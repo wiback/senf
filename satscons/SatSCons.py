@@ -105,7 +105,7 @@ def StandardObjects(env, sources, testSources = None, LIBS = []):
     LIBS = [ x for x in LIBS if x not in LOCAL_LIBS ]
     if testSources:
         testTargets.append(env.BoostUnitTests(
-            target = 'test',
+            target = 'test_runner',
             source = sources,
             test_source = testSources + LOCAL_LIBS,
             LIBS = LIBS,
@@ -122,7 +122,3 @@ def StandardLib(env, library, sources, testSources = None, LIBS = []):
     lib = env.Library(library,objects)
     env.Default(lib)
     env.Append(**{ 'LIB_' + library : lib })
-
-def AllTests(env):
-    tests = env.Alias('tests')
-    env.Depends(tests, testTargets)

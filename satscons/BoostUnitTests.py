@@ -13,11 +13,13 @@ def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [
     testEnv = env.Copy(**kw)
     testEnv.Append(LIBS = '$BOOSTTESTLIB')
     testEnv.Append(LIBS = LIBS)
-    testRunner = testEnv.Program('test', env.Object(source) + test_source)
+    testRunner = testEnv.Program(target, env.Object(source) + test_source)
     if DEPENDS:
         env.Depends(testRunner, DEPENDS)
-    return env.Alias(target, env.Command(os.path.join(path,'.'+name+'.stamp'), testRunner,
-                                  [ './$SOURCE $BOOSSTTESTARGS', 'touch $TARGET' ]))
+    test = env.Command(os.path.join(path,'.'+name+'.stamp'), testRunner,
+                                         [ './$SOURCE $BOOSSTTESTARGS', 'touch $TARGET' ])
+    env.Alias('all_tests', test)
+    return env.Alias(env.File('test'), test)
 
 
 def dispatcher(*arg,**kw):
