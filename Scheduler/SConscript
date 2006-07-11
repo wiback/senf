@@ -1,0 +1,11 @@
+Import('env satscons')
+import sys
+sys.path.append(satscons)
+import SatSCons
+
+###########################################################################
+
+SatSCons.StandardLib(env,
+                     library = 'Scheduler',
+                     sources = SatSCons.GlobSources(),
+                     LIBS = [ '$LIB_Utils' ])

@@ -26,6 +26,7 @@
 //#include "scheduler.test.ih"
 
 // Custom includes
+#include "Scheduler.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -33,7 +34,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace sastcom::lib;
+using namespace satcom::lib;
 
 BOOST_AUTO_UNIT_TEST(scheduler)
 {

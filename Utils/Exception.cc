@@ -22,18 +22,19 @@
 
 // Definition of non-inline non-template functions
 
-//#include "Exception.hh"
+#include "Exception.hh"
 //#include "Exception.ih"
 
 // Custom includes
+#include <cstring>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ char const * satcom::SystemException::what()
+prefix_ char const * satcom::lib::SystemException::what()
     const throw()
 {
-    return strerror(this->errno);
+    return std::strerror(this->err);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

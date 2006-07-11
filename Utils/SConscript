@@ -1,0 +1,8 @@
+Import('env satscons')
+import sys
+sys.path.append(satscons)
+import SatSCons
+
+###########################################################################
+
+SatSCons.StandardLib(env, 'Utils',  SatSCons.GlobSources())

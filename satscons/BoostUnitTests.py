@@ -3,16 +3,19 @@ import SCons.Defaults
 import os.path
 import os
 
-def BoostUnitTests(env, target, source, test_sources=None, **kw):
+def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [], **kw):
     path, name = os.path.split(target)
-    if test_sources:
-        if type(test_sources) is not type([]):
-            test_sources = [ test_sources ]
+    if test_source:
+        if type(test_source) is not type([]):
+            test_source = [ test_source ]
     else:
-        test_sources = []
+        test_source = []
     testEnv = env.Copy(**kw)
     testEnv.Append(LIBS = '$BOOSTTESTLIB')
-    testRunner = testEnv.Program('test', env.Object(source) + test_sources)
+    testEnv.Append(LIBS = LIBS)
+    testRunner = testEnv.Program('test', env.Object(source) + test_source)
+    if DEPENDS:
+        env.Depends(testRunner, DEPENDS)
     return env.Alias(target, env.Command(os.path.join(path,'.'+name+'.stamp'), testRunner,
                                   [ './$SOURCE $BOOSSTTESTARGS', 'touch $TARGET' ]))
 

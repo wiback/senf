@@ -7,7 +7,7 @@ def replace_ext(n,ext):
     base,ext = os.path.splitext(n)
     return base+ext
 
-def Doxygen(env, target, source, image):
+def Doxygen(env, target, source, image=[]):
     path, name = os.path.split(str(target))
     stamp = os.path.join(path, '.'+name+'.stamp')
     alias = env.Alias(target,

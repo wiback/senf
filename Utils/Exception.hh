@@ -24,6 +24,7 @@
 #define HH_Exception_ 1
 
 // Custom includes
+#include <exception>
 
 //#include "Exception.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -33,10 +34,10 @@ namespace lib {
 
     struct SystemException : public std::exception
     {
-        SystemException(errno_) : errno(errno_) {};
+        SystemException(int err_) : err(err_) {};
         virtual char const * what() const throw();
-        int errno;
-    }    
+        int err;
+    };
     
 }}
 
