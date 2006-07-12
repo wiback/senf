@@ -1,6 +1,4 @@
-Import('env satscons')
-import sys
-sys.path.append(satscons)
+Import('env')
 import SatSCons
 
 ###########################################################################
