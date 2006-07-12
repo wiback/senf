@@ -22,4 +22,3 @@ Export('env satscons')
 SConscript(glob.glob("*/SConscript"))
 
 SatSCons.StandardTargets(env)
-SatSCons.AllTests(env)

@@ -50,8 +50,8 @@ namespace lib {
         // Types
 
         enum EventId { EV_NONE=0, 
-                       EV_READ=1, EV_WRITE=2, EV_HUP=4, EV_ERR=8, 
-                       EV_ALL=15 };
+                       EV_READ=1, EV_PRIO=2, EV_WRITE=4, EV_HUP=8, EV_ERR=16, 
+                       EV_ALL=31 };
         typedef boost::function<void (int fd, EventId event)> Callback;
 
         ///////////////////////////////////////////////////////////////////////////
@@ -69,8 +69,12 @@ namespace lib {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void set(int fd, Callback const & cb, EventId eventMask = EV_ALL);
-        void unset(int fd, EventId eventMask = EV_ALL);
+        void add(int fd, Callback const & cb, EventId eventMask = EV_ALL);
+        void remove(int fd, EventId eventMask = EV_ALL);
+
+        void process();
+
+        void terminate();
 
     protected:
 
@@ -80,6 +84,7 @@ namespace lib {
         struct EventSpec 
         {
             Callback cb_read;
+            Callback cb_prio;
             Callback cb_write;
             Callback cb_hup;
             Callback cb_err;
@@ -91,12 +96,13 @@ namespace lib {
 
         FdTable fdTable_;
         int epollFd_;
+        bool terminate_;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Scheduler.cci"
+#include "Scheduler.cci"
 //#include "Scheduler.ct"
 //#include "Scheduler.cti"
 #endif
