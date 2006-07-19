@@ -16,11 +16,8 @@ def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [
     testRunner = testEnv.Program(target, env.Object(source) + test_source)
     if DEPENDS:
         env.Depends(testRunner, DEPENDS)
-    test = env.Command(os.path.join(path,'.'+name+'.stamp'), testRunner,
-                                         [ './$SOURCE $BOOSSTTESTARGS', 'touch $TARGET' ])
-    env.Alias('all_tests', test)
-    return env.Alias(env.File('test'), test)
-
+    return env.Command(os.path.join(path,'.'+name+'.stamp'), testRunner,
+                       [ './$SOURCE $BOOSSTTESTARGS', 'touch $TARGET' ])
 
 def dispatcher(*arg,**kw):
     return BoostUnitTests(*arg,**kw)

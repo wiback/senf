@@ -3,8 +3,6 @@ import os.path, SCons.Options, SCons.Environment, SCons.Script.SConscript, glob
 opts = None
 finalizers = []
 
-testTargets = []
-
 def InitOpts():
     global opts
     if opts is not None: return
@@ -92,7 +90,6 @@ def StandardTargets(env):
     #env.AlwaysBuild(env.Command('ChangeLog', '', [ "cvs2cl -rS --no-wrap --summary" ]))
     
 def StandardObjects(env, sources, testSources = None, LIBS = []):
-    global testTargets
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
@@ -101,19 +98,21 @@ def StandardObjects(env, sources, testSources = None, LIBS = []):
 
     objects = env.Object(sources)
 
-    LOCAL_LIBS = [ x for x in LIBS if x.startswith('$LIB_') ]
-    LIBS = [ x for x in LIBS if x not in LOCAL_LIBS ]
     if testSources:
-        testTargets.append(env.BoostUnitTests(
+        LOCAL_LIBS = [ x for x in LIBS if x.startswith('$LIB_') ]
+        LIBS = [ x for x in LIBS if x not in LOCAL_LIBS ]
+        test = env.BoostUnitTests(
             target = 'test_runner',
             source = sources,
             test_source = testSources + LOCAL_LIBS,
             LIBS = LIBS,
-            DEPENDS = LOCAL_LIBS))
+            DEPENDS = LOCAL_LIBS)
+        env.Alias('all_tests', test)
+        env.Alias(env.File('test'), test)
 
-    env.Doxygen(
-        target = 'doc',
-        source = sources )
+    #env.Doxygen(
+    #    target = 'doc',
+    #    source = sources )
 
     return objects
 
@@ -122,10 +121,16 @@ def StandardLib(env, library, sources, testSources = None, LIBS = []):
     lib = env.Library(library,objects)
     env.Default(lib)
     env.Append(**{ 'LIB_' + library : lib })
+    env.Append(LIB_ALL = lib)
     return lib
 
 def StandardBinary(env, binary, sources, testSources = None, LIBS = []):
     objects = StandardObjects(env,sources,testSources,LIBS=LIBS)
-    program = env.Program(binary,objects)
+    LOCAL_LIBS = [ x for x in LIBS if x.startswith('$LIB_') ]
+    LIBS = [ x for x in LIBS if x not in LOCAL_LIBS ]
+    progEnv = env.Copy()
+    progEnv.Append(LIBS = LIBS)
+    program = progEnv.Program(target=binary,source=objects+LOCAL_LIBS)
     env.Default(program)
+    env.Depends(program, LOCAL_LIBS)
     return program
