@@ -122,3 +122,10 @@ def StandardLib(env, library, sources, testSources = None, LIBS = []):
     lib = env.Library(library,objects)
     env.Default(lib)
     env.Append(**{ 'LIB_' + library : lib })
+    return lib
+
+def StandardBinary(env, binary, sources, testSources = None, LIBS = []):
+    objects = StandardObjects(env,sources,testSources,LIBS=LIBS)
+    program = env.Program(binary,objects)
+    env.Default(program)
+    return program

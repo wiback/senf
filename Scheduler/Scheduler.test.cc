@@ -162,7 +162,6 @@ namespace {
             ;
         }
         Scheduler::instance().terminate();
-            
     }
         
 }
