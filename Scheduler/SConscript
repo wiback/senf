@@ -3,7 +3,8 @@ import SatSCons
 
 ###########################################################################
 
-SatSCons.StandardLib(env,
-                     library = 'Scheduler',
-                     sources = SatSCons.GlobSources(),
-                     LIBS = [ '$LIB_Utils' ])
+SatSCons.StandardTargets(env)
+SatSCons.Lib(env,
+             library = 'Scheduler',
+             sources = SatSCons.GlobSources(),
+             LIBS = [ 'Utils' ])
