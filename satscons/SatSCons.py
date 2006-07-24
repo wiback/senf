@@ -67,7 +67,9 @@ def MakeEnvironment():
         finalizer(conf.env)
 
     conf.env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long',
-                                 '-pedantic', '-ansi' ])
+                                 '-pedantic', '-ansi' ],
+                    LOCALLIBDIR = [ '#' ],
+                    LIBPATH = [ '$LOCALLIBDIR' ])
 
     if conf.env['final']:
         conf.env.Append(CXXFLAGS = [ '-O3' ])
@@ -87,50 +89,55 @@ def StandardTargets(env):
     env.Clean(all, [ '.sconsign', '.sconf_temp', 'config.log', 'ChangeLog.bak', '.clean'
                      ] + glob.glob("*~"))
     env.Depends(all, '.')
-    #env.AlwaysBuild(env.Command('ChangeLog', '', [ "cvs2cl -rS --no-wrap --summary" ]))
+
+def LibPath(lib): return '$LOCALLIBDIR/lib%s.a' % lib
     
-def StandardObjects(env, sources, testSources = None, LIBS = []):
+def Objects(env, sources, testSources = None, LIBS = []):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
     
-    StandardTargets(env)
-
     objects = env.Object(sources)
 
     if testSources:
-        LOCAL_LIBS = [ x for x in LIBS if x.startswith('$LIB_') ]
-        LIBS = [ x for x in LIBS if x not in LOCAL_LIBS ]
         test = env.BoostUnitTests(
             target = 'test_runner',
             source = sources,
-            test_source = testSources + LOCAL_LIBS,
+            test_source = testSources,
             LIBS = LIBS,
-            DEPENDS = LOCAL_LIBS)
+            DEPENDS = [ env.File(LibPath(x)) for x in LIBS ])
         env.Alias('all_tests', test)
+        # Hmm ... here I'd like to use an Alias instead of a file
+        # however the alias does not seem to live in the subdirectory
+        # which breaks 'scons -u test'
         env.Alias(env.File('test'), test)
-
-    #env.Doxygen(
-    #    target = 'doc',
-    #    source = sources )
 
     return objects
 
-def StandardLib(env, library, sources, testSources = None, LIBS = []):
-    objects = StandardObjects(env,sources,testSources,LIBS=LIBS)
-    lib = env.Library(library,objects)
+def Doxygen(env, sources, testSources = None):
+    if type(sources) == type(()):
+        testSources = sources[1]
+        sources = sources[0]
+
+    doc = env.Doxygen(
+        target = 'doc',
+        source = sources )
+
+    env.Alias('all_docs', doc)
+    return doc
+
+def Lib(env, library, sources, testSources = None, LIBS = []):
+    objects = Objects(env,sources,testSources,LIBS=LIBS)
+    lib = env.Library(env.File(LibPath(library)),objects)
     env.Default(lib)
-    env.Append(**{ 'LIB_' + library : lib })
-    env.Append(LIB_ALL = lib)
+    env.Append(ALLLIBS = library)
     return lib
 
-def StandardBinary(env, binary, sources, testSources = None, LIBS = []):
-    objects = StandardObjects(env,sources,testSources,LIBS=LIBS)
-    LOCAL_LIBS = [ x for x in LIBS if x.startswith('$LIB_') ]
-    LIBS = [ x for x in LIBS if x not in LOCAL_LIBS ]
+def Binary(env, binary, sources, testSources = None, LIBS = []):
+    objects = Objects(env,sources,testSources,LIBS=LIBS)
     progEnv = env.Copy()
     progEnv.Append(LIBS = LIBS)
-    program = progEnv.Program(target=binary,source=objects+LOCAL_LIBS)
+    program = progEnv.Program(target=binary,source=objects)
     env.Default(program)
-    env.Depends(program, LOCAL_LIBS)
+    env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
     return program
