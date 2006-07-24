@@ -3,4 +3,5 @@ import SatSCons
 
 ###########################################################################
 
-SatSCons.StandardLib(env, 'Utils',  SatSCons.GlobSources())
+SatSCons.StandardTargets(env)
+SatSCons.Lib(env, 'Utils',  SatSCons.GlobSources())
