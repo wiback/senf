@@ -27,6 +27,7 @@
 #include <map>
 #include <boost/function.hpp>
 #include <boost/utility.hpp>
+#include <boost/call_traits.hpp>
 
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -52,7 +53,13 @@ namespace lib {
         enum EventId { EV_NONE=0, 
                        EV_READ=1, EV_PRIO=2, EV_WRITE=4, EV_HUP=8, EV_ERR=16, 
                        EV_ALL=31 };
-        typedef boost::function<void (int fd, EventId event)> Callback;
+
+        template <class Handle>
+        struct GenericCallback {
+            typedef boost::function<void (typename boost::call_traits<Handle>::param_type,
+                                          EventId) > Callback;
+        };
+        typedef GenericCallback<int>::Callback Callback;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -71,6 +78,13 @@ namespace lib {
 
         void add(int fd, Callback const & cb, EventId eventMask = EV_ALL);
         void remove(int fd, EventId eventMask = EV_ALL);
+
+        template <class Handle>
+        void add(Handle const & handle, 
+                 typename GenericCallback<Handle>::Callback const & cb,
+                 EventId eventMask = EV_ALL);
+        template <class Handle>
+        void remove(Handle const & handle, EventId eventMask = EV_ALL);
 
         void process();
 
@@ -103,8 +117,8 @@ namespace lib {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Scheduler.cci"
-//#include "Scheduler.ct"
-//#include "Scheduler.cti"
+#include "Scheduler.ct"
+#include "Scheduler.cti"
 #endif
 
 

@@ -163,7 +163,25 @@ namespace {
         }
         Scheduler::instance().terminate();
     }
-        
+     
+    struct HandleWrapper
+    {
+        HandleWrapper(int fd,std::string const & tag) : fd_(fd), tag_(tag) {}
+        int fd_;
+        std::string tag_;
+    };
+
+    int retrieve_filehandle(HandleWrapper const & handle)
+    {
+        return handle.fd_;
+    }
+
+    void handleCallback(HandleWrapper const & handle, Scheduler::EventId event)
+    {
+        if (handle.tag_ != "TheTag")
+            return;
+        callback(handle.fd_,event);
+    }
 }
 
 BOOST_AUTO_UNIT_TEST(scheduler)
@@ -198,14 +216,15 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "READ" );
 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().add(sock,&callback,Scheduler::EV_WRITE) );
+    HandleWrapper handle(sock,"TheTag");
+    BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,&handleCallback,Scheduler::EV_WRITE) );
     strcpy(buffer,"WRITE");
     size=5;
     event = Scheduler::EV_NONE;
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
     BOOST_CHECK_EQUAL( event, Scheduler::EV_WRITE );
 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().remove(sock,Scheduler::EV_WRITE) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().remove(handle,Scheduler::EV_WRITE) );
     event = Scheduler::EV_NONE;
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
     BOOST_CHECK_EQUAL( event, Scheduler::EV_READ );
