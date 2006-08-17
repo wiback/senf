@@ -96,8 +96,10 @@ def Objects(env, sources, testSources = None, LIBS = []):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
-    
-    objects = env.Object(sources)
+
+    objects = None
+    if sources:
+        objects = env.Object(sources)
 
     if testSources:
         test = env.BoostUnitTests(
@@ -128,16 +130,20 @@ def Doxygen(env, sources, testSources = None):
 
 def Lib(env, library, sources, testSources = None, LIBS = []):
     objects = Objects(env,sources,testSources,LIBS=LIBS)
-    lib = env.Library(env.File(LibPath(library)),objects)
-    env.Default(lib)
-    env.Append(ALLLIBS = library)
+    lib = None
+    if objects:
+        lib = env.Library(env.File(LibPath(library)),objects)
+        env.Default(lib)
+        env.Append(ALLLIBS = library)
     return lib
 
 def Binary(env, binary, sources, testSources = None, LIBS = []):
     objects = Objects(env,sources,testSources,LIBS=LIBS)
-    progEnv = env.Copy()
-    progEnv.Append(LIBS = LIBS)
-    program = progEnv.Program(target=binary,source=objects)
-    env.Default(program)
-    env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
+    program = None
+    if objects:
+        progEnv = env.Copy()
+        progEnv.Append(LIBS = LIBS)
+        program = progEnv.Program(target=binary,source=objects)
+        env.Default(program)
+        env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
     return program

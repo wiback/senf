@@ -1,0 +1,11 @@
+Import('env')
+import SatSCons
+
+###########################################################################
+
+SatSCons.StandardTargets(env)
+
+SatSCons.Lib(env,
+             library = 'Socket',
+             sources = SatSCons.GlobSources(),
+             LIBS = [ 'Utils' ])

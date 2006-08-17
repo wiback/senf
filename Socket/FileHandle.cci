@@ -1,0 +1,164 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Definition of inline non-template functions
+
+//#include "FileHandle.ih"
+
+// Custom includes
+#include <unistd.h>
+#include <errno.h>
+#include "Utils/Exception.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::FileBody
+
+prefix_ satcom::lib::FileBody::FileBody(int fd)
+    : fd_(fd)
+{}
+
+prefix_  satcom::lib::FileBody::~FileBody()
+{
+    if (valid())
+        try {
+            close();
+        }
+        catch (...) {
+            terminate();
+        }
+}
+
+prefix_ int satcom::lib::FileBody::fd()
+    const
+{
+    return fd_;
+}
+
+prefix_ int satcom::lib::FileBody::fd(int fd)
+{
+    int oldFd (fd_);
+    fd_ = fd;
+    return oldFd;
+}
+
+prefix_ void satcom::lib::FileBody::close()
+{
+    if (::close(fd_) != 0)
+        throw SystemException(errno);
+    fd_ = -1;
+}
+
+prefix_ void satcom::lib::FileBody::terminate()
+{
+    ::close(fd_);
+    fd_ = -1;
+}
+
+prefix_ void satcom::lib::FileBody::flush()
+{}
+
+prefix_ bool satcom::lib::FileBody::valid()
+    const
+{
+    return fd_ != -1;
+}
+
+prefix_ bool satcom::lib::FileBody::ok()
+    const
+{
+    return valid();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::FileHandle
+
+prefix_ void satcom::lib::FileHandle::close()
+{
+    body_->close();
+}
+
+prefix_ void satcom::lib::FileHandle::terminate()
+{
+    body_->terminate();
+}
+
+prefix_ void satcom::lib::FileHandle::flush()
+{
+    body_->flush();
+}
+
+prefix_ bool satcom::lib::FileHandle::readable()
+    const
+{
+    return body_->readable();
+}
+
+prefix_ bool satcom::lib::FileHandle::writeable()
+    const
+{
+    return body_->writeable();
+}
+
+prefix_ bool satcom::lib::FileHandle::valid()
+    const
+{
+    return body_->valid();
+}
+
+prefix_ satcom::lib::FileHandle::operator bool ()
+    const
+{
+    return body_->ok();
+}
+
+prefix_ bool satcom::lib::FileHandle::operator!()
+    const
+{
+    return ! body_->ok();
+}
+
+prefix_ int satcom::lib::FileHandle::fd()
+    const
+{
+    return body_->fd();
+}
+
+prefix_  satcom::lib::FileHandle::FileHandle(std::auto_ptr<FileBody> body)
+    : body_(body.release())
+{}
+
+prefix_ int satcom::lib::FileHandle::fd(int fd)
+{
+    return body_->fd(fd);
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

@@ -1,0 +1,210 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+#ifndef IH_SocketPolicy_
+#define IH_SocketPolicy_ 1
+
+// Custom includes
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/fold.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/and.hpp>
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace satcom {
+namespace lib {
+namespace impl{
+
+    template <int N>
+    struct SocketPolicy_rv
+    {
+        int v[N];
+    };
+    
+    SocketPolicy_rv<1> MakeSocketPolicy_merge_(AddressingPolicyBase*);
+    SocketPolicy_rv<2> MakeSocketPolicy_merge_(FramingPolicyBase*);
+    SocketPolicy_rv<3> MakeSocketPolicy_merge_(CommunicationPolicyBase*);
+    SocketPolicy_rv<4> MakeSocketPolicy_merge_(ReadPolicyBase*);
+    SocketPolicy_rv<5> MakeSocketPolicy_merge_(WritePolicyBase*);
+    SocketPolicy_rv<6> MakeSocketPolicy_merge_(BufferingPolicyBase*);
+
+    template <class Base, class Policy, int N>
+    struct MakeSocketPolicy_merge
+    {};
+
+    template <class Base, class Policy>
+    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<1>)>
+    {
+        typedef SocketPolicy< 
+            Policy,
+            typename Base::FramingPolicy,
+            typename Base::CommunicationPolicy,
+            typename Base::ReadPolicy,
+            typename Base::WritePolicy,
+            typename Base::BufferingPolicy> type;
+    };
+
+    template <class Base, class Policy>
+    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<2>)>
+    {
+        typedef SocketPolicy< 
+            typename Base::AddressingPolicy,
+            Policy,
+            typename Base::CommunicationPolicy,
+            typename Base::ReadPolicy,
+            typename Base::WritePolicy,
+            typename Base::BufferingPolicy> type;
+    };
+
+    template <class Base, class Policy>
+    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<3>)>
+    {
+        typedef SocketPolicy< 
+            typename Base::AddressingPolicy,
+            typename Base::FramingPolicy,
+            Policy,
+            typename Base::ReadPolicy,
+            typename Base::WritePolicy,
+            typename Base::BufferingPolicy> type;
+    };
+
+    template <class Base, class Policy>
+    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<4>)>
+    {
+        typedef SocketPolicy< 
+            typename Base::AddressingPolicy,
+            typename Base::FramingPolicy,
+            typename Base::CommunicationPolicy,
+            Policy,
+            typename Base::WritePolicy,
+            typename Base::BufferingPolicy> type;
+    };
+
+    template <class Base, class Policy>
+    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<5>)>
+    {
+        typedef SocketPolicy< 
+            typename Base::AddressingPolicy,
+            typename Base::FramingPolicy,
+            typename Base::CommunicationPolicy,
+            typename Base::ReadPolicy,
+            Policy,
+            typename Base::BufferingPolicy> type;
+    };
+
+    template <class Base, class Policy>
+    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<6>)>
+    {
+        typedef SocketPolicy< 
+            typename Base::AddressingPolicy,
+            typename Base::FramingPolicy,
+            typename Base::CommunicationPolicy,
+            typename Base::ReadPolicy,
+            typename Base::WritePolicy,
+            Policy> type;
+    };
+
+    struct MakeSocketPolicy_fold
+    {
+        template <class Base, class Policy>
+        struct apply
+            : MakeSocketPolicy_merge<Base,
+                                     Policy,
+                                     sizeof(MakeSocketPolicy_merge_(static_cast<Policy*>(0)))>
+        {};
+
+        template <class Base>
+        struct apply<Base,nil>
+        {
+            typedef Base type;
+        };
+    };
+
+    template <class Base, class Vector>
+    struct MakeSocketPolicy_impl
+    {
+        typedef typename boost::mpl::fold< Vector, Base, MakeSocketPolicy_fold >::type policy;
+    };
+
+    template <class Base>
+    SocketPolicy_rv<1> SocketPolicy_checkcompat_(typename Base::AddressingPolicy*,
+                                                 typename Base::FramingPolicy*,
+                                                 typename Base::CommunicationPolicy*,
+                                                 typename Base::ReadPolicy*,
+                                                 typename Base::WritePolicy*,
+                                                 typename Base::BufferingPolicy*);
+
+    template <class Base>
+    SocketPolicy_rv<2> SocketPolicy_checkcompat_(void*, void*, void*, void*, void*, void*);
+
+    template <int Size>
+    struct SocketPolicy_checkcompat
+        : public boost::false_type
+    {};
+
+    template<>
+    struct SocketPolicy_checkcompat<sizeof(SocketPolicy_rv<1>)>
+        : public boost::true_type
+    {};
+
+    template <class Base, class Derived>
+    struct SocketPolicy_compatibility
+        : public SocketPolicy_checkcompat< sizeof(SocketPolicy_checkcompat_<Base>(
+                                                      static_cast<typename Derived::AddressingPolicy*>(0),
+                                                      static_cast<typename Derived::FramingPolicy*>(0),
+                                                      static_cast<typename Derived::CommunicationPolicy*>(0),
+                                                      static_cast<typename Derived::ReadPolicy*>(0),
+                                                      static_cast<typename Derived::WritePolicy*>(0),
+                                                      static_cast<typename Derived::BufferingPolicy*>(0))) >
+    {};
+
+}}}
+
+namespace satcom {
+namespace lib {
+
+    template <class T1, class T2, class T3, class T4, class T5, class T6>
+    class MakeSocketPolicy
+        : public boost::mpl::if_< boost::is_base_of< SocketPolicyBase, T1>,
+                                  impl::MakeSocketPolicy_impl< T1, boost::mpl::vector<T2,T3,T4,T5,T6> >,
+                                  impl::MakeSocketPolicy_impl< SocketPolicy<>,
+                                                               boost::mpl::vector<T1,T2,T3,T4,T5,T6> > >::type
+    {};
+
+    template <class BasePolicy, class DerivedPolicy>
+    struct SocketPolicyIsBaseOf
+        : public boost::mpl::if_< boost::mpl::and_< boost::is_base_of< SocketPolicyBase, BasePolicy>,
+                                                    boost::is_base_of< SocketPolicyBase, DerivedPolicy> >,
+                                  impl::SocketPolicy_compatibility<BasePolicy,DerivedPolicy>,
+                                  boost::false_type >::type
+    {};
+}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

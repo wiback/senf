@@ -13,7 +13,11 @@ def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [
     testEnv = env.Copy(**kw)
     testEnv.Append(LIBS = '$BOOSTTESTLIB')
     testEnv.Append(LIBS = LIBS)
-    testRunner = testEnv.Program(target, env.Object(source) + test_source)
+    sources = []
+    if source:
+        sources = sources + env.Object(source)
+    sources = sources + test_source
+    testRunner = testEnv.Program(target, sources)
     if DEPENDS:
         env.Depends(testRunner, DEPENDS)
     return env.Command(os.path.join(path,'.'+name+'.stamp'), testRunner,
