@@ -75,6 +75,10 @@ namespace lib {
     protected:
         explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol);
         SocketHandle(FileHandle other, bool isChecked);
+        
+        SocketBody & body();
+        SocketBody const & body() const;
+
         void assign(FileHandle other);
 
     private:

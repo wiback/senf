@@ -20,26 +20,30 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline non-template functions
+// Definition of inline template functions
 
-#include "SocketHandle.ih"
+//#include "ProtocolClientSocketHandle.ih"
 
 // Custom includes
 
 #define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////cti.p///////////////////////////////////////
 
-prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol)
-    : protocol_(protocol)
+template <class SocketProtocol>
+prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientSocketHandle()
+    : ClientSocketHandle<typename SocketProtocol::Policy>(
+        std::auto_ptr<satcom::lib::SocketProtocol>(new SocketProtocol()))
 {}
 
-prefix_ satcom::lib::SocketProtocol const & satcom::lib::SocketBody::protocol()
-    const
+template <class SocketProtocol>
+prefix_ SocketProtocol const &
+satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::protocol()
 {
-    return *protocol_;
+    BOOST_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
+    return static_cast<SocketProtocol const &>(this->body().protocol());
 }
 
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

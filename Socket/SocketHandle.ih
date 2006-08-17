@@ -55,6 +55,8 @@ namespace lib {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
+        SocketProtocol const & protocol() const;
+
     protected:
 
     private:

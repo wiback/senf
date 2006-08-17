@@ -74,6 +74,9 @@ namespace lib {
     protected:
         explicit FileHandle(std::auto_ptr<FileBody> body);
 
+        FileBody & body();
+        FileBody const & body() const;
+
         int fd(int fd);
 
     private:

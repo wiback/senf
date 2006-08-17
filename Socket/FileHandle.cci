@@ -96,62 +96,73 @@ prefix_ bool satcom::lib::FileBody::ok()
 
 prefix_ void satcom::lib::FileHandle::close()
 {
-    body_->close();
+    body().close();
 }
 
 prefix_ void satcom::lib::FileHandle::terminate()
 {
-    body_->terminate();
+    body().terminate();
 }
 
 prefix_ void satcom::lib::FileHandle::flush()
 {
-    body_->flush();
+    body().flush();
 }
 
 prefix_ bool satcom::lib::FileHandle::readable()
     const
 {
-    return body_->readable();
+    return body().readable();
 }
 
 prefix_ bool satcom::lib::FileHandle::writeable()
     const
 {
-    return body_->writeable();
+    return body().writeable();
 }
 
 prefix_ bool satcom::lib::FileHandle::valid()
     const
 {
-    return body_->valid();
+    return body().valid();
 }
 
 prefix_ satcom::lib::FileHandle::operator bool ()
     const
 {
-    return body_->ok();
+    return body().ok();
 }
 
 prefix_ bool satcom::lib::FileHandle::operator!()
     const
 {
-    return ! body_->ok();
+    return ! body().ok();
 }
 
 prefix_ int satcom::lib::FileHandle::fd()
     const
 {
-    return body_->fd();
+    return body().fd();
 }
 
 prefix_  satcom::lib::FileHandle::FileHandle(std::auto_ptr<FileBody> body)
     : body_(body.release())
 {}
 
+prefix_ satcom::lib::FileBody & satcom::lib::FileHandle::body()
+{
+    return *body_;
+}
+
+prefix_ satcom::lib::FileBody const & satcom::lib::FileHandle::body()
+    const
+{
+    return *body_;
+}
+
 prefix_ int satcom::lib::FileHandle::fd(int fd)
 {
-    return body_->fd(fd);
+    return body().fd(fd);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

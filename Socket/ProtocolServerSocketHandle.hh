@@ -20,13 +20,13 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_ProtocolClientSocketHandle_
-#define HH_ProtocolClientSocketHandle_ 1
+#ifndef HH_ProtocolServerSocketHandle_
+#define HH_ProtocolServerSocketHandle_ 1
 
 // Custom includes
-#include "ClientSocketHandle.hh"
+#include "ServerSocketHandle.hh"
 
-//#include "ProtocolClientSocketHandle.mpp"
+//#include "ProtocolServerSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace satcom {
@@ -35,8 +35,8 @@ namespace lib {
     /** \brief
       */
     template <class SocketProtocol>
-    class ProtocolClientSocketHandle
-        : public ClientSocketHandle<typename SocketProtocol::Policy>
+    class ProtocolServerSocketHandle
+        : public ServerSocketHandle<typename SocketProtocol::Policy>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ namespace lib {
 
         // TODO: Non-default constructors (via argument forwarding
         //       to the SocketProtocol::init(...) methods
-        ProtocolClientSocketHandle();
+        ProtocolServerSocketHandle();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -66,9 +66,9 @@ namespace lib {
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "ProtocolClientSocketHandle.cci"
-//#include "ProtocolClientSocketHandle.ct"
-#include "ProtocolClientSocketHandle.cti"
+//#include "ProtocolServerSocketHandle.cci"
+//#include "ProtocolServerSocketHandle.ct"
+#include "ProtocolServerSocketHandle.cti"
 #endif
 
 

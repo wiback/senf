@@ -57,6 +57,21 @@ prefix_ satcom::lib::SocketHandle<SocketPolicy>::SocketHandle(FileHandle other, 
 {}
 
 template <class SocketPolicy>
+prefix_ satcom::lib::SocketBody & satcom::lib::SocketHandle<SocketPolicy>::body()
+{
+    BOOST_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
+    return static_cast<SocketBody &>(FileHandle::body());
+}
+
+template <class SocketPolicy>
+prefix_ satcom::lib::SocketBody const & satcom::lib::SocketHandle<SocketPolicy>::body()
+    const
+{
+    BOOST_ASSERT( dynamic_cast<SocketBody const *>(&FileHandle::body()) );
+    return static_cast<SocketBody const &>(FileHandle::body());
+}
+
+template <class SocketPolicy>
 prefix_ void satcom::lib::SocketHandle<SocketPolicy>::assign(FileHandle other)
 {
     FileHandle::operator=(other);
