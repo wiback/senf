@@ -19,12 +19,22 @@ def UseBoost():
     InitOpts()
     opts.Add('BOOST_INCLUDES', 'Boost include directory', '')
     opts.Add('BOOST_VARIANT', 'The boost variant to use', '')
+    opts.Add('BOOST_TOOLSET', 'The boost toolset to use', '')
     opts.Add('BOOST_LIBDIR', 'The directory of the boost libraries', '')
     Finalizer(FinalizeBoost)
 
 def FinalizeBoost(env):
     env.Tool('BoostUnitTests', [os.path.split(__file__)[0]])
+
+    if env['BOOST_TOOLSET']:
+        runtime = ""
+        if not env['final'] : runtime += "gd"
+        if env['STLPORT_LIB'] : runtime += "p"
+        if runtime: runtime = "-" + runtime
+        env['BOOST_VARIANT'] = "-" + env['BOOST_TOOLSET'] + runtime
+
     env['BOOSTTESTLIB'] = 'libboost_unit_test_framework' + env['BOOST_VARIANT']
+
     env.Append(LIBPATH = [ '$BOOST_LIBDIR' ],
                CPPPATH = [ '$BOOST_INCLUDES' ])
     
@@ -72,7 +82,8 @@ def MakeEnvironment():
                     LIBPATH = [ '$LOCALLIBDIR' ])
 
     if conf.env['final']:
-        conf.env.Append(CXXFLAGS = [ '-O3' ])
+        conf.env.Append(CXXFLAGS = [ '-O3', '-g' ],
+                        LINKFLAGS = [ '-g' ])
     else:
         conf.env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
                         LINKFLAGS = [ '-g' ])
@@ -89,6 +100,14 @@ def StandardTargets(env):
     env.Clean(all, [ '.sconsign', '.sconf_temp', 'config.log', 'ChangeLog.bak', '.clean'
                      ] + glob.glob("*~"))
     env.Depends(all, '.')
+
+def GlobalTargets(env):
+    command = "find -name .svn -prune -o \( -name '*.hh' -o -name '*.ih' -o -name '*.cc' -o -name '*.cci' -o -name '*.ct' -o -name '*.cti' -o -name '*.mpp' \) -print " \
+              "| xargs -r awk -F '//' '/%s/{print ARGV[ARGIND] \":\" FNR \":\" $2}' > $TARGET"
+    env.AlwaysBuild(env.Command('TODOS',None,[ command % 'TODO' ]))
+    env.AlwaysBuild(env.Command('FIXMES',None,[ command % ' FIXME' ]))
+    env.AlwaysBuild(env.Command('BUGS',None,[ command % 'BUG' ] ))
+    env.Alias('status',[ 'TODOS', 'FIXMES', 'BUGS' ])
 
 def LibPath(lib): return '$LOCALLIBDIR/lib%s.a' % lib
     

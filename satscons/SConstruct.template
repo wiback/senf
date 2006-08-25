@@ -18,3 +18,4 @@ Export('env')
 SConscript(glob.glob("*/SConscript"))
 
 SatSCons.StandardTargets(env)
+SatSCons.GlobalTargets(env)
