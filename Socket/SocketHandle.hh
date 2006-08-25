@@ -78,6 +78,7 @@ namespace lib {
         
         SocketBody & body();
         SocketBody const & body() const;
+        SocketProtocol const & protocol() const;
 
         void assign(FileHandle other);
 

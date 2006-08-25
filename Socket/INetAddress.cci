@@ -22,23 +22,63 @@
 
 // Definition of inline non-template functions
 
-#include "SocketHandle.ih"
-
 // Custom includes
+#include <arpa/inet.h>
+#include <netinet/in.h>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol)
-    : protocol_(protocol)
+prefix_ satcom::lib::INet4Address::INet4Address(std::string address)
 {
-    protocol_->body_ = this;
+    *this = address;
 }
 
-prefix_ satcom::lib::SocketProtocol const & satcom::lib::SocketBody::protocol()
+prefix_ satcom::lib::INet4Address::INet4Address(std::string host, unsigned port)
+{
+    *this = std::make_pair(host,port);
+}
+
+prefix_ bool satcom::lib::INet4Address::operator==(INet4Address const & other)
+{
+    return addr.sin_port == other.addr.sin_port && 
+        addr.sin_addr.s_addr == other.addr.sin_addr.s_addr;
+}
+
+prefix_ std::string satcom::lib::INet4Address::host()
     const
 {
-    return *protocol_;
+    // FIXME: thread safety?
+    return std::string(::inet_ntoa(addr.sin_addr));
+}
+
+prefix_ unsigned satcom::lib::INet4Address::port()
+    const
+{
+    return ntohs(addr.sin_port);
+}
+
+prefix_ struct sockaddr * satcom::lib::INet4Address::sockaddr_p()
+{
+    return reinterpret_cast<struct sockaddr *>(&addr);
+}
+
+prefix_ struct sockaddr const * satcom::lib::INet4Address::sockaddr_p()
+    const
+{
+    return reinterpret_cast<struct sockaddr const *>(&addr);
+}
+
+prefix_ unsigned satcom::lib::INet4Address::sockaddr_len()
+    const
+{
+    return sizeof(addr);
+}
+
+prefix_ std::ostream & satcom::lib::operator<<(std::ostream & os, INet4Address const & addr)
+{
+    os << addr.str();
+    return os;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

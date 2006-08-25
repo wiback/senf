@@ -100,6 +100,30 @@ namespace lib {
     template <class BasePolicy, class DerivedPolicy>
     struct SocketPolicyIsBaseOf;
     // the rest is implementation detail ...
+
+    template <class Policy, class Trait>
+    struct IfAddressingPolicyIs;
+    // the rest is implementation detail ...
+
+    template <class Policy, class Trait>
+    struct IfFramingPolicyIs;
+    // the rest is implementation detail ...
+
+    template <class Policy, class Trait>
+    struct IfCommunicationPolicyIs;
+    // the rest is implementation detail ...
+
+    template <class Policy, class Trait>
+    struct IfReadPolicyIs;
+    // the rest is implementation detail ...
+
+    template <class Policy, class Trait>
+    struct IfWritePolicyIs;
+    // the rest is implementation detail ...
+
+    template <class Policy, class Trait>
+    struct IfBufferingPolicyIs;
+    // the rest is implementation detail ...
 }}
 
 //////////////////////////////hh.e////////////////////////////////////////

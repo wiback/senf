@@ -24,6 +24,7 @@
 #define HH_ClientSocketHandle_ 1
 
 // Custom includes
+#include <boost/call_traits.hpp>
 #include "SocketHandle.hh"
 
 //#include "ClientSocketHandle.mpp"
@@ -34,9 +35,9 @@ namespace lib {
 
     /** \brief
       */
-    template <class SocketPolicy>
+    template <class Policy>
     class ClientSocketHandle
-        : public SocketHandle<SocketPolicy>
+        : public SocketHandle<Policy>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -54,15 +55,44 @@ namespace lib {
         // conversion constructors
         template <class OtherPolicy>
         ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,
-                           typename SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type * = 0);
+                           typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type * = 0);
+
+        template <class OtherPolicy>
+        typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const & 
+        operator=(ClientSocketHandle<OtherPolicy> other);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        template <class OtherPolicy>
-        typename SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const & 
-        operator=(ClientSocketHandle<OtherPolicy> other);
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name reading and writing
+        ///@{
 
+        // read from socket (connected or unconnected)
+        std::string  read         ();
+        void         read         (std::string & buffer);
+        unsigned     read         (char * buffer, unsigned size);
+
+        // read from unconnected socket returning peer address
+        std::pair<std::string, typename Policy::AddressingPolicy::Address> 
+                     readfrom     ();
+        void         readfrom     (std::string & buffer, 
+                                   typename Policy::AddressingPolicy::Address & from);
+        unsigned     readfrom     (char * buffer, unsigned size,
+                                   typename Policy::AddressingPolicy::Address & from);
+
+        // write to connected socket
+        unsigned     write        (std::string const & data);
+        unsigned     write        (char const * buffer, unsigned size);
+
+        // write to unconnected socket
+        unsigned     writeto      (typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr, 
+                                   std::string const & data);
+        unsigned     writeto      (typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
+                                   char const * buffer, unsigned size);
+
+        ///@}
+                 
     protected:
         explicit ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol);
 
@@ -74,7 +104,7 @@ namespace lib {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ClientSocketHandle.cci"
-//#include "ClientSocketHandle.ct"
+#include "ClientSocketHandle.ct"
 #include "ClientSocketHandle.cti"
 #endif
 

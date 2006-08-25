@@ -20,59 +20,63 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_ProtocolClientSocketHandle_
-#define HH_ProtocolClientSocketHandle_ 1
+#ifndef HH_INetAddress_
+#define HH_INetAddress_ 1
 
 // Custom includes
-#include "ClientSocketHandle.hh"
+#include <string>
+#include <exception>
+#include <netinet/in.h>
 
-#include "ProtocolClientSocketHandle.mpp"
+//#include "INetAddress.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace satcom {
 namespace lib {
 
-    /** \brief
-      */
-    template <class SocketProtocol>
-    class ProtocolClientSocketHandle
-        : public ClientSocketHandle<typename SocketProtocol::Policy>
+    class INet4Address
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
+        INet4Address();
+        INet4Address(std::string address);
+        INet4Address(std::string host, unsigned port);
 
-        typedef SocketProtocol Protocol;
+        INet4Address const & operator=(std::string const & address);
+        INet4Address const & operator=(std::pair<std::string, unsigned> const & address);
 
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
+        bool operator==(INet4Address const & other);
 
-        ProtocolClientSocketHandle();
-        template <class A1>
-        ProtocolClientSocketHandle(A1 const & a1);
+        std::string str() const;
+        std::string host() const;
+        unsigned port() const;
 
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, "Socket/ProtocolClientSocketHandle.mpp", 1))
-#       include BOOST_PP_ITERATE()
-        
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        // TODO: Interface
 
-        Protocol const & protocol();
-
-    protected:
+        struct sockaddr * sockaddr_p();
+        struct sockaddr const * sockaddr_p() const;
+        unsigned sockaddr_len() const;
 
     private:
-
+        struct ::sockaddr_in addr;
     };
+
+    std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
+
+    class INet6Address
+    {
+        // TODO: Implement
+    };
+    
+    struct InvalidINetAddressException : public std::exception
+    { char const * what() const throw() { return "invalid inet address"; } };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "ProtocolClientSocketHandle.cci"
-//#include "ProtocolClientSocketHandle.ct"
-#include "ProtocolClientSocketHandle.cti"
-#include "ProtocolClientSocketHandle.mpp"
+#include "INetAddress.cci"
+//#include "INetAddress.ct"
+//#include "INetAddress.cti"
+//#include "INetAddress.mpp"
 #endif
 
 

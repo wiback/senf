@@ -26,6 +26,8 @@
 //#include "ClientSocketHandle.test.ih"
 
 // Custom includes
+#include "SocketPolicy.test.hh"
+#include "SocketProtocol.test.hh"
 #include "ClientSocketHandle.hh"
 
 #include <boost/test/auto_unit_test.hpp>
@@ -35,64 +37,71 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
+
     namespace sl = satcom::lib;
-    
-    struct INetAddressingPolicy : public sl::AddressingPolicyBase {};
-    struct UnixAddressingPolicy : public sl::AddressingPolicyBase {};
-
-    struct StreamFramingPolicy : public sl::FramingPolicyBase {};
-    struct DgramFramingPolicy : public sl::FramingPolicyBase {};
-
-    struct ConnectedCommunicationPolicy : public sl::CommunicationPolicyBase {};
-    struct UnconnectedCommunicationPolicy : public sl::CommunicationPolicyBase {};
-
-    struct ReadablePolicy : public sl::ReadPolicyBase {};
-    struct UnreadablePolicy : public sl::ReadPolicyBase {};
-
-    struct WritablePolicy : public sl::WritePolicyBase {};
-    struct UnwritablePolicy : public sl::WritePolicyBase {};
-    
-    struct SocketBufferingPolicy : public sl::BufferingPolicyBase {};
-
-    typedef sl::MakeSocketPolicy<
-        INetAddressingPolicy,
-        StreamFramingPolicy,
-        ConnectedCommunicationPolicy,
-        ReadablePolicy,
-        WritablePolicy,
-        SocketBufferingPolicy
-        >::policy MyProtocol_Policy;
-
-    class MyProtocol 
-        : public sl::ConcreteSocketProtocol<MyProtocol_Policy>
-    {
-    public:
-        ~MyProtocol() {}
-    };
 
     class MySocketHandle
-        : public sl::ClientSocketHandle<MyProtocol::Policy>
+        : public sl::ClientSocketHandle<sl::test::SomeProtocol::Policy>
     {
     public:
         MySocketHandle()
-            : sl::ClientSocketHandle<MyProtocol::Policy>(std::auto_ptr<sl::SocketProtocol>(new MyProtocol()))
+            : sl::ClientSocketHandle<sl::test::SomeProtocol::Policy>(
+                std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()))
             {}
     };
 }
 
 BOOST_AUTO_UNIT_TEST(clientSocketHandle)
 {
-    typedef sl::MakeSocketPolicy<
-        StreamFramingPolicy,
-        ConnectedCommunicationPolicy,
-        ReadablePolicy,
-        WritablePolicy
-        >::policy StreamSocketPolicy;
-    typedef sl::SocketHandle<StreamSocketPolicy> StreamSocketHandle;
-    
     MySocketHandle myh;
-    StreamSocketHandle ssh (myh);
-    ssh = myh;
+
+    // conversion to other socket handles
+    {
+        typedef sl::MakeSocketPolicy<
+            sl::test::SomeFramingPolicy,
+            sl::test::SomeReadPolicy,
+            sl::test::SomeWritePolicy
+            >::policy OtherSocketPolicy;
+        typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
+    
+        OtherSocketHandle ssh (myh);
+        ssh = myh;
+    }
+
+    // reading and writing
+    BOOST_CHECK_EQUAL( myh.read(), "TEST-READ" );
+    {
+        std::string buf("FOO-BAR");
+        myh.read(buf);
+        BOOST_CHECK_EQUAL( buf, "TEST-READ" );
+    }
+    {
+        char buf[11];
+        ::strcpy(buf,"0123456789");
+        BOOST_CHECK_EQUAL( myh.read(buf,10), 9u );
+        BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
+    }
+
+    BOOST_CHECK_EQUAL( myh.readfrom().first, "TEST-READ" );
+    {
+        std::string buf("FOO-BAR");
+        satcom::lib::nil addr;
+        myh.readfrom(buf,addr);
+        BOOST_CHECK_EQUAL( buf, "TEST-READ" );
+    }
+    {
+        char buf[11];
+        satcom::lib::nil addr;
+        ::strcpy(buf,"0123456789");
+        BOOST_CHECK_EQUAL( myh.readfrom(buf,10,addr), 9u );
+        BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
+    }
+
+    BOOST_CHECK_EQUAL( myh.write("TEST-WRITE"), 10u );
+    BOOST_CHECK_EQUAL( myh.write("TEST"), 0u );
+    BOOST_CHECK_EQUAL( myh.write("TEST-WRITE9",10), 10u );
+    BOOST_CHECK_EQUAL( myh.writeto(satcom::lib::nil(),"TEST-WRITE"), 10u );
+    BOOST_CHECK_EQUAL( myh.writeto(satcom::lib::nil(),"TEST-WRITE9",10), 10u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

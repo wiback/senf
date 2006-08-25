@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "SocketPolicy.hh"
+#include "SocketPolicy.test.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

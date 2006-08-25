@@ -20,59 +20,41 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_ProtocolClientSocketHandle_
-#define HH_ProtocolClientSocketHandle_ 1
+#ifndef HH_INetProtocol_
+#define HH_INetProtocol_ 1
 
 // Custom includes
-#include "ClientSocketHandle.hh"
+#include "SocketPolicy.hh"
+#include "INetAddress.hh"
 
-#include "ProtocolClientSocketHandle.mpp"
+//#include "INetProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace satcom {
 namespace lib {
 
-    /** \brief
-      */
-    template <class SocketProtocol>
-    class ProtocolClientSocketHandle
-        : public ClientSocketHandle<typename SocketProtocol::Policy>
+    struct INet4AddressingPolicy : public AddressingPolicyBase
     {
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        typedef SocketProtocol Protocol;
-
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
-        ProtocolClientSocketHandle();
-        template <class A1>
-        ProtocolClientSocketHandle(A1 const & a1);
-
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, "Socket/ProtocolClientSocketHandle.mpp", 1))
-#       include BOOST_PP_ITERATE()
-        
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
-
-        Protocol const & protocol();
-
-    protected:
-
-    private:
-
+        typedef INet4Address Address;
     };
+
+    struct INet6AddressingPolicy : public AddressingPolicyBase
+    {
+        typedef INet6Address Address;
+    };
+
+    class IPv4Protocol 
+    {};
+    
+    class IPv6Protocol
+    {};
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "ProtocolClientSocketHandle.cci"
-//#include "ProtocolClientSocketHandle.ct"
-#include "ProtocolClientSocketHandle.cti"
-#include "ProtocolClientSocketHandle.mpp"
+//#include "INetProtocol.cci"
+//#include "INetProtocol.ct"
+//#include "INetProtocol.cti"
 #endif
 
 

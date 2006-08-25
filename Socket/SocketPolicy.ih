@@ -185,7 +185,7 @@ namespace lib {
 
     template <class T1, class T2, class T3, class T4, class T5, class T6>
     class MakeSocketPolicy
-        : public boost::mpl::if_< boost::is_base_of< SocketPolicyBase, T1>,
+        : public boost::mpl::if_< boost::is_convertible< T1*, SocketPolicyBase* >,
                                   impl::MakeSocketPolicy_impl< T1, boost::mpl::vector<T2,T3,T4,T5,T6> >,
                                   impl::MakeSocketPolicy_impl< SocketPolicy<>,
                                                                boost::mpl::vector<T1,T2,T3,T4,T5,T6> > >::type
@@ -193,10 +193,40 @@ namespace lib {
 
     template <class BasePolicy, class DerivedPolicy>
     struct SocketPolicyIsBaseOf
-        : public boost::mpl::if_< boost::mpl::and_< boost::is_base_of< SocketPolicyBase, BasePolicy>,
-                                                    boost::is_base_of< SocketPolicyBase, DerivedPolicy> >,
+        : public boost::mpl::if_< boost::mpl::and_< boost::is_convertible< BasePolicy*, SocketPolicyBase* >,
+                                                    boost::is_convertible< DerivedPolicy*, SocketPolicyBase* > >,
                                   impl::SocketPolicy_compatibility<BasePolicy,DerivedPolicy>,
                                   boost::false_type >::type
+    {};
+
+    template <class Policy, class Trait>
+    struct IfAddressingPolicyIs
+        : public boost::is_convertible< typename Policy::AddressingPolicy*, Trait* >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfFramingPolicyIs
+        : public boost::is_convertible< typename Policy::FramingPolicy*, Trait* >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfCommunicationPolicyIs
+        : public boost::is_convertible< typename Policy::CommunicationPolicy*, Trait* >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfReadPolicyIs
+        : public boost::is_convertible< typename Policy::ReadPolicy*, Trait* >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfWritePolicyIs
+        : public boost::is_convertible< typename Policy::WritePolicy*, Trait* >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfBufferingPolicyIs
+        : public boost::is_convertible< typename Policy::BufferingPolicy*, Trait* >
     {};
 }}
 

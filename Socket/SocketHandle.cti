@@ -72,6 +72,13 @@ prefix_ satcom::lib::SocketBody const & satcom::lib::SocketHandle<SocketPolicy>:
 }
 
 template <class SocketPolicy>
+prefix_ satcom::lib::SocketProtocol const & satcom::lib::SocketHandle<SocketPolicy>::protocol()
+    const
+{
+    return body().protocol();
+}
+
+template <class SocketPolicy>
 prefix_ void satcom::lib::SocketHandle<SocketPolicy>::assign(FileHandle other)
 {
     FileHandle::operator=(other);

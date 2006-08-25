@@ -20,41 +20,31 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
-
-//#include "ProtocolClientSocketHandle.test.hh"
-//#include "ProtocolClientSocketHandle.test.ih"
+#ifndef HH_CommunicationPolicy_
+#define HH_CommunicationPolicy_ 1
 
 // Custom includes
-#include "ProtocolClientSocketHandle.hh"
-#include "SocketProtocol.test.hh"
 
-#include <boost/test/auto_unit_test.hpp>
-#include <boost/test/test_tools.hpp>
+//#include "CommunicationPolicy.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+namespace satcom {
+namespace lib {
 
-namespace {
-    struct MyProtocol : public satcom::lib::test::SomeProtocol
-    {
-        using satcom::lib::test::SomeProtocol::init_client;
-        void init_client(char const *,unsigned) const {}
-    };
-}
+    struct ConnectedCommunicationPolicy : public CommunicationPolicyBase
+    {};
 
-BOOST_AUTO_UNIT_TEST(protocolClientSocketHandle)
-{
-    typedef satcom::lib::ProtocolClientSocketHandle<MyProtocol> MySocketHandle;
+    struct UnconnectedCommunicationPolicy : public CommunicationPolicyBase
+    {};
 
-    MySocketHandle h;
-    h.protocol();
+}}
 
-    MySocketHandle hh("foo.bar.c",1234);
-}
 
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "CommunicationPolicy.cci"
+//#include "CommunicationPolicy.ct"
+//#include "CommunicationPolicy.cti"
+#endif
 
 
 // Local Variables:

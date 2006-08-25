@@ -22,12 +22,11 @@
 
 // Unit tests
 
-//#include "SocketHandle.test.hh"
-//#include "SocketHandle.test.ih"
+//#include "TCPSocketHandle.test.hh"
+//#include "TCPSocketHandle.test.ih"
 
 // Custom includes
-#include "SocketHandle.hh"
-#include "SocketProtocol.test.hh"
+#include "TCPSocketHandle.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -35,30 +34,15 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
-    namespace sl = satcom::lib;
-
-    class MySocketHandle
-        : public sl::SocketHandle<sl::test::SomeProtocol::Policy>
-    {
-    public:
-        MySocketHandle()
-            : sl::SocketHandle<sl::test::SomeProtocol::Policy>(std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()))
-            {}
-    };
-}
-
-BOOST_AUTO_UNIT_TEST(socketHandle)
+BOOST_AUTO_UNIT_TEST(tcpSocketHandle)
 {
-    typedef sl::MakeSocketPolicy<
-        sl::test::SomeCommunicationPolicy,
-        sl::test::SomeReadPolicy
-        >::policy OtherSocketPolicy;
-    typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
-    
-    MySocketHandle myh;
-    OtherSocketHandle ssh (myh);
-    ssh = myh;
+    satcom::lib::TCPv4ClientSocketHandle sock;
+
+    BOOST_CHECK_THROW( sock.protocol().connect(satcom::lib::INet4Address("127.0.0.1:12345")), satcom::lib::SystemException );
+    BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1:12345"), satcom::lib::SystemException );
+    BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1",12345), satcom::lib::SystemException );
+
+    // TODO: Richtige connection testen
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

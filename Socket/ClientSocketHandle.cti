@@ -29,27 +29,75 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
-template <class SocketPolicy>
+template <class Policy>
 template <class OtherPolicy>
-prefix_ satcom::lib::ClientSocketHandle<SocketPolicy>::
+prefix_ satcom::lib::ClientSocketHandle<Policy>::
 ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,
-                   typename SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type *)
-    : SocketHandle<SocketPolicy>(other,true)
+                   typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type *)
+    : SocketHandle<Policy>(other,true)
 {}
 
-template <class SocketPolicy>
-prefix_  satcom::lib::ClientSocketHandle<SocketPolicy>::
+template <class Policy>
+prefix_  satcom::lib::ClientSocketHandle<Policy>::
 ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol)
-    : SocketHandle<SocketPolicy>(protocol)
+    : SocketHandle<Policy>(protocol)
 {}
 
-template <class SocketPolicy>
+template <class Policy>
 template <class OtherPolicy>
-prefix_ typename satcom::lib::SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const &
-satcom::lib::ClientSocketHandle<SocketPolicy>::operator=(ClientSocketHandle<OtherPolicy> other)
+prefix_ typename satcom::lib::SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const &
+satcom::lib::ClientSocketHandle<Policy>::operator=(ClientSocketHandle<OtherPolicy> other)
 {
     assign(other);
     return *this;
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// reading and writing
+
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::read(char * buffer,
+                                                                     unsigned size)
+{
+    return Policy::ReadPolicy::read(*this, buffer, size);
+}
+
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::
+readfrom(char * buffer, unsigned size, typename Policy::AddressingPolicy::Address & from)
+{
+    return Policy::ReadPolicy::readfrom(*this, buffer, size, from);
+}
+
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::write(std::string const & data)
+{
+    return this->write(data.data(),data.size());
+}
+
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::write(char const * buffer,
+                                                                unsigned size)
+{
+    return Policy::WritePolicy::write(*this, buffer, size);
+}
+
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::
+writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
+        std::string const & data)
+{
+    return this->writeto(addr, data.data(), data.size());
+}
+
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::
+writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
+        char const * buffer, unsigned size)
+{
+    return Policy::WritePolicy::writeto(*this, addr, buffer, size);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

@@ -28,6 +28,7 @@
 // Custom includes
 #include "SocketProtocol.hh"
 #include "SocketPolicy.hh"
+#include "SocketProtocol.test.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -35,22 +36,13 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
-    typedef satcom::lib::SocketPolicy<> MyProtocol_Policy;
-
-    class MyProtocol 
-        : public satcom::lib::ConcreteSocketProtocol< MyProtocol_Policy >
-    {
-    public:
-        MyProtocol() : satcom::lib::ConcreteSocketProtocol< MyProtocol_Policy >() {}
-    };
-}
-
 BOOST_AUTO_UNIT_TEST(socketProtocol)
 {
-    MyProtocol protocol;
+    satcom::lib::test::SomeProtocol protocol;
 
-    BOOST_CHECK( protocol.body() == 0 );
+    // This would fail an assertion ...
+    // BOOST_CHECK( protocol.body() == 0 ); 
+
     protocol.policy();
 }
 

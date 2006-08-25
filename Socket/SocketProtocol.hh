@@ -57,16 +57,20 @@ namespace lib {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        // TODO: Abstract interface to policy subclasses
-        
-        SocketBody * body() const;
+        SocketBody & body() const;
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        virtual unsigned available() const = 0;
 
     protected:
 
     private:
         // That SocketBody instance owns us and controls our lifetime
         // Do we need this ??
-        SocketBody* body_;
+        SocketBody * body_;
+
+        friend class SocketBody;
     };
 
     /** \brief

@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "ServerSocketHandle.hh"
+#include "SocketProtocol.test.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -36,46 +37,13 @@
 
 namespace {
     namespace sl = satcom::lib;
-    
-    struct INetAddressingPolicy : public sl::AddressingPolicyBase {};
-    struct UnixAddressingPolicy : public sl::AddressingPolicyBase {};
-
-    struct StreamFramingPolicy : public sl::FramingPolicyBase {};
-    struct DgramFramingPolicy : public sl::FramingPolicyBase {};
-
-    struct ConnectedCommunicationPolicy : public sl::CommunicationPolicyBase {};
-    struct UnconnectedCommunicationPolicy : public sl::CommunicationPolicyBase {};
-
-    struct ReadablePolicy : public sl::ReadPolicyBase {};
-    struct UnreadablePolicy : public sl::ReadPolicyBase {};
-
-    struct WritablePolicy : public sl::WritePolicyBase {};
-    struct UnwritablePolicy : public sl::WritePolicyBase {};
-    
-    struct SocketBufferingPolicy : public sl::BufferingPolicyBase {};
-
-    typedef sl::MakeSocketPolicy<
-        INetAddressingPolicy,
-        StreamFramingPolicy,
-        ConnectedCommunicationPolicy,
-        ReadablePolicy,
-        WritablePolicy,
-        SocketBufferingPolicy
-        >::policy MyProtocol_Policy;
-
-    class MyProtocol 
-        : public sl::ConcreteSocketProtocol<MyProtocol_Policy>
-    {
-    public:
-        ~MyProtocol() {}
-    };
 
     class MySocketHandle
-        : public sl::ServerSocketHandle<MyProtocol::Policy>
+        : public sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>
     {
     public:
         MySocketHandle()
-            : sl::ServerSocketHandle<MyProtocol::Policy>(std::auto_ptr<sl::SocketProtocol>(new MyProtocol()))
+            : sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>(std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()))
             {}
     };
 }
@@ -83,15 +51,14 @@ namespace {
 BOOST_AUTO_UNIT_TEST(serverSocketHandle)
 {
     typedef sl::MakeSocketPolicy<
-        StreamFramingPolicy,
-        ConnectedCommunicationPolicy,
-        ReadablePolicy,
-        WritablePolicy
-        >::policy StreamSocketPolicy;
-    typedef sl::SocketHandle<StreamSocketPolicy> StreamSocketHandle;
+        sl::test::SomeFramingPolicy,
+        sl::test::SomeReadPolicy,
+        sl::test::SomeWritePolicy
+        >::policy OtherSocketPolicy;
+    typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
     
     MySocketHandle myh;
-    StreamSocketHandle ssh (myh);
+    OtherSocketHandle ssh (myh);
     ssh = myh;
 }
 

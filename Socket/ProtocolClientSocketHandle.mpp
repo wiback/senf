@@ -1,0 +1,93 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+#if !BOOST_PP_IS_ITERATING
+#ifndef MPP_ProtocolClientSocketHandle
+
+// Custom includes
+#include <boost/preprocessor/iteration/iterate.hpp>
+#include <boost/preprocessor/enum.hpp>
+#include <boost/preprocessor/cat.hpp>
+
+//////////////////////////////mpp.p////////////////////////////////////////
+// Local Macros
+
+#define mppArg(z,n,data) BOOST_PP_CAT(A,n) const & BOOST_PP_CAT(a,n)
+
+#define mppTemplateParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A )
+#define mppMethodParameters() BOOST_PP_ENUM(BOOST_PP_ITERATION(), mppArg, )
+#define mppCallParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), a )
+
+//////
+#endif
+#else
+///////////////////////////////////////////////////////////////////////////
+
+//////
+#if BOOST_PP_ITERATION_FLAGS()==1
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
+// ProtocolClientSocketHandle (constructor) declaration
+
+template < mppTemplateParameters() >
+ProtocolClientSocketHandle( mppMethodParameters() );
+
+//////
+#elif BOOST_PP_ITERATION_FLAGS()==2
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
+// ProtocolClientSocketHandle (constructor) implementation
+
+template <class SocketProtocol>
+template < mppTemplateParameters() >
+prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
+ProtocolClientSocketHandle( mppMethodParameters() )
+    : ClientSocketHandle<typename SocketProtocol::Policy>(
+        std::auto_ptr<satcom::lib::SocketProtocol>(new SocketProtocol()))
+{
+    this->protocol().init_client( mppCallParameters() );
+}
+
+//////
+#endif
+#endif
+#if !BOOST_PP_IS_ITERATING
+#ifdef MPP_ProtocolClientSocketHandle_
+///////////////////////////////////////////////////////////////////////////
+// Undefine local Macros
+
+#undef mppArg
+#undef mppTemplateParameters
+#undef mppMethodParameters
+#undef mppCallParameters
+
+//////////////////////////////mpp.e////////////////////////////////////////
+#else
+#define MPP_ProtocolClientSocketHandle_ 1
+#endif
+#endif
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

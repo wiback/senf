@@ -20,59 +20,41 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_ProtocolClientSocketHandle_
-#define HH_ProtocolClientSocketHandle_ 1
+#ifndef HH_SocketProtocol_test_
+#define HH_SocketProtocol_test_ 1
 
 // Custom includes
-#include "ClientSocketHandle.hh"
+#include "SocketProtocol.hh"
+#include "SocketPolicy.test.hh"
 
-#include "ProtocolClientSocketHandle.mpp"
+//#include "SocketProtocol.test.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace satcom {
 namespace lib {
+namespace test {
 
-    /** \brief
-      */
-    template <class SocketProtocol>
-    class ProtocolClientSocketHandle
-        : public ClientSocketHandle<typename SocketProtocol::Policy>
+    class SomeProtocol
+        : public ConcreteSocketProtocol<SomeSocketPolicy>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        typedef SocketProtocol Protocol;
-
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
-        ProtocolClientSocketHandle();
-        template <class A1>
-        ProtocolClientSocketHandle(A1 const & a1);
-
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, "Socket/ProtocolClientSocketHandle.mpp", 1))
-#       include BOOST_PP_ITERATE()
+        ~SomeProtocol() {}
         
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+        void init_client() const {}
+        void init_server() const {}
 
-        Protocol const & protocol();
-
-    protected:
-
-    private:
-
+        unsigned available() const { 
+            return Policy::ReadPolicy::TEST_SIZE;
+        }
     };
 
-}}
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "ProtocolClientSocketHandle.cci"
-//#include "ProtocolClientSocketHandle.ct"
-#include "ProtocolClientSocketHandle.cti"
-#include "ProtocolClientSocketHandle.mpp"
+//#include "SocketProtocol.test.cci"
+//#include "SocketProtocol.test.ct"
+//#include "SocketProtocol.test.cti"
+//#include "SocketProtocol.test.mpp"
 #endif
 
 

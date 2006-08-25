@@ -25,21 +25,23 @@
 //#include "SocketProtocol.ih"
 
 // Custom includes
+#include <boost/assert.hpp>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
 prefix_ satcom::lib::SocketProtocol::SocketProtocol()
-    : body_(0)
+    : body_()
 {}
 
 prefix_ satcom::lib::SocketProtocol::~SocketProtocol()
 {}
 
-prefix_ satcom::lib::SocketBody * satcom::lib::SocketProtocol::body()
+prefix_ satcom::lib::SocketBody & satcom::lib::SocketProtocol::body()
     const
 {
-    return body_;
+    BOOST_ASSERT( body_ );
+    return *body_;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////
