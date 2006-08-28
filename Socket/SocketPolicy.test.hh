@@ -36,7 +36,16 @@ namespace test {
 
     struct SomeAddressingPolicy : public satcom::lib::AddressingPolicyBase
     {
-        typedef satcom::lib::nil Address;
+        typedef unsigned Address;
+        
+        static void peer(FileHandle handle, unsigned & addr)
+            { addr=1; }
+        static void local(FileHandle, unsigned & addr)
+            { addr=2; }
+        static void connect(FileHandle, unsigned addr)
+            {}
+        static void bind(FileHandle, unsigned addr)
+            {}
     };
 
     struct SomeFramingPolicy : public satcom::lib::FramingPolicyBase
@@ -57,7 +66,7 @@ namespace test {
             }
 
         static unsigned readfrom(FileHandle handle, char * buffer, unsigned size,
-                                 satcom::lib::nil & address)
+                                 unsigned & address)
             {
                 return read(handle,buffer,size);
             }
@@ -73,7 +82,7 @@ namespace test {
                     return 0;
             }
 
-        static unsigned writeto(FileHandle handle, satcom::lib::nil const & address,
+        static unsigned writeto(FileHandle handle, unsigned address,
                                 char const * buffer, unsigned size)
             {
                 return write(handle,buffer,size);

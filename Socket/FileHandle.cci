@@ -79,6 +79,12 @@ prefix_ void satcom::lib::FileBody::terminate()
 prefix_ void satcom::lib::FileBody::flush()
 {}
 
+prefix_ bool satcom::lib::FileBody::eof()
+    const
+{
+    return false;
+}
+
 prefix_ bool satcom::lib::FileBody::valid()
     const
 {
@@ -88,7 +94,31 @@ prefix_ bool satcom::lib::FileBody::valid()
 prefix_ bool satcom::lib::FileBody::ok()
     const
 {
-    return valid();
+    return valid() && !eof();
+}
+
+prefix_ bool satcom::lib::FileBody::readable()
+    const
+{
+    return pollCheck(fd(),true);
+}
+
+prefix_ void satcom::lib::FileBody::waitReadable()
+    const
+{
+    pollCheck(fd(),true,true);
+}
+
+prefix_ bool satcom::lib::FileBody::writeable()
+    const
+{
+    return pollCheck(fd(),false);
+}
+
+prefix_ void satcom::lib::FileBody::waitWritable()
+    const
+{
+    pollCheck(fd(),false,true);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -115,10 +145,39 @@ prefix_ bool satcom::lib::FileHandle::readable()
     return body().readable();
 }
 
+prefix_ void satcom::lib::FileHandle::waitReadable()
+    const
+{
+    body().waitReadable();
+}
+
 prefix_ bool satcom::lib::FileHandle::writeable()
     const
 {
     return body().writeable();
+}
+
+prefix_ void satcom::lib::FileHandle::waitWritable()
+    const
+{
+    body().waitWritable();
+}
+
+prefix_ bool satcom::lib::FileHandle::blocking()
+    const
+{
+    return body().blocking();
+}
+
+prefix_ bool satcom::lib::FileHandle::blocking(bool status)
+{
+    return body().blocking(status);
+}
+
+prefix_ bool satcom::lib::FileHandle::eof()
+    const
+{
+    return body().eof();
 }
 
 prefix_ bool satcom::lib::FileHandle::valid()

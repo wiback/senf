@@ -32,6 +32,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 // TODO: ReadWritePolicy.test.cc ...
+// TODO: EINTR, EAGAIN etc handling ...
 
 namespace satcom {
 namespace lib {
@@ -51,11 +52,16 @@ namespace lib {
     struct WriteablePolicy : public WritePolicyBase
     {
         template <class Policy>
-        static unsigned write(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
+        static unsigned write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
                               typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
         template <class Policy>
-        static unsigned writeto(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
+        static unsigned writeto(ClientSocketHandle<Policy> handle, 
+                                typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
+                                char const * buffer, unsigned size,
                                 typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type * = 0);
+
+    private:
+        static unsigned do_write(FileHandle handle, char const * buffer, unsigned size);
     };
     
     struct NotWriteablePolicy : public WritePolicyBase
@@ -65,9 +71,9 @@ namespace lib {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "ReadWritePolicy.cci"
+#include "ReadWritePolicy.cci"
 //#include "ReadWritePolicy.ct"
-//#include "ReadWritePolicy.cti"
+#include "ReadWritePolicy.cti"
 #endif
 
 

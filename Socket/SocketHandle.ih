@@ -57,6 +57,8 @@ namespace lib {
 
         SocketProtocol const & protocol() const;
 
+        virtual bool eof() const;
+
     protected:
 
     private:

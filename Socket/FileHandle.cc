@@ -29,35 +29,43 @@
 #include <sys/poll.h>
 #include <string.h>
 #include <errno.h>
+#include <fcntl.h>
 #include "Utils/Exception.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
-    bool pollCheck(int fd, int event)
-    {
-        struct ::pollfd pfd;
-        ::memset(&pfd,0,sizeof(pfd));
-        pfd.fd = fd;
-        pfd.events = event;
-        int rv = ::poll(&pfd,1,0);
-        if (rv<0)
-            throw satcom::lib::SystemException(errno);
-        return rv>0;
-    }
-}
-
-prefix_ bool satcom::lib::FileBody::readable()
+prefix_ bool satcom::lib::FileBody::blocking()
     const
 {
-    return pollCheck(fd(),POLLIN);
+    int flags = ::fcntl(fd(),F_GETFL);
+    if (flags < 0) throw SystemException(errno);
+    return ! (flags & O_NONBLOCK);
 }
 
-prefix_ bool satcom::lib::FileBody::writeable()
+prefix_ bool satcom::lib::FileBody::blocking(bool status)
     const
 {
-    return pollCheck(fd(),POLLOUT);
+    int flags = ::fcntl(fd(),F_GETFL);
+    if (flags < 0) throw SystemException(errno);
+    bool old = flags & O_NONBLOCK;
+    if (status) flags &= ~O_NONBLOCK;
+    else        flags |= O_NONBLOCK;
+    if (::fcntl(fd(), F_SETFL, flags) < 0) throw SystemException(errno);
+    return ! old;
+}
+
+prefix_ bool satcom::lib::FileBody::pollCheck(int fd, bool incoming, bool block)
+    const
+{
+    struct ::pollfd pfd;
+    ::memset(&pfd,0,sizeof(pfd));
+    pfd.fd = fd;
+    pfd.events = incoming?POLLIN:POLLOUT;
+    int rv = ::poll(&pfd,1,block?-1:0);
+    if (rv<0)
+        throw satcom::lib::SystemException(errno);
+    return rv>0;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

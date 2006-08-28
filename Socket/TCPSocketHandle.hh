@@ -64,6 +64,7 @@ namespace lib {
         void connect(std::string host, unsigned port) const;
 
         unsigned available() const;
+        bool eof() const;
     };
 
     typedef ProtocolClientSocketHandle<TCPv4SocketProtocol> TCPv4ClientSocketHandle;
@@ -82,7 +83,9 @@ namespace lib {
         : public ConcreteSocketProtocol<TCPv6Socket_Policy>, 
           public IPv6Protocol,
           public TCPProtocol
-    {};
+    {
+        // TODO: Implement
+    };
 
     typedef ProtocolClientSocketHandle<TCPv6SocketProtocol> TCPv6ClientSocketHandle;
     typedef ProtocolServerSocketHandle<TCPv6SocketProtocol> TCPv6ServerSocketHandle;

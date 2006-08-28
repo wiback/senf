@@ -43,6 +43,9 @@ namespace lib {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        typedef typename Policy::AddressingPolicy::Address Address;
+        typedef typename boost::call_traits<Address>::param_type AddressParam;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -74,22 +77,35 @@ namespace lib {
         unsigned     read         (char * buffer, unsigned size);
 
         // read from unconnected socket returning peer address
-        std::pair<std::string, typename Policy::AddressingPolicy::Address> 
+        std::pair<std::string, Address> 
                      readfrom     ();
-        void         readfrom     (std::string & buffer, 
-                                   typename Policy::AddressingPolicy::Address & from);
-        unsigned     readfrom     (char * buffer, unsigned size,
-                                   typename Policy::AddressingPolicy::Address & from);
+        void         readfrom     (std::string & buffer, Address & from);
+        unsigned     readfrom     (char * buffer, unsigned size, Address & from);
 
         // write to connected socket
         unsigned     write        (std::string const & data);
         unsigned     write        (char const * buffer, unsigned size);
 
         // write to unconnected socket
-        unsigned     writeto      (typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr, 
-                                   std::string const & data);
-        unsigned     writeto      (typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
-                                   char const * buffer, unsigned size);
+        unsigned     writeto      (AddressParam addr, std::string const & data);
+        unsigned     writeto      (AddressParam addr, char const * buffer, unsigned size);
+
+        ///@}
+
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Addressing
+        ///@{
+
+        void         connect      (AddressParam addr);
+        void         bind         (AddressParam addr);
+
+        typename Policy::AddressingPolicy::Address 
+                     peer         ();
+        void         peer         (Address & addr);
+
+        typename Policy::AddressingPolicy::Address 
+                     local         ();
+        void         local         (Address & addr);
 
         ///@}
                  
@@ -97,6 +113,7 @@ namespace lib {
         explicit ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol);
 
     private:
+        unsigned available();
 
     };
 

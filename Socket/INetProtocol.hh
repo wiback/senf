@@ -26,6 +26,8 @@
 // Custom includes
 #include "SocketPolicy.hh"
 #include "INetAddress.hh"
+#include "ClientSocketHandle.hh"
+#include "CommunicationPolicy.hh"
 
 //#include "INetProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -36,11 +38,27 @@ namespace lib {
     struct INet4AddressingPolicy : public AddressingPolicyBase
     {
         typedef INet4Address Address;
+
+        template <class Policy>
+        static void peer(ClientSocketHandle<Policy> handle, Address & addr,
+                         typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+        static void local(FileHandle handle, Address & addr);
+
+        template <class Policy>
+        static void connect(ClientSocketHandle<Policy> handle, Address const & addr,
+                            typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+        static void bind(FileHandle handle, Address const & addr);
+
+    private:
+        static void do_peer(FileHandle handle, Address & addr);
+        static void do_connect(FileHandle handle, Address const & addr);
     };
 
     struct INet6AddressingPolicy : public AddressingPolicyBase
     {
         typedef INet6Address Address;
+
+        // TODO: Implement
     };
 
     class IPv4Protocol 
@@ -52,9 +70,9 @@ namespace lib {
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "INetProtocol.cci"
+#include "INetProtocol.cci"
 //#include "INetProtocol.ct"
-//#include "INetProtocol.cti"
+#include "INetProtocol.cti"
 #endif
 
 

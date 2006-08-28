@@ -52,6 +52,8 @@ namespace lib {
 
         // TODO: Interface
 
+        void clear();
+
         struct sockaddr * sockaddr_p();
         struct sockaddr const * sockaddr_p() const;
         unsigned sockaddr_len() const;

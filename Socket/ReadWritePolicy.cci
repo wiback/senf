@@ -38,10 +38,10 @@ prefix_ unsigned satcom::lib::ReadablePolicy::read(FileHandle handle, char * buf
     return rv;
 }
 
-prefix_ unsigned satcom::lib::WriteablePolicy::write(int fd, char * buffer, unsigned size,
-                                                     ConnectedCommunicationPolicy*)
+prefix_ unsigned satcom::lib::WriteablePolicy::do_write(FileHandle handle, char const * buffer,
+                                                        unsigned size)
 {
-    int rv = ::write(fd, buffer, size);
+    int rv = ::write(handle.fd(), buffer, size);
     if (rv < 0)
         throw SystemException(errno);
     return rv;

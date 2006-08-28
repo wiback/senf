@@ -63,14 +63,22 @@ namespace lib {
         virtual void flush();
 
         bool readable() const;
+        void waitReadable() const;
         bool writeable() const;
+        void waitWritable() const;
 
+        bool blocking() const;
+        bool blocking(bool status) const;
+
+        virtual bool eof() const;
         virtual bool valid() const;
-        virtual bool ok() const;
+        bool ok() const;
 
     protected:
         
     private:
+        bool pollCheck(int fd, bool incoming, bool block=false) const;
+
         int fd_;
     };
 

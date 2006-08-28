@@ -85,13 +85,13 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
     BOOST_CHECK_EQUAL( myh.readfrom().first, "TEST-READ" );
     {
         std::string buf("FOO-BAR");
-        satcom::lib::nil addr;
+        unsigned addr;
         myh.readfrom(buf,addr);
         BOOST_CHECK_EQUAL( buf, "TEST-READ" );
     }
     {
         char buf[11];
-        satcom::lib::nil addr;
+        unsigned addr;
         ::strcpy(buf,"0123456789");
         BOOST_CHECK_EQUAL( myh.readfrom(buf,10,addr), 9u );
         BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
@@ -100,8 +100,13 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
     BOOST_CHECK_EQUAL( myh.write("TEST-WRITE"), 10u );
     BOOST_CHECK_EQUAL( myh.write("TEST"), 0u );
     BOOST_CHECK_EQUAL( myh.write("TEST-WRITE9",10), 10u );
-    BOOST_CHECK_EQUAL( myh.writeto(satcom::lib::nil(),"TEST-WRITE"), 10u );
-    BOOST_CHECK_EQUAL( myh.writeto(satcom::lib::nil(),"TEST-WRITE9",10), 10u );
+    BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE"), 10u );
+    BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE9",10), 10u );
+
+    BOOST_CHECK_NO_THROW( myh.connect(0) );
+    BOOST_CHECK_NO_THROW( myh.bind(0) );
+    BOOST_CHECK_EQUAL( myh.peer(), 1u );
+    BOOST_CHECK_EQUAL( myh.local(), 2u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

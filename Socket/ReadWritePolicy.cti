@@ -35,7 +35,7 @@ template <class Policy>
 prefix_ unsigned satcom::lib::ReadablePolicy::
 readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
          typename Policy::AddressingPolicy::Address & address,
-         IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type *)
+         typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type *)
 {
     int rv = ::recvfrom(handle.fd(),buffer, size, 0, 
                         address.sockaddr_p(), address.sockaddr_len());
@@ -46,22 +46,21 @@ readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
 
 template <class Policy>
 prefix_ unsigned satcom::lib::WriteablePolicy::
-write(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
-      IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
+write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
+      typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
 {
-    int rv = ::write(handle.fd(), buffer, size);
-    if (rv < 0)
-        throw SystemException(errno);
-    return rv;
+    return do_write(handle,buffer,size);
 }
 
 template <class Policy>
 prefix_ unsigned satcom::lib::WriteablePolicy::
-writeto(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
-        IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type *)
+writeto(ClientSocketHandle<Policy> handle,
+        typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
+        char const * buffer, unsigned size,
+        typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type *)
 {
     int rv = ::sendto(handle.fd(), buffer, size, 0,
-                      address.sockaddr_p(), address.sockaddr_len());
+                      addr.sockaddr_p(), addr.sockaddr_len());
     if (rv < 0)
         throw SystemException(errno);
     return rv;

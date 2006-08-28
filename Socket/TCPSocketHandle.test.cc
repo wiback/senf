@@ -26,7 +26,14 @@
 //#include "TCPSocketHandle.test.ih"
 
 // Custom includes
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include "TCPSocketHandle.hh"
+#include <iostream>
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -34,15 +41,124 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(tcpSocketHandle)
+namespace {
+
+    void error(char const * fn, char const * proc="")
+    {
+        std::cerr << "\n" << proc << fn << ": " << strerror(errno) << std::endl;
+    }
+
+    void fail(char const * fn)
+    {
+        error(fn,"server: ");
+        _exit(1);
+    }
+
+    void server()
+    {
+        int serv = socket(PF_INET,SOCK_STREAM,0);
+        if (serv<0) fail("socket()");
+        int v = 1;
+        if (setsockopt(serv,SOL_SOCKET,SO_REUSEADDR,&v,sizeof(v))<0)
+            fail("setsockopt()");
+        struct sockaddr_in sin;
+        sin.sin_family = AF_INET;
+        sin.sin_port = htons(12345);
+        sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+        if (bind(serv,(struct sockaddr *)&sin,sizeof(sin))<0) fail("bind()");
+        if (listen(serv,1)<0) fail("listen()");
+        int sock = accept(serv,0,0);
+        if (sock < 0) fail("accept()");
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        char buffer[1024];
+        while (1) {
+            int n = read(sock,buffer,1024);
+            if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
+                break;
+            write(sock,buffer,n);
+        }
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        if (shutdown(sock, SHUT_RDWR) < 0) fail("shutdown()");
+        if (close(sock) < 0) fail("close()");
+        if (close(serv) < 0) fail("close()");
+    }
+
+    int server_pid = 0;
+
+    void start_server()
+    {
+        server_pid = ::fork();
+        if (server_pid < 0) BOOST_FAIL("fork()");
+        if (server_pid == 0) {
+            server();
+            _exit(0);
+        }
+    }
+
+    void wait_server()
+    {
+        int status;
+        if (waitpid(server_pid,&status,0)<0)
+            BOOST_FAIL("waitpid()");
+        BOOST_CHECK_EQUAL( status , 0 );
+    }
+
+    void stop_server()
+    {
+        kill(server_pid,9);
+        wait_server();
+    }
+
+}
+
+BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
 {
-    satcom::lib::TCPv4ClientSocketHandle sock;
+    {
+        satcom::lib::TCPv4ClientSocketHandle sock;
 
-    BOOST_CHECK_THROW( sock.protocol().connect(satcom::lib::INet4Address("127.0.0.1:12345")), satcom::lib::SystemException );
-    BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1:12345"), satcom::lib::SystemException );
-    BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1",12345), satcom::lib::SystemException );
+        BOOST_CHECK_THROW( sock.connect(satcom::lib::INet4Address("127.0.0.1:12345")), satcom::lib::SystemException );
+        BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1:12345"), satcom::lib::SystemException );
+        BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1",12345), satcom::lib::SystemException );
+    }
 
-    // TODO: Richtige connection testen
+    {
+        start_server();
+        satcom::lib::TCPv4ClientSocketHandle sock;
+        BOOST_CHECK_NO_THROW( sock.bind(satcom::lib::INet4Address("127.0.0.1:23456")) );
+        BOOST_CHECK_NO_THROW( sock.connect(satcom::lib::INet4Address("127.0.0.1:12345")) );
+        BOOST_CHECK( sock.peer() == satcom::lib::INet4Address("127.0.0.1:12345") );
+        BOOST_CHECK( sock.local() == satcom::lib::INet4Address("127.0.0.1:23456") );
+        BOOST_CHECK( sock.blocking() );
+        BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
+        BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
+        BOOST_CHECK( !sock.eof() );
+        sock.write("QUIT");
+        sleep(1);
+        stop_server();
+        BOOST_CHECK_EQUAL( sock.read(), "" );
+        BOOST_CHECK( sock.eof() );
+        BOOST_CHECK( !sock );
+
+//         BOOST_CHECK_EQUAL( sock.write("x"), 1u );
+//         BOOST_CHECK_EQUAL( sock.write("TEST-WRITE"), 10u );
+//         int v = -1;
+//         ioctl(sock.fd(),TIOCOUTQ,&v,sizeof(v));
+//         std::cerr << v << "\n";
+//         sleep(10);
+//         ioctl(sock.fd(),TIOCOUTQ,&v,sizeof(v));
+//         std::cerr << v << "\n";
+//         BOOST_CHECK_EQUAL( sock.write("TEST-WRITE"), 10u );
+//         ioctl(sock.fd(),TIOCOUTQ,&v,sizeof(v));
+//         std::cerr << v << "\n";
+//         sleep(10);
+//         ioctl(sock.fd(),TIOCOUTQ,&v,sizeof(v));
+//         std::cerr << v << "\n";
+    }
+
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

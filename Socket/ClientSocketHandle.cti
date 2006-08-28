@@ -100,6 +100,54 @@ writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>:
     return Policy::WritePolicy::writeto(*this, addr, buffer, size);
 }
 
+///////////////////////////////////////////////////////////////////////////
+// addressing
+
+template <class Policy>
+prefix_ typename Policy::AddressingPolicy::Address
+satcom::lib::ClientSocketHandle<Policy>::peer()
+{
+    typename Policy::AddressingPolicy::Address addr;
+    this->peer(addr);
+    return addr;
+}
+
+template <class Policy>
+prefix_ void satcom::lib::ClientSocketHandle<Policy>::
+peer(typename Policy::AddressingPolicy::Address & addr)
+{
+    Policy::AddressingPolicy::peer(*this,addr);
+}
+
+template <class Policy>
+prefix_ typename Policy::AddressingPolicy::Address
+satcom::lib::ClientSocketHandle<Policy>::local()
+{
+    typename Policy::AddressingPolicy::Address addr;
+    this->local(addr);
+    return addr;
+}
+
+template <class Policy>
+prefix_ void satcom::lib::ClientSocketHandle<Policy>::
+local(typename Policy::AddressingPolicy::Address & addr)
+{
+    Policy::AddressingPolicy::local(*this,addr);
+}
+
+template <class Policy>
+prefix_ void satcom::lib::ClientSocketHandle<Policy>::connect(AddressParam addr)
+{
+    Policy::AddressingPolicy::connect(*this,addr);
+}
+
+template <class Policy>
+prefix_ void satcom::lib::ClientSocketHandle<Policy>::
+bind(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr)
+{
+    Policy::AddressingPolicy::bind(*this,addr);
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

@@ -25,6 +25,7 @@
 //#include "ClientSocketHandle.ih"
 
 // Custom includes
+#include <fcntl.h>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -40,7 +41,8 @@ prefix_ std::string satcom::lib::ClientSocketHandle<Policy>::read()
 template <class Policy>
 prefix_ void satcom::lib::ClientSocketHandle<Policy>::read(std::string & buffer)
 {
-    unsigned nread = this->protocol().available();
+    unsigned nread = available();
+    // TODO: handle case where nread == 0 and socket is blocking
     // FIXME: This is not necessary correct and more or less a hack ...
     buffer.assign(nread,0);
     unsigned rv = this->read(const_cast<char *>(buffer.data()),nread);
@@ -62,14 +64,25 @@ template <class Policy>
 prefix_ void satcom::lib::ClientSocketHandle<Policy>::
 readfrom(std::string & buffer, typename Policy::AddressingPolicy::Address & from)
 {
-    unsigned nread = this->protocol().available();
-    // FIXME: s.o.
+    unsigned nread = available();
+    // TODO: handle case where nread == 0 and socket is blocking
+    // FIXME: This is not necessary correct and more or less a hack ...
     buffer.assign(nread,0);
     unsigned rv = this->readfrom(const_cast<char *>(buffer.data()), nread, from);
     if (rv < nread)
         buffer.erase(buffer.begin()+rv,buffer.end());
 }
 
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::available()
+{
+    unsigned nread = this->protocol().available();
+    if (nread == 0 && this->blocking()) {
+            this->waitReadable();
+            nread = this->protocol().available();
+    }
+    return nread;
+}
 
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_

@@ -96,6 +96,12 @@ prefix_ unsigned satcom::lib::TCPv4SocketProtocol::available()
     return n;
 }
 
+prefix_ bool satcom::lib::TCPv4SocketProtocol::eof()
+    const
+{
+    return body().readable() && available()==0;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "TCPSocketHandle.mpp"

@@ -22,29 +22,40 @@
 
 // Definition of inline non-template functions
 
-#include "SocketHandle.ih"
-
 // Custom includes
+#include <sys/socket.h>
+#include "Utils/Exception.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol)
-    : protocol_(protocol)
+prefix_ void satcom::lib::INet4AddressingPolicy::local(FileHandle handle, Address & addr)
 {
-    protocol_->body_ = this;
+    addr.clear();
+    socklen_t l (addr.sockaddr_len());
+    if (::getsockname(handle.fd(),addr.sockaddr_p(),&l) < 0)
+        throw SystemException(errno);
 }
 
-prefix_ satcom::lib::SocketProtocol const & satcom::lib::SocketBody::protocol()
-    const
+prefix_ void satcom::lib::INet4AddressingPolicy::bind(FileHandle handle, Address const & addr)
 {
-    return *protocol_;
+    if (::bind(handle.fd(),addr.sockaddr_p(),addr.sockaddr_len()) < 0)
+        throw SystemException(errno);
 }
 
-prefix_ bool satcom::lib::SocketBody::eof()
-    const
+prefix_ void satcom::lib::INet4AddressingPolicy::do_peer(FileHandle handle, Address & addr)
 {
-    return protocol().eof();
+    addr.clear();
+    socklen_t l (addr.sockaddr_len());
+    if (::getpeername(handle.fd(),addr.sockaddr_p(),&l) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void satcom::lib::INet4AddressingPolicy::do_connect(FileHandle handle,
+                                                            Address const & addr)
+{
+    if (::connect(handle.fd(),addr.sockaddr_p(),addr.sockaddr_len()) < 0)
+        throw SystemException(errno);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

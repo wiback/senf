@@ -62,8 +62,14 @@ namespace lib {
         void flush();
 
         bool readable() const;
+        void waitReadable() const;
         bool writeable() const;
+        void waitWritable() const;
 
+        bool blocking() const;
+        bool blocking(bool status);
+
+        bool eof() const;
         bool valid() const;
 
         operator bool () const;

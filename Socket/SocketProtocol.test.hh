@@ -46,6 +46,10 @@ namespace test {
         unsigned available() const { 
             return Policy::ReadPolicy::TEST_SIZE;
         }
+
+        bool eof() const {
+            return false;
+        }
     };
 
 }}}

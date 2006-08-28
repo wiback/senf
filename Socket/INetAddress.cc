@@ -37,15 +37,13 @@
 
 prefix_ satcom::lib::INet4Address::INet4Address()
 {
-    ::memset(&addr,0,sizeof(addr));
-    addr.sin_family = AF_INET;
+    clear();
 }
 
 prefix_ satcom::lib::INet4Address const &
 satcom::lib::INet4Address::operator=(std::string const & address)
 {
-    ::memset(&addr,0,sizeof(addr));
-    addr.sin_family = AF_INET;
+    clear();
     // TODO: gethostbyname einbauen
     unsigned i = address.find(':');
     if (i == std::string::npos)
@@ -65,8 +63,7 @@ satcom::lib::INet4Address::operator=(std::string const & address)
 prefix_ satcom::lib::INet4Address const &
 satcom::lib::INet4Address::operator=(std::pair<std::string, unsigned> const & address)
 {
-    ::memset(&addr,0,sizeof(addr));
-    addr.sin_family = AF_INET;
+    clear();
     // TODO: gethostbyname einbauen
     if (::inet_aton(address.first.c_str(), &addr.sin_addr) == 0)
         throw InvalidINetAddressException();
@@ -80,6 +77,12 @@ prefix_ std::string satcom::lib::INet4Address::str()
     std::stringstream s;
     s << host() << ':' << port();
     return s.str();
+}
+
+prefix_ void satcom::lib::INet4Address::clear()
+{
+    ::memset(&addr,0,sizeof(addr));
+    addr.sin_family = AF_INET;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
