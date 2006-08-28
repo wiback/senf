@@ -1,0 +1,85 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Definition of non-inline non-template functions
+
+#include "ReadWritePolicy.hh"
+//#include "ReadWritePolicy.ih"
+
+// Custom includes
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <errno.h>
+
+
+//#include "ReadWritePolicy.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
+
+prefix_ unsigned satcom::lib::ReadablePolicy::read(FileHandle handle, char * buffer,
+                                                   unsigned size)
+{
+    int rv = ::read(handle.fd(), buffer, size);
+    if (rv < 0)
+        throw SystemException(errno);
+    return rv;
+}
+
+prefix_ unsigned satcom::lib::ReadablePolicy::do_readfrom(FileHandle handle, char * buffer,
+                                                          unsigned size,
+                                                          struct ::sockaddr * addr, socklen_t len)
+{
+    int rv = ::recvfrom(handle.fd(),buffer, size, 0, addr, &len);
+    if (rv < 0)
+        throw SystemException(errno);
+    return rv;
+}
+
+prefix_ unsigned satcom::lib::WriteablePolicy::do_write(FileHandle handle, char const * buffer,
+                                                        unsigned size)
+{
+    int rv = ::write(handle.fd(), buffer, size);
+    if (rv < 0)
+        throw SystemException(errno);
+    return rv;
+}
+
+prefix_ unsigned satcom::lib::WriteablePolicy::do_writeto(FileHandle handle,
+                                                          char const * buffer, unsigned size,
+                                                          struct sockaddr * addr, socklen_t len)
+{
+    int rv = ::sendto(handle.fd(), buffer, size, 0, addr, len);
+    if (rv < 0)
+        throw SystemException(errno);
+    return rv;
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "ReadWritePolicy.mpp"
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

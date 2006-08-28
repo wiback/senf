@@ -60,6 +60,7 @@ namespace lib {
         SocketBody & body() const;
 
         ///////////////////////////////////////////////////////////////////////////
+        // Virtual interface
 
         virtual unsigned available() const = 0;
         virtual bool eof() const = 0;

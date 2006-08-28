@@ -99,14 +99,22 @@ namespace lib {
         void         connect      (AddressParam addr);
         void         bind         (AddressParam addr);
 
-        typename Policy::AddressingPolicy::Address 
-                     peer         ();
+        Address      peer         ();
         void         peer         (Address & addr);
+        Address      local        ();
+        void         local        (Address & addr);
 
-        typename Policy::AddressingPolicy::Address 
-                     local         ();
-        void         local         (Address & addr);
+        ///@}
 
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Buffering
+        ///@{
+        
+        unsigned     rcvbuf      ();
+        void         rcvbuf      (unsigned size);        
+        unsigned     sndbuf      ();
+        void         sndbuf      (unsigned size);
+        
         ///@}
                  
     protected:

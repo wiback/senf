@@ -24,6 +24,7 @@
 #define HH_BufferingPolicy_ 1
 
 // Custom includes
+#include "FileHandle.hh"
 #include "SocketPolicy.hh"
 
 //#include "BufferingPolicy.mpp"
@@ -32,8 +33,15 @@
 namespace satcom {
 namespace lib {
 
+    // TODO: Should this be dependent on Read / WritePolicy ?
     struct SocketBufferingPolicy : public BufferingPolicyBase
-    {};
+    {
+        static unsigned rcvbuf(FileHandle handle);
+        static void rcvbuf(FileHandle handle, unsigned size);
+
+        static unsigned sndbuf(FileHandle handle);
+        static void sndbuf(FileHandle handle, unsigned size);
+    };
 
 }}
 

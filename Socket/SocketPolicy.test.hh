@@ -90,7 +90,17 @@ namespace test {
     };
     
     struct SomeBufferingPolicy : public satcom::lib::BufferingPolicyBase
-    {};
+    {
+        static unsigned rcvbuf(FileHandle handle)
+            { return 0; }
+        static unsigned rcvbuf(FileHandle handle, unsigned size)
+            { return 0; }
+
+        static unsigned sndbuf(FileHandle handle)
+            { return 0; }
+        static unsigned sndbuf(FileHandle handle, unsigned size)
+            { return 0; }
+    };
 
     typedef satcom::lib::MakeSocketPolicy<
         SomeAddressingPolicy,

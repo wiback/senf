@@ -25,7 +25,6 @@
 //#include "FileHandle.ih"
 
 // Custom includes
-#include <unistd.h>
 #include <errno.h>
 #include "Utils/Exception.hh"
 
@@ -50,51 +49,43 @@ prefix_  satcom::lib::FileBody::~FileBody()
         }
 }
 
+prefix_ void satcom::lib::FileBody::close()
+{
+    if (!valid())
+        throw SystemException(EBADF);
+    v_close();
+    fd_ = -1;
+}
+
+prefix_ void satcom::lib::FileBody::terminate()
+{
+    if (valid()) {
+        v_terminate();
+        fd_ = -1;
+    }
+}
+
 prefix_ int satcom::lib::FileBody::fd()
     const
 {
     return fd_;
 }
 
-prefix_ int satcom::lib::FileBody::fd(int fd)
+prefix_ void satcom::lib::FileBody::fd(int fd)
 {
-    int oldFd (fd_);
     fd_ = fd;
-    return oldFd;
 }
-
-prefix_ void satcom::lib::FileBody::close()
-{
-    if (::close(fd_) != 0)
-        throw SystemException(errno);
-    fd_ = -1;
-}
-
-prefix_ void satcom::lib::FileBody::terminate()
-{
-    ::close(fd_);
-    fd_ = -1;
-}
-
-prefix_ void satcom::lib::FileBody::flush()
-{}
 
 prefix_ bool satcom::lib::FileBody::eof()
     const
 {
-    return false;
+    return v_eof();
 }
 
 prefix_ bool satcom::lib::FileBody::valid()
     const
 {
-    return fd_ != -1;
-}
-
-prefix_ bool satcom::lib::FileBody::ok()
-    const
-{
-    return valid() && !eof();
+    return fd_!=-1 && v_valid();
 }
 
 prefix_ bool satcom::lib::FileBody::readable()
@@ -134,11 +125,6 @@ prefix_ void satcom::lib::FileHandle::terminate()
     body().terminate();
 }
 
-prefix_ void satcom::lib::FileHandle::flush()
-{
-    body().flush();
-}
-
 prefix_ bool satcom::lib::FileHandle::readable()
     const
 {
@@ -169,9 +155,9 @@ prefix_ bool satcom::lib::FileHandle::blocking()
     return body().blocking();
 }
 
-prefix_ bool satcom::lib::FileHandle::blocking(bool status)
+prefix_ void satcom::lib::FileHandle::blocking(bool status)
 {
-    return body().blocking(status);
+    body().blocking(status);
 }
 
 prefix_ bool satcom::lib::FileHandle::eof()
@@ -189,13 +175,13 @@ prefix_ bool satcom::lib::FileHandle::valid()
 prefix_ satcom::lib::FileHandle::operator bool ()
     const
 {
-    return body().ok();
+    return valid() && !eof();
 }
 
 prefix_ bool satcom::lib::FileHandle::operator!()
     const
 {
-    return ! body().ok();
+    return ! (valid() && !eof());
 }
 
 prefix_ int satcom::lib::FileHandle::fd()
@@ -219,9 +205,9 @@ prefix_ satcom::lib::FileBody const & satcom::lib::FileHandle::body()
     return *body_;
 }
 
-prefix_ int satcom::lib::FileHandle::fd(int fd)
+prefix_ void satcom::lib::FileHandle::fd(int fd)
 {
-    return body().fd(fd);
+    body().fd(fd);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

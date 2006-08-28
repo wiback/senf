@@ -22,75 +22,57 @@
 
 // Definition of non-inline non-template functions
 
-#include "FileHandle.hh"
-//#include "FileHandle.ih"
+#include "BufferingPolicy.hh"
+//#include "BufferingPolicy.ih"
 
 // Custom includes
-#include <unistd.h>
-#include <sys/poll.h>
-#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <errno.h>
-#include <fcntl.h>
 #include "Utils/Exception.hh"
 
+//#include "BufferingPolicy.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::FileBody::v_close()
+prefix_ unsigned satcom::lib::SocketBufferingPolicy::rcvbuf(FileHandle handle)
 {
-    if (::close(fd_) != 0)
+    unsigned size;
+    socklen_t len (sizeof(size));
+    if (::getsockopt(handle.fd(),SOL_SOCKET,SO_RCVBUF,&size,&len) < 0)
+        throw SystemException(errno);
+    // Linux doubles the bufer size on setting the RCVBUF to cater for internal
+    // headers. We fix this up here .. (see lkml FAQ)
+    return size/2;
+}
+
+prefix_ void satcom::lib::SocketBufferingPolicy::rcvbuf(FileHandle handle, unsigned size)
+{
+    if (::setsockopt(handle.fd(),SOL_SOCKET,SO_RCVBUF,&size,sizeof(size)) < 0)
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::FileBody::v_terminate()
+prefix_ unsigned satcom::lib::SocketBufferingPolicy::sndbuf(FileHandle handle)
 {
-    ::close(fd_);
+    unsigned size;
+    socklen_t len (sizeof(size));
+    if (::getsockopt(handle.fd(),SOL_SOCKET,SO_SNDBUF,&size,&len) < 0)
+        throw SystemException(errno);
+    // Linux doubles the bufer size on setting the SNDBUF to cater for internal
+    // headers. We fix this up here .. (see lkml FAQ)
+    return size/2;
+    
 }
 
-prefix_ bool satcom::lib::FileBody::v_eof()
-    const
+prefix_ void satcom::lib::SocketBufferingPolicy::sndbuf(FileHandle handle, unsigned size)
 {
-    return false;
-}
-
-prefix_ bool satcom::lib::FileBody::v_valid()
-    const
-{
-    return true;
-}
-
-prefix_ bool satcom::lib::FileBody::blocking()
-    const
-{
-    int flags = ::fcntl(fd(),F_GETFL);
-    if (flags < 0) throw SystemException(errno);
-    return ! (flags & O_NONBLOCK);
-}
-
-prefix_ void satcom::lib::FileBody::blocking(bool status)
-{
-    int flags = ::fcntl(fd(),F_GETFL);
-    if (flags < 0) throw SystemException(errno);
-    if (status) flags &= ~O_NONBLOCK;
-    else        flags |= O_NONBLOCK;
-    if (::fcntl(fd(), F_SETFL, flags) < 0) throw SystemException(errno);
-}
-
-prefix_ bool satcom::lib::FileBody::pollCheck(int fd, bool incoming, bool block)
-    const
-{
-    struct ::pollfd pfd;
-    ::memset(&pfd,0,sizeof(pfd));
-    pfd.fd = fd;
-    pfd.events = incoming?POLLIN:POLLOUT;
-    int rv = ::poll(&pfd,1,block?-1:0);
-    if (rv<0)
-        throw satcom::lib::SystemException(errno);
-    return rv>0;
+    if (::setsockopt(handle.fd(),SOL_SOCKET,SO_SNDBUF,&size,sizeof(size)) < 0)
+        throw SystemException(errno);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "BufferingPolicy.mpp"
 
 
 // Local Variables:

@@ -24,6 +24,8 @@
 #define IH_FileHandle_ 1
 
 // Custom includes
+#include <boost/intrusive_ptr.hpp>
+#include "Utils/intrusive_refcount.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -55,12 +57,10 @@ namespace lib {
         ///////////////////////////////////////////////////////////////////////////
 
         int fd() const;
-        int fd(int fd);
+        void fd(int fd);
 
-        // TODO: Move theese to i_* and make the public iface non-virtual
-        virtual void close();
-        virtual void terminate();
-        virtual void flush();
+        void close();
+        void terminate();
 
         bool readable() const;
         void waitReadable() const;
@@ -68,11 +68,20 @@ namespace lib {
         void waitWritable() const;
 
         bool blocking() const;
-        bool blocking(bool status) const;
+        void blocking(bool status);
 
-        virtual bool eof() const;
-        virtual bool valid() const;
-        bool ok() const;
+        bool eof() const;
+        bool valid() const;
+        
+    private:
+        ///////////////////////////////////////////////////////////////////////////
+        // Virtual interface for subclasses to override
+
+        virtual void v_close();
+        virtual void v_terminate();
+        virtual bool v_eof() const;
+        virtual bool v_valid() const;
+        
 
     protected:
         

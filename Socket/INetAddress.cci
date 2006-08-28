@@ -24,7 +24,6 @@
 
 // Custom includes
 #include <arpa/inet.h>
-#include <netinet/in.h>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////

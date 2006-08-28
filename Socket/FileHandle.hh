@@ -25,8 +25,6 @@
 
 // Custom includes
 #include <memory> // std::auto_ptr
-#include <boost/intrusive_ptr.hpp>
-#include "Utils/intrusive_refcount.hh"
 
 //#include "FileHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -59,7 +57,6 @@ namespace lib {
         
         void close();
         void terminate();
-        void flush();
 
         bool readable() const;
         void waitReadable() const;
@@ -67,7 +64,7 @@ namespace lib {
         void waitWritable() const;
 
         bool blocking() const;
-        bool blocking(bool status);
+        void blocking(bool status);
 
         bool eof() const;
         bool valid() const;
@@ -83,7 +80,7 @@ namespace lib {
         FileBody & body();
         FileBody const & body() const;
 
-        int fd(int fd);
+        void fd(int fd);
 
     private:
         FileBody::ptr body_;

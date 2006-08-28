@@ -148,6 +148,33 @@ bind(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::pa
     Policy::AddressingPolicy::bind(*this,addr);
 }
 
+///////////////////////////////////////////////////////////////////////////
+// Buffering
+
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::rcvbuf()
+{
+    return Policy::BufferingPolicy::rcvbuf(*this);
+}
+
+template <class Policy>
+prefix_ void satcom::lib::ClientSocketHandle<Policy>::rcvbuf(unsigned size)
+{
+    Policy::BufferingPolicy::rcvbuf(*this,size);
+}
+
+template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::sndbuf()
+{
+    return Policy::BufferingPolicy::sndbuf(*this);
+}
+
+template <class Policy>
+prefix_ void satcom::lib::ClientSocketHandle<Policy>::sndbuf(unsigned size)
+{
+    Policy::BufferingPolicy::sndbuf(*this,size);
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

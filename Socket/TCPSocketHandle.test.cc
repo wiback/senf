@@ -133,6 +133,10 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK( sock.peer() == satcom::lib::INet4Address("127.0.0.1:12345") );
         BOOST_CHECK( sock.local() == satcom::lib::INet4Address("127.0.0.1:23456") );
         BOOST_CHECK( sock.blocking() );
+        BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.sndbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
         BOOST_CHECK( !sock.eof() );
@@ -142,21 +146,6 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.read(), "" );
         BOOST_CHECK( sock.eof() );
         BOOST_CHECK( !sock );
-
-//         BOOST_CHECK_EQUAL( sock.write("x"), 1u );
-//         BOOST_CHECK_EQUAL( sock.write("TEST-WRITE"), 10u );
-//         int v = -1;
-//         ioctl(sock.fd(),TIOCOUTQ,&v,sizeof(v));
-//         std::cerr << v << "\n";
-//         sleep(10);
-//         ioctl(sock.fd(),TIOCOUTQ,&v,sizeof(v));
-//         std::cerr << v << "\n";
-//         BOOST_CHECK_EQUAL( sock.write("TEST-WRITE"), 10u );
-//         ioctl(sock.fd(),TIOCOUTQ,&v,sizeof(v));
-//         std::cerr << v << "\n";
-//         sleep(10);
-//         ioctl(sock.fd(),TIOCOUTQ,&v,sizeof(v));
-//         std::cerr << v << "\n";
     }
 
 }

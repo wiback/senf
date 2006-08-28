@@ -34,6 +34,8 @@
 // TODO: ReadWritePolicy.test.cc ...
 // TODO: EINTR, EAGAIN etc handling ...
 
+struct sockaddr;
+
 namespace satcom {
 namespace lib {
 
@@ -44,6 +46,10 @@ namespace lib {
         static unsigned readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
                                  typename Policy::AddressingPolicy::Address & address,
                                  typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type * = 0);
+
+    private:
+        static unsigned do_readfrom(FileHandle handle, char * buffer, unsigned size,
+                                    struct ::sockaddr * addr, socklen_t len);
     };
 
     struct NotReadablePolicy : public ReadPolicyBase
@@ -62,6 +68,8 @@ namespace lib {
 
     private:
         static unsigned do_write(FileHandle handle, char const * buffer, unsigned size);
+        static unsigned do_writeto(FileHandle handle, char const * buffer, unsigned size,
+                                   struct sockaddr * addr, socklen_t len);
     };
     
     struct NotWriteablePolicy : public WritePolicyBase
@@ -71,7 +79,7 @@ namespace lib {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "ReadWritePolicy.cci"
+//#include "ReadWritePolicy.cci"
 //#include "ReadWritePolicy.ct"
 #include "ReadWritePolicy.cti"
 #endif

@@ -20,35 +20,49 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline non-template functions
+// Definition of non-inline non-template functions
+
+#include "SocketHandle.hh"
+#include "SocketHandle.ih"
 
 // Custom includes
-#include <unistd.h>
-#include <errno.h>
+#include <sys/socket.h>
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "SocketHandle.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned satcom::lib::ReadablePolicy::read(FileHandle handle, char * buffer,
-                                                   unsigned size)
+prefix_ void satcom::lib::SocketBody::v_close()
 {
-    int rv = ::read(handle.fd(), buffer, size);
-    if (rv < 0)
+    if (::shutdown(fd(),SHUT_RDWR) < 0)
         throw SystemException(errno);
-    return rv;
+    if (::close(fd()) < 0)
+        throw SystemException(errno);
 }
 
-prefix_ unsigned satcom::lib::WriteablePolicy::do_write(FileHandle handle, char const * buffer,
-                                                        unsigned size)
+prefix_ void satcom::lib::SocketBody::v_terminate()
 {
-    int rv = ::write(handle.fd(), buffer, size);
-    if (rv < 0)
-        throw SystemException(errno);
-    return rv;
+    struct linger ling;
+    ling.l_onoff = 0;
+    ling.l_linger = 0;
+
+    // We purposely IGNORE any errors: this method is used to try and
+    // terminate the connection ignoring any possible problems
+
+    ::setsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling));
+    ::shutdown(fd(),SHUT_RDWR);
+    ::close(fd());
 }
 
-///////////////////////////////cci.e///////////////////////////////////////
+prefix_ bool satcom::lib::SocketBody::v_eof()
+    const
+{
+    return protocol().eof();
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "SocketHandle.mpp"
 
 
 // Local Variables:

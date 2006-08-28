@@ -25,7 +25,6 @@
 //#include "ClientSocketHandle.ih"
 
 // Custom includes
-#include <fcntl.h>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -42,7 +41,6 @@ template <class Policy>
 prefix_ void satcom::lib::ClientSocketHandle<Policy>::read(std::string & buffer)
 {
     unsigned nread = available();
-    // TODO: handle case where nread == 0 and socket is blocking
     // FIXME: This is not necessary correct and more or less a hack ...
     buffer.assign(nread,0);
     unsigned rv = this->read(const_cast<char *>(buffer.data()),nread);
@@ -65,7 +63,6 @@ prefix_ void satcom::lib::ClientSocketHandle<Policy>::
 readfrom(std::string & buffer, typename Policy::AddressingPolicy::Address & from)
 {
     unsigned nread = available();
-    // TODO: handle case where nread == 0 and socket is blocking
     // FIXME: This is not necessary correct and more or less a hack ...
     buffer.assign(nread,0);
     unsigned rv = this->readfrom(const_cast<char *>(buffer.data()), nread, from);

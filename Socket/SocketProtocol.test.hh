@@ -50,6 +50,7 @@ namespace test {
         bool eof() const {
             return false;
         }
+
     };
 
 }}}

@@ -20,14 +20,18 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline non-template functions
+// Definition of non-inline non-template functions
+
+#include "INetProtocol.hh"
+//#include "INetProtocol.ih"
 
 // Custom includes
 #include <sys/socket.h>
 #include "Utils/Exception.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "INetProtocol.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ void satcom::lib::INet4AddressingPolicy::local(FileHandle handle, Address & addr)
 {
@@ -58,8 +62,9 @@ prefix_ void satcom::lib::INet4AddressingPolicy::do_connect(FileHandle handle,
         throw SystemException(errno);
 }
 
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "INetProtocol.mpp"
 
 
 // Local Variables:

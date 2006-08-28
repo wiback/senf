@@ -25,6 +25,7 @@
 #include "SocketHandle.ih"
 
 // Custom includes
+#include "Utils/Exception.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -39,12 +40,6 @@ prefix_ satcom::lib::SocketProtocol const & satcom::lib::SocketBody::protocol()
     const
 {
     return *protocol_;
-}
-
-prefix_ bool satcom::lib::SocketBody::eof()
-    const
-{
-    return protocol().eof();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

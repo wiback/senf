@@ -57,11 +57,11 @@ namespace lib {
 
         SocketProtocol const & protocol() const;
 
-        virtual bool eof() const;
-
-    protected:
-
     private:
+        virtual void v_close();
+        virtual void v_terminate();
+        virtual bool v_eof() const;
+
         boost::scoped_ptr<SocketProtocol> protocol_;
     };
 
