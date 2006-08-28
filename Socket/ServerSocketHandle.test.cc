@@ -27,7 +27,8 @@
 
 // Custom includes
 #include "ServerSocketHandle.hh"
-#include "SocketProtocol.test.hh"
+#include "ServerSocketHandle.test.hh"
+#include "ClientSocketHandle.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -36,14 +37,16 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
+    
     namespace sl = satcom::lib;
-
+    
     class MySocketHandle
-        : public sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>
+        : public sl::ServerSocketHandle<sl::test::SomeConnectedProtocol::Policy>
     {
     public:
         MySocketHandle()
-            : sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>(std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()))
+            : sl::ServerSocketHandle<sl::test::SomeConnectedProtocol::Policy>(
+                std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeConnectedProtocol()))
             {}
     };
 }
@@ -60,6 +63,10 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
     MySocketHandle myh;
     OtherSocketHandle ssh (myh);
     ssh = myh;
+
+    BOOST_CHECK_NO_THROW( myh.bind(0) );
+    BOOST_CHECK_EQUAL( myh.local(), 2u );
+    // BOOST_CHECK_NO_THROW( myh.accept() );
 }
 
 

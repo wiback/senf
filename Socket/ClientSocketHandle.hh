@@ -33,6 +33,8 @@
 namespace satcom {
 namespace lib {
 
+    template <class Policy> class ServerSocketHandle;
+
     /** \brief
       */
     template <class Policy>
@@ -45,6 +47,7 @@ namespace lib {
 
         typedef typename Policy::AddressingPolicy::Address Address;
         typedef typename boost::call_traits<Address>::param_type AddressParam;
+        typedef ServerSocketHandle<Policy> ServerSocketHandle;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members

@@ -24,7 +24,11 @@
 #define HH_ServerSocketHandle_ 1
 
 // Custom includes
+#include <boost/static_assert.hpp>
+#include <boost/call_traits.hpp>
 #include "SocketHandle.hh"
+#include "CommunicationPolicy.hh"
+#include "AddressingPolicy.hh"
 
 //#include "ServerSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -32,15 +36,27 @@
 namespace satcom {
 namespace lib {
 
+    template <class Policy> class ClientSocketHandle;
+
     /** \brief
       */
-    template <class SocketPolicy>
+    template <class Policy>
     class ServerSocketHandle
-        : public SocketHandle<SocketPolicy>
+        : public SocketHandle<Policy>
     {
+        // FIXME: Are theese necessary ... hmm ...
+        BOOST_STATIC_ASSERT((boost::is_convertible< typename Policy::CommunicationPolicy *,
+                                                    ConnectedCommunicationPolicy *>::value ));
+        BOOST_STATIC_ASSERT(!(boost::is_convertible< typename Policy::AddressingPolicy *,
+                                                     NoAddressingPolicy *>::value ));
+
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
+
+        typedef typename Policy::AddressingPolicy::Address Address;
+        typedef typename boost::call_traits<Address>::param_type AddressParam;
+        typedef ClientSocketHandle<Policy> ClientSocketHandle;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -54,14 +70,28 @@ namespace lib {
         // conversion constructors
         template <class OtherPolicy>
         ServerSocketHandle(ServerSocketHandle<OtherPolicy> other,
-                           typename SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type * = 0);
+                           typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type * = 0);
+
+        template <class OtherPolicy>
+        typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const & 
+        operator=(ServerSocketHandle<OtherPolicy> other);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        template <class OtherPolicy>
-        typename SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const & 
-        operator=(ServerSocketHandle<OtherPolicy> other);
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Server socket interface
+        ///@{
+
+        void         bind         (AddressParam addr);
+
+        Address      local        ();
+        void         local        (Address & addr);
+        
+        ClientSocketHandle
+                     accept       ();
+        
+        ///@}
 
     protected:
         explicit ServerSocketHandle(std::auto_ptr<SocketProtocol> protocol);

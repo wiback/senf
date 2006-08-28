@@ -20,32 +20,31 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
-
-//#include "ProtocolServerSocketHandle.test.hh"
-//#include "ProtocolServerSocketHandle.test.ih"
+#ifndef HH_AddressingPolicy_
+#define HH_AddressingPolicy_ 1
 
 // Custom includes
-#include "ProtocolServerSocketHandle.hh"
-#include "ServerSocketHandle.test.hh"
+#include "SocketPolicy.hh"
 
-#include <boost/test/auto_unit_test.hpp>
-#include <boost/test/test_tools.hpp>
+//#include "AddressingPolicy.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+namespace satcom {
+namespace lib {
 
-BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
-{
-    typedef satcom::lib::ProtocolServerSocketHandle<
-        satcom::lib::test::SomeConnectedProtocol> MySocketHandle;
+    struct NoAddressingPolicy : public AddressingPolicyBase
+    {
+        typedef satcom::lib::nil Address;
+    };
 
-    MySocketHandle h;
-    h.protocol();
-}
+}}
 
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "AddressingPolicy.cci"
+//#include "AddressingPolicy.ct"
+//#include "AddressingPolicy.cti"
+//#include "AddressingPolicy.mpp"
+#endif
 
 
 // Local Variables:

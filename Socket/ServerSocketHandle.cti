@@ -52,6 +52,37 @@ satcom::lib::ServerSocketHandle<SocketPolicy>::operator=(ServerSocketHandle<Othe
     return *this;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// Server socket interface
+
+template <class Policy>
+prefix_ void satcom::lib::ServerSocketHandle<Policy>::bind(AddressParam addr)
+{
+    Policy::AddressingPolicy::bind(*this,addr);
+}
+
+template <class Policy>
+prefix_ typename satcom::lib::ServerSocketHandle<Policy>::Address
+satcom::lib::ServerSocketHandle<Policy>::local()
+{
+    typename Policy::AddressingPolicy::Address addr;
+    this->local(addr);
+    return addr;
+}
+
+template <class Policy>
+prefix_ void satcom::lib::ServerSocketHandle<Policy>::local(Address & addr)
+{
+    Policy::AddressingPolicy::local(*this,addr);
+}
+
+template <class Policy>
+prefix_ typename satcom::lib::ServerSocketHandle<Policy>::ClientSocketHandle
+satcom::lib::ServerSocketHandle<Policy>::accept()
+{
+    return Policy::CommunicationPolicy::accept(*this);
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
