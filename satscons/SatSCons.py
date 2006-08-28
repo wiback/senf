@@ -68,27 +68,31 @@ def MakeEnvironment():
     global opts, finalizers
     InitOpts()
     env = SCons.Environment.Environment(options=opts)
+    if SCons.Script.SConscript.Arguments.get('final'):
+        env['final'] = 1
     env.Help(opts.GenerateHelpText(env))
-    conf = env.Configure()
+    #conf = env.Configure()
+    #env = conf.env
     if os.environ.has_key('SSH_AUTH_SOCK'):
-        conf.env.Append( ENV = { 'SSH_AUTH_SOCK': os.environ['SSH_AUTH_SOCK'] } )
+        env.Append( ENV = { 'SSH_AUTH_SOCK': os.environ['SSH_AUTH_SOCK'] } )
 
     for finalizer in finalizers:
-        finalizer(conf.env)
+        finalizer(env)
 
-    conf.env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long',
+    env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long',
                                  '-pedantic', '-ansi' ],
                     LOCALLIBDIR = [ '#' ],
                     LIBPATH = [ '$LOCALLIBDIR' ])
 
-    if conf.env['final']:
-        conf.env.Append(CXXFLAGS = [ '-O3', '-g' ],
+    if env['final']:
+        env.Append(CXXFLAGS = [ '-O3', '-g' ],
                         LINKFLAGS = [ '-g' ])
     else:
-        conf.env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
+        env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
                         LINKFLAGS = [ '-g' ])
 
-    return conf.Finish()
+    #return conf.Finish()
+    return env
 
 def GlobSources():
     testSources = glob.glob("*.test.cc")
