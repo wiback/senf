@@ -43,7 +43,7 @@ prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientS
 template <class SocketProtocol>
 prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
 ProtocolClientSocketHandle(FileHandle other, bool isChecked)
-    : ClientSocketHandle<typename Protocol::Policy>(other, true)
+    : ClientSocketHandle<typename Protocol::Policy>(other, isChecked)
 {}
 
 template <class SocketProtocol>
@@ -52,6 +52,14 @@ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::protocol()
 {
     BOOST_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
     return static_cast<SocketProtocol const &>(this->body().protocol());
+}
+
+template <class SocketProtocol>
+prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>
+satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::cast_static(FileHandle handle)
+{
+    // TODO: Add BOOST_ASSERT
+    return ProtocolClientSocketHandle(handle,true);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

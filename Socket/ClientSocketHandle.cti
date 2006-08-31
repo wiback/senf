@@ -183,6 +183,16 @@ prefix_ void satcom::lib::ClientSocketHandle<Policy>::sndbuf(unsigned size)
     Policy::BufferingPolicy::sndbuf(*this,size);
 }
 
+///////////////////////////////////////////////////////////////////////////
+
+template <class Policy>
+prefix_ satcom::lib::ClientSocketHandle<Policy>
+satcom::lib::ClientSocketHandle<Policy>::cast_static(FileHandle handle)
+{
+    // TODO: Add BOOST_ASSERT
+    return ClientSocketHandle(handle, true);
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

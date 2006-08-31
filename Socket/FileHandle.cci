@@ -210,6 +210,12 @@ prefix_ void satcom::lib::FileHandle::fd(int fd)
     body().fd(fd);
 }
 
+prefix_ satcom::lib::FileHandle::FileHandle
+satcom::lib::FileHandle::cast_static(FileHandle handle)
+{
+    return handle;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

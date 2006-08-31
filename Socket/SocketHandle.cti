@@ -54,7 +54,10 @@ satcom::lib::SocketHandle<SocketPolicy>::SocketHandle(std::auto_ptr<SocketProtoc
 template <class SocketPolicy>
 prefix_ satcom::lib::SocketHandle<SocketPolicy>::SocketHandle(FileHandle other, bool isChecked)
     : FileHandle(other)
-{}
+{
+    BOOST_ASSERT( isChecked );
+    BOOST_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
+}
 
 template <class SocketPolicy>
 prefix_ satcom::lib::SocketBody & satcom::lib::SocketHandle<SocketPolicy>::body()
@@ -82,6 +85,25 @@ template <class SocketPolicy>
 prefix_ void satcom::lib::SocketHandle<SocketPolicy>::assign(FileHandle other)
 {
     FileHandle::operator=(other);
+}
+
+template <class SocketPolicy>
+prefix_ satcom::lib::SocketHandle<SocketPolicy>
+satcom::lib::SocketHandle<SocketPolicy>::cast_static(FileHandle handle)
+{
+    // TODO: Add BOOST_ASSERT
+    return SocketHandle(handle,true);
+}
+
+template <class Target, class Source>
+prefix_ Target satcom::lib::static_socket_cast(Source handle)
+{
+    BOOST_STATIC_ASSERT((
+        boost::is_convertible<Source*,FileHandle*>::value &&
+        boost::is_convertible<Target*,FileHandle*>::value &&
+        ( boost::is_convertible<Source,Target>::value ||
+          boost::is_convertible<Target,Source>::value ) ));
+    return Target::cast_static(handle);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

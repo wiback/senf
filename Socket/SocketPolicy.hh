@@ -24,7 +24,6 @@
 #define HH_SocketPolicy_ 1
 
 // Custom includes
-#include <boost/type_traits.hpp>
 
 //#include "SocketPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -32,122 +31,14 @@
 namespace satcom {
 namespace lib {
 
-    class AddressingPolicyBase
-    {};
-    typedef AddressingPolicyBase UnspecifiedAddressingPolicy;
+#   define SATCOM_LIB_SocketPolicy_Policies \
+	(AddressingPolicy)                      \
+        (FramingPolicy)                         \
+	(CommunicationPolicy)                   \
+	(ReadPolicy)                            \
+	(WritePolicy)                           \
+	(BufferingPolicy)
 
-    class FramingPolicyBase
-    {};
-    typedef FramingPolicyBase UnspecifiedFramingPolicy;
-    
-    class CommunicationPolicyBase
-    {};
-    typedef CommunicationPolicyBase UnspecifiedCommunicationPolicy;
-    
-    class ReadPolicyBase
-    {};
-    typedef ReadPolicyBase UnspecifiedReadPolicy;
-    
-    class WritePolicyBase
-    {};
-    typedef WritePolicyBase UnspecifiedWritePolicy;
-    
-    class BufferingPolicyBase
-    {};
-    typedef BufferingPolicyBase UnspecifiedBufferingPolicy;
-    
-    class SocketPolicyBase
-    {
-        typedef AddressingPolicyBase AddressingPolicy;
-        typedef FramingPolicyBase FramingPolicy;
-        typedef CommunicationPolicyBase CommunicationPolicy;
-        typedef ReadPolicyBase ReadPolicy;
-        typedef WritePolicyBase WritePolicy;
-        typedef BufferingPolicyBase BufferingPolicy;
-    };
-
-    template <class AddressingPolicy_=AddressingPolicyBase,
-              class FramingPolicy_=FramingPolicyBase,
-              class CommunicationPolicy_=CommunicationPolicyBase,
-              class ReadPolicy_=ReadPolicyBase,
-              class WritePolicy_=WritePolicyBase,
-              class BufferingPolicy_=BufferingPolicyBase>
-    class SocketPolicy
-        : public SocketPolicyBase
-    {
-    public:
-        typedef AddressingPolicy_ AddressingPolicy;
-        typedef FramingPolicy_ FramingPolicy;
-        typedef CommunicationPolicy_ CommunicationPolicy;
-        typedef ReadPolicy_ ReadPolicy;
-        typedef WritePolicy_ WritePolicy;
-        typedef BufferingPolicy_ BufferingPolicy;
-
-        AddressingPolicy addressingPolicy;
-        FramingPolicy framingPolicy;
-        CommunicationPolicy communicationPolicy;
-        ReadPolicy readPolicy;
-        WritePolicy writePolicy;
-        BufferingPolicy bufferingPolicy;
-    };
-
-    struct nil {};
-
-    template <class T1, class T2=nil, class T3=nil, class T4=nil, class T5=nil, class T6=nil>
-    class MakeSocketPolicy;
-    // the rest is implementation detail
-
-    template <class BasePolicy, class DerivedPolicy>
-    struct SocketPolicyIsBaseOf;
-    // the rest is implementation detail ...
-
-    template <class Policy, class Trait>
-    struct AddressingPolicyIs;
-    template <class Policy, class Trait>
-    struct IfAddressingPolicyIs;
-    template <class Policy, class Trait>
-    struct IfAddressingPolicyIsNot;
-    // the rest is implementation detail ...
-
-    template <class Policy, class Trait>
-    struct FramingPolicyIs;
-    template <class Policy, class Trait>
-    struct IfFramingPolicyIs;
-    template <class Policy, class Trait>
-    struct IfFramingPolicyIsNot;
-    // the rest is implementation detail ...
-
-    template <class Policy, class Trait>
-    struct CommunicationPolicyIs;
-    template <class Policy, class Trait>
-    struct IfCommunicationPolicyIs;
-    template <class Policy, class Trait>
-    struct IfCommunicationPolicyIsNot;
-    // the rest is implementation detail ...
-
-    template <class Policy, class Trait>
-    struct ReadPolicyIs;
-    template <class Policy, class Trait>
-    struct IfReadPolicyIs;
-    template <class Policy, class Trait>
-    struct IfReadPolicyIsNot;
-    // the rest is implementation detail ...
-
-    template <class Policy, class Trait>
-    struct WritePolicyIs;
-    template <class Policy, class Trait>
-    struct IfWritePolicyIs;
-    template <class Policy, class Trait>
-    struct IfWritePolicyIsNot;
-    // the rest is implementation detail ...
-
-    template <class Policy, class Trait>
-    struct BufferingPolicyIs;
-    template <class Policy, class Trait>
-    struct IfBufferingPolicyIs;
-    template <class Policy, class Trait>
-    struct IfBufferingPolicyIsNot;
-    // the rest is implementation detail ...
 }}
 
 //////////////////////////////hh.e////////////////////////////////////////

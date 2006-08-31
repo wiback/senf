@@ -57,8 +57,10 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
     typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
     
     MySocketHandle myh;
-    OtherSocketHandle ssh (myh);
-    ssh = myh;
+    OtherSocketHandle osh (myh);
+    osh = myh;
+    typedef sl::SocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
+    SomeSocketHandle ssh = satcom::lib::static_socket_cast<SomeSocketHandle>(osh);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

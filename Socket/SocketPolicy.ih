@@ -24,6 +24,21 @@
 #define IH_SocketPolicy_ 1
 
 // Custom includes
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/seq/for_each_i.hpp>
+#include <boost/preprocessor/seq/size.hpp>
+#include <boost/preprocessor/punctuation/comma_if.hpp>
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/repetition/enum_params_with_a_default.hpp>
+#include <boost/preprocessor/repetition/enum_shifted_params.hpp>
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/seq/elem.hpp>
+#include <boost/preprocessor/arithmetic/dec.hpp>
+#include <boost/preprocessor/iteration/local.hpp>
+#include <boost/preprocessor/control/if.hpp>
+#include <boost/preprocessor/comparison/equal.hpp>
+
+#include <boost/type_traits.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/fold.hpp>
 #include <boost/mpl/if.hpp>
@@ -34,96 +49,75 @@
 
 namespace satcom {
 namespace lib {
-namespace impl{
+
+#   define SP_DeclareBase(x1,x2,SomePolicy) \
+        struct BOOST_PP_CAT(SomePolicy,Base)                                            \
+        { virtual ~ BOOST_PP_CAT(SomePolicy,Base) () {} };                              \
+        typedef BOOST_PP_CAT(SomePolicy,Base) BOOST_PP_CAT(Unspecified,SomePolicy);
+
+    BOOST_PP_SEQ_FOR_EACH( SP_DeclareBase, nix, SATCOM_LIB_SocketPolicy_Policies )
+
+#   undef SP_DeclareBase
+        
+    struct SocketPolicyBase
+    {
+#       define SP_DeclareTypedef(x1,x2,SomePolicy) \
+            typedef BOOST_PP_CAT(SomePolicy,Base) SomePolicy;
+
+        BOOST_PP_SEQ_FOR_EACH( SP_DeclareTypedef, nix, SATCOM_LIB_SocketPolicy_Policies )
+
+#       undef SP_DeclareTypedef
+    };
+
+#   define SP_TemplateArgs(x1,x2,n,SomePolicy) \
+        BOOST_PP_COMMA_IF( n ) \
+        class BOOST_PP_CAT(SomePolicy,_) = BOOST_PP_CAT(SomePolicy,Base)
+
+    template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, nix, SATCOM_LIB_SocketPolicy_Policies ) >
+    struct SocketPolicy
+        : public SocketPolicyBase
+    {
+#   define SP_DeclarePolicyMember(x1,x2,SomePolicy) \
+        typedef BOOST_PP_CAT(SomePolicy,_) SomePolicy; \
+        SomePolicy BOOST_PP_CAT(the,SomePolicy);
+
+        BOOST_PP_SEQ_FOR_EACH( SP_DeclarePolicyMember, , SATCOM_LIB_SocketPolicy_Policies )
+#   undef SP_DeclarePolicyMember
+    };
+
+#   undef SP_TemplateArgs
+
+namespace impl {
+
+    struct nil {};
 
     template <int N>
     struct SocketPolicy_rv
-    {
-        int v[N];
-    };
+    { int v[N+1]; };
     
-    SocketPolicy_rv<1> MakeSocketPolicy_merge_(AddressingPolicyBase*);
-    SocketPolicy_rv<2> MakeSocketPolicy_merge_(FramingPolicyBase*);
-    SocketPolicy_rv<3> MakeSocketPolicy_merge_(CommunicationPolicyBase*);
-    SocketPolicy_rv<4> MakeSocketPolicy_merge_(ReadPolicyBase*);
-    SocketPolicy_rv<5> MakeSocketPolicy_merge_(WritePolicyBase*);
-    SocketPolicy_rv<6> MakeSocketPolicy_merge_(BufferingPolicyBase*);
-
     template <class Base, class Policy, int N>
     struct MakeSocketPolicy_merge
     {};
 
-    template <class Base, class Policy>
-    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<1>)>
-    {
-        typedef SocketPolicy< 
-            Policy,
-            typename Base::FramingPolicy,
-            typename Base::CommunicationPolicy,
-            typename Base::ReadPolicy,
-            typename Base::WritePolicy,
-            typename Base::BufferingPolicy> type;
-    };
+#   define SP_DeclareMakeSocketPolicy_merge_member(r,n,m,SomePolicy) \
+        BOOST_PP_COMMA_IF( m ) \
+        BOOST_PP_IIF( BOOST_PP_EQUAL(n,m), Policy, typename Base::SomePolicy )
 
-    template <class Base, class Policy>
-    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<2>)>
-    {
-        typedef SocketPolicy< 
-            typename Base::AddressingPolicy,
-            Policy,
-            typename Base::CommunicationPolicy,
-            typename Base::ReadPolicy,
-            typename Base::WritePolicy,
-            typename Base::BufferingPolicy> type;
-    };
+#    define BOOST_PP_LOCAL_LIMITS (0, BOOST_PP_DEC( BOOST_PP_SEQ_SIZE( SATCOM_LIB_SocketPolicy_Policies ) ) )
+#    define BOOST_PP_LOCAL_MACRO(n) \
+        SocketPolicy_rv<n> MakeSocketPolicy_merge_(BOOST_PP_CAT( BOOST_PP_SEQ_ELEM( n, SATCOM_LIB_SocketPolicy_Policies ),Base)*);      \
+                                                                                                                                        \
+        template <class Base, class Policy>                                                                                             \
+        struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<n>)>                                                           \
+        {                                                                                                                               \
+            typedef SocketPolicy<                                                                                                       \
+               BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareMakeSocketPolicy_merge_member, n, SATCOM_LIB_SocketPolicy_Policies )                  \
+               > type;                                                                                                                  \
+        };
 
-    template <class Base, class Policy>
-    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<3>)>
-    {
-        typedef SocketPolicy< 
-            typename Base::AddressingPolicy,
-            typename Base::FramingPolicy,
-            Policy,
-            typename Base::ReadPolicy,
-            typename Base::WritePolicy,
-            typename Base::BufferingPolicy> type;
-    };
+#   include BOOST_PP_LOCAL_ITERATE()
 
-    template <class Base, class Policy>
-    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<4>)>
-    {
-        typedef SocketPolicy< 
-            typename Base::AddressingPolicy,
-            typename Base::FramingPolicy,
-            typename Base::CommunicationPolicy,
-            Policy,
-            typename Base::WritePolicy,
-            typename Base::BufferingPolicy> type;
-    };
-
-    template <class Base, class Policy>
-    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<5>)>
-    {
-        typedef SocketPolicy< 
-            typename Base::AddressingPolicy,
-            typename Base::FramingPolicy,
-            typename Base::CommunicationPolicy,
-            typename Base::ReadPolicy,
-            Policy,
-            typename Base::BufferingPolicy> type;
-    };
-
-    template <class Base, class Policy>
-    struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<6>)>
-    {
-        typedef SocketPolicy< 
-            typename Base::AddressingPolicy,
-            typename Base::FramingPolicy,
-            typename Base::CommunicationPolicy,
-            typename Base::ReadPolicy,
-            typename Base::WritePolicy,
-            Policy> type;
-    };
+#   undef SP_DeclareMakeSocketPolicy_merge_member
 
     struct MakeSocketPolicy_fold
     {
@@ -147,16 +141,19 @@ namespace impl{
         typedef typename boost::mpl::fold< Vector, Base, MakeSocketPolicy_fold >::type policy;
     };
 
-    template <class Base>
-    SocketPolicy_rv<1> SocketPolicy_checkcompat_(typename Base::AddressingPolicy*,
-                                                 typename Base::FramingPolicy*,
-                                                 typename Base::CommunicationPolicy*,
-                                                 typename Base::ReadPolicy*,
-                                                 typename Base::WritePolicy*,
-                                                 typename Base::BufferingPolicy*);
+#   define SP_DeclareArguments(x1,x2,n,SomePolicy) \
+    	BOOST_PP_COMMA_IF( n )   \
+	typename Base::SomePolicy *
 
     template <class Base>
-    SocketPolicy_rv<2> SocketPolicy_checkcompat_(void*, void*, void*, void*, void*, void*);
+    SocketPolicy_rv<1> SocketPolicy_checkcompat_(
+        BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareArguments, nix, SATCOM_LIB_SocketPolicy_Policies ) );
+
+#   undef SP_DeclareArguments
+
+    template <class Base>
+    SocketPolicy_rv<2> SocketPolicy_checkcompat_( 
+        BOOST_PP_ENUM_PARAMS( BOOST_PP_SEQ_SIZE(SATCOM_LIB_SocketPolicy_Policies), void * BOOST_PP_INTERCEPT ) );
 
     template <int Size>
     struct SocketPolicy_checkcompat
@@ -168,28 +165,26 @@ namespace impl{
         : public boost::true_type
     {};
 
+
+#   define SP_DeclareArguments(x1,x2,n,SomePolicy) \
+        BOOST_PP_COMMA_IF( n ) \
+        static_cast<typename Derived::SomePolicy *>(0)
+
     template <class Base, class Derived>
     struct SocketPolicy_compatibility
-        : public SocketPolicy_checkcompat< sizeof(SocketPolicy_checkcompat_<Base>(
-                                                      static_cast<typename Derived::AddressingPolicy*>(0),
-                                                      static_cast<typename Derived::FramingPolicy*>(0),
-                                                      static_cast<typename Derived::CommunicationPolicy*>(0),
-                                                      static_cast<typename Derived::ReadPolicy*>(0),
-                                                      static_cast<typename Derived::WritePolicy*>(0),
-                                                      static_cast<typename Derived::BufferingPolicy*>(0))) >
+        : public SocketPolicy_checkcompat< sizeof(
+            SocketPolicy_checkcompat_<Base>(
+                BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareArguments, nix, SATCOM_LIB_SocketPolicy_Policies ) )) >
     {};
 
-}}}
+} // namespace impl
 
-namespace satcom {
-namespace lib {
-
-    template <class T1, class T2, class T3, class T4, class T5, class T6>
+    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( BOOST_PP_SEQ_SIZE( SATCOM_LIB_SocketPolicy_Policies ), class T, satcom::lib::impl::nil ) >
     class MakeSocketPolicy
-        : public boost::mpl::if_< boost::is_convertible< T1*, SocketPolicyBase* >,
-                                  impl::MakeSocketPolicy_impl< T1, boost::mpl::vector<T2,T3,T4,T5,T6> >,
+        : public boost::mpl::if_< boost::is_convertible< T0*, SocketPolicyBase* >,
+                                  impl::MakeSocketPolicy_impl< T0, boost::mpl::vector< BOOST_PP_ENUM_SHIFTED_PARAMS( BOOST_PP_SEQ_SIZE( SATCOM_LIB_SocketPolicy_Policies ), T ) > >,
                                   impl::MakeSocketPolicy_impl< SocketPolicy<>,
-                                                               boost::mpl::vector<T1,T2,T3,T4,T5,T6> > >::type
+                                                               boost::mpl::vector< BOOST_PP_ENUM_PARAMS( BOOST_PP_SEQ_SIZE( SATCOM_LIB_SocketPolicy_Policies ), T ) > > >::type
     {};
 
     template <class BasePolicy, class DerivedPolicy>
@@ -200,95 +195,26 @@ namespace lib {
                                   boost::false_type >::type
     {};
 
-    template <class Policy, class Trait>
-    struct AddressingPolicyIs
-        : public boost::is_convertible< typename Policy::AddressingPolicy*, Trait* >
-    {};
+#   define SP_DefineConditions(x1,x2,SomePolicy) \
+        template <class Policy, class Trait>                                                    \
+        struct BOOST_PP_CAT(SomePolicy,Is)                                                      \
+            : public boost::is_convertible< typename Policy::SomePolicy*, Trait* >              \
+        {};                                                                                     \
+                                                                                                \
+        template <class Policy, class Trait>                                                    \
+        struct BOOST_PP_CAT(BOOST_PP_CAT(If,SomePolicy),Is)                                     \
+            : public boost::enable_if< BOOST_PP_CAT(SomePolicy,Is)<Policy,Trait> >              \
+        {};                                                                                     \
+                                                                                                \
+        template <class Policy, class Trait>                                                    \
+        struct BOOST_PP_CAT(BOOST_PP_CAT(If,SomePolicy),IsNot)                                  \
+            : public boost::enable_if_c< ! BOOST_PP_CAT(SomePolicy,Is)<Policy,Trait>::value >   \
+        {};
 
-    template <class Policy, class Trait>
-    struct IfAddressingPolicyIs
-        : public boost::enable_if< AddressingPolicyIs<Policy,Trait> >
-    {};
+    BOOST_PP_SEQ_FOR_EACH( SP_DefineConditions, nix, SATCOM_LIB_SocketPolicy_Policies )
 
-    template <class Policy, class Trait>
-    struct IfAddressingPolicyIsNot
-        : public boost::enable_if_c< ! AddressingPolicyIs<Policy,Trait>::value >
-    {};
+#   undef SP_DefineConditions
 
-    template <class Policy, class Trait>
-    struct FramingPolicyIs
-        : public boost::is_convertible< typename Policy::FramingPolicy*, Trait* >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfFramingPolicyIs
-        : public boost::enable_if< FramingPolicyIs<Policy,Trait> >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfFramingPolicyIsNot
-        : public boost::enable_if_c< ! FramingPolicyIs<Policy,Trait>::value >
-    {};
-
-    template <class Policy, class Trait>
-    struct CommunicationPolicyIs
-        : public boost::is_convertible< typename Policy::CommunicationPolicy*, Trait* >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfCommunicationPolicyIs
-        : public boost::enable_if< CommunicationPolicyIs<Policy,Trait> >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfCommunicationPolicyIsNot
-        : public boost::enable_if_c< ! CommunicationPolicyIs<Policy,Trait>::value >
-    {};
-
-    template <class Policy, class Trait>
-    struct ReadPolicyIs
-        : public boost::is_convertible< typename Policy::ReadPolicy*, Trait* >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfReadPolicyIs
-        : public boost::enable_if< ReadPolicyIs<Policy,Trait> >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfReadPolicyIsNot
-        : public boost::enable_if_c< ! ReadPolicyIs<Policy,Trait>::value >
-    {};
-
-    template <class Policy, class Trait>
-    struct WritePolicyIs
-        : public boost::is_convertible< typename Policy::WritePolicy*, Trait* >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfWritePolicyIs
-        : public boost::enable_if< WritePolicyIs<Policy,Trait> >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfWritePolicyIsNot
-        : public boost::enable_if_c< ! WritePolicyIs<Policy,Trait>::value >
-    {};
-
-    template <class Policy, class Trait>
-    struct BufferingPolicyIs
-        : public boost::is_convertible< typename Policy::BufferingPolicy*, Trait* >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfBufferingPolicyIs
-        : public boost::enable_if< BufferingPolicyIs<Policy,Trait> >
-    {};
-
-    template <class Policy, class Trait>
-    struct IfBufferingPolicyIsNot
-        : public boost::enable_if_c< ! BufferingPolicyIs<Policy,Trait>::value >
-    {};
 }}
 
 ///////////////////////////////ih.e////////////////////////////////////////

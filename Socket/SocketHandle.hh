@@ -72,6 +72,8 @@ namespace lib {
         template <class OtherPolicy>
         typename IsCompatible<OtherPolicy>::type const & operator=(SocketHandle<OtherPolicy> other);
 
+        static SocketHandle cast_static(FileHandle handle);
+
     protected:
         explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol);
         SocketHandle(FileHandle other, bool isChecked);
@@ -86,7 +88,8 @@ namespace lib {
 
     };
 
-
+    template <class Target, class Source>
+    Target static_socket_cast(Source handle);
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

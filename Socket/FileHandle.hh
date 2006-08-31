@@ -74,6 +74,8 @@ namespace lib {
 
         int fd() const;
 
+        static FileHandle cast_static(FileHandle handle);
+
     protected:
         explicit FileHandle(std::auto_ptr<FileBody> body);
 

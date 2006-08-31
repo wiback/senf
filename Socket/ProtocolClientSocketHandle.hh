@@ -60,6 +60,8 @@ namespace lib {
 
         Protocol const & protocol();
 
+        static ProtocolClientSocketHandle cast_static(FileHandle handle);
+
     protected:
         ProtocolClientSocketHandle(FileHandle other, bool isChecked);
 

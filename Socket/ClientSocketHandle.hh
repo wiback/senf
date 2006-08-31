@@ -119,6 +119,8 @@ namespace lib {
         void         sndbuf      (unsigned size);
         
         ///@}
+        
+        static ClientSocketHandle cast_static(FileHandle handle);
                  
     protected:
         ClientSocketHandle(FileHandle other, bool isChecked);

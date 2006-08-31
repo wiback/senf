@@ -55,6 +55,20 @@ satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::accept()
         FileHandle(this->ServerSocketHandle<typename SocketProtocol::Policy>::accept()),true);
 }
 
+template <class SocketProtocol>
+prefix_ satcom::lib::ProtocolServerSocketHandle<SocketProtocol>
+satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::cast_static(FileHandle handle)
+{
+    // TODO: Add BOOST_ASSERT
+    return ProtocolServerSocketHandle(handle,true);
+}
+
+template <class SocketProtocol>
+prefix_ satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::
+ProtocolServerSocketHandle(FileHandle other, bool isChecked)
+    : ServerSocketHandle<typename SocketProtocol::Policy>(other,isChecked)
+{}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

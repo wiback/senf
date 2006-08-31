@@ -91,7 +91,10 @@ namespace lib {
         
         ///@}
 
+        static ServerSocketHandle cast_static(FileHandle handle);
+
     protected:
+        ServerSocketHandle(FileHandle other, bool isChecked);
         explicit ServerSocketHandle(std::auto_ptr<SocketProtocol> protocol);
 
     private:

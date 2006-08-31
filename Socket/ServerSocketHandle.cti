@@ -103,6 +103,22 @@ satcom::lib::ServerSocketHandle<Policy>::acceptfrom(Address & addr)
                               Policy::CommunicationPolicy::accept(*this,addr));
 }
 
+///////////////////////////////////////////////////////////////////////////
+
+template <class Policy>
+prefix_ satcom::lib::ServerSocketHandle<Policy>::ServerSocketHandle(FileHandle other,
+                                                                    bool isChecked)
+    : SocketHandle<Policy>(other, isChecked)
+{}
+
+template <class Policy>
+prefix_ satcom::lib::ServerSocketHandle<Policy>
+satcom::lib::ServerSocketHandle<Policy>::cast_static(FileHandle handle)
+{
+    // TODO: Add BOOST_ASSERT
+    return ServerSocketHandle(handle,true);
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
