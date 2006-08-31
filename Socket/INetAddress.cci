@@ -28,17 +28,23 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::INet4Address::INet4Address(std::string address)
+prefix_ satcom::lib::INet4Address::INet4Address()
 {
-    *this = address;
+    clear();
 }
 
-prefix_ satcom::lib::INet4Address::INet4Address(std::string host, unsigned port)
+prefix_ satcom::lib::INet4Address::INet4Address(char const * address)
 {
-    *this = std::make_pair(host,port);
+    assignString(address);
+}
+
+prefix_ satcom::lib::INet4Address::INet4Address(std::string address)
+{
+    assignString(address);
 }
 
 prefix_ bool satcom::lib::INet4Address::operator==(INet4Address const & other)
+    const
 {
     return addr.sin_port == other.addr.sin_port && 
         addr.sin_addr.s_addr == other.addr.sin_addr.s_addr;

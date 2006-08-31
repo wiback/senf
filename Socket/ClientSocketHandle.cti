@@ -38,10 +38,18 @@ ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,
 {}
 
 template <class Policy>
-prefix_  satcom::lib::ClientSocketHandle<Policy>::
-ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol)
-    : SocketHandle<Policy>(protocol)
+prefix_ satcom::lib::ClientSocketHandle<Policy>::ClientSocketHandle(FileHandle other,
+                                                                    bool isChecked)
+    : SocketHandle<Policy>(other, isChecked)
 {}
+
+template <class Policy>
+prefix_  satcom::lib::ClientSocketHandle<Policy>::
+ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol, int fd)
+    : SocketHandle<Policy>(protocol)
+{
+    this->body().fd(fd);
+}
 
 template <class Policy>
 template <class OtherPolicy>

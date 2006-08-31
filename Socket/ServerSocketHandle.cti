@@ -80,7 +80,27 @@ template <class Policy>
 prefix_ typename satcom::lib::ServerSocketHandle<Policy>::ClientSocketHandle
 satcom::lib::ServerSocketHandle<Policy>::accept()
 {
-    return Policy::CommunicationPolicy::accept(*this);
+    Address address;
+    return acceptfrom(address);
+}
+
+template <class Policy>
+prefix_ std::pair<typename satcom::lib::ServerSocketHandle<Policy>::ClientSocketHandle,
+                  typename satcom::lib::ServerSocketHandle<Policy>::Address>
+satcom::lib::ServerSocketHandle<Policy>::acceptfrom()
+{
+
+    Address address;
+    ClientSocketHandle handle = accept(address);
+    return std::make_pair(handle,address);
+}
+
+template <class Policy>
+prefix_ typename satcom::lib::ServerSocketHandle<Policy>::ClientSocketHandle
+satcom::lib::ServerSocketHandle<Policy>::acceptfrom(Address & addr)
+{
+    return ClientSocketHandle(this->protocol().clone(), 
+                              Policy::CommunicationPolicy::accept(*this,addr));
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

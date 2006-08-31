@@ -54,15 +54,21 @@ namespace lib {
           public TCPProtocol
     {
     public:
+        bool reuseraddr() const;
+        void reuseaddr(bool value) const;
+        
+        ///////////////////////////////////////////////////////////////////////////
+        // internal interface
+
         void init_client() const;
-        void init_client(INet4AddressingPolicy::Address const & address) const;
-        void init_client(std::string address) const;
-        void init_client(std::string host, unsigned port) const;
+        void init_client(INet4Address const & address) const;
+        void init_server() const;
+        void init_server(INet4Address const & address) const;
 
-        void connect(INet4AddressingPolicy::Address const & address) const;
-        void connect(std::string address) const;
-        void connect(std::string host, unsigned port) const;
+        void connect(INet4Address const & address) const;
+        void bind(INet4Address const & address) const;
 
+        std::auto_ptr<SocketProtocol> clone() const;
         unsigned available() const;
         bool eof() const;
     };

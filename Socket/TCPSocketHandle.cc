@@ -36,6 +36,24 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+prefix_ bool satcom::lib::TCPv4SocketProtocol::reuseraddr()
+    const
+{
+    int value;
+    socklen_t len (sizeof(value));
+    if (::getsockopt(body().fd(),SOL_SOCKET,SO_REUSEADDR,&value,&len) < 0)
+        throw SystemException(errno);
+    return value;
+}
+
+prefix_ void satcom::lib::TCPv4SocketProtocol::reuseaddr(bool value)
+    const
+{
+    int ivalue (value);
+    if (::setsockopt(body().fd(),SOL_SOCKET,SO_REUSEADDR,&ivalue,sizeof(ivalue)) < 0)
+        throw SystemException(errno);
+}
+
 prefix_ void satcom::lib::TCPv4SocketProtocol::init_client()
     const
 {
@@ -46,45 +64,51 @@ prefix_ void satcom::lib::TCPv4SocketProtocol::init_client()
 }
 
 prefix_ void
-satcom::lib::TCPv4SocketProtocol::init_client(INet4AddressingPolicy::Address const & address)
+satcom::lib::TCPv4SocketProtocol::init_client(INet4Address const & address)
     const
 {
     init_client();
     connect(address);
 }
 
-prefix_ void satcom::lib::TCPv4SocketProtocol::init_client(std::string address)
+prefix_ void satcom::lib::TCPv4SocketProtocol::init_server()
     const
 {
-    init_client();
-    connect(address);
-}
-
-prefix_ void satcom::lib::TCPv4SocketProtocol::init_client(std::string host, unsigned port)
-    const
-{
-    init_client();
-    connect(host,port);
+    int sock = ::socket(PF_INET,SOCK_STREAM,0);
+    if (sock < 0)
+        throw SystemException(errno);
+    body().fd(sock);
 }
 
 prefix_ void
-satcom::lib::TCPv4SocketProtocol::connect(INet4AddressingPolicy::Address const & address)
+satcom::lib::TCPv4SocketProtocol::init_server(INet4Address const & address)
+    const
+{
+    init_server();
+    bind(address);
+    reuseaddr(true);
+    if (::listen(body().fd(),1) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void satcom::lib::TCPv4SocketProtocol::connect(INet4Address const & address)
     const
 {
     if (::connect(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::TCPv4SocketProtocol::connect(std::string address)
+prefix_ void satcom::lib::TCPv4SocketProtocol::bind(INet4Address const & address)
     const
 {
-    connect(INet4AddressingPolicy::Address(address));
+    if (::bind(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
+        throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::TCPv4SocketProtocol::connect(std::string host, unsigned port)
+prefix_ std::auto_ptr<satcom::lib::SocketProtocol> satcom::lib::TCPv4SocketProtocol::clone()
     const
 {
-    connect(INet4AddressingPolicy::Address(host,port));
+    return std::auto_ptr<SocketProtocol>(new TCPv4SocketProtocol());
 }
 
 prefix_ unsigned satcom::lib::TCPv4SocketProtocol::available()

@@ -52,7 +52,10 @@ namespace test {
     {};
 
     struct SomeCommunicationPolicy : public satcom::lib::CommunicationPolicyBase
-    {};
+    {
+        static int accept(FileHandle handle, unsigned & addr)
+            { addr = 3; return -1; }
+    };
 
     struct SomeReadPolicy : public satcom::lib::ReadPolicyBase
     {

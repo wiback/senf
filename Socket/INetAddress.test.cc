@@ -43,15 +43,15 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
         INet4Address addr;
     
         addr = "127.0.0.1:12345";
-        addr = std::make_pair("127.0.0.1",12345);
     }
     
     {
         INet4Address addr1("127.0.0.1:12345");
-        INet4Address addr2("127.0.0.1",12345);
+        INet4Address addr2(std::string("127.0.0.1:12345"));
+        INet4Address addr3("127.0.0.1",12345);
     }
 
-    BOOST_CHECK( INet4Address("127.0.0.1:12345") == INet4Address("127.0.0.1",12345) );
+    BOOST_CHECK_EQUAL( INet4Address("127.0.0.1:12345"), INet4Address("127.0.0.1",12345) );
 
     BOOST_CHECK_THROW( INet4Address("127.0.0.1"), InvalidINetAddressException );
     BOOST_CHECK_THROW( INet4Address("foo@bar:12345"), InvalidINetAddressException );

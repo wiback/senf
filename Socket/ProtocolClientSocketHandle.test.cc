@@ -47,10 +47,14 @@ BOOST_AUTO_UNIT_TEST(protocolClientSocketHandle)
 {
     typedef satcom::lib::ProtocolClientSocketHandle<MyProtocol> MySocketHandle;
 
-    MySocketHandle h;
-    h.protocol();
+    {
+        MySocketHandle h;
+        h.protocol();
+    }
 
-    MySocketHandle hh("foo.bar.c",1234);
+    {
+        MySocketHandle hh("foo.bar.c",1234);
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

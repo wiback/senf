@@ -20,63 +20,35 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+// Definition of non-inline non-template functions
 
-//#include "ServerSocketHandle.test.hh"
-//#include "ServerSocketHandle.test.ih"
+#include "CommunicationPolicy.hh"
+//#include "CommunicationPolicy.ih"
 
 // Custom includes
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <errno.h>
+#include "Utils/Exception.hh"
 #include "ServerSocketHandle.hh"
-#include "ClientSocketHandle.hh"
-#include "SocketProtocol.test.hh"
 
-#include <boost/test/auto_unit_test.hpp>
-#include <boost/test/test_tools.hpp>
-
+//#include "CommunicationPolicy.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
-    
-    namespace sl = satcom::lib;
-    
-    class MySocketHandle
-        : public sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>
-    {
-    public:
-        MySocketHandle()
-            : sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>(
-                std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()))
-            {}
-    };
-}
-
-BOOST_AUTO_UNIT_TEST(serverSocketHandle)
+prefix_ int satcom::lib::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
+                                                                 struct sockaddr * addr,
+                                                                 unsigned len)
 {
-    typedef sl::MakeSocketPolicy<
-        sl::test::SomeFramingPolicy,
-        sl::test::SomeReadPolicy,
-        sl::test::SomeWritePolicy
-        >::policy OtherSocketPolicy;
-    typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
-    
-    MySocketHandle myh;
-    OtherSocketHandle ssh (myh);
-    ssh = myh;
-
-    BOOST_CHECK_NO_THROW( myh.bind(0) );
-    BOOST_CHECK_EQUAL( myh.local(), 2u );
-
-    {
-        MySocketHandle::ClientSocketHandle client = myh.accept();
-        BOOST_CHECK_EQUAL( client.fd(), -1 );
-    }
-    
+    int rv = ::accept(handle.fd(),addr,&len);
+    if (rv < 0)
+        throw SystemException(errno);
+    return rv;
 }
-
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "CommunicationPolicy.mpp"
 
 
 // Local Variables:

@@ -33,6 +33,7 @@ namespace satcom {
 namespace lib {
 
     class SocketBody;
+    class FileHandle;
 
     /** \brief
      */
@@ -62,6 +63,7 @@ namespace lib {
         ///////////////////////////////////////////////////////////////////////////
         // Virtual interface
 
+        virtual std::auto_ptr<SocketProtocol> clone() const = 0;
         virtual unsigned available() const = 0;
         virtual bool eof() const = 0;
 

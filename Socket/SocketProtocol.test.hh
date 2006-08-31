@@ -26,6 +26,7 @@
 // Custom includes
 #include "SocketProtocol.hh"
 #include "SocketPolicy.test.hh"
+#include "ProtocolClientSocketHandle.hh"
 
 //#include "SocketProtocol.test.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -43,14 +44,12 @@ namespace test {
         void init_client() const {}
         void init_server() const {}
 
-        unsigned available() const { 
-            return Policy::ReadPolicy::TEST_SIZE;
-        }
-
-        bool eof() const {
-            return false;
-        }
-
+        std::auto_ptr<SocketProtocol> clone() const 
+            { return std::auto_ptr<SocketProtocol>(new SomeProtocol()); }
+        unsigned available() const 
+            { return Policy::ReadPolicy::TEST_SIZE; }
+        bool eof() const 
+            { return false; }
     };
 
 }}}

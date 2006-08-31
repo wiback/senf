@@ -35,13 +35,30 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ satcom::lib::INet4Address::INet4Address()
+prefix_ satcom::lib::INet4Address::INet4Address(std::string host, unsigned port)
 {
     clear();
+    // TODO: gethostbyname einbauen
+    if (::inet_aton(host.c_str(), &addr.sin_addr) == 0)
+        throw InvalidINetAddressException();
+    addr.sin_port = htons(port);
 }
 
-prefix_ satcom::lib::INet4Address const &
-satcom::lib::INet4Address::operator=(std::string const & address)
+prefix_ std::string satcom::lib::INet4Address::str()
+    const
+{
+    std::stringstream s;
+    s << host() << ':' << port();
+    return s.str();
+}
+
+prefix_ void satcom::lib::INet4Address::clear()
+{
+    ::memset(&addr,0,sizeof(addr));
+    addr.sin_family = AF_INET;
+}
+
+prefix_ void satcom::lib::INet4Address::assignString(std::string address)
 {
     clear();
     // TODO: gethostbyname einbauen
@@ -57,32 +74,6 @@ satcom::lib::INet4Address::operator=(std::string const & address)
     catch (boost::bad_lexical_cast const & ex) {
         throw InvalidINetAddressException();
     }
-    return *this;
-}
-
-prefix_ satcom::lib::INet4Address const &
-satcom::lib::INet4Address::operator=(std::pair<std::string, unsigned> const & address)
-{
-    clear();
-    // TODO: gethostbyname einbauen
-    if (::inet_aton(address.first.c_str(), &addr.sin_addr) == 0)
-        throw InvalidINetAddressException();
-    addr.sin_port = htons(address.second);
-    return *this;
-}
-
-prefix_ std::string satcom::lib::INet4Address::str()
-    const
-{
-    std::stringstream s;
-    s << host() << ':' << port();
-    return s.str();
-}
-
-prefix_ void satcom::lib::INet4Address::clear()
-{
-    ::memset(&addr,0,sizeof(addr));
-    addr.sin_family = AF_INET;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

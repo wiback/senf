@@ -24,15 +24,29 @@
 #define HH_CommunicationPolicy_ 1
 
 // Custom includes
+#include "SocketPolicy.hh"
+#include "AddressingPolicy.hh"
+#include "FileHandle.hh"
 
 //#include "CommunicationPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
+struct sockaddr;
+
 namespace satcom {
 namespace lib {
+    
+    template <class Policy> class ServerSocketHandle;
 
     struct ConnectedCommunicationPolicy : public CommunicationPolicyBase
-    {};
+    {
+        template <class Policy>
+        static int accept(ServerSocketHandle<Policy> handle, 
+                          typename ServerSocketHandle<Policy>::Address & address,
+                          typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type * = 0);
+    private:
+        static int do_accept(FileHandle handle, struct sockaddr * addr, unsigned len);
+    };
 
     struct UnconnectedCommunicationPolicy : public CommunicationPolicyBase
     {};
@@ -43,7 +57,7 @@ namespace lib {
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "CommunicationPolicy.cci"
 //#include "CommunicationPolicy.ct"
-//#include "CommunicationPolicy.cti"
+#include "CommunicationPolicy.cti"
 #endif
 
 

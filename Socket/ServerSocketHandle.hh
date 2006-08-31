@@ -44,12 +44,6 @@ namespace lib {
     class ServerSocketHandle
         : public SocketHandle<Policy>
     {
-        // FIXME: Are theese necessary ... hmm ...
-        BOOST_STATIC_ASSERT((boost::is_convertible< typename Policy::CommunicationPolicy *,
-                                                    ConnectedCommunicationPolicy *>::value ));
-        BOOST_STATIC_ASSERT(!(boost::is_convertible< typename Policy::AddressingPolicy *,
-                                                     NoAddressingPolicy *>::value ));
-
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
@@ -88,8 +82,12 @@ namespace lib {
         Address      local        ();
         void         local        (Address & addr);
         
-        ClientSocketHandle
+        ClientSocketHandle 
                      accept       ();
+        std::pair<ClientSocketHandle, Address>
+                     acceptfrom   ();
+        ClientSocketHandle
+                     acceptfrom   (Address & addr);
         
         ///@}
 
@@ -97,7 +95,7 @@ namespace lib {
         explicit ServerSocketHandle(std::auto_ptr<SocketProtocol> protocol);
 
     private:
-
+        
     };
 
 }}

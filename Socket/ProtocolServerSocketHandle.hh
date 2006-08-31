@@ -26,11 +26,13 @@
 // Custom includes
 #include "ServerSocketHandle.hh"
 
-//#include "ProtocolServerSocketHandle.mpp"
+#include "ProtocolServerSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace satcom {
 namespace lib {
+    
+    template <class Protocol> class ProtocolClientSocketHandle;
 
     /** \brief
       */
@@ -48,14 +50,17 @@ namespace lib {
         ///\name Structors and default members
         ///@{
 
-        // TODO: Non-default constructors (via argument forwarding
-        //       to the SocketProtocol::init(...) methods
         ProtocolServerSocketHandle();
+
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolServerSocketHandle.mpp", 1))
+#       include BOOST_PP_ITERATE()
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
         Protocol const & protocol();
+
+        ProtocolClientSocketHandle<SocketProtocol> accept();
 
     protected:
 

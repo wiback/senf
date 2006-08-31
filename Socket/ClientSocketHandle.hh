@@ -121,11 +121,14 @@ namespace lib {
         ///@}
                  
     protected:
-        explicit ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol);
+        ClientSocketHandle(FileHandle other, bool isChecked);
+        explicit ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol,
+                                    int fd = -1);
 
     private:
         unsigned available();
 
+        friend class satcom::lib::ServerSocketHandle<Policy>;
     };
 
 }}

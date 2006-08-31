@@ -27,7 +27,7 @@
 
 // Custom includes
 #include "ProtocolServerSocketHandle.hh"
-#include "ServerSocketHandle.test.hh"
+#include "SocketProtocol.test.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -35,13 +35,29 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace {
+
+    struct MyProtocol : public satcom::lib::test::SomeProtocol
+    {
+        using satcom::lib::test::SomeProtocol::init_server;
+        void init_server(char const *,unsigned) const {}
+    };
+}
+
 BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
 {
-    typedef satcom::lib::ProtocolServerSocketHandle<
-        satcom::lib::test::SomeConnectedProtocol> MySocketHandle;
+    typedef satcom::lib::ProtocolServerSocketHandle<MyProtocol> MySocketHandle;
 
-    MySocketHandle h;
-    h.protocol();
+    {
+        MySocketHandle h;
+   
+        MySocketHandle::ClientSocketHandle client = h.accept();
+        BOOST_CHECK_EQUAL( client.fd(), -1 );
+    }
+
+    {
+        MySocketHandle h("foo.bar.c",1234);
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

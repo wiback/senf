@@ -54,6 +54,38 @@ namespace {
         _exit(1);
     }
 
+    int server_pid = 0;
+
+    void start(void (*fn)())
+    {
+        server_pid = ::fork();
+        if (server_pid < 0) BOOST_FAIL("fork()");
+        if (server_pid == 0) {
+            (*fn)();
+            _exit(0);
+        }
+    }
+
+    void wait()
+    {
+        int status;
+        if (waitpid(server_pid,&status,0)<0)
+            BOOST_FAIL("waitpid()");
+        BOOST_CHECK_EQUAL( status , 0 );
+    }
+
+    void stop()
+    {
+        kill(server_pid,9);
+        wait();
+    }
+
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+namespace {
+
     void server()
     {
         int serv = socket(PF_INET,SOCK_STREAM,0);
@@ -70,8 +102,6 @@ namespace {
         int sock = accept(serv,0,0);
         if (sock < 0) fail("accept()");
 
-        ///////////////////////////////////////////////////////////////////////////
-
         char buffer[1024];
         while (1) {
             int n = read(sock,buffer,1024);
@@ -80,37 +110,9 @@ namespace {
             write(sock,buffer,n);
         }
 
-        ///////////////////////////////////////////////////////////////////////////
-
         if (shutdown(sock, SHUT_RDWR) < 0) fail("shutdown()");
         if (close(sock) < 0) fail("close()");
         if (close(serv) < 0) fail("close()");
-    }
-
-    int server_pid = 0;
-
-    void start_server()
-    {
-        server_pid = ::fork();
-        if (server_pid < 0) BOOST_FAIL("fork()");
-        if (server_pid == 0) {
-            server();
-            _exit(0);
-        }
-    }
-
-    void wait_server()
-    {
-        int status;
-        if (waitpid(server_pid,&status,0)<0)
-            BOOST_FAIL("waitpid()");
-        BOOST_CHECK_EQUAL( status , 0 );
-    }
-
-    void stop_server()
-    {
-        kill(server_pid,9);
-        wait_server();
     }
 
 }
@@ -122,16 +124,15 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
 
         BOOST_CHECK_THROW( sock.connect(satcom::lib::INet4Address("127.0.0.1:12345")), satcom::lib::SystemException );
         BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1:12345"), satcom::lib::SystemException );
-        BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1",12345), satcom::lib::SystemException );
     }
 
     {
-        start_server();
+        start(server);
         satcom::lib::TCPv4ClientSocketHandle sock;
-        BOOST_CHECK_NO_THROW( sock.bind(satcom::lib::INet4Address("127.0.0.1:23456")) );
-        BOOST_CHECK_NO_THROW( sock.connect(satcom::lib::INet4Address("127.0.0.1:12345")) );
-        BOOST_CHECK( sock.peer() == satcom::lib::INet4Address("127.0.0.1:12345") );
-        BOOST_CHECK( sock.local() == satcom::lib::INet4Address("127.0.0.1:23456") );
+        BOOST_CHECK_NO_THROW( sock.bind("127.0.0.1:23456") );
+        BOOST_CHECK_NO_THROW( sock.connect("127.0.0.1:12345") );
+        BOOST_CHECK( sock.peer() == "127.0.0.1:12345" );
+        BOOST_CHECK( sock.local() == "127.0.0.1:23456" );
         BOOST_CHECK( sock.blocking() );
         BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
         BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
@@ -142,12 +143,59 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK( !sock.eof() );
         sock.write("QUIT");
         sleep(1);
-        stop_server();
+        stop();
+        sleep(1);
         BOOST_CHECK_EQUAL( sock.read(), "" );
         BOOST_CHECK( sock.eof() );
         BOOST_CHECK( !sock );
     }
+}
 
+///////////////////////////////////////////////////////////////////////////
+
+namespace {
+
+    void client()
+    {
+        int sock = socket(PF_INET,SOCK_STREAM,0);
+        if (sock<0) fail("socket()");
+        struct sockaddr_in sin;
+        sin.sin_family = AF_INET;
+        sin.sin_port = htons(12346);
+        sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+        if (connect(sock,(struct sockaddr *)&sin,sizeof(sin)) < 0)
+            fail("connect()");
+        
+        char buffer[1024];
+        while (1) {
+            int n = read(sock,buffer,1024);
+            if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
+                break;
+            write(sock,buffer,n);
+        }
+
+        if (shutdown(sock, SHUT_RDWR) < 0) fail("shutdown()");
+        if (close(sock) < 0) fail("close()");
+    }
+
+}
+
+BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
+{
+    {
+        BOOST_CHECKPOINT("Opening server socket");
+        satcom::lib::TCPv4ServerSocketHandle server ("127.0.0.1:12346");
+        BOOST_CHECKPOINT("Starting client");
+        start(client);
+
+        BOOST_CHECKPOINT("Accepting connection");
+        satcom::lib::TCPv4ClientSocketHandle client = server.accept();
+        BOOST_CHECK_NO_THROW(client.write("QUIT"));
+
+        BOOST_CHECKPOINT("Stopping client");
+        sleep(1);
+        stop();
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

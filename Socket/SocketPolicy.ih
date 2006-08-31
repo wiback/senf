@@ -28,6 +28,7 @@
 #include <boost/mpl/fold.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/and.hpp>
+#include <boost/utility.hpp> // for enable_if
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -200,33 +201,93 @@ namespace lib {
     {};
 
     template <class Policy, class Trait>
-    struct IfAddressingPolicyIs
+    struct AddressingPolicyIs
         : public boost::is_convertible< typename Policy::AddressingPolicy*, Trait* >
     {};
 
     template <class Policy, class Trait>
-    struct IfFramingPolicyIs
+    struct IfAddressingPolicyIs
+        : public boost::enable_if< AddressingPolicyIs<Policy,Trait> >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfAddressingPolicyIsNot
+        : public boost::enable_if_c< ! AddressingPolicyIs<Policy,Trait>::value >
+    {};
+
+    template <class Policy, class Trait>
+    struct FramingPolicyIs
         : public boost::is_convertible< typename Policy::FramingPolicy*, Trait* >
     {};
 
     template <class Policy, class Trait>
-    struct IfCommunicationPolicyIs
+    struct IfFramingPolicyIs
+        : public boost::enable_if< FramingPolicyIs<Policy,Trait> >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfFramingPolicyIsNot
+        : public boost::enable_if_c< ! FramingPolicyIs<Policy,Trait>::value >
+    {};
+
+    template <class Policy, class Trait>
+    struct CommunicationPolicyIs
         : public boost::is_convertible< typename Policy::CommunicationPolicy*, Trait* >
     {};
 
     template <class Policy, class Trait>
-    struct IfReadPolicyIs
+    struct IfCommunicationPolicyIs
+        : public boost::enable_if< CommunicationPolicyIs<Policy,Trait> >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfCommunicationPolicyIsNot
+        : public boost::enable_if_c< ! CommunicationPolicyIs<Policy,Trait>::value >
+    {};
+
+    template <class Policy, class Trait>
+    struct ReadPolicyIs
         : public boost::is_convertible< typename Policy::ReadPolicy*, Trait* >
     {};
 
     template <class Policy, class Trait>
-    struct IfWritePolicyIs
+    struct IfReadPolicyIs
+        : public boost::enable_if< ReadPolicyIs<Policy,Trait> >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfReadPolicyIsNot
+        : public boost::enable_if_c< ! ReadPolicyIs<Policy,Trait>::value >
+    {};
+
+    template <class Policy, class Trait>
+    struct WritePolicyIs
         : public boost::is_convertible< typename Policy::WritePolicy*, Trait* >
     {};
 
     template <class Policy, class Trait>
-    struct IfBufferingPolicyIs
+    struct IfWritePolicyIs
+        : public boost::enable_if< WritePolicyIs<Policy,Trait> >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfWritePolicyIsNot
+        : public boost::enable_if_c< ! WritePolicyIs<Policy,Trait>::value >
+    {};
+
+    template <class Policy, class Trait>
+    struct BufferingPolicyIs
         : public boost::is_convertible< typename Policy::BufferingPolicy*, Trait* >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfBufferingPolicyIs
+        : public boost::enable_if< BufferingPolicyIs<Policy,Trait> >
+    {};
+
+    template <class Policy, class Trait>
+    struct IfBufferingPolicyIsNot
+        : public boost::enable_if_c< ! BufferingPolicyIs<Policy,Trait>::value >
     {};
 }}
 

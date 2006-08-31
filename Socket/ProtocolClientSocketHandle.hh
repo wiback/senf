@@ -32,6 +32,8 @@
 namespace satcom {
 namespace lib {
 
+    template <class Protocol> class ProtocolServerSocketHandle;
+
     /** \brief
       */
     template <class SocketProtocol>
@@ -49,10 +51,8 @@ namespace lib {
         ///@{
 
         ProtocolClientSocketHandle();
-        template <class A1>
-        ProtocolClientSocketHandle(A1 const & a1);
 
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, "Socket/ProtocolClientSocketHandle.mpp", 1))
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolClientSocketHandle.mpp", 1))
 #       include BOOST_PP_ITERATE()
         
         ///@}
@@ -61,9 +61,10 @@ namespace lib {
         Protocol const & protocol();
 
     protected:
+        ProtocolClientSocketHandle(FileHandle other, bool isChecked);
 
     private:
-
+        friend class ProtocolServerSocketHandle<Protocol>;
     };
 
 }}

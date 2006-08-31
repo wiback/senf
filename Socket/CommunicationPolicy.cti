@@ -22,37 +22,20 @@
 
 // Definition of inline template functions
 
-//#include "ProtocolServerSocketHandle.ih"
+//#include "CommunicationPolicy.ih"
 
 // Custom includes
-#include "ProtocolClientSocketHandle.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
-template <class SocketProtocol>
-prefix_ satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::ProtocolServerSocketHandle()
-    : ServerSocketHandle<typename SocketProtocol::Policy>(
-        std::auto_ptr<satcom::lib::SocketProtocol>(new SocketProtocol()))
-{}
-
-#define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolServerSocketHandle.mpp", 2))
-#include BOOST_PP_ITERATE()
-
-template <class SocketProtocol>
-prefix_ SocketProtocol const &
-satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::protocol()
+template <class Policy>
+prefix_ int satcom::lib::ConnectedCommunicationPolicy::
+accept(ServerSocketHandle<Policy> handle,
+       typename ServerSocketHandle<Policy>::Address & address,
+       typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type *)
 {
-    BOOST_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
-    return static_cast<SocketProtocol const &>(this->body().protocol());
-}
-
-template <class SocketProtocol>
-prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>
-satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::accept()
-{
-    return ProtocolClientSocketHandle<SocketProtocol>(
-        FileHandle(this->ServerSocketHandle<typename SocketProtocol::Policy>::accept()),true);
+    return do_accept(handle,address.sockaddr_p(),address.sockaddr_len());
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

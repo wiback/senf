@@ -38,13 +38,11 @@ namespace lib {
     {
     public:
         INet4Address();
+        INet4Address(char const * address);
         INet4Address(std::string address);
         INet4Address(std::string host, unsigned port);
 
-        INet4Address const & operator=(std::string const & address);
-        INet4Address const & operator=(std::pair<std::string, unsigned> const & address);
-
-        bool operator==(INet4Address const & other);
+        bool operator==(INet4Address const & other) const;
 
         std::string str() const;
         std::string host() const;
@@ -59,6 +57,8 @@ namespace lib {
         unsigned sockaddr_len() const;
 
     private:
+        void assignString(std::string addr);
+        
         struct ::sockaddr_in addr;
     };
 

@@ -37,18 +37,14 @@ prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientS
     this->protocol().init_client();
 }
 
-template <class SocketProtocol>
-template <class A1>
-prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
-ProtocolClientSocketHandle(A1 const & a1)
-    : ClientSocketHandle<typename SocketProtocol::Policy>(
-        std::auto_ptr<satcom::lib::SocketProtocol>(new SocketProtocol()))
-{
-    this->protocol().init_client(a1);
-}
-
-#define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, "Socket/ProtocolClientSocketHandle.mpp", 2))
+#define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolClientSocketHandle.mpp", 2))
 #include BOOST_PP_ITERATE()
+
+template <class SocketProtocol>
+prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
+ProtocolClientSocketHandle(FileHandle other, bool isChecked)
+    : ClientSocketHandle<typename Protocol::Policy>(other, true)
+{}
 
 template <class SocketProtocol>
 prefix_ SocketProtocol const &

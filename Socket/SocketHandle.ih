@@ -47,7 +47,8 @@ namespace lib {
         ///\name Structors and default members
         ///@{
 
-        SocketBody(std::auto_ptr<SocketProtocol> protocol);
+        explicit SocketBody(std::auto_ptr<SocketProtocol> protocol);
+        SocketBody(std::auto_ptr<SocketProtocol> protocol, int fd);
 
         // no copy
         // no conversion constructors

@@ -102,27 +102,51 @@ namespace lib {
     // the rest is implementation detail ...
 
     template <class Policy, class Trait>
+    struct AddressingPolicyIs;
+    template <class Policy, class Trait>
     struct IfAddressingPolicyIs;
+    template <class Policy, class Trait>
+    struct IfAddressingPolicyIsNot;
     // the rest is implementation detail ...
 
+    template <class Policy, class Trait>
+    struct FramingPolicyIs;
     template <class Policy, class Trait>
     struct IfFramingPolicyIs;
+    template <class Policy, class Trait>
+    struct IfFramingPolicyIsNot;
     // the rest is implementation detail ...
 
+    template <class Policy, class Trait>
+    struct CommunicationPolicyIs;
     template <class Policy, class Trait>
     struct IfCommunicationPolicyIs;
+    template <class Policy, class Trait>
+    struct IfCommunicationPolicyIsNot;
     // the rest is implementation detail ...
 
+    template <class Policy, class Trait>
+    struct ReadPolicyIs;
     template <class Policy, class Trait>
     struct IfReadPolicyIs;
+    template <class Policy, class Trait>
+    struct IfReadPolicyIsNot;
     // the rest is implementation detail ...
 
+    template <class Policy, class Trait>
+    struct WritePolicyIs;
     template <class Policy, class Trait>
     struct IfWritePolicyIs;
+    template <class Policy, class Trait>
+    struct IfWritePolicyIsNot;
     // the rest is implementation detail ...
 
     template <class Policy, class Trait>
+    struct BufferingPolicyIs;
+    template <class Policy, class Trait>
     struct IfBufferingPolicyIs;
+    template <class Policy, class Trait>
+    struct IfBufferingPolicyIsNot;
     // the rest is implementation detail ...
 }}
 

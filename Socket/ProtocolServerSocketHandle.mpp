@@ -21,21 +21,21 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #if !BOOST_PP_IS_ITERATING
-#ifndef MPP_ProtocolClientSocketHandle_
+#ifndef MPP_PSSH__ProtocolServerSocketHandle_
 
 // Custom includes
 #include <boost/preprocessor/iteration/iterate.hpp>
 #include <boost/preprocessor/enum.hpp>
 #include <boost/preprocessor/cat.hpp>
 
-//////////////////////////////mpp.p////////////////////////////////////////
+//////////////////////////////mpp_PSSH_.p////////////////////////////////////////
 // Local Macros
 
-#define mpp_PCSH_Arg(z,n,data) BOOST_PP_CAT(A,n) const & BOOST_PP_CAT(a,n)
+#define mpp_PSSH_Arg(z,n,data) BOOST_PP_CAT(A,n) const & BOOST_PP_CAT(a,n)
 
-#define mpp_PCSH_TemplateParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A )
-#define mpp_PCSH_MethodParameters() BOOST_PP_ENUM(BOOST_PP_ITERATION(), mpp_PCSH_Arg, )
-#define mpp_PCSH_CallParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), a )
+#define mpp_PSSH_TemplateParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A )
+#define mpp_PSSH_MethodParameters() BOOST_PP_ENUM(BOOST_PP_ITERATION(), mpp_PSSH_Arg, )
+#define mpp_PSSH_CallParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), a )
 
 //////
 #endif
@@ -45,44 +45,44 @@
 //////
 #if BOOST_PP_ITERATION_FLAGS()==1
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
-// ProtocolClientSocketHandle (constructor) declaration
+// satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::
+// ProtocolServerSocketHandle (constructor) declaration
 
-template < mpp_PCSH_TemplateParameters() >
-ProtocolClientSocketHandle( mpp_PCSH_MethodParameters() );
+template < mpp_PSSH_TemplateParameters() >
+ProtocolServerSocketHandle( mpp_PSSH_MethodParameters() );
 
 //////
 #elif BOOST_PP_ITERATION_FLAGS()==2
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
-// ProtocolClientSocketHandle (constructor) implementation
+// satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::
+// ProtocolServerSocketHandle (constructor) implementation
 
 template <class SocketProtocol>
-template < mpp_PCSH_TemplateParameters() >
-prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
-ProtocolClientSocketHandle( mpp_PCSH_MethodParameters() )
-    : ClientSocketHandle<typename SocketProtocol::Policy>(
+template < mpp_PSSH_TemplateParameters() >
+prefix_ satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::
+ProtocolServerSocketHandle( mpp_PSSH_MethodParameters() )
+    : ServerSocketHandle<typename SocketProtocol::Policy>(
         std::auto_ptr<satcom::lib::SocketProtocol>(new SocketProtocol()))
 {
-    this->protocol().init_client( mpp_PCSH_CallParameters() );
+    this->protocol().init_server( mpp_PSSH_CallParameters() );
 }
 
 //////
 #endif
 #endif
 #if !BOOST_PP_IS_ITERATING
-#ifdef MPP_PCSH__ProtocolClientSocketHandle_
+#ifdef MPP_PSSH__ProtocolServerSocketHandle_
 ///////////////////////////////////////////////////////////////////////////
 // Undefine local Macros
 
-#undef mpp_PCSH_Arg
-#undef mpp_PCSH_TemplateParameters
-#undef mpp_PCSH_MethodParameters
-#undef mpp_PCSH_CallParameters
+#undef mpp_PSSH_Arg
+#undef mpp_PSSH_TemplateParameters
+#undef mpp_PSSH_MethodParameters
+#undef mpp_PSSH_CallParameters
 
-//////////////////////////////mpp_PCSH_.e////////////////////////////////////////
+//////////////////////////////mpp_PSSH_.e////////////////////////////////////////
 #else
-#define MPP_PCSH__ProtocolClientSocketHandle_ 1
+#define MPP_PSSH__ProtocolServerSocketHandle_ 1
 #endif
 #endif
 

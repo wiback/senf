@@ -33,6 +33,14 @@
 prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol)
     : protocol_(protocol)
 {
+    BOOST_ASSERT( ! protocol_->body_ );
+    protocol_->body_ = this;
+}
+
+prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol, int fd)
+    : FileBody(fd), protocol_(protocol)
+{
+    BOOST_ASSERT( ! protocol_->body_ );
     protocol_->body_ = this;
 }
 
