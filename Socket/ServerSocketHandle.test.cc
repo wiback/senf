@@ -61,8 +61,11 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
     typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
     
     MySocketHandle myh;
-    OtherSocketHandle ssh (myh);
-    ssh = myh;
+    OtherSocketHandle osh (myh);
+    osh = myh;
+
+    typedef sl::ServerSocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
+    SomeSocketHandle ssh = sl::static_socket_cast<SomeSocketHandle>(osh);
 
     BOOST_CHECK_NO_THROW( myh.bind(0) );
     BOOST_CHECK_EQUAL( myh.local(), 2u );

@@ -49,7 +49,18 @@ BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
     typedef satcom::lib::ProtocolServerSocketHandle<MyProtocol> MySocketHandle;
 
     {
+        typedef satcom::lib::MakeSocketPolicy<
+            satcom::lib::test::SomeFramingPolicy,
+            satcom::lib::test::SomeReadPolicy,
+            satcom::lib::test::SomeWritePolicy
+            >::policy OtherSocketPolicy;
+        typedef satcom::lib::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
+
         MySocketHandle h;
+        h.protocol();
+
+        OtherSocketHandle osh (h);
+        h = satcom::lib::static_socket_cast<MySocketHandle>(osh);
    
         MySocketHandle::ClientSocketHandle client = h.accept();
         BOOST_CHECK_EQUAL( client.fd(), -1 );

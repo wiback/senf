@@ -38,6 +38,22 @@ namespace lib {
 	(ReadPolicy)                            \
 	(WritePolicy)                           \
 	(BufferingPolicy)
+    
+    // The implementation file will for each Policy declared above
+    // define the following (SomePolicy is one of the above):
+    //
+    // struct SomePolicyBase;
+    // typedef UndefinedSomePolicy;
+    // template SomePolicyIs< SocketPolicy, Axis >
+    // template IfSomePolicyIs< SocketPolicy, Axis >
+    // template IfSomePolicyIsNot< SocketPolicy, Axis >
+    //
+    // Additionally the following are defined:
+    //
+    // class SocketPolicyBase
+    // template SocketPolicy< ..policies.. >
+    // template MakeSocketPolicy< ..args.. >
+    // template SocketPolicyIsBaseOf< Base, Derived >
 
 }}
 

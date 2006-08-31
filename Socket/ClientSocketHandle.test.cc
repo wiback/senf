@@ -64,8 +64,11 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
             >::policy OtherSocketPolicy;
         typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
     
-        OtherSocketHandle ssh (myh);
-        ssh = myh;
+        OtherSocketHandle osh (myh);
+        osh = myh;
+        typedef sl::ClientSocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
+        SomeSocketHandle ssh = 
+            sl::static_socket_cast<SomeSocketHandle>(osh);
     }
 
     // reading and writing
