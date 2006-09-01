@@ -37,7 +37,7 @@ def FinalizeBoost(env):
 
     env.Append(LIBPATH = [ '$BOOST_LIBDIR' ],
                CPPPATH = [ '$BOOST_INCLUDES' ])
-    
+
 def UseSTLPort():
     global opts
     InitOpts()
@@ -80,13 +80,13 @@ def MakeEnvironment():
         finalizer(env)
 
     env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long',
-                                 '-pedantic', '-ansi' ],
+                            '-pedantic', '-ansi' ],
                     LOCALLIBDIR = [ '#' ],
                     LIBPATH = [ '$LOCALLIBDIR' ])
 
     if env['final']:
-        env.Append(CXXFLAGS = [ '-O3', '-g' ],
-                        LINKFLAGS = [ '-g' ])
+        env.Append(CXXFLAGS = [ '-O3' ],
+                   CPPDEFINES = [ 'NDEBUG' ])
     else:
         env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
                         LINKFLAGS = [ '-g' ])
