@@ -24,6 +24,7 @@
 #define HH_TCPProtocol_ 1
 
 // Custom includes
+#include "SocketProtocol.hh"
 
 //#include "TCPProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -32,7 +33,15 @@ namespace satcom {
 namespace lib {
 
     class TCPProtocol
-    {};
+        : public virtual SocketProtocolHelper
+    {
+    public:
+        bool nodelay() const;
+        void nodelay(bool value) const;
+
+        unsigned siocinq() const;
+        unsigned siocoutq() const;
+    };
 
 }}
 

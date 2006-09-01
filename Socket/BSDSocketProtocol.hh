@@ -20,32 +20,38 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline non-template functions
-
-//#include "SocketProtocol.ih"
+#ifndef HH_BSDSocketProtocol_
+#define HH_BSDSocketProtocol_ 1
 
 // Custom includes
-#include <boost/assert.hpp>
+#include "SocketProtocol.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "BSDSocketProtocol.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-prefix_ satcom::lib::SocketProtocolHelper::SocketProtocolHelper()
-    : body_()
-{}
+namespace satcom {
+namespace lib {
 
-prefix_  satcom::lib::SocketProtocolHelper::~SocketProtocolHelper()
-{}
+    class BSDSocketProtocol
+        : public virtual SocketProtocolHelper
+    {
+    public:
+        bool reuseaddr() const;
+        void reuseaddr(bool value) const;
 
-prefix_ satcom::lib::SocketBody & satcom::lib::SocketProtocolHelper::body()
-    const
-{
-    BOOST_ASSERT( body_ );
-    return *body_;
-}
+        std::pair<bool,unsigned> linger();
+        void linger(bool enable, unsigned timeout);
+    };
 
-///////////////////////////////cci.e///////////////////////////////////////
-#undef prefix_
+}}
+
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "BSDSocketProtocol.cci"
+//#include "BSDSocketProtocol.ct"
+//#include "BSDSocketProtocol.cti"
+//#include "BSDSocketProtocol.mpp"
+#endif
 
 
 // Local Variables:

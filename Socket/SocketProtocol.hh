@@ -36,10 +36,23 @@ namespace lib {
     class FileHandle;
     class SocketPolicyBase;
 
-    /** \brief
-     */
-    class SocketProtocol
+    class SocketProtocolHelper
         : boost::noncopyable
+    {
+    public:
+        SocketProtocolHelper();
+        virtual ~SocketProtocolHelper() = 0;
+
+        SocketBody & body() const;
+
+    private:
+        SocketBody * body_;
+
+        friend class SocketBody;
+    };
+
+    class SocketProtocol
+        : public virtual SocketProtocolHelper
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -49,17 +62,13 @@ namespace lib {
         ///\name Structors and default members
         ///@{
 
-        SocketProtocol();
-        virtual ~SocketProtocol() = 0;
-
-        // no default constructor
+        // default default constructor
         // no copy
         // no conversion constructors
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        SocketBody & body() const;
         virtual SocketPolicyBase const & policy() const = 0;
         
         ///////////////////////////////////////////////////////////////////////////
@@ -74,9 +83,6 @@ namespace lib {
     private:
         // That SocketBody instance owns us and controls our lifetime
         // Do we need this ??
-        SocketBody * body_;
-
-        friend class SocketBody;
     };
 
     /** \brief

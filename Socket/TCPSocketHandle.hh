@@ -26,6 +26,7 @@
 // Custom includes
 #include "INetProtocol.hh"
 #include "TCPProtocol.hh"
+#include "BSDSocketProtocol.hh"
 #include "StreamFramingPolicy.hh"
 #include "CommunicationPolicy.hh"
 #include "ReadWritePolicy.hh"
@@ -51,12 +52,10 @@ namespace lib {
     class TCPv4SocketProtocol
         : public ConcreteSocketProtocol<TCPv4Socket_Policy>,
           public IPv4Protocol, 
-          public TCPProtocol
+          public TCPProtocol,
+          public BSDSocketProtocol
     {
     public:
-        bool reuseraddr() const;
-        void reuseaddr(bool value) const;
-        
         ///////////////////////////////////////////////////////////////////////////
         // internal interface
 
@@ -64,9 +63,6 @@ namespace lib {
         void init_client(INet4Address const & address) const;
         void init_server() const;
         void init_server(INet4Address const & address) const;
-
-        void connect(INet4Address const & address) const;
-        void bind(INet4Address const & address) const;
 
         std::auto_ptr<SocketProtocol> clone() const;
         unsigned available() const;

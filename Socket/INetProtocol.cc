@@ -27,11 +27,16 @@
 
 // Custom includes
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <net/if.h> // for if_nametoindex
 #include "Utils/Exception.hh"
 
 //#include "INetProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::INet4AddressingPolicy
 
 prefix_ void satcom::lib::INet4AddressingPolicy::local(FileHandle handle, Address & addr)
 {
@@ -58,9 +63,116 @@ prefix_ void satcom::lib::INet4AddressingPolicy::do_peer(FileHandle handle, Addr
 prefix_ void satcom::lib::INet4AddressingPolicy::do_connect(FileHandle handle,
                                                             Address const & addr)
 {
+    // FIXME: a non-blocking socket will return with EINPROGRESS
+    // This necessitates reading the SO_ERROR value and poll-ing for
+    // completion !! (see man connect)
     if (::connect(handle.fd(),addr.sockaddr_p(),addr.sockaddr_len()) < 0)
         throw SystemException(errno);
 }
+
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::INet4Protocol
+
+prefix_ void satcom::lib::IPv4Protocol::connect(INet4Address const & address)
+    const
+{
+    if (::connect(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void satcom::lib::IPv4Protocol::bind(INet4Address const & address)
+    const
+{
+    if (::bind(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ bool satcom::lib::IPv4Protocol::mcLoop()
+{
+    int value;
+    socklen_t len (sizeof(value));
+    if (::getsockopt(body().fd(),SOL_IP,IP_MULTICAST_LOOP,&value,&len) < 0)
+        throw SystemException(errno);
+    return value;
+}
+
+prefix_ void satcom::lib::IPv4Protocol::mcLoop(bool value)
+{
+    int ivalue (value);
+    if (::setsockopt(body().fd(),SOL_IP,IP_MULTICAST_LOOP,&ivalue,sizeof(ivalue)) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void satcom::lib::IPv4Protocol::mcAddMembership(INet4Address const & mcAddr)
+{
+    struct ip_mreqn mreqn;
+    mreqn.imr_multiaddr = reinterpret_cast<struct sockaddr_in const *>(mcAddr.sockaddr_p())->sin_addr;
+    mreqn.imr_address.s_addr = htons(INADDR_ANY);
+    mreqn.imr_ifindex = 0;
+    if (::setsockopt(body().fd(),SOL_IP,IP_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void satcom::lib::IPv4Protocol::mcAddMembership(INet4Address const & mcAddr,
+                                                        INet4Address const & localAddr)
+{
+    struct ip_mreqn mreqn;
+    mreqn.imr_multiaddr = reinterpret_cast<struct sockaddr_in const *>(mcAddr.sockaddr_p())->sin_addr;
+    mreqn.imr_address = reinterpret_cast<struct sockaddr_in const *>(localAddr.sockaddr_p())->sin_addr;
+    mreqn.imr_ifindex = 0;
+    if (::setsockopt(body().fd(),SOL_IP,IP_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void satcom::lib::IPv4Protocol::mcDropMembership(INet4Address const & mcAddr)
+{
+    struct ip_mreqn mreqn;
+    mreqn.imr_multiaddr = reinterpret_cast<struct sockaddr_in const *>(mcAddr.sockaddr_p())->sin_addr;
+    mreqn.imr_address.s_addr = htons(INADDR_ANY);
+    mreqn.imr_ifindex = 0;
+    if (::setsockopt(body().fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void satcom::lib::IPv4Protocol::mcDropMembership(INet4Address const & mcAddr,
+                                                         INet4Address const & localAddr)
+{
+    struct ip_mreqn mreqn;
+    mreqn.imr_multiaddr = reinterpret_cast<struct sockaddr_in const *>(mcAddr.sockaddr_p())->sin_addr;
+    mreqn.imr_address = reinterpret_cast<struct sockaddr_in const *>(localAddr.sockaddr_p())->sin_addr;
+    mreqn.imr_ifindex = 0;
+    if (::setsockopt(body().fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void satcom::lib::IPv4Protocol::mcIface(std::string iface)
+{
+    struct ip_mreqn mreqn;
+    ::memset(&mreqn,sizeof(mreqn),0);
+    if (!iface.empty()) {
+        mreqn.imr_ifindex = if_nametoindex(iface.c_str());
+        if (mreqn.imr_ifindex == 0)
+            throw SystemException(EINVAL);
+    }
+    if (::setsockopt(body().fd(),SOL_IP,IP_MULTICAST_IF,&mreqn,sizeof(mreqn)) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ unsigned satcom::lib::IPv4Protocol::mcTTL()
+{
+    int value;
+    socklen_t len (sizeof(value));
+    if (::getsockopt(body().fd(),SOL_IP,IP_MULTICAST_TTL,&value,&len) < 0)
+        throw SystemException(errno);
+    return value;
+}
+
+prefix_ void satcom::lib::IPv4Protocol::mcTTL(unsigned value)
+{
+    if (::setsockopt(body().fd(),SOL_IP,IP_MULTICAST_TTL,&value,sizeof(value)) < 0)
+        throw SystemException(errno);
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
