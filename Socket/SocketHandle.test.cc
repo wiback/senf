@@ -28,6 +28,7 @@
 // Custom includes
 #include "SocketHandle.hh"
 #include "SocketProtocol.test.hh"
+#include "AddressingPolicy.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -43,8 +44,18 @@ namespace {
     {
     public:
         MySocketHandle()
-            : sl::SocketHandle<sl::test::SomeProtocol::Policy>(std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()))
+            : sl::SocketHandle<sl::test::SomeProtocol::Policy>(
+                std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()),false)
             {}
+    };
+
+    class FDHandle
+        : public satcom::lib::FileHandle
+    {
+    public:
+        FDHandle() 
+            : satcom::lib::FileHandle(std::auto_ptr<satcom::lib::FileBody>(
+                                          new satcom::lib::FileBody())) {}
     };
 }
 
@@ -59,8 +70,22 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
     MySocketHandle myh;
     OtherSocketHandle osh (myh);
     osh = myh;
+
     typedef sl::SocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
     SomeSocketHandle ssh = satcom::lib::static_socket_cast<SomeSocketHandle>(osh);
+
+    BOOST_CHECK_NO_THROW( satcom::lib::dynamic_socket_cast<SomeSocketHandle>(osh) );
+
+    typedef sl::SocketHandle< sl::MakeSocketPolicy<
+        OtherSocketPolicy,
+        satcom::lib::NoAddressingPolicy
+        >::policy> SomeOtherSocketHandle;
+
+    BOOST_CHECK_THROW( satcom::lib::dynamic_socket_cast<SomeOtherSocketHandle>(osh), 
+                       std::bad_cast );
+    BOOST_CHECK_THROW( satcom::lib::dynamic_socket_cast<SomeSocketHandle>(
+                           satcom::lib::FileHandle(FDHandle())),
+                       std::bad_cast );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

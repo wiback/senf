@@ -47,8 +47,8 @@ namespace lib {
         ///\name Structors and default members
         ///@{
 
-        explicit SocketBody(std::auto_ptr<SocketProtocol> protocol);
-        SocketBody(std::auto_ptr<SocketProtocol> protocol, int fd);
+        explicit SocketBody(std::auto_ptr<SocketProtocol> protocol, bool isServer);
+        SocketBody(std::auto_ptr<SocketProtocol> protocol, bool isServer, int fd);
 
         // no copy
         // no conversion constructors
@@ -57,6 +57,7 @@ namespace lib {
         ///////////////////////////////////////////////////////////////////////////
 
         SocketProtocol const & protocol() const;
+        bool isServer();
 
     private:
         virtual void v_close();
@@ -64,6 +65,7 @@ namespace lib {
         virtual bool v_eof() const;
 
         boost::scoped_ptr<SocketProtocol> protocol_;
+        bool isServer_;
     };
 
 }}

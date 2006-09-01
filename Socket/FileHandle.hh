@@ -75,12 +75,15 @@ namespace lib {
         int fd() const;
 
         static FileHandle cast_static(FileHandle handle);
+        static FileHandle cast_dynamic(FileHandle handle);
 
     protected:
         explicit FileHandle(std::auto_ptr<FileBody> body);
 
         FileBody & body();
         FileBody const & body() const;
+        static FileBody & body(FileHandle & handle);
+        static FileBody const & body(FileHandle const & handle);
 
         void fd(int fd);
 

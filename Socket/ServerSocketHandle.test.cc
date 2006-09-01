@@ -29,6 +29,7 @@
 #include "ServerSocketHandle.hh"
 #include "ClientSocketHandle.hh"
 #include "SocketProtocol.test.hh"
+#include "AddressingPolicy.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -66,6 +67,18 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
 
     typedef sl::ServerSocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
     SomeSocketHandle ssh = sl::static_socket_cast<SomeSocketHandle>(osh);
+
+    typedef sl::ServerSocketHandle<sl::MakeSocketPolicy<
+        OtherSocketPolicy,
+        satcom::lib::NoAddressingPolicy
+        >::policy> SomeOtherSocketHandle;
+    typedef sl::ClientSocketHandle<OtherSocketPolicy> OtherClientHandle;
+    
+    BOOST_CHECK_NO_THROW( sl::dynamic_socket_cast<SomeSocketHandle>(osh) );
+    BOOST_CHECK_THROW( sl::dynamic_socket_cast<SomeOtherSocketHandle>(osh),
+                       std::bad_cast );
+    BOOST_CHECK_THROW( sl::dynamic_socket_cast<OtherClientHandle>(osh),
+                       std::bad_cast );
 
     BOOST_CHECK_NO_THROW( myh.bind(0) );
     BOOST_CHECK_EQUAL( myh.local(), 2u );

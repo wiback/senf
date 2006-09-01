@@ -25,6 +25,7 @@
 //#include "ServerSocketHandle.ih"
 
 // Custom includes
+#include <typeinfo>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -40,7 +41,7 @@ ServerSocketHandle(ServerSocketHandle<OtherPolicy> other,
 template <class SocketPolicy>
 prefix_  satcom::lib::ServerSocketHandle<SocketPolicy>::
 ServerSocketHandle(std::auto_ptr<SocketProtocol> protocol)
-    : SocketHandle<SocketPolicy>(protocol)
+    : SocketHandle<SocketPolicy>(protocol,true)
 {}
 
 template <class SocketPolicy>
@@ -115,8 +116,17 @@ template <class Policy>
 prefix_ satcom::lib::ServerSocketHandle<Policy>
 satcom::lib::ServerSocketHandle<Policy>::cast_static(FileHandle handle)
 {
-    // TODO: Add BOOST_ASSERT
     return ServerSocketHandle(handle,true);
+}
+
+template <class Policy>
+prefix_ satcom::lib::ServerSocketHandle<Policy>
+satcom::lib::ServerSocketHandle<Policy>::cast_dynamic(FileHandle handle)
+{
+    SocketHandle<Policy> h (SocketHandle<Policy>::cast_dynamic(handle));
+    if (! static_cast<SocketBody&>(FileHandle::body(handle)).isServer())
+        throw std::bad_cast();
+    return cast_static(handle);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

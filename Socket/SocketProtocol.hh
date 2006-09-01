@@ -34,6 +34,7 @@ namespace lib {
 
     class SocketBody;
     class FileHandle;
+    class SocketPolicyBase;
 
     /** \brief
      */
@@ -59,7 +60,8 @@ namespace lib {
         ///////////////////////////////////////////////////////////////////////////
 
         SocketBody & body() const;
-
+        virtual SocketPolicyBase const & policy() const = 0;
+        
         ///////////////////////////////////////////////////////////////////////////
         // Virtual interface
 

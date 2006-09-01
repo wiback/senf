@@ -73,9 +73,10 @@ namespace lib {
         typename IsCompatible<OtherPolicy>::type const & operator=(SocketHandle<OtherPolicy> other);
 
         static SocketHandle cast_static(FileHandle handle);
-
+        static SocketHandle cast_dynamic(FileHandle handle);
+        
     protected:
-        explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol);
+        explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol, bool isServer);
         SocketHandle(FileHandle other, bool isChecked);
         
         SocketBody & body();
@@ -90,6 +91,12 @@ namespace lib {
 
     template <class Target, class Source>
     Target static_socket_cast(Source handle);
+
+    template <class Target, class Source>
+    Target dynamic_socket_cast(Source handle);
+
+    template <class Target, class Source>
+    bool check_socket_cast(Source handle);
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

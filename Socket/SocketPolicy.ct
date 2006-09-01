@@ -20,44 +20,31 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline non-template functions
+// Definition of non-inline template functions
 
-#include "SocketHandle.ih"
+#include "SocketPolicy.ih"
 
 // Custom includes
-#include "Utils/Exception.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
 
-prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol,
-                                            bool isServer)
-    : protocol_(protocol), isServer_(isServer)
+#define SP_TemplateArgs(x1,x2,n,SomePolicy) BOOST_PP_COMMA_IF(n) class BOOST_PP_CAT(SomePolicy,_)
+#define SP_TemplateParams(x1,x2,n,SomePolicy) BOOST_PP_COMMA_IF(n) BOOST_PP_CAT(SomePolicy,_)
+
+template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, , SATLIB_SOCKET_POLICIES ) >
+prefix_ void satcom::lib::SocketPolicy< BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateParams, , SATLIB_SOCKET_POLICIES ) >::
+checkBaseOf(SocketPolicyBase const & other)
 {
-    BOOST_ASSERT( ! protocol_->body_ );
-    protocol_->body_ = this;
+#   define SP_CheckPolicy(x1,x2,SomePolicy) dynamic_cast<SomePolicy const &>(other.BOOST_PP_CAT(the,SomePolicy)());
+    BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SATLIB_SOCKET_POLICIES )
+#   undef SP_CheckPolicy
 }
 
-prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol,
-                                            bool isServer, int fd)
-    : FileBody(fd), protocol_(protocol), isServer_(isServer)
-{
-    BOOST_ASSERT( ! protocol_->body_ );
-    protocol_->body_ = this;
-}
+#undef SP_TemplateArgs
+#undef SP_TemplateParams
 
-prefix_ satcom::lib::SocketProtocol const & satcom::lib::SocketBody::protocol()
-    const
-{
-    return *protocol_;
-}
-
-prefix_ bool satcom::lib::SocketBody::isServer()
-{
-    return isServer_;
-}
-
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
 

@@ -205,6 +205,17 @@ prefix_ satcom::lib::FileBody const & satcom::lib::FileHandle::body()
     return *body_;
 }
 
+prefix_ satcom::lib::FileBody & satcom::lib::FileHandle::body(FileHandle & handle)
+{
+    return handle.body();
+}
+
+prefix_ satcom::lib::FileBody const &
+satcom::lib::FileHandle::body(FileHandle const & handle)
+{
+    return handle.body();
+}
+
 prefix_ void satcom::lib::FileHandle::fd(int fd)
 {
     body().fd(fd);
@@ -212,6 +223,12 @@ prefix_ void satcom::lib::FileHandle::fd(int fd)
 
 prefix_ satcom::lib::FileHandle::FileHandle
 satcom::lib::FileHandle::cast_static(FileHandle handle)
+{
+    return handle;
+}
+
+prefix_ satcom::lib::FileHandle
+satcom::lib::FileHandle::cast_dynamic(FileHandle handle)
 {
     return handle;
 }

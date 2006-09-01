@@ -63,6 +63,7 @@ namespace lib {
         ProtocolClientSocketHandle<SocketProtocol> accept();
 
         static ProtocolServerSocketHandle cast_static(FileHandle handle);
+        static ProtocolServerSocketHandle cast_dynamic(FileHandle handle);
 
     protected:
         ProtocolServerSocketHandle(FileHandle other, bool isChecked);

@@ -121,6 +121,7 @@ namespace lib {
         ///@}
         
         static ClientSocketHandle cast_static(FileHandle handle);
+        static ClientSocketHandle cast_dynamic(FileHandle handle);
                  
     protected:
         ClientSocketHandle(FileHandle other, bool isChecked);

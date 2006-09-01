@@ -92,6 +92,7 @@ namespace lib {
         ///@}
 
         static ServerSocketHandle cast_static(FileHandle handle);
+        static ServerSocketHandle cast_dynamic(FileHandle handle);
 
     protected:
         ServerSocketHandle(FileHandle other, bool isChecked);

@@ -33,9 +33,7 @@ namespace satcom {
 namespace lib {
 
     struct NoAddressingPolicy : public AddressingPolicyBase
-    {
-        typedef void Address;
-    };
+    {};
 
 }}
 

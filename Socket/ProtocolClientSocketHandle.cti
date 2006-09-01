@@ -58,8 +58,18 @@ template <class SocketProtocol>
 prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>
 satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::cast_static(FileHandle handle)
 {
-    // TODO: Add BOOST_ASSERT
     return ProtocolClientSocketHandle(handle,true);
+}
+
+template <class SocketProtocol>
+prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>
+satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::cast_dynamic(FileHandle handle)
+{
+    ClientSocketHandle<typename SocketProtocol::Policy> h(
+        ClientSocketHandle<typename SocketProtocol::Policy>::cast_dynamic(handle));
+    // throw std::bad_cast if the protocol is invalid
+    dynamic_cast<SocketProtocol const &>(static_cast<SocketBody&>(FileHandle::body(h)).protocol());
+    return cast_static(handle);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

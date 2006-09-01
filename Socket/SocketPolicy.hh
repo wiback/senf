@@ -31,7 +31,12 @@
 namespace satcom {
 namespace lib {
 
-#   define SATCOM_LIB_SocketPolicy_Policies \
+    // This may be adapted to change the supported policies (however,
+    // ClientSocketHandle and ServerSocketHandle will probably have to
+    // be adjusted accordingly). However, AddressingPolicy MUST always
+    // be the first Policy member ...
+
+#   define SATLIB_SOCKET_POLICIES               \
 	(AddressingPolicy)                      \
         (FramingPolicy)                         \
 	(CommunicationPolicy)                   \
@@ -54,13 +59,12 @@ namespace lib {
     // template SocketPolicy< ..policies.. >
     // template MakeSocketPolicy< ..args.. >
     // template SocketPolicyIsBaseOf< Base, Derived >
-
 }}
 
 //////////////////////////////hh.e////////////////////////////////////////
 #include "SocketPolicy.ih"
 //#include "SocketPolicy.cci"
-//#include "SocketPolicy.ct"
+#include "SocketPolicy.ct"
 //#include "SocketPolicy.cti"
 #endif
 
