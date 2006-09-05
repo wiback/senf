@@ -81,8 +81,8 @@ def MakeEnvironment():
 
     env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long',
                             '-pedantic', '-ansi' ],
-                    LOCALLIBDIR = [ '#' ],
-                    LIBPATH = [ '$LOCALLIBDIR' ])
+               LOCALLIBDIR = [ '#' ],
+               LIBPATH = [ '$LOCALLIBDIR' ])
 
     if env['final']:
         env.Append(CXXFLAGS = [ '-O3' ],
@@ -126,7 +126,7 @@ def Objects(env, sources, testSources = None, LIBS = []):
 
     if testSources:
         test = env.BoostUnitTests(
-            target = 'test_runner',
+            target = 'test.log',
             source = sources,
             test_source = testSources,
             LIBS = LIBS,

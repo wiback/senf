@@ -17,11 +17,12 @@ def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [
     if source:
         sources = sources + env.Object(source)
     sources = sources + test_source
-    testRunner = testEnv.Program(target, sources)
+    binName = os.path.join(path,'.' + os.path.splitext(name)[0]+'.bin')
+    testRunner = testEnv.Program(binName, sources)
     if DEPENDS:
         env.Depends(testRunner, DEPENDS)
-    return env.Command(os.path.join(path,'.'+name+'.stamp'), testRunner,
-                       [ './$SOURCE $BOOSSTTESTARGS', 'touch $TARGET' ])
+    return env.Command(target, testRunner,
+                       [ './$SOURCE $BOOSTTESTARGS | tee  $TARGET' ])
 
 def dispatcher(*arg,**kw):
     return BoostUnitTests(*arg,**kw)

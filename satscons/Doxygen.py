@@ -10,7 +10,7 @@ def replace_ext(n,ext):
 def Doxygen(env, target, source, image=[]):
     path, name = os.path.split(str(target))
     stamp = os.path.join(path, '.'+name+'.stamp')
-    dir = env.Dir('target')
+    dir = env.Dir(target)
     env.Depends(dir,
                 [ env.Command(os.path.splitext(img)[0]+".png", img,
                               [ 'TERM=dumb make -f imgconvert.mak $TARGET' ])
