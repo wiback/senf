@@ -36,41 +36,6 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::INet4AddressingPolicy
-
-prefix_ void satcom::lib::INet4AddressingPolicy::local(FileHandle handle, Address & addr)
-{
-    addr.clear();
-    socklen_t l (addr.sockaddr_len());
-    if (::getsockname(handle.fd(),addr.sockaddr_p(),&l) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ void satcom::lib::INet4AddressingPolicy::bind(FileHandle handle, Address const & addr)
-{
-    if (::bind(handle.fd(),addr.sockaddr_p(),addr.sockaddr_len()) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ void satcom::lib::INet4AddressingPolicy::do_peer(FileHandle handle, Address & addr)
-{
-    addr.clear();
-    socklen_t l (addr.sockaddr_len());
-    if (::getpeername(handle.fd(),addr.sockaddr_p(),&l) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ void satcom::lib::INet4AddressingPolicy::do_connect(FileHandle handle,
-                                                            Address const & addr)
-{
-    // FIXME: a non-blocking socket will return with EINPROGRESS
-    // This necessitates reading the SO_ERROR value and poll-ing for
-    // completion !! (see man connect)
-    if (::connect(handle.fd(),addr.sockaddr_p(),addr.sockaddr_len()) < 0)
-        throw SystemException(errno);
-}
-
-///////////////////////////////////////////////////////////////////////////
 // satcom::lib::INet4Protocol
 
 prefix_ void satcom::lib::IPv4Protocol::connect(INet4Address const & address)

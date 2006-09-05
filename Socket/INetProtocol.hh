@@ -74,7 +74,7 @@ namespace lib {
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "INetProtocol.cci"
 //#include "INetProtocol.ct"
-#include "INetProtocol.cti"
+//#include "INetProtocol.cti"
 #endif
 
 

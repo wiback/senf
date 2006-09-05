@@ -32,6 +32,7 @@
 template <class ForwardRange>
 prefix_ void satcom::lib::PacketProtocol::mcAdd(std::string interface,
                                                 ForwardRange const & address)
+    const
 {
     do_mc(interface,address,true);
 }
@@ -39,6 +40,7 @@ prefix_ void satcom::lib::PacketProtocol::mcAdd(std::string interface,
 template <class ForwardRange>
 prefix_ void satcom::lib::PacketProtocol::mcDrop(std::string interface,
                                                  ForwardRange const & address)
+    const
 {
     do_mc(interface,address,false);
 }
@@ -52,9 +54,10 @@ Range_LLAddressCopier(ForwardRange const & range)
 template <class ForwardRange>
 prefix_ void satcom::lib::PacketProtocol::do_mc(std::string interface,
                                                 ForwardRange const & address, bool add)
+    const
 {
     detail::Range_LLAddressCopier<ForwardRange> copier (address);
-    do_mc(interface, copier);
+    do_mc_i(interface, copier, add);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

@@ -39,6 +39,7 @@ namespace detail {
 
     template <class ForwardRange>
     struct Range_LLAddressCopier
+        : public LLAddressCopier
     {
         Range_LLAddressCopier(ForwardRange const & range);
         

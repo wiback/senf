@@ -30,6 +30,7 @@
 #include "SocketPolicy.hh"
 #include "ClientSocketHandle.hh"
 #include "CommunicationPolicy.hh"
+#include "GenericAddressingPolicy.hh"
 
 //#include "INetAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -72,23 +73,16 @@ namespace lib {
         // TODO: Implement
     };
     
-    struct INet4AddressingPolicy : public AddressingPolicyBase
+    struct INet4AddressingPolicy 
+        : public AddressingPolicyBase,
+          private GenericAddressingPolicy<INet4Address>
     {
         typedef INet4Address Address;
 
-        template <class Policy>
-        static void peer(ClientSocketHandle<Policy> handle, Address & addr,
-                         typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
-        static void local(FileHandle handle, Address & addr);
-
-        template <class Policy>
-        static void connect(ClientSocketHandle<Policy> handle, Address const & addr,
-                            typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
-        static void bind(FileHandle handle, Address const & addr);
-
-    private:
-        static void do_peer(FileHandle handle, Address & addr);
-        static void do_connect(FileHandle handle, Address const & addr);
+        using GenericAddressingPolicy<INet4Address>::peer;
+        using GenericAddressingPolicy<INet4Address>::local;
+        using GenericAddressingPolicy<INet4Address>::connect;
+        using GenericAddressingPolicy<INet4Address>::bind;
     };
 
     struct INet6AddressingPolicy : public AddressingPolicyBase

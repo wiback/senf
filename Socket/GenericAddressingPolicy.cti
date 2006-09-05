@@ -22,27 +22,48 @@
 
 // Definition of inline template functions
 
-//#include "INetProtocol.ih"
+//#include "GenericAddressingPolicy.ih"
 
 // Custom includes
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::GenericAddressingPolicy<Address>
+
+template <class Address>
 template <class Policy>
-prefix_ void satcom::lib::INet4AddressingPolicy::
-peer(ClientSocketHandle<Policy> handle, Address & addr,
+prefix_ void satcom::lib::GenericAddressingPolicy<Address>::
+peer(SocketHandle<Policy> handle, Address & addr,
      typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
 {
-    do_peer(handle,addr);
+    addr.clear();
+    do_peer(handle,addr.sockaddr_p(),addr.sockaddr_len());
 }
 
+template <class Address>
 template <class Policy>
-prefix_ void satcom::lib::INet4AddressingPolicy::
-connect(ClientSocketHandle<Policy> handle, Address const & addr,
+prefix_ void satcom::lib::GenericAddressingPolicy<Address>::
+connect(SocketHandle<Policy> handle, Address const & addr,
         typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
 {
-    do_connect(handle,addr);
+    do_connect(handle,addr.sockaddr_p(),addr.sockaddr_len());
+}
+
+template <class Address>
+prefix_ void satcom::lib::GenericAddressingPolicy<Address>::local(FileHandle handle,
+                                                                  Address & addr)
+{
+    addr.clear();
+    do_local(handle,addr.sockaddr_p(),addr.sockaddr_len());
+}
+
+template <class Address>
+prefix_ void satcom::lib::GenericAddressingPolicy<Address>::bind(FileHandle handle,
+                                                                 Address const & addr)
+{
+    do_bind(handle,addr.sockaddr_p(),addr.sockaddr_len());
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

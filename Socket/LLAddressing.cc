@@ -117,17 +117,6 @@ satcom::lib::llAddress(std::string address)
     return detail::LLAddressFromStringRange(j,j_end);
 }
 
-///////////////////////////////////////////////////////////////////////////
-// satcom::lib::LLAddressingPolicy
-
-prefix_ void satcom::lib::LLAddressingPolicy::local(FileHandle handle, Address &addr)
-{
-    // TODO: check, wether getsockname works on packet sockets ...
-    socklen_t len = addr.sockaddr_len();
-    if (::getsockname(handle.fd(), addr.sockaddr_p(), &len) < 0)
-        throw SystemException(errno);
-}
-
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "LLAddressing.mpp"

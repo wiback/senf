@@ -33,6 +33,7 @@
 
 #include "SocketPolicy.hh"
 #include "FileHandle.hh"
+#include "GenericAddressingPolicy.hh"
 
 //#include "LLAddressing.mpp"
 #include "LLAddressing.ih"
@@ -67,6 +68,7 @@ namespace lib {
         LLSocketAddress();
         // And this is for bind
         LLSocketAddress(unsigned protocol, std::string interface="");
+        explicit LLSocketAddress(std::string interface);
         // This is for sending packets ..
         // We must use enable_if here, so this constructor will not hide
         // above constructor if passed a plain int or short argument
@@ -108,12 +110,14 @@ namespace lib {
                           typename boost::enable_if< boost::is_class<ForwardRange> >::type * = 0);
 
     class LLAddressingPolicy
-        : public AddressingPolicyBase
+        : public AddressingPolicyBase,
+          private GenericAddressingPolicy<LLSocketAddress>
     {
     public:
         typedef LLSocketAddress Address;
 
-        static void local(FileHandle handle, Address &addr);
+        using GenericAddressingPolicy<LLSocketAddress>::local;
+        using GenericAddressingPolicy<LLSocketAddress>::bind;
     };
 
     struct InvalidLLSocketAddressException : public std::exception

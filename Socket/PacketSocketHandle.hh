@@ -63,21 +63,21 @@ namespace lib {
 
         enum PromiscMode { Promiscuous, AllMulticast, None };
 
-        void promisc(std::string interface, PromiscMode mode);
+        void promisc(std::string interface, PromiscMode mode) const;
         // See LLSocketAddress for a discussion/rationale for
         // ForwardRange here
         template <class ForwardRange>
-        void mcAdd(std::string interface, ForwardRange const & address);
+        void mcAdd(std::string interface, ForwardRange const & address) const;
         template <class ForwardRange>
-        void mcDrop(std::string interface, ForwardRange const & address);
+        void mcDrop(std::string interface, ForwardRange const & address) const;
 
         unsigned available() const;
         bool eof() const;
 
     private:
         template<class ForwardRange>
-        void do_mc(std::string interface, ForwardRange const & address, bool add);
-        void do_mc(std::string interface, detail::LLAddressCopier const & copier, bool add);
+        void do_mc(std::string interface, ForwardRange const & address, bool add) const;
+        void do_mc_i(std::string interface, detail::LLAddressCopier const & copier, bool add) const;
     };
 
     typedef ProtocolClientSocketHandle<PacketProtocol> PacketSocketHandle;

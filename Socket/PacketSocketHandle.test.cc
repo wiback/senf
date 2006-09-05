@@ -39,13 +39,39 @@
 
 BOOST_AUTO_UNIT_TEST(packetSocketHandle)
 {
-    // We have a Problem here .. this is only allowed, if we are root
+    // We have a Problem here .. packet sockets are only allowed for root
     if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(getuid() == 0, "Cannot test PacketSocketHandle as non-root user");
+        BOOST_WARN_MESSAGE(false, "Cannot test satcom::lib::PacketSocketHandle as non-root user");
         return;
     }
+
     {
         satcom::lib::PacketSocketHandle sock;
+        
+        BOOST_CHECK_NO_THROW( sock.bind(satcom::lib::LLSocketAddress("lo")) );
+        satcom::lib::LLSocketAddress a;
+        BOOST_CHECK_NO_THROW( sock.local(a) );
+        BOOST_CHECK_EQUAL( a.interface(), "lo" );
+
+        // How am I supposed to test read and write .. grmpf ..
+        
+        // TODO: There are some failures here ... need to investigate
+        /*
+        BOOST_CHECK_NO_THROW( sock.protocol().promisc(
+                                  "lo",satcom::lib::PacketProtocol::Promiscuous) );
+        BOOST_CHECK_NO_THROW( sock.protocol().promisc(
+                                  "lo",satcom::lib::PacketProtocol::AllMulticast) );
+        BOOST_CHECK_NO_THROW( sock.protocol().promisc(
+                                  "lo",satcom::lib::PacketProtocol::None) );
+        */
+        
+        BOOST_CHECK_NO_THROW( sock.protocol().mcAdd(
+                                  "lo",satcom::lib::llAddress("01-02-03-04-05-06")) );
+        BOOST_CHECK_NO_THROW( sock.protocol().mcDrop(
+                                  "lo",satcom::lib::llAddress("01-02-03-04-05-06")) );
+
+        BOOST_CHECK_NO_THROW( sock.protocol().available() );
+        BOOST_CHECK( ! sock.eof() );
     }
 }
 

@@ -41,6 +41,12 @@ prefix_ satcom::lib::LLSocketAddress::LLSocketAddress(unsigned protocol, std::st
     this->interface(interface);
 }
 
+prefix_  satcom::lib::LLSocketAddress::LLSocketAddress(std::string interface)
+{
+    clear();
+    this->interface(interface);
+}
+
 prefix_ void satcom::lib::LLSocketAddress::clear()
 {
     ::memset(&addr_,0,sizeof(addr_));

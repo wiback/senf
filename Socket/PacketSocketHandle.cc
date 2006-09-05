@@ -76,6 +76,7 @@ prefix_ bool satcom::lib::PacketProtocol::eof()
 }
 
 prefix_ void satcom::lib::PacketProtocol::promisc(std::string interface, PromiscMode mode)
+    const
 {
     // The interface is really stupid: as far as i understand, it is possible to 
     // enable PROMISC and ALLMULTI seperately, however PROMISC is really a superset
@@ -99,8 +100,9 @@ prefix_ void satcom::lib::PacketProtocol::promisc(std::string interface, Promisc
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::PacketProtocol::do_mc(std::string interface,
-                                                detail::LLAddressCopier const & copier, bool add)
+prefix_ void satcom::lib::PacketProtocol::do_mc_i(std::string interface,
+                                                  detail::LLAddressCopier const & copier, bool add)
+    const
 {
     struct packet_mreq mreq;
     mreq.mr_ifindex = ::if_nametoindex(interface.c_str());
