@@ -20,45 +20,36 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_BSDSocketProtocol_
-#define HH_BSDSocketProtocol_ 1
+#ifndef IH_PacketSocketHandle_
+#define IH_PacketSocketHandle_ 1
 
 // Custom includes
-#include <sys/time.h>
-#include "SocketProtocol.hh"
 
-//#include "BSDSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+///////////////////////////////ih.p////////////////////////////////////////
 
 namespace satcom {
 namespace lib {
+namespace detail {
 
-    class BSDSocketProtocol
-        : public virtual SocketProtocol
+    struct LLAddressCopier
     {
-    public:
-        std::pair<bool,unsigned> linger() const;
-        void linger(bool enable, unsigned timeout) const;
-
-        struct timeval timestamp() const;
+        virtual ~LLAddressCopier() {}
+        virtual unsigned operator()(unsigned char * target) const = 0;
     };
 
-    class AddressableBSDSocketProtocol
-        : public virtual SocketProtocol
+    template <class ForwardRange>
+    struct Range_LLAddressCopier
     {
-    public:
-        bool reuseaddr() const;
-        void reuseaddr(bool value) const;
+        Range_LLAddressCopier(ForwardRange const & range);
+        
+        unsigned operator()(unsigned char * target) const;
+
+        ForwardRange const & range_;
     };
 
-}}
+}}}
 
-
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "BSDSocketProtocol.cci"
-//#include "BSDSocketProtocol.ct"
-//#include "BSDSocketProtocol.cti"
-//#include "BSDSocketProtocol.mpp"
+///////////////////////////////ih.e////////////////////////////////////////
 #endif
 
 

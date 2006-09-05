@@ -73,6 +73,19 @@ prefix_ unsigned satcom::lib::TCPProtocol::siocoutq()
     return n;
 }
 
+prefix_ unsigned satcom::lib::TCPProtocol::available()
+    const
+{
+    return siocinq();
+}
+
+prefix_ bool satcom::lib::TCPProtocol::eof()
+    const
+{
+    return body().readable() && available()==0;
+}
+
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "TCPProtocol.mpp"

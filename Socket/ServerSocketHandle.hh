@@ -78,6 +78,7 @@ namespace lib {
         ///@{
 
         void         bind         (AddressParam addr);
+        void         listen       (unsigned backlog=0);
 
         Address      local        ();
         void         local        (Address & addr);

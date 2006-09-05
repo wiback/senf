@@ -3,9 +3,13 @@ import SatSCons
 
 ###########################################################################
 
+sources = SatSCons.GlobSources()
+
 SatSCons.StandardTargets(env)
 
 SatSCons.Lib(env,
              library = 'Socket',
-             sources = SatSCons.GlobSources(),
+             sources = sources,
              LIBS = [ 'Utils' ])
+
+SatSCons.Doxygen(env,sources)

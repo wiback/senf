@@ -27,7 +27,7 @@
 #include "INetProtocol.hh"
 #include "TCPProtocol.hh"
 #include "BSDSocketProtocol.hh"
-#include "StreamFramingPolicy.hh"
+#include "FramingPolicy.hh"
 #include "CommunicationPolicy.hh"
 #include "ReadWritePolicy.hh"
 #include "BufferingPolicy.hh"
@@ -53,7 +53,8 @@ namespace lib {
         : public ConcreteSocketProtocol<TCPv4Socket_Policy>,
           public IPv4Protocol, 
           public TCPProtocol,
-          public BSDSocketProtocol
+          public BSDSocketProtocol,
+          public AddressableBSDSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -62,29 +63,25 @@ namespace lib {
         void init_client() const;
         void init_client(INet4Address const & address) const;
         void init_server() const;
-        void init_server(INet4Address const & address) const;
+        void init_server(INet4Address const & address, unsigned backlog=1) const;
 
         std::auto_ptr<SocketProtocol> clone() const;
-        unsigned available() const;
-        bool eof() const;
     };
 
     typedef ProtocolClientSocketHandle<TCPv4SocketProtocol> TCPv4ClientSocketHandle;
     typedef ProtocolServerSocketHandle<TCPv4SocketProtocol> TCPv4ServerSocketHandle;
 
     typedef MakeSocketPolicy<
-        INet6AddressingPolicy,
-        StreamFramingPolicy,
-        ConnectedCommunicationPolicy,
-        ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        TCPv4Socket_Policy,
+        INet6AddressingPolicy
         >::policy TCPv6Socket_Policy;
 
     class TCPv6SocketProtocol
         : public ConcreteSocketProtocol<TCPv6Socket_Policy>, 
           public IPv6Protocol,
-          public TCPProtocol
+          public TCPProtocol,
+          public BSDSocketProtocol,
+          public AddressableBSDSocketProtocol
     {
         // TODO: Implement
     };

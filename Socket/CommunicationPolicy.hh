@@ -40,6 +40,7 @@ namespace lib {
 
     struct ConnectedCommunicationPolicy : public CommunicationPolicyBase
     {
+        static void listen(FileHandle handle, unsigned backlog);
         template <class Policy>
         static int accept(ServerSocketHandle<Policy> handle, 
                           typename ServerSocketHandle<Policy>::Address & address,

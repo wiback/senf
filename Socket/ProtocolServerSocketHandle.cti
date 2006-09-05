@@ -44,7 +44,9 @@ prefix_ SocketProtocol const &
 satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::protocol()
 {
     BOOST_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
-    return static_cast<SocketProtocol const &>(this->body().protocol());
+    // Need dynamic_cast here, since satcom::lib::SocketProtocol is a
+    // virtual base
+    return dynamic_cast<SocketProtocol const &>(this->body().protocol());
 }
 
 template <class SocketProtocol>

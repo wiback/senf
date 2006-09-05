@@ -28,13 +28,48 @@
 // Custom includes
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include "SocketHandle.hh"
 
 //#include "BSDSocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ bool satcom::lib::BSDSocketProtocol::reuseaddr()
+prefix_ std::pair<bool,unsigned> satcom::lib::BSDSocketProtocol::linger()
+    const
+{
+    struct linger ling;
+    socklen_t len = sizeof(ling);
+    ::memset(&ling,sizeof(ling),0);
+    if (::getsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,&len) < 0)
+        throw SystemException(errno);
+    return std::make_pair(ling.l_onoff, ling.l_linger);
+}
+
+prefix_ void satcom::lib::BSDSocketProtocol::linger(bool enable, unsigned timeout)
+    const
+{
+    struct linger ling;
+    ling.l_onoff = enable;
+    ling.l_linger = timeout;
+    if (::setsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling)) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ struct timeval satcom::lib::BSDSocketProtocol::timestamp()
+    const
+{
+    // TODO: Check, why this fails with ENOFILE (!!!!) at least when
+    // called from a tcp socket. Further investigation necessary ...
+    struct timeval tv;
+    if (::ioctl(body().fd(), SIOCGSTAMP, &tv) < 0)
+        throw SystemException(errno);
+    return tv;
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+prefix_ bool satcom::lib::AddressableBSDSocketProtocol::reuseaddr()
     const
 {
     int value;
@@ -44,32 +79,11 @@ prefix_ bool satcom::lib::BSDSocketProtocol::reuseaddr()
     return value;
 }
 
-prefix_ void satcom::lib::BSDSocketProtocol::reuseaddr(bool value)
+prefix_ void satcom::lib::AddressableBSDSocketProtocol::reuseaddr(bool value)
     const
 {
-    // FIXME: This is only relevant for addressable sockets (not for e.g. socketpair)
     int ivalue (value);
     if (::setsockopt(body().fd(),SOL_SOCKET,SO_REUSEADDR,&ivalue,sizeof(ivalue)) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ std::pair<bool,unsigned> satcom::lib::BSDSocketProtocol::linger()
-{
-    // FIXME: This is really only relevant for stream sockets ...
-    // TODO: Can the linger timeout be 0 or -1 and what does that mean?
-    struct linger ling;
-    socklen_t len = sizeof(ling);
-    if (::getsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,&len) < 0)
-        throw SystemException(errno);
-    return std::make_pair(ling.l_onoff,ling.l_linger);
-}
-
-prefix_ void satcom::lib::BSDSocketProtocol::linger(bool enable, unsigned timeout)
-{
-    struct linger ling;
-    ling.l_onoff = enable;
-    ling.l_linger = timeout;
-    if (::setsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling)) < 0)
         throw SystemException(errno);
 }
 

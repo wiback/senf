@@ -1,0 +1,107 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Definition of inline non-template functions
+
+// Custom includes
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ satcom::lib::LLSocketAddress::LLSocketAddress()
+{
+    clear();
+}
+
+prefix_ satcom::lib::LLSocketAddress::LLSocketAddress(unsigned protocol, std::string interface)
+{
+    clear();
+    this->protocol(protocol);
+    this->interface(interface);
+}
+
+prefix_ void satcom::lib::LLSocketAddress::clear()
+{
+    ::memset(&addr_,0,sizeof(addr_));
+    addr_.sll_family = AF_PACKET;
+}
+
+prefix_ unsigned satcom::lib::LLSocketAddress::protocol()
+    const
+{
+    return ntohs(addr_.sll_protocol);
+}
+
+prefix_ unsigned satcom::lib::LLSocketAddress::arptype()
+    const
+{
+    // TODO: Check, wether this is returned in network or host byte
+    // order
+    return ntohs(addr_.sll_hatype);
+}
+
+prefix_ unsigned satcom::lib::LLSocketAddress::pkttype()
+    const
+{
+    // TODO: Check, wether this is returned in network or host byte
+    // order
+    return ntohs(addr_.sll_pkttype);
+}
+
+prefix_ satcom::lib::LLSocketAddress::LLAddress satcom::lib::LLSocketAddress::address()
+    const
+{
+    return LLAddress(&addr_.sll_addr[0], &addr_.sll_addr[addr_.sll_halen]);
+}
+
+prefix_ void satcom::lib::LLSocketAddress::protocol(unsigned protocol)
+{
+    addr_.sll_protocol = htons(protocol);
+}
+
+prefix_ struct sockaddr * satcom::lib::LLSocketAddress::sockaddr_p()
+{
+    return reinterpret_cast<struct sockaddr *>(&addr_);
+}
+
+prefix_ struct sockaddr const * satcom::lib::LLSocketAddress::sockaddr_p()
+    const
+{
+    return reinterpret_cast<struct sockaddr const *>(&addr_);
+}
+
+prefix_ unsigned satcom::lib::LLSocketAddress::sockaddr_len()
+    const
+{
+    return sizeof(addr_);
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

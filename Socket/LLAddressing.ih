@@ -20,26 +20,33 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_StreamFramingPolicy_
-#define HH_StreamFramingPolicy_ 1
+#ifndef IH_LLAddressing_
+#define IH_LLAddressing_ 1
 
 // Custom includes
+#include <boost/algorithm/string/split.hpp>
 
-//#include "StreamFramingPolicy.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+///////////////////////////////ih.p////////////////////////////////////////
 
 namespace satcom {
 namespace lib {
+namespace detail {
 
-    struct StreamFramingPolicy : public FramingPolicyBase
-    {};
+    struct HexConverter {
+        typedef unsigned char result_type;
+        template <class ForwardRange>
+        result_type operator()(ForwardRange const & v) const;
+    };
 
-}}
+    typedef boost::split_iterator<std::string::iterator> StringSplitIterator;
+    typedef boost::transform_iterator< HexConverter, StringSplitIterator > HexSplitIterator;
+    typedef boost::iterator_range<HexSplitIterator> LLAddressFromStringRange;
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "StreamFramingPolicy.cci"
-//#include "StreamFramingPolicy.ct"
-//#include "StreamFramingPolicy.cti"
+    unsigned char hexnibble(char c);
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
 #endif
 
 

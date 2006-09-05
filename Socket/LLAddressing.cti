@@ -20,46 +20,28 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_BSDSocketProtocol_
-#define HH_BSDSocketProtocol_ 1
+// Definition of inline template functions
+
+#include "LLAddressing.ih"
 
 // Custom includes
-#include <sys/time.h>
-#include "SocketProtocol.hh"
+#include <algorithm> // for std::copy
 
-//#include "BSDSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+template <class ForwardRange>
+prefix_ satcom::lib::LLSocketAddress::
+LLSocketAddress(ForwardRange const & address, std::string interface,
+                typename boost::enable_if_c<! boost::is_integral<ForwardRange>::value >::type *)
+{
+    clear();
+    this->address(address);
+    this->interface(interface);
+}
 
-    class BSDSocketProtocol
-        : public virtual SocketProtocol
-    {
-    public:
-        std::pair<bool,unsigned> linger() const;
-        void linger(bool enable, unsigned timeout) const;
-
-        struct timeval timestamp() const;
-    };
-
-    class AddressableBSDSocketProtocol
-        : public virtual SocketProtocol
-    {
-    public:
-        bool reuseaddr() const;
-        void reuseaddr(bool value) const;
-    };
-
-}}
-
-
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "BSDSocketProtocol.cci"
-//#include "BSDSocketProtocol.ct"
-//#include "BSDSocketProtocol.cti"
-//#include "BSDSocketProtocol.mpp"
-#endif
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

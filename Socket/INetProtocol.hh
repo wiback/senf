@@ -27,8 +27,7 @@
 
 // Custom includes
 #include "SocketProtocol.hh"
-#include "SocketPolicy.hh"
-#include "INetAddress.hh"
+#include "INetAddressing.hh"
 #include "ClientSocketHandle.hh"
 #include "CommunicationPolicy.hh"
 
@@ -38,44 +37,18 @@
 namespace satcom {
 namespace lib {
 
-    struct INet4AddressingPolicy : public AddressingPolicyBase
-    {
-        typedef INet4Address Address;
-
-        template <class Policy>
-        static void peer(ClientSocketHandle<Policy> handle, Address & addr,
-                         typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
-        static void local(FileHandle handle, Address & addr);
-
-        template <class Policy>
-        static void connect(ClientSocketHandle<Policy> handle, Address const & addr,
-                            typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
-        static void bind(FileHandle handle, Address const & addr);
-
-    private:
-        static void do_peer(FileHandle handle, Address & addr);
-        static void do_connect(FileHandle handle, Address const & addr);
-    };
-
-    struct INet6AddressingPolicy : public AddressingPolicyBase
-    {
-        typedef INet6Address Address;
-
-        // TODO: Implement
-    };
-
     class IPv4Protocol 
-        : public virtual SocketProtocolHelper
+        : public virtual SocketProtocol
     {
     public:
         void connect(INet4Address const & address) const;
         void bind(INet4Address const & address) const;
 
-        unsigned mcTTL();
-        void mcTTL(unsigned value);
+        unsigned mcTTL() const;
+        void mcTTL(unsigned value) const;
 
-        bool mcLoop();
-        void mcLoop(bool value);
+        bool mcLoop() const;
+        void mcLoop(bool value) const;
 
         // TODO: Implement real INet4Address datatype and 
         // rename this one to INet4SockAddress ...
@@ -83,17 +56,17 @@ namespace lib {
         // index on add/drop? what does it do (especially if
         // the local addres is given ?)
 
-        void mcAddMembership(INet4Address const & mcAddr);
-        void mcAddMembership(INet4Address const & mcAddr, INet4Address const & localAddr);
+        void mcAddMembership(INet4Address const & mcAddr) const;
+        void mcAddMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;
 
-        void mcDropMembership(INet4Address const & mcAddr);
-        void mcDropMembership(INet4Address const & mcAddr, INet4Address const & localAddr);
+        void mcDropMembership(INet4Address const & mcAddr) const;
+        void mcDropMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;
 
-        void mcIface(std::string iface = std::string());
+        void mcIface(std::string iface = std::string()) const;
     };
     
     class IPv6Protocol
-        : public virtual SocketProtocolHelper
+        : public virtual SocketProtocol
     {};
 
 }}

@@ -22,8 +22,8 @@
 
 // Definition of non-inline non-template functions
 
-#include "INetAddress.hh"
-//#include "INetAddress.ih"
+#include "INetAddressing.hh"
+//#include "INetAddressing.ih"
 
 // Custom includes
 #include <strstream>
@@ -31,7 +31,7 @@
 #include <sys/socket.h>
 #include <boost/lexical_cast.hpp>
 
-//#include "INetAddress.mpp"
+//#include "INetAddressing.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
@@ -39,9 +39,9 @@ prefix_ satcom::lib::INet4Address::INet4Address(std::string host, unsigned port)
 {
     clear();
     // TODO: gethostbyname einbauen
-    if (::inet_aton(host.c_str(), &addr.sin_addr) == 0)
+    if (::inet_aton(host.c_str(), &addr_.sin_addr) == 0)
         throw InvalidINetAddressException();
-    addr.sin_port = htons(port);
+    addr_.sin_port = htons(port);
 }
 
 prefix_ std::string satcom::lib::INet4Address::str()
@@ -54,8 +54,8 @@ prefix_ std::string satcom::lib::INet4Address::str()
 
 prefix_ void satcom::lib::INet4Address::clear()
 {
-    ::memset(&addr,0,sizeof(addr));
-    addr.sin_family = AF_INET;
+    ::memset(&addr_,0,sizeof(addr_));
+    addr_.sin_family = AF_INET;
 }
 
 prefix_ void satcom::lib::INet4Address::assignString(std::string address)
@@ -65,11 +65,11 @@ prefix_ void satcom::lib::INet4Address::assignString(std::string address)
     unsigned i = address.find(':');
     if (i == std::string::npos)
         throw InvalidINetAddressException();
-    if (::inet_aton(std::string(address,0,i).c_str(), &addr.sin_addr) == 0)
+    if (::inet_aton(std::string(address,0,i).c_str(), &addr_.sin_addr) == 0)
         throw InvalidINetAddressException();
     try {
         // Replace lexical_cast with strtoul ?
-        addr.sin_port = htons(boost::lexical_cast< ::u_int16_t >(std::string(address,i+1)));
+        addr_.sin_port = htons(boost::lexical_cast< ::u_int16_t >(std::string(address,i+1)));
     } 
     catch (boost::bad_lexical_cast const & ex) {
         throw InvalidINetAddressException();
@@ -78,7 +78,7 @@ prefix_ void satcom::lib::INet4Address::assignString(std::string address)
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "INetAddress.mpp"
+//#include "INetAddressing.mpp"
 
 
 // Local Variables:

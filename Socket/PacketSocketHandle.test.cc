@@ -20,46 +20,37 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_BSDSocketProtocol_
-#define HH_BSDSocketProtocol_ 1
+// Unit tests
+
+//#include "PacketSocketHandle.test.hh"
+//#include "PacketSocketHandle.test.ih"
+
+#include "PacketSocketHandle.hh"
 
 // Custom includes
-#include <sys/time.h>
-#include "SocketProtocol.hh"
+#include <iostream>
+#include <unistd.h>
 
-//#include "BSDSocketProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-namespace satcom {
-namespace lib {
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-    class BSDSocketProtocol
-        : public virtual SocketProtocol
+BOOST_AUTO_UNIT_TEST(packetSocketHandle)
+{
+    // We have a Problem here .. this is only allowed, if we are root
+    if (getuid() != 0) {
+        BOOST_WARN_MESSAGE(getuid() == 0, "Cannot test PacketSocketHandle as non-root user");
+        return;
+    }
     {
-    public:
-        std::pair<bool,unsigned> linger() const;
-        void linger(bool enable, unsigned timeout) const;
+        satcom::lib::PacketSocketHandle sock;
+    }
+}
 
-        struct timeval timestamp() const;
-    };
-
-    class AddressableBSDSocketProtocol
-        : public virtual SocketProtocol
-    {
-    public:
-        bool reuseaddr() const;
-        void reuseaddr(bool value) const;
-    };
-
-}}
-
-
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "BSDSocketProtocol.cci"
-//#include "BSDSocketProtocol.ct"
-//#include "BSDSocketProtocol.cti"
-//#include "BSDSocketProtocol.mpp"
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

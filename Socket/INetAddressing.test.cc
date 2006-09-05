@@ -22,11 +22,11 @@
 
 // Unit tests
 
-//#include "INetAddress.test.hh"
-//#include "INetAddress.test.ih"
+//#include "INetAddressing.test.hh"
+//#include "INetAddressing.test.ih"
 
 // Custom includes
-#include "INetAddress.hh"
+#include "INetAddressing.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

@@ -63,6 +63,12 @@ prefix_ void satcom::lib::ServerSocketHandle<Policy>::bind(AddressParam addr)
 }
 
 template <class Policy>
+prefix_ void satcom::lib::ServerSocketHandle<Policy>::listen(unsigned backlog)
+{
+    Policy::CommunicationPolicy::listen(*this,backlog);
+}
+
+template <class Policy>
 prefix_ typename satcom::lib::ServerSocketHandle<Policy>::Address
 satcom::lib::ServerSocketHandle<Policy>::local()
 {

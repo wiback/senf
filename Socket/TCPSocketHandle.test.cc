@@ -140,6 +140,8 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
+        // this fails with ENOFILE ... why ????
+        // BOOST_CHECK_NO_THROW( sock.protocol().timestamp() );
         BOOST_CHECK( !sock.eof() );
         sock.write("QUIT");
         sleep(1);
@@ -148,6 +150,37 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.read(), "" );
         BOOST_CHECK( sock.eof() );
         BOOST_CHECK( !sock );
+    }
+    
+    {
+        satcom::lib::TCPv4ClientSocketHandle sock;
+
+        // Since this is a TCP socket, most of the calls will fail or
+        // are at least not sensible ...
+        // I'll have to move those to a UDPSocket test ... they should
+        // realy only be in the UDP Protocol implementation
+        // TODO: Move all these into a IPv4MulticastProtocol class and
+        //       use that on a UDPv4SocketHandle implementation
+        BOOST_CHECK_NO_THROW( sock.protocol().mcTTL() );
+        BOOST_CHECK_THROW( sock.protocol().mcTTL(1), satcom::lib::SystemException );
+        BOOST_CHECK_NO_THROW( sock.protocol().mcLoop() );
+        BOOST_CHECK_NO_THROW( sock.protocol().mcLoop(false) );
+        BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0") );
+        BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0","127.0.0.1:0") );
+        BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0","127.0.0.1:0") );
+        BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0") );
+        BOOST_CHECK_THROW( sock.protocol().mcIface("lo"), satcom::lib::SystemException );
+        
+        // The following setsockopts are hard to REALLY test ...
+        BOOST_CHECK_NO_THROW( sock.protocol().nodelay(true) );
+        BOOST_CHECK( sock.protocol().nodelay() );
+        BOOST_CHECK_EQUAL( sock.protocol().siocinq(), 0u );
+        BOOST_CHECK_EQUAL( sock.protocol().siocoutq(), 0u );
+
+        BOOST_CHECK_NO_THROW( sock.protocol().reuseaddr(true) );
+        BOOST_CHECK( sock.protocol().reuseaddr() );
+        BOOST_CHECK_NO_THROW( sock.protocol().linger(true,0) );
+        BOOST_CHECK( sock.protocol().linger() == std::make_pair(true, 0u) );
     }
 }
 

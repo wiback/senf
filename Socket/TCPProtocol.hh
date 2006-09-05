@@ -33,7 +33,7 @@ namespace satcom {
 namespace lib {
 
     class TCPProtocol
-        : public virtual SocketProtocolHelper
+        : public virtual SocketProtocol
     {
     public:
         bool nodelay() const;
@@ -41,6 +41,8 @@ namespace lib {
 
         unsigned siocinq() const;
         unsigned siocoutq() const;
+        unsigned available() const;
+        bool eof() const;
     };
 
 }}

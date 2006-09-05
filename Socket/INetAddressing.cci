@@ -46,38 +46,38 @@ prefix_ satcom::lib::INet4Address::INet4Address(std::string address)
 prefix_ bool satcom::lib::INet4Address::operator==(INet4Address const & other)
     const
 {
-    return addr.sin_port == other.addr.sin_port && 
-        addr.sin_addr.s_addr == other.addr.sin_addr.s_addr;
+    return addr_.sin_port == other.addr_.sin_port && 
+        addr_.sin_addr.s_addr == other.addr_.sin_addr.s_addr;
 }
 
 prefix_ std::string satcom::lib::INet4Address::host()
     const
 {
     // FIXME: thread safety?
-    return std::string(::inet_ntoa(addr.sin_addr));
+    return std::string(::inet_ntoa(addr_.sin_addr));
 }
 
 prefix_ unsigned satcom::lib::INet4Address::port()
     const
 {
-    return ntohs(addr.sin_port);
+    return ntohs(addr_.sin_port);
 }
 
 prefix_ struct sockaddr * satcom::lib::INet4Address::sockaddr_p()
 {
-    return reinterpret_cast<struct sockaddr *>(&addr);
+    return reinterpret_cast<struct sockaddr *>(&addr_);
 }
 
 prefix_ struct sockaddr const * satcom::lib::INet4Address::sockaddr_p()
     const
 {
-    return reinterpret_cast<struct sockaddr const *>(&addr);
+    return reinterpret_cast<struct sockaddr const *>(&addr_);
 }
 
 prefix_ unsigned satcom::lib::INet4Address::sockaddr_len()
     const
 {
-    return sizeof(addr);
+    return sizeof(addr_);
 }
 
 prefix_ std::ostream & satcom::lib::operator<<(std::ostream & os, INet4Address const & addr)

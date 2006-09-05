@@ -20,65 +20,30 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_INetAddress_
-#define HH_INetAddress_ 1
+#ifndef HH_FramingPolicy_
+#define HH_FramingPolicy_ 1
 
 // Custom includes
-#include <string>
-#include <exception>
-#include <netinet/in.h>
+#include "SocketPolicy.hh"
 
-//#include "INetAddress.mpp"
+//#include "FramingPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace satcom {
 namespace lib {
 
-    class INet4Address
-    {
-    public:
-        INet4Address();
-        INet4Address(char const * address);
-        INet4Address(std::string address);
-        INet4Address(std::string host, unsigned port);
+    struct StreamFramingPolicy : public FramingPolicyBase
+    {};
 
-        bool operator==(INet4Address const & other) const;
-
-        std::string str() const;
-        std::string host() const;
-        unsigned port() const;
-
-        // TODO: Interface
-
-        void clear();
-
-        struct sockaddr * sockaddr_p();
-        struct sockaddr const * sockaddr_p() const;
-        unsigned sockaddr_len() const;
-
-    private:
-        void assignString(std::string addr);
-        
-        struct ::sockaddr_in addr;
-    };
-
-    std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
-
-    class INet6Address
-    {
-        // TODO: Implement
-    };
-    
-    struct InvalidINetAddressException : public std::exception
-    { char const * what() const throw() { return "invalid inet address"; } };
+    struct DatagramFramingPolicy : public FramingPolicyBase
+    {};
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "INetAddress.cci"
-//#include "INetAddress.ct"
-//#include "INetAddress.cti"
-//#include "INetAddress.mpp"
+//#include "FramingPolicy.cci"
+//#include "FramingPolicy.ct"
+//#include "FramingPolicy.cti"
 #endif
 
 

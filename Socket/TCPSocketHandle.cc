@@ -62,14 +62,14 @@ prefix_ void satcom::lib::TCPv4SocketProtocol::init_server()
     body().fd(sock);
 }
 
-prefix_ void
-satcom::lib::TCPv4SocketProtocol::init_server(INet4Address const & address)
+prefix_ void satcom::lib::TCPv4SocketProtocol::init_server(INet4Address const & address,
+                                                           unsigned backlog)
     const
 {
     init_server();
     bind(address);
     reuseaddr(true);
-    if (::listen(body().fd(),1) < 0)
+    if (::listen(body().fd(),backlog) < 0)
         throw SystemException(errno);
 }
 
@@ -77,18 +77,6 @@ prefix_ std::auto_ptr<satcom::lib::SocketProtocol> satcom::lib::TCPv4SocketProto
     const
 {
     return std::auto_ptr<SocketProtocol>(new TCPv4SocketProtocol());
-}
-
-prefix_ unsigned satcom::lib::TCPv4SocketProtocol::available()
-    const
-{
-    return siocinq();
-}
-
-prefix_ bool satcom::lib::TCPv4SocketProtocol::eof()
-    const
-{
-    return body().readable() && available()==0;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
