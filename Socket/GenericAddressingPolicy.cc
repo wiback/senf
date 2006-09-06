@@ -62,11 +62,27 @@ prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_connect(FileHandle ha
                                                                    struct sockaddr const * addr,
                                                                    unsigned len)
 {
-    // FIXME: a non-blocking socket will return with EINPROGRESS
-    // This necessitates reading the SO_ERROR value and poll-ing for
-    // completion !! (see man connect)
-    if (::connect(handle.fd(),addr,len) < 0)
-        throw SystemException(errno);
+    while(1) {
+        if (::connect(handle.fd(),addr,len) < 0) 
+            switch (errno) {
+            case EINPROGRESS: {
+                handle.waitWriteable();
+                int err = 0;
+                socklen_t len = sizeof(err);
+                if (::getsockopt(handle.fd(),SOL_SOCKET,SO_ERROR,&err,&len) < 0)
+                    throw SystemException(errno);
+                if (err != 0)
+                    throw SystemException(err);
+                return;
+            }
+            case EINTR:
+                break;
+            default:
+                throw SystemException(errno);
+            }
+        else
+            return;
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

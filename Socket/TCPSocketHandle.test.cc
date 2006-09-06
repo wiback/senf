@@ -159,8 +159,6 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         // are at least not sensible ...
         // I'll have to move those to a UDPSocket test ... they should
         // realy only be in the UDP Protocol implementation
-        // TODO: Move all these into a IPv4MulticastProtocol class and
-        //       use that on a UDPv4SocketHandle implementation
         BOOST_CHECK_NO_THROW( sock.protocol().mcTTL() );
         BOOST_CHECK_THROW( sock.protocol().mcTTL(1), satcom::lib::SystemException );
         BOOST_CHECK_NO_THROW( sock.protocol().mcLoop() );

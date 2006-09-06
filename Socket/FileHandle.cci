@@ -106,7 +106,7 @@ prefix_ bool satcom::lib::FileBody::writeable()
     return pollCheck(fd(),false);
 }
 
-prefix_ void satcom::lib::FileBody::waitWritable()
+prefix_ void satcom::lib::FileBody::waitWriteable()
     const
 {
     pollCheck(fd(),false,true);
@@ -143,10 +143,10 @@ prefix_ bool satcom::lib::FileHandle::writeable()
     return body().writeable();
 }
 
-prefix_ void satcom::lib::FileHandle::waitWritable()
+prefix_ void satcom::lib::FileHandle::waitWriteable()
     const
 {
-    body().waitWritable();
+    body().waitWriteable();
 }
 
 prefix_ bool satcom::lib::FileHandle::blocking()

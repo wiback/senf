@@ -61,7 +61,7 @@ namespace lib {
         bool readable() const;
         void waitReadable() const;
         bool writeable() const;
-        void waitWritable() const;
+        void waitWriteable() const;
 
         bool blocking() const;
         void blocking(bool status);

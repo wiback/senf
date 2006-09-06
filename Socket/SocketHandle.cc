@@ -26,6 +26,7 @@
 #include "SocketHandle.ih"
 
 // Custom includes
+#include <sstream>
 #include <sys/socket.h>
 
 //#include "SocketHandle.mpp"
@@ -58,6 +59,76 @@ prefix_ bool satcom::lib::SocketBody::v_eof()
     const
 {
     return protocol().eof();
+}
+
+prefix_ void satcom::lib::SocketBody::state(SocketStateMap & map, unsigned lod)
+{
+    map["handle.server"] = isServer() ? "true" : "false";
+    map["handle.protocol"] = typeid(protocol()).name();
+    protocol().state(map,lod);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::detail::StateMapOrdering
+
+namespace {
+    bool contains(std::string::iterator b, std::string::iterator e, char c)
+    {
+        for (; b != e; ++b)
+            if (*b == c)
+                return true;
+        return false;
+    }
+}
+
+prefix_ bool satcom::lib::detail::StateMapOrdering::operator()(std::string a1, std::string a2)
+    const
+{
+    std::string::iterator i1 (a1.begin());
+    std::string::iterator const i1_end (a1.end());
+    std::string::iterator i2 (a2.begin());
+    std::string::iterator const i2_end (a2.end());
+    for(; i1 != i1_end && i2 != i2_end && *i1 == *i2; ++i1, ++i2) ;
+    if (i1 == i1_end) {
+        if (i2 == i2_end)
+            // the strings are equal
+            return false;
+        if (contains(i2,i2_end,'.'))
+            // the longer string is a sub-'directory' of the shorter
+            return true;
+        return *i1 < *i2;
+    }
+    else if (i2 == i2_end) { // && i1 != i1_end
+        if (contains(i1,i1_end,'.'))
+            // the longer string is a sub-'directory' of the shorter
+            return false;
+        return *i1 < *i2;
+    }
+    if (contains(i1,i1_end,'.')) {
+        if (contains(i2,i2_end,'.'))
+            return *i1 < *i2;
+        return false;
+    }
+    else if (contains(i2,i2_end,'.'))
+        return true;
+    return *i1 < *i2;
+}
+
+prefix_ std::string satcom::lib::detail::dumpState(SocketStateMap const & map)
+{
+    std::stringstream s;
+    SocketStateMap::const_iterator i (map.begin());
+    SocketStateMap::const_iterator i_end (map.end());
+    for (; i != i_end; ++i)
+        s << i->first << ": " << i->second << "\n";
+    return s.str();
+}
+
+template <class Policy>
+prefix_ std::ostream & satcom::lib::operator<<(std::ostream & os, SocketHandle<Policy> handle)
+{
+    os << handle.dumpState();
+    return os;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

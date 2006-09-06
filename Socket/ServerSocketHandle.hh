@@ -82,7 +82,10 @@ namespace lib {
 
         Address      local        ();
         void         local        (Address & addr);
-        
+
+        // If the handle is non-blocking, accept will NOT block. If no connection
+        // is available to be returned, accept will return a ClientSocketHandle
+        // which is not valid()
         ClientSocketHandle 
                      accept       ();
         std::pair<ClientSocketHandle, Address>

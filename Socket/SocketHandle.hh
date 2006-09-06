@@ -29,6 +29,7 @@
 #include "SocketPolicy.hh"
 
 //#include "SocketHandle.mpp"
+#include "SocketHandle.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 #include "SocketHandle.ih"
 
@@ -74,7 +75,10 @@ namespace lib {
 
         static SocketHandle cast_static(FileHandle handle);
         static SocketHandle cast_dynamic(FileHandle handle);
-        
+
+        void state(SocketStateMap & map, unsigned lod);
+        std::string dumpState(unsigned lod);
+
     protected:
         explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol, bool isServer);
         SocketHandle(FileHandle other, bool isChecked);
@@ -88,6 +92,9 @@ namespace lib {
     private:
 
     };
+
+    template <class Policy>
+    std::ostream & operator<<(std::ostream & os, SocketHandle<Policy> handle);
 
     template <class Target, class Source>
     Target static_socket_cast(Source handle);

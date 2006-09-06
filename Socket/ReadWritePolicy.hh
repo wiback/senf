@@ -32,7 +32,6 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 // TODO: ReadWritePolicy.test.cc ...
-// TODO: EINTR, EAGAIN etc handling ...
 
 struct sockaddr;
 

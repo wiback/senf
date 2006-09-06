@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+// TODO: Implement possibly non-blocking connect and SO_ERROR in the
+// protocol interface
+
 #ifndef HH_TCPSocketHandle_
 #define HH_TCPSocketHandle_ 1
 

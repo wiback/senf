@@ -39,9 +39,21 @@
 prefix_ unsigned satcom::lib::ReadablePolicy::read(FileHandle handle, char * buffer,
                                                    unsigned size)
 {
-    int rv = ::read(handle.fd(), buffer, size);
-    if (rv < 0)
-        throw SystemException(errno);
+    int rv = -1;
+    do {
+        rv = ::read(handle.fd(), buffer, size);
+        if (rv < 0)
+            switch(errno) {
+            case EINTR:
+                break;
+            case EAGAIN:
+                // This means, the socket is non-blocking an no data was available
+                rv = 0;
+                break;
+            default:
+                throw SystemException(errno);
+            }
+    } while (rv<0);
     return rv;
 }
 
@@ -49,18 +61,40 @@ prefix_ unsigned satcom::lib::ReadablePolicy::do_readfrom(FileHandle handle, cha
                                                           unsigned size,
                                                           struct ::sockaddr * addr, socklen_t len)
 {
-    int rv = ::recvfrom(handle.fd(),buffer, size, 0, addr, &len);
-    if (rv < 0)
-        throw SystemException(errno);
+    int rv = -1;
+    do {
+        rv = ::recvfrom(handle.fd(),buffer, size, 0, addr, &len);
+        if (rv < 0)
+            switch (errno) {
+            case EINTR:
+                break;
+            case EAGAIN:
+                rv = 0;
+                break;
+            default:
+                throw SystemException(errno);
+            }
+    } while (rv<0);
     return rv;
 }
 
 prefix_ unsigned satcom::lib::WriteablePolicy::do_write(FileHandle handle, char const * buffer,
                                                         unsigned size)
 {
-    int rv = ::write(handle.fd(), buffer, size);
-    if (rv < 0)
-        throw SystemException(errno);
+    int rv = -1;
+    do {
+        rv = ::write(handle.fd(), buffer, size);
+        if (rv < 0)
+            switch (errno) {
+            case EINTR:
+                break;
+            case EAGAIN:
+                rv = 0;
+                break;
+            default:
+                throw SystemException(errno);
+            }
+    } while (rv<0);
     return rv;
 }
 
@@ -68,12 +102,23 @@ prefix_ unsigned satcom::lib::WriteablePolicy::do_writeto(FileHandle handle,
                                                           char const * buffer, unsigned size,
                                                           struct sockaddr * addr, socklen_t len)
 {
-    int rv = ::sendto(handle.fd(), buffer, size, 0, addr, len);
-    if (rv < 0)
-        throw SystemException(errno);
+    int rv = -1;
+    do {
+        rv = ::sendto(handle.fd(), buffer, size, 0, addr, len);
+        if (rv < 0)
+            switch (errno) {
+            case EINTR:
+                break;
+            case EAGAIN:
+                rv = 0;
+                break;
+            default:
+                throw SystemException(errno);
+            }
+    } while (rv<0);
     return rv;
 }
-
+    
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "ReadWritePolicy.mpp"

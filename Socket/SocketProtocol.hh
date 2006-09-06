@@ -25,6 +25,8 @@
 
 // Custom includes
 #include <boost/utility.hpp>
+// TODO: this is really bad. This includes and predefs should be restructured
+#include "SocketHandle.ih"
 
 //#include "SocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -32,8 +34,6 @@
 namespace satcom {
 namespace lib {
 
-    class SocketBody;
-    class FileHandle;
     class SocketPolicyBase;
 
     class SocketProtocol : boost::noncopyable
@@ -65,6 +65,7 @@ namespace lib {
         virtual std::auto_ptr<SocketProtocol> clone() const = 0;
         virtual unsigned available() const = 0;
         virtual bool eof() const = 0;
+        virtual void state(SocketStateMap & map, unsigned lod) const;
 
     protected:
 

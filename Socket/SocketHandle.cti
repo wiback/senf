@@ -153,6 +153,21 @@ prefix_ bool satcom::lib::check_socket_cast(Source handle)
     return true;
 }
 
+template <class SocketPolicy>
+prefix_ void satcom::lib::SocketHandle<SocketPolicy>::state(SocketStateMap & map, unsigned lod)
+{
+    body().state(map,lod);
+}
+
+template <class SocketPolicy>
+prefix_ std::string satcom::lib::SocketHandle<SocketPolicy>::dumpState(unsigned lod)
+{
+    SocketStateMap map;
+    state(map,lod);
+    return detail::dumpState(map);
+}
+
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

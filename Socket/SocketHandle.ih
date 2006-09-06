@@ -24,16 +24,34 @@
 #define IH_SocketHandle_ 1
 
 // Custom includes
+#include <map>
+#include <string>
 #include <boost/scoped_ptr.hpp>
-#include "SocketProtocol.hh"
+#include "FileHandle.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace satcom {
 namespace lib {
 
-    /** \brief
-      */
+    class SocketProtocol;
+
+    namespace detail {
+        
+        struct StateMapOrdering
+            : public std::binary_function<std::string,std::string,bool>
+        {
+            bool operator()(std::string a1, std::string a2) const;
+        };
+        
+    }
+
+    typedef std::map< std::string, std::string, detail::StateMapOrdering > SocketStateMap;
+
+    namespace detail {
+        std::string dumpState(SocketStateMap const & map);
+    }
+
     class SocketBody
         : public FileBody
     {
@@ -58,6 +76,8 @@ namespace lib {
 
         SocketProtocol const & protocol() const;
         bool isServer();
+        
+        void state(SocketStateMap & map, unsigned lod);
 
     private:
         virtual void v_close();

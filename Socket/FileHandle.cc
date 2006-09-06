@@ -83,9 +83,17 @@ prefix_ bool satcom::lib::FileBody::pollCheck(int fd, bool incoming, bool block)
     ::memset(&pfd,0,sizeof(pfd));
     pfd.fd = fd;
     pfd.events = incoming?POLLIN:POLLOUT;
-    int rv = ::poll(&pfd,1,block?-1:0);
-    if (rv<0)
-        throw satcom::lib::SystemException(errno);
+    int rv = -1;
+    do {
+        rv = ::poll(&pfd,1,block?-1:0);
+        if (rv<0)
+            switch (errno) {
+            case EINTR:
+                break;
+            default:
+                throw SystemException(errno);
+            }
+    } while (rv<0);
     return rv>0;
 }
 

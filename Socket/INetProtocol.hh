@@ -22,6 +22,10 @@
 
 // TODO: what about OOB data? das OOB Data block receipt of normal data ?
 
+// TODO: Implement IP_RECVERR / MSG_ERRQUEUE. This should be placed
+// into an additional protocol class since IP_RECVERR is only valid
+// for SOCK_DGRAM (UDP) and not SOCK_STREAM (TCP) sockets
+
 #ifndef HH_INetProtocol_
 #define HH_INetProtocol_ 1
 
@@ -50,11 +54,12 @@ namespace lib {
         bool mcLoop() const;
         void mcLoop(bool value) const;
 
-        // TODO: Implement real INet4Address datatype and 
-        // rename this one to INet4SockAddress ...
         // TODO: Is it safe, not to allow setting the interface
         // index on add/drop? what does it do (especially if
         // the local addres is given ?)
+       
+        // TODO: move all multicast-methods into an extra
+        // IPv4MulticastProtocol class
 
         void mcAddMembership(INet4Address const & mcAddr) const;
         void mcAddMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;

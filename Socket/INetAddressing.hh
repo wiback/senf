@@ -38,6 +38,9 @@
 namespace satcom {
 namespace lib {
 
+    // TODO: Implement real INet4Address datatype and 
+    // rename this one to INet4SockAddress ...
+
     class INet4Address
     {
     public:

@@ -22,50 +22,22 @@
 
 // Definition of non-inline non-template functions
 
-#include "CommunicationPolicy.hh"
-//#include "CommunicationPolicy.ih"
+#include "SocketProtocol.hh"
+//#include "SocketProtocol.ih"
 
 // Custom includes
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <errno.h>
-#include "Utils/Exception.hh"
-#include "ServerSocketHandle.hh"
 
-//#include "CommunicationPolicy.mpp"
+//#include "SocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::ConnectedCommunicationPolicy::listen(FileHandle handle,
-                                                               unsigned backlog)
-{
-    ::listen(handle.fd(),backlog);
-}
-
-prefix_ int satcom::lib::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
-                                                                 struct sockaddr * addr,
-                                                                 unsigned len)
-{
-    int rv = -1;
-    do {
-        rv = ::accept(handle.fd(),addr,&len);
-        if (rv < 0)
-            switch (errno) {
-            case EWOULDBLOCK:
-                return -1;
-                break;
-            case EINTR:
-                break;
-            default:
-                throw SystemException(errno);
-            }
-    } while (rv<0);
-    return rv;
-}
+prefix_ void satcom::lib::SocketProtocol::state(SocketStateMap & map, unsigned lod)
+    const
+{}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "CommunicationPolicy.mpp"
+//#include "SocketProtocol.mpp"
 
 
 // Local Variables:
