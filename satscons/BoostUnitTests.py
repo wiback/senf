@@ -11,8 +11,8 @@ def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [
     else:
         test_source = []
     testEnv = env.Copy(**kw)
-    testEnv.Append(LIBS = '$BOOSTTESTLIB')
-    testEnv.Append(LIBS = LIBS)
+    testEnv.Prepend(LIBS = '$BOOSTTESTLIB')
+    testEnv.Prepend(LIBS = LIBS)
     sources = []
     if source:
         sources = sources + env.Object(source)
