@@ -37,6 +37,17 @@ namespace lib {
     class SocketProtocol;
 
     namespace detail {
+
+        class ConvertibleString : public std::string
+        {
+        public:
+            ConvertibleString();
+            ConvertibleString(bool v);
+            template <class T>
+            ConvertibleString(T const & other);
+            template <class T>
+            ConvertibleString & operator+= (ConvertibleString const & other);
+        };
         
         struct StateMapOrdering
             : public std::binary_function<std::string,std::string,bool>
@@ -46,7 +57,7 @@ namespace lib {
         
     }
 
-    typedef std::map< std::string, std::string, detail::StateMapOrdering > SocketStateMap;
+    typedef std::map< std::string, detail::ConvertibleString, detail::StateMapOrdering > SocketStateMap;
 
     namespace detail {
         std::string dumpState(SocketStateMap const & map);

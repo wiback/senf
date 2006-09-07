@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+// TODO: Create a SocketHandleBase class and move some non-Policy
+// dependent code there
+
 #ifndef HH_SocketHandle_
 #define HH_SocketHandle_ 1
 
@@ -76,8 +79,8 @@ namespace lib {
         static SocketHandle cast_static(FileHandle handle);
         static SocketHandle cast_dynamic(FileHandle handle);
 
-        void state(SocketStateMap & map, unsigned lod);
-        std::string dumpState(unsigned lod);
+        void state(SocketStateMap & map, unsigned lod=0);
+        std::string dumpState(unsigned lod=0);
 
     protected:
         explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol, bool isServer);
@@ -108,7 +111,7 @@ namespace lib {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "SocketHandle.cci"
-//#include "SocketHandle.ct"
+#include "SocketHandle.ct"
 #include "SocketHandle.cti"
 #endif
 

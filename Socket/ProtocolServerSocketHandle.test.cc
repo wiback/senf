@@ -64,6 +64,15 @@ BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
    
         MySocketHandle::ClientSocketHandle client = h.accept();
         BOOST_CHECK_EQUAL( client.fd(), -1 );
+
+        BOOST_CHECK_EQUAL( h.dumpState(),
+                           "handle: satcom::lib::ProtocolServerSocketHandle<(anonymous namespace)::MyProtocol>\n"
+                           "file.handle: -1\n"
+                           "file.refcount: 2\n"
+                           "socket.policy: satcom::lib::SocketPolicy<satcom::lib::test::SomeAddressingPolicy, satcom::lib::test::SomeFramingPolicy, satcom::lib::test::SomeCommunicationPolicy, satcom::lib::test::SomeReadPolicy, satcom::lib::test::SomeWritePolicy, satcom::lib::test::SomeBufferingPolicy>\n"
+                           "socket.protocol: (anonymous namespace)::MyProtocol\n"
+                           "socket.server: true\n" );
+
     }
 
     {

@@ -65,6 +65,9 @@ namespace lib {
         static ProtocolServerSocketHandle cast_static(FileHandle handle);
         static ProtocolServerSocketHandle cast_dynamic(FileHandle handle);
 
+        void state(SocketStateMap & map, unsigned lod=0);
+        std::string dumpState(unsigned lod=0);
+
     protected:
         ProtocolServerSocketHandle(FileHandle other, bool isChecked);
 

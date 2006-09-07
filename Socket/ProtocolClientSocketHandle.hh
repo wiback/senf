@@ -63,6 +63,9 @@ namespace lib {
         static ProtocolClientSocketHandle cast_static(FileHandle handle);
         static ProtocolClientSocketHandle cast_dynamic(FileHandle handle);
 
+        void state(SocketStateMap & map, unsigned lod=0);
+        std::string dumpState(unsigned lod=0);
+
     protected:
         ProtocolClientSocketHandle(FileHandle other, bool isChecked);
 

@@ -26,6 +26,8 @@
 
 // Custom includes
 #include <typeinfo>
+#include <boost/lexical_cast.hpp>
+#include "Utils/TypeInfo.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -156,6 +158,7 @@ prefix_ bool satcom::lib::check_socket_cast(Source handle)
 template <class SocketPolicy>
 prefix_ void satcom::lib::SocketHandle<SocketPolicy>::state(SocketStateMap & map, unsigned lod)
 {
+    map["handle"] = prettyName(typeid(*this));
     body().state(map,lod);
 }
 
@@ -167,6 +170,13 @@ prefix_ std::string satcom::lib::SocketHandle<SocketPolicy>::dumpState(unsigned 
     return detail::dumpState(map);
 }
 
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::detail::ConvertibleString
+
+template <class T>
+prefix_ satcom::lib::detail::ConvertibleString::ConvertibleString(T const & other)
+    : std::string(boost::lexical_cast<std::string>(other))
+{}
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

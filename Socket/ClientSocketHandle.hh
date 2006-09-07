@@ -125,7 +125,11 @@ namespace lib {
         
         static ClientSocketHandle cast_static(FileHandle handle);
         static ClientSocketHandle cast_dynamic(FileHandle handle);
-                 
+
+        // we need to override both since SocketHandle is *not* polymorphic
+        void state(SocketStateMap & map, unsigned lod=0);
+        std::string dumpState(unsigned lod=0);
+
     protected:
         ClientSocketHandle(FileHandle other, bool isChecked);
         explicit ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol,

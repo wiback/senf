@@ -86,6 +86,15 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
     BOOST_CHECK_THROW( satcom::lib::dynamic_socket_cast<SomeSocketHandle>(
                            satcom::lib::FileHandle(FDHandle())),
                        std::bad_cast );
+
+    BOOST_CHECK_EQUAL( myh.dumpState(), 
+                       "handle: satcom::lib::SocketHandle<satcom::lib::SocketPolicy<satcom::lib::test::SomeAddressingPolicy, satcom::lib::test::SomeFramingPolicy, satcom::lib::test::SomeCommunicationPolicy, satcom::lib::test::SomeReadPolicy, satcom::lib::test::SomeWritePolicy, satcom::lib::test::SomeBufferingPolicy> >\n"
+                       "file.handle: -1\n"
+                       "file.refcount: 3\n"
+                       "socket.policy: satcom::lib::SocketPolicy<satcom::lib::test::SomeAddressingPolicy, satcom::lib::test::SomeFramingPolicy, satcom::lib::test::SomeCommunicationPolicy, satcom::lib::test::SomeReadPolicy, satcom::lib::test::SomeWritePolicy, satcom::lib::test::SomeBufferingPolicy>\n"
+                       "socket.protocol: satcom::lib::test::SomeProtocol\n"
+                       "socket.server: false\n" );
+
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

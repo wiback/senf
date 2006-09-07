@@ -28,6 +28,7 @@
 // Custom includes
 #include <sstream>
 #include <sys/socket.h>
+#include "Utils/TypeInfo.hh"
 
 //#include "SocketHandle.mpp"
 #define prefix_
@@ -63,8 +64,11 @@ prefix_ bool satcom::lib::SocketBody::v_eof()
 
 prefix_ void satcom::lib::SocketBody::state(SocketStateMap & map, unsigned lod)
 {
-    map["handle.server"] = isServer() ? "true" : "false";
-    map["handle.protocol"] = typeid(protocol()).name();
+    map["file.handle"] = fd();
+    map["file.refcount"] = refcount();
+    map["socket.server"] = isServer();
+    map["socket.protocol"] = prettyName(typeid(protocol()));
+    map["socket.policy"] = prettyName(typeid(protocol().policy()));
     protocol().state(map,lod);
 }
 

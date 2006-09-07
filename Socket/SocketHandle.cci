@@ -58,6 +58,16 @@ prefix_ bool satcom::lib::SocketBody::isServer()
     return isServer_;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// satcom::lib::detail::ConvertibleString
+
+prefix_ satcom::lib::detail::ConvertibleString::ConvertibleString()
+{}
+
+prefix_ satcom::lib::detail::ConvertibleString::ConvertibleString(bool v)
+    : std::string(v ? "true" : "false")
+{}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
