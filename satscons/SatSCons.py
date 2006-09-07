@@ -165,7 +165,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = []):
     program = None
     if objects:
         progEnv = env.Copy()
-        progEnv.Append(LIBS = LIBS)
+        progEnv.Prepend(LIBS = LIBS)
         program = progEnv.Program(target=binary,source=objects)
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
