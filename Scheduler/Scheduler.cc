@@ -20,6 +20,48 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+// TODO: Implement signal handling
+// Here a basic concept of how to add signal support to the scheduler:
+//
+// Every signal to be reported by the scheduler will be asigned a
+// generic signal handler by the scheduler. This signal handler will
+// use longjmp (juck) to report this signal back to the scheduler
+// main-loop.
+//
+// To make this safe, the main-loop will look something like:
+//
+//     int signal = setjmp(jmpBuffer_);
+//     if (signal == 0) {
+//         // unblock all signals which are registered with the
+//         // scheduler
+//         // call epoll
+//         // block all relevant signals again
+//     }
+//   
+//     // now handle the event
+//
+// The signal handler is then simply defined as
+//
+//     static void Scheduler::sigHandler(int signal)
+//     {
+//         // make sure to restore the signal handler here if
+//         // necessary
+//         longjmp(Scheduler::instance().jmpBuffer_,signal);
+//     }
+//
+// You should use sigaction to register the signal handlers and define
+// a sa_mask so all Scheduler-registered signals are automatically
+// *blocked* whenever one of the signals is called (including the
+// called signal!). This ensures, that no two signals can be delivered
+// on top of each other. And of course any signal registered with the
+// scheduler must be blocked as soon as it is registered with the
+// scheduler.
+
+// TODO: Multithreading support
+// To support multithreading, the static member Scheduler::instance()
+// must return a thread-local value (that is Scheduler::instance()
+// must allocate one Scheduler instance per thread)
+
 // Definition of non-inline non-template functions
 
 #include "Scheduler.hh"
@@ -118,6 +160,7 @@ prefix_ void satcom::lib::Scheduler::process()
         struct epoll_event ev;
         int events = epoll_wait(epollFd_, &ev, 1, 1000);
         if (events<0)
+            // Hmm ... man epoll says, it will NOT return with EINTR ??
             throw SystemException(errno);
         if (events==0)
             continue;
