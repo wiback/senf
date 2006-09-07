@@ -28,6 +28,8 @@
 // Custom includes
 #include "malloc.h"
 #define HAVE_DECL_BASENAME 1
+#define HAVE_DECL_ASPRINTF 1
+#define HAVE_DECL_VASPRINTF 1
 #include "impl/demangle.h"
 
 //#include "TypeInfo.mpp"
