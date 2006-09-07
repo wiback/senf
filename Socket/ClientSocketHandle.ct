@@ -71,6 +71,27 @@ readfrom(std::string & buffer, typename Policy::AddressingPolicy::Address & from
 }
 
 template <class Policy>
+prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::write(std::string const & data)
+{
+    unsigned written = this->write(data.data(),data.size());
+    if (written == 0)
+        throw SystemException(EPIPE);
+    // This implementation ensures, we only call blocking() when
+    // necessary (since it incurs a system call overhead ...)
+    if (written < data.size() && this->blocking())
+        // We need to enforce in the WritePolicy implementation, that
+        // DatagramFramingPolicy sockets will ALWAYS either write the
+        // complete datagram or nothing at all
+        while (written < data.size()) {
+            unsigned n = this->write(data.data()+written,data.size()-written); 
+            if (n == 0)
+                throw SystemException(EPIPE);
+            written += n;
+        }
+    return written;
+}
+
+template <class Policy>
 prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::available()
 {
     unsigned nread = this->protocol().available();

@@ -81,18 +81,6 @@ readfrom(char * buffer, unsigned size, typename Policy::AddressingPolicy::Addres
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::write(std::string const & data)
-{
-    if (this->blocking()) {
-        unsigned written = 0;
-        while (written < data.size())
-            written += this->write(data.data()+written,data.size()-written);
-        return data.size();
-    } else
-        return this->write(data.data(),data.size());
-}
-
-template <class Policy>
 prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::write(char const * buffer,
                                                                 unsigned size)
 {

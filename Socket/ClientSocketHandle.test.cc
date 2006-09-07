@@ -54,6 +54,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(clientSocketHandle)
 {
+    BOOST_CHECKPOINT("Constructing socket handle");
     MySocketHandle myh;
 
     // conversion to other socket handles
@@ -65,12 +66,14 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
             >::policy OtherSocketPolicy;
         typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
     
+        BOOST_CHECKPOINT("Copy-constructing socket handle");
         OtherSocketHandle osh (myh);
+        BOOST_CHECKPOINT("Assigning socket handle");
         osh = myh;
         typedef sl::ClientSocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
+        BOOST_CHECKPOINT("static_casting socket handle");
         SomeSocketHandle ssh = 
             sl::static_socket_cast<SomeSocketHandle>(osh);
-
         BOOST_CHECK_NO_THROW( sl::dynamic_socket_cast<SomeSocketHandle>(osh) );
         typedef sl::ClientSocketHandle<sl::MakeSocketPolicy<
             OtherSocketPolicy,
@@ -81,48 +84,48 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
     }
 
     // reading and writing
-    BOOST_CHECK_EQUAL( myh.read(), "TEST-READ" );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.read(), "TEST-READ" ) );
     {
         std::string buf("FOO-BAR");
-        myh.read(buf);
+        BOOST_CHECK_NO_THROW( myh.read(buf) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ" );
     }
     {
         char buf[11];
         ::strcpy(buf,"0123456789");
-        BOOST_CHECK_EQUAL( myh.read(buf,10), 9u );
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.read(buf,10), 9u ) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
     }
 
-    BOOST_CHECK_EQUAL( myh.readfrom().first, "TEST-READ" );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.readfrom().first, "TEST-READ" ) );
     {
         std::string buf("FOO-BAR");
         unsigned addr;
-        myh.readfrom(buf,addr);
+        BOOST_CHECK_NO_THROW( myh.readfrom(buf,addr) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ" );
     }
     {
         char buf[11];
         unsigned addr;
         ::strcpy(buf,"0123456789");
-        BOOST_CHECK_EQUAL( myh.readfrom(buf,10,addr), 9u );
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.readfrom(buf,10,addr), 9u ) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
     }
 
-    BOOST_CHECK_EQUAL( myh.write("TEST-WRITE"), 10u );
-    BOOST_CHECK_EQUAL( myh.write("TEST"), 0u );
-    BOOST_CHECK_EQUAL( myh.write("TEST-WRITE9",10), 10u );
-    BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE"), 10u );
-    BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE9",10), 10u );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.write("TEST-WRITE"), 10u ) );
+    BOOST_CHECK_THROW( myh.write("TEST"),satcom::lib::SystemException );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.write("TEST-WRITE9",10), 10u ) );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE"), 10u ) );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE9",10), 10u ) );
 
     BOOST_CHECK_NO_THROW( myh.connect(0) );
     BOOST_CHECK_NO_THROW( myh.bind(0) );
-    BOOST_CHECK_EQUAL( myh.peer(), 1u );
-    BOOST_CHECK_EQUAL( myh.local(), 2u );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.peer(), 1u ) );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.local(), 2u ) );
 
-    BOOST_CHECK_EQUAL( myh.rcvbuf(), 0u );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.rcvbuf(), 0u ) );
     BOOST_CHECK_NO_THROW( myh.rcvbuf(1) );
-    BOOST_CHECK_EQUAL( myh.sndbuf(), 0u );
+    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.sndbuf(), 0u ) );
     BOOST_CHECK_NO_THROW( myh.sndbuf(1) );
 }
 
