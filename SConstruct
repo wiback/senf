@@ -10,7 +10,8 @@ SatSCons.UseDoxygen();
 env = SatSCons.MakeEnvironment();
 
 env.Append(
-   CPPPATH = [ '#..', '#' ]
+   CPPPATH = [ '#' ],
+   LIBS = [ 'iberty' ]
 )
 
 Export('env')
