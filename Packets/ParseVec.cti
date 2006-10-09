@@ -1,0 +1,224 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Definition of inline template functions
+
+//#include "ParseVec.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
+Parse_Vector(SizeParser const & size)
+    : size_(size) 
+{}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
+Parse_Vector(size_parser const & size, Iterator const & i)
+    : ParserBase<Iterator,IPacket>(i), size_(size) 
+{}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ unsigned satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::bytes()
+    const
+{
+    return Parser::bytes()*size();
+}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ void
+satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::check(Iterator const & e)
+    const
+{
+    return e-this->i() >= bytes();
+}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ void satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::init()
+    const
+{
+    iterator e (end());
+    for (iterator i (begin()); i!=e; ++i) i->init();
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::size_type
+satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::size()
+    const
+{
+    return size_.value();
+}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ bool satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::empty()
+    const
+{
+    return size()==0;
+}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ 
+typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::iterator
+satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::begin()
+    const
+{
+    return iterator(this->i());
+}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ 
+typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::iterator
+satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::end()
+    const
+{
+    return iterator(this->i()+bytes());
+}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ 
+typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range_type
+satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range()
+    const
+{
+    return std::make_pair(begin(),end());
+}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ 
+typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range_type
+satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value()
+    const
+{
+    return range();
+}
+
+template <class Parser, class SizeParser, class Iterator, class IPacket>
+prefix_ 
+typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value_type
+satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::operator[](difference_type i)
+    const
+{
+    return begin()[i];
+}
+
+///////////////////////////////////////////////////////////////////////////
+// satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>
+
+template <class Parser, class SizeParser, class Container>
+template <class P, class SP, class I, class IP>
+prefix_ satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::
+Parse_Vector_wrapper(Parse_Vector<P,SP,I,IP> const & vector, Container & container)
+    : i_(vector.i()-container.begin()), size_i_(vector.size_.i()-container.begin()),
+      container_(container) 
+{}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::size_type
+satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::size()
+    const
+{
+    return SizeParser(container_.begin()+size_i_).value();
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ bool satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::empty()
+    const
+{
+    return size() == 0;
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::iterator
+satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::begin()
+    const
+{
+    return iterator(container_.begin() + i_);
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::iterator
+satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::end()
+    const
+{
+    return iterator(container_.begin() + i_ + Parser::bytes()*size());
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::range_type
+satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::range()
+    const
+{
+    return std::make_pair(begin(), end());
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::value_type
+satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::operator[](difference_type i)
+    const
+{
+    return begin()[i];
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::shift(iterator pos,
+                                                                               size_type n)
+{
+    container_.insert(pos.raw(),n*Parser::bytes(),0);
+    SizeParser(container_.begin()+size_i_) += n;
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::erase(iterator pos,
+                                                                               size_type n)
+{
+    container_.erase(pos.raw(),pos.raw()+n*Parser::bytes());
+    SizeParser(container_.begin()+size_i_) -= n;
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::erase(iterator f,
+                                                                               iterator l)
+{
+    erase(f,l-f);
+}
+
+template <class Parser, class SizeParser, class Container>
+prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::clear()
+{
+    container_.erase(container_.begin()+i_,container_.begin()+i_+size()*Parser::bytes());
+    SizeParser(container_.begin()+size_i_) = 0;
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

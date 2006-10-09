@@ -1,0 +1,195 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Definition of inline non-template functions
+
+#include "Packet.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ satcom::pkf::impl::PacketImpl::PacketImpl()
+    : data_(), interpreters_(), refcount_(1)
+{
+    SATCOM_PKF_REFC_MSG("] PacketImpl::PacketImpl (" << this << "): refcount_ = 1\n");
+}
+
+prefix_ satcom::pkf::impl::PacketImpl::PacketImpl(unsigned size, Packet::byte initValue)
+    : data_(size,initValue), interpreters_(), refcount_(1)
+{
+    SATCOM_PKF_REFC_MSG("] PacketImpl::PacketImpl (" << this << "): refcount_ = 1\n");
+}
+
+prefix_ satcom::pkf::impl::PacketImpl::~PacketImpl()
+{
+    BOOST_ASSERT( !refcount_ );
+    SATCOM_PKF_REFC_MSG("] PacketImpl::~PacketImpl (" << this << ")\n");
+}
+
+// PacketImpl::add_ref and PacketImpl::release are only called from
+// intrusive_ptr_add_ref and intrusive_ptr_release
+prefix_ void satcom::pkf::impl::PacketImpl::add_ref()
+{ 
+    ++refcount_;
+    SATCOM_PKF_REFC_MSG("] PacketImpl::add_ref (" << this << "): refcount_ = " << refcount_ << "\n");
+}
+
+prefix_ bool satcom::pkf::impl::PacketImpl::release()
+{ 
+    BOOST_ASSERT( refcount_ > 0 );
+    --refcount_;
+    SATCOM_PKF_REFC_MSG("] PacketImpl::release (" << this << "): refcount_ = " << refcount_ << "\n");
+    return ! refcount_;
+}
+
+prefix_ void satcom::pkf::impl::PacketImpl::truncateInterpreters(Packet const * p)
+{
+    BOOST_ASSERT( p->impl_ == this );
+    this->interpreters_.erase(p->self_,this->interpreters_.end());
+}
+
+prefix_ void satcom::pkf::impl::PacketImpl::truncateInterpretersAfter(Packet const * p)
+{
+    BOOST_ASSERT( p->impl_ == this );
+    this->interpreters_.erase(boost::next(p->self_),this->interpreters_.end());
+}
+
+prefix_ satcom::pkf::impl::PacketImpl* satcom::pkf::impl::PacketImpl::impl(Packet const * p)
+{
+    return p->impl_;
+}
+
+/*
+prefix_ std::ostream & satcom::pkf::operator<<(std::ostream & os, Packet const & packet)
+{
+    packet.dump(os);
+    return os;
+}
+*/
+
+// These methods are called by the user codes Packet::ptr's. They
+// refcount both the Packet and the owning PacketImpl. 
+prefix_ void satcom::pkf::intrusive_ptr_add_ref(Packet const * p)
+{
+    impl::PacketImpl::packet_add_ref(p);
+}
+
+prefix_ void satcom::pkf::intrusive_ptr_release(Packet * p)
+{
+    impl::PacketImpl::packet_release(p);
+}
+
+prefix_ void satcom::pkf::impl::intrusive_ptr_add_ref(PacketImpl * p)
+{
+    p->add_ref();
+}
+
+prefix_ void satcom::pkf::impl::intrusive_ptr_release(PacketImpl * p)
+{
+    if (p->release())
+        delete p;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// class Packet
+
+prefix_ satcom::pkf::Packet::iterator satcom::pkf::Packet::begin()
+    const
+{
+    return impl_->data_.begin()+begin_;
+}
+
+prefix_ satcom::pkf::Packet::iterator satcom::pkf::Packet::end()
+    const
+{
+    return impl_->data_.begin()+end_;
+}
+
+prefix_ size_t satcom::pkf::Packet::size()
+    const
+{
+    return end_-begin_;
+}
+
+prefix_ satcom::pkf::Packet::ptr satcom::pkf::Packet::prev()
+    const
+{
+    if (this->self_ == this->impl_->interpreters_.begin())
+        return ptr(0);
+    // Re-converting the to a smart pointer is correct here, since the
+    // shared_ptr really uses the intrusive refcount which makes this
+    // operation safe ...
+    return ptr(boost::prior(this->self_)->get(),true);
+}
+
+prefix_ satcom::pkf::Packet::ptr satcom::pkf::Packet::head()
+    const
+{
+    // Re-converting the to a smart pointer is correct here, since the
+    // shared_ptr really uses the intrusive refcount which makes this
+    // operation safe ...
+    return ptr(this->impl_->interpreters_.front().get(),true);
+}
+
+prefix_  satcom::pkf::Packet::~Packet()
+{
+    // FIXME: This is bad ... we cannot check this since this
+    // assertion fails at the moment if the Packet constructor throws
+    // ... hrmpf ... we really need to initialize refcount_ to 0 and
+    // remove the 'false' argument to the ptr constructor in ::create
+    // BOOST_ASSERT( !this->refcount_  && !this->impl_ );
+    SATCOM_PKF_REFC_MSG("] Packet::~Packet (" << this << ")\n");
+}
+
+prefix_ void satcom::pkf::Packet::add_ref()
+    const
+{
+    ++this->refcount_;
+    SATCOM_PKF_REFC_MSG("] Packet::add_ref (" << this << "): refcount_ = " << this->refcount_ << "\n");
+}
+
+prefix_ bool satcom::pkf::Packet::release()
+{
+    BOOST_ASSERT( this->refcount_ > 0 );
+    --this->refcount_;
+    SATCOM_PKF_REFC_MSG("] Packet::release (" << this << "): refcount_ = " << this->refcount_ << "\n");
+    return !this->refcount_ && !this->impl_;
+}
+
+prefix_ bool satcom::pkf::Packet::unlink()
+{
+    SATCOM_PKF_REFC_MSG("] Packet::unlink (" << this << "): refcount_ = " << this->refcount_ << "\n");
+    this->impl_ = 0;
+    this->begin_ = this->end_;
+    return !this->refcount_;
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

@@ -1,0 +1,83 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Definition of inline template funPacketRegistry.ons
+
+#include "PacketRegistry.ih"
+
+// Custom includes
+#include "Packet.hh"
+
+#define prefix_ inline
+///////////////////////////////PacketRegistry..p///////////////////////////////////////
+
+template <class Tag>
+template <class OtherPacket>
+prefix_ void satcom::pkf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key)
+{
+    registry().registerPacket<OtherPacket>(key);
+}
+
+template <class Tag>
+template <class OtherPacket>
+prefix_ satcom::pkf::PacketRegistry<Tag>::RegistrationProxy<OtherPacket>::
+RegistrationProxy(typename Tag::key_t key)
+{
+    PacketRegistry<Tag>::template registerPacket<OtherPacket>(key);
+}
+
+template <class Tag>
+template <class OtherPacket>
+prefix_ typename Tag::key_t satcom::pkf::PacketRegistry<Tag>::key()
+{
+    return registry().key(satcom::lib::typeIdValue<OtherPacket>());
+}
+
+template <class KeyType>
+template <class OtherPacket>
+prefix_ void
+satcom::pkf::impl::PacketRegistryImpl<KeyType>::registerInterpreter(Packet * p,
+                                                                    Packet::iterator b,
+                                                                    Packet::iterator e)
+{
+    p->registerInterpreter<OtherPacket>(b,e);
+}
+
+template <class Tag, class Derived>
+prefix_ void
+satcom::pkf::PacketRegistryMixin<Tag,Derived>::registerInterpreter(typename Tag::key_t key,
+                                                                   Packet::iterator b,
+                                                                   Packet::iterator e)
+    const
+{
+    PacketRegistry<Tag>::registry().lookup(key)->registerInterpreter(
+        static_cast<Derived const * const>(this),b,e);
+}
+
+///////////////////////////////PacketRegistry..e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

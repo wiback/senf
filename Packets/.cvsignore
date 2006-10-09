@@ -1,0 +1,10 @@
+SConfig
+.doc.stamp
+.test.stamp
+.sconf_temp
+.sconsign
+config.log
+doc
+test
+structure.png
+.clean

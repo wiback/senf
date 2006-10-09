@@ -1,0 +1,206 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Definition of inline template functions
+
+#include "ParseArray.ih"
+
+// Custom includes
+#include <algorithm>
+#if defined(_STLP_ALGORITHM) || (__GNUC__<4 && __GNUC_MINOR__<4)
+#define copy_n std::copy_n
+#else
+#include <ext/algorithm>
+#define copy_n __gnu_cxx::copy_n
+#endif
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array()
+{}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array(Iterator const & i)
+    : ParserBase<Iterator,IPacket>(i) 
+{}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ unsigned satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::bytes()
+{
+    return elements*Parser::bytes();
+}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ bool
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::check(Iterator const & e)
+    const
+{
+    return e-this->i() >= bytes();
+}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ void satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::init()
+    const
+{
+    iterator e=end();
+    for (iterator i=begin(); i!=e; ++i) i->init();
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::size_type
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::size()
+{
+    return elements;
+}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::begin()
+    const
+{
+    return iterator(this->i());
+}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::end()
+    const
+{
+    return iterator(this->i()+bytes());
+}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::range_type
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::range()
+    const
+{
+    return std::make_pair(begin(),end());
+}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::value()
+    const
+{
+    return begin();
+}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::value_type
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::operator[](difference_type i)
+    const
+{
+    return begin()[i];
+}
+
+template <unsigned elements, class Parser, class Iterator, class IPacket>
+template <class InputIterator>
+prefix_ satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket> const &
+satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::operator=(InputIterator const & i)
+{
+    copy_n(i,size(),begin());
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+template <class Parser, class Iterator>
+prefix_ Iterator satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::raw()
+    const
+{
+    return i_;
+}
+
+template <class Parser, class Iterator>
+prefix_ Parser satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::operator[](int i)
+    const
+{
+    return (*this+i).dereference();
+}
+
+template <class Parser, class Iterator>
+prefix_ satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::Parse_Array_iterator()
+    : i_()
+{}
+
+template <class Parser, class Iterator>
+prefix_  satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::
+Parse_Array_iterator(Iterator const & i)
+    : i_(i)
+{}
+
+template <class Parser, class Iterator>
+prefix_ Parser
+satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::dereference()
+    const
+{
+    return Parser(i_);
+}
+
+template <class Parser, class Iterator>
+prefix_ bool satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::
+equal(Parse_Array_iterator const & other)
+    const
+{
+    return i_==other.i_;
+}
+
+template <class Parser, class Iterator>
+prefix_ int satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::
+distance_to(Parse_Array_iterator const & other)
+    const
+{
+    return (other.i_-i_)/Parser::bytes();
+}
+
+template <class Parser, class Iterator>
+prefix_ void satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::increment()
+{
+    i_ += Parser::bytes();
+}
+
+template <class Parser, class Iterator>
+prefix_ void satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::decrement()
+{
+    i_ -= Parser::bytes();
+}
+
+template <class Parser, class Iterator>
+prefix_ void
+satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::advance(int n)
+{
+    i_ += n*Parser::bytes();
+}
+
+#undef copy_n
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

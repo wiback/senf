@@ -1,0 +1,69 @@
+// $Id$
+//
+// Copyright (C) 2006 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+#ifndef IH_ParseListS_
+#define IH_ParseListS_ 1
+
+// Custom includes
+#include <boost/iterator/iterator_facade.hpp>
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace satcom {
+namespace pkf {
+namespace impl {
+
+    template <class Parser, class Sentinel, class Iterator>
+    class Parse_ListS_iterator
+        : public boost::iterator_facade< Parse_ListS_iterator<Parser,Sentinel,Iterator>,
+                                         Parser,
+                                         boost::forward_traversal_tag,
+                                         Parser >
+    {
+    public:
+        Parse_ListS_iterator();
+        explicit Parse_ListS_iterator(Iterator const & i);
+        
+        Iterator raw() const;
+        
+    private:
+        friend class boost::iterator_core_access;
+
+        Parser dereference() const;
+        bool equal(Parse_ListS_iterator const & other) const;
+        void increment();
+
+        Iterator i_;
+        bool atEnd_;
+    };
+
+}}}
+
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// c-file-style: "satcom"
+// End:

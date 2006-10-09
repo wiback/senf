@@ -1,0 +1,15 @@
+Klasse für IPv6 (v4?) Adressen als Parser und als value type
+
+Bessere check implementierung ?
+check umbauen: check() static machen und vor dem DerivedPacket() constructor
+aufrufen. DerivedPacket() constructor darf dann keine exception mehr
+auslösen
+
+ParseListS wrapper implementieren.
+
+---------------------------------------------------------------------------
+Obsolete:
+
+reference-counting: Packet's mit 0 refcount erstellen und dann in
+create hochzählen. Was spricht eigentlich dagegen ???
+  --> Hrmpf .. doch ziemlich kompliziert, ich glaube, das lasse ich
