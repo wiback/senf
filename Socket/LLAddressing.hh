@@ -67,14 +67,14 @@ namespace lib {
         
         LLSocketAddress();
         // And this is for bind
-        LLSocketAddress(unsigned protocol, std::string interface="");
+        explicit LLSocketAddress(unsigned protocol, std::string interface="");
         explicit LLSocketAddress(std::string interface);
         // This is for sending packets ..
         // We must use enable_if here, so this constructor will not hide
         // above constructor if passed a plain int or short argument
         template <class ForwardRange>
-        LLSocketAddress(ForwardRange const & address, std::string interface,
-                        typename boost::enable_if_c<! boost::is_integral<ForwardRange>::value >::type * = 0);
+        explicit LLSocketAddress(ForwardRange const & address, std::string interface="",
+                                 typename boost::enable_if_c<! boost::is_integral<ForwardRange>::value >::type * = 0);
 
         void clear();
 
