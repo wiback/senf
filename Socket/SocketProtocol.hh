@@ -25,7 +25,7 @@
 
 // Custom includes
 #include <boost/utility.hpp>
-// TODO: this is really bad. This includes and predefs should be restructured
+// FIXME: this is really bad. The includes and predefs should be restructured
 #include "SocketHandle.ih"
 
 //#include "SocketProtocol.mpp"

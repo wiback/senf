@@ -59,7 +59,7 @@ prefix_ void satcom::lib::BSDSocketProtocol::linger(bool enable, unsigned timeou
 prefix_ struct timeval satcom::lib::BSDSocketProtocol::timestamp()
     const
 {
-    // TODO: Check, why this fails with ENOFILE (!!!!) at least when
+    // BUG: Check, why this fails with ENOFILE (!!!!) at least when
     // called from a tcp socket. Further investigation necessary ...
     struct timeval tv;
     if (::ioctl(body().fd(), SIOCGSTAMP, &tv) < 0)
