@@ -1,0 +1,7 @@
+Import('env')
+import SatSCons
+
+###########################################################################
+
+SatSCons.Binary(env, 'sniffer', SatSCons.GlobSources(),
+                LIBS = [ 'Packets', 'Socket', 'Utils' ]);
