@@ -126,7 +126,7 @@ def Objects(env, sources, testSources = None, LIBS = []):
 
     if testSources:
         test = env.BoostUnitTests(
-            target = 'test.log',
+            target = 'test',
             source = sources,
             test_source = testSources,
             LIBS = LIBS,
