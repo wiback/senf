@@ -23,7 +23,7 @@ def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [
     if DEPENDS:
         env.Depends(testRunner, DEPENDS)
     return env.Command([ target, stamp ], testRunner,
-                       [ '( $SOURCE $BOOSTTESTARGS 2>&1 && touch ${TARGETS[1]} ) | tee ${TARGETS[0]}' ])
+                       [ '( $SOURCE $BOOSTTESTARGS 2>&1 && touch ${TARGETS[1]} ) | tee ${TARGETS[0]}; exit $$PIPESTATUS[0]' ])
 
 def dispatcher(*arg,**kw):
     return BoostUnitTests(*arg,**kw)
