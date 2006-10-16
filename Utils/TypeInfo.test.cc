@@ -40,7 +40,7 @@ namespace test {
         virtual ~Base() {}
     };
 
-    template <class C, unsigned N>
+    template <class C, int N>
     struct Foo : public Base
     {};
 
@@ -51,11 +51,10 @@ BOOST_AUTO_UNIT_TEST(prettyName)
 {
     typedef test::Foo< test::Foo<test::Blub, 1>, 10> TestType;
     TestType ob;
-    // test::Base const & baseOb(ob);
+    test::Base const & baseOb(ob);
 
     BOOST_CHECK_EQUAL( satcom::lib::prettyName(typeid(int)), "int");
-    // The exact representation is compiler version dependent ... 
-    // BOOST_CHECK_EQUAL( satcom::lib::prettyName(typeid(baseOb)), "test::Foo<test::Foo<test::Blub, 1>, 10>" );
+    BOOST_CHECK_EQUAL( satcom::lib::prettyName(typeid(baseOb)), "test::Foo<test::Foo<test::Blub, 1>, 10>" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
