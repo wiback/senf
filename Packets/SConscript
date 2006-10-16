@@ -6,4 +6,7 @@ import SatSCons
 sources = SatSCons.GlobSources()
 SatSCons.StandardTargets(env)
 SatSCons.Lib(env, 'Packets',  sources)
-SatSCons.Doxygen(env,sources)
+env.AddPreAction(
+    SatSCons.Doxygen(env,sources),
+    env.Action("make -f imgconvert.mak structure.png"))
+    
