@@ -35,6 +35,7 @@ namespace pkf {
 namespace impl {
 
     struct PkReg_Entry {
+        virtual ~PkReg_Entry() {}
         virtual void registerInterpreter(Packet const * p, 
                                          Packet::iterator b, Packet::iterator e) = 0;
         virtual Packet::ptr reinterpret(Packet * p) = 0;

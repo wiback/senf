@@ -45,11 +45,11 @@ namespace impl {
             Parser_traits_fixed_size_check(&Parser::bytes))-sizeof(Parser_traits_sentinel<1>);
     };
 
-    template <class T>
-    Parser_traits_sentinel<2> Parser_traits_fixed_size_check(T);
+    template <class R>
+    Parser_traits_sentinel<2> Parser_traits_fixed_size_check(R (*)());
 
     template <class R,class T>
-    Parser_traits_sentinel<1> Parser_traits_fixed_size_check(R (T::*)());
+    Parser_traits_sentinel<1> Parser_traits_fixed_size_check(R (T::*)() const);
 
     template <class Parser, class Iterator>
     bool check(Iterator const & b, Iterator const & e, ParserBase *);

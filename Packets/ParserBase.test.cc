@@ -28,6 +28,7 @@
 // Custom includes
 #include "ParserBase.hh"
 #include "Packet.hh"
+#include <boost/static_assert.hpp>
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -85,6 +86,9 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(parserBase_construction)
 {
+    BOOST_STATIC_ASSERT( pkf::Parser_traits< Parse_Test<> >::fixed_size );
+    BOOST_STATIC_ASSERT( ! pkf::Parser_traits< Parse_Test2<> >::fixed_size );
+
     BOOST_CHECK_EQUAL( pkf::min_bytes< Parse_Test<int> >(), 14u );
     BOOST_CHECK( pkf::check< Parse_Test<int> >(0,14) );
     BOOST_CHECK( ! pkf::check< Parse_Test<int> >(2,15) );
