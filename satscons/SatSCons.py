@@ -139,14 +139,15 @@ def Objects(env, sources, testSources = None, LIBS = []):
 
     return objects
 
-def Doxygen(env, sources, testSources = None):
+def Doxygen(env, sources, testSources = None, image = []):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
 
     doc = env.Doxygen(
         target = 'doc',
-        source = sources )
+        source = sources,
+        image = image)
 
     env.Alias('all_docs', doc)
     return doc
