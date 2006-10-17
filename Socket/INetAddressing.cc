@@ -26,7 +26,7 @@
 //#include "INetAddressing.ih"
 
 // Custom includes
-#include <strstream>
+#include <sstream>
 #include <string.h>
 #include <sys/socket.h>
 #include <boost/lexical_cast.hpp>

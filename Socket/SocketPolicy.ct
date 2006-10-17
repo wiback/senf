@@ -36,7 +36,7 @@ template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, , SATLIB_SOCKET_POLICIES ) 
 prefix_ void satcom::lib::SocketPolicy< BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateParams, , SATLIB_SOCKET_POLICIES ) >::
 checkBaseOf(SocketPolicyBase const & other)
 {
-#   define SP_CheckPolicy(x1,x2,SomePolicy) dynamic_cast<SomePolicy const &>(other.BOOST_PP_CAT(the,SomePolicy)());
+#   define SP_CheckPolicy(x1,x2,SomePolicy) (void) dynamic_cast<SomePolicy const &>(other.BOOST_PP_CAT(the,SomePolicy)());
     BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SATLIB_SOCKET_POLICIES )
 #   undef SP_CheckPolicy
 }
