@@ -20,6 +20,14 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \mainpage The SENF Socket Library
+
+\section arch Overall Architecture
+
+\image html "../../SocketLibrary-classes.png" Class Diagram
+
+ */
+
 #ifndef HH_FileHandle_
 #define HH_FileHandle_ 1
 

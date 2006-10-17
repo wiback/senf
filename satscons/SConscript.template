@@ -6,5 +6,5 @@ import SatSCons
 SatSCons.StandardTargets(env)
 
 # SatSCons.Lib(env,
-               library = 'Test',
-               sources = SatSCons.GlobSources())
+#               library = 'Test',
+#               sources = SatSCons.GlobSources())
