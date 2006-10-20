@@ -38,7 +38,7 @@
 // implementation.
 
 
-/** \mainpage The SatCom Packet Framework
+/** \mainpage The SENF Packet Library
 
     \section arch Overall Architecture
 

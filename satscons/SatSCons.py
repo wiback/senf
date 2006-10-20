@@ -139,13 +139,13 @@ def Objects(env, sources, testSources = None, LIBS = []):
 
     return objects
 
-def Doxygen(env, sources, testSources = None, image = []):
+def Doxygen(env, sources, testSources = None, target='doc', image = []):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
 
     doc = env.Doxygen(
-        target = 'doc',
+        target = target,
         source = sources,
         image = image)
 
