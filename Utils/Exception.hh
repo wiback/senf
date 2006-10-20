@@ -25,6 +25,7 @@
 
 // Custom includes
 #include <exception>
+#include <string>
 
 //#include "Exception.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -34,9 +35,18 @@ namespace lib {
 
     struct SystemException : public std::exception
     {
-        SystemException(int err_) : err(err_) {};
+        explicit SystemException(int err_) : where(0), err(err_) { init(); }
+        SystemException(char const * where_, int err_) : where(where_), err(err_) { init(); }
+
         virtual char const * what() const throw();
+
+        char const * where;
         int err;
+
+        virtual ~SystemException() throw() {}
+    private:
+        void init();
+	std::string buffer_;
     };
     
 }}

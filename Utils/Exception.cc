@@ -27,14 +27,24 @@
 
 // Custom includes
 #include <cstring>
+#include <sstream>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+prefix_ void satcom::lib::SystemException::init()
+{
+    std::stringstream s;
+    if (where)
+        s << where << ": ";
+    s << "(" << err << ") " << std::strerror(err);
+    buffer_ = s.str();
+}
+
 prefix_ char const * satcom::lib::SystemException::what()
     const throw()
 {
-    return std::strerror(this->err);
+    return buffer_.c_str();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
