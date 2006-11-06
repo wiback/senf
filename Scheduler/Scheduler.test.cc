@@ -163,6 +163,11 @@ namespace {
         }
         Scheduler::instance().terminate();
     }
+
+    void timeout() 
+    {
+	Scheduler::instance().terminate();
+    }
      
     struct HandleWrapper
     {
@@ -182,6 +187,12 @@ namespace {
             return;
         callback(handle.fd_,event);
     }
+
+    bool is_close(MicroTime a, MicroTime b)
+    {
+	return (a<b ? b-a : a-b) < 1100;
+    }
+	    
 }
 
 BOOST_AUTO_UNIT_TEST(scheduler)
@@ -216,6 +227,14 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "READ" );
 
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(100,&timeout) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(200,&timeout) );
+    MicroTime t (now());
+    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+    BOOST_CHECK_PREDICATE( is_close, (now()) (t+100*1000) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+    BOOST_CHECK_PREDICATE( is_close, (now()) (t+200*1000) );
+    
     HandleWrapper handle(sock,"TheTag");
     BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,&handleCallback,Scheduler::EV_WRITE) );
     strcpy(buffer,"WRITE");

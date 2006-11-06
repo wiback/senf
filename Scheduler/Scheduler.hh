@@ -25,9 +25,12 @@
 
 // Custom includes
 #include <map>
+#include <queue>
 #include <boost/function.hpp>
 #include <boost/utility.hpp>
 #include <boost/call_traits.hpp>
+
+#include "Utils/MicroTime.hh"
 
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -59,6 +62,8 @@ namespace lib {
             typedef boost::function<void (typename boost::call_traits<Handle>::param_type,
                                           EventId) > Callback;
         };
+	typedef boost::function<void (EventId)> SimpleCallback;
+	typedef boost::function<void ()> TimerCallback;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -78,38 +83,52 @@ namespace lib {
         template <class Handle>
         void add(Handle const & handle, 
                  typename GenericCallback<Handle>::Callback const & cb,
-                 EventId eventMask = EV_ALL);
-        template <class Handle>
+                 EventId eventMask = EV_ALL); 
+	template <class Handle>
         void remove(Handle const & handle, EventId eventMask = EV_ALL);
 
-        void process();
+	void timeout(unsigned long timeout, TimerCallback const & cb);
 
+        void process();
         void terminate();
 
     protected:
 
     private:
         Scheduler();
- 
-	typedef boost::function<void (EventId)> InternalCallback;
-	
-        void do_add(int fd, InternalCallback const & cb, EventId eventMask = EV_ALL);
+ 	
+        void do_add(int fd, SimpleCallback const & cb, EventId eventMask = EV_ALL);
         void do_remove(int fd, EventId eventMask = EV_ALL);
-	
+
 	struct EventSpec 
         {
-            InternalCallback cb_read;
-            InternalCallback cb_prio;
-            InternalCallback cb_write;
-            InternalCallback cb_hup;
-            InternalCallback cb_err;
+            SimpleCallback cb_read;
+            SimpleCallback cb_prio;
+            SimpleCallback cb_write;
+            SimpleCallback cb_hup;
+            SimpleCallback cb_err;
 
             int epollMask() const;
         };
+	
+	struct TimerSpec
+	{
+	    TimerSpec() : timeout(), cb() {}
+            TimerSpec(unsigned long long timeout_, TimerCallback cb_)
+                : timeout(timeout_), cb(cb_) {}
+
+	    bool operator< (TimerSpec const & other) const
+		{ return timeout > other.timeout; }
+	    
+	    unsigned long long timeout;
+	    TimerCallback cb;
+	};
         
         typedef std::map<int,EventSpec> FdTable;
+	typedef std::priority_queue<TimerSpec> TimerQueue;
 
         FdTable fdTable_;
+	TimerQueue timerQueue_;
         int epollFd_;
         bool terminate_;
     };

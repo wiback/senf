@@ -71,6 +71,7 @@
 #include <errno.h>
 #include <sys/epoll.h>
 #include "Utils/Exception.hh"
+#include "Utils/MicroTime.hh"
 
 static const int EPollInitialSize = 16;
 
@@ -83,6 +84,11 @@ prefix_ satcom::lib::Scheduler::Scheduler & satcom::lib::Scheduler::instance()
     return instance;
 }
 
+prefix_ void satcom::lib::Scheduler::timeout(unsigned long timeout, TimerCallback const & cb)
+{
+    timerQueue_.push(TimerSpec(now()+1000*timeout,cb));
+}
+
 prefix_ satcom::lib::Scheduler::Scheduler()
     : epollFd_(epoll_create(EPollInitialSize))
 {
@@ -90,7 +96,7 @@ prefix_ satcom::lib::Scheduler::Scheduler()
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::Scheduler::do_add(int fd, InternalCallback const & cb, EventId eventMask)
+prefix_ void satcom::lib::Scheduler::do_add(int fd, SimpleCallback const & cb, EventId eventMask)
 {
     FdTable::iterator i (fdTable_.find(fd));
     int action (EPOLL_CTL_MOD);
@@ -141,6 +147,7 @@ prefix_ void satcom::lib::Scheduler::do_remove(int fd, EventId eventMask)
         throw SystemException(errno);
 }
 
+
 prefix_ int satcom::lib::Scheduler::EventSpec::epollMask()
     const
 {
@@ -158,11 +165,21 @@ prefix_ void satcom::lib::Scheduler::process()
     terminate_ = false;
     while (! terminate_) {
         struct epoll_event ev;
-        int events = epoll_wait(epollFd_, &ev, 1, 1000);
+	MicroTime timeNow = now();
+	while ( ! timerQueue_.empty() && timerQueue_.top().timeout <= timeNow ) {
+	    timerQueue_.top().cb();
+	    timerQueue_.pop();
+	}
+	if (terminate_) 
+	    return;
+	int timeout = timerQueue_.empty() ? -1 : int((timerQueue_.top().timeout - timeNow)/1000);
+	    
+        int events = epoll_wait(epollFd_, &ev, 1, timeout);
         if (events<0)
             // Hmm ... man epoll says, it will NOT return with EINTR ??
             throw SystemException(errno);
         if (events==0)
+	    // Timeout .. it will be run when reachiung the top of the loop
             continue;
         
         FdTable::iterator i = fdTable_.find(ev.data.fd);
