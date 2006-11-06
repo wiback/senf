@@ -90,7 +90,7 @@ prefix_ satcom::lib::Scheduler::Scheduler()
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::Scheduler::add(int fd, Callback const & cb, EventId eventMask)
+prefix_ void satcom::lib::Scheduler::do_add(int fd, InternalCallback const & cb, EventId eventMask)
 {
     FdTable::iterator i (fdTable_.find(fd));
     int action (EPOLL_CTL_MOD);
@@ -114,7 +114,7 @@ prefix_ void satcom::lib::Scheduler::add(int fd, Callback const & cb, EventId ev
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::Scheduler::remove(int fd, EventId eventMask)
+prefix_ void satcom::lib::Scheduler::do_remove(int fd, EventId eventMask)
 {
     FdTable::iterator i (fdTable_.find(fd));
     if (i == fdTable_.end()) 
@@ -171,24 +171,24 @@ prefix_ void satcom::lib::Scheduler::process()
 
         if (ev.events & EPOLLIN) {
             BOOST_ASSERT(spec.cb_read); 
-            spec.cb_read(ev.data.fd, EV_READ);
+            spec.cb_read(EV_READ);
         }
         else if (ev.events & EPOLLPRI) {
             BOOST_ASSERT(spec.cb_prio);
-            spec.cb_prio (ev.data.fd, EV_PRIO);
+            spec.cb_prio(EV_PRIO);
         }
         else if (ev.events & EPOLLOUT) {
             BOOST_ASSERT(spec.cb_write);
-            spec.cb_write(ev.data.fd, EV_WRITE);
+            spec.cb_write(EV_WRITE);
         }
 
         else if (ev.events & EPOLLHUP) {
             BOOST_ASSERT(spec.cb_hup);
-            spec.cb_hup(ev.data.fd, EV_HUP);
+            spec.cb_hup(EV_HUP);
         }
         else if (ev.events & EPOLLERR) {
             BOOST_ASSERT(spec.cb_err);
-            spec.cb_err(ev.data.fd, EV_ERR);
+            spec.cb_err(EV_ERR);
         }
     }
 }

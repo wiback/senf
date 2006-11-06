@@ -71,6 +71,11 @@ namespace impl {
         Derived const & operator -- ()
             { derived().value( derived.value()-1 ); return derived(); }
 
+        Derived const & operator ++ (int)
+            { Value v (derived.value()); derived().value( v+1 ); return v; }
+        Derived const & operator -- (int)
+            { Value v (derived.value()); derived().value( v-1 ); return v; }
+
     private:
         Derived & derived() { return *static_cast<Derived *>(this); }
         Derived const & derived() const { return *static_cast<Derived const *>(this); };

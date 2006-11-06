@@ -59,7 +59,6 @@ namespace lib {
             typedef boost::function<void (typename boost::call_traits<Handle>::param_type,
                                           EventId) > Callback;
         };
-        typedef GenericCallback<int>::Callback Callback;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -76,9 +75,6 @@ namespace lib {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void add(int fd, Callback const & cb, EventId eventMask = EV_ALL);
-        void remove(int fd, EventId eventMask = EV_ALL);
-
         template <class Handle>
         void add(Handle const & handle, 
                  typename GenericCallback<Handle>::Callback const & cb,
@@ -94,14 +90,19 @@ namespace lib {
 
     private:
         Scheduler();
-
-        struct EventSpec 
+ 
+	typedef boost::function<void (EventId)> InternalCallback;
+	
+        void do_add(int fd, InternalCallback const & cb, EventId eventMask = EV_ALL);
+        void do_remove(int fd, EventId eventMask = EV_ALL);
+	
+	struct EventSpec 
         {
-            Callback cb_read;
-            Callback cb_prio;
-            Callback cb_write;
-            Callback cb_hup;
-            Callback cb_err;
+            InternalCallback cb_read;
+            InternalCallback cb_prio;
+            InternalCallback cb_write;
+            InternalCallback cb_hup;
+            InternalCallback cb_err;
 
             int epollMask() const;
         };
@@ -112,6 +113,8 @@ namespace lib {
         int epollFd_;
         bool terminate_;
     };
+
+    int retrieve_filehandle(int fd);
 
 }}
 

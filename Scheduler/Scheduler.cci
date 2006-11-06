@@ -34,6 +34,11 @@ prefix_ void satcom::lib::Scheduler::terminate()
     terminate_ = true;
 }
 
+prefix_ int satcom::lib::retrieve_filehandle(int fd)
+{
+    return fd;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

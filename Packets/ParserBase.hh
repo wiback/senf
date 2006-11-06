@@ -29,6 +29,7 @@
 
 // Custom includes
 #include <utility>
+#include <boost/iterator/iterator_facade.hpp>
 #include <boost/type_traits/is_member_function_pointer.hpp>
 
 #include "ParserBase.ih"
@@ -39,7 +40,19 @@ namespace pkf {
     
     namespace impl { struct ParserBase; }
 
-    struct nil {};
+    struct nil 
+	: public boost::iterator_facade<nil,char,boost::random_access_traversal_tag>
+    {
+	// Theese are declared to make nil a valid iterator. All
+	// access to an instance of this iterator however is invalid
+	// (these members are not implemented only declared)
+	char & dereference() const;
+	bool equal(nil other) const;
+	void increment();
+	void decrement();
+	void advance(int n);
+	int distance_to(nil other) const;
+    };
 
     /** \brief Parser framework
 

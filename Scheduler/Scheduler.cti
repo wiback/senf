@@ -35,14 +35,15 @@ prefix_ void satcom::lib::Scheduler::add(Handle const & handle,
                                          typename GenericCallback<Handle>::Callback const & cb,
                                          EventId eventMask)
 {
-    add(retrieve_filehandle(handle),boost::bind(cb,handle,_2),eventMask);
+    // retrieve_filehandle is found via ADL
+    do_add(retrieve_filehandle(handle),boost::bind(cb,handle,_1),eventMask);
 }
 
 template <class Handle>
 prefix_ void satcom::lib::Scheduler::remove(Handle const & handle, EventId eventMask)
 {
     // retrieve_filehandle is found via ADL
-    remove(retrieve_filehandle(handle),eventMask);
+    do_remove(retrieve_filehandle(handle),eventMask);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

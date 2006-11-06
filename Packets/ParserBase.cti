@@ -22,7 +22,7 @@
 
 // Definition of inline template functions
 
-//#include "ParserBase.ih"
+#include "ParserBase.ih"
 
 // Custom includes
 
