@@ -172,16 +172,10 @@ prefix_ bool satcom::lib::FileHandle::valid()
     return body().valid();
 }
 
-prefix_ satcom::lib::FileHandle::operator bool ()
+prefix_ bool satcom::lib::FileHandle::boolean_test()
     const
 {
     return valid() && !eof();
-}
-
-prefix_ bool satcom::lib::FileHandle::operator!()
-    const
-{
-    return ! (valid() && !eof());
 }
 
 prefix_ int satcom::lib::FileHandle::fd()
@@ -231,6 +225,11 @@ prefix_ satcom::lib::FileHandle
 satcom::lib::FileHandle::cast_dynamic(FileHandle handle)
 {
     return handle;
+}
+
+prefix_ int satcom::lib::retrieve_filehandle(FileHandle handle)
+{
+    return handle.fd();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

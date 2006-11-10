@@ -99,12 +99,14 @@ prefix_ bool satcom::lib::detail::StateMapOrdering::operator()(std::string a1, s
             return false;
         if (contains(i2,i2_end,'.'))
             // the longer string is a sub-'directory' of the shorter
+	    // FIXME: shouldn't this be *i2 == '.' ?
             return true;
         return *i1 < *i2;
     }
     else if (i2 == i2_end) { // && i1 != i1_end
         if (contains(i1,i1_end,'.'))
             // the longer string is a sub-'directory' of the shorter
+	    // FIXME: shouldn't this be *i1 == '.' ?
             return false;
         return *i1 < *i2;
     }

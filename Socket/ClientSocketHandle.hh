@@ -78,8 +78,8 @@ namespace lib {
         ///@{
 
         // read from socket (connected or unconnected)
-        std::string  read         ();
-        void         read         (std::string & buffer);
+        std::string  read         (unsigned limit=0);
+        void         read         (std::string & buffer, unsigned limit=0);
         unsigned     read         (char * buffer, unsigned size);
 
         // read from unconnected socket returning peer address

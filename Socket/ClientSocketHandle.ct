@@ -30,17 +30,19 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Policy>
-prefix_ std::string satcom::lib::ClientSocketHandle<Policy>::read()
+prefix_ std::string satcom::lib::ClientSocketHandle<Policy>::read(unsigned limit)
 {
     std::string rv;
-    this->read(rv);
+    this->read(rv,limit);
     return rv;
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::read(std::string & buffer)
+prefix_ void satcom::lib::ClientSocketHandle<Policy>::read(std::string & buffer, unsigned limit)
 {
     unsigned nread = available();
+    if (limit>0 && nread>limit) 
+	nread = limit;
     // FIXME: This is not necessary correct and more or less a hack ...
     buffer.assign(nread,0);
     unsigned rv = this->read(const_cast<char *>(buffer.data()),nread);

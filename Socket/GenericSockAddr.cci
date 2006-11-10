@@ -1,0 +1,38 @@
+// $Id$
+//
+// Copyright (C) 2006 
+
+// Definition of inline non-template functions
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ satcom::lib::GenericSockAddr::GenericSockAddr()
+{}
+
+prefix_ struct sockaddr * satcom::lib::GenericSockAddr::sockaddr_p()
+{
+    return reinterpret_cast<sockaddr *>(&addr_);
+}
+
+prefix_ struct sockaddr const * satcom::lib::GenericSockAddr::sockaddr_p()
+    const
+{
+    return reinterpret_cast<sockaddr const *>(&addr_);
+}
+
+prefix_ unsigned satcom::lib::GenericSockAddr::sockaddr_len()
+    const
+{
+    return sizeof(addr_);
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// End:

@@ -46,6 +46,8 @@
 #include <boost/mpl/and.hpp>
 #include <boost/utility.hpp> // for enable_if
 
+#include "GenericSockAddr.hh"
+
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace satcom {
@@ -62,11 +64,7 @@ namespace lib {
     {
         virtual ~ AddressingPolicyBase() {}
         
-        class Address 
-        {
-        private:
-            Address();
-        };
+	typedef GenericSockAddr Address;
     };
 
 #   define SP_DeclareBase(x1,x2,SomePolicy)                                             \

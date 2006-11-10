@@ -33,6 +33,7 @@
 
 // Custom includes
 #include <memory> // std::auto_ptr
+#include "Utils/SafeBool.hh"
 
 //#include "FileHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -44,6 +45,7 @@ namespace lib {
     /** \brief
      */
     class FileHandle
+	: public SafeBool<FileHandle>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -77,8 +79,7 @@ namespace lib {
         bool eof() const;
         bool valid() const;
 
-        operator bool () const;
-        bool operator!() const;
+	bool boolean_test() const;
 
         int fd() const;
 
@@ -98,6 +99,8 @@ namespace lib {
     private:
         FileBody::ptr body_;
     };
+
+    int retrieve_filehandle(FileHandle handle);
 
 }}
 

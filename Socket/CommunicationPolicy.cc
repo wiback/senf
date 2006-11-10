@@ -53,7 +53,6 @@ prefix_ int satcom::lib::ConnectedCommunicationPolicy::do_accept(FileHandle hand
             switch (errno) {
             case EWOULDBLOCK:
                 return -1;
-                break;
             case EINTR:
                 break;
             default:
