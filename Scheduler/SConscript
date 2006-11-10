@@ -7,4 +7,4 @@ SatSCons.StandardTargets(env)
 SatSCons.Lib(env,
              library = 'Scheduler',
              sources = SatSCons.GlobSources(),
-             LIBS = [ 'Utils' ])
+             LIBS = [ 'Socket', 'Utils' ])

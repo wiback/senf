@@ -1,0 +1,40 @@
+// $Id$
+//
+// Copyright (C) 2006 
+
+#ifndef IH_ReadHelper_
+#define IH_ReadHelper_ 1
+
+// Custom includes
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace satcom {
+namespace lib {
+
+    template <class Handle>
+    struct ReadHelper<Handle>::InternalPredicate
+    {
+	virtual ~InternalPredicate() {}
+	template <class Predicate>
+	struct Dispatcher
+	    : public ReadHelper<Handle>::InternalPredicate
+	{
+	    Dispatcher(Predicate p) : predicate(p) {}
+	    virtual std::string::size_type operator()(std::string const & data);
+	    Predicate predicate;
+	};
+
+	virtual std::string::size_type operator()(std::string const & data) = 0;
+    };
+
+}}
+
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// End:

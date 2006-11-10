@@ -190,7 +190,7 @@ namespace {
 
     bool is_close(MicroTime a, MicroTime b)
     {
-	return (a<b ? b-a : a-b) < 1100;
+	return (a<b ? b-a : a-b) < 10100; // a little bit over 10ms
     }
 	    
 }

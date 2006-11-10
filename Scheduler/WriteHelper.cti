@@ -1,0 +1,58 @@
+// $Id$
+//
+// Copyright (C) 2006 
+
+// Definition of inline template functions
+
+//#include "WriteHelper.ih"
+
+// Custom includes
+#include "Utils/Exception.hh"
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+template <class Handle>
+prefix_ typename satcom::lib::WriteHelper<Handle>::ptr
+satcom::lib::WriteHelper<Handle>::dispatch(Handle handle, std::string data, Callback callback)
+{
+    return ptr(new WriteHelper(handle, data, callback));
+}
+
+template <class Handle>
+prefix_ Handle satcom::lib::WriteHelper<Handle>::handle()
+    const
+{
+    return handle_;
+}
+
+template <class Handle>
+prefix_ bool satcom::lib::WriteHelper<Handle>::complete()
+    const
+{
+    return data_.empty();
+}
+
+template <class Handle>
+prefix_ bool satcom::lib::WriteHelper<Handle>::error()
+    const
+{
+    return errno_ != 0;
+}
+
+template <class Handle>
+prefix_ void satcom::lib::WriteHelper<Handle>::throw_error()
+    const
+{
+    if (errno_ != 0)
+	throw satcom::lib::SystemException(errno_);
+}
+
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// End:

@@ -1,0 +1,27 @@
+// $Id$
+//
+// Copyright (C) 2006 
+
+// Definition of inline non-template functions
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ satcom::lib::ReadUntil::ReadUntil(std::string target_)
+    : target(target_)
+{}
+
+prefix_ std::string::size_type satcom::lib::ReadUntil::operator()(std::string data)
+{
+    return data.find(target);
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// End:

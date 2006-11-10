@@ -96,7 +96,7 @@ prefix_ satcom::lib::Scheduler::Scheduler()
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::Scheduler::do_add(int fd, SimpleCallback const & cb, EventId eventMask)
+prefix_ void satcom::lib::Scheduler::do_add(int fd, SimpleCallback const & cb, int eventMask)
 {
     FdTable::iterator i (fdTable_.find(fd));
     int action (EPOLL_CTL_MOD);
@@ -120,7 +120,7 @@ prefix_ void satcom::lib::Scheduler::do_add(int fd, SimpleCallback const & cb, E
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::Scheduler::do_remove(int fd, EventId eventMask)
+prefix_ void satcom::lib::Scheduler::do_remove(int fd, int eventMask)
 {
     FdTable::iterator i (fdTable_.find(fd));
     if (i == fdTable_.end()) 
@@ -136,7 +136,7 @@ prefix_ void satcom::lib::Scheduler::do_remove(int fd, EventId eventMask)
     memset(&ev,0,sizeof(ev));
     ev.events = i->second.epollMask();
     ev.data.fd = fd;
-
+    
     int action (EPOLL_CTL_MOD);
     if (ev.events==0) {
         action = EPOLL_CTL_DEL;
@@ -164,7 +164,7 @@ prefix_ void satcom::lib::Scheduler::process()
 {
     terminate_ = false;
     while (! terminate_) {
-        struct epoll_event ev;
+
 	MicroTime timeNow = now();
 	while ( ! timerQueue_.empty() && timerQueue_.top().timeout <= timeNow ) {
 	    timerQueue_.top().cb();
@@ -174,6 +174,7 @@ prefix_ void satcom::lib::Scheduler::process()
 	    return;
 	int timeout = timerQueue_.empty() ? -1 : int((timerQueue_.top().timeout - timeNow)/1000);
 	    
+        struct epoll_event ev;
         int events = epoll_wait(epollFd_, &ev, 1, timeout);
         if (events<0)
             // Hmm ... man epoll says, it will NOT return with EINTR ??
@@ -200,13 +201,22 @@ prefix_ void satcom::lib::Scheduler::process()
         }
 
         else if (ev.events & EPOLLHUP) {
-            BOOST_ASSERT(spec.cb_hup);
-            spec.cb_hup(EV_HUP);
+	    if (spec.cb_hup)
+		spec.cb_hup(EV_HUP);
+	    else if (ev.events & EPOLLERR) {
+		if (spec.cb_write) spec.cb_write(EV_HUP);
+		if (spec.cb_read) spec.cb_read(EV_HUP);
+	    }
         }
-        else if (ev.events & EPOLLERR) {
-            BOOST_ASSERT(spec.cb_err);
-            spec.cb_err(EV_ERR);
+        else if (ev.events & EPOLLERR && ! ev.events & EPOLLHUP) {
+	    if (spec.cb_err)
+		spec.cb_err(EV_ERR);
+	    else {
+		if (spec.cb_write) spec.cb_write(EV_ERR);
+		if (spec.cb_read) spec.cb_read(EV_ERR);
+	    }
         }
+
     }
 }
 

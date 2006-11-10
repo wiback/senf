@@ -1,0 +1,89 @@
+// $Id$
+//
+// Copyright (C) 2006 
+
+// Definition of non-inline template functions
+
+//#include "WriteHelper.ih"
+
+// Custom includes
+#include <errno.h>
+#include "Utils/Exception.hh"
+#include "Scheduler.hh"
+
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
+
+template <class Handle>
+prefix_ satcom::lib::WriteHelper<Handle>::WriteHelper(Handle handle, std::string data,
+                                                      Callback callback)
+    : handle_(handle), data_(data), callback_(callback),
+      offset_(0), errno_(0)
+{
+    satcom::lib::Scheduler::instance()
+	.add(handle_, boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2),
+	     satcom::lib::Scheduler::EV_WRITE);
+}
+
+template <class Handle>
+prefix_ std::string const & satcom::lib::WriteHelper<Handle>::data()
+    const
+{
+    if (offset_ > 0) {
+	data_.erase(0,offset_);
+	offset_ = 0;
+    }
+    return data_;
+}
+
+template <class Handle>
+prefix_ void satcom::lib::WriteHelper<Handle>::revoke()
+{
+    ptr guard (this); // To ensure, 'this' is deleted only after this method terminates ...
+    satcom::lib::Scheduler::instance()
+	.remove(handle_, satcom::lib::Scheduler::EV_WRITE);
+}
+
+template <class Handle>
+prefix_ void
+satcom::lib::WriteHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
+                                                  satcom::lib::Scheduler::EventId event)
+{
+    // since we have a 'ptr' argument, the instance cannot be deleted
+    // before this method returns
+    return helper->process(handle,event);
+}
+
+template <class Handle>
+prefix_ void satcom::lib::WriteHelper<Handle>::process(Handle handle,
+                                                       satcom::lib::Scheduler::EventId event)
+{
+    try {
+	if (event != satcom::lib::Scheduler::EV_WRITE)
+	    throw satcom::lib::SystemException(EPIPE);
+	offset_ += handle.write(data_.data()+offset_,data_.size()-offset_);
+	if (offset_ >= data_.size()) {
+	    data_.erase();
+	    done();
+	}
+    }
+    catch (satcom::lib::SystemException const & ex) {
+	errno_ = ex.err;
+	done();
+    }
+}
+
+template <class Handle>
+prefix_ void satcom::lib::WriteHelper<Handle>::done()
+{
+    revoke();
+    callback_(ptr(this));
+}
+
+///////////////////////////////ct.e////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// End:

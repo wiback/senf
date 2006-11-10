@@ -20,6 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+// TODO: Fix EventId parameter (probably to int) to allow |-ing without casting ...
+
 #ifndef HH_Scheduler_
 #define HH_Scheduler_ 1
 
@@ -83,9 +85,9 @@ namespace lib {
         template <class Handle>
         void add(Handle const & handle, 
                  typename GenericCallback<Handle>::Callback const & cb,
-                 EventId eventMask = EV_ALL); 
+                 int eventMask = EV_ALL); 
 	template <class Handle>
-        void remove(Handle const & handle, EventId eventMask = EV_ALL);
+        void remove(Handle const & handle, int eventMask = EV_ALL);
 
 	void timeout(unsigned long timeout, TimerCallback const & cb);
 
@@ -97,8 +99,8 @@ namespace lib {
     private:
         Scheduler();
  	
-        void do_add(int fd, SimpleCallback const & cb, EventId eventMask = EV_ALL);
-        void do_remove(int fd, EventId eventMask = EV_ALL);
+        void do_add(int fd, SimpleCallback const & cb, int eventMask = EV_ALL);
+        void do_remove(int fd, int eventMask = EV_ALL);
 
 	struct EventSpec 
         {
