@@ -94,9 +94,9 @@ def MakeEnvironment():
     #return conf.Finish()
     return env
 
-def GlobSources():
+def GlobSources(exclude=[]):
     testSources = glob.glob("*.test.cc")
-    sources = [ x for x in glob.glob("*.cc") if x not in testSources ]
+    sources = [ x for x in glob.glob("*.cc") if x not in testSources and x not in exclude ]
     return (sources, testSources)
     
 def StandardTargets(env):
