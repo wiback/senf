@@ -1,0 +1,36 @@
+// $Id$
+//
+// Copyright (C) 2006 
+
+// Definition of inline non-template functions
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ void satcom::lib::SafeBoolBase::this_type_does_not_support_comparisons()
+    const
+{}
+
+prefix_ satcom::lib::SafeBoolBase::SafeBoolBase()
+{}
+
+prefix_ satcom::lib::SafeBoolBase::SafeBoolBase(const SafeBoolBase&)
+{}
+
+prefix_ satcom::lib::SafeBoolBase& satcom::lib::SafeBoolBase::operator=(const SafeBoolBase&)
+{
+    return *this;
+}
+
+prefix_ satcom::lib::SafeBoolBase::~SafeBoolBase()
+{}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// End:

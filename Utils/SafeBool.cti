@@ -1,0 +1,51 @@
+// $Id$
+//
+// Copyright (C) 2006 
+
+// Definition of inline template functions
+
+//#include "SafeBool.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+template <typename T>
+prefix_ satcom::lib::SafeBool<T>::operator bool_type()
+    const
+{
+    return (static_cast<const T*>(this))->boolean_test()
+	? &SafeBoolBase::this_type_does_not_support_comparisons : 0;
+}
+
+template <typename T>
+prefix_ bool satcom::lib::SafeBool<T>::operator!()
+    const
+{
+    return ! (static_cast<const T*>(this))->boolean_test();
+}
+
+template <typename T>
+prefix_ satcom::lib::SafeBool<T>::~SafeBool()
+{}
+
+template <typename T, typename U>
+prefix_ void satcom::lib::operator==(const SafeBool<T>& lhs, const SafeBool<U>& rhs)
+{
+    lhs.this_type_does_not_support_comparisons();     
+}
+
+template <typename T, typename U>
+prefix_ void satcom::lib::operator!=(const SafeBool<T>& lhs, const SafeBool<U>& rhs)
+{
+    lhs.this_type_does_not_support_comparisons();
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// End:
