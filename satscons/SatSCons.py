@@ -8,6 +8,8 @@ def InitOpts():
     if opts is not None: return
     opts = SCons.Options.Options('SConfig')
     opts.Add('CXX', 'C++ compiler to use', 'g++')
+    opts.Add('EXTRA_DEFINES', 'Additional preprocessor defines', '')
+    opts.Add('EXTRA_LIBS', 'Additional libraries to link against', '')
     opts.Add(SCons.Options.BoolOption('final','Enable optimization',0))
 
 def Finalizer(f):
@@ -20,6 +22,8 @@ def UseBoost():
     opts.Add('BOOST_INCLUDES', 'Boost include directory', '')
     opts.Add('BOOST_VARIANT', 'The boost variant to use', '')
     opts.Add('BOOST_TOOLSET', 'The boost toolset to use', '')
+    opts.Add('BOOST_RUNTIME', 'The boost runtime to use', '')
+    opts.Add('BOOST_DEBUG_RUNTIME', 'The boost debug runtime to use', '')
     opts.Add('BOOST_LIBDIR', 'The directory of the boost libraries', '')
     Finalizer(FinalizeBoost)
 
@@ -28,7 +32,8 @@ def FinalizeBoost(env):
 
     if env['BOOST_TOOLSET']:
         runtime = ""
-        if not env['final'] : runtime += "gd"
+        if env['final'] : runtime += env.get('BOOST_RUNTIME','')
+        else            : runtime += env.get('BOOST_DEBUG_RUNTIME','gd')
         if env['STLPORT_LIB'] : runtime += "p"
         if runtime: runtime = "-" + runtime
         env['BOOST_VARIANT'] = "-" + env['BOOST_TOOLSET'] + runtime
@@ -43,13 +48,14 @@ def UseSTLPort():
     InitOpts()
     opts.Add('STLPORT_INCLUDES', 'STLport include directory', '')
     opts.Add('STLPORT_LIB', 'Name of the stlport library or empty to not use stlport', '')
+    opts.Add('STLPORT_DEBUGLIB', 'Name of the stlport debug library','')
     opts.Add('STLPORT_LIBDIR', 'The directory of the stlport libraries','')
     Finalizer(FinalizeSTLPort)
 
 def FinalizeSTLPort(env):
-    env['STLPORT_DEBUGLIB'] = ''
     if env['STLPORT_LIB']:
-        env['STLPORT_DEBUGLIB'] = env['STLPORT_LIB'] + '_stldebug'
+        if not env['STLPORT_DEBUGLIB']:
+            env['STLPORT_DEBUGLIB'] = env['STLPORT_LIB'] + '_stldebug'
         env.Append(LIBPATH = [ '$STLPORT_LIBDIR' ],
                    CPPPATH = [ '$STLPORT_INCLUDES' ])
         if env['final']:
@@ -79,8 +85,7 @@ def MakeEnvironment():
     for finalizer in finalizers:
         finalizer(env)
 
-    env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long',
-                            '-pedantic', '-ansi' ],
+    env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long' ],
                LOCALLIBDIR = [ '#' ],
                LIBPATH = [ '$LOCALLIBDIR' ])
 
@@ -89,7 +94,10 @@ def MakeEnvironment():
                    CPPDEFINES = [ 'NDEBUG' ])
     else:
         env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
-                        LINKFLAGS = [ '-g' ])
+                   LINKFLAGS = [ '-g' ])
+
+    env.Append(CPPDEFINES = [ '$EXTRA_DEFINES' ],
+               LIBS = [ '$EXTRA_LIBS' ])
 
     #return conf.Finish()
     return env
