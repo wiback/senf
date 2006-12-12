@@ -36,52 +36,18 @@ body {
 	white-space: nowrap;
 }
 
-#head ul { 
-	float: left;
-	margin: 10px 0 0 10px;
-	width: 120px;
-	background-color: #FDF7C3;
-	border: 1px solid #AF9D00;
-	list-style-type: none;
-	padding: 0;
-}
-
-#head ul li { 
-	display: inline;
-}
-
-#head ul li a, #head ul li b { 
-	padding: 2px 5px;
-	display: block;
-}
-
-#head ul li b { 
-	border-bottom: 1px solid #AF9D00;
-	background-color: #EDE497;
-	color: #726921;
-}
-
-#head ul li a, #head ul li a:active, #head ul li a:visited { 
-	color: #726921;
-	text-decoration: none;
-}
-
-#head ul li a:hover { 
-	background-color: #EDE497;
-	text-decoration: none;
-}
-
 #content { 
 	/* Non-0 top padding to fix margin inhertance from first non-float elt */
 	padding: 1px 10px 10px 142px;
 }
 
 div.tabs { 
+	display: inline; /* IE double margin fix */
 	float: left;
 	clear: left;
 	background-color: #FDF7C3;
 	border: 1px solid #AF9D00;
-	margin: 10px 0 0 -132px;
+        margin: 10px 0 0 -132px;
 	width: 120px; 
 	overflow: hidden;
 }
@@ -100,14 +66,14 @@ div.tabs ul li a {
 	display: block;
 	padding: 2px 5px;
         font-size: 13px;
-	font-weight: normal;
 	color: #726921;
 	text-decoration: none;
 	white-space: nowrap;
 }
 
-div.tabs a:visited, div.tabs a:active { 
+div.tabs ul li a:visited, div.tabs ul li a:active { 
 	color: #726921;
+        text-decoration: none;
 }
 
 div.tabs ul li a:hover, div.tabs ul li#current a { 
@@ -125,3 +91,12 @@ div.nav {
 	margin: 0;	
 }
 
+div.qindex {
+	width: auto;
+	background-color: #e8eef2;
+	border: 1px solid #84b0c7;
+	text-align: center;
+	margin: 2px;
+	padding: 2px;
+	line-height: 140%;
+}
