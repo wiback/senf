@@ -1,4 +1,5 @@
-PROJECT_NAME           = "libSocket: The Socket library"
+PROJECT_NAME           = libSocket
 PROJECT_NUMBER         = "Version 0.0.1"
+TAGFILES               = ../Utils/doc/doxytags
 
 @INCLUDE = ../doclib/Doxyfile.global

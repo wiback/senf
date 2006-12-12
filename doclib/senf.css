@@ -37,24 +37,21 @@ body {
 }
 
 #head ul { 
-	position: absolute;
-	top: 5px;
-	right: 25px;
-	width: 100px;
+	float: left;
+	margin: 10px 0 0 10px;
+	width: 120px;
 	background-color: #FDF7C3;
 	border: 1px solid #AF9D00;
 	list-style-type: none;
 	padding: 0;
-	margin: 0;
 }
 
-#head li { 
+#head ul li { 
 	display: inline;
 }
 
 #head ul li a, #head ul li b { 
 	padding: 2px 5px;
-	text-align: center;
 	display: block;
 }
 
@@ -74,16 +71,24 @@ body {
 	text-decoration: none;
 }
 
+#content { 
+	/* Non-0 top padding to fix margin inhertance from first non-float elt */
+	padding: 1px 10px 10px 142px;
+}
+
 div.tabs { 
-	margin: 0 -10px;
+	float: left;
+	clear: left;
+	background-color: #FDF7C3;
+	border: 1px solid #AF9D00;
+	margin: 10px 0 0 -132px;
+	width: 120px; 
+	overflow: hidden;
 }
 
 div.tabs ul { 
 	margin: 0;
 	padding: 0;
-	height: 22px;
-	background-color: #FDF7C3;
-	border-bottom: 1px solid #AF9D00;
 	list-style-type: none;
 }
 
@@ -92,14 +97,13 @@ div.tabs ul li {
 }
 
 div.tabs ul li a { 
-	float: left;
-	height: 18px;
-	padding: 4px 10px 0 10px;
-	border-right: 1px solid #AF9D00;
+	display: block;
+	padding: 2px 5px;
         font-size: 13px;
 	font-weight: normal;
 	color: #726921;
 	text-decoration: none;
+	white-space: nowrap;
 }
 
 div.tabs a:visited, div.tabs a:active { 
@@ -121,6 +125,3 @@ div.nav {
 	margin: 0;	
 }
 
-#content { 
-	padding: 0 10px 10px 10px;
-}

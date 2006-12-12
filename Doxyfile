@@ -1,4 +1,4 @@
-PROJECT_NAME           = "SENF Framework Overview"
+PROJECT_NAME           = Overview
 PROJECT_NUMBER         = "Version 0.0.1"
 
 OUTPUT_DIRECTORY       = doc

@@ -1,4 +1,5 @@
-PROJECT_NAME           = "libScheduler: The Scheduler library"
+PROJECT_NAME           = libScheduler
 PROJECT_NUMBER         = "Version 0.0.1"
+TAGFILES               = ../Utils/doc/doxytags
 
 @INCLUDE = ../doclib/Doxyfile.global
