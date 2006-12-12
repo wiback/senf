@@ -22,6 +22,11 @@
 
 // TODO: Fix EventId parameter (probably to int) to allow |-ing without casting ...
 
+
+/** \mainpage The SENF Scheduler library
+
+ */
+
 #ifndef HH_Scheduler_
 #define HH_Scheduler_ 1
 

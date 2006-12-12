@@ -23,6 +23,7 @@
 // TODO: Create a SocketHandleBase class and move some non-Policy
 // dependent code there
 
+
 #ifndef HH_SocketHandle_
 #define HH_SocketHandle_ 1
 

@@ -147,11 +147,19 @@ def Objects(env, sources, testSources = None, LIBS = []):
 
     return objects
 
-def Doxygen(env, sources, testSources = None, target='doc', image = []):
-    if type(sources) == type(()):
-        testSources = sources[1]
-        sources = sources[0]
+def DoxyGlob(exclude=[]):
+    sources = [ f
+                for ext in ("cci", "ct", "cti", "h", "hh", "ih", "mmc", "dox")
+                for f in glob.glob("*."+ext)
+                if f not in exclude ]
+    return sources
 
+def Doxygen(env, cc_sources = [], doc_sources = None, target='doc', image = []):
+    if type(cc_sources) == type(()):
+        cc_sources = cc_sources[0]
+    sources = cc_sources
+    if doc_sources is not None:
+        sources += doc_sources
     doc = env.Doxygen(
         target = target,
         source = sources,

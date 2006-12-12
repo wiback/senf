@@ -1,0 +1,126 @@
+body {
+	padding: 0;
+	margin: 0;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+#head {
+	height: 63px;
+	border-top: 4px solid #DECD40;
+	border-bottom: 1px solid #AF9D00;
+	background: url(logo-head.png) top left no-repeat;
+	background-color: #EDE497;
+}
+
+#head h1 {
+	margin: 0 0 0 100px;
+        padding: 6px 0 0 0;
+	height: 34px;
+        background-color: #DECD40;
+	border-bottom: 1px solid #AF9D00;
+        font-size: 22px;
+	font-weight: bold;
+        color: white;
+	white-space: nowrap;
+	text-align: left;
+}
+
+#head h2 {
+	margin: 0 0 0 100px;
+	padding: 4px 0 0 0;
+	height: 18px;
+	background-color: #EDE497;
+        font-size: 13px;
+	font-weight: normal;
+	color: #726921;
+	white-space: nowrap;
+}
+
+#head ul { 
+	position: absolute;
+	top: 5px;
+	right: 25px;
+	width: 100px;
+	background-color: #FDF7C3;
+	border: 1px solid #AF9D00;
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+#head li { 
+	display: inline;
+}
+
+#head ul li a, #head ul li b { 
+	padding: 2px 5px;
+	text-align: center;
+	display: block;
+}
+
+#head ul li b { 
+	border-bottom: 1px solid #AF9D00;
+	background-color: #EDE497;
+	color: #726921;
+}
+
+#head ul li a, #head ul li a:active, #head ul li a:visited { 
+	color: #726921;
+	text-decoration: none;
+}
+
+#head ul li a:hover { 
+	background-color: #EDE497;
+	text-decoration: none;
+}
+
+div.tabs { 
+	margin: 0 -10px;
+}
+
+div.tabs ul { 
+	margin: 0;
+	padding: 0;
+	height: 22px;
+	background-color: #FDF7C3;
+	border-bottom: 1px solid #AF9D00;
+	list-style-type: none;
+}
+
+div.tabs ul li { 
+	display: inline;
+}
+
+div.tabs ul li a { 
+	float: left;
+	height: 18px;
+	padding: 4px 10px 0 10px;
+	border-right: 1px solid #AF9D00;
+        font-size: 13px;
+	font-weight: normal;
+	color: #726921;
+	text-decoration: none;
+}
+
+div.tabs a:visited, div.tabs a:active { 
+	color: #726921;
+}
+
+div.tabs ul li a:hover, div.tabs ul li#current a { 
+	color: #726921;
+	text-decoration: none;
+	background-color: #EDE497;
+}
+
+div.nav { 
+	width: auto;
+	background-color: white;
+	border: none;
+	border-bottom: 1px solid #AF9D00;
+	padding: 5px 0;
+	margin: 0;	
+}
+
+#content { 
+	padding: 0 10px 10px 10px;
+}

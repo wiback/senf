@@ -1,10 +1,14 @@
+# -*- python -*-
+
 Import('env')
 import SatSCons
 
 ###########################################################################
 
+sources = SatSCons.GlobSources()
 SatSCons.StandardTargets(env)
 SatSCons.Lib(env,
              library = 'Scheduler',
-             sources = SatSCons.GlobSources(),
+             sources = sources,
              LIBS = [ 'Socket', 'Utils' ])
+SatSCons.Doxygen(env, sources, SatSCons.DoxyGlob())

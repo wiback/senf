@@ -20,3 +20,4 @@ SConscript(glob.glob("*/SConscript"))
 
 SatSCons.StandardTargets(env)
 SatSCons.GlobalTargets(env)
+SatSCons.Doxygen(env, SatSCons.DoxyGlob())

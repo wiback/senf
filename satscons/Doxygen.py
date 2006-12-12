@@ -17,7 +17,7 @@ def Doxygen(env, target, source, image=[]):
                 [ env.Command(os.path.splitext(img)[0]+".png", img,
                               [ 'TERM=dumb make -f %s $TARGET' % mak ])
                   for img in image ] +
-                [ env.Command(stamp, source,
+                [ env.Command(stamp, source + [ os.path.join(path,"Doxyfile") ],
                               [ 'cd $TARGET.dir && $DOXYGENCOM',
                                 "touch $TARGET" ],
                               source_scanner = SCons.Defaults.ObjSourceScan) ])
