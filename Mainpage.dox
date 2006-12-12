@@ -1,5 +1,51 @@
 /** \mainpage SENF: The Simple and Extensible Network Framework
-    
+
+    The SENF Simple and Extensible Network Framework aims to be a
+    complete set of libraries to facilitate the development of network
+    applications focusing on network protocols on the layers below the
+    application layer. However, the framework includes many general
+    purpose utilities and will be expedient to use well beyond its
+    primary objective.
+
+    \section goals Goals
+
+    The main goals where
+
+    \li modular framework design
+    \li utilizing the power of modern C++
+    \li very low overhead for frequently called members
+    \li extensible design    
+    \li concise interface
+
+    \section code Coding practices
+
+    The library heavily depends on the features of modern C++. As
+    such, it depends on a fairly recent and standards compliant C++
+    compiler (the Library is developed using \c gcc with Version at
+    least 3.4). To meet the above defined goals, the library makes
+    quite heavy use of advanced templating techniques, so
+    understanding the implementation will require expertise in the
+    intricacies of C++ templates. However, it was deemed important to
+    keep the \e visible Interface of the Library as clean and simple
+    as possible without sacrificing the projects design goals.
+
+    The library heavily depends on the \e Boost libraries (see
+    http://www.boost.org). The Boost libraries are an ever growing
+    collection of highest quality reusable C++ components. They are
+    designed with standardization in mind. Many of the libraries are
+    already in queue to be part of the next generation C++ standard.
+   
+    \section Dependencies
+
+    \li A standards compliant, modern C++ compiler. The library as
+        such is developed under Linux using \c gcc with Version
+        above 3.4
+    \li The Boost libraries from http://www.boost.org
+    \li The SCons build tool (see http://www.scons.org)
+    \li Linux. The library only makes use of the POSIX API's, however
+        it has not been tested beyond Linux, so if you are somewhere
+        else, you are on your own. However, we will greatly appreciate
+        feedback and patches for other platforms.
 */
 
 

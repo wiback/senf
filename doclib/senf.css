@@ -39,6 +39,7 @@ body {
 #content { 
 	/* Non-0 top padding to fix margin inhertance from first non-float elt */
 	padding: 1px 10px 10px 142px;
+	max-width: 60em;
 }
 
 div.tabs { 
