@@ -154,19 +154,11 @@ def DoxyGlob(exclude=[]):
                 if f not in exclude ]
     return sources
 
-def Doxygen(env, cc_sources = [], doc_sources = None, target='doc', image = []):
-    if type(cc_sources) == type(()):
-        cc_sources = cc_sources[0]
-    sources = cc_sources
-    if doc_sources is not None:
-        sources += doc_sources
-    doc = env.Doxygen(
-        target = target,
-        source = sources,
-        image = image)
-
-    env.Alias('all_docs', doc)
-    return doc
+def Doxygen(env, doxyfile="Doxyfile", extra_sources = []):
+    docs = env.Doxygen(doxyfile)
+    env.Depends(docs,extra_sources)
+    env.Alias('all_docs', *docs)
+    return docs
 
 def Lib(env, library, sources, testSources = None, LIBS = []):
     objects = Objects(env,sources,testSources,LIBS=LIBS)

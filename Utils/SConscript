@@ -8,4 +8,4 @@ import SatSCons
 sources = SatSCons.GlobSources()
 SatSCons.StandardTargets(env)
 SatSCons.Lib(env, 'Utils', sources)
-SatSCons.Doxygen(env, sources, SatSCons.DoxyGlob())
+SatSCons.Doxygen(env)

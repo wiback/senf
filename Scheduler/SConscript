@@ -11,4 +11,4 @@ SatSCons.Lib(env,
              library = 'Scheduler',
              sources = sources,
              LIBS = [ 'Socket', 'Utils' ])
-SatSCons.Doxygen(env, sources, SatSCons.DoxyGlob())
+SatSCons.Doxygen(env)

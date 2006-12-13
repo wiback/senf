@@ -14,5 +14,6 @@ SatSCons.Lib(env,
              sources = sources,
              LIBS = [ 'Utils' ])
 
-SatSCons.Doxygen(env,sources,SatSCons.DoxyGlob(),
-                 image=[ 'SocketLibrary-classes.dia' ])
+SatSCons.Doxygen(env, extra_sources = [
+    env.Dia2Png('SocketLibrary-classes.dia')
+    ])

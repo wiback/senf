@@ -9,9 +9,10 @@ import SCons.Builder
 
 def dia_getSize(env,source):
     size = None
-    for line in popen(env['DIACOM']+" -e /proc/self/fd/1 -t eps "+source[0],"r"):
+    for line in os.popen(env['DIACOM']+" -e /proc/self/fd/1 -t eps "+str(source[0]),"r"):
         if line.startswith("%%BoundingBox:"):
-            size=map(int,line.split()[4:])
+            size=map(int,line.split()[3:])
+            break
     return size
 
 def dia2png_generator(source, target, env, for_signature):
@@ -19,9 +20,9 @@ def dia2png_generator(source, target, env, for_signature):
         return "$DIACOM -t png -s $DIA2PNGDPI $TARGET $SOURCE"
     size = dia_getSize(env,source)
     if not size: return None;
-    size[0] = size[0]*72/int(env['DIA2PNGDPI'])
-    size[1] = size[1]*72/int(env['$DIA2PNGDPI'])
-    return env.Action("$DIACOM -t png -s %dx%d $TARGET $SOURCE" % size)
+    size[0] = size[0]*int(env['DIA2PNGDPI'])/72
+    size[1] = size[1]*int(env['DIA2PNGDPI'])/72
+    return env.Action("$DIACOM -t png -s %dx%d -e $TARGET $SOURCE" % tuple(size))
 
 Dia2Png = SCons.Builder.Builder(suffix = ".png",
                                 src_suffix = ".dia",
@@ -34,4 +35,4 @@ def generate(env):
     env['DIA2PNGDPI'] = 115
 
 def exists(env):
-    return 1
+    return env.Detect("dia")

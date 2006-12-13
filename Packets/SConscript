@@ -8,6 +8,6 @@ import SatSCons
 sources = SatSCons.GlobSources()
 SatSCons.StandardTargets(env)
 SatSCons.Lib(env, 'Packets',  sources, )
-SatSCons.Doxygen(env,sources,SatSCons.DoxyGlob(),
-		 image = [ "structure.dia" ])
-    
+SatSCons.Doxygen(env, extra_sources = [
+    env.Dia2Png("structure.dia")
+    ])
