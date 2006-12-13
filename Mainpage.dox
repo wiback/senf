@@ -7,15 +7,70 @@
     purpose utilities and will be expedient to use well beyond its
     primary objective.
 
-    \section goals Goals
+    \section Goals
 
-    The main goals where
+    The main goals where (in no particular order)
 
     \li modular framework design
     \li utilizing the power of modern C++
     \li very low overhead for frequently called members
     \li extensible design    
     \li concise interface
+
+    \section Components
+
+    The framework is made up of several modular components. When using
+    the library, it is possible to selectively choose to use only a
+    subset of the implemented modules. The modules are
+    
+    \subsection libSocket libSocket: C++ abstraction of the BSD socket API
+
+    This library provides a high performance and object oriented
+    abstraction of the standard socket API. It utilizes a flexible and
+    extensible policy based design. The library provides predefined
+    types for the important socket types (UDP and TCP sockets etc)
+    including raw and packet sockets. \n
+
+    \see <a href="../../Socket/doc/html/index.html">libSocket API
+    reference</a>
+
+    \subsection libPackets libPackets: Network packet manipulation
+
+    This libarary provides a very flexible infrastructure to
+    parse, create and otherwise manipulate packetized network
+    data. Included is a library of several protocol parsers covering
+    the basic IPv4 and IPv6 network protocols down to the Ethernet
+    layer.
+
+    \see <a href="../../Packets/doc/html/index.html">libPackets API
+    reference</a>
+
+    \subsection libScheduler libScheduler: Asynchronous event handling
+
+    The scheduler library provides an object oriented interface to the
+    standard UNIX \c select type event dispatcher. It is based on the
+    high performance \c epoll system call. It provides support for
+    read/write events as well as simple timer based events.
+
+    \see <a href="../../Scheduler/doc/html/index.html">libScheduler API
+    reference</a>
+
+    \subsection libUtils libUtils: Collection of arbitrary utilities
+
+    This library is used be most all of the other modules for
+    miscellaneous tools and utilities. We have
+
+    \li Simple functions to manage daemon processes
+    \li Standard exception classes 
+    \li satcom::lib::intrusive_refcount to simplify the implementation
+	of classes usable with boost::intrusive_ptr
+    \li boost::bind extensions
+    \li An interface to the \c g++ demangler integrated with type_info 
+    \li Typedefs and rudimentary methods to simplify handling
+	high-resolution time values
+
+    \see <a href="../../Utils/doc/html/index.html">libUtils API
+    reference</a>
 
     \section code Coding practices
 
