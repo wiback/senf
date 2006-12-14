@@ -9,7 +9,7 @@
 
     \section Goals
 
-    The main goals where (in no particular order)
+    The main goals of this library are (in no particular order):
 
     \li modular framework design
     \li utilizing the power of modern C++
@@ -17,13 +17,124 @@
     \li extensible design    
     \li concise interface
 
-    \section Components
+    \section start Getting started
+
+    To get started using this library, begin by checking out the code
+    from the <a
+    href="http://developer.berlios.de/svn/?group_id=7489">BerliOS SVN
+    repository</a>. You may find help on using the library at '\ref
+    usage'. If you are interested in SENF, feel free to subscribe
+    to the <a
+    href="http://developer.berlios.de/mail/?group_id=7489">SENF
+    mailing lists</a>.
+
+    \see \ref usage\n
+         \ref example\n
+         <a href="http://developer.berlios.de/projects/senf"><b><i>The BerliOS project page</i></b></a>\n
+         <a href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework"><b><i>The SENF Wiki at BerliOS</i></b></a>
+*/
+
+/** \page usage Using the SENF framework
+
+    The SENF Framework is a collection of lossly coupled
+    modules. The libraries are heavily object oriented and template
+    based. For compatibility reasons, the libraries are therefore
+    built together with every project making use of the framework.
+
+    When starting a new Projekt based on the SENF framework, it is
+    advisable, to make use of the SENFSCons build environment and use
+    SVN to manage the code repository. This is the configuration,
+    described in this documentation.
+
+    \see \ref build \n
+         \ref components \n
+         \ref svnsetup
+
+    \section Preliminaries
+
+    Before starting the devlopment, make sure to fulfill the following
+    requirements:
+
+    \li GNU g++, version at least 3.4
+    \li The Boost libraries (http://www.boost.org)
+    \li The SCons build tool (http://www.scons.org)
+
+    If you want to build the documentation, you additionally need
+
+    \li Doxygen (http://www.doxygen.org)
+    \li The \c dia diagram editor (http://www.gnome.org/projects/dia/)
+
+
+    The library is only tested with gcc-3.4 and 4.0 on Linux. On other
+    POSIX platforms with a BSD Socket API, the library should be
+    usable, possibly with some tweaking (except for the Scheduler,
+    which relies on \c epoll)
+    
+    \todo
+    \li Preliminaries: SVN access, Dependencies
+    \li Building the library -> Configuration
+    \li Setting up a project using this library (svn:externals)
+    \li Library components
+    \li coding standards and patterns
+ */
+
+/** \page build Building the framework
+    
+    This procedure will test building the complete framework
+    including the unit tests and the Sniffer test application. This
+    build is \e not needed to use the framework since every project
+    will include the full SENF source code itself (via Subversion).
+
+    After you have successfully built the library tests, you can
+    continue to setup your own project using SENF.
+
+    \see \ref components \n
+	 \ref svnsetup
+
+    \section checkout Getting the code
+
+    To access the code, check out the code from the BerliOS
+    repository. Change to your development directory and use the
+    following subversion command
+
+    <pre class="fragment">
+      $ svn checkout http://svn.berlios.de/svnroot/repos/senf/trunk senf</pre>
+
+    This will create a new directory \c senf within the current
+    directory. For further documentation on the use of Subversion, see
+    the \c svn manpage or the subversion homepage at
+    http://subversion.tigris.org. A very good introduction and
+    reference to subversion is available at
+    http://svnbook.red-bean.com.
+
+    \section compile Building
+
+    To build the library, execute all unit tests and build the Sniffer
+    test application, use
+
+    <pre class="fragment">
+      $ scons
+      $ scons all_tests</pre>
+
+    in the \c senf directory. This assumes, that you want to build the
+    library with your default gcc and requires the boost libraries to
+    be available in the system include paths. If this is not the case,
+    you can take a look at <tt>SConfig.template</tt> file. Copy this
+    file to <tt>SConfig</tt> and comment out all the variables you
+    don't want to change (The \e values in the template file are just
+    arbitrary examples).
+ */
+
+/** \page components The SENF modules
 
     The framework is made up of several modular components. When using
     the library, it is possible to selectively choose to use only a
-    subset of the implemented modules. The modules are
+    subset of the implemented modules.
+
+    \see \ref build \n
+         \ref svnsetup
     
-    \subsection libSocket libSocket: C++ abstraction of the BSD socket API
+    \section libSocket libSocket: C++ abstraction of the BSD socket API
 
     This library provides a high performance and object oriented
     abstraction of the standard socket API. It utilizes a flexible and
@@ -34,7 +145,7 @@
     \see <a href="../../Socket/doc/html/index.html">libSocket API
     reference</a>
 
-    \subsection libPackets libPackets: Network packet manipulation
+    \section libPackets libPackets: Network packet manipulation
 
     This libarary provides a very flexible infrastructure to
     parse, create and otherwise manipulate packetized network
@@ -45,7 +156,7 @@
     \see <a href="../../Packets/doc/html/index.html">libPackets API
     reference</a>
 
-    \subsection libScheduler libScheduler: Asynchronous event handling
+    \section libScheduler libScheduler: Asynchronous event handling
 
     The scheduler library provides an object oriented interface to the
     standard UNIX \c select type event dispatcher. It is based on the
@@ -55,7 +166,7 @@
     \see <a href="../../Scheduler/doc/html/index.html">libScheduler API
     reference</a>
 
-    \subsection libUtils libUtils: Collection of arbitrary utilities
+    \section libUtils libUtils: Collection of arbitrary utilities
 
     This library is used be most all of the other modules for
     miscellaneous tools and utilities. We have
@@ -71,6 +182,80 @@
 
     \see <a href="../../Utils/doc/html/index.html">libUtils API
     reference</a>
+
+    \section senfscons SENFSCons, the SENF build environment
+
+    SENF relies on SCons (http://www.scons.org) to build. To further
+    simplify the common tasks, SENF includes a library of custom
+    routines and builders comprising a very concise build
+    environment. Included are a number of templates to help
+    bootstrapping a new project or component.
+
+    \see <a href="../../satscons/doc/html/index.html">SENFSCons
+    reference</a>
+ */
+
+/** \page svnsetup Setting up a new project using SENF via SVN
+    
+    The preferred way to use SENF in a new project is to rely on
+    Subversion and make use of the SENFSCons build environment. The
+    following sections will describe, how this setup works.
+
+    \section svnext Setting up the project repository
+
+    The most seamless integration is possible if you rely on
+    Subversion to manage the new project. Subversion does support
+    'external repositories'. This allows to import code from a foreign
+    repository into the checkout without importing it into your
+    repository. The code will always stay at the remote repository,
+    updates are automatically available.
+
+    First setup a new empty repository as described for example in the
+    Subversion book at http://svnbook.red-bean.com or as mandated by
+    your site policy. We will call the project 'Foo' and assume, that
+    the project has been checked out into the 'Foo' directory.
+
+    You now have to decide, which modules you want to use. Every
+    module resides in it's own subdirectory in the SENF
+    repository. Instead of directly checking out the code, we will use
+    \c svn:externals. This will instruct \c svn to auutomatically
+    check out the needed directories from the BerliOS SENF
+    repository. Change to the 'Foo' directory and type
+    
+      <pre class="fragment">
+        $ svn propedit svn:externals .</pre>
+
+    The default editor (probably VI) will be started with the current
+    value of the svn:externals property (which will probably be
+    empty). Now add all the modules you want plus \c satscons and
+    possibly \c doclib (if you want to build the documentation). You
+    will almost certainly neeed the \c Utils module, since all other
+    modules depend on it.
+
+    For example, if you want to use the \c Scheduler and \c Socket
+    module, the file will look like
+
+      <pre class="fragment">
+        satscons http://svn.berlios.de/svnroot/repos/senf/trunk/satscons
+        Utils http://svn.berlios.de/svnroot/repos/senf/trunk/Utils
+        Scheduler http://svn.berlios.de/svnroot/repos/senf/trunk/Scheduler
+        Socket http://svn.berlios.de/svnroot/repos/senf/trunk/Socket</pre>
+
+    exit the editor and the property will be set. Now run
+
+      <pre class="fragment">
+        $ svn update</pre>
+
+    and the code will be checked out into the corresponding
+    directories. 
+
+    \todo \li Configuring and building -> reference to the SENFSCons
+              dok
+ */
+
+/** \page example Sniffer: A simple Example application
+
+ */
 
     \section code Coding practices
 
@@ -90,20 +275,8 @@
     designed with standardization in mind. Many of the libraries are
     already in queue to be part of the next generation C++ standard.
    
-    \section Dependencies
-
-    \li A standards compliant, modern C++ compiler. The library as
-        such is developed under Linux using \c gcc with Version
-        above 3.4
-    \li The Boost libraries from http://www.boost.org
-    \li The SCons build tool (see http://www.scons.org)
-    \li Linux. The library only makes use of the POSIX API's, however
-        it has not been tested beyond Linux, so if you are somewhere
-        else, you are on your own. However, we will greatly appreciate
-        feedback and patches for other platforms.
-*/
-
 
 // Local Variables:
 // mode: c++
 // End:
+

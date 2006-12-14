@@ -30,15 +30,20 @@ body {
 	padding: 4px 0 0 0;
 	height: 18px;
 	background-color: #EDE497;
+	color: #726921;
         font-size: 13px;
 	font-weight: normal;
-	color: #726921;
 	white-space: nowrap;
 }
 
-#content { 
-	/* Non-0 top padding to fix margin inhertance from first non-float elt */
-	padding: 1px 10px 10px 142px;
+#content1 { 
+	padding: 0 10px 10px 142px;
+	border-bottom: 1px solid #AF9D00;
+}
+
+#content2 { 
+        /* need non-zero top padding here to prevent margin propagation */
+	padding: 10px 0 0 0;
 	max-width: 60em;
 }
 
@@ -48,7 +53,7 @@ div.tabs {
 	clear: left;
 	background-color: #FDF7C3;
 	border: 1px solid #AF9D00;
-        margin: 10px 0 0 -132px;
+        margin: 0 0 10px -132px;
 	width: 120px; 
 	overflow: hidden;
 }
@@ -100,4 +105,27 @@ div.qindex {
 	margin: 2px;
 	padding: 2px;
 	line-height: 140%;
+}
+
+#footer { 
+	clear: both;
+	padding: 4px 10px 4px 142px;
+	color: #726921;
+	white-space: nowrap;
+	text-align: right;
+	max-width: 60em;
+}
+
+#footer span { 
+        font-size: 10px;
+}
+
+#footer a, #footer a:active, #footer a:visited { 
+	color: #726921;
+	text-decoration: none;
+}
+
+#footer a:hover { 
+	background-color: inherit;
+	text-decoration: underline;
 }

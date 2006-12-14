@@ -81,12 +81,11 @@ def DoxyfileParse(file_contents, dir, data = None):
 
       # compress lists of len 1 into single strings
       for (k, v) in data.items():
-         if k == "@INCLUDE" : continue
          if len(v) == 0:
             data.pop(k)
 
          # items in the following list will be kept as lists and not converted to strings
-         if k in ["INPUT", "FILE_PATTERNS", "EXCLUDE_PATTERNS"]:
+         if k in ["INPUT", "FILE_PATTERNS", "EXCLUDE_PATTERNS", "@INCLUDE", "TAGFILES"]:
             continue
 
          if len(v) == 1:
@@ -101,6 +100,10 @@ def DoxySourceScan(node, env, path):
    Doxygen Doxyfile source scanner.  This should scan the Doxygen file and add
    any files used to generate docs to the list of source files.
    """
+   dep_add_keys = [
+      '@INCLUDE', 'HTML_HEADER', 'HTML_FOOTER', 'TAGFILES'
+   ]
+   
    default_file_patterns = [
       '*.c', '*.cc', '*.cxx', '*.cpp', '*.c++', '*.java', '*.ii', '*.ixx',
       '*.ipp', '*.i++', '*.inl', '*.h', '*.hh ', '*.hxx', '*.hpp', '*.h++',
@@ -112,45 +115,34 @@ def DoxySourceScan(node, env, path):
       '*~',
    ]
 
-   sources = []
-
-   data = DoxyfileParse(node.get_contents(), str(node.dir))
-
-   if data.get("RECURSIVE", "NO") == "YES":
-      recursive = True
-   else:
-      recursive = False
-
-   file_patterns = data.get("FILE_PATTERNS", default_file_patterns)
+   sources          = []
+   basedir          = str(node.dir)
+   data             = DoxyfileParse(node.get_contents(), basedir)
+   recursive        = ( data.get("RECURSIVE", "NO") == "YES" )
+   file_patterns    = data.get("FILE_PATTERNS", default_file_patterns)
    exclude_patterns = data.get("EXCLUDE_PATTERNS", default_exclude_patterns)
 
    for i in data.get("INPUT", [ "." ]):
-      input = os.path.normpath(os.path.join(str(node.dir),i))
+      input = os.path.normpath(os.path.join(basedir,i))
       if os.path.isfile(input):
          sources.append(input)
       elif os.path.isdir(input):
-         if recursive:
-            entries = os.walk(input)
-         else:
-            entries = [ (input, [], os.listdir(input)) ]
+         if recursive : entries = os.walk(input)
+         else         : entries = [ (input, [], os.listdir(input)) ]
          for root, dirs, files in entries:
             for f in files:
-               filename = os.path.join(root, f)
-
-               pattern_check = reduce(lambda x, y: x or bool(fnmatch(filename, y)), file_patterns, False)
-               exclude_check = reduce(lambda x, y: x and fnmatch(filename, y), exclude_patterns, True)
-
-               if pattern_check and not exclude_check:
+               filename = os.path.normpath(os.path.join(root, f))
+               if ( reduce(lambda x, y: x or fnmatch(filename, y),
+                           file_patterns, False) 
+                    and not reduce(lambda x, y: x or fnmatch(filename, y),
+                                   exclude_patterns, False) ):
                   sources.append(filename)
 
-   sources.extend([ os.path.normpath(os.path.join(str(node.dir),x))
-                    for x in data.get("@INCLUDE",[]) ])
-
-   for key in ('HTML_HEADER','HTML_FOOTER','TAGFILES'):
+   for key in dep_add_keys:
       if data.has_key(key):
          elt = data[key]
          if type(elt) is type ("") : elt = [ elt ]
-         sources.extend([ os.path.normpath(os.path.join(str(node.dir),f))
+         sources.extend([ os.path.normpath(os.path.join(basedir,f))
                           for f in elt ])
 
    sources = map( lambda path: env.File(path), sources )

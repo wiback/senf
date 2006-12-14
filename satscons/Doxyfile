@@ -1,0 +1,4 @@
+PROJECT_NAME           = SENFSCons
+PROJECT_NUMBER         = "Version 0.0.1"
+
+@INCLUDE = ../doclib/Doxyfile.global

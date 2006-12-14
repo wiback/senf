@@ -1,7 +1,14 @@
 import os.path, SCons.Options, SCons.Environment, SCons.Script.SConscript, glob
 
+SCONS_TOOLS = [
+    "Doxygen",
+    "Dia2Png",
+]
+
 opts = None
 finalizers = []
+
+basedir = os.path.split(__file__)[0]
 
 def InitOpts():
     global opts
@@ -28,7 +35,7 @@ def UseBoost():
     Finalizer(FinalizeBoost)
 
 def FinalizeBoost(env):
-    env.Tool('BoostUnitTests', [os.path.split(__file__)[0]])
+    env.Tool('BoostUnitTests', [basedir])
 
     if env['BOOST_TOOLSET']:
         runtime = ""
@@ -64,12 +71,6 @@ def FinalizeSTLPort(env):
             env.Append(LIBS = [ '$STLPORT_DEBUGLIB' ],
                        CPPDEFINES = [ '_STLP_DEBUG' ])
 
-def UseDoxygen():
-    Finalizer(FinalizeDoxygen)
-
-def FinalizeDoxygen(env):
-    env.Tool('Doxygen', [os.path.split(__file__)[0]])
-    
 def MakeEnvironment():
     global opts, finalizers
     InitOpts()
@@ -84,6 +85,9 @@ def MakeEnvironment():
 
     for finalizer in finalizers:
         finalizer(env)
+
+    for tool in SCONS_TOOLS:
+        env.Tool(tool, [basedir])
 
     env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long' ],
                LOCALLIBDIR = [ '#' ],

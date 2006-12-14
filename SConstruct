@@ -8,9 +8,7 @@ import SatSCons
 
 SatSCons.UseBoost()
 SatSCons.UseSTLPort()
-SatSCons.UseDoxygen()
 env = SatSCons.MakeEnvironment()
-env.Tool('Dia2Png', [ 'satscons' ])
 
 env.Append(
    CPPPATH = [ '#' ],
