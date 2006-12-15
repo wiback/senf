@@ -5,8 +5,8 @@ body {
 }
 
 #head {
-	height: 63px;
-	border-top: 4px solid #DECD40;
+	height: 62px;
+	border-top: 5px solid #DECD40;
 	border-bottom: 1px solid #AF9D00;
 	background: url(logo-head.png) top left no-repeat;
 	background-color: #EDE497;
@@ -15,7 +15,7 @@ body {
 #head h1 {
 	margin: 0 0 0 100px;
         padding: 6px 0 0 0;
-	height: 34px;
+	height: 33px;
         background-color: #DECD40;
 	border-bottom: 1px solid #AF9D00;
         font-size: 22px;

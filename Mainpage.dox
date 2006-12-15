@@ -48,7 +48,8 @@
 
     \see \ref build \n
          \ref components \n
-         \ref svnsetup
+         \ref svnsetup \n
+         \ref overview
 
     \section Preliminaries
 
@@ -71,10 +72,6 @@
     which relies on \c epoll)
     
     \todo
-    \li Preliminaries: SVN access, Dependencies
-    \li Building the library -> Configuration
-    \li Setting up a project using this library (svn:externals)
-    \li Library components
     \li coding standards and patterns
  */
 
@@ -195,11 +192,15 @@
     reference</a>
  */
 
-/** \page svnsetup Setting up a new project using SENF via SVN
+/** \page svnsetup Setting up a new project using SENF
     
     The preferred way to use SENF in a new project is to rely on
     Subversion and make use of the SENFSCons build environment. The
     following sections will describe, how this setup works.
+
+    \see \ref build \n
+         \ref components \n
+         \ref overview
 
     \section svnext Setting up the project repository
 
@@ -249,34 +250,121 @@
     and the code will be checked out into the corresponding
     directories. 
 
-    \todo \li Configuring and building -> reference to the SENFSCons
-              dok
+    \section new_conf Configuring SENFSCons
+
+    To set up the build environment, copy the
+    <tt>satscons/SConstruct.template</tt> to <tt>Satscons</tt> in the
+    project root. The default setup of this file is to build all
+    subdirectories (using the \c SConscript files of the
+    subdirectories). You can add additonal global targets and
+    configuration parameters here.
+
+    If you want to use a non-default compiler or the boost library is
+    not installed in the system directories, you will have to copy
+    <tt>satscons/SConfig.template</tt> to <tt>SConfig</tt> in the
+    project root and edit it there. You should \e never add \c SConfig
+    to the repository since it should only contain local settings
+    necessary for building on your local system. You should therefore
+    add \c SConfig to the list of files ignored by Subversion in the
+    project root. In the project root execute
+
+    <pre class="fragment">
+      $ svn propedit svn:ignore .</pre>
+
+    and add \c SConfig as a new line to the property.
+
+    \section new_build Building the project
+
+    You should now be able to build your project using
+
+    <pre class="fragment">
+      $ scons</pre>
+
+    If you have not changed the \c SConstruct file, this will build
+    all modules you have importet into your project. To build and
+    execute the unit tests, use
+
+    <pre class="fragment">
+      $ scons all_tests</pre>
+
+    you can also build only a subdirectory by changing to it and
+    running
+    
+    <pre class="fragment">
+      $ scons -u [target]</pre>
+
+    \see <a href="../../satscons/doc/html/index.html"><b>SENFSCons reference</b></a> \n
+         <a href="http://www.scons.org/documentation.php"><b><i>SCons documentation</i></b></a> \n
+         <a href="http://svnbook.red-bean.com"><b><i>Subversion online book</i></b></a> \n
+         <a href="http://subversion.tigris.org"><b><i>Subversion Homepage</i></b></a>
  */
 
-/** \page example Sniffer: A simple Example application
+/** \page overview Introduction to the framework
+    
+    The SENF framework is relatively complex and makes use of advanced
+    features of the C++ language. To make the most efficient use of
+    the framework, you should have at least a basic understanding of
+    C++ templates and the standard library concepts.
 
+    The library implementation at places makes heavy use of advanced
+    template techniques and relies on some very advanced template
+    libraries from Boost. The aim was however for the \e external
+    interface of the library to be as simple as possible without
+    sacrificing important functionality or adversely impacting the
+    runtime performance.
+
+    As already mentioned several times, the library relies on Boost
+    (http://www.boost.org) as a generic library of high quality
+    reusable C++ components. It also makes frequent use of the
+    standard library. It is designed, to integrate well into both
+    libraries and to use the same concepts and ideas.
+
+    \section startup Getting starting developing with SENF
+
+    To introduce the framework and it's general structure, a simple
+    example application is provided in the SENF repository in the \c
+    Sniffer module. Peruse this example to get a first look at how to
+    make use of SENF.
+    
+    When building a network Application with SENF, you will use
+    several modules:
+    
+    \li Use the <a href="../../Socket/doc/html/index.html"><b>Socket
+      	library</b></a> for network communication needs. This library
+      	includes support for raw and packet sockets to allow low level
+      	network access.
+    \li Use the <a
+      	href="../../Scheduler/doc/html/index.html"><b>Scheduler
+      	library</b></a> to coordinate the asynchronous event
+      	processing. This drastically reduces the number of threads
+      	needed in your application and will greatly enhance the overall
+      	responsiveness.
+    \li To interpret low level network packets, use the <a
+      	href="../../Packets/doc/html/index.html"><b>Packets
+      	library</b></a>. This library will provide efficient and 
+	convenient access to all protocol fields. It supports parsing as
+      	well as modifying and creating packets. It has default support
+      	for the most important TCP protocols and is highly extensible
+      	with new protocols.
+    \li Go over the <a href="../../Utils/doc/html/index.html"><b>Utils
+      	library</b></a>. It contains small helpers to
+      	simplify tasks like daemonization, exception handling,
+        debugging and so on.
+
+    The simplest way to get started is: copy the Sniffer application
+    and start to modify it.
+
+    \see \ref example \n
+	 \ref components \n
+         \ref svnsetup \n
+         \ref build
  */
 
-    \section code Coding practices
-
-    The library heavily depends on the features of modern C++. As
-    such, it depends on a fairly recent and standards compliant C++
-    compiler (the Library is developed using \c gcc with Version at
-    least 3.4). To meet the above defined goals, the library makes
-    quite heavy use of advanced templating techniques, so
-    understanding the implementation will require expertise in the
-    intricacies of C++ templates. However, it was deemed important to
-    keep the \e visible Interface of the Library as clean and simple
-    as possible without sacrificing the projects design goals.
-
-    The library heavily depends on the \e Boost libraries (see
-    http://www.boost.org). The Boost libraries are an ever growing
-    collection of highest quality reusable C++ components. They are
-    designed with standardization in mind. Many of the libraries are
-    already in queue to be part of the next generation C++ standard.
-   
 
 // Local Variables:
 // mode: c++
+// mode: flyspell
+// mode: auto-fill
+// ispell-local-dictionary: "american"
 // End:
 

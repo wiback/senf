@@ -86,7 +86,7 @@ namespace {
     }
 }
 
-int main (int argc, char * argv[])
+int main (int argc, char const * argv[])
 {
     try {
         satcom::lib::PacketSocketHandle sock;
@@ -104,7 +104,7 @@ int main (int argc, char * argv[])
             std::cout << "\n\n";
         }
     }
-    catch (std::exception & ex) {
+    catch (std::exception const & ex) {
         std::cerr << satcom::lib::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
     }
 }

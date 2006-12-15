@@ -1,0 +1,110 @@
+/** \page example Sniffer: A simple example application
+
+    \dontinclude Sniffer.cc
+
+    The Sniffer application is a simple command line network sniffer
+    like \c tcpdump or \c tethereal. The application uses a packet
+    socket to read Ethernet packets from the \c eth0 interface and
+    dumps the parsed packets out to the standard output.
+
+    We will be looking at \c Sniffer.cc in the \c Sniffer
+    directory. We start by including the necessary headers
+
+    \skip // Custom includes
+    \until Ethernet
+
+    (The additional includes are part of a short-time fix which will
+    be removed as soon as possible). The example application now
+    contains a helper routine to produce a packet hexdump. We will
+    skip this routine here and go directly to the \c main function
+    
+    \skip main
+    \until try
+
+    We catch all exceptions in a \c try block. This is good for a
+    deliverable binary. When debugging the application, it might be
+    better to let the exception \c abort the execution so you can get
+    a backtrace of the exception origin in the debugger.
+
+    We now create a packet socket and bind it to the \c eth0
+    interface. By uncommenting the last line, you may switch the
+    interface into promiscuous mode.
+
+    \until //
+
+    We will now read packets from the socket forever, that is until
+    the user hits Ctrl-C
+
+    \skip while
+    \until read
+    
+    The next step is, to parse the data read from the socket as an
+    Ethernet packet
+
+    \until ;
+    
+    Lets digest this line step by step: We declare a variable named \c
+    packet as a smart pointer to an \c EthernetPacket instance. \c ptr
+    is a typedef member of all Packet classes for the corresponding
+    smart pointer type. We then initialize this pointer with a call to
+    the static \c create member of the \c Packet class. This member
+    takes the type of Packet to parse as a template argument. We pass
+    \c EthernetPacket here. The function takes an iterator range as an
+    argument, and we pass it the complete packet just read by
+    giving the range \c begin() to \c end() of our just read \c data
+    string.
+
+    The next step is, to write out the packet to the standard output
+
+    \until \n\n
+
+    The \c dump call will write out a complete representation of the
+    parsed packet data. The Packet library will \e not try to
+    interpret payload data as long as no exact indication of the
+    payload type is available (example: A UDP Payload is not parsed
+    further unless you explicitly tell the library, how to parse it).
+    Tools like \c tethereal guess the payload type by checking port
+    numbers and the payload data, however this is not advisable for a
+    general purpose packet library.
+
+    The next line, \c hexdump, will write out the \e last packet
+    component. Packets are managed as a chain of headers. The last
+    header is normally a \c DataPacket holding the payload data.
+
+    That's it. We finish of by catching the exception and giving as
+    much detail as possible if an exception is caught
+
+    \until ;
+    \until }
+    \until }
+
+    The \c prettyName function from the \c Utils library is used, to
+    get a nice, printable representation of the \e dynamic type of the
+    exception instance. It is an interface to the g++ demangler. This
+    is necessary since the \c name member of the C++ \c type_info
+    instance is a mangled name in C++.
+
+    That's it. This is all, that's necessary to read and parse raw
+    network packets using the SENF library. To try out the example
+    application, check out the library, go to the \c Sniffer directory
+    and execute
+
+    <pre class="fragment">
+      # scons -u
+      # ./Sniffer</pre>
+
+    \see \ref components \n
+         \ref build \n
+         <a href="../../Socket/doc/html/index.html"><b>libSocket API reference</b></a> \n
+         <a href="../../Packets/doc/html/index.html"><b>libPackets API reference</b></a> \n
+         <a href="../../Utils/doc/html/index.html"><b>libUtils API reference</b></a>
+ */
+
+
+// Local Variables:
+// mode: c++
+// mode: flyspell
+// mode: auto-fill
+// ispell-local-dictionary: "american"
+// End:
+
