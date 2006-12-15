@@ -70,9 +70,6 @@
     POSIX platforms with a BSD Socket API, the library should be
     usable, possibly with some tweaking (except for the Scheduler,
     which relies on \c epoll)
-    
-    \todo
-    \li coding standards and patterns
  */
 
 /** \page build Building the framework
