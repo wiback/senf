@@ -37,14 +37,27 @@ body {
 }
 
 #content1 { 
-	padding: 0 10px 10px 142px;
+	padding: 0 10px 10px 0;
 	border-bottom: 1px solid #AF9D00;
 }
 
 #content2 { 
         /* need non-zero top padding here to prevent margin propagation */
-	padding: 10px 0 0 0;
+	padding: 10px 0 0 142px;
 	max-width: 60em;
+}
+
+a { 
+	font-weight: bold;
+	text-decoration: none;
+}
+
+a:contains("http://") { 
+	font-weight: normal;
+}
+
+a.ext {
+        font-style: italic;
 }
 
 div.tabs { 
@@ -56,6 +69,10 @@ div.tabs {
         margin: 0 0 10px -132px;
 	width: 120px; 
 	overflow: hidden;
+}
+
+* html div.tabs { 
+	margin-bottom: 0; /* Grmpf .. IE6 is f**ing up ... */
 }
 
 div.tabs ul { 
@@ -75,6 +92,7 @@ div.tabs ul li a {
 	color: #726921;
 	text-decoration: none;
 	white-space: nowrap;
+	font-weight: normal;
 }
 
 div.tabs ul li a:visited, div.tabs ul li a:active { 
@@ -129,3 +147,4 @@ div.qindex {
 	background-color: inherit;
 	text-decoration: underline;
 }
+

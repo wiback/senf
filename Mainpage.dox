@@ -30,8 +30,8 @@
 
     \see \ref usage\n
          \ref example\n
-         <a href="http://developer.berlios.de/projects/senf"><b><i>The BerliOS project page</i></b></a>\n
-         <a href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework"><b><i>The SENF Wiki at BerliOS</i></b></a>
+         <a class="ext" href="http://developer.berlios.de/projects/senf">The BerliOS project page</a>\n
+         <a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">The SENF Wiki at BerliOS</a>
 */
 
 /** \page usage Using the SENF framework
@@ -290,10 +290,10 @@
     <pre class="fragment">
       $ scons -u [target]</pre>
 
-    \see <a href="../../satscons/doc/html/index.html"><b>SENFSCons reference</b></a> \n
-         <a href="http://www.scons.org/documentation.php"><b><i>SCons documentation</i></b></a> \n
-         <a href="http://svnbook.red-bean.com"><b><i>Subversion online book</i></b></a> \n
-         <a href="http://subversion.tigris.org"><b><i>Subversion Homepage</i></b></a>
+    \see <a href="../../satscons/doc/html/index.html">SENFSCons reference</a> \n
+         <a class="ext" href="http://www.scons.org/documentation.php">SCons documentation</a> \n
+         <a class="ext" href="http://svnbook.red-bean.com">Subversion online book</a> \n
+         <a class="ext" href="http://subversion.tigris.org">Subversion Homepage</a>
  */
 
 /** \page overview Introduction to the framework
@@ -326,25 +326,25 @@
     When building a network Application with SENF, you will use
     several modules:
     
-    \li Use the <a href="../../Socket/doc/html/index.html"><b>Socket
-      	library</b></a> for network communication needs. This library
+    \li Use the <a href="../../Socket/doc/html/index.html">Socket
+      	library</a> for network communication needs. This library
       	includes support for raw and packet sockets to allow low level
       	network access.
     \li Use the <a
-      	href="../../Scheduler/doc/html/index.html"><b>Scheduler
-      	library</b></a> to coordinate the asynchronous event
+      	href="../../Scheduler/doc/html/index.html">Scheduler
+      	library</a> to coordinate the asynchronous event
       	processing. This drastically reduces the number of threads
       	needed in your application and will greatly enhance the overall
       	responsiveness.
     \li To interpret low level network packets, use the <a
-      	href="../../Packets/doc/html/index.html"><b>Packets
-      	library</b></a>. This library will provide efficient and 
+      	href="../../Packets/doc/html/index.html">Packets
+      	library</a>. This library will provide efficient and 
 	convenient access to all protocol fields. It supports parsing as
       	well as modifying and creating packets. It has default support
       	for the most important TCP protocols and is highly extensible
       	with new protocols.
-    \li Go over the <a href="../../Utils/doc/html/index.html"><b>Utils
-      	library</b></a>. It contains small helpers to
+    \li Go over the <a href="../../Utils/doc/html/index.html">Utils
+      	library</a>. It contains small helpers to
       	simplify tasks like daemonization, exception handling,
         debugging and so on.
 
