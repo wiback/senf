@@ -1,4 +1,5 @@
-PROJECT_NAME           = libUtils
-PROJECT_NUMBER         = "Version 0.0.1"
-
 @INCLUDE = ../doclib/Doxyfile.global
+
+PROJECT_NAME = libUtils
+PROJECT_NUMBER = "Version 0.0.1"
+GENERATE_TAGFILE = doc/Utils.tag

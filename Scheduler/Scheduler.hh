@@ -42,8 +42,8 @@
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
+/** \brief SENF Project namespace */
 namespace senf {
-
 
     /** \brief Singleton class to manage the event loop
 

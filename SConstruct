@@ -24,3 +24,5 @@ SConscript(glob.glob("*/SConscript"))
 SatSCons.StandardTargets(env)
 SatSCons.GlobalTargets(env)
 SatSCons.Doxygen(env)
+
+env.Command("Doxyfile.local", None, Touch("$TARGET"))

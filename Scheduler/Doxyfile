@@ -1,5 +1,6 @@
-PROJECT_NAME           = libScheduler
-PROJECT_NUMBER         = "Version 0.0.1"
-TAGFILES               = ../Utils/doc/doxytags
-
 @INCLUDE = ../doclib/Doxyfile.global
+
+PROJECT_NAME = libScheduler
+PROJECT_NUMBER = "Version 0.0.1"
+TAGFILES = ../Utils/doc/Utils.tag
+GENERATE_TAGFILE = doc/Scheduler.tag

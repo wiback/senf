@@ -186,12 +186,11 @@ SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = 
 INCLUDE_FILE_PATTERNS  = 
 PREDEFINED             = DOXYGEN
-EXPAND_AS_DEFINED      = DefineCommand
+EXPAND_AS_DEFINED      = prefix_
 SKIP_FUNCTION_MACROS   = YES
 #---------------------------------------------------------------------------
 # Configuration::additions related to external references   
 #---------------------------------------------------------------------------
-GENERATE_TAGFILE       = doc/doxytags
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
 PERL_PATH              = /usr/bin/perl
@@ -205,7 +204,7 @@ CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = YES
 GROUP_GRAPHS           = YES
 UML_LOOK               = NO
-TEMPLATE_RELATIONS     = NO
+TEMPLATE_RELATIONS     = YES
 INCLUDE_GRAPH          = YES
 INCLUDED_BY_GRAPH      = YES
 CALL_GRAPH             = NO
@@ -216,7 +215,7 @@ DOT_PATH               =
 DOTFILE_DIRS           = 
 MAX_DOT_GRAPH_WIDTH    = 800
 MAX_DOT_GRAPH_HEIGHT   = 1200
-MAX_DOT_GRAPH_DEPTH    = 1000
+MAX_DOT_GRAPH_DEPTH    = 3
 DOT_TRANSPARENT        = NO
 DOT_MULTI_TARGETS      = YES
 GENERATE_LEGEND        = YES
@@ -225,3 +224,5 @@ DOT_CLEANUP            = NO
 # Configuration::additions related to the search engine   
 #---------------------------------------------------------------------------
 SEARCHENGINE           = NO
+
+@INCLUDE = "../Doxyfile.local"

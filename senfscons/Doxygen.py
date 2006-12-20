@@ -59,7 +59,7 @@ def DoxyfileParse(file_contents, dir, data = None):
             else          : key = token
             if token != '@' : key_token = False
          else:
-            if token == "+=" or (token == "==" and key == "@INCLUDE"):
+            if token == "+=" or (token == "=" and key == "@INCLUDE"):
                if not data.has_key(key):
                   data[key] = list()
             elif token == "=":
@@ -90,6 +90,7 @@ def DoxyfileParse(file_contents, dir, data = None):
 
          if len(v) == 1:
             data[k] = v[0]
+
 
       return data
    except:
@@ -174,7 +175,9 @@ def DoxyEmitter(source, target, env):
          # Grmpf ... need to use a File object here. The problem is, that
          # Dir.scan() is implemented to just return the directory entries
          # and does *not* invoke the source-file scanners .. ARGH !!
-         node = env.File( os.path.join(str(source[0].dir), out_dir, data.get(k + "_OUTPUT", v[1]), ".stamp" ))
+         dir = env.Dir( os.path.join(str(source[0].dir), out_dir, data.get(k + "_OUTPUT", v[1])) )
+         node = env.File( os.path.join(str(dir), ".stamp" ) )
+         env.Clean(node, dir)
          targets.append( node )
 
    if data.has_key("GENERATE_TAGFILE"):
@@ -184,11 +187,75 @@ def DoxyEmitter(source, target, env):
    for node in targets:
       env.Precious(node)
 
-   # set up cleaning stuff
-   for node in targets:
-      env.Clean(node, node)
-
    return (targets, source)
+
+def doxyNodeHtmlDir(node):
+   if not node.sources : return None
+   data = DoxyfileParse(node.sources[0].get_contents(), str(node.sources[0].dir))
+   if data.get("GENERATE_HTML",'YES') != 'YES' : return None
+   return os.path.normpath(os.path.join( str(node.sources[0].dir),
+                                         data.get("OUTPUT_DIRECTORY","."),
+                                         data.get("HTML_OUTPUT","html") ))
+
+def relpath(source, target):
+   source = os.path.normpath(source)
+   target = os.path.normpath(target)
+   prefix = os.path.dirname(os.path.commonprefix((source,target)))
+   prefix_len = prefix and len(prefix.split(os.sep)) or 0
+   source_elts = source.split(os.sep)
+   target_elts = target.split(os.sep)
+   if source_elts[0] == '..' or target_elts[0] == '..':
+      raise ValueError, "invalid relapth args"
+   return os.path.join(*([".."] * (len(source_elts) - prefix_len) +
+                         target_elts[prefix_len:]))
+
+def DoxyGenerator(source, target, env, for_signature):
+
+   data = DoxyfileParse(source[0].get_contents(), str(source[0].dir))
+
+   actions = [ env.Action("cd ${SOURCE.dir}  &&  ${DOXYGEN} ${SOURCE.file}") ]
+
+   # This will add automatic 'installdox' calls.
+   #
+   # For every referenced tagfile, the generator first checks for the
+   # existence of a construction variable '<name>_DOXY_URL' where
+   # '<name>' is the uppercased name of the tagfile sans extension
+   # (e.g. 'Utils.tag' -> 'UTILS_DOXY_URL'). If this variable exists,
+   # it must contain the url or path to the installed documentation
+   # corresponding to the tag file.
+   #
+   # Is the variable is not found and if a referenced tag file is a
+   # target within this same build, the generator will parse the
+   # 'Doxyfile' from which the tag file is built. It will
+   # automatically create the html directory from the information in
+   # that 'Doxyfile'.
+   #
+   # If for any referenced tagfile no url can be found, 'installdox'
+   # will *not* be called and a warning about the missing url is
+   # generated.
+   
+   if data.get('GENERATE_HTML','YES') == "YES":
+      output_dir = os.path.normpath(os.path.join( str(source[0].dir),
+                                                  data.get("OUTPUT_DIRECTORY","."),
+                                                  data.get("HTML_OUTPUT","html") ))
+      args = []
+      for tagfile in data.get('TAGFILES',[]):
+         url = env.get(os.path.splitext(os.path.basename(tagfile))[0].upper()+"_DOXY_URL", None)
+         if not url:
+            url = doxyNodeHtmlDir(
+               env.File(os.path.normpath(os.path.join( str(source[0].dir), tagfile ))))
+            if url : url = relpath(output_dir, url)
+         if not url:
+            print "WARNING:",str(node.sources[0]),": missing tagfile url for",tagfile
+            args = None
+         if args is not None and url:
+            args.append("-l %s@%s" % ( os.path.basename(tagfile), url ))
+      if args:
+         actions.append(env.Action('cd %s && ./installdox %s' % (output_dir, " ".join(args))))
+   
+   actions.append(env.Action([ "touch $TARGETS" ]))
+
+   return actions
 
 def generate(env):
    """
@@ -203,7 +270,7 @@ def generate(env):
 
    doxyfile_builder = env.Builder(
       # scons 0.96.93 hang on the next line but I don't know hot to FIX the problem
-      action = env.Action("( cd ${SOURCE.dir}  &&  ${DOXYGEN} ${SOURCE.file} ) && touch $TARGETS"),
+      generator = DoxyGenerator,
       emitter = DoxyEmitter,
       target_factory = env.fs.Entry,
       single_source = True,
