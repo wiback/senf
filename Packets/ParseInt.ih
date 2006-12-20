@@ -27,8 +27,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 namespace impl {
     
     ///////////////////////////////////////////////////////////////////////////
@@ -212,7 +212,7 @@ namespace impl {
         : public parse_bitfield_i<Iterator,start/8,(end-1)/8-start/8,start%8,end-8*(start/8)>
     {};
 
-}}}
+}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -220,5 +220,5 @@ namespace impl {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

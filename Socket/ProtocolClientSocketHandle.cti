@@ -30,9 +30,9 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class SocketProtocol>
-prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientSocketHandle()
+prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientSocketHandle()
     : ClientSocketHandle<typename SocketProtocol::Policy>(
-        std::auto_ptr<satcom::lib::SocketProtocol>(new SocketProtocol()))
+        std::auto_ptr<senf::SocketProtocol>(new SocketProtocol()))
 {
     this->protocol().init_client();
 }
@@ -41,31 +41,31 @@ prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientS
 #include BOOST_PP_ITERATE()
 
 template <class SocketProtocol>
-prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::
+prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::
 ProtocolClientSocketHandle(FileHandle other, bool isChecked)
     : ClientSocketHandle<typename Protocol::Policy>(other, isChecked)
 {}
 
 template <class SocketProtocol>
 prefix_ SocketProtocol const &
-satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::protocol()
+senf::ProtocolClientSocketHandle<SocketProtocol>::protocol()
 {
     BOOST_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
-    // Need dynamic_cast here, since satcom::lib::SocketProtocol is a
+    // Need dynamic_cast here, since senf::SocketProtocol is a
     // virtual base
     return dynamic_cast<SocketProtocol const &>(this->body().protocol());
 }
 
 template <class SocketProtocol>
-prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>
-satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::cast_static(FileHandle handle)
+prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>
+senf::ProtocolClientSocketHandle<SocketProtocol>::cast_static(FileHandle handle)
 {
     return ProtocolClientSocketHandle(handle,true);
 }
 
 template <class SocketProtocol>
-prefix_ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>
-satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::cast_dynamic(FileHandle handle)
+prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>
+senf::ProtocolClientSocketHandle<SocketProtocol>::cast_dynamic(FileHandle handle)
 {
     ClientSocketHandle<typename SocketProtocol::Policy> h(
         ClientSocketHandle<typename SocketProtocol::Policy>::cast_dynamic(handle));
@@ -76,7 +76,7 @@ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::cast_dynamic(FileHandle
 
 template <class SocketProtocol>
 prefix_ void
-satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::state(SocketStateMap & map,
+senf::ProtocolClientSocketHandle<SocketProtocol>::state(SocketStateMap & map,
                                                                unsigned lod)
 {
     map["handle"] = prettyName(typeid(*this));
@@ -85,7 +85,7 @@ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::state(SocketStateMap & 
 
 template <class SocketProtocol>
 prefix_ std::string
-satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::dumpState(unsigned lod)
+senf::ProtocolClientSocketHandle<SocketProtocol>::dumpState(unsigned lod)
 {
     SocketStateMap map;
     state(map,lod);
@@ -98,5 +98,5 @@ satcom::lib::ProtocolClientSocketHandle<SocketProtocol>::dumpState(unsigned lod)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

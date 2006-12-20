@@ -31,7 +31,7 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol,
+prefix_ senf::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol,
                                             bool isServer)
     : protocol_(protocol), isServer_(isServer)
 {
@@ -39,7 +39,7 @@ prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protoc
     protocol_->body_ = this;
 }
 
-prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol,
+prefix_ senf::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol,
                                             bool isServer, int fd)
     : FileBody(fd), protocol_(protocol), isServer_(isServer)
 {
@@ -47,24 +47,24 @@ prefix_ satcom::lib::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protoc
     protocol_->body_ = this;
 }
 
-prefix_ satcom::lib::SocketProtocol const & satcom::lib::SocketBody::protocol()
+prefix_ senf::SocketProtocol const & senf::SocketBody::protocol()
     const
 {
     return *protocol_;
 }
 
-prefix_ bool satcom::lib::SocketBody::isServer()
+prefix_ bool senf::SocketBody::isServer()
 {
     return isServer_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::detail::ConvertibleString
+// senf::detail::ConvertibleString
 
-prefix_ satcom::lib::detail::ConvertibleString::ConvertibleString()
+prefix_ senf::detail::ConvertibleString::ConvertibleString()
 {}
 
-prefix_ satcom::lib::detail::ConvertibleString::ConvertibleString(bool v)
+prefix_ senf::detail::ConvertibleString::ConvertibleString(bool v)
     : std::string(v ? "true" : "false")
 {}
 
@@ -74,5 +74,5 @@ prefix_ satcom::lib::detail::ConvertibleString::ConvertibleString(bool v)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

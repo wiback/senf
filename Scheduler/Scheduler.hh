@@ -42,8 +42,8 @@
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     /** \brief Singleton class to manage the event loop
 
@@ -142,7 +142,7 @@ namespace lib {
 
     int retrieve_filehandle(int fd);
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Scheduler.cci"
@@ -153,5 +153,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

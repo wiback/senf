@@ -30,14 +30,14 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <typename OtherPacket>
-prefix_ bool satcom::pkf::Packet::is()
+prefix_ bool senf::Packet::is()
     const
 {
     return dynamic_cast<OtherPacket const *>(this);
 }
 
 template <typename OtherPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::as()
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::as()
 {
     return typename ptr_t<OtherPacket>::ptr(dynamic_cast<OtherPacket*>(this),true);
 }
@@ -45,7 +45,7 @@ prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packe
 // This constructor appends a new interreter to the interpreter chain
 // of an existing Packet
 template <class Operation>
-prefix_ satcom::pkf::Packet::Packet(Operation const & arg)
+prefix_ senf::Packet::Packet(Operation const & arg)
     : impl_(0), begin_(arg.begin()), end_(arg.end()), self_(),
       parsed_(false), refcount_(1)
 {
@@ -57,7 +57,7 @@ prefix_ satcom::pkf::Packet::Packet(Operation const & arg)
 }
 
 template <class InputIterator>
-prefix_ satcom::pkf::impl::PacketImpl::PacketImpl(InputIterator begin, InputIterator end)
+prefix_ senf::impl::PacketImpl::PacketImpl(InputIterator begin, InputIterator end)
     : data_(begin, end), interpreters_(), refcount_(1)
 {
     SATCOM_PKF_REFC_MSG("] PacketImpl::PacketImpl (" << this << "): refcount_ = 1\n")
@@ -69,5 +69,5 @@ prefix_ satcom::pkf::impl::PacketImpl::PacketImpl(InputIterator begin, InputIter
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

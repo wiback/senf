@@ -30,12 +30,12 @@
 //#include "TypeInfo.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     std::string prettyName(std::type_info const & type);
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "TypeInfo.cci"
@@ -47,5 +47,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -120,15 +120,15 @@ namespace {
 BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
 {
     {
-        satcom::lib::TCPv4ClientSocketHandle sock;
+        senf::TCPv4ClientSocketHandle sock;
 
-        BOOST_CHECK_THROW( sock.connect(satcom::lib::INet4Address("127.0.0.1:12345")), satcom::lib::SystemException );
-        BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1:12345"), satcom::lib::SystemException );
+        BOOST_CHECK_THROW( sock.connect(senf::INet4Address("127.0.0.1:12345")), senf::SystemException );
+        BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1:12345"), senf::SystemException );
     }
 
     {
         start(server);
-        satcom::lib::TCPv4ClientSocketHandle sock;
+        senf::TCPv4ClientSocketHandle sock;
         BOOST_CHECK_NO_THROW( sock.bind("127.0.0.1:23456") );
         BOOST_CHECK_NO_THROW( sock.connect("127.0.0.1:12345") );
         BOOST_CHECK( sock.peer() == "127.0.0.1:12345" );
@@ -153,21 +153,21 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
     }
     
     {
-        satcom::lib::TCPv4ClientSocketHandle sock;
+        senf::TCPv4ClientSocketHandle sock;
 
         // Since this is a TCP socket, most of the calls will fail or
         // are at least not sensible ...
         // I'll have to move those to a UDPSocket test ... they should
         // realy only be in the UDP Protocol implementation
         BOOST_CHECK_NO_THROW( sock.protocol().mcTTL() );
-        BOOST_CHECK_THROW( sock.protocol().mcTTL(1), satcom::lib::SystemException );
+        BOOST_CHECK_THROW( sock.protocol().mcTTL(1), senf::SystemException );
         BOOST_CHECK_NO_THROW( sock.protocol().mcLoop() );
         BOOST_CHECK_NO_THROW( sock.protocol().mcLoop(false) );
         BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0") );
         BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0","127.0.0.1:0") );
         BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0","127.0.0.1:0") );
         BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0") );
-        BOOST_CHECK_THROW( sock.protocol().mcIface("lo"), satcom::lib::SystemException );
+        BOOST_CHECK_THROW( sock.protocol().mcIface("lo"), senf::SystemException );
         
         // The following setsockopts are hard to REALLY test ...
         BOOST_CHECK_NO_THROW( sock.protocol().nodelay(true) );
@@ -215,12 +215,12 @@ BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
 {
     {
         BOOST_CHECKPOINT("Opening server socket");
-        satcom::lib::TCPv4ServerSocketHandle server ("127.0.0.1:12346");
+        senf::TCPv4ServerSocketHandle server ("127.0.0.1:12346");
         BOOST_CHECKPOINT("Starting client");
         start(client);
 
         BOOST_CHECKPOINT("Accepting connection");
-        satcom::lib::TCPv4ClientSocketHandle client = server.accept();
+        senf::TCPv4ClientSocketHandle client = server.accept();
         BOOST_CHECK_NO_THROW(client.write("QUIT"));
 
         BOOST_CHECKPOINT("Stopping client");
@@ -235,5 +235,5 @@ BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

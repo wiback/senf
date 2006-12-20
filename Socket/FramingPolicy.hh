@@ -29,8 +29,8 @@
 //#include "FramingPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     struct StreamFramingPolicy : public FramingPolicyBase
     {};
@@ -38,7 +38,7 @@ namespace lib {
     struct DatagramFramingPolicy : public FramingPolicyBase
     {};
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "FramingPolicy.cci"
@@ -49,5 +49,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ bool satcom::lib::TCPProtocol::nodelay()
+prefix_ bool senf::TCPProtocol::nodelay()
     const
 {
     int value;
@@ -47,7 +47,7 @@ prefix_ bool satcom::lib::TCPProtocol::nodelay()
     return value;
 }
 
-prefix_ void satcom::lib::TCPProtocol::nodelay(bool value)
+prefix_ void senf::TCPProtocol::nodelay(bool value)
     const
 {
     int ivalue (value);
@@ -55,7 +55,7 @@ prefix_ void satcom::lib::TCPProtocol::nodelay(bool value)
         throw SystemException(errno);
 }
 
-prefix_ unsigned satcom::lib::TCPProtocol::siocinq()
+prefix_ unsigned senf::TCPProtocol::siocinq()
     const
 {
     int n;
@@ -64,7 +64,7 @@ prefix_ unsigned satcom::lib::TCPProtocol::siocinq()
     return n;
 }
 
-prefix_ unsigned satcom::lib::TCPProtocol::siocoutq()
+prefix_ unsigned senf::TCPProtocol::siocoutq()
     const
 {
     int n;
@@ -73,13 +73,13 @@ prefix_ unsigned satcom::lib::TCPProtocol::siocoutq()
     return n;
 }
 
-prefix_ unsigned satcom::lib::TCPProtocol::available()
+prefix_ unsigned senf::TCPProtocol::available()
     const
 {
     return siocinq();
 }
 
-prefix_ bool satcom::lib::TCPProtocol::eof()
+prefix_ bool senf::TCPProtocol::eof()
     const
 {
     return body().readable() && available()==0;
@@ -93,5 +93,5 @@ prefix_ bool satcom::lib::TCPProtocol::eof()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

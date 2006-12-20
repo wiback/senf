@@ -31,13 +31,13 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 
-prefix_ void satcom::pkf::RTCPPacket::v_nextInterpreter()
+prefix_ void senf::RTCPPacket::v_nextInterpreter()
     const
 {
     registerInterpreter<DataPacket>(begin()+bytes(),end());
 }
 
-prefix_ void satcom::pkf::RTCPPacket::v_finalize()
+prefix_ void senf::RTCPPacket::v_finalize()
 {}
 
 
@@ -47,5 +47,5 @@ prefix_ void satcom::pkf::RTCPPacket::v_finalize()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

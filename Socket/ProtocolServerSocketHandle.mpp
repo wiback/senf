@@ -45,7 +45,7 @@
 //////
 #if BOOST_PP_ITERATION_FLAGS()==1
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::
+// senf::ProtocolServerSocketHandle<SocketProtocol>::
 // ProtocolServerSocketHandle (constructor) declaration
 
 template < mpp_PSSH_TemplateParameters() >
@@ -54,15 +54,15 @@ ProtocolServerSocketHandle( mpp_PSSH_MethodParameters() );
 //////
 #elif BOOST_PP_ITERATION_FLAGS()==2
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::
+// senf::ProtocolServerSocketHandle<SocketProtocol>::
 // ProtocolServerSocketHandle (constructor) implementation
 
 template <class SocketProtocol>
 template < mpp_PSSH_TemplateParameters() >
-prefix_ satcom::lib::ProtocolServerSocketHandle<SocketProtocol>::
+prefix_ senf::ProtocolServerSocketHandle<SocketProtocol>::
 ProtocolServerSocketHandle( mpp_PSSH_MethodParameters() )
     : ServerSocketHandle<typename SocketProtocol::Policy>(
-        std::auto_ptr<satcom::lib::SocketProtocol>(new SocketProtocol()))
+        std::auto_ptr<senf::SocketProtocol>(new SocketProtocol()))
 {
     this->protocol().init_server( mpp_PSSH_CallParameters() );
 }
@@ -89,5 +89,5 @@ ProtocolServerSocketHandle( mpp_PSSH_MethodParameters() )
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

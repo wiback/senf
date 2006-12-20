@@ -32,8 +32,8 @@
 //#include "UDPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
     
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UDP : public ParserBase<Iterator,IPacket>
@@ -80,7 +80,7 @@ namespace pkf {
 
         friend class Packet;
     };
-}}
+}
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -92,5 +92,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

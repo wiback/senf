@@ -41,7 +41,7 @@
 // interface isn't even explicitly exportet from libiberty. However, it is 
 // *EXTREMELY* helpful for debugging ...
 
-prefix_ std::string satcom::lib::prettyName(std::type_info const & type)
+prefix_ std::string senf::prettyName(std::type_info const & type)
 {
     char const * mangled = type.name();
     char * demangled = ::cplus_demangle(mangled,DMGL_TYPES|DMGL_AUTO);
@@ -58,5 +58,5 @@ prefix_ std::string satcom::lib::prettyName(std::type_info const & type)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

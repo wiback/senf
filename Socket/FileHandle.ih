@@ -29,13 +29,13 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     /** \brief
       */
     class FileBody
-        : public satcom::lib::intrusive_refcount
+        : public senf::intrusive_refcount
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ namespace lib {
         int fd_;
     };
 
-}}
+}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -99,5 +99,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

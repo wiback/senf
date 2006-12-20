@@ -32,8 +32,8 @@
 //#include "ParseListS.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 
     template <class Parser, class Sentinel, class Container> class Parse_ListS_wrapper;
     namespace impl { 
@@ -150,7 +150,7 @@ namespace pkf {
         Container & container_;
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ParseListS.cci"
@@ -161,5 +161,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

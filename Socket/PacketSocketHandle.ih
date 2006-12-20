@@ -27,8 +27,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 namespace detail {
 
     struct LLAddressCopier
@@ -48,7 +48,7 @@ namespace detail {
         ForwardRange const & range_;
     };
 
-}}}
+}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -56,5 +56,5 @@ namespace detail {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

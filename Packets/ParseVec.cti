@@ -30,19 +30,19 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
+prefix_ senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
 Parse_Vector(SizeParser const & size)
     : size_(size) 
 {}
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
+prefix_ senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
 Parse_Vector(size_parser const & size, Iterator const & i)
     : ParserBase<Iterator,IPacket>(i), size_(size) 
 {}
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ unsigned satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::bytes()
+prefix_ unsigned senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::bytes()
     const
 {
     return Parser::bytes()*size();
@@ -50,14 +50,14 @@ prefix_ unsigned satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
 prefix_ void
-satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::check(Iterator const & e)
+senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::check(Iterator const & e)
     const
 {
     return e-this->i() >= bytes();
 }
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ void satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::init()
+prefix_ void senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::init()
     const
 {
     iterator e (end());
@@ -67,15 +67,15 @@ prefix_ void satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::init
 ///////////////////////////////////////////////////////////////////////////
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::size_type
-satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::size()
+prefix_ typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::size_type
+senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::size()
     const
 {
     return size_.value();
 }
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ bool satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::empty()
+prefix_ bool senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::empty()
     const
 {
     return size()==0;
@@ -83,8 +83,8 @@ prefix_ bool satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::empt
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
 prefix_ 
-typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::iterator
-satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::begin()
+typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::iterator
+senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::begin()
     const
 {
     return iterator(this->i());
@@ -92,8 +92,8 @@ satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::begin()
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
 prefix_ 
-typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::iterator
-satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::end()
+typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::iterator
+senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::end()
     const
 {
     return iterator(this->i()+bytes());
@@ -101,8 +101,8 @@ satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::end()
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
 prefix_ 
-typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range_type
-satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range()
+typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range_type
+senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range()
     const
 {
     return std::make_pair(begin(),end());
@@ -110,8 +110,8 @@ satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range()
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
 prefix_ 
-typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range_type
-satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value()
+typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range_type
+senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value()
     const
 {
     return range();
@@ -119,73 +119,73 @@ satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value()
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
 prefix_ 
-typename satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value_type
-satcom::pkf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::operator[](difference_type i)
+typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value_type
+senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::operator[](difference_type i)
     const
 {
     return begin()[i];
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>
+// senf::Parse_Vector_wrapper<Parser,SizeParser,Container>
 
 template <class Parser, class SizeParser, class Container>
 template <class P, class SP, class I, class IP>
-prefix_ satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::
+prefix_ senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::
 Parse_Vector_wrapper(Parse_Vector<P,SP,I,IP> const & vector, Container & container)
     : i_(vector.i()-container.begin()), size_i_(vector.size_.i()-container.begin()),
       container_(container) 
 {}
 
 template <class Parser, class SizeParser, class Container>
-prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::size_type
-satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::size()
+prefix_ typename senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::size_type
+senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::size()
     const
 {
     return SizeParser(container_.begin()+size_i_).value();
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ bool satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::empty()
+prefix_ bool senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::empty()
     const
 {
     return size() == 0;
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::iterator
-satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::begin()
+prefix_ typename senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::iterator
+senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::begin()
     const
 {
     return iterator(container_.begin() + i_);
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::iterator
-satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::end()
+prefix_ typename senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::iterator
+senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::end()
     const
 {
     return iterator(container_.begin() + i_ + Parser::bytes()*size());
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::range_type
-satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::range()
+prefix_ typename senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::range_type
+senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::range()
     const
 {
     return std::make_pair(begin(), end());
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ typename satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::value_type
-satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::operator[](difference_type i)
+prefix_ typename senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::value_type
+senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::operator[](difference_type i)
     const
 {
     return begin()[i];
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::shift(iterator pos,
+prefix_ void senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::shift(iterator pos,
                                                                                size_type n)
 {
     container_.insert(pos.raw(),n*Parser::bytes(),0);
@@ -193,7 +193,7 @@ prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::shi
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::erase(iterator pos,
+prefix_ void senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::erase(iterator pos,
                                                                                size_type n)
 {
     container_.erase(pos.raw(),pos.raw()+n*Parser::bytes());
@@ -201,14 +201,14 @@ prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::era
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::erase(iterator f,
+prefix_ void senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::erase(iterator f,
                                                                                iterator l)
 {
     erase(f,l-f);
 }
 
 template <class Parser, class SizeParser, class Container>
-prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::clear()
+prefix_ void senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::clear()
 {
     container_.erase(container_.begin()+i_,container_.begin()+i_+size()*Parser::bytes());
     SizeParser(container_.begin()+size_i_) = 0;
@@ -220,5 +220,5 @@ prefix_ void satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::cle
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

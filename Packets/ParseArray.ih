@@ -29,7 +29,7 @@
 ///////////////////////////////ih.p////////////////////////////////////////
 
 template <class Parser, class Iterator>
-class satcom::pkf::impl::Parse_Array_iterator
+class senf::impl::Parse_Array_iterator
     : public boost::iterator_facade< Parse_Array_iterator<Parser,Iterator>,
                                      Parser,
                                      boost::random_access_traversal_tag,
@@ -65,5 +65,5 @@ private:
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

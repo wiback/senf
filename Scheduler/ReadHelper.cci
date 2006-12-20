@@ -9,11 +9,11 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::ReadUntil::ReadUntil(std::string target_)
+prefix_ senf::ReadUntil::ReadUntil(std::string target_)
     : target(target_)
 {}
 
-prefix_ std::string::size_type satcom::lib::ReadUntil::operator()(std::string data)
+prefix_ std::string::size_type senf::ReadUntil::operator()(std::string data)
 {
     return data.find(target);
 }

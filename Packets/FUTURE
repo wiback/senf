@@ -14,15 +14,15 @@ next free typeid integer. This can then efficiently be returned by the
 static retrieval function:
 
     template <class T>
-    struct satcom::vtable::impl::TypeRegistry
+    struct senf::vtable::impl::TypeRegistry
     {
         static unsigned id() {
-            static satcom::vtable::impl::AutoTypeId typeid;
+            static senf::vtable::impl::AutoTypeId typeid;
             return typeid.id();
         }
     };
 
-    struct satcom::vtable::impl::AutoTypeId
+    struct senf::vtable::impl::AutoTypeId
     {
         AutoTypeId() : id(nextAutoTypeId()) {}
         unsigned id;
@@ -36,7 +36,7 @@ static retrieval function:
 
 This setup will assign id's uniquely. The Id's will be ordered by the
 first TypeRegistry::id() call. To get the Type id of a type, just call
-satcom::vtable::impl::TypeRegistry<SomeType>::id().
+senf::vtable::impl::TypeRegistry<SomeType>::id().
 
 The above is bogus ... we don't register the extensible types, we
 register the extensions which are arbitrary types.

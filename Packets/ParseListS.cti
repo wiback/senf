@@ -31,74 +31,74 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::Parse_ListS()
+prefix_ senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::Parse_ListS()
 {}
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
 prefix_
-satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::Parse_ListS(Iterator const & i)
+senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::Parse_ListS(Iterator const & i)
     : ParserBase<Iterator,IPacket>(i)
 {}
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::size_type
-satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::size()
+prefix_ typename senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::size_type
+senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::size()
     const
 {
     return std::distance(begin(),end());
 }
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ bool satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::empty()
+prefix_ bool senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::empty()
     const
 {
     return begin()==end();
 }
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::iterator
-satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::begin()
+prefix_ typename senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::iterator
+senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::begin()
     const
 {
     return iterator(this->i());
 }
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::iterator
-satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::end()
+prefix_ typename senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::iterator
+senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::end()
     const
 {
     return iterator();
 }
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::range_type
-satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::range()
+prefix_ typename senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::range_type
+senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::range()
     const
 {
     return std::make_pair(begin(),end());
 }
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::range_type
-satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::value()
+prefix_ typename senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::range_type
+senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::value()
     const
 {
     return range();
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>
+// senf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>
 
 template <class Parser, class Sentinel, class Iterator>
 prefix_
-satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::Parse_ListS_iterator()
+senf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::Parse_ListS_iterator()
     : i_(), atEnd_(true)
 {}
 
 template <class Parser, class Sentinel, class Iterator>
 prefix_ 
-satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::
+senf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::
 Parse_ListS_iterator(Iterator const & i)
     : i_(i), atEnd_(false)
 {
@@ -106,7 +106,7 @@ Parse_ListS_iterator(Iterator const & i)
 }
 
 template <class Parser, class Sentinel, class Iterator>
-prefix_ Iterator satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::raw()
+prefix_ Iterator senf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::raw()
     const
 {
     return i_;
@@ -114,14 +114,14 @@ prefix_ Iterator satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterato
 
 template <class Parser, class Sentinel, class Iterator>
 prefix_ Parser
-satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::dereference()
+senf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::dereference()
     const
 {
     return Parser(i_);
 }
 
 template <class Parser, class Sentinel, class Iterator>
-prefix_ bool satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::
+prefix_ bool senf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::
 equal(Parse_ListS_iterator const & other)
     const
 {
@@ -135,7 +135,7 @@ equal(Parse_ListS_iterator const & other)
 }
 
 template <class Parser, class Sentinel, class Iterator>
-prefix_ void satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::increment()
+prefix_ void senf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::increment()
 {
     BOOST_ASSERT( !atEnd_ );
     i_ += dereference().bytes();
@@ -143,49 +143,49 @@ prefix_ void satcom::pkf::impl::Parse_ListS_iterator<Parser,Sentinel,Iterator>::
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>
+// senf::Parse_ListS_wrapper<Parser,Sentinel,Container>
 
 template <class Parser, class Sentinel, class Container>
 template <class P, class S, class I, class IP>
-prefix_ satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::
+prefix_ senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::
 Parse_ListS_wrapper(Parse_ListS<P,S,I,IP> const & list, Container & container)
     : i_(list.i()-container.begin()), container_(container)
 {}
 
 template <class Parser, class Sentinel, class Container>
-prefix_ typename satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::size_type
-satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::size()
+prefix_ typename senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::size_type
+senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::size()
     const
 {
     return std::distance(begin(),end());
 }
 
 template <class Parser, class Sentinel, class Container>
-prefix_ bool satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::empty()
+prefix_ bool senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::empty()
     const
 {
     return begin()==end();
 }
 
 template <class Parser, class Sentinel, class Container>
-prefix_ typename satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::iterator
-satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::begin()
+prefix_ typename senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::iterator
+senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::begin()
     const
 {
     return iterator(container_.begin()+i_);
 }
 
 template <class Parser, class Sentinel, class Container>
-prefix_ typename satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::iterator
-satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::end()
+prefix_ typename senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::iterator
+senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::end()
     const
 {
     return iterator();
 }
 
 template <class Parser, class Sentinel, class Container>
-prefix_ typename satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::range_type
-satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::range()
+prefix_ typename senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::range_type
+senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::range()
     const
 {
     return std::make_pair(begin(),end());
@@ -197,5 +197,5 @@ satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::range()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

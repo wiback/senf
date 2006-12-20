@@ -30,18 +30,18 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Arg>
-prefix_ satcom::pkf::RTPPacket::RTPPacket(Arg const & arg)
+prefix_ senf::RTPPacket::RTPPacket(Arg const & arg)
     : Packet(arg)
 {}
 
 template <class Arg>
-prefix_ satcom::pkf::RTPExtensionBasePacket::
+prefix_ senf::RTPExtensionBasePacket::
 RTPExtensionBasePacket(Arg const & arg)
     : Packet(arg)
 {}
 
 template <class Arg>
-prefix_ satcom::pkf::RTPUnknownExtensionPacket::
+prefix_ senf::RTPUnknownExtensionPacket::
 RTPUnknownExtensionPacket(Arg const & arg)
     : RTPExtensionBasePacket(arg)
 {}
@@ -52,5 +52,5 @@ RTPUnknownExtensionPacket(Arg const & arg)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -18,7 +18,7 @@
 
 BOOST_AUTO_UNIT_TEST(microTime)
 {
-    BOOST_CHECK_NO_THROW( satcom::lib::now() );
+    BOOST_CHECK_NO_THROW( senf::now() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

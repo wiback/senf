@@ -10,8 +10,8 @@
 //#include "SafeBool.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
     
     // This is a direct copy of a safe bool solution by Bjorn Karlsson 
     // from http://www.artima.com/cppsource/safebool.html
@@ -67,7 +67,7 @@ namespace lib {
     template <typename T,typename U> 
     void operator!=(const SafeBool<T>& lhs,const SafeBool<U>& rhs);
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "SafeBool.cci"

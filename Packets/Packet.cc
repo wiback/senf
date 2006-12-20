@@ -63,7 +63,7 @@
 // This is the custom deleter used for the pointers in the
 // interpreters list. This deleter is only called, when the Packet is
 // removed from the interpreters list.
-prefix_ void satcom::pkf::impl::ListPacketDeleter::operator()(Packet * p)
+prefix_ void senf::impl::ListPacketDeleter::operator()(Packet * p)
 {
     PacketImpl * impl = PacketImpl::impl(p);
     if (impl->releaseInterpreter(p))
@@ -72,8 +72,8 @@ prefix_ void satcom::pkf::impl::ListPacketDeleter::operator()(Packet * p)
 
 // struct PacketImpl
 
-prefix_ satcom::pkf::Packet::interpreter_list::iterator
-satcom::pkf::impl::PacketImpl::appendInterpreter(Packet * p)
+prefix_ senf::Packet::interpreter_list::iterator
+senf::impl::PacketImpl::appendInterpreter(Packet * p)
 {
     BOOST_ASSERT( p->impl_ == 0 );
     
@@ -87,8 +87,8 @@ satcom::pkf::impl::PacketImpl::appendInterpreter(Packet * p)
     return p->self_;
 }
 
-prefix_ satcom::pkf::Packet::interpreter_list::iterator
-satcom::pkf::impl::PacketImpl::prependInterpreter(Packet * p)
+prefix_ senf::Packet::interpreter_list::iterator
+senf::impl::PacketImpl::prependInterpreter(Packet * p)
 {
     BOOST_ASSERT( p->impl_ == 0 );
 
@@ -96,7 +96,7 @@ satcom::pkf::impl::PacketImpl::prependInterpreter(Packet * p)
     SATCOM_PKF_REFC_MSG("] PacketImpl::prependInterpreter (" << this << "): refcount_ = " << refcount_ << "\n");
     p->impl_ = this;
     this->interpreters_.push_front(
-        boost::shared_ptr<Packet>(p, pkf::impl::ListPacketDeleter()));
+        boost::shared_ptr<Packet>(p, impl::ListPacketDeleter()));
 
     p->self_ = this->interpreters_.begin();
     return p->self_;
@@ -104,7 +104,7 @@ satcom::pkf::impl::PacketImpl::prependInterpreter(Packet * p)
 
 // Called, whenever a Packet is removed from the list by the
 // ListPacketDeleter;
-prefix_ bool satcom::pkf::impl::PacketImpl::releaseInterpreter(Packet * p)
+prefix_ bool senf::impl::PacketImpl::releaseInterpreter(Packet * p)
 {
     // We have to be extra careful here: This method might be called
     // AFTER the PacketImpl instance has already been destructed while
@@ -125,9 +125,9 @@ prefix_ bool satcom::pkf::impl::PacketImpl::releaseInterpreter(Packet * p)
 }
 
 namespace {
-    bool whenceCmp(unsigned a, unsigned b, bool end, satcom::pkf::Packet::Whence whence)
+    bool whenceCmp(unsigned a, unsigned b, bool end, senf::Packet::Whence whence)
     {
-        using satcom::pkf::Packet;
+        using senf::Packet;
         return ((whence == Packet::OUTSIDE && ! end)
                 || whence == Packet::BEFORE
                 || (whence == Packet::INSIDE && end)) ? a>=b : a>b;
@@ -135,7 +135,7 @@ namespace {
 }
 
 prefix_ void
-satcom::pkf::impl::PacketImpl::updateIterators(Packet::size_type index,
+senf::impl::PacketImpl::updateIterators(Packet::size_type index,
                                                Packet::difference_type n,
                                                Packet::interpreter_list::iterator self,
                                                Packet::Whence whence)
@@ -159,14 +159,14 @@ satcom::pkf::impl::PacketImpl::updateIterators(Packet::size_type index,
     }
 }
 
-prefix_ void satcom::pkf::impl::PacketImpl::packet_add_ref(Packet const * p)
+prefix_ void senf::impl::PacketImpl::packet_add_ref(Packet const * p)
 {
     p->add_ref();
     if (p->impl_)
         p->impl_->add_ref();
 }
 
-prefix_ void satcom::pkf::impl::PacketImpl::packet_release(Packet * p)
+prefix_ void senf::impl::PacketImpl::packet_release(Packet * p)
 { 
     bool del (p->release());
     if (p->impl_ && p->impl_->release())
@@ -180,7 +180,7 @@ prefix_ void satcom::pkf::impl::PacketImpl::packet_release(Packet * p)
 ///////////////////////////////////////////////////////////////////////////
 // class Packet
 
-prefix_ satcom::pkf::Packet::ptr satcom::pkf::Packet::next()
+prefix_ senf::Packet::ptr senf::Packet::next()
     const
 {
     interpreter_list::iterator n = boost::next(this->self_);
@@ -201,7 +201,7 @@ prefix_ satcom::pkf::Packet::ptr satcom::pkf::Packet::next()
     return ptr(n->get(),true);
 }
 
-prefix_ satcom::pkf::Packet::ptr satcom::pkf::Packet::last()
+prefix_ senf::Packet::ptr senf::Packet::last()
     const
 {
     Packet * p = this->impl_->interpreters_.back().get();
@@ -215,7 +215,7 @@ prefix_ satcom::pkf::Packet::ptr satcom::pkf::Packet::last()
     return ptr(p,true);
 }
 
-prefix_ void satcom::pkf::Packet::i_registerInterpreter(Packet * p)
+prefix_ void senf::Packet::i_registerInterpreter(Packet * p)
     const
 {
     BOOST_ASSERT( !p->impl_ );
@@ -224,7 +224,7 @@ prefix_ void satcom::pkf::Packet::i_registerInterpreter(Packet * p)
     this->parsed_ = true;
 }
 
-prefix_ void satcom::pkf::Packet::i_replaceInterpreter(Packet * p)
+prefix_ void senf::Packet::i_replaceInterpreter(Packet * p)
 {
     BOOST_ASSERT( !p->impl_ );
     // We need to increment the refcount of impl_ beforehand,
@@ -234,14 +234,14 @@ prefix_ void satcom::pkf::Packet::i_replaceInterpreter(Packet * p)
     impl->appendInterpreter(p);
 }
 
-prefix_ void satcom::pkf::Packet::i_setInterpreter(impl::PacketImpl * i)
+prefix_ void senf::Packet::i_setInterpreter(impl::PacketImpl * i)
 {
     // Using prependInterpreter makes this usable for both, the
     // create-from-data and wrap-packet constructors
     i->prependInterpreter(this);
 }
 
-prefix_ void satcom::pkf::Packet::insert(iterator pos, byte v, Whence whence)
+prefix_ void senf::Packet::insert(iterator pos, byte v, Whence whence)
 {
     size_type index(pos-impl_->data_.begin());
     BOOST_ASSERT( index >= begin_ && index <= end_);
@@ -249,7 +249,7 @@ prefix_ void satcom::pkf::Packet::insert(iterator pos, byte v, Whence whence)
     impl_->updateIterators(index,1,self_,whence);
 }
 
-prefix_ void satcom::pkf::Packet::insert(iterator pos, size_type n, byte v, Whence whence)
+prefix_ void senf::Packet::insert(iterator pos, size_type n, byte v, Whence whence)
 {
     size_type index(pos-impl_->data_.begin());
     BOOST_ASSERT( index >= begin_ && index <= end_ );
@@ -257,7 +257,7 @@ prefix_ void satcom::pkf::Packet::insert(iterator pos, size_type n, byte v, When
     impl_->updateIterators(index,n,self_,whence);
 }
 
-prefix_ void satcom::pkf::Packet::erase(iterator pos)
+prefix_ void senf::Packet::erase(iterator pos)
 {
     size_type index(pos-impl_->data_.begin());
     BOOST_ASSERT( index >= begin_ && index < end_ );
@@ -265,7 +265,7 @@ prefix_ void satcom::pkf::Packet::erase(iterator pos)
     impl_->updateIterators(index,-1,self_,INSIDE);
 }
 
-prefix_ void satcom::pkf::Packet::erase(iterator first, iterator last)
+prefix_ void senf::Packet::erase(iterator first, iterator last)
 {
     size_type index(first-impl_->data_.begin());
     size_type sz(last-first);
@@ -276,7 +276,7 @@ prefix_ void satcom::pkf::Packet::erase(iterator first, iterator last)
     impl_->updateIterators(index,-sz,self_,INSIDE);
 }
 
-prefix_ void satcom::pkf::Packet::dump(std::ostream & os)
+prefix_ void senf::Packet::dump(std::ostream & os)
     const
 {
     v_dump(os);
@@ -291,5 +291,5 @@ prefix_ void satcom::pkf::Packet::dump(std::ostream & os)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

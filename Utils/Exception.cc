@@ -32,7 +32,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::SystemException::init()
+prefix_ void senf::SystemException::init()
 {
     std::stringstream s;
     if (where)
@@ -41,7 +41,7 @@ prefix_ void satcom::lib::SystemException::init()
     buffer_ = s.str();
 }
 
-prefix_ char const * satcom::lib::SystemException::what()
+prefix_ char const * senf::SystemException::what()
     const throw()
 {
     return buffer_.c_str();
@@ -53,5 +53,5 @@ prefix_ char const * satcom::lib::SystemException::what()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

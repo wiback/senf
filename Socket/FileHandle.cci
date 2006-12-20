@@ -32,13 +32,13 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::FileBody
+// senf::FileBody
 
-prefix_ satcom::lib::FileBody::FileBody(int fd)
+prefix_ senf::FileBody::FileBody(int fd)
     : fd_(fd)
 {}
 
-prefix_  satcom::lib::FileBody::~FileBody()
+prefix_  senf::FileBody::~FileBody()
 {
     if (valid())
         try {
@@ -49,7 +49,7 @@ prefix_  satcom::lib::FileBody::~FileBody()
         }
 }
 
-prefix_ void satcom::lib::FileBody::close()
+prefix_ void senf::FileBody::close()
 {
     if (!valid())
         throw SystemException(EBADF);
@@ -57,7 +57,7 @@ prefix_ void satcom::lib::FileBody::close()
     fd_ = -1;
 }
 
-prefix_ void satcom::lib::FileBody::terminate()
+prefix_ void senf::FileBody::terminate()
 {
     if (valid()) {
         v_terminate();
@@ -65,169 +65,169 @@ prefix_ void satcom::lib::FileBody::terminate()
     }
 }
 
-prefix_ int satcom::lib::FileBody::fd()
+prefix_ int senf::FileBody::fd()
     const
 {
     return fd_;
 }
 
-prefix_ void satcom::lib::FileBody::fd(int fd)
+prefix_ void senf::FileBody::fd(int fd)
 {
     fd_ = fd;
 }
 
-prefix_ bool satcom::lib::FileBody::eof()
+prefix_ bool senf::FileBody::eof()
     const
 {
     return v_eof();
 }
 
-prefix_ bool satcom::lib::FileBody::valid()
+prefix_ bool senf::FileBody::valid()
     const
 {
     return fd_!=-1 && v_valid();
 }
 
-prefix_ bool satcom::lib::FileBody::readable()
+prefix_ bool senf::FileBody::readable()
     const
 {
     return pollCheck(fd(),true);
 }
 
-prefix_ void satcom::lib::FileBody::waitReadable()
+prefix_ void senf::FileBody::waitReadable()
     const
 {
     pollCheck(fd(),true,true);
 }
 
-prefix_ bool satcom::lib::FileBody::writeable()
+prefix_ bool senf::FileBody::writeable()
     const
 {
     return pollCheck(fd(),false);
 }
 
-prefix_ void satcom::lib::FileBody::waitWriteable()
+prefix_ void senf::FileBody::waitWriteable()
     const
 {
     pollCheck(fd(),false,true);
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::FileHandle
+// senf::FileHandle
 
-prefix_ void satcom::lib::FileHandle::close()
+prefix_ void senf::FileHandle::close()
 {
     body().close();
 }
 
-prefix_ void satcom::lib::FileHandle::terminate()
+prefix_ void senf::FileHandle::terminate()
 {
     body().terminate();
 }
 
-prefix_ bool satcom::lib::FileHandle::readable()
+prefix_ bool senf::FileHandle::readable()
     const
 {
     return body().readable();
 }
 
-prefix_ void satcom::lib::FileHandle::waitReadable()
+prefix_ void senf::FileHandle::waitReadable()
     const
 {
     body().waitReadable();
 }
 
-prefix_ bool satcom::lib::FileHandle::writeable()
+prefix_ bool senf::FileHandle::writeable()
     const
 {
     return body().writeable();
 }
 
-prefix_ void satcom::lib::FileHandle::waitWriteable()
+prefix_ void senf::FileHandle::waitWriteable()
     const
 {
     body().waitWriteable();
 }
 
-prefix_ bool satcom::lib::FileHandle::blocking()
+prefix_ bool senf::FileHandle::blocking()
     const
 {
     return body().blocking();
 }
 
-prefix_ void satcom::lib::FileHandle::blocking(bool status)
+prefix_ void senf::FileHandle::blocking(bool status)
 {
     body().blocking(status);
 }
 
-prefix_ bool satcom::lib::FileHandle::eof()
+prefix_ bool senf::FileHandle::eof()
     const
 {
     return body().eof();
 }
 
-prefix_ bool satcom::lib::FileHandle::valid()
+prefix_ bool senf::FileHandle::valid()
     const
 {
     return body().valid();
 }
 
-prefix_ bool satcom::lib::FileHandle::boolean_test()
+prefix_ bool senf::FileHandle::boolean_test()
     const
 {
     return valid() && !eof();
 }
 
-prefix_ int satcom::lib::FileHandle::fd()
+prefix_ int senf::FileHandle::fd()
     const
 {
     return body().fd();
 }
 
-prefix_  satcom::lib::FileHandle::FileHandle(std::auto_ptr<FileBody> body)
+prefix_  senf::FileHandle::FileHandle(std::auto_ptr<FileBody> body)
     : body_(body.release())
 {}
 
-prefix_ satcom::lib::FileBody & satcom::lib::FileHandle::body()
+prefix_ senf::FileBody & senf::FileHandle::body()
 {
     return *body_;
 }
 
-prefix_ satcom::lib::FileBody const & satcom::lib::FileHandle::body()
+prefix_ senf::FileBody const & senf::FileHandle::body()
     const
 {
     return *body_;
 }
 
-prefix_ satcom::lib::FileBody & satcom::lib::FileHandle::body(FileHandle & handle)
+prefix_ senf::FileBody & senf::FileHandle::body(FileHandle & handle)
 {
     return handle.body();
 }
 
-prefix_ satcom::lib::FileBody const &
-satcom::lib::FileHandle::body(FileHandle const & handle)
+prefix_ senf::FileBody const &
+senf::FileHandle::body(FileHandle const & handle)
 {
     return handle.body();
 }
 
-prefix_ void satcom::lib::FileHandle::fd(int fd)
+prefix_ void senf::FileHandle::fd(int fd)
 {
     body().fd(fd);
 }
 
-prefix_ satcom::lib::FileHandle::FileHandle
-satcom::lib::FileHandle::cast_static(FileHandle handle)
+prefix_ senf::FileHandle::FileHandle
+senf::FileHandle::cast_static(FileHandle handle)
 {
     return handle;
 }
 
-prefix_ satcom::lib::FileHandle
-satcom::lib::FileHandle::cast_dynamic(FileHandle handle)
+prefix_ senf::FileHandle
+senf::FileHandle::cast_dynamic(FileHandle handle)
 {
     return handle;
 }
 
-prefix_ int satcom::lib::retrieve_filehandle(FileHandle handle)
+prefix_ int senf::retrieve_filehandle(FileHandle handle)
 {
     return handle.fd();
 }
@@ -238,5 +238,5 @@ prefix_ int satcom::lib::retrieve_filehandle(FileHandle handle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

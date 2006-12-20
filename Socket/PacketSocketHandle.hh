@@ -38,8 +38,8 @@
 #include "PacketSocketHandle.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
     
     typedef MakeSocketPolicy<
         LLAddressingPolicy,
@@ -82,7 +82,7 @@ namespace lib {
 
     typedef ProtocolClientSocketHandle<PacketProtocol> PacketSocketHandle;
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "PacketSocketHandle.cci"
@@ -94,5 +94,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

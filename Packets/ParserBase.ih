@@ -27,8 +27,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 namespace impl {
 
     struct ParserBase {};
@@ -87,7 +87,7 @@ namespace impl {
         static unsigned bytes() { return Parser::bytes(); }
     };
 
-}}}
+}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -95,5 +95,5 @@ namespace impl {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

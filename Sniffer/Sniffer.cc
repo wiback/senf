@@ -81,22 +81,22 @@ namespace {
     void use_em()
     {
         // Pull in symbols from the wanted packets ...
-        satcom::pkf::Packet::create<satcom::pkf::IpV4Packet>(0,0);
-        satcom::pkf::Packet::create<satcom::pkf::UDPPacket>(0,0);
+        senf::Packet::create<senf::IpV4Packet>(0,0);
+        senf::Packet::create<senf::UDPPacket>(0,0);
     }
 }
 
 int main (int argc, char const * argv[])
 {
     try {
-        satcom::lib::PacketSocketHandle sock;
-        sock.bind(satcom::lib::LLSocketAddress("eth0"));
-        // sock.protocol().promisc("eth0",satcom::lib::PacketProtocol::Promiscuous);
+        senf::PacketSocketHandle sock;
+        sock.bind(senf::LLSocketAddress("eth0"));
+        // sock.protocol().promisc("eth0",senf::PacketProtocol::Promiscuous);
         
         while (true) { // forever
             std::string data (sock.read());
-            satcom::pkf::EthernetPacket::ptr packet (
-                satcom::pkf::Packet::create<satcom::pkf::EthernetPacket>(
+            senf::EthernetPacket::ptr packet (
+                senf::Packet::create<senf::EthernetPacket>(
                     data.begin(), data.end()));
             packet->dump(std::cout);
             hexdump(packet->last()->begin(),
@@ -105,7 +105,7 @@ int main (int argc, char const * argv[])
         }
     }
     catch (std::exception const & ex) {
-        std::cerr << satcom::lib::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
+        std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
     }
 }
 
@@ -116,5 +116,5 @@ int main (int argc, char const * argv[])
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

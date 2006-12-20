@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ std::pair<bool,unsigned> satcom::lib::BSDSocketProtocol::linger()
+prefix_ std::pair<bool,unsigned> senf::BSDSocketProtocol::linger()
     const
 {
     struct linger ling;
@@ -46,7 +46,7 @@ prefix_ std::pair<bool,unsigned> satcom::lib::BSDSocketProtocol::linger()
     return std::make_pair(ling.l_onoff, ling.l_linger);
 }
 
-prefix_ void satcom::lib::BSDSocketProtocol::linger(bool enable, unsigned timeout)
+prefix_ void senf::BSDSocketProtocol::linger(bool enable, unsigned timeout)
     const
 {
     struct linger ling;
@@ -56,7 +56,7 @@ prefix_ void satcom::lib::BSDSocketProtocol::linger(bool enable, unsigned timeou
         throw SystemException(errno);
 }
 
-prefix_ struct timeval satcom::lib::BSDSocketProtocol::timestamp()
+prefix_ struct timeval senf::BSDSocketProtocol::timestamp()
     const
 {
     // BUG: Check, why this fails with ENOFILE (!!!!) at least when
@@ -69,7 +69,7 @@ prefix_ struct timeval satcom::lib::BSDSocketProtocol::timestamp()
 
 ///////////////////////////////////////////////////////////////////////////
 
-prefix_ bool satcom::lib::AddressableBSDSocketProtocol::reuseaddr()
+prefix_ bool senf::AddressableBSDSocketProtocol::reuseaddr()
     const
 {
     int value;
@@ -79,7 +79,7 @@ prefix_ bool satcom::lib::AddressableBSDSocketProtocol::reuseaddr()
     return value;
 }
 
-prefix_ void satcom::lib::AddressableBSDSocketProtocol::reuseaddr(bool value)
+prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
     const
 {
     int ivalue (value);
@@ -94,5 +94,5 @@ prefix_ void satcom::lib::AddressableBSDSocketProtocol::reuseaddr(bool value)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

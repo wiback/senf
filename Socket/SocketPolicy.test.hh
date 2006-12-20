@@ -30,11 +30,11 @@
 //#include "SocketPolicy.test.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 namespace test {
 
-    struct SomeAddressingPolicy : public satcom::lib::AddressingPolicyBase
+    struct SomeAddressingPolicy : public senf::AddressingPolicyBase
     {
         typedef unsigned Address;
         
@@ -48,16 +48,16 @@ namespace test {
             {}
     };
 
-    struct SomeFramingPolicy : public satcom::lib::FramingPolicyBase
+    struct SomeFramingPolicy : public senf::FramingPolicyBase
     {};
 
-    struct SomeCommunicationPolicy : public satcom::lib::CommunicationPolicyBase
+    struct SomeCommunicationPolicy : public senf::CommunicationPolicyBase
     {
         static int accept(FileHandle handle, unsigned & addr)
             { addr = 3; return -1; }
     };
 
-    struct SomeReadPolicy : public satcom::lib::ReadPolicyBase
+    struct SomeReadPolicy : public senf::ReadPolicyBase
     {
         static unsigned const TEST_SIZE = 9;
 
@@ -75,7 +75,7 @@ namespace test {
             }
     };
 
-    struct SomeWritePolicy : public satcom::lib::WritePolicyBase
+    struct SomeWritePolicy : public senf::WritePolicyBase
     {
         static unsigned write(FileHandle handle, char const * buffer, unsigned size)
             {
@@ -92,7 +92,7 @@ namespace test {
             }
     };
     
-    struct SomeBufferingPolicy : public satcom::lib::BufferingPolicyBase
+    struct SomeBufferingPolicy : public senf::BufferingPolicyBase
     {
         static unsigned rcvbuf(FileHandle handle)
             { return 0; }
@@ -105,7 +105,7 @@ namespace test {
             { return 0; }
     };
 
-    typedef satcom::lib::MakeSocketPolicy<
+    typedef senf::MakeSocketPolicy<
         SomeAddressingPolicy,
         SomeFramingPolicy,
         SomeCommunicationPolicy,
@@ -114,7 +114,7 @@ namespace test {
         SomeBufferingPolicy
         >::policy SomeSocketPolicy;
 
-}}}
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "SocketPolicy.test.cci"
@@ -126,5 +126,5 @@ namespace test {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

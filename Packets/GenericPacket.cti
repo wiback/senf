@@ -31,59 +31,59 @@
 
 template <unsigned HEADER, unsigned TRAILER>
 template <class Arg>
-prefix_ satcom::pkf::GenericPacket<HEADER,TRAILER>::GenericPacket(Arg const & arg)
+prefix_ senf::GenericPacket<HEADER,TRAILER>::GenericPacket(Arg const & arg)
 : Packet(arg)
 {}
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ void satcom::pkf::GenericPacket<HEADER,TRAILER>::init()
+prefix_ void senf::GenericPacket<HEADER,TRAILER>::init()
 {
     insert(begin(),HEADER,0);
     insert(end(),TRAILER,0);
 }
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ typename satcom::pkf::GenericPacket<HEADER,TRAILER>::iterator
-satcom::pkf::GenericPacket<HEADER,TRAILER>::begin_header()
+prefix_ typename senf::GenericPacket<HEADER,TRAILER>::iterator
+senf::GenericPacket<HEADER,TRAILER>::begin_header()
     const
 {
     return this->begin();
 }
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ typename satcom::pkf::GenericPacket<HEADER,TRAILER>::iterator
-satcom::pkf::GenericPacket<HEADER,TRAILER>::end_header()
+prefix_ typename senf::GenericPacket<HEADER,TRAILER>::iterator
+senf::GenericPacket<HEADER,TRAILER>::end_header()
     const
 {
     return this->begin() + HEADER;
 }
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ typename satcom::pkf::GenericPacket<HEADER,TRAILER>::size_type
-satcom::pkf::GenericPacket<HEADER,TRAILER>::header_len()
+prefix_ typename senf::GenericPacket<HEADER,TRAILER>::size_type
+senf::GenericPacket<HEADER,TRAILER>::header_len()
 {
     return HEADER;
 }
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ typename satcom::pkf::GenericPacket<HEADER,TRAILER>::iterator
-satcom::pkf::GenericPacket<HEADER,TRAILER>::begin_trailer()
+prefix_ typename senf::GenericPacket<HEADER,TRAILER>::iterator
+senf::GenericPacket<HEADER,TRAILER>::begin_trailer()
     const
 {
     return this->end() - TRAILER;
 }
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ typename satcom::pkf::GenericPacket<HEADER,TRAILER>::iterator
-satcom::pkf::GenericPacket<HEADER,TRAILER>::end_trailer()
+prefix_ typename senf::GenericPacket<HEADER,TRAILER>::iterator
+senf::GenericPacket<HEADER,TRAILER>::end_trailer()
     const
 {
     return this->end();
 }
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ typename satcom::pkf::GenericPacket<HEADER,TRAILER>::size_type
-satcom::pkf::GenericPacket<HEADER,TRAILER>::trailer_len()
+prefix_ typename senf::GenericPacket<HEADER,TRAILER>::size_type
+senf::GenericPacket<HEADER,TRAILER>::trailer_len()
 {
     return TRAILER;
 }
@@ -94,5 +94,5 @@ satcom::pkf::GenericPacket<HEADER,TRAILER>::trailer_len()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

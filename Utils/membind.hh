@@ -29,8 +29,8 @@
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
 #define scOBTYPE T *
 #include "Utils/impl/membind.hh"
@@ -40,7 +40,7 @@ namespace lib {
 #include "Utils/impl/membind.hh"
 #undef scOBTYPE
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "membind.cci"

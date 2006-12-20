@@ -20,7 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
-// NEVER INCLUDE DIRECTLY !! INCLUDE satcom/membind.hh
+// NEVER INCLUDE DIRECTLY !! INCLUDE senf/membind.hh
 
 #if !BOOST_PP_IS_ITERATING
 

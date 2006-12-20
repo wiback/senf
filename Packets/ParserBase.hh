@@ -35,8 +35,8 @@
 #include "ParserBase.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
     
     namespace impl { struct ParserBase; }
 
@@ -81,7 +81,7 @@ namespace pkf {
         \code
             template <class Iterator=nil, class IPacket=nil>
             struct Parser_Example
-                : protected satcom::pkf::ParserBase<Iterator,IPacket>
+                : protected senf::ParserBase<Iterator,IPacket>
             {
                 // fixed interface of all parser classes
 
@@ -294,7 +294,7 @@ namespace pkf {
     template <class Parser>
     unsigned min_bytes();
     
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ParserBase.cci"
@@ -305,5 +305,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -35,8 +35,8 @@
 
 struct sockaddr;
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     struct ReadablePolicy : public ReadPolicyBase
     {
@@ -74,7 +74,7 @@ namespace lib {
     struct NotWriteablePolicy : public WritePolicyBase
     {};
 
-}}
+}
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -86,5 +86,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

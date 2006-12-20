@@ -28,8 +28,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 namespace detail {
 
     struct HexConverter {
@@ -44,7 +44,7 @@ namespace detail {
 
     unsigned char hexnibble(char c);
 
-}}}
+}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -52,5 +52,5 @@ namespace detail {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

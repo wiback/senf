@@ -55,8 +55,8 @@ namespace {
 BOOST_AUTO_UNIT_TEST(membind)
 {
     Test instance;
-    boost::function<char const * ()> f1 (satcom::lib::membind(&Test::meth1,instance));
-    boost::function<std::string (int,int)> f2 (satcom::lib::membind(&Test::meth2,instance));
+    boost::function<char const * ()> f1 (senf::membind(&Test::meth1,instance));
+    boost::function<std::string (int,int)> f2 (senf::membind(&Test::meth2,instance));
 
     BOOST_CHECK_EQUAL( f1(), "meth1()" );
     BOOST_CHECK_EQUAL( f2(1,2), "meth2(1,2)" );
@@ -68,5 +68,5 @@ BOOST_AUTO_UNIT_TEST(membind)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -39,8 +39,8 @@
 #include "LLAddressing.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     class LLSocketAddress
     {
@@ -122,7 +122,7 @@ namespace lib {
 
     struct InvalidLLSocketAddressException : public std::exception
     { char const * what() const throw() { return "invalid ll address"; } };
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "LLAddressing.cci"
@@ -134,5 +134,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

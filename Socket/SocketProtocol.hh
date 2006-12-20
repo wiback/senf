@@ -31,8 +31,8 @@
 //#include "SocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     class SocketPolicyBase;
 
@@ -107,7 +107,7 @@ namespace lib {
 
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "SocketProtocol.cci"
@@ -118,5 +118,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

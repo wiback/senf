@@ -38,19 +38,19 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    class FHandle : public satcom::lib::FileHandle
+    class FHandle : public senf::FileHandle
     {
     public:
         FHandle(int fd=-1) 
-            : satcom::lib::FileHandle(std::auto_ptr<satcom::lib::FileBody>(
-                                          new satcom::lib::FileBody(fd))) {}
+            : senf::FileHandle(std::auto_ptr<senf::FileBody>(
+                                          new senf::FileBody(fd))) {}
         FHandle(std::string name) 
-            : satcom::lib::FileHandle(std::auto_ptr<satcom::lib::FileBody>(
-                                          new satcom::lib::FileBody()))
+            : senf::FileHandle(std::auto_ptr<senf::FileBody>(
+                                          new senf::FileBody()))
             {
                 int rv = ::open(name.c_str(),O_RDWR|O_NONBLOCK) ;
                 if (rv<0)
-                    throw satcom::lib::SystemException(errno);
+                    throw senf::SystemException(errno);
                 fd(rv);
             }
     };
@@ -71,7 +71,7 @@ BOOST_AUTO_UNIT_TEST(fileHandle)
             
             BOOST_CHECK(fh.writeable());
             BOOST_CHECK_NO_THROW(fh.close());
-            BOOST_CHECK_THROW(fh.close(),satcom::lib::SystemException);
+            BOOST_CHECK_THROW(fh.close(),senf::SystemException);
             BOOST_CHECK_NO_THROW(fh.terminate());
         }
         
@@ -111,5 +111,5 @@ BOOST_AUTO_UNIT_TEST(fileHandle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

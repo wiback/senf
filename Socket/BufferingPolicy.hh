@@ -30,8 +30,8 @@
 //#include "BufferingPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     // TODO: Should this be dependent on Read / WritePolicy ?
     struct SocketBufferingPolicy : public BufferingPolicyBase
@@ -43,7 +43,7 @@ namespace lib {
         static void sndbuf(FileHandle handle, unsigned size);
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "BufferingPolicy.cci"
@@ -55,5 +55,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

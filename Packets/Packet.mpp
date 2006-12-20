@@ -49,8 +49,8 @@ typename ptr_t<OtherPacket>::ptr reinterpret( BOOST_PP_ENUM( BOOST_PP_ITERATION(
 // Packet::reinterpret implementation
 
 template <class OtherPacket, BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A) >
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr
-satcom::pkf::Packet::reinterpret( BOOST_PP_ENUM( BOOST_PP_ITERATION(), pkARG, ) )
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr
+senf::Packet::reinterpret( BOOST_PP_ENUM( BOOST_PP_ITERATION(), pkARG, ) )
 {
     if (!OtherPacket::check(begin(),end()))
         throw TruncatedPacketException();
@@ -75,8 +75,8 @@ typename ptr_t<OtherPacket>::ptr registerInterpreter(
 // Packet::registerIterpreter implementation
 
 template <class OtherPacket, BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A) >
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr
-satcom::pkf::Packet::registerInterpreter(raw_container::iterator begin,
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr
+senf::Packet::registerInterpreter(raw_container::iterator begin,
                                          raw_container::iterator end,
                                          BOOST_PP_ENUM( BOOST_PP_ITERATION(), pkARG, ) )
     const
@@ -98,7 +98,7 @@ satcom::pkf::Packet::registerInterpreter(raw_container::iterator begin,
 
 template < class OtherPacket, class InputIterator, 
            BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A) >
-static typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr create(
+static typename senf::Packet::ptr_t<OtherPacket>::ptr create(
     InputIterator b, InputIterator e,
     BOOST_PP_ENUM( BOOST_PP_ITERATION(), pkARG, ) );
 
@@ -108,7 +108,7 @@ static typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr create(
 
 template < class OtherPacket, class InputIterator, 
            BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A) >
-typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::create(
+typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::create(
     InputIterator b, InputIterator e,
     BOOST_PP_ENUM( BOOST_PP_ITERATION(), pkARG, ) )
 {
@@ -130,5 +130,5 @@ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::creat
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

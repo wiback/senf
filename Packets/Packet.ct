@@ -32,8 +32,8 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class OtherPacket, class InputIterator>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr
-satcom::pkf::Packet::create(InputIterator b, InputIterator e)
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr
+senf::Packet::create(InputIterator b, InputIterator e)
 {
     boost::intrusive_ptr<impl::PacketImpl> impl (new impl::PacketImpl(b,e),false);
     if (!check<OtherPacket>(impl->data_.begin(),impl->data_.end()))
@@ -43,7 +43,7 @@ satcom::pkf::Packet::create(InputIterator b, InputIterator e)
 }
 
 template <class OtherPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::create()
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::create()
 {
     boost::intrusive_ptr<impl::PacketImpl> impl (
         new impl::PacketImpl(min_bytes<OtherPacket>(),0));
@@ -53,8 +53,8 @@ prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packe
 }
 
 template <class OuterPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OuterPacket>::ptr
-satcom::pkf::Packet::create(Packet::ptr payload)
+prefix_ typename senf::Packet::ptr_t<OuterPacket>::ptr
+senf::Packet::create(Packet::ptr payload)
 {
     // TODO: should I instead of using head() throw away all
     // interpreters before payload? ... probably yes ...
@@ -65,7 +65,7 @@ satcom::pkf::Packet::create(Packet::ptr payload)
 }
 
 template <class OtherPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::reinterpret()
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::reinterpret()
 {
     // THIS INVALIDATES this !!!!!!!
     if (!check<OtherPacket>(begin(),end()))
@@ -75,8 +75,8 @@ prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packe
 }
 
 template <class OtherPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr
-satcom::pkf::Packet::registerInterpreter(raw_container::iterator begin,
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr
+senf::Packet::registerInterpreter(raw_container::iterator begin,
                                          raw_container::iterator end)
     const
 {
@@ -94,7 +94,7 @@ satcom::pkf::Packet::registerInterpreter(raw_container::iterator begin,
 #include BOOST_PP_ITERATE()
 
 template <class OtherPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::find_next()
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::find_next()
     const
 {
     ptr p (next());
@@ -104,7 +104,7 @@ prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packe
 }
 
 template <class OtherPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::find_prev()
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::find_prev()
     const
 {
     ptr p (prev());
@@ -114,7 +114,7 @@ prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packe
 }
 
 template <class OtherPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::get_next()
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::get_next()
     const
 {
     typename ptr_t<OtherPacket>::ptr p (find_next<OtherPacket>());
@@ -123,7 +123,7 @@ prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packe
 }
 
 template <class OtherPacket>
-prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packet::get_prev()
+prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::get_prev()
     const
 {
     typename ptr_t<OtherPacket>::ptr p (find_prev<OtherPacket>());
@@ -132,7 +132,7 @@ prefix_ typename satcom::pkf::Packet::ptr_t<OtherPacket>::ptr satcom::pkf::Packe
 }
 
 template <class InputIterator>
-prefix_ void satcom::pkf::Packet::insert(iterator pos, InputIterator f, InputIterator l,
+prefix_ void senf::Packet::insert(iterator pos, InputIterator f, InputIterator l,
                                          Whence whence)
 {
     size_type index(pos-impl_->data_.begin());
@@ -148,5 +148,5 @@ prefix_ void satcom::pkf::Packet::insert(iterator pos, InputIterator f, InputIte
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

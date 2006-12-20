@@ -31,8 +31,8 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class T>
-prefix_ satcom::lib::detail::ConvertibleString &
-satcom::lib::detail::ConvertibleString::operator+=(ConvertibleString const & other)
+prefix_ senf::detail::ConvertibleString &
+senf::detail::ConvertibleString::operator+=(ConvertibleString const & other)
 {
     if (!empty())
         this->std::string::operator+=(", ");
@@ -46,5 +46,5 @@ satcom::lib::detail::ConvertibleString::operator+=(ConvertibleString const & oth
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

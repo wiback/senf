@@ -40,8 +40,8 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 #include "FileHandle.ih"
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
     
     /** \brief
      */
@@ -103,7 +103,7 @@ namespace lib {
 
     int retrieve_filehandle(FileHandle handle);
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "FileHandle.cci"
@@ -114,5 +114,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

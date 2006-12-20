@@ -30,7 +30,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Policy>
-prefix_ int satcom::lib::ConnectedCommunicationPolicy::
+prefix_ int senf::ConnectedCommunicationPolicy::
 accept(ServerSocketHandle<Policy> handle,
        typename ServerSocketHandle<Policy>::Address & address,
        typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type *)
@@ -44,5 +44,5 @@ accept(ServerSocketHandle<Policy> handle,
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

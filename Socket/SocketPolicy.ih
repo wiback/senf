@@ -50,8 +50,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
 #   define SATLIB_SOCKET_POLICIES_N BOOST_PP_SEQ_SIZE( SATLIB_SOCKET_POLICIES )
     
@@ -205,7 +205,7 @@ namespace impl {
 
 } // namespace impl
 
-    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SATLIB_SOCKET_POLICIES_N, class T, satcom::lib::impl::nil ) >
+    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SATLIB_SOCKET_POLICIES_N, class T, senf::impl::nil ) >
     class MakeSocketPolicy
         : public boost::mpl::if_< boost::is_convertible< T0*, SocketPolicyBase* >,
                                   impl::MakeSocketPolicy_impl< T0, boost::mpl::vector< BOOST_PP_ENUM_SHIFTED_PARAMS( SATLIB_SOCKET_POLICIES_N, T ) > >,
@@ -241,7 +241,7 @@ namespace impl {
 
 #   undef SP_DefineConditions
 
-}}
+}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -249,5 +249,5 @@ namespace impl {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

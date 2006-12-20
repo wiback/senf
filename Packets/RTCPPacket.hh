@@ -34,8 +34,8 @@
 //#include "RTCPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 
     template <class I=nil,class P=nil> struct Parse_RTCP_RR;
     template <class I=nil,class P=nil> struct Parse_RTCP_SR;
@@ -299,7 +299,7 @@ namespace pkf {
         friend class Packet;
     };
  
-}}
+}
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -311,5 +311,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

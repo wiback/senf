@@ -32,8 +32,8 @@
 //#include "IpV4Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
     
     template <class Iterator=nil, class IpV4Packet=nil>
     struct Parse_IpV4 : public ParserBase<Iterator,IpV4Packet>
@@ -103,7 +103,7 @@ namespace pkf {
 
         friend class Packet;
     };
-}}
+}
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -115,5 +115,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

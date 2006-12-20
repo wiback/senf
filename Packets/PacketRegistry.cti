@@ -32,14 +32,14 @@
 
 template <class Tag>
 template <class OtherPacket>
-prefix_ void satcom::pkf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key)
+prefix_ void senf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key)
 {
     registry().registerPacket<OtherPacket>(key);
 }
 
 template <class Tag>
 template <class OtherPacket>
-prefix_ satcom::pkf::PacketRegistry<Tag>::RegistrationProxy<OtherPacket>::
+prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<OtherPacket>::
 RegistrationProxy(typename Tag::key_t key)
 {
     PacketRegistry<Tag>::template registerPacket<OtherPacket>(key);
@@ -47,15 +47,15 @@ RegistrationProxy(typename Tag::key_t key)
 
 template <class Tag>
 template <class OtherPacket>
-prefix_ typename Tag::key_t satcom::pkf::PacketRegistry<Tag>::key()
+prefix_ typename Tag::key_t senf::PacketRegistry<Tag>::key()
 {
-    return registry().key(satcom::lib::typeIdValue<OtherPacket>());
+    return registry().key(senf::typeIdValue<OtherPacket>());
 }
 
 template <class KeyType>
 template <class OtherPacket>
 prefix_ void
-satcom::pkf::impl::PacketRegistryImpl<KeyType>::registerInterpreter(Packet * p,
+senf::impl::PacketRegistryImpl<KeyType>::registerInterpreter(Packet * p,
                                                                     Packet::iterator b,
                                                                     Packet::iterator e)
 {
@@ -64,7 +64,7 @@ satcom::pkf::impl::PacketRegistryImpl<KeyType>::registerInterpreter(Packet * p,
 
 template <class Tag, class Derived>
 prefix_ void
-satcom::pkf::PacketRegistryMixin<Tag,Derived>::registerInterpreter(typename Tag::key_t key,
+senf::PacketRegistryMixin<Tag,Derived>::registerInterpreter(typename Tag::key_t key,
                                                                    Packet::iterator b,
                                                                    Packet::iterator e)
     const
@@ -79,5 +79,5 @@ satcom::pkf::PacketRegistryMixin<Tag,Derived>::registerInterpreter(typename Tag:
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

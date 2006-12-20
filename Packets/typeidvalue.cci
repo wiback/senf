@@ -29,41 +29,41 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::TypeIdValue::TypeIdValue()
+prefix_ senf::TypeIdValue::TypeIdValue()
     : value_(new ValueImpl<void>()) 
 {}
 
-prefix_ satcom::lib::TypeIdValue::TypeIdValue(TypeIdValue const & other)
+prefix_ senf::TypeIdValue::TypeIdValue(TypeIdValue const & other)
 {
     value_.reset(other.value_->clone());
 }
 
-prefix_ satcom::lib::TypeIdValue const &
-satcom::lib::TypeIdValue::operator=(TypeIdValue const & other)
+prefix_ senf::TypeIdValue const &
+senf::TypeIdValue::operator=(TypeIdValue const & other)
 {
     value_.reset(other.value_->clone());
     return *this;
 }
 
-prefix_ bool satcom::lib::TypeIdValue::operator==(TypeIdValue const & other)
+prefix_ bool senf::TypeIdValue::operator==(TypeIdValue const & other)
     const
 {
     return value_->id() == other.value_->id();
 }
 
-prefix_ bool satcom::lib::TypeIdValue::operator<(TypeIdValue const & other)
+prefix_ bool senf::TypeIdValue::operator<(TypeIdValue const & other)
     const
 {
     return value_->id().before(other.value_->id());
 }
 
-prefix_ std::string satcom::lib::TypeIdValue::name()
+prefix_ std::string senf::TypeIdValue::name()
     const
 {
     return std::string(value_->id().name());
 }
 
-prefix_ satcom::lib::TypeIdValue const satcom::lib::typeIdValue()
+prefix_ senf::TypeIdValue const senf::typeIdValue()
 {
     return TypeIdValue();
 }
@@ -74,5 +74,5 @@ prefix_ satcom::lib::TypeIdValue const satcom::lib::typeIdValue()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

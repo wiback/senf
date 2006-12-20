@@ -31,7 +31,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class ForwardRange>
-prefix_ satcom::lib::LLSocketAddress::
+prefix_ senf::LLSocketAddress::
 LLSocketAddress(ForwardRange const & address, std::string interface,
                 typename boost::enable_if_c<! boost::is_integral<ForwardRange>::value >::type *)
 {
@@ -46,5 +46,5 @@ LLSocketAddress(ForwardRange const & address, std::string interface,
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

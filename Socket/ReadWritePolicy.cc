@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned satcom::lib::ReadablePolicy::read(FileHandle handle, char * buffer,
+prefix_ unsigned senf::ReadablePolicy::read(FileHandle handle, char * buffer,
                                                    unsigned size)
 {
     int rv = -1;
@@ -57,7 +57,7 @@ prefix_ unsigned satcom::lib::ReadablePolicy::read(FileHandle handle, char * buf
     return rv;
 }
 
-prefix_ unsigned satcom::lib::ReadablePolicy::do_readfrom(FileHandle handle, char * buffer,
+prefix_ unsigned senf::ReadablePolicy::do_readfrom(FileHandle handle, char * buffer,
                                                           unsigned size,
                                                           struct ::sockaddr * addr, socklen_t len)
 {
@@ -78,7 +78,7 @@ prefix_ unsigned satcom::lib::ReadablePolicy::do_readfrom(FileHandle handle, cha
     return rv;
 }
 
-prefix_ unsigned satcom::lib::WriteablePolicy::do_write(FileHandle handle, char const * buffer,
+prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle handle, char const * buffer,
                                                         unsigned size)
 {
     int rv = -1;
@@ -98,7 +98,7 @@ prefix_ unsigned satcom::lib::WriteablePolicy::do_write(FileHandle handle, char 
     return rv;
 }
 
-prefix_ unsigned satcom::lib::WriteablePolicy::do_writeto(FileHandle handle,
+prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle handle,
                                                           char const * buffer, unsigned size,
                                                           struct sockaddr * addr, socklen_t len)
 {
@@ -126,5 +126,5 @@ prefix_ unsigned satcom::lib::WriteablePolicy::do_writeto(FileHandle handle,
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

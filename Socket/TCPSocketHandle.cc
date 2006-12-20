@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::TCPv4SocketProtocol::init_client()
+prefix_ void senf::TCPv4SocketProtocol::init_client()
     const
 {
     int sock = ::socket(PF_INET,SOCK_STREAM,0);
@@ -46,14 +46,14 @@ prefix_ void satcom::lib::TCPv4SocketProtocol::init_client()
 }
 
 prefix_ void
-satcom::lib::TCPv4SocketProtocol::init_client(INet4Address const & address)
+senf::TCPv4SocketProtocol::init_client(INet4Address const & address)
     const
 {
     init_client();
     connect(address);
 }
 
-prefix_ void satcom::lib::TCPv4SocketProtocol::init_server()
+prefix_ void senf::TCPv4SocketProtocol::init_server()
     const
 {
     int sock = ::socket(PF_INET,SOCK_STREAM,0);
@@ -62,7 +62,7 @@ prefix_ void satcom::lib::TCPv4SocketProtocol::init_server()
     body().fd(sock);
 }
 
-prefix_ void satcom::lib::TCPv4SocketProtocol::init_server(INet4Address const & address,
+prefix_ void senf::TCPv4SocketProtocol::init_server(INet4Address const & address,
                                                            unsigned backlog)
     const
 {
@@ -73,7 +73,7 @@ prefix_ void satcom::lib::TCPv4SocketProtocol::init_server(INet4Address const & 
         throw SystemException(errno);
 }
 
-prefix_ std::auto_ptr<satcom::lib::SocketProtocol> satcom::lib::TCPv4SocketProtocol::clone()
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::TCPv4SocketProtocol::clone()
     const
 {
     return std::auto_ptr<SocketProtocol>(new TCPv4SocketProtocol());
@@ -86,5 +86,5 @@ prefix_ std::auto_ptr<satcom::lib::SocketProtocol> satcom::lib::TCPv4SocketProto
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

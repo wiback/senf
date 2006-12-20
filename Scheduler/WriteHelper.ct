@@ -15,18 +15,18 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Handle>
-prefix_ satcom::lib::WriteHelper<Handle>::WriteHelper(Handle handle, std::string data,
+prefix_ senf::WriteHelper<Handle>::WriteHelper(Handle handle, std::string data,
                                                       Callback callback)
     : handle_(handle), data_(data), callback_(callback),
       offset_(0), errno_(0)
 {
-    satcom::lib::Scheduler::instance()
+    senf::Scheduler::instance()
 	.add(handle_, boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2),
-	     satcom::lib::Scheduler::EV_WRITE);
+	     senf::Scheduler::EV_WRITE);
 }
 
 template <class Handle>
-prefix_ std::string const & satcom::lib::WriteHelper<Handle>::data()
+prefix_ std::string const & senf::WriteHelper<Handle>::data()
     const
 {
     if (offset_ > 0) {
@@ -37,17 +37,17 @@ prefix_ std::string const & satcom::lib::WriteHelper<Handle>::data()
 }
 
 template <class Handle>
-prefix_ void satcom::lib::WriteHelper<Handle>::revoke()
+prefix_ void senf::WriteHelper<Handle>::revoke()
 {
     ptr guard (this); // To ensure, 'this' is deleted only after this method terminates ...
-    satcom::lib::Scheduler::instance()
-	.remove(handle_, satcom::lib::Scheduler::EV_WRITE);
+    senf::Scheduler::instance()
+	.remove(handle_, senf::Scheduler::EV_WRITE);
 }
 
 template <class Handle>
 prefix_ void
-satcom::lib::WriteHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
-                                                  satcom::lib::Scheduler::EventId event)
+senf::WriteHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
+                                                  senf::Scheduler::EventId event)
 {
     // since we have a 'ptr' argument, the instance cannot be deleted
     // before this method returns
@@ -55,26 +55,26 @@ satcom::lib::WriteHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
 }
 
 template <class Handle>
-prefix_ void satcom::lib::WriteHelper<Handle>::process(Handle handle,
-                                                       satcom::lib::Scheduler::EventId event)
+prefix_ void senf::WriteHelper<Handle>::process(Handle handle,
+                                                       senf::Scheduler::EventId event)
 {
     try {
-	if (event != satcom::lib::Scheduler::EV_WRITE)
-	    throw satcom::lib::SystemException(EPIPE);
+	if (event != senf::Scheduler::EV_WRITE)
+	    throw senf::SystemException(EPIPE);
 	offset_ += handle.write(data_.data()+offset_,data_.size()-offset_);
 	if (offset_ >= data_.size()) {
 	    data_.erase();
 	    done();
 	}
     }
-    catch (satcom::lib::SystemException const & ex) {
+    catch (senf::SystemException const & ex) {
 	errno_ = ex.err;
 	done();
     }
 }
 
 template <class Handle>
-prefix_ void satcom::lib::WriteHelper<Handle>::done()
+prefix_ void senf::WriteHelper<Handle>::done()
 {
     revoke();
     callback_(ptr(this));

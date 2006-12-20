@@ -29,13 +29,13 @@
 //#include "AddressingPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     struct NoAddressingPolicy : public AddressingPolicyBase
     {};
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "AddressingPolicy.cci"
@@ -47,5 +47,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

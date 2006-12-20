@@ -35,8 +35,8 @@
 //#include "INetAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     // TODO: Implement real INet4Address datatype and 
     // rename this one to INet4SockAddress ...
@@ -98,7 +98,7 @@ namespace lib {
     struct InvalidINetAddressException : public std::exception
     { char const * what() const throw() { return "invalid inet address"; } };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "INetAddressing.cci"
@@ -110,5 +110,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -29,8 +29,8 @@
 #include "ProtocolClientSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     template <class Protocol> class ProtocolServerSocketHandle;
 
@@ -73,7 +73,7 @@ namespace lib {
         friend class ProtocolServerSocketHandle<Protocol>;
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ProtocolClientSocketHandle.cci"
@@ -85,5 +85,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

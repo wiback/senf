@@ -30,12 +30,12 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Arg>
-prefix_ satcom::pkf::EthernetPacket::EthernetPacket(Arg const & arg)
+prefix_ senf::EthernetPacket::EthernetPacket(Arg const & arg)
     : Packet(arg)
 {}
 
 template <class Arg>
-prefix_ satcom::pkf::EthVLanPacket::EthVLanPacket(Arg const & arg)
+prefix_ senf::EthVLanPacket::EthVLanPacket(Arg const & arg)
     : Packet(arg)
 {}
 
@@ -45,5 +45,5 @@ prefix_ satcom::pkf::EthVLanPacket::EthVLanPacket(Arg const & arg)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

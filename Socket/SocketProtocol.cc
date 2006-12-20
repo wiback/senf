@@ -31,7 +31,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::SocketProtocol::state(SocketStateMap & map, unsigned lod)
+prefix_ void senf::SocketProtocol::state(SocketStateMap & map, unsigned lod)
     const
 {}
 
@@ -42,5 +42,5 @@ prefix_ void satcom::lib::SocketProtocol::state(SocketStateMap & map, unsigned l
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

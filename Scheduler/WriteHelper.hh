@@ -15,12 +15,12 @@
 //#include "WriteHelper.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     template <class Handle>
     class WriteHelper
-	: public satcom::lib::intrusive_refcount
+	: public senf::intrusive_refcount
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -53,8 +53,8 @@ namespace lib {
     private:
 	WriteHelper(Handle handle, std::string data, Callback callback);
 
-	static void dispatchProcess(ptr helper, Handle handle, satcom::lib::Scheduler::EventId event);
-	void process(Handle handle, satcom::lib::Scheduler::EventId event);
+	static void dispatchProcess(ptr helper, Handle handle, senf::Scheduler::EventId event);
+	void process(Handle handle, senf::Scheduler::EventId event);
 	void done();
 
 	Handle handle_;
@@ -66,7 +66,7 @@ namespace lib {
     };
 
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "WriteHelper.cci"

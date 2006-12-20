@@ -36,30 +36,30 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::FileBody::v_close()
+prefix_ void senf::FileBody::v_close()
 {
     if (::close(fd_) != 0)
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::FileBody::v_terminate()
+prefix_ void senf::FileBody::v_terminate()
 {
     ::close(fd_);
 }
 
-prefix_ bool satcom::lib::FileBody::v_eof()
+prefix_ bool senf::FileBody::v_eof()
     const
 {
     return false;
 }
 
-prefix_ bool satcom::lib::FileBody::v_valid()
+prefix_ bool senf::FileBody::v_valid()
     const
 {
     return true;
 }
 
-prefix_ bool satcom::lib::FileBody::blocking()
+prefix_ bool senf::FileBody::blocking()
     const
 {
     int flags = ::fcntl(fd(),F_GETFL);
@@ -67,7 +67,7 @@ prefix_ bool satcom::lib::FileBody::blocking()
     return ! (flags & O_NONBLOCK);
 }
 
-prefix_ void satcom::lib::FileBody::blocking(bool status)
+prefix_ void senf::FileBody::blocking(bool status)
 {
     int flags = ::fcntl(fd(),F_GETFL);
     if (flags < 0) throw SystemException(errno);
@@ -76,7 +76,7 @@ prefix_ void satcom::lib::FileBody::blocking(bool status)
     if (::fcntl(fd(), F_SETFL, flags) < 0) throw SystemException(errno);
 }
 
-prefix_ bool satcom::lib::FileBody::pollCheck(int fd, bool incoming, bool block)
+prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, bool block)
     const
 {
     struct ::pollfd pfd;
@@ -103,5 +103,5 @@ prefix_ bool satcom::lib::FileBody::pollCheck(int fd, bool incoming, bool block)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

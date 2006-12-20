@@ -34,7 +34,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_local(FileHandle handle,
+prefix_ void senf::GenericAddressingPolicy_Base::do_local(FileHandle handle,
                                                                  struct sockaddr * addr,
                                                                  unsigned len)
 {
@@ -42,7 +42,7 @@ prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_local(FileHandle hand
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_peer(FileHandle handle,
+prefix_ void senf::GenericAddressingPolicy_Base::do_peer(FileHandle handle,
                                                                 struct sockaddr * addr,
                                                                 unsigned len)
 {
@@ -50,7 +50,7 @@ prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_peer(FileHandle handl
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_bind(FileHandle handle,
+prefix_ void senf::GenericAddressingPolicy_Base::do_bind(FileHandle handle,
                                                                 struct sockaddr const * addr,
                                                                 unsigned len)
 {
@@ -58,7 +58,7 @@ prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_bind(FileHandle handl
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
+prefix_ void senf::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
                                                                    struct sockaddr const * addr,
                                                                    unsigned len)
 {
@@ -92,5 +92,5 @@ prefix_ void satcom::lib::GenericAddressingPolicy_Base::do_connect(FileHandle ha
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

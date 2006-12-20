@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace satcom::lib;
+using namespace senf;
 
 namespace {
     struct INetAddressingPolicy : public AddressingPolicyBase {};
@@ -136,5 +136,5 @@ BOOST_AUTO_UNIT_TEST(socketPolicy)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

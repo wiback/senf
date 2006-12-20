@@ -28,8 +28,8 @@
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 
     /** \brief General packet comprised of header, trailer and payload
 
@@ -76,7 +76,7 @@ namespace pkf {
         friend class Packet;
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "GenericPacket.cci"
@@ -87,5 +87,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

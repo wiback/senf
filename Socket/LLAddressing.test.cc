@@ -37,7 +37,7 @@
 BOOST_AUTO_UNIT_TEST(llAddress)
 {
     { 
-        satcom::lib::LLSocketAddress a;
+        senf::LLSocketAddress a;
 
         BOOST_CHECK_EQUAL( a.protocol(), 0u );
         BOOST_CHECK_EQUAL( a.interface(), "" );
@@ -45,8 +45,8 @@ BOOST_AUTO_UNIT_TEST(llAddress)
         BOOST_CHECK_EQUAL( a.pkttype(), 0u );
         BOOST_CHECK_EQUAL( a.address(), "" );
 
-        a.address(satcom::lib::llAddress("05-10-1A-2f-25-30"));
-        BOOST_CHECK_EQUAL( satcom::lib::llAddress(a.address()), "05-10-1a-2f-25-30" );
+        a.address(senf::llAddress("05-10-1A-2f-25-30"));
+        BOOST_CHECK_EQUAL( senf::llAddress(a.address()), "05-10-1a-2f-25-30" );
         a.interface("lo");
         BOOST_CHECK_EQUAL( a.interface(), "lo" );
         a.protocol(123);
@@ -54,24 +54,24 @@ BOOST_AUTO_UNIT_TEST(llAddress)
     }
     
     {
-        satcom::lib::LLSocketAddress a (
-            satcom::lib::llAddress("11-12-13-14-15-16"), "lo");
+        senf::LLSocketAddress a (
+            senf::llAddress("11-12-13-14-15-16"), "lo");
         
         BOOST_CHECK_EQUAL( a.protocol(), 0u );
         BOOST_CHECK_EQUAL( a.interface(), "lo" );
         BOOST_CHECK_EQUAL( a.arptype(), 0u );
         BOOST_CHECK_EQUAL( a.pkttype(), 0u );
-        BOOST_CHECK_EQUAL( satcom::lib::llAddress(a.address()), "11-12-13-14-15-16" );
+        BOOST_CHECK_EQUAL( senf::llAddress(a.address()), "11-12-13-14-15-16" );
     }
 
     {
-        satcom::lib::LLSocketAddress a (123, "lo");
+        senf::LLSocketAddress a (123, "lo");
         
         BOOST_CHECK_EQUAL( a.protocol(), 123u );
         BOOST_CHECK_EQUAL( a.interface(), "lo" );
         BOOST_CHECK_EQUAL( a.arptype(), 0u );
         BOOST_CHECK_EQUAL( a.pkttype(), 0u );
-        BOOST_CHECK_EQUAL( satcom::lib::llAddress(a.address()), "" );
+        BOOST_CHECK_EQUAL( senf::llAddress(a.address()), "" );
     }
 }
 
@@ -81,5 +81,5 @@ BOOST_AUTO_UNIT_TEST(llAddress)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

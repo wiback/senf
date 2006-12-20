@@ -32,8 +32,8 @@
 //#include "typeidvalue.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     /** \brief Wrapper to use types as key's in a map
       */
@@ -89,7 +89,7 @@ namespace lib {
     template <class Type>
     TypeIdValue const typeIdValue();
     
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "typeidvalue.cci"
@@ -100,5 +100,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

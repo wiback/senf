@@ -30,8 +30,8 @@
 #define prefix_
 ///////////////////////////////PacketRegistry..p////////////////////////////////////////
 
-satcom::pkf::impl::PkReg_EntryImpl<satcom::pkf::DataPacket> 
-    satcom::pkf::impl::pkreg_dataEntry;
+senf::impl::PkReg_EntryImpl<senf::DataPacket> 
+    senf::impl::pkreg_dataEntry;
 
 ///////////////////////////////PacketRegistry..e////////////////////////////////////////
 #undef prefix_
@@ -39,5 +39,5 @@ satcom::pkf::impl::PkReg_EntryImpl<satcom::pkf::DataPacket>
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

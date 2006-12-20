@@ -31,8 +31,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     class SocketProtocol;
 
@@ -99,7 +99,7 @@ namespace lib {
         bool isServer_;
     };
 
-}}
+}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -107,5 +107,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

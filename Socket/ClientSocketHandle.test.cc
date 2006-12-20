@@ -39,7 +39,7 @@
 
 namespace {
 
-    namespace sl = satcom::lib;
+    namespace sl = senf;
 
     class MySocketHandle
         : public sl::ClientSocketHandle<sl::test::SomeProtocol::Policy>
@@ -113,7 +113,7 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
     }
 
     BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.write("TEST-WRITE"), 10u ) );
-    BOOST_CHECK_THROW( myh.write("TEST"),satcom::lib::SystemException );
+    BOOST_CHECK_THROW( myh.write("TEST"),senf::SystemException );
     BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.write("TEST-WRITE9",10), 10u ) );
     BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE"), 10u ) );
     BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE9",10), 10u ) );
@@ -135,5 +135,5 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

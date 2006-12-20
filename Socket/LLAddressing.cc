@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned char satcom::lib::detail::hexnibble(char c)
+prefix_ unsigned char senf::detail::hexnibble(char c)
 {
     if (c>='0' && c<='9')
         return c - '0';
@@ -49,7 +49,7 @@ prefix_ unsigned char satcom::lib::detail::hexnibble(char c)
     throw InvalidLLSocketAddressException();
 }
 
-prefix_ std::string satcom::lib::LLSocketAddress::interface()
+prefix_ std::string senf::LLSocketAddress::interface()
     const
 {
     if (addr_.sll_ifindex == 0)
@@ -79,7 +79,7 @@ prefix_ std::string satcom::lib::LLSocketAddress::interface()
 
 
 /*
-prefix_ void satcom::lib::LLSocketAddress::address(std::string address)
+prefix_ void senf::LLSocketAddress::address(std::string address)
 {
     typedef boost::split_iterator<std::string::iterator> StringSplitIterator;
     StringSplitIterator i = boost::make_split_iterator(address, boost::token_finder(boost::is_any_of("-: ")));
@@ -94,7 +94,7 @@ prefix_ void satcom::lib::LLSocketAddress::address(std::string address)
 }
 */
 
-prefix_ void satcom::lib::LLSocketAddress::interface(std::string interface)
+prefix_ void senf::LLSocketAddress::interface(std::string interface)
 {
     if (! interface.empty()) {
         addr_.sll_ifindex = if_nametoindex(interface.c_str());
@@ -104,8 +104,8 @@ prefix_ void satcom::lib::LLSocketAddress::interface(std::string interface)
 }
 
 
-prefix_ satcom::lib::detail::LLAddressFromStringRange
-satcom::lib::llAddress(std::string address)
+prefix_ senf::detail::LLAddressFromStringRange
+senf::llAddress(std::string address)
 {
     detail::StringSplitIterator i = 
         boost::make_split_iterator(address, boost::token_finder(boost::is_any_of("-: ")));
@@ -124,5 +124,5 @@ satcom::lib::llAddress(std::string address)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

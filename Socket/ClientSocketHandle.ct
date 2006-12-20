@@ -30,7 +30,7 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Policy>
-prefix_ std::string satcom::lib::ClientSocketHandle<Policy>::read(unsigned limit)
+prefix_ std::string senf::ClientSocketHandle<Policy>::read(unsigned limit)
 {
     std::string rv;
     this->read(rv,limit);
@@ -38,7 +38,7 @@ prefix_ std::string satcom::lib::ClientSocketHandle<Policy>::read(unsigned limit
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::read(std::string & buffer, unsigned limit)
+prefix_ void senf::ClientSocketHandle<Policy>::read(std::string & buffer, unsigned limit)
 {
     unsigned nread = available();
     if (limit>0 && nread>limit) 
@@ -52,7 +52,7 @@ prefix_ void satcom::lib::ClientSocketHandle<Policy>::read(std::string & buffer,
 
 template <class Policy>
 prefix_ std::pair<std::string, typename Policy::AddressingPolicy::Address>
-satcom::lib::ClientSocketHandle<Policy>::readfrom()
+senf::ClientSocketHandle<Policy>::readfrom()
 {
     std::string rv;
     typename Policy::AddressingPolicy::Address addr;
@@ -61,7 +61,7 @@ satcom::lib::ClientSocketHandle<Policy>::readfrom()
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::
+prefix_ void senf::ClientSocketHandle<Policy>::
 readfrom(std::string & buffer, typename Policy::AddressingPolicy::Address & from)
 {
     unsigned nread = available();
@@ -73,7 +73,7 @@ readfrom(std::string & buffer, typename Policy::AddressingPolicy::Address & from
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::write(std::string const & data)
+prefix_ unsigned senf::ClientSocketHandle<Policy>::write(std::string const & data)
 {
     unsigned written = this->write(data.data(),data.size());
     if (written == 0)
@@ -94,7 +94,7 @@ prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::write(std::string cons
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::available()
+prefix_ unsigned senf::ClientSocketHandle<Policy>::available()
 {
     unsigned nread = this->protocol().available();
     if (nread == 0 && this->blocking()) {
@@ -110,5 +110,5 @@ prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::available()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

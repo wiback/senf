@@ -32,22 +32,22 @@
 
 template <class SocketPolicy>
 template <class OtherPolicy>
-prefix_ satcom::lib::ServerSocketHandle<SocketPolicy>::
+prefix_ senf::ServerSocketHandle<SocketPolicy>::
 ServerSocketHandle(ServerSocketHandle<OtherPolicy> other,
                    typename SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type *)
     : SocketHandle<SocketPolicy>(other,true)
 {}
 
 template <class SocketPolicy>
-prefix_  satcom::lib::ServerSocketHandle<SocketPolicy>::
+prefix_  senf::ServerSocketHandle<SocketPolicy>::
 ServerSocketHandle(std::auto_ptr<SocketProtocol> protocol)
     : SocketHandle<SocketPolicy>(protocol,true)
 {}
 
 template <class SocketPolicy>
 template <class OtherPolicy>
-prefix_ typename satcom::lib::SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const &
-satcom::lib::ServerSocketHandle<SocketPolicy>::operator=(ServerSocketHandle<OtherPolicy> other)
+prefix_ typename senf::SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const &
+senf::ServerSocketHandle<SocketPolicy>::operator=(ServerSocketHandle<OtherPolicy> other)
 {
     assign(other);
     return *this;
@@ -57,20 +57,20 @@ satcom::lib::ServerSocketHandle<SocketPolicy>::operator=(ServerSocketHandle<Othe
 // Server socket interface
 
 template <class Policy>
-prefix_ void satcom::lib::ServerSocketHandle<Policy>::bind(AddressParam addr)
+prefix_ void senf::ServerSocketHandle<Policy>::bind(AddressParam addr)
 {
     Policy::AddressingPolicy::bind(*this,addr);
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ServerSocketHandle<Policy>::listen(unsigned backlog)
+prefix_ void senf::ServerSocketHandle<Policy>::listen(unsigned backlog)
 {
     Policy::CommunicationPolicy::listen(*this,backlog);
 }
 
 template <class Policy>
-prefix_ typename satcom::lib::ServerSocketHandle<Policy>::Address
-satcom::lib::ServerSocketHandle<Policy>::local()
+prefix_ typename senf::ServerSocketHandle<Policy>::Address
+senf::ServerSocketHandle<Policy>::local()
 {
     typename Policy::AddressingPolicy::Address addr;
     this->local(addr);
@@ -78,23 +78,23 @@ satcom::lib::ServerSocketHandle<Policy>::local()
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ServerSocketHandle<Policy>::local(Address & addr)
+prefix_ void senf::ServerSocketHandle<Policy>::local(Address & addr)
 {
     Policy::AddressingPolicy::local(*this,addr);
 }
 
 template <class Policy>
-prefix_ typename satcom::lib::ServerSocketHandle<Policy>::ClientSocketHandle
-satcom::lib::ServerSocketHandle<Policy>::accept()
+prefix_ typename senf::ServerSocketHandle<Policy>::ClientSocketHandle
+senf::ServerSocketHandle<Policy>::accept()
 {
     Address address;
     return acceptfrom(address);
 }
 
 template <class Policy>
-prefix_ std::pair<typename satcom::lib::ServerSocketHandle<Policy>::ClientSocketHandle,
-                  typename satcom::lib::ServerSocketHandle<Policy>::Address>
-satcom::lib::ServerSocketHandle<Policy>::acceptfrom()
+prefix_ std::pair<typename senf::ServerSocketHandle<Policy>::ClientSocketHandle,
+                  typename senf::ServerSocketHandle<Policy>::Address>
+senf::ServerSocketHandle<Policy>::acceptfrom()
 {
 
     Address address;
@@ -103,8 +103,8 @@ satcom::lib::ServerSocketHandle<Policy>::acceptfrom()
 }
 
 template <class Policy>
-prefix_ typename satcom::lib::ServerSocketHandle<Policy>::ClientSocketHandle
-satcom::lib::ServerSocketHandle<Policy>::acceptfrom(Address & addr)
+prefix_ typename senf::ServerSocketHandle<Policy>::ClientSocketHandle
+senf::ServerSocketHandle<Policy>::acceptfrom(Address & addr)
 {
     return ClientSocketHandle(this->protocol().clone(), 
                               Policy::CommunicationPolicy::accept(*this,addr));
@@ -113,21 +113,21 @@ satcom::lib::ServerSocketHandle<Policy>::acceptfrom(Address & addr)
 ///////////////////////////////////////////////////////////////////////////
 
 template <class Policy>
-prefix_ satcom::lib::ServerSocketHandle<Policy>::ServerSocketHandle(FileHandle other,
+prefix_ senf::ServerSocketHandle<Policy>::ServerSocketHandle(FileHandle other,
                                                                     bool isChecked)
     : SocketHandle<Policy>(other, isChecked)
 {}
 
 template <class Policy>
-prefix_ satcom::lib::ServerSocketHandle<Policy>
-satcom::lib::ServerSocketHandle<Policy>::cast_static(FileHandle handle)
+prefix_ senf::ServerSocketHandle<Policy>
+senf::ServerSocketHandle<Policy>::cast_static(FileHandle handle)
 {
     return ServerSocketHandle(handle,true);
 }
 
 template <class Policy>
-prefix_ satcom::lib::ServerSocketHandle<Policy>
-satcom::lib::ServerSocketHandle<Policy>::cast_dynamic(FileHandle handle)
+prefix_ senf::ServerSocketHandle<Policy>
+senf::ServerSocketHandle<Policy>::cast_dynamic(FileHandle handle)
 {
     SocketHandle<Policy> h (SocketHandle<Policy>::cast_dynamic(handle));
     if (! static_cast<SocketBody&>(FileHandle::body(handle)).isServer())
@@ -136,14 +136,14 @@ satcom::lib::ServerSocketHandle<Policy>::cast_dynamic(FileHandle handle)
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ServerSocketHandle<Policy>::state(SocketStateMap & map, unsigned lod)
+prefix_ void senf::ServerSocketHandle<Policy>::state(SocketStateMap & map, unsigned lod)
 {
     map["handle"] = prettyName(typeid(*this));
     this->body().state(map,lod);
 }
 
 template <class Policy>
-prefix_ std::string satcom::lib::ServerSocketHandle<Policy>::dumpState(unsigned lod)
+prefix_ std::string senf::ServerSocketHandle<Policy>::dumpState(unsigned lod)
 {
     SocketStateMap map;
     state(map,lod);
@@ -156,5 +156,5 @@ prefix_ std::string satcom::lib::ServerSocketHandle<Policy>::dumpState(unsigned 
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -30,12 +30,12 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class SocketPolicy>
-prefix_ satcom::lib::ConcreteSocketProtocol<SocketPolicy>::~ConcreteSocketProtocol()
+prefix_ senf::ConcreteSocketProtocol<SocketPolicy>::~ConcreteSocketProtocol()
 {}
 
 template <class SocketPolicy>
-prefix_ typename satcom::lib::ConcreteSocketProtocol<SocketPolicy>::Policy const &
-satcom::lib::ConcreteSocketProtocol<SocketPolicy>::policy()
+prefix_ typename senf::ConcreteSocketProtocol<SocketPolicy>::Policy const &
+senf::ConcreteSocketProtocol<SocketPolicy>::policy()
     const
 {
     return policy_;
@@ -47,5 +47,5 @@ satcom::lib::ConcreteSocketProtocol<SocketPolicy>::policy()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

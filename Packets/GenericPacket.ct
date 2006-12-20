@@ -30,18 +30,18 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ void satcom::pkf::GenericPacket<HEADER,TRAILER>::v_nextInterpreter()
+prefix_ void senf::GenericPacket<HEADER,TRAILER>::v_nextInterpreter()
     const
 {
     this->registerInterpreter<DataPacket>(this->end_header(), this->begin_trailer());
 }
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ void satcom::pkf::GenericPacket<HEADER,TRAILER>::v_finalize()
+prefix_ void senf::GenericPacket<HEADER,TRAILER>::v_finalize()
 {}
 
 template <unsigned HEADER, unsigned TRAILER>
-prefix_ void satcom::pkf::GenericPacket<HEADER,TRAILER>::v_dump(std::ostream & os)
+prefix_ void senf::GenericPacket<HEADER,TRAILER>::v_dump(std::ostream & os)
     const
 {
     // TODO: implement v_dump()
@@ -53,5 +53,5 @@ prefix_ void satcom::pkf::GenericPacket<HEADER,TRAILER>::v_dump(std::ostream & o
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

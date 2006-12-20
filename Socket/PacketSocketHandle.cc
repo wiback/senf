@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::PacketProtocol::init_client(SocketType type, int protocol)
+prefix_ void senf::PacketProtocol::init_client(SocketType type, int protocol)
     const
 {
     int socktype = SOCK_RAW;
@@ -52,13 +52,13 @@ prefix_ void satcom::lib::PacketProtocol::init_client(SocketType type, int proto
     body().fd(sock);
 }
 
-prefix_ std::auto_ptr<satcom::lib::SocketProtocol> satcom::lib::PacketProtocol::clone()
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::PacketProtocol::clone()
     const
 {
     return std::auto_ptr<SocketProtocol>(new PacketProtocol());
 }
 
-prefix_ unsigned satcom::lib::PacketProtocol::available()
+prefix_ unsigned senf::PacketProtocol::available()
     const
 {
     if (! body().readable())
@@ -69,13 +69,13 @@ prefix_ unsigned satcom::lib::PacketProtocol::available()
     return l;
 }
 
-prefix_ bool satcom::lib::PacketProtocol::eof()
+prefix_ bool senf::PacketProtocol::eof()
     const
 {
     return false;
 }
 
-prefix_ void satcom::lib::PacketProtocol::promisc(std::string interface, PromiscMode mode)
+prefix_ void senf::PacketProtocol::promisc(std::string interface, PromiscMode mode)
     const
 {
     // The interface is really stupid: as far as i understand, it is possible to 
@@ -100,7 +100,7 @@ prefix_ void satcom::lib::PacketProtocol::promisc(std::string interface, Promisc
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::PacketProtocol::do_mc_i(std::string interface,
+prefix_ void senf::PacketProtocol::do_mc_i(std::string interface,
                                                   detail::LLAddressCopier const & copier, bool add)
     const
 {
@@ -123,5 +123,5 @@ prefix_ void satcom::lib::PacketProtocol::do_mc_i(std::string interface,
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

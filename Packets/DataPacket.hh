@@ -28,8 +28,8 @@
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 
     /** \brief Non-interpreted Packet
 
@@ -64,7 +64,7 @@ namespace pkf {
     };
 
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "DataPacket.cci"
@@ -75,5 +75,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

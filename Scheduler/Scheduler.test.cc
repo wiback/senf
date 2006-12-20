@@ -44,7 +44,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace satcom::lib;
+using namespace senf;
 
 namespace {
     
@@ -264,5 +264,5 @@ BOOST_AUTO_UNIT_TEST(scheduler)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

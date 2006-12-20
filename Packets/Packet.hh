@@ -37,83 +37,6 @@
 // beginning. This really is just another type of deque
 // implementation.
 
-
-/** \mainpage The SENF Packet Library
-
-    \section arch Overall Architecture
-
-    The general Architecture of the Packet Framework (pkf for short)
-    is seperated into two components: The basic packet handling and
-    the parser framework.
-
-    The basic packet handling implements a packet interpreter
-    chain. Every packet is represented as a chain of interpreters
-    where each interpreter is a facade looking into the same
-    packet. Each interpreter will interpret a specific header of a
-    packet. For example, an ethernet frame might have an interpreter
-    chain consisting of EthernetPacket, IPPacket, UDPPacket and
-    DataPacket. Each of these interpreters will interpret a section of
-    the raw data bytes. The interpreter ranges overlap since every
-    packet also includes it's payload.
-
-    The parser framework is used to interpret the raw bytes of a
-    specific packet and parse the values present in that packet. For
-    example, Parse_Ethernet will parse the ethernet source MAC,
-    destination MAC and ethertype given any random access iterator to
-    the first byte of the ethernet frame. Parsers are extremely light
-    classes. They are temporary classes passed around by value. In
-    most cases, they are just comprised of a single pointer adorned
-    with type information.
-
-    \section handling Packet Handling
-
-    The packet handling is implemented within
-    satcom::pkf::Packet. This class is the baseclass to all packet
-    interpreter facades. To implement a new packet type, publically
-    derive from satcom::pkf::Packet and implement the virtual
-    interface (see the class documentation for details).
-
-    \section framework Parser Framework
-
-    The parser framework provides an abstract framwork to parse packet
-    oriented data. A Parser is a template class taking an arbitrary
-    iterator as input and allowing random access to data elements of
-    the interpreted type, like source and destination MAC of an
-    ethernet frame. The parser framework is to be used hierarchically
-    and recursively, the parser methods should return further parsers
-    which can return further parsers and so on.
-
-    The parser framework contains some basic parsers to be used to
-    build up more complex parsers:
-
-     - ParseInt.hh: Lots of parsers for integer numbers like
-       satcom::pkf::Parse_UInt8, for integer bitfields like
-       satcom::pkf::Parse_UIntField and satcom::pkf::Parse_Flag to
-       parse boolean flags.
-
-     - ParseArray.hh: The satcom::pkf::Parse_Array parser to parse
-       arbitrary fixed-size arrays of fixed-size elements (that is
-       sub-parsers).
-
-     - ParseVec.hh: The satcom::pkf::Parse_Vector parser to parse
-       dynamically sized arrays of fixed-size elements (that is
-       sub-parsers).
-
-    See satcom::pkf::ParserBase for further information.
-
-    \section stuff Other Utilities
-
-    The pkf also comprises some additional utilities to support the
-    development of packet classes. 
-
-    The satcom::pkf::PacketRegistry implements a registry of packets
-    keyed by an arbitrary type. The registry is used to find a packet
-    type given some kind of id (like the ethertype value from the
-    ethernet header). Together with it's support classes (especially
-    satcom::pkf::PacketRegistryMixin) this class greatly simplifies
-    implementing the needed table lookups.
- */
-
 /** \file
     \brief Main packet interface
  */
@@ -133,8 +56,7 @@
 #include "Packet.mpp"
 // ////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
     
     namespace impl { template <class OtherPacket> class PkReg_EntryImpl; }
     namespace impl { class PacketImpl; }
@@ -145,7 +67,7 @@ namespace pkf {
         
         This class is the base class of all Packets. It implements the
         generic Packet interface and provides the packet management
-        framework. satcom::pkf::Packet manages the necessary memory
+        framework. senf::Packet manages the necessary memory
         resources and controlls the chain of packet interpreters.
 
         The Packet user always interfaces with the pkf via a Packet
@@ -195,7 +117,7 @@ namespace pkf {
 
         \code        
             class ExamplePacket 
-                : public satcom::pkf::Packet
+                : public senf::Packet
             {
             public:
                 typedef ptr_t<ExamplePacket>::ptr ptr;
@@ -210,7 +132,7 @@ namespace pkf {
             private:
                 template <class Arg>
                 ExamplePacket(Arg arg [, other args ... ])
-                    : satcom::pkf::Packet(arg)
+                    : senf::Packet(arg)
                 {}
 
                 virtual void v_nextInterpreter() const
@@ -225,14 +147,14 @@ namespace pkf {
                     // calculate checksum etc
                 }
 
-                friend class satcom::pkf::Packet;
+                friend class senf::Packet;
             };
         \endcode
 
         Please do not implement the methods inline to not clutter up
         the header file. This is done here in the example to simplify
         it. If a class is to be registered in some
-        satcom:pkf::PacketRegistry, it must not take any additional
+        senf:PacketRegistry, it must not take any additional
         constructor parameters.
 
         After having implemented the bare framework, the most comman
@@ -246,8 +168,8 @@ namespace pkf {
 
         \code
             class ExamplePacket
-                : public satcom::pkf::Packet,
-                  public Parse_Example<satcom::pkf::Packet::iterator,
+                : public senf::Packet,
+                  public Parse_Example<senf::Packet::iterator,
                                        ExamplePacket>
             {
 
@@ -257,17 +179,17 @@ namespace pkf {
             private:
                 template <class InputIterator>
                 ExamplePacket(InputIterator begin, InputIterator end)
-                    : satcom::pkf::Packet(begin,end)
+                    : senf::Packet(begin,end)
                 {}
             };
         \endcode
 
-        See the satcom::pkf::ParserBase Documentation for how to
+        See the senf::ParserBase Documentation for how to
         implement Parse_Example.
 
         The implementation of v_nextInterpreter most of the time
         relies on some packet registry. This is simplified using the
-        satcom::pkf::PacketRegistryMixin class as follows. Again, we
+        senf::PacketRegistryMixin class as follows. Again, we
         only show the differences from the preceding Example:
 
         \code
@@ -276,14 +198,14 @@ namespace pkf {
             };
 
             class ExamplePacket
-                : public satcom::pkf::Packet,
-                  public Parse_Example<satcom::pkf::Packet::iterator,
+                : public senf::Packet,
+                  public Parse_Example<senf::Packet::iterator,
                                        ExamplePacket>,
-                  public satcom::pkf::PacketRegistryMixin<ExampleRegistry,
+                  public senf::PacketRegistryMixin<ExampleRegistry,
                                                           ExamplePacket>
             {
-                using satcom::pkf::Packet::registerInterpreter;
-                using satcom::pkf::PacketRegsitryMixin<ExampleRegistry,ExamplePacket>::registerInterpreter;
+                using senf::Packet::registerInterpreter;
+                using senf::PacketRegsitryMixin<ExampleRegistry,ExamplePacket>::registerInterpreter;
             private:
                 virtual void v_nextInterpreter() const
                 {
@@ -296,7 +218,7 @@ namespace pkf {
         \endcode
 
         For further details on the packet registry, see
-        satcom::pkf::PacketRegistry.
+        senf::PacketRegistry.
 
         \section packet_impl Implementation details
 
@@ -307,7 +229,7 @@ namespace pkf {
         imporved by either allocating some headroom/tailroom in the
         vector and using this when inserting data at the beginning or
         end. Alternatively, a new container class (like the
-        satcom::lib::deque_list) could be used to support zero-copy
+        senf::deque_list) could be used to support zero-copy
         semantics.
 
         At the moment, we leave the implementation at
@@ -358,7 +280,7 @@ namespace pkf {
 
         typedef std::vector<byte> raw_container;
         typedef boost::shared_ptr<Packet> interpreter_list_ptr;
-        typedef std::list<satcom::pkf::Packet::interpreter_list_ptr> interpreter_list;
+        typedef std::list<senf::Packet::interpreter_list_ptr> interpreter_list;
         typedef unsigned refcount_t;
 
         ///@}
@@ -593,7 +515,7 @@ namespace pkf {
             instance. The new instance is automatically added to the
             interpreter chain after the current interpreter.
 
-            See also satcom::pkf::PacketRegistryMixin on how to
+            See also senf::PacketRegistryMixin on how to
             use a Registry to find the next interpreters implementing
             class.
          */
@@ -689,7 +611,7 @@ namespace pkf {
     struct TruncatedPacketException : public std::exception
     { virtual char const * what() const throw() { return "truncated packet"; } };
 
-}}
+}
 
 // ////////////////////////////hh.e////////////////////////////////////////
 #include "Packet.cci"
@@ -702,5 +624,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

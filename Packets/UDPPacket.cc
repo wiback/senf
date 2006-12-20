@@ -32,21 +32,20 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 namespace {
-    namespace pkf = satcom::pkf;
-    pkf::PacketRegistry<pkf::IpV4Types>::RegistrationProxy<pkf::UDPPacket> 
+    senf::PacketRegistry<senf::IpV4Types>::RegistrationProxy<senf::UDPPacket> 
         registerUDPPacket(17);
 }
 
-prefix_ void satcom::pkf::UDPPacket::v_nextInterpreter()
+prefix_ void senf::UDPPacket::v_nextInterpreter()
     const
 {
     registerInterpreter<DataPacket>(begin()+bytes(),end());
 }
 
-prefix_ void satcom::pkf::UDPPacket::v_finalize()
+prefix_ void senf::UDPPacket::v_finalize()
 {}
 
-prefix_ void satcom::pkf::UDPPacket::v_dump(std::ostream & os)
+prefix_ void senf::UDPPacket::v_dump(std::ostream & os)
     const
 {
     os << "UDP:\n"
@@ -62,5 +61,5 @@ prefix_ void satcom::pkf::UDPPacket::v_dump(std::ostream & os)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

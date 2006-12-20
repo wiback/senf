@@ -37,8 +37,8 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 #include "SocketHandle.ih"
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     /** \brief
       */
@@ -108,7 +108,7 @@ namespace lib {
 
     template <class Target, class Source>
     bool check_socket_cast(Source handle);
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "SocketHandle.cci"
@@ -119,5 +119,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -36,13 +36,13 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::ConnectedCommunicationPolicy::listen(FileHandle handle,
+prefix_ void senf::ConnectedCommunicationPolicy::listen(FileHandle handle,
                                                                unsigned backlog)
 {
     ::listen(handle.fd(),backlog);
 }
 
-prefix_ int satcom::lib::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
+prefix_ int senf::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
                                                                  struct sockaddr * addr,
                                                                  unsigned len)
 {
@@ -69,5 +69,5 @@ prefix_ int satcom::lib::ConnectedCommunicationPolicy::do_accept(FileHandle hand
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

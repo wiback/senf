@@ -37,7 +37,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    namespace sl = satcom::lib;
+    namespace sl = senf;
 
     class MySocketHandle
         : public sl::SocketHandle<sl::test::SomeProtocol::Policy>
@@ -50,12 +50,12 @@ namespace {
     };
 
     class FDHandle
-        : public satcom::lib::FileHandle
+        : public senf::FileHandle
     {
     public:
         FDHandle() 
-            : satcom::lib::FileHandle(std::auto_ptr<satcom::lib::FileBody>(
-                                          new satcom::lib::FileBody())) {}
+            : senf::FileHandle(std::auto_ptr<senf::FileBody>(
+                                          new senf::FileBody())) {}
     };
 }
 
@@ -72,27 +72,27 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
     osh = myh;
 
     typedef sl::SocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
-    SomeSocketHandle ssh = satcom::lib::static_socket_cast<SomeSocketHandle>(osh);
+    SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
 
-    BOOST_CHECK_NO_THROW( satcom::lib::dynamic_socket_cast<SomeSocketHandle>(osh) );
+    BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
 
     typedef sl::SocketHandle< sl::MakeSocketPolicy<
         OtherSocketPolicy,
-        satcom::lib::NoAddressingPolicy
+        senf::NoAddressingPolicy
         >::policy> SomeOtherSocketHandle;
 
-    BOOST_CHECK_THROW( satcom::lib::dynamic_socket_cast<SomeOtherSocketHandle>(osh), 
+    BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeOtherSocketHandle>(osh), 
                        std::bad_cast );
-    BOOST_CHECK_THROW( satcom::lib::dynamic_socket_cast<SomeSocketHandle>(
-                           satcom::lib::FileHandle(FDHandle())),
+    BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(
+                           senf::FileHandle(FDHandle())),
                        std::bad_cast );
 
     BOOST_CHECK_EQUAL( myh.dumpState(), 
-                       "handle: satcom::lib::SocketHandle<satcom::lib::SocketPolicy<satcom::lib::test::SomeAddressingPolicy, satcom::lib::test::SomeFramingPolicy, satcom::lib::test::SomeCommunicationPolicy, satcom::lib::test::SomeReadPolicy, satcom::lib::test::SomeWritePolicy, satcom::lib::test::SomeBufferingPolicy> >\n"
+                       "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy, senf::test::SomeBufferingPolicy> >\n"
                        "file.handle: -1\n"
                        "file.refcount: 3\n"
-                       "socket.policy: satcom::lib::SocketPolicy<satcom::lib::test::SomeAddressingPolicy, satcom::lib::test::SomeFramingPolicy, satcom::lib::test::SomeCommunicationPolicy, satcom::lib::test::SomeReadPolicy, satcom::lib::test::SomeWritePolicy, satcom::lib::test::SomeBufferingPolicy>\n"
-                       "socket.protocol: satcom::lib::test::SomeProtocol\n"
+                       "socket.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy, senf::test::SomeBufferingPolicy>\n"
+                       "socket.protocol: senf::test::SomeProtocol\n"
                        "socket.server: false\n" );
 
 }
@@ -103,5 +103,5 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

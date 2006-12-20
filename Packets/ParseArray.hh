@@ -30,8 +30,8 @@
 //#include "ParseArray.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
     
     namespace impl { template <class,class> class Parse_Array_iterator; }
 
@@ -76,7 +76,7 @@ namespace pkf {
         Parse_Array const & operator= (InputIterator const & i);
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ParseArray.cci"
@@ -87,5 +87,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

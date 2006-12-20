@@ -30,7 +30,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class ForwardRange>
-prefix_ void satcom::lib::PacketProtocol::mcAdd(std::string interface,
+prefix_ void senf::PacketProtocol::mcAdd(std::string interface,
                                                 ForwardRange const & address)
     const
 {
@@ -38,7 +38,7 @@ prefix_ void satcom::lib::PacketProtocol::mcAdd(std::string interface,
 }
 
 template <class ForwardRange>
-prefix_ void satcom::lib::PacketProtocol::mcDrop(std::string interface,
+prefix_ void senf::PacketProtocol::mcDrop(std::string interface,
                                                  ForwardRange const & address)
     const
 {
@@ -46,13 +46,13 @@ prefix_ void satcom::lib::PacketProtocol::mcDrop(std::string interface,
 }
 
 template <class ForwardRange>
-prefix_ satcom::lib::detail::Range_LLAddressCopier<ForwardRange>::
+prefix_ senf::detail::Range_LLAddressCopier<ForwardRange>::
 Range_LLAddressCopier(ForwardRange const & range)
     : range_ (range) 
 {}
 
 template <class ForwardRange>
-prefix_ void satcom::lib::PacketProtocol::do_mc(std::string interface,
+prefix_ void senf::PacketProtocol::do_mc(std::string interface,
                                                 ForwardRange const & address, bool add)
     const
 {
@@ -66,5 +66,5 @@ prefix_ void satcom::lib::PacketProtocol::do_mc(std::string interface,
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

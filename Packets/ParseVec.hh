@@ -33,8 +33,8 @@
 //#include "ParseVec.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 
     template <class Parser, class SizeParser, class Container> class Parse_Vector_wrapper;
 
@@ -160,7 +160,7 @@ namespace pkf {
         Container & container_;
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ParseVec.cci"
@@ -171,5 +171,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

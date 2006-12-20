@@ -36,23 +36,23 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::INet4Protocol
+// senf::INet4Protocol
 
-prefix_ void satcom::lib::IPv4Protocol::connect(INet4Address const & address)
+prefix_ void senf::IPv4Protocol::connect(INet4Address const & address)
     const
 {
     if (::connect(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::IPv4Protocol::bind(INet4Address const & address)
+prefix_ void senf::IPv4Protocol::bind(INet4Address const & address)
     const
 {
     if (::bind(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
         throw SystemException(errno);
 }
 
-prefix_ bool satcom::lib::IPv4Protocol::mcLoop()
+prefix_ bool senf::IPv4Protocol::mcLoop()
     const
 {
     int value;
@@ -62,7 +62,7 @@ prefix_ bool satcom::lib::IPv4Protocol::mcLoop()
     return value;
 }
 
-prefix_ void satcom::lib::IPv4Protocol::mcLoop(bool value)
+prefix_ void senf::IPv4Protocol::mcLoop(bool value)
     const
 {
     int ivalue (value);
@@ -70,7 +70,7 @@ prefix_ void satcom::lib::IPv4Protocol::mcLoop(bool value)
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::IPv4Protocol::mcAddMembership(INet4Address const & mcAddr)
+prefix_ void senf::IPv4Protocol::mcAddMembership(INet4Address const & mcAddr)
     const
 {
     struct ip_mreqn mreqn;
@@ -81,7 +81,7 @@ prefix_ void satcom::lib::IPv4Protocol::mcAddMembership(INet4Address const & mcA
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::IPv4Protocol::mcAddMembership(INet4Address const & mcAddr,
+prefix_ void senf::IPv4Protocol::mcAddMembership(INet4Address const & mcAddr,
                                                         INet4Address const & localAddr)
     const
 {
@@ -93,7 +93,7 @@ prefix_ void satcom::lib::IPv4Protocol::mcAddMembership(INet4Address const & mcA
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::IPv4Protocol::mcDropMembership(INet4Address const & mcAddr)
+prefix_ void senf::IPv4Protocol::mcDropMembership(INet4Address const & mcAddr)
     const
 {
     struct ip_mreqn mreqn;
@@ -104,7 +104,7 @@ prefix_ void satcom::lib::IPv4Protocol::mcDropMembership(INet4Address const & mc
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::IPv4Protocol::mcDropMembership(INet4Address const & mcAddr,
+prefix_ void senf::IPv4Protocol::mcDropMembership(INet4Address const & mcAddr,
                                                          INet4Address const & localAddr)
     const
 {
@@ -116,7 +116,7 @@ prefix_ void satcom::lib::IPv4Protocol::mcDropMembership(INet4Address const & mc
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::IPv4Protocol::mcIface(std::string iface)
+prefix_ void senf::IPv4Protocol::mcIface(std::string iface)
     const
 {
     struct ip_mreqn mreqn;
@@ -130,7 +130,7 @@ prefix_ void satcom::lib::IPv4Protocol::mcIface(std::string iface)
         throw SystemException(errno);
 }
 
-prefix_ unsigned satcom::lib::IPv4Protocol::mcTTL()
+prefix_ unsigned senf::IPv4Protocol::mcTTL()
     const
 {
     int value;
@@ -140,7 +140,7 @@ prefix_ unsigned satcom::lib::IPv4Protocol::mcTTL()
     return value;
 }
 
-prefix_ void satcom::lib::IPv4Protocol::mcTTL(unsigned value)
+prefix_ void senf::IPv4Protocol::mcTTL(unsigned value)
     const
 {
     if (::setsockopt(body().fd(),SOL_IP,IP_MULTICAST_TTL,&value,sizeof(value)) < 0)
@@ -155,5 +155,5 @@ prefix_ void satcom::lib::IPv4Protocol::mcTTL(unsigned value)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

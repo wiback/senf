@@ -36,30 +36,30 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    struct MyProtocol : public satcom::lib::test::SomeProtocol
+    struct MyProtocol : public senf::test::SomeProtocol
     {
-        using satcom::lib::test::SomeProtocol::init_client;
+        using senf::test::SomeProtocol::init_client;
         void init_client(char const *,unsigned) const {}
     };
 }
 
 BOOST_AUTO_UNIT_TEST(protocolClientSocketHandle)
 {
-    typedef satcom::lib::ProtocolClientSocketHandle<MyProtocol> MySocketHandle;
+    typedef senf::ProtocolClientSocketHandle<MyProtocol> MySocketHandle;
 
     {
-        typedef satcom::lib::MakeSocketPolicy<
-            satcom::lib::test::SomeFramingPolicy,
-            satcom::lib::test::SomeReadPolicy,
-            satcom::lib::test::SomeWritePolicy
+        typedef senf::MakeSocketPolicy<
+            senf::test::SomeFramingPolicy,
+            senf::test::SomeReadPolicy,
+            senf::test::SomeWritePolicy
             >::policy OtherSocketPolicy;
-        typedef satcom::lib::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
+        typedef senf::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
 
         MySocketHandle h;
         h.protocol();
         
         OtherSocketHandle osh (h);
-        h = satcom::lib::static_socket_cast<MySocketHandle>(osh);
+        h = senf::static_socket_cast<MySocketHandle>(osh);
     }
 
     {
@@ -73,5 +73,5 @@ BOOST_AUTO_UNIT_TEST(protocolClientSocketHandle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

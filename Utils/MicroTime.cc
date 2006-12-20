@@ -18,7 +18,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ satcom::lib::MicroTime satcom::lib::now()
+prefix_ senf::MicroTime senf::now()
 {
     struct timeval tv;
     if (gettimeofday(&tv,0) < 0)

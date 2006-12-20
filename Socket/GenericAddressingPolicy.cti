@@ -30,11 +30,11 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::GenericAddressingPolicy<Address>
+// senf::GenericAddressingPolicy<Address>
 
 template <class Address>
 template <class Policy>
-prefix_ void satcom::lib::GenericAddressingPolicy<Address>::
+prefix_ void senf::GenericAddressingPolicy<Address>::
 peer(SocketHandle<Policy> handle, Address & addr,
      typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
 {
@@ -44,7 +44,7 @@ peer(SocketHandle<Policy> handle, Address & addr,
 
 template <class Address>
 template <class Policy>
-prefix_ void satcom::lib::GenericAddressingPolicy<Address>::
+prefix_ void senf::GenericAddressingPolicy<Address>::
 connect(SocketHandle<Policy> handle, Address const & addr,
         typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
 {
@@ -52,7 +52,7 @@ connect(SocketHandle<Policy> handle, Address const & addr,
 }
 
 template <class Address>
-prefix_ void satcom::lib::GenericAddressingPolicy<Address>::local(FileHandle handle,
+prefix_ void senf::GenericAddressingPolicy<Address>::local(FileHandle handle,
                                                                   Address & addr)
 {
     addr.clear();
@@ -60,7 +60,7 @@ prefix_ void satcom::lib::GenericAddressingPolicy<Address>::local(FileHandle han
 }
 
 template <class Address>
-prefix_ void satcom::lib::GenericAddressingPolicy<Address>::bind(FileHandle handle,
+prefix_ void senf::GenericAddressingPolicy<Address>::bind(FileHandle handle,
                                                                  Address const & addr)
 {
     do_bind(handle,addr.sockaddr_p(),addr.sockaddr_len());
@@ -72,5 +72,5 @@ prefix_ void satcom::lib::GenericAddressingPolicy<Address>::bind(FileHandle hand
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

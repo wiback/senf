@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace satcom::pkf;
+using namespace senf;
 
 // Since Packet is abstract, we can only test the Packet interface using
 // a simple implementation: DataPacket and GenericPacket.
@@ -243,5 +243,5 @@ BOOST_AUTO_UNIT_TEST(Packet_new)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

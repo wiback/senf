@@ -38,7 +38,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace satcom::pkf;
+using namespace senf;
 
 BOOST_AUTO_UNIT_TEST(rtpPacket_parser)
 {
@@ -242,5 +242,5 @@ BOOST_AUTO_UNIT_TEST(eth_rtpPacket_packet)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

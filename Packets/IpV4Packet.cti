@@ -30,7 +30,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Arg>
-prefix_ satcom::pkf::IpV4Packet::IpV4Packet(Arg const & arg)
+prefix_ senf::IpV4Packet::IpV4Packet(Arg const & arg)
     : Packet(arg)
 {}
 
@@ -42,5 +42,5 @@ prefix_ satcom::pkf::IpV4Packet::IpV4Packet(Arg const & arg)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

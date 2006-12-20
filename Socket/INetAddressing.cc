@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ satcom::lib::INet4Address::INet4Address(std::string host, unsigned port)
+prefix_ senf::INet4Address::INet4Address(std::string host, unsigned port)
 {
     clear();
     // TODO: gethostbyname einbauen
@@ -44,7 +44,7 @@ prefix_ satcom::lib::INet4Address::INet4Address(std::string host, unsigned port)
     addr_.sin_port = htons(port);
 }
 
-prefix_ std::string satcom::lib::INet4Address::str()
+prefix_ std::string senf::INet4Address::str()
     const
 {
     std::stringstream s;
@@ -52,13 +52,13 @@ prefix_ std::string satcom::lib::INet4Address::str()
     return s.str();
 }
 
-prefix_ void satcom::lib::INet4Address::clear()
+prefix_ void senf::INet4Address::clear()
 {
     ::memset(&addr_,0,sizeof(addr_));
     addr_.sin_family = AF_INET;
 }
 
-prefix_ void satcom::lib::INet4Address::assignString(std::string address)
+prefix_ void senf::INet4Address::assignString(std::string address)
 {
     clear();
     // TODO: gethostbyname einbauen
@@ -83,5 +83,5 @@ prefix_ void satcom::lib::INet4Address::assignString(std::string address)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

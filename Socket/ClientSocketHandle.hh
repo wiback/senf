@@ -33,8 +33,8 @@
 //#include "ClientSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     template <class Policy> class ServerSocketHandle;
 
@@ -138,10 +138,10 @@ namespace lib {
     private:
         unsigned available();
 
-        friend class satcom::lib::ServerSocketHandle<Policy>;
+        friend class senf::ServerSocketHandle<Policy>;
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ClientSocketHandle.cci"
@@ -152,5 +152,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

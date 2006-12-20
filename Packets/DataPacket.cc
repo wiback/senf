@@ -30,14 +30,14 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::pkf::DataPacket::v_nextInterpreter()
+prefix_ void senf::DataPacket::v_nextInterpreter()
     const
 {}
 
-prefix_ void satcom::pkf::DataPacket::v_finalize()
+prefix_ void senf::DataPacket::v_finalize()
 {}
 
-prefix_ void satcom::pkf::DataPacket::v_dump(std::ostream & os)
+prefix_ void senf::DataPacket::v_dump(std::ostream & os)
     const
 {
     os << "Payload:\n"
@@ -50,5 +50,5 @@ prefix_ void satcom::pkf::DataPacket::v_dump(std::ostream & os)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

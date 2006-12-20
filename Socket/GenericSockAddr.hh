@@ -11,8 +11,8 @@
 //#include "GenericSockAddr.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     class GenericSockAddr
     {
@@ -27,7 +27,7 @@ namespace lib {
 	struct ::sockaddr_storage addr_;
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "GenericSockAddr.cci"

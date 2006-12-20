@@ -33,8 +33,8 @@
 //#include "ServerSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     template <class Policy> class ClientSocketHandle;
 
@@ -110,7 +110,7 @@ namespace lib {
         
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ServerSocketHandle.cci"
@@ -121,5 +121,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

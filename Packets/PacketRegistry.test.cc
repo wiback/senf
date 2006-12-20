@@ -39,7 +39,7 @@
 
 namespace {
 
-    using namespace satcom::pkf;
+    using namespace senf;
 
     struct BaseTag {
         typedef unsigned key_t;
@@ -167,5 +167,5 @@ BOOST_AUTO_UNIT_TEST(packetRegistry_test)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

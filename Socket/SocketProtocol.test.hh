@@ -31,8 +31,8 @@
 //#include "SocketProtocol.test.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 namespace test {
 
     class SomeProtocol
@@ -52,7 +52,7 @@ namespace test {
             { return false; }
     };
 
-}}}
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "SocketProtocol.test.cci"
@@ -64,5 +64,5 @@ namespace test {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

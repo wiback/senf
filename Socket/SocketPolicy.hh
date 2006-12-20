@@ -28,8 +28,8 @@
 //#include "SocketPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     // This may be adapted to change the supported policies (however,
     // ClientSocketHandle and ServerSocketHandle will probably have to
@@ -59,7 +59,7 @@ namespace lib {
     // template SocketPolicy< ..policies.. >
     // template MakeSocketPolicy< ..args.. >
     // template SocketPolicyIsBaseOf< Base, Derived >
-}}
+}
 
 //////////////////////////////hh.e////////////////////////////////////////
 #include "SocketPolicy.ih"
@@ -71,5 +71,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

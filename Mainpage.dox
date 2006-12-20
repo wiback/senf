@@ -167,7 +167,7 @@
 
     \li Simple functions to manage daemon processes
     \li Standard exception classes 
-    \li satcom::lib::intrusive_refcount to simplify the implementation
+    \li senf::intrusive_refcount to simplify the implementation
 	of classes usable with boost::intrusive_ptr
     \li boost::bind extensions
     \li An interface to the \c g++ demangler integrated with type_info 
@@ -185,7 +185,7 @@
     environment. Included are a number of templates to help
     bootstrapping a new project or component.
 
-    \see <a href="../../satscons/doc/html/index.html">SENFSCons
+    \see <a href="../../senfscons/doc/html/index.html">SENFSCons
     reference</a>
  */
 
@@ -225,7 +225,7 @@
 
     The default editor (probably VI) will be started with the current
     value of the svn:externals property (which will probably be
-    empty). Now add all the modules you want plus \c satscons and
+    empty). Now add all the modules you want plus \c senfscons and
     possibly \c doclib (if you want to build the documentation). You
     will almost certainly neeed the \c Utils module, since all other
     modules depend on it.
@@ -234,7 +234,7 @@
     module, the file will look like
 
       <pre class="fragment">
-        satscons http://svn.berlios.de/svnroot/repos/senf/trunk/satscons
+        senfscons http://svn.berlios.de/svnroot/repos/senf/trunk/senfscons
         Utils http://svn.berlios.de/svnroot/repos/senf/trunk/Utils
         Scheduler http://svn.berlios.de/svnroot/repos/senf/trunk/Scheduler
         Socket http://svn.berlios.de/svnroot/repos/senf/trunk/Socket</pre>
@@ -250,7 +250,7 @@
     \section new_conf Configuring SENFSCons
 
     To set up the build environment, copy the
-    <tt>satscons/SConstruct.template</tt> to <tt>Satscons</tt> in the
+    <tt>senfscons/SConstruct.template</tt> to <tt>Satscons</tt> in the
     project root. The default setup of this file is to build all
     subdirectories (using the \c SConscript files of the
     subdirectories). You can add additonal global targets and
@@ -258,7 +258,7 @@
 
     If you want to use a non-default compiler or the boost library is
     not installed in the system directories, you will have to copy
-    <tt>satscons/SConfig.template</tt> to <tt>SConfig</tt> in the
+    <tt>senfscons/SConfig.template</tt> to <tt>SConfig</tt> in the
     project root and edit it there. You should \e never add \c SConfig
     to the repository since it should only contain local settings
     necessary for building on your local system. You should therefore
@@ -290,7 +290,7 @@
     <pre class="fragment">
       $ scons -u [target]</pre>
 
-    \see <a href="../../satscons/doc/html/index.html">SENFSCons reference</a> \n
+    \see <a href="../../senfscons/doc/html/index.html">SENFSCons reference</a> \n
          <a class="ext" href="http://www.scons.org/documentation.php">SCons documentation</a> \n
          <a class="ext" href="http://svnbook.red-bean.com">Subversion online book</a> \n
          <a class="ext" href="http://subversion.tigris.org">Subversion Homepage</a>

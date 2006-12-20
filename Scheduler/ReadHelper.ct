@@ -16,7 +16,7 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Handle>
-prefix_ satcom::lib::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_type maxSize,
+prefix_ senf::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_type maxSize,
                                                     InternalPredicate * predicate, Callback cb)
     : handle_(handle), maxSize_(maxSize), predicate_(predicate), callback_(cb), 
       errno_(0), complete_(false)
@@ -25,23 +25,23 @@ prefix_ satcom::lib::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::
     // argumnet instead of a simple bound-member as callback to the
     // scheduler. This ensures, that the refcount is at least 1 as
     // long as the helper is registered with the scheduler.
-    satcom::lib::Scheduler::instance()
+    senf::Scheduler::instance()
 	.add(handle,boost::bind(&ReadHelper::dispatchProcess,ptr(this),_1,_2),
-	     satcom::lib::Scheduler::EV_READ);
+	     senf::Scheduler::EV_READ);
 }
 
 template <class Handle>
-prefix_ void satcom::lib::ReadHelper<Handle>::revoke()
+prefix_ void senf::ReadHelper<Handle>::revoke()
 {
     ptr guard (this); // To ensure, 'this' is deleted only after this method terminates ...
-    satcom::lib::Scheduler::instance()
-	.remove(handle_,satcom::lib::Scheduler::EV_READ);
+    senf::Scheduler::instance()
+	.remove(handle_,senf::Scheduler::EV_READ);
 }
 
 template <class Handle>
 prefix_ void
-satcom::lib::ReadHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
-                                                 satcom::lib::Scheduler::EventId event)
+senf::ReadHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
+                                                 senf::Scheduler::EventId event)
 {
     // since we have a 'ptr' argument, the instance cannot be deleted
     // before this method returns
@@ -49,11 +49,11 @@ satcom::lib::ReadHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
 }
 
 template <class Handle>
-prefix_ void satcom::lib::ReadHelper<Handle>::process(Handle handle,
-                                                      satcom::lib::Scheduler::EventId event)
+prefix_ void senf::ReadHelper<Handle>::process(Handle handle,
+                                                      senf::Scheduler::EventId event)
 {
     try {
-	if (event != satcom::lib::Scheduler::EV_READ)
+	if (event != senf::Scheduler::EV_READ)
 	    throw SystemException(EPIPE);
 	std::string rcv (handle.read(maxSize_ - data_.size()));
 	data_.append(rcv);
@@ -67,14 +67,14 @@ prefix_ void satcom::lib::ReadHelper<Handle>::process(Handle handle,
 	    done();
 	}
     }
-    catch (satcom::lib::SystemException const & ex) {
+    catch (senf::SystemException const & ex) {
 	errno_ = ex.err;
 	done();
     }
 }
 
 template <class Handle>
-prefix_ void satcom::lib::ReadHelper<Handle>::done()
+prefix_ void senf::ReadHelper<Handle>::done()
 {
     revoke();
     callback_(ptr(this));
@@ -83,7 +83,7 @@ prefix_ void satcom::lib::ReadHelper<Handle>::done()
 template <class Handle>
 template <class Predicate>
 prefix_ std::string::size_type
-satcom::lib::ReadHelper<Handle>::InternalPredicate::Dispatcher<Predicate>::
+senf::ReadHelper<Handle>::InternalPredicate::Dispatcher<Predicate>::
 operator()(std::string const & data)
 {
     return predicate(data);

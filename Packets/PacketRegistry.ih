@@ -30,8 +30,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 namespace impl {
 
     struct PkReg_Entry {
@@ -77,7 +77,7 @@ namespace impl {
         template <class OtherPacket>
         void registerPacket(key_t key);
 
-        key_t key(satcom::lib::TypeIdValue const & type);
+        key_t key(senf::TypeIdValue const & type);
 
         Entry * lookup(key_t key);
 
@@ -89,7 +89,7 @@ namespace impl {
 
         typedef boost::shared_ptr<Entry> Entry_ptr;
         typedef std::map<key_t, Entry_ptr> PacketMap;
-        typedef std::map<satcom::lib::TypeIdValue, key_t> ReversePacketMap;
+        typedef std::map<senf::TypeIdValue, key_t> ReversePacketMap;
 
         PacketMap registry_;
         ReversePacketMap reverseRegistry_;
@@ -97,7 +97,7 @@ namespace impl {
 
     extern PkReg_EntryImpl<DataPacket> pkreg_dataEntry;
 
-}}}
+}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -105,5 +105,5 @@ namespace impl {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

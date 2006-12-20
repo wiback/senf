@@ -30,14 +30,14 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::SocketProtocol::SocketProtocol()
+prefix_ senf::SocketProtocol::SocketProtocol()
     : body_(0)
 {}
 
-prefix_  satcom::lib::SocketProtocol::~SocketProtocol()
+prefix_  senf::SocketProtocol::~SocketProtocol()
 {}
 
-prefix_ satcom::lib::SocketBody & satcom::lib::SocketProtocol::body()
+prefix_ senf::SocketBody & senf::SocketProtocol::body()
     const
 {
     BOOST_ASSERT( body_ );
@@ -50,5 +50,5 @@ prefix_ satcom::lib::SocketBody & satcom::lib::SocketProtocol::body()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

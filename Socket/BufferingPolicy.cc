@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned satcom::lib::SocketBufferingPolicy::rcvbuf(FileHandle handle)
+prefix_ unsigned senf::SocketBufferingPolicy::rcvbuf(FileHandle handle)
 {
     unsigned size;
     socklen_t len (sizeof(size));
@@ -46,13 +46,13 @@ prefix_ unsigned satcom::lib::SocketBufferingPolicy::rcvbuf(FileHandle handle)
     return size/2;
 }
 
-prefix_ void satcom::lib::SocketBufferingPolicy::rcvbuf(FileHandle handle, unsigned size)
+prefix_ void senf::SocketBufferingPolicy::rcvbuf(FileHandle handle, unsigned size)
 {
     if (::setsockopt(handle.fd(),SOL_SOCKET,SO_RCVBUF,&size,sizeof(size)) < 0)
         throw SystemException(errno);
 }
 
-prefix_ unsigned satcom::lib::SocketBufferingPolicy::sndbuf(FileHandle handle)
+prefix_ unsigned senf::SocketBufferingPolicy::sndbuf(FileHandle handle)
 {
     unsigned size;
     socklen_t len (sizeof(size));
@@ -64,7 +64,7 @@ prefix_ unsigned satcom::lib::SocketBufferingPolicy::sndbuf(FileHandle handle)
     
 }
 
-prefix_ void satcom::lib::SocketBufferingPolicy::sndbuf(FileHandle handle, unsigned size)
+prefix_ void senf::SocketBufferingPolicy::sndbuf(FileHandle handle, unsigned size)
 {
     if (::setsockopt(handle.fd(),SOL_SOCKET,SO_SNDBUF,&size,sizeof(size)) < 0)
         throw SystemException(errno);
@@ -77,5 +77,5 @@ prefix_ void satcom::lib::SocketBufferingPolicy::sndbuf(FileHandle handle, unsig
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

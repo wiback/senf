@@ -20,25 +20,25 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::daemonize()
+prefix_ void senf::daemonize()
 {
     int pid = fork();
     if (pid < 0)
-	throw satcom::lib::SystemException("fork",errno);
+	throw senf::SystemException("fork",errno);
     if (pid > 0)
 	::_exit(0);
     if (::setsid() < 0)
-	throw satcom::lib::SystemException("setsid",errno);
+	throw senf::SystemException("setsid",errno);
 }
 
-prefix_ void satcom::lib::redirect_stdio(std::string const & path)
+prefix_ void senf::redirect_stdio(std::string const & path)
 {
     int fd = ::open(path.c_str(),O_RDWR);
-    if (fd < 0) throw satcom::lib::SystemException("open",errno);
-    if (dup2(fd,0) < 0) throw satcom::lib::SystemException("dup2",errno);
-    if (dup2(fd,1) < 0) throw satcom::lib::SystemException("dup2",errno);
-    if (dup2(fd,2) < 0) throw satcom::lib::SystemException("dup2",errno);
-    if (::close(fd) < 0) throw satcom::lib::SystemException("close",errno);
+    if (fd < 0) throw senf::SystemException("open",errno);
+    if (dup2(fd,0) < 0) throw senf::SystemException("dup2",errno);
+    if (dup2(fd,1) < 0) throw senf::SystemException("dup2",errno);
+    if (dup2(fd,2) < 0) throw senf::SystemException("dup2",errno);
+    if (::close(fd) < 0) throw senf::SystemException("close",errno);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

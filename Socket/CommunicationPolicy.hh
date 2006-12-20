@@ -33,8 +33,8 @@
 
 struct sockaddr;
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
     
     template <class Policy> class ServerSocketHandle;
 
@@ -52,7 +52,7 @@ namespace lib {
     struct UnconnectedCommunicationPolicy : public CommunicationPolicyBase
     {};
 
-}}
+}
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -64,5 +64,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

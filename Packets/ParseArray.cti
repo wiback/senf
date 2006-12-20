@@ -37,31 +37,31 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array()
+prefix_ senf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array()
 {}
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
 prefix_
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array(Iterator const & i)
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array(Iterator const & i)
     : ParserBase<Iterator,IPacket>(i) 
 {}
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ unsigned satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::bytes()
+prefix_ unsigned senf::Parse_Array<elements,Parser,Iterator,IPacket>::bytes()
 {
     return elements*Parser::bytes();
 }
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
 prefix_ bool
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::check(Iterator const & e)
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::check(Iterator const & e)
     const
 {
     return e-this->i() >= bytes();
 }
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ void satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::init()
+prefix_ void senf::Parse_Array<elements,Parser,Iterator,IPacket>::init()
     const
 {
     iterator e=end();
@@ -71,47 +71,47 @@ prefix_ void satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::init()
 ///////////////////////////////////////////////////////////////////////////
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::size_type
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::size()
+prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::size_type
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::size()
 {
     return elements;
 }
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::begin()
+prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::begin()
     const
 {
     return iterator(this->i());
 }
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::end()
+prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::end()
     const
 {
     return iterator(this->i()+bytes());
 }
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::range_type
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::range()
+prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::range_type
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::range()
     const
 {
     return std::make_pair(begin(),end());
 }
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::value()
+prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::value()
     const
 {
     return begin();
 }
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::value_type
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::operator[](difference_type i)
+prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::value_type
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::operator[](difference_type i)
     const
 {
     return begin()[i];
@@ -119,8 +119,8 @@ satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::operator[](differenc
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
 template <class InputIterator>
-prefix_ satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket> const &
-satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::operator=(InputIterator const & i)
+prefix_ senf::Parse_Array<elements,Parser,Iterator,IPacket> const &
+senf::Parse_Array<elements,Parser,Iterator,IPacket>::operator=(InputIterator const & i)
 {
     copy_n(i,size(),begin());
 }
@@ -128,40 +128,40 @@ satcom::pkf::Parse_Array<elements,Parser,Iterator,IPacket>::operator=(InputItera
 ///////////////////////////////////////////////////////////////////////////
 
 template <class Parser, class Iterator>
-prefix_ Iterator satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::raw()
+prefix_ Iterator senf::impl::Parse_Array_iterator<Parser,Iterator>::raw()
     const
 {
     return i_;
 }
 
 template <class Parser, class Iterator>
-prefix_ Parser satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::operator[](int i)
+prefix_ Parser senf::impl::Parse_Array_iterator<Parser,Iterator>::operator[](int i)
     const
 {
     return (*this+i).dereference();
 }
 
 template <class Parser, class Iterator>
-prefix_ satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::Parse_Array_iterator()
+prefix_ senf::impl::Parse_Array_iterator<Parser,Iterator>::Parse_Array_iterator()
     : i_()
 {}
 
 template <class Parser, class Iterator>
-prefix_  satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::
+prefix_  senf::impl::Parse_Array_iterator<Parser,Iterator>::
 Parse_Array_iterator(Iterator const & i)
     : i_(i)
 {}
 
 template <class Parser, class Iterator>
 prefix_ Parser
-satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::dereference()
+senf::impl::Parse_Array_iterator<Parser,Iterator>::dereference()
     const
 {
     return Parser(i_);
 }
 
 template <class Parser, class Iterator>
-prefix_ bool satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::
+prefix_ bool senf::impl::Parse_Array_iterator<Parser,Iterator>::
 equal(Parse_Array_iterator const & other)
     const
 {
@@ -169,7 +169,7 @@ equal(Parse_Array_iterator const & other)
 }
 
 template <class Parser, class Iterator>
-prefix_ int satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::
+prefix_ int senf::impl::Parse_Array_iterator<Parser,Iterator>::
 distance_to(Parse_Array_iterator const & other)
     const
 {
@@ -177,20 +177,20 @@ distance_to(Parse_Array_iterator const & other)
 }
 
 template <class Parser, class Iterator>
-prefix_ void satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::increment()
+prefix_ void senf::impl::Parse_Array_iterator<Parser,Iterator>::increment()
 {
     i_ += Parser::bytes();
 }
 
 template <class Parser, class Iterator>
-prefix_ void satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::decrement()
+prefix_ void senf::impl::Parse_Array_iterator<Parser,Iterator>::decrement()
 {
     i_ -= Parser::bytes();
 }
 
 template <class Parser, class Iterator>
 prefix_ void
-satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::advance(int n)
+senf::impl::Parse_Array_iterator<Parser,Iterator>::advance(int n)
 {
     i_ += n*Parser::bytes();
 }
@@ -202,5 +202,5 @@ satcom::pkf::impl::Parse_Array_iterator<Parser,Iterator>::advance(int n)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

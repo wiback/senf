@@ -30,8 +30,8 @@
 //#include "Exception.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     struct SystemException : public std::exception
     {
@@ -49,7 +49,7 @@ namespace lib {
 	std::string buffer_;
     };
     
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Exception.cci"
@@ -60,5 +60,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

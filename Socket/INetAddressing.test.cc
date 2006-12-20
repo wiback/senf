@@ -36,8 +36,8 @@
 
 BOOST_AUTO_UNIT_TEST(inet4Address)
 {
-    using satcom::lib::INet4Address;
-    using satcom::lib::InvalidINetAddressException;
+    using senf::INet4Address;
+    using senf::InvalidINetAddressException;
 
     {
         INet4Address addr;
@@ -85,5 +85,5 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

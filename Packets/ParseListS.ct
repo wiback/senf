@@ -31,7 +31,7 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ unsigned satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::bytes()
+prefix_ unsigned senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::bytes()
     const
 {
     iterator i (begin());
@@ -46,7 +46,7 @@ prefix_ unsigned satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::byt
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
 prefix_ bool
-satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::check(Iterator const & e)
+senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::check(Iterator const & e)
     const
 {
     byte_iterator i (this->i());
@@ -61,7 +61,7 @@ satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::check(Iterator const
 }
 
 template <class Parser, class Sentinel, class Iterator, class IPacket>
-prefix_ void satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::init()
+prefix_ void senf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::init()
     const
 {
     iterator i (begin());
@@ -74,12 +74,12 @@ prefix_ void satcom::pkf::Parse_ListS<Parser,Sentinel,Iterator,IPacket>::init()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>
+// senf::Parse_ListS_wrapper<Parser,Sentinel,Container>
 
 template <class Parser, class Sentinel, class Container>
 template <class Value>
 prefix_ void
-satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos,
+senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos,
                                                                     Value const & t)
 {
     // FIXME: What, if pos == end() / default constructed iterator ?
@@ -91,7 +91,7 @@ satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos
 template <class Parser, class Sentinel, class Container>
 template <class Value>
 prefix_ void
-satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos, size_type n,
+senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos, size_type n,
                                                                     Value const & t)
 {
     size_type ix (pos.raw()-container_.begin());
@@ -104,7 +104,7 @@ satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos
 template <class Parser, class Sentinel, class Container>
 template <class InputIterator>
 prefix_ void
-satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos,
+senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos,
                                                                     InputIterator f,
                                                                     InputIterator l)
 {
@@ -117,5 +117,5 @@ satcom::pkf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

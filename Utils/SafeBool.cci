@@ -9,22 +9,22 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void satcom::lib::SafeBoolBase::this_type_does_not_support_comparisons()
+prefix_ void senf::SafeBoolBase::this_type_does_not_support_comparisons()
     const
 {}
 
-prefix_ satcom::lib::SafeBoolBase::SafeBoolBase()
+prefix_ senf::SafeBoolBase::SafeBoolBase()
 {}
 
-prefix_ satcom::lib::SafeBoolBase::SafeBoolBase(const SafeBoolBase&)
+prefix_ senf::SafeBoolBase::SafeBoolBase(const SafeBoolBase&)
 {}
 
-prefix_ satcom::lib::SafeBoolBase& satcom::lib::SafeBoolBase::operator=(const SafeBoolBase&)
+prefix_ senf::SafeBoolBase& senf::SafeBoolBase::operator=(const SafeBoolBase&)
 {
     return *this;
 }
 
-prefix_ satcom::lib::SafeBoolBase::~SafeBoolBase()
+prefix_ senf::SafeBoolBase::~SafeBoolBase()
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

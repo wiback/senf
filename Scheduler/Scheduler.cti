@@ -31,7 +31,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Handle>
-prefix_ void satcom::lib::Scheduler::add(Handle const & handle,
+prefix_ void senf::Scheduler::add(Handle const & handle,
                                          typename GenericCallback<Handle>::Callback const & cb,
                                          int eventMask)
 {
@@ -42,7 +42,7 @@ prefix_ void satcom::lib::Scheduler::add(Handle const & handle,
 }
 
 template <class Handle>
-prefix_ void satcom::lib::Scheduler::remove(Handle const & handle, int eventMask)
+prefix_ void senf::Scheduler::remove(Handle const & handle, int eventMask)
 {
     // retrieve_filehandle is found via ADL
     do_remove(retrieve_filehandle(handle),eventMask);
@@ -54,5 +54,5 @@ prefix_ void satcom::lib::Scheduler::remove(Handle const & handle, int eventMask
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

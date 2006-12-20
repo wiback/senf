@@ -35,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace satcom::pkf;
+using namespace senf;
 
 BOOST_AUTO_UNIT_TEST(parseInt_fixedSizes)
 {
@@ -237,5 +237,5 @@ BOOST_AUTO_UNIT_TEST(parseInt_inherited)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

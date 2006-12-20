@@ -34,8 +34,8 @@
 #define SATCOM_PKF_REFC_MSG(x)
 #endif
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 namespace impl {
 
     // This deleter is used in the PacketImpl list holding the
@@ -91,10 +91,10 @@ namespace impl {
     // method invocations
     void intrusive_ptr_add_ref(PacketImpl * p);
     void intrusive_ptr_release(PacketImpl * p);
-}}}
+}}
 
 
-struct satcom::pkf::Packet::PacketOp_register
+struct senf::Packet::PacketOp_register
 {
     size_type b;
     size_type e;
@@ -109,7 +109,7 @@ struct satcom::pkf::Packet::PacketOp_register
     { p->i_registerInterpreter(self); }
 };
 
-struct satcom::pkf::Packet::PacketOp_replace 
+struct senf::Packet::PacketOp_replace 
 {
     Packet * p;
 
@@ -121,7 +121,7 @@ struct satcom::pkf::Packet::PacketOp_replace
     { p->i_replaceInterpreter(self); }
 };
 
-struct satcom::pkf::Packet::PacketOp_set
+struct senf::Packet::PacketOp_set
 {
     impl::PacketImpl * i;
 
@@ -139,5 +139,5 @@ struct satcom::pkf::Packet::PacketOp_set
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

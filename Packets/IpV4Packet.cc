@@ -35,21 +35,20 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    namespace pkf = satcom::pkf;
-    pkf::PacketRegistry<pkf::EtherTypes>::RegistrationProxy<pkf::IpV4Packet> 
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV4Packet> 
         registerIpV4Packet(0x0800);
 }
 
-prefix_ void satcom::pkf::IpV4Packet::v_nextInterpreter()
+prefix_ void senf::IpV4Packet::v_nextInterpreter()
     const
 {
     registerInterpreter(protocol(),begin()+bytes(),end());
 }
 
-prefix_ void satcom::pkf::IpV4Packet::v_finalize()
+prefix_ void senf::IpV4Packet::v_finalize()
 {}
 
-prefix_ void satcom::pkf::IpV4Packet::v_dump(std::ostream & os)
+prefix_ void senf::IpV4Packet::v_dump(std::ostream & os)
     const
 {
     struct in_addr in;
@@ -79,5 +78,5 @@ prefix_ void satcom::pkf::IpV4Packet::v_dump(std::ostream & os)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -32,7 +32,7 @@
 template <class Parser, class SizeParser, class Container>
 template <class Value>
 prefix_ void
-satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
+senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
                                                                        Value const & t)
 {
     size_type ix(pos.raw()-container_.begin());
@@ -43,7 +43,7 @@ satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator 
 template <class Parser, class SizeParser, class Container>
 template <class Value>
 prefix_ void
-satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
+senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
                                                                        size_type n,
                                                                        Value const & t)
 {
@@ -57,7 +57,7 @@ satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator 
 template <class Parser, class SizeParser, class Container>
 template <class InputIterator>
 prefix_ void
-satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
+senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
                                                                        InputIterator f,
                                                                        InputIterator l)
 {
@@ -77,5 +77,5 @@ satcom::pkf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator 
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

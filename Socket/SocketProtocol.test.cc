@@ -38,7 +38,7 @@
 
 BOOST_AUTO_UNIT_TEST(socketProtocol)
 {
-    satcom::lib::test::SomeProtocol protocol;
+    senf::test::SomeProtocol protocol;
 
     // This would fail an assertion ...
     // BOOST_CHECK( protocol.body() == 0 ); 
@@ -52,5 +52,5 @@ BOOST_AUTO_UNIT_TEST(socketProtocol)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

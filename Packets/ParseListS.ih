@@ -28,8 +28,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 namespace impl {
 
     template <class Parser, class Sentinel, class Iterator>
@@ -56,7 +56,7 @@ namespace impl {
         bool atEnd_;
     };
 
-}}}
+}}
 
 
 ///////////////////////////////ih.e////////////////////////////////////////
@@ -65,5 +65,5 @@ namespace impl {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

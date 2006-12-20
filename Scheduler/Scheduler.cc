@@ -78,25 +78,25 @@ static const int EPollInitialSize = 16;
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ satcom::lib::Scheduler::Scheduler & satcom::lib::Scheduler::instance()
+prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
 {
     static Scheduler instance;
     return instance;
 }
 
-prefix_ void satcom::lib::Scheduler::timeout(unsigned long timeout, TimerCallback const & cb)
+prefix_ void senf::Scheduler::timeout(unsigned long timeout, TimerCallback const & cb)
 {
     timerQueue_.push(TimerSpec(now()+1000*timeout,cb));
 }
 
-prefix_ satcom::lib::Scheduler::Scheduler()
+prefix_ senf::Scheduler::Scheduler()
     : epollFd_(epoll_create(EPollInitialSize))
 {
     if (epollFd_<0)
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::Scheduler::do_add(int fd, SimpleCallback const & cb, int eventMask)
+prefix_ void senf::Scheduler::do_add(int fd, SimpleCallback const & cb, int eventMask)
 {
     FdTable::iterator i (fdTable_.find(fd));
     int action (EPOLL_CTL_MOD);
@@ -120,7 +120,7 @@ prefix_ void satcom::lib::Scheduler::do_add(int fd, SimpleCallback const & cb, i
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::Scheduler::do_remove(int fd, int eventMask)
+prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
 {
     FdTable::iterator i (fdTable_.find(fd));
     if (i == fdTable_.end()) 
@@ -148,7 +148,7 @@ prefix_ void satcom::lib::Scheduler::do_remove(int fd, int eventMask)
 }
 
 
-prefix_ int satcom::lib::Scheduler::EventSpec::epollMask()
+prefix_ int senf::Scheduler::EventSpec::epollMask()
     const
 {
     int mask (0);
@@ -160,7 +160,7 @@ prefix_ int satcom::lib::Scheduler::EventSpec::epollMask()
     return mask;
 }
 
-prefix_ void satcom::lib::Scheduler::process()
+prefix_ void senf::Scheduler::process()
 {
     terminate_ = false;
     while (! terminate_) {
@@ -226,5 +226,5 @@ prefix_ void satcom::lib::Scheduler::process()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -33,8 +33,8 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 #include "ParseInt.ih"
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int8
@@ -305,7 +305,7 @@ namespace pkf {
         Parse_Flag const & operator= (value_type other) { value(other); return *this; }
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "ParseInt.cci"
@@ -316,5 +316,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

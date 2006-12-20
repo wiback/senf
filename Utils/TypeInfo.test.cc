@@ -53,8 +53,8 @@ BOOST_AUTO_UNIT_TEST(prettyName)
     TestType ob;
     test::Base const & baseOb(ob);
 
-    BOOST_CHECK_EQUAL( satcom::lib::prettyName(typeid(int)), "int");
-    BOOST_CHECK_EQUAL( satcom::lib::prettyName(typeid(baseOb)), "test::Foo<test::Foo<test::Blub, 1>, 10>" );
+    BOOST_CHECK_EQUAL( senf::prettyName(typeid(int)), "int");
+    BOOST_CHECK_EQUAL( senf::prettyName(typeid(baseOb)), "test::Foo<test::Foo<test::Blub, 1>, 10>" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
@@ -63,5 +63,5 @@ BOOST_AUTO_UNIT_TEST(prettyName)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

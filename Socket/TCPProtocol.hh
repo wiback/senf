@@ -29,8 +29,8 @@
 //#include "TCPProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     class TCPProtocol
         : public virtual SocketProtocol
@@ -45,7 +45,7 @@ namespace lib {
         bool eof() const;
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "TCPProtocol.cci"
@@ -56,5 +56,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

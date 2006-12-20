@@ -1,7 +1,7 @@
 # -*- python -*-
 
 import sys, glob
-sys.path.append('satscons')
+sys.path.append('senfscons')
 import SatSCons
 
 ###########################################################################

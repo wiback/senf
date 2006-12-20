@@ -11,13 +11,13 @@
 //#include "DaemonTools.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     void daemonize();
     void redirect_stdio(std::string const & path = "/dev/null");
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "DaemonTools.cci"

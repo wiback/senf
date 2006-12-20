@@ -36,8 +36,6 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace pkf = satcom::pkf;
-
 // The non-inherited Version is extensively tested in PaseInt.test.hh
 
 BOOST_AUTO_UNIT_TEST(parserBase_inherited)
@@ -47,15 +45,15 @@ BOOST_AUTO_UNIT_TEST(parserBase_inherited)
 
 namespace {
 
-    template <class Iterator=pkf::nil, class IPacket=pkf::nil>
-    struct Parse_Test : public pkf::ParserBase<Iterator,IPacket>
+    template <class Iterator=senf::nil, class IPacket=senf::nil>
+    struct Parse_Test : public senf::ParserBase<Iterator,IPacket>
     {
-        template <class I=pkf::nil, class P=pkf::nil>
+        template <class I=senf::nil, class P=senf::nil>
         struct rebind { typedef Parse_Test<I,P> parser; };
         typedef Iterator byte_iterator;
         
         Parse_Test() {}
-        Parse_Test(Iterator const & i) : pkf::ParserBase<Iterator,IPacket>(i) {}
+        Parse_Test(Iterator const & i) : senf::ParserBase<Iterator,IPacket>(i) {}
         
         static unsigned bytes() { return 14; }
 
@@ -63,15 +61,15 @@ namespace {
 
     };
 
-    template <class Iterator=pkf::nil, class IPacket=pkf::nil>
-    struct Parse_Test2 : public pkf::ParserBase<Iterator,IPacket>
+    template <class Iterator=senf::nil, class IPacket=senf::nil>
+    struct Parse_Test2 : public senf::ParserBase<Iterator,IPacket>
     {
-        template <class I=pkf::nil, class P=pkf::nil>
+        template <class I=senf::nil, class P=senf::nil>
         struct rebind { typedef Parse_Test<I,P> parser; };
         typedef Iterator byte_iterator;
         
         Parse_Test2() {}
-        Parse_Test2(Iterator const & i) : pkf::ParserBase<Iterator,IPacket>(i) {}
+        Parse_Test2(Iterator const & i) : senf::ParserBase<Iterator,IPacket>(i) {}
         
         unsigned bytes() const { return 14; }
         static unsigned check(Iterator a, Iterator b)
@@ -86,16 +84,16 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(parserBase_construction)
 {
-    BOOST_STATIC_ASSERT( pkf::Parser_traits< Parse_Test<> >::fixed_size );
-    BOOST_STATIC_ASSERT( ! pkf::Parser_traits< Parse_Test2<> >::fixed_size );
+    BOOST_STATIC_ASSERT( senf::Parser_traits< Parse_Test<> >::fixed_size );
+    BOOST_STATIC_ASSERT( ! senf::Parser_traits< Parse_Test2<> >::fixed_size );
 
-    BOOST_CHECK_EQUAL( pkf::min_bytes< Parse_Test<int> >(), 14u );
-    BOOST_CHECK( pkf::check< Parse_Test<int> >(0,14) );
-    BOOST_CHECK( ! pkf::check< Parse_Test<int> >(2,15) );
+    BOOST_CHECK_EQUAL( senf::min_bytes< Parse_Test<int> >(), 14u );
+    BOOST_CHECK( senf::check< Parse_Test<int> >(0,14) );
+    BOOST_CHECK( ! senf::check< Parse_Test<int> >(2,15) );
 
-    BOOST_CHECK_EQUAL( pkf::min_bytes< Parse_Test2<int> >(), 10u );
-    BOOST_CHECK( pkf::check< Parse_Test2<int> >(2,13) );
-    BOOST_CHECK( pkf::check< Parse_Test2<int> >(2,12) );
+    BOOST_CHECK_EQUAL( senf::min_bytes< Parse_Test2<int> >(), 10u );
+    BOOST_CHECK( senf::check< Parse_Test2<int> >(2,13) );
+    BOOST_CHECK( senf::check< Parse_Test2<int> >(2,12) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
@@ -104,5 +102,5 @@ BOOST_AUTO_UNIT_TEST(parserBase_construction)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

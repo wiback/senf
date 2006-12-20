@@ -37,7 +37,7 @@
 
 namespace {
     struct Tester 
-        : public satcom::lib::intrusive_refcount
+        : public senf::intrusive_refcount
     {
         typedef boost::intrusive_ptr<Tester> ptr;
 
@@ -80,5 +80,5 @@ BOOST_AUTO_UNIT_TEST(intrusive_refcount)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

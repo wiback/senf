@@ -40,8 +40,8 @@
 //#include "TCPSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     typedef MakeSocketPolicy<
         INet4AddressingPolicy,
@@ -92,7 +92,7 @@ namespace lib {
     typedef ProtocolClientSocketHandle<TCPv6SocketProtocol> TCPv6ClientSocketHandle;
     typedef ProtocolServerSocketHandle<TCPv6SocketProtocol> TCPv6ServerSocketHandle;
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "TCPSocketHandle.cci"
@@ -103,5 +103,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

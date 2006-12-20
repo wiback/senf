@@ -39,7 +39,7 @@
 
 namespace {
     
-    namespace sl = satcom::lib;
+    namespace sl = senf;
     
     class MySocketHandle
         : public sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>
@@ -70,7 +70,7 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
 
     typedef sl::ServerSocketHandle<sl::MakeSocketPolicy<
         OtherSocketPolicy,
-        satcom::lib::NoAddressingPolicy
+        senf::NoAddressingPolicy
         >::policy> SomeOtherSocketHandle;
     typedef sl::ClientSocketHandle<OtherSocketPolicy> OtherClientHandle;
     
@@ -97,5 +97,5 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

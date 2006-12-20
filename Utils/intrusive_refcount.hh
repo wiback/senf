@@ -29,8 +29,8 @@
 //#include "intrusive_refcount.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     /** \brief
      */
@@ -54,14 +54,14 @@ namespace lib {
 
         refcount_t refcount_;
 
-        friend void satcom::lib::intrusive_ptr_add_ref(intrusive_refcount* p);
-        friend void satcom::lib::intrusive_ptr_release(intrusive_refcount* p);
+        friend void senf::intrusive_ptr_add_ref(intrusive_refcount* p);
+        friend void senf::intrusive_ptr_release(intrusive_refcount* p);
     };
 
     void intrusive_ptr_add_ref(intrusive_refcount* p);
     void intrusive_ptr_release(intrusive_refcount* p);
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "intrusive_refcount.cci"
@@ -72,5 +72,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

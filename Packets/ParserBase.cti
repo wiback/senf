@@ -30,58 +30,58 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Iterator, class IPacket>
-prefix_ Iterator satcom::pkf::ParserBase<Iterator,IPacket>::i()
+prefix_ Iterator senf::ParserBase<Iterator,IPacket>::i()
     const
 {
     return static_cast<IPacket const *>(this)->begin();
 }
 
 template <class Iterator>
-prefix_ satcom::pkf::ParserBase<Iterator,satcom::pkf::nil>::ParserBase(Iterator const & i)
+prefix_ senf::ParserBase<Iterator,senf::nil>::ParserBase(Iterator const & i)
     : i_(i)
 {}
 
 template <class Iterator>
-prefix_ Iterator satcom::pkf::ParserBase<Iterator,satcom::pkf::nil>::i()
+prefix_ Iterator senf::ParserBase<Iterator,senf::nil>::i()
     const
 {
     return i_;
 }
 
 template <class Parser, class Iterator>
-prefix_ bool satcom::pkf::impl::check(Iterator const & b, Iterator const & e,
+prefix_ bool senf::impl::check(Iterator const & b, Iterator const & e,
                                       impl::ParserBase *)
 {
     return impl::ParserCheck<Parser,Parser_traits<Parser>::fixed_size>::check(b,e);
 }
 
 template <class Parser, class Iterator>
-prefix_ bool satcom::pkf::impl::check(Iterator const & b, Iterator const & e,
+prefix_ bool senf::impl::check(Iterator const & b, Iterator const & e,
                                       void *)
 {
     return Parser::check(b,e);
 }
 
 template <class Parser, class Iterator>
-prefix_ bool satcom::pkf::check(Iterator const & b, Iterator const & e)
+prefix_ bool senf::check(Iterator const & b, Iterator const & e)
 {
     return impl::check<Parser,Iterator>(b,e,static_cast<Parser*>(0));
 }
 
 template <class Parser>
-prefix_ unsigned satcom::pkf::impl::min_bytes(impl::ParserBase *)
+prefix_ unsigned senf::impl::min_bytes(impl::ParserBase *)
 {
     return impl::ParserMinBytes<Parser,Parser_traits<Parser>::fixed_size>::bytes();
 }
 
 template <class Parser>
-prefix_ unsigned satcom::pkf::impl::min_bytes(void *)
+prefix_ unsigned senf::impl::min_bytes(void *)
 {
     return 0;
 }
 
 template <class Parser>
-prefix_ unsigned satcom::pkf::min_bytes()
+prefix_ unsigned senf::min_bytes()
 {
     return impl::min_bytes<Parser>(static_cast<Parser*>(0));
 }
@@ -92,5 +92,5 @@ prefix_ unsigned satcom::pkf::min_bytes()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

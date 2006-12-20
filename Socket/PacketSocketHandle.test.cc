@@ -41,15 +41,15 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
 {
     // We have a Problem here .. packet sockets are only allowed for root
     if (getuid() != 0) {
-        BOOST_WARN_MESSAGE(false, "Cannot test satcom::lib::PacketSocketHandle as non-root user");
+        BOOST_WARN_MESSAGE(false, "Cannot test senf::PacketSocketHandle as non-root user");
         return;
     }
 
     {
-        satcom::lib::PacketSocketHandle sock;
+        senf::PacketSocketHandle sock;
         
-        BOOST_CHECK_NO_THROW( sock.bind(satcom::lib::LLSocketAddress("lo")) );
-        satcom::lib::LLSocketAddress a;
+        BOOST_CHECK_NO_THROW( sock.bind(senf::LLSocketAddress("lo")) );
+        senf::LLSocketAddress a;
         BOOST_CHECK_NO_THROW( sock.local(a) );
         BOOST_CHECK_EQUAL( a.interface(), "lo" );
 
@@ -58,17 +58,17 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
         // BUG: There are some failures here ... need to investigate
         /*
         BOOST_CHECK_NO_THROW( sock.protocol().promisc(
-                                  "lo",satcom::lib::PacketProtocol::Promiscuous) );
+                                  "lo",senf::PacketProtocol::Promiscuous) );
         BOOST_CHECK_NO_THROW( sock.protocol().promisc(
-                                  "lo",satcom::lib::PacketProtocol::AllMulticast) );
+                                  "lo",senf::PacketProtocol::AllMulticast) );
         BOOST_CHECK_NO_THROW( sock.protocol().promisc(
-                                  "lo",satcom::lib::PacketProtocol::None) );
+                                  "lo",senf::PacketProtocol::None) );
         */
         
         BOOST_CHECK_NO_THROW( sock.protocol().mcAdd(
-                                  "lo",satcom::lib::llAddress("01-02-03-04-05-06")) );
+                                  "lo",senf::llAddress("01-02-03-04-05-06")) );
         BOOST_CHECK_NO_THROW( sock.protocol().mcDrop(
-                                  "lo",satcom::lib::llAddress("01-02-03-04-05-06")) );
+                                  "lo",senf::llAddress("01-02-03-04-05-06")) );
 
         BOOST_CHECK_NO_THROW( sock.protocol().available() );
         BOOST_CHECK( ! sock.eof() );
@@ -81,5 +81,5 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

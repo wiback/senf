@@ -13,8 +13,8 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Handle>
-prefix_ typename satcom::lib::ReadHelper<Handle>::ptr
-satcom::lib::ReadHelper<Handle>::dispatch(Handle handle, std::string::size_type maxSize,
+prefix_ typename senf::ReadHelper<Handle>::ptr
+senf::ReadHelper<Handle>::dispatch(Handle handle, std::string::size_type maxSize,
                                           Callback callback)
 {
     return ptr(new ReadHelper(handle, maxSize, 0, callback));
@@ -22,8 +22,8 @@ satcom::lib::ReadHelper<Handle>::dispatch(Handle handle, std::string::size_type 
 
 template <class Handle>
 template <class Predicate>
-prefix_ typename satcom::lib::ReadHelper<Handle>::ptr
-satcom::lib::ReadHelper<Handle>::dispatch(Handle handle, std::string::size_type maxSize,
+prefix_ typename senf::ReadHelper<Handle>::ptr
+senf::ReadHelper<Handle>::dispatch(Handle handle, std::string::size_type maxSize,
                                           Predicate predicate, Callback callback)
 {
     return ptr(new ReadHelper(handle, maxSize, 
@@ -32,49 +32,49 @@ satcom::lib::ReadHelper<Handle>::dispatch(Handle handle, std::string::size_type 
 }
 
 template <class Handle>
-prefix_ Handle satcom::lib::ReadHelper<Handle>::handle()
+prefix_ Handle senf::ReadHelper<Handle>::handle()
     const
 {
     return handle_;
 }
 
 template <class Handle>
-prefix_ unsigned satcom::lib::ReadHelper<Handle>::maxSize()
+prefix_ unsigned senf::ReadHelper<Handle>::maxSize()
     const
 {
     return maxSize_;
 }
 
 template <class Handle>
-prefix_ std::string const & satcom::lib::ReadHelper<Handle>::data()
+prefix_ std::string const & senf::ReadHelper<Handle>::data()
     const
 {
     return data_;
 }
 
 template <class Handle>
-prefix_ std::string const & satcom::lib::ReadHelper<Handle>::tail()
+prefix_ std::string const & senf::ReadHelper<Handle>::tail()
     const
 {
     return tail_;
 }
 
 template <class Handle>
-prefix_ bool satcom::lib::ReadHelper<Handle>::complete()
+prefix_ bool senf::ReadHelper<Handle>::complete()
     const
 {
     return complete_;
 }
 
 template <class Handle>
-prefix_ bool satcom::lib::ReadHelper<Handle>::error()
+prefix_ bool senf::ReadHelper<Handle>::error()
     const
 {
     return errno_ != 0;
 }
 
 template <class Handle>
-prefix_ void satcom::lib::ReadHelper<Handle>::throw_error()
+prefix_ void senf::ReadHelper<Handle>::throw_error()
     const
 {
     if (errno_ != 0) throw SystemException(errno_);

@@ -29,37 +29,37 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::LLSocketAddress::LLSocketAddress()
+prefix_ senf::LLSocketAddress::LLSocketAddress()
 {
     clear();
 }
 
-prefix_ satcom::lib::LLSocketAddress::LLSocketAddress(unsigned protocol, std::string interface)
+prefix_ senf::LLSocketAddress::LLSocketAddress(unsigned protocol, std::string interface)
 {
     clear();
     this->protocol(protocol);
     this->interface(interface);
 }
 
-prefix_  satcom::lib::LLSocketAddress::LLSocketAddress(std::string interface)
+prefix_  senf::LLSocketAddress::LLSocketAddress(std::string interface)
 {
     clear();
     this->interface(interface);
 }
 
-prefix_ void satcom::lib::LLSocketAddress::clear()
+prefix_ void senf::LLSocketAddress::clear()
 {
     ::memset(&addr_,0,sizeof(addr_));
     addr_.sll_family = AF_PACKET;
 }
 
-prefix_ unsigned satcom::lib::LLSocketAddress::protocol()
+prefix_ unsigned senf::LLSocketAddress::protocol()
     const
 {
     return ntohs(addr_.sll_protocol);
 }
 
-prefix_ unsigned satcom::lib::LLSocketAddress::arptype()
+prefix_ unsigned senf::LLSocketAddress::arptype()
     const
 {
     // TODO: Check, wether this is returned in network or host byte
@@ -67,7 +67,7 @@ prefix_ unsigned satcom::lib::LLSocketAddress::arptype()
     return ntohs(addr_.sll_hatype);
 }
 
-prefix_ unsigned satcom::lib::LLSocketAddress::pkttype()
+prefix_ unsigned senf::LLSocketAddress::pkttype()
     const
 {
     // TODO: Check, wether this is returned in network or host byte
@@ -75,29 +75,29 @@ prefix_ unsigned satcom::lib::LLSocketAddress::pkttype()
     return ntohs(addr_.sll_pkttype);
 }
 
-prefix_ satcom::lib::LLSocketAddress::LLAddress satcom::lib::LLSocketAddress::address()
+prefix_ senf::LLSocketAddress::LLAddress senf::LLSocketAddress::address()
     const
 {
     return LLAddress(&addr_.sll_addr[0], &addr_.sll_addr[addr_.sll_halen]);
 }
 
-prefix_ void satcom::lib::LLSocketAddress::protocol(unsigned protocol)
+prefix_ void senf::LLSocketAddress::protocol(unsigned protocol)
 {
     addr_.sll_protocol = htons(protocol);
 }
 
-prefix_ struct sockaddr * satcom::lib::LLSocketAddress::sockaddr_p()
+prefix_ struct sockaddr * senf::LLSocketAddress::sockaddr_p()
 {
     return reinterpret_cast<struct sockaddr *>(&addr_);
 }
 
-prefix_ struct sockaddr const * satcom::lib::LLSocketAddress::sockaddr_p()
+prefix_ struct sockaddr const * senf::LLSocketAddress::sockaddr_p()
     const
 {
     return reinterpret_cast<struct sockaddr const *>(&addr_);
 }
 
-prefix_ unsigned satcom::lib::LLSocketAddress::sockaddr_len()
+prefix_ unsigned senf::LLSocketAddress::sockaddr_len()
     const
 {
     return sizeof(addr_);
@@ -109,5 +109,5 @@ prefix_ unsigned satcom::lib::LLSocketAddress::sockaddr_len()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

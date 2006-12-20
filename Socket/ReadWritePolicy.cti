@@ -30,7 +30,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ReadablePolicy::
+prefix_ unsigned senf::ReadablePolicy::
 readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
          typename Policy::AddressingPolicy::Address & address,
          typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type *)
@@ -39,7 +39,7 @@ readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::WriteablePolicy::
+prefix_ unsigned senf::WriteablePolicy::
 write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
       typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
 {
@@ -47,7 +47,7 @@ write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::WriteablePolicy::
+prefix_ unsigned senf::WriteablePolicy::
 writeto(ClientSocketHandle<Policy> handle,
         typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
         char const * buffer, unsigned size,
@@ -62,5 +62,5 @@ writeto(ClientSocketHandle<Policy> handle,
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

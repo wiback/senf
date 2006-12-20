@@ -30,40 +30,40 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::intrusive_refcount::refcount_t satcom::lib::intrusive_refcount::refcount()
+prefix_ senf::intrusive_refcount::refcount_t senf::intrusive_refcount::refcount()
 {
     return refcount_;
 }
 
-prefix_ bool satcom::lib::intrusive_refcount::is_shared()
+prefix_ bool senf::intrusive_refcount::is_shared()
 {
     return refcount()>1;
 }
 
-prefix_ satcom::lib::intrusive_refcount::intrusive_refcount()
+prefix_ senf::intrusive_refcount::intrusive_refcount()
     : refcount_(0)
 {}
 
-prefix_  satcom::lib::intrusive_refcount::~intrusive_refcount()
+prefix_  senf::intrusive_refcount::~intrusive_refcount()
 {}
 
-prefix_ void satcom::lib::intrusive_refcount::add_ref()
+prefix_ void senf::intrusive_refcount::add_ref()
 {
     ++refcount_;
 }
 
-prefix_ bool satcom::lib::intrusive_refcount::release()
+prefix_ bool senf::intrusive_refcount::release()
 {
     BOOST_ASSERT(refcount_>0);
     return --refcount_ == 0;
 }
 
-prefix_ void satcom::lib::intrusive_ptr_add_ref(intrusive_refcount* p)
+prefix_ void senf::intrusive_ptr_add_ref(intrusive_refcount* p)
 {
     p->add_ref();
 }
 
-prefix_ void satcom::lib::intrusive_ptr_release(intrusive_refcount* p)
+prefix_ void senf::intrusive_ptr_release(intrusive_refcount* p)
 {
     if (p->release())
         delete p;
@@ -75,5 +75,5 @@ prefix_ void satcom::lib::intrusive_ptr_release(intrusive_refcount* p)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

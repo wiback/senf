@@ -34,15 +34,15 @@
 
 template <class SocketPolicy>
 template <class OtherPolicy>
-prefix_ satcom::lib::SocketHandle<SocketPolicy>::SocketHandle(SocketHandle<OtherPolicy> other,
+prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle(SocketHandle<OtherPolicy> other,
                                                               typename IsCompatible<OtherPolicy>::type *)
     : FileHandle(other)
 {}
 
 template <class SocketPolicy>
 template <class OtherPolicy>
-prefix_ typename satcom::lib::SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const &
-satcom::lib::SocketHandle<SocketPolicy>::operator=(SocketHandle<OtherPolicy> other)
+prefix_ typename senf::SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const &
+senf::SocketHandle<SocketPolicy>::operator=(SocketHandle<OtherPolicy> other)
 {
     assign(other);
     return *this;
@@ -50,13 +50,13 @@ satcom::lib::SocketHandle<SocketPolicy>::operator=(SocketHandle<OtherPolicy> oth
 
 template <class SocketPolicy>
 prefix_ 
-satcom::lib::SocketHandle<SocketPolicy>::SocketHandle(std::auto_ptr<SocketProtocol> protocol,
+senf::SocketHandle<SocketPolicy>::SocketHandle(std::auto_ptr<SocketProtocol> protocol,
                                                       bool isServer)
     : FileHandle(std::auto_ptr<FileBody>(new SocketBody(protocol,isServer)))
 {}
 
 template <class SocketPolicy>
-prefix_ satcom::lib::SocketHandle<SocketPolicy>::SocketHandle(FileHandle other, bool isChecked)
+prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle(FileHandle other, bool isChecked)
     : FileHandle(other)
 {
     BOOST_ASSERT( isChecked );
@@ -64,14 +64,14 @@ prefix_ satcom::lib::SocketHandle<SocketPolicy>::SocketHandle(FileHandle other, 
 }
 
 template <class SocketPolicy>
-prefix_ satcom::lib::SocketBody & satcom::lib::SocketHandle<SocketPolicy>::body()
+prefix_ senf::SocketBody & senf::SocketHandle<SocketPolicy>::body()
 {
     BOOST_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
     return static_cast<SocketBody &>(FileHandle::body());
 }
 
 template <class SocketPolicy>
-prefix_ satcom::lib::SocketBody const & satcom::lib::SocketHandle<SocketPolicy>::body()
+prefix_ senf::SocketBody const & senf::SocketHandle<SocketPolicy>::body()
     const
 {
     BOOST_ASSERT( dynamic_cast<SocketBody const *>(&FileHandle::body()) );
@@ -79,28 +79,28 @@ prefix_ satcom::lib::SocketBody const & satcom::lib::SocketHandle<SocketPolicy>:
 }
 
 template <class SocketPolicy>
-prefix_ satcom::lib::SocketProtocol const & satcom::lib::SocketHandle<SocketPolicy>::protocol()
+prefix_ senf::SocketProtocol const & senf::SocketHandle<SocketPolicy>::protocol()
     const
 {
     return body().protocol();
 }
 
 template <class SocketPolicy>
-prefix_ void satcom::lib::SocketHandle<SocketPolicy>::assign(FileHandle other)
+prefix_ void senf::SocketHandle<SocketPolicy>::assign(FileHandle other)
 {
     FileHandle::operator=(other);
 }
 
 template <class SocketPolicy>
-prefix_ satcom::lib::SocketHandle<SocketPolicy>
-satcom::lib::SocketHandle<SocketPolicy>::cast_static(FileHandle handle)
+prefix_ senf::SocketHandle<SocketPolicy>
+senf::SocketHandle<SocketPolicy>::cast_static(FileHandle handle)
 {
     return SocketHandle(handle,true);
 }
 
 template <class SocketPolicy>
-prefix_ satcom::lib::SocketHandle<SocketPolicy>
-satcom::lib::SocketHandle<SocketPolicy>::cast_dynamic(FileHandle handle)
+prefix_ senf::SocketHandle<SocketPolicy>
+senf::SocketHandle<SocketPolicy>::cast_dynamic(FileHandle handle)
 {
     // throws bad_cast if the body is not a SocketBody
     SocketBody & body (dynamic_cast<SocketBody&>(FileHandle::body(handle)));
@@ -110,7 +110,7 @@ satcom::lib::SocketHandle<SocketPolicy>::cast_dynamic(FileHandle handle)
 }
 
 template <class Target, class Source>
-prefix_ Target satcom::lib::static_socket_cast(Source handle)
+prefix_ Target senf::static_socket_cast(Source handle)
 {
     BOOST_STATIC_ASSERT((
         boost::is_convertible<Source*,FileHandle*>::value &&
@@ -122,7 +122,7 @@ prefix_ Target satcom::lib::static_socket_cast(Source handle)
 }
 
 template <class Target, class Source>
-prefix_ Target satcom::lib::dynamic_socket_cast(Source handle)
+prefix_ Target senf::dynamic_socket_cast(Source handle)
 {
     BOOST_STATIC_ASSERT((
         boost::is_convertible<Source*,FileHandle*>::value &&
@@ -133,7 +133,7 @@ prefix_ Target satcom::lib::dynamic_socket_cast(Source handle)
 }
 
 template <class Target, class Source>
-prefix_ bool satcom::lib::check_socket_cast(Source handle)
+prefix_ bool senf::check_socket_cast(Source handle)
 {
     BOOST_STATIC_ASSERT((
         boost::is_convertible<Source*,FileHandle*>::value &&
@@ -156,14 +156,14 @@ prefix_ bool satcom::lib::check_socket_cast(Source handle)
 }
 
 template <class SocketPolicy>
-prefix_ void satcom::lib::SocketHandle<SocketPolicy>::state(SocketStateMap & map, unsigned lod)
+prefix_ void senf::SocketHandle<SocketPolicy>::state(SocketStateMap & map, unsigned lod)
 {
     map["handle"] = prettyName(typeid(*this));
     body().state(map,lod);
 }
 
 template <class SocketPolicy>
-prefix_ std::string satcom::lib::SocketHandle<SocketPolicy>::dumpState(unsigned lod)
+prefix_ std::string senf::SocketHandle<SocketPolicy>::dumpState(unsigned lod)
 {
     SocketStateMap map;
     state(map,lod);
@@ -171,10 +171,10 @@ prefix_ std::string satcom::lib::SocketHandle<SocketPolicy>::dumpState(unsigned 
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::detail::ConvertibleString
+// senf::detail::ConvertibleString
 
 template <class T>
-prefix_ satcom::lib::detail::ConvertibleString::ConvertibleString(T const & other)
+prefix_ senf::detail::ConvertibleString::ConvertibleString(T const & other)
     : std::string(boost::lexical_cast<std::string>(other))
 {}
 
@@ -184,5 +184,5 @@ prefix_ satcom::lib::detail::ConvertibleString::ConvertibleString(T const & othe
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

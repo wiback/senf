@@ -11,14 +11,14 @@
 //#include "MicroTime.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     typedef boost::uint64_t MicroTime;
 
     MicroTime now();
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "MicroTime.cci"

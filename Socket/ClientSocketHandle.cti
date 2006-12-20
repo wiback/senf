@@ -32,20 +32,20 @@
 
 template <class Policy>
 template <class OtherPolicy>
-prefix_ satcom::lib::ClientSocketHandle<Policy>::
+prefix_ senf::ClientSocketHandle<Policy>::
 ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,
                    typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type *)
     : SocketHandle<Policy>(other,true)
 {}
 
 template <class Policy>
-prefix_ satcom::lib::ClientSocketHandle<Policy>::ClientSocketHandle(FileHandle other,
+prefix_ senf::ClientSocketHandle<Policy>::ClientSocketHandle(FileHandle other,
                                                                     bool isChecked)
     : SocketHandle<Policy>(other, isChecked)
 {}
 
 template <class Policy>
-prefix_  satcom::lib::ClientSocketHandle<Policy>::
+prefix_  senf::ClientSocketHandle<Policy>::
 ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol, int fd)
     : SocketHandle<Policy>(protocol,false)
 {
@@ -54,8 +54,8 @@ ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol, int fd)
 
 template <class Policy>
 template <class OtherPolicy>
-prefix_ typename satcom::lib::SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const &
-satcom::lib::ClientSocketHandle<Policy>::operator=(ClientSocketHandle<OtherPolicy> other)
+prefix_ typename senf::SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const &
+senf::ClientSocketHandle<Policy>::operator=(ClientSocketHandle<OtherPolicy> other)
 {
     assign(other);
     return *this;
@@ -67,28 +67,28 @@ satcom::lib::ClientSocketHandle<Policy>::operator=(ClientSocketHandle<OtherPolic
 // reading and writing
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::read(char * buffer,
+prefix_ unsigned senf::ClientSocketHandle<Policy>::read(char * buffer,
                                                                      unsigned size)
 {
     return Policy::ReadPolicy::read(*this, buffer, size);
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::
+prefix_ unsigned senf::ClientSocketHandle<Policy>::
 readfrom(char * buffer, unsigned size, typename Policy::AddressingPolicy::Address & from)
 {
     return Policy::ReadPolicy::readfrom(*this, buffer, size, from);
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::write(char const * buffer,
+prefix_ unsigned senf::ClientSocketHandle<Policy>::write(char const * buffer,
                                                                 unsigned size)
 {
     return Policy::WritePolicy::write(*this, buffer, size);
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::
+prefix_ unsigned senf::ClientSocketHandle<Policy>::
 writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
         std::string const & data)
 {
@@ -96,7 +96,7 @@ writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>:
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::
+prefix_ unsigned senf::ClientSocketHandle<Policy>::
 writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
         char const * buffer, unsigned size)
 {
@@ -108,7 +108,7 @@ writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>:
 
 template <class Policy>
 prefix_ typename Policy::AddressingPolicy::Address
-satcom::lib::ClientSocketHandle<Policy>::peer()
+senf::ClientSocketHandle<Policy>::peer()
 {
     typename Policy::AddressingPolicy::Address addr;
     this->peer(addr);
@@ -116,7 +116,7 @@ satcom::lib::ClientSocketHandle<Policy>::peer()
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::
+prefix_ void senf::ClientSocketHandle<Policy>::
 peer(typename Policy::AddressingPolicy::Address & addr)
 {
     Policy::AddressingPolicy::peer(*this,addr);
@@ -124,7 +124,7 @@ peer(typename Policy::AddressingPolicy::Address & addr)
 
 template <class Policy>
 prefix_ typename Policy::AddressingPolicy::Address
-satcom::lib::ClientSocketHandle<Policy>::local()
+senf::ClientSocketHandle<Policy>::local()
 {
     typename Policy::AddressingPolicy::Address addr;
     this->local(addr);
@@ -132,20 +132,20 @@ satcom::lib::ClientSocketHandle<Policy>::local()
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::
+prefix_ void senf::ClientSocketHandle<Policy>::
 local(typename Policy::AddressingPolicy::Address & addr)
 {
     Policy::AddressingPolicy::local(*this,addr);
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::connect(AddressParam addr)
+prefix_ void senf::ClientSocketHandle<Policy>::connect(AddressParam addr)
 {
     Policy::AddressingPolicy::connect(*this,addr);
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::
+prefix_ void senf::ClientSocketHandle<Policy>::
 bind(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr)
 {
     Policy::AddressingPolicy::bind(*this,addr);
@@ -155,25 +155,25 @@ bind(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::pa
 // Buffering
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::rcvbuf()
+prefix_ unsigned senf::ClientSocketHandle<Policy>::rcvbuf()
 {
     return Policy::BufferingPolicy::rcvbuf(*this);
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::rcvbuf(unsigned size)
+prefix_ void senf::ClientSocketHandle<Policy>::rcvbuf(unsigned size)
 {
     Policy::BufferingPolicy::rcvbuf(*this,size);
 }
 
 template <class Policy>
-prefix_ unsigned satcom::lib::ClientSocketHandle<Policy>::sndbuf()
+prefix_ unsigned senf::ClientSocketHandle<Policy>::sndbuf()
 {
     return Policy::BufferingPolicy::sndbuf(*this);
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::sndbuf(unsigned size)
+prefix_ void senf::ClientSocketHandle<Policy>::sndbuf(unsigned size)
 {
     Policy::BufferingPolicy::sndbuf(*this,size);
 }
@@ -181,15 +181,15 @@ prefix_ void satcom::lib::ClientSocketHandle<Policy>::sndbuf(unsigned size)
 ///////////////////////////////////////////////////////////////////////////
 
 template <class Policy>
-prefix_ satcom::lib::ClientSocketHandle<Policy>
-satcom::lib::ClientSocketHandle<Policy>::cast_static(FileHandle handle)
+prefix_ senf::ClientSocketHandle<Policy>
+senf::ClientSocketHandle<Policy>::cast_static(FileHandle handle)
 {
     return ClientSocketHandle(handle, true);
 }
 
 template <class Policy>
-prefix_ satcom::lib::ClientSocketHandle<Policy>
-satcom::lib::ClientSocketHandle<Policy>::cast_dynamic(FileHandle handle)
+prefix_ senf::ClientSocketHandle<Policy>
+senf::ClientSocketHandle<Policy>::cast_dynamic(FileHandle handle)
 {
     SocketHandle<Policy> h (SocketHandle<Policy>::cast_dynamic(handle));
     if (static_cast<SocketBody&>(FileHandle::body(h)).isServer())
@@ -198,14 +198,14 @@ satcom::lib::ClientSocketHandle<Policy>::cast_dynamic(FileHandle handle)
 }
 
 template <class Policy>
-prefix_ void satcom::lib::ClientSocketHandle<Policy>::state(SocketStateMap & map, unsigned lod)
+prefix_ void senf::ClientSocketHandle<Policy>::state(SocketStateMap & map, unsigned lod)
 {
     map["handle"] = prettyName(typeid(*this));
     this->body().state(map,lod);
 }
 
 template <class Policy>
-prefix_ std::string satcom::lib::ClientSocketHandle<Policy>::dumpState(unsigned lod)
+prefix_ std::string senf::ClientSocketHandle<Policy>::dumpState(unsigned lod)
 {
     SocketStateMap map;
     state(map,lod);
@@ -218,5 +218,5 @@ prefix_ std::string satcom::lib::ClientSocketHandle<Policy>::dumpState(unsigned 
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

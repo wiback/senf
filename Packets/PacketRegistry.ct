@@ -33,19 +33,19 @@
 
 template <class KeyType>
 template <class OtherPacket>
-prefix_ void satcom::pkf::impl::PacketRegistryImpl<KeyType>::registerPacket(key_t key)
+prefix_ void senf::impl::PacketRegistryImpl<KeyType>::registerPacket(key_t key)
 {
     // If this assertion fails, a Packet was registered with an already known key
     BOOST_ASSERT( registry_.insert(std::make_pair(
         key, Entry_ptr(new impl::PkReg_EntryImpl<OtherPacket>()))).second );
     // If this assertion fails, the same Packet was registered with two different keys
     BOOST_ASSERT( reverseRegistry_.insert(
-        std::make_pair(satcom::lib::typeIdValue<OtherPacket>(), key)).second );
+        std::make_pair(senf::typeIdValue<OtherPacket>(), key)).second );
 }
 
 template <class KeyType>
-prefix_ typename satcom::pkf::impl::PacketRegistryImpl<KeyType>::key_t
-satcom::pkf::impl::PacketRegistryImpl<KeyType>::key(satcom::lib::TypeIdValue const & type)
+prefix_ typename senf::impl::PacketRegistryImpl<KeyType>::key_t
+senf::impl::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type)
 {
     typename ReversePacketMap::iterator i (reverseRegistry_.find(type));
     if (i==reverseRegistry_.end())
@@ -55,7 +55,7 @@ satcom::pkf::impl::PacketRegistryImpl<KeyType>::key(satcom::lib::TypeIdValue con
 
 template <class OtherPacket>
 prefix_ void
-satcom::pkf::impl::PkReg_EntryImpl<OtherPacket>::registerInterpreter(Packet const * p,
+senf::impl::PkReg_EntryImpl<OtherPacket>::registerInterpreter(Packet const * p,
                                                                      Packet::iterator b,
                                                                      Packet::iterator e)
 {
@@ -63,15 +63,15 @@ satcom::pkf::impl::PkReg_EntryImpl<OtherPacket>::registerInterpreter(Packet cons
 }
 
 template <class OtherPacket>
-prefix_ satcom::pkf::Packet::ptr
-satcom::pkf::impl::PkReg_EntryImpl<OtherPacket>::reinterpret(Packet * p)
+prefix_ senf::Packet::ptr
+senf::impl::PkReg_EntryImpl<OtherPacket>::reinterpret(Packet * p)
 {
     return p->template reinterpret<OtherPacket>();
 }
 
 template <class KeyType>
-prefix_ typename satcom::pkf::impl::PacketRegistryImpl<KeyType>::Entry *
-satcom::pkf::impl::PacketRegistryImpl<KeyType>::lookup(key_t key)
+prefix_ typename senf::impl::PacketRegistryImpl<KeyType>::Entry *
+senf::impl::PacketRegistryImpl<KeyType>::lookup(key_t key)
 {
     typename PacketMap::iterator i (registry_.find(key));
     if (i==registry_.end())
@@ -81,8 +81,8 @@ satcom::pkf::impl::PacketRegistryImpl<KeyType>::lookup(key_t key)
 
 template <class Tag>
 template <class InputIterator>
-prefix_ satcom::pkf::Packet::ptr
-satcom::pkf::PacketRegistry<Tag>::create(typename Tag::key_t key, InputIterator b,
+prefix_ senf::Packet::ptr
+senf::PacketRegistry<Tag>::create(typename Tag::key_t key, InputIterator b,
                                          InputIterator e)
 {
     Packet::ptr p (Packet::create<DataPacket>(b,e));
@@ -90,8 +90,8 @@ satcom::pkf::PacketRegistry<Tag>::create(typename Tag::key_t key, InputIterator 
 }
 
 template <class Tag>
-prefix_ typename satcom::pkf::PacketRegistry<Tag>::Registry &
-satcom::pkf::PacketRegistry<Tag>::registry()
+prefix_ typename senf::PacketRegistry<Tag>::Registry &
+senf::PacketRegistry<Tag>::registry()
 {
     static Registry registry;
     return registry;
@@ -103,5 +103,5 @@ satcom::pkf::PacketRegistry<Tag>::registry()
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -13,39 +13,39 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Handle>
-prefix_ typename satcom::lib::WriteHelper<Handle>::ptr
-satcom::lib::WriteHelper<Handle>::dispatch(Handle handle, std::string data, Callback callback)
+prefix_ typename senf::WriteHelper<Handle>::ptr
+senf::WriteHelper<Handle>::dispatch(Handle handle, std::string data, Callback callback)
 {
     return ptr(new WriteHelper(handle, data, callback));
 }
 
 template <class Handle>
-prefix_ Handle satcom::lib::WriteHelper<Handle>::handle()
+prefix_ Handle senf::WriteHelper<Handle>::handle()
     const
 {
     return handle_;
 }
 
 template <class Handle>
-prefix_ bool satcom::lib::WriteHelper<Handle>::complete()
+prefix_ bool senf::WriteHelper<Handle>::complete()
     const
 {
     return data_.empty();
 }
 
 template <class Handle>
-prefix_ bool satcom::lib::WriteHelper<Handle>::error()
+prefix_ bool senf::WriteHelper<Handle>::error()
     const
 {
     return errno_ != 0;
 }
 
 template <class Handle>
-prefix_ void satcom::lib::WriteHelper<Handle>::throw_error()
+prefix_ void senf::WriteHelper<Handle>::throw_error()
     const
 {
     if (errno_ != 0)
-	throw satcom::lib::SystemException(errno_);
+	throw senf::SystemException(errno_);
 }
 
 

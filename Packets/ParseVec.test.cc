@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace satcom::pkf;
+using namespace senf;
 
 BOOST_AUTO_UNIT_TEST(parseVec_test)
 {
@@ -149,5 +149,5 @@ BOOST_AUTO_UNIT_TEST(parserTraits_test)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

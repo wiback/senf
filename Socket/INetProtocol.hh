@@ -38,8 +38,8 @@
 //#include "INetProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     class IPv4Protocol 
         : public virtual SocketProtocol
@@ -74,7 +74,7 @@ namespace lib {
         : public virtual SocketProtocol
     {};
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "INetProtocol.cci"
@@ -85,5 +85,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

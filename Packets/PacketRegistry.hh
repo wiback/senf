@@ -34,8 +34,8 @@
 //#include "PacketRegistry.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace pkf {
+namespace senf {
+
 
     namespace impl { template <class key> class PacketRegistryImpl; }
 
@@ -152,7 +152,7 @@ namespace pkf {
 
         This mixin class provides a new registerInterpreter
         implementation which can be used besides the methods provided
-        bei satcom::pkf::Packet to add a new interpreter to the
+        bei senf::Packet to add a new interpreter to the
         interpreter chain.
 
         \code
@@ -191,7 +191,7 @@ namespace pkf {
     struct PacketTypeNotRegistered : public std::exception
     { virtual char const * what() const throw() { return "packet type not registered"; } };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "PacketRegistry.cci"
@@ -202,5 +202,5 @@ namespace pkf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

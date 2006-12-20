@@ -9,21 +9,21 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::GenericSockAddr::GenericSockAddr()
+prefix_ senf::GenericSockAddr::GenericSockAddr()
 {}
 
-prefix_ struct sockaddr * satcom::lib::GenericSockAddr::sockaddr_p()
+prefix_ struct sockaddr * senf::GenericSockAddr::sockaddr_p()
 {
     return reinterpret_cast<sockaddr *>(&addr_);
 }
 
-prefix_ struct sockaddr const * satcom::lib::GenericSockAddr::sockaddr_p()
+prefix_ struct sockaddr const * senf::GenericSockAddr::sockaddr_p()
     const
 {
     return reinterpret_cast<sockaddr const *>(&addr_);
 }
 
-prefix_ unsigned satcom::lib::GenericSockAddr::sockaddr_len()
+prefix_ unsigned senf::GenericSockAddr::sockaddr_len()
     const
 {
     return sizeof(addr_);

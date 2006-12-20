@@ -34,7 +34,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void satcom::lib::SocketBody::v_close()
+prefix_ void senf::SocketBody::v_close()
 {
     if (::shutdown(fd(),SHUT_RDWR) < 0)
         throw SystemException(errno);
@@ -42,7 +42,7 @@ prefix_ void satcom::lib::SocketBody::v_close()
         throw SystemException(errno);
 }
 
-prefix_ void satcom::lib::SocketBody::v_terminate()
+prefix_ void senf::SocketBody::v_terminate()
 {
     struct linger ling;
     ling.l_onoff = 0;
@@ -56,13 +56,13 @@ prefix_ void satcom::lib::SocketBody::v_terminate()
     ::close(fd());
 }
 
-prefix_ bool satcom::lib::SocketBody::v_eof()
+prefix_ bool senf::SocketBody::v_eof()
     const
 {
     return protocol().eof();
 }
 
-prefix_ void satcom::lib::SocketBody::state(SocketStateMap & map, unsigned lod)
+prefix_ void senf::SocketBody::state(SocketStateMap & map, unsigned lod)
 {
     map["file.handle"] = fd();
     map["file.refcount"] = refcount();
@@ -73,7 +73,7 @@ prefix_ void satcom::lib::SocketBody::state(SocketStateMap & map, unsigned lod)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// satcom::lib::detail::StateMapOrdering
+// senf::detail::StateMapOrdering
 
 namespace {
     bool contains(std::string::iterator b, std::string::iterator e, char c)
@@ -85,7 +85,7 @@ namespace {
     }
 }
 
-prefix_ bool satcom::lib::detail::StateMapOrdering::operator()(std::string a1, std::string a2)
+prefix_ bool senf::detail::StateMapOrdering::operator()(std::string a1, std::string a2)
     const
 {
     std::string::iterator i1 (a1.begin());
@@ -120,7 +120,7 @@ prefix_ bool satcom::lib::detail::StateMapOrdering::operator()(std::string a1, s
     return *i1 < *i2;
 }
 
-prefix_ std::string satcom::lib::detail::dumpState(SocketStateMap const & map)
+prefix_ std::string senf::detail::dumpState(SocketStateMap const & map)
 {
     std::stringstream s;
     SocketStateMap::const_iterator i (map.begin());
@@ -131,7 +131,7 @@ prefix_ std::string satcom::lib::detail::dumpState(SocketStateMap const & map)
 }
 
 template <class Policy>
-prefix_ std::ostream & satcom::lib::operator<<(std::ostream & os, SocketHandle<Policy> handle)
+prefix_ std::ostream & senf::operator<<(std::ostream & os, SocketHandle<Policy> handle)
 {
     os << handle.dumpState();
     return os;
@@ -144,5 +144,5 @@ prefix_ std::ostream & satcom::lib::operator<<(std::ostream & os, SocketHandle<P
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

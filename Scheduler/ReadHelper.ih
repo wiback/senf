@@ -9,8 +9,8 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     template <class Handle>
     struct ReadHelper<Handle>::InternalPredicate
@@ -28,7 +28,7 @@ namespace lib {
 	virtual std::string::size_type operator()(std::string const & data) = 0;
     };
 
-}}
+}
 
 
 ///////////////////////////////ih.e////////////////////////////////////////

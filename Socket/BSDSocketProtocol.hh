@@ -30,8 +30,8 @@
 //#include "BSDSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     class BSDSocketProtocol
         : public virtual SocketProtocol
@@ -51,7 +51,7 @@ namespace lib {
         void reuseaddr(bool value) const;
     };
 
-}}
+}
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -64,5 +64,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

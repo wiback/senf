@@ -28,59 +28,59 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ satcom::lib::INet4Address::INet4Address()
+prefix_ senf::INet4Address::INet4Address()
 {
     clear();
 }
 
-prefix_ satcom::lib::INet4Address::INet4Address(char const * address)
+prefix_ senf::INet4Address::INet4Address(char const * address)
 {
     assignString(address);
 }
 
-prefix_ satcom::lib::INet4Address::INet4Address(std::string address)
+prefix_ senf::INet4Address::INet4Address(std::string address)
 {
     assignString(address);
 }
 
-prefix_ bool satcom::lib::INet4Address::operator==(INet4Address const & other)
+prefix_ bool senf::INet4Address::operator==(INet4Address const & other)
     const
 {
     return addr_.sin_port == other.addr_.sin_port && 
         addr_.sin_addr.s_addr == other.addr_.sin_addr.s_addr;
 }
 
-prefix_ std::string satcom::lib::INet4Address::host()
+prefix_ std::string senf::INet4Address::host()
     const
 {
     // FIXME: thread safety?
     return std::string(::inet_ntoa(addr_.sin_addr));
 }
 
-prefix_ unsigned satcom::lib::INet4Address::port()
+prefix_ unsigned senf::INet4Address::port()
     const
 {
     return ntohs(addr_.sin_port);
 }
 
-prefix_ struct sockaddr * satcom::lib::INet4Address::sockaddr_p()
+prefix_ struct sockaddr * senf::INet4Address::sockaddr_p()
 {
     return reinterpret_cast<struct sockaddr *>(&addr_);
 }
 
-prefix_ struct sockaddr const * satcom::lib::INet4Address::sockaddr_p()
+prefix_ struct sockaddr const * senf::INet4Address::sockaddr_p()
     const
 {
     return reinterpret_cast<struct sockaddr const *>(&addr_);
 }
 
-prefix_ unsigned satcom::lib::INet4Address::sockaddr_len()
+prefix_ unsigned senf::INet4Address::sockaddr_len()
     const
 {
     return sizeof(addr_);
 }
 
-prefix_ std::ostream & satcom::lib::operator<<(std::ostream & os, INet4Address const & addr)
+prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4Address const & addr)
 {
     os << addr.str();
     return os;
@@ -92,5 +92,5 @@ prefix_ std::ostream & satcom::lib::operator<<(std::ostream & os, INet4Address c
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

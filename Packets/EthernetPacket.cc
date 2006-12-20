@@ -33,12 +33,11 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    namespace pkf = satcom::pkf;
-    pkf::PacketRegistry<pkf::EtherTypes>::RegistrationProxy<pkf::EthVLanPacket> 
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthVLanPacket> 
         registerEthVLanPacket(0x8100);
 }
 
-prefix_ void satcom::pkf::EthernetPacket::v_nextInterpreter()
+prefix_ void senf::EthernetPacket::v_nextInterpreter()
     const
 {
     // TODO: Add LLC/SNAP support -> only use the registry
@@ -48,7 +47,7 @@ prefix_ void satcom::pkf::EthernetPacket::v_nextInterpreter()
 
 namespace {
     
-    void dumpmac(std::ostream & os, satcom::pkf::EthernetPacket::Parse_MAC mac)
+    void dumpmac(std::ostream & os, senf::EthernetPacket::Parse_MAC mac)
     {
         for (unsigned i = 0; i < 6; ++i) {
             if (i > 0) 
@@ -60,7 +59,7 @@ namespace {
 
 }
 
-prefix_ void satcom::pkf::EthernetPacket::v_dump(std::ostream & os)
+prefix_ void senf::EthernetPacket::v_dump(std::ostream & os)
     const
 {
     if (type() <= 1500)
@@ -80,10 +79,10 @@ prefix_ void satcom::pkf::EthernetPacket::v_dump(std::ostream & os)
        << unsigned(type()) << "\n" << std::dec;
 }
 
-prefix_ void satcom::pkf::EthernetPacket::v_finalize()
+prefix_ void senf::EthernetPacket::v_finalize()
 {}
 
-prefix_ void satcom::pkf::EthVLanPacket::v_nextInterpreter()
+prefix_ void senf::EthVLanPacket::v_nextInterpreter()
     const
 {
     // TODO: Add LLC/SNAP support -> only use the registry
@@ -91,10 +90,10 @@ prefix_ void satcom::pkf::EthVLanPacket::v_nextInterpreter()
     registerInterpreter(type(),begin()+bytes(),end());
 }
 
-prefix_ void satcom::pkf::EthVLanPacket::v_finalize()
+prefix_ void senf::EthVLanPacket::v_finalize()
 {}
 
-prefix_ void satcom::pkf::EthVLanPacket::v_dump(std::ostream & os)
+prefix_ void senf::EthVLanPacket::v_dump(std::ostream & os)
     const
 {
     os << "Ethernet 802.1q (VLAN):\n"
@@ -110,5 +109,5 @@ prefix_ void satcom::pkf::EthVLanPacket::v_dump(std::ostream & os)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

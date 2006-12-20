@@ -32,8 +32,8 @@
 //#include "GenericAddressingPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-namespace satcom {
-namespace lib {
+namespace senf {
+
 
     struct GenericAddressingPolicy_Base
     {
@@ -58,7 +58,7 @@ namespace lib {
         static void bind(FileHandle handle, Address const & addr);
     };
 
-}}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "GenericAddressingPolicy.cci"
@@ -70,5 +70,5 @@ namespace lib {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:

@@ -37,39 +37,39 @@
 
 namespace {
 
-    struct MyProtocol : public satcom::lib::test::SomeProtocol
+    struct MyProtocol : public senf::test::SomeProtocol
     {
-        using satcom::lib::test::SomeProtocol::init_server;
+        using senf::test::SomeProtocol::init_server;
         void init_server(char const *,unsigned) const {}
     };
 }
 
 BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
 {
-    typedef satcom::lib::ProtocolServerSocketHandle<MyProtocol> MySocketHandle;
+    typedef senf::ProtocolServerSocketHandle<MyProtocol> MySocketHandle;
 
     {
-        typedef satcom::lib::MakeSocketPolicy<
-            satcom::lib::test::SomeFramingPolicy,
-            satcom::lib::test::SomeReadPolicy,
-            satcom::lib::test::SomeWritePolicy
+        typedef senf::MakeSocketPolicy<
+            senf::test::SomeFramingPolicy,
+            senf::test::SomeReadPolicy,
+            senf::test::SomeWritePolicy
             >::policy OtherSocketPolicy;
-        typedef satcom::lib::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
+        typedef senf::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
 
         MySocketHandle h;
         h.protocol();
 
         OtherSocketHandle osh (h);
-        h = satcom::lib::static_socket_cast<MySocketHandle>(osh);
+        h = senf::static_socket_cast<MySocketHandle>(osh);
    
         MySocketHandle::ClientSocketHandle client = h.accept();
         BOOST_CHECK_EQUAL( client.fd(), -1 );
 
         BOOST_CHECK_EQUAL( h.dumpState(),
-                           "handle: satcom::lib::ProtocolServerSocketHandle<(anonymous namespace)::MyProtocol>\n"
+                           "handle: senf::ProtocolServerSocketHandle<(anonymous namespace)::MyProtocol>\n"
                            "file.handle: -1\n"
                            "file.refcount: 2\n"
-                           "socket.policy: satcom::lib::SocketPolicy<satcom::lib::test::SomeAddressingPolicy, satcom::lib::test::SomeFramingPolicy, satcom::lib::test::SomeCommunicationPolicy, satcom::lib::test::SomeReadPolicy, satcom::lib::test::SomeWritePolicy, satcom::lib::test::SomeBufferingPolicy>\n"
+                           "socket.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy, senf::test::SomeBufferingPolicy>\n"
                            "socket.protocol: (anonymous namespace)::MyProtocol\n"
                            "socket.server: true\n" );
 
@@ -86,5 +86,5 @@ BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
 
 // Local Variables:
 // mode: c++
-// c-file-style: "satcom"
+// c-file-style: "senf"
 // End:
