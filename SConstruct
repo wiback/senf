@@ -1,6 +1,6 @@
 # -*- python -*-
 
-import sys, glob
+import sys, glob, os.path
 sys.path.append('senfscons')
 import SatSCons
 
@@ -25,4 +25,4 @@ SatSCons.StandardTargets(env)
 SatSCons.GlobalTargets(env)
 SatSCons.Doxygen(env)
 
-env.Command("Doxyfile.local", None, Touch("$TARGET"))
+if not os.path.exists("Doxyfile.local") : Execute(Touch("Doxyfile.local"))
