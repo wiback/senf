@@ -20,17 +20,25 @@ import os.path
 import glob
 from fnmatch import fnmatch
 
-def DoxyfileParse(file_contents, dir, data = None):
+def DoxyfileParse(file):
+   data = DoxyfileParse_(file,{})
+   for (k,v) in data.items():
+      if not v : del data[k]
+      elif k in ("INPUT", "FILE_PATTERNS", "EXCLUDE_PATTERNS", "@INCLUDE", "TAGFILES") : continue
+      elif len(v)==1 : data[k] = v[0]
+   return data
+
+def DoxyfileParse_(file, data):
    """
    Parse a Doxygen source file and return a dictionary of all the values.
    Values will be strings and lists of strings.
    """
    try:
-      if data is None : data = {}
+      dir = os.path.dirname(file)
 
       import shlex
-      lex = shlex.shlex(instream = file_contents, posix = True)
-      lex.wordchars += "*+./-:"
+      lex = shlex.shlex(instream=open(file), posix=True)
+      lex.wordchars += "*+./-:@~"
       lex.whitespace = lex.whitespace.replace("\n", "")
       lex.escape = ""
 
@@ -49,48 +57,34 @@ def DoxyfileParse(file_contents, dir, data = None):
             data[key][-1] += token
 
       while token:
-         if token in ['\n']:
-            if last_token not in ['\\']:
+         if token=='\n':
+            if last_token!='\\':
                key_token = True
-         elif token in ['\\']:
+         elif token=='\\':
             pass
          elif key_token:
-            if key == '@' : key += token
-            else          : key = token
-            if token != '@' : key_token = False
+            key = token
+            key_token = False
          else:
-            if token == "+=" or (token == "=" and key == "@INCLUDE"):
+            if token=="+=" or (token=="=" and key=="@INCLUDE"):
                if not data.has_key(key):
-                  data[key] = list()
+                  data[key] = []
             elif token == "=":
-               data[key] = list()
+               data[key] = []
             else:
-               append_data( data, key, new_data, token )
+               append_data(data, key, new_data, token)
                new_data = True
-               if key == '@INCLUDE':
+               if key=='@INCLUDE':
                   inc = os.path.join(dir,data['@INCLUDE'][-1])
                   if os.path.exists(inc) :
-                     DoxyfileParse(open(inc).read(),dir,data)
+                     DoxyfileParse_(inc,data)
 
          last_token = token
          token = lex.get_token()
 
-         if last_token == '\\' and token != '\n':
+         if last_token=='\\' and token!='\n':
             new_data = False
-            append_data( data, key, new_data, '\\' )
-
-      # compress lists of len 1 into single strings
-      for (k, v) in data.items():
-         if len(v) == 0:
-            data.pop(k)
-
-         # items in the following list will be kept as lists and not converted to strings
-         if k in ["INPUT", "FILE_PATTERNS", "EXCLUDE_PATTERNS", "@INCLUDE", "TAGFILES"]:
-            continue
-
-         if len(v) == 1:
-            data[k] = v[0]
-
+            append_data(data, key, new_data, '\\')
 
       return data
    except:
@@ -101,25 +95,25 @@ def DoxySourceScan(node, env, path):
    Doxygen Doxyfile source scanner.  This should scan the Doxygen file and add
    any files used to generate docs to the list of source files.
    """
-   dep_add_keys = [
+   dep_add_keys = (
       '@INCLUDE', 'HTML_HEADER', 'HTML_FOOTER', 'TAGFILES'
-   ]
+   )
    
-   default_file_patterns = [
+   default_file_patterns = (
       '*.c', '*.cc', '*.cxx', '*.cpp', '*.c++', '*.java', '*.ii', '*.ixx',
       '*.ipp', '*.i++', '*.inl', '*.h', '*.hh ', '*.hxx', '*.hpp', '*.h++',
       '*.idl', '*.odl', '*.cs', '*.php', '*.php3', '*.inc', '*.m', '*.mm',
       '*.py',
-   ]
+   )
 
-   default_exclude_patterns = [
+   default_exclude_patterns = (
       '*~',
-   ]
+   )
 
    sources          = []
-   basedir          = str(node.dir)
-   data             = DoxyfileParse(node.get_contents(), basedir)
-   recursive        = ( data.get("RECURSIVE", "NO") == "YES" )
+   basedir          = node.dir.abspath
+   data             = DoxyfileParse(node.abspath)
+   recursive        = data.get("RECURSIVE", "NO").upper()=="YES"
    file_patterns    = data.get("FILE_PATTERNS", default_file_patterns)
    exclude_patterns = data.get("EXCLUDE_PATTERNS", default_exclude_patterns)
 
@@ -157,21 +151,21 @@ def DoxyEmitter(source, target, env):
    """Doxygen Doxyfile emitter"""
    # possible output formats and their default values and output locations
    output_formats = {
-      "HTML": ("YES", "html"),
-      "LATEX": ("YES", "latex"),
-      "RTF": ("NO", "rtf"),
-      "MAN": ("YES", "man"),
-      "XML": ("NO", "xml"),
+      "HTML"  : ("YES", "html"),
+      "LATEX" : ("YES", "latex"),
+      "RTF"   : ("NO",  "rtf"),
+      "MAN"   : ("YES", "man"),
+      "XML"   : ("NO",  "xml"),
    }
 
-   data = DoxyfileParse(source[0].get_contents(), str(source[0].dir))
+   data = DoxyfileParse(source[0].abspath)
 
    targets = []
    out_dir = data.get("OUTPUT_DIRECTORY", ".")
 
    # add our output locations
-   for (k, v) in output_formats.items():
-      if data.get("GENERATE_" + k, v[0]) == "YES":
+   for (k, v) in output_formats.iteritems():
+      if data.get("GENERATE_" + k, v[0]).upper() == "YES":
          # Grmpf ... need to use a File object here. The problem is, that
          # Dir.scan() is implemented to just return the directory entries
          # and does *not* invoke the source-file scanners .. ARGH !!
@@ -191,9 +185,9 @@ def DoxyEmitter(source, target, env):
 
 def doxyNodeHtmlDir(node):
    if not node.sources : return None
-   data = DoxyfileParse(node.sources[0].get_contents(), str(node.sources[0].dir))
-   if data.get("GENERATE_HTML",'YES') != 'YES' : return None
-   return os.path.normpath(os.path.join( str(node.sources[0].dir),
+   data = DoxyfileParse(node.sources[0].abspath)
+   if data.get("GENERATE_HTML",'YES').upper() != 'YES' : return None
+   return os.path.normpath(os.path.join( node.sources[0].abspath,
                                          data.get("OUTPUT_DIRECTORY","."),
                                          data.get("HTML_OUTPUT","html") ))
 
@@ -211,7 +205,7 @@ def relpath(source, target):
 
 def DoxyGenerator(source, target, env, for_signature):
 
-   data = DoxyfileParse(source[0].get_contents(), str(source[0].dir))
+   data = DoxyfileParse(source[0].abspath)
 
    actions = [ env.Action("cd ${SOURCE.dir}  &&  ${DOXYGEN} ${SOURCE.file}") ]
 
@@ -234,8 +228,8 @@ def DoxyGenerator(source, target, env, for_signature):
    # will *not* be called and a warning about the missing url is
    # generated.
    
-   if data.get('GENERATE_HTML','YES') == "YES":
-      output_dir = os.path.normpath(os.path.join( str(source[0].dir),
+   if data.get('GENERATE_HTML','YES').upper() == "YES":
+      output_dir = os.path.normpath(os.path.join( source[0].dir.abspath,
                                                   data.get("OUTPUT_DIRECTORY","."),
                                                   data.get("HTML_OUTPUT","html") ))
       args = []
@@ -243,10 +237,10 @@ def DoxyGenerator(source, target, env, for_signature):
          url = env.get(os.path.splitext(os.path.basename(tagfile))[0].upper()+"_DOXY_URL", None)
          if not url:
             url = doxyNodeHtmlDir(
-               env.File(os.path.normpath(os.path.join( str(source[0].dir), tagfile ))))
+               env.File(os.path.normpath(os.path.join(str(source[0].dir), tagfile))))
             if url : url = relpath(output_dir, url)
          if not url:
-            print "WARNING:",str(node.sources[0]),": missing tagfile url for",tagfile
+            print "WARNING:",source[0].abspath, ": missing tagfile url for", tagfile
             args = None
          if args is not None and url:
             args.append("-l %s@%s" % ( os.path.basename(tagfile), url ))
