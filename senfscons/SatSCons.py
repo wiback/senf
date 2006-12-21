@@ -160,6 +160,16 @@ def DoxyGlob(exclude=[]):
 
 def Doxygen(env, doxyfile="Doxyfile", extra_sources = []):
     docs = env.Doxygen(doxyfile)
+    # The last target is the (optional) tagfile
+    if os.path.basename(str(docs[-1])) != '.stamp':
+        # Postprocess the tag file to remove the (broken) namespace
+        # references
+        env.AddPostAction(
+            docs,
+            env.Action([ "xsltproc -o ${TARGETS[-1]}.temp %s ${TARGETS[-1]}"
+                         % os.path.join(basedir,"tagmunge.xsl"),
+                         "mv ${TARGETS[-1]}.temp ${TARGETS[-1]}" ]))
+        env.Clean(docs[-1],"$TARGET.temp")
     env.Depends(docs,extra_sources)
     env.Alias('all_docs', *docs)
     return docs
