@@ -1,11 +1,11 @@
 # -*- python -*-
 
 Import('env')
-import SatSCons
+import SENFSCons
 
 ###########################################################################
 
-sources = SatSCons.GlobSources()
-SatSCons.StandardTargets(env)
-SatSCons.Lib(env, 'Utils', sources)
-SatSCons.Doxygen(env)
+sources = SENFSCons.GlobSources()
+SENFSCons.StandardTargets(env)
+SENFSCons.Lib(env, 'Utils', sources)
+SENFSCons.Doxygen(env)

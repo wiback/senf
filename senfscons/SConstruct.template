@@ -1,12 +1,12 @@
 import sys, glob
 sys.path.append('senfscons')
-import SatSCons
+import SENFSCons
 
 ###########################################################################
 
-SatSCons.UseBoost();
-SatSCons.UseSTLPort();
-env = SatSCons.MakeEnvironment();
+SENFSCons.UseBoost();
+SENFSCons.UseSTLPort();
+env = SENFSCons.MakeEnvironment();
 
 env.Append(
    CPPPATH = [ '#' ]
@@ -16,5 +16,5 @@ Export('env')
 
 SConscript(glob.glob("*/SConscript"))
 
-SatSCons.StandardTargets(env)
-SatSCons.GlobalTargets(env)
+SENFSCons.StandardTargets(env)
+SENFSCons.GlobalTargets(env)

@@ -1,19 +1,19 @@
 # -*- python -*-
 
 Import('env')
-import SatSCons
+import SENFSCons
 
 ###########################################################################
 
-sources = SatSCons.GlobSources()
+sources = SENFSCons.GlobSources()
 
-SatSCons.StandardTargets(env)
+SENFSCons.StandardTargets(env)
 
-SatSCons.Lib(env,
+SENFSCons.Lib(env,
              library = 'Socket',
              sources = sources,
              LIBS = [ 'Utils' ])
 
-SatSCons.Doxygen(env, extra_sources = [
+SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('SocketLibrary-classes.dia')
     ])

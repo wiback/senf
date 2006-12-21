@@ -1,10 +1,10 @@
 Import('env')
-import SatSCons
+import SENFSCons
 
 ###########################################################################
 
-SatSCons.StandardTargets(env)
+SENFSCons.StandardTargets(env)
 
-# SatSCons.Lib(env,
+# SENFSCons.Lib(env,
 #               library = 'Test',
-#               sources = SatSCons.GlobSources())
+#               sources = SENFSCons.GlobSources())

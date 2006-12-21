@@ -1,7 +1,7 @@
 Import('env')
-import SatSCons
+import SENFSCons
 
 ###########################################################################
 
-SatSCons.StandardTargets(env)
-SatSCons.Doxygen(env)
+SENFSCons.StandardTargets(env)
+SENFSCons.Doxygen(env)

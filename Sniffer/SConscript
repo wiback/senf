@@ -1,7 +1,7 @@
 Import('env')
-import SatSCons
+import SENFSCons
 
 ###########################################################################
 
-SatSCons.Binary(env, 'sniffer', SatSCons.GlobSources(),
+SENFSCons.Binary(env, 'sniffer', SENFSCons.GlobSources(),
                 LIBS = [ 'Packets', 'Socket', 'Utils' ]);
