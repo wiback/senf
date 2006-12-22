@@ -44,7 +44,7 @@ body {
 #content2 { 
         /* need non-zero top padding here to prevent margin propagation */
 	padding: 10px 0 0 142px;
-	max-width: 60em;
+	max-width: 62em;
 }
 
 a { 
@@ -131,7 +131,7 @@ div.qindex {
 	color: #726921;
 	white-space: nowrap;
 	text-align: right;
-	max-width: 60em;
+	max-width: 62em;
 }
 
 #footer span { 
@@ -148,3 +148,20 @@ div.qindex {
 	text-decoration: underline;
 }
 
+dl.attention { 
+	border: 1px solid #AADD88;
+	background-color: #EEFFDD;
+	padding: 4px;
+}
+
+dl.warning { 
+	border: 1px solid #DDAA88;
+	background-color: #FFEEDD;
+	padding: 4px;
+}
+
+dl.note { 
+	border: 1px solid A0C2C2;
+	background-color: #F0F8F8;
+	padding: 4px;
+}

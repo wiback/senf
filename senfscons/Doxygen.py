@@ -127,9 +127,9 @@ def DoxySourceScan(node, env, path):
          for root, dirs, files in entries:
             for f in files:
                filename = os.path.normpath(os.path.join(root, f))
-               if ( reduce(lambda x, y: x or fnmatch(filename, y),
+               if ( reduce(lambda x, y: x or fnmatch(f, y),
                            file_patterns, False) 
-                    and not reduce(lambda x, y: x or fnmatch(filename, y),
+                    and not reduce(lambda x, y: x or fnmatch(f, y),
                                    exclude_patterns, False) ):
                   sources.append(filename)
 
@@ -187,7 +187,7 @@ def doxyNodeHtmlDir(node):
    if not node.sources : return None
    data = DoxyfileParse(node.sources[0].abspath)
    if data.get("GENERATE_HTML",'YES').upper() != 'YES' : return None
-   return os.path.normpath(os.path.join( node.sources[0].abspath,
+   return os.path.normpath(os.path.join( node.sources[0].dir.abspath,
                                          data.get("OUTPUT_DIRECTORY","."),
                                          data.get("HTML_OUTPUT","html") ))
 

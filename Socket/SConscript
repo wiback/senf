@@ -15,5 +15,5 @@ SENFSCons.Lib(env,
              LIBS = [ 'Utils' ])
 
 SENFSCons.Doxygen(env, extra_sources = [
-    env.Dia2Png('SocketLibrary-classes.dia')
-    ])
+    env.Dia2Png('SocketLibrary-classes.dia'),
+])

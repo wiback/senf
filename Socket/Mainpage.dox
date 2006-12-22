@@ -1,0 +1,90 @@
+/** \mainpage The SENF Socket Library
+
+    The Socket library provides a high level and object oriented
+    abstraction of the BSD socket API. The abstraction is based on
+    several concepts:
+
+    \li The basic visible interface is a handle object
+	(senf::FileHandle and it's derived classes)
+    \li The socket interface relies on a policy framework to configure
+	it's functionality
+    \li The rest of the socket API is accessible using a classic
+	inheritance hierarchy of protocol classes
+
+    The handle/body architecture provides automatic reference counted
+    management of socket instances, the policy framework provides
+    highly efficient access to the most important socket functions
+    (like reading and writing) and the inheritance hierarchy provides
+    convenient access to the multitude of special and protocol
+    dependent options.
+
+    \see \ref usage \n
+         \ref extend \n
+         \ref implementation
+ */
+
+/** \page usage Using the Socket Library
+
+    \section socket_handle The socket handle
+
+    Whenever you use the socket library, what you will be dealing with
+    are senf::FileHandle derived instances. The socket library relies
+    on reference counting to automatically manage the underlying
+    socket representation. This frees you of having to manage the
+    socket lifetime explicitly.
+    
+    \attention It is very important, to (almost) always pass the socket
+    handle <em>by value</em>. The socket handle is a very lightweight
+    class and designed to be used like an ordinary built-in type. This
+    is very important in combination with the policy interface.
+
+    \section policy_framework The policy framework
+
+    The policy framework conceptually implements a list of parallel
+    inheritance hierarchies each covering a specific interface aspect
+    of the socket handle. The socket handle itself only provides
+    minimal functionality. All further functionality is relayed to a
+    policy class, or more precisely, to a group of policy classes, one
+    for each policy axis. The policy axis are
+    
+    <dl>
+    <dt><em>addressingPolicy</em></dt>
+    <dd>configures, whether a socket is
+    addressable and if so, configures the address type</dd>
+    
+    <dt><em>framingPolicy</em></dt>
+    <dd>configures the type of framing the socket provides: either no
+    framing providing a simple i/o stream or packet framing</dd>
+    
+    <dt><em>communicationPolicy</em></dt>
+    <dd>configures,if and how the communication partner is
+    selected</dd> 
+    
+    <dt><em>readPolicy</em></dt>
+    <dd>configures the readability of the socket</dd>
+    
+    <dt><em>writePolicy</em></dt>
+    <dd>configures the writability of the socket</dd>
+    
+    <dt><em>bufferingPolicy</em></dt>
+    <dd>configures, if and how buffering is configured for a socket</dd>
+    </dl>
+
+ */
+
+/** \page extend Extending the Library
+ */
+
+/** \page implementation Implementation notes
+
+    \image html "../../SocketLibrary-classes.png" Class hierarchy
+ */
+
+
+
+// Local Variables:
+// mode: c++
+// mode: flyspell
+// mode: auto-fill
+// ispell-local-dictionary: "american"
+// End:
