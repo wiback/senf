@@ -113,8 +113,7 @@ def GlobSources(exclude=[]):
     
 def StandardTargets(env):
     all = env.Alias('all')
-    env.Clean(all, [ '.sconsign', '.sconf_temp', 'config.log', 'ChangeLog.bak', '.clean'
-                     ] + glob.glob("*~"))
+    env.Clean(all, [ '.sconsign', '.sconf_temp', 'config.log' ])
     env.Depends(all, '.')
 
 def GlobalTargets(env):
@@ -151,14 +150,7 @@ def Objects(env, sources, testSources = None, LIBS = []):
 
     return objects
 
-def DoxyGlob(exclude=[]):
-    sources = [ f
-                for ext in ("cci", "ct", "cti", "h", "hh", "ih", "mmc", "dox")
-                for f in glob.glob("*."+ext)
-                if f not in exclude ]
-    return sources
-
-def Doxygen(env, doxyfile="Doxyfile", extra_sources = []):
+def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     docs = env.Doxygen(doxyfile)
     # The last target is the (optional) tagfile
     if os.path.basename(str(docs[-1])) != '.stamp':

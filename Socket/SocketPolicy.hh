@@ -36,7 +36,7 @@ namespace senf {
     // be adjusted accordingly). However, AddressingPolicy MUST always
     // be the first Policy member ...
 
-#   define SATLIB_SOCKET_POLICIES               \
+#   define SENF_SOCKET_POLICIES               \
 	(AddressingPolicy)                      \
         (FramingPolicy)                         \
 	(CommunicationPolicy)                   \

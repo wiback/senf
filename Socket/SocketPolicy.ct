@@ -32,12 +32,12 @@
 #define SP_TemplateArgs(x1,x2,n,SomePolicy) BOOST_PP_COMMA_IF(n) class BOOST_PP_CAT(SomePolicy,_)
 #define SP_TemplateParams(x1,x2,n,SomePolicy) BOOST_PP_COMMA_IF(n) BOOST_PP_CAT(SomePolicy,_)
 
-template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, , SATLIB_SOCKET_POLICIES ) >
-prefix_ void senf::SocketPolicy< BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateParams, , SATLIB_SOCKET_POLICIES ) >::
+template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, , SENF_SOCKET_POLICIES ) >
+prefix_ void senf::SocketPolicy< BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateParams, , SENF_SOCKET_POLICIES ) >::
 checkBaseOf(SocketPolicyBase const & other)
 {
 #   define SP_CheckPolicy(x1,x2,SomePolicy) (void) dynamic_cast<SomePolicy const &>(other.BOOST_PP_CAT(the,SomePolicy)());
-    BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SATLIB_SOCKET_POLICIES )
+    BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SENF_SOCKET_POLICIES )
 #   undef SP_CheckPolicy
 }
 

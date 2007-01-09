@@ -53,7 +53,7 @@
 namespace senf {
 
 
-#   define SATLIB_SOCKET_POLICIES_N BOOST_PP_SEQ_SIZE( SATLIB_SOCKET_POLICIES )
+#   define SENF_SOCKET_POLICIES_N BOOST_PP_SEQ_SIZE( SENF_SOCKET_POLICIES )
     
     // This REALLY is bad ... but we just need an Address member in
     // AddressingPolicyBase as long as ClientSocketHandle /
@@ -72,7 +72,7 @@ namespace senf {
         { virtual ~ BOOST_PP_CAT(SomePolicy,Base) () {} };                              \
         typedef BOOST_PP_CAT(SomePolicy,Base) BOOST_PP_CAT(Unspecified,SomePolicy);
 
-    BOOST_PP_SEQ_FOR_EACH( SP_DeclareBase, , BOOST_PP_SEQ_POP_FRONT( SATLIB_SOCKET_POLICIES ) )
+    BOOST_PP_SEQ_FOR_EACH( SP_DeclareBase, , BOOST_PP_SEQ_POP_FRONT( SENF_SOCKET_POLICIES ) )
 
 #   undef SP_DeclareBase
         
@@ -86,7 +86,7 @@ namespace senf {
             virtual BOOST_PP_CAT(SomePolicy,Base) const & BOOST_PP_CAT(the,SomePolicy) () const \
                 { return BOOST_PP_CAT(BOOST_PP_CAT(the,SomePolicy),_); }
 
-        BOOST_PP_SEQ_FOR_EACH( SP_DeclareTypedef, , SATLIB_SOCKET_POLICIES )
+        BOOST_PP_SEQ_FOR_EACH( SP_DeclareTypedef, , SENF_SOCKET_POLICIES )
 
 #       undef SP_DeclareTypedef
     };
@@ -95,7 +95,7 @@ namespace senf {
         BOOST_PP_COMMA_IF( n )                                                  \
         class BOOST_PP_CAT(SomePolicy,_) = BOOST_PP_CAT(SomePolicy,Base)
 
-    template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, , SATLIB_SOCKET_POLICIES ) >
+    template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, , SENF_SOCKET_POLICIES ) >
     struct SocketPolicy
         : public SocketPolicyBase
     {
@@ -105,7 +105,7 @@ namespace senf {
         BOOST_PP_CAT(SomePolicy,Base) const & BOOST_PP_CAT(the,SomePolicy) () const     \
             { return BOOST_PP_CAT(BOOST_PP_CAT(the,SomePolicy),_); }
 
-        BOOST_PP_SEQ_FOR_EACH( SP_DeclarePolicyMember, , SATLIB_SOCKET_POLICIES )
+        BOOST_PP_SEQ_FOR_EACH( SP_DeclarePolicyMember, , SENF_SOCKET_POLICIES )
 #   undef SP_DeclarePolicyMember
 
         static void checkBaseOf(SocketPolicyBase const & other);
@@ -129,15 +129,15 @@ namespace impl {
         BOOST_PP_COMMA_IF( m )                                                  \
         BOOST_PP_IIF( BOOST_PP_EQUAL(n,m), Policy, typename Base::SomePolicy )
 
-#    define BOOST_PP_LOCAL_LIMITS (0, BOOST_PP_DEC( SATLIB_SOCKET_POLICIES_N ) )
+#    define BOOST_PP_LOCAL_LIMITS (0, BOOST_PP_DEC( SENF_SOCKET_POLICIES_N ) )
 #    define BOOST_PP_LOCAL_MACRO(n)                                                                                             \
-        SocketPolicy_rv<n> MakeSocketPolicy_merge_(BOOST_PP_CAT( BOOST_PP_SEQ_ELEM( n, SATLIB_SOCKET_POLICIES ),Base)*);        \
+        SocketPolicy_rv<n> MakeSocketPolicy_merge_(BOOST_PP_CAT( BOOST_PP_SEQ_ELEM( n, SENF_SOCKET_POLICIES ),Base)*);        \
                                                                                                                                 \
         template <class Base, class Policy>                                                                                     \
         struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<n>)>                                                   \
         {                                                                                                                       \
             typedef SocketPolicy<                                                                                               \
-               BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareMakeSocketPolicy_merge_member, n, SATLIB_SOCKET_POLICIES )                    \
+               BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareMakeSocketPolicy_merge_member, n, SENF_SOCKET_POLICIES )                    \
                > type;                                                                                                          \
         };
 
@@ -173,13 +173,13 @@ namespace impl {
 
     template <class Base>
     SocketPolicy_rv<1> SocketPolicy_checkcompat_(
-        BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareArguments, , SATLIB_SOCKET_POLICIES ) );
+        BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareArguments, , SENF_SOCKET_POLICIES ) );
 
 #   undef SP_DeclareArguments
 
     template <class Base>
     SocketPolicy_rv<2> SocketPolicy_checkcompat_( 
-        BOOST_PP_ENUM_PARAMS( SATLIB_SOCKET_POLICIES_N, void * BOOST_PP_INTERCEPT ) );
+        BOOST_PP_ENUM_PARAMS( SENF_SOCKET_POLICIES_N, void * BOOST_PP_INTERCEPT ) );
 
     template <int Size>
     struct SocketPolicy_checkcompat
@@ -200,17 +200,17 @@ namespace impl {
     struct SocketPolicy_compatibility
         : public SocketPolicy_checkcompat< sizeof(
             SocketPolicy_checkcompat_<Base>(
-                BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareArguments, , SATLIB_SOCKET_POLICIES ) )) >
+                BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareArguments, , SENF_SOCKET_POLICIES ) )) >
     {};
 
 } // namespace impl
 
-    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SATLIB_SOCKET_POLICIES_N, class T, senf::impl::nil ) >
+    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SENF_SOCKET_POLICIES_N, class T, senf::impl::nil ) >
     class MakeSocketPolicy
         : public boost::mpl::if_< boost::is_convertible< T0*, SocketPolicyBase* >,
-                                  impl::MakeSocketPolicy_impl< T0, boost::mpl::vector< BOOST_PP_ENUM_SHIFTED_PARAMS( SATLIB_SOCKET_POLICIES_N, T ) > >,
+                                  impl::MakeSocketPolicy_impl< T0, boost::mpl::vector< BOOST_PP_ENUM_SHIFTED_PARAMS( SENF_SOCKET_POLICIES_N, T ) > >,
                                   impl::MakeSocketPolicy_impl< SocketPolicy<>,
-                                                               boost::mpl::vector< BOOST_PP_ENUM_PARAMS( SATLIB_SOCKET_POLICIES_N, T ) > > >::type
+                                                               boost::mpl::vector< BOOST_PP_ENUM_PARAMS( SENF_SOCKET_POLICIES_N, T ) > > >::type
     {};
 
     template <class BasePolicy, class DerivedPolicy>
@@ -237,7 +237,7 @@ namespace impl {
             : public boost::enable_if_c< ! BOOST_PP_CAT(SomePolicy,Is)<Policy,Trait>::value >   \
         {};
 
-    BOOST_PP_SEQ_FOR_EACH( SP_DefineConditions, , SATLIB_SOCKET_POLICIES )
+    BOOST_PP_SEQ_FOR_EACH( SP_DefineConditions, , SENF_SOCKET_POLICIES )
 
 #   undef SP_DefineConditions
 

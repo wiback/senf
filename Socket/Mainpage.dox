@@ -33,12 +33,43 @@
     socket representation. This frees you of having to manage the
     socket lifetime explicitly.
     
+    \section socket_hierarchy The FileHandle hierarchy
+
+    \image html FhHierarchy.png
+
+    The senf::FileHandle class is the base of a hierarchy of socket
+    handle classes (realized as templates). These classes provide an
+    interface to the complete socket API. While going down the
+    inheritance hierarchy, the interface will be more and more
+    complete.
+
+    The most complete interface is provided by
+    senf::ProtocolClientSocketHandle and
+    senf::ProtocolServerSocketHandle. The template Arguments specifies
+    the Protocol class of the underlying socket type. These are the
+    \e only classes having public constructors and are therefore the
+    only classes, which may be created by the library user. You will
+    normally use these classes by naming a specific socket typedef
+    (e.g. senf::TCPv4ClientSocketHandle).
+    
+    However, to aid writing flexible and generic code, the socket
+    library provides the senf::ClientSocketHandle and
+    senf::ServerSocketHandle class templates. These templates
+    implement a family of closely related classes based on the
+    specification of the socket policy. This policy specification may
+    be \e incomplete (see below). Instances of
+    senf::ClientSocketHandle/senf::ServerSocketHandle can be assigned
+    and converted to different ClientSocketHandle/ServerSocketHandle
+    types as long as the policy specifications are compatible.
+
     \attention It is very important, to (almost) always pass the socket
     handle <em>by value</em>. The socket handle is a very lightweight
     class and designed to be used like an ordinary built-in type. This
     is very important in combination with the policy interface.
 
     \section policy_framework The policy framework
+    
+    \image html SocketPolicy.png
 
     The policy framework conceptually implements a list of parallel
     inheritance hierarchies each covering a specific interface aspect
@@ -70,6 +101,42 @@
     <dd>configures, if and how buffering is configured for a socket</dd>
     </dl>
 
+    Every Policy value is identified by a class type. The policy types
+    themselves built an inheritance hierarchy for each policy
+    axis. For each policy axis, the root of this tree is the class
+    named '<tt>(axis name)Base</tt>' (e.g. \p FramingPolicyBase or \p
+    CommunicationPolicyBase) which is aliased to '<tt>Unspecified(axis
+    name)</tt>' (e.g. \p UnspecifiedFramingPolicy or \p
+    UnspecifiedCommunicationPolicy). 
+
+    The senf::SocketPolicy template combines a set of policy classes,
+    one for each policy axis. Together, they define the behavior of a
+    socket handle. The socket handle instances do net implement any
+    socket functionality themselves, instead defering the
+    implementation to the socket classes. The interface is therefore
+    \e not implemented using virtual members, all important socket
+    functions can be inlined by the compiler to create highly
+    efficient code.
+
+    Two SocketPolicy instances are considered compatible, if all
+    policy axis are compatible. A policy axis is compatible, if one
+    policy class is either the same as the other or derived from
+    it. Two SocketHandle instances can be converted into each other,
+    as long as the SocketPolicies are compatible. 
+
+    \section policy_interface The policy interface
+
+    The socket handle classes and templates only implement the most
+    important socket API methods. To access the complete API, the
+    protocol interface is provided. Access to the protocol interface
+    is only possible via senf::ProtocolClientSocketHandle and
+    senf::ProtocolServerSocketHandle which have the necessary \c
+    protocol() member. This member returns a reference to the protocol
+    class instance which contains members covering all the API
+    function snot found in the SocketHandle interface. The protocol
+    interface is specific to the protocol. It's implementation is
+    quite free. Every protocol class will define the complete and
+    specific socket policy of it's socket handle.
  */
 
 /** \page extend Extending the Library
@@ -77,9 +144,8 @@
 
 /** \page implementation Implementation notes
 
-    \image html "../../SocketLibrary-classes.png" Class hierarchy
+    \image html SocketLibrary-classes.png
  */
-
 
 
 // Local Variables:
