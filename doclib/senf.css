@@ -165,3 +165,24 @@ dl.note {
 	background-color: #F0F8F8;
 	padding: 4px;
 }
+
+table.senf { 
+	width: 95%;
+	margin: 0 auto;
+	border: 1px solid #AAAAAA;
+	padding: 2px;
+	border-spacing: 0;
+}
+
+table.senf td,th { 
+	border: 2px solid white;
+	background-color: #EEEEEE;
+	padding: 2px 4px;
+	text-align: left;
+}
+
+table.senf th { 
+	background-color: #DDDDDD;
+	text-align: center;
+	font-weight: bold;
+}
