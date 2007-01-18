@@ -179,7 +179,7 @@ def DoxyEmitter(source, target, env):
          # This is needed to silence the (wrong) 'Multiple ways to
          # build the same target' message
          dir.sources = source
-         node = env.File( os.path.join(dir.abspath, ".stamp" ) )
+         node = env.File( os.path.join(dir.abspath, k.lower()+".stamp" ) )
          targets.append(node)
          targets.append(dir)
 

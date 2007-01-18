@@ -194,11 +194,33 @@ dl.bug {
 	padding: 0 10px;
 }
 
+dl:contains("Bug:") { 
+	border: 1px solid #CC8888;
+	padding: 5px;
+	background-color: #FFEEEE;
+	color: #666666;
+}
+
+dl:contains("Bug:") a { 
+	color: #6666FF;
+}
+
 dl.fixme { 
 	border: 1px solid #EEEE00;
 	border-left-width: 4px;
 	background-color: #FFFFDD;
 	padding: 0 10px;
+}
+
+dl:contains("Fix:") { 
+	border: 1px solid #CCCC88;
+	padding: 5px;
+	background-color: #FFFFEE;
+	color: #666666;
+}
+
+dl:contains("Fix:") a { 
+	color: #6666FF;
 }
 
 dl.todo { 
@@ -208,6 +230,17 @@ dl.todo {
 	padding: 0 10px;
 }
 
+dl:contains("Todo:") { 
+	border: 1px solid #88CC88;
+	padding: 5px;
+	background-color: #EEFFEE;
+	color: #666666;
+}
+
+dl:contains("Todo:") a { 
+	color: #6666FF;
+}
+
 dl.idea { 
 	border: 1px solid #AAAAAA;
 	border-left-width: 4px;
@@ -215,3 +248,13 @@ dl.idea {
 	padding: 0 10px;
 }
 
+dl:contains("Idea:") { 
+	border: 1px solid #CCCCCC;
+	padding: 5px;
+	background-color: #F8F8F8;
+	color: #666666;
+}
+
+dl:contains("Idea:") a { 
+	color: #6666FF;
+}

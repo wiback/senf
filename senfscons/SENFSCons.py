@@ -9,7 +9,7 @@ SCONS_TOOLS = [
 opts = None
 finalizers = []
 
-basedir = os.path.split(__file__)[0]
+basedir = os.path.abspath(os.path.split(__file__)[0])
 
 def InitOpts():
     global opts
@@ -147,23 +147,44 @@ def Objects(env, sources, testSources = None, LIBS = []):
     return objects
 
 def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
-    docs = env.Doxygen(doxyfile)
+    # ARGHHH !!! without the [:] we are changing the target list
+    #        ||| WITHIN THE DOXYGEN BUILDER
+    docs = env.Doxygen(doxyfile)[:]
+    xmlnode = None
+    tagnode = None
     for doc in docs:
         if isinstance(doc,SCons.Node.FS.Dir): continue
-        if os.path.basename(str(doc)) == '.stamp' : continue # file stamp
+        if doc.name == 'xml.stamp' : xmlnode = doc
+        if os.path.splitext(doc.name)[1] == '.stamp' : continue # file stamp
         # otherwise it must be the tag file
-        break
-    else:
-        doc = None
-    if doc:
+        tagnode = doc
+
+    if tagnode:
         # Postprocess the tag file to remove the (broken) namespace
         # references
         env.AddPostAction(
-            doc,
-            env.Action([ "xsltproc -o TARGET.temp %s TARGET"
-                         % os.path.join(basedir,"tagmunge.xsl"),
-                         "mv TARGET.temp TARGET" ]))
-        env.Clean(doc,"$TARGET.temp")
+            docs,
+            env.Action("xsltproc -o %(target)s.temp %(template)s %(target)s && mv %(target)s.temp %(target)s"
+                       % { 'target': tagnode.abspath,
+                           'template': os.path.join(basedir,"tagmunge.xsl") }))
+
+    if xmlnode:
+        xrefs = []
+        for type in env.get("DOXY_XREF_TYPES",[ "bug", "todo" ]):
+            xref = os.path.join(xmlnode.dir.abspath,type+".xml")
+            xref_pp = env.Command(xref+'i', [ xref, os.path.join(basedir,'xrefxtract.xslt'), xmlnode ],
+                                  [ "test -s $SOURCE && xsltproc -o $TARGET" +
+                                    " --stringparam module $MODULE" + 
+                                    " --stringparam type $TYPE" +
+                                    " ${SOURCES[1]} $SOURCE || touch $TARGET" ],
+                                  MODULE = xmlnode.dir.dir.dir.name,
+                                  TYPE = type)
+            env.SideEffect(xref, xmlnode)
+            env.AddPreAction(docs, "rm -f %s" % (xref,))
+            env.AddPostAction(docs, "test -r %s || touch %s" % (xref,xref))
+            xrefs.extend(xref_pp)
+        docs.extend(xrefs)
+
     env.Depends(docs,extra_sources)
     for doc in docs :
         env.Alias('all_docs', doc)
@@ -171,41 +192,13 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         env.Clean('all', doc)
     return docs
 
-def DoxyXRef(env, 
-             TYPES = ('bug','todo'),
+def DoxyXRef(env, docs=None,
              HTML_HEADER = None, HTML_FOOTER = None,
              TITLE = "Cross-reference of action points"):
-    # Hmm .. this looks a bit scary :-) ...
-    xrefis = []
-
-    # This iterates over all doc targets. These are all .stamp and .tag files
-    for node in env.Alias('all_docs')[0].sources:
-        # We are only interested in the xml targets. This is Doxyfile dependent :-(
-        if node.abspath.endswith('/xml/.stamp'):
-            # This is the list of xref categories
-            for type in TYPES:
-                # Here we construct the pathname of the xml file for the category
-                xref = os.path.join(node.dir.abspath,type+'.xml')
-                # And now apply the xrefxtract.xslt tempalte to it. However, we must
-                # only call xsltproc if the source xml file is not empty (therefore the
-                # 'test')
-                xrefi = env.Command(xref+'i', [ xref, '%s/xrefxtract.xslt' % basedir, node ],
-                                    [ "test -s $SOURCE && xsltproc -o $TARGET" +
-                                      " --stringparam module $MODULE" + 
-                                      " --stringparam type $TYPE" +
-                                      " ${SOURCES[1]} $SOURCE || touch $TARGET" ],
-                                    MODULE = node.dir.dir.dir.name,
-                                    TYPE = type)
-                # If the xref xml file does not exist we create it here as an empty
-                # file since doxygen will only create it if it is non-empty.
-                if not env.GetOption('clean') and not os.path.exists(xref):
-                    if not os.path.exists(node.dir.abspath):
-                        env.Execute(SCons.Defaults.Mkdir(node.dir.abspath))
-                    env.Execute(SCons.Defaults.Touch(xref))
-                xrefis.append(xrefi)
-
-    # And here we can now simply combine all the xrefi files
-    xref = env.Command("doc/html/xref.xml", xrefis,
+    if docs is None:
+        docs = env.Alias('all_docs')[0].sources
+    xrefs = [ doc for doc in docs if os.path.splitext(doc.name)[1] == ".xmli" ]
+    xref = env.Command("doc/html/xref.xml", xrefs,
                        [ "echo -e '<?xml version=\"1.0\"?>\\n<xref>' >$TARGET",
                          "cat $SOURCES >> $TARGET",
                          "echo '</xref>' >>$TARGET" ])

@@ -4,7 +4,7 @@ FILE_PATTERNS          = *.c *.cc *.cci *.ct *.cti *.h *.hh *.ih *.mmc *.dox
 EXCLUDE_PATTERNS       = *.test.cc .*
 IMAGE_PATH             = .
 
-ALIASES                = "fixme=\xrefitem fixme \"Fixme\" \"Fixmes\"" \
+ALIASES                = "fixme=\xrefitem fixme \"Fix\" \"Fixmes\"" \
 			 "idea=\xrefitem idea \"Idea\" \"Ideas\""
 REPEAT_BRIEF           = YES
 ALWAYS_DETAILED_SEC    = YES

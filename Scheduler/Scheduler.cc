@@ -29,8 +29,6 @@
     static member Scheduler::instance() must return a thread-local
     value (that is Scheduler::instance() must allocate one Scheduler
     instance per thread)
-
-    \fixme Test2
  */
 
 // Here a basic concept of how to add signal support to the scheduler:
