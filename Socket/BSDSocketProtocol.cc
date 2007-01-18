@@ -59,8 +59,8 @@ prefix_ void senf::BSDSocketProtocol::linger(bool enable, unsigned timeout)
 prefix_ struct timeval senf::BSDSocketProtocol::timestamp()
     const
 {
-    // BUG: Check, why this fails with ENOFILE (!!!!) at least when
-    // called from a tcp socket. Further investigation necessary ...
+    /** \bug Check, why this fails with ENOFILE (!!!!) at least when
+	called from a tcp socket. Further investigation necessary ... */
     struct timeval tv;
     if (::ioctl(body().fd(), SIOCGSTAMP, &tv) < 0)
         throw SystemException(errno);

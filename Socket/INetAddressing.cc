@@ -38,7 +38,7 @@
 prefix_ senf::INet4Address::INet4Address(std::string host, unsigned port)
 {
     clear();
-    // TODO: gethostbyname einbauen
+    /** \todo  gethostbyname support */
     if (::inet_aton(host.c_str(), &addr_.sin_addr) == 0)
         throw InvalidINetAddressException();
     addr_.sin_port = htons(port);
@@ -61,7 +61,7 @@ prefix_ void senf::INet4Address::clear()
 prefix_ void senf::INet4Address::assignString(std::string address)
 {
     clear();
-    // TODO: gethostbyname einbauen
+    /** \todo  gethostbyname support */
     unsigned i = address.find(':');
     if (i == std::string::npos)
         throw InvalidINetAddressException();

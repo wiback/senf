@@ -20,25 +20,25 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// TODO: Implement assign() method akin to reinterpret(). However,
-// instead of using the data already present, assign() will replace
-// the date of the current packet with the given Packet.
-
-// TODO: Implement wrapping-constructor. Somehow we want to have a
-// constructor, which allows creating a chain of packet interpreters
-// with as little overhead as possible.
-
-// TODO: Document the additional concrete Packet facade requirements
-// explicitly and not only within the Parser requirements (check(),
-// bytes() and min_bytes() members ...)
-
-// TODO: Implement special container replacing vector which manages
-// some headroom to allow efficient insertion of elements at the
-// beginning. This really is just another type of deque
-// implementation.
-
 /** \file
     \brief Main packet interface
+
+    \todo Implement assign() method akin to reinterpret(). However,
+    instead of using the data already present, assign() will replace
+    the date of the current packet with the given Packet.
+
+    \todo Implement wrapping-constructor. Somehow we want to have a
+    constructor, which allows creating a chain of packet interpreters
+    with as little overhead as possible.
+
+    \todo Document the additional concrete Packet facade requirements
+    explicitly and not only within the Parser requirements (check(),
+    bytes() and min_bytes() members ...)
+
+    \todo Implement special container replacing vector which manages
+    some headroom to allow efficient insertion of elements at the
+    beginning. This really is just another type of deque
+    implementation.
  */
 
 #ifndef HH_Packet_
@@ -76,7 +76,7 @@ namespace senf {
         counted smart pointer, so resource management is quasi
         automatic.
 
-        \image html "../../structure.png" Overview
+        \image html structure.png Overview
         
         Internally, every Packet references a PacketImpl instance which
         manages the raw packet data and the interpreter list. This raw
@@ -260,6 +260,8 @@ namespace senf {
         intrusive_ptr is only the size of an ordinary pointer, a
         smart_ptr has the size of two pointers).
 
+        \fixme Make all data mutators protected
+
         \nosubgrouping
       */
     class Packet : boost::noncopyable
@@ -395,8 +397,8 @@ namespace senf {
             OtherPacket. 
 
             \attention This invalidates the packet instance \e
-            this</b>. You must ensure, not to use the Packet instance
-            any further after this call
+            this. You must ensure, not to use the Packet instance any
+            further after this call
 
             \return smart pointer to a \e new packet facade
             \throws TruncatedPacketException there is not enough data
@@ -438,8 +440,6 @@ namespace senf {
         size_t size() const;
 
         // Modifying the raw packet data
-
-        // FIXME: Make all data mutators protected
 
         typedef enum { AUTO, BEFORE, INSIDE, OUTSIDE, AFTER } Whence;
 

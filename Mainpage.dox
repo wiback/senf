@@ -30,6 +30,7 @@
 
     \see \ref usage\n
          \ref example\n
+         <a href="xref.html">Current status: Cross reference of action points</a>\n
          <a class="ext" href="http://developer.berlios.de/projects/senf">The BerliOS project page</a>\n
          <a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">The SENF Wiki at BerliOS</a>
 */

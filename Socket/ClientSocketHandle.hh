@@ -20,9 +20,6 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// TODO: Move all not template-parameter dependent code into a
-// non-template base class
-
 #ifndef HH_ClientSocketHandle_
 #define HH_ClientSocketHandle_ 1
 
@@ -39,6 +36,9 @@ namespace senf {
     template <class Policy> class ServerSocketHandle;
 
     /** \brief
+	
+	\todo Move all not template-parameter dependent code into a
+	non-template base class
       */
     template <class Policy>
     class ClientSocketHandle

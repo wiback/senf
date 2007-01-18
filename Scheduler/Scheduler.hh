@@ -20,9 +20,6 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// TODO: Fix EventId parameter (probably to int) to allow |-ing without casting ...
-
-
 /** \mainpage The SENF Scheduler library
 
  */
@@ -52,6 +49,9 @@ namespace senf {
         descriptiors with this class and pass callback functions to be
         called on input, output or error. This functions are specified
         using boost::function objects
+
+	\todo Fix EventId parameter (probably to int) to allow |-ing
+	without casting ...
       */
     class Scheduler
         : boost::noncopyable

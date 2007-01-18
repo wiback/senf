@@ -33,7 +33,10 @@
 namespace senf {
 
 
-    // TODO: Should this be dependent on Read / WritePolicy ?
+    /** \brief
+
+	\todo Shouldn't this be dependent on Read / WritePolicy ?
+     */
     struct SocketBufferingPolicy : public BufferingPolicyBase
     {
         static unsigned rcvbuf(FileHandle handle);

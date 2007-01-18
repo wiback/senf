@@ -40,8 +40,8 @@ namespace {
 prefix_ void senf::EthernetPacket::v_nextInterpreter()
     const
 {
-    // TODO: Add LLC/SNAP support -> only use the registry
-    // for type() values >=1536, otherwise expect an LLC header
+    /** \todo Add LLC/SNAP support -> only use the registry
+	for type() values >=1536, otherwise expect an LLC header */
     registerInterpreter(type(),begin()+bytes(),end());
 }
 
@@ -85,8 +85,7 @@ prefix_ void senf::EthernetPacket::v_finalize()
 prefix_ void senf::EthVLanPacket::v_nextInterpreter()
     const
 {
-    // TODO: Add LLC/SNAP support -> only use the registry
-    // for type() values >=1536, otherwise expect an LLC header
+    /** \todo Add LLC/SNAP support (see above) */
     registerInterpreter(type(),begin()+bytes(),end());
 }
 

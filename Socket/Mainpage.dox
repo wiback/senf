@@ -218,7 +218,7 @@
     information on how to implement that policy.
 
     <table class="senf">
-      <tr><th>SocketHandle member</th><th>Policy member</th></tr>
+      <tr><th>SocketHandle member</th>                  <th>Policy member</th></tr>
       <tr><td>senf::ClientSocketHandle::read</td>       <td>ReadPolicy::read (\ref senf::ReadPolicyBase)</td></tr>
       <tr><td>senf::ClientSocketHandle::readfrom</td>   <td>ReadPolicy::readfrom (\ref senf::ReadPolicyBase)</td></tr>
       <tr><td>senf::ClientSocketHandle::write</td>      <td>WritePolicy::write (\ref senf::WritePolicyBase)</td></tr>

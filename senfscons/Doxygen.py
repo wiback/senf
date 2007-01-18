@@ -40,7 +40,7 @@ def DoxyfileParse_(file, data):
       lex = shlex.shlex(instream=open(file), posix=True)
       lex.wordchars += "*+./-:@~"
       lex.whitespace = lex.whitespace.replace("\n", "")
-      lex.escape = ""
+      lex.escape = "\\"
 
       lineno = lex.lineno
       token = lex.get_token()
@@ -161,7 +161,13 @@ def DoxyEmitter(source, target, env):
    data = DoxyfileParse(source[0].abspath)
 
    targets = []
-   out_dir = data.get("OUTPUT_DIRECTORY", ".")
+   if data.has_key("OUTPUT_DIRECTORY"):
+      out_dir = data["OUTPUT_DIRECTORY"]
+      dir = env.Dir( os.path.join(source[0].dir.abspath, out_dir) )
+      dir.sources = source
+      targets.append(dir)
+   else:
+      out_dir = '.'
 
    # add our output locations
    for (k, v) in output_formats.iteritems():
@@ -169,13 +175,16 @@ def DoxyEmitter(source, target, env):
          # Grmpf ... need to use a File object here. The problem is, that
          # Dir.scan() is implemented to just return the directory entries
          # and does *not* invoke the source-file scanners .. ARGH !!
-         dir = env.Dir( os.path.join(str(source[0].dir), out_dir, data.get(k + "_OUTPUT", v[1])) )
-         node = env.File( os.path.join(str(dir), ".stamp" ) )
-         env.Clean(node, dir)
-         targets.append( node )
+         dir = env.Dir( os.path.join(source[0].dir.abspath, out_dir, data.get(k + "_OUTPUT", v[1])) )
+         # This is needed to silence the (wrong) 'Multiple ways to
+         # build the same target' message
+         dir.sources = source
+         node = env.File( os.path.join(dir.abspath, ".stamp" ) )
+         targets.append(node)
+         targets.append(dir)
 
    if data.has_key("GENERATE_TAGFILE"):
-      targets.append(env.File( os.path.join(str(source[0].dir), data["GENERATE_TAGFILE"]) ))
+      targets.append(env.File( os.path.join(source[0].dir.abspath, data["GENERATE_TAGFILE"]) ))
 
    # don't clobber targets
    for node in targets:

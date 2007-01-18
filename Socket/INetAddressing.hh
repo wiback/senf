@@ -38,9 +38,13 @@
 namespace senf {
 
 
-    // TODO: Implement real INet4Address datatype and 
-    // rename this one to INet4SockAddress ...
+    /** \brief
+	
+	\todo Implement real INet4Address datatype and 
+	rename this one to INet4SockAddress ... 
 
+	\todo Implement more complete interface
+     */
     class INet4Address
     {
     public:
@@ -54,8 +58,6 @@ namespace senf {
         std::string str() const;
         std::string host() const;
         unsigned port() const;
-
-        // TODO: Interface
 
         void clear();
 
@@ -71,9 +73,12 @@ namespace senf {
 
     std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
 
+    /** \brief
+
+	\todo Implement
+     */
     class INet6Address
     {
-        // TODO: Implement
     };
     
     struct INet4AddressingPolicy 
@@ -88,11 +93,13 @@ namespace senf {
         using GenericAddressingPolicy<INet4Address>::bind;
     };
 
+    /** \brief
+
+	\todo Implement
+     */
     struct INet6AddressingPolicy : public AddressingPolicyBase
     {
         typedef INet6Address Address;
-
-        // TODO: Implement
     };
 
     struct InvalidINetAddressException : public std::exception

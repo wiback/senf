@@ -78,6 +78,8 @@ prefix_ bool senf::PacketProtocol::eof()
 prefix_ void senf::PacketProtocol::promisc(std::string interface, PromiscMode mode)
     const
 {
+    /** \bug There are some failures here ... need to investigate */
+
     // The interface is really stupid: as far as i understand, it is possible to 
     // enable PROMISC and ALLMULTI seperately, however PROMISC is really a superset
     // of ALLMULTI ... grmpf ... therefore we allways set/reset both to implement sane

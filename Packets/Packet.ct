@@ -56,8 +56,8 @@ template <class OuterPacket>
 prefix_ typename senf::Packet::ptr_t<OuterPacket>::ptr
 senf::Packet::create(Packet::ptr payload)
 {
-    // TODO: should I instead of using head() throw away all
-    // interpreters before payload? ... probably yes ...
+    /** \todo should I instead of using head() throw away all
+	interpreters before payload? ... probably yes ... */
     payload->insert(payload->head()->begin(),min_bytes<OuterPacket>(),0);
     typename ptr_t<OuterPacket>::ptr p (new OuterPacket(PacketOp_set(payload->impl_)));
     p->init();

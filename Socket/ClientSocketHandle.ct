@@ -43,7 +43,7 @@ prefix_ void senf::ClientSocketHandle<Policy>::read(std::string & buffer, unsign
     unsigned nread = available();
     if (limit>0 && nread>limit) 
 	nread = limit;
-    // FIXME: This is not necessary correct and more or less a hack ...
+    /** \fixme This is not necessary correct and more or less a hack ... */
     buffer.assign(nread,0);
     unsigned rv = this->read(const_cast<char *>(buffer.data()),nread);
     if (rv < nread)
@@ -65,7 +65,7 @@ prefix_ void senf::ClientSocketHandle<Policy>::
 readfrom(std::string & buffer, typename Policy::AddressingPolicy::Address & from)
 {
     unsigned nread = available();
-    // FIXME: This is not necessary correct and more or less a hack ...
+    /** \fixme This is not necessary correct and more or less a hack ... */
     buffer.assign(nread,0);
     unsigned rv = this->readfrom(const_cast<char *>(buffer.data()), nread, from);
     if (rv < nread)

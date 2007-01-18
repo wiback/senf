@@ -3,10 +3,11 @@ INPUT                  = .
 FILE_PATTERNS          = *.c *.cc *.cci *.ct *.cti *.h *.hh *.ih *.mmc *.dox
 EXCLUDE_PATTERNS       = *.test.cc .*
 IMAGE_PATH             = .
-HTML_HEADER            = ../doclib/doxy-header.html
-HTML_FOOTER            = ../doclib/doxy-footer.html
 
-REPEAT_BRIEF           = NO
+ALIASES                = "fixme=\xrefitem fixme \"Fixme\" \"Fixmes\"" \
+			 "idea=\xrefitem idea \"Idea\" \"Ideas\""
+REPEAT_BRIEF           = YES
+ALWAYS_DETAILED_SEC    = YES
 MULTILINE_CPP_IS_BRIEF = YES
 DETAILS_AT_TOP         = YES
 BUILTIN_STL_SUPPORT    = YES
@@ -15,15 +16,20 @@ EXTRACT_PRIVATE        = YES
 EXTRACT_STATIC         = YES
 INTERNAL_DOCS          = YES
 SOURCE_BROWSER         = YES
+STRIP_CODE_COMMENTS    = NO
 ALPHABETICAL_INDEX     = YES
 COLS_IN_ALPHA_INDEX    = 3
-GENERATE_LATEX         = NO
-GENERATE_MAN           = NO
 
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 PREDEFINED             = DOXYGEN
 EXPAND_AS_DEFINED      = prefix_
+
+HTML_HEADER            = ../doclib/doxy-header.html
+HTML_FOOTER            = ../doclib/doxy-footer.html
+GENERATE_LATEX         = NO
+GENERATE_MAN           = NO
+GENERATE_XML           = YES
 
 HAVE_DOT               = YES
 CLASS_GRAPH            = YES

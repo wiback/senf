@@ -1,4 +1,5 @@
-import os.path, SCons.Options, SCons.Environment, SCons.Script.SConscript, glob
+import os.path, glob
+import  SCons.Options, SCons.Environment, SCons.Script.SConscript, SCons.Node.FS, SCons.Defaults
 
 SCONS_TOOLS = [
     "Doxygen",
@@ -117,12 +118,7 @@ def StandardTargets(env):
     env.Depends(all, '.')
 
 def GlobalTargets(env):
-    command = "find -name .svn -prune -o \( -name '*.hh' -o -name '*.ih' -o -name '*.cc' -o -name '*.cci' -o -name '*.ct' -o -name '*.cti' -o -name '*.mpp' \) -print " \
-              "| xargs -r awk -F '//' '/%s/{print ARGV[ARGIND] \":\" FNR \":\" $2}' > $TARGET"
-    env.AlwaysBuild(env.Command('TODOS',None,[ command % 'TODO' ]))
-    env.AlwaysBuild(env.Command('FIXMES',None,[ command % ' FIXME' ]))
-    env.AlwaysBuild(env.Command('BUGS',None,[ command % 'BUG' ] ))
-    env.Alias('status',[ 'TODOS', 'FIXMES', 'BUGS' ])
+    pass
 
 def LibPath(lib): return '$LOCALLIBDIR/lib%s.a' % lib
     
@@ -152,19 +148,87 @@ def Objects(env, sources, testSources = None, LIBS = []):
 
 def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     docs = env.Doxygen(doxyfile)
-    # The last target is the (optional) tagfile
-    if os.path.basename(str(docs[-1])) != '.stamp':
+    for doc in docs:
+        if isinstance(doc,SCons.Node.FS.Dir): continue
+        if os.path.basename(str(doc)) == '.stamp' : continue # file stamp
+        # otherwise it must be the tag file
+        break
+    else:
+        doc = None
+    if doc:
         # Postprocess the tag file to remove the (broken) namespace
         # references
         env.AddPostAction(
-            docs,
-            env.Action([ "xsltproc -o ${TARGETS[-1]}.temp %s ${TARGETS[-1]}"
+            doc,
+            env.Action([ "xsltproc -o TARGET.temp %s TARGET"
                          % os.path.join(basedir,"tagmunge.xsl"),
-                         "mv ${TARGETS[-1]}.temp ${TARGETS[-1]}" ]))
-        env.Clean(docs[-1],"$TARGET.temp")
+                         "mv TARGET.temp TARGET" ]))
+        env.Clean(doc,"$TARGET.temp")
     env.Depends(docs,extra_sources)
-    env.Alias('all_docs', *docs)
+    for doc in docs :
+        env.Alias('all_docs', doc)
+        env.Clean('all_docs', doc)
+        env.Clean('all', doc)
     return docs
+
+def DoxyXRef(env, 
+             TYPES = ('bug','todo'),
+             HTML_HEADER = None, HTML_FOOTER = None,
+             TITLE = "Cross-reference of action points"):
+    # Hmm .. this looks a bit scary :-) ...
+    xrefis = []
+
+    # This iterates over all doc targets. These are all .stamp and .tag files
+    for node in env.Alias('all_docs')[0].sources:
+        # We are only interested in the xml targets. This is Doxyfile dependent :-(
+        if node.abspath.endswith('/xml/.stamp'):
+            # This is the list of xref categories
+            for type in TYPES:
+                # Here we construct the pathname of the xml file for the category
+                xref = os.path.join(node.dir.abspath,type+'.xml')
+                # And now apply the xrefxtract.xslt tempalte to it. However, we must
+                # only call xsltproc if the source xml file is not empty (therefore the
+                # 'test')
+                xrefi = env.Command(xref+'i', [ xref, '%s/xrefxtract.xslt' % basedir, node ],
+                                    [ "test -s $SOURCE && xsltproc -o $TARGET" +
+                                      " --stringparam module $MODULE" + 
+                                      " --stringparam type $TYPE" +
+                                      " ${SOURCES[1]} $SOURCE || touch $TARGET" ],
+                                    MODULE = node.dir.dir.dir.name,
+                                    TYPE = type)
+                # If the xref xml file does not exist we create it here as an empty
+                # file since doxygen will only create it if it is non-empty.
+                if not env.GetOption('clean') and not os.path.exists(xref):
+                    if not os.path.exists(node.dir.abspath):
+                        env.Execute(SCons.Defaults.Mkdir(node.dir.abspath))
+                    env.Execute(SCons.Defaults.Touch(xref))
+                xrefis.append(xrefi)
+
+    # And here we can now simply combine all the xrefi files
+    xref = env.Command("doc/html/xref.xml", xrefis,
+                       [ "echo -e '<?xml version=\"1.0\"?>\\n<xref>' >$TARGET",
+                         "cat $SOURCES >> $TARGET",
+                         "echo '</xref>' >>$TARGET" ])
+
+    # Lastly we create the html file
+    sources = [ xref, "%s/xrefhtml.xslt" % basedir ]
+    if HTML_HEADER : sources.append(HTML_HEADER)
+    if HTML_FOOTER : sources.append(HTML_FOOTER)
+
+    commands = []
+    if HTML_HEADER:
+        commands.append(
+            "sed -e 's/\\$$title/$TITLE/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[2]} > $TARGET")
+    commands.append("xsltproc --stringparam title '$TITLE' ${SOURCES[1]} $SOURCE >> $TARGET")
+    if HTML_FOOTER:
+        commands.append(
+            "sed -e 's/\\$$title/$TITLE/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[%d]} >> $TARGET"
+            % (HTML_HEADER and 3 or 2))
+    
+    xref = env.Command("doc/html/xref.html", sources, commands)
+
+    env.Alias('all_docs',xref)
+    return xref
 
 def Lib(env, library, sources, testSources = None, LIBS = []):
     objects = Objects(env,sources,testSources,LIBS=LIBS)

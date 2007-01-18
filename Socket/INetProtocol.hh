@@ -20,11 +20,14 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// TODO: what about OOB data? das OOB Data block receipt of normal data ?
+/** \file
 
-// TODO: Implement IP_RECVERR / MSG_ERRQUEUE. This should be placed
-// into an additional protocol class since IP_RECVERR is only valid
-// for SOCK_DGRAM (UDP) and not SOCK_STREAM (TCP) sockets
+    \todo what about OOB data? 
+
+    \todo Implement IP_RECVERR / MSG_ERRQUEUE. This should be placed
+    into an additional protocol class since IP_RECVERR is only valid
+    for SOCK_DGRAM (UDP) and not SOCK_STREAM (TCP) sockets
+ */
 
 #ifndef HH_INetProtocol_
 #define HH_INetProtocol_ 1
@@ -41,6 +44,15 @@
 namespace senf {
 
 
+    /** \brief
+
+	\todo Is it safe, not to allow setting the interface index on
+	add/drop? what does it do (especially if the local addres is
+	given ?). What have I been thinking here ???
+       
+	\todo move all multicast-methods into an extra
+	IPv4MulticastProtocol class
+     */
     class IPv4Protocol 
         : public virtual SocketProtocol
     {
@@ -53,13 +65,6 @@ namespace senf {
 
         bool mcLoop() const;
         void mcLoop(bool value) const;
-
-        // TODO: Is it safe, not to allow setting the interface
-        // index on add/drop? what does it do (especially if
-        // the local addres is given ?)
-       
-        // TODO: move all multicast-methods into an extra
-        // IPv4MulticastProtocol class
 
         void mcAddMembership(INet4Address const & mcAddr) const;
         void mcAddMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;

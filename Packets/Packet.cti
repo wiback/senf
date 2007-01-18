@@ -50,9 +50,9 @@ prefix_ senf::Packet::Packet(Operation const & arg)
       parsed_(false), refcount_(1)
 {
     SATCOM_PKF_REFC_MSG("] Packet::Packet (" << this << "): refcount_ = 1\n");
-    // FIXME: This is not exception safe, if an exception is thrown in
-    // the derived class constuctor, the effects of this call must be
-    // undone which is not possible in a simple way.
+    /** \fixme This is not exception safe, if an exception is thrown in
+	the derived class constuctor, the effects of this call must be
+	undone which is not possible in a simple way. */
     arg(this);
 }
 

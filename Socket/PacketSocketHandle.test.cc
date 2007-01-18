@@ -55,8 +55,7 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
 
         // How am I supposed to test read and write .. grmpf ..
         
-        // BUG: There are some failures here ... need to investigate
-        /*
+	/*
         BOOST_CHECK_NO_THROW( sock.protocol().promisc(
                                   "lo",senf::PacketProtocol::Promiscuous) );
         BOOST_CHECK_NO_THROW( sock.protocol().promisc(

@@ -82,7 +82,7 @@ prefix_ void
 senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos,
                                                                     Value const & t)
 {
-    // FIXME: What, if pos == end() / default constructed iterator ?
+    /** \fixme What, if pos == end() / default constructed iterator ? */
     size_type ix (pos.raw()-container_.begin());
     container_.insert(pos.raw(),t.bytes(),0);
     Parser(container_.begin()+ix).value(t);

@@ -20,6 +20,11 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+
+    \todo ReadWritePolicy.test.cc 
+ */
+
 #ifndef HH_ReadWritePolicy_
 #define HH_ReadWritePolicy_ 1
 
@@ -31,7 +36,6 @@
 //#include "ReadWritePolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-// TODO: ReadWritePolicy.test.cc ...
 
 struct sockaddr;
 

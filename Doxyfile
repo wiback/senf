@@ -5,6 +5,7 @@ OUTPUT_DIRECTORY       = doc
 INPUT                  = .
 FILE_PATTERNS          = *.dox
 IMAGE_PATH             = .
+EXAMPLE_PATH           = Sniffer
 HTML_HEADER            = doclib/doxy-header-overview.html
 HTML_FOOTER            = doclib/doxy-footer.html
 GENERATE_LATEX         = NO

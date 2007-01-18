@@ -20,7 +20,19 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// TODO: Implement signal handling
+/** \file
+
+    \idea Implement signal handling (See source for more discussion
+    about this) 
+
+    \idea Multithreading support: To support multithreading, the
+    static member Scheduler::instance() must return a thread-local
+    value (that is Scheduler::instance() must allocate one Scheduler
+    instance per thread)
+
+    \fixme Test2
+ */
+
 // Here a basic concept of how to add signal support to the scheduler:
 //
 // Every signal to be reported by the scheduler will be asigned a
@@ -56,11 +68,6 @@
 // on top of each other. And of course any signal registered with the
 // scheduler must be blocked as soon as it is registered with the
 // scheduler.
-
-// TODO: Multithreading support
-// To support multithreading, the static member Scheduler::instance()
-// must return a thread-local value (that is Scheduler::instance()
-// must allocate one Scheduler instance per thread)
 
 // Definition of non-inline non-template functions
 

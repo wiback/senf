@@ -20,10 +20,6 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// TODO: Create a SocketHandleBase class and move some non-Policy
-// dependent code there
-
-
 #ifndef HH_SocketHandle_
 #define HH_SocketHandle_ 1
 
@@ -41,7 +37,10 @@ namespace senf {
 
 
     /** \brief
-      */
+
+	\todo Create a SocketHandleBase class and move some non-Policy
+	dependent code there
+     */
     template <class SocketPolicy>
     class SocketHandle
         : public FileHandle

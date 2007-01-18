@@ -62,16 +62,16 @@ prefix_ unsigned senf::LLSocketAddress::protocol()
 prefix_ unsigned senf::LLSocketAddress::arptype()
     const
 {
-    // TODO: Check, wether this is returned in network or host byte
-    // order
+    /** \todo make sure, that the value really is in network byte
+	order */
     return ntohs(addr_.sll_hatype);
 }
 
 prefix_ unsigned senf::LLSocketAddress::pkttype()
     const
 {
-    // TODO: Check, wether this is returned in network or host byte
-    // order
+    /** \todo make sure, that the value really is in network byte
+	order */
     return ntohs(addr_.sll_pkttype);
 }
 

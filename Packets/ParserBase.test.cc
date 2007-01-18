@@ -40,7 +40,7 @@
 
 BOOST_AUTO_UNIT_TEST(parserBase_inherited)
 {
-    // TODO: Implement
+    /** \todo Implement */
 }
 
 namespace {

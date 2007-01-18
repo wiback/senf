@@ -2,7 +2,6 @@
 //
 // Copyright (C) 2006 
 
-// TODO: Move all not Handle dependent members to a ReadHandleBase class
 
 #ifndef HH_ReadHelper_
 #define HH_ReadHelper_ 1
@@ -22,6 +21,10 @@
 namespace senf {
 
 
+    /** \brief
+
+	\todo Move all not Handle dependent members to a ReadHandleBase class
+     */
     template <class Handle>
     class ReadHelper
 	: public senf::intrusive_refcount

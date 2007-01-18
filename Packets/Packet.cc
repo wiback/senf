@@ -187,8 +187,8 @@ prefix_ senf::Packet::ptr senf::Packet::next()
     if (n == this->impl_->interpreters_.end()) {
         if (this->parsed_)
             return ptr(0);
-        // FIXME: v_nextInterpreter return bool? new Interpreter to be
-        // added ? hmm ... this however is quite suboptimal ...
+        /* \fixme v_nextInterpreter return bool? new Interpreter to be
+	   added ? hmm ... this however is quite suboptimal ... */
         this->v_nextInterpreter();
         this->parsed_ = true;
         n = boost::next(this->self_);
@@ -270,8 +270,8 @@ prefix_ void senf::Packet::erase(iterator first, iterator last)
     size_type index(first-impl_->data_.begin());
     size_type sz(last-first);
     BOOST_ASSERT( index >= begin_ && index < end_ && sz <= end_-index );
-    // FIXME: Here we should assert, that no bytes belonging to the
-    // next iterator are deleted ...
+    /** \fixme Here we should assert, that no bytes belonging to the
+	next iterator are deleted ... */
     impl_->data_.erase(first,last);
     impl_->updateIterators(index,-sz,self_,INSIDE);
 }

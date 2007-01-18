@@ -44,7 +44,7 @@ template <unsigned HEADER, unsigned TRAILER>
 prefix_ void senf::GenericPacket<HEADER,TRAILER>::v_dump(std::ostream & os)
     const
 {
-    // TODO: implement v_dump()
+    /// \todo implement v_dump()
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

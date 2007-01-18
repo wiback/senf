@@ -69,7 +69,7 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
     BOOST_CHECK_EQUAL(p_1.rr().socount(),        0x0dc8u     );
 
 
-    // TODO RTCP RR
+    /// \todo RTCP RR
     unsigned char data_2[] = { 
                              0x82, 0xc8, 0x00, 0x06, 
                              0xe5, 0x70, 0xaa, 0x18, 
@@ -201,7 +201,7 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
     BOOST_CHECK_EQUAL( j->DLSR(),     0x20212223u  );
 #endif
 
-    // TODO RTCP SDES
+    /// \todo RTCP SDES
 
     unsigned char data_4[] = { 
                              0x81, 0xca, 0x00, 0x04, 
@@ -225,7 +225,7 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
 #if 0
     Parse_RTCP_SDES::Parse_itemList::iterator j_4 (p_4.sdes().chunkVec().begin());
 
-// TODO  -> ask Stefan
+/// \todo ask Stefan
 
  // BOOST_CHECK_EQUAL( p_4.sdes().chunkList()[0].ssrc(), 0xe570aa18u);
  // BOOST_CHECK_EQUAL( p_4.sdes().chunkList()[0].itemList().size(), 0x01u);
