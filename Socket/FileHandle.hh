@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file 
+    \brief senf::FileHandle public header
+ */
+
 #ifndef HH_FileHandle_
 #define HH_FileHandle_ 1
 
@@ -105,19 +109,27 @@ namespace senf {
 
         bool eof() const;            ///< Check EOF condition
 	                             /**< Depending on the socket type, this might never return \p
-					true */
+					true.
+					
+					This member is somewhat problematic performance wise if
+					called frequently since it relies on virtual
+					functions. However, since the eof() handling is extremely
+					protocol dependent, a policy based implementation does not
+					seam feasible. */
         bool valid() const;          ///< Check filehandle validity
 	                             /**< Any operation besides valid() will fail on an invalid
 					FileHandle */
 
 	bool boolean_test() const;  ///< Short for valid() && ! eof()
 	                            /**< This is called when using a FileHandle instance in a boolen
-				       context */
+				       context 
+
+				       See the performance comments for the eof() member */
 
         int fd() const;             ///< Return the raw FileHandle
 
-        static FileHandle cast_static(FileHandle handle);  ///< \internal
-        static FileHandle cast_dynamic(FileHandle handle); ///< \internal
+        static FileHandle cast_static(FileHandle handle);  /**< \internal */
+        static FileHandle cast_dynamic(FileHandle handle); /**< \internal */
 
     protected:
         explicit FileHandle(std::auto_ptr<FileBody> body);

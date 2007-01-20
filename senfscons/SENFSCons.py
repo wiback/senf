@@ -218,7 +218,8 @@ def DoxyXRef(env, docs=None,
             "sed -e 's/\\$$title/$TITLE/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[%d]} >> $TARGET"
             % (HTML_HEADER and 3 or 2))
     
-    xref = env.Command("doc/html/xref.html", sources, commands)
+    xref = env.Command("doc/html/xref.html", sources, commands,
+                       TITLE = TITLE)
 
     env.Alias('all_docs',xref)
     return xref

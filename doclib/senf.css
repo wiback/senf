@@ -106,25 +106,6 @@ div.tabs ul li a:hover, div.tabs ul li#current a {
 	background-color: #EDE497;
 }
 
-div.nav { 
-	width: auto;
-	background-color: white;
-	border: none;
-	border-bottom: 1px solid #AF9D00;
-	padding: 5px 0;
-	margin: 0;	
-}
-
-div.qindex {
-	width: auto;
-	background-color: #e8eef2;
-	border: 1px solid #84b0c7;
-	text-align: center;
-	margin: 2px;
-	padding: 2px;
-	line-height: 140%;
-}
-
 #footer { 
 	clear: both;
 	padding: 4px 10px 4px 142px;
@@ -187,74 +168,88 @@ table.senf th {
 	font-weight: bold;
 }
 
-dl.bug { 
+dl.bug, dl.fixme, dl.todo, dl.idea { 
 	border: 1px solid #EE0000;
 	border-left-width: 4px;
 	background-color: #FFDDDD;
 	padding: 0 10px;
 }
 
-dl:contains("Bug:") { 
+dl:contains("Bug:"), dl:contains("Fix:"), dl:contains("Todo:"), dl:contains("Idea:") { 
 	border: 1px solid #CC8888;
-	padding: 5px;
+	padding: 4px;
 	background-color: #FFEEEE;
 	color: #666666;
+	font-size: 6px;
+	line-height: 6px;
+	overflow: hidden;
+	height: 6px;
 }
 
-dl:contains("Bug:") a { 
+dl:contains("Bug:"):hover, dl:contains("Fix:"):hover, 
+dl:contains("Todo:"):hover, dl:contains("Idea:"):hover { 
+	line-height: inherit;
+	font-size: inherit;
+	height: auto;
+}
+
+dl:contains("Bug:") a, dl:contains("Fix:") a, dl:contains("Todo:") a, dl:contains("Idea:") a { 
 	color: #6666FF;
 }
 
 dl.fixme { 
-	border: 1px solid #EEEE00;
-	border-left-width: 4px;
+	border-color: #EEEE00;
 	background-color: #FFFFDD;
-	padding: 0 10px;
 }
 
 dl:contains("Fix:") { 
-	border: 1px solid #CCCC88;
-	padding: 5px;
+	border-color: #CCCC88;
 	background-color: #FFFFEE;
-	color: #666666;
-}
-
-dl:contains("Fix:") a { 
-	color: #6666FF;
 }
 
 dl.todo { 
-	border: 1px solid #00AA00;
-	border-left-width: 4px;
+	border-color: #00AA00;
 	background-color: #DDFFDD;
-	padding: 0 10px;
 }
 
 dl:contains("Todo:") { 
-	border: 1px solid #88CC88;
-	padding: 5px;
+	border-color: #88CC88;
 	background-color: #EEFFEE;
-	color: #666666;
-}
-
-dl:contains("Todo:") a { 
-	color: #6666FF;
 }
 
 dl.idea { 
-	border: 1px solid #AAAAAA;
-	border-left-width: 4px;
+	border-color: #AAAAAA;
 	background-color: #EEEEEE;
-	padding: 0 10px;
 }
 
 dl:contains("Idea:") { 
-	border: 1px solid #CCCCCC;
-	padding: 5px;
+	border-color:  #CCCCCC;
 	background-color: #F8F8F8;
-	color: #666666;
 }
 
-dl:contains("Idea:") a { 
-	color: #6666FF;
+table {
+	width: 100%;
+}
+
+div.ah { 
+	margin-right: 10px;
+}
+
+div.nav { 
+	width: auto;
+	background-color: white;
+	border: none;
+	border-bottom: 1px solid #AF9D00;
+	padding: 5px 0;
+	margin: 0;	
+}
+
+div.qindex {
+	width: auto;
+	background-color: #e8eef2;
+	border: 1px solid #84b0c7;
+	text-align: center;
+	margin: 2px 0;
+	padding: 2px;
+	line-height: 140%;
 }

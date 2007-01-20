@@ -15,6 +15,34 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+# I have been fighting 4 problems in this implementation:
+# - A Directory target will *not* call any source scanners
+# - A Directory target will interpret the directory contents as
+#   sources not targets. This means, that if a command creates that
+#   directory plus contents, the target will never be up-to-date
+#   (since the directory contents will change with every call of
+#   scons)
+# - Theres a bug in SCons which will produce an error message for
+#   directory targets if dir.sources is not set explicitly
+# - the first argument to env.Clean() must be the command line target,
+#   with which the scons was invoked. This does not help to add
+#   aditional files or directories to be cleaned if you don't know
+#   that target (it's not possible to say 'if you clean this file,
+#   also clean that one' hich is, what I had expected env.Clean to
+#   do).
+#
+# Together, these problems have produced several difficulties. I have
+# solved them by
+# - Adding an (empty) stamp file as a (file) target. This target will
+#   cause source scanners to be invoked
+# - Adding the documentation directory as a target (so it will be
+#   cleaned up which env.Clean doesn't help me to do), but *only* if
+#   scons is called to with the -c option
+# - Setting dir.sources to the known source-list to silence the error
+#   message whenever a directory is added as a target
+#
+# You will find all this in the DoxyEmitter
+
 import os, sys, traceback
 import os.path
 import glob
@@ -165,23 +193,18 @@ def DoxyEmitter(source, target, env):
       out_dir = data["OUTPUT_DIRECTORY"]
       dir = env.Dir( os.path.join(source[0].dir.abspath, out_dir) )
       dir.sources = source
-      targets.append(dir)
+      if env.GetOption('clean'): targets.append(dir)
    else:
       out_dir = '.'
 
    # add our output locations
    for (k, v) in output_formats.iteritems():
       if data.get("GENERATE_" + k, v[0]).upper() == "YES":
-         # Grmpf ... need to use a File object here. The problem is, that
-         # Dir.scan() is implemented to just return the directory entries
-         # and does *not* invoke the source-file scanners .. ARGH !!
          dir = env.Dir( os.path.join(source[0].dir.abspath, out_dir, data.get(k + "_OUTPUT", v[1])) )
-         # This is needed to silence the (wrong) 'Multiple ways to
-         # build the same target' message
          dir.sources = source
          node = env.File( os.path.join(dir.abspath, k.lower()+".stamp" ) )
          targets.append(node)
-         targets.append(dir)
+         if env.GetOption('clean'): targets.append(dir)
 
    if data.has_key("GENERATE_TAGFILE"):
       targets.append(env.File( os.path.join(source[0].dir.abspath, data["GENERATE_TAGFILE"]) ))

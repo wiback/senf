@@ -20,7 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file
+    \brief senf::SocketHandle non-inline non-template implementation
+ */
 
 #include "SocketHandle.hh"
 #include "SocketHandle.ih"
@@ -85,7 +87,8 @@ namespace {
     }
 }
 
-prefix_ bool senf::detail::StateMapOrdering::operator()(std::string a1, std::string a2)
+prefix_ bool senf::detail::StateMapOrdering::operator()(std::string const & a1,
+                                                        std::string const & a2)
     const
 {
     std::string::iterator i1 (a1.begin());

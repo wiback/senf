@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief senf::FileHandle internal header
+ */
+
 #ifndef IH_FileHandle_
 #define IH_FileHandle_ 1
 
@@ -32,7 +36,29 @@
 namespace senf {
 
 
-    /** \brief
+    /** \brief senf::FileHandle referenced body
+	
+	\internal
+
+	The senf::FileBody class formes the body part of the handle/body structure of the FileHandle
+	interface. It manages the FileHandle data and is referenced by senf::FileHandle. It is
+	automatically managed using reference counting.
+
+	Since the senf::FileHandle class forwards most calls directly to the underlying
+	senf::FileBody instance, most members are documented in senf::FileHandle.
+
+	\section filebody_new Writing senf::FileBody derived classes
+
+	It is possible to write customized senf::FileBody derived body implementations. This
+	implementation can then be used be a senf::FileHandle derived class to customize the
+	FileHandle behavior. Handling the body directly by the handle class ensures, that no invalid
+	handles can be created (a senf::FileHandle derived handle expecting a specific body type but
+	pointing to a different body type).
+
+	To customize the behavior, a virtual interface is provided. This interface only covers some
+	basic funcionality which is only used infrequently during the lifetime of a FileHandle
+	instance.
+
       */
     class FileBody
         : public senf::intrusive_refcount
@@ -47,7 +73,11 @@ namespace senf {
         ///\name Structors and default members
         ///@{
         
-        explicit FileBody(int fd=-1);
+        explicit FileBody(int fd=-1);	///< Create new instance
+					/**< You need to pass a real file descriptor to this
+					   constructor not some arbitrary id even if you overload
+					   all the virtual members. If the file descriptor is -1 the
+					   resulting body/handle is not valid() */
         virtual ~FileBody();
 
         // no copy
@@ -77,11 +107,23 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Virtual interface for subclasses to override
 
-        virtual void v_close();
-        virtual void v_terminate();
-        virtual bool v_eof() const;
-        virtual bool v_valid() const;
-        
+        virtual void v_close();		///< Called to close the file descriptor
+					/**< You should probably always call the global ::close()
+					   function in this member, however you might want to do
+					   some additional cleanup here. If the operation fails, you
+					   are allowed to throw (preferably a
+					   senf::SystemException).
+
+					\throws senf::SystemException */
+        virtual void v_terminate();	///< Called to forcibly close the file descriptor
+					/**< This member is called by the destructor (and by
+					   terminate()) to close the descriptor. This member must \e
+					   never throw, it should probably just ignore error
+					   conditions (there's not much else you can do) */
+        virtual bool v_eof() const;	///< Called by eof()
+        virtual bool v_valid() const;	///< Called by valid()
+					/**< This member is only called, if the file descriptor is
+					   not -1 */
 
     protected:
         
@@ -100,4 +142,5 @@ namespace senf {
 // Local Variables:
 // mode: c++
 // c-file-style: "senf"
+// fill-column: 100
 // End:

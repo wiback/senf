@@ -20,7 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file
+    \brief senf::FileHandle non-inline non-template implementation
+ */
 
 #include "FileHandle.hh"
 //#include "FileHandle.ih"
@@ -76,6 +78,9 @@ prefix_ void senf::FileBody::blocking(bool status)
     if (::fcntl(fd(), F_SETFL, flags) < 0) throw SystemException(errno);
 }
 
+/* We don't take POLLIN/POLLOUT as argument to avoid having to include
+   sys/poll.h in the .cci file (and therefore indirectly into the .hh
+   and then every file which uses FileHandle) */
 prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, bool block)
     const
 {
