@@ -45,18 +45,23 @@
 
 import os, sys, traceback
 import os.path
-import glob
+import glob, re
 from fnmatch import fnmatch
 
-def DoxyfileParse(file):
-   data = DoxyfileParse_(file,{})
-   for (k,v) in data.items():
+EnvVar = re.compile(r"\$\(([0-9A-Za-z_-]+)\)")
+
+def DoxyfileParse(env,file):
+   ENV = {}
+   ENV.update(env.get("ENV",{}))
+   ENV['TOPDIR'] = env.Dir('#').abspath
+   data = DoxyfileParse_(file,{},ENV)
+   for k,v in data.items():
       if not v : del data[k]
       elif k in ("INPUT", "FILE_PATTERNS", "EXCLUDE_PATTERNS", "@INCLUDE", "TAGFILES") : continue
       elif len(v)==1 : data[k] = v[0]
    return data
 
-def DoxyfileParse_(file, data):
+def DoxyfileParse_(file, data, ENV):
    """
    Parse a Doxygen source file and return a dictionary of all the values.
    Values will be strings and lists of strings.
@@ -66,7 +71,7 @@ def DoxyfileParse_(file, data):
 
       import shlex
       lex = shlex.shlex(instream=open(file), posix=True)
-      lex.wordchars += "*+./-:@~"
+      lex.wordchars += "*+./-:@~$()"
       lex.whitespace = lex.whitespace.replace("\n", "")
       lex.escape = "\\"
 
@@ -100,12 +105,13 @@ def DoxyfileParse_(file, data):
             elif token == "=":
                data[key] = []
             else:
+               token = EnvVar.sub(lambda m,ENV=ENV: str(ENV.get(m.group(1),"")),token)
                append_data(data, key, new_data, token)
                new_data = True
                if key=='@INCLUDE':
                   inc = os.path.join(dir,data['@INCLUDE'][-1])
                   if os.path.exists(inc) :
-                     DoxyfileParse_(inc,data)
+                     DoxyfileParse_(inc,data,ENV)
 
          last_token = token
          token = lex.get_token()
@@ -140,7 +146,7 @@ def DoxySourceScan(node, env, path):
 
    sources          = []
    basedir          = node.dir.abspath
-   data             = DoxyfileParse(node.abspath)
+   data             = DoxyfileParse(env, node.abspath)
    recursive        = data.get("RECURSIVE", "NO").upper()=="YES"
    file_patterns    = data.get("FILE_PATTERNS", default_file_patterns)
    exclude_patterns = data.get("EXCLUDE_PATTERNS", default_exclude_patterns)
@@ -186,7 +192,7 @@ def DoxyEmitter(source, target, env):
       "XML"   : ("NO",  "xml"),
    }
 
-   data = DoxyfileParse(source[0].abspath)
+   data = DoxyfileParse(env, source[0].abspath)
 
    targets = []
    if data.has_key("OUTPUT_DIRECTORY"):
@@ -215,9 +221,9 @@ def DoxyEmitter(source, target, env):
 
    return (targets, source)
 
-def doxyNodeHtmlDir(node):
+def doxyNodeHtmlDir(env,node):
    if not node.sources : return None
-   data = DoxyfileParse(node.sources[0].abspath)
+   data = DoxyfileParse(env, node.sources[0].abspath)
    if data.get("GENERATE_HTML",'YES').upper() != 'YES' : return None
    return os.path.normpath(os.path.join( node.sources[0].dir.abspath,
                                          data.get("OUTPUT_DIRECTORY","."),
@@ -237,9 +243,10 @@ def relpath(source, target):
 
 def DoxyGenerator(source, target, env, for_signature):
 
-   data = DoxyfileParse(source[0].abspath)
+   data = DoxyfileParse(env, source[0].abspath)
 
-   actions = [ env.Action("cd ${SOURCE.dir}  &&  ${DOXYGEN} ${SOURCE.file}") ]
+   actions = [ env.Action("cd ${SOURCE.dir}  && TOPDIR=%s ${DOXYGEN} ${SOURCE.file}"
+                          % (relpath(source[0].dir.abspath, env.Dir('#').abspath),)) ]
 
    # This will add automatic 'installdox' calls.
    #
@@ -269,6 +276,7 @@ def DoxyGenerator(source, target, env, for_signature):
          url = env.get(os.path.splitext(os.path.basename(tagfile))[0].upper()+"_DOXY_URL", None)
          if not url:
             url = doxyNodeHtmlDir(
+               env,
                env.File(os.path.normpath(os.path.join(str(source[0].dir), tagfile))))
             if url : url = relpath(output_dir, url)
          if not url:

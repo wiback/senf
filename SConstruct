@@ -1,10 +1,16 @@
 # -*- python -*-
 
-import sys, glob, os.path
+import sys, glob, os.path, datetime
 sys.path.append('senfscons')
 import SENFSCons
 
 ###########################################################################
+
+svninfo = dict(
+    [ tuple(map(lambda y:y.strip(),x.split(":",1)))
+      for x in os.popen("svn info").read().split("\n")
+      if ':' in x ] )
+svninfo['commited'] = not(os.popen("svn status").read())
 
 SENFSCons.UseBoost()
 SENFSCons.UseSTLPort()
@@ -15,19 +21,9 @@ env.Append(
    LIBS = [ 'iberty' ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
-)
-
-import datetime
-
-svninfo = dict(
-    [ tuple(map(lambda y:y.strip(),x.split(":",1)))
-      for x in os.popen("svn info").read().split("\n")
-      if ':' in x ] )
-svninfo['commited'] = not(os.popen("svn status").read())
-
-env.Append(
-    ENV = { 'TODAY' : datetime.date.today(),
-            'REVISION' : svninfo['Revision'] + (not(svninfo['commited']) and " + local changes" or "") }
+   ENV = { 'TODAY' : str(datetime.date.today()),
+           'REVISION' : svninfo['Revision'] + (not(svninfo['commited']) and " + local changes" or ""),
+           },
 )
 
 Export('env')

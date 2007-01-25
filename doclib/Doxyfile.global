@@ -1,7 +1,7 @@
 OUTPUT_DIRECTORY       = doc
 INPUT                  = .
 FILE_PATTERNS          = *.c *.cc *.cci *.ct *.cti *.h *.hh *.ih *.mmc *.dox
-EXCLUDE_PATTERNS       = *.test.cc *.test.hh .*
+EXCLUDE_PATTERNS       = *.test.cc *.test.hh .* *~ "#*#"
 IMAGE_PATH             = .
 
 ALIASES                = "fixme=\xrefitem fixme \"Fix\" \"Fixmes\"" \
@@ -25,8 +25,8 @@ EXPAND_ONLY_PREDEF     = YES
 PREDEFINED             = DOXYGEN
 EXPAND_AS_DEFINED      = prefix_
 
-HTML_HEADER            = ../doclib/doxy-header.html
-HTML_FOOTER            = ../doclib/doxy-footer.html
+HTML_HEADER            = "$(TOPDIR)/doclib/doxy-header.html"
+HTML_FOOTER            = "$(TOPDIR)/doclib/doxy-footer.html"
 GENERATE_LATEX         = NO
 GENERATE_MAN           = NO
 GENERATE_XML           = YES
@@ -42,4 +42,4 @@ MAX_DOT_GRAPH_HEIGHT   = 1200
 MAX_DOT_GRAPH_DEPTH    = 3
 DOT_MULTI_TARGETS      = YES
 
-@INCLUDE = "../Doxyfile.local"
+@INCLUDE = "$(TOPDIR)/Doxyfile.local"

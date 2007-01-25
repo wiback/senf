@@ -1,4 +1,3 @@
-@INCLUDE = ../doclib/Doxyfile.global
+@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = SENFSCons
-PROJECT_NUMBER = "Version 0.0.1"

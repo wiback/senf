@@ -1,6 +1,6 @@
-@INCLUDE = ../doclib/Doxyfile.global
+@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = libSocket
-TAGFILES = ../Utils/doc/Utils.tag
+TAGFILES = "$(TOPDIR)/Utils/doc/Utils.tag"
 GENERATE_TAGFILE = doc/Socket.tag
 
