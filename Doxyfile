@@ -1,5 +1,5 @@
 PROJECT_NAME           = Overview
-PROJECT_NUMBER         = 
+PROJECT_NUMBER         = "(Revision $(REVISION), generated $(TODAY))"
 
 OUTPUT_DIRECTORY       = doc
 INPUT                  = .

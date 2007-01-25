@@ -16,6 +16,19 @@ env.Append(
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
 )
 
+import datetime
+
+svninfo = dict(
+    [ tuple(map(lambda y:y.strip(),x.split(":",1)))
+      for x in os.popen("svn info").read().split("\n")
+      if ':' in x ] )
+svninfo['commited'] = not(os.popen("svn status").read())
+
+env.Append(
+    ENV = { 'TODAY' : datetime.date.today(),
+            'REVISION' : svninfo['Revision'] + (not(svninfo['commited']) and " + local changes" or "") }
+)
+
 Export('env')
 
 SConscript(glob.glob("*/SConscript"))
