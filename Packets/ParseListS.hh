@@ -20,6 +20,36 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+
+    \idea Add an optional state to the sentinel and an optional
+    transition function. See ParseListS.hh for more.
+
+    We should write a baseclass for sentinels which has no \c check()
+    member, en empty \c next() member and \c void as the state
+    type. This simplifies writing simple sentinels.
+
+    The parse_listS iterator will have to pass the state in addition
+    to the current list element to \c check(). The \c next() member
+    will be invoked to advance the iterator. It is passer the current
+    element and a (non-const) reference to the state which it may
+    update. The Parse_ListS constructor must take an arbitrary number
+    of additional arguments which are forwarded to the state
+    initialization. 
+    
+    This structure makes it simple to optimize away the overhead if
+    the state type is void. If we would always instantiate the
+    sentinel, this will always take up space.
+
+    Another possibility would be to always instantiate the sentinel
+    and make the baseclass mandatory. The baseclass would then hold
+    the current raw iterator. The iterator itself would ONLY include a
+    single sentinel instance .. I think, this is the best solution,
+    sentinel members then have intrinsic access to the
+    state. Arguments are forwarded from the list constructor to the
+    Sentinel constructor.
+ */
+
 #ifndef HH_ParseListS_
 #define HH_ParseListS_ 1
 

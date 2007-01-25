@@ -30,8 +30,10 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
-    
+ 
+    /// \addtogroup handle_group
+    /// @{
+   
     template <class Protocol> class ProtocolClientSocketHandle;
 
     /** \brief
@@ -75,6 +77,7 @@ namespace senf {
 
     };
 
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

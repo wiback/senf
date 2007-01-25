@@ -35,6 +35,8 @@
 
 namespace senf {
 
+    /// \addtogroup handle_group
+    /// @{
 
     template <class Policy> class ClientSocketHandle;
 
@@ -110,6 +112,7 @@ namespace senf {
         
     };
 
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

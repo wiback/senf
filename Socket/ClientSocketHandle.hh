@@ -31,8 +31,10 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
-
+    
+    /// \addtogroup handle_group
+    /// @{
+    
     template <class Policy> class ServerSocketHandle;
 
     /** \brief
@@ -141,6 +143,7 @@ namespace senf {
         friend class senf::ServerSocketHandle<Policy>;
     };
 
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

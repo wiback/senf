@@ -31,6 +31,8 @@
 
 namespace senf {
 
+    /// \addtogroup handle_group
+    /// @{
 
     template <class Protocol> class ProtocolServerSocketHandle;
 
@@ -73,6 +75,7 @@ namespace senf {
         friend class ProtocolServerSocketHandle<Protocol>;
     };
 
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

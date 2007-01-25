@@ -39,6 +39,8 @@
 
 namespace senf {
 
+    /// \addtogroup handle_group
+    /// @{
 
     /** \brief basic SocketHandle supporting protocol and policy abstraction
 
@@ -121,11 +123,20 @@ namespace senf {
 					   \param map string to string mapping to be filled with
 					       state information
 					   \param lod level of detail requesten. The interpretation
-					       of this value is protocol specific */
+					       of this value is protocol specific 
+
+					   \implementation This member will be re-implemented in
+					   every derived class. This is very important since state()
+					   is \e not a virtual function (which we don't want since
+					   we don't want to add a vtable pointer to every handle
+					   instance). */
         std::string dumpState(unsigned lod=0);
 	                                ///< Format complete state information as string
 	                                /**< Formats the complete state map value and returns it as
-					   a single multi-line string. */
+					   a single multi-line string.
+
+					   \implementation This member will be re-implemented in
+					   every derived class. See the state() documentation. */
 
     protected:
         explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol, bool isServer);
@@ -225,6 +236,8 @@ namespace senf {
      */
     template <class Target, class Source>
     bool check_socket_cast(Source handle);
+
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

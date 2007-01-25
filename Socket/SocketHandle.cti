@@ -106,7 +106,7 @@ senf::SocketHandle<SocketPolicy>::cast_dynamic(FileHandle handle)
 {
     // throws bad_cast if the body is not a SocketBody
     SocketBody & body (dynamic_cast<SocketBody&>(FileHandle::body(handle)));
-    // throws bad_cast if the poplicy is not compatible
+    // throws bad_cast if the policy is not compatible
     SocketPolicy::checkBaseOf(body.protocol().policy());
     return cast_static(handle);
 }
@@ -160,6 +160,11 @@ prefix_ bool senf::check_socket_cast(Source handle)
 template <class SocketPolicy>
 prefix_ void senf::SocketHandle<SocketPolicy>::state(SocketStateMap & map, unsigned lod)
 {
+    // We use typeid here even though the type of *this is static
+    // (SocketHandle is not polymorphic and has no vtable). This will
+    // automatically include the SocketPolicy template parameter in
+    // the type name and therefore show the \e static policy of the
+    // socket handle.
     map["handle"] = prettyName(typeid(*this));
     body().state(map,lod);
 }

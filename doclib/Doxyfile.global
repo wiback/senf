@@ -1,11 +1,12 @@
 OUTPUT_DIRECTORY       = doc
 INPUT                  = .
 FILE_PATTERNS          = *.c *.cc *.cci *.ct *.cti *.h *.hh *.ih *.mmc *.dox
-EXCLUDE_PATTERNS       = *.test.cc .*
+EXCLUDE_PATTERNS       = *.test.cc *.test.hh .*
 IMAGE_PATH             = .
 
 ALIASES                = "fixme=\xrefitem fixme \"Fix\" \"Fixmes\"" \
-			 "idea=\xrefitem idea \"Idea\" \"Ideas\""
+			 "idea=\xrefitem idea \"Idea\" \"Ideas\"" \
+			 "implementation=\par \"Implementation note:\""
 REPEAT_BRIEF           = YES
 ALWAYS_DETAILED_SEC    = YES
 MULTILINE_CPP_IS_BRIEF = YES
@@ -16,7 +17,6 @@ EXTRACT_PRIVATE        = YES
 EXTRACT_STATIC         = YES
 INTERNAL_DOCS          = YES
 SOURCE_BROWSER         = YES
-STRIP_CODE_COMMENTS    = NO
 ALPHABETICAL_INDEX     = YES
 COLS_IN_ALPHA_INDEX    = 3
 

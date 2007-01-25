@@ -153,10 +153,6 @@ namespace senf {
 					   otherwise */
 
 	void state(SocketStateMap & map, unsigned lod);
-                                        /**< \todo Move state into a virtual body member (which is
-					   ok, since SocketBody already has virtual members). This
-					   makes in unnecessary to reimplement dumpState and state
-					   in every SocketHandle derived class */
 
     private:
 	virtual void v_close();		///< Close socket

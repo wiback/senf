@@ -94,7 +94,6 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
                        "socket.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy, senf::test::SomeBufferingPolicy>\n"
                        "socket.protocol: senf::test::SomeProtocol\n"
                        "socket.server: false\n" );
-
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

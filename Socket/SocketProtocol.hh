@@ -20,6 +20,36 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+ */
+
+/** \defgroup protocol_group The Protocol Classes
+
+    \image html Protocols.png
+
+    The socket handle classes and templates only implement the most
+    important socket API methods using the policy framework. To access
+    the complete API, the protocol interface is provided. Access to
+    the protocol interface is only possible via
+    senf::ProtocolClientSocketHandle and
+    senf::ProtocolServerSocketHandle which have the necessary \c
+    protocol() member. This member returns a reference to the protocol
+    class instance which contains members covering all the API
+    functions (mostly setsockopt/getsockopt related calls but there
+    may be more, this is completely up to the implementor of the
+    protocol class) not found in the SocketHandle interface. The
+    protocol interface is specific to the protocol. It's
+    implementation is quite free. The standard protocols are
+    implemented using a simple multiple-inheritance hierarchy as shown
+    above.
+
+    Since the protocol class is protocol specific (how intelligent
+    ...), the protocol class also defines the complete socket policy
+    to be used with it's protocol. Complete meaning, that every policy
+    axis must be assigned it's the most specific (that is derived)
+    policy class to be used with the protocol.
+ */
+
 #ifndef HH_SocketProtocol_
 #define HH_SocketProtocol_ 1
 
@@ -33,6 +63,8 @@
 
 namespace senf {
 
+    /// \addtogroup protocol_group
+    /// @{
 
     class SocketPolicyBase;
 
@@ -107,6 +139,7 @@ namespace senf {
 
     };
 
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

@@ -4,12 +4,13 @@
     abstraction of the BSD socket API. The abstraction is based on
     several concepts:
 
-    \li The basic visible interface is a handle object
-	(senf::FileHandle and it's derived classes)
-    \li The socket interface relies on a policy framework to configure
-	it's functionality
+    \li The basic visible interface is a \link handle_group handle
+	object \endlink
+    \li The socket interface relies on a \link policy_group policy
+	framework \endlink to configure it's functionality
     \li The rest of the socket API is accessible using a classic
-	inheritance hierarchy of protocol classes
+	inheritance hierarchy of \link protocol_group protocol classes
+	\endlink
 
     The handle/body architecture provides automatic reference counted
     management of socket instances, the policy framework provides
@@ -19,136 +20,65 @@
     dependent options.
 
     \see \ref usage \n
-         \ref extend \n
+         \ref handle_group \n
+         \ref policy_group \n
+         \ref protocol_group \n
+	 \ref extend \n
          \ref implementation
  */
 
 /** \page usage Using the Socket Library
-
-    \section socket_handle The socket handle
 
     Whenever you use the socket library, what you will be dealing with
     are senf::FileHandle derived instances. The socket library relies
     on reference counting to automatically manage the underlying
     socket representation. This frees you of having to manage the
     socket lifetime explicitly.
-    
-    \section socket_hierarchy The FileHandle hierarchy
 
-    \image html FhHierarchy.png
+    \section usage_create Creating a Socket Handle
 
-    The senf::FileHandle class is the base of a hierarchy of socket
-    handle classes (realized as templates). These classes provide an
-    interface to the complete socket API. While going down the
-    inheritance hierarchy, the interface will be more and more
-    complete.
+    To create a new socket handle (opening a socket), you will need to
+    use senf::ProtocolClientSocketHandle or
+    senf::ProtocolServerSocketHandle. You will probably not use these
+    templates as is but use proper typedefs (for example
+    senf::TCPv4ClientSocketHandle or senf::PacketSocketHandle). The
+    documentation for these socket handles are found in the protocol
+    class (for example senf::TCPv4SocketProtocol or
+    senf::PacketProtocol).
 
-    The most complete interface is provided by
-    senf::ProtocolClientSocketHandle and
-    senf::ProtocolServerSocketHandle. The template Arguments specifies
-    the Protocol class of the underlying socket type. These are the
-    \e only classes having public constructors and are therefore the
-    only classes, which may be created by the library user. You will
-    normally use these classes by naming a specific socket typedef
-    (e.g. senf::TCPv4ClientSocketHandle).
-    
-    However, to aid writing flexible and generic code, the socket
-    library provides the senf::ClientSocketHandle and
-    senf::ServerSocketHandle class templates. These templates
-    implement a family of closely related classes based on the
-    specification of the socket policy. This policy specification may
-    be \e incomplete (see below). Instances of
-    senf::ClientSocketHandle/senf::ServerSocketHandle can be assigned
-    and converted to different ClientSocketHandle/ServerSocketHandle
-    types as long as the policy specifications are compatible.
+    \section usage_reusable Writing Reusable Components
 
-    \attention It is very important, to (almost) always pass the socket
-    handle <em>by value</em>. The socket handle is a very lightweight
-    class and designed to be used like an ordinary built-in type. This
-    is very important in combination with the policy interface.
+    To make your code more flexible, you should not pass around your
+    socket in this form. Most of your code will be using only a small
+    subset of the senf::ProtocolClientSocketHandle or
+    senf::ProtocolServerSocketHandle API. If instead of using the
+    fully specified handle type you use a more incomplete type, you
+    allow your code to be used with all socket which fulfill the
+    minimal requirements of your code.
 
-    \section policy_framework The policy framework
-    
-    \image html SocketPolicy.png
+    This works, by defining a special reduced policy or handle for
+    your code:
 
-    The policy framework conceptually implements a list of parallel
-    inheritance hierarchies each covering a specific interface aspect
-    of the socket handle. The socket handle itself only provides
-    minimal functionality. All further functionality is relayed to a
-    policy class, or more precisely, to a group of policy classes, one
-    for each policy axis. The policy axis are
-    
-    <dl>
-    <dt><em>addressingPolicy</em></dt>
-    <dd>configures, whether a socket is
-    addressable and if so, configures the address type</dd>
-    
-    <dt><em>framingPolicy</em></dt>
-    <dd>configures the type of framing the socket provides: either no
-    framing providing a simple i/o stream or packet framing</dd>
-    
-    <dt><em>communicationPolicy</em></dt>
-    <dd>configures,if and how the communication partner is
-    selected</dd> 
-    
-    <dt><em>readPolicy</em></dt>
-    <dd>configures the readability of the socket</dd>
-    
-    <dt><em>writePolicy</em></dt>
-    <dd>configures the writability of the socket</dd>
-    
-    <dt><em>bufferingPolicy</em></dt>
-    <dd>configures, if and how buffering is configured for a socket</dd>
-    </dl>
+    \code
+      typedef senf::ClientSocketHandle<
+          senf::MakeSocketPolicy< 
+              senf::ReadablePolicy, 
+              senf::StreamFramingPolicy,
+              senf::ConnectedCommunicationPolicy > > MyReadableHandle;
+              
+    \endcode
 
-    Every Policy value is identified by a class type. The policy types
-    themselves built an inheritance hierarchy for each policy
-    axis. For each policy axis, the root of this tree is the class
-    named '<tt>(axis name)Base</tt>' (e.g. \p FramingPolicyBase or \p
-    CommunicationPolicyBase) which is aliased to '<tt>Unspecified(axis
-    name)</tt>' (e.g. \p UnspecifiedFramingPolicy or \p
-    UnspecifiedCommunicationPolicy). 
-
-    The senf::SocketPolicy template combines a set of policy classes,
-    one for each policy axis. Together, they define the behavior of a
-    socket handle. The socket handle instances do net implement any
-    socket functionality themselves, instead defering the
-    implementation to the socket classes. The interface is therefore
-    \e not implemented using virtual members, all important socket
-    functions can be inlined by the compiler to create highly
-    efficient code.
-
-    Two SocketPolicy instances are considered compatible, if all
-    policy axis are compatible. A policy axis is compatible, if one
-    policy class is either the same as the other or derived from
-    it. Two SocketHandle instances can be converted into each other,
-    as long as the SocketPolicies are compatible. 
-
-    \section protocol_interface The protocol interface
-
-    \image html Protocols.png
-
-    The socket handle classes and templates only implement the most
-    important socket API methods using the policy framework. To access
-    the complete API, the protocol interface is provided. Access to
-    the protocol interface is only possible via
-    senf::ProtocolClientSocketHandle and
-    senf::ProtocolServerSocketHandle which have the necessary \c
-    protocol() member. This member returns a reference to the protocol
-    class instance which contains members covering all the API
-    function (mostly setsockopt/getsockopt related calls) not found in
-    the SocketHandle interface. The protocol interface is specific to
-    the protocol. It's implementation is quite free. The standard
-    protocols are implemented using a simple multiple-inheritance
-    hierarchy as shown above.
-
-    Since the protocol class is protocol specific (how intelligent
-    ...), the protocol class also defines the complete socket policy
-    to be used with it's protocol. Complete meaning, that every policy
-    axis must be assigned it's the most specific (that is derived)
-    policy class to be used with the protocol.
-
+    This defines \c MyReadableHandle as a senf::ClientSocketHandle
+    which will have only read functionality. Your code expects a
+    stream interface (in contrast to a packet or datagram based
+    interface). You will not have \c write or \c readfrom members. \c
+    write will be disabled since the WritePolicy is unknown, \c
+    readfrom will be disabled since a socket with the
+    senf::ConnectedCommunicationPolicy does not have a \c readfrom
+    member.
  */
+    
+
 
 /** \page extend Extending the Library
     
@@ -157,7 +87,7 @@
     the protocol layer is quite simple and works as long as the
     desired protocol does use the same BSD API used by the standard
     internet protocols as implemented in the standard policies
-    (i.e. it uses ordinere read() and write() or rcvfrom() or sendto()
+    (i.e. it uses ordinary read() and write() or rcvfrom() or sendto()
     calls and so on).
 
     If however the implementation of a policy feature needs to be
@@ -241,6 +171,8 @@
     members additionally depend on other policy axis (example:
     AddressingPolicy::connect is only defined if the communication
     policy is ConnectedCommunication).
+
+    \see policy_group
  */
 
 /** \page implementation Implementation notes
