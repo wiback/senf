@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SocketPolicy public header
+    \brief Policy Framework public header
 
     \todo We should probably remove BufferingPolicy from the
     interface, it does not make much sense (how did I come to include

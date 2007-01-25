@@ -175,25 +175,24 @@ dl.bug, dl.fixme, dl.todo, dl.idea {
 	padding: 0 10px;
 }
 
-dl:contains("Bug:"), dl:contains("Fix:"), dl:contains("Todo:"), dl:contains("Idea:") { 
+dl.xref-bug, dl.xref-fix, dl.xref-todo, dl.xref-idea { 
 	border: 1px solid #CC8888;
-	padding: 4px;
+	padding: 2px 3px;
+	margin: 4px 0;
 	background-color: #FFEEEE;
 	color: #666666;
-	font-size: 6px;
-	line-height: 6px;
+	font-size: 9px;
 	overflow: hidden;
-	height: 6px;
 }
 
-dl:contains("Bug:"):hover, dl:contains("Fix:"):hover, 
-dl:contains("Todo:"):hover, dl:contains("Idea:"):hover { 
-	line-height: inherit;
-	font-size: inherit;
-	height: auto;
+dl.xref-bug dt, dl.xref-fix dt, dl.xref-todo dt, dl.xref-idea dt,
+dl.xref-bug dd, dl.xref-fix dd, dl.xref-todo dd, dl.xref-idea dd { 
+	display: inline;
+	margin: 0;
+	padding: 0;
 }
 
-dl:contains("Bug:") a, dl:contains("Fix:") a, dl:contains("Todo:") a, dl:contains("Idea:") a { 
+dl.xref-bug a, dl.xref-fix a, dl.xref-todo a, dl.xref-idea a { 
 	color: #6666FF;
 }
 
@@ -202,7 +201,7 @@ dl.fixme {
 	background-color: #FFFFDD;
 }
 
-dl:contains("Fix:") { 
+dl.xref-fix { 
 	border-color: #CCCC88;
 	background-color: #FFFFEE;
 }
@@ -212,7 +211,7 @@ dl.todo {
 	background-color: #DDFFDD;
 }
 
-dl:contains("Todo:") { 
+dl.xref-todo { 
 	border-color: #88CC88;
 	background-color: #EEFFEE;
 }
@@ -222,7 +221,7 @@ dl.idea {
 	background-color: #EEEEEE;
 }
 
-dl:contains("Idea:") { 
+dl.xref-idea { 
 	border-color:  #CCCCCC;
 	background-color: #F8F8F8;
 }

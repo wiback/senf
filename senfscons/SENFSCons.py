@@ -151,11 +151,13 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     #        ||| WITHIN THE DOXYGEN BUILDER
     docs = env.Doxygen(doxyfile)[:]
     xmlnode = None
+    htmlnode = None
     tagnode = None
     for doc in docs:
         if isinstance(doc,SCons.Node.FS.Dir): continue
         if doc.name == 'xml.stamp' : xmlnode = doc
-        if os.path.splitext(doc.name)[1] == '.stamp' : continue # file stamp
+        if doc.name == 'html.stamp' : htmlnode = doc
+        if os.path.splitext(doc.name)[1] == '.stamp' : continue # ignore other file stamps
         # otherwise it must be the tag file
         tagnode = doc
 
@@ -164,9 +166,20 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         # references
         env.AddPostAction(
             docs,
-            env.Action("xsltproc -o %(target)s.temp %(template)s %(target)s && mv %(target)s.temp %(target)s"
+            env.Action("xsltproc --nonet -o %(target)s.temp %(template)s %(target)s && mv %(target)s.temp %(target)s"
                        % { 'target': tagnode.abspath,
                            'template': os.path.join(basedir,"tagmunge.xsl") }))
+
+    if htmlnode and env.get('DOXY_HTML_XSL'):
+        xslfile = env.File(env['DOXY_HTML_XSL'])
+        env.AddPostAction(
+            docs,
+            env.Action(("for html in %s/*.html; do " +
+                        "xsltproc --nonet --html -o $${html}.new %s $${html} && mv $${html}.new $${html}; " +
+                        "done")
+                       % (htmlnode.dir.abspath, xslfile.abspath)))
+        for doc in docs:
+            env.Depends(doc,xslfile)
 
     if xmlnode:
         xrefs = []
