@@ -62,10 +62,12 @@
 // You should use sigaction to register the signal handlers and define
 // a sa_mask so all Scheduler-registered signals are automatically
 // *blocked* whenever one of the signals is called (including the
-// called signal!). This ensures, that no two signals can be delivered
-// on top of each other. And of course any signal registered with the
-// scheduler must be blocked as soon as it is registered with the
-// scheduler.
+// called signal!) (This also means, we will have to re-register all
+// signals if we change the registration of some signal since the
+// sa_mask changes). This ensures, that no two signals can be
+// delivered on top of each other. And of course any signal registered
+// with the scheduler must be blocked as soon as it is registered with
+// the scheduler.
 
 // Definition of non-inline non-template functions
 
@@ -209,6 +211,10 @@ prefix_ void senf::Scheduler::process()
 	    if (spec.cb_hup)
 		spec.cb_hup(EV_HUP);
 	    else if (ev.events & EPOLLERR) {
+		/// \fixme This is stupid, if cb_write and cb_read are
+		/// the same. The same below. We really have to
+		/// exactly define sane semantics of what to do on
+		/// EPOLLHUP and EPOLLERR.
 		if (spec.cb_write) spec.cb_write(EV_HUP);
 		if (spec.cb_read) spec.cb_read(EV_HUP);
 	    }

@@ -206,8 +206,7 @@
     senf::ConnectedCommunicationPolicyIs is based on the \c
     boost::enable_if template).
 
-    \see \ref policy_framework \n
-	 \ref extend_policy \n
+    \see \ref extend_policy \n
          <a class="ext" href="http://www.boost.org/libs/utility/enable_if.html">The Boost enable_if utility</a> \n
          <a class="ext" href="http://www.boost.org/libs/mpl/doc/index.html">The Boost.MPL library</a> \n
          <a class="ext" href="http://www.boost.org/libs/preprocessor/doc/index.html">The Boost.Preprocessor library</a>

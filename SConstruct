@@ -7,10 +7,10 @@ import SENFSCons
 ###########################################################################
 
 svninfo = dict(
-    [ tuple(map(lambda y:y.strip(),x.split(":",1)))
+    [ map(lambda y:y.strip(),x.split(":",1))
       for x in os.popen("svn info").read().split("\n")
       if ':' in x ] )
-svninfo['commited'] = not(os.popen("svn status").read())
+svninfo['commited'] = not(os.popen("svn status -q").read())
 
 SENFSCons.UseBoost()
 SENFSCons.UseSTLPort()

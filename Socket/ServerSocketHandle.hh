@@ -41,6 +41,15 @@ namespace senf {
     template <class Policy> class ClientSocketHandle;
 
     /** \brief
+
+	<table>
+	<tr><td>senf::ServerSocketHandle::bind</td>       <td>AddressingPolicy::bind (\ref senf::AddressingPolicyBase)</td></tr>
+	<tr><td>senf::ServerSocketHandle::listen</td>     <td>CommunicationPolicy::listen (\ref senf::CommunicationPolicyBase)</td></tr>
+	<tr><td>senf::ServerSocketHandle::local</td>      <td>AddressingPolicy::local (\ref senf::AddressingPolicyBase)</td></tr>
+	<tr><td>senf::ServerSocketHandle::accept</td>     <td>CommunicationPolicy::accept (\ref senf::CommunicationPolicyBase)</td></tr>
+	<tr><td>senf::ServerSocketHandle::acceptfrom</td> <td>CommunicationPolicy::accept (\ref senf::CommunicationPolicyBase)</td></tr>
+	</table>
+	
       */
     template <class Policy>
     class ServerSocketHandle

@@ -60,7 +60,6 @@ namespace senf {
 
     void intrusive_ptr_add_ref(intrusive_refcount* p);
     void intrusive_ptr_release(intrusive_refcount* p);
-
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

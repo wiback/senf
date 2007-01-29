@@ -142,35 +142,13 @@
     Therefore you need to be careful of what you are doing. The first
     step is to find out, which policy you will have to implement. For
     this, find the senf::ClientSocketHandle and/or
-    senf::ServerSocketHandle members you want to change. The following
-    table shows, which policy axis is responsible for which
-    members. The policy axis base class documentation contains further
-    information on how to implement that policy.
-
-    <table class="senf">
-      <tr><th>SocketHandle member</th>                  <th>Policy member</th></tr>
-      <tr><td>senf::ClientSocketHandle::read</td>       <td>ReadPolicy::read (\ref senf::ReadPolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::readfrom</td>   <td>ReadPolicy::readfrom (\ref senf::ReadPolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::write</td>      <td>WritePolicy::write (\ref senf::WritePolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::writeto</td>    <td>WritePolicy::writeto (\ref senf::WritePolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::connect</td>    <td>AddressingPolicy::connect (\ref senf::AddressingPolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::bind</td>       <td>AddressingPolicy::bind (\ref senf::AddressingPolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::peer</td>       <td>AddressingPolicy::peer (\ref senf::AddressingPolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::local</td>      <td>AddressingPolicy::local (\ref senf::AddressingPolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::rcvbuf</td>     <td>BufferingPolicy::sndbuf (\ref senf::BufferingPolicyBase)</td></tr>
-      <tr><td>senf::ClientSocketHandle::sndbuf</td>     <td>BufferingPolicy::rcvbuf (\ref senf::BufferingPolicyBase)</td></tr>
-      <tr><td>senf::ServerSocketHandle::bind</td>       <td>AddressingPolicy::bind (\ref senf::AddressingPolicyBase)</td></tr>
-      <tr><td>senf::ServerSocketHandle::listen</td>     <td>CommunicationPolicy::listen (\ref senf::CommunicationPolicyBase)</td></tr>
-      <tr><td>senf::ServerSocketHandle::local</td>      <td>AddressingPolicy::local (\ref senf::AddressingPolicyBase)</td></tr>
-      <tr><td>senf::ServerSocketHandle::accept</td>     <td>CommunicationPolicy::accept (\ref senf::CommunicationPolicyBase)</td></tr>
-      <tr><td>senf::ServerSocketHandle::acceptfrom</td> <td>CommunicationPolicy::accept (\ref senf::CommunicationPolicyBase)</td></tr>
-    </table>
-
-    As you can see from this list, not all policy axis directly
-    contribute to the SocketHandle interface. However, some policy
-    members additionally depend on other policy axis (example:
-    AddressingPolicy::connect is only defined if the communication
-    policy is ConnectedCommunication).
+    senf::ServerSocketHandle members you want to change (see \ref
+    senf::ClientSocketHandle and \ref senf::ServerSocketHandle).  Not
+    all policy axis directly contribute to the SocketHandle
+    interface. However, some policy members additionally depend on
+    other policy axis (example: AddressingPolicy::connect is only
+    defined if the communication policy is
+    ConnectedCommunication).
 
     \see policy_group
  */
