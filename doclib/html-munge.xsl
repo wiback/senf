@@ -2,46 +2,45 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 version="1.0">
 
-  <xsl:output method="html" encoding="html" />
-
-  <xsl:template match="/">
-    <html>
-      <body bgcolor="#FFFFFF">
-        <xsl:apply-templates/>
-      </body>
-    </html>
+  <xsl:output method="html" encoding="html"/>
+  
+  <xsl:template name="add-class">
+    <xsl:param name="class"/>
+    <xsl:copy>
+      <xsl:for-each select="@*"><xsl:copy/></xsl:for-each>
+      <xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute>
+      <xsl:apply-templates/>
+    </xsl:copy>
   </xsl:template>
 
   <xsl:template match="dl[dt/b/a/text()='Bug:']">
-    <xsl:copy>
-      <xsl:for-each select="@*"><xsl:copy/></xsl:for-each>
-      <xsl:attribute name="class">xref-bug</xsl:attribute>
-      <xsl:apply-templates/>
-    </xsl:copy>
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">xref-bug</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="dl[dt/b/a/text()='Fixme:']">
-    <xsl:copy>
-      <xsl:for-each select="@*"><xsl:copy/></xsl:for-each>
-      <xsl:attribute name="class">xref-fixme</xsl:attribute>
-      <xsl:apply-templates/>
-    </xsl:copy>
+  <xsl:template match="dl[dt/b/a/text()='Fix:']">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">xref-fix</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="dl[dt/b/a/text()='Todo:']">
-    <xsl:copy>
-      <xsl:for-each select="@*"><xsl:copy/></xsl:for-each>
-      <xsl:attribute name="class">xref-todo</xsl:attribute>
-      <xsl:apply-templates/>
-    </xsl:copy>
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">xref-todo</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="dl[dt/b/a/text()='Idea:']">
-    <xsl:copy>
-      <xsl:for-each select="@*"><xsl:copy/></xsl:for-each>
-      <xsl:attribute name="class">xref-idea</xsl:attribute>
-      <xsl:apply-templates/>
-    </xsl:copy>
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">xref-idea</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="dl[dt/b/text()='Parameters:']">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">parameters</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="*">

@@ -252,3 +252,7 @@ div.qindex {
 	padding: 2px;
 	line-height: 140%;
 }
+
+dl.parameters dd table { 
+	width: auto;
+}
