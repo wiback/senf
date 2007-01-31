@@ -24,12 +24,20 @@
     \brief Policy Framework public header
 
     \todo We should probably remove BufferingPolicy from the
-    interface, it does not make much sense (how did I come to include
-    it ??)
+	interface, it does not make much sense (how did I come to
+	include it ??)
     
     \todo Do we want to support separate read and write policies. This
-    allows to treat pipes within this framework however, is this worth
-    the effort?
+	allows to treat pipes within this framework however, is this
+	worth the effort?
+
+    \idea Creating a new Socket will create three new instances (The
+	handle, the body and the policy) of which two (body and
+	policy) live on the heap. This is expensive. We should check,
+	wether we can make all the policy classes to singletons and
+	assign the same instance to all socket bodies with the same
+	policy. This would reduce the number of allocations per socket
+	handle to one.
  */
 
 /** \defgroup policy_group The Policy Framework

@@ -100,8 +100,14 @@ prefix_ unsigned senf::ClientSocketHandle<Policy>::available()
 {
     unsigned nread = this->protocol().available();
     if (nread == 0 && this->blocking()) {
-            this->waitReadable();
-            nread = this->protocol().available();
+	// We have to block explicitly here so we can return the
+	// number of bytes available explicitly. If no more date can
+	// be expected to arive (i.e. the other end has closed the
+	// connection), the socket will always be in the readable
+	// state. This is the only case when available() will return
+	// 0.
+	this->waitReadable();
+	nread = this->protocol().available();
     }
     return nread;
 }
