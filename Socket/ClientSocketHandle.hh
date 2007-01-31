@@ -108,7 +108,6 @@ namespace senf {
 	/** This class will probably only be usable, if the \c CommunicationPolicy is \c
 	    ConnectedCommunicationPolicy and the \c AddressingPolicy is not \c
 	    NoAddressingPolicy. */
-	 */
         typedef ServerSocketHandle<Policy> ServerSocketHandle;
 
         ///////////////////////////////////////////////////////////////////////////
