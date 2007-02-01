@@ -21,6 +21,18 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
+
+    \idea We should optimize the protocol handling. Allocating a
+	protocol instance for every socket body seems quite
+	wasteful. However I have no idea, how to access the socket
+	handle from within the protocol interface if the protocol
+	class is a singleton. Maybe, we'll have some other idea to
+	reduce the number of heap allocations (like deriving the
+	SocketProtocol class (private? protected?) from the
+	SocketBody. (private inheritance is a form of 'has-a' instead
+	of 'is-a' which would fit very well here). This would allow to
+	reduce the number of heap-allocations per socket to one which
+	is good.
  */
 
 /** \defgroup protocol_group The Protocol Classes

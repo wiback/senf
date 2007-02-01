@@ -1,6 +1,6 @@
 OUTPUT_DIRECTORY       = doc
 INPUT                  = .
-FILE_PATTERNS          = *.c *.cc *.cci *.ct *.cti *.h *.hh *.ih *.mmc *.dox
+FILE_PATTERNS          = *.c *.cc *.cci *.ct *.cti *.h *.hh *.ih *.mpp *.dox
 EXCLUDE_PATTERNS       = *.test.cc *.test.hh .* *~ "#*#"
 IMAGE_PATH             = .
 

@@ -177,7 +177,9 @@ namespace senf {
 
     public:
         static SocketHandle cast_static(FileHandle handle);
+                                        /**< \internal */
         static SocketHandle cast_dynamic(FileHandle handle);
+                                        /**< \internal */
 
     private:
 

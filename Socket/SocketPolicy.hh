@@ -31,13 +31,13 @@
 	allows to treat pipes within this framework however, is this
 	worth the effort?
 
-    \idea Creating a new Socket will create three new instances (The
-	handle, the body and the policy) of which two (body and
-	policy) live on the heap. This is expensive. We should check,
-	wether we can make all the policy classes to singletons and
-	assign the same instance to all socket bodies with the same
-	policy. This would reduce the number of allocations per socket
-	handle to one.
+    \idea Creating a new Socket will create 4 (!) new instances (The
+	handle, the body, the policy and the protocol) of which 3
+	(argh) (body, policy and protocol) live on the heap. This is
+	expensive. We should convert all the policy classes to
+	singletons and assign the same instance to all socket bodies
+	with the same policy. This would reduce the number of heap
+	allocations per socket handle to two.
  */
 
 /** \defgroup policy_group The Policy Framework

@@ -20,71 +20,67 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#if !BOOST_PP_IS_ITERATING
-#ifndef MPP_ProtocolClientSocketHandle_
+/** \file
+    \brief senf::ProtocolClientSocketHandle Boost.Preprocessor external iteration include
+ */
+
+#if !BOOST_PP_IS_ITERATING && !defined(MPP_ProtocolClientSocketHandle_)
+#define MPP_ProtocolClientSocketHandle_ 1
 
 // Custom includes
 #include <boost/preprocessor/iteration/iterate.hpp>
 #include <boost/preprocessor/enum.hpp>
 #include <boost/preprocessor/cat.hpp>
 
-//////////////////////////////mpp.p////////////////////////////////////////
+// ///////////////////////////mpp.p////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
 // Local Macros
 
-#define mpp_PCSH_Arg(z,n,data) BOOST_PP_CAT(A,n) const & BOOST_PP_CAT(a,n)
+#define mpp_Arg(z,n,data) BOOST_PP_CAT(A,n) const & BOOST_PP_CAT(a,n)
+#define mpp_TemplateParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A )
+#define mpp_MethodParameters() BOOST_PP_ENUM(BOOST_PP_ITERATION(), mpp_Arg, )
+#define mpp_CallParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), a )
 
-#define mpp_PCSH_TemplateParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A )
-#define mpp_PCSH_MethodParameters() BOOST_PP_ENUM(BOOST_PP_ITERATION(), mpp_PCSH_Arg, )
-#define mpp_PCSH_CallParameters() BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), a )
-
-//////
-#endif
-#else
-///////////////////////////////////////////////////////////////////////////
-
-//////
-#if BOOST_PP_ITERATION_FLAGS()==1
-///////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+#if BOOST_PP_IS_ITERATING // //////////////////////////////////////////////
+#if BOOST_PP_ITERATION_FLAGS()==1 // //////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
 // senf::ProtocolClientSocketHandle<SocketProtocol>::
 // ProtocolClientSocketHandle (constructor) declaration
 
-template < mpp_PCSH_TemplateParameters() >
-ProtocolClientSocketHandle( mpp_PCSH_MethodParameters() );
+template < mpp_TemplateParameters() >
+ProtocolClientSocketHandle( mpp_MethodParameters() );
 
-//////
-#elif BOOST_PP_ITERATION_FLAGS()==2
-///////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==2 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
 // senf::ProtocolClientSocketHandle<SocketProtocol>::
 // ProtocolClientSocketHandle (constructor) implementation
 
 template <class SocketProtocol>
-template < mpp_PCSH_TemplateParameters() >
+template < mpp_TemplateParameters() >
 prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::
-ProtocolClientSocketHandle( mpp_PCSH_MethodParameters() )
+ProtocolClientSocketHandle( mpp_MethodParameters() )
     : ClientSocketHandle<typename SocketProtocol::Policy>(
         std::auto_ptr<senf::SocketProtocol>(new SocketProtocol()))
 {
-    this->protocol().init_client( mpp_PCSH_CallParameters() );
+    this->protocol().init_client( mpp_CallParameters() );
 }
 
-//////
-#endif
-#endif
-#if !BOOST_PP_IS_ITERATING
-#ifdef MPP_PCSH__ProtocolClientSocketHandle_
-///////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
 // Undefine local Macros
 
-#undef mpp_PCSH_Arg
-#undef mpp_PCSH_TemplateParameters
-#undef mpp_PCSH_MethodParameters
-#undef mpp_PCSH_CallParameters
+#undef mpp_Arg
+#undef mpp_TemplateParameters
+#undef mpp_MethodParameters
+#undef mpp_CallParameters
 
-//////////////////////////////mpp_PCSH_.e////////////////////////////////////////
-#else
-#define MPP_PCSH__ProtocolClientSocketHandle_ 1
-#endif
-#endif
+// ////////////////////////////////////////////////////////////////////////
+// ///////////////////////////mpp.e////////////////////////////////////////
 
 
 // Local Variables:

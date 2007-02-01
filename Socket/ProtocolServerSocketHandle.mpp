@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief ssenf::ProtocolServerSocketHandle Boost.Preprocessor external iteration include
+ */
+
 #if !BOOST_PP_IS_ITERATING
 #ifndef MPP_PSSH__ProtocolServerSocketHandle_
 

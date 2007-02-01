@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief senf::ProtocolClientSocketHandle public header
+ */
+
 #ifndef HH_ProtocolClientSocketHandle_
 #define HH_ProtocolClientSocketHandle_ 1
 
@@ -36,7 +40,21 @@ namespace senf {
 
     template <class Protocol> class ProtocolServerSocketHandle;
 
-    /** \brief
+    /** \brief Protocol specific socket handle (client interface)
+
+	The ProtocolClientSocketHandle is the client interface leaf class of the handle
+	hierarchy. This is the class to instantiate to open a new socket. This is also the \e only
+	class, which can be used to open a client socket.
+
+	The \a Protocol template argument defines the protocol of the socket. This protocol provides
+	the protocol interface of the socket as well as the complete socket policy of this protocol.
+
+	The ProtocolClientSocketHandle adds the protocol interface as an additional interface to the
+	socket handle. This interface is only accessible via the protocol class. All socket
+	functionality not available through the policy interface (see ClientSocketHandle) is
+	accessible via the protocol() member.
+
+	\see \ref protocol_group
       */
     template <class SocketProtocol>
     class ProtocolClientSocketHandle
@@ -46,12 +64,21 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef SocketProtocol Protocol;
+        typedef SocketProtocol Protocol; ///< The sockets protocol
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
+	/** \brief Create new client socket
+
+	    This constructor is one of the possible constructors. The exact Signature of the
+	    constructor (or constructors) is defined by the \c init_client() member (or members) of
+	    the \a Protocol class. ProtocolClientSocketHandle defines a number of constructors
+	    taking up to 9 arguments which just forward to a corresponding \a Protocol\c
+	    ::init_client() member. See the documentation of the respective Protocol class for a
+	    detailed documentation of that protocols constructors.
+	 */
         ProtocolClientSocketHandle();
 
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolClientSocketHandle.mpp", 1))
@@ -60,7 +87,11 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        Protocol const & protocol();
+        Protocol const & protocol();    ///< Access the protocol interface
+	                                /**< The returned protocol class reference gives access to
+					   the complete protocol interface as defined by that
+					   class. See the respective protocol class documentation.
+					   \returns \a Protocol class reference */
 
         static ProtocolClientSocketHandle cast_static(FileHandle handle);
         static ProtocolClientSocketHandle cast_dynamic(FileHandle handle);
@@ -89,4 +120,5 @@ namespace senf {
 // Local Variables:
 // mode: c++
 // c-file-style: "senf"
+// fill-column: 100
 // End:

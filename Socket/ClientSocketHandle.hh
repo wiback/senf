@@ -333,6 +333,7 @@ namespace senf {
 	    There are two Variants of this member, one will return the address by value, the other
 	    takes a reference argument to elide the copy operation.
 
+	    \throws senf::SystemException
 	 */
 	Address      local        ();
 	void         local        (Address & addr);
@@ -360,9 +361,7 @@ namespace senf {
 	///@}
 
 	static ClientSocketHandle cast_static(FileHandle handle);
-                                        /**< \internal */
 	static ClientSocketHandle cast_dynamic(FileHandle handle);
-                                        /**< \internal */
 
 	// we need to override both since SocketHandle is *not* polymorphic
 	void state(SocketStateMap & map, unsigned lod=0);
