@@ -40,6 +40,8 @@
 
 namespace senf {
 
+    /// \addtogroup concrete_protocol_group
+    /// @{
     
     typedef MakeSocketPolicy<
         LLAddressingPolicy,
@@ -48,31 +50,109 @@ namespace senf {
         ReadablePolicy,
         WriteablePolicy,
         SocketBufferingPolicy
-        >::policy Packet_Policy;
+        >::policy Packet_Policy;        ///< Policy of PacketProtocol
 
+    /** \brief Raw Packet-Socket access (Linux)
+	
+	\par Socket Handle typedefs:
+	\ref PacketSocketHandle
+
+	\par Protocol Interface:
+	ClientSocketHandle::read(), ClientSocketHandle::readfrom(), ClientSocketHandle::writeto(),
+	ClientSocketHandle::bind(), ClientSocketHandle::local(), ClientSocketHandle::rcvbuf(),
+	ClientSocketHandle::sndbuf()
+
+	\par Address Type:
+	LLSocketAddress
+
+	The PacketProtocol provides access to the linux packet socket API. This API gives access to
+	the low level network packets. The packet socket allows read() and write() operations. The
+	PacketProtocol has no concept of a server socket.
+
+	\see \ref ProtocolClientSocketHandle \n
+	     \ref protocol_group
+     */
     class PacketProtocol 
         : public ConcreteSocketProtocol<Packet_Policy>,
           public BSDSocketProtocol
     {
     public:
         enum SocketType { RawSocket, DatagramSocket };
-
-        void init_client(SocketType type = RawSocket, int protocol = -1) const;
-
-        std::auto_ptr<SocketProtocol> clone() const;
-
+                                        ///< Socket types
         enum PromiscMode { Promiscuous, AllMulticast, None };
+                                        ///< Interface modes
 
-        void promisc(std::string interface, PromiscMode mode) const;
-        // See LLSocketAddress for a discussion/rationale for
-        // ForwardRange here
+	///\name Constructors
+	///@{
+        void init_client(SocketType type = RawSocket, int protocol = -1) const;
+                                        ///< Create packet socket
+                                        /**< The new socket will receive all packets of the given
+					     IEEE 802.3 \a protocol. The socket will receive all
+					     packets, if \a protocol is -1.
+
+					     If \a type is \c RawSocket, the packet will include the
+					     link-level header (the Ethernet header). Sent packets
+					     must already include a well formed ll header.
+					     
+					     If \a type is \c DatagramSocket, the link level header
+					     will not be part of the packet data. The ll header will
+					     be removed from received packets and a correct ll
+					     header will be created on sent packets.
+
+					     \param[in] type socket type
+					     \param[in] protocol IEEE 802.3 protocol number */
+	///@}
+
+	///\name Protocol Interface
+	///@{
+	void promisc(std::string interface, PromiscMode mode) const;
+                                        ///< Change interface mode
+                                        /**< This member will change the reception on the given
+					     interface. The modes available are
+
+					     <dl>
+					     <dt>\e None</dt><dd>No special mode set. Only receive
+					     packets addressed to the interface or of joined
+					     multicast groups</dd>
+					     <dt>\e AllMulticast</dt><dd>Additionally receive all
+					     multicast traffic</dd>
+					     <dt>\e Promiscuous</dt><dd>Receive all packets on the
+					     wire</dd>
+					     </dl>
+
+					     \param[in] interface interface to modify
+					     \param[in] mode new interface mode */
+
+        // See LLSocketAddress for a discussion/rationale for ForwardRange here
         template <class ForwardRange>
         void mcAdd(std::string interface, ForwardRange const & address) const;
-        template <class ForwardRange>
-        void mcDrop(std::string interface, ForwardRange const & address) const;
+                                        ///< Enable reception of a multicast group
+                                        /**< mcAdd will join a new multicast group. The address
+					     parameter is specified as an arbitrary forward range
+					     (see <a
+					     href="http://www.boost.org/libs/range/index.html">Boost.Range</a>)
+					     of up to 8 bytes. This  allows to initialize the
+					     address from an arbitrary sources without excessive
+					     copying. 
 
+					     \param[in] interface interface with which to join
+					     \param[in] address multicast address to join 
+
+					     \see \ref LLSocketAddress */
+	template <class ForwardRange>
+        void mcDrop(std::string interface, ForwardRange const & address) const;
+                                        ///< Disable reception of a multicast group
+                                        /**< \see \ref mcAdd() */
+	///@}
+
+	///\name Abstract Interface Implementation
+	///@{
+
+        std::auto_ptr<SocketProtocol> clone() const;
         unsigned available() const;
         bool eof() const;
+
+	///@}
 
     private:
         template<class ForwardRange>
@@ -81,7 +161,10 @@ namespace senf {
     };
 
     typedef ProtocolClientSocketHandle<PacketProtocol> PacketSocketHandle;
-
+                                        ///< SocketHandle of the PacketProtocol
+                                        /**< \related PacketPrototol */
+    
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -95,4 +178,5 @@ namespace senf {
 // Local Variables:
 // mode: c++
 // c-file-style: "senf"
+// fill-column: 100
 // End:

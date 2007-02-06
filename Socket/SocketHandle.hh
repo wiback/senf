@@ -112,64 +112,67 @@ namespace senf {
         void state(SocketStateMap & map, unsigned lod=0);
 	                                ///< Inquire state information of socket handle
 	                                /**< The map argument (a string to string mapping) will be
-					   filled with information coverning the current state of
-					   the socket. The information provided depends on the
-					   socket protocol. The amount of information returned can
-					   be controlled using the \p lod value.
+					     filled with information coverning the current state of
+					     the socket. The information provided depends on the
+					     socket protocol. The amount of information returned can
+					     be controlled using the \p lod value.
 
-					   See senf::SocketProtocol::state() for more information,
-					   how the Information is generated.
+					     See senf::SocketProtocol::state() for more information,
+					     how the Information is generated.
 
-					   \param map string to string mapping to be filled with
-					       state information
-					   \param lod level of detail requesten. The interpretation
-					       of this value is protocol specific 
+					     \param map string to string mapping to be filled with
+						 state information
+					     \param lod level of detail requesten. The interpretation
+						 of this value is protocol specific 
 
-					   \implementation This member will be re-implemented in
-					   every derived class. This is very important since state()
-					   is \e not a virtual function (which we don't want since
-					   we don't want to add a vtable pointer to every handle
-					   instance). */
+					     \implementation This member will be re-implemented in
+						 every derived class. This is very important since
+						 state() is \e not a virtual function (which we
+						 don't want since we don't want to add a vtable
+						 pointer to every handle instance). */
         std::string dumpState(unsigned lod=0);
 	                                ///< Format complete state information as string
 	                                /**< Formats the complete state map value and returns it as
-					   a single multi-line string.
+					     a single multi-line string.
 
-					   \implementation This member will be re-implemented in
-					   every derived class. See the state() documentation. */
+					     \implementation This member will be re-implemented in
+						 every derived class. See the state()
+						 documentation. */
 
     protected:
         explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol, bool isServer);
 	                                ///< Initialize SocketHandle providing the protocol
 	                                /**< \param protocol Protocol class of the protocol
 					         implemented by this socket handle
-					     \param isServer \c true, if this SocketHandle instance
+					     \param isServer \c true, if this SobcketHandle instance
 					         implements a server handle, \c false otherwise */
         SocketHandle(FileHandle other, bool isChecked);
                                         ///< Initialize SocketHandle from arbitrary checked
                                         ///< FileHandle
 	                                /**< This constructor is used to support up- and downcasting
-					   of SocketHandle instances.
+					     of SocketHandle instances.
 
-					   \warning It is absolutely necessary to ensure, that the
-					   FileHandle passed in is \e really a SocketHandle holding
-					   a SocketBody (and not a simple FileBody)
-					   instance. Additionally. the SocketPolicy absolutely must
-					   be compatible.
+					     \warning It is absolutely necessary to ensure, that the
+						 FileHandle passed in is \e really a SocketHandle
+						 holding a SocketBody (and not a simple FileBody)
+						 instance. Additionally. the SocketPolicy absolutely
+						 must be compatible.
 
-					   \param other FileHandle to assign
-					   \param isChecked has to be \c true
+					     \param other FileHandle to assign
+					     \param isChecked has to be \c true
 
-					   \todo Answer, why the heck I need the \c isChecked
-					   parameter ??
+					     \todo Answer, why the heck I need the \c isChecked
+						 parameter ??
 					*/
 
         SocketBody & body();		///< Access socket body
                                         /**< This member replaces the corresponding FileHandle
-					   member and returns an appropriately cast body reference */
+					     member and returns an appropriately cast body
+					     reference */
         SocketBody const & body() const; ///< Access socket body in const context
                                         /**< This member replaces the corresponding FileHandle
-					   member and returns an appropriately cast body reference */
+					     member and returns an appropriately cast body
+					     reference */
         SocketProtocol const & protocol() const;
                                         ///< Access protocol class
 

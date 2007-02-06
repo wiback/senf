@@ -175,7 +175,13 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         env.AddPostAction(
             docs,
             env.Action(("for html in %s/*.html; do " +
-                        "xsltproc --nonet --html -o $${html}.new %s $${html} && mv $${html}.new $${html}; " +
+                        "    echo $$html;" +
+                        "    sed -e 's/id=\"current\"/class=\"current\"/' $${html}" +
+                        "        | tidy -ascii -q --show-warnings no" +
+                        "        | xsltproc --nonet --html -o $${html}.new %s - 2>&1" +
+                        "        | grep '^-'" +
+                        "        | grep -v 'ID .* already defined';" +
+                        "    mv $${html}.new $${html}; " +
                         "done")
                        % (htmlnode.dir.abspath, xslfile.abspath)))
         for doc in docs:

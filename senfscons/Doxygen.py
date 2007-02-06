@@ -130,7 +130,7 @@ def DoxySourceScan(node, env, path):
    any files used to generate docs to the list of source files.
    """
    dep_add_keys = (
-      '@INCLUDE', 'HTML_HEADER', 'HTML_FOOTER', 'TAGFILES'
+      '@INCLUDE', 'HTML_HEADER', 'HTML_FOOTER', 'TAGFILES', 'INPUT_FILTER'
    )
    
    default_file_patterns = (

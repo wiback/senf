@@ -3,6 +3,7 @@ INPUT                  = .
 FILE_PATTERNS          = *.c *.cc *.cci *.ct *.cti *.h *.hh *.ih *.mpp *.dox
 EXCLUDE_PATTERNS       = *.test.cc *.test.hh .* *~ "#*#"
 IMAGE_PATH             = .
+INPUT_FILTER           = "$(TOPDIR)/doclib/filter.pl"
 
 ALIASES                = "fixme=\xrefitem fixme \"Fix\" \"Fixmes\"" \
 			 "idea=\xrefitem idea \"Idea\" \"Ideas\"" \

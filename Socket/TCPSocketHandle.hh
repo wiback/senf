@@ -45,6 +45,8 @@
 
 namespace senf {
 
+    /// \addtogroup concrete_protocol_group
+    /// @{
 
     typedef MakeSocketPolicy<
         INet4AddressingPolicy,
@@ -53,8 +55,10 @@ namespace senf {
         ReadablePolicy,
         WriteablePolicy,
         SocketBufferingPolicy
-        >::policy TCPv4Socket_Policy;
+        >::policy TCPv4Socket_Policy;   ///< Socket Policy of the TCPv4 Protocol
 
+    /** \brief
+     */
     class TCPv4SocketProtocol
         : public ConcreteSocketProtocol<TCPv4Socket_Policy>,
           public IPv4Protocol, 
@@ -66,12 +70,20 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // internal interface
 
+	///\name Constructors
+	///@{
+
         void init_client() const;
         void init_client(INet4Address const & address) const;
         void init_server() const;
         void init_server(INet4Address const & address, unsigned backlog=1) const;
 
+	///@}
+	///\name Abstract Interface Implementation
+
         std::auto_ptr<SocketProtocol> clone() const;
+	
+	///@}
     };
 
     typedef ProtocolClientSocketHandle<TCPv4SocketProtocol> TCPv4ClientSocketHandle;
@@ -94,6 +106,8 @@ namespace senf {
 
     typedef ProtocolClientSocketHandle<TCPv6SocketProtocol> TCPv6ClientSocketHandle;
     typedef ProtocolServerSocketHandle<TCPv6SocketProtocol> TCPv6ServerSocketHandle;
+
+    /// @}
 
 }
 

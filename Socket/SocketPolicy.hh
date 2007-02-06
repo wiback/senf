@@ -79,7 +79,7 @@
     Every Policy value is identified by a class type. The policy
     classes themselves built an inheritance hierarchy for each policy
     axis. For each policy axis, the root of this tree is the class
-    named \i Policy \c Base (e.g. \p AddressingPolicyBase).
+    named \e Policy \c Base (e.g. \p AddressingPolicyBase).
 
     The senf::SocketPolicy defines the complete policy of a socket. It
     combines a set of policy classes, one for each policy
@@ -143,7 +143,9 @@
     checking, that it derives from SocketPolicyBase. This is simpler
     than chacking the template directly).</dd>
 
-    <dt>\c template \c SocketPolicy < \e addressingPolicy, \e framingPolicy, \e communicationPolicy, \e readPolicy, \e writePolicy, \e bufferingPolicy ></dt>
+    <dt>\c template \c SocketPolicy < \e addressingPolicy, \e
+    framingPolicy, \e communicationPolicy, \e readPolicy, \e
+    writePolicy, \e bufferingPolicy ></dt>
     <dd>This is the central SocketPolicy template. It combines a
     complete set of policy classes, one for each axis.</dd>
 
@@ -467,18 +469,34 @@ namespace senf {
 
 	\internal
 
-	This class is used to 
+	This class provides the baseclass of all socket policies
+	(bundles). It serves two purposes: 
+	\li It allows us to easily identify a socket policy bundle by
+	    checking a classes baseclass.
+	\li It provides an abstract (virtual) interface to access the
+	    policy axes
 
 	\see policy_group
      */
     struct SocketPolicyBase
-    {};
+    {
+	/** \brief Polymorphic access to policy axes
+	    
+	    This is an example of a policy axes accessor. It returns a
+	    reference to the policy axes used by the conrecte protocol
+	    bundle. This reference can then be checked using RTTI
+	    information.
+	 */
+	AddressingPolicyBase const & theAddressingPolicy() const = 0;
+    };
 
     /** \brief Collection of policy classes
 	
 	The SocketPolicy template defines the complete Policy used by
 	the socket library. It contains one policy class for each
-	policy axis.
+	policy axis. This template takes one policy from each axis as
+	it's template arguments (this example implementation only has
+	AddressingPolicy as an argument).
 
 	A SocketPolicy can be complete or incomplete. An incomplete
 	SocketPolicy will have at least one axis set to \c Undefined
@@ -490,15 +508,24 @@ namespace senf {
 
 	\see policy_group
      */
-    template <
-	class AddressingPolicy, 
-	class FramingPolicy,
-	class CommunicationPolicy, 
-	class ReadPolicy,
-	class WritePolicy,
-	class BufferingPolicy >
+    template < class AddressingPolicy >
     struct SocketPolicy
-    {};
+    {
+	/** \brief Check dynamic policy compatibility
+
+	    This method will check the socket policy \a other against
+	    this policy. It will check, wether \a other is a base
+	    policy (or the same) of this policy. This check is done
+	    against the \e dynamic type of \a other using RTTI. It
+	    will throw \c std::bad_cast, if the policy is not
+	    compatible.
+
+	    \param[in] other SocketPolicy to check
+	    \throws std::bad_cast if \a other is not a compatible
+		policy
+	 */
+	static void checkBaseOf(SocketPolicyBase const & other);
+    };
     
     /** \brief Metafunction to create SocketPolicy
 	

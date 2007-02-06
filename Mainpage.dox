@@ -37,7 +37,7 @@
 
 /** \page usage Using the SENF framework
 
-    The SENF Framework is a collection of lossly coupled
+    The SENF Framework is a collection of loosely coupled
     modules. The libraries are heavily object oriented and template
     based. For compatibility reasons, the libraries are therefore
     built together with every project making use of the framework.
@@ -65,7 +65,8 @@
 
     \li Doxygen (http://www.doxygen.org)
     \li The \c dia diagram editor (http://www.gnome.org/projects/dia/)
-    \li \The c xsltproc XSLT processor (http://xmlsoft.org/XSLT/xsltproc2.html)
+    \li HTML \c tidy (http://tidy.sourceforge.net/)
+    \li \The \c xsltproc XSLT processor (http://xmlsoft.org/XSLT/xsltproc2.html)
 
 
     The library is only tested with gcc-3.4 and 4.0 on Linux. On other
@@ -343,8 +344,8 @@
       	library</a>. This library will provide efficient and 
 	convenient access to all protocol fields. It supports parsing as
       	well as modifying and creating packets. It has default support
-      	for the most important TCP protocols and is highly extensible
-      	with new protocols.
+      	for the most important internet protocols and is highly
+      	extensible with new protocols.
     \li Go over the <a href="../../Utils/doc/html/index.html">Utils
       	library</a>. It contains small helpers to
       	simplify tasks like daemonization, exception handling,
