@@ -68,7 +68,6 @@ namespace senf {
 					     \param[in] size size of buffer
 					     \param[out] address peer address
 					     \returns number of bytes read */
-*/
 
     private:
         static unsigned do_readfrom(FileHandle handle, char * buffer, unsigned size,
