@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief CommunicationPolicy public header
+ */
+
 #ifndef HH_CommunicationPolicy_
 #define HH_CommunicationPolicy_ 1
 
@@ -35,22 +39,54 @@ struct sockaddr;
 
 namespace senf {
 
+    /// \addtogroup policy_impl_group
+    /// @{
     
     template <class Policy> class ServerSocketHandle;
 
+    /** \brief CommunicationPolicy for connected sockets
+
+	The ConnectedCommunicationPolicy provides support for standard BSD socket API based
+	connected communication. It provides the server side listen() and accept() members.
+     */
     struct ConnectedCommunicationPolicy : public CommunicationPolicyBase
     {
         static void listen(FileHandle handle, unsigned backlog);
+                                        ///< Enable establishing new connections on the socket
+                                        /** \param[in] handle socket handle to enable reception on
+					    \param[in] backlog size of backlog queue
+					    
+					    \fixme listen probably makes no sense without accpept,
+						so listen() should debend on AddressingPolicy too. */
         template <class Policy>
         static int accept(ServerSocketHandle<Policy> handle, 
                           typename ServerSocketHandle<Policy>::Address & address,
                           typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type * = 0);
+                                        ///< accept a new connection on the socket.
+                                        /**< The accept() member will return a new client file
+					     descriptor. This file descriptor will be used by the
+					     ServerSocketHandle implementation to build a new
+					     ClientSocketHandle for the new connection.
+					     
+					     \param[in] handle socket handle to accept connection on
+					     \param[out] address address of newly connected remote
+						 peer
+					     \returns file descriptor of new client socket */
     private:
         static int do_accept(FileHandle handle, struct sockaddr * addr, unsigned len);
     };
 
+    /** \brief CommunicationPolicy for unconnected sockets
+
+	This is different from UndefinedCommunicationPolicy (which is the same as
+	CommunicationPolicyBase). This policy class defines the communication policy -- it
+	explicitly states, that the socket does not support connected communication. This
+	effektively disables ther ServerSocketHandle.
+     */
     struct UnconnectedCommunicationPolicy : public CommunicationPolicyBase
     {};
+
+    /// @}
 
 }
 
@@ -65,4 +101,5 @@ namespace senf {
 // Local Variables:
 // mode: c++
 // c-file-style: "senf"
+// fill-column: 100
 // End:

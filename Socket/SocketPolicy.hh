@@ -228,6 +228,14 @@
     with \c SocketPolicyIsBaseOf.
  */
 
+/** \defgroup policy_impl_group Policy Implementation classes
+    \ingroup policy_group
+
+    Here you will find all policy classes. Also included are some
+    supporting classes which are used as base classes to build other
+    policy classes.
+ */
+
 #ifndef HH_SocketPolicy_
 #define HH_SocketPolicy_ 1
 

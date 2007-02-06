@@ -193,8 +193,26 @@ namespace senf {
  */
 
 /** \page implementation Implementation notes
+    
+    \section class_diagram Class Diagram
 
     \image html SocketLibrary-classes.png
+
+    \section impl_notes Arbitrary Implementation Notes
+
+    \li The implementation tries to isolate the library user as much
+	as possible from the system header files since those headers
+	define a lot of define symbols and introduce a host of symbols
+	into the global namespace. This is, why some classes define
+	their own \c enum types to replace system defined define
+	constants. This also precludes inlining some functionality.
+
+    \li To reduce overhead, template functions/members which are
+	more than one-liners are often implemented in terms of a
+	non-template function/member. This is also used to further the
+	isolation from system headers as defined above (template code
+	must always be included into every compilation unit together
+	with all headers need for the implementation).
  */
 
 }

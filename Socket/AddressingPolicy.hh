@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief NoAddressingPolicy public header
+ */
+
 #ifndef HH_AddressingPolicy_
 #define HH_AddressingPolicy_ 1
 
@@ -31,10 +35,20 @@
 
 namespace senf {
 
+    /// \addtogroup policy_impl_group
+    /// @{
 
+    /** \brief AddressingPolicy for non-addressable sockets
+
+	This is different from UndefinedAddressingPolicy (which is the
+	same as AddressingPolicyBase). This policy class defines the
+	addressing -- it explicitly states, that the socket does not
+	support any addressing.
+     */
     struct NoAddressingPolicy : public AddressingPolicyBase
     {};
 
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

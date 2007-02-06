@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief senf::ServerSocketHandle public header
+    \brief ServerSocketHandle public header
  */
 
 #ifndef HH_ServerSocketHandle_

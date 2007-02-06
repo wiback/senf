@@ -20,7 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file
+    \brief GenericAddressingPolicy non-inline non-template implementation
+ */
 
 #include "GenericAddressingPolicy.hh"
 //#include "GenericAddressingPolicy.ih"

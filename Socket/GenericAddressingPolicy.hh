@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief GenericAddressingPolicy public header
+ */
+
 #ifndef HH_GenericAddressingPolicy_
 #define HH_GenericAddressingPolicy_ 1
 
@@ -34,7 +38,13 @@
 
 namespace senf {
 
+    /// \addtogroup policy_impl_group
+    /// @{
 
+    /** \brief Non-template implemenatation class of GenericAddressingPolicy template
+
+	\internal
+     */
     struct GenericAddressingPolicy_Base
     {
         static void do_local(FileHandle handle, struct sockaddr * addr, unsigned len);
@@ -43,6 +53,26 @@ namespace senf {
         static void do_connect(FileHandle handle, struct sockaddr const * addr, unsigned len);
     };
 
+    /** \brief Template for generic AddressingPolicy implementation based on the BSD socket API
+	
+	This template provides an implementation template to implement generic addressing policy
+	classes which rely on the standard BSD socket API for their implementation
+	(connect/bind/getsockname/getpeername).
+
+	The \a Address template parameter specifies the address type of the addressing policy. This
+	type must have two members: \c sockaddr_p() and \c sockaddr_len(). The first must return a
+	<tt>struct sockaddr *</tt> to the address, the second must return the size of the address in
+	bytes. The pointer returned by \c sockaddr_p() must be non-const if called on a non-const
+	address. <em>The underlying socket address stored at that pointer might be
+	modified</em>.
+
+	\idea We could explicitly provide open_sockaddr_p() and close_sockaddr_p()
+	members. sockaddr_p could always return a const * whereas open_sockaddr_p should return a
+	non-const pointer. The close operation would then explicitly signal, that the new value
+	should be incorporated into the class. With our current implementation, the close member
+	would be a no-op, however this ould free us from using the sockaddr values as a direct
+	sotrage representation of the address.
+     */
     template <class Address>
     struct GenericAddressingPolicy
         : private GenericAddressingPolicy_Base
@@ -50,13 +80,34 @@ namespace senf {
         template <class Policy>
         static void peer(SocketHandle<Policy> handle, Address & addr,
                          typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+                                        ///< Return address of remote peer on connected sockets
+                                        /**< This member is only available if the socket handles
+					     communication policy is ConnectedCommunicationPolicy.
+
+					     \param[in] handle socket handle to get peer address of
+					     \param[out] addr address of remote peer */
         static void local(FileHandle handle, Address & addr);
+                                        ///< Return local of socket
+                                        /**< \param[in] handle socket handle to check
+					     \param[out] addr local socket address */
 
         template <class Policy>
         static void connect(SocketHandle<Policy> handle, Address const & addr,
                             typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+                                        ///< Connect to remote host
+                                        /**< This member is only available if the socket handles
+					     communication policy is ConnectedCommunicationPolicy.
+
+					     \param[in] handle socket handle
+					     \param[in] address address of remote peer to connect 
+						 to */
         static void bind(FileHandle handle, Address const & addr);
+                                        ///< Set local socket address
+                                        /**< \param[in] handle socket handle
+					     \param[in] addr local socket address */
     };
+
+    /// @}
 
 }
 
@@ -71,4 +122,5 @@ namespace senf {
 // Local Variables:
 // mode: c++
 // c-file-style: "senf"
+// fill-column: 100
 // End:

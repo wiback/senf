@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file 
-    \brief senf::FileHandle public header
+    \brief FileHandle public header
  */
 
 /** \defgroup handle_group The Handle Hierarchy

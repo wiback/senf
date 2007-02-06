@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief PacketProtocol and PacketSocketHandle public header
+ */
+
 #ifndef HH_PacketSocketHandle_
 #define HH_PacketSocketHandle_ 1
 
@@ -55,7 +59,7 @@ namespace senf {
     /** \brief Raw Packet-Socket access (Linux)
 	
 	\par Socket Handle typedefs:
-	\ref PacketSocketHandle
+	\ref PacketSocketHandle (ProtocolClientSocketHandle)
 
 	\par Protocol Interface:
 	ClientSocketHandle::read(), ClientSocketHandle::readfrom(), ClientSocketHandle::writeto(),
@@ -69,8 +73,8 @@ namespace senf {
 	the low level network packets. The packet socket allows read() and write() operations. The
 	PacketProtocol has no concept of a server socket.
 
-	\see \ref ProtocolClientSocketHandle \n
-	     \ref protocol_group
+	This class is utilized as the protocol class of the ProtocolClientSocketHandle via the
+	Socket Handle typedefs above.
      */
     class PacketProtocol 
         : public ConcreteSocketProtocol<Packet_Policy>,
@@ -101,6 +105,9 @@ namespace senf {
 
 					     \param[in] type socket type
 					     \param[in] protocol IEEE 802.3 protocol number */
+	                                /**< \note This member is implicitly called from the
+					     ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+					     constructor */
 	///@}
 
 	///\name Protocol Interface

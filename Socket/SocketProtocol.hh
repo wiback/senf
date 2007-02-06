@@ -21,6 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
+    \brief SocketProtocol and ConcreteSocketProtocol public header
     
     \idea We should optimize the protocol handling. Allocating a protocol instance for every socket
 	body seems quite wasteful. We could derive SocketPolicy from SocketBody (probably privately,

@@ -177,7 +177,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
             env.Action(("for html in %s/*.html; do " +
                         "    echo $$html;" +
                         "    sed -e 's/id=\"current\"/class=\"current\"/' $${html}" +
-                        "        | tidy -ascii -q --show-warnings no" +
+                        "        | tidy -ascii -q --show-warnings no --fix-uri no" +
                         "        | xsltproc --nonet --html -o $${html}.new %s - 2>&1" +
                         "        | grep '^-'" +
                         "        | grep -v 'ID .* already defined';" +
