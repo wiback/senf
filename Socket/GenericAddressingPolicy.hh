@@ -66,6 +66,10 @@ namespace senf {
 	address. <em>The underlying socket address stored at that pointer might be
 	modified</em>.
 
+	This template class is inherited into addressing policy classes via private
+	inheritance. Then the members supported by the respective addressing policy are made
+	available via \c using declarations (See INet4AddressingPolicy for an Example).
+
 	\idea We could explicitly provide open_sockaddr_p() and close_sockaddr_p()
 	members. sockaddr_p could always return a const * whereas open_sockaddr_p should return a
 	non-const pointer. The close operation would then explicitly signal, that the new value

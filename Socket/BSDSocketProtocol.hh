@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief BSDSocketProtocol public header */
+
 #ifndef HH_BSDSocketProtocol_
 #define HH_BSDSocketProtocol_ 1
 
@@ -32,24 +35,58 @@
 
 namespace senf {
 
+    /// \addtogroup protocol_facets_group
+    /// @{
 
+    /** \brief Protocol facet providing basic BSD socket functionality
+	
+	BSDSocketProtocol provides the basic BSD socket API as shared by all BSD sockets.
+     */
     class BSDSocketProtocol
         : public virtual SocketProtocol
     {
     public:
-        std::pair<bool,unsigned> linger() const;
-        void linger(bool enable, unsigned timeout) const;
+        std::pair<bool,unsigned> linger() const; ///< Return current linger status
+                                        /**< The value is returned in an std:pair. the first element
+					     is \c true, if linger is active. The second value is
+					     the linger timeout in seconds.
+					     \returns linger state (enable disabled) and linger
+					     timeout */ 
+        void linger(bool enable, unsigned timeout=0) const; ///< Change linger status
+                                        /**< If linger is enabled, the timeout value specifies, how
+					     long to wait before returning while data is unsent in
+					     seconds. If this value is 0, a close() might wait
+					     forvever.
+					     \param[in] enable \c true to activate linger
+					     \param[in] timeout linger timeout in seconds */
 
-        struct timeval timestamp() const;
+        struct timeval timestamp() const; ///< Return packet timestamp of last packet
+                                        /**< The returned timestamp represents the time, at which
+					     the last network packet passed to the user has been
+					     received from the network. This allows precise network
+					     timing.
+					     \returns timestamp when packet was received */
     };
 
+    /** \brief Protocol facat providing basic connection oriented BSD socket functions
+	
+	AddressableBSDSocketProtocol provides the BSD socket API as it generically applies to
+	addressable (connection oriented) sockets.
+     */
     class AddressableBSDSocketProtocol
         : public virtual SocketProtocol
     {
     public:
-        bool reuseaddr() const;
-        void reuseaddr(bool value) const;
+        bool reuseaddr() const;         ///< Return current reuseaddr state
+                                        /**< \returns \c true if \c SO_REUSEADDR is currently
+					     enabled, \c false otherwise*/
+        void reuseaddr(bool value) const; ///< Set reuseraddr state
+                                        /**< A \c true value enables \c SO_REUSEADDR, \c false will
+					     disable it.
+					     \param[in] value new \c SO_REUSEADDR state */
     };
+
+    /// @}
 
 }
 
@@ -65,4 +102,5 @@ namespace senf {
 // Local Variables:
 // mode: c++
 // c-file-style: "senf"
+// fill-column: 100
 // End:

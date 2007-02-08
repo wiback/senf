@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file
+    \brief INet[46]Protocol non-inline non-template implementation */
 
 #include "INetProtocol.hh"
 //#include "INetProtocol.ih"

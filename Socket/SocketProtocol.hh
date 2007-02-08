@@ -57,6 +57,9 @@
     \see 
 	\ref handle_group \n
 	\ref policy_group
+
+    \todo Complete the protocol interface implementations. Better distribution of members to
+	protocol facets and more precise distribution of functionality among the facets.
  */
 
 /** \defgroup concrete_protocol_group Protocol Implementations (Concrete Protocol Classes)
@@ -71,6 +74,15 @@
     the documentation of the protocol classes listed below for more information on the supported
     protocols. Every protocol class documents it's policy interface. Use the 'list all members' link
     of the protocol class to find the complete policy interface.
+ */
+
+/** \defgroup protocol_facets_group Protocol Facets
+    \ingroup protocol_group
+
+    The protocol facets are classes used as building blocks to build concrete protocol classes. Each
+    protocol facet will implement some functional part of the protocol interface. The protocol
+    facets all inherit from SocketProtocol by public \e virtual inheritance. This ensures the
+    accessibility of the socket body from all facets.
  */
 
 #ifndef HH_SocketProtocol_

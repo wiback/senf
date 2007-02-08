@@ -20,7 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file
+    \brief INet[46]Address and INet[46]AddressingPolicy non-inline non-template implementation
+ */
 
 #include "INetAddressing.hh"
 //#include "INetAddressing.ih"
@@ -61,17 +63,18 @@ prefix_ void senf::INet4Address::clear()
 prefix_ void senf::INet4Address::assignString(std::string address)
 {
     clear();
-    /** \todo  gethostbyname support */
     unsigned i = address.find(':');
     if (i == std::string::npos)
         throw InvalidINetAddressException();
+    // The temporary string in the next expr is guaranteed to live
+    // until end-of-statement
     if (::inet_aton(std::string(address,0,i).c_str(), &addr_.sin_addr) == 0)
         throw InvalidINetAddressException();
     try {
         // Replace lexical_cast with strtoul ?
         addr_.sin_port = htons(boost::lexical_cast< ::u_int16_t >(std::string(address,i+1)));
     } 
-    catch (boost::bad_lexical_cast const & ex) {
+    catch (boost::bad_lexical_cast const &) {
         throw InvalidINetAddressException();
     }
 }

@@ -20,7 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline non-template functions
+/** \file
+    \brief INet[46]Address and INet[46]AddressingPolicy inline non-template implementation
+ */
 
 // Custom includes
 #include <arpa/inet.h>

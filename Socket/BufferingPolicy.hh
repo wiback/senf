@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief BufferingPolicy public header
+ */
+
 #ifndef HH_BufferingPolicy_
 #define HH_BufferingPolicy_ 1
 
@@ -32,19 +36,37 @@
 
 namespace senf {
 
+    /// \addtogroup policy_impl_group
+    /// @{
 
-    /** \brief
+    /** \brief BufferingPolicy implementing standard socket buffering
+
+	This policy class implements standard BSD socket buffering.
 
 	\todo Shouldn't this be dependent on Read / WritePolicy ?
      */
     struct SocketBufferingPolicy : public BufferingPolicyBase
     {
         static unsigned rcvbuf(FileHandle handle);
+                                        ///< Check receive buffer size
+                                        /**< \param[in] handle socket handle to check 
+					     \returns size of receive buffer in bytes */
         static void rcvbuf(FileHandle handle, unsigned size);
+                                        ///< Change receive buffer size
+                                        /**< \param[in] handle socket handle
+					     \param[in] size new receive buffer size */
 
         static unsigned sndbuf(FileHandle handle);
+                                        ///< Check send buffer size
+                                        /**< \param[in] handle socket handle to check
+					     \returns size of send buffer in bytes */
         static void sndbuf(FileHandle handle, unsigned size);
+                                        ///< Change size of send buffer
+                                        /**< \param[in] handle socket handle
+					     \param[in] size new send buffer size */
     };
+
+    /// @}
 
 }
 
@@ -59,4 +81,5 @@ namespace senf {
 // Local Variables:
 // mode: c++
 // c-file-style: "senf"
+// fill-column: 100
 // End:

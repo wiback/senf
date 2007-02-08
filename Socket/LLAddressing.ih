@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief LLSocketAddress and LLAddressingPolicy internal header
+ */
 #ifndef IH_LLAddressing_
 #define IH_LLAddressing_ 1
 
@@ -32,6 +35,9 @@ namespace senf {
 
 namespace detail {
 
+    /** \brief Convert two-char hexbyte representation to numeric value
+	\internal
+     */
     struct HexConverter {
         typedef unsigned char result_type;
         template <class ForwardRange>
@@ -42,6 +48,9 @@ namespace detail {
     typedef boost::transform_iterator< HexConverter, StringSplitIterator > HexSplitIterator;
     typedef boost::iterator_range<HexSplitIterator> LLAddressFromStringRange;
 
+    /** \brief convert single hex digit to numeric value
+	\internal
+     */
     unsigned char hexnibble(char c);
 
 }}

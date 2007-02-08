@@ -35,12 +35,28 @@ namespace senf {
 
 namespace detail {
 
+    /** \brief Abstract address copier
+	\internal
+	
+	This class provides the abstract interface to copy a
+	link-local address to a destination address.
+     */
     struct LLAddressCopier
     {
         virtual ~LLAddressCopier() {}
         virtual unsigned operator()(unsigned char * target) const = 0;
     };
 
+    /** \brief Implementation of LLAddressCopier to copy arbitrary Range
+	\internal
+
+	This implementation of the LLAddressCopier interface will copy
+	an arbitrary range to the target address. This class is used,
+	to convert the compile-time polymorphism of templates
+	(provided by the \c ForwardRange template argument) into
+	runtime polymorphism (provided by the abstract LLAddressCopier
+	interface).
+     */
     template <class ForwardRange>
     struct Range_LLAddressCopier
         : public LLAddressCopier

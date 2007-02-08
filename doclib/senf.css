@@ -285,3 +285,7 @@ table.glossary tr td:first-child {
 	white-space: nowrap;
 	padding-right: 10px;
 }
+
+table.members td:first-child { 
+	width: 35%;
+}

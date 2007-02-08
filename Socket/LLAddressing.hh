@@ -20,6 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief LLSocketAddress and LLAddressingPolicy public header
+ */
+
 #ifndef HH_LLAddressing_
 #define HH_LLAddressing_ 1
 
@@ -41,7 +45,27 @@
 
 namespace senf {
 
+    /// \addtogroup addr_group
+    /// @{
 
+    /** \brief Link local address
+
+	LLSocketAddress wrapps the standard sockaddr_ll datatype.
+
+	\todo I don't think the current implementation is
+	    sensible. I'll have to reimplement this class probably
+	    from scratch.
+
+	\implementation The class relies uses a very flexible
+	    'ForwardRange' representation for a raw ll
+	    address (See <a
+	    href="http://www.boost.org/libs/range/index.html">Boost.Range</a>).
+	    This representation allows zero-copy imlementations of
+	    many operations, however it is probably not worth the
+	    effort since the ll address is restricted to a max of 8
+	    bytes. Therefore this will be changed and the concrete
+	    implementation is not documented very well ...
+     */
     class LLSocketAddress
     {
     public:
@@ -100,28 +124,58 @@ namespace senf {
         struct ::sockaddr_ll addr_;
     };
 
+    /** \brief
+	\related LLSocketAddress
+     */
     detail::LLAddressFromStringRange llAddress(std::string address);
+
     // The enable_if condition here allows only for classes as range.
     // However, excluding zero-terminated strings (which we want to
     // pass to above) I cannot think of a non-class ForwardRange
     // except for academic cases
+    // STOP: ... how about std::vector<...>::iterator ?? isn't that a ..pointer ?
+    /** \brief Convert raw link-local address into printable form
+	\related LLSocketAddress
+     */
     template <class ForwardRange>
     std::string llAddress(ForwardRange const & address,
                           typename boost::enable_if< boost::is_class<ForwardRange> >::type * = 0);
 
-    class LLAddressingPolicy
+    /** \brief Signal invalid link local address syntax
+	\related LLSocketAddress
+     */
+    struct InvalidLLSocketAddressException : public std::exception
+    { char const * what() const throw() { return "invalid ll address"; } };
+
+    /// @}
+
+    /// \addtogroup policy_impl_group
+    /// @{
+
+    /** \brief Addressing policy supporting link-local addressing
+
+	\par Address Type:
+	    LLSocketAddress
+	
+	This addressing policy implements generic link local
+	addressing. The predominant type of link local addressing is
+	Ethernet addressing.
+
+	Since the link layer does not support the notion of
+	connections, link local addresses do not support the connect()
+	or peer() members.
+     */
+    struct LLAddressingPolicy
         : public AddressingPolicyBase,
           private GenericAddressingPolicy<LLSocketAddress>
     {
-    public:
         typedef LLSocketAddress Address;
 
         using GenericAddressingPolicy<LLSocketAddress>::local;
         using GenericAddressingPolicy<LLSocketAddress>::bind;
     };
 
-    struct InvalidLLSocketAddressException : public std::exception
-    { char const * what() const throw() { return "invalid ll address"; } };
+    /// @}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

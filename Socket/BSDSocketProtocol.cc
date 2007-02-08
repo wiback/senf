@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file
+    \brief BSDSocketProtocol non-inline non-template implementation */
 
 #include "BSDSocketProtocol.hh"
 //#include "BSDSocketProtocol.ih"
@@ -60,7 +61,10 @@ prefix_ struct timeval senf::BSDSocketProtocol::timestamp()
     const
 {
     /** \bug Check, why this fails with ENOFILE (!!!!) at least when
-	called from a tcp socket. Further investigation necessary ... */
+	called from a tcp socket.Maybe this is only available for
+	datagram sockets ? That could make sense from the description
+	(what is the last packet passed to the user on a stream
+	socket?)  Further investigation necessary ... */
     struct timeval tv;
     if (::ioctl(body().fd(), SIOCGSTAMP, &tv) < 0)
         throw SystemException(errno);

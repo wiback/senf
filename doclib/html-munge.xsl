@@ -51,4 +51,10 @@
     </xsl:call-template>
   </xsl:template>
 
+  <xsl:template match="table[descendant::td[@class='memItemLeft']]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">members</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
 </xsl:stylesheet>
