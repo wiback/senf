@@ -3,3 +3,4 @@
 PROJECT_NAME = libScheduler
 TAGFILES = "$(TOPDIR)/Utils/doc/Utils.tag"
 GENERATE_TAGFILE = doc/Scheduler.tag
+ALPHABETICAL_INDEX = NO

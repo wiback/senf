@@ -1,8 +1,11 @@
 #!/usr/bin/perl -n
 
-if (/^\s*\\code\s*$/ .. /\\endcode/) {
-    $i=length((/^(\s*)/)[0]) if /^\s*\\code\s*$/;
-    print substr($_,$i);
+s/\s*$//;
+while (s/\t/' 'x(8-length($`)%8)/e) {}
+
+if (/^\s*\\code$/ .. /\\endcode/ && !/^$/) {
+    $i=length($1) if /^(\s*)\\code$/;
+    print substr($_,$i),"\n";
 } else {
-    print;
+    print $_,"\n";
 }

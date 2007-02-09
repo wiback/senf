@@ -188,7 +188,7 @@ dl.bug, dl.fixme, dl.todo, dl.idea {
 dl.xref-bug, dl.xref-fix, dl.xref-todo, dl.xref-idea { 
 	border: 1px solid #CC8888;
 	padding: 2px 3px;
-	margin: 4px 0;
+	margin: 4px 8px 4px 2px;
 	background-color: #FFEEEE;
 	color: #666666;
 	font-size: 9px;

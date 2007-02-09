@@ -1,6 +1,25 @@
 // $Id$
 //
+// Copyright (C) 2006 Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // Copyright (C) 2006 
+
+/** \file
+    \brief ReadHelper internal header */
 
 #ifndef IH_ReadHelper_
 #define IH_ReadHelper_ 1
@@ -12,10 +31,24 @@
 namespace senf {
 
 
+    /** \brief Abstract predicate interface
+	\internal
+     */
     template <class Handle>
     struct ReadHelper<Handle>::InternalPredicate
     {
 	virtual ~InternalPredicate() {}
+
+	/** \brief template to runtime polymorphic barrier for the predicate interface
+	    \internal
+
+	    \implementation This class will provide a polymorphic
+		wrapper around the non-polymorphic ReadHelper
+		predicate. This is used, so the predicate can be
+		specified as an arbitrary callable object (even a
+		boost::function or a Boost.Lambda expression) without
+		imposing any inheritance relationship on the predicate
+	 */
 	template <class Predicate>
 	struct Dispatcher
 	    : public ReadHelper<Handle>::InternalPredicate

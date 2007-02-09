@@ -20,6 +20,32 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief membind  public header */
+
+/** \defgroup membind Bound Member Functions
+
+    The membind() family of function templates simplifies the creation
+    of simple bound member function pointers:
+
+    \code
+      struct Foo {
+          int test(int x);
+      };
+
+      Foo * foo = ...; 
+      boost::function<int (int)> f = senf::membind(&Foo::test,foo);
+      int rv = f(1); // Calls foo->test(1)
+    \endcode
+
+    \idea Make the \a ob argument type an additional P template
+    parameter (using call_traits for the exact arg type? Probably
+    we'll get deduction problems then) . The only operation this
+    object musst suppoprt is ob->*fn. This would allow the use of
+    smart pointers. We should keep the T & version to still support
+    ob.*fn use.
+ */
+
 #ifndef HH_membind_
 #define HH_membind_ 1
 
@@ -31,7 +57,6 @@
 
 namespace senf {
 
-
 #define scOBTYPE T *
 #include "Utils/impl/membind.hh"
 #undef scOBTYPE
@@ -39,6 +64,28 @@ namespace senf {
 #define scOBTYPE T &
 #include "Utils/impl/membind.hh"
 #undef scOBTYPE
+
+#ifdef DOXYGEN
+
+    /// \addtogroup membind
+    /// @{
+
+    /** \brief Build bound member function object
+
+	membind() supports up to 9 function parameters (represented as
+	\a Args here). The \a ob argument can be either a pointer or a
+	reference to \a T
+	\param[in] fn member function pointer
+	\param[in] ob object instance to bind this pointer to
+	\returns Boost.Function object representing a bound call of \a
+	    fn on \a ob
+     */
+    template <typename R, typename T, typename Args>
+    boost::function<R (Args)> membind(R (T::* fn)( Args ), T * ob);
+
+    /// @}
+
+#endif
 
 }
 

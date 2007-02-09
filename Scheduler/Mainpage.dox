@@ -1,0 +1,33 @@
+namespace senf {
+
+/** \mainpage The SENF Scheduler Library
+
+    The Scheduler library provides a simple yet flexible abstraction
+    of the standard asynchronous UNIX mainloop utilizing \c select or
+    \c poll. The Scheduler library is based on the highly efficient
+    (but linux specific) \c epoll() system call.
+
+    The library provides 
+    \li a central \ref Scheduler singleton and 
+    \li \ref ReadHelper and \ref WriteHelper templates to simplify
+	common tasks.
+
+    In it's current incarnation, the library only supports network
+    file handles (including pipes etc) and simple timers (especially
+    it does not support asynchronous notification for on-disc file
+    transfers etc). Additional features will be added:
+    \li UNIX signal support
+    \li async IO support for local (disc) file handles
+    \li multi threading support
+    \li IPC support for multithreaded applications
+ */
+
+}
+
+
+// Local Variables:
+// mode: c++
+// mode: flyspell
+// mode: auto-fill
+// ispell-local-dictionary: "american"
+// End:

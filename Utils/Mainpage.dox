@@ -1,0 +1,43 @@
+namespace senf {
+
+/** \mainpage The SENF Utilities Library
+
+    The Utilities Library is a collection of independent
+    utilities. We have
+    <dl>
+
+    <dt>SystemException</dt><dd>standard exception for system errors
+    (errno)</dd>
+
+    <dt>\ref time</dt><dd>Very rudimentary microsecond time
+    support</dd>
+    
+    <dt>\ref process</dt><dd>Some simple process management and daemon
+    helpers<?dd>
+    
+    <dt>\ref membind</dt><dd>a simple <a
+    href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a>
+    extension</dd>
+
+    <dt>intrusive_refcount</dt><dd>mixin to simplify writing classes for
+    use with <a
+    href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a></dd>
+
+    <dt>SafeBool</dt><dd>a mixin class to provide a really safe
+    replacement for <tt>operator bool</tt></dd>
+
+    <dt>prettyName()</dt><dd>an interface to the C++ demangler of g++
+    to get formated type names from typeinfo objects</dd>
+
+    </dl>
+ */
+
+}
+
+
+// Local Variables:
+// mode: c++
+// mode: flyspell
+// mode: auto-fill
+// ispell-local-dictionary: "american"
+// End:

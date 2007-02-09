@@ -1,9 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
-// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+// Copyright (C) 2006 Stefan Bund <g0dil@senf.berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,20 +17,34 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline template functions
-
-//#include "Scheduler.ih"
+/** \file
+    \brief Exception inline non-template implementation */
 
 // Custom includes
 
-#define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
-///////////////////////////////ct.e////////////////////////////////////////
+prefix_  senf::SystemException::SystemException(int err_)
+    : where(0), err(err_) 
+{
+    init(); 
+}
+
+prefix_ senf::SystemException::SystemException(char const * where_, int err_)
+    : where(where_), err(err_) 
+{ 
+    init(); 
+}
+
+prefix_  senf::SystemException::~SystemException()
+    throw()
+{}
+
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // End:

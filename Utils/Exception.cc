@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file
+    \brief Exception non-inline non-template implementation */
 
 #include "Exception.hh"
 //#include "Exception.ih"
@@ -34,6 +35,9 @@
 
 prefix_ void senf::SystemException::init()
 {
+    // We normallyl don't want to consume memory in an exception,
+    // however all other solutions to format the message are terribly
+    // ugly (since thay must use a static and shared buffer ...)
     std::stringstream s;
     if (where)
         s << where << ": ";

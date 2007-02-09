@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief Exception public header */
+
 #ifndef HH_Exception_
 #define HH_Exception_ 1
 
@@ -32,18 +35,37 @@
 
 namespace senf {
 
+    /** \brief Exception handling standard UNIX errors (errno)
 
-    struct SystemException : public std::exception
+	This exception is thrown to signal generic errno failuers.
+
+	\todo make where and err accessors and make the member vars private
+
+	\idea Add a template class derived from SystemException which
+	takes the error number as a numeric argument. This allows
+	catching specific errno conditions: ErrnoException<EPIPE> etc.
+	
+	\idea Add a generic error thrower which takes the origin
+	string and errno value as an argument and will throw a
+	corresponding template class instance. This would just be a
+	big switch statement containing all possible errno values,
+	probably created using some makro metaprogramming.
+     */
+    class SystemException : public std::exception
     {
-        explicit SystemException(int err_) : where(0), err(err_) { init(); }
-        SystemException(char const * where_, int err_) : where(where_), err(err_) { init(); }
+    public:
+        explicit SystemException(int err); ///< SystemException without error lokus info
+                                        /**< \param[in] err errror number (the errno value) */
+        SystemException(char const * where, int err); ///< SystemException with error lokus info
+                                        /**< \param[in] where description of error origin
+					     \param[in] err error number (the errno value) */
 
-        virtual char const * what() const throw();
+        virtual char const * what() const throw(); ///< Return verbose error description
 
-        char const * where;
-        int err;
+        char const * where; ///< Error origin
+        int err; ///< Error number
 
-        virtual ~SystemException() throw() {}
+        virtual ~SystemException() throw();
     private:
         void init();
 	std::string buffer_;
@@ -52,7 +74,7 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Exception.cci"
+#include "Exception.cci"
 //#include "Exception.ct"
 //#include "Exception.cti"
 #endif

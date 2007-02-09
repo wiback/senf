@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief TypeInfo public header */
+
 #ifndef HH_TypeInfo_
 #define HH_TypeInfo_ 1
 
@@ -32,7 +35,21 @@
 
 namespace senf {
 
+    /** \brief Try to return readable type for given type_info
+	
+	This function will try to return a demangled type name for the
+	given type_info object. If the demangling fails, the possibly
+	mangled name (type->name()) will be returned.
 
+	This function depends on the liberty library provided by the
+	linux binutils or binutils-dev packages. It also depends on an
+	internal header file. If the API should change, this header
+	file (which resides in impl/demangle.h) must be updated from
+	the binutils sources.
+
+	\param[in] type type_info object
+	\returns type name, possibly demangled
+     */
     std::string prettyName(std::type_info const & type);
 
 }

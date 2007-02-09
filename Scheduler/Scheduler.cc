@@ -21,6 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
+    \brief Scheduler non-inline non-template implementation
 
     \idea Implement signal handling (See source for more discussion
     about this) 
@@ -28,7 +29,9 @@
     \idea Multithreading support: To support multithreading, the
     static member Scheduler::instance() must return a thread-local
     value (that is Scheduler::instance() must allocate one Scheduler
-    instance per thread)
+    instance per thread). Another possibility would be to distribute
+    the async load unto several threads (one scheduler for multiple
+    threads)
  */
 
 // Here a basic concept of how to add signal support to the scheduler:
@@ -68,8 +71,6 @@
 // delivered on top of each other. And of course any signal registered
 // with the scheduler must be blocked as soon as it is registered with
 // the scheduler.
-
-// Definition of non-inline non-template functions
 
 #include "Scheduler.hh"
 //#include "Scheduler.ih"
@@ -211,10 +212,10 @@ prefix_ void senf::Scheduler::process()
 	    if (spec.cb_hup)
 		spec.cb_hup(EV_HUP);
 	    else if (ev.events & EPOLLERR) {
-		/// \fixme This is stupid, if cb_write and cb_read are
-		/// the same. The same below. We really have to
-		/// exactly define sane semantics of what to do on
-		/// EPOLLHUP and EPOLLERR.
+		/** \fixme This is stupid, if cb_write and cb_read are
+		    the same. The same below. We really have to
+		    exactly define sane semantics of what to do on
+		    EPOLLHUP and EPOLLERR. */
 		if (spec.cb_write) spec.cb_write(EV_HUP);
 		if (spec.cb_read) spec.cb_read(EV_HUP);
 	    }
