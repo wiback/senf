@@ -53,11 +53,12 @@ namespace senf {
     {
         static void listen(FileHandle handle, unsigned backlog);
                                         ///< Enable establishing new connections on the socket
-                                        /** \param[in] handle socket handle to enable reception on
-					    \param[in] backlog size of backlog queue
-					    
-					    \fixme listen probably makes no sense without accpept,
-						so listen() should debend on AddressingPolicy too. */
+                                        /**< \param[in] handle socket handle to enable reception on
+					     \param[in] backlog size of backlog queue
+					     
+					     \fixme listen probably makes no sense without accpept,
+						 so listen() should debend on AddressingPolicy
+						 too. */
         template <class Policy>
         static int accept(ServerSocketHandle<Policy> handle, 
                           typename ServerSocketHandle<Policy>::Address & address,

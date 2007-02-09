@@ -303,7 +303,7 @@ namespace senf {
 	    For addressable protocols (AddressingPolicy is not NoAddressingPolicy), bind() will set
 	    the local address of the socket.
 
-	    \parm[in] addr Local socket address to asign
+	    \param[in] addr Local socket address to asign
 
 	    \throws senf::SystemException
 	 */

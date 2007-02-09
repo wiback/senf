@@ -66,7 +66,7 @@
     \li Doxygen (http://www.doxygen.org)
     \li The \c dia diagram editor (http://www.gnome.org/projects/dia/)
     \li HTML \c tidy (http://tidy.sourceforge.net/)
-    \li \The \c xsltproc XSLT processor (http://xmlsoft.org/XSLT/xsltproc2.html)
+    \li The \c xsltproc XSLT processor (http://xmlsoft.org/XSLT/xsltproc2.html)
 
 
     The library is only tested with gcc-3.4 and 4.0 on Linux. On other

@@ -121,7 +121,7 @@ namespace senf {
 	    For addressable protocols (AddressingPolicy is not NoAddressingPolicy), bind() will set
 	    the local address of the socket.
 
-	    \parm[in] addr Local socket address to asign
+	    \param[in] addr Local socket address to asign
 
 	    \throws senf::SystemException
 	 */
@@ -182,7 +182,7 @@ namespace senf {
                                         ///< Accept new connection
                                         /**< This variant will additionally return the remote
 					   address of the client
-					   \params[out] client address
+					   \param[out] client address
 					   \returns handle of new client connection
 					   \see \ref accept() */
         

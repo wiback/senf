@@ -439,7 +439,7 @@ namespace senf {
     
     /** \brief Check single policy axis
 	
-	This template is an example of the \i Policy \c Is family of
+	This template is an example of the \e Policy \c Is family of
 	tempalte metafunctions. It will check, wether \c Trait is a
 	valid compatible Policy class of \c SocketPolicy. \c Trait
 	must be derived from AddressingPolicyBase (respectively \i
@@ -453,11 +453,11 @@ namespace senf {
 
     /** \brief Enable template overload depending on policy value
 
-	This template is an exmaple of the \c If \i Policy \c Is
+	This template is an exmaple of the \c If \e Policy \c Is
 	family of templates. It is used like <a class="ext"
 	href="http://www.boost.org/libs/utility/enable_if.html">Boost.enable_if</a>
 	to enable a templated overload only, if the AddressingPolicy
-	of \i Policy is compatible with \c Trait (that is the
+	of \e Policy is compatible with \c Trait (that is the
 	AddressingPolicy of \c Policy is derived from \c Trait).
 
 	\see policy_group
@@ -508,7 +508,7 @@ namespace senf {
 
 	A SocketPolicy can be complete or incomplete. An incomplete
 	SocketPolicy will have at least one axis set to \c Undefined
-	\i Policy (or a generic derived class which is used to group
+	\e Policy (or a generic derived class which is used to group
 	some other policies but does not (completely) define the
 	policy behavior). A complete SocketPolicy will have a
 	concrete definition of the desired behavior for each policy
@@ -541,7 +541,7 @@ namespace senf {
 	SocketPolicy instantiation. It takes any number (that is up to
 	6) of Policy classes as arguments in any Order. It will create
 	a SocketPolicy from these policy classes. Any axis not
-	specified will be left as \c Unspecified \i Policy. 
+	specified will be left as \c Unspecified \e Policy. 
 
 	\see policy_group
      */
