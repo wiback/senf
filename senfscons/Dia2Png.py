@@ -1,8 +1,22 @@
-"""Dia2Png SCons Builder: Build a PNG file given a DIA file.
+## \file
+# \brief Bia2Png builder
 
-Support the specification of a scalefactor in the DIA2PNGDPI Environment variable.
-
-"""
+## \package senfscons.Dia2Png
+# \brief Build a PNG file from a DIA file
+#
+# This builder will convert a given DIA file into a PNG image. The
+# size of the target file is specified by giving a preferred DPI value
+# and a maximum width. The Builder will automatically fetch the
+# correct aspect ratio from the dia file.
+#
+# \par Construction Envrionment Variables:
+# <table class="senf">
+# <tr><td>\c DIACOM</td><td>dia command, defaults to \c diak</td></tr>
+# <tr><td>\c DIA2PNGDPI</td><td>resolution of converted image, defaults to 115</td></tr>
+# <tr><td>\c DIA2PNGMAXWIDTH</td><td>maximum image width, defaults to 800</td></tr>
+# </table>
+#
+# \ingroup builder
 
 import os
 import SCons.Builder

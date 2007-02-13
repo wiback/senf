@@ -1,3 +1,5 @@
+# The Doxygen builder is based on the Doxygen builder from:
+#
 # Astxx, the Asterisk C++ API and Utility Library.
 # Copyright (C) 2005, 2006  Matthew A. Nicholson
 # Copyright (C) 2006  Tim Blechmann
@@ -15,7 +17,55 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# I have been fighting 4 problems in this implementation:
+# The Modifications are Copyright (C) 2006,2007
+# Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+# Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+#     Stefan Bund <g0dil@berlios.de>
+
+## \file
+# \brief Doxygen builder
+
+## \package senfscons.Doxygen
+# \brief Doxygen Documentation Builder
+#
+# This builder will invoke \c doxygen to build software
+# documentation. The doxygen builder only takes the name of the
+# doxyfile as it's source file. The builder parses that doxygen
+# configuration file.
+#
+# The builder will automatically find all sources on which the
+# documentation depends. This includes
+# \li the source code files (as selected by the \c RECURSIVE, \c
+#     FILE_PATTERNS, \c INPUT and \c EXCLUDE_PATTERNS doxygen
+#     directives
+# \li the \c HTML_HEADER and \c HTML_FOOTER
+# \li all referenced \c TAGFILES
+# \li the \c INPUT_FILTER
+# \li all included doxyfiles (via \c @INCLUDE)
+#
+# The builder will emit a list of targets built by doxygen. This
+# depends on the types of documentation built.
+#
+# The builder will also generate additional commands to resolve
+# cross-references to other module documentations. This is based on
+# the \c TAGFILES used. Tagfiles built in the same project in other
+# modules are automatically found and the links will be resolved
+# correctly. To resolve links from external tagfiles, you may specify
+# <i>tagfilename</i><tt>_DOXY_URL</tt> as a construction environment
+# variable to specify the path to resolve references from the given
+# tagfile to. <i>tagfilename</i> is the uppercased basename of the
+# tagfile used.
+#
+# \par Construction Envrionment Variables:
+# <table class="senf">
+# <tr><td>\c DOXYGEN</td><td>doxygen command, defaults to \c doxygen</td></tr>
+# <tr><td><i>tag</i><tt>_DOXY_URL</tt></td><td>external tagfile resolve URL</td></tr>
+# </table>
+#
+# \ingroup builder
+
+# I (g0dil@berlios.de) have been fighting 4 problems in this
+# implementation:
 # - A Directory target will *not* call any source scanners
 # - A Directory target will interpret the directory contents as
 #   sources not targets. This means, that if a command creates that
@@ -71,7 +121,7 @@ def DoxyfileParse_(file, data, ENV):
 
       import shlex
       lex = shlex.shlex(instream=open(file), posix=True)
-      lex.wordchars += "*+./-:@~$()"
+      lex.wordchars += "*+=./-:@~$()"
       lex.whitespace = lex.whitespace.replace("\n", "")
       lex.escape = "\\"
 

@@ -1,3 +1,26 @@
+## \file
+# \brief BoostUnitTests build
+
+## \package senfscons.BoostUnitTests
+# \brief Builder utilizing the <a href="http://www.boost.org/libs/test/doc/index.html">Boost.Test</a> unit-test framework
+#
+# The BoostUnitTests builder will build a unit-test executable using
+# the <a
+# href="http://www.boost.org/libs/test/doc/index.html">Boost.Test</a>
+# library. After building, the unit-test will be executed.
+#
+# This builder is used by the SENFSCons.Object() helper to build the
+# unit test.
+#
+# \par Construction Envrionment Variables:
+# <table class="senf">
+# <tr><td>\c BOOSTTESTLIB</td><td>Name of the library to use, defaults to \c boost_unit_test_framework</td></tr>
+# <tr><td>\c BOOSTTESTARGS</td><td>Command line arguments of the test, defaults to <tt>--build_info=yes --log_level=test_suite</tt></td></tr>
+# </table>
+#
+# \todo This is not really a builder. This should be rewritten as one
+# \ingroup builder
+
 import SCons.Script.SConscript
 import SCons.Defaults
 import os.path
@@ -28,7 +51,7 @@ def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [
 
 def dispatcher(*arg,**kw):
     return BoostUnitTests(*arg,**kw)
-    
+
 def generate(env):
     env['BOOSTTESTLIB'] = 'boost_unit_test_framework'
     env['BOOSTTESTARGS'] = [ '--build_info=yes', '--log_level=test_suite' ]
