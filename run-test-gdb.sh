@@ -39,25 +39,41 @@ EOF
 # also truncate the backtrace at the first stackframe within the unit
 # test subsystem since we are only interested in the user code.
 gdb -batch -x .run-test-gdb.cmd ./.test.bin 2>/dev/null | perl -e '
+  $mode=0;
   while (<STDIN>) {
-    if (/^$/) { 
-      $_=<STDIN>; 
+    if ($mode==0) {
+      if (/^$/) { 
+        $mode=1;
+      } else {
+        print;
+      }
+    }
+    elsif ($mode==1) {
       if (/^Breakpoint 1, exception/) {
+        $mode=2;
         @l=();
-        while (<STDIN>) {
-          last unless /^#?[0-9]|^ /;
-          push @l,$_ if /^#/;
-	  $l[$#l] .= $_ if /^ /;
-        }
+      } else {
+        print "\n";
+        print;
+        $mode=0;
+      }
+    }
+    elsif ($mode==2) {
+      if (/^(#?[0-9]| )/) {
+        push @l,$_ if /^#/;
+        $l[$#l] .= $_ if /^ /;
+      } else {
+        $mode=0;
         if (/: fatal error in /) {
           for (@l[1..$#l]) {
-             last if /^#[0-9]+ +0x[0-9a-f]+ in boost::unit_test/;
+             last if /^#[0-9]+ +0x[0-9a-f]+ in boost::unit_test::ut_detail::invoker/;
              print;
           }
+          print;
+        } else {
+          redo;
         }
       }
-      else { print "\n"; }
     }
-    print;
   }
 '

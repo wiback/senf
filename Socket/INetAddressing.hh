@@ -105,13 +105,117 @@ namespace senf {
      */
     std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
 
-    /** \brief IPv6 socket address
+    /** \brief IPv6 network address
 
 	\todo Implement
      */
     class INet6Address
     {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
+        INet6Address();
+        INet6Address(std::string const & addr);
+	INet6Address(char const * addr);
+	INet6Address(struct in6_addr const & addr);
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+	void clear();
+	std::string address() const;
+
+	bool operator==(INet6Address const & other) const;
+	bool operator!=(INet6Address const & other) const;
+
+	struct in6_addr & addr();
+	struct in6_addr const & addr() const;
+	struct in6_addr * addr_p();
+	struct in6_addr const * addr_p() const;
+	unsigned addr_len() const;
+
+    protected:
+
+    private:
+	struct in6_addr addr_;
     };
+
+    std::ostream & operator<<(std::ostream & os, INet6Address const & addr);
+
+    /** \brief IPv6 socket address
+
+	\implementation The sockaddr_in6 structure has an sin6_flowinfo member. However RFC3493 does
+	not give the use of this field and specifies, that the field should be ignored ... so that's
+	what we do. Furthermore, the GNU libc reference states, that this field is not implemented
+	in the library.
+
+	\idea Implement a INet6Address_ref class which has an interface identical to INet6Address
+	and is convertible to INet6Address (the latter has a conversion constructor taking the
+	former as arg). This class however references an external in6_addr instead of containing one
+	itself. This can be used in INet6SocketAddress to increase the performance of some
+	operations.
+     */
+    class INet6SocketAddress
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
+        INet6SocketAddress();
+        INet6SocketAddress(std::string const & addr);
+        INet6SocketAddress(char const * addr);
+	INet6SocketAddress(INet6Address const & addr, unsigned port);
+	INet6SocketAddress(INet6Address const & addr, unsigned port, std::string const & iface);
+	INet6SocketAddress(std::string const & addr, std::string const & iface);
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+	bool operator==(INet6SocketAddress const & other) const;
+	bool operator!=(INet6SocketAddress const & other) const;
+
+	void clear();
+
+	std::string address() const;
+	void address(std::string const & addr);
+
+	INet6Address host() const;
+	void host(INet6Address const & addr);
+	
+	unsigned port() const;
+	void port(unsigned poirt);
+	
+	std::string iface() const;
+	void iface(std::string const & iface);
+	
+        ///\name Generic SocketAddress interface
+        ///@{
+
+        struct sockaddr * sockaddr_p();
+        struct sockaddr const * sockaddr_p() const;
+        unsigned sockaddr_len() const;
+
+        ///@}
+
+    protected:
+
+    private:
+	void assignAddr(std::string const & addr);
+	void assignIface(std::string const & iface);
+
+	struct sockaddr_in6 sockaddr_;
+    };
+
+    std::ostream & operator<<(std::ostream & os, INet6SocketAddress const & addr);
 
     /** \brief Signal invalid INet address syntax
 
@@ -164,9 +268,16 @@ namespace senf {
 
 	\todo implement
      */
-    struct INet6AddressingPolicy : public AddressingPolicyBase
+    struct INet6AddressingPolicy
+        : public AddressingPolicyBase,
+          private GenericAddressingPolicy<INet6SocketAddress>
     {
-        typedef INet6Address Address;
+        typedef INet6SocketAddress Address;
+
+        using GenericAddressingPolicy<INet6SocketAddress>::peer;
+        using GenericAddressingPolicy<INet6SocketAddress>::local;
+        using GenericAddressingPolicy<INet6SocketAddress>::connect;
+        using GenericAddressingPolicy<INet6SocketAddress>::bind;
     };
 
     /// @}

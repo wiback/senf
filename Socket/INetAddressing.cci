@@ -30,6 +30,9 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::INet4Address
+
 prefix_ senf::INet4Address::INet4Address()
 {
     clear();
@@ -85,6 +88,147 @@ prefix_ unsigned senf::INet4Address::sockaddr_len()
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4Address const & addr)
 {
     os << addr.str();
+    return os;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::INet6Address
+
+prefix_ senf::INet6Address::INet6Address()
+{
+    clear();
+}
+
+prefix_ senf::INet6Address::INet6Address(struct in6_addr const & addr)
+{
+    addr_ = addr;
+}
+
+prefix_ struct in6_addr & senf::INet6Address::addr()
+{
+    return addr_;
+}
+
+prefix_ struct in6_addr const & senf::INet6Address::addr()
+    const
+{
+    return addr_;
+}
+
+prefix_ struct in6_addr * senf::INet6Address::addr_p()
+{
+    return & addr_;
+}
+
+prefix_ struct in6_addr const * senf::INet6Address::addr_p()
+    const
+{
+    return & addr_;
+}
+
+prefix_ unsigned senf::INet6Address::addr_len()
+    const
+{
+    return sizeof(addr_);
+}
+
+prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Address const & addr)
+{
+    os << addr.address();
+    return os;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::INet6SocketAddress
+
+prefix_ senf::INet6SocketAddress::INet6SocketAddress()
+{
+    clear();
+}
+
+prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr)
+{
+    clear();
+    assignAddr(addr);
+}
+
+prefix_ senf::INet6SocketAddress::INet6SocketAddress(char const * addr)
+{
+    clear();
+    assignAddr(addr);
+}
+
+prefix_ senf::INet6SocketAddress::INet6SocketAddress(INet6Address const & addr, unsigned port)
+{
+    clear();
+    sockaddr_.sin6_addr = addr.addr();
+    sockaddr_.sin6_port = htons(port);
+}
+
+prefix_ senf::INet6SocketAddress::INet6SocketAddress(INet6Address const & addr, unsigned port,
+                                                     std::string const & iface)
+{
+    clear();
+    sockaddr_.sin6_addr = addr.addr();
+    sockaddr_.sin6_port = htons(port);
+    assignIface(iface);
+}
+
+prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
+                                                     std::string const & iface)
+{
+    clear();
+    assignAddr(addr);
+    assignIface(iface);
+}
+
+prefix_ senf::INet6Address senf::INet6SocketAddress::host()
+    const
+{
+    return INet6Address(sockaddr_.sin6_addr);
+}
+
+prefix_ void senf::INet6SocketAddress::host(INet6Address const & addr)
+{
+    sockaddr_.sin6_addr = addr.addr();
+}
+
+prefix_ unsigned senf::INet6SocketAddress::port()
+    const
+{
+    return ntohs(sockaddr_.sin6_port);
+}
+
+prefix_ void senf::INet6SocketAddress::port(unsigned port)
+{
+    sockaddr_.sin6_port = htons(port);
+}
+
+prefix_ void senf::INet6SocketAddress::iface(std::string const & iface)
+{
+    assignIface(iface);
+}
+
+prefix_ struct sockaddr * senf::INet6SocketAddress::sockaddr_p()
+{
+    return reinterpret_cast<struct sockaddr *>(&sockaddr_);
+}
+
+prefix_ struct sockaddr const * senf::INet6SocketAddress::sockaddr_p()
+    const
+{
+    return reinterpret_cast<struct sockaddr const *>(&sockaddr_);
+}
+
+prefix_ unsigned senf::INet6SocketAddress::sockaddr_len()
+    const
+{
+    return sizeof(sockaddr_);
+}
+
+prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6SocketAddress const & addr)
+{
+    os << addr.address();
     return os;
 }
 
