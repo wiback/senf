@@ -97,7 +97,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_client()
 }
 
 prefix_ void
-senf::TCPv6SocketProtocol::init_client(INet6Address const & address)
+senf::TCPv6SocketProtocol::init_client(INet6SocketAddress const & address)
     const
 {
     init_client();
@@ -107,14 +107,14 @@ senf::TCPv6SocketProtocol::init_client(INet6Address const & address)
 prefix_ void senf::TCPv6SocketProtocol::init_server()
     const
 {
-    int sock = ::socket(PF_INET,SOCK_STREAM,0);
+    int sock = ::socket(PF_INET6,SOCK_STREAM,0);
     if (sock < 0)
         throw SystemException(errno);
     body().fd(sock);
 }
 
-prefix_ void senf::TCPv6SocketProtocol::init_server(INet6Address const & address,
-                                                           unsigned backlog)
+prefix_ void senf::TCPv6SocketProtocol::init_server(INet6SocketAddress const & address,
+						    unsigned backlog)
     const
 {
     init_server();

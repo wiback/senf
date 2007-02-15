@@ -45,12 +45,12 @@ namespace {
 
     void error(char const * fn, char const * proc="")
     {
-        std::cerr << "\n" << proc << fn << ": " << strerror(errno) << std::endl;
+        std::cerr << "\n" << proc << ((*proc)?": ":"") << fn << ": " << strerror(errno) << std::endl;
     }
 
-    void fail(char const * fn)
+    void fail(char const * proc, char const * fn)
     {
-        error(fn,"server: ");
+        error(fn,proc);
         _exit(1);
     }
 
@@ -76,8 +76,11 @@ namespace {
 
     void stop()
     {
-        kill(server_pid,9);
-        wait();
+	if (server_pid) {
+	    kill(server_pid,9);
+	    wait();
+	    server_pid = 0;
+	}
     }
 
 }
@@ -86,21 +89,22 @@ namespace {
 
 namespace {
 
-    void server()
+    void server_v4()
     {
         int serv = socket(PF_INET,SOCK_STREAM,0);
-        if (serv<0) fail("socket()");
+        if (serv<0) fail("server_v4","socket()");
         int v = 1;
         if (setsockopt(serv,SOL_SOCKET,SO_REUSEADDR,&v,sizeof(v))<0)
-            fail("setsockopt()");
+            fail("server_v4","setsockopt()");
         struct sockaddr_in sin;
+	::memset(&sin,0,sizeof(sin));
         sin.sin_family = AF_INET;
         sin.sin_port = htons(12345);
         sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-        if (bind(serv,(struct sockaddr *)&sin,sizeof(sin))<0) fail("bind()");
-        if (listen(serv,1)<0) fail("listen()");
+        if (bind(serv,(struct sockaddr *)&sin,sizeof(sin))<0) fail("server_v4","bind()");
+        if (listen(serv,1)<0) fail("server_v4","listen()");
         int sock = accept(serv,0,0);
-        if (sock < 0) fail("accept()");
+        if (sock < 0) fail("server_v4","accept()");
 
         char buffer[1024];
         while (1) {
@@ -110,9 +114,39 @@ namespace {
             write(sock,buffer,n);
         }
 
-        if (shutdown(sock, SHUT_RDWR) < 0) fail("shutdown()");
-        if (close(sock) < 0) fail("close()");
-        if (close(serv) < 0) fail("close()");
+        if (shutdown(sock, SHUT_RDWR) < 0) fail("server_v4","shutdown()");
+        if (close(sock) < 0) fail("server_v4","close()");
+        if (close(serv) < 0) fail("server_v4","close()");
+    }
+
+    void server_v6()
+    {
+        int serv = socket(PF_INET6,SOCK_STREAM,0);
+        if (serv<0) fail("server_v6","socket()");
+        int v = 1;
+        if (setsockopt(serv,SOL_SOCKET,SO_REUSEADDR,&v,sizeof(v))<0)
+            fail("server_v6","setsockopt()");
+        struct sockaddr_in6 sin;
+	::memset(&sin,0,sizeof(sin));
+        sin.sin6_family = AF_INET6;
+        sin.sin6_port = htons(12345);
+        sin.sin6_addr = in6addr_loopback;
+        if (bind(serv,(struct sockaddr *)&sin,sizeof(sin))<0) fail("server_v6","bind()");
+        if (listen(serv,1)<0) fail("server_v6","listen()");
+        int sock = accept(serv,0,0);
+        if (sock < 0) fail("server_v6","accept()");
+
+        char buffer[1024];
+        while (1) {
+            int n = read(sock,buffer,1024);
+            if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
+                break;
+            write(sock,buffer,n);
+        }
+
+        if (shutdown(sock, SHUT_RDWR) < 0) fail("server_v6","shutdown()");
+        if (close(sock) < 0) fail("server_v6","close()");
+        if (close(serv) < 0) fail("server_v6","close()");
     }
 
 }
@@ -126,8 +160,9 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1:12345"), senf::SystemException );
     }
 
-    {
-        start(server);
+    try {
+	alarm(10);
+        start(server_v4);
         senf::TCPv4ClientSocketHandle sock;
         BOOST_CHECK_NO_THROW( sock.bind("127.0.0.1:23456") );
         BOOST_CHECK_NO_THROW( sock.connect("127.0.0.1:12345") );
@@ -150,6 +185,13 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.read(), "" );
         BOOST_CHECK( sock.eof() );
         BOOST_CHECK( !sock );
+	alarm(0);
+    } catch (...) {
+	alarm(0);
+	sleep(1);
+	stop();
+	sleep(1);
+	throw;
     }
     
     {
@@ -182,20 +224,80 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
     }
 }
 
+BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
+{
+    {
+        senf::TCPv6ClientSocketHandle sock;
+
+        BOOST_CHECK_THROW( sock.connect(senf::INet6SocketAddress("[::1]:12345")), senf::SystemException );
+        BOOST_CHECK_THROW( sock.protocol().connect("[::1]:12345"), senf::SystemException );
+    }
+
+    try {
+	alarm(10);
+        start(server_v6);
+        senf::TCPv6ClientSocketHandle sock;
+        BOOST_CHECK_NO_THROW( sock.bind("[::1]:23456") );
+        BOOST_CHECK_NO_THROW( sock.connect("[::1]:12345") );
+        BOOST_CHECK( sock.peer() == "[::1]:12345" );
+        BOOST_CHECK( sock.local() == "[::1]:23456" );
+        BOOST_CHECK( sock.blocking() );
+        BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.sndbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
+        BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
+        // this fails with ENOFILE ... why ????
+        // BOOST_CHECK_NO_THROW( sock.protocol().timestamp() );
+        BOOST_CHECK( !sock.eof() );
+        sock.write("QUIT");
+        sleep(1);
+        stop();
+        sleep(1);
+        BOOST_CHECK_EQUAL( sock.read(), "" );
+        BOOST_CHECK( sock.eof() );
+        BOOST_CHECK( !sock );
+	alarm(0);
+    } catch (...) {
+	alarm(0);
+	sleep(1);
+	stop();
+	sleep(1);
+	throw;
+    }
+    
+    {
+        senf::TCPv6ClientSocketHandle sock;
+
+        // The following setsockopts are hard to REALLY test ...
+        BOOST_CHECK_NO_THROW( sock.protocol().nodelay(true) );
+        BOOST_CHECK( sock.protocol().nodelay() );
+        BOOST_CHECK_EQUAL( sock.protocol().siocinq(), 0u );
+        BOOST_CHECK_EQUAL( sock.protocol().siocoutq(), 0u );
+
+        BOOST_CHECK_NO_THROW( sock.protocol().reuseaddr(true) );
+        BOOST_CHECK( sock.protocol().reuseaddr() );
+        BOOST_CHECK_NO_THROW( sock.protocol().linger(true,0) );
+        BOOST_CHECK( sock.protocol().linger() == std::make_pair(true, 0u) );
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 namespace {
 
-    void client()
+    void client_v4()
     {
         int sock = socket(PF_INET,SOCK_STREAM,0);
-        if (sock<0) fail("socket()");
+        if (sock<0) fail("client_v4","socket()");
         struct sockaddr_in sin;
+	::memset(&sin,0,sizeof(sin));
         sin.sin_family = AF_INET;
         sin.sin_port = htons(12346);
         sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         if (connect(sock,(struct sockaddr *)&sin,sizeof(sin)) < 0)
-            fail("connect()");
+            fail("client_v4","connect()");
         
         char buffer[1024];
         while (1) {
@@ -205,19 +307,44 @@ namespace {
             write(sock,buffer,n);
         }
 
-        if (shutdown(sock, SHUT_RDWR) < 0) fail("shutdown()");
-        if (close(sock) < 0) fail("close()");
+        if (shutdown(sock, SHUT_RDWR) < 0) fail("client_v4","shutdown()");
+        if (close(sock) < 0) fail("client_v4","close()");
+    }
+
+    void client_v6()
+    {
+        int sock = socket(PF_INET6,SOCK_STREAM,0);
+        if (sock<0) fail("client_v6","socket()");
+        struct sockaddr_in6 sin;
+	::memset(&sin,0,sizeof(sin));
+        sin.sin6_family = AF_INET6;
+        sin.sin6_port = htons(12347);
+        sin.sin6_addr = in6addr_loopback;
+        if (connect(sock,(struct sockaddr *)&sin,sizeof(sin)) < 0)
+            fail("client_v6","connect()");
+        
+        char buffer[1024];
+        while (1) {
+            int n = read(sock,buffer,1024);
+            if (n == 4 && strncmp(buffer,"QUIT",4) == 0)
+                break;
+            write(sock,buffer,n);
+        }
+
+        if (shutdown(sock, SHUT_RDWR) < 0) fail("client_v6","shutdown()");
+        if (close(sock) < 0) fail("client_v6","close()");
     }
 
 }
 
 BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
 {
-    {
+    try {
+	alarm(10);
         BOOST_CHECKPOINT("Opening server socket");
         senf::TCPv4ServerSocketHandle server ("127.0.0.1:12346");
         BOOST_CHECKPOINT("Starting client");
-        start(client);
+        start(client_v4);
 
         BOOST_CHECKPOINT("Accepting connection");
         senf::TCPv4ClientSocketHandle client = server.accept();
@@ -226,6 +353,39 @@ BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
         BOOST_CHECKPOINT("Stopping client");
         sleep(1);
         stop();
+	alarm(0);
+    } catch (...) {
+	alarm(0);
+	sleep(1);
+	stop();
+	sleep(1);
+	throw;
+    }
+}
+
+BOOST_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
+{
+    try {
+	alarm(10);
+        BOOST_CHECKPOINT("Opening server socket");
+        senf::TCPv6ServerSocketHandle server ("[::1]:12347");
+        BOOST_CHECKPOINT("Starting client");
+        start(client_v6);
+
+        BOOST_CHECKPOINT("Accepting connection");
+        senf::TCPv6ClientSocketHandle client = server.accept();
+        BOOST_CHECK_NO_THROW(client.write("QUIT"));
+
+        BOOST_CHECKPOINT("Stopping client");
+        sleep(1);
+        stop();
+	alarm(0);
+    } catch (...) {
+	alarm(0);
+	sleep(1);
+	stop();
+	sleep(1);
+	throw;
     }
 }
 

@@ -141,10 +141,10 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 	BOOST_CHECK_EQUAL( addr.port(), 100u );
 	addr.host("::2");
 	BOOST_CHECK_EQUAL( addr.host(), "::2" );
-	BOOST_CHECK_THROW( addr.address(""), InvalidINetAddressException );
-	BOOST_CHECK_THROW( addr.address("[::1]"), InvalidINetAddressException );
-	BOOST_CHECK_THROW( addr.address("[::1]1234"), InvalidINetAddressException );
-	addr.address("[12::21@lo]:12345");
+	BOOST_CHECK_THROW( addr = "", InvalidINetAddressException );
+	BOOST_CHECK_THROW( addr = "[::1]", InvalidINetAddressException );
+	BOOST_CHECK_THROW( addr = "[::1]1234", InvalidINetAddressException );
+	addr = "[12::21@lo]:12345";
 	BOOST_CHECK_EQUAL( addr.address(), "[12::21@lo]:12345" );
 	BOOST_CHECK_EQUAL( addr.host(), "12::21" );
 	BOOST_CHECK_EQUAL( addr.port(), 12345u );
