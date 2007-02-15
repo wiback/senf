@@ -160,8 +160,6 @@ namespace senf {
 	ProtocolServerSocketHandle via the Socket Handle typedefs above.
 
 	\see TCPv4SocketProtocol
-	
-	\todo Implement
      */
     class TCPv6SocketProtocol
         : public ConcreteSocketProtocol<TCPv6Socket_Policy>, 
@@ -170,6 +168,47 @@ namespace senf {
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
     {
+        ///////////////////////////////////////////////////////////////////////////
+        // internal interface
+
+	///\name Constructors
+	///@{
+
+        void init_client() const;       ///< Create unconnected client socket
+	                                /**< \note This member is implicitly called from the
+					     ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+					     constructor */
+        void init_client(INet4Address const & address) const;
+                                        ///< Create client socket and connect
+                                        /**< Creates a new client socket and connects to the given
+					     address. 
+					     
+					     \param[in] address remote address to connect to */
+	                                /**< \note This member is implicitly called from the
+					     ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+					     constructor */
+        void init_server() const;       ///< Create server socket
+	                                /**< \note This member is implicitly called from the
+					     ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+					     constructor */
+        void init_server(INet4Address const & address, unsigned backlog=1) const;
+                                        ///< Create server socket and listen
+                                        /**< Creates a new server socket, binds to \a address end
+					     starts listening for new connections with a backlog of
+					     \a backlog connections. It also enables reuseaddr().
+
+					     \param[in] address address to listen on
+					     \param[in] backlog size of the listen backlog */
+	                                /**< \note This member is implicitly called from the
+					     ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+					     constructor */
+
+	///@}
+	///\name Abstract Interface Implementation
+
+        std::auto_ptr<SocketProtocol> clone() const;
+	
+	///@}
     };
 
     typedef ProtocolClientSocketHandle<TCPv6SocketProtocol> TCPv6ClientSocketHandle;

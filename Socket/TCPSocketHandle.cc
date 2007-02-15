@@ -38,6 +38,9 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::TCPv4SocketProtocol
+
 prefix_ void senf::TCPv4SocketProtocol::init_client()
     const
 {
@@ -79,6 +82,52 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::TCPv4SocketProtocol::clone()
     const
 {
     return std::auto_ptr<SocketProtocol>(new TCPv4SocketProtocol());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::TCPv6SocketProtocol::
+
+prefix_ void senf::TCPv6SocketProtocol::init_client()
+    const
+{
+    int sock = ::socket(PF_INET6,SOCK_STREAM,0);
+    if (sock < 0)
+        throw SystemException(errno);
+    body().fd(sock);
+}
+
+prefix_ void
+senf::TCPv6SocketProtocol::init_client(INet6Address const & address)
+    const
+{
+    init_client();
+    connect(address);
+}
+
+prefix_ void senf::TCPv6SocketProtocol::init_server()
+    const
+{
+    int sock = ::socket(PF_INET,SOCK_STREAM,0);
+    if (sock < 0)
+        throw SystemException(errno);
+    body().fd(sock);
+}
+
+prefix_ void senf::TCPv6SocketProtocol::init_server(INet6Address const & address,
+                                                           unsigned backlog)
+    const
+{
+    init_server();
+    bind(address);
+    reuseaddr(true);
+    if (::listen(body().fd(),backlog) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::TCPv6SocketProtocol::clone()
+    const
+{
+    return std::auto_ptr<SocketProtocol>(new TCPv6SocketProtocol());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -148,14 +148,6 @@ prefix_ void senf::INet6SocketAddress::clear()
     sockaddr_.sin6_family = AF_INET6;
 }
 
-prefix_ void senf::INet6SocketAddress::address(std::string const & addr)
-{
-    if (addr[0]=='[')
-	assignAddr(addr);
-    else
-	host(addr);
-}
-
 prefix_ std::string senf::INet6SocketAddress::address()
     const
 {

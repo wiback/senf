@@ -29,10 +29,7 @@
     mailing lists</a>.
 
     \see \ref usage\n
-         \ref example\n
-         <a href="xref.html">Current status: Cross reference of action points</a>\n
-         <a class="ext" href="http://developer.berlios.de/projects/senf">The BerliOS project page</a>\n
-         <a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">The SENF Wiki at BerliOS</a>
+         \ref example
 */
 
 /** \page usage Using the SENF framework
@@ -94,8 +91,9 @@
     repository. Change to your development directory and use the
     following subversion command
 
-    <pre class="fragment">
-      $ svn checkout http://svn.berlios.de/svnroot/repos/senf/trunk senf</pre>
+    <pre>
+    $ svn checkout http://svn.berlios.de/svnroot/repos/senf/trunk senf
+    </pre>
 
     This will create a new directory \c senf within the current
     directory. For further documentation on the use of Subversion, see
@@ -109,9 +107,10 @@
     To build the library, execute all unit tests and build the Sniffer
     test application, use
 
-    <pre class="fragment">
-      $ scons
-      $ scons all_tests</pre>
+    <pre>
+    $ scons
+    $ scons all_tests
+    </pre>
 
     in the \c senf directory. This assumes, that you want to build the
     library with your default gcc and requires the boost libraries to
@@ -223,8 +222,9 @@
     check out the needed directories from the BerliOS SENF
     repository. Change to the 'Foo' directory and type
     
-      <pre class="fragment">
-        $ svn propedit svn:externals .</pre>
+    <pre>
+    $ svn propedit svn:externals .
+    </pre>
 
     The default editor (probably VI) will be started with the current
     value of the svn:externals property (which will probably be
@@ -236,16 +236,18 @@
     For example, if you want to use the \c Scheduler and \c Socket
     module, the file will look like
 
-      <pre class="fragment">
-        senfscons http://svn.berlios.de/svnroot/repos/senf/trunk/senfscons
-        Utils http://svn.berlios.de/svnroot/repos/senf/trunk/Utils
-        Scheduler http://svn.berlios.de/svnroot/repos/senf/trunk/Scheduler
-        Socket http://svn.berlios.de/svnroot/repos/senf/trunk/Socket</pre>
+    <pre>
+    senfscons http://svn.berlios.de/svnroot/repos/senf/trunk/senfscons
+    Utils http://svn.berlios.de/svnroot/repos/senf/trunk/Utils
+    Scheduler http://svn.berlios.de/svnroot/repos/senf/trunk/Scheduler
+    Socket http://svn.berlios.de/svnroot/repos/senf/trunk/Socket
+    </pre>
 
     exit the editor and the property will be set. Now run
 
-      <pre class="fragment">
-        $ svn update</pre>
+    <pre>
+    $ svn update
+    </pre>
 
     and the code will be checked out into the corresponding
     directories. 
@@ -268,8 +270,9 @@
     add \c SConfig to the list of files ignored by Subversion in the
     project root. In the project root execute
 
-    <pre class="fragment">
-      $ svn propedit svn:ignore .</pre>
+    <pre>
+    $ svn propedit svn:ignore .
+    </pre>
 
     and add \c SConfig as a new line to the property.
 
@@ -277,21 +280,24 @@
 
     You should now be able to build your project using
 
-    <pre class="fragment">
-      $ scons</pre>
+    <pre>
+    $ scons
+    </pre>
 
     If you have not changed the \c SConstruct file, this will build
     all modules you have importet into your project. To build and
     execute the unit tests, use
 
-    <pre class="fragment">
-      $ scons all_tests</pre>
+    <pre>
+    $ scons all_tests
+    </pre>
 
     you can also build only a subdirectory by changing to it and
     running
     
-    <pre class="fragment">
-      $ scons -u [target]</pre>
+    <pre>
+    $ scons -u [target]
+    </pre>
 
     \see <a href="../../senfscons/doc/html/index.html">SENFSCons reference</a> \n
          <a class="ext" href="http://www.scons.org/documentation.php">SCons documentation</a> \n

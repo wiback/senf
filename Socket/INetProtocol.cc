@@ -37,7 +37,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::INet4Protocol
+// senf::IPv4Protocol
 
 prefix_ void senf::IPv4Protocol::connect(INet4Address const & address)
     const
@@ -148,6 +148,22 @@ prefix_ void senf::IPv4Protocol::mcTTL(unsigned value)
         throw SystemException(errno);
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::IPv6Protocol
+
+prefix_ void senf::IPv6Protocol::connect(INet6SocketAddress const & address)
+    const
+{
+    if (::connect(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void senf::IPv6Protocol::bind(INet6SocketAddress const & address)
+    const
+{
+    if (::bind(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
+        throw SystemException(errno);
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

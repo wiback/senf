@@ -127,12 +127,20 @@ namespace senf {
 	
 	This protocol facet introduces all the socket api protocol members which are related to IPv6
 	addressing.
-
-	\todo implement
      */
     class IPv6Protocol
         : public virtual SocketProtocol
-    {};
+    {
+    public:
+        void connect(INet6SocketAddress const & address) const; ///< Connect to remote address
+                                        /**< \todo make this obsolete by allowing access to the
+					     ClientSocketHandle from ConcreateSocketProtocol 
+					     \param[in] address Address to connect to */
+        void bind(INet6SocketAddress const & address) const; ///< Set local socket address
+                                        /**< \todo make this obsolete by allowing access to the
+					     ClientSocketHandle from ConcreateSocketProtocol 
+					     \param[in] address Address to set */
+    };
 
     /// @}
 

@@ -89,9 +89,10 @@
     application, check out the library, go to the \c Sniffer directory
     and execute
 
-    <pre class="fragment">
-      # scons -u
-      # ./Sniffer</pre>
+    <pre>
+    # scons -u
+    # ./Sniffer
+    </pre>
 
     \see \ref components \n
          \ref build \n
