@@ -31,8 +31,9 @@
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
 namespace {
-    senf::PacketRegistry<senf::IpV4Types>::RegistrationProxy<senf::UDPPacket> 
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::UDPPacket> 
         registerUDPPacket(17);
 }
 

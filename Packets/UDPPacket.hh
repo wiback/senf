@@ -33,7 +33,6 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
     
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UDP : public ParserBase<Iterator,IPacket>

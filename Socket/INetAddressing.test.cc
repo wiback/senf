@@ -111,6 +111,13 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 	BOOST_CHECK_EQUAL( addr1, addr2 );
 	BOOST_CHECK_THROW( addr1 = "", InvalidINetAddressException );
 	BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr1), "::" );
+	unsigned char data[] = { 0x12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x21, 0 };
+	INet6Address addr3 (std::make_pair(&data[0],&data[0]+sizeof(data)-1));
+	BOOST_CHECK_EQUAL( addr3, "1200::21" );
+	BOOST_CHECK_THROW( INet6Address(std::make_pair(&data[0],&data[0]+sizeof(data))), 
+			   InvalidINetAddressException );
+	BOOST_CHECK_THROW( INet6Address(std::make_pair(&data[0],&data[0]+sizeof(data)-2)), 
+			   InvalidINetAddressException );
     }
 
     {

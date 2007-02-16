@@ -1,9 +1,7 @@
-// $Id$
-//
-// Copyright (C) 2006 
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +18,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline template functions
+/** \file
+    \brief IpV6Packet inline template implementation */
 
-//#include "IpV4Packet.ih"
+//#include "IpV6Packet.ih"
 
 // Custom includes
 
@@ -30,7 +29,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Arg>
-prefix_ senf::IpV4Packet::IpV4Packet(Arg const & arg)
+prefix_ senf::IpV6Packet::IpV6Packet(Arg const & arg)
     : Packet(arg)
 {}
 
@@ -40,5 +39,7 @@ prefix_ senf::IpV4Packet::IpV4Packet(Arg const & arg)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// ispell-local-dictionary: "american"
 // End:

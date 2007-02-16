@@ -58,6 +58,7 @@ namespace senf {
     };
 
     struct EtherTypes {
+	// See http://www.iana.org/assignments/ethernet-numbers
         typedef boost::uint16_t key_t;
     };
 

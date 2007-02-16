@@ -6,8 +6,14 @@ import SENFSCons
 ###########################################################################
 
 sources = SENFSCons.GlobSources()
+
 SENFSCons.StandardTargets(env)
-SENFSCons.Lib(env, 'Packets',  sources, )
+
+SENFSCons.Lib(env,
+              library = 'Packets',
+              sources = sources,
+              LIBS = [ 'Socket', 'Utils' ])
+
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png("structure.dia")
-    ])
+])

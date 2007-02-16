@@ -1,9 +1,7 @@
-// $Id$
-//
-// Copyright (C) 2006 
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,25 +18,37 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline template functions
+/** \file
+    \brief INetAddressing non-inline template implementation  */
 
-//#include "IpV4Packet.ih"
+//#include "INetAddressing.ih"
 
 // Custom includes
+#include <boost/range.hpp>
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
 
-template <class Arg>
-prefix_ senf::IpV4Packet::IpV4Packet(Arg const & arg)
-    : Packet(arg)
-{}
+template <class Range>
+prefix_ senf::INet6Address::INet6Address(Range const & range)
+{
+    typename boost::range_const_iterator<Range>::type i ( boost::const_begin(range) );
+    typename boost::range_const_iterator<Range>::type const i_end ( boost::const_end(range) );
+    unsigned char * p (&addr_.s6_addr[0]);
+    unsigned char * p_end (p+sizeof(addr_.s6_addr));
+    for (; p!=p_end && i!=i_end; ++p, ++i)
+	*p = *i;
+    if (p!=p_end || i!=i_end)
+	throw InvalidINetAddressException();
+}
 
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// ispell-local-dictionary: "american"
 // End:

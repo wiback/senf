@@ -75,16 +75,18 @@ namespace senf {
         Parse_32bit    destination() const { return Parse_32bit   (this->i() + 16 ); }
     };
 
-    struct IpV4Types {
+    struct IpTypes {
+	// See http://www.iana.org/assignments/protocol-numbers
+	// Also used by IPv6
         typedef boost::uint16_t key_t;
     };
 
     class IpV4Packet
         : public Packet, 
           public Parse_IpV4<Packet::iterator,IpV4Packet>, 
-          public PacketRegistryMixin<IpV4Types,IpV4Packet>
+          public PacketRegistryMixin<IpTypes,IpV4Packet>
     {
-        using PacketRegistryMixin<IpV4Types,IpV4Packet>::registerInterpreter;
+        using PacketRegistryMixin<IpTypes,IpV4Packet>::registerInterpreter;
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types

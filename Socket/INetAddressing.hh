@@ -128,10 +128,20 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        INet6Address();
-        INet6Address(std::string const & addr);
-	INet6Address(char const * addr);
-	INet6Address(struct in6_addr const & addr);
+        INet6Address();                 ///< Create empty address
+        INet6Address(std::string const & addr); ///< Create address from string representation
+	INet6Address(char const * addr); ///< Create address from string representation
+	INet6Address(struct in6_addr const & addr); ///< Create address from in6_addr
+	template <class Range>
+	explicit INet6Address(Range const & range); ///< Create address from arbitrary raw data
+                                        /**< This constructor will copy 16 bytes from the given
+					     range and interpret them as a IPv6 address in network
+					     byte order. This constructor is used to read an
+					     arbitrary address from it's binary representation.
+
+					     \param range arbitrary range, see <a
+						 href="http://www.boost.org/libs/range/index.html">Boost.Range</a>
+					  */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -326,7 +336,7 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "INetAddressing.cci"
-//#include "INetAddressing.ct"
+#include "INetAddressing.ct"
 //#include "INetAddressing.cti"
 //#include "INetAddressing.mpp"
 #endif
