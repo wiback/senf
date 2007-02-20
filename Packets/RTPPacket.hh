@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -35,7 +35,7 @@
 
 namespace senf {
 
-    
+
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_RTP : public ParserBase<Iterator,IPacket>
     {
@@ -45,7 +45,7 @@ namespace senf {
 
         Parse_RTP() {}
         Parse_RTP(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
-                     
+
         ///////////////////////////////////////////////////////////////////////////
 
         typedef Parse_UIntField  < 0, 2, Iterator >    Parse_Version;
@@ -57,7 +57,7 @@ namespace senf {
         typedef Parse_UInt16     < Iterator >          Parse_Seq;
         typedef Parse_UInt32     < Iterator >          Parse_32bit;
         typedef Parse_Vector     < Parse_32bit, Parse_CC, Iterator > Parse_CCVec;
-      
+
         Parse_Version  version()      const { return Parse_Version  (this->i()      ); }
         Parse_P        padding()      const { return Parse_P        (this->i()      ); }
         Parse_X        extension()    const { return Parse_X        (this->i()      ); }
@@ -67,16 +67,16 @@ namespace senf {
         Parse_Seq      seqNumber()    const { return Parse_Seq      (this->i() + 2  ); }
         Parse_32bit    timestamp()    const { return Parse_32bit    (this->i() + 4  ); }
         Parse_32bit    ssrc()         const { return Parse_32bit    (this->i() + 8  ); }
-        Parse_CCVec    csrcList()     const { return Parse_CCVec (csrcCount(), this->i() + 12 ); }  
+        Parse_CCVec    csrcList()     const { return Parse_CCVec (csrcCount(), this->i() + 12 ); }
 
-        
- 
+
+
         ///////////////////////////////////////////////////////////////////////////
 
         unsigned int bytes() const { return 12 + ( 4 * csrcCount()); }
         static bool check(Iterator const & b, Iterator const & e)
         { return e-b>= 12 and unsigned(e-b) >= Parse_RTP<Iterator>(b).bytes(); }
-        
+
     };
 
     struct RTPTypes {
@@ -84,8 +84,8 @@ namespace senf {
     };
 
     class RTPPacket
-        : public Packet, 
-          public Parse_RTP<Packet::iterator, RTPPacket>, 
+        : public Packet,
+          public Parse_RTP<Packet::iterator, RTPPacket>,
           public PacketRegistryMixin<RTPTypes,RTPPacket>
     {
         using Packet::registerInterpreter;
@@ -99,10 +99,10 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         typedef Parse_UInt8 < Packet::iterator >  Parse_paddingOctet;
-        
-        Parse_paddingOctet paddingOctet() const { 
-            return Parse_paddingOctet( end() -1 ); 
-        } 
+
+        Parse_paddingOctet paddingOctet() const {
+            return Parse_paddingOctet( end() -1 );
+        }
 
     private:
         template <class Arg>
@@ -115,8 +115,8 @@ namespace senf {
         friend class Packet;
     };
 
-   
- 
+
+
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_RTPExtensionBase : public ParserBase<Iterator,IPacket>
     {
@@ -128,27 +128,27 @@ namespace senf {
         Parse_RTPExtensionBase(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
 
         ///////////////////////////////////////////////////////////////////////////
-                
+
         typedef Parse_UInt16    < Iterator >        Parse_16bit;
 
         Parse_16bit proDef() const { return Parse_16bit(this->i()); };
         Parse_16bit length() const { return Parse_16bit(this->i()+2); };
 
-        unsigned int bytes() const { return 4 + length(); }        
+        unsigned int bytes() const { return 4 + length(); }
         static bool check(Iterator const & b, Iterator const & e)
         { return e-b>=4 && unsigned(e-b) >= Parse_RTPExtensionBase<Iterator>(b).bytes(); }
 
 
-    }; 
+    };
 
-    class RTPExtensionBasePacket 
+    class RTPExtensionBasePacket
         : public Packet,
           public PacketRegistryMixin<RTPTypes, RTPExtensionBasePacket>
     {
         using PacketRegistryMixin<RTPTypes,RTPExtensionBasePacket>::registerInterpreter;
         using Packet::registerInterpreter;
     public:
-         ///////////////////////////////////////////////////////////////////////////       
+         ///////////////////////////////////////////////////////////////////////////
          typedef ptr_t<RTPExtensionBasePacket>::ptr ptr;
 
     protected:
@@ -174,13 +174,13 @@ namespace senf {
 
         Parse_RTPUnknownExtension() {}
         Parse_RTPUnknownExtension(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
-     
+
         ///////////////////////////////////////////////////////////////////////////
-           
+
         typedef Parse_UInt16 < Iterator >                          Parse_16bit;
         typedef Parse_UInt8  < Iterator >                          Parse_8bit;
         typedef Parse_Vector < Parse_8bit, Parse_16bit, Iterator > Parse_ext;
-       
+
         Parse_ext ext() const { return Parse_ext (this->length(), this->i() + 4 ); }
 
     };
@@ -220,5 +220,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

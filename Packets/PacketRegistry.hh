@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -43,7 +43,7 @@ namespace senf {
         The PacketRegistry provides a generic facility to associate an
         arbitrary key with Packets. Example keys are Ethertype or IP
         protocols.
-        
+
         Every PacketRegistry is identified by a type tag:
         \code
           struct SomeTag {
@@ -68,7 +68,7 @@ namespace senf {
         Normally, packet classes are registered statically and not
         procedurally. To this end, the RegistrationProxy is provided:
         \code
-          PacketRegistry<SomeTag>::RegistrationProxy<SomePacket> 
+          PacketRegistry<SomeTag>::RegistrationProxy<SomePacket>
               registerSomePacket (key_of_somePacket);
         \endcode
         This global variable declaration will register \c SomePacket
@@ -82,7 +82,7 @@ namespace senf {
         facades. This is further supported by the PacketRegistryMixin
         class.
 
-	\todo Add parameterless create() method
+        \todo Add parameterless create() method
      */
     template <class Tag>
     class PacketRegistry
@@ -90,17 +90,17 @@ namespace senf {
     public:
         /** \brief Statically register a packet type in a PacketRegistry
 
-	    \fixme This fails to work within a library since the linker will
-	    remove all unused object files ...
+            \fixme This fails to work within a library since the linker will
+            remove all unused object files ...
          */
         template <class OtherPacket>
         struct RegistrationProxy
         {
             RegistrationProxy(typename Tag::key_t key);
         };
-        
+
         /** \brief Register new packet type
-            
+
             Register \c OtherPacket in the packet registry \c Tag
             under the given \c key.
 
@@ -116,7 +116,7 @@ namespace senf {
         static void registerPacket(typename Tag::key_t key);
 
         /** \brief Find key of a packet
-            
+
             Return the key of \c OtherPacket as registered in the \c
             Tag registry
 
@@ -138,11 +138,11 @@ namespace senf {
          */
         template <class InputIterator>
         static Packet::ptr create(typename Tag::key_t key, InputIterator b, InputIterator e);
-        
+
     private:
         typedef impl::PacketRegistryImpl<typename Tag::key_t> Registry;
         static Registry & registry();
-        
+
         template <class T, class D> friend class PacketRegistryMixin;
     };
 
@@ -179,14 +179,14 @@ namespace senf {
     {
     protected:
         /** \brief add interpreter to interpreter chain
-            
+
             This method is used by v_nextInterpreter() to add a new
             interpreter to the interpreter chain (see the Packet
             reference for more). Instead of specifying the type of
             packet to use as a template argument it is specified using
             the \c key value from the \c Tag registry
          */
-        void registerInterpreter(typename Tag::key_t key, 
+        void registerInterpreter(typename Tag::key_t key,
                                  Packet::iterator b, Packet::iterator e) const;
     };
 
@@ -204,5 +204,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

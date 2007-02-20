@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -35,7 +35,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace test {
-    
+
     struct Base {
         virtual ~Base() {}
     };
@@ -63,5 +63,8 @@ BOOST_AUTO_UNIT_TEST(prettyName)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

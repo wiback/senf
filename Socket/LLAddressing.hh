@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -50,21 +50,21 @@ namespace senf {
 
     /** \brief Link local address
 
-	LLSocketAddress wrapps the standard sockaddr_ll datatype.
+        LLSocketAddress wrapps the standard sockaddr_ll datatype.
 
-	\todo I don't think the current implementation is
-	    sensible. I'll have to reimplement this class probably
-	    from scratch.
+        \todo I don't think the current implementation is
+            sensible. I'll have to reimplement this class probably
+            from scratch.
 
-	\implementation The class relies uses a very flexible
-	    'ForwardRange' representation for a raw ll
-	    address (See <a
-	    href="http://www.boost.org/libs/range/index.html">Boost.Range</a>).
-	    This representation allows zero-copy imlementations of
-	    many operations, however it is probably not worth the
-	    effort since the ll address is restricted to a max of 8
-	    bytes. Therefore this will be changed and the concrete
-	    implementation is not documented very well ...
+        \implementation The class relies uses a very flexible
+            'ForwardRange' representation for a raw ll
+            address (See <a
+            href="http://www.boost.org/libs/range/index.html">Boost.Range</a>).
+            This representation allows zero-copy imlementations of
+            many operations, however it is probably not worth the
+            effort since the ll address is restricted to a max of 8
+            bytes. Therefore this will be changed and the concrete
+            implementation is not documented very well ...
      */
     class LLSocketAddress
     {
@@ -88,7 +88,7 @@ namespace senf {
         // I'll leave it as it is ...
 
         typedef boost::iterator_range<unsigned char const *> LLAddress;
-        
+
         LLSocketAddress();
         // And this is for bind
         explicit LLSocketAddress(unsigned protocol, std::string interface="");
@@ -125,7 +125,7 @@ namespace senf {
     };
 
     /** \brief
-	\related LLSocketAddress
+        \related LLSocketAddress
      */
     detail::LLAddressFromStringRange llAddress(std::string address);
 
@@ -135,14 +135,14 @@ namespace senf {
     // except for academic cases
     // STOP: ... how about std::vector<...>::iterator ?? isn't that a ..pointer ?
     /** \brief Convert raw link-local address into printable form
-	\related LLSocketAddress
+        \related LLSocketAddress
      */
     template <class ForwardRange>
     std::string llAddress(ForwardRange const & address,
                           typename boost::enable_if< boost::is_class<ForwardRange> >::type * = 0);
 
     /** \brief Signal invalid link local address syntax
-	\related LLSocketAddress
+        \related LLSocketAddress
      */
     struct InvalidLLSocketAddressException : public std::exception
     { char const * what() const throw() { return "invalid ll address"; } };
@@ -154,16 +154,16 @@ namespace senf {
 
     /** \brief Addressing policy supporting link-local addressing
 
-	\par Address Type:
-	    LLSocketAddress
-	
-	This addressing policy implements generic link local
-	addressing. The predominant type of link local addressing is
-	Ethernet addressing.
+        \par Address Type:
+            LLSocketAddress
 
-	Since the link layer does not support the notion of
-	connections, link local addresses do not support the connect()
-	or peer() members.
+        This addressing policy implements generic link local
+        addressing. The predominant type of link local addressing is
+        Ethernet addressing.
+
+        Since the link layer does not support the notion of
+        connections, link local addresses do not support the connect()
+        or peer() members.
      */
     struct LLAddressingPolicy
         : public AddressingPolicyBase,
@@ -188,5 +188,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

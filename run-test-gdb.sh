@@ -42,7 +42,7 @@ gdb -batch -x .run-test-gdb.cmd ./.test.bin 2>/dev/null | perl -e '
   $mode=0;
   while (<STDIN>) {
     if ($mode==0) {
-      if (/^$/) { 
+      if (/^$/) {
         $mode=1;
       } else {
         print;

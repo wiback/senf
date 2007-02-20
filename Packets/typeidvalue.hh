@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -85,10 +85,10 @@ namespace senf {
     };
 
     TypeIdValue const typeIdValue();
-    
+
     template <class Type>
     TypeIdValue const typeIdValue();
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -100,5 +100,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

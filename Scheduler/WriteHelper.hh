@@ -16,7 +16,7 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-// Copyright (C) 2006 
+// Copyright (C) 2006
 
 /** \file
     \brief WriteHelper public header */
@@ -37,76 +37,76 @@
 namespace senf {
 
     /** \brief Asyncronous writing helper
-	
-	This class provides a simple asyncronous writing facility. This helper will register with
-	the Scheduler to write the requested data. It will stay registered until the data has benen
-	completely sent or some error condition is encountered. As soon as the WriteHelper is done,
-	the callback will be called.
 
-	The WriteHelper accepts the same flexible file handle interfaces as the Scheduler.
+        This class provides a simple asyncronous writing facility. This helper will register with
+        the Scheduler to write the requested data. It will stay registered until the data has benen
+        completely sent or some error condition is encountered. As soon as the WriteHelper is done,
+        the callback will be called.
 
-	The callback must take a WriteHelper::ptr argument. Using this WriteHelper instance, the
-	callback can access the state information and check the termination status.
+        The WriteHelper accepts the same flexible file handle interfaces as the Scheduler.
 
-	\todo Add additional interface to better access the intermediate status (data sent so far)
+        The callback must take a WriteHelper::ptr argument. Using this WriteHelper instance, the
+        callback can access the state information and check the termination status.
+
+        \todo Add additional interface to better access the intermediate status (data sent so far)
      */
     template <class Handle>
     class WriteHelper
-	: public senf::intrusive_refcount
+        : public senf::intrusive_refcount
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-	typedef boost::intrusive_ptr<WriteHelper> ptr; ///< Smart pointer type for this class
-	typedef boost::function<void (ptr)> Callback; ///< Callback type
+        typedef boost::intrusive_ptr<WriteHelper> ptr; ///< Smart pointer type for this class
+        typedef boost::function<void (ptr)> Callback; ///< Callback type
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-	static ptr dispatch(Handle handle, std::string data, Callback callback);
+        static ptr dispatch(Handle handle, std::string data, Callback callback);
                                         ///< Register new WriteHelper instance
                                         /**< The registered callback will be called after all \a
-					     data has been sent or when some error condition is
-					     encountered.
-					     \param[in] handle file descriptor or handle providing
-						 the Handle interface defined above.
-					     \param[in] data data to send
-					     \param[in] cb callback
-					     \returns smart pointer to new WriteHelper instance */
+                                             data has been sent or when some error condition is
+                                             encountered.
+                                             \param[in] handle file descriptor or handle providing
+                                                 the Handle interface defined above.
+                                             \param[in] data data to send
+                                             \param[in] cb callback
+                                             \returns smart pointer to new WriteHelper instance */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-	Handle handle() const;
+        Handle handle() const;
 
-	std::string const & data() const; ///< Return the data
+        std::string const & data() const; ///< Return the data
                                         /**< After all data has been sent, this member will return
-					     an empty string. Until then, the complete string will
-					     be returned. */
+                                             an empty string. Until then, the complete string will
+                                             be returned. */
 
-	bool complete() const;          ///< Check wether the write has completed successfully
-	bool error() const;             ///< Check for error condition
-	void throw_error() const;       ///< If an error occured, throw it
+        bool complete() const;          ///< Check wether the write has completed successfully
+        bool error() const;             ///< Check for error condition
+        void throw_error() const;       ///< If an error occured, throw it
 
-	void revoke();                  ///< Remove the WriteHelper from the scheduler
+        void revoke();                  ///< Remove the WriteHelper from the scheduler
 
     protected:
 
     private:
-	WriteHelper(Handle handle, std::string data, Callback callback);
+        WriteHelper(Handle handle, std::string data, Callback callback);
 
-	static void dispatchProcess(ptr helper, Handle handle, senf::Scheduler::EventId event);
-	void process(Handle handle, senf::Scheduler::EventId event);
-	void done();
+        static void dispatchProcess(ptr helper, Handle handle, senf::Scheduler::EventId event);
+        void process(Handle handle, senf::Scheduler::EventId event);
+        void done();
 
-	Handle handle_;
-	mutable std::string data_;
-	Callback callback_;
+        Handle handle_;
+        mutable std::string data_;
+        Callback callback_;
 
-	mutable std::string::size_type offset_;
-	int errno_;
+        mutable std::string::size_type offset_;
+        int errno_;
     };
 
 
@@ -122,6 +122,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

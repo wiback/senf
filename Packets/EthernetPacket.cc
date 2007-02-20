@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -33,7 +33,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthVLanPacket> 
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthVLanPacket>
         registerEthVLanPacket(0x8100);
 }
 
@@ -41,16 +41,16 @@ prefix_ void senf::EthernetPacket::v_nextInterpreter()
     const
 {
     /** \todo Add LLC/SNAP support -> only use the registry
-	for type() values >=1536, otherwise expect an LLC header */
+        for type() values >=1536, otherwise expect an LLC header */
     registerInterpreter(type(),begin()+bytes(),end());
 }
 
 namespace {
-    
+
     void dumpmac(std::ostream & os, senf::EthernetPacket::Parse_MAC mac)
     {
         for (unsigned i = 0; i < 6; ++i) {
-            if (i > 0) 
+            if (i > 0)
                 os << ':';
             os << std::hex << std::setw(2) << std::setfill('0')
                << unsigned(mac[i]);
@@ -66,7 +66,7 @@ prefix_ void senf::EthernetPacket::v_dump(std::ostream & os)
         os << "Ethernet 802.3";
     else if (type() >= 0x600)
         os << "Ethernet II (DIX)";
-    else 
+    else
         os << "Ethernet 802.3 (bad ethertype >1500 and <1536)";
     os << ": \n"
        << "  destination   : ";
@@ -108,5 +108,8 @@ prefix_ void senf::EthVLanPacket::v_dump(std::ostream & os)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

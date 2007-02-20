@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -102,14 +102,14 @@ prefix_ bool senf::detail::StateMapOrdering::operator()(std::string const & a1,
             return false;
         if (contains(i2,i2_end,'.'))
             // the longer string is a sub-'directory' of the shorter
-	    /** \fixme shouldn't this be *i2 == '.' ? */
+            /** \fixme shouldn't this be *i2 == '.' ? */
             return true;
         return *i1 < *i2;
     }
     else if (i2 == i2_end) { // && i1 != i1_end
         if (contains(i1,i1_end,'.'))
             // the longer string is a sub-'directory' of the shorter
-	    /** \fixme shouldn't this be *i1 == '.' ? */
+            /** \fixme shouldn't this be *i1 == '.' ? */
             return false;
         return *i1 < *i2;
     }
@@ -147,5 +147,8 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, SocketHandle<Policy> 
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

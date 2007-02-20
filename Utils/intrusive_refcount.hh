@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -36,15 +36,15 @@ namespace senf {
 
     /** \brief Reference count mixin for intrusive_ptr
 
-	This class provides a simple internally managed refcount and supplies the <a
-	href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a>
-	required interface. To make a class compatible with \c boost::intrusive_ptr, just derive
-	publicly from intrusive_refcount.
+        This class provides a simple internally managed refcount and supplies the <a
+        href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a>
+        required interface. To make a class compatible with \c boost::intrusive_ptr, just derive
+        publicly from intrusive_refcount.
 
-	Two additional benifits of using intrusive_refcount are
-	\li The object can access it's own refcount
-	\li It is valid and safe to convert a plain object pointer to an intrusive_ptr at any time
-	    (not only after new)
+        Two additional benifits of using intrusive_refcount are
+        \li The object can access it's own refcount
+        \li It is valid and safe to convert a plain object pointer to an intrusive_ptr at any time
+            (not only after new)
      */
     class intrusive_refcount
         : public boost::noncopyable
@@ -59,7 +59,7 @@ namespace senf {
 
     protected:
         intrusive_refcount();
-        
+
     private:
         void add_ref();
         bool release();
@@ -83,6 +83,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

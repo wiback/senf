@@ -14,7 +14,7 @@
     \li modular framework design
     \li utilizing the power of modern C++
     \li very low overhead for frequently called members
-    \li extensible design    
+    \li extensible design
     \li concise interface
 
     \section start Getting started
@@ -73,7 +73,7 @@
  */
 
 /** \page build Building the framework
-    
+
     This procedure will test building the complete framework
     including the unit tests and the Sniffer test application. This
     build is \e not needed to use the framework since every project
@@ -83,7 +83,7 @@
     continue to setup your own project using SENF.
 
     \see \ref components \n
-	 \ref svnsetup
+         \ref svnsetup
 
     \section checkout Getting the code
 
@@ -129,7 +129,7 @@
 
     \see \ref build \n
          \ref svnsetup
-    
+
     \section libSocket libSocket: C++ abstraction of the BSD socket API
 
     This library provides a high performance and object oriented
@@ -168,13 +168,13 @@
     miscellaneous tools and utilities. We have
 
     \li Simple functions to manage daemon processes
-    \li Standard exception classes 
+    \li Standard exception classes
     \li senf::intrusive_refcount to simplify the implementation
-	of classes usable with boost::intrusive_ptr
+        of classes usable with boost::intrusive_ptr
     \li boost::bind extensions
-    \li An interface to the \c g++ demangler integrated with type_info 
+    \li An interface to the \c g++ demangler integrated with type_info
     \li Typedefs and rudimentary methods to simplify handling
-	high-resolution time values
+        high-resolution time values
 
     \see <a href="../../Utils/doc/html/index.html">libUtils API
     reference</a>
@@ -192,7 +192,7 @@
  */
 
 /** \page svnsetup Setting up a new project using SENF
-    
+
     The preferred way to use SENF in a new project is to rely on
     Subversion and make use of the SENFSCons build environment. The
     following sections will describe, how this setup works.
@@ -221,7 +221,7 @@
     \c svn:externals. This will instruct \c svn to auutomatically
     check out the needed directories from the BerliOS SENF
     repository. Change to the 'Foo' directory and type
-    
+
     <pre>
     $ svn propedit svn:externals .
     </pre>
@@ -250,7 +250,7 @@
     </pre>
 
     and the code will be checked out into the corresponding
-    directories. 
+    directories.
 
     \section new_conf Configuring SENFSCons
 
@@ -294,7 +294,7 @@
 
     you can also build only a subdirectory by changing to it and
     running
-    
+
     <pre>
     $ scons -u [target]
     </pre>
@@ -306,7 +306,7 @@
  */
 
 /** \page overview Introduction to the framework
-    
+
     The SENF framework is relatively complex and makes use of advanced
     features of the C++ language. To make the most efficient use of
     the framework, you should have at least a basic understanding of
@@ -331,37 +331,37 @@
     example application is provided in the SENF repository in the \c
     Sniffer module. Peruse this example to get a first look at how to
     make use of SENF.
-    
+
     When building a network Application with SENF, you will use
     several modules:
-    
+
     \li Use the <a href="../../Socket/doc/html/index.html">Socket
-      	library</a> for network communication needs. This library
-      	includes support for raw and packet sockets to allow low level
-      	network access.
+        library</a> for network communication needs. This library
+        includes support for raw and packet sockets to allow low level
+        network access.
     \li Use the <a
-      	href="../../Scheduler/doc/html/index.html">Scheduler
-      	library</a> to coordinate the asynchronous event
-      	processing. This drastically reduces the number of threads
-      	needed in your application and will greatly enhance the overall
-      	responsiveness.
+        href="../../Scheduler/doc/html/index.html">Scheduler
+        library</a> to coordinate the asynchronous event
+        processing. This drastically reduces the number of threads
+        needed in your application and will greatly enhance the overall
+        responsiveness.
     \li To interpret low level network packets, use the <a
-      	href="../../Packets/doc/html/index.html">Packets
-      	library</a>. This library will provide efficient and 
-	convenient access to all protocol fields. It supports parsing as
-      	well as modifying and creating packets. It has default support
-      	for the most important internet protocols and is highly
-      	extensible with new protocols.
+        href="../../Packets/doc/html/index.html">Packets
+        library</a>. This library will provide efficient and
+        convenient access to all protocol fields. It supports parsing as
+        well as modifying and creating packets. It has default support
+        for the most important internet protocols and is highly
+        extensible with new protocols.
     \li Go over the <a href="../../Utils/doc/html/index.html">Utils
-      	library</a>. It contains small helpers to
-      	simplify tasks like daemonization, exception handling,
+        library</a>. It contains small helpers to
+        simplify tasks like daemonization, exception handling,
         debugging and so on.
 
     The simplest way to get started is: copy the Sniffer application
     and start to modify it.
 
     \see \ref example \n
-	 \ref components \n
+         \ref components \n
          \ref svnsetup \n
          \ref build
  */
@@ -369,8 +369,10 @@
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // mode: flyspell
 // mode: auto-fill
-// ispell-local-dictionary: "american"
 // End:
-

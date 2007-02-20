@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -41,29 +41,29 @@ namespace senf {
 
     /** \brief BufferingPolicy implementing standard socket buffering
 
-	This policy class implements standard BSD socket buffering.
+        This policy class implements standard BSD socket buffering.
 
-	\todo Shouldn't this be dependent on Read / WritePolicy ?
+        \todo Shouldn't this be dependent on Read / WritePolicy ?
      */
     struct SocketBufferingPolicy : public BufferingPolicyBase
     {
         static unsigned rcvbuf(FileHandle handle);
                                         ///< Check receive buffer size
-                                        /**< \param[in] handle socket handle to check 
-					     \returns size of receive buffer in bytes */
+                                        /**< \param[in] handle socket handle to check
+                                             \returns size of receive buffer in bytes */
         static void rcvbuf(FileHandle handle, unsigned size);
                                         ///< Change receive buffer size
                                         /**< \param[in] handle socket handle
-					     \param[in] size new receive buffer size */
+                                             \param[in] size new receive buffer size */
 
         static unsigned sndbuf(FileHandle handle);
                                         ///< Check send buffer size
                                         /**< \param[in] handle socket handle to check
-					     \returns size of send buffer in bytes */
+                                             \returns size of send buffer in bytes */
         static void sndbuf(FileHandle handle, unsigned size);
                                         ///< Change size of send buffer
                                         /**< \param[in] handle socket handle
-					     \param[in] size new send buffer size */
+                                             \param[in] size new send buffer size */
     };
 
     /// @}
@@ -80,6 +80,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

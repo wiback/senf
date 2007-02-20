@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -63,7 +63,7 @@ prefix_ unsigned senf::SocketBufferingPolicy::sndbuf(FileHandle handle)
     // Linux doubles the bufer size on setting the SNDBUF to cater for internal
     // headers. We fix this up here .. (see lkml FAQ)
     return size/2;
-    
+
 }
 
 prefix_ void senf::SocketBufferingPolicy::sndbuf(FileHandle handle, unsigned size)
@@ -79,5 +79,8 @@ prefix_ void senf::SocketBufferingPolicy::sndbuf(FileHandle handle, unsigned siz
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -1,4 +1,4 @@
-// Copyright (C) 2007 
+// Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -75,5 +75,6 @@ prefix_ void senf::IpV6Packet::v_dump(std::ostream & os)
 // mode: c++
 // fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // End:

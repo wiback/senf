@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -41,7 +41,7 @@ BOOST_AUTO_UNIT_TEST(socketProtocol)
     senf::test::SomeProtocol protocol;
 
     // This would fail an assertion ...
-    // BOOST_CHECK( protocol.body() == 0 ); 
+    // BOOST_CHECK( protocol.body() == 0 );
 
     protocol.policy();
 }
@@ -52,5 +52,8 @@ BOOST_AUTO_UNIT_TEST(socketProtocol)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

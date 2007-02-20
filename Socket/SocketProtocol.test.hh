@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -40,15 +40,15 @@ namespace test {
     {
     public:
         ~SomeProtocol() {}
-        
+
         void init_client() const {}
         void init_server() const {}
 
-        std::auto_ptr<SocketProtocol> clone() const 
+        std::auto_ptr<SocketProtocol> clone() const
             { return std::auto_ptr<SocketProtocol>(new SomeProtocol()); }
-        unsigned available() const 
+        unsigned available() const
             { return Policy::ReadPolicy::TEST_SIZE; }
-        bool eof() const 
+        bool eof() const
             { return false; }
     };
 
@@ -64,5 +64,8 @@ namespace test {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

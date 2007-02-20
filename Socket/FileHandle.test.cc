@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -41,10 +41,10 @@ namespace {
     class FHandle : public senf::FileHandle
     {
     public:
-        FHandle(int fd=-1) 
+        FHandle(int fd=-1)
             : senf::FileHandle(std::auto_ptr<senf::FileBody>(
                                           new senf::FileBody(fd))) {}
-        FHandle(std::string name) 
+        FHandle(std::string name)
             : senf::FileHandle(std::auto_ptr<senf::FileBody>(
                                           new senf::FileBody()))
             {
@@ -68,13 +68,13 @@ BOOST_AUTO_UNIT_TEST(fileHandle)
 
             FHandle fh2(fh);
             BOOST_CHECK_EQUAL(fh.fd(), fh2.fd());
-            
+
             BOOST_CHECK(fh.writeable());
             BOOST_CHECK_NO_THROW(fh.close());
             BOOST_CHECK_THROW(fh.close(),senf::SystemException);
             BOOST_CHECK_NO_THROW(fh.terminate());
         }
-        
+
         {
             FHandle fh("/dev/zero");
             BOOST_CHECK(fh.readable());
@@ -104,12 +104,15 @@ BOOST_AUTO_UNIT_TEST(fileHandle)
         BOOST_FAIL(ex.what());
     }
 }
-    
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

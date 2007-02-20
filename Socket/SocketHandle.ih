@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -42,137 +42,137 @@ namespace senf {
 
     namespace detail {
 
-	/** \brief String supporting automatic type conversion
+        /** \brief String supporting automatic type conversion
 
-	    The ConvertibleString class is used to simplify creating a text representation of
-	    arbitrary values. ConvertibleString is an ordinary string with an additional constructor
-	    which allows constructing the string from any arbitrary, streamable type.
-	    
-	    \note It is generally not advisable to derive from the standard library container
-	    classes. However, in this concrete case, the derivation is safe since only the
-	    additional functionality is added. It is absolutely safe to convert the derived class
-	    back to the base type.
-	 */
+            The ConvertibleString class is used to simplify creating a text representation of
+            arbitrary values. ConvertibleString is an ordinary string with an additional constructor
+            which allows constructing the string from any arbitrary, streamable type.
+
+            \note It is generally not advisable to derive from the standard library container
+            classes. However, in this concrete case, the derivation is safe since only the
+            additional functionality is added. It is absolutely safe to convert the derived class
+            back to the base type.
+         */
         class ConvertibleString : public std::string
         {
         public:
             ConvertibleString();
-            ConvertibleString(bool v);	///< Bool conversion constructor
-					/**< The bool conversion is defined explicitly to use a
-					   specialized representation (the strings 'true' and
-					   'false') */
+            ConvertibleString(bool v);  ///< Bool conversion constructor
+                                        /**< The bool conversion is defined explicitly to use a
+                                           specialized representation (the strings 'true' and
+                                           'false') */
             template <class T>
             ConvertibleString(T const & other);
                                         ///< Conversion constructor
                                         /**< This constructor will assign the string from any
-					   arbitrary type. It will use boost::lexical_cast to
-					   convert the argument to its string representation. */
+                                           arbitrary type. It will use boost::lexical_cast to
+                                           convert the argument to its string representation. */
 
-	    template <class T>
-	    ConvertibleString & operator+= (ConvertibleString const & other);
+            template <class T>
+            ConvertibleString & operator+= (ConvertibleString const & other);
                                         ///< Add additional values with separator
                                         /**< This operator facilitates the representation of
-					   multiple values in a single string. Each value is first
-					   converted to a string (using the type conversion
-					   machinery of C++ and the ConvertibleString conversion
-					   constructors). It is then appended to the current string
-					   with ', ' as a separator (if the current string is
-					   non-empty). */
-	};
+                                           multiple values in a single string. Each value is first
+                                           converted to a string (using the type conversion
+                                           machinery of C++ and the ConvertibleString conversion
+                                           constructors). It is then appended to the current string
+                                           with ', ' as a separator (if the current string is
+                                           non-empty). */
+        };
 
-	/** \brief Special ordering for the SocketStateMap
-	    \internal
+        /** \brief Special ordering for the SocketStateMap
+            \internal
 
-	    This special ordering will sort 'hierarchical' strings correctly. A hierarchical string
-	    in this context is a string like a path- or hostname with '.' as the hierarchical
-	    separator.
-	 */
-	struct StateMapOrdering
-	    : public std::binary_function<std::string,std::string,bool>
-	{
-	    bool operator()(std::string const & a1, std::string const & a2) const;
-	};
+            This special ordering will sort 'hierarchical' strings correctly. A hierarchical string
+            in this context is a string like a path- or hostname with '.' as the hierarchical
+            separator.
+         */
+        struct StateMapOrdering
+            : public std::binary_function<std::string,std::string,bool>
+        {
+            bool operator()(std::string const & a1, std::string const & a2) const;
+        };
 
     }
 
     typedef std::map< std::string, detail::ConvertibleString, detail::StateMapOrdering > SocketStateMap;
 
     namespace detail {
-	/** \brief Helper to convert SocketStateMap to multiline string representation
-	    \internal
-	 */
-	std::string dumpState(SocketStateMap const & map);
+        /** \brief Helper to convert SocketStateMap to multiline string representation
+            \internal
+         */
+        std::string dumpState(SocketStateMap const & map);
     }
 
     /** \brief SocketHandle referenced body
-	
-	\internal
 
-	senf::SocketBody is the extended (relatively to senf::FileBody) body of
-	senf::SocketHandle. Every SocketHandle must have a SocketBody as it's body (and not a simple
-	FileBody). The casting and conversion operators defined will ensure this if used
-	properly. If this invariant is violated, your Program will probably crash.
+        \internal
+
+        senf::SocketBody is the extended (relatively to senf::FileBody) body of
+        senf::SocketHandle. Every SocketHandle must have a SocketBody as it's body (and not a simple
+        FileBody). The casting and conversion operators defined will ensure this if used
+        properly. If this invariant is violated, your Program will probably crash.
      */
     class SocketBody
-	: public FileBody
+        : public FileBody
     {
     public:
-	///////////////////////////////////////////////////////////////////////////
-	// Types
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
 
-	typedef boost::intrusive_ptr<SocketBody> ptr;
+        typedef boost::intrusive_ptr<SocketBody> ptr;
 
-	///////////////////////////////////////////////////////////////////////////
-	///\name Structors and default members
-	///@{
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
 
-	SocketBody(std::auto_ptr<SocketProtocol> protocol, bool isServer);
-                                        /**< 
-					   \param protocol Protocol class implementing the desired
-					   protocol 
-					   \param isServer \c true, if this socket is a server
-					   socket, false otherwise */
-	SocketBody(std::auto_ptr<SocketProtocol> protocol, bool isServer, int fd);
-                                        /**< 
-					   \param protocol Protocol class implementing the desired
-					   protocol 
-					   \param isServer \c true, if this socket is a server
-					   socket, false otherwise
-					   \param fd socket file descriptor */
+        SocketBody(std::auto_ptr<SocketProtocol> protocol, bool isServer);
+                                        /**<
+                                           \param protocol Protocol class implementing the desired
+                                           protocol
+                                           \param isServer \c true, if this socket is a server
+                                           socket, false otherwise */
+        SocketBody(std::auto_ptr<SocketProtocol> protocol, bool isServer, int fd);
+                                        /**<
+                                           \param protocol Protocol class implementing the desired
+                                           protocol
+                                           \param isServer \c true, if this socket is a server
+                                           socket, false otherwise
+                                           \param fd socket file descriptor */
 
-	// no copy
-	// no conversion constructors
+        // no copy
+        // no conversion constructors
 
-	///@}
-	///////////////////////////////////////////////////////////////////////////
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
 
-	SocketProtocol const & protocol() const;
+        SocketProtocol const & protocol() const;
                                         ///< Access the protocol instance
-	bool isServer();		///< Check socket type
+        bool isServer();                ///< Check socket type
                                         /**< \return \c true, if this is a server socket, \c false
-					   otherwise */
+                                           otherwise */
 
-	void state(SocketStateMap & map, unsigned lod);
+        void state(SocketStateMap & map, unsigned lod);
 
     private:
-	virtual void v_close();		///< Close socket
+        virtual void v_close();         ///< Close socket
                                         /**< This override will automatically \c shutdown() the
-					   socket whenever it is closed.
-					   \throws senf::SystemException */
-	virtual void v_terminate();	///< Forcibly close socket
+                                           socket whenever it is closed.
+                                           \throws senf::SystemException */
+        virtual void v_terminate();     ///< Forcibly close socket
                                         /**< This override will automatically \c shutfown() the
-					   socket whenever it is called. Additionally it will
-					   disable SO_LINGER to ensure, that v_terminate will not
-					   block. Like the overriden method, this member will ignore
-					   failures and will never throw. It therefore safe to be
-					   called from a destructor. */
-	virtual bool v_eof() const;	///< Check for eof condition
+                                           socket whenever it is called. Additionally it will
+                                           disable SO_LINGER to ensure, that v_terminate will not
+                                           block. Like the overriden method, this member will ignore
+                                           failures and will never throw. It therefore safe to be
+                                           called from a destructor. */
+        virtual bool v_eof() const;     ///< Check for eof condition
                                         /**< Since the eof check for sockets is very protocol
-					   dependent, this member will forward the call to
-					   senf::SocketPolicy::eof() */
+                                           dependent, this member will forward the call to
+                                           senf::SocketPolicy::eof() */
 
-	boost::scoped_ptr<SocketProtocol> protocol_;
-	bool isServer_;
+        boost::scoped_ptr<SocketProtocol> protocol_;
+        bool isServer_;
     };
 
 }
@@ -183,6 +183,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

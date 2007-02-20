@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -60,7 +60,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_packet)
     BOOST_CHECK_EQUAL( p->source()[0], 0x07 );
     BOOST_CHECK_EQUAL( p->type(), 0x1011 );
 
-    BOOST_CHECK_THROW( Packet::create<EthernetPacket>(data, data+sizeof(data)-1), 
+    BOOST_CHECK_THROW( Packet::create<EthernetPacket>(data, data+sizeof(data)-1),
                        TruncatedPacketException );
 }
 
@@ -91,5 +91,8 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_chain)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

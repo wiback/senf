@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -38,9 +38,9 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    
+
     namespace sl = senf;
-    
+
     class MySocketHandle
         : public sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>
     {
@@ -60,7 +60,7 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
         sl::test::SomeWritePolicy
         >::policy OtherSocketPolicy;
     typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
-    
+
     MySocketHandle myh;
     OtherSocketHandle osh (myh);
     osh = myh;
@@ -73,7 +73,7 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
         senf::NoAddressingPolicy
         >::policy> SomeOtherSocketHandle;
     typedef sl::ClientSocketHandle<OtherSocketPolicy> OtherClientHandle;
-    
+
     BOOST_CHECK_NO_THROW( sl::dynamic_socket_cast<SomeSocketHandle>(osh) );
     BOOST_CHECK_THROW( sl::dynamic_socket_cast<SomeOtherSocketHandle>(osh),
                        std::bad_cast );
@@ -87,7 +87,7 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
         MySocketHandle::ClientSocketHandle client = myh.accept();
         BOOST_CHECK_EQUAL( client.fd(), -1 );
     }
-    
+
 }
 
 
@@ -97,5 +97,8 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

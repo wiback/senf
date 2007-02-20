@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -36,7 +36,7 @@ namespace impl {
 
     struct PkReg_Entry {
         virtual ~PkReg_Entry() {}
-        virtual void registerInterpreter(Packet const * p, 
+        virtual void registerInterpreter(Packet const * p,
                                          Packet::iterator b, Packet::iterator e) = 0;
         virtual Packet::ptr reinterpret(Packet * p) = 0;
     };
@@ -56,11 +56,11 @@ namespace impl {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-        
+
         typedef KeyType key_t;
 
         typedef impl::PkReg_Entry Entry;
-        
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -105,5 +105,8 @@ namespace impl {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

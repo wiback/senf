@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -67,7 +67,7 @@ BOOST_AUTO_UNIT_TEST(parseInt_bits)
     //                       011000111101011101011010001100011010010001000110
     unsigned char data[] = { 0x63,   0xd7,   0x5a,   0x31,   0xa4,   0x46 };
     typedef unsigned char * iterator;
-    
+
     // 1 byte
     BOOST_CHECK_EQUAL((Parse_UIntField<2,7,iterator>(data).value()), 17u);
     BOOST_CHECK_EQUAL((Parse_IntField<2,7,iterator>(data).value()), -15);
@@ -109,7 +109,7 @@ BOOST_AUTO_UNIT_TEST(parseInt_assign)
 
     Parse_Int8<iterator>(data).value(0x2f);
     BOOST_CHECK_EQUAL( data[0], 0x2f );
-    
+
     Parse_Int16<iterator>(data).value(0xa341);
     BOOST_CHECK_EQUAL( data[0], 0xa3 );
     BOOST_CHECK_EQUAL( data[1], 0x41 );
@@ -124,7 +124,7 @@ BOOST_AUTO_UNIT_TEST(parseInt_assign)
     BOOST_CHECK_EQUAL( data[1], 0xdc );
     BOOST_CHECK_EQUAL( data[2], 0xba );
     BOOST_CHECK_EQUAL( data[3], 0x98 );
-    
+
     Parse_IntField<2,6,iterator>(data).value(0x3);
     BOOST_CHECK_EQUAL( data[0], 0xce );
     BOOST_CHECK_EQUAL( data[1], 0xdc );
@@ -144,7 +144,7 @@ BOOST_AUTO_UNIT_TEST(parseInt_assign)
     BOOST_CHECK_EQUAL( (Parse_UIntField<4,34,iterator>(data).value()), 0x268ad497u );
 }
 
-BOOST_AUTO_UNIT_TEST(parseInt_operators) 
+BOOST_AUTO_UNIT_TEST(parseInt_operators)
 {
     unsigned char data[] = { 0x63, 0xd7, 0x5a, 0x31, 0xa4, 0x46 };
 
@@ -179,24 +179,24 @@ BOOST_AUTO_UNIT_TEST(parseInt_operators)
 }
 
 namespace {
-    
+
     template < class P >
-    class TestPacket 
+    class TestPacket
         : public Packet, public P::template rebind< Packet::iterator,TestPacket<P> >::parser
     {
     public:
         typedef typename P::template rebind<Packet::iterator,TestPacket>::parser parser;
         typedef typename ptr_t<TestPacket>::ptr ptr;
-        
+
         static bool check(iterator b, iterator e) { return true; }
 
     private:
         template <class Arg>
-        TestPacket(Arg const & arg) 
+        TestPacket(Arg const & arg)
             : Packet(arg) {}
 
         virtual void v_nextInterpreter() const {}
-	virtual void v_finalize() {}
+        virtual void v_finalize() {}
         virtual void v_dump(std::ostream &) const {}
 
         friend class Packet;
@@ -237,5 +237,8 @@ BOOST_AUTO_UNIT_TEST(parseInt_inherited)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

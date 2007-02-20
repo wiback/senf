@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -39,8 +39,8 @@ namespace senf {
     /// @{
 
     /** \brief Protocol facet providing basic BSD socket functionality
-	
-	BSDSocketProtocol provides the basic BSD socket API as shared by all BSD sockets.
+
+        BSDSocketProtocol provides the basic BSD socket API as shared by all BSD sockets.
      */
     class BSDSocketProtocol
         : public virtual SocketProtocol
@@ -48,30 +48,30 @@ namespace senf {
     public:
         std::pair<bool,unsigned> linger() const; ///< Return current linger status
                                         /**< The value is returned in an std:pair. the first element
-					     is \c true, if linger is active. The second value is
-					     the linger timeout in seconds.
-					     \returns linger state (enable disabled) and linger
-					     timeout */ 
+                                             is \c true, if linger is active. The second value is
+                                             the linger timeout in seconds.
+                                             \returns linger state (enable disabled) and linger
+                                             timeout */
         void linger(bool enable, unsigned timeout=0) const; ///< Change linger status
                                         /**< If linger is enabled, the timeout value specifies, how
-					     long to wait before returning while data is unsent in
-					     seconds. If this value is 0, a close() might wait
-					     forvever.
-					     \param[in] enable \c true to activate linger
-					     \param[in] timeout linger timeout in seconds */
+                                             long to wait before returning while data is unsent in
+                                             seconds. If this value is 0, a close() might wait
+                                             forvever.
+                                             \param[in] enable \c true to activate linger
+                                             \param[in] timeout linger timeout in seconds */
 
         struct timeval timestamp() const; ///< Return packet timestamp of last packet
                                         /**< The returned timestamp represents the time, at which
-					     the last network packet passed to the user has been
-					     received from the network. This allows precise network
-					     timing.
-					     \returns timestamp when packet was received */
+                                             the last network packet passed to the user has been
+                                             received from the network. This allows precise network
+                                             timing.
+                                             \returns timestamp when packet was received */
     };
 
     /** \brief Protocol facat providing basic connection oriented BSD socket functions
-	
-	AddressableBSDSocketProtocol provides the BSD socket API as it generically applies to
-	addressable (connection oriented) sockets.
+
+        AddressableBSDSocketProtocol provides the BSD socket API as it generically applies to
+        addressable (connection oriented) sockets.
      */
     class AddressableBSDSocketProtocol
         : public virtual SocketProtocol
@@ -79,11 +79,11 @@ namespace senf {
     public:
         bool reuseaddr() const;         ///< Return current reuseaddr state
                                         /**< \returns \c true if \c SO_REUSEADDR is currently
-					     enabled, \c false otherwise*/
+                                             enabled, \c false otherwise*/
         void reuseaddr(bool value) const; ///< Set reuseraddr state
                                         /**< A \c true value enables \c SO_REUSEADDR, \c false will
-					     disable it.
-					     \param[in] value new \c SO_REUSEADDR state */
+                                             disable it.
+                                             \param[in] value new \c SO_REUSEADDR state */
     };
 
     /// @}
@@ -101,6 +101,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

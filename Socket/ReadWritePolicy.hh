@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -23,7 +23,7 @@
 /** \file
     \brief ReadPolicy and WritePolicy public header
 
-    \todo ReadWritePolicy.test.cc 
+    \todo ReadWritePolicy.test.cc
  */
 
 #ifndef HH_ReadWritePolicy_
@@ -32,7 +32,7 @@
 // Custom includes
 #include "SocketPolicy.hh"
 #include "ClientSocketHandle.hh"
-#include "CommunicationPolicy.hh" 
+#include "CommunicationPolicy.hh"
 
 //#include "ReadWritePolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -46,28 +46,28 @@ namespace senf {
     /// @{
 
     /** \brief ReadPolicy for readable sockets
-	
-	This policy provides support for readable sockets via the standard UNIX read/recvfrom system
-	cals. The concreate semantics of the read calls depend on the framing policy of the socket.
+
+        This policy provides support for readable sockets via the standard UNIX read/recvfrom system
+        cals. The concreate semantics of the read calls depend on the framing policy of the socket.
      */
     struct ReadablePolicy : public ReadPolicyBase
     {
         static unsigned read(FileHandle handle, char * buffer, unsigned size);
                                         ///< read data from socket
                                         /**< \param[in] handle socket handle to read from
-					     \param[in] buffer address of buffer to write data to
-					     \param[in] size size of buffer
-					     \returns number of bytes read */
+                                             \param[in] buffer address of buffer to write data to
+                                             \param[in] size size of buffer
+                                             \returns number of bytes read */
         template <class Policy>
         static unsigned readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
                                  typename Policy::AddressingPolicy::Address & address,
                                  typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type * = 0);
                                         ///< read data from socket returning peer address
                                         /**< \param[in] handle socket handle to read from
-					     \param[in] buffer address of buffer to write data to
-					     \param[in] size size of buffer
-					     \param[out] address peer address
-					     \returns number of bytes read */
+                                             \param[in] buffer address of buffer to write data to
+                                             \param[in] size size of buffer
+                                             \param[out] address peer address
+                                             \returns number of bytes read */
 
     private:
         static unsigned do_readfrom(FileHandle handle, char * buffer, unsigned size,
@@ -76,17 +76,17 @@ namespace senf {
 
     /** \brief ReadPolicy for unreadable sockets
 
-	This is different from UndefinedReadPolicy (which is the same as ReadPolicyBase). This
-	policy class defines the socket readability -- it explicitly states, that the socket does
-	not support reading.
+        This is different from UndefinedReadPolicy (which is the same as ReadPolicyBase). This
+        policy class defines the socket readability -- it explicitly states, that the socket does
+        not support reading.
      */
     struct NotReadablePolicy : public ReadPolicyBase
     {};
 
     /** \brief WritePolicy for writeable sockets
 
-	This policy provides support for writable sockets via the standard UNIX write/sendto system
-	cals. The concreate semantics of the write calls depend on the framing policy of the socket.
+        This policy provides support for writable sockets via the standard UNIX write/sendto system
+        cals. The concreate semantics of the write calls depend on the framing policy of the socket.
      */
     struct WriteablePolicy : public WritePolicyBase
     {
@@ -95,42 +95,42 @@ namespace senf {
                               typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
                                         ///< write data to socket
                                         /**< This member is only enabled if the socket uses
-					     connected communication. Otherwise the communication
-					     partner must be specified explicitly using the sendto
-					     call 
-					     
-					     \param[in] handle socket handle to write data to
-					     \param[in] buffer address of buffer to send
-					     \param[in] size number of bytes to write
-					     \returns number of bytes written */
+                                             connected communication. Otherwise the communication
+                                             partner must be specified explicitly using the sendto
+                                             call
+
+                                             \param[in] handle socket handle to write data to
+                                             \param[in] buffer address of buffer to send
+                                             \param[in] size number of bytes to write
+                                             \returns number of bytes written */
         template <class Policy>
-        static unsigned writeto(ClientSocketHandle<Policy> handle, 
+        static unsigned writeto(ClientSocketHandle<Policy> handle,
                                 typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
                                 char const * buffer, unsigned size,
                                 typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type * = 0);
                                         ///< write data to socket sending to given peer
                                         /**< This member is only enabled if the socket uses
-					     unconnected communication. Otherwise no target may be
-					     specified since it is implied in the connection.
+                                             unconnected communication. Otherwise no target may be
+                                             specified since it is implied in the connection.
 
-					     \param[in] handle socket handle to write data to
-					     \param[in] buffer address of buffer to send
-					     \param[in] size number of bytes to write
-					     \param[in] address peer to send data to
-					     \returns number of bytes written 
-					  */
+                                             \param[in] handle socket handle to write data to
+                                             \param[in] buffer address of buffer to send
+                                             \param[in] size number of bytes to write
+                                             \param[in] address peer to send data to
+                                             \returns number of bytes written
+                                          */
 
     private:
         static unsigned do_write(FileHandle handle, char const * buffer, unsigned size);
         static unsigned do_writeto(FileHandle handle, char const * buffer, unsigned size,
                                    struct sockaddr * addr, socklen_t len);
     };
-    
+
     /** \brief WritePolicy for unwriteable sockets
 
-	This is different from UndefinedWritePolicy (which is the same as WritePolicyBase). This
-	policy class defines the socket writeability -- it explicitly states, that the socket does
-	not support writing.
+        This is different from UndefinedWritePolicy (which is the same as WritePolicyBase). This
+        policy class defines the socket writeability -- it explicitly states, that the socket does
+        not support writing.
      */
     struct NotWriteablePolicy : public WritePolicyBase
     {};
@@ -149,6 +149,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -16,7 +16,7 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-// Copyright (C) 2006 
+// Copyright (C) 2006
 
 /** \file
     \brief WriteHelper non-inline template implementation */
@@ -38,8 +38,8 @@ prefix_ senf::WriteHelper<Handle>::WriteHelper(Handle handle, std::string data,
       offset_(0), errno_(0)
 {
     senf::Scheduler::instance()
-	.add(handle_, boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2),
-	     senf::Scheduler::EV_WRITE);
+        .add(handle_, boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2),
+             senf::Scheduler::EV_WRITE);
 }
 
 template <class Handle>
@@ -47,8 +47,8 @@ prefix_ std::string const & senf::WriteHelper<Handle>::data()
     const
 {
     if (offset_ > 0) {
-	data_.erase(0,offset_);
-	offset_ = 0;
+        data_.erase(0,offset_);
+        offset_ = 0;
     }
     return data_;
 }
@@ -58,7 +58,7 @@ prefix_ void senf::WriteHelper<Handle>::revoke()
 {
     ptr guard (this); // To ensure, 'this' is deleted only after this method terminates ...
     senf::Scheduler::instance()
-	.remove(handle_, senf::Scheduler::EV_WRITE);
+        .remove(handle_, senf::Scheduler::EV_WRITE);
 }
 
 template <class Handle>
@@ -77,17 +77,17 @@ prefix_ void senf::WriteHelper<Handle>::process(Handle handle,
 {
     /** \fixme Move the done() calls to outside the try/catch block */
     try {
-	if (event != senf::Scheduler::EV_WRITE)
-	    throw senf::SystemException(EPIPE);
-	offset_ += handle.write(data_.data()+offset_,data_.size()-offset_);
-	if (offset_ >= data_.size()) {
-	    data_.erase();
-	    done();
-	}
+        if (event != senf::Scheduler::EV_WRITE)
+            throw senf::SystemException(EPIPE);
+        offset_ += handle.write(data_.data()+offset_,data_.size()-offset_);
+        if (offset_ >= data_.size()) {
+            data_.erase();
+            done();
+        }
     }
     catch (senf::SystemException const & ex) {
-	errno_ = ex.err;
-	done();
+        errno_ = ex.err;
+        done();
     }
 }
 
@@ -104,4 +104,8 @@ prefix_ void senf::WriteHelper<Handle>::done()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

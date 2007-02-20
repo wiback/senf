@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -48,7 +48,7 @@ BOOST_AUTO_UNIT_TEST(parseVec_test)
 
     Parse_UInt8<iterator> sizeParser (data);
     Parse_UInt16Vec v (sizeParser, data+1);
-    
+
     BOOST_CHECK_EQUAL( v[0], 0x1011 );
     BOOST_CHECK_EQUAL( v[2], 0x1415 );
     BOOST_CHECK_EQUAL( v.size(), 3u );
@@ -56,7 +56,7 @@ BOOST_AUTO_UNIT_TEST(parseVec_test)
     data[0] = 0x06;
     BOOST_CHECK_EQUAL( v.size(), 6u );
     BOOST_CHECK_EQUAL( v.bytes(), 12u );
-    
+
     iterator i (data+1);
     Parse_UInt16Vec::iterator j (v.begin());
     Parse_UInt16Vec::iterator e (v.end());
@@ -74,9 +74,9 @@ BOOST_AUTO_UNIT_TEST(parseVec_wrapper)
     typedef Parse_UInt16Vec::wrapper<Container>::t Parse_UInt16VecWrap;
 
     using namespace boost::assign;
-    
+
     Container data;
-    data += 
+    data +=
         0x03,                                   // size
         0x10, 0x11,  0x12, 0x13,  0x14, 0x15,   // data
         0x20, 0x21,  0x22, 0x23,  0x24, 0x25;
@@ -90,7 +90,7 @@ BOOST_AUTO_UNIT_TEST(parseVec_wrapper)
     BOOST_CHECK_EQUAL( w.size(), 3u );
     data[0] = 0x06;
     BOOST_CHECK_EQUAL( w.size(), 6u );
-    
+
     {
         iterator i (data.begin()+1);
         Parse_UInt16VecWrap::iterator j (w.begin());
@@ -105,7 +105,7 @@ BOOST_AUTO_UNIT_TEST(parseVec_wrapper)
     BOOST_CHECK_EQUAL( w[0], 0x1011 );
     BOOST_CHECK_EQUAL( w[1], 0 );
     BOOST_CHECK_EQUAL( w[2], 0x1213 );
-    
+
     w.insert(w.begin()+3, 2u, 0xfffe);
     BOOST_CHECK_EQUAL( w.size(), 9u );
     BOOST_CHECK_EQUAL( w[2], 0x1213 );
@@ -115,7 +115,7 @@ BOOST_AUTO_UNIT_TEST(parseVec_wrapper)
 
     w.erase(w.begin()+3, w.begin()+5);
     BOOST_CHECK_EQUAL( w.size(), 7u );
-    
+
     w.erase(w.begin()+1);
     BOOST_CHECK_EQUAL( w.size(), 6u );
 
@@ -137,7 +137,7 @@ BOOST_AUTO_UNIT_TEST(parseVec_wrapper)
 // This really belongs into ParserBase.test.cc but it's simpler here
 BOOST_AUTO_UNIT_TEST(parserTraits_test)
 {
-    // Really, this could be checked by BOOST_STATIC_ASSERT since 
+    // Really, this could be checked by BOOST_STATIC_ASSERT since
     // it's compile-time ...
     BOOST_CHECK( Parser_traits< Parse_UInt32<> >::fixed_size );
     BOOST_CHECK( (! Parser_traits< Parse_Vector< Parse_UInt16<>,Parse_UInt16<> > >::fixed_size) );
@@ -149,5 +149,8 @@ BOOST_AUTO_UNIT_TEST(parserTraits_test)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

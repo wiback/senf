@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -61,7 +61,7 @@ BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
 
         OtherSocketHandle osh (h);
         h = senf::static_socket_cast<MySocketHandle>(osh);
-   
+
         MySocketHandle::ClientSocketHandle client = h.accept();
         BOOST_CHECK_EQUAL( client.fd(), -1 );
 
@@ -86,5 +86,8 @@ BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

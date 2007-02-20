@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -39,23 +39,23 @@ namespace senf {
     /// @{
 
     /** \brief FramingPolicy for stream oriented sockets
-	
-	This policy does not explicitly modify the SocketHAndle
-	API. It however affects the semantics of the read and write
-	operations. On a stream oriented socket, read() and write()
-	operations may be combined, the boundary between separate
-	write() calls will be lost on the receiving side.
+
+        This policy does not explicitly modify the SocketHAndle
+        API. It however affects the semantics of the read and write
+        operations. On a stream oriented socket, read() and write()
+        operations may be combined, the boundary between separate
+        write() calls will be lost on the receiving side.
      */
     struct StreamFramingPolicy : public FramingPolicyBase
     {};
 
     /** \brief FramingPolicy for datagram oriented sockets
 
-	This policy does not explicitly modify the SocketHAndle
-	API. It however affects the semantics of the read and write
-	operations. On a datagram socket, each read() or write() call
-	we read or write a single datagram. Datagram boundaries are
-	kept intact accross the network.
+        This policy does not explicitly modify the SocketHAndle
+        API. It however affects the semantics of the read and write
+        operations. On a datagram socket, each read() or write() call
+        we read or write a single datagram. Datagram boundaries are
+        kept intact accross the network.
      */
     struct DatagramFramingPolicy : public FramingPolicyBase
     {};
@@ -73,5 +73,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

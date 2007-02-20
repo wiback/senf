@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -100,8 +100,8 @@ struct senf::Packet::PacketOp_register
     size_type e;
     const Packet * p;
 
-    PacketOp_register(size_type b_, size_type e_, const Packet * p_) 
-	: b(b_), e(e_), p(p_) {}
+    PacketOp_register(size_type b_, size_type e_, const Packet * p_)
+        : b(b_), e(e_), p(p_) {}
 
     size_type begin() const { return b; }
     size_type end() const { return e; }
@@ -109,7 +109,7 @@ struct senf::Packet::PacketOp_register
     { p->i_registerInterpreter(self); }
 };
 
-struct senf::Packet::PacketOp_replace 
+struct senf::Packet::PacketOp_replace
 {
     Packet * p;
 
@@ -139,5 +139,8 @@ struct senf::Packet::PacketOp_set
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

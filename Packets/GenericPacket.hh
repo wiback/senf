@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -60,12 +60,12 @@ namespace senf {
         iterator end_trailer() const;
         static size_type trailer_len();
 
-        static bool check(iterator const & b, iterator const & e) 
+        static bool check(iterator const & b, iterator const & e)
             { return unsigned(e - b) >= HEADER + TRAILER; }
-        
+
     protected:
 
-    private:  
+    private:
         template <class Arg>
         GenericPacket(Arg const & arg);
 
@@ -87,5 +87,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

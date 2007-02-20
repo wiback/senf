@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -54,8 +54,8 @@ namespace {
                     std::cout << "  " << ascii << "\n";
                     ascii = "";
                 }
-                std::cout << "  " 
-                          << std::hex << std::setw(4) << std::setfill('0') 
+                std::cout << "  "
+                          << std::hex << std::setw(4) << std::setfill('0')
                           << offset << ' ';
                 break;
             case BLOCK_SIZE/2:
@@ -63,7 +63,7 @@ namespace {
                 ascii += ' ';
                 break;
             }
-            std::cout << ' ' << std::hex << std::setw(2) << std::setfill('0') 
+            std::cout << ' ' << std::hex << std::setw(2) << std::setfill('0')
                       << unsigned(*i);
             ascii += (*i >= ' ' && *i < 126) ? *i : '.';
         }
@@ -92,7 +92,7 @@ int main (int argc, char const * argv[])
         senf::PacketSocketHandle sock;
         sock.bind(senf::LLSocketAddress("eth0"));
         // sock.protocol().promisc("eth0",senf::PacketProtocol::Promiscuous);
-        
+
         while (true) { // forever
             std::string data (sock.read());
             senf::EthernetPacket::ptr packet (
@@ -116,5 +116,8 @@ int main (int argc, char const * argv[])
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

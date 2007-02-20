@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -49,19 +49,19 @@ namespace {
         typedef std::string key_t;
     };
 
-    class BasePacket 
+    class BasePacket
         : public Packet, public PacketRegistryMixin<BaseTag,BasePacket>
     {
         using PacketRegistryMixin<BaseTag,BasePacket>::registerInterpreter;
     public:
         typedef ptr_t<BasePacket>::ptr ptr;
         typedef iterator byte_iterator;
-        
+
         typedef Parse_UInt16<iterator> Parse_Type;
-        
+
         Parse_Type type() const { return Parse_Type(begin()); }
         static bool check(iterator b, iterator e) { return true; }
-       
+
     private:
         template <class Arg>
         BasePacket(Arg const & arg) : Packet(arg) {}
@@ -79,7 +79,7 @@ namespace {
     public:
         typedef ptr_t<FooPacket>::ptr ptr;
         typedef iterator byte_iterator;
-        
+
         static bool check(iterator b, iterator e) { return true; }
 
     private:
@@ -98,7 +98,7 @@ namespace {
     public:
         typedef ptr_t<BarPacket>::ptr ptr;
         typedef iterator byte_iterator;
-        
+
         static bool check(iterator b, iterator e) { return true; }
 
     private:
@@ -116,14 +116,14 @@ namespace {
         PacketRegistry<StringTag>::RegistrationProxy<FooPacket> registerFoo ("foo");
         PacketRegistry<StringTag>::RegistrationProxy<BarPacket> registerBar ("bar");
     }
-                                                                            
+
 }
 
 BOOST_AUTO_UNIT_TEST(packetRegistry_test)
 {
     unsigned char data[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                              0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
-    
+
     {
         BasePacket::ptr p (Packet::create<BasePacket>(data, data+sizeof(data)));
         BOOST_CHECK( p->next()->is<DataPacket>() );
@@ -147,7 +147,7 @@ BOOST_AUTO_UNIT_TEST(packetRegistry_test)
         BasePacket::ptr p (Packet::create<BasePacket>(data, data+sizeof(data)));
         BOOST_CHECK( p->next()->is<BarPacket>() );
     }
-    
+
     data[0] = 0x01;
 
     {
@@ -167,5 +167,8 @@ BOOST_AUTO_UNIT_TEST(packetRegistry_test)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

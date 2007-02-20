@@ -64,7 +64,7 @@
     \section stuff Other Utilities
 
     The pkf also comprises some additional utilities to support the
-    development of packet classes. 
+    development of packet classes.
 
     The senf::PacketRegistry implements a registry of packets
     keyed by an arbitrary type. The registry is used to find a packet
@@ -74,38 +74,41 @@
     implementing the needed table lookups.
 
     \todo The Packet Libarary really needs a refactoring of the public
-	interfaface ...
+        interfaface ...
 
     \idea Add the Handle-Body idiom to the mix with a PacketRef (or
-	HeaderRef or InterpreterRef or whatever class). This would
-	have members for all the API defined in Packet now. \c
-	operator-> would return a parser object to interpret the
-	data. This would make awayy with the inheritance relationship
-	...
+        HeaderRef or InterpreterRef or whatever class). This would
+        have members for all the API defined in Packet now. \c
+        operator-> would return a parser object to interpret the
+        data. This would make awayy with the inheritance relationship
+        ...
 
     \idea Templating the parsers on the iterator type does not
-	introduce additional coupling (because of the inlining) but
-	looking at it after the fact it looks like severe overdesign
-	and it does introduce some problems (e.g. rebind and all this
-	entails). If we just implement all parsers for
-	Packet::byte_iterator they are no tmplates any more which
-	should simplify things a log.
+        introduce additional coupling (because of the inlining) but
+        looking at it after the fact it looks like severe overdesign
+        and it does introduce some problems (e.g. rebind and all this
+        entails). If we just implement all parsers for
+        Packet::byte_iterator they are no tmplates any more which
+        should simplify things a log.
 
     \idea we need some better and automatic checking on data access
-	especially after data has changed. Idea 1: give the parser the
-	end iterator as additional member. Enforce, that all parsers
-	must ultimately be based on ParseInt and have ParseInt check
-	against end() at construction time. Idea 2: add a dirty flag
-	to the interpreters. Set this flag whenever the packet is
-	changed and recall check() in operator-> of the PacketRef
-	object if the packet is dirty. Maybe we need both and make
-	them tunable.
+        especially after data has changed. Idea 1: give the parser the
+        end iterator as additional member. Enforce, that all parsers
+        must ultimately be based on ParseInt and have ParseInt check
+        against end() at construction time. Idea 2: add a dirty flag
+        to the interpreters. Set this flag whenever the packet is
+        changed and recall check() in operator-> of the PacketRef
+        object if the packet is dirty. Maybe we need both and make
+        them tunable.
  */
 
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // mode: flyspell
 // mode: auto-fill
-// ispell-local-dictionary: "american"
 // End:

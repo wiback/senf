@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -37,19 +37,19 @@ namespace senf {
 
     /** \brief Exception handling standard UNIX errors (errno)
 
-	This exception is thrown to signal generic errno failuers.
+        This exception is thrown to signal generic errno failuers.
 
-	\todo make where and err accessors and make the member vars private
+        \todo make where and err accessors and make the member vars private
 
-	\idea Add a template class derived from SystemException which
-	takes the error number as a numeric argument. This allows
-	catching specific errno conditions: ErrnoException<EPIPE> etc.
-	
-	\idea Add a generic error thrower which takes the origin
-	string and errno value as an argument and will throw a
-	corresponding template class instance. This would just be a
-	big switch statement containing all possible errno values,
-	probably created using some makro metaprogramming.
+        \idea Add a template class derived from SystemException which
+        takes the error number as a numeric argument. This allows
+        catching specific errno conditions: ErrnoException<EPIPE> etc.
+
+        \idea Add a generic error thrower which takes the origin
+        string and errno value as an argument and will throw a
+        corresponding template class instance. This would just be a
+        big switch statement containing all possible errno values,
+        probably created using some makro metaprogramming.
      */
     class SystemException : public std::exception
     {
@@ -58,7 +58,7 @@ namespace senf {
                                         /**< \param[in] err errror number (the errno value) */
         SystemException(char const * where, int err); ///< SystemException with error lokus info
                                         /**< \param[in] where description of error origin
-					     \param[in] err error number (the errno value) */
+                                             \param[in] err error number (the errno value) */
 
         virtual char const * what() const throw(); ///< Return verbose error description
 
@@ -68,9 +68,9 @@ namespace senf {
         virtual ~SystemException() throw();
     private:
         void init();
-	std::string buffer_;
+        std::string buffer_;
     };
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -82,5 +82,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

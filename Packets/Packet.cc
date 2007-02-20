@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -76,7 +76,7 @@ prefix_ senf::Packet::interpreter_list::iterator
 senf::impl::PacketImpl::appendInterpreter(Packet * p)
 {
     BOOST_ASSERT( p->impl_ == 0 );
-    
+
     this->refcount_ += p->refcount_;
     SATCOM_PKF_REFC_MSG("] PacketImpl::appendInterpreter (" << this << "): refcount_ = " << refcount_ << "\n");
     p->impl_ = this;
@@ -167,7 +167,7 @@ prefix_ void senf::impl::PacketImpl::packet_add_ref(Packet const * p)
 }
 
 prefix_ void senf::impl::PacketImpl::packet_release(Packet * p)
-{ 
+{
     bool del (p->release());
     if (p->impl_ && p->impl_->release())
         // In this case, del is certainly false here. p might
@@ -188,7 +188,7 @@ prefix_ senf::Packet::ptr senf::Packet::next()
         if (this->parsed_)
             return ptr(0);
         /* \fixme v_nextInterpreter return bool? new Interpreter to be
-	   added ? hmm ... this however is quite suboptimal ... */
+           added ? hmm ... this however is quite suboptimal ... */
         this->v_nextInterpreter();
         this->parsed_ = true;
         n = boost::next(this->self_);
@@ -271,7 +271,7 @@ prefix_ void senf::Packet::erase(iterator first, iterator last)
     size_type sz(last-first);
     BOOST_ASSERT( index >= begin_ && index < end_ && sz <= end_-index );
     /** \fixme Here we should assert, that no bytes belonging to the
-	next iterator are deleted ... */
+        next iterator are deleted ... */
     impl_->data_.erase(first,last);
     impl_->updateIterators(index,-sz,self_,INSIDE);
 }
@@ -291,5 +291,8 @@ prefix_ void senf::Packet::dump(std::ostream & os)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

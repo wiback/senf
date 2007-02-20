@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -43,8 +43,8 @@ template <class Policy>
 prefix_ void senf::ClientSocketHandle<Policy>::read(std::string & buffer, unsigned limit)
 {
     unsigned nread = available();
-    if (limit>0 && nread>limit) 
-	nread = limit;
+    if (limit>0 && nread>limit)
+        nread = limit;
     /** \fixme This is not necessary correct and more or less a hack ... */
     buffer.assign(nread,0);
     unsigned rv = this->read(const_cast<char *>(buffer.data()),nread);
@@ -87,7 +87,7 @@ prefix_ unsigned senf::ClientSocketHandle<Policy>::write(std::string const & dat
         // DatagramFramingPolicy sockets will ALWAYS either write the
         // complete datagram or nothing at all
         while (written < data.size()) {
-            unsigned n = this->write(data.data()+written,data.size()-written); 
+            unsigned n = this->write(data.data()+written,data.size()-written);
             if (n == 0)
                 throw SystemException(EPIPE);
             written += n;
@@ -100,14 +100,14 @@ prefix_ unsigned senf::ClientSocketHandle<Policy>::available()
 {
     unsigned nread = this->protocol().available();
     if (nread == 0 && this->blocking()) {
-	// We have to block explicitly here so we can return the
-	// number of bytes available explicitly. If no more date can
-	// be expected to arive (i.e. the other end has closed the
-	// connection), the socket will always be in the readable
-	// state. This is the only case when available() will return
-	// 0.
-	this->waitReadable();
-	nread = this->protocol().available();
+        // We have to block explicitly here so we can return the
+        // number of bytes available explicitly. If no more date can
+        // be expected to arive (i.e. the other end has closed the
+        // connection), the socket will always be in the readable
+        // state. This is the only case when available() will return
+        // 0.
+        this->waitReadable();
+        nread = this->protocol().available();
     }
     return nread;
 }
@@ -118,5 +118,8 @@ prefix_ unsigned senf::ClientSocketHandle<Policy>::available()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

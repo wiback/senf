@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -42,9 +42,9 @@ boost::function<R()> membind(R (T::* fn)(),scOBTYPE ob)
 
 #define scARG(z,n,d) BOOST_PP_CAT(d,n)
 #define scPARAMS(d) BOOST_PP_ENUM_SHIFTED(BOOST_PP_ITERATION(),scARG,d)
-    
+
 template < typename R, typename T, scPARAMS(typename A) >
-boost::function<R ( scPARAMS(A) )> 
+boost::function<R ( scPARAMS(A) )>
 membind(R (T::* fn)( scPARAMS(A) ), scOBTYPE ob)
 {
     return boost::bind(fn, ob, scPARAMS(_) );
@@ -52,7 +52,7 @@ membind(R (T::* fn)( scPARAMS(A) ), scOBTYPE ob)
 
 #undef scPARAMS
 #undef scARG
-    
+
 // }
 #endif
 // done
@@ -60,4 +60,8 @@ membind(R (T::* fn)( scPARAMS(A) ), scOBTYPE ob)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

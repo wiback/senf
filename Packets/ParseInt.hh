@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -39,9 +39,9 @@ namespace senf {
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int8
-	: public impl::ParseIntOps<Parse_Int8<Iterator,IPacket>,boost::int8_t>,
+        : public impl::ParseIntOps<Parse_Int8<Iterator,IPacket>,boost::int8_t>,
           public ParserBase<Iterator,IPacket>
-    { 
+    {
         template <class I=nil, class P=nil>
         struct rebind { typedef Parse_Int8<I,P> parser; };
         typedef Iterator byte_iterator;
@@ -65,7 +65,7 @@ namespace senf {
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt8
-	: public impl::ParseIntOps<Parse_UInt8<Iterator,IPacket>,boost::uint8_t>,
+        : public impl::ParseIntOps<Parse_UInt8<Iterator,IPacket>,boost::uint8_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -73,7 +73,7 @@ namespace senf {
         typedef Iterator byte_iterator;
 
         static unsigned bytes() { return 1; }
-        
+
         Parse_UInt8() {}
         explicit Parse_UInt8(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
 
@@ -91,7 +91,7 @@ namespace senf {
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int16
-	: public impl::ParseIntOps<Parse_Int16<Iterator,IPacket>,boost::int16_t>,
+        : public impl::ParseIntOps<Parse_Int16<Iterator,IPacket>,boost::int16_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -117,7 +117,7 @@ namespace senf {
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt16
-	: public impl::ParseIntOps<Parse_UInt16<Iterator,IPacket>,boost::uint16_t>,
+        : public impl::ParseIntOps<Parse_UInt16<Iterator,IPacket>,boost::uint16_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -143,7 +143,7 @@ namespace senf {
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int24
-	: public impl::ParseIntOps<Parse_Int24<Iterator,IPacket>,boost::int32_t>,
+        : public impl::ParseIntOps<Parse_Int24<Iterator,IPacket>,boost::int32_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -159,7 +159,7 @@ namespace senf {
 
         typedef boost::int32_t value_type;
 
-        value_type value() const { 
+        value_type value() const {
             value_type v (impl::parse_uint24(this->i())); return v&0x800000 ? v|0xff000000 : v; }
         void value(value_type v) { impl::write_uint24(this->i(),v); }
         Parse_Int24 const & operator= (value_type other) { value(other); return *this; }
@@ -170,7 +170,7 @@ namespace senf {
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt24
-	: public impl::ParseIntOps<Parse_UInt24<Iterator,IPacket>,boost::uint32_t>,
+        : public impl::ParseIntOps<Parse_UInt24<Iterator,IPacket>,boost::uint32_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -196,7 +196,7 @@ namespace senf {
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int32
-	: public impl::ParseIntOps<Parse_Int32<Iterator,IPacket>,boost::int32_t>,
+        : public impl::ParseIntOps<Parse_Int32<Iterator,IPacket>,boost::int32_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -222,7 +222,7 @@ namespace senf {
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt32
-	: public impl::ParseIntOps<Parse_UInt32<Iterator,IPacket>,boost::uint32_t>,
+        : public impl::ParseIntOps<Parse_UInt32<Iterator,IPacket>,boost::uint32_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -248,7 +248,7 @@ namespace senf {
 
     template <unsigned start, unsigned end, class Iterator=nil, class IPacket=nil>
     struct Parse_IntField
-	: public impl::ParseIntOps<Parse_IntField<start,end,Iterator,IPacket>,boost::int32_t>,
+        : public impl::ParseIntOps<Parse_IntField<start,end,Iterator,IPacket>,boost::int32_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -264,7 +264,7 @@ namespace senf {
 
         typedef boost::int32_t value_type;
 
-        value_type value() const { 
+        value_type value() const {
             value_type v (impl::parse_bitfield<Iterator,start,end>::parse(this->i()));
             return v&boost::high_bit_mask_t<end-start-1>::high_bit ?
                 v | ~boost::low_bits_mask_t<end-start>::sig_bits : v;
@@ -282,7 +282,7 @@ namespace senf {
 
     template <unsigned start, unsigned end, class Iterator=nil, class IPacket=nil>
     struct Parse_UIntField
-	: public impl::ParseIntOps<Parse_UIntField<start,end,Iterator,IPacket>,boost::uint32_t>,
+        : public impl::ParseIntOps<Parse_UIntField<start,end,Iterator,IPacket>,boost::uint32_t>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -312,7 +312,7 @@ namespace senf {
 
     template <unsigned bit, class Iterator=nil, class IPacket=nil>
     struct Parse_Flag
-	: public impl::ParseIntOps<Parse_Flag<bit,Iterator,IPacket>,bool>,
+        : public impl::ParseIntOps<Parse_Flag<bit,Iterator,IPacket>,bool>,
           public ParserBase<Iterator,IPacket>
     {
         template <class I=nil, class P=nil>
@@ -329,7 +329,7 @@ namespace senf {
         typedef bool value_type;
 
         value_type value() const { return this->i()[bit/8] & (1<<(7-(bit%8))); }
-        void value(value_type v) { 
+        void value(value_type v) {
             if (v) this->i()[0] |= 1<<(7-(bit%8));
             else   this->i()[0] &= ~(1<<(7-(bit%8)));
         }
@@ -350,5 +350,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -59,30 +59,30 @@ namespace senf {
         >::policy TCPv4Socket_Policy;   ///< Socket Policy of the TCPv4 Protocol
 
     /** \brief IPv4 TCP Socket Protocol
-	
-	\par Socket Handle typedefs:
-	\ref TCPv4ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv4ServerSocketHandle
-	(ProtocolServerSocketHandle)
 
-	\par Protocol Interface:
-	ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
-	ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
-	ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+        \par Socket Handle typedefs:
+        \ref TCPv4ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv4ServerSocketHandle
+        (ProtocolServerSocketHandle)
 
-	\par Address Type:
-	INet4Address
-	
-	TCPv4SocketProtocol provides an internet protocol stream socket based on the TCP protocol
-	and IPv4 addressing.
+        \par Protocol Interface:
+        ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
+        ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
+        ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
 
-	This class is utilized as the protocol class of the ProtocolClientSocketHandle and
-	ProtocolServerSocketHandle via the Socket Handle typedefs above.
+        \par Address Type:
+        INet4Address
 
-	\see TCPv6SocketProtocol
+        TCPv4SocketProtocol provides an internet protocol stream socket based on the TCP protocol
+        and IPv4 addressing.
+
+        This class is utilized as the protocol class of the ProtocolClientSocketHandle and
+        ProtocolServerSocketHandle via the Socket Handle typedefs above.
+
+        \see TCPv6SocketProtocol
      */
     class TCPv4SocketProtocol
         : public ConcreteSocketProtocol<TCPv4Socket_Policy>,
-          public IPv4Protocol, 
+          public IPv4Protocol,
           public TCPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
@@ -91,44 +91,44 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // internal interface
 
-	///\name Constructors
-	///@{
+        ///\name Constructors
+        ///@{
 
         void init_client() const;       ///< Create unconnected client socket
-	                                /**< \note This member is implicitly called from the
-					     ProtocolClientSocketHandle::ProtocolClientSocketHandle()
-					     constructor */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+                                             constructor */
         void init_client(INet4Address const & address) const;
                                         ///< Create client socket and connect
                                         /**< Creates a new client socket and connects to the given
-					     address. 
-					     
-					     \param[in] address remote address to connect to */
-	                                /**< \note This member is implicitly called from the
-					     ProtocolClientSocketHandle::ProtocolClientSocketHandle()
-					     constructor */
+                                             address.
+
+                                             \param[in] address remote address to connect to */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+                                             constructor */
         void init_server() const;       ///< Create server socket
-	                                /**< \note This member is implicitly called from the
-					     ProtocolServerSocketHandle::ProtocolServerSocketHandle()
-					     constructor */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+                                             constructor */
         void init_server(INet4Address const & address, unsigned backlog=1) const;
                                         ///< Create server socket and listen
                                         /**< Creates a new server socket, binds to \a address end
-					     starts listening for new connections with a backlog of
-					     \a backlog connections. It also enables reuseaddr().
+                                             starts listening for new connections with a backlog of
+                                             \a backlog connections. It also enables reuseaddr().
 
-					     \param[in] address address to listen on
-					     \param[in] backlog size of the listen backlog */
-	                                /**< \note This member is implicitly called from the
-					     ProtocolServerSocketHandle::ProtocolServerSocketHandle()
-					     constructor */
+                                             \param[in] address address to listen on
+                                             \param[in] backlog size of the listen backlog */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+                                             constructor */
 
-	///@}
-	///\name Abstract Interface Implementation
+        ///@}
+        ///\name Abstract Interface Implementation
 
         std::auto_ptr<SocketProtocol> clone() const;
-	
-	///@}
+
+        ///@}
     };
 
     typedef ProtocolClientSocketHandle<TCPv4SocketProtocol> TCPv4ClientSocketHandle;
@@ -140,29 +140,29 @@ namespace senf {
         >::policy TCPv6Socket_Policy;
 
     /** \brief IPv6 TCP Socket Protocol
-	
-	\par Socket Handle typedefs:
-	\ref TCPv6ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv6ServerSocketHandle
-	(ProtocolServerSocketHandle)
 
-	\par Protocol Interface:
-	ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
-	ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
-	ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+        \par Socket Handle typedefs:
+        \ref TCPv6ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv6ServerSocketHandle
+        (ProtocolServerSocketHandle)
 
-	\par Address Type:
-	INet6Address
-	
-	TCPv6SocketProtocol provides an internet protocol stream socket based on the TCP protocol
-	and IPv6 addressing.
+        \par Protocol Interface:
+        ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
+        ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
+        ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
 
-	This class is utilized as the protocol class of the ProtocolClientSocketHandle and
-	ProtocolServerSocketHandle via the Socket Handle typedefs above.
+        \par Address Type:
+        INet6Address
 
-	\see TCPv4SocketProtocol
+        TCPv6SocketProtocol provides an internet protocol stream socket based on the TCP protocol
+        and IPv6 addressing.
+
+        This class is utilized as the protocol class of the ProtocolClientSocketHandle and
+        ProtocolServerSocketHandle via the Socket Handle typedefs above.
+
+        \see TCPv4SocketProtocol
      */
     class TCPv6SocketProtocol
-        : public ConcreteSocketProtocol<TCPv6Socket_Policy>, 
+        : public ConcreteSocketProtocol<TCPv6Socket_Policy>,
           public IPv6Protocol,
           public TCPProtocol,
           public BSDSocketProtocol,
@@ -172,44 +172,44 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // internal interface
 
-	///\name Constructors
-	///@{
+        ///\name Constructors
+        ///@{
 
         void init_client() const;       ///< Create unconnected client socket
-	                                /**< \note This member is implicitly called from the
-					     ProtocolClientSocketHandle::ProtocolClientSocketHandle()
-					     constructor */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+                                             constructor */
         void init_client(INet6SocketAddress const & address) const;
                                         ///< Create client socket and connect
                                         /**< Creates a new client socket and connects to the given
-					     address. 
-					     
-					     \param[in] address remote address to connect to */
-	                                /**< \note This member is implicitly called from the
-					     ProtocolClientSocketHandle::ProtocolClientSocketHandle()
-					     constructor */
+                                             address.
+
+                                             \param[in] address remote address to connect to */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+                                             constructor */
         void init_server() const;       ///< Create server socket
-	                                /**< \note This member is implicitly called from the
-					     ProtocolServerSocketHandle::ProtocolServerSocketHandle()
-					     constructor */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+                                             constructor */
         void init_server(INet6SocketAddress const & address, unsigned backlog=1) const;
                                         ///< Create server socket and listen
                                         /**< Creates a new server socket, binds to \a address end
-					     starts listening for new connections with a backlog of
-					     \a backlog connections. It also enables reuseaddr().
+                                             starts listening for new connections with a backlog of
+                                             \a backlog connections. It also enables reuseaddr().
 
-					     \param[in] address address to listen on
-					     \param[in] backlog size of the listen backlog */
-	                                /**< \note This member is implicitly called from the
-					     ProtocolServerSocketHandle::ProtocolServerSocketHandle()
-					     constructor */
+                                             \param[in] address address to listen on
+                                             \param[in] backlog size of the listen backlog */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+                                             constructor */
 
-	///@}
-	///\name Abstract Interface Implementation
+        ///@}
+        ///\name Abstract Interface Implementation
 
         std::auto_ptr<SocketProtocol> clone() const;
-	
-	///@}
+
+        ///@}
     };
 
     typedef ProtocolClientSocketHandle<TCPv6SocketProtocol> TCPv6ClientSocketHandle;
@@ -228,6 +228,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

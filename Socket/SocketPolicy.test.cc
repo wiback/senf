@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -55,7 +55,7 @@ namespace {
 
     struct WritablePolicy : public WritePolicyBase {};
     struct UnwritablePolicy : public WritePolicyBase {};
-    
+
     struct SocketBufferingPolicy : public BufferingPolicyBase {};
 
     template <class Policy>
@@ -65,7 +65,7 @@ namespace {
         ConvertibleValue(ConvertibleValue const & other) {}
 
         template <class OtherPolicy>
-        ConvertibleValue(ConvertibleValue<OtherPolicy> const & other, 
+        ConvertibleValue(ConvertibleValue<OtherPolicy> const & other,
                          typename boost::enable_if< SocketPolicyIsBaseOf<Policy,OtherPolicy> >::type * = 0)
             {}
 
@@ -73,8 +73,8 @@ namespace {
             { return *this; }
 
         template <class OtherPolicy>
-        typename boost::enable_if< SocketPolicyIsBaseOf<Policy,OtherPolicy>, 
-                                   ConvertibleValue >::type const & 
+        typename boost::enable_if< SocketPolicyIsBaseOf<Policy,OtherPolicy>,
+                                   ConvertibleValue >::type const &
         operator=(ConvertibleValue<OtherPolicy> const & other)
             { return *this; }
     };
@@ -97,7 +97,7 @@ BOOST_AUTO_UNIT_TEST(socketPolicy)
         ReadablePolicy,
         UnspecifiedWritePolicy,
         UnspecifiedBufferingPolicy> Policy2;
-        
+
     BOOST_MPL_ASSERT(( boost::is_same<Policy1,Policy2> ));
 
     typedef MakeSocketPolicy<
@@ -121,7 +121,7 @@ BOOST_AUTO_UNIT_TEST(socketPolicy)
 
     // The following should fail at compile time
     // BOOST_MPL_ASSERT(( SocketPolicyIsBaseOf<Policy1,Policy3> ));
-   
+
     ConvertibleValue<Policy1> p1;
     ConvertibleValue<Policy3> p3(p1);
 
@@ -136,5 +136,8 @@ BOOST_AUTO_UNIT_TEST(socketPolicy)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

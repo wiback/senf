@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -32,13 +32,13 @@
 template <class Parser, class SizeParser, class Iterator, class IPacket>
 prefix_ senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
 Parse_Vector(SizeParser const & size)
-    : size_(size) 
+    : size_(size)
 {}
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
 prefix_ senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::
 Parse_Vector(size_parser const & size, Iterator const & i)
-    : ParserBase<Iterator,IPacket>(i), size_(size) 
+    : ParserBase<Iterator,IPacket>(i), size_(size)
 {}
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
@@ -82,7 +82,7 @@ prefix_ bool senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::empty()
 }
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ 
+prefix_
 typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::iterator
 senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::begin()
     const
@@ -91,7 +91,7 @@ senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::begin()
 }
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ 
+prefix_
 typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::iterator
 senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::end()
     const
@@ -100,7 +100,7 @@ senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::end()
 }
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ 
+prefix_
 typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range_type
 senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range()
     const
@@ -109,7 +109,7 @@ senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range()
 }
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ 
+prefix_
 typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::range_type
 senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value()
     const
@@ -118,7 +118,7 @@ senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value()
 }
 
 template <class Parser, class SizeParser, class Iterator, class IPacket>
-prefix_ 
+prefix_
 typename senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::value_type
 senf::Parse_Vector<Parser,SizeParser,Iterator,IPacket>::operator[](difference_type i)
     const
@@ -134,7 +134,7 @@ template <class P, class SP, class I, class IP>
 prefix_ senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::
 Parse_Vector_wrapper(Parse_Vector<P,SP,I,IP> const & vector, Container & container)
     : i_(vector.i()-container.begin()), size_i_(vector.size_.i()-container.begin()),
-      container_(container) 
+      container_(container)
 {}
 
 template <class Parser, class SizeParser, class Container>
@@ -220,5 +220,8 @@ prefix_ void senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::clear()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -41,10 +41,10 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
 
     {
         INet4Address addr;
-    
+
         addr = "127.0.0.1:12345";
     }
-    
+
     {
         INet4Address addr1("127.0.0.1:12345");
         INet4Address addr2(std::string("127.0.0.1:12345"));
@@ -82,81 +82,81 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
     using senf::InvalidINetAddressException;
 
     {
-	INet6Address addr1 ("0102:0304:0506:0708:090A:0B0C:0D0E:0F00");
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[0], 1 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[1], 2 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[2], 3 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[3], 4 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[4], 5 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[5], 6 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[6], 7 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[7], 8 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[8], 9 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[9], 10 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[10], 11 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[11], 12 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[12], 13 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[13], 14 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[14], 15 );
-	BOOST_CHECK_EQUAL( addr1.addr().s6_addr[15], 0 );
-	INet6Address addr2;
-	BOOST_CHECK_EQUAL( addr2, "::" );
-	addr2 = "::1";
-	BOOST_CHECK( addr1 != addr2 );
-	addr1 ="::1";
-	BOOST_CHECK_EQUAL( addr1, addr2 );
-	BOOST_CHECK_EQUAL( addr1.address(),"::1" );
-	addr1.clear();
-	addr2 = "::";
-	BOOST_CHECK_EQUAL( addr1, addr2 );
-	BOOST_CHECK_THROW( addr1 = "", InvalidINetAddressException );
-	BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr1), "::" );
-	unsigned char data[] = { 0x12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x21, 0 };
-	INet6Address addr3 (std::make_pair(&data[0],&data[0]+sizeof(data)-1));
-	BOOST_CHECK_EQUAL( addr3, "1200::21" );
-	BOOST_CHECK_THROW( INet6Address(std::make_pair(&data[0],&data[0]+sizeof(data))), 
-			   InvalidINetAddressException );
-	BOOST_CHECK_THROW( INet6Address(std::make_pair(&data[0],&data[0]+sizeof(data)-2)), 
-			   InvalidINetAddressException );
+        INet6Address addr1 ("0102:0304:0506:0708:090A:0B0C:0D0E:0F00");
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[0], 1 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[1], 2 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[2], 3 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[3], 4 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[4], 5 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[5], 6 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[6], 7 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[7], 8 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[8], 9 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[9], 10 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[10], 11 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[11], 12 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[12], 13 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[13], 14 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[14], 15 );
+        BOOST_CHECK_EQUAL( addr1.addr().s6_addr[15], 0 );
+        INet6Address addr2;
+        BOOST_CHECK_EQUAL( addr2, "::" );
+        addr2 = "::1";
+        BOOST_CHECK( addr1 != addr2 );
+        addr1 ="::1";
+        BOOST_CHECK_EQUAL( addr1, addr2 );
+        BOOST_CHECK_EQUAL( addr1.address(),"::1" );
+        addr1.clear();
+        addr2 = "::";
+        BOOST_CHECK_EQUAL( addr1, addr2 );
+        BOOST_CHECK_THROW( addr1 = "", InvalidINetAddressException );
+        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr1), "::" );
+        unsigned char data[] = { 0x12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x21, 0 };
+        INet6Address addr3 (std::make_pair(&data[0],&data[0]+sizeof(data)-1));
+        BOOST_CHECK_EQUAL( addr3, "1200::21" );
+        BOOST_CHECK_THROW( INet6Address(std::make_pair(&data[0],&data[0]+sizeof(data))),
+                           InvalidINetAddressException );
+        BOOST_CHECK_THROW( INet6Address(std::make_pair(&data[0],&data[0]+sizeof(data)-2)),
+                           InvalidINetAddressException );
     }
 
     {
-	INet6SocketAddress addr;
-	BOOST_CHECK_EQUAL( addr.host(), "::" );
-	BOOST_CHECK_EQUAL( addr.port(), 0u );
-	BOOST_CHECK_EQUAL( addr.iface(), "" );
-	addr = "[12::21]:12345";
-	BOOST_CHECK_EQUAL( addr.host(), "12::21" );
-	BOOST_CHECK_EQUAL( addr.port(), 12345u );
-	BOOST_CHECK_EQUAL( addr.iface(), "" );
-	BOOST_CHECK_EQUAL( addr, INet6SocketAddress("[12::21]:12345") );
-    }
-    
-    {
-	INet6SocketAddress addr ("::1", 1);
-	BOOST_CHECK_EQUAL( addr, "[::1]:1" );
-	BOOST_CHECK_EQUAL( addr.iface(), "" );
+        INet6SocketAddress addr;
+        BOOST_CHECK_EQUAL( addr.host(), "::" );
+        BOOST_CHECK_EQUAL( addr.port(), 0u );
+        BOOST_CHECK_EQUAL( addr.iface(), "" );
+        addr = "[12::21]:12345";
+        BOOST_CHECK_EQUAL( addr.host(), "12::21" );
+        BOOST_CHECK_EQUAL( addr.port(), 12345u );
+        BOOST_CHECK_EQUAL( addr.iface(), "" );
+        BOOST_CHECK_EQUAL( addr, INet6SocketAddress("[12::21]:12345") );
     }
 
     {
-	INet6SocketAddress addr ("::1", 1, "lo");
-	BOOST_CHECK_EQUAL( addr, "[::1@lo]:1" );
-	BOOST_CHECK_EQUAL( addr.iface(), "lo" );
-	addr.iface("");
-	BOOST_CHECK_EQUAL( addr.iface(), "" );
-	addr.port(100u);
-	BOOST_CHECK_EQUAL( addr.port(), 100u );
-	addr.host("::2");
-	BOOST_CHECK_EQUAL( addr.host(), "::2" );
-	BOOST_CHECK_THROW( addr = "", InvalidINetAddressException );
-	BOOST_CHECK_THROW( addr = "[::1]", InvalidINetAddressException );
-	BOOST_CHECK_THROW( addr = "[::1]1234", InvalidINetAddressException );
-	addr = "[12::21@lo]:12345";
-	BOOST_CHECK_EQUAL( addr.address(), "[12::21@lo]:12345" );
-	BOOST_CHECK_EQUAL( addr.host(), "12::21" );
-	BOOST_CHECK_EQUAL( addr.port(), 12345u );
-	BOOST_CHECK_EQUAL( addr.iface(), "lo" );
-	BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr), "[12::21@lo]:12345" );
+        INet6SocketAddress addr ("::1", 1);
+        BOOST_CHECK_EQUAL( addr, "[::1]:1" );
+        BOOST_CHECK_EQUAL( addr.iface(), "" );
+    }
+
+    {
+        INet6SocketAddress addr ("::1", 1, "lo");
+        BOOST_CHECK_EQUAL( addr, "[::1@lo]:1" );
+        BOOST_CHECK_EQUAL( addr.iface(), "lo" );
+        addr.iface("");
+        BOOST_CHECK_EQUAL( addr.iface(), "" );
+        addr.port(100u);
+        BOOST_CHECK_EQUAL( addr.port(), 100u );
+        addr.host("::2");
+        BOOST_CHECK_EQUAL( addr.host(), "::2" );
+        BOOST_CHECK_THROW( addr = "", InvalidINetAddressException );
+        BOOST_CHECK_THROW( addr = "[::1]", InvalidINetAddressException );
+        BOOST_CHECK_THROW( addr = "[::1]1234", InvalidINetAddressException );
+        addr = "[12::21@lo]:12345";
+        BOOST_CHECK_EQUAL( addr.address(), "[12::21@lo]:12345" );
+        BOOST_CHECK_EQUAL( addr.host(), "12::21" );
+        BOOST_CHECK_EQUAL( addr.port(), 12345u );
+        BOOST_CHECK_EQUAL( addr.iface(), "lo" );
+        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr), "[12::21@lo]:12345" );
     }
 }
 
@@ -166,5 +166,8 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

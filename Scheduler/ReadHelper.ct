@@ -16,7 +16,7 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-// Copyright (C) 2006 
+// Copyright (C) 2006
 
 /** \file
     \brief ReadHelper non-inline template implementation */
@@ -35,7 +35,7 @@
 template <class Handle>
 prefix_ senf::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_type maxSize,
                                                     InternalPredicate * predicate, Callback cb)
-    : handle_(handle), maxSize_(maxSize), predicate_(predicate), callback_(cb), 
+    : handle_(handle), maxSize_(maxSize), predicate_(predicate), callback_(cb),
       errno_(0), complete_(false)
 {
     // Here we add a *static* member taking a *smart* pointer as first
@@ -43,8 +43,8 @@ prefix_ senf::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_ty
     // scheduler. This ensures, that the refcount is at least 1 as
     // long as the helper is registered with the scheduler.
     senf::Scheduler::instance()
-	.add(handle,boost::bind(&ReadHelper::dispatchProcess,ptr(this),_1,_2),
-	     senf::Scheduler::EV_READ);
+        .add(handle,boost::bind(&ReadHelper::dispatchProcess,ptr(this),_1,_2),
+             senf::Scheduler::EV_READ);
 }
 
 template <class Handle>
@@ -52,7 +52,7 @@ prefix_ void senf::ReadHelper<Handle>::revoke()
 {
     ptr guard (this); // To ensure, 'this' is deleted only after this method terminates ...
     senf::Scheduler::instance()
-	.remove(handle_,senf::Scheduler::EV_READ);
+        .remove(handle_,senf::Scheduler::EV_READ);
 }
 
 template <class Handle>
@@ -71,23 +71,23 @@ prefix_ void senf::ReadHelper<Handle>::process(Handle handle,
 {
     /** \fixme Move the done() calls to outside the try/catch block */
     try {
-	if (event != senf::Scheduler::EV_READ)
-	    throw SystemException(EPIPE);
-	std::string rcv (handle.read(maxSize_ - data_.size()));
-	data_.append(rcv);
-	std::string::size_type n = predicate_ ? (*predicate_)(data_) : std::string::npos;
-	if (n != std::string::npos || data_.size() >= maxSize_ || rcv.size() == 0) {
-	    complete_ = true;
-	    if (n < data_.size()) {
-		tail_.assign(data_,n,std::string::npos);
-		data_.erase(n);
-	    }
-	    done();
-	}
+        if (event != senf::Scheduler::EV_READ)
+            throw SystemException(EPIPE);
+        std::string rcv (handle.read(maxSize_ - data_.size()));
+        data_.append(rcv);
+        std::string::size_type n = predicate_ ? (*predicate_)(data_) : std::string::npos;
+        if (n != std::string::npos || data_.size() >= maxSize_ || rcv.size() == 0) {
+            complete_ = true;
+            if (n < data_.size()) {
+                tail_.assign(data_,n,std::string::npos);
+                data_.erase(n);
+            }
+            done();
+        }
     }
     catch (senf::SystemException const & ex) {
-	errno_ = ex.err;
-	done();
+        errno_ = ex.err;
+        done();
     }
 }
 
@@ -113,4 +113,8 @@ operator()(std::string const & data)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

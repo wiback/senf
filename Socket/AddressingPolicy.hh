@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -40,10 +40,10 @@ namespace senf {
 
     /** \brief AddressingPolicy for non-addressable sockets
 
-	This is different from UndefinedAddressingPolicy (which is the
-	same as AddressingPolicyBase). This policy class defines the
-	addressing -- it explicitly states, that the socket does not
-	support any addressing.
+        This is different from UndefinedAddressingPolicy (which is the
+        same as AddressingPolicyBase). This policy class defines the
+        addressing -- it explicitly states, that the socket does not
+        support any addressing.
      */
     struct NoAddressingPolicy : public AddressingPolicyBase
     {};
@@ -61,5 +61,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

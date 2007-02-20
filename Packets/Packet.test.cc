@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -56,7 +56,7 @@ namespace {
     }
 
 }
-        
+
 BOOST_AUTO_UNIT_TEST(Packet_DataPacket)
 {
     Packet::ptr p (Packet::create<DataPacket>(data, data+sizeof(data)));
@@ -90,7 +90,7 @@ BOOST_AUTO_UNIT_TEST(Packet_GenericPacket)
     BOOST_CHECK( compare(p->begin_header(), p->end_header()) );
     BOOST_CHECK_EQUAL( p->trailer_len(), 6u );
     BOOST_CHECK( compare(p->begin_trailer(), p->end_trailer(), sizeof(data)-6) );
-    
+
     // check the first packet in the interpreter chain
     BOOST_CHECK_EQUAL( p->head(), p );
     BOOST_CHECK( !p->prev() );
@@ -104,7 +104,7 @@ BOOST_AUTO_UNIT_TEST(Packet_GenericPacket)
     BOOST_REQUIRE( p->next() );
     BOOST_CHECK( p->next()->is<DataPacket>() );
     BOOST_CHECK(( !p->next()->is< GenericPacket<4,6> >() ));
-    
+
     // check the contents of the second interpreter
     BOOST_CHECK_EQUAL( p->next()->size(), sizeof(data)-10 );
     BOOST_CHECK( compare(p->next()->begin(), p->next()->end(), 4) );
@@ -120,13 +120,13 @@ BOOST_AUTO_UNIT_TEST(Packet_GenericPacket)
     // We need require here. If this fails, p->last() will probably
     // run into an endless loop ...
     BOOST_REQUIRE( !p->next()->next() );
-    BOOST_CHECK_EQUAL( p->next(), p->last() );    
+    BOOST_CHECK_EQUAL( p->next(), p->last() );
 }
 
 BOOST_AUTO_UNIT_TEST(Packet_Reinterpret)
 {
     Packet::ptr p (Packet::create< GenericPacket<4,4> >(data, data+sizeof(data)));
-    
+
     BOOST_CHECK( p->next()->is<DataPacket>() );
     p->next()->reinterpret< GenericPacket<6> >();
     BOOST_CHECK( p->next()->is< GenericPacket<6> >() );
@@ -141,7 +141,7 @@ BOOST_AUTO_UNIT_TEST(Packet_Reinterpret)
     p = p->reinterpret< GenericPacket<8,2> >();
     BOOST_REQUIRE( p->next() );
     BOOST_CHECK( p->next()->is<DataPacket>() );
-    
+
     BOOST_CHECK_EQUAL( p->next()->size(), sizeof(data)-10 );
     BOOST_CHECK( compare(p->next()->begin(), p->next()->end(), 8) );
 }
@@ -150,7 +150,7 @@ BOOST_AUTO_UNIT_TEST(Packet_InsertErase)
 {
     Packet::ptr p (Packet::create< GenericPacket<7,3> >(data, data+sizeof(data)));
     p->next()->reinterpret< GenericPacket<4> >();
-    
+
     BOOST_CHECK_EQUAL( p->size(), 20u );
     BOOST_CHECK_EQUAL( p->next()->size(), 10u );
     BOOST_CHECK_EQUAL( p->next()->next()->size(), 6u );
@@ -175,7 +175,7 @@ BOOST_AUTO_UNIT_TEST(Packet_InsertErase)
     BOOST_CHECK( compare(p->next()->next()->begin(), p->next()->next()->end(), 11) );
 
     p->next()->erase( p->next()->begin()+2, p->next()->begin()+8 );
-    
+
     BOOST_CHECK_EQUAL( p->size(), 20u );
     BOOST_CHECK_EQUAL( p->next()->size(), 10u );
     BOOST_CHECK_EQUAL( p->next()->next()->size(), 6u );
@@ -203,7 +203,7 @@ BOOST_AUTO_UNIT_TEST(Packet_InsertErase)
     BOOST_CHECK( compare(p->next()->next()->begin(), p->next()->next()->end(), 11) );
 
     p->next()->next()->insert(p->next()->begin()+5, data, data+4);
-    
+
     BOOST_CHECK_EQUAL( p->size(), 24u );
     BOOST_CHECK_EQUAL( p->next()->size(), 14u );
     BOOST_CHECK_EQUAL( p->next()->next()->size(), 10u );
@@ -223,7 +223,7 @@ BOOST_AUTO_UNIT_TEST(Packet_InsertErase)
     BOOST_CHECK( compare(p->begin()+10, p->end(), 12) );
 
     p->erase(p->begin()+5, p->end());
-    
+
     BOOST_CHECK_EQUAL( p->size(), 5u );
     BOOST_CHECK_EQUAL( p->next()->size(), 0u );
     BOOST_CHECK_EQUAL( p->next()->next()->size(), 0u );
@@ -243,5 +243,8 @@ BOOST_AUTO_UNIT_TEST(Packet_new)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

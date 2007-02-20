@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -50,7 +50,7 @@ prefix_ void senf::PacketProtocol::mcDrop(std::string interface,
 template <class ForwardRange>
 prefix_ senf::detail::Range_LLAddressCopier<ForwardRange>::
 Range_LLAddressCopier(ForwardRange const & range)
-    : range_ (range) 
+    : range_ (range)
 {}
 
 template <class ForwardRange>
@@ -68,5 +68,8 @@ prefix_ void senf::PacketProtocol::do_mc(std::string interface,
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

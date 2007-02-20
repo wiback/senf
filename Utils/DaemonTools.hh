@@ -25,19 +25,19 @@
     This collection of utilities provides help in managing daemon processes.
 
     \idea Add communication between parent and child process to daemonize() and add things like
-	init_done(), failure() etc which allow the daemon process to tell the frontend of successful
-	startup or failure. This proabably means moving all the methods into a DaemonTools class (as
-	statics or via a singleton). This would also allow for automatic pid file creation and
-	removal (remove in global destructor).
+        init_done(), failure() etc which allow the daemon process to tell the frontend of successful
+        startup or failure. This proabably means moving all the methods into a DaemonTools class (as
+        statics or via a singleton). This would also allow for automatic pid file creation and
+        removal (remove in global destructor).
 
     \idea Add a DaemonProcess baseclass whith init() and main() abstract members which wraps the
-	startup process. DaeminProcess::run() would fork, call init(), create a pid file and then
-	call main(). Exceptions during init()'s execution would be passed to the parent
-	process. This is based on the above API.
-    
+        startup process. DaeminProcess::run() would fork, call init(), create a pid file and then
+        call main(). Exceptions during init()'s execution would be passed to the parent
+        process. This is based on the above API.
+
     \idea A closeall()/closemost() function which is useful when starting child processes. We'll use
-	getrlimit to now the biggest filehandle and close all of em. closemost() takes a number of
-	file handles as arg and will keep those open.
+        getrlimit to now the biggest filehandle and close all of em. closemost() takes a number of
+        file handles as arg and will keep those open.
 
     \idea We might want to add other oft used utitlities: chroot(), setreuid(), pipes() / IPC ...
  */
@@ -58,11 +58,11 @@ namespace senf {
 
     void daemonize();                   ///< Make the current process a daemon process
                                         /**< daemonize() will fork, detach from the controlling
-					     terminal and start a new process group. */
+                                             terminal and start a new process group. */
     void redirect_stdio(std::string const & path = "/dev/null"); ///< Redirect STDIN, STDOUT and STDERR
                                         /**< All standard file-descriptors will be redirected to the
-					     given path defaulting to <tt>/dev/null</tg>
-					     \param[in] path path to redirect to */
+                                             given path defaulting to <tt>/dev/null</tg>
+                                             \param[in] path path to redirect to */
 
     /// @}
 }
@@ -77,6 +77,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

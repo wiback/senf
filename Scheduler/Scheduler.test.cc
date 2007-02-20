@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -47,9 +47,9 @@
 using namespace senf;
 
 namespace {
-    
+
     char const * SOCK_PATH = "/tmp/sched_test.sock";
-    
+
     void error(char const * fn, char const * proc="")
     {
         std::cerr << "\n" << proc << fn << ": " << strerror(errno) << std::endl;
@@ -107,7 +107,7 @@ namespace {
             error("fork");
             return 0;
         }
-            
+
         sleep(1); // Wait for the server socket to be opened
         return pid;
     }
@@ -164,11 +164,11 @@ namespace {
         Scheduler::instance().terminate();
     }
 
-    void timeout() 
+    void timeout()
     {
-	Scheduler::instance().terminate();
+        Scheduler::instance().terminate();
     }
-     
+
     struct HandleWrapper
     {
         HandleWrapper(int fd,std::string const & tag) : fd_(fd), tag_(tag) {}
@@ -190,9 +190,9 @@ namespace {
 
     bool is_close(MicroTime a, MicroTime b)
     {
-	return (a<b ? b-a : a-b) < 10100; // a little bit over 10ms
+        return (a<b ? b-a : a-b) < 10100; // a little bit over 10ms
     }
-	    
+
 }
 
 BOOST_AUTO_UNIT_TEST(scheduler)
@@ -209,7 +209,7 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     memset(&sun,0,sizeof(sun));
     sun.sun_family = AF_UNIX;
     strcpy(sun.sun_path,SOCK_PATH);
-    
+
     if (connect(sock,(struct sockaddr*)&sun,sizeof(sun))<0) {
         error("connect");
         BOOST_FAIL("connect");
@@ -234,7 +234,7 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     BOOST_CHECK_PREDICATE( is_close, (now()) (t+100*1000) );
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
     BOOST_CHECK_PREDICATE( is_close, (now()) (t+200*1000) );
-    
+
     HandleWrapper handle(sock,"TheTag");
     BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,&handleCallback,Scheduler::EV_WRITE) );
     strcpy(buffer,"WRITE");
@@ -264,5 +264,8 @@ BOOST_AUTO_UNIT_TEST(scheduler)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -7,12 +7,12 @@ namespace senf {
     several concepts:
 
     \li The basic visible interface is a \link handle_group handle
-	object \endlink
+        object \endlink
     \li The socket interface relies on a \link policy_group policy
-	framework \endlink to configure it's functionality
+        framework \endlink to configure it's functionality
     \li The rest of the socket API is accessible using a classic
-	inheritance hierarchy of \link protocol_group protocol classes
-	\endlink
+        inheritance hierarchy of \link protocol_group protocol classes
+        \endlink
 
     The handle/body architecture provides automatic reference counted
     management of socket instances, the policy framework provides
@@ -25,7 +25,7 @@ namespace senf {
          \ref handle_group \n
          \ref policy_group \n
          \ref protocol_group \n
-	 \ref extend \n
+         \ref extend \n
          \ref implementation
  */
 
@@ -63,11 +63,11 @@ namespace senf {
 
     \code
       typedef ClientSocketHandle<
-          MakeSocketPolicy< 
-              ReadablePolicy, 
+          MakeSocketPolicy<
+              ReadablePolicy,
               StreamFramingPolicy,
               ConnectedCommunicationPolicy > > MyReadableHandle;
-              
+
     \endcode
 
     This defines \c MyReadableHandle as a ClientSocketHandle
@@ -79,11 +79,11 @@ namespace senf {
     ConnectedCommunicationPolicy does not have a \c readfrom
     member.
  */
-    
+
 
 
 /** \page extend Extending the Library
-    
+
     There are two layers, on which the socket library can be
     extended: On the protocol layer and on the policy layer. Extending
     the protocol layer is quite simple and works as long as the
@@ -97,7 +97,7 @@ namespace senf {
     very complicated however the integration is more complex.
 
     \section extend_protocol Writing a new protocol class
-    
+
     Most protocols can be implemented by just implementing a new
     protocol class. The protocol class must be derived from
     ConcreteSocketProtocol and takes the socket policy (as
@@ -124,21 +124,21 @@ namespace senf {
     aware of some important limitations of the socket library:
 
     \li When you define a new policy for some axis, this new policy
-	<em>must not</em> be derived from one of the existing concrete
-	policy classes (except of course the respective policy axis
-	base class). This is important since the policy type is \e not
-	polymorphic. The policy to be used is selected by the compiler
-	using the \e static type, which is exactly what is desired,
-	since this allows calls to be efficiently inlined.
+        <em>must not</em> be derived from one of the existing concrete
+        policy classes (except of course the respective policy axis
+        base class). This is important since the policy type is \e not
+        polymorphic. The policy to be used is selected by the compiler
+        using the \e static type, which is exactly what is desired,
+        since this allows calls to be efficiently inlined.
 
     \li Therefore, extending the policy framework will make the new
-	socket probably \e incompatible with generic code which relies
-	on the policy axis which is extended. Example: If you write a
-	new write policy because your protocol does not use ordinary
-	write() system calls but some protocol specific API, Then any
-	generic function relying on WritablePolicy will \e not
-	work with the new socket, since the socket does \e not have
-	this policy, it has some other kind of write policy.
+        socket probably \e incompatible with generic code which relies
+        on the policy axis which is extended. Example: If you write a
+        new write policy because your protocol does not use ordinary
+        write() system calls but some protocol specific API, Then any
+        generic function relying on WritablePolicy will \e not
+        work with the new socket, since the socket does \e not have
+        this policy, it has some other kind of write policy.
 
     Therefore you need to be careful of what you are doing. The first
     step is to find out, which policy you will have to implement. For
@@ -183,7 +183,7 @@ namespace senf {
     <tr><td>policy interface</td> <td>interface directly provided by
     ClientSocketHandle/ServerSocketHandle and defined through the
     policy</td>
-    
+
     <tr><td>protocol interface</td> <td>interface provided by the
     protocol class and accessible via the
     ProtocolClientSocketHandle::protocol()/ProtocolServerSocketHandle::protocol()
@@ -193,7 +193,7 @@ namespace senf {
  */
 
 /** \page implementation Implementation notes
-    
+
     \section class_diagram Class Diagram
 
     \image html SocketLibrary-classes.png
@@ -201,18 +201,18 @@ namespace senf {
     \section impl_notes Arbitrary Implementation Notes
 
     \li The implementation tries to isolate the library user as much
-	as possible from the system header files since those headers
-	define a lot of define symbols and introduce a host of symbols
-	into the global namespace. This is, why some classes define
-	their own \c enum types to replace system defined define
-	constants. This also precludes inlining some functionality.
+        as possible from the system header files since those headers
+        define a lot of define symbols and introduce a host of symbols
+        into the global namespace. This is, why some classes define
+        their own \c enum types to replace system defined define
+        constants. This also precludes inlining some functionality.
 
     \li To reduce overhead, template functions/members which are
-	more than one-liners are often implemented in terms of a
-	non-template function/member. This is also used to further the
-	isolation from system headers as defined above (template code
-	must always be included into every compilation unit together
-	with all headers need for the implementation).
+        more than one-liners are often implemented in terms of a
+        non-template function/member. This is also used to further the
+        isolation from system headers as defined above (template code
+        must always be included into every compilation unit together
+        with all headers need for the implementation).
  */
 
 }
@@ -220,7 +220,10 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // mode: flyspell
 // mode: auto-fill
-// ispell-local-dictionary: "american"
 // End:

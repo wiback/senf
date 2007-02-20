@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -53,7 +53,7 @@ namespace {
         : public senf::FileHandle
     {
     public:
-        FDHandle() 
+        FDHandle()
             : senf::FileHandle(std::auto_ptr<senf::FileBody>(
                                           new senf::FileBody())) {}
     };
@@ -66,7 +66,7 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
         sl::test::SomeReadPolicy
         >::policy OtherSocketPolicy;
     typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
-    
+
     MySocketHandle myh;
     OtherSocketHandle osh (myh);
     osh = myh;
@@ -81,13 +81,13 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
         senf::NoAddressingPolicy
         >::policy> SomeOtherSocketHandle;
 
-    BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeOtherSocketHandle>(osh), 
+    BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeOtherSocketHandle>(osh),
                        std::bad_cast );
     BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(
                            senf::FileHandle(FDHandle())),
                        std::bad_cast );
 
-    BOOST_CHECK_EQUAL( myh.dumpState(), 
+    BOOST_CHECK_EQUAL( myh.dumpState(),
                        "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy, senf::test::SomeBufferingPolicy> >\n"
                        "file.handle: -1\n"
                        "file.refcount: 3\n"
@@ -102,5 +102,8 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

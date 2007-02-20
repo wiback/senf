@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -37,7 +37,7 @@ namespace test {
     struct SomeAddressingPolicy : public senf::AddressingPolicyBase
     {
         typedef unsigned Address;
-        
+
         static void peer(FileHandle handle, unsigned & addr)
             { addr=1; }
         static void local(FileHandle, unsigned & addr)
@@ -91,7 +91,7 @@ namespace test {
                 return write(handle,buffer,size);
             }
     };
-    
+
     struct SomeBufferingPolicy : public senf::BufferingPolicyBase
     {
         static unsigned rcvbuf(FileHandle handle)
@@ -126,5 +126,8 @@ namespace test {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -30,7 +30,7 @@
 #define prefix_
 ///////////////////////////////PacketRegistry..p////////////////////////////////////////
 
-senf::impl::PkReg_EntryImpl<senf::DataPacket> 
+senf::impl::PkReg_EntryImpl<senf::DataPacket>
     senf::impl::pkreg_dataEntry;
 
 ///////////////////////////////PacketRegistry..e////////////////////////////////////////
@@ -39,5 +39,8 @@ senf::impl::PkReg_EntryImpl<senf::DataPacket>
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

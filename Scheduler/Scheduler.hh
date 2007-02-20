@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -49,23 +49,23 @@ namespace senf {
         input, output or error. This functions are specified using boost::function objects (See <a
         href="http://www.boost.org/doc/html/function.html">Boost.Function</a>)
 
-	The Scheduler is based on a generic handle representation. The only information needed from
-	a handle, is the intrinsic file descriptor. Any object for which the statement
-	\code
-	  int fd = retrieve_filehandle(object);
-	\endcode
-	is valid and places the relevent file descriptor into fd can be used as a Handle type. There
-	is an implementation of retrieve_filehandle(int) within the library to handle explicit file
-	descrptors. The <a href="../../../Socket/doc/html/index.html">Socket library</a> provides an
-	implementation of <tt>retrive_filehandle(FileHandle handle)</tt>. If you want to support
-	some other handle type, just define an apropriate \c retrieve_filehandle function <em>in
-	that types namespace</em>.
+        The Scheduler is based on a generic handle representation. The only information needed from
+        a handle, is the intrinsic file descriptor. Any object for which the statement
+        \code
+          int fd = retrieve_filehandle(object);
+        \endcode
+        is valid and places the relevent file descriptor into fd can be used as a Handle type. There
+        is an implementation of retrieve_filehandle(int) within the library to handle explicit file
+        descrptors. The <a href="../../../Socket/doc/html/index.html">Socket library</a> provides an
+        implementation of <tt>retrive_filehandle(FileHandle handle)</tt>. If you want to support
+        some other handle type, just define an apropriate \c retrieve_filehandle function <em>in
+        that types namespace</em>.
 
-	It is important to note, that for every combination of file descriptor and event, only a \e
-	single handler may be installed. Installing more handlers does not make sense. If you need
-	to distribute data to serveral interested parties, you must take care of this yourself.
+        It is important to note, that for every combination of file descriptor and event, only a \e
+        single handler may be installed. Installing more handlers does not make sense. If you need
+        to distribute data to serveral interested parties, you must take care of this yourself.
 
-	\todo Fix EventId parameter (probably to int) to allow |-ing without casting ...
+        \todo Fix EventId parameter (probably to int) to allow |-ing without casting ...
       */
     class Scheduler
         : boost::noncopyable
@@ -74,25 +74,25 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-	/// \brief Types of file descriptor events */
-        enum EventId { EV_NONE=0, 
-                       EV_READ=1, EV_PRIO=2, EV_WRITE=4, EV_HUP=8, EV_ERR=16, 
+        /// \brief Types of file descriptor events */
+        enum EventId { EV_NONE=0,
+                       EV_READ=1, EV_PRIO=2, EV_WRITE=4, EV_HUP=8, EV_ERR=16,
                        EV_ALL=31 };
 
-	/** \brief Template typedef for Callback type
-	    
-	    This is a template typedef (which does not exist in C++) that is, a template class whose
-	    sole member is a typedef symbol defining the callback type given the handle type.
+        /** \brief Template typedef for Callback type
 
-	    The Callback is any callable object taking a \c Handle and an \c EventId as argument.
-	 */
+            This is a template typedef (which does not exist in C++) that is, a template class whose
+            sole member is a typedef symbol defining the callback type given the handle type.
+
+            The Callback is any callable object taking a \c Handle and an \c EventId as argument.
+         */
         template <class Handle>
         struct GenericCallback {
             typedef boost::function<void (typename boost::call_traits<Handle>::param_type,
                                           EventId) > Callback;
         };
-	/** \brief Callback type for timer events */
-	typedef boost::function<void ()> TimerCallback;
+        /** \brief Callback type for timer events */
+        typedef boost::function<void ()> TimerCallback;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -104,78 +104,78 @@ namespace senf {
         // default destructor
         // no conversion constructors
 
-	/** \brief Return Scheduler instance 
-	    
-	    This static member is used to access the singleton instance. This member is save to
-	    return a correctly initialized Scheduler instance even if called at global construction
-	    time
-	    
-	    \implementation This static member just defines the Scheduler as a static method
-		variable. The C++ standard then provides above guaratee. The instance will be
-		initialized the first time, the code flow passes the variable declaration found in
-		the instance() body.
-	 */
+        /** \brief Return Scheduler instance
+
+            This static member is used to access the singleton instance. This member is save to
+            return a correctly initialized Scheduler instance even if called at global construction
+            time
+
+            \implementation This static member just defines the Scheduler as a static method
+                variable. The C++ standard then provides above guaratee. The instance will be
+                initialized the first time, the code flow passes the variable declaration found in
+                the instance() body.
+         */
         static Scheduler & instance();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
         template <class Handle>
-        void add(Handle const & handle, 
+        void add(Handle const & handle,
                  typename GenericCallback<Handle>::Callback const & cb,
                  int eventMask = EV_ALL); ///< Add file handle event callback
                                         /**< add() will add a callback to the Scheduler. The
-					     callbeck will be called for the given type of event on
-					     the given  arbitrary file-descriptor or
-					     handle-like object. If there already is a Callback
-					     register ed for one of the events requested, the new
-					     handler will replace the old one.
-					     \param[in] handle file descriptor or handle providing
-						 the Handle interface defined above.
-					     \param[in] cb callback
-					     \param[in] eventMask arbitrary combination via '|'
-						 operator of EventId designators. */
-	template <class Handle>
+                                             callbeck will be called for the given type of event on
+                                             the given  arbitrary file-descriptor or
+                                             handle-like object. If there already is a Callback
+                                             register ed for one of the events requested, the new
+                                             handler will replace the old one.
+                                             \param[in] handle file descriptor or handle providing
+                                                 the Handle interface defined above.
+                                             \param[in] cb callback
+                                             \param[in] eventMask arbitrary combination via '|'
+                                                 operator of EventId designators. */
+        template <class Handle>
         void remove(Handle const & handle, int eventMask = EV_ALL); ///< Remove event callback
                                         /**< remove() will remove any callback registered for any of
-					     the given events on the given file descriptor or handle
-					     like object.
-					     \param[in] handle file descriptor or handle providing
-						 the Handle interface defined above.	
-					     \param[in] eventMask arbitrary combination via '|'
-						 operator of EventId designators. */
+                                             the given events on the given file descriptor or handle
+                                             like object.
+                                             \param[in] handle file descriptor or handle providing
+                                                 the Handle interface defined above.
+                                             \param[in] eventMask arbitrary combination via '|'
+                                                 operator of EventId designators. */
 
-	void timeout(unsigned long timeout, TimerCallback const & cb); ///< Add timeout event
+        void timeout(unsigned long timeout, TimerCallback const & cb); ///< Add timeout event
                                         /**< \param[in] timeout timeout in milliseconds
-					     \param[in] cb callback to call after \a timeout
-						 milliseconds 
-					     \todo Return some kind of handle/pointer and add
-						 support to update or revoke a timeout */
+                                             \param[in] cb callback to call after \a timeout
+                                                 milliseconds
+                                             \todo Return some kind of handle/pointer and add
+                                                 support to update or revoke a timeout */
 
         void process();                 ///< Event handler main loop
                                         /**< This member must be called at some time to enter the
-					     event handler main loop. Only while this function is
-					     running any events are handled. The call will return
-					     only, if any callback calls terminate(). */
+                                             event handler main loop. Only while this function is
+                                             running any events are handled. The call will return
+                                             only, if any callback calls terminate(). */
         void terminate();               ///< Called by callbacks to terminate the main loop
                                         /**< This member may be called by any callback to tell the
-					     main loop to terminate. The main loop will return to
-					     it's caller after the currently running callback
-					     returns. */
+                                             main loop to terminate. The main loop will return to
+                                             it's caller after the currently running callback
+                                             returns. */
 
     protected:
 
     private:
-	typedef boost::function<void (EventId)> SimpleCallback;
+        typedef boost::function<void (EventId)> SimpleCallback;
 
         Scheduler();
- 	
+
         void do_add(int fd, SimpleCallback const & cb, int eventMask = EV_ALL);
         void do_remove(int fd, int eventMask = EV_ALL);
 
-	/** \brief Descriptor event specification
-	    \internal */
-	struct EventSpec 
+        /** \brief Descriptor event specification
+            \internal */
+        struct EventSpec
         {
             SimpleCallback cb_read;
             SimpleCallback cb_prio;
@@ -185,37 +185,37 @@ namespace senf {
 
             int epollMask() const;
         };
-	
-	/** \brief Timer event specification
-	    \internal */
-	struct TimerSpec
-	{
-	    TimerSpec() : timeout(), cb() {}
+
+        /** \brief Timer event specification
+            \internal */
+        struct TimerSpec
+        {
+            TimerSpec() : timeout(), cb() {}
             TimerSpec(unsigned long long timeout_, TimerCallback cb_)
                 : timeout(timeout_), cb(cb_) {}
 
-	    bool operator< (TimerSpec const & other) const
-		{ return timeout > other.timeout; }
-	    
-	    unsigned long long timeout;
-	    TimerCallback cb;
-	};
-        
+            bool operator< (TimerSpec const & other) const
+                { return timeout > other.timeout; }
+
+            unsigned long long timeout;
+            TimerCallback cb;
+        };
+
         typedef std::map<int,EventSpec> FdTable;
-	typedef std::priority_queue<TimerSpec> TimerQueue;
+        typedef std::priority_queue<TimerSpec> TimerQueue;
 
         FdTable fdTable_;
-	TimerQueue timerQueue_;
+        TimerQueue timerQueue_;
         int epollFd_;
         bool terminate_;
     };
 
     /** \brief Default file descriptor accessor
-	
-	retrieve_filehandle() provides the Scheduler with support for explicit file descriptors as
-	file handle argument.
 
-	\relates Scheduler
+        retrieve_filehandle() provides the Scheduler with support for explicit file descriptors as
+        file handle argument.
+
+        \relates Scheduler
      */
     int retrieve_filehandle(int fd);
 
@@ -230,6 +230,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

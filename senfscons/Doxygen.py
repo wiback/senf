@@ -182,7 +182,7 @@ def DoxySourceScan(node, env, path):
    dep_add_keys = (
       '@INCLUDE', 'HTML_HEADER', 'HTML_FOOTER', 'TAGFILES', 'INPUT_FILTER'
    )
-   
+
    default_file_patterns = (
       '*.c', '*.cc', '*.cxx', '*.cpp', '*.c++', '*.java', '*.ii', '*.ixx',
       '*.ipp', '*.i++', '*.inl', '*.h', '*.hh ', '*.hxx', '*.hpp', '*.h++',
@@ -212,7 +212,7 @@ def DoxySourceScan(node, env, path):
             for f in files:
                filename = os.path.normpath(os.path.join(root, f))
                if ( reduce(lambda x, y: x or fnmatch(f, y),
-                           file_patterns, False) 
+                           file_patterns, False)
                     and not reduce(lambda x, y: x or fnmatch(f, y),
                                    exclude_patterns, False) ):
                   sources.append(filename)
@@ -316,7 +316,7 @@ def DoxyGenerator(source, target, env, for_signature):
    # If for any referenced tagfile no url can be found, 'installdox'
    # will *not* be called and a warning about the missing url is
    # generated.
-   
+
    if data.get('GENERATE_HTML','YES').upper() == "YES":
       output_dir = os.path.normpath(os.path.join( source[0].dir.abspath,
                                                   data.get("OUTPUT_DIRECTORY","."),
@@ -336,7 +336,7 @@ def DoxyGenerator(source, target, env, for_signature):
             args.append("-l %s@%s" % ( os.path.basename(tagfile), url ))
       if args:
          actions.append(env.Action('cd %s && ./installdox %s' % (output_dir, " ".join(args))))
-   
+
    actions.append(env.Action([ "touch $TARGETS" ]))
 
    return actions

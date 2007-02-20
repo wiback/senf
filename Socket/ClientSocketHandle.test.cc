@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -65,14 +65,14 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
             sl::test::SomeWritePolicy
             >::policy OtherSocketPolicy;
         typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
-    
+
         BOOST_CHECKPOINT("Copy-constructing socket handle");
         OtherSocketHandle osh (myh);
         BOOST_CHECKPOINT("Assigning socket handle");
         osh = myh;
         typedef sl::ClientSocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
         BOOST_CHECKPOINT("static_casting socket handle");
-        SomeSocketHandle ssh = 
+        SomeSocketHandle ssh =
             sl::static_socket_cast<SomeSocketHandle>(osh);
         BOOST_CHECK_NO_THROW( sl::dynamic_socket_cast<SomeSocketHandle>(osh) );
         typedef sl::ClientSocketHandle<sl::MakeSocketPolicy<
@@ -135,5 +135,8 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

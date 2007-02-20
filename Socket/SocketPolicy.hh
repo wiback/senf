@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -12,7 +12,7 @@
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
@@ -24,20 +24,20 @@
     \brief Policy Framework public header
 
     \todo We should probably remove BufferingPolicy from the
-	interface, it does not make much sense (how did I come to
-	include it ??)
-    
+        interface, it does not make much sense (how did I come to
+        include it ??)
+
     \todo Do we want to support separate read and write policies. This
-	allows to treat pipes within this framework however, is this
-	worth the effort?
+        allows to treat pipes within this framework however, is this
+        worth the effort?
 
     \idea Creating a new Socket will create 4 (!) new instances (The
-	handle, the body, the policy and the protocol) of which 3
-	(argh) (body, policy and protocol) live on the heap. This is
-	expensive. We should convert all the policy classes to
-	singletons and assign the same instance to all socket bodies
-	with the same policy. This would reduce the number of heap
-	allocations per socket handle to two.
+        handle, the body, the policy and the protocol) of which 3
+        (argh) (body, policy and protocol) live on the heap. This is
+        expensive. We should convert all the policy classes to
+        singletons and assign the same instance to all socket bodies
+        with the same policy. This would reduce the number of heap
+        allocations per socket handle to two.
  */
 
 /** \defgroup policy_group The Policy Framework
@@ -52,26 +52,26 @@
     minimal functionality. All further functionality is relayed to a
     policy class, or more precisely, to a group of policy classes, one
     for each policy axis. The policy axis are
-    
+
     <dl>
     <dt><em>addressingPolicy</em></dt>
     <dd>configures, whether a socket is
     addressable and if so, configures the address type</dd>
-    
+
     <dt><em>framingPolicy</em></dt>
     <dd>configures the type of framing the socket provides: either no
     framing providing a simple i/o stream or packet framing</dd>
-    
+
     <dt><em>communicationPolicy</em></dt>
     <dd>configures,if and how the communication partner is
-    selected</dd> 
-    
+    selected</dd>
+
     <dt><em>readPolicy</em></dt>
     <dd>configures the readability of the socket</dd>
-    
+
     <dt><em>writePolicy</em></dt>
     <dd>configures the writability of the socket</dd>
-    
+
     <dt><em>bufferingPolicy</em></dt>
     <dd>configures, if and how buffering is configured for a socket</dd>
     </dl>
@@ -99,21 +99,21 @@
     Two SocketHandle's with different policies can be \e
     compatible. If they are, the more derived SocketHandle can be
     converted (assigned to) the more basic SocketHandle.
-    
+
     \section policy_group_details The Policy Framework Classes
 
     In the following discussion we will use the following conventions:
     \li \e Policy is one or \c AddressingPolicy, \c FramingPolicy, \c
-	CommunicationPolicy, \c ReadPolicy, \c WritePolicy or \c
-	BufferingPolicy
+        CommunicationPolicy, \c ReadPolicy, \c WritePolicy or \c
+        BufferingPolicy
     \li \e socketPolicy is any socket policy (that is, an
-	instantiation of the SocketPolicy template)
+        instantiation of the SocketPolicy template)
     \li \e trait is an any policy class (that is, any class derived
-	from one of the axis base classes)
+        from one of the axis base classes)
 
     Each axis is comprised of a number of classes and templates (all
     in namespace senf of course):
-    
+
     <dl>
     <dt>\e Policy \c Base (ex: AddressingPolicyBase)</dt>
     <dd>Baseclass of all policies in this axis</dd>
@@ -132,7 +132,7 @@
     <dt>\c If \e Policy \c IsNot < \e socketPolicy, \e trait > (ex: IfAddressingPolicyIsNot)</dt>
     <dd>The inverse of above</dd>
     </dl>
-    
+
     These classes form the basis of the policy framework. To bind the
     policy axis together, there are some more classes and templates.
 
@@ -191,7 +191,7 @@
     specify the call signature not the way, the member must be defined
     (FileHandle really is not a FileHandle but an arbitrary
     SocketHandle).
-    
+
     If the existence of a member depends on other policies, you should
     use the <code>If</code><i>SomePolicy</i><code>Is</code> and
     <code>If</code><i>SomePolicy</i><code>IsNot</code> templates to
@@ -199,12 +199,12 @@
     policy:
 
     \code
-      struct ExampleAddressingPolicy 
+      struct ExampleAddressingPolicy
       {
-	  template <class Policy>
-	  void connect(senf::SocketHandle<Policy> handle, Address & addr,
-		       typename senf::IfCommmunicationPolicyIs<
-			   Policy, senf::ConnectedCommunicationPolicy>::type * = 0);
+          template <class Policy>
+          void connect(senf::SocketHandle<Policy> handle, Address & addr,
+                       typename senf::IfCommmunicationPolicyIs<
+                           Policy, senf::ConnectedCommunicationPolicy>::type * = 0);
       };
     \endcode
 
@@ -256,162 +256,162 @@ namespace senf {
     // be adjusted accordingly)
 
     /** \brief List all policy axis
-	
-	\internal
 
-	This define symbol is used to configure the policy axis. The
-	base class for each of these axis must be defined explicitly
-	(e.g. AddressingPolicyBase). The implementation files will
-	then automatically generate all the other classes from this
-	list.
+        \internal
 
-	\see policy_group
+        This define symbol is used to configure the policy axis. The
+        base class for each of these axis must be defined explicitly
+        (e.g. AddressingPolicyBase). The implementation files will
+        then automatically generate all the other classes from this
+        list.
+
+        \see policy_group
      */
-#   define SENF_SOCKET_POLICIES			\
-	(AddressingPolicy)			\
-	(FramingPolicy)				\
-	(CommunicationPolicy)			\
-	(ReadPolicy)				\
-	(WritePolicy)				\
-	(BufferingPolicy)
+#   define SENF_SOCKET_POLICIES                 \
+        (AddressingPolicy)                      \
+        (FramingPolicy)                         \
+        (CommunicationPolicy)                   \
+        (ReadPolicy)                            \
+        (WritePolicy)                           \
+        (BufferingPolicy)
 
     // Wer define these classes explicitly (and not with some macro
     // magic) because
     // a) AddressingPolicyBase is different from all the others
     // b) We want to document each one explicitly
-    
+
     /** \brief Policy defining socket addressing
 
-	AddressingPolicyBase is the baseclass of all addressing policy
-	classes. When defining a new addressing policy, the following
-	members can be defined. All methods must be static.
+        AddressingPolicyBase is the baseclass of all addressing policy
+        classes. When defining a new addressing policy, the following
+        members can be defined. All methods must be static.
 
-	<table class="senf">
-	<tr><td>typedef</td> <td><tt>Address</tt></td>					 <td>Address type</td></tr>
-	<tr><td>method</td>  <td><tt>void local(FileHandle, Address &)</tt></td>	 <td>Get local socket address</td></tr>
-	<tr><td>method</td>  <td><tt>void peer(FileHandle, Address &)</tt></td>		 <td>Get remote socket address</td></tr>
-	<tr><td>method</td>  <td><tt>void bind(FileHandle, Address const &)</tt></td>	 <td>Bind socket to local address</td></tr>
-	<tr><td>method</tr>  <td><tt>void connect(FileHandle, Address const &)</tt></td> <td>Connect to remote address</td></tr>
-	</table>
+        <table class="senf">
+        <tr><td>typedef</td> <td><tt>Address</tt></td>                                   <td>Address type</td></tr>
+        <tr><td>method</td>  <td><tt>void local(FileHandle, Address &)</tt></td>         <td>Get local socket address</td></tr>
+        <tr><td>method</td>  <td><tt>void peer(FileHandle, Address &)</tt></td>          <td>Get remote socket address</td></tr>
+        <tr><td>method</td>  <td><tt>void bind(FileHandle, Address const &)</tt></td>    <td>Bind socket to local address</td></tr>
+        <tr><td>method</tr>  <td><tt>void connect(FileHandle, Address const &)</tt></td> <td>Connect to remote address</td></tr>
+        </table>
 
-	\see policy_group
+        \see policy_group
      */
     struct AddressingPolicyBase
     {
-	virtual ~AddressingPolicyBase() {}
-	
-	typedef GenericSockAddr Address;
+        virtual ~AddressingPolicyBase() {}
+
+        typedef GenericSockAddr Address;
     };
 
     /** \brief Policy defining the framing format
 
-	This policy does not define any operations since it does have
-	no influence on any method signature. It does however affect
-	the semantics of the \c read() and \c write() operations.
+        This policy does not define any operations since it does have
+        no influence on any method signature. It does however affect
+        the semantics of the \c read() and \c write() operations.
 
-	\note This policy axis probably only has two sensible statess:
-	StreamFramingPolicy and DatagramFramingPolicy.
+        \note This policy axis probably only has two sensible statess:
+        StreamFramingPolicy and DatagramFramingPolicy.
 
-	\see policy_group
+        \see policy_group
      */
-    struct FramingPolicyBase 
+    struct FramingPolicyBase
     {
-	virtual ~FramingPolicyBase() {}
+        virtual ~FramingPolicyBase() {}
     };
 
     /** \brief Policy defining, how peers are selected
 
-	The CommunicationPolicy may define two members:
+        The CommunicationPolicy may define two members:
 
-	<table class="senf">
-	<tr><td>method</td> <td><tt>void listen(FileHandle, unsigned backlog)</tt></td> <td>Switch socket into listening state</td></tr>
-	<tr><td>method</td> <td><tt>int accept(FileHandle, Address &)</tt></td>		<td>Accept a new connection</td></tr>
-	</table>
-	
-	The \c listen member is straight forward. The \c accept() member
-	must return a new file descriptor (which will be used to
-	create a new SocketHandle of the correct type). Additionally,
-	accept() should only be defined, if the Addressing policy is
-	not \c NoAddressingPolicy (which together with
-	ConnectedCommunicationPolicy would identify a point-to-point
-	link with fixed communication partners).
+        <table class="senf">
+        <tr><td>method</td> <td><tt>void listen(FileHandle, unsigned backlog)</tt></td> <td>Switch socket into listening state</td></tr>
+        <tr><td>method</td> <td><tt>int accept(FileHandle, Address &)</tt></td>         <td>Accept a new connection</td></tr>
+        </table>
 
-	\note This Policy only has two meaningful states:
-	ConnectedCommunicationPolicy and
-	UnconnectedCommunicationPolicy. It is probably not sensible to
-	define a new CommunicationPolicy type.
+        The \c listen member is straight forward. The \c accept() member
+        must return a new file descriptor (which will be used to
+        create a new SocketHandle of the correct type). Additionally,
+        accept() should only be defined, if the Addressing policy is
+        not \c NoAddressingPolicy (which together with
+        ConnectedCommunicationPolicy would identify a point-to-point
+        link with fixed communication partners).
 
-	\see policy_group
+        \note This Policy only has two meaningful states:
+        ConnectedCommunicationPolicy and
+        UnconnectedCommunicationPolicy. It is probably not sensible to
+        define a new CommunicationPolicy type.
+
+        \see policy_group
      */
     struct CommunicationPolicyBase
     {
-	virtual ~CommunicationPolicyBase() {}
+        virtual ~CommunicationPolicyBase() {}
     };
 
     /** \brief Policy defining the readability
 
-	The ReadPolicy defines, wether the socket is readable. It
-	may define two members:
+        The ReadPolicy defines, wether the socket is readable. It
+        may define two members:
 
-	<table class="senf">
-	<tr><td>method</td> <td><tt>unsigned read(FileHandle, char * buffer, unsigned size)</tt></td>		     <td>read data from socket</td></tr>
-	<tr><td>method</td> <td><tt>unsigned readfrom(FileHandle, char * buffer, unsigned size, Address &)</tt></td> <td>read data from unconnected socket</td></tr>
-	</table>
+        <table class="senf">
+        <tr><td>method</td> <td><tt>unsigned read(FileHandle, char * buffer, unsigned size)</tt></td>                <td>read data from socket</td></tr>
+        <tr><td>method</td> <td><tt>unsigned readfrom(FileHandle, char * buffer, unsigned size, Address &)</tt></td> <td>read data from unconnected socket</td></tr>
+        </table>
 
-	The second member should only be enabled if the communication
-	policy is UnconnectedCommunication (otherwise it does not make
-	sense since the communication partner is fixed) (see
-	AddressingPolicyBase on how to do this).
+        The second member should only be enabled if the communication
+        policy is UnconnectedCommunication (otherwise it does not make
+        sense since the communication partner is fixed) (see
+        AddressingPolicyBase on how to do this).
 
-	\note This Policy only has two meaningful states:
-	ReadablePolicy and NotReadablePolicy. It probably does not
-	make sense to define new read policy types.
+        \note This Policy only has two meaningful states:
+        ReadablePolicy and NotReadablePolicy. It probably does not
+        make sense to define new read policy types.
 
-	\see policy_group
+        \see policy_group
      */
     struct ReadPolicyBase
     {
-	virtual ~ReadPolicyBase() {}
+        virtual ~ReadPolicyBase() {}
     };
 
     /** \brief Policy defining the writability
 
-	The WritePolicy defines, wether the socket is writable. It may
-	define two members:
+        The WritePolicy defines, wether the socket is writable. It may
+        define two members:
 
-	<table class="senf">
-	<tr><td>method</td> <td><tt>unsigned write(FileHandle, char * buffer, unsigned size)</tt></td>		    <td>read data from socket</td></tr>
-	<tr><td>method</td> <td><tt>unsigned writeto(FileHandle, char * buffer, unsigned size, Address &)</tt></td> <td>read data from unconnected socket</td></tr>
-	</table>
+        <table class="senf">
+        <tr><td>method</td> <td><tt>unsigned write(FileHandle, char * buffer, unsigned size)</tt></td>              <td>read data from socket</td></tr>
+        <tr><td>method</td> <td><tt>unsigned writeto(FileHandle, char * buffer, unsigned size, Address &)</tt></td> <td>read data from unconnected socket</td></tr>
+        </table>
 
-	The second member should only be enabled if the communication
-	policy is UnconnectedCommunication (otherwise it does not make
-	sense since the communication partner is fixed) (see
-	AddressingPolicyBase on how to do this).
+        The second member should only be enabled if the communication
+        policy is UnconnectedCommunication (otherwise it does not make
+        sense since the communication partner is fixed) (see
+        AddressingPolicyBase on how to do this).
 
-	\note This Policy only has two meaningful states:
-	WritablePolicy and NotWritablePolicy. It probably does not
-	make sense to define new write policy types.
+        \note This Policy only has two meaningful states:
+        WritablePolicy and NotWritablePolicy. It probably does not
+        make sense to define new write policy types.
 
-	\see policy_group
+        \see policy_group
      */
     struct WritePolicyBase
     {
-	virtual ~WritePolicyBase() {}
+        virtual ~WritePolicyBase() {}
     };
-    
+
     /** \brief Policy defining the buffering interface
 
-	The BufferingPolicy defines the buffer handling of the
-	socket. It may provide the follogin members:
-	
-	\see policy_group
+        The BufferingPolicy defines the buffer handling of the
+        socket. It may provide the follogin members:
+
+        \see policy_group
      */
     struct BufferingPolicyBase
     {
-	virtual ~BufferingPolicyBase() {}
+        virtual ~BufferingPolicyBase() {}
     };
-    
+
     // The implementation file will for each Policy declared above
     // define the following (SomePolicy is one of the above):
     //
@@ -433,19 +433,19 @@ namespace senf {
     // The following stub definitions are only visible to doxygen
 
     /** \brief Alias of AddressingPolicyBase for better readability
-	\see \ref policy_group
+        \see \ref policy_group
      */
     typedef AddressingPolicyBase UnspecifiedAddressingPolicy;
-    
-    /** \brief Check single policy axis
-	
-	This template is an example of the \e Policy \c Is family of
-	tempalte metafunctions. It will check, wether \c Trait is a
-	valid compatible Policy class of \c SocketPolicy. \c Trait
-	must be derived from AddressingPolicyBase (respectively \i
-	Policy \c Base). 
 
-	\see \ref policy_group
+    /** \brief Check single policy axis
+
+        This template is an example of the \e Policy \c Is family of
+        tempalte metafunctions. It will check, wether \c Trait is a
+        valid compatible Policy class of \c SocketPolicy. \c Trait
+        must be derived from AddressingPolicyBase (respectively \i
+        Policy \c Base).
+
+        \see \ref policy_group
      */
     template <class SocketPolicy, class Trait>
     struct AddressingPolicyIs
@@ -453,21 +453,21 @@ namespace senf {
 
     /** \brief Enable template overload depending on policy value
 
-	This template is an exmaple of the \c If \e Policy \c Is
-	family of templates. It is used like <a class="ext"
-	href="http://www.boost.org/libs/utility/enable_if.html">Boost.enable_if</a>
-	to enable a templated overload only, if the AddressingPolicy
-	of \e Policy is compatible with \c Trait (that is the
-	AddressingPolicy of \c Policy is derived from \c Trait).
+        This template is an exmaple of the \c If \e Policy \c Is
+        family of templates. It is used like <a class="ext"
+        href="http://www.boost.org/libs/utility/enable_if.html">Boost.enable_if</a>
+        to enable a templated overload only, if the AddressingPolicy
+        of \e Policy is compatible with \c Trait (that is the
+        AddressingPolicy of \c Policy is derived from \c Trait).
 
-	\see policy_group
+        \see policy_group
      */
     template <class SocketPolicy, class Trait>
     struct IfAddressingPolicyIs
     {};
 
     /** \brief Inversion of \c IfAddressingPolicyIs
-	\see policy_group
+        \see policy_group
      */
     template <class SocketPolicy, class Trait>
     struct IfAddressingPolicyIsNot
@@ -475,75 +475,75 @@ namespace senf {
 
     /** \brief Baseclass of all SocketPolicies
 
-	\internal
+        \internal
 
-	This class provides the baseclass of all socket policies
-	(bundles). It serves two purposes: 
-	\li It allows us to easily identify a socket policy bundle by
-	    checking a classes baseclass.
-	\li It provides an abstract (virtual) interface to access the
-	    policy axes
+        This class provides the baseclass of all socket policies
+        (bundles). It serves two purposes:
+        \li It allows us to easily identify a socket policy bundle by
+            checking a classes baseclass.
+        \li It provides an abstract (virtual) interface to access the
+            policy axes
 
-	\see policy_group
+        \see policy_group
      */
     struct SocketPolicyBase
     {
-	/** \brief Polymorphic access to policy axes
-	    
-	    This is an example of a policy axes accessor. It returns a
-	    reference to the policy axes used by the conrecte protocol
-	    bundle. This reference can then be checked using RTTI
-	    information.
-	 */
-	AddressingPolicyBase const & theAddressingPolicy() const = 0;
+        /** \brief Polymorphic access to policy axes
+
+            This is an example of a policy axes accessor. It returns a
+            reference to the policy axes used by the conrecte protocol
+            bundle. This reference can then be checked using RTTI
+            information.
+         */
+        AddressingPolicyBase const & theAddressingPolicy() const = 0;
     };
 
     /** \brief Collection of policy classes
-	
-	The SocketPolicy template defines the complete Policy used by
-	the socket library. It contains one policy class for each
-	policy axis. This template takes one policy from each axis as
-	it's template arguments (this example implementation only has
-	AddressingPolicy as an argument).
 
-	A SocketPolicy can be complete or incomplete. An incomplete
-	SocketPolicy will have at least one axis set to \c Undefined
-	\e Policy (or a generic derived class which is used to group
-	some other policies but does not (completely) define the
-	policy behavior). A complete SocketPolicy will have a
-	concrete definition of the desired behavior for each policy
-	axis.
+        The SocketPolicy template defines the complete Policy used by
+        the socket library. It contains one policy class for each
+        policy axis. This template takes one policy from each axis as
+        it's template arguments (this example implementation only has
+        AddressingPolicy as an argument).
 
-	\see policy_group
+        A SocketPolicy can be complete or incomplete. An incomplete
+        SocketPolicy will have at least one axis set to \c Undefined
+        \e Policy (or a generic derived class which is used to group
+        some other policies but does not (completely) define the
+        policy behavior). A complete SocketPolicy will have a
+        concrete definition of the desired behavior for each policy
+        axis.
+
+        \see policy_group
      */
     template < class AddressingPolicy >
     struct SocketPolicy
     {
-	/** \brief Check dynamic policy compatibility
+        /** \brief Check dynamic policy compatibility
 
-	    This method will check the socket policy \a other against
-	    this policy. It will check, wether \a other is a base
-	    policy (or the same) of this policy. This check is done
-	    against the \e dynamic type of \a other using RTTI. It
-	    will throw \c std::bad_cast, if the policy is not
-	    compatible.
+            This method will check the socket policy \a other against
+            this policy. It will check, wether \a other is a base
+            policy (or the same) of this policy. This check is done
+            against the \e dynamic type of \a other using RTTI. It
+            will throw \c std::bad_cast, if the policy is not
+            compatible.
 
-	    \param[in] other SocketPolicy to check
-	    \throws std::bad_cast if \a other is not a compatible
-		policy
-	 */
-	static void checkBaseOf(SocketPolicyBase const & other);
+            \param[in] other SocketPolicy to check
+            \throws std::bad_cast if \a other is not a compatible
+                policy
+         */
+        static void checkBaseOf(SocketPolicyBase const & other);
     };
-    
-    /** \brief Metafunction to create SocketPolicy
-	
-	This template metafunction simplifies the creation of a
-	SocketPolicy instantiation. It takes any number (that is up to
-	6) of Policy classes as arguments in any Order. It will create
-	a SocketPolicy from these policy classes. Any axis not
-	specified will be left as \c Unspecified \e Policy. 
 
-	\see policy_group
+    /** \brief Metafunction to create SocketPolicy
+
+        This template metafunction simplifies the creation of a
+        SocketPolicy instantiation. It takes any number (that is up to
+        6) of Policy classes as arguments in any Order. It will create
+        a SocketPolicy from these policy classes. Any axis not
+        specified will be left as \c Unspecified \e Policy.
+
+        \see policy_group
      */
     template <class Arg1, class Arg2, class ArgN>
     struct MakeSocketPolicy
@@ -551,19 +551,19 @@ namespace senf {
 
     /** \brief Check policy compatibility
 
-	This tempalte metafunction checks, wether the SocketPolicy \c
-	Derived is more specialized than \c Base (and therefore a
-	SocketHandle with policy \c Derived is convertible to a
-	SocketHandle with policy \c Base).
+        This tempalte metafunction checks, wether the SocketPolicy \c
+        Derived is more specialized than \c Base (and therefore a
+        SocketHandle with policy \c Derived is convertible to a
+        SocketHandle with policy \c Base).
 
-	The metafunction will return true (that is inherits from \c
-	boost::true_type, see the <a class="ext"
-	href="http://www.boost.org/libs/mpl/doc/index.html">Boost.MPL</a>
-	library documentation for more information) if each policy
-	class in \c Base is a baseclass of (or the same as) the
-	corresponding policy class in \c Derived.
+        The metafunction will return true (that is inherits from \c
+        boost::true_type, see the <a class="ext"
+        href="http://www.boost.org/libs/mpl/doc/index.html">Boost.MPL</a>
+        library documentation for more information) if each policy
+        class in \c Base is a baseclass of (or the same as) the
+        corresponding policy class in \c Derived.
 
-	\see policy_group
+        \see policy_group
      */
     template <class Base, class Derived>
     struct SocketPolicyIsBaseOf
@@ -584,5 +584,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

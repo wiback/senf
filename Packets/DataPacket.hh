@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -55,7 +55,7 @@ namespace senf {
     private:
         template <class Arg>
         DataPacket(Arg const & arg);
-        
+
         virtual void v_nextInterpreter() const;
         virtual void v_finalize();
         virtual void v_dump(std::ostream & os) const;
@@ -75,5 +75,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

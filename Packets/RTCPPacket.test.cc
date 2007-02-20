@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -40,23 +40,23 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
 {
 
     // RTCP RR (no RB)
-    unsigned char data_1[] = { 
-                             0x80, 0xc8, 0x00, 0x06, 
-                             0xe5, 0x70, 0xaa, 0x18, 
+    unsigned char data_1[] = {
+                             0x80, 0xc8, 0x00, 0x06,
+                             0xe5, 0x70, 0xaa, 0x18,
                              0xc7, 0xc2, 0xb2, 0x00,
                              0xc3, 0xd7, 0x0e, 0x96,
                              0x00, 0x00, 0x00, 0x00,
                              0x00, 0x00, 0x00, 0x01,
                              0x00, 0x00, 0x0d, 0xc8
-				                             
-                           };                       
+
+                           };
 
     typedef unsigned char * iterator_1;
     Parse_RTCP<iterator_1> p_1(data_1);
 
     BOOST_CHECK_EQUAL( p_1.version(),            2u          );
     BOOST_CHECK_EQUAL( p_1.padding(),            0           );
-    BOOST_CHECK_EQUAL( p_1.count(),              0u          );    
+    BOOST_CHECK_EQUAL( p_1.count(),              0u          );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_1.payloadType()), 200u );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_1.length()), 0x0006u );
 
@@ -70,9 +70,9 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
 
 
     /// \todo RTCP RR
-    unsigned char data_2[] = { 
-                             0x82, 0xc8, 0x00, 0x06, 
-                             0xe5, 0x70, 0xaa, 0x18, 
+    unsigned char data_2[] = {
+                             0x82, 0xc8, 0x00, 0x06,
+                             0xe5, 0x70, 0xaa, 0x18,
                              0xc7, 0xc2, 0xb2, 0x00,
                              0xc3, 0xd7, 0x0e, 0x96,
                              0x00, 0x00, 0x00, 0x00,
@@ -90,15 +90,15 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
                              0x09, 0x10, 0x11, 0x12,
                              0x13, 0x14, 0x15, 0x16,
                              0x20, 0x21, 0x22, 0x23
-				                             
-                           };  
+
+                           };
 
     typedef unsigned char * iterator_2;
     Parse_RTCP<iterator_2> p_2(data_2);
 
     BOOST_CHECK_EQUAL( p_2.version(),            2u          );
     BOOST_CHECK_EQUAL( p_2.padding(),            0           );
-    BOOST_CHECK_EQUAL( p_2.count(),              2u          );    
+    BOOST_CHECK_EQUAL( p_2.count(),              2u          );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_2.payloadType()), 200u );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_2.length()), 0x0006u );
 
@@ -112,7 +112,7 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
 
     BOOST_CHECK_EQUAL( p_2.rr().rbVec().size(),    0x02u  );
 
- 
+
     BOOST_CHECK_EQUAL( p_2.rr().rbVec().begin()->ssrc(),     0x01020304u  );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_2.rr().rbVec().begin()->fragLost()), 0x05u );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_2.rr().rbVec().begin()->cnpl()[0]), 0x06u );
@@ -148,10 +148,10 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
 
 
     // RTCP SR
-    unsigned char data_3[] = { 
-                             0x82, 0xc9, 0x00, 0x06, 
-                             0xe5, 0x70, 0xaa, 0x18, 
-                             
+    unsigned char data_3[] = {
+                             0x82, 0xc9, 0x00, 0x06,
+                             0xe5, 0x70, 0xaa, 0x18,
+
                              0x99, 0x02, 0x03, 0x04,
                              0x05, 0x06, 0x07, 0x08,
                              0x09, 0x10, 0x11, 0x12,
@@ -163,22 +163,22 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
                              0x09, 0x10, 0x11, 0x12,
                              0x13, 0x14, 0x15, 0x16,
                              0x20, 0x21, 0x22, 0x23
-				                             
-                           };  
+
+                           };
 
     typedef unsigned char * iterator_3;
     Parse_RTCP<iterator_3> p_3(data_3);
 
     BOOST_CHECK_EQUAL( p_3.version(),            2u          );
     BOOST_CHECK_EQUAL( p_3.padding(),            0           );
-    BOOST_CHECK_EQUAL( p_3.count(),              2u          );    
+    BOOST_CHECK_EQUAL( p_3.count(),              2u          );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_3.payloadType()), 201u );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_3.length()), 0x0006u );
 
     BOOST_CHECK_EQUAL( p_3.sr().ssrc(),           0xe570aa18u );
     BOOST_CHECK_EQUAL( p_3.sr().rbVec().size(),    0x02u  );
 
- 
+
     typedef unsigned char * iterator;
     typedef Parse_UIntField     < 3, 8, iterator >    Parse_Count;
     typedef Parse_Vector        < Parse_RTCP_RB<>, Parse_Count, iterator > Parse_rbVec;
@@ -203,21 +203,21 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
 
     /// \todo RTCP SDES
 
-    unsigned char data_4[] = { 
-                             0x81, 0xca, 0x00, 0x04, 
-                             0xe5, 0x70, 0xaa, 0x18, 
-                             0x01, 0x09, 0x39, 0x30, 
-                             0x31, 0x31, 0x33, 0x35, 
+    unsigned char data_4[] = {
+                             0x81, 0xca, 0x00, 0x04,
+                             0xe5, 0x70, 0xaa, 0x18,
+                             0x01, 0x09, 0x39, 0x30,
+                             0x31, 0x31, 0x33, 0x35,
                              0x37, 0x36, 0x37, 0x00
-				                             
-                           }; 
+
+                           };
 
     typedef unsigned char * iterator_4;
-    Parse_RTCP<iterator_4> p_4(data_4); 
+    Parse_RTCP<iterator_4> p_4(data_4);
 
     BOOST_CHECK_EQUAL( p_4.version(),            2u          );
     BOOST_CHECK_EQUAL( p_4.padding(),            0           );
-    BOOST_CHECK_EQUAL( p_4.count(),              1u          );    
+    BOOST_CHECK_EQUAL( p_4.count(),              1u          );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_4.payloadType()), 202u );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_4.length()), 0x0004u );
 
@@ -232,7 +232,7 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
  // BOOST_CHECK( p_4.sdes().chunkList()[0].itemList().check(data_4+20) );
  // BOOST_CHECK_EQUAL(p.sdes().chunkList()[0].chunkList().size(),  1);
 
-//item 
+//item
 //     typeField(), 0x01u
 //     length(), 0x09u
 //     desc(), 0x393031313335373637u
@@ -240,21 +240,21 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
 #endif
 
 
-   // RTCP BYE 
-   unsigned char data_5[] = { 
-                             0x82, 0xcb, 0x00, 0x06, 
-                                    
+   // RTCP BYE
+   unsigned char data_5[] = {
+                             0x82, 0xcb, 0x00, 0x06,
+
                              0x01, 0x02, 0x03, 0x04,
                              0x05, 0x06, 0x07, 0x08
-                             				                             
-                           };  
+
+                           };
 
     typedef unsigned char * iterator_5;
     Parse_RTCP<iterator_5> p_5(data_5);
 
     BOOST_CHECK_EQUAL( p_5.version(),            2u          );
     BOOST_CHECK_EQUAL( p_5.padding(),            0           );
-    BOOST_CHECK_EQUAL( p_5.count(),              2u          );    
+    BOOST_CHECK_EQUAL( p_5.count(),              2u          );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_5.payloadType()), 203u );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_5.length()), 0x0006u );
 
@@ -264,29 +264,29 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
     BOOST_CHECK_EQUAL( p_5.bye().ssrcVec()[1],     0x05060708u  );
 
 
-   // RTCP APP 
-   unsigned char data_6[] = { 
-                             0x82, 0x7b, 0x00, 0x05, 
-                                    
+   // RTCP APP
+   unsigned char data_6[] = {
+                             0x82, 0x7b, 0x00, 0x05,
+
                              0x01, 0x02, 0x03, 0x04,
                              0x05, 0x06, 0x07, 0x08,
                              0x09, 0x10, 0x11, 0x12,
                              0x00, 0x00, 0x00, 0x08
-                             				                             
-                           };  
+
+                           };
 
     typedef unsigned char * iterator_6;
     Parse_RTCP<iterator_6> p_6(data_6);
 
     BOOST_CHECK_EQUAL( p_6.version(),              2u           );
     BOOST_CHECK_EQUAL( p_6.padding(),              0            );
-    BOOST_CHECK_EQUAL( p_6.count(),                2u           );    
+    BOOST_CHECK_EQUAL( p_6.count(),                2u           );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_6.payloadType()), 123u );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_6.length()), 0x0005u );
 
     BOOST_CHECK_EQUAL( p_6.app().ssrc(),           0x01020304u  );
-    BOOST_CHECK_EQUAL( p_6.app().name(),           0x05060708u  );  
-#if 0    
+    BOOST_CHECK_EQUAL( p_6.app().name(),           0x05060708u  );
+#if 0
     BOOST_CHECK_EQUAL( p_6.app().appData().size(), 2u           );
 #endif
     BOOST_CHECK_EQUAL( p_6.app().appData()[0],     0x09101112u  );
@@ -294,26 +294,26 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_parser)
 
 }
 
-		      
+
 BOOST_AUTO_UNIT_TEST(rtcpPacket_packet)
 {
 #if 0
-    unsigned char data_1[] = { 
-                             0x80, 0xc8, 0x00, 0x06, 
-                             0xe5, 0x70, 0xaa, 0x18, 
+    unsigned char data_1[] = {
+                             0x80, 0xc8, 0x00, 0x06,
+                             0xe5, 0x70, 0xaa, 0x18,
                              0xc7, 0xc2, 0xb2, 0x00,
                              0xc3, 0xd7, 0x0e, 0x96,
                              0x00, 0x00, 0x00, 0x00,
                              0x00, 0x00, 0x00, 0x01,
                              0x00, 0x00, 0x0d, 0xc8
-				                             
-                           };   
+
+                           };
 
     RTCPPacket::ptr p_1 (Packet::create<RTCPPacket>(data_1, data_1+sizeof(data_1)));
 
     BOOST_CHECK_EQUAL( p_1->version(),            2u          );
     BOOST_CHECK_EQUAL( p_1->padding(),            0           );
-    BOOST_CHECK_EQUAL( p_1->count(),              0u          );    
+    BOOST_CHECK_EQUAL( p_1->count(),              0u          );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_1->payloadType()), 200u );
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p_1->length()), 0x0006u );
 
@@ -325,7 +325,7 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_packet)
     BOOST_CHECK_EQUAL(p_1->rr().spcount(),        0x01u       );
     BOOST_CHECK_EQUAL(p_1->rr().socount(),        0x0dc8u     );
 #endif
-   
+
 }
 
 
@@ -335,5 +335,8 @@ BOOST_AUTO_UNIT_TEST(rtcpPacket_packet)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

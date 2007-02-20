@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -65,7 +65,7 @@ prefix_ unsigned senf::LLSocketAddress::arptype()
     const
 {
     /** \todo make sure, that the value really is in network byte
-	order */
+        order */
     return ntohs(addr_.sll_hatype);
 }
 
@@ -73,7 +73,7 @@ prefix_ unsigned senf::LLSocketAddress::pkttype()
     const
 {
     /** \todo make sure, that the value really is in network byte
-	order */
+        order */
     return ntohs(addr_.sll_pkttype);
 }
 
@@ -111,5 +111,8 @@ prefix_ unsigned senf::LLSocketAddress::sockaddr_len()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

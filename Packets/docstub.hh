@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -35,7 +35,7 @@ namespace boost {
     template <class Derived, class Value, class Traversal, class Reference> struct iterator_facade {};
     template <class T> struct intrusive_ptr { T * ptr; };
     template <class T> struct shared_ptr { T * ptr; };
-    
+
 }
 
 namespace std {
@@ -43,7 +43,7 @@ namespace std {
     struct exception {};
     template <class T> struct vector { T * elements; };
     template <class T> struct list { T * elements; };
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -55,5 +55,8 @@ namespace std {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

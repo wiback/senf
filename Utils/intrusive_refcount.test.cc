@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -36,7 +36,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    struct Tester 
+    struct Tester
         : public senf::intrusive_refcount
     {
         typedef boost::intrusive_ptr<Tester> ptr;
@@ -65,7 +65,7 @@ BOOST_AUTO_UNIT_TEST(intrusive_refcount)
         BOOST_CHECK_EQUAL(p->refcount(),2u);
         BOOST_CHECK_EQUAL(p->is_shared(),true);
     }
-    
+
     BOOST_CHECK_EQUAL(Tester::counter,1u);
     BOOST_CHECK_EQUAL(p->refcount(),1u);
     BOOST_CHECK_EQUAL(p->is_shared(),false);
@@ -80,5 +80,8 @@ BOOST_AUTO_UNIT_TEST(intrusive_refcount)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

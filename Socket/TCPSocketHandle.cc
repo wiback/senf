@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -114,7 +114,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_server()
 }
 
 prefix_ void senf::TCPv6SocketProtocol::init_server(INet6SocketAddress const & address,
-						    unsigned backlog)
+                                                    unsigned backlog)
     const
 {
     init_server();
@@ -137,5 +137,8 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::TCPv6SocketProtocol::clone()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

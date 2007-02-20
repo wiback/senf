@@ -1,4 +1,4 @@
-// Copyright (C) 2007 
+// Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -47,16 +47,16 @@ namespace senfscons {
     framework however semi-automatically creates the necessary cross-reference information to
     cross-link the different module documentations. The unit-tests as well are run on a per-module
     basis.
-    
+
     \section Standard Build Configuration
 
     When the \c SConsctruct and \c SConscript files are build using the default SENFSCons helpers,
     by default all libraries and binaries are built. Some additional targets are
 
     <dl><dt><tt>scons all_tests</tt></dt><dd>Build all unit tests</dd>
-    
+
     <dt><tt>scons all_docs</tt></dt><dd>Build documentation of all modules</dd>
-    
+
     <dt><tt>scons all</tt></dt><dd>Build all targets including binaries, libraries, documentation,
     tests andpossible further targets </dd>
 
@@ -72,8 +72,8 @@ namespace senfscons {
     directory.
 
     \see
-	\ref sconstruct \n
-	\ref sconscript \n
+        \ref sconstruct \n
+        \ref sconscript \n
         \ref sconfig  \n
         \ref builder
  */
@@ -91,14 +91,14 @@ namespace senfscons {
     The general structure of the \c SConstruct file is
     \li make the \c senfscons directory accessible
     \li tell the SENFScons infrastructure, which frameworks you intend to use and let SENFScons
-	built a construction environment for you
+        built a construction environment for you
     \li configure the construction environment
     \li load module sconscript file
     \li specify global build targets
 
     The first part, <i>making the \c senfscons directory accessible</i> will always stay the
     same. See the template file for how this is done.
-    
+
     <i>Simplifying the use of more complex frameworks</i> is one of the most important things why
     SENFScons exists. If you only use very simple libraries, the configuration is quite
     simple. However for more complex frameworks the configuration can get quite complicated. This is
@@ -125,9 +125,9 @@ namespace senfscons {
     software. Just remember, you can use all of python and all of SCons here. SENFScons just
     provides some additional helpers to make things simpler and more concise.
 
-    \see 
-	\ref use \n
-	\ref target
+    \see
+        \ref use \n
+        \ref target
  */
 
 /** \page sconscript The Module 'SConscript' Files
@@ -143,14 +143,14 @@ namespace senfscons {
     targets of every module.
 
     \see
-	\ref target
+        \ref target
  */
 
 /** \page sconfig The 'SConfig' File
-    
+
     To configure the build environment to the local environment, a \c SConfig file may be created in
     the projects root directory. The supported parameters are
-    
+
     <dl><dt>\c CXX</dt><dd>C++ compiler to use</dd>
     <dt>\c EXTRA_DEFINES</dt><dd>preprocessor symbols to be defined locally</dd>
     <dt>\c EXTRA_LIBS</dt><dd>additional libraries needed for a local build</dd></dl>
@@ -165,7 +165,8 @@ namespace senfscons {
 // mode: c++
 // fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // mode: flyspell
 // mode: auto-fill
-// ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -43,7 +43,7 @@ namespace senf {
     template <class I=nil,class P=nil> struct Parse_RTCP_BYE;
     template <class I=nil,class P=nil> struct Parse_RTCP_APP;
 
-    
+
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_RTCP : public ParserBase<Iterator,IPacket>
     {
@@ -53,13 +53,13 @@ namespace senf {
 
         Parse_RTCP() {}
         Parse_RTCP(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
-                     
+
         ///////////////////////////////////////////////////////////////////////////
 
         typedef Parse_UIntField  < 0, 2, Iterator >    Parse_Version;
         typedef Parse_Flag       < 2, Iterator >       Parse_P;
         typedef Parse_UIntField  < 3, 8, Iterator >    Parse_Count;
-        typedef Parse_UInt8      < Iterator >          Parse_PT;     
+        typedef Parse_UInt8      < Iterator >          Parse_PT;
         typedef Parse_UInt16     < Iterator >          Parse_Length;
 
         typedef Parse_RTCP_RR    < Iterator >          Parse_RTCP_RR;
@@ -77,9 +77,9 @@ namespace senf {
         Parse_RTCP_RR   rr()   { return Parse_RTCP_RR   (this->i()  ); }
         Parse_RTCP_SR   sr()   { return Parse_RTCP_SR   (this->i()  ); }
         Parse_RTCP_SDES sdes() { return Parse_RTCP_SDES (this->i()  ); }
-        Parse_RTCP_BYE  bye()  { return Parse_RTCP_BYE  (this->i()  ); }      
+        Parse_RTCP_BYE  bye()  { return Parse_RTCP_BYE  (this->i()  ); }
         Parse_RTCP_APP  app()  { return Parse_RTCP_APP  (this->i()  ); }
- 
+
         ///////////////////////////////////////////////////////////////////////////
 
         unsigned int bytes() const { return 32 + (4 * length()); }
@@ -99,10 +99,10 @@ namespace senf {
         Parse_RTCP_RB(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
 
         ///////////////////////////////////////////////////////////////////////////
-        
+
         typedef Parse_UInt32        < Iterator >                    Parse_32bit;
-        typedef Parse_UInt8         < Iterator >                    Parse_8bit; 
-        typedef Parse_Array         < 3, Parse_UInt8<>, Iterator >  Parse_24bit; 
+        typedef Parse_UInt8         < Iterator >                    Parse_8bit;
+        typedef Parse_Array         < 3, Parse_UInt8<>, Iterator >  Parse_24bit;
 
         Parse_32bit   ssrc()        const { return Parse_32bit(this->i()   ); }
         Parse_8bit    fragLost()    const { return Parse_8bit(this->i()+4  ); }
@@ -110,10 +110,10 @@ namespace senf {
         Parse_32bit   ehsnr()       const { return Parse_32bit(this->i()+8 ); }
         Parse_32bit   LSR()         const { return Parse_32bit(this->i()+12); }
         Parse_32bit   DLSR()        const { return Parse_32bit(this->i()+16); }
- 
+
         ///////////////////////////////////////////////////////////////////////////
 
-	static unsigned int bytes()  { return 20; }
+        static unsigned int bytes()  { return 20; }
 
     };
 
@@ -126,21 +126,21 @@ namespace senf {
 
         Parse_RTCP_RR() {}
         Parse_RTCP_RR(Iterator const & i) : Parse_RTCP<Iterator,IPacket>(i) {}
-       
+
         ///////////////////////////////////////////////////////////////////////////
-        
+
         typedef Parse_UInt32        < Iterator > Parse_32bit;
         typedef Parse_Vector        < Parse_RTCP_RB<>, typename Parse_RTCP<Iterator,IPacket>::Parse_Count, Iterator > Parse_rbVec;
 
         Parse_32bit   ssrc()        const { return Parse_32bit(this->i()+ 4  ); }
-      
+
         Parse_32bit   ntp_msb()     const { return Parse_32bit(this->i()+ 8  ); }
         Parse_32bit   ntp_lsb()     const { return Parse_32bit(this->i()+ 12 ); }
         Parse_32bit   timestamp()   const { return Parse_32bit(this->i()+ 16 ); }
         Parse_32bit   spcount()     const { return Parse_32bit(this->i()+ 20 ); }
         Parse_32bit   socount()     const { return Parse_32bit(this->i()+ 24 ); }
 
-        Parse_rbVec   rbVec()      const { return Parse_rbVec(this->count(), this->i() + 28 ); } 
+        Parse_rbVec   rbVec()      const { return Parse_rbVec(this->count(), this->i() + 28 ); }
 
     };
 
@@ -153,15 +153,15 @@ namespace senf {
 
         Parse_RTCP_SR() {}
         Parse_RTCP_SR(Iterator const & i) : Parse_RTCP<Iterator,IPacket>(i) {}
-       
+
         ///////////////////////////////////////////////////////////////////////////
-        
+
         typedef Parse_UInt32        < Iterator > Parse_32bit;
         typedef Parse_Vector        < Parse_RTCP_RB<>, typename Parse_RTCP<Iterator,IPacket>::Parse_Count, Iterator > Parse_rbVec;
 
         Parse_32bit   ssrc()        const { return Parse_32bit(this->i()+ 4  ); }
         Parse_rbVec   rbVec()      const { return Parse_rbVec(this->count(), this->i() + 8 ); }
- 
+
     };
 
     template  <class Iterator=nil, class IPacket=nil>
@@ -174,15 +174,15 @@ namespace senf {
         Parse_RTCP_item() {}
         Parse_RTCP_item(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
 
-        
+
         ///////////////////////////////////////////////////////////////////////////
-        
+
         typedef Parse_UInt8         < Iterator >                    Parse_8bit;
         typedef Parse_UInt32        < Iterator >                    Parse_32bit;
         typedef Parse_Vector        < Parse_UInt8<>, Parse_UInt8<>, Iterator >  Parse_desc;
-        
+
         Parse_8bit   typeField()    const { return Parse_8bit(this->i()   ); }
-        Parse_8bit   length()       const { return Parse_8bit(this->i()+1 ); }       
+        Parse_8bit   length()       const { return Parse_8bit(this->i()+1 ); }
         Parse_desc   desc()         const { return Parse_desc(this->length(), this->i()+2 ); }
 
 
@@ -203,16 +203,16 @@ namespace senf {
 
         Parse_RTCP_chunk() {}
         Parse_RTCP_chunk(Iterator const & i) : Parse_RTCP<Iterator,IPacket>(i) {}
-       
+
         ///////////////////////////////////////////////////////////////////////////
-        
+
         typedef Parse_UInt32     < Iterator > Parse_32bit;
         typedef Parse_UInt8      < Iterator > Parse_8bit;
         typedef Parse_ListS      < Parse_RTCP_item<>, Sentinel_EmptyList<Parse_RTCP_item<> >, Iterator, IPacket>   Parse_itemList;
-        
+
         Parse_32bit    ssrc()      const { return Parse_32bit(this->i() ); }
         Parse_itemList itemList()  const { return Parse_itemList(this->i() + 4 ); }
- 
+
     };
 
 
@@ -225,13 +225,13 @@ namespace senf {
 
         Parse_RTCP_SDES() {}
         Parse_RTCP_SDES(Iterator const & i) : Parse_RTCP<Iterator,IPacket>(i) {}
-       
+
         ///////////////////////////////////////////////////////////////////////////
- 
+
         typedef Parse_Vector     < Parse_RTCP_chunk<>, typename Parse_RTCP<Iterator,IPacket>::Parse_Count, Iterator > Parse_chunkVec;
-        
+
         Parse_chunkVec   chunkVec()       const { return Parse_chunkVec(this->count(), this->i()+4 ); }
- 
+
     };
 
     template <class Iterator, class IPacket>
@@ -243,9 +243,9 @@ namespace senf {
 
         Parse_RTCP_BYE() {}
         Parse_RTCP_BYE(Iterator const & i) : Parse_RTCP<Iterator,IPacket>(i) {}
-   
+
         ///////////////////////////////////////////////////////////////////////////
-        
+
         typedef Parse_Vector        < Parse_UInt32<>, typename Parse_RTCP<Iterator,IPacket>::Parse_Count, Iterator >  Parse_ssrcVec;
 
         Parse_ssrcVec ssrcVec()      const { return Parse_ssrcVec(this->count(), this->i()+4 ); }
@@ -263,11 +263,11 @@ namespace senf {
         Parse_RTCP_APP() {}
         Parse_RTCP_APP(Iterator const & i) : Parse_RTCP<Iterator,IPacket>(i) {}
 
-        
+
         ///////////////////////////////////////////////////////////////////////////
-        
+
         typedef Parse_UInt32       < Iterator >       Parse_32bit;
-        typedef Parse_Vector       < Parse_UInt32<>, typename Parse_RTCP<Iterator,IPacket>::Parse_Length, Iterator >  Parse_dataVec;        
+        typedef Parse_Vector       < Parse_UInt32<>, typename Parse_RTCP<Iterator,IPacket>::Parse_Length, Iterator >  Parse_dataVec;
 
         Parse_32bit   ssrc()       const { return Parse_32bit(this->i()+4); }
         Parse_32bit   name()       const { return Parse_32bit(this->i()+8); }
@@ -278,11 +278,11 @@ namespace senf {
 
 
     class RTCPPacket
-        : public Packet, 
+        : public Packet,
           public Parse_RTCP<Packet::iterator, RTCPPacket>
     {
         using Packet::registerInterpreter;
-       
+
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
@@ -298,7 +298,7 @@ namespace senf {
 
         friend class Packet;
     };
- 
+
 }
 
 
@@ -311,5 +311,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

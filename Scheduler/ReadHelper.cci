@@ -16,7 +16,7 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-// Copyright (C) 2006 
+// Copyright (C) 2006
 
 /** \file
     \brief ReadHelper inline non-template implementation */
@@ -41,4 +41,8 @@ prefix_ std::string::size_type senf::ReadUntil::operator()(std::string const & d
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

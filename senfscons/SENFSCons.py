@@ -5,7 +5,7 @@
 # \brief Build helpers and utilities
 #
 # The SENFSCons package contains a number of build helpers and
-# utilities which are used to simplify commmon tasks. 
+# utilities which are used to simplify commmon tasks.
 #
 # The utitlities of this package are grouped into:
 # <dl><dt>\ref use</dt><dd>help using complex environments and
@@ -28,7 +28,7 @@ import  SCons.Options, SCons.Environment, SCons.Script.SConscript, SCons.Node.FS
 ## \defgroup use Predefined Framework Configurators
 #
 # The following framework configurators are used in the top level \c
-# SConstruct file to simplify more complex configurations. 
+# SConstruct file to simplify more complex configurations.
 #
 # Each of the framework configurators introduces additional
 # configuration parameters to \ref sconfig
@@ -247,7 +247,7 @@ def GlobSources(exclude=[]):
     testSources = glob.glob("*.test.cc")
     sources = [ x for x in glob.glob("*.cc") if x not in testSources and x not in exclude ]
     return (sources, testSources)
-    
+
 ## \brief Add generic standard targets for every module
 #
 # This target helper should be called in the top-level \c SConstruct file
@@ -255,7 +255,7 @@ def GlobSources(exclude=[]):
 # targets. Right now, these are
 # \li clean up \c .sconsign, \c .sconf_temp and \c config.log on
 #   <tt>scons -c all</tt>
-# 
+#
 # \ingroup target
 def StandardTargets(env):
     env.Clean(env.Alias('all'), [ '.sconsign', '.sconf_temp', 'config.log' ])
@@ -399,7 +399,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
             xref = os.path.join(xmlnode.dir.abspath,type+".xml")
             xref_pp = env.Command(xref+'i', [ xref, os.path.join(basedir,'xrefxtract.xslt'), xmlnode ],
                                   [ "test -s $SOURCE && xsltproc -o $TARGET" +
-                                    " --stringparam module $MODULE" + 
+                                    " --stringparam module $MODULE" +
                                     " --stringparam type $TYPE" +
                                     " ${SOURCES[1]} $SOURCE || touch $TARGET" ],
                                   MODULE = xmlnode.dir.dir.dir.name,
@@ -452,7 +452,7 @@ def DoxyXRef(env, docs=None,
         commands.append(
             "sed -e 's/\\$$title/$TITLE/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[%d]} >> $TARGET"
             % (HTML_HEADER and 3 or 2))
-    
+
     xref = env.Command("doc/html/xref.html", sources, commands,
                        TITLE = TITLE)
 

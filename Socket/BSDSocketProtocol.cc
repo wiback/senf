@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -61,10 +61,10 @@ prefix_ struct timeval senf::BSDSocketProtocol::timestamp()
     const
 {
     /** \bug Check, why this fails with ENOFILE (!!!!) at least when
-	called from a tcp socket.Maybe this is only available for
-	datagram sockets ? That could make sense from the description
-	(what is the last packet passed to the user on a stream
-	socket?)  Further investigation necessary ... */
+        called from a tcp socket.Maybe this is only available for
+        datagram sockets ? That could make sense from the description
+        (what is the last packet passed to the user on a stream
+        socket?)  Further investigation necessary ... */
     struct timeval tv;
     if (::ioctl(body().fd(), SIOCGSTAMP, &tv) < 0)
         throw SystemException(errno);
@@ -98,5 +98,8 @@ prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

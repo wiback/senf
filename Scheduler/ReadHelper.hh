@@ -16,7 +16,7 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-// Copyright (C) 2006 
+// Copyright (C) 2006
 
 /** \file
     \brief ReadHelper public header */
@@ -39,126 +39,126 @@
 namespace senf {
 
 
-    /** \brief Asyncronous reading helper 
+    /** \brief Asyncronous reading helper
 
-	This class provides a simple asynchronous reading facility. This helper will register with
-	the Scheduler and read incoming data. It will collect the data until a specific numbner of
-	bytes has been read or some Predicate evaluated on the data read thus far signals end of
-	data.
+        This class provides a simple asynchronous reading facility. This helper will register with
+        the Scheduler and read incoming data. It will collect the data until a specific numbner of
+        bytes has been read or some Predicate evaluated on the data read thus far signals end of
+        data.
 
-	The ReadHelper accepts the same flexible file handle interfaces as the Scheduler.
-	
-	The callback must take a ReadHelper::ptr argument. Using this ReadHelper instance, the
-	callback can access the data read or retrieve state information.
+        The ReadHelper accepts the same flexible file handle interfaces as the Scheduler.
 
-	The ReadHelper separates the data into two parts: data() will return the matched data,
-	tail() will return any surplus data already read. If you don't specify a predicate, tail()
-	will always be empty (there may however some data be left in the socket input buffer after
-	the ReadHelper returns).
+        The callback must take a ReadHelper::ptr argument. Using this ReadHelper instance, the
+        callback can access the data read or retrieve state information.
 
-	The predicate is any class instance with an <tt>operator(std::string const &)</tt>. This
-	operator is called, whenever some data has been read. If the data is not yet complete, the
-	predicate must return \c std::string::npos. If the ReadHelper should stop readeing more
-	data, the predicate must return the number of bytes which are to be considered 'matched'.
+        The ReadHelper separates the data into two parts: data() will return the matched data,
+        tail() will return any surplus data already read. If you don't specify a predicate, tail()
+        will always be empty (there may however some data be left in the socket input buffer after
+        the ReadHelper returns).
 
-	\todo Move all not Handle dependent members to a ReadHandleBase class
-	\todo Add an optional <tt>std::string const & tail</tt> argument to the constructors which
-	    takes the tail() of a previous ReadHelper instance.
+        The predicate is any class instance with an <tt>operator(std::string const &)</tt>. This
+        operator is called, whenever some data has been read. If the data is not yet complete, the
+        predicate must return \c std::string::npos. If the ReadHelper should stop readeing more
+        data, the predicate must return the number of bytes which are to be considered 'matched'.
+
+        \todo Move all not Handle dependent members to a ReadHandleBase class
+        \todo Add an optional <tt>std::string const & tail</tt> argument to the constructors which
+            takes the tail() of a previous ReadHelper instance.
      */
     template <class Handle>
     class ReadHelper
-	: public senf::intrusive_refcount
+        : public senf::intrusive_refcount
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-	
-	typedef boost::intrusive_ptr<ReadHelper> ptr; ///< Smart pointer type for this class
-	typedef boost::function<void (ptr)> Callback; ///< Callback type
+
+        typedef boost::intrusive_ptr<ReadHelper> ptr; ///< Smart pointer type for this class
+        typedef boost::function<void (ptr)> Callback; ///< Callback type
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-	static ptr dispatch(Handle handle, std::string::size_type maxSize, 
-			    Callback callback); ///< Register new ReadHandler instance
+        static ptr dispatch(Handle handle, std::string::size_type maxSize,
+                            Callback callback); ///< Register new ReadHandler instance
                                         /**< The registered Callback will be called after \a maxSize
-					     bytes have been read or EOF or some error is
-					     encountered.
-					     \post The returned ReadHelper instance is registered
-						 with the Scheduler to handle read events.
-					     \param[in] handle file descriptor or handle providing
-						 the Handle interface defined above.
-					     \param[in] maxSize maximum number of bytes to read
-					     \param[in] cb callback
-					     \returns Smart pointer to new ReadHelper instance */
+                                             bytes have been read or EOF or some error is
+                                             encountered.
+                                             \post The returned ReadHelper instance is registered
+                                                 with the Scheduler to handle read events.
+                                             \param[in] handle file descriptor or handle providing
+                                                 the Handle interface defined above.
+                                             \param[in] maxSize maximum number of bytes to read
+                                             \param[in] cb callback
+                                             \returns Smart pointer to new ReadHelper instance */
 
-	template <class Predicate>
-	static ptr dispatch(Handle handle, std::string::size_type maxSize, Predicate const & predicate,
-			    Callback callback); ///< Register new ReadHelper instance
+        template <class Predicate>
+        static ptr dispatch(Handle handle, std::string::size_type maxSize, Predicate const & predicate,
+                            Callback callback); ///< Register new ReadHelper instance
                                         /**< The registered Callback will be called after the \a
-					     predicate returns a Value other than \c
-					     std::string::npos, \a maxSize bytes have been read, or
-					     EOF or some error condition is encountered.
-					     \post The returned ReadHelper instance is registered
-						 with the Scheduler to handle read events
-.					     \param[in] handle file descriptor or handle providing
-						 the Handle interface defined above.
-					     \param[in] maxSize maximum number of bytes to read
-					     \param[in] predicate predicate to check
-					     \param[in] cb callback
-					     \returns smart pointer to new ReadHelper instance */
+                                             predicate returns a Value other than \c
+                                             std::string::npos, \a maxSize bytes have been read, or
+                                             EOF or some error condition is encountered.
+                                             \post The returned ReadHelper instance is registered
+                                                 with the Scheduler to handle read events
+.                                            \param[in] handle file descriptor or handle providing
+                                                 the Handle interface defined above.
+                                             \param[in] maxSize maximum number of bytes to read
+                                             \param[in] predicate predicate to check
+                                             \param[in] cb callback
+                                             \returns smart pointer to new ReadHelper instance */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-	Handle handle() const;          ///< Access the handle object
-	unsigned maxSize() const;       ///< Return maximum number of bytes to be read
+        Handle handle() const;          ///< Access the handle object
+        unsigned maxSize() const;       ///< Return maximum number of bytes to be read
 
-	std::string const & data() const; ///< return data read
-	std::string const & tail() const; ///< return data read but not matched by the predicate
+        std::string const & data() const; ///< return data read
+        std::string const & tail() const; ///< return data read but not matched by the predicate
 
-	bool complete() const;          ///< Check wether the read has completed successfully
-	bool error() const;             ///< Check for error condition
-	void throw_error() const;       ///< If an error occured, throw it
+        bool complete() const;          ///< Check wether the read has completed successfully
+        bool error() const;             ///< Check for error condition
+        void throw_error() const;       ///< If an error occured, throw it
 
-	void revoke();                  ///< Remove the ReadHelper from the scheduler
+        void revoke();                  ///< Remove the ReadHelper from the scheduler
 
     protected:
 
     private:
-	struct InternalPredicate;
+        struct InternalPredicate;
 
         ReadHelper(Handle handle, unsigned maxSize,  InternalPredicate * predicate, Callback cb);
 
-	static void dispatchProcess(ptr helper, Handle handle, senf::Scheduler::EventId event);
-	void process(Handle handle, senf::Scheduler::EventId event);
-	void done();
+        static void dispatchProcess(ptr helper, Handle handle, senf::Scheduler::EventId event);
+        void process(Handle handle, senf::Scheduler::EventId event);
+        void done();
 
-	Handle handle_;
-	std::string::size_type maxSize_;
-	boost::scoped_ptr<InternalPredicate> predicate_;
-	Callback callback_;
+        Handle handle_;
+        std::string::size_type maxSize_;
+        boost::scoped_ptr<InternalPredicate> predicate_;
+        Callback callback_;
 
-	std::string data_;
-	std::string tail_;
-	int errno_;
-	bool complete_;
+        std::string data_;
+        std::string tail_;
+        int errno_;
+        bool complete_;
     };
 
     /** \brief ReadHelper predicate matching an arbitrary string
-	
-	This predicate will terminate the read when the data read matches a given fixed string. All
-	data up to and including the string matched is considered to be part of the data() portion,
-	everything after the matched string is placed into the tail().
 
-	\see ReadHelper
+        This predicate will terminate the read when the data read matches a given fixed string. All
+        data up to and including the string matched is considered to be part of the data() portion,
+        everything after the matched string is placed into the tail().
+
+        \see ReadHelper
      */
     struct ReadUntil
     {
         ReadUntil(std::string const & target);
-	std::string::size_type operator()(std::string const & data);
-	std::string target;
+        std::string::size_type operator()(std::string const & data);
+        std::string target;
     };
 
 }
@@ -173,6 +173,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

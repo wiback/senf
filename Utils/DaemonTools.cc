@@ -40,11 +40,11 @@ prefix_ void senf::daemonize()
 {
     int pid = fork();
     if (pid < 0)
-	throw senf::SystemException("fork",errno);
+        throw senf::SystemException("fork",errno);
     if (pid > 0)
-	::_exit(0);
+        ::_exit(0);
     if (::setsid() < 0)
-	throw senf::SystemException("setsid",errno);
+        throw senf::SystemException("setsid",errno);
 }
 
 prefix_ void senf::redirect_stdio(std::string const & path)
@@ -64,4 +64,8 @@ prefix_ void senf::redirect_stdio(std::string const & path)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

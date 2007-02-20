@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -53,27 +53,27 @@ namespace impl {
 
     template <class Parser, class Iterator>
     bool check(Iterator const & b, Iterator const & e, ParserBase *);
-    
+
     template <class Parser, class Iterator>
     bool check(Iterator const & b, Iterator const & e, void *);
 
     template <class Parser, bool Fixed>
     struct ParserCheck {
         template <class Iterator>
-        static unsigned check(Iterator const & b, Iterator const & e) 
+        static unsigned check(Iterator const & b, Iterator const & e)
             { return Parser::check(b,e); }
     };
-    
+
     template <class Parser>
     struct ParserCheck<Parser,true> {
         template <class Iterator>
         static unsigned check(Iterator const & b, Iterator const & e)
             { return unsigned(e-b) >= Parser::bytes(); }
     };
-    
+
     template <class Parser>
     unsigned min_bytes(ParserBase *);
-    
+
     template <class Parser>
     unsigned min_bytes(void *);
 
@@ -95,5 +95,8 @@ namespace impl {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

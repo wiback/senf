@@ -1,4 +1,4 @@
-// Copyright (C) 2007 
+// Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -49,8 +49,8 @@ BOOST_AUTO_UNIT_TEST(logger)
     SENF_LOG((LogFoo) ("Another log message: " << 10));
 
     SENF_LOG_BLOCK((senf::log::Debug) (senf::log::WARNING) ({
-	log << "Last message";
-	log << " continued here";
+        log << "Last message";
+        log << " continued here";
     }));
 
     BOOST_CHECK_EQUAL( logstream.str(), "Log message\nAnother log message: 10\nLast message continued here\n" );
@@ -64,5 +64,6 @@ BOOST_AUTO_UNIT_TEST(logger)
 // mode: c++
 // fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -57,7 +57,7 @@ prefix_ typename senf::Packet::ptr_t<OuterPacket>::ptr
 senf::Packet::create(Packet::ptr payload)
 {
     /** \todo should I instead of using head() throw away all
-	interpreters before payload? ... probably yes ... */
+        interpreters before payload? ... probably yes ... */
     payload->insert(payload->head()->begin(),min_bytes<OuterPacket>(),0);
     typename ptr_t<OuterPacket>::ptr p (new OuterPacket(PacketOp_set(payload->impl_)));
     p->init();
@@ -84,8 +84,8 @@ senf::Packet::registerInterpreter(raw_container::iterator begin,
         throw TruncatedPacketException();
     typename ptr_t<OtherPacket>::ptr p (
         new OtherPacket(PacketOp_register(begin-impl_->data_.begin(),
-					  end-impl_->data_.begin(),
-					  this)),
+                                          end-impl_->data_.begin(),
+                                          this)),
         false);
     return p;
 }
@@ -148,5 +148,8 @@ prefix_ void senf::Packet::insert(iterator pos, InputIterator f, InputIterator l
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

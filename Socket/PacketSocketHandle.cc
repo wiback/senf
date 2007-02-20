@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -82,7 +82,7 @@ prefix_ void senf::PacketProtocol::promisc(std::string interface, PromiscMode mo
 {
     /** \bug There are some failures here ... need to investigate */
 
-    // The interface is really stupid: as far as i understand, it is possible to 
+    // The interface is really stupid: as far as i understand, it is possible to
     // enable PROMISC and ALLMULTI seperately, however PROMISC is really a superset
     // of ALLMULTI ... grmpf ... therefore we allways set/reset both to implement sane
     // semantics
@@ -127,5 +127,8 @@ prefix_ void senf::PacketProtocol::do_mc_i(std::string interface,
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

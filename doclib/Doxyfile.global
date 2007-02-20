@@ -6,8 +6,8 @@ IMAGE_PATH             = .
 INPUT_FILTER           = "$(TOPDIR)/doclib/filter.pl"
 
 ALIASES                = "fixme=\xrefitem fixme \"Fix\" \"Fixmes\"" \
-			 "idea=\xrefitem idea \"Idea\" \"Ideas\"" \
-			 "implementation=\par \"Implementation note:\""
+                         "idea=\xrefitem idea \"Idea\" \"Ideas\"" \
+                         "implementation=\par \"Implementation note:\""
 REPEAT_BRIEF           = YES
 ALWAYS_DETAILED_SEC    = YES
 MULTILINE_CPP_IS_BRIEF = YES

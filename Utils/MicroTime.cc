@@ -38,7 +38,7 @@ prefix_ senf::MicroTime senf::now()
 {
     struct timeval tv;
     if (gettimeofday(&tv,0) < 0)
-	throw SystemException(errno);
+        throw SystemException(errno);
     return 1000000*MicroTime(tv.tv_sec) + tv.tv_usec;
 }
 
@@ -50,4 +50,8 @@ prefix_ senf::MicroTime senf::now()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

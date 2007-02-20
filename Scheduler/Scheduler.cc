@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -24,7 +24,7 @@
     \brief Scheduler non-inline non-template implementation
 
     \idea Implement signal handling (See source for more discussion
-    about this) 
+    about this)
 
     \idea Multithreading support: To support multithreading, the
     static member Scheduler::instance() must return a thread-local
@@ -50,7 +50,7 @@
 //         // call epoll
 //         // block all relevant signals again
 //     }
-//   
+//
 //     // now handle the event
 //
 // The signal handler is then simply defined as
@@ -123,7 +123,7 @@ prefix_ void senf::Scheduler::do_add(int fd, SimpleCallback const & cb, int even
     memset(&ev,0,sizeof(ev));
     ev.events = i->second.epollMask();
     ev.data.fd = fd;
-    
+
     if (epoll_ctl(epollFd_, action, fd, &ev)<0)
         throw SystemException(errno);
 }
@@ -131,7 +131,7 @@ prefix_ void senf::Scheduler::do_add(int fd, SimpleCallback const & cb, int even
 prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
 {
     FdTable::iterator i (fdTable_.find(fd));
-    if (i == fdTable_.end()) 
+    if (i == fdTable_.end())
         return;
 
     if (eventMask & EV_READ)  i->second.cb_read = 0;
@@ -144,7 +144,7 @@ prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
     memset(&ev,0,sizeof(ev));
     ev.events = i->second.epollMask();
     ev.data.fd = fd;
-    
+
     int action (EPOLL_CTL_MOD);
     if (ev.events==0) {
         action = EPOLL_CTL_DEL;
@@ -173,30 +173,30 @@ prefix_ void senf::Scheduler::process()
     terminate_ = false;
     while (! terminate_) {
 
-	MicroTime timeNow = now();
-	while ( ! timerQueue_.empty() && timerQueue_.top().timeout <= timeNow ) {
-	    timerQueue_.top().cb();
-	    timerQueue_.pop();
-	}
-	if (terminate_) 
-	    return;
-	int timeout = timerQueue_.empty() ? -1 : int((timerQueue_.top().timeout - timeNow)/1000);
-	    
+        MicroTime timeNow = now();
+        while ( ! timerQueue_.empty() && timerQueue_.top().timeout <= timeNow ) {
+            timerQueue_.top().cb();
+            timerQueue_.pop();
+        }
+        if (terminate_)
+            return;
+        int timeout = timerQueue_.empty() ? -1 : int((timerQueue_.top().timeout - timeNow)/1000);
+
         struct epoll_event ev;
         int events = epoll_wait(epollFd_, &ev, 1, timeout);
         if (events<0)
             // Hmm ... man epoll says, it will NOT return with EINTR ??
             throw SystemException(errno);
         if (events==0)
-	    // Timeout .. it will be run when reachiung the top of the loop
+            // Timeout .. it will be run when reachiung the top of the loop
             continue;
-        
+
         FdTable::iterator i = fdTable_.find(ev.data.fd);
         BOOST_ASSERT (i != fdTable_.end() );
-        EventSpec const & spec (i->second); 
+        EventSpec const & spec (i->second);
 
         if (ev.events & EPOLLIN) {
-            BOOST_ASSERT(spec.cb_read); 
+            BOOST_ASSERT(spec.cb_read);
             spec.cb_read(EV_READ);
         }
         else if (ev.events & EPOLLPRI) {
@@ -209,24 +209,24 @@ prefix_ void senf::Scheduler::process()
         }
 
         else if (ev.events & EPOLLHUP) {
-	    if (spec.cb_hup)
-		spec.cb_hup(EV_HUP);
-	    else if (ev.events & EPOLLERR) {
-		/** \fixme This is stupid, if cb_write and cb_read are
-		    the same. The same below. We really have to
-		    exactly define sane semantics of what to do on
-		    EPOLLHUP and EPOLLERR. */
-		if (spec.cb_write) spec.cb_write(EV_HUP);
-		if (spec.cb_read) spec.cb_read(EV_HUP);
-	    }
+            if (spec.cb_hup)
+                spec.cb_hup(EV_HUP);
+            else if (ev.events & EPOLLERR) {
+                /** \fixme This is stupid, if cb_write and cb_read are
+                    the same. The same below. We really have to
+                    exactly define sane semantics of what to do on
+                    EPOLLHUP and EPOLLERR. */
+                if (spec.cb_write) spec.cb_write(EV_HUP);
+                if (spec.cb_read) spec.cb_read(EV_HUP);
+            }
         }
         else if (ev.events & EPOLLERR && ! ev.events & EPOLLHUP) {
-	    if (spec.cb_err)
-		spec.cb_err(EV_ERR);
-	    else {
-		if (spec.cb_write) spec.cb_write(EV_ERR);
-		if (spec.cb_read) spec.cb_read(EV_ERR);
-	    }
+            if (spec.cb_err)
+                spec.cb_err(EV_ERR);
+            else {
+                if (spec.cb_write) spec.cb_write(EV_ERR);
+                if (spec.cb_read) spec.cb_read(EV_ERR);
+            }
         }
 
     }
@@ -238,5 +238,8 @@ prefix_ void senf::Scheduler::process()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

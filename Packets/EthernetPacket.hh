@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -34,7 +34,7 @@
 
 namespace senf {
 
-    
+
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Ethernet : public ParserBase<Iterator,IPacket>
     {
@@ -46,25 +46,25 @@ namespace senf {
         Parse_Ethernet(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
 
         static unsigned bytes() { return 14; }
-        
+
         ///////////////////////////////////////////////////////////////////////////
 
         typedef Parse_Array  < 6, Parse_UInt8<>, Iterator > Parse_MAC;
         typedef Parse_UInt16 < Iterator  >                  Parse_Type;
-        
+
         Parse_MAC  destination() const { return Parse_MAC  (this->i() ); }
         Parse_MAC  source()      const { return Parse_MAC  (this->i() + Parse_MAC::size() ); }
         Parse_Type type()        const { return Parse_Type (this->i() + 2*Parse_MAC::size() ); }
     };
 
     struct EtherTypes {
-	// See http://www.iana.org/assignments/ethernet-numbers
+        // See http://www.iana.org/assignments/ethernet-numbers
         typedef boost::uint16_t key_t;
     };
 
     class EthernetPacket
-        : public Packet, 
-          public Parse_Ethernet<Packet::iterator, EthernetPacket>, 
+        : public Packet,
+          public Parse_Ethernet<Packet::iterator, EthernetPacket>,
           public PacketRegistryMixin<EtherTypes,EthernetPacket>
     {
         using PacketRegistryMixin<EtherTypes,EthernetPacket>::registerInterpreter;
@@ -98,9 +98,9 @@ namespace senf {
         Parse_EthVLan(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
 
         static unsigned bytes() { return 4; }
-        
+
         ///////////////////////////////////////////////////////////////////////////
-        
+
         typedef Parse_UIntField < 0,  3, Iterator > Parse_Priority;
         typedef Parse_Flag          < 3, Iterator > Parse_CFI;
         typedef Parse_UIntField < 4, 16, Iterator > Parse_VLanId;
@@ -149,5 +149,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

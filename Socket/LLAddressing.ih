@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -36,7 +36,7 @@ namespace senf {
 namespace detail {
 
     /** \brief Convert two-char hexbyte representation to numeric value
-	\internal
+        \internal
      */
     struct HexConverter {
         typedef unsigned char result_type;
@@ -49,7 +49,7 @@ namespace detail {
     typedef boost::iterator_range<HexSplitIterator> LLAddressFromStringRange;
 
     /** \brief convert single hex digit to numeric value
-	\internal
+        \internal
      */
     unsigned char hexnibble(char c);
 
@@ -61,5 +61,8 @@ namespace detail {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

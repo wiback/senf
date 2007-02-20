@@ -1,4 +1,4 @@
-// Copyright (C) 2007 
+// Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -48,33 +48,33 @@ namespace senf {
         Parse_IpV6(Iterator const & i) : ParserBase<Iterator,IpV6Packet>(i) {}
 
         static unsigned bytes() { return 40; }
-        
+
         ///////////////////////////////////////////////////////////////////////////
 
-	typedef Parse_UIntField <  0,  4, Iterator > Parse_Version;
-	typedef Parse_UIntField <  4, 12, Iterator > Parse_Class;
-	typedef Parse_UIntField < 12, 32, Iterator > Parse_FlowLabel;
-	typedef Parse_UInt8     <         Iterator > Parse_8bit;
-	typedef Parse_UInt16    <         Iterator > Parse_16bit;
+        typedef Parse_UIntField <  0,  4, Iterator > Parse_Version;
+        typedef Parse_UIntField <  4, 12, Iterator > Parse_Class;
+        typedef Parse_UIntField < 12, 32, Iterator > Parse_FlowLabel;
+        typedef Parse_UInt8     <         Iterator > Parse_8bit;
+        typedef Parse_UInt16    <         Iterator > Parse_16bit;
 
-	typedef Parse_Array < 16, Parse_8bit, Iterator > Parse_Addr;
+        typedef Parse_Array < 16, Parse_8bit, Iterator > Parse_Addr;
 
-	Parse_Version    version()       const { return Parse_Version   (this->i()      ); }
+        Parse_Version    version()       const { return Parse_Version   (this->i()      ); }
         Parse_Class      trafficClass()  const { return Parse_Class     (this->i()      ); }
-	Parse_FlowLabel  flowLabel()     const { return Parse_FlowLabel (this->i()      ); }
-	Parse_16bit      length()        const { return Parse_16bit     (this->i() +  4 ); }
+        Parse_FlowLabel  flowLabel()     const { return Parse_FlowLabel (this->i()      ); }
+        Parse_16bit      length()        const { return Parse_16bit     (this->i() +  4 ); }
         Parse_8bit       nextHeader()    const { return Parse_8bit      (this->i() +  6 ); }
-	Parse_8bit       hopLimit()      const { return Parse_8bit      (this->i() +  7 ); }
+        Parse_8bit       hopLimit()      const { return Parse_8bit      (this->i() +  7 ); }
         Parse_Addr       source()        const { return Parse_Addr      (this->i() +  8 ); }
-	Parse_Addr       destination()   const { return Parse_Addr      (this->i() + 24 ); }
+        Parse_Addr       destination()   const { return Parse_Addr      (this->i() + 24 ); }
     };
 
     class IpV6Packet
-	: public Packet,
-	  public Parse_IpV6<Packet::iterator, IpV6Packet>,
-	  public PacketRegistryMixin<IpTypes, IpV6Packet>
+        : public Packet,
+          public Parse_IpV6<Packet::iterator, IpV6Packet>,
+          public PacketRegistryMixin<IpTypes, IpV6Packet>
     {
-	using PacketRegistryMixin<IpTypes,IpV6Packet>::registerInterpreter;
+        using PacketRegistryMixin<IpTypes,IpV6Packet>::registerInterpreter;
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
@@ -94,7 +94,7 @@ namespace senf {
         friend class Packet;
     };
 
-}    
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "IpV6Packet.cci"
@@ -107,5 +107,6 @@ namespace senf {
 // mode: c++
 // fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -65,7 +65,7 @@ prefix_ void senf::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
                                                                    unsigned len)
 {
     while(1) {
-        if (::connect(handle.fd(),addr,len) < 0) 
+        if (::connect(handle.fd(),addr,len) < 0)
             switch (errno) {
             case EINPROGRESS: {
                 handle.waitWriteable();
@@ -94,5 +94,8 @@ prefix_ void senf::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

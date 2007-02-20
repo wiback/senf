@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -38,12 +38,12 @@ using namespace senf;
 
 BOOST_AUTO_UNIT_TEST(ipV4Packet_parser)
 {
-    unsigned char data[] = { 0x01, 0x02, 0x03, 0x04, 
-			     0x05, 0x06, 0x07, 0x08, 
-			     0x09, 0x0A, 0x0B, 0x0C,   
-                             0x11, 0x12, 0x13, 0x14, 
-			     0x15, 0x16, 0x17, 0x18
-                           };                        
+    unsigned char data[] = { 0x01, 0x02, 0x03, 0x04,
+                             0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C,
+                             0x11, 0x12, 0x13, 0x14,
+                             0x15, 0x16, 0x17, 0x18
+                           };
 
     typedef unsigned char * iterator;
     Parse_IpV4<iterator> p(data);
@@ -63,19 +63,19 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_parser)
     BOOST_CHECK_EQUAL( static_cast<unsigned>(p.crc()), 0x0B0Cu );
     BOOST_CHECK_EQUAL( p.source(),      0x11121314u );
     BOOST_CHECK_EQUAL( p.destination(), 0x15161718u );
-    
+
 }
 
-		      
+
 BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
 {
 
-    unsigned char data[] = { 0x01, 0x02, 0x03, 0x04, 
-			     0x05, 0x06, 0x07, 0x08, 
-			     0x09, 0x0A, 0x0B, 0x0C,   
-                             0x11, 0x12, 0x13, 0x14, 
-			     0x15, 0x16, 0x17, 0x18
-                           };  
+    unsigned char data[] = { 0x01, 0x02, 0x03, 0x04,
+                             0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C,
+                             0x11, 0x12, 0x13, 0x14,
+                             0x15, 0x16, 0x17, 0x18
+                           };
 
     IpV4Packet::ptr p (Packet::create<IpV4Packet>(data, data+sizeof(data)));
 
@@ -106,5 +106,8 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

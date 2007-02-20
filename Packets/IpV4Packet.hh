@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -34,7 +34,7 @@
 
 namespace senf {
 
-    
+
     template <class Iterator=nil, class IpV4Packet=nil>
     struct Parse_IpV4 : public ParserBase<Iterator,IpV4Packet>
     {
@@ -46,7 +46,7 @@ namespace senf {
         Parse_IpV4(Iterator const & i) : ParserBase<Iterator,IpV4Packet>(i) {}
 
         static unsigned bytes() { return 20; }
-        
+
         ///////////////////////////////////////////////////////////////////////////
 
         typedef Parse_UIntField <  0,  4, Iterator > Parse_Version;
@@ -57,8 +57,8 @@ namespace senf {
         typedef Parse_Flag      <  1,     Iterator > Parse_DF;
         typedef Parse_Flag      <  2,     Iterator > Parse_MF;
         typedef Parse_UIntField <  3, 16, Iterator > Parse_Frag;
-        typedef Parse_UInt32    <         Iterator > Parse_32bit;  
-        
+        typedef Parse_UInt32    <         Iterator > Parse_32bit;
+
         Parse_Version  version()     const { return Parse_Version (this->i()      ); }
         Parse_IHL      ihl()         const { return Parse_IHL     (this->i()      ); }
         Parse_8bit     tos()         const { return Parse_8bit    (this->i() + 1  ); }
@@ -69,21 +69,21 @@ namespace senf {
         Parse_MF       mf()          const { return Parse_MF      (this->i() + 6  ); }
         Parse_Frag     frag()        const { return Parse_Frag    (this->i() + 6  ); }
         Parse_8bit     ttl()         const { return Parse_8bit    (this->i() + 8  ); }
-	Parse_8bit     protocol()    const { return Parse_8bit    (this->i() + 9  ); } 
-	Parse_16bit    crc()         const { return Parse_16bit   (this->i() + 10 ); }
-	Parse_32bit    source()      const { return Parse_32bit   (this->i() + 12 ); }
+        Parse_8bit     protocol()    const { return Parse_8bit    (this->i() + 9  ); }
+        Parse_16bit    crc()         const { return Parse_16bit   (this->i() + 10 ); }
+        Parse_32bit    source()      const { return Parse_32bit   (this->i() + 12 ); }
         Parse_32bit    destination() const { return Parse_32bit   (this->i() + 16 ); }
     };
 
     struct IpTypes {
-	// See http://www.iana.org/assignments/protocol-numbers
-	// Also used by IPv6
+        // See http://www.iana.org/assignments/protocol-numbers
+        // Also used by IPv6
         typedef boost::uint16_t key_t;
     };
 
     class IpV4Packet
-        : public Packet, 
-          public Parse_IpV4<Packet::iterator,IpV4Packet>, 
+        : public Packet,
+          public Parse_IpV4<Packet::iterator,IpV4Packet>,
           public PacketRegistryMixin<IpTypes,IpV4Packet>
     {
         using PacketRegistryMixin<IpTypes,IpV4Packet>::registerInterpreter;
@@ -117,5 +117,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

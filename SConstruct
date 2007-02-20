@@ -37,7 +37,7 @@ SConscript(glob.glob("*/SConscript"))
 SENFSCons.StandardTargets(env)
 SENFSCons.GlobalTargets(env)
 SENFSCons.Doxygen(env)
-SENFSCons.DoxyXRef(env, 
+SENFSCons.DoxyXRef(env,
                    HTML_HEADER = '#/doclib/doxy-header-overview.html',
                    HTML_FOOTER = '#/doclib/doxy-footer.html')
 

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -57,14 +57,14 @@
 // ////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     namespace impl { template <class OtherPacket> class PkReg_EntryImpl; }
     namespace impl { class PacketImpl; }
 
     /** \brief Basic interface to all packet facades
 
         \section packet_overview Overview
-        
+
         This class is the base class of all Packets. It implements the
         generic Packet interface and provides the packet management
         framework. senf::Packet manages the necessary memory
@@ -77,7 +77,7 @@ namespace senf {
         automatic.
 
         \image html structure.png Overview
-        
+
         Internally, every Packet references a PacketImpl instance which
         manages the raw packet data and the interpreter list. This raw
         data is interpreted by the concrete Packet derived class
@@ -85,7 +85,7 @@ namespace senf {
         type (i.e. EthernetPacket or UDPPacket).
 
         Packet provides several interfaces:
-        
+
         - Creation of Packet instances: create()
 
         - Access to the chain of interpreters: next(), prev(), head(),
@@ -115,8 +115,8 @@ namespace senf {
         - You must implement a static check() method which validates
           a byte region as your new Packet
 
-        \code        
-            class ExamplePacket 
+        \code
+            class ExamplePacket
                 : public senf::Packet
             {
             public:
@@ -174,7 +174,7 @@ namespace senf {
             {
 
                 // check does not need to be implemented here, it is
-                // inherited from the parser 
+                // inherited from the parser
 
             private:
                 template <class InputIterator>
@@ -292,9 +292,9 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         ///\name Types
         ///@{
-        
+
         /** \brief smart pointer template for all Packet classes
-            
+
             This struct is just a template typedef. It defines the
             smart pointer used for all Packet classes.
          */
@@ -304,11 +304,11 @@ namespace senf {
 
             Every derived class \e must redeclare this member for it's
             derived type:
-            \code 
+            \code
                 typedef ptr_t<DerivedClass>::ptr ptr
             \endcode
          */
-        typedef ptr_t<Packet>::ptr ptr; 
+        typedef ptr_t<Packet>::ptr ptr;
         typedef raw_container::iterator iterator; //!< raw data iterator
         typedef raw_container::size_type size_type;
         typedef raw_container::difference_type difference_type;
@@ -321,7 +321,7 @@ namespace senf {
         ///@{
 
         /** \brief create new Packet
-            
+
             This method is used to create a new Packet. All Packet
             instances are created via this method, they are \e never
             created directly from the Packet derived class.
@@ -349,7 +349,7 @@ namespace senf {
 
         ///\name Interpreter chain
         ///@{
-        
+
         /** \brief get next packet from the interpreter chain
             \return smart pointer to next packet or 0 if last packet */
         ptr next() const;
@@ -362,7 +362,7 @@ namespace senf {
         /** \brief get last packet of the interpreter chain
             \return smart pointer to last packet */
         ptr last() const;
-        
+
         /** \brief first packet of given type after the current packet
             \return smart pointer to first following packet of type \a
                 OtherPacket or 0, if no such packet exists */
@@ -384,17 +384,17 @@ namespace senf {
         /** \brief check, wether the packet is of the given type
             \return true, if packt is of type \a OtherPacket, false
                 otherwise */
-        template <class OtherPacket> bool is() const; 
+        template <class OtherPacket> bool is() const;
         /** \brief cast packet pointer to the given type
             \return a properly cast smart pointer if packet is of type
                 \a OtherPacket. Otherwise return 0 */
-        template <class OtherPacket> typename ptr_t<OtherPacket>::ptr as(); 
+        template <class OtherPacket> typename ptr_t<OtherPacket>::ptr as();
 
         /** \brief replace current packet interpreter
 
             This method will \e replace the current packet facade in
             the interpreter list with a new interpreter given by \a
-            OtherPacket. 
+            OtherPacket.
 
             \attention This invalidates the packet instance \e
             this. You must ensure, not to use the Packet instance any
@@ -414,7 +414,7 @@ namespace senf {
         ///@{
 
         /** \brief begin interator of raw packet data
-            
+
             This iterator allows access to the raw data interpreted by
             the packet facade. This \e includes any header possibly
             interpreted by the derived packet instance. To access the
@@ -424,7 +424,7 @@ namespace senf {
                 data */
         iterator begin() const;
         /** \brief past-the-end iterator of raw packet data
-            
+
             This iterator allows access to the raw data interpreted by
             the packet facade. This \e includes any header possibly
             interpreted by the derived packet instance. To access the
@@ -463,7 +463,7 @@ namespace senf {
             derived packet instance. This method is mostly to be used
             by the derived class implementation and their helper
             classes. */
-        template <class InputIterator> 
+        template <class InputIterator>
         void insert(iterator pos, InputIterator f, InputIterator l, Whence whence = AUTO);
 
         /** \brief erase single byte
@@ -490,7 +490,7 @@ namespace senf {
         ///@{
 
         /** \brief create new interpreter facade for an existing packet
-            
+
             This constructor is called, when a new interpreter is to
             be added to the interpreter chain. The constructor is
             called indirectly from registerInterpreter() or
@@ -500,7 +500,7 @@ namespace senf {
         template <class Operation>
         Packet(Operation const & arg);
         virtual ~Packet();
-        
+
     private:
         /** \brief create next packet interpreter
 
@@ -571,16 +571,16 @@ namespace senf {
         bool release();
         bool unlink();
 
-	struct PacketOp_register;
-	friend class PacketOp_register;
+        struct PacketOp_register;
+        friend class PacketOp_register;
         void i_registerInterpreter(Packet * p) const;
 
-	struct PacketOp_replace;
-	friend class PacketOp_replace;
+        struct PacketOp_replace;
+        friend class PacketOp_replace;
         void i_replaceInterpreter(Packet * p);
 
-	struct PacketOp_set;
-	friend class PacketOp_set;
+        struct PacketOp_set;
+        friend class PacketOp_set;
         void i_setInterpreter(impl::PacketImpl * i);
 
     private:
@@ -624,5 +624,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

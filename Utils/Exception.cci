@@ -26,15 +26,15 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 prefix_  senf::SystemException::SystemException(int err_)
-    : where(0), err(err_) 
+    : where(0), err(err_)
 {
-    init(); 
+    init();
 }
 
 prefix_ senf::SystemException::SystemException(char const * where_, int err_)
-    : where(where_), err(err_) 
-{ 
-    init(); 
+    : where(where_), err(err_)
+{
+    init();
 }
 
 prefix_  senf::SystemException::~SystemException()
@@ -47,4 +47,8 @@ prefix_  senf::SystemException::~SystemException()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -110,7 +110,7 @@ template <class Policy>
 prefix_ typename senf::ServerSocketHandle<Policy>::ClientSocketHandle
 senf::ServerSocketHandle<Policy>::acceptfrom(Address & addr)
 {
-    return ClientSocketHandle(this->protocol().clone(), 
+    return ClientSocketHandle(this->protocol().clone(),
                               Policy::CommunicationPolicy::accept(*this,addr));
 }
 
@@ -160,5 +160,8 @@ prefix_ std::string senf::ServerSocketHandle<Policy>::dumpState(unsigned lod)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

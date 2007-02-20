@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -41,48 +41,48 @@ namespace senf {
 
     /// \addtogroup policy_impl_group
     /// @{
-    
+
     template <class Policy> class ServerSocketHandle;
 
     /** \brief CommunicationPolicy for connected sockets
 
-	The ConnectedCommunicationPolicy provides support for standard BSD socket API based
-	connected communication. It provides the server side listen() and accept() members.
+        The ConnectedCommunicationPolicy provides support for standard BSD socket API based
+        connected communication. It provides the server side listen() and accept() members.
      */
     struct ConnectedCommunicationPolicy : public CommunicationPolicyBase
     {
         static void listen(FileHandle handle, unsigned backlog);
                                         ///< Enable establishing new connections on the socket
                                         /**< \param[in] handle socket handle to enable reception on
-					     \param[in] backlog size of backlog queue
-					     
-					     \fixme listen probably makes no sense without accpept,
-						 so listen() should debend on AddressingPolicy
-						 too. */
+                                             \param[in] backlog size of backlog queue
+
+                                             \fixme listen probably makes no sense without accpept,
+                                                 so listen() should debend on AddressingPolicy
+                                                 too. */
         template <class Policy>
-        static int accept(ServerSocketHandle<Policy> handle, 
+        static int accept(ServerSocketHandle<Policy> handle,
                           typename ServerSocketHandle<Policy>::Address & address,
                           typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type * = 0);
                                         ///< accept a new connection on the socket.
                                         /**< The accept() member will return a new client file
-					     descriptor. This file descriptor will be used by the
-					     ServerSocketHandle implementation to build a new
-					     ClientSocketHandle for the new connection.
-					     
-					     \param[in] handle socket handle to accept connection on
-					     \param[out] address address of newly connected remote
-						 peer
-					     \returns file descriptor of new client socket */
+                                             descriptor. This file descriptor will be used by the
+                                             ServerSocketHandle implementation to build a new
+                                             ClientSocketHandle for the new connection.
+
+                                             \param[in] handle socket handle to accept connection on
+                                             \param[out] address address of newly connected remote
+                                                 peer
+                                             \returns file descriptor of new client socket */
     private:
         static int do_accept(FileHandle handle, struct sockaddr * addr, unsigned len);
     };
 
     /** \brief CommunicationPolicy for unconnected sockets
 
-	This is different from UndefinedCommunicationPolicy (which is the same as
-	CommunicationPolicyBase). This policy class defines the communication policy -- it
-	explicitly states, that the socket does not support connected communication. This
-	effektively disables ther ServerSocketHandle.
+        This is different from UndefinedCommunicationPolicy (which is the same as
+        CommunicationPolicyBase). This policy class defines the communication policy -- it
+        explicitly states, that the socket does not support connected communication. This
+        effektively disables ther ServerSocketHandle.
      */
     struct UnconnectedCommunicationPolicy : public CommunicationPolicyBase
     {};
@@ -101,6 +101,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

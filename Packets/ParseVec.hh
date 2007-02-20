@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -46,13 +46,13 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Parser interface
 
-        template <class I=nil, class P=nil> 
+        template <class I=nil, class P=nil>
         struct rebind { typedef Parse_Vector<Parser,SizeParser,I,P> parser; };
         typedef Iterator byte_iterator;
-        
+
         explicit Parse_Vector(SizeParser const & size);
         Parse_Vector(size_parser const & size, Iterator const & i);
-        
+
         unsigned bytes() const;
         void check(Iterator const & e) const;
         void init() const;
@@ -81,12 +81,12 @@ namespace senf {
 
      private:
         size_parser size_;
-        
+
         template <class P, class SP, class C> friend class Parse_Vector_wrapper;
     };
 
     /** \brief
-        
+
         Holds a reference to the container !
       */
     template <class Parser, class SizeParser, class Container>
@@ -137,24 +137,24 @@ namespace senf {
         ///\name Mutators
         ///@{
 
-        void shift(iterator pos, size_type n=1); 
+        void shift(iterator pos, size_type n=1);
         template <class Value>
-        void insert(iterator pos, Value const & t); 
+        void insert(iterator pos, Value const & t);
         template <class Value>
-        void insert(iterator pos, size_type n, Value const & t); 
+        void insert(iterator pos, size_type n, Value const & t);
         template <class InputIterator>
-        void insert(iterator pos, InputIterator f, InputIterator l); 
-        
-        void erase(iterator pos, size_type n=1); 
-        void erase(iterator f, iterator l); 
-        void clear(); 
+        void insert(iterator pos, InputIterator f, InputIterator l);
+
+        void erase(iterator pos, size_type n=1);
+        void erase(iterator f, iterator l);
+        void clear();
 
         ///@}
 
     protected:
 
     private:
-        
+
         size_type i_;
         size_type size_i_;
         Container & container_;
@@ -171,5 +171,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

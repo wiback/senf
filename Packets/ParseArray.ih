@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -38,26 +38,26 @@ class senf::impl::Parse_Array_iterator
 public:
     Parse_Array_iterator();
     explicit Parse_Array_iterator(Iterator const & i);
-    
+
     // Needed to elide the []-proxy of iterator_facade
     Parser operator[](int i) const;
 
     Iterator raw() const;
 
 protected:
-    
+
 private:
     friend class boost::iterator_core_access;
-    
+
     Parser dereference() const;
     bool equal(Parse_Array_iterator const & other) const;
     int distance_to(Parse_Array_iterator const & other) const;
     void increment();
     void decrement();
     void advance(int n);
-    
+
     Iterator i_;
-};        
+};
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
@@ -65,5 +65,8 @@ private:
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -16,7 +16,7 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-// Copyright (C) 2006 
+// Copyright (C) 2006
 
 /** \file
     \brief ReadHelper internal header */
@@ -32,33 +32,33 @@ namespace senf {
 
 
     /** \brief Abstract predicate interface
-	\internal
+        \internal
      */
     template <class Handle>
     struct ReadHelper<Handle>::InternalPredicate
     {
-	virtual ~InternalPredicate() {}
+        virtual ~InternalPredicate() {}
 
-	/** \brief template to runtime polymorphic barrier for the predicate interface
-	    \internal
+        /** \brief template to runtime polymorphic barrier for the predicate interface
+            \internal
 
-	    \implementation This class will provide a polymorphic
-		wrapper around the non-polymorphic ReadHelper
-		predicate. This is used, so the predicate can be
-		specified as an arbitrary callable object (even a
-		boost::function or a Boost.Lambda expression) without
-		imposing any inheritance relationship on the predicate
-	 */
-	template <class Predicate>
-	struct Dispatcher
-	    : public ReadHelper<Handle>::InternalPredicate
-	{
-	    Dispatcher(Predicate p) : predicate(p) {}
-	    virtual std::string::size_type operator()(std::string const & data);
-	    Predicate predicate;
-	};
+            \implementation This class will provide a polymorphic
+                wrapper around the non-polymorphic ReadHelper
+                predicate. This is used, so the predicate can be
+                specified as an arbitrary callable object (even a
+                boost::function or a Boost.Lambda expression) without
+                imposing any inheritance relationship on the predicate
+         */
+        template <class Predicate>
+        struct Dispatcher
+            : public ReadHelper<Handle>::InternalPredicate
+        {
+            Dispatcher(Predicate p) : predicate(p) {}
+            virtual std::string::size_type operator()(std::string const & data);
+            Predicate predicate;
+        };
 
-	virtual std::string::size_type operator()(std::string const & data) = 0;
+        virtual std::string::size_type operator()(std::string const & data) = 0;
     };
 
 }
@@ -70,4 +70,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

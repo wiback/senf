@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -43,7 +43,7 @@ prefix_ senf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array()
 template <unsigned elements, class Parser, class Iterator, class IPacket>
 prefix_
 senf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array(Iterator const & i)
-    : ParserBase<Iterator,IPacket>(i) 
+    : ParserBase<Iterator,IPacket>(i)
 {}
 
 template <unsigned elements, class Parser, class Iterator, class IPacket>
@@ -202,5 +202,8 @@ senf::impl::Parse_Array_iterator<Parser,Iterator>::advance(int n)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

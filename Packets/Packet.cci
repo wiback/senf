@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -50,13 +50,13 @@ prefix_ senf::impl::PacketImpl::~PacketImpl()
 // PacketImpl::add_ref and PacketImpl::release are only called from
 // intrusive_ptr_add_ref and intrusive_ptr_release
 prefix_ void senf::impl::PacketImpl::add_ref()
-{ 
+{
     ++refcount_;
     SATCOM_PKF_REFC_MSG("] PacketImpl::add_ref (" << this << "): refcount_ = " << refcount_ << "\n");
 }
 
 prefix_ bool senf::impl::PacketImpl::release()
-{ 
+{
     BOOST_ASSERT( refcount_ > 0 );
     --refcount_;
     SATCOM_PKF_REFC_MSG("] PacketImpl::release (" << this << "): refcount_ = " << refcount_ << "\n");
@@ -89,7 +89,7 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, Packet const & packet
 */
 
 // These methods are called by the user codes Packet::ptr's. They
-// refcount both the Packet and the owning PacketImpl. 
+// refcount both the Packet and the owning PacketImpl.
 prefix_ void senf::intrusive_ptr_add_ref(Packet const * p)
 {
     impl::PacketImpl::packet_add_ref(p);
@@ -155,9 +155,9 @@ prefix_ senf::Packet::ptr senf::Packet::head()
 prefix_  senf::Packet::~Packet()
 {
     /** \fixme This is bad ... we cannot check this since this
-	assertion fails at the moment if the Packet constructor throws
-	... hrmpf ... we really need to initialize refcount_ to 0 and
-	remove the 'false' argument to the ptr constructor in create */
+        assertion fails at the moment if the Packet constructor throws
+        ... hrmpf ... we really need to initialize refcount_ to 0 and
+        remove the 'false' argument to the ptr constructor in create */
     // BOOST_ASSERT( !this->refcount_  && !this->impl_ );
     SATCOM_PKF_REFC_MSG("] Packet::~Packet (" << this << ")\n");
 }
@@ -191,5 +191,8 @@ prefix_ bool senf::Packet::unlink()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

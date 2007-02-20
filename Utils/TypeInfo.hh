@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -36,19 +36,19 @@
 namespace senf {
 
     /** \brief Try to return readable type for given type_info
-	
-	This function will try to return a demangled type name for the
-	given type_info object. If the demangling fails, the possibly
-	mangled name (type->name()) will be returned.
 
-	This function depends on the liberty library provided by the
-	linux binutils or binutils-dev packages. It also depends on an
-	internal header file. If the API should change, this header
-	file (which resides in impl/demangle.h) must be updated from
-	the binutils sources.
+        This function will try to return a demangled type name for the
+        given type_info object. If the demangling fails, the possibly
+        mangled name (type->name()) will be returned.
 
-	\param[in] type type_info object
-	\returns type name, possibly demangled
+        This function depends on the liberty library provided by the
+        linux binutils or binutils-dev packages. It also depends on an
+        internal header file. If the API should change, this header
+        file (which resides in impl/demangle.h) must be updated from
+        the binutils sources.
+
+        \param[in] type type_info object
+        \returns type name, possibly demangled
      */
     std::string prettyName(std::type_info const & type);
 
@@ -64,5 +64,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

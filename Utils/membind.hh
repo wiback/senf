@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -33,7 +33,7 @@
           int test(int x);
       };
 
-      Foo * foo = ...; 
+      Foo * foo = ...;
       boost::function<int (int)> f = senf::membind(&Foo::test,foo);
       int rv = f(1); // Calls foo->test(1)
     \endcode
@@ -72,13 +72,13 @@ namespace senf {
 
     /** \brief Build bound member function object
 
-	membind() supports up to 9 function parameters (represented as
-	\a Args here). The \a ob argument can be either a pointer or a
-	reference to \a T
-	\param[in] fn member function pointer
-	\param[in] ob object instance to bind this pointer to
-	\returns Boost.Function object representing a bound call of \a
-	    fn on \a ob
+        membind() supports up to 9 function parameters (represented as
+        \a Args here). The \a ob argument can be either a pointer or a
+        reference to \a T
+        \param[in] fn member function pointer
+        \param[in] ob object instance to bind this pointer to
+        \returns Boost.Function object representing a bound call of \a
+            fn on \a ob
      */
     template <typename R, typename T, typename Args>
     boost::function<R (Args)> membind(R (T::* fn)( Args ), T * ob);
@@ -98,4 +98,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

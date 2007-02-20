@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -51,10 +51,10 @@ namespace {
         template <class I=senf::nil, class P=senf::nil>
         struct rebind { typedef Parse_Test<I,P> parser; };
         typedef Iterator byte_iterator;
-        
+
         Parse_Test() {}
         Parse_Test(Iterator const & i) : senf::ParserBase<Iterator,IPacket>(i) {}
-        
+
         static unsigned bytes() { return 14; }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -67,10 +67,10 @@ namespace {
         template <class I=senf::nil, class P=senf::nil>
         struct rebind { typedef Parse_Test<I,P> parser; };
         typedef Iterator byte_iterator;
-        
+
         Parse_Test2() {}
         Parse_Test2(Iterator const & i) : senf::ParserBase<Iterator,IPacket>(i) {}
-        
+
         unsigned bytes() const { return 14; }
         static unsigned check(Iterator a, Iterator b)
             { return true; }
@@ -102,5 +102,8 @@ BOOST_AUTO_UNIT_TEST(parserBase_construction)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -51,7 +51,7 @@ BOOST_AUTO_UNIT_TEST(parse_ListS_simple)
     unsigned char data[] = { 0x01, 0x02, 0x03, 0x04, 0x00 };
     typedef unsigned char * iterator;
     typedef Parse_ListS<Parse_UInt8<>,Sentinel_IsZero<unsigned char>,iterator> Parse_UInt8ListS;
-    
+
     Parse_UInt8ListS l (data);
     Parse_UInt8ListS::iterator i (l.begin());
     Parse_UInt8ListS::iterator e (l.end());
@@ -77,10 +77,10 @@ namespace {
         struct rebind { typedef Parse_LVec<Parser,SizeParser,I,P> parser; };
         typedef typename SizeParser::template rebind<Iterator>::parser sizeParser;
 
-        Parse_LVec(Iterator const & i) 
+        Parse_LVec(Iterator const & i)
             : Parse_Vector<Parser,SizeParser,Iterator,IPacket>(sizeParser(i),i+sizeParser::bytes())
         {}
-        
+
         unsigned bytes() const
         { return this->Parse_Vector<Parser,SizeParser,Iterator,IPacket>::bytes() + sizeParser::bytes(); }
         bool check(Iterator const & e) const
@@ -123,7 +123,7 @@ BOOST_AUTO_UNIT_TEST(parse_ListS_complex)
         ++i;
     }
     BOOST_CHECK( i==e );
-    
+
     BOOST_CHECK_EQUAL( l.size(), 3u );
     BOOST_CHECK_EQUAL( l.bytes(), 13u );
     BOOST_CHECK( !l.empty() );
@@ -170,5 +170,8 @@ BOOST_AUTO_UNIT_TEST(parse_ListS_wrapper)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

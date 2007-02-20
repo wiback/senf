@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -37,21 +37,21 @@
 
 namespace senf {
 
-    
+
     namespace impl { struct ParserBase; }
 
-    struct nil 
-	: public boost::iterator_facade<nil,char,boost::random_access_traversal_tag>
+    struct nil
+        : public boost::iterator_facade<nil,char,boost::random_access_traversal_tag>
     {
-	// Theese are declared to make nil a valid iterator. All
-	// access to an instance of this iterator however is invalid
-	// (these members are not implemented only declared)
-	char & dereference() const;
-	bool equal(nil other) const;
-	void increment();
-	void decrement();
-	void advance(int n);
-	int distance_to(nil other) const;
+        // Theese are declared to make nil a valid iterator. All
+        // access to an instance of this iterator however is invalid
+        // (these members are not implemented only declared)
+        char & dereference() const;
+        bool equal(nil other) const;
+        void increment();
+        void decrement();
+        void advance(int n);
+        int distance_to(nil other) const;
     };
 
     /** \brief Parser framework
@@ -77,7 +77,7 @@ namespace senf {
 
         To implement a new parser, write a template implementing the
         following members:
-        
+
         \code
             template <class Iterator=nil, class IPacket=nil>
             struct Parser_Example
@@ -91,7 +91,7 @@ namespace senf {
 
                 Parse_Example() {}
                 Parse_Example(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
-        
+
                 [static] unsigned bytes()
                 {
                     // return the size of the parsed header. This
@@ -141,9 +141,9 @@ namespace senf {
                 Parse_Field2 field2() const { return Parse_Field2 (this->i()+2); }
             };
         \endcode
-        
+
         Every parser must have some mandatory fixed members which are:
-        
+
         - struct rebind: This structure allows the parser to be
           converted to a parser of the same type but with a different
           iterator. Parser may have more than the two standard
@@ -153,10 +153,10 @@ namespace senf {
           parameters must be provided from the outside template
 
         - byte_iterator: A typedef for the Iterator class used
-        
+
         - Non Iterator constructor: This constructor is only used when
           the parser is inherited into a Packet class.
-        
+
         - Iterator constructor: This constructor must call the
           corresponding ParserBase constructor.
 
@@ -223,7 +223,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-        
+
         // default default constructor
         // default copy constructor
         // default copy assignment
@@ -237,7 +237,7 @@ namespace senf {
         static void init() {};
 
     private:
-        
+
     };
 
     template <class Iterator>
@@ -263,14 +263,14 @@ namespace senf {
         static void init() {}
         template <class SomePacket>
         static void init(typename SomePacket::ptr) {}
-        
+
     private:
 
         Iterator i_;
     };
 
     /** \brief Addtiional Parser information
-        
+
         Parser_traits provids abstract information about an unknown
         parser. Besides the information already available within the
         Parser it provides an additional 'fixed_sized' member which is
@@ -293,7 +293,7 @@ namespace senf {
 
     template <class Parser>
     unsigned min_bytes();
-    
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -305,5 +305,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

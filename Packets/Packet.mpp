@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -56,7 +56,7 @@ senf::Packet::reinterpret( BOOST_PP_ENUM( BOOST_PP_ITERATION(), pkARG, ) )
         throw TruncatedPacketException();
     typename ptr_t<OtherPacket>::ptr p (
         new OtherPacket(PacketOp_replace(this),
-			BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), a ) ),
+                        BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), a ) ),
         false);
     return p;
 }
@@ -84,10 +84,10 @@ senf::Packet::registerInterpreter(raw_container::iterator begin,
     if (!OtherPacket::check(begin,end))
         throw TruncatedPacketException();
     typename ptr_t<OtherPacket>::ptr p (
-	new OtherPacket(PacketOp_register(begin-impl_->data_.begin(),
-					  end-impl_->data_.begin(),
-					  this),
-			BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), a) ),
+        new OtherPacket(PacketOp_register(begin-impl_->data_.begin(),
+                                          end-impl_->data_.begin(),
+                                          this),
+                        BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), a) ),
         false);
     return p;
 }
@@ -96,7 +96,7 @@ senf::Packet::registerInterpreter(raw_container::iterator begin,
 ///////////////////////////////////////////////////////////////////////////
 // Packet::create declaration
 
-template < class OtherPacket, class InputIterator, 
+template < class OtherPacket, class InputIterator,
            BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A) >
 static typename senf::Packet::ptr_t<OtherPacket>::ptr create(
     InputIterator b, InputIterator e,
@@ -106,7 +106,7 @@ static typename senf::Packet::ptr_t<OtherPacket>::ptr create(
 ///////////////////////////////////////////////////////////////////////////
 // Packet::create implementation
 
-template < class OtherPacket, class InputIterator, 
+template < class OtherPacket, class InputIterator,
            BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A) >
 typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::create(
     InputIterator b, InputIterator e,
@@ -116,8 +116,8 @@ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::create(
     if (!OtherPacket::check(impl->data_.begin(), impl->data_.end()))
         throw TruncatedPacketException();
     typename ptr_t<OtherPacket>::ptr p (
-	new OtherPacket(PacketOp_set(impl.get()),
-			BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), a) ),
+        new OtherPacket(PacketOp_set(impl.get()),
+                        BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), a) ),
         false);
     return p;
 }
@@ -130,5 +130,8 @@ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::create(
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

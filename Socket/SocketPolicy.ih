@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -58,19 +58,19 @@
 namespace senf {
 
 #   define SENF_SOCKET_POLICIES_N BOOST_PP_SEQ_SIZE( SENF_SOCKET_POLICIES )
-    
+
 #   define SP_DeclareAlias(x1,x2,SomePolicy)                                             \
         typedef BOOST_PP_CAT(SomePolicy,Base) BOOST_PP_CAT(Unspecified,SomePolicy);
 
     BOOST_PP_SEQ_FOR_EACH( SP_DeclareAlias, , SENF_SOCKET_POLICIES )
 
 #   undef SP_DeclareAlias
-        
+
     struct SocketPolicyBase
     {
         virtual ~SocketPolicyBase() {}
 
-#       define SP_Declare(x1,x2,SomePolicy)							\
+#       define SP_Declare(x1,x2,SomePolicy)                                                     \
             virtual BOOST_PP_CAT(SomePolicy,Base) const & BOOST_PP_CAT(the,SomePolicy) () const = 0;
 
         BOOST_PP_SEQ_FOR_EACH( SP_Declare, , SENF_SOCKET_POLICIES )
@@ -107,7 +107,7 @@ namespace impl {
     template <int N>
     struct SocketPolicy_rv
     { int v[N+1]; };
-    
+
     template <class Base, class Policy, int N>
     struct MakeSocketPolicy_merge
     {};
@@ -117,15 +117,15 @@ namespace impl {
         BOOST_PP_IIF( BOOST_PP_EQUAL(n,m), Policy, typename Base::SomePolicy )
 
 #    define BOOST_PP_LOCAL_LIMITS (0, BOOST_PP_DEC( SENF_SOCKET_POLICIES_N ) )
-#    define BOOST_PP_LOCAL_MACRO(n)											\
-        SocketPolicy_rv<n> MakeSocketPolicy_merge_(BOOST_PP_CAT( BOOST_PP_SEQ_ELEM( n, SENF_SOCKET_POLICIES ),Base)*);	\
-															\
-        template <class Base, class Policy>										\
-        struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<n>)>						\
-        {														\
-            typedef SocketPolicy<											\
-               BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareMakeSocketPolicy_merge_member, n, SENF_SOCKET_POLICIES )		\
-               > type;													\
+#    define BOOST_PP_LOCAL_MACRO(n)                                                                                     \
+        SocketPolicy_rv<n> MakeSocketPolicy_merge_(BOOST_PP_CAT( BOOST_PP_SEQ_ELEM( n, SENF_SOCKET_POLICIES ),Base)*);  \
+                                                                                                                        \
+        template <class Base, class Policy>                                                                             \
+        struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<n>)>                                           \
+        {                                                                                                               \
+            typedef SocketPolicy<                                                                                       \
+               BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareMakeSocketPolicy_merge_member, n, SENF_SOCKET_POLICIES )              \
+               > type;                                                                                                  \
         };
 
 #   include BOOST_PP_LOCAL_ITERATE()
@@ -155,8 +155,8 @@ namespace impl {
     };
 
 #   define SP_DeclareArguments(x1,x2,n,SomePolicy)      \
-    	BOOST_PP_COMMA_IF( n )                          \
-	typename Base::SomePolicy *
+        BOOST_PP_COMMA_IF( n )                          \
+        typename Base::SomePolicy *
 
     template <class Base>
     SocketPolicy_rv<1> SocketPolicy_checkcompat_(
@@ -237,5 +237,8 @@ namespace impl {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

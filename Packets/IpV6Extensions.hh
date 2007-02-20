@@ -1,4 +1,4 @@
-// Copyright (C) 2007 
+// Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -35,7 +35,7 @@ namespace senf {
     // See RFC2460
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_IpV6Extension_Fragment
-	: public ParserBase<Iterator,IPacket>
+        : public ParserBase<Iterator,IPacket>
     {
         template <class I, class P=nil>
         struct rebind { typedef Parse_IpV6Extension_Fragment<I,P> parser; };
@@ -45,29 +45,29 @@ namespace senf {
         Parse_IpV6Extension_Fragment(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
 
         static unsigned bytes() { return 8; }
-        
+
         ///////////////////////////////////////////////////////////////////////////
 
-	typedef Parse_UInt8     <         Iterator > Parse_8bit;
-	typedef Parse_UIntField <  0, 13, Iterator > Parse_Offset;
-	typedef Parse_UIntField < 13, 15, Iterator > Parse_Reserved;
-	typedef Parse_Flag      < 15,     Iterator > Parse_More;
-	typedef Parse_UInt32    <         Iterator > Parse_32bit;
+        typedef Parse_UInt8     <         Iterator > Parse_8bit;
+        typedef Parse_UIntField <  0, 13, Iterator > Parse_Offset;
+        typedef Parse_UIntField < 13, 15, Iterator > Parse_Reserved;
+        typedef Parse_Flag      < 15,     Iterator > Parse_More;
+        typedef Parse_UInt32    <         Iterator > Parse_32bit;
 
-	Parse_8bit      nextHeader()      const { return Parse_8bit      (this->i()      ); }
-	Parse_8bit      reserved1()       const { return Parse_8bit      (this->i() +  1 ); }
-	Parse_Offset    fragmentOffset()  const { return Parse_Offset    (this->i() +  2 ); }
-	Parse_Reserved  reserved2()       const { return Parse_Reserved  (this->i() +  2 ); }
-	Parse_More      moreFragments()   const { return Parse_More      (this->i() +  2 ); }
-	Parse_32bit     id()              const { return Parse_32bit     (this->i() +  4 ); }
+        Parse_8bit      nextHeader()      const { return Parse_8bit      (this->i()      ); }
+        Parse_8bit      reserved1()       const { return Parse_8bit      (this->i() +  1 ); }
+        Parse_Offset    fragmentOffset()  const { return Parse_Offset    (this->i() +  2 ); }
+        Parse_Reserved  reserved2()       const { return Parse_Reserved  (this->i() +  2 ); }
+        Parse_More      moreFragments()   const { return Parse_More      (this->i() +  2 ); }
+        Parse_32bit     id()              const { return Parse_32bit     (this->i() +  4 ); }
     };
 
     class IpV6Extension_Fragment
-	: public Packet,
-	  public Parse_IpV6Extension_Fragment<Packet::iterator, IpV6Extension_Fragment>,
-	  public PacketRegistryMixin<IpTypes, IpV6Extension_Fragment>
+        : public Packet,
+          public Parse_IpV6Extension_Fragment<Packet::iterator, IpV6Extension_Fragment>,
+          public PacketRegistryMixin<IpTypes, IpV6Extension_Fragment>
     {
-	using PacketRegistryMixin<IpTypes,IpV6Extension_Fragment>::registerInterpreter;
+        using PacketRegistryMixin<IpTypes,IpV6Extension_Fragment>::registerInterpreter;
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
@@ -99,5 +99,6 @@ namespace senf {
 // mode: c++
 // fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // End:

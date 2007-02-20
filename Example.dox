@@ -17,7 +17,7 @@
     be removed as soon as possible). The example application now
     contains a helper routine to produce a packet hexdump. We will
     skip this routine here and go directly to the \c main function
-    
+
     \skip main
     \until try
 
@@ -37,12 +37,12 @@
 
     \skip while
     \until read
-    
+
     The next step is, to parse the data read from the socket as an
     Ethernet packet
 
     \until ;
-    
+
     Lets digest this line step by step: We declare a variable named \c
     packet as a smart pointer to an \c EthernetPacket instance. \c ptr
     is a typedef member of all Packet classes for the corresponding
@@ -104,8 +104,10 @@
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // mode: flyspell
 // mode: auto-fill
-// ispell-local-dictionary: "american"
 // End:
-

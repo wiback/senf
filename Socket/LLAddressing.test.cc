@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -36,7 +36,7 @@
 
 BOOST_AUTO_UNIT_TEST(llAddress)
 {
-    { 
+    {
         senf::LLSocketAddress a;
 
         BOOST_CHECK_EQUAL( a.protocol(), 0u );
@@ -52,11 +52,11 @@ BOOST_AUTO_UNIT_TEST(llAddress)
         a.protocol(123);
         BOOST_CHECK_EQUAL( a.protocol(), 123u );
     }
-    
+
     {
         senf::LLSocketAddress a (
             senf::llAddress("11-12-13-14-15-16"), "lo");
-        
+
         BOOST_CHECK_EQUAL( a.protocol(), 0u );
         BOOST_CHECK_EQUAL( a.interface(), "lo" );
         BOOST_CHECK_EQUAL( a.arptype(), 0u );
@@ -66,7 +66,7 @@ BOOST_AUTO_UNIT_TEST(llAddress)
 
     {
         senf::LLSocketAddress a (123, "lo");
-        
+
         BOOST_CHECK_EQUAL( a.protocol(), 123u );
         BOOST_CHECK_EQUAL( a.interface(), "lo" );
         BOOST_CHECK_EQUAL( a.arptype(), 0u );
@@ -81,5 +81,8 @@ BOOST_AUTO_UNIT_TEST(llAddress)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

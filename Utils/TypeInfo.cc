@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -38,8 +38,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 
-// WARNING: This is completely g++ and libiberty dependent. The demangling 
-// interface isn't even explicitly exportet from libiberty. However, it is 
+// WARNING: This is completely g++ and libiberty dependent. The demangling
+// interface isn't even explicitly exportet from libiberty. However, it is
 // *EXTREMELY* helpful for debugging ...
 
 prefix_ std::string senf::prettyName(std::type_info const & type)
@@ -47,7 +47,7 @@ prefix_ std::string senf::prettyName(std::type_info const & type)
     char const * mangled = type.name();
     char * demangled = ::cplus_demangle(mangled,DMGL_TYPES|DMGL_AUTO);
     std::string name (demangled ? demangled : mangled);
-    if (demangled) 
+    if (demangled)
         ::free(demangled);
     return name;
 }
@@ -59,5 +59,8 @@ prefix_ std::string senf::prettyName(std::type_info const & type)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

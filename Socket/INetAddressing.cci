@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -51,7 +51,7 @@ prefix_ senf::INet4Address::INet4Address(std::string address)
 prefix_ bool senf::INet4Address::operator==(INet4Address const & other)
     const
 {
-    return addr_.sin_port == other.addr_.sin_port && 
+    return addr_.sin_port == other.addr_.sin_port &&
         addr_.sin_addr.s_addr == other.addr_.sin_addr.s_addr;
 }
 
@@ -238,5 +238,8 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6SocketAddress co
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

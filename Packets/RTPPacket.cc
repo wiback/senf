@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -38,11 +38,11 @@ prefix_ void senf::RTPPacket::v_nextInterpreter()
     if(extension()){
         Packet::registerInterpreter<RTPUnknownExtensionPacket>(begin()+bytes(),end());
     }else{
-	
-	int paddingOctets = 0;
+
+        int paddingOctets = 0;
         if(padding()){
-	    paddingOctets = paddingOctet();
-	}
+            paddingOctets = paddingOctet();
+        }
         registerInterpreter(payloadType(),begin()+bytes(),end()-paddingOctets);
     }
 }
@@ -80,7 +80,7 @@ prefix_ void senf::RTPExtensionBasePacket::v_nextInterpreter()
 
     int paddingOctets = 0;
     if(get_prev<RTPPacket>()->padding()){
-	paddingOctets = get_prev<RTPPacket>()->paddingOctet();
+        paddingOctets = get_prev<RTPPacket>()->paddingOctet();
     }
     registerInterpreter(get_prev<RTPPacket>()->payloadType(),begin()+p.bytes(),end()-paddingOctets);
 }
@@ -101,5 +101,8 @@ prefix_ void senf::RTPUnknownExtensionPacket::v_finalize()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

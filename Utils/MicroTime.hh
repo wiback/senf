@@ -27,12 +27,12 @@
     supported members are the datatype (which just uses a 64 bit
     integer) and the now() function to get the current UTC time in
     microsecods since the Epoch.
-    
+
     \idea This thing only exists as a quick hack. We can probably make
-	use of Boost.Time or some such thing so it probably does not
-	make sense to extend this further. We should however check the
-	performance of Boost.Time since this is used heavily in the
-	Scheduler.
+        use of Boost.Time or some such thing so it probably does not
+        make sense to extend this further. We should however check the
+        performance of Boost.Time since this is used heavily in the
+        Scheduler.
  */
 
 #ifndef HH_MicroTime_
@@ -45,7 +45,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     /// \addtogroup time
     /// @{
 
@@ -67,4 +67,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

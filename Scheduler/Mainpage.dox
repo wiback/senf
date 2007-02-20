@@ -7,10 +7,10 @@ namespace senf {
     \c poll. The Scheduler library is based on the highly efficient
     (but linux specific) \c epoll() system call.
 
-    The library provides 
-    \li a central \ref Scheduler singleton and 
+    The library provides
+    \li a central \ref Scheduler singleton and
     \li \ref ReadHelper and \ref WriteHelper templates to simplify
-	common tasks.
+        common tasks.
 
     In it's current incarnation, the library only supports network
     file handles (including pipes etc) and simple timers (especially
@@ -27,7 +27,10 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // mode: flyspell
 // mode: auto-fill
-// ispell-local-dictionary: "american"
 // End:

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 
 // Definition of inline non-template functions
 
@@ -33,4 +33,8 @@ prefix_ senf::SafeBoolBase::~SafeBoolBase()
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

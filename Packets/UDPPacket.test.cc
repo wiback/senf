@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -40,7 +40,7 @@ BOOST_AUTO_UNIT_TEST(udpPacket_parser)
 {
     unsigned char data[] = { 0x01, 0x02, 0x03, 0x04,
                              0x05, 0x06, 0x07, 0x08
-                           };                        
+                           };
 
     typedef unsigned char * iterator;
     Parse_UDP<iterator> p(data);
@@ -48,24 +48,24 @@ BOOST_AUTO_UNIT_TEST(udpPacket_parser)
     BOOST_CHECK_EQUAL( p.source(),            0x0102       );
     BOOST_CHECK_EQUAL( p.destination(),       0x0304       );
     BOOST_CHECK_EQUAL( p.length(),            0x0506       );
-    BOOST_CHECK_EQUAL( p.crc(),               0x0708       );    
-    
+    BOOST_CHECK_EQUAL( p.crc(),               0x0708       );
+
 }
 
-		      
+
 BOOST_AUTO_UNIT_TEST(udpPacket_packet)
 {
 
     unsigned char data[] = { 0x01, 0x02, 0x03, 0x04,
                              0x05, 0x06, 0x07, 0x08
-                           };   
+                           };
 
     UDPPacket::ptr p (Packet::create<UDPPacket>(data, data+sizeof(data)));
 
     BOOST_CHECK_EQUAL( p->source(),            0x0102       );
     BOOST_CHECK_EQUAL( p->destination(),       0x0304       );
     BOOST_CHECK_EQUAL( p->length(),            0x0506       );
-    BOOST_CHECK_EQUAL( p->crc(),               0x0708       );    
+    BOOST_CHECK_EQUAL( p->crc(),               0x0708       );
 
 }
 
@@ -77,5 +77,8 @@ BOOST_AUTO_UNIT_TEST(udpPacket_packet)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

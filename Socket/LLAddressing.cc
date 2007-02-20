@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -67,7 +67,7 @@ prefix_ std::string senf::LLSocketAddress::interface()
     if (addr_.sll_halen == 0)
         return std::string();
     std::stringstream s;
-    
+
     unsigned char const * i = &addr_.sll_addr[0];
     while (1) {
         s << std::hex << std::setw(2) << std::setfill('0') << unsigned(*i);
@@ -109,7 +109,7 @@ prefix_ void senf::LLSocketAddress::interface(std::string interface)
 prefix_ senf::detail::LLAddressFromStringRange
 senf::llAddress(std::string address)
 {
-    detail::StringSplitIterator i = 
+    detail::StringSplitIterator i =
         boost::make_split_iterator(address, boost::token_finder(boost::is_any_of("-: ")));
     detail::StringSplitIterator i_end;
 
@@ -126,5 +126,8 @@ senf::llAddress(std::string address)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

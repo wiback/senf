@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -76,11 +76,11 @@ namespace {
 
     void stop()
     {
-	if (server_pid) {
-	    kill(server_pid,9);
-	    wait();
-	    server_pid = 0;
-	}
+        if (server_pid) {
+            kill(server_pid,9);
+            wait();
+            server_pid = 0;
+        }
     }
 
 }
@@ -97,7 +97,7 @@ namespace {
         if (setsockopt(serv,SOL_SOCKET,SO_REUSEADDR,&v,sizeof(v))<0)
             fail("server_v4","setsockopt()");
         struct sockaddr_in sin;
-	::memset(&sin,0,sizeof(sin));
+        ::memset(&sin,0,sizeof(sin));
         sin.sin_family = AF_INET;
         sin.sin_port = htons(12345);
         sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
@@ -127,7 +127,7 @@ namespace {
         if (setsockopt(serv,SOL_SOCKET,SO_REUSEADDR,&v,sizeof(v))<0)
             fail("server_v6","setsockopt()");
         struct sockaddr_in6 sin;
-	::memset(&sin,0,sizeof(sin));
+        ::memset(&sin,0,sizeof(sin));
         sin.sin6_family = AF_INET6;
         sin.sin6_port = htons(12345);
         sin.sin6_addr = in6addr_loopback;
@@ -161,7 +161,7 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
     }
 
     try {
-	alarm(10);
+        alarm(10);
         start(server_v4);
         senf::TCPv4ClientSocketHandle sock;
         BOOST_CHECK_NO_THROW( sock.bind("127.0.0.1:23456") );
@@ -185,15 +185,15 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.read(), "" );
         BOOST_CHECK( sock.eof() );
         BOOST_CHECK( !sock );
-	alarm(0);
+        alarm(0);
     } catch (...) {
-	alarm(0);
-	sleep(1);
-	stop();
-	sleep(1);
-	throw;
+        alarm(0);
+        sleep(1);
+        stop();
+        sleep(1);
+        throw;
     }
-    
+
     {
         senf::TCPv4ClientSocketHandle sock;
 
@@ -210,7 +210,7 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0","127.0.0.1:0") );
         BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0") );
         BOOST_CHECK_THROW( sock.protocol().mcIface("lo"), senf::SystemException );
-        
+
         // The following setsockopts are hard to REALLY test ...
         BOOST_CHECK_NO_THROW( sock.protocol().nodelay(true) );
         BOOST_CHECK( sock.protocol().nodelay() );
@@ -234,7 +234,7 @@ BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
     }
 
     try {
-	alarm(10);
+        alarm(10);
         start(server_v6);
         senf::TCPv6ClientSocketHandle sock;
         BOOST_CHECK_NO_THROW( sock.bind("[::1]:23456") );
@@ -258,15 +258,15 @@ BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.read(), "" );
         BOOST_CHECK( sock.eof() );
         BOOST_CHECK( !sock );
-	alarm(0);
+        alarm(0);
     } catch (...) {
-	alarm(0);
-	sleep(1);
-	stop();
-	sleep(1);
-	throw;
+        alarm(0);
+        sleep(1);
+        stop();
+        sleep(1);
+        throw;
     }
-    
+
     {
         senf::TCPv6ClientSocketHandle sock;
 
@@ -292,13 +292,13 @@ namespace {
         int sock = socket(PF_INET,SOCK_STREAM,0);
         if (sock<0) fail("client_v4","socket()");
         struct sockaddr_in sin;
-	::memset(&sin,0,sizeof(sin));
+        ::memset(&sin,0,sizeof(sin));
         sin.sin_family = AF_INET;
         sin.sin_port = htons(12346);
         sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         if (connect(sock,(struct sockaddr *)&sin,sizeof(sin)) < 0)
             fail("client_v4","connect()");
-        
+
         char buffer[1024];
         while (1) {
             int n = read(sock,buffer,1024);
@@ -316,13 +316,13 @@ namespace {
         int sock = socket(PF_INET6,SOCK_STREAM,0);
         if (sock<0) fail("client_v6","socket()");
         struct sockaddr_in6 sin;
-	::memset(&sin,0,sizeof(sin));
+        ::memset(&sin,0,sizeof(sin));
         sin.sin6_family = AF_INET6;
         sin.sin6_port = htons(12347);
         sin.sin6_addr = in6addr_loopback;
         if (connect(sock,(struct sockaddr *)&sin,sizeof(sin)) < 0)
             fail("client_v6","connect()");
-        
+
         char buffer[1024];
         while (1) {
             int n = read(sock,buffer,1024);
@@ -340,7 +340,7 @@ namespace {
 BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
 {
     try {
-	alarm(10);
+        alarm(10);
         BOOST_CHECKPOINT("Opening server socket");
         senf::TCPv4ServerSocketHandle server ("127.0.0.1:12346");
         BOOST_CHECKPOINT("Starting client");
@@ -353,20 +353,20 @@ BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
         BOOST_CHECKPOINT("Stopping client");
         sleep(1);
         stop();
-	alarm(0);
+        alarm(0);
     } catch (...) {
-	alarm(0);
-	sleep(1);
-	stop();
-	sleep(1);
-	throw;
+        alarm(0);
+        sleep(1);
+        stop();
+        sleep(1);
+        throw;
     }
 }
 
 BOOST_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
 {
     try {
-	alarm(10);
+        alarm(10);
         BOOST_CHECKPOINT("Opening server socket");
         senf::TCPv6ServerSocketHandle server ("[::1]:12347");
         BOOST_CHECKPOINT("Starting client");
@@ -379,13 +379,13 @@ BOOST_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
         BOOST_CHECKPOINT("Stopping client");
         sleep(1);
         stop();
-	alarm(0);
+        alarm(0);
     } catch (...) {
-	alarm(0);
-	sleep(1);
-	stop();
-	sleep(1);
-	throw;
+        alarm(0);
+        sleep(1);
+        stop();
+        sleep(1);
+        throw;
     }
 }
 
@@ -395,5 +395,8 @@ BOOST_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

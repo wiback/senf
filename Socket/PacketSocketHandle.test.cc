@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -47,15 +47,15 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
 
     {
         senf::PacketSocketHandle sock;
-        
+
         BOOST_CHECK_NO_THROW( sock.bind(senf::LLSocketAddress("lo")) );
         senf::LLSocketAddress a;
         BOOST_CHECK_NO_THROW( sock.local(a) );
         BOOST_CHECK_EQUAL( a.interface(), "lo" );
 
         // How am I supposed to test read and write .. grmpf ..
-        
-	/*
+
+        /*
         BOOST_CHECK_NO_THROW( sock.protocol().promisc(
                                   "lo",senf::PacketProtocol::Promiscuous) );
         BOOST_CHECK_NO_THROW( sock.protocol().promisc(
@@ -63,7 +63,7 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
         BOOST_CHECK_NO_THROW( sock.protocol().promisc(
                                   "lo",senf::PacketProtocol::None) );
         */
-        
+
         BOOST_CHECK_NO_THROW( sock.protocol().mcAdd(
                                   "lo",senf::llAddress("01-02-03-04-05-06")) );
         BOOST_CHECK_NO_THROW( sock.protocol().mcDrop(
@@ -80,5 +80,8 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

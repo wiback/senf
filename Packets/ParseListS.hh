@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -35,8 +35,8 @@
     element and a (non-const) reference to the state which it may
     update. The Parse_ListS constructor must take an arbitrary number
     of additional arguments which are forwarded to the state
-    initialization. 
-    
+    initialization.
+
     This structure makes it simple to optimize away the overhead if
     the state type is void. If we would always instantiate the
     sentinel, this will always take up space.
@@ -66,8 +66,8 @@ namespace senf {
 
 
     template <class Parser, class Sentinel, class Container> class Parse_ListS_wrapper;
-    namespace impl { 
-        template <class Parser, class Sentinel, class Container> class Parse_ListS_iterator; 
+    namespace impl {
+        template <class Parser, class Sentinel, class Container> class Parse_ListS_iterator;
     }
 
     template <class Parser, class Sentinel, class Iterator=nil, class IPacket=nil>
@@ -76,13 +76,13 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Parser interface
 
-        template <class I=nil, class P=nil> 
+        template <class I=nil, class P=nil>
         struct rebind { typedef Parse_ListS<Parser,Sentinel,I,P> parser; };
         typedef Iterator byte_iterator;
-        
+
         Parse_ListS();
         Parse_ListS(Iterator const & i);
-        
+
         unsigned bytes() const;
         bool check(Iterator const & e) const;
         void init() const;
@@ -113,7 +113,7 @@ namespace senf {
     };
 
     /** \brief
-        
+
         Holds a reference to the container !
       */
     template <class Parser, class Sentinel, class Container>
@@ -162,20 +162,20 @@ namespace senf {
         ///\name Mutators
         ///@{
 
-        template <class Value> void insert(iterator pos, Value const & t); 
-        template <class Value> void insert(iterator pos, size_type n, Value const & t); 
-        template <class InputIterator> void insert(iterator pos, InputIterator f, InputIterator l); 
-        
-        void erase(iterator pos, size_type n=1); 
-        void erase(iterator f, iterator l); 
-        void clear(); 
+        template <class Value> void insert(iterator pos, Value const & t);
+        template <class Value> void insert(iterator pos, size_type n, Value const & t);
+        template <class InputIterator> void insert(iterator pos, InputIterator f, InputIterator l);
+
+        void erase(iterator pos, size_type n=1);
+        void erase(iterator f, iterator l);
+        void clear();
 
         ///@}
 
     protected:
 
     private:
-        
+
         size_type i_;
         Container & container_;
     };
@@ -191,5 +191,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

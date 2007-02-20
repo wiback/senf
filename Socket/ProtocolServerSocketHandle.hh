@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -34,31 +34,31 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
- 
+
     /// \addtogroup handle_group
     /// @{
-   
+
     template <class Protocol> class ProtocolClientSocketHandle;
 
     /** \brief Protocol specific socket handle (server interface)
 
-	The ProtocolServerSocketHandle is the server interface leaf class of the handle
-	hierarchy. This is the class to instantiate to open a new socket. This is also the \e only
-	class, which can be used to open a server socket.
+        The ProtocolServerSocketHandle is the server interface leaf class of the handle
+        hierarchy. This is the class to instantiate to open a new socket. This is also the \e only
+        class, which can be used to open a server socket.
 
-	The \a Protocol template argument defines the protocol of the socket. This protocol provides
-	the protocol interface of the socket as well as the complete socket policy of this protocol.
+        The \a Protocol template argument defines the protocol of the socket. This protocol provides
+        the protocol interface of the socket as well as the complete socket policy of this protocol.
 
-	The ProtocolServerSocketHandle adds the protocol interface as an additional interface to the
-	socket handle. This interface is only accessible via the protocol class. All socket
-	functionality not available through the policy interface (see ServerSocketHandle) is
-	accessible via the protocol() member.
+        The ProtocolServerSocketHandle adds the protocol interface as an additional interface to the
+        socket handle. This interface is only accessible via the protocol class. All socket
+        functionality not available through the policy interface (see ServerSocketHandle) is
+        accessible via the protocol() member.
 
-	A ProtocolServerSocketHandle is only meaningful for connection oriented addressable
-	protocols (CommunicationPolicy is ConnectedCommunicationPolicy and AddressingPolicy is not
-	NoAddressingPolicy).
+        A ProtocolServerSocketHandle is only meaningful for connection oriented addressable
+        protocols (CommunicationPolicy is ConnectedCommunicationPolicy and AddressingPolicy is not
+        NoAddressingPolicy).
 
-	\see \ref protocol_group
+        \see \ref protocol_group
       */
     template <class SocketProtocol>
     class ProtocolServerSocketHandle
@@ -74,16 +74,16 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-	/** \brief Create new server socket
+        /** \brief Create new server socket
 
-	    This constructor is one of the possible constructors. The exact Signature of the
-	    constructor (or constructors) is defined by the \c init_server() member (or members) of
-	    the \a Protocol class. ProtocolClientSocketHandle defines a number of constructors
-	    taking up to 9 arguments which just forward to a corresponding \a Protocol\c
-	    ::init_server() member. See the documentation of the respective Protocol class for a
-	    detailed documentation of that protocols constructors.
-	 */
-	
+            This constructor is one of the possible constructors. The exact Signature of the
+            constructor (or constructors) is defined by the \c init_server() member (or members) of
+            the \a Protocol class. ProtocolClientSocketHandle defines a number of constructors
+            taking up to 9 arguments which just forward to a corresponding \a Protocol\c
+            ::init_server() member. See the documentation of the respective Protocol class for a
+            detailed documentation of that protocols constructors.
+         */
+
         ProtocolServerSocketHandle();
 
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolServerSocketHandle.mpp", 1))
@@ -93,10 +93,10 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         Protocol const & protocol();    ///< Access the protocol interface
-	                                /**< The returned protocol class reference gives access to
-					   the complete protocol interface as defined by that
-					   class. See the respective protocol class documentation.
-					   \returns \a Protocol class reference */
+                                        /**< The returned protocol class reference gives access to
+                                           the complete protocol interface as defined by that
+                                           class. See the respective protocol class documentation.
+                                           \returns \a Protocol class reference */
 
         ProtocolClientSocketHandle<SocketProtocol> accept();
 
@@ -125,6 +125,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
-// c-file-style: "senf"
 // fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

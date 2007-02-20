@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006 
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -33,7 +33,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     // See RFC768
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UDP : public ParserBase<Iterator,IPacket>
@@ -49,8 +49,8 @@ namespace senf {
 
         ///////////////////////////////////////////////////////////////////////////
 
-        typedef Parse_UInt16 < Iterator > Parse_16bit;  
-        
+        typedef Parse_UInt16 < Iterator > Parse_16bit;
+
         Parse_16bit source()          const { return Parse_16bit      (this->i()     ); }
         Parse_16bit destination()     const { return Parse_16bit      (this->i() + 2 ); }
         Parse_16bit length()          const { return Parse_16bit      (this->i() + 4 ); }
@@ -59,7 +59,7 @@ namespace senf {
     };
 
     class UDPPacket
-        : public Packet, 
+        : public Packet,
           public Parse_UDP<Packet::iterator, UDPPacket>
     {
     public:
@@ -92,5 +92,8 @@ namespace senf {
 
 // Local Variables:
 // mode: c++
+// fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
 // End:

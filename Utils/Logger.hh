@@ -1,4 +1,4 @@
-// Copyright (C) 2007 
+// Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -22,7 +22,7 @@
     \brief Logger public header */
 
 /** \defgroup logger The SENF Logger
-    
+
     The Loggger infrastructure shall implement a highliy flexible compile- and run-time configurable
     logging infrastructure supporting multiple streams, user defineable log areas and fine grained
     log levels. Logging can be configured at compile and runtime on any combination of above
@@ -35,11 +35,11 @@
     arguments are encoded into a <a
     href="http://www.boost.org/libs/preprocessor/doc/index.html">Boost.Preprocessor</a> like
     sequence:
-    
+
     \code
     SENF_LOG( (senf::log::Debug)(senf::log::NOTICE)(FroblizerArea)("The log message") );
     \endcode
-    
+
     The last sequence element always is the log message. Before that we have a number of log
     parameters <it>in arbitrary order</it>. Since giving all the parameters in every log message is
     to verbose, there are two helpful constructs to reduce the verbosity. Using \ref SENF_LOG_DEFAULTS it
@@ -49,8 +49,8 @@
 
     \code
     SENF_LOG_DEF_STREAM(userLog);
-    
-    class Froblizer 
+
+    class Froblizer
     {
         // Define a new log area
         SENF_LOG_DEF_AREA(FroblizerArea);
@@ -123,79 +123,79 @@ namespace senf {
 #   ifndef _senf_LOG_STREAM
 #     define _senf_LOG_STREAM std::cerr
 #   endif
-   
+
     /// \addtogroup logger
     /// @{
 
     /** \brief Write log message
-	
-	This macro will write it's last argument to the log stream. The last argument must be an
-	expression which will be placed after a streaming \c operator<< (like
-	<it>some-log-sttream</it> \c << <it>last-macro-arg</it>).
-	\code
-	BOOST_LOG((parameters...)("log message " << args << ...));
-	\endcode
 
-	\hideinitializer
+        This macro will write it's last argument to the log stream. The last argument must be an
+        expression which will be placed after a streaming \c operator<< (like
+        <it>some-log-sttream</it> \c << <it>last-macro-arg</it>).
+        \code
+        BOOST_LOG((parameters...)("log message " << args << ...));
+        \endcode
+
+        \hideinitializer
      */
-#   define SENF_LOG(args)									\
-        _senf_LOG_STREAM << BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args)	\
+#   define SENF_LOG(args)                                                                       \
+        _senf_LOG_STREAM << BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args)       \
                          << std::endl;
 
     /** \brief Enable block based on logging parameters
-	
-	This macro is like SENF_LOG, however instead of writing a simple message, this macro allows
-	to specify a complete block of code to be executed if the log message is enabled.
-	\code
-	BOOST_LOG_BLOCK((parameters...)({
-	   // arbitrary code using 'log' for logging
-	   log << "log message";
-        }));
-	\endcode
 
-	\hideinitializer
+        This macro is like SENF_LOG, however instead of writing a simple message, this macro allows
+        to specify a complete block of code to be executed if the log message is enabled.
+        \code
+        BOOST_LOG_BLOCK((parameters...)({
+           // arbitrary code using 'log' for logging
+           log << "log message";
+        }));
+        \endcode
+
+        \hideinitializer
      */
-#   define SENF_LOG_BLOCK(args)							\
-        do {									\
-            std::ostream & log (_senf_LOG_STREAM);				\
-	    BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args)	\
-            log << std::endl;							\
-	} while (0)
+#   define SENF_LOG_BLOCK(args)                                                 \
+        do {                                                                    \
+            std::ostream & log (_senf_LOG_STREAM);                              \
+            BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args)       \
+            log << std::endl;                                                   \
+        } while (0)
 
     /** \brief Set scope default log parameters
 
-	Sets the default log parameters for the current scope
-	\code
-	BOOST_LOG_DEFAULTS((parameters...));
-	\endcode
+        Sets the default log parameters for the current scope
+        \code
+        BOOST_LOG_DEFAULTS((parameters...));
+        \endcode
 
-	\hideinitializer
+        \hideinitializer
      */
 #   define SENF_LOG_DEFAULTS(args)
 
     /** \brief Define log area
-	
-	Defines a new log area named \a area. The area is defined as a symbol in the current scope.
 
-	\hideinitializer
+        Defines a new log area named \a area. The area is defined as a symbol in the current scope.
+
+        \hideinitializer
      */
 #   define SENF_LOG_DEF_AREA(area)
 
     /** \brief Define log stream
-	
-	Defines a new log stream named \a stream. The stream is defined as a symbol in the current
-	scope.
 
-	\hideinitializer
+        Defines a new log stream named \a stream. The stream is defined as a symbol in the current
+        scope.
+
+        \hideinitializer
      */
 #   define SENF_LOG_DEF_STREAM(stream)
 
     /** \brief Define log parameter alias
-	
-	Defines a new parameter alias named \a alias as an alias for the parameters in \a args. The
-	alias is defined as a symbol in the current scope.
 
-	\hideinitializer
+        Defines a new parameter alias named \a alias as an alias for the parameters in \a args. The
+        alias is defined as a symbol in the current scope.
+
+        \hideinitializer
      */
 #   define SENF_LOG_DEF_ALIAS(alias,args)
 
@@ -214,5 +214,6 @@ namespace senf {
 // mode: c++
 // fill-column: 100
 // c-file-style: "senf"
+// indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // End:
