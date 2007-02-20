@@ -36,7 +36,10 @@
 
 namespace {
     senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV4Packet> 
-        registerIpV4Packet(0x0800);
+        registerIpV4Packet (0x0800);
+
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV4Packet>
+        regsiterIpV4Packet2 (4); // IP-in-IP encapsulation
 }
 
 prefix_ void senf::IpV4Packet::v_nextInterpreter()

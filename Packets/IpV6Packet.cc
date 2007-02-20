@@ -34,7 +34,13 @@
 
 namespace {
     senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV6Packet>
-        registerIpV6Packet(0x86dd);
+        registerIpV6Packet (0x86dd);
+
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6Packet>
+        registerIpV6Packet2 (41); // IP6-in-IP(6) encapsulation
+
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::DataPacket>
+        registerNoNextHeader (59);
 }
 
 prefix_ void senf::IpV6Packet::v_nextInterpreter()

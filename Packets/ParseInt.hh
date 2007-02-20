@@ -24,6 +24,7 @@
 #define HH_ParseInt_ 1
 
 // Custom includes
+#include <iostream>
 #include "ParserBase.hh"
 #include <boost/cstdint.hpp>
 #include <boost/static_assert.hpp>
@@ -58,6 +59,9 @@ namespace senf {
         void value(value_type v) { this->i()[0] = v; }
         Parse_Int8 const & operator= (value_type other) { value(other); return *this; }
     };
+    template <class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_Int8<Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt8
@@ -81,6 +85,9 @@ namespace senf {
         void value(value_type v) { this->i()[0] = v; }
         Parse_UInt8 const & operator= (value_type other) { value(other); return *this; }
     };
+    template <class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_UInt8<Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int16
@@ -104,6 +111,9 @@ namespace senf {
         void value(value_type v) { impl::write_uint16(this->i(),v); }
         Parse_Int16 const & operator= (value_type other) { value(other); return *this; }
     };
+    template <class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_Int16<Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt16
@@ -127,6 +137,9 @@ namespace senf {
         void value(value_type v) { impl::write_uint16(this->i(),v); }
         Parse_UInt16 const & operator= (value_type other) { value(other); return *this; }
     };
+    template <class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_UInt16<Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int24
@@ -151,6 +164,9 @@ namespace senf {
         void value(value_type v) { impl::write_uint24(this->i(),v); }
         Parse_Int24 const & operator= (value_type other) { value(other); return *this; }
     };
+    template <class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_Int24<Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt24
@@ -174,6 +190,9 @@ namespace senf {
         void value(value_type v) { impl::write_uint24(this->i(),v); }
         Parse_UInt24 const & operator= (value_type other) { value(other); return *this; }
     };
+    template <class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_UInt24<Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int32
@@ -197,6 +216,9 @@ namespace senf {
         void value(value_type v) { impl::write_uint32(this->i(),v); }
         Parse_Int32 const & operator= (value_type other) { value(other); return *this; }
     };
+    template <class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_Int32<Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt32
@@ -220,6 +242,9 @@ namespace senf {
         void value(value_type v) { impl::write_uint32(this->i(),v); }
         Parse_UInt32 const & operator= (value_type other) { value(other); return *this; }
     };
+    template <class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_UInt32<Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <unsigned start, unsigned end, class Iterator=nil, class IPacket=nil>
     struct Parse_IntField
@@ -251,6 +276,9 @@ namespace senf {
         BOOST_STATIC_ASSERT( start<end );
         BOOST_STATIC_ASSERT( end-start<=32 );
     };
+    template <unsigned start, unsigned end, class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_IntField<start,end,Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <unsigned start, unsigned end, class Iterator=nil, class IPacket=nil>
     struct Parse_UIntField
@@ -278,6 +306,9 @@ namespace senf {
         BOOST_STATIC_ASSERT( start<end );
         BOOST_STATIC_ASSERT( end-start<=32 );
     };
+    template <unsigned start, unsigned end, class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_UIntField<start,end,Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
     template <unsigned bit, class Iterator=nil, class IPacket=nil>
     struct Parse_Flag
@@ -304,6 +335,9 @@ namespace senf {
         }
         Parse_Flag const & operator= (value_type other) { value(other); return *this; }
     };
+    template <unsigned bit, class Iterator, class IPacket>
+    std::ostream & operator<<(std::ostream & os, Parse_Flag<bit,Iterator,IPacket> const & i)
+    { os << i.value(); return os; }
 
 }
 

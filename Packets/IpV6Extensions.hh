@@ -19,73 +19,66 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV6Packet public header */
+    \brief IpV6Extensions public header */
 
-#ifndef HH_IpV6Packet_
-#define HH_IpV6Packet_ 1
+#ifndef HH_IpV6Extensions_
+#define HH_IpV6Extensions_ 1
 
 // Custom includes
-#include "Packet.hh"
-#include "ParseInt.hh"
-#include "ParseArray.hh"
-#include "PacketRegistry.hh"
-#include "IpV4Packet.hh"
+#include "IpV6Packet.hh"
 
-//#include "IpV6Packet.mpp"
+//#include "IpV6Extensions.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 
     // See RFC2460
-    template <class Iterator=nil, class IpV6Packet=nil>
-    struct Parse_IpV6 : public ParserBase<Iterator,IpV6Packet>
+    template <class Iterator=nil, class IPacket=nil>
+    struct Parse_IpV6Extension_Fragment
+	: public ParserBase<Iterator,IPacket>
     {
         template <class I, class P=nil>
-        struct rebind { typedef Parse_IpV6<I,P> parser; };
+        struct rebind { typedef Parse_IpV6Extension_Fragment<I,P> parser; };
         typedef Iterator byte_iterator;
 
-        Parse_IpV6() {}
-        Parse_IpV6(Iterator const & i) : ParserBase<Iterator,IpV6Packet>(i) {}
+        Parse_IpV6Extension_Fragment() {}
+        Parse_IpV6Extension_Fragment(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
 
-        static unsigned bytes() { return 40; }
+        static unsigned bytes() { return 8; }
         
         ///////////////////////////////////////////////////////////////////////////
 
-	typedef Parse_UIntField <  0,  4, Iterator > Parse_Version;
-	typedef Parse_UIntField <  4, 12, Iterator > Parse_Class;
-	typedef Parse_UIntField < 12, 32, Iterator > Parse_FlowLabel;
 	typedef Parse_UInt8     <         Iterator > Parse_8bit;
-	typedef Parse_UInt16    <         Iterator > Parse_16bit;
+	typedef Parse_UIntField <  0, 13, Iterator > Parse_Offset;
+	typedef Parse_UIntField < 13, 15, Iterator > Parse_Reserved;
+	typedef Parse_Flag      < 15,     Iterator > Parse_More;
+	typedef Parse_UInt32    <         Iterator > Parse_32bit;
 
-	typedef Parse_Array < 16, Parse_8bit, Iterator > Parse_Addr;
-
-	Parse_Version    version()       const { return Parse_Version   (this->i()      ); }
-        Parse_Class      trafficClass()  const { return Parse_Class     (this->i()      ); }
-	Parse_FlowLabel  flowLabel()     const { return Parse_FlowLabel (this->i()      ); }
-	Parse_16bit      length()        const { return Parse_16bit     (this->i() +  4 ); }
-        Parse_8bit       nextHeader()    const { return Parse_8bit      (this->i() +  6 ); }
-	Parse_8bit       hopLimit()      const { return Parse_8bit      (this->i() +  7 ); }
-        Parse_Addr       source()        const { return Parse_Addr      (this->i() +  8 ); }
-	Parse_Addr       destination()   const { return Parse_Addr      (this->i() + 24 ); }
+	Parse_8bit      nextHeader()      const { return Parse_8bit      (this->i()      ); }
+	Parse_8bit      reserved1()       const { return Parse_8bit      (this->i() +  1 ); }
+	Parse_Offset    fragmentOffset()  const { return Parse_Offset    (this->i() +  2 ); }
+	Parse_Reserved  reserved2()       const { return Parse_Reserved  (this->i() +  2 ); }
+	Parse_More      moreFragments()   const { return Parse_More      (this->i() +  2 ); }
+	Parse_32bit     id()              const { return Parse_32bit     (this->i() +  4 ); }
     };
 
-    class IpV6Packet
+    class IpV6Extension_Fragment
 	: public Packet,
-	  public Parse_IpV6<Packet::iterator, IpV6Packet>,
-	  public PacketRegistryMixin<IpTypes, IpV6Packet>
+	  public Parse_IpV6Extension_Fragment<Packet::iterator, IpV6Extension_Fragment>,
+	  public PacketRegistryMixin<IpTypes, IpV6Extension_Fragment>
     {
-	using PacketRegistryMixin<IpTypes,IpV6Packet>::registerInterpreter;
+	using PacketRegistryMixin<IpTypes,IpV6Extension_Fragment>::registerInterpreter;
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef ptr_t<IpV6Packet>::ptr ptr;
+        typedef ptr_t<IpV6Extension_Fragment>::ptr ptr;
 
         ///////////////////////////////////////////////////////////////////////////
 
     private:
         template <class Arg>
-        IpV6Packet(Arg const & arg);
+        IpV6Extension_Fragment(Arg const & arg);
 
         virtual void v_nextInterpreter() const;
         virtual void v_finalize();
@@ -93,13 +86,12 @@ namespace senf {
 
         friend class Packet;
     };
-
-}    
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "IpV6Packet.cci"
-//#include "IpV6Packet.ct"
-#include "IpV6Packet.cti"
+//#include "IpV6Extensions.cci"
+#include "IpV6Extensions.ct"
+//#include "IpV6Extensions.cti"
 #endif
 
 

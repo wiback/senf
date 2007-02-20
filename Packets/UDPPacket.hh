@@ -34,6 +34,7 @@
 
 namespace senf {
     
+    // See RFC768
     template <class Iterator=nil, class IPacket=nil>
     struct Parse_UDP : public ParserBase<Iterator,IPacket>
     {
