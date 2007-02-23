@@ -200,7 +200,7 @@ namespace senf {
 
             \returns \c std::pair of data read (a string) and the peers address
 
-            \todo Add \c limit argument
+            \fixme Add \c limit argument
 
             \implementation The readfrom() family of members will use \c recvfrom from the BSD
             socket API.
@@ -243,7 +243,6 @@ namespace senf {
 
             \param[in] data Data to write
             \returns number of bytes written
-            \todo Make this member write the complete string if the socket is blocking
             \implementation The write() family of members will use POSIX \c write calls, not \c
                 send.
          */

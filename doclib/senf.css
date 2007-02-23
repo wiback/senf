@@ -178,13 +178,6 @@ table.senf th {
         font-weight: bold;
 }
 
-dl.bug, dl.fixme, dl.todo, dl.idea {
-        border: 1px solid #EE0000;
-        border-left-width: 4px;
-        background-color: #FFDDDD;
-        padding: 0 10px;
-}
-
 dl.xref-bug, dl.xref-fix, dl.xref-todo, dl.xref-idea {
         border: 1px solid #CC8888;
         padding: 2px 3px;
@@ -206,19 +199,9 @@ dl.xref-bug a, dl.xref-fix a, dl.xref-todo a, dl.xref-idea a {
         color: #6666FF;
 }
 
-dl.fixme {
-        border-color: #EEEE00;
-        background-color: #FFFFDD;
-}
-
 dl.xref-fix {
         border-color: #CCCC88;
         background-color: #FFFFEE;
-}
-
-dl.todo {
-        border-color: #00AA00;
-        background-color: #DDFFDD;
 }
 
 dl.xref-todo {
@@ -226,14 +209,29 @@ dl.xref-todo {
         background-color: #EEFFEE;
 }
 
-dl.idea {
-        border-color: #AAAAAA;
-        background-color: #EEEEEE;
-}
-
 dl.xref-idea {
         border-color:  #CCCCCC;
         background-color: #F8F8F8;
+}
+
+div.bug, div.fixme, div.todo, div.idea { 
+	padding-left: 10px;
+}
+
+div.bug { 
+	border-left: 10px solid red;
+}
+
+div.fixme { 
+	border-left: 10px solid yellow;
+}
+
+div.todo { 
+	border-left: 10px solid green;
+}
+
+div.idea { 
+	border-left: 10px solid #AAAAAA;
 }
 
 table {

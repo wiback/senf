@@ -17,9 +17,9 @@
           <xsl:value-of select="string(varlistentry/term)"/>
         </xsl:attribute>
         <xsl:text>&#xA;</xsl:text>
-        <xsl:variable name="curid" select="varlistentry/term/ref/@refid"/>
+        <xsl:variable name="curid" select="varlistentry/term/ref[1]/@refid"/>
         <xsl:apply-templates 
-          select="//variablelist[varlistentry/term/ref/@refid=$curid]"
+          select="//variablelist[varlistentry/term/ref[1]/@refid=$curid]"
           mode="inlist"/>
       </xsl:element>
       <xsl:text>&#xA;</xsl:text>

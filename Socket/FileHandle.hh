@@ -109,7 +109,7 @@ namespace senf {
         instance. This instance may either be a simple senf::FileBody or a class derived from
         senf::FileBody.
 
-        \todo Add public default constructor to allow declaration of (empty) senf::FileHandle
+        \fixme Add public default constructor to allow declaration of (empty) senf::FileHandle
         variables.
      */
     class FileHandle
