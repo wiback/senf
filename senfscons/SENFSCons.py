@@ -447,7 +447,7 @@ def DoxyXRef(env, docs=None,
     if HTML_HEADER:
         commands.append(
             "sed -e 's/\\$$title/$TITLE/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[2]} > $TARGET")
-    commands.append("xsltproc --stringparam title '$TITLE' ${SOURCES[1]} $SOURCE >> $TARGET")
+    commands.append("xsltproc --stringparam title '$TITLE' --stringparam types '$DOXY_XREF_TYPES' ${SOURCES[1]} $SOURCE >> $TARGET")
     if HTML_FOOTER:
         commands.append(
             "sed -e 's/\\$$title/$TITLE/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[%d]} >> $TARGET"

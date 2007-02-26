@@ -13,7 +13,7 @@
   <xsl:output method="html"/>
   <xsl:strip-space elements="*"/>
   <xsl:param name="title" select="''"/>
-  <xsl:param name="types" select="'bug fixme todo idea'"/>
+  <xsl:param name="types" select="'bug todo'"/>
 
   <xsl:template match="/">
     <div class="xref">
