@@ -225,6 +225,8 @@ namespace senf {
         protocols themselves, they are combined to build concrete protocols. This structure will
         remove a lot of code duplication. It is important to ensure, that the protocol facets do not
         overlap, since otherwise there will be problems resolving overlapping members.
+        
+        \doc init_client init_server
      */
     template <class SocketPolicy>
     class ConcreteSocketProtocol

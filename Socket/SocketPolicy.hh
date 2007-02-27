@@ -76,14 +76,18 @@
     <dd>configures, if and how buffering is configured for a socket</dd>
     </dl>
 
-    Every Policy value is identified by a class type. The policy
-    classes themselves built an inheritance hierarchy for each policy
-    axis. For each policy axis, the root of this tree is the class
-    named \e Policy \c Base (e.g. \p AddressingPolicyBase).
-
-    The senf::SocketPolicy defines the complete policy of a socket. It
+    In a concrete policy, each of these policy axis is assigned a value,
+    the policy value. This value is identified by a class type. For example,
+    possible values for <em>framingPolicy</em> are <tt>DatagramFramingPolicy</tt>
+    or <tt>StreamFramingPolicy</tt> which are classes derived from the axis
+    base class <tt>FramingPolicyBase</tt>. This base class doubles as
+    <tt>UnspecifiedFramingPolicy</tt> (which is just a typedef alias).
+    If a policy axis is assigned this Unspecified type, the axis is left
+    unspecified, the policy will be incomplete.
+    
+    The senf::SocketPolicy tempalte defines the complete policy of a socket. It
     combines a set of policy classes, one for each policy
-    axis. Together, they define the behavior of a socket handle. The
+    axis as described above. Together, they define the behavior of a socket handle. The
     socket handle instances do not implement any socket functionality
     themselves instead defering the implementation to the policy
     classes. The SocketHandle interface is therefore \e not
@@ -100,8 +104,13 @@
     compatible. If they are, the more derived SocketHandle can be
     converted (assigned to) the more basic SocketHandle.
 
+    \doc Example (concrete policy, incomplete policy, compatibility/assignment)
+
     \section policy_group_details The Policy Framework Classes
 
+   \doc Policy should be Axis here. Make clear, that this information is only 
+   needed when extending the library.
+    
     In the following discussion we will use the following conventions:
     \li \e Policy is one or \c AddressingPolicy, \c FramingPolicy, \c
         CommunicationPolicy, \c ReadPolicy, \c WritePolicy or \c

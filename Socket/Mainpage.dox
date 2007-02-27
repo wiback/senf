@@ -53,13 +53,17 @@ namespace senf {
     To make your code more flexible, you should not pass around your
     socket in this form. Most of your code will be using only a small
     subset of the ProtocolClientSocketHandle or
-    ProtocolServerSocketHandle API. If instead of using the
+    ProtocolServerSocketHandle API. 
+    
+    If instead of using the
     fully specified handle type you use a more incomplete type, you
-    allow your code to be used with all socket which fulfill the
-    minimal requirements of your code.
-
-    This works, by defining a special reduced policy or handle for
-    your code:
+    allow your code to be used with all sockets which fulfill the
+    minimal requirements of your code. These types are based on the 
+    ClientSocketHandle and ServerSocketHandle templates which implement
+    the policy interface without providing the concrete protocol interface.
+    To use those templates you may define a special reduced policy or handle for
+    your code. By giving only an incomplete policy you thereby reduce the 
+    interface to that required by your module:
 
     \code
       typedef ClientSocketHandle<
