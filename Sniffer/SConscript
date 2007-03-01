@@ -4,4 +4,4 @@ import SENFSCons
 ###########################################################################
 
 SENFSCons.Binary(env, 'sniffer', SENFSCons.GlobSources(),
-                LIBS = [ 'Packets', 'Socket', 'Utils' ]);
+                LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ]);

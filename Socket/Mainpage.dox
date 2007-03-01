@@ -147,9 +147,12 @@ namespace senf {
     interface). You will not have \c write or \c readfrom members. \c write will be disabled since
     the WritePolicy is unknown, \c readfrom will be disabled since a socket with the
     ConnectedCommunicationPolicy does not have a \c readfrom member.
+
+    \see
+        \ref policy_group \n
+        \ref handle_group \n
+        \ref protocol_group
  */
-
-
 
 /** \page extend Extending the Library
 

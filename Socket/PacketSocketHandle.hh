@@ -61,7 +61,7 @@ namespace senf {
         \par Socket Handle typedefs:
         \ref PacketSocketHandle (ProtocolClientSocketHandle)
 
-        \par Protocol Interface:
+        \par Policy Interface:
         ClientSocketHandle::read(), ClientSocketHandle::readfrom(), ClientSocketHandle::writeto(),
         ClientSocketHandle::bind(), ClientSocketHandle::local(), ClientSocketHandle::rcvbuf(),
         ClientSocketHandle::sndbuf()

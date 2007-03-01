@@ -64,7 +64,7 @@ namespace senf {
         \ref TCPv4ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv4ServerSocketHandle
         (ProtocolServerSocketHandle)
 
-        \par Protocol Interface:
+        \par Policy Interface:
         ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
         ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
         ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
@@ -145,7 +145,7 @@ namespace senf {
         \ref TCPv6ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv6ServerSocketHandle
         (ProtocolServerSocketHandle)
 
-        \par Protocol Interface:
+        \par Policy Interface:
         ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
         ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
         ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()

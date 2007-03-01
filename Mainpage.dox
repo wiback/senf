@@ -1,11 +1,29 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
 /** \mainpage SENF: The Simple and Extensible Network Framework
 
-    The SENF Simple and Extensible Network Framework aims to be a
-    complete set of libraries to facilitate the development of network
-    applications focusing on network protocols on the layers below the
-    application layer. However, the framework includes many general
-    purpose utilities and will be expedient to use well beyond its
-    primary objective.
+    The SENF Simple and Extensible Network Framework aims to be a complete set of libraries to
+    facilitate the development of network applications focusing on network protocols on the layers
+    below the application layer. However, the framework includes many general purpose utilities and
+    will be expedient to use well beyond its primary objective.
 
     \section Goals
 
@@ -19,14 +37,11 @@
 
     \section start Getting started
 
-    To get started using this library, begin by checking out the code
-    from the <a
-    href="http://developer.berlios.de/svn/?group_id=7489">BerliOS SVN
-    repository</a>. You may find help on using the library at '\ref
-    usage'. If you are interested in SENF, feel free to subscribe
-    to the <a
-    href="http://developer.berlios.de/mail/?group_id=7489">SENF
-    mailing lists</a>.
+    To get started using this library, begin by checking out the code from the <a
+    href="http://developer.berlios.de/svn/?group_id=7489">BerliOS SVN repository</a>. You may find
+    help on using the library at '\ref usage'. If you are interested in SENF, feel free to subscribe
+    to the <a href="http://developer.berlios.de/mail/?group_id=7489">SENF mailing lists</a>. If you
+    want to contribute, read the docs and \e please adhere to the \ref conventions.
 
     \see \ref usage\n
          \ref example
@@ -34,15 +49,13 @@
 
 /** \page usage Using the SENF framework
 
-    The SENF Framework is a collection of loosely coupled
-    modules. The libraries are heavily object oriented and template
-    based. For compatibility reasons, the libraries are therefore
-    built together with every project making use of the framework.
+    The SENF Framework is a collection of loosely coupled modules. The libraries are heavily object
+    oriented and template based. For compatibility reasons, the libraries are therefore built
+    together with every project making use of the framework.
 
-    When starting a new Projekt based on the SENF framework, it is
-    advisable, to make use of the SENFSCons build environment and use
-    SVN to manage the code repository. This is the configuration,
-    described in this documentation.
+    When starting a new Projekt based on the SENF framework, it is advisable, to make use of the
+    SENFSCons build environment and use SVN to manage the code repository. This is the
+    configuration, described in this documentation.
 
     \see \ref build \n
          \ref components \n
@@ -51,8 +64,7 @@
 
     \section Preliminaries
 
-    Before starting the devlopment, make sure to fulfill the following
-    requirements:
+    Before starting the devlopment, make sure to fulfill the following requirements:
 
     \li GNU g++, version at least 3.4
     \li The Boost libraries (http://www.boost.org)
@@ -66,136 +78,117 @@
     \li The \c xsltproc XSLT processor (http://xmlsoft.org/XSLT/xsltproc2.html)
 
 
-    The library is only tested with gcc-3.4 and 4.0 on Linux. On other
-    POSIX platforms with a BSD Socket API, the library should be
-    usable, possibly with some tweaking (except for the Scheduler,
+    The library is only tested with gcc-3.4 and 4.0 on Linux. On other POSIX platforms with a BSD
+    Socket API, the library should be usable, possibly with some tweaking (except for the Scheduler,
     which relies on \c epoll)
  */
 
 /** \page build Building the framework
 
-    This procedure will test building the complete framework
-    including the unit tests and the Sniffer test application. This
-    build is \e not needed to use the framework since every project
+    This procedure will test building the complete framework including the unit tests and the
+    Sniffer test application. This build is \e not needed to use the framework since every project
     will include the full SENF source code itself (via Subversion).
 
-    After you have successfully built the library tests, you can
-    continue to setup your own project using SENF.
+    After you have successfully built the library tests, you can continue to setup your own project
+    using SENF.
 
     \see \ref components \n
          \ref svnsetup
 
     \section checkout Getting the code
 
-    To access the code, check out the code from the BerliOS
-    repository. Change to your development directory and use the
-    following subversion command
+    To access the code, check out the code from the BerliOS repository. Change to your development
+    directory and use the following subversion command
 
     <pre>
     $ svn checkout http://svn.berlios.de/svnroot/repos/senf/trunk senf
     </pre>
 
-    This will create a new directory \c senf within the current
-    directory. For further documentation on the use of Subversion, see
-    the \c svn manpage or the subversion homepage at
-    http://subversion.tigris.org. A very good introduction and
-    reference to subversion is available at
-    http://svnbook.red-bean.com.
+    This will create a new directory \c senf within the current directory. For further documentation
+    on the use of Subversion, see the \c svn manpage or the subversion homepage at
+    http://subversion.tigris.org. A very good introduction and reference to subversion is available
+    at http://svnbook.red-bean.com.
 
     \section compile Building
 
-    To build the library, execute all unit tests and build the Sniffer
-    test application, use
+    To build the library, execute all unit tests and build the Sniffer test application, use
 
     <pre>
     $ scons
     $ scons all_tests
     </pre>
 
-    in the \c senf directory. This assumes, that you want to build the
-    library with your default gcc and requires the boost libraries to
-    be available in the system include paths. If this is not the case,
-    you can take a look at <tt>SConfig.template</tt> file. Copy this
-    file to <tt>SConfig</tt> and comment out all the variables you
-    don't want to change (The \e values in the template file are just
-    arbitrary examples).
+    in the \c senf directory. This assumes, that you want to build the library with your default gcc
+    and requires the boost libraries to be available in the system include paths. If this is not the
+    case, you can take a look at <tt>SConfig.template</tt> file. Copy this file to <tt>SConfig</tt>
+    and comment out all the variables you don't want to change (The \e values in the template file
+    are just arbitrary examples).
  */
 
 /** \page components The SENF modules
 
-    The framework is made up of several modular components. When using
-    the library, it is possible to selectively choose to use only a
-    subset of the implemented modules.
+    The framework is made up of several modular components. When using the library, it is possible
+    to selectively choose to use only a subset of the implemented modules.
 
     \see \ref build \n
          \ref svnsetup
 
     \section libSocket libSocket: C++ abstraction of the BSD socket API
 
-    This library provides a high performance and object oriented
-    abstraction of the standard socket API. It utilizes a flexible and
-    extensible policy based design. The library provides predefined
-    types for the important socket types (UDP and TCP sockets etc)
-    including raw and packet sockets. \n
+    This library provides a high performance and object oriented abstraction of the standard socket
+    API. It utilizes a flexible and extensible policy based design. The library provides predefined
+    types for the important socket types (UDP and TCP sockets etc) including raw and packet
+    sockets. \n
 
     \see <a href="../../Socket/doc/html/index.html">libSocket API
     reference</a>
 
     \section libPackets libPackets: Network packet manipulation
 
-    This libarary provides a very flexible infrastructure to
-    parse, create and otherwise manipulate packetized network
-    data. Included is a library of several protocol parsers covering
-    the basic IPv4 and IPv6 network protocols down to the Ethernet
-    layer.
+    This libarary provides a very flexible infrastructure to parse, create and otherwise manipulate
+    packetized network data. Included is a library of several protocol parsers covering the basic
+    IPv4 and IPv6 network protocols down to the Ethernet layer.
 
     \see <a href="../../Packets/doc/html/index.html">libPackets API
     reference</a>
 
     \section libScheduler libScheduler: Asynchronous event handling
 
-    The scheduler library provides an object oriented interface to the
-    standard UNIX \c select type event dispatcher. It is based on the
-    high performance \c epoll system call. It provides support for
-    read/write events as well as simple timer based events.
+    The scheduler library provides an object oriented interface to the standard UNIX \c select type
+    event dispatcher. It is based on the high performance \c epoll system call. It provides support
+    for read/write events as well as simple timer based events.
 
-    \see <a href="../../Scheduler/doc/html/index.html">libScheduler API
-    reference</a>
+    \see <a href="../../Scheduler/doc/html/index.html">libScheduler API reference</a>
 
     \section libUtils libUtils: Collection of arbitrary utilities
 
-    This library is used be most all of the other modules for
-    miscellaneous tools and utilities. We have
+    This library is used be most all of the other modules for miscellaneous tools and utilities. We
+    have
 
     \li Simple functions to manage daemon processes
     \li Standard exception classes
-    \li senf::intrusive_refcount to simplify the implementation
-        of classes usable with boost::intrusive_ptr
+    \li senf::intrusive_refcount to simplify the implementation of classes usable with
+        boost::intrusive_ptr
     \li boost::bind extensions
     \li An interface to the \c g++ demangler integrated with type_info
-    \li Typedefs and rudimentary methods to simplify handling
-        high-resolution time values
+    \li Typedefs and rudimentary methods to simplify handling high-resolution time values
 
-    \see <a href="../../Utils/doc/html/index.html">libUtils API
-    reference</a>
+    \see <a href="../../Utils/doc/html/index.html">libUtils API reference</a>
 
     \section senfscons SENFSCons, the SENF build environment
 
-    SENF relies on SCons (http://www.scons.org) to build. To further
-    simplify the common tasks, SENF includes a library of custom
-    routines and builders comprising a very concise build
-    environment. Included are a number of templates to help
-    bootstrapping a new project or component.
+    SENF relies on SCons (http://www.scons.org) to build. To further simplify the common tasks, SENF
+    includes a library of custom routines and builders comprising a very concise build
+    environment. Included are a number of templates to help bootstrapping a new project or
+    component.
 
-    \see <a href="../../senfscons/doc/html/index.html">SENFSCons
-    reference</a>
+    \see <a href="../../senfscons/doc/html/index.html">SENFSCons reference</a>
  */
 
 /** \page svnsetup Setting up a new project using SENF
 
-    The preferred way to use SENF in a new project is to rely on
-    Subversion and make use of the SENFSCons build environment. The
-    following sections will describe, how this setup works.
+    The preferred way to use SENF in a new project is to rely on Subversion and make use of the
+    SENFSCons build environment. The following sections will describe, how this setup works.
 
     \see \ref build \n
          \ref components \n
@@ -203,38 +196,30 @@
 
     \section svnext Setting up the project repository
 
-    The most seamless integration is possible if you rely on
-    Subversion to manage the new project. Subversion does support
-    'external repositories'. This allows to import code from a foreign
-    repository into the checkout without importing it into your
-    repository. The code will always stay at the remote repository,
-    updates are automatically available.
+    The most seamless integration is possible if you rely on Subversion to manage the new
+    project. Subversion does support 'external repositories'. This allows to import code from a
+    foreign repository into the checkout without importing it into your repository. The code will
+    always stay at the remote repository, updates are automatically available.
 
-    First setup a new empty repository as described for example in the
-    Subversion book at http://svnbook.red-bean.com or as mandated by
-    your site policy. We will call the project 'Foo' and assume, that
-    the project has been checked out into the 'Foo' directory.
+    First setup a new empty repository as described for example in the Subversion book at
+    http://svnbook.red-bean.com or as mandated by your site policy. We will call the project 'Foo'
+    and assume, that the project has been checked out into the 'Foo' directory.
 
-    You now have to decide, which modules you want to use. Every
-    module resides in it's own subdirectory in the SENF
-    repository. Instead of directly checking out the code, we will use
-    \c svn:externals. This will instruct \c svn to auutomatically
-    check out the needed directories from the BerliOS SENF
-    repository. Change to the 'Foo' directory and type
+    You now have to decide, which modules you want to use. Every module resides in it's own
+    subdirectory in the SENF repository. Instead of directly checking out the code, we will use \c
+    svn:externals. This will instruct \c svn to auutomatically check out the needed directories from
+    the BerliOS SENF repository. Change to the 'Foo' directory and type
 
     <pre>
     $ svn propedit svn:externals .
     </pre>
 
-    The default editor (probably VI) will be started with the current
-    value of the svn:externals property (which will probably be
-    empty). Now add all the modules you want plus \c senfscons and
-    possibly \c doclib (if you want to build the documentation). You
-    will almost certainly neeed the \c Utils module, since all other
-    modules depend on it.
+    The default editor (probably VI) will be started with the current value of the svn:externals
+    property (which will probably be empty). Now add all the modules you want plus \c senfscons and
+    possibly \c doclib (if you want to build the documentation). You will almost certainly neeed the
+    \c Utils module, since all other modules depend on it.
 
-    For example, if you want to use the \c Scheduler and \c Socket
-    module, the file will look like
+    For example, if you want to use the \c Scheduler and \c Socket module, the file will look like
 
     <pre>
     senfscons http://svn.berlios.de/svnroot/repos/senf/trunk/senfscons
@@ -249,26 +234,21 @@
     $ svn update
     </pre>
 
-    and the code will be checked out into the corresponding
-    directories.
+    and the code will be checked out into the corresponding directories.
 
     \section new_conf Configuring SENFSCons
 
-    To set up the build environment, copy the
-    <tt>senfscons/SConstruct.template</tt> to <tt>SConstruct</tt> in
-    the project root. The default setup of this file is to build all
-    subdirectories (using the \c SConscript files of the
-    subdirectories). You can add additonal global targets and
-    configuration parameters here.
+    To set up the build environment, copy the <tt>senfscons/SConstruct.template</tt> to
+    <tt>SConstruct</tt> in the project root. The default setup of this file is to build all
+    subdirectories (using the \c SConscript files of the subdirectories). You can add additonal
+    global targets and configuration parameters here.
 
-    If you want to use a non-default compiler or the boost library is
-    not installed in the system directories, you will have to copy
-    <tt>senfscons/SConfig.template</tt> to <tt>SConfig</tt> in the
-    project root and edit it there. You should \e never add \c SConfig
-    to the repository since it should only contain local settings
-    necessary for building on your local system. You should therefore
-    add \c SConfig to the list of files ignored by Subversion in the
-    project root. In the project root execute
+    If you want to use a non-default compiler or the boost library is not installed in the system
+    directories, you will have to copy <tt>senfscons/SConfig.template</tt> to <tt>SConfig</tt> in
+    the project root and edit it there. You should \e never add \c SConfig to the repository since
+    it should only contain local settings necessary for building on your local system. You should
+    therefore add \c SConfig to the list of files ignored by Subversion in the project root. In the
+    project root execute
 
     <pre>
     $ svn propedit svn:ignore .
@@ -284,16 +264,14 @@
     $ scons
     </pre>
 
-    If you have not changed the \c SConstruct file, this will build
-    all modules you have importet into your project. To build and
-    execute the unit tests, use
+    If you have not changed the \c SConstruct file, this will build all modules you have importet
+    into your project. To build and execute the unit tests, use
 
     <pre>
     $ scons all_tests
     </pre>
 
-    you can also build only a subdirectory by changing to it and
-    running
+    you can also build only a subdirectory by changing to it and running
 
     <pre>
     $ scons -u [target]
@@ -307,63 +285,143 @@
 
 /** \page overview Introduction to the framework
 
-    The SENF framework is relatively complex and makes use of advanced
-    features of the C++ language. To make the most efficient use of
-    the framework, you should have at least a basic understanding of
-    C++ templates and the standard library concepts.
+    The SENF framework is relatively complex and makes use of advanced features of the C++
+    language. To make the most efficient use of the framework, you should have at least a basic
+    understanding of C++ templates and the standard library concepts.
 
-    The library implementation at places makes heavy use of advanced
-    template techniques and relies on some very advanced template
-    libraries from Boost. The aim was however for the \e external
-    interface of the library to be as simple as possible without
-    sacrificing important functionality or adversely impacting the
-    runtime performance.
+    The library implementation at places makes heavy use of advanced template techniques and relies
+    on some very advanced template libraries from Boost. The aim was however for the \e external
+    interface of the library to be as simple as possible without sacrificing important functionality
+    or adversely impacting the runtime performance.
 
-    As already mentioned several times, the library relies on Boost
-    (http://www.boost.org) as a generic library of high quality
-    reusable C++ components. It also makes frequent use of the
-    standard library. It is designed, to integrate well into both
-    libraries and to use the same concepts and ideas.
+    As already mentioned several times, the library relies on Boost (http://www.boost.org) as a
+    generic library of high quality reusable C++ components. It also makes frequent use of the
+    standard library. It is designed, to integrate well into both libraries and to use the same
+    concepts and ideas.
 
     \section startup Getting starting developing with SENF
 
-    To introduce the framework and it's general structure, a simple
-    example application is provided in the SENF repository in the \c
-    Sniffer module. Peruse this example to get a first look at how to
-    make use of SENF.
+    To introduce the framework and it's general structure, a simple example application is provided
+    in the SENF repository in the \c Sniffer module. Peruse this example to get a first look at how
+    to make use of SENF.
 
-    When building a network Application with SENF, you will use
-    several modules:
+    When building a network Application with SENF, you will use several modules:
 
-    \li Use the <a href="../../Socket/doc/html/index.html">Socket
-        library</a> for network communication needs. This library
-        includes support for raw and packet sockets to allow low level
-        network access.
-    \li Use the <a
-        href="../../Scheduler/doc/html/index.html">Scheduler
-        library</a> to coordinate the asynchronous event
-        processing. This drastically reduces the number of threads
-        needed in your application and will greatly enhance the overall
-        responsiveness.
+    \li Use the <a href="../../Socket/doc/html/index.html">Socket library</a> for network
+        communication needs. This library includes support for raw and packet sockets to allow low
+        level network access.
+    \li Use the <a href="../../Scheduler/doc/html/index.html">Scheduler library</a> to coordinate
+        the asynchronous event processing. This drastically reduces the number of threads needed in
+        your application and will greatly enhance the overall responsiveness.
     \li To interpret low level network packets, use the <a
-        href="../../Packets/doc/html/index.html">Packets
-        library</a>. This library will provide efficient and
-        convenient access to all protocol fields. It supports parsing as
-        well as modifying and creating packets. It has default support
-        for the most important internet protocols and is highly
-        extensible with new protocols.
-    \li Go over the <a href="../../Utils/doc/html/index.html">Utils
-        library</a>. It contains small helpers to
-        simplify tasks like daemonization, exception handling,
-        debugging and so on.
+        href="../../Packets/doc/html/index.html">Packets library</a>. This library will provide
+        efficient and convenient access to all protocol fields. It supports parsing as well as
+        modifying and creating packets. It has default support for the most important internet
+        protocols and is highly extensible with new protocols.
+    \li Go over the <a href="../../Utils/doc/html/index.html">Utils library</a>. It contains small
+        helpers to simplify tasks like daemonization, exception handling, debugging and so on.
 
-    The simplest way to get started is: copy the Sniffer application
-    and start to modify it.
+    The simplest way to get started is: copy the Sniffer application and start to modify it.
 
     \see \ref example \n
          \ref components \n
          \ref svnsetup \n
          \ref build
+
+    \section conventions Coding Conventions
+    
+    Here we have laid down the coding conventions used throughout the SENF framework. Please adhere
+    to these conventions when changing or adding code. If you use emacs, you can use the C++ IDE for
+    emacs from http://g0dil.de which greatly simplifies following these conventions.
+
+    \subsection conventions_file_naming File Naming
+
+    Files should be named according to the main class they define. A single header file should
+    define only one main class. Exceptions to this rule are OK.
+
+    \par Rationale:
+        This simplifies finding the implementation/header for a given class and also reduces the
+        size of each single file.
+    
+    The implementation is divided into a number of different files:
+
+    <table class="glossary"> <tr><td>\c .h</td><td>C public header</td></tr>
+
+    <tr><td>\c .hh</td><td>C++ public header</td></tr>
+
+    <tr><td>\c .ih</td><td>C++ internal header used only by the implementation. This header will
+    probably be included indirectly by the public header but is not meant to be perused by the
+    library user</td></tr>
+
+    <tr><td>\c .c</td><td>C implementation</td></tr>
+
+    <tr><td>\c .cc</td><td>C++ implementation of non-inline non-template functions and
+    members</td></tr>
+
+    <tr><td>\c .ct</td><td>C++ implementation of non-inline template functions and members</td></tr>
+
+    <tr><td>\c .cci</td><td>C++ implementation of inline non-template functions and
+    members</td></tr>
+    
+    <tr><td>\c .cti</td><td>C++ implementation of inline template fuanctions and members</td></tr>
+
+    <tr><td>\c .mpp</td><td>Special include file used for external iteration by the
+    Boost.Preprocessor library</td></tr> </table>
+
+    \par Rationale:
+        There are two part's to this: First, separating the implementation of inlines and tempaltes
+        out of the header file makes the header file much easier to read. This is important, since
+        the header file will be used as a reference by the developers.
+    \par
+        Separating inline from non-inline members is used together with the \c prefix_ convention
+        below to ensure the correct placement of inline vs non-inline members in the source
+        code. The C++ language requires, that inline members must be included into \e every
+        compilation unit, non-inline members however must be included \e only in one compilation
+        unit. Placing the inline members into a separate file allows to automate this: Simply moving
+        an implementation from one of the inline files into one of the non-inline files will change
+        the type of implementation accordingly.
+
+    \subsection conventions_type_naming Type Naming
+
+    SENF prefers the use of the CapitalziedLettersToSeparateWords convention for class names. In
+    this case, class names must start with a capital letter. There are some exceptions to this rule:
+    Types which define new basic data types to be used like other built-in types may be named using
+    lowercase letters plus underscores. Also, if a type or class is directly related to some other
+    library (STL or Boost) which uses the underscore convention, it might be more sensible to follow
+    this convention. This is open to debate.
+
+    \par Rationale:
+        Naming types with capital letters nicely gives a visual clue, that a symbol is a type
+        name. This can also be used by the editor to highlight type names correctly. Additionally,
+        this convention is compact and does not add additional or repeated overhead.
+
+    \subsection conventions_impl Implementation
+
+    Only in very few places, SENF allows the use of inline implementations (not to be confused with
+    inline functions). An \e implementation is inline, if it is written directly into the class
+    definition in the header file. Again there are exceptions to this rule but they are very few:
+    \li When defining simple exception classes, the 'what()' member may be defined inline if it
+        returns a string constant.
+    \li It may be OK to use inline implementations for one-line implementations in internal
+        headers. 
+    \li The Packet library allows inline implementations for the definition of parsers since doing
+        so outside the declaration just gets to verbose and parsers definitions are quite length but
+        very simple and straight forward.
+
+    \par Rationale:
+        Implementing members inline inside the class declaration makes the declaration much harder
+        to read. Since the declaration in the header file will be used as a reference by the
+        developer, the header files should be as readable as possible.
+
+    Every function or method implementation in one of the implementation files must \e always be
+    prefixed with \c prefix_. This symbol is defined at the beginning of the file and undefined at
+    the end. The symbol must be defined to be \c inline in the \c .cti and \c .cci files and must be
+    defined empty in the \c .cc and \c .ct files.
+
+    \par Rationale:
+        Together with splitting inlines and non-inlines into separate files, this allows to
+        automatically include the inline definitions at the right places. See above.
+
  */
 
 

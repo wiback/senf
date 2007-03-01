@@ -103,7 +103,7 @@ namespace senf {
 
     class SocketPolicyBase;
 
-    /** \brief Socket protocol base class
+    /** \brief Socket Protocol base class
 
         This is the base class of all socket protocol classes. Every protocol class must directly or
         indirectly inherit from SocketProtocol
@@ -211,7 +211,7 @@ namespace senf {
    };
 
 
-    /** \brief Concrete socket protocol implementation base class
+    /** \brief Concrete Socket Protocol implementation base class
 
         ConcreteSocketProtocol is the base class of a concrete socket protocol implementation. The
         final protocol class must inherit from ConcreteSocketProtocol. The template argument \a

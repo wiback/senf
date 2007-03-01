@@ -30,6 +30,9 @@
 #include <iostream>
 #include <iomanip>
 #include "Socket/PacketSocketHandle.hh"
+#include "Scheduler/Scheduler.hh"
+#include "Utils/membind.hh"
+
 #include "Packets/EthernetPacket.hh"
 #include "Packets/IpV4Packet.hh"
 #include "Packets/UDPPacket.hh"
@@ -86,7 +89,7 @@ namespace {
     }
 }
 
-int main (int argc, char const * argv[])
+int loop_main (int argc, char const * argv[])
 {
     try {
         senf::PacketSocketHandle sock;
@@ -107,6 +110,59 @@ int main (int argc, char const * argv[])
     catch (std::exception const & ex) {
         std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
     }
+    return 0;
+}
+
+class Sniffer
+{
+    senf::PacketSocketHandle sock;
+
+public:
+    Sniffer(std::string const & interface)
+        { sock.bind(senf::LLSocketAddress(interface)); }
+
+    void run()
+        {
+            senf::Scheduler::instance().add(sock, senf::membind(&Sniffer::dumpPacket, this));
+            senf::Scheduler::instance().process();
+        }
+         
+private:
+    void dumpPacket(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
+        {
+            std::string data (sock.read());
+            senf::EthernetPacket::ptr packet (
+                senf::Packet::create<senf::EthernetPacket>(
+                    data.begin(), data.end()));
+            packet->dump(std::cout);
+            hexdump(packet->last()->begin(),
+                    packet->last()->end());
+            std::cout << "\n\n";
+        }
+};
+
+int scheduler_main(int argc, char const * argv[])
+{
+    try {
+        Sniffer sniffer ("eth0");
+        sniffer.run();
+    }
+    catch (std::exception const & ex) {
+        std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
+    }
+    return 0;
+}
+
+int main(int argc, char const * argv[])
+{
+    if (argc >= 2)
+        if (std::string(argv[1]) == "loop")
+            return loop_main(argc,argv);
+        else if (std::string(argv[1]) == "scheduler")
+            return scheduler_main(argc,argv);
+
+    std::cerr << "Usage: sniffer { loop | scheduler }" << std::endl;
+    return 1;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
