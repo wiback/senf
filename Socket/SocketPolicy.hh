@@ -23,20 +23,16 @@
 /** \file
     \brief Policy Framework public header
 
-    \todo We should probably remove BufferingPolicy from the
-        interface, it does not make much sense (how did I come to
-        include it ??)
+    \todo We should probably remove BufferingPolicy from the interface, it does not make much sense
+        (how did I come to include it ??)
 
-    \todo Do we want to support separate read and write policies. This
-        allows to treat pipes within this framework however, is this
-        worth the effort?
+    \todo Do we want to support separate read and write policies. This allows to treat pipes within
+        this framework however, is this worth the effort?
 
-    \idea Creating a new Socket will create 4 (!) new instances (The
-        handle, the body, the policy and the protocol) of which 3
-        (argh) (body, policy and protocol) live on the heap. This is
-        expensive. We should convert all the policy classes to
-        singletons and assign the same instance to all socket bodies
-        with the same policy. This would reduce the number of heap
+    \idea Creating a new Socket will create 4 (!) new instances (The handle, the body, the policy
+        and the protocol) of which 3 (argh) (body, policy and protocol) live on the heap. This is
+        expensive. We should convert all the policy classes to singletons and assign the same
+        instance to all socket bodies with the same policy. This would reduce the number of heap
         allocations per socket handle to two.
  */
 
@@ -46,166 +42,167 @@
 
     \section policy_group_introduction Introduction to the Policy Framework
 
-    The policy framework conceptually implements a list of parallel
-    inheritance hierarchies each covering a specific interface aspect
-    of the socket handle. The socket handle itself only provides
-    minimal functionality. All further functionality is relayed to a
-    policy class, or more precisely, to a group of policy classes, one
-    for each policy axis. The policy axis are
+    The policy framework conceptually implements a list of parallel inheritance hierarchies each
+    covering a specific interface aspect of the socket handle. The socket handle itself only
+    provides minimal functionality. All further functionality is relayed to a policy class, or more
+    precisely, to a group of policy classes, one for each policy axis. The policy axis are
 
-    <dl>
-    <dt><em>addressingPolicy</em></dt>
-    <dd>configures, whether a socket is
-    addressable and if so, configures the address type</dd>
+    <dl><dt><em>addressingPolicy</em></dt><dd>configures, whether a socket is addressable and if
+    so, configures the address type</dd>
 
-    <dt><em>framingPolicy</em></dt>
-    <dd>configures the type of framing the socket provides: either no
-    framing providing a simple i/o stream or packet framing</dd>
+    <dt><em>framingPolicy</em></dt> <dd>configures the type of framing the socket provides: either
+    no framing providing a simple i/o stream or packet framing</dd>
 
-    <dt><em>communicationPolicy</em></dt>
-    <dd>configures,if and how the communication partner is
+    <dt><em>communicationPolicy</em></dt><dd>configures,if and how the communication partner is
     selected</dd>
 
-    <dt><em>readPolicy</em></dt>
-    <dd>configures the readability of the socket</dd>
+    <dt><em>readPolicy</em></dt><dd>configures the readability of the socket</dd>
 
-    <dt><em>writePolicy</em></dt>
-    <dd>configures the writability of the socket</dd>
+    <dt><em>writePolicy</em></dt><dd>configures the writability of the socket</dd>
 
-    <dt><em>bufferingPolicy</em></dt>
-    <dd>configures, if and how buffering is configured for a socket</dd>
-    </dl>
+    <dt><em>bufferingPolicy</em></dt><dd>configures, if and how buffering is configured for a
+    socket</dd> </dl>
 
-    In a concrete policy, each of these policy axis is assigned a value,
-    the policy value. This value is identified by a class type. For example,
-    possible values for <em>framingPolicy</em> are <tt>DatagramFramingPolicy</tt>
-    or <tt>StreamFramingPolicy</tt> which are classes derived from the axis
-    base class <tt>FramingPolicyBase</tt>. This base class doubles as
-    <tt>UnspecifiedFramingPolicy</tt> (which is just a typedef alias).
-    If a policy axis is assigned this Unspecified type, the axis is left
-    unspecified, the policy will be incomplete.
+    The template senf::SocketPolicy combines these policy axis to form a concrete socket policy. In
+    a concrete policy, each of these policy axis is assigned a value, the policy value. This value
+    is identified by a class type, a policy class. E.g. possible values for <em>framingPolicy</em>
+    are <tt>DatagramFramingPolicy</tt> or <tt>StreamFramingPolicy</tt> which are classes derived
+    from the axis base class <tt>FramingPolicyBase</tt>. This base class also doubles as
+    <tt>UnspecifiedFramingPolicy</tt> (which is just a typedef alias).  If a policy axis is assigned
+    this Unspecified type, the axis is left unspecified, the concrete policy will be incomplete.
     
-    The senf::SocketPolicy tempalte defines the complete policy of a socket. It
-    combines a set of policy classes, one for each policy
-    axis as described above. Together, they define the behavior of a socket handle. The
-    socket handle instances do not implement any socket functionality
-    themselves instead defering the implementation to the policy
-    classes. The SocketHandle interface is therefore \e not
-    implemented using virtual members, all important socket functions
-    can be inlined by the compiler to create highly efficient code.
+    The senf::SocketPolicy template defines the behavior of a socket handle. The socket handle
+    instances do not implement any socket functionality themselves instead defering the
+    implementation to the policy classes. The SocketHandle interface is therefore \e not implemented
+    using virtual members, all important socket functions can be inlined by the compiler to create
+    highly efficient code.
 
-    A SocketPolicy can be incomplete. In this case it does \e not
-    completely specify the socket interface, it leaves some aspects
-    open. A SocketHandle based on such a policy will have a reduced
-    interface: It will only support those members for wich the
-    corresponding policies are defined.
+    A senf::SocketPolicy instance can be incomplete. In this case it does \e not completely specify
+    the socket interface, it leaves some aspects open by assigning the Unspecified value to one or
+    more of the policy axis. A senf::SocketHandle based on such a policy will have a reduced
+    interface: It will only support those members for wich the corresponding policies are defined.
 
-    Two SocketHandle's with different policies can be \e
-    compatible. If they are, the more derived SocketHandle can be
-    converted (assigned to) the more basic SocketHandle.
+    To build a senf::SocketPolicy instance the senf::MakeSocketPolicy helper is provided. This
+    helper template takes any number (it is really limited to 6 Arguments but more arguments don't
+    make sense) of policy classes as it's argument. The MakeSocketPolicy helper will take the
+    arguments in the order they are specified and for each argument will check to which axis the
+    policy class belongs (by checking the base classes of that class) and assign it to the correct
+    policy axis in the senf::SocketPolicy template. If any policy axis are not specified, they are
+    defaulted to their corresponding Unspecified value. This helper frees you to specify the policy
+    classes in any order. An additional feature is, that you may specify a complete policy as a
+    first argument. This policy will then be used to provide default values for unspecified axis.
 
-    \doc Example (concrete policy, incomplete policy, compatibility/assignment)
+    Two senf::SocketHandle's with different policies can be \e compatible. If they are, the more
+    specific SocketHandle can be converted (assigned to) the more basic SocketHandle. A SocketHandle
+    is more specific then another SocketHandle if the policy of the former is more specific then
+    that of the latter which means, that for each policy axis separately, the value of that axis of
+    the more specific policy is derived from or the same as the value of that axis in the more basic
+    policy. This is like converting a derived class pointer to a base class pointer, only it happens
+    separately but at the same time for each policy axis:
+
+    \code
+    // This defines an incomplete policy where addressingPolicy, writePolicy and bufferingPolicy
+    // are unspecified
+    typedef senf::MakeSocketPolicy<
+        senf::StreamFramingPolicy,
+        senf::ConnectedCommunicationPolicy,
+        senf::ReadablePolicy
+        >::policy MyReadableSocketPolicy
+
+    typedef senf::ClientSocketHandle<MyReadableSocketPolicy> MyReadableHandle;
+
+    // TCPv4ClientSocketHandle is a socket handle with the policy equivalent to
+    // senf::MakeSocketPolicy<
+    //     INet4AddressingPolicy,
+    //     StreamFramingPolicy,
+    //     ConnectedCommunicationPolicy,
+    //     ReadablePolicy,
+    //     WritablePolicy,
+    //     SocketBufferingPolicy>::policy
+    senf::TCPv4ClientSocketHandle tcpHandle (...);
+
+    MyReadableHandle myHandle (tcpHandle); // Conversion to more basic socket handle
+    \endcode
 
     \section policy_group_details The Policy Framework Classes
 
-   \doc Policy should be Axis here. Make clear, that this information is only 
-   needed when extending the library.
+    In the following discussion, deeper insight into C++ and especially the concepts of template
+    meta-programming are needed. Hoewever, this information is only needed if you want to write new
+    policy classes or want to use the policy framework explicitly for your own involved
+    optimizations ... or if you are just plain curious :-)
     
     In the following discussion we will use the following conventions:
-    \li \e Policy is one or \c AddressingPolicy, \c FramingPolicy, \c
-        CommunicationPolicy, \c ReadPolicy, \c WritePolicy or \c
-        BufferingPolicy
-    \li \e socketPolicy is any socket policy (that is, an
-        instantiation of the SocketPolicy template)
-    \li \e trait is an any policy class (that is, any class derived
-        from one of the axis base classes)
+    \li \e Axis is one or \c AddressingPolicy, \c FramingPolicy, \c CommunicationPolicy, \c
+        ReadPolicy, \c WritePolicy or \c BufferingPolicy
+    \li \e socketPolicy is any socket policy (that is, an instantiation of the SocketPolicy
+        template)
+    \li \e trait is an any policy class (that is, any class derived from one of the axis base
+        classes)
 
-    Each axis is comprised of a number of classes and templates (all
-    in namespace senf of course):
+    Each axis is comprised of a number of classes and templates (all in namespace senf of course):
 
-    <dl>
-    <dt>\e Policy \c Base (ex: AddressingPolicyBase)</dt>
-    <dd>Baseclass of all policies in this axis</dd>
+    <dl><dt>\e Axis \c Base (ex: AddressingPolicyBase)</dt><dd>Baseclass of all policies in this
+    axis</dd>
 
-    <dt>\c Unspecified \e Policy  (ex: \ref UnspecifiedAddressingPolicy)</dt>
-    <dd>An alias (typedef) for \e Policy \c Base</dd>
+    <dt>\c Unspecified \e Axis (ex: \ref UnspecifiedAddressingPolicy)</dt> <dd>An alias (typedef)
+    for \e Axis \c Base</dd>
 
-    <dt>\e Policy \c Is < \e socketPolicy, \e trait > (ex: AddressingPolicyIs)</dt>
-    <dd>A template metafunction returning \c boost::true_type, if \e
-    trait (any class derived from \e Policy \c Base) is a compatible
-    policy value of the given \e socketPolicy</dd>
+    <dt>\e Axis \c Is < \e socketPolicy, \e trait > (ex: AddressingPolicyIs)</dt> <dd>A template
+    metafunction returning \c boost::true_type, if \e trait (any class derived from \e Axis \c
+    Base) is a compatible policy value of the given \e socketPolicy</dd>
 
-    <dt>\c If \e Policy \c Is < \e socketPolicy, \e trait > (ex: IfAddressingPolicyIs)</dt>
-    <dd>This is a combination of \e Policy \c Is and \c boost::enable_if</dd>
+    <dt>\c If \e Axis \c Is < \e socketPolicy, \e trait > (ex: IfAddressingPolicyIs)</dt> <dd>This
+    is a combination of \e Axis \c Is and \c boost::enable_if</dd>
 
-    <dt>\c If \e Policy \c IsNot < \e socketPolicy, \e trait > (ex: IfAddressingPolicyIsNot)</dt>
-    <dd>The inverse of above</dd>
-    </dl>
+    <dt>\c If \e Axis \c IsNot < \e socketPolicy, \e trait > (ex: IfAddressingPolicyIsNot)</dt>
+    <dd>The inverse of above</dd> </dl>
 
-    These classes form the basis of the policy framework. To bind the
-    policy axis together, there are some more classes and templates.
+    These classes form the basis of the policy framework. To bind the policy axis together, there
+    are some more classes and templates.
 
-    <dl>
-    <dt>\c class \c SocketPolicyBase</dt>
-    <dd>This class is the base class of the SocketPolicy template. It
-    is used to validate, that a class is really a SocketPolicy (by
-    checking, that it derives from SocketPolicyBase. This is simpler
-    than chacking the template directly).</dd>
+    <dl><dt>\c class \c SocketPolicyBase</dt> <dd>This class is the base class of the SocketPolicy
+    template. It is used to validate, that a class is really a SocketPolicy (by checking, that it
+    derives from SocketPolicyBase. This is simpler than chacking the template directly).</dd>
 
-    <dt>\c template \c SocketPolicy < \e addressingPolicy, \e
-    framingPolicy, \e communicationPolicy, \e readPolicy, \e
-    writePolicy, \e bufferingPolicy ></dt>
-    <dd>This is the central SocketPolicy template. It combines a
-    complete set of policy classes, one for each axis.</dd>
+    <dt>\c template \c SocketPolicy < \e addressingPolicy, \e framingPolicy, \e communicationPolicy,
+    \e readPolicy, \e writePolicy, \e bufferingPolicy ></dt> <dd>This is the central SocketPolicy
+    template. It combines a complete set of policy classes, one for each axis.</dd>
 
-    <dt>\c template \c MakeSocketPolicy < \e args ></dt>
-    <dd>\c MakeSocketPolicy is a template metafunction which
-    simplifies building SocketPolicy instantiations. It takes any
-    number (ok, up to a maximum of 6) of policy classes as an
-    argument (in any order). It will sort these arguments into the
-    SocketPolicy template arguments. If for some axis no class is
-    specified, it's slot will be filled with \c Unspecified \e
-    Policy. Additionally, the first Argument may optionally be ab
-    arbitrary SocketPolicy. It will provide default values for
-    unspecified axis</dd>
+    <dt>\c template \c MakeSocketPolicy < \e args ></dt> <dd>\c MakeSocketPolicy is a template
+    metafunction which simplifies building SocketPolicy instantiations. It takes any number (ok, up
+    to a maximum of 6) of policy classes as an argument (in any order). It will sort these arguments
+    into the SocketPolicy template arguments. If for some axis no class is specified, it's slot will
+    be filled with \c Unspecified \e Axis. Additionally, the first Argument may optionally be ab
+    arbitrary SocketPolicy. It will provide default values for unspecified axis</dd>
 
-    <dt>\c template \c SocketPolicyIsBaseOf < \e base, \e derived ></dt>
-    <dd>This template metafunction will check, wether the socket
-    policy \e derived is convertible to \e base. This means, that for
-    each axis, the corresponding policy class in \e derived must be
-    derived or be the same as the one on \e base.</dd>
-    </dl>
+    <dt>\c template \c SocketPolicyIsBaseOf < \e base, \e derived ></dt> <dd>This template
+    metafunction will check, wether the socket policy \e derived is convertible to \e base. This
+    means, that for each axis, the corresponding policy class in \e derived must be derived or be
+    the same as the one on \e base.</dd> </dl>
 
-    \implementation All these classes are created automatically. The
-    \c SENF_SOCKET_POLICIES makro is a Boost.Preprocessor style
-    sequence listing all policy axis. The Boost.Preprocessor library
+    \implementation All these classes are created automatically. The \c SENF_SOCKET_POLICIES makro
+    is a Boost.Preprocessor style sequence listing all policy axis. The Boost.Preprocessor library
     is then used to generate the respective classes.
 
     \section policy_implement Implementing Policy Classes
 
-    To define a new policy class, derive from the corresponding base
-    class for your policy axies. The only policy axis which might
-    possibly need to be extended are the addressing policy
-    (AddressingPolicyBase) and the buffering policy
-    (BufferingPolicyBase). See the Documentation of these classes for
-    more information on which members can be implemented.
+    To define a new policy class, derive from the corresponding base class for your policy
+    axies. The only policy axis which might possibly need to be extended are the addressing policy
+    (AddressingPolicyBase) and the buffering policy (BufferingPolicyBase). See the Documentation of
+    these classes for more information on which members can be implemented.
 
-    All members you define must be static. For any of the policy
-    classes, you must only define those members which are supported by
-    your implementation. If you leave out a member you automatically
-    disable the corresponding functionality in the
-    ClientSocketHandle/ServerSocketHandle interface.
+    All members you define must be static. For any of the policy classes, you must only define those
+    members which are supported by your implementation. If you leave out a member you automatically
+    disable the corresponding functionality in the ClientSocketHandle/ServerSocketHandle interface.
 
-    The member prototypes given in the base class documentation only
-    specify the call signature not the way, the member must be defined
-    (FileHandle really is not a FileHandle but an arbitrary
+    The member prototypes given in the base class documentation only specify the call signature not
+    the way, the member must be defined (FileHandle really is not a FileHandle but an arbitrary
     SocketHandle).
 
-    If the existence of a member depends on other policies, you should
-    use the <code>If</code><i>SomePolicy</i><code>Is</code> and
-    <code>If</code><i>SomePolicy</i><code>IsNot</code> templates to
-    dynamically enable/disable the member depending on some other
-    policy:
+    If the existence of a member depends on other policies, you should use the
+    <code>If</code><i>SomePolicy</i><code>Is</code> and
+    <code>If</code><i>SomePolicy</i><code>IsNot</code> templates to dynamically enable/disable the
+    member depending on some other policy:
 
     \code
       struct ExampleAddressingPolicy
@@ -217,24 +214,21 @@
       };
     \endcode
 
-    The \c connect member in this example will only be enabled, it
-    the communication policy of the socket handle is
-    ConnectedCommunicationPolicy (or a derived type). See <a
-    href="http://www.boost.org/libs/utility/enable_if.html">Boost.Enable_If</a>
-    for a discussion of the third argument (\c
-    senf::ConnectedCommunicationPolicyIs is based on the \c
-    boost::enable_if template).
+    The \c connect member in this example will only be enabled, it the communication policy of the
+    socket handle is ConnectedCommunicationPolicy (or a derived type). See <a
+    href="http://www.boost.org/libs/utility/enable_if.html">Boost.Enable_If</a> for a discussion of
+    the third argument (\c senf::ConnectedCommunicationPolicyIs is based on the \c boost::enable_if
+    template).
 
     \see \ref extend_policy \n
          <a class="ext" href="http://www.boost.org/libs/utility/enable_if.html">The Boost enable_if utility</a> \n
          <a class="ext" href="http://www.boost.org/libs/mpl/doc/index.html">The Boost.MPL library</a> \n
          <a class="ext" href="http://www.boost.org/libs/preprocessor/doc/index.html">The Boost.Preprocessor library</a>
 
-    \idea We could combine all the \e Policy \c Is templates into a
-    single template. Since the \e trait argument will automatically
-    specify the axis to be used, it is not necessary to specify that
-    axis in the tempalte functor's name. We could even combine this
-    with \c SocketPolicyIsBaseOf.
+    \idea We could combine all the \e Axis \c Is templates into a single template. Since the \e
+    trait argument will automatically specify the axis to be used, it is not necessary to specify
+    that axis in the tempalte functor's name. We could even combine this with \c
+    SocketPolicyIsBaseOf.
  */
 
 /** \defgroup policy_impl_group Policy Implementation classes
@@ -260,9 +254,8 @@ namespace senf {
     /// \addtogroup policy_group
     /// @{
 
-    // This may be adapted to change the supported policies (however,
-    // ClientSocketHandle and ServerSocketHandle will probably have to
-    // be adjusted accordingly)
+    // This may be adapted to change the supported policies (however, ClientSocketHandle and
+    // ServerSocketHandle will probably have to be adjusted accordingly)
 
     /** \brief List all policy axis
 
@@ -448,7 +441,7 @@ namespace senf {
 
     /** \brief Check single policy axis
 
-        This template is an example of the \e Policy \c Is family of
+        This template is an example of the \e Axis \c Is family of
         tempalte metafunctions. It will check, wether \c Trait is a
         valid compatible Policy class of \c SocketPolicy. \c Trait
         must be derived from AddressingPolicyBase (respectively \i
@@ -462,11 +455,11 @@ namespace senf {
 
     /** \brief Enable template overload depending on policy value
 
-        This template is an exmaple of the \c If \e Policy \c Is
+        This template is an exmaple of the \c If \e Axis \c Is
         family of templates. It is used like <a class="ext"
         href="http://www.boost.org/libs/utility/enable_if.html">Boost.enable_if</a>
         to enable a templated overload only, if the AddressingPolicy
-        of \e Policy is compatible with \c Trait (that is the
+        of \e Axis is compatible with \c Trait (that is the
         AddressingPolicy of \c Policy is derived from \c Trait).
 
         \see policy_group
@@ -517,7 +510,7 @@ namespace senf {
 
         A SocketPolicy can be complete or incomplete. An incomplete
         SocketPolicy will have at least one axis set to \c Undefined
-        \e Policy (or a generic derived class which is used to group
+        \e Axis (or a generic derived class which is used to group
         some other policies but does not (completely) define the
         policy behavior). A complete SocketPolicy will have a
         concrete definition of the desired behavior for each policy
@@ -550,7 +543,7 @@ namespace senf {
         SocketPolicy instantiation. It takes any number (that is up to
         6) of Policy classes as arguments in any Order. It will create
         a SocketPolicy from these policy classes. Any axis not
-        specified will be left as \c Unspecified \e Policy.
+        specified will be left as \c Unspecified \e Axis.
 
         \see policy_group
      */

@@ -2,26 +2,22 @@ namespace senf {
 
 /** \mainpage The SENF Socket Library
 
-    The Socket library provides a high level and object oriented
-    abstraction of the BSD socket API. The abstraction is based on
-    several concepts:
+    The Socket library provides a high level and object oriented abstraction of the BSD socket
+    API. The abstraction is based on several concepts:
 
-    \li The basic visible interface is a \link handle_group handle
-        object \endlink
-    \li The socket interface relies on a \link policy_group policy
-        framework \endlink to configure it's functionality
-    \li The rest of the socket API is accessible using a classic
-        inheritance hierarchy of \link protocol_group protocol classes
-        \endlink
+    \li The basic visible interface is a \link handle_group handle object \endlink
+    \li The socket interface relies on a \link policy_group policy framework \endlink to configure
+        it's functionality
+    \li The rest of the socket API is accessible using a classic inheritance hierarchy of \link
+        protocol_group protocol classes \endlink
 
-    The handle/body architecture provides automatic reference counted
-    management of socket instances, the policy framework provides
-    highly efficient access to the most important socket functions
-    (like reading and writing) and the inheritance hierarchy provides
-    convenient access to the multitude of special and protocol
-    dependent options.
+    The handle/body architecture provides automatic reference counted management of socket
+    instances, the policy framework provides highly efficient access to the most important socket
+    functions (like reading and writing) and the inheritance hierarchy provides convenient access to
+    the multitude of special and protocol dependent options.
 
-    \see \ref usage \n
+    \see \ref structure \n
+         \ref usage \n
          \ref handle_group \n
          \ref policy_group \n
          \ref protocol_group \n
@@ -29,41 +25,113 @@ namespace senf {
          \ref implementation
  */
 
+/** \page structure Overview of the Socket Library Structure
+
+    \image html Handle.png
+
+    This diagram tries to give a structural overview of the Socket Library, it does \e not directly
+    show, how the library is implemented. This will be explained later.
+
+    The outside interface to the library is a Handle object. This is the only object, the library
+    user directly interacts with. Every handle references some socket. This is like the ordinary
+    POSIX API: the file descriptor (also called file handle, an integer number) references a socket
+    structure which lives in kernel space. In this library, the Handle object (which is not a simple
+    integer any more but an object) references the Socket (which is part of the
+    implementation). Several handles may reference the same Socket. In contrast to the kernel API,
+    the library employs reference counting to release a socket when the last Handle to it goes out
+    of scope.
+
+    The behavior of a Socket is defined by it's Protocol. It is divided into two parts: the
+    <em>policy interface</em> and the <em>protocol interface</em>. Together they provide the
+    complete API for a specific type of Socket as defined by the Protocol. The <em>policy
+    interface</em> provides highly efficient access to the most frequently used operations whereas
+    the <em>protocol interface</em> completes the interface by providing a complete set of all
+    protocol specific operations not found in the policy interface. This structure allows us to
+    combine the benefits of two design methodologies: The policy interface utilizes a policy based
+    design technique and is highly efficient albeit more complex to implement, whereas the protocol
+    interface is based on a more common inheritance architecture which is not as optimized for
+    performance but much simpler to implement. We reduce the complexity of the implementation by
+    reducing the policy interface to a minimal sensible subset of the complete API.
+
+    \section over_policy The Policy Interface
+    
+    The policy of a Socket consists of several parts, called <em>policy axis</em>. Each axis
+    corresponds to one specific interface aspect of the Socket. The exact meaning of the policy axis
+    are defined elsewhere (see \ref policy_group). The Protocol will always provide a complete set
+    of <em>policy classes</em>, one for each axis.
+
+    This <em>complete socket policy</em> defines the policy interface of the protocol. This
+    interface is carried over into the Handle. The socket policy as defined in the Handle however
+    may be <em>incomplete</em>. This mans, that the \e accessible interface of the Socket depends on
+    the type of Handle used. The inherent interface does not change but the view of this interface
+    does if the Handle does not provide the \e complete policy interface. This feature is very
+    important. It allows to define generic Handle types. A generic Handle with an incompletely
+    defined policy can point to an arbitrary Socket as long as all those policy axis which \e are
+    defined match those defined in that Socket's protocol. Using such a generic handle decouples the
+    implementation parts using this handle from the other socket aspects (e.g. you may define a
+    generic socket handle for TCP based communication leaving the addressingPolicy undefined which
+    makes your code independent of the type of addressing, IPv4 or IPv6).
+
+    \section over_protocol The Protocol Interface
+
+    The protocol interface is provided by a set of <em>protocol facets</em>. Each facet provides a
+    part of the interface. Whereas the policy interface is strictly defined (the number and type of
+    policy axis is fixed and also the possible members provided by the policy interface is fixed),
+    the protocol interface is much more flexible. Any member needed to provide a complete API for
+    the specific protocol may be defined, the number and type of facets combined to provide the
+    complete interface is up to the Protocol implementor. This flexibility is necessary to provide a
+    complete API for every possible protocol.
+
+    However this flexibility comes at a cost: To access the protocol interface the user must know
+    the exact protocol of the socket. With other words, the protocol is only accessible if the
+    handle you use is a protocol specific handle. A protocol specific Handle differs from a generic
+    Handle in two ways: It always \e must have a complete policy and it has an additional reference
+    to the protocol type of the socket. This reference gives access to the complete policy
+    interface.
+
+    \section over_impl Implementation of the Socket Libarary Structure
+
+    In the Implementation, the socket policy is identified by an instance of the senf::SocketPolicy
+    template. The Socket representation is internally represented in a senf::SocketBody which is not
+    outside visible. The Handle is provided by a hierarchy of handle templates. Each Handle template
+    uses template arguments for the policy and/or protocol as needed (see \ref handle_group).
+
+    The protocol interface is implemented using inheritance: The Protocol class inherits from each
+    protocol facet using multiple (virtual public) inheritance. The Protocol class therefore
+    provides the complete protocol API in a unified (see \ref protocol_group).
+
+    The Handle references the policy and the protocol only via it's template argument, the
+    information is part of the type. This information is not available as a data member in the
+    Handle object.
+ */
+
 /** \page usage Using the Socket Library
 
-    Whenever you use the socket library, what you will be dealing with
-    are FileHandle derived instances. The socket library relies
-    on reference counting to automatically manage the underlying
-    socket representation. This frees you of having to manage the
-    socket lifetime explicitly.
+    Whenever you use the socket library, what you will be dealing with are FileHandle derived
+    instances. The socket library relies on reference counting to automatically manage the
+    underlying socket representation. This frees you of having to manage the socket lifetime
+    explicitly.
 
     \section usage_create Creating a Socket Handle
 
-    To create a new socket handle (opening a socket), you will need to
-    use ProtocolClientSocketHandle or
-    ProtocolServerSocketHandle. You will probably not use these
-    templates as is but use proper typedefs (for example
-    TCPv4ClientSocketHandle or PacketSocketHandle). The
-    documentation for these socket handles are found in the protocol
-    class (for example TCPv4SocketProtocol or
-    PacketProtocol).
+    To create a new socket handle (opening a socket), you will need to use
+    ProtocolClientSocketHandle or ProtocolServerSocketHandle. You will probably not use these
+    templates as is but use proper typedefs (for example TCPv4ClientSocketHandle or
+    PacketSocketHandle). The documentation for these socket handles are found in the protocol class
+    (for example TCPv4SocketProtocol or PacketProtocol).
 
     \section usage_reusable Writing Reusable Components
 
-    To make your code more flexible, you should not pass around your
-    socket in this form. Most of your code will be using only a small
-    subset of the ProtocolClientSocketHandle or
-    ProtocolServerSocketHandle API. 
+    To make your code more flexible, you should not pass around your socket in this form. Most of
+    your code will be using only a small subset of the ProtocolClientSocketHandle or
+    ProtocolServerSocketHandle API.
     
-    If instead of using the
-    fully specified handle type you use a more incomplete type, you
-    allow your code to be used with all sockets which fulfill the
-    minimal requirements of your code. These types are based on the 
-    ClientSocketHandle and ServerSocketHandle templates which implement
-    the policy interface without providing the concrete protocol interface.
-    To use those templates you may define a special reduced policy or handle for
-    your code. By giving only an incomplete policy you thereby reduce the 
-    interface to that required by your module:
+    If instead of using the fully specified handle type you use a more incomplete type, you allow
+    your code to be used with all sockets which fulfill the minimal requirements of your code. These
+    types are based on the ClientSocketHandle and ServerSocketHandle templates which implement the
+    policy interface without providing the concrete protocol interface.  To use those templates you
+    may define a special reduced policy or handle for your code. By giving only an incomplete policy
+    you thereby reduce the interface to that required by your module:
 
     \code
       typedef ClientSocketHandle<
@@ -74,49 +142,38 @@ namespace senf {
 
     \endcode
 
-    This defines \c MyReadableHandle as a ClientSocketHandle
-    which will have only read functionality. Your code expects a
-    stream interface (in contrast to a packet or datagram based
-    interface). You will not have \c write or \c readfrom members. \c
-    write will be disabled since the WritePolicy is unknown, \c
-    readfrom will be disabled since a socket with the
-    ConnectedCommunicationPolicy does not have a \c readfrom
-    member.
+    This defines \c MyReadableHandle as a ClientSocketHandle which will have only read
+    functionality. Your code expects a stream interface (in contrast to a packet or datagram based
+    interface). You will not have \c write or \c readfrom members. \c write will be disabled since
+    the WritePolicy is unknown, \c readfrom will be disabled since a socket with the
+    ConnectedCommunicationPolicy does not have a \c readfrom member.
  */
 
 
 
 /** \page extend Extending the Library
 
-    There are two layers, on which the socket library can be
-    extended: On the protocol layer and on the policy layer. Extending
-    the protocol layer is quite simple and works as long as the
-    desired protocol does use the same BSD API used by the standard
-    internet protocols as implemented in the standard policies
-    (i.e. it uses ordinary read() and write() or rcvfrom() or sendto()
-    calls and so on).
+    There are two layers, on which the socket library can be extended: On the protocol layer and on
+    the policy layer. Extending the protocol layer is quite simple and works as long as the desired
+    protocol does use the same BSD API used by the standard internet protocols as implemented in the
+    standard policies (i.e. it uses ordinary read() and write() or rcvfrom() or sendto() calls and
+    so on).
 
-    If however the implementation of a policy feature needs to be
-    changed, a new policy class has to be written. This also is not
-    very complicated however the integration is more complex.
+    If however the implementation of a policy feature needs to be changed, a new policy class has to
+    be written. This also is not very complicated however the integration is more complex.
 
     \section extend_protocol Writing a new protocol class
 
-    Most protocols can be implemented by just implementing a new
-    protocol class. The protocol class must be derived from
-    ConcreteSocketProtocol and takes the socket policy (as
-    created by MakeSocketPolicy) as a template argument. See the
-    documentation of this class for the interface.
+    Most protocols can be implemented by just implementing a new protocol class. The protocol class
+    must be derived from ConcreteSocketProtocol and takes the socket policy (as created by
+    MakeSocketPolicy) as a template argument. See the documentation of this class for the interface.
 
-    \attention You may want to use multiple inheritance as it is used
-    in the implementation of the standard protocols (See \ref
-    protocol_group). You must however be extra careful to ensure, that
-    every class ultimately has SocketPolicy as a public \e
-    virtual base.
+    \attention You may want to use multiple inheritance as it is used in the implementation of the
+    standard protocols (See \ref protocol_group). You must however be extra careful to ensure, that
+    every class ultimately has SocketPolicy as a public \e virtual base.
 
-    After the protocol class has been defined, you will probably want to
-    provide typedefs for the new protocol sockets. If the new protocol
-    is connection oriented, this will be like
+    After the protocol class has been defined, you will probably want to provide typedefs for the
+    new protocol sockets. If the new protocol is connection oriented, this will be like
     \code
     typedef ProtocolClientSocketHandle<MyProtocolClass> MyProtocolClientSocketHandle;
     typedef ProtocolServerSocketHandle<MyProtocolClass> MyProtocolServerSocketHandle;
@@ -124,35 +181,28 @@ namespace senf {
 
     \section extend_policy Extending the policy framework
 
-    If you have to extend the policy framework, you will need to be
-    aware of some important limitations of the socket library:
+    If you have to extend the policy framework, you will need to be aware of some important
+    limitations of the socket library:
 
-    \li When you define a new policy for some axis, this new policy
-        <em>must not</em> be derived from one of the existing concrete
-        policy classes (except of course the respective policy axis
-        base class). This is important since the policy type is \e not
-        polymorphic. The policy to be used is selected by the compiler
-        using the \e static type, which is exactly what is desired,
-        since this allows calls to be efficiently inlined.
+    \li When you define a new policy for some axis, this new policy <em>must not</em> be derived
+        from one of the existing concrete policy classes (except of course the respective policy
+        axis base class). This is important since the policy type is \e not polymorphic. The policy
+        to be used is selected by the compiler using the \e static type, which is exactly what is
+        desired, since this allows calls to be efficiently inlined.
 
-    \li Therefore, extending the policy framework will make the new
-        socket probably \e incompatible with generic code which relies
-        on the policy axis which is extended. Example: If you write a
-        new write policy because your protocol does not use ordinary
-        write() system calls but some protocol specific API, Then any
-        generic function relying on WritablePolicy will \e not
-        work with the new socket, since the socket does \e not have
-        this policy, it has some other kind of write policy.
+    \li Therefore, extending the policy framework will make the new socket probably \e incompatible
+        with generic code which relies on the policy axis which is extended. Example: If you write a
+        new write policy because your protocol does not use ordinary write() system calls but some
+        protocol specific API, Then any generic function relying on WritablePolicy will \e not work
+        with the new socket, since the socket does \e not have this policy, it has some other kind
+        of write policy.
 
-    Therefore you need to be careful of what you are doing. The first
-    step is to find out, which policy you will have to implement. For
-    this, find the ClientSocketHandle and/or
-    ServerSocketHandle members you want to change (see \ref
-    ClientSocketHandle and \ref ServerSocketHandle).  Not
-    all policy axis directly contribute to the SocketHandle
-    interface. However, some policy members additionally depend on
-    other policy axis (example: AddressingPolicy::connect is only
-    defined if the communication policy is
+    Therefore you need to be careful of what you are doing. The first step is to find out, which
+    policy you will have to implement. For this, find the ClientSocketHandle and/or
+    ServerSocketHandle members you want to change (see \ref ClientSocketHandle and \ref
+    ServerSocketHandle).  Not all policy axis directly contribute to the SocketHandle
+    interface. However, some policy members additionally depend on other policy axis (example:
+    AddressingPolicy::connect is only defined if the communication policy is
     ConnectedCommunication).
 
     \see policy_group
@@ -162,35 +212,31 @@ namespace senf {
 
     <table class="glossary">
 
-    <tr><td>policy</td> <td>collection of policy classes, one for each
-    policy axis, instantiation of the SocketPolicy template</td></tr>
+    <tr><td>policy</td> <td>collection of policy classes, one for each policy axis, instantiation of
+    the SocketPolicy template</td></tr>
 
-    <tr><td>policy axis</td> <td>one aspect defined in the socket
-    policy, typedef and member of the SocketPolicy template</td></tr>
+    <tr><td>policy axis</td> <td>one aspect defined in the socket policy, typedef and member of the
+    SocketPolicy template</td></tr>
 
-    <tr><td>policy class</td> <td>implementation of a single policy
-    axis, class derived from the axis base class</td></tr>
+    <tr><td>policy class</td> <td>implementation of a single policy axis, class derived from the
+    axis base class</td></tr>
 
-    <tr><td>complete policy</td> <td>socket policy where each
-    axis is specified completely</td></tr>
+    <tr><td>complete policy</td> <td>socket policy where each axis is specified completely</td></tr>
 
-    <tr><td>incomplete policy</td> <td>socket policy, where at
-    least one axis is not fully specified</td></tr>
+    <tr><td>incomplete policy</td> <td>socket policy, where at least one axis is not fully
+    specified</td></tr>
 
-    <tr><td>protocol class</td> <td>definition of a protocol as a
-    class, class inheriting from ConcreteSocketProtocol.</td></tr>
+    <tr><td>protocol class</td> <td>definition of a protocol as a class, class inheriting from
+    ConcreteSocketProtocol.</td></tr>
 
-    <tr><td>protocol facet</td> <td>a class providing some subset of
-    the protocol interface, class derived from SocketProtocol but not
-    from ConcreteSocketProtocol</td></tr>
+    <tr><td>protocol facet</td> <td>a class providing some subset of the protocol interface, class
+    derived from SocketProtocol but not from ConcreteSocketProtocol</td></tr>
 
     <tr><td>policy interface</td> <td>interface directly provided by
-    ClientSocketHandle/ServerSocketHandle and defined through the
-    policy</td>
+    ClientSocketHandle/ServerSocketHandle and defined through the policy</td>
 
-    <tr><td>protocol interface</td> <td>interface provided by the
-    protocol class and accessible via the
-    ProtocolClientSocketHandle::protocol()/ProtocolServerSocketHandle::protocol()
+    <tr><td>protocol interface</td> <td>interface provided by the protocol class and accessible via
+    the ProtocolClientSocketHandle::protocol()/ProtocolServerSocketHandle::protocol()
     member</td></tr>
 
     </table>
@@ -204,19 +250,15 @@ namespace senf {
 
     \section impl_notes Arbitrary Implementation Notes
 
-    \li The implementation tries to isolate the library user as much
-        as possible from the system header files since those headers
-        define a lot of define symbols and introduce a host of symbols
-        into the global namespace. This is, why some classes define
-        their own \c enum types to replace system defined define
-        constants. This also precludes inlining some functionality.
+    \li The implementation tries to isolate the library user as much as possible from the system
+        header files since those headers define a lot of define symbols and introduce a host of
+        symbols into the global namespace. This is, why some classes define their own \c enum types
+        to replace system defined define constants. This also precludes inlining some functionality.
 
-    \li To reduce overhead, template functions/members which are
-        more than one-liners are often implemented in terms of a
-        non-template function/member. This is also used to further the
-        isolation from system headers as defined above (template code
-        must always be included into every compilation unit together
-        with all headers need for the implementation).
+    \li To reduce overhead, template functions/members which are more than one-liners are often
+        implemented in terms of a non-template function/member. This is also used to further the
+        isolation from system headers as defined above (template code must always be included into
+        every compilation unit together with all headers need for the implementation).
  */
 
 }
