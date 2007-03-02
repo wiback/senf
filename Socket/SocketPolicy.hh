@@ -221,9 +221,9 @@
     template).
 
     \see \ref extend_policy \n
-         <a class="ext" href="http://www.boost.org/libs/utility/enable_if.html">The Boost enable_if utility</a> \n
-         <a class="ext" href="http://www.boost.org/libs/mpl/doc/index.html">The Boost.MPL library</a> \n
-         <a class="ext" href="http://www.boost.org/libs/preprocessor/doc/index.html">The Boost.Preprocessor library</a>
+         <a href="http://www.boost.org/libs/utility/enable_if.html">The Boost enable_if utility</a> \n
+         <a href="http://www.boost.org/libs/mpl/doc/index.html">The Boost.MPL library</a> \n
+         <a href="http://www.boost.org/libs/preprocessor/doc/index.html">The Boost.Preprocessor library</a>
 
     \idea We could combine all the \e Axis \c Is templates into a single template. Since the \e
     trait argument will automatically specify the axis to be used, it is not necessary to specify
@@ -234,9 +234,8 @@
 /** \defgroup policy_impl_group Policy Implementation classes
     \ingroup policy_group
 
-    Here you will find all policy classes. Also included are some
-    supporting classes which are used as base classes to build other
-    policy classes.
+    Here you will find all policy classes. Also included are some supporting classes which are used
+    as base classes to build other policy classes.
  */
 
 #ifndef HH_SocketPolicy_
@@ -261,11 +260,9 @@ namespace senf {
 
         \internal
 
-        This define symbol is used to configure the policy axis. The
-        base class for each of these axis must be defined explicitly
-        (e.g. AddressingPolicyBase). The implementation files will
-        then automatically generate all the other classes from this
-        list.
+        This define symbol is used to configure the policy axis. The base class for each of these
+        axis must be defined explicitly (e.g. AddressingPolicyBase). The implementation files will
+        then automatically generate all the other classes from this list.
 
         \see policy_group
      */
@@ -284,9 +281,8 @@ namespace senf {
 
     /** \brief Policy defining socket addressing
 
-        AddressingPolicyBase is the baseclass of all addressing policy
-        classes. When defining a new addressing policy, the following
-        members can be defined. All methods must be static.
+        AddressingPolicyBase is the baseclass of all addressing policy classes. When defining a new
+        addressing policy, the following members can be defined. All methods must be static.
 
         <table class="senf">
         <tr><td>typedef</td> <td><tt>Address</tt></td>                                   <td>Address type</td></tr>
@@ -307,12 +303,11 @@ namespace senf {
 
     /** \brief Policy defining the framing format
 
-        This policy does not define any operations since it does have
-        no influence on any method signature. It does however affect
-        the semantics of the \c read() and \c write() operations.
+        This policy does not define any operations since it does have no influence on any method
+        signature. It does however affect the semantics of the \c read() and \c write() operations.
 
-        \note This policy axis probably only has two sensible statess:
-        StreamFramingPolicy and DatagramFramingPolicy.
+        \note This policy axis probably only has two sensible statess: StreamFramingPolicy and
+        DatagramFramingPolicy.
 
         \see policy_group
      */
@@ -330,18 +325,15 @@ namespace senf {
         <tr><td>method</td> <td><tt>int accept(FileHandle, Address &)</tt></td>         <td>Accept a new connection</td></tr>
         </table>
 
-        The \c listen member is straight forward. The \c accept() member
-        must return a new file descriptor (which will be used to
-        create a new SocketHandle of the correct type). Additionally,
-        accept() should only be defined, if the Addressing policy is
-        not \c NoAddressingPolicy (which together with
-        ConnectedCommunicationPolicy would identify a point-to-point
-        link with fixed communication partners).
+        The \c listen member is straight forward. The \c accept() member must return a new file
+        descriptor (which will be used to create a new SocketHandle of the correct
+        type). Additionally, accept() should only be defined, if the Addressing policy is not \c
+        NoAddressingPolicy (which together with ConnectedCommunicationPolicy would identify a
+        point-to-point link with fixed communication partners).
 
-        \note This Policy only has two meaningful states:
-        ConnectedCommunicationPolicy and
-        UnconnectedCommunicationPolicy. It is probably not sensible to
-        define a new CommunicationPolicy type.
+        \note This Policy only has two meaningful states: ConnectedCommunicationPolicy and
+        UnconnectedCommunicationPolicy. It is probably not sensible to define a new
+        CommunicationPolicy type.
 
         \see policy_group
      */
@@ -352,22 +344,19 @@ namespace senf {
 
     /** \brief Policy defining the readability
 
-        The ReadPolicy defines, wether the socket is readable. It
-        may define two members:
+        The ReadPolicy defines, wether the socket is readable. It may define two members:
 
         <table class="senf">
         <tr><td>method</td> <td><tt>unsigned read(FileHandle, char * buffer, unsigned size)</tt></td>                <td>read data from socket</td></tr>
         <tr><td>method</td> <td><tt>unsigned readfrom(FileHandle, char * buffer, unsigned size, Address &)</tt></td> <td>read data from unconnected socket</td></tr>
         </table>
 
-        The second member should only be enabled if the communication
-        policy is UnconnectedCommunication (otherwise it does not make
-        sense since the communication partner is fixed) (see
-        AddressingPolicyBase on how to do this).
+        The second member should only be enabled if the communication policy is
+        UnconnectedCommunication (otherwise it does not make sense since the communication partner
+        is fixed) (see AddressingPolicyBase on how to do this).
 
-        \note This Policy only has two meaningful states:
-        ReadablePolicy and NotReadablePolicy. It probably does not
-        make sense to define new read policy types.
+        \note This Policy only has two meaningful states: ReadablePolicy and NotReadablePolicy. It
+        probably does not make sense to define new read policy types.
 
         \see policy_group
      */
@@ -378,22 +367,19 @@ namespace senf {
 
     /** \brief Policy defining the writability
 
-        The WritePolicy defines, wether the socket is writable. It may
-        define two members:
+        The WritePolicy defines, wether the socket is writable. It may define two members:
 
         <table class="senf">
         <tr><td>method</td> <td><tt>unsigned write(FileHandle, char * buffer, unsigned size)</tt></td>              <td>read data from socket</td></tr>
         <tr><td>method</td> <td><tt>unsigned writeto(FileHandle, char * buffer, unsigned size, Address &)</tt></td> <td>read data from unconnected socket</td></tr>
         </table>
 
-        The second member should only be enabled if the communication
-        policy is UnconnectedCommunication (otherwise it does not make
-        sense since the communication partner is fixed) (see
-        AddressingPolicyBase on how to do this).
+        The second member should only be enabled if the communication policy is
+        UnconnectedCommunication (otherwise it does not make sense since the communication partner
+        is fixed) (see AddressingPolicyBase on how to do this).
 
-        \note This Policy only has two meaningful states:
-        WritablePolicy and NotWritablePolicy. It probably does not
-        make sense to define new write policy types.
+        \note This Policy only has two meaningful states: WritablePolicy and NotWritablePolicy. It
+        probably does not make sense to define new write policy types.
 
         \see policy_group
      */
@@ -404,8 +390,8 @@ namespace senf {
 
     /** \brief Policy defining the buffering interface
 
-        The BufferingPolicy defines the buffer handling of the
-        socket. It may provide the follogin members:
+        The BufferingPolicy defines the buffer handling of the socket. It may provide the follogin
+        members:
 
         \see policy_group
      */
@@ -441,11 +427,9 @@ namespace senf {
 
     /** \brief Check single policy axis
 
-        This template is an example of the \e Axis \c Is family of
-        tempalte metafunctions. It will check, wether \c Trait is a
-        valid compatible Policy class of \c SocketPolicy. \c Trait
-        must be derived from AddressingPolicyBase (respectively \i
-        Policy \c Base).
+        This template is an example of the \e Axis \c Is family of tempalte metafunctions. It will
+        check, wether \c Trait is a valid compatible Policy class of \c SocketPolicy. \c Trait must
+        be derived from AddressingPolicyBase (respectively \i Policy \c Base).
 
         \see \ref policy_group
      */
@@ -455,12 +439,10 @@ namespace senf {
 
     /** \brief Enable template overload depending on policy value
 
-        This template is an exmaple of the \c If \e Axis \c Is
-        family of templates. It is used like <a class="ext"
-        href="http://www.boost.org/libs/utility/enable_if.html">Boost.enable_if</a>
-        to enable a templated overload only, if the AddressingPolicy
-        of \e Axis is compatible with \c Trait (that is the
-        AddressingPolicy of \c Policy is derived from \c Trait).
+        This template is an exmaple of the \c If \e Axis \c Is family of templates. It is used like
+        <a href="http://www.boost.org/libs/utility/enable_if.html">Boost.enable_if</a> to enable a
+        templated overload only, if the AddressingPolicy of \e Axis is compatible with \c Trait
+        (that is the AddressingPolicy of \c Policy is derived from \c Trait).
 
         \see policy_group
      */
@@ -479,12 +461,9 @@ namespace senf {
 
         \internal
 
-        This class provides the baseclass of all socket policies
-        (bundles). It serves two purposes:
-        \li It allows us to easily identify a socket policy bundle by
-            checking a classes baseclass.
-        \li It provides an abstract (virtual) interface to access the
-            policy axes
+        This class provides the baseclass of all socket policies (bundles). It serves two purposes:
+        \li It allows us to easily identify a socket policy bundle by checking a classes baseclass.
+        \li It provides an abstract (virtual) interface to access the policy axes
 
         \see policy_group
      */
@@ -492,9 +471,8 @@ namespace senf {
     {
         /** \brief Polymorphic access to policy axes
 
-            This is an example of a policy axes accessor. It returns a
-            reference to the policy axes used by the conrecte protocol
-            bundle. This reference can then be checked using RTTI
+            This is an example of a policy axes accessor. It returns a reference to the policy axes
+            used by the conrecte protocol bundle. This reference can then be checked using RTTI
             information.
          */
         AddressingPolicyBase const & theAddressingPolicy() const = 0;
@@ -502,19 +480,15 @@ namespace senf {
 
     /** \brief Collection of policy classes
 
-        The SocketPolicy template defines the complete Policy used by
-        the socket library. It contains one policy class for each
-        policy axis. This template takes one policy from each axis as
-        it's template arguments (this example implementation only has
-        AddressingPolicy as an argument).
+        The SocketPolicy template defines the complete Policy used by the socket library. It
+        contains one policy class for each policy axis. This template takes one policy from each
+        axis as it's template arguments (this example implementation only has AddressingPolicy as an
+        argument).
 
-        A SocketPolicy can be complete or incomplete. An incomplete
-        SocketPolicy will have at least one axis set to \c Undefined
-        \e Axis (or a generic derived class which is used to group
-        some other policies but does not (completely) define the
-        policy behavior). A complete SocketPolicy will have a
-        concrete definition of the desired behavior for each policy
-        axis.
+        A SocketPolicy can be complete or incomplete. An incomplete SocketPolicy will have at least
+        one axis set to \c Undefined \e Axis (or a generic derived class which is used to group some
+        other policies but does not (completely) define the policy behavior). A complete
+        SocketPolicy will have a concrete definition of the desired behavior for each policy axis.
 
         \see policy_group
      */
@@ -523,27 +497,23 @@ namespace senf {
     {
         /** \brief Check dynamic policy compatibility
 
-            This method will check the socket policy \a other against
-            this policy. It will check, wether \a other is a base
-            policy (or the same) of this policy. This check is done
-            against the \e dynamic type of \a other using RTTI. It
-            will throw \c std::bad_cast, if the policy is not
-            compatible.
+            This method will check the socket policy \a other against this policy. It will check,
+            wether \a other is a base policy (or the same) of this policy. This check is done
+            against the \e dynamic type of \a other using RTTI. It will throw \c std::bad_cast, if
+            the policy is not compatible.
 
             \param[in] other SocketPolicy to check
-            \throws std::bad_cast if \a other is not a compatible
-                policy
+            \throws std::bad_cast if \a other is not a compatible policy
          */
         static void checkBaseOf(SocketPolicyBase const & other);
     };
 
     /** \brief Metafunction to create SocketPolicy
 
-        This template metafunction simplifies the creation of a
-        SocketPolicy instantiation. It takes any number (that is up to
-        6) of Policy classes as arguments in any Order. It will create
-        a SocketPolicy from these policy classes. Any axis not
-        specified will be left as \c Unspecified \e Axis.
+        This template metafunction simplifies the creation of a SocketPolicy instantiation. It takes
+        any number (that is up to 6) of Policy classes as arguments in any Order. It will create a
+        SocketPolicy from these policy classes. Any axis not specified will be left as \c
+        Unspecified \e Axis.
 
         \see policy_group
      */
@@ -553,16 +523,13 @@ namespace senf {
 
     /** \brief Check policy compatibility
 
-        This tempalte metafunction checks, wether the SocketPolicy \c
-        Derived is more specialized than \c Base (and therefore a
-        SocketHandle with policy \c Derived is convertible to a
+        This tempalte metafunction checks, wether the SocketPolicy \c Derived is more specialized
+        than \c Base (and therefore a SocketHandle with policy \c Derived is convertible to a
         SocketHandle with policy \c Base).
 
-        The metafunction will return true (that is inherits from \c
-        boost::true_type, see the <a class="ext"
-        href="http://www.boost.org/libs/mpl/doc/index.html">Boost.MPL</a>
-        library documentation for more information) if each policy
-        class in \c Base is a baseclass of (or the same as) the
+        The metafunction will return true (that is inherits from \c boost::true_type, see the <a
+        href="http://www.boost.org/libs/mpl/doc/index.html">Boost.MPL</a> library documentation for
+        more information) if each policy class in \c Base is a baseclass of (or the same as) the
         corresponding policy class in \c Derived.
 
         \see policy_group

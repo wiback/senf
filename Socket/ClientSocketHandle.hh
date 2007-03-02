@@ -100,8 +100,9 @@ namespace senf {
         typedef typename Policy::AddressingPolicy::Address Address;
         /// 'Best' type for passing address as parameter
         /** Depending on the type of \c Address, this will be either <tt>Address</tt> or <tt>Address
-            const &</tt>. See <a href="http://www.boost.org/libs/utility/call_traits.htm"
-            class="ext">call_traits documentation in the Boost.Utility library\endlink.</a>
+            const &</tt>. See <a
+            href="http://www.boost.org/libs/utility/call_traits.htm">call_traits documentation in
+            the Boost.Utility library\endlink.</a>
          */
         typedef typename boost::call_traits<Address>::param_type AddressParam;
         /// Corresponding server socket handle with the same policy

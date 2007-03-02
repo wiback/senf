@@ -57,4 +57,22 @@
     </xsl:call-template>
   </xsl:template>
 
+  <xsl:template match="a[@href=string(current())]" priority="1">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">literal</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="a[contains(@href,'http://')]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">ext</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="a[not(@href)]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">anchor</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
 </xsl:stylesheet>

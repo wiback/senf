@@ -278,9 +278,9 @@
     </pre>
 
     \see <a href="../../senfscons/doc/html/index.html">SENFSCons reference</a> \n
-         <a class="ext" href="http://www.scons.org/documentation.php">SCons documentation</a> \n
-         <a class="ext" href="http://svnbook.red-bean.com">Subversion online book</a> \n
-         <a class="ext" href="http://subversion.tigris.org">Subversion Homepage</a>
+         <a href="http://www.scons.org/documentation.php">SCons documentation</a> \n
+         <a href="http://svnbook.red-bean.com">Subversion online book</a> \n
+         <a href="http://subversion.tigris.org">Subversion Homepage</a>
  */
 
 /** \page overview Introduction to the framework

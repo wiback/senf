@@ -70,13 +70,20 @@ namespace senf {
     defined match those defined in that Socket's protocol. Using such a generic handle decouples the
     implementation parts using this handle from the other socket aspects (e.g. you may define a
     generic socket handle for TCP based communication leaving the addressingPolicy undefined which
-    makes your code independent of the type of addressing, IPv4 or IPv6).
+    makes your code independent of the type of addressing, IPv4 or IPv6). 
+
+    This can be described as generalized compile-time polymorphism: A base class reference to some
+    derived class will only give access to a reduced interface (the base class interface) of a
+    class. The class still is of it's derived type (and inherently has the complete interface) but
+    only part of it is accessible via the base class reference. Likewise a generic handle (aka base
+    class reference) will only provide a reduced interface (aka base class interface) to the derived
+    class instance (aka socket).
 
     \section over_protocol The Protocol Interface
 
     The protocol interface is provided by a set of <em>protocol facets</em>. Each facet provides a
     part of the interface. Whereas the policy interface is strictly defined (the number and type of
-    policy axis is fixed and also the possible members provided by the policy interface is fixed),
+    policy axis is fixed and also the possible members provided by the policy interface are fixed),
     the protocol interface is much more flexible. Any member needed to provide a complete API for
     the specific protocol may be defined, the number and type of facets combined to provide the
     complete interface is up to the Protocol implementor. This flexibility is necessary to provide a
@@ -84,9 +91,9 @@ namespace senf {
 
     However this flexibility comes at a cost: To access the protocol interface the user must know
     the exact protocol of the socket. With other words, the protocol is only accessible if the
-    handle you use is a protocol specific handle. A protocol specific Handle differs from a generic
-    Handle in two ways: It always \e must have a complete policy and it has an additional reference
-    to the protocol type of the socket. This reference gives access to the complete policy
+    handle you use is a <em>protocol specific</em> handle. A protocol specific Handle differs from a
+    generic Handle in two ways: It always has a complete policy and it knows the exact protocol type
+    of the socket (which generic handles don't). This allows to access to the complete protocol
     interface.
 
     \section over_impl Implementation of the Socket Libarary Structure
@@ -96,13 +103,14 @@ namespace senf {
     outside visible. The Handle is provided by a hierarchy of handle templates. Each Handle template
     uses template arguments for the policy and/or protocol as needed (see \ref handle_group).
 
+    The Handle hierarchy divides the interface into two separate strains: the client interface
+    (senf::ClientSocketHandle and senf::ProtocolClientSocketHandle) provides the interface of a
+    client socket whereas the server interface (senf::ServerSocketHandle and
+    senf::ProtocolServerSocketHandle) provides the interface as used by server sockets.
+
     The protocol interface is implemented using inheritance: The Protocol class inherits from each
     protocol facet using multiple (virtual public) inheritance. The Protocol class therefore
     provides the complete protocol API in a unified (see \ref protocol_group).
-
-    The Handle references the policy and the protocol only via it's template argument, the
-    information is part of the type. This information is not available as a data member in the
-    Handle object.
  */
 
 /** \page usage Using the Socket Library

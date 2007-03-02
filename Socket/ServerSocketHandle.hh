@@ -84,8 +84,9 @@ namespace senf {
         typedef typename Policy::AddressingPolicy::Address Address;
         /// 'Best' type for passing address as parameter
         /** Depending on the type of \c Address, this will be either <tt>Address</tt> or <tt>Address
-            const &</tt>. See <a href="http://www.boost.org/libs/utility/call_traits.htm"
-            class="ext">call_traits documentation in the Boost.Utility library\endlink.</a>
+            const &</tt>. See <a
+            href="http://www.boost.org/libs/utility/call_traits.htm">call_traits documentation in
+            the Boost.Utility library\endlink.</a>
          */
         typedef typename boost::call_traits<Address>::param_type AddressParam;
         /// Corresponding client socket handle with the same policy
@@ -158,9 +159,8 @@ namespace senf {
 
         /** \brief Accept new connection
 
-            If the handle is non-blocking, accept will NOT block. If no connection
-            is available to be returned, accept will return a ClientSocketHandle
-            which is not valid()
+            If the handle is non-blocking, accept will NOT block. If no connection is available to
+            be returned, accept will return a ClientSocketHandle which is not valid()
 
             \throws senf::SystemException
 

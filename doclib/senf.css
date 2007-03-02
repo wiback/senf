@@ -52,12 +52,17 @@ a {
         text-decoration: none;
 }
 
-a:contains("http://") {
+a.literal {
         font-weight: normal;
 }
 
 a.ext {
         font-style: italic;
+}
+
+a.anchor { 
+	color: inherit;
+	background-color: white !important;
 }
 
 div.tabs {
