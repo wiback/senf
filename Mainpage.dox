@@ -330,7 +330,7 @@
 
     \section conventions Coding Conventions
     
-    Here we have laid down the coding conventions used throughout the SENF framework. Please adhere
+    Here we have laid down the coding conventions used throughout the SENF framework. Please ad here
     to these conventions when changing or adding code. If you use emacs, you can use the C++ IDE for
     emacs from http://g0dil.de which greatly simplifies following these conventions.
 
@@ -369,7 +369,7 @@
     Boost.Preprocessor library</td></tr> </table>
 
     \par Rationale:
-        There are two part's to this: First, separating the implementation of inlines and tempaltes
+        There are two part's to this: First, separating the implementation of inlines and templates
         out of the header file makes the header file much easier to read. This is important, since
         the header file will be used as a reference by the developers.
     \par
