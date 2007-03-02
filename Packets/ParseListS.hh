@@ -26,7 +26,7 @@
     transition function. See ParseListS.hh for more.
 
     We should write a baseclass for sentinels which has no \c check()
-    member, en empty \c next() member and \c void as the state
+    member, an empty \c next() member and \c void as the state
     type. This simplifies writing simple sentinels.
 
     The parse_listS iterator will have to pass the state in addition

@@ -37,7 +37,7 @@
 
     \todo Implement special container replacing vector which manages
     some headroom to allow efficient insertion of elements at the
-    beginning. This really is just another type of deque
+    beginning. This really is just another type of dequeue
     implementation.
  */
 
@@ -68,7 +68,7 @@ namespace senf {
         This class is the base class of all Packets. It implements the
         generic Packet interface and provides the packet management
         framework. senf::Packet manages the necessary memory
-        resources and controlls the chain of packet interpreters.
+        resources and controls the chain of packet interpreters.
 
         The Packet user always interfaces with the pkf via a Packet
         derived class. This is the only external entity ever held by a
@@ -81,7 +81,7 @@ namespace senf {
         Internally, every Packet references a PacketImpl instance which
         manages the raw packet data and the interpreter list. This raw
         data is interpreted by the concrete Packet derived class
-        according to the definition of that derived class's packet
+        according to the definition of that derived classes packet
         type (i.e. EthernetPacket or UDPPacket).
 
         Packet provides several interfaces:
@@ -157,7 +157,7 @@ namespace senf {
         senf:PacketRegistry, it must not take any additional
         constructor parameters.
 
-        After having implemented the bare framework, the most comman
+        After having implemented the bare framework, the most common
         way to implement access to the packets specific data is to use
         the parser framework by additionally inheriting a
         corresponding parser. This also automatically implements the
@@ -224,9 +224,9 @@ namespace senf {
 
         The Packet interface is implemented to minimize overhead as
         far as possible without getting to complex. One area for
-        improvement ist the container class used to hold the raw
+        improvement is the container class used to hold the raw
         data. This currently is an \a std::vector. This could be
-        imporved by either allocating some headroom/tailroom in the
+        improved by either allocating some headroom/tailroom in the
         vector and using this when inserting data at the beginning or
         end. Alternatively, a new container class (like the
         senf::deque_list) could be used to support zero-copy
@@ -241,7 +241,7 @@ namespace senf {
         we cannot construct the \a writev() data structures.
 
         The interpreter list managed by Packet is lazy, meaning packet
-        interpreter facades are added only when requestd by next(),
+        interpreter facades are added only when requested by next(),
         last() or find_next(). v_nextInterpreter() is called if
         necessary by these methods to complete the interpreter chain.
 
@@ -255,7 +255,7 @@ namespace senf {
         interpreter list to the Packet facades must not be
         counted. They are therefore implemented differently (
         boost::shared_ptr vs. boost::intrusive_ptr). The choice of
-        boost::intrusive_ptr for the externaly visible smart pointer
+        boost::intrusive_ptr for the externally visible smart pointer
         for all Packet facades is taken to reduce the overhead (an
         intrusive_ptr is only the size of an ordinary pointer, a
         smart_ptr has the size of two pointers).
@@ -333,7 +333,7 @@ namespace senf {
             \param e corresponding end iterator
             \return smart pointer to new packet
             \throws TruncatedPacketException The data cannot be parsed
-                    securely (the data might be trunctated or just
+                    securely (the data might be truncated or just
                     plain invalid)
          */
         template <class OtherPacket, class InputIterator>
@@ -381,8 +381,8 @@ namespace senf {
             OtherPacket. \e Assert's, that a packet of this type exists */
         template <class OtherPacket> typename ptr_t<OtherPacket>::ptr get_prev() const;
 
-        /** \brief check, wether the packet is of the given type
-            \return true, if packt is of type \a OtherPacket, false
+        /** \brief check, whether the packet is of the given type
+            \return true, if packet is of type \a OtherPacket, false
                 otherwise */
         template <class OtherPacket> bool is() const;
         /** \brief cast packet pointer to the given type
@@ -402,7 +402,7 @@ namespace senf {
 
             \return smart pointer to a \e new packet facade
             \throws TruncatedPacketException there is not enough data
-                to savely interpret the packet as the given type. The
+                to safely interpret the packet as the given type. The
                 original packet is \e not invalidated
          */
         template <class OtherPacket>
@@ -413,7 +413,7 @@ namespace senf {
         ///\name Raw packet data
         ///@{
 
-        /** \brief begin interator of raw packet data
+        /** \brief begin iterator of raw packet data
 
             This iterator allows access to the raw data interpreted by
             the packet facade. This \e includes any header possibly
@@ -526,10 +526,10 @@ namespace senf {
             This method is called by the packet framework to let the
             interpreter facade do some final calculations/packet
             cleanup before the packet is sent out or digested in some
-            other way. This is the place to calcaulate checksums and
+            other way. This is the place to calculate checksums and
             such.
 
-            This method is autmatically called for all interpreters on
+            This method is automatically called for all interpreters on
             the interpreter chain.
          */
         virtual void v_finalize() = 0;

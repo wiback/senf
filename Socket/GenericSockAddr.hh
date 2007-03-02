@@ -74,11 +74,11 @@ namespace senf {
                                              address interface.
                                              \returns non-const (!) pointer to sockaddr structure */
         struct sockaddr const * sockaddr_p() const; ///< Return a pointer to sockaddr structure
-                                        /**< This member is like sockaddr_p(), hoewever it does not
+                                        /**< This member is like sockaddr_p(), however it does not
                                              allow changing the address.
                                              \returns const pointer to sockaddr structure */
         unsigned sockaddr_len() const;  ///< Return size of address
-                                        /**< This meember return the size of the socket address
+                                        /**< This member return the size of the socket address
                                              structure as returned by sockaddr_p() in bytes.
                                              \returns size of respective sockaddr structure in bytes
                                           */

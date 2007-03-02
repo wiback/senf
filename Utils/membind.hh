@@ -41,7 +41,7 @@
     \idea Make the \a ob argument type an additional P template
     parameter (using call_traits for the exact arg type? Probably
     we'll get deduction problems then) . The only operation this
-    object musst suppoprt is ob->*fn. This would allow the use of
+    object must support is ob->*fn. This would allow the use of
     smart pointers. We should keep the T & version to still support
     ob.*fn use.
  */

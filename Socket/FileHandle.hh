@@ -87,10 +87,10 @@ namespace senf {
         not readable or writable or only using special function calls like sendto).
 
         The FileHandle class provides handle/body handling and uses automatic reference
-        counting. The senf::FileHandle istance is very lightweight and should be used like a
+        counting. The senf::FileHandle instance is very lightweight and should be used like a
         built-in type.
 
-        \attention You should mostly pass around senf::FileHandle objects by \e value und not by
+        \attention You should mostly pass around senf::FileHandle objects by \e value and not by
         reference.
 
         The FileHandle abstraction is only applicable to real filehandles. It is \e not possible to
@@ -105,7 +105,7 @@ namespace senf {
         \section filehandle_new Writing senf::FileHandle derived classes
 
         To build a new FileHandle type you need to derive from senf::FileHandle. The derived class
-        will have to call the protocted FileHandle constructor passing a new senf::FileBody
+        will have to call the protected FileHandle constructor passing a new senf::FileBody
         instance. This instance may either be a simple senf::FileBody or a class derived from
         senf::FileBody.
 
@@ -137,11 +137,11 @@ namespace senf {
                                      /**< \throws senf::SystemException */
         void terminate();            ///< Close filehandle ignoring error conditions
 
-        bool readable() const;       ///< Check, wether a read on the handle would not block
+        bool readable() const;       ///< Check, whether a read on the handle would not block
                                      ///< (ignoring blocking state)
         void waitReadable() const;   ///< Wait, until read on the handle would not block (ignoring
                                      ///< blocking state)
-        bool writeable() const;      ///< Check, wether a write on the handle would not block
+        bool writeable() const;      ///< Check, whether a write on the handle would not block
                                      ///< (ignoring blocking state)
         void waitWriteable() const;  ///< Wait, until a write on the handle would not block
                                      ///< (ignoring blocking state)
@@ -163,7 +163,7 @@ namespace senf {
                                         FileHandle */
 
         bool boolean_test() const;  ///< Short for valid() && ! eof()
-                                    /**< This is called when using a FileHandle instance in a boolen
+                                    /**< This is called when using a FileHandle instance in a boolean
                                        context
 
                                        See the performance comments for the eof() member */

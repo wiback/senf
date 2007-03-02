@@ -41,7 +41,7 @@ namespace senf {
     /// \addtogroup policy_impl_group
     /// @{
 
-    /** \brief Non-template implemenatation class of GenericAddressingPolicy template
+    /** \brief Non-template implementation class of GenericAddressingPolicy template
 
         \internal
      */
@@ -74,8 +74,8 @@ namespace senf {
         members. sockaddr_p could always return a const * whereas open_sockaddr_p should return a
         non-const pointer. The close operation would then explicitly signal, that the new value
         should be incorporated into the class. With our current implementation, the close member
-        would be a no-op, however this ould free us from using the sockaddr values as a direct
-        sotrage representation of the address.
+        would be a no-op, however this should free us from using the sockaddr values as a direct
+        storage representation of the address.
      */
     template <class Address>
     struct GenericAddressingPolicy

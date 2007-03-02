@@ -56,7 +56,7 @@ namespace senf {
                                         /**< If linger is enabled, the timeout value specifies, how
                                              long to wait before returning while data is unsent in
                                              seconds. If this value is 0, a close() might wait
-                                             forvever.
+                                             forever.
                                              \param[in] enable \c true to activate linger
                                              \param[in] timeout linger timeout in seconds */
 
@@ -68,7 +68,7 @@ namespace senf {
                                              \returns timestamp when packet was received */
     };
 
-    /** \brief Protocol facat providing basic connection oriented BSD socket functions
+    /** \brief Protocol facet providing basic connection oriented BSD socket functions
 
         AddressableBSDSocketProtocol provides the BSD socket API as it generically applies to
         addressable (connection oriented) sockets.

@@ -56,7 +56,7 @@ namespace senf {
         pointing to a different body type).
 
         To customize the behavior, a virtual interface is provided. This interface only covers some
-        basic funcionality which is only used infrequently during the lifetime of a FileHandle
+        basic functionality which is only used infrequently during the lifetime of a FileHandle
         instance.
 
       */

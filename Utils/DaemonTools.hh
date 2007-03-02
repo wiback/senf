@@ -26,11 +26,11 @@
 
     \idea Add communication between parent and child process to daemonize() and add things like
         init_done(), failure() etc which allow the daemon process to tell the frontend of successful
-        startup or failure. This proabably means moving all the methods into a DaemonTools class (as
+        startup or failure. This probably means moving all the methods into a DaemonTools class (as
         statics or via a singleton). This would also allow for automatic pid file creation and
         removal (remove in global destructor).
 
-    \idea Add a DaemonProcess baseclass whith init() and main() abstract members which wraps the
+    \idea Add a DaemonProcess baseclass with init() and main() abstract members which wraps the
         startup process. DaeminProcess::run() would fork, call init(), create a pid file and then
         call main(). Exceptions during init()'s execution would be passed to the parent
         process. This is based on the above API.

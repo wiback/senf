@@ -46,8 +46,8 @@ namespace senf {
 
     /** \brief IPv4 socket address
 
-        INet4Address wrapps the standard sockaddr_in datatype. It provides simple accessor methods
-        to accss the host and port. It does \e not integrate \c gethostbyname or DNS lookup.
+        INet4Address wraps the standard sockaddr_in datatype. It provides simple accessor methods
+        to access the host and port. It does \e not integrate \c gethostbyname or DNS lookup.
 
         \todo Implement real INet4Address datatype and rename this one to INet4SockAddress ...
         \todo Implement more complete interface
@@ -111,7 +111,7 @@ namespace senf {
         numeric string representations of IPv6 addresses. This class does not integrate with \c
         gethostbyname() and so does not support host names.
 
-        The conversion constructors allow the use of string constants whereever an INet6Address is
+        The conversion constructors allow the use of string constants wherever an INet6Address is
         expected. Especially, it is possible to assign a string to an address to change it's value.
 
         \implementation The <tt>char const *</tt> constructor overload is needed to support
@@ -173,7 +173,7 @@ namespace senf {
 
     /** \brief IPv6 socket address
 
-        This class wrapps the standard \c sockaddr_in6 structure. INet6SocketAddress provides access
+        This class wraps the standard \c sockaddr_in6 structure. INet6SocketAddress provides access
         to all members of the sockaddr_in6 structure. Additionally, INet6SocketAddress supports the
         string representation
 
@@ -219,7 +219,7 @@ namespace senf {
 
         INet6SocketAddress();           ///< Create empty instance
         INet6SocketAddress(std::string const & addr);
-                                        ///< Initialize/convert from string represenation
+                                        ///< Initialize/convert from string representation
         INet6SocketAddress(char const * addr); ///< Same as above to support string literals
         INet6SocketAddress(INet6Address const & addr, unsigned port);
                                         ///< Initialize from address and port
@@ -290,7 +290,7 @@ namespace senf {
         This addressing policy implements addressing using Internet V4
         addresses.
 
-        The various members are directly importet from
+        The various members are directly imported from
         GenericAddressingPolicy which see for a detailed
         documentation.
      */
@@ -314,7 +314,7 @@ namespace senf {
         This addressing policy implements addressing using Internet V6
         addresses.
 
-        The various members are directly importet from
+        The various members are directly imported from
         GenericAddressingPolicy which see for a detailed
         documentation.
      */

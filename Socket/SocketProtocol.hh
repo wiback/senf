@@ -29,7 +29,7 @@
         the number of heap-allocations per socket to one which is good.
  */
 
-// The private inheritance idea should indeed work very well: We just need to chnage the
+// The private inheritance idea should indeed work very well: We just need to change the
 // implementations of body() and protocol() and that of the ProtocolClient/ServerSocketHandle
 // constructors and the SocketBody constructor. The body and the protocol would still be visible
 // like several instances because of the private inheritance but we would save the backwards
@@ -152,7 +152,7 @@ namespace senf {
                                         ///< Return number of bytes available for reading without
                                         ///< blocking
                                         /**< This member will check in a (very, sigh) protocol
-                                             deqpendent way, how many bytes are guarateed to be
+                                             dependent way, how many bytes are guaranteed to be
                                              readable from the socket without blocking even if the
                                              socket is blocking. */
 
@@ -218,7 +218,7 @@ namespace senf {
         SocketPolicy must be set to the complete socket policy of the protocol.
 
         A protocol implementation may define the protocol interface directly. It can also
-        (additnally) make use of multiple inheritance to combine a set of protocol facets into a
+        (additionally) make use of multiple inheritance to combine a set of protocol facets into a
         specific protocol implementation (i.e. TCPv4SocketProtocol inherits from
         ConcreteSocketProtocol and from the protocol facets IPv4Protocol, TCPProtocol,
         BSDSocketProtocol and AddressableBSDSocketProtocol). The protocol facets are not concrete

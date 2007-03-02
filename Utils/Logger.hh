@@ -23,11 +23,11 @@
 
 /** \defgroup logger The SENF Logger
 
-    The Loggger infrastructure shall implement a highliy flexible compile- and run-time configurable
-    logging infrastructure supporting multiple streams, user defineable log areas and fine grained
+    The Loggger infrastructure shall implement a highly flexible compile- and run-time configurable
+    logging infrastructure supporting multiple streams, user definable log areas and fine grained
     log levels. Logging can be configured at compile and runtime on any combination of above
     parameters. The library supports a host of log targets and messages can be routed into multiple
-    targets at the same time. To allow concise usage of the libarary, a utlity to define logging
+    targets at the same time. To allow concise usage of the library, a utility to define logging
     defaults for any scope is provided.
 
     An important basic concept of the library is, that most of the macros take a variable number of
@@ -87,7 +87,7 @@
     \endcode
 
     Currently, the library is not implemented in any way. The interface has been defined up to a
-    point and we have dummy implementations of the 'in-code' part ot the interface. This is the
+    point and we have dummy implementations of the 'in-code' part of the interface. This is the
     part, which is called throughout the code. The configuration API is defined but we don't even
     have a template implementation. However, this allows starting to use the SENF Logger in newly
     developed code. Even though this code will unconditionally log everything to \c std::cerr for

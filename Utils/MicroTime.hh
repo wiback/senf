@@ -26,7 +26,7 @@
     type precise to 10<sup>-6</sup> seconds. Up to now, the only
     supported members are the datatype (which just uses a 64 bit
     integer) and the now() function to get the current UTC time in
-    microsecods since the Epoch.
+    microseconds since the Epoch.
 
     \idea This thing only exists as a quick hack. We can probably make
         use of Boost.Time or some such thing so it probably does not

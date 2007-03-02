@@ -53,7 +53,7 @@
     oriented and template based. For compatibility reasons, the libraries are therefore built
     together with every project making use of the framework.
 
-    When starting a new Projekt based on the SENF framework, it is advisable, to make use of the
+    When starting a new project based on the SENF framework, it is advisable, to make use of the
     SENFSCons build environment and use SVN to manage the code repository. This is the
     configuration, described in this documentation.
 
@@ -64,7 +64,7 @@
 
     \section Preliminaries
 
-    Before starting the devlopment, make sure to fulfill the following requirements:
+    Before starting the development, make sure to fulfill the following requirements:
 
     \li GNU g++, version at least 3.4
     \li The Boost libraries (http://www.boost.org)
@@ -145,7 +145,7 @@
 
     \section libPackets libPackets: Network packet manipulation
 
-    This libarary provides a very flexible infrastructure to parse, create and otherwise manipulate
+    This library provides a very flexible infrastructure to parse, create and otherwise manipulate
     packetized network data. Included is a library of several protocol parsers covering the basic
     IPv4 and IPv6 network protocols down to the Ethernet layer.
 
@@ -207,7 +207,7 @@
 
     You now have to decide, which modules you want to use. Every module resides in it's own
     subdirectory in the SENF repository. Instead of directly checking out the code, we will use \c
-    svn:externals. This will instruct \c svn to auutomatically check out the needed directories from
+    svn:externals. This will instruct \c svn to automatically check out the needed directories from
     the BerliOS SENF repository. Change to the 'Foo' directory and type
 
     <pre>
@@ -216,7 +216,7 @@
 
     The default editor (probably VI) will be started with the current value of the svn:externals
     property (which will probably be empty). Now add all the modules you want plus \c senfscons and
-    possibly \c doclib (if you want to build the documentation). You will almost certainly neeed the
+    possibly \c doclib (if you want to build the documentation). You will almost certainly need the
     \c Utils module, since all other modules depend on it.
 
     For example, if you want to use the \c Scheduler and \c Socket module, the file will look like
@@ -240,7 +240,7 @@
 
     To set up the build environment, copy the <tt>senfscons/SConstruct.template</tt> to
     <tt>SConstruct</tt> in the project root. The default setup of this file is to build all
-    subdirectories (using the \c SConscript files of the subdirectories). You can add additonal
+    subdirectories (using the \c SConscript files of the subdirectories). You can add additional
     global targets and configuration parameters here.
 
     If you want to use a non-default compiler or the boost library is not installed in the system
@@ -264,7 +264,7 @@
     $ scons
     </pre>
 
-    If you have not changed the \c SConstruct file, this will build all modules you have importet
+    If you have not changed the \c SConstruct file, this will build all modules you have imported
     into your project. To build and execute the unit tests, use
 
     <pre>
@@ -363,7 +363,7 @@
     <tr><td>\c .cci</td><td>C++ implementation of inline non-template functions and
     members</td></tr>
     
-    <tr><td>\c .cti</td><td>C++ implementation of inline template fuanctions and members</td></tr>
+    <tr><td>\c .cti</td><td>C++ implementation of inline template functions and members</td></tr>
 
     <tr><td>\c .mpp</td><td>Special include file used for external iteration by the
     Boost.Preprocessor library</td></tr> </table>

@@ -50,7 +50,7 @@ namespace senf {
 
     /** \brief Link local address
 
-        LLSocketAddress wrapps the standard sockaddr_ll datatype.
+        LLSocketAddress wraps the standard sockaddr_ll datatype.
 
         \todo I don't think the current implementation is
             sensible. I'll have to reimplement this class probably
@@ -60,7 +60,7 @@ namespace senf {
             'ForwardRange' representation for a raw ll
             address (See <a
             href="http://www.boost.org/libs/range/index.html">Boost.Range</a>).
-            This representation allows zero-copy imlementations of
+            This representation allows zero-copy implementations of
             many operations, however it is probably not worth the
             effort since the ll address is restricted to a max of 8
             bytes. Therefore this will be changed and the concrete
@@ -73,7 +73,7 @@ namespace senf {
         // as the representation for a hardware address. The restrictions
         // for the range are:
         // a) the range must never be larger than 8 elements
-        // b) the value_type must be convertible to unsigend char
+        // b) the value_type must be convertible to unsigned char
         // and really we need only a single-pass range.
         //
         // Since a hardware address is so short (a maximum of 8

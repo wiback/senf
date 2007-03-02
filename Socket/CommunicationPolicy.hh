@@ -56,8 +56,8 @@ namespace senf {
                                         /**< \param[in] handle socket handle to enable reception on
                                              \param[in] backlog size of backlog queue
 
-                                             \fixme listen probably makes no sense without accpept,
-                                                 so listen() should debend on AddressingPolicy
+                                             \fixme listen probably makes no sense without accept,
+                                                 so listen() should depend on AddressingPolicy
                                                  too. */
         template <class Policy>
         static int accept(ServerSocketHandle<Policy> handle,
@@ -82,7 +82,7 @@ namespace senf {
         This is different from UndefinedCommunicationPolicy (which is the same as
         CommunicationPolicyBase). This policy class defines the communication policy -- it
         explicitly states, that the socket does not support connected communication. This
-        effektively disables ther ServerSocketHandle.
+        effectively disables the ServerSocketHandle.
      */
     struct UnconnectedCommunicationPolicy : public CommunicationPolicyBase
     {};

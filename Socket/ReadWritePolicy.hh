@@ -48,7 +48,7 @@ namespace senf {
     /** \brief ReadPolicy for readable sockets
 
         This policy provides support for readable sockets via the standard UNIX read/recvfrom system
-        cals. The concreate semantics of the read calls depend on the framing policy of the socket.
+        calls. The concrete semantics of the read calls depend on the framing policy of the socket.
      */
     struct ReadablePolicy : public ReadPolicyBase
     {
@@ -86,7 +86,7 @@ namespace senf {
     /** \brief WritePolicy for writeable sockets
 
         This policy provides support for writable sockets via the standard UNIX write/sendto system
-        cals. The concreate semantics of the write calls depend on the framing policy of the socket.
+        calls. The concrete semantics of the write calls depend on the framing policy of the socket.
      */
     struct WriteablePolicy : public WritePolicyBase
     {

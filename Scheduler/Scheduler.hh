@@ -45,7 +45,7 @@ namespace senf {
     /** \brief Singleton class to manage the event loop
 
         This class manages a single select() type event loop. A customer of this class may register
-        any number of file descriptiors with this class and pass callback functions to be called on
+        any number of file descriptors with this class and pass callback functions to be called on
         input, output or error. This functions are specified using boost::function objects (See <a
         href="http://www.boost.org/doc/html/function.html">Boost.Function</a>)
 
@@ -54,16 +54,16 @@ namespace senf {
         \code
           int fd = retrieve_filehandle(object);
         \endcode
-        is valid and places the relevent file descriptor into fd can be used as a Handle type. There
+        is valid and places the relevant file descriptor into fd can be used as a Handle type. There
         is an implementation of retrieve_filehandle(int) within the library to handle explicit file
-        descrptors. The <a href="../../../Socket/doc/html/index.html">Socket library</a> provides an
-        implementation of <tt>retrive_filehandle(FileHandle handle)</tt>. If you want to support
-        some other handle type, just define an apropriate \c retrieve_filehandle function <em>in
+        descriptors. The <a href="../../../Socket/doc/html/index.html">Socket library</a> provides an
+        implementation of <tt>retrieve_filehandle(FileHandle handle)</tt>. If you want to support
+        some other handle type, just define an appropriate \c retrieve_filehandle function <em>in
         that types namespace</em>.
 
         It is important to note, that for every combination of file descriptor and event, only a \e
         single handler may be installed. Installing more handlers does not make sense. If you need
-        to distribute data to serveral interested parties, you must take care of this yourself.
+        to distribute data to several interested parties, you must take care of this yourself.
 
         \todo Fix EventId parameter (probably to int) to allow |-ing without casting ...
       */
@@ -111,7 +111,7 @@ namespace senf {
             time
 
             \implementation This static member just defines the Scheduler as a static method
-                variable. The C++ standard then provides above guaratee. The instance will be
+                variable. The C++ standard then provides above guarantee. The instance will be
                 initialized the first time, the code flow passes the variable declaration found in
                 the instance() body.
          */
@@ -125,7 +125,7 @@ namespace senf {
                  typename GenericCallback<Handle>::Callback const & cb,
                  int eventMask = EV_ALL); ///< Add file handle event callback
                                         /**< add() will add a callback to the Scheduler. The
-                                             callbeck will be called for the given type of event on
+                                             callback will be called for the given type of event on
                                              the given  arbitrary file-descriptor or
                                              handle-like object. If there already is a Callback
                                              register ed for one of the events requested, the new

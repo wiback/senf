@@ -38,8 +38,8 @@ namespace senf {
 
     /** \brief Asyncronous writing helper
 
-        This class provides a simple asyncronous writing facility. This helper will register with
-        the Scheduler to write the requested data. It will stay registered until the data has benen
+        This class provides a simple asynchronous writing facility. This helper will register with
+        the Scheduler to write the requested data. It will stay registered until the data has been
         completely sent or some error condition is encountered. As soon as the WriteHelper is done,
         the callback will be called.
 
@@ -86,9 +86,9 @@ namespace senf {
                                              an empty string. Until then, the complete string will
                                              be returned. */
 
-        bool complete() const;          ///< Check wether the write has completed successfully
+        bool complete() const;          ///< Check whether the write has completed successfully
         bool error() const;             ///< Check for error condition
-        void throw_error() const;       ///< If an error occured, throw it
+        void throw_error() const;       ///< If an error occurred, throw it
 
         void revoke();                  ///< Remove the WriteHelper from the scheduler
 

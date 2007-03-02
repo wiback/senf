@@ -42,7 +42,7 @@ namespace senf {
     /** \brief Asyncronous reading helper
 
         This class provides a simple asynchronous reading facility. This helper will register with
-        the Scheduler and read incoming data. It will collect the data until a specific numbner of
+        the Scheduler and read incoming data. It will collect the data until a specific number of
         bytes has been read or some Predicate evaluated on the data read thus far signals end of
         data.
 
@@ -58,7 +58,7 @@ namespace senf {
 
         The predicate is any class instance with an <tt>operator(std::string const &)</tt>. This
         operator is called, whenever some data has been read. If the data is not yet complete, the
-        predicate must return \c std::string::npos. If the ReadHelper should stop readeing more
+        predicate must return \c std::string::npos. If the ReadHelper should stop reading more
         data, the predicate must return the number of bytes which are to be considered 'matched'.
 
         \todo Move all not Handle dependent members to a ReadHandleBase class
@@ -118,9 +118,9 @@ namespace senf {
         std::string const & data() const; ///< return data read
         std::string const & tail() const; ///< return data read but not matched by the predicate
 
-        bool complete() const;          ///< Check wether the read has completed successfully
+        bool complete() const;          ///< Check whether the read has completed successfully
         bool error() const;             ///< Check for error condition
-        void throw_error() const;       ///< If an error occured, throw it
+        void throw_error() const;       ///< If an error occurred, throw it
 
         void revoke();                  ///< Remove the ReadHelper from the scheduler
 

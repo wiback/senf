@@ -58,7 +58,7 @@ namespace senfscons {
     <dt><tt>scons all_docs</tt></dt><dd>Build documentation of all modules</dd>
 
     <dt><tt>scons all</tt></dt><dd>Build all targets including binaries, libraries, documentation,
-    tests andpossible further targets </dd>
+    tests and possible further targets </dd>
 
     <dt><tt>scons -u doc</tt></dt><dd>Run from within a module directory will build the
     documentation of that module</dd>
@@ -106,7 +106,7 @@ namespace senfscons {
     and have a prefix of \c Use. See \ref use.
 
     After all frameworks are configured, you can use SEFNScons.MakeEnvironment() to create a
-    corretly configured construction environment.
+    correctly configured construction environment.
 
     To <i>configure the construction environment</i> you can set Variables in the construction
     environment. See the SCons manpage for a list of supported variables. Some additional variables

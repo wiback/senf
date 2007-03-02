@@ -37,7 +37,7 @@ namespace senf {
 
     /** \brief Exception handling standard UNIX errors (errno)
 
-        This exception is thrown to signal generic errno failuers.
+        This exception is thrown to signal generic errno failures.
 
         \todo make where and err accessors and make the member vars private
 
@@ -49,13 +49,13 @@ namespace senf {
         string and errno value as an argument and will throw a
         corresponding template class instance. This would just be a
         big switch statement containing all possible errno values,
-        probably created using some makro metaprogramming.
+        probably created using some macro metaprogramming.
      */
     class SystemException : public std::exception
     {
     public:
         explicit SystemException(int err); ///< SystemException without error lokus info
-                                        /**< \param[in] err errror number (the errno value) */
+                                        /**< \param[in] err error number (the errno value) */
         SystemException(char const * where, int err); ///< SystemException with error lokus info
                                         /**< \param[in] where description of error origin
                                              \param[in] err error number (the errno value) */

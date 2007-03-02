@@ -50,7 +50,7 @@ namespace senf {
               typedef some_key_type key_t;
           };
         \endcode
-        The key type can be an arbitrary valuetype. The PacketRegistry
+        The key type can be an arbitrary value type. The PacketRegistry
         for this Tag can then be accessed using
         <code>PacketRegistry<SomeTag>::</code>.
 
@@ -109,7 +109,7 @@ namespace senf {
                 any other packet class in this registry.
                 The Packet must not already be registered in the registry.
 
-            \param OtherPacket packet to regiser
+            \param OtherPacket packet to register
             \param key key of the packet
          */
         template <class OtherPacket>
@@ -132,7 +132,7 @@ namespace senf {
 
             \param key Key of packet type to create instance of
             \param b begin iterator argument to Packet::create()
-            \param e end iterator argment to Packet::create()
+            \param e end iterator argument to Packet::create()
             \returns new Instance of the packet type registered under
                 key or DataPacket, if the key is not registered.
          */
@@ -154,7 +154,7 @@ namespace senf {
 
         This mixin class provides a new registerInterpreter
         implementation which can be used besides the methods provided
-        bei senf::Packet to add a new interpreter to the
+        by senf::Packet to add a new interpreter to the
         interpreter chain.
 
         \code

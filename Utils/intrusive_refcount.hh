@@ -41,7 +41,7 @@ namespace senf {
         required interface. To make a class compatible with \c boost::intrusive_ptr, just derive
         publicly from intrusive_refcount.
 
-        Two additional benifits of using intrusive_refcount are
+        Two additional benefits of using intrusive_refcount are
         \li The object can access it's own refcount
         \li It is valid and safe to convert a plain object pointer to an intrusive_ptr at any time
             (not only after new)

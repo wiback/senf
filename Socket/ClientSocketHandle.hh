@@ -144,7 +144,7 @@ namespace senf {
             that the socket buffer will be empty after read() returns.
 
             \attention If the space available for the data read is limited, the read will return no
-            more than that amount of data. For a datagram socket, a full datagram is still dequed
+            more than that amount of data. For a datagram socket, a full datagram is still dequeued
             from the socket buffer, the remainder of the datagram will be lost.
 
             There are three variants of read which differ in how they return the read string.
@@ -175,7 +175,7 @@ namespace senf {
                                            now. If you do not want to block, you \e must make the
                                            socket non-blocking (using FileHandle::blocking()).
                                            \param[out] buffer data read
-                                           \param[in] limit Maximum number of buytes to read or 0
+                                           \param[in] limit Maximum number of bytes to read or 0
                                            if unlimited
                                            \see \ref read() */
         unsigned     read         (char * buffer, unsigned size);
@@ -216,12 +216,12 @@ namespace senf {
                                            \param[out] from peer address
                                            \see \ref readfrom() */
         unsigned     readfrom     (char * buffer, unsigned size, Address & from);
-                                        ///< Read data into memory byffer
+                                        ///< Read data into memory buffer
                                         /**< This variant will read data into the memory area at \c
                                            buffer of size \c size. This is the most performant
                                            version of readfrom().
                                            \param[in] buffer address of buffer to store data at
-                                           \param[in] size size of bnuffer
+                                           \param[in] size size of buffer
                                            \param[out] from peer address
                                            \returns Number of bytes read
                                            \see \ref readfrom() */
@@ -235,7 +235,7 @@ namespace senf {
 
             A single write call might depending on the circumstances write only part of the data.
 
-            There are two variants of thie member
+            There are two variants of this member
 
             \throws senf::SystemException
 
@@ -276,7 +276,7 @@ namespace senf {
         unsigned     writeto      (AddressParam addr, std::string const & data);
         unsigned     writeto      (AddressParam addr, char const * buffer, unsigned size);
                                         ///< Write data from memory buffer to unconnected socket
-                                        /**< \param[in] addr Address o fpeer to send data to
+                                        /**< \param[in] addr Address of peer to send data to
                                            \param[in] buffer address of buffer to write
                                            \param[in] size amount of data to write
                                            \returns Number of bytes written

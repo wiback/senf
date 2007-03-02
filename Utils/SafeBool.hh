@@ -44,7 +44,7 @@ namespace senf {
         better in this respect but still allows two instances of any
         class having such a <tt>void *</tt> conversion to be compared
         for equality. This again will produce absolutely unexpected
-        results since it will not check wethere the objects are
+        results since it will not check whether the objects are
         identical, it will only check, that both return the same
         boolean state.
 

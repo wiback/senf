@@ -112,7 +112,7 @@ namespace senf {
         void state(SocketStateMap & map, unsigned lod=0);
                                         ///< Inquire state information of socket handle
                                         /**< The map argument (a string to string mapping) will be
-                                             filled with information coverning the current state of
+                                             filled with information covering the current state of
                                              the socket. The information provided depends on the
                                              socket protocol. The amount of information returned can
                                              be controlled using the \p lod value.
@@ -122,7 +122,7 @@ namespace senf {
 
                                              \param map string to string mapping to be filled with
                                                  state information
-                                             \param lod level of detail requesten. The interpretation
+                                             \param lod level of detail requested. The interpretation
                                                  of this value is protocol specific
 
                                              \implementation This member will be re-implemented in
@@ -231,7 +231,7 @@ namespace senf {
 
     /** \brief dynamically check cast validity
 
-        This function will check, wether the given cast is valid. This is the same as checking, that
+        This function will check, whether the given cast is valid. This is the same as checking, that
         dynamic_socket_cast does not throw.
 
         This member is needed, since there is no 'null' SocketHandle (comparable to a null pointer)

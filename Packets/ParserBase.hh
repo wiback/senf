@@ -107,7 +107,7 @@ namespace senf {
                     // return true, if the data in the range [begin,end)
                     // can be safely interpreted by the parser without
                     // causing invalid memory access. This means,
-                    // check, wether the data is truncated
+                    // check, whether the data is truncated
                     return static_cast<unsigned>(end-begin) >= bytes();
                 }
 
@@ -271,7 +271,7 @@ namespace senf {
 
     /** \brief Addtiional Parser information
 
-        Parser_traits provids abstract information about an unknown
+        Parser_traits provides abstract information about an unknown
         parser. Besides the information already available within the
         Parser it provides an additional 'fixed_sized' member which is
         true if and only if the Parser has a static bytes() member.
