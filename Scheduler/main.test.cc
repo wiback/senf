@@ -1,4 +1,4 @@
-// $Id: main.test.cc 32 2006-03-23 16:24:56Z sbund $
+// $Id$
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
