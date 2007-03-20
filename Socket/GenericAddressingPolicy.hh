@@ -103,7 +103,7 @@ namespace senf {
                                              communication policy is ConnectedCommunicationPolicy.
 
                                              \param[in] handle socket handle
-                                             \param[in] address address of remote peer to connect
+                                             \param[in] addr address of remote peer to connect
                                                  to */
         static void bind(FileHandle handle, Address const & addr);
                                         ///< Set local socket address

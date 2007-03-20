@@ -55,11 +55,6 @@ namespace senf {
         \todo Is it safe, not to allow setting the interface index on add/drop? what does it do
         (especially if the local address is given ?). What have I been thinking here ???
 
-        \todo move all multicast-methods into an extra IPv4MulticastProtocol class (it's only
-        available on datagram sockets)
-
-        \todo the multicast add/remove/iface semantics are quite unclear ...
-
         \todo connect() is only available on stream sockets. We want to access bind() and connect()
         via the ClientSocketHandle -> see SocketProtocol todo point
      */
@@ -75,52 +70,6 @@ namespace senf {
                                         /**< \todo make this obsolete by allowing access to the
                                              ClientSocketHandle from ConcreateSocketProtocol
                                              \param[in] address Address to set */
-
-        unsigned mcTTL() const;         ///< Return current multicast TTL
-        void mcTTL(unsigned value) const; ///< Set multicast TTL
-
-        bool mcLoop() const;            ///< Return current multicast loopback state
-        void mcLoop(bool value) const;  ///< Set multicast loopback state
-
-        void mcAddMembership(INet4Address const & mcAddr) const;
-                                        ///< Join multicast group
-                                        /**< This member will add \a mcAddr to the list of multicast
-                                             groups received. The group is joined on the default
-                                             interface.
-                                             \param[in] mcAddr address of group to join
-                                             \todo fix this as soon as we have a real address class
-                                                 (different from the sockaddress class */
-        void mcAddMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;
-                                        ///< join multicast group on a specific address/interface
-                                        /**< This member will add \a mcAddr to the list of multicast
-                                             groups received. The group is joined on the interface
-                                             with the given local address.
-                                             \param[in] mcAddr address of group to join
-                                             \param[in] localAddr address of interface to join on
-                                             \todo fix this as soon as we have a real address class
-                                                 (different from the sockaddress class */
-
-        void mcDropMembership(INet4Address const & mcAddr) const;
-                                        ///< Leave multicast group
-                                        /**< This member will remove \a mcAddr from the list of
-                                             multicast groups received. The group is left from the
-                                             default interface.
-                                             \param[in] mcAddr address of group to leave
-                                             \todo fix this as soon as we have a real address class
-                                                 (different from the sockaddress class */
-        void mcDropMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;
-                                        ///< leave multicast group on a specific address/interface
-                                        /**< This member will remove \a mcAddr from the list of
-                                             multicast groups received. The group is left from the
-                                             interface with the given local address.
-                                             \param[in] mcAddr address of group to leave
-                                             \param[in] localAddr address of interface to leave from
-                                             \todo fix this as soon as we have a real address class
-                                                 (different from the sockaddress class */
-
-        void mcIface(std::string iface = std::string()) const;
-                                        ///< set default multicast interface of the socket
-                                        /**< \param[in] iface name of interface */
     };
 
     /** \brief Protocol facet providing IPv6 Addressing related API

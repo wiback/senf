@@ -21,58 +21,78 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief INet[46]Protocol non-inline non-template implementation */
+    \brief UDPv4SocketHandle and UDPv6SocketHandle non-inline non-template implementation
+ */
 
-#include "INetProtocol.hh"
-//#include "INetProtocol.ih"
+#include "UDPSocketHandle.hh"
+//#include "UDPSocketHandle.ih"
 
 // Custom includes
+#include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
+#include <sys/ioctl.h>
+
 #include "Utils/Exception.hh"
 
-//#include "INetProtocol.mpp"
+//#include "UDPSocketHandle.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::IPv4Protocol
+// senf::UDPv4SocketProtocol
 
-prefix_ void senf::IPv4Protocol::connect(INet4Address const & address)
+prefix_ void senf::UDPv4SocketProtocol::init_client()
     const
 {
-    if (::connect(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
+    int sock = ::socket(PF_INET,SOCK_DGRAM,0);
+    if (sock < 0)
         throw SystemException(errno);
+    body().fd(sock);
 }
 
-prefix_ void senf::IPv4Protocol::bind(INet4Address const & address)
+prefix_ void
+senf::UDPv4SocketProtocol::init_client(INet4Address const & address)
     const
 {
-    if (::bind(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
-        throw SystemException(errno);
+    init_client();
+    connect(address);
 }
 
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::UDPv4SocketProtocol::clone()
+    const
+{
+    return std::auto_ptr<SocketProtocol>(new UDPv4SocketProtocol());
+}
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::IPv6Protocol
+// senf::UDPv6SocketProtocol::
 
-prefix_ void senf::IPv6Protocol::connect(INet6SocketAddress const & address)
+prefix_ void senf::UDPv6SocketProtocol::init_client()
     const
 {
-    if (::connect(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
+    int sock = ::socket(PF_INET6,SOCK_DGRAM,0);
+    if (sock < 0)
         throw SystemException(errno);
+    body().fd(sock);
 }
 
-prefix_ void senf::IPv6Protocol::bind(INet6SocketAddress const & address)
+prefix_ void
+senf::UDPv6SocketProtocol::init_client(INet6SocketAddress const & address)
     const
 {
-    if (::bind(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
-        throw SystemException(errno);
+    init_client();
+    connect(address);
+}
+
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::UDPv6SocketProtocol::clone()
+    const
+{
+    return std::auto_ptr<SocketProtocol>(new UDPv6SocketProtocol());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "INetProtocol.mpp"
+//#include "UDPSocketHandle.mpp"
 
 
 // Local Variables:

@@ -201,15 +201,15 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         // are at least not sensible ...
         // I'll have to move those to a UDPSocket test ... they should
         // realy only be in the UDP Protocol implementation
-        BOOST_CHECK_NO_THROW( sock.protocol().mcTTL() );
-        BOOST_CHECK_THROW( sock.protocol().mcTTL(1), senf::SystemException );
-        BOOST_CHECK_NO_THROW( sock.protocol().mcLoop() );
-        BOOST_CHECK_NO_THROW( sock.protocol().mcLoop(false) );
-        BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0") );
-        BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0","127.0.0.1:0") );
-        BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0","127.0.0.1:0") );
-        BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0") );
-        BOOST_CHECK_THROW( sock.protocol().mcIface("lo"), senf::SystemException );
+//        BOOST_CHECK_NO_THROW( sock.protocol().mcTTL() );
+//        BOOST_CHECK_THROW( sock.protocol().mcTTL(1), senf::SystemException );
+//        BOOST_CHECK_NO_THROW( sock.protocol().mcLoop() );
+//        BOOST_CHECK_NO_THROW( sock.protocol().mcLoop(false) );
+//        BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0") );
+//        BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0","127.0.0.1:0") );
+//        BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0","127.0.0.1:0") );
+//        BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0") );
+//        BOOST_CHECK_THROW( sock.protocol().mcIface("lo"), senf::SystemException );
 
         // The following setsockopts are hard to REALLY test ...
         BOOST_CHECK_NO_THROW( sock.protocol().nodelay(true) );
