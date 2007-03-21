@@ -84,7 +84,7 @@ namespace senfscons {
     invokes the module \c SConscript files. To simplify the configuration, the SENFScons python
     package is provided. This package has helper utilities to simplify standard tasks.
 
-    In \c senfscons/SConstruct.tempalte you may find an example SConstruct file. Copy this to the
+    In \c senfscons/SConstruct.template you may find an example SConstruct file. Copy this to the
     project root (under the name \c SConstruct) to start a new project. You can then modify and
     configure it to your wishes.
 
