@@ -151,9 +151,14 @@ namespace senfscons {
     To configure the build environment to the local environment, a \c SConfig file may be created in
     the projects root directory. The supported parameters are
 
-    <dl><dt>\c CXX</dt><dd>C++ compiler to use</dd>
-    <dt>\c EXTRA_DEFINES</dt><dd>preprocessor symbols to be defined locally</dd>
-    <dt>\c EXTRA_LIBS</dt><dd>additional libraries needed for a local build</dd></dl>
+    <dl>
+        <dt>\c CXX</dt>
+            <dd>C++ compiler to use</dd>
+        <dt>\c EXTRA_DEFINES</dt>
+            <dd>preprocessor symbols to be defined locally</dd>
+        <dt>\c EXTRA_LIBS</dt>
+            <dd>additional libraries needed for a local build</dd>
+    </dl>
 
     Additionally, the \ref use define additional configuration variables which may be set here.
  */

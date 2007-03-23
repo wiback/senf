@@ -1,0 +1,10 @@
+import sys, glob, os.path, datetime
+sys.path.append('senfscons')
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+SConscript(glob.glob("*/SConscript"))
+
+SENFSCons.Doxygen(env)

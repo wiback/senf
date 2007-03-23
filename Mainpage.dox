@@ -44,7 +44,7 @@
     want to contribute, read the docs and \e please adhere to the \ref conventions.
 
     \see \ref usage\n
-         \ref example
+         <a href="../../Examples/doc/html/index.html">Examples</a>
 */
 
 /** \page usage Using the SENF framework
@@ -323,7 +323,7 @@
 
     The simplest way to get started is: copy the Sniffer application and start to modify it.
 
-    \see \ref example \n
+    \see <a href="../../Examples/doc/html/index.html">Examples</a> \n
          \ref components \n
          \ref svnsetup \n
          \ref build

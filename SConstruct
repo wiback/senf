@@ -37,7 +37,7 @@ SConscript(glob.glob("*/SConscript"))
 SENFSCons.StandardTargets(env)
 SENFSCons.GlobalTargets(env)
 SENFSCons.Doxygen(env, extra_sources = [
-    'Sniffer/Sniffer.cc',
+    'Examples/Sniffer/Sniffer.cc',
 ])
 SENFSCons.DoxyXRef(env,
                    HTML_HEADER = '#/doclib/doxy-header-overview.html',

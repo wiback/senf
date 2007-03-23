@@ -1,4 +1,10 @@
-/** \page example Sniffer: A simple example application
+/** \mainpage Examples
+    \anchor Examples_Main
+    
+    \ref sniffer
+*/
+
+/** \page sniffer Sniffer: A simple example application
 
     \dontinclude Sniffer.cc
 
@@ -56,8 +62,6 @@
     We now create a packet socket and bind it to the \c eth0 interface. A packet socket is a linux
     specific type of socket which returns ethernet packets directly from the network wire. By
     uncommenting the last line, you may switch the interface into promiscuous mode.
-
-    \until //
 
     We will now read packets from the socket forever, that is until the user hits Ctrl-C
 
@@ -159,6 +163,7 @@
          <a href="../../Packets/doc/html/index.html"><b>libPackets API reference</b></a> \n
          <a href="../../Utils/doc/html/index.html"><b>libUtils API reference</b></a>
  */
+
 
 
 // Local Variables:

@@ -344,7 +344,7 @@ def DoxyGenerator(source, target, env, for_signature):
 def generate(env):
    """
    Add builders and construction variables for the
-   Doxygen tool.  This is currently for Doxygen 1.4.6.
+   Doxygen tool. This is currently for Doxygen 1.4.6.
    """
    doxyfile_scanner = env.Scanner(
       DoxySourceScan,
