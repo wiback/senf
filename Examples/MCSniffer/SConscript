@@ -1,0 +1,7 @@
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+SENFSCons.Binary(env, 'mcsniffer', SENFSCons.GlobSources(),
+                LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ]);
