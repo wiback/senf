@@ -27,26 +27,21 @@
 // Custom includes
 #include <string>
 #include <fstream>
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <sys/ioctl.h>
-#include <linux/sockios.h> //
-
+#include <linux/sockios.h>
 #include <string>
 #include <iostream>
 #include <iomanip>
 #include "Socket/UDPSocketHandle.hh"
 #include "Scheduler/Scheduler.hh"
 #include "Utils/membind.hh"
-
 #include "Packets/EthernetPacket.hh"
 
 
-
-
-//#include "Sniffer.mpp"
+//#include "MCSniffer.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 

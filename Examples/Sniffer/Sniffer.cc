@@ -118,27 +118,30 @@ class Sniffer
     senf::PacketSocketHandle sock;
 
 public:
-    Sniffer(std::string const & interface)
-        { sock.bind(senf::LLSocketAddress(interface)); }
+    Sniffer(std::string const & interface) 
+    {
+        sock.bind(senf::LLSocketAddress(interface)); 
+    }
 
-    void run()
-        {
-            senf::Scheduler::instance().add(sock, senf::membind(&Sniffer::dumpPacket, this));
-            senf::Scheduler::instance().process();
-        }
+    void run() 
+    {
+        senf::Scheduler::instance().add(
+            sock, senf::membind(&Sniffer::dumpPacket, this));
+        senf::Scheduler::instance().process();
+    }
          
 private:
     void dumpPacket(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
-        {
-            std::string data (sock.read());
-            senf::EthernetPacket::ptr packet (
-                senf::Packet::create<senf::EthernetPacket>(
-                    data.begin(), data.end()));
-            packet->dump(std::cout);
-            hexdump(packet->last()->begin(),
-                    packet->last()->end());
-            std::cout << "\n\n";
-        }
+    {
+        std::string data (sock.read());
+        senf::EthernetPacket::ptr packet (
+            senf::Packet::create<senf::EthernetPacket>(
+                data.begin(), data.end()));
+        packet->dump(std::cout);
+        hexdump(packet->last()->begin(),
+                packet->last()->end());
+        std::cout << "\n\n";
+    }
 };
 
 int scheduler_main(int argc, char const * argv[])

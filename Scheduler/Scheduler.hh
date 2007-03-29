@@ -128,7 +128,7 @@ namespace senf {
                                              callback will be called for the given type of event on
                                              the given  arbitrary file-descriptor or
                                              handle-like object. If there already is a Callback
-                                             register ed for one of the events requested, the new
+                                             registered for one of the events requested, the new
                                              handler will replace the old one.
                                              \param[in] handle file descriptor or handle providing
                                                  the Handle interface defined above.

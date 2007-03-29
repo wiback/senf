@@ -1,4 +1,4 @@
-// $Id$
+// $Id:SocketHandle.hh 218 2007-03-20 14:39:32Z tho $
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -134,6 +134,9 @@ namespace senf {
                                         ///< Format complete state information as string
                                         /**< Formats the complete state map value and returns it as
                                              a single multi-line string.
+
+                                             param lod  level of detail requested. The interpretation
+                                                of this value is protocol specific
 
                                              \implementation This member will be re-implemented in
                                                  every derived class. See the state()
