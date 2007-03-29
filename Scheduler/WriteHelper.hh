@@ -73,7 +73,7 @@ namespace senf {
                                              \param[in] handle file descriptor or handle providing
                                                  the Handle interface defined above.
                                              \param[in] data data to send
-                                             \param[in] cb callback
+                                             \param[in] callback callback
                                              \returns smart pointer to new WriteHelper instance */
 
         ///@}

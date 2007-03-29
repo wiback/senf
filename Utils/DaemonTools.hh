@@ -61,7 +61,7 @@ namespace senf {
                                              terminal and start a new process group. */
     void redirect_stdio(std::string const & path = "/dev/null"); ///< Redirect STDIN, STDOUT and STDERR
                                         /**< All standard file-descriptors will be redirected to the
-                                             given path defaulting to <tt>/dev/null</tg>
+                                             given path defaulting to <tt>/dev/null</tt>
                                              \param[in] path path to redirect to */
 
     /// @}

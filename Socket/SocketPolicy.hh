@@ -1,4 +1,4 @@
-// $Id$
+// $Id:SocketPolicy.hh 218 2007-03-20 14:39:32Z tho $
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -429,7 +429,7 @@ namespace senf {
 
         This template is an example of the \e Axis \c Is family of template metafunctions. It will
         check, whether \c Trait is a valid compatible Policy class of \c SocketPolicy. \c Trait must
-        be derived from AddressingPolicyBase (respectively \i Policy \c Base).
+        be derived from AddressingPolicyBase (respectively \c Policy \c Base).
 
         \see \ref policy_group
      */

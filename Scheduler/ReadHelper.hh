@@ -90,7 +90,7 @@ namespace senf {
                                              \param[in] handle file descriptor or handle providing
                                                  the Handle interface defined above.
                                              \param[in] maxSize maximum number of bytes to read
-                                             \param[in] cb callback
+                                             \param[in] callback callback
                                              \returns Smart pointer to new ReadHelper instance */
 
         template <class Predicate>
@@ -106,7 +106,7 @@ namespace senf {
                                                  the Handle interface defined above.
                                              \param[in] maxSize maximum number of bytes to read
                                              \param[in] predicate predicate to check
-                                             \param[in] cb callback
+                                             \param[in] callback callback
                                              \returns smart pointer to new ReadHelper instance */
 
         ///@}

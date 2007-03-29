@@ -1,4 +1,4 @@
-// $Id$
+// $Id:ServerSocketHandle.hh 218 2007-03-20 14:39:32Z tho $
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -86,7 +86,7 @@ namespace senf {
         /** Depending on the type of \c Address, this will be either <tt>Address</tt> or <tt>Address
             const &</tt>. See <a
             href="http://www.boost.org/libs/utility/call_traits.htm">call_traits documentation in
-            the Boost.Utility library\endlink.</a>
+            the Boost.Utility library.</a>
          */
         typedef typename boost::call_traits<Address>::param_type AddressParam;
         /// Corresponding client socket handle with the same policy
@@ -182,7 +182,7 @@ namespace senf {
                                         ///< Accept new connection
                                         /**< This variant will additionally return the remote
                                            address of the client
-                                           \param[out] client address
+                                           \param[out] addr address
                                            \returns handle of new client connection
                                            \see \ref accept() */
 

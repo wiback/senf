@@ -41,7 +41,7 @@
     \endcode
 
     The last sequence element always is the log message. Before that we have a number of log
-    parameters <it>in arbitrary order</it>. Since giving all the parameters in every log message is
+    parameters <i>in arbitrary order</i>. Since giving all the parameters in every log message is
     to verbose, there are two helpful constructs to reduce the verbosity. Using \ref SENF_LOG_DEFAULTS it
     is possible to define the default logging parameters to be used within a given scope. Using
     \ref SENF_LOG_DEF_ALIAS you can define an alias (which is a scoped symbol) as an arbitrary
@@ -131,7 +131,7 @@ namespace senf {
 
         This macro will write it's last argument to the log stream. The last argument must be an
         expression which will be placed after a streaming \c operator<< (like
-        <it>some-log-sttream</it> \c << <it>last-macro-arg</it>).
+        <i>some-log-sttream</i> \c << <i>last-macro-arg</i>).
         \code
         BOOST_LOG((parameters...)("log message " << args << ...));
         \endcode

@@ -1,4 +1,4 @@
-// $Id$
+// $Id:PacketSocketHandle.hh 218 2007-03-20 14:39:32Z tho $
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -118,12 +118,12 @@ namespace senf {
                                              interface. The modes available are
 
                                              <dl>
-                                             <dt>\e None</dt><dd>No special mode set. Only receive
+                                             <dt><em>None</em></dt><dd>No special mode set. Only receive
                                              packets addressed to the interface or of joined
                                              multicast groups</dd>
-                                             <dt>\e AllMulticast</dt><dd>Additionally receive all
+                                             <dt><em>AllMulticast</em></dt><dd>Additionally receive all
                                              multicast traffic</dd>
-                                             <dt>\e Promiscuous</dt><dd>Receive all packets on the
+                                             <dt><em> Promiscuous</em></dt><dd>Receive all packets on the
                                              wire</dd>
                                              </dl>
 

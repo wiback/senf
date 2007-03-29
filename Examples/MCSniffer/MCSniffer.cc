@@ -21,24 +21,17 @@
 
 // Definition of non-inline non-template functions
 
-//#include "Sniffer.hh"
-//#include "Sniffer.ih"
+//#include "MCSniffer.hh"
+//#include "MCSniffer.ih"
 
 // Custom includes
-#include <string>
 #include <fstream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <sys/ioctl.h>
-#include <linux/sockios.h>
 #include <string>
-#include <iostream>
 #include <iomanip>
 #include "Socket/UDPSocketHandle.hh"
 #include "Scheduler/Scheduler.hh"
-#include "Utils/membind.hh"
 #include "Packets/EthernetPacket.hh"
+#include "Utils/membind.hh"
 
 
 //#include "MCSniffer.mpp"
@@ -87,20 +80,20 @@ namespace {
 }
 
 
-class MSniffer
+class MCSniffer
 {
     senf::UDPv4ClientSocketHandle sock;
     std::ostream& stream;
 
 public:
-    MSniffer(senf::INet4Address addr, std::ostream& s)
+    MCSniffer(senf::INet4Address addr, std::ostream& s)
         : stream(s)
     {
         sock.protocol().bind(addr);
         sock.protocol().mcLoop(true);
         sock.protocol().mcAddMembership(addr);
         senf::Scheduler::instance().add(
-            sock, senf::membind(&MSniffer::dumpPacket, this));
+            sock, senf::membind(&MCSniffer::dumpPacket, this));
     }
 
 private:
@@ -125,9 +118,9 @@ int main(int argc, char const * argv[])
         std::ofstream f1 ("233.132.152.1.txt");
         std::ofstream f2 ("233.132.152.2.txt");
         
-        MSniffer sniffer1 (
+        MCSniffer sniffer1 (
             senf::INet4Address::INet4Address("233.132.152.1:22344"), f1);
-        MSniffer sniffer2 (
+        MCSniffer sniffer2 (
             senf::INet4Address::INet4Address("233.132.152.2:22344"), f2);
             
         senf::Scheduler::instance().process();
@@ -141,7 +134,7 @@ int main(int argc, char const * argv[])
  
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "Sniffer.mpp"
+//#include "MCSniffer.mpp"
 
 
 // Local Variables:
