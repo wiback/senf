@@ -5,7 +5,7 @@ body {
 }
 
 #head {
-        height: 62px;
+        height: 72px;
         border-top: 5px solid #DECD40;
         border-bottom: 1px solid #AF9D00;
         background: url(logo-head.png) top left no-repeat;
@@ -27,13 +27,19 @@ body {
 
 #head h2 {
         margin: 0 0 0 100px;
-        padding: 4px 0 0 42px;
-        height: 18px;
+        padding: 6px 0 0 42px;
+        height: 26px;
         background-color: #EDE497;
         color: #726921;
         font-size: 13px;
         font-weight: normal;
         white-space: nowrap;
+}
+
+#search {
+        position: absolute;
+        top: 50px;
+        right: 10px;
 }
 
 #content1 {

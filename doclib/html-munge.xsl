@@ -10,6 +10,9 @@
     </xsl:copy>
   </xsl:template>
   
+  <xsl:template match="li[form]"> 
+  </xsl:template>
+  
   <!-- Add 'class' attribute to some special paragraphs/lists -->
   
   <xsl:template name="add-class">
@@ -74,5 +77,5 @@
       <xsl:with-param name="class">anchor</xsl:with-param>
     </xsl:call-template>
   </xsl:template>
-
+  
 </xsl:stylesheet>
