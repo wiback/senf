@@ -1,0 +1,10 @@
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+SENFSCons.Binary(env, 'client', 'client.cc',
+                LIBS = [ 'Packets', 'Socket', 'Utils' ]);
+
+SENFSCons.Binary(env, 'server', 'server.cc',
+                LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ]);
