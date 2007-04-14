@@ -108,6 +108,7 @@ senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos,
                                                                     InputIterator f,
                                                                     InputIterator l)
 {
+    /** \todo Optimize this for random-access and multi-pass iterators */
     for (;f!=l;++f,++pos) insert(pos,*f);
 }
 

@@ -260,8 +260,6 @@ namespace senf {
         intrusive_ptr is only the size of an ordinary pointer, a
         smart_ptr has the size of two pointers).
 
-        \fixme Make all data mutators protected
-
         \nosubgrouping
       */
     class Packet : boost::noncopyable

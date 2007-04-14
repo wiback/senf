@@ -9,13 +9,13 @@
 <body>
 
 <div id="head">
-  <h1>SENF Extensible Network Framework</h1>
-  <h2>Search Results</h2>
   <div id="search">
     <form action="search.php" method="get">
     Search: <?php inputfield(); ?>
     </form>
   </div>
+  <h1>SENF Extensible Network Framework</h1>
+  <h2>Search Results</h2>
 </div>
 
 <div id="content1">

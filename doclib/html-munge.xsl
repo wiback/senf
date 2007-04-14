@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  version="1.0">
 
-  <xsl:output method="html" encoding="html"/>
+  <xsl:output 
+    method="html" 
+    encoding="html" 
+    doctype-public="-//W3C//DTD HTML 4.01 Transitional//EN"
+    doctype-system="http://www.w3.org/TR/html4/loose.dtd"/>
   
   <xsl:template match="*">
     <xsl:copy>

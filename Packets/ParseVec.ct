@@ -61,7 +61,7 @@ senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
                                                                        InputIterator f,
                                                                        InputIterator l)
 {
-    /** \fixme This might be horribly inefficient ... we need to
+    /** \todo This might be horribly inefficient ... we need to
         specialize for random_access and forward iterators, where we
         can count the distance */
 

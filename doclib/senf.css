@@ -5,7 +5,7 @@ body {
 }
 
 #head {
-        height: 72px;
+        height: 62px;
         border-top: 5px solid #DECD40;
         border-bottom: 1px solid #AF9D00;
         background: url(logo-head.png) top left no-repeat;
@@ -27,8 +27,8 @@ body {
 
 #head h2 {
         margin: 0 0 0 100px;
-        padding: 6px 0 0 42px;
-        height: 26px;
+        padding: 4px 0 0 42px;
+        height: 18px;
         background-color: #EDE497;
         color: #726921;
         font-size: 13px;
@@ -37,9 +37,28 @@ body {
 }
 
 #search {
-        position: absolute;
-        top: 50px;
-        right: 10px;
+        float: right;
+        width: 150px;
+        height: 39px;
+        font-size: 10px;
+        /* margin/padding/color/background-color/border: mostly IE6/IE7 fixes */
+        margin: 0 0 0 -10px;
+        padding: 0 10px 0 10px;
+        color: #726921;
+        background-color: #DECD40;
+        border-bottom: 1px solid #AF9D00;
+}
+
+#search input { 
+        display: block;
+        height: 16px;
+        border: 1px solid #AF9D00;
+        width: 100%;
+}
+
+#search form { 
+        margin: 0;
+        padding: 0;
 }
 
 #content1 {
@@ -67,8 +86,8 @@ a.ext {
 }
 
 a.anchor { 
-	color: inherit;
-	background-color: white !important;
+        color: inherit;
+        background-color: white !important;
 }
 
 div.tabs {
@@ -226,23 +245,23 @@ dl.xref-idea {
 }
 
 div.bug, div.fixme, div.todo, div.idea { 
-	padding-left: 10px;
+        padding-left: 10px;
 }
 
 div.bug { 
-	border-left: 10px solid red;
+        border-left: 10px solid red;
 }
 
 div.fixme { 
-	border-left: 10px solid yellow;
+        border-left: 10px solid yellow;
 }
 
 div.todo { 
-	border-left: 10px solid green;
+        border-left: 10px solid green;
 }
 
 div.idea { 
-	border-left: 10px solid #AAAAAA;
+        border-left: 10px solid #AAAAAA;
 }
 
 table {
@@ -279,7 +298,7 @@ dl.parameters dd table {
 table.glossary {
         border: none;
         border-spacing: 0;
-	margin: 10px 0;
+        margin: 10px 0;
 }
 
 table.glossary tr td {
@@ -299,3 +318,10 @@ table.glossary tr td:first-child {
 table.members td:first-child {
         width: 35%;
 }
+
+/* 
+ * Local Variables:
+ * indent-tabs-mode: nil
+ * ispell-local-dictionary: "american"
+ * End:
+ */

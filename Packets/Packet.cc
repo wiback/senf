@@ -270,7 +270,7 @@ prefix_ void senf::Packet::erase(iterator first, iterator last)
     size_type index(first-impl_->data_.begin());
     size_type sz(last-first);
     BOOST_ASSERT( index >= begin_ && index < end_ && sz <= end_-index );
-    /** \fixme Here we should assert, that no bytes belonging to the
+    /** \todo Here we should assert, that no bytes belonging to the
         next iterator are deleted ... */
     impl_->data_.erase(first,last);
     impl_->updateIterators(index,-sz,self_,INSIDE);
