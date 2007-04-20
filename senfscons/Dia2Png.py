@@ -19,7 +19,7 @@
 # \ingroup builder
 
 import os
-import SCons.Builder
+import SCons.Builder, SCons.Action
 
 def dia_getSize(env,source):
     size = None
@@ -39,7 +39,7 @@ def dia2png_generator(source, target, env, for_signature):
     if size[0] > env['DIA2PNGMAXWIDTH']:
         size[1] = size[1]*env['DIA2PNGMAXWIDTH']/size[0]
         size[0] = env['DIA2PNGMAXWIDTH']
-    return env.Action("$DIACOM -t png -s %dx%d -e $TARGET $SOURCE" % tuple(size))
+    return SCons.Action.Action("$DIACOM -t png -s %dx%d -e $TARGET $SOURCE" % tuple(size))
 
 Dia2Png = SCons.Builder.Builder(suffix = ".png",
                                 src_suffix = ".dia",

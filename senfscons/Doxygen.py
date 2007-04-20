@@ -96,6 +96,7 @@
 import os, sys, traceback
 import os.path
 import glob, re
+import SCons.Action
 from fnmatch import fnmatch
 
 EnvVar = re.compile(r"\$\(([0-9A-Za-z_-]+)\)")
@@ -295,8 +296,8 @@ def DoxyGenerator(source, target, env, for_signature):
 
    data = DoxyfileParse(env, source[0].abspath)
 
-   actions = [ env.Action("cd ${SOURCE.dir}  && TOPDIR=%s ${DOXYGEN} ${SOURCE.file}"
-                          % (relpath(source[0].dir.abspath, env.Dir('#').abspath),)) ]
+   actions = [ SCons.Action.Action("cd ${SOURCE.dir}  && TOPDIR=%s ${DOXYGEN} ${SOURCE.file}"
+                                   % (relpath(source[0].dir.abspath, env.Dir('#').abspath),)) ]
 
    # This will add automatic 'installdox' calls.
    #
@@ -335,9 +336,9 @@ def DoxyGenerator(source, target, env, for_signature):
          if args is not None and url:
             args.append("-l %s@%s" % ( os.path.basename(tagfile), url ))
       if args:
-         actions.append(env.Action('cd %s && ./installdox %s' % (output_dir, " ".join(args))))
+         actions.append(SCons.Action.Action('cd %s && ./installdox %s' % (output_dir, " ".join(args))))
 
-   actions.append(env.Action([ "touch $TARGETS" ]))
+   actions.append(SCons.Action.Action([ "touch $TARGETS" ]))
 
    return actions
 

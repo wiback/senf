@@ -23,7 +23,8 @@
 # All other functions are for internal use only.
 
 import os.path, glob
-import  SCons.Options, SCons.Environment, SCons.Script.SConscript, SCons.Node.FS, SCons.Defaults
+import SCons.Options, SCons.Environment, SCons.Script.SConscript, SCons.Node.FS
+import SCons.Defaults, SCons.Action
 
 ## \defgroup use Predefined Framework Configurators
 #
@@ -372,7 +373,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         # references
         env.AddPostAction(
             docs,
-            env.Action("xsltproc --nonet -o %(target)s.temp %(template)s %(target)s && mv %(target)s.temp %(target)s"
+            SCons.Action.Action("xsltproc --nonet -o %(target)s.temp %(template)s %(target)s && mv %(target)s.temp %(target)s"
                        % { 'target': tagnode.abspath,
                            'template': os.path.join(basedir,"tagmunge.xsl") }))
 
@@ -380,7 +381,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         xslfile = env.File(env['DOXY_HTML_XSL'])
         env.AddPostAction(
             docs,
-            env.Action(("for html in %s/*.html; do " +
+            SCons.Action.Action(("for html in %s/*.html; do " +
                         "    echo $$html;" +
                         "    sed -e 's/id=\"current\"/class=\"current\"/' $${html}" +
                         "        | tidy -ascii -q --show-warnings no --fix-uri no" +
