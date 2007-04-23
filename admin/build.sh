@@ -42,6 +42,7 @@ rsync -rzv --del --delete-excluded \
 	--filter="+ *.css" \
 	--filter="+ *.png" \
 	--filter="+ *.php" \
+	--filter="+ *.idx" \
 	--filter="+ *.log" \
 	--filter="- *" \
 	. g0dil@shell.berlios.de://home/groups/senf/htdocs/src
