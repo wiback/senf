@@ -465,20 +465,6 @@ def DoxyXRef(env, docs=None,
     return xref
 
 
-def DoxySearch(env, docs=None):
-    if docs is None:
-        docs = env.Alias('all_docs')[0].sources
-    indices = [ doc for doc in docs if doc.name == "search.idx" ]
-    commands = [ "echo '<?php function paths() { return array(' >$TARGET" ]
-    root = env.Dir('#').abspath
-    commands.extend([ "echo '\"..%s/\",' >>$TARGET" % index.dir.abspath[len(root):]
-                      for index in indices  ])
-    commands.append("echo '); } ?>' >>$TARGET" )
-    target = env.Command("doc/html/search_paths.php", indices, commands)
-    env.Alias('all_docs', target)
-    return target
-
-
 ## \brief Build library
 #
 # This target helper will build the given library. The library will be

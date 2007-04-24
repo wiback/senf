@@ -1,4 +1,4 @@
-<?php include '../doc/html/search_paths.php'; ?>
+<?php include 'search_paths.php'; ?>
 <?php
 
 function search_results()

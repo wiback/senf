@@ -5,15 +5,125 @@ import SENFSCons
 
 ###########################################################################
 
-# This is not nice .. really ...
-env.Alias(
-    'all_docs',
-    env.Command('search.php',
-                [ 'doxy-header-overview.html', 'doxy-footer.html', 'html-munge.xsl' ], 
-                [ "sed -e 's/\\$$title/Search results/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[0]} > ${TARGET}.tmp",
-                  'echo "PHPSEARCH" >> ${TARGET}.tmp',
-                  'cat ${SOURCES[1]} >> ${TARGET}.tmp',
-                  'xsltproc --nonet --html --stringparam topdir .. -o - ${SOURCES[2]} ${TARGET}.tmp 2>/dev/null'
-                  + '| sed -e "s/PHPSEARCH/<?php include \'search_functions.php\'; ?><?php search(); ?>/" > $TARGET',
-                  'rm -f ${TARGET}.tmp' ]))
+import yaptu
 
+def modules():
+    global EXTRA_MODULES
+    rv = []
+    ix = len(env.Dir('#').abspath)+1
+    for module in env.Alias('all_docs')[0].sources:
+        if module.name != 'html.stamp' : continue 
+        if not [ x for x in EXTRA_MODULES if env.Dir(x[1]).abspath == module.dir.abspath]:
+            rv.append(('lib%s' % module.dir.dir.dir.name, module.dir.abspath[ix:]))
+    rv.sort()
+    return [ (name, env.Dir(path).abspath[ix:]) for name,path in EXTRA_MODULES ] + rv
+
+def indices():
+    ix = len(env.Dir('#').abspath)+1
+    return [ doc.dir.abspath[ix:]
+             for doc in env.Alias('all_docs')[0].sources
+             if doc.name == "search.idx" ]
+
+def writeTemplate(target = None, source = None, env = None):
+    file(target[0].abspath,"w").write(yaptu.process(env['TEMPLATE'], globals(), env.Dictionary()))
+
+writeTemplate = env.Action(writeTemplate, varlist = [ 'TEMPLATE' ])
+
+###########################################################################
+
+# Extra documentation modules which are handled (named) different from
+# library modules
+EXTRA_MODULES = [
+    ('Overview', '#/doc/html'),
+    ('Examples', '#/Examples/doc/html'),
+    ('SENFScons', '#/senfscons/doc/html') ]
+
+HEADER = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>$title</title>
+<link href="@TOPDIR@/doc/html/doxygen.css" rel="stylesheet" type="text/css">
+<link href="@TOPDIR@/doclib/senf.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+div.tabs ul li.$projectname a {obr} background-color: #EDE497; {cbr}
+</style>
+</head>
+<body>
+
+<div id="head">
+  <div id="search">
+    <form action="@TOPDIR@/doclib/search.php" method="get">
+      Search: <input type="text" name="query" size="20" accesskey="s"/> 
+    </form>
+  </div>
+  <h1>SENF Extensible Network Framework</h1>
+  <h2>{TITLE}</h2>
+</div>
+
+<div id="content1">
+  <div id="content2">
+    <div class="tabs menu">
+      <ul>
+{{ for name, path in modules():
+        <li class="{name}"><a href="@TOPDIR@/{path}/index.html">{name}</a></li>
+}}
+      </ul>
+    </div>"""
+
+FOOTER = """<hr style="width:0px;border:none;clear:both;margin:0;padding:0" />
+  </div>
+</div>
+<div id="footer">
+  <span>
+    <a href="mailto:senf-dev@lists.berlios.de">Contact: senf-dev@lists.berlios.de</a> |
+    Copyright &copy; 2006 Fraunhofer Gesellschaft, SatCom, Stefan Bund
+  </span>
+</div>
+</body></html>"""
+
+OVERVIEW_EXTRA_HEADER="""
+    <div class="tabs">
+      <ul>
+        <li><a href="xref.html">Open Issues</a></li>
+        <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">SVN ChangeLog</a></li>
+        <li><a class="ext" href="http://developer.berlios.de/projects/senf">SENF @ BerliOS</a></li>
+        <li><a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">Wiki</a></li>
+      </ul>
+    </div>"""
+
+SEARCH_PHP="""
+<?php include 'search_functions.php'; ?>
+<?php search(); ?>"""
+
+SEARCH_PATHS_PHP="""<?php
+function paths() {
+  return array(
+{{ for index in indices():
+    "../{index}/",
+}}
+  );
+}
+?>"""
+
+env.Command('doxy-header.html', None, writeTemplate,
+            TEMPLATE = HEADER,
+            TITLE = "Documentation and API reference")
+env.Command('doxy-header-overview.html', None, writeTemplate,
+            TEMPLATE = HEADER+OVERVIEW_EXTRA_HEADER,
+            TITLE = "Introduction and Overview")
+env.Command('doxy-footer.html', None, writeTemplate,
+            TEMPLATE = FOOTER)
+env.Alias('all_docs',
+          env.Command('search.php', 'html-munge.xsl',
+                      [ writeTemplate,
+                        'xsltproc --nonet --html --stringparam topdir .. -o - $SOURCE $TARGET 2>/dev/null'
+                        + r'| sed -e "s/\[\[/</g" -e "s/\]\]/>/g" > ${TARGET}.tmp',
+                        'mv ${TARGET}.tmp ${TARGET}' ],
+                      TEMPLATE = (HEADER
+                                  + OVERVIEW_EXTRA_HEADER
+                                  + SEARCH_PHP.replace('<','[[').replace('>',']]')
+                                  + FOOTER),
+                      TITLE = "Search results"))
+env.Alias('all_docs',
+          env.Command('search_paths.php', None, writeTemplate,
+                      TEMPLATE = SEARCH_PATHS_PHP))
