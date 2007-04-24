@@ -1,3 +1,4 @@
+<?php include '../doc/html/search_paths.php'; ?>
 <?php
 
 function search_results()
@@ -313,14 +314,7 @@ function search()
     die("Error: PHP version 4.1.0 or above required!");
   }
 
-  $paths = array(
-  	"../doc/html/", 
-    "../Socket/doc/html/",
-    "../Examples/doc/html/",
-    "../Packets/doc/html/",
-    "../Utils/doc/html/",
-    "../Scheduler/doc/html/",
-  );
+  $paths = paths();
   $files = array();
   $j=0;
   for ($i=0; $i<sizeof($paths); $i++) {

@@ -1,0 +1,19 @@
+# -*- python -*-
+
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+# This is not nice .. really ...
+env.Alias(
+    'all_docs',
+    env.Command('search.php',
+                [ 'doxy-header-overview.html', 'doxy-footer.html', 'html-munge.xsl' ], 
+                [ "sed -e 's/\\$$title/Search results/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[0]} > ${TARGET}.tmp",
+                  'echo "PHPSEARCH" >> ${TARGET}.tmp',
+                  'cat ${SOURCES[1]} >> ${TARGET}.tmp',
+                  'xsltproc --nonet --html --stringparam topdir .. -o - ${SOURCES[2]} ${TARGET}.tmp 2>/dev/null'
+                  + '| sed -e "s/PHPSEARCH/<?php include \'search_functions.php\'; ?><?php search(); ?>/" > $TARGET',
+                  'rm -f ${TARGET}.tmp' ]))
+

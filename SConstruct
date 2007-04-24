@@ -38,12 +38,10 @@ SENFSCons.StandardTargets(env)
 SENFSCons.GlobalTargets(env)
 SENFSCons.Doxygen(env)
 
-#, extra_sources = [
-#    'Examples/Sniffer/Sniffer.cc',
-#])
 SENFSCons.DoxyXRef(env,
                    HTML_HEADER = '#/doclib/doxy-header-overview.html',
                    HTML_FOOTER = '#/doclib/doxy-footer.html')
+SENFSCons.DoxySearch(env)
 
 # Create Doxyfile.local if not cleaning and the file does not exist
 # otherwise doxygen will barf on this non-existent file

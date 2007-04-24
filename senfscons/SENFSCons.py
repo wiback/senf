@@ -364,6 +364,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         if isinstance(doc,SCons.Node.FS.Dir): continue
         if doc.name == 'xml.stamp' : xmlnode = doc
         if doc.name == 'html.stamp' : htmlnode = doc
+        if doc.name == 'search.idx' : continue
         if os.path.splitext(doc.name)[1] == '.stamp' : continue # ignore other file stamps
         # otherwise it must be the tag file
         tagnode = doc
@@ -379,18 +380,21 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
 
     if htmlnode and env.get('DOXY_HTML_XSL'):
         xslfile = env.File(env['DOXY_HTML_XSL'])
+        reltopdir = '../' * len(htmlnode.dir.abspath[len(env.Dir('#').abspath)+1:].split('/'))
+        if reltopdir : reltopdir = reltopdir[:-1]
+        else         : reltopdir = '.'
         env.AddPostAction(
             docs,
             SCons.Action.Action(("for html in %s/*.html; do " +
                         "    echo $$html;" +
                         "    sed -e 's/id=\"current\"/class=\"current\"/' $${html}" +
                         "        | tidy -ascii -q --show-warnings no --fix-uri no" +
-                        "        | xsltproc --nonet --html -o $${html}.new %s - 2>&1" +
+                        "        | xsltproc --nonet --html --stringparam topdir %s -o $${html}.new %s - 2>&1" +
                         "        | grep '^-'" +
                         "        | grep -v 'ID .* already defined';" +
                         "    mv $${html}.new $${html}; " +
                         "done")
-                       % (htmlnode.dir.abspath, xslfile.abspath)))
+                       % (htmlnode.dir.abspath, reltopdir, xslfile.abspath)))
         for doc in docs:
             env.Depends(doc,xslfile)
 
@@ -459,6 +463,21 @@ def DoxyXRef(env, docs=None,
 
     env.Alias('all_docs',xref)
     return xref
+
+
+def DoxySearch(env, docs=None):
+    if docs is None:
+        docs = env.Alias('all_docs')[0].sources
+    indices = [ doc for doc in docs if doc.name == "search.idx" ]
+    commands = [ "echo '<?php function paths() { return array(' >$TARGET" ]
+    root = env.Dir('#').abspath
+    commands.extend([ "echo '\"..%s/\",' >>$TARGET" % index.dir.abspath[len(root):]
+                      for index in indices  ])
+    commands.append("echo '); } ?>' >>$TARGET" )
+    target = env.Command("doc/html/search_paths.php", indices, commands)
+    env.Alias('all_docs', target)
+    return target
+
 
 ## \brief Build library
 #

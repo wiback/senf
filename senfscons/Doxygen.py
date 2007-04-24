@@ -255,16 +255,21 @@ def DoxyEmitter(source, target, env):
       out_dir = '.'
 
    # add our output locations
+   html_dir = None
    for (k, v) in output_formats.iteritems():
       if data.get("GENERATE_" + k, v[0]).upper() == "YES":
          dir = env.Dir( os.path.join(source[0].dir.abspath, out_dir, data.get(k + "_OUTPUT", v[1])) )
+         if k == "HTML" : html_dir = dir
          dir.sources = source
          node = env.File( os.path.join(dir.abspath, k.lower()+".stamp" ) )
          targets.append(node)
          if env.GetOption('clean'): targets.append(dir)
 
-   if data.has_key("GENERATE_TAGFILE"):
+   if data.has_key("GENERATE_TAGFILE") and html_dir:
       targets.append(env.File( os.path.join(source[0].dir.abspath, data["GENERATE_TAGFILE"]) ))
+
+   if data.get("SEARCHENGINE","NO").upper() == "YES":
+      targets.append(env.File( os.path.join(html_dir.abspath, "search.idx") ))
 
    # don't clobber targets
    for node in targets:
