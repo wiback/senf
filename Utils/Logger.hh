@@ -133,7 +133,7 @@ namespace senf {
         expression which will be placed after a streaming \c operator<< (like
         <i>some-log-sttream</i> \c << <i>last-macro-arg</i>).
         \code
-        BOOST_LOG((parameters...)("log message " << args << ...));
+        SENF_LOG((parameters...)("log message " << args << ...));
         \endcode
 
         \hideinitializer
@@ -147,7 +147,7 @@ namespace senf {
         This macro is like SENF_LOG, however instead of writing a simple message, this macro allows
         to specify a complete block of code to be executed if the log message is enabled.
         \code
-        BOOST_LOG_BLOCK((parameters...)({
+        SENF_LOG_BLOCK((parameters...)({
            // arbitrary code using 'log' for logging
            log << "log message";
         }));
@@ -166,7 +166,7 @@ namespace senf {
 
         Sets the default log parameters for the current scope
         \code
-        BOOST_LOG_DEFAULTS((parameters...));
+        SENF_LOG_DEFAULTS((parameters...));
         \endcode
 
         \hideinitializer
