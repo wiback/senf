@@ -64,9 +64,19 @@ div.tabs ul li.$projectname a {obr} background-color: #EDE497; {cbr}
   <div id="content2">
     <div class="tabs menu">
       <ul>
-{{ for name, path in modules():
-        <li class="{name}"><a href="@TOPDIR@/{path}/index.html">{name}</a></li>
+{{      for name, path in modules():
+          <li class="{name}"><a href="@TOPDIR@/{path}/index.html">{name}</a></li>
 }}
+      </ul>
+    </div>"""
+
+OVERVIEW_EXTRA_HEADER="""
+    <div class="tabs">
+      <ul>
+      <li><a href="@TOPDIR@/doc/html/xref.html">Open Issues</a></li>
+        <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">SVN ChangeLog</a></li>
+        <li><a class="ext" href="http://developer.berlios.de/projects/senf">SENF @ BerliOS</a></li>
+        <li><a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">Wiki</a></li>
       </ul>
     </div>"""
 
@@ -81,16 +91,6 @@ FOOTER = """<hr style="width:0px;border:none;clear:both;margin:0;padding:0" />
 </div>
 </body></html>"""
 
-OVERVIEW_EXTRA_HEADER="""
-    <div class="tabs">
-      <ul>
-        <li><a href="xref.html">Open Issues</a></li>
-        <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">SVN ChangeLog</a></li>
-        <li><a class="ext" href="http://developer.berlios.de/projects/senf">SENF @ BerliOS</a></li>
-        <li><a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">Wiki</a></li>
-      </ul>
-    </div>"""
-
 SEARCH_PHP="""
 <?php include 'search_functions.php'; ?>
 <?php search(); ?>"""
@@ -98,8 +98,8 @@ SEARCH_PHP="""
 SEARCH_PATHS_PHP="""<?php
 function paths() {
   return array(
-{{ for index in indices():
-    "../{index}/",
+{{  for index in indices():
+      "../{index}/",
 }}
   );
 }
@@ -117,11 +117,11 @@ env.Alias('all_docs',
           env.Command('search.php', 'html-munge.xsl',
                       [ writeTemplate,
                         'xsltproc --nonet --html --stringparam topdir .. -o - $SOURCE $TARGET 2>/dev/null'
-                        + r'| sed -e "s/\[\[/</g" -e "s/\]\]/>/g" > ${TARGET}.tmp',
+                        + r'| sed -e "s/\[\[/<?/g" -e "s/\]\]/?>/g" > ${TARGET}.tmp',
                         'mv ${TARGET}.tmp ${TARGET}' ],
                       TEMPLATE = (HEADER
                                   + OVERVIEW_EXTRA_HEADER
-                                  + SEARCH_PHP.replace('<','[[').replace('>',']]')
+                                  + SEARCH_PHP.replace('<?','[[').replace('?>',']]')
                                   + FOOTER),
                       TITLE = "Search results"))
 env.Alias('all_docs',

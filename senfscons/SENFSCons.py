@@ -450,14 +450,32 @@ def DoxyXRef(env, docs=None,
 
     commands = []
     if HTML_HEADER:
-        commands.append(
-            "sed -e 's/\\$$title/$TITLE/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[2]} > $TARGET")
-    commands.append("xsltproc --stringparam title '$TITLE' --stringparam types '$DOXY_XREF_TYPES' ${SOURCES[1]} $SOURCE >> $TARGET")
+        commands.append("sed" +
+                        " -e 's/\\$$title/$TITLE/g'" +
+                        " -e 's/\\$$projectname/Overview/g'" +
+                        " ${SOURCES[2]} > $TARGET")
+    commands.append("xsltproc" +
+                    " --stringparam title '$TITLE'" +
+                    " --stringparam types '$DOXY_XREF_TYPES'" +
+                    " ${SOURCES[1]} $SOURCE >> $TARGET")
     if HTML_FOOTER:
         commands.append(
             "sed -e 's/\\$$title/$TITLE/g' -e 's/\\$$projectname/Overview/g' ${SOURCES[%d]} >> $TARGET"
             % (HTML_HEADER and 3 or 2))
 
+    if env.get('DOXY_HTML_XSL'):
+        xslfile = env.File(env['DOXY_HTML_XSL'])
+        reltopdir = '../' * len(xref[0].dir.abspath[len(env.Dir('#').abspath)+1:].split('/'))
+        if reltopdir : reltopdir = reltopdir[:-1]
+        else         : reltopdir = '.'
+        commands.append(("xsltproc -o ${TARGET}.tmp" +
+                         " --nonet --html" +
+                         " --stringparam topdir %s" +
+                         " ${SOURCES[-1]} $TARGET 2>/dev/null")
+                        % reltopdir)
+        commands.append("mv ${TARGET}.tmp ${TARGET}")
+        sources.append(xslfile)
+        
     xref = env.Command("doc/html/xref.html", sources, commands,
                        TITLE = TITLE)
 
