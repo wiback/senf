@@ -1,0 +1,10 @@
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+SENFSCons.StandardTargets(env)
+
+SENFSCons.Doxygen(env, extra_sources=[
+    env.Dia2Png('scenario.dia'),
+])

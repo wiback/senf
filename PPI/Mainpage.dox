@@ -1,0 +1,247 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \mainpage libPPI : The Packet Processing Infrastructure
+
+    The PPI provides an infrastructure to create packet oriented network processin
+    applications. A PPI application is built by combining processing modules in a very flexible
+    manner.
+
+    \image html scenario.png Target Scenario
+    
+    The PPI concept is built around some key concepts
+
+    \li The PPI is based on processing \e packets. It does not handle stream oriented channels.
+    \li The PPI is built around reusable \e modules. Each module is completely independent.
+    \li Each module has an arbitrary number of \e connectors, inputs and outputs.
+    \li The modules are connected to each other using flexible \e connections.
+    \li Data flow throughout the network is governed via flexible automatic or manual \e throttling.
+    \li Modules may register additional external \e events (file descriptor events or timers).
+    
+    The PPI thereby builds on the facilities provided by the other components of the SENF
+    framework. 
+
+    Modules are divided roughly in to two categories: I/O modules provide packet sources and sinks
+    (network connection, writing packets to disk, generating new packets) whereas processing modules
+    process packets internally.  The target scenario above depicts a diffserv capable UDLR/ULE
+    router including performance optimizations for TCP traffic (PEP). This router is built by
+    combining several modules. In this scenario, <em>TAP</em>, <em>ASI Out</em>, <em>Raw Socket</em>
+    and in a limited way <em>Generator</em> are I/O modules whereas <em>PEP</em>, <em>DiffServ</em>,
+    <em>DVB Enc</em>, <em>GRE/UDLR</em>, <em>TCP Filter</em> and <em>Stuffer</em>are processing
+    modules. <em>ASI/MPEG</em> and <em>Net</em> are external I/O ports which are integrated via the
+    <em>TAP</em>, <em>ASI Out</em> and <em>Raw Sock</em> modules using external events.
+
+    \section packets Packets
+
+    The PPI processes packets and uses the <a href="@TOPDIR@/Packets/doc/html/index.html">Packet
+    library</a> to handle them. All packets are passed around as generic Packet::ptr's, the PPI
+    does not enforce any packet type restrictions.
+
+    \section modules Modules
+
+    A module is represented by a class type. Each module has several components:
+
+    \li It may have any number of connectors (inputs and outputs)
+    \li Each module declares flow information which details the route packets take within the
+        module. This information does not define how the information is processed, it only tells,
+        where data arriving on some input will be directed at.
+    \li The module might take additional parameters.
+    \li The module might also register additional events.
+
+    \code
+      class RateStuffer 
+          : public senf::ppi::Module
+      {
+      public:
+          ActiveInput payload;
+          ActiveInput stuffing;
+          ActiveOutput output;
+
+          RateStuffer(unsigned packetsPerSecond)
+          {
+              route(payload, output);
+              route(stuffing, output);
+
+              registerEvent(&RateStuffer::tick, IntervalTimer(1000u, packetsPerSecond));
+          }
+
+      private:
+          void tick()
+          {
+              if (payload)
+                  output(payload());
+              else
+                  output(stuffing());
+          }
+      };
+    \endcode
+
+    This module declares three I/O connectors (see below): <tt>payload</tt>, <tt>stuffing</tt> and
+    <tt>output</tt>. These connectors are defined as <em>public</em> data members so they can be
+    accessed from the outside. This is important as we will see below.
+
+    On module instantiation, it will declare it's flow information with <tt>route</tt> (which
+    is inherited from <tt>senf::ppi::Module</tt>). Then the module registers an interval timer which
+    will fire <tt>packetsPerSecond</tt> times every <tt>1000</tt> milliseconds.
+
+    The processing of the module is very simple: Whenever a timer tick arrives a packet is sent. If
+    the <tt>payload</tt> input is ready (see throttling below), a payload packet is sent, otherwise
+    a stuffing packet is sent. The module will therefore provide a constant stream of packets at a
+    fixed rate on <tt>output</tt>
+    
+    An example module to generate the stuffing packets could be
+
+    \code
+      class CopyPacketGenerator
+          : public senf::ppi::Module
+      {
+      public:
+          PassiveOutput output;
+
+          CopyPacketGenerator(Packet::ptr template)
+              : template_ (template)
+          {
+              noroute(output);
+              output.onRequest(&CopyPacketGenerator::makePacket);
+          }
+
+      private:
+          Packet::ptr template_;
+
+          void makePacket()
+          {
+              output(template_.clone());
+          }
+      };
+    \endcode
+
+    This module just produces a copy of a given packet whenever output is requested.
+
+    \subsection connectors Connectors
+    
+    Inputs and Outputs can be active and passive. An \e active I/O is <em>activated by the
+    module</em> to send data or to poll for available packets. A \e passive I/O is <em>signaled by
+    the framework</em> to fetch data from the module or to pass data into the module.
+
+    To send or receive a packet (either actively or after packet reception has been signaled), the
+    module just calls the connector. This allows to generate or process multiple packets in one
+    iteration. However, reading will only succeed, as long as packets are available from the
+    connection.
+
+    A module might want to queue incoming packets within a passive input or outgoing packets within
+    an active output. This is possible by either not reading any packet even though a new packet has
+    been scheduled on the input or by writing to the output while it is still throttled. To
+    facilitate this use, the connectors provide accessors to access the attached connection and it's
+    queue. This allows to analyze all packets available in the queue and act accordingly.
+
+    \section connections Connections
+
+    To make use of the modules, they have to be instantiated and connections have to be created
+    between the I/O connectors. It is possible to connect any pair of input/output connectors as
+    long as at least one of them is active
+
+    Every connection contains an internal packet queue. Under normal operating conditions (without
+    throttling) the queue will mostly be empty since packets will be processed directly. If a
+    connection is throttled, it can still receive new packets on it's input which will then be
+    queued. This is necessary even though the throttling will be propagated backwards (so no new
+    packets should arrive) since a module may produce more then one result packet from a single
+    incoming packet.
+
+    To complete our simplified example: Lets say we have a <tt>UdpInput</tt> module and a
+    <tt>UdpOutput</tt> module. We can then use our <tt>RateStuffer</tt> module to build an
+    application which will create a fixed-rate UDP stream:
+
+    \code
+      RateStuffer rateStuffer (10);
+      CopyPacketGenerator generator (some_packet_ptr);
+      senf::UDPv4ClientSocketHandle inputSocket (1111);
+      senf::ppi::SocketInput udpInput (inputSocket);
+      senf::UDPv4ClientSocketHandle outputSocket ("2.3.4.5:2222");
+      senf::ppi::SocketOutput udpOutput (outputSocket);
+
+      senf::ppi::connect(udpInput.output, rateStuffer.payload)
+          .bufferHighThresh(10)
+          .bufferLowThresh(5);
+      senf::ppi::connect(generator.output, rateStuffer.stuffing);
+      senf::ppi::connect(rateStuffer.output, udpOutput.input);
+
+      senf::ppi::run();
+    \endcode
+
+    First all necessary modules are created. Then the connections between these modules are set
+    up. The buffering of the udpInput <-> rateStuffer connection is changed so the queue will begin
+    to throttle only if more than 10 packets are in the queue. The connection will be unthrottled as
+    soon as there are no more than 5 packets left in the queue. This application will read
+    udp-packts coming in on port 1111 and will forward them to port 2222 on host 2.3.4.5 with a
+    fixed rate of 10 packets / second. 
+
+    \section throttling Throttling
+
+    If a connection cannot pass packets in it's current state, the connection is \e throttled. In
+    simple cases, throttling is handled automatically by
+    \li the connection if the queue is exceeds the buffering threshold
+    \li I/O modules whenever the external source or sink of the module is not ready
+
+    Throttling is handled separately in each direction:
+    \li Forward throttling will throttle in the direction of the data flow. Example: No new packets
+        are available from an input. This will activate forward throttling until new data arrives
+    \li Backward throttling will throttle in the direction to the data source. Example: an output
+        device (e.g. serial interface) has no more room for data. This event will activate backward
+        throttling so no new data will arrive until the device can send data again
+
+    The throttling state is managed within the Connection. Automatic throttling utilizes the routing
+    information (provided in the modules constructor) to forward throttling events across
+    modules. However, automatic throttling can be disabled for each connector. Modules may also
+    register event handlers whenever a throttling event occurs.
+
+    Whenever a connection is throttled (in the corresponding direction), passive connectors will \e
+    not be called by the framework. This may lead to packets being accumulated in the connection
+    queue. These packets will be sent as soon as the connection is unthrottled. The unthrottle event
+    will hoewever only be forwarded when the queue is empty (or has reached it's lower buffering
+    threshold).
+    
+    \code
+      passiveConnector.autoForwardThrottling(false);
+      passiveConnector.autoBackwardThrotttling(true);
+      passiveConnector.onForwardThrottle(...);
+      passiveConnector.onBackwardUnthrottle(...);
+    \endcode
+
+    Throttling is <em>not</em> enforced: especially a throttled output may still be called, the
+    excessive packets will be queued in the connection queue.
+
+    \section events Events
+
+    Modules may register additional events. These external events are very important since the drive
+    the PPI framework. Possible event sources are
+    \li time based events
+    \li file descriptors.
+ */
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// mode: flyspell
+// mode: auto-fill
+// End:

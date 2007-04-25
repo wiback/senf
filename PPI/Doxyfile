@@ -1,0 +1,4 @@
+@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
+
+PROJECT_NAME = libPPI
+GENERATE_TAGFILE = doc/ppi.tag
