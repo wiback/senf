@@ -11,9 +11,10 @@ def modules():
     global EXTRA_MODULES
     rv = []
     ix = len(env.Dir('#').abspath)+1
+    ex = dict((env.Dir(p).abspath,True) for n,p in EXTRA_MODULES)
     for module in env.Alias('all_docs')[0].sources:
         if module.name != 'html.stamp' : continue 
-        if not [ x for x in EXTRA_MODULES if env.Dir(x[1]).abspath == module.dir.abspath]:
+        if not ex.get(module.dir.abspath):
             rv.append(('lib%s' % module.dir.dir.dir.name, module.dir.abspath[ix:]))
     rv.sort()
     return [ (name, env.Dir(path).abspath[ix:]) for name,path in EXTRA_MODULES ] + rv
@@ -25,7 +26,7 @@ def indices():
              if doc.name == "search.idx" ]
 
 def writeTemplate(target = None, source = None, env = None):
-    file(target[0].abspath,"w").write(yaptu.process(env['TEMPLATE'], globals(), env.Dictionary()))
+    file(target[0].abspath,"w").write(yaptu.process(str(env['TEMPLATE']), globals(), env.Dictionary()))
 
 writeTemplate = env.Action(writeTemplate, varlist = [ 'TEMPLATE' ])
 
@@ -45,7 +46,7 @@ HEADER = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
 <link href="@TOPDIR@/doc/html/doxygen.css" rel="stylesheet" type="text/css">
 <link href="@TOPDIR@/doclib/senf.css" rel="stylesheet" type="text/css">
 <style type="text/css">
-div.tabs ul li.$projectname a {obr} background-color: #EDE497; {cbr}
+div.tabs ul li.$projectname a { background-color: #EDE497; }
 </style>
 </head>
 <body>
@@ -57,7 +58,7 @@ div.tabs ul li.$projectname a {obr} background-color: #EDE497; {cbr}
     </form>
   </div>
   <h1>SENF Extensible Network Framework</h1>
-  <h2>{TITLE}</h2>
+  <h2>${TITLE}</h2>
 </div>
 
 <div id="content1">
@@ -65,7 +66,7 @@ div.tabs ul li.$projectname a {obr} background-color: #EDE497; {cbr}
     <div class="tabs menu">
       <ul>
 {{      for name, path in modules():
-          <li class="{name}"><a href="@TOPDIR@/{path}/index.html">{name}</a></li>
+          <li class="${name}"><a href="@TOPDIR@/${path}/index.html">${name}</a></li>
 }}
       </ul>
     </div>"""
@@ -99,31 +100,31 @@ SEARCH_PATHS_PHP="""<?php
 function paths() {
   return array(
 {{  for index in indices():
-      "../{index}/",
+      "../${index}/",
 }}
   );
 }
 ?>"""
 
 env.Command('doxy-header.html', None, writeTemplate,
-            TEMPLATE = HEADER,
+            TEMPLATE = Literal(HEADER),
             TITLE = "Documentation and API reference")
 env.Command('doxy-header-overview.html', None, writeTemplate,
-            TEMPLATE = HEADER+OVERVIEW_EXTRA_HEADER,
+            TEMPLATE = Literal(HEADER+OVERVIEW_EXTRA_HEADER),
             TITLE = "Introduction and Overview")
 env.Command('doxy-footer.html', None, writeTemplate,
-            TEMPLATE = FOOTER)
+            TEMPLATE = Literal(FOOTER))
 env.Alias('all_docs',
           env.Command('search.php', 'html-munge.xsl',
                       [ writeTemplate,
                         'xsltproc --nonet --html --stringparam topdir .. -o - $SOURCE $TARGET 2>/dev/null'
                         + r'| sed -e "s/\[\[/<?/g" -e "s/\]\]/?>/g" > ${TARGET}.tmp',
                         'mv ${TARGET}.tmp ${TARGET}' ],
-                      TEMPLATE = (HEADER
-                                  + OVERVIEW_EXTRA_HEADER
-                                  + SEARCH_PHP.replace('<?','[[').replace('?>',']]')
-                                  + FOOTER),
+                      TEMPLATE = Literal(HEADER
+                                         + OVERVIEW_EXTRA_HEADER
+                                         + SEARCH_PHP.replace('<?','[[').replace('?>',']]')
+                                         + FOOTER),
                       TITLE = "Search results"))
 env.Alias('all_docs',
           env.Command('search_paths.php', None, writeTemplate,
-                      TEMPLATE = SEARCH_PATHS_PHP))
+                      TEMPLATE = Literal(SEARCH_PATHS_PHP)))

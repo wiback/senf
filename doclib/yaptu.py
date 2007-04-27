@@ -79,7 +79,7 @@ class copier:
         self.locals['_bl'] = block
         self.copyblock()
 
-_RE_EXPR = re.compile('{([^{}]+)}')
+_RE_EXPR = re.compile('\${([^{}]+)}')
 _RE_BEGIN = re.compile('{{')
 _RE_END = re.compile('}}')
 _RE_CONT = re.compile(r'\|\|')
@@ -87,8 +87,6 @@ _RE_CONT = re.compile(r'\|\|')
 def process(text,*args):
     vardict = {}
     for arg in args : vardict.update(arg)
-    vardict['obr'] = '{'
-    vardict['cbr'] = '}'
     output = StringIO()
     c = copier(_RE_EXPR, vardict, _RE_BEGIN, _RE_END, _RE_CONT,
                ouf = output)
