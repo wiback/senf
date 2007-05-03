@@ -118,7 +118,11 @@ env.Alias('all_docs',
           env.Command('search.php', 'html-munge.xsl',
                       [ writeTemplate,
                         'xsltproc --nonet --html --stringparam topdir .. -o - $SOURCE $TARGET 2>/dev/null'
-                        + r'| sed -e "s/\[\[/<?/g" -e "s/\]\]/?>/g" > ${TARGET}.tmp',
+                            + "| sed"
+                            +   r" -e 's/\[\[/<?/g' -e 's/\]\]/?>/g'"
+                            +   r" -e 's/\$$projectname/Overview/g'"
+                            +   r" -e 's/\$$title/Search results/g'"
+                            +       "> ${TARGET}.tmp",
                         'mv ${TARGET}.tmp ${TARGET}' ],
                       TEMPLATE = Literal(HEADER
                                          + OVERVIEW_EXTRA_HEADER

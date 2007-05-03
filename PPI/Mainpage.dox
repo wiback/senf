@@ -28,12 +28,12 @@
     
     The PPI concept is built around some key concepts
 
-    \li The PPI is based on processing \e packets. It does not handle stream oriented channels.
-    \li The PPI is built around reusable \e modules. Each module is completely independent.
-    \li Each module has an arbitrary number of \e connectors, inputs and outputs.
-    \li The modules are connected to each other using flexible \e connections.
-    \li Data flow throughout the network is governed via flexible automatic or manual \e throttling.
-    \li Modules may register additional external \e events (file descriptor events or timers).
+    \li The PPI is based on processing \ref packets. It does not handle stream oriented channels.
+    \li The PPI is built around reusable \ref modules. Each module is completely independent.
+    \li Each module has an arbitrary number of \ref connectors, inputs and outputs.
+    \li The modules are connected to each other using flexible \ref connections.
+    \li Data flow throughout the network is governed via flexible automatic or manual \ref throttling.
+    \li Modules may register additional external \ref events (file descriptor events or timers).
     
     The PPI thereby builds on the facilities provided by the other components of the SENF
     framework. 
@@ -79,7 +79,8 @@
               route(payload, output);
               route(stuffing, output);
 
-              registerEvent(&RateStuffer::tick, IntervalTimer(1000u, packetsPerSecond));
+              registerEvent(&RateStuffer::tick, 
+                            senf::ppi::IntervalTimer(1000u, packetsPerSecond));
           }
 
       private:
@@ -134,7 +135,7 @@
 
     This module just produces a copy of a given packet whenever output is requested.
 
-    \subsection connectors Connectors
+    \section connectors Connectors
     
     Inputs and Outputs can be active and passive. An \e active I/O is <em>activated by the
     module</em> to send data or to poll for available packets. A \e passive I/O is <em>signaled by
@@ -145,40 +146,40 @@
     iteration. However, reading will only succeed, as long as packets are available from the
     connection.
 
-    A module might want to queue incoming packets within a passive input or outgoing packets within
-    an active output. This is possible by either not reading any packet even though a new packet has
-    been scheduled on the input or by writing to the output while it is still throttled. To
-    facilitate this use, the connectors provide accessors to access the attached connection and it's
-    queue. This allows to analyze all packets available in the queue and act accordingly.
+    Since a module is free to generate more than a single packet on incoming packet requests, all
+    input connectors incorporate a packet queue. This queue is exposed to the module and allows the
+    module to process packets in batches.
 
     \section connections Connections
 
     To make use of the modules, they have to be instantiated and connections have to be created
     between the I/O connectors. It is possible to connect any pair of input/output connectors as
-    long as at least one of them is active
+    long as one of them is active and the other is passive.
+    
+    It is possible to connect two active connectors with each other using a special adaptor
+    module. This Module has a passive input and a passive output. It will queue any incoming packets
+    and automatically handle throttling events (see below). This adaptor is automatically added by
+    the connect method if needed.
 
-    Every connection contains an internal packet queue. Under normal operating conditions (without
-    throttling) the queue will mostly be empty since packets will be processed directly. If a
-    connection is throttled, it can still receive new packets on it's input which will then be
-    queued. This is necessary even though the throttling will be propagated backwards (so no new
-    packets should arrive) since a module may produce more then one result packet from a single
-    incoming packet.
-
-    To complete our simplified example: Lets say we have a <tt>UdpInput</tt> module and a
-    <tt>UdpOutput</tt> module. We can then use our <tt>RateStuffer</tt> module to build an
+    To complete our simplified example: Lets say we have an <tt>ActiveSocketInput</tt> and a
+    <tt>PassiveUdpOutput</tt> module. We can then use our <tt>RateStuffer</tt> module to build an
     application which will create a fixed-rate UDP stream:
 
     \code
       RateStuffer rateStuffer (10);
-      CopyPacketGenerator generator (some_packet_ptr);
-      senf::UDPv4ClientSocketHandle inputSocket (1111);
-      senf::ppi::SocketInput udpInput (inputSocket);
-      senf::UDPv4ClientSocketHandle outputSocket ("2.3.4.5:2222");
-      senf::ppi::SocketOutput udpOutput (outputSocket);
 
-      senf::ppi::connect(udpInput.output, rateStuffer.payload)
-          .bufferHighThresh(10)
-          .bufferLowThresh(5);
+      senf::Packet::ptr stuffingPacket = senf::Packet::create<...>(...); 
+      CopyPacketGenerator generator (stuffingPacket);
+
+      senf::UDPv4ClientSocketHandle inputSocket (1111);
+      senf::ppi::ActiveSocketInput udpInput (inputSocket);
+
+      senf::UDPv4ClientSocketHandle outputSocket ("2.3.4.5:2222");
+      senf::ppi::PassiveSocketOutput udpOutput (outputSocket);
+
+      senf::ppi::connect(udpInput.output, rateStuffer.payload, 
+                         dynamicModule<PassiveQueue>()
+                             -> qdisc(ThresholdQueueing(10,5)) );
       senf::ppi::connect(generator.output, rateStuffer.stuffing);
       senf::ppi::connect(rateStuffer.output, udpOutput.input);
 
@@ -186,46 +187,39 @@
     \endcode
 
     First all necessary modules are created. Then the connections between these modules are set
-    up. The buffering of the udpInput <-> rateStuffer connection is changed so the queue will begin
-    to throttle only if more than 10 packets are in the queue. The connection will be unthrottled as
+    up. The buffering on the udpInput <-> rateStuffer adaptor is changed so the queue will begin to
+    throttle only if more than 10 packets are in the queue. The connection will be unthrottled as
     soon as there are no more than 5 packets left in the queue. This application will read
     udp-packts coming in on port 1111 and will forward them to port 2222 on host 2.3.4.5 with a
-    fixed rate of 10 packets / second. 
+    fixed rate of 10 packets / second.
 
     \section throttling Throttling
 
-    If a connection cannot pass packets in it's current state, the connection is \e throttled. In
-    simple cases, throttling is handled automatically by
-    \li the connection if the queue is exceeds the buffering threshold
-    \li I/O modules whenever the external source or sink of the module is not ready
+    If a passive connector cannot handle incoming requests, this connector may be \e
+    throttled. Throttling a request will forward a throttle notification to the module connected
+    to that connector. The module then must handle this throttle notification. If automatic
+    throttling is enabled for the module (which is the default), the notification will automatically
+    be forwarded to all dependent connectors as taken from the flow information. For there it will
+    be forwarded to further modules and so on.
 
-    Throttling is handled separately in each direction:
-    \li Forward throttling will throttle in the direction of the data flow. Example: No new packets
-        are available from an input. This will activate forward throttling until new data arrives
-    \li Backward throttling will throttle in the direction to the data source. Example: an output
-        device (e.g. serial interface) has no more room for data. This event will activate backward
-        throttling so no new data will arrive until the device can send data again
+    A throttle notification reaching an I/O module will normally disable the input/output by
+    disabling any external I/O events registered by the module. When the passive connector which
+    originated the notification becomes active again, it creates an unthrottle notification which
+    will be forwarded in the same way. This notification will re-enable any registered I/O events.
 
-    The throttling state is managed within the Connection. Automatic throttling utilizes the routing
-    information (provided in the modules constructor) to forward throttling events across
-    modules. However, automatic throttling can be disabled for each connector. Modules may also
-    register event handlers whenever a throttling event occurs.
+    The above discussion shows, that throttle events are always generated on passive connectors and
+    received on active connectors. To differentiate further, the throttling originating from a
+    passive input is called <em>backward throttling</em> since it is forwarded in the direction \e
+    opposite to the data flow. Backward throttling notifications are sent towards the input
+    modules. On the other hand, the throttling originating from a passive output is called
+    <em>forward throttling</em> since it is forwarded along the \e same direction the data
+    is. Forward throttling notifications are therefore sent towards the output modules.
 
-    Whenever a connection is throttled (in the corresponding direction), passive connectors will \e
-    not be called by the framework. This may lead to packets being accumulated in the connection
-    queue. These packets will be sent as soon as the connection is unthrottled. The unthrottle event
-    will hoewever only be forwarded when the queue is empty (or has reached it's lower buffering
-    threshold).
-    
-    \code
-      passiveConnector.autoForwardThrottling(false);
-      passiveConnector.autoBackwardThrotttling(true);
-      passiveConnector.onForwardThrottle(...);
-      passiveConnector.onBackwardUnthrottle(...);
-    \endcode
-
-    Throttling is <em>not</em> enforced: especially a throttled output may still be called, the
-    excessive packets will be queued in the connection queue.
+    Since throttling a passive input may not disable all further packet delivery immediately, any
+    passive input contains an input queue. In it's default configuration, the queue will send out
+    throttle notifications when it becomes non-empty and unthrottle notifications when it becomes
+    empty again. This automatic behavior may however be disabled. This allows a module to collect
+    incoming packets in it's input queue before processing a bunch of them in one go.
 
     \section events Events
 
@@ -233,6 +227,81 @@
     the PPI framework. Possible event sources are
     \li time based events
     \li file descriptors.
+
+    Here some example code implementing the ActiveSocketInput Module:
+
+    \code
+      class ActiveSocketInput 
+          : public senf::ppi::Module
+      {
+          static PacketParser<senf::DataPacket> defaultParser_;
+
+      public:
+          ActiveOutput output;
+
+          typedef senf::ClientSocketHandle<
+              senf::MakeSocketPolicy< senf::ReadablePolicy,
+                                      senf::DatagramFramingPolicy > > Socket;
+
+          // I hestitate taking parser by const & since a const & can be bound to
+          // a temporary even though a const & is all we need. The real implementation
+          // will probably make this a template arg. This simplifies the memory management
+          // from the users pov.
+          ActiveSocketInput(Socket socket, DataParser & parser = SocketInput::defaultParser_)
+              : socket_ (socket), 
+                parser_ (parser)
+                event_ (registerEvent( &ActiveSocketInput::data, 
+                                       senf::ppi::IOSignaler(socket, senf::ppi::IOSignaler::Read) ))
+          {
+              route(event_, output);
+          }
+      
+      private:
+          Socket socket_;
+          DataParser const & parser_;
+          senf::ppi:IOSignaler::EventBinding event_;
+    
+          void data()
+          {
+              std::string data;
+              socket_.read(data);
+              output(parser_(data));
+          }
+      };
+    \endcode
+
+    First we declare our own socket handle type which allows us to read packets. The constructor
+    then takes two arguments: A compatible socket and a parser object. This parser object gets
+    passed the packet data as read from the socket (an \c std::string) and returns a
+    senf::Packet::ptr. The \c PacketParser is a simple parser which interprets the data as specified
+    by the template argument.
+
+    We register an IOSignaler event. This event will be signaled whenever the socket is
+    readable. This event is routet to the output. This routing automates throttling for the socket:
+    Whenever the output receives a throttle notifications, the event will be temporarily disabled.
+
+    Processing arriving packets happens in the \c data() member: This member simple reads a packet
+    from the socket. It passes this packet to the \c parser_ and sends the generated packet out.
+
+    \implementation Generation of throttle notifications: Backward throttling notifications are
+        automatically generated (if this is not disabled) whenever the input queue is non-empty \e
+        after the event handler has finished processing. Forward throttling notifications are not
+        generated automatically within the connector. However, the Passive-Passive adaptor will
+        generate Forward-throttling notifications whenever the input queue is empty.
+
+    \note Open Issues
+      \li We need to clearly differentiate between auto-throttling and auto-throttle-forwarding,
+        between a connectors own throttling state and the forwarded state.
+      \li Exception handling
+      \li ActiveInputs also need a queue: This is necessary to allow a PassiveOutput to create more
+        than a single packet from a single 'onRequest' event. This greatly simplifies writing
+        modules which produce multiple output packets for a single input packet.
+      \li We need to clear up the throttled() member semantics: If the connector is throttled, does
+        it return so if there are still packets in the queue? Probably yes. However, it does not
+        forward throttling notifications until instructed by the qdisc. Throttling notifications are
+        also bound to onThrottle/onUnThrottle callbacks. The semantics are then clear: An active
+        connector emitting onThrottle cannot process any further request (for inputs, no data will
+        be available, for outputs the data will be queued in the peer input)
  */
 
 

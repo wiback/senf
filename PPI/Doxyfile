@@ -2,3 +2,5 @@
 
 PROJECT_NAME = libPPI
 GENERATE_TAGFILE = doc/ppi.tag
+
+TAGFILES = "$(TOPDIR)/Packets/doc/Packets.tag" "$(TOPDIR)/Socket/doc/Socket.tag"
