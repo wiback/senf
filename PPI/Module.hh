@@ -19,13 +19,15 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Module public header */
+    \brief Module public header 
+*/
 
 #ifndef HH_Module_
 #define HH_Module_ 1
 
 // Custom includes
 #include <boost/utility.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 //#include "Module.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -39,7 +41,7 @@ namespace ppi {
         with interfaces to several PPI facilities:
         
         \li Connector management
-        \li Flow management
+        \li Flow management (routing)
         \li Event handling
 
         To provide internal bookkeeping, most access to the PPI infrastructure is managed through
@@ -56,7 +58,8 @@ namespace ppi {
         ~Module();
 
         template <class Source, class Target>
-        Route route(Source const & source, Target const & target); ///< Define flow information
+        Route<Source, Target> & route(Source const & source, Target const & target); 
+                                        ///< Define flow information
                                         /**< Using the route() and noroute() members, the
                                              information flow within the module is defined. Routing
                                              may be specified either between inputs, outputs and
@@ -74,7 +77,7 @@ namespace ppi {
 
                                              The return value may be used to alter routing
                                              parameters like throttling parameters.
-
+                                             
                                              \param[in] source Data source, object which controlls
                                                  incoming data
                                              \param[in] target Data target, object which controlls
@@ -82,22 +85,19 @@ namespace ppi {
                                              \returns Route instance describing this route */
 
         template <class Connector>
-        void noroute(Connector const & connector); ///<Define terminal connectors
-                                        /**<
-            
-                                            The noroute() member explicitly declares, that a
-                                            connector is terminal and does not directly
-                                            receive/forward data from/to some other
-                                            connector. <em>It is mandatory to define routing
-                                            information for terminal connectors</em>.
+        void noroute(Connector const & connector); ///< Define terminal connectors
+                                        /**< The noroute() member explicitly declares, that a
+                                             connector is terminal and does not directly
+                                             receive/forward data from/to some other
+                                             connector. <em>It is mandatory to define routing
+                                             information for terminal connectors</em>.
 
-                                            See the route() documentation for more on routing
-
-                                            \param[in] connector Terminal connector to declare */
+                                             See the route() documentation for more on routing
+                                             
+                                             \param[in] connector Terminal connector to declare */
 
         template <class Target, class Descriptor>
-        typename Descriptor::EventBinding const registerEvent(Target target, 
-                                                              Descriptor const & descriptor);
+        typename Descriptor & registerEvent(Target target, Descriptor const & descriptor);
                                         ///< Register an external event
                                         /**< The \a target argument may be either an arbitrary
                                              callable object or it may be a member function pointer
@@ -116,13 +116,45 @@ namespace ppi {
                                              delivery or to remove the binding explicitly. Depending
                                              on the type of event, other operations may be
                                              possible. See the event descriptor documentation.
-            
-                                            \param[in] target The handler to call whenever the event
-                                                is signaled
-                                            \param[in] descriptor The type of event to register
-                                            \returns An event binding instance of the appropriate
-                                                type. */
+
+                                             \param[in] target The handler to call whenever the event
+                                                 is signaled
+                                             \param[in] descriptor The type of event to register
+                                             \returns An event binding instance of the appropriate
+                                                 type. */
+
+        boost::posix_time::ptime eventTime(); ///< Return timestamp of the currently processing event
     };
+
+    /** \brief Automatically manage dynamic module deallocation
+
+        The dynamicModule helper will create a new dynamically managed module instance.
+
+        The \a args template parameter is only a placeholder. All arguments to dynamicModule will be
+        passed to the Module constructor.
+     */
+    template <class Module, class Args>
+    unspecified dynamicModule(Args args);
+
+
+    /** \brief Connect compatible connectors
+
+        connect() will connect two compatible connectors: One connector must be active, the other
+        passive.
+     */
+    template <class Source, class Target>
+    void connect(Source const & source, Target const & target);
+
+    /** \brief Connect connectors via an adaptor module
+        
+        This connect() overload will insert an additional adaptor module into the connection. The
+        Adaptor module must have two connectors, \a input and \a output. The call will setup the
+        connections \a source to \a input and \a output to \a target. Each connector pair must be
+        compatible.
+     */
+    template <class Source, class Target, class Adaptor)
+    Adaptor const &  connect(Source const & source, Target const & target, 
+                             Adaptor const & adaptor);
 
 }}
 

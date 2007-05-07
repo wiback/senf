@@ -48,6 +48,15 @@
     modules. <em>ASI/MPEG</em> and <em>Net</em> are external I/O ports which are integrated via the
     <em>TAP</em>, <em>ASI Out</em> and <em>Raw Sock</em> modules using external events.
 
+    \section design Design considerations
+
+    The PPI interface is designed to be as simple as possible. It provides sane defaults for all
+    configurable parameters to simplify getting started. It also automates all resource
+    management. Especially to simplify resource management, the PPI will take many configuration
+    objects by value. Even though this is not as efficient, it frees the user from most resource
+    management chores. This decision does not affect the runtime performance since it only applies
+    to the configuration part.
+
     \section packets Packets
 
     The PPI processes packets and uses the <a href="@TOPDIR@/Packets/doc/html/index.html">Packet
