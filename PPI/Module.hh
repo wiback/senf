@@ -132,6 +132,9 @@ namespace ppi {
 
         The \a args template parameter is only a placeholder. All arguments to dynamicModule will be
         passed to the Module constructor.
+
+        \implementation dynamicModule should just register the Instance in a different way with the
+            Infrastructure and return a reference to the new module.
      */
     template <class Module, class Args>
     unspecified dynamicModule(Args args);

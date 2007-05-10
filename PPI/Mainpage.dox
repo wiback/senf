@@ -36,17 +36,9 @@
     \li Modules may register additional external \ref events (file descriptor events or timers).
     
     The PPI thereby builds on the facilities provided by the other components of the SENF
-    framework. 
-
-    Modules are divided roughly in to two categories: I/O modules provide packet sources and sinks
-    (network connection, writing packets to disk, generating new packets) whereas processing modules
-    process packets internally.  The target scenario above depicts a diffserv capable UDLR/ULE
-    router including performance optimizations for TCP traffic (PEP). This router is built by
-    combining several modules. In this scenario, <em>TAP</em>, <em>ASI Out</em>, <em>Raw Socket</em>
-    and in a limited way <em>Generator</em> are I/O modules whereas <em>PEP</em>, <em>DiffServ</em>,
-    <em>DVB Enc</em>, <em>GRE/UDLR</em>, <em>TCP Filter</em> and <em>Stuffer</em>are processing
-    modules. <em>ASI/MPEG</em> and <em>Net</em> are external I/O ports which are integrated via the
-    <em>TAP</em>, <em>ASI Out</em> and <em>Raw Sock</em> modules using external events.
+    framework. The target scenario above depicts a diffserv capable UDLR/ULE router including
+    performance optimizations for TCP traffic (PEP). This router is built by combining several
+    modules.
 
     \section design Design considerations
 
@@ -54,8 +46,8 @@
     configurable parameters to simplify getting started. It also automates all resource
     management. Especially to simplify resource management, the PPI will take many configuration
     objects by value. Even though this is not as efficient, it frees the user from most resource
-    management chores. This decision does not affect the runtime performance since it only applies
-    to the configuration part.
+    management chores. This decision does not affect the runtime performance since it only affects
+    the configuration step.
 
     \section packets Packets
 
@@ -73,6 +65,19 @@
         where data arriving on some input will be directed at.
     \li The module might take additional parameters.
     \li The module might also register additional events.
+
+    Modules are divided roughly in to two categories: I/O modules provide packet sources and sinks
+    (network connection, writing packets to disk, generating new packets) whereas processing modules
+    process packets internally.  In the target scenario, <em>TAP</em>, <em>ASI Out</em>, <em>Raw
+    Socket</em> and in a limited way <em>Generator</em> are I/O modules whereas <em>PEP</em>,
+    <em>DiffServ</em>, <em>DVB Enc</em>, <em>GRE/UDLR</em>, <em>TCP Filter</em> and
+    <em>Stuffer</em>are processing modules. <em>ASI/MPEG</em> and <em>Net</em> are external I/O
+    ports which are integrated via the <em>TAP</em>, <em>ASI Out</em> and <em>Raw Sock</em> modules
+    using external events.
+
+    The following example module declares three I/O connectors (see below): <tt>payload</tt>,
+    <tt>stuffing</tt> and <tt>output</tt>. These connectors are defined as <em>public</em> data
+    members so they can be accessed from the outside. This is important as we will see below.
 
     \code
       class RateStuffer 
@@ -102,10 +107,6 @@
           }
       };
     \endcode
-
-    This module declares three I/O connectors (see below): <tt>payload</tt>, <tt>stuffing</tt> and
-    <tt>output</tt>. These connectors are defined as <em>public</em> data members so they can be
-    accessed from the outside. This is important as we will see below.
 
     On module instantiation, it will declare it's flow information with <tt>route</tt> (which
     is inherited from <tt>senf::ppi::Module</tt>). Then the module registers an interval timer which
@@ -292,25 +293,69 @@
     Processing arriving packets happens in the \c data() member: This member simple reads a packet
     from the socket. It passes this packet to the \c parser_ and sends the generated packet out.
 
-    \implementation Generation of throttle notifications: Backward throttling notifications are
-        automatically generated (if this is not disabled) whenever the input queue is non-empty \e
-        after the event handler has finished processing. Forward throttling notifications are not
-        generated automatically within the connector. However, the Passive-Passive adaptor will
-        generate Forward-throttling notifications whenever the input queue is empty.
-
     \note Open Issues
-      \li We need to clearly differentiate between auto-throttling and auto-throttle-forwarding,
-        between a connectors own throttling state and the forwarded state.
-      \li Exception handling
-      \li ActiveInputs also need a queue: This is necessary to allow a PassiveOutput to create more
-        than a single packet from a single 'onRequest' event. This greatly simplifies writing
-        modules which produce multiple output packets for a single input packet.
-      \li We need to clear up the throttled() member semantics: If the connector is throttled, does
-        it return so if there are still packets in the queue? Probably yes. However, it does not
-        forward throttling notifications until instructed by the qdisc. Throttling notifications are
-        also bound to onThrottle/onUnThrottle callbacks. The semantics are then clear: An active
-        connector emitting onThrottle cannot process any further request (for inputs, no data will
-        be available, for outputs the data will be queued in the peer input)
+      \li Exception handling. It would be great to have a sane default exception handling freeing us
+        from most manual work. However, I don't think this is feasible.
+
+    \see \ref ppi_implementation
+ */
+
+/** \page ppi_implementation Implementation Overview
+    
+    \section processing Data Processing
+
+    The processing in the PPI is driven by external events. Without external events <em>nothing will
+    happen</em>. When an external event is generated, the module called will probably either send or
+    receive data from an active connector. 
+
+    Calling an active connector will directly call the handler registered at the connected passive
+    connector. This way the call and data are handed across the connections until an I/O module will
+    finally handle the request (by not calling any other connectors).
+
+    Throttling is handled in the same way: Throttling a passive connector will call a corresponding
+    (internal) method of the connector active connector. This method will call registered handlers
+    and will analyze the routing information of the module for other (passive) connectors to call
+    and throttle. This will again create a call chain which terminates at the I/O modules. An event
+    which is called to be throttled will disable the event temporarily. Unthrottling works in the
+    same way.
+
+    This simple structure is complicated by the existence of the input queues. This affects both
+    data forwarding and throttling:
+    \li A data request will only be forwarded, if no data is available in the queue
+    \li The connection will only be throttled when the queue is empty
+    \li Handlers of passive input connectors must be called repeatedly until either the queue is
+        empty or the handler does not take any packets from the queue
+
+
+    \section logistics Managing the Data Structures
+
+    The PPI itself is a singleton. This simplifies many of the interfaces (We do not need to pass
+    the PPI instance). Should it be necessary to have several PPI systems working in parallel
+    (either by registering all events with the same event handler or by utilizing multiple threads),
+    we can still extend the API by adding an optional PPI instance argument.
+
+    Every module manages a collection of all it's connectors and every connector has a reference to
+    it's containing module. In addition, every connector maintains a collection of all it's routing
+    targets. 
+
+    All this data is initialized via the routing statements. This is, why \e every connector must
+    appear in at least one routing statement: These statements will as a side effect initialize the
+    connector with it's containing module.
+
+    Since all access to the PPI via the module is via it's base class, unbound member function
+    pointers can be provided as handler arguments: They will automatically be bound to the current
+    instance. This simplifies the PPI usage considerably. The same is true for the connectors: Since
+    they know the containing module, they can explicitly bind unbound member function pointers to
+    the instance.
+    
+
+    \section random_notes Random implementation notes
+    
+    Generation of throttle notifications: Backward throttling notifications are automatically
+    generated (if this is not disabled) whenever the input queue is non-empty \e after the event
+    handler has finished processing. Forward throttling notifications are not generated
+    automatically within the connector. However, the Passive-Passive adaptor will generate
+    Forward-throttling notifications whenever the input queue is empty.
  */
 
 

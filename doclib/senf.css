@@ -2,6 +2,7 @@ body {
         padding: 0;
         margin: 0;
         font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
 }
 
 #head {
@@ -25,25 +26,64 @@ body {
         text-align: left;
 }
 
-#head h2 {
-        margin: 0 0 0 100px;
+#subtitle {
+        margin: 0 10px 0 100px;
         padding: 4px 0 0 42px;
         height: 18px;
+	max-width: 62em;
         background-color: #EDE497;
         color: #726921;
-        font-size: 13px;
+}
+
+#head h2 {
+	margin: 0;
+	padding: 0;
+	font-size: 13px;
         font-weight: normal;
         white-space: nowrap;
 }
 
-#search {
+#head ul { 
+	display: inline; /* für IE ... */
+	font-size: 13px;
+	height: 0px;
+	margin: 0;
+	padding: 0;
+}
+
+#head li { 
+	list-style-type: none;
+	margin: 0 0 0 15px;
+	padding: 0 0 0 5px;
+	float: right;
+	border-left: 4px solid #726921;
+	height: 14px;
+}
+
+#head a { 
+	font-weight: normal;
+	color: inherit;
+}
+
+#head a:hover { 
+	background-color: inherit;
+	text-decoration: underline;
+}
+
+#search { 
+	margin: 0 10px 0 100px;
+	padding: 0 0 0 42px;
+	max-width: 62em;
+}
+
+#search2 {
         float: right;
         width: 150px;
         height: 39px;
         font-size: 10px;
         /* margin/padding/color/background-color/border: mostly IE6/IE7 fixes */
         margin: 0 0 0 -10px;
-        padding: 0 10px 0 10px;
+        padding: 0 0 0 10px;
         color: #726921;
         background-color: #DECD40;
         border-bottom: 1px solid #AF9D00;

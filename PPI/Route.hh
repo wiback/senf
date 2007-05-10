@@ -32,6 +32,11 @@
 namespace senf {
 namespace ppi {
 
+    /** \brief Route descriptor
+        
+        Route instances are created by Module::route statements. The Route class provides an
+        interface to manipulate the flow processing.
+     */
     template <class Source, class Target>
     class Route
     {

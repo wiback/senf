@@ -37,7 +37,7 @@ writeTemplate = env.Action(writeTemplate, varlist = [ 'TEMPLATE' ])
 EXTRA_MODULES = [
     ('Overview', '#/doc/html'),
     ('Examples', '#/Examples/doc/html'),
-    ('SenfScons', '#/senfscons/doc/html') ]
+    ('SENFSCons', '#/senfscons/doc/html') ]
 
 HEADER = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -53,13 +53,23 @@ div.tabs ul li.$projectname a { background-color: #EDE497; }
 <body>
 
 <div id="head">
-  <div id="search">
-    <form action="@TOPDIR@/doclib/search.php" method="get">
-      Search: <input type="text" name="query" size="20" accesskey="s"/> 
-    </form>
-  </div>
-  <h1>SENF Extensible Network Framework</h1>
-  <h2>${TITLE}</h2>
+    <div id="search">
+      <div id="search2">
+        <form action="@TOPDIR@/doclib/search.php" method="get">
+          Search: <input type="text" name="query" size="20" accesskey="s"/> 
+        </form>
+      </div>
+    </div>
+    <h1>SENF Extensible Network Framework</h1>
+    <div id="subtitle">
+      <ul>
+        <li><a href="@TOPDIR@/doc/html/xref.html">Open Issues</a></li>
+        <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">SVN ChangeLog</a></li>
+        <li><a class="ext" href="http://developer.berlios.de/projects/senf">SENF @ BerliOS</a></li>
+        <li><a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">Wiki</a></li>
+      </ul>
+      <h2>${TITLE}</h2>
+    </div>
 </div>
 
 <div id="content1">
@@ -72,15 +82,7 @@ div.tabs ul li.$projectname a { background-color: #EDE497; }
       </ul>
     </div>"""
 
-OVERVIEW_EXTRA_HEADER="""
-    <div class="tabs">
-      <ul>
-      <li><a href="@TOPDIR@/doc/html/xref.html">Open Issues</a></li>
-        <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">SVN ChangeLog</a></li>
-        <li><a class="ext" href="http://developer.berlios.de/projects/senf">SENF @ BerliOS</a></li>
-        <li><a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">Wiki</a></li>
-      </ul>
-    </div>"""
+OVERVIEW_EXTRA_HEADER=""
 
 FOOTER = """<hr style="width:0px;border:none;clear:both;margin:0;padding:0" />
   </div>
