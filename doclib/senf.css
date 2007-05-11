@@ -53,11 +53,16 @@ body {
 
 #head li { 
 	list-style-type: none;
-	margin: 0 0 0 15px;
-	padding: 0 0 0 5px;
+	margin: 0 0 0 10px;
+	padding: 0 10px 0 0;
 	float: right;
-	border-left: 4px solid #726921;
+	border-right: 1px solid #726921;
 	height: 14px;
+}
+
+#head li:first-child { 
+	border-right: none;
+	padding: 0;
 }
 
 #head a { 

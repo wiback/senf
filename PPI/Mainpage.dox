@@ -297,7 +297,8 @@
       \li Exception handling. It would be great to have a sane default exception handling freeing us
         from most manual work. However, I don't think this is feasible.
 
-    \see \ref ppi_implementation
+    \see \ref ppi_implementation \n
+        <a href="http://openfacts.berlios.de/index-en.phtml?title=SENF:_Packet_Processing_Infrastructure">Implementation plan</a>
  */
 
 /** \page ppi_implementation Implementation Overview
