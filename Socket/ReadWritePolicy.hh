@@ -123,7 +123,7 @@ namespace senf {
     private:
         static unsigned do_write(FileHandle handle, char const * buffer, unsigned size);
         static unsigned do_writeto(FileHandle handle, char const * buffer, unsigned size,
-                                   struct sockaddr * addr, socklen_t len);
+                                   struct sockaddr const * addr, socklen_t len);
     };
 
     /** \brief WritePolicy for unwriteable sockets

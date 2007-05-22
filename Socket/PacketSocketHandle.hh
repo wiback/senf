@@ -22,6 +22,8 @@
 
 /** \file
     \brief PacketProtocol and PacketSocketHandle public header
+
+    \todo Implement global promisc() helper based on ioctl() interface.
  */
 
 #ifndef HH_PacketSocketHandle_
@@ -83,8 +85,6 @@ namespace senf {
     public:
         enum SocketType { RawSocket, DatagramSocket };
                                         ///< Socket types
-        enum PromiscMode { Promiscuous, AllMulticast, None };
-                                        ///< Interface modes
 
         ///\name Constructors
         ///@{
@@ -112,23 +112,6 @@ namespace senf {
 
         ///\name Protocol Interface
         ///@{
-        void promisc(std::string interface, PromiscMode mode) const;
-                                        ///< Change interface mode
-                                        /**< This member will change the reception on the given
-                                             interface. The modes available are
-
-                                             <dl>
-                                             <dt><em>None</em></dt><dd>No special mode set. Only receive
-                                             packets addressed to the interface or of joined
-                                             multicast groups</dd>
-                                             <dt><em>AllMulticast</em></dt><dd>Additionally receive all
-                                             multicast traffic</dd>
-                                             <dt><em> Promiscuous</em></dt><dd>Receive all packets on the
-                                             wire</dd>
-                                             </dl>
-
-                                             \param[in] interface interface to modify
-                                             \param[in] mode new interface mode */
 
         // See LLSocketAddress for a discussion/rationale for ForwardRange here
         template <class ForwardRange>

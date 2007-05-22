@@ -22,29 +22,34 @@
       <div class="nav">
         <xsl:text> -- </xsl:text>
         <xsl:for-each select="str:split($types)">
-          <xsl:element name="a">
-            <xsl:attribute name="href">#<xsl:value-of select="."/></xsl:attribute>
-            <xsl:value-of select="translate(.,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/><xsl:text>S</xsl:text>
-          </xsl:element>
-          <xsl:text> -- </xsl:text>
+          <xsl:variable name="type" select="string(.)"/>
+          <xsl:if test="$doc//xreflist[@type=$type]">
+            <xsl:element name="a">
+              <xsl:attribute name="href">#<xsl:value-of select="."/></xsl:attribute>
+              <xsl:value-of select="translate(.,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/><xsl:text>S</xsl:text>
+            </xsl:element>
+            <xsl:text> -- </xsl:text>
+          </xsl:if>
         </xsl:for-each>
       </div>
       <xsl:for-each select="str:split($types)">
         <xsl:variable name="type" select="string(.)"/>
-        <xsl:element name="div">
-          <xsl:attribute name="class"><xsl:value-of select="$type"/></xsl:attribute>
-          <xsl:element name="a">
-            <xsl:attribute name="name"><xsl:value-of select="$type"/></xsl:attribute>
-            <h2>Open <xsl:value-of select="translate($type,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>s</h2>
+        <xsl:if test="$doc//xreflist[@type=$type]">
+          <xsl:element name="div">
+            <xsl:attribute name="class"><xsl:value-of select="$type"/></xsl:attribute>
+            <xsl:element name="a">
+              <xsl:attribute name="name"><xsl:value-of select="$type"/></xsl:attribute>
+              <h2>Open <xsl:value-of select="translate($type,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>s</h2>
+            </xsl:element>
+            <xsl:for-each select="$doc//xreflist[@type=$type]">
+              <xsl:sort select="@module"/>
+              <h3><xsl:value-of select="@module"/> module</h3>
+              <dl>
+                <xsl:apply-templates/>
+              </dl>
+            </xsl:for-each>
           </xsl:element>
-          <xsl:for-each select="$doc//xreflist[@type=$type]">
-            <xsl:sort select="@module"/>
-            <h3><xsl:value-of select="@module"/> module</h3>
-            <dl>
-              <xsl:apply-templates/>
-            </dl>
-          </xsl:for-each>
-        </xsl:element>
+        </xsl:if>
       </xsl:for-each>
     </div>
   </xsl:template>

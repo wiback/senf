@@ -175,8 +175,6 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
-        // this fails with ENOFILE ... why ????
-        // BOOST_CHECK_NO_THROW( sock.protocol().timestamp() );
         BOOST_CHECK( !sock.eof() );
         sock.write("QUIT");
         sleep(1);

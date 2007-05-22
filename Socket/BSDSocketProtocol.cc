@@ -60,11 +60,6 @@ prefix_ void senf::BSDSocketProtocol::linger(bool enable, unsigned timeout)
 prefix_ struct timeval senf::BSDSocketProtocol::timestamp()
     const
 {
-    /** \bug Check, why this fails with ENOFILE (!!!!) at least when
-        called from a tcp socket.Maybe this is only available for
-        datagram sockets ? That could make sense from the description
-        (what is the last packet passed to the user on a stream
-        socket?)  Further investigation necessary ... */
     struct timeval tv;
     if (::ioctl(body().fd(), SIOCGSTAMP, &tv) < 0)
         throw SystemException(errno);

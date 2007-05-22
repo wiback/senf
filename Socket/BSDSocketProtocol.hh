@@ -65,7 +65,8 @@ namespace senf {
                                              the last network packet passed to the user has been
                                              received from the network. This allows precise network
                                              timing.
-                                             \returns timestamp when packet was received */
+                                             \returns timestamp when packet was received 
+                                             \todo Move this to DatagramSocketProtocol class */
     };
 
     /** \brief Protocol facet providing basic connection oriented BSD socket functions

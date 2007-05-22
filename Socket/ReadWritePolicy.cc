@@ -102,7 +102,7 @@ prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle handle, char const *
 
 prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle handle,
                                                           char const * buffer, unsigned size,
-                                                          struct sockaddr * addr, socklen_t len)
+                                                          struct sockaddr const * addr, socklen_t len)
 {
     int rv = -1;
     do {

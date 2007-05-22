@@ -77,33 +77,6 @@ prefix_ bool senf::PacketProtocol::eof()
     return false;
 }
 
-prefix_ void senf::PacketProtocol::promisc(std::string interface, PromiscMode mode)
-    const
-{
-    /** \bug There are some failures here ... need to investigate */
-
-    // The interface is really stupid: as far as i understand, it is possible to
-    // enable PROMISC and ALLMULTI seperately, however PROMISC is really a superset
-    // of ALLMULTI ... grmpf ... therefore we allways set/reset both to implement sane
-    // semantics
-
-    struct packet_mreq mreq;
-    mreq.mr_ifindex = ::if_nametoindex(interface.c_str());
-    if (mreq.mr_ifindex == 0)
-        throw SystemException(EINVAL);
-    mreq.mr_alen = 0;
-
-    mreq.mr_type = PACKET_MR_PROMISC;
-    int command = mode == Promiscuous ? PACKET_ADD_MEMBERSHIP : PACKET_DROP_MEMBERSHIP;
-    if (::setsockopt(body().fd(),SOL_PACKET,command,&mreq,sizeof(mreq)) < 0)
-        throw SystemException(errno);
-
-    mreq.mr_type = PACKET_MR_ALLMULTI;
-    command = mode == AllMulticast ? PACKET_ADD_MEMBERSHIP : PACKET_DROP_MEMBERSHIP;
-    if (::setsockopt(body().fd(),SOL_PACKET,command,&mreq,sizeof(mreq)) < 0)
-        throw SystemException(errno);
-}
-
 prefix_ void senf::PacketProtocol::do_mc_i(std::string interface,
                                                   detail::LLAddressCopier const & copier, bool add)
     const
