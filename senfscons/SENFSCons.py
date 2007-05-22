@@ -292,7 +292,7 @@ def LibPath(lib): return '$LOCALLIBDIR/lib%s.a' % lib
 # provide both \a sources and \a testSources.
 #
 # \ingroup target
-def Objects(env, sources, testSources = None, LIBS = []):
+def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = []):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
@@ -307,6 +307,7 @@ def Objects(env, sources, testSources = None, LIBS = []):
             source = sources,
             test_source = testSources,
             LIBS = LIBS,
+            OBJECTS = OBJECTS,
             DEPENDS = [ env.File(LibPath(x)) for x in LIBS ])
         env.Alias('all_tests', test)
         # Hmm ... here I'd like to use an Alias instead of a file
@@ -493,14 +494,23 @@ def DoxyXRef(env, docs=None,
 # The library is added to the list of default targets.
 #
 #\ingroup target
-def Lib(env, library, sources, testSources = None, LIBS = []):
-    objects = Objects(env,sources,testSources,LIBS=LIBS)
+def Lib(env, library, sources, testSources = None, LIBS = [], OBJECTS = []):
+    objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
     lib = None
     if objects:
         lib = env.Library(env.File(LibPath(library)),objects)
         env.Default(lib)
         env.Append(ALLLIBS = library)
     return lib
+
+## \brief Build Object from multiple sources
+def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = []):
+    objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
+    ob = None
+    if objects:
+        ob = env.Command(target+".o", objects, "ld -r -o $TARGET $SOURCES")
+        env.Default(ob)
+    return ob
 
 ## \brief Build executable
 #
@@ -512,13 +522,13 @@ def Lib(env, library, sources, testSources = None, LIBS = []):
 # construction environment parameters or the framework helpers.
 #
 # \ingroup target
-def Binary(env, binary, sources, testSources = None, LIBS = []):
-    objects = Objects(env,sources,testSources,LIBS=LIBS)
+def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = []):
+    objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
     program = None
     if objects:
         progEnv = env.Copy()
         progEnv.Prepend(LIBS = LIBS)
-        program = progEnv.Program(target=binary,source=objects)
+        program = progEnv.Program(target=binary,source=objects+OBJECTS)
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
     return program

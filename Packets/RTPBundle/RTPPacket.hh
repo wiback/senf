@@ -24,11 +24,11 @@
 #define HH_RTPPacket_ 1
 
 // Custom includes
-#include "Packet.hh"
-#include "ParseInt.hh"
-#include "ParseArray.hh"
-#include "ParseVec.hh"
-#include "PacketRegistry.hh"
+#include "Packets/Packet.hh"
+#include "Packets/ParseInt.hh"
+#include "Packets/ParseArray.hh"
+#include "Packets/ParseVec.hh"
+#include "Packets/PacketRegistry.hh"
 
 //#include "RTPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -28,9 +28,9 @@
 // Custom includes
 #include "RTPPacket.hh"
 
-#include "EthernetPacket.hh"
-#include "IpV4Packet.hh"
-#include "UDPPacket.hh"
+#include "Packets/DefaultBundle/EthernetPacket.hh"
+#include "Packets/DefaultBundle/IpV4Packet.hh"
+#include "Packets/DefaultBundle/UDPPacket.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

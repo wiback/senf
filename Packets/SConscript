@@ -1,7 +1,7 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons
+import SENFSCons, glob
 
 ###########################################################################
 
@@ -17,3 +17,5 @@ SENFSCons.Lib(env,
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png("structure.dia")
 ])
+
+SConscript(glob.glob("*/SConscript"))

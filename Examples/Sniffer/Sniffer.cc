@@ -32,10 +32,7 @@
 #include "Socket/PacketSocketHandle.hh"
 #include "Scheduler/Scheduler.hh"
 #include "Utils/membind.hh"
-
-#include "Packets/EthernetPacket.hh"
-#include "Packets/IpV4Packet.hh"
-#include "Packets/UDPPacket.hh"
+#include "Packets/DefaultBundle/EthernetPacket.hh"
 
 //#include "Sniffer.mpp"
 #define prefix_
@@ -81,12 +78,6 @@ namespace {
         std::cout << std::dec;
     }
 
-    void use_em()
-    {
-        // Pull in symbols from the wanted packets ...
-        senf::Packet::create<senf::IpV4Packet>(0,0);
-        senf::Packet::create<senf::UDPPacket>(0,0);
-    }
 }
 
 int loop_main (int argc, char const * argv[])

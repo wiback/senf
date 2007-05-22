@@ -27,7 +27,7 @@
 #include "IpV4Packet.hh"
 
 // Custom includes
-#include "DataPacket.hh"
+#include "Packets/DataPacket.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

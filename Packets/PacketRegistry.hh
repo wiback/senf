@@ -89,9 +89,6 @@ namespace senf {
     {
     public:
         /** \brief Statically register a packet type in a PacketRegistry
-
-            \fixme This fails to work within a library since the linker will
-            remove all unused object files ...
          */
         template <class OtherPacket>
         struct RegistrationProxy

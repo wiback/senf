@@ -24,12 +24,12 @@
 #define HH_RTCPPacket_ 1
 
 // Custom includes
-#include "Packet.hh"
-#include "ParseInt.hh"
-#include "ParseArray.hh"
-#include "ParseListS.hh"
-#include "ParseVec.hh"
-#include "PacketRegistry.hh"
+#include "Packets/Packet.hh"
+#include "Packets/ParseInt.hh"
+#include "Packets/ParseArray.hh"
+#include "Packets/ParseListS.hh"
+#include "Packets/ParseVec.hh"
+#include "Packets/PacketRegistry.hh"
 
 //#include "RTCPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

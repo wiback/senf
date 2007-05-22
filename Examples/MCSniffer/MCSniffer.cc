@@ -30,7 +30,7 @@
 #include <iomanip>
 #include "Socket/UDPSocketHandle.hh"
 #include "Scheduler/Scheduler.hh"
-#include "Packets/EthernetPacket.hh"
+#include "Packets/DefaultBundle/EthernetPacket.hh"
 #include "Utils/membind.hh"
 
 

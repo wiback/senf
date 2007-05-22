@@ -1,8 +1,9 @@
-// $Id$
+// $Id: main.test.cc 206 2007-02-20 14:20:52Z g0dil $
 //
-// Copyright (C) 2007
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,34 +20,28 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+// Definition of non-inline non-template functions
+
+//#include "test.hh"
+//#include "test.ih"
 
 // Custom includes
-#include <iostream>
-#include <sstream>
-#include "Socket/TCPSocketHandle.hh"
-#include "Socket/INetAddressing.hh"
+#define BOOST_AUTO_TEST_MAIN
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
+
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
 
-int main(int argc, char const * argv[])
-{
-    try {
-        for (int i=0; i<=1000; i++) {
-            senf::TCPv4ClientSocketHandle sock;
-            sock.connect(senf::INet4Address("127.0.0.1", 4243));
-            sock.protocol().linger(true);
-            
-            std::stringstream s;
-            s << i++;
-            sock.write(s.str());
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
-            sock.close();
-            
-            std::cout << i << std::endl;
-        }
-    }
-    catch (std::exception const & ex) {
-        std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
-    }
-    
-    return 0;
-}
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// End:

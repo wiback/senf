@@ -26,7 +26,7 @@ import SCons.Defaults
 import os.path
 import os
 
-def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [], **kw):
+def BoostUnitTests(env, target, source, test_source=None, LIBS = [], OBJECTS = [], DEPENDS = [], **kw):
     path, name = os.path.split(target)
     if test_source:
         if type(test_source) is not type([]):
@@ -38,7 +38,7 @@ def BoostUnitTests(env, target, source, test_source=None, LIBS = [], DEPENDS = [
     testEnv.Prepend(LIBS = LIBS)
     sources = []
     if source:
-        sources = sources + env.Object(source)
+        sources = sources + env.Object(source) + OBJECTS
     sources = sources + test_source
     binName = os.path.join(path,'.' + name +'.bin')
     testRunner = testEnv.Program(binName, sources)

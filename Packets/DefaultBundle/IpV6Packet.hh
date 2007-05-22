@@ -25,10 +25,10 @@
 #define HH_IpV6Packet_ 1
 
 // Custom includes
-#include "Packet.hh"
-#include "ParseInt.hh"
-#include "ParseArray.hh"
-#include "PacketRegistry.hh"
+#include "Packets/Packet.hh"
+#include "Packets/ParseInt.hh"
+#include "Packets/ParseArray.hh"
+#include "Packets/PacketRegistry.hh"
 #include "IpV4Packet.hh"
 
 //#include "IpV6Packet.mpp"
