@@ -440,7 +440,8 @@ def DoxyXRef(env, docs=None,
         docs = env.Alias('all_docs')[0].sources
     xrefs = [ doc for doc in docs if os.path.splitext(doc.name)[1] == ".xmli" ]
     xref = env.Command("doc/html/xref.xml", xrefs,
-                       [ "echo -e '<?xml version=\"1.0\"?>\\n<xref>' >$TARGET",
+                       [ "echo '<?xml version=\"1.0\"?>' > $TARGET",
+                         "echo '<xref>' >> $TARGET",
                          "cat $SOURCES >> $TARGET",
                          "echo '</xref>' >>$TARGET" ])
 
