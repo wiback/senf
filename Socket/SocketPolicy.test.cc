@@ -83,7 +83,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(socketPolicy)
 {
-    // All these checks are really compile-time checks ...
+    // Most of these checks are really compile-time checks ...
 
     typedef MakeSocketPolicy<
         UnixAddressingPolicy,
@@ -122,12 +122,22 @@ BOOST_AUTO_UNIT_TEST(socketPolicy)
     // The following should fail at compile time
     // BOOST_MPL_ASSERT(( SocketPolicyIsBaseOf<Policy1,Policy3> ));
 
-    ConvertibleValue<Policy1> p1;
-    ConvertibleValue<Policy3> p3(p1);
+    {
+        ConvertibleValue<Policy1> p1;
+        ConvertibleValue<Policy3> p3(p1);
 
-    p3 = p1;
-    // The following should fail at compile time
-    // p1 = p3;
+        p3 = p1;
+        // The following should fail at compile time
+        // p1 = p3;
+    }
+    
+    {
+        Policy1 p1;
+        Policy3 p3;
+
+        BOOST_CHECK_THROW( Policy1::checkBaseOf(p3), std::bad_cast );
+        BOOST_CHECK_NO_THROW( Policy3::checkBaseOf(p1) );
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

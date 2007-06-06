@@ -41,7 +41,7 @@ checkBaseOf(SocketPolicyBase const & other)
     // check, wether each policy of other is (dynamically!) convertible
     // to the corresponding (static) policy of this class. Throws
     // std::bad_cast on failure
-#   define SP_CheckPolicy(x1,x2,SomePolicy) (void) dynamic_cast<SomePolicy const &>(other.BOOST_PP_CAT(the,SomePolicy)());
+#   define SP_CheckPolicy(x1,x2,SomePolicy) (void) dynamic_cast<BOOST_PP_CAT(SomePolicy,_) const &>(other.BOOST_PP_CAT(the,SomePolicy)());
     BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SENF_SOCKET_POLICIES )
 #   undef SP_CheckPolicy
 }
