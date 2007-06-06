@@ -32,6 +32,8 @@ namespace senf {
     <dt>prettyName()</dt><dd>an interface to the C++ demangler of g++
     to get formated type names from typeinfo objects</dd>
 
+    <dt>\ref SENF_SCOPED_BUFFER</dt><dd>a portable way to efficiently allocate temporary buffers</dd>
+
     </dl>
  */
 
