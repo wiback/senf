@@ -70,10 +70,10 @@
     (network connection, writing packets to disk, generating new packets) whereas processing modules
     process packets internally.  In the target scenario, <em>TAP</em>, <em>ASI Out</em>, <em>Raw
     Socket</em> and in a limited way <em>Generator</em> are I/O modules whereas <em>PEP</em>,
-    <em>DiffServ</em>, <em>DVB Enc</em>, <em>GRE/UDLR</em>, <em>TCP Filter</em> and
-    <em>Stuffer</em>are processing modules. <em>ASI/MPEG</em> and <em>Net</em> are external I/O
-    ports which are integrated via the <em>TAP</em>, <em>ASI Out</em> and <em>Raw Sock</em> modules
-    using external events.
+    <em>DiffServ</em>, <em>DVB Enc</em>, <em>GRE/UDLR</em>, <em>TCP Filter</em> and <em>Stuffer</em>
+    are processing modules. <em>ASI/MPEG</em> and <em>Net</em> are external I/O ports which are
+    integrated via the <em>TAP</em>, <em>ASI Out</em> and <em>Raw Sock</em> modules using external
+    events.
 
     The following example module declares three I/O connectors (see below): <tt>payload</tt>,
     <tt>stuffing</tt> and <tt>output</tt>. These connectors are defined as <em>public</em> data
@@ -83,18 +83,20 @@
       class RateStuffer 
           : public senf::ppi::Module
       {
+          senf::ppi::IntervalTimer timer_;
+
       public:
-          ActiveInput payload;
-          ActiveInput stuffing;
-          ActiveOutput output;
+          senf::ppi::ActiveInput payload;
+          senf::ppi::ActiveInput stuffing;
+          senf::ppi::ActiveOutput output;
 
           RateStuffer(unsigned packetsPerSecond)
+              : timer_(1000u, packetsPerSecond)
           {
               route(payload, output);
               route(stuffing, output);
 
-              registerEvent(&RateStuffer::tick, 
-                            senf::ppi::IntervalTimer(1000u, packetsPerSecond));
+              registerEvent(&RateStuffer::tick, timer_);
           }
 
       private:
@@ -124,7 +126,7 @@
           : public senf::ppi::Module
       {
       public:
-          PassiveOutput output;
+          senf::ppi::PassiveOutput output;
 
           CopyPacketGenerator(Packet::ptr template)
               : template_ (template)
@@ -244,14 +246,17 @@
       class ActiveSocketInput 
           : public senf::ppi::Module
       {
-          static PacketParser<senf::DataPacket> defaultParser_;
-
-      public:
-          ActiveOutput output;
-
           typedef senf::ClientSocketHandle<
               senf::MakeSocketPolicy< senf::ReadablePolicy,
                                       senf::DatagramFramingPolicy > > Socket;
+          static PacketParser<senf::DataPacket> defaultParser_;
+
+          Socket socket_;
+          DataParser const & parser_;
+          senf::ppi:IOSignaler event_;
+
+      public:
+          senf::ppi::ActiveOutput output;
 
           // I hestitate taking parser by const & since a const & can be bound to
           // a temporary even though a const & is all we need. The real implementation
@@ -260,16 +265,13 @@
           ActiveSocketInput(Socket socket, DataParser & parser = SocketInput::defaultParser_)
               : socket_ (socket), 
                 parser_ (parser)
-                event_ (registerEvent( &ActiveSocketInput::data, 
-                                       senf::ppi::IOSignaler(socket, senf::ppi::IOSignaler::Read) ))
+                event_ (socket, senf::ppi::IOSignaler::Read)
           {
+              registerEvent( &ActiveSocketInput::data, event_ );
               route(event_, output);
           }
       
       private:
-          Socket socket_;
-          DataParser const & parser_;
-          senf::ppi:IOSignaler::EventBinding event_;
     
           void data()
           {

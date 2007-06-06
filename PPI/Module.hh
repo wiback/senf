@@ -97,7 +97,7 @@ namespace ppi {
                                              \param[in] connector Terminal connector to declare */
 
         template <class Target, class Descriptor>
-        typename Descriptor & registerEvent(Target target, Descriptor const & descriptor);
+        void registerEvent(Target target, Descriptor const & descriptor);
                                         ///< Register an external event
                                         /**< The \a target argument may be either an arbitrary
                                              callable object or it may be a member function pointer
@@ -111,17 +111,9 @@ namespace ppi {
                                              may be a timer event or some type of I/O event on a
                                              file descriptor or socket.
 
-                                             The return value may be used to modify the
-                                             binding. This allows to temporarily inhibit event
-                                             delivery or to remove the binding explicitly. Depending
-                                             on the type of event, other operations may be
-                                             possible. See the event descriptor documentation.
-
                                              \param[in] target The handler to call whenever the event
                                                  is signaled
-                                             \param[in] descriptor The type of event to register
-                                             \returns An event binding instance of the appropriate
-                                                 type. */
+                                             \param[in] descriptor The type of event to register */
 
         boost::posix_time::ptime eventTime(); ///< Return timestamp of the currently processing event
     };
