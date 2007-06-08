@@ -148,7 +148,7 @@ BOOST_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.writeto("127.0.0.1:12345","TEST-WRITE") );
+        BOOST_CHECK_NO_THROW( sock.writeto("127.0.0.1:12345", std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
         BOOST_CHECK_NO_THROW( sock.protocol().timestamp() );
         sock.writeto("127.0.0.1:12345","QUIT");

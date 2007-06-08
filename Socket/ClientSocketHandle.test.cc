@@ -93,7 +93,7 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
     {
         char buf[11];
         ::strcpy(buf,"0123456789");
-        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.read(buf,buf+10), buf+9u ) );
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.read(buf,buf+10), buf+9 ) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
     }
 
@@ -108,15 +108,23 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
         char buf[11];
         unsigned addr;
         ::strcpy(buf,"0123456789");
-        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.readfrom(buf,buf+10,addr), buf+9u ) );
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.readfrom(buf,buf+10,addr), buf+9 ) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
     }
 
-    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.write("TEST-WRITE"), 10u ) );
-    BOOST_CHECK_THROW( myh.write("TEST"),senf::SystemException );
-    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.write("TEST-WRITE9",10), 10u ) );
-    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE"), 10u ) );
-    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.writeto(0,"TEST-WRITE9",10), 10u ) );
+    {
+        std::string s ("TEST-WRITE");
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.write(s)-s.begin(), 10 ) );
+        s = "TEST";
+        // This simulates a closed file in this test policy. However, we
+        // have changed the semantics so this will not work anymore.
+        // BOOST_CHECK_THROW( myh.write(s),senf::SystemException );
+        char const * const s1 = "TEST-WRITE9";
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.write(s1,s1+10), s1+10u ) );
+        s = "TEST-WRITE";
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.writeto(0,s)-s.begin(), 10 ) );
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.writeto(0,s1,s1+10), s1+10 ) );
+    }
 
     BOOST_CHECK_NO_THROW( myh.connect(0) );
     BOOST_CHECK_NO_THROW( myh.bind(0) );

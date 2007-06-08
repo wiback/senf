@@ -35,32 +35,60 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::ReadRange<Policy,ForwardWritableRange,true>
 
-// senf::detail::ReadRange<Policy,ForwardWritableRange,true>::read
-
 template <class Handle, class ForwardWritableRange>
 prefix_ typename boost::range_iterator<ForwardWritableRange>::type
 senf::detail::ReadRange<Handle,ForwardWritableRange,true>::read(Handle & handle,
                                                                 ForwardWritableRange & range)
 {
-    typename boost::range_iterator<ForwardWritableRange>::type i (boost::begin(range));
-    char * ic (reinterpret_cast<char*>(storage_iterator(i)));
+    typename boost::range_iterator<ForwardWritableRange>::type const i (boost::begin(range));
+    char * const ic (reinterpret_cast<char*>(storage_iterator(i)));
     return i + (handle.read( ic, 
                              reinterpret_cast<char*>(storage_iterator(boost::end(range))) )
                 - ic);
 }
-
-// senf::detail::ReadRange<Policy,ForwardWritableRange,true>::readfrom
 
 template <class Handle, class ForwardWritableRange>
 prefix_ typename boost::range_iterator<ForwardWritableRange>::type
 senf::detail::ReadRange<Handle,ForwardWritableRange,true>::
 readfrom(Handle & handle, ForwardWritableRange & range, typename Handle::Address & addr)
 {
-    typename boost::range_iterator<ForwardWritableRange>::type i (boost::begin(range));
-    char * ic (reinterpret_cast<char*>(storage_iterator(i)));
+    typename boost::range_iterator<ForwardWritableRange>::type const i (boost::begin(range));
+    char * const ic (reinterpret_cast<char*>(storage_iterator(i)));
     return i + (handle.readfrom( ic, 
                                  reinterpret_cast<char*>(storage_iterator(boost::end(range))),
                                  addr )
+                - ic);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::WriteRange<Handle, ForwardReadableRange, true>
+
+template <class Handle, class ForwardReadableRange>
+prefix_ typename boost::range_const_iterator<ForwardReadableRange>::type
+senf::detail::WriteRange<Handle, ForwardReadableRange, true>::
+write(Handle & handle, ForwardReadableRange & range)
+{
+    typename boost::range_const_iterator<ForwardReadableRange>::type const i 
+        (boost::const_begin(range));
+    char const * const ic (reinterpret_cast<char const *>(storage_iterator(i)));
+    return i + (handle.write(ic,
+                             reinterpret_cast<char const *>(
+                                 storage_iterator(boost::const_end(range))))
+                - ic);
+}
+
+template <class Handle, class ForwardReadableRange>
+prefix_ typename boost::range_const_iterator<ForwardReadableRange>::type
+senf::detail::WriteRange<Handle, ForwardReadableRange, true>::
+writeto(Handle & handle, ForwardReadableRange & range, typename Handle::Address const & addr)
+{
+    typename boost::range_const_iterator<ForwardReadableRange>::type const i 
+        (boost::const_begin(range));
+    char const * const ic (reinterpret_cast<char const *>(storage_iterator(i)));
+    return i + (handle.writeto(addr,
+                               ic,
+                               reinterpret_cast<char const *>(
+                                   storage_iterator(boost::const_end(range))))
                 - ic);
 }
 
@@ -144,7 +172,7 @@ prefix_ char * senf::ClientSocketHandle<Policy>::read(char * start, char * end)
 
 template <class Policy>
 template <class ForwardWritableRange>
-prefix_ typename boost::range_iterator<ForwardWritableRange>::type
+prefix_ typename boost::range_iterator<ForwardWritableRange const>::type
 senf::ClientSocketHandle<Policy>::readfrom(ForwardWritableRange const & range, Address & from)
 {
     return detail::ReadRange< 
@@ -180,28 +208,47 @@ prefix_ char * senf::ClientSocketHandle<Policy>::readfrom(char * start, char * e
 // senf::ClientSocketHandle<Policy>::write
 
 template <class Policy>
-prefix_ unsigned senf::ClientSocketHandle<Policy>::write(char const * buffer,
-                                                                unsigned size)
+template <class ForwardReadableRange>
+prefix_ typename boost::range_const_iterator<ForwardReadableRange const>::type
+senf::ClientSocketHandle<Policy>::write(ForwardReadableRange const & range)
 {
-    return Policy::WritePolicy::write(*this, buffer, size);
+    return detail::WriteRange<
+        ClientSocketHandle<Policy>,
+        ForwardReadableRange const,
+        contiguous_storage_iterator<
+            typename boost::range_iterator<ForwardReadableRange>::type
+        >::value && sizeof(typename boost::range_value<ForwardReadableRange>::type)==sizeof(char)
+        >::write(*this, range);
+}
+
+template <class Policy>
+prefix_ char const * senf::ClientSocketHandle<Policy>::write(char const * start, char const * end)
+{
+    return start + Policy::WritePolicy::write(*this, start, end-start);
 }
 
 // senf::ClientSocketHandle<Policy>::writeto
 
 template <class Policy>
-prefix_ unsigned senf::ClientSocketHandle<Policy>::
-writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
-        std::string const & data)
+template <class ForwardReadableRange>
+prefix_ typename boost::range_const_iterator<ForwardReadableRange const>::type
+senf::ClientSocketHandle<Policy>::writeto(AddressParam addr, ForwardReadableRange const & range)
 {
-    return this->writeto(addr, data.data(), data.size());
+    return detail::WriteRange<
+        ClientSocketHandle<Policy>,
+        ForwardReadableRange const,
+        contiguous_storage_iterator<
+            typename boost::range_iterator<ForwardReadableRange>::type
+        >::value && sizeof(typename boost::range_value<ForwardReadableRange>::type)==sizeof(char)
+        >::writeto(*this, range, addr);
 }
 
 template <class Policy>
-prefix_ unsigned senf::ClientSocketHandle<Policy>::
-writeto(typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
-        char const * buffer, unsigned size)
+prefix_ char const * senf::ClientSocketHandle<Policy>::writeto(AddressParam addr,
+                                                               char const * start,
+                                                               char const * end)
 {
-    return Policy::WritePolicy::writeto(*this, addr, buffer, size);
+    return start + Policy::WritePolicy::writeto(*this, addr, start, end-start);
 }
 
 ////////////////////////////////////////

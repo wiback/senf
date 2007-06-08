@@ -61,7 +61,8 @@ namespace senf {
         template <class Policy>
         static unsigned readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
                                  typename Policy::AddressingPolicy::Address & address,
-                                 typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type * = 0);
+                                 typename IfCommunicationPolicyIs<
+                                     Policy,UnconnectedCommunicationPolicy>::type * = 0);
                                         ///< read data from socket returning peer address
                                         /**< \param[in] handle socket handle to read from
                                              \param[in] buffer address of buffer to write data to
@@ -92,7 +93,8 @@ namespace senf {
     {
         template <class Policy>
         static unsigned write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
-                              typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+                              typename IfCommunicationPolicyIs<
+                                  Policy,ConnectedCommunicationPolicy>::type * = 0);
                                         ///< write data to socket
                                         /**< This member is only enabled if the socket uses
                                              connected communication. Otherwise the communication
@@ -105,9 +107,11 @@ namespace senf {
                                              \returns number of bytes written */
         template <class Policy>
         static unsigned writeto(ClientSocketHandle<Policy> handle,
-                                typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
+                                typename boost::call_traits<
+                                    typename Policy::AddressingPolicy::Address>::param_type addr,
                                 char const * buffer, unsigned size,
-                                typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type * = 0);
+                                typename IfCommunicationPolicyIs<
+                                    Policy,UnconnectedCommunicationPolicy>::type * = 0);
                                         ///< write data to socket sending to given peer
                                         /**< This member is only enabled if the socket uses
                                              unconnected communication. Otherwise no target may be

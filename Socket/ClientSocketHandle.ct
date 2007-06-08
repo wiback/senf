@@ -36,8 +36,6 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>
 
-// senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>::read
-
 template <class Handle, class ForwardWritableRange, bool IsContiguous>
 prefix_ typename boost::range_iterator<ForwardWritableRange>::type
 senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>::
@@ -48,8 +46,6 @@ read(Handle & handle, ForwardWritableRange & range)
     return std::copy(buffer, handle.read(buffer,buffer+nread), boost::begin(range));
 }
 
-// senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>::readfrom
-
 template <class Handle, class ForwardWritableRange, bool IsContiguous>
 prefix_ typename boost::range_iterator<ForwardWritableRange>::type
 senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>::
@@ -58,6 +54,31 @@ readfrom(Handle & handle, ForwardWritableRange & range, typename Handle::Address
     typename boost::range_size<ForwardWritableRange>::type nread (boost::size(range));
     SENF_SCOPED_BUFFER(char, buffer, nread);
     return std::copy(buffer, handle.readfrom(buffer,buffer+nread,addr), boost::begin(range));
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::WriteRange<Handle,ForwardReadableRange,IsContiguous>
+
+template <class Handle, class ForwardReadableRange, bool IsContiguous>
+prefix_ typename boost::range_iterator<ForwardReadableRange>::type
+senf::detail::WriteRange<Handle,ForwardReadableRange,IsContiguous>::
+write(Handle & handle, ForwardReadableRange & range)
+{
+    typename boost::range_size<ForwardReadableRange>::type nwrite (boost::size(range));
+    SENF_SCOPED_BUFFER(char, buffer, nwrite);
+    std::copy(boost::begin(range), boost::end(range), buffer);
+    return handle.write(std::make_pair(buffer, buffer+nwrite));
+}
+
+template <class Handle, class ForwardReadableRange, bool IsContiguous>
+prefix_ typename boost::range_iterator<ForwardReadableRange>::type
+senf::detail::WriteRange<Handle,ForwardReadableRange,IsContiguous>::
+writeto(Handle & handle, ForwardReadableRange & range, typename Handle::Address const & addr)
+{
+    typename boost::range_size<ForwardReadableRange>::type nwrite (boost::size(range));
+    SENF_SCOPED_BUFFER(char, buffer, nwrite);
+    std::copy(boost::begin(range), boost::end(range), buffer);
+    return handle.writeto(std::make_pair(buffer, buffer+nwrite), addr);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -111,29 +132,6 @@ prefix_ void senf::ClientSocketHandle<Policy>::readfrom(Sequence & container, Ad
     container.resize(nread);
     container.erase(readfrom( std::make_pair(container.begin(), container.end()), from ), 
                     container.end());
-}
-
-// senf::ClientSocketHandle<Policy>::write
-
-template <class Policy>
-prefix_ unsigned senf::ClientSocketHandle<Policy>::write(std::string const & data)
-{
-    unsigned written = this->write(data.data(),data.size());
-    if (written == 0)
-        throw SystemException(EPIPE);
-    // This implementation ensures, we only call blocking() when
-    // necessary (since it incurs a system call overhead ...)
-    if (written < data.size() && this->blocking())
-        // We need to enforce in the WritePolicy implementation, that
-        // DatagramFramingPolicy sockets will ALWAYS either write the
-        // complete datagram or nothing at all
-        while (written < data.size()) {
-            unsigned n = this->write(data.data()+written,data.size()-written);
-            if (n == 0)
-                throw SystemException(EPIPE);
-            written += n;
-        }
-    return written;
 }
 
 ////////////////////////////////////////

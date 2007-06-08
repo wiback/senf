@@ -32,6 +32,9 @@
 namespace senf {
 namespace detail {
 
+    ///////////////////////////////////////////////////////////////////////
+    // senf::detail::ReadRange
+
     template <class Handle, class ForwardWritableRange, bool IsContiguous>
     struct ReadRange 
     {
@@ -43,13 +46,38 @@ namespace detail {
     };
 
     template <class Handle, class ForwardWritableRange>
-    struct ReadRange<Handle,ForwardWritableRange,true>
+    struct ReadRange<Handle, ForwardWritableRange, true>
     {
         static typename boost::range_iterator<ForwardWritableRange>::type
         read(Handle & handle, ForwardWritableRange & range);
 
         static typename boost::range_iterator<ForwardWritableRange>::type
         readfrom(Handle & handle, ForwardWritableRange & range, typename Handle::Address & addr);
+    };
+
+    ///////////////////////////////////////////////////////////////////////
+    // senf::detail::WriteRange
+
+    template <class Handle, class ForwardReadableRange, bool IsContiguous>
+    struct WriteRange
+    {
+        static typename boost::range_iterator<ForwardReadableRange>::type
+        write(Handle & handle, ForwardReadableRange & range);
+        
+        static typename boost::range_iterator<ForwardReadableRange>::type
+        writeto(Handle & handle, ForwardReadableRange & range,
+                typename Handle::Address const & addr);
+    };
+
+    template <class Handle, class ForwardReadableRange>
+    struct WriteRange<Handle, ForwardReadableRange, true>
+    {
+        static typename boost::range_const_iterator<ForwardReadableRange>::type
+        write(Handle & handle, ForwardReadableRange & range);
+        
+        static typename boost::range_const_iterator<ForwardReadableRange>::type
+        writeto(Handle & handle, ForwardReadableRange & range,
+                typename Handle::Address const & addr);
     };
 
 }}

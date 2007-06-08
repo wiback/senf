@@ -229,7 +229,7 @@ namespace senf {
         std::pair<std::string, Address>
                      readfrom     (unsigned limit=0);
         template <class ForwardWritableRange>
-        typename boost::range_iterator<ForwardWritableRange>::type
+        typename boost::range_iterator<ForwardWritableRange const>::type
                      readfrom     (ForwardWritableRange const & range, Address & from);
                                         ///< Read data into range
                                         /**< Read data into the given range. At most
@@ -288,20 +288,22 @@ namespace senf {
             \throws senf::SystemException
 
 
-            This variant will write out the string \c data.
+            This variant will write out the range \c data.
 
-            \param[in] data Data to write
-            \returns number of bytes written
+            \param[in] range Data to write
+            \returns past-the-end iterator after last element written
             \implementation The write() family of members will use POSIX \c write calls, not \c
                 send.
          */
-        unsigned     write        (std::string const & data);
-        unsigned     write        (char const * buffer, unsigned size);
+        template <class ForwardReadableRange>
+        typename boost::range_const_iterator<ForwardReadableRange const>::type
+                     write        (ForwardReadableRange const & range);
+        char const * write        (char const * start, char const * end);
                                         ///< Write data to socket from memory buffer
-                                        /**< \param[in] buffer address of buffer to write
-                                           \param[in] size amount of data to write
-                                           \returns Number of bytes written
-                                           \see \ref write() */
+                                        /**< \param[in] start beginning of area to write
+                                             \param[in] end past-the-end pointer to area to write
+                                             \returns past-the-end pointer after last byte written
+                                             \see \ref write() */
 
         /** \brief Write data to unconnected socket
 
@@ -315,20 +317,22 @@ namespace senf {
             \throw senf::SystemException
 
 
-            This variant will send the string \c data to the peer \c addr.
+            This variant will send the range \c range to peer \c addr.
 
             \param[in] addr Address of peer to send data to
-            \param[in] data data to send
+            \param[in] range data to send
             \returns Number of bytes written
          */
-        unsigned     writeto      (AddressParam addr, std::string const & data);
-        unsigned     writeto      (AddressParam addr, char const * buffer, unsigned size);
+        template <class ForwardReadableRange>
+        typename boost::range_const_iterator<ForwardReadableRange const>::type
+                     writeto      (AddressParam addr, ForwardReadableRange const & range);
+        char const * writeto      (AddressParam addr, char const * start, char const * end);
                                         ///< Write data from memory buffer to unconnected socket
                                         /**< \param[in] addr Address of peer to send data to
-                                           \param[in] buffer address of buffer to write
-                                           \param[in] size amount of data to write
-                                           \returns Number of bytes written
-                                           \see \ref writeto() */
+                                             \param[in] start address of buffer to write
+                                             \param[in] end past-the-end pointer after data to write
+                                             \returns past-the-end iterator after last byte written
+                                             \see \ref writeto() */
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Addressing
