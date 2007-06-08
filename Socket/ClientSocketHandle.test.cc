@@ -87,13 +87,13 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
     BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.read(), "TEST-READ" ) );
     {
         std::string buf("FOO-BAR");
-        BOOST_CHECK_NO_THROW( myh.read(buf) );
+        BOOST_CHECK_NO_THROW( myh.read(buf,0) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ" );
     }
     {
         char buf[11];
         ::strcpy(buf,"0123456789");
-        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.read(buf,10), 9u ) );
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.read(buf,buf+10), buf+9u ) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
     }
 
@@ -101,14 +101,14 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
     {
         std::string buf("FOO-BAR");
         unsigned addr;
-        BOOST_CHECK_NO_THROW( myh.readfrom(buf,addr) );
+        BOOST_CHECK_NO_THROW( myh.readfrom(buf,addr,0) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ" );
     }
     {
         char buf[11];
         unsigned addr;
         ::strcpy(buf,"0123456789");
-        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.readfrom(buf,10,addr), 9u ) );
+        BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.readfrom(buf,buf+10,addr), buf+9u ) );
         BOOST_CHECK_EQUAL( buf, "TEST-READ9" );
     }
 

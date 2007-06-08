@@ -29,6 +29,7 @@
 
 // Custom includes
 #include <boost/call_traits.hpp>
+#include <boost/range.hpp>
 #include "SocketHandle.hh"
 
 //#include "ClientSocketHandle.mpp"
@@ -139,26 +140,26 @@ namespace senf {
         /** \brief Read data from socket
 
             If the sockets \c FramingPolicy is \c DatagramFramingPolicy, every read() command will
-            return a single datagram. If the sockets FramingPolicy is StreamFraming, the operation will
-            return as much data as possible from the socket buffer. However it cannot be guaranteed,
-            that the socket buffer will be empty after read() returns.
+            return a single datagram. If the sockets FramingPolicy is StreamFraming, the operation
+            will return as much data as possible from the socket buffer. However it cannot be
+            guaranteed, that the socket buffer will be empty after read() returns.
 
             \attention If the space available for the data read is limited, the read will return no
             more than that amount of data. For a datagram socket, a full datagram is still dequeued
             from the socket buffer, the remainder of the datagram will be lost.
 
-            There are three variants of read which differ in how they return the read string.
+            There are several variants of read which differ in how they return the read string.
 
-            \throws senf::SystemException
+            If the further document doesn't tell something differently, on a blocking socket the
+            members will \e always return some data (as long as the socket has not been closed at
+            the other end) and will block, if no data is available now. If you do not want to block,
+            you \e must make the socket non-blocking (using FileHandle::blocking()).
+
+            \throws senf::SystemException 
 
 
             This variant will read up to \c limit bytes from the
             socket and return them as a \c std::string object.
-
-            On a blocking socket, this member will \e always return some data (as long as the socket
-            has not been closed at the other end) and will block, if no data is available now. If
-            you do not want to block, you \e must make the socket non-blocking (using
-            FileHandle::blocking()).
 
             \param[in] limit Maximum number of bytes to read or 0 if unlimited.
             \returns data read
@@ -167,55 +168,102 @@ namespace senf {
             \c recv.
         */
         std::string  read         (unsigned limit=0);
-        void         read         (std::string & buffer, unsigned limit=0);
-                                        ///< Read data into string buffer
-                                        /**< On a blocking socket, this member will \e always return
-                                           some data (as long as the socket has not been closed at
-                                           the other end) and will block, if no data is available
-                                           now. If you do not want to block, you \e must make the
-                                           socket non-blocking (using FileHandle::blocking()).
-                                           \param[out] buffer data read
-                                           \param[in] limit Maximum number of bytes to read or 0
-                                           if unlimited
-                                           \see \ref read() */
-        unsigned     read         (char * buffer, unsigned size);
+        template <class ForwardWritableRange>
+        typename boost::range_iterator<ForwardWritableRange>::type
+                     read         (ForwardWritableRange const & range);
+                                        ///< Read data into range
+                                        /**< Read data into the given range. At most
+                                             <tt>boost::size(range)</tt> characters are read. The
+                                             data read will start at the beginning of the
+                                             range. read returns a past-the-end iterator after the
+                                             last character read. This iterator will point to
+                                             somewhere within the input range.
+                                             \param[in/out] range Range to store data in 
+                                             \returns past-the-end iterator pointer to after the
+                                                 last read character 
+                                             \see \ref read() */
+        template <class ForwardWritableRange>
+        typename boost::range_iterator<ForwardWritableRange>::type
+                     read         (ForwardWritableRange & range);
+                                        ///< Read data into range
+                                        /**< \see 
+                                             read(ForwardWritableRange const &) \n
+                                             read() */
+        template <class Sequence>
+        void         read         (Sequence & container, unsigned limit);
+                                        ///< Read data into container
+                                        /**< The data read is written into the given container. Old
+                                             data in the container will be removed. For this to
+                                             work, the container must be a model of 'Sequence' as
+                                             defined in the STL documentation
+                                             \param[out] container Container to write data to
+                                             \param[in] limit Maximum number of characters to read 
+                                             \see \ref read() */
+        char *       read         (char * start, char * end);
                                         ///< Read data into memory area
-                                        /**< This variant will read data into the memory area at \c
-                                           buffer of size \c size. This is the most performant
-                                           version of read().
-                                           \param[in] buffer address of buffer to store data at
-                                           \param[in] size size of memory buffer
-                                           \returns Number of bytes read
-                                           \see \ref read() */
+                                        /**< This variant will read data into the memory area from
+                                             \a start to before \a end. This is guaranteed to be the
+                                             most efficient version  of read().
+                                             \param[in] start address of buffer to store data at
+                                             \param[in] end address one past the end of the buffer
+                                             \returns pointer past the end of the data read
+                                             \see \ref read() */
 
         /** \brief Read data from unconnected socket returning address
 
-            This member behaves like read() but should only be available, if the sockets \c
-            CommunicationPolicy is \c UnconnectedCommunicationPolicy and the \c AddressingPolicy is
-            not \c NoAddressingPolicy. The readfrom() family will in addition to the data return the
-            address of the sender.
+            The readfrom() group of member behaves like \ref read() but should only be available, if
+            the sockets \c CommunicationPolicy is \c UnconnectedCommunicationPolicy and the \c
+            AddressingPolicy is not \c NoAddressingPolicy. readfrom() will in addition to the data
+            return the address of the sender.
 
             \throws senf::SystemException
+
 
             This variant will return the data read and the address as a std::pair.
 
             \returns \c std::pair of data read (a string) and the peers address
 
-            \fixme Add \c limit argument
-
             \implementation The readfrom() family of members will use \c recvfrom from the BSD
             socket API.
          */
         std::pair<std::string, Address>
-                     readfrom     ();
-        void         readfrom     (std::string & buffer, Address & from);
-                                        ///< Read data into string buffer
-                                        /**< This variant will return the result in the locations
-                                           passed in
-                                           \param[out] buffer data read
-                                           \param[out] from peer address
-                                           \see \ref readfrom() */
-        unsigned     readfrom     (char * buffer, unsigned size, Address & from);
+                     readfrom     (unsigned limit=0);
+        template <class ForwardWritableRange>
+        typename boost::range_iterator<ForwardWritableRange>::type
+                     readfrom     (ForwardWritableRange const & range, Address & from);
+                                        ///< Read data into range
+                                        /**< Read data into the given range. At most
+                                             <tt>boost::size(range)</tt> characters are read. The
+                                             data read will start at the beginning of the
+                                             range. read returns a past-the-end iterator after the
+                                             last character read. This iterator will point to
+                                             somewhere within the input range.
+                                             \param[in/out] range Range to store data in 
+                                             \param[out] from peers address from which the data was
+                                                 received
+                                             \returns past-the-end iterator pointer to after the
+                                                 last read character 
+                                             \see \ref readfrom() */
+        template <class ForwardWritableRange>
+        typename boost::range_iterator<ForwardWritableRange>::type
+                     readfrom     (ForwardWritableRange & range, Address & from);
+                                        ///< Read data into range
+                                        /**< \see 
+                                             readfrom(ForwardWritableRange const&,Address&) \n
+                                             readfrom() */
+        template <class Sequence>
+        void         readfrom     (Sequence & container, Address & from, unsigned limit);
+                                        ///< Read data into container
+                                        /**< The data read is written into the given container. Old
+                                             data in the container will be removed. For this to
+                                             work, the container must be a model of 'Sequence' as
+                                             defined in the STL documentation
+                                             \param[out] container Container to write data to
+                                             \param[in] limit Maximum number of characters to read 
+                                             \param[out] from peers address from which the data was
+                                                 received
+                                             \see \ref readfrom() */
+        char *       readfrom     (char * start, char * end, Address & from);
                                         ///< Read data into memory buffer
                                         /**< This variant will read data into the memory area at \c
                                            buffer of size \c size. This is the most performant

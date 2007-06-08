@@ -24,12 +24,49 @@
     \brief ClientSocketHandle non-inline template implementation
  */
 
-//#include "ClientSocketHandle.ih"
+#include "ClientSocketHandle.ih"
 
 // Custom includes
+#include <algorithm>
+#include "Utils/Buffer.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>
+
+// senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>::read
+
+template <class Handle, class ForwardWritableRange, bool IsContiguous>
+prefix_ typename boost::range_iterator<ForwardWritableRange>::type
+senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>::
+read(Handle & handle, ForwardWritableRange & range)
+{
+    typename boost::range_size<ForwardWritableRange>::type nread (boost::size(range));
+    SENF_SCOPED_BUFFER(char, buffer, nread);
+    return std::copy(buffer, handle.read(buffer,buffer+nread), boost::begin(range));
+}
+
+// senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>::readfrom
+
+template <class Handle, class ForwardWritableRange, bool IsContiguous>
+prefix_ typename boost::range_iterator<ForwardWritableRange>::type
+senf::detail::ReadRange<Handle,ForwardWritableRange,IsContiguous>::
+readfrom(Handle & handle, ForwardWritableRange & range, typename Handle::Address & addr)
+{
+    typename boost::range_size<ForwardWritableRange>::type nread (boost::size(range));
+    SENF_SCOPED_BUFFER(char, buffer, nread);
+    return std::copy(buffer, handle.readfrom(buffer,buffer+nread,addr), boost::begin(range));
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ClientSocketHandle<Policy>
+
+////////////////////////////////////////
+// reading and writing
+
+// senf::ClientSocketHandle<Policy>::read
 
 template <class Policy>
 prefix_ std::string senf::ClientSocketHandle<Policy>::read(unsigned limit)
@@ -40,39 +77,43 @@ prefix_ std::string senf::ClientSocketHandle<Policy>::read(unsigned limit)
 }
 
 template <class Policy>
-prefix_ void senf::ClientSocketHandle<Policy>::read(std::string & buffer, unsigned limit)
+template <class Sequence>
+prefix_ void senf::ClientSocketHandle<Policy>::read(Sequence & container, unsigned limit)
 {
-    unsigned nread = available();
+    unsigned nread (available());
     if (limit>0 && nread>limit)
         nread = limit;
-    /** \fixme This is not necessary correct and more or less a hack ... */
-    buffer.assign(nread,0);
-    unsigned rv = this->read(const_cast<char *>(buffer.data()),nread);
-    if (rv < nread)
-        buffer.erase(buffer.begin()+rv,buffer.end());
+    container.resize(nread);
+    container.erase(read( std::make_pair(container.begin(), container.end()) ), 
+                    container.end());
 }
+
+// senf::ClientSocketHandle<Policy>::readfrom
 
 template <class Policy>
 prefix_ std::pair<std::string, typename Policy::AddressingPolicy::Address>
-senf::ClientSocketHandle<Policy>::readfrom()
+senf::ClientSocketHandle<Policy>::readfrom(unsigned limit)
 {
     std::string rv;
     typename Policy::AddressingPolicy::Address addr;
-    this->readfrom(rv,addr);
+    this->readfrom(rv,addr,limit);
     return std::make_pair(rv,addr);
 }
 
 template <class Policy>
-prefix_ void senf::ClientSocketHandle<Policy>::
-readfrom(std::string & buffer, typename Policy::AddressingPolicy::Address & from)
+template <class Sequence>
+prefix_ void senf::ClientSocketHandle<Policy>::readfrom(Sequence & container, Address & from,
+                                                        unsigned limit)
 {
-    unsigned nread = available();
-    /** \fixme This is not necessary correct and more or less a hack ... */
-    buffer.assign(nread,0);
-    unsigned rv = this->readfrom(const_cast<char *>(buffer.data()), nread, from);
-    if (rv < nread)
-        buffer.erase(buffer.begin()+rv,buffer.end());
+    unsigned nread (available());
+    if (limit>0 && nread>limit)
+        nread = limit;
+    container.resize(nread);
+    container.erase(readfrom( std::make_pair(container.begin(), container.end()), from ), 
+                    container.end());
 }
+
+// senf::ClientSocketHandle<Policy>::write
 
 template <class Policy>
 prefix_ unsigned senf::ClientSocketHandle<Policy>::write(std::string const & data)
@@ -94,6 +135,11 @@ prefix_ unsigned senf::ClientSocketHandle<Policy>::write(std::string const & dat
         }
     return written;
 }
+
+////////////////////////////////////////
+// private members
+
+// senf::ClientSocketHandle<Policy>::available
 
 template <class Policy>
 prefix_ unsigned senf::ClientSocketHandle<Policy>::available()
