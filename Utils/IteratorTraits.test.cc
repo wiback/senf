@@ -19,24 +19,32 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IteratorTraits inline template implementation */
+    \brief IteratorTraits.test unit tests */
 
-#include "IteratorTraits.ih"
+//#include "IteratorTraits.test.hh"
+//#include "IteratorTraits.test.ih"
 
 // Custom includes
-#include <boost/utility.hpp>
+#include "IteratorTraits.hh"
+#include <vector>
+#include <string>
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-template <class Iterator>
-prefix_ typename std::iterator_traits<Iterator>::pointer senf::storage_iterator(Iterator i)
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
+
+BOOST_AUTO_UNIT_TEST(iteratorTraits)
 {
-    return boost::addressof(*i);
+    BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<int*>::value, true );
+#ifdef __GNUG__
+    BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<std::vector<int>::iterator>::value, true);
+    BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<std::string::iterator>::value, true);
+#endif
 }
 
-
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 

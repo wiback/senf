@@ -19,25 +19,40 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IteratorTraits inline template implementation */
+    \brief IteratorTraits internal header */
 
-#include "IteratorTraits.ih"
+#ifndef IH_IteratorTraits_
+#define IH_IteratorTraits_ 1
 
 // Custom includes
-#include <boost/utility.hpp>
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+///////////////////////////////ih.p////////////////////////////////////////
 
-template <class Iterator>
-prefix_ typename std::iterator_traits<Iterator>::pointer senf::storage_iterator(Iterator i)
-{
-    return boost::addressof(*i);
+namespace senf {
+
+    // It is not very nice that we need to specialize on the exact iterator names.
+    // The preprocessor guard will need to be expanded by also giving the correct
+    // version numbers. We need to disable it when using stlport and so on ... 
+    // The problem is, that typedefs are not expanded when specializing ...
+
+#if defined(__GNUG__)
+    template <class T, class Alloc>
+    struct contiguous_storage_iterator<
+        __gnu_cxx::__normal_iterator<T*, std::vector<T,Alloc> > >
+        : public boost::true_type
+    {};
+
+    template <class CharT, class Traits, class Alloc>
+    struct contiguous_storage_iterator< 
+        __gnu_cxx::__normal_iterator<CharT*, std::basic_string<CharT, Traits, Alloc> > >
+        : public boost::true_type
+    {};
+#endif
+
 }
 
-
-///////////////////////////////cti.e///////////////////////////////////////
-#undef prefix_
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
 
 
 // Local Variables:

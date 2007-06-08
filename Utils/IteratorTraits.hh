@@ -25,6 +25,7 @@
 #define HH_IteratorTraits_ 1
 
 // Custom includes
+#include <boost/type_traits/integral_constant.hpp>
 #include <vector>
 #include <string>
 
@@ -36,26 +37,19 @@ namespace senf {
 // The following is *not* standard mandated but it *is* mandated by TR1 and I know of no
 // implementation for which this is not correct
 
-#define SENF_VECTOR_IS_CONTIGUOUS 1
-#define SENF_STRING_IS_CONTIGUOUS 1
-    
     /** \brief Check for contiguous mutable storage
 
         This type trait returns \c true, if \a RandomAccessIterator is an iterator into a contiguous
         storage area which may be written to. If this is the case, some algorithms may be optimized
         by directly modifying the underlying storage instead of relying on the STL interface.
         
-        This trait is predefined to return \c true for pointers and for the iterators of \c
-        std::vector and \c std::basic_string (and so for \c std::string and \c std::wstring). This
-        is \e not required by the current standard. It is however required for \c std::vector in the
-        first corrigendum to the standard, TR1. Furthermore almost all implementations for \c
-        std::vector do follow this approach. 
+        This trait will return \c true for pointers. Additonally it should be configured to return
+        true for all standard containers which obey above implementation restrictions. This
+        typically includes \c std::vector and \c std::basic_string.
 
-        For \c std::string the case is different, there are libraries which use reference counting
-        and shared ownership for strings, however no library with which SENF has been tested to date
-        has strings of this variety. If SENF is used with such a standard library implementation,
-        this header has to be adjysted to define the preprocessor symbol \c
-        SENF_STRING_IS_CONTIGUOUS accordingly.
+        To do so, the template must be specialized for those containers \c iterator type. If
+        compiling with g++, this is implemented in \ref IteratorTraits.ih. This file should be
+        extended for further compilers if necessary.
      */
     template <class RandomAccessIterator>
     struct contiguous_storage_iterator
@@ -66,20 +60,6 @@ namespace senf {
     struct contiguous_storage_iterator<T *>
         : public boost::true_type
     {};
-
-#if defined(SENF_VECTOR_IS_CONTIGUOUS)
-    template <class T, class Alloc>
-    struct contiguous_storage_iterator< typename std::vector<T,Alloc>::iterator >
-        : public boost::true_type
-    {};
-#endif
-
-#if defined(SENF_STRING_IS_CONTIGUOUS)
-    template <class CharT, class Traits, class Alloc>
-    struct contiguous_storage_iterator< typename std::basic_string<CharT, Traits, Alloc>::iterator >
-        : public boost::true_type
-    {};
-#endif
 
     /** \brief Convert contiguous storage iterator to pointer
         
@@ -94,7 +74,8 @@ namespace senf {
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "IteratorTraits.cci"
 //#include "IteratorTraits.ct"
-//#include "IteratorTraits.cti"
+#include "IteratorTraits.cti"
+#include "IteratorTraits.ih"
 #endif
 
 
