@@ -116,8 +116,6 @@ prefix_ void senf::Scheduler::do_add(int fd, SimpleCallback const & cb, int even
     if (eventMask & EV_READ)  i->second.cb_read = cb;
     if (eventMask & EV_PRIO)  i->second.cb_prio = cb;
     if (eventMask & EV_WRITE) i->second.cb_write = cb;
-    if (eventMask & EV_HUP)   i->second.cb_hup = cb;
-    if (eventMask & EV_ERR)   i->second.cb_err = cb;
 
     epoll_event ev;
     memset(&ev,0,sizeof(ev));
@@ -137,8 +135,6 @@ prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
     if (eventMask & EV_READ)  i->second.cb_read = 0;
     if (eventMask & EV_PRIO)  i->second.cb_prio = 0;
     if (eventMask & EV_WRITE) i->second.cb_write = 0;
-    if (eventMask & EV_HUP)   i->second.cb_hup = 0;
-    if (eventMask & EV_ERR)   i->second.cb_err = 0;
 
     epoll_event ev;
     memset(&ev,0,sizeof(ev));
@@ -163,8 +159,6 @@ prefix_ int senf::Scheduler::EventSpec::epollMask()
     if (cb_read)  mask |= EPOLLIN;
     if (cb_prio)  mask |= EPOLLPRI;
     if (cb_write) mask |= EPOLLOUT;
-    if (cb_hup)   mask |= EPOLLHUP;
-    if (cb_err)   mask |= EPOLLERR;
     return mask;
 }
 
@@ -185,50 +179,46 @@ prefix_ void senf::Scheduler::process()
         struct epoll_event ev;
         int events = epoll_wait(epollFd_, &ev, 1, timeout);
         if (events<0)
-            // Hmm ... man epoll says, it will NOT return with EINTR ??
+            // Hmm ... man epoll says, it will NOT return with EINTR. I hope, this is true :-)
             throw SystemException(errno);
         if (events==0)
-            // Timeout .. it will be run when reachiung the top of the loop
+            // Timeout .. the handler will be run when going back to the loop top
             continue;
 
         FdTable::iterator i = fdTable_.find(ev.data.fd);
         BOOST_ASSERT (i != fdTable_.end() );
-        EventSpec const & spec (i->second);
+        // \todo Make this more efficient. Instead of copying the event-spec it should be
+        // revalidated by monitoring add/remove calls
+        EventSpec spec (i->second);
+
+        unsigned extraFlags (0);
+        if (ev.events & EPOLLHUP) extraFlags |= EV_HUP;
+        if (ev.events & EPOLLERR) extraFlags |= EV_ERR;
 
         if (ev.events & EPOLLIN) {
             BOOST_ASSERT(spec.cb_read);
-            spec.cb_read(EV_READ);
+            spec.cb_read(EventId(EV_READ | extraFlags));
         }
         else if (ev.events & EPOLLPRI) {
             BOOST_ASSERT(spec.cb_prio);
-            spec.cb_prio(EV_PRIO);
+            spec.cb_prio(EventId(EV_PRIO | extraFlags));
         }
         else if (ev.events & EPOLLOUT) {
             BOOST_ASSERT(spec.cb_write);
-            spec.cb_write(EV_WRITE);
+            spec.cb_write(EventId(EV_WRITE | extraFlags));
         }
-
-        else if (ev.events & EPOLLHUP) {
-            if (spec.cb_hup)
-                spec.cb_hup(EV_HUP);
-            else if (ev.events & EPOLLERR) {
-                /** \fixme This is stupid, if cb_write and cb_read are
-                    the same. The same below. We really have to
-                    exactly define sane semantics of what to do on
-                    EPOLLHUP and EPOLLERR. */
-                if (spec.cb_write) spec.cb_write(EV_HUP);
-                if (spec.cb_read) spec.cb_read(EV_HUP);
-            }
+        else {
+            // This branch is only taken, if HUP or ERR is signaled but none of IN/OUT/PRI. 
+            // In this case we will signal all registered callbacks. The callbacks must be
+            // prepared to be called multiple times if they are registered to more than
+            // one event.
+            if (spec.cb_write) 
+                spec.cb_write(EventId(extraFlags));
+            if (spec.cb_prio) 
+                spec.cb_prio(EventId(extraFlags));
+            if (spec.cb_read) 
+                spec.cb_read(EventId(extraFlags));
         }
-        else if (ev.events & EPOLLERR && ! ev.events & EPOLLHUP) {
-            if (spec.cb_err)
-                spec.cb_err(EV_ERR);
-            else {
-                if (spec.cb_write) spec.cb_write(EV_ERR);
-                if (spec.cb_read) spec.cb_read(EV_ERR);
-            }
-        }
-
     }
 }
 

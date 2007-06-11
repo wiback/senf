@@ -56,9 +56,10 @@ prefix_ void senf::IpV4Packet::v_dump(std::ostream & os)
 {
     struct in_addr in;
     in.s_addr = htonl(source());
-    std::string src (inet_ntoa(in));
+    char buffer[128];
+    std::string src (inet_ntop(AF_INET,&in,buffer,128));
     in.s_addr = htonl(destination());
-    std::string dst (inet_ntoa(in));
+    std::string dst (inet_ntop(AF_INET,&in,buffer,128));
     os << "Internet protocol Version 4:\n"
        << "  version       : " << version() << "\n"
        << "  IHL           : " << ihl() << "\n"

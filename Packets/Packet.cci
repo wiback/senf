@@ -154,9 +154,8 @@ prefix_ senf::Packet::ptr senf::Packet::head()
 
 prefix_  senf::Packet::~Packet()
 {
-    /** \fixme This is bad ... we cannot check this since this
-        assertion fails at the moment if the Packet constructor throws
-        ... hrmpf ... we really need to initialize refcount_ to 0 and
+    /** \todo This is sad ... we cannot check this since this assertion fails at the moment if the
+        Packet constructor throws ... hrmpf ... we really should initialize refcount_ to 0 and
         remove the 'false' argument to the ptr constructor in create */
     // BOOST_ASSERT( !this->refcount_  && !this->impl_ );
     SATCOM_PKF_REFC_MSG("] Packet::~Packet (" << this << ")\n");

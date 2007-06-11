@@ -35,6 +35,11 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class SocketProtocol>
+prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::
+ProtocolClientSocketHandle(UninitializedType)
+{}
+
+template <class SocketProtocol>
 prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientSocketHandle()
     : ClientSocketHandle<typename SocketProtocol::Policy>(
         std::auto_ptr<senf::SocketProtocol>(new SocketProtocol()))

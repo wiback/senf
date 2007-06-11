@@ -96,10 +96,13 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        // no default constructor
+        // default default constructor
         // default copy constructor
         // default copy assignment
         // default destructor
+
+        // here to implement
+        ServerSocketHandle();
 
         // conversion constructors
         template <class OtherPolicy>

@@ -35,6 +35,10 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class SocketPolicy>
+prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle()
+{}
+
+template <class SocketPolicy>
 template <class OtherPolicy>
 prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle(SocketHandle<OtherPolicy> other,
                                                               typename IsCompatible<OtherPolicy>::type *)

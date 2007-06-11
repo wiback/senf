@@ -79,13 +79,6 @@ namespace senf {
         typelist of Poclicy classes which can be accessed. You use protocol<ProtocolClass>() to
         access a protocol class. \c Policies can of course be underspecified or even empty.
 
-        \idea add more flexible read/write members for a) boost::arrays and arrays of other types b)
-        std::vector (which uses contiguous memory ..) c) other random-access containers (we should
-        use some configurable trait class to identify containers with contiguous storage). Probably
-        we should just use a generic Boost.Range interface. Here we again come to the point: make
-        all except the most basic members be non-member algorithms ? this would make the
-        configuration of such extenden members more flexible.
-
         \see \ref policy_group \n
              \ref protocol_group
       */
@@ -116,10 +109,13 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        // no default constructor
+        // default default constructor
         // default copy constructor
         // default copy assignment
         // default destructor
+
+        // here to implement
+        ClientSocketHandle();
 
         // conversion constructors
         template <class OtherPolicy>
@@ -181,14 +177,15 @@ namespace senf {
                                              \param[in/out] range Range to store data in 
                                              \returns past-the-end iterator pointer to after the
                                                  last read character 
-                                             \see \ref read() */
+                                             \see \ref read() \n
+                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a> */
         template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type
                      read         (ForwardWritableRange & range);
                                         ///< Read data into range
-                                        /**< \see 
-                                             read(ForwardWritableRange const &) \n
-                                             read() */
+                                        /**< \see read(ForwardWritableRange const &) \n
+                                                  read() \n
+                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
         template <class Sequence>
         void         read         (Sequence & container, unsigned limit);
                                         ///< Read data into container
@@ -243,14 +240,15 @@ namespace senf {
                                                  received
                                              \returns past-the-end iterator pointer to after the
                                                  last read character 
-                                             \see \ref readfrom() */
+                                             \see \ref readfrom() \n
+                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
         template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type
                      readfrom     (ForwardWritableRange & range, Address & from);
                                         ///< Read data into range
-                                        /**< \see 
-                                             readfrom(ForwardWritableRange const&,Address&) \n
-                                             readfrom() */
+                                        /**< \see readfrom(ForwardWritableRange const&,Address&) \n
+                                                  readfrom()  \n
+                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a> */
         template <class Sequence>
         void         readfrom     (Sequence & container, Address & from, unsigned limit);
                                         ///< Read data into container
@@ -303,7 +301,8 @@ namespace senf {
                                         /**< \param[in] start beginning of area to write
                                              \param[in] end past-the-end pointer to area to write
                                              \returns past-the-end pointer after last byte written
-                                             \see \ref write() */
+                                             \see \ref write() \n
+                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
 
         /** \brief Write data to unconnected socket
 
@@ -332,7 +331,8 @@ namespace senf {
                                              \param[in] start address of buffer to write
                                              \param[in] end past-the-end pointer after data to write
                                              \returns past-the-end iterator after last byte written
-                                             \see \ref writeto() */
+                                             \see \ref writeto() \n
+                                                  <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Addressing

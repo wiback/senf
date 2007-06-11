@@ -41,7 +41,8 @@ namespace {
     class FHandle : public senf::FileHandle
     {
     public:
-        FHandle(int fd=-1)
+        FHandle() {}
+        FHandle(int fd)
             : senf::FileHandle(std::auto_ptr<senf::FileBody>(
                                           new senf::FileBody(fd))) {}
         FHandle(std::string name)
@@ -66,7 +67,9 @@ BOOST_AUTO_UNIT_TEST(fileHandle)
             BOOST_CHECK(fh);
             BOOST_CHECK(!!fh);
 
-            FHandle fh2(fh);
+            FHandle fh2;
+            BOOST_CHECK( ! fh2.valid() );
+            fh2 = fh;
             BOOST_CHECK_EQUAL(fh.fd(), fh2.fd());
 
             BOOST_CHECK(fh.writeable());

@@ -51,14 +51,12 @@ namespace senf {
      */
     struct ConnectedCommunicationPolicy : public CommunicationPolicyBase
     {
-        static void listen(FileHandle handle, unsigned backlog);
+        template <class Policy>
+        static void listen(ServerSocketHandle<Policy> handle, unsigned backlog,
+                           typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type * = 0);
                                         ///< Enable establishing new connections on the socket
                                         /**< \param[in] handle socket handle to enable reception on
-                                             \param[in] backlog size of backlog queue
-
-                                             \fixme listen probably makes no sense without accept,
-                                                 so listen() should depend on AddressingPolicy
-                                                 too. */
+                                             \param[in] backlog size of backlog queue */
         template <class Policy>
         static int accept(ServerSocketHandle<Policy> handle,
                           typename ServerSocketHandle<Policy>::Address & address,
@@ -74,6 +72,7 @@ namespace senf {
                                                  peer
                                              \returns file descriptor of new client socket */
     private:
+        static void do_listen(FileHandle handle, unsigned backlog);
         static int do_accept(FileHandle handle, struct sockaddr * addr, unsigned len);
     };
 

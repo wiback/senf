@@ -34,6 +34,10 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+template <class Policy>
+prefix_ senf::ServerSocketHandle<Policy>::ServerSocketHandle()
+{}
+
 template <class SocketPolicy>
 template <class OtherPolicy>
 prefix_ senf::ServerSocketHandle<SocketPolicy>::

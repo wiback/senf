@@ -59,9 +59,7 @@ namespace senf {
         INet4Address();
         INet4Address(char const * address); ///< Set address and port
                                         /**< See INet4Address(std::string)
-                                             \throws InvalidINetAddressException
-                                             \fixme Why do I need this version? Shouldn't the
-                                             std::string version be enough ? */
+                                             \throws InvalidINetAddressException */
         INet4Address(std::string address); ///< Set address and port
                                         /**< This constructor expects a string of the form
                                              'xxx.xxx.xxx.xxx:pppp'. The constructor will use this

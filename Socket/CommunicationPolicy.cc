@@ -38,8 +38,8 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::ConnectedCommunicationPolicy::listen(FileHandle handle,
-                                                               unsigned backlog)
+prefix_ void senf::ConnectedCommunicationPolicy::do_listen(FileHandle handle,
+                                                           unsigned backlog)
 {
     ::listen(handle.fd(),backlog);
 }

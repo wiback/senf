@@ -32,6 +32,14 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Policy>
+prefix_ void senf::ConnectedCommunicationPolicy::
+listen(ServerSocketHandle<Policy> handle, unsigned backlog,
+       typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type *)
+{
+    do_listen(handle, backlog);
+}
+
+template <class Policy>
 prefix_ int senf::ConnectedCommunicationPolicy::
 accept(ServerSocketHandle<Policy> handle,
        typename ServerSocketHandle<Policy>::Address & address,

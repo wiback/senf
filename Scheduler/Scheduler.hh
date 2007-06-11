@@ -76,8 +76,9 @@ namespace senf {
 
         /// \brief Types of file descriptor events */
         enum EventId { EV_NONE=0,
-                       EV_READ=1, EV_PRIO=2, EV_WRITE=4, EV_HUP=8, EV_ERR=16,
-                       EV_ALL=31 };
+                       EV_READ=1, EV_PRIO=2, EV_WRITE=4, 
+                       EV_ALL=7,
+                       EV_HUP=8, EV_ERR=16 };
 
         /** \brief Template typedef for Callback type
 
@@ -180,8 +181,6 @@ namespace senf {
             SimpleCallback cb_read;
             SimpleCallback cb_prio;
             SimpleCallback cb_write;
-            SimpleCallback cb_hup;
-            SimpleCallback cb_err;
 
             int epollMask() const;
         };

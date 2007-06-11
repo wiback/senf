@@ -28,40 +28,30 @@
 
     \image html FhHierarchy.png
 
-    The senf::FileHandle class is the base of a hierarchy of socket
-    handle classes (realized as templates). These classes provide an
-    interface to the complete socket API. While going down the
-    inheritance hierarchy, the interface will be more and more
-    complete.
+    The senf::FileHandle class is the base of a hierarchy of socket handle classes (realized as
+    templates). These classes provide an interface to the complete socket API. While going down the
+    inheritance hierarchy, the interface will be more and more complete.
 
-    The most complete interface is provided by
-    senf::ProtocolClientSocketHandle and
-    senf::ProtocolServerSocketHandle. The template Arguments specifies
-    the Protocol class of the underlying socket type. These are the
-    \e only classes having public constructors and are therefore the
-    only classes, which may be created by the library user. You will
-    normally use these classes by naming a specific socket typedef
-    (e.g. senf::TCPv4ClientSocketHandle).
+    The most complete interface is provided by senf::ProtocolClientSocketHandle and
+    senf::ProtocolServerSocketHandle. The template Arguments specifies the Protocol class of the
+    underlying socket type. These are the \e only classes having public constructors and are
+    therefore the only classes, which may be created by the library user. You will normally use
+    these classes by naming a specific socket typedef (e.g. senf::TCPv4ClientSocketHandle).
 
-    However, to aid writing flexible and generic code, the socket
-    library provides the senf::ClientSocketHandle and
-    senf::ServerSocketHandle class templates. These templates
-    implement a family of closely related classes based on the
-    specification of the socket policy. This policy specification may
-    be \e incomplete (see below). Instances of
-    senf::ClientSocketHandle/senf::ServerSocketHandle can be assigned
-    and converted to different ClientSocketHandle/ServerSocketHandle
-    types as long as the policy specifications are compatible.
+    However, to aid writing flexible and generic code, the socket library provides the
+    senf::ClientSocketHandle and senf::ServerSocketHandle class templates. These templates implement
+    a family of closely related classes based on the specification of the socket policy. This policy
+    specification may be \e incomplete (see below). Instances of
+    senf::ClientSocketHandle/senf::ServerSocketHandle can be assigned and converted to different
+    ClientSocketHandle/ServerSocketHandle types as long as the policy specifications are compatible.
 
-    \attention It is very important, to (almost) always pass the socket
-    handle <em>by value</em>. The socket handle is a very lightweight
-    class and designed to be used like an ordinary built-in type. This
-    is very important in combination with the policy interface.
+    \attention It is very important, to (almost) always pass the socket handle <em>by
+    value</em>. The socket handle is a very lightweight class and designed to be used like an
+    ordinary built-in type. This is very important in combination with the policy interface.
 
-    \note The FileHandle hierarchy below the SocketHandle template is
-    \e not meant to be user extensible. To add new socket types, you
-    should introduce new protocol and/or policy classes, the
-    SocketHandle classes should not be changed.
+    \note The FileHandle hierarchy below the SocketHandle template is \e not meant to be user
+    extensible. To add new socket types, you should introduce new protocol and/or policy classes,
+    the SocketHandle classes should not be changed.
  */
 
 #ifndef HH_FileHandle_
@@ -108,9 +98,6 @@ namespace senf {
         will have to call the protected FileHandle constructor passing a new senf::FileBody
         instance. This instance may either be a simple senf::FileBody or a class derived from
         senf::FileBody.
-
-        \fixme Add public default constructor to allow declaration of (empty) senf::FileHandle
-        variables.
      */
     class FileHandle
         : public SafeBool<FileHandle>
@@ -123,7 +110,9 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        // protected default constructor
+        FileHandle();
+
+        // my default constructor
         // default copy constructor
         // default copy assignment
         // default destructor

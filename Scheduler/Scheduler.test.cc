@@ -143,7 +143,7 @@ namespace {
     void callback(int fd, Scheduler::EventId ev)
     {
         event = ev;
-        switch (event) {
+        switch (event & Scheduler::EV_ALL) {
         case Scheduler::EV_READ:
             size = recv(fd,buffer,1024,0);
             break;
@@ -155,11 +155,6 @@ namespace {
             size = write(fd,buffer,size);
             Scheduler::instance().terminate();
             break;
-        case Scheduler::EV_HUP:
-        case Scheduler::EV_ERR:
-        case Scheduler::EV_NONE:
-        case Scheduler::EV_ALL:
-            ;
         }
         Scheduler::instance().terminate();
     }
@@ -246,7 +241,7 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     BOOST_CHECK_NO_THROW( Scheduler::instance().remove(handle,Scheduler::EV_WRITE) );
     event = Scheduler::EV_NONE;
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_EQUAL( event, Scheduler::EV_READ );
+    BOOST_CHECK_EQUAL( event, Scheduler::EventId(Scheduler::EV_READ|Scheduler::EV_HUP) );
     BOOST_REQUIRE_EQUAL( size, 2 );
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "OK" );

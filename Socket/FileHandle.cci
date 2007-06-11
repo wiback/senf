@@ -171,7 +171,7 @@ prefix_ bool senf::FileHandle::eof()
 prefix_ bool senf::FileHandle::valid()
     const
 {
-    return body().valid();
+    return body_ && body().valid();
 }
 
 prefix_ bool senf::FileHandle::boolean_test()
@@ -186,18 +186,24 @@ prefix_ int senf::FileHandle::fd()
     return body().fd();
 }
 
+prefix_ senf::FileHandle::FileHandle()
+    : body_(0)
+{}
+
 prefix_  senf::FileHandle::FileHandle(std::auto_ptr<FileBody> body)
     : body_(body.release())
 {}
 
 prefix_ senf::FileBody & senf::FileHandle::body()
 {
+    BOOST_ASSERT(body_);
     return *body_;
 }
 
 prefix_ senf::FileBody const & senf::FileHandle::body()
     const
 {
+    BOOST_ASSERT(body_);
     return *body_;
 }
 

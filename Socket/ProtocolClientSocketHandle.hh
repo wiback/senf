@@ -65,6 +65,7 @@ namespace senf {
         // Types
 
         typedef SocketProtocol Protocol; ///< The sockets protocol
+        enum UninitializedType { Uninitialized }; ///< Flag to call 'uninitialized' constructor
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -83,6 +84,17 @@ namespace senf {
 
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolClientSocketHandle.mpp", 1))
 #       include BOOST_PP_ITERATE()
+
+        /** \brief Create uninitialized socket variable
+
+            This special constructor is called when passing
+            ProtocolClientSocketHandle::Uninitialized as only argument to the constructor. This will
+            create an in-\ref valid() socket handle which can however be assigned later with another
+            socket instance.
+
+            \implementation The socket handle will have no \c body allocated.
+         */
+        ProtocolClientSocketHandle(UninitializedType);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////

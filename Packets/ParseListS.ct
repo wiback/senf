@@ -80,9 +80,8 @@ template <class Parser, class Sentinel, class Container>
 template <class Value>
 prefix_ void
 senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos,
-                                                                    Value const & t)
+                                                             Value const & t)
 {
-    /** \fixme What, if pos == end() / default constructed iterator ? */
     size_type ix (pos.raw()-container_.begin());
     container_.insert(pos.raw(),t.bytes(),0);
     Parser(container_.begin()+ix).value(t);
@@ -92,7 +91,7 @@ template <class Parser, class Sentinel, class Container>
 template <class Value>
 prefix_ void
 senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos, size_type n,
-                                                                    Value const & t)
+                                                             Value const & t)
 {
     size_type ix (pos.raw()-container_.begin());
     container_.insert(pos.raw(),n*t.bytes(),0);
@@ -105,8 +104,8 @@ template <class Parser, class Sentinel, class Container>
 template <class InputIterator>
 prefix_ void
 senf::Parse_ListS_wrapper<Parser,Sentinel,Container>::insert(iterator pos,
-                                                                    InputIterator f,
-                                                                    InputIterator l)
+                                                             InputIterator f,
+                                                             InputIterator l)
 {
     /** \todo Optimize this for random-access and multi-pass iterators */
     for (;f!=l;++f,++pos) insert(pos,*f);

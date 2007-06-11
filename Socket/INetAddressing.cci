@@ -58,8 +58,8 @@ prefix_ bool senf::INet4Address::operator==(INet4Address const & other)
 prefix_ std::string senf::INet4Address::host()
     const
 {
-    /** \fixme thread safety? */
-    return std::string(::inet_ntoa(addr_.sin_addr));
+    char buffer[128];
+    return std::string(::inet_ntop(AF_INET,&addr_.sin_addr,buffer,128));
 }
 
 prefix_ unsigned senf::INet4Address::port()

@@ -69,7 +69,6 @@ template <class Handle>
 prefix_ void senf::ReadHelper<Handle>::process(Handle handle,
                                                       senf::Scheduler::EventId event)
 {
-    /** \fixme Move the done() calls to outside the try/catch block */
     try {
         if (event != senf::Scheduler::EV_READ)
             throw SystemException(EPIPE);
@@ -82,13 +81,15 @@ prefix_ void senf::ReadHelper<Handle>::process(Handle handle,
                 tail_.assign(data_,n,std::string::npos);
                 data_.erase(n);
             }
-            done();
         }
     }
     catch (senf::SystemException const & ex) {
         errno_ = ex.err;
         done();
+        return;
     }
+    if (complete_)
+        done();
 }
 
 template <class Handle>

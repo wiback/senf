@@ -99,6 +99,10 @@ writeto(Handle & handle, ForwardReadableRange & range, typename Handle::Address 
 // structors
 
 template <class Policy>
+prefix_ senf::ClientSocketHandle<Policy>::ClientSocketHandle()
+{}
+
+template <class Policy>
 template <class OtherPolicy>
 prefix_ senf::ClientSocketHandle<Policy>::
 ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,

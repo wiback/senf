@@ -75,20 +75,23 @@ template <class Handle>
 prefix_ void senf::WriteHelper<Handle>::process(Handle handle,
                                                        senf::Scheduler::EventId event)
 {
-    /** \fixme Move the done() calls to outside the try/catch block */
+    bool complete_ (false);
     try {
         if (event != senf::Scheduler::EV_WRITE)
             throw senf::SystemException(EPIPE);
         offset_ += handle.write(data_.data()+offset_,data_.size()-offset_);
         if (offset_ >= data_.size()) {
             data_.erase();
-            done();
+            complete_ = true;
         }
     }
     catch (senf::SystemException const & ex) {
         errno_ = ex.err;
         done();
+        return;
     }
+    if (complete_)
+        done();
 }
 
 template <class Handle>
