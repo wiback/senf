@@ -53,23 +53,25 @@ div.tabs ul li.$projectname a { background-color: #EDE497; }
 <body>
 
 <div id="head">
-    <div id="search">
-      <div id="search2">
+  <div id="title">
+    <div id="title2">
+      <div id="search">
         <form action="@TOPDIR@/doclib/search.php" method="get">
           Search: <input type="text" name="query" size="20" accesskey="s"/> 
         </form>
       </div>
+      <h1>SENF Extensible Network Framework</h1>
     </div>
-    <h1>SENF Extensible Network Framework</h1>
-    <div id="subtitle">
-      <ul>
-        <li><a href="@TOPDIR@/doc/html/xref.html">Open Issues</a></li>
-        <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">SVN ChangeLog</a></li>
-        <li><a class="ext" href="http://developer.berlios.de/projects/senf">SENF @ BerliOS</a></li>
-        <li><a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">Wiki</a></li>
-      </ul>
-      <h2>${TITLE}</h2>
-    </div>
+  </div>
+  <div id="subtitle">
+    <ul>
+      <li><a href="@TOPDIR@/doc/html/xref.html">Open Issues</a></li>
+      <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">SVN ChangeLog</a></li>
+      <li><a class="ext" href="http://developer.berlios.de/projects/senf">SENF @ BerliOS</a></li>
+      <li><a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">Wiki</a></li>
+    </ul>
+    <h2>${TITLE}</h2>
+  </div>
 </div>
 
 <div id="content1">

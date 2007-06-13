@@ -13,12 +13,22 @@ body {
         background-color: #EDE497;
 }
 
-#head h1 {
-        margin: 0 0 0 100px;
-        padding: 6px 0 0 42px;
-        height: 33px;
+#title { 
+        height: 39px;
         background-color: #DECD40;
         border-bottom: 1px solid #AF9D00;
+        margin: 0 0 0 100px;
+}
+
+#title2 {
+	padding: 0 0 0 42px;
+	max-width: 62em;
+        margin: 0 10px 0 0;
+}
+
+#head h1 {
+        margin: 0;
+        padding: 6px 0 0 0;
         font-size: 22px;
         font-weight: bold;
         color: white;
@@ -67,7 +77,7 @@ body {
 
 #head a { 
 	font-weight: normal;
-	color: inherit;
+        color: #726921;
 }
 
 #head a:hover { 
@@ -75,23 +85,12 @@ body {
 	text-decoration: underline;
 }
 
-#search { 
-	margin: 0 10px 0 100px;
-	padding: 0 0 0 42px;
-	max-width: 62em;
-}
-
-#search2 {
+#search {
         float: right;
         width: 150px;
         height: 39px;
         font-size: 10px;
-        /* margin/padding/color/background-color/border: mostly IE6/IE7 fixes */
-        margin: 0 0 0 -10px;
-        padding: 0 0 0 10px;
         color: #726921;
-        background-color: #DECD40;
-        border-bottom: 1px solid #AF9D00;
 }
 
 #search input { 
