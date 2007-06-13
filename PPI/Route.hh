@@ -47,11 +47,6 @@ namespace ppi {
                                              be disabled by setting the authoThrottling state to \c
                                              false.
                                              
-                                             This member only exists if
-                                             \li \a Source or \a Target is an event
-                                             \li one of \a Source and \a Target is an active
-                                                 connector and the other is a passive connector.
-
                                              Routing from/to an event to/from a passive connector
                                              will automatically create throttling notifications on
                                              the connector whenever the event is disabled. Routing

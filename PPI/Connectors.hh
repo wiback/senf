@@ -48,9 +48,7 @@
 
 namespace senf {
 namespace ppi {
-
-    ///@{
-    ///\addtogroup connectors
+namespace connector {
 
     /** \brief Connector baseclass
 
@@ -137,7 +135,7 @@ namespace ppi {
     {
     public:
         template <class Handler>
-        void onThrottle(Handler);       ///< Register throttle notification handler
+        void onThrottle(Handler handle); ///< Register throttle notification handler
                                         /**< The handler register here will be called, whenever a
                                              throttle notification comes in. The \a handler argument
                                              is either an arbitrary callable object or it is a
@@ -149,7 +147,7 @@ namespace ppi {
                                                  notifications. */
 
         template <class Handler>
-        void onUnthrottle(Handler);     ///< Register unthrottle notification handler
+        void onUnthrottle(Handler handler); ///< Register unthrottle notification handler
                                         /**< The handler register here will be called, whenever an
                                              unthrottle notification comes in. The \a handler
                                              argument is either an arbitrary callable object or it
@@ -256,6 +254,9 @@ namespace ppi {
         PassiveConnector();
         ~PassiveConnector();
     };
+    
+    ///@{
+    ///\addtogroup connectors
 
     /** \brief Combination of PassiveConnector and InputConnector
 
@@ -312,7 +313,7 @@ namespace ppi {
 
     ///@}
 
-}}
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Conenctors.cci"

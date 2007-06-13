@@ -34,6 +34,7 @@
 
 namespace senf {
 namespace ppi {
+namespace module {
 
     /** \brief Module baseclass
 
@@ -111,26 +112,13 @@ namespace ppi {
                                              may be a timer event or some type of I/O event on a
                                              file descriptor or socket.
 
-                                             \param[in] target The handler to call whenever the event
-                                                 is signaled
+                                             \param[in] target The handler to call whenever the
+                                                 event is signaled
                                              \param[in] descriptor The type of event to register */
 
-        boost::posix_time::ptime eventTime(); ///< Return timestamp of the currently processing event
+        boost::posix_time::ptime eventTime(); ///< Return timestamp of the currently processing
+                                              ///< event
     };
-
-    /** \brief Automatically manage dynamic module deallocation
-
-        The dynamicModule helper will create a new dynamically managed module instance.
-
-        The \a args template parameter is only a placeholder. All arguments to dynamicModule will be
-        passed to the Module constructor.
-
-        \implementation dynamicModule should just register the Instance in a different way with the
-            Infrastructure and return a reference to the new module.
-     */
-    template <class Module, class Args>
-    unspecified dynamicModule(Args args);
-
 
     /** \brief Connect compatible connectors
 
@@ -140,18 +128,7 @@ namespace ppi {
     template <class Source, class Target>
     void connect(Source const & source, Target const & target);
 
-    /** \brief Connect connectors via an adaptor module
-        
-        This connect() overload will insert an additional adaptor module into the connection. The
-        Adaptor module must have two connectors, \a input and \a output. The call will setup the
-        connections \a source to \a input and \a output to \a target. Each connector pair must be
-        compatible.
-     */
-    template <class Source, class Target, class Adaptor)
-    Adaptor const &  connect(Source const & source, Target const & target, 
-                             Adaptor const & adaptor);
-
-}}
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Module.cci"

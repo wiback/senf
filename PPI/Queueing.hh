@@ -38,10 +38,10 @@ namespace ppi {
         QueueingDiscipline is called whenever the packets are entered or removed from the queue. The
         queueing discipline then determines the new throttling state of the queue.
 
-        \important The QueueingDiscipline will \e never drop packets explicitly. This is left to the
+        \note The QueueingDiscipline will \e never drop packets explicitly. This is left to the
         operating system by sending throttling events. The PPI will never loose a packet internally
         (if not a module explicitly does so), however it may disable reception of new incoming
-        packets which will then probably dropped by the operating system.
+        packets which will then probably be dropped by the operating system.
      */
     class QueueingDiscipline
     {
