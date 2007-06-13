@@ -111,23 +111,23 @@ function paths() {
 }
 ?>"""
 
-env.Command('doxy-header.html', None, writeTemplate,
+env.Command('doxy-header.html', 'SConscript', writeTemplate,
             TEMPLATE = Literal(HEADER),
             TITLE = "Documentation and API reference")
-env.Command('doxy-header-overview.html', None, writeTemplate,
+env.Command('doxy-header-overview.html', 'SConscript', writeTemplate,
             TEMPLATE = Literal(HEADER+OVERVIEW_EXTRA_HEADER),
             TITLE = "Introduction and Overview")
-env.Command('doxy-footer.html', None, writeTemplate,
+env.Command('doxy-footer.html', 'SConscript', writeTemplate,
             TEMPLATE = Literal(FOOTER))
 env.Alias('all_docs',
-          env.Command('search.php', 'html-munge.xsl',
+          env.Command('search.php', [ 'html-munge.xsl', 'SConscript' ],
                       [ writeTemplate,
                         'xsltproc --nonet --html --stringparam topdir .. -o - $SOURCE $TARGET 2>/dev/null'
                             + "| sed"
                             +   r" -e 's/\[\[/<?/g' -e 's/\]\]/?>/g'"
                             +   r" -e 's/\$$projectname/Overview/g'"
                             +   r" -e 's/\$$title/Search results/g'"
-                            +       "> ${TARGET}.tmp",
+                            +       "> ${TARGETS[0]}.tmp",
                         'mv ${TARGET}.tmp ${TARGET}' ],
                       TEMPLATE = Literal(HEADER
                                          + OVERVIEW_EXTRA_HEADER
@@ -135,5 +135,5 @@ env.Alias('all_docs',
                                          + FOOTER),
                       TITLE = "Search results"))
 env.Alias('all_docs',
-          env.Command('search_paths.php', None, writeTemplate,
+          env.Command('search_paths.php', 'SConscript', writeTemplate,
                       TEMPLATE = Literal(SEARCH_PATHS_PHP)))
