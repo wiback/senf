@@ -87,42 +87,6 @@ namespace {
     }
 }
 
-prefix_ bool senf::detail::StateMapOrdering::operator()(std::string const & a1,
-                                                        std::string const & a2)
-    const
-{
-    std::string::const_iterator i1 (a1.begin());
-    std::string::const_iterator const i1_end (a1.end());
-    std::string::const_iterator i2 (a2.begin());
-    std::string::const_iterator const i2_end (a2.end());
-    for(; i1 != i1_end && i2 != i2_end && *i1 == *i2; ++i1, ++i2) ;
-    if (i1 == i1_end) {
-        if (i2 == i2_end)
-            // the strings are equal
-            return false;
-        if (contains(i2,i2_end,'.'))
-            // the longer string is a sub-'directory' of the shorter
-            /** \fixme shouldn't this be *i2 == '.' ? */
-            return true;
-        return *i1 < *i2;
-    }
-    else if (i2 == i2_end) { // && i1 != i1_end
-        if (contains(i1,i1_end,'.'))
-            // the longer string is a sub-'directory' of the shorter
-            /** \fixme shouldn't this be *i1 == '.' ? */
-            return false;
-        return *i1 < *i2;
-    }
-    if (contains(i1,i1_end,'.')) {
-        if (contains(i2,i2_end,'.'))
-            return *i1 < *i2;
-        return false;
-    }
-    else if (contains(i2,i2_end,'.'))
-        return true;
-    return *i1 < *i2;
-}
-
 prefix_ std::string senf::detail::dumpState(SocketStateMap const & map)
 {
     std::stringstream s;

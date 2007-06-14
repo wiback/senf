@@ -80,22 +80,9 @@ namespace senf {
                                            non-empty). */
         };
 
-        /** \brief Special ordering for the SocketStateMap
-            \internal
-
-            This special ordering will sort 'hierarchical' strings correctly. A hierarchical string
-            in this context is a string like a path- or hostname with '.' as the hierarchical
-            separator.
-         */
-        struct StateMapOrdering
-            : public std::binary_function<std::string,std::string,bool>
-        {
-            bool operator()(std::string const & a1, std::string const & a2) const;
-        };
-
     }
 
-    typedef std::map< std::string, detail::ConvertibleString, detail::StateMapOrdering > SocketStateMap;
+    typedef std::map< std::string, detail::ConvertibleString > SocketStateMap;
 
     namespace detail {
         /** \brief Helper to convert SocketStateMap to multiline string representation

@@ -90,7 +90,8 @@
 
 // Custom includes
 #include <boost/utility.hpp>
-/** \fixme this is not nice. The includes and predefs should be restructured */
+// Hrmpf ... I have tried very hard, but I just can't find a nice, generic way to clean
+// up this include
 #include "SocketHandle.ih"
 
 //#include "SocketProtocol.mpp"
