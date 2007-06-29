@@ -35,7 +35,7 @@ template <class Handle>
 prefix_ senf::WriteHelper<Handle>::WriteHelper(Handle handle, std::string data,
                                                       Callback callback)
     : handle_(handle), data_(data), callback_(callback),
-      offset_(0), errno_(0)
+      offset_(data_.begin()), errno_(0)
 {
     senf::Scheduler::instance()
         .add(handle_, boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2),
@@ -46,9 +46,9 @@ template <class Handle>
 prefix_ std::string const & senf::WriteHelper<Handle>::data()
     const
 {
-    if (offset_ > 0) {
-        data_.erase(0,offset_);
-        offset_ = 0;
+    if (offset_ > data_.begin()) {
+        data_.erase(data_.begin(),offset_);
+        offset_ = data_.begin();
     }
     return data_;
 }
@@ -79,9 +79,10 @@ prefix_ void senf::WriteHelper<Handle>::process(Handle handle,
     try {
         if (event != senf::Scheduler::EV_WRITE)
             throw senf::SystemException(EPIPE);
-        offset_ += handle.write(data_.data()+offset_,data_.size()-offset_);
-        if (offset_ >= data_.size()) {
+        offset_ = handle.write(std::make_pair(offset_,data_.end()));
+        if (offset_ == data_.end()) {
             data_.erase();
+            offset_ = data_.begin();
             complete_ = true;
         }
     }

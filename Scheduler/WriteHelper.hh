@@ -105,7 +105,7 @@ namespace senf {
         mutable std::string data_;
         Callback callback_;
 
-        mutable std::string::size_type offset_;
+        mutable std::string::iterator offset_;
         int errno_;
     };
 
