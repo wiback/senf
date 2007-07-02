@@ -132,4 +132,5 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle handle,
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

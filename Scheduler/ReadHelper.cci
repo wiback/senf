@@ -45,4 +45,5 @@ prefix_ std::string::size_type senf::ReadUntil::operator()(std::string const & d
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

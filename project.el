@@ -30,7 +30,8 @@
      '(( fill-column  . 100    )
        ( c-file-style . "senf" )
        ( indent-tabs-mode . nil )
-       ( ispell-local-dictionary . "american" )))
+       ( ispell-local-dictionary . "american" )
+       ( compile-command . "scons -u test") ))
 
 (set (make-local-variable 'ccide-default-copyright)
      (concat "//\n"

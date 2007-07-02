@@ -68,4 +68,5 @@ prefix_ void senf::redirect_stdio(std::string const & path)
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

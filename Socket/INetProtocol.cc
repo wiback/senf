@@ -81,4 +81,5 @@ prefix_ void senf::IPv6Protocol::bind(INet6SocketAddress const & address)
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

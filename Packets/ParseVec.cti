@@ -224,4 +224,5 @@ prefix_ void senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::clear()
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

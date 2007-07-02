@@ -75,4 +75,5 @@ prefix_ int senf::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

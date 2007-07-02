@@ -54,4 +54,5 @@ BOOST_AUTO_UNIT_TEST(iteratorTraits)
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

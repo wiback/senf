@@ -118,4 +118,5 @@ BOOST_AUTO_UNIT_TEST(ipv6Extension_Fragment_packet)
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

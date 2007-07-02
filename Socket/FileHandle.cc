@@ -112,4 +112,5 @@ prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, bool block)
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

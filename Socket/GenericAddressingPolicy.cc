@@ -98,4 +98,5 @@ prefix_ void senf::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:

@@ -152,4 +152,5 @@ prefix_ void senf::Packet::insert(iterator pos, InputIterator f, InputIterator l
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
 // End:
