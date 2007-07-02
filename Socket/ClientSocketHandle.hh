@@ -81,6 +81,10 @@ namespace senf {
 
         \see \ref policy_group \n
              \ref protocol_group
+
+        \fixme Add enable_if conditions so anything convertible to unsigned will not be interpreted
+            as a Range template argument but will use the unsigned variant of
+            read/readfrom/write/writeto.
       */
     template <class Policy>
     class ClientSocketHandle
