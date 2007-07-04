@@ -20,7 +20,7 @@
 
 /** \mainpage libPPI : The Packet Processing Infrastructure
 
-    The PPI provides an infrastructure to create packet oriented network processin
+    The PPI provides an infrastructure to create packet oriented network processing
     applications. A PPI application is built by combining processing modules in a very flexible
     manner.
 
@@ -205,7 +205,7 @@
     up. The buffering on the udpInput <-> rateStuffer adaptor is changed so the queue will begin to
     throttle only if more than 10 packets are in the queue. The connection will be unthrottled as
     soon as there are no more than 5 packets left in the queue. This application will read
-    udp-packts coming in on port 1111 and will forward them to port 2222 on host 2.3.4.5 with a
+    udp-packets coming in on port 1111 and will forward them to port 2222 on host 2.3.4.5 with a
     fixed rate of 10 packets / second.
 
     \section throttling Throttling
@@ -294,7 +294,7 @@
     by the template argument.
 
     We register an IOSignaler event. This event will be signaled whenever the socket is
-    readable. This event is routet to the output. This routing automates throttling for the socket:
+    readable. This event is routed to the output. This routing automates throttling for the socket:
     Whenever the output receives a throttle notifications, the event will be temporarily disabled.
 
     Processing arriving packets happens in the \c data() member: This member simple reads a packet

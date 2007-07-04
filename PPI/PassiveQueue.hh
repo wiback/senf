@@ -52,7 +52,7 @@ namespace module {
         PassiveQueue();
 
         void qdisc(QueueingDiscipline const & disc); ///< Change the queueing discipline
-        /**< This call changs the queueing discipline of the queue. This call is just forwarded to
+        /**< This call changes the queueing discipline of the queue. This call is just forwarded to
              the \a input connector.
              
              \see connector::PassiveInput::qdisc() */

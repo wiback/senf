@@ -143,7 +143,7 @@ namespace connector {
                                              this input. In the second case, the pointer will
                                              automatically be bound to the containing instance.
 
-                                             \param[in] handler Handler to call on throttle
+                                             \param[in] handle Handler to call on throttle
                                                  notifications. */
 
         template <class Handler>
@@ -155,7 +155,7 @@ namespace connector {
                                              holds this input. In the second case, the pointer will
                                              automatically be bound to the containing instance.
 
-                                             \param[in] handler Handler to call on unthrottle
+                                             \param[in] handle Handler to call on unthrottle
                                                  notifications. */
 
         PassiveConnector & peer();
@@ -204,7 +204,7 @@ namespace connector {
                                              exception is raised. */
         operator unspecified_boolean_type (); ///< Check packet availability
                                         /**< Using any input connector in a boolean context will
-                                             check, wether an input request can be fulfilled. This
+                                             check, whether an input request can be fulfilled. This
                                              is always possible if the queue is non-empty. If the
                                              input is active, it also returns when the connected
                                              passive output is not throttled so new packets can be
@@ -264,7 +264,7 @@ namespace connector {
         queue throttling state. This state is automatically managed by a queueing discipline. The
         standard queueing discipline is ThresholdQueueing, which throttles the connection whenever
         the queue length reaches the high threshold and unthrottles the connection when the queue
-        reaches the low threshold. The default queueing discpiline is
+        reaches the low threshold. The default queueing discipline is
         <tt>ThresholdQueueing(1,0)</tt> which will throttle the input whenever the queue is
         non-empty.
      */
@@ -299,7 +299,7 @@ namespace connector {
     public:
         PassiveOutput & peer();
 
-        void request();                 ///< request more packets without dequeing any packet
+        void request();                 ///< request more packets without dequeuing any packet
     };
 
     /** \brief Combination of ActiveConnector and OutputConnector

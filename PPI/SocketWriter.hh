@@ -37,7 +37,7 @@ namespace ppi {
 
     /** \brief Write helper for module::ActiveSocketWriter / module::PassiveSocketWriter
         
-        This write helper will write the packets completely as datagrmas to the given socket.
+        This write helper will write the packets completely as datagrams to the given socket.
      */
     class PacketWriter
     {

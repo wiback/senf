@@ -34,7 +34,7 @@ namespace ppi {
 
     /** \brief Generic event interface baseclass
 
-        The EventDescriptor baseclass provides an interface to manuplate events in a generic
+        The EventDescriptor baseclass provides an interface to manipulate events in a generic
         way. This allows to register events or to temporarily disable event processing.
      */ 
     class EventDescriptor
@@ -53,7 +53,7 @@ namespace ppi {
         virtual void v_register(CallbackType handler) = 0; ///< Called to register the event
         virtual void v_unregister() = 0; ///< Called to unregister the event
         virtual void v_enable() = 0;    ///< Called to enable the event delivery
-        virtual void v_disable() = 0;   ///< Called to disable the event delilvery
+        virtual void v_disable() = 0;   ///< Called to disable the event delivery
         virtual void v_process() = 0;   ///< Called whenever the event is signaled
                                         /**< This virtual method is called \e after every call to
                                              the event handler to provide a hook for further

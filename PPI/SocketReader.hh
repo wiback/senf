@@ -77,7 +77,7 @@ namespace module {
           class SomeReader
           {
           public:
-              typedef unspecified_type Handle;        // type of handle reqeusted
+              typedef unspecified_type Handle;        // type of handle requested
               SomeReader();                           // default constructible
               Packet::ptr operator()(Handle handle);  // extraction function
           };
@@ -89,7 +89,7 @@ namespace module {
     public:
         typedef typename Reader::Handle Handle; ///< Handle type requested by the reader
 
-        connector::ActiveOutput output; ///< Output connector to which the data recevied is writtten
+        connector::ActiveOutput output; ///< Output connector to which the data received is written
         
         ActiveSocketReader(Handle handle); ///< Create new reader for the given handle
                                         /**< Data will be read from \a handle and be parsed by \a

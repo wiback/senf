@@ -54,7 +54,7 @@ namespace ppi {
                                              called to calculate the new throttling state.
                                              
                                              \param[in] input Connector holding the queue
-                                             \param[in] event Type of event triggering the upate
+                                             \param[in] event Type of event triggering the update
                                              \returns new throttling state */
     };
 
