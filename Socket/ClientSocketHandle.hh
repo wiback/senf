@@ -267,14 +267,15 @@ namespace senf {
                                              \see \ref readfrom() */
         char *       readfrom     (char * start, char * end, Address & from);
                                         ///< Read data into memory buffer
-                                        /**< This variant will read data into the memory area at \c
-                                           buffer of size \c size. This is the most performant
-                                           version of readfrom().
-                                           \param[in] buffer address of buffer to store data at
-                                           \param[in] size size of buffer
-                                           \param[out] from peer address
-                                           \returns Number of bytes read
-                                           \see \ref readfrom() */
+                                        /**< This variant will read data into the memory area from
+                                             \a start to before \a end. This is guaranteed to be the
+                                             most efficient version  of readfrom().
+                                             \param[in] start address of buffer to store data at
+                                             \param[in] end address one past the end of the buffer
+                                             \param[out] from peers address from which the data was
+                                                 received
+                                             \returns pointer past the end of the data read
+                                             \see \ref read() */
 
 
         /** \brief Write data to socket
