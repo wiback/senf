@@ -147,7 +147,7 @@ namespace connector {
                                                  notifications. */
 
         template <class Handler>
-        void onUnthrottle(Handler handler); ///< Register unthrottle notification handler
+        void onUnthrottle(Handler handle); ///< Register unthrottle notification handler
                                         /**< The handler register here will be called, whenever an
                                              unthrottle notification comes in. The \a handler
                                              argument is either an arbitrary callable object or it

@@ -178,7 +178,7 @@ namespace senf {
                                              range. read returns a past-the-end iterator after the
                                              last character read. This iterator will point to
                                              somewhere within the input range.
-                                             \param[in/out] range Range to store data in 
+                                             \param[in,out] range Range to store data in 
                                              \returns past-the-end iterator pointer to after the
                                                  last read character 
                                              \see \ref read() \n
@@ -239,7 +239,7 @@ namespace senf {
                                              range. read returns a past-the-end iterator after the
                                              last character read. This iterator will point to
                                              somewhere within the input range.
-                                             \param[in/out] range Range to store data in 
+                                             \param[in,out] range Range to store data in 
                                              \param[out] from peers address from which the data was
                                                  received
                                              \returns past-the-end iterator pointer to after the
