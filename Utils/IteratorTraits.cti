@@ -47,4 +47,5 @@ prefix_ typename std::iterator_traits<Iterator>::pointer senf::storage_iterator(
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:

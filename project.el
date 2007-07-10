@@ -27,7 +27,8 @@
 (c-add-style "senf" senf-c-style)
 
 (set (make-local-variable 'ccide-file-vars)
-     '(( fill-column  . 100    )
+     '(( fill-column  . 100 )
+       ( comment-column . 40 )
        ( c-file-style . "senf" )
        ( indent-tabs-mode . nil )
        ( ispell-local-dictionary . "american" )

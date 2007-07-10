@@ -61,4 +61,5 @@ prefix_ void senf::Scheduler::remove(Handle const & handle, int eventMask)
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:

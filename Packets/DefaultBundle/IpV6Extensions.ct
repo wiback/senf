@@ -44,4 +44,5 @@ prefix_ senf::IpV6Extension_Fragment::IpV6Extension_Fragment(Arg const & arg)
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:

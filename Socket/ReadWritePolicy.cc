@@ -133,4 +133,5 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle handle,
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:

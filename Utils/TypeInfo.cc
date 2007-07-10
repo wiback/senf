@@ -64,4 +64,5 @@ prefix_ std::string senf::prettyName(std::type_info const & type)
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:
