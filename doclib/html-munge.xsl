@@ -15,7 +15,7 @@
       <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
-  
+
   <xsl:template name="copy-attributes">
     <xsl:for-each select="@*">
       <xsl:attribute name="{name(current())}">
@@ -32,7 +32,8 @@
       </xsl:attribute>
     </xsl:for-each>
   </xsl:template>
-  
+
+  <!-- Remove the automatically inserted search form (we build our own) -->
   <xsl:template match="li[form]"> 
   </xsl:template>
   
@@ -106,6 +107,10 @@
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">anchor</xsl:with-param>
     </xsl:call-template>
+  </xsl:template>
+
+  <!-- Remove [external] references from the modules page -->
+  <xsl:template match="div[@id='content2']/ul/li[a/@class='elRef'][a/@doxygen][code/text()='[external]'][not(ul)]">
   </xsl:template>
   
 </xsl:stylesheet>
