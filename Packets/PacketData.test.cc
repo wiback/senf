@@ -137,4 +137,6 @@ BOOST_AUTO_UNIT_TEST(safePacketIterator)
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
 // End:

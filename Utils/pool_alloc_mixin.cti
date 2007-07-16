@@ -81,4 +81,6 @@ prefix_ unsigned long senf::pool_alloc_mixin<Self>::allocCounter(long delta)
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
 // End:
