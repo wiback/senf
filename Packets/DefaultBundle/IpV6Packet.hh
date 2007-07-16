@@ -37,6 +37,9 @@
 
 namespace senf {
 
+    ///\addtogroup protocolbundle_default
+    ///@{
+
     // See RFC2460
     struct Parse_IpV6 : public PacketParserBase
     {
@@ -88,6 +91,7 @@ namespace senf {
 
     typedef IpV6PacketType::packet IpV6Packet;
 
+    ///@}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

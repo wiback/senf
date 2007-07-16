@@ -1,4 +1,4 @@
-// $Id$
+// $Id: IpV4Packet.hh 307 2007-07-14 21:31:12Z g0dil $
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -33,6 +33,9 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    ///\addtogroup protocolbundle_default
+    ///@{
 
     struct Parse_IpV4 : public PacketParserBase
     {
@@ -98,6 +101,7 @@ namespace senf {
         
     typedef IpV4PacketType::packet IpV4Packet;
 
+    ///@}
 }
 
 

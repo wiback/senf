@@ -106,6 +106,7 @@ prefix_ bool senf::Packet::operator==(Packet other)
 prefix_ void senf::Packet::finalize()
     const
 {
+    last(); // Make sure the packet is complete
     ptr()->finalize();
 }
 

@@ -2,7 +2,7 @@ body {
         padding: 0;
         margin: 0;
         font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10pt;
+        font-size: 10pt;
 }
 
 #head {
@@ -21,8 +21,8 @@ body {
 }
 
 #title2 {
-	padding: 0 0 0 42px;
-	max-width: 62em;
+        padding: 0 0 0 42px;
+        max-width: 62em;
         margin: 0 10px 0 0;
 }
 
@@ -40,49 +40,49 @@ body {
         margin: 0 10px 0 100px;
         padding: 4px 0 0 42px;
         height: 18px;
-	max-width: 62em;
+        max-width: 62em;
         background-color: #EDE497;
         color: #726921;
 }
 
 #head h2 {
-	margin: 0;
-	padding: 0;
-	font-size: 13px;
+        margin: 0;
+        padding: 0;
+        font-size: 13px;
         font-weight: normal;
         white-space: nowrap;
 }
 
 #head ul { 
-	display: inline; /* für IE ... */
-	font-size: 13px;
-	height: 0px;
-	margin: 0;
-	padding: 0;
+        display: inline; /* für IE ... */
+        font-size: 13px;
+        height: 0px;
+        margin: 0;
+        padding: 0;
 }
 
 #head li { 
-	list-style-type: none;
-	margin: 0 0 0 10px;
-	padding: 0 10px 0 0;
-	float: right;
-	border-right: 1px solid #726921;
-	height: 14px;
+        list-style-type: none;
+        margin: 0 0 0 10px;
+        padding: 0 10px 0 0;
+        float: right;
+        border-right: 1px solid #726921;
+        height: 14px;
 }
 
 #head li:first-child { 
-	border-right: none;
-	padding: 0;
+        border-right: none;
+        padding: 0;
 }
 
 #head a { 
-	font-weight: normal;
+        font-weight: normal;
         color: #726921;
 }
 
 #head a:hover { 
-	background-color: #EDE497;
-	text-decoration: underline;
+        background-color: #EDE497;
+        text-decoration: underline;
 }
 
 #search {
@@ -306,6 +306,11 @@ div.todo {
 
 div.idea { 
         border-left: 10px solid #AAAAAA;
+}
+
+dl.implementation {
+        color: #666666;
+        font-size: 9px;
 }
 
 table {

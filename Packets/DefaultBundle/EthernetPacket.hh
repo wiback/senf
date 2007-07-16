@@ -36,6 +36,9 @@
 
 namespace senf {
 
+    ///\addtogroup protocolbundle_default
+    ///@{
+
     struct MACAddress
         : boost::array<PacketParserBase::byte,6>
     {
@@ -146,6 +149,8 @@ namespace senf {
     };
 
     typedef EthVLanPacketType::packet EthVLanPacket;
+
+    ///@}
 }
 
 

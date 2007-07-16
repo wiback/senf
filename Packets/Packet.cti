@@ -263,7 +263,7 @@ senf::ConcretePacket<PacketType>::clone()
 // Field access
 
 template <class PacketType>
-prefix_ typename senf::ConcretePacket<PacketType>::interpreter::parser *
+prefix_ typename senf::ConcretePacket<PacketType>::type::parser *
 senf::ConcretePacket<PacketType>::operator->()
     const
 {

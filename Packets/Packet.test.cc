@@ -164,8 +164,8 @@ BOOST_AUTO_UNIT_TEST(packet)
 
     BOOST_CHECK( packet.factory() == FooPacket::factory() );
 
-    senf::Packet::byte data[] = { 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                  0x81, 0x82, 0x83 };
+    senf::PacketData::byte data[] = { 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                      0x81, 0x82, 0x83 };
 
     BarPacket::createAfter(packet,data);
     BOOST_REQUIRE( packet.next() );
@@ -194,7 +194,7 @@ BOOST_AUTO_UNIT_TEST(packet)
 
 BOOST_AUTO_UNIT_TEST(concretePacket)
 {
-    FooPacket::byte data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
+    senf::PacketData::byte data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
 
     BOOST_CHECK_EQUAL( FooPacket::create().size(), 4u );
     BOOST_CHECK_EQUAL( FooPacket::create(FooPacket::noinit).size(), 0u );

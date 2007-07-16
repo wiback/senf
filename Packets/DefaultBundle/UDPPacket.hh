@@ -1,4 +1,4 @@
-// $Id$
+// $Id: UDPPacket.hh 308 2007-07-14 22:31:20Z g0dil $
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -34,6 +34,9 @@
 
 namespace senf {
 
+    ///\addtogroup protocolbundle_default
+    ///@{
+
     // See RFC768
     struct Parse_UDP : public PacketParserBase
     {
@@ -66,6 +69,8 @@ namespace senf {
     };
 
     typedef UDPPacketType::packet UDPPacket;
+
+    ///@}
 }
 
 

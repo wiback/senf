@@ -2,104 +2,37 @@
 
     \section arch Overall Architecture
 
-    The general Architecture of the Packet Framework (pkf for short)
-    is seperated into two components: The basic packet handling and
-    the parser framework.
+    The Packet library consists of several components:
+    
+    \li The \ref packet_module manages the packet data and provides the framework for handling the
+        chain of packet headers. The visible interface is provided by the Packet class.
+    \li \ref packetparser provides the framework for interpreting packet data. It handles
+        parsing the packet information into meaningful values.
+    \li The \ref protocolbundles provide concrete implementations for interpreting packets of
+        some protocol. The Protocol Bundles are built on top of the basic packet library.
+ */
 
-    The basic packet handling implements a packet interpreter
-    chain. Every packet is represented as a chain of interpreters
-    where each interpreter is a facade looking into the same
-    packet. Each interpreter will interpret a specific header of a
-    packet. For example, an ethernet frame might have an interpreter
-    chain consisting of EthernetPacket, IPPacket, UDPPacket and
-    DataPacket. Each of these interpreters will interpret a section of
-    the raw data bytes. The interpreter ranges overlap since every
-    packet also includes it's payload.
+/*    
 
-    The parser framework is used to interpret the raw bytes of a
-    specific packet and parse the values present in that packet. For
-    example, Parse_Ethernet will parse the ethernet source MAC,
-    destination MAC and ethertype given any random access iterator to
-    the first byte of the ethernet frame. Parsers are extremely light
-    classes. They are temporary classes passed around by value. In
-    most cases, they are just comprised of a single pointer adorned
-    with type information.
+     - ParseInt.hh: Lots of parsers for integer numbers like senf::Parse_UInt8, for integer
+       bitfields like senf::Parse_UIntField and senf::Parse_Flag to parse boolean flags.
 
-    \section handling Packet Handling
+     - ParseArray.hh: The senf::Parse_Array parser to parse arbitrary fixed-size arrays of
+       fixed-size elements (that is sub-parsers).
 
-    The packet handling is implemented within
-    senf::Packet. This class is the baseclass to all packet
-    interpreter facades. To implement a new packet type, publically
-    derive from senf::Packet and implement the virtual
-    interface (see the class documentation for details).
-
-    \section framework Parser Framework
-
-    The parser framework provides an abstract framwork to parse packet
-    oriented data. A Parser is a template class taking an arbitrary
-    iterator as input and allowing random access to data elements of
-    the interpreted type, like source and destination MAC of an
-    ethernet frame. The parser framework is to be used hierarchically
-    and recursively, the parser methods should return further parsers
-    which can return further parsers and so on.
-
-    The parser framework contains some basic parsers to be used to
-    build up more complex parsers:
-
-     - ParseInt.hh: Lots of parsers for integer numbers like
-       senf::Parse_UInt8, for integer bitfields like
-       senf::Parse_UIntField and senf::Parse_Flag to
-       parse boolean flags.
-
-     - ParseArray.hh: The senf::Parse_Array parser to parse
-       arbitrary fixed-size arrays of fixed-size elements (that is
-       sub-parsers).
-
-     - ParseVec.hh: The senf::Parse_Vector parser to parse
-       dynamically sized arrays of fixed-size elements (that is
-       sub-parsers).
+     - ParseVec.hh: The senf::Parse_Vector parser to parse dynamically sized arrays of fixed-size
+       elements (that is sub-parsers).
 
     See senf::ParserBase for further information.
 
     \section stuff Other Utilities
 
-    The pkf also comprises some additional utilities to support the
-    development of packet classes.
+    The pkf also comprises some additional utilities to support the development of packet classes.
 
-    The senf::PacketRegistry implements a registry of packets
-    keyed by an arbitrary type. The registry is used to find a packet
-    type given some kind of id (like the ethertype value from the
-    ethernet header). Together with it's support classes (especially
-    senf::PacketRegistryMixin) this class greatly simplifies
-    implementing the needed table lookups.
-
-    \todo The Packet Libarary really needs a refactoring of the public
-        interfaface ...
-
-    \idea Add the Handle-Body idiom to the mix with a PacketRef (or
-        HeaderRef or InterpreterRef or whatever class). This would
-        have members for all the API defined in Packet now. \c
-        operator-> would return a parser object to interpret the
-        data. This would make awayy with the inheritance relationship
-        ...
-
-    \idea Templating the parsers on the iterator type does not
-        introduce additional coupling (because of the inlining) but
-        looking at it after the fact it looks like severe overdesign
-        and it does introduce some problems (e.g. rebind and all this
-        entails). If we just implement all parsers for
-        Packet::byte_iterator they are no tmplates any more which
-        should simplify things a log.
-
-    \idea we need some better and automatic checking on data access
-        especially after data has changed. Idea 1: give the parser the
-        end iterator as additional member. Enforce, that all parsers
-        must ultimately be based on ParseInt and have ParseInt check
-        against end() at construction time. Idea 2: add a dirty flag
-        to the interpreters. Set this flag whenever the packet is
-        changed and recall check() in operator-> of the PacketRef
-        object if the packet is dirty. Maybe we need both and make
-        them tunable.
+    The senf::PacketRegistry implements a registry of packets keyed by an arbitrary type. The
+    registry is used to find a packet type given some kind of id (like the ethertype value from the
+    ethernet header). Together with it's support classes (especially senf::PacketRegistryMixin) this
+    class greatly simplifies implementing the needed table lookups.
  */
 
 
