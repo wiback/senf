@@ -42,6 +42,33 @@ namespace senf {
         This type trait returns \c true, if \a RandomAccessIterator is an iterator into a contiguous
         storage area which may be written to. If this is the case, some algorithms may be optimized
         by directly modifying the underlying storage instead of relying on the STL interface.
+
+        \code
+        // Generic algorithm
+        template <class Iterator>
+        void do(Iterator i, boost::false_type)
+        {
+            // Access the iterator 'i' via the standard STL interface
+        }
+
+        template<class Iterator>
+        void do(Iterator i, boost::true_type) 
+        {
+            typename Iterator::pointer p (senf::storage_iterator(i));
+            // Manipulate the container by manipulating the data pointed at via 'p'
+        }
+
+        template <class Iterator>
+        void foo(Iterator i)
+        {
+            // ...
+            do( i, senf::contiguous_storage_iterator<Iterator>() );
+            // ...
+        }
+        \endcode
+
+        Thie \ref senf::storage_iterator helper function will convert an iterator to a pointer to
+        the same element the iterator is referencing.
         
         This trait will return \c true for pointers. Additonally it should be configured to return
         true for all standard containers which obey above implementation restrictions. This
@@ -49,13 +76,17 @@ namespace senf {
 
         To do so, the template must be specialized for those containers \c iterator type. If
         compiling with g++, this is implemented in \ref IteratorTraits.ih. This file should be
-        extended for further compilers if necessary.
+        extended for further compilers or STL implementations if needed.
      */
     template <class RandomAccessIterator>
     struct contiguous_storage_iterator
         : public boost::false_type
     {};
 
+    /** \brief Check for contiguous mutable storage. Pointer specialization
+
+        See \ref contiguous_storage_iterator.
+     */
     template <class T>
     struct contiguous_storage_iterator<T *>
         : public boost::true_type
@@ -65,6 +96,9 @@ namespace senf {
         
         storage_iterator will convert a contiguous storage iterator into a pointer to the same
         element in the container. This allows to directly access the containers storage.
+
+        \warning This conversion is only safe if \ref contiguous_storage_iterator<Iterator>::value
+            is \c true for the given iterator type !
      */
     template <class Iterator>
     typename std::iterator_traits<Iterator>::pointer storage_iterator(Iterator i);

@@ -22,54 +22,89 @@
 
 // Definition of non-inline template funPacketRegistry.ons
 
-//#include "ParseVec.ih"
+#include "ParseVec.ih"
 
 // Custom includes
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-template <class Parser, class SizeParser, class Container>
-template <class Value>
-prefix_ void
-senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
-                                                                       Value const & t)
+///////////////////////////////////////////////////////////////////////////
+// senf::Parse_Vector<ElementParser,Sizer>
+
+template <class ElementParser, class Sizer>
+prefix_ void senf::Parse_Vector<ElementParser,Sizer>::init()
+    const
 {
-    size_type ix(pos.raw()-container_.begin());
-    shift(pos);
-    Parser(container_.begin()+ix).value(t);
+    sizer_.init(i(),state());
+    iterator i (begin());
+    iterator const e (end());
+    for (; i!=e; ++i)
+        i->init();
 }
 
-template <class Parser, class SizeParser, class Container>
+///////////////////////////////////////////////////////////////////////////
+// senf::Parse_Vector_Container<ElementParser,Sizer>
+
+template <class ElementParser, class Sizer>
+prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::init()
+    const
+{
+    iterator i (begin());
+    iterator const e (end());
+    for (; i!=e; ++i)
+        i->init();
+}
+
+// Mutators
+
+template <class ElementParser, class Sizer>
+prefix_ typename senf::Parse_Vector_Container<ElementParser,Sizer>::iterator
+senf::Parse_Vector_Container<ElementParser,Sizer>::shift(iterator pos, size_type n)
+{
+    size_type ix (std::distance(data().begin(),pos.raw()));
+    data().insert(pos.raw(),n*ElementParser::fixed_bytes,0);
+    setSize(size()+n);
+    return iterator(boost::next(data().begin(),ix),state());
+}
+
+template <class ElementParser, class Sizer>
 template <class Value>
-prefix_ void
-senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
+prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::insert(iterator pos,
                                                                        size_type n,
                                                                        Value const & t)
 {
-    size_type ix(pos.raw()-container_.begin());
-    shift(pos,n);
-    typename Container::iterator j (container_.begin()+ix);
-    for (; n; --n, j+=Parser::bytes())
-        Parser(j).value(t);
+    for (iterator j (shift(pos,n)); n; --n, ++j) 
+        *j << t;
 }
 
-template <class Parser, class SizeParser, class Container>
-template <class InputIterator>
-prefix_ void
-senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
-                                                                       InputIterator f,
-                                                                       InputIterator l)
+template <class ElementParser, class Sizer>
+template <class ForwardIterator>
+prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::
+insert(iterator pos, ForwardIterator f, ForwardIterator l,
+       typename boost::disable_if< boost::is_convertible<ForwardIterator,size_type> >::type *)
 {
-    /** \todo This might be horribly inefficient ... we need to
-        specialize for random_access and forward iterators, where we
-        can count the distance */
+    for (iterator j (shift(pos,std::distance(f,l))); f!=l; ++f,++j)
+        *j << *f;
+}
 
-    size_type ix(pos.raw()-container_.begin());
-    for (;f!=l;++f) {
-        insert(container_.begin()+ix,*f);
-        ix += Parser::bytes();
-    }
+template <class ElementParser, class Sizer>
+prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::resize(size_type n)
+{
+    if (size()>=n)
+        erase(boost::next(begin(),n),end());
+    else
+        push_back_space(n-size());
+}
+
+template <class ElementParser, class Sizer>
+template <class Value>
+prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::resize(size_type n, Value value)
+{
+    if (size()>=n)
+        erase(boost::next(begin(),n),end());
+    else
+        push_back(value,n-size());
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
@@ -83,5 +118,4 @@ senf::Parse_Vector_wrapper<Parser,SizeParser,Container>::insert(iterator pos,
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

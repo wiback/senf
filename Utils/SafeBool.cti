@@ -12,7 +12,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <typename T>
-prefix_ senf::SafeBool<T>::operator bool_type()
+prefix_ senf::ComparableSafeBool<T>::operator bool_type()
     const
 {
     return (static_cast<const T*>(this))->boolean_test()
@@ -20,14 +20,14 @@ prefix_ senf::SafeBool<T>::operator bool_type()
 }
 
 template <typename T>
-prefix_ bool senf::SafeBool<T>::operator!()
+prefix_ bool senf::ComparableSafeBool<T>::operator!()
     const
 {
     return ! (static_cast<const T*>(this))->boolean_test();
 }
 
 template <typename T>
-prefix_ senf::SafeBool<T>::~SafeBool()
+prefix_ senf::ComparableSafeBool<T>::~ComparableSafeBool()
 {}
 
 template <typename T, typename U>

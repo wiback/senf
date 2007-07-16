@@ -33,64 +33,52 @@
 namespace senf {
 
     // See RFC2460
-    template <class Iterator=nil, class IPacket=nil>
-    struct Parse_IpV6Extension_Fragment
-        : public ParserBase<Iterator,IPacket>
+    struct Parse_IpV6Extension_Fragment : public PacketParserBase
     {
-        template <class I, class P=nil>
-        struct rebind { typedef Parse_IpV6Extension_Fragment<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        Parse_IpV6Extension_Fragment() {}
-        Parse_IpV6Extension_Fragment(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
-
-        static unsigned bytes() { return 8; }
+        SENF_PACKET_PARSER_INIT(Parse_IpV6Extension_Fragment);
 
         ///////////////////////////////////////////////////////////////////////////
 
-        typedef Parse_UInt8     <         Iterator > Parse_8bit;
-        typedef Parse_UIntField <  0, 13, Iterator > Parse_Offset;
-        typedef Parse_UIntField < 13, 15, Iterator > Parse_Reserved;
-        typedef Parse_Flag      < 15,     Iterator > Parse_More;
-        typedef Parse_UInt32    <         Iterator > Parse_32bit;
+        typedef Parse_UInt8                Parse_8bit;
+        typedef Parse_UIntField <  0, 13 > Parse_Offset;
+        typedef Parse_UIntField < 13, 15 > Parse_Reserved;
+        typedef Parse_Flag      < 15     > Parse_More;
+        typedef Parse_UInt32               Parse_32bit;
 
-        Parse_8bit      nextHeader()      const { return Parse_8bit      (this->i()      ); }
-        Parse_8bit      reserved1()       const { return Parse_8bit      (this->i() +  1 ); }
-        Parse_Offset    fragmentOffset()  const { return Parse_Offset    (this->i() +  2 ); }
-        Parse_Reserved  reserved2()       const { return Parse_Reserved  (this->i() +  2 ); }
-        Parse_More      moreFragments()   const { return Parse_More      (this->i() +  2 ); }
-        Parse_32bit     id()              const { return Parse_32bit     (this->i() +  4 ); }
+        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
+            ((Field       )( nextHeader     , Parse_8bit     ))
+            ((Field       )( reserved1      , Parse_8bit     ))
+            ((OverlayField)( fragmentOffset , Parse_Offset   ))
+            ((OverlayField)( reserved2      , Parse_Reserved ))
+            ((Field       )( moreFragments  , Parse_More     ))
+            ((Field       )( id             , Parse_32bit    )) );
     };
 
-    class IpV6Extension_Fragment
-        : public Packet,
-          public Parse_IpV6Extension_Fragment<Packet::iterator, IpV6Extension_Fragment>,
-          public PacketRegistryMixin<IpTypes, IpV6Extension_Fragment>
+    struct IpV6ExtensionType_Fragment
+        : public PacketTypeBase,
+          public PacketTypeMixin<IpV6ExtensionType_Fragment, IpTypes>
     {
-        using PacketRegistryMixin<IpTypes,IpV6Extension_Fragment>::registerInterpreter;
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
+        typedef PacketTypeMixin<IpV6ExtensionType_Fragment, IpTypes> mixin;
+        typedef ConcretePacket<IpV6ExtensionType_Fragment> packet;
+        typedef Parse_IpV6Extension_Fragment parser;
 
-        typedef ptr_t<IpV6Extension_Fragment>::ptr ptr;
+        using mixin::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::initSize;
+        using mixin::init;
 
-        ///////////////////////////////////////////////////////////////////////////
-
-    private:
-        template <class Arg>
-        IpV6Extension_Fragment(Arg const & arg);
-
-        virtual void v_nextInterpreter() const;
-        virtual void v_finalize();
-        virtual void v_dump(std::ostream & os) const;
-
-        friend class Packet;
+        static registry_key_t nextPacketKey(packet p) 
+            { return p->nextHeader(); }
+        
+        static void dump(packet p, std::ostream & os);
     };
+
+    typedef IpV6ExtensionType_Fragment::packet IpV6Extension_Fragment;
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "IpV6Extensions.cci"
-#include "IpV6Extensions.ct"
+//#include "IpV6Extensions.ct"
 //#include "IpV6Extensions.cti"
 #endif
 

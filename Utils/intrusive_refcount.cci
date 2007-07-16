@@ -31,44 +31,36 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::intrusive_refcount::refcount_t senf::intrusive_refcount::refcount()
+prefix_ senf::intrusive_refcount_base::refcount_t senf::intrusive_refcount_base::refcount()
 {
     return refcount_;
 }
 
-prefix_ bool senf::intrusive_refcount::is_shared()
+prefix_ bool senf::intrusive_refcount_base::is_shared()
 {
     return refcount()>1;
 }
 
-prefix_ senf::intrusive_refcount::intrusive_refcount()
+prefix_ senf::intrusive_refcount_base::intrusive_refcount_base()
     : refcount_(0)
 {}
 
-prefix_  senf::intrusive_refcount::~intrusive_refcount()
+prefix_  senf::intrusive_refcount_base::~intrusive_refcount_base()
 {}
 
-prefix_ void senf::intrusive_refcount::add_ref()
+prefix_ void senf::intrusive_refcount_base::add_ref()
 {
     ++refcount_;
 }
 
-prefix_ bool senf::intrusive_refcount::release()
+prefix_ bool senf::intrusive_refcount_base::release()
 {
     BOOST_ASSERT(refcount_>0);
     return --refcount_ == 0;
 }
 
-prefix_ void senf::intrusive_ptr_add_ref(intrusive_refcount* p)
-{
-    p->add_ref();
-}
-
-prefix_ void senf::intrusive_ptr_release(intrusive_refcount* p)
-{
-    if (p->release())
-        delete p;
-}
+prefix_ senf::intrusive_refcount::intrusive_refcount()
+{}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

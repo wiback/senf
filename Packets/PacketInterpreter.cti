@@ -1,0 +1,228 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketInterpreter inline template implementation */
+
+//#include "PacketInterpreter.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketInterpreterBase
+
+// Interpreter chain access
+
+template <class Type>
+prefix_ bool senf::PacketInterpreterBase::is()
+{
+    return dynamic_cast< PacketInterpreter<Type>* >(this);
+}
+
+template <class Type>
+prefix_ typename senf::PacketInterpreter<Type>::ptr senf::PacketInterpreterBase::as()
+{
+    return typename PacketInterpreter<Type>::ptr(
+        static_cast< PacketInterpreter<Type>* >(this));
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketInterpreter<PacketType>
+
+template <class PacketType>
+prefix_ senf::PacketInterpreter<PacketType>::~PacketInterpreter()
+{
+    parser_p()->~parser();
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::factory_t
+senf::PacketInterpreter<PacketType>::factory()
+{
+    return & factory_;
+}
+
+// Create completely new packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::create()
+{
+    return create(initSize());
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::create(NoInit_t)
+{
+    return create(0,noinit);
+}
+
+template <class PacketType>
+template <class ForwardReadableRange>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::create(ForwardReadableRange const & range)
+{
+    detail::PacketImpl::Guard p (new detail::PacketImpl(boost::begin(range),boost::end(range)));
+    ptr pi (create(p.p,p.p->begin(),p.p->end(),Append));
+    return pi;
+}
+
+// Create packet as new packet after a given packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet)
+{
+    return createAfter(packet, initSize());
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet, NoInit_t)
+{
+    return createAfter(packet, 0, noinit);
+}
+
+// Create clone of current packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::clone()
+{
+    return boost::static_pointer_cast<typename ptr::element_type>(PacketInterpreterBase::clone());
+}
+
+// Packet field access
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::parser
+senf::PacketInterpreter<PacketType>::fields()
+{
+    return parser(&data());
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::parser *
+senf::PacketInterpreter<PacketType>::fields_p()
+{
+    // This is somewhat awkward. We want to allow the user to access the packet's field using the
+    // 'operator->' member of the packet class (the handle). Now, 'operator->' *must* return a
+    // pointer to a non-dynamically allocated object. So where should it point to? We need to return
+    // a pointer to a parser instance, but parser instances are designed to be transient (they are
+    // invalidated whenever a packet's size is changed).
+
+    // What we do is the following: parserStorage_ is an (initialy uninitialized) storage area
+    // within the interpreter with enough space (and correct alignment) to take hold of a parser
+    // instance. In the constructor we use placement new to construct a parser in this area which we
+    // explicit dispose of in the destructor. Now, whenever the fields_p() member is called, we
+    // destroy the parser object and recreate it. 
+
+    // This does introduce one additional problem: It is not safe for multiple threads to
+    // concurrently read from the same packet. On the other hand, the packet classes are not
+    // syncronized in any way and are not safe to use from multiple threads anyways (e.g. the lazy
+    // packet chain makes some read-only operations change the packet which is not thread safe).
+
+    parser_p()->~parser();
+    new (parser_p()) parser (data().begin(),&data());
+    return parser_p();
+}
+
+////////////////////////////////////////
+// private members
+
+// Private structors
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::create(detail::PacketImpl * impl, iterator b, iterator e,
+                                            Append_t)
+{
+    return ptr(new PacketInterpreter(impl,b,e,Append));
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::create(detail::PacketImpl * impl, iterator b, iterator e,
+                                            Prepend_t)
+{
+    return ptr(new PacketInterpreter(impl,b,e,Prepend));
+}
+
+template <class PacketType>
+prefix_ senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl,
+                                                               iterator b, iterator e, Append_t)
+    : PacketInterpreterBase(impl,b,e,Append)
+{
+    new (parser_p()) parser (data().begin(),&data());
+}
+
+template <class PacketType>
+prefix_ senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl,
+                                                               iterator b, iterator e, Prepend_t)
+    : PacketInterpreterBase(impl,b,e,Prepend)
+{
+    new (parser_p()) parser (data().begin(),&data());
+}
+
+// PacketType access
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::size_type
+senf::PacketInterpreter<PacketType>::initSize()
+{
+    return type::initSize();
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::size_type
+senf::PacketInterpreter<PacketType>::initHeadSize()
+{
+    size_type sz (type::initHeadSize());
+    return  sz == size_type(-1) ? initSize() : sz ;
+}
+
+template <class PacketType>
+prefix_ void senf::PacketInterpreter<PacketType>::init()
+{
+    return type::init(ConcretePacket<PacketType>(ptr(this)));
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::parser *
+senf::PacketInterpreter<PacketType>::parser_p()
+{
+    return reinterpret_cast<parser *>(&parserStorage_);
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// End:

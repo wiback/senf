@@ -1,0 +1,188 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief ParseListB inline template implementation */
+
+#include "ParseListB.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>
+
+template <class ElementParser, class BytesParser>
+prefix_ typename senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::size_type
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::bytes(iterator i, state_type s)
+    const
+{
+    return BytesParser(i,s) + BytesParser::fixed_bytes;
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ typename senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::size_type
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::size(iterator i, state_type s)
+    const
+{
+    parser_type l (i,s);
+    return std::distance(l.begin(),l.end());
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ void senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::init(iterator i,
+                                                                               state_type s)
+    const
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator_policy
+
+template <class ElementParser, class BytesParser>
+prefix_ typename senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator_policy::
+setBegin(iterator i, state_type s)
+{
+    return boost::next(i,BytesParser::fixed_bytes);
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ typename senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator_policy::
+setEnd(iterator i, state_type s)
+{
+    return boost::next(i,BytesParser(i,s) + BytesParser::fixed_bytes);
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ void
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator_policy::
+setFromPosition(iterator i, state_type s, iterator p)
+{}
+
+template <class ElementParser, class BytesParser>
+prefix_ typename senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator_policy::next(iterator i,
+                                                                                   state_type s)
+{
+    return boost::next(i,senf::bytes(ElementParser(i,s)));
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ typename senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::iterator_policy::raw(iterator i,
+                                                                                  state_type s)
+    const
+{
+    return i;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>
+
+template <class ElementParser, class BytesParser>
+prefix_
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::container_policy::
+container_policy(parser_type const & list)
+{
+    iterator const e (boost::next(list.i(),list.bytes()));
+    iterator i (boost::next(list.i(), BytesParser::fixed_bytes));
+    for(n_=0; i!=e; ++n_, std::advance(i,ElementParser(i,list.state()).bytes())) ;
+    container_size_ = list.data().size();
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ typename senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::size_type
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::container_policy::
+bytes(iterator i, state_type s)
+    const
+{
+    return BytesParser(i,s) + BytesParser::fixed_bytes;
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ typename senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::size_type
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::container_policy::
+size(iterator i, state_type s)
+    const
+{
+    return n_;
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ void
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::container_policy::
+erase(iterator i, state_type s, iterator p)
+{
+    size_type b (senf::bytes(ElementParser(p,s)));
+    BytesParser(i,s) -= b;
+    --n_;
+    // The container will be reduced by b bytes directly after this call
+    container_size_ = s->size()-b;
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ void
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::container_policy::
+insert(iterator i, state_type s, iterator p)
+{
+    BytesParser(i,s) += senf::bytes(ElementParser(p,s));
+    ++n_;
+    container_size_ = s->size();
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ void
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::container_policy::
+init(iterator i, state_type s)
+{
+    n_ = 0;
+    container_size_ = s->size();
+}
+
+template <class ElementParser, class BytesParser>
+prefix_ void
+senf::detail::Parse_ListB_Policy<ElementParser,BytesParser>::container_policy::
+update(iterator i, state_type s)
+    const
+{
+    if (container_size_ == s->size())
+        return;
+    iterator j (boost::next(i,BytesParser::fixed_bytes));
+    for (size_type n (n_); n; --n, std::advance(j,ElementParser(j,s).bytes())) ;
+    BytesParser(i,s) = std::distance(i,j) - BytesParser::fixed_bytes;
+    container_size_ = s->size();
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

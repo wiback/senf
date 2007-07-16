@@ -1,0 +1,141 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketParser inline template implementation */
+
+#include "PacketParser.ih"
+
+// Custom includes
+#include "PacketData.hh"
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketParserBase
+
+template <class Parser>
+prefix_ Parser senf::PacketParserBase::parse(data_iterator i)
+    const
+{
+    return Parser(i,state());
+}
+
+template <class Parser>
+prefix_ Parser senf::PacketParserBase::parse(size_type n)
+    const
+{
+    return Parser(boost::next(i(),n),state());
+}
+
+prefix_ void senf::PacketParserBase::defaultInit()
+    const
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// namespace members
+
+template <class Parser>
+prefix_ senf::PacketParserBase::size_type senf::bytes(Parser p)
+{
+    return detail::packetParserSize(p,0);
+}
+
+template <class Parser, class Value>
+prefix_ typename boost::enable_if_c < 
+        boost::is_base_of<senf::PacketParserBase, Parser>::value 
+            && ! boost::is_base_of<senf::PacketParserBase, Value>::value,
+        Parser >::type senf::operator<<(Parser target, Value const & value)
+{
+    target.value(value);
+    return target;
+}
+
+template <class Parser>
+prefix_ senf::PacketParserBase::size_type
+senf::detail::packetParserSize(Parser p, int, Parser_TakeNum<Parser::fixed_bytes> *)
+{
+    return Parser::fixed_bytes;
+}
+
+template <class Parser>
+prefix_ senf::PacketParserBase::size_type senf::detail::packetParserSize(Parser p, ...)
+{
+    return p.bytes();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::SafePacketParser<Parser>
+
+template <class Parser>
+prefix_ senf::SafePacketParser<Parser>::SafePacketParser()
+    : i_()
+{}
+
+template <class Parser>
+prefix_ senf::SafePacketParser<Parser>::SafePacketParser(Parser parser)
+    : parser_(parser), i_(parser)
+{}
+
+template <class Parser>
+prefix_ senf::SafePacketParser<Parser> & senf::SafePacketParser<Parser>::operator=(Parser parser)
+{
+    parser_ = parser;
+    i_ = parser;
+    return *this;
+}
+
+template <class Parser>
+prefix_ Parser senf::SafePacketParser<Parser>::operator*()
+    const
+{
+    BOOST_ASSERT( i_ );
+    parser_->i_ = PacketParserBase::data_iterator(i_);
+    return *parser_;
+}
+
+template <class Parser>
+prefix_ Parser const * senf::SafePacketParser<Parser>::operator->()
+    const
+{
+    BOOST_ASSERT( i_ );
+    parser_->i_ = PacketParserBase::data_iterator(i_);
+    return & (*parser_);
+}
+
+template <class Parser>
+prefix_ bool senf::SafePacketParser<Parser>::boolean_test()
+    const
+{
+    return i_;
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// End:

@@ -36,163 +36,121 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ senf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array()
-{}
-
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::Parse_Array(Iterator const & i)
-    : ParserBase<Iterator,IPacket>(i)
-{}
-
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ unsigned senf::Parse_Array<elements,Parser,Iterator,IPacket>::bytes()
-{
-    return elements*Parser::bytes();
-}
-
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ bool
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::check(Iterator const & e)
-    const
-{
-    return e-this->i() >= bytes();
-}
-
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ void senf::Parse_Array<elements,Parser,Iterator,IPacket>::init()
-    const
-{
-    iterator e=end();
-    for (iterator i=begin(); i!=e; ++i) i->init();
-}
-
 ///////////////////////////////////////////////////////////////////////////
+// senf::Parse_Array<elements,ElementParser>
 
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::size_type
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::size()
+template <unsigned elements, class ElementParser>
+prefix_ senf::Parse_Array<elements,ElementParser>::Parse_Array(data_iterator i, state_type s)
+    : PacketParserBase(i,s,fixed_bytes)
+{}
+
+// Container interface
+
+template <unsigned elements, class ElementParser>
+prefix_ typename senf::Parse_Array<elements,ElementParser>::size_type
+senf::Parse_Array<elements,ElementParser>::size()
 {
     return elements;
 }
 
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::begin()
+template <unsigned elements, class ElementParser>
+prefix_ typename senf::Parse_Array<elements,ElementParser>::iterator
+senf::Parse_Array<elements,ElementParser>::begin()
     const
 {
-    return iterator(this->i());
+    return iterator(i(),state());
 }
 
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::end()
+template <unsigned elements, class ElementParser>
+prefix_ typename senf::Parse_Array<elements,ElementParser>::iterator
+senf::Parse_Array<elements,ElementParser>::end()
     const
 {
-    return iterator(this->i()+bytes());
+    return iterator(boost::next(i(),fixed_bytes),state());
 }
 
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::range_type
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::range()
+template <unsigned elements, class ElementParser>
+prefix_ typename senf::Parse_Array<elements,ElementParser>::value_type
+senf::Parse_Array<elements,ElementParser>::operator[](difference_type i)
     const
 {
-    return std::make_pair(begin(),end());
-}
-
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::iterator
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::value()
-    const
-{
-    return begin();
-}
-
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-prefix_ typename senf::Parse_Array<elements,Parser,Iterator,IPacket>::value_type
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::operator[](difference_type i)
-    const
-{
+    BOOST_ASSERT( i>=0 && i < difference_type(elements) );
     return begin()[i];
 }
 
-template <unsigned elements, class Parser, class Iterator, class IPacket>
-template <class InputIterator>
-prefix_ senf::Parse_Array<elements,Parser,Iterator,IPacket> const &
-senf::Parse_Array<elements,Parser,Iterator,IPacket>::operator=(InputIterator const & i)
-{
-    copy_n(i,size(),begin());
-}
-
 ///////////////////////////////////////////////////////////////////////////
+// senf::detail::Parse_Array_iterator<ElementParser>
 
-template <class Parser, class Iterator>
-prefix_ Iterator senf::impl::Parse_Array_iterator<Parser,Iterator>::raw()
-    const
-{
-    return i_;
-}
+template <class ElementParser>
+prefix_ senf::detail::Parse_Array_iterator<ElementParser>::Parse_Array_iterator()
+    : i_()
+{}
 
-template <class Parser, class Iterator>
-prefix_ Parser senf::impl::Parse_Array_iterator<Parser,Iterator>::operator[](int i)
+template <class ElementParser>
+prefix_  senf::detail::Parse_Array_iterator<ElementParser>::
+Parse_Array_iterator(PacketParserBase::data_iterator const & i, PacketParserBase::state_type s)
+    : i_(i), s_(s)
+{}
+
+template <class ElementParser>
+prefix_ ElementParser 
+senf::detail::Parse_Array_iterator<ElementParser>::operator[](int i)
     const
 {
     return (*this+i).dereference();
 }
 
-template <class Parser, class Iterator>
-prefix_ senf::impl::Parse_Array_iterator<Parser,Iterator>::Parse_Array_iterator()
-    : i_()
-{}
-
-template <class Parser, class Iterator>
-prefix_  senf::impl::Parse_Array_iterator<Parser,Iterator>::
-Parse_Array_iterator(Iterator const & i)
-    : i_(i)
-{}
-
-template <class Parser, class Iterator>
-prefix_ Parser
-senf::impl::Parse_Array_iterator<Parser,Iterator>::dereference()
+template <class ElementParser>
+prefix_ senf::PacketParserBase::data_iterator
+senf::detail::Parse_Array_iterator<ElementParser>::raw()
     const
 {
-    return Parser(i_);
+    return i_;
 }
 
-template <class Parser, class Iterator>
-prefix_ bool senf::impl::Parse_Array_iterator<Parser,Iterator>::
+// iterator_facade interface
+
+template <class ElementParser>
+prefix_ ElementParser 
+senf::detail::Parse_Array_iterator<ElementParser>::dereference()
+    const
+{
+    return ElementParser(i_,s_);
+}
+
+template <class ElementParser>
+prefix_ bool
+senf::detail::Parse_Array_iterator<ElementParser>::
 equal(Parse_Array_iterator const & other)
     const
 {
     return i_==other.i_;
 }
 
-template <class Parser, class Iterator>
-prefix_ int senf::impl::Parse_Array_iterator<Parser,Iterator>::
+template <class ElementParser>
+prefix_ int senf::detail::Parse_Array_iterator<ElementParser>::
 distance_to(Parse_Array_iterator const & other)
     const
 {
-    return (other.i_-i_)/Parser::bytes();
+    return (other.i_-i_)/ElementParser::fixed_bytes;
 }
 
-template <class Parser, class Iterator>
-prefix_ void senf::impl::Parse_Array_iterator<Parser,Iterator>::increment()
+template <class ElementParser>
+prefix_ void senf::detail::Parse_Array_iterator<ElementParser>::increment()
 {
-    i_ += Parser::bytes();
+    i_ += ElementParser::fixed_bytes;
 }
 
-template <class Parser, class Iterator>
-prefix_ void senf::impl::Parse_Array_iterator<Parser,Iterator>::decrement()
+template <class ElementParser>
+prefix_ void senf::detail::Parse_Array_iterator<ElementParser>::decrement()
 {
-    i_ -= Parser::bytes();
+    i_ -= ElementParser::fixed_bytes;
 }
 
-template <class Parser, class Iterator>
-prefix_ void
-senf::impl::Parse_Array_iterator<Parser,Iterator>::advance(int n)
+template <class ElementParser>
+prefix_ void senf::detail::Parse_Array_iterator<ElementParser>::advance(int n)
 {
-    i_ += n*Parser::bytes();
+    i_ += n*ElementParser::fixed_bytes;
 }
 
 #undef copy_n
@@ -207,5 +165,4 @@ senf::impl::Parse_Array_iterator<Parser,Iterator>::advance(int n)
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

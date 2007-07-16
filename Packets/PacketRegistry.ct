@@ -26,67 +26,71 @@
 
 // Custom includes
 #include <iostream>
-#include "Utils/TypeInfo.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-template <class KeyType>
-template <class OtherPacket>
-prefix_ void senf::impl::PacketRegistryImpl<KeyType>::registerPacket(key_t key)
+template <class PacketType>
+prefix_ senf::PacketInterpreterBase::factory_t senf::detail::PkReg_EntryImpl<PacketType>::factory()
+    const
 {
-    // If this assertion fails, a Packet was registered with an already known key
-    BOOST_ASSERT( registry_.insert(std::make_pair(
-        key, Entry_ptr(new impl::PkReg_EntryImpl<OtherPacket>()))).second );
-    // If this assertion fails, the same Packet was registered with two different keys
-    BOOST_ASSERT( reverseRegistry_.insert(
-        std::make_pair(senf::typeIdValue<OtherPacket>(), key)).second );
+    return PacketInterpreter<PacketType>::factory();
 }
 
 template <class KeyType>
-prefix_ typename senf::impl::PacketRegistryImpl<KeyType>::key_t
-senf::impl::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type)
+template <class PacketType>
+prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key)
+{
+    bool isUnique (
+        registry_.insert(
+            std::make_pair(key, Entry_ptr(new detail::PkReg_EntryImpl<PacketType>()))).second);
+    // If this assertion fails, a Packet was registered with an already known key
+    BOOST_ASSERT( isUnique );
+    bool isNew (
+        reverseRegistry_.insert(
+            std::make_pair(senf::typeIdValue<PacketType>(), key)).second);
+    // If this assertion fails, the same Packet was registered with two different keys
+    BOOST_ASSERT( isNew );
+}
+
+template <class KeyType>
+prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::key_t
+senf::detail::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type)
 {
     typename ReversePacketMap::iterator i (reverseRegistry_.find(type));
     if (i==reverseRegistry_.end())
-        throw PacketTypeNotRegistered();
+        throw PacketTypeNotRegisteredException();
     return i->second;
 }
 
-template <class OtherPacket>
-prefix_ void
-senf::impl::PkReg_EntryImpl<OtherPacket>::registerInterpreter(Packet const * p,
-                                                                     Packet::iterator b,
-                                                                     Packet::iterator e)
+template <class KeyType>
+prefix_ boost::optional<typename senf::detail::PacketRegistryImpl<KeyType>::key_t>
+senf::detail::PacketRegistryImpl<KeyType>::key(senf::TypeIdValue const & type, bool)
 {
-    p->template registerInterpreter<OtherPacket>(b,e);
-}
-
-template <class OtherPacket>
-prefix_ senf::Packet::ptr
-senf::impl::PkReg_EntryImpl<OtherPacket>::reinterpret(Packet * p)
-{
-    return p->template reinterpret<OtherPacket>();
+    typename ReversePacketMap::iterator i (reverseRegistry_.find(type));
+    if (i==reverseRegistry_.end())
+        return boost::optional<key_t>();
+    return i->second;
 }
 
 template <class KeyType>
-prefix_ typename senf::impl::PacketRegistryImpl<KeyType>::Entry *
-senf::impl::PacketRegistryImpl<KeyType>::lookup(key_t key)
+prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::Entry const &
+senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key)
 {
     typename PacketMap::iterator i (registry_.find(key));
     if (i==registry_.end())
-        return &impl::pkreg_dataEntry;
-    return i->second.get();
+        throw PacketTypeNotRegisteredException();
+    return *(i->second);
 }
 
-template <class Tag>
-template <class InputIterator>
-prefix_ senf::Packet::ptr
-senf::PacketRegistry<Tag>::create(typename Tag::key_t key, InputIterator b,
-                                         InputIterator e)
+template <class KeyType>
+prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::Entry const *
+senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key, bool)
 {
-    Packet::ptr p (Packet::create<DataPacket>(b,e));
-    return registry().lookup(key)->reinterpret(p.get());
+    typename PacketMap::iterator i (registry_.find(key));
+    if (i==registry_.end())
+        return 0;
+    return i->second.get();
 }
 
 template <class Tag>

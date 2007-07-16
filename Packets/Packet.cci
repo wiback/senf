@@ -1,9 +1,7 @@
-// $Id$
-//
-// Copyright (C) 2006
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,168 +18,133 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline non-template functions
-
-#include "Packet.ih"
+/** \file
+    \brief Packet inline non-template implementation */
 
 // Custom includes
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::impl::PacketImpl::PacketImpl()
-    : data_(), interpreters_(), refcount_(1)
-{
-    SATCOM_PKF_REFC_MSG("] PacketImpl::PacketImpl (" << this << "): refcount_ = 1\n");
-}
-
-prefix_ senf::impl::PacketImpl::PacketImpl(unsigned size, Packet::byte initValue)
-    : data_(size,initValue), interpreters_(), refcount_(1)
-{
-    SATCOM_PKF_REFC_MSG("] PacketImpl::PacketImpl (" << this << "): refcount_ = 1\n");
-}
-
-prefix_ senf::impl::PacketImpl::~PacketImpl()
-{
-    BOOST_ASSERT( !refcount_ );
-    SATCOM_PKF_REFC_MSG("] PacketImpl::~PacketImpl (" << this << ")\n");
-}
-
-// PacketImpl::add_ref and PacketImpl::release are only called from
-// intrusive_ptr_add_ref and intrusive_ptr_release
-prefix_ void senf::impl::PacketImpl::add_ref()
-{
-    ++refcount_;
-    SATCOM_PKF_REFC_MSG("] PacketImpl::add_ref (" << this << "): refcount_ = " << refcount_ << "\n");
-}
-
-prefix_ bool senf::impl::PacketImpl::release()
-{
-    BOOST_ASSERT( refcount_ > 0 );
-    --refcount_;
-    SATCOM_PKF_REFC_MSG("] PacketImpl::release (" << this << "): refcount_ = " << refcount_ << "\n");
-    return ! refcount_;
-}
-
-prefix_ void senf::impl::PacketImpl::truncateInterpreters(Packet const * p)
-{
-    BOOST_ASSERT( p->impl_ == this );
-    this->interpreters_.erase(p->self_,this->interpreters_.end());
-}
-
-prefix_ void senf::impl::PacketImpl::truncateInterpretersAfter(Packet const * p)
-{
-    BOOST_ASSERT( p->impl_ == this );
-    this->interpreters_.erase(boost::next(p->self_),this->interpreters_.end());
-}
-
-prefix_ senf::impl::PacketImpl* senf::impl::PacketImpl::impl(Packet const * p)
-{
-    return p->impl_;
-}
-
-/*
-prefix_ std::ostream & senf::operator<<(std::ostream & os, Packet const & packet)
-{
-    packet.dump(os);
-    return os;
-}
-*/
-
-// These methods are called by the user codes Packet::ptr's. They
-// refcount both the Packet and the owning PacketImpl.
-prefix_ void senf::intrusive_ptr_add_ref(Packet const * p)
-{
-    impl::PacketImpl::packet_add_ref(p);
-}
-
-prefix_ void senf::intrusive_ptr_release(Packet * p)
-{
-    impl::PacketImpl::packet_release(p);
-}
-
-prefix_ void senf::impl::intrusive_ptr_add_ref(PacketImpl * p)
-{
-    p->add_ref();
-}
-
-prefix_ void senf::impl::intrusive_ptr_release(PacketImpl * p)
-{
-    if (p->release())
-        delete p;
-}
-
 ///////////////////////////////////////////////////////////////////////////
-// class Packet
+// senf::Packet
 
-prefix_ senf::Packet::iterator senf::Packet::begin()
+// public structors
+
+prefix_ senf::Packet::Packet()
+{}
+
+prefix_ senf::Packet senf::Packet::clone()
     const
 {
-    return impl_->data_.begin()+begin_;
+    return Packet(ptr()->clone());
 }
 
-prefix_ senf::Packet::iterator senf::Packet::end()
+// Interpreter chain access
+
+prefix_ senf::Packet senf::Packet::next()
     const
 {
-    return impl_->data_.begin()+end_;
+    PacketInterpreterBase::ptr p (ptr()->next());
+    return !p && ptr()->nextPacketRange() ? checkNext() : Packet(p);
 }
 
-prefix_ size_t senf::Packet::size()
+prefix_ senf::Packet senf::Packet::prev()
     const
 {
-    return end_-begin_;
+    return Packet(ptr()->prev());
 }
 
-prefix_ senf::Packet::ptr senf::Packet::prev()
+prefix_ senf::Packet senf::Packet::first()
     const
 {
-    if (this->self_ == this->impl_->interpreters_.begin())
-        return ptr(0);
-    // Re-converting the to a smart pointer is correct here, since the
-    // shared_ptr really uses the intrusive refcount which makes this
-    // operation safe ...
-    return ptr(boost::prior(this->self_)->get(),true);
+    return Packet(ptr()->first());
 }
 
-prefix_ senf::Packet::ptr senf::Packet::head()
+prefix_ senf::Packet senf::Packet::last()
     const
 {
-    // Re-converting the to a smart pointer is correct here, since the
-    // shared_ptr really uses the intrusive refcount which makes this
-    // operation safe ...
-    return ptr(this->impl_->interpreters_.front().get(),true);
+    Packet p (ptr()->last());
+    return p.next() ? checkLast() : p;
 }
 
-prefix_  senf::Packet::~Packet()
-{
-    /** \todo This is sad ... we cannot check this since this assertion fails at the moment if the
-        Packet constructor throws ... hrmpf ... we really should initialize refcount_ to 0 and
-        remove the 'false' argument to the ptr constructor in create */
-    // BOOST_ASSERT( !this->refcount_  && !this->impl_ );
-    SATCOM_PKF_REFC_MSG("] Packet::~Packet (" << this << ")\n");
-}
-
-prefix_ void senf::Packet::add_ref()
+prefix_ senf::Packet senf::Packet::parseNextAs(factory_t factory)
     const
 {
-    ++this->refcount_;
-    SATCOM_PKF_REFC_MSG("] Packet::add_ref (" << this << "): refcount_ = " << this->refcount_ << "\n");
+    return Packet(ptr()->parseNextAs(factory));
 }
 
-prefix_ bool senf::Packet::release()
+prefix_ senf::Packet senf::Packet::append(Packet packet)
+    const
 {
-    BOOST_ASSERT( this->refcount_ > 0 );
-    --this->refcount_;
-    SATCOM_PKF_REFC_MSG("] Packet::release (" << this << "): refcount_ = " << this->refcount_ << "\n");
-    return !this->refcount_ && !this->impl_;
+    return Packet(ptr()->append(packet.ptr()));
 }
 
-prefix_ bool senf::Packet::unlink()
+// Data access
+
+prefix_ senf::PacketData & senf::Packet::data()
+    const
 {
-    SATCOM_PKF_REFC_MSG("] Packet::unlink (" << this << "): refcount_ = " << this->refcount_ << "\n");
-    this->impl_ = 0;
-    this->begin_ = this->end_;
-    return !this->refcount_;
+    return ptr()->data();
+}
+
+prefix_ senf::Packet::size_type senf::Packet::size()
+    const
+{
+    return data().size();
+}
+
+
+// Other methods
+
+prefix_ bool senf::Packet::operator==(Packet other)
+    const
+{
+    return ptr() == other.ptr();
+}
+
+prefix_ void senf::Packet::finalize()
+    const
+{
+    ptr()->finalize();
+}
+
+prefix_ void senf::Packet::dump(std::ostream & os)
+    const
+{
+    last(); // Make sure the packet is complete
+    ptr()->dump(os);
+}
+
+prefix_ senf::TypeIdValue senf::Packet::typeId()
+    const
+{
+    return ptr()->typeId();
+}
+
+prefix_ senf::Packet::factory_t senf::Packet::factory()
+    const
+{
+    return ptr()->factory();
+}
+
+prefix_ bool senf::Packet::boolean_test()
+    const
+{
+    return packet_ && packet_->valid();
+}
+
+// protected members
+
+prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr packet)
+    : packet_(packet)
+{}
+
+prefix_ senf::PacketInterpreterBase::ptr senf::Packet::ptr()
+    const
+{
+    BOOST_ASSERT(packet_);
+    return packet_;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////
@@ -195,5 +158,4 @@ prefix_ bool senf::Packet::unlink()
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

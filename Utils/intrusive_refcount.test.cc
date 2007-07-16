@@ -48,6 +48,25 @@ namespace {
     };
 
     unsigned Tester::counter = 0;
+
+    struct TesterCustom
+        : public senf::intrusive_refcount_t<TesterCustom>
+    {
+        typedef boost::intrusive_ptr<TesterCustom> ptr;
+        typedef senf::intrusive_refcount_t<TesterCustom> super;
+
+        TesterCustom() { ++counter; }
+        ~TesterCustom() { --counter; }
+
+        void add_ref() { super::add_ref(); ++refs; }
+        bool release() { --refs; super::release(); return false; }
+
+        static unsigned counter;
+        static unsigned refs;
+    };
+
+    unsigned TesterCustom::counter = 0;
+    unsigned TesterCustom::refs = 0;
 }
 
 BOOST_AUTO_UNIT_TEST(intrusive_refcount)
@@ -72,6 +91,42 @@ BOOST_AUTO_UNIT_TEST(intrusive_refcount)
 
     p = 0;
     BOOST_CHECK_EQUAL(Tester::counter,0u);
+}
+
+BOOST_AUTO_UNIT_TEST(intrusive_refcount_t)
+{
+    BOOST_CHECK_EQUAL(TesterCustom::counter,0u);
+    BOOST_CHECK_EQUAL(TesterCustom::refs,0u);
+
+    TesterCustom::ptr p (new TesterCustom);
+    BOOST_CHECK_EQUAL(TesterCustom::counter,1u);
+    BOOST_CHECK_EQUAL(p->refcount(),1u);
+    BOOST_CHECK_EQUAL(p->is_shared(),false);
+    BOOST_CHECK_EQUAL(TesterCustom::refs,1u);
+    
+
+    {
+        TesterCustom::ptr pp (p);
+        BOOST_CHECK_EQUAL(TesterCustom::counter,1u);
+        BOOST_CHECK_EQUAL(p->refcount(),2u);
+        BOOST_CHECK_EQUAL(p->is_shared(),true);
+        BOOST_CHECK_EQUAL(TesterCustom::refs,2u);
+    }
+
+    BOOST_CHECK_EQUAL(TesterCustom::counter,1u);
+    BOOST_CHECK_EQUAL(p->refcount(),1u);
+    BOOST_CHECK_EQUAL(p->is_shared(),false);
+    BOOST_CHECK_EQUAL(TesterCustom::refs,1u);
+
+    {
+        TesterCustom * pp (p.get());
+        p = 0;
+        BOOST_CHECK_EQUAL(TesterCustom::counter,1u);
+        BOOST_CHECK_EQUAL(TesterCustom::refs,0u);
+        // The TesterCustom leaks ...
+        delete pp;
+        BOOST_CHECK_EQUAL(TesterCustom::counter,0u);
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

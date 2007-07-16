@@ -1,0 +1,198 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketImpl inline non-template implementation */
+
+// Custom includes
+#include "PacketInterpreter.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+// Memory management:
+// 
+// * The PacketImpl destructor will *explicitly* clean-up the interpreters_ list by removing
+//   each element from the list and deleting it if it's (intrusive) refcount is 0
+// * The PacketInterpreters use safe hooks -> they know wether they are part of a list or not
+// * PacketHandle has an intrusive_ptr to PacketInterpreterBase. The intrusive_ptr_add_ref
+//   will refcount both the PacketImpl as well as the PacketInterpreterBase
+// * intrusive_ptr_remove will only delete the object if it's not in a container
+// * removing an object from the list will decrement the PacketImpl refcount accordingly
+// * inserting an object into the list will incroment the PacketImpl refcount accordingly
+// * each PacketInterpreterBase instance holds a *raw* pointer to the PacketImpl
+//
+// The following operations change refcounts:
+//
+// * intrusive_ptr_add_ref(PacketInterpreterBase *);
+// * intrusive_ptr_remove(PacketInterpreterBase *);
+// * PacketImpl::appendInterpreter();
+// * PacketImpl::prependInterpreter();
+// * PacketImpl::truncateInterpreters();
+//
+// The last three also modify the impl_ member accordingly by calling
+// PacketInterpreterBase::assign/release
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::PacketImpl
+
+prefix_ senf::detail::PacketImpl::PacketImpl()
+    : refcount_(0)
+{}
+
+prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
+    : refcount_(0), data_(size,initValue)
+{}
+
+prefix_ senf::detail::PacketImpl::~PacketImpl()
+{
+    // We increment refcount_ to ensure, release() won't call delete again
+    ++refcount_;
+    eraseInterpreters(interpreters_.begin(), interpreters_.end());
+}
+
+// rerference/memory management
+
+prefix_ void senf::detail::PacketImpl::add_ref(refcount_t n)
+{
+    refcount_ += n;
+}
+
+prefix_ void senf::detail::PacketImpl::release(refcount_t n)
+{
+    BOOST_ASSERT(refcount_ >= n);
+    // uah ... we need to be extremely careful here. If refcount_ is n, we want to commit suicide,
+    // however the destructor will remove all PacketInterpreters from the list and will thereby
+    // decrement refcount -> only decrenebt refcount_ when *not* caling delete
+    if (refcount_ == n)
+        delete this;
+    else
+        refcount_ -= n;
+}
+
+prefix_ senf::detail::PacketImpl::refcount_t senf::detail::PacketImpl::refcount()
+    const
+{
+    return refcount_;
+}
+
+// Interpreter chain
+
+prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::first()
+{
+    return interpreters_.empty() ? 0 : & interpreters_.front();
+}
+
+prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::last()
+{
+    return interpreters_.empty() ? 0 : & interpreters_.back();
+}
+
+prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::next(PacketInterpreterBase * p)
+{
+    interpreter_list::iterator i (interpreter_list::current(*p));
+    return (++i == interpreters_.end()) ? 0 : &*i;
+}
+
+prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::prev(PacketInterpreterBase * p)
+{ 
+    interpreter_list::iterator i (interpreter_list::current(*p));
+    return (i == interpreters_.begin()) ? 0 : &*(--i);
+}
+
+prefix_ void senf::detail::PacketImpl::truncateInterpreters(PacketInterpreterBase * p)
+{
+    Guard guard (this);
+    eraseInterpreters(interpreter_list::current(*p),interpreters_.end());
+}
+
+prefix_ void senf::detail::PacketImpl::truncateInterpretersBackwards(PacketInterpreterBase * p)
+{
+    Guard guard (this);
+    eraseInterpreters(interpreters_.begin(),boost::next(interpreter_list::current(*p)));
+}
+
+// Data container
+
+prefix_ senf::detail::PacketImpl::iterator senf::detail::PacketImpl::begin()
+{
+    return data_.begin();
+}
+
+prefix_ senf::detail::PacketImpl::iterator senf::detail::PacketImpl::end()
+{
+    return data_.end();
+}
+
+prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::size()
+{
+    return data_.size();
+}
+
+prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, byte v)
+{
+    data_.insert(pos,v);
+    updateIterators(self,pos,1);
+}
+
+prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, size_type n,
+                                              byte v)
+{
+    data_.insert(pos,n,v);
+    updateIterators(self,pos,n);
+}
+
+prefix_ void senf::detail::PacketImpl::erase(PacketData * self, iterator pos)
+{
+    data_.erase(pos);
+    updateIterators(self,pos,-1);
+}
+
+prefix_ void senf::detail::PacketImpl::erase(PacketData * self, iterator first, iterator last)
+{
+    data_.erase(first,last);
+    updateIterators(self,first,-std::distance(first,last));
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::PacketImpl::Guard
+
+prefix_ senf::detail::PacketImpl::Guard::Guard(PacketImpl * impl)
+    : p (impl)
+{
+    p->add_ref();
+}
+
+prefix_ senf::detail::PacketImpl::Guard::~Guard()
+{
+    p->release();
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// End:

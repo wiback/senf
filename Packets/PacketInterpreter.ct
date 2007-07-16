@@ -1,0 +1,364 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketInterpreter non-inline template implementation  */
+
+//#include "PacketInterpreter.ih"
+
+// Custom includes
+#include "Packet.hh"
+
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketInterpreterBase
+
+// Interpreter chain access
+
+template <class Type>
+prefix_ typename senf::PacketInterpreter<Type>::ptr
+senf::PacketInterpreterBase::parseNextAs()
+{
+    optional_range r (nextPacketRange());
+    if (!r)
+        throw InvalidPacketChainException();
+    
+    if (next())
+        impl().truncateInterpreters(next().get());
+
+    typename PacketInterpreter<Type>::ptr pi 
+        (PacketInterpreter<Type>::create(&impl(),r->begin(),r->end(),Append));
+    return pi;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketInterpreter<PacketType>
+
+// Create completely new packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::create(size_type size)
+{
+    if (size < initSize())
+        throw TruncatedPacketException();
+    ptr pi (create(size,noinit));
+    pi->init();
+    return pi;
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::create(size_type size, NoInit_t)
+{
+    detail::PacketImpl::Guard p (new detail::PacketImpl(size,0));
+    ptr pi (create(p.p,p.p->begin(),p.p->end(),Append));
+    return pi;
+}
+
+// Create packet as new packet after a given packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet,
+                                                 size_type size)
+{
+    if (size < initSize())
+        throw TruncatedPacketException();
+    ptr pi (createAfter(packet,size,noinit));
+    std::fill(pi->data().begin(), pi->data().end(),0);
+    pi->init();
+    return pi;
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet,
+                                                 size_type size, NoInit_t)
+{
+    optional_range r (packet->nextPacketRange());
+    if (!r)
+        throw InvalidPacketChainException();
+
+    if (packet->next())
+        packet->impl().truncateInterpreters(packet->next().get());
+
+    ptr pi (create(&packet->impl(),r->begin(),r->end(),Append));
+    pi->data().resize(size);
+    return pi;
+}
+
+template <class PacketType>
+template <class ForwardReadableRange>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet,
+                                                 ForwardReadableRange const & range)
+{
+    optional_range r (packet->nextPacketRange());
+    if (!r)
+        throw InvalidPacketChainException();
+    
+    if (packet->next())
+        packet->impl().truncateInterpreters(packet->next().get());
+
+    ptr pi (create(&packet->impl(),r->begin(),r->end(),Append));
+    pi->data().resize(boost::size(range));
+    std::copy(boost::begin(range), boost::end(range), pi->data().begin());
+    return pi;
+}
+
+// Create packet as new packet (header) before a given packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr packet)
+{
+    ptr pi (createBefore(packet, noinit));
+    pi->data().insert(pi->data().begin(),initHeadSize(),byte(0x00u));
+    pi->data().insert(pi->data().end(),initSize()-initHeadSize(),byte(0x00u));
+    pi->init();
+    return pi;
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::ptr
+senf::PacketInterpreter<PacketType>::createBefore(PacketInterpreterBase::ptr packet, NoInit_t)
+{
+    if (packet->prev())
+        packet->impl().truncateInterpretersBackwards(packet->prev().get());
+    
+    return create(&packet->impl(),packet->data().begin(),packet->data().end(),Prepend);
+}
+
+////////////////////////////////////////
+// private members
+
+// virtual interface
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::optional_range
+senf::PacketInterpreter<PacketType>::v_nextPacketRange()
+{
+    return type::nextPacketRange(ConcretePacket<PacketType>(ptr(this)));
+}
+
+template <class PacketType>
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::v_appendClone(detail::PacketImpl * impl, iterator base,
+                                                   iterator new_base)
+{
+    return create(impl,
+                  boost::next(new_base,std::distance(base,begin())),
+                  boost::next(new_base,std::distance(base,end())),
+                  Append);
+}
+
+template <class PacketType>
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::v_appendClone(detail::PacketImpl * impl, range r)
+{
+    return create(impl, r.begin(), r.end(), Append);
+}
+
+template <class PacketType>
+prefix_ void senf::PacketInterpreter<PacketType>::v_finalize()
+{
+    type::finalize(ConcretePacket<PacketType>(ptr(this)));
+}
+
+template <class PacketType>
+prefix_ void senf::PacketInterpreter<PacketType>::v_dump(std::ostream & os)
+{
+    type::dump(ConcretePacket<PacketType>(ptr(this)),os);
+}
+
+template <class PacketType>
+prefix_ senf::TypeIdValue senf::PacketInterpreter<PacketType>::v_type()
+{
+    return typeIdValue<PacketType>();
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::factory_t
+senf::PacketInterpreter<PacketType>::v_factory()
+{
+    return factory();
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreter<PacketType>::factory_t
+senf::PacketInterpreter<PacketType>::v_nextPacketType()
+{
+    return type::nextPacketType(ConcretePacket<PacketType>(ptr(this)));
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketInterpreterBase::Factory
+
+template <class ForwardReadableRange>
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreterBase::Factory::create(ForwardReadableRange const & range)
+    const
+{
+    ptr pi (create(boost::size(range),noinit));
+    std::copy(boost::begin(range), boost::end(range), pi->data().begin());
+    return pi;
+}
+
+template <class ForwardReadableRange>
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreterBase::Factory::createAfter(PacketInterpreterBase::ptr packet,
+                                                  ForwardReadableRange const & range)
+    const
+{
+    ptr pi (createAfter(packet,boost::size(range),noinit));
+    std::copy(boost::begin(range), boost::end(range), pi->data().begin());
+    return pi;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketInterpreter<PacketType>::FactoryImpl
+
+// Create completely new packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::create()
+    const
+{
+    return senf::PacketInterpreter<PacketType>::create();
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::create(NoInit_t)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::create(noinit);
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::create(size_type size)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::create(size);
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::create(size_type size, NoInit_t)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::create(size, noinit);
+}
+
+// Create packet as new packet after a given packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr packet)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::createAfter(packet);
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr packet,
+                                                              NoInit_t)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::createAfter(packet,noinit);
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr packet,
+                                                              size_type size)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::createAfter(packet,size);
+}
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::createAfter(PacketInterpreterBase::ptr packet,
+                                                              size_type size, NoInit_t)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::createAfter(packet,size,noinit);
+}
+
+// Create packet as new packet (header) before a given packet
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::
+createBefore(PacketInterpreterBase::ptr packet)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::createBefore(packet);
+}
+
+template <class PacketType>
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::
+createBefore(PacketInterpreterBase::ptr packet, NoInit_t)
+    const
+{
+    return senf::PacketInterpreter<PacketType>::createBefore(packet,noinit);
+}
+
+// Parse next packet in chain
+
+template <class PacketType>
+prefix_ typename senf::PacketInterpreterBase::ptr
+senf::PacketInterpreter<PacketType>::FactoryImpl::parseNext(PacketInterpreterBase::ptr packet)
+    const
+{
+    optional_range r (packet->nextPacketRange());
+    if (!r)
+        throw InvalidPacketChainException();
+    
+    if (packet->next())
+        packet->impl().truncateInterpreters(packet->next().get());
+
+    return senf::PacketInterpreter<PacketType>::create(&packet->impl(),r->begin(),r->end(),Append);
+}
+
+template <class PacketType>
+const typename senf::PacketInterpreter<PacketType>::FactoryImpl 
+    senf::PacketInterpreter<PacketType>::factory_;
+
+///////////////////////////////ct.e////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// End:

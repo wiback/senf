@@ -36,37 +36,6 @@
 
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(ipV4Packet_parser)
-{
-    unsigned char data[] = { 0x01, 0x02, 0x03, 0x04,
-                             0x05, 0x06, 0x07, 0x08,
-                             0x09, 0x0A, 0x0B, 0x0C,
-                             0x11, 0x12, 0x13, 0x14,
-                             0x15, 0x16, 0x17, 0x18
-                           };
-
-    typedef unsigned char * iterator;
-    Parse_IpV4<iterator> p(data);
-
-    BOOST_CHECK_EQUAL( p.version(),     0x00u       );
-    BOOST_CHECK_EQUAL( p.ihl(),         0x01u       );
-    // the static_cast is to silence gcc-3.3
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p.tos()), 0x02u );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p.length()), 0x0304u );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p.identifier()), 0x0506u );
-    BOOST_CHECK_EQUAL( p.reserved(),    0           );
-    BOOST_CHECK_EQUAL( p.df(),          0           );
-    BOOST_CHECK_EQUAL( p.mf(),          0           );
-    BOOST_CHECK_EQUAL( p.frag(),        0x0708u     );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p.ttl()), 0x09u );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p.protocol()), 0x0Au );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p.crc()), 0x0B0Cu );
-    BOOST_CHECK_EQUAL( p.source(),      0x11121314u );
-    BOOST_CHECK_EQUAL( p.destination(), 0x15161718u );
-
-}
-
-
 BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
 {
 
@@ -77,28 +46,23 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
                              0x15, 0x16, 0x17, 0x18
                            };
 
-    IpV4Packet::ptr p (Packet::create<IpV4Packet>(data, data+sizeof(data)));
+    senf::IpV4Packet p (senf::IpV4Packet::create(data));
 
     BOOST_CHECK_EQUAL( p->version(),     0x00u       );
     BOOST_CHECK_EQUAL( p->ihl(),         0x01u       );
-    // the static_cast is to silence gcc-3.3
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p->tos()), 0x02u );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p->length()), 0x0304u );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p->identifier()), 0x0506u );
+    BOOST_CHECK_EQUAL( p->tos(),         0x02u       );
+    BOOST_CHECK_EQUAL( p->length(),      0x0304u     );
+    BOOST_CHECK_EQUAL( p->identifier(),  0x0506u     );
     BOOST_CHECK_EQUAL( p->reserved(),    0           );
     BOOST_CHECK_EQUAL( p->df(),          0           );
     BOOST_CHECK_EQUAL( p->mf(),          0           );
     BOOST_CHECK_EQUAL( p->frag(),        0x0708u     );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p->ttl()), 0x09u );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p->protocol()), 0x0Au );
-    BOOST_CHECK_EQUAL( static_cast<unsigned>(p->crc()), 0x0B0Cu );
+    BOOST_CHECK_EQUAL( p->ttl(),         0x09u       );
+    BOOST_CHECK_EQUAL( p->protocol(),    0x0Au       );
+    BOOST_CHECK_EQUAL( p->crc(),         0x0B0Cu     );
     BOOST_CHECK_EQUAL( p->source(),      0x11121314u );
     BOOST_CHECK_EQUAL( p->destination(), 0x15161718u );
-
-
 }
-
-
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

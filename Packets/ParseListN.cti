@@ -1,0 +1,125 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief ParseListN inline template implementation */
+
+#include "ParseListN.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+template <class ElementParser, class SizeParser>
+prefix_ typename senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::size_type
+senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::bytes(iterator i, state_type s)
+    const
+{
+    return std::distance(i,parser_type(i,s).end().raw());
+}
+
+template <class ElementParser, class SizeParser>
+prefix_ typename senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::size_type
+senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::size(iterator i, state_type s)
+    const
+{
+    return SizeParser(i,s);
+}
+
+template <class ElementParser, class SizeParser>
+prefix_ void senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::init(iterator i,
+                                                                              state_type s)
+    const
+{}
+
+template <class ElementParser, class SizeParser>
+prefix_ void senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::erase(iterator i,
+                                                                               state_type s,
+                                                                               iterator p)
+    const
+{
+    --SizeParser(i,s);
+}
+
+template <class ElementParser, class SizeParser>
+prefix_ void senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::insert(iterator i,
+                                                                                state_type s,
+                                                                                iterator p)
+    const
+{
+    ++SizeParser(i,s);
+}
+
+template <class ElementParser, class SizeParser>
+prefix_ void senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::update(iterator i,
+                                                                                state_type s)
+    const
+{}
+
+template <class ElementParser, class SizeParser>
+prefix_ typename senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::iterator
+senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::iterator_policy::
+setBegin(iterator i, state_type s)
+{
+    l_ = i;
+    n_ = SizeParser(i,s);
+    return n_ ? boost::next(i,SizeParser::fixed_bytes) : data(s).end();
+}
+
+template <class ElementParser, class SizeParser>
+prefix_ typename senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::iterator
+senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::iterator_policy::
+setEnd(iterator i, state_type s)
+{
+    l_ = i;
+    n_ = 0;
+    return data(s).end();
+}
+
+template <class ElementParser, class SizeParser>
+prefix_ typename senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::iterator
+senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::iterator_policy::next(iterator i,
+                                                                                  state_type s)
+{
+    --n_;
+    return n_ ? boost::next(i,senf::bytes(ElementParser(i,s))) : data(s).end();
+}
+
+template <class ElementParser, class SizeParser>
+prefix_ senf::PacketData &
+senf::detail::Parse_ListN_Policy<ElementParser,SizeParser>::data(state_type s)
+{
+    return *s;
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

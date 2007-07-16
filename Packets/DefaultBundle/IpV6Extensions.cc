@@ -31,27 +31,17 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6Extension_Fragment>
-        registerIpV6Extension_Fragment (44);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6ExtensionType_Fragment>
+        registerIpV6ExtensionType_Fragment (44);
 }
 
-prefix_ void senf::IpV6Extension_Fragment::v_nextInterpreter()
-    const
-{
-    registerInterpreter(nextHeader(),begin()+bytes(),end());
-}
-
-prefix_ void senf::IpV6Extension_Fragment::v_finalize()
-{}
-
-prefix_ void senf::IpV6Extension_Fragment::v_dump(std::ostream & os)
-    const
+prefix_ void senf::IpV6ExtensionType_Fragment::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 fragment extension:\n"
-       << "  next header    : " << unsigned(nextHeader()) << "\n"
-       << "  fragment offset: " << std::hex << unsigned(fragmentOffset()) << "\n"
-       << "  more fragments : " << (moreFragments()?"yes":"no") << "\n"
-       << "  id             : " << std::hex << unsigned(id()) << "\n";
+       << "  next header    : " << unsigned(p->nextHeader()) << "\n"
+       << "  fragment offset: " << std::hex << unsigned(p->fragmentOffset()) << "\n"
+       << "  more fragments : " << (p->moreFragments()?"yes":"no") << "\n"
+       << "  id             : " << std::hex << unsigned(p->id()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

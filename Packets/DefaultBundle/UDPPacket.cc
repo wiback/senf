@@ -33,27 +33,17 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::UDPPacket>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::UDPPacketType>
         registerUDPPacket (17);
 }
 
-prefix_ void senf::UDPPacket::v_nextInterpreter()
-    const
-{
-    registerInterpreter<DataPacket>(begin()+bytes(),end());
-}
-
-prefix_ void senf::UDPPacket::v_finalize()
-{}
-
-prefix_ void senf::UDPPacket::v_dump(std::ostream & os)
-    const
+prefix_ void senf::UDPPacketType::dump(packet p, std::ostream & os)
 {
     os << "UDP:\n"
-       << "  source port   : " << source() << "\n"
-       << "  dest port     : " << destination() << "\n"
-       << "  length        : " << length() << "\n"
-       << "  crc           : " << std::hex << crc() << std::dec << "\n";
+       << "  source port   : " << p->source() << "\n"
+       << "  dest port     : " << p->destination() << "\n"
+       << "  length        : " << p->length() << "\n"
+       << "  crc           : " << std::hex << p->crc() << std::dec << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

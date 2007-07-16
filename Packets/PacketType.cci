@@ -1,0 +1,81 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketType inline non-template implementation */
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketTypeBase
+
+prefix_ senf::PacketTypeBase::optional_range senf::PacketTypeBase::no_range()
+{
+    return PacketInterpreterBase::no_range();
+}
+
+prefix_ senf::PacketTypeBase::factory_t senf::PacketTypeBase::no_factory()
+{
+    return PacketInterpreterBase::no_factory();
+}
+
+prefix_ senf::PacketTypeBase::size_type senf::PacketTypeBase::initSize()
+{
+    return 0;
+}
+
+prefix_ senf::PacketTypeBase::size_type senf::PacketTypeBase::initHeadSize()
+{
+    return size_type(-1);
+}
+
+prefix_ void senf::PacketTypeBase::init(packet)
+{}
+
+prefix_ senf::PacketTypeBase::optional_range senf::PacketTypeBase::nextPacketRange(packet p)
+{
+    return PacketInterpreterBase::no_range();
+}
+
+prefix_ senf::PacketTypeBase::factory_t senf::PacketTypeBase::nextPacketType(packet p)
+{
+    return PacketInterpreterBase::no_factory();
+}
+
+prefix_ void senf::PacketTypeBase::finalize(packet)
+{}
+
+prefix_ void senf::PacketTypeBase::dump(packet p, std::ostream & os)
+{}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// End:

@@ -34,25 +34,6 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace senf;
-
-BOOST_AUTO_UNIT_TEST(udpPacket_parser)
-{
-    unsigned char data[] = { 0x01, 0x02, 0x03, 0x04,
-                             0x05, 0x06, 0x07, 0x08
-                           };
-
-    typedef unsigned char * iterator;
-    Parse_UDP<iterator> p(data);
-
-    BOOST_CHECK_EQUAL( p.source(),            0x0102       );
-    BOOST_CHECK_EQUAL( p.destination(),       0x0304       );
-    BOOST_CHECK_EQUAL( p.length(),            0x0506       );
-    BOOST_CHECK_EQUAL( p.crc(),               0x0708       );
-
-}
-
-
 BOOST_AUTO_UNIT_TEST(udpPacket_packet)
 {
 
@@ -60,7 +41,7 @@ BOOST_AUTO_UNIT_TEST(udpPacket_packet)
                              0x05, 0x06, 0x07, 0x08
                            };
 
-    UDPPacket::ptr p (Packet::create<UDPPacket>(data, data+sizeof(data)));
+    senf::UDPPacket p (senf::UDPPacket::create(data));
 
     BOOST_CHECK_EQUAL( p->source(),            0x0102       );
     BOOST_CHECK_EQUAL( p->destination(),       0x0304       );

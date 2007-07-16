@@ -1,0 +1,84 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief pool_alloc_mixin inline template implementation */
+
+//#include "pool_alloc_mixin.ih"
+
+// Custom includes
+#include <boost/assert.hpp>
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+template <class Self>
+prefix_ void * senf::pool_alloc_mixin<Self>::operator new(size_t size)
+{
+    // When deriving from Self you may not change the class's size without
+    // inheriting from pool_alloc_mixin again. See pool_alloc_mixin documentation.
+    BOOST_ASSERT( size == sizeof(Self) );
+#ifndef NDEBUG
+    allocCounter(1);
+#endif
+    return boost::singleton_pool< pool_alloc_mixin_tag, sizeof(Self) >::malloc();
+}
+
+template <class Self>
+prefix_ void senf::pool_alloc_mixin<Self>::operator delete(void * p, size_t size)
+{
+    // When deriving from Self you may not change the class's size without
+    // inheriting from pool_alloc_mixin again. See pool_alloc_mixin documentation.
+    BOOST_ASSERT( size == sizeof(Self) );
+#ifndef NDEBUG
+    allocCounter(-1);
+#endif
+    boost::singleton_pool< pool_alloc_mixin_tag, sizeof(Self) >::free(p);
+}
+
+#ifndef NDEBUG
+
+template <class Self>
+prefix_ unsigned long senf::pool_alloc_mixin<Self>::allocCounter()
+{
+    return allocCounter(0);
+}
+
+template <class Self>
+prefix_ unsigned long senf::pool_alloc_mixin<Self>::allocCounter(long delta)
+{
+    static unsigned long counter (0);
+    counter += delta;
+    return counter;
+}
+
+#endif
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// End:

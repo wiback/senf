@@ -24,10 +24,11 @@
 #define HH_ParseVec_ 1
 
 // Custom includes
-#include <utility> // for std::pair
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/utility.hpp> // for boost::noncopyable
-#include "ParserBase.hh"
+#include <boost/utility.hpp>
+#include <boost/range.hpp>
+#include <boost/type_traits.hpp>
+#include "PacketParser.hh"
 #include "ParseArray.hh" // for Parse_Array_iterator
 
 //#include "ParseVec.mpp"
@@ -35,92 +36,104 @@
 
 namespace senf {
 
+    template <class ElementParser, class Sizer> class Parse_Vector_Container;
 
-    template <class Parser, class SizeParser, class Container> class Parse_Vector_wrapper;
-
-    template <class Parser, class SizeParser, class Iterator=nil, class IPacket=nil>
-    struct Parse_Vector : public ParserBase<Iterator,IPacket>
+    /** \brief
+        
+        \todo Make the sizer a private baseclass to profit from the empty-base-class optimization
+     */
+    template <class ElementParser, class Sizer>
+    struct Parse_Vector : public PacketParserBase
     {
-        typedef typename SizeParser::template rebind<Iterator>::parser size_parser;
+        Parse_Vector(data_iterator i, state_type s);
+        Parse_Vector(Sizer sizer, data_iterator i, state_type s);
 
-        ///////////////////////////////////////////////////////////////////////////
-        // Parser interface
-
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_Vector<Parser,SizeParser,I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        explicit Parse_Vector(SizeParser const & size);
-        Parse_Vector(size_parser const & size, Iterator const & i);
-
-        unsigned bytes() const;
-        void check(Iterator const & e) const;
+        size_type bytes() const;
         void init() const;
+
+        static const size_type init_bytes = Sizer::init_bytes;
 
         ///////////////////////////////////////////////////////////////////////////
         // Container interface
 
-        typedef typename Parser::template rebind<Iterator>::parser value_type;
-        typedef impl::Parse_Array_iterator<value_type,Iterator> iterator;
-        typedef unsigned size_type;
-        typedef int difference_type;
-        typedef std::pair<iterator,iterator> range_type;
-
-        template <class Container>
-        struct wrapper { typedef Parse_Vector_wrapper<value_type, size_parser, Container> t; };
+        typedef ElementParser value_type;
+        typedef detail::Parse_Array_iterator<value_type> iterator;
+        typedef iterator const_iterator;
+        typedef Parse_Vector_Container<ElementParser,Sizer> container;
 
         size_type size() const;
         bool empty() const;
 
         iterator begin() const;
         iterator end() const;
-        range_type range() const;
-        range_type value() const;
 
         value_type operator[](difference_type i) const;
+        value_type front() const;
+        value_type back() const;
+
+        // Mutators
+        
+        // The mutators provided here are those which don't take an iterator argument.
+        // If you need to pass an iterator it is much simpler and cleaner to use the
+        // 'container' wrapper
+                   
+        template <class Value> void push_back        (Value value, size_type n=1) const;
+                               void push_back_space  (size_type n=1) const;
+        template <class Value> void push_front       (Value value, size_type n=1) const;
+                               void push_front_space (size_type n=1) const;
+                               void resize           (size_type n) const;
+        template <class Value> void resize           (size_type n, Value value) const;
 
      private:
-        size_parser size_;
+        Sizer sizer_;
 
-        template <class P, class SP, class C> friend class Parse_Vector_wrapper;
+        friend class Parse_Vector_Container<ElementParser,Sizer>;
+    };
+
+    namespace detail { template <class SizeParser> class Parse_VectorN_Sizer; }
+
+    template <class ElementParser, class SizeParser>
+    struct Parse_VectorN
+    {
+        typedef Parse_Vector< ElementParser,
+                              detail::Parse_VectorN_Sizer<SizeParser> > parser;
     };
 
     /** \brief
 
         Holds a reference to the container !
       */
-    template <class Parser, class SizeParser, class Container>
-    class Parse_Vector_wrapper
-        : public boost::noncopyable
+    template <class ElementParser, class Sizer>
+    class Parse_Vector_Container
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef Container container;
-        typedef SizeParser size_parser;
-        typedef typename Parser::byte_iterator byte_iterator;
-        typedef Parser value_type;
-        typedef impl::Parse_Array_iterator<value_type,byte_iterator> iterator;
-        typedef unsigned size_type;
-        typedef int difference_type;
-        typedef std::pair<iterator,iterator> range_type;
+        typedef Parse_Vector<ElementParser,Sizer> parser_type;
+        typedef PacketParserBase::data_iterator data_iterator;
+        typedef PacketParserBase::size_type size_type;
+        typedef PacketParserBase::difference_type difference_type;
+        typedef ElementParser value_type;
+        typedef detail::Parse_Array_iterator<value_type> iterator;
+        typedef iterator const_iterator;
+        typedef PacketParserBase::state_type state_type;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-        template <class P, class SP, class I, class IP>
-        Parse_Vector_wrapper(Parse_Vector<P,SP,I,IP> const & vector, Container & container);
-
         // no default constructor
-        // no copy
+        // default copy
         // default destructor
-        // no conversion constructors
+        // conversion constructors
+
+        Parse_Vector_Container(parser_type const & vector);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-        ///\name APacketRegistry.essors
+
+        ///\name Accessors
         ///@{
 
         size_type size() const;
@@ -128,36 +141,58 @@ namespace senf {
 
         iterator begin() const;
         iterator end() const;
-        range_type range() const;
 
         value_type operator[](difference_type i) const;
+        value_type front() const;
+        value_type back() const;
 
         ///@}
-        ///////////////////////////////////////////////////////////////////////////
         ///\name Mutators
         ///@{
 
-        void shift(iterator pos, size_type n=1);
+        iterator shift(iterator pos, size_type n=1);
         template <class Value>
         void insert(iterator pos, Value const & t);
         template <class Value>
         void insert(iterator pos, size_type n, Value const & t);
-        template <class InputIterator>
-        void insert(iterator pos, InputIterator f, InputIterator l);
+        template <class ForwardIterator>
+        void insert(iterator pos, ForwardIterator f, ForwardIterator l,
+                    typename boost::disable_if< boost::is_convertible<ForwardIterator,size_type> >::type * = 0);
 
         void erase(iterator pos, size_type n=1);
         void erase(iterator f, iterator l);
         void clear();
 
+        template <class Value> void push_back        (Value value, size_type n=1);
+                               void push_back_space  (size_type n=1);
+        template <class Value> void push_front       (Value value, size_type n=1);
+                               void push_front_space (size_type n=1);
+                               void resize           (size_type n);
+        template <class Value> void resize           (size_type n, Value value);
+
+        ///@}
+
+        ///\name Parser interface
+        ///@{
+
+        parser_type parser() const;
+        data_iterator i() const;
+        state_type state() const;
+        PacketData & data() const;
+
+        size_type bytes() const;
+        void init() const;
+        
         ///@}
 
     protected:
 
     private:
+        void setSize(size_type value);
 
+        Sizer sizer_;
+        state_type state_;
         size_type i_;
-        size_type size_i_;
-        Container & container_;
     };
 
 }
@@ -176,5 +211,4 @@ namespace senf {
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

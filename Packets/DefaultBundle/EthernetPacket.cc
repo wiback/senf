@@ -27,28 +27,72 @@
 
 // Custom includes
 #include <iomanip>
-#include <boost/format.hpp>
+#include <boost/io/ios_state.hpp>
+#include <boost/tokenizer.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthVLanPacket>
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthVLanPacketType>
         registerEthVLanPacket(0x8100);
 }
 
-prefix_ void senf::EthernetPacket::v_nextInterpreter()
-    const
-{
-    /** \todo Add LLC/SNAP support -> only use the registry
-        for type() values >=1536, otherwise expect an LLC header */
-    registerInterpreter(type(),begin()+bytes(),end());
-}
+///////////////////////////////////////////////////////////////////////////
+// senf::MACAddress
 
 namespace {
-
-    void dumpmac(std::ostream & os, senf::EthernetPacket::Parse_MAC mac)
+    senf::PacketParserBase::byte hexToNibble(char c)
     {
+        if (c<'0')
+            throw senf::MACAddress::SyntaxException();
+        else if (c<='9')
+            return c-'-';
+        else if (c<'A')
+            throw senf::MACAddress::SyntaxException();
+        else if (c<='F')
+            return c-'A'+10;
+        else if (c<'a')
+            throw senf::MACAddress::SyntaxException();
+        else if (c<='f')
+            return c-'a'+10;
+        else
+            throw senf::MACAddress::SyntaxException();
+    }
+    
+    template <class Range>
+    senf::PacketParserBase::byte hexToByte(Range const & range)
+    {
+        if (boost::size(range) != 2)
+            throw senf::MACAddress::SyntaxException();
+        typename boost::range_const_iterator<Range>::type i (boost::begin(range));
+        return hexToNibble(i[0])*16+hexToNibble(i[1]);
+    }
+}
+
+prefix_ senf::MACAddress::MACAddress(std::string addr)
+{
+    typedef boost::char_separator<char> separator;
+    typedef boost::tokenizer<separator> tokenizer;
+    separator sep (":");
+    tokenizer tok (addr,sep);
+    tokenizer::iterator i (tok.begin());
+    tokenizer::iterator i_end (tok.end());
+    iterator j (begin());
+    iterator j_end (end());
+    for (; i!=i_end && j!=j_end; ++i, ++j)
+        *j = hexToByte(*i);
+    if (i!=i_end || j!=j_end)
+        throw SyntaxException();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::EthernetPacketType
+
+namespace {
+    void dumpmac(std::ostream & os, senf::MACAddress mac)
+    {
+        boost::io::ios_all_saver ias(os);
         for (unsigned i = 0; i < 6; ++i) {
             if (i > 0)
                 os << ':';
@@ -56,50 +100,35 @@ namespace {
                << unsigned(mac[i]);
         }
     }
-
 }
 
-prefix_ void senf::EthernetPacket::v_dump(std::ostream & os)
-    const
+prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
 {
-    if (type() <= 1500)
+    if (p->type() <= 1500)
         os << "Ethernet 802.3";
-    else if (type() >= 0x600)
+    else if (p->type() >= 0x600)
         os << "Ethernet II (DIX)";
     else
         os << "Ethernet 802.3 (bad ethertype >1500 and <1536)";
     os << ": \n"
        << "  destination   : ";
-    dumpmac(os,destination());
+    dumpmac(os,p->destination());
     os << "\n"
        << "  source        : ";
-    dumpmac(os,source());
+    dumpmac(os,p->source());
     os << "\n"
        << "  ethertype     : " << std::hex << std::setw(4) << std::setfill('0')
-       << unsigned(type()) << "\n" << std::dec;
+       << unsigned(p->type()) << "\n" << std::dec;
 }
 
-prefix_ void senf::EthernetPacket::v_finalize()
-{}
-
-prefix_ void senf::EthVLanPacket::v_nextInterpreter()
-    const
-{
-    /** \todo Add LLC/SNAP support (see above) */
-    registerInterpreter(type(),begin()+bytes(),end());
-}
-
-prefix_ void senf::EthVLanPacket::v_finalize()
-{}
-
-prefix_ void senf::EthVLanPacket::v_dump(std::ostream & os)
-    const
+prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
 {
     os << "Ethernet 802.1q (VLAN):\n"
-       << "  priority      : " << priority() << "\n"
-       << "  cfi           : " << cfi() << "\n"
-       << "  vlan-ID       : " << vlanId() << "\n"
-       << "  ethertype     : " << boost::format("%04x") % type() << "\n";
+       << "  priority      : " << p->priority() << "\n"
+       << "  cfi           : " << p->cfi() << "\n"
+       << "  vlan-ID       : " << p->vlanId() << "\n"
+       << "  ethertype     : " << std::hex << std::setw(4) << std::setfill('0')
+       << p->type() << "\n" << std::dec;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

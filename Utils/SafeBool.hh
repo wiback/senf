@@ -79,7 +79,7 @@ namespace senf {
         SafeBool to safe_bool (I tend to the latter ...)
      */
     template <typename T>
-    class SafeBool
+    class ComparableSafeBool
         : public SafeBoolBase
     {
     public:
@@ -87,8 +87,11 @@ namespace senf {
         bool operator !() const;
 
     protected:
-        ~SafeBool();
+        ~ComparableSafeBool();
     };
+
+    template <typename T>
+    class SafeBool : public ComparableSafeBool<T> {};
 
     template <typename T, typename U>
     void operator==(const SafeBool<T>& lhs,const SafeBool<U>& rhs);

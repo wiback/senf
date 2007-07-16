@@ -1,9 +1,7 @@
-// $Id$
-//
-// Copyright (C) 2006
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,126 +18,43 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline template functions
+/** \file
+    \brief Packet non-inline template implementation  */
 
-#include "Packet.ih"
+//#include "Packet.ih"
 
 // Custom includes
-#include <algorithm>
-#include "ParserBase.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-template <class OtherPacket, class InputIterator>
-prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr
-senf::Packet::create(InputIterator b, InputIterator e)
-{
-    boost::intrusive_ptr<impl::PacketImpl> impl (new impl::PacketImpl(b,e),false);
-    if (!check<OtherPacket>(impl->data_.begin(),impl->data_.end()))
-        throw TruncatedPacketException();
-    typename ptr_t<OtherPacket>::ptr p (new OtherPacket(PacketOp_set(impl.get())), false);
-    return p;
-}
+///////////////////////////////////////////////////////////////////////////
+// senf::Packet
 
 template <class OtherPacket>
-prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::create()
-{
-    boost::intrusive_ptr<impl::PacketImpl> impl (
-        new impl::PacketImpl(min_bytes<OtherPacket>(),0));
-    typename ptr_t<OtherPacket>::ptr p (new OtherPacket(PacketOp_set(impl.get())), false);
-    p->init();
-    return p;
-}
-
-template <class OuterPacket>
-prefix_ typename senf::Packet::ptr_t<OuterPacket>::ptr
-senf::Packet::create(Packet::ptr payload)
-{
-    /** \todo should I instead of using head() throw away all
-        interpreters before payload? ... probably yes ... */
-    payload->insert(payload->head()->begin(),min_bytes<OuterPacket>(),0);
-    typename ptr_t<OuterPacket>::ptr p (new OuterPacket(PacketOp_set(payload->impl_)));
-    p->init();
-    return p;
-}
-
-template <class OtherPacket>
-prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::reinterpret()
-{
-    // THIS INVALIDATES this !!!!!!!
-    if (!check<OtherPacket>(begin(),end()))
-        throw TruncatedPacketException();
-    typename ptr_t<OtherPacket>::ptr p (new OtherPacket(PacketOp_replace(this)),false);
-    return p;
-}
-
-template <class OtherPacket>
-prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr
-senf::Packet::registerInterpreter(raw_container::iterator begin,
-                                         raw_container::iterator end)
+prefix_ OtherPacket senf::Packet::findNext(NoThrow_t)
     const
 {
-    if (!check<OtherPacket>(begin,end))
-        throw TruncatedPacketException();
-    typename ptr_t<OtherPacket>::ptr p (
-        new OtherPacket(PacketOp_register(begin-impl_->data_.begin(),
-                                          end-impl_->data_.begin(),
-                                          this)),
-        false);
-    return p;
-}
-
-#define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Packets/Packet.mpp", 4))
-#include BOOST_PP_ITERATE()
-
-template <class OtherPacket>
-prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::find_next()
-    const
-{
-    ptr p (next());
-    while (p && !p->is<OtherPacket>())
-        p = p->next();
-    return p->as<OtherPacket>();
+    Packet p (*this);
+    while (p && ! p.is<OtherPacket>()) 
+        p = p.next();
+    if (p) 
+        return p.as<OtherPacket>();
+    else
+        return OtherPacket();
 }
 
 template <class OtherPacket>
-prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::find_prev()
+prefix_ OtherPacket senf::Packet::findPrev(NoThrow_t)
     const
 {
-    ptr p (prev());
-    while (p && !p->is<OtherPacket>())
-        p = p->prev();
-    return p->as<OtherPacket>();
-}
-
-template <class OtherPacket>
-prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::get_next()
-    const
-{
-    typename ptr_t<OtherPacket>::ptr p (find_next<OtherPacket>());
-    BOOST_ASSERT(p);
-    return p;
-}
-
-template <class OtherPacket>
-prefix_ typename senf::Packet::ptr_t<OtherPacket>::ptr senf::Packet::get_prev()
-    const
-{
-    typename ptr_t<OtherPacket>::ptr p (find_prev<OtherPacket>());
-    BOOST_ASSERT(p);
-    return p;
-}
-
-template <class InputIterator>
-prefix_ void senf::Packet::insert(iterator pos, InputIterator f, InputIterator l,
-                                         Whence whence)
-{
-    size_type index(pos-impl_->data_.begin());
-    BOOST_ASSERT( index >= begin_ && index <= end_ );
-    size_type sz (impl_->data_.size());
-    impl_->data_.insert(pos,f,l);
-    impl_->updateIterators(index,impl_->data_.size()-sz,self_,whence);
+    Packet p (*this);
+    while (p && ! p.is<OtherPacket>()) 
+        p = p.prev();
+    if (p) 
+        return p.as<OtherPacket>();
+    else
+        return OtherPacket();
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
@@ -153,5 +68,4 @@ prefix_ void senf::Packet::insert(iterator pos, InputIterator f, InputIterator l
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

@@ -25,10 +25,11 @@
 #define HH_IpV6Packet_ 1
 
 // Custom includes
-#include "Packets/Packet.hh"
+#include "Packets/PacketType.hh"
 #include "Packets/ParseInt.hh"
-#include "Packets/ParseArray.hh"
 #include "Packets/PacketRegistry.hh"
+#include "Packets/PacketParser.hh"
+#include "Packets/ParseArray.hh"
 #include "IpV4Packet.hh"
 
 //#include "IpV6Packet.mpp"
@@ -37,69 +38,62 @@
 namespace senf {
 
     // See RFC2460
-    template <class Iterator=nil, class IpV6Packet=nil>
-    struct Parse_IpV6 : public ParserBase<Iterator,IpV6Packet>
+    struct Parse_IpV6 : public PacketParserBase
     {
-        template <class I, class P=nil>
-        struct rebind { typedef Parse_IpV6<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        Parse_IpV6() {}
-        Parse_IpV6(Iterator const & i) : ParserBase<Iterator,IpV6Packet>(i) {}
-
-        static unsigned bytes() { return 40; }
+        SENF_PACKET_PARSER_NO_INIT(Parse_IpV6);
 
         ///////////////////////////////////////////////////////////////////////////
 
-        typedef Parse_UIntField <  0,  4, Iterator > Parse_Version;
-        typedef Parse_UIntField <  4, 12, Iterator > Parse_Class;
-        typedef Parse_UIntField < 12, 32, Iterator > Parse_FlowLabel;
-        typedef Parse_UInt8     <         Iterator > Parse_8bit;
-        typedef Parse_UInt16    <         Iterator > Parse_16bit;
+        typedef Parse_UIntField <  0,  4 > Parse_Version;
+        typedef Parse_UIntField <  4, 12 > Parse_Class;
+        typedef Parse_UIntField < 12, 32 > Parse_FlowLabel;
+        typedef Parse_UInt8                Parse_8bit;
+        typedef Parse_UInt16               Parse_16bit;
 
-        typedef Parse_Array < 16, Parse_8bit, Iterator > Parse_Addr;
+        typedef Parse_Array < 16, Parse_8bit > Parse_Addr;
 
-        Parse_Version    version()       const { return Parse_Version   (this->i()      ); }
-        Parse_Class      trafficClass()  const { return Parse_Class     (this->i()      ); }
-        Parse_FlowLabel  flowLabel()     const { return Parse_FlowLabel (this->i()      ); }
-        Parse_16bit      length()        const { return Parse_16bit     (this->i() +  4 ); }
-        Parse_8bit       nextHeader()    const { return Parse_8bit      (this->i() +  6 ); }
-        Parse_8bit       hopLimit()      const { return Parse_8bit      (this->i() +  7 ); }
-        Parse_Addr       source()        const { return Parse_Addr      (this->i() +  8 ); }
-        Parse_Addr       destination()   const { return Parse_Addr      (this->i() + 24 ); }
+        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
+            ((OverlayField)( version,      Parse_Version   ))
+            ((OverlayField)( trafficClass, Parse_Class     ))
+            ((Field       )( flowLabel,    Parse_FlowLabel ))
+            ((Field       )( length,       Parse_16bit     ))
+            ((Field       )( nextHeader,   Parse_8bit      ))
+            ((Field       )( hopLimit,     Parse_8bit      ))
+            ((Field       )( source,       Parse_Addr      ))
+            ((Field       )( destination,  Parse_Addr      )) );
+
+        void init() {
+            version() = 6;
+        }
     };
 
-    class IpV6Packet
-        : public Packet,
-          public Parse_IpV6<Packet::iterator, IpV6Packet>,
-          public PacketRegistryMixin<IpTypes, IpV6Packet>
+    struct IpV6PacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<IpV6PacketType, IpTypes>
     {
-        using PacketRegistryMixin<IpTypes,IpV6Packet>::registerInterpreter;
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
+        typedef PacketTypeMixin<IpV6PacketType, IpTypes> mixin;
+        typedef ConcretePacket<IpV6PacketType> packet;
+        typedef Parse_IpV6 parser;
 
-        typedef ptr_t<IpV6Packet>::ptr ptr;
+        using mixin::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::initSize;
+        using mixin::init;
 
-        ///////////////////////////////////////////////////////////////////////////
-
-    private:
-        template <class Arg>
-        IpV6Packet(Arg const & arg);
-
-        virtual void v_nextInterpreter() const;
-        virtual void v_finalize();
-        virtual void v_dump(std::ostream & os) const;
-
-        friend class Packet;
+        static registry_key_t nextPacketKey(packet p) 
+            { return p->nextHeader(); }
+        
+        static void dump(packet p, std::ostream & os);
     };
+
+    typedef IpV6PacketType::packet IpV6Packet;
 
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "IpV6Packet.cci"
 //#include "IpV6Packet.ct"
-#include "IpV6Packet.cti"
+//#include "IpV6Packet.cti"
 #endif
 
 

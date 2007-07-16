@@ -1,9 +1,7 @@
-// $Id$
-//
-// Copyright (C) 2006
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,65 +18,40 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief DataPacket public header */
+
 #ifndef HH_DataPacket_
 #define HH_DataPacket_ 1
 
 // Custom includes
+#include "PacketType.hh"
 #include "Packet.hh"
 
+//#include "DataPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+    
+    struct DataPacketType : public PacketTypeBase
+    {};
 
-
-    /** \brief Non-interpreted Packet
-
-        A DataPacket is an uninterpreted blob of data. It is terminal
-        in the sense, that no further packet header may follow after
-        this packet. A DataPacket implements the abstract Packet
-        interface and nothing more.
-     */
-    class DataPacket : public Packet
-    {
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        typedef ptr_t<DataPacket>::ptr ptr;
-        typedef iterator byte_iterator;
-
-        ///////////////////////////////////////////////////////////////////////////
-
-        static void init() {}
-        static bool check(iterator const & b, iterator const & e) { return true; }
-
-    private:
-        template <class Arg>
-        DataPacket(Arg const & arg);
-
-        virtual void v_nextInterpreter() const;
-        virtual void v_finalize();
-        virtual void v_dump(std::ostream & os) const;
-
-        friend class Packet;
-    };
-
-
+    typedef ConcretePacket<DataPacketType> DataPacket;
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "DataPacket.cci"
 //#include "DataPacket.ct"
-#include "DataPacket.cti"
+//#include "DataPacket.cti"
 #endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

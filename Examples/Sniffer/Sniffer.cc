@@ -88,13 +88,12 @@ int loop_main (int argc, char const * argv[])
         // sock.protocol().promisc("eth0",senf::PacketProtocol::Promiscuous);
 
         while (true) { // forever
-            std::string data (sock.read());
-            senf::EthernetPacket::ptr packet (
-                senf::Packet::create<senf::EthernetPacket>(
-                    data.begin(), data.end()));
-            packet->dump(std::cout);
-            hexdump(packet->last()->begin(),
-                    packet->last()->end());
+            senf::EthernetPacket packet (senf::EthernetPacket::create(
+                                             senf::EthernetPacket::noinit));
+            sock.read(packet.data(),0);
+            packet.dump(std::cout);
+            hexdump(packet.last().data().begin(),
+                    packet.last().data().end());
             std::cout << "\n\n";
         }
     }
@@ -124,13 +123,12 @@ public:
 private:
     void dumpPacket(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
     {
-        std::string data (sock.read());
-        senf::EthernetPacket::ptr packet (
-            senf::Packet::create<senf::EthernetPacket>(
-                data.begin(), data.end()));
-        packet->dump(std::cout);
-        hexdump(packet->last()->begin(),
-                packet->last()->end());
+        senf::EthernetPacket packet (
+            senf::EthernetPacket::create(senf::EthernetPacket::noinit));
+        sock.read(packet.data(),0);
+        packet.dump(std::cout);
+        hexdump(packet.last().data().begin(),
+                packet.last().data().end());
         std::cout << "\n\n";
     }
 };
@@ -170,6 +168,6 @@ int main(int argc, char const * argv[])
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -u"
 // comment-column: 40
 // End:

@@ -1,9 +1,7 @@
-// $Id$
-//
-// Copyright (C) 2006
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,21 +18,24 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template funPacketRegistry.ons
+/** \file
+    \brief PacketRegistry non-inline non-template implementation */
 
 #include "PacketRegistry.hh"
 #include "PacketRegistry.ih"
 
 // Custom includes
 
+//#include "PacketRegistry.mpp"
 #define prefix_
-///////////////////////////////PacketRegistry..p////////////////////////////////////////
+///////////////////////////////cc.p////////////////////////////////////////
 
-senf::impl::PkReg_EntryImpl<senf::DataPacket>
-    senf::impl::pkreg_dataEntry;
+prefix_  senf::PkReg_Entry::~PkReg_Entry()
+{}
 
-///////////////////////////////PacketRegistry..e////////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "PacketRegistry.mpp"
 
 
 // Local Variables:
@@ -43,6 +44,4 @@ senf::impl::PkReg_EntryImpl<senf::DataPacket>
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
-// comment-column: 40
 // End:

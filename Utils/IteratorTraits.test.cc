@@ -38,6 +38,7 @@
 BOOST_AUTO_UNIT_TEST(iteratorTraits)
 {
     BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<int*>::value, true );
+    BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<void>::value, false );
 #ifdef __GNUG__
     BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<std::vector<int>::iterator>::value, true);
     BOOST_CHECK_EQUAL( senf::contiguous_storage_iterator<std::string::iterator>::value, true);

@@ -3,4 +3,5 @@
 PROJECT_NAME = libPackets
 TAGFILES = "$(TOPDIR)/Utils/doc/Utils.tag"
 GENERATE_TAGFILE = doc/Packets.tag
-INPUT = . DefaultBundle RTPBundle
+#INPUT = . DefaultBundle RTPBundle
+INPUT = .

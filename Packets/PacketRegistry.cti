@@ -25,52 +25,62 @@
 #include "PacketRegistry.ih"
 
 // Custom includes
-#include "Packet.hh"
 
 #define prefix_ inline
 ///////////////////////////////PacketRegistry..p///////////////////////////////////////
 
 template <class Tag>
-template <class OtherPacket>
-prefix_ void senf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key)
-{
-    registry().registerPacket<OtherPacket>(key);
-}
-
-template <class Tag>
-template <class OtherPacket>
-prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<OtherPacket>::
+template <class PacketType>
+prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>::
 RegistrationProxy(typename Tag::key_t key)
 {
-    PacketRegistry<Tag>::template registerPacket<OtherPacket>(key);
+    PacketRegistry<Tag>::template registerPacket<PacketType>(key);
 }
 
 template <class Tag>
-template <class OtherPacket>
+template <class PacketType>
+prefix_ void senf::PacketRegistry<Tag>::registerPacket(typename Tag::key_t key)
+{
+    registry().registerPacket<PacketType>(key);
+}
+
+template <class Tag>
+template <class PacketType>
 prefix_ typename Tag::key_t senf::PacketRegistry<Tag>::key()
 {
-    return registry().key(senf::typeIdValue<OtherPacket>());
+    return registry().key(senf::typeIdValue<PacketType>());
 }
 
-template <class KeyType>
-template <class OtherPacket>
-prefix_ void
-senf::impl::PacketRegistryImpl<KeyType>::registerInterpreter(Packet * p,
-                                                                    Packet::iterator b,
-                                                                    Packet::iterator e)
+template <class Tag>
+template <class PacketType>
+prefix_ typename boost::optional<typename Tag::key_t> senf::PacketRegistry<Tag>::key(NoThrow_t)
 {
-    p->registerInterpreter<OtherPacket>(b,e);
+    return registry().key(senf::typeIdValue<PacketType>(),true);
 }
 
-template <class Tag, class Derived>
-prefix_ void
-senf::PacketRegistryMixin<Tag,Derived>::registerInterpreter(typename Tag::key_t key,
-                                                                   Packet::iterator b,
-                                                                   Packet::iterator e)
-    const
+template <class Tag>
+prefix_ typename Tag::key_t senf::PacketRegistry<Tag>::key(Packet packet)
 {
-    PacketRegistry<Tag>::registry().lookup(key)->registerInterpreter(
-        static_cast<Derived const * const>(this),b,e);
+    return registry().key(packet.typeId());
+}
+
+template <class Tag>
+prefix_ typename Tag::key_t senf::PacketRegistry<Tag>::key(Packet packet, NoThrow_t)
+{
+    return registry().key(packet.typeId(),true);
+}
+
+template <class Tag>
+prefix_ senf::PkReg_Entry const & senf::PacketRegistry<Tag>::lookup(typename Tag::key_t key)
+{
+    return registry().lookup(key);
+}
+
+template <class Tag>
+prefix_ senf::PkReg_Entry const * senf::PacketRegistry<Tag>::lookup(typename Tag::key_t key,
+                                                                    NoThrow_t)
+{
+    return registry().lookup(key,true);
 }
 
 ///////////////////////////////PacketRegistry..e///////////////////////////////////////

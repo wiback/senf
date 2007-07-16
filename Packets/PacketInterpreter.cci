@@ -1,0 +1,185 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketInterpreter inline non-template implementation */
+
+// Custom includes
+#include <boost/utility.hpp>
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketInterpreterBase
+
+// Structors and default members
+
+prefix_ senf::PacketInterpreterBase::factory_t senf::PacketInterpreterBase::no_factory()
+{
+    return 0;
+}
+
+// Interpreter chain access
+
+prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::next()
+{
+    return ptr(impl().next(this));
+}
+
+prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::prev()
+{
+    return ptr(impl().prev(this));
+}
+
+prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::first()
+{
+    return ptr(impl().first());
+}
+
+prefix_ senf::PacketInterpreterBase::ptr senf::PacketInterpreterBase::last()
+{
+    return ptr(impl().last());
+}
+
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreterBase::parseNextAs(factory_t factory)
+{
+    return factory->parseNext(ptr(this));
+}
+
+// Data access
+
+prefix_ senf::PacketData & senf::PacketInterpreterBase::data()
+{
+    return (*this);
+}
+
+// Access to the abstract interface
+
+prefix_ senf::PacketInterpreterBase::optional_range
+senf::PacketInterpreterBase::nextPacketRange()
+{
+    return v_nextPacketRange();
+}
+
+prefix_ senf::TypeIdValue senf::PacketInterpreterBase::typeId()
+{
+    return v_type();
+}
+
+prefix_ senf::PacketInterpreterBase::factory_t senf::PacketInterpreterBase::factory()
+{
+    return v_factory();
+}
+
+prefix_ senf::PacketInterpreterBase::factory_t senf::PacketInterpreterBase::nextPacketType()
+{
+    return v_nextPacketType();
+}
+
+////////////////////////////////////////
+// protected members
+
+// protected structors
+
+prefix_ senf::PacketInterpreterBase::PacketInterpreterBase(detail::PacketImpl * impl,
+                                                           iterator b, iterator e, Append_t)
+    : PacketData(std::distance(impl->begin(),b),
+                 std::distance(impl->begin(),e))
+{
+    impl->appendInterpreter(this);
+}
+
+prefix_ senf::PacketInterpreterBase::PacketInterpreterBase(detail::PacketImpl * impl,
+                                                           iterator b, iterator e, Prepend_t)
+    : PacketData(std::distance(impl->begin(),b),
+                 std::distance(impl->begin(),e))
+{
+        impl->prependInterpreter(this);
+}
+
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreterBase::appendClone(detail::PacketImpl * impl, iterator base,
+                                         iterator new_base)
+{
+    return v_appendClone(impl,base,new_base);
+}
+
+prefix_ senf::PacketInterpreterBase::ptr
+senf::PacketInterpreterBase::appendClone(detail::PacketImpl * impl, range r)
+{
+    return v_appendClone(impl,r);
+}
+
+////////////////////////////////////////
+// private members
+
+// reference/memory management
+
+prefix_ void senf::PacketInterpreterBase::add_ref()
+{
+    intrusive_refcount_t<PacketInterpreterBase>::add_ref();
+    if (impl_)
+        impl_->add_ref();
+}
+
+prefix_ bool senf::PacketInterpreterBase::release()
+{
+    if (impl_) 
+        // This call will set impl_ to 0 if we just removed the last reference ...
+        impl_->release();
+    return intrusive_refcount_t<PacketInterpreterBase>::release() && !impl_;
+}
+
+// containment management. Only to be called by PacketImpl.
+
+prefix_ void senf::PacketInterpreterBase::assignImpl(detail::PacketImpl * impl)
+{
+    BOOST_ASSERT(!impl_);
+    impl_ = impl;
+    impl_->add_ref(refcount());
+}
+
+prefix_ void senf::PacketInterpreterBase::releaseImpl()
+{
+    BOOST_ASSERT(impl_);
+    refcount_t refc (refcount());
+    if (refc) {
+        impl_->release(refc);
+        impl_ = 0;
+    } else {
+        impl_ = 0;
+        delete this;
+    }
+}
+
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// End:

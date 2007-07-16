@@ -27,7 +27,9 @@
 // Custom includes
 #include <map>
 #include <boost/utility.hpp> // for boost::noncopyable
-#include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
+#include "Utils/Exception.hh"
+#include "PacketInterpreter.hh"
 #include "Packet.hh"
 
 //#include "PacketRegistry.mpp"
@@ -35,8 +37,14 @@
 
 namespace senf {
 
+    struct PkReg_Entry 
+        : public intrusive_refcount
+    {
+        virtual ~PkReg_Entry();
+        virtual PacketInterpreterBase::factory_t factory() const = 0;
+    };
 
-    namespace impl { template <class key> class PacketRegistryImpl; }
+    namespace detail { template <class Key> class PacketRegistryImpl; }
 
     /** \brief Packet registration facility
 
@@ -90,7 +98,7 @@ namespace senf {
     public:
         /** \brief Statically register a packet type in a PacketRegistry
          */
-        template <class OtherPacket>
+        template <class PacketType>
         struct RegistrationProxy
         {
             RegistrationProxy(typename Tag::key_t key);
@@ -98,7 +106,7 @@ namespace senf {
 
         /** \brief Register new packet type
 
-            Register \c OtherPacket in the packet registry \c Tag
+            Register \c PacketType in the packet registry \c Tag
             under the given \c key.
 
             \par Preconditions:
@@ -106,88 +114,49 @@ namespace senf {
                 any other packet class in this registry.
                 The Packet must not already be registered in the registry.
 
-            \param OtherPacket packet to register
+            \param PacketType packet to register
             \param key key of the packet
          */
-        template <class OtherPacket>
+        template <class PacketType>
         static void registerPacket(typename Tag::key_t key);
 
         /** \brief Find key of a packet
 
-            Return the key of \c OtherPacket as registered in the \c
+            Return the key of \c PacketType as registered in the \c
             Tag registry
 
-            \param OtherPacket packet of which the key is requested
+            \param PacketType packet of which the key is requested
             \returns key of the packet
             \throws PacketTypeNotRegistered if the packet type is not
                 found in the registry.
          */
-        template <class OtherPacket>
+        template <class PacketType>
         static typename Tag::key_t key();
 
-        /** \brief Create new Packet
+        template <class PacketType>
+        static typename boost::optional<typename Tag::key_t> key(NoThrow_t);
 
-            \param key Key of packet type to create instance of
-            \param b begin iterator argument to Packet::create()
-            \param e end iterator argument to Packet::create()
-            \returns new Instance of the packet type registered under
-                key or DataPacket, if the key is not registered.
+        static typename Tag::key_t key(Packet packet);
+        static typename Tag::key_t key(Packet packet, NoThrow_t);
+
+        /** \brief Lookup a packet by it's key
+
+            Returns the packet registration registered under \a key in the \a Tag registry
+
+            \param key Key of the packet registered
+            \returns Registration entry of the packet
+            \throws PacketTypeNotRegistered if the packet type is not found in the registry
          */
-        template <class InputIterator>
-        static Packet::ptr create(typename Tag::key_t key, InputIterator b, InputIterator e);
+        static PkReg_Entry const & lookup(typename Tag::key_t key);
+
+        static PkReg_Entry const * lookup(typename Tag::key_t key, NoThrow_t);
 
     private:
-        typedef impl::PacketRegistryImpl<typename Tag::key_t> Registry;
+        typedef detail::PacketRegistryImpl<typename Tag::key_t> Registry;
         static Registry & registry();
-
-        template <class T, class D> friend class PacketRegistryMixin;
     };
 
-    /** \brief Helper class for v_nextInterpreter implementations
-
-        This class is a helper class which is to be inherited from in
-        a packet facade which wants to register a new interpreter with
-        the packet framework depending on a packet registry.
-
-        This mixin class provides a new registerInterpreter
-        implementation which can be used besides the methods provided
-        by senf::Packet to add a new interpreter to the
-        interpreter chain.
-
-        \code
-          class SomePacket
-              : public Packet,
-                private PacketRegistryMixin<SomeTag,SomePacket>
-          {
-              using Packet::retgisterInterpreter;
-              using PacketRegistryMixin<SomeTag,SomePacket>::registerInterpreter;
-
-              virtual void v_nextInterpreter()
-              {
-                  registerInterpreter(some_key_value, subpacket_begin, subpacket_end);
-              }
-          };
-        \endcode
-        This example is not complete, it only contains the parts
-        concerned with PacketRegistryMixin.
-     */
-    template <class Tag, class Derived>
-    class PacketRegistryMixin
-    {
-    protected:
-        /** \brief add interpreter to interpreter chain
-
-            This method is used by v_nextInterpreter() to add a new
-            interpreter to the interpreter chain (see the Packet
-            reference for more). Instead of specifying the type of
-            packet to use as a template argument it is specified using
-            the \c key value from the \c Tag registry
-         */
-        void registerInterpreter(typename Tag::key_t key,
-                                 Packet::iterator b, Packet::iterator e) const;
-    };
-
-    struct PacketTypeNotRegistered : public std::exception
+    struct PacketTypeNotRegisteredException : public std::exception
     { virtual char const * what() const throw() { return "packet type not registered"; } };
 
 }

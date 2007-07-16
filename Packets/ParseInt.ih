@@ -24,12 +24,13 @@
 #define IH_ParseInt_ 1
 
 // Custom includes
+#include "PacketTypes.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
-
-namespace impl {
+namespace detail {
+namespace packet {
 
     ///////////////////////////////////////////////////////////////////////////
     // Integer operators
@@ -67,14 +68,14 @@ namespace impl {
 #       undef mutator
 
         Derived const & operator ++ ()
-            { derived().value( derived.value()+1 ); return derived(); }
+            { derived().value( derived().value()+1 ); return derived(); }
         Derived const & operator -- ()
-            { derived().value( derived.value()-1 ); return derived(); }
+            { derived().value( derived().value()-1 ); return derived(); }
 
-        Derived const & operator ++ (int)
-            { Value v (derived.value()); derived().value( v+1 ); return v; }
-        Derived const & operator -- (int)
-            { Value v (derived.value()); derived().value( v-1 ); return v; }
+        Value operator ++ (int)
+            { Value v (derived().value()); derived().value( v+1 ); return v; }
+        Value operator -- (int)
+            { Value v (derived().value()); derived().value( v-1 ); return v; }
 
     private:
         Derived & derived() { return *static_cast<Derived *>(this); }
@@ -84,41 +85,35 @@ namespace impl {
     ///////////////////////////////////////////////////////////////////////////
     // Network byte order integer extraction
 
-    template <class Iterator>
-    boost::uint16_t parse_uint16(Iterator const & i)
+    inline boost::uint16_t parse_uint16(iterator i)
     {
         return i[1] | i[0]<<8;
     }
 
-    template <class Iterator>
-    void write_uint16(Iterator const & i, boost::uint16_t v)
+    inline void write_uint16(iterator i, boost::uint16_t v)
     {
         i[0] = ( v >>  8 ) & 0xff;
         i[1] = ( v       ) & 0xff;
     }
 
-    template <class Iterator>
-    boost::uint32_t parse_uint24(Iterator const & i)
+    inline boost::uint32_t parse_uint24(iterator i)
     {
         return i[2] | i[1]<<8 | i[0]<<16;
     }
 
-    template <class Iterator>
-    void write_uint24(Iterator const & i, boost::uint32_t v)
+    inline void write_uint24(iterator i, boost::uint32_t v)
     {
         i[0] = ( v >> 16 ) & 0xff;
         i[1] = ( v >>  8 ) & 0xff;
         i[2] = ( v       ) & 0xff;
     }
 
-    template <class Iterator>
-    boost::uint32_t parse_uint32(Iterator const & i)
+    inline boost::uint32_t parse_uint32(iterator i)
     {
         return i[3] | i[2]<<8 | i[1]<<16 | i[0]<<24;
     }
 
-    template <class Iterator>
-    void write_uint32(Iterator const & i, boost::uint32_t v)
+    inline void write_uint32(iterator i, boost::uint32_t v)
     {
         i[0] = ( v >> 24 ) & 0xff;
         i[1] = ( v >> 16 ) & 0xff;
@@ -129,17 +124,21 @@ namespace impl {
     ///////////////////////////////////////////////////////////////////////////
     // bitfield extraction
 
-    template <class Iterator, unsigned offset, unsigned endb, unsigned start, unsigned end>
+    // Doxygen doesn't like this stuff ... 
+
+#   ifndef DOXYGEN
+
+    template <unsigned offset, unsigned endb, unsigned start, unsigned end>
     struct parse_bitfield_i
     {
-        static boost::uint32_t parse(Iterator const & i) {
+        static boost::uint32_t parse(iterator i) {
             return ( ( ( parse_uint32(i+offset+1)>>(40-end) ) // Beware of sign extension !!
                        & boost::low_bits_mask_t<32-(40-end)>::sig_bits )
                      | (i[offset]<<(32-(40-end))) )
                 & boost::low_bits_mask_t<end-start>::sig_bits;
         }
 
-        static void write(Iterator const & i, boost::uint32_t v) {
+        static void write(iterator i, boost::uint32_t v) {
             write_uint32(i+offset+1,
                          (parse_uint32(i+offset+1) & ~(boost::low_bits_mask_t<end-8>::sig_bits<<(40-end)))
                          | ((v & boost::low_bits_mask_t<end-8>::sig_bits) << (40-end)));
@@ -148,71 +147,73 @@ namespace impl {
         }
     };
 
-    template <class Iterator, unsigned offset, unsigned start, unsigned end>
-    struct parse_bitfield_i<Iterator, offset, 3, start, end>
+    template <unsigned offset, unsigned start, unsigned end>
+    struct parse_bitfield_i<offset, 3, start, end>
     {
-        static boost::uint32_t parse(Iterator const & i) {
+        static boost::uint32_t parse(iterator i) {
             return ( parse_uint32(i+offset)>>(32-end) )
                 & boost::low_bits_mask_t<end-start>::sig_bits;
         }
 
-        static void write(Iterator const & i, boost::uint32_t v) {
+        static void write(iterator i, boost::uint32_t v) {
             write_uint32(i+offset,
                          (parse_uint32(i+offset) & ~(boost::low_bits_mask_t<end-start>::sig_bits<<(32-end)))
                          | ((v & boost::low_bits_mask_t<end-start>::sig_bits) << (32-end)));
         }
     };
 
-    template <class Iterator, unsigned offset, unsigned start, unsigned end>
-    struct parse_bitfield_i<Iterator, offset, 2, start, end>
+    template <unsigned offset, unsigned start, unsigned end>
+    struct parse_bitfield_i<offset, 2, start, end>
     {
-        static boost::uint32_t parse(Iterator const & i) {
+        static boost::uint32_t parse(iterator i) {
             return ( parse_uint24(i+offset)>>(24-end) )
                 & boost::low_bits_mask_t<end-start>::sig_bits;
         }
 
-        static void write(Iterator const & i, boost::uint32_t v) {
+        static void write(iterator i, boost::uint32_t v) {
             write_uint24(i+offset,
                          (parse_uint24(i+offset) & ~(boost::low_bits_mask_t<end-start>::sig_bits<<(24-end)))
                          | ((v & boost::low_bits_mask_t<end-start>::sig_bits) << (24-end)));
         }
     };
 
-    template <class Iterator, unsigned offset, unsigned start, unsigned end>
-    struct parse_bitfield_i<Iterator, offset, 1, start, end>
+    template <unsigned offset, unsigned start, unsigned end>
+    struct parse_bitfield_i<offset, 1, start, end>
     {
-        static boost::uint32_t parse(Iterator const & i) {
+        static boost::uint32_t parse(iterator i) {
             return ( parse_uint16(i+offset)>>(16-end) )
                 & boost::low_bits_mask_t<end-start>::sig_bits;
         }
 
-        static void write(Iterator const & i, boost::uint32_t v) {
+        static void write(iterator i, boost::uint32_t v) {
             write_uint16(i+offset,
                          (parse_uint16(i+offset) & ~(boost::low_bits_mask_t<end-start>::sig_bits<<(16-end)))
                          | ((v & boost::low_bits_mask_t<end-start>::sig_bits) << (16-end)));
         }
     };
 
-    template <class Iterator, unsigned offset, unsigned start, unsigned end>
-    struct parse_bitfield_i<Iterator, offset, 0, start, end>
+    template <unsigned offset, unsigned start, unsigned end>
+    struct parse_bitfield_i<offset, 0, start, end>
     {
-        static boost::uint32_t parse(Iterator const & i) {
+        static boost::uint32_t parse(iterator i) {
             return ( i[offset]>>(8-end) )
                 & boost::low_bits_mask_t<end-start>::sig_bits;
         }
 
-        static void write(Iterator const & i, boost::uint32_t v) {
+        static void write(iterator i, boost::uint32_t v) {
             i[offset] = (i[offset] & ~(boost::low_bits_mask_t<end-start>::sig_bits<<(8-end)))
                 | ((v & boost::low_bits_mask_t<end-start>::sig_bits) << (8-end));
         }
     };
 
-    template <class Iterator, unsigned start, unsigned end>
+#   endif
+
+    template <unsigned start, unsigned end>
     struct parse_bitfield
-        : public parse_bitfield_i<Iterator,start/8,(end-1)/8-start/8,start%8,end-8*(start/8)>
+        : public parse_bitfield_i<start/8,(end-1)/8-start/8,start%8,end-8*(start/8)>
     {};
 
-}}
+}}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif

@@ -26,6 +26,7 @@
 
 // Custom includes
 #include "EthernetPacket.hh"
+#include "Packets/DataPacket.hh"
 #include "Socket/INetAddressing.hh"
 
 //#include "IpV6Packet.mpp"
@@ -33,37 +34,27 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV6Packet>
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV6PacketType>
         registerIpV6Packet (0x86dd);
 
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6Packet>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6PacketType>
         registerIpV6Packet2 (41); // IP6-in-IP(6) encapsulation
 
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::DataPacket>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::DataPacketType>
         registerNoNextHeader (59);
 }
 
-prefix_ void senf::IpV6Packet::v_nextInterpreter()
-    const
-{
-    registerInterpreter(nextHeader(),begin()+bytes(),end());
-}
-
-prefix_ void senf::IpV6Packet::v_finalize()
-{}
-
-prefix_ void senf::IpV6Packet::v_dump(std::ostream & os)
-    const
+prefix_ void senf::IpV6PacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6:\n"
-       << "  version       : " << unsigned(version()) << "\n"
-       << "  traffic class : " << std::hex << unsigned(trafficClass()) << "\n"
-       << "  flow label    : " << std::hex << unsigned(flowLabel()) << "\n"
-       << "  length        : " << std::dec << unsigned(length()) << "\n"
-       << "  next header   : " << unsigned(nextHeader()) << "\n"
-       << "  hop limit     : " << unsigned(hopLimit()) << "\n"
-       << "  source        : " << INet6Address(source().range()) << "\n"
-       << "  destination   : " << INet6Address(destination().range()) << "\n";
+       << "  version       : " << unsigned(p->version()) << "\n"
+       << "  traffic class : " << std::hex << unsigned(p->trafficClass()) << "\n"
+       << "  flow label    : " << std::hex << unsigned(p->flowLabel()) << "\n"
+       << "  length        : " << std::dec << unsigned(p->length()) << "\n"
+       << "  next header   : " << unsigned(p->nextHeader()) << "\n"
+       << "  hop limit     : " << unsigned(p->hopLimit()) << "\n"
+       << "  source        : " << INet6Address(p->source()) << "\n"
+       << "  destination   : " << INet6Address(p->destination()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

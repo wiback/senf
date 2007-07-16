@@ -24,56 +24,39 @@
 #define HH_ParseArray_ 1
 
 // Custom includes
-#include <utility> // for std::pair
-#include "ParserBase.hh"
+#include "PacketParser.hh"
 
 //#include "ParseArray.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 
-
-    namespace impl { template <class,class> class Parse_Array_iterator; }
+    namespace detail { template <class> class Parse_Array_iterator; }
 
     /* Parse_Array has the external interface of a container class
      */
-    template <unsigned elements, class Parser, class Iterator=nil, class IPacket=nil>
-    struct Parse_Array : public ParserBase<Iterator,IPacket>
+    template <unsigned elements, class ElementParser>
+    struct Parse_Array : public PacketParserBase
     {
-        ///////////////////////////////////////////////////////////////////////////
-        // Parser interface
+        Parse_Array(data_iterator i, state_type s);
 
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_Array<elements,Parser,I,P> parser; };
-        typedef Iterator byte_iterator;
+        static size_type const fixed_bytes = elements*ElementParser::fixed_bytes;
 
-        Parse_Array();
-        explicit Parse_Array(Iterator const & i);
-
-        static unsigned bytes();
-        bool check(Iterator const & e) const;
         void init() const;
 
         ///////////////////////////////////////////////////////////////////////////
         // Container interface
 
-        typedef typename Parser::template rebind<Iterator>::parser value_type;
-        typedef impl::Parse_Array_iterator<value_type,Iterator> iterator;
-        typedef unsigned size_type;
-        typedef int difference_type;
-        typedef std::pair<iterator,iterator> range_type;
+        typedef ElementParser value_type;
+        typedef detail::Parse_Array_iterator<value_type> iterator;
+        typedef iterator const_iterator;
 
         static size_type size();
 
         iterator begin() const;
         iterator end() const;
-        range_type range() const;
-        iterator value() const;
 
         value_type operator[](difference_type i) const;
-
-        template <class InputIterator>
-        Parse_Array const & operator= (InputIterator const & i);
     };
 
 }
@@ -92,5 +75,4 @@ namespace senf {
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

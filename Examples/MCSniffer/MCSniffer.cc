@@ -100,12 +100,11 @@ private:
     void dumpPacket(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
     {
         std::string data (sock.read());
-        senf::EthernetPacket::ptr packet (
-            senf::Packet::create<senf::EthernetPacket>(
-                data.begin(), data.end()));
-        packet->dump(stream);
-        hexdump(packet->last()->begin(),
-                packet->last()->end(),
+        senf::EthernetPacket packet (
+            senf::EthernetPacket::create(data));
+        packet.dump(stream);
+        hexdump(packet.last().data().begin(),
+                packet.last().data().end(),
                 stream);
         stream << "\n\n";
      }
@@ -143,6 +142,6 @@ int main(int argc, char const * argv[])
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -u"
 // comment-column: 40
 // End:

@@ -71,6 +71,8 @@ namespace senf {
         std::string buffer_;
     };
 
+    enum NoThrow_t { nothrow };
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

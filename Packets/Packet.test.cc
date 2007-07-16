@@ -1,9 +1,7 @@
-// $Id$
-//
-// Copyright (C) 2006
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,15 +18,20 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief Packet.test unit tests */
 
 //#include "Packet.test.hh"
 //#include "Packet.test.ih"
 
 // Custom includes
+#include <sstream>
+#include "PacketType.hh"
+#include "PacketRegistry.hh"
 #include "Packet.hh"
+#include "ParseInt.hh"
+#include "PacketParser.hh"
 #include "DataPacket.hh"
-#include "GenericPacket.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -36,205 +39,196 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-using namespace senf;
-
-// Since Packet is abstract, we can only test the Packet interface using
-// a simple implementation: DataPacket and GenericPacket.
-
 namespace {
 
-    Packet::byte data[] = {  0,  1,  2,  3,  4,  5,  6,  7,  8,  9,
-                            10, 11, 12, 13, 14, 15, 16, 17, 18, 19 };
+    struct RegTag {
+        typedef unsigned key_t;
+    };
 
-    bool compare(Packet::iterator b, Packet::iterator e, unsigned o=0)
+    struct FooPacketType 
+        : public senf::PacketTypeBase,
+          public senf::PacketTypeMixin<FooPacketType>
     {
-        unsigned i (o);
-        for (; b!=e; ++b, ++i)
-            if (i>=sizeof(data) || *b != data[i])
-                return false;
-        return true;
+        using senf::PacketTypeMixin<FooPacketType>::nextPacketRange;
+        using senf::PacketTypeMixin<FooPacketType>::initSize;
+        using senf::PacketTypeMixin<FooPacketType>::init;
+        typedef senf::PacketInterpreter<FooPacketType> interpreter;
+        static interpreter::size_type initSize()
+            { return 4u; }
+    };
+    typedef senf::ConcretePacket<FooPacketType> FooPacket;
+
+    struct BarPacketParser : public senf::PacketParserBase
+    {
+        SENF_PACKET_PARSER_INIT(BarPacketParser);
+        
+        typedef senf::Parse_UInt16 Parse_Type;
+        typedef senf::Parse_Int32  Parse_Length;
+        typedef senf::Parse_UInt16 Parse_Reserved;
+
+        Parse_Type type() const { return parse<Parse_Type> (i()); }
+        Parse_Length length() const { return parse<Parse_Length> (i()+2); }
+        Parse_Reserved reserved() const { return parse<Parse_Reserved> (i()+6); }
+    };
+
+    struct BarPacketType 
+        : public senf::PacketTypeBase,
+          public senf::PacketTypeMixin<BarPacketType,RegTag>
+    {
+        typedef senf::PacketTypeMixin<BarPacketType,RegTag> mixin;
+        typedef senf::ConcretePacket<BarPacketType> packet;
+        typedef BarPacketParser parser;
+        using mixin::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::initSize;
+        using mixin::init;
+        static size_type initSize() 
+            { return 8u; }
+        static void init(packet p) {
+            p->reserved() = 0xA0A0u;
+        }
+        static void dump(packet p, std::ostream & os) {
+            os << "BarPacket:\n"
+               << "type: " << p->type() << "\n"
+               << "length: " << p->length() << "\n";
+        }
+        static void finalize(packet p) {
+            if (p.next())
+                p->type() = senf::PacketRegistry<RegTag>::key(p.next());
+            else
+                p->type() = -1;
+        }
+        static registry_key_t nextPacketKey(packet p) {
+            return p->type();
+        }
+    };
+    typedef BarPacketType::packet BarPacket;
+
+    namespace reg {
+        senf::PacketRegistry<RegTag>::RegistrationProxy<FooPacketType> registerFoo(1u);
+        senf::PacketRegistry<RegTag>::RegistrationProxy<BarPacketType> registerBar(2u);
     }
 
 }
 
-BOOST_AUTO_UNIT_TEST(Packet_DataPacket)
+BOOST_AUTO_UNIT_TEST(packet)
 {
-    Packet::ptr p (Packet::create<DataPacket>(data, data+sizeof(data)));
+    senf::Packet packet (FooPacket::create());
+    BarPacket::createAfter(packet);
 
-    BOOST_REQUIRE( p );
-    BOOST_CHECK_EQUAL( p->size(), sizeof(data) );
-    BOOST_CHECK( compare(p->begin(), p->end()) );
+    BOOST_REQUIRE( packet );
+    BOOST_CHECK( packet.next() );
+    BOOST_CHECK( ! packet.next().next() );
+    BOOST_CHECK( ! packet.prev() );
+    BOOST_CHECK( packet.next().prev() == packet );
+    BOOST_CHECK( packet.next() != packet );
+    BOOST_CHECK_EQUAL( packet.size(), 12u );
+    BOOST_CHECK_EQUAL( packet.next().size(), 8u );
+    BOOST_CHECK( packet.is<FooPacket>() );
+    BOOST_CHECK( packet.next().is<BarPacket>() );
+    BOOST_CHECK( packet.first() == packet );
+    BOOST_CHECK( packet.last() == packet.next() );
+    
+    senf::Packet p2 (packet.next());
+    BOOST_CHECK( p2 );
+    packet.parseNextAs<FooPacket>();
+    BOOST_CHECK_EQUAL( packet.size(), 12u );
+    BOOST_CHECK_EQUAL( packet.next().size(), 8u );
+    BOOST_CHECK( packet.next().is<FooPacket>() );
+    BOOST_CHECK( ! p2 );
+    BOOST_CHECK( packet.next().as<FooPacket>() );
+    
+    p2 = packet.next().clone();
+    BOOST_REQUIRE( p2 );
+    packet.next().append( p2 );
+    BOOST_REQUIRE( packet.next().next() );
+    BOOST_CHECK( packet.next().next().next() );
+    BOOST_CHECK( packet.next().next().next().is<senf::DataPacket>() );
+    BOOST_CHECK_EQUAL( packet.size(), 16u );
 
-    *p->begin() = 20;
-    BOOST_CHECK( !compare(p->begin(), p->end()) );
-    BOOST_CHECK_EQUAL( *p->begin(), 20 );
+    // This calls and checks typeId()
+    BOOST_CHECK_EQUAL( senf::PacketRegistry<RegTag>::key(packet), 1u );
+    packet.next().parseNextAs( senf::PacketRegistry<RegTag>::lookup(2u).factory() );
+    BOOST_CHECK( packet.next().next().is<BarPacket>() );
+    
+    std::stringstream s;
+    packet.dump(s);
+    BOOST_CHECK_EQUAL( s.str(), "BarPacket:\ntype: 0\nlength: 0\n" );
+    
+    packet.finalize();
+    BOOST_CHECK_EQUAL( packet.last().as<BarPacket>()->type(), 
+                       BarPacket::type::parser::Parse_Type::value_type(-1) );
+    packet.last().append(FooPacket::create());
+    packet.finalize();
+    BOOST_CHECK_EQUAL( packet.next<BarPacket>()->type(), 1u );
 
-    BOOST_CHECK( !p->next() );
-    BOOST_CHECK( !p->prev() );
-    BOOST_CHECK_EQUAL( p->head(), p );
-    BOOST_CHECK_EQUAL( p->last(), p );
+    BOOST_CHECK( packet.factory() == FooPacket::factory() );
 
-    BOOST_CHECK( p->is<DataPacket>() );
-    BOOST_CHECK( p->as<DataPacket>() );
+    senf::Packet::byte data[] = { 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                  0x81, 0x82, 0x83 };
+
+    BarPacket::createAfter(packet,data);
+    BOOST_REQUIRE( packet.next() );
+    BOOST_REQUIRE( packet.next().is<BarPacket>() );
+    BOOST_CHECK( packet.last().is<FooPacket>() );
+    BOOST_CHECK_EQUAL( packet.last<BarPacket>()->type(), 1u );
+    BOOST_CHECK_EQUAL( packet.next().size(), 11u );
+    BOOST_REQUIRE( packet.next().next() );
+    BOOST_CHECK( packet.next().next().is<FooPacket>() );
+    BOOST_CHECK( ! packet.next().next().next() );
+    BOOST_CHECK_EQUAL( packet.next().next().data()[0], 0x81u );
+
+    BOOST_CHECK( packet.first<FooPacket>() == packet );
+    BOOST_CHECK( packet.first<FooPacket>(senf::nothrow) == packet );
+    BOOST_CHECK( packet.last<BarPacket>() == packet.last().prev() );
+    BOOST_CHECK( packet.last<BarPacket>(senf::nothrow) == packet.last().prev() );
+    BOOST_CHECK( packet.findNext<FooPacket>() == packet );
+    BOOST_CHECK( packet.findNext<FooPacket>(senf::nothrow) == packet );
+    BOOST_CHECK( packet.last().findPrev<FooPacket>() == packet.last() );
+    BOOST_CHECK( packet.last().findPrev<FooPacket>(senf::nothrow) == packet.last() );
+    BOOST_CHECK( packet.next<BarPacket>() == packet.next() );
+    BOOST_CHECK( packet.next<BarPacket>(senf::nothrow) == packet.next() );
+    BOOST_CHECK( packet.last().prev<FooPacket>() == packet );
+    BOOST_CHECK( packet.last().prev<FooPacket>(senf::nothrow) == packet );
 }
 
-BOOST_AUTO_UNIT_TEST(Packet_GenericPacket)
+BOOST_AUTO_UNIT_TEST(concretePacket)
 {
-    GenericPacket<4,6>::ptr p (Packet::create< GenericPacket<4,6> >(data, data+sizeof(data)));
+    FooPacket::byte data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
 
-    // check, that the packet was constructed corretly
-    BOOST_REQUIRE( p );
-    BOOST_CHECK_EQUAL( p->size(), sizeof(data) );
-    BOOST_CHECK( compare(p->begin(), p->end()) );
-    BOOST_CHECK_EQUAL( p->header_len(), 4u );
-    BOOST_CHECK( compare(p->begin_header(), p->end_header()) );
-    BOOST_CHECK_EQUAL( p->trailer_len(), 6u );
-    BOOST_CHECK( compare(p->begin_trailer(), p->end_trailer(), sizeof(data)-6) );
+    BOOST_CHECK_EQUAL( FooPacket::create().size(), 4u );
+    BOOST_CHECK_EQUAL( FooPacket::create(FooPacket::noinit).size(), 0u );
+    BOOST_CHECK_THROW( FooPacket::create(2u), senf::TruncatedPacketException );
+    BOOST_CHECK_EQUAL( FooPacket::create(10u).size(), 10u );
+    BOOST_CHECK_EQUAL( FooPacket::create(2u,FooPacket::noinit).size(), 2u );
+    BOOST_CHECK_EQUAL( FooPacket::create(data).size(), 6u );
 
-    // check the first packet in the interpreter chain
-    BOOST_CHECK_EQUAL( p->head(), p );
-    BOOST_CHECK( !p->prev() );
-    BOOST_CHECK(( p->is< GenericPacket<4,6> >() ));
-    BOOST_CHECK( !p->is<DataPacket>() );
-    BOOST_CHECK(( !p->is< GenericPacket<4,4> >() ));
-    BOOST_CHECK(( p->as< GenericPacket<4,6> >() ));
-    BOOST_CHECK( !p->as<DataPacket>() );
+    senf::Packet packet (FooPacket::create());
 
-    // check the next packet in the interpreter chain
-    BOOST_REQUIRE( p->next() );
-    BOOST_CHECK( p->next()->is<DataPacket>() );
-    BOOST_CHECK(( !p->next()->is< GenericPacket<4,6> >() ));
+    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet).size(), 4u );
+    BOOST_CHECK_EQUAL( packet.size(), 8u );
 
-    // check the contents of the second interpreter
-    BOOST_CHECK_EQUAL( p->next()->size(), sizeof(data)-10 );
-    BOOST_CHECK( compare(p->next()->begin(), p->next()->end(), 4) );
+    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,FooPacket::noinit).size(), 0u );
+    BOOST_CHECK_EQUAL( packet.size(), 4u );
 
-    // validate, that the two interpreters share the same data
-    // container
-    *p->next()->begin() = 20;
-    BOOST_CHECK( !compare(p->next()->begin(), p->next()->end(), 4) );
-    BOOST_CHECK( *p->next()->begin() == 20 );
-    BOOST_CHECK( !compare(p->begin(), p->end()) );
-    BOOST_CHECK( *(p->begin()+4) == 20 );
+    BOOST_CHECK_THROW( FooPacket::createAfter(packet,2u), senf::TruncatedPacketException );
+    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,10u).size(), 10u );
+    BOOST_CHECK_EQUAL( packet.size(), 14u );
+    
+    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,2u,FooPacket::noinit).size(), 2u );
+    BOOST_CHECK_EQUAL( packet.size(), 6u );
+    
+    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,data).size(), 6u );
+    BOOST_CHECK_EQUAL( packet.size(), 10u );
+    
+    BOOST_CHECK_EQUAL( FooPacket::createBefore(packet).size(), 14u );
+    BOOST_CHECK_EQUAL( packet.size(), 10u );
 
-    // We need require here. If this fails, p->last() will probably
-    // run into an endless loop ...
-    BOOST_REQUIRE( !p->next()->next() );
-    BOOST_CHECK_EQUAL( p->next(), p->last() );
-}
+    BOOST_CHECK_EQUAL( FooPacket::createBefore(packet,FooPacket::noinit).size(), 10u );
+    BOOST_CHECK_EQUAL( packet.size(), 10u );
 
-BOOST_AUTO_UNIT_TEST(Packet_Reinterpret)
-{
-    Packet::ptr p (Packet::create< GenericPacket<4,4> >(data, data+sizeof(data)));
-
-    BOOST_CHECK( p->next()->is<DataPacket>() );
-    p->next()->reinterpret< GenericPacket<6> >();
-    BOOST_CHECK( p->next()->is< GenericPacket<6> >() );
-    BOOST_REQUIRE( p->next()->next() );
-    BOOST_CHECK( p->next()->next()->is<DataPacket>() );
-    BOOST_CHECK( !p->next()->next()->next() );
-
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), sizeof(data)-14 );
-    BOOST_CHECK( compare(p->next()->next()->begin(),
-                         p->next()->next()->end(), 10) );
-
-    p = p->reinterpret< GenericPacket<8,2> >();
-    BOOST_REQUIRE( p->next() );
-    BOOST_CHECK( p->next()->is<DataPacket>() );
-
-    BOOST_CHECK_EQUAL( p->next()->size(), sizeof(data)-10 );
-    BOOST_CHECK( compare(p->next()->begin(), p->next()->end(), 8) );
-}
-
-BOOST_AUTO_UNIT_TEST(Packet_InsertErase)
-{
-    Packet::ptr p (Packet::create< GenericPacket<7,3> >(data, data+sizeof(data)));
-    p->next()->reinterpret< GenericPacket<4> >();
-
-    BOOST_CHECK_EQUAL( p->size(), 20u );
-    BOOST_CHECK_EQUAL( p->next()->size(), 10u );
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), 6u );
-
-    BOOST_CHECK_EQUAL( p->next()->next()->begin()[0], 11 );
-    BOOST_CHECK_EQUAL( p->end()[-1], 19 );
-    BOOST_CHECK_EQUAL( p->next()->end()[-1], 16 );
-    BOOST_CHECK_EQUAL( p->next()->next()->end()[-1], 16 );
-
-    p->next()->insert(p->next()->begin()+2, data, data+6);
-
-    BOOST_CHECK_EQUAL( p->size(), 26u );
-    BOOST_CHECK_EQUAL( p->next()->size(), 16u );
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), 6u );
-
-    BOOST_CHECK( compare(p->begin(), p->begin()+9) );
-    BOOST_CHECK( compare(p->begin()+9, p->begin()+15) );
-    BOOST_CHECK( compare(p->begin()+15, p->end(), 9) );
-    BOOST_CHECK( compare(p->next()->begin(), p->next()->begin()+2, 7) );
-    BOOST_CHECK( compare(p->next()->begin()+2, p->next()->begin()+8) );
-    BOOST_CHECK( compare(p->next()->begin()+8, p->next()->end(), 9) );
-    BOOST_CHECK( compare(p->next()->next()->begin(), p->next()->next()->end(), 11) );
-
-    p->next()->erase( p->next()->begin()+2, p->next()->begin()+8 );
-
-    BOOST_CHECK_EQUAL( p->size(), 20u );
-    BOOST_CHECK_EQUAL( p->next()->size(), 10u );
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), 6u );
-
-    BOOST_CHECK( compare(p->begin(), p->end()) );
-    BOOST_CHECK( compare(p->next()->begin(), p->next()->end(), 7) );
-    BOOST_CHECK( compare(p->next()->next()->begin(), p->next()->next()->end(), 11) );
-
-    p->next()->insert(p->next()->begin()+4, data, data+2);
-
-    BOOST_CHECK_EQUAL( p->size(), 22u );
-    BOOST_CHECK_EQUAL( p->next()->size(), 12u );
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), 6u );
-
-    BOOST_CHECK( compare(p->next()->next()->begin(), p->next()->next()->end(), 11) );
-
-    p->next()->erase(p->next()->begin()+4, p->next()->begin()+6);
-
-    BOOST_CHECK_EQUAL( p->size(), 20u );
-    BOOST_CHECK_EQUAL( p->next()->size(), 10u );
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), 6u );
-
-    BOOST_CHECK( compare(p->begin(), p->end()) );
-    BOOST_CHECK( compare(p->next()->begin(), p->next()->end(), 7) );
-    BOOST_CHECK( compare(p->next()->next()->begin(), p->next()->next()->end(), 11) );
-
-    p->next()->next()->insert(p->next()->begin()+5, data, data+4);
-
-    BOOST_CHECK_EQUAL( p->size(), 24u );
-    BOOST_CHECK_EQUAL( p->next()->size(), 14u );
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), 10u );
-
-    BOOST_CHECK( compare(p->next()->next()->begin(), p->next()->next()->begin()+1, 11) );
-    BOOST_CHECK( compare(p->next()->next()->begin()+1, p->next()->next()->begin()+5) );
-    BOOST_CHECK( compare(p->next()->next()->begin()+5, p->end(), 12) );
-
-    p->next()->erase(p->next()->begin()+3, p->next()->begin()+9);
-
-    BOOST_CHECK_EQUAL( p->size(), 18u );
-    BOOST_CHECK_EQUAL( p->next()->size(), 8u );
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), 5u );
-
-    BOOST_CHECK( compare(p->next()->next()->begin(), p->next()->next()->end(), 12) );
-    BOOST_CHECK( compare(p->begin(), p->begin()+10) );
-    BOOST_CHECK( compare(p->begin()+10, p->end(), 12) );
-
-    p->erase(p->begin()+5, p->end());
-
-    BOOST_CHECK_EQUAL( p->size(), 5u );
-    BOOST_CHECK_EQUAL( p->next()->size(), 0u );
-    BOOST_CHECK_EQUAL( p->next()->next()->size(), 0u );
-}
-
-BOOST_AUTO_UNIT_TEST(Packet_new)
-{
-    Packet::ptr p (Packet::create< GenericPacket<10,4> >());
-    BOOST_CHECK_EQUAL(p->size(), 14u);
-    Packet::ptr p2 (Packet::create< GenericPacket<2,2> >(p));
-    BOOST_CHECK_EQUAL(p2->size(),18u);
+    BOOST_CHECK( packet.clone() != packet );
+    BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
@@ -248,5 +242,4 @@ BOOST_AUTO_UNIT_TEST(Packet_new)
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

@@ -24,10 +24,10 @@
 #define HH_UDPPacket_ 1
 
 // Custom includes
-#include "Packets/Packet.hh"
+#include "Packets/PacketType.hh"
 #include "Packets/ParseInt.hh"
-#include "Packets/ParseArray.hh"
 #include "Packets/PacketRegistry.hh"
+#include "Packets/PacketParser.hh"
 
 //#include "UDPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -35,58 +35,44 @@
 namespace senf {
 
     // See RFC768
-    template <class Iterator=nil, class IPacket=nil>
-    struct Parse_UDP : public ParserBase<Iterator,IPacket>
+    struct Parse_UDP : public PacketParserBase
     {
-        template <class I, class P=nil>
-        struct rebind { typedef Parse_UDP<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        Parse_UDP() {}
-        Parse_UDP(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
-
-        static unsigned bytes() { return 8; }
+        SENF_PACKET_PARSER_INIT(Parse_UDP);
 
         ///////////////////////////////////////////////////////////////////////////
 
-        typedef Parse_UInt16 < Iterator > Parse_16bit;
+        typedef Parse_UInt16 Parse_16bit;
 
-        Parse_16bit source()          const { return Parse_16bit      (this->i()     ); }
-        Parse_16bit destination()     const { return Parse_16bit      (this->i() + 2 ); }
-        Parse_16bit length()          const { return Parse_16bit      (this->i() + 4 ); }
-        Parse_16bit crc()             const { return Parse_16bit      (this->i() + 6 ); }
-
+        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
+            ((Field)( source,      Parse_16bit ))
+            ((Field)( destination, Parse_16bit ))
+            ((Field)( length,      Parse_16bit ))
+            ((Field)( crc,         Parse_16bit )) );
     };
 
-    class UDPPacket
-        : public Packet,
-          public Parse_UDP<Packet::iterator, UDPPacket>
+    struct UDPPacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<UDPPacketType>
     {
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
+        typedef PacketTypeMixin<UDPPacketType> mixin;
+        typedef ConcretePacket<UDPPacketType> packet;
+        typedef Parse_UDP parser;
 
-        typedef ptr_t<UDPPacket>::ptr ptr;
+        using mixin::nextPacketRange;
+        using mixin::initSize;
+        using mixin::init;
 
-        ///////////////////////////////////////////////////////////////////////////
-
-    private:
-        template <class Arg>
-        UDPPacket(Arg const & arg);
-
-        virtual void v_nextInterpreter() const;
-        virtual void v_finalize();
-        virtual void v_dump(std::ostream & os) const;
-
-        friend class Packet;
+        static void dump(packet p, std::ostream & os);
     };
+
+    typedef UDPPacketType::packet UDPPacket;
 }
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include UDPPacket.cci"
 //#include "UDPPacket.ct"
-#include "UDPPacket.cti"
+//#include "UDPPacket.cti"
 #endif
 
 

@@ -24,34 +24,24 @@
 #define IH_PacketRegistryImpl_ 1
 
 // Custom includes
-#include "Packet.hh"
-#include "DataPacket.hh"
+#include <boost/intrusive_ptr.hpp>
 #include "typeidvalue.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
+namespace detail {
 
-namespace impl {
-
-    struct PkReg_Entry {
-        virtual ~PkReg_Entry() {}
-        virtual void registerInterpreter(Packet const * p,
-                                         Packet::iterator b, Packet::iterator e) = 0;
-        virtual Packet::ptr reinterpret(Packet * p) = 0;
-    };
-
-    template <class OtherPacket>
+    template <class PacketType>
     struct PkReg_EntryImpl
         : public PkReg_Entry
     {
-        virtual void registerInterpreter(Packet const * p, Packet::iterator b, Packet::iterator e);
-        virtual Packet::ptr reinterpret(Packet * p);
+        virtual PacketInterpreterBase::factory_t factory() const;
     };
 
-
     template <class KeyType>
-    class PacketRegistryImpl : private boost::noncopyable
+    class PacketRegistryImpl 
+        : private boost::noncopyable
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -59,7 +49,7 @@ namespace impl {
 
         typedef KeyType key_t;
 
-        typedef impl::PkReg_Entry Entry;
+        typedef PkReg_Entry Entry;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -74,28 +64,25 @@ namespace impl {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        template <class OtherPacket>
+        template <class PacketType>
         void registerPacket(key_t key);
 
         key_t key(senf::TypeIdValue const & type);
+        boost::optional<key_t> key(senf::TypeIdValue const & type, bool);
 
-        Entry * lookup(key_t key);
+        Entry const & lookup(key_t key);
+        Entry const * lookup(key_t key, bool);
 
     protected:
 
     private:
-        template <class OtherPacket>
-        static void registerInterpreter(Packet * p, Packet::iterator b, Packet::iterator e);
-
-        typedef boost::shared_ptr<Entry> Entry_ptr;
+        typedef boost::intrusive_ptr<Entry> Entry_ptr;
         typedef std::map<key_t, Entry_ptr> PacketMap;
         typedef std::map<senf::TypeIdValue, key_t> ReversePacketMap;
 
         PacketMap registry_;
         ReversePacketMap reverseRegistry_;
     };
-
-    extern PkReg_EntryImpl<DataPacket> pkreg_dataEntry;
 
 }}
 

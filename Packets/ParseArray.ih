@@ -28,35 +28,39 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-template <class Parser, class Iterator>
-class senf::impl::Parse_Array_iterator
-    : public boost::iterator_facade< Parse_Array_iterator<Parser,Iterator>,
-                                     Parser,
+template <class ElementParser>
+class senf::detail::Parse_Array_iterator
+    : public boost::iterator_facade< Parse_Array_iterator<ElementParser>,
+                                     ElementParser,
                                      boost::random_access_traversal_tag,
-                                     Parser >
+                                     ElementParser >
 {
 public:
     Parse_Array_iterator();
-    explicit Parse_Array_iterator(Iterator const & i);
+    Parse_Array_iterator(PacketParserBase::data_iterator const & i,
+                         PacketParserBase::state_type s);
 
     // Needed to elide the []-proxy of iterator_facade
-    Parser operator[](int i) const;
+    ElementParser operator[](int i) const;
 
-    Iterator raw() const;
+    PacketParserBase::data_iterator raw() const;
 
 protected:
 
 private:
     friend class boost::iterator_core_access;
+    
+    // iterator_facade interface
 
-    Parser dereference() const;
+    ElementParser dereference() const;
     bool equal(Parse_Array_iterator const & other) const;
     int distance_to(Parse_Array_iterator const & other) const;
     void increment();
     void decrement();
     void advance(int n);
 
-    Iterator i_;
+    PacketParserBase::data_iterator i_;
+    PacketParserBase::state_type s_;
 };
 
 ///////////////////////////////ih.e////////////////////////////////////////
@@ -70,5 +74,4 @@ private:
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

@@ -25,10 +25,10 @@
 
 // Custom includes
 #include <iostream>
-#include "ParserBase.hh"
 #include <boost/cstdint.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/integer/integer_mask.hpp>
+#include "PacketParser.hh"
 
 //#include "ParseInt.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -36,307 +36,224 @@
 
 namespace senf {
 
-
-    template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int8
-        : public impl::ParseIntOps<Parse_Int8<Iterator,IPacket>,boost::int8_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_Int8,boost::int8_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_Int8<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 1; }
-
-        Parse_Int8() {}
-        explicit Parse_Int8(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_Int8(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::int8_t value_type;
+        static size_type const fixed_bytes = 1;
 
-        value_type value() const { return this->i()[0]; }
-        void value(value_type v) { this->i()[0] = v; }
+        value_type value() const { return i()[0]; }
+        void value(value_type v) { i()[0] = v; }
         Parse_Int8 const & operator= (value_type other) { value(other); return *this; }
     };
-    template <class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_Int8<Iterator,IPacket> const & i)
+    inline std::ostream & operator<<(std::ostream & os, Parse_Int8 const & i)
     { os << i.value(); return os; }
 
-    template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt8
-        : public impl::ParseIntOps<Parse_UInt8<Iterator,IPacket>,boost::uint8_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_UInt8,boost::uint8_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_UInt8<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 1; }
-
-        Parse_UInt8() {}
-        explicit Parse_UInt8(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_UInt8(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint8_t value_type;
+        static size_type const fixed_bytes = 1;
 
-        value_type value() const { return this->i()[0]; }
-        void value(value_type v) { this->i()[0] = v; }
+        value_type value() const { return i()[0]; }
+        void value(value_type v) { i()[0] = v; }
         Parse_UInt8 const & operator= (value_type other) { value(other); return *this; }
     };
-    template <class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_UInt8<Iterator,IPacket> const & i)
+    inline std::ostream & operator<<(std::ostream & os, Parse_UInt8 const & i)
     { os << i.value(); return os; }
 
-    template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int16
-        : public impl::ParseIntOps<Parse_Int16<Iterator,IPacket>,boost::int16_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_Int16,boost::int16_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_Int16<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 2; }
-
-        Parse_Int16() {}
-        explicit Parse_Int16(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_Int16(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::int16_t value_type;
+        static size_type const fixed_bytes = 2;
 
-        value_type value() const { return impl::parse_uint16(this->i()); }
-        void value(value_type v) { impl::write_uint16(this->i(),v); }
+        value_type value() const { return detail::packet::parse_uint16(i()); }
+        void value(value_type v) { detail::packet::write_uint16(i(),v); }
         Parse_Int16 const & operator= (value_type other) { value(other); return *this; }
     };
-    template <class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_Int16<Iterator,IPacket> const & i)
+    inline std::ostream & operator<<(std::ostream & os, Parse_Int16 const & i)
     { os << i.value(); return os; }
 
-    template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt16
-        : public impl::ParseIntOps<Parse_UInt16<Iterator,IPacket>,boost::uint16_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_UInt16,boost::uint16_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_UInt16<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 2; }
-
-        Parse_UInt16() {}
-        explicit Parse_UInt16(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_UInt16(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint16_t value_type;
+        static size_type const fixed_bytes = 2;
 
-        value_type value() const { return impl::parse_uint16(this->i()); }
-        void value(value_type v) { impl::write_uint16(this->i(),v); }
+        value_type value() const { return detail::packet::parse_uint16(i()); }
+        void value(value_type v) { detail::packet::write_uint16(i(),v); }
         Parse_UInt16 const & operator= (value_type other) { value(other); return *this; }
     };
-    template <class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_UInt16<Iterator,IPacket> const & i)
+    inline std::ostream & operator<<(std::ostream & os, Parse_UInt16 const & i)
     { os << i.value(); return os; }
 
-    template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int24
-        : public impl::ParseIntOps<Parse_Int24<Iterator,IPacket>,boost::int32_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_Int24,boost::int32_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_Int24<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 3; }
-
-        Parse_Int24() {}
-        explicit Parse_Int24(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_Int24(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::int32_t value_type;
+        static size_type const fixed_bytes = 3;
 
         value_type value() const {
-            value_type v (impl::parse_uint24(this->i())); return v&0x800000 ? v|0xff000000 : v; }
-        void value(value_type v) { impl::write_uint24(this->i(),v); }
+            value_type v (detail::packet::parse_uint24(i())); return v&0x800000 ? v|0xff000000 : v; }
+        void value(value_type v) { detail::packet::write_uint24(i(),v); }
         Parse_Int24 const & operator= (value_type other) { value(other); return *this; }
     };
-    template <class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_Int24<Iterator,IPacket> const & i)
+    inline std::ostream & operator<<(std::ostream & os, Parse_Int24 const & i)
     { os << i.value(); return os; }
 
-    template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt24
-        : public impl::ParseIntOps<Parse_UInt24<Iterator,IPacket>,boost::uint32_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_UInt24,boost::uint32_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_UInt24<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 3; }
-
-        Parse_UInt24() {}
-        explicit Parse_UInt24(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_UInt24(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint32_t value_type;
+        static size_type const fixed_bytes = 3;
 
-        value_type value() const { return impl::parse_uint24(this->i()); }
-        void value(value_type v) { impl::write_uint24(this->i(),v); }
+        value_type value() const { return detail::packet::parse_uint24(i()); }
+        void value(value_type v) { detail::packet::write_uint24(i(),v); }
         Parse_UInt24 const & operator= (value_type other) { value(other); return *this; }
     };
-    template <class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_UInt24<Iterator,IPacket> const & i)
+    inline std::ostream & operator<<(std::ostream & os, Parse_UInt24 const & i)
     { os << i.value(); return os; }
 
-    template <class Iterator=nil, class IPacket=nil>
     struct Parse_Int32
-        : public impl::ParseIntOps<Parse_Int32<Iterator,IPacket>,boost::int32_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_Int32,boost::int32_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_Int32<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 4; }
-
-        Parse_Int32() {}
-        explicit Parse_Int32(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_Int32(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::int32_t value_type;
+        static size_type const fixed_bytes = 4;
 
-        value_type value() const { return impl::parse_uint32(this->i()); }
-        void value(value_type v) { impl::write_uint32(this->i(),v); }
+        value_type value() const { return detail::packet::parse_uint32(i()); }
+        void value(value_type v) { detail::packet::write_uint32(i(),v); }
         Parse_Int32 const & operator= (value_type other) { value(other); return *this; }
     };
-    template <class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_Int32<Iterator,IPacket> const & i)
+    inline std::ostream & operator<<(std::ostream & os, Parse_Int32 const & i)
     { os << i.value(); return os; }
 
-    template <class Iterator=nil, class IPacket=nil>
     struct Parse_UInt32
-        : public impl::ParseIntOps<Parse_UInt32<Iterator,IPacket>,boost::uint32_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_UInt32,boost::uint32_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_UInt32<I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 4; }
-
-        Parse_UInt32() {}
-        explicit Parse_UInt32(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_UInt32(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint32_t value_type;
+        static size_type const fixed_bytes = 4;
 
-        value_type value() const { return impl::parse_uint32(this->i()); }
-        void value(value_type v) { impl::write_uint32(this->i(),v); }
+        value_type value() const { return detail::packet::parse_uint32(i()); }
+        void value(value_type v) { detail::packet::write_uint32(i(),v); }
         Parse_UInt32 const & operator= (value_type other) { value(other); return *this; }
     };
-    template <class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_UInt32<Iterator,IPacket> const & i)
+    inline std::ostream & operator<<(std::ostream & os, Parse_UInt32 const & i)
     { os << i.value(); return os; }
 
-    template <unsigned start, unsigned end, class Iterator=nil, class IPacket=nil>
+    template <unsigned Start, unsigned End>
     struct Parse_IntField
-        : public impl::ParseIntOps<Parse_IntField<start,end,Iterator,IPacket>,boost::int32_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_IntField<Start,End>,boost::int32_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_IntField<start,end,I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return (end-1)/8+1; }
-
-        Parse_IntField() {}
-        explicit Parse_IntField(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_IntField(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::int32_t value_type;
+        static size_type const fixed_bytes = (End-1)/8+1;
 
         value_type value() const {
-            value_type v (impl::parse_bitfield<Iterator,start,end>::parse(this->i()));
-            return v&boost::high_bit_mask_t<end-start-1>::high_bit ?
-                v | ~boost::low_bits_mask_t<end-start>::sig_bits : v;
+            value_type v (detail::packet::parse_bitfield<Start,End>::parse(i()));
+            return v&boost::high_bit_mask_t<End-Start-1>::high_bit ?
+                v | ~boost::low_bits_mask_t<End-Start>::sig_bits : v;
         }
-        void value(value_type v) { impl::parse_bitfield<Iterator,start,end>::write(this->i(),v); }
+        void value(value_type v) { detail::packet::parse_bitfield<Start,End>::write(i(),v); }
         Parse_IntField const & operator= (value_type other) { value(other); return *this; }
 
     private:
-        BOOST_STATIC_ASSERT( start<end );
-        BOOST_STATIC_ASSERT( end-start<=32 );
+        BOOST_STATIC_ASSERT( Start<End );
+        BOOST_STATIC_ASSERT( End-Start<=32 );
     };
-    template <unsigned start, unsigned end, class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_IntField<start,end,Iterator,IPacket> const & i)
+    template <unsigned Start, unsigned End>
+    inline std::ostream & operator<<(std::ostream & os, Parse_IntField<Start,End> const & i)
     { os << i.value(); return os; }
 
-    template <unsigned start, unsigned end, class Iterator=nil, class IPacket=nil>
+    template <unsigned Start, unsigned End>
     struct Parse_UIntField
-        : public impl::ParseIntOps<Parse_UIntField<start,end,Iterator,IPacket>,boost::uint32_t>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_UIntField<Start,End>,boost::uint32_t>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_UIntField<start,end,I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return (end-1)/8+1; }
-
-        Parse_UIntField() {}
-        explicit Parse_UIntField(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_UIntField(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint32_t value_type;
+        static size_type const fixed_bytes = (End-1)/8+1;
 
-        value_type value() const { return impl::parse_bitfield<Iterator,start,end>::parse(this->i()); }
-        void value(value_type v) { impl::parse_bitfield<Iterator,start,end>::write(this->i(),v); }
+        value_type value() const { return detail::packet::parse_bitfield<Start,End>::parse(i()); }
+        void value(value_type v) { detail::packet::parse_bitfield<Start,End>::write(i(),v); }
         Parse_UIntField const & operator= (value_type other) { value(other); return *this; }
 
     private:
-        BOOST_STATIC_ASSERT( start<end );
-        BOOST_STATIC_ASSERT( end-start<=32 );
+        BOOST_STATIC_ASSERT( Start<End );
+        BOOST_STATIC_ASSERT( End-Start<=32 );
     };
-    template <unsigned start, unsigned end, class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_UIntField<start,end,Iterator,IPacket> const & i)
+    template <unsigned Start, unsigned End>
+    inline std::ostream & operator<<(std::ostream & os, Parse_UIntField<Start,End> const & i)
     { os << i.value(); return os; }
 
-    template <unsigned bit, class Iterator=nil, class IPacket=nil>
+    template <unsigned bit>
     struct Parse_Flag
-        : public impl::ParseIntOps<Parse_Flag<bit,Iterator,IPacket>,bool>,
-          public ParserBase<Iterator,IPacket>
+        : public detail::packet::ParseIntOps<Parse_Flag<bit>,bool>,
+          public PacketParserBase
     {
-        template <class I=nil, class P=nil>
-        struct rebind { typedef Parse_Flag<bit,I,P> parser; };
-        typedef Iterator byte_iterator;
-
-        static unsigned bytes() { return 1; }
-
-        Parse_Flag() {}
-        explicit Parse_Flag(Iterator const & i) : ParserBase<Iterator,IPacket>(i) {}
+        Parse_Flag(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
         typedef bool value_type;
+        static size_type const fixed_bytes = bit/8+1;
 
-        value_type value() const { return this->i()[bit/8] & (1<<(7-(bit%8))); }
+        value_type value() const { return i()[bit/8] & (1<<(7-(bit%8))); }
         void value(value_type v) {
-            if (v) this->i()[0] |= 1<<(7-(bit%8));
-            else   this->i()[0] &= ~(1<<(7-(bit%8)));
+            if (v) i()[0] |= 1<<(7-(bit%8));
+            else   i()[0] &= ~(1<<(7-(bit%8)));
         }
         Parse_Flag const & operator= (value_type other) { value(other); return *this; }
     };
-    template <unsigned bit, class Iterator, class IPacket>
-    std::ostream & operator<<(std::ostream & os, Parse_Flag<bit,Iterator,IPacket> const & i)
+    template <unsigned bit>
+    inline std::ostream & operator<<(std::ostream & os, Parse_Flag<bit> const & i)
     { os << i.value(); return os; }
 
 }

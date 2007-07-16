@@ -24,54 +24,44 @@
 
 #include "IpV4Packet.hh"
 //#include "IpV4Packet.ih"
-#include "EthernetPacket.hh"
 
 // Custom includes
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "EthernetPacket.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV4Packet>
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV4PacketType>
         registerIpV4Packet (0x0800);
 
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV4Packet>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV4PacketType>
         regsiterIpV4Packet2 (4); // IP-in-IP encapsulation
 }
 
-prefix_ void senf::IpV4Packet::v_nextInterpreter()
-    const
-{
-    registerInterpreter(protocol(),begin()+bytes(),end());
-}
-
-prefix_ void senf::IpV4Packet::v_finalize()
-{}
-
-prefix_ void senf::IpV4Packet::v_dump(std::ostream & os)
-    const
+prefix_ void senf::IpV4PacketType::dump(packet p, std::ostream & os)
 {
     struct in_addr in;
-    in.s_addr = htonl(source());
+    in.s_addr = htonl(p->source());
     char buffer[128];
     std::string src (inet_ntop(AF_INET,&in,buffer,128));
-    in.s_addr = htonl(destination());
+    in.s_addr = htonl(p->destination());
     std::string dst (inet_ntop(AF_INET,&in,buffer,128));
     os << "Internet protocol Version 4:\n"
-       << "  version       : " << version() << "\n"
-       << "  IHL           : " << ihl() << "\n"
-       << "  TOS           : " << unsigned(tos()) << "\n"
-       << "  length        : " << length() << "\n"
-       << "  identifier    : " << identifier() << "\n"
-       << "  DF            : " << df() << "\n"
-       << "  MF            : " << mf() << "\n"
-       << "  fragment      : " << frag() << "\n"
-       << "  TTL           : " << unsigned(ttl()) << "\n"
-       << "  protocol      : " << unsigned(protocol()) << "\n"
-       << "  CRC           : " << std::hex << crc() << std::dec << "\n"
+       << "  version       : " << p->version() << "\n"
+       << "  IHL           : " << p->ihl() << "\n"
+       << "  TOS           : " << unsigned(p->tos()) << "\n"
+       << "  length        : " << p->length() << "\n"
+       << "  identifier    : " << p->identifier() << "\n"
+       << "  DF            : " << p->df() << "\n"
+       << "  MF            : " << p->mf() << "\n"
+       << "  fragment      : " << p->frag() << "\n"
+       << "  TTL           : " << unsigned(p->ttl()) << "\n"
+       << "  protocol      : " << unsigned(p->protocol()) << "\n"
+       << "  CRC           : " << std::hex << p->crc() << std::dec << "\n"
        << "  source        : " << src << "\n"
        << "  destination   : " << dst << "\n";
 }
