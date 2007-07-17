@@ -168,6 +168,11 @@ namespace senf {
         ptr appendClone(detail::PacketImpl * impl, iterator base, iterator new_base);
         ptr appendClone(detail::PacketImpl * impl, range r);
 
+    public:
+        // Need this for g++ < 4.0. Since PacketInterpreter is not publically visible, it should not
+        // be a real problem to make impl() public here
+        using PacketData::impl;
+
     private:
         // abstract packet type interface
 
