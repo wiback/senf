@@ -37,7 +37,7 @@
 
 BOOST_AUTO_UNIT_TEST(ethernetPacket_packet)
 {
-    senf::EthernetPacket::byte data[] = 
+    senf::PacketData::byte data[] = 
         { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
           0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,  // source MAC
           0x10, 0x11 };                        // EtherType
