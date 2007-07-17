@@ -87,7 +87,7 @@ prefix_ senf::PacketParserBase::size_type senf::detail::packetParserSize(Parser 
 
 template <class Parser>
 prefix_ senf::SafePacketParser<Parser>::SafePacketParser()
-    : i_()
+    : parser_(), i_()
 {}
 
 template <class Parser>

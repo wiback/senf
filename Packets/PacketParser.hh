@@ -1,7 +1,7 @@
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <g0dil@berlios.de>
+//     Stefan Bund <g0dil@berlios.be>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,20 +24,45 @@
 /** \defgroup packetparser The PacketParser facility
     
     The PacketParser facility provides a framework to implement very lightweight classes which parse
-    the raw content of a packet into meaningful values. PacketParsers are always passed around by
-    value, they can be understood as pointers into the data structure with added type information
-    providing parsing functions.
+    the raw content of a packet into meaningful values. PacketParsers are always passed around
+    <em>by value</em>, they can be understood as pointers into the packet data with added type
+    information providing parsing functions.
 
-    Parsers are built hirarchically. A high-level parser will return other parsers when returning
-    some element (Example: Asking an EthernetParser for the ethertype field by calling the parsers
-    \c type() member will return an UInt16 parser). The lowest level building blocks then return the
+    Parsers are built hierarchically. A high-level parser will return other parsers when accessing
+    an element (Example: Asking an EthernetParser for the ethertype field by calling the parsers \c
+    type() member will return an \c UInt16 parser). The lowest level building blocks then return the
     values. This hierarchical structure greatly simplifies building complex parsers.
 
-    Every parser is derived from senf::PacketParserBase. This parser provides the necessary
-    housekeeping information and provides the parsers with access to the data.
+    Since parsers are very lightweight and are passed by value, packet fields are accessed using the
+    corresponding accessor method:
+    \code
+      SomePacket p (...)
+      SomePacket q (...)
 
-    The PacketParser facility predefines several parsers to be used as building blocks in defining
-    more complex parsers (integer parsers, several parsers for repetitive constructs)
+      // Assign new value to an integer parser
+      p->someField() = 10;
+
+      // Write out above value
+      std::cerr << p->someField() << "\n";
+
+      // Use the generic parser-assignment operator '<<' to copy field values
+      p->someVector()[1].someOtherField() << q->someField();
+      p->someVector() << q->someVector()
+    \endcode
+
+    Here \c someField(), \c someOtherField() and \c someVector() are accessor methods named after
+    the field name. Each returns a parser object. Simple parsers can be used like their
+    corresponding basic type (e.g. a Parse_UInt16 field can be used like an unsigned integer), more
+    complex parsers provide type specific access members. Assigning a value to a parser will change
+    the underlying representation (the packet data). 
+
+    More complex parsers (especially those representing a collection of values) provide an
+    additional wrapper class for mutating access (e.g. Parse_Vector provides a container wrapper
+    with am STL compatible random-access sequence interface). See the documentation of the specific
+    parser for the wrapper specification.
+
+    Every parser is derived from senf::PacketParserBase. This class provides the necessary
+    housekeeping information and provides the parsers with access to the data.
  */
 
 #ifndef HH_PacketParser_
@@ -58,16 +83,30 @@
 
 namespace senf {
     
-    /** \brief Parser Baseclass
+    /** \brief Parser Base class
 
-        To implement a packet parser, you need to derive from PacketParserBase and implement several
-        required members. There are two ways how to do this.
-        \li If the parser just consists of a simple sequence of consecutive fields, the
-            SENF_PACKET_PARESR_DEFINE_FIELDS and SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS macros
-            provide a simple an convenient way to define the packet
+        Parsers come in two favors: fixed and dynamically sized parsers. A <em>fixed size
+        parser</em> has a constant size, it will always parse a fixed number of bytes. The low-level
+        'final'  parsers (like the integer parsers) are fixed size parsers as are composite parsers
+        built up only of fixed-size fields.
+
+        A <em>dynamically sized</em> parser on the other hand infers it's size from the contents of
+        the data parsed. Any parser containing at least one dynamically sized sub-parser will itself
+        be dynamically sized.
+        
+        Both kinds of parser need to derive from PacketParserBase and implement several required
+        members. Which members to implement depends on the parsers flavor. There are two ways how to
+        do this.
+        \li If the parser just consists of a simple sequence of consecutive fields (sub-parsers),
+            the \ref SENF_PACKET_PARSER_DEFINE_FIELDS and \ref
+            SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS macros provide a simple and convenient way to
+            define the packet
         \li In more complex cases, you need to implement the necessary members manually.
 
-        The following example documents the interface (which must be) provided by a parser.
+        This documentation is about the manual implementation. You should nevertheless read through
+        this to understand, what above macros are doing.
+
+        The following example documents the interface (which must be) provided by a parser:
         \code
           struct FooParser : public PacketParserBase
           {
@@ -85,7 +124,7 @@ namespace senf {
               // of bytes to allocate when creating a new object
               static const size_type init_bytes = some_constant_size;
 
-              // You also mey define an init() member. This will be called to initialize a newly
+              // You also may define an init() member. This will be called to initialize a newly
               // created data object. The default implementation just does nothing.
               void init() const;
 
@@ -101,13 +140,13 @@ namespace senf {
         \endcode
         
         You should never call the \c bytes() member of a parser directly. Instead you should use the
-        freestanding senf::bytes() functon. This function will return the correct size even for
-        fixed-size parsers. You may access \c fixed_bytes directly, however be aware that this will
-        restrict your code to fixed size parsers (which depending on the circumstances may be
+        freestanding senf::bytes() function. This function will return the correct size irrespective
+        of the parsers flavor. You may access \c fixed_bytes directly, however be aware that this
+        will restrict your code to fixed size parsers (which depending on the circumstances may be
         exactly what you want).
 
-        In the same way, dont access \c init_bytes directly, always use the senf::init_bytes
-        metafunction class which will correctly support fixed size parsers.
+        In the same way, don't access \c init_bytes directly, always use the senf::init_bytes
+        meta-function class which correctly supports fixed size parsers.
 
         \ingroup packetparser
       */
@@ -117,11 +156,11 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef detail::packet::iterator data_iterator;
-        typedef detail::packet::size_type size_type;
-        typedef detail::packet::difference_type difference_type;
-        typedef detail::packet::byte byte;
-        typedef PacketData * state_type;
+        typedef detail::packet::iterator data_iterator; ///< Raw data iterator type
+        typedef detail::packet::size_type size_type; ///< Unsigned integral type
+        typedef detail::packet::difference_type difference_type; ///< Signed integral type
+        typedef detail::packet::byte byte; ///< Unsigned 8bit value, the raw value type
+        typedef PacketData * state_type; ///< Type of the 'state' parameter
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -135,23 +174,68 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        data_iterator i() const;
-        state_type state() const;
-        PacketData & data() const;
+        data_iterator i() const;        ///< Return beginning of data to parse
+                                        /**< The parser is expected to interpret the data beginning
+                                             here. The size of the interpreted is given by
+                                             <tt>senf::bytes(</tt><em>parser
+                                             instance</em><tt>)</tt>. */
+        state_type state() const;       ///< Return state of this parser
+                                        /**< The value returned should be interpreted as an opaque
+                                             value provided just to be forwarded to other
+                                             parsers. */
+        PacketData & data() const;      ///< Access the packets raw data container
+                                        /**< This member will return the raw data container holding
+                                             the data which is parsed by \c this parser. */
 
-        void init() const;
+        void init() const;              ///< Default implementation
+                                        /**< This is just an empty default
+                                             implementation. Re-implement this member in your own
+                                             parsers if needed. */
 
     protected:
-        PacketParserBase(data_iterator i, state_type s);
-        PacketParserBase(data_iterator i, state_type s, size_type size);
+        PacketParserBase(data_iterator i, state_type s); ///< Standard constructor
+                                        /**< This is the constructor used by most parsers. The
+                                             parameters are just forwarded from the derived classes
+                                             constructor parameters. */
+        PacketParserBase(data_iterator i, state_type s, size_type size); 
+                                        ///< Size checking constructor
+                                        /**< In addition to the standard constructor, this
+                                             constructor will validate, that there is enough data in
+                                             the raw data container to parse \a size bytes after \a
+                                             i.
 
-        bool check(size_type size);
-        void validate(size_type size);
+                                             This constructor is called by all 'final' parsers
+                                             (e.g. the integer parsers) and \e only by those
+                                             parsers. Most parsers do \e not check the validity of
+                                             the iterator, this is delayed until the very last
+                                             parser. This allows to partial parse truncated
+                                             packets.
 
-        template <class Parser> Parser parse(data_iterator i) const;
-        template <class Parser> Parser parse(size_type n) const;
+                                             \throw TruncatedPacketException if the raw data
+                                                 container does not hold at least \a size bytes
+                                                 beginning at \a i. */
 
-        void defaultInit() const;
+        bool check(size_type size);     ///< Check size of data container
+                                        /**< \returns \c true, if the data container holds at least
+                                             \a size beginning at i(), \c false otherwise. */
+        void validate(size_type size);  ///< Validate size of data container
+                                        /**< \throws TruncatedPacketException if the raw data
+                                             container does not hold at least \a size bytes
+                                             beginning at i(). */
+
+        template <class Parser> Parser parse(data_iterator i) const; ///< Create sub-parser
+                                        /**< Creates a new instance of \a Parser to parse data
+                                             beginning at \a i. Automatically passes \a state() to
+                                             the new parser. */
+        template <class Parser> Parser parse(size_type n) const; ///< Create sub-parser
+                                        /**< Creates a new instance of \a Parser to parse data
+                                         * beginning at i()<tt> + </tt>\a n. Automatically passes \a
+                                             state() to the new parser. */
+
+        void defaultInit() const;       ///< Default implementation
+                                        /**< This is just an empty default
+                                             implementation. Re-implement this member in your own
+                                             parsers if needed. */
 
     private:
         data_iterator end();
@@ -183,16 +267,16 @@ namespace senf {
 
     /** \brief Return number of bytes to allocate to new object of given type
 
-        This metafcuntion is called like
+        This meta-function is called like
         \code
             senf::init_bytes<SomeParser>::value
         \endcode
 
-        This expression evaluates to a compile-time constant itegral expression of type
-        senf::PacketParserBase::size_type. This metafunction will return \c Parser::fixed_bytes or
+        This expression evaluates to a compile-time constant integral expression of type
+        senf::PacketParserBase::size_type. This meta-function will return \c Parser::fixed_bytes or
         \c Parser::init_bytes depending on the type of parser.
 
-        \param[in] Parser Parser to return init_bytes for
+        \param[in] Parser The Parser to return init_bytes for
         \returns Number of bytes to allocate to the new object
         \ingroup packetparser
      */
@@ -200,12 +284,32 @@ namespace senf {
     struct init_bytes : public detail::ParserInitBytes<Parser>
     {};
 
+    /** \brief Generic parser copying
+
+        This operator allows to copy the values of identical parsers. This operation does \e not
+        depend on the parsers detailed implementation, it will just replace the data bytes of the
+        target parser with those from the source parser. This allows to easily copy around complex
+        packet substructures.
+
+        This operation is different from the ordinary assignment operator: It does not change the \a
+        target parser, it changes the data referenced by the \a target parser.
+
+        \ingroup packetparser
+     */
     template <class Parser>
     typename boost::enable_if< 
         boost::is_base_of<PacketParserBase, Parser>,
         Parser >::type
     operator<<(Parser target, Parser source);
 
+    /** \brief Generic parser value assignment
+
+        This operator allows to assign a value to parsers which implement a <tt>value(</tt>\a
+        value<tt>)</tt> member. This operator allows to use a common syntax for assigning values or
+        parsers to a parser. 
+
+        \ingroup packetparser
+     */
     template <class Parser, class Value>
     typename boost::enable_if_c < 
         boost::is_base_of<PacketParserBase, Parser>::value 
@@ -216,7 +320,7 @@ namespace senf {
     /** \defgroup packetparsermacros Helper macros for defining new packet parsers
         
         To simplify the definition of simple packet parsers, several macros are provided. Before
-        using these macros you should familarize yourself with the packet parser interface as
+        using these macros you should familiarize yourself with the packet parser interface as
         described in senf::PacketParserBase.
 
         These macros simplify providing the above defined interface. A typical packet declaration
@@ -273,6 +377,13 @@ namespace senf {
           )
         \endcode
         
+        For each field, this command will define
+        \li A method \a name() returning an instance of the \a type parser
+        \li \a name<tt>_t</tt> as a typedef for \a type, the fields value
+        \li \a name<tt>_offset</tt> to give the offset of the field from the beginning of the
+            parser. If the parser is a fixed size parser, this will be a static constant, otherwise
+            it will be a method.
+
         The \a builder argument selects, how the field is defined
         \li <tt>Field</tt> defines a field and increments the current position by the size of the
             field
@@ -284,10 +395,10 @@ namespace senf {
         The \a name argument defines the name of the accessor method.
 
         The \a type argument is the parser to return for that field. Since none of the arguments may
-        contain a komma, <em>This argument cannot be a template</em>. Always use typedefs to access
-        tempalte parsers as shown above.
+        contain a comma, <em>This argument cannot be a multi-parameter template</em>. Always use
+        typedefs to access templated parsers as shown above.
 
-        The \ref SENF_PACKET_PARSER_INIT makro defines the constructor and the \c init() member. If
+        The \ref SENF_PACKET_PARSER_INIT macro defines the constructor and the \c init() member. If
         you want to provide your own \c init() implementation, use \ref
         SENF_PACKET_PARSER_NO_INIT. The first statement in your init method should probably to call
         \c defaultInit(). This will call the \c init() member of all the fields. Afterwards you can
@@ -331,7 +442,7 @@ namespace senf {
     name(data_iterator i, state_type s) : senf::PacketParserBase(i,s) {}                          \
     void init() const { defaultInit(); }
 
-    /** \brief Define initialization mebers of a parser except init()
+    /** \brief Define initialization members of a parser except init()
         
         This macro is like SENF_PACKET_PARSER_INIT but does \e not define \c init(). This allows you
         to provide your own implementation. You should call \c defaultInit() first before
@@ -371,7 +482,20 @@ namespace senf {
         SENF_PACKET_PARSER_INIT(VoidPacketParser);
     };
 
-    /** \brief
+    /** \brief Iterator re-validating Parser wrapper
+
+        An ordinary parser will be invalidated whenever the raw data container's size is
+        changed. This can complicate some algorithms considerably.
+
+        This wrapper will update the parsers iterator (the value returned by the i() member) on
+        every access. This ensures that the iterator will stay valid.
+
+        \attention Beware however, if you insert or remove data before the safe wrapper, the
+            location will \e not be updated accordingly and therefore the parser will be
+            invalid.
+
+        Additionally a SafePacketparser has an uninitialized state. The only allowed operations in
+        this state are the boolean test for validity and assigning another parser.
       */
     template <class Parser>
     class SafePacketParser
@@ -385,23 +509,26 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        // default default constructor
         // default copy constructor
         // default copy assignment
         // default destructor
-        SafePacketParser();
+        SafePacketParser();             ///< Create an empty uninitialized SafePacketParser
 
         // conversion constructors
-        SafePacketParser(Parser parser);
+        SafePacketParser(Parser parser); ///< Initialize SafePacketParser from \a parser
 
-        SafePacketParser & operator=(Parser parser);
+        SafePacketParser & operator=(Parser parser); ///< Assign \a parser to \c this
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        Parser operator*() const;
-        Parser const * operator->() const;
-        bool boolean_test() const;
+        Parser operator*() const;       ///< Access the stored parser
+                                        /**< On every access, the stored parsers iterator will be
+                                             updated / re-validated. */
+        Parser const * operator->() const; ///< Access the stored parser
+                                        /**< On every access, the stored parsers iterator will be
+                                             updated / re-validated. */
+        bool boolean_test() const;      ///< Check validity
 
     protected:
 
@@ -428,3 +555,14 @@ namespace senf {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
+
+//  LocalWords:  templated PacketParser defgroup packetparser PacketParsers li
+//  LocalWords:  EthernetParser ethertype UInt senf PacketParserBase tt
+//  LocalWords:  struct FooParser const init endcode ingroup param SomeParser
+//  LocalWords:  ethernet DefaultBundle EthernetPacket hh EthVLan UIntField CFI
+//  LocalWords:  VLanId OverlayField cfi vlanId accessor defaultInit bitfield
+//  LocalWords:  SomePacket SimpleVectorSizer packetparsermacros Fraunhofer std
+//  LocalWords:  hideinitializer Institut fuer offene Kommunikationssysteme STL
+//  LocalWords:  FOKUS Kompetenzzentrum Satelitenkommunikation SatCom Bund cerr
+//  LocalWords:  berlios dil Structors someField someVector someOtherField
+//  LocalWords:  TruncatedPacketException

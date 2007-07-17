@@ -114,6 +114,42 @@
       <xsl:with-param name="class">anchor</xsl:with-param>
     </xsl:call-template>
   </xsl:template>
+
+  <xsl:template match="div[@class='memdoc']/p[1]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">memtitle</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="div[@class='memdoc']/p[starts-with(text(),'Definition at line ')]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">sourceline</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="div[@class='memdoc']/p[starts-with(text(),'References ')]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">references</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="div[@class='memdoc']/p[starts-with(text(),'Referenced by ')]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">referencedby</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="div[@class='memdoc']/p[starts-with(text(),'Reimplemented from ')]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">reimplementedfrom</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="div[@class='memdoc']/p[starts-with(text(),'Reimplemented in ')]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">reimplementedin</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
   
   <!-- Remove [external] references from the modules page -->
   <xsl:template match="div[@id='content2']/ul/li[a/@class='elRef'][a/@doxygen][code/text()='[external]'][not(ul)]">

@@ -26,7 +26,8 @@
 
 /** \defgroup protocolbundle_default The Default Bundle
 
-    The default bundle combines a set of basic low level protocols like Ethernet or IP.
+    The default bundle combines a set of basic low level protocols like Ethernet or IP. Find the
+    list of packet types implemented below under 'Typedefs'.
 
     \ingroup protocolbundles
  */
@@ -39,8 +40,10 @@
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
-// mode: flyspell
+// compile-command: "scons -u doc"
 // mode: auto-fill
-// ispell-local-dictionary: "american"
 // End:
+
+//  LocalWords:  Fraunhofer Institut fuer offene Kommunikationssysteme FOKUS de
+//  LocalWords:  Kompetenzzentrum Satelitenkommunikation SatCom Bund berlios IP
+//  LocalWords:  defgroup protocolbundles protocolbundle ingroup dil

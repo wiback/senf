@@ -258,7 +258,7 @@ dl.xref-bug, dl.xref-fix, dl.xref-todo, dl.xref-idea {
         margin: 4px 8px 4px 2px;
         background-color: #FFEEEE;
         color: #666666;
-        font-size: 9px;
+        font-size: 75%;
         overflow: hidden;
 }
 
@@ -310,7 +310,27 @@ div.idea {
 
 dl.implementation {
         color: #666666;
-        font-size: 9px;
+        font-size: 75%;
+}
+
+p.memtitle {
+        color: #1a41a8;
+        font-weight: bold;
+        margin-right: 14px;
+        border-bottom: 1px solid #84b0c7;
+}
+
+p.sourceline, p.references, p.referencedby, p.reimplementedfrom, p.reimplementedin {
+        color: #666666;
+        font-size: 75%;
+        margin-left: 10em;
+        margin-bottom: .2em;
+        margin-top: .2em;
+        text-indent: -4em;
+}
+
+div.memproto {
+        margin-bottom: .5em;
 }
 
 table {

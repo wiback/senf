@@ -47,80 +47,94 @@
 # define SENF_PACKET_PARSER_I_GET_TYPE_1(x) SENF_PACKET_PARSER_I_GET_TYPE_2
 # define SENF_PACKET_PARSER_I_GET_TYPE_2(name,type) type
 # 
-# define SENF_PACKET_PARSER_I_DEFINE_INIT_C(_0,_1,elt)                                             \
+# define SENF_PACKET_PARSER_I_DEFINE_INIT_C(_0,_1,elt)                                            \
      SENF_PACKET_PARSER_I_GET_NAME(elt) ().init();
 # 
-# define SENF_PACKET_PARSER_I_DEFINE_INIT(fields)                                                  \
-     void defaultInit() const {                                                                    \
-         BOOST_PP_SEQ_FOR_EACH( SENF_PACKET_PARSER_I_DEFINE_INIT_C, _, fields)                     \
+# define SENF_PACKET_PARSER_I_DEFINE_INIT(fields)                                                 \
+     void defaultInit() const {                                                                   \
+         BOOST_PP_SEQ_FOR_EACH( SENF_PACKET_PARSER_I_DEFINE_INIT_C, _, fields)                    \
      }
 # 
-# define SENF_PACKET_PARSER_I_FIELD_DISPATCH(n,t,name,type)                                        \
+# define SENF_PACKET_PARSER_I_FIELD_DISPATCH(n,t,name,type)                                       \
      SENF_PACKET_PARSER_I_ ## t(n,name,type)
 # 
-# define SENF_PACKET_PARSER_I_FIELD_C(_0,_1,n,elt)                                                 \
-     BOOST_PP_EXPAND(                                                                              \
+# define SENF_PACKET_PARSER_I_FIELD_C(_0,_1,n,elt)                                                \
+     BOOST_PP_EXPAND(                                                                             \
          SENF_PACKET_PARSER_I_FIELD_DISPATCH SENF_PACKET_PARSER_I_UNWRAP(n,elt))
 # 
-# define SENF_PACKET_PARSER_I_INITSIZE_C(_0,_1,n,elt)                                              \
+# define SENF_PACKET_PARSER_I_INITSIZE_C(_0,_1,n,elt)                                             \
      BOOST_PP_IF(n,+,) senf::init_bytes< SENF_PACKET_PARSER_I_GET_TYPE(elt) >::value
 #     
-# define SENF_PACKET_PARSER_I_DEFINE_FIELDS(fields)                                                \
-     size_type offset_0_() const { return 0; }                                                     \
-     BOOST_PP_SEQ_FOR_EACH_I(SENF_PACKET_PARSER_I_FIELD_C, _, fields)                              \
-     size_type bytes() const {                                                                     \
-         return BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_SEQ_SIZE(fields),_)) ();                \
-     }                                                                                             \
-     SENF_PACKET_PARSER_I_DEFINE_INIT(fields)                                                      \
-     static const size_type init_bytes =                                                           \
+# define SENF_PACKET_PARSER_I_DEFINE_FIELDS(fields)                                               \
+     size_type offset_0_() const { return 0; }                                                    \
+     BOOST_PP_SEQ_FOR_EACH_I(SENF_PACKET_PARSER_I_FIELD_C, _, fields)                             \
+     size_type bytes() const {                                                                    \
+         return BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_SEQ_SIZE(fields),_)) ();               \
+     }                                                                                            \
+     SENF_PACKET_PARSER_I_DEFINE_INIT(fields)                                                     \
+     static const size_type init_bytes =                                                          \
          BOOST_PP_SEQ_FOR_EACH_I(SENF_PACKET_PARSER_I_INITSIZE_C, _, fields) ;
 # 
-# define SENF_PACKET_PARSER_I_FIXED_FIELD_DISPATCH(n,t,name,type)                                  \
+# define SENF_PACKET_PARSER_I_FIXED_FIELD_DISPATCH(n,t,name,type)                                 \
      SENF_PACKET_PARSER_I_FIXED_ ## t(n,name,type)
 # 
-# define SENF_PACKET_PARSER_I_FIXED_FIELD_C(_0,_1,n,elt)                                           \
-     BOOST_PP_EXPAND(                                                                              \
+# define SENF_PACKET_PARSER_I_FIXED_FIELD_C(_0,_1,n,elt)                                          \
+     BOOST_PP_EXPAND(                                                                             \
          SENF_PACKET_PARSER_I_FIXED_FIELD_DISPATCH SENF_PACKET_PARSER_I_UNWRAP(n,elt))
 # 
-# define SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(fields)                                          \
-     static const size_type offset_0_ = 0;                                                         \
-     BOOST_PP_SEQ_FOR_EACH_I(SENF_PACKET_PARSER_I_FIXED_FIELD_C, _, fields)                        \
-     static const size_type fixed_bytes =                                                          \
-         BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_SEQ_SIZE(fields),_));                          \
+# define SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(fields)                                         \
+     static const size_type offset_0_ = 0;                                                        \
+     BOOST_PP_SEQ_FOR_EACH_I(SENF_PACKET_PARSER_I_FIXED_FIELD_C, _, fields)                       \
+     static const size_type fixed_bytes =                                                         \
+         BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_SEQ_SIZE(fields),_));                         \
      SENF_PACKET_PARSER_I_DEFINE_INIT(fields)
 # 
 # ///////////////////////////////////////////////////////////////////////////
 # // Definition of the field types
 # 
-# define SENF_PACKET_PARSER_I_Field(n,name,type)                                                   \
-     type name () const {                                                                          \
-         return parse< type >( BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) () );                       \
-     }                                                                                             \
-     size_type BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) () const {                    \
-         return BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) () + senf::bytes( name () );               \
+# define SENF_PACKET_PARSER_I_Field(n,name,type)                                                  \
+     typedef type BOOST_PP_CAT(name,_t) ;                                                         \
+     type name () const {                                                                         \
+         return parse< type >( BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) () );                      \
+     }                                                                                            \
+     size_type BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) () const {                   \
+         return BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) () + senf::bytes( name () );              \
+     }                                                                                            \
+     size_type BOOST_PP_CAT(name, _offset) () const {                                             \
+         return BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) () ;                        \
      }
 # 
-# define SENF_PACKET_PARSER_I_FIXED_Field(n,name,type)                                             \
-     type name () const {                                                                          \
-         return parse< type >( BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) );                          \
-     }                                                                                             \
-     static const size_type BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) =                \
-         BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) + type::fixed_bytes;
+# define SENF_PACKET_PARSER_I_FIXED_Field(n,name,type)                                            \
+     typedef type BOOST_PP_CAT(name,_t) ;                                                         \
+     type name () const {                                                                         \
+         return parse< type >( BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) );                         \
+     }                                                                                            \
+     static const size_type BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) =               \
+         BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) + type::fixed_bytes;                             \
+     static const size_type BOOST_PP_CAT(name,_offset) =                                          \
+         BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_));
 # 
-# define SENF_PACKET_PARSER_I_OverlayField(n,name,type)                                            \
-     type name () const {                                                                          \
-         return parse< type >( BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) () );                       \
-     }                                                                                             \
-     size_type BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) () const {                    \
-         return BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) ();                                        \
+# define SENF_PACKET_PARSER_I_OverlayField(n,name,type)                                           \
+     typedef type BOOST_PP_CAT(name,_t) ;                                                         \
+     type name () const {                                                                         \
+         return parse< type >( BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) () );                      \
+     }                                                                                            \
+     size_type BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) () const {                   \
+         return BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) ();                                       \
+     }                                                                                            \
+     size_type BOOST_PP_CAT(name, _offset) () const {                                             \
+         return BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) () ;                        \
      }
 # 
-# define SENF_PACKET_PARSER_I_FIXED_OverlayField(n,name,type)                                      \
-     type name () const {                                                                          \
-         return parse< type >( BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) );                          \
-     }                                                                                             \
-     static const size_type BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) =                \
-         BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_));
+# define SENF_PACKET_PARSER_I_FIXED_OverlayField(n,name,type)                                     \
+     typedef type BOOST_PP_CAT(name,_t) ;                                                         \
+     type name () const {                                                                         \
+         return parse< type >( BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_)) );                         \
+     }                                                                                            \
+     static const size_type BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_)) =               \
+         BOOST_PP_CAT(offset_,BOOST_PP_CAT(n,_));                                                 \
+     static const size_type BOOST_PP_CAT(name,_offset) =                                          \
+         BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_INC(n),_));
 # 
 # ///////////////////////////////mpp.e///////////////////////////////////////
 # endif

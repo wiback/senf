@@ -10,29 +10,110 @@
         parsing the packet information into meaningful values.
     \li The \ref protocolbundles provide concrete implementations for interpreting packets of
         some protocol. The Protocol Bundles are built on top of the basic packet library.
- */
 
-/*    
+    All these components work together to provide a hopefully simple and intuitive interface to
+    packet parsing and creation.
 
-     - ParseInt.hh: Lots of parsers for integer numbers like senf::Parse_UInt8, for integer
-       bitfields like senf::Parse_UIntField and senf::Parse_Flag to parse boolean flags.
+    \section intro Introduction
+    
+    Most every use of the packet library starts with some concrete packet typedef. Some fundamental
+    packet typedefs are provided by \ref protocolbundle_default. The first example will build a
+    complex packet: This will be an Ethernet packet containing an IPv4 UDP packet. We begin by
+    building the raw packet skeleton:
 
-     - ParseArray.hh: The senf::Parse_Array parser to parse arbitrary fixed-size arrays of
-       fixed-size elements (that is sub-parsers).
+    \code
+      senf::EthernetPacket eth      (senf::EthernetPacket::create());
+      senf::IpV4Packet     ip       (senf::IpV4Packet::createAfter(ethernet));
+      senf::UDPPacket      udp      (senf::UDPPacket::createAfter(ip));
+      senf::DataPacket     payload  (senf::DataPacket::createAfter(udp, 
+                                                                   std::string("Hello, world!")));
+    \endcode
 
-     - ParseVec.hh: The senf::Parse_Vector parser to parse dynamically sized arrays of fixed-size
-       elements (that is sub-parsers).
+    These commands create what is called an interpreter chain. This chain consists of four
+    interpreters. All interpreters reference the same data storage. This data storage is a random
+    access sequence which contains the data bytes of the packet.
 
-    See senf::ParserBase for further information.
+    \note The data structures allocated are automatically managed using reference counting. In this
+        example we have four packet references each referencing the same underlying data
+        structure. This data structure will be freed when the last reference to it goes out of
+        scope.
 
-    \section stuff Other Utilities
+    The packet created above already has the correct payload however all protocol fields are
+    empty. We need to set those protocol fields:
 
-    The pkf also comprises some additional utilities to support the development of packet classes.
+    \code
+      udp->source()      = 2000u;
+      udp->destination() = 2001u;
+      ip->ttl()          = 255u;
+      ip->source()       = senf::INet4Address("192.168.0.1"); // (*)
+      ip->destination()  = senf::INet4Address("192.168.0.2"); // (*)
+      eth->source()      = senf::MACAddress("00:11:22:33:44:55");
+      eth->destination() = senf::MACAddress("00:11:22:33:44:66");
+    
+      eth.finalize(); // (*)
+    \endcode
 
-    The senf::PacketRegistry implements a registry of packets keyed by an arbitrary type. The
-    registry is used to find a packet type given some kind of id (like the ethertype value from the
-    ethernet header). Together with it's support classes (especially senf::PacketRegistryMixin) this
-    class greatly simplifies implementing the needed table lookups.
+    As seen above, packet fields are accessed using the <tt>-></tt> operator whereas other packet
+    facilities (like \c finalize()) are directly accessed using the member operator. The field
+    values are simple set using appropriately named accessors. As a last step, the \c finalize()
+    call will update all calculated fields (fields like next-protocol, header or payload length,
+    checksums etc). Now the packet is ready. We may now send it out using a packet socket
+
+    \code
+      senf::PacketSocketHandle sock ("eth0");
+      sock.write(eth.data());
+    \endcode
+
+    The packet library also provides lot's of facilities to navigate the packet chain:
+
+    \code
+      eth.next() == ip;                   // true
+      eth.next().is<IpV4Packet>();        // true
+      eth.next().next() == udp;           // true
+      eth.next().is<UDPPacket>();         // false
+      eth.next<UDPPacket>() == udp;       // true
+
+      udp.next<UDPPacket>();              // throws InvalidPacketChainException
+      udp.next<UDPPacket>(senf::nothrow); // a senf::Packet testing as false
+      udp.findNext<UDPPacket()> == udp;   // true
+      udp.first<IpV4Packet>() == ip;      // true
+
+      udp.prev() == ip;                   // true
+      udp.prev<EthernetPacket>() == eth   // true
+    \endcode
+
+    ... and so on. It is therefore not necessary to stash away a reference for every interpreter (as
+    each of the sub-packets are called) as long as at least one reference is available.
+
+    These chain navigation functions are also used to parse a packet. Let's read an Ethernet packet
+    from a packet socket handle:
+    
+    \code
+      senf::PacketSocketHandle sock ("eth0");
+      senf::EthernetPacket packet (senf::EthernetPacket::create(senf::Packet::noinit));
+      sock.read(packet.data(),0u);
+    \endcode
+
+    This first creates an uninitialized Ethernet packet and then reads into this packet. We can now
+    parse this packet. Let's find out, whether this is a UDP packet destined to port 2001:
+
+    \code
+      try {
+          senf::UDPPacket udp (packet.findNext<UDPPacket>(senf::nothrow));
+          if (udp && udp->destination() == 2001u) {
+              // Voila ...
+          }
+      } catch (senf::TruncatedPacketException const &) {
+          std::cerr << "Ooops !! Broken packet received ...\n"
+      }
+    \endcode
+
+    TruncatedPacketException is thrown by <tt>udp->destination()</tt> if that field cannot be
+    accessed. More generally, whenever a field cannot be accessed because it would be out of bounds
+    of the data read, this exception is generated.
+
+    This is only a very short introduction to the library to give a feel for the implementation. For
+    a detailed discussion see the respective reference documentation.
  */
 
 
@@ -42,6 +123,12 @@
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// mode: flyspell
 // mode: auto-fill
+// compile-command: "scons -u doc"
 // End:
+
+//  LocalWords:  mainpage SENF packetparser protocolbundles protocolbundle IPv4
+//  LocalWords:  udp endcode li senf EthernetPacket eth IpV createAfter ip std
+//  LocalWords:  ethernet UDPPacket DataPacket ttl INet MACAddress nothrow prev
+//  LocalWords:  PacketSocketHandle InvalidPacketChainException findNext noinit
+//  LocalWords:  tt TruncatedPacketException const cerr Ooops

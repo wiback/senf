@@ -104,7 +104,7 @@ namespace senf {
 
         Packet is protocol agnostic. This class only provides non-protocol dependent members. To
         access the protocol specific features of a packet (like header fields) the ConcretePacket
-        class extending Packet is povided.
+        class extending Packet is provided.
 
         \section packet_semantics Semantics
         
@@ -128,6 +128,11 @@ namespace senf {
         (protocol). For each implemented protocol, typedefs should be provided for these
         instantiations (Example: \ref EthernetPacket is a typedef for
         \ref ConcretePacket < \ref EthernetPacketType >).
+
+        \see 
+            \ref ConcretePacket for the type specific interface\n
+            \ref PacketData for the sequence interface\n
+            \ref packetparser for a specification of the parser interface
       */
     class Packet
         : public SafeBool<Packet>,
@@ -317,7 +322,7 @@ namespace senf {
                                         /**< \see valid() */
         bool valid() const;             ///< Check, whether the packet is valid()
                                         /**< An in-valid() packet does not allow any operation
-                                             except checking vor validity and assignment. in-valid()
+                                             except checking for validity and assignment. in-valid()
                                              packets serve the same role as 0-pointers. */
         
 
@@ -337,7 +342,7 @@ namespace senf {
                                         /**< This method is provided mostly to help debugging packet
                                              problems. Each concrete packet should implement a dump
                                              method writing out all fields of the packet in a
-                                             readable reresentation. dump() will call this member
+                                             readable representation. dump() will call this member
                                              for each packet/header/interpreter in the chain from \c
                                              this packet up to the end of the chain. */
 
@@ -483,7 +488,7 @@ namespace senf {
                                              \param[in] noinit This parameter must always have the
                                                  value \c senf::noinit. */
         static ConcretePacket createAfter(Packet packet, size_type size);
-                                        ///< Create default initializzed packet after \a packet
+                                        ///< Create default initialized packet after \a packet
                                         /**< This member will create a default initialized packet
                                              with the given size. If the size parameter is smaller
                                              than the minimum allowed packet size an exception will
@@ -590,3 +595,13 @@ namespace senf {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
+
+//  LocalWords:  defgroup li html png STL ConcretePacket PacketInterpreterBase
+//  LocalWords:  PacketInterpreter PacketImpl OtherPacket EthernetPacket param
+//  LocalWords:  EthernetPacketType PacketData packetparser nothrow senf prev
+//  LocalWords:  InvalidPacketChainException findNext findPrev parseNextAs tt
+//  LocalWords:  PacketType SomePacketType createAfter createBefore noinit href
+//  LocalWords:  PacketTypeBase TruncatedPacketException http www org Institut
+//  LocalWords:  Fraunhofer fuer offene Kommunikationssysteme FOKUS SatCom Bund
+//  LocalWords:  Kompetenzzentrum Satelitenkommunikation berlios de hh
+//  LocalWords:  addtogroup Structors PacketType dil

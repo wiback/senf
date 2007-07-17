@@ -55,3 +55,26 @@
 (let ((local-conf (ccide-project-search-upwards "project-local.el")))
   (if local-conf
       (load-file local-conf)))
+
+(defun flyspell-cc-progmode-verify ()
+  "Replacement for standard flyspell-generic-progmode-verify which
+checks for C/C++ preproc directives. Additionally, anything after ^L
+is ignored (Those are the file local variables and local words)."
+  (let ((f (get-text-property (point) 'face)))
+    (and (memq f flyspell-prog-text-faces)
+	 (not (save-excursion 
+		(beginning-of-line) 
+		(looking-at "\\(//\\)?#")))
+	 (not (let ((l (max (point-min) (- (point-max) 4096))))
+		(and (< l (point))
+		     (save-excursion (search-backward "" l t))))))))
+
+(defun flyspell-cc-mode ()
+  "Torn on `flyspell-mode` for comments and strings in C/C++ mode."
+  (interactive)
+  (setq flyspell-generic-check-word-p 'flyspell-cc-progmode-verify)
+  (flyspell-mode 1))
+
+;; Better set this here than in the file variables since the setting
+;; is only valid if project.el is loaded ...
+(flyspell-cc-mode)

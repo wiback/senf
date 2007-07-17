@@ -36,9 +36,33 @@
 
 namespace senf {
 
-    /** \brief
+    /** \brief Packet data STL-sequence view
 
-        PacketData only exists to separate out the container interface from PacketInterpreter.
+        The PacketData class provides an STL-sequence compatible view of the raw packet data. Each
+        packet/header/interpreter in the chain references the same storage area, presenting a
+        different (but nested/overlapping) section of the data.
+
+        Whenever the data is manipulated through PacketData, the change is assumed to be within the
+        data range of that packet: All insertions take place \e inside \c this packet and \e outside
+        any following packets in the packet chain. 
+
+        \warning It is not permissible to change data belonging to a following
+            packet/header/interpreter even though this data is part of \c this sequence. Doing so
+            will corrupt the packet data.
+        
+        \par
+
+        \warning When accessing packet data via the PacketData interface you are on your own: The
+            packet is not validated in any way, you bypass all parsers.
+
+        All public members are those of an STL random-access sequence.
+
+        \implementation This class is very tightly integrated with PacketInterpreterBase /
+            PacketInterpreter. It is separated out of those classes primarily to provide a clean
+            sequence interface to the library user and not for implementation reasons (it would have
+            been simpler to implement all these members in PacketInterpreterBase).
+
+        \ingroup packet_module
       */
     class PacketData
         : boost::noncopyable
@@ -47,8 +71,6 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef senf::detail::packet::smart_pointer<PacketData>::ptr_t ptr;
-        
         typedef senf::detail::packet::iterator iterator;
         typedef senf::detail::packet::const_iterator const_iterator;
         typedef senf::detail::packet::size_type size_type;
@@ -99,14 +121,15 @@ namespace senf {
 
         ///@}
 
-        bool valid();
-
     protected:
         PacketData(size_type b, size_type e);
 
+        /// Need to make this protected so we can change it in the derived class
         detail::PacketImpl * impl_;
 
         detail::PacketImpl & impl() const;
+
+        bool valid();
 
     private:
         size_type begin_;
@@ -180,3 +203,8 @@ namespace senf {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
+
+//  LocalWords:  Fraunhofer Institut fuer offene Kommunikationssysteme FOKUS de
+//  LocalWords:  Kompetenzzentrum Satelitenkommunikation SatCom Bund berlios dil
+//  LocalWords:  PacketData hh STL PacketInterpreterBase PacketInterpreter
+//  LocalWords:  ingroup Structors
