@@ -463,8 +463,37 @@ namespace senf {
         \hideinitializer
      */
 #   define SENF_PACKET_PARSER_DEFINE_FIELDS(fields)                                               \
-    SENF_PACKET_PARSER_I_DEFINE_FIELDS(fields)
+    SENF_PACKET_PARSER_I_DEFINE_FIELDS(0,fields)
         
+    /** \brief Define fields for a dynamically sized parser (with offset)
+
+        Define the fields as specified in \a fields. This macro supports dynamically sized
+        subfields, the resulting parser will be dynamically sized.
+
+        The \a offset argument gives the byte offset at which to start parsing the fields. This
+        helps defining extended parser deriving from a base parser:
+        \code
+           struct ExtendedParser : public BaseParser
+           {
+               SENF_PACKET_PARSER_NO_INIT(ExtendedParser);
+        
+               SENF_PACKET_PARSER_DEFINE_FIELDS_OFFSET(senf::bytes(BaseParser(*this)),
+                 ( ... fields ... ) );
+
+               void init() {
+                   BaseParser::init();
+                   defaultInit();
+                   // other init code
+               }
+           }
+        \endcode
+
+        \ingroup packetparsermacros
+        \hideinitializer
+     */
+#   define SENF_PACKET_PARSER_DEFINE_FIELDS_OFFSET(offset,fields)                                 \
+    SENF_PACKET_PARSER_I_DEFINE_FIELDS(offset,fields)
+
     /** \brief Define fields for a fixed size parser
 
         Define the fields as specified in \a fields. This macro only supports fixed size
@@ -474,7 +503,36 @@ namespace senf {
         \hideinitializer
      */
 #   define SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(fields)                                         \
-    SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(fields)
+    SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(0,fields)
+
+    /** \brief Define fields for a fixed size parser
+
+        Define the fields as specified in \a fields. This macro only supports fixed size
+        subfields, the resulting parser will also be a fixed size parser.
+
+        The \a offset argument gives the byte offset at which to start parsing the fields. This
+        helps defining extended parser deriving from a base parser:
+        \code
+           struct ExtendedParser : public BaseParser
+           {
+               SENF_PACKET_PARSER_NO_INIT(ExtendedParser);
+
+               SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS_OFFSET(BaseParser::fixed_bytes,
+                 ( ... fields ... ) );
+
+               void init() {
+                   BaseParser::init();
+                   defaultInit();
+                   // other init code
+               }
+           }
+        \endcode
+
+        \ingroup packetparsermacros
+        \hideinitializer
+     */
+#   define SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS_OFFSET(offset,fields)                           \
+    SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(offset,fields)
 
     struct VoidPacketParser 
         : public PacketParserBase

@@ -65,8 +65,8 @@
 # define SENF_PACKET_PARSER_I_INITSIZE_C(_0,_1,n,elt)                                             \
      BOOST_PP_IF(n,+,) senf::init_bytes< SENF_PACKET_PARSER_I_GET_TYPE(elt) >::value
 #     
-# define SENF_PACKET_PARSER_I_DEFINE_FIELDS(fields)                                               \
-     size_type offset_0_() const { return 0; }                                                    \
+# define SENF_PACKET_PARSER_I_DEFINE_FIELDS(offset,fields)                                        \
+     size_type offset_0_() const { return offset; }                                               \
      BOOST_PP_SEQ_FOR_EACH_I(SENF_PACKET_PARSER_I_FIELD_C, _, fields)                             \
      size_type bytes() const {                                                                    \
          return BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_SEQ_SIZE(fields),_)) ();               \
@@ -82,8 +82,8 @@
      BOOST_PP_EXPAND(                                                                             \
          SENF_PACKET_PARSER_I_FIXED_FIELD_DISPATCH SENF_PACKET_PARSER_I_UNWRAP(n,elt))
 # 
-# define SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(fields)                                         \
-     static const size_type offset_0_ = 0;                                                        \
+# define SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(offset,fields)                                  \
+     static const size_type offset_0_ = offset;                                                   \
      BOOST_PP_SEQ_FOR_EACH_I(SENF_PACKET_PARSER_I_FIXED_FIELD_C, _, fields)                       \
      static const size_type fixed_bytes =                                                         \
          BOOST_PP_CAT(offset_,BOOST_PP_CAT(BOOST_PP_SEQ_SIZE(fields),_));                         \
