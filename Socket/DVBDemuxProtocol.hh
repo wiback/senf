@@ -1,4 +1,4 @@
-// $Id$
+// $Id: DVBProtocol.hh 321 2007-07-19 09:00:23Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -21,56 +21,55 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief xxx
+    \brief DVBProtocol public header
  */
 
-#include "DVBProtocol.hh"
-//#include "DVBProtocol.ih"
+#ifndef HH_DVBDemuxProtocol_
+#define HH_DVBDemuxProtocol_ 1
+
+#include <linux/dvb/dmx.h> 
 
 // Custom includes
-#include <sys/socket.h>
-#include <iostream>
-#include <string>
-#include <sys/ioctl.h>
-#include <linux/sockios.h>
-#include "SocketHandle.hh"
+#include "SocketProtocol.hh"
+#include "INetAddressing.hh"
 
 //#include "DVBProtocol.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+///////////////////////////////hh.p////////////////////////////////////////
 
+namespace senf {
 
+    /// \addtogroup protocol_facets_group
+    /// @{
 
-prefix_ void senf::DVBProtocol::setBufferSize(unsigned long size)
-    const
-{
-    if (::ioctl(body().fd(), DMX_SET_BUFFER_SIZE, size) < 0)
-        throw SystemException(errno);
+    /** xxx
+     */
+    class DVBDemuxProtocol
+        : public virtual SocketProtocol
+    {
+    public:
+        void setBufferSize(unsigned long size) const;
+        
+        void startFiltering() const;
+        void stopFiltering() const;
+        
+        ///\name Abstract Interface Implementation
+        ///@{
+
+        //unsigned available() const;
+        bool eof() const;
+
+        ///@}
+        
+        
+    };
+
 }
 
-prefix_ void senf::DVBProtocol::startFiltering()
-    const
-{
-    if (::ioctl(body().fd(), DMX_START) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ void senf::DVBProtocol::stopFiltering()
-    const
-{
-    if (::ioctl(body().fd(), DMX_STOP) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ bool senf::DVBProtocol::eof()
-    const
-{
-    return false;
-}
-
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
-//#include "DVBProtocol.mpp"
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "DVBDemuxProtocol.cci"
+//#include "DVBDemuxProtocol.ct"
+//#include "DVBDemuxProtocol.cti"
+#endif
 
 
 // Local Variables:

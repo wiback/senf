@@ -1,4 +1,4 @@
-// $Id$
+// $Id: DVBProtocol.cc 321 2007-07-19 09:00:23Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -21,55 +21,56 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DVBProtocol public header
+    \brief xxx
  */
 
-#ifndef HH_DVBProtocol_
-#define HH_DVBProtocol_ 1
-
-#include <linux/dvb/dmx.h> 
+#include "DVBDemuxProtocol.hh"
+//#include "DVBDemuxProtocol.ih"
 
 // Custom includes
-#include "SocketProtocol.hh"
-#include "INetAddressing.hh"
+#include <sys/socket.h>
+#include <iostream>
+#include <string>
+#include <sys/ioctl.h>
+#include <linux/sockios.h>
+#include "SocketHandle.hh"
 
-//#include "DVBProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//#include "DVBDemuxProtocol.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
 
-    /// \addtogroup protocol_facets_group
-    /// @{
 
-    /** xxx
-     */
-    class DVBProtocol
-        : public virtual SocketProtocol
-    {
-    public:
-        void setBufferSize(unsigned long size) const;
-        
-        void startFiltering() const;
-        void stopFiltering() const;
-        
-        ///\name Abstract Interface Implementation
-        ///@{
-
-        //unsigned available() const;
-        bool eof() const;
-
-        ///@}
-        
-        
-    };
-
+prefix_ void senf::DVBDemuxProtocol::setBufferSize(unsigned long size)
+    const
+{
+    if (::ioctl(body().fd(), DMX_SET_BUFFER_SIZE, size) < 0)
+        throw SystemException(errno);
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "DVBProtocol.cci"
-//#include "DVBProtocol.ct"
-//#include "DVBProtocol.cti"
-#endif
+prefix_ void senf::DVBDemuxProtocol::startFiltering()
+    const
+{
+    if (::ioctl(body().fd(), DMX_START) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void senf::DVBDemuxProtocol::stopFiltering()
+    const
+{
+    if (::ioctl(body().fd(), DMX_STOP) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ bool senf::DVBDemuxProtocol::eof()
+    const
+{
+    return false;
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "DVBDemuxProtocol.mpp"
 
 
 // Local Variables:

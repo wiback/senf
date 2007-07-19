@@ -1,4 +1,4 @@
-// $Id$
+// $Id: Sniffer.cc 296 2007-07-10 20:39:34Z g0dil $
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -22,19 +22,24 @@
 
 // Definition of non-inline non-template functions
 
-//#include "Sniffer.hh"
-//#include "Sniffer.ih"
-
-// Custom includes
 #include <string>
 #include <iostream>
 #include <iomanip>
-#include "Socket/PacketSocketHandle.hh"
-#include "Scheduler/Scheduler.hh"
-#include "Utils/membind.hh"
-#include "Packets/DefaultBundle/EthernetPacket.hh"
+#include <sys/ioctl.h>
+#include <linux/sockios.h>
+#include <linux/dvb/dmx.h> 
 
-//#include "Sniffer.mpp"
+#include "Scheduler/Scheduler.hh"
+#include "Packets/DefaultBundle/EthernetPacket.hh"
+#include "Packets/MPEG_DVBBundle/DatagramSection.hh"
+#include "Utils/membind.hh"
+#include "Socket/DVBDemuxHandles.hh"
+#include "Packets/ParseInt.hh"
+#include "Packets/Packet.hh"
+#include "Packets/PacketData.hh"
+
+#define PID 271
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
@@ -43,7 +48,7 @@ namespace {
     static const unsigned BLOCK_SIZE = 16;
 
     template <class Iterator>
-    void hexdump(Iterator i, Iterator const & i_end)
+    void hexdump(Iterator i, Iterator const & i_end, std::ostream& stream)
     {
         unsigned offset (0);
         std::string ascii;
@@ -51,93 +56,74 @@ namespace {
             switch (offset % BLOCK_SIZE) {
             case 0:
                 if (!ascii.empty()) {
-                    std::cout << "  " << ascii << "\n";
+                    stream << "  " << ascii << "\n";
                     ascii = "";
                 }
-                std::cout << "  "
+                stream << "  "
                           << std::hex << std::setw(4) << std::setfill('0')
                           << offset << ' ';
                 break;
             case BLOCK_SIZE/2:
-                std::cout << " ";
+                stream << " ";
                 ascii += ' ';
                 break;
             }
-            std::cout << ' ' << std::hex << std::setw(2) << std::setfill('0')
+            stream << ' ' << std::hex << std::setw(2) << std::setfill('0')
                       << unsigned(*i);
             ascii += (*i >= ' ' && *i < 126) ? *i : '.';
         }
         if (!ascii.empty()) {
             for (; (offset % BLOCK_SIZE) != 0; ++offset) {
                 if ((offset % BLOCK_SIZE) == BLOCK_SIZE/2)
-                    std::cout << " ";
-                std::cout << "   ";
+                    stream << " ";
+                stream << "   ";
             }
-            std::cout << "  " << ascii << "\n";
+            stream << "  " << ascii << "\n";
         }
-        std::cout << std::dec;
+        stream << std::dec;
     }
-
 }
 
-int loop_main (int argc, char const * argv[])
-{
-    try {
-        senf::PacketSocketHandle sock;
-        sock.bind(senf::LLSocketAddress("eth1"));
-        // sock.protocol().promisc("eth0",senf::PacketProtocol::Promiscuous);
 
-        while (true) { // forever
-            senf::EthernetPacket packet (senf::EthernetPacket::create(
-                                             senf::EthernetPacket::noinit));
-            sock.read(packet.data(),0);
-            packet.dump(std::cout);
-            hexdump(packet.last().data().begin(),
-                    packet.last().data().end());
-            std::cout << "\n\n";
-        }
-    }
-    catch (std::exception const & ex) {
-        std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
-    }
-    return 0;
-}
-
-class Sniffer
+class MySniffer
 {
-    senf::PacketSocketHandle sock;
+    senf::DVBDemuxPESHandle demuxHandle;
+    senf::DVBDvrHandle dvrHandle;
 
 public:
-    Sniffer(std::string const & interface) 
+    MySniffer()
     {
-        sock.bind(senf::LLSocketAddress(interface)); 
+        struct dmx_pes_filter_params pes_filter;
+        memset(&pes_filter, 0, sizeof (struct dmx_pes_filter_params));
+        pes_filter.pid = PID;
+        pes_filter.input  = DMX_IN_FRONTEND;
+        pes_filter.output = DMX_OUT_TS_TAP;
+        pes_filter.pes_type = DMX_PES_OTHER;
+        pes_filter.flags = DMX_IMMEDIATE_START;
+
+        demuxHandle.protocol().setPESFilter( &pes_filter );
+        
+        senf::Scheduler::instance().add(
+            dvrHandle, senf::membind(&MySniffer::dumpSection, this));
     }
 
-    void run() 
-    {
-        senf::Scheduler::instance().add(
-            sock, senf::membind(&Sniffer::dumpPacket, this));
-        senf::Scheduler::instance().process();
-    }
-         
 private:
-    void dumpPacket(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
+    void dumpSection(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
     {
-        senf::EthernetPacket packet (
-            senf::EthernetPacket::create(senf::EthernetPacket::noinit));
-        sock.read(packet.data(),0);
-        packet.dump(std::cout);
-        hexdump(packet.last().data().begin(),
-                packet.last().data().end());
-        std::cout << "\n\n";
+        std::string data (dvrHandle.read());
+        std::cout << data.length() << "\n";
+        //senf::DatagramSection section (senf::DatagramSection::create(data));
+        //section.dump(std::cout);
+        //senf::PacketData & datagramData (section.last().data());
+        //hexdump(datagramData.begin(), datagramData.end(), std::cout);
     }
 };
 
-int scheduler_main(int argc, char const * argv[])
+int main(int argc, char const * argv[])
 {
     try {
-        Sniffer sniffer ("eth1");
-        sniffer.run();
+        MySniffer sniffer;
+        senf::Scheduler::instance().process();
     }
     catch (std::exception const & ex) {
         std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
@@ -145,21 +131,9 @@ int scheduler_main(int argc, char const * argv[])
     return 0;
 }
 
-int main(int argc, char const * argv[])
-{
-    if (argc >= 2)
-        if (std::string(argv[1]) == "loop")
-            return loop_main(argc,argv);
-        else if (std::string(argv[1]) == "scheduler")
-            return scheduler_main(argc,argv);
-
-    std::cerr << "Usage: sniffer { loop | scheduler }" << std::endl;
-    return 1;
-}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "Sniffer.mpp"
 
 
 // Local Variables:
@@ -168,6 +142,6 @@ int main(int argc, char const * argv[])
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u"
+// compile-command: "scons -u test"
 // comment-column: 40
 // End:

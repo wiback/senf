@@ -1,4 +1,4 @@
-// $Id$
+// $Id: DVBSectionHandle.cc 321 2007-07-19 09:00:23Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -24,8 +24,8 @@
     \brief xxx
  */
 
-#include "DVBSectionHandle.hh"
-//#include "DVBSectionHandle.ih"
+#include "DVBDemuxHandles.hh"
+//#include "DVBDemuxHandles.ih"
 
 // Custom includes
 #include <sys/types.h>
@@ -39,14 +39,14 @@
 
 #include "Utils/Exception.hh"
 
-//#include "DVBSectionHandle.mpp"
+//#include "DVBDemuxHandles.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::DVBSectionProtocol
+// senf::DVBDemuxHandles
 
-prefix_ void senf::DVBSectionProtocol::init_client()
+prefix_ void senf::DVBDemuxSectionProtocol::init_client()
     const
 {
     int fd = open("/dev/dvb/adapter0/demux0", O_RDONLY | O_NONBLOCK);
@@ -55,45 +55,81 @@ prefix_ void senf::DVBSectionProtocol::init_client()
     body().fd(fd);
 }
 
-prefix_ unsigned senf::DVBSectionProtocol::available()
+prefix_ unsigned senf::DVBDemuxSectionProtocol::available()
     const
 {
     return 4096;
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBSectionProtocol::clone()
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBDemuxSectionProtocol::clone()
     const
 {
-    return std::auto_ptr<SocketProtocol>(new DVBSectionProtocol());
+    return std::auto_ptr<SocketProtocol>(new DVBDemuxSectionProtocol());
 }
 
-
-prefix_ void senf::DVBSectionProtocol::setSectionFilter(
-        unsigned short pid,
-        unsigned char table_id)
-    const
-{
-    struct dmx_sct_filter_params sec_filter;
-    memset(&sec_filter, 0, sizeof (struct dmx_sct_filter_params));
-    sec_filter.pid = pid;
-    sec_filter.filter.filter[0] = table_id;
-    sec_filter.filter.mask[0] = 0xff;
-    sec_filter.flags = DMX_IMMEDIATE_START;
-    sec_filter.flags |= DMX_CHECK_CRC;
-    setSectionFilter( &sec_filter );
-}
-
-
-prefix_ void senf::DVBSectionProtocol::setSectionFilter(struct dmx_sct_filter_params *filter)
+prefix_ void senf::DVBDemuxSectionProtocol::setSectionFilter(struct dmx_sct_filter_params *filter)
     const
 {
     if (::ioctl(body().fd(), DMX_SET_FILTER, filter) < 0)
         throw SystemException(errno);
 }
 
+// ----------------------------------------------------------------
+
+prefix_ void senf::DVBDemuxPESProtocol::init_client()
+    const
+{
+    int fd = open("/dev/dvb/adapter0/demux0", O_RDONLY | O_NONBLOCK);
+    if (fd < 0)
+        throw SystemException(errno);
+    body().fd(fd);
+}
+
+prefix_ unsigned senf::DVBDemuxPESProtocol::available()
+    const
+{
+    return 4096; //???
+}
+
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBDemuxPESProtocol::clone()
+    const
+{
+    return std::auto_ptr<SocketProtocol>(new DVBDemuxPESProtocol());
+}
+
+prefix_ void senf::DVBDemuxPESProtocol::setPESFilter(struct dmx_pes_filter_params *filter)
+    const
+{
+    if (::ioctl(body().fd(), DMX_SET_PES_FILTER, filter) < 0)
+        throw SystemException(errno);
+}
+
+// ----------------------------------------------------------------
+
+prefix_ void senf::DVBDvrProtocol::init_client()
+    const
+{
+    int fd = open("/dev/dvb/adapter0/dvr0", O_RDONLY | O_NONBLOCK);
+    if (fd < 0)
+        throw SystemException(errno);
+    body().fd(fd);
+}
+
+prefix_ unsigned senf::DVBDvrProtocol::available()
+    const
+{
+    return 188;
+}
+
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBDvrProtocol::clone()
+    const
+{
+    return std::auto_ptr<SocketProtocol>(new DVBDvrProtocol());
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "DVBSectionHandle.mpp"
+//#include "DVBDemuxHandles.mpp"
 
 
 // Local Variables:
