@@ -1,0 +1,14 @@
+# -*- python -*-
+
+Import('env')
+import SENFSCons, glob
+
+###########################################################################
+
+sources = SENFSCons.GlobSources()
+
+SENFSCons.StandardTargets(env)
+
+SENFSCons.Object(env, target = 'MPEG_DVBBundle', sources=sources,
+                 LIBS = ['Packets', 'Socket', 'Utils'])
+                 

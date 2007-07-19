@@ -325,27 +325,11 @@ namespace senf {
 
         These macros simplify providing the above defined interface. A typical packet declaration
         using these macros has the following form (This is a concrete example from the definition of
-        the ethernet packet in <tt>DefaultBundle//EthernetPacket.hh</tt>)
-        \code
-            struct Parse_EthVLan : public senf::PacketParserBase
-            {
-                SENF_PACKET_PARSER_INIT(Parse_EthVLan);
-
-                // ////////////////////////////////////////////////////////////////////////
-
-                typedef senf::Parse_UIntField < 0,  3 > Parse_Priority;
-                typedef senf::Parse_Flag          < 3 > Parse_CFI;
-                typedef senf::Parse_UIntField < 4, 16 > Parse_VLanId;
-                typedef senf::Parse_UInt16              Parse_Type;
-
-                SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-                    ((OverlayField)( priority, Parse_Priority ))
-                    ((OverlayField)( cfi,      Parse_CFI      ))
-                    ((Field       )( vlanId,   Parse_VLanId   ))
-                    ((Field       )( type,     Parse_Type     )) 
-                );
-            };
-        \endcode
+        the ethernet packet in <tt>DefaultBundle/EthernetPacket.hh</tt>)
+    
+        \dontinclude EthernetPacket.hh
+        \skipline struct Parse_EthVLan : public PacketParserBase
+        \until };
 
         The macros take care of the following:
         \li They define the accessor functions returning parsers of the given type.
