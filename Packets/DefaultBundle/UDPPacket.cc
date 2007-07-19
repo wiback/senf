@@ -27,13 +27,13 @@
 #include "IpV4Packet.hh"
 
 // Custom includes
-#include "Packets/DataPacket.hh"
+#include "Packets/Packets.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::UDPPacketType>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::UDPPacket>
         registerUDPPacket (17);
 }
 

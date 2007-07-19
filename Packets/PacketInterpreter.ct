@@ -194,7 +194,7 @@ prefix_ void senf::PacketInterpreter<PacketType>::v_dump(std::ostream & os)
 template <class PacketType>
 prefix_ senf::TypeIdValue senf::PacketInterpreter<PacketType>::v_type()
 {
-    return typeIdValue<PacketType>();
+    return typeIdValue< ConcretePacket<PacketType> >();
 }
 
 template <class PacketType>

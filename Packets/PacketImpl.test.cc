@@ -25,9 +25,7 @@
 //#include "PacketImpl.test.ih"
 
 // Custom includes
-#include "PacketImpl.hh"
-#include "PacketInterpreter.hh"
-#include "PacketType.hh"
+#include "Packets.hh"
 #include "main.test.hh"
 
 #include <boost/test/auto_unit_test.hpp>

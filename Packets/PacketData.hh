@@ -186,8 +186,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_PacketData_DeclOnly) &&!defined(HH_PacketData_def)
-#define HH_PacketData_def
+#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_PacketData_i_)
+#define HH_PacketData_i_
 #include "PacketData.cci"
 //#include "PacketData.ct"
 #include "PacketData.cti"

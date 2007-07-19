@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief PacketRegistry internal header */
+
 #ifndef IH_PacketRegistryImpl_
 #define IH_PacketRegistryImpl_ 1
 
@@ -31,14 +34,16 @@
 
 namespace senf {
 namespace detail {
-
+    
+    ///\internal
     template <class PacketType>
     struct PkReg_EntryImpl
         : public PkReg_Entry
     {
-        virtual PacketInterpreterBase::factory_t factory() const;
+        virtual Packet::factory_t factory() const;
     };
 
+    ///\internal
     template <class KeyType>
     class PacketRegistryImpl 
         : private boost::noncopyable

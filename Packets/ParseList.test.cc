@@ -25,7 +25,7 @@
 //#include "ParseList.test.ih"
 
 // Custom includes
-#include "ParseList.hh"
+#include "Packets.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

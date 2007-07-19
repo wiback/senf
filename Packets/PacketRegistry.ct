@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline template funPacketRegistry.ons
+/** \file
+    \brief PacketRegistry non-inline template implementation */
 
 #include "PacketRegistry.ih"
 
@@ -34,7 +35,7 @@ template <class PacketType>
 prefix_ senf::PacketInterpreterBase::factory_t senf::detail::PkReg_EntryImpl<PacketType>::factory()
     const
 {
-    return PacketInterpreter<PacketType>::factory();
+    return PacketType::factory();
 }
 
 template <class KeyType>

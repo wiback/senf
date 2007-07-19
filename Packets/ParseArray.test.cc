@@ -26,10 +26,7 @@
 //#include "ParseArray.test.ih"
 
 // Custom includes
-#include "PacketInterpreter.hh"
-#include "ParseArray.hh"
-#include "ParseInt.hh"
-#include "PacketType.hh"
+#include "Packets.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

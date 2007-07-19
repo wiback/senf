@@ -352,6 +352,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_PacketInterpreter_i_)
+#define HH_PacketInterpreter_i_
 #include "PacketInterpreter.cci"
 #include "PacketInterpreter.ct"
 #include "PacketInterpreter.cti"

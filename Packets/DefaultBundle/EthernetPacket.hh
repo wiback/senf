@@ -26,10 +26,7 @@
 // Custom includes
 #include <algorithm>
 #include <boost/array.hpp>
-#include "Packets/PacketType.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/PacketRegistry.hh"
-#include "Packets/PacketParser.hh"
+#include "Packets/Packets.hh"
 
 //#include "EthernetPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -155,6 +152,8 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#ifndef SENF_PACKETS_DECL_ONLY
 //#include "EthernetPacket.cci"
 #include "EthernetPacket.ct"
 //#include "EthernetPacket.cti"

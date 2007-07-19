@@ -35,10 +35,10 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV4PacketType>
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV4Packet>
         registerIpV4Packet (0x0800);
 
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV4PacketType>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV4Packet>
         regsiterIpV4Packet2 (4); // IP-in-IP encapsulation
 }
 

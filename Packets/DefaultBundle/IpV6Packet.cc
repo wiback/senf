@@ -26,7 +26,6 @@
 
 // Custom includes
 #include "EthernetPacket.hh"
-#include "Packets/DataPacket.hh"
 #include "Socket/INetAddressing.hh"
 
 //#include "IpV6Packet.mpp"
@@ -34,13 +33,13 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV6PacketType>
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV6Packet>
         registerIpV6Packet (0x86dd);
 
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6PacketType>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6Packet>
         registerIpV6Packet2 (41); // IP6-in-IP(6) encapsulation
 
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::DataPacketType>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::DataPacket>
         registerNoNextHeader (59);
 }
 

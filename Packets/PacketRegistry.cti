@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline template funPacketRegistry.ons
+/** \file
+    \brief PacketRegistry inline template implementation */
 
 #include "PacketRegistry.ih"
 
@@ -65,7 +66,8 @@ prefix_ typename Tag::key_t senf::PacketRegistry<Tag>::key(Packet packet)
 }
 
 template <class Tag>
-prefix_ typename Tag::key_t senf::PacketRegistry<Tag>::key(Packet packet, NoThrow_t)
+prefix_ typename boost::optional<typename Tag::key_t>
+senf::PacketRegistry<Tag>::key(Packet packet, NoThrow_t)
 {
     return registry().key(packet.typeId(),true);
 }

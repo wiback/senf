@@ -19,33 +19,19 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DataPacket public header */
+    \brief Packets public header */
 
-#ifndef HH_DataPacket_
-#define HH_DataPacket_ 1
+#ifndef HH_Packets_
+#define HH_Packets_ 1
 
-// Custom includes
-#include "PacketType.hh"
-#include "Packet.hh"
+#define SENF_PACKETS_DECL_ONLY
 
-//#include "DataPacket.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#include "all_includes.hh"
 
-namespace senf {
-    
-    struct DataPacketType : public PacketTypeBase
-    {};
+#undef SENF_PACKETS_DECL_ONLY
 
-    typedef ConcretePacket<DataPacketType> DataPacket;
-}
+#include "all_includes.hh"
 
-///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_DataPacket_impl_)
-#define HH_DataPacket_impl_
-//#include "DataPacket.cci"
-//#include "DataPacket.ct"
-//#include "DataPacket.cti"
 #endif
 
 

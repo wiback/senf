@@ -5,9 +5,20 @@ import SENFSCons, glob
 
 ###########################################################################
 
+def makeAllIncludesHH(target = None, source = None, env = None):
+    file(target[0].abspath,"w").write("".join([ '#include "%s"\n' % f
+                                                for f in env['SOURCE_HEADERS']]))
+makeAllIncludesHH = env.Action(makeAllIncludesHH, varlist=['SOURCE_HEADERS'])
+
+###########################################################################
+
 sources = SENFSCons.GlobSources()
 
 SENFSCons.StandardTargets(env)
+
+env.Command('all_includes.hh', 'SConscript', makeAllIncludesHH,
+            SOURCE_HEADERS = [ f for f in glob.glob("*.hh")
+                               if 'defined(SENF_PACKETS_DECL_ONLY)' in file(f).read() ])
 
 SENFSCons.Lib(env,
               library = 'Packets',

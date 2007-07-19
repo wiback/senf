@@ -1,4 +1,4 @@
-// $Id: IpV4Packet.hh 307 2007-07-14 21:31:12Z g0dil $
+// $Id$
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -24,10 +24,7 @@
 #define HH_IpV4Packet_ 1
 
 // Custom includes
-#include "Packets/PacketType.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/PacketRegistry.hh"
-#include "Packets/PacketParser.hh"
+#include "Packets/Packets.hh"
 
 //#include "IpV4Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -106,6 +103,8 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#ifndef SENF_PACKETS_DECL_ONLY
 //#include IpV4Packet.cci"
 //#include "IpV4Packet.ct"
 //#include "IpV4Packet.cti"

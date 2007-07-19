@@ -31,7 +31,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6ExtensionType_Fragment>
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6Extension_Fragment>
         registerIpV6ExtensionType_Fragment (44);
 }
 

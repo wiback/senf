@@ -1,4 +1,4 @@
-// $Id: UDPPacket.hh 308 2007-07-14 22:31:20Z g0dil $
+// $Id$
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -24,10 +24,7 @@
 #define HH_UDPPacket_ 1
 
 // Custom includes
-#include "Packets/PacketType.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/PacketRegistry.hh"
-#include "Packets/PacketParser.hh"
+#include "Packets/Packets.hh"
 
 //#include "UDPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -75,6 +72,8 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#ifndef SENF_PACKETS_DECL_ONLY
 //#include UDPPacket.cci"
 //#include "UDPPacket.ct"
 //#include "UDPPacket.cti"

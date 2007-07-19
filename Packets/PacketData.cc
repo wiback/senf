@@ -21,11 +21,10 @@
 /** \file
     \brief PacketData non-inline non-template implementation */
 
-#include "PacketData.hh"
 //#include "PacketData.ih"
 
 // Custom includes
-#include "PacketImpl.hh"
+#include "Packets.hh"
 
 //#include "PacketData.mpp"
 #define prefix_

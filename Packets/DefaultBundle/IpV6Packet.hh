@@ -25,11 +25,7 @@
 #define HH_IpV6Packet_ 1
 
 // Custom includes
-#include "Packets/PacketType.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/PacketRegistry.hh"
-#include "Packets/PacketParser.hh"
-#include "Packets/ParseArray.hh"
+#include "Packets/Packets.hh"
 #include "IpV4Packet.hh"
 
 //#include "IpV6Packet.mpp"
@@ -95,6 +91,8 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#ifndef SENF_PACKETS_DECL_ONLY
 //#include "IpV6Packet.cci"
 //#include "IpV6Packet.ct"
 //#include "IpV6Packet.cti"

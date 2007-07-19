@@ -29,6 +29,7 @@
 #define BOOST_AUTO_TEST_MAIN
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
+#include "Packets.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

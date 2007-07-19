@@ -74,9 +74,7 @@
 #include <boost/optional.hpp>
 #include "Utils/SafeBool.hh"
 #include "PacketTypes.hh"
-#define HH_PacketData_DeclOnly
 #include "PacketData.hh"
-#undef HH_PacketData_DeclOnly
 
 #include "PacketParser.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -459,7 +457,7 @@ namespace senf {
         \code
            struct ExtendedParser : public BaseParser
            {
-               SENF_PACKET_PARSER_NO_INIT(ExtendedParser);
+               ExtendedParser(data_iterator i, state_type s) : BaseParser(i,s) {}
         
                SENF_PACKET_PARSER_DEFINE_FIELDS_OFFSET(senf::bytes(BaseParser(*this)),
                  ( ... fields ... ) );
@@ -499,7 +497,7 @@ namespace senf {
         \code
            struct ExtendedParser : public BaseParser
            {
-               SENF_PACKET_PARSER_NO_INIT(ExtendedParser);
+               ExtendedParser(data_iterator i, state_type s) : BaseParser(i,s) {}
 
                SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS_OFFSET(BaseParser::fixed_bytes,
                  ( ... fields ... ) );
@@ -582,6 +580,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_PacketParser_i_)
+#define HH_PacketParser_i_
 #include "PacketParser.cci"
 #include "PacketParser.ct"
 #include "PacketParser.cti"

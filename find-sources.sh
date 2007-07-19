@@ -17,6 +17,8 @@ if [ "$1" = "-c" ]; then
     cond='( -name *.h -o -name *.hh -o -name *.ih -o -name *.c -o -name *.cc -o -name *.cci -o -name *.ct -o -name *.cti )'
 fi
 
+set -f
+
 find . \
 	-name .svn -prune -o \
 	-name doc -prune -o \

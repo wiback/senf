@@ -21,10 +21,9 @@
 /** \file
     \brief PacketRegistry non-inline non-template implementation */
 
-#include "PacketRegistry.hh"
-#include "PacketRegistry.ih"
 
 // Custom includes
+#include "Packets.hh"
 
 //#include "PacketRegistry.mpp"
 #define prefix_

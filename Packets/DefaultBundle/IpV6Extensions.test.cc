@@ -28,7 +28,6 @@
 #include "IpV6Extensions.hh"
 #include "IpV6Packet.hh"
 #include "UDPPacket.hh"
-#include "Packets/DataPacket.hh"
 #include "Socket/INetAddressing.hh"
 
 #include <boost/test/auto_unit_test.hpp>

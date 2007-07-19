@@ -25,10 +25,7 @@
 //#include "ParseListB.test.ih"
 
 // Custom includes
-#include "ParseListB.hh"
-#include "ParseVec.hh"
-#include "PacketType.hh"
-#include "ParseInt.hh"
+#include "Packets.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

@@ -580,6 +580,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_Packet_i_)
+#define HH_Packet_i_
 #include "Packet.cci"
 #include "Packet.ct"
 #include "Packet.cti"
@@ -604,4 +607,4 @@ namespace senf {
 //  LocalWords:  PacketTypeBase TruncatedPacketException http www org Institut
 //  LocalWords:  Fraunhofer fuer offene Kommunikationssysteme FOKUS SatCom Bund
 //  LocalWords:  Kompetenzzentrum Satelitenkommunikation berlios de hh
-//  LocalWords:  addtogroup Structors PacketType dil
+//  LocalWords:  addtogroup Structors PacketType dil PacketType's

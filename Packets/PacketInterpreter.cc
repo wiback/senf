@@ -21,10 +21,10 @@
 /** \file
     \brief PacketInterpreter non-inline non-template implementation */
 
-#include "PacketInterpreter.hh"
 //#include "PacketInterpreter.ih"
 
 // Custom includes
+#include "Packets.hh"
 
 //#include "PacketInterpreter.mpp"
 #define prefix_

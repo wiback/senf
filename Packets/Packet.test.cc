@@ -26,12 +26,7 @@
 
 // Custom includes
 #include <sstream>
-#include "PacketType.hh"
-#include "PacketRegistry.hh"
-#include "Packet.hh"
-#include "ParseInt.hh"
-#include "PacketParser.hh"
-#include "DataPacket.hh"
+#include "Packets.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -105,8 +100,8 @@ namespace {
     typedef BarPacketType::packet BarPacket;
 
     namespace reg {
-        senf::PacketRegistry<RegTag>::RegistrationProxy<FooPacketType> registerFoo(1u);
-        senf::PacketRegistry<RegTag>::RegistrationProxy<BarPacketType> registerBar(2u);
+        senf::PacketRegistry<RegTag>::RegistrationProxy<FooPacket> registerFoo(1u);
+        senf::PacketRegistry<RegTag>::RegistrationProxy<BarPacket> registerBar(2u);
     }
 
 }

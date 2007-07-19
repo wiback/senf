@@ -82,6 +82,8 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#ifndef SENF_PACKETS_DECL_ONLY
 //#include "IpV6Extensions.cci"
 //#include "IpV6Extensions.ct"
 //#include "IpV6Extensions.cti"

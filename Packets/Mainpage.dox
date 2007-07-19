@@ -15,18 +15,30 @@
     packet parsing and creation.
 
     \section intro Introduction
-    
-    Most every use of the packet library starts with some concrete packet typedef. Some fundamental
-    packet typedefs are provided by \ref protocolbundle_default. The first example will build a
-    complex packet: This will be an Ethernet packet containing an IPv4 UDP packet. We begin by
-    building the raw packet skeleton:
+
+    Whenever using the library, you will probably need to \c \#include it's header:
 
     \code
-      senf::EthernetPacket eth      (senf::EthernetPacket::create());
-      senf::IpV4Packet     ip       (senf::IpV4Packet::createAfter(ethernet));
-      senf::UDPPacket      udp      (senf::UDPPacket::createAfter(ip));
-      senf::DataPacket     payload  (senf::DataPacket::createAfter(udp, 
-                                                                   std::string("Hello, world!")));
+    #include "Packets/Packets.hh"
+    \endcode
+
+    \warning Never include any other Packets library header directly, always include \c
+    Packets/Packets.hh.
+
+    Additionally you will have to include the header files for the packet types you use, e.g. \c
+    Packets/DefaultBundle/EthernetPacket.hh etc.
+    
+    Most every use of the packet library starts with some concrete packet typedef. Some fundamental
+    packet types are provided by \ref protocolbundle_default. Building on those packet types, this
+    example will build a complex packet: This will be an Ethernet packet containing an IPv4 UDP
+    packet. We begin by building the raw packet skeleton:
+
+    \code
+    senf::EthernetPacket eth      (senf::EthernetPacket::create());
+    senf::IpV4Packet     ip       (senf::IpV4Packet    ::createAfter(ethernet));
+    senf::UDPPacket      udp      (senf::UDPPacket     ::createAfter(ip));
+    senf::DataPacket     payload  (senf::DataPacket    ::createAfter(udp, 
+                                                                     std::string("Hello, world!")));
     \endcode
 
     These commands create what is called an interpreter chain. This chain consists of four
@@ -42,15 +54,15 @@
     empty. We need to set those protocol fields:
 
     \code
-      udp->source()      = 2000u;
-      udp->destination() = 2001u;
-      ip->ttl()          = 255u;
-      ip->source()       = senf::INet4Address("192.168.0.1"); // (*)
-      ip->destination()  = senf::INet4Address("192.168.0.2"); // (*)
-      eth->source()      = senf::MACAddress("00:11:22:33:44:55");
-      eth->destination() = senf::MACAddress("00:11:22:33:44:66");
+    udp->source()      = 2000u;
+    udp->destination() = 2001u;
+    ip->ttl()          = 255u;
+    ip->source()       = senf::INet4Address("192.168.0.1"); // (*)
+    ip->destination()  = senf::INet4Address("192.168.0.2"); // (*)
+    eth->source()      = senf::MACAddress("00:11:22:33:44:55");
+    eth->destination() = senf::MACAddress("00:11:22:33:44:66");
     
-      eth.finalize(); // (*)
+    eth.finalize(); // (*)
     \endcode
 
     As seen above, packet fields are accessed using the <tt>-></tt> operator whereas other packet
@@ -60,26 +72,26 @@
     checksums etc). Now the packet is ready. We may now send it out using a packet socket
 
     \code
-      senf::PacketSocketHandle sock ("eth0");
-      sock.write(eth.data());
+    senf::PacketSocketHandle sock ("eth0");
+    sock.write(eth.data());
     \endcode
 
     The packet library also provides lot's of facilities to navigate the packet chain:
 
     \code
-      eth.next() == ip;                   // true
-      eth.next().is<IpV4Packet>();        // true
-      eth.next().next() == udp;           // true
-      eth.next().is<UDPPacket>();         // false
-      eth.next<UDPPacket>() == udp;       // true
+    eth.next() == ip;                   // true
+    eth.next().is<IpV4Packet>();        // true
+    eth.next().next() == udp;           // true
+    eth.next().is<UDPPacket>();         // false
+    eth.next<UDPPacket>() == udp;       // true
 
-      udp.next<UDPPacket>();              // throws InvalidPacketChainException
-      udp.next<UDPPacket>(senf::nothrow); // a senf::Packet testing as false
-      udp.findNext<UDPPacket()> == udp;   // true
-      udp.first<IpV4Packet>() == ip;      // true
+    udp.next<UDPPacket>();              // throws InvalidPacketChainException
+    udp.next<UDPPacket>(senf::nothrow); // a senf::Packet testing as false
+    udp.findNext<UDPPacket()> == udp;   // true
+    udp.first<IpV4Packet>() == ip;      // true
 
-      udp.prev() == ip;                   // true
-      udp.prev<EthernetPacket>() == eth   // true
+    udp.prev() == ip;                   // true
+    udp.prev<EthernetPacket>() == eth   // true
     \endcode
 
     ... and so on. It is therefore not necessary to stash away a reference for every interpreter (as
@@ -89,23 +101,23 @@
     from a packet socket handle:
     
     \code
-      senf::PacketSocketHandle sock ("eth0");
-      senf::EthernetPacket packet (senf::EthernetPacket::create(senf::Packet::noinit));
-      sock.read(packet.data(),0u);
+    senf::PacketSocketHandle sock ("eth0");
+    senf::EthernetPacket packet (senf::EthernetPacket::create(senf::Packet::noinit));
+    sock.read(packet.data(),0u);
     \endcode
 
     This first creates an uninitialized Ethernet packet and then reads into this packet. We can now
     parse this packet. Let's find out, whether this is a UDP packet destined to port 2001:
 
     \code
-      try {
-          senf::UDPPacket udp (packet.findNext<UDPPacket>(senf::nothrow));
-          if (udp && udp->destination() == 2001u) {
-              // Voila ...
-          }
-      } catch (senf::TruncatedPacketException const &) {
-          std::cerr << "Ooops !! Broken packet received ...\n"
-      }
+    try {
+        senf::UDPPacket udp (packet.findNext<UDPPacket>(senf::nothrow));
+        if (udp && udp->destination() == 2001u) {
+            // Voila ...
+        }
+    } catch (senf::TruncatedPacketException const &) {
+        std::cerr << "Ooops !! Broken packet received ...\n"
+    }
     \endcode
 
     TruncatedPacketException is thrown by <tt>udp->destination()</tt> if that field cannot be
@@ -131,4 +143,4 @@
 //  LocalWords:  udp endcode li senf EthernetPacket eth IpV createAfter ip std
 //  LocalWords:  ethernet UDPPacket DataPacket ttl INet MACAddress nothrow prev
 //  LocalWords:  PacketSocketHandle InvalidPacketChainException findNext noinit
-//  LocalWords:  tt TruncatedPacketException const cerr Ooops
+//  LocalWords:  tt TruncatedPacketException const cerr Ooops hh

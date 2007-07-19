@@ -27,7 +27,6 @@
 
 // Custom includes
 #include "EthernetPacket.hh"
-#include "Packets/DataPacket.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
