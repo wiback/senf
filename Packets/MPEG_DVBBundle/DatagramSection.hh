@@ -1,4 +1,4 @@
-// $Id: EthernetPacket.hh 299 2007-07-10 21:23:49Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)

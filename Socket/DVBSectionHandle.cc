@@ -1,4 +1,4 @@
-// $Id: UDPSocketHandle.cc 296 2007-07-10 20:39:34Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
