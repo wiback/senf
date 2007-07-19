@@ -45,6 +45,10 @@ namespace detail {
 
 namespace packet {
 
+    /** \brief Internal: Tempalte typedef for used smart pointer
+
+        \internal
+     */
     template <class T>
     struct smart_pointer {
         typedef boost::intrusive_ptr<T> ptr_t;

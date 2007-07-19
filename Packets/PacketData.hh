@@ -140,9 +140,25 @@ namespace senf {
 
     class PacketParserBase;
 
+    /** \brief Invalid packet data access
+
+        This exception is signaled whenever an operation tries to access an out-of-bounds data
+        byte. If the packet has been implemented correctly, this signals a malformed packet.
+     */
     struct TruncatedPacketException : public std::exception
     { virtual char const * what() const throw() { return "truncated packet"; } };
 
+    /** \brief Re-validating data iterator
+
+        This class is a wrapper around a PacketData::iterator instance. It will revalidate the
+        iterator on every access. This keeps the iterator valid even when the data container is
+        resized and thereby possibly relocated. The iterator will always point to the byte at the
+        same offset from the packets beginning. If data is inserted before this iterators position,
+        the data pointed to will of course change.
+
+        For this to work, the safe_data_iterator must be initialized with the container to which the
+        iterator belongs. After this initialization it can be used like any other iterator.
+     */
     class safe_data_iterator
         : public boost::iterator_facade< safe_data_iterator,
                                          PacketData::value_type,
@@ -152,18 +168,29 @@ namespace senf {
     public:
         typedef PacketData::size_type size_type;
 
-        safe_data_iterator();
-        explicit safe_data_iterator(PacketData & data);
+        safe_data_iterator(); ///< Make uninitialized iterator
+        explicit safe_data_iterator(PacketData & data); 
+                                        ///< Construct iterator only setting the data container
         safe_data_iterator(PacketData & data, PacketData::iterator i);
+                                        ///< Initialize iterator to given position
         explicit safe_data_iterator(PacketParserBase const & parser);
+                                        ///< Initialize iterator from parser
+                                        /**< The iterator will point to the parsers start
+                                             position. */
 
-        safe_data_iterator & operator=(PacketData::iterator i);
+        safe_data_iterator & operator=(PacketData::iterator i); ///< Assign iterator
+                                        /**< The iteator \a i must be from the container wo which \c
+                                             this iterator has been initialized. */
         safe_data_iterator & operator=(PacketParserBase const & parser);
-        operator PacketData::iterator() const;
+                                        ///< Assign iterator from parser
+                                        /**< The iterator will point to the parser start
+                                             position. */
 
-        bool boolean_test() const;
+        operator PacketData::iterator() const; ///< Convert to iterator
 
-        PacketData & data() const;
+        bool boolean_test() const;      ///< Check, if iterator is initialized
+
+        PacketData & data() const;      ///< Access data container
 
     private:
         friend class boost::iterator_core_access;
@@ -204,7 +231,3 @@ namespace senf {
 // comment-column: 40
 // End:
 
-//  LocalWords:  Fraunhofer Institut fuer offene Kommunikationssysteme FOKUS de
-//  LocalWords:  Kompetenzzentrum Satelitenkommunikation SatCom Bund berlios dil
-//  LocalWords:  PacketData hh STL PacketInterpreterBase PacketInterpreter
-//  LocalWords:  ingroup Structors

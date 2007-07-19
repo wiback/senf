@@ -1,3 +1,4 @@
+
 // $Id$
 //
 // Copyright (C) 2006
@@ -240,6 +241,7 @@ BOOST_AUTO_UNIT_TEST(scheduler)
 
     BOOST_CHECK_NO_THROW( Scheduler::instance().remove(handle,Scheduler::EV_WRITE) );
     event = Scheduler::EV_NONE;
+    sleep(1);
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
     BOOST_CHECK_EQUAL( event, Scheduler::EventId(Scheduler::EV_READ|Scheduler::EV_HUP) );
     BOOST_REQUIRE_EQUAL( size, 2 );

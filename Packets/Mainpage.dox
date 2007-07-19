@@ -128,6 +128,17 @@
     a detailed discussion see the respective reference documentation.
  */
 
+/** \defgroup protocolbundles Protocol Bundles
+
+    Each protocol bundle provides a collection of related concrete packet classes for a group of
+    related protocols:
+
+    \li <a href="../../DefaultBundle/doc/html/index.html">DefaultBundle</a>: Some basic
+        default protocols: Ethernet, Ip, TCP, UDP
+    \li <a href="../../MPEG_DVBBundle/doc/html/index.html">MPEG_DVBBundle</a>: MPEG and DVB
+        protocols
+ */
+
 
 // Local Variables:
 // mode: c++
@@ -139,8 +150,3 @@
 // compile-command: "scons -u doc"
 // End:
 
-//  LocalWords:  mainpage SENF packetparser protocolbundles protocolbundle IPv4
-//  LocalWords:  udp endcode li senf EthernetPacket eth IpV createAfter ip std
-//  LocalWords:  ethernet UDPPacket DataPacket ttl INet MACAddress nothrow prev
-//  LocalWords:  PacketSocketHandle InvalidPacketChainException findNext noinit
-//  LocalWords:  tt TruncatedPacketException const cerr Ooops hh

@@ -516,6 +516,8 @@ namespace senf {
 #   define SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS_OFFSET(offset,fields)                           \
     SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(offset,fields)
 
+    /** \brief Default parser parsing nothing
+     */
     struct VoidPacketParser 
         : public PacketParserBase
     {
@@ -599,13 +601,3 @@ namespace senf {
 // comment-column: 40
 // End:
 
-//  LocalWords:  templated PacketParser defgroup packetparser PacketParsers li
-//  LocalWords:  EthernetParser ethertype UInt senf PacketParserBase tt
-//  LocalWords:  struct FooParser const init endcode ingroup param SomeParser
-//  LocalWords:  ethernet DefaultBundle EthernetPacket hh EthVLan UIntField CFI
-//  LocalWords:  VLanId OverlayField cfi vlanId accessor defaultInit bitfield
-//  LocalWords:  SomePacket SimpleVectorSizer packetparsermacros Fraunhofer std
-//  LocalWords:  hideinitializer Institut fuer offene Kommunikationssysteme STL
-//  LocalWords:  FOKUS Kompetenzzentrum Satelitenkommunikation SatCom Bund cerr
-//  LocalWords:  berlios dil Structors someField someVector someOtherField
-//  LocalWords:  TruncatedPacketException

@@ -42,7 +42,12 @@ namespace senf {
 
     template <class PacketType> class PacketInterpreter;
 
-    /** \brief
+    /** \brief Internal: Base packet interpreter class
+        
+        \internal
+
+        This is the base class for the persistent interpreter. This class encapsulates all the
+        functionality accessible via the packet handle, most handle operations are just forwarded.
       */
     class PacketInterpreterBase
         : protected PacketData, 
@@ -70,6 +75,14 @@ namespace senf {
         enum Prepend_t { Prepend };
         enum NoInit_t { noinit };
 
+        /** \brief Internal: Abstract packet factory
+
+            \internal
+
+            This abstract class provides an abstract packet factory interface. It allows to call
+            almost any one of the create / createAfter / createBefore static PacketInterpreter
+            without static information on the type of packet to create.
+         */
         struct Factory { 
             virtual ~Factory();
 
@@ -169,7 +182,7 @@ namespace senf {
         ptr appendClone(detail::PacketImpl * impl, range r);
 
     public:
-        // Need this for g++ < 4.0. Since PacketInterpreter is not publically visible, it should not
+        // Need this for g++ < 4.0. Since PacketInterpreter is not publicly visible, it should not
         // be a real problem to make impl() public here
         using PacketData::impl;
 
@@ -201,7 +214,13 @@ namespace senf {
         friend class detail::packet::test::TestDriver;
     };
 
-    /** \brief Concrete packet interpreter
+    /** \brief Internal: Concrete packet interpreter
+
+        \internal
+
+        Instantiations of this class build the interpreter chain. This class is accessed by the
+        packet handles. It provides the packet-type specific functionality in addition to the
+        interface defined in the PacketInterpreterBase class.
 
         \see PacketTypeBase for the \a PacketType interface
       */
@@ -301,6 +320,12 @@ namespace senf {
 
         // factory
 
+        /** \brief Internal: Implementation of abstract factory interface
+            
+            \internal
+
+            Implements the abstract factory interface for \a PacketType
+         */
         struct FactoryImpl : public Factory {
             // Create completely new packet
 
@@ -346,6 +371,11 @@ namespace senf {
         friend class FactoryImpl;
     };
 
+    /** \brief Invalid packet chain operation
+
+        This exception signals an invalid operation on the chain like trying to find a non-existent
+        chain member and other similar error conditions. 
+     */
     struct InvalidPacketChainException : public std::exception
     { virtual char const * what() const throw() { return "invalid packet chain"; } };
     

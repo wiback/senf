@@ -11,4 +11,7 @@ SENFSCons.StandardTargets(env)
 
 SENFSCons.Object(env, target = 'MPEG_DVBBundle', sources=sources,
                  LIBS = ['Packets', 'Socket', 'Utils'])
+SENFSCons.Lib(env, library = 'Packets_MPEG_DVBBundle', sources = sources[0],
+              LIBS = ['Packets', 'Socket', 'Utils'])
                  
+SENFSCons.Doxygen(env)

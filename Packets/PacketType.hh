@@ -321,6 +321,8 @@ namespace senf {
         static void                                  init            (Packet p);
     };
 
+#   ifndef DOXYGEN
+
     template <class Self>
     class PacketTypeMixin<Self,void>
     {
@@ -329,6 +331,8 @@ namespace senf {
         static PacketInterpreterBase::size_type      initSize        ();
         static void                                  init            (Packet p);
     };
+
+#   endif
 
 }
 
@@ -352,11 +356,3 @@ namespace senf {
 // comment-column: 40
 // End:
 
-//  LocalWords:  Fraunhofer Institut fuer offene Kommunikationssysteme FOKUS de
-//  LocalWords:  Kompetenzzentrum Satelitenkommunikation SatCom Bund berlios dil
-//  LocalWords:  PacketType struct SomePacketType senf PacketTypeBase initSize
-//  LocalWords:  ConcretePacket init initHeadSize nextPacketRange NextPacket os
-//  LocalWords:  nextPacketType std ostream endcode ingroup VoidPacketParser Ok
-//  LocalWords:  tt li OtherPacketType Mixin mixin SimplePacketType typeField
-//  LocalWords:  PacketTypeMixin SomeRegistryTag SomePacketParser nextPacketKey
-//  LocalWords:  hh

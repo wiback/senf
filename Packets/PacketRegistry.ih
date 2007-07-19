@@ -35,7 +35,9 @@
 namespace senf {
 namespace detail {
     
-    ///\internal
+    /** \brief Internal
+        \internal
+     */
     template <class PacketType>
     struct PkReg_EntryImpl
         : public PkReg_Entry
@@ -43,7 +45,9 @@ namespace detail {
         virtual Packet::factory_t factory() const;
     };
 
-    ///\internal
+    /** \brief Internal
+        \internal
+     */
     template <class KeyType>
     class PacketRegistryImpl 
         : private boost::noncopyable

@@ -77,4 +77,6 @@ is ignored (Those are the file local variables and local words)."
 
 ;; Better set this here than in the file variables since the setting
 ;; is only valid if project.el is loaded ...
+(set (make-local-variable 'ispell-personal-dictionary)
+     (expand-file-name "senf.dict" ccide-project-root))
 (flyspell-cc-mode)

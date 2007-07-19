@@ -599,12 +599,3 @@ namespace senf {
 // comment-column: 40
 // End:
 
-//  LocalWords:  defgroup li html png STL ConcretePacket PacketInterpreterBase
-//  LocalWords:  PacketInterpreter PacketImpl OtherPacket EthernetPacket param
-//  LocalWords:  EthernetPacketType PacketData packetparser nothrow senf prev
-//  LocalWords:  InvalidPacketChainException findNext findPrev parseNextAs tt
-//  LocalWords:  PacketType SomePacketType createAfter createBefore noinit href
-//  LocalWords:  PacketTypeBase TruncatedPacketException http www org Institut
-//  LocalWords:  Fraunhofer fuer offene Kommunikationssysteme FOKUS SatCom Bund
-//  LocalWords:  Kompetenzzentrum Satelitenkommunikation berlios de hh
-//  LocalWords:  addtogroup Structors PacketType dil PacketType's

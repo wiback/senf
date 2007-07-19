@@ -193,6 +193,10 @@ packet of which the key is requested
         static Registry & registry();
     };
 
+    /** \brief Entry not found in registry
+
+        This exception is signaled whenever a throwing lookup operation fails.
+     */
     struct PacketTypeNotRegisteredException : public std::exception
     { virtual char const * what() const throw() { return "packet type not registered"; } };
 
@@ -218,10 +222,3 @@ packet of which the key is requested
 // comment-column: 40
 // End:
 
-//  LocalWords:  PacketRegistry hh dil Fraunhofer Institut fuer offene FOKUS de
-//  LocalWords:  Kommunikationssysteme Kompetenzzentrum Satelitenkommunikation
-//  LocalWords:  SatCom Bund stefan bund fokus fraunhofer Ethertype IP struct
-//  LocalWords:  SomeTag endcode senf SomePacket registerPacket ingroup param
-//  LocalWords:  registerSomePacket RegistrationProxy namespace PacketType key
-//  LocalWords:  registerPacketType ConcretePacket PacketTypeNotRegistered href
-//  LocalWords:  http www org html

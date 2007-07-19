@@ -3,6 +3,7 @@
 PROJECT_NAME     = libPackets
 TAGFILES         = "$(TOPDIR)/Utils/doc/Utils.tag"
 GENERATE_TAGFILE = doc/Packets.tag
-INPUT            = . DefaultBundle MPEG_DVBBundle
+#INPUT            = . DefaultBundle MPEG_DVBBundle
+INPUT            = .
 
-EXAMPLE_PATH     = . DefaultBundle
+#EXAMPLE_PATH     = . DefaultBundle

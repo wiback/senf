@@ -36,6 +36,15 @@
 namespace senf {
 namespace detail {
     
+    /** \brief Internal: Packet data storage
+        
+        \internal
+
+        This is the class holding the packet data and the interpreter chain. All manipulations of
+        the packet data are performed via the interface exported here. This is very important, since
+        PacketImpl will update the interpreters (that is the vector indices stored therein) whenever
+        the data is changed.
+     */
     class PacketImpl 
         : boost::noncopyable,
           public pool_alloc_mixin<PacketImpl>
@@ -92,9 +101,14 @@ namespace detail {
         void erase(PacketData * self, iterator first, iterator last);
         void clear(PacketData * self);
 
-        // The Guard will keep the PacketImpl instance alive during a members execution time
-        // It the refcount should drop to 0, PacketImpl will be deleted after the member
-        // has completed executing.
+        /** \brief Internal: Keep PacketImpl instance alive
+
+            \internal
+
+            The Guard will keep the PacketImpl instance alive during a members execution time
+            It the refcount should drop to 0, PacketImpl will be deleted after the member
+            has completed executing.
+         */
         struct Guard {
             Guard(PacketImpl * impl);
             ~Guard();
@@ -108,7 +122,6 @@ namespace detail {
 
         void eraseInterpreters(interpreter_list::iterator b, interpreter_list::iterator e);
         void updateIterators(PacketData * self, iterator pos, difference_type n);
-
     };
 
 }}
@@ -132,3 +145,4 @@ namespace detail {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
+
