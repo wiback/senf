@@ -1,4 +1,4 @@
-// $Id: DVBProtocol.cc 321 2007-07-19 09:00:23Z tho $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)

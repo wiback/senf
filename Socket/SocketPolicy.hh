@@ -363,7 +363,7 @@ namespace senf {
         </table>
 
         The second member should only be enabled if the communication policy is
-        UnconnectedCommunication (otherwise it does not make sense since the communication partner
+        UnconnectedCommunicationPolicy (otherwise it does not make sense since the communication partner
         is fixed) (see AddressingPolicyBase on how to do this).
 
         \note This Policy only has two meaningful states: ReadablePolicy and NotReadablePolicy. It
@@ -386,7 +386,7 @@ namespace senf {
         </table>
 
         The second member should only be enabled if the communication policy is
-        UnconnectedCommunication (otherwise it does not make sense since the communication partner
+        UnconnectedCommunicationPolicy (otherwise it does not make sense since the communication partner
         is fixed) (see AddressingPolicyBase on how to do this).
 
         \note This Policy only has two meaningful states: WritablePolicy and NotWritablePolicy. It

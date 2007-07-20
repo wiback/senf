@@ -54,7 +54,7 @@ body {
 }
 
 #head ul { 
-        display: inline; /* für IE ... */
+        display: inline; /* fï¿½r IE ... */
         font-size: 13px;
         height: 0px;
         margin: 0;
@@ -191,7 +191,7 @@ div.tabs ul li a:hover, div.tabs ul li.current a {
 }
 
 div.tabs ul li.level1 a {
-        padding-left: 2em;
+        padding-left: 1.5em;
         font-size: 90%;
 }
 

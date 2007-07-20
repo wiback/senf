@@ -155,7 +155,9 @@ namespace senf {
                                         /**< This member will check in a (very, sigh) protocol
                                              dependent way, how many bytes are guaranteed to be
                                              readable from the socket without blocking even if the
-                                             socket is blocking. */
+                                             socket is blocking. If the socket does not support
+                                             reading (viz. NotReadablePolicy is set), this member
+                                             should always return \c 0.*/
 
         virtual bool eof() const = 0;   ///< Check for end-of-file condition
                                         /**< This is another check which (like available()) is
