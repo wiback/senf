@@ -190,6 +190,11 @@ div.tabs ul li a:hover, div.tabs ul li.current a {
         background-color: #EDE497;
 }
 
+div.tabs ul li.level1 a {
+        padding-left: 2em;
+        font-size: 90%;
+}
+
 #footer {
         clear: both;
         padding: 4px 10px 4px 142px;

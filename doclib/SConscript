@@ -8,16 +8,37 @@ import SENFSCons
 import yaptu
 
 def modules():
+    # Naja ... etwas rumgehackt aber was solls ...
     global EXTRA_MODULES
-    rv = []
+    mods = {}
     ix = len(env.Dir('#').abspath)+1
     ex = dict((env.Dir(p).abspath,True) for n,p in EXTRA_MODULES)
     for module in env.Alias('all_docs')[0].sources:
         if module.name != 'html.stamp' : continue 
         if not ex.get(module.dir.abspath):
-            rv.append(('lib%s' % module.dir.dir.dir.name, module.dir.abspath[ix:]))
-    rv.sort()
-    return [ (name, env.Dir(path).abspath[ix:]) for name,path in EXTRA_MODULES ] + rv
+            mods[module.dir.dir.dir.abspath] = [ module.dir.dir.dir.name, module.dir.abspath[ix:], 0 ]
+    rv = []
+    keys = mods.keys()
+    keys.sort()
+    for mod in keys:
+        i = 0
+        while i < len(rv):
+            if mod.startswith(rv[i] + '/'):
+                level = mods[rv[i]][2] + 1
+                i += 1
+                while i < len(rv) and mods[rv[i]][2] >= level:
+                    i += 1
+                rv[i:i] = [ mod ]
+                mods[mod][2] = level
+                break
+            i += 1
+        if i == len(rv):
+            rv.append(mod)
+    return [ (name, env.Dir(path).abspath[ix:], 0) for name,path in EXTRA_MODULES
+             ] + [ ( (((not mods[mod][2]) and 'lib') or '') + mods[mod][0],
+                     mods[mod][1],
+                     mods[mod][2])
+                   for mod in rv ]
 
 def indices():
     ix = len(env.Dir('#').abspath)+1
@@ -79,8 +100,8 @@ div.tabs ul li.$projectname a { background-color: #EDE497; }
   <div id="content2">
     <div class="tabs menu">
       <ul>
-{{      for name, path in modules():
-          <li class="${name}"><a href="@TOPDIR@/${path}/index.html">${name}</a></li>
+{{      for name, path, level in modules():
+          <li class="${name} level${level}"><a href="@TOPDIR@/${path}/index.html">${name}</a></li>
 }}
       </ul>
     </div>"""

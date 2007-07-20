@@ -46,20 +46,23 @@ namespace senf {
 
         This class provides the client side policy interface of the socket
         abstraction. ClientSocketHandle defines the complete policy interface. It does not implement
-        any functionality itself however. All calls are forward to the following policy classes:
+        any functionality itself however. The following table shows, to which policy members each
+        group of ClientSocketHandle members is forwardd. The last collumn shows, on which other
+        policies this member-group depends <em>in the default policy classes</em>. If you define
+        your own policy classes, the dependencies are up to you.
 
         <table class="senf">
-        <tr><th>ClientSocketHandle member</th> <th>Policy member</th></tr>
-        <tr><td>read()</td>       <td>ReadPolicy::read (\ref senf::ReadPolicyBase)</td></tr>
-        <tr><td>readfrom()</td>   <td>ReadPolicy::readfrom (\ref senf::ReadPolicyBase)</td></tr>
-        <tr><td>write()</td>      <td>WritePolicy::write (\ref senf::WritePolicyBase)</td></tr>
-        <tr><td>writeto()</td>    <td>WritePolicy::writeto (\ref senf::WritePolicyBase)</td></tr>
-        <tr><td>connect()</td>    <td>AddressingPolicy::connect (\ref senf::AddressingPolicyBase)</td></tr>
-        <tr><td>bind()</td>       <td>AddressingPolicy::bind (\ref senf::AddressingPolicyBase)</td></tr>
-        <tr><td>peer()</td>       <td>AddressingPolicy::peer (\ref senf::AddressingPolicyBase)</td></tr>
-        <tr><td>local()</td>      <td>AddressingPolicy::local (\ref senf::AddressingPolicyBase)</td></tr>
-        <tr><td>rcvbuf()</td>     <td>BufferingPolicy::sndbuf (\ref senf::BufferingPolicyBase)</td></tr>
-        <tr><td>sndbuf()</td>     <td>BufferingPolicy::rcvbuf (\ref senf::BufferingPolicyBase)</td></tr>
+        <tr><th>ClientSocketHandle member</th> <th>Policy member</th> <th>Other policies</th></tr>
+        <tr><td>read()</td>       <td>ReadPolicy::read (\ref senf::ReadPolicyBase)</td>                  <td></td></tr>
+        <tr><td>readfrom()</td>   <td>ReadPolicy::readfrom (\ref senf::ReadPolicyBase)</td>              <td>UnconnectedCommunicationPolicy</td></tr>
+        <tr><td>write()</td>      <td>WritePolicy::write (\ref senf::WritePolicyBase)</td>               <td>ConnectedCommunicationPolicy</td></tr>
+        <tr><td>writeto()</td>    <td>WritePolicy::writeto (\ref senf::WritePolicyBase)</td>             <td>UnconnectedCommunicationPolicy</td></tr>
+        <tr><td>connect()</td>    <td>AddressingPolicy::connect (\ref senf::AddressingPolicyBase)</td>   <td></td></tr>
+        <tr><td>bind()</td>       <td>AddressingPolicy::bind (\ref senf::AddressingPolicyBase)</td>      <td></td></tr>
+        <tr><td>peer()</td>       <td>AddressingPolicy::peer (\ref senf::AddressingPolicyBase)</td>      <td></td></tr>
+        <tr><td>local()</td>      <td>AddressingPolicy::local (\ref senf::AddressingPolicyBase)</td>     <td></td></tr>
+        <tr><td>rcvbuf()</td>     <td>BufferingPolicy::sndbuf (\ref senf::BufferingPolicyBase)</td>      <td></td></tr>
+        <tr><td>sndbuf()</td>     <td>BufferingPolicy::rcvbuf (\ref senf::BufferingPolicyBase)</td>      <td></td></tr>
         </table>
 
         It is important to note, that not all members are always accessible. Which are depends on
