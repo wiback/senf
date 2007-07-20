@@ -5,8 +5,8 @@ import SENFSCons
 
 SENFSCons.Binary(env, 'uledec', 'ULEdec.cc',
                  LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ],
-                 OBJECTS = [ '#/Packets/MPEG_DVBBundle/MPEG_DVBBundle.o' ]);
+                 OBJECTS = [ '#/Packets/MPEGDVBBundle/MPEGDVBBundle.o' ]);
 
 SENFSCons.Binary(env, 'mpedec', 'MPEdec.cc',
                  LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ],
-                 OBJECTS = [ '#/Packets/MPEG_DVBBundle/MPEG_DVBBundle.o' ]);
+                 OBJECTS = [ '#/Packets/MPEGDVBBundle/MPEGDVBBundle.o' ]);

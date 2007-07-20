@@ -31,7 +31,7 @@
 
 #include "Scheduler/Scheduler.hh"
 #include "Packets/DefaultBundle/EthernetPacket.hh"
-#include "Packets/MPEG_DVBBundle/DatagramSection.hh"
+#include "Packets/MPEGDVBBundle/DatagramSection.hh"
 #include "Utils/membind.hh"
 #include "Socket/DVBDemuxHandles.hh"
 #include "Packets/ParseInt.hh"

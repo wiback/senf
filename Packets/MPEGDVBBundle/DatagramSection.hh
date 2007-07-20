@@ -29,7 +29,7 @@
 #include "Packets/ParseInt.hh"
 #include "Packets/PacketRegistry.hh"
 #include "Packets/PacketParser.hh"
-#include "Packets/MPEG_DVBBundle/DSMCCSection.hh"
+#include "Packets/MPEGDVBBundle/DSMCCSection.hh"
 
 
 //#include "DatagramSection.mpp"

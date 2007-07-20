@@ -67,12 +67,12 @@ prefix_ void senf::DatagramSectionType::dump(packet p, std::ostream & os)
 
 prefix_ senf::PacketParserBase::size_type senf::DatagramSectionType::initSize()
 {
-    return initHeadSize() + 32/8;
+    return parser::fixed_bytes + 32/8;
 }
 
 prefix_ senf::PacketParserBase::size_type senf::DatagramSectionType::initHeadSize()
 {
-    return (8+1+1+2+12+8+8+2+2+2+1+1+8+8+8+8+8+8) / 8;
+    return parser::fixed_bytes;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

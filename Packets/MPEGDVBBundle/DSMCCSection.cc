@@ -60,12 +60,12 @@ prefix_ void senf::DSMCCSectionType::dump(packet p, std::ostream & os)
 
 prefix_ senf::PacketParserBase::size_type senf::DSMCCSectionType::initSize()
 {
-    return initHeadSize() + 32/8;
+    return parser::fixed_bytes + 32/8;
 }
 
 prefix_ senf::PacketParserBase::size_type senf::DSMCCSectionType::initHeadSize()
 {
-    return (8+1+1+2+12+16+2+5+1+8+8) / 8;
+    return parser::fixed_bytes;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

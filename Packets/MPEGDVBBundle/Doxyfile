@@ -1,6 +1,6 @@
 @INCLUDE         = "$(TOPDIR)/doclib/Doxyfile.global"
 
-PROJECT_NAME     = libPackets/MPEG_DVBBundle
+PROJECT_NAME     = libPackets/MPEGDVBBundle
 TAGFILES         = "$(TOPDIR)/Utils/doc/Utils.tag" "$(TOPDIR)/Packets/doc/Packets.tag"
-GENERATE_TAGFILE = doc/MPEG_DVBBundle.tag
+GENERATE_TAGFILE = doc/MPEGDVBBundle.tag
 INPUT            = .

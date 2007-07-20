@@ -9,9 +9,9 @@ sources = SENFSCons.GlobSources()
 
 SENFSCons.StandardTargets(env)
 
-SENFSCons.Object(env, target = 'MPEG_DVBBundle', sources=sources,
+SENFSCons.Object(env, target = 'MPEGDVBBundle', sources=sources,
                  LIBS = ['Packets', 'Socket', 'Utils'])
-SENFSCons.Lib(env, library = 'Packets_MPEG_DVBBundle', sources = sources[0],
+SENFSCons.Lib(env, library = 'Packets_MPEGDVBBundle', sources = sources[0],
               LIBS = ['Packets', 'Socket', 'Utils'])
                  
 SENFSCons.Doxygen(env)
