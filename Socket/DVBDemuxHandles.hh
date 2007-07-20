@@ -28,11 +28,9 @@
 #define HH_DVBDemuxHandles_ 1
 
 // Custom includes
-#include "BSDSocketProtocol.hh"
 #include "FramingPolicy.hh"
 #include "CommunicationPolicy.hh"
 #include "ReadWritePolicy.hh"
-#include "BufferingPolicy.hh"
 #include "ProtocolClientSocketHandle.hh"
 #include "DVBDemuxProtocol.hh"
 

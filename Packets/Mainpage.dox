@@ -135,7 +135,7 @@
 
     \li <a href="../../DefaultBundle/doc/html/index.html">DefaultBundle</a>: Some basic
         default protocols: Ethernet, Ip, TCP, UDP
-    \li <a href="../../MPEG_DVBBundle/doc/html/index.html">MPEG_DVBBundle</a>: MPEG and DVB
+    \li <a href="../../MPEGDVBBundle/doc/html/index.html">MPEGDVBBundle</a>: MPEG and DVB
         protocols
  */
 

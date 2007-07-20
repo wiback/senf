@@ -1,4 +1,4 @@
-// $Id$
+// $Id: DVBDemuxHandles.cc 329 2007-07-20 12:29:34Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -24,51 +24,67 @@
     \brief xxx
  */
 
-#include "DVBDemuxProtocol.hh"
-//#include "DVBDemuxProtocol.ih"
+#include "DVBFrontendHandle.hh"
+//#include "DVBFrontendHandle.ih"
 
 // Custom includes
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <iostream>
 #include <string>
 #include <sys/ioctl.h>
 #include <linux/sockios.h>
+#include <stdio.h>
+#include <fcntl.h>
 #include "SocketHandle.hh"
 
-//#include "DVBDemuxProtocol.mpp"
+#include "Utils/Exception.hh"
+
+//#include "DVBFrontendHandle.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::DVBDemuxProtocol::setBufferSize(unsigned long size)
+///////////////////////////////////////////////////////////////////////////
+// senf::DVBFrontendHandle
+
+prefix_ void senf::DVBFrontendProtocol::init_client()
     const
 {
-    if (::ioctl(body().fd(), DMX_SET_BUFFER_SIZE, size) < 0)
+    int fd = open("/dev/dvb/adapter0/frontend0", O_RDONLY | O_NONBLOCK);
+    if (fd < 0)
         throw SystemException(errno);
+    body().fd(fd);
 }
 
-prefix_ void senf::DVBDemuxProtocol::startFiltering()
+prefix_ unsigned senf::DVBFrontendProtocol::available()
     const
 {
-    if (::ioctl(body().fd(), DMX_START) < 0)
-        throw SystemException(errno);
+    return 0;
 }
 
-prefix_ void senf::DVBDemuxProtocol::stopFiltering()
-    const
-{
-    if (::ioctl(body().fd(), DMX_STOP) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ bool senf::DVBDemuxProtocol::eof()
+prefix_ bool senf::DVBFrontendProtocol::eof()
     const
 {
     return false;
 }
 
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBFrontendProtocol::clone()
+    const
+{
+    return std::auto_ptr<SocketProtocol>(new DVBFrontendProtocol());
+}
+
+
+prefix_ void senf::DVBFrontendProtocol::signalStrength(int16_t *strength)
+    const
+{
+    if (::ioctl(body().fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)
+        throw SystemException(errno);
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "DVBDemuxProtocol.mpp"
+//#include "DVBFrontendHandle.mpp"
 
 
 // Local Variables:

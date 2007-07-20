@@ -1,6 +1,6 @@
-// $Id$
+// $Id: ULEdec.cc 327 2007-07-20 10:03:44Z tho $
 //
-// Copyright (C) 2007
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -20,51 +20,46 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief DVBProtocol public header
- */
-
-#ifndef HH_DVBDemuxProtocol_
-#define HH_DVBDemuxProtocol_ 1
-
+#include <string>
+#include <iostream>
+#include <iomanip>
+#include <sys/ioctl.h>
+#include <linux/sockios.h>
 #include <linux/dvb/dmx.h> 
 
-// Custom includes
-#include "SocketProtocol.hh"
+#include "Scheduler/Scheduler.hh"
+#include "Packets/DefaultBundle/EthernetPacket.hh"
+#include "Packets/MPEGDVBBundle/DatagramSection.hh"
+#include "Utils/membind.hh"
+#include "Socket/DVBFrontendHandle.hh"
+#include "Packets/ParseInt.hh"
+#include "Packets/Packet.hh"
+#include "Packets/PacketData.hh"
 
-//#include "DVBProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
-
-    /// \addtogroup protocol_facets_group
-    /// @{
-
-    /** xxx
-     */
-    class DVBDemuxProtocol
-        : public virtual SocketProtocol
-    {
-    public:
-        void setBufferSize(unsigned long size) const;
+int main(int argc, char const * argv[])
+{
+    try {
+        senf::DVBFrontendHandle handle;
+        int16_t strength;
         
-        void startFiltering() const;
-        void stopFiltering() const;
-        
-        ///\name Abstract Interface Implementation
-        ///@{
-        
-        bool eof() const;
-
-        ///@}
-    };
+        while (true) {
+            handle.protocol().signalStrength(&strength);
+            std::cout << "signal strength: " << strength << "\n";
+            sleep(1);
+        }
+    }
+    catch (std::exception const & ex) {
+        std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
+    }
+    return 0;
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "DVBDemuxProtocol.cci"
-//#include "DVBDemuxProtocol.ct"
-//#include "DVBDemuxProtocol.cti"
-#endif
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:
