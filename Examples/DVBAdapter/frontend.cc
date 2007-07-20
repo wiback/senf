@@ -1,4 +1,4 @@
-// $Id: ULEdec.cc 327 2007-07-20 10:03:44Z tho $
+// $Id$
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -22,19 +22,7 @@
 
 #include <string>
 #include <iostream>
-#include <iomanip>
-#include <sys/ioctl.h>
-#include <linux/sockios.h>
-#include <linux/dvb/dmx.h> 
-
-#include "Scheduler/Scheduler.hh"
-#include "Packets/DefaultBundle/EthernetPacket.hh"
-#include "Packets/MPEGDVBBundle/DatagramSection.hh"
-#include "Utils/membind.hh"
 #include "Socket/DVBFrontendHandle.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/Packet.hh"
-#include "Packets/PacketData.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -56,7 +44,6 @@ int main(int argc, char const * argv[])
     }
     return 0;
 }
-
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
