@@ -1,4 +1,4 @@
-// $Id$
+// $Id:DatagramSection.hh 327 2007-07-20 10:03:44Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -36,6 +36,9 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    ///\addtogroup protocolbundle_mpegdvb
+    ///@{
 
     struct Parse_DatagramSection : public Parse_DSMCCSection
     {
@@ -94,6 +97,8 @@ namespace senf {
     };
         
     typedef DatagramSectionType::packet DatagramSection;
+    
+    ///@}
 }
 
 
