@@ -38,8 +38,19 @@
 
 /** \defgroup policy_group The Policy Framework
 
-    \image html SocketPolicy.png
-
+    \htmlonly
+        <map name="socketPolicy">
+          <area shape="rect" alt="SocketPolicy" href="structsenf_1_1SocketPolicy.html" title="SocketPolicy" coords="276,90,558,213" />
+          <area shape="rect" alt="BufferingPolicyBase" href="structsenf_1_1BufferingPolicyBase.html" title="BufferingPolicyBase" coords="25,282,190,306" />
+          <area shape="rect" alt="WritePolicyBase" href="structsenf_1_1WritePolicyBase.html" title="WritePolicyBase" coords="39,243,174,268" />
+          <area shape="rect" alt="ReadPolicyBase" href="structsenf_1_1ReadPolicyBase.html" title="ReadPolicyBase" coords="42,204,174,231" />
+          <area shape="rect" alt="CommunicationPolicyBase" href="structsenf_1_1CommunicationPolicyBase.html" title="CommunicationPolicyBase" coords="0,166,215,193" />
+          <area shape="rect" alt="FramingPolicyBase" href="structsenf_1_1FramingPolicyBase.html" title="FramingPolicyBase" coords="30,129,185,155" />
+          <area shape="rect" alt="AddressingPolicyBase" href="structsenf_1_1AddressingPolicyBase.html" title="AddressingPolicyBase" coords="17,90,200,116" />
+        </map>
+        <img src="SocketPolicy.png" border="0" alt="Socket Policy" usemap="#socketPolicy">
+    \endhtmlonly
+        
     \section policy_group_introduction Introduction to the Policy Framework
 
     The policy framework conceptually implements a list of parallel inheritance hierarchies each
