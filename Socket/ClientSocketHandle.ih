@@ -35,6 +35,13 @@ namespace detail {
     ///////////////////////////////////////////////////////////////////////
     // senf::detail::ReadRange
 
+    /** \brief Internal: Choose optimal read implementation
+
+        \internal
+
+        If the range iterator is a contiguous_storage_iterator, the data is *directly* read into the
+        range, otherwise a temporary storage area is used.
+     */
     template <class Handle, class ForwardWritableRange, bool IsContiguous>
     struct ReadRange 
     {
@@ -44,6 +51,8 @@ namespace detail {
         static typename boost::range_iterator<ForwardWritableRange>::type
         readfrom(Handle & handle, ForwardWritableRange & range, typename Handle::Address & addr);
     };
+
+#   ifndef DOXYGEN
 
     template <class Handle, class ForwardWritableRange>
     struct ReadRange<Handle, ForwardWritableRange, true>
@@ -55,9 +64,18 @@ namespace detail {
         readfrom(Handle & handle, ForwardWritableRange & range, typename Handle::Address & addr);
     };
 
+#   endif
+
     ///////////////////////////////////////////////////////////////////////
     // senf::detail::WriteRange
 
+    /** \brief Internal: Choose optimal write implementation
+
+        \internal
+
+        If the range iterator is a contiguous_storage_iterator, the data is *directly* written from
+        the range, otherwise a temporary storage area is used.
+     */
     template <class Handle, class ForwardReadableRange, bool IsContiguous>
     struct WriteRange
     {
@@ -69,6 +87,8 @@ namespace detail {
                 typename Handle::Address const & addr);
     };
 
+#   ifndef DOXYGEN
+
     template <class Handle, class ForwardReadableRange>
     struct WriteRange<Handle, ForwardReadableRange, true>
     {
@@ -79,6 +99,8 @@ namespace detail {
         writeto(Handle & handle, ForwardReadableRange & range,
                 typename Handle::Address const & addr);
     };
+
+#   endif
 
 }}
 

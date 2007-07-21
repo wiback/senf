@@ -4,3 +4,4 @@ PROJECT_NAME     = DefaultBundle
 TAGFILES         = "$(TOPDIR)/Utils/doc/Utils.tag" "$(TOPDIR)/Packets/doc/Packets.tag"
 GENERATE_TAGFILE = doc/DefaultBundle.tag
 INPUT            = .
+ALPHABETICAL_INDEX = NO

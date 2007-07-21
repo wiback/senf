@@ -4,3 +4,4 @@ PROJECT_NAME     = MPEGDVBBundle
 TAGFILES         = "$(TOPDIR)/Utils/doc/Utils.tag" "$(TOPDIR)/Packets/doc/Packets.tag"
 GENERATE_TAGFILE = doc/MPEGDVBBundle.tag
 INPUT            = .
+ALPHABETICAL_INDEX = NO

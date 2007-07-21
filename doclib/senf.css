@@ -322,15 +322,19 @@ p.memtitle {
         color: #1a41a8;
         font-weight: bold;
         margin-right: 14px;
-        border-bottom: 1px solid #84b0c7;
 }
 
-p.sourceline, p.references, p.referencedby, p.reimplementedfrom, p.reimplementedin {
+p.sourceline, p.references, p.referencedby, p.reimplementedfrom, p.reimplementedin, 
+p.implementedin {
         color: #666666;
         font-size: 75%;
-        margin-left: 10em;
         margin-bottom: .2em;
         margin-top: .2em;
+}
+
+div.memdoc p.sourceline, p.references, p.referencedby, p.reimplementedfrom, p.reimplementedin, 
+p.implementedin {
+        margin-left: 10em;
         text-indent: -4em;
 }
 

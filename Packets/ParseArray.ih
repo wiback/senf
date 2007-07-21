@@ -28,6 +28,13 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
+/** \brief Internal: Array and Vector iterator
+
+    \internal
+
+    This is the iterator type used for both Parse_Array and Parse_Vector. It is a model of random
+    access iterator.
+ */
 template <class ElementParser>
 class senf::detail::Parse_Array_iterator
     : public boost::iterator_facade< Parse_Array_iterator<ElementParser>,
@@ -43,7 +50,9 @@ public:
     // Needed to elide the []-proxy of iterator_facade
     ElementParser operator[](int i) const;
 
-    PacketParserBase::data_iterator raw() const;
+    PacketParserBase::data_iterator raw() const; ///< Return data_iterator
+                                        /**< Returns the raw data_iterator pointing to the beginning
+                                             of the current element */
 
 protected:
 

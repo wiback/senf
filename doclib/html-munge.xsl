@@ -121,7 +121,7 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="div[@class='memdoc']/p[starts-with(text(),'Definition at line ')]">
+  <xsl:template match="p[starts-with(text(),'Definition at line ')]">
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">sourceline</xsl:with-param>
     </xsl:call-template>
@@ -149,6 +149,16 @@
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">reimplementedin</xsl:with-param>
     </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="div[@class='memdoc']/p[starts-with(text(),'Implemented in ')]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">implementedin</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Remove external items from the namespace index -->
+  <xsl:template match="div[@id='content2']/table[contains(preceding-sibling::h1/text(),'Namespace Reference')]/tr[td[@class='memItemRight']/a[1][@class='elRef'][@doxygen]]">
   </xsl:template>
   
   <!-- Remove [external] references from the modules page -->

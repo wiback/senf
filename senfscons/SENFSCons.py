@@ -389,7 +389,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
             SCons.Action.Action(("for html in %s/*.html; do " +
                         "    echo $$html;" +
                         "    sed -e 's/id=\"current\"/class=\"current\"/' $${html}" +
-                        "        | tidy -ascii -q --show-warnings no --fix-uri no" +
+                        "        | tidy -ascii -q --show-warnings no --fix-uri no " +
                         "        | xsltproc --nonet --html --stringparam topdir %s -o $${html}.new %s - 2>&1" +
                         "        | grep '^-'" +
                         "        | grep -v 'ID .* already defined';" +

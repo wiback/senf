@@ -45,7 +45,8 @@ namespace detail {
         virtual Packet::factory_t factory() const;
     };
 
-    /** \brief Internal
+    /** \brief Internal: Singleton class implementing the packet registry.
+
         \internal
      */
     template <class KeyType>
