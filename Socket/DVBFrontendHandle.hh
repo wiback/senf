@@ -28,6 +28,7 @@
 #define HH_DVBFrontendHandle_ 1
 
 // Custom includes
+#include "BufferingPolicy.hh"
 #include "FramingPolicy.hh"
 #include "CommunicationPolicy.hh"
 #include "ReadWritePolicy.hh"
@@ -49,7 +50,8 @@ namespace senf {
         DatagramFramingPolicy,
         UnconnectedCommunicationPolicy,
         NotReadablePolicy,
-        NotWriteablePolicy
+        NotWriteablePolicy,
+        NoBufferingPolicy
         >::policy DVBFrontend_Policy;   ///< Socket Policy for xxxx
 
     /** \brief xxx

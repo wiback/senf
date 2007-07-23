@@ -397,7 +397,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                         "done")
                        % (htmlnode.dir.abspath, reltopdir, xslfile.abspath)))
         for doc in docs:
-            env.Depends(doc,xslfile)
+            env.Depends(doc, xslfile)
 
     if xmlnode:
         xrefs = []
@@ -416,7 +416,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
             xrefs.extend(xref_pp)
         docs.extend(xrefs)
 
-    env.Depends(docs,extra_sources)
+    env.Depends(docs, extra_sources)
     for doc in docs :
         env.Alias('all_docs', doc)
         env.Clean('all_docs', doc)

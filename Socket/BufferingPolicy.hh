@@ -38,6 +38,22 @@ namespace senf {
 
     /// \addtogroup policy_impl_group
     /// @{
+    
+    /** \brief BufferingPolicy for non-buffered sockets
+    
+        This is different from UndefinedBufferingPolicy (which is the
+        same as BufferingPolicyBase). This policy class defines the
+        buffering policy -- it explicitly states, that the socket does not
+        support buffering.
+     */
+    struct NoBufferingPolicy : public BufferingPolicyBase
+    {};
+    
+    /// @}
+
+    
+    /// \addtogroup policy_impl_group
+    /// @{
 
     /** \brief BufferingPolicy implementing standard socket buffering
 

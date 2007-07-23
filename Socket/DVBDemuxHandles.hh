@@ -28,6 +28,7 @@
 #define HH_DVBDemuxHandles_ 1
 
 // Custom includes
+#include "BufferingPolicy.hh"
 #include "FramingPolicy.hh"
 #include "CommunicationPolicy.hh"
 #include "ReadWritePolicy.hh"
@@ -47,7 +48,8 @@ namespace senf {
         DatagramFramingPolicy,
         UnconnectedCommunicationPolicy,
         ReadablePolicy,
-        NotWriteablePolicy
+        NotWriteablePolicy,
+        NoBufferingPolicy
         >::policy DVBDemux_Policy;   ///< Socket Policy for xxxx
 
     /** \brief xxx
