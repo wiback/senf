@@ -37,7 +37,22 @@
 
 /** \defgroup protocol_group The Protocol Classes
 
-    \image html Protocols.png
+    \htmlonly
+    <map name="protocols">
+      <area shape="rect" alt="SocketPolicy" href="structsenf_1_1SocketPolicy.html" title="SocketPolicy" coords="416,50,536,68" />
+      <area shape="rect" alt="ConcreteSocketProtocol" href="classsenf_1_1ConcreteSocketProtocol.html" title="ConcreteSocketProtocol" coords="268,65,456,88" />
+      <area shape="rect" alt="SocketProtocol" href="classsenf_1_1SocketProtocol.html" title="SocketProtocol" coords="1,2,120,26" />
+      <area shape="rect" alt="BSDSocketProtocol" href="classsenf_1_1BSDSocketProtocol.html" title="BSDSocketProtocol" coords="124,118,276,143" />
+      <area shape="rect" alt="AddressableBSDSocketProtocol" href="classsenf_1_1AddressableBSDSocketProtocol.html" title="AddressableBSDSocketProtocol" coords="82,200,314,224" />
+      <area shape="rect" alt="IPv4Protocol" href="classsenf_1_1IPv4Protocol.html" title="IPv4Protocol" coords="149,272,252,296" />
+      <area shape="rect" alt="IPv6Protocol" href="classsenf_1_1IPv6Protocol.html" title="IPv6Protocol" coords="149,335,251,359" />
+      <area shape="rect" alt="TCPProtocol" href="classsenf_1_1TCPProtocol.html" title="TCPProtocol" coords="151,398,248,420" />
+      <area shape="rect" alt="TCPv4SocketProtocol" href="classsenf_1_1TCPv4SocketProtocol.html" title="TCPv4SocketProtocol" coords="288,471,405,494" />
+      <area shape="rect" alt="TCPv6SocketProtocol" href="classsenf_1_1TCPv6SocketProtocol.html" title="TCPv6SocketProtocol" coords="424,470,540,494" />
+      <area shape="rect" alt="PacketProtocol" href="classsenf_1_1PacketProtocol.html" title="PacketProtocol" coords="560,469,680,495" />
+    </map>
+    <img src="Protocols.png" border="0" alt="Protocols" usemap="#protocols">
+    \endhtmlonly
 
     The socket handle classes and templates only implement the most important socket API methods
     using the policy framework. To access the complete API, the protocol interface is
