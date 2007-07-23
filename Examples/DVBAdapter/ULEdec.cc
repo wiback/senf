@@ -31,7 +31,7 @@
 
 #include "Scheduler/Scheduler.hh"
 #include "Packets/DefaultBundle/EthernetPacket.hh"
-#include "Packets/MPEGDVBBundle/DatagramSection.hh"
+#include "Packets/MPEGDVBBundle/TransportPacket.hh"
 #include "Utils/membind.hh"
 #include "Socket/DVBDemuxHandles.hh"
 #include "Packets/ParseInt.hh"
@@ -111,11 +111,10 @@ private:
     void dumpSection(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
     {
         std::string data (dvrHandle.read());
-        std::cout << data.length() << "\n";
-        //senf::DatagramSection section (senf::DatagramSection::create(data));
-        //section.dump(std::cout);
-        //senf::PacketData & datagramData (section.last().data());
-        //hexdump(datagramData.begin(), datagramData.end(), std::cout);
+        senf::TransportPacket packet (senf::TransportPacket::create(data));
+        packet.dump(std::cout);
+        senf::PacketData & packetData (packet.last().data());
+        hexdump(packetData.begin(), packetData.end(), std::cout);
     }
 };
 
