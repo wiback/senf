@@ -31,6 +31,7 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+#ifndef DOXYGEN
 template <class Policy>
 prefix_ unsigned senf::ReadablePolicy::
 readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
@@ -39,7 +40,15 @@ readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
 {
     return do_rcvfrom(handle, buffer, size, address.sockaddr_p(), address.sockaddr_len());
 }
+#else
+template <class Policy>
+prefix_ unsigned senf::ReadablePolicy::
+readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
+         typename Policy::AddressingPolicy::Address & address)
+{}
+#endif
 
+#ifndef DOXYGEN
 template <class Policy>
 prefix_ unsigned senf::WriteablePolicy::
 write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
@@ -47,7 +56,14 @@ write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
 {
     return do_write(handle,buffer,size);
 }
+#else
+template <class Policy>
+prefix_ unsigned senf::WriteablePolicy::
+write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size)
+{}
+#endif
 
+#ifndef DOXYGEN
 template <class Policy>
 prefix_ unsigned senf::WriteablePolicy::
 writeto(ClientSocketHandle<Policy> handle,
@@ -57,6 +73,14 @@ writeto(ClientSocketHandle<Policy> handle,
 {
     return do_writeto(handle, buffer, size, addr.sockaddr_p(), addr.sockaddr_len());
 }
+#else
+template <class Policy>
+prefix_ unsigned senf::WriteablePolicy::
+writeto(ClientSocketHandle<Policy> handle,
+        typename Policy::AddressingPolicy::Address const & addr,
+        char const * buffer, unsigned size)
+{}
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

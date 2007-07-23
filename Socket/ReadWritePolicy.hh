@@ -58,17 +58,23 @@ namespace senf {
                                              \param[in] buffer address of buffer to write data to
                                              \param[in] size size of buffer
                                              \returns number of bytes read */
+#       ifndef DOXYGEN
         template <class Policy>
         static unsigned readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
                                  typename Policy::AddressingPolicy::Address & address,
                                  typename IfCommunicationPolicyIs<
                                      Policy,UnconnectedCommunicationPolicy>::type * = 0);
+#       else
+        template <class Policy>
+        static unsigned readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
+                                 typename Policy::AddressingPolicy::Address & address);
                                         ///< read data from socket returning peer address
                                         /**< \param[in] handle socket handle to read from
                                              \param[in] buffer address of buffer to write data to
                                              \param[in] size size of buffer
                                              \param[out] address peer address
                                              \returns number of bytes read */
+#       endif
 
     private:
         static unsigned do_readfrom(FileHandle handle, char * buffer, unsigned size,
@@ -91,10 +97,15 @@ namespace senf {
      */
     struct WriteablePolicy : public WritePolicyBase
     {
+#       ifndef DOXYGEN
         template <class Policy>
         static unsigned write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
                               typename IfCommunicationPolicyIs<
                                   Policy,ConnectedCommunicationPolicy>::type * = 0);
+#       else
+        template <class Policy>
+        static unsigned write(ClientSocketHandle<Policy> handle, char const * buffer, 
+                              unsigned size);
                                         ///< write data to socket
                                         /**< This member is only enabled if the socket uses
                                              connected communication. Otherwise the communication
@@ -105,6 +116,8 @@ namespace senf {
                                              \param[in] buffer address of buffer to send
                                              \param[in] size number of bytes to write
                                              \returns number of bytes written */
+#       endif
+#       ifndef DOXYGEN
         template <class Policy>
         static unsigned writeto(ClientSocketHandle<Policy> handle,
                                 typename boost::call_traits<
@@ -112,6 +125,11 @@ namespace senf {
                                 char const * buffer, unsigned size,
                                 typename IfCommunicationPolicyIs<
                                     Policy,UnconnectedCommunicationPolicy>::type * = 0);
+#       else
+        template <class Policy>
+        static unsigned writeto(ClientSocketHandle<Policy> handle,
+                                typename Policy::AddressingPolicy::Address const & addr,
+                                char const * buffer, unsigned size);
                                         ///< write data to socket sending to given peer
                                         /**< This member is only enabled if the socket uses
                                              unconnected communication. Otherwise no target may be
@@ -123,6 +141,7 @@ namespace senf {
                                              \param[in] addr peer to send data to
                                              \returns number of bytes written
                                           */
+#       endif
 
     private:
         static unsigned do_write(FileHandle handle, char const * buffer, unsigned size);

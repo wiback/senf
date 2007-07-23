@@ -34,6 +34,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::GenericAddressingPolicy<Address>
 
+#ifndef DOXYGEN
 template <class Address>
 template <class Policy>
 prefix_ void senf::GenericAddressingPolicy<Address>::
@@ -43,7 +44,15 @@ peer(SocketHandle<Policy> handle, Address & addr,
     addr.clear();
     do_peer(handle,addr.sockaddr_p(),addr.sockaddr_len());
 }
+#else
+template <class Address>
+template <class Policy>
+prefix_ void senf::GenericAddressingPolicy<Address>::
+peer(SocketHandle<Policy> handle, Address & addr)
+{}
+#endif
 
+#ifndef DOXYGEN
 template <class Address>
 template <class Policy>
 prefix_ void senf::GenericAddressingPolicy<Address>::
@@ -52,6 +61,13 @@ connect(SocketHandle<Policy> handle, Address const & addr,
 {
     do_connect(handle,addr.sockaddr_p(),addr.sockaddr_len());
 }
+#else
+template <class Address>
+template <class Policy>
+prefix_ void senf::GenericAddressingPolicy<Address>::
+connect(SocketHandle<Policy> handle, Address const & addr)
+{}
+#endif
 
 template <class Address>
 prefix_ void senf::GenericAddressingPolicy<Address>::local(FileHandle handle,

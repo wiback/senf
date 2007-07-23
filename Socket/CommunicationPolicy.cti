@@ -31,6 +31,7 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+#ifndef DOXYGEN
 template <class Policy>
 prefix_ void senf::ConnectedCommunicationPolicy::
 listen(ServerSocketHandle<Policy> handle, unsigned backlog,
@@ -38,7 +39,14 @@ listen(ServerSocketHandle<Policy> handle, unsigned backlog,
 {
     do_listen(handle, backlog);
 }
+#else
+template <class Policy>
+prefix_ void senf::ConnectedCommunicationPolicy::
+listen(ServerSocketHandle<Policy> handle, unsigned backlog)
+{}
+#endif
 
+#ifndef DOXYGEN
 template <class Policy>
 prefix_ int senf::ConnectedCommunicationPolicy::
 accept(ServerSocketHandle<Policy> handle,
@@ -47,6 +55,13 @@ accept(ServerSocketHandle<Policy> handle,
 {
     return do_accept(handle,address.sockaddr_p(),address.sockaddr_len());
 }
+#else
+template <class Policy>
+prefix_ int senf::ConnectedCommunicationPolicy::
+accept(ServerSocketHandle<Policy> handle,
+       typename ServerSocketHandle<Policy>::Address & address)
+{}
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

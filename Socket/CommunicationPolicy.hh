@@ -51,16 +51,27 @@ namespace senf {
      */
     struct ConnectedCommunicationPolicy : public CommunicationPolicyBase
     {
+#       ifndef DOXYGEN
         template <class Policy>
         static void listen(ServerSocketHandle<Policy> handle, unsigned backlog,
                            typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type * = 0);
+#       else
+        template <class Policy>
+        static void listen(ServerSocketHandle<Policy> handle, unsigned backlog);
                                         ///< Enable establishing new connections on the socket
                                         /**< \param[in] handle socket handle to enable reception on
                                              \param[in] backlog size of backlog queue */
+#       endif
+
+#       ifndef DOXYGEN
         template <class Policy>
         static int accept(ServerSocketHandle<Policy> handle,
                           typename ServerSocketHandle<Policy>::Address & address,
                           typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type * = 0);
+#       else
+        template <class Policy>
+        static int accept(ServerSocketHandle<Policy> handle,
+                          typename ServerSocketHandle<Policy>::Address & address);
                                         ///< accept a new connection on the socket.
                                         /**< The accept() member will return a new client file
                                              descriptor. This file descriptor will be used by the
@@ -71,6 +82,8 @@ namespace senf {
                                              \param[out] address address of newly connected remote
                                                  peer
                                              \returns file descriptor of new client socket */
+#       endif
+
     private:
         static void do_listen(FileHandle handle, unsigned backlog);
         static int do_accept(FileHandle handle, struct sockaddr * addr, unsigned len);

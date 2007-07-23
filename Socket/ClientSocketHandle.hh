@@ -123,13 +123,22 @@ namespace senf {
         ClientSocketHandle();
 
         // conversion constructors
+#       ifndef DOXYGEN
         template <class OtherPolicy>
         ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,
                            typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type * = 0);
+#       else
+        ClientSocketHandle(ClientSocketHandle<OtherPolicy> other);
+#       endif
 
+#       ifndef DOXYGEN
         template <class OtherPolicy>
         typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const &
         operator=(ClientSocketHandle<OtherPolicy> other);
+#       else
+        template <class OtherPolicy>
+        OtherPolicy const & operator=(ClientSocketHandle<OtherPolicy> other);
+#       endif        
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -190,14 +199,20 @@ namespace senf {
                                              \see \ref read() \n
                                                   <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a> */
 #       endif
+#       ifndef DOXYGEN
         template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type
                      read         (ForwardWritableRange & range,
                                    typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type * = 0);
+#       else
+        template <class ForwardWritableRange>
+        typename boost::range_iterator<ForwardWritableRange>::type
+                     read         (ForwardWritableRange & range);
                                         ///< Read data into range
                                         /**< \see read(ForwardWritableRange const &) \n
                                                   read() \n
                                                   <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a>  */
+#       endif
         template <class Sequence>
         void         read         (Sequence & container, unsigned limit);
                                         ///< Read data into container

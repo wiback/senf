@@ -102,6 +102,7 @@ template <class Policy>
 prefix_ senf::ClientSocketHandle<Policy>::ClientSocketHandle()
 {}
 
+#ifndef DOXYGEN
 template <class Policy>
 template <class OtherPolicy>
 prefix_ senf::ClientSocketHandle<Policy>::
@@ -109,6 +110,13 @@ ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,
                    typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type *)
     : SocketHandle<Policy>(other,true) 
 {}
+#else
+template <class Policy>
+template <class OtherPolicy>
+prefix_ senf::ClientSocketHandle<Policy>::
+ClientSocketHandle(ClientSocketHandle<OtherPolicy> other)
+{}
+#endif
 
 template <class Policy>
 prefix_ senf::ClientSocketHandle<Policy>::ClientSocketHandle(FileHandle other, bool isChecked)
@@ -124,6 +132,7 @@ senf::ClientSocketHandle<Policy>::ClientSocketHandle(std::auto_ptr<SocketProtoco
     this->body().fd(fd);
 }
 
+#ifndef DOXYGEN
 template <class Policy>
 template <class OtherPolicy>
 prefix_ typename senf::SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const &
@@ -132,6 +141,13 @@ senf::ClientSocketHandle<Policy>::operator=(ClientSocketHandle<OtherPolicy> othe
     assign(other);
     return *this;
 }
+#else 
+template <class Policy>
+template <class OtherPolicy>
+prefix_ OtherPolicy const &
+senf::ClientSocketHandle<Policy>::operator=(ClientSocketHandle<OtherPolicy> other)
+{}
+#endif
 
 ////////////////////////////////////////
 // reading and writing
@@ -163,6 +179,7 @@ read(ForwardWritableRange const & range)
 {}
 #endif
 
+#ifndef DOXYGEN
 template <class Policy>
 template <class ForwardWritableRange>
 prefix_ typename boost::range_iterator<ForwardWritableRange>::type
@@ -178,6 +195,14 @@ read(ForwardWritableRange & range,
         >::value && sizeof(typename boost::range_value<ForwardWritableRange>::type)==sizeof(char)
         >::read(*this, range);
 }
+#else
+template <class Policy>
+template <class ForwardWritableRange>
+prefix_ typename boost::range_iterator<ForwardWritableRange>::type
+senf::ClientSocketHandle<Policy>::
+read(ForwardWritableRange & range)
+{}
+#endif
 
 template <class Policy>
 prefix_ char * senf::ClientSocketHandle<Policy>::read(char * start, char * end)

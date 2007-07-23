@@ -81,23 +81,32 @@ namespace senf {
     struct GenericAddressingPolicy
         : private GenericAddressingPolicy_Base
     {
+#       ifndef DOXYGEN
         template <class Policy>
         static void peer(SocketHandle<Policy> handle, Address & addr,
                          typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+#       else
+        template <class Policy>
+        static void peer(SocketHandle<Policy> handle, Address & addr);
                                         ///< Return address of remote peer on connected sockets
                                         /**< This member is only available if the socket handles
                                              communication policy is ConnectedCommunicationPolicy.
 
                                              \param[in] handle socket handle to get peer address of
                                              \param[out] addr address of remote peer */
+#       endif
         static void local(FileHandle handle, Address & addr);
                                         ///< Return local of socket
                                         /**< \param[in] handle socket handle to check
                                              \param[out] addr local socket address */
 
+#       ifndef DOXYGEN
         template <class Policy>
         static void connect(SocketHandle<Policy> handle, Address const & addr,
                             typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+#       else
+        template <class Policy>
+        static void connect(SocketHandle<Policy> handle, Address const & addr);
                                         ///< Connect to remote host
                                         /**< This member is only available if the socket handles
                                              communication policy is ConnectedCommunicationPolicy.
@@ -105,6 +114,7 @@ namespace senf {
                                              \param[in] handle socket handle
                                              \param[in] addr address of remote peer to connect
                                                  to */
+#       endif
         static void bind(FileHandle handle, Address const & addr);
                                         ///< Set local socket address
                                         /**< \param[in] handle socket handle
