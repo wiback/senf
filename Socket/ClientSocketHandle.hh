@@ -30,6 +30,8 @@
 // Custom includes
 #include <boost/call_traits.hpp>
 #include <boost/range.hpp>
+#include <boost/utility.hpp>
+#include <boost/type_traits.hpp>
 #include "SocketHandle.hh"
 
 //#include "ClientSocketHandle.mpp"
@@ -173,7 +175,8 @@ namespace senf {
         std::string  read         (unsigned limit=0);
         template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type
-                     read         (ForwardWritableRange const & range);
+                     read         (ForwardWritableRange const & range,
+                                   typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type * = 0);
                                         ///< Read data into range
                                         /**< Read data into the given range. At most
                                              <tt>boost::size(range)</tt> characters are read. The
@@ -188,7 +191,8 @@ namespace senf {
                                                   <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a> */
         template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type
-                     read         (ForwardWritableRange & range);
+                     read         (ForwardWritableRange & range,
+                                   typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type * = 0);
                                         ///< Read data into range
                                         /**< \see read(ForwardWritableRange const &) \n
                                                   read() \n
