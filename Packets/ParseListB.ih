@@ -31,7 +31,7 @@
 namespace senf {
 namespace detail {
 
-    /** \brief ListPolicy defing the Parse_ListB parser
+    /** \brief Internal: ListPolicy defing the Parse_ListB parser
         \internal
         \see \ref Parse_ListB
      */
@@ -76,7 +76,10 @@ namespace detail {
         size_type bytes  (iterator i, state_type s) const;
         size_type size   (iterator i, state_type s) const;
         void      init   (iterator i, state_type s) const;
-
+        
+        /** \brief Internal: Parse_ListB_Policy's iterator policy
+            \internal
+         */
         struct iterator_policy
         {
             iterator setBegin        (iterator i, state_type s);
@@ -86,6 +89,9 @@ namespace detail {
             iterator raw             (iterator i, state_type s) const;
         };
 
+        /** \brief Internal: Parse_ListB_Policy's container policy
+            \internal
+         */
         struct container_policy
         {
             typedef typename Parse_ListB_Policy<

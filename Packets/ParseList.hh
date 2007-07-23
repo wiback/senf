@@ -39,7 +39,23 @@ namespace senf {
     template <class ListPolicy>
     class Parse_List_Container;
 
-    /** \brief
+    /** \brief Arbitrary sequential element collection
+
+        A List is a sequential collection of elements. The element type is given as an arbitrary
+        parser. The list is more flexible than a vector: It is not limited to fixed-size elements
+        and it might not have direct access to the size of the collection. 
+
+        The cost is however, that a List is only a model of an STL forward sequence. The parser
+        provides a reduced interface to this sequence, the container wrapper provides the complete
+        interface.
+
+        Pare_List makes use of a policy template argument, \a ListPolicy, to customize the way the
+        list is laid out. This policy is given quite some freedom in the list
+        implementation. It is however important, that list elements <em>always follow each other
+        without padding</em> (if padding is needed, it needs to be part of the element parser).
+
+        \see ExampleListPolicy
+        \ingroup parsecollection
       */
     template <class ListPolicy>
     class Parse_List 
@@ -49,6 +65,9 @@ namespace senf {
     public:
         Parse_List(data_iterator i, state_type s);
         Parse_List(ListPolicy policy, data_iterator i, state_type s);
+                                        ///< Additional policy specific constructor
+                                        /**< This constructor may be used, if the policy needs
+                                             additional parameters. */
 
         size_type bytes() const;
         void init() const;
@@ -84,7 +103,7 @@ namespace senf {
         template <class Policy> friend class Parse_List_Container;
     };
 
-    /** \brief Exmaple of a list policy. ONLY FOR EXPOSITION.
+    /** \brief Example of a list policy. ONLY FOR EXPOSITION.
         
         This class shows the interface which must be implemented by a list policy. It is not a list
         policy only a declaration of the interface:
@@ -125,7 +144,7 @@ namespace senf {
         \endcode
 
         If necessary, you may use a different policy in the container_type. The ListPolicy must
-        define the elements bytes(), size() and init(), the container policy needs all theese and
+        define the elements bytes(), size() and init(), the container policy needs all these and
         additionally needs erase() and insert(). The container policy will also need the
         element_type, parser_type and container_type typedefs.
         
@@ -156,7 +175,7 @@ namespace senf {
 
         size_type bytes(iterator i, state_type s) const; ///< Size of list in bytes
                                         /**< Return the complete size of the list in
-                                             bytes. Depending on the type of list, thie call may
+                                             bytes. Depending on the type of list, this call may
                                              need to completely traverse the list ... */
 
         size_type size(iterator i, state_type s) const; ///< Number of elements in list
@@ -173,13 +192,13 @@ namespace senf {
         void erase(iterator i, state_type s, iterator p) const; ///< Erase element from list
                                         /**< Delete the list element at p from the List (i,s). When
                                              this operation is called, the element is still part of
-                                             the list. This call must update the metadata as
+                                             the list. This call must update the meta-data as
                                              needed. The data will be removed after this call
                                              returns. */
 
         void insert(iterator i, state_type s, iterator p) const; ///< Insert element into list
                                         /**< This is called after an element has been inserted at p
-                                             into the List (i,s) to update the metadata. */
+                                             into the List (i,s) to update the meta-data. */
 
         /** \brief Example of a list iterator policy. ONLY FOR EXPOSITION.
 
@@ -234,6 +253,24 @@ namespace senf {
         };
     };
 
+    /** \brief Parse_List container wrapper
+
+        This is the container wrapper used for list parsers. The container wrapper will stay valid
+        after changing the collection. However the container still depends on the packet and will be
+        invalidated if the Packet is deallocated or if the packet size is changed from without the
+        container wrapper (more precisely, it is invalided if the insertion/deletion happens before
+        the vector in the packet data).
+
+        The vector container wrapper provides a complete STL random-access sequence interface.
+        
+        \code
+        SomePacket p (...);
+        SomePacket::aListCollection_t::container c (p->aListCollection());
+        c.insert(c.begin(), ... );
+        \endcode
+
+        \see Parse_List
+      */
     template <class ListPolicy>
     class Parse_List_Container
         : private ListPolicy

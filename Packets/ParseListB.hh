@@ -38,10 +38,10 @@ namespace senf {
     /** \brief List parser with size-field in bytes
 
         This list parser will parse a list which size is given by a preceding field containing the
-        lenght of the list in bytes. This struct is just a template typedef:
+        length of the list in bytes. This struct is just a template typedef:
         \code
-          typedef senf::Parse_VectorN< Parser_UInt32, Parser_UInt16 >::parser Parse_MyVector;
-          typedef senf::Parse_ListB< Parse_MyVector, Parse_UInt16 >::parser Parse_MyList;
+        typedef senf::Parse_VectorN< Parser_UInt32, Parser_UInt16 >::parser Parse_MyVector;
+        typedef senf::Parse_ListB< Parse_MyVector, Parse_UInt16 >::parser Parse_MyList;
         \endcode
         This first defines a Vector of 32 bit unsigned integers with 16 bit length counter. Then it
         defines a list of such vectors with a 16 bit bytes field.
@@ -49,13 +49,16 @@ namespace senf {
         \warning There are some caveats when working with this kind of list
         \li You may <b>only change the size of a contained element from a container wrapper</b>.
         \li While you hold a container wrapper, <b>only access the packet through this wrapper</b>
-            or a nested wrepper either for reading or writing.
+            or a nested wrapper either for reading or writing.
 
         If lists are nested, you need to allocate a container wrapper for each level and may only
         access the packet through the lowest-level active container wrapper.
 
         \implementation These restrictions are necessary to ensure correct recalculation of the
             <tt>bytes</tt> field. For more info, see the comments in \ref ParseListB.ih
+
+        \see Parse_List
+        \ingroup parsecollection
      */
     template <class ElementParser, class BytesParser>
     struct Parse_ListB {

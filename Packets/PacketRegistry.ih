@@ -35,7 +35,8 @@
 namespace senf {
 namespace detail {
     
-    /** \brief Internal
+    /** \brief Internal: Registry entry implementation for a specific packet type
+
         \internal
      */
     template <class PacketType>

@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief ParseVec public header */
+
 #ifndef HH_ParseVec_
 #define HH_ParseVec_ 1
 
@@ -47,7 +50,7 @@ namespace senf {
         A vector is a model of an STL random-access sequence. The parser only provides a reduced
         interface, the container wrapper however completes this interface.
 
-        Parse_Vector makes use of a policy template argument, \a Sizer to customize the way the
+        Parse_Vector makes use of a policy template argument, \a Sizer, to customize the way the
         containers size is obtained. You will normally not instantiate Parser_Vector directly, you
         will use one of the 'template typedefs' (which are templated structures since C++ does not
         provide real template typedefs) provided with the policy implementations.
@@ -203,6 +206,8 @@ namespace senf {
         SomePacket::aVectorCollection_t::container c (p->aVectorCollection());
         c.insert(c.begin(), ... );
         \endcode
+
+        \see Parse_Vector
       */
     template <class ElementParser, class Sizer>
     class Parse_Vector_Container

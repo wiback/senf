@@ -32,6 +32,10 @@
 namespace senf {
 namespace detail {
 
+    /** \brief Internal: Iterator used by Parse_List
+
+        \internal
+     */
     template <class ElementParser, class IteratorPolicy>
     class Parse_List_Iterator
         : public boost::iterator_facade< Parse_List_Iterator<ElementParser,IteratorPolicy>,

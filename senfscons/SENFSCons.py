@@ -408,7 +408,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                                     " --stringparam module $MODULE" +
                                     " --stringparam type $TYPE" +
                                     " ${SOURCES[1]} $SOURCE || touch $TARGET" ],
-                                  MODULE = xmlnode.dir.dir.dir.name,
+                                  MODULE = xmlnode.dir.dir.dir.abspath[
+                                               len(env.Dir('#').abspath)+1:],
                                   TYPE = type)
             env.SideEffect(xref, xmlnode)
             env.AddPreAction(docs, "rm -f %s" % (xref,))

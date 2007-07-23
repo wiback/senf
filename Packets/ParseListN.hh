@@ -1,3 +1,4 @@
+
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
@@ -35,6 +36,20 @@ namespace senf {
     namespace detail { template <class ElementParser, class SizeParser>
                        class Parse_ListN_Policy; }
 
+    /** \brief List parser with size-field giving number of list elements
+
+        This parser will parse a list which size is giving by a preceding field containing the
+        number of list elements. This struct is just a 'template typedef':
+        \code
+        senf::Parse_VectorN< Parser_UInt32, Parser_UInt16 >::parser Parse_MyVector;
+        senf::Parse_ListN< Parse_MyVector, Parse_UInt16 >::parser Parse_MyList;
+        \endcode
+        This first defines a Vector of 32 bit unsigned integers with 16 bit length counter. Then it
+        defines a list of such vectors with a 16 bit size field.
+
+        \see Parse_List
+        \ingroup parsecollection
+     */
     template <class ElementParser, class SizeParser>
     struct Parse_ListN {
         typedef Parse_List< detail::Parse_ListN_Policy<ElementParser,SizeParser> > parser;

@@ -31,6 +31,10 @@
 namespace senf {
 namespace detail {
 
+    /** \brief Internal: ListPolicy defining the Parse_ListN parser
+        \internal
+        \see \ref Parse_ListN
+     */
     template <class ElementParser, class SizeParser>
     struct Parse_ListN_Policy
     {
@@ -50,6 +54,9 @@ namespace detail {
         void      insert (iterator i, state_type s, iterator p) const;
         void      update (iterator i, state_type s) const;
 
+        /** \brief Iternal: Parse_ListN_Policy's iterator policy
+            \internal
+         */
         struct iterator_policy
         {
             iterator setBegin        (iterator i, state_type s);
