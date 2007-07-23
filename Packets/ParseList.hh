@@ -89,7 +89,6 @@ namespace senf {
         This class shows the interface which must be implemented by a list policy. It is not a list
         policy only a declaration of the interface:
         \code
-        tempalte <class ElementParser>
         struct ExampleListPolicy
         {
             // optional typedefs used to simplify all other declarations
@@ -137,6 +136,19 @@ namespace senf {
         typedef PacketParserBase::data_iterator iterator;
         typedef PacketParserBase::state_type state_type;
         typedef PacketParserBase::size_type size_type;
+
+        typedef void element_type;      ///< Type of list elements
+                                        /**< This is the parser used to parse the list elements. */
+        typedef void parser_type;       ///< List parser type
+                                        /**< parser_type is the list parser used to parse a list of
+                                             this type,
+                                             e.g. <tt>senf::Parse_List<ExampleListPolicy></tt>. */
+        typedef void container_type;    ///< Type of container wrapper
+                                        /**< This is the container wrapper of the list, e.g.
+                                             <tt>Parse_List_Container<ExampleListPolicy></tt>. The
+                                             container may however use a \e different policy, as
+                                             long as that policy is constructible from the parser
+                                             policy. */
 
         static const size_type init_bytes = 0; ///< Size of a new list of this type
                                         /**< Initial size which needs to be allocated to this type

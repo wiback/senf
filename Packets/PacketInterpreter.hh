@@ -33,7 +33,7 @@
 #include "Utils/intrusive_refcount.hh"
 #include "Utils/pool_alloc_mixin.hh"
 #include "PacketData.hh"
-#include "typeidvalue.hh"
+#include "Utils/TypeIdValue.hh"
 
 //#include "PacketInterpreter.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

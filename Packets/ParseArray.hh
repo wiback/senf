@@ -32,7 +32,12 @@
     collection parser, what kind of sequence is modelled (e.g. random access sequence, forward
     sequence etc). Most collections will also provide a kind of container wrapper to allow extensive
     manipulations of the collection contents. A container wrapper is initialized with the collection
-    parser and then provides a more complete sequence interface.
+    parser and then provides a more complete sequence interface. Additionally, the collection
+    wrapper has a longer lifetime than an ordinary parser: While a parser will be invalidated
+    whenever the collection is changed, the container wrapper will stay valid as long as the
+    collection is changed through the wrapper (directly or indirectly, where indirectly means that a
+    sub-field or sub-collection of the collection is changed). Some collections may provide even
+    more lifetime guarantees but this guarantee should be met by all collection wrappers.
 
     \important Parser lifetime has to be tightly checked when working with collection parsers since
     \e every change of the collections size will invalidate \e all parsers and iterators referencing

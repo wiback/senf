@@ -36,6 +36,9 @@ namespace senf {
     <dt>\ref contiguous_storage_iterator</dt><dd>traits class to check iterator type for raw pointer
     accessibility</dd>
 
+    <dt>\ref TypeIdValue</dt><dd>class wrapping a typeid in a way that it can be used like any other
+    value type, e.g. as the key in a map.</dd>
+
     </dl>
  */
 

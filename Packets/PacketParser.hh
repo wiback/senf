@@ -63,6 +63,11 @@
 
     Every parser is derived from senf::PacketParserBase. This class provides the necessary
     housekeeping information and provides the parsers with access to the data.
+
+    \warning Parsers are like iterators: They are invalidated <em>whenever the size of the packet's
+    data is changed</em>. You should not store a parser anywhere. If you want to keep a parser
+    reference, use the senf::SafePacketParser wrapper. You still will need to take extra care to
+    ensure the parser is not invalidated.
  */
 
 #ifndef HH_PacketParser_
@@ -536,8 +541,10 @@ namespace senf {
             location will \e not be updated accordingly and therefore the parser will be
             invalid.
 
-        Additionally a SafePacketparser has an uninitialized state. The only allowed operations in
+        Additionally a SafePacketParser has an uninitialized state. The only allowed operations in
         this state are the boolean test for validity and assigning another parser.
+
+        \ingroup packetparser
       */
     template <class Parser>
     class SafePacketParser

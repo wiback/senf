@@ -20,8 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_typeidvalue_
-#define HH_typeidvalue_ 1
+#ifndef HH_TypeIdValue_
+#define HH_TypeIdValue_ 1
 
 // Custom includes
 #include <typeinfo>
@@ -29,7 +29,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/operators.hpp>
 
-//#include "typeidvalue.mpp"
+//#include "TypeIdValue.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -92,9 +92,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "typeidvalue.cci"
-//#include "typeidvalue.ct"
-#include "typeidvalue.cti"
+#include "TypeIdValue.cci"
+//#include "TypeIdValue.ct"
+#include "TypeIdValue.cti"
 #endif
 
 

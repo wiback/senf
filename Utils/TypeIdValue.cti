@@ -20,55 +20,40 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of inline non-template functions
+// Definition of inline template functions
 
-//#include "typeidvalue.ih"
+//#include "TypeIdValue.ih"
 
 // Custom includes
 
 #define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////cti.p///////////////////////////////////////
 
-prefix_ senf::TypeIdValue::TypeIdValue()
-    : value_(new ValueImpl<void>())
+template <class Type>
+prefix_ senf::TypeIdValue::TypeIdValue(Type *)
+    : value_(new ValueImpl<Type>())
 {}
 
-prefix_ senf::TypeIdValue::TypeIdValue(TypeIdValue const & other)
+template <class Type>
+prefix_ std::type_info const & senf::TypeIdValue::ValueImpl<Type>::id()
 {
-    value_.reset(other.value_->clone());
+    return typeid(Type);
 }
 
-prefix_ senf::TypeIdValue const &
-senf::TypeIdValue::operator=(TypeIdValue const & other)
+template <class Type>
+prefix_ senf::TypeIdValue::Value *
+senf::TypeIdValue::ValueImpl<Type>::clone()
 {
-    value_.reset(other.value_->clone());
-    return *this;
+    return new ValueImpl<Type>();
 }
 
-prefix_ bool senf::TypeIdValue::operator==(TypeIdValue const & other)
-    const
-{
-    return value_->id() == other.value_->id();
-}
-
-prefix_ bool senf::TypeIdValue::operator<(TypeIdValue const & other)
-    const
-{
-    return value_->id().before(other.value_->id());
-}
-
-prefix_ std::string senf::TypeIdValue::name()
-    const
-{
-    return std::string(value_->id().name());
-}
-
+template <class Type>
 prefix_ senf::TypeIdValue const senf::typeIdValue()
 {
-    return TypeIdValue();
+    return TypeIdValue(static_cast<Type*>(0));
 }
 
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

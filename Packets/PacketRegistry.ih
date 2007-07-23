@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/intrusive_ptr.hpp>
-#include "typeidvalue.hh"
+#include "Utils/TypeIdValue.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

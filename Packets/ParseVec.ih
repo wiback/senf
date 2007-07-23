@@ -31,6 +31,12 @@
 namespace senf {
 namespace detail {
 
+    /** \brief Internal: Sizer implementing prefix sizing
+
+        \internal
+
+        This is the sizer policy used by Parse_VectorN
+     */
     template <class SizeParser>
     struct Parse_VectorN_Sizer
     {

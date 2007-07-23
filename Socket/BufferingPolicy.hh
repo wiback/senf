@@ -49,12 +49,6 @@ namespace senf {
     struct NoBufferingPolicy : public BufferingPolicyBase
     {};
     
-    /// @}
-
-    
-    /// \addtogroup policy_impl_group
-    /// @{
-
     /** \brief BufferingPolicy implementing standard socket buffering
 
         This policy class implements standard BSD socket buffering.

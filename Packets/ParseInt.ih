@@ -35,6 +35,13 @@ namespace packet {
     ///////////////////////////////////////////////////////////////////////////
     // Integer operators
 
+    /** \brief Internal: Integer operation mixin for integer parsers
+
+        \internal
+
+        This class contains all the integer operations supported by the integer parsers. It is
+        inherited by each integer parser.
+     */
     template <class Derived, class Value>
     class ParseIntOps
     {
@@ -85,22 +92,38 @@ namespace packet {
     ///////////////////////////////////////////////////////////////////////////
     // Network byte order integer extraction
 
+    /** \brief Internal: Extract 16bit network byte order value
+        
+        \internal
+     */
     inline boost::uint16_t parse_uint16(iterator i)
     {
         return i[1] | i[0]<<8;
     }
 
+    /** \brief Internal: Write 16bit network byte order value
+        
+        \internal
+     */
     inline void write_uint16(iterator i, boost::uint16_t v)
     {
         i[0] = ( v >>  8 ) & 0xff;
         i[1] = ( v       ) & 0xff;
     }
 
+    /** \brief Internal: Extract 24bit network byte order value
+        
+        \internal
+     */
     inline boost::uint32_t parse_uint24(iterator i)
     {
         return i[2] | i[1]<<8 | i[0]<<16;
     }
 
+    /** \brief Internal: Write 24bit network byte order value
+        
+        \internal
+     */
     inline void write_uint24(iterator i, boost::uint32_t v)
     {
         i[0] = ( v >> 16 ) & 0xff;
@@ -108,11 +131,19 @@ namespace packet {
         i[2] = ( v       ) & 0xff;
     }
 
+    /** \brief Internal: Extract 32bit network byte order value
+        
+        \internal
+     */
     inline boost::uint32_t parse_uint32(iterator i)
     {
         return i[3] | i[2]<<8 | i[1]<<16 | i[0]<<24;
     }
 
+    /** \brief Internal: Write 32bit network byte order value
+        
+        \internal
+     */
     inline void write_uint32(iterator i, boost::uint32_t v)
     {
         i[0] = ( v >> 24 ) & 0xff;
@@ -208,6 +239,17 @@ namespace packet {
 
 #   endif
 
+    /** \brief Internal: Bitfield read/write helper
+
+        \internal
+        
+        Using template specializations, this class provides optimized bitfield parsers and
+        writers. For each number of bytes the bitfield covers (from 1 to 5 bytes), a template
+        specialization is provided in \c parse_bitfield_i.
+
+        This helper always processes unsigned values. For signed values sign extension still needs
+        to be performed.
+     */
     template <unsigned start, unsigned end>
     struct parse_bitfield
         : public parse_bitfield_i<start/8,(end-1)/8-start/8,start%8,end-8*(start/8)>
