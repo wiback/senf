@@ -31,9 +31,33 @@
 
 namespace senf {
 
-    ///\addtogroup protocolbundle_default
-    ///@{
+    /** \brief Parse an IpV4 packet
 
+        Parser implementing the IpV4 header. The fields implemented are:
+
+        <table class="senf">
+            <tr><th>Field name</th><th>Parser type</th></tr>
+            <tr><td>version</td><td>\ref Parse_Version</td></tr>
+            <tr><td>ihl</td><td>\ref Parse_IHL</td></tr>
+            <tr><td>tos</td><td>\ref Parse_8bit</td></tr>
+            <tr><td>length</td><td>\ref Parse_16bit</td></tr>
+            <tr><td>identifier</td><td>\ref Parse_16bit</td></tr>
+            <tr><td>reserved</td><td>\ref Parse_R</td></tr>
+            <tr><td>df</td><td>\ref Parse_DF</td></tr>
+            <tr><td>mf</td><td>\ref Parse_MF</td></tr>
+            <tr><td>frag</td><td>\ref Parse_Frag</td></tr>
+            <tr><td>ttl</td><td>\ref Parse_8bit</td></tr>
+            <tr><td>protocol</td><td>\ref Parse_8bit</td></tr>
+            <tr><td>crc</td><td>\ref Parse_16bit</td></tr>
+            <tr><td>source</td><td>\ref Parse_32bit</td></tr>
+            <tr><td>destination</td><td>\ref Parse_32bit</td></tr>
+        </table>
+
+        \see IpV4PacketType \n
+            <a href="http://tools.ietf.org/html/rfc791">RFC 791</a>
+
+        \todo Implement options
+     */
     struct Parse_IpV4 : public PacketParserBase
     {
         SENF_PACKET_PARSER_NO_INIT(Parse_IpV4);
@@ -71,12 +95,30 @@ namespace senf {
         }
     };
 
+    /** \brief IP protocol number registry
+
+        This registeres packets with their IP protocol number.
+
+        \see <a href="http://www.iana.org/assignments/protocol-numbers">Protocol numbers</a>
+            PacketRegistry
+     */
     struct IpTypes {
-        // See http://www.iana.org/assignments/protocol-numbers
-        // Also used by IPv6
         typedef boost::uint16_t key_t;
     };
 
+    /** \brief IpV4 packet
+        
+        \par Packet type (typedef):
+            \ref IpV4Packet
+
+        \par Fields:
+            \ref Parse_IpV4
+
+        \par Associated registries:
+            \ref IpTypes
+
+        \ingroup protocolbundle_default
+     */
     struct IpV4PacketType
         : public PacketTypeBase,
           public PacketTypeMixin<IpV4PacketType, IpTypes>
@@ -96,9 +138,8 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
         
+    /** \brief IpV4 packet typedef */
     typedef IpV4PacketType::packet IpV4Packet;
-
-    ///@}
 }
 
 

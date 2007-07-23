@@ -32,10 +32,23 @@
 
 namespace senf {
 
-    ///\addtogroup protocolbundle_default
-    ///@{
+    /** \brief Parse in IpV6 fragment extension header
+        
+        Parser implementing the IpV6 fragment extension. The fields implemented are:
 
-    // See RFC2460
+        <table class="senf">
+            <tr><th>Field name</th><th>Parser type</th></tr>
+            <tr><td>nextHeader</td><td>\ref Parse_8bit</td></tr>
+            <tr><td>reserved1</td><td>\ref Parse_8bit</td></tr>
+            <tr><td>fragmentOffset</td><td>\ref Parse_Offset</td></tr>
+            <tr><td>reserved2</td><td>\ref Parse_Reserved</td></tr>
+            <tr><td>moreFragments</td><td>\ref Parse_More</td></tr>
+            <tr><td>id</td><td>\ref Parse_32bit</td></tr>
+        </table>
+
+        \see IpV6ExtensionType_Fragment \n
+            <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
+     */
     struct Parse_IpV6Extension_Fragment : public PacketParserBase
     {
         SENF_PACKET_PARSER_INIT(Parse_IpV6Extension_Fragment);
@@ -57,6 +70,19 @@ namespace senf {
             ((Field       )( id             , Parse_32bit    )) );
     };
 
+    /** \brief IpV6 fragment extension
+
+        \par Packet type (typedef):
+            \ref IpV6Extension_Fragment
+
+        \par Fields:
+            \ref Parse_IpV6Extension_Fragment
+        
+        \par Associated registries:
+            \par IpTypes
+        
+        \ingroup protocolbundle_default
+     */
     struct IpV6ExtensionType_Fragment
         : public PacketTypeBase,
           public PacketTypeMixin<IpV6ExtensionType_Fragment, IpTypes>
@@ -76,9 +102,8 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
 
+    /** \brief IpV6 fragment extension packet typedef */
     typedef IpV6ExtensionType_Fragment::packet IpV6Extension_Fragment;
-
-    ///@}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

@@ -33,9 +33,12 @@
 
 namespace senf {
 
-    ///\addtogroup protocolbundle_default
-    ///@{
+    /** \brief Ethernet MAC address
+        
+        The Ethernet MAC is modelled as a fixed-size container/sequence of 6 bytes.
 
+        \todo Move to someplace else when implementing the addressing classes
+     */
     struct MACAddress
         : boost::array<PacketParserBase::byte,6>
     {
@@ -47,6 +50,13 @@ namespace senf {
         { virtual char const * what() const throw() { return "invalid mac address syntax"; } };
     };
 
+    /** \brief Parse an Ethernet MAC address 
+
+        The ethernet MAC is returned by value as a 6-byte sequence
+
+        \see MACAddress \n
+            EthernetPacket
+     */
     struct Parse_MAC : public PacketParserBase
     {
         Parse_MAC(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
@@ -63,7 +73,20 @@ namespace senf {
 
         Parse_MAC const & operator= (value_type const & other) { value(other); return *this; }
     };
+    
+    /** \brief Parse an Ethernet packet
 
+        Parser implementing an ethernet header. The fields implemented are
+
+        <table class="senf">
+        <tr> <th>Field name</th>  <th>Parser type</th>     </tr>
+        <tr> <td>destination</td> <td>\ref Parse_MAC</td>  </tr>
+        <tr> <td>source</td>      <td>\ref Parse_MAC</td>  </tr>
+        <tr> <td>type</td>        <td>\ref Parse_Type</td> </tr>
+        </table>
+
+        \see EthernetPacketType
+     */
     struct Parse_Ethernet : public PacketParserBase
     {
         SENF_PACKET_PARSER_INIT(Parse_Ethernet);
@@ -78,11 +101,31 @@ namespace senf {
             ((Field)( type,        Parse_Type )) );
     };
 
+    /** \brief EtherType registry
+
+        This registry registers packet types with their EtherType number.
+        
+        \see <a href="http://www.iana.org/assignments/ethernet-numbers">Ethernet numbers</a>
+         \ref PacketRegistry
+     */
     struct EtherTypes {
-        // See http://www.iana.org/assignments/ethernet-numbers
+        // See 
         typedef boost::uint16_t key_t;
     };
 
+    /** \brief Ethernet packet
+
+        \par Packet type (typedef):
+            \ref EthernetPacket
+
+        \par Fields:
+            \ref Parse_Ethernet
+
+        \par Associated registries:
+            \ref EtherTypes
+
+        \ingroup protocolbundle_default
+     */
     struct EthernetPacketType
         : public PacketTypeBase,
           public PacketTypeMixin<EthernetPacketType, EtherTypes>
@@ -104,8 +147,23 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
 
+    /** \brief Ethernet packet typedef */
     typedef EthernetPacketType::packet EthernetPacket;
 
+    /** \brief Parse an ethernet VLAN tag
+        
+        Parser interpreting the ethernet VLAN tag. Fields are
+
+        <table class="senf">
+        <tr> <th>Field name</th><th>Parser type</th></tr>
+        <tr><td>priority</td><td>\ref Parse_Priority</td></tr>
+        <tr><td>cfi</td><td>\ref Parse_CFI</td></tr>
+        <tr><td>vlanId</td><td>\ref Parse_VLanId</td></tr>
+        <tr><td>type</td><td>\ref Parse_Type</td></tr>
+        </table>
+
+        \see EthVLanPacketType
+     */
     struct Parse_EthVLan : public PacketParserBase
     {
         SENF_PACKET_PARSER_INIT(Parse_EthVLan);
@@ -124,6 +182,19 @@ namespace senf {
             ((Field       )( type,     Parse_Type     )) );
     };
 
+    /** \brief Ethernet VLAN tag
+
+        \par Packet type (typedef):
+            \ref EthVLanPacket
+
+        \par Fields:
+            \ref Parse_EthVLan
+
+        \par Associated registries:
+            \ref EtherTypes
+
+        \ingroup protocolbundle_default
+     */
     struct EthVLanPacketType
         : public PacketTypeBase, 
           public PacketTypeMixin<EthVLanPacketType, EtherTypes>
@@ -145,9 +216,8 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
 
+    /** \brief Ethernet VLAN tag typedef */
     typedef EthVLanPacketType::packet EthVLanPacket;
-
-    ///@}
 }
 
 

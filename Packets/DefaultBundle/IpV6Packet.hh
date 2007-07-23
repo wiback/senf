@@ -33,10 +33,25 @@
 
 namespace senf {
 
-    ///\addtogroup protocolbundle_default
-    ///@{
+    /** \brief Parse an IpV6 packet
 
-    // See RFC2460
+        Parser implementing the IpV6 header. The fields implemented are:
+
+        <table class="senf">
+            <tr><th>Field name</th><th>Parser type</th></tr>
+            <tr><td>version</td><td>\ref Parse_Version</td></tr>
+            <tr><td>trafficClass</td><td>\ref Parse_Class</td></tr>
+            <tr><td>flowLabel</td><td>\ref Parse_FlowLabel</td></tr>
+            <tr><td>length</td><td>\ref Parse_16bit</td></tr>
+            <tr><td>nextHeader</td><td>\ref Parse_8bit</td></tr>
+            <tr><td>hopLimit</td><td>\ref Parse_8bit</td></tr>
+            <tr><td>source</td><td>\ref Parse_Addr</td></tr>
+            <tr><td>destination</td><td>\ref Parse_Addr</td></tr>
+        </table>
+
+        \see IpV6PacketType \n
+            <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
+     */
     struct Parse_IpV6 : public PacketParserBase
     {
         SENF_PACKET_PARSER_NO_INIT(Parse_IpV6);
@@ -66,6 +81,19 @@ namespace senf {
         }
     };
 
+    /** \brief IpV6 packet
+
+        \par Packet type (typedef):
+            \ref IpV6Packet
+        
+        \par Fields:
+            \ref Parse_IpV6
+
+        \par Associated registries:
+            \ref IpTypes
+
+        \ingroup protocolbundle_default
+     */
     struct IpV6PacketType
         : public PacketTypeBase,
           public PacketTypeMixin<IpV6PacketType, IpTypes>
@@ -85,6 +113,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
 
+    /** \brief IpV6 packet typedef */
     typedef IpV6PacketType::packet IpV6Packet;
 
     ///@}

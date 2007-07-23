@@ -31,10 +31,21 @@
 
 namespace senf {
 
-    ///\addtogroup protocolbundle_default
-    ///@{
+    /** \brief Parse a UDP packet
 
-    // See RFC768
+        Parser implementing the UDP header. The fields implemented are:
+
+        <table class="senf">
+            <tr><th>Field name</th><th>Parser type</th></tr>
+            <tr><td>source</td><td>\ref Parse_16bit</td></tr>
+            <tr><td>destination</td><td>\ref Parse_16bit</td></tr>
+            <tr><td>length</td><td>\ref Parse_16bit</td></tr>
+            <tr><td>crc</td><td>\ref Parse_16bit</td></tr>
+        </table>
+
+        \see UDPPacketType
+            <a href="http://tools.ietf.org/html/rfc768">RFC 768</a>
+     */
     struct Parse_UDP : public PacketParserBase
     {
         SENF_PACKET_PARSER_INIT(Parse_UDP);
@@ -50,6 +61,16 @@ namespace senf {
             ((Field)( crc,         Parse_16bit )) );
     };
 
+    /** \brief UDP packet
+        
+        \par Packet type (typedef):
+            \ref UDPPacket
+
+        \par Fields:
+            \ref Parse_UDP
+
+        \ingroup protocolbundle_default
+     */
     struct UDPPacketType
         : public PacketTypeBase,
           public PacketTypeMixin<UDPPacketType>
@@ -65,9 +86,8 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
 
+    /** \brief UDP packet typedef */
     typedef UDPPacketType::packet UDPPacket;
-
-    ///@}
 }
 
 

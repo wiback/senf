@@ -20,17 +20,21 @@
 
 /** \mainpage The Default Bundle
 
-    The default bundle combines a set of basic low level protocols like Ethernet or IP. You can find
-    the list of implemented protocols at \ref protocolbundle_default (see the list of typedefs)
+    The default bundle combines a set of basic low level protocols like Ethernet or IP. Find the
+    list of protocols implemented at \ref protocolbundle_default
  */
 
-/** \defgroup protocolbundle_default Protocols of the default bundle
+/** \defgroup protocolbundle_default Protocols contained in the DefaultBundle
 
     Each protocol consists of several objects
 
     \li The packet \c typedef symbol. This is the only object explicitly accessed from the outside
     \li The associated parser object. This is, where the field names are documented
     \li The internal packet type object
+
+    Below you find a list of the internal packet type object for each of the implemented
+    protocols. You will never use this type directly, however the documentation will reference the
+    packet typedef to use and will document the parser used to parse the packet's fields.
  */
 
 
