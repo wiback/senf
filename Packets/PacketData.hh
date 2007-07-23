@@ -109,9 +109,14 @@ namespace senf {
         // only academic since what should an empty packet be good for ?
         void insert(iterator pos, byte v);
         void insert(iterator pos, size_type n, byte v);
+#       ifndef DOXYGEN
         template <class InputIterator>
         void insert(iterator pos, InputIterator f, InputIterator l,
                     typename boost::disable_if< boost::is_convertible<InputIterator,size_type> >::type * = 0);
+#       else
+        template <class InputIterator>
+        void insert(iterator pos, InputIterator f, InputIterator l);
+#       endif
 
         void erase(iterator pos);
         void erase(iterator first, iterator last);

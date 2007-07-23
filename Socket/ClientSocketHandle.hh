@@ -170,9 +170,13 @@ namespace senf {
         */
         std::string  read         (unsigned limit=0);
         template <class ForwardWritableRange>
+#       ifndef DOXYGEN
         typename boost::range_iterator<ForwardWritableRange>::type
                      read         (ForwardWritableRange const & range,
                                    typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type * = 0);
+#       else
+        typename boost::range_iterator<ForwardWritableRange>::type
+                     read         (ForwardWritableRange const & range);
                                         ///< Read data into range
                                         /**< Read data into the given range. At most
                                              <tt>boost::size(range)</tt> characters are read. The
@@ -185,6 +189,7 @@ namespace senf {
                                                  last read character 
                                              \see \ref read() \n
                                                   <a href="http://www.boost.org/libs/range/index.html">Boost.Range</a> */
+#       endif
         template <class ForwardWritableRange>
         typename boost::range_iterator<ForwardWritableRange>::type
                      read         (ForwardWritableRange & range,

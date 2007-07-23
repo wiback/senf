@@ -96,9 +96,14 @@ namespace senf {
         // This is for sending packets ..
         // We must use enable_if here, so this constructor will not hide
         // above constructor if passed a plain int or short argument
+#       ifndef DOXYGEN
         template <class ForwardRange>
         explicit LLSocketAddress(ForwardRange const & address, std::string interface="",
                                  typename boost::enable_if_c<! boost::is_integral<ForwardRange>::value >::type * = 0);
+#       else
+        template <class ForwardRange>
+        explicit LLSocketAddress(ForwardRange const & address, std::string interface="");
+#       endif
 
         void clear();
 

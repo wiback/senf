@@ -261,9 +261,14 @@ namespace senf {
         void insert(iterator pos, Value const & t);
         template <class Value>
         void insert(iterator pos, size_type n, Value const & t);
+#       ifndef DOXYGEN
         template <class ForwardIterator>
         void insert(iterator pos, ForwardIterator f, ForwardIterator l,
                     typename boost::disable_if< boost::is_convertible<ForwardIterator,size_type> >::type * = 0);
+#       else
+        template <class ForwardIterator>
+        void insert(iterator pos, ForwardIterator f, ForwardIterator l);
+#       endif
 
         void erase(iterator pos, size_type n=1);
         void erase(iterator f, iterator l);

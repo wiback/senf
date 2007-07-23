@@ -299,11 +299,16 @@ namespace senf {
 
         \ingroup packetparser
      */
+#   ifndef DOXYGEN
     template <class Parser>
     typename boost::enable_if< 
         boost::is_base_of<PacketParserBase, Parser>,
         Parser >::type
     operator<<(Parser target, Parser source);
+#   else
+    template <class Parser>
+    Parser operator<<(Parser target, Parser source);
+#   endif
 
     /** \brief Generic parser value assignment
 
