@@ -32,6 +32,7 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+#ifndef DOXYGEN
 template <class ForwardRange>
 prefix_ senf::LLSocketAddress::
 LLSocketAddress(ForwardRange const & address, std::string interface,
@@ -41,6 +42,12 @@ LLSocketAddress(ForwardRange const & address, std::string interface,
     this->address(address);
     this->interface(interface);
 }
+#else
+template <class ForwardRange>
+prefix_ senf::LLSocketAddress::
+LLSocketAddress(ForwardRange const & address, std::string interface)
+{}
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

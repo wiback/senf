@@ -79,6 +79,7 @@ prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::insert(iterator 
         *j << t;
 }
 
+#ifndef DOXYGEN
 template <class ElementParser, class Sizer>
 template <class ForwardIterator>
 prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::
@@ -88,6 +89,13 @@ insert(iterator pos, ForwardIterator f, ForwardIterator l,
     for (iterator j (shift(pos,std::distance(f,l))); f!=l; ++f,++j)
         *j << *f;
 }
+#else
+template <class ElementParser, class Sizer>
+template <class ForwardIterator>
+prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::
+insert(iterator pos, ForwardIterator f, ForwardIterator l)
+{}
+#endif
 
 template <class ElementParser, class Sizer>
 prefix_ void senf::Parse_Vector_Container<ElementParser,Sizer>::resize(size_type n)

@@ -33,6 +33,7 @@
 
 // Modifying the raw packet data
 
+#ifndef DOXYGEN
 template <class InputIterator>
 prefix_ void senf::PacketData::
 insert(iterator pos, InputIterator f, InputIterator l,
@@ -40,6 +41,12 @@ insert(iterator pos, InputIterator f, InputIterator l,
 {
      impl().insert(this,pos,f,l);
 }
+#else
+template <class InputIterator>
+prefix_ void senf::PacketData::
+insert(iterator pos, InputIterator f, InputIterator l)
+{}
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

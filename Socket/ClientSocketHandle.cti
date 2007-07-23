@@ -138,6 +138,7 @@ senf::ClientSocketHandle<Policy>::operator=(ClientSocketHandle<OtherPolicy> othe
 
 // senf::ClientSocketHandle<Policy>::read
 
+#ifndef DOXYGEN
 template <class Policy>
 template <class ForwardWritableRange>
 prefix_ typename boost::range_iterator<ForwardWritableRange>::type
@@ -153,6 +154,14 @@ read(ForwardWritableRange const & range,
         >::value && sizeof(typename boost::range_value<ForwardWritableRange>::type)==sizeof(char)
         >::read(*this, range);
 }
+#else
+template <class Policy>
+template <class ForwardWritableRange>
+prefix_ typename boost::range_iterator<ForwardWritableRange>::type
+senf::ClientSocketHandle<Policy>::
+read(ForwardWritableRange const & range)
+{}
+#endif
 
 template <class Policy>
 template <class ForwardWritableRange>

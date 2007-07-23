@@ -99,6 +99,7 @@ prefix_ void senf::Parse_List_Container<ListPolicy>::insert(iterator pos,
     }
 }
 
+#ifndef DOXYGEN
 template <class ListPolicy>
 template <class ForwardIterator>
 prefix_ void senf::Parse_List_Container<ListPolicy>::
@@ -116,6 +117,13 @@ insert(iterator pos, ForwardIterator f, ForwardIterator l,
         sp += senf::bytes(value_type(sp,state()));
     }
 }
+#else
+template <class ListPolicy>
+template <class ForwardIterator>
+prefix_ void senf::Parse_List_Container<ListPolicy>::
+insert(iterator pos, ForwardIterator f, ForwardIterator l)
+{}
+#endif
 
 template <class ListPolicy>
 prefix_ void senf::Parse_List_Container<ListPolicy>::erase(iterator pos,

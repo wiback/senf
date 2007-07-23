@@ -287,6 +287,13 @@ namespace senf {
     struct init_bytes : public detail::ParserInitBytes<Parser>
     {};
 
+#   ifndef DOXYGEN
+    template <class Parser>
+    typename boost::enable_if< 
+        boost::is_base_of<PacketParserBase, Parser>,
+        Parser >::type
+    operator<<(Parser target, Parser source);
+#   else
     /** \brief Generic parser copying
 
         This operator allows to copy the values of identical parsers. This operation does \e not
@@ -299,17 +306,18 @@ namespace senf {
 
         \ingroup packetparser
      */
-#   ifndef DOXYGEN
-    template <class Parser>
-    typename boost::enable_if< 
-        boost::is_base_of<PacketParserBase, Parser>,
-        Parser >::type
-    operator<<(Parser target, Parser source);
-#   else
     template <class Parser>
     Parser operator<<(Parser target, Parser source);
 #   endif
 
+#   ifndef DOXYGEN
+    template <class Parser, class Value>
+    typename boost::enable_if_c < 
+        boost::is_base_of<PacketParserBase, Parser>::value 
+            && ! boost::is_base_of<PacketParserBase, Value>::value,
+        Parser >::type
+    operator<<(Parser target, Value const & value);
+#   else 
     /** \brief Generic parser value assignment
 
         This operator allows to assign a value to parsers which implement a <tt>value(</tt>\a
@@ -319,11 +327,8 @@ namespace senf {
         \ingroup packetparser
      */
     template <class Parser, class Value>
-    typename boost::enable_if_c < 
-        boost::is_base_of<PacketParserBase, Parser>::value 
-            && ! boost::is_base_of<PacketParserBase, Value>::value,
-        Parser >::type
-    operator<<(Parser target, Value const & value);
+    Parser operator<<(Parser target, Value const & value);
+#   endif
 
     /** \defgroup packetparsermacros Helper macros for defining new packet parsers
         

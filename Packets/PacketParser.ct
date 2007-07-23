@@ -28,6 +28,7 @@
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
+#ifndef DOXYGEN
 template <class Parser>
 prefix_ typename boost::enable_if< 
         boost::is_base_of<senf::PacketParserBase, Parser>,
@@ -45,6 +46,11 @@ prefix_ typename boost::enable_if<
                PacketParserBase::data_iterator(new_target.i()) );
     return new_target;
 }
+#else
+template <class Parser>
+prefix_ Parser senf::operator<<(Parser target, Parser source)
+{}
+#endif
 
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
