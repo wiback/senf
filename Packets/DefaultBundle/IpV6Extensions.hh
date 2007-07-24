@@ -36,30 +36,20 @@ namespace senf {
         
         Parser implementing the IpV6 fragment extension. The fields implemented are:
 
-        <table class="senf">
-            <tr><th>Field name</th><th>Parser type</th></tr>
-            <tr><td>nextHeader</td><td>\ref Parse_8bit</td></tr>
-            <tr><td>reserved1</td><td>\ref Parse_8bit</td></tr>
-            <tr><td>fragmentOffset</td><td>\ref Parse_Offset</td></tr>
-            <tr><td>reserved2</td><td>\ref Parse_Reserved</td></tr>
-            <tr><td>moreFragments</td><td>\ref Parse_More</td></tr>
-            <tr><td>id</td><td>\ref Parse_32bit</td></tr>
-        </table>
-
         \see IpV6ExtensionType_Fragment \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
     struct Parse_IpV6Extension_Fragment : public PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(Parse_IpV6Extension_Fragment);
-
-        ///////////////////////////////////////////////////////////////////////////
-
         typedef Parse_UInt8                Parse_8bit;
         typedef Parse_UIntField <  0, 13 > Parse_Offset;
         typedef Parse_UIntField < 13, 15 > Parse_Reserved;
         typedef Parse_Flag      < 15     > Parse_More;
         typedef Parse_UInt32               Parse_32bit;
+
+#       ifndef DOXYGEN
+
+        SENF_PACKET_PARSER_INIT(Parse_IpV6Extension_Fragment);
 
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
             ((Field       )( nextHeader     , Parse_8bit     ))
@@ -68,6 +58,17 @@ namespace senf {
             ((OverlayField)( reserved2      , Parse_Reserved ))
             ((Field       )( moreFragments  , Parse_More     ))
             ((Field       )( id             , Parse_32bit    )) );
+
+#       else
+
+        Parse_8bit nextHeader();
+        Parse_8bit reserved1();
+        Parse_Offset fragmentOffset();
+        Parse_Reserved reserved2();
+        Parse_More moreFragments();
+        Parse_32bit id();
+
+#       endif
     };
 
     /** \brief IpV6 fragment extension

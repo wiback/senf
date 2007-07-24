@@ -35,30 +35,31 @@ namespace senf {
 
         Parser implementing the UDP header. The fields implemented are:
 
-        <table class="senf">
-            <tr><th>Field name</th><th>Parser type</th></tr>
-            <tr><td>source</td><td>\ref Parse_16bit</td></tr>
-            <tr><td>destination</td><td>\ref Parse_16bit</td></tr>
-            <tr><td>length</td><td>\ref Parse_16bit</td></tr>
-            <tr><td>crc</td><td>\ref Parse_16bit</td></tr>
-        </table>
-
         \see UDPPacketType
             <a href="http://tools.ietf.org/html/rfc768">RFC 768</a>
      */
     struct Parse_UDP : public PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(Parse_UDP);
-
-        ///////////////////////////////////////////////////////////////////////////
-
         typedef Parse_UInt16 Parse_16bit;
+
+#       ifndef DOXYGEN
+
+        SENF_PACKET_PARSER_INIT(Parse_UDP);
 
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
             ((Field)( source,      Parse_16bit ))
             ((Field)( destination, Parse_16bit ))
             ((Field)( length,      Parse_16bit ))
             ((Field)( crc,         Parse_16bit )) );
+
+#       else
+
+        Parse_16bit source();
+        Parse_16bit destination();
+        Parse_16bit length();
+        Parse_16bit crc();
+
+#       endif
     };
 
     /** \brief UDP packet

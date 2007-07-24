@@ -35,24 +35,6 @@ namespace senf {
 
         Parser implementing the IpV4 header. The fields implemented are:
 
-        <table class="senf">
-            <tr><th>Field name</th><th>Parser type</th></tr>
-            <tr><td>version</td><td>\ref Parse_Version</td></tr>
-            <tr><td>ihl</td><td>\ref Parse_IHL</td></tr>
-            <tr><td>tos</td><td>\ref Parse_8bit</td></tr>
-            <tr><td>length</td><td>\ref Parse_16bit</td></tr>
-            <tr><td>identifier</td><td>\ref Parse_16bit</td></tr>
-            <tr><td>reserved</td><td>\ref Parse_R</td></tr>
-            <tr><td>df</td><td>\ref Parse_DF</td></tr>
-            <tr><td>mf</td><td>\ref Parse_MF</td></tr>
-            <tr><td>frag</td><td>\ref Parse_Frag</td></tr>
-            <tr><td>ttl</td><td>\ref Parse_8bit</td></tr>
-            <tr><td>protocol</td><td>\ref Parse_8bit</td></tr>
-            <tr><td>crc</td><td>\ref Parse_16bit</td></tr>
-            <tr><td>source</td><td>\ref Parse_32bit</td></tr>
-            <tr><td>destination</td><td>\ref Parse_32bit</td></tr>
-        </table>
-
         \see IpV4PacketType \n
             <a href="http://tools.ietf.org/html/rfc791">RFC 791</a>
 
@@ -60,10 +42,6 @@ namespace senf {
      */
     struct Parse_IpV4 : public PacketParserBase
     {
-        SENF_PACKET_PARSER_NO_INIT(Parse_IpV4);
-
-        ///////////////////////////////////////////////////////////////////////////
-
         typedef Parse_UIntField <  0,  4 > Parse_Version;
         typedef Parse_UIntField <  4,  8 > Parse_IHL;
         typedef Parse_UInt8                Parse_8bit;
@@ -73,6 +51,10 @@ namespace senf {
         typedef Parse_Flag      <  2     > Parse_MF;
         typedef Parse_UIntField <  3, 16 > Parse_Frag;
         typedef Parse_UInt32               Parse_32bit;
+
+#       ifndef DOXYGEN
+
+        SENF_PACKET_PARSER_NO_INIT(Parse_IpV4);
 
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
             ((OverlayField)( version,     Parse_Version ))
@@ -89,6 +71,25 @@ namespace senf {
             ((Field       )( crc,         Parse_16bit   ))
             ((Field       )( source,      Parse_32bit   ))
             ((Field       )( destination, Parse_32bit   )) );
+
+#       else
+
+        Parse_Version version();
+        Parse_IHL ihl();
+        Parse_8bit tos();
+        Parse_16bit length();
+        Parse_16bit identifier();
+        Parse_R reserved();
+        Parse_DF df();
+        Parse_MF mf();
+        Parse_Frag frag();
+        Parse_8bit ttl();
+        Parse_8bit protocol();
+        Parse_16bit crc();
+        Parse_32bit source();
+        Parse_32bit destination();
+
+#       endif
 
         void init() {
             version() = 4;

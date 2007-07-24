@@ -37,27 +37,11 @@ namespace senf {
 
         Parser implementing the IpV6 header. The fields implemented are:
 
-        <table class="senf">
-            <tr><th>Field name</th><th>Parser type</th></tr>
-            <tr><td>version</td><td>\ref Parse_Version</td></tr>
-            <tr><td>trafficClass</td><td>\ref Parse_Class</td></tr>
-            <tr><td>flowLabel</td><td>\ref Parse_FlowLabel</td></tr>
-            <tr><td>length</td><td>\ref Parse_16bit</td></tr>
-            <tr><td>nextHeader</td><td>\ref Parse_8bit</td></tr>
-            <tr><td>hopLimit</td><td>\ref Parse_8bit</td></tr>
-            <tr><td>source</td><td>\ref Parse_Addr</td></tr>
-            <tr><td>destination</td><td>\ref Parse_Addr</td></tr>
-        </table>
-
         \see IpV6PacketType \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
     struct Parse_IpV6 : public PacketParserBase
     {
-        SENF_PACKET_PARSER_NO_INIT(Parse_IpV6);
-
-        ///////////////////////////////////////////////////////////////////////////
-
         typedef Parse_UIntField <  0,  4 > Parse_Version;
         typedef Parse_UIntField <  4, 12 > Parse_Class;
         typedef Parse_UIntField < 12, 32 > Parse_FlowLabel;
@@ -65,6 +49,10 @@ namespace senf {
         typedef Parse_UInt16               Parse_16bit;
 
         typedef Parse_Array < 16, Parse_8bit > Parse_Addr;
+
+#       ifndef DOXYGEN
+
+        SENF_PACKET_PARSER_NO_INIT(Parse_IpV6);
 
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
             ((OverlayField)( version,      Parse_Version   ))
@@ -75,6 +63,19 @@ namespace senf {
             ((Field       )( hopLimit,     Parse_8bit      ))
             ((Field       )( source,       Parse_Addr      ))
             ((Field       )( destination,  Parse_Addr      )) );
+
+#       else
+
+        Parse_Version version();
+        Parse_Class trafficClass();
+        Parse_FlowLabel flowLabel();
+        Parse_16bit length();
+        Parse_8bit nextHeader();
+        Parse_8bit hopLimit();
+        Parse_Addr source();
+        Parse_Addr destination();
+
+#       endif
 
         void init() {
             version() = 6;

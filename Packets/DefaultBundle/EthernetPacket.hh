@@ -76,29 +76,30 @@ namespace senf {
     
     /** \brief Parse an Ethernet packet
 
-        Parser implementing an ethernet header. The fields implemented are
-
-        <table class="senf">
-        <tr> <th>Field name</th>  <th>Parser type</th>     </tr>
-        <tr> <td>destination</td> <td>\ref Parse_MAC</td>  </tr>
-        <tr> <td>source</td>      <td>\ref Parse_MAC</td>  </tr>
-        <tr> <td>type</td>        <td>\ref Parse_Type</td> </tr>
-        </table>
+        Parser implementing an ethernet header.
 
         \see EthernetPacketType
      */
     struct Parse_Ethernet : public PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(Parse_Ethernet);
-
-        ///////////////////////////////////////////////////////////////////////////
-
         typedef Parse_UInt16                      Parse_Type;
+
+#       ifndef DOXYGEN
+
+        SENF_PACKET_PARSER_INIT(Parse_Ethernet);
 
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
             ((Field)( destination, Parse_MAC  ))
             ((Field)( source,      Parse_MAC  ))
             ((Field)( type,        Parse_Type )) );
+
+#       else
+
+        Parse_MAC destination();
+        Parse_MAC source();
+        Parse_Type type();
+
+#       endif
     };
 
     /** \brief EtherType registry
@@ -154,32 +155,33 @@ namespace senf {
         
         Parser interpreting the ethernet VLAN tag. Fields are
 
-        <table class="senf">
-        <tr> <th>Field name</th><th>Parser type</th></tr>
-        <tr><td>priority</td><td>\ref Parse_Priority</td></tr>
-        <tr><td>cfi</td><td>\ref Parse_CFI</td></tr>
-        <tr><td>vlanId</td><td>\ref Parse_VLanId</td></tr>
-        <tr><td>type</td><td>\ref Parse_Type</td></tr>
-        </table>
-
         \see EthVLanPacketType
      */
     struct Parse_EthVLan : public PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(Parse_EthVLan);
-
-        ///////////////////////////////////////////////////////////////////////////
-
         typedef Parse_UIntField < 0,  3 > Parse_Priority;
         typedef Parse_Flag          < 3 > Parse_CFI;
         typedef Parse_UIntField < 4, 16 > Parse_VLanId;
         typedef Parse_UInt16              Parse_Type;
+
+#       ifndef DOXYGEN
+
+        SENF_PACKET_PARSER_INIT(Parse_EthVLan);
 
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
             ((OverlayField)( priority, Parse_Priority ))
             ((OverlayField)( cfi,      Parse_CFI      ))
             ((Field       )( vlanId,   Parse_VLanId   ))
             ((Field       )( type,     Parse_Type     )) );
+
+#       else
+
+        Parse_Priority priority();
+        Parse_CFI cfi();
+        Parse_VLanId vlanId();
+        Parse_Type type();
+
+#       endif
     };
 
     /** \brief Ethernet VLAN tag
