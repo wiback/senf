@@ -34,14 +34,15 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
-    ///\addtogroup protocolbundle_mpegdvb
-    ///@{
-    
+
+    /** \brief Parse a UDP packet
+
+        Parser implementing the header of a MPEG Transport Stream Packet.
+        
+        \see TransportPacketType
+     */
     struct Parse_TransportPacket : public PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(Parse_TransportPacket);
-        
         typedef Parse_Flag      <     0 > Parse_tei; // transport_error_indicator
         typedef Parse_Flag      <     1 > Parse_pusi; // payload_unit_start_indicator
         typedef Parse_Flag      <     2 > Parse_transportPrio;  // transport_priority
@@ -50,10 +51,12 @@ namespace senf {
         typedef Parse_UIntField < 2,  4 > Parse_adaptCtrl; // adaptation_field_control
         typedef Parse_UIntField < 4,  8 > Parse_contCounter; // continuity_counter
     
-        ///////////////////////////////////////////////////////////////////////////
-                
+#       ifndef DOXYGEN
+        
+        SENF_PACKET_PARSER_INIT(Parse_TransportPacket);
+        
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((Field       ) ( syncByte,                  Parse_UInt8         )) 
+            ((Field       ) ( sync_byte,                 Parse_UInt8         )) 
             ((OverlayField) ( transport_error_indicator, Parse_tei           ))
             ((OverlayField) ( pusi,                      Parse_pusi          ))
             ((OverlayField) ( transport_priority,        Parse_transportPrio ))
@@ -63,8 +66,34 @@ namespace senf {
             ((Field       ) ( continuity_counter,        Parse_contCounter   ))      
         );
         
+#       else
+        
+        Parse_UInt8         sync_byte() const;
+        Parse_tei           transport_error_indicator() const;
+        Parse_pusi          pusi() const;
+        Parse_transportPrio transport_priority() const;
+        Parse_pid           pid() const;
+        Parse_tsc           transport_scrmbl_ctrl() const;
+        Parse_adaptCtrl     adaptation_field_ctrl() const;
+        Parse_contCounter   continuity_counter() const;
+
+#       endif
+        
+//        Parse_UInt8 payload_pointer() const {
+//            return parse<Parse_UInt8>( Parse_TransportPacket::fixed_bytes ); 
+//        }
     };
     
+    /** \brief Transport Stream packet
+        
+        \par Packet type (typedef):
+            \ref TransportPacket
+
+        \par Fields:
+            \ref Parse_TransportPacket
+
+        \ingroup protocolbundle_mpegdvb
+     */
     struct TransportPacketType
         : public PacketTypeBase,
           public PacketTypeMixin<TransportPacketType>
@@ -80,10 +109,9 @@ namespace senf {
         
         static void dump(packet p, std::ostream & os);
     };
-        
-    typedef TransportPacketType::packet TransportPacket;
     
-    ///@}
+    /** \brief Transport packet typedef */
+    typedef TransportPacketType::packet TransportPacket;
   
 }
 

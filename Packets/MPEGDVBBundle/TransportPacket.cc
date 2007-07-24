@@ -35,7 +35,7 @@ prefix_ void senf::TransportPacketType::dump(packet p, std::ostream & os)
 {
     os << "TransportPacket:\n"
        << std::hex
-       << "  syncByte: 0x" << unsigned(p->syncByte()) << "\n"
+       << "  syncByte: 0x" << unsigned(p->sync_byte()) << "\n"
        << "  transport_error_indicator: 0x" << unsigned(p->transport_error_indicator()) << "\n"
        << "  payload_unit_start_indicator (pusi): 0x" << unsigned(p->pusi()) << "\n"
        << "  transport_priority: 0x" << unsigned(p->transport_priority()) << "\n"
@@ -45,6 +45,8 @@ prefix_ void senf::TransportPacketType::dump(packet p, std::ostream & os)
        << "  transport_scrambling_control: 0x" << unsigned(p->transport_scrmbl_ctrl()) << "\n"
        << "  adaptation_field_control: 0x" << unsigned(p->adaptation_field_ctrl()) << "\n"
        << "  continuity_counter: 0x" << unsigned(p->continuity_counter()) << "\n";
+//    if (p->pusi())
+//        os << "  payload_pointer: 0x" << unsigned(p->payload_pointer()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

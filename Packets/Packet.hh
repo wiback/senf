@@ -354,7 +354,7 @@ namespace senf {
         factory_t factory() const;      ///< Return factory instance of \c this packet
                                         /**< The returned factory instance can be used to create new
                                              packets of the given type without knowing the concrete
-                                             type of the packet. The valid may be stored away for
+                                             type of the packet. The value may be stored away for
                                              later use if needed. */
         
         ///@}
