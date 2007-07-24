@@ -28,10 +28,10 @@
 #define HH_GenericAddressingPolicy_ 1
 
 // Custom includes
-#include "SocketHandle.hh"
-#include "FileHandle.hh"
-#include "SocketPolicy.hh"
-#include "CommunicationPolicy.hh"
+#include "Socket/SocketHandle.hh"
+#include "Socket/FileHandle.hh"
+#include "Socket/SocketPolicy.hh"
+#include "Socket/CommunicationPolicy.hh"
 
 //#include "GenericAddressingPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

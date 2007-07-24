@@ -35,8 +35,8 @@
 #include <sys/socket.h>
 #include <netpacket/packet.h>
 
-#include "SocketPolicy.hh"
-#include "FileHandle.hh"
+#include "Socket/SocketPolicy.hh"
+#include "Socket/FileHandle.hh"
 #include "GenericAddressingPolicy.hh"
 
 //#include "LLAddressing.mpp"

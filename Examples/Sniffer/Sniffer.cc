@@ -29,7 +29,7 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
-#include "Socket/PacketSocketHandle.hh"
+#include "Socket/Protocols/PacketSocketHandle.hh"
 #include "Scheduler/Scheduler.hh"
 #include "Utils/membind.hh"
 #include "Packets/DefaultBundle/EthernetPacket.hh"

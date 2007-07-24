@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -20,33 +20,71 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include <string>
-#include <iostream>
-#include "Socket/Protocols/DVB/DVBFrontendHandle.hh"
+/** \file
+    \brief xxx
+ */
 
+#include "DVBFrontendHandle.hh"
+//#include "DVBFrontendHandle.ih"
+
+// Custom includes
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <iostream>
+#include <string>
+#include <sys/ioctl.h>
+#include <linux/sockios.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include "Socket/SocketHandle.hh"
+
+#include "Utils/Exception.hh"
+
+//#include "DVBFrontendHandle.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-int main(int argc, char const * argv[])
+///////////////////////////////////////////////////////////////////////////
+// senf::DVBFrontendHandle
+
+prefix_ void senf::DVBFrontendProtocol::init_client()
+    const
 {
-    try {
-        senf::DVBFrontendHandle handle;
-        int16_t strength;
-        
-        while (true) {
-            handle.protocol().signalStrength(&strength);
-            std::cout << "signal strength: " << strength << "\n";
-            sleep(1);
-        }
-    }
-    catch (std::exception const & ex) {
-        std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
-    }
+    int fd = open("/dev/dvb/adapter0/frontend0", O_RDONLY | O_NONBLOCK);
+    if (fd < 0)
+        throw SystemException(errno);
+    body().fd(fd);
+}
+
+prefix_ unsigned senf::DVBFrontendProtocol::available()
+    const
+{
     return 0;
+}
+
+prefix_ bool senf::DVBFrontendProtocol::eof()
+    const
+{
+    return false;
+}
+
+prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBFrontendProtocol::clone()
+    const
+{
+    return std::auto_ptr<SocketProtocol>(new DVBFrontendProtocol());
+}
+
+
+prefix_ void senf::DVBFrontendProtocol::signalStrength(int16_t *strength)
+    const
+{
+    if (::ioctl(body().fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)
+        throw SystemException(errno);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "DVBFrontendHandle.mpp"
 
 
 // Local Variables:

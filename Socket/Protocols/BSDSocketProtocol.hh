@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <sys/time.h>
-#include "SocketProtocol.hh"
+#include "Socket/SocketProtocol.hh"
 
 //#include "BSDSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -29,8 +29,8 @@
 #include <iostream>
 #include "Scheduler/Scheduler.hh"
 #include "Utils/membind.hh"
-#include "Socket/TCPSocketHandle.hh"
-#include "Socket/INetAddressing.hh"
+#include "Socket/Protocols/INet/TCPSocketHandle.hh"
+#include "Socket/Protocols/INet/INetAddressing.hh"
 
 
 class Server

@@ -2,17 +2,24 @@
 
 Import('env')
 import SENFSCons
+import glob
 
 ###########################################################################
 
-sources = SENFSCons.GlobSources()
+sources, testSources = SENFSCons.GlobSources()
 
 SENFSCons.StandardTargets(env)
 
+subob = []
+for sc in glob.glob("*/SConscript"):
+    ob = SConscript(sc)
+    if ob : subob.extend(ob)
+
 SENFSCons.Lib(env,
-             library = 'Socket',
-             sources = sources,
-             LIBS = [ 'Utils' ])
+              library = 'Socket',
+              sources = sources + subob,
+              testSources = testSources,
+              LIBS = [ 'Utils' ])
 
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('SocketLibrary-classes.dia'),

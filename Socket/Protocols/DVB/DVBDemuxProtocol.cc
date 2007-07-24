@@ -24,67 +24,51 @@
     \brief xxx
  */
 
-#include "DVBFrontendHandle.hh"
-//#include "DVBFrontendHandle.ih"
+#include "DVBDemuxProtocol.hh"
+//#include "DVBDemuxProtocol.ih"
 
 // Custom includes
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <iostream>
 #include <string>
 #include <sys/ioctl.h>
 #include <linux/sockios.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include "SocketHandle.hh"
+#include "Socket/SocketHandle.hh"
 
-#include "Utils/Exception.hh"
-
-//#include "DVBFrontendHandle.mpp"
+//#include "DVBDemuxProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::DVBFrontendHandle
-
-prefix_ void senf::DVBFrontendProtocol::init_client()
+prefix_ void senf::DVBDemuxProtocol::setBufferSize(unsigned long size)
     const
 {
-    int fd = open("/dev/dvb/adapter0/frontend0", O_RDONLY | O_NONBLOCK);
-    if (fd < 0)
+    if (::ioctl(body().fd(), DMX_SET_BUFFER_SIZE, size) < 0)
         throw SystemException(errno);
-    body().fd(fd);
 }
 
-prefix_ unsigned senf::DVBFrontendProtocol::available()
+prefix_ void senf::DVBDemuxProtocol::startFiltering()
     const
 {
-    return 0;
+    if (::ioctl(body().fd(), DMX_START) < 0)
+        throw SystemException(errno);
 }
 
-prefix_ bool senf::DVBFrontendProtocol::eof()
+prefix_ void senf::DVBDemuxProtocol::stopFiltering()
+    const
+{
+    if (::ioctl(body().fd(), DMX_STOP) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ bool senf::DVBDemuxProtocol::eof()
     const
 {
     return false;
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBFrontendProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new DVBFrontendProtocol());
-}
-
-
-prefix_ void senf::DVBFrontendProtocol::signalStrength(int16_t *strength)
-    const
-{
-    if (::ioctl(body().fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)
-        throw SystemException(errno);
-}
-
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "DVBFrontendHandle.mpp"
+//#include "DVBDemuxProtocol.mpp"
 
 
 // Local Variables:

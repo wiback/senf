@@ -28,7 +28,7 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
-#include "Socket/UDPSocketHandle.hh"
+#include "Socket/Protocols/INet/UDPSocketHandle.hh"
 #include "Scheduler/Scheduler.hh"
 #include "Packets/DefaultBundle/EthernetPacket.hh"
 #include "Utils/membind.hh"

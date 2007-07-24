@@ -21,74 +21,76 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief BSDSocketProtocol non-inline non-template implementation */
+    \brief TCPProtocol non-inline non-template implementation
+ */
 
-#include "BSDSocketProtocol.hh"
-//#include "BSDSocketProtocol.ih"
+#include "TCPProtocol.hh"
+//#include "TCPProtocol.ih"
 
 // Custom includes
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/ioctl.h>
-#include "SocketHandle.hh"
+#include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
+#include "Socket/SocketHandle.hh"
 
-//#include "BSDSocketProtocol.mpp"
+//#include "TCPProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ std::pair<bool,unsigned> senf::BSDSocketProtocol::linger()
-    const
-{
-    struct linger ling;
-    socklen_t len = sizeof(ling);
-    ::memset(&ling,sizeof(ling),0);
-    if (::getsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,&len) < 0)
-        throw SystemException(errno);
-    return std::make_pair(ling.l_onoff, ling.l_linger);
-}
-
-prefix_ void senf::BSDSocketProtocol::linger(bool enable, unsigned timeout)
-    const
-{
-    struct linger ling;
-    ling.l_onoff = enable;
-    ling.l_linger = timeout;
-    if (::setsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling)) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ struct timeval senf::BSDSocketProtocol::timestamp()
-    const
-{
-    struct timeval tv;
-    if (::ioctl(body().fd(), SIOCGSTAMP, &tv) < 0)
-        throw SystemException(errno);
-    return tv;
-}
-
-///////////////////////////////////////////////////////////////////////////
-
-prefix_ bool senf::AddressableBSDSocketProtocol::reuseaddr()
+prefix_ bool senf::TCPProtocol::nodelay()
     const
 {
     int value;
     socklen_t len (sizeof(value));
-    if (::getsockopt(body().fd(),SOL_SOCKET,SO_REUSEADDR,&value,&len) < 0)
+    if (::getsockopt(body().fd(),SOL_TCP,TCP_NODELAY,&value,&len) < 0)
         throw SystemException(errno);
     return value;
 }
 
-prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
+prefix_ void senf::TCPProtocol::nodelay(bool value)
     const
 {
     int ivalue (value);
-    if (::setsockopt(body().fd(),SOL_SOCKET,SO_REUSEADDR,&ivalue,sizeof(ivalue)) < 0)
+    if (::setsockopt(body().fd(),SOL_TCP,TCP_NODELAY,&ivalue,sizeof(ivalue)) < 0)
         throw SystemException(errno);
 }
 
+prefix_ unsigned senf::TCPProtocol::siocinq()
+    const
+{
+    int n;
+    if (::ioctl(body().fd(),SIOCINQ,&n) < 0)
+        throw SystemException(errno);
+    return n;
+}
+
+prefix_ unsigned senf::TCPProtocol::siocoutq()
+    const
+{
+    int n;
+    if (::ioctl(body().fd(),SIOCOUTQ,&n) < 0)
+        throw SystemException(errno);
+    return n;
+}
+
+prefix_ unsigned senf::TCPProtocol::available()
+    const
+{
+    return siocinq();
+}
+
+prefix_ bool senf::TCPProtocol::eof()
+    const
+{
+    return body().readable() && available()==0;
+}
+
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "BSDSocketProtocol.mpp"
+//#include "TCPProtocol.mpp"
 
 
 // Local Variables:

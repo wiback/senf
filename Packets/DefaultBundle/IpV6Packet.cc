@@ -26,7 +26,7 @@
 
 // Custom includes
 #include "EthernetPacket.hh"
-#include "Socket/INetAddressing.hh"
+#include "Socket/Protocols/INet/INetAddressing.hh"
 
 //#include "IpV6Packet.mpp"
 #define prefix_

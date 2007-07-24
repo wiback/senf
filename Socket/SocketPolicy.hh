@@ -254,8 +254,6 @@
 
 // Custom includes
 
-#include "GenericSockAddr.hh"
-
 //#include "SocketPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -309,7 +307,7 @@ namespace senf {
     {
         virtual ~AddressingPolicyBase() {}
 
-        typedef GenericSockAddr Address;
+        class Address { Address(); };
     };
 
     /** \brief Policy defining the framing format

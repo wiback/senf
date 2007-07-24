@@ -33,7 +33,7 @@
 #include "Packets/DefaultBundle/EthernetPacket.hh"
 #include "Packets/MPEGDVBBundle/TransportPacket.hh"
 #include "Utils/membind.hh"
-#include "Socket/DVBDemuxHandles.hh"
+#include "Socket/Protocols/DVB/DVBDemuxHandles.hh"
 #include "Packets/ParseInt.hh"
 #include "Packets/Packet.hh"
 #include "Packets/PacketData.hh"

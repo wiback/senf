@@ -1,0 +1,19 @@
+# -*- python -*-
+
+Import('env')
+import SENFSCons, glob
+
+###########################################################################
+
+sources = SENFSCons.GlobSources()
+
+allob = []
+
+allob.extend(
+    SENFSCons.Objects( env, sources = sources, LIBS = [ 'Socket', 'Utils' ] ) )
+
+for sc in glob.glob("*/SConscript"):
+    ob = SConscript(sc)
+    if ob : allob.extend(ob)
+
+Return('allob')

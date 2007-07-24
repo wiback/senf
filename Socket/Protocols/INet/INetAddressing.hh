@@ -31,10 +31,10 @@
 #include <string>
 #include <exception>
 #include <netinet/in.h>
-#include "SocketPolicy.hh"
-#include "ClientSocketHandle.hh"
-#include "CommunicationPolicy.hh"
-#include "GenericAddressingPolicy.hh"
+#include "Socket/SocketPolicy.hh"
+#include "Socket/ClientSocketHandle.hh"
+#include "Socket/CommunicationPolicy.hh"
+#include "Socket/Protocols/GenericAddressingPolicy.hh"
 
 //#include "INetAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

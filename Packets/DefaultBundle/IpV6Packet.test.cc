@@ -26,7 +26,7 @@
 
 // Custom includes
 #include "IpV6Packet.hh"
-#include "Socket/INetAddressing.hh"
+#include "Socket/Protocols/INet/INetAddressing.hh"
 #include "Packets/DataPacket.hh"
 
 #include <boost/test/auto_unit_test.hpp>

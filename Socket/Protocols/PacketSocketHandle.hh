@@ -30,14 +30,14 @@
 #define HH_PacketSocketHandle_ 1
 
 // Custom includes
-#include "SocketPolicy.hh"
-#include "SocketProtocol.hh"
-#include "ProtocolClientSocketHandle.hh"
+#include "Socket/SocketPolicy.hh"
+#include "Socket/SocketProtocol.hh"
+#include "Socket/ProtocolClientSocketHandle.hh"
+#include "Socket/FramingPolicy.hh"
+#include "Socket/CommunicationPolicy.hh"
+#include "Socket/ReadWritePolicy.hh"
+#include "Socket/BufferingPolicy.hh"
 #include "LLAddressing.hh"
-#include "FramingPolicy.hh"
-#include "CommunicationPolicy.hh"
-#include "ReadWritePolicy.hh"
-#include "BufferingPolicy.hh"
 #include "BSDSocketProtocol.hh"
 
 //#include "PacketSocketHandle.mpp"

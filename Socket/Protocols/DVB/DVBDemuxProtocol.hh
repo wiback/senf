@@ -30,7 +30,7 @@
 #include <linux/dvb/dmx.h> 
 
 // Custom includes
-#include "SocketProtocol.hh"
+#include "Socket/SocketProtocol.hh"
 
 //#include "DVBProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -26,22 +26,22 @@ import SCons.Defaults
 import os.path
 import os
 
-def BoostUnitTests(env, target, source, test_source=None, LIBS = [], OBJECTS = [], DEPENDS = [], **kw):
+def BoostUnitTests(env, target, objects, test_sources=None, LIBS = [], OBJECTS = [], DEPENDS = [], **kw):
     path, name = os.path.split(target)
-    if test_source:
-        if type(test_source) is not type([]):
-            test_source = [ test_source ]
+    if test_sources:
+        if type(test_sources) is not type([]):
+            test_sources = [ test_sources ]
     else:
-        test_source = []
+        test_sources = []
     testEnv = env.Copy(**kw)
     testEnv.Prepend(LIBS = '$BOOSTTESTLIB')
     testEnv.Prepend(LIBS = LIBS)
-    sources = []
-    if source:
-        sources = sources + env.Object(source) + OBJECTS
-    sources = sources + test_source
+    all_objects = []
+    if not objects:
+        objects = []
+    all_objects = objects + env.Object(test_sources) + OBJECTS
     binName = os.path.join(path,'.' + name +'.bin')
-    testRunner = testEnv.Program(binName, sources)
+    testRunner = testEnv.Program(binName, all_objects)
     stamp = os.path.join(path,'.' + os.path.splitext(name)[0]+'.stamp')
     if DEPENDS:
         env.Depends(testRunner, DEPENDS)

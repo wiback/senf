@@ -21,26 +21,28 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UDPv4SocketHandle and UDPv6SocketHandle public header
+    \brief TCPv4SocketHandle and TCPv6SocketHandle public header
 
     \todo Implement possibly non-blocking connect and SO_ERROR in the
     protocol interface
  */
 
-#ifndef HH_UDPSocketHandle_
-#define HH_UDPSocketHandle_ 1
+#ifndef HH_TCPSocketHandle_
+#define HH_TCPSocketHandle_ 1
 
 // Custom includes
+#include "Utils/pool_alloc_mixin.hh"
 #include "INetProtocol.hh"
-#include "UDPProtocol.hh"
-#include "BSDSocketProtocol.hh"
-#include "FramingPolicy.hh"
-#include "CommunicationPolicy.hh"
-#include "ReadWritePolicy.hh"
-#include "BufferingPolicy.hh"
-#include "ProtocolClientSocketHandle.hh"
+#include "TCPProtocol.hh"
+#include "Socket/Protocols/BSDSocketProtocol.hh"
+#include "Socket/FramingPolicy.hh"
+#include "Socket/CommunicationPolicy.hh"
+#include "Socket/ReadWritePolicy.hh"
+#include "Socket/BufferingPolicy.hh"
+#include "Socket/ProtocolClientSocketHandle.hh"
+#include "Socket/ProtocolServerSocketHandle.hh"
 
-//#include "UDPSocketHandle.mpp"
+//#include "TCPSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -50,17 +52,18 @@ namespace senf {
 
     typedef MakeSocketPolicy<
         INet4AddressingPolicy,
-        DatagramFramingPolicy,
-        UnconnectedCommunicationPolicy,
+        StreamFramingPolicy,
+        ConnectedCommunicationPolicy,
         ReadablePolicy,
         WriteablePolicy,
         SocketBufferingPolicy
-        >::policy UDPv4Socket_Policy;   ///< Socket Policy of the UDPv4 Protocol
+        >::policy TCPv4Socket_Policy;   ///< Socket Policy of the TCPv4 Protocol
 
-    /** \brief IPv4 UDP Socket Protocol
+    /** \brief IPv4 TCP Socket Protocol
 
         \par Socket Handle typedefs:
-        \ref UDPv4ClientSocketHandle (ProtocolClientSocketHandle)
+        \ref TCPv4ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv4ServerSocketHandle
+        (ProtocolServerSocketHandle)
 
         \par Policy Interface:
         ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
@@ -70,21 +73,21 @@ namespace senf {
         \par Address Type:
         INet4Address
 
-        UDPv4SocketProtocol provides an internet protocol stream socket based on the UDP protocol
+        TCPv4SocketProtocol provides an internet protocol stream socket based on the TCP protocol
         and IPv4 addressing.
 
-        This class is utilized as the protocol class of the ProtocolClientSocketHandle
-        via the Socket Handle typedefs above.
+        This class is utilized as the protocol class of the ProtocolClientSocketHandle and
+        ProtocolServerSocketHandle via the Socket Handle typedefs above.
 
-        \see UDPv6SocketProtocol
+        \see TCPv6SocketProtocol
      */
-    class UDPv4SocketProtocol
-        : public ConcreteSocketProtocol<UDPv4Socket_Policy>,
+    class TCPv4SocketProtocol
+        : public ConcreteSocketProtocol<TCPv4Socket_Policy>,
           public IPv4Protocol,
-          public UDPProtocol,
+          public TCPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<UDPv4SocketProtocol>
+          public senf::pool_alloc_mixin<TCPv4SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -106,6 +109,21 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
+        void init_server() const;       ///< Create server socket
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+                                             constructor */
+        void init_server(INet4Address const & address, unsigned backlog=1) const;
+                                        ///< Create server socket and listen
+                                        /**< Creates a new server socket, binds to \a address end
+                                             starts listening for new connections with a backlog of
+                                             \a backlog connections. It also enables reuseaddr().
+
+                                             \param[in] address address to listen on
+                                             \param[in] backlog size of the listen backlog */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+                                             constructor */
 
         ///@}
         ///\name Abstract Interface Implementation
@@ -115,17 +133,19 @@ namespace senf {
         ///@}
     };
 
-    typedef ProtocolClientSocketHandle<UDPv4SocketProtocol> UDPv4ClientSocketHandle;
+    typedef ProtocolClientSocketHandle<TCPv4SocketProtocol> TCPv4ClientSocketHandle;
+    typedef ProtocolServerSocketHandle<TCPv4SocketProtocol> TCPv4ServerSocketHandle;
 
     typedef MakeSocketPolicy<
-        UDPv4Socket_Policy,
+        TCPv4Socket_Policy,
         INet6AddressingPolicy
-        >::policy UDPv6Socket_Policy;
+        >::policy TCPv6Socket_Policy;
 
-    /** \brief IPv6 UDP Socket Protocol
+    /** \brief IPv6 TCP Socket Protocol
 
         \par Socket Handle typedefs:
-        \ref UDPv6ClientSocketHandle (ProtocolClientSocketHandle)
+        \ref TCPv6ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv6ServerSocketHandle
+        (ProtocolServerSocketHandle)
 
         \par Policy Interface:
         ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
@@ -135,21 +155,21 @@ namespace senf {
         \par Address Type:
         INet6Address
 
-        UDPv6SocketProtocol provides an internet protocol stream socket based on the UDP protocol
+        TCPv6SocketProtocol provides an internet protocol stream socket based on the TCP protocol
         and IPv6 addressing.
 
-        This class is utilized as the protocol class of the ProtocolClientSocketHandle
-        via the Socket Handle typedefs above.
+        This class is utilized as the protocol class of the ProtocolClientSocketHandle and
+        ProtocolServerSocketHandle via the Socket Handle typedefs above.
 
-        \see UDPv4SocketProtocol
+        \see TCPv4SocketProtocol
      */
-    class UDPv6SocketProtocol
-        : public ConcreteSocketProtocol<UDPv6Socket_Policy>,
+    class TCPv6SocketProtocol
+        : public ConcreteSocketProtocol<TCPv6Socket_Policy>,
           public IPv6Protocol,
-          public UDPProtocol,
+          public TCPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<UDPv6SocketProtocol>
+          public senf::pool_alloc_mixin<TCPv6SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -171,6 +191,21 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
+        void init_server() const;       ///< Create server socket
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+                                             constructor */
+        void init_server(INet6SocketAddress const & address, unsigned backlog=1) const;
+                                        ///< Create server socket and listen
+                                        /**< Creates a new server socket, binds to \a address end
+                                             starts listening for new connections with a backlog of
+                                             \a backlog connections. It also enables reuseaddr().
+
+                                             \param[in] address address to listen on
+                                             \param[in] backlog size of the listen backlog */
+                                        /**< \note This member is implicitly called from the
+                                             ProtocolServerSocketHandle::ProtocolServerSocketHandle()
+                                             constructor */
 
         ///@}
         ///\name Abstract Interface Implementation
@@ -180,16 +215,17 @@ namespace senf {
         ///@}
     };
 
-    typedef ProtocolClientSocketHandle<UDPv6SocketProtocol> UDPv6ClientSocketHandle;
+    typedef ProtocolClientSocketHandle<TCPv6SocketProtocol> TCPv6ClientSocketHandle;
+    typedef ProtocolServerSocketHandle<TCPv6SocketProtocol> TCPv6ServerSocketHandle;
 
     /// @}
 
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "UDPSocketHandle.cci"
-//#include "UDPSocketHandle.ct"
-//#include "UDPSocketHandle.cti"
+//#include "TCPSocketHandle.cci"
+//#include "TCPSocketHandle.ct"
+//#include "TCPSocketHandle.cti"
 #endif
 
 

@@ -1,6 +1,6 @@
-// $Id$
+// $Id: main.test.cc 296 2007-07-10 20:39:34Z g0dil $
 //
-// Copyright (C) 2007
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -20,55 +20,22 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief xxx
- */
+// Definition of non-inline non-template functions
 
-#include "DVBDemuxProtocol.hh"
-//#include "DVBDemuxProtocol.ih"
+//#include "test.hh"
+//#include "test.ih"
 
 // Custom includes
-#include <sys/socket.h>
-#include <iostream>
-#include <string>
-#include <sys/ioctl.h>
-#include <linux/sockios.h>
-#include "SocketHandle.hh"
+#define BOOST_AUTO_TEST_MAIN
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-//#include "DVBDemuxProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::DVBDemuxProtocol::setBufferSize(unsigned long size)
-    const
-{
-    if (::ioctl(body().fd(), DMX_SET_BUFFER_SIZE, size) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ void senf::DVBDemuxProtocol::startFiltering()
-    const
-{
-    if (::ioctl(body().fd(), DMX_START) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ void senf::DVBDemuxProtocol::stopFiltering()
-    const
-{
-    if (::ioctl(body().fd(), DMX_STOP) < 0)
-        throw SystemException(errno);
-}
-
-prefix_ bool senf::DVBDemuxProtocol::eof()
-    const
-{
-    return false;
-}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "DVBDemuxProtocol.mpp"
 
 
 // Local Variables:

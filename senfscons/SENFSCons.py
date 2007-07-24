@@ -296,16 +296,25 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = []):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
+    if type(sources) is not type([]):
+        sources = [ sources ]
 
     objects = None
     if sources:
-        objects = env.Object(sources)
+        objects = env.Object([
+            source
+            for source in sources
+            if not str(source).endswith('.o') ]) + [
+            source
+            for source in sources
+            if str(source).endswith('.o') ]
+        
 
     if testSources:
         test = env.BoostUnitTests(
             target = 'test',
-            source = sources,
-            test_source = testSources,
+            objects = objects,
+            test_sources = testSources,
             LIBS = LIBS,
             OBJECTS = OBJECTS,
             DEPENDS = [ env.File(LibPath(x)) for x in LIBS ])

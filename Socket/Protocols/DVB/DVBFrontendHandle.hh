@@ -28,12 +28,12 @@
 #define HH_DVBFrontendHandle_ 1
 
 // Custom includes
-#include "BufferingPolicy.hh"
-#include "FramingPolicy.hh"
-#include "CommunicationPolicy.hh"
-#include "ReadWritePolicy.hh"
-#include "ProtocolClientSocketHandle.hh"
-#include "SocketProtocol.hh"
+#include "Socket/BufferingPolicy.hh"
+#include "Socket/FramingPolicy.hh"
+#include "Socket/CommunicationPolicy.hh"
+#include "Socket/ReadWritePolicy.hh"
+#include "Socket/ProtocolClientSocketHandle.hh"
+#include "Socket/SocketProtocol.hh"
 
 #include <linux/dvb/frontend.h> 
 
