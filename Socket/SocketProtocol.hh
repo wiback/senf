@@ -65,9 +65,9 @@
     protocols are implemented using a simple multiple-inheritance hierarchy as shown above.
 
     Since the protocol class is protocol specific (how intelligent ...), the protocol class also
-    defines the complete socket policy to be used with it's protocol. Complete meaning, that every
-    policy axis must be assigned it's the most specific (that is derived) policy class to be used
-    with the protocol.
+    defines the \e complete socket policy to be used with it's protocol. Complete meaning, that
+    every policy axis must be assigned it's the most specific (that is derived) policy class to be
+    used with the protocol and that no policy axis is allowed to be left unspecified.
 
     \see
         \ref handle_group \n
@@ -126,7 +126,8 @@ namespace senf {
 
         \attention SocketProtocol must \e always be inherited using public \e virtual inheritance.
      */
-    class SocketProtocol : boost::noncopyable
+    class SocketProtocol 
+        : boost::noncopyable
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

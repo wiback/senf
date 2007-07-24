@@ -80,7 +80,8 @@ namespace senf {
      */
     class PacketProtocol
         : public ConcreteSocketProtocol<Packet_Policy>,
-          public BSDSocketProtocol
+          public BSDSocketProtocol,
+          public senf::pool_alloc_mixin<PacketProtocol>
     {
     public:
         enum SocketType { RawSocket, DatagramSocket };

@@ -30,6 +30,7 @@
 // Custom includes
 #include <boost/intrusive_ptr.hpp>
 #include "Utils/intrusive_refcount.hh"
+#include "Utils/pool_alloc_mixin.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -40,7 +41,7 @@ namespace senf {
 
         \internal
 
-        The senf::FileBody class formes the body part of the handle/body structure of the FileHandle
+        The senf::FileBody class forms the body part of the handle/body structure of the FileHandle
         interface. It manages the FileHandle data and is referenced by senf::FileHandle. It is
         automatically managed using reference counting.
 
@@ -59,9 +60,12 @@ namespace senf {
         basic functionality which is only used infrequently during the lifetime of a FileHandle
         instance.
 
+        \attention Whenever a new class is derived from FileBody which adds new members, this class
+            \e must also derive from senf::pool_alloc_mixin
       */
     class FileBody
-        : public senf::intrusive_refcount
+        : public senf::intrusive_refcount, 
+          public senf::pool_alloc_mixin<FileBody>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

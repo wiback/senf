@@ -100,7 +100,7 @@ namespace senf {
 
         This registeres packets with their IP protocol number.
 
-        \see <a href="http://www.iana.org/assignments/protocol-numbers">Protocol numbers</a>
+        \see <a href="http://www.iana.org/assignments/protocol-numbers">Protocol numbers</a> \n
             PacketRegistry
      */
     struct IpTypes {

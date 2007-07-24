@@ -83,7 +83,8 @@ namespace senf {
           public IPv4Protocol,
           public UDPProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol
+          public AddressableBSDSocketProtocol,
+          public senf::pool_alloc_mixin<UDPv4SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -147,7 +148,8 @@ namespace senf {
           public IPv6Protocol,
           public UDPProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol
+          public AddressableBSDSocketProtocol,
+          public senf::pool_alloc_mixin<UDPv6SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,7 @@
 #define HH_TCPSocketHandle_ 1
 
 // Custom includes
+#include "Utils/pool_alloc_mixin.hh"
 #include "INetProtocol.hh"
 #include "TCPProtocol.hh"
 #include "BSDSocketProtocol.hh"
@@ -85,7 +86,8 @@ namespace senf {
           public IPv4Protocol,
           public TCPProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol
+          public AddressableBSDSocketProtocol,
+          public senf::pool_alloc_mixin<TCPv4SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -166,7 +168,8 @@ namespace senf {
           public IPv6Protocol,
           public TCPProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol
+          public AddressableBSDSocketProtocol,
+          public senf::pool_alloc_mixin<TCPv6SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

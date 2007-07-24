@@ -101,9 +101,13 @@ namespace senf {
         properly. If this invariant is violated, your Program will probably crash.
      */
     class SocketBody
-        : public FileBody
+        : public FileBody, 
+          public senf::pool_alloc_mixin<SocketBody>
     {
     public:
+        using senf::pool_alloc_mixin<SocketBody>::operator new;
+        using senf::pool_alloc_mixin<SocketBody>::operator delete;
+
         ///////////////////////////////////////////////////////////////////////////
         // Types
 

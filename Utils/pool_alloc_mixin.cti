@@ -34,7 +34,7 @@ prefix_ void * senf::pool_alloc_mixin<Self>::operator new(size_t size)
 {
     // When deriving from Self you may not change the class's size without
     // inheriting from pool_alloc_mixin again. See pool_alloc_mixin documentation.
-    BOOST_ASSERT( size == sizeof(Self) );
+    BOOST_ASSERT( size <= sizeof(Self) );
 #ifndef NDEBUG
     allocCounter(1);
 #endif

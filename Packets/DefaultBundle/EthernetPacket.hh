@@ -106,8 +106,8 @@ namespace senf {
 
         This registry registers packet types with their EtherType number.
         
-        \see <a href="http://www.iana.org/assignments/ethernet-numbers">Ethernet numbers</a>
-         \ref PacketRegistry
+        \see <a href="http://www.iana.org/assignments/ethernet-numbers">Ethernet numbers</a> \n
+            \ref PacketRegistry
      */
     struct EtherTypes {
         // See 

@@ -50,6 +50,8 @@
 #include <boost/mpl/and.hpp>
 #include <boost/utility.hpp> // for enable_if
 
+#include "Utils/pool_alloc_mixin.hh"
+
 ///////////////////////////////ih.p////////////////////////////////////////
 
 /// \cond disabled
@@ -59,7 +61,7 @@ namespace senf {
 
 #   define SENF_SOCKET_POLICIES_N BOOST_PP_SEQ_SIZE( SENF_SOCKET_POLICIES )
 
-#   define SP_DeclareAlias(x1,x2,SomePolicy)                                             \
+#   define SP_DeclareAlias(x1,x2,SomePolicy)                                                      \
         typedef BOOST_PP_CAT(SomePolicy,Base) BOOST_PP_CAT(Unspecified,SomePolicy);
 
     BOOST_PP_SEQ_FOR_EACH( SP_DeclareAlias, , SENF_SOCKET_POLICIES )
@@ -70,26 +72,31 @@ namespace senf {
     {
         virtual ~SocketPolicyBase() {}
 
-#       define SP_Declare(x1,x2,SomePolicy)                                                     \
-            virtual BOOST_PP_CAT(SomePolicy,Base) const & BOOST_PP_CAT(the,SomePolicy) () const = 0;
+#       define SP_Declare(x1,x2,SomePolicy)                                                       \
+            virtual BOOST_PP_CAT(SomePolicy,Base) const & BOOST_PP_CAT(the,SomePolicy) ()         \
+                const = 0;
 
         BOOST_PP_SEQ_FOR_EACH( SP_Declare, , SENF_SOCKET_POLICIES )
 
 #       undef SP_Declare
     };
 
-#   define SP_TemplateArgs(x1,x2,n,SomePolicy)                                  \
-        BOOST_PP_COMMA_IF( n )                                                  \
+#   define SP_TemplateArgs(x1,x2,n,SomePolicy)                                                    \
+        BOOST_PP_COMMA_IF( n )                                                                    \
         class BOOST_PP_CAT(SomePolicy,_) = BOOST_PP_CAT(SomePolicy,Base)
+#   define SP_TemplateParms(x1,x2,n,SomePolicy)                                                   \
+        BOOST_PP_COMMA_IF( n ) BOOST_PP_CAT(SomePolicy,_)
 
     template < BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateArgs, , SENF_SOCKET_POLICIES ) >
     struct SocketPolicy
-        : public SocketPolicyBase
+        : public SocketPolicyBase,
+          public senf::pool_alloc_mixin< 
+              SocketPolicy< BOOST_PP_SEQ_FOR_EACH_I( SP_TemplateParms, , SENF_SOCKET_POLICIES ) > >
     {
-#   define SP_DeclarePolicyMember(x1,x2,SomePolicy)                                     \
-        typedef BOOST_PP_CAT(SomePolicy,_) SomePolicy;                                  \
-        SomePolicy BOOST_PP_CAT(BOOST_PP_CAT(the,SomePolicy),_);                        \
-        BOOST_PP_CAT(SomePolicy,Base) const & BOOST_PP_CAT(the,SomePolicy) () const     \
+#   define SP_DeclarePolicyMember(x1,x2,SomePolicy)                                               \
+        typedef BOOST_PP_CAT(SomePolicy,_) SomePolicy;                                            \
+        SomePolicy BOOST_PP_CAT(BOOST_PP_CAT(the,SomePolicy),_);                                  \
+        BOOST_PP_CAT(SomePolicy,Base) const & BOOST_PP_CAT(the,SomePolicy) () const               \
             { return BOOST_PP_CAT(BOOST_PP_CAT(the,SomePolicy),_); }
 
         BOOST_PP_SEQ_FOR_EACH( SP_DeclarePolicyMember, , SENF_SOCKET_POLICIES )
@@ -99,6 +106,7 @@ namespace senf {
     };
 
 #   undef SP_TemplateArgs
+#   undef SP_TemplateParms
 
 namespace impl {
 
@@ -112,20 +120,23 @@ namespace impl {
     struct MakeSocketPolicy_merge
     {};
 
-#   define SP_DeclareMakeSocketPolicy_merge_member(r,n,m,SomePolicy)            \
-        BOOST_PP_COMMA_IF( m )                                                  \
+#   define SP_DeclareMakeSocketPolicy_merge_member(r,n,m,SomePolicy)                              \
+        BOOST_PP_COMMA_IF( m )                                                                    \
         BOOST_PP_IIF( BOOST_PP_EQUAL(n,m), Policy, typename Base::SomePolicy )
 
 #    define BOOST_PP_LOCAL_LIMITS (0, BOOST_PP_DEC( SENF_SOCKET_POLICIES_N ) )
-#    define BOOST_PP_LOCAL_MACRO(n)                                                                                     \
-        SocketPolicy_rv<n> MakeSocketPolicy_merge_(BOOST_PP_CAT( BOOST_PP_SEQ_ELEM( n, SENF_SOCKET_POLICIES ),Base)*);  \
-                                                                                                                        \
-        template <class Base, class Policy>                                                                             \
-        struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<n>)>                                           \
-        {                                                                                                               \
-            typedef SocketPolicy<                                                                                       \
-               BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareMakeSocketPolicy_merge_member, n, SENF_SOCKET_POLICIES )              \
-               > type;                                                                                                  \
+#    define BOOST_PP_LOCAL_MACRO(n)                                                               \
+        SocketPolicy_rv<n> MakeSocketPolicy_merge_(                                               \
+            BOOST_PP_CAT( BOOST_PP_SEQ_ELEM( n, SENF_SOCKET_POLICIES ),Base)*);                   \
+                                                                                                  \
+        template <class Base, class Policy>                                                       \
+        struct MakeSocketPolicy_merge<Base,Policy,sizeof(SocketPolicy_rv<n>)>                     \
+        {                                                                                         \
+            typedef SocketPolicy<                                                                 \
+               BOOST_PP_SEQ_FOR_EACH_I( SP_DeclareMakeSocketPolicy_merge_member,                  \
+                                        n,                                                        \
+                                        SENF_SOCKET_POLICIES )                                    \
+               > type;                                                                            \
         };
 
 #   include BOOST_PP_LOCAL_ITERATE()
@@ -154,8 +165,8 @@ namespace impl {
         typedef typename boost::mpl::fold< Vector, Base, MakeSocketPolicy_fold >::type policy;
     };
 
-#   define SP_DeclareArguments(x1,x2,n,SomePolicy)      \
-        BOOST_PP_COMMA_IF( n )                          \
+#   define SP_DeclareArguments(x1,x2,n,SomePolicy)                                                \
+        BOOST_PP_COMMA_IF( n )                                                                    \
         typename Base::SomePolicy *
 
     template <class Base>
@@ -178,8 +189,8 @@ namespace impl {
     {};
 
 
-#   define SP_DeclareArguments(x1,x2,n,SomePolicy)      \
-        BOOST_PP_COMMA_IF( n )                          \
+#   define SP_DeclareArguments(x1,x2,n,SomePolicy)                                                \
+        BOOST_PP_COMMA_IF( n )                                                                    \
         static_cast<typename Derived::SomePolicy *>(0)
 
     template <class Base, class Derived>
@@ -191,36 +202,47 @@ namespace impl {
 
 } // namespace impl
 
-    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SENF_SOCKET_POLICIES_N, class T, senf::impl::nil ) >
+    template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SENF_SOCKET_POLICIES_N, 
+                                                    class T, 
+                                                    senf::impl::nil ) >
     class MakeSocketPolicy
         : public boost::mpl::if_< boost::is_convertible< T0*, SocketPolicyBase* >,
-                                  impl::MakeSocketPolicy_impl< T0, boost::mpl::vector< BOOST_PP_ENUM_SHIFTED_PARAMS( SENF_SOCKET_POLICIES_N, T ) > >,
-                                  impl::MakeSocketPolicy_impl< SocketPolicy<>,
-                                                               boost::mpl::vector< BOOST_PP_ENUM_PARAMS( SENF_SOCKET_POLICIES_N, T ) > > >::type
+                                  impl::MakeSocketPolicy_impl< 
+                                      T0, 
+                                      boost::mpl::vector< 
+                                          BOOST_PP_ENUM_SHIFTED_PARAMS( 
+                                              SENF_SOCKET_POLICIES_N, T ) > >,
+                                  impl::MakeSocketPolicy_impl< 
+                                      SocketPolicy<>,
+                                      boost::mpl::vector< 
+                                          BOOST_PP_ENUM_PARAMS( 
+                                              SENF_SOCKET_POLICIES_N, T ) > > >::type
     {};
 
     template <class BasePolicy, class DerivedPolicy>
     struct SocketPolicyIsBaseOf
-        : public boost::mpl::if_< boost::mpl::and_< boost::is_convertible< BasePolicy*, SocketPolicyBase* >,
-                                                    boost::is_convertible< DerivedPolicy*, SocketPolicyBase* > >,
-                                  impl::SocketPolicy_compatibility<BasePolicy,DerivedPolicy>,
-                                  boost::false_type >::type
+        : public boost::mpl::if_< 
+              boost::mpl::and_< boost::is_convertible< BasePolicy*, SocketPolicyBase* >,
+                                boost::is_convertible< DerivedPolicy*, SocketPolicyBase* > >,
+              impl::SocketPolicy_compatibility<BasePolicy,DerivedPolicy>,
+              boost::false_type 
+          >::type
     {};
 
-#   define SP_DefineConditions(x1,x2,SomePolicy)                                                \
-        template <class Policy, class Trait>                                                    \
-        struct BOOST_PP_CAT(SomePolicy,Is)                                                      \
-            : public boost::is_convertible< typename Policy::SomePolicy*, Trait* >              \
-        {};                                                                                     \
-                                                                                                \
-        template <class Policy, class Trait>                                                    \
-        struct BOOST_PP_CAT(BOOST_PP_CAT(If,SomePolicy),Is)                                     \
-            : public boost::enable_if< BOOST_PP_CAT(SomePolicy,Is)<Policy,Trait> >              \
-        {};                                                                                     \
-                                                                                                \
-        template <class Policy, class Trait>                                                    \
-        struct BOOST_PP_CAT(BOOST_PP_CAT(If,SomePolicy),IsNot)                                  \
-            : public boost::enable_if_c< ! BOOST_PP_CAT(SomePolicy,Is)<Policy,Trait>::value >   \
+#   define SP_DefineConditions(x1,x2,SomePolicy)                                                  \
+        template <class Policy, class Trait>                                                      \
+        struct BOOST_PP_CAT(SomePolicy,Is)                                                        \
+            : public boost::is_convertible< typename Policy::SomePolicy*, Trait* >                \
+        {};                                                                                       \
+                                                                                                  \
+        template <class Policy, class Trait>                                                      \
+        struct BOOST_PP_CAT(BOOST_PP_CAT(If,SomePolicy),Is)                                       \
+            : public boost::enable_if< BOOST_PP_CAT(SomePolicy,Is)<Policy,Trait> >                \
+        {};                                                                                       \
+                                                                                                  \
+        template <class Policy, class Trait>                                                      \
+        struct BOOST_PP_CAT(BOOST_PP_CAT(If,SomePolicy),IsNot)                                    \
+            : public boost::enable_if_c< ! BOOST_PP_CAT(SomePolicy,Is)<Policy,Trait>::value >     \
         {};
 
     BOOST_PP_SEQ_FOR_EACH( SP_DefineConditions, , SENF_SOCKET_POLICIES )
