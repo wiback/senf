@@ -137,6 +137,16 @@
         default protocols: Ethernet, Ip, TCP, UDP
     \li <a href="../../MPEGDVBBundle/doc/html/index.html">MPEGDVBBundle</a>: MPEG and DVB
         protocols
+
+    There are two ways to link with a bundle
+    
+    \li If you only work with known packets which you explicitly reference you may just link with
+        the corresponding library.
+    \li If you need to parse unknown packets and want those to be parsed as complete as possible
+        without explicitly referencing the packet type, you will need to link against the combined
+        object file built for every bundle. This way, all packets defined in the bundle will be
+        included whether they are explicitly referenced or not (and they will all automatically be
+        registered).
  */
 
 

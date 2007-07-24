@@ -28,6 +28,11 @@
     <em>by value</em>, they can be understood as pointers into the packet data with added type
     information providing parsing functions.
 
+    Packet parsers are \e only used within the packet framework. You should never allocate a new
+    parser instance directly, you should the Packet library let that do for you (either by having
+    the parser as a packet parser in a packet type or by having a member in the packet parser which
+    allocates the parser as a sub-parser).
+
     Parsers are built hierarchically. A high-level parser will return other parsers when accessing
     an element (Example: Asking an EthernetParser for the ethertype field by calling the parsers \c
     type() member will return an \c UInt16 parser). The lowest level building blocks then return the
@@ -56,18 +61,86 @@
     complex parsers provide type specific access members. Assigning a value to a parser will change
     the underlying representation (the packet data). 
 
-    More complex parsers (especially those representing a collection of values) provide an
-    additional wrapper class for mutating access (e.g. Parse_Vector provides a container wrapper
-    with am STL compatible random-access sequence interface). See the documentation of the specific
-    parser for the wrapper specification.
-
-    Every parser is derived from senf::PacketParserBase. This class provides the necessary
-    housekeeping information and provides the parsers with access to the data.
+    Parsers can be grouped into several categories. These categories are not all defined rigorously
+    but are nevertheless helpful when working with the parsers:
+    \li <em>Value parsers</em> provide the lowest level parsers (e.g. senf::Parse_UInt16 which
+        returns an integer value).
+    \li <em>Collection parsers</em> are parsers which model a collection of sub-elements like
+        senf::Parse_List or senf::Parse_Vector.
+    \li <em>Composite parsers</em> collect several fields of arbitrary type into a new
+        parser. Parsers defined using the \ref packetparsermacros fall under this category.
+    \li <em>Packet parsers</em> are used to define a packet type.
 
     \warning Parsers are like iterators: They are invalidated <em>whenever the size of the packet's
     data is changed</em>. You should not store a parser anywhere. If you want to keep a parser
     reference, use the senf::SafePacketParser wrapper. You still will need to take extra care to
     ensure the parser is not invalidated.
+
+    \section parserimpl Packet parser categories
+
+    Every parser is derived from senf::PacketParserBase. This class provides the necessary
+    housekeeping information and provides the parsers with access to the data. You may in principle
+    define arbitrary methods as parser members (e.g. methods to calculate a checksum, methods
+    processing fields in some way and so on). You should however be very wary to access data outside
+    the range assigned to the packet (the range starting at \c i() and with a size of senf::bytes()
+    bytes).
+    
+    Each parser type has specific features
+
+    \subsection parserimpl_value Value parsers
+
+    For a parser \a SomeParser to be a value parser, the following expressions must be valid:
+    \code
+    // SomeParser must have a 'value_type', The 'value_type' must be default constructible, copy
+    // constructible and assignable
+    SomeParser::value_type v; 
+
+    // An instance of 'SomeParser' must have a 'value' member which returns a value which may be
+    // assigned to a variable of type 'value_type'
+    v = p.someParserField().value()
+
+    // It must be possible to assign a new value using the 'value' member
+    p.someParserField().value(v)
+    \endcode
+
+    If at all possible, the 'value_type' should not reference the packet data using iterators or
+    pointers, it should hold a copy of the value (it's Ok for \c value() to return such a reference
+    as long as assigning it to a \c value_type variable will copy the value).
+
+    \subsection parserimpl_collection Collection parsers
+
+    A collection parser \a SomeParser should model STL containers. The parsers themselves will
+    probably only // provide a reduced interface, but the collection parser should have a \c
+    collection member which is a wrapper providing the full interface.
+    \code
+    SomeParser::container c (p.someParserField());
+    \endcode
+
+    You will probably only very seldom need to implement a completely new collection
+    parser. Instead, you can rely on senf::Parse_Vector or senf::Parse_List and implement new
+    polcies.
+
+    \subsection parserimpl_composite Composite parsers
+    
+    If possible, composite parsers should be implemented using the \ref packetparsermacros. In
+    addition to the normal parser requirements, these macros ensure, that for each field,
+    <em>fieldname</em><tt>_t</tt> is a typedef for the fields parser and
+    <em>fieldname</em><tt>_offset</tt> is the offset of the field in bytes from the beginning of the
+    parser (either a constant for fixed size parsers or a member function for dynamically sized
+    parsers). When defining composite parsers without the help of the \ref packetparsermacros, you
+    should provide those same members.
+
+    \subsection parserimpl_packet Packet parsers
+
+    Packet parsers are composite parsers with relaxed requirements. Since a packet parser will never
+    be used as a sub-parser (it will not be used within another composite parser or as value type in
+    a collection parser), the value returned by senf::bytes for this parser must not necessarily
+    cover the complete packet (e.g. if the packet has a trailer, the trailer will live outside the
+    range given by senf::bytes). You may define any member you want to have in your packets field
+    interface. These members may access the packet data in any way. You just need to ensure, that
+    the integration into the packet-type is correct (the senf::PacketTypeMixin will by default use
+    senf::bytes() to find the end of the header).
+    
  */
 
 #ifndef HH_PacketParser_
