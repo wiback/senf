@@ -37,8 +37,8 @@
 #include "Socket/CommunicationPolicy.hh"
 #include "Socket/ReadWritePolicy.hh"
 #include "Socket/BufferingPolicy.hh"
+#include "Socket/Protocols/BSDSocketProtocol.hh"
 #include "LLAddressing.hh"
-#include "BSDSocketProtocol.hh"
 
 //#include "PacketSocketHandle.mpp"
 #include "PacketSocketHandle.ih"

@@ -28,30 +28,13 @@
 
 // Custom includes
 #include <algorithm>
-#include <boost/array.hpp>
+#include "Socket/Protocols/Raw/MACAddress.hh"
 #include "Packets/Packets.hh"
 
 //#include "EthernetPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
-    /** \brief Ethernet MAC address
-        
-        The Ethernet MAC is modelled as a fixed-size container/sequence of 6 bytes.
-
-        \todo Move to someplace else when implementing the addressing classes
-     */
-    struct MACAddress
-        : boost::array<PacketParserBase::byte,6>
-    {
-        MACAddress(std::string addr);
-        template <class InputIterator>
-        MACAddress(InputIterator i);
-
-        struct SyntaxException : public std::exception
-        { virtual char const * what() const throw() { return "invalid mac address syntax"; } };
-    };
 
     /** \brief Parse an Ethernet MAC address 
 
@@ -69,7 +52,7 @@ namespace senf {
         typedef MACAddress value_type;
         static const size_type fixed_bytes = 6u;
 
-        value_type value() const { return MACAddress(i()); }
+        value_type value() const { return MACAddress::from_data(i()); }
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
         operator value_type () { return value(); }
         byte & operator[](size_type index) { return *boost::next(i(),index);  }
@@ -230,7 +213,7 @@ namespace senf {
 #endif
 #ifndef SENF_PACKETS_DECL_ONLY
 //#include "EthernetPacket.cci"
-#include "EthernetPacket.ct"
+//#include "EthernetPacket.ct"
 //#include "EthernetPacket.cti"
 #endif
 

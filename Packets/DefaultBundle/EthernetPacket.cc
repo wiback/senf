@@ -29,7 +29,6 @@
 // Custom includes
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
-#include <boost/tokenizer.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -40,71 +39,11 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::MACAddress
-
-namespace {
-    senf::PacketParserBase::byte hexToNibble(char c)
-    {
-        if (c<'0')
-            throw senf::MACAddress::SyntaxException();
-        else if (c<='9')
-            return c-'-';
-        else if (c<'A')
-            throw senf::MACAddress::SyntaxException();
-        else if (c<='F')
-            return c-'A'+10;
-        else if (c<'a')
-            throw senf::MACAddress::SyntaxException();
-        else if (c<='f')
-            return c-'a'+10;
-        else
-            throw senf::MACAddress::SyntaxException();
-    }
-    
-    template <class Range>
-    senf::PacketParserBase::byte hexToByte(Range const & range)
-    {
-        if (boost::size(range) != 2)
-            throw senf::MACAddress::SyntaxException();
-        typename boost::range_const_iterator<Range>::type i (boost::begin(range));
-        return hexToNibble(i[0])*16+hexToNibble(i[1]);
-    }
-}
-
-prefix_ senf::MACAddress::MACAddress(std::string addr)
-{
-    typedef boost::char_separator<char> separator;
-    typedef boost::tokenizer<separator> tokenizer;
-    separator sep (":");
-    tokenizer tok (addr,sep);
-    tokenizer::iterator i (tok.begin());
-    tokenizer::iterator i_end (tok.end());
-    iterator j (begin());
-    iterator j_end (end());
-    for (; i!=i_end && j!=j_end; ++i, ++j)
-        *j = hexToByte(*i);
-    if (i!=i_end || j!=j_end)
-        throw SyntaxException();
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::EthernetPacketType
-
-namespace {
-    void dumpmac(std::ostream & os, senf::MACAddress mac)
-    {
-        boost::io::ios_all_saver ias(os);
-        for (unsigned i = 0; i < 6; ++i) {
-            if (i > 0)
-                os << ':';
-            os << std::hex << std::setw(2) << std::setfill('0')
-               << unsigned(mac[i]);
-        }
-    }
-}
 
 prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
 {
+    boost::io::ios_all_saver ias(os);
     if (p->type() <= 1500)
         os << "Ethernet 802.3";
     else if (p->type() >= 0x600)
@@ -112,24 +51,21 @@ prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
     else
         os << "Ethernet 802.3 (bad ethertype >1500 and <1536)";
     os << ": \n"
-       << "  destination   : ";
-    dumpmac(os,p->destination());
-    os << "\n"
-       << "  source        : ";
-    dumpmac(os,p->source());
-    os << "\n"
-       << "  ethertype     : " << std::hex << std::setw(4) << std::setfill('0')
-       << unsigned(p->type()) << "\n" << std::dec;
+       << "  destination   : " << p->destination() << "\n"
+       << "  source        : " << p->source() << "\n"
+       << "  ethertype     : " 
+       << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
 }
 
 prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
 {
+    boost::io::ios_all_saver ias(os);
     os << "Ethernet 802.1q (VLAN):\n"
        << "  priority      : " << p->priority() << "\n"
        << "  cfi           : " << p->cfi() << "\n"
        << "  vlan-ID       : " << p->vlanId() << "\n"
-       << "  ethertype     : " << std::hex << std::setw(4) << std::setfill('0')
-       << p->type() << "\n" << std::dec;
+       << "  ethertype     : " 
+       << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

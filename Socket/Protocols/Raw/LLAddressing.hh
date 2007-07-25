@@ -37,7 +37,7 @@
 
 #include "Socket/SocketPolicy.hh"
 #include "Socket/FileHandle.hh"
-#include "GenericAddressingPolicy.hh"
+#include "Socket/Protocols/GenericAddressingPolicy.hh"
 
 //#include "LLAddressing.mpp"
 #include "LLAddressing.ih"

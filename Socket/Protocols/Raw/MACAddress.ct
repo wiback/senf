@@ -19,22 +19,27 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EthernetPacket non-inline template implementation  */
+    \brief MACAddress non-inline template implementation  */
 
-//#include "EthernetPacket.ih"
+//#include "MACAddress.ih"
 
 // Custom includes
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::MACAddress
+
 template <class InputIterator>
-prefix_ senf::MACAddress::MACAddress(InputIterator i)
+prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_data(InputIterator i)
 {
-    iterator j (begin());
-    iterator j_end (end());
+    MACAddress mac (MACAddress::noinit);
+    iterator j (mac.begin());
+    iterator j_end (mac.end());
     for (;j!=j_end;++j,++i)
         *j = *i;
+    return mac;
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
