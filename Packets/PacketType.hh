@@ -100,7 +100,7 @@ namespace senf {
         \endcode
 
         You may leave out any one of the members (you should however always define the \c
-        interpreter typedef member)
+        packet typedef member)
 
         \ingroup packet_module
       */
