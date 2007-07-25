@@ -28,19 +28,15 @@
 #define HH_LLAddressing_ 1
 
 // Custom includes
-#include <boost/range/iterator_range.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits.hpp>
-
 #include <sys/socket.h>
 #include <netpacket/packet.h>
-
 #include "Socket/SocketPolicy.hh"
 #include "Socket/FileHandle.hh"
 #include "Socket/Protocols/GenericAddressingPolicy.hh"
+#include "MACAddress.hh"
 
 //#include "LLAddressing.mpp"
-#include "LLAddressing.ih"
+//#include "LLAddressing.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -50,101 +46,77 @@ namespace senf {
 
     /** \brief Link local address
 
-        LLSocketAddress wraps the standard sockaddr_ll datatype.
+        LLSocketAddress wraps the standard sockaddr_ll data type. An LLSocketAddress provides quite
+        some information, only part of which is necessary for sending packets. The LLSocketAddress
+        class only allows changing those fields which need to be changed. The other fields are
+        read-only. They are filled by the operating system when receiving a packet
 
-        \todo I don't think the current implementation is
-            sensible. I'll have to reimplement this class probably
-            from scratch.
-
-        \implementation The class relies uses a very flexible
-            'ForwardRange' representation for a raw ll
-            address (See <a
-            href="http://www.boost.org/libs/range/index.html">Boost.Range</a>).
-            This representation allows zero-copy implementations of
-            many operations, however it is probably not worth the
-            effort since the ll address is restricted to a max of 8
-            bytes. Therefore this will be changed and the concrete
-            implementation is not documented very well ...
      */
     class LLSocketAddress
     {
     public:
-        // Right now we use an arbitrary ForwardRange (see Boost.Range)
-        // as the representation for a hardware address. The restrictions
-        // for the range are:
-        // a) the range must never be larger than 8 elements
-        // b) the value_type must be convertible to unsigned char
-        // and really we need only a single-pass range.
-        //
-        // Since a hardware address is so short (a maximum of 8
-        // bytes), in the aftermath I think a simple container holding
-        // a maximum of 8 unsigned chars (e.g. Boost.Array with
-        // additional length parameter) will be much simpler and
-        // probably even more efficient. This should have a conversion
-        // constructor from an arbitrary ForwardRange to make it
-        // compatible e.g. with the Packet library.
-        //
-        // However, since I have implemented it already as it is now,
-        // I'll leave it as it is ...
+        /** \brief Valid pkttype() values
 
-        typedef boost::iterator_range<unsigned char const *> LLAddress;
+            These are the possible values returned by arptype() 
+         */
+        enum PktType { Undefined = 0
+                     , Host      = PACKET_HOST      /**< Packet destined for this host */
+                     , Broadcast = PACKET_BROADCAST /**< Packet sent to the broadcast address */
+                     , Multicast = PACKET_MULTICAST /**< Packet sent to a (link local) multicast
+                                                         address */
+                     , OtherHost = PACKET_OTHERHOST /**< Packet sent to another host (promisc) */
+                     , Outgoing  = PACKET_OUTGOING  /**< Packet sent out from this host */
+        };
+        
+        LLSocketAddress();              ///< Create empty address
+        explicit LLSocketAddress(unsigned proto, std::string const & iface="");
+                                        ///< Create address for \c bind()
+                                        /**< This constructs an LLSocketAddress valid for calling
+                                             PacketSocketHandle::bind() with.
+                                             \param[in] prot Protocol (Ethertype) to listen for
+                                             \param[in] iface Interface name to bind to */
+        explicit LLSocketAddress(std::string const &iface);
+                                        ///< Create address for \c bind()
+                                        /**< This constructs an LLSocketAddress valid for calling
+                                             \c PacketSocketHandle::bind() with.
+                                             \param[in] iface Interface name to bind to */
 
-        LLSocketAddress();
-        // And this is for bind
-        explicit LLSocketAddress(unsigned protocol, std::string interface="");
-        explicit LLSocketAddress(std::string interface);
-        // This is for sending packets ..
-        // We must use enable_if here, so this constructor will not hide
-        // above constructor if passed a plain int or short argument
-#       ifndef DOXYGEN
-        template <class ForwardRange>
-        explicit LLSocketAddress(ForwardRange const & address, std::string interface="",
-                                 typename boost::enable_if_c<! boost::is_integral<ForwardRange>::value >::type * = 0);
-#       else
-        template <class ForwardRange>
-        explicit LLSocketAddress(ForwardRange const & address, std::string interface="");
-#       endif
+        // This constructor is for sending packets
+        explicit LLSocketAddress(MACAddress const & addr, std::string const & iface="");
+                                        ///< Create address valid to send raw packets
+                                        /**< Addresses created with this constructor are valid for
+                                             use with \c PacketSocketHandle::sendto() on a \c
+                                             SOCK_DGRAM packet socket.
+                                             \param addr Address to send data to
+                                             \param iface Interface to send packet from */
 
-        void clear();
+        void clear();                   ///< Clear the address
 
-        unsigned protocol() const;
-        std::string interface() const;
-        unsigned arptype() const;
-        unsigned pkttype() const;
-        LLAddress address() const;
+        unsigned protocol() const;      ///< Return address protocol (ethertype)
+        std::string interface() const;  ///< Return interface name
+        unsigned arptype() const;       ///< Return the hatype field (ARP hardware type)
+        PktType pkttype() const;        ///< Return type of packet
+        MACAddress address() const;     ///< Return address
 
         // The mutating interface is purposely restricted to allow only
         // changing those members, which are sensible to be changed.
 
-        template <class ForwardRange>
-        void address(ForwardRange const & address);
-        void interface(std::string interface);
-        void protocol(unsigned protocol);
+        void address(MACAddress const & addr); ///< Change address
+        void interface(std::string iface); ///< Change interface
+        void protocol(unsigned prot);   ///< Change protocol
+
+        ///\name Generic SocketAddress interface
+        ///@{
 
         struct sockaddr * sockaddr_p();
         struct sockaddr const * sockaddr_p() const;
         unsigned sockaddr_len() const;
 
+        ///@}
+
     private:
         struct ::sockaddr_ll addr_;
     };
-
-    /** \brief
-        \related LLSocketAddress
-     */
-    detail::LLAddressFromStringRange llAddress(std::string address);
-
-    // The enable_if condition here allows only for classes as range.
-    // However, excluding zero-terminated strings (which we want to
-    // pass to above) I cannot think of a non-class ForwardRange
-    // except for academic cases
-    // STOP: ... how about std::vector<...>::iterator ?? isn't that a ..pointer ?
-    /** \brief Convert raw link-local address into printable form
-        \related LLSocketAddress
-     */
-    template <class ForwardRange>
-    std::string llAddress(ForwardRange const & address,
-                          typename boost::enable_if< boost::is_class<ForwardRange> >::type * = 0);
 
     /** \brief Signal invalid link local address syntax
         \related LLSocketAddress
@@ -185,8 +157,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "LLAddressing.cci"
-#include "LLAddressing.ct"
-#include "LLAddressing.cti"
+//#include "LLAddressing.ct"
+//#include "LLAddressing.cti"
 //#include "LLAddressing.mpp"
 #endif
 

@@ -25,7 +25,7 @@
  */
 
 #include "PacketSocketHandle.hh"
-#include "PacketSocketHandle.ih"
+//#include "PacketSocketHandle.ih"
 
 // Custom includes
 #include <sys/types.h>
@@ -77,20 +77,37 @@ prefix_ bool senf::PacketProtocol::eof()
     return false;
 }
 
-prefix_ void senf::PacketProtocol::do_mc_i(std::string interface,
-                                                  detail::LLAddressCopier const & copier, bool add)
+namespace {
+    
+    void do_mc(int fd, std::string interface, senf::MACAddress address, bool add)
+    {
+        struct packet_mreq mreq;
+        mreq.mr_ifindex = ::if_nametoindex(interface.c_str());
+        if (mreq.mr_ifindex == 0)
+            throw senf::SystemException(EINVAL);
+        mreq.mr_type = PACKET_MR_MULTICAST;
+        mreq.mr_alen = 6;
+        std::copy(address.begin(), address.end(), &mreq.mr_address[0]);
+        if (::setsockopt(fd, SOL_PACKET,
+                         add ? PACKET_ADD_MEMBERSHIP : PACKET_DROP_MEMBERSHIP,
+                         &mreq, sizeof(mreq)) < 0)
+            throw senf::SystemException(errno);
+    }
+
+}
+
+prefix_ void senf::PacketProtocol::mcAdd(std::string const & interface,
+                                         MACAddress const & address)
     const
 {
-    struct packet_mreq mreq;
-    mreq.mr_ifindex = ::if_nametoindex(interface.c_str());
-    if (mreq.mr_ifindex == 0)
-        throw SystemException(EINVAL);
-    mreq.mr_type = PACKET_MR_MULTICAST;
-    mreq.mr_alen = copier(&mreq.mr_address[0]);
-    if (::setsockopt(body().fd(),SOL_PACKET,
-                     add ? PACKET_ADD_MEMBERSHIP : PACKET_DROP_MEMBERSHIP,
-                     &mreq, sizeof(mreq)) < 0)
-        throw SystemException(errno);
+    do_mc(body().fd(),interface,address,true);
+}
+
+prefix_ void senf::PacketProtocol::mcDrop(std::string const & interface,
+                                          MACAddress const & address)
+    const
+{
+    do_mc(body().fd(),interface,address,false);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

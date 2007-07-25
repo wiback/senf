@@ -41,7 +41,7 @@
 #include "LLAddressing.hh"
 
 //#include "PacketSocketHandle.mpp"
-#include "PacketSocketHandle.ih"
+//#include "PacketSocketHandle.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -114,24 +114,15 @@ namespace senf {
         ///\name Protocol Interface
         ///@{
 
-        // See LLSocketAddress for a discussion/rationale for ForwardRange here
-        template <class ForwardRange>
-        void mcAdd(std::string interface, ForwardRange const & address) const;
+        void mcAdd(std::string const & interface, MACAddress const & address) const;
                                         ///< Enable reception of a multicast group
-                                        /**< mcAdd will join a new multicast group. The address
-                                             parameter is specified as an arbitrary forward range
-                                             (see <a
-                                             href="http://www.boost.org/libs/range/index.html">Boost.Range</a>)
-                                             of up to 8 bytes. This  allows to initialize the
-                                             address from an arbitrary sources without excessive
-                                             copying.
+                                        /**< mcAdd will join a new multicast group.
 
                                              \param[in] interface interface with which to join
                                              \param[in] address multicast address to join
 
                                              \see \ref LLSocketAddress */
-        template <class ForwardRange>
-        void mcDrop(std::string interface, ForwardRange const & address) const;
+        void mcDrop(std::string const & interface, MACAddress const & address) const;
                                         ///< Disable reception of a multicast group
                                         /**< \see \ref mcAdd() */
         ///@}
@@ -144,11 +135,6 @@ namespace senf {
         bool eof() const;
 
         ///@}
-
-    private:
-        template<class ForwardRange>
-        void do_mc(std::string interface, ForwardRange const & address, bool add) const;
-        void do_mc_i(std::string interface, detail::LLAddressCopier const & copier, bool add) const;
     };
 
     typedef ProtocolClientSocketHandle<PacketProtocol> PacketSocketHandle;
@@ -160,8 +146,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "PacketSocketHandle.cci"
-#include "PacketSocketHandle.ct"
-#include "PacketSocketHandle.cti"
+//#include "PacketSocketHandle.ct"
+//#include "PacketSocketHandle.cti"
 //#include "PacketSocketHandle.mpp"
 #endif
 

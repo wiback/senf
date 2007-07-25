@@ -25,7 +25,7 @@
  */
 
 #include "LLAddressing.hh"
-#include "LLAddressing.ih"
+//#include "LLAddressing.ih"
 
 // Custom includes
 #include <net/if.h>
@@ -40,17 +40,6 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned char senf::detail::hexnibble(char c)
-{
-    if (c>='0' && c<='9')
-        return c - '0';
-    if (c>='A' && c<='F')
-        return c - 'A' + 10;
-    if (c>='a' && c<='f')
-        return c - 'a' + 10;
-    throw InvalidLLSocketAddressException();
-}
-
 prefix_ std::string senf::LLSocketAddress::interface()
     const
 {
@@ -62,61 +51,15 @@ prefix_ std::string senf::LLSocketAddress::interface()
     return std::string(name);
 }
 
-/*
+prefix_ void senf::LLSocketAddress::interface(std::string iface)
 {
-    if (addr_.sll_halen == 0)
-        return std::string();
-    std::stringstream s;
-
-    unsigned char const * i = &addr_.sll_addr[0];
-    while (1) {
-        s << std::hex << std::setw(2) << std::setfill('0') << unsigned(*i);
-        ++i;
-        if (i == &addr_.sll_addr[addr_.sll_halen]) break;
-        s << '-';
-    }
-    return s.str();
-}
-*/
-
-
-/*
-prefix_ void senf::LLSocketAddress::address(std::string address)
-{
-    typedef boost::split_iterator<std::string::iterator> StringSplitIterator;
-    StringSplitIterator i = boost::make_split_iterator(address, boost::token_finder(boost::is_any_of("-: ")));
-    unsigned char * j = &addr_.sll_addr[0];
-    for (; ! i.eof() && addr_.sll_halen<8; ++i, ++j, ++addr_.sll_halen) {
-        if ( i->size() != 2 || ! boost::all(*i, boost::is_xdigit()) )
-            throw InvalidLLSocketAddressException();
-        *j = hex(*i);
-    }
-    if (! i.eof())
-        throw InvalidLLSocketAddressException();
-}
-*/
-
-prefix_ void senf::LLSocketAddress::interface(std::string interface)
-{
-    if (! interface.empty()) {
-        addr_.sll_ifindex = if_nametoindex(interface.c_str());
+    if (iface.empty()) 
+        addr_.sll_ifindex = 0;
+    else {
+        addr_.sll_ifindex = if_nametoindex(iface.c_str());
         if (addr_.sll_ifindex == 0)
             throw InvalidLLSocketAddressException();
     }
-}
-
-
-prefix_ senf::detail::LLAddressFromStringRange
-senf::llAddress(std::string address)
-{
-    detail::StringSplitIterator i =
-        boost::make_split_iterator(address, boost::token_finder(boost::is_any_of("-: ")));
-    detail::StringSplitIterator i_end;
-
-    detail::HexSplitIterator j (i,detail::HexConverter());
-    detail::HexSplitIterator j_end (i_end);
-
-    return detail::LLAddressFromStringRange(j,j_end);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

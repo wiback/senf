@@ -36,17 +36,25 @@ prefix_ senf::LLSocketAddress::LLSocketAddress()
     clear();
 }
 
-prefix_ senf::LLSocketAddress::LLSocketAddress(unsigned protocol, std::string interface)
+prefix_ senf::LLSocketAddress::LLSocketAddress(unsigned prot, std::string const & iface)
 {
     clear();
-    this->protocol(protocol);
-    this->interface(interface);
+    protocol(prot);
+    interface(iface);
 }
 
-prefix_  senf::LLSocketAddress::LLSocketAddress(std::string interface)
+prefix_ senf::LLSocketAddress::LLSocketAddress(std::string const &iface)
 {
     clear();
-    this->interface(interface);
+    interface(iface);
+}
+
+prefix_ senf::LLSocketAddress::LLSocketAddress(MACAddress const & addr,
+                                               std::string const & iface)
+{
+    clear();
+    address(addr);
+    interface(iface);
 }
 
 prefix_ void senf::LLSocketAddress::clear()
@@ -64,28 +72,29 @@ prefix_ unsigned senf::LLSocketAddress::protocol()
 prefix_ unsigned senf::LLSocketAddress::arptype()
     const
 {
-    /** \todo make sure, that the value really is in network byte
-        order */
     return ntohs(addr_.sll_hatype);
 }
 
-prefix_ unsigned senf::LLSocketAddress::pkttype()
+prefix_ senf::LLSocketAddress::PktType senf::LLSocketAddress::pkttype()
     const
 {
-    /** \todo make sure, that the value really is in network byte
-        order */
-    return ntohs(addr_.sll_pkttype);
+    return PktType(ntohs(addr_.sll_pkttype));
 }
 
-prefix_ senf::LLSocketAddress::LLAddress senf::LLSocketAddress::address()
+prefix_ senf::MACAddress senf::LLSocketAddress::address()
     const
 {
-    return LLAddress(&addr_.sll_addr[0], &addr_.sll_addr[addr_.sll_halen]);
+    return MACAddress::from_data(&addr_.sll_addr[0]);
 }
 
-prefix_ void senf::LLSocketAddress::protocol(unsigned protocol)
+prefix_ void senf::LLSocketAddress::address(MACAddress const & addr)
 {
-    addr_.sll_protocol = htons(protocol);
+    std::copy(addr.begin(), addr.end(),&addr_.sll_addr[0]);
+}
+
+prefix_ void senf::LLSocketAddress::protocol(unsigned prot)
+{
+    addr_.sll_protocol = htons(prot);
 }
 
 prefix_ struct sockaddr * senf::LLSocketAddress::sockaddr_p()
