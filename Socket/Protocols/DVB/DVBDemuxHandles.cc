@@ -21,8 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief xxx
- */
+    \brief DVBDemuxHandles non-inline non-template implementation */
 
 #include "DVBDemuxHandles.hh"
 //#include "DVBDemuxHandles.ih"

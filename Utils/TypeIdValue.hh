@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief TypeIdValue public header */
+
 #ifndef HH_TypeIdValue_
 #define HH_TypeIdValue_ 1
 

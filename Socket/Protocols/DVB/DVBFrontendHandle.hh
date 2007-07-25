@@ -21,8 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DVBHandles
- */
+    \brief DVBFrontendHandle public header */
 
 #ifndef HH_DVBFrontendHandle_
 #define HH_DVBFrontendHandle_ 1

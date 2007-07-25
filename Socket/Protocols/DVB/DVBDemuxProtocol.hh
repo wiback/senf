@@ -21,8 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DVBProtocol public header
- */
+    \brief DVBDemuxProtocol public header */
 
 #ifndef HH_DVBDemuxProtocol_
 #define HH_DVBDemuxProtocol_ 1

@@ -20,6 +20,9 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \brief
+    \file DatagramSection public header */
+
 #ifndef HH_DatagramSection_
 #define HH_DatagramSection_ 1
 
