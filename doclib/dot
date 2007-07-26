@@ -1,0 +1,5 @@
+#!/bin/sh
+
+topdir="`dirname "$0"`"; topdir="`cd "$topdir/.."; pwd`"
+"$topdir/doclib/dot-munge.pl" "$1"
+exec dot "$@"
