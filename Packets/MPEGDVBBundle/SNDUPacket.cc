@@ -1,4 +1,4 @@
-// $Id: DSMCCSection.cc 350 2007-07-25 08:26:41Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
