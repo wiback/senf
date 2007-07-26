@@ -32,13 +32,16 @@
 #include "Scheduler/Scheduler.hh"
 #include "Packets/DefaultBundle/EthernetPacket.hh"
 #include "Packets/MPEGDVBBundle/TransportPacket.hh"
+#include "Packets/MPEGDVBBundle/SNDUPacket.hh"
 #include "Utils/membind.hh"
 #include "Socket/Protocols/DVB/DVBDemuxHandles.hh"
 #include "Packets/ParseInt.hh"
 #include "Packets/Packet.hh"
 #include "Packets/PacketData.hh"
+#include "Packets/ParseInt.hh"
 
 #define PID 271
+#define TS_SYNC 0x47
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -85,13 +88,15 @@ namespace {
 }
 
 
-class MySniffer
+class ULEdec
 {
     senf::DVBDemuxPESHandle demuxHandle;
     senf::DVBDvrHandle dvrHandle;
-
+    
+    unsigned char receiver_state;
+    unsigned char priv_tscc;
 public:
-    MySniffer()
+    ULEdec()
     {
         struct dmx_pes_filter_params pes_filter;
         memset(&pes_filter, 0, sizeof (struct dmx_pes_filter_params));
@@ -100,28 +105,62 @@ public:
         pes_filter.output = DMX_OUT_TS_TAP;
         pes_filter.pes_type = DMX_PES_OTHER;
         pes_filter.flags = DMX_IMMEDIATE_START;
-
         demuxHandle.protocol().setPESFilter( &pes_filter );
         
         senf::Scheduler::instance().add(
-            dvrHandle, senf::membind(&MySniffer::dumpSection, this));
+            dvrHandle, senf::membind(&ULEdec::handlePacket, this));
+        
+        receiver_state = 1; // Idle
     }
 
 private:
-    void dumpSection(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
+    void handlePacket(senf::FileHandle, senf::Scheduler::EventId event)
     {
-        std::string data (dvrHandle.read());
-        senf::TransportPacket packet (senf::TransportPacket::create(data));
-        packet.dump(std::cout);
-        senf::PacketData & packetData (packet.last().data());
-        hexdump(packetData.begin(), packetData.end(), std::cout);
+        char ts_data[188];
+        dvrHandle.read(&ts_data[0], &ts_data[188]);
+        senf::TransportPacket tsPacket (
+                senf::TransportPacket::create( boost::begin(ts_data) ));
+//        packet.dump(std::cout);
+//        senf::PacketData & packetData (packet.last().data());
+//        hexdump(packetData.begin(), packetData.end(), std::cout);
+        
+        // Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control.
+        if ( (tsPacket->sync_byte() != TS_SYNC) || 
+             (tsPacket->transport_error_indicator() == true) || 
+             (tsPacket->transport_scrmbl_ctrl() != 0)) 
+        {
+            std::cerr << "invalid ts packet\n";
+            // drop partly decoded SNDU, reset state, resync on PUSI.
+            return;
+        }
+
+        unsigned char payload_pointer;
+        switch (receiver_state) {
+        case 1:  // Idle State
+            // resync on PUSI
+            if (tsPacket->pusi() == 0) 
+                return; // skip packet
+            // Synchronize continuity counter
+            priv_tscc = tsPacket->continuity_counter();
+            // a PUSI value of 1 indicates the presence of a Payload Pointer.
+            payload_pointer = ts_data[4];
+            if (payload_pointer>181) {
+                std::cerr << "invalid payload_pointer\n";
+                return;
+            }
+            
+            // 
+            break;
+        case 2:  // Reassembly State
+            break;
+        }
     }
 };
 
 int main(int argc, char const * argv[])
 {
     try {
-        MySniffer sniffer;
+        ULEdec decoder;
         senf::Scheduler::instance().process();
     }
     catch (std::exception const & ex) {

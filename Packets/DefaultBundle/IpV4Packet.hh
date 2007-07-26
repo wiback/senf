@@ -77,20 +77,20 @@ namespace senf {
 
 #       else
 
-        Parse_Version version();
-        Parse_IHL ihl();
-        Parse_8bit tos();
-        Parse_16bit length();
-        Parse_16bit identifier();
-        Parse_R reserved();
-        Parse_DF df();
-        Parse_MF mf();
-        Parse_Frag frag();
-        Parse_8bit ttl();
-        Parse_8bit protocol();
-        Parse_16bit crc();
-        Parse_32bit source();
-        Parse_32bit destination();
+        Parse_Version version() const;
+        Parse_IHL     ihl() const;
+        Parse_8bit    tos() const;
+        Parse_16bit   length() const;
+        Parse_16bit   identifier() const;
+        Parse_R       reserved() const;
+        Parse_DF      df() const;
+        Parse_MF      mf() const;
+        Parse_Frag    frag() const;
+        Parse_8bit    ttl() const;
+        Parse_8bit    protocol() const;
+        Parse_16bit   crc() const;
+        Parse_32bit   source() const;
+        Parse_32bit   destination() const;
 
 #       endif
 

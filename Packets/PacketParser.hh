@@ -161,7 +161,7 @@ namespace senf {
     
     /** \brief Parser Base class
 
-        Parsers come in two favors: fixed and dynamically sized parsers. A <em>fixed size
+        Parsers come in two flavors: fixed and dynamically sized parsers. A <em>fixed size
         parser</em> has a constant size, it will always parse a fixed number of bytes. The low-level
         'final'  parsers (like the integer parsers) are fixed size parsers as are composite parsers
         built up only of fixed-size fields.
@@ -413,10 +413,24 @@ namespace senf {
         using these macros has the following form (This is a concrete example from the definition of
         the ethernet packet in <tt>DefaultBundle/EthernetPacket.hh</tt>)
     
-        \dontinclude EthernetPacket.hh
-        \skipline struct Parse_EthVLan : public PacketParserBase
-        \until };
+        \code
+        struct Parse_EthVLan : public PacketParserBase
+        {
+            typedef Parse_UIntField < 0,  3 > Parse_Priority;
+            typedef Parse_Flag          < 3 > Parse_CFI;
+            typedef Parse_UIntField < 4, 16 > Parse_VLanId;
+            typedef Parse_UInt16              Parse_Type;
 
+            SENF_PACKET_PARSER_INIT(Parse_EthVLan);
+
+            SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
+                ((OverlayField)( priority, Parse_Priority ))
+                ((OverlayField)( cfi,      Parse_CFI      ))
+                ((Field       )( vlanId,   Parse_VLanId   ))
+                ((Field       )( type,     Parse_Type     )) );
+        };
+        \endcode
+        
         The macros take care of the following:
         \li They define the accessor functions returning parsers of the given type.
         \li They automatically calculate the offset of the fields from the preceding fields.

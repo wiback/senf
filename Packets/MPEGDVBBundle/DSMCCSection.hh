@@ -30,7 +30,6 @@
 #include <algorithm>
 #include "Packets/PacketType.hh"
 #include "Packets/ParseInt.hh"
-#include "Packets/PacketRegistry.hh"
 #include "Packets/PacketParser.hh"
 
 //#include "DSMCCSection.mpp"
@@ -38,15 +37,14 @@
 
 namespace senf {
 
-    ///\addtogroup protocolbundle_mpegdvb
-    ///@{
-
+    /** \brief Parse a DSMCC Section
+    
+        Parser implementing the header of a DSMCC Section
+        
+        \see DSMCCSectionType
+     */
     struct Parse_DSMCCSection : public PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(Parse_DSMCCSection);
-
-        ///////////////////////////////////////////////////////////////////////////
-
         typedef Parse_UInt8               Parse_table_id;
         typedef Parse_Flag      <     0 > Parse_ssi;  // section_syntax_indicator
         typedef Parse_Flag      <     1 > Parse_pi;   // private_indicator
@@ -55,7 +53,11 @@ namespace senf {
         typedef Parse_UIntField < 0,  2 > Parse_reserved_2;
         typedef Parse_UIntField < 2,  7 > Parse_version_num;
         typedef Parse_Flag      <     7 > Parse_curr_next_indicator;
-                
+
+#       ifndef DOXYGEN
+        
+        SENF_PACKET_PARSER_INIT(Parse_DSMCCSection);
+
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
             ((Field       ) ( table_id,            Parse_table_id            )) 
             ((OverlayField) ( ssi,                 Parse_ssi                 ))
@@ -70,9 +72,35 @@ namespace senf {
             ((Field       ) ( last_sec_num,        Parse_UInt8               ))
         );
         
+#       else
+        
+        Parse_table_id table_id() const;
+        Parse_ssi                 ssi() const;                 
+        Parse_pi                  pi() const;
+        Parse_reserved_1          reserved_1() const;
+        Parse_sec_length          sec_length const;
+        Parse_UInt16              tabel_id_extension() const;
+        Parse_reserved_2          reserved_2() const;
+        Parse_version_num         version_num() const;
+        Parse_curr_next_indicator curr_next_indicator() const;
+        Parse_UInt8               sec_num() const;
+        Parse_UInt8               last_sec_num() const;
+        
+#       endif
+        
         Parse_UInt32 crc() const { return parse<Parse_UInt32>( data().size()-4 ); }
     };
+    
+    /** \brief DSMCC Section
+        
+        \par Packet type (typedef):
+            \ref DSMCCSection
 
+        \par Fields:
+            \ref Parse_DSMCCSection
+
+        \ingroup protocolbundle_mpegdvb
+     */
     struct DSMCCSectionType
         : public PacketTypeBase,
           public PacketTypeMixin<DSMCCSectionType>
@@ -92,8 +120,6 @@ namespace senf {
     };
         
     typedef DSMCCSectionType::packet DSMCCSection;
-    
-    ///@}
 }
 
 

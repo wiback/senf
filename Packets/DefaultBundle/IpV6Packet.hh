@@ -66,14 +66,14 @@ namespace senf {
 
 #       else
 
-        Parse_Version version();
-        Parse_Class trafficClass();
-        Parse_FlowLabel flowLabel();
-        Parse_16bit length();
-        Parse_8bit nextHeader();
-        Parse_8bit hopLimit();
-        Parse_Addr source();
-        Parse_Addr destination();
+        Parse_Version   version() const;
+        Parse_Class     trafficClass() const;
+        Parse_FlowLabel flowLabel() const;
+        Parse_16bit     length() const;
+        Parse_8bit      nextHeader() const;
+        Parse_8bit      hopLimit() const;
+        Parse_Addr      source() const;
+        Parse_Addr      destination() const;
 
 #       endif
 

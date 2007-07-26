@@ -38,7 +38,7 @@
 
 namespace senf {
 
-    /** \brief Parse a UDP packet
+    /** \brief Parse a Transport Stream packet
 
         Parser implementing the header of a MPEG Transport Stream Packet.
         

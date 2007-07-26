@@ -40,26 +40,37 @@
 
 namespace senf {
 
-    ///\addtogroup protocolbundle_mpegdvb
-    ///@{
-
+    /** \brief Parse a Datagram Section
+    
+        Parser implementing the Datagram Section.
+    
+        \see DatagramSectionType
+     */
     struct Parse_DatagramSection : public Parse_DSMCCSection
     {
-        //SENF_PACKET_PARSER_NO_INIT(Parse_DatagramSection);
         Parse_DatagramSection(data_iterator i, state_type s) : senf::Parse_DSMCCSection(i,s) {}
-
-        ///////////////////////////////////////////////////////////////////////////
 
         typedef Parse_UIntField < 2,  4 > Parse_payload_scrmbl_ctrl;
         typedef Parse_UIntField < 4,  6 > Parse_addr_scrmbl_ctrl;
         typedef Parse_Flag      <     6 > Parse_llc_snap_flag;
                 
+#       ifndef DOXYGEN
+        
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS_OFFSET(Parse_DSMCCSection::fixed_bytes,
             ((Field       ) ( mac_addr_4, Parse_UInt8 ))
             ((Field       ) ( mac_addr_3, Parse_UInt8 ))
             ((Field       ) ( mac_addr_2, Parse_UInt8 ))
             ((Field       ) ( mac_addr_1, Parse_UInt8 ))
         );
+        
+#       else
+        
+        Parse_UInt8 mac_addr_4() const;
+        Parse_UInt8 mac_addr_3() const;
+        Parse_UInt8 mac_addr_2() const;
+        Parse_UInt8 mac_addr_1() const;
+        
+#       endif
         
         Parse_UInt8 mac_addr_6() const { return parse<Parse_UInt8>( 3 ); }
         Parse_UInt8 mac_addr_5() const { return parse<Parse_UInt8>( 4 ); }
@@ -80,6 +91,16 @@ namespace senf {
         }  
     };
 
+    /** \brief Datagram Section
+        
+        \par Packet type (typedef):
+            \ref DatagramSection
+
+        \par Fields:
+            \ref Parse_DatagramSection
+
+        \ingroup protocolbundle_mpegdvb
+     */
     struct DatagramSectionType
         : public DSMCCSectionType,
           public PacketTypeMixin<DatagramSectionType>
@@ -100,8 +121,6 @@ namespace senf {
     };
         
     typedef DatagramSectionType::packet DatagramSection;
-    
-    ///@}
 }
 
 
