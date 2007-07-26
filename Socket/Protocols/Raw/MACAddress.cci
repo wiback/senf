@@ -39,13 +39,23 @@ prefix_ senf::MACAddress::MACAddress()
 prefix_ senf::MACAddress::MACAddress(NoInit_t)
 {}
 
+prefix_ senf::MACAddress::MACAddress(boost::uint64_t v)
+{
+    (*this)[0] = boost::uint8_t( v>>40 );
+    (*this)[1] = boost::uint8_t( v>>32 );
+    (*this)[2] = boost::uint8_t( v>>24 );
+    (*this)[3] = boost::uint8_t( v>>16 );
+    (*this)[4] = boost::uint8_t( v>> 8 );
+    (*this)[5] = boost::uint8_t( v     );
+}
+
 prefix_ bool senf::MACAddress::local()
     const
 {
     return (*this)[0] & 0x02;
 }
 
-prefix_ bool senf::MACAddress::group()
+prefix_ bool senf::MACAddress::multicast()
     const
 {
     return (*this)[0] & 0x01;

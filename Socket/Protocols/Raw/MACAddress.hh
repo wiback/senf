@@ -51,10 +51,14 @@ namespace senf {
         : public boost::array<boost::uint8_t,6>, 
           public ComparableSafeBool<MACAddress>
     {
+        static MACAddress const Broadcast; ///< The broadcast address
+        static MACAddress const None;   ///< The empty (0) address
+
         enum NoInit_t { noinit };
         
         MACAddress();                   ///< Construct zero-initialized address
         MACAddress(NoInit_t);           ///< Construct uninitialized (!) address
+        explicit MACAddress(boost::uint64_t v); ///< Construct MACAddress constants
 
         static MACAddress from_string(std::string const & s);
                                         ///< Construct address from string representation
@@ -80,7 +84,7 @@ namespace senf {
                                                  EUI-64. */
 
         bool local() const;             ///< \c true, if address is locally administered
-        bool group() const;             ///< \c true, if address is a group/multicast address
+        bool multicast() const;             ///< \c true, if address is a group/multicast address
         bool broadcast() const;         ///< \c true, if address is the broadcast address
         bool boolean_test() const;      ///< \c true, if address is the zero address
 

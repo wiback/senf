@@ -56,7 +56,7 @@ namespace senf {
         bool mcLoop() const;            ///< Return current multicast loopback state
         void mcLoop(bool value) const;  ///< Set multicast loopback state
 
-        void mcAddMembership(INet4Address const & mcAddr) const;
+        void mcAddMembership(INet4SocketAddress const & mcAddr) const;
                                         ///< Join multicast group
                                         /**< This member will add \a mcAddr to the list of multicast
                                              groups received. The group is joined on the default
@@ -64,7 +64,7 @@ namespace senf {
                                              \param[in] mcAddr address of group to join
                                              \todo fix this as soon as we have a real address class
                                                  (different from the sockaddress class */
-        void mcAddMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;
+        void mcAddMembership(INet4SocketAddress const & mcAddr, INet4SocketAddress const & localAddr) const;
                                         ///< join multicast group on a specific address/interface
                                         /**< This member will add \a mcAddr to the list of multicast
                                              groups received. The group is joined on the interface
@@ -74,7 +74,7 @@ namespace senf {
                                              \todo fix this as soon as we have a real address class
                                                  (different from the sockaddress class */
 
-        void mcDropMembership(INet4Address const & mcAddr) const;
+        void mcDropMembership(INet4SocketAddress const & mcAddr) const;
                                         ///< Leave multicast group
                                         /**< This member will remove \a mcAddr from the list of
                                              multicast groups received. The group is left from the
@@ -82,7 +82,7 @@ namespace senf {
                                              \param[in] mcAddr address of group to leave
                                              \todo fix this as soon as we have a real address class
                                                  (different from the sockaddress class */
-        void mcDropMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;
+        void mcDropMembership(INet4SocketAddress const & mcAddr, INet4SocketAddress const & localAddr) const;
                                         ///< leave multicast group on a specific address/interface
                                         /**< This member will remove \a mcAddr from the list of
                                              multicast groups received. The group is left from the

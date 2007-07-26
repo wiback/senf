@@ -51,7 +51,7 @@ prefix_ void senf::UDPv4SocketProtocol::init_client()
 }
 
 prefix_ void
-senf::UDPv4SocketProtocol::init_client(INet4Address const & address)
+senf::UDPv4SocketProtocol::init_client(INet4SocketAddress const & address)
     const
 {
     init_client();

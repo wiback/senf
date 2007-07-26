@@ -97,7 +97,7 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        void init_client(INet4Address const & address) const;
+        void init_client(INet4SocketAddress const & address) const;
                                         ///< Create client socket and connect
                                         /**< Creates a new client socket and connects to the given
                                              address.

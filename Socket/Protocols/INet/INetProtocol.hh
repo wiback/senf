@@ -62,11 +62,11 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        void connect(INet4Address const & address) const; ///< Connect to remote address
+        void connect(INet4SocketAddress const & address) const; ///< Connect to remote address
                                         /**< \todo make this obsolete by allowing access to the
                                              ClientSocketHandle from ConcreateSocketProtocol
                                              \param[in] address Address to connect to */
-        void bind(INet4Address const & address) const; ///< Set local socket address
+        void bind(INet4SocketAddress const & address) const; ///< Set local socket address
                                         /**< \todo make this obsolete by allowing access to the
                                              ClientSocketHandle from ConcreateSocketProtocol
                                              \param[in] address Address to set */

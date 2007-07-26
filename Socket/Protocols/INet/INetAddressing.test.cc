@@ -36,34 +36,34 @@
 
 BOOST_AUTO_UNIT_TEST(inet4Address)
 {
-    using senf::INet4Address;
+    using senf::INet4SocketAddress;
     using senf::InvalidINetAddressException;
 
     {
-        INet4Address addr;
+        INet4SocketAddress addr;
 
         addr = "127.0.0.1:12345";
     }
 
     {
-        INet4Address addr1("127.0.0.1:12345");
-        INet4Address addr2(std::string("127.0.0.1:12345"));
-        INet4Address addr3("127.0.0.1",12345);
+        INet4SocketAddress addr1("127.0.0.1:12345");
+        INet4SocketAddress addr2(std::string("127.0.0.1:12345"));
+        INet4SocketAddress addr3("127.0.0.1",12345);
     }
 
-    BOOST_CHECK_EQUAL( INet4Address("127.0.0.1:12345"), INet4Address("127.0.0.1",12345) );
+    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345"), INet4SocketAddress("127.0.0.1",12345) );
 
-    BOOST_CHECK_THROW( INet4Address("127.0.0.1"), InvalidINetAddressException );
-    BOOST_CHECK_THROW( INet4Address("foo@bar:12345"), InvalidINetAddressException );
-    BOOST_CHECK_THROW( INet4Address("127.0.0.1:1234a"), InvalidINetAddressException );
-    BOOST_CHECK_THROW( INet4Address("foo@bar",12345), InvalidINetAddressException );
+    BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1"), InvalidINetAddressException );
+    BOOST_CHECK_THROW( INet4SocketAddress("foo@bar:12345"), InvalidINetAddressException );
+    BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1:1234a"), InvalidINetAddressException );
+    BOOST_CHECK_THROW( INet4SocketAddress("foo@bar",12345), InvalidINetAddressException );
 
-    BOOST_CHECK_EQUAL( INet4Address("127.0.0.1:12345").host(), "127.0.0.1" );
-    BOOST_CHECK_EQUAL( INet4Address("127.0.0.1:12345").port(), 12345u );
-    BOOST_CHECK_EQUAL( INet4Address("127.0.0.1:12345").str(), "127.0.0.1:12345" );
+    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").host(), "127.0.0.1" );
+    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").port(), 12345u );
+    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").str(), "127.0.0.1:12345" );
 
     {
-        INet4Address addr("127.0.0.1:12345");
+        INet4SocketAddress addr("127.0.0.1:12345");
         BOOST_CHECK_EQUAL( reinterpret_cast< ::sockaddr_in * >(addr.sockaddr_p())->sin_port,
                            htons(12345) );
         BOOST_CHECK_EQUAL( reinterpret_cast< ::sockaddr_in * >(addr.sockaddr_p())->sin_addr.s_addr,

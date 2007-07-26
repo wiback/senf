@@ -53,14 +53,14 @@ namespace senf {
         \todo Implement more complete interface
         \todo  gethostbyname support ?
      */
-    class INet4Address
+    class INet4SocketAddress
     {
     public:
-        INet4Address();
-        INet4Address(char const * address); ///< Set address and port
-                                        /**< See INet4Address(std::string)
+        INet4SocketAddress();
+        INet4SocketAddress(char const * address); ///< Set address and port
+                                        /**< See INet4SocketAddress(std::string)
                                              \throws InvalidINetAddressException */
-        INet4Address(std::string address); ///< Set address and port
+        INet4SocketAddress(std::string address); ///< Set address and port
                                         /**< This constructor expects a string of the form
                                              'xxx.xxx.xxx.xxx:pppp'. The constructor will use this
                                              value to initialize the host and port members. This
@@ -68,13 +68,14 @@ namespace senf {
                                              not hostnames
                                              \param[in] address Address and port
                                              \throws InvalidINetAddressException */
-        INet4Address(std::string host, unsigned port); ///< Set address and port explicitly
+        INet4SocketAddress(std::string host, unsigned port); ///< Set address and port explicitly
                                         /**< \param[in] host ip address in dotted-quad notation
                                              \param[in] port port number
                                              \throws InvalidINetAddressException */
 
 
-        bool operator==(INet4Address const & other) const; ///< Check INet4Address for equality
+        bool operator==(INet4SocketAddress const & other) const;
+                                        ///< Check INet4SocketAddress for equality
 
         std::string str() const;        ///< Return "address:port" string
         std::string host() const;       ///< Return address in doted quad notation
@@ -101,7 +102,7 @@ namespace senf {
 
         \related INet4Address
      */
-    std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
+    std::ostream & operator<<(std::ostream & os, INet4SocketAddress const & addr);
 
     /** \brief IPv6 network address
 
@@ -294,14 +295,14 @@ namespace senf {
      */
     struct INet4AddressingPolicy
         : public AddressingPolicyBase,
-          private GenericAddressingPolicy<INet4Address>
+          private GenericAddressingPolicy<INet4SocketAddress>
     {
-        typedef INet4Address Address;
+        typedef INet4SocketAddress Address;
 
-        using GenericAddressingPolicy<INet4Address>::peer;
-        using GenericAddressingPolicy<INet4Address>::local;
-        using GenericAddressingPolicy<INet4Address>::connect;
-        using GenericAddressingPolicy<INet4Address>::bind;
+        using GenericAddressingPolicy<INet4SocketAddress>::peer;
+        using GenericAddressingPolicy<INet4SocketAddress>::local;
+        using GenericAddressingPolicy<INet4SocketAddress>::connect;
+        using GenericAddressingPolicy<INet4SocketAddress>::bind;
     };
 
     /** \brief Addressing policy supporting IPv6 addressing

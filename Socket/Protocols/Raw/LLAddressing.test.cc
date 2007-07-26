@@ -71,7 +71,7 @@ BOOST_AUTO_UNIT_TEST(llAddress)
         BOOST_CHECK_EQUAL( a.protocol(), 123u );
         BOOST_CHECK_EQUAL( a.interface(), "lo" );
         BOOST_CHECK_EQUAL( a.arptype(), 0u );
-        BOOST_CHECK_EQUAL( a.pkttype(), 0u );
+        BOOST_CHECK_EQUAL( a.pkttype(), senf::LLSocketAddress::Undefined );
         BOOST_CHECK( ! a.address() );
     }
 }

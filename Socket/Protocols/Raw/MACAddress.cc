@@ -100,6 +100,9 @@ prefix_ senf::MACAddress senf::MACAddress::from_eui64(boost::uint64_t v)
     return mac;
 }
 
+senf::MACAddress const senf::MACAddress::Broadcast = senf::MACAddress(0xFFFFFFFFFFFFull);
+senf::MACAddress const senf::MACAddress::None;
+
 ///////////////////////////////////////////////////////////////////////////
 // namespace members
 

@@ -100,7 +100,7 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        void init_client(INet4Address const & address) const;
+        void init_client(INet4SocketAddress const & address) const;
                                         ///< Create client socket and connect
                                         /**< Creates a new client socket and connects to the given
                                              address.
@@ -113,7 +113,7 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolServerSocketHandle::ProtocolServerSocketHandle()
                                              constructor */
-        void init_server(INet4Address const & address, unsigned backlog=1) const;
+        void init_server(INet4SocketAddress const & address, unsigned backlog=1) const;
                                         ///< Create server socket and listen
                                         /**< Creates a new server socket, binds to \a address end
                                              starts listening for new connections with a backlog of

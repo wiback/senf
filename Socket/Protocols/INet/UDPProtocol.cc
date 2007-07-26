@@ -73,7 +73,7 @@ prefix_ void senf::UDPProtocol::mcLoop(bool value)
         throw SystemException(errno);
 }
 
-prefix_ void senf::UDPProtocol::mcAddMembership(INet4Address const & mcAddr)
+prefix_ void senf::UDPProtocol::mcAddMembership(INet4SocketAddress const & mcAddr)
     const
 {
     struct ip_mreqn mreqn;
@@ -84,8 +84,8 @@ prefix_ void senf::UDPProtocol::mcAddMembership(INet4Address const & mcAddr)
         throw SystemException(errno);
 }
 
-prefix_ void senf::UDPProtocol::mcAddMembership(INet4Address const & mcAddr,
-                                                        INet4Address const & localAddr)
+prefix_ void senf::UDPProtocol::mcAddMembership(INet4SocketAddress const & mcAddr,
+                                                        INet4SocketAddress const & localAddr)
     const
 {
     struct ip_mreqn mreqn;
@@ -96,7 +96,7 @@ prefix_ void senf::UDPProtocol::mcAddMembership(INet4Address const & mcAddr,
         throw SystemException(errno);
 }
 
-prefix_ void senf::UDPProtocol::mcDropMembership(INet4Address const & mcAddr)
+prefix_ void senf::UDPProtocol::mcDropMembership(INet4SocketAddress const & mcAddr)
     const
 {
     struct ip_mreqn mreqn;
@@ -107,8 +107,8 @@ prefix_ void senf::UDPProtocol::mcDropMembership(INet4Address const & mcAddr)
         throw SystemException(errno);
 }
 
-prefix_ void senf::UDPProtocol::mcDropMembership(INet4Address const & mcAddr,
-                                                         INet4Address const & localAddr)
+prefix_ void senf::UDPProtocol::mcDropMembership(INet4SocketAddress const & mcAddr,
+                                                         INet4SocketAddress const & localAddr)
     const
 {
     struct ip_mreqn mreqn;

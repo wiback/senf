@@ -43,7 +43,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet4Address
 
-prefix_ senf::INet4Address::INet4Address(std::string host, unsigned port)
+prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string host, unsigned port)
 {
     clear();
     /** \todo  gethostbyname support */
@@ -52,7 +52,7 @@ prefix_ senf::INet4Address::INet4Address(std::string host, unsigned port)
     addr_.sin_port = htons(port);
 }
 
-prefix_ std::string senf::INet4Address::str()
+prefix_ std::string senf::INet4SocketAddress::str()
     const
 {
     std::stringstream s;
@@ -60,13 +60,13 @@ prefix_ std::string senf::INet4Address::str()
     return s.str();
 }
 
-prefix_ void senf::INet4Address::clear()
+prefix_ void senf::INet4SocketAddress::clear()
 {
     ::memset(&addr_,0,sizeof(addr_));
     addr_.sin_family = AF_INET;
 }
 
-prefix_ void senf::INet4Address::assignString(std::string address)
+prefix_ void senf::INet4SocketAddress::assignString(std::string address)
 {
     clear();
     unsigned i = address.find(':');

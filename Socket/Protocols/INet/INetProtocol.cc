@@ -38,14 +38,14 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::IPv4Protocol
 
-prefix_ void senf::IPv4Protocol::connect(INet4Address const & address)
+prefix_ void senf::IPv4Protocol::connect(INet4SocketAddress const & address)
     const
 {
     if (::connect(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
         throw SystemException(errno);
 }
 
-prefix_ void senf::IPv4Protocol::bind(INet4Address const & address)
+prefix_ void senf::IPv4Protocol::bind(INet4SocketAddress const & address)
     const
 {
     if (::bind(body().fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)

@@ -51,7 +51,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_client()
 }
 
 prefix_ void
-senf::TCPv4SocketProtocol::init_client(INet4Address const & address)
+senf::TCPv4SocketProtocol::init_client(INet4SocketAddress const & address)
     const
 {
     init_client();
@@ -67,7 +67,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_server()
     body().fd(sock);
 }
 
-prefix_ void senf::TCPv4SocketProtocol::init_server(INet4Address const & address,
+prefix_ void senf::TCPv4SocketProtocol::init_server(INet4SocketAddress const & address,
                                                            unsigned backlog)
     const
 {
