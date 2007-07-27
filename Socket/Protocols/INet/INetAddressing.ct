@@ -39,7 +39,7 @@ prefix_ senf::INet6Address::INet6Address(Range const & range)
     for (; p!=p_end && i!=i_end; ++p, ++i)
         *p = *i;
     if (p!=p_end || i!=i_end)
-        throw InvalidINetAddressException();
+        throw SyntaxException();
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

@@ -156,18 +156,20 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
     {
         senf::TCPv4ClientSocketHandle sock;
 
-        BOOST_CHECK_THROW( sock.connect(senf::INet4SocketAddress("127.0.0.1:12345")), senf::SystemException );
-        BOOST_CHECK_THROW( sock.protocol().connect("127.0.0.1:12345"), senf::SystemException );
+        BOOST_CHECK_THROW( sock.connect(senf::INet4SocketAddress("127.0.0.1:12345")), 
+                           senf::SystemException );
+        BOOST_CHECK_THROW( sock.protocol().connect(senf::INet4SocketAddress("127.0.0.1:12345")),
+                           senf::SystemException );
     }
 
     try {
         alarm(10);
         start(server_v4);
         senf::TCPv4ClientSocketHandle sock;
-        BOOST_CHECK_NO_THROW( sock.bind("127.0.0.1:23456") );
-        BOOST_CHECK_NO_THROW( sock.connect("127.0.0.1:12345") );
-        BOOST_CHECK( sock.peer() == "127.0.0.1:12345" );
-        BOOST_CHECK( sock.local() == "127.0.0.1:23456" );
+        BOOST_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress("127.0.0.1:23456")) );
+        BOOST_CHECK_NO_THROW( sock.connect(senf::INet4SocketAddress("127.0.0.1:12345")) );
+        BOOST_CHECK( sock.peer() == senf::INet4SocketAddress("127.0.0.1:12345") );
+        BOOST_CHECK( sock.local() == senf::INet4SocketAddress("127.0.0.1:23456") );
         BOOST_CHECK( sock.blocking() );
         BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
         BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
@@ -340,7 +342,7 @@ BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
     try {
         alarm(10);
         BOOST_CHECKPOINT("Opening server socket");
-        senf::TCPv4ServerSocketHandle server ("127.0.0.1:12346");
+        senf::TCPv4ServerSocketHandle server (senf::INet4SocketAddress("127.0.0.1:12346"));
         BOOST_CHECKPOINT("Starting client");
         start(client_v4);
 

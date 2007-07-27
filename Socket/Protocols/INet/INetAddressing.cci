@@ -38,16 +38,6 @@ prefix_ senf::INet4SocketAddress::INet4SocketAddress()
     clear();
 }
 
-prefix_ senf::INet4SocketAddress::INet4SocketAddress(char const * address)
-{
-    assignString(address);
-}
-
-prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & address)
-{
-    assignString(address);
-}
-
 prefix_ bool senf::INet4SocketAddress::operator==(INet4SocketAddress const & other)
     const
 {
@@ -55,17 +45,32 @@ prefix_ bool senf::INet4SocketAddress::operator==(INet4SocketAddress const & oth
         addr_.sin_addr.s_addr == other.addr_.sin_addr.s_addr;
 }
 
-prefix_ std::string senf::INet4SocketAddress::host()
+prefix_ senf::INet4Address senf::INet4SocketAddress::address()
     const
 {
-    char buffer[128];
-    return std::string(::inet_ntop(AF_INET,&addr_.sin_addr,buffer,128));
+    return INet4Address::from_inaddr(addr_.sin_addr.s_addr);
 }
 
 prefix_ unsigned senf::INet4SocketAddress::port()
     const
 {
     return ntohs(addr_.sin_port);
+}
+
+prefix_ bool senf::INet4SocketAddress::boolean_test()
+    const
+{
+    return port() || address();
+}
+
+prefix_ void senf::INet4SocketAddress::address(INet4Address const & addr)
+{
+    addr_.sin_addr.s_addr = addr.inaddr();
+}
+
+prefix_ void senf::INet4SocketAddress::port(unsigned p)
+{
+    addr_.sin_port = htons(p);
 }
 
 prefix_ struct sockaddr * senf::INet4SocketAddress::sockaddr_p()
@@ -87,7 +92,7 @@ prefix_ unsigned senf::INet4SocketAddress::sockaddr_len()
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4SocketAddress const & addr)
 {
-    os << addr.str();
+    os << addr.address() << ":" << addr.port();
     return os;
 }
 

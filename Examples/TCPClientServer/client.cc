@@ -31,7 +31,7 @@ int main(int argc, char const * argv[])
     try {
         for (int i=0; i<=1000; i++) {
             senf::TCPv4ClientSocketHandle sock;
-            sock.connect(senf::INet4SocketAddress("127.0.0.1", 4243));
+            sock.connect(senf::INet4SocketAddress("127.0.0.1:4243"));
             sock.protocol().linger(true);
             
             std::stringstream s;

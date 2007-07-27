@@ -37,30 +37,33 @@
 BOOST_AUTO_UNIT_TEST(inet4Address)
 {
     using senf::INet4SocketAddress;
-    using senf::InvalidINetAddressException;
+    using senf::INet4Address;
 
     {
         INet4SocketAddress addr;
+        
+        BOOST_CHECK( ! addr );
 
-        addr = "127.0.0.1:12345";
+        addr = INet4SocketAddress("127.0.0.1:12345");
+        BOOST_CHECK ( addr != INet4SocketAddress() );
     }
 
     {
         INet4SocketAddress addr1("127.0.0.1:12345");
-        INet4SocketAddress addr2(std::string("127.0.0.1:12345"));
-        INet4SocketAddress addr3("127.0.0.1",12345);
+        INet4SocketAddress addr3(INet4Address::Loopback,12345);
     }
 
-    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345"), INet4SocketAddress("127.0.0.1",12345) );
+    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345"), 
+                       INet4SocketAddress(INet4Address::Loopback,12345) );
 
-    BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1"), InvalidINetAddressException );
-    BOOST_CHECK_THROW( INet4SocketAddress("foo@bar:12345"), InvalidINetAddressException );
-    BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1:1234a"), InvalidINetAddressException );
-    BOOST_CHECK_THROW( INet4SocketAddress("foo@bar",12345), InvalidINetAddressException );
+    BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1"), INet4SocketAddress::SyntaxException );
+    BOOST_CHECK_THROW( INet4SocketAddress("foo@bar:12345"), INet4Address::SyntaxException );
+    BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1:1234a"), INet4SocketAddress::SyntaxException );
 
-    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").host(), "127.0.0.1" );
+    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").address(), INet4Address::Loopback );
     BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").port(), 12345u );
-    BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").str(), "127.0.0.1:12345" );
+    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(INet4SocketAddress("127.0.0.1:12345")),
+                       "127.0.0.1:12345" );
 
     {
         INet4SocketAddress addr("127.0.0.1:12345");
@@ -79,7 +82,6 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 {
     using senf::INet6Address;
     using senf::INet6SocketAddress;
-    using senf::InvalidINetAddressException;
 
     {
         INet6Address addr1 ("0102:0304:0506:0708:090A:0B0C:0D0E:0F00");
@@ -109,15 +111,15 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         addr1.clear();
         addr2 = "::";
         BOOST_CHECK_EQUAL( addr1, addr2 );
-        BOOST_CHECK_THROW( addr1 = "", InvalidINetAddressException );
+        BOOST_CHECK_THROW( addr1 = "", INet6Address::SyntaxException );
         BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr1), "::" );
         unsigned char data[] = { 0x12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x21, 0 };
         INet6Address addr3 (std::make_pair(&data[0],&data[0]+sizeof(data)-1));
         BOOST_CHECK_EQUAL( addr3, "1200::21" );
         BOOST_CHECK_THROW( INet6Address(std::make_pair(&data[0],&data[0]+sizeof(data))),
-                           InvalidINetAddressException );
+                           INet6Address::SyntaxException );
         BOOST_CHECK_THROW( INet6Address(std::make_pair(&data[0],&data[0]+sizeof(data)-2)),
-                           InvalidINetAddressException );
+                           INet6Address::SyntaxException );
     }
 
     {
@@ -148,9 +150,9 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK_EQUAL( addr.port(), 100u );
         addr.host("::2");
         BOOST_CHECK_EQUAL( addr.host(), "::2" );
-        BOOST_CHECK_THROW( addr = "", InvalidINetAddressException );
-        BOOST_CHECK_THROW( addr = "[::1]", InvalidINetAddressException );
-        BOOST_CHECK_THROW( addr = "[::1]1234", InvalidINetAddressException );
+        BOOST_CHECK_THROW( addr = "", INet6SocketAddress::SyntaxException );
+        BOOST_CHECK_THROW( addr = "[::1]", INet6SocketAddress::SyntaxException );
+        BOOST_CHECK_THROW( addr = "[::1]1234", INet6SocketAddress::SyntaxException );
         addr = "[12::21@lo]:12345";
         BOOST_CHECK_EQUAL( addr.address(), "[12::21@lo]:12345" );
         BOOST_CHECK_EQUAL( addr.host(), "12::21" );

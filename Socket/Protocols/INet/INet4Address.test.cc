@@ -39,6 +39,7 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
 {
     senf::INet4Address addr (senf::INet4Address::from_string("127.0.0.1"));
     BOOST_CHECK_EQUAL( addr, senf::INet4Address::Loopback );
+    BOOST_CHECK( addr != senf::INet4Address::Broadcast );
 
     addr = senf::INet4Address::from_string("localhost");
     BOOST_CHECK_EQUAL( addr, senf::INet4Address::Loopback );

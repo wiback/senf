@@ -38,7 +38,7 @@ class Server
     senf::TCPv4ServerSocketHandle serverSock;
 
 public:
-    Server(std::string const & host, unsigned int port)
+    Server(senf::INet4Address const & host, unsigned int port)
         : serverSock(senf::INet4SocketAddress(host, port)) {}
     
     void run() 
@@ -75,7 +75,7 @@ private:
 int main(int argc, char const * argv[])
 {
     try {
-        Server myServer ("127.0.0.1", 4243);
+        Server myServer (senf::INet4Address::Loopback, 4243);
         myServer.run();
     }
     catch (std::exception const & ex) {

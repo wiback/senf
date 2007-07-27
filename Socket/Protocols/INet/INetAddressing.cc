@@ -43,21 +43,26 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet4Address
 
-prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & host, unsigned port)
+prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & addr)
 {
     clear();
-    /** \todo  gethostbyname support */
-    if (::inet_aton(host.c_str(), &addr_.sin_addr) == 0)
-        throw InvalidINetAddressException();
-    addr_.sin_port = htons(port);
+    unsigned i = addr.find(':');
+    if (i == std::string::npos)
+        throw SyntaxException();
+    address(INet4Address::from_string(std::string(addr,0,i)));
+    try {
+        port(boost::lexical_cast< ::u_int16_t >(std::string(addr,i+1)));
+    }
+    catch (boost::bad_lexical_cast const &) {
+        throw SyntaxException();
+    }
 }
 
-prefix_ std::string senf::INet4SocketAddress::str()
-    const
+prefix_ senf::INet4SocketAddress::INet4SocketAddress(INet4Address const & addr, unsigned p)
 {
-    std::stringstream s;
-    s << host() << ':' << port();
-    return s.str();
+    clear();
+    address(addr);
+    port(p);
 }
 
 prefix_ void senf::INet4SocketAddress::clear()
@@ -66,38 +71,19 @@ prefix_ void senf::INet4SocketAddress::clear()
     addr_.sin_family = AF_INET;
 }
 
-prefix_ void senf::INet4SocketAddress::assignString(std::string const & address)
-{
-    clear();
-    unsigned i = address.find(':');
-    if (i == std::string::npos)
-        throw InvalidINetAddressException();
-    // The temporary string in the next expr is guaranteed to live
-    // until end-of-statement
-    if (::inet_aton(std::string(address,0,i).c_str(), &addr_.sin_addr) == 0)
-        throw InvalidINetAddressException();
-    try {
-        // Replace lexical_cast with strtoul ?
-        addr_.sin_port = htons(boost::lexical_cast< ::u_int16_t >(std::string(address,i+1)));
-    }
-    catch (boost::bad_lexical_cast const &) {
-        throw InvalidINetAddressException();
-    }
-}
-
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet6Address
 
 prefix_ senf::INet6Address::INet6Address(std::string const & addr)
 {
     if (inet_pton(AF_INET6,addr.c_str(),&addr_) <= 0)
-        throw InvalidINetAddressException();
+        throw SyntaxException();
 }
 
 prefix_ senf::INet6Address::INet6Address(char const * addr)
 {
     if (inet_pton(AF_INET6,addr,&addr_) <= 0)
-        throw InvalidINetAddressException();
+        throw SyntaxException();
 }
 
 prefix_ void senf::INet6Address::clear()
@@ -185,28 +171,28 @@ prefix_ void senf::INet6SocketAddress::assignAddr(std::string const & addr)
         || inet_pton(AF_INET6, std::string(boost::begin(*token),boost::end(*token)).c_str(),
                      &sockaddr_.sin6_addr) <= 0
         || ++token == tokens.end())
-        throw InvalidINetAddressException();
+        throw SyntaxException();
     if (*token == "@") {
         if (++token == tokens.end())
-            throw InvalidINetAddressException();
+            throw SyntaxException();
         assignIface(std::string(boost::begin(*token),boost::end(*token)));
         if (++token == tokens.end()
             || *token != "]")
-            throw InvalidINetAddressException();
+            throw SyntaxException();
     } else if (*token != "]")
-        throw InvalidINetAddressException();
+        throw SyntaxException();
     if (++token == tokens.end()
         || *boost::begin(*token) != ':')
-        throw InvalidINetAddressException();
+        throw SyntaxException();
     try {
         sockaddr_.sin6_port = htons(
             boost::lexical_cast<unsigned>(std::string(boost::next(boost::begin(*token)),
                                                       boost::end(*token))));
     } catch(boost::bad_lexical_cast const &) {
-        throw InvalidINetAddressException();
+        throw SyntaxException();
     }
     if (++token != tokens.end())
-        throw InvalidINetAddressException();
+        throw SyntaxException();
 }
 
 prefix_ void senf::INet6SocketAddress::assignIface(std::string const & iface)
@@ -216,7 +202,7 @@ prefix_ void senf::INet6SocketAddress::assignIface(std::string const & iface)
     else {
         sockaddr_.sin6_scope_id = if_nametoindex(iface.c_str());
         if (sockaddr_.sin6_scope_id == 0)
-            throw InvalidINetAddressException();
+            throw SyntaxException();
     }
 }
 

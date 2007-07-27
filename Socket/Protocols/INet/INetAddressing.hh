@@ -31,10 +31,12 @@
 #include <string>
 #include <exception>
 #include <netinet/in.h>
+#include <boost/operators.hpp>
 #include "Socket/SocketPolicy.hh"
 #include "Socket/ClientSocketHandle.hh"
 #include "Socket/CommunicationPolicy.hh"
 #include "Socket/Protocols/GenericAddressingPolicy.hh"
+#include "INet4Address.hh"
 
 //#include "INetAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -48,41 +50,44 @@ namespace senf {
 
         INet4Address wraps the standard sockaddr_in datatype. It provides simple accessor methods
         to access the host and port. It does \e not integrate \c gethostbyname or DNS lookup.
-
-        \todo Implement real INet4Address datatype and rename this one to INet4SockAddress ...
-        \todo Implement more complete interface
-        \todo  gethostbyname support ?
+        
+        \implementation This implementation is based on sockaddr_in, which is needed since it needs
+            to provide a non-const struct sockaddr * for legacy compatibility.
      */
     class INet4SocketAddress
+        : public boost::equality_comparable<INet4SocketAddress>, 
+          public senf::ComparableSafeBool<INet4SocketAddress>
     {
     public:
         INet4SocketAddress();
-        INet4SocketAddress(char const * address); ///< Set address and port
-                                        /**< See INet4SocketAddress(std::string)
-                                             \throws InvalidINetAddressException */
-        INet4SocketAddress(std::string const & address); ///< Set address and port
+        explicit INet4SocketAddress(std::string const & address); ///< Set address and port
                                         /**< This constructor expects a string of the form
-                                             'xxx.xxx.xxx.xxx:pppp'. The constructor will use this
-                                             value to initialize the host and port members. This
-                                             constructor does \e only support numeric ip addresses
-                                             not hostnames
-                                             \param[in] address Address and port
-                                             \throws InvalidINetAddressException */
-        INet4SocketAddress(std::string const & host, unsigned port); 
-                                        ///< Set address and port explicitly
-                                        /**< \param[in] host ip address in dotted-quad notation
-                                             \param[in] port port number
-                                             \throws InvalidINetAddressException */
+                                             'host:port'. The constructor will use this value to
+                                             initialize the host and port members. Since it uses the
+                                             INet4Address::from_string constructor, this call may
+                                             block while waiting for the resolver.
+                                             \throws SyntaxException if the 'host:port' syntax is
+                                                 not obeyed.
+                                             \throws INet4Address::SyntaxException if the host part
+                                                 cannot be converted to an IP address. */
 
+        INet4SocketAddress(INet4Address const & addr, unsigned port); 
+                                        ///< Set address and port explicitly
+                                        /**< \param[in] addr IP address
+                                             \param[in] port port number */
 
         bool operator==(INet4SocketAddress const & other) const;
                                         ///< Check INet4SocketAddress for equality
 
-        std::string str() const;        ///< Return "address:port" string
-        std::string host() const;       ///< Return address in doted quad notation
-        unsigned port() const;          ///< Return portnumber
+        INet4Address address() const;   ///< Return address
+        unsigned port() const;          ///< Return port number
+
+        bool boolean_test() const;      ///< \c true, if address is empty (i.e. 0.0.0.0:0)
 
         void clear();                   ///< Clear address/port to 0.0.0.0:0
+
+        void address(INet4Address const & addr); ///< Set address
+        void port(unsigned p);          ///< Set port number
 
         /// \name Generic Address Interface
         /// @{
@@ -93,15 +98,17 @@ namespace senf {
 
         /// @}
 
-    private:
-        void assignString(std::string const & addr);
+        struct SyntaxException : public std::exception
+        { virtual char const * what() const throw() 
+                { return "Invalid IpV4 socket address syntax"; } };
 
+    private:
         struct ::sockaddr_in addr_;
     };
 
     /** \brief Write address and port to os
 
-        \related INet4Address
+        \related INet4SocketAddress
      */
     std::ostream & operator<<(std::ostream & os, INet4SocketAddress const & addr);
 
@@ -159,6 +166,9 @@ namespace senf {
         struct in6_addr const * addr_p() const;
                                         ///< Get const pointer to internal address repr
         unsigned addr_len() const;      ///< Size of an IPv6 address (16 bytes)
+
+        struct SyntaxException : public std::exception
+        { virtual char const * what() const throw() { return "Invalid IpV6 address syntax"; } };
 
     protected:
 
@@ -256,6 +266,10 @@ namespace senf {
 
         ///@}
 
+        struct SyntaxException : public std::exception
+        { virtual char const * what() const throw() 
+                { return "Invalid IpV6 socket address syntax"; } };
+
     protected:
 
     private:
@@ -268,14 +282,6 @@ namespace senf {
     /** \brief Output INet6SocketAddress instance as it's string representation
      */
     std::ostream & operator<<(std::ostream & os, INet6SocketAddress const & addr);
-
-    /** \brief Signal invalid INet address syntax
-
-        \related INet4Address
-        \relatesalso INet6Address
-     */
-    struct InvalidINetAddressException : public std::exception
-    { char const * what() const throw() { return "invalid inet address"; } };
 
     /// @}
 
