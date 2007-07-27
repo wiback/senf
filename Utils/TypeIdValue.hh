@@ -92,6 +92,9 @@ namespace senf {
     template <class Type>
     TypeIdValue const typeIdValue();
 
+    inline std::ostream & operator<<(std::ostream & os, TypeIdValue const & v)
+    { return os << v.name(); }
+    
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
