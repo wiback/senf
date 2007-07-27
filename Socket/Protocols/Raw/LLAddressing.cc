@@ -51,7 +51,7 @@ prefix_ std::string senf::LLSocketAddress::interface()
     return std::string(name);
 }
 
-prefix_ void senf::LLSocketAddress::interface(std::string iface)
+prefix_ void senf::LLSocketAddress::interface(std::string const & iface)
 {
     if (iface.empty()) 
         addr_.sll_ifindex = 0;

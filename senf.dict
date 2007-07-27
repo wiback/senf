@@ -6,14 +6,18 @@ AddressingPolicyBase
 addtogroup
 aListCollection
 alloc
+async
 aVectorCollection
 BaseParser
 berlios
 bitfield
 bund
+Callback
 callbacks
+cb
 cerr
 cfi
+CIDR
 ClientSocketHandle
 CommunicationPolicy
 CommunicationPolicyBase
@@ -29,6 +33,7 @@ DefaultBundle
 defaultInit
 defgroup
 dil
+DNS
 dontinclude
 ElementParser
 endcode
@@ -57,10 +62,13 @@ fuer
 hh
 hideinitializer
 Hmm
+hostname
+hostnames
 href
 htm
 html
 http
+IANA
 ih
 impl
 INet
@@ -83,6 +91,7 @@ li
 ListB
 ListN
 ListPolicy
+loopback
 MACAddress
 mainpage
 mixin
@@ -94,6 +103,7 @@ NextPacket
 nextPacketKey
 nextPacketRange
 nextPacketType
+NIS
 NoAddressingPolicy
 noinit
 nothrow

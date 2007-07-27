@@ -26,13 +26,12 @@
 #include "Socket/Protocols/INet/TCPSocketHandle.hh"
 #include "Socket/Protocols/INet/INetAddressing.hh"
 
-
 int main(int argc, char const * argv[])
 {
     try {
         for (int i=0; i<=1000; i++) {
             senf::TCPv4ClientSocketHandle sock;
-            sock.connect(senf::INet4Address("127.0.0.1", 4243));
+            sock.connect(senf::INet4SocketAddress("127.0.0.1", 4243));
             sock.protocol().linger(true);
             
             std::stringstream s;
@@ -50,3 +49,14 @@ int main(int argc, char const * argv[])
     
     return 0;
 }
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u"
+// comment-column: 40
+// End:

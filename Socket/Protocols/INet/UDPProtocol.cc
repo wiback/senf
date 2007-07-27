@@ -119,7 +119,7 @@ prefix_ void senf::UDPProtocol::mcDropMembership(INet4SocketAddress const & mcAd
         throw SystemException(errno);
 }
 
-prefix_ void senf::UDPProtocol::mcIface(std::string iface)
+prefix_ void senf::UDPProtocol::mcIface(std::string const & iface)
     const
 {
     struct ip_mreqn mreqn;

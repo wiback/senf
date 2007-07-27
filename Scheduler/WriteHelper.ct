@@ -32,7 +32,7 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Handle>
-prefix_ senf::WriteHelper<Handle>::WriteHelper(Handle handle, std::string data,
+prefix_ senf::WriteHelper<Handle>::WriteHelper(Handle handle, std::string const & data,
                                                       Callback callback)
     : handle_(handle), data_(data), callback_(callback),
       offset_(data_.begin()), errno_(0)

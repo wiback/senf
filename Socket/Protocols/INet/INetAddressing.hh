@@ -60,7 +60,7 @@ namespace senf {
         INet4SocketAddress(char const * address); ///< Set address and port
                                         /**< See INet4SocketAddress(std::string)
                                              \throws InvalidINetAddressException */
-        INet4SocketAddress(std::string address); ///< Set address and port
+        INet4SocketAddress(std::string const & address); ///< Set address and port
                                         /**< This constructor expects a string of the form
                                              'xxx.xxx.xxx.xxx:pppp'. The constructor will use this
                                              value to initialize the host and port members. This
@@ -68,7 +68,8 @@ namespace senf {
                                              not hostnames
                                              \param[in] address Address and port
                                              \throws InvalidINetAddressException */
-        INet4SocketAddress(std::string host, unsigned port); ///< Set address and port explicitly
+        INet4SocketAddress(std::string const & host, unsigned port); 
+                                        ///< Set address and port explicitly
                                         /**< \param[in] host ip address in dotted-quad notation
                                              \param[in] port port number
                                              \throws InvalidINetAddressException */
@@ -93,7 +94,7 @@ namespace senf {
         /// @}
 
     private:
-        void assignString(std::string addr);
+        void assignString(std::string const & addr);
 
         struct ::sockaddr_in addr_;
     };

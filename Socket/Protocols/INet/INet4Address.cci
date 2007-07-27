@@ -30,32 +30,50 @@
 // senf::INet4Address
 
 prefix_ senf::INet4Address::INet4Address()
-    : addr_()
+{
+    std::fill(begin(), end(), 0u);
+}
+
+prefix_ senf::INet4Address::INet4Address(NoInit_t)
 {}
 
-prefix_ senf::INet4Address senf::INet4Address::from_inaddr(unsigned long v)
+prefix_ senf::INet4Address senf::INet4Address::from_inaddr(inaddr_type v)
 {
-    INet4Address addr;
-    addr.addr_ = v;
-    return addr;
+    return INet4Address(v,IsInAddr);
+}
+
+prefix_ senf::INet4Address::INet4Address(inaddr_type addr, InAddr_t)
+{
+    iref() = addr;
 }
 
 prefix_ bool senf::INet4Address::broadcast()
     const
 {
-    return addr_ == 0xFFFFFFFFu;
+    return inaddr() == 0xFFFFFFFFu;
 }
 
 prefix_ bool senf::INet4Address::boolean_test()
     const
 {
-    return addr_;
+    return inaddr();
 }
 
-prefix_ unsigned long senf::INet4Address::raw()
+prefix_ senf::INet4Address::inaddr_type senf::INet4Address::inaddr()
     const
 {
-    return addr_;
+    return iref();
+}
+
+prefix_ senf::INet4Address::inaddr_type & senf::INet4Address::iref()
+{
+    return *reinterpret_cast<inaddr_type *>(&(*this)[0]);
+}
+
+prefix_ senf::INet4Address::inaddr_type senf::INet4Address::iref()
+    const
+{
+    return *reinterpret_cast<inaddr_type const *>(&(*this)[0]);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

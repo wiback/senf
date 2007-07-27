@@ -19,14 +19,14 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief INet4Address inline template implementation */
+    \brief INet4Address non-inline template implementation  */
 
 //#include "INet4Address.ih"
 
 // Custom includes
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet4Address
@@ -34,14 +34,15 @@
 template <class InputIterator>
 prefix_ senf::INet4Address senf::INet4Address::from_data(InputIterator i)
 {
-    address_type v ((address_type(*i)&0xFF) << 24);
-    v |= (address_type(*++i)&0xFF) << 16;
-    v |= (address_type(*++i)&0xFF) <<  8;
-    v |= (address_type(*++i)&0xFF);
-    return senf::INet4Address(v);
+    INet4Address addr (INet4Address::noinit);
+    iterator j (addr.begin());
+    iterator const j_end (addr.end());
+    for (;j!=j_end;++j,++i)
+        *j = *i;
+    return addr;
 }
 
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
 

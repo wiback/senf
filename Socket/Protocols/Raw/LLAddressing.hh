@@ -102,7 +102,7 @@ namespace senf {
         // changing those members, which are sensible to be changed.
 
         void address(MACAddress const & addr); ///< Change address
-        void interface(std::string iface); ///< Change interface
+        void interface(std::string const & iface); ///< Change interface
         void protocol(unsigned prot);   ///< Change protocol
 
         ///\name Generic SocketAddress interface

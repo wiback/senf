@@ -6,13 +6,6 @@ import SENFSCons
 
 ###########################################################################
 
-# Load subversion information
-svninfo = dict(
-    [ map(lambda y:y.strip(),x.split(":",1))
-      for x in os.popen("svn info").read().split("\n")
-      if ':' in x ] )
-svninfo['commited'] = not(os.popen("svn status -q").read())
-
 # Load utilities and setup libraries
 SENFSCons.UseBoost()
 SENFSCons.UseSTLPort()
@@ -25,7 +18,7 @@ env.Append(
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
    ENV = { 'TODAY' : str(datetime.date.today()),
-           'REVISION' : svninfo['Revision'] + (not(svninfo['commited']) and " + local changes" or ""),
+           'REVISION' : os.popen("svnversion").read().strip()
            },
 )
 

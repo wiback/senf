@@ -31,7 +31,7 @@
 
 template <class Handle>
 prefix_ typename senf::WriteHelper<Handle>::ptr
-senf::WriteHelper<Handle>::dispatch(Handle handle, std::string data, Callback callback)
+senf::WriteHelper<Handle>::dispatch(Handle handle, std::string const & data, Callback callback)
 {
     return ptr(new WriteHelper(handle, data, callback));
 }

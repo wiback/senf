@@ -86,7 +86,7 @@ class MCSniffer
     std::ostream& stream;
 
 public:
-    MCSniffer(senf::INet4Address addr, std::ostream& s)
+    MCSniffer(senf::INet4SocketAddress addr, std::ostream& s)
         : stream(s)
     {
         sock.protocol().bind(addr);
@@ -118,9 +118,9 @@ int main(int argc, char const * argv[])
         std::ofstream f2 ("233.132.152.2.txt");
         
         MCSniffer sniffer1 (
-            senf::INet4Address::INet4Address("233.132.152.1:22344"), f1);
+            senf::INet4SocketAddress("233.132.152.1:22344"), f1);
         MCSniffer sniffer2 (
-            senf::INet4Address::INet4Address("233.132.152.2:22344"), f2);
+            senf::INet4SocketAddress("233.132.152.2:22344"), f2);
             
         senf::Scheduler::instance().process();
     }

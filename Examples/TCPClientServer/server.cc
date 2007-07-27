@@ -39,7 +39,7 @@ class Server
 
 public:
     Server(std::string const & host, unsigned int port)
-        : serverSock(senf::INet4Address(host, port)) {}
+        : serverSock(senf::INet4SocketAddress(host, port)) {}
     
     void run() 
     {
@@ -83,3 +83,14 @@ int main(int argc, char const * argv[])
     }
     return 0;
 }
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u"
+// comment-column: 40
+// End:

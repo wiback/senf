@@ -37,7 +37,7 @@
 
 BOOST_AUTO_UNIT_TEST(inet4Address)
 {
-    senf::INet4Address addr  (senf::INet4Address::from_string("127.0.0.1"));
+    senf::INet4Address addr (senf::INet4Address::from_string("127.0.0.1"));
     BOOST_CHECK_EQUAL( addr, senf::INet4Address::Loopback );
 
     addr = senf::INet4Address::from_string("localhost");
@@ -47,7 +47,8 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
     char data[] = { 128, 129, 130, 131 };
     addr = senf::INet4Address::from_data(data);
     BOOST_CHECK_EQUAL( addr, senf::INet4Address::from_string("128.129.130.131") );
-    BOOST_CHECK_EQUAL( addr.raw(), htonl(0x80818283u) );
+    BOOST_CHECK_EQUAL( addr.inaddr(), htonl(0x80818283u) );
+    BOOST_CHECK_EQUAL( addr.address(), 0x80818283u );
 
     BOOST_CHECK( ! addr.loopback() );
     BOOST_CHECK( ! addr.local() );

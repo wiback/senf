@@ -33,22 +33,21 @@
 
 namespace senf {
 
-    /** \brief Internal: Packet type of DataPacket
-
-        \internal
-     */
-    struct DataPacketType : public PacketTypeBase
-    {};
-
-
     /** \brief Generic payload-only packet
-        
+
+        \par Packet type (typedef):
+            \ref DataPacket
+
         DataPacket is a simple generic packet with just a payload of uninterpreted data. This is the
         packet used whenever no more specific packet type can be found for a sub-packet (e.g. as the
         payload data of a UDP packet)
 
         \ingroup packet_module
      */
+    struct DataPacketType : public PacketTypeBase
+    {};
+
+    /** \brief Generic payload-only packet typedef */
     typedef ConcretePacket<DataPacketType> DataPacket;
 }
 

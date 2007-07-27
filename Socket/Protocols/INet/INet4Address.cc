@@ -40,24 +40,44 @@
 // senf::INet4Address::INet4Address
 
 prefix_ senf::INet4Address::INet4Address(address_type value)
-    : addr_(htonl(value))
-{}
+{
+    iref() = htonl(value);
+}
 
 prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s)
 {
-    ::in_addr ina;
+    struct in_addr ina;
     if (::inet_pton(AF_INET,s.c_str(),&ina) > 0)
         return senf::INet4Address::from_inaddr(ina.s_addr);
+    int herr (0);
+
+    // If available, we use the reentrant GNU variant. This has the additional advantage, that we
+    // can explicitly ask for IpV4 addresses
+
+#   ifdef __GLIBC__
+
+    struct hostent entbuf;
+    char buffer[4096];
+    struct hostent * ent (0);
+    ::gethostbyname2_r(s.c_str(), AF_INET, &entbuf, buffer, sizeof(buffer), &ent, &herr);
+
+#   else // ! __GLIBC__
+
 #   ifdef _REENTRANT
     static boost::mutex mutex;
     boost::mutex::scoped_lock lock(mutex);
 #   endif
-    ::hostent * ent (::gethostbyname(s.c_str()));
+    struct hostent * ent (::gethostbyname(s.c_str()));
+    herr = h_errno;
+
+#   endif // __GLIBC__
+
     if (!ent)
         ///\fixme Need to give better exception here
         throw SyntaxException(); 
     if (ent->h_addrtype != AF_INET)
         throw SyntaxException();    
+
     // We are only interested in the first address ...
     return senf::INet4Address::from_inaddr(
         reinterpret_cast<in_addr*>(*(ent->h_addr_list))->s_addr);
@@ -66,7 +86,7 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
 prefix_ bool senf::INet4Address::local()
     const
 {
-    address_type l (ntohl(addr_));
+    address_type l (address());
     return 
         (l & 0xFF000000u) == 0x0A000000u ||
         (l & 0xFFF00000u) == 0xAC100000u ||
@@ -77,13 +97,19 @@ prefix_ bool senf::INet4Address::local()
 prefix_ bool senf::INet4Address::loopback()
     const
 {
-    return (ntohl(addr_) & 0xFF000000u) == 0x7F000000u;
+    return (address() & 0xFF000000u) == 0x7F000000u;
 }
 
 prefix_ bool senf::INet4Address::multicast()
     const
 {
-    return (ntohl(addr_) & 0xF0000000u) == 0xE0000000u;
+    return (address() & 0xF0000000u) == 0xE0000000u;
+}
+
+prefix_ senf::INet4Address::address_type senf::INet4Address::address()
+    const
+{
+    return ntohl(iref());
 }
 
 senf::INet4Address const senf::INet4Address::None;
@@ -98,7 +124,7 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4Address const & 
 {
     ::in_addr ina;
     char buffer[16];
-    ina.s_addr = addr.raw();
+    ina.s_addr = addr.inaddr();
     ::inet_ntop(AF_INET,&ina,buffer,16);
     buffer[15] = 0; 
     os << buffer;

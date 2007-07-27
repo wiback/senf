@@ -79,7 +79,7 @@ prefix_ bool senf::PacketProtocol::eof()
 
 namespace {
     
-    void do_mc(int fd, std::string interface, senf::MACAddress address, bool add)
+    void do_mc(int fd, std::string const & interface, senf::MACAddress address, bool add)
     {
         struct packet_mreq mreq;
         mreq.mr_ifindex = ::if_nametoindex(interface.c_str());

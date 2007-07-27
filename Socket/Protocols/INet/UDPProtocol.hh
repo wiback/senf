@@ -92,7 +92,7 @@ namespace senf {
                                              \todo fix this as soon as we have a real address class
                                                  (different from the sockaddress class */
 
-        void mcIface(std::string iface = std::string()) const;
+        void mcIface(std::string const & iface = std::string()) const;
                                         ///< set default multicast interface of the socket
                                         /**< \param[in] iface name of interface */
     

@@ -45,7 +45,7 @@ namespace {
         FHandle(int fd)
             : senf::FileHandle(std::auto_ptr<senf::FileBody>(
                                           new senf::FileBody(fd))) {}
-        FHandle(std::string name)
+        FHandle(std::string const & name)
             : senf::FileHandle(std::auto_ptr<senf::FileBody>(
                                           new senf::FileBody()))
             {

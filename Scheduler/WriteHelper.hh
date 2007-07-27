@@ -65,7 +65,7 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        static ptr dispatch(Handle handle, std::string data, Callback callback);
+        static ptr dispatch(Handle handle, std::string const & data, Callback callback);
                                         ///< Register new WriteHelper instance
                                         /**< The registered callback will be called after all \a
                                              data has been sent or when some error condition is
@@ -95,7 +95,7 @@ namespace senf {
     protected:
 
     private:
-        WriteHelper(Handle handle, std::string data, Callback callback);
+        WriteHelper(Handle handle, std::string const & data, Callback callback);
 
         static void dispatchProcess(ptr helper, Handle handle, senf::Scheduler::EventId event);
         void process(Handle handle, senf::Scheduler::EventId event);
