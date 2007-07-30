@@ -41,7 +41,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::INet4Address
+// senf::INet4SocketAddress
 
 prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & addr)
 {
@@ -69,46 +69,6 @@ prefix_ void senf::INet4SocketAddress::clear()
 {
     ::memset(&addr_,0,sizeof(addr_));
     addr_.sin_family = AF_INET;
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::INet6Address
-
-prefix_ senf::INet6Address::INet6Address(std::string const & addr)
-{
-    if (inet_pton(AF_INET6,addr.c_str(),&addr_) <= 0)
-        throw SyntaxException();
-}
-
-prefix_ senf::INet6Address::INet6Address(char const * addr)
-{
-    if (inet_pton(AF_INET6,addr,&addr_) <= 0)
-        throw SyntaxException();
-}
-
-prefix_ void senf::INet6Address::clear()
-{
-    ::memset(&addr_,0,sizeof(addr_));
-}
-
-prefix_ std::string senf::INet6Address::address()
-    const
-{
-    char buffer[8*5];
-    BOOST_ASSERT( inet_ntop(AF_INET6, &addr_, buffer, sizeof(buffer)) );
-    return std::string(buffer);
-}
-
-prefix_ bool senf::INet6Address::operator==(INet6Address const & other)
-    const
-{
-    return ::memcmp(&addr_,&other.addr_,sizeof(addr_))==0;
-}
-
-prefix_ bool senf::INet6Address::operator!=(INet6Address const & other)
-    const
-{
-    return !operator==(other);
 }
 
 ///////////////////////////////////////////////////////////////////////////

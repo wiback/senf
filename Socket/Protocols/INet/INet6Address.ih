@@ -1,0 +1,203 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief INet6Address internal header */
+
+#ifndef IH_INet6Address_
+#define IH_INet6Address_ 1
+
+// Custom includes
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+
+    class INet6Address;
+
+namespace detail {
+
+#   ifndef DOXYGEN
+
+    template <unsigned a, unsigned bytes, unsigned restbits>
+    struct CheckINet6Network_impl5
+    {};
+
+    template <unsigned a>
+    struct CheckINet6Network_impl5<a,0,0>
+    {
+        static bool match(boost::uint8_t v0, boost::uint8_t v1);
+    };
+
+    template <unsigned a, unsigned restbits>
+    struct CheckINet6Network_impl5<a,0,restbits>
+    {
+        static bool match(boost::uint8_t v0, boost::uint8_t v1);
+    };
+
+    template <unsigned a>
+    struct CheckINet6Network_impl5<a,1,0>
+    {
+        static bool match(boost::uint8_t v0, boost::uint8_t v1);
+    };
+
+    template <unsigned a, unsigned restbits>
+    struct CheckINet6Network_impl5<a,1,restbits>
+    {
+        static bool match(boost::uint8_t v0, boost::uint8_t v1);
+    };
+
+    template <unsigned a, unsigned bits>
+    struct CheckINet6Network_impl4
+        : public CheckINet6Network_impl5<a,bits/8,bits%8>
+    {};
+    
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned words, unsigned restbits>
+    struct CheckINet6Network_impl3
+    {};
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned restbits>
+    struct CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,0,restbits>
+    {
+        static bool match(INet6Address const & addr);
+    };
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned restbits>
+    struct CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,1,restbits>
+    {
+        static bool match(INet6Address const & addr);
+    };
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned restbits>
+    struct CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,2,restbits>
+    {
+        static bool match(INet6Address const & addr);
+    };
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned restbits>
+    struct CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,3,restbits>
+    {
+        static bool match(INet6Address const & addr);
+    };
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned restbits>
+    struct CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,4,restbits>
+    {
+        static bool match(INet6Address const & addr);
+    };
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned restbits>
+    struct CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,5,restbits>
+    {
+        static bool match(INet6Address const & addr);
+    };
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned restbits>
+    struct CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,6,restbits>
+    {
+        static bool match(INet6Address const & addr);
+    };
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned restbits>
+    struct CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,7,restbits>
+    {
+        static bool match(INet6Address const & addr);
+    };
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned bits>
+    struct CheckINet6Network_impl2
+        : public CheckINet6Network_impl3<a0,a1,a2,a3,a4,a5,a6,a7,bits/16,bits%16>
+    {};
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7, unsigned a8>
+    struct CheckINet6Network_impl
+        : public CheckINet6Network_impl2<a0,a1,a2,a3,a4,a5,a6,a7,a8>
+    {};
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6, unsigned a7>
+    struct CheckINet6Network_impl<a0,a1,a2,a3,a4,a5,a6,a7,0>
+        : public CheckINet6Network_impl2<a0,a1,a2,a3,a4,a5,a6,0,a7>
+    {};
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5, unsigned a6>
+    struct CheckINet6Network_impl<a0,a1,a2,a3,a4,a5,a6,0,0>
+        : public CheckINet6Network_impl2<a0,a1,a2,a3,a4,a5,0,0,a6>
+    {};
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4,
+              unsigned a5>
+    struct CheckINet6Network_impl<a0,a1,a2,a3,a4,a5,0,0,0>
+        : public CheckINet6Network_impl2<a0,a1,a2,a3,a4,0,0,0,a5>
+    {};
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3, unsigned a4>
+    struct CheckINet6Network_impl<a0,a1,a2,a3,a4,0,0,0,0>
+        : public CheckINet6Network_impl2<a0,a1,a2,a3,0,0,0,0,a4>
+    {};
+
+    template <unsigned a0, unsigned a1, unsigned a2, unsigned a3>
+    struct CheckINet6Network_impl<a0,a1,a2,a3,0,0,0,0,0>
+        : public CheckINet6Network_impl2<a0,a1,a2,0,0,0,0,0,a3>
+    {};
+
+    template <unsigned a0, unsigned a1, unsigned a2>
+    struct CheckINet6Network_impl<a0,a1,a2,0,0,0,0,0,0>
+        : public CheckINet6Network_impl2<a0,a1,0,0,0,0,0,0,a2>
+    {};
+
+    template <unsigned a0, unsigned a1>
+    struct CheckINet6Network_impl<a0,a1,0,0,0,0,0,0,0>
+        : public CheckINet6Network_impl2<a0,0,0,0,0,0,0,0,a1>
+    {};
+
+    template <boost::uint64_t net, boost::uint64_t id, unsigned bits, unsigned bytes>
+    struct IsINet6Network_impl
+    {};
+
+#   endif
+
+}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

@@ -69,8 +69,10 @@ BOOST_AUTO_UNIT_TEST(ipv6Extension_Fragment_packet)
     BOOST_CHECK_EQUAL( p->version(), 6u );
     BOOST_CHECK_EQUAL( p->length(), 20u );
     BOOST_CHECK_EQUAL( p->nextHeader(), 44u );
-    BOOST_CHECK_EQUAL( senf::INet6Address(p->source()), "2001::1" );
-    BOOST_CHECK_EQUAL( senf::INet6Address(p->destination()), "2001::2" );
+    BOOST_CHECK_EQUAL( senf::INet6Address::from_data(p->source().i()), 
+                       senf::INet6Address::from_string("2001::1") );
+    BOOST_CHECK_EQUAL( senf::INet6Address::from_data(p->destination().i()),
+                       senf::INet6Address::from_string("2001::2") );
     BOOST_CHECK( p.next().is<senf::IpV6Extension_Fragment>() );
 
     senf::IpV6Extension_Fragment f (p.next().as<senf::IpV6Extension_Fragment>());

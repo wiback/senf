@@ -1,0 +1,229 @@
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief INet6Address inline non-template implementation */
+
+// Custom includes
+#include <algorithm>
+#include <boost/lambda/lambda.hpp>
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ senf::INet6Address::INet6Address(NoInit_t)
+{}
+
+prefix_ senf::INet6Address::INet6Address(boost::uint16_t a0, boost::uint16_t a1,
+                                         boost::uint16_t a2, boost::uint16_t a3,
+                                         boost::uint16_t a4, boost::uint16_t a5,
+                                         boost::uint16_t a6, boost::uint16_t a7)
+{
+    (*this)[ 0] = boost::uint8_t(a0>>8);
+    (*this)[ 1] = boost::uint8_t(a0);
+    (*this)[ 2] = boost::uint8_t(a1>>8);
+    (*this)[ 3] = boost::uint8_t(a1);
+    (*this)[ 4] = boost::uint8_t(a2>>8);
+    (*this)[ 5] = boost::uint8_t(a2);
+    (*this)[ 6] = boost::uint8_t(a3>>8);
+    (*this)[ 7] = boost::uint8_t(a3);
+    (*this)[ 8] = boost::uint8_t(a4>>8);
+    (*this)[ 9] = boost::uint8_t(a4);
+    (*this)[10] = boost::uint8_t(a5>>8);
+    (*this)[11] = boost::uint8_t(a5);
+    (*this)[12] = boost::uint8_t(a6>>8);
+    (*this)[13] = boost::uint8_t(a6);
+    (*this)[14] = boost::uint8_t(a7>>8);
+    (*this)[15] = boost::uint8_t(a7);
+}
+
+prefix_ senf::INet6Address senf::INet6Address::from_inet4address(INet4Address addr4)
+{
+    INet6Address addr;
+    addr[10] = 0xffu;
+    addr[11] = 0xffu;
+    std::copy(addr4.begin(), addr4.end(), addr.begin()+12);
+    return addr;
+}
+
+prefix_ boost::uint64_t senf::INet6Address::network()
+    const
+{
+    return 
+        ((boost::uint64_t((*this)[0]) & 0xff) << 56 ) |
+        ((boost::uint64_t((*this)[1]) & 0xff) << 48 ) |
+        ((boost::uint64_t((*this)[2]) & 0xff) << 40 ) |
+        ((boost::uint64_t((*this)[3]) & 0xff) << 32 ) |
+        ((boost::uint64_t((*this)[4]) & 0xff) << 24 ) |
+        ((boost::uint64_t((*this)[5]) & 0xff) << 16 ) |
+        ((boost::uint64_t((*this)[6]) & 0xff) <<  8 ) |
+        ((boost::uint64_t((*this)[7]) & 0xff)       );
+}
+
+prefix_ bool senf::INet6Address::hasEuid64()
+    const
+{
+    return unicast() && ((*this)[0]&0xE0u) != 0u;
+}
+
+prefix_ boost::uint64_t senf::INet6Address::id()
+    const
+{
+    return 
+        ((boost::uint64_t((*this)[ 8]) & 0xff) << 56 ) |
+        ((boost::uint64_t((*this)[ 9]) & 0xff) << 48 ) |
+        ((boost::uint64_t((*this)[10]) & 0xff) << 40 ) |
+        ((boost::uint64_t((*this)[11]) & 0xff) << 32 ) |
+        ((boost::uint64_t((*this)[12]) & 0xff) << 24 ) |
+        ((boost::uint64_t((*this)[13]) & 0xff) << 16 ) |
+        ((boost::uint64_t((*this)[14]) & 0xff) <<  8 ) |
+        ((boost::uint64_t((*this)[15]) & 0xff)       );
+}
+
+prefix_ bool senf::INet6Address::universalId()
+    const
+{
+    return (*this)[8] & 2u;
+}
+
+prefix_ bool senf::INet6Address::groupId()
+    const
+{
+    return (*this)[8] & 1u;
+}
+
+prefix_ bool senf::INet6Address::unicast()
+    const
+{
+    return ! multicast();
+}
+
+prefix_ bool senf::INet6Address::multicast()
+    const
+{
+    return (*this)[0] == 0xFFu;
+}
+
+prefix_ senf::INet6Address::ScopeId senf::INet6Address::scope()
+    const
+{
+    static ScopeId const scopeMap[]
+        = { ReservedScope, InterfaceScope, LinkScope, ReservedScope,
+            AdminScope, SiteScope, UnassignedScope, UnassignedScope,
+            OrganizationScope, UnassignedScope, UnassignedScope, UnassignedScope,
+            UnassignedScope, UnassignedScope, GlobalScope, ReservedScope };
+    return multicast() ? scopeMap[(*this)[1] & 0x0Fu] : 
+        (*this)[0] == 0xFEu ? (((*this)[1]&0xC0) == 0x80 ? LinkScope : 
+                               ((*this)[1]&0xC0) == 0xC0 ? SiteScope : GlobalScope ) 
+        : GlobalScope;
+}
+
+prefix_ bool senf::INet6Address::globalScope()
+    const
+{
+    return scope() == GlobalScope;
+}
+ 
+prefix_ bool senf::INet6Address::linkScope()
+    const
+{
+    return scope() == LinkScope;
+}
+
+prefix_ senf::INet4Address senf::INet6Address::inet4address()
+    const
+{
+    return INet4Address::from_data(&(*this)[12]);
+}
+
+prefix_ bool senf::INet6Address::ipv4Compatible()
+    const
+{
+    return CheckINet6Network<0u,96>::match(*this);
+}
+
+prefix_ bool senf::INet6Address::ipv4Mapped()
+    const
+{
+    return CheckINet6Network<0u,0u,0u,0u,0u,0xFFFFu,96>::match(*this);
+}
+
+prefix_ bool senf::INet6Address::globalMulticastAddr()
+    const
+{
+    return multicast() && ! ((*this)[1] & 0x10u);
+}
+
+prefix_ bool senf::INet6Address::prefixMulticastAddr()
+    const
+{
+    return multicast() && ((*this)[1] & 0x20u);
+}
+
+prefix_ bool senf::INet6Address::embeddedRpAddr()
+    const
+{
+    return multicast() && ((*this)[1] & 0x40u);
+}
+
+prefix_ bool senf::INet6Address::boolean_test()
+    const
+{
+    using boost::lambda::_1;
+    return std::find_if(begin(),end(), _1 != 0x00) != end();
+}
+
+prefix_ void senf::INet6Address::network(boost::uint64_t net)
+{
+    (*this)[ 0] = net >> 56;
+    (*this)[ 1] = net >> 48;
+    (*this)[ 2] = net >> 40;
+    (*this)[ 3] = net >> 32;
+    (*this)[ 4] = net >> 24;
+    (*this)[ 5] = net >> 16;
+    (*this)[ 6] = net >>  8;
+    (*this)[ 7] = net      ;
+}
+
+prefix_ void senf::INet6Address::id(boost::uint64_t id)
+{
+    (*this)[ 8] = id >> 56;
+    (*this)[ 9] = id >> 48;
+    (*this)[10] = id >> 40;
+    (*this)[11] = id >> 32;
+    (*this)[12] = id >> 24;
+    (*this)[13] = id >> 16;
+    (*this)[14] = id >>  8;
+    (*this)[15] = id      ;
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

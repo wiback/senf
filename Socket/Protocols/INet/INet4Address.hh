@@ -50,6 +50,9 @@ namespace senf {
 
     {
     public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+        
         typedef uint32_t address_type;  ///< Address representation as number in host byte order
         typedef uint32_t inaddr_type;   ///< Legacy address representation in network byte order
         typedef boost::function<void (INet4Address const &)> Callback;
@@ -61,8 +64,12 @@ namespace senf {
 
         enum NoInit_t { noinit };
 
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
         INet4Address();                 ///< Construct an empty address
-        INet4Address(NoInit_t);         ///< Construct uninitialized (!) address
+        explicit INet4Address(NoInit_t); ///< Construct uninitialized (!) address
         explicit INet4Address(address_type value);
                                         ///< Construct an address constant
 
@@ -104,6 +111,11 @@ namespace senf {
                                              code to convert a network byte order address in an
                                              integer number into an INet4Address. */
 
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Accessors
+        ///@{
+
         bool local() const;             ///< \c true, if address is locally administered
                                         /**< This call checks, if the address is within one of the
                                              IANA private ranges. */
@@ -124,6 +136,8 @@ namespace senf {
                                         /**< This member returns the address as an integer number in
                                              host byte order. This representation allows simple
                                              network math operations. */
+
+        ////@}
 
         struct SyntaxException : public std::exception
         { virtual char const * what() const throw() { return "invalid INet4 address syntax"; } };

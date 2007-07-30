@@ -52,8 +52,8 @@ prefix_ void senf::IpV6PacketType::dump(packet p, std::ostream & os)
        << "  length        : " << std::dec << unsigned(p->length()) << "\n"
        << "  next header   : " << unsigned(p->nextHeader()) << "\n"
        << "  hop limit     : " << unsigned(p->hopLimit()) << "\n"
-       << "  source        : " << INet6Address(p->source()) << "\n"
-       << "  destination   : " << INet6Address(p->destination()) << "\n";
+       << "  source        : " << INet6Address::from_data(p->source().i()) << "\n"
+       << "  destination   : " << INet6Address::from_data(p->destination().i()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -1,4 +1,4 @@
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -19,27 +19,27 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief INetAddressing non-inline template implementation  */
+    \brief INet6Address non-inline template implementation  */
 
-//#include "INetAddressing.ih"
+#include "INet6Address.ih"
 
 // Custom includes
-#include <boost/range.hpp>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-template <class Range>
-prefix_ senf::INet6Address::INet6Address(Range const & range)
+///////////////////////////////////////////////////////////////////////////
+// senf::INet6Address
+
+template <class InputIterator>
+prefix_ senf::INet6Address senf::INet6Address::from_data(InputIterator i)
 {
-    typename boost::range_const_iterator<Range>::type i ( boost::const_begin(range) );
-    typename boost::range_const_iterator<Range>::type const i_end ( boost::const_end(range) );
-    unsigned char * p (&addr_.s6_addr[0]);
-    unsigned char * p_end (p+sizeof(addr_.s6_addr));
-    for (; p!=p_end && i!=i_end; ++p, ++i)
-        *p = *i;
-    if (p!=p_end || i!=i_end)
-        throw SyntaxException();
+    INet6Address addr (INet6Address::noinit);
+    iterator j (addr.begin());
+    iterator const j_end (addr.end());
+    for (;j!=j_end;++j,++i)
+        *j = *i;
+    return addr;
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
@@ -49,9 +49,9 @@ prefix_ senf::INet6Address::INet6Address(Range const & range)
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

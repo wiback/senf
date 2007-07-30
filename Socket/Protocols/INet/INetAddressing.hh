@@ -37,6 +37,7 @@
 #include "Socket/CommunicationPolicy.hh"
 #include "Socket/Protocols/GenericAddressingPolicy.hh"
 #include "INet4Address.hh"
+#include "INet6Address.hh"
 
 //#include "INetAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -111,75 +112,6 @@ namespace senf {
         \related INet4SocketAddress
      */
     std::ostream & operator<<(std::ostream & os, INet4SocketAddress const & addr);
-
-    /** \brief IPv6 network address
-
-        INet6Address represents a 128bit IPv6 network address. This class supports all standard
-        numeric string representations of IPv6 addresses. This class does not integrate with \c
-        gethostbyname() and so does not support host names.
-
-        The conversion constructors allow the use of string constants wherever an INet6Address is
-        expected. Especially, it is possible to assign a string to an address to change it's value.
-
-        \implementation The <tt>char const *</tt> constructor overload is needed to support
-            string-literals where an INet6Address is expected (the C++ standard does not allow
-            chaining conversion constructors like char const * -> std::string -> INet6Address)
-     */
-    class INet6Address
-    {
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
-        INet6Address();                 ///< Create empty address
-        INet6Address(std::string const & addr); ///< Create address from string representation
-        INet6Address(char const * addr); ///< Create address from string representation
-        INet6Address(struct in6_addr const & addr); ///< Create address from in6_addr
-        template <class Range>
-        explicit INet6Address(Range const & range); ///< Create address from arbitrary raw data
-                                        /**< This constructor will copy 16 bytes from the given
-                                             range and interpret them as a IPv6 address in network
-                                             byte order. This constructor is used to read an
-                                             arbitrary address from it's binary representation.
-
-                                             \param range arbitrary range, see <a
-                                                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a>
-                                          */
-
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
-
-        void clear();                   ///< Clear address
-        std::string address() const;    ///< Return printable address representation
-
-        bool operator==(INet6Address const & other) const; ///< Compare addresses for equality
-        bool operator!=(INet6Address const & other) const; ///< Inverse of above
-
-        struct in6_addr & addr();       ///< Access internal address representation
-        struct in6_addr const & addr() const;
-                                        ///< Access internal address representation in const context
-        struct in6_addr * addr_p();     ///< Get pointer to internal address repr
-        struct in6_addr const * addr_p() const;
-                                        ///< Get const pointer to internal address repr
-        unsigned addr_len() const;      ///< Size of an IPv6 address (16 bytes)
-
-        struct SyntaxException : public std::exception
-        { virtual char const * what() const throw() { return "Invalid IpV6 address syntax"; } };
-
-    protected:
-
-    private:
-        struct in6_addr addr_;
-    };
-
-
-    /** \brief Output INet6Address instance as it's string representation
-     */
-    std::ostream & operator<<(std::ostream & os, INet6Address const & addr);
 
     /** \brief IPv6 socket address
 
@@ -342,7 +274,7 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "INetAddressing.cci"
-#include "INetAddressing.ct"
+//#include "INetAddressing.ct"
 //#include "INetAddressing.cti"
 //#include "INetAddressing.mpp"
 #endif
