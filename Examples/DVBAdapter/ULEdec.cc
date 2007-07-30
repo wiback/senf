@@ -40,122 +40,141 @@
 #include "Packets/PacketData.hh"
 #include "Packets/ParseInt.hh"
 
+#include "ULEdec.hh"
+
 #define PID 271
 #define TS_SYNC 0x47
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
-
-    static const unsigned BLOCK_SIZE = 16;
-
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator const & i_end, std::ostream& stream)
-    {
-        unsigned offset (0);
-        std::string ascii;
-        for (; i != i_end; ++i, ++offset) {
-            switch (offset % BLOCK_SIZE) {
-            case 0:
-                if (!ascii.empty()) {
-                    stream << "  " << ascii << "\n";
-                    ascii = "";
-                }
-                stream << "  "
-                          << std::hex << std::setw(4) << std::setfill('0')
-                          << offset << ' ';
-                break;
-            case BLOCK_SIZE/2:
-                stream << " ";
-                ascii += ' ';
-                break;
+template <class Iterator>
+void ULEdec::hexdump(Iterator i, Iterator const & i_end, std::ostream& stream)
+{
+    unsigned offset (0);
+    std::string ascii;
+    for (; i != i_end; ++i, ++offset) {
+        switch (offset % BLOCK_SIZE) {
+        case 0:
+            if (!ascii.empty()) {
+                stream << "  " << ascii << "\n";
+                ascii = "";
             }
-            stream << ' ' << std::hex << std::setw(2) << std::setfill('0')
-                      << unsigned(*i);
-            ascii += (*i >= ' ' && *i < 126) ? *i : '.';
+            stream << "  "
+                      << std::hex << std::setw(4) << std::setfill('0')
+                      << offset << ' ';
+            break;
+        case BLOCK_SIZE/2:
+            stream << " ";
+            ascii += ' ';
+            break;
         }
-        if (!ascii.empty()) {
-            for (; (offset % BLOCK_SIZE) != 0; ++offset) {
-                if ((offset % BLOCK_SIZE) == BLOCK_SIZE/2)
-                    stream << " ";
-                stream << "   ";
-            }
-            stream << "  " << ascii << "\n";
-        }
-        stream << std::dec;
+        stream << ' ' << std::hex << std::setw(2) << std::setfill('0')
+                  << unsigned(*i);
+        ascii += (*i >= ' ' && *i < 126) ? *i : '.';
     }
+    if (!ascii.empty()) {
+        for (; (offset % BLOCK_SIZE) != 0; ++offset) {
+            if ((offset % BLOCK_SIZE) == BLOCK_SIZE/2)
+                stream << " ";
+            stream << "   ";
+        }
+        stream << "  " << ascii << "\n";
+    }
+    stream << std::dec;
 }
 
 
-class ULEdec
+ULEdec::ULEdec()
 {
-    senf::DVBDemuxPESHandle demuxHandle;
-    senf::DVBDvrHandle dvrHandle;
+    struct dmx_pes_filter_params pes_filter;
+    memset(&pes_filter, 0, sizeof (struct dmx_pes_filter_params));
+    pes_filter.pid = PID;
+    pes_filter.input  = DMX_IN_FRONTEND;
+    pes_filter.output = DMX_OUT_TS_TAP;
+    pes_filter.pes_type = DMX_PES_OTHER;
+    pes_filter.flags = DMX_IMMEDIATE_START;
+    demuxHandle.protocol().setPESFilter( &pes_filter );
     
-    unsigned char receiver_state;
-    unsigned char priv_tscc;
-public:
-    ULEdec()
-    {
-        struct dmx_pes_filter_params pes_filter;
-        memset(&pes_filter, 0, sizeof (struct dmx_pes_filter_params));
-        pes_filter.pid = PID;
-        pes_filter.input  = DMX_IN_FRONTEND;
-        pes_filter.output = DMX_OUT_TS_TAP;
-        pes_filter.pes_type = DMX_PES_OTHER;
-        pes_filter.flags = DMX_IMMEDIATE_START;
-        demuxHandle.protocol().setPESFilter( &pes_filter );
-        
-        senf::Scheduler::instance().add(
-            dvrHandle, senf::membind(&ULEdec::handlePacket, this));
-        
-        receiver_state = 1; // Idle
-    }
+    senf::Scheduler::instance().add(
+        dvrHandle, senf::membind(&ULEdec::handleEvent, this));
+    
+    this->receiver_state = 1; // Idle
+}
 
-private:
-    void handlePacket(senf::FileHandle, senf::Scheduler::EventId event)
+void ULEdec::handleEvent(senf::FileHandle, senf::Scheduler::EventId event)
+{
+    senf::TransportPacket ts_packet (
+            senf::TransportPacket::create(188, senf::TransportPacket::noinit));
+    dvrHandle.read( ts_packet.data() );
+   
+    // Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control.
+    if ( (ts_packet->sync_byte() != TS_SYNC) || 
+         (ts_packet->transport_error_indicator() == true) || 
+         (ts_packet->transport_scrmbl_ctrl() != 0)) 
     {
-        char ts_data[188];
-        dvrHandle.read(&ts_data[0], &ts_data[188]);
-        senf::TransportPacket tsPacket (
-                senf::TransportPacket::create( boost::begin(ts_data) ));
-//        packet.dump(std::cout);
-//        senf::PacketData & packetData (packet.last().data());
-//        hexdump(packetData.begin(), packetData.end(), std::cout);
+        std::cerr << "invalid ts packet\n";
+        // drop partly decoded SNDU, reset state, resync on PUSI.
+        return;
+    }
+    
+    handleTSPacket(ts_packet);
+}
+    
+void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
+{
+    unsigned char payload_pointer;
+
+    senf::PacketData &ts_payload (ts_packet.next().data());
+    BOOST_ASSERT( ts_payload.size() == 184 );
+    
+    switch (this->receiver_state) {
+    case 1: { // Idle State
+        // resync on PUSI
+        if (ts_packet->pusi() == 0) 
+            return; // skip packet
         
-        // Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control.
-        if ( (tsPacket->sync_byte() != TS_SYNC) || 
-             (tsPacket->transport_error_indicator() == true) || 
-             (tsPacket->transport_scrmbl_ctrl() != 0)) 
-        {
-            std::cerr << "invalid ts packet\n";
-            // drop partly decoded SNDU, reset state, resync on PUSI.
+        // Synchronize continuity counter
+        this->priv_tscc = ts_packet->continuity_counter();
+
+        // a PUSI value of 1 indicates the presence of a Payload Pointer.
+        payload_pointer = ts_payload[0];
+        if (payload_pointer>181) {
+            std::cerr << "invalid payload_pointer\n";
             return;
         }
-
-        unsigned char payload_pointer;
-        switch (receiver_state) {
-        case 1:  // Idle State
-            // resync on PUSI
-            if (tsPacket->pusi() == 0) 
-                return; // skip packet
-            // Synchronize continuity counter
-            priv_tscc = tsPacket->continuity_counter();
-            // a PUSI value of 1 indicates the presence of a Payload Pointer.
-            payload_pointer = ts_data[4];
-            if (payload_pointer>181) {
-                std::cerr << "invalid payload_pointer\n";
-                return;
+        payload_pointer++;
+        
+        bool dbit = false;
+        senf::Packet::size_type sndu_length;
+        while (payload_pointer < 184) {
+            sndu_length = ts_payload[payload_pointer] << 8 | ts_payload[payload_pointer+1];
+            if (sndu_length & 0x8000) {
+                sndu_length &= 0x7FFF;
+                dbit = true;
             }
+            this->snduPacket = senf::SNDUPacket::create(sndu_length+2);
+            this->snduPacket->d_bit() = dbit;
+            this->snduPacket->length() = sndu_length;
+
+            return;
             
-            // 
-            break;
-        case 2:  // Reassembly State
-            break;
+            payload_pointer += 2;
+            
+            
         }
+        
+        
+        
+        // 
+        break;
     }
-};
+    case 2: { // Reassembly State
+        break;
+    }
+    }
+}
+
 
 int main(int argc, char const * argv[])
 {
