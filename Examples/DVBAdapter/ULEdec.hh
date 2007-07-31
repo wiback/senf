@@ -47,11 +47,22 @@ public:
     ULEdec();
 
 private:
+    typedef senf::PacketData::iterator iterator;
+    
+    enum ReciverState {
+        Idle,
+        Reassembly
+    };
+    
     senf::DVBDemuxPESHandle demuxHandle;
     senf::DVBDvrHandle dvrHandle;
+    
     senf::SNDUPacket snduPacket;
-    unsigned char receiver_state;
+    
+    ReciverState receiver_state;
     unsigned char priv_tscc;
+    bool priv_sndu_type_1;
+    iterator snduPacketData_iter;
 
     static const unsigned BLOCK_SIZE = 16;
     
@@ -61,6 +72,11 @@ private:
     void handleEvent(senf::FileHandle, senf::Scheduler::EventId event);
     
     void handleTSPacket(senf::TransportPacket tsPacket);
+    
+    iterator readNewSNDUPacket(iterator i_start, iterator i_end);
+    iterator readContSNDUPacket(iterator i_start, iterator i_end);
+    iterator readRawSNDUPacketData(iterator i_start, iterator i_end);
+    
 };
 
 

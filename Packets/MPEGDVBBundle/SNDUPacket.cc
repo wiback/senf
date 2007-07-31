@@ -49,7 +49,10 @@ prefix_ senf::PacketParserBase::size_type senf::Parse_SNDUPacket::bytes()
 
 prefix_ void senf::SNDUPacketType::dump(packet p, std::ostream & os)
 {
-    os << "SNDUPacket:\n";
+    os << "SNDUPacket:\n"
+       << "  d_bit: " << p->d_bit() << "\n"
+       << "  length: " << unsigned(p->length()) << "\n"
+       << "  crc: " << unsigned(p->crc()) << "\n";
 }
 
 prefix_ senf::PacketParserBase::size_type senf::SNDUPacketType::initSize()

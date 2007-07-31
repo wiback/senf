@@ -49,7 +49,7 @@ namespace senf {
     {
 #       ifndef DOXYGEN
         
-        SENF_PACKET_PARSER_INIT(Parse_SNDUPacket);
+        SENF_PACKET_PARSER_NO_INIT(Parse_SNDUPacket);
 
 #       endif
         
@@ -71,6 +71,11 @@ namespace senf {
         }
         Parse_UInt32 crc() const { 
             return parse<Parse_UInt32>( data().size()-4 ); 
+        }
+        
+        void init() const {
+            defaultInit();
+            d_bit() = false;
         }
         
         PacketParserBase::size_type bytes() const;
@@ -110,8 +115,8 @@ namespace senf {
 
     /*!
      \def ULE_END_INDICATOR 
-         ULE End Indicator; indicates to the Receiver that there are no 
-         further SNDUs present within the current TS Packet.
+         ULE End Indicator; indicates to the receiver that there are no 
+         further SNDUs present within the current TS packet.
     */
 #   define ULE_END_INDICATOR 0xffff
 }
