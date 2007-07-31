@@ -25,6 +25,7 @@
 //#include "IpV6Packet.ih"
 
 // Custom includes
+#include <boost/io/ios_state.hpp>
 #include "EthernetPacket.hh"
 #include "Socket/Protocols/INet/INetAddressing.hh"
 
@@ -45,6 +46,7 @@ namespace {
 
 prefix_ void senf::IpV6PacketType::dump(packet p, std::ostream & os)
 {
+    boost::io::ios_all_saver ias(os);
     os << "Internet protocol Version 6:\n"
        << "  version       : " << unsigned(p->version()) << "\n"
        << "  traffic class : " << std::hex << unsigned(p->trafficClass()) << "\n"
@@ -52,8 +54,8 @@ prefix_ void senf::IpV6PacketType::dump(packet p, std::ostream & os)
        << "  length        : " << std::dec << unsigned(p->length()) << "\n"
        << "  next header   : " << unsigned(p->nextHeader()) << "\n"
        << "  hop limit     : " << unsigned(p->hopLimit()) << "\n"
-       << "  source        : " << INet6Address::from_data(p->source().i()) << "\n"
-       << "  destination   : " << INet6Address::from_data(p->destination().i()) << "\n";
+       << "  source        : " << p->source() << "\n"
+       << "  destination   : " << p->destination() << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

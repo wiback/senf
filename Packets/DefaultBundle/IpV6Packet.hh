@@ -25,6 +25,7 @@
 #define HH_IpV6Packet_ 1
 
 // Custom includes
+#include "Socket/Protocols/INet/INet6Address.hh"
 #include "Packets/Packets.hh"
 #include "IpV4Packet.hh"
 
@@ -33,9 +34,28 @@
 
 namespace senf {
 
-    /** \brief Parse an IpV6 packet
+    /** \brief Parse an IpV6 address
+        
+        \see INet6Address
+     */
+    struct Parse_INet6Address : public PacketParserBase
+    {
+        Parse_INet6Address(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
-        Parser implementing the IpV6 header. The fields implemented are:
+        ///////////////////////////////////////////////////////////////////////////
+
+        typedef INet6Address value_type;
+        static const size_type fixed_bytes = 16u;
+
+        value_type value() const { return value_type::from_data(i()); }
+        void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
+        operator value_type() { return value(); }
+        byte & operator[](size_type index) { return *boost::next(i(),index); }
+        Parse_INet6Address const & operator= (value_type const & other) 
+            { value(other); return *this; }
+    };
+
+    /** \brief Parse an IpV6 packet
 
         \see IpV6PacketType \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
@@ -47,8 +67,7 @@ namespace senf {
         typedef Parse_UIntField < 12, 32 > Parse_FlowLabel;
         typedef Parse_UInt8                Parse_8bit;
         typedef Parse_UInt16               Parse_16bit;
-
-        typedef Parse_Array < 16, Parse_8bit > Parse_Addr;
+        typedef Parse_INet6Address         Parse_Addr;
 
 #       ifndef DOXYGEN
 

@@ -60,8 +60,8 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
     BOOST_CHECK_EQUAL( p->ttl(),         0x09u       );
     BOOST_CHECK_EQUAL( p->protocol(),    0x0Au       );
     BOOST_CHECK_EQUAL( p->crc(),         0x0B0Cu     );
-    BOOST_CHECK_EQUAL( p->source(),      0x11121314u );
-    BOOST_CHECK_EQUAL( p->destination(), 0x15161718u );
+    BOOST_CHECK_EQUAL( p->source().value(), senf::INet4Address(0x11121314u) );
+    BOOST_CHECK_EQUAL( p->destination().value(), senf::INet4Address(0x15161718u) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

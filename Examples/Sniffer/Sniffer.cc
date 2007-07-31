@@ -84,7 +84,7 @@ int loop_main (int argc, char const * argv[])
 {
     try {
         senf::PacketSocketHandle sock;
-        sock.bind(senf::LLSocketAddress("eth1"));
+        sock.bind(senf::LLSocketAddress(argv[2]));
         // sock.protocol().promisc("eth0",senf::PacketProtocol::Promiscuous);
 
         while (true) { // forever
@@ -136,7 +136,7 @@ private:
 int scheduler_main(int argc, char const * argv[])
 {
     try {
-        Sniffer sniffer ("eth1");
+        Sniffer sniffer (argv[2]);
         sniffer.run();
     }
     catch (std::exception const & ex) {
@@ -147,13 +147,13 @@ int scheduler_main(int argc, char const * argv[])
 
 int main(int argc, char const * argv[])
 {
-    if (argc >= 2)
+    if (argc >= 3)
         if (std::string(argv[1]) == "loop")
             return loop_main(argc,argv);
         else if (std::string(argv[1]) == "scheduler")
             return scheduler_main(argc,argv);
 
-    std::cerr << "Usage: sniffer { loop | scheduler }" << std::endl;
+    std::cerr << "Usage: sniffer { loop | scheduler } [interface]" << std::endl;
     return 1;
 }
 

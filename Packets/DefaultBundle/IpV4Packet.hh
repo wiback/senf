@@ -27,12 +27,34 @@
 #define HH_IpV4Packet_ 1
 
 // Custom includes
+#include "Socket/Protocols/INet/INet4Address.hh"
 #include "Packets/Packets.hh"
 
 //#include "IpV4Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    /** \brief Parse in IpV4 address
+
+        \see INet4Address
+     */
+    struct Parse_INet4Address : public PacketParserBase
+    {
+        Parse_INet4Address(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        typedef INet4Address value_type;
+        static const size_type fixed_bytes = 4u;
+
+        value_type value() const { return value_type::from_data(i()); }
+        void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
+        operator value_type() { return value(); }
+        byte & operator[](size_type index) { return *boost::next(i(),index); }
+        Parse_INet4Address const & operator= (value_type const & other) 
+            { value(other); return *this; }
+    };
 
     /** \brief Parse an IpV4 packet
 
@@ -54,6 +76,7 @@ namespace senf {
         typedef Parse_Flag      <  2     > Parse_MF;
         typedef Parse_UIntField <  3, 16 > Parse_Frag;
         typedef Parse_UInt32               Parse_32bit;
+        typedef Parse_INet4Address         Parse_Addr;
 
 #       ifndef DOXYGEN
 
@@ -72,8 +95,8 @@ namespace senf {
             ((Field       )( ttl,         Parse_8bit    ))
             ((Field       )( protocol,    Parse_8bit    ))
             ((Field       )( crc,         Parse_16bit   ))
-            ((Field       )( source,      Parse_32bit   ))
-            ((Field       )( destination, Parse_32bit   )) );
+            ((Field       )( source,      Parse_Addr    ))
+            ((Field       )( destination, Parse_Addr    )) );
 
 #       else
 
@@ -89,8 +112,8 @@ namespace senf {
         Parse_8bit    ttl() const;
         Parse_8bit    protocol() const;
         Parse_16bit   crc() const;
-        Parse_32bit   source() const;
-        Parse_32bit   destination() const;
+        Parse_Addr    source() const;
+        Parse_Addr    destination() const;
 
 #       endif
 

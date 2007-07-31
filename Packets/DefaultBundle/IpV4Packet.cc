@@ -45,12 +45,6 @@ namespace {
 
 prefix_ void senf::IpV4PacketType::dump(packet p, std::ostream & os)
 {
-    struct in_addr in;
-    in.s_addr = htonl(p->source());
-    char buffer[128];
-    std::string src (inet_ntop(AF_INET,&in,buffer,128));
-    in.s_addr = htonl(p->destination());
-    std::string dst (inet_ntop(AF_INET,&in,buffer,128));
     os << "Internet protocol Version 4:\n"
        << "  version       : " << p->version() << "\n"
        << "  IHL           : " << p->ihl() << "\n"
@@ -63,8 +57,8 @@ prefix_ void senf::IpV4PacketType::dump(packet p, std::ostream & os)
        << "  TTL           : " << unsigned(p->ttl()) << "\n"
        << "  protocol      : " << unsigned(p->protocol()) << "\n"
        << "  CRC           : " << std::hex << p->crc() << std::dec << "\n"
-       << "  source        : " << src << "\n"
-       << "  destination   : " << dst << "\n";
+       << "  source        : " << p->source() << "\n"
+       << "  destination   : " << p->destination() << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

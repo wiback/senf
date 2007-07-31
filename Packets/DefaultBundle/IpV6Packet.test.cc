@@ -54,9 +54,9 @@ BOOST_AUTO_UNIT_TEST(ipV6Packet_packet)
     BOOST_CHECK_EQUAL( p->length(),        0x0102u    );
     BOOST_CHECK_EQUAL( p->nextHeader(),    0x03u      );
     BOOST_CHECK_EQUAL( p->hopLimit(),      0x04u      );
-    BOOST_CHECK_EQUAL( senf::INet6Address::from_data(p->source().i()),
+    BOOST_CHECK_EQUAL( p->source().value(),
                        senf::INet6Address::from_string("1011:1213:1415:1617:1819:1a1b:1c1d:1e1f") );
-    BOOST_CHECK_EQUAL( senf::INet6Address::from_data(p->destination().i()),
+    BOOST_CHECK_EQUAL( p->destination().value(),
                        senf::INet6Address::from_string("2021:2223:2425:2627:2829:2a2b:2c2d:2e2f") );
 
     BOOST_CHECK( p.next() );
