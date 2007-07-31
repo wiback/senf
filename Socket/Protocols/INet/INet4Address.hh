@@ -43,6 +43,7 @@ namespace senf {
         container/sequence of 4 bytes.
 
         \todo Add additional classes for CIDR addresses and networks and network math.
+        \ingroup addr_group
       */
     class INet4Address
         : public boost::array<boost::uint8_t,4>, 

@@ -72,6 +72,7 @@ namespace senf {
 
         ///@}
         ///\name Abstract Interface Implementation
+        ///@{
         
         unsigned available() const;
         bool eof() const;
@@ -85,6 +86,7 @@ namespace senf {
 
     typedef ProtocolClientSocketHandle<DVBFrontendProtocol> DVBFrontendHandle;
 
+    ///@}
 }
 
 

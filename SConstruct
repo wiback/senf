@@ -14,7 +14,7 @@ env = SENFSCons.MakeEnvironment()
 # Configure build
 env.Append(
    CPPPATH = [ '#' ],
-   LIBS = [ 'iberty' ],
+   LIBS = [ 'iberty', '$BOOSTREGEXLIB' ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
    ENV = { 'TODAY' : str(datetime.date.today()),

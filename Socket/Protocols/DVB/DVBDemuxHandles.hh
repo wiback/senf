@@ -71,6 +71,7 @@ namespace senf {
 
         ///@}
         ///\name Abstract Interface Implementation
+        ///@{
         
         unsigned available() const;
 
@@ -105,6 +106,7 @@ namespace senf {
 
         ///@}
         ///\name Abstract Interface Implementation
+        ///@{
         
         unsigned available() const;
 
@@ -141,16 +143,18 @@ namespace senf {
 
         ///@}
         ///\name Abstract Interface Implementation
+        ///@{
         
         unsigned available() const;
 
         std::auto_ptr<SocketProtocol> clone() const;
-
+        
         ///@}
-   
      };
 
      typedef ProtocolClientSocketHandle<DVBDvrProtocol> DVBDvrHandle;
+
+    ///@}
     
 }
 

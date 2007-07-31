@@ -229,18 +229,18 @@ BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
     {
         senf::TCPv6ClientSocketHandle sock;
 
-        BOOST_CHECK_THROW( sock.connect(senf::INet6SocketAddress("[::1]:12345")), senf::SystemException );
-        BOOST_CHECK_THROW( sock.protocol().connect("[::1]:12345"), senf::SystemException );
+        BOOST_CHECK_THROW( sock.connect(senf::INet6SocketAddress("[::1]:12345")), 
+                           senf::SystemException );
     }
 
     try {
         alarm(10);
         start(server_v6);
         senf::TCPv6ClientSocketHandle sock;
-        BOOST_CHECK_NO_THROW( sock.bind("[::1]:23456") );
-        BOOST_CHECK_NO_THROW( sock.connect("[::1]:12345") );
-        BOOST_CHECK( sock.peer() == "[::1]:12345" );
-        BOOST_CHECK( sock.local() == "[::1]:23456" );
+        BOOST_CHECK_NO_THROW( sock.bind(senf::INet6SocketAddress("[::1]:23456")) );
+        BOOST_CHECK_NO_THROW( sock.connect(senf::INet6SocketAddress("[::1]:12345")) );
+        BOOST_CHECK( sock.peer() == senf::INet6SocketAddress("[::1]:12345") );
+        BOOST_CHECK( sock.local() == senf::INet6SocketAddress("[::1]:23456") );
         BOOST_CHECK( sock.blocking() );
         BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
         BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
@@ -368,7 +368,7 @@ BOOST_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
     try {
         alarm(10);
         BOOST_CHECKPOINT("Opening server socket");
-        senf::TCPv6ServerSocketHandle server ("[::1]:12347");
+        senf::TCPv6ServerSocketHandle server (senf::INet6SocketAddress("[::1]:12347"));
         BOOST_CHECKPOINT("Starting client");
         start(client_v6);
 

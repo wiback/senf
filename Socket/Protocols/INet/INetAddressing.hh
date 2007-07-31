@@ -44,9 +44,6 @@
 
 namespace senf {
 
-    /// \addtogroup addr_group
-    /// @{
-
     /** \brief IPv4 socket address
 
         INet4Address wraps the standard sockaddr_in datatype. It provides simple accessor methods
@@ -54,6 +51,8 @@ namespace senf {
         
         \implementation This implementation is based on sockaddr_in, which is needed since it needs
             to provide a non-const struct sockaddr * for legacy compatibility.
+
+        \ingroup addr_group
      */
     class INet4SocketAddress
         : public boost::equality_comparable<INet4SocketAddress>, 
@@ -117,37 +116,32 @@ namespace senf {
 
         This class wraps the standard \c sockaddr_in6 structure. INet6SocketAddress provides access
         to all members of the sockaddr_in6 structure. Additionally, INet6SocketAddress supports the
-        string representation
+        string representations
 
-        \par "" <tt>[</tt> <i>address</i> [ <tt>\@</tt> <i>interface</i> ] <tt>]:</tt> <i>port</i>
+        \par ""
+            <tt>[</tt> <i>address</i> [ <tt>%</tt> <i>zone-id</i> ] <tt>]:</tt> <i>port</i> \n
+            <i>hostname</i> <tt>:</tt> <i>port</i>
 
-        Where \e address is an arbitrary numeric IPv6 address, \e interface is an optional network
-        interface name and \e port is the port number. The interface specification is only valid if
-        \e address is link-local address. The URL representation of an IPv6 address is as above
-        without the optional interface spec.
-
-        INet6SocketAddress supports conversion constructors from it's string
-        representation. Therefore, wherever a INet6SocketAddress instance is expected, a string may
-        be used instead.
+        Where \e address is an arbitrary numeric IPv6 address, \e zone-id is an optional network
+        interface name and \e port is the port number. So some example addresses are
+        
+        \par ""
+            <tt>[2001:db8:1::1]:80</tt> \n
+            <tt>www.6bone.net:80</tt> \n
+            <tt>[fe80::1\%eth0]:443</tt>
 
         \implementation The sockaddr_in6 structure has an sin6_flowinfo member. However RFC3493 does
             not give the use of this field and specifies, that the field should be ignored ... so
             that's what we do. Furthermore, the GNU libc reference states, that this field is not
             implemented in the library.
 
-        \implementation We need to return the address in host() by value since we need to return a
-            INet6Address. However, sockaddr_in6 does not have one ...
-
-        \implementation The <tt>char const *</tt> constructor overload is needed to support
-            string-literals where an INet6SocketAddress is expected (the C++ standard does not allow
-            chaining conversion constructors like <tt>char const *</tt> -> \c std::string -> \c
-            INet6SocketAddress)
-
         \idea Implement a INet6Address_ref class which has an interface identical to INet6Address
-        and is convertible to INet6Address (the latter has a conversion constructor taking the
-        former as arg). This class however references an external in6_addr instead of containing one
-        itself. This can be used in INet6SocketAddress to increase the performance of some
-        operations.
+            and is convertible to INet6Address (the latter has a conversion constructor taking the
+            former as arg). This class however references an external in6_addr instead of containing
+            one itself. This can be used in INet6SocketAddress to increase the performance of some
+            operations.
+
+        \ingroup addr_group
      */
     class INet6SocketAddress
     {
@@ -160,9 +154,8 @@ namespace senf {
         ///@{
 
         INet6SocketAddress();           ///< Create empty instance
-        INet6SocketAddress(std::string const & addr);
+        explicit INet6SocketAddress(std::string const & addr);
                                         ///< Initialize/convert from string representation
-        INet6SocketAddress(char const * addr); ///< Same as above to support string literals
         INet6SocketAddress(INet6Address const & addr, unsigned port);
                                         ///< Initialize from address and port
         INet6SocketAddress(INet6Address const & addr, unsigned port, std::string const & iface);
@@ -178,10 +171,9 @@ namespace senf {
 
         void clear();                   ///< Clear socket address
 
-        std::string address() const;    ///< Get printable address representation
+        INet6Address address() const;    ///< Get printable address representation
 
-        INet6Address host() const;      ///< Get address
-        void host(INet6Address const & addr); ///< Change address
+        void address(INet6Address const & addr); ///< Change address
 
         unsigned port() const;          ///< Get port number
         void port(unsigned poirt);      ///< Change port number
@@ -212,10 +204,9 @@ namespace senf {
     };
 
     /** \brief Output INet6SocketAddress instance as it's string representation
+        \related INet6SocketAddress
      */
     std::ostream & operator<<(std::ostream & os, INet6SocketAddress const & addr);
-
-    /// @}
 
     /// \addtogroup policy_impl_group
     /// @{

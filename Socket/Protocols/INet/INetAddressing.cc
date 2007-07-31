@@ -33,8 +33,7 @@
 #include <sys/socket.h>
 #include <net/if.h>
 #include <boost/lexical_cast.hpp>
-#include <boost/tokenizer.hpp>
-#include <boost/range.hpp>
+#include <boost/regex.hpp>
 
 //#include "INetAddressing.mpp"
 #define prefix_
@@ -94,17 +93,6 @@ prefix_ void senf::INet6SocketAddress::clear()
     sockaddr_.sin6_family = AF_INET6;
 }
 
-prefix_ std::string senf::INet6SocketAddress::address()
-    const
-{
-    std::stringstream ss;
-    ss << '[' << host();
-    if (sockaddr_.sin6_scope_id != 0)
-        ss << '@' << iface()
-    << "]:" << port();
-    return ss.str();
-}
-
 prefix_ std::string senf::INet6SocketAddress::iface()
     const
 {
@@ -117,42 +105,28 @@ prefix_ std::string senf::INet6SocketAddress::iface()
 
 prefix_ void senf::INet6SocketAddress::assignAddr(std::string const & addr)
 {
-    // Format of addr: "[" address [ "@" interface ] "]" ":" port
-    typedef boost::char_separator<char> separator;
-    typedef boost::tokenizer<separator> tokenizer;
-    // we don't add ':' to the list of separators since that would give as the IPv6 address
-    // as a list of tokens. We just strip the : from the port number manually
-    separator sep ("", "@[]");
-    tokenizer tokens (addr, sep);
-    tokenizer::iterator token (tokens.begin());
-    if (token == tokens.end()
-        || *token != "["
-        || ++token == tokens.end()
-        || inet_pton(AF_INET6, std::string(boost::begin(*token),boost::end(*token)).c_str(),
-                     &sockaddr_.sin6_addr) <= 0
-        || ++token == tokens.end())
+    // Format of addr: "[" address [ "%" interface ] "]" ":" port
+    //             or: host ":" port
+
+    static boost::regex const addressRx ("(?:\\[([a-f0-9A-F:]+)(?:%(.+))?\\]|(.+)):([0-9]+)");
+    // Subexpression numbers:
+    enum { NumericAddr = 1,
+           ZoneId      = 2,
+           Hostname    = 3,
+           Port        = 4 };
+    
+    boost::smatch match;
+    if (! regex_match(addr, match, addressRx))
         throw SyntaxException();
-    if (*token == "@") {
-        if (++token == tokens.end())
-            throw SyntaxException();
-        assignIface(std::string(boost::begin(*token),boost::end(*token)));
-        if (++token == tokens.end()
-            || *token != "]")
-            throw SyntaxException();
-    } else if (*token != "]")
-        throw SyntaxException();
-    if (++token == tokens.end()
-        || *boost::begin(*token) != ':')
-        throw SyntaxException();
-    try {
-        sockaddr_.sin6_port = htons(
-            boost::lexical_cast<unsigned>(std::string(boost::next(boost::begin(*token)),
-                                                      boost::end(*token))));
-    } catch(boost::bad_lexical_cast const &) {
-        throw SyntaxException();
-    }
-    if (++token != tokens.end())
-        throw SyntaxException();
+
+    INet6Address a (INet6Address::from_string(
+                        match[NumericAddr].matched ? match[NumericAddr] : match[Hostname]));
+    std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
+
+    if (match[ZoneId].matched)
+        assignIface(match[ZoneId]);
+
+    sockaddr_.sin6_port = htons(boost::lexical_cast<boost::uint16_t>(match[Port]));
 }
 
 prefix_ void senf::INet6SocketAddress::assignIface(std::string const & iface)

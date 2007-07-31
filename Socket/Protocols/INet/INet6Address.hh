@@ -78,6 +78,9 @@ namespace senf {
 
         The INet6Address class is based on \c boost::array and is built as a fixed-size sequence of
         16 bytes.
+
+        \see CheckINet6Network Helper to check address against an arbitrary fixed network prefix
+        \ingroup addr_group
      */
     class INet6Address
         : public boost::array<boost::uint8_t,16>,

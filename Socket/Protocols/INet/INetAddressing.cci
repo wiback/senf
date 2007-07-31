@@ -110,12 +110,6 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr)
     assignAddr(addr);
 }
 
-prefix_ senf::INet6SocketAddress::INet6SocketAddress(char const * addr)
-{
-    clear();
-    assignAddr(addr);
-}
-
 prefix_ senf::INet6SocketAddress::INet6SocketAddress(INet6Address const & addr, unsigned port)
 {
     clear();
@@ -140,13 +134,13 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
     assignIface(iface);
 }
 
-prefix_ senf::INet6Address senf::INet6SocketAddress::host()
+prefix_ senf::INet6Address senf::INet6SocketAddress::address()
     const
 {
     return INet6Address::from_data(&sockaddr_.sin6_addr.s6_addr[0]);
 }
 
-prefix_ void senf::INet6SocketAddress::host(INet6Address const & addr)
+prefix_ void senf::INet6SocketAddress::address(INet6Address const & addr)
 {
     std::copy(addr.begin(), addr.end(), &sockaddr_.sin6_addr.s6_addr[0]);
 }
@@ -186,7 +180,11 @@ prefix_ unsigned senf::INet6SocketAddress::sockaddr_len()
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6SocketAddress const & addr)
 {
-    os << addr.address();
+    os << '[' << addr.address();
+    std::string iface (addr.iface());
+    if (! iface.empty())
+        os << '%' << iface;
+    os << "]:" << addr.port();
     return os;
 }
 

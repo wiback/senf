@@ -85,41 +85,44 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
 
     {
         INet6SocketAddress addr;
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr.host()), "::" );
+        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr.address()), "::" );
         BOOST_CHECK_EQUAL( addr.port(), 0u );
         BOOST_CHECK_EQUAL( addr.iface(), "" );
-        addr = "[12::21]:12345";
-        BOOST_CHECK_EQUAL( addr.host(), INet6Address::from_string("12::21") );
+        addr = senf::INet6SocketAddress("[12::21]:12345");
+        BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("12::21") );
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
         BOOST_CHECK_EQUAL( addr.iface(), "" );
         BOOST_CHECK_EQUAL( addr, INet6SocketAddress("[12::21]:12345") );
+        BOOST_CHECK_NO_THROW( INet6SocketAddress("www.6bone.net:80") );
     }
 
     {
         INet6SocketAddress addr (INet6Address::from_string("::1"), 1);
-        BOOST_CHECK_EQUAL( addr, "[::1]:1" );
+        BOOST_CHECK_EQUAL( addr,senf::INet6SocketAddress("[::1]:1") );
         BOOST_CHECK_EQUAL( addr.iface(), "" );
     }
 
     {
         INet6SocketAddress addr (INet6Address::Loopback, 1, "lo");
-        BOOST_CHECK_EQUAL( addr, "[::1@lo]:1" );
+        BOOST_CHECK_EQUAL( addr, senf::INet6SocketAddress("[::1%lo]:1") );
         BOOST_CHECK_EQUAL( addr.iface(), "lo" );
         addr.iface("");
         BOOST_CHECK_EQUAL( addr.iface(), "" );
         addr.port(100u);
         BOOST_CHECK_EQUAL( addr.port(), 100u );
-        addr.host(INet6Address::from_string("::2"));
-        BOOST_CHECK_EQUAL( addr.host(), INet6Address::from_string("::2") );
-        BOOST_CHECK_THROW( addr = "", INet6SocketAddress::SyntaxException );
-        BOOST_CHECK_THROW( addr = "[::1]", INet6SocketAddress::SyntaxException );
-        BOOST_CHECK_THROW( addr = "[::1]1234", INet6SocketAddress::SyntaxException );
-        addr = "[12::21@lo]:12345";
-        BOOST_CHECK_EQUAL( addr.address(), "[12::21@lo]:12345" );
-        BOOST_CHECK_EQUAL( addr.host(), INet6Address::from_string("12::21") );
+        addr.address(INet6Address::from_string("::2"));
+        BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("::2") );
+        BOOST_CHECK_THROW( senf::INet6SocketAddress(""), INet6SocketAddress::SyntaxException );
+        BOOST_CHECK_THROW( senf::INet6SocketAddress("[::1]"), 
+                           INet6SocketAddress::SyntaxException );
+        BOOST_CHECK_THROW( senf::INet6SocketAddress("[::1]1234"), 
+                           INet6SocketAddress::SyntaxException );
+        addr = senf::INet6SocketAddress("[12::21%lo]:12345");
+        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr), "[12::21%lo]:12345" );
+        BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("12::21") );
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
         BOOST_CHECK_EQUAL( addr.iface(), "lo" );
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr), "[12::21@lo]:12345" );
+        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr), "[12::21%lo]:12345" );
     }
 }
 

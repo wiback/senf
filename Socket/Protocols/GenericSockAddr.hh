@@ -27,16 +27,13 @@
 
     To support the core socket functionality we need a collection of classing providing addressing
     for the different protocols.
+    
+    For all standard BSD socket protocols we base the address classes on the corresponding \c
+    sockaddr structures, wrapped into appropriate C++ adapters. These Address classes are based on
+    GenericSockAddr, the corresponding addressing policy is defined in GenericAddressingPolicy.
 
-    Every Address Implementation used with the standard policy classes Has to have a set of minimum
-    members. These members are documented in GenericSockAddr. However, these members are \e neither
-    abstract \e nor virtual and other address classes do \e not inherit from GenericSockAddr. The
-    address classes are not usable polymorphically for performance reasons.
-
-    The interface defined above forces the implementation to be directly based on the corresponding
-    sockaddr data structures provided by the BSD socket API. These structures however are wrapped
-    into more flexible and more easy to use classes. Using the sockaddr representation increases the
-    performance since any intermediarre conversions are skipped.
+    You are however not limit to BSD type socket address classes as long as you implement the
+    corresponding addressing policy.
  */
 
 #ifndef HH_GenericSockAddr_
