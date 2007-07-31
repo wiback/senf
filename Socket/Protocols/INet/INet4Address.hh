@@ -42,6 +42,12 @@ namespace senf {
         INet4Address represents a simple IP address. It is modelled as a fixed-size
         container/sequence of 4 bytes.
 
+        \implementation We awkwardly need to use static named constructors (<tt>from_</tt> members)
+            instead of ordinarily overloaded constructors for one simple reason: <tt>char *</tt>
+            doubles as string literal and as arbitrary data iterator. The iterator constructor can
+            therefore not be distinguished from initialization with a string literal. Therefore we
+            need to disambiguate using the named constructors.
+
         \todo Add additional classes for CIDR addresses and networks and network math.
         \ingroup addr_group
       */

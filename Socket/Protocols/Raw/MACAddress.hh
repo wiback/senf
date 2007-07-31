@@ -46,6 +46,8 @@ namespace senf {
             doubles as string literal and as arbitrary data iterator. The iterator constructor can
             therefore not be distinguished from initialization with a string literal. Therefore we
             need to disambiguate using the named constructors.
+
+        \ingroup addr_group
      */
     struct MACAddress
         : public boost::array<boost::uint8_t,6>, 
