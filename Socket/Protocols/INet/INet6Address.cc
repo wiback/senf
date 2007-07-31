@@ -38,7 +38,8 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet6Address
 
-prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s)
+prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s,
+                                                           Resolve_t resolve)
 {
     struct in6_addr ina;
     if (::inet_pton(AF_INET6,s.c_str(),&ina) > 0)
@@ -66,15 +67,21 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
 
 #   endif // __GLIBC__
 
-    if (!ent)
-        ///\fixme Need to give better exception here
-        throw SyntaxException(); 
-    if (ent->h_addrtype != AF_INET6)
-        throw SyntaxException();    
+    if (ent && ent->h_addrtype == AF_INET6)
+        // We are only interested in the first address ...
+        return senf::INet6Address::from_data(
+            &reinterpret_cast<in6_addr*>(*(ent->h_addr_list))->s6_addr[0]);
 
-    // We are only interested in the first address ...
-    return senf::INet6Address::from_data(
-        &reinterpret_cast<in6_addr*>(*(ent->h_addr_list))->s6_addr[0]);
+    ///\todo Throw better exceptions here ?
+
+    if (resolve == ResolveINet4)
+        try {
+            return from_inet4address(INet4Address::from_string(s));
+        } catch (INet4Address::SyntaxException const & ex) {
+            throw SyntaxException();
+        }
+    else
+        throw SyntaxException();
 }
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Address const & addr)

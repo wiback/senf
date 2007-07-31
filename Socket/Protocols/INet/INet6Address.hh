@@ -99,6 +99,7 @@ namespace senf {
         static INet6Address const AllRouters;  ///< The 'all routers' link-local multicast address
 
         enum NoInit_t { noinit };
+        enum Resolve_t { ResolveINet6, ResolveINet4 };
 
         /** \brief Possible scope values
 
@@ -128,7 +129,7 @@ namespace senf {
                      boost::uint16_t a6=0u, boost::uint16_t a7=0u);
                                         ///< Construct an address constant
 
-        static INet6Address from_string(std::string const & s);
+        static INet6Address from_string(std::string const & s, Resolve_t resolve = ResolveINet6);
                                         ///< Convert string to address
                                         /**< This member will try to convert the given string into
                                              an IP address. from_string() supports all standard IP
@@ -138,9 +139,15 @@ namespace senf {
                                                  protocol like DNS or NIS
                                              \throws SyntaxException if the address cannot be
                                                  converted for some reason
-                                             \param[in] s Address literal or hostname */
+                                             \param[in] s Address literal or hostname 
+                                             \param[in] resolve If this is set to \c ResolveINet4,
+                                                 the call will additionally try to interpret \a s as
+                                                 an IpV4 address if no valid IpV6 address is
+                                                 found. The address will be returned as mapped IpV6
+                                                 address. */
 
-        static void from_string(std::string const & s, Callback const & cb);
+        static void from_string(std::string const & s, Callback const & cb, 
+                                Resolve_t resolve = ResolveINet6);
                                         ///< Convert string to address (async/non-blocking)
                                         /**< This member works like
                                              from_string(std::string const &). However unlike
@@ -152,6 +159,11 @@ namespace senf {
                                              On error, the address passed to \a cb will be empty.
                                              \param[in] s Address literal or hostname
                                              \param[in] cb Callback to pass the address to 
+                                             \param[in] resolve If this is set to \c ResolveINet4,
+                                                 the call will additionally try to interpret \a s as
+                                                 an IpV4 address if no valid IpV6 address is
+                                                 found. The address will be returned as mapped IpV6
+                                                 address.
                                              \fixme Implement */
 
         template <class InputIterator> 

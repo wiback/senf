@@ -154,14 +154,17 @@ namespace senf {
         ///@{
 
         INet6SocketAddress();           ///< Create empty instance
-        explicit INet6SocketAddress(std::string const & addr);
+        explicit INet6SocketAddress(std::string const & addr, 
+                                    INet6Address::Resolve_t resolve = INet6Address::ResolveINet6);
                                         ///< Initialize/convert from string representation
+                                        /**< \param[in] addr Address to parse
+                                             \param[in] resolve If this is
+                                             INet6Address::ResolveINet4, support also IpV4
+                                                 addresses. See INet6Address. */
         INet6SocketAddress(INet6Address const & addr, unsigned port);
                                         ///< Initialize from address and port
         INet6SocketAddress(INet6Address const & addr, unsigned port, std::string const & iface);
                                         ///< Initialize explicitly from given parameters
-        INet6SocketAddress(std::string const & addr, std::string const & iface);
-                                        ///< Initialize from URL representation and explit interface
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -197,7 +200,6 @@ namespace senf {
     protected:
 
     private:
-        void assignAddr(std::string const & addr);
         void assignIface(std::string const & iface);
 
         struct sockaddr_in6 sockaddr_;

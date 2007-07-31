@@ -104,12 +104,6 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress()
     clear();
 }
 
-prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr)
-{
-    clear();
-    assignAddr(addr);
-}
-
 prefix_ senf::INet6SocketAddress::INet6SocketAddress(INet6Address const & addr, unsigned port)
 {
     clear();
@@ -123,14 +117,6 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(INet6Address const & addr, 
     clear();
     std::copy(addr.begin(), addr.end(), &sockaddr_.sin6_addr.s6_addr[0]);
     sockaddr_.sin6_port = htons(port);
-    assignIface(iface);
-}
-
-prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
-                                                     std::string const & iface)
-{
-    clear();
-    assignAddr(addr);
     assignIface(iface);
 }
 

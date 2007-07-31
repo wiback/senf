@@ -73,6 +73,36 @@ prefix_ void senf::INet4SocketAddress::clear()
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet6SocketAddress
 
+prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
+                                                     INet6Address::Resolve_t resolve)
+{
+    clear();
+
+    // Format of addr: "[" address [ "%" interface ] "]" ":" port
+    //             or: host ":" port
+
+    static boost::regex const addressRx ("(?:\\[([a-f0-9A-F:]+)(?:%(.+))?\\]|(.+)):([0-9]+)");
+    // Subexpression numbers:
+    enum { NumericAddr = 1,
+           ZoneId      = 2,
+           Hostname    = 3,
+           Port        = 4 };
+    
+    boost::smatch match;
+    if (! regex_match(addr, match, addressRx))
+        throw SyntaxException();
+
+    INet6Address a (INet6Address::from_string(
+                        match[NumericAddr].matched ? match[NumericAddr] : match[Hostname],
+                        resolve));
+    std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
+
+    if (match[ZoneId].matched)
+        assignIface(match[ZoneId]);
+
+    sockaddr_.sin6_port = htons(boost::lexical_cast<boost::uint16_t>(match[Port]));
+}
+
 prefix_ bool senf::INet6SocketAddress::operator==(INet6SocketAddress const & other)
     const
 {
@@ -101,32 +131,6 @@ prefix_ std::string senf::INet6SocketAddress::iface()
     char buffer[IFNAMSIZ];
     BOOST_ASSERT( if_indextoname(sockaddr_.sin6_scope_id,buffer) );
     return std::string(buffer);
-}
-
-prefix_ void senf::INet6SocketAddress::assignAddr(std::string const & addr)
-{
-    // Format of addr: "[" address [ "%" interface ] "]" ":" port
-    //             or: host ":" port
-
-    static boost::regex const addressRx ("(?:\\[([a-f0-9A-F:]+)(?:%(.+))?\\]|(.+)):([0-9]+)");
-    // Subexpression numbers:
-    enum { NumericAddr = 1,
-           ZoneId      = 2,
-           Hostname    = 3,
-           Port        = 4 };
-    
-    boost::smatch match;
-    if (! regex_match(addr, match, addressRx))
-        throw SyntaxException();
-
-    INet6Address a (INet6Address::from_string(
-                        match[NumericAddr].matched ? match[NumericAddr] : match[Hostname]));
-    std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
-
-    if (match[ZoneId].matched)
-        assignIface(match[ZoneId]);
-
-    sockaddr_.sin6_port = htons(boost::lexical_cast<boost::uint16_t>(match[Port]));
 }
 
 prefix_ void senf::INet6SocketAddress::assignIface(std::string const & iface)
