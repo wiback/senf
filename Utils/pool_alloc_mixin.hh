@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
@@ -42,7 +44,7 @@ namespace senf {
         default. Using this allocator does however introduce a few restrictions:
 
         \li The operator is defined for a fixed size. Therefore if you derive from the class <b>you
-            must not change it's size</t>.
+            must not change it's size</b>.
         \li If you change the size of the class in a derived class you have to derive from
             pool_alloc_mixin again.
 

@@ -73,7 +73,7 @@ namespace senf {
                                         ///< Create address for \c bind()
                                         /**< This constructs an LLSocketAddress valid for calling
                                              PacketSocketHandle::bind() with.
-                                             \param[in] prot Protocol (Ethertype) to listen for
+                                             \param[in] proto Protocol (Ethertype) to listen for
                                              \param[in] iface Interface name to bind to */
         explicit LLSocketAddress(std::string const &iface);
                                         ///< Create address for \c bind()

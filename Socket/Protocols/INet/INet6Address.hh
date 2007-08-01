@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
@@ -41,21 +43,26 @@ namespace senf {
 
     /** \brief IpV6 network address
 
-        This implementation of an IpV6 address is based strictly on RFC 4291: Internet Protocol
+        This implementation of an IpV6 address is based strictly on 
+        <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>: Internet Protocol
         Version 6 (IPv6) Addressing Architecture. This class provides accessors to all the
         information fields defined in this document.
 
         The IpV6 addressing architecture however has several other components defined in other
         RFC's. These RFC's should be implemented in additional modules:
 
-        \li RFC4193: Unique Local Addresses (ULA). Defines the fc00::/7 prefix
-        \li RFC3306: Unicast-Prefix-based IPv6 Multicast Addresses. Defines the ff30::/12 prefix
-        \li RFC3956: Embedding the Rendezvous Point (RP) Address in an IPv6 Multicast
+        \li <a href="http://tools.ietf.org/html/rfc4193">RFC 4193</a>:
+            Unique Local Addresses (ULA). Defines the fc00::/7 prefix
+        \li <a href="http://tools.ietf.org/html/rfc3306">RFC 3306</a>:
+            Unicast-Prefix-based IPv6 Multicast Addresses. Defines the ff30::/12 prefix
+        \li <a href="http://tools.ietf.org/html/rfc3956">RFC 3956</a>:
+            Embedding the Rendezvous Point (RP) Address in an IPv6 Multicast
             Address. Defines the ff70::/12 prefix
-        \li RFC3056: Connection of IPv6 Domains via IPv4 Clouds. Defines 6to4 tunneling and the
+        \li <a href="http://tools.ietf.org/html/rfc3056">RFC 3056</a>:
+            Connection of IPv6 Domains via IPv4 Clouds. Defines 6to4 tunneling and the
             2002::/16 prefix
-        \li RFC3849: IPv6 Address Prefix Reserved for Documentation. Defines the 2001:db8::/32
-            prefix
+        \li <a href="http://tools.ietf.org/html/rfc3849">RFC 3849</a>:
+            IPv6 Address Prefix Reserved for Documentation. Defines the 2001:db8::/32 prefix
         
         Here an overview of well-known prefixes:
 
@@ -110,8 +117,9 @@ namespace senf {
         /** \brief Possible scope values
 
             List of all possible scope values. This list includes all scope values defined for
-            multicast addresses in RFC4291. The values \ref LinkScope, \ref SiteScope and \ref
-            GlobalScope are also used with unicast addresses.
+            multicast addresses in <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>. 
+            The values \ref LinkScope, \ref SiteScope and \ref GlobalScope are also used with 
+            unicast addresses.
          */
         enum ScopeId {
               InterfaceScope    =  1    /**< Interface only scope */
@@ -184,7 +192,9 @@ namespace senf {
                                         /**< This will construct an address of the form
                                              <tt>::FFFF::w.x.y.z</tt> where <tt>w.x.y.z</tt> is
                                              the INet4Address value. This kind of address is called
-                                             an IpV6-mapped IpV4 address (see RFC4291). \par
+                                             an IpV6-mapped IpV4 address (see 
+                                             <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>).
+                                             \par 
                                              IpV4 compatible IpV6 addresses are not directly
                                              supported, they are deprecated in the RFC. */
         ///@}
@@ -225,14 +235,18 @@ namespace senf {
 
         bool globalMulticastAddr() const; ///< \c true, if T bit is \e not set
                                         /**< Any multicast address with a cleared T bit must be
-                                             globally assigned. See RFC4291. */
+                                             globally assigned. See 
+                                             <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>. */
         bool prefixMulticastAddr() const; ///< \c true, if P bit is set
-                                        /**< In RFC4291, the P bit is specified as defining a
-                                             unicast prefix based multicast address. See RFC3306. */ 
+                                        /**< In <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>,
+                                             the P bit is specified as defining a
+                                             unicast prefix based multicast address. See 
+                                             <a href="http://tools.ietf.org/html/rfc3306">RFC 3306</a>. */ 
         bool embeddedRpAddr() const;    ///< \c true, if R bit is set
-                                        /** In RFC4291, the R bit is specified as defining a
-                                            multicast address with embedded rendezvous point. See
-                                            RFC3956. */
+                                        /**< In <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>,
+                                             the R bit is specified as defining a multicast address 
+                                             with embedded rendezvous point. See
+                                             <a href="http://tools.ietf.org/html/rfc3956">RFC 3956</a>. */
 
         bool boolean_test() const;      ///< \c true, if address != '::' (None)
 
