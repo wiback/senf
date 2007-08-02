@@ -64,18 +64,16 @@ private:
     bool priv_sndu_type_1;
     iterator snduPacketData_iter;
 
-    static const unsigned BLOCK_SIZE = 16;
-    
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator const & i_end, std::ostream& stream);
-    
     void handleEvent(senf::FileHandle, senf::Scheduler::EventId event);
-    
     void handleTSPacket(senf::TransportPacket tsPacket);
+    void handleSNDUPacket();
     
     iterator readNewSNDUPacket(iterator i_start, iterator i_end);
     iterator readContSNDUPacket(iterator i_start, iterator i_end);
     iterator readRawSNDUPacketData(iterator i_start, iterator i_end);
+    
+    inline bool isSDNUPacketComplete(); 
+    inline iterator::difference_type snduPacketBytesLeft();
     
 };
 

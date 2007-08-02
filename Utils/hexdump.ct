@@ -1,0 +1,84 @@
+// $Id$
+//
+// Copyright (C) 2007
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief hexdump non-inline template implementation */
+
+//#include "hexdump.ih"
+
+// Custom includes
+#include <iomanip> 
+
+//#include "hexdump.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
+
+template <class Iterator>
+prefix_ void senf::hexdump(Iterator i, Iterator const & i_end, std::ostream& stream, unsigned block_size=16)
+{
+    unsigned offset (0);
+    std::string ascii;
+    for (; i != i_end; ++i, ++offset) {
+        switch ((offset % block_size)==0) {
+        case true:
+            if (!ascii.empty()) {
+                stream << "  " << ascii << "\n";
+                ascii = "";
+            }
+            stream << "  "
+                      << std::hex << std::setw(4) << std::setfill('0')
+                      << offset << ' ';
+            break;
+        case false:
+            stream << " ";
+            ascii += ' ';
+            break;
+        }
+        stream << ' ' << std::hex << std::setw(2) << std::setfill('0')
+                  << unsigned(*i);
+        ascii += (*i >= ' ' && *i < 126) ? *i : '.';
+    }
+    if (!ascii.empty()) {
+        for (; (offset % block_size) != 0; ++offset) {
+            if ((offset % block_size) == block_size/2)
+                stream << " ";
+            stream << "   ";
+        }
+        stream << "  " << ascii << "\n";
+    }
+    stream << std::dec;
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "hexdump.mpp"
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

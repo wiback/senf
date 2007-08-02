@@ -33,6 +33,7 @@
 #include "Packets/DefaultBundle/EthernetPacket.hh"
 #include "Packets/MPEGDVBBundle/DatagramSection.hh"
 #include "Utils/membind.hh"
+#include "Utils/hexdump.hh"
 #include "Socket/Protocols/DVB/DVBDemuxHandles.hh"
 #include "Packets/ParseInt.hh"
 #include "Packets/Packet.hh"
@@ -42,48 +43,6 @@
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-namespace {
-
-    static const unsigned BLOCK_SIZE = 16;
-
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator const & i_end, std::ostream& stream)
-    {
-        unsigned offset (0);
-        std::string ascii;
-        for (; i != i_end; ++i, ++offset) {
-            switch (offset % BLOCK_SIZE) {
-            case 0:
-                if (!ascii.empty()) {
-                    stream << "  " << ascii << "\n";
-                    ascii = "";
-                }
-                stream << "  "
-                          << std::hex << std::setw(4) << std::setfill('0')
-                          << offset << ' ';
-                break;
-            case BLOCK_SIZE/2:
-                stream << " ";
-                ascii += ' ';
-                break;
-            }
-            stream << ' ' << std::hex << std::setw(2) << std::setfill('0')
-                      << unsigned(*i);
-            ascii += (*i >= ' ' && *i < 126) ? *i : '.';
-        }
-        if (!ascii.empty()) {
-            for (; (offset % BLOCK_SIZE) != 0; ++offset) {
-                if ((offset % BLOCK_SIZE) == BLOCK_SIZE/2)
-                    stream << " ";
-                stream << "   ";
-            }
-            stream << "  " << ascii << "\n";
-        }
-        stream << std::dec;
-    }
-}
-
 
 class MySniffer
 {
@@ -113,7 +72,7 @@ private:
         senf::DatagramSection section (senf::DatagramSection::create(data));
         section.dump(std::cout);
         senf::PacketData & datagramData (section.last().data());
-        hexdump(datagramData.begin(), datagramData.end(), std::cout);
+        senf::hexdump(datagramData.begin(), datagramData.end(), std::cout);
     }
 };
 

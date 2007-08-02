@@ -32,53 +32,12 @@
 #include "Scheduler/Scheduler.hh"
 #include "Packets/DefaultBundle/EthernetPacket.hh"
 #include "Utils/membind.hh"
+#include "Utils/hexdump.hh"
 
 
 //#include "MCSniffer.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-namespace {
-
-    static const unsigned BLOCK_SIZE = 16;
-
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator const & i_end, std::ostream& stream)
-    {
-        unsigned offset (0);
-        std::string ascii;
-        for (; i != i_end; ++i, ++offset) {
-            switch (offset % BLOCK_SIZE) {
-            case 0:
-                if (!ascii.empty()) {
-                    stream << "  " << ascii << "\n";
-                    ascii = "";
-                }
-                stream << "  "
-                          << std::hex << std::setw(4) << std::setfill('0')
-                          << offset << ' ';
-                break;
-            case BLOCK_SIZE/2:
-                stream << " ";
-                ascii += ' ';
-                break;
-            }
-            stream << ' ' << std::hex << std::setw(2) << std::setfill('0')
-                      << unsigned(*i);
-            ascii += (*i >= ' ' && *i < 126) ? *i : '.';
-        }
-        if (!ascii.empty()) {
-            for (; (offset % BLOCK_SIZE) != 0; ++offset) {
-                if ((offset % BLOCK_SIZE) == BLOCK_SIZE/2)
-                    stream << " ";
-                stream << "   ";
-            }
-            stream << "  " << ascii << "\n";
-        }
-        stream << std::dec;
-    }
-}
-
 
 class MCSniffer
 {
@@ -103,7 +62,7 @@ private:
         senf::EthernetPacket packet (
             senf::EthernetPacket::create(data));
         packet.dump(stream);
-        hexdump(packet.last().data().begin(),
+        senf::hexdump(packet.last().data().begin(),
                 packet.last().data().end(),
                 stream);
         stream << "\n\n";
