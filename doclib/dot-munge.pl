@@ -2,8 +2,8 @@
 
 # Reduce font size
 s/fontsize=10/fontsize=8/g; 
-s/fontname="FreeSans.ttf"/fontname="Bitstream Vera Sans Mono"/g;
-##s/fontname="FreeSans.ttf"/fontname="Verdana"/g;
+##s/fontname="FreeSans.ttf"/fontname="Bitstream Vera Sans Mono"/g;
+s/fontname="FreeSans.ttf"/fontname="Verdana"/g;
 ##s/fontname="FreeSans.ttf"/fontname="Lucida Sans Typewriter"/g;
 
 # Wrap long labels (templates)

@@ -144,7 +144,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
     } else {
         // a PUSI value of 1 indicates the presence of a Payload Pointer.
         unsigned char payload_pointer = *payload_start++;
-        if (payload_pointer>181) {
+        if (payload_pointer > 181) {
             std::cerr << "invalid payload_pointer\n";
             return;
         }
@@ -155,7 +155,18 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
             this->snduPacket.dump(std::cout);
             break;
         case Reassembly:
-            readContSNDUPacket( payload_start, payload_end );
+            // Reassembly Payload Pointer Checking
+            unsigned char sdnu_bytes_left = std::distance(
+                    this->snduPacketData_iter, this->snduPacket.data().end() );
+            if (sdnu_bytes_left != payload_pointer) {
+                // delimiting error
+                std::cerr << "delimiting error\n";
+                payload_start += payload_pointer;
+            } else {
+                readContSNDUPacket( payload_start, payload_end );
+                BOOST_ASSERT( this->snduPacketData_iter == this->snduPacket.data().end() );
+            }
+            readNewSNDUPacket( payload_start, payload_end );
         }       
     }
 
@@ -186,10 +197,11 @@ ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i_start, iterator i_end)
     this->snduPacket->d_bit() = dbit;
     this->snduPacket->length() = sndu_length;
     this->snduPacketData_iter = this->snduPacket.data().begin() + 2;
+    this->priv_sndu_type_1 = false;
     
     switch (std::distance(i_start, i_end)) {
     case 1:
-        this->priv_sndu_type_1 = true;;
+        this->priv_sndu_type_1 = true;
         this->snduPacket->type() = *i_start++;
         this->snduPacketData_iter++;
     case 0:
