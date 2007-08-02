@@ -38,8 +38,7 @@ prefix_ void senf::hexdump(Iterator i, Iterator const & i_end, std::ostream& str
     unsigned offset (0);
     std::string ascii;
     for (; i != i_end; ++i, ++offset) {
-        switch ((offset % block_size)==0) {
-        case true:
+        if ((offset % block_size) == 0) {
             if (!ascii.empty()) {
                 stream << "  " << ascii << "\n";
                 ascii = "";
@@ -47,11 +46,9 @@ prefix_ void senf::hexdump(Iterator i, Iterator const & i_end, std::ostream& str
             stream << "  "
                       << std::hex << std::setw(4) << std::setfill('0')
                       << offset << ' ';
-            break;
-        case false:
+        } else if ((offset % block_size) == block_size/2) {
             stream << " ";
             ascii += ' ';
-            break;
         }
         stream << ' ' << std::hex << std::setw(2) << std::setfill('0')
                   << unsigned(*i);
@@ -72,7 +69,7 @@ prefix_ void senf::hexdump(Iterator i, Iterator const & i_end, std::ostream& str
 #undef prefix_
 //#include "hexdump.mpp"
 
-
+ 
 // Local Variables:
 // mode: c++
 // fill-column: 100

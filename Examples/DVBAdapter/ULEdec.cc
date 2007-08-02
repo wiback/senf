@@ -115,7 +115,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
                     return;
                 default:
                     if ( (*payload_start++ | *payload_start++) != ULE_END_INDICATOR )
-                        std::cerr << "delimiting error\n";
+                        std::cerr << "delimiting error 1\n";
             } else {
                 BOOST_ASSERT( std::distance( payload_start, payload_end ) == 0 );
             }
@@ -127,26 +127,35 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
         unsigned char payload_pointer = *payload_start++;
         if (payload_pointer > 181) {
             std::cerr << "invalid payload_pointer\n";
+            this->receiver_state = Idle;
             return;
         }
         switch (this->receiver_state) {
         case Idle:
             payload_start += payload_pointer;
-            readNewSNDUPacket( payload_start, payload_end );
             break;
         case Reassembly:
             // Reassembly Payload Pointer Checking
-            unsigned char sndu_bytes_left = snduPacketBytesLeft();
-            if (sndu_bytes_left != payload_pointer) {
+            if (snduPacketBytesLeft() != payload_pointer) {
                 // delimiting error
-                std::cerr << "delimiting error\n";
+                std::cerr << "delimiting error 2\n";
                 payload_start += payload_pointer;
             } else {
-                readContSNDUPacket( payload_start, payload_end );
+                payload_start = readContSNDUPacket( payload_start, payload_end );
                 BOOST_ASSERT( isSDNUPacketComplete() );
+                handleSNDUPacket();
             }
-            readNewSNDUPacket( payload_start, payload_end );
         }
+        do {
+            payload_start = readNewSNDUPacket( payload_start, payload_end );
+            if (! isSDNUPacketComplete()) {
+                BOOST_ASSERT( std::distance( payload_start, payload_end ) == 0 );
+                this->receiver_state = Reassembly;
+                break;
+            }
+            handleSNDUPacket();
+            this->receiver_state = Idle;
+        } while (std::distance(payload_start, payload_end) < 2 );
     }
     } // end pusi-switch
 
@@ -241,7 +250,7 @@ int main(int argc, char const * argv[])
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+ 
 // Local Variables:
 // mode: c++
 // fill-column: 100

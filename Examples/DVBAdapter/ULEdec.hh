@@ -49,7 +49,7 @@ public:
 private:
     typedef senf::PacketData::iterator iterator;
     
-    enum ReciverState {
+    enum ReceiverState {
         Idle,
         Reassembly
     };
@@ -59,7 +59,7 @@ private:
     
     senf::SNDUPacket snduPacket;
     
-    ReciverState receiver_state;
+    ReceiverState receiver_state;
     unsigned char priv_tscc;
     bool priv_sndu_type_1;
     iterator snduPacketData_iter;
