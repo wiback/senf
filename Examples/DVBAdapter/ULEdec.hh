@@ -61,14 +61,24 @@ private:
     void handleTSPacket(senf::TransportPacket tsPacket);
     void handleSNDUPacket();
     
-    iterator readNewSNDUPacket(iterator i_start, iterator i_end);
-    iterator readContSNDUPacket(iterator i_start, iterator i_end);
-    iterator readRawSNDUPacketData(iterator i_start, iterator i_end);
+    iterator readNewSNDUPacket(iterator i, const iterator i_end);
+    iterator readContSNDUPacket(iterator i, const iterator i_end);
+    iterator readRawSNDUPacketData(iterator i, iterator const i_end);
     
     inline bool isSDNUPacketComplete(); 
     inline iterator::difference_type snduPacketBytesLeft();
     
 };
+
+
+struct ULEdecException : public std::exception
+{
+    ULEdecException(char const * what) : what_(what) {};
+    virtual char const * what() const throw() { return what_.c_str(); }
+    virtual ~ULEdecException() throw() {};
+    std::string what_;
+};
+
 
 
 // Local Variables:

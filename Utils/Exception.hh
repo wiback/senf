@@ -56,7 +56,7 @@ namespace senf {
     public:
         explicit SystemException(int err); ///< SystemException without error lokus info
                                         /**< \param[in] err error number (the errno value) */
-        SystemException(char const * where, int err); ///< SystemException with error lokus info
+        SystemException(char const * where, int err); ///< SystemException with error location info
                                         /**< \param[in] where description of error origin
                                              \param[in] err error number (the errno value) */
 

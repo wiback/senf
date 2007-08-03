@@ -75,12 +75,12 @@ void ULEdec::handleEvent(senf::FileHandle, senf::Scheduler::EventId event)
 void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
 {
     senf::PacketData & payloadData (ts_packet.next().data());
-    iterator payload_start = payloadData.begin();
+    iterator payload_iter = payloadData.begin();
     iterator payload_end = payloadData.end();
     
     std::cout << "New TS Packet:\n"
               << "----------------------------------------------------------------------------\n";
-    senf::hexdump(payload_start, payload_end, std::cout);
+    senf::hexdump(payload_iter, payload_end, std::cout);
     std::cout << "----------------------------------------------------------------------------\n";
     
     // Synchronize continuity counter
@@ -92,26 +92,31 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
         case Idle:
             return;
         case Reassembly:
-            payload_start = readContSNDUPacket( payload_start, payload_end );
+            payload_iter = readContSNDUPacket( payload_iter, payload_end );
             if (isSDNUPacketComplete()) {
-                handleSNDUPacket();
                 this->receiver_state = Idle;
-                switch (std::distance( payload_start, payload_end ))
+                try {
+                    handleSNDUPacket();
+                } catch (ULEdecException const & ex) {
+                    std::cerr << ex.what() << "\n";
+                    return;
+                }
+                switch (std::distance( payload_iter, payload_end ))
                 case 0:
                 case 1:
                     return;
                 default:
-                    if ( (*payload_start++ << 8 | *payload_start++) != ULE_END_INDICATOR )
+                    if ( (*payload_iter++ << 8 | *payload_iter++) != ULE_END_INDICATOR )
                         std::cerr << "delimiting error 1\n";
             } else {
-                BOOST_ASSERT( std::distance( payload_start, payload_end ) == 0 );
+                BOOST_ASSERT( std::distance( payload_iter, payload_end ) == 0 );
             }
         }
         break;
     }
     case 1: {
         // a PUSI value of 1 indicates the presence of a Payload Pointer.
-        unsigned char payload_pointer = *payload_start++;
+        unsigned char payload_pointer = *payload_iter++;
         if (payload_pointer > 181) {
             std::cerr << "invalid payload_pointer\n";
             this->receiver_state = Idle;
@@ -119,96 +124,111 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
         }
         switch (this->receiver_state) {
         case Idle:
-            payload_start += payload_pointer;
+            std::advance(payload_iter, payload_pointer);
             break;
         case Reassembly:
             // Reassembly Payload Pointer Checking
             if (snduPacketBytesLeft() != payload_pointer) {
                 // delimiting error
                 std::cerr << "delimiting error 2\n";
-                payload_start += payload_pointer;
+                std::advance(payload_iter, payload_pointer);
             } else {
-                payload_start = readContSNDUPacket( payload_start, payload_end );
+                payload_iter = readContSNDUPacket( payload_iter, payload_end );
                 BOOST_ASSERT( isSDNUPacketComplete() );
-                handleSNDUPacket();
+                try {
+                    handleSNDUPacket();
+                } catch (ULEdecException const & ex) {
+                    std::cerr << ex.what() << "\n";
+                    this->receiver_state = Idle;
+                    return;
+                }
             }
         }
-        do {
-            payload_start = readNewSNDUPacket( payload_start, payload_end );
-            if (! isSDNUPacketComplete()) {
-                BOOST_ASSERT( std::distance( payload_start, payload_end ) == 0 );
-                this->receiver_state = Reassembly;
-                break;
-            }
-            handleSNDUPacket();
-            this->receiver_state = Idle;
-        } while (std::distance(payload_start, payload_end) < 2 );
+        this->receiver_state = Idle;
+        try {
+            do {
+                payload_iter = readNewSNDUPacket( payload_iter, payload_end );
+                if (! isSDNUPacketComplete()) {
+                    BOOST_ASSERT( std::distance( payload_iter, payload_end ) == 0 );
+                    this->receiver_state = Reassembly;
+                    break;
+                }
+                handleSNDUPacket();
+            } while (std::distance(payload_iter, payload_end) < 2 );
+        }
+        catch (ULEdecException const & ex) {
+            std::cerr << ex.what() << "\n";
+            return;
+        }
     }
     
     } // end pusi-switch
 }
 
 
-ULEdec::iterator ULEdec::readContSNDUPacket(iterator i_start, iterator i_end)
+ULEdec::iterator ULEdec::readContSNDUPacket(iterator i, iterator const i_end)
 {
     if (priv_sndu_type_1) {
-        this->snduPacket->type() |= *i_start++;
+        this->snduPacket->type() |= *i++;
     }
-    i_start = readRawSNDUPacketData(i_start, i_end);
-    
-    return i_start;
+    return readRawSNDUPacketData(i, i_end);
 }
 
 
-ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i_start, iterator i_end)
+ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i, iterator const i_end)
 { 
     bool dbit = false;
     senf::Packet::size_type sndu_length;
-    sndu_length = *i_start++ << 8 | *i_start++;
+    sndu_length = *i++ << 8 | *i++;
     if (sndu_length & 0x8000) {
         sndu_length &= 0x7FFF;
         dbit = true;
     }
+    if (sndu_length < 5 || sndu_length == 0xffff) {
+        throw ULEdecException("SNDU length error");
+     }
     this->snduPacket = senf::SNDUPacket::create(sndu_length+4);
     this->snduPacket->d_bit() = dbit;
     this->snduPacket->length() = sndu_length;
-    this->snduPacketData_iter = this->snduPacket.data().begin() + 2;
+    this->snduPacketData_iter = boost::next(this->snduPacket.data().begin(), 2);
     this->priv_sndu_type_1 = false;
     
-    switch (std::distance(i_start, i_end)) {
+    switch (std::distance(i, i_end)) {
     case 1:
         this->priv_sndu_type_1 = true;
-        this->snduPacket->type() = *i_start++ << 8;
+        this->snduPacket->type() = *i++ << 8;
         this->snduPacketData_iter++;
     case 0:
         break;
         
     default: 
-        this->snduPacket->type() = *i_start++ << 8 | *i_start++;
-        this->snduPacketData_iter += 2;
-        i_start = readRawSNDUPacketData(i_start, i_end);
+        this->snduPacket->type() = *i++ << 8 | *i++;
+        std::advance(this->snduPacketData_iter, 2);
+        i = readRawSNDUPacketData(i, i_end);
     }
     
-    return i_start;
+    return i;
 }
 
 
-ULEdec::iterator ULEdec::readRawSNDUPacketData(iterator i_start, iterator i_end)
+ULEdec::iterator ULEdec::readRawSNDUPacketData(iterator i, iterator i_end)
 {
     unsigned char how_much = std::min(
-            snduPacketBytesLeft(), std::distance( i_start, i_end ) );
-    copy_n(i_start, how_much, this->snduPacketData_iter);
-    i_start += how_much;
-    this->snduPacketData_iter += how_much;
-    return i_start;
+            snduPacketBytesLeft(), std::distance(i, i_end) );
+    copy_n(i, how_much, this->snduPacketData_iter);
+    std::advance(i, how_much);
+    std::advance(this->snduPacketData_iter, how_much);
+    return i;
 }
 
 
 void ULEdec::handleSNDUPacket()
 {
     this->snduPacket.dump(std::cout);
-    std::cout << "  calculated CRC: " << this->snduPacket->calcCrc() << "\n";
     std::cout << "----------------------------------------------------------------------------\n\n";
+    if (this->snduPacket->crc() != this->snduPacket->calcCrc()) {
+        throw ULEdecException("CRC Error");
+    }
 }
 
 
