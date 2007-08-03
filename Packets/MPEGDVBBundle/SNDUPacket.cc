@@ -52,12 +52,10 @@ prefix_ senf::PacketParserBase::size_type senf::Parse_SNDUPacket::bytes()
 prefix_ boost::uint32_t senf::Parse_SNDUPacket::calcCrc()
     const
 {
-    ule_crc32 result;
-    senf::PacketData::iterator i (data().begin());
-    senf::PacketData::iterator const i_end(boost::prior(data().end(),4));
-    for (; i!=i_end; ++i) 
-        result.process_byte(*i);
-    return result.checksum(); 
+    return std::for_each(
+            data().begin(), 
+            boost::prior(data().end(), 4), 
+            ule_crc32() ).checksum();
 }
 
 prefix_ void senf::SNDUPacketType::dump(packet p, std::ostream & os)
