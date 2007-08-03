@@ -28,6 +28,8 @@
 
 // Custom includes
 #include <iomanip>
+#include "Utils/hexdump.hh"
+#include "Packets/PacketData.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -45,6 +47,17 @@ prefix_ senf::PacketParserBase::size_type senf::Parse_SNDUPacket::bytes()
         return 2 + 2 + 4;  // D-Bit + 15 bits length + 16 bits type field + 32 bits crc
     else
         return 2 + 2 + 4 + 6;  // + 6 Byte NPA destination address
+}
+
+prefix_ boost::uint32_t senf::Parse_SNDUPacket::calcCrc()
+    const
+{
+    ule_crc32 result;
+    senf::PacketData::iterator i (data().begin());
+    senf::PacketData::iterator const i_end(boost::prior(data().end(),4));
+    for (; i!=i_end; ++i) 
+        result.process_byte(*i);
+    return result.checksum(); 
 }
 
 prefix_ void senf::SNDUPacketType::dump(packet p, std::ostream & os)

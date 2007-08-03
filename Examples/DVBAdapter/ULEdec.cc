@@ -22,27 +22,11 @@
 
 // Definition of non-inline non-template functions
 
-#include <string>
-#include <iostream>
-#include <iomanip>
-#include <algorithm>
-#include <sys/ioctl.h>
-#include <linux/sockios.h>
-#include <linux/dvb/dmx.h> 
-
-#include "Scheduler/Scheduler.hh"
-#include "Packets/DefaultBundle/EthernetPacket.hh"
-#include "Packets/MPEGDVBBundle/TransportPacket.hh"
-#include "Packets/MPEGDVBBundle/SNDUPacket.hh"
-#include "Utils/membind.hh"
-#include "Utils/hexdump.hh"
-#include "Socket/Protocols/DVB/DVBDemuxHandles.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/Packet.hh"
-#include "Packets/PacketData.hh"
-#include "Packets/ParseInt.hh"
-
 #include "ULEdec.hh"
+
+#include "Packets/PacketData.hh"
+#include "Utils/hexdump.hh"
+#include "Utils/membind.hh"
 
 #define PID 271
 #define TS_SYNC 0x47
@@ -94,7 +78,10 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
     iterator payload_start = payloadData.begin();
     iterator payload_end = payloadData.end();
     
+    std::cout << "New TS Packet:\n"
+              << "----------------------------------------------------------------------------\n";
     senf::hexdump(payload_start, payload_end, std::cout);
+    std::cout << "----------------------------------------------------------------------------\n";
     
     // Synchronize continuity counter
     this->priv_tscc = ts_packet->continuity_counter();
@@ -114,7 +101,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
                 case 1:
                     return;
                 default:
-                    if ( (*payload_start++ | *payload_start++) != ULE_END_INDICATOR )
+                    if ( (*payload_start++ << 8 | *payload_start++) != ULE_END_INDICATOR )
                         std::cerr << "delimiting error 1\n";
             } else {
                 BOOST_ASSERT( std::distance( payload_start, payload_end ) == 0 );
@@ -157,8 +144,8 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
             this->receiver_state = Idle;
         } while (std::distance(payload_start, payload_end) < 2 );
     }
+    
     } // end pusi-switch
-
 }
 
 
@@ -191,13 +178,13 @@ ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i_start, iterator i_end)
     switch (std::distance(i_start, i_end)) {
     case 1:
         this->priv_sndu_type_1 = true;
-        this->snduPacket->type() = *i_start++;
+        this->snduPacket->type() = *i_start++ << 8;
         this->snduPacketData_iter++;
     case 0:
         break;
         
     default: 
-        this->snduPacket->type() = *i_start++ | *i_start++;
+        this->snduPacket->type() = *i_start++ << 8 | *i_start++;
         this->snduPacketData_iter += 2;
         i_start = readRawSNDUPacketData(i_start, i_end);
     }
@@ -220,6 +207,8 @@ ULEdec::iterator ULEdec::readRawSNDUPacketData(iterator i_start, iterator i_end)
 void ULEdec::handleSNDUPacket()
 {
     this->snduPacket.dump(std::cout);
+    std::cout << "  calculated CRC: " << this->snduPacket->calcCrc() << "\n";
+    std::cout << "----------------------------------------------------------------------------\n\n";
 }
 
 

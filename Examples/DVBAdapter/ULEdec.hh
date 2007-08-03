@@ -1,6 +1,6 @@
 // $Id: ULEdec.cc 355 2007-07-26 14:17:02Z tho $
 //
-// Copyright (C) 2006
+// Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -26,19 +26,12 @@
 #include <iostream>
 #include <iomanip>
 #include <sys/ioctl.h>
-#include <linux/sockios.h>
 #include <linux/dvb/dmx.h> 
 
 #include "Scheduler/Scheduler.hh"
-#include "Packets/DefaultBundle/EthernetPacket.hh"
 #include "Packets/MPEGDVBBundle/TransportPacket.hh"
 #include "Packets/MPEGDVBBundle/SNDUPacket.hh"
-#include "Utils/membind.hh"
 #include "Socket/Protocols/DVB/DVBDemuxHandles.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/Packet.hh"
-#include "Packets/PacketData.hh"
-#include "Packets/ParseInt.hh"
 
 
 class ULEdec

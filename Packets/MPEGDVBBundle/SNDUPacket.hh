@@ -1,4 +1,4 @@
-// $Id:DSMCCSection.hh 327 2007-07-20 10:03:44Z tho $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <algorithm>
+#include <boost/crc.hpp>
 #include "Packets/PacketType.hh"
 #include "Packets/ParseInt.hh"
 #include "Packets/PacketRegistry.hh"
@@ -81,6 +82,8 @@ namespace senf {
         PacketParserBase::size_type bytes() const;
         
         static const size_type init_bytes = 2+2+4; // D-Bit + 15 bits length + 16 bits type field + 32 bits crc
+
+        boost::uint32_t calcCrc() const;
     };
 
     /** \brief ULE SNDU Packet
@@ -112,6 +115,9 @@ namespace senf {
     };
         
     typedef SNDUPacketType::packet SNDUPacket;
+    
+    typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> ule_crc32;
+
 
     /*!
      \def ULE_END_INDICATOR 
