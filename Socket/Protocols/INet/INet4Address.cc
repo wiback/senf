@@ -30,6 +30,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <sys/socket.h>
+#include <boost/lexical_cast.hpp>
 #ifdef _REENTRANT
 #include <boost/thread/mutex.hpp>
 #endif
@@ -118,6 +119,21 @@ senf::INet4Address const senf::INet4Address::None;
 senf::INet4Address const senf::INet4Address::Loopback (0x7F000001u);
 senf::INet4Address const senf::INet4Address::Broadcast (0xFFFFFFFFu);
 
+///////////////////////////////////////////////////////////////////////////
+// senf::INet4Network
+
+prefix_ senf::INet4Network::INet4Network(std::string s)
+{
+    std::string::size_type i (s.find('/'));
+    if (i == std::string::npos)
+        throw INet4Address::SyntaxException();
+    try {
+        prefix_len_ = boost::lexical_cast<unsigned>(std::string(s,i+1));
+    } catch (boost::bad_lexical_cast const &) {
+        throw INet4Address::SyntaxException();
+    }
+    address_ = INet4Address(INet4Address::from_string(std::string(s, 0, i)).address() & mask());
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // namespace members

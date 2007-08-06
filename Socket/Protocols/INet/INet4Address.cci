@@ -78,6 +78,73 @@ prefix_ senf::INet4Address::inaddr_type senf::INet4Address::iref()
     return *reinterpret_cast<inaddr_type const *>(&(*this)[0]);
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::INet4Network
+
+prefix_ senf::INet4Network::INet4Network()
+    : prefix_len_(), address_()
+{}
+
+prefix_ senf::INet4Network::INet4Network(INet4Address address, unsigned prefix_len)
+    : prefix_len_(prefix_len), address_(INet4Address(address.address() & mask()))
+{}
+
+prefix_ senf::INet4Address const & senf::INet4Network::address()
+    const
+{
+    return address_;
+}
+
+prefix_ unsigned senf::INet4Network::prefix_len()
+    const
+{
+    return prefix_len_;
+}
+
+prefix_ bool senf::INet4Network::boolean_test()
+    const
+{
+    return address() || prefix_len();
+}
+
+prefix_ bool senf::INet4Network::operator==(INet4Network const & other)
+    const
+{
+    return address() == other.address() && prefix_len() == other.prefix_len();
+}
+
+prefix_ bool senf::INet4Network::match(INet4Address addr)
+    const
+{
+    return (addr.address() & mask()) == address_.address();
+}
+
+prefix_ bool senf::INet4Network::match(INet4Network net)
+    const
+{
+    return net.prefix_len() >= prefix_len() &&
+        (net.address().address() & mask()) == address_.address();
+}
+
+////////////////////////////////////////
+// private members
+
+prefix_ boost::uint32_t senf::INet4Network::mask()
+    const
+{
+    // This is correct as long as the system is using 2-complement arithmetic ...
+    return (~((boost::uint32_t(1u)<<(32u-prefix_len()))-1u)) & 0xFFFFFFFFu;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// namespace members
+
+prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4Network const & addr)
+{
+    os << addr.address() << '/' << addr.prefix_len();
+    return os;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

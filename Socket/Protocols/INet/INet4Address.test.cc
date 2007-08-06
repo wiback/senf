@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <arpa/inet.h>
+#include <boost/lexical_cast.hpp>
 #include <sstream>
 #include "INet4Address.hh"
 
@@ -66,6 +67,28 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
     std::stringstream str;
     str << addr;
     BOOST_CHECK_EQUAL( str.str(), "128.129.130.131" );
+}
+
+BOOST_AUTO_UNIT_TEST(inet4Network)
+{
+    senf::INet4Network net (senf::INet4Address::Loopback,8);
+    BOOST_CHECK_EQUAL( net.address().address(), 0x7F000000u );
+    BOOST_CHECK_EQUAL( net.prefix_len(), 8u );
+    BOOST_CHECK( net );
+    BOOST_CHECK( ! senf::INet4Network() );
+    
+    senf::INet4Network net2 ("192.0.111.222/16");
+    BOOST_CHECK_EQUAL( net2.address(), senf::INet4Address::from_string("192.0.0.0") );
+    BOOST_CHECK_EQUAL( net2.prefix_len(), 16u );
+
+    BOOST_CHECK( net != net2 );
+    BOOST_CHECK( net.match(senf::INet4Address::from_string("127.0.0.1")) );
+    BOOST_CHECK( ! net2.match(senf::INet4Address::from_string("127.0.0.1")) );
+    BOOST_CHECK( ! net.match(net2) );
+    BOOST_CHECK( net2.match(senf::INet4Network("192.0.111.0/24")) );
+    BOOST_CHECK( ! net2.match(senf::INet4Network("192.0.0.0/15")) );
+
+    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2), "192.0.0.0/16" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

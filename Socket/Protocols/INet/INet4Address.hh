@@ -32,6 +32,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/function.hpp>
 #include <boost/array.hpp>
+#include <boost/operators.hpp>
 #include "Utils/SafeBool.hh"
 
 //#include "INet4Address.mpp"
@@ -58,7 +59,6 @@ namespace senf {
     class INet4Address
         : public boost::array<boost::uint8_t,4>, 
           public ComparableSafeBool<INet4Address>
-
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -195,6 +195,56 @@ namespace senf {
         static bool match(INet4Address const & addr);
     };
 
+    /** \brief IpV4 network prefix
+
+        This class represents an IpV4 network prefix in CIDR notation. 
+      */
+    class INet4Network
+        : public boost::equality_comparable<INet4Network>, 
+          public ComparableSafeBool<INet4Network>
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
+        INet4Network();                 ///< Construct empty (0.0.0.0/0) network
+        INet4Network(INet4Address address, unsigned prefix_len);
+                                        ///< Construct network from given address and prefix length
+        explicit INet4Network(std::string s); ///< Construct network from CIDR notation
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+        INet4Address const & address() const; ///< Get the networks address
+        unsigned prefix_len() const;    ///< Get the networks prefix length
+
+        bool boolean_test() const;      ///< \c true, if INet4Network is non-empty
+        bool operator==(INet4Network const & other) const;
+                                        ///< Compare to networks for equality
+        
+        bool match(INet4Address addr) const; ///< \c true, if the network includes \a addr
+        bool match(INet4Network net) const; ///< \c true, if the network includes \a net
+                                        /**< The is true, if \a net is sub-network (or the same as)
+                                             \c this. */
+
+    protected:
+
+    private:
+        boost::uint32_t mask() const;
+
+        unsigned prefix_len_;
+        INet4Address address_;
+    };
+
+    /** \brief Output INet4Network instance as it's string representation
+        \related INet4Network
+     */
+    std::ostream & operator<<(std::ostream & os, INet4Network const & addr);
+        
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
