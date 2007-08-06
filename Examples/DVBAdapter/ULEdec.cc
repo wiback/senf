@@ -178,8 +178,7 @@ ULEdec::iterator ULEdec::readContSNDUPacket(iterator i, iterator const i_end)
 ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i, iterator const i_end)
 { 
     bool dbit = false;
-    senf::Packet::size_type sndu_length;
-    sndu_length = *i++ << 8 | *i++;
+    senf::Packet::size_type sndu_length = *i++ << 8 | *i++;
     if (sndu_length & 0x8000) {
         sndu_length &= 0x7FFF;
         dbit = true;
@@ -229,6 +228,12 @@ void ULEdec::handleSNDUPacket()
     if (this->snduPacket->crc() != this->snduPacket->calcCrc()) {
         throw ULEdecException("CRC Error");
     }
+//    senf::Packet nextPacket = this->snduPacket.next();
+//    senf::hexdump(
+//            nextPacket.data().begin(),
+//            nextPacket.data().end(),
+//            std::cout);
+    
 }
 
 

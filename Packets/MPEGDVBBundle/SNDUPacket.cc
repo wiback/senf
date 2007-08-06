@@ -29,6 +29,7 @@
 // Custom includes
 #include <iomanip>
 #include "Utils/hexdump.hh"
+#include "Packets/DefaultBundle/EthernetPacket.hh"
 
 
 #define prefix_
@@ -58,11 +59,51 @@ prefix_ boost::uint32_t senf::Parse_SNDUPacket::calcCrc()
             ule_crc32() ).checksum();
 }
 
+//prefix_ senf::SNDUPacketType::registry_key_t senf::SNDUPacketType::nextPacketKey(packet p)
+//{
+//    return p->type(); 
+//}
+
+prefix_ void senf::SNDUPacketType::init(packet p)
+{
+    p->init();
+}
+
+prefix_ senf::PacketInterpreterBase::factory_t senf::SNDUPacketType::nextPacketType(packet p)
+{
+    if (p.data().size() < 8)
+        return no_factory();
+    PkReg_Entry const * e;
+    if (p->type() < 1536)
+        e = PacketRegistry<senf::ULEExtHeaderTypes>::lookup( p->type(), nothrow );
+    else
+        e = PacketRegistry<senf::EtherTypes>::lookup( 0x86dd, nothrow );
+    return e ? e->factory() : no_factory();
+}
+
+prefix_ senf::PacketInterpreterBase::optional_range 
+senf::SNDUPacketType::nextPacketRange(packet p) 
+{
+    if (p.data().size() < 8)
+        return no_range();
+    
+    size_type sz = 2 + 2;  // D-Bit + 15 bits length + 16 bits type field
+    if (! p->d_bit() )
+        sz += 6;  // + 6 Byte NPA destination address
+    return range(
+            boost::next(p.data().begin(), sz),
+            boost::prior(p.data().end(), 4));  // - 32 bits crc
+}
+
 prefix_ void senf::SNDUPacketType::dump(packet p, std::ostream & os)
 {
     os << "SNDUPacket:\n"
+       << std::dec
        << "  d_bit: " << p->d_bit() << "\n"
        << "  length: " << unsigned(p->length()) << "\n"
+       << std::hex
+       << "  type: 0x" << unsigned(p->type()) << "\n"
+       << std::dec
        << "  crc: " << unsigned(p->crc()) << "\n";
 }
 

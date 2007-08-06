@@ -86,6 +86,11 @@ namespace senf {
         boost::uint32_t calcCrc() const;
     };
 
+    
+    struct ULEExtHeaderTypes {
+        typedef boost::uint16_t key_t;
+    };
+    
     /** \brief ULE SNDU Packet
         
         \par Packet type (typedef):
@@ -97,20 +102,29 @@ namespace senf {
         \ingroup protocolbundle_mpegdvb
      */
     struct SNDUPacketType
-        : public PacketTypeBase,
-          public PacketTypeMixin<SNDUPacketType>
+        : public PacketTypeBase
+//          public PacketTypeMixin<SNDUPacketType, ULEExtHeaderTypes>
     {
-        typedef PacketTypeMixin<SNDUPacketType> mixin;
+//        typedef PacketTypeMixin<SNDUPacketType, ULEExtHeaderType> mixin;
         typedef ConcretePacket<SNDUPacketType> packet;
         typedef Parse_SNDUPacket parser;
 
-        using mixin::nextPacketRange;
-//          using mixin::nextPacketType;
-        using mixin::init;
+//        using mixin::nextPacketRange;
+//        using mixin::nextPacketType;
+//        using mixin::init;
+        
+//        static registry_key_t nextPacketKey(packet p);
+        
+        static void init(packet p);
+
+        static factory_t nextPacketType(packet p);
+        
+        static optional_range nextPacketRange(packet p);
         
         static void dump(packet p, std::ostream & os);
         
         static PacketParserBase::size_type initSize();
+        
         static PacketParserBase::size_type initHeadSize();
     };
         

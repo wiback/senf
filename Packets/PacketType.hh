@@ -266,7 +266,7 @@ namespace senf {
                 // Return the key in the registry under which the next packet
                 // header is to be found. This member must be given if a Registry argument is
                 // passed to the PacketTypeMixin template.
-                return i.fields().typeField();
+                return p->typeField();
             }
 
             static void finalize(packet p)
