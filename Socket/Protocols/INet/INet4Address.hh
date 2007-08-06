@@ -44,6 +44,8 @@ namespace senf {
         INet4Address represents a simple IP address. It is modelled as a fixed-size
         container/sequence of 4 bytes.
 
+        \see CheckINet4Network
+
         \implementation We awkwardly need to use static named constructors (<tt>from_</tt> members)
             instead of ordinarily overloaded constructors for one simple reason: <tt>char *</tt>
             doubles as string literal and as arbitrary data iterator. The iterator constructor can
@@ -158,14 +160,47 @@ namespace senf {
         inaddr_type iref() const;
     };
 
+    /** \brief Output INet4Address instance as it's string representation
+        \related INet4Address
+     */
     std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
+
+    /** \brief CHeck INet4Address against a fixed network prefix
+
+        This helper allows to easily and efficiently check an INet4Address against an arbitrary but
+        constant network prefix. The network prefix is represented by
+        
+        \par ""
+            <tt>senf::CheckINet4Network<</tt> <i>addr</i> <tt>,</tt> <i>prefix-len</i> <tt>></tt>
+        
+        Where \a addr is the v4 Internet address as a 32-bit unsigned integer number in host byte
+        order and \a prefix_len is the length of the network prefix. The class exposes a single
+        static member <tt>match(</tt> <i>addr</i> <tt>)</tt> which matches the INet4Address \a addr
+        against the prefix:
+
+        \code
+        if (senf::CheckINet4Network<0x7F000000u,8u>::match(addr)) {
+            // 'addr' is within the 127.0.0.0/8 loopback network
+            ...
+        }
+        \endcode
+
+        \implementation This is implemented the way it is so the syntax is identical to the
+            CheckINet6Network syntax.
+     */
+    template <boost::uint32_t address, unsigned prefix_len>
+    class CheckINet4Network
+    {
+    public:
+        static bool match(INet4Address const & addr);
+    };
 
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "INet4Address.cci"
 #include "INet4Address.ct"
-//#include "INet4Address.cti"
+#include "INet4Address.cti"
 #endif
 
 

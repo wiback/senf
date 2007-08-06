@@ -16,13 +16,15 @@ namespace senf {
     functions (like reading and writing) and the inheritance hierarchy provides convenient access to
     the multitude of special and protocol dependent options.
 
-    \see \ref structure \n
-         \ref usage \n
-         \ref handle_group \n
-         \ref policy_group \n
-         \ref protocol_group \n
-         \ref extend \n
-         \ref implementation
+    \see 
+        \ref structure \n
+        \ref usage \n
+        \ref handle_group \n
+        \ref policy_group \n
+        \ref protocol_group \n
+        \ref addr_group \n
+        \ref extend \n
+        \ref implementation
  */
 
 /** \page structure Overview of the Socket Library Structure
