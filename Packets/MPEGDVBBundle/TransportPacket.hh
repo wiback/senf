@@ -115,6 +115,8 @@ namespace senf {
     
     /** \brief Transport packet typedef */
     typedef TransportPacketType::packet TransportPacket;
+    
+    #define TRANSPORT_PACKET_SYNC_BYTE 0x47
   
 }
 
