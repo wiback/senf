@@ -138,6 +138,32 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
     }
 }
 
+BOOST_AUTO_UNIT_TEST(inet6Network)
+{
+    senf::INet6Network net (senf::INet6Address(0xFF14u,0x1234u),32u);
+    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net.address()), "ff14:1234::");
+    BOOST_CHECK_EQUAL( net.prefix_len(), 32u );
+    BOOST_CHECK( net );
+    BOOST_CHECK( ! senf::INet6Network() );
+    
+    senf::INet6Network net2 ("2001:db8:1234::/44");
+    BOOST_CHECK_EQUAL( net2.address(), senf::INet6Address::from_string("2001:db8:1230::") );
+    BOOST_CHECK_EQUAL( net2.prefix_len(), 44u );
+
+    BOOST_CHECK( net != net2 );
+    BOOST_CHECK( net.match(senf::INet6Address::from_string("ff14:1234::1")) );
+    BOOST_CHECK( ! net2.match(senf::INet6Address::from_string("ff13:1234::1")) );
+    BOOST_CHECK( ! net.match(net2) );
+    BOOST_CHECK( net2.match(senf::INet6Network("2001:db8:1234::/48")) );
+    BOOST_CHECK( ! net2.match(senf::INet6Network("2001:db8:1234::/32")) );
+
+    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2), "2001:db8:1230::/44" );
+
+    BOOST_CHECK_EQUAL( net2.host(0x1234u), senf::INet6Address::from_string("2001:db8:1230::1234") );
+    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2.subnet(2u,48u)), 
+                       "2001:db8:1232::/48" );
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

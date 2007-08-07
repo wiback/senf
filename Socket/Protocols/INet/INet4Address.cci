@@ -122,8 +122,17 @@ prefix_ bool senf::INet4Network::match(INet4Address addr)
 prefix_ bool senf::INet4Network::match(INet4Network net)
     const
 {
-    return net.prefix_len() >= prefix_len() &&
-        (net.address().address() & mask()) == address_.address();
+    return net.prefix_len() >= prefix_len() && match(net.address());
+}
+
+prefix_ senf::INet4Address senf::INet4Network::host(boost::uint32_t number)
+{
+    return INet4Address(address_.address() | (number & ~mask()));
+}
+
+prefix_ senf::INet4Network senf::INet4Network::subnet(boost::uint32_t net, unsigned prefix_len)
+{
+    return INet4Network(host(net << (32-prefix_len)),prefix_len);
 }
 
 ////////////////////////////////////////

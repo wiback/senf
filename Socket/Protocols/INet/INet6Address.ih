@@ -182,11 +182,17 @@ namespace detail {
         : public CheckINet6Network_impl2<a0,0,0,0,0,0,0,0,a1>
     {};
 
-    template <boost::uint64_t net, boost::uint64_t id, unsigned bits, unsigned bytes>
-    struct IsINet6Network_impl
-    {};
-
 #   endif
+
+    boost::uint8_t low_bits_mask(unsigned bits);
+
+    template <class ForwardIterator, class Function>
+    void apply_mask(unsigned bits, ForwardIterator b, ForwardIterator e, Function fn);
+
+    template <class ForwardIterator1, class ForwardIterator2, class Function>
+    ForwardIterator1 find_if_mask(unsigned bits, 
+                                  ForwardIterator1 b1, ForwardIterator1 e1, ForwardIterator2 b2,
+                                  Function fn);
 
 }}
 

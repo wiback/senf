@@ -32,6 +32,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <boost/lexical_cast.hpp>
 
 //#include "INet6Address.mpp"
 #define prefix_
@@ -101,6 +102,25 @@ senf::INet6Address const senf::INet6Address::None;
 senf::INet6Address const senf::INet6Address::Loopback   (0u,0u,0u,0u,0u,0u,0u,1u);
 senf::INet6Address const senf::INet6Address::AllNodes   (0xFF02u,0u,0u,0u,0u,0u,0u,1u);
 senf::INet6Address const senf::INet6Address::AllRouters (0xFF02u,0u,0u,0u,0u,0u,0u,2u);
+
+///////////////////////////////////////////////////////////////////////////
+// senf::INet6Network
+
+prefix_ senf::INet6Network::INet6Network(std::string s)
+{
+    using boost::lambda::_1;
+    using boost::lambda::_2;
+    std::string::size_type i (s.find('/'));
+    if (i == std::string::npos)
+        throw INet6Address::SyntaxException();
+    try {
+        prefix_len_ = boost::lexical_cast<unsigned>(std::string(s,i+1));
+    } catch (boost::bad_lexical_cast const &) {
+        throw INet6Address::SyntaxException();
+    }
+    address_ = INet6Address::from_string(std::string(s, 0, i));
+    detail::apply_mask(prefix_len_, address_.begin(), address_.end(), _1 &= _2);
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

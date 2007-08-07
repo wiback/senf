@@ -44,6 +44,46 @@ prefix_ senf::INet6Address senf::INet6Address::from_data(InputIterator i)
     return addr;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// namespace senf::detail members
+
+template <class ForwardIterator, class Function>
+prefix_ void senf::detail::apply_mask(unsigned bits, ForwardIterator b, ForwardIterator e,
+                                      Function fn)
+{
+    for(; b != e; ++b) {
+        boost::uint8_t mask (0);
+        if (bits > 8) {
+            mask = 0xFFu;
+            bits -= 8;
+        } else if (bits > 0) {
+            mask = ~ low_bits_mask(8-bits);
+            bits = 0;
+        }
+        fn(*b,mask);
+    }
+}
+
+template <class ForwardIterator1, class ForwardIterator2, class Function>
+prefix_ ForwardIterator1 senf::detail::find_if_mask(unsigned bits, ForwardIterator1 b1,
+                                                    ForwardIterator1 e1, ForwardIterator2 b2, 
+                                                    Function fn)
+{
+    for(; b1 != e1; ++b1, ++b2) {
+        boost::uint8_t mask (0);
+        if (bits > 8) {
+            mask = 0xFFu;
+            bits -= 8;
+        } else if (bits > 0) {
+            mask = ~ low_bits_mask(8-bits);
+            bits = 0;
+        }
+        if (fn(*b1,*b2,mask))
+            return b1;
+    }
+    return e1;
+}
+
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 

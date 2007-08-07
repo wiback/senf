@@ -32,6 +32,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/function.hpp>
 #include <boost/array.hpp>
+#include <boost/operators.hpp>
 #include "Utils/SafeBool.hh"
 #include "INet4Address.hh"
 
@@ -86,7 +87,7 @@ namespace senf {
         The INet6Address class is based on \c boost::array and is built as a fixed-size sequence of
         16 bytes.
 
-        \see CheckINet6Network Helper to check address against an arbitrary fixed network prefix
+        \see CheckINet6Network \n INet6Network
         \ingroup addr_group
 
         \implementation We awkwardly need to use static named constructors (<tt>from_</tt> members)
@@ -302,6 +303,66 @@ namespace senf {
         : public detail::CheckINet6Network_impl<a0,a1,a2,a3,a4,a5,a6,a7,a8>
     {};
 
+    /** \brief IpV6 network prefix
+
+        This class represents an IpV6 network prefix in CIDR notation. 
+      */
+    class INet6Network
+        : public boost::equality_comparable<INet6Network>, 
+          public ComparableSafeBool<INet6Network>
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
+        INet6Network();                 ///< Construct empty (::/0) network
+        INet6Network(INet6Address address, unsigned prefix_len);
+                                        ///< Construct network from given address and prefix length
+        explicit INet6Network(std::string s); ///< Construct network from CIDR notation
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+        INet6Address const & address() const; ///< Get the network address
+        unsigned prefix_len() const;    ///< Get the network prefix length
+
+        bool boolean_test() const;      ///< \c true, if INet6Network is non-empty
+        bool operator==(INet6Network const & other) const;
+                                        ///< Compare two networks for equality
+        
+        bool match(INet6Address addr) const; ///< \c true, if the network includes \a addr
+        bool match(INet6Network net) const; ///< \c true, if the network includes \a net
+                                        /**< The is true, if \a net is sub-network (or the same as)
+                                             \c this. */
+        INet6Address host(boost::uint64_t id); ///< Return the host with the given id
+                                        /**< Returns the host with the given number within the
+                                             network. This call replaces the lower 64 bits of the
+                                             network address with the given id. */
+
+        INet6Network subnet(boost::uint64_t net, unsigned prefix_len);
+                                        ///< Return the given subnet of \c this
+                                        /**< The returned INet6Network will be a subnet of \c this
+                                             with the given network number. The network number is
+                                             comprised by the bits above \a prefix_len:
+                                             \code
+                                             INet6Network("2001:db8::/32").subnet(0x12u,40u) == INet6Network("2001:db8:1200::/40")
+                                             INet6Network("2001:db8:1200::/40").subnet(0x2345,64u) == INet6Network("2001:db8:1200:2345::/64")
+                                             \endcode 
+                                             \param[in] net network number
+                                             \param[in] prefix_len length of subnet prefix */
+
+    protected:
+
+    private:
+        unsigned prefix_len_;
+        INet6Address address_;
+    };
+
+    /** \brief Output INet6Network instance as it's string representation
+        \related INet6Network
+     */
+    std::ostream & operator<<(std::ostream & os, INet6Network const & addr);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

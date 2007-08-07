@@ -89,6 +89,9 @@ BOOST_AUTO_UNIT_TEST(inet4Network)
     BOOST_CHECK( ! net2.match(senf::INet4Network("192.0.0.0/15")) );
 
     BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2), "192.0.0.0/16" );
+
+    BOOST_CHECK_EQUAL( net2.host(-1), senf::INet4Address::from_string("192.0.255.255") );
+    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2.subnet(2u,24u)), "192.0.2.0/24" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -45,7 +45,7 @@ namespace senf {
         INet4Address represents a simple IP address. It is modelled as a fixed-size
         container/sequence of 4 bytes.
 
-        \see CheckINet4Network
+        \see CheckINet4Network \n INet4Network
 
         \implementation We awkwardly need to use static named constructors (<tt>from_</tt> members)
             instead of ordinarily overloaded constructors for one simple reason: <tt>char *</tt>
@@ -205,9 +205,6 @@ namespace senf {
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
@@ -230,6 +227,26 @@ namespace senf {
         bool match(INet4Network net) const; ///< \c true, if the network includes \a net
                                         /**< The is true, if \a net is sub-network (or the same as)
                                              \c this. */
+
+        INet4Address host(boost::uint32_t number); ///< Return the host with the given number
+                                        /**< Returns the host with the given number within the
+                                             network. If the number is larger than the maximum
+                                             host number in the network, it is truncated. So \c
+                                             host(0) is the networks own address, \c host(1)
+                                             customarily is the default router and \c host(-1) is
+                                             the broadcast address. */
+
+        INet4Network subnet(boost::uint32_t net, unsigned prefix_len);
+                                        ///< Return the given subnet of \c this
+                                        /**< The returned INet4Network will be a subnet of \c this
+                                             with the given network number. The network number is
+                                             comprised by the bits above \a prefix_len:
+                                             \code
+                                             INet4Network("192.168.0.0/16").subnet(111u,24u) == INet4Network("192.168.111.0/24")
+                                             INet4Network("192.168.111.0/24").subnet(1u,28u) == INet4Network("192.168.111.16/28")
+                                             \endcode 
+                                             \param[in] net network number
+                                             \param[in] prefix_len length of subnet prefix */
 
     protected:
 

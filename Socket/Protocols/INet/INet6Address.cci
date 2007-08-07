@@ -23,6 +23,8 @@
 /** \file
     \brief INet6Address inline non-template implementation */
 
+#include "INet6Address.ih"
+
 // Custom includes
 #include <algorithm>
 #include <boost/lambda/lambda.hpp>
@@ -214,6 +216,97 @@ prefix_ void senf::INet6Address::id(boost::uint64_t id)
     (*this)[13] = id >> 16;
     (*this)[14] = id >>  8;
     (*this)[15] = id      ;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::INet6Network
+
+prefix_ senf::INet6Network::INet6Network()
+    : prefix_len_(), address_()
+{}
+
+prefix_ senf::INet6Network::INet6Network(INet6Address address, unsigned prefix_len)
+    : prefix_len_(prefix_len), address_(address)
+{
+    using boost::lambda::_1;
+    using boost::lambda::_2;
+    detail::apply_mask(prefix_len_, address_.begin(), address_.end(), _1 &= _2);
+}
+
+prefix_ senf::INet6Address const & senf::INet6Network::address()
+    const
+{
+    return address_;
+}
+
+prefix_ unsigned senf::INet6Network::prefix_len()
+    const
+{
+    return prefix_len_;
+}
+
+prefix_ bool senf::INet6Network::boolean_test()
+    const
+{
+    return prefix_len() && address();
+}
+
+prefix_ bool senf::INet6Network::operator==(INet6Network const & other)
+    const
+{
+    return prefix_len() == other.prefix_len() && address() == other.address();
+}
+
+prefix_ bool senf::INet6Network::match(INet6Address addr)
+    const
+{
+    using boost::lambda::_1;
+    using boost::lambda::_2;
+    using boost::lambda::_3;
+    return detail::find_if_mask(prefix_len_, address_.begin(), address_.end(), addr.begin(),
+                                _1 != (_2 & _3)) == address_.end();
+}
+
+prefix_ bool senf::INet6Network::match(INet6Network net)
+    const
+{
+    return net.prefix_len() >= prefix_len() && match(net.address());
+}
+
+prefix_ senf::INet6Address senf::INet6Network::host(boost::uint64_t id)
+{
+    INet6Address addr (address());
+    addr.id(id);
+    return addr;
+}
+
+prefix_ senf::INet6Network senf::INet6Network::subnet(boost::uint64_t net, unsigned prefix_len)
+{
+    using boost::lambda::_1;
+    using boost::lambda::_2;
+    using boost::lambda::_3;
+    using boost::lambda::var;
+    using boost::lambda::ret;
+    INet6Address addr (address());
+    net <<= (64-prefix_len);
+    detail::apply_mask(prefix_len, addr.begin(), addr.end(),
+                       ( ( _1 |= ret<boost::uint8_t>((var(net) >> 56) & _2) ),
+                         ( var(net) <<= 8 ) ));
+    return INet6Network(addr, prefix_len);
+}
+
+prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Network const & addr)
+{
+    os << addr.address() << '/' << addr.prefix_len();
+    return os;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// namespace senf::detail members
+
+prefix_ boost::uint8_t senf::detail::low_bits_mask(unsigned bits)
+{
+    return ((1<<bits)-1);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////
