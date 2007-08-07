@@ -1,4 +1,4 @@
-// $Id: IpV4Packet.test.cc 364 2007-07-31 09:39:56Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
