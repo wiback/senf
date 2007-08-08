@@ -26,8 +26,11 @@
 #define HH_Module_ 1
 
 // Custom includes
+#include <vector>
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include "predecl.hh"
 
 //#include "Module.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -56,10 +59,9 @@ namespace module {
     {
     protected:
         Module();
-        ~Module();
 
         template <class Source, class Target>
-        Route<Source, Target> & route(Source const & source, Target const & target); 
+        Route<Source, Target> & route(Source & source, Target & target); 
                                         ///< Define flow information
                                         /**< Using the route() and noroute() members, the
                                              information flow within the module is defined. Routing
@@ -85,8 +87,7 @@ namespace module {
                                                  outgoing data
                                              \returns Route instance describing this route */
 
-        template <class Connector>
-        void noroute(Connector const & connector); ///< Define terminal connectors
+        void noroute(connector::Connector & connector); ///< Define terminal connectors
                                         /**< The noroute() member explicitly declares, that a
                                              connector is terminal and does not directly
                                              receive/forward data from/to some other
@@ -98,7 +99,7 @@ namespace module {
                                              \param[in] connector Terminal connector to declare */
 
         template <class Target, class Descriptor>
-        void registerEvent(Target target, Descriptor const & descriptor);
+        void registerEvent(Target target, Descriptor & descriptor);
                                         ///< Register an external event
                                         /**< The \a target argument may be either an arbitrary
                                              callable object or it may be a member function pointer
@@ -109,6 +110,7 @@ namespace module {
                                              information on the event delivered.
 
                                              The \a descriptor describes the event to signal. This
+
                                              may be a timer event or some type of I/O event on a
                                              file descriptor or socket.
 
@@ -118,6 +120,21 @@ namespace module {
 
         boost::posix_time::ptime eventTime(); ///< Return timestamp of the currently processing
                                               ///< event
+
+    private:
+        EventManager & eventManager();
+        
+        void registerConnector(connector::Connector & connector);
+        RouteBase & addRoute(std::auto_ptr<RouteBase> route);
+
+        typedef std::vector<connector::Connector *> ConnectorRegistry;
+        ConnectorRegistry connectorRegistry_;
+
+        typedef boost::ptr_vector<RouteBase> RouteInfoBase;
+        RouteInfoBase routes_;
+
+        template <class Source, class Target>
+        friend class detail::RouteHelper;
     };
 
     /** \brief Connect compatible connectors
@@ -131,8 +148,8 @@ namespace module {
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Module.cci"
-//#include "Module.ct"
+#include "Module.cci"
+#include "Module.ct"
 //#include "Module.cti"
 #endif
 

@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,39 +21,33 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief public header for hexdump */
+    \brief EventManager.test unit tests */
 
-#ifndef HH_hexdump_
-#define HH_hexdump_ 1
+//#include "EventManager.test.hh"
+//#include "EventManager.test.ih"
 
 // Custom includes
-#include <iostream>
+#include "EventManager.hh"
 
-//#include "hexdump.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-namespace senf {
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-    /** \brief write the contents from Iterator i to i_end to the output stream in hexadecimal format.
-     */
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator i_end, std::ostream & stream, unsigned block_size=16);
-}
+BOOST_AUTO_UNIT_TEST(eventManager)
+{}
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "hexdump.cci"
-#include "hexdump.ct"
-//#include "hexdump.cti"
-//#include "hexdump.mpp"
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

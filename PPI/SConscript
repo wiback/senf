@@ -1,10 +1,20 @@
 Import('env')
-import SENFSCons
+import SENFSCons, glob
 
 ###########################################################################
 
+SConscript(glob.glob("*/SConscript"))
+
+sources = SENFSCons.GlobSources(subdirs=[ 'detail' ])
+
 SENFSCons.StandardTargets(env)
+
+SENFSCons.Lib(env,
+             library = 'PPI',
+             sources = sources,
+             LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ])
 
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('scenario.dia'),
+    env.Dia2Png('classes.dia'),
 ])

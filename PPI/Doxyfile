@@ -2,5 +2,7 @@
 
 PROJECT_NAME = libPPI
 GENERATE_TAGFILE = doc/ppi.tag
+RECURSIVE = Yes
+SHOW_DIRECTORIES = Yes
 
 TAGFILES = "$(TOPDIR)/Packets/doc/Packets.tag" "$(TOPDIR)/Socket/doc/Socket.tag"

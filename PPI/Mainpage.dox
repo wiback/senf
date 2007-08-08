@@ -388,6 +388,10 @@
     handler has finished processing. Forward throttling notifications are not generated
     automatically within the connector. However, the Passive-Passive adaptor will generate
     Forward-throttling notifications whenever the input queue is empty.
+
+    \section class_diagram Class Diagram
+
+    \image html classes.png
  */
 
 

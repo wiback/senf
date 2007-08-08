@@ -25,6 +25,7 @@
 #define HH_Queueing_ 1
 
 // Custom includes
+#include "predecl.hh"
 
 //#include "Queueing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -46,10 +47,13 @@ namespace ppi {
     class QueueingDiscipline
     {
     public:
+        virtual ~QueueingDiscipline();
+
         enum Event { ENQUEUE, DEQUEUE }; ///< Possible queueing events
         enum State { THROTTLED, UNTHROTTLED }; ///< Possible queueing states
-
-        State update(PassiveInput & input, Event event) = 0; ///< Calculate new queueing state
+        
+        virtual State update(connector::PassiveInput & input, Event event) = 0;
+                                        ///< Calculate new queueing state
                                         /**< Whenever the queue is manipulated, this member is
                                              called to calculate the new throttling state.
                                              

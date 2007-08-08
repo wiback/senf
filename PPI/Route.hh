@@ -25,6 +25,8 @@
 #define HH_Route_ 1
 
 // Custom includes
+#include <boost/type_traits.hpp>
+#include "predecl.hh"
 
 //#include "Route.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -32,13 +34,7 @@
 namespace senf {
 namespace ppi {
 
-    /** \brief Route descriptor
-        
-        Route instances are created by Module::route statements. The Route class provides an
-        interface to manipulate the flow processing.
-     */
-    template <class Source, class Target>
-    class Route
+    class RouteBase
     {
     public:
         void autoThrottling(bool state); ///< Change automatic throttle notification forwarding
@@ -61,14 +57,47 @@ namespace ppi {
                                                  specializations. However, this is an implementation
                                                  detail which does not affect the exposed
                                                  interface. */
+
+    protected:
+        RouteBase(module::Module & module);
+
+    private:
+        module::Module * module_;
+    };
+
+}}
+
+#include "Route.ih"
+
+namespace senf {
+namespace ppi {
+
+    /** \brief Route descriptor
+        
+        Route instances are created by Module::route statements. The Route class provides an
+        interface to manipulate the flow processing.
+     */
+    template <class Source, class Target>
+    class Route
+        : public detail::RouteImplementation< boost::is_base_of<EventDescriptor,Source>::value,
+                                              boost::is_base_of<EventDescriptor,Target>::value >
+    {
+    private:
+        typedef detail::RouteImplementation< 
+            boost::is_base_of<EventDescriptor,Source>::value,
+            boost::is_base_of<EventDescriptor,Target>::value > Implementation;
+        
+        Route(module::Module & module, Source & source, Target & target);
+
+        friend class module::Module;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Route.cci"
+#include "Route.cci"
 //#include "Route.ct"
-//#include "Route.cti"
+#include "Route.cti"
 #endif
 
 

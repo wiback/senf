@@ -49,6 +49,7 @@ import SCons.Defaults, SCons.Action
 SCONS_TOOLS = [
     "Doxygen",
     "Dia2Png",
+    "CopyToDir",
 ]
 
 opts = None
@@ -245,9 +246,13 @@ def MakeEnvironment():
 # in the current directory. The sources will be returned as a tuple of
 # sources, test-sources. The target helpers all accept such a tuple as
 # their source argument.
-def GlobSources(exclude=[]):
+def GlobSources(exclude=[], subdirs=[]):
     testSources = glob.glob("*.test.cc")
     sources = [ x for x in glob.glob("*.cc") if x not in testSources and x not in exclude ]
+    for subdir in subdirs:
+        testSources += glob.glob(os.path.join(subdir,"*.test.cc"))
+        sources += [ x for x in glob.glob(os.path.join(subdir,"*.cc"))
+                     if x not in testSources and x not in exclude ]
     return (sources, testSources)
 
 ## \brief Add generic standard targets for every module
@@ -427,7 +432,19 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
             xrefs.extend(xref_pp)
         docs.extend(xrefs)
 
-    env.Depends(docs, extra_sources)
+    if extra_sources and htmlnode:
+        env.Depends(docs,
+                    [ env.CopyToDir( source=source, target=htmlnode.dir )
+                      for source in extra_sources ])
+
+    if extra_sources and xmlnode:
+        env.Depends(docs,
+                    [ env.CopyToDir( source=source, target=xmlnode.dir )
+                      for source in extra_sources ])
+
+    if not htmlnode and not xmlnode:
+        env.Depends(docs, extra_sources)
+        
     for doc in docs :
         env.Alias('all_docs', doc)
         env.Clean('all_docs', doc)

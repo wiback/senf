@@ -1,0 +1,7 @@
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+SENFSCons.Binary( env, 'ppitest', SENFSCons.GlobSources(),
+                  LIBS = [ 'PPI', 'Scheduler', 'Packets', 'Socket', 'Utils' ] );

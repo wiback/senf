@@ -25,9 +25,14 @@
 #define HH_SocketWriter_ 1
 
 // Custom includes
-#include "Packets/Packet.hh"
+#include "Packets/Packets.hh"
+#include "Socket/ClientSocketHandle.hh"
+#include "Socket/SocketPolicy.hh"
+#include "Socket/ReadWritePolicy.hh"
+#include "Socket/FramingPolicy.hh"
+#include "Socket/CommunicationPolicy.hh"
 #include "Module.hh"
-#include "Connector.hh"
+#include "Connectors.hh"
 
 //#include "SocketWriter.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -44,10 +49,11 @@ namespace ppi {
     public:
         typedef senf::ClientSocketHandle<
             senf::MakeSocketPolicy< senf::WriteablePolicy,
-                                    senf::DatagramFramingPolicy > > Handle;
+                                    senf::DatagramFramingPolicy,
+                                    senf::ConnectedCommunicationPolicy>::policy > Handle;
                                         ///< Handle type supported by this writer
         
-        void operator()(Handle handle, Packet::ptr packet);
+        void operator()(Handle handle, Packet packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -74,7 +80,7 @@ namespace module {
           public:
               typedef unspecified Handle;                          // type of handle requested
               SomeWriter();                                        // default constructible
-              void operator()(Handle handle, Packet::ptr packet);  // insertion function
+              void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
      */
@@ -82,7 +88,7 @@ namespace module {
     class ActiveSocketWriter : public Module
     {
     public:
-        typedef typename Writer:Handle Handle; ///< Handle type requested by writer
+        typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
         connector::ActiveInput input; ///< Input connector from which data is received
         
@@ -106,7 +112,7 @@ namespace module {
           public:
               typedef unspecified Handle;                          // type of handle requested
               SomeWriter();                                        // default constructible
-              void operator()(Handle handle, Packet::ptr packet);  // insertion function
+              void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
      */
@@ -114,21 +120,27 @@ namespace module {
     class PassiveSocketWriter : public Module
     {
     public:
-        typedef typename Writer:Handle Handle; ///< Handle type requested by writer
+        typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
         connector::PassiveInput input; ///< Input connector from which data is received
         
-        ActiveSocketWriter(Handle handle); ///< Create new writer for the given handle
+        PassiveSocketWriter(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \param[in] handle Handle to write data to */
+
+    private:
+        void write();
+
+        Handle handle_;
+        Writer writer_;
     };
 
 }}}
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "SocketWriter.cci"
-//#include "SocketWriter.ct"
+#include "SocketWriter.cci"
+#include "SocketWriter.ct"
 //#include "SocketWriter.cti"
 #endif
 

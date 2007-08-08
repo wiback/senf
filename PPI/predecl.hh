@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,39 +21,68 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief public header for hexdump */
+    \brief predecl public header */
 
-#ifndef HH_hexdump_
-#define HH_hexdump_ 1
+#ifndef HH_predecl_
+#define HH_predecl_ 1
 
 // Custom includes
-#include <iostream>
+#include <boost/type_traits.hpp>
 
-//#include "hexdump.mpp"
+//#include "predecl.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+namespace ppi {
 
-    /** \brief write the contents from Iterator i to i_end to the output stream in hexadecimal format.
-     */
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator i_end, std::ostream & stream, unsigned block_size=16);
-}
+    class EventDescriptor;
+    template <class EventType=void> class EventImplementation;
+    class EventManager;
+    class RouteBase;
+    template <class Source, class Target> class Route;
+    class QueueingDiscipline;
+
+    namespace detail {
+        class EventBindingBase;
+        template <class EvImpl> class EventBinding;
+        template <class EventType> struct EventArgType;
+        template <bool srcEvent, bool trgEvent> class RouteImplementation;
+    }
+
+    namespace module {       
+        class Module;       
+        namespace detail {
+            template <class Source, class Target> class RouteHelper;
+        }
+    }
+
+    namespace connector {
+        class Connector;
+        class ActiveConnector;
+        class PassiveConnector;
+        class InputConnector;
+        class OutputConnector;
+        class ActiveInput;
+        class ActiveOutput;
+        class PassiveInput;
+        class PassiveOutput;
+    }
+
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "hexdump.cci"
-#include "hexdump.ct"
-//#include "hexdump.cti"
-//#include "hexdump.mpp"
+//#include "predecl.cci"
+//#include "predecl.ct"
+//#include "predecl.cti"
 #endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

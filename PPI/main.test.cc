@@ -1,6 +1,6 @@
-// $Id$
+// $Id: main.test.cc 296 2007-07-10 20:39:34Z g0dil $
 //
-// Copyright (C) 2007
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
@@ -20,32 +20,22 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief public header for hexdump */
+// Definition of non-inline non-template functions
 
-#ifndef HH_hexdump_
-#define HH_hexdump_ 1
+//#include "test.hh"
+//#include "test.ih"
 
 // Custom includes
-#include <iostream>
+#define BOOST_AUTO_TEST_MAIN
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-//#include "hexdump.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
 
-    /** \brief write the contents from Iterator i to i_end to the output stream in hexadecimal format.
-     */
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator i_end, std::ostream & stream, unsigned block_size=16);
-}
-
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "hexdump.cci"
-#include "hexdump.ct"
-//#include "hexdump.cti"
-//#include "hexdump.mpp"
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

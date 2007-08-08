@@ -24,10 +24,8 @@ SENFSCons.Lib(env,
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('SocketLibrary-classes.dia'),
     env.Dia2Png('FhHierarchy.dia'),
-    env.Command('doc/html/SocketPolicy.png', env.Dia2Png('SocketPolicy.dia'),
-                Copy('$TARGET','$SOURCE')),
-    env.Command('doc/html/Protocols.png', env.Dia2Png('Protocols.dia'),
-                Copy('$TARGET','$SOURCE')),
+    env.Dia2Png('SocketPolicy.dia'),
+    env.Dia2Png('Protocols.dia'),
     env.Dia2Png('Handle.dia'),
 ])
 

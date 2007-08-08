@@ -25,12 +25,22 @@
 #define HH_Events_ 1
 
 // Custom includes
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "predecl.hh"
 
 //#include "Events.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
+
+    // Implementation: The concrete EventDescriptor implementation will need to set things up so
+    // some callback (within the EventDescriptor implementation) will be called when the event
+    // happens. This setup happens in 'v_enable()'. This internal handler sets up an EventType
+    // instance if needed and calls 'callback()'. 
+    //
+    // 'callback()' will access the EventBinding wrapper to find the user-callback to signal. It
+    // will do any needed internal processing, call that user callback and clean up afterwards.
 
     /** \brief Generic event interface baseclass
 
@@ -40,35 +50,52 @@ namespace ppi {
     class EventDescriptor
     {
     public:
+        virtual ~EventDescriptor();
+
         bool enabled(); ///< Check, whether the event is currently enabled
-        void enabled(bool); ///< Enable or disable the event
+        void enabled(bool v); ///< Enable or disable the event
 
     protected:
-        typedef unspecified CallbackType; ///< Fixed type of the (internal) event handler.
-
-        void register(CallbackType handler); ///< Register the event
-        void unregister(); ///< Unregister the event
+        EventDescriptor();
 
     private:
-        virtual void v_register(CallbackType handler) = 0; ///< Called to register the event
-        virtual void v_unregister() = 0; ///< Called to unregister the event
         virtual void v_enable() = 0;    ///< Called to enable the event delivery
         virtual void v_disable() = 0;   ///< Called to disable the event delivery
-        virtual void v_process() = 0;   ///< Called whenever the event is signaled
-                                        /**< This virtual method is called \e after every call to
-                                             the event handler to provide a hook for further
-                                             processing (example: calculate the next time, an
-                                             interval timer expires) */
+
+        virtual bool v_isRegistered() = 0;
 
         bool enabled_;
+    };
+
+    template <class EventType>
+    class EventImplementation
+        : public EventDescriptor
+    {
+    public:
+        typedef EventType Event;
+        typedef typename detail::EventArgType<EventType>::type EventArg;
+
+    protected:
+        EventImplementation();
+
+        void callback(EventArg event, boost::posix_time::ptime time);
+        void callback(EventArg event);
+
+    private:
+        virtual bool v_isRegistered();
+        void setBinding(detail::EventBinding<Event> & binding);
+
+        detail::EventBinding<Event> * binding_;
+
+        friend class EventManager;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Events.cci"
+#include "Events.cci"
 //#include "Events.ct"
-//#include "Events.cti"
+#include "Events.cti"
 #endif
 
 

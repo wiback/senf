@@ -284,7 +284,6 @@ prefix_ senf::INet6Network senf::INet6Network::subnet(boost::uint64_t net, unsig
 {
     using boost::lambda::_1;
     using boost::lambda::_2;
-    using boost::lambda::_3;
     using boost::lambda::var;
     using boost::lambda::ret;
     INet6Address addr (address());

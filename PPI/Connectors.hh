@@ -19,7 +19,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Conenctors public header */
+    \brief Connectors public header */
 
 /** \defgroup connectors Connector classes
 
@@ -37,13 +37,20 @@
     senf::ppi::PassiveInput and senf::ppi::PassiveOutput.
  */
 
-#ifndef HH_Conenctors_
-#define HH_Conenctors_ 1
+#ifndef HH_Connectors_
+#define HH_Connectors_ 1
 
 // Custom includes
+#include <deque>
 #include <boost/utility.hpp>
+#include <boost/scoped_ptr.hpp>
+#include "Utils/SafeBool.hh"
+#include "Packets/Packets.hh"
+#include "predecl.hh"
+#include "detail/Callback.hh"
+#include "Queueing.hh"
 
-//#include "Conenctors.mpp"
+//#include "Connectors.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -61,12 +68,21 @@ namespace connector {
     {
     public:
         Connector & peer();             ///< Get peer connected to this connector
-        Module & module();              ///< Get this connectors containing module
+        module::Module & module();      ///< Get this connectors containing module
 
     protected:
-        // here to protect
         Connector();
-        ~Connector();
+        virtual ~Connector();
+
+        void connect(Connector & target);
+
+    private:
+        void setModule(module::Module & module);
+
+        Connector * peer_;
+        module::Module * module_;
+
+        friend class module::Module;
     };
 
     /** \brief Passive connector baseclass
@@ -115,9 +131,14 @@ namespace connector {
         ActiveConnector & peer();
 
     protected:
-        // here to protect
         PassiveConnector();
-        ~PassiveConnector();
+
+        void emit();
+
+    private:
+
+        typedef detail::Callback<>::type Callback;
+        Callback callback_;
     };
 
     /** \brief Active connector baseclass
@@ -161,9 +182,7 @@ namespace connector {
         PassiveConnector & peer();
 
     protected:
-        // here to protect
-        PassiveConnector();
-        ~PassiveConnector();
+        ActiveConnector();
     };
 
     /** \brief Input connector baseclass
@@ -187,13 +206,15 @@ namespace connector {
             be added to the queue before it can be processed.
      */
     class InputConnector 
-        : public virtual Connector
+        : public virtual Connector,
+          public SafeBool<InputConnector>
     {
+        typedef std::deque<Packet> Queue;
     public:
-        typedef unspecified queue_iterator; ///< Iterator type of the embedded queue
-        typedef unspecified size_type;  ///< Unsigned type representing the number of queue elements
+        typedef Queue::const_iterator queue_iterator; ///< Iterator type of the embedded queue
+        typedef Queue::size_type size_type; ///< Unsigned type for counting queue elements
 
-        Packet::ptr operator();         ///< Get a packet
+        Packet operator()();            ///< Get a packet
                                         /**< This member is the primary method to access received
                                              data. On passive connectors, this operator will just
                                              dequeue a packet from the packet queue. If the
@@ -202,7 +223,7 @@ namespace connector {
                                              request cannot be fulfilled, this is considered to be a
                                              logic error in the module implementation and an
                                              exception is raised. */
-        operator unspecified_boolean_type (); ///< Check packet availability
+        bool boolean_test ();           ///< Check packet availability
                                         /**< Using any input connector in a boolean context will
                                              check, whether an input request can be fulfilled. This
                                              is always possible if the queue is non-empty. If the
@@ -215,24 +236,28 @@ namespace connector {
 
                                              \returns \c true if operator() can be called, \c false
                                                  otherwise */
-        operator ! ();                  ///< Check packet availability
-                                        /**< Inverse of the boolean conversion operator
-                                             \returns \c false if operator() can be called, \c true
-                                                 otherwise */
 
         OutputConnector & peer();
 
         queue_iterator begin();         ///< Access queue begin (head)
         queue_iterator end();           ///< Access queue past-the-end (tail)
-        Packet::ptr head();             ///< Return head element from the queue
+        Packet peek();                  ///< Return head element from the queue
 
         size_type queueSize();          ///< Return number of elements in the queue
         bool empty();                   ///< Return queueSize() == 0
 
     protected:
-        // here to protect
-        PassiveConnector();
-        ~PassiveConnector();
+        InputConnector();
+        
+    private:
+        void enqueue(Packet p);
+        
+        virtual void v_enqueueEvent();
+        virtual void v_dequeueEvent();
+
+        Queue queue_;
+
+        friend class OutputConnector;
     };
     
     /** \brief Output connector baseclass
@@ -245,14 +270,12 @@ namespace connector {
         : public virtual Connector
     {
     public:
-        void operator(Packet::ptr);     ///< Send out a packet
+        void operator()(Packet p);        ///< Send out a packet
 
         InputConnector & peer();
 
     protected:
-        // here to protect
-        PassiveConnector();
-        ~PassiveConnector();
+        OutputConnector();
     };
     
     ///@{
@@ -272,14 +295,23 @@ namespace connector {
         : public PassiveConnector, public InputConnector
     {
     public:
+        PassiveInput();
+
         ActiveOutput & peer();
 
-        template <class QueueingDiscipline>
-        void qdisc(QueueingDiscipline const & disc); ///< Change the queueing discipline
+        template <class QDisc>
+        void qdisc(QDisc const & disc); ///< Change the queueing discipline
                                         /**< The queueing discipline is a class which provides the
                                              QueueingDiscipline interface.
                                              
                                              \param[in] disc New queueing discipline */
+
+    private:
+        void v_enqueueEvent();
+        void v_dequeueEvent();
+
+        boost::scoped_ptr<QueueingDiscipline> qdisc_;
+        QueueingDiscipline::State qstate_;
     };
 
     /** \brief Combination of PassiveConnector and OutputConnector
@@ -289,6 +321,8 @@ namespace connector {
     {
     public:
         ActiveInput & peer();
+
+        void connect(ActiveInput & target);
     };
 
     /** \brief Combination of ActiveConnector and InputConnector
@@ -309,6 +343,8 @@ namespace connector {
     {
     public:
         ActiveInput & peer();
+
+        void connect(PassiveInput & target);
     };
 
     ///@}
@@ -316,9 +352,9 @@ namespace connector {
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Conenctors.cci"
-//#include "Conenctors.ct"
-//#include "Conenctors.cti"
+#include "Connectors.cci"
+//#include "Connectors.ct"
+#include "Connectors.cti"
 #endif
 
 

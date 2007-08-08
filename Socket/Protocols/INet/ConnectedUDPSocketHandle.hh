@@ -1,4 +1,4 @@
-// $Id$
+// $Id: ConnectedUDPSocketHandle.hh 357 2007-07-26 22:48:39Z g0dil $
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -27,8 +27,8 @@
     protocol interface
  */
 
-#ifndef HH_UDPSocketHandle_
-#define HH_UDPSocketHandle_ 1
+#ifndef HH_ConnectedUDPSocketHandle_
+#define HH_ConnectedUDPSocketHandle_ 1
 
 // Custom includes
 #include "INetProtocol.hh"
@@ -40,7 +40,7 @@
 #include "Socket/BufferingPolicy.hh"
 #include "Socket/ProtocolClientSocketHandle.hh"
 
-//#include "UDPSocketHandle.mpp"
+//#include "ConnectedUDPSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -51,40 +51,40 @@ namespace senf {
     typedef MakeSocketPolicy<
         INet4AddressingPolicy,
         DatagramFramingPolicy,
-        UnconnectedCommunicationPolicy,
+        ConnectedCommunicationPolicy,
         ReadablePolicy,
         WriteablePolicy,
         SocketBufferingPolicy
-        >::policy UDPv4Socket_Policy;   ///< Socket Policy of the UDPv4 Protocol
+        >::policy ConnectedUDPv4Socket_Policy;   ///< Socket Policy of the UDPv4 Protocol
 
-    /** \brief IPv4 UDP Socket Protocol
+    /** \brief IPv4 UDP Socket Protocol, connected
 
         \par Socket Handle typedefs:
-            \ref UDPv4ClientSocketHandle (ProtocolClientSocketHandle)
+            \ref ConnectedUDPv4ClientSocketHandle (ProtocolClientSocketHandle)
 
         \par Policy Interface:
-            ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
-            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local(),
+            ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
+            ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
             ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
 
         \par Address Type:
             INet4Address
-
-        UDPv4SocketProtocol provides an internet protocol stream socket based on the UDP protocol
-        and IPv4 addressing.
+        
+        ConnectedUDPv4SocketProtocol provides an internet protocol stream socket based on the UDP
+        protocol and IPv4 addressing.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
 
-        \see UDPv6SocketProtocol
+        \see ConnectedUDPv6SocketProtocol
      */
-    class UDPv4SocketProtocol
-        : public ConcreteSocketProtocol<UDPv4Socket_Policy>,
+    class ConnectedUDPv4SocketProtocol
+        : public ConcreteSocketProtocol<ConnectedUDPv4Socket_Policy>,
           public IPv4Protocol,
           public UDPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<UDPv4SocketProtocol>
+          public senf::pool_alloc_mixin<ConnectedUDPv4SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -115,41 +115,42 @@ namespace senf {
         ///@}
     };
 
-    typedef ProtocolClientSocketHandle<UDPv4SocketProtocol> UDPv4ClientSocketHandle;
+    typedef ProtocolClientSocketHandle<
+        ConnectedUDPv4SocketProtocol> ConnectedUDPv4ClientSocketHandle;
 
     typedef MakeSocketPolicy<
-        UDPv4Socket_Policy,
+        ConnectedUDPv4Socket_Policy,
         INet6AddressingPolicy
-        >::policy UDPv6Socket_Policy;
+        >::policy  ConnectedUDPv6Socket_Policy;
 
-    /** \brief IPv6 UDP Socket Protocol
+    /** \brief IPv6 UDP Socket Protocol, connected
 
         \par Socket Handle typedefs:
-        \ref UDPv6ClientSocketHandle (ProtocolClientSocketHandle)
+            \ref ConnectedUDPv6ClientSocketHandle (ProtocolClientSocketHandle)
 
-        \par Policy Interface: 
-            ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
-            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local(),
+        \par Policy Interface:
+            ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
+            ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
             ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
 
         \par Address Type:
             INet6Address
 
-        UDPv6SocketProtocol provides an internet protocol stream socket based on the UDP protocol
-        and IPv6 addressing.
+        ConnectedUDPv6SocketProtocol provides an internet protocol stream socket based on the UDP
+        protocol and IPv6 addressing.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
 
-        \see UDPv4SocketProtocol
+        \see ConnectedUDPv4SocketProtocol
      */
-    class UDPv6SocketProtocol
-        : public ConcreteSocketProtocol<UDPv6Socket_Policy>,
+    class ConnectedUDPv6SocketProtocol
+        : public ConcreteSocketProtocol<ConnectedUDPv6Socket_Policy>,
           public IPv6Protocol,
           public UDPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<UDPv6SocketProtocol>
+          public senf::pool_alloc_mixin<ConnectedUDPv6SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -180,16 +181,17 @@ namespace senf {
         ///@}
     };
 
-    typedef ProtocolClientSocketHandle<UDPv6SocketProtocol> UDPv6ClientSocketHandle;
+    typedef ProtocolClientSocketHandle<
+        ConnectedUDPv6SocketProtocol> ConnectedUDPv6ClientSocketHandle;
 
     /// @}
 
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "UDPSocketHandle.cci"
-//#include "UDPSocketHandle.ct"
-//#include "UDPSocketHandle.cti"
+//#include "ConnectedUDPSocketHandle.cci"
+//#include "ConnectedUDPSocketHandle.ct"
+//#include "ConnectedUDPSocketHandle.cti"
 #endif
 
 

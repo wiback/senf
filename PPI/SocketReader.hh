@@ -25,10 +25,14 @@
 #define HH_SocketReader_ 1
 
 // Custom includes
-#include "Packets/Packet.hh"
-#include "Packets/DataPacket.hh"
+#include "Packets/Packets.hh"
+#include "Socket/ClientSocketHandle.hh"
+#include "Socket/SocketPolicy.hh"
+#include "Socket/ReadWritePolicy.hh"
+#include "Socket/FramingPolicy.hh"
 #include "Module.hh"
-#include "Connector.hh"
+#include "Connectors.hh"
+#include "IOEvent.hh"
 
 //#include "SocketReader.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -49,10 +53,10 @@ namespace ppi {
     public:
         typedef senf::ClientSocketHandle<
             senf::MakeSocketPolicy< senf::ReadablePolicy,
-                                    senf::DatagramFramingPolicy > > Handle;
+                                    senf::DatagramFramingPolicy >::policy > Handle;
                                         ///< Handle type supported by this reader
 
-        Packet::ptr operator()(Handle handle);
+        Packet operator()(Handle handle);
                                         ///< Read packet from \a handle
                                         /**< Read a datagram from \a handle and interpret is as
                                              packet of type \c Packet.
@@ -95,13 +99,20 @@ namespace module {
                                         /**< Data will be read from \a handle and be parsed by \a
                                              Reader.
                                              \param[in] handle Handle to read data from */
+
+    private:
+        void read();
+        
+        Handle handle_;
+        IOEvent event_;
+        Reader reader_;
     };
 
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "SocketReader.cci"
-//#include "SocketReader.ct"
+#include "SocketReader.ct"
 //#include "SocketReader.cti"
 #endif
 

@@ -51,17 +51,12 @@ template <class ForwardIterator, class Function>
 prefix_ void senf::detail::apply_mask(unsigned bits, ForwardIterator b, ForwardIterator e,
                                       Function fn)
 {
-    for(; b != e; ++b) {
-        boost::uint8_t mask (0);
-        if (bits > 8) {
-            mask = 0xFFu;
-            bits -= 8;
-        } else if (bits > 0) {
-            mask = ~ low_bits_mask(8-bits);
-            bits = 0;
-        }
-        fn(*b,mask);
-    }
+    for(; bits>8 && b != e; bits -= 8, ++b) 
+        fn(*b, boost::lambda::make_const(0xFFu));
+    if (bits > 0 && b != e)
+        fn( *(b++), boost::lambda::make_const(~ low_bits_mask(8-bits)));
+    for(; b != e; ++b)
+        fn(*b, boost::lambda::make_const(0u));
 }
 
 template <class ForwardIterator1, class ForwardIterator2, class Function>
@@ -69,18 +64,15 @@ prefix_ ForwardIterator1 senf::detail::find_if_mask(unsigned bits, ForwardIterat
                                                     ForwardIterator1 e1, ForwardIterator2 b2, 
                                                     Function fn)
 {
-    for(; b1 != e1; ++b1, ++b2) {
-        boost::uint8_t mask (0);
-        if (bits > 8) {
-            mask = 0xFFu;
-            bits -= 8;
-        } else if (bits > 0) {
-            mask = ~ low_bits_mask(8-bits);
-            bits = 0;
-        }
-        if (fn(*b1,*b2,mask))
+    for(; bits>8 && b1 != e1; bits -= 8, ++b1, ++b2) 
+        if (fn(*b1, *b2, boost::lambda::make_const(0xFFu)))
             return b1;
-    }
+    if (bits > 0 && b1 != e1)
+        if (fn( *(b1++), *(b2++), boost::lambda::make_const(~ low_bits_mask(8-bits))))
+            return b1;
+    for(; b1 != e1; ++b1, ++b2)
+        if (fn(*b1, *b2, boost::lambda::make_const(0u)))
+            return b1;
     return e1;
 }
 

@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,39 +21,42 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief public header for hexdump */
-
-#ifndef HH_hexdump_
-#define HH_hexdump_ 1
+    \brief Setup inline non-template implementation */
 
 // Custom includes
-#include <iostream>
+#include "Connectors.hh"
+#include "Scheduler/Scheduler.hh"
 
-//#include "hexdump.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
-namespace senf {
-
-    /** \brief write the contents from Iterator i to i_end to the output stream in hexadecimal format.
-     */
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator i_end, std::ostream & stream, unsigned block_size=16);
+prefix_ void senf::ppi::connect(connector::ActiveOutput & source,
+                                connector::PassiveInput & target)
+{
+    source.connect(target);
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "hexdump.cci"
-#include "hexdump.ct"
-//#include "hexdump.cti"
-//#include "hexdump.mpp"
-#endif
+prefix_ void senf::ppi::connect(connector::PassiveOutput & source,
+                                connector::ActiveInput & target)
+{
+    source.connect(target);
+}
+
+prefix_ void senf::ppi::run()
+{
+    Scheduler::instance().process();
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,39 +21,52 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief public header for hexdump */
+    \brief IOEvent non-inline non-template implementation */
 
-#ifndef HH_hexdump_
-#define HH_hexdump_ 1
+#include "IOEvent.hh"
+//#include "IOEvent.ih"
 
 // Custom includes
-#include <iostream>
+#include <boost/bind.hpp>
 
-//#include "hexdump.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//#include "IOEvent.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::IOEvent
 
-    /** \brief write the contents from Iterator i to i_end to the output stream in hexadecimal format.
-     */
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator i_end, std::ostream & stream, unsigned block_size=16);
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::IOEvent::v_enable()
+{
+    Scheduler::instance().add(fd_, boost::bind(&IOEvent::cb,this,_1,_2), 
+                              Scheduler::EventId(events_));
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "hexdump.cci"
-#include "hexdump.ct"
-//#include "hexdump.cti"
-//#include "hexdump.mpp"
-#endif
+prefix_ void senf::ppi::IOEvent::v_disable()
+{
+    Scheduler::instance().remove(fd_, Scheduler::EventId(events_));
+}
+
+prefix_ void senf::ppi::IOEvent::cb(int, Scheduler::EventId event)
+{
+    IOEventInfo info = { event };
+    callback(info);
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "IOEvent.mpp"
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

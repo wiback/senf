@@ -1,0 +1,212 @@
+// $Id$
+//
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Connectors inline non-template implementation */
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::Connector
+
+prefix_ senf::ppi::connector::Connector & senf::ppi::connector::Connector::peer()
+{
+    BOOST_ASSERT(peer_);
+    return *peer_;
+}
+
+prefix_ senf::ppi::module::Module & senf::ppi::connector::Connector::module()
+{
+    BOOST_ASSERT(module_);
+    return *module_;
+}
+
+////////////////////////////////////////
+// protected members
+
+prefix_ senf::ppi::connector::Connector::Connector()
+    : peer_(), module_()
+{}
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::connector::Connector::setModule(module::Module & module)
+{
+    module_ = &module;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::ActiveConnector
+
+////////////////////////////////////////
+// protected members
+
+prefix_ senf::ppi::connector::ActiveConnector::ActiveConnector()
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::PassiveConnector
+
+prefix_ senf::ppi::connector::ActiveConnector & senf::ppi::connector::PassiveConnector::peer()
+{
+    return dynamic_cast<ActiveConnector&>(Connector::peer());
+}
+
+////////////////////////////////////////
+// protected members
+
+prefix_ senf::ppi::connector::PassiveConnector::PassiveConnector()
+    : callback_()
+{}
+
+prefix_ void senf::ppi::connector::PassiveConnector::emit()
+{
+    BOOST_ASSERT(callback_);
+    callback_();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::InputConnector
+
+prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
+{
+    Packet p (queue_.back());
+    queue_.pop_back();
+    v_dequeueEvent();
+    return p;
+}
+
+prefix_ bool senf::ppi::connector::InputConnector::boolean_test()
+{
+    ///\fixme Add additional active/passive throttle/unthrottle conditions (make virtual ?)
+    return ! empty();
+}
+
+prefix_ senf::ppi::connector::OutputConnector & senf::ppi::connector::InputConnector::peer()
+{
+    return dynamic_cast<OutputConnector &>(Connector::peer());
+}
+
+prefix_ senf::ppi::connector::InputConnector::queue_iterator
+senf::ppi::connector::InputConnector::begin()
+{
+    return queue_.begin();
+}
+
+prefix_ senf::ppi::connector::InputConnector::queue_iterator
+senf::ppi::connector::InputConnector::end()
+{
+    return queue_.end();
+}
+
+prefix_ senf::Packet senf::ppi::connector::InputConnector::peek()
+{
+    return queue_.back();
+}
+
+prefix_ senf::ppi::connector::InputConnector::size_type
+senf::ppi::connector::InputConnector::queueSize()
+{
+    return queue_.size();
+}
+
+prefix_ bool senf::ppi::connector::InputConnector::empty()
+{
+    return queue_.empty();
+}
+
+////////////////////////////////////////
+// protected members
+
+prefix_ senf::ppi::connector::InputConnector::InputConnector()
+{}
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet p)
+{
+    queue_.push_front(p);
+    v_enqueueEvent();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::OutputConnector
+
+prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet p)
+{
+    peer().enqueue(p);
+}
+
+prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConnector::peer()
+{
+    return dynamic_cast<InputConnector&>(Connector::peer());
+}
+
+////////////////////////////////////////
+// protected members
+
+prefix_ senf::ppi::connector::OutputConnector::OutputConnector()
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::PassiveInput
+
+prefix_ senf::ppi::connector::PassiveInput::PassiveInput()
+    : qdisc_(), qstate_(QueueingDiscipline::UNTHROTTLED)
+{}
+
+prefix_ senf::ppi::connector::ActiveOutput & senf::ppi::connector::PassiveInput::peer()
+{
+    return dynamic_cast<ActiveOutput&>(Connector::peer());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::ActiveOutput
+
+prefix_ senf::ppi::connector::ActiveInput & senf::ppi::connector::ActiveOutput::peer()
+{
+    return dynamic_cast<ActiveInput&>(Connector::peer());
+}
+
+prefix_ void senf::ppi::connector::ActiveOutput::connect(PassiveInput & target)
+{
+    Connector::connect(target);
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
