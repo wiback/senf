@@ -48,6 +48,8 @@ namespace detail {
         connector::OutputConnector * target_;
     };
 
+#   ifndef DOXYGEN
+
     template <>
     class RouteImplementation<true,false>
         : public RouteBase
@@ -75,6 +77,8 @@ namespace detail {
         connector::InputConnector * source_;
         EventDescriptor * target_;
     };
+
+#   endif
 
 }}}
 

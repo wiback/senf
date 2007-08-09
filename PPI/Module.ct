@@ -48,6 +48,7 @@ prefix_ void senf::ppi::module::Module::registerEvent(Target target, Descriptor 
         *this,
         EventManager::Callback<Descriptor>::make(target,*this),
         descriptor);
+    descriptor.enabled(true);
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -45,7 +45,8 @@ prefix_ Packet senf::ppi::PacketReader<Packet>::operator()(Handle handle)
 // senf::ppi::module::ActiveSocketReader<Reader>
 
 template <class Reader>
-prefix_ senf::ppi::module::ActiveSocketReader<Reader>::ActiveSocketReader(Handle handle)
+prefix_ senf::ppi::module::ActiveSocketReader<Reader>::
+ActiveSocketReader(Handle handle)
     : handle_(handle), event_(handle_, IOEvent::Read), reader_()
 {
     registerEvent( &ActiveSocketReader::read, event_ );

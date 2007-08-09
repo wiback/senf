@@ -29,6 +29,7 @@
 // Custom includes
 #include "Socket/Protocols/INet/UDPSocketHandle.hh"
 #include "Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
+#include "Socket/Protocols/INet/INetAddressing.hh"
 #include "PPI/SocketReader.hh"
 #include "PPI/SocketWriter.hh"
 #include "PPI/Setup.hh"
@@ -43,9 +44,11 @@ int main(int argc, char * argv[])
     namespace ppi = senf::ppi;
 
     senf::UDPv4ClientSocketHandle inputSocket;
+    inputSocket.bind(senf::INet4SocketAddress("0.0.0.0:44344"));
     module::ActiveSocketReader<> udpReader (inputSocket);
 
-    senf::ConnectedUDPv4ClientSocketHandle outputSocket;
+    senf::ConnectedUDPv4ClientSocketHandle outputSocket(
+        senf::INet4SocketAddress("localhost:44345"));
     module::PassiveSocketWriter<> udpWriter (outputSocket);
     
     ppi::connect(udpReader.output, udpWriter.input);

@@ -88,7 +88,8 @@ namespace module {
         \endcode
      */
     template <class Reader=PacketReader<> >
-    class ActiveSocketReader : public Module
+    class ActiveSocketReader 
+        : public Module
     {
     public:
         typedef typename Reader::Handle Handle; ///< Handle type requested by the reader

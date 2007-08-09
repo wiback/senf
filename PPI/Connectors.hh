@@ -252,6 +252,7 @@ namespace connector {
     private:
         void enqueue(Packet p);
         
+        virtual void v_requestEvent();
         virtual void v_enqueueEvent();
         virtual void v_dequeueEvent();
 
@@ -323,6 +324,8 @@ namespace connector {
         ActiveInput & peer();
 
         void connect(ActiveInput & target);
+
+        friend class ActiveInput;
     };
 
     /** \brief Combination of ActiveConnector and InputConnector
@@ -334,6 +337,9 @@ namespace connector {
         PassiveOutput & peer();
 
         void request();                 ///< request more packets without dequeuing any packet
+
+    private:
+        void v_requestEvent();
     };
 
     /** \brief Combination of ActiveConnector and OutputConnector

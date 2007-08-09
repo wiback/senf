@@ -1,0 +1,164 @@
+// $Id$
+//
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief DebugModules inline non-template implementation */
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::debug::ActivePacketSource
+
+prefix_ senf::ppi::module::debug::ActivePacketSource::ActivePacketSource()
+{
+    noroute(output);
+}
+
+prefix_ void senf::ppi::module::debug::ActivePacketSource::submit(Packet packet)
+{
+    output(packet);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::debug::PassivePacketSource
+
+prefix_ senf::ppi::module::debug::PassivePacketSource::PassivePacketSource()
+{
+    noroute(output);
+    output.onRequest(&PassivePacketSource::request);
+}
+
+prefix_ void senf::ppi::module::debug::PassivePacketSource::submit(Packet packet)
+{
+    packets_.push_back(packet);
+}
+
+prefix_ bool senf::ppi::module::debug::PassivePacketSource::empty()
+{
+    return packets_.empty();
+}
+
+prefix_ senf::ppi::module::debug::PassivePacketSource::size_type
+senf::ppi::module::debug::PassivePacketSource::size()
+{
+    return packets_.size();
+}
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::module::debug::PassivePacketSource::request()
+{
+    output(packets_.front());
+    packets_.pop_front();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::debug::ActivePacketSink
+
+prefix_ senf::ppi::module::debug::ActivePacketSink::ActivePacketSink()
+{
+    noroute(input);
+}
+
+prefix_ senf::Packet senf::ppi::module::debug::ActivePacketSink::request()
+{
+    return input();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::debug::PassivePacketSink
+
+prefix_ senf::ppi::module::debug::PassivePacketSink::PassivePacketSink()
+{
+    noroute(input);
+    input.onRequest(&PassivePacketSink::request);
+}
+
+prefix_ bool senf::ppi::module::debug::PassivePacketSink::empty()
+{
+    return packets_.empty();
+}
+
+prefix_ senf::ppi::module::debug::PassivePacketSink::size_type
+senf::ppi::module::debug::PassivePacketSink::size()
+{
+    return packets_.size();
+}
+
+prefix_ senf::ppi::module::debug::PassivePacketSink::iterator
+senf::ppi::module::debug::PassivePacketSink::begin()
+{
+    return packets_.begin();
+}
+
+prefix_ senf::ppi::module::debug::PassivePacketSink::iterator
+senf::ppi::module::debug::PassivePacketSink::end()
+{
+    return packets_.end();
+}
+
+prefix_ senf::Packet senf::ppi::module::debug::PassivePacketSink::back()
+{
+    if (empty())
+        return Packet();
+    else
+        return packets_.back();
+}
+
+prefix_ senf::Packet senf::ppi::module::debug::PassivePacketSink::pop_back()
+{
+    Packet p (back());
+    if (p) 
+        packets_.pop_back();
+    return p;
+}
+
+prefix_ void senf::ppi::module::debug::PassivePacketSink::clear()
+{
+    packets_.erase(packets_.begin(), packets_.end());
+}
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::module::debug::PassivePacketSink::request()
+{
+    packets_.push_back(input());
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

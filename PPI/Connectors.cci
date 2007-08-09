@@ -93,7 +93,8 @@ prefix_ void senf::ppi::connector::PassiveConnector::emit()
 
 prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
 {
-    Packet p (queue_.back());
+    v_requestEvent();
+    Packet p (peek());
     queue_.pop_back();
     v_dequeueEvent();
     return p;
@@ -124,6 +125,7 @@ senf::ppi::connector::InputConnector::end()
 
 prefix_ senf::Packet senf::ppi::connector::InputConnector::peek()
 {
+    BOOST_ASSERT( ! queue_.empty() );
     return queue_.back();
 }
 
@@ -182,6 +184,32 @@ prefix_ senf::ppi::connector::PassiveInput::PassiveInput()
 prefix_ senf::ppi::connector::ActiveOutput & senf::ppi::connector::PassiveInput::peer()
 {
     return dynamic_cast<ActiveOutput&>(Connector::peer());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::PassiveOutput
+
+prefix_ senf::ppi::connector::ActiveInput & senf::ppi::connector::PassiveOutput::peer()
+{
+    return dynamic_cast<ActiveInput&>(Connector::peer());
+}
+
+prefix_ void senf::ppi::connector::PassiveOutput::connect(ActiveInput & target)
+{
+    Connector::connect(target);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::ActiveInput
+
+prefix_ senf::ppi::connector::PassiveOutput & senf::ppi::connector::ActiveInput::peer()
+{
+    return dynamic_cast<PassiveOutput&>(Connector::peer());
+}
+
+prefix_ void senf::ppi::connector::ActiveInput::request()
+{
+    peer().emit();
 }
 
 ///////////////////////////////////////////////////////////////////////////

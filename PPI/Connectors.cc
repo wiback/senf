@@ -50,11 +50,25 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 ////////////////////////////////////////
 // private members
 
+prefix_ void senf::ppi::connector::InputConnector::v_requestEvent()
+{}
+
 prefix_ void senf::ppi::connector::InputConnector::v_enqueueEvent()
 {}
 
 prefix_ void senf::ppi::connector::InputConnector::v_dequeueEvent()
 {}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::ActiveInput
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::connector::ActiveInput::v_requestEvent()
+{
+    request();
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveInput
@@ -65,14 +79,20 @@ prefix_ void senf::ppi::connector::InputConnector::v_dequeueEvent()
 prefix_ void senf::ppi::connector::PassiveInput::v_enqueueEvent()
 {
     ///\fixme Emit notifications when qstate_ changes
-    qstate_ = qdisc_->update(*this, QueueingDiscipline::ENQUEUE);
+    if (qdisc_)
+        qstate_ = qdisc_->update(*this, QueueingDiscipline::ENQUEUE);
+    else
+        qstate_ = empty()?QueueingDiscipline::UNTHROTTLED:QueueingDiscipline::THROTTLED;
     emit();
 }
 
 prefix_ void senf::ppi::connector::PassiveInput::v_dequeueEvent()
 {
     ///\fixme Emit notifications when qstate_ changes
-    qstate_ = qdisc_->update(*this, QueueingDiscipline::DEQUEUE);
+    if (qdisc_)
+        qstate_ = qdisc_->update(*this, QueueingDiscipline::DEQUEUE);
+    else
+        qstate_ = empty()?QueueingDiscipline::UNTHROTTLED:QueueingDiscipline::THROTTLED;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
