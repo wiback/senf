@@ -125,9 +125,6 @@ namespace connector {
         void throttle();                ///< Set native throttling
         void unthrottle();              ///< Revoke native throttling
         
-        void notifyThrottle();          ///< Forward a throttling notification to this connector
-        void notifyUnthrottle();        ///< Forward an unthrottling notification to this connector
-
         ActiveConnector & peer();
 
     protected:
@@ -136,9 +133,13 @@ namespace connector {
         void emit();
 
     private:
+        void notifyThrottle();          ///< Forward a throttling notification to this connector
+        void notifyUnthrottle();        ///< Forward an unthrottling notification to this connector
 
         typedef detail::Callback<>::type Callback;
         Callback callback_;
+        
+        friend class ActiveConnector;
     };
 
     /** \brief Active connector baseclass
@@ -348,7 +349,7 @@ namespace connector {
         : public ActiveConnector, public OutputConnector
     {
     public:
-        ActiveInput & peer();
+        PassiveInput & peer();
 
         void connect(PassiveInput & target);
     };

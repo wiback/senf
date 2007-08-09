@@ -165,6 +165,8 @@
 
     \section connections Connections
 
+    \image html ratestuffer.png Simple RateStuffer
+
     To make use of the modules, they have to be instantiated and connections have to be created
     between the I/O connectors. It is possible to connect any pair of input/output connectors as
     long as one of them is active and the other is passive.

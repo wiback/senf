@@ -17,4 +17,5 @@ SENFSCons.Lib(env,
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('scenario.dia'),
     env.Dia2Png('classes.dia'),
+    env.Dia2Png('ratestuffer.dia'),
 ])

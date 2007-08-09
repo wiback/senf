@@ -215,9 +215,9 @@ prefix_ void senf::ppi::connector::ActiveInput::request()
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::ActiveOutput
 
-prefix_ senf::ppi::connector::ActiveInput & senf::ppi::connector::ActiveOutput::peer()
+prefix_ senf::ppi::connector::PassiveInput & senf::ppi::connector::ActiveOutput::peer()
 {
-    return dynamic_cast<ActiveInput&>(Connector::peer());
+    return dynamic_cast<PassiveInput&>(Connector::peer());
 }
 
 prefix_ void senf::ppi::connector::ActiveOutput::connect(PassiveInput & target)

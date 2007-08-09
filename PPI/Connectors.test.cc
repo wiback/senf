@@ -28,6 +28,8 @@
 
 // Custom includes
 #include "Connectors.hh"
+#include "DebugModules.hh"
+#include "Setup.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -35,8 +37,49 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(connectors)
-{}
+namespace debug = senf::ppi::module::debug;
+namespace ppi = senf::ppi;
+
+// For each type of connector we use the corresponding debug module. Additionally, we always need
+// the corresponding connected module since otherwise the connectors cannot be connected anywhere
+// and will be unusable.
+
+BOOST_AUTO_UNIT_TEST(connector)
+{
+    // It doesn't matter, which type of connectors we use here since they are all based on
+    // Connector.
+
+    debug::ActivePacketSource source;
+    debug::PassivePacketSink target;
+
+    ppi::connect(source.output,target.input);
+
+    BOOST_CHECK_EQUAL( & source.output.module(), & source );
+    BOOST_CHECK_EQUAL( & target.input.module(), & target );
+    BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
+    BOOST_CHECK_EQUAL( & target.input.peer(), & source.output );
+}
+
+BOOST_AUTO_UNIT_TEST(passiveConnector)
+{
+    debug::ActivePacketSource source;
+    debug::PassivePacketSink target;
+
+    ppi::connect(source.output,target.input);
+
+    // onRequest is implicitly tested within the PassivePacketSink implementation which is tested
+    // in DebugModules.test.cc
+
+#if 0
+    target.input.throttle();
+    BOOST_CHECK( target.input.throttled() );
+    BOOST_CHECK( target.input.nativeThrottled() );
+    
+    target.input.unthrottle();
+    BOOST_CHECK( ! target.input.throttled() );
+    BOOST_CHECK( ! target.input.nativeThrottled() );
+#endif
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
