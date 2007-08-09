@@ -49,7 +49,8 @@ class MySniffer
     senf::DVBDemuxSectionHandle handle;
 
 public:
-    MySniffer()
+    MySniffer(unsigned short adapter=0, unsigned short device=0)
+        : handle( adapter, device ) 
     {
         struct dmx_sct_filter_params sec_filter;
         memset(&sec_filter, 0, sizeof (struct dmx_sct_filter_params));

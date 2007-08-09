@@ -27,16 +27,10 @@
 //#include "DVBFrontendHandle.ih"
 
 // Custom includes
-#include <sys/types.h>
+#include <boost/format.hpp>
 #include <sys/socket.h>
-#include <iostream>
-#include <string>
 #include <sys/ioctl.h>
-#include <linux/sockios.h>
-#include <stdio.h>
 #include <fcntl.h>
-#include "Socket/SocketHandle.hh"
-
 #include "Utils/Exception.hh"
 
 //#include "DVBFrontendHandle.mpp"
@@ -46,10 +40,12 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::DVBFrontendHandle
 
-prefix_ void senf::DVBFrontendProtocol::init_client()
+prefix_ void senf::DVBFrontendProtocol::init_client(uint8_t adapter, boost::uint8_t device)
     const
 {
-    int fd = open("/dev/dvb/adapter0/frontend0", O_RDONLY | O_NONBLOCK);
+    std::string devFrontend = str( boost::format(
+            "/dev/dvb/adapter%d/frontend%d") % adapter % device);
+    int fd = open(devFrontend.c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0)
         throw SystemException(errno);
     body().fd(fd);

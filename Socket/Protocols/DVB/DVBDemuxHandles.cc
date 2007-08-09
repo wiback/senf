@@ -27,15 +27,10 @@
 //#include "DVBDemuxHandles.ih"
 
 // Custom includes
-#include <sys/types.h>
+#include <boost/format.hpp>
 #include <sys/socket.h>
-#include <iostream>
-#include <string>
 #include <sys/ioctl.h>
-#include <linux/sockios.h>
-#include <stdio.h>
 #include <fcntl.h>
-
 #include "Utils/Exception.hh"
 
 //#include "DVBDemuxHandles.mpp"
@@ -45,10 +40,12 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::DVBDemuxHandles
 
-prefix_ void senf::DVBDemuxSectionProtocol::init_client()
+prefix_ void senf::DVBDemuxSectionProtocol::init_client(unsigned short adapter, unsigned short device)
     const
 {
-    int fd = open("/dev/dvb/adapter0/demux0", O_RDONLY | O_NONBLOCK);
+    std::string devDemux = str( boost::format(
+            "/dev/dvb/adapter%d/demux%d") % adapter % device);
+    int fd = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0)
         throw SystemException(errno);
     body().fd(fd);
@@ -75,10 +72,12 @@ prefix_ void senf::DVBDemuxSectionProtocol::setSectionFilter(struct dmx_sct_filt
 
 // ----------------------------------------------------------------
 
-prefix_ void senf::DVBDemuxPESProtocol::init_client()
+prefix_ void senf::DVBDemuxPESProtocol::init_client(unsigned short adapter, unsigned short device)
     const
 {
-    int fd = open("/dev/dvb/adapter0/demux0", O_RDONLY | O_NONBLOCK);
+    std::string devDemux = str( boost::format(
+            "/dev/dvb/adapter%d/demux%d") % adapter % device);
+    int fd = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0)
         throw SystemException(errno);
     body().fd(fd);
@@ -105,10 +104,12 @@ prefix_ void senf::DVBDemuxPESProtocol::setPESFilter(struct dmx_pes_filter_param
 
 // ----------------------------------------------------------------
 
-prefix_ void senf::DVBDvrProtocol::init_client()
+prefix_ void senf::DVBDvrProtocol::init_client(unsigned short adapter, unsigned short device)
     const
 {
-    int fd = open("/dev/dvb/adapter0/dvr0", O_RDONLY | O_NONBLOCK);
+    std::string devDvr = str( boost::format(
+            "/dev/dvb/adapter%d/dvr%d") % adapter % device);
+    int fd = open(devDvr.c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0)
         throw SystemException(errno);
     body().fd(fd);

@@ -38,7 +38,7 @@ using namespace senf;
 
 BOOST_AUTO_UNIT_TEST(transportPacket_packet)
 {
-    // TransportStream-Packet containing a MPE encoded section with an IPv6 ping packet,
+    // TransportStream-Packet containing a ULE encoded IPv6 ping packet,
     // captured with dvbsnoop
     unsigned char data[] = { 
             0x47, 0x41, 0x0f, 0x1e, 0x00, 0x80, 0x4c, 0x86,

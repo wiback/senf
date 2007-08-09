@@ -27,14 +27,14 @@
 #define HH_DVBFrontendHandle_ 1
 
 // Custom includes
+#include <boost/cstdint.hpp>
+#include <linux/dvb/frontend.h> 
 #include "Socket/BufferingPolicy.hh"
 #include "Socket/FramingPolicy.hh"
 #include "Socket/CommunicationPolicy.hh"
 #include "Socket/ReadWritePolicy.hh"
 #include "Socket/ProtocolClientSocketHandle.hh"
 #include "Socket/SocketProtocol.hh"
-
-#include <linux/dvb/frontend.h> 
 
 //#include "DVBFrontendHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace senf {
         ///\name Constructors
         ///@{
 
-        void init_client() const;       ///< xxx
+        void init_client(boost::uint8_t adapter=0, boost::uint8_t device=0) const;       ///< xxx
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */

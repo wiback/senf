@@ -22,12 +22,6 @@
 
 // Definition of non-inline non-template functions
 
-#include <string>
-#include <iostream>
-#include <iomanip>
-#include <sys/ioctl.h>
-#include <linux/dvb/dmx.h> 
-
 #include "Scheduler/Scheduler.hh"
 #include "Packets/MPEGDVBBundle/TransportPacket.hh"
 #include "Packets/MPEGDVBBundle/SNDUPacket.hh"
@@ -37,7 +31,7 @@
 class ULEdec
 {
 public:
-    ULEdec();
+    ULEdec(unsigned short adapter=0, unsigned short device=0);
 
 private:
     typedef senf::PacketData::iterator iterator;

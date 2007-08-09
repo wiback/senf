@@ -24,18 +24,19 @@
 
 #include "ULEdec.hh"
 
+#include <linux/dvb/dmx.h> 
 #include "Packets/PacketData.hh"
 #include "Utils/hexdump.hh"
 #include "Utils/membind.hh"
 
 #define PID 271
-#define TS_SYNC 0x47
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 
-ULEdec::ULEdec()
+ULEdec::ULEdec(unsigned short adapter, unsigned short device)
+    : demuxHandle( adapter, device ),  dvrHandle( adapter, device )
 {
     struct dmx_pes_filter_params pes_filter;
     memset(&pes_filter, 0, sizeof (struct dmx_pes_filter_params));
@@ -60,7 +61,7 @@ void ULEdec::handleEvent(senf::FileHandle, senf::Scheduler::EventId event)
     dvrHandle.read( ts_packet.data() );
    
     // Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control.
-    if ( (ts_packet->sync_byte() != TS_SYNC) || 
+    if ( (ts_packet->sync_byte() != TRANSPORT_PACKET_SYNC_BYTE) || 
          (ts_packet->transport_error_indicator() == true) || 
          (ts_packet->transport_scrmbl_ctrl() != 0)) 
     {

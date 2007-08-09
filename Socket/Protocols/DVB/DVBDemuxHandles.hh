@@ -64,7 +64,7 @@ namespace senf {
         ///\name Constructors
         ///@{
 
-        void init_client() const;       ///< xxx
+        void init_client(unsigned short adapter=0, unsigned short device=0) const;       ///< xxx
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
@@ -99,7 +99,7 @@ namespace senf {
         ///\name Constructors
         ///@{
 
-        void init_client() const;       ///< xxx
+        void init_client(unsigned short adapter=0, unsigned short device=0) const;       ///< xxx
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
@@ -136,7 +136,7 @@ namespace senf {
         ///\name Constructors
         ///@{
 
-        void init_client() const;       ///< xxx
+        void init_client(unsigned short adapter=0, unsigned short device=0) const;       ///< xxx
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
