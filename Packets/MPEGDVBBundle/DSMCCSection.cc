@@ -3,7 +3,7 @@
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ prefix_ void senf::DSMCCSectionType::dump(packet p, std::ostream & os)
        << std::hex
        << "  table_id: 0x" << unsigned(p->table_id()) << "\n"
        << "  section_syntax_indicator: " << p->ssi() << "\n"
-       << "  private_indicator: " << p->pi() << "\n"
+       << "  private_indicator: " << p->private_indicator() << "\n"
        << "  reserved_1: " << p->reserved_1() << "\n"
        << std::dec
        << "  section_length: " << p->sec_length() << "\n"

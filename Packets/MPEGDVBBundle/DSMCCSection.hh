@@ -3,7 +3,7 @@
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ namespace senf {
         SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
             ((Field       ) ( table_id,            Parse_table_id            )) 
             ((OverlayField) ( ssi,                 Parse_ssi                 ))
-            ((OverlayField) ( pi,                  Parse_pi                  ))
+            ((OverlayField) ( private_indicator,   Parse_pi                  ))
             ((OverlayField) ( reserved_1,          Parse_reserved_1          ))
             ((Field       ) ( sec_length,          Parse_sec_length          ))
             ((Field       ) ( tabel_id_extension,  Parse_UInt16              ))

@@ -68,7 +68,7 @@ BOOST_AUTO_UNIT_TEST(parseVec)
         BOOST_CHECK_EQUAL(std::distance(b,e), Parse_UInt16Vec::difference_type(v.size()));
     }
 
-    // Warning: Each of the followingoperations invalidate the parser -> we need to recreate it at
+    // Warning: Each of the following operations invalidate the parser -> we need to recreate it at
     // each step
 
     // And since all these members directly call the corresponding members in the container wrapper,
