@@ -25,11 +25,16 @@
 #include "ULEdec.hh"
 
 #include <linux/dvb/dmx.h> 
+#include <boost/format.hpp>
 #include "Packets/PacketData.hh"
 #include "Utils/hexdump.hh"
 #include "Utils/membind.hh"
 
 #define PID 271
+#define TRANSPORT_PACKET_SIZE 188
+// max. payload_pointer = ts packet payload size ( = ts packet size - ts header - payload_pointer)
+//                          - 2 bytes min. sndu header
+#define MAX_PAYLOAD_POINTER ( TRANSPORT_PACKET_SIZE - 4 - 1 - 2 )   
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -108,7 +113,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
                     return;
                 default:
                     if ( (*payload_iter++ << 8 | *payload_iter++) != ULE_END_INDICATOR )
-                        std::cerr << "delimiting error 1\n";
+                        std::cerr << "delimiting error\n";
             } else {
                 BOOST_ASSERT( std::distance( payload_iter, payload_end ) == 0 );
             }
@@ -118,8 +123,9 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
     case 1: {
         // a PUSI value of 1 indicates the presence of a Payload Pointer.
         unsigned char payload_pointer = *payload_iter++;
-        if (payload_pointer > 181) {
-            std::cerr << "invalid payload_pointer\n";
+        if (payload_pointer > MAX_PAYLOAD_POINTER) {
+            std::cerr << str( boost::format( 
+                    "invalid payload_pointer (%d)\n") % unsigned(payload_pointer) ) ;
             this->receiver_state = Idle;
             return;
         }
@@ -131,7 +137,9 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
             // Reassembly Payload Pointer Checking
             if (snduPacketBytesLeft() != payload_pointer) {
                 // delimiting error
-                std::cerr << "delimiting error 2\n";
+                std::cerr << str( boost::format(
+                        "delimiting error: bytes left in SNDU packet != payload_pointer ("
+                        "(%d != %d)\n") % snduPacketBytesLeft() % payload_pointer );
                 std::advance(payload_iter, payload_pointer);
             } else {
                 payload_iter = readContSNDUPacket( payload_iter, payload_end );
@@ -185,7 +193,8 @@ ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i, iterator const i_end)
         dbit = true;
     }
     if (sndu_length < 5 || sndu_length == 0xffff) {
-        throw ULEdecException("SNDU length error");
+        throw ULEdecException( str( boost::format(
+                "SNDU length error. length=%d") % sndu_length) );
      }
     this->snduPacket = senf::SNDUPacket::create(sndu_length+4);
     this->snduPacket->d_bit() = dbit;
@@ -227,7 +236,9 @@ void ULEdec::handleSNDUPacket()
     this->snduPacket.dump(std::cout);
     std::cout << "----------------------------------------------------------------------------\n\n";
     if (this->snduPacket->crc() != this->snduPacket->calcCrc()) {
-        throw ULEdecException("CRC Error");
+        throw ULEdecException( str( boost::format( 
+                "CRC Error. received crc:%d calculated crc:%d")
+                    % this->snduPacket->crc() % this->snduPacket->calcCrc() ) );
     }
 //    senf::Packet nextPacket = this->snduPacket.next();
 //    senf::hexdump(

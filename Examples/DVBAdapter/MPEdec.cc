@@ -72,7 +72,7 @@ private:
         std::string data (handle.read());
         senf::DatagramSection section (senf::DatagramSection::create(data));
         section.dump(std::cout);
-        senf::PacketData & datagramData (section.last().data());
+        senf::PacketData & datagramData (section.next().data());
         senf::hexdump(datagramData.begin(), datagramData.end(), std::cout);
     }
 };

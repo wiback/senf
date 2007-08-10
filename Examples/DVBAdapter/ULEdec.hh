@@ -68,6 +68,7 @@ private:
 struct ULEdecException : public std::exception
 {
     ULEdecException(char const * what) : what_(what) {};
+    ULEdecException(std::string const what) : what_(what) {};
     virtual char const * what() const throw() { return what_.c_str(); }
     virtual ~ULEdecException() throw() {};
     std::string what_;

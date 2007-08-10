@@ -77,7 +77,7 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::SNDUPacketType::nextPacketT
     if (p->type() < 1536)
         e = PacketRegistry<senf::ULEExtHeaderTypes>::lookup( p->type(), nothrow );
     else
-        e = PacketRegistry<senf::EtherTypes>::lookup( 0x86dd, nothrow );
+        e = PacketRegistry<senf::EtherTypes>::lookup( p->type(), nothrow );
     return e ? e->factory() : no_factory();
 }
 
