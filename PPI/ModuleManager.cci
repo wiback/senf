@@ -21,35 +21,33 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Setup inline non-template implementation */
+    \brief ModuleManager inline non-template implementation */
 
 // Custom includes
-#include "Connectors.hh"
-#include "ModuleManager.hh"
+#include <algorithm>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::ppi::connect(connector::ActiveOutput & source,
-                                connector::PassiveInput & target)
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::ModuleManager
+
+prefix_ senf::ppi::ModuleManager & senf::ppi::ModuleManager::instance()
 {
-    source.connect(target);
+    static ModuleManager manager;
+    return manager;
 }
 
-prefix_ void senf::ppi::connect(connector::PassiveOutput & source,
-                                connector::ActiveInput & target)
+prefix_ void senf::ppi::ModuleManager::registerModule(module::Module & module)
 {
-    source.connect(target);
+    moduleRegistry_.push_back(&module);
 }
 
-prefix_ void senf::ppi::run()
+prefix_ void senf::ppi::ModuleManager::unregisterModule(module::Module & module)
 {
-    ModuleManager::instance().run();
-}
-
-prefix_ void senf::ppi::init()
-{
-    ModuleManager::instance().init();
+    moduleRegistry_.erase(
+        std::remove(moduleRegistry_.begin(), moduleRegistry_.end(), & module),
+        moduleRegistry_.end());
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

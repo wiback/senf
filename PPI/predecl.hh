@@ -39,14 +39,26 @@ namespace ppi {
     template <class EventType=void> class EventImplementation;
     class EventManager;
     class RouteBase;
+    class ForwardingRoute;
     template <class Source, class Target> class Route;
     class QueueingDiscipline;
+    class ModuleManager;
 
     namespace detail {
         class EventBindingBase;
         template <class EvImpl> class EventBinding;
         template <class EventType> struct EventArgType;
-        template <bool srcEvent, bool trgEvent> class RouteImplementation;
+        class NonForwardingRouteImplementation;
+        class NonForwardingRouteToEventImplementation;
+        class NonForwardingRouteFromEventImplementation;
+        class ForwardForwardingRouteImplementation;
+        class BackwardForwardingRouteImplementation;
+        class ForwardForwardingRouteToEventImplementation;
+        class BackwardForwardingRouteFromEventImplementation;
+        template <class Source, class Target, 
+                  bool srcEvent = boost::is_base_of<EventDescriptor,Source>::value,
+                  bool trgEvent = boost::is_base_of<EventDescriptor,Target>::value>
+            class RouteImplementation;
     }
 
     namespace module {       

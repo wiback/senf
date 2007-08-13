@@ -53,6 +53,7 @@ prefix_ senf::ppi::module::debug::PassivePacketSource::PassivePacketSource()
 prefix_ void senf::ppi::module::debug::PassivePacketSource::submit(Packet packet)
 {
     packets_.push_back(packet);
+    output.unthrottle();
 }
 
 prefix_ bool senf::ppi::module::debug::PassivePacketSource::empty()
@@ -71,8 +72,16 @@ senf::ppi::module::debug::PassivePacketSource::size()
 
 prefix_ void senf::ppi::module::debug::PassivePacketSource::request()
 {
+    BOOST_ASSERT( ! packets_.empty() );
     output(packets_.front());
     packets_.pop_front();
+    if (packets_.empty())
+        output.throttle();
+}
+
+prefix_ void senf::ppi::module::debug::PassivePacketSource::init()
+{
+    output.throttle();
 }
 
 ///////////////////////////////////////////////////////////////////////////

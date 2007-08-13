@@ -57,6 +57,9 @@ namespace module {
     class Module
         : boost::noncopyable
     {
+    public:
+        virtual ~Module();
+
     protected:
         Module();
 
@@ -122,7 +125,10 @@ namespace module {
                                               ///< event
 
     private:
+        virtual void init();
+
         EventManager & eventManager();
+        ModuleManager & moduleManager();
         
         void registerConnector(connector::Connector & connector);
         RouteBase & addRoute(std::auto_ptr<RouteBase> route);
@@ -135,6 +141,7 @@ namespace module {
 
         template <class Source, class Target>
         friend class detail::RouteHelper;
+        friend class senf::ppi::ModuleManager;
     };
 
     /** \brief Connect compatible connectors

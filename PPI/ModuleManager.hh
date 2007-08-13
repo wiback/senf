@@ -21,32 +21,63 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Setup public header */
+    \brief ModuleManager public header */
 
-#ifndef HH_Setup_
-#define HH_Setup_ 1
+#ifndef HH_ModuleManager_
+#define HH_ModuleManager_ 1
 
 // Custom includes
+#include <vector>
 #include "predecl.hh"
 
-//#include "Setup.mpp"
+//#include "ModuleManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
 
-    void connect(connector::ActiveOutput & source, connector::PassiveInput & target);
-    void connect(connector::PassiveOutput & source, connector::ActiveInput & target);
+    /** \brief
+      */
+    class ModuleManager
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
 
-    void run();
-    void init();
+        static ModuleManager & instance();
+
+        // default default constructor
+        // default copy constructor
+        // default copy assignment
+        // default destructor
+
+        // no conversion constructors
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+        void registerModule(module::Module & module);
+        void unregisterModule(module::Module & module);
+        
+        void init();
+        void run();
+
+    protected:
+
+    private:
+        typedef std::vector<module::Module *> ModuleRegistry;
+
+        ModuleRegistry moduleRegistry_;
+    };
+
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "Setup.cci"
-//#include "Setup.ct"
-//#include "Setup.cti"
+#include "ModuleManager.cci"
+//#include "ModuleManager.ct"
+//#include "ModuleManager.cti"
 #endif
 
 

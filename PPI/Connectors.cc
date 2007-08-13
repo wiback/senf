@@ -27,25 +27,64 @@
 //#include "Connectors.ih"
 
 // Custom includes
+#include "Route.hh"
 
 //#include "Connectors.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// protected members
+// senf::ppi::connector::PassiveConnector
 
-prefix_ senf::ppi::connector::Connector::~Connector()
-{}
+////////////////////////////////////////
+// private members
 
-prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::ActiveConnector
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::connector::ActiveConnector::notifyThrottle()
 {
-    peer_ = & target;
-    target.peer_ = this;
+    if (throttleCallback_)
+        throttleCallback_();
+    NotifyRoutes::const_iterator i (notifyRoutes_.begin());
+    NotifyRoutes::const_iterator const i_end (notifyRoutes_.end());
+    for (; i != i_end; ++i)
+        (*i)->notifyThrottle();
+}
+
+prefix_ void senf::ppi::connector::ActiveConnector::notifyUnthrottle()
+{
+    if (unthrottleCallback_)
+        unthrottleCallback_();
+    NotifyRoutes::const_iterator i (notifyRoutes_.begin());
+    NotifyRoutes::const_iterator const i_end (notifyRoutes_.end());
+    for (; i != i_end; ++i)
+        (*i)->notifyUnthrottle();
+}
+
+prefix_ void senf::ppi::connector::ActiveConnector::registerRoute(ForwardingRoute & route)
+{
+    notifyRoutes_.push_back(&route);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::InputConnector
+
+prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
+{
+    if (empty())
+        v_requestEvent();
+    Packet p;
+    if (! empty()) {
+        p = peek();
+        queue_.pop_back();
+        v_dequeueEvent();
+    }
+    return p;
+}
 
 ////////////////////////////////////////
 // private members
@@ -78,21 +117,25 @@ prefix_ void senf::ppi::connector::ActiveInput::v_requestEvent()
 
 prefix_ void senf::ppi::connector::PassiveInput::v_enqueueEvent()
 {
-    ///\fixme Emit notifications when qstate_ changes
-    if (qdisc_)
-        qstate_ = qdisc_->update(*this, QueueingDiscipline::ENQUEUE);
-    else
-        qstate_ = empty()?QueueingDiscipline::UNTHROTTLED:QueueingDiscipline::THROTTLED;
     emit();
+    qdisc_->update(*this, QueueingDiscipline::ENQUEUE);
 }
 
 prefix_ void senf::ppi::connector::PassiveInput::v_dequeueEvent()
 {
-    ///\fixme Emit notifications when qstate_ changes
-    if (qdisc_)
-        qstate_ = qdisc_->update(*this, QueueingDiscipline::DEQUEUE);
-    else
-        qstate_ = empty()?QueueingDiscipline::UNTHROTTLED:QueueingDiscipline::THROTTLED;
+    qdisc_->update(*this, QueueingDiscipline::DEQUEUE);
+}
+
+prefix_ void senf::ppi::connector::PassiveInput::v_unthrottleEvent()
+{
+    size_type n (queueSize());
+    while (n) {
+        emit();
+        size_type nn (queueSize());
+        if (n == nn)
+            break;
+        n = nn;
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

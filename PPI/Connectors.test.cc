@@ -37,8 +37,8 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace debug = senf::ppi::module::debug;
 namespace ppi = senf::ppi;
+namespace debug = ppi::module::debug;
 
 // For each type of connector we use the corresponding debug module. Additionally, we always need
 // the corresponding connected module since otherwise the connectors cannot be connected anywhere
@@ -53,6 +53,7 @@ BOOST_AUTO_UNIT_TEST(connector)
     debug::PassivePacketSink target;
 
     ppi::connect(source.output,target.input);
+    ppi::init();
 
     BOOST_CHECK_EQUAL( & source.output.module(), & source );
     BOOST_CHECK_EQUAL( & target.input.module(), & target );
@@ -66,11 +67,11 @@ BOOST_AUTO_UNIT_TEST(passiveConnector)
     debug::PassivePacketSink target;
 
     ppi::connect(source.output,target.input);
+    ppi::init();
 
     // onRequest is implicitly tested within the PassivePacketSink implementation which is tested
     // in DebugModules.test.cc
 
-#if 0
     target.input.throttle();
     BOOST_CHECK( target.input.throttled() );
     BOOST_CHECK( target.input.nativeThrottled() );
@@ -78,8 +79,209 @@ BOOST_AUTO_UNIT_TEST(passiveConnector)
     target.input.unthrottle();
     BOOST_CHECK( ! target.input.throttled() );
     BOOST_CHECK( ! target.input.nativeThrottled() );
-#endif
+
+    BOOST_CHECK_EQUAL( & target.input.peer(), & source.output );
 }
+
+namespace {
+    
+    bool called = false;
+    
+    void handler() { called = true; }
+}
+
+BOOST_AUTO_UNIT_TEST(activeConnector)
+{
+    debug::ActivePacketSource source;
+    debug::PassivePacketSink target;
+
+    ppi::connect(source.output,target.input);
+    ppi::init();
+
+    source.output.onThrottle(handler);
+    BOOST_CHECK( ! called );
+    target.input.throttle();
+    BOOST_CHECK( called );
+    called = false;
+    target.input.unthrottle();
+    BOOST_CHECK( ! called );
+    source.output.onThrottle();
+    source.output.onUnthrottle(handler);
+    BOOST_CHECK( ! called );
+    target.input.throttle();
+    BOOST_CHECK( ! called );
+    target.input.unthrottle();
+    BOOST_CHECK( called );
+    source.output.onUnthrottle();
+    called = false;
+    BOOST_CHECK( ! called );
+    target.input.throttle();
+    target.input.unthrottle();
+    BOOST_CHECK( ! called );
+
+    BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
+}
+
+BOOST_AUTO_UNIT_TEST(inputConnector)
+{
+    debug::ActivePacketSource source;
+    debug::PassivePacketSink target;
+
+    ppi::connect(source.output,target.input);
+    ppi::init();
+
+    // operator() is implicitly tested within the Active/PassivePacketSink implementation which is
+    // tested in DebugModules.test.cc
+
+    // peek() is implicitly tested within the Active/PassivePacketSink implementation
+
+    BOOST_CHECK_EQUAL ( & target.input.peer(), & source.output );
+    
+    BOOST_CHECK( target.input.begin() == target.input.end() );
+    BOOST_CHECK_EQUAL( target.input.queueSize(), 0u );
+    BOOST_CHECK( target.input.empty() );
+}
+
+BOOST_AUTO_UNIT_TEST(outputConnector)
+{
+    debug::ActivePacketSource source;
+    debug::PassivePacketSink target;
+
+    ppi::connect(source.output,target.input);
+    ppi::init();
+
+    // operator() is implicitly tested within the Active/PassivePacketSource implementation which is
+    // tested in DebugModules.test.cc
+
+    BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
+}
+
+namespace {
+
+    class PassiveInputTest
+        : public ppi::module::Module
+    {
+    public:
+        ppi::connector::PassiveInput input;
+
+        PassiveInputTest() : counter() {
+            noroute(input);
+            input.onRequest(&PassiveInputTest::request);
+        }
+
+        void request() {
+            ++ counter;
+        }
+
+        unsigned counter;
+    };
+}
+
+BOOST_AUTO_UNIT_TEST(passiveInput)
+{
+    debug::ActivePacketSource source;
+    PassiveInputTest target;
+
+    ppi::connect(source.output,target.input);
+    ppi::init();
+
+    BOOST_CHECK_EQUAL( & target.input.peer(), & source.output );
+    
+    target.input.throttle();
+    senf::Packet p (senf::DataPacket::create());
+    source.submit(p);
+    
+    BOOST_CHECK_EQUAL( target.counter, 0u );
+    BOOST_CHECK( target.input );
+    BOOST_CHECK_EQUAL( target.input.queueSize(), 1u );
+    target.input.unthrottle();
+    BOOST_CHECK( target.input );
+    BOOST_CHECK_EQUAL( target.counter, 1u );
+    
+    BOOST_CHECK( target.input() == p );
+    BOOST_CHECK( ! target.input );
+    
+    source.submit(p);
+    
+    BOOST_CHECK_EQUAL( target.counter, 2u );
+    BOOST_CHECK( target.input.throttled() );
+    BOOST_CHECK( target.input() == p );
+    BOOST_CHECK( ! target.input.throttled() );
+
+    target.input.qdisc(ppi::ThresholdQueueing(2,0));
+
+    source.submit(p);
+    BOOST_CHECK ( ! target.input.throttled() );
+    source.submit(p);
+    BOOST_CHECK( target.input.throttled() );
+    target.input();
+    BOOST_CHECK( target.input.throttled() );
+    target.input();
+    BOOST_CHECK( ! target.input.throttled() );
+}
+
+BOOST_AUTO_UNIT_TEST(passiveOutput)
+{
+    debug::PassivePacketSource source;
+    debug::ActivePacketSink target;
+
+    ppi::connect(source.output,target.input);
+    ppi::init();
+
+    senf::Packet p (senf::DataPacket::create());
+    source.submit(p);
+
+    BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
+
+    BOOST_CHECK( source.output );
+
+    source.submit(p);
+    BOOST_CHECK( target.request() == p );
+    
+    // connect() is tested indirectly via ppi::connect
+}
+
+BOOST_AUTO_UNIT_TEST(activeInput)
+{
+    debug::PassivePacketSource source;
+    debug::ActivePacketSink target;
+
+    ppi::connect(source.output,target.input);
+    ppi::init();
+
+    BOOST_CHECK_EQUAL( & target.input.peer(), & source.output );
+
+    BOOST_CHECK ( ! target.input );
+
+    senf::Packet p (senf::DataPacket::create());
+    source.submit(p);
+
+    BOOST_CHECK( target.input );
+    BOOST_CHECK( target.request() == p );
+
+    source.submit(p);
+    target.input.request();
+    BOOST_CHECK_EQUAL( target.input.queueSize(), 1u );
+    BOOST_CHECK( target.input );
+    BOOST_CHECK( target.request() == p );
+}
+
+BOOST_AUTO_UNIT_TEST(activeOutput)
+{
+    debug::ActivePacketSource source;
+    debug::PassivePacketSink target;
+
+    ppi::connect(source.output,target.input);
+    ppi::init();
+    
+    BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
+    BOOST_CHECK( source.output );
+    target.input.throttle();
+    BOOST_CHECK( ! source.output );
+
+    // connect() is tested indirectly via ppi::connect
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

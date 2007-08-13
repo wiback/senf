@@ -27,6 +27,7 @@
 #include "Route.hh"
 #include "Connectors.hh"
 #include "EventManager.hh"
+#include "ModuleManager.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -34,10 +35,9 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::Module
 
-prefix_ void senf::ppi::module::Module::noroute(connector::Connector & connector)
+prefix_ senf::ppi::module::Module::~Module()
 {
-    registerConnector(connector);
-    connector.setModule(*this);
+    moduleManager().unregisterModule(*this);
 }
 
 prefix_ boost::posix_time::ptime senf::ppi::module::Module::eventTime()
@@ -49,14 +49,30 @@ prefix_ boost::posix_time::ptime senf::ppi::module::Module::eventTime()
 // protected members
 
 prefix_ senf::ppi::module::Module::Module()
-{}
+{
+    moduleManager().registerModule(*this);
+}
+
+prefix_ void senf::ppi::module::Module::noroute(connector::Connector & connector)
+{
+    registerConnector(connector);
+    connector.setModule(*this);
+}
 
 ////////////////////////////////////////
 // private members
 
+prefix_ void senf::ppi::module::Module::init()
+{}
+
 prefix_ senf::ppi::EventManager & senf::ppi::module::Module::eventManager()
 {
     return EventManager::instance();
+}
+
+prefix_ senf::ppi::ModuleManager & senf::ppi::module::Module::moduleManager()
+{
+    return ModuleManager::instance();
 }
 
 prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector & connector)

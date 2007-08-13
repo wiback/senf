@@ -24,6 +24,8 @@
     \brief Route inline non-template implementation */
 
 // Custom includes
+#include "Connectors.hh"
+#include "Events.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -31,11 +33,210 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::RouteBase
 
+prefix_ senf::ppi::RouteBase::~RouteBase()
+{}
+
 ////////////////////////////////////////
 // protected members
 
 prefix_ senf::ppi::RouteBase::RouteBase(module::Module & module)
     : module_(&module)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::ForwardingRoute
+
+prefix_ bool senf::ppi::ForwardingRoute::autoThrottling()
+{
+    return autoThrottling_;
+}
+
+prefix_ void senf::ppi::ForwardingRoute::autoThrottling(bool state)
+{
+    autoThrottling_ = state;
+}
+
+////////////////////////////////////////
+// protected members
+
+prefix_ senf::ppi::ForwardingRoute::ForwardingRoute(module::Module & module)
+    : RouteBase(module), autoThrottling_(false)
+{}
+
+prefix_ void senf::ppi::ForwardingRoute::registerRoute(connector::ActiveConnector & connector)
+{
+    connector.registerRoute(*this);
+}
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::ForwardingRoute::notifyThrottle()
+{
+    v_notifyThrottle();
+}
+
+prefix_ void senf::ppi::ForwardingRoute::notifyUnthrottle()
+{
+    v_notifyUnthrottle();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::NonForwardingRouteImplementation
+
+prefix_ senf::ppi::detail::NonForwardingRouteImplementation::
+NonForwardingRouteImplementation(module::Module & module, connector::InputConnector & source,
+                                 connector::OutputConnector & target)
+    : RouteBase(module), source_(&source), target_(&target)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::NonForwardingRouteToEventImplementation
+
+prefix_
+senf::ppi::detail::NonForwardingRouteToEventImplementation::
+NonForwardingRouteToEventImplementation(module::Module & module,
+                                        connector::InputConnector & source,
+                                        EventDescriptor & target)
+    : RouteBase(module), source_(&source), target_(&target)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::NonForwardingRouteFromEventImplementation
+
+prefix_
+senf::ppi::detail::NonForwardingRouteFromEventImplementation::
+NonForwardingRouteFromEventImplementation(module::Module & module, EventDescriptor & source,
+                                          connector::OutputConnector & target)
+    : RouteBase(module), source_(&source), target_(&target)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::ForwardForwardingRouteImplementation
+
+prefix_
+senf::ppi::detail::ForwardForwardingRouteImplementation::
+ForwardForwardingRouteImplementation(module::Module & module, connector::ActiveInput & source,
+                                     connector::PassiveOutput & target)
+    : ForwardingRoute(module), source_(&source), target_(&target)
+{
+    registerRoute(*source_);
+}
+
+prefix_ void senf::ppi::detail::ForwardForwardingRouteImplementation::v_notifyThrottle()
+{
+    if (autoThrottling())
+        target_->notifyThrottle();
+}
+
+prefix_ void senf::ppi::detail::ForwardForwardingRouteImplementation::v_notifyUnthrottle()
+{
+    if (autoThrottling())
+        target_->notifyUnthrottle();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::BackwardForwardingRouteImplementation
+
+prefix_
+senf::ppi::detail::BackwardForwardingRouteImplementation::
+BackwardForwardingRouteImplementation(module::Module & module,
+                                      connector::PassiveInput & source,
+                                      connector::ActiveOutput & target)
+    : ForwardingRoute(module), source_(&source), target_(&target)
+{
+    registerRoute(*target_);
+}
+
+prefix_ void senf::ppi::detail::BackwardForwardingRouteImplementation::v_notifyThrottle()
+{ 
+    if (autoThrottling())
+        source_->notifyThrottle();
+}
+
+prefix_ void senf::ppi::detail::BackwardForwardingRouteImplementation::v_notifyUnthrottle()
+{
+    if (autoThrottling())
+        source_->notifyUnthrottle();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::ForwardForwardingRouteToEventImplementation
+
+prefix_
+senf::ppi::detail::ForwardForwardingRouteToEventImplementation::
+ForwardForwardingRouteToEventImplementation(module::Module & module,
+                                            connector::ActiveInput & source,
+                                            EventDescriptor & target)
+    : ForwardingRoute(module), source_(&source), target_(&target)
+{
+    registerRoute(*source_);
+}
+
+prefix_ void senf::ppi::detail::ForwardForwardingRouteToEventImplementation::v_notifyThrottle()
+{
+    if (autoThrottling())
+        target_->enabled(false);
+}
+
+prefix_ void
+senf::ppi::detail::ForwardForwardingRouteToEventImplementation::v_notifyUnthrottle()
+{
+    if (autoThrottling())
+        target_->enabled(true);
+}
+
+///////////////////////////////////////////////////////////////////////////
+//senf::ppi::detail::BackwardForwardingRouteFromEventImplementation
+
+prefix_
+senf::ppi::detail::BackwardForwardingRouteFromEventImplementation::
+BackwardForwardingRouteFromEventImplementation(module::Module & module,
+                                               EventDescriptor & source,
+                                               connector::ActiveOutput & target)
+    : ForwardingRoute(module), source_(&source), target_(&target)
+{
+    registerRoute(*target_);
+}
+
+prefix_ void
+senf::ppi::detail::BackwardForwardingRouteFromEventImplementation::v_notifyThrottle()
+{
+    if (autoThrottling())
+        source_->enabled(false);
+}
+
+prefix_ void
+senf::ppi::detail::BackwardForwardingRouteFromEventImplementation::v_notifyUnthrottle()
+{ 
+    if (autoThrottling())
+        source_->enabled(true);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::RouteImplementation<connector::ActiveInput, connector::PassiveOutput, 
+//                                        false, false>
+
+prefix_
+senf::ppi::detail::RouteImplementation<senf::ppi::connector::ActiveInput, 
+                                       senf::ppi::connector::PassiveOutput, 
+                                       false, false>::
+RouteImplementation(module::Module & module, connector::ActiveInput & source,
+                    connector::PassiveOutput & target)
+    : ForwardForwardingRouteImplementation(module, source, target)
+{}
+
+////////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::RouteImplementation<connector::PassiveInput, connector::ActiveOutput, 
+//                                        false, false>
+
+prefix_
+senf::ppi::detail::RouteImplementation<senf::ppi::connector::PassiveInput, 
+                                       senf::ppi::connector::ActiveOutput, 
+                                       false, false>::
+RouteImplementation(module::Module & module, connector::PassiveInput & source,
+                    connector::ActiveOutput & target)
+    : BackwardForwardingRouteImplementation(module, source, target)
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

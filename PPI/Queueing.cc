@@ -27,16 +27,28 @@
 //#include "Queueing.ih"
 
 // Custom includes
+#include "Connectors.hh"
 
 //#include "Queueing.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::QueueingDiscipline
+// senf::ppi::ThresholdQueueing
 
-prefix_ senf::ppi::QueueingDiscipline::~QueueingDiscipline()
-{}
+prefix_ void senf::ppi::ThresholdQueueing::update(connector::PassiveInput & input, Event event)
+{
+    switch (event) {
+    case ENQUEUE:    
+        if (input.queueSize() >= high_)
+            input.throttle();
+        break;
+    case DEQUEUE:
+        if (input.queueSize() <= low_)
+            input.unthrottle();
+        break;
+    }
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

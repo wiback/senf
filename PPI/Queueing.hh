@@ -43,6 +43,12 @@ namespace ppi {
         operating system by sending throttling events. The PPI will never loose a packet internally
         (if not a module explicitly does so), however it may disable reception of new incoming
         packets which will then probably be dropped by the operating system.
+
+        \attention Notifications may be forwarded to the QueueingDiscipline implementation
+            out-of-order: A dequeue event may be notified before the corresponding enqueue
+            event (this happens to optimize away transient throttling state changes which would
+            otherwise occur if a packet is entered into the queue and then removed from it in the
+            same processing step).
      */
     class QueueingDiscipline
     {
@@ -50,22 +56,35 @@ namespace ppi {
         virtual ~QueueingDiscipline();
 
         enum Event { ENQUEUE, DEQUEUE }; ///< Possible queueing events
-        enum State { THROTTLED, UNTHROTTLED }; ///< Possible queueing states
         
-        virtual State update(connector::PassiveInput & input, Event event) = 0;
+        virtual void update(connector::PassiveInput & input, Event event) = 0;
                                         ///< Calculate new queueing state
                                         /**< Whenever the queue is manipulated, this member is
-                                             called to calculate the new throttling state.
+                                             called to calculate the new throttling state. The
+                                             member must call \a input's \c throttle() or \c
+                                             unthrottle() member to set the new throttling state.
                                              
                                              \param[in] input Connector holding the queue
-                                             \param[in] event Type of event triggering the update
-                                             \returns new throttling state */
+                                             \param[in] event Type of event triggering the update */
+    };
+
+    class ThresholdQueueing
+        : public QueueingDiscipline
+    {
+    public:
+        ThresholdQueueing(unsigned high, unsigned low);
+
+        virtual void update(connector::PassiveInput & input, Event event);
+
+    private:
+        unsigned high_;
+        unsigned low_;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Queueing.cci"
+#include "Queueing.cci"
 //#include "Queueing.ct"
 //#include "Queueing.cti"
 #endif

@@ -40,12 +40,27 @@ prefix_ void senf::ppi::connector::PassiveConnector::onRequest(Handler handler)
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::ActiveConnector
+
+template <class Handler>
+prefix_ void senf::ppi::connector::ActiveConnector::onThrottle(Handler handler)
+{
+    throttleCallback_ = detail::Callback<>::make(handler, module());
+}
+
+template <class Handler>
+prefix_ void senf::ppi::connector::ActiveConnector::onUnthrottle(Handler handler)
+{
+    unthrottleCallback_ = detail::Callback<>::make(handler, module());
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveInput
 
 template <class QDisc>
 prefix_ void senf::ppi::connector::PassiveInput::qdisc(QDisc const & disc)
 {
-    qdisc_ = boost::scoped_ptr<QueueingDiscipline>(new QDisc(disc));
+    qdisc_.reset(new QDisc(disc));
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

@@ -48,12 +48,16 @@ BOOST_AUTO_UNIT_TEST(debugModules)
         debug::PassivePacketSink sink;
 
         ppi::connect(source.output, sink.input);
-        
+        ppi::init();
+    
         senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };
         senf::Packet p (senf::DataPacket::create(data));
 
+        BOOST_CHECK( ! sink.input.throttled() );
+
         source.submit(p);
-        
+
+        BOOST_CHECK( ! sink.input.throttled() );
         BOOST_CHECK_EQUAL( sink.size(), 1u );
         BOOST_CHECK( ! sink.empty() );
         BOOST_CHECK_EQUAL( 
@@ -73,6 +77,7 @@ BOOST_AUTO_UNIT_TEST(debugModules)
         debug::ActivePacketSink sink;
 
         ppi::connect(source.output, sink.input);
+        ppi::init();
 
         senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };
         senf::Packet p (senf::DataPacket::create(data));

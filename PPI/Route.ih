@@ -34,48 +34,181 @@ namespace senf {
 namespace ppi {
 namespace detail {
 
-    template <bool srcEvent, bool trgEvent>
-    class RouteImplementation
+    // Valid Forwarding routes:
+    //   Forward throttling
+    //     ActiveInput -> PassiveOutput
+    //       tempalte<> RouteImplementation<ActiveInput,PassiveOutput,false,false>
+    //     ActiveInput -> Event
+    //       template<class Event> class RouteImplementation<ActiveInput, Event, false, true>
+    //   Backward throttling
+    //     PassiveInput -> ActiveOutput
+    //       template<> RouteImplementation<PassiveInput, ActiveOutput, false, false>
+    //     Event -> ActiveOutput
+    //       template<class Event> class RouteImplementation<Event, ActiveOutput, true, false>
+
+    class NonForwardingRouteImplementation
         : public RouteBase
     {
     protected:
-        RouteImplementation(module::Module & module, 
-                            connector::InputConnector & source, 
-                            connector::OutputConnector & target);
+        NonForwardingRouteImplementation(module::Module & module, 
+                                         connector::InputConnector & source,
+                                         connector::OutputConnector & target);
 
     private:
         connector::InputConnector * source_;
         connector::OutputConnector * target_;
     };
 
-#   ifndef DOXYGEN
-
-    template <>
-    class RouteImplementation<true,false>
+    class NonForwardingRouteToEventImplementation
         : public RouteBase
     {
     protected:
-        RouteImplementation(module::Module & module, 
-                            EventDescriptor & source, 
-                            connector::OutputConnector & target);
+        NonForwardingRouteToEventImplementation(module::Module & module,
+                                                connector::InputConnector & source,
+                                                EventDescriptor & target);
+        
+    private:
+        connector::InputConnector * source_;
+        EventDescriptor * target_;
+    };
+
+    class NonForwardingRouteFromEventImplementation
+        : public RouteBase
+    {
+    protected:
+        NonForwardingRouteFromEventImplementation(module::Module & module,
+                                                  EventDescriptor & source,
+                                                  connector::OutputConnector & target);
 
     private:
         EventDescriptor * source_;
         connector::OutputConnector * target_;
     };
 
-    template<>
-    class RouteImplementation<false,true>
-        : public RouteBase
+    class ForwardForwardingRouteImplementation
+        : public ForwardingRoute
     {
     protected:
-        RouteImplementation(module::Module & module, 
-                            connector::InputConnector & source,
-                            EventDescriptor & target);
+        ForwardForwardingRouteImplementation(module::Module & module,
+                                             connector::ActiveInput & source,
+                                             connector::PassiveOutput & target);
 
     private:
-        connector::InputConnector * source_;
+        virtual void v_notifyThrottle();
+        virtual void v_notifyUnthrottle();
+
+        connector::ActiveInput * source_;
+        connector::PassiveOutput * target_;
+    };
+
+    class BackwardForwardingRouteImplementation
+        : public ForwardingRoute
+    {
+    protected:
+        BackwardForwardingRouteImplementation(module::Module & module,
+                                              connector::PassiveInput & source,
+                                              connector::ActiveOutput & target);
+
+    private:
+        virtual void v_notifyThrottle();
+        virtual void v_notifyUnthrottle();
+        
+        connector::PassiveInput * source_;
+        connector::ActiveOutput * target_;
+    };
+
+    class ForwardForwardingRouteToEventImplementation
+        : public ForwardingRoute
+    {
+    protected:
+        ForwardForwardingRouteToEventImplementation(module::Module & module,
+                                                    connector::ActiveInput & source,
+                                                    EventDescriptor & target);
+
+    private:
+        virtual void v_notifyThrottle();
+        virtual void v_notifyUnthrottle();
+
+        connector::ActiveInput * source_;
         EventDescriptor * target_;
+    };
+
+    class BackwardForwardingRouteFromEventImplementation
+        : public ForwardingRoute
+    {
+    protected:
+        BackwardForwardingRouteFromEventImplementation(module::Module & module,
+                                                       EventDescriptor & source,
+                                                       connector::ActiveOutput & target); 
+
+    private:
+        virtual void v_notifyThrottle();
+        virtual void v_notifyUnthrottle();
+
+        EventDescriptor * source_;
+        connector::ActiveOutput * target_;
+    };
+
+    template <class Source, class Target, bool srcEvent, bool trgEvent>
+    class RouteImplementation
+        : public NonForwardingRouteImplementation
+    {
+    protected:
+        RouteImplementation(module::Module & module, Source & source, Target & target);
+    };
+
+#   ifndef DOXYGEN
+
+    template <class Source, class Target>
+    class RouteImplementation<Source, Target, true, false>
+        : public NonForwardingRouteFromEventImplementation
+    {
+    protected:
+        RouteImplementation(module::Module & module, Source & source, Target & target);
+    };
+
+    template<class Source, class Target>
+    class RouteImplementation<Source, Target, false, true>
+        : public NonForwardingRouteToEventImplementation
+    {
+    protected:
+        RouteImplementation(module::Module & module, Source & source, Target & target);
+    };
+
+    template<>
+    class RouteImplementation<connector::ActiveInput, connector::PassiveOutput, false, false>
+        : public ForwardForwardingRouteImplementation
+    {
+    protected:
+        RouteImplementation(module::Module & module, connector::ActiveInput & source, 
+                            connector::PassiveOutput & target);
+    };
+
+    template <class Event>
+    class RouteImplementation<connector::ActiveInput, Event, false, true>
+        : public ForwardForwardingRouteToEventImplementation
+    {
+    protected:
+        RouteImplementation(module::Module & module, connector::ActiveInput & source, 
+                            Event & target);
+    };
+
+    template <>
+    class RouteImplementation<connector::PassiveInput, connector::ActiveOutput, false, false>
+        : public BackwardForwardingRouteImplementation
+    {
+    protected:
+        RouteImplementation(module::Module & module, connector::PassiveInput & source, 
+                            connector::ActiveOutput & target);
+    };
+    
+    template <class Event>
+    class RouteImplementation<Event, connector::ActiveOutput, true, false>
+        : public BackwardForwardingRouteFromEventImplementation
+    {
+    protected:
+        RouteImplementation(module::Module & module, Event & source, 
+                            connector::ActiveOutput & target);
     };
 
 #   endif

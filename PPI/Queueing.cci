@@ -21,36 +21,25 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Setup inline non-template implementation */
+    \brief Queueing inline non-template implementation */
 
 // Custom includes
-#include "Connectors.hh"
-#include "ModuleManager.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::ppi::connect(connector::ActiveOutput & source,
-                                connector::PassiveInput & target)
-{
-    source.connect(target);
-}
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::QueueingDiscipline
 
-prefix_ void senf::ppi::connect(connector::PassiveOutput & source,
-                                connector::ActiveInput & target)
-{
-    source.connect(target);
-}
+prefix_ senf::ppi::QueueingDiscipline::~QueueingDiscipline()
+{}
 
-prefix_ void senf::ppi::run()
-{
-    ModuleManager::instance().run();
-}
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::ThresholdQueueing
 
-prefix_ void senf::ppi::init()
-{
-    ModuleManager::instance().init();
-}
+prefix_ senf::ppi::ThresholdQueueing::ThresholdQueueing(unsigned high, unsigned low)
+    : high_(high), low_(low)
+{}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

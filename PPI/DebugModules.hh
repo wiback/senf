@@ -69,6 +69,7 @@ namespace debug {
 
     private:
         void request();
+        void init();
         
         Queue packets_;
     };

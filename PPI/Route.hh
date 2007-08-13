@@ -37,6 +37,20 @@ namespace ppi {
     class RouteBase
     {
     public:
+        virtual ~RouteBase();
+
+    protected:
+        RouteBase(module::Module & module);
+
+    private:
+        module::Module * module_;
+    };
+
+    class ForwardingRoute
+        : public RouteBase
+    {
+    public:
+        bool autoThrottling();
         void autoThrottling(bool state); ///< Change automatic throttle notification forwarding
                                         /**< By default, throttle notifications are automatically
                                              forwarded from active to passive connectors. This may
@@ -50,23 +64,31 @@ namespace ppi {
                                              disable the event whenever a throttling notification
                                              comes in. Respective for unthrottle notifications.
 
-                                             \param[in] state New throttle forwarding state 
-
-                                             \implementation This class will be implemented using a
-                                                 baseclass, this template and several
-                                                 specializations. However, this is an implementation
-                                                 detail which does not affect the exposed
-                                                 interface. */
-
+                                             \param[in] state New throttle forwarding state */
+        
     protected:
-        RouteBase(module::Module & module);
+        ForwardingRoute(module::Module & module);
+
+        // Called to register this route with the connectors forwarding information base
+        void registerRoute(connector::ActiveConnector & connector);
 
     private:
-        module::Module * module_;
+        // called to forward a throttling notification along the route
+        void notifyThrottle();
+        void notifyUnthrottle();
+
+        // Implemented in the derived classes to forward throttling notifications
+        virtual void v_notifyThrottle() = 0;
+        virtual void v_notifyUnthrottle() = 0;
+
+        bool autoThrottling_;
+
+        friend class connector::ActiveConnector;
     };
 
 }}
 
+// We need detail::RouteImplementation here ...
 #include "Route.ih"
 
 namespace senf {
@@ -79,13 +101,10 @@ namespace ppi {
      */
     template <class Source, class Target>
     class Route
-        : public detail::RouteImplementation< boost::is_base_of<EventDescriptor,Source>::value,
-                                              boost::is_base_of<EventDescriptor,Target>::value >
+        : public detail::RouteImplementation<Source,Target>
     {
     private:
-        typedef detail::RouteImplementation< 
-            boost::is_base_of<EventDescriptor,Source>::value,
-            boost::is_base_of<EventDescriptor,Target>::value > Implementation;
+        typedef detail::RouteImplementation<Source,Target> Implementation;
         
         Route(module::Module & module, Source & source, Target & target);
 

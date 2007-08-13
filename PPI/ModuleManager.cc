@@ -21,39 +21,39 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Setup inline non-template implementation */
+    \brief ModuleManager non-inline non-template implementation */
+
+#include "ModuleManager.hh"
+//#include "ModuleManager.ih"
 
 // Custom includes
-#include "Connectors.hh"
-#include "ModuleManager.hh"
+#include "Scheduler/Scheduler.hh"
+#include "Module.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "ModuleManager.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::ppi::connect(connector::ActiveOutput & source,
-                                connector::PassiveInput & target)
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::ModuleManager
+
+prefix_ void senf::ppi::ModuleManager::init()
 {
-    source.connect(target);
+    ModuleRegistry::const_iterator i (moduleRegistry_.begin());
+    ModuleRegistry::const_iterator const i_end (moduleRegistry_.end());
+    for (; i != i_end; ++i)
+        (*i)->init();
 }
 
-prefix_ void senf::ppi::connect(connector::PassiveOutput & source,
-                                connector::ActiveInput & target)
+prefix_ void senf::ppi::ModuleManager::run()
 {
-    source.connect(target);
+    init();
+    Scheduler::instance().process();
 }
 
-prefix_ void senf::ppi::run()
-{
-    ModuleManager::instance().run();
-}
-
-prefix_ void senf::ppi::init()
-{
-    ModuleManager::instance().init();
-}
-
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "ModuleManager.mpp"
 
 
 // Local Variables:
