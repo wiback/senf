@@ -21,19 +21,15 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventManager public header */
+    \brief DebugEvent public header */
 
-#ifndef HH_EventManager_
-#define HH_EventManager_ 1
+#ifndef HH_DebugEvent_
+#define HH_DebugEvent_ 1
 
 // Custom includes
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include "predecl.hh"
-#include "detail/Callback.hh"
-#include "detail/EventBinding.hh"
+#include "Events.hh"
 
-//#include "EventManager.mpp"
+//#include "DebugEvent.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -41,65 +37,41 @@ namespace ppi {
 
     /** \brief
       */
-    class EventManager
+    class DebugEvent
+        : public EventImplementation<>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        template <class Descriptor>
-#ifndef DOXYGEN
-        struct Callback
-#else
-        // This is SO stupid but doxygen must have some scoping problems if the 
-        // struct is called 'Callback' and will hang in an endless loop somewhere
-        struct Callback_
-#endif
-            : public detail::Callback<typename Descriptor::EventArg>
-        {};
-
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-
-        static EventManager & instance();
 
         // default default constructor
         // default copy constructor
         // default copy assignment
         // default destructor
-
         // no conversion constructors
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        template <class Descriptor>
-        void registerEvent(module::Module & module,
-                           typename Callback<Descriptor>::type callback,
-                           Descriptor & descriptor);
-
-        boost::posix_time::ptime eventTime();
+        void trigger();
 
     protected:
 
     private:
-        typedef boost::ptr_vector<detail::EventBindingBase> EventRegistrations;
-        EventRegistrations registrations_;
-
-        void eventTime(boost::posix_time::ptime time);
-
-        boost::posix_time::ptime eventTime_;
-
-        friend class detail::EventBindingBase;
+        virtual void v_enable();
+        virtual void v_disable();
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "EventManager.cci"
-#include "EventManager.ct"
-//#include "EventManager.cti"
+#include "DebugEvent.cci"
+//#include "DebugEvent.ct"
+//#include "DebugEvent.cti"
 #endif
 
 

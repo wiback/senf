@@ -28,6 +28,10 @@
 
 // Custom includes
 #include "Route.hh"
+#include "DebugEvent.hh"
+#include "DebugModules.hh"
+#include "Module.hh"
+#include "Setup.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -35,8 +39,126 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace ppi = senf::ppi;
+namespace connector = ppi::connector;
+namespace module = ppi::module;
+namespace debug = module::debug;
+
+namespace {
+    class RouteTester : public module::Module
+    {
+    public:
+        connector::ActiveInput activeIn;
+        connector::PassiveInput passiveIn;
+
+        connector::ActiveOutput activeOut;
+        connector::PassiveOutput passiveOut;
+
+        ppi::DebugEvent event;
+
+        ppi::ForwardingRoute * rt;
+        
+        RouteTester() : events(0), throttles(0) {
+                   route( activeIn,  activeOut  );  // non-forwarding
+            rt = & route( activeIn,  passiveOut );  // forward throttling
+                   route( passiveIn, activeOut  );  // backward throttling
+                   route( passiveIn, passiveOut );  // non-forwarding
+                   route( event,     activeOut  );  // forward event throttling
+                   route( activeIn,  event      );  // backward event throttling
+
+            passiveIn.onRequest(&RouteTester::inputRequest);
+            passiveOut.onRequest(&RouteTester::outputRequest);
+            registerEvent(&RouteTester::onEvent, event);
+
+            activeIn.onThrottle(&RouteTester::throttleRequest);
+            activeIn.onUnthrottle(&RouteTester::unthrottleRequest);
+            activeOut.onThrottle(&RouteTester::throttleRequest);
+            activeOut.onUnthrottle(&RouteTester::unthrottleRequest);
+        }
+
+        void inputRequest() {
+            activeOut(passiveIn());
+        }
+
+        void outputRequest() {
+            passiveOut(activeIn());
+        }
+
+        void onEvent() {
+            ++ events;
+        }
+
+        void throttleRequest() {
+            ++ throttles;
+        }
+        
+        void unthrottleRequest() {
+            -- throttles;
+        }
+
+        unsigned events;
+        int throttles;
+    };
+}
+
 BOOST_AUTO_UNIT_TEST(route)
-{}
+{
+    debug::PassivePacketSource passiveSource;
+    debug::ActivePacketSource activeSource;
+    debug::PassivePacketSink passiveSink;
+    debug::ActivePacketSink activeSink;
+    RouteTester tester;
+
+    ppi::connect(passiveSource.output, tester.activeIn);
+    ppi::connect(activeSource.output, tester.passiveIn);
+    ppi::connect(tester.activeOut, passiveSink.input);
+    ppi::connect(tester.passiveOut, activeSink.input);
+
+    ppi::init();
+
+    senf::Packet p1 (senf::DataPacket::create());
+    senf::Packet p2 (senf::DataPacket::create());
+
+    passiveSource.submit(p1);
+    activeSource.submit(p2);
+
+    BOOST_CHECK( p2 == passiveSink.front() );
+
+    // The passive source is not throttled at this point since it has packets in queue
+
+    passiveSink.input.throttle();
+    BOOST_CHECK( passiveSink.input.throttled() );
+    BOOST_CHECK( ! tester.activeOut );
+    BOOST_CHECK_EQUAL( tester.throttles, 1 );
+    BOOST_CHECK( tester.passiveIn.throttled() );
+    BOOST_CHECK( ! activeSource.output );
+    BOOST_CHECK( ! tester.event.enabled() );
+
+    passiveSink.input.unthrottle();
+    BOOST_CHECK( activeSource.output );
+    BOOST_CHECK( tester.event.enabled() );
+    
+
+    // Now throttle the passive source by exhausting the queue
+    
+    BOOST_CHECK( p1 == activeSink.request() );
+    BOOST_CHECK( passiveSource.output.throttled() );
+    BOOST_CHECK( ! tester.activeIn );
+    BOOST_CHECK_EQUAL( tester.throttles, 1 );
+    BOOST_CHECK( tester.passiveOut.throttled() );
+    BOOST_CHECK( ! activeSink.input );
+    BOOST_CHECK( ! tester.event.enabled() );
+    
+    passiveSource.submit(p1);
+    BOOST_CHECK( activeSink.input );
+    BOOST_CHECK( tester.event.enabled() );
+
+    tester.rt->autoThrottling(false);
+
+    BOOST_CHECK( p1 == activeSink.request() );
+    BOOST_CHECK( passiveSource.output.throttled() );
+    BOOST_CHECK( activeSink.input );
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

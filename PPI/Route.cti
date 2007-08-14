@@ -31,65 +31,139 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::detail::RouteImplementation<Source,Target,srcEvent,trgEvent>
-
-template <class Source, class Target, bool srcEvent, bool trgEvent>
-prefix_
-senf::ppi::detail::RouteImplementation<Source,Target,srcEvent,trgEvent>::
-RouteImplementation(module::Module & module, Source & source, Target & target)
-    : NonForwardingRouteImplementation(module, source, target)
-{}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::detail::RouteImplementation<Source, Target, true, false>
-
-template <class Source, class Target>
-prefix_
-senf::ppi::detail::RouteImplementation<Source, Target, true, false>::
-RouteImplementation(module::Module & module, Source & source, Target & target)
-    : NonForwardingRouteFromEventImplementation(module, source, target)
-{}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::detail::RouteImplementation<Source, Target, false, true>
-
-template <class Source, class Target>
-prefix_
-senf::ppi::detail::RouteImplementation<Source, Target, false, true>::
-RouteImplementation(module::Module & module, Source & source, Target & target)
-    : NonForwardingRouteToEventImplementation(module, source, target)
-{}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::detail::RouteImplementation<connector::ActiveInput, Event, false, true>
-
-template <class Event>
-prefix_
-senf::ppi::detail::RouteImplementation<senf::ppi::connector::ActiveInput, Event, false, true>::
-RouteImplementation(module::Module & module, connector::ActiveInput & source, Event & target)
-    : ForwardForwardingRouteToEventImplementation(module, source, target)
-{}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::detail::RouteImplementation<Event, connector::ActiveOutput, true, false>
-
-template <class Event>
-prefix_
-senf::ppi::detail::RouteImplementation<Event, senf::ppi::connector::ActiveOutput, true, false>::
-RouteImplementation(module::Module & module, Event & source, connector::ActiveOutput & target)
-    : BackwardForwardingRouteFromEventImplementation(module, source, target)
-{}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::ppi::Route<Source,Target>
+
+template <class Source, class Target>
+prefix_ senf::ppi::Route<Source,Target>::Route(module::Module & module, Source & source,
+                                               Target & target)
+    : Base(module,source,target)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::ForwardingRoute
+
+////////////////////////////////////////
+// protected members
+
+template <class T>
+prefix_ void senf::ppi::ForwardingRoute::notifyThrottle(T & ob)
+{
+    ob.notifyThrottle();
+}
+
+template <class T>
+prefix_ void senf::ppi::ForwardingRoute::notifyUnthrottle(T & ob)
+{
+    ob.notifyUnthrottle();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>
+
+template <class Source, class Target, class Base>
+prefix_ Source & senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::source()
+{
+    return *source_;
+}
+
+template <class Source, class Target, class Base>
+prefix_ Target & senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::target()
+{
+    return *target_;
+}
+
+////////////////////////////////////////
+// protected members
+
+template <class Source, class Target, class Base>
+prefix_ senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::
+BaseRouteImplementation(module::Module & module, Source & source, Target & target)
+    : Base(module), source_(&source), target_(&target)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::ForwardingRouteImplementation<Source,Target>
 
 ////////////////////////////////////////
 // protected members
 
 template <class Source, class Target>
-prefix_ senf::ppi::Route<Source,Target>::Route(module::Module & module, Source & source,
-                                               Target & target)
-    : Implementation(module, source, target)
+prefix_
+senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+ForwardingRouteImplementation(module::Module & module, Source & source, Target & target)
+    : Base(module,source,target)
+{
+    registerRoute(source, boost::mpl::bool_<RoutingTraits<Source>::notifySource>());
+    registerRoute(target, boost::mpl::bool_<RoutingTraits<Target>::notifySource>());
+}
+
+////////////////////////////////////////
+// private members
+
+template <class Source, class Target>
+template <class T>
+prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+registerRoute(T & ob, boost::mpl::bool_<true> const &)
+{
+    ForwardingRoute::registerRoute(ob);
+}
+
+template <class Source, class Target>
+template <class T>
+prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+registerRoute(T & ob, boost::mpl::bool_<false> const &)
+{}
+
+template <class Source, class Target>
+template <class T>
+prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+notifyThrottle(T & ob, boost::mpl::bool_<true> const &)
+{
+    ForwardingRoute::notifyThrottle(ob);
+}
+
+template <class Source, class Target>
+template <class T>
+prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+notifyThrottle(T & ob, boost::mpl::bool_<false> const &)
+{}
+
+template <class Source, class Target>
+template <class T>
+prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+notifyUnthrottle(T & ob, boost::mpl::bool_<true> const &)
+{
+    ForwardingRoute::notifyUnthrottle(ob);
+}
+
+template <class Source, class Target>
+template <class T>
+prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+notifyUnthrottle(T & ob, boost::mpl::bool_<false> const &)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::RouteImplementation2<Source,Target>
+
+////////////////////////////////////////
+// protected members
+
+template <class Source, class Target>
+prefix_ senf::ppi::detail::RouteImplementation2<Source,Target>::
+RouteImplementation2(module::Module & module, Source & source, Target & target)
+    : Base(module,source,target)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::RouteImplementation<Source,Target>
+
+////////////////////////////////////////
+// protected members
+
+template <class Source, class Target>
+prefix_ senf::ppi::detail::RouteImplementation<Source,Target>::
+RouteImplementation(module::Module & module, Source & source, Target & target)
+    : Base(module,source,target)
 {}
 
 ///////////////////////////////cti.e///////////////////////////////////////

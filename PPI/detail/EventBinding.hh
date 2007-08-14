@@ -52,23 +52,47 @@ namespace detail {
         EventDescriptor * descriptor_;
     };
 
+    template <class EventType, class Self>
+    class EventBindingHelper
+    {
+    public:
+        typedef typename detail::EventArgType<EventType>::type EventArg;
+
+        void callback(EventArg event, boost::posix_time::ptime time);
+        void callback(EventArg event);
+        
+    private:
+        Self & self();
+    };
+
+    template <class Self>
+    class EventBindingHelper<void,Self>
+    {
+    public:
+        void callback(boost::posix_time::ptime time);
+        void callback();
+        
+    private:
+        Self & self();
+    };
+
     template <class EventType>
     class EventBinding
-        : public EventBindingBase
+        : public EventBindingBase, 
+          public EventBindingHelper<EventType, EventBinding<EventType> >
     {
     public:
         typedef EventType Event;
         typedef typename detail::EventArgType<Event>::type EventArg;
-        typedef typename detail::Callback<Event const &>::type Callback;
+        typedef typename detail::Callback<EventArg>::type Callback;
 
         EventBinding(EventManager & manager, module::Module & module, Callback callback,
                      EventDescriptor & descriptor);
 
-        void callback(EventArg event, boost::posix_time::ptime time);
-        void callback(EventArg event);
-
     private:
         Callback callback_;
+
+        friend class EventBindingHelper<EventType, EventBinding<EventType> >;
     };
 
 }}}

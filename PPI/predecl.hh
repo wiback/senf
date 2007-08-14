@@ -55,9 +55,7 @@ namespace ppi {
         class BackwardForwardingRouteImplementation;
         class ForwardForwardingRouteToEventImplementation;
         class BackwardForwardingRouteFromEventImplementation;
-        template <class Source, class Target, 
-                  bool srcEvent = boost::is_base_of<EventDescriptor,Source>::value,
-                  bool trgEvent = boost::is_base_of<EventDescriptor,Target>::value>
+        template <class Source, class Target>
             class RouteImplementation;
     }
 

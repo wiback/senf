@@ -21,57 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Events inline non-template implementation */
+    \brief Route non-inline template implementation  */
+
+#include "Route.ih"
 
 // Custom includes
-#include <boost/assert.hpp>
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::EventDescriptor
-
-prefix_ senf::ppi::EventDescriptor::~EventDescriptor()
-{}
-
-prefix_ bool senf::ppi::EventDescriptor::enabled()
-{
-    return enabled_;
-}
-
-prefix_ void senf::ppi::EventDescriptor::enabled(bool v)
-{
-    BOOST_ASSERT(v_isRegistered());
-    if (v && ! enabled_)
-        v_enable();
-    else if (! v && enabled_)
-        v_disable();
-    enabled_ = v;
-}
-
-////////////////////////////////////////
-// protected members
-
-prefix_ senf::ppi::EventDescriptor::EventDescriptor()
-    : enabled_(false)
-{}
+// senf::ppi::detail::ForwardingRouteImplementation<Source,Target>
 
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::EventDescriptor::notifyThrottle()
+template <class Source, class Target>
+prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::v_notifyThrottle()
 {
-    enabled(false);
+    if (this->autoThrottling()) {
+        notifyThrottle(this->source(),boost::mpl::bool_<RoutingTraits<Source>::notifyTarget>());
+        notifyThrottle(this->target(),boost::mpl::bool_<RoutingTraits<Target>::notifyTarget>());
+    }
 }
 
-prefix_ void senf::ppi::EventDescriptor::notifyUnthrottle()
+template <class Source, class Target>
+prefix_ void
+senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::v_notifyUnthrottle()
 {
-    enabled(true);
+    if (this->autoThrottling()) {
+        notifyUnthrottle(this->source(),boost::mpl::bool_<RoutingTraits<Source>::notifyTarget>());
+        notifyUnthrottle(this->target(),boost::mpl::bool_<RoutingTraits<Target>::notifyTarget>());
+    }
 }
 
-
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
 

@@ -64,11 +64,11 @@ BOOST_AUTO_UNIT_TEST(debugModules)
             debug::PassivePacketSink::size_type(std::distance(sink.begin(),sink.end())),
             sink.size() );
         BOOST_CHECK( *sink.begin() == p );
-        BOOST_CHECK( sink.back() == p );
+        BOOST_CHECK( sink.front() == p );
 
         sink.clear();
 
-        BOOST_CHECK( ! sink.back() );
+        BOOST_CHECK( ! sink.front() );
         BOOST_CHECK( sink.empty() );
     }
 

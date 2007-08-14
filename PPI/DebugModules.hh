@@ -103,8 +103,8 @@ namespace debug {
         iterator begin();
         iterator end();
 
-        Packet back();
-        Packet pop_back();
+        Packet front();
+        Packet pop_front();
 
         void clear();
 

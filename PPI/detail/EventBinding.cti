@@ -31,6 +31,59 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::EventBindingHelper<EventType,Self>
+
+template <class EventType, class Self>
+prefix_ void
+senf::ppi::detail::EventBindingHelper<EventType,Self>::callback(EventArg event,
+                                                                boost::posix_time::ptime time)
+{
+    self().eventTime(time);
+    self().callback_(event);
+}
+
+template <class EventType, class Self>
+prefix_ void senf::ppi::detail::EventBindingHelper<EventType,Self>::callback(EventArg event)
+{
+    callback(event, boost::posix_time::microsec_clock::universal_time());
+}
+
+////////////////////////////////////////
+// private members
+
+template <class EventType, class Self>
+prefix_ Self & senf::ppi::detail::EventBindingHelper<EventType,Self>::self()
+{
+    return * static_cast<Self*>(this);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail::EventBindingHelper<void,Self>
+
+template <class Self>
+prefix_ void
+senf::ppi::detail::EventBindingHelper<void,Self>::callback(boost::posix_time::ptime time)
+{
+    self().eventTime(time);
+    self().callback_();
+}
+
+template <class Self>
+prefix_ void senf::ppi::detail::EventBindingHelper<void,Self>::callback()
+{
+    callback(boost::posix_time::microsec_clock::universal_time());
+}
+
+////////////////////////////////////////
+// private members
+
+template <class Self>
+prefix_ Self & senf::ppi::detail::EventBindingHelper<void,Self>::self()
+{
+    return * static_cast<Self*>(this);
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::ppi::detail::EventBinding<EvImpl>
 
 template <class EventType>
@@ -40,20 +93,6 @@ prefix_ senf::ppi::detail::EventBinding<EventType>::EventBinding(EventManager & 
                                                                  EventDescriptor & descriptor)
     : EventBindingBase(manager, module, descriptor), callback_(callback)
 {}
-
-template <class EvImpl>
-prefix_ void senf::ppi::detail::EventBinding<EvImpl>::callback(EventArg event,
-                                                               boost::posix_time::ptime time)
-{
-    eventTime(time);
-    callback_(event);
-}
-
-template <class EvImpl>
-prefix_ void senf::ppi::detail::EventBinding<EvImpl>::callback(EventArg event)
-{
-    callback(event, boost::posix_time::microsec_clock::universal_time());
-}
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

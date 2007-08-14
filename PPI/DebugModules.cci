@@ -129,19 +129,19 @@ senf::ppi::module::debug::PassivePacketSink::end()
     return packets_.end();
 }
 
-prefix_ senf::Packet senf::ppi::module::debug::PassivePacketSink::back()
+prefix_ senf::Packet senf::ppi::module::debug::PassivePacketSink::front()
 {
     if (empty())
         return Packet();
     else
-        return packets_.back();
+        return packets_.front();
 }
 
-prefix_ senf::Packet senf::ppi::module::debug::PassivePacketSink::pop_back()
+prefix_ senf::Packet senf::ppi::module::debug::PassivePacketSink::pop_front()
 {
-    Packet p (back());
+    Packet p (front());
     if (p) 
-        packets_.pop_back();
+        packets_.pop_front();
     return p;
 }
 

@@ -64,12 +64,42 @@ namespace ppi {
 
         virtual bool v_isRegistered() = 0;
 
+        void notifyThrottle();
+        void notifyUnthrottle();
+
         bool enabled_;
+
+        friend class ForwardingRoute;
+    };
+    
+    template <class EventType, class Self>
+    class EventImplementationHelper
+    {
+    protected:
+        typedef typename detail::EventArgType<EventType>::type EventArg;
+
+        void callback(EventArg event, boost::posix_time::ptime time);
+        void callback(EventArg event);
+
+    private:
+        detail::EventBinding<EventType> & binding();
+    };
+    
+    template <class Self>
+    class EventImplementationHelper<void,Self>
+    {
+    protected:
+        void callback(boost::posix_time::ptime time);
+        void callback();
+
+    private:
+        detail::EventBinding<void> & binding();
     };
 
     template <class EventType>
     class EventImplementation
-        : public EventDescriptor
+        : public EventDescriptor, 
+          public EventImplementationHelper< EventType, EventImplementation<EventType> >
     {
     public:
         typedef EventType Event;
@@ -78,9 +108,6 @@ namespace ppi {
     protected:
         EventImplementation();
 
-        void callback(EventArg event, boost::posix_time::ptime time);
-        void callback(EventArg event);
-
     private:
         virtual bool v_isRegistered();
         void setBinding(detail::EventBinding<Event> & binding);
@@ -88,6 +115,7 @@ namespace ppi {
         detail::EventBinding<Event> * binding_;
 
         friend class EventManager;
+        friend class EventImplementationHelper< EventType, EventImplementation<EventType> >;
     };
 
 }}

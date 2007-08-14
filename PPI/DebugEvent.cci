@@ -21,65 +21,30 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Route inline non-template implementation */
+    \brief DebugEvent inline non-template implementation */
 
 // Custom includes
-#include "Connectors.hh"
-#include "Events.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::RouteBase
+// senf::ppi::DebugEvent
 
-prefix_ senf::ppi::RouteBase::~RouteBase()
-{}
-
-////////////////////////////////////////
-// protected members
-
-prefix_ senf::ppi::RouteBase::RouteBase(module::Module & module)
-    : module_(&module)
-{}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::ForwardingRoute
-
-prefix_ bool senf::ppi::ForwardingRoute::autoThrottling()
+prefix_ void senf::ppi::DebugEvent::trigger()
 {
-    return autoThrottling_;
-}
-
-prefix_ void senf::ppi::ForwardingRoute::autoThrottling(bool state)
-{
-    autoThrottling_ = state;
-}
-
-////////////////////////////////////////
-// protected members
-
-prefix_ senf::ppi::ForwardingRoute::ForwardingRoute(module::Module & module)
-    : RouteBase(module), autoThrottling_(true)
-{}
-
-prefix_ void senf::ppi::ForwardingRoute::registerRoute(connector::ActiveConnector & connector)
-{
-    connector.registerRoute(*this);
+    if (enabled())
+        callback();
 }
 
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::ForwardingRoute::notifyThrottle()
-{
-    v_notifyThrottle();
-}
+prefix_ void senf::ppi::DebugEvent::v_enable()
+{}
 
-prefix_ void senf::ppi::ForwardingRoute::notifyUnthrottle()
-{
-    v_notifyUnthrottle();
-}
+prefix_ void senf::ppi::DebugEvent::v_disable()
+{}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

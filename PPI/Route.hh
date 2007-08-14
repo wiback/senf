@@ -72,6 +72,9 @@ namespace ppi {
         // Called to register this route with the connectors forwarding information base
         void registerRoute(connector::ActiveConnector & connector);
 
+        template <class T> void notifyThrottle(T & ob);
+        template <class T> void notifyUnthrottle(T & ob);
+
     private:
         // called to forward a throttling notification along the route
         void notifyThrottle();
@@ -103,6 +106,7 @@ namespace ppi {
     class Route
         : public detail::RouteImplementation<Source,Target>
     {
+        typedef detail::RouteImplementation<Source,Target> Base;
     private:
         typedef detail::RouteImplementation<Source,Target> Implementation;
         
@@ -115,7 +119,7 @@ namespace ppi {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Route.cci"
-//#include "Route.ct"
+#include "Route.ct"
 #include "Route.cti"
 #endif
 

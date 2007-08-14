@@ -32,6 +32,67 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::ppi::EventImplementationHelper<EventType,Self>
+
+////////////////////////////////////////
+// protected members
+
+template <class EventType, class Self>
+prefix_ void
+senf::ppi::EventImplementationHelper<EventType,Self>::callback(EventArg event,
+                                                               boost::posix_time::ptime time)
+{
+    binding().callback(event,time);
+}
+
+template <class EventType, class Self>
+prefix_ void senf::ppi::EventImplementationHelper<EventType,Self>::callback(EventArg event)
+{
+    binding().callback(event);
+}
+
+////////////////////////////////////////
+// private members
+
+template <class EventType, class Self>
+prefix_ senf::ppi::detail::EventBinding<EventType> &
+senf::ppi::EventImplementationHelper<EventType,Self>::binding()
+{
+    BOOST_ASSERT( static_cast<Self*>(this)->binding_ );
+    return * static_cast<Self*>(this)->binding_;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::EventImplementationHelper<void,Self>
+
+////////////////////////////////////////
+// protected members
+
+template <class Self>
+prefix_ void
+senf::ppi::EventImplementationHelper<void,Self>::callback(boost::posix_time::ptime time)
+{
+    binding().callback(time);
+}
+
+template <class Self>
+prefix_ void senf::ppi::EventImplementationHelper<void,Self>::callback()
+{
+    binding().callback();
+}
+
+////////////////////////////////////////
+// private members
+
+template <class Self>
+prefix_ senf::ppi::detail::EventBinding<void> &
+senf::ppi::EventImplementationHelper<void,Self>::binding()
+{
+    BOOST_ASSERT( static_cast<Self*>(this)->binding_ );
+    return * static_cast<Self*>(this)->binding_;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::ppi::EventImplementation<EventType>
 
 ////////////////////////////////////////
@@ -41,21 +102,6 @@ template <class EventType>
 prefix_ senf::ppi::EventImplementation<EventType>::EventImplementation()
     : binding_(0)
 {}
-
-template <class EventType>
-prefix_ void senf::ppi::EventImplementation<EventType>::callback(EventArg event,
-                                                                 boost::posix_time::ptime time)
-{
-    BOOST_ASSERT(binding_);
-    binding_->callback(event,time);
-}
-
-template <class EventType>
-prefix_ void senf::ppi::EventImplementation<EventType>::callback(EventArg event)
-{
-    BOOST_ASSERT(binding_);
-    binding_->callback(event);
-}
 
 ////////////////////////////////////////
 // private members

@@ -27,6 +27,11 @@
 #define IH_Route_ 1
 
 // Custom includes
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/type_traits/is_base_of.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/static_assert.hpp>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -34,184 +39,163 @@ namespace senf {
 namespace ppi {
 namespace detail {
 
-    // Valid Forwarding routes:
-    //   Forward throttling
-    //     ActiveInput -> PassiveOutput
-    //       tempalte<> RouteImplementation<ActiveInput,PassiveOutput,false,false>
-    //     ActiveInput -> Event
-    //       template<class Event> class RouteImplementation<ActiveInput, Event, false, true>
-    //   Backward throttling
-    //     PassiveInput -> ActiveOutput
-    //       template<> RouteImplementation<PassiveInput, ActiveOutput, false, false>
-    //     Event -> ActiveOutput
-    //       template<class Event> class RouteImplementation<Event, ActiveOutput, true, false>
-
-    class NonForwardingRouteImplementation
-        : public RouteBase
+    // This is the RoutingTraits implementation for Connectors. Events are handled in the
+    // specialization below
+    template <class Connector, bool isEvent>
+    struct RoutingTraitsImplementation
     {
-    protected:
-        NonForwardingRouteImplementation(module::Module & module, 
-                                         connector::InputConnector & source,
-                                         connector::OutputConnector & target);
+        BOOST_STATIC_ASSERT((boost::is_base_of<connector::Connector, Connector>::value));
 
-    private:
-        connector::InputConnector * source_;
-        connector::OutputConnector * target_;
-    };
+        static bool const notifySource = boost::is_base_of<
+            connector::ActiveConnector, Connector>::value;
+        static bool const notifyTarget = boost::is_base_of<
+            connector::PassiveConnector, Connector>::value;
 
-    class NonForwardingRouteToEventImplementation
-        : public RouteBase
-    {
-    protected:
-        NonForwardingRouteToEventImplementation(module::Module & module,
-                                                connector::InputConnector & source,
-                                                EventDescriptor & target);
+        static bool const dataSource = boost::is_base_of<
+            connector::InputConnector, Connector>::value;
+        static bool const dataTarget = boost::is_base_of<
+            connector::OutputConnector, Connector>::value;
         
-    private:
-        connector::InputConnector * source_;
-        EventDescriptor * target_;
+        typedef Connector type;
     };
 
-    class NonForwardingRouteFromEventImplementation
-        : public RouteBase
-    {
-    protected:
-        NonForwardingRouteFromEventImplementation(module::Module & module,
-                                                  EventDescriptor & source,
-                                                  connector::OutputConnector & target);
-
-    private:
-        EventDescriptor * source_;
-        connector::OutputConnector * target_;
-    };
-
-    class ForwardForwardingRouteImplementation
-        : public ForwardingRoute
-    {
-    protected:
-        ForwardForwardingRouteImplementation(module::Module & module,
-                                             connector::ActiveInput & source,
-                                             connector::PassiveOutput & target);
-
-    private:
-        virtual void v_notifyThrottle();
-        virtual void v_notifyUnthrottle();
-
-        connector::ActiveInput * source_;
-        connector::PassiveOutput * target_;
-    };
-
-    class BackwardForwardingRouteImplementation
-        : public ForwardingRoute
-    {
-    protected:
-        BackwardForwardingRouteImplementation(module::Module & module,
-                                              connector::PassiveInput & source,
-                                              connector::ActiveOutput & target);
-
-    private:
-        virtual void v_notifyThrottle();
-        virtual void v_notifyUnthrottle();
-        
-        connector::PassiveInput * source_;
-        connector::ActiveOutput * target_;
-    };
-
-    class ForwardForwardingRouteToEventImplementation
-        : public ForwardingRoute
-    {
-    protected:
-        ForwardForwardingRouteToEventImplementation(module::Module & module,
-                                                    connector::ActiveInput & source,
-                                                    EventDescriptor & target);
-
-    private:
-        virtual void v_notifyThrottle();
-        virtual void v_notifyUnthrottle();
-
-        connector::ActiveInput * source_;
-        EventDescriptor * target_;
-    };
-
-    class BackwardForwardingRouteFromEventImplementation
-        : public ForwardingRoute
-    {
-    protected:
-        BackwardForwardingRouteFromEventImplementation(module::Module & module,
-                                                       EventDescriptor & source,
-                                                       connector::ActiveOutput & target); 
-
-    private:
-        virtual void v_notifyThrottle();
-        virtual void v_notifyUnthrottle();
-
-        EventDescriptor * source_;
-        connector::ActiveOutput * target_;
-    };
-
-    template <class Source, class Target, bool srcEvent, bool trgEvent>
-    class RouteImplementation
-        : public NonForwardingRouteImplementation
-    {
-    protected:
-        RouteImplementation(module::Module & module, Source & source, Target & target);
-    };
-
-#   ifndef DOXYGEN
-
-    template <class Source, class Target>
-    class RouteImplementation<Source, Target, true, false>
-        : public NonForwardingRouteFromEventImplementation
-    {
-    protected:
-        RouteImplementation(module::Module & module, Source & source, Target & target);
-    };
-
-    template<class Source, class Target>
-    class RouteImplementation<Source, Target, false, true>
-        : public NonForwardingRouteToEventImplementation
-    {
-    protected:
-        RouteImplementation(module::Module & module, Source & source, Target & target);
-    };
-
-    template<>
-    class RouteImplementation<connector::ActiveInput, connector::PassiveOutput, false, false>
-        : public ForwardForwardingRouteImplementation
-    {
-    protected:
-        RouteImplementation(module::Module & module, connector::ActiveInput & source, 
-                            connector::PassiveOutput & target);
-    };
-
+    // RoutingTraits specialization for Event types. Events may be both dataSource or dataTarget but
+    // cannot be notifySource.
     template <class Event>
-    class RouteImplementation<connector::ActiveInput, Event, false, true>
-        : public ForwardForwardingRouteToEventImplementation
+    struct RoutingTraitsImplementation<Event,true>
     {
-    protected:
-        RouteImplementation(module::Module & module, connector::ActiveInput & source, 
-                            Event & target);
-    };
+        static bool const notifySource = false;
+        static bool const notifyTarget = true;
 
-    template <>
-    class RouteImplementation<connector::PassiveInput, connector::ActiveOutput, false, false>
-        : public BackwardForwardingRouteImplementation
-    {
-    protected:
-        RouteImplementation(module::Module & module, connector::PassiveInput & source, 
-                            connector::ActiveOutput & target);
+        static bool const dataSource = true;
+        static bool const dataTarget = true;
+
+        typedef EventDescriptor type;
     };
     
-    template <class Event>
-    class RouteImplementation<Event, connector::ActiveOutput, true, false>
-        : public BackwardForwardingRouteFromEventImplementation
+    // The RoutingTraits give routing related information about the argument type:
+    //  - Wether the type is a notifySource or notifyTarget
+    //  - Wether the type is dataSource or dataTarget
+    //  - Provide the generalized target type
+    //
+    // The real implementation is in RoutingTraitsImplementation which is appropriately specialized
+    // for Events
+    template <class Object>
+    struct RoutingTraits
+        : public RoutingTraitsImplementation<Object, 
+                                             boost::is_convertible<Object*,
+                                                                   EventDescriptor*>::value>
+    {};
+
+    // This is the generic route implementation for all routes. It just provides access to the 
+    // source and target.
+    template <class Source, class Target, class Base>
+    class BaseRouteImplementation
+        : public Base
     {
+    public:
+        typedef Source source_type;
+        typedef Target target_type;
+
+        Source & source();
+        Target & target();
+
     protected:
-        RouteImplementation(module::Module & module, Event & source, 
-                            connector::ActiveOutput & target);
+        BaseRouteImplementation(module::Module & module, Source & source, Target & target);
+
+    private:
+        Source * source_;
+        Target * target_;
     };
 
-#   endif
+    // The ForwardingRouteImplementation is based on the same BaseRouteImplementation
+    // as non-forwarding routes are but injects a different base-class (the third template
+    // argument to BaseRouteImplementation). ForwardingRouteImplementation has two additional
+    // functions:
+    //  1) Register the ForwardingRoute with the notifySource
+    //  2) Implement the abstract ForwardingRoute interface
+    //
+    // Since we don't know explicitly, which of Source or Target is the notifySource or
+    // notifyTarget, the implementation calls registerRoute and notifyThrottle/notifyUnthrottle on
+    // *both*, the source and target, however qualified with an additional argument of type
+    // boost::mpl::bool_ which is used to select the correct overloads, of which the 'false'
+    // overload always is a no-op. This way, only the correct call will generate any code, the
+    // disabled call will be optimized away.
+    template <class Source, class Target>
+    class ForwardingRouteImplementation
+        : public BaseRouteImplementation<Source, Target, ForwardingRoute>
+    {
+        typedef BaseRouteImplementation<Source, Target, ForwardingRoute> Base;
+        
+    protected:
+        ForwardingRouteImplementation(module::Module & module, Source & source, Target & target);
+
+    private:
+        // register the Route in the notifySource only if the second argument is a 'true' type
+        template <class T> void registerRoute(T & ob, boost::mpl::bool_<true> const &);
+        template <class T> void registerRoute(T & ob, boost::mpl::bool_<false> const &);
+
+        // send a throttle/unthrottle notification  only if the second argument is a 'true' type
+        template <class T> void notifyThrottle(T & ob, boost::mpl::bool_<true> const &);
+        template <class T> void notifyThrottle(T & ob, boost::mpl::bool_<false> const &);
+        template <class T> void notifyUnthrottle(T & ob, boost::mpl::bool_<true> const &);
+        template <class T> void notifyUnthrottle(T & ob, boost::mpl::bool_<false> const &);
+
+        virtual void v_notifyThrottle();
+        virtual void v_notifyUnthrottle();
+    };
+
+    // This helper class finds the base-class suitable for a specific route. Routes are classified
+    // into two groups: 
+    //  1) A forwarding routes is a routed which forwards notifications from a notifySource to a
+    //     notifyTarget. Forwarding routes are implemneted using ForwardingRouteImplementation
+    //  2) Non-forwarding routes don't forward notifications. They are implemented directly
+    //     using BaseRouteImplementation
+    template <class Source, class Target>
+    struct RouteImplementationBase
+    {
+        typedef RoutingTraits<Source> srcTrait;
+        typedef RoutingTraits<Target> trgTrait;
+
+        static bool const isForwarding = (srcTrait::notifySource && trgTrait::notifyTarget)
+            || (srcTrait::notifyTarget && trgTrait::notifySource);
+        
+        typedef typename boost::mpl::if_c<
+            isForwarding, 
+            ForwardingRouteImplementation<Source,Target>, 
+            BaseRouteImplementation<Source,Target,RouteBase> >::type base;
+    };
+
+    // RouteImplementation2 has two purposes: 
+    //  1) Ensure, that routing is always from a data source to a data target
+    //  2) To find the correct base-class. This is delegated to RouteImplementationBase
+    template <class Source, class Target>
+    class RouteImplementation2
+        : public RouteImplementationBase<Source,Target>::base
+    {
+        typedef typename RouteImplementationBase<Source,Target>::base Base;
+
+        BOOST_STATIC_ASSERT( RoutingTraits<Source>::dataSource && 
+                             RoutingTraits<Target>::dataTarget );
+
+    protected:
+        RouteImplementation2(module::Module & module, Source & source, Target & target);
+    };
+
+    // RouteImplementation just forwards to RouteImplementation2 replacing the template arguments
+    // with the appropriately generalized type: If either Source or Target is an Event type, it is
+    // replaced with the general Event base-class EventDescriptor. Connector types are left as is.
+    template <class Source, class Target>
+    class RouteImplementation
+        : public RouteImplementation2<typename RoutingTraits<Source>::type,
+                                      typename RoutingTraits<Target>::type>
+    {
+        typedef RouteImplementation2<typename RoutingTraits<Source>::type,
+                                     typename RoutingTraits<Target>::type> Base;
+
+    protected:
+        RouteImplementation(module::Module & module, Source & source, Target & target);
+    };
 
 }}}
 

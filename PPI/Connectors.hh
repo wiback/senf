@@ -150,8 +150,7 @@ namespace connector {
         bool remoteThrottled_;
         bool nativeThrottled_;
 
-        friend class senf::ppi::detail::ForwardForwardingRouteImplementation;
-        friend class senf::ppi::detail::BackwardForwardingRouteImplementation;
+        friend class senf::ppi::ForwardingRoute;
     };
 
     /** \brief Active connector baseclass
