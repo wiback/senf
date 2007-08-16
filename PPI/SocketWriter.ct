@@ -31,6 +31,26 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::ActiveSocketWriter<Writer>
+
+template <class Writer>
+prefix_ senf::ppi::module::ActiveSocketWriter<Writer>::ActiveSocketWriter(Handle handle)
+    : handle_(handle), event_(handle_, IOEvent::Write), writer_()
+{
+    registerEvent( &ActiveSocketWriter::write, event_ );
+    route(input, event_);
+}
+
+////////////////////////////////////////
+// private members
+
+template <class Writer>
+prefix_ void senf::ppi::module::ActiveSocketWriter<Writer>::write()
+{
+    writer_(handle_,input());
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveSocketWriter<Writer>
 
 template <class Writer>

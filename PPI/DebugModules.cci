@@ -87,7 +87,8 @@ prefix_ void senf::ppi::module::debug::PassivePacketSource::request()
 
 prefix_ void senf::ppi::module::debug::PassivePacketSource::init()
 {
-    output.throttle();
+    if (empty())
+        output.throttle();
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -25,6 +25,9 @@
 //#include "Module.test.ih"
 
 // Custom includes
+#include "DebugEvent.hh"
+#include "DebugModules.hh"
+#include "Setup.hh"
 #include "Module.hh"
 
 #include <boost/test/auto_unit_test.hpp>
@@ -34,8 +37,45 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace ppi = senf::ppi;
+namespace connector = ppi::connector;
+namespace debug = ppi::module::debug;
+
+namespace {
+    class TestModule : public ppi::module::Module
+    {
+    public:
+        connector::ActiveOutput output;
+
+        ppi::DebugEvent event;
+
+        TestModule() {
+            noroute(output);
+            registerEvent(&TestModule::onEvent, event);
+        }
+
+        void onEvent() {
+            output(senf::DataPacket::create());
+        }
+
+        using ppi::module::Module::eventTime;
+    };
+}
+
 BOOST_AUTO_UNIT_TEST(module)
-{}
+{
+    // route and registerEvent are tested in Route.test.cc
+
+    TestModule tester;
+    debug::PassivePacketSink sink;
+    ppi::connect(tester.output, sink.input);
+    ppi::init();
+
+    tester.event.trigger();
+    BOOST_CHECK_EQUAL( sink.size(), 1u );
+    BOOST_CHECK_EQUAL( (boost::posix_time::microsec_clock::universal_time() - 
+                        tester.eventTime()).total_seconds(), 0 );
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

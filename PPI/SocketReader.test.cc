@@ -27,7 +27,12 @@
 //#include "SocketReader.test.ih"
 
 // Custom includes
+#include <algorithm>
+#include "Socket/Protocols/INet/UDPSocketHandle.hh"
+#include "Scheduler/Scheduler.hh"
 #include "SocketReader.hh"
+#include "DebugModules.hh"
+#include "Setup.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -35,8 +40,38 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace ppi = senf::ppi;
+namespace connector = ppi::connector;
+namespace module = ppi::module;
+namespace debug = module::debug;
+
+namespace {
+    void timeout() {
+        senf::Scheduler::instance().terminate();
+    }
+}
+
 BOOST_AUTO_UNIT_TEST(socketReader)
-{}
+{
+    senf::UDPv4ClientSocketHandle inputSocket;
+    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
+    inputSocket.blocking(false);
+    module::ActiveSocketReader<> udpReader(inputSocket);
+    debug::PassivePacketSink sink;
+    ppi::connect(udpReader.output, sink.input);
+
+    std::string data ("TEST");
+
+    senf::UDPv4ClientSocketHandle outputSocket;
+    outputSocket.writeto(senf::INet4SocketAddress("localhost:44344"),data);
+    senf::Scheduler::instance().timeout(1000, &timeout);
+    senf::ppi::run();
+
+    BOOST_REQUIRE( ! sink.empty() );
+    BOOST_CHECK_EQUAL( sink.front().data().size(), data.size() );
+    BOOST_CHECK( std::equal( sink.front().data().begin(), sink.front().data().end(), 
+                             data.begin()) );
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

@@ -27,7 +27,12 @@
 //#include "SocketWriter.test.ih"
 
 // Custom includes
+#include "Socket/Protocols/INet/UDPSocketHandle.hh"
+#include "Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
+#include "SocketReader.hh"
+#include "DebugModules.hh"
 #include "SocketWriter.hh"
+#include "Setup.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -35,8 +40,59 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(socketWriter)
-{}
+namespace ppi = senf::ppi;
+namespace connector = ppi::connector;
+namespace module = ppi::module;
+namespace debug = module::debug;
+
+namespace {
+    void timeout() {
+        senf::Scheduler::instance().terminate();
+    }
+}
+
+BOOST_AUTO_UNIT_TEST(passiveSocketWriter)
+{
+    senf::ConnectedUDPv4ClientSocketHandle outputSocket (
+        senf::INet4SocketAddress("localhost:44344"));
+    module::PassiveSocketWriter<> udpWriter(outputSocket);
+    debug::ActivePacketSource source;
+    ppi::connect(source.output, udpWriter.input);
+
+    std::string data ("TEST");
+    senf::Packet p (senf::DataPacket::create(data));
+
+    senf::UDPv4ClientSocketHandle inputSocket;
+    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
+    inputSocket.blocking(false);
+    senf::ppi::init();
+    source.submit(p);
+
+    std::string input (inputSocket.read());
+    BOOST_CHECK_EQUAL( data, input );
+}
+
+BOOST_AUTO_UNIT_TEST(activeSocketWriter)
+{
+    senf::ConnectedUDPv4ClientSocketHandle outputSocket (
+        senf::INet4SocketAddress("localhost:44344"));
+    module::ActiveSocketWriter<> udpWriter(outputSocket);
+    debug::PassivePacketSource source;
+    ppi::connect(source.output, udpWriter.input);
+
+    std::string data ("TEST");
+    senf::Packet p (senf::DataPacket::create(data));
+
+    senf::UDPv4ClientSocketHandle inputSocket;
+    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
+    inputSocket.blocking(false);
+    senf::Scheduler::instance().timeout(1000, &timeout);
+    source.submit(p);
+    senf::ppi::run();
+
+    std::string input (inputSocket.read());
+    BOOST_CHECK_EQUAL( data, input );
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

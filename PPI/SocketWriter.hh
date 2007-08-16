@@ -95,6 +95,12 @@ namespace module {
         ActiveSocketWriter(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \param[in] handle Handle to write data to */
+    private:
+        void write();
+
+        Handle handle_;
+        IOEvent event_;
+        Writer writer_;
     };
 
     /** \brief Output module writing data to arbitrary FileHandle
