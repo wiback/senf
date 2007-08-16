@@ -25,6 +25,7 @@
 #define HH_Events_ 1
 
 // Custom includes
+#include <vector>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include "predecl.hh"
 
@@ -67,7 +68,12 @@ namespace ppi {
         void notifyThrottle();
         void notifyUnthrottle();
 
+        void registerRoute(ForwardingRoute & route);
+
         bool enabled_;
+
+        typedef std::vector<ForwardingRoute*> Routes;
+        Routes routes_;
 
         friend class ForwardingRoute;
     };

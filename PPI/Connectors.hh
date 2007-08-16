@@ -144,11 +144,17 @@ namespace connector {
         // Called after unthrottling the connector
         virtual void v_unthrottleEvent();
 
+        // called by ForwardingRoute to register a new route
+        void registerRoute(ForwardingRoute & route);
+
         typedef detail::Callback<>::type Callback;
         Callback callback_;
 
         bool remoteThrottled_;
         bool nativeThrottled_;
+
+        typedef std::vector<ForwardingRoute*> Routes;
+        Routes routes_;
 
         friend class senf::ppi::ForwardingRoute;
     };
@@ -193,6 +199,8 @@ namespace connector {
                                              \param[in] handle Handler to call on unthrottle
                                                  notifications. */
         void onUnthrottle();
+
+        bool throttled() const;
 
         PassiveConnector & peer() const;
 

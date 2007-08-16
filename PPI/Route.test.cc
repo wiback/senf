@@ -131,14 +131,13 @@ BOOST_AUTO_UNIT_TEST(route)
     BOOST_CHECK( ! tester.activeOut );
     BOOST_CHECK_EQUAL( tester.throttles, 1 );
     BOOST_CHECK( tester.passiveIn.throttled() );
-    BOOST_CHECK( ! activeSource.output );
+    BOOST_CHECK( ! activeSource );
     BOOST_CHECK( ! tester.event.enabled() );
 
     passiveSink.input.unthrottle();
-    BOOST_CHECK( activeSource.output );
+    BOOST_CHECK( activeSource );
     BOOST_CHECK( tester.event.enabled() );
     
-
     // Now throttle the passive source by exhausting the queue
     
     BOOST_CHECK( p1 == activeSink.request() );
@@ -146,18 +145,29 @@ BOOST_AUTO_UNIT_TEST(route)
     BOOST_CHECK( ! tester.activeIn );
     BOOST_CHECK_EQUAL( tester.throttles, 1 );
     BOOST_CHECK( tester.passiveOut.throttled() );
-    BOOST_CHECK( ! activeSink.input );
+    BOOST_CHECK( ! activeSink );
     BOOST_CHECK( ! tester.event.enabled() );
     
     passiveSource.submit(p1);
-    BOOST_CHECK( activeSink.input );
+    BOOST_CHECK( activeSink );
+    BOOST_CHECK( tester.event.enabled() );
+
+    // Check correct combination of multiple throttling events
+
+    activeSink.request();
+    BOOST_CHECK( ! tester.event.enabled() );
+    passiveSink.input.throttle();
+    BOOST_CHECK( ! tester.event.enabled() );
+    passiveSource.submit(p1);
+    BOOST_CHECK( ! tester.event.enabled() );
+    passiveSink.input.unthrottle();
     BOOST_CHECK( tester.event.enabled() );
 
     tester.rt->autoThrottling(false);
 
     BOOST_CHECK( p1 == activeSink.request() );
     BOOST_CHECK( passiveSource.output.throttled() );
-    BOOST_CHECK( activeSink.input );
+    BOOST_CHECK( activeSink );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

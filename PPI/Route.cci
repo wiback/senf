@@ -47,6 +47,7 @@ prefix_ senf::ppi::RouteBase::RouteBase(module::Module & module)
 // senf::ppi::ForwardingRoute
 
 prefix_ bool senf::ppi::ForwardingRoute::autoThrottling()
+    const
 {
     return autoThrottling_;
 }
@@ -56,17 +57,18 @@ prefix_ void senf::ppi::ForwardingRoute::autoThrottling(bool state)
     autoThrottling_ = state;
 }
 
+prefix_ bool senf::ppi::ForwardingRoute::throttled()
+    const
+{
+    return v_throttled();
+}
+
 ////////////////////////////////////////
 // protected members
 
 prefix_ senf::ppi::ForwardingRoute::ForwardingRoute(module::Module & module)
     : RouteBase(module), autoThrottling_(true)
 {}
-
-prefix_ void senf::ppi::ForwardingRoute::registerRoute(connector::ActiveConnector & connector)
-{
-    connector.registerRoute(*this);
-}
 
 ////////////////////////////////////////
 // private members

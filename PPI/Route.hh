@@ -50,7 +50,7 @@ namespace ppi {
         : public RouteBase
     {
     public:
-        bool autoThrottling();
+        bool autoThrottling() const;
         void autoThrottling(bool state); ///< Change automatic throttle notification forwarding
                                         /**< By default, throttle notifications are automatically
                                              forwarded from active to passive connectors. This may
@@ -65,12 +65,14 @@ namespace ppi {
                                              comes in. Respective for unthrottle notifications.
 
                                              \param[in] state New throttle forwarding state */
+
+        bool throttled() const;
         
     protected:
         ForwardingRoute(module::Module & module);
 
         // Called to register this route with the connectors forwarding information base
-        void registerRoute(connector::ActiveConnector & connector);
+        template <class T> void registerRoute(T & ob);
 
         template <class T> void notifyThrottle(T & ob);
         template <class T> void notifyUnthrottle(T & ob);
@@ -83,6 +85,7 @@ namespace ppi {
         // Implemented in the derived classes to forward throttling notifications
         virtual void v_notifyThrottle() = 0;
         virtual void v_notifyUnthrottle() = 0;
+        virtual bool v_throttled() const = 0;
 
         bool autoThrottling_;
 

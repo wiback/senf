@@ -134,16 +134,6 @@ prefix_ void senf::ppi::connector::PassiveConnector::notifyThrottle()
         remoteThrottled_ = true;
 }
 
-prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
-{
-    if (throttled() && !nativeThrottled_) {
-        remoteThrottled_ = false;
-        emitUnthrottle();
-    } 
-    else
-        remoteThrottled_ = false;
-}
-
 prefix_ void senf::ppi::connector::PassiveConnector::emitThrottle()
 {
     peer().notifyThrottle();
@@ -157,6 +147,11 @@ prefix_ void senf::ppi::connector::PassiveConnector::emitUnthrottle()
 
 prefix_ void senf::ppi::connector::PassiveConnector::v_unthrottleEvent()
 {}
+
+prefix_ void senf::ppi::connector::PassiveConnector::registerRoute(ForwardingRoute & route)
+{
+    routes_.push_back(&route);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::ActiveConnector
@@ -175,6 +170,12 @@ prefix_ void senf::ppi::connector::ActiveConnector::onThrottle()
 prefix_ void senf::ppi::connector::ActiveConnector::onUnthrottle()
 {
     unthrottleCallback_ = Callback();
+}
+
+prefix_ bool senf::ppi::connector::ActiveConnector::throttled()
+    const
+{
+    return peer().throttled();
 }
 
 ////////////////////////////////////////

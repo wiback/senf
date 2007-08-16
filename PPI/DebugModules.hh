@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <deque>
+#include "Utils/SafeBool.hh"
 #include "Packets/Packets.hh"
 #include "Module.hh"
 
@@ -40,7 +41,8 @@ namespace module {
 namespace debug {
     
     class ActivePacketSource
-        : public Module
+        : public Module, 
+          public SafeBool<ActivePacketSource>
     {
     public:
         connector::ActiveOutput output;
@@ -48,6 +50,8 @@ namespace debug {
         ActivePacketSource();
 
         void submit(Packet packet);
+
+        bool boolean_test() const;
     };
 
     class PassivePacketSource
@@ -75,7 +79,8 @@ namespace debug {
     };
 
     class ActivePacketSink
-        : public Module
+        : public Module,
+          public SafeBool<ActivePacketSink>
     {
     public:
         connector::ActiveInput input;
@@ -83,6 +88,8 @@ namespace debug {
         ActivePacketSink();
 
         Packet request();
+
+        bool boolean_test() const;
     };
 
     class PassivePacketSink

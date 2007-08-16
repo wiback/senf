@@ -41,6 +41,12 @@ prefix_ void senf::ppi::module::debug::ActivePacketSource::submit(Packet packet)
     output(packet);
 }
 
+prefix_ bool senf::ppi::module::debug::ActivePacketSource::boolean_test()
+    const
+{
+    return output;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::debug::PassivePacketSource
 
@@ -95,6 +101,12 @@ prefix_ senf::ppi::module::debug::ActivePacketSink::ActivePacketSink()
 prefix_ senf::Packet senf::ppi::module::debug::ActivePacketSink::request()
 {
     return input();
+}
+
+prefix_ bool senf::ppi::module::debug::ActivePacketSink::boolean_test()
+    const
+{
+    return input;
 }
 
 ///////////////////////////////////////////////////////////////////////////

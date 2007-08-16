@@ -46,6 +46,12 @@ prefix_ senf::ppi::Route<Source,Target>::Route(module::Module & module, Source &
 // protected members
 
 template <class T>
+prefix_ void senf::ppi::ForwardingRoute::registerRoute(T & ob)
+{
+    ob.registerRoute(*this);
+}
+
+template <class T>
 prefix_ void senf::ppi::ForwardingRoute::notifyThrottle(T & ob)
 {
     ob.notifyThrottle();
@@ -62,12 +68,14 @@ prefix_ void senf::ppi::ForwardingRoute::notifyUnthrottle(T & ob)
 
 template <class Source, class Target, class Base>
 prefix_ Source & senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::source()
+    const
 {
     return *source_;
 }
 
 template <class Source, class Target, class Base>
 prefix_ Target & senf::ppi::detail::BaseRouteImplementation<Source,Target,Base>::target()
+    const
 {
     return *target_;
 }
@@ -93,26 +101,12 @@ senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
 ForwardingRouteImplementation(module::Module & module, Source & source, Target & target)
     : Base(module,source,target)
 {
-    registerRoute(source, boost::mpl::bool_<RoutingTraits<Source>::notifySource>());
-    registerRoute(target, boost::mpl::bool_<RoutingTraits<Target>::notifySource>());
+    registerRoute(source);
+    registerRoute(target);
 }
 
 ////////////////////////////////////////
 // private members
-
-template <class Source, class Target>
-template <class T>
-prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
-registerRoute(T & ob, boost::mpl::bool_<true> const &)
-{
-    ForwardingRoute::registerRoute(ob);
-}
-
-template <class Source, class Target>
-template <class T>
-prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
-registerRoute(T & ob, boost::mpl::bool_<false> const &)
-{}
 
 template <class Source, class Target>
 template <class T>
@@ -141,6 +135,24 @@ template <class T>
 prefix_ void senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
 notifyUnthrottle(T & ob, boost::mpl::bool_<false> const &)
 {}
+
+template <class Source, class Target>
+template <class T>
+prefix_ bool senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+throttled(T & ob, boost::mpl::bool_<true> const &)
+    const
+{
+    return ob.throttled();
+}
+
+template <class Source, class Target>
+template <class T>
+prefix_ bool senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::
+throttled(T & ob, boost::mpl::bool_<false> const &)
+    const
+{
+    return false;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::detail::RouteImplementation2<Source,Target>

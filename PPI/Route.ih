@@ -97,8 +97,8 @@ namespace detail {
         typedef Source source_type;
         typedef Target target_type;
 
-        Source & source();
-        Target & target();
+        Source & source() const;
+        Target & target() const;
 
     protected:
         BaseRouteImplementation(module::Module & module, Source & source, Target & target);
@@ -131,18 +131,18 @@ namespace detail {
         ForwardingRouteImplementation(module::Module & module, Source & source, Target & target);
 
     private:
-        // register the Route in the notifySource only if the second argument is a 'true' type
-        template <class T> void registerRoute(T & ob, boost::mpl::bool_<true> const &);
-        template <class T> void registerRoute(T & ob, boost::mpl::bool_<false> const &);
-
         // send a throttle/unthrottle notification  only if the second argument is a 'true' type
         template <class T> void notifyThrottle(T & ob, boost::mpl::bool_<true> const &);
         template <class T> void notifyThrottle(T & ob, boost::mpl::bool_<false> const &);
         template <class T> void notifyUnthrottle(T & ob, boost::mpl::bool_<true> const &);
         template <class T> void notifyUnthrottle(T & ob, boost::mpl::bool_<false> const &);
 
+        template <class T> bool throttled(T & ob, boost::mpl::bool_<true> const &) const;
+        template <class T> bool throttled(T & ob, boost::mpl::bool_<false> const &) const;
+
         virtual void v_notifyThrottle();
         virtual void v_notifyUnthrottle();
+        virtual bool v_throttled() const;
     };
 
     // This helper class finds the base-class suitable for a specific route. Routes are classified

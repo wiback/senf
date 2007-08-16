@@ -39,6 +39,23 @@
 ////////////////////////////////////////
 // private members
 
+prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
+{
+    if (throttled() && !nativeThrottled_) {
+        Routes::const_iterator i (routes_.begin());
+        Routes::const_iterator const i_end (routes_.end());
+        for (; i != i_end; ++i)
+            if ((*i)->throttled())
+                break;
+        if (i == i_end) {
+            remoteThrottled_ = false;
+            emitUnthrottle();
+        }
+    } 
+    else
+        remoteThrottled_ = false;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::ActiveConnector
 

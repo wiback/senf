@@ -21,57 +21,35 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Events inline non-template implementation */
+    \brief Events non-inline non-template implementation */
+
+#include "Events.hh"
+#include "Events.ih"
 
 // Custom includes
-#include <boost/assert.hpp>
+#include "Route.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "Events.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::EventDescriptor
 
-prefix_ senf::ppi::EventDescriptor::~EventDescriptor()
-{}
-
-prefix_ bool senf::ppi::EventDescriptor::enabled()
+prefix_ void senf::ppi::EventDescriptor::notifyUnthrottle()
 {
-    return enabled_;
+    Routes::const_iterator i (routes_.begin());
+    Routes::const_iterator const i_end (routes_.end());
+    for (; i != i_end; ++i)
+        if ((*i)->throttled())
+            break;
+    if (i == i_end) 
+        enabled(true);
 }
 
-prefix_ void senf::ppi::EventDescriptor::enabled(bool v)
-{
-    BOOST_ASSERT(v_isRegistered());
-    if (v && ! enabled_)
-        v_enable();
-    else if (! v && enabled_)
-        v_disable();
-    enabled_ = v;
-}
-
-////////////////////////////////////////
-// protected members
-
-prefix_ senf::ppi::EventDescriptor::EventDescriptor()
-    : enabled_(false)
-{}
-
-////////////////////////////////////////
-// private members
-
-prefix_ void senf::ppi::EventDescriptor::notifyThrottle()
-{
-    enabled(false);
-}
-
-prefix_ void senf::ppi::EventDescriptor::registerRoute(ForwardingRoute & route)
-{
-    routes_.push_back(&route);
-}
-
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "Events.mpp"
 
 
 // Local Variables:

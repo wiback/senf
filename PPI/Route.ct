@@ -55,6 +55,15 @@ senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::v_notifyUnthrot
     }
 }
 
+template <class Source, class Target>
+prefix_ bool senf::ppi::detail::ForwardingRouteImplementation<Source,Target>::v_throttled()
+    const
+{
+    return this->autoThrottling() && (
+        throttled(this->source(),boost::mpl::bool_<RoutingTraits<Source>::notifySource>()) ||
+        throttled(this->target(),boost::mpl::bool_<RoutingTraits<Target>::notifySource>()) );
+}
+
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
