@@ -44,6 +44,8 @@ namespace debug = ppi::module::debug;
 namespace {
     class TestModule : public ppi::module::Module
     {
+        SENF_PPI_MODULE(TestModule);
+
     public:
         connector::ActiveOutput output;
 

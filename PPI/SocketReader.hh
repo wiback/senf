@@ -91,6 +91,8 @@ namespace module {
     class ActiveSocketReader 
         : public Module
     {
+        SENF_PPI_MODULE(ActiveSocketReader);
+
     public:
         typedef typename Reader::Handle Handle; ///< Handle type requested by the reader
 

@@ -40,6 +40,9 @@ namespace detail {
 
     class EventBindingBase
     {
+    public:
+        ~EventBindingBase();
+        
     protected:
         EventBindingBase(EventManager & manager, module::Module & module, 
                          EventDescriptor & descriptor);
@@ -50,6 +53,8 @@ namespace detail {
         EventManager * manager_;
         module::Module * module_;
         EventDescriptor * descriptor_;
+
+        friend class senf::ppi::EventManager;
     };
 
     template <class EventType, class Self>

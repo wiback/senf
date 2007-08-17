@@ -44,6 +44,8 @@ namespace debug {
         : public Module, 
           public SafeBool<ActivePacketSource>
     {
+        SENF_PPI_MODULE(ActivePacketSource);
+
     public:
         connector::ActiveOutput output;
 
@@ -57,6 +59,8 @@ namespace debug {
     class PassivePacketSource
         : public Module
     {
+        SENF_PPI_MODULE(PassivePacketSource);
+
         typedef std::deque<Packet> Queue;
 
     public:
@@ -82,6 +86,8 @@ namespace debug {
         : public Module,
           public SafeBool<ActivePacketSink>
     {
+        SENF_PPI_MODULE(ActivePacketSink);
+
     public:
         connector::ActiveInput input;
 
@@ -95,6 +101,8 @@ namespace debug {
     class PassivePacketSink
         : public Module
     {
+        SENF_PPI_MODULE(PassivePacketSink);
+
         typedef std::deque<Packet> Queue;
 
     public:

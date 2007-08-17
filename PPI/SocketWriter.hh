@@ -87,6 +87,8 @@ namespace module {
     template <class Writer=PacketWriter>
     class ActiveSocketWriter : public Module
     {
+        SENF_PPI_MODULE(ActiveSocketWriter);
+
     public:
         typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
@@ -125,6 +127,8 @@ namespace module {
     template <class Writer=PacketWriter>
     class PassiveSocketWriter : public Module
     {
+        SENF_PPI_MODULE(PassiveSocketWriter);
+
     public:
         typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 

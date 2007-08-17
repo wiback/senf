@@ -84,6 +84,8 @@ namespace ppi {
     protected:
 
     private:
+        void destroyModule(module::Module & module);
+
         typedef boost::ptr_vector<detail::EventBindingBase> EventRegistrations;
         EventRegistrations registrations_;
 
@@ -92,6 +94,7 @@ namespace ppi {
         boost::posix_time::ptime eventTime_;
 
         friend class detail::EventBindingBase;
+        friend class module::Module;
     };
 
 }}

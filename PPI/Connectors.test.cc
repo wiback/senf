@@ -161,6 +161,8 @@ namespace {
     class PassiveInputTest
         : public ppi::module::Module
     {
+        SENF_PPI_MODULE(PassiveInputTest);
+
     public:
         ppi::connector::PassiveInput input;
 

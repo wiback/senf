@@ -47,6 +47,8 @@ namespace debug = module::debug;
 namespace {
     class RouteTester : public module::Module
     {
+        SENF_PPI_MODULE(RouteTester);
+
     public:
         connector::ActiveInput activeIn;
         connector::PassiveInput passiveIn;

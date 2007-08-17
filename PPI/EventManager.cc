@@ -21,33 +21,39 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventBinding inline non-template implementation */
+    \brief EventManager non-inline non-template implementation */
+
+#include "EventManager.hh"
+//#include "EventManager.ih"
 
 // Custom includes
-#include "../Events.hh"
+#include <boost/lambda/lambda.hpp>
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "EventManager.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::detail::EventBindingBase
-
-prefix_ senf::ppi::detail::EventBindingBase::~EventBindingBase()
-{
-    descriptor_->enabled(false);
-}
+// senf::ppi::EventManager
 
 ////////////////////////////////////////
-// protected members
+// private members
 
-prefix_ senf::ppi::detail::EventBindingBase::EventBindingBase(EventManager & manager,
-                                                              module::Module & module,
-                                                              EventDescriptor & descriptor)
-    : manager_(&manager), module_(&module), descriptor_(&descriptor)
-{}
+prefix_ void senf::ppi::EventManager::destroyModule(module::Module & module)
+{
+    using boost::lambda::_1;
 
-///////////////////////////////cci.e///////////////////////////////////////
+    // boost::ptr_vector::erase(f,l) asserts !empty() .. why ??
+    if (!registrations_.empty())
+        registrations_.erase(
+            std::remove_if(registrations_.begin(), registrations_.end(),
+                           ((&_1) ->* & detail::EventBindingBase::module_) == & module),
+            registrations_.end());
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "EventManager.mpp"
 
 
 // Local Variables:
@@ -57,5 +63,5 @@ prefix_ senf::ppi::detail::EventBindingBase::EventBindingBase(EventManager & man
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u ../test"
+// compile-command: "scons -u test"
 // End:

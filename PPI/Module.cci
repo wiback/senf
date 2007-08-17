@@ -59,6 +59,11 @@ prefix_ void senf::ppi::module::Module::noroute(connector::Connector & connector
     connector.setModule(*this);
 }
 
+prefix_ void senf::ppi::module::Module::destroy()
+{
+    eventManager().destroyModule(*this);
+}
+
 ////////////////////////////////////////
 // private members
 

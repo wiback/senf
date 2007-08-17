@@ -53,7 +53,10 @@ prefix_ senf::ppi::connector::Connector::Connector()
 {}
 
 prefix_ senf::ppi::connector::Connector::~Connector()
-{}
+{
+    if (peer_)
+        peer_->peer_ = 0;
+}
 
 prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 {

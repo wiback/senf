@@ -124,6 +124,10 @@ namespace module {
         boost::posix_time::ptime eventTime(); ///< Return timestamp of the currently processing
                                               ///< event
 
+        void destroy();
+
+        virtual void macro_SENF_PPI_MODULE_missing() = 0;
+
     private:
         virtual void init();
 
@@ -144,13 +148,11 @@ namespace module {
         friend class senf::ppi::ModuleManager;
     };
 
-    /** \brief Connect compatible connectors
-
-        connect() will connect two compatible connectors: One connector must be active, the other
-        passive.
-     */
-    template <class Source, class Target>
-    void connect(Source const & source, Target const & target);
+#   define SENF_PPI_MODULE(name)                                                                  \
+    public:                                                                                       \
+        ~ name() { destroy(); }                                                                   \
+        void macro_SENF_PPI_MODULE_missing() {}                                                   \
+    private:
 
 }}}
 
