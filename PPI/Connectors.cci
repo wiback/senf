@@ -60,6 +60,7 @@ prefix_ senf::ppi::connector::Connector::~Connector()
 
 prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 {
+    BOOST_ASSERT( ! peer_ && ! target.peer_ );
     peer_ = & target;
     target.peer_ = this;
 }
@@ -89,9 +90,10 @@ prefix_ bool senf::ppi::connector::PassiveConnector::nativeThrottled()
 
 prefix_ void senf::ppi::connector::PassiveConnector::throttle()
 {
-    if (!throttled())
+    if (!throttled()) {
+        nativeThrottled_ = true;
         emitThrottle();
-    nativeThrottled_ = true;
+    }
 }
 
 prefix_ void senf::ppi::connector::PassiveConnector::unthrottle()

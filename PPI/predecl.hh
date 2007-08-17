@@ -64,6 +64,8 @@ namespace ppi {
         namespace detail {
             template <class Source, class Target> class RouteHelper;
         }
+        class PassiveJoin;
+        class PriorityJoin;
     }
 
     namespace connector {

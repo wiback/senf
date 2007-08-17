@@ -184,9 +184,9 @@ namespace {
         callback(handle.fd_,event);
     }
 
-    bool is_close(MicroTime a, MicroTime b)
+    bool is_close(Scheduler::sched_time a, Scheduler::sched_time b)
     {
-        return (a<b ? b-a : a-b) < 10100; // a little bit over 10ms
+        return (a<b ? b-a : a-b) < 10100000UL; // a little bit over 10ms
     }
 
 }
@@ -223,13 +223,13 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "READ" );
 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(100,&timeout) );
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(200,&timeout) );
-    MicroTime t (now());
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(100000000UL,&timeout) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(200000000UL,&timeout) );
+    Scheduler::sched_time t (Scheduler::instance().now());
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (now()) (t+100*1000) );
+    BOOST_CHECK_PREDICATE( is_close, (Scheduler::instance().now()) (t+100000000UL) );
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (now()) (t+200*1000) );
+    BOOST_CHECK_PREDICATE( is_close, (Scheduler::instance().now()) (t+200000000UL) );
 
     HandleWrapper handle(sock,"TheTag");
     BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,&handleCallback,Scheduler::EV_WRITE) );

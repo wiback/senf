@@ -79,7 +79,6 @@
 #include <errno.h>
 #include <sys/epoll.h>
 #include "Utils/Exception.hh"
-#include "Utils/MicroTime.hh"
 
 static const int EPollInitialSize = 16;
 
@@ -92,13 +91,14 @@ prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
     return instance;
 }
 
-prefix_ void senf::Scheduler::timeout(unsigned long timeout, TimerCallback const & cb)
+prefix_ void senf::Scheduler::timeout(sched_time timeout, TimerCallback const & cb)
 {
-    timerQueue_.push(TimerSpec(now()+1000*timeout,cb));
+    timerQueue_.push(TimerSpec(now()+timeout,cb));
 }
 
 prefix_ senf::Scheduler::Scheduler()
-    : epollFd_(epoll_create(EPollInitialSize))
+    : epollFd_ (epoll_create(EPollInitialSize)), 
+      epoch_ (boost::posix_time::microsec_clock::universal_time())
 {
     if (epollFd_<0)
         throw SystemException(errno);
@@ -166,20 +166,27 @@ prefix_ void senf::Scheduler::process()
 {
     terminate_ = false;
     while (! terminate_) {
+        sched_time timeNow = now();
 
-        MicroTime timeNow = now();
         while ( ! timerQueue_.empty() && timerQueue_.top().timeout <= timeNow ) {
             timerQueue_.top().cb();
             timerQueue_.pop();
         }
+
         if (terminate_)
             return;
-        int timeout = timerQueue_.empty() ? -1 : int((timerQueue_.top().timeout - timeNow)/1000);
+
+        int timeout (MinTimeout);
+        if (! timerQueue_.empty()) {
+            sched_time delta ((timerQueue_.top().timeout - timeNow)/1000000UL);
+            if (delta<MinTimeout)
+                timeout = int(delta);
+        }
 
         struct epoll_event ev;
         int events = epoll_wait(epollFd_, &ev, 1, timeout);
         if (events<0)
-            // Hmm ... man epoll says, it will NOT return with EINTR. I hope, this is true :-)
+            // 'man epoll' says, epoll will not return with EINTR.
             throw SystemException(errno);
         if (events==0)
             // Timeout .. the handler will be run when going back to the loop top
@@ -187,8 +194,6 @@ prefix_ void senf::Scheduler::process()
 
         FdTable::iterator i = fdTable_.find(ev.data.fd);
         BOOST_ASSERT (i != fdTable_.end() );
-        // \todo Make this more efficient. Instead of copying the event-spec it should be
-        // revalidated by monitoring add/remove calls
         EventSpec spec (i->second);
 
         unsigned extraFlags (0);

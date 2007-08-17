@@ -36,6 +36,15 @@ prefix_ void senf::Scheduler::terminate()
     terminate_ = true;
 }
 
+prefix_ senf::Scheduler::sched_time senf::Scheduler::now()
+    const
+{
+    boost::posix_time::time_duration delta (
+        boost::posix_time::microsec_clock::universal_time() - epoch_);
+    return sched_time( delta.ticks() )
+        * sched_time( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
+}
+
 prefix_ int senf::retrieve_filehandle(int fd)
 {
     return fd;

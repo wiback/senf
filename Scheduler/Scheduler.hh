@@ -33,8 +33,8 @@
 #include <boost/function.hpp>
 #include <boost/utility.hpp>
 #include <boost/call_traits.hpp>
-
-#include "Utils/MicroTime.hh"
+#include <boost/integer.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -74,7 +74,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        /// \brief Types of file descriptor events */
+        /** \brief Types of file descriptor events */
         enum EventId { EV_NONE=0,
                        EV_READ=1, EV_PRIO=2, EV_WRITE=4, 
                        EV_ALL=7,
@@ -92,6 +92,20 @@ namespace senf {
             typedef boost::function<void (typename boost::call_traits<Handle>::param_type,
                                           EventId) > Callback;
         };
+
+        /** \brief Scheduler time data type
+            
+            Unsigned integer type representing scheduler time. Scheduler time is measured in
+            nanoseconds relative to some implementation defined reference time.
+         */
+        typedef boost::uint_fast64_t sched_time;
+
+        /** \brief Absolute time data type
+
+            Boost.DateTime datatype used to represent absolute date/time values.
+         */
+        typedef boost::posix_time::ptime abs_time;
+
         /** \brief Callback type for timer events */
         typedef boost::function<void ()> TimerCallback;
 
@@ -146,8 +160,8 @@ namespace senf {
                                              \param[in] eventMask arbitrary combination via '|'
                                                  operator of EventId designators. */
 
-        void timeout(unsigned long timeout, TimerCallback const & cb); ///< Add timeout event
-                                        /**< \param[in] timeout timeout in milliseconds
+        void timeout(sched_time timeout, TimerCallback const & cb); ///< Add timeout event
+                                        /**< \param[in] timeout timeout in nanoseconds
                                              \param[in] cb callback to call after \a timeout
                                                  milliseconds
                                              \todo Return some kind of handle/pointer and add
@@ -163,11 +177,33 @@ namespace senf {
                                              main loop to terminate. The main loop will return to
                                              it's caller after the currently running callback
                                              returns. */
+        
+        abs_time abstime(sched_time time) const; ///< Convert scheduler time to absolute time
+                                        /**< This member converts a scheduler time value into an
+                                             absolute Boost.DateTime value. 
+                                             \note You should not base timeout calculations on this
+                                                 absolute time value. Scheduler time is guaranteed
+                                                 to be monotonous, absolute time may be
+                                                 non-monotonous if the system date/time is
+                                                 changed. */
+
+        sched_time schedtime(abs_time time) const; ///< Convert absolute time to scheduler time
+                                        /**< This member converst an absolute time value into the
+                                             corresponding scheduler time.
+                                             \see abstime */
+
+        sched_time now() const;         ///< Return current date/time
+                                        /**< The return value represents the current date/time in
+                                             scheduler time representation */
+
+        sched_time eventTime() const;   ///< Return date/time of last event
 
     protected:
 
     private:
         typedef boost::function<void (EventId)> SimpleCallback;
+
+        static unsigned const MinTimeout = 1000;
 
         Scheduler();
 
@@ -190,13 +226,13 @@ namespace senf {
         struct TimerSpec
         {
             TimerSpec() : timeout(), cb() {}
-            TimerSpec(unsigned long long timeout_, TimerCallback cb_)
+            TimerSpec(sched_time timeout_, TimerCallback cb_)
                 : timeout(timeout_), cb(cb_) {}
 
             bool operator< (TimerSpec const & other) const
                 { return timeout > other.timeout; }
 
-            unsigned long long timeout;
+            sched_time timeout;
             TimerCallback cb;
         };
 
@@ -207,6 +243,7 @@ namespace senf {
         TimerQueue timerQueue_;
         int epollFd_;
         bool terminate_;
+        abs_time epoch_;
     };
 
     /** \brief Default file descriptor accessor

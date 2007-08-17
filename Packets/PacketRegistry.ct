@@ -42,6 +42,10 @@ template <class KeyType>
 template <class PacketType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key)
 {
+#ifdef NDEBUG
+    registry_.insert(std::make_pair(key, Entry_ptr(new detail::PkReg_EntryImpl<PacketType>())));
+    reverseRegistry_.insert(std::make_pair(senf::typeIdValue<PacketType>(), key));
+#else
     bool isUnique (
         registry_.insert(
             std::make_pair(key, Entry_ptr(new detail::PkReg_EntryImpl<PacketType>()))).second);
@@ -52,6 +56,7 @@ prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key
             std::make_pair(senf::typeIdValue<PacketType>(), key)).second);
     // If this assertion fails, the same Packet was registered with two different keys
     BOOST_ASSERT( isNew );
+#endif
 }
 
 template <class KeyType>
