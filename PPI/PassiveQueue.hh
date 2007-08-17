@@ -25,6 +25,9 @@
 #define HH_PassiveQueue_ 1
 
 // Custom includes
+#include "Connectors.hh"
+#include "Module.hh"
+#include "predecl.hh"
 
 //#include "PassiveQueue.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -44,26 +47,36 @@ namespace module {
         forward throttling notifications are sent out whenever the queue is empty.
      */
     class PassiveQueue 
+        : public module::Module
     {
+        SENF_PPI_MODULE(PassiveQueue);
     public:
         connector::PassiveInput input;
         connector::PassiveOutput output;
         
         PassiveQueue();
 
-        void qdisc(QueueingDiscipline const & disc); ///< Change the queueing discipline
-        /**< This call changes the queueing discipline of the queue. This call is just forwarded to
-             the \a input connector.
-             
-             \see connector::PassiveInput::qdisc() */
+        template <class QDiscipline>
+        void qdisc(QDiscipline const & disc); ///< Change the queueing discipline
+                                        /**< This call changes the queueing discipline of the
+                                             queue. This call is just forwarded to the \a input
+                                             connector.
+                                             
+                                             \see connector::PassiveInput::qdisc() */
+
+    private:
+        void init();
+
+        void onInput();
+        void onOutput();
     };
 
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "PassiveQueue.cci"
+#include "PassiveQueue.cci"
 //#include "PassiveQueue.ct"
-//#include "PassiveQueue.cti"
+#include "PassiveQueue.cti"
 #endif
 
 
