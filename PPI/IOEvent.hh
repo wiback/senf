@@ -42,6 +42,8 @@ namespace ppi {
     };
 
     /** \brief
+
+        \fixme Implement error/EOF handling
       */
     class IOEvent
         : public EventImplementation<IOEventInfo>

@@ -21,40 +21,43 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Setup inline non-template implementation */
+    \brief Setup inline template implementation */
 
 //#include "Setup.ih"
 
 // Custom includes
-#include "Connectors.hh"
-#include "ModuleManager.hh"
 
 #define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////cti.p///////////////////////////////////////
 
-prefix_ void senf::ppi::connect(connector::ActiveOutput & source,
-                                connector::PassiveInput & target)
+template <class M, class C>
+prefix_ void
+senf::ppi::connect(M & source, C & target,
+                   typename boost::enable_if< boost::is_base_of<module::Module, M> >::type *,
+                   typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *)
 {
-    source.connect(target);
+    connect(source.output, target);
 }
 
-prefix_ void senf::ppi::connect(connector::PassiveOutput & source,
-                                connector::ActiveInput & target)
+template <class C, class M>
+prefix_ void
+senf::ppi::connect(C & source, M & target,
+                   typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *,
+                   typename boost::enable_if< boost::is_base_of<module::Module, M> >::type *)
 {
-    source.connect(target);
+    connect(source, target.input);
 }
 
-prefix_ void senf::ppi::run()
+template <class M1, class M2>
+prefix_ void
+senf::ppi::connect(M1 & source, M2 & target,
+                   typename boost::enable_if< boost::is_base_of<module::Module, M1> >::type *,
+                   typename boost::enable_if< boost::is_base_of<module::Module, M2> >::type *)
 {
-    ModuleManager::instance().run();
+    connect(source.output, target.input);
 }
 
-prefix_ void senf::ppi::init()
-{
-    ModuleManager::instance().init();
-}
-
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

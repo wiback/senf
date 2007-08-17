@@ -47,7 +47,7 @@ BOOST_AUTO_UNIT_TEST(debugModules)
         debug::ActivePacketSource source;
         debug::PassivePacketSink sink;
 
-        ppi::connect(source.output, sink.input);
+        ppi::connect(source, sink);
         ppi::init();
     
         senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };
@@ -76,7 +76,7 @@ BOOST_AUTO_UNIT_TEST(debugModules)
         debug::PassivePacketSource source;
         debug::ActivePacketSink sink;
 
-        ppi::connect(source.output, sink.input);
+        ppi::connect(source, sink);
         ppi::init();
 
         senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };

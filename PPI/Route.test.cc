@@ -111,10 +111,10 @@ BOOST_AUTO_UNIT_TEST(route)
     debug::ActivePacketSink activeSink;
     RouteTester tester;
 
-    ppi::connect(passiveSource.output, tester.activeIn);
-    ppi::connect(activeSource.output, tester.passiveIn);
-    ppi::connect(tester.activeOut, passiveSink.input);
-    ppi::connect(tester.passiveOut, activeSink.input);
+    ppi::connect(passiveSource, tester.activeIn);
+    ppi::connect(activeSource, tester.passiveIn);
+    ppi::connect(tester.activeOut, passiveSink);
+    ppi::connect(tester.passiveOut, activeSink);
 
     ppi::init();
 

@@ -34,10 +34,25 @@
 
 namespace senf {
 namespace ppi {
-
+    
     void connect(connector::ActiveOutput & source, connector::PassiveInput & target);
     void connect(connector::PassiveOutput & source, connector::ActiveInput & target);
+    
+    template <class M, class C>
+    void connect(M & source, C & target,
+                 typename boost::enable_if< boost::is_base_of<module::Module, M> >::type * = 0,
+                 typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0);
 
+    template <class C, class M>
+    void connect(C & source, M & target,
+                 typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0,
+                 typename boost::enable_if< boost::is_base_of<module::Module, M> >::type * = 0);
+
+    template <class M1, class M2>
+    void connect(M1 & source, M2 & target,
+                 typename boost::enable_if< boost::is_base_of<module::Module, M1> >::type * = 0,
+                 typename boost::enable_if< boost::is_base_of<module::Module, M2> >::type * = 0);
+    
     void run();
     void init();
 
@@ -46,7 +61,7 @@ namespace ppi {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Setup.cci"
 //#include "Setup.ct"
-//#include "Setup.cti"
+#include "Setup.cti"
 #endif
 
 

@@ -70,7 +70,7 @@ BOOST_AUTO_UNIT_TEST(module)
 
     TestModule tester;
     debug::PassivePacketSink sink;
-    ppi::connect(tester.output, sink.input);
+    ppi::connect(tester, sink);
     ppi::init();
 
     tester.event.trigger();

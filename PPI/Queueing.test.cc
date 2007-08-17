@@ -21,17 +21,17 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SocketWriter.test unit tests */
+    \brief Queueing.test unit tests */
 
-//#include "SocketWriter.test.hh"
-//#include "SocketWriter.test.ih"
+//#include "Queueing.test.hh"
+//#include "Queueing.test.ih"
 
 // Custom includes
-#include "Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
-#include "SocketReader.hh"
+#include "Queueing.hh"
+#include "Module.hh"
+#include "Connectors.hh"
 #include "DebugModules.hh"
-#include "SocketWriter.hh"
+#include "Packets/Packets.hh"
 #include "Setup.hh"
 
 #include <boost/test/auto_unit_test.hpp>
@@ -46,50 +46,52 @@ namespace module = ppi::module;
 namespace debug = module::debug;
 
 namespace {
-    void timeout() {
-        senf::Scheduler::instance().terminate();
-    }
+    class QueueTester : public module::Module
+    {
+        SENF_PPI_MODULE(QueueTester);
+    public:
+        connector::PassiveInput input;
+        connector::ActiveOutput output;
+
+        QueueTester() {
+            route(input, output);
+            input.qdisc(ppi::ThresholdQueueing(2,1));
+            input.onRequest(&QueueTester::nop);
+        }
+
+        void nop() {}
+
+        void forward() {
+            if (input && output)
+                output(input());
+        }
+
+    };
 }
 
-BOOST_AUTO_UNIT_TEST(passiveSocketWriter)
+BOOST_AUTO_UNIT_TEST(thresholdQueueing)
 {
-    senf::ConnectedUDPv4ClientSocketHandle outputSocket (
-        senf::INet4SocketAddress("localhost:44344"));
-    module::PassiveSocketWriter<> udpWriter(outputSocket);
     debug::ActivePacketSource source;
-    ppi::connect(source, udpWriter);
+    QueueTester tester;
+    debug::PassivePacketSink sink;
 
-    std::string data ("TEST");
-    senf::Packet p (senf::DataPacket::create(data));
+    ppi::connect(source, tester);
+    ppi::connect(tester, sink);
+    ppi::init();
 
-    senf::UDPv4ClientSocketHandle inputSocket;
-    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
-    senf::ppi::init();
+    senf::Packet p (senf::DataPacket::create());
+    BOOST_CHECK( source );
     source.submit(p);
-
-    std::string input (inputSocket.read());
-    BOOST_CHECK_EQUAL( data, input );
-}
-
-BOOST_AUTO_UNIT_TEST(activeSocketWriter)
-{
-    senf::ConnectedUDPv4ClientSocketHandle outputSocket (
-        senf::INet4SocketAddress("localhost:44344"));
-    module::ActiveSocketWriter<> udpWriter(outputSocket);
-    debug::PassivePacketSource source;
-    ppi::connect(source, udpWriter);
-
-    std::string data ("TEST");
-    senf::Packet p (senf::DataPacket::create(data));
-
-    senf::UDPv4ClientSocketHandle inputSocket;
-    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
-    senf::Scheduler::instance().timeout(100, &timeout);
+    BOOST_CHECK( source );
     source.submit(p);
-    senf::ppi::run();
-
-    std::string input (inputSocket.read());
-    BOOST_CHECK_EQUAL( data, input );
+    BOOST_CHECK( ! source );
+    BOOST_CHECK_EQUAL( tester.input.queueSize(), 2u );
+    tester.forward();
+    BOOST_CHECK_EQUAL( tester.input.queueSize(), 1u );
+    BOOST_CHECK( source );
+    tester.forward();
+    BOOST_CHECK_EQUAL( tester.input.queueSize(), 0u );
+    BOOST_CHECK( source );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

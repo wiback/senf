@@ -184,7 +184,7 @@ BOOST_AUTO_UNIT_TEST(passiveInput)
     debug::ActivePacketSource source;
     PassiveInputTest target;
 
-    ppi::connect(source.output,target.input);
+    ppi::connect(source,target);
     ppi::init();
 
     BOOST_CHECK_EQUAL( & target.input.peer(), & source.output );
@@ -227,7 +227,7 @@ BOOST_AUTO_UNIT_TEST(passiveOutput)
     debug::PassivePacketSource source;
     debug::ActivePacketSink target;
 
-    ppi::connect(source.output,target.input);
+    ppi::connect(source,target);
     ppi::init();
 
     senf::Packet p (senf::DataPacket::create());
@@ -248,7 +248,7 @@ BOOST_AUTO_UNIT_TEST(activeInput)
     debug::PassivePacketSource source;
     debug::ActivePacketSink target;
 
-    ppi::connect(source.output,target.input);
+    ppi::connect(source,target);
     ppi::init();
 
     BOOST_CHECK_EQUAL( & target.input.peer(), & source.output );
@@ -273,7 +273,7 @@ BOOST_AUTO_UNIT_TEST(activeOutput)
     debug::ActivePacketSource source;
     debug::PassivePacketSink target;
 
-    ppi::connect(source.output,target.input);
+    ppi::connect(source,target);
     ppi::init();
     
     BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
