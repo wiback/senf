@@ -3,5 +3,5 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.Binary( env, 'ppitest', SENFSCons.GlobSources(),
+SENFSCons.Binary( env, 'ratestuffer', SENFSCons.GlobSources(),
                   LIBS = [ 'PPI', 'Scheduler', 'Packets', 'Socket', 'Utils' ] );
