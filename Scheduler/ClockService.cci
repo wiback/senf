@@ -1,0 +1,86 @@
+// $Id$
+//
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief ClockService inline non-template implementation */
+
+// Custom includes
+#include "boost/date_time/posix_time/posix_time_types.hpp"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ClockService
+
+prefix_ senf::ClockService::~ClockService()
+{
+    
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::now()
+{
+    return clock(boost::posix_time::microsec_clock::universal_time());
+}
+
+prefix_ senf::ClockService::abstime_type senf::ClockService::abstime(clock_type clock)
+{
+#ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
+    return instance().base_ + boost::posix_time::nanoseconds(clock);
+#else
+    return instance().base_ + boost::posix_time::microseconds((clock+500)/1000);
+#endif
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::clock(abstime_type time)
+{
+    boost::posix_time::time_duration delta (time - instance().base_);
+    return clock_type( delta.ticks() )
+        * clock_type( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
+}
+
+////////////////////////////////////////
+// private members
+
+prefix_ senf::ClockService::ClockService()
+    : base_ (boost::posix_time::microsec_clock::universal_time())
+{}
+
+prefix_ senf::ClockService & senf::ClockService::instance()
+{
+    static ClockService instance;
+    return instance;
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

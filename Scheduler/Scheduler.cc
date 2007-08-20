@@ -91,14 +91,13 @@ prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
     return instance;
 }
 
-prefix_ void senf::Scheduler::timeout(sched_time timeout, TimerCallback const & cb)
+prefix_ void senf::Scheduler::timeout(ClockService::clock_type timeout, TimerCallback const & cb)
 {
-    timerQueue_.push(TimerSpec(now()+timeout,cb));
+    timerQueue_.push(TimerSpec(ClockService::now()+timeout,cb));
 }
 
 prefix_ senf::Scheduler::Scheduler()
-    : epollFd_ (epoll_create(EPollInitialSize)), 
-      epoch_ (boost::posix_time::microsec_clock::universal_time())
+    : epollFd_ (epoll_create(EPollInitialSize))
 {
     if (epollFd_<0)
         throw SystemException(errno);
@@ -166,7 +165,7 @@ prefix_ void senf::Scheduler::process()
 {
     terminate_ = false;
     while (! terminate_) {
-        sched_time timeNow = now();
+        ClockService::clock_type timeNow = ClockService::now();
 
         while ( ! timerQueue_.empty() && timerQueue_.top().timeout <= timeNow ) {
             timerQueue_.top().cb();
@@ -178,7 +177,7 @@ prefix_ void senf::Scheduler::process()
 
         int timeout (MinTimeout);
         if (! timerQueue_.empty()) {
-            sched_time delta ((timerQueue_.top().timeout - timeNow)/1000000UL);
+            ClockService::clock_type delta ((timerQueue_.top().timeout - timeNow)/1000000UL);
             if (delta<MinTimeout)
                 timeout = int(delta);
         }

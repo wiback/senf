@@ -34,7 +34,7 @@
 #include <boost/utility.hpp>
 #include <boost/call_traits.hpp>
 #include <boost/integer.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "ClockService.hh"
 
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -93,19 +93,6 @@ namespace senf {
                                           EventId) > Callback;
         };
 
-        /** \brief Scheduler time data type
-            
-            Unsigned integer type representing scheduler time. Scheduler time is measured in
-            nanoseconds relative to some implementation defined reference time.
-         */
-        typedef boost::uint_fast64_t sched_time;
-
-        /** \brief Absolute time data type
-
-            Boost.DateTime datatype used to represent absolute date/time values.
-         */
-        typedef boost::posix_time::ptime abs_time;
-
         /** \brief Callback type for timer events */
         typedef boost::function<void ()> TimerCallback;
 
@@ -160,7 +147,8 @@ namespace senf {
                                              \param[in] eventMask arbitrary combination via '|'
                                                  operator of EventId designators. */
 
-        void timeout(sched_time timeout, TimerCallback const & cb); ///< Add timeout event
+        void timeout(ClockService::clock_type timeout, TimerCallback const & cb); 
+                                        ///< Add timeout event
                                         /**< \param[in] timeout timeout in nanoseconds
                                              \param[in] cb callback to call after \a timeout
                                                  milliseconds
@@ -178,25 +166,7 @@ namespace senf {
                                              it's caller after the currently running callback
                                              returns. */
         
-        abs_time abstime(sched_time time) const; ///< Convert scheduler time to absolute time
-                                        /**< This member converts a scheduler time value into an
-                                             absolute Boost.DateTime value. 
-                                             \note You should not base timeout calculations on this
-                                                 absolute time value. Scheduler time is guaranteed
-                                                 to be monotonous, absolute time may be
-                                                 non-monotonous if the system date/time is
-                                                 changed. */
-
-        sched_time schedtime(abs_time time) const; ///< Convert absolute time to scheduler time
-                                        /**< This member converst an absolute time value into the
-                                             corresponding scheduler time.
-                                             \see abstime */
-
-        sched_time now() const;         ///< Return current date/time
-                                        /**< The return value represents the current date/time in
-                                             scheduler time representation */
-
-        sched_time eventTime() const;   ///< Return date/time of last event
+        ClockService::clock_type eventTime() const; ///< Return date/time of last event
 
     protected:
 
@@ -226,13 +196,13 @@ namespace senf {
         struct TimerSpec
         {
             TimerSpec() : timeout(), cb() {}
-            TimerSpec(sched_time timeout_, TimerCallback cb_)
+            TimerSpec(ClockService::clock_type timeout_, TimerCallback cb_)
                 : timeout(timeout_), cb(cb_) {}
 
             bool operator< (TimerSpec const & other) const
                 { return timeout > other.timeout; }
 
-            sched_time timeout;
+            ClockService::clock_type timeout;
             TimerCallback cb;
         };
 
@@ -243,7 +213,6 @@ namespace senf {
         TimerQueue timerQueue_;
         int epollFd_;
         bool terminate_;
-        abs_time epoch_;
     };
 
     /** \brief Default file descriptor accessor

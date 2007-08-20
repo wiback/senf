@@ -184,7 +184,7 @@ namespace {
         callback(handle.fd_,event);
     }
 
-    bool is_close(Scheduler::sched_time a, Scheduler::sched_time b)
+    bool is_close(ClockService::clock_type a, ClockService::clock_type b)
     {
         return (a<b ? b-a : a-b) < 10100000UL; // a little bit over 10ms
     }
@@ -225,11 +225,11 @@ BOOST_AUTO_UNIT_TEST(scheduler)
 
     BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(100000000UL,&timeout) );
     BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(200000000UL,&timeout) );
-    Scheduler::sched_time t (Scheduler::instance().now());
+    ClockService::clock_type t (ClockService::now());
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (Scheduler::instance().now()) (t+100000000UL) );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+100000000UL) );
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (Scheduler::instance().now()) (t+200000000UL) );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+200000000UL) );
 
     HandleWrapper handle(sock,"TheTag");
     BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,&handleCallback,Scheduler::EV_WRITE) );
