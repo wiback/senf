@@ -1,0 +1,7 @@
+@INCLUDE          = "$(TOPDIR)/doclib/Doxyfile.global"
+
+PROJECT_NAME      = RateStuffer
+TAGFILES          = "$(TOPDIR)/Utils/doc/Utils.tag" "$(TOPDIR)/Socket/doc/Socket.tag" "$(TOPDIR)/Packets/doc/Packets.tag" "$(TOPDIR)/Scheduler/doc/Scheduler.tag" "$(TOPDIR)/PPI/doc/PPI.tag"
+ALPHABETICAL_INDEX = NO
+
+EXAMPLE_PATH      = "."

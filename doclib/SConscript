@@ -11,19 +11,20 @@ def modules():
     # Naja ... etwas rumgehackt aber was solls ...
     global EXTRA_MODULES
     mods = {}
-    ix = len(env.Dir('#').abspath)+1
-    ex = dict((env.Dir(p).abspath,True) for n,p in EXTRA_MODULES)
+    pathbase = len(env.Dir('#').abspath)+1
     for module in env.Alias('all_docs')[0].sources:
         if module.name != 'html.stamp' : continue 
-        if not ex.get(module.dir.abspath):
-            mods[module.dir.dir.dir.abspath] = [ module.dir.dir.dir.name, module.dir.abspath[ix:], 0 ]
+        mods[module.dir.dir.dir.abspath] = [ module.dir.dir.dir.name,
+                                             module.dir.abspath[pathbase:],
+                                             0 ]
+        
     rv = []
     keys = mods.keys()
     keys.sort()
     for mod in keys:
         i = 0
         while i < len(rv):
-            if mod.startswith(rv[i] + '/'):
+            if len(rv[i]) > pathbase and mod.startswith(rv[i] + '/'):
                 level = mods[rv[i]][2] + 1
                 i += 1
                 while i < len(rv) and mods[rv[i]][2] >= level:
@@ -34,11 +35,29 @@ def modules():
             i += 1
         if i == len(rv):
             rv.append(mod)
-    return [ (name, env.Dir(path).abspath[ix:], 0) for name,path in EXTRA_MODULES
-             ] + [ ( (((not mods[mod][2]) and 'lib') or '') + mods[mod][0],
-                     mods[mod][1],
-                     mods[mod][2])
-                   for mod in rv ]
+
+    for mod in keys:
+        if mods[mod][2] == 0:
+            mods[mod][0] = 'lib' + mods[mod][0]
+
+    n = 0
+    for name,path in EXTRA_MODULES:
+        path = env.Dir(path).dir.dir.abspath
+        i = 0
+        while i < len(rv):
+            if rv[i] == path:
+                mods[rv[i]][0] = name
+                m = 1
+                while i+m < len(rv) and mods[rv[i+m]][2] > mods[rv[i]][2]:
+                    m += 1
+                rv[n:n] = rv[i:i+m]
+                rv[i+m:i+2*m] = []
+                i += m
+                n += m
+            else:
+                i += 1
+
+    return ( tuple(mods[mod]) for mod in rv )
 
 def indices():
     ix = len(env.Dir('#').abspath)+1

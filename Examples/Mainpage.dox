@@ -1,170 +1,17 @@
 /** \mainpage Examples
     
-    \ref sniffer
+    \htmlonly
+    <dl>
+   
+    <dt><a href="../../Sniffer/doc/html/index.html">Sniffer</a></dt><dd>Simple packet sniffer
+    reading packets from a packet socket and dumping packet parse to stdout</dd>
+
+    <dt><a href="../../RateStuffer/doc/html/index.html">RateStuffer</a></dt><dd>Example application
+    showing of the PPI infrastructure</dd>
+
+    </dl>
+    \endhtmlonly
 */
-
-/** \page sniffer Sniffer: A simple example application
-
-    \dontinclude Sniffer.cc
-
-    The Sniffer application is a simple command line network sniffer like \c tcpdump or \c
-    tethereal. The application uses a packet socket to read Ethernet packets from the \c eth0
-    interface and dumps the parsed packets out to the standard output.
-
-    To try out the example application, check out the library, go to the \c Sniffer
-    directory and execute
-
-    <pre>
-    # scons -u
-    # ./sniffer loop
-    < Hit Ctrl-C when you've seen enough >
-    # ./sniffer scheduler
-    < Hit Ctrl-C when you've seen enough >
-    </pre>
-
-    We will now look at the code which is found in \c Sniffer.cc in the \c Sniffer directory. The
-    code starts out by including the necessary headers
-
-    \skip // Custom includes
-    \until membind
-
-    (The additional includes found in the source but not shown here are part of a short-time fix
-    which will be removed as soon as possible). The example application now contains a helper
-    routine to produce a packet hexdump. We will skip this routine here. The example includes two
-    implementations, one using blocking calls and a while loop, the other using the senf::Scheduler
-    for asynchronous event notification. They are implemented in \c loop_main() and \c
-    scheduler_main(). They will be documented below. For now, we skip these implementations and go
-    straight to the \c main() function
-
-    \skip int main(
-    \until return 1;
-    \until }
-
-    This routine simply interprets the first command line argument and dispatches to the required
-    implementation.
-
-    Now lets go back and study each implementation in detail.
-
-    \dontinclude Sniffer.cc
-
-    \section example_loop A Blocking Implementation
-
-    This implementation is found in the \c loop_main function.
-
-    \skip loop_main
-    \until try
-
-    We catch all exceptions in a \c try block. This is good for a deliverable binary. When debugging
-    the application, it might be better to let the exception \c abort the execution so you can get a
-    backtrace of the exception origin in the debugger.
-
-    We now create a packet socket and bind it to the \c eth0 interface. A packet socket is a linux
-    specific type of socket which returns ethernet packets directly from the network wire. By
-    uncommenting the last line, you may switch the interface into promiscuous mode.
-
-    \until //
-
-    We will now read packets from the socket forever, that is until the user hits Ctrl-C
-
-    \skip while
-    \until read
-
-    The next step is, to parse the data read from the socket as an Ethernet packet
-
-    \until ;
-
-    Lets digest this line step by step: We declare a variable named \c packet as a smart pointer to
-    an \c EthernetPacket instance. \c ptr is a typedef member of all Packet classes for the
-    corresponding smart pointer type. We then initialize this pointer with a call to the static \c
-    create member of the \c Packet class. This member takes the type of Packet to parse as a
-    template argument. We pass \c EthernetPacket here. The function takes an iterator range as an
-    argument, and we pass it the complete packet just read by giving the range \c begin() to \c
-    end() of our just read \c data string.
-
-    The next step is to write out the packet to the standard output
-
-    \until \n\n
-
-    The \c dump call will write out a complete representation of the parsed packet data. The Packet
-    library will \e not try to interpret payload data as long as no exact indication of the payload
-    type is available (example: A UDP Payload is not parsed further unless you explicitly tell the
-    library, how to parse it).  Tools like \c tethereal guess the payload type by checking port
-    numbers and the payload data, however this is not advisable for a general purpose packet
-    library.
-
-    The next line, \c hexdump, will write out the \e last packet component. Packets are managed as a
-    chain of headers. The last header is normally a \c DataPacket holding the payload data.
-
-    That's it. We finish of by catching the exception and giving as much detail as possible if an
-    exception is caught
-
-    \until ;
-    \until }
-    \until }
-
-    The \c prettyName function from the \c Utils library is used, to get a nice, printable
-    representation of the \e dynamic type of the exception instance. It is an interface to the g++
-    demangler. This is necessary since the \c name member of the C++ \c type_info instance is a
-    mangled name in \c g++.
-    
-    That's it for the simple blocking implementation. 
-
-    \section example_scheduler Using the Scheduler
-
-    However, we have another one which uses the Scheduler. We do this as it will be most of the
-    time: We define a class which manages reading the packets and dumping them out.
-
-    \until }
-
-    The class constructor binds the socket defined as a data member to the correct interface.
-
-    \until add
-
-    The public \c run() member is called to run the sniffer.  It first adds the socket to the
-    Scheduler. The \c add() call takes two Arguments, the socket to bind to (which can be a lot of
-    things and must not necessarily be a socket instance) and callback to call, whenever there is an
-    event on that socket. A third argument may be specified to restrict the events, on which the
-    function is called, here we have left out this argument which defaults to
-    senf::Scheduler::EV_ALL.
-
-    The callback is specified as a <a
-    href="http://www.boost.org/doc/html/function.html">Boost.Function</a> object. We use the \c
-    senf::membind helper from the Utils library to build such a function object. This helper takes
-    an arbitrary class member and binds it to a specific instance.
-
-    \until }
-
-    Calling the Schedulers \c process() method will start the event loop. This call does not return
-    (ok, it does return in special cases if \c senf::Scheduler::terminate() is called which does not
-    apply here).
-    
-    \until {
-
-    The \c dumpPacket() member is called by the scheduler whenever an event on the socket is
-    encountered. The scheduler always passes two arguments: The socket and an event id which
-    identifies the type of event which triggered the call.
-
-    \until };
-
-    The body is absolutely identical to the body of the \c while loop of the blocking
-    implementation. However, the scheduler guarantees, that a read on the socket will not block if
-    the socket is triggered to be readable (even if the socket is not set to non-blocking mode).
-
-    We now only need to provide the \c scheduler_main() function to run this code
-
-    \until 0;
-    \until }
-
-    This function is straight forward. The exception handling is the same as in \c loop_main(). The
-    code then just creates a \c Sniffer instance and calls it's \c run() member.
-
-    \see \ref components \n
-         \ref build \n
-         <a href="../../../Socket/doc/html/index.html"><b>libSocket API reference</b></a> \n
-         <a href="../../../Packets/doc/html/index.html"><b>libPackets API reference</b></a> \n
-         <a href="../../../Utils/doc/html/index.html"><b>libUtils API reference</b></a>
- */
-
 
 
 // Local Variables:

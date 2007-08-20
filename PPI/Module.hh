@@ -126,7 +126,9 @@ namespace module {
 
         void destroy();
 
+#ifndef DOXYGEN
         virtual void macro_SENF_PPI_MODULE_missing() = 0;
+#endif
 
     private:
         virtual void init();

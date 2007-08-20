@@ -1,7 +1,3 @@
-@INCLUDE 		  = "$(TOPDIR)/doclib/Doxyfile.global"
+@INCLUDE           = "$(TOPDIR)/doclib/Doxyfile.global"
 
-PROJECT_NAME 	  = Examples
-TAGFILES          = "$(TOPDIR)/Utils/doc/Utils.tag" "$(TOPDIR)/Socket/doc/Socket.tag" "$(TOPDIR)/Packets/doc/Packets.tag" "$(TOPDIR)/Scheduler/doc/Scheduler.tag" "$(TOPDIR)/doc/overview.tag"
-GENERATE_TAGFILE  = doc/Examples.tag
-
-EXAMPLE_PATH      = "Sniffer"
+PROJECT_NAME      = Examples

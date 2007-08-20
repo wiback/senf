@@ -34,7 +34,9 @@
 
 namespace senf {
 namespace ppi {
-    
+
+#ifndef DOXYGEN    
+
     void connect(connector::ActiveOutput & source, connector::PassiveInput & target);
     void connect(connector::PassiveOutput & source, connector::ActiveInput & target);
     
@@ -52,7 +54,14 @@ namespace ppi {
     void connect(M1 & source, M2 & target,
                  typename boost::enable_if< boost::is_base_of<module::Module, M1> >::type * = 0,
                  typename boost::enable_if< boost::is_base_of<module::Module, M2> >::type * = 0);
-    
+
+#else
+
+    template <class Source, class Target>
+    void connect(Source & source, Target & target);
+
+#endif
+
     void run();
     void init();
 

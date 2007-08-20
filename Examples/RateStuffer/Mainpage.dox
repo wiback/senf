@@ -1,0 +1,187 @@
+// $Id$
+//
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \mainpage RateStuffer: A simple example featuring the Packet Processing Infrastructure
+
+    This example application implements a simple PPI application: It will read UDP packets from an
+    input port and will forward them to another port at a fixed packet rate. If the input stream
+    does not provide enough packets, empty UDP packets will be sent instead.
+    
+    \section run Running the example
+
+    Running the example is a little bit more complicated since we need to provide example UDP
+    packets so we can see the application at work. We do this using \c netcat. We open several shell
+    windows and run the folling commands, each in it's own window
+
+    The first command listens for incoming UDP packets on port 44345:
+    <pre>
+    # nc -u -l -p 44345
+    </pre>
+    
+    The next command starts the \c ratestuffer
+    <pre>
+    # cd .../Examples/RateStuffer
+    # scons -u
+    # ./ratestuffer
+    </pre>
+
+    We should now see '<idle>' messages arriving in the first window once per second. We now can
+    start another \c netcat to send packets to the input port.
+
+    <pre>
+    # nc -u localhost 44344
+    < type any text here >
+    </pre>
+
+    Whenever we send out a packet with CR in the last window we should see it appear in the first
+    one. If we send out packets faster than 1 packet per seccond, they will still only be forwarded
+    with a speed of 1 packet / seccond. If the kernel UDP buffer overflows, packets would be dropped
+    (however, this buffer is prohibitively large) 
+
+    \image html screenshot.png
+
+    \section setup Module setup
+
+    \image html ratestuffer.png
+
+    Above image depicts the module setup implementing the rate stuffer. A
+    senf::ppi::module::ActiveSocketReader reads the incoming UDP packets and sends them into a
+    senf::ppi::module::PassiveQueue.
+
+    The \a queue feeds the packets into a senf::ppi::module::PriorityJoin. The CopyPacketGenerator
+    \a generator is fed as second input into the \a join to provide the stuffing packets.
+
+    The RateFilter \a rateFilter reads packets from it's input at a fixed rate and writes them into
+    the senf::ppi::module::PassiveSocketWriter \a udpWriter. The senf::ppi::module::PriorityJoin
+    ensures that read requests of the RateStuffer's input are always serviced, either from the \a
+    queue or, if the \a queue output is throttled, from the \a generator.
+
+    \section code Example code
+
+    \dontinclude ratestuffer.cc
+
+    The code starts out including the necessary header files
+
+    \skip Custom
+    \skip #include
+    \until Setup
+
+    We also define some namepsace aliases
+
+    \skip namespace
+    \until senf::ppi;
+
+    The RateStuffer application is based on two additional modules.
+
+    \subsection ratefilter The RateFilter module
+
+    The RateFilter module simply forwards packets at a fixed rate.
+
+    \skip class
+    \until };
+
+    Both connectors of the RateFilter module are active. The module is driven by a
+    senf::ppi::IntervalTimer.
+
+    \until }
+
+    The event is initialized to fire eery \a interval nanoseconds.  The traffic is routed 'accross'
+    the timer which controls the traffic. The timer is then registered to call
+    RateFilter::timeout().
+
+    \until }
+
+    The event handler is quite simple: Every \a interval nanoseconds a packet is read from \a input
+    and forwarded to \a output.
+
+    This is all there is to the RateFilter module. Due to the routing setup, the timer will
+    automatically be disabled if either \a input or \a output become throttled (which is not even
+    needed here).
+
+    \subsection generator The CopyPacketGenerator
+
+    We need an additional module to provide the stuffing packets. The CopyPacketGenerator provides
+    an unlimited stream of clone's of a template packet.
+
+    \skip class
+    \until };
+
+    This module is very simple. 
+
+    \until }
+
+    We save the template packet and initialize the \a output connector to call
+    CopyPacketGenerator::request() whenever a packet is requested.
+
+    \until }
+
+    The handler just provides \a packet on each request. This is ok as long as the packets are not
+    changed, in which case we would return <tt>packet->clone()</tt> instead.
+
+    \subsection main Connecting the modules
+
+    The applications main() method starts out by initializing the socket handles
+
+    \skip main
+    \until 44345
+
+    The \a inputSocket is listening on port 44344 while the \a outputSocket will send packets to
+    port 44345 on localhost. The \a outputSocket uses a ConnectedUDPv4SocketHandle which is
+    compatible with the senf::ppi::module::PassiveSocketWriter module.
+
+    \until udpWriter
+
+    Next all the modules are allocated:
+
+    \li \a udpReader to read the packets from \a inputSocket
+    \li \a queue to convert the active output of senf::ppi::module::ActiveSocketReader into a
+        passive output
+    \li \a generator to provide the stuffing in the form of packets containing <tt>"<idle>\n"</tt>
+    \li \a join to combine the two packet streams (from \a udpReader and from \a generator) into a
+        single stream
+    \li \a rateFilter to generate the fixed rate packet stream of 1 packet every 1000000000
+        nanoseconds and
+    \li \a udpWriter to send the packets to \a outputSocket
+
+    \until udpWriter
+
+    The \ref senf::ppi::connect() calls now setup the necessary connections.
+    
+    \until run
+
+    The module setup is complete, \ref senf::ppi::run() is called to enter the event loop.
+
+    \until }
+ */
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u doc"
+// mode: flyspell
+// mode: auto-fill
+// End:

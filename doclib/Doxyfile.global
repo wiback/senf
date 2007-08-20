@@ -25,7 +25,7 @@ SEARCHENGINE           = YES
 
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
-PREDEFINED             = DOXYGEN
+PREDEFINED             = DOXYGEN SENF_PPI_MODULE(x)=
 EXPAND_AS_DEFINED      = prefix_
 
 HTML_HEADER            = "$(TOPDIR)/doclib/doxy-header.html"

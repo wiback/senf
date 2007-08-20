@@ -46,52 +46,72 @@ namespace module = senf::ppi::module;
 namespace connector = senf::ppi::connector;
 namespace ppi = senf::ppi;
 
-namespace {
+// ////////////////////////////////////////////////////////////////////////
+// RateFilter
 
-    class RateFilter
-        : public module::Module
-    {
-        SENF_PPI_MODULE(RateFilter);
-    public:
+class RateFilter
+    : public module::Module
+{
+    SENF_PPI_MODULE(RateFilter);
+public:
 
-        connector::ActiveInput input;
-        connector::ActiveOutput output;
+    connector::ActiveInput input;
+    connector::ActiveOutput output;
 
-        RateFilter(senf::ClockService::clock_type interval) : timer(interval) {
-            route(input,output);
-            route(input,timer);
-            registerEvent(&RateFilter::timeout, timer);
-        }
+    RateFilter(senf::ClockService::clock_type interval);
 
-    private:
-        void timeout() {
-            output(input());
-        }
+private:
+    void timeout();
 
-        ppi::IntervalTimer timer;
-    };
+    ppi::IntervalTimer timer;
+};
 
-    class CopyPacketGenerator
-        : public module::Module
-    {
-        SENF_PPI_MODULE(CopyPacketGenerator);
-    public:
-
-        connector::PassiveOutput output;
-
-        CopyPacketGenerator(senf::Packet p) : packet(p) {
-            noroute(output);
-            output.onRequest(&CopyPacketGenerator::request);
-        }
-
-    private:
-        void request() {
-            output(packet);
-        }
-
-        senf::Packet packet;
-    };
+RateFilter::RateFilter(senf::ClockService::clock_type interval)
+    : timer(interval) 
+{
+    route(input,timer);
+    route(timer,output);
+    registerEvent(&RateFilter::timeout, timer);
 }
+
+void RateFilter::timeout()
+{
+    output(input());
+}
+
+// ////////////////////////////////////////////////////////////////////////
+// CopyPacketGenerator
+
+class CopyPacketGenerator
+    : public module::Module
+{
+    SENF_PPI_MODULE(CopyPacketGenerator);
+public:
+
+    connector::PassiveOutput output;
+
+    CopyPacketGenerator(senf::Packet p);
+
+private:
+    void request();
+
+    senf::Packet packet;
+};
+
+CopyPacketGenerator::CopyPacketGenerator(senf::Packet p)
+    : packet(p) 
+{
+    noroute(output);
+    output.onRequest(&CopyPacketGenerator::request);
+}
+
+void CopyPacketGenerator::request()
+{
+    output(packet);
+}
+
+// ////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
 
 // Module setup:
 //
