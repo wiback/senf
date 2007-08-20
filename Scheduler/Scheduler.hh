@@ -147,13 +147,15 @@ namespace senf {
                                              \param[in] eventMask arbitrary combination via '|'
                                                  operator of EventId designators. */
 
-        void timeout(ClockService::clock_type timeout, TimerCallback const & cb); 
+        unsigned timeout(ClockService::clock_type timeout, TimerCallback const & cb); 
                                         ///< Add timeout event
                                         /**< \param[in] timeout timeout in nanoseconds
                                              \param[in] cb callback to call after \a timeout
                                                  milliseconds
                                              \todo Return some kind of handle/pointer and add
                                                  support to update or revoke a timeout */
+
+        void cancelTimeout(unsigned id);
 
         void process();                 ///< Event handler main loop
                                         /**< This member must be called at some time to enter the
@@ -196,21 +198,37 @@ namespace senf {
         struct TimerSpec
         {
             TimerSpec() : timeout(), cb() {}
-            TimerSpec(ClockService::clock_type timeout_, TimerCallback cb_)
-                : timeout(timeout_), cb(cb_) {}
+            TimerSpec(ClockService::clock_type timeout_, TimerCallback cb_, unsigned id_)
+                : timeout(timeout_), cb(cb_), id(id_), canceled(false) {}
 
             bool operator< (TimerSpec const & other) const
                 { return timeout > other.timeout; }
 
             ClockService::clock_type timeout;
             TimerCallback cb;
+            unsigned id;
+            bool canceled;
         };
 
         typedef std::map<int,EventSpec> FdTable;
-        typedef std::priority_queue<TimerSpec> TimerQueue;
+        typedef std::map<unsigned,TimerSpec> TimerMap;
+
+        struct TimerSpecCompare
+        {
+            typedef TimerMap::iterator first_argument_type;
+            typedef TimerMap::iterator second_argument_type;
+            typedef bool result_type;
+            
+            result_type operator()(first_argument_type a, second_argument_type b);
+        };
+
+        typedef std::priority_queue<TimerMap::iterator, std::vector<TimerMap::iterator>, 
+                                    TimerSpecCompare> TimerQueue;
 
         FdTable fdTable_;
+        unsigned timerIdCounter_;
         TimerQueue timerQueue_;
+        TimerMap timerMap_;
         int epollFd_;
         bool terminate_;
     };

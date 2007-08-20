@@ -33,7 +33,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::ppi::detail::EventBindingBase::eventTime(boost::posix_time::ptime time)
+prefix_ void senf::ppi::detail::EventBindingBase::eventTime(ClockService::clock_type time)
 {
     // It's hard to make this inline because of a circular header dependency ...
     manager_->eventTime(time);

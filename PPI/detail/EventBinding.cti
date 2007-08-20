@@ -36,7 +36,7 @@
 template <class EventType, class Self>
 prefix_ void
 senf::ppi::detail::EventBindingHelper<EventType,Self>::callback(EventArg event,
-                                                                boost::posix_time::ptime time)
+                                                                ClockService::clock_type time)
 {
     self().eventTime(time);
     self().callback_(event);
@@ -45,7 +45,7 @@ senf::ppi::detail::EventBindingHelper<EventType,Self>::callback(EventArg event,
 template <class EventType, class Self>
 prefix_ void senf::ppi::detail::EventBindingHelper<EventType,Self>::callback(EventArg event)
 {
-    callback(event, boost::posix_time::microsec_clock::universal_time());
+    callback(event, ClockService::now());
 }
 
 ////////////////////////////////////////
@@ -62,7 +62,7 @@ prefix_ Self & senf::ppi::detail::EventBindingHelper<EventType,Self>::self()
 
 template <class Self>
 prefix_ void
-senf::ppi::detail::EventBindingHelper<void,Self>::callback(boost::posix_time::ptime time)
+senf::ppi::detail::EventBindingHelper<void,Self>::callback(ClockService::clock_type time)
 {
     self().eventTime(time);
     self().callback_();
@@ -71,7 +71,7 @@ senf::ppi::detail::EventBindingHelper<void,Self>::callback(boost::posix_time::pt
 template <class Self>
 prefix_ void senf::ppi::detail::EventBindingHelper<void,Self>::callback()
 {
-    callback(boost::posix_time::microsec_clock::universal_time());
+    callback(ClockService::now());
 }
 
 ////////////////////////////////////////

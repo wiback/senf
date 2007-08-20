@@ -26,7 +26,7 @@
 
 // Custom includes
 #include <vector>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "Scheduler/ClockService.hh"
 #include "predecl.hh"
 
 //#include "Events.mpp"
@@ -84,7 +84,7 @@ namespace ppi {
     protected:
         typedef typename detail::EventArgType<EventType>::type EventArg;
 
-        void callback(EventArg event, boost::posix_time::ptime time);
+        void callback(EventArg event, ClockService::clock_type time);
         void callback(EventArg event);
 
     private:
@@ -95,7 +95,7 @@ namespace ppi {
     class EventImplementationHelper<void,Self>
     {
     protected:
-        void callback(boost::posix_time::ptime time);
+        void callback(ClockService::clock_type time);
         void callback();
 
     private:

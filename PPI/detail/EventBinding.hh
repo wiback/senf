@@ -27,7 +27,7 @@
 #define HH_EventBinding_ 1
 
 // Custom includes
-#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "Scheduler/ClockService.hh"
 #include "../predecl.hh"
 #include "Callback.hh"
 
@@ -47,7 +47,7 @@ namespace detail {
         EventBindingBase(EventManager & manager, module::Module & module, 
                          EventDescriptor & descriptor);
 
-        void eventTime(boost::posix_time::ptime time);
+        void eventTime(ClockService::clock_type time);
 
     private:
         EventManager * manager_;
@@ -63,7 +63,7 @@ namespace detail {
     public:
         typedef typename detail::EventArgType<EventType>::type EventArg;
 
-        void callback(EventArg event, boost::posix_time::ptime time);
+        void callback(EventArg event, ClockService::clock_type time);
         void callback(EventArg event);
         
     private:
@@ -74,7 +74,7 @@ namespace detail {
     class EventBindingHelper<void,Self>
     {
     public:
-        void callback(boost::posix_time::ptime time);
+        void callback(ClockService::clock_type time);
         void callback();
         
     private:

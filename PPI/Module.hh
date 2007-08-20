@@ -28,8 +28,8 @@
 // Custom includes
 #include <vector>
 #include <boost/utility.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include "Scheduler/ClockService.hh"
 #include "predecl.hh"
 
 //#include "Module.mpp"
@@ -121,8 +121,8 @@ namespace module {
                                                  event is signaled
                                              \param[in] descriptor The type of event to register */
 
-        boost::posix_time::ptime eventTime(); ///< Return timestamp of the currently processing
-                                              ///< event
+        ClockService::clock_type eventTime(); ///< Return timestamp of the currently processing
+                                               ///< event
 
         void destroy();
 

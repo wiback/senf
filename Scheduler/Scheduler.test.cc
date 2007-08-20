@@ -223,8 +223,10 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "READ" );
 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(100000000UL,&timeout) );
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(200000000UL,&timeout) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
+                              ClockService::now()+100000000UL,&timeout) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
+                              ClockService::now()+200000000UL,&timeout) );
     ClockService::clock_type t (ClockService::now());
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
     BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+100000000UL) );

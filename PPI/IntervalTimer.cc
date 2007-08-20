@@ -21,39 +21,56 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventManager inline non-template implementation */
+    \brief IntervalTimer non-inline non-template implementation */
 
-//#include "EventManager.ih"
+#include "IntervalTimer.hh"
+//#include "IntervalTimer.ih"
 
 // Custom includes
+#include "Scheduler/Scheduler.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "IntervalTimer.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::EventManager
-
-prefix_ senf::ppi::EventManager & senf::ppi::EventManager::instance()
-{
-    static EventManager manager;
-    return manager;
-}
-
-prefix_ senf::ClockService::clock_type senf::ppi::EventManager::eventTime()
-{
-    return eventTime_;
-}
+// senf::ppi::IntervalTimer
 
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::EventManager::eventTime(ClockService::clock_type time)
+prefix_ void senf::ppi::IntervalTimer::v_enable()
 {
-    eventTime_ = time;
+    info_.intervalStart = ClockService::now();
+    info_.number = 0;
+    schedule();
 }
 
-///////////////////////////////cci.e///////////////////////////////////////
+prefix_ void senf::ppi::IntervalTimer::v_disable()
+{
+    Scheduler::instance().cancelTimeout(id_);
+}
+
+prefix_ void senf::ppi::IntervalTimer::schedule()
+{
+    info_.expected = info_.intervalStart + ( interval_ * (info_.number+1) ) / eventsPerInterval_;
+    id_ = Scheduler::instance().timeout(info_.expected, boost::bind(&IntervalTimer::cb,this));
+}
+
+prefix_ void senf::ppi::IntervalTimer::cb()
+{
+    callback(info_, info_.expected);
+    ++ info_.number;
+    if (info_.number >= eventsPerInterval_) {
+        info_.number = 0;
+        info_.intervalStart += interval_;
+    }
+    schedule();
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "IntervalTimer.mpp"
 
 
 // Local Variables:

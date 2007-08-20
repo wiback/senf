@@ -21,88 +21,68 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventManager public header */
+    \brief IntervalTimer public header */
 
-#ifndef HH_EventManager_
-#define HH_EventManager_ 1
+#ifndef HH_IntervalTimer_
+#define HH_IntervalTimer_ 1
 
 // Custom includes
-#include <boost/ptr_container/ptr_vector.hpp>
 #include "Scheduler/ClockService.hh"
-#include "predecl.hh"
-#include "detail/Callback.hh"
-#include "detail/EventBinding.hh"
+#include "Events.hh"
 
-//#include "EventManager.mpp"
+//#include "IntervalTimer.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
 
+    struct IntervalTimerEventInfo
+    {
+        ClockService::clock_type expected;
+        ClockService::clock_type intervalStart;
+        unsigned number;
+    };
+
     /** \brief
       */
-    class EventManager
+    class IntervalTimer
+        : public EventImplementation<IntervalTimerEventInfo>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        template <class Descriptor>
-#ifndef DOXYGEN
-        struct Callback
-#else
-        // This is SO stupid but doxygen must have some scoping problems if the 
-        // struct is called 'Callback' and will hang in an endless loop somewhere
-        struct Callback_
-#endif
-            : public detail::Callback<typename Descriptor::EventArg>
-        {};
-
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-        static EventManager & instance();
-
-        // default default constructor
-        // default copy constructor
-        // default copy assignment
-        // default destructor
-
-        // no conversion constructors
+        explicit IntervalTimer(ClockService::clock_type interval, 
+                               unsigned eventsPerInterval=1);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        template <class Descriptor>
-        void registerEvent(module::Module & module,
-                           typename Callback<Descriptor>::type callback,
-                           Descriptor & descriptor);
-
-        ClockService::clock_type eventTime();
-
     protected:
 
     private:
-        void destroyModule(module::Module & module);
+        virtual void v_enable();
+        virtual void v_disable();
 
-        typedef boost::ptr_vector<detail::EventBindingBase> EventRegistrations;
-        EventRegistrations registrations_;
+        void schedule();
+        void cb();
 
-        void eventTime(ClockService::clock_type time);
-
-        ClockService::clock_type eventTime_;
-
-        friend class detail::EventBindingBase;
-        friend class module::Module;
+        ClockService::clock_type interval_;
+        unsigned eventsPerInterval_;
+        IntervalTimerEventInfo info_;
+        unsigned id_;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "EventManager.cci"
-#include "EventManager.ct"
-//#include "EventManager.cti"
+#include "IntervalTimer.cci"
+//#include "IntervalTimer.ct"
+//#include "IntervalTimer.cti"
 #endif
 
 

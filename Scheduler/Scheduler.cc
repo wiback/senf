@@ -85,19 +85,8 @@ static const int EPollInitialSize = 16;
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
-{
-    static Scheduler instance;
-    return instance;
-}
-
-prefix_ void senf::Scheduler::timeout(ClockService::clock_type timeout, TimerCallback const & cb)
-{
-    timerQueue_.push(TimerSpec(ClockService::now()+timeout,cb));
-}
-
 prefix_ senf::Scheduler::Scheduler()
-    : epollFd_ (epoll_create(EPollInitialSize))
+    : timerIdCounter_(0), epollFd_ (epoll_create(EPollInitialSize)), terminate_(false)
 {
     if (epollFd_<0)
         throw SystemException(errno);
@@ -167,8 +156,11 @@ prefix_ void senf::Scheduler::process()
     while (! terminate_) {
         ClockService::clock_type timeNow = ClockService::now();
 
-        while ( ! timerQueue_.empty() && timerQueue_.top().timeout <= timeNow ) {
-            timerQueue_.top().cb();
+        while ( ! timerQueue_.empty() && timerQueue_.top()->second.timeout <= timeNow ) {
+            TimerMap::iterator i (timerQueue_.top());
+            if (! i->second.canceled)
+                i->second.cb();
+            timerMap_.erase(i);
             timerQueue_.pop();
         }
 
@@ -177,7 +169,8 @@ prefix_ void senf::Scheduler::process()
 
         int timeout (MinTimeout);
         if (! timerQueue_.empty()) {
-            ClockService::clock_type delta ((timerQueue_.top().timeout - timeNow)/1000000UL);
+            ClockService::clock_type delta (
+                (timerQueue_.top()->second.timeout - timeNow)/1000000UL);
             if (delta<MinTimeout)
                 timeout = int(delta);
         }

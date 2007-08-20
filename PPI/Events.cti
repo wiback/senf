@@ -40,7 +40,7 @@
 template <class EventType, class Self>
 prefix_ void
 senf::ppi::EventImplementationHelper<EventType,Self>::callback(EventArg event,
-                                                               boost::posix_time::ptime time)
+                                                               ClockService::clock_type time)
 {
     binding().callback(event,time);
 }
@@ -70,7 +70,7 @@ senf::ppi::EventImplementationHelper<EventType,Self>::binding()
 
 template <class Self>
 prefix_ void
-senf::ppi::EventImplementationHelper<void,Self>::callback(boost::posix_time::ptime time)
+senf::ppi::EventImplementationHelper<void,Self>::callback(ClockService::clock_type time)
 {
     binding().callback(time);
 }

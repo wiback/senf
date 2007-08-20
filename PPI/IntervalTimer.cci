@@ -21,9 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventManager inline non-template implementation */
-
-//#include "EventManager.ih"
+    \brief IntervalTimer inline non-template implementation */
 
 // Custom includes
 
@@ -31,26 +29,12 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::EventManager
+// senf::ppi::IntervalTimer
 
-prefix_ senf::ppi::EventManager & senf::ppi::EventManager::instance()
-{
-    static EventManager manager;
-    return manager;
-}
-
-prefix_ senf::ClockService::clock_type senf::ppi::EventManager::eventTime()
-{
-    return eventTime_;
-}
-
-////////////////////////////////////////
-// private members
-
-prefix_ void senf::ppi::EventManager::eventTime(ClockService::clock_type time)
-{
-    eventTime_ = time;
-}
+prefix_ senf::ppi::IntervalTimer::IntervalTimer(ClockService::clock_type interval,
+                                                unsigned eventsPerInterval)
+    : interval_ (interval), eventsPerInterval_ (eventsPerInterval)
+{}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

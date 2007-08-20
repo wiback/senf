@@ -75,8 +75,7 @@ BOOST_AUTO_UNIT_TEST(module)
 
     tester.event.trigger();
     BOOST_CHECK_EQUAL( sink.size(), 1u );
-    BOOST_CHECK_EQUAL( (boost::posix_time::microsec_clock::universal_time() - 
-                        tester.eventTime()).total_seconds(), 0 );
+    BOOST_CHECK( senf::ClockService::now() - tester.eventTime() < 1000000000L );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

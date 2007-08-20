@@ -31,6 +31,29 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
+prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
+{
+    static Scheduler instance;
+    return instance;
+}
+
+prefix_ unsigned senf::Scheduler::timeout(ClockService::clock_type timeout,
+                                          TimerCallback const & cb)
+{
+    TimerMap::iterator i (
+        timerMap_.insert(std::make_pair(timerIdCounter_, 
+                                        TimerSpec(timeout,cb,timerIdCounter_))).first);
+    timerQueue_.push(i);
+    return timerIdCounter_++;
+}
+
+prefix_ void senf::Scheduler::cancelTimeout(unsigned id)
+{
+    TimerMap::iterator i (timerMap_.find(id));
+    if (i != timerMap_.end())
+        i->second.canceled = true;
+}
+
 prefix_ void senf::Scheduler::terminate()
 {
     terminate_ = true;
@@ -39,6 +62,12 @@ prefix_ void senf::Scheduler::terminate()
 prefix_ int senf::retrieve_filehandle(int fd)
 {
     return fd;
+}
+
+prefix_ senf::Scheduler::TimerSpecCompare::result_type
+senf::Scheduler::TimerSpecCompare::operator()(first_argument_type a, second_argument_type b)
+{
+    return a->second < b->second;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

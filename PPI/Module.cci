@@ -40,7 +40,7 @@ prefix_ senf::ppi::module::Module::~Module()
     moduleManager().unregisterModule(*this);
 }
 
-prefix_ boost::posix_time::ptime senf::ppi::module::Module::eventTime()
+prefix_ senf::ClockService::clock_type senf::ppi::module::Module::eventTime()
 {
     return eventManager().eventTime();
 }
