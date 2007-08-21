@@ -28,12 +28,17 @@
 
 // Custom includes
 #include <boost/utility.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/scoped_ptr.hpp>
 
 //#include "ClockService.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+#ifndef DOXYGEN
+    namespace detail { class ClockServiceTest; }
+#endif
 
     // Implementation note:
     //
@@ -72,8 +77,6 @@ namespace senf {
 
         The ClockService provides a highly accurate monotonous clock source based on
         gettimeofday(). However, it takes additional precautions to detect clock skew.
-
-        \fixme Implement the clock-skew detection
       */
     class ClockService
         : boost::noncopyable
@@ -121,14 +124,40 @@ namespace senf {
                                              corresponding clock value.
                                              \see abstime */
 
+        static clock_type nanoseconds(clock_type v);
+        static clock_type microseconds(clock_type v);
+        static clock_type milliseconds(clock_type v);
+        static clock_type seconds(clock_type v);
+        static clock_type minutes(clock_type v);
+        static clock_type hours(clock_type v);
+        static clock_type days(clock_type v);
+
+        static void restart();
+
     protected:
 
     private:
+
         ClockService();
 
         static ClockService & instance();
+        clock_type now_i();
+        void restart_i();
+
+        bool checkSkew(boost::posix_time::ptime time);
+        void clockSkew(boost::posix_time::ptime time, boost::posix_time::ptime expected);
+        void updateSkew(boost::posix_time::ptime time);
         
         boost::posix_time::ptime base_;
+        boost::posix_time::ptime heartbeat_;
+
+        struct Impl;
+        boost::scoped_ptr<Impl> impl_;
+
+        friend class Impl;
+#ifndef DOXYGEN
+        friend class senf::detail::ClockServiceTest;
+#endif
     };
 
 

@@ -224,14 +224,14 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     BOOST_CHECK_EQUAL( buffer, "READ" );
 
     BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
-                              ClockService::now()+100000000UL,&timeout) );
+                              ClockService::now()+ClockService::milliseconds(100),&timeout) );
     BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
-                              ClockService::now()+200000000UL,&timeout) );
+                              ClockService::now()+ClockService::milliseconds(200),&timeout) );
     ClockService::clock_type t (ClockService::now());
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+100000000UL) );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(100)) );
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+200000000UL) );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
 
     HandleWrapper handle(sock,"TheTag");
     BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,&handleCallback,Scheduler::EV_WRITE) );

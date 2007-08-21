@@ -145,8 +145,8 @@
     \until 44345
 
     The \a inputSocket is listening on port 44344 while the \a outputSocket will send packets to
-    port 44345 on localhost. The \a outputSocket uses a ConnectedUDPv4SocketHandle which is
-    compatible with the senf::ppi::module::PassiveSocketWriter module.
+    port 44345 on localhost. The \a outputSocket uses the senf::ConnectedUDPv4SocketProtocol which
+    is compatible with the senf::ppi::module::PassiveSocketWriter module.
 
     \until udpWriter
 

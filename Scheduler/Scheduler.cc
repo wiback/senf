@@ -86,7 +86,8 @@ static const int EPollInitialSize = 16;
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::Scheduler::Scheduler()
-    : timerIdCounter_(0), epollFd_ (epoll_create(EPollInitialSize)), terminate_(false)
+    : timerIdCounter_(0), epollFd_ (epoll_create(EPollInitialSize)), terminate_(false),
+      eventTime_(0)
 {
     if (epollFd_<0)
         throw SystemException(errno);
@@ -153,10 +154,9 @@ prefix_ int senf::Scheduler::EventSpec::epollMask()
 prefix_ void senf::Scheduler::process()
 {
     terminate_ = false;
+    eventTime_ = ClockService::now();
     while (! terminate_) {
-        ClockService::clock_type timeNow = ClockService::now();
-
-        while ( ! timerQueue_.empty() && timerQueue_.top()->second.timeout <= timeNow ) {
+        while ( ! timerQueue_.empty() && timerQueue_.top()->second.timeout <= eventTime_ ) {
             TimerMap::iterator i (timerQueue_.top());
             if (! i->second.canceled)
                 i->second.cb();
@@ -170,7 +170,7 @@ prefix_ void senf::Scheduler::process()
         int timeout (MinTimeout);
         if (! timerQueue_.empty()) {
             ClockService::clock_type delta (
-                (timerQueue_.top()->second.timeout - timeNow)/1000000UL);
+                (timerQueue_.top()->second.timeout - eventTime_)/1000000UL);
             if (delta<MinTimeout)
                 timeout = int(delta);
         }
@@ -180,6 +180,12 @@ prefix_ void senf::Scheduler::process()
         if (events<0)
             // 'man epoll' says, epoll will not return with EINTR.
             throw SystemException(errno);
+
+        /// \fixme Fix unneeded timer delays
+        // Hmm ... I remember, I purposely moved the timeout-handlers to the loop top ... but why?
+        // This delays possible time-critical handlers even further ...
+
+        eventTime_ = ClockService::now();
         if (events==0)
             // Timeout .. the handler will be run when going back to the loop top
             continue;

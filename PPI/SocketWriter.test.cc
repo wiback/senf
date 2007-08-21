@@ -85,7 +85,7 @@ BOOST_AUTO_UNIT_TEST(activeSocketWriter)
     senf::UDPv4ClientSocketHandle inputSocket;
     inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
     senf::Scheduler::instance().timeout(
-        senf::ClockService::now() + 100000000, &timeout);
+        senf::ClockService::now() + senf::ClockService::milliseconds(100), &timeout);
     source.submit(p);
     senf::ppi::run();
 

@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "Scheduler/Scheduler.hh"
+#include "EventManager.hh"
 
 //#include "IntervalTimer.mpp"
 #define prefix_
@@ -41,7 +42,7 @@
 
 prefix_ void senf::ppi::IntervalTimer::v_enable()
 {
-    info_.intervalStart = ClockService::now();
+    info_.intervalStart = manager().now();
     info_.number = 0;
     schedule();
 }

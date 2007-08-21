@@ -60,7 +60,7 @@ namespace {
             output(senf::DataPacket::create());
         }
 
-        using ppi::module::Module::eventTime;
+        using ppi::module::Module::time;
     };
 }
 
@@ -75,7 +75,7 @@ BOOST_AUTO_UNIT_TEST(module)
 
     tester.event.trigger();
     BOOST_CHECK_EQUAL( sink.size(), 1u );
-    BOOST_CHECK( senf::ClockService::now() - tester.eventTime() < 1000000000L );
+    BOOST_CHECK( senf::ClockService::now() - tester.time() < senf::ClockService::seconds(1) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

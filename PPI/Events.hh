@@ -111,6 +111,9 @@ namespace ppi {
         typedef EventType Event;
         typedef typename detail::EventArgType<EventType>::type EventArg;
 
+        module::Module & module() const;
+        EventManager & manager() const;
+        
     protected:
         EventImplementation();
 

@@ -37,6 +37,18 @@ prefix_ senf::ppi::detail::EventBindingBase::~EventBindingBase()
     descriptor_->enabled(false);
 }
 
+prefix_ senf::ppi::EventManager & senf::ppi::detail::EventBindingBase::manager()
+    const
+{
+    return *manager_;
+}
+
+prefix_ senf::ppi::module::Module & senf::ppi::detail::EventBindingBase::module()
+    const
+{
+    return *module_;
+}
+
 ////////////////////////////////////////
 // protected members
 

@@ -32,14 +32,13 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ClockService
 
-prefix_ senf::ClockService::~ClockService()
-{
-    
-}
-
 prefix_ senf::ClockService::clock_type senf::ClockService::now()
 {
-    return clock(boost::posix_time::microsec_clock::universal_time());
+    // We must make sure to call instance() before fetching the current time since the first call to
+    // instance() will construct the singleton and initialize heartbeat_. If this happens *after*
+    // fetching the current time checkSkew() will detect clock skew since heartbeat_ will be <
+    // current time.
+    return instance().now_i();
 }
 
 prefix_ senf::ClockService::abstime_type senf::ClockService::abstime(clock_type clock)
@@ -58,17 +57,72 @@ prefix_ senf::ClockService::clock_type senf::ClockService::clock(abstime_type ti
         * clock_type( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
 }
 
+prefix_ senf::ClockService::clock_type senf::ClockService::nanoseconds(clock_type v)
+{
+    return v;
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::microseconds(clock_type v)
+{
+    return nanoseconds(1000*v);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::milliseconds(clock_type v)
+{
+    return microseconds(1000*v);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::seconds(clock_type v)
+{
+    return milliseconds(1000*v);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::minutes(clock_type v)
+{
+    return seconds(60*v);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::hours(clock_type v)
+{
+    return minutes(60*v);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::days(clock_type v)
+{
+    return hours(24*v);
+}
+
+prefix_ void senf::ClockService::restart()
+{
+    instance().restart_i();
+}
+
 ////////////////////////////////////////
 // private members
-
-prefix_ senf::ClockService::ClockService()
-    : base_ (boost::posix_time::microsec_clock::universal_time())
-{}
 
 prefix_ senf::ClockService & senf::ClockService::instance()
 {
     static ClockService instance;
     return instance;
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::now_i()
+{
+    boost::posix_time::ptime time (boost::posix_time::microsec_clock::universal_time());
+    if (checkSkew(time)) 
+        updateSkew(time);
+    return clock(time);
+}
+
+prefix_ bool senf::ClockService::checkSkew(boost::posix_time::ptime time)
+{
+    return time < heartbeat_ || (time - heartbeat_) > boost::posix_time::seconds(2*CheckInterval);
+}
+
+prefix_ void senf::ClockService::clockSkew(boost::posix_time::ptime time,
+                                           boost::posix_time::ptime expected)
+{
+    base_ += (time - expected);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

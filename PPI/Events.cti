@@ -95,6 +95,20 @@ senf::ppi::EventImplementationHelper<void,Self>::binding()
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::EventImplementation<EventType>
 
+template <class EventType>
+prefix_ senf::ppi::module::Module & senf::ppi::EventImplementation<EventType>::module()
+    const
+{
+    return binding_->module();
+}
+
+template <class EventType>
+prefix_ senf::ppi::EventManager & senf::ppi::EventImplementation<EventType>::manager()
+    const
+{
+    return binding_->manager();
+}
+
 ////////////////////////////////////////
 // protected members
 

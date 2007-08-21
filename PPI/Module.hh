@@ -121,8 +121,10 @@ namespace module {
                                                  event is signaled
                                              \param[in] descriptor The type of event to register */
 
-        ClockService::clock_type eventTime(); ///< Return timestamp of the currently processing
-                                               ///< event
+        ClockService::clock_type time() const; ///< Return timestamp of the currently processing
+                                        ///< event
+
+        ClockService::clock_type now() const;
 
         void destroy();
 
@@ -133,8 +135,8 @@ namespace module {
     private:
         virtual void init();
 
-        EventManager & eventManager();
-        ModuleManager & moduleManager();
+        EventManager & eventManager() const;
+        ModuleManager & moduleManager() const;
         
         void registerConnector(connector::Connector & connector);
         RouteBase & addRoute(std::auto_ptr<RouteBase> route);

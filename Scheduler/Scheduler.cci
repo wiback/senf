@@ -59,6 +59,12 @@ prefix_ void senf::Scheduler::terminate()
     terminate_ = true;
 }
 
+prefix_ senf::ClockService::clock_type senf::Scheduler::eventTime()
+    const
+{
+    return eventTime_;
+}
+
 prefix_ int senf::retrieve_filehandle(int fd)
 {
     return fd;

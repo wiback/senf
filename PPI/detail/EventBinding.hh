@@ -42,6 +42,9 @@ namespace detail {
     {
     public:
         ~EventBindingBase();
+
+        EventManager & manager() const;
+        module::Module & module() const;
         
     protected:
         EventBindingBase(EventManager & manager, module::Module & module, 

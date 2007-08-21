@@ -26,6 +26,7 @@
 //#include "EventBinding.ih"
 
 // Custom includes
+#include "../EventManager.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -45,7 +46,7 @@ senf::ppi::detail::EventBindingHelper<EventType,Self>::callback(EventArg event,
 template <class EventType, class Self>
 prefix_ void senf::ppi::detail::EventBindingHelper<EventType,Self>::callback(EventArg event)
 {
-    callback(event, ClockService::now());
+    callback(event, self().manager().now());
 }
 
 ////////////////////////////////////////
@@ -71,7 +72,7 @@ senf::ppi::detail::EventBindingHelper<void,Self>::callback(ClockService::clock_t
 template <class Self>
 prefix_ void senf::ppi::detail::EventBindingHelper<void,Self>::callback()
 {
-    callback(ClockService::now());
+    callback(self().manager().now());
 }
 
 ////////////////////////////////////////

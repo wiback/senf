@@ -79,7 +79,8 @@ namespace ppi {
                            typename Callback<Descriptor>::type callback,
                            Descriptor & descriptor);
 
-        ClockService::clock_type eventTime();
+        ClockService::clock_type now();
+        ClockService::clock_type time();
 
     protected:
 

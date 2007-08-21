@@ -231,6 +231,7 @@ namespace senf {
         TimerMap timerMap_;
         int epollFd_;
         bool terminate_;
+        ClockService::clock_type eventTime_;
     };
 
     /** \brief Default file descriptor accessor

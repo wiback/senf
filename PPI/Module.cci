@@ -40,9 +40,16 @@ prefix_ senf::ppi::module::Module::~Module()
     moduleManager().unregisterModule(*this);
 }
 
-prefix_ senf::ClockService::clock_type senf::ppi::module::Module::eventTime()
+prefix_ senf::ClockService::clock_type senf::ppi::module::Module::time()
+    const
 {
-    return eventManager().eventTime();
+    return eventManager().time();
+}
+
+prefix_ senf::ClockService::clock_type senf::ppi::module::Module::now()
+    const
+{
+    return eventManager().now();
 }
 
 ////////////////////////////////////////
@@ -71,11 +78,13 @@ prefix_ void senf::ppi::module::Module::init()
 {}
 
 prefix_ senf::ppi::EventManager & senf::ppi::module::Module::eventManager()
+    const
 {
     return EventManager::instance();
 }
 
 prefix_ senf::ppi::ModuleManager & senf::ppi::module::Module::moduleManager()
+    const
 {
     return ModuleManager::instance();
 }
