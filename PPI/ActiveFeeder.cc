@@ -21,39 +21,31 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Events internal header */
+    \brief ActiveFeeder non-inline non-template implementation */
 
-#ifndef IH_Events_
-#define IH_Events_ 1
+#include "ActiveFeeder.hh"
+//#include "ActiveFeeder.ih"
 
 // Custom includes
 
-///////////////////////////////ih.p////////////////////////////////////////
+//#include "ActiveFeeder.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
-namespace ppi {
-namespace detail {
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::ActiveFeeder
 
-    template <class EventType>
-    struct EventArgType
-    {
-        typedef EventType const & type;
-    };
+////////////////////////////////////////
+// private members
 
-#ifndef DOXYGEN
+prefix_ void senf::ppi::module::ActiveFeeder::request()
+{
+    output(input());
+}
 
-    template <>
-    struct EventArgType<void>
-    {
-        typedef void type;
-    };
-
-#endif
-
-}}}
-
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "ActiveFeeder.mpp"
 
 
 // Local Variables:

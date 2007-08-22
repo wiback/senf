@@ -32,6 +32,8 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
+#ifndef DOXYGEN
+
 prefix_ void senf::ppi::connect(connector::ActiveOutput & source,
                                 connector::PassiveInput & target)
 {
@@ -53,6 +55,8 @@ prefix_ void senf::ppi::init()
 {
     ModuleManager::instance().init();
 }
+
+#endif
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

@@ -63,12 +63,19 @@ namespace ppi {
         void init();
         void run();
 
-    protected:
+        bool running() const;
 
     private:
+        ModuleManager();
+
         typedef std::vector<module::Module *> ModuleRegistry;
 
+        struct RunGuard;
+        friend class RunGuard;
+
         ModuleRegistry moduleRegistry_;
+        bool running_;
+        bool terminate_;
     };
 
 

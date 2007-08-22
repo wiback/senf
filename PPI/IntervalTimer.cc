@@ -50,6 +50,7 @@ prefix_ void senf::ppi::IntervalTimer::v_enable()
 prefix_ void senf::ppi::IntervalTimer::v_disable()
 {
     Scheduler::instance().cancelTimeout(id_);
+    id_ = 0;
 }
 
 prefix_ void senf::ppi::IntervalTimer::schedule()
@@ -61,6 +62,8 @@ prefix_ void senf::ppi::IntervalTimer::schedule()
 prefix_ void senf::ppi::IntervalTimer::cb()
 {
     callback(info_, info_.expected);
+    if (! enabled())
+        return;
     ++ info_.number;
     if (info_.number >= eventsPerInterval_) {
         info_.number = 0;

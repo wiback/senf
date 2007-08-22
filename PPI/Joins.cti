@@ -58,6 +58,8 @@ senf::ppi::module::PriorityJoin::connect(Source & source)
 ///////////////////////////////////////////////////////////////////////////
 // namespace members
 
+#ifndef DOXYGEN
+
 template <class Source>
 prefix_ senf::ppi::connector::PassiveInput & senf::ppi::connect(Source & source,
                                                                 module::PassiveJoin & target)
@@ -71,6 +73,8 @@ prefix_ senf::ppi::connector::ActiveInput & senf::ppi::connect(Source & source,
 {
     return target.connect(source);
 }
+
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

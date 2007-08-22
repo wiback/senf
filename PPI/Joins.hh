@@ -38,11 +38,15 @@
 namespace senf {
 namespace ppi {
 
+#ifndef DOXYGEN
+
     template <class Source>
     connector::PassiveInput & connect(Source & source, module::PassiveJoin & target);
     
     template <class Source>
     connector::ActiveInput & connect(Source & source, module::PriorityJoin & target);
+
+#endif
 
 namespace module {
 

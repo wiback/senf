@@ -38,11 +38,11 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace debug = senf::ppi::module::debug;
+namespace ppi = senf::ppi;
+
 BOOST_AUTO_UNIT_TEST(debugModules)
 {
-    namespace debug = senf::ppi::module::debug;
-    namespace ppi = senf::ppi;
-
     {
         debug::ActivePacketSource source;
         debug::PassivePacketSink sink;

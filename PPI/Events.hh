@@ -91,6 +91,8 @@ namespace ppi {
         detail::EventBinding<EventType> & binding();
     };
     
+#ifndef DOXYGEN
+
     template <class Self>
     class EventImplementationHelper<void,Self>
     {
@@ -101,6 +103,8 @@ namespace ppi {
     private:
         detail::EventBinding<void> & binding();
     };
+
+#endif
 
     template <class EventType>
     class EventImplementation

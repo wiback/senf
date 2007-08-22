@@ -45,11 +45,26 @@ prefix_ void senf::ppi::ModuleManager::init()
         (*i)->init();
 }
 
+struct senf::ppi::ModuleManager::RunGuard
+{
+    RunGuard(ModuleManager & m) : manager(m) { manager.running_ = true; }
+    ~RunGuard() { manager.running_ = false; }
+    ModuleManager & manager;
+};
+
 prefix_ void senf::ppi::ModuleManager::run()
 {
     init();
+    RunGuard guard (*this);
     Scheduler::instance().process();
 }
+
+////////////////////////////////////////
+// private members
+
+prefix_ senf::ppi::ModuleManager::ModuleManager()
+    : running_(false), terminate_(false)
+{}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

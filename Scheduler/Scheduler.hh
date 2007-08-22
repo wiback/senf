@@ -116,6 +116,8 @@ namespace senf {
                 variable. The C++ standard then provides above guarantee. The instance will be
                 initialized the first time, the code flow passes the variable declaration found in
                 the instance() body.
+
+            \fixme TimerQueue as \c map \e and \c priority_queue doesn't make sense ...
          */
         static Scheduler & instance();
 
@@ -174,8 +176,6 @@ namespace senf {
 
     private:
         typedef boost::function<void (EventId)> SimpleCallback;
-
-        static unsigned const MinTimeout = 1000;
 
         Scheduler();
 

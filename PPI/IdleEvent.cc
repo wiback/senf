@@ -21,39 +21,45 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Events internal header */
+    \brief IdleEvent non-inline non-template implementation */
 
-#ifndef IH_Events_
-#define IH_Events_ 1
+#include "IdleEvent.hh"
+//#include "IdleEvent.ih"
 
 // Custom includes
+#include "Scheduler/Scheduler.hh"
 
-///////////////////////////////ih.p////////////////////////////////////////
+//#include "IdleEvent.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
-namespace ppi {
-namespace detail {
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::IdleEvent
 
-    template <class EventType>
-    struct EventArgType
-    {
-        typedef EventType const & type;
-    };
+////////////////////////////////////////
+// private members
 
-#ifndef DOXYGEN
+prefix_ void senf::ppi::IdleEvent::v_enable()
+{
+    id_ = Scheduler::instance().timeout(manager().now(), boost::bind(&IdleEvent::cb,this));
+}
 
-    template <>
-    struct EventArgType<void>
-    {
-        typedef void type;
-    };
+prefix_ void senf::ppi::IdleEvent::v_disable()
+{
+    Scheduler::instance().cancelTimeout(id_);
+    id_ = 0;
+}
 
-#endif
+prefix_ void senf::ppi::IdleEvent::cb()
+{
+    callback();
+    if (enabled())
+        v_enable();
+}
 
-}}}
-
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "IdleEvent.mpp"
 
 
 // Local Variables:

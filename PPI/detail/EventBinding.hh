@@ -73,6 +73,8 @@ namespace detail {
         Self & self();
     };
 
+#ifndef DOXYGEN
+
     template <class Self>
     class EventBindingHelper<void,Self>
     {
@@ -83,6 +85,8 @@ namespace detail {
     private:
         Self & self();
     };
+
+#endif
 
     template <class EventType>
     class EventBinding

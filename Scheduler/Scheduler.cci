@@ -40,11 +40,12 @@ prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
 prefix_ unsigned senf::Scheduler::timeout(ClockService::clock_type timeout,
                                           TimerCallback const & cb)
 {
+    ++ timerIdCounter_;
     TimerMap::iterator i (
         timerMap_.insert(std::make_pair(timerIdCounter_, 
                                         TimerSpec(timeout,cb,timerIdCounter_))).first);
     timerQueue_.push(i);
-    return timerIdCounter_++;
+    return timerIdCounter_;
 }
 
 prefix_ void senf::Scheduler::cancelTimeout(unsigned id)

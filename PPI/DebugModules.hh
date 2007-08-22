@@ -35,11 +35,22 @@
 //#include "DebugModules.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
+/** \namespace senf::ppi::module::debug
+    \brief Debug modules
+
+    This namespace collects several modules helpful for PPI debugging. The modules allow to manually
+    pass packets into a network and read back the output packets.
+
+    
+ */
+
 namespace senf {
 namespace ppi {
 namespace module {
 namespace debug {
     
+    /** \brief
+     */
     class ActivePacketSource
         : public Module, 
           public SafeBool<ActivePacketSource>

@@ -155,7 +155,7 @@ prefix_ void senf::Scheduler::process()
 {
     terminate_ = false;
     eventTime_ = ClockService::now();
-    while (! terminate_) {
+    while (! terminate_ && ( ! timerQueue_.empty() || ! fdTable_.empty())) {
         while ( ! timerQueue_.empty() && timerQueue_.top()->second.timeout <= eventTime_ ) {
             TimerMap::iterator i (timerQueue_.top());
             if (! i->second.canceled)
@@ -167,26 +167,27 @@ prefix_ void senf::Scheduler::process()
         if (terminate_)
             return;
 
-        int timeout (MinTimeout);
+        int timeout (-1);
         if (! timerQueue_.empty()) {
             ClockService::clock_type delta (
                 (timerQueue_.top()->second.timeout - eventTime_)/1000000UL);
-            if (delta<MinTimeout)
-                timeout = int(delta);
+            timeout = delta < 0 ? 0 : delta;
         }
 
+        ///\fixme Handle more than one epoll_event per call
         struct epoll_event ev;
         int events = epoll_wait(epollFd_, &ev, 1, timeout);
         if (events<0)
-            // 'man epoll' says, epoll will not return with EINTR.
-            throw SystemException(errno);
+            // even though 'man epoll' does not mention EINTR the reality is different ...
+            if (errno != EINTR)
+                throw SystemException(errno);
 
         /// \fixme Fix unneeded timer delays
         // Hmm ... I remember, I purposely moved the timeout-handlers to the loop top ... but why?
         // This delays possible time-critical handlers even further ...
 
         eventTime_ = ClockService::now();
-        if (events==0)
+        if (events <= 0)
             // Timeout .. the handler will be run when going back to the loop top
             continue;
 

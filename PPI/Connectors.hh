@@ -185,7 +185,7 @@ namespace connector {
 
                                              \param[in] handler Handler to call on throttle
                                                  notifications. */
-        void onThrottle();
+        void onThrottle();              ///< Clear throttle notification handler
 
         template <class Handler>
         void onUnthrottle(Handler handler); ///< Register unthrottle notification handler
@@ -198,9 +198,9 @@ namespace connector {
 
                                              \param[in] handle Handler to call on unthrottle
                                                  notifications. */
-        void onUnthrottle();
+        void onUnthrottle();            ///< Clear unthrottle notification handler
 
-        bool throttled() const;
+        bool throttled() const;         ///< \c true, if peer() is throttled
 
         PassiveConnector & peer() const;
 
@@ -326,7 +326,7 @@ namespace connector {
 
         ActiveOutput & peer() const;
 
-        bool boolean_test() const;
+        bool boolean_test() const;      ///< \c true, if ! empty()
 
         template <class QDisc>
         void qdisc(QDisc const & disc); ///< Change the queueing discipline
@@ -352,9 +352,9 @@ namespace connector {
     public:
         ActiveInput & peer() const;
 
-        bool boolean_test() const;
+        bool boolean_test() const;      ///< Always \c true
 
-        void connect(ActiveInput & target);
+        void connect(ActiveInput & target); ///< Internal: Use senf::ppi::connect() instead
 
         friend class ActiveInput;
     };
@@ -368,7 +368,7 @@ namespace connector {
     public:
         PassiveOutput & peer() const;
 
-        bool boolean_test() const;
+        bool boolean_test() const;      ///< \c true, if ! empty() or ! throttled()
 
         void request();                 ///< request more packets without dequeuing any packet
 
@@ -385,9 +385,9 @@ namespace connector {
     public:
         PassiveInput & peer() const;
 
-        bool boolean_test() const;
+        bool boolean_test() const;      ///< \c true if peer() is ! throttled()
 
-        void connect(PassiveInput & target);
+        void connect(PassiveInput & target); ///< Internal: Use senf::ppi::connect() instead
     };
 
     ///@}

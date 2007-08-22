@@ -21,39 +21,47 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Events internal header */
+    \brief ActiveFeeder.test unit tests */
 
-#ifndef IH_Events_
-#define IH_Events_ 1
+//#include "ActiveFeeder.test.hh"
+//#include "ActiveFeeder.test.ih"
 
 // Custom includes
+#include "ActiveFeeder.hh"
+#include "DebugModules.hh"
+#include "Setup.hh"
 
-///////////////////////////////ih.p////////////////////////////////////////
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-namespace senf {
-namespace ppi {
-namespace detail {
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-    template <class EventType>
-    struct EventArgType
-    {
-        typedef EventType const & type;
-    };
+namespace debug = senf::ppi::module::debug;
+namespace ppi = senf::ppi;
+namespace module = senf::ppi::module;
 
-#ifndef DOXYGEN
+BOOST_AUTO_UNIT_TEST(activeFeeder)
+{
+    debug::PassivePacketSource source;
+    debug::PassivePacketSink sink;
+    module::ActiveFeeder feeder;
 
-    template <>
-    struct EventArgType<void>
-    {
-        typedef void type;
-    };
+    ppi::connect(source,feeder);
+    ppi::connect(feeder,sink);
 
-#endif
+    source.submit(senf::DataPacket::create());
+    source.submit(senf::DataPacket::create());
+    source.submit(senf::DataPacket::create());
 
-}}}
+    ppi::run();
 
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+    BOOST_CHECK_EQUAL( source.size(), 0u );
+    BOOST_CHECK_EQUAL( sink.size(), 3u );
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

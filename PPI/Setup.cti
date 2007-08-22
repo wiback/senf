@@ -30,6 +30,8 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+#ifndef DOXYGEN
+
 template <class M, class C>
 prefix_ void
 senf::ppi::connect(M & source, C & target,
@@ -56,6 +58,8 @@ senf::ppi::connect(M1 & source, M2 & target,
 {
     connect(source.output, target.input);
 }
+
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

@@ -59,6 +59,8 @@ namespace detail {
         typedef Connector type;
     };
 
+#ifndef DOXYGEN
+
     // RoutingTraits specialization for Event types. Events may be both dataSource or dataTarget but
     // cannot be notifySource.
     template <class Event>
@@ -72,6 +74,8 @@ namespace detail {
 
         typedef EventDescriptor type;
     };
+
+#endif
     
     // The RoutingTraits give routing related information about the argument type:
     //  - Wether the type is a notifySource or notifyTarget

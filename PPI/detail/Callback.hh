@@ -65,6 +65,8 @@ namespace detail {
         static type make(boost::function<void()> callable, Owner &);
     };
 
+#ifndef DOXYGEN
+
     template <>
     struct Callback<void>
     {
@@ -75,6 +77,8 @@ namespace detail {
         template <class Owner>
         static type make(type callable, Owner &);
     };
+
+#endif
 
 }}}
 

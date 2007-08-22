@@ -50,6 +50,12 @@ prefix_ void senf::ppi::ModuleManager::unregisterModule(module::Module & module)
         moduleRegistry_.end());
 }
 
+prefix_ bool senf::ppi::ModuleManager::running()
+    const
+{
+    return running_;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

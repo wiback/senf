@@ -21,39 +21,22 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Events internal header */
-
-#ifndef IH_Events_
-#define IH_Events_ 1
+    \brief IdleEvent inline non-template implementation */
 
 // Custom includes
 
-///////////////////////////////ih.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
-namespace senf {
-namespace ppi {
-namespace detail {
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::IdleEvent
 
-    template <class EventType>
-    struct EventArgType
-    {
-        typedef EventType const & type;
-    };
+prefix_ senf::ppi::IdleEvent::IdleEvent()
+    : id_(0)
+{}
 
-#ifndef DOXYGEN
-
-    template <>
-    struct EventArgType<void>
-    {
-        typedef void type;
-    };
-
-#endif
-
-}}}
-
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

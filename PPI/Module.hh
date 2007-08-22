@@ -126,8 +126,6 @@ namespace module {
 
         ClockService::clock_type now() const;
 
-        void destroy();
-
 #ifndef DOXYGEN
         virtual void macro_SENF_PPI_MODULE_missing() = 0;
 #endif
@@ -135,6 +133,12 @@ namespace module {
     private:
         virtual void init();
 
+#ifndef DOXYGEN
+    public:
+#endif
+        void destroy();
+        
+    private:
         EventManager & eventManager() const;
         ModuleManager & moduleManager() const;
         

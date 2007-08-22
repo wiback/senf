@@ -64,14 +64,14 @@ namespace senf {
     // amount the time has been changed. To do this we need an as accurate as possible approximation
     // of the expected current time value. We need to differentiate two cases:
     //
-    // a) Clock skew detected in within now()
+    // a) Clock skew detected within now()
     //
-    // In this case, we use getitimer() to find the time remaining in the timer. Using this value and
-    // an the saved gettimeofday() value we can adjust base_ accordingly.
+    // In this case, we use getitimer() to find the time remaining in the timer. Using this value
+    // and the saved gettimeofday() value we can adjust base_ accordingly.
     //
     // b) Clock skew detected in the signal handler
     //
-    // In this case we use the save gettimeofday() value + CheckInterval to adjust base_.
+    // In this case we use the saved gettimeofday() value + CheckInterval to adjust base_.
     
     /** \brief Reliable high precision monotonous clock source
 
@@ -90,7 +90,7 @@ namespace senf {
             Unsigned integer type representing scheduler time. Scheduler time is measured in
             nanoseconds relative to some implementation defined reference time.
          */
-        typedef boost::uint_fast64_t clock_type;
+        typedef boost::int_fast64_t clock_type;
 
         /** \brief Absolute time data type
 
