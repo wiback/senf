@@ -52,13 +52,13 @@ namespace detail {
 namespace {
 
     bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
-                        unsigned long delta = 10100000ul)
+                        unsigned long delta = 50000000ul)
     {
         return (a<b ? b-a : a-b ) < delta;
     }
 
     bool is_close_pt(boost::posix_time::ptime a, boost::posix_time::ptime b,
-                     boost::posix_time::time_duration delta = boost::posix_time::milliseconds(10) )
+                     boost::posix_time::time_duration delta = boost::posix_time::milliseconds(50) )
     {
         return (a<b ? b-a : a-b ) < delta;
     }
@@ -77,12 +77,14 @@ BOOST_AUTO_UNIT_TEST(clockService)
 {
     senf::ClockService::restart(); // So we know, when the signal will be delivered
     
-    senf::ClockService::clock_type t (senf::ClockService::now());
-    delay(100);
+    senf::ClockService::clock_type t1 (senf::ClockService::now());
+    delay(200);
+    senf::ClockService::clock_type t2 (senf::ClockService::now());
     BOOST_CHECK_PREDICATE( is_close_clock,
-                           (t + senf::ClockService::milliseconds(100)) 
-                           (senf::ClockService::now()) );
+                           (t1 + senf::ClockService::milliseconds(200)) 
+                           (t2) );
 
+    t1 = t2;
     // We shift both heartbeat() and base() back 1 minute. This is the same as
     // moving the current time forward 1 minute.
     boost::posix_time::ptime b (senf::detail::ClockServiceTest::base());
@@ -100,17 +102,20 @@ BOOST_AUTO_UNIT_TEST(clockService)
                            (h+boost::posix_time::seconds(senf::ClockService::CheckInterval))
                            (senf::detail::ClockServiceTest::heartbeat()) );
 
+    t2 = senf::ClockService::now();
     BOOST_CHECK_PREDICATE( is_close_clock,
-                           (t + senf::ClockService::milliseconds(1100))
-                           (senf::ClockService::now()) );
+                           (t1 + senf::ClockService::seconds(senf::ClockService::CheckInterval))
+                           (t2) );
+
+    t1 = t2;
 
     senf::detail::ClockServiceTest::heartbeat() -= boost::posix_time::minutes(1);
     senf::detail::ClockServiceTest::base() -= boost::posix_time::minutes(1);
 
     // Let now() do the clock skew detection using getitimer() ...
-    delay(100);
+    delay(200);
     BOOST_CHECK_PREDICATE( is_close_clock,
-                           (t + senf::ClockService::milliseconds(1200))
+                           (t1 + senf::ClockService::milliseconds(200))
                            (senf::ClockService::now()) );
     
 }
