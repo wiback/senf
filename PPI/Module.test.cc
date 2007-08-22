@@ -69,7 +69,7 @@ BOOST_AUTO_UNIT_TEST(module)
     // route and registerEvent are tested in Route.test.cc
 
     TestModule tester;
-    debug::PassivePacketSink sink;
+    debug::PassiveSink sink;
     ppi::connect(tester, sink);
     ppi::init();
 

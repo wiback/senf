@@ -71,9 +71,9 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(thresholdQueueing)
 {
-    debug::ActivePacketSource source;
+    debug::ActiveSource source;
     QueueTester tester;
-    debug::PassivePacketSink sink;
+    debug::PassiveSink sink;
 
     ppi::connect(source, tester);
     ppi::connect(tester, sink);

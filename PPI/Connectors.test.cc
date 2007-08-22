@@ -49,8 +49,8 @@ BOOST_AUTO_UNIT_TEST(connector)
     // It doesn't matter, which type of connectors we use here since they are all based on
     // Connector.
 
-    debug::ActivePacketSource source;
-    debug::PassivePacketSink target;
+    debug::ActiveSource source;
+    debug::PassiveSink target;
 
     ppi::connect(source.output,target.input);
     ppi::init();
@@ -63,13 +63,13 @@ BOOST_AUTO_UNIT_TEST(connector)
 
 BOOST_AUTO_UNIT_TEST(passiveConnector)
 {
-    debug::ActivePacketSource source;
-    debug::PassivePacketSink target;
+    debug::ActiveSource source;
+    debug::PassiveSink target;
 
     ppi::connect(source.output,target.input);
     ppi::init();
 
-    // onRequest is implicitly tested within the PassivePacketSink implementation which is tested
+    // onRequest is implicitly tested within the PassiveSink implementation which is tested
     // in DebugModules.test.cc
 
     target.input.throttle();
@@ -92,8 +92,8 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(activeConnector)
 {
-    debug::ActivePacketSource source;
-    debug::PassivePacketSink target;
+    debug::ActiveSource source;
+    debug::PassiveSink target;
 
     ppi::connect(source.output,target.input);
     ppi::init();
@@ -124,16 +124,16 @@ BOOST_AUTO_UNIT_TEST(activeConnector)
 
 BOOST_AUTO_UNIT_TEST(inputConnector)
 {
-    debug::ActivePacketSource source;
-    debug::PassivePacketSink target;
+    debug::ActiveSource source;
+    debug::PassiveSink target;
 
     ppi::connect(source.output,target.input);
     ppi::init();
 
-    // operator() is implicitly tested within the Active/PassivePacketSink implementation which is
+    // operator() is implicitly tested within the Active/PassiveSink implementation which is
     // tested in DebugModules.test.cc
 
-    // peek() is implicitly tested within the Active/PassivePacketSink implementation
+    // peek() is implicitly tested within the Active/PassiveSink implementation
 
     BOOST_CHECK_EQUAL ( & target.input.peer(), & source.output );
     
@@ -144,13 +144,13 @@ BOOST_AUTO_UNIT_TEST(inputConnector)
 
 BOOST_AUTO_UNIT_TEST(outputConnector)
 {
-    debug::ActivePacketSource source;
-    debug::PassivePacketSink target;
+    debug::ActiveSource source;
+    debug::PassiveSink target;
 
     ppi::connect(source.output,target.input);
     ppi::init();
 
-    // operator() is implicitly tested within the Active/PassivePacketSource implementation which is
+    // operator() is implicitly tested within the Active/PassiveSource implementation which is
     // tested in DebugModules.test.cc
 
     BOOST_CHECK_EQUAL( & source.output.peer(), & target.input );
@@ -181,7 +181,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(passiveInput)
 {
-    debug::ActivePacketSource source;
+    debug::ActiveSource source;
     PassiveInputTest target;
 
     ppi::connect(source,target);
@@ -224,8 +224,8 @@ BOOST_AUTO_UNIT_TEST(passiveInput)
 
 BOOST_AUTO_UNIT_TEST(passiveOutput)
 {
-    debug::PassivePacketSource source;
-    debug::ActivePacketSink target;
+    debug::PassiveSource source;
+    debug::ActiveSink target;
 
     ppi::connect(source,target);
     ppi::init();
@@ -245,8 +245,8 @@ BOOST_AUTO_UNIT_TEST(passiveOutput)
 
 BOOST_AUTO_UNIT_TEST(activeInput)
 {
-    debug::PassivePacketSource source;
-    debug::ActivePacketSink target;
+    debug::PassiveSource source;
+    debug::ActiveSink target;
 
     ppi::connect(source,target);
     ppi::init();
@@ -270,8 +270,8 @@ BOOST_AUTO_UNIT_TEST(activeInput)
 
 BOOST_AUTO_UNIT_TEST(activeOutput)
 {
-    debug::ActivePacketSource source;
-    debug::PassivePacketSink target;
+    debug::ActiveSource source;
+    debug::PassiveSink target;
 
     ppi::connect(source,target);
     ppi::init();

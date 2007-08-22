@@ -32,29 +32,29 @@
 
 #ifndef DOXYGEN
 
-template <class M, class C>
-prefix_ void
-senf::ppi::connect(M & source, C & target,
-                   typename boost::enable_if< boost::is_base_of<module::Module, M> >::type *,
-                   typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *)
+template <class T, class C>
+prefix_ void senf::ppi::
+connect(T & source, C & target,
+        typename boost::disable_if< boost::is_base_of<connector::Connector, T> >::type *,
+        typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *)
 {
     connect(source.output, target);
 }
 
-template <class C, class M>
-prefix_ void
-senf::ppi::connect(C & source, M & target,
-                   typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *,
-                   typename boost::enable_if< boost::is_base_of<module::Module, M> >::type *)
+template <class C, class T>
+prefix_ void senf::ppi::
+connect(C & source, T & target,
+        typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *,
+        typename boost::disable_if< boost::is_base_of<connector::Connector,T> >::type *)
 {
     connect(source, target.input);
 }
 
-template <class M1, class M2>
-prefix_ void
-senf::ppi::connect(M1 & source, M2 & target,
-                   typename boost::enable_if< boost::is_base_of<module::Module, M1> >::type *,
-                   typename boost::enable_if< boost::is_base_of<module::Module, M2> >::type *)
+template <class T1, class T2>
+prefix_ void senf::ppi::
+connect(T1 & source, T2 & target,
+        typename boost::disable_if< boost::is_base_of<connector::Connector, T1> >::type *,
+        typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type *)
 {
     connect(source.output, target.input);
 }

@@ -27,7 +27,6 @@
 #define HH_predecl_ 1
 
 // Custom includes
-#include <boost/type_traits.hpp>
 
 //#include "predecl.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

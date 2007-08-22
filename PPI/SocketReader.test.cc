@@ -57,7 +57,7 @@ BOOST_AUTO_UNIT_TEST(socketReader)
     inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
     inputSocket.blocking(false);
     module::ActiveSocketReader<> udpReader(inputSocket);
-    debug::PassivePacketSink sink;
+    debug::PassiveSink sink;
     ppi::connect(udpReader, sink);
 
     std::string data ("TEST");

@@ -45,9 +45,9 @@ namespace debug = module::debug;
 
 BOOST_AUTO_UNIT_TEST(passiveQueue)
 {
-    debug::ActivePacketSource source;
+    debug::ActiveSource source;
     module::PassiveQueue queue;
-    debug::ActivePacketSink sink;
+    debug::ActiveSink sink;
 
     ppi::connect(source,queue);
     ppi::connect(queue,sink);

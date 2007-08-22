@@ -44,8 +44,8 @@ namespace ppi = senf::ppi;
 BOOST_AUTO_UNIT_TEST(debugModules)
 {
     {
-        debug::ActivePacketSource source;
-        debug::PassivePacketSink sink;
+        debug::ActiveSource source;
+        debug::PassiveSink sink;
 
         ppi::connect(source, sink);
         ppi::init();
@@ -61,7 +61,7 @@ BOOST_AUTO_UNIT_TEST(debugModules)
         BOOST_CHECK_EQUAL( sink.size(), 1u );
         BOOST_CHECK( ! sink.empty() );
         BOOST_CHECK_EQUAL( 
-            debug::PassivePacketSink::size_type(std::distance(sink.begin(),sink.end())),
+            debug::PassiveSink::size_type(std::distance(sink.begin(),sink.end())),
             sink.size() );
         BOOST_CHECK( *sink.begin() == p );
         BOOST_CHECK( sink.front() == p );
@@ -73,8 +73,8 @@ BOOST_AUTO_UNIT_TEST(debugModules)
     }
 
     {
-        debug::PassivePacketSource source;
-        debug::ActivePacketSink sink;
+        debug::PassiveSource source;
+        debug::ActiveSink sink;
 
         ppi::connect(source, sink);
         ppi::init();
@@ -89,6 +89,43 @@ BOOST_AUTO_UNIT_TEST(debugModules)
         BOOST_CHECK_EQUAL( source.size(), 0u );
         BOOST_CHECK( source.empty() );
     }
+}
+
+BOOST_AUTO_UNIT_TEST(activeFeederSource)
+{
+    debug::ActiveFeederSource source;
+    debug::PassiveSink sink;
+
+    ppi::connect(source,sink);
+
+    source.submit(senf::DataPacket::create());
+    
+    ppi::run();
+
+    BOOST_CHECK( source.empty() );
+    BOOST_CHECK_EQUAL( source.size(), 0u );
+    BOOST_CHECK_EQUAL( sink.size(), 1u );
+}
+
+BOOST_AUTO_UNIT_TEST(activeFeederSink)
+{
+    debug::PassiveSource source;
+    debug::ActiveFeederSink sink;
+
+    ppi::connect(source,sink);
+
+    source.submit(senf::DataPacket::create());
+    
+    ppi::run();
+
+    BOOST_CHECK( ! sink.empty() );
+    BOOST_CHECK_EQUAL( sink.size(), 1u );
+    BOOST_CHECK_EQUAL( debug::ActiveFeederSink::size_type(std::distance(sink.begin(), sink.end())),
+                       sink.size() );
+    BOOST_CHECK( sink.front().data().empty() );
+    BOOST_CHECK( sink.pop_front().data().empty() );
+    BOOST_CHECK( sink.empty() );
+    BOOST_CHECK( source.empty() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

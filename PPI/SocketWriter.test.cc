@@ -56,7 +56,7 @@ BOOST_AUTO_UNIT_TEST(passiveSocketWriter)
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
         senf::INet4SocketAddress("localhost:44344"));
     module::PassiveSocketWriter<> udpWriter(outputSocket);
-    debug::ActivePacketSource source;
+    debug::ActiveSource source;
     ppi::connect(source, udpWriter);
 
     std::string data ("TEST");
@@ -76,7 +76,7 @@ BOOST_AUTO_UNIT_TEST(activeSocketWriter)
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
         senf::INet4SocketAddress("localhost:44344"));
     module::ActiveSocketWriter<> udpWriter(outputSocket);
-    debug::PassivePacketSource source;
+    debug::PassiveSource source;
     ppi::connect(source, udpWriter);
 
     std::string data ("TEST");

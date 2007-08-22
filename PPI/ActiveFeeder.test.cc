@@ -43,8 +43,8 @@ namespace module = senf::ppi::module;
 
 BOOST_AUTO_UNIT_TEST(activeFeeder)
 {
-    debug::PassivePacketSource source;
-    debug::PassivePacketSink sink;
+    debug::PassiveSource source;
+    debug::PassiveSink sink;
     module::ActiveFeeder feeder;
 
     ppi::connect(source,feeder);

@@ -45,10 +45,10 @@ namespace debug = module::debug;
 
 BOOST_AUTO_UNIT_TEST(passiveJoin)
 {
-    debug::ActivePacketSource source1;
-    debug::ActivePacketSource source2;
+    debug::ActiveSource source1;
+    debug::ActiveSource source2;
     module::PassiveJoin join;
-    debug::PassivePacketSink sink;
+    debug::PassiveSink sink;
 
     ppi::connect(source1, join);
     ppi::connect(source2, join);
@@ -75,10 +75,10 @@ BOOST_AUTO_UNIT_TEST(passiveJoin)
 
 BOOST_AUTO_UNIT_TEST(priorityJoin)
 {
-    debug::PassivePacketSource source1;
-    debug::PassivePacketSource source2;
+    debug::PassiveSource source1;
+    debug::PassiveSource source2;
     module::PriorityJoin join;
-    debug::ActivePacketSink sink;
+    debug::ActiveSink sink;
 
     ppi::connect(source1, join);
     ppi::connect(source2, join);

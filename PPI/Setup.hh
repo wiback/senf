@@ -27,6 +27,8 @@
 #define HH_Setup_ 1
 
 // Custom includes
+#include <boost/type_traits.hpp>
+#include <boost/utility/enable_if.hpp>
 #include "predecl.hh"
 
 //#include "Setup.mpp"
@@ -40,20 +42,20 @@ namespace ppi {
     void connect(connector::ActiveOutput & source, connector::PassiveInput & target);
     void connect(connector::PassiveOutput & source, connector::ActiveInput & target);
     
-    template <class M, class C>
-    void connect(M & source, C & target,
-                 typename boost::enable_if< boost::is_base_of<module::Module, M> >::type * = 0,
+    template <class T, class C>
+    void connect(T & source, C & target,
+                 typename boost::disable_if< boost::is_base_of<connector::Connector, T> >::type * = 0,
                  typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0);
 
-    template <class C, class M>
-    void connect(C & source, M & target,
+    template <class C, class T>
+    void connect(C & source, T & target,
                  typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0,
-                 typename boost::enable_if< boost::is_base_of<module::Module, M> >::type * = 0);
+                 typename boost::disable_if< boost::is_base_of<connector::Connector,T> >::type * = 0);
 
-    template <class M1, class M2>
-    void connect(M1 & source, M2 & target,
-                 typename boost::enable_if< boost::is_base_of<module::Module, M1> >::type * = 0,
-                 typename boost::enable_if< boost::is_base_of<module::Module, M2> >::type * = 0);
+    template <class T1, class T2>
+    void connect(T1 & source, T2 & target,
+                 typename boost::disable_if< boost::is_base_of<connector::Connector, T1> >::type * = 0,
+                 typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type * = 0);
 
 #else
 

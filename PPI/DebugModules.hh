@@ -31,6 +31,7 @@
 #include "Utils/SafeBool.hh"
 #include "Packets/Packets.hh"
 #include "Module.hh"
+#include "ActiveFeeder.hh"
 
 //#include "DebugModules.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -51,33 +52,33 @@ namespace debug {
     
     /** \brief
      */
-    class ActivePacketSource
+    class ActiveSource
         : public Module, 
-          public SafeBool<ActivePacketSource>
+          public SafeBool<ActiveSource>
     {
-        SENF_PPI_MODULE(ActivePacketSource);
+        SENF_PPI_MODULE(ActiveSource);
 
     public:
         connector::ActiveOutput output;
 
-        ActivePacketSource();
+        ActiveSource();
 
         void submit(Packet packet);
 
         bool boolean_test() const;
     };
 
-    class PassivePacketSource
+    class PassiveSource
         : public Module
     {
-        SENF_PPI_MODULE(PassivePacketSource);
+        SENF_PPI_MODULE(PassiveSource);
 
         typedef std::deque<Packet> Queue;
 
     public:
         typedef Queue::size_type size_type;
         
-        PassivePacketSource();
+        PassiveSource();
         
         connector::PassiveOutput output;
         
@@ -93,26 +94,26 @@ namespace debug {
         Queue packets_;
     };
 
-    class ActivePacketSink
+    class ActiveSink
         : public Module,
-          public SafeBool<ActivePacketSink>
+          public SafeBool<ActiveSink>
     {
-        SENF_PPI_MODULE(ActivePacketSink);
+        SENF_PPI_MODULE(ActiveSink);
 
     public:
         connector::ActiveInput input;
 
-        ActivePacketSink();
+        ActiveSink();
 
         Packet request();
 
         bool boolean_test() const;
     };
 
-    class PassivePacketSink
+    class PassiveSink
         : public Module
     {
-        SENF_PPI_MODULE(PassivePacketSink);
+        SENF_PPI_MODULE(PassiveSink);
 
         typedef std::deque<Packet> Queue;
 
@@ -122,7 +123,7 @@ namespace debug {
 
         connector::PassiveInput input;
         
-        PassivePacketSink();
+        PassiveSink();
 
         bool empty();
         size_type size();
@@ -138,6 +139,49 @@ namespace debug {
         void request();
         
         Queue packets_;
+    };
+
+    class ActiveFeederSource
+    {
+    private:
+        PassiveSource source;
+        ActiveFeeder feeder;
+
+    public:
+        typedef PassiveSource::size_type size_type;
+        
+        connector::ActiveOutput & output;
+
+        ActiveFeederSource();
+
+        void submit(Packet packet);
+        bool empty();
+        size_type size();
+    };
+
+    class ActiveFeederSink
+    {
+    private:
+        PassiveSink sink;
+        ActiveFeeder feeder;
+
+    public:
+        typedef PassiveSink::size_type size_type;
+        typedef PassiveSink::iterator iterator;
+
+        connector::ActiveInput & input;
+        
+        ActiveFeederSink();
+
+        bool empty();
+        size_type size();
+        iterator begin();
+        iterator end();
+
+        Packet front();
+        Packet pop_front();
+
+        void clear();
     };
 
 }}}}

@@ -105,10 +105,10 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(route)
 {
-    debug::PassivePacketSource passiveSource;
-    debug::ActivePacketSource activeSource;
-    debug::PassivePacketSink passiveSink;
-    debug::ActivePacketSink activeSink;
+    debug::PassiveSource passiveSource;
+    debug::ActiveSource activeSource;
+    debug::PassiveSink passiveSink;
+    debug::ActiveSink activeSink;
     RouteTester tester;
 
     ppi::connect(passiveSource, tester.activeIn);
