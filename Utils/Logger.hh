@@ -121,6 +121,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+namespace log {
 
 #   ifndef _senf_LOG_STREAM
 #     define _senf_LOG_STREAM std::cerr
@@ -181,7 +182,7 @@ namespace senf {
 
         \hideinitializer
      */
-#   define SENF_LOG_DEF_AREA(area)
+#   define SENF_LOG_DEF_AREA(area) struct area {}
 
     /** \brief Define log stream
 
@@ -190,7 +191,7 @@ namespace senf {
 
         \hideinitializer
      */
-#   define SENF_LOG_DEF_STREAM(stream)
+#   define SENF_LOG_DEF_STREAM(stream) struct stream {}
 
     /** \brief Define log parameter alias
 
@@ -199,11 +200,16 @@ namespace senf {
 
         \hideinitializer
      */
-#   define SENF_LOG_DEF_ALIAS(alias,args)
+#   define SENF_LOG_DEF_ALIAS(alias,args) struct alias {}
 
     /// @}
 
-}
+    enum Level { VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL };
+    
+    SENF_LOG_DEF_STREAM(Debug);
+    SENF_LOG_DEF_AREA(DefaultArea);
+
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Logger.cci"

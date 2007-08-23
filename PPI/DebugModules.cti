@@ -21,50 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IdleEvent public header */
+    \brief DebugModules inline template implementation */
 
-#ifndef HH_IdleEvent_
-#define HH_IdleEvent_ 1
+//#include "DebugModules.ih"
 
 // Custom includes
-#include "Events.hh"
+#include "Utils/hexdump.hh"
 
-//#include "IdleEvent.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
-namespace senf {
-namespace ppi {
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::debug::LogWriter<Stream,Area,level>
 
-    /** \brief Continually signaled event
+template <class Stream, class Area, senf::log::Level level>
+prefix_ senf::ppi::module::debug::LogWriter<Stream,Area,level>::LogWriter()
+{
+    noroute(input);
+    input.onRequest(&LogWriter::request);
+}
 
-        An IdleEvent is signaled continually and repeatedly while enabled. It will consume 100% of
-        available CPU resources. The resource usage is controlled by adequate event throttling.
-     */
-    class IdleEvent
-        : public EventImplementation<>
-    {
-    public:
-        IdleEvent();
+////////////////////////////////////////
+// private members
 
-    protected:
+template <class Stream, class Area, senf::log::Level level>
+prefix_ void senf::ppi::module::debug::LogWriter<Stream,Area,level>::request()
+{
+    Packet packet (input());
+    SENF_LOG_BLOCK((Stream)(Area)(level)({
+        packet.dump(log);
+        hexdump(packet.last().data().begin(), packet.last().data().end(),log);
+    }));
+}
 
-    private:
-        virtual void v_enable();
-        virtual void v_disable();
-
-        void cb();
-        
-        unsigned id_;
-    };
-
-}}
-
-
-///////////////////////////////hh.e////////////////////////////////////////
-#include "IdleEvent.cci"
-//#include "IdleEvent.ct"
-//#include "IdleEvent.cti"
-#endif
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

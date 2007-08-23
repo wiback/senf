@@ -43,10 +43,9 @@ namespace ppi {
     // 'callback()' will access the EventBinding wrapper to find the user-callback to signal. It
     // will do any needed internal processing, call that user callback and clean up afterwards.
 
-    /** \brief Generic event interface baseclass
+    /** \brief Generic event interface base-class
 
-        The EventDescriptor baseclass provides an interface to manipulate events in a generic
-        way. This allows to register events or to temporarily disable event processing.
+        The EventDescriptor base-class provides an interface to control events.
      */ 
     class EventDescriptor
     {
@@ -78,6 +77,8 @@ namespace ppi {
         friend class ForwardingRoute;
     };
     
+    /** \brief Internal: Callback forwarders
+     */
     template <class EventType, class Self>
     class EventImplementationHelper
     {
@@ -85,7 +86,13 @@ namespace ppi {
         typedef typename detail::EventArgType<EventType>::type EventArg;
 
         void callback(EventArg event, ClockService::clock_type time);
-        void callback(EventArg event);
+                                        ///< Forward event to user callback
+                                        /**< \param[in] event Event argument to pass to the user
+                                             callback
+                                             \param[in] time Expected time of the event */
+        void callback(EventArg event);  ///< Forward event to user callback
+                                        /**< \param[in] event Event argument to pass to the user
+                                             callback. */
 
     private:
         detail::EventBinding<EventType> & binding();
@@ -106,6 +113,43 @@ namespace ppi {
 
 #endif
 
+    /** \brief Event implementation base class
+
+        EventImplementation provides the base-class for all Event implementations. 
+        \code
+        class SomeEvent : public EventImplementation<SomeEventArg>
+        {
+        public:
+            SomeEvent() {}
+
+        private:
+            virtual void v_enable() {
+                // register cb() to be called when the event occurs
+            }
+
+            virtual void v_disable() {
+                // unregister cb()
+            }
+
+            void cb() {
+                // Build event argument
+                SomeEventArg arg (...); 
+                // Call the event callback
+                callback(arg);
+            }
+        };
+        \endcode
+
+        Every event needs to implement v_enable() and v_disable(). v_enable() should register some
+        member (in the example \c cb() ) to be called whenever the event occurs, while v_disable()
+        should unregister it.
+
+        The \a EventType argument to EventImplementation defines the type of argument passed to the
+        user callback. It defaults to \c void. . This user callback is called from within the
+        registered member (e.g. \c cb() ) by calling the inherited callback() member. This member
+        takes an \a EventType reference as argument which will be forwarded to the user callback. If
+        available, you should also provide the \e expected event time as a second argument.
+     */
     template <class EventType>
     class EventImplementation
         : public EventDescriptor, 
@@ -115,8 +159,8 @@ namespace ppi {
         typedef EventType Event;
         typedef typename detail::EventArgType<EventType>::type EventArg;
 
-        module::Module & module() const;
-        EventManager & manager() const;
+        module::Module & module() const; ///< Module in which the event is registered
+        EventManager & manager() const; ///< EventManager of the event
         
     protected:
         EventImplementation();

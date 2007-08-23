@@ -43,6 +43,8 @@ namespace ppi {
     class QueueingDiscipline;
     class ModuleManager;
 
+#ifndef DOXYGEN
+
     namespace detail {
         class EventBindingBase;
         template <class EvImpl> class EventBinding;
@@ -57,6 +59,8 @@ namespace ppi {
         template <class Source, class Target>
             class RouteImplementation;
     }
+
+#endif
 
     namespace module {       
         class Module;       

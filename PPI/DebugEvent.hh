@@ -35,7 +35,10 @@
 namespace senf {
 namespace ppi {
 
-    /** \brief
+    /** \brief Manually triggered event
+
+        DebugEvent is a manually triggered event. The event is triggered by explicit calls to
+        trigger() and not by the event infrastructure.
       */
     class DebugEvent
         : public EventImplementation<>
@@ -57,7 +60,7 @@ namespace ppi {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void trigger();
+        void trigger();                 ///< Trigger event
 
     protected:
 

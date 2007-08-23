@@ -70,8 +70,10 @@ namespace ppi {
 
         typedef std::vector<module::Module *> ModuleRegistry;
 
+#ifndef DOXYGEN
         struct RunGuard;
         friend class RunGuard;
+#endif
 
         ModuleRegistry moduleRegistry_;
         bool running_;

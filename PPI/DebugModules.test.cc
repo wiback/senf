@@ -26,8 +26,16 @@
 //#include "DebubgModules.test.hh"
 //#include "DebubgModules.test.ih"
 
+
 // Custom includes
 #include <algorithm>
+#include <sstream>
+
+#define _senf_LOG_STREAM logstream
+namespace {
+    std::stringstream logstream;
+}
+
 #include "Packets/Packets.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
@@ -97,9 +105,7 @@ BOOST_AUTO_UNIT_TEST(activeFeederSource)
     debug::PassiveSink sink;
 
     ppi::connect(source,sink);
-
     source.submit(senf::DataPacket::create());
-    
     ppi::run();
 
     BOOST_CHECK( source.empty() );
@@ -113,9 +119,7 @@ BOOST_AUTO_UNIT_TEST(activeFeederSink)
     debug::ActiveFeederSink sink;
 
     ppi::connect(source,sink);
-
     source.submit(senf::DataPacket::create());
-    
     ppi::run();
 
     BOOST_CHECK( ! sink.empty() );
@@ -126,6 +130,20 @@ BOOST_AUTO_UNIT_TEST(activeFeederSink)
     BOOST_CHECK( sink.pop_front().data().empty() );
     BOOST_CHECK( sink.empty() );
     BOOST_CHECK( source.empty() );
+}
+
+BOOST_AUTO_UNIT_TEST(logWriter)
+{
+    debug::ActiveFeederSource source;
+    debug::LogWriter<> sink;
+
+    ppi::connect(source,sink);
+    senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };
+    source.submit( senf::DataPacket::create(data) );
+    senf::ppi::run();
+    
+    BOOST_CHECK_EQUAL( logstream.str(), 
+                       "  0000  13 24 35                                          .$5\n\n" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

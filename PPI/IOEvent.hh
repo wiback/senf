@@ -36,12 +36,21 @@
 namespace senf {
 namespace ppi {
 
+    /** \brief IOEvent event information
+
+        Information passed to the IOEvent event handler
+     */
     struct IOEventInfo
     {
-        unsigned events;
+        unsigned events;                ///< Type of event signaled
+                                        /**< The value is a combination of the flags from
+                                             IOEvent::EventFlags */
     };
 
-    /** \brief
+    /** \brief FileHandle based I/O read/write event
+
+        An IOEvent is signaled, whenever the FileHandle \a handle becomes readable or writable. The
+        type of event is specified using the \a events mask with values from EventFlags.
 
         \fixme Implement error/EOF handling
       */

@@ -33,6 +33,8 @@ namespace ppi {
 namespace module {
 namespace detail {
 
+#ifndef DOXYGEN
+
     // Placing these into a class simplifies the friend declaration
     template <class Source, class Target>
     struct RouteHelper 
@@ -50,6 +52,8 @@ namespace detail {
                           EventDescriptor &,
                           connector::OutputConnector &);
     };
+
+#endif
        
 }}}}
 

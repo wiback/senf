@@ -38,6 +38,15 @@ namespace senf {
 namespace ppi {
 namespace module {
 
+    /** \brief Adapter to connect passive connectors
+
+        ActiveFeeder is an adapter module which allows to connect to passive connectors. As long as
+        none of the connectors is throttled, the ActiveFeeder will forward packets from it's input
+        to it's output.
+
+        \note For this Module to work correctly, it is very important for the connectors to be
+            correctly throttled. Otherwise the system might well hang in an endless loop.
+     */
     class ActiveFeeder
         : public Module
     {

@@ -39,9 +39,9 @@ namespace senf {
 namespace ppi {
 namespace module {
 
-    /** \brief Module baseclass
+    /** \brief Module base-class
 
-        senf::ppi::Module is the baseclass of all PPI modules. It provides the module implementation
+        senf::ppi::Module is the base-class of all PPI modules. It provides the module implementation
         with interfaces to several PPI facilities:
         
         \li Connector management
@@ -49,10 +49,77 @@ namespace module {
         \li Event handling
 
         To provide internal bookkeeping, most access to the PPI infrastructure is managed through
-        this base class. 
+        this base class. This is an example module specification:
+        \code
+        class SomeModule : public senf::ppi::module::Module
+        {
+            SENF_PPI_MODULE(SomeModule);
 
-        Instances of this class may be allocated either statically or dynamically. Dynamic instances
-        are automatically managed using the dynamicModule adaptor.
+            senf::FileHandle handle;
+
+            // If needed, define events
+            senf::ppi::IOEvent event;
+
+        public:
+            // Define connectors. Any number and type of connectors may be defined. Connectors
+            // must be public since they need to be accessed to connect modules with each other.
+            senf::ppi::connector::PassiveInput input;
+            senf::ppi::connector::ActiveOutput output;
+
+            SomeModule(senf::FileHandle h) 
+              : handle ( h ), 
+                event  ( handle, senf::ppi::IOEvent::Read )
+            {
+                // Set up routing. If some connector is not routed you need to explicitly state this
+                // using noroute()
+                route( input, output );
+                route( event, output )
+                    .autoThrottling( false );
+
+                // Register event handlers
+                registerEvent( &SomeModule::read, event );
+
+                // Register passive connector handlers
+                input.onRequest( &SomeModule::outputRequest );
+
+                // If needed, you may register throttling event handlers
+                output.onThrottle( &SomeModule::throttle );
+                output.onUnthrottle( &SomeModule::unthrottle );
+            }
+
+            void read() {
+                // Called whenever the 'handle' is readable. Read data, do processing and so
+                // on. This example reads the data, puts it into an ethernet packet and sends the
+                // packet out via the active output.
+                output(senf::EthernetPacket::create(handle.read()))
+            }
+
+            void outputRequest() {
+                // Called whenever a packet is sent into the input to. Here we just forward it to
+                // the output if it is an EthernetPacket
+                senf::EthernetPacket p (input().find<EthernetPacket>(senf::nothrow));
+                if (p)
+                    output(p);
+            }
+
+            void onThrottle() {
+                // Called whenever a throttle notification comes in. Here, we just disable the
+                // event (which is stupid since we should just not have disabled autoThrottling on
+                // the route but this is only an example which tries to be simple ...)
+                event.disable();
+            }
+
+            void onUnthrottle() {
+                // and for unthrottle notifications
+                event.enable();
+            }
+
+        };
+        \endcode
+
+        If your module only has a single input connector, you should call this connector \c
+        input. If it has only a single output connector, you should call it \c output. This allows
+        to setup connections without stating the connector explicitly (see senf::ppi::connect()).
      */
     class Module
         : boost::noncopyable
@@ -108,9 +175,9 @@ namespace module {
                                              callable object or it may be a member function pointer
                                              pointing to a member function of the Module derived
                                              classed. The handler may \e optionally take an Argument
-                                             of type <tt>typename Descriptor::Event const
-                                             &</tt>. This object allows to access detailed
-                                             information on the event delivered.
+                                             of type <tt>Descriptor::Event const &</tt>. This object
+                                             allows to access detailed information on the event
+                                             delivered.
 
                                              The \a descriptor describes the event to signal. This
 
@@ -121,10 +188,11 @@ namespace module {
                                                  event is signaled
                                              \param[in] descriptor The type of event to register */
 
-        ClockService::clock_type time() const; ///< Return timestamp of the currently processing
-                                        ///< event
+        ClockService::clock_type time() const; ///< Time-stamp of the currently processing event
+                                        /**< If available, this returns the scheduled time of the
+                                             event. */
 
-        ClockService::clock_type now() const;
+        ClockService::clock_type now() const; ///< Current time of the currently processing event
 
 #ifndef DOXYGEN
         virtual void macro_SENF_PPI_MODULE_missing() = 0;

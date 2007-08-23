@@ -57,7 +57,11 @@ namespace senf {
 namespace ppi {
 namespace connector {
 
-    /** \brief Connector baseclass
+    /** \namespace senf::ppi::connector
+        \brief Connector classes 
+     */
+
+    /** \brief Connector base-class
 
         This connector provides access to the generic connector facilities. This includes the
         connection management (access to the connected peer) and the containment management (access
@@ -85,7 +89,7 @@ namespace connector {
         friend class module::Module;
     };
 
-    /** \brief Passive connector baseclass
+    /** \brief Passive connector base-class
 
         A passive connector is a connector which is activated externally whenever an I/O request
         occurs. Passive connectors are the origin of throttling notifications. Depending on the type
@@ -134,8 +138,8 @@ namespace connector {
 
     private:
         // Called by the routing to change the remote throttling state
-        void notifyThrottle();          ///< Forward a throttling notification to this connector
-        void notifyUnthrottle();        ///< Forward an unthrottling notification to this connector
+        void notifyThrottle();          ///< Forward a throttle notification to this connector
+        void notifyUnthrottle();        ///< Forward an unthrottle notification to this connector
 
         // Internal members to emit throttling notifications
         void emitThrottle();
@@ -159,7 +163,7 @@ namespace connector {
         friend class senf::ppi::ForwardingRoute;
     };
 
-    /** \brief Active connector baseclass
+    /** \brief Active connector base-class
 
         An active connector is a connector which emits I/O requests. Active connectors receive
         throttling notifications. Depending on the type of connector (input or output) the
@@ -225,7 +229,7 @@ namespace connector {
         friend class PassiveConnector;
     };
 
-    /** \brief Input connector baseclass
+    /** \brief Input connector base-class
 
         An input connector receives packets. It may be either an ActiveConnector or a
         PassiveConnector. An input connector contains a packet queue. This queue enables processing
@@ -242,7 +246,7 @@ namespace connector {
                 insertion/removal properties on both ends.
 
             So probably we will use a deque. I'd like a container which keeps iterators intact on
-            isertion/deletion but I believe that list is just to expensive since every packet will
+            insertion/deletion but I believe that list is just to expensive since every packet will
             be added to the queue before it can be processed.
      */
     class InputConnector 
@@ -287,7 +291,7 @@ namespace connector {
         friend class OutputConnector;
     };
     
-    /** \brief Output connector baseclass
+    /** \brief Output connector base-class
         
         An output connector sends out packets. It may be either an ActiveConnector or a
         PassiveConnector. An output connector does \e not have an built-in queueing, it relies on

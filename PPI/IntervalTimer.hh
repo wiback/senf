@@ -36,14 +36,21 @@
 namespace senf {
 namespace ppi {
 
+    /** \brief IntervalTimer event information
+
+        Information passed to the IntervalTimer event handler
+     */
     struct IntervalTimerEventInfo
     {
-        ClockService::clock_type expected;
-        ClockService::clock_type intervalStart;
-        unsigned number;
+        ClockService::clock_type expected; ///< Scheduled event time
+        ClockService::clock_type intervalStart; ///< Start of the current time interval
+        unsigned number;                ///< Number of the current event within the interval
     };
 
-    /** \brief
+    /** \brief High precision regularly signaled event.
+
+        An IntervalTimer signals an event \a eventsPerInterval times each \a interval
+        nanoseconds. The event counter and timer are reset, whenever the event is disabled.
       */
     class IntervalTimer
         : public EventImplementation<IntervalTimerEventInfo>

@@ -45,12 +45,16 @@ prefix_ void senf::ppi::ModuleManager::init()
         (*i)->init();
 }
 
+#ifndef DOXYGEN
+
 struct senf::ppi::ModuleManager::RunGuard
 {
     RunGuard(ModuleManager & m) : manager(m) { manager.running_ = true; }
     ~RunGuard() { manager.running_ = false; }
     ModuleManager & manager;
 };
+
+#endif
 
 prefix_ void senf::ppi::ModuleManager::run()
 {

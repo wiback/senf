@@ -38,6 +38,7 @@ namespace senf {
 namespace ppi {
 namespace detail {
 
+    /** \brief Internal: Association Event - Module - Handler, base-class */
     class EventBindingBase
     {
     public:
@@ -60,6 +61,8 @@ namespace detail {
         friend class senf::ppi::EventManager;
     };
 
+    /** \brief Internal: Callback forwarders
+     */
     template <class EventType, class Self>
     class EventBindingHelper
     {
@@ -88,6 +91,7 @@ namespace detail {
 
 #endif
 
+    /** \brief Internal: Association Event - Module - Handler, event type specific */
     template <class EventType>
     class EventBinding
         : public EventBindingBase, 

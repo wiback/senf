@@ -34,6 +34,11 @@
 namespace senf {
 namespace ppi {
 
+    /** \brief Routing base class
+
+        Routing information is defined within each module to define the control flow. RouteBase is
+        the generic base class for all routing entries.
+     */
     class RouteBase
     {
     public:
@@ -46,11 +51,17 @@ namespace ppi {
         module::Module * module_;
     };
 
+    /** \brief Forwarding route base class
+
+        All routes which may forward control information are based on
+        ForwardingRoute. ForwardingRoute provides methods to control and query the throttling
+        behavior.
+     */
     class ForwardingRoute
         : public RouteBase
     {
     public:
-        bool autoThrottling() const;
+        bool autoThrottling() const;    ///< Query current autoThrottling state
         void autoThrottling(bool state); ///< Change automatic throttle notification forwarding
                                         /**< By default, throttle notifications are automatically
                                              forwarded from active to passive connectors. This may
@@ -66,7 +77,10 @@ namespace ppi {
 
                                              \param[in] state New throttle forwarding state */
 
-        bool throttled() const;
+        bool throttled() const;         ///< \c true, if the route is throttled
+                                        /**< This member checks only the automatic throttling
+                                             state. If autoThrottling() is \c false, this member
+                                             will always return \c false. */
         
     protected:
         ForwardingRoute(module::Module & module);
@@ -104,13 +118,17 @@ namespace ppi {
         
         Route instances are created by Module::route statements. The Route class provides an
         interface to manipulate the flow processing.
+
+        The concrete interface provided depends on the type of route. If the route is a forwarding
+        route, it will be based on ForwardingRoute otherwise it will be based directly on
+        RouteBase.
      */
     template <class Source, class Target>
     class Route
         : public detail::RouteImplementation<Source,Target>
     {
-        typedef detail::RouteImplementation<Source,Target> Base;
     private:
+        typedef detail::RouteImplementation<Source,Target> Base;
         typedef detail::RouteImplementation<Source,Target> Implementation;
         
         Route(module::Module & module, Source & source, Target & target);

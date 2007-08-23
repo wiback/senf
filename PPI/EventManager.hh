@@ -39,7 +39,11 @@
 namespace senf {
 namespace ppi {
 
-    /** \brief
+    /** \brief Event registry and control
+
+        The EventManager control event registration and manages global event parameters. The
+        EventManager controls event dispatch but does \e not control event generation. This is the
+        responsibility of an external component (the Scheduler)
       */
     class EventManager
     {
@@ -47,16 +51,13 @@ namespace ppi {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        template <class Descriptor>
 #ifndef DOXYGEN
+        // Somehow doxygen barfs on this definition
+        template <class Descriptor>
         struct Callback
-#else
-        // This is SO stupid but doxygen must have some scoping problems if the 
-        // struct is called 'Callback' and will hang in an endless loop somewhere
-        struct Callback_
-#endif
             : public detail::Callback<typename Descriptor::EventArg>
         {};
+#endif
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -74,17 +75,17 @@ namespace ppi {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
+        ClockService::clock_type now(); ///< Current time at last event dispatch
+        ClockService::clock_type time(); ///< Expected time of the last event
+
+    protected:
+
+    private:
         template <class Descriptor>
         void registerEvent(module::Module & module,
                            typename Callback<Descriptor>::type callback,
                            Descriptor & descriptor);
 
-        ClockService::clock_type now();
-        ClockService::clock_type time();
-
-    protected:
-
-    private:
         void destroyModule(module::Module & module);
 
         typedef boost::ptr_vector<detail::EventBindingBase> EventRegistrations;

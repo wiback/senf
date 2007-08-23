@@ -81,11 +81,16 @@ namespace module {
           class SomeReader
           {
           public:
-              typedef unspecified_type Handle;        // type of handle requested
-              SomeReader();                           // default constructible
-              Packet::ptr operator()(Handle handle);  // extraction function
+              typedef unspecified_type Handle;   // type of handle requested
+              SomeReader();                      // default constructible
+              Packet operator()(Handle handle);  // extraction function
           };
         \endcode
+        
+        Whenever the FileHandle object is ready for reading, the \a Reader's \c operator() is called
+        to read a packet. The default \a Reader is \c PacketReader<>, which will read packets from a
+        datagram SocketHandle into DataPacket's. You may 
+        
      */
     template <class Reader=PacketReader<> >
     class ActiveSocketReader 
