@@ -39,6 +39,52 @@ namespace senf {
 namespace ppi {
 namespace module {
 
+    /** \namespace senf::ppi::module
+        \brief PPI Modules
+       
+        The modules build the PPI core. The PPI provides a set of general purpose infrastructure
+        modules. For concrete applications, additional application specific processing modules need
+        to be implemented.
+
+        \section module_impl Implementing Modules
+        
+        All modules derive from senf::ppi::module::Module. See this class for a documentation on how
+        to write new modules.
+
+        \section infrastructure_modules General Purpose Modules
+
+        The PPI provided general purpose modules can be grouped into several categories
+
+        \li \ref io_modules receive external data or forward packets out of the PPI
+        \li \ref sourcesink_modules generate or absorb packets internally
+        \li \ref routing_modules forward packets within the network
+        \li \ref adapter_modules are used to connect incompatible connectors to each other
+     */
+
+    /** \defgroup io_modules Input/Output Modules
+
+        Input/Output Modules receive data from external sources or forward data from the PPI to
+        outside targets.
+     */
+
+    /** \defgroup sourcesink_modules Source/Sink Modules
+
+        Source and Sink modules generate or absorb packets internally. In contrast to \ref
+        io_modules, they do not communicate outside the PPI.
+     */
+
+    /** \defgroup routing_modules Routing Modules
+
+        Routing modules perform packet forwarding within the network. They do not process the packet
+        data, they just route it.
+     */
+
+    /** \defgroup adapter_modules Adapter Modules
+
+        Adapter modules adapt incompatible connectors to each other. They allow connection a pair of
+        active or passive connectors.
+     */
+
     /** \brief Module base-class
 
         senf::ppi::Module is the base-class of all PPI modules. It provides the module implementation
@@ -198,8 +244,10 @@ namespace module {
         virtual void macro_SENF_PPI_MODULE_missing() = 0;
 #endif
 
+#ifndef DOXYGEN
     private:
-        virtual void init();
+#endif
+        virtual void init();            ///< Called just before the network is run
 
 #ifndef DOXYGEN
     public:
@@ -224,6 +272,12 @@ namespace module {
         friend class senf::ppi::ModuleManager;
     };
 
+    /** \brief Define PPI Module
+
+        Every module must begin by using this macro. 
+
+        \see senf::ppi::module::Module
+     */
 #   define SENF_PPI_MODULE(name)                                                                  \
     public:                                                                                       \
         ~ name() { destroy(); }                                                                   \

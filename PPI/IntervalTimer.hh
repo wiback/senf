@@ -51,6 +51,10 @@ namespace ppi {
 
         An IntervalTimer signals an event \a eventsPerInterval times each \a interval
         nanoseconds. The event counter and timer are reset, whenever the event is disabled.
+
+        \see IntervalTimerEventInfo
+
+        \ingroup event_group
       */
     class IntervalTimer
         : public EventImplementation<IntervalTimerEventInfo>

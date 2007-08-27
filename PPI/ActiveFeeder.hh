@@ -46,6 +46,8 @@ namespace module {
 
         \note For this Module to work correctly, it is very important for the connectors to be
             correctly throttled. Otherwise the system might well hang in an endless loop.
+
+        \ingroup adapter_modules
      */
     class ActiveFeeder
         : public Module

@@ -90,7 +90,8 @@ namespace module {
         Whenever the FileHandle object is ready for reading, the \a Reader's \c operator() is called
         to read a packet. The default \a Reader is \c PacketReader<>, which will read packets from a
         datagram SocketHandle into DataPacket's. You may 
-        
+
+        \ingroup io_modules
      */
     template <class Reader=PacketReader<> >
     class ActiveSocketReader 

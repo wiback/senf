@@ -30,6 +30,7 @@
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>
+#include "Utils/singleton.hh"
 
 //#include "ClockService.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -77,9 +78,14 @@ namespace senf {
 
         The ClockService provides a highly accurate monotonous clock source based on
         gettimeofday(). However, it takes additional precautions to detect clock skew.
+
+        \implementation We use a mix of static and non-static members to achieve high performance
+            in the normal case (no clock skew) and still encapsulate the dependency on legacy C
+            headers. Using the senf::singleton mixin ensures, that the instance is constructed
+            before main even when instance() is not called.
       */
     class ClockService
-        : boost::noncopyable
+        : singleton<ClockService>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -98,7 +104,7 @@ namespace senf {
          */
         typedef boost::posix_time::ptime abstime_type;
 
-        static unsigned const CheckInterval = 1;
+        static unsigned const CheckInterval = 10;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -134,32 +140,33 @@ namespace senf {
 
         static void restart();
 
-    protected:
-
     private:
-
         ClockService();
 
-        static ClockService & instance();
-        clock_type now_i();
-        void restart_i();
+        void timer();
+
+        clock_type now_m();
+        abstime_type abstime_m(clock_type clock);
+        clock_type clock_m(abstime_type time);
+        void restart_m(bool restart = true);
 
         bool checkSkew(boost::posix_time::ptime time);
-        void clockSkew(boost::posix_time::ptime time, boost::posix_time::ptime expected);
         void updateSkew(boost::posix_time::ptime time);
-        
+        void clockSkew(boost::posix_time::ptime time, boost::posix_time::ptime expected);
+
         boost::posix_time::ptime base_;
         boost::posix_time::ptime heartbeat_;
 
+        // I don't want this header to depend on the legacy C headers.
         struct Impl;
         boost::scoped_ptr<Impl> impl_;
 
         friend class Impl;
 #ifndef DOXYGEN
         friend class senf::detail::ClockServiceTest;
+        friend class singleton<ClockService>;
 #endif
     };
-
 
 }
 

@@ -20,9 +20,8 @@
 
 /** \mainpage libPPI : The Packet Processing Infrastructure
 
-    The PPI provides an infrastructure to create packet oriented network processing
-    applications. A PPI application is built by combining processing modules in a very flexible
-    manner.
+    The PPI provides an infrastructure to create packet oriented network processing applications. A
+    PPI application is built by combining processing modules in a very flexible manner.
 
     \image html scenario.png Target Scenario
     
@@ -40,6 +39,16 @@
     framework. The target scenario above depicts a diffserv capable UDLR/ULE router including
     performance optimizations for TCP traffic (PEP). This router is built by combining several
     modules.
+
+    \see \ref overview \n
+        <a href="../../../Examples/RateStuffer/doc/html/index.html">PPI Example Application:
+        RateStuffer</a> \n
+        \ref senf::ppi::module "Modules" \n
+        \ref senf::ppi::connector "Connectors" \n
+        \ref event_group
+ */
+
+/** \page overview PPI Overview and Concepts
 
     \section design Design considerations
 
@@ -331,11 +340,10 @@
     route statement as defining the 'conceptual data flow' since this is also how control messages
     should flow (sans the direction, which is defined by the connectors active/passive property).
 
-    \see \ref ppi_implementation \n
-        <a href="http://openfacts.berlios.de/index-en.phtml?title=SENF:_Packet_Processing_Infrastructure">Implementation plan</a>
+    \see \ref ppi_implementation
  */
 
-/** \page ppi_implementation Implementation Overview
+/** \page ppi_implementation Implementation Notes
     
     \section processing Data Processing
 
@@ -397,6 +405,7 @@
 
     \fixme Implement Spliters: PassiveSplitter, PrioritySplitter, CloneSplitter
     \fixme Implement DiscardSink, CloneSource
+    \fixme Implement ThrottleBarrier
  */
 
 

@@ -37,7 +37,10 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-#define CheckErrno(op,args) if (op args < 0) throw SystemException(# op, errno)
+#define CheckError(op,args) if (op args < 0) throw SystemException(# op, errno)
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ClockService::Impl
 
 struct senf::ClockService::Impl 
 {
@@ -61,28 +64,23 @@ struct senf::ClockService::Impl
 
 prefix_ senf::ClockService::Impl::Impl()
 {
-    CheckErrno( sigemptyset, (&alrm_set) );
-    CheckErrno( sigaddset, (&alrm_set, SIGALRM) );
+    CheckError( sigemptyset, (&alrm_set) );
+    CheckError( sigaddset, (&alrm_set, SIGALRM) );
 }
 
 prefix_ void senf::ClockService::Impl::block()
 {
-    CheckErrno( sigprocmask, (SIG_BLOCK, &alrm_set, 0) );
+    CheckError( sigprocmask, (SIG_BLOCK, &alrm_set, 0) );
 }
 
 prefix_ void senf::ClockService::Impl::unblock()
 {
-    CheckErrno( sigprocmask, (SIG_UNBLOCK, &alrm_set, 0) );
+    CheckError( sigprocmask, (SIG_UNBLOCK, &alrm_set, 0) );
 }
 
 prefix_ void senf::ClockService::Impl::timer(int)
 {
-    boost::posix_time::ptime time (boost::posix_time::microsec_clock::universal_time());
-    if (ClockService::instance().checkSkew(time))
-        ClockService::instance().clockSkew(
-            time, ClockService::instance().heartbeat_ + boost::posix_time::seconds(
-                ClockService::CheckInterval));
-    ClockService::instance().heartbeat_ = time;
+    ClockService::instance().timer();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -98,54 +96,60 @@ prefix_ senf::ClockService::~ClockService()
 // private members
 
 prefix_ senf::ClockService::ClockService()
-    : base_ (boost::posix_time::microsec_clock::universal_time()), 
-      heartbeat_ (base_), impl_(new ClockService::Impl())
+    : impl_(new ClockService::Impl())
 {
-    struct sigaction action;
-    action.sa_handler = & senf::ClockService::Impl::timer;
-    CheckErrno( sigemptyset, (&action.sa_mask) );
-    action.sa_flags = SA_RESTART;
-    CheckErrno( sigaction, (SIGALRM, &action, &impl_->oldaction) );
-
-    struct itimerval itimer;
-    itimer.it_interval.tv_sec = CheckInterval;
-    itimer.it_interval.tv_usec = 0;
-    itimer.it_value.tv_sec = CheckInterval;
-    itimer.it_value.tv_usec = 0;
-    CheckErrno( setitimer, (ITIMER_REAL, &itimer, &impl_->olditimer) );
-    impl_->unblock();
+    restart_m(false);
 }
 
-prefix_ void senf::ClockService::restart_i()
+prefix_ void senf::ClockService::timer()
 {
-    impl_->block(); // if any syscall fails, the alarm signal stays blocked which is correct
+    boost::posix_time::ptime time (boost::posix_time::microsec_clock::universal_time());
+    if (checkSkew(time))
+        clockSkew(time, heartbeat_ + boost::posix_time::seconds(
+                      ClockService::CheckInterval));
+    heartbeat_ = time;
+}
+
+prefix_ void senf::ClockService::restart_m(bool restart)
+{
+    if (restart)
+        // if any syscall fails, the alarm signal stays blocked which is correct
+        impl_->block(); 
+
     base_ = boost::posix_time::microsec_clock::universal_time();
     heartbeat_ = base_;
 
     struct sigaction action;
     action.sa_handler = & senf::ClockService::Impl::timer;
-    CheckErrno( sigemptyset, (&action.sa_mask) );
+    CheckError( sigemptyset, (&action.sa_mask) );
     action.sa_flags = SA_RESTART;
-    CheckErrno( sigaction, (SIGALRM, &action, 0) );
+    CheckError( sigaction, (SIGALRM, &action, restart ? 0 : &impl_->oldaction) );
 
     struct itimerval itimer;
     itimer.it_interval.tv_sec = CheckInterval;
     itimer.it_interval.tv_usec = 0;
     itimer.it_value.tv_sec = CheckInterval;
     itimer.it_value.tv_usec = 0;
-    CheckErrno( setitimer, (ITIMER_REAL, &itimer, 0) );
+    CheckError( setitimer, (ITIMER_REAL, &itimer, restart ? 0 : &impl_->olditimer) );
+    
     impl_->unblock();
 }
 
 prefix_ void senf::ClockService::updateSkew(boost::posix_time::ptime time)
 {
     Impl::Blocker alrmBlocker (impl_.get());
-    struct itimerval itimer;
-    CheckErrno( getitimer, (ITIMER_REAL, &itimer) );
-    clockSkew(time, (heartbeat_ 
-                     + boost::posix_time::seconds(CheckInterval) 
-                     - boost::posix_time::seconds(itimer.it_value.tv_sec)
-                     - boost::posix_time::microseconds(itimer.it_value.tv_usec)));
+    
+    // Make a second 'checkSkew' test, this time with SIGALRM blocked. See
+    // senf::ClockService::now_i()
+
+    if (checkSkew(time)) {
+        struct itimerval itimer;
+        CheckError( getitimer, (ITIMER_REAL, &itimer) );
+        clockSkew(time, (heartbeat_ 
+                         + boost::posix_time::seconds(CheckInterval) 
+                         - boost::posix_time::seconds(itimer.it_value.tv_sec)
+                         - boost::posix_time::microseconds(itimer.it_value.tv_usec)));
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

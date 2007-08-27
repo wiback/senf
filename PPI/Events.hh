@@ -34,6 +34,18 @@
 
 namespace senf {
 namespace ppi {
+    
+    /** \defgroup event_group Events
+
+        Events provide notification of events outside the PPI framework: I/O activity, Timers
+        etc. Events are very important since they drive the PPI: Without events, nothing will
+        happen.
+
+        \section event_impl Implementing Events
+
+        All events are derived from EventImplementation which is based on EventDescriptor.
+        \see EventImplementation
+     */
 
     // Implementation: The concrete EventDescriptor implementation will need to set things up so
     // some callback (within the EventDescriptor implementation) will be called when the event

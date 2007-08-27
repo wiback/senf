@@ -21,51 +21,53 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IdleEvent public header */
+    \brief ThrottleBarrier public header */
 
-#ifndef HH_IdleEvent_
-#define HH_IdleEvent_ 1
+#ifndef HH_ThrottleBarrier_
+#define HH_ThrottleBarrier_ 1
 
 // Custom includes
-#include "Events.hh"
+#include "Connectors.hh"
+#include "Module.hh"
 
-//#include "IdleEvent.mpp"
+//#include "ThrottleBarrier.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
+namespace module {
 
-    /** \brief Continually signaled event
+    /** \brief Packet discarding barrier for throttle notifications
 
-        An IdleEvent is signaled continually and repeatedly while enabled. It will consume 100% of
-        available CPU resources. The resource usage is controlled by adequate event throttling.
-        
-        \ingroup event_group
+        A ThrottleBarrier will \e not forward any throttle notifications received on it's output. It
+        will instead discard any packet received on it's input while the output is throttled. This
+        module is used to circumvent any operating system based queueing. This allows the queueing
+        to be controlled explicitly within the PPI.
+
+        \ingroup routing_modules
      */
-    class IdleEvent
-        : public EventImplementation<>
+    class ThrottleBarrier
+        : public Module
     {
+        SENF_PPI_MODULE(ThrottleBarrier);
     public:
-        IdleEvent();
+        
+        connector::PassiveInput input;
+        connector::ActiveOutput output;
 
-    protected:
+        ThrottleBarrier();
 
     private:
-        virtual void v_enable();
-        virtual void v_disable();
-
-        void cb();
-        
-        unsigned id_;
+        void request();
     };
 
-}}
 
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "IdleEvent.cci"
-//#include "IdleEvent.ct"
-//#include "IdleEvent.cti"
+//#include "ThrottleBarrier.cci"
+//#include "ThrottleBarrier.ct"
+//#include "ThrottleBarrier.cti"
 #endif
 
 

@@ -109,6 +109,9 @@ namespace debug {
         connector::PassiveOutput output;
 
         PassiveSource();
+
+        void throttle();                ///< Throttle output connector
+        void unthrottle();              ///< Unthrottle output connector
         
         void submit(Packet packet);     ///< Enqueue packet
 
@@ -165,8 +168,11 @@ namespace debug {
         typedef Queue::const_iterator iterator;
 
         connector::PassiveInput input;
-        
+
         PassiveSink();
+
+        void throttle();                ///< Throttle input connection
+        void unthrottle();              ///< Unthrottle input connection
 
         bool empty();                   ///< \c true, if queue is empty
         size_type size();               ///< number of packets in the queue

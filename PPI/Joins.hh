@@ -50,6 +50,25 @@ namespace ppi {
 
 namespace module {
 
+    /** \brief Join multiple packet streams with passive inputs
+
+        The PassiveJoin will combine any number of packet streams. You may connect any number of
+        ActiveOutput's  to the PassiveJoin instance. The combined stream is then provided on the
+        ActiveOutput \a output.
+
+        Since PassiveJoin allows any number of incoming packet streams, the input connectors are
+        dynamically managed. A special senf::ppi::connect() overload is used to dynamically create
+        the needed input connectors. This hides this extra functionality from the user.
+        \code
+        senf::ppi::module::PassiveJoin join;
+
+        ppi::connect(module1,join);             // Connect first module to join's input
+        ppi::connect(module2.some_output,join); // Connect another module to join's input
+        ppi::connect(join,module3);             // Forward combined stream to module3
+        \endcode
+
+        \ingroup routing_modules
+     */
     class PassiveJoin
         : public Module
     {
@@ -59,12 +78,17 @@ namespace module {
 
         PassiveJoin();
 
+    private:
+        connector::PassiveInput & newInput();
+
+#ifndef DOXYGEN
+        // I didn't get template friend functions to work ...
+    public:
+#endif
         template <class Source>
         connector::PassiveInput & connect(Source & source);
 
     private:
-        connector::PassiveInput & newInput();
-
         void request(connector::PassiveInput & input);
         void onThrottle();
         void onUnthrottle();
@@ -73,6 +97,32 @@ namespace module {
         Inputs inputs_;
     };
 
+    /** \brief Join multiple packet streams with active inputs
+
+        The PriorityJoin will combine any number of packet streams. You may connect any number of
+        PassiveInput's  to the PassiveJoin instance. The combined stream is then provided on the
+        PassiveOutput \a output.
+
+        When a packet request is received on Priorityjoin's \a output, The request will be serviced
+        from the first unthrottled input. The order, in which connectors are connected to the
+        PriorityJoin's input is important: The earlier connected peer has the higher priority and
+        will be serviced first.
+
+        Since PriorityJoin allows any number of incoming packet streams, the input connectors are
+        dynamically managed. A special senf::ppi::connect() overload is used to dynamically create
+        the needed input connectors. This hides this extra functionality from the user.
+        \code
+        senf::ppi::module::PriorityJoin join;
+
+        ppi::connect(module1,join);             // Connect first module to join's input
+        ppi::connect(module2.some_output,join); // Connect another module to join's input
+        ppi::connect(join,module3);             // Forward combined stream to module3
+        \endcode
+        Here, \a module1 has higher priority than \a module2 which will only be queried if \a
+        module1 is throttled.
+        
+        \ingroup routing_modules
+     */
     class PriorityJoin
         : public Module
     {
@@ -82,12 +132,16 @@ namespace module {
 
         PriorityJoin();
 
+    private:
+        connector::ActiveInput & newInput();
+
+#ifndef DOXYGEN
+    public:
+#endif
         template <class Source>
         connector::ActiveInput & connect(Source & source);
 
     private:
-        connector::ActiveInput & newInput();
-
         void request();
         void onThrottle();
         void onUnthrottle();

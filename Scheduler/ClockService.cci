@@ -34,27 +34,17 @@
 
 prefix_ senf::ClockService::clock_type senf::ClockService::now()
 {
-    // We must make sure to call instance() before fetching the current time since the first call to
-    // instance() will construct the singleton and initialize heartbeat_. If this happens *after*
-    // fetching the current time checkSkew() will detect clock skew since heartbeat_ will be <
-    // current time.
-    return instance().now_i();
+    return instance().now_m();
 }
 
 prefix_ senf::ClockService::abstime_type senf::ClockService::abstime(clock_type clock)
 {
-#ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
-    return instance().base_ + boost::posix_time::nanoseconds(clock);
-#else
-    return instance().base_ + boost::posix_time::microseconds((clock+500)/1000);
-#endif
+    return instance().abstime_m(clock);
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::clock(abstime_type time)
 {
-    boost::posix_time::time_duration delta (time - instance().base_);
-    return clock_type( delta.ticks() )
-        * clock_type( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
+    return instance().clock_m(time);
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::nanoseconds(clock_type v)
@@ -64,59 +54,79 @@ prefix_ senf::ClockService::clock_type senf::ClockService::nanoseconds(clock_typ
 
 prefix_ senf::ClockService::clock_type senf::ClockService::microseconds(clock_type v)
 {
-    return nanoseconds(1000*v);
+    return v * nanoseconds(1000);
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::milliseconds(clock_type v)
 {
-    return microseconds(1000*v);
+    return v * microseconds(1000);
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::seconds(clock_type v)
 {
-    return milliseconds(1000*v);
+    return v * milliseconds(1000);
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::minutes(clock_type v)
 {
-    return seconds(60*v);
+    return v * seconds(60);
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::hours(clock_type v)
 {
-    return minutes(60*v);
+    return v * minutes(60);
 }
 
 prefix_ senf::ClockService::clock_type senf::ClockService::days(clock_type v)
 {
-    return hours(24*v);
+    return v * hours(24);
 }
 
 prefix_ void senf::ClockService::restart()
 {
-    instance().restart_i();
+    instance().restart_m();
 }
 
 ////////////////////////////////////////
 // private members
 
-prefix_ senf::ClockService & senf::ClockService::instance()
+prefix_ senf::ClockService::clock_type senf::ClockService::now_m()
 {
-    static ClockService instance;
-    return instance;
-}
+    // We want to make the normal case (no skew) really fast. This first 'checkSkew' *might*
+    // transiently fail if a SIGALRM is delivered in the midst of the test. updateSkew will
+    // therefore block signals and do the check again to make sure.
+    //
+    // The opposite case (the test returns 'false' even though it should return 'true') is so highly
+    // improbable that it is treated as academic. (it will be catched by the next SIGALRM)
 
-prefix_ senf::ClockService::clock_type senf::ClockService::now_i()
-{
     boost::posix_time::ptime time (boost::posix_time::microsec_clock::universal_time());
     if (checkSkew(time)) 
         updateSkew(time);
-    return clock(time);
+    
+    // 'clock' will pick up the corrected base_ value if needed.
+    return clock_m(time);
+}
+
+prefix_ senf::ClockService::abstime_type senf::ClockService::abstime_m(clock_type clock)
+{
+#ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
+    return base_ + boost::posix_time::nanoseconds(clock);
+#else
+    return base_ + boost::posix_time::microseconds((clock+500)/1000);
+#endif
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type time)
+{
+    boost::posix_time::time_duration delta (time - base_);
+    return clock_type( delta.ticks() )
+        * clock_type( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
 }
 
 prefix_ bool senf::ClockService::checkSkew(boost::posix_time::ptime time)
 {
-    return time < heartbeat_ || (time - heartbeat_) > boost::posix_time::seconds(2*CheckInterval);
+    boost::posix_time::ptime h (heartbeat_); // reduce chance for race condition
+    return time < h || (time - h) > boost::posix_time::seconds(2*CheckInterval);
 }
 
 prefix_ void senf::ClockService::clockSkew(boost::posix_time::ptime time,

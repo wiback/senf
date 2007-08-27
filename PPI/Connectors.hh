@@ -21,22 +21,6 @@
 /** \file
     \brief Connectors public header */
 
-/** \defgroup connectors Connector classes
-
-    A connector has two independent properties
-    \li it may be \e active or \e passive
-    \li it may be an \e input or an \e output
-    
-    \e Active connectors are activated from within the module, \e passive connectors are signaled by
-    the external framework. \e Input modules receive packets, \e output modules send packets.
-
-    All passive connectors call some onRequest callback whenever I/O needs to be performed. All
-    input modules possess a packet queue.
-
-    We therefore have 4 connector types: senf::ppi::ActiveInput, senf::ppi::ActiveOutput,
-    senf::ppi::PassiveInput and senf::ppi::PassiveOutput.
- */
-
 #ifndef HH_Connectors_
 #define HH_Connectors_ 1
 
@@ -59,6 +43,20 @@ namespace connector {
 
     /** \namespace senf::ppi::connector
         \brief Connector classes 
+
+        A connector has two independent properties
+        \li it may be \e active or \e passive
+        \li it may be an \e input or an \e output
+    
+        \e Active connectors are activated from within the module, \e passive connectors are
+        signaled by the external framework. \e Input modules receive packets, \e output modules send
+        packets.
+
+        All passive connectors call some onRequest callback whenever I/O needs to be performed. All
+        input modules possess a packet queue.
+
+        We therefore have 4 connector types: senf::ppi::ActiveInput, senf::ppi::ActiveOutput,
+        senf::ppi::PassiveInput and senf::ppi::PassiveOutput.
      */
 
     /** \brief Connector base-class

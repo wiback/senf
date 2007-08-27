@@ -41,19 +41,28 @@ namespace senf {
         advertised:
         \li There must be only a single thread executing before main() starts. (This should always
             be the case)
-        \li The singleton class must have a default constructor
+        \li There must be only a single thread executing after main() ends. (This is always
+            important, otherwise global object destruction might fail)
+        \li The singleton class must have a non throwing default constructor and destructor
 
         If these conditions are met, this mixin will ensure that the singleton is constructed \e
         before main even starts executing. If static construction code calls the instance() member,
-        it is ensured, that a valid instance is returned.
+        it is ensured, that the instance is constructed no later than the first call to instance().
 
         Usage example:
         \code
           class SomeClass
               : public senf::singleton<SomeClass>
           {
-          public:
-              SomeClass(); // Must have default constructor
+              // Must have default constructor
+              SomeClass(); 
+        
+              // Give singleton access to the constructor
+              friend class senf::singleton<SomeClass>;
+
+        public:
+              // By default 'instance()' is protected. If you want, you may make it public:
+              using senf::singleton<SomeClass>::instance;
               
               // ...
           };
@@ -65,8 +74,11 @@ namespace senf {
               SomeClass::instance().doSomething();
           }
         \endcode
+        
+        \warning The singleton class should \e not have any static data members since it cannot be
+            guaranteed, that these members will be constructed before the singleton instance.
 
-        \note This implementation is directly taken from
+        \implementation This implementation is directly taken from
             <tt>boost/pool/detail/singleton.hpp</tt>. See that file for a description of the
             technique. The only difference is, that I prefer to advertise this class as a mixin
             (though it may be used the same way as the original too).
@@ -75,8 +87,8 @@ namespace senf {
     class singleton
         : boost::noncopyable
     {
-    public:
-        static Self & instance(); ///< Return singleton instance
+    protected:
+        static Self & instance();       ///< Return singleton instance
 
     private:
         /** \brief Internal
@@ -96,7 +108,7 @@ namespace senf {
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "singleton.cci"
 //#include "singleton.ct"
-//#include "singleton.cti"
+#include "singleton.cti"
 #endif
 
 

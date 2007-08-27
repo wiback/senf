@@ -21,51 +21,48 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief singleton inline template implementation */
+    \brief DiscardSink.test unit tests */
 
-//#include "singleton.ih"
+//#include "DiscardSink.test.hh"
+//#include "DiscardSink.test.ih"
 
 // Custom includes
+#include "DiscardSink.hh"
+#include "DebugModules.hh"
+#include "Setup.hh"
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-template <class Self>
-prefix_ Self & senf::singleton<Self>::instance()
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
+
+BOOST_AUTO_UNIT_TEST(discardSink)
 {
-    static Self instance_;
-    // Force instantiation of force_creation (at static object creation time)
-    creator_.nop(); 
-    return instance_;
+    // here we really can just validate that everything compiles ...
+
+    senf::ppi::module::debug::ActiveSource source;
+    senf::ppi::module::DiscardSink sink;
+    
+    senf::ppi::connect(source,sink);
+    senf::ppi::init();
+
+    senf::Packet p (senf::DataPacket::create());
+    
+    source.submit(p);
+    source.submit(p);
 }
 
-template <class Self>
-prefix_ senf::singleton<Self>::force_creation::force_creation()
-{
-    // Force execution of instance() thereby creating instance
-    senf::singleton<Self>::instance();
-}
-
-template <class Self>
-prefix_ void senf::singleton<Self>::force_creation::nop()
-    const
-{
-    // No operation ...
-}
-
-template <class Self>
-typename senf::singleton<Self>::force_creation senf::singleton<Self>::creator_;
-
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

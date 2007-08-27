@@ -59,12 +59,43 @@ namespace ppi {
 
 #else
 
+    /** \brief Connect modules
+
+        senf::ppi::connect() establishes a connection between two modules or, to be more precise,
+        between two connectors. For enhanced usability, \a source and \a target may be a Connector,
+        a Module or a collection/subnetwork. Passing a Module or collection/subnetwork as \a source
+        will originate the connection on the \c output member of that Module or collection while
+        passing a module or collection/subnetwork as \a target will terminate the connection on that
+        Module or collections \c input member. For most simple modules, the specification of the
+        connector is therefore obsolete.
+
+        Furthermore, the connect() call may be extended by special modules (e.g. PassiveJoin which
+        allows an arbitrary of input connections).
+     */
     template <class Source, class Target>
     void connect(Source & source, Target & target);
 
 #endif
+    
+    /** \brief Start the network
 
+        Calling senf::ppi::run() will start processing the network. The main event loop is managed
+        by the Scheduler. Before starting the Scheduler main loop, all Module init() members are
+        called.
+
+        senf::ppi::run() will return when no more work is to be done, that is when no events are
+        enabled (Since the events are enabled and disabled by the throttle notifications which
+        depend among other things on the packet queues, this is the same as checking for packets in
+        any queue). It is Ok to call senf::ppi::run() multiple times during the program lifetime.
+     */
     void run();
+
+    /** \brief Manually initialize the network
+        
+        For debugging purposes, it is sometimes simpler to not use senf::ppi::run() but instead
+        drive the network via explicit calls using the debug modules. However, it is still necessary
+        to initialize the network. This operation is performed by senf::ppi::init().
+     */
     void init();
 
 }}

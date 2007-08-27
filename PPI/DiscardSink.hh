@@ -21,51 +21,57 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief singleton inline template implementation */
+    \brief DiscardSink public header */
 
-//#include "singleton.ih"
+#ifndef HH_DiscardSink_
+#define HH_DiscardSink_ 1
 
 // Custom includes
+#include "Connectors.hh"
+#include "Module.hh"
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+//#include "DiscardSink.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-template <class Self>
-prefix_ Self & senf::singleton<Self>::instance()
-{
-    static Self instance_;
-    // Force instantiation of force_creation (at static object creation time)
-    creator_.nop(); 
-    return instance_;
-}
+namespace senf {
+namespace ppi {
+namespace module {
 
-template <class Self>
-prefix_ senf::singleton<Self>::force_creation::force_creation()
-{
-    // Force execution of instance() thereby creating instance
-    senf::singleton<Self>::instance();
-}
+    /** \brief Module discarding all received packets
 
-template <class Self>
-prefix_ void senf::singleton<Self>::force_creation::nop()
-    const
-{
-    // No operation ...
-}
+        DiscardSink will accept any number of packets and will silently discard them.
 
-template <class Self>
-typename senf::singleton<Self>::force_creation senf::singleton<Self>::creator_;
+        \ingroup sourcesink_modules
+      */
+    class DiscardSink
+        : public Module
+    {
+        SENF_PPI_MODULE(DiscardSink);
+    public:
+        connector::PassiveInput input;
+        
+        DiscardSink();
 
-///////////////////////////////cti.e///////////////////////////////////////
-#undef prefix_
+    private:
+        void request();
+    };
+
+
+}}}
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "DiscardSink.cci"
+//#include "DiscardSink.ct"
+//#include "DiscardSink.cti"
+#endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

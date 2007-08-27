@@ -21,51 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief singleton inline template implementation */
+    \brief ThrottleBarrier non-inline non-template implementation */
 
-//#include "singleton.ih"
+#include "ThrottleBarrier.hh"
+//#include "ThrottleBarrier.ih"
 
 // Custom includes
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+//#include "ThrottleBarrier.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-template <class Self>
-prefix_ Self & senf::singleton<Self>::instance()
+prefix_ senf::ppi::module::ThrottleBarrier::ThrottleBarrier()
 {
-    static Self instance_;
-    // Force instantiation of force_creation (at static object creation time)
-    creator_.nop(); 
-    return instance_;
+    route( input, output ).autoThrottling( false );
+    input.onRequest( &ThrottleBarrier::request );
 }
 
-template <class Self>
-prefix_ senf::singleton<Self>::force_creation::force_creation()
+prefix_ void senf::ppi::module::ThrottleBarrier::request()
 {
-    // Force execution of instance() thereby creating instance
-    senf::singleton<Self>::instance();
+    Packet p (input());
+    if (output)
+        output(p);
 }
 
-template <class Self>
-prefix_ void senf::singleton<Self>::force_creation::nop()
-    const
-{
-    // No operation ...
-}
-
-template <class Self>
-typename senf::singleton<Self>::force_creation senf::singleton<Self>::creator_;
-
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "ThrottleBarrier.mpp"
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

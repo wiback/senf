@@ -53,6 +53,10 @@ namespace ppi {
         type of event is specified using the \a events mask with values from EventFlags.
 
         \fixme Implement error/EOF handling
+
+        \see IOEventInfo
+
+        \ingroup event_group
       */
     class IOEvent
         : public EventImplementation<IOEventInfo>

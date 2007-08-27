@@ -91,6 +91,12 @@ prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle handle, char const *
             case EINTR:
                 break;
             case EAGAIN:
+            case ECONNREFUSED:
+                // Writing to a UDP socket seems return this error code if a corresponding ICMP
+                // error code has been received before (at least on linux). This is inconsistent
+                // since I cannot rely on getting ECONNREFUSED. I therefore ignore this error. TCP
+                // sockets will return this error on connect() and not on write(). Therefore we can
+                // unconditionally ignore this error here.
                 rv = 0;
                 break;
             default:

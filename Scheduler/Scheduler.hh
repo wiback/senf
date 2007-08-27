@@ -116,8 +116,6 @@ namespace senf {
                 variable. The C++ standard then provides above guarantee. The instance will be
                 initialized the first time, the code flow passes the variable declaration found in
                 the instance() body.
-
-            \fixme TimerQueue as \c map \e and \c priority_queue doesn't make sense ...
          */
         static Scheduler & instance();
 
@@ -211,7 +209,7 @@ namespace senf {
         };
 
         typedef std::map<int,EventSpec> FdTable;
-        typedef std::map<unsigned,TimerSpec> TimerMap;
+        typedef std::map<unsigned,TimerSpec> TimerMap; // sorted by id
 
         struct TimerSpecCompare
         {
@@ -223,7 +221,7 @@ namespace senf {
         };
 
         typedef std::priority_queue<TimerMap::iterator, std::vector<TimerMap::iterator>, 
-                                    TimerSpecCompare> TimerQueue;
+                                    TimerSpecCompare> TimerQueue; // sorted by time
 
         FdTable fdTable_;
         unsigned timerIdCounter_;

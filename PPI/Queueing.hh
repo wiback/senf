@@ -68,6 +68,14 @@ namespace ppi {
                                              \param[in] event Type of event triggering the update */
     };
 
+    /** \brief Simple queueing discipline with high and low threshold
+
+        The ThresholdQueueing QueueingDiscipline is a simple queueing discipline which throttles the
+        input as soon the number of packets in the queue reaches the \a high threshold. The input
+        will be unthrottled when the number of packets drops to the \a low threshold. 
+
+        The default queueing discipline is ThresholdQueueing(1,0).
+     */
     class ThresholdQueueing
         : public QueueingDiscipline
     {

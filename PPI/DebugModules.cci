@@ -57,6 +57,16 @@ prefix_ senf::ppi::module::debug::PassiveSource::PassiveSource()
     output.onRequest(&PassiveSource::request);
 }
 
+prefix_ void senf::ppi::module::debug::PassiveSource::throttle()
+{
+    output.throttle();
+}
+
+prefix_ void senf::ppi::module::debug::PassiveSource::unthrottle()
+{
+    output.unthrottle();
+}
+
 prefix_ void senf::ppi::module::debug::PassiveSource::submit(Packet packet)
 {
     packets_.push_back(packet);
@@ -118,6 +128,16 @@ prefix_ senf::ppi::module::debug::PassiveSink::PassiveSink()
 {
     noroute(input);
     input.onRequest(&PassiveSink::request);
+}
+
+prefix_ void senf::ppi::module::debug::PassiveSink::throttle()
+{
+    input.throttle();
+}
+
+prefix_ void senf::ppi::module::debug::PassiveSink::unthrottle()
+{
+    input.unthrottle();
 }
 
 prefix_ bool senf::ppi::module::debug::PassiveSink::empty()

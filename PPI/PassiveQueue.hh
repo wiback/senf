@@ -45,6 +45,8 @@ namespace module {
         The PassiveQueue will automatically throttle in both directions. Throttling on the input
         connector is the standard throttling as implemented in connector::PassiveInput. Additional,
         forward throttling notifications are sent out whenever the queue is empty.
+
+        \ingroup adapter_modules
      */
     class PassiveQueue 
         : public module::Module

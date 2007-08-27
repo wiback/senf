@@ -30,7 +30,7 @@
 
     Running the example is a little bit more complicated since we need to provide example UDP
     packets so we can see the application at work. We do this using \c netcat. We open several shell
-    windows and run the folling commands, each in it's own window
+    windows and run the following commands, each in it's own window
 
     The first command listens for incoming UDP packets on port 44345:
     <pre>
@@ -53,9 +53,8 @@
     </pre>
 
     Whenever we send out a packet with CR in the last window we should see it appear in the first
-    one. If we send out packets faster than 1 packet per seccond, they will still only be forwarded
-    with a speed of 1 packet / seccond. If the kernel UDP buffer overflows, packets would be dropped
-    (however, this buffer is prohibitively large) 
+    one. If we send out packets faster than 1 packet per second, they will start to be discarded if
+    more than two packets are in flight.
 
     \image html screenshot.png
 
@@ -67,7 +66,7 @@
     senf::ppi::module::ActiveSocketReader reads the incoming UDP packets and sends them into a
     senf::ppi::module::PassiveQueue.
 
-    The \a queue feeds the packets into a senf::ppi::module::PriorityJoin. The CopyPacketGenerator
+    The \a queue feeds the packets into a senf::ppi::module::PriorityJoin. The CloneSource
     \a generator is fed as second input into the \a join to provide the stuffing packets.
 
     The RateFilter \a rateFilter reads packets from it's input at a fixed rate and writes them into
@@ -85,12 +84,12 @@
     \skip #include
     \until Setup
 
-    We also define some namepsace aliases
+    We also define some namespace aliases
 
     \skip namespace
     \until senf::ppi;
 
-    The RateStuffer application is based on two additional modules.
+    The RateStuffer application is based on one additional application module.
 
     \subsection ratefilter The RateFilter module
 
@@ -104,7 +103,7 @@
 
     \until }
 
-    The event is initialized to fire eery \a interval nanoseconds.  The traffic is routed 'accross'
+    The event is initialized to fire eery \a interval nanoseconds.  The traffic is routed 'across'
     the timer which controls the traffic. The timer is then registered to call
     RateFilter::timeout().
 
@@ -117,25 +116,42 @@
     automatically be disabled if either \a input or \a output become throttled (which is not even
     needed here).
 
-    \subsection generator The CopyPacketGenerator
+    \subsection ratestuffer The RateStuffer subnet
 
-    We need an additional module to provide the stuffing packets. The CopyPacketGenerator provides
-    an unlimited stream of clone's of a template packet.
+    We decide to implement the RateStuffer as a subnet or collection. This is a simple struct or
+    class which contains all the modules necessary for a specific functionality. The modules are
+    initialized and connected in the class's constructor. External connectors are exported as
+    references to the corresponding module connectors:
 
     \skip class
+    \until rateFilter
+    
+    First the needed modules are declared. We have 
+    \li the \a barrier to discard incoming packets sent to fast
+    \li the \a queue to receive incoming packets and create throttling notifications
+    \li the \a generator to create the stuffing packets
+    \li the \a join to combine the input stream from the \a queue with the stuffing packet stream
+    \li the \a rateFilter to generate the fixed rate output stream
+
+    \until output
+
+    Here we declare the external connectors. The subnetwork exports a single input and output
+    connector. The external connectors are declared as \e references.
+
+    \until output
+
+    The constructor now initializes all the local objects. We pass the template \a packet to the \a
+    generator and set the timing \a interval of the \a rateFilter.
+    
+    The \a input and \a output connector references are bound to the corresponding connectors we
+    want to expose: \a input to the \a queue's \a input and \a output to the \a rateStuffer's \a
+    output.
+
     \until };
 
-    This module is very simple. 
-
-    \until }
-
-    We save the template packet and initialize the \a output connector to call
-    CopyPacketGenerator::request() whenever a packet is requested.
-
-    \until }
-
-    The handler just provides \a packet on each request. This is ok as long as the packets are not
-    changed, in which case we would return <tt>packet->clone()</tt> instead.
+    The constructor body sets up the connections within the subnetwork. Finally, we set the queueing
+    discipline of the \a queue. This Completes the RateStuffer. This subnetwork can now be used like
+    a module.
 
     \subsection main Connecting the modules
 
@@ -150,21 +166,15 @@
 
     \until udpWriter
 
-    Next all the modules are allocated:
+    Here we allocate the components:
 
     \li \a udpReader to read the packets from \a inputSocket
-    \li \a queue to convert the active output of senf::ppi::module::ActiveSocketReader into a
-        passive output
-    \li \a generator to provide the stuffing in the form of packets containing <tt>"<idle>\n"</tt>
-    \li \a join to combine the two packet streams (from \a udpReader and from \a generator) into a
-        single stream
-    \li \a rateFilter to generate the fixed rate packet stream of 1 packet every 1000000000
-        nanoseconds and
+    \li \a stuffer for the real work and
     \li \a udpWriter to send the packets to \a outputSocket
 
     \until udpWriter
 
-    The \ref senf::ppi::connect() calls now setup the necessary connections.
+    The \ref senf::ppi::connect() calls setup the necessary connections.
     
     \until run
 

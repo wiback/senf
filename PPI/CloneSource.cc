@@ -21,51 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief singleton inline template implementation */
+    \brief CloneSource non-inline non-template implementation */
 
-//#include "singleton.ih"
+#include "CloneSource.hh"
+//#include "CloneSource.ih"
 
 // Custom includes
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+//#include "CloneSource.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-template <class Self>
-prefix_ Self & senf::singleton<Self>::instance()
+senf::ppi::module::CloneSource::CloneSource(senf::Packet packet)
+    : packet_(packet) 
 {
-    static Self instance_;
-    // Force instantiation of force_creation (at static object creation time)
-    creator_.nop(); 
-    return instance_;
+    noroute(output);
+    output.onRequest(&CloneSource::request);
 }
 
-template <class Self>
-prefix_ senf::singleton<Self>::force_creation::force_creation()
+void senf::ppi::module::CloneSource::request()
 {
-    // Force execution of instance() thereby creating instance
-    senf::singleton<Self>::instance();
+    output(packet_.clone());
 }
 
-template <class Self>
-prefix_ void senf::singleton<Self>::force_creation::nop()
-    const
-{
-    // No operation ...
-}
 
-template <class Self>
-typename senf::singleton<Self>::force_creation senf::singleton<Self>::creator_;
-
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "CloneSource.mpp"
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

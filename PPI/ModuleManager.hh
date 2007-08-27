@@ -36,7 +36,10 @@
 namespace senf {
 namespace ppi {
 
-    /** \brief
+    /** \brief Internal: Module management
+
+        Every module is registered with the ModuleManager. The ModuleManager controls module
+        initialization and execution of the network.
       */
     class ModuleManager
     {
@@ -57,17 +60,17 @@ namespace ppi {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void registerModule(module::Module & module);
-        void unregisterModule(module::Module & module);
-        
-        void init();
-        void run();
+        void init();                    ///< Called by senf::ppi::init()
+        void run();                     ///< Called by senf::ppi::run()
 
-        bool running() const;
+        bool running() const;           ///< \c true, if the network is running
 
     private:
         ModuleManager();
 
+        void registerModule(module::Module & module);
+        void unregisterModule(module::Module & module);
+        
         typedef std::vector<module::Module *> ModuleRegistry;
 
 #ifndef DOXYGEN
@@ -78,6 +81,8 @@ namespace ppi {
         ModuleRegistry moduleRegistry_;
         bool running_;
         bool terminate_;
+
+        friend class module::Module;
     };
 
 

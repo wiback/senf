@@ -21,51 +21,60 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief singleton inline template implementation */
+    \brief CloneSource public header */
 
-//#include "singleton.ih"
+#ifndef HH_CloneSource_
+#define HH_CloneSource_ 1
 
 // Custom includes
+#include "Packets/Packets.hh"
+#include "Module.hh"
+#include "Connectors.hh"
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+//#include "CloneSource.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-template <class Self>
-prefix_ Self & senf::singleton<Self>::instance()
-{
-    static Self instance_;
-    // Force instantiation of force_creation (at static object creation time)
-    creator_.nop(); 
-    return instance_;
-}
+namespace senf {
+namespace ppi {
+namespace module {
 
-template <class Self>
-prefix_ senf::singleton<Self>::force_creation::force_creation()
-{
-    // Force execution of instance() thereby creating instance
-    senf::singleton<Self>::instance();
-}
+    /** \brief Generate clone's of a template packet
 
-template <class Self>
-prefix_ void senf::singleton<Self>::force_creation::nop()
-    const
-{
-    // No operation ...
-}
+        CloneSource will provide clone's of a template \a packet on it's \a output.
 
-template <class Self>
-typename senf::singleton<Self>::force_creation senf::singleton<Self>::creator_;
+        \ingroup sourcesink_modules
+     */
+    class CloneSource
+        : public Module
+    {
+        SENF_PPI_MODULE(CloneSource);
+    public:
 
-///////////////////////////////cti.e///////////////////////////////////////
-#undef prefix_
+        connector::PassiveOutput output;
+
+        CloneSource(senf::Packet packet);
+
+    private:
+        void request();
+
+        senf::Packet packet_;
+    };
+
+}}}
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "CloneSource.cci"
+//#include "CloneSource.ct"
+//#include "CloneSource.cti"
+#endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

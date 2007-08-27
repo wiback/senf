@@ -47,7 +47,7 @@ template <class Owner, class FnClass, class FnArg>
 prefix_ typename senf::ppi::detail::Callback<Arg>::type
 senf::ppi::detail::Callback<Arg>::make(void (FnClass::* memfn )(FnArg arg), Owner & owner)
 {
-    return boost::bind(memfn,static_cast<FnClass *>(&owner),1);
+    return boost::bind(memfn,static_cast<FnClass *>(&owner),_1);
 }
 
 template <class Arg>

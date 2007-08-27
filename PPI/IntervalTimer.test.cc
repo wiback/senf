@@ -21,17 +21,14 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Queueing.test unit tests */
+    \brief IntervalTimer.test unit tests */
 
-//#include "Queueing.test.hh"
-//#include "Queueing.test.ih"
+//#include "IntervalTimer.test.hh"
+//#include "IntervalTimer.test.ih"
 
 // Custom includes
-#include "Queueing.hh"
+#include "IntervalTimer.hh"
 #include "Module.hh"
-#include "Connectors.hh"
-#include "DebugModules.hh"
-#include "Packets/Packets.hh"
 #include "Setup.hh"
 
 #include <boost/test/auto_unit_test.hpp>
@@ -40,58 +37,48 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace module = senf::ppi::module;
 namespace ppi = senf::ppi;
-namespace connector = ppi::connector;
-namespace module = ppi::module;
-namespace debug = module::debug;
 
 namespace {
-    class QueueTester : public module::Module
+    
+    class TimerTest : public module::Module
     {
-        SENF_PPI_MODULE(QueueTester);
+        SENF_PPI_MODULE(TimerTest);
+
+        ppi::IntervalTimer timer;
+
+        void tick(ppi::IntervalTimer::Event const & event) {
+            if ( --n == 0 )
+                timer.enabled(false);
+        }
+
+        unsigned n;
+
     public:
-        connector::PassiveInput input;
-        connector::ActiveOutput output;
-
-        QueueTester() {
-            route(input, output);
-            input.qdisc(ppi::ThresholdQueueing(2,1));
-            input.onRequest(&QueueTester::nop);
+        TimerTest(senf::ClockService::clock_type d_, unsigned n_)
+        :   timer ( senf::ClockService::milliseconds(d_) ), 
+            n     ( n_ ) 
+        {
+            registerEvent( &TimerTest::tick, timer );
         }
-
-        void nop() { /* no operation */ }
-
-        void forward() {
-            if (input && output)
-                output(input());
-        }
-
     };
+
+    bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
+                        unsigned long delta = 50000000ul)
+    {
+        return (a<b ? b-a : a-b ) < delta;
+    }
 }
 
-BOOST_AUTO_UNIT_TEST(thresholdQueueing)
+BOOST_AUTO_UNIT_TEST(intervalTimer)
 {
-    debug::ActiveSource source;
-    QueueTester tester;
-    debug::PassiveSink sink;
-
-    ppi::connect(source, tester);
-    ppi::connect(tester, sink);
-    ppi::init();
-
-    senf::Packet p (senf::DataPacket::create());
-    BOOST_CHECK( source );
-    source.submit(p);
-    BOOST_CHECK( source );
-    source.submit(p);
-    BOOST_CHECK( ! source );
-    BOOST_CHECK_EQUAL( tester.input.queueSize(), 2u );
-    tester.forward();
-    BOOST_CHECK_EQUAL( tester.input.queueSize(), 1u );
-    BOOST_CHECK( source );
-    tester.forward();
-    BOOST_CHECK_EQUAL( tester.input.queueSize(), 0u );
-    BOOST_CHECK( source );
+    TimerTest timer (100,4);
+    senf::ClockService::clock_type start (senf::ClockService::now());
+    senf::ppi::run();
+    BOOST_CHECK_PREDICATE( is_close_clock, 
+                           (senf::ClockService::now())
+                           (start+senf::ClockService::milliseconds(400)) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

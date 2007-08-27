@@ -155,40 +155,53 @@ prefix_ void senf::Scheduler::process()
 {
     terminate_ = false;
     eventTime_ = ClockService::now();
-    while (! terminate_ && ( ! timerQueue_.empty() || ! fdTable_.empty())) {
-        while ( ! timerQueue_.empty() && timerQueue_.top()->second.timeout <= eventTime_ ) {
+    while (! terminate_) {
+
+        while (! timerQueue_.empty()) {
             TimerMap::iterator i (timerQueue_.top());
             if (! i->second.canceled)
-                i->second.cb();
+                break;
             timerMap_.erase(i);
             timerQueue_.pop();
         }
 
-        if (terminate_)
-            return;
-
         int timeout (-1);
-        if (! timerQueue_.empty()) {
+        if (timerQueue_.empty()) {
+            if (fdTable_.empty())
+                break;
+        }
+        else {
             ClockService::clock_type delta (
                 (timerQueue_.top()->second.timeout - eventTime_)/1000000UL);
             timeout = delta < 0 ? 0 : delta;
         }
 
-        ///\fixme Handle more than one epoll_event per call
+        ///\todo Handle more than one epoll_event per call
         struct epoll_event ev;
         int events = epoll_wait(epollFd_, &ev, 1, timeout);
         if (events<0)
-            // even though 'man epoll' does not mention EINTR the reality is different ...
             if (errno != EINTR)
                 throw SystemException(errno);
 
-        /// \fixme Fix unneeded timer delays
-        // Hmm ... I remember, I purposely moved the timeout-handlers to the loop top ... but why?
-        // This delays possible time-critical handlers even further ...
-
         eventTime_ = ClockService::now();
+
+        // We always run event handlers. This is important, even if a file-descriptor is signaled
+        // since some descriptors (e.g. real files) will *always* be ready and we still may want to
+        // handle timers
+
+        while (! timerQueue_.empty()) {
+            TimerMap::iterator i (timerQueue_.top());
+            if (i->second.canceled)
+                ;
+            else if (i->second.timeout <= eventTime_)
+                i->second.cb();
+            else
+                break;
+            timerMap_.erase(i);
+            timerQueue_.pop();
+        }
+
         if (events <= 0)
-            // Timeout .. the handler will be run when going back to the loop top
             continue;
 
         FdTable::iterator i = fdTable_.find(ev.data.fd);

@@ -83,6 +83,8 @@ namespace module {
               void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
+
+        \ingroup io_modules
      */
     template <class Writer=PacketWriter>
     class ActiveSocketWriter : public Module
@@ -123,6 +125,8 @@ namespace module {
               void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
+
+        \ingroup io_modules
      */
     template <class Writer=PacketWriter>
     class PassiveSocketWriter : public Module
