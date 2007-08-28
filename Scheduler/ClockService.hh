@@ -154,6 +154,8 @@ namespace senf {
         void updateSkew(boost::posix_time::ptime time);
         void clockSkew(boost::posix_time::ptime time, boost::posix_time::ptime expected);
 
+        void restartTimer(bool restart = true);
+
         boost::posix_time::ptime base_;
         boost::posix_time::ptime heartbeat_;
 

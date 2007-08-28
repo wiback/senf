@@ -117,10 +117,13 @@ BOOST_AUTO_UNIT_TEST(clockService)
     BOOST_CHECK_PREDICATE( is_close_clock,
                            (t1 + senf::ClockService::milliseconds(200))
                            (senf::ClockService::now()) );
-    
-    // We need restart the clock-service here to fix up the bad heartbeat value. That's faster
-    // than waiting another CheckInterval seconds for SIGALRM
-    senf::ClockService::restart();
+
+    // The next check validates that the clock service itimer/heartbeat_ is correctly reset after a
+    // clock-skew is detected
+
+    BOOST_CHECK_PREDICATE( is_close_clock,
+                           (t1 + senf::ClockService::milliseconds(200))
+                           (senf::ClockService::now()) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

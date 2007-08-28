@@ -125,14 +125,19 @@ prefix_ void senf::ClockService::restart_m(bool restart)
     action.sa_flags = SA_RESTART;
     CheckError( sigaction, (SIGALRM, &action, restart ? 0 : &impl_->oldaction) );
 
+    restartTimer(restart);
+    
+    impl_->unblock();
+}
+
+prefix_ void senf::ClockService::restartTimer(bool restart)
+{
     struct itimerval itimer;
     itimer.it_interval.tv_sec = CheckInterval;
     itimer.it_interval.tv_usec = 0;
     itimer.it_value.tv_sec = CheckInterval;
     itimer.it_value.tv_usec = 0;
     CheckError( setitimer, (ITIMER_REAL, &itimer, restart ? 0 : &impl_->olditimer) );
-    
-    impl_->unblock();
 }
 
 prefix_ void senf::ClockService::updateSkew(boost::posix_time::ptime time)
@@ -149,6 +154,8 @@ prefix_ void senf::ClockService::updateSkew(boost::posix_time::ptime time)
                          + boost::posix_time::seconds(CheckInterval) 
                          - boost::posix_time::seconds(itimer.it_value.tv_sec)
                          - boost::posix_time::microseconds(itimer.it_value.tv_usec)));
+        heartbeat_ = time;
+        restartTimer();
     }
 }
 
