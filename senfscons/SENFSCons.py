@@ -68,6 +68,14 @@ def InitOpts():
     opts.Add('EXTRA_DEFINES', 'Additional preprocessor defines', '')
     opts.Add('EXTRA_LIBS', 'Additional libraries to link against', '')
     opts.Add(SCons.Options.BoolOption('final','Enable optimization',0))
+    opts.Add('PREFIX', 'Installation prefix', '/usr/local')
+    opts.Add('LIBINSTALLDIR', 'Library install dir', '$PREFIX/lib')
+    opts.Add('BININSTALLDIR', 'Executable install dir', '$PREFIX/bin')
+    opts.Add('INCLUDEINSTALLDIR', 'Include-file install dir', '$PREFIX/include')
+    opts.Add('OBJINSTALLDIR', 'Static object file install dir', '$LIBINSTALLDIR')
+    opts.Add('DOCINSTALLDIR', 'Documentation install dir', '$PREFIX/doc')
+    opts.Add('CPP_INCLUDE_EXTENSIONS', 'File extensions to include in source install',
+             [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti', '.mpp' ])
 
 # A finalizer is any callable object. All finalizers will be called
 # in MakeEnvironment. We use them so every finalizer has knowledge of
@@ -205,6 +213,9 @@ def MakeEnvironment():
     global opts, finalizers
     InitOpts()
     env = SCons.Environment.Environment(options=opts)
+    for opt in opts.options:
+        if SCons.Script.SConscript.Arguments.get(opt.key):
+            env[opt.key] = SCons.Script.SConscript.Arguments.get(opt.key)
     if SCons.Script.SConscript.Arguments.get('final'):
         env['final'] = 1
     env.Help(opts.GenerateHelpText(env))
@@ -332,6 +343,30 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = []):
 
     return objects
 
+def InstallWithSources(env, targets, dir, sources, testSources = []):
+    if type(sources) is type(()):
+        sources = sources[0] + sources[1]
+    if testSources:
+        sources += testSources
+    if type(sources) is not type([]):
+        sources = [ sources ]
+
+    installs = []
+    installs.append( env.Install(dir, targets) )
+
+    for source in sources:
+        l = len(env.Dir('#').abspath)
+        source = str(source)
+        while '.' in source:
+            source = os.path.splitext(source)[0]
+        for ext in env['CPP_INCLUDE_EXTENSIONS']:
+            f = env.File(source+ext)
+            if f.exists():
+                installs.append(env.Install(
+                    '$INCLUDEINSTALLDIR' + f.dir.abspath[l:], f))
+
+    return installs
+
 ## \brief Build documentation with doxygen
 #
 # The doxygen target helper will build software documentation using
@@ -444,11 +479,21 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
 
     if not htmlnode and not xmlnode:
         env.Depends(docs, extra_sources)
-        
+
     for doc in docs :
         env.Alias('all_docs', doc)
         env.Clean('all_docs', doc)
         env.Clean('all', doc)
+
+    l = len(env.Dir('#').abspath)
+    if htmlnode:
+        env.Alias('install_all',
+                  env.Install( '$DOCINSTALLDIR' + htmlnode.dir.dir.abspath[l:],
+                               htmlnode.dir ))
+    if tagnode:
+        env.Alias('install_all',
+                  env.Install( '$DOCINSTALLDIR' + tagnode.dir.abspath[l:],
+                               tagnode ))
 
     return docs
 
@@ -530,6 +575,8 @@ def Lib(env, library, sources, testSources = None, LIBS = [], OBJECTS = []):
         lib = env.Library(env.File(LibPath(library)),objects)
         env.Default(lib)
         env.Append(ALLLIBS = library)
+        install = InstallWithSources(env, lib, '$LIBINSTALLDIR', sources)
+        env.Alias('install_all', install)
     return lib
 
 ## \brief Build Object from multiple sources
@@ -539,6 +586,8 @@ def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = []):
     if objects:
         ob = env.Command(target+".o", objects, "ld -r -o $TARGET $SOURCES")
         env.Default(ob)
+        install = InstallWithSources(env, ob, '$OBJINSTALLDIR', sources)
+        env.Alias('install_all', install)
     return ob
 
 ## \brief Build executable
@@ -560,4 +609,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = []):
         program = progEnv.Program(target=binary,source=objects+OBJECTS)
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
+        install = InstallWithSources(env, program, '$BININSTALLDIR',
+                                     sources, testSources)
+        env.Alias('install_all', install)
     return program

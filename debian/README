@@ -1,0 +1,27 @@
+SENF: The Simple and Extensible Network Framework
+-------------------------------------------------
+
+The SENF Simple and Extensible Network Framework aims to be a complete
+set of libraries to facilitate the development of network applications
+focusing on network protocols on the layers below the application
+layer. However, the framework includes many general purpose utilities
+and will be expedient to use well beyond its primary objective.
+
+Goals
+-----
+
+The main goals of this library are (in no particular order): 
+
+ - modular framework design
+ - utilizing the power of modern C++
+ - very low overhead for frequently called members
+ - extensible design
+ - concise interface
+
+Getting started
+---------------
+
+Information on using the library including some extensively documented
+examples are found in the 'libsenf-doc' package.
+
+ -- Stefan Bund <senf-dev@lists.berlios.de>  Tue, 28 Aug 2007 10:02:23 +0200

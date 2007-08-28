@@ -1,0 +1,5 @@
+libsenf (0.0r%(rev)s) unstable; urgency=low
+
+  * Packaging revision %(rev)s
+
+ -- %(user)s <senf-dev@lists.berlios.de>  %(date)s

@@ -1,0 +1,77 @@
+Source: libsenf
+Priority: extra
+Maintainer: Stefan Bund <senf-dev@lists.berlios.de>
+Build-Depends: debhelper (>= 5), scons, libboost-dev, libboost-test-dev, libboost-date-time-dev, libboost-regex-dev, libboost-thread-dev, doxygen, dia, tidy, xsltproc, graphviz
+Standards-Version: 3.7.2
+Section: libs
+
+Package: libsenf-ppi-dev
+Section: libdevel
+Architecture: any
+Depends: libsenf-scheduler-dev (= ${Source-Version}), libsenf-packets-dev (= ${Source-Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: SENF Extensible Network Framework, Packet Processing Infrastructure
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.
+
+Package: libsenf-packets-dev
+Section: libdevel
+Architecture: any
+Depends: libsenf-socket-dev (= ${Source-Version}), libsenf-utils-dev (= ${Source-Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: SENF Extensible Network Framework, Packets library
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.
+
+Package: libsenf-scheduler-dev
+Section: libdevel
+Architecture: any
+Depends: libsenf-socket-dev (= ${Source-Version}), libsenf-utils-dev (= ${Source-Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: SENF Extensible Network Framework, Scheduler, development files
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.
+
+Package: libsenf-socket-dev
+Section: libdevel
+Architecture: any
+Depends: libsenf-utils-dev (= ${Source-Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: SENF Extensible Network Framework, Socket library, development files
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.
+
+Package: libsenf-utils-dev
+Section: libdevel
+Architecture: any
+Depends: binutils-dev, libboost-dev, libboost-regex-dev, libboost-date-time-dev, libboost-thread-dev, ${shlibs:Depends}, ${misc:Depends}
+Description: SENF Extensible Network Framework, Utilities, development files
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.
+
+Package: libsenf-doc
+Section: doc
+Architecture: all
+Description: SENF Extensible Network Framework, Documentation and Examples
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.

@@ -48,8 +48,10 @@ BOOST_AUTO_UNIT_TEST(packetImpl_mem)
     BOOST_CHECK_EQUAL(p->refcount(), 0);
     p->add_ref();
     BOOST_CHECK_EQUAL(p->refcount(), 1);
+#ifndef NDEBUG
     BOOST_CHECK_EQUAL(
         senf::pool_alloc_mixin<senf::detail::PacketImpl>::allocCounter(), 1u);
+#endif
     // From now on, the object should stay alive since I manually incremented the
     // refcount ..
 
@@ -65,8 +67,10 @@ BOOST_AUTO_UNIT_TEST(packetImpl_mem)
                 p,p->begin(),p->end(), senf::PacketInterpreterBase::Append));
         // Hmm ... this check works as long as sizeof(PacketInterpreterBase> !=
         // sizeof(PacketImpl) ... !!
+#ifndef NDEBUG
         BOOST_CHECK_EQUAL(
             senf::pool_alloc_mixin< senf::PacketInterpreter<VoidPacket> >::allocCounter(), 1u);
+#endif
         senf::PacketInterpreterBase::ptr pi2 (pi);
         BOOST_CHECK_EQUAL(p->refcount(), 3);
     }
@@ -78,8 +82,10 @@ BOOST_AUTO_UNIT_TEST(packetImpl_mem)
         p->truncateInterpreters(pi.get());
         BOOST_CHECK_EQUAL(p->refcount(),1);
     }
+#ifndef NDEBUG
     BOOST_CHECK_EQUAL(
         senf::pool_alloc_mixin<senf::PacketInterpreterBase>::allocCounter(), 0u);
+#endif
     BOOST_CHECK_EQUAL(p->refcount(),1);
 
 
@@ -87,8 +93,10 @@ BOOST_AUTO_UNIT_TEST(packetImpl_mem)
     // Therefore we can safely delete the object.
     BOOST_CHECK_EQUAL(p->refcount(), 1);
     p->release();
+#ifndef NDEBUG
     BOOST_CHECK_EQUAL(
         senf::pool_alloc_mixin<senf::detail::PacketImpl>::allocCounter(), 0u);
+#endif
 }
 
 BOOST_AUTO_UNIT_TEST(packetImpl_data)
@@ -191,8 +199,10 @@ BOOST_AUTO_UNIT_TEST(packetImpl_interpreters)
 
     BOOST_CHECK_EQUAL(p->refcount(), 1);
     p->release();
+#ifndef NDEBUG
     BOOST_CHECK_EQUAL(
         senf::pool_alloc_mixin<senf::detail::PacketImpl>::allocCounter(), 0u);
+#endif
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

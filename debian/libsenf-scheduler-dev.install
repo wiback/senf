@@ -1,0 +1,3 @@
+debian/tmp/usr/lib/libScheduler.a
+debian/tmp/usr/include/Scheduler
+debian/README usr/share/doc/libsenf-scheduler-dev

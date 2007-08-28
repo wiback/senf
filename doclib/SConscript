@@ -178,3 +178,11 @@ env.Alias('all_docs',
 env.Alias('all_docs',
           env.Command('search_paths.php', 'SConscript', writeTemplate,
                       TEMPLATE = Literal(SEARCH_PATHS_PHP)))
+
+env.Alias('install_all',
+          env.Install( '$DOCINSTALLDIR/doclib', [ 'favicon.ico',
+                                                  'logo-head.png',
+                                                  'search.php',
+                                                  'search_functions.php',
+                                                  'search_paths.php',
+                                                  'senf.css' ] ))

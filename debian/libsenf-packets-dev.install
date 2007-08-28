@@ -1,0 +1,5 @@
+debian/tmp/usr/lib/libPackets.a
+debian/tmp/usr/lib/libPackets_*.a
+debian/tmp/usr/lib/*.o usr/lib/Packets
+debian/tmp/usr/include/Packets
+debian/README usr/share/doc/libsenf-packets-dev
