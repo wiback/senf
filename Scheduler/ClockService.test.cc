@@ -118,6 +118,9 @@ BOOST_AUTO_UNIT_TEST(clockService)
                            (t1 + senf::ClockService::milliseconds(200))
                            (senf::ClockService::now()) );
     
+    // We need restart the clock-service here to fix up the bad heartbeat value. That's faster
+    // than waiting another CheckInterval seconds for SIGALRM
+    senf::ClockService::restart();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

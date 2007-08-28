@@ -118,6 +118,13 @@ prefix_ senf::ClockService::abstime_type senf::ClockService::abstime_m(clock_typ
 
 prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type time)
 {
+    ///\fixme What happens, if base_ is changed in SIGALRM while reading it here ?
+
+    // Idea: Have *two* base values: one is written by the SIGALRM handler, the other is only
+    // Written by synchronous code. If they differ, we block signals, copy over and continue.  If
+    // they transiently differ because we are reading the SIGALRM value while it is being changed
+    // this does not matter: We will then still copy it over.
+
     boost::posix_time::time_duration delta (time - base_);
     return clock_type( delta.ticks() )
         * clock_type( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
