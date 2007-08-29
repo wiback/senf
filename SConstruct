@@ -36,7 +36,8 @@ env.Append(
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
    ENV = { 'TODAY' : str(datetime.date.today()),
            'REVISION' : rev,
-           'LOGNAME' : os.environ['LOGNAME'] # needed by the debian build scripts
+           'LOGNAME' : os.environ['LOGNAME'], # needed by the debian build scripts
+           'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1"
            },
 )
 

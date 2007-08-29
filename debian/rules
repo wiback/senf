@@ -14,6 +14,8 @@ export debian_build
 
 CFLAGS = -Wall -g
 
+CONCURRENCY_LEVEL ?= 1
+
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
 else
@@ -42,7 +44,7 @@ build: build-stamp
 build-stamp: configure-stamp 
 	dh_testdir
 #	# Add here commands to compile the package.
-	scons all final=1
+	scons -j $(CONCURRENCY_LEVEL) all final=1
 	touch $@
 
 clean:
