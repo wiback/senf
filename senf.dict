@@ -55,7 +55,9 @@ DNS
 dontinclude
 ElementParser
 endcode
+enum
 eof
+ErrorException
 eth
 ethernet
 EthernetPacket
@@ -67,6 +69,8 @@ EUI
 EUID
 EventBinding
 EventDescriptor
+EventFlags
+EventId
 EventImplementation
 EventManager
 eventsPerInterval
@@ -87,6 +91,8 @@ ForwardingRoute
 fraunhofer
 fuer
 GlobalScope
+hangup
+HangupException
 hh
 hideinitializer
 Hmm
@@ -114,6 +120,7 @@ IntervalTimer
 IntField
 InvalidPacketChainException
 IOEvent
+IOEventInfo
 ip
 IpV
 ipv
@@ -270,6 +277,7 @@ udpReader
 udpWriter
 UInt
 UIntField
+Unhandled
 unicast
 unthrottle
 unthrottled

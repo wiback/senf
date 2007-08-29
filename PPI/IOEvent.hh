@@ -52,8 +52,6 @@ namespace ppi {
         An IOEvent is signaled, whenever the FileHandle \a handle becomes readable or writable. The
         type of event is specified using the \a events mask with values from EventFlags.
 
-        \fixme Implement error/EOF handling
-
         \see IOEventInfo
 
         \ingroup event_group
@@ -65,8 +63,14 @@ namespace ppi {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        // This is stupid, however there is no way to import the Scheduler::EventId enum together
+        // with the enumeration symbols
+
         enum EventFlags { Read  = Scheduler::EV_READ, 
-                          Write = Scheduler::EV_WRITE };
+                          Prio = Scheduler::EV_PRIO,
+                          Write = Scheduler::EV_WRITE,
+                          Hup = Scheduler::EV_HUP,
+                          Err = Scheduler::EV_ERR };
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -78,11 +82,21 @@ namespace ppi {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
+        /** \brief Unhandled error condition */
+        struct ErrorException : public std::exception
+        { virtual char const * what() const throw() 
+                { return "senf::ppi::IOEvent::ErrorException"; } };
+
+        /** \brief Unhandled hangup condition */
+        struct HangupException : public std::exception
+        { virtual char const * what() const throw() 
+                { return "senf::ppi::IOEvent::HangupException"; } };
+
     protected:
 
     private:
         virtual void v_enable();
-        virtual void v_disable();
+         virtual void v_disable();
         
         void cb(int, Scheduler::EventId event);
 

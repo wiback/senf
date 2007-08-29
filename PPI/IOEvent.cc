@@ -52,8 +52,18 @@ prefix_ void senf::ppi::IOEvent::v_disable()
 
 prefix_ void senf::ppi::IOEvent::cb(int, Scheduler::EventId event)
 {
-    IOEventInfo info = { event };
-    callback(info);
+    if ((event & ~events_) != 0) {
+        if (event & Err)
+            throw ErrorException();
+        else if (event & Hup)
+            throw HangupException();
+        else
+            // This cannot happen.
+            BOOST_ASSERT(false);
+    } else {
+        IOEventInfo info = { event };
+        callback(info);
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

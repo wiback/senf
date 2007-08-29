@@ -157,6 +157,9 @@ prefix_ void senf::Scheduler::process()
     eventTime_ = ClockService::now();
     while (! terminate_) {
 
+        // Since a callback may have disabled further timers, we need to check for canceled timeouts
+        // again.
+
         while (! timerQueue_.empty()) {
             TimerMap::iterator i (timerQueue_.top());
             if (! i->second.canceled)
@@ -187,7 +190,8 @@ prefix_ void senf::Scheduler::process()
 
         // We always run event handlers. This is important, even if a file-descriptor is signaled
         // since some descriptors (e.g. real files) will *always* be ready and we still may want to
-        // handle timers
+        // handle timers.
+        // Time handlers are run before file events to not delay them unnecessarily.
 
         while (! timerQueue_.empty()) {
             TimerMap::iterator i (timerQueue_.top());
