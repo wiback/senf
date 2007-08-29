@@ -48,11 +48,16 @@ prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & addr)
     unsigned i = addr.find(':');
     if (i == std::string::npos)
         throw SyntaxException();
-    address(INet4Address::from_string(std::string(addr,0,i)));
     try {
         port(boost::lexical_cast< ::u_int16_t >(std::string(addr,i+1)));
     }
     catch (boost::bad_lexical_cast const &) {
+        throw SyntaxException();
+    }
+    try {
+        address(INet4Address::from_string(std::string(addr,0,i)));
+    }
+    catch (INet4Address::SyntaxException const &) {
         throw SyntaxException();
     }
 }
@@ -92,15 +97,19 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
     if (! regex_match(addr, match, addressRx))
         throw SyntaxException();
 
-    INet6Address a (INet6Address::from_string(
-                        match[NumericAddr].matched ? match[NumericAddr] : match[Hostname],
-                        resolve));
-    std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
-
     if (match[ZoneId].matched)
         assignIface(match[ZoneId]);
 
     sockaddr_.sin6_port = htons(boost::lexical_cast<boost::uint16_t>(match[Port]));
+
+    try {
+        INet6Address a (INet6Address::from_string(
+                            match[NumericAddr].matched ? match[NumericAddr] : match[Hostname],
+                            resolve));
+        std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
+    } catch (INet6Address::SyntaxException const &) {
+          throw SyntaxException();
+    }
 }
 
 prefix_ bool senf::INet6SocketAddress::operator==(INet6SocketAddress const & other)

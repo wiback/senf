@@ -55,6 +55,8 @@ namespace test {
     {
         static int accept(FileHandle handle, unsigned & addr)
             { addr = 3; return -1; }
+        static int accept(FileHandle handle)
+            { return -1; }
     };
 
     struct SomeReadPolicy : public senf::ReadPolicyBase

@@ -60,16 +60,16 @@ namespace senf {
     {
     public:
         INet4SocketAddress();
-        explicit INet4SocketAddress(std::string const & address); ///< Set address and port
+        explicit INet4SocketAddress(std::string const & addr); ///< Set address and port
                                         /**< This constructor expects a string of the form
                                              'host:port'. The constructor will use this value to
                                              initialize the host and port members. Since it uses the
                                              INet4Address::from_string constructor, this call may
                                              block while waiting for the resolver.
-                                             \throws SyntaxException if the 'host:port' syntax is
-                                                 not obeyed.
-                                             \throws INet4Address::SyntaxException if the host part
-                                                 cannot be converted to an IP address. */
+                                             \throws SyntaxException if the address syntax is
+                                                 invalid
+                                             \throws INet4Address::UnknownHostnameException if the
+                                                 address cannot be resolved. */
 
         INet4SocketAddress(INet4Address const & addr, unsigned port); 
                                         ///< Set address and port explicitly
@@ -157,9 +157,13 @@ namespace senf {
         explicit INet6SocketAddress(std::string const & addr, 
                                     INet6Address::Resolve_t resolve = INet6Address::ResolveINet6);
                                         ///< Initialize/convert from string representation
-                                        /**< \param[in] addr Address to parse
+                                        /**< \throws SyntaxException if the address syntax is
+                                                 invalid
+                                             \throws INet6Address::UnknownHostnameException if the
+                                                 address cannot be resolved.
+                                             \param[in] addr Address to parse
                                              \param[in] resolve If this is
-                                             INet6Address::ResolveINet4, support also IpV4
+                                                 INet6Address::ResolveINet4, support IpV4
                                                  addresses. See INet6Address. */
         INet6SocketAddress(INet6Address const & addr, unsigned port);
                                         ///< Initialize from address and port

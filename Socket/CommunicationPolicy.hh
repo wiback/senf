@@ -84,6 +84,16 @@ namespace senf {
                                              \returns file descriptor of new client socket */
 #       endif
 
+        static int accept(FileHandle handle);
+                                        ///< accept a new connection on the socket.
+                                        /**< The accept() member will return a new client file
+                                             descriptor. This file descriptor will be used by the
+                                             ServerSocketHandle implementation to build a new
+                                             ClientSocketHandle for the new connection.
+
+                                             \param[in] handle socket handle to accept connection on
+                                             \returns file descriptor of new client socket */
+
     private:
         static void do_listen(FileHandle handle, unsigned backlog);
         static int do_accept(FileHandle handle, struct sockaddr * addr, unsigned len);
@@ -105,7 +115,7 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "CommunicationPolicy.cci"
+#include "CommunicationPolicy.cci"
 //#include "CommunicationPolicy.ct"
 #include "CommunicationPolicy.cti"
 #endif

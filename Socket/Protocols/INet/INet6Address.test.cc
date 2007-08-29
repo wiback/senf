@@ -77,7 +77,7 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK_EQUAL( INet6Address::from_inet4address(INet4Address(0x01020304)),
                            INet6Address::from_string("::ffff:1.2.3.4") );
 
-        BOOST_CHECK_THROW( INet6Address::from_string("1.2.3.4"), INet6Address::SyntaxException );
+        BOOST_CHECK_THROW( INet6Address::from_string("1.2.3.4"), INet6Address::UnknownHostnameException );
         BOOST_CHECK_EQUAL( INet6Address::from_string("1.2.3.4", INet6Address::ResolveINet4),
                            INet6Address::from_string("::ffff:1.2.3.4") );
     }

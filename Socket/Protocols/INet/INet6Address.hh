@@ -30,7 +30,6 @@
 #include <iostream>
 #include <string>
 #include <boost/cstdint.hpp>
-#include <boost/function.hpp>
 #include <boost/array.hpp>
 #include <boost/operators.hpp>
 #include "Utils/SafeBool.hh"
@@ -104,9 +103,6 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef boost::function<void (INet6Address const &)> Callback;
-                                        ///< Callback for asynchronous from_string call
-
         static INet6Address const None;        ///< The empty (::0) address
         static INet6Address const Loopback;    ///< The loopback (::1) address
         static INet6Address const AllNodes;    ///< The 'all nodes' link-local multicast address
@@ -160,26 +156,6 @@ namespace senf {
                                                  an IpV4 address if no valid IpV6 address is
                                                  found. The address will be returned as mapped IpV6
                                                  address. */
-
-        static void from_string(std::string const & s, Callback const & cb, 
-                                Resolve_t resolve = ResolveINet6);
-                                        ///< Convert string to address (async/non-blocking)
-                                        /**< This member works like
-                                             from_string(std::string const &). However unlike
-                                             from_string(std::string const &), this call will not
-                                             block. Instead it will call \a cb passing the
-                                             INet6Address instance as soon as the address has been
-                                             resolved (which may be immediate if the address
-                                             represents an IP literal). \par
-                                             On error, the address passed to \a cb will be empty.
-                                             \param[in] s Address literal or hostname
-                                             \param[in] cb Callback to pass the address to 
-                                             \param[in] resolve If this is set to \c ResolveINet4,
-                                                 the call will additionally try to interpret \a s as
-                                                 an IpV4 address if no valid IpV6 address is
-                                                 found. The address will be returned as mapped IpV6
-                                                 address.
-                                             \fixme Implement */
 
         template <class InputIterator> 
         static INet6Address from_data(InputIterator i);
@@ -260,9 +236,18 @@ namespace senf {
 
         ///@}
 
-        /** \brief Invalid IpV6 address syntax */
-        struct SyntaxException : public std::exception
-        { virtual char const * what() const throw() { return "Invalid IpV6 address syntax"; } };
+        /** \brief Base-class for INet6Address exceptions */
+        struct AddressException : public std::exception {};
+
+        /** \brief Invalid INet4 address syntax */
+        struct SyntaxException : public AddressException
+        { virtual char const * what() const throw() 
+                { return "invalid INet6 address syntax"; } };
+
+        /** \brief Resolver failure */
+        struct UnknownHostnameException : public AddressException
+        { virtual char const * what() const throw() 
+                { return "failed to resolve INet6 hostname"; } };
     };
 
     /** \brief Output INet6Address instance as it's string representation

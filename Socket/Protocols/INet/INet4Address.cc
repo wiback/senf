@@ -52,6 +52,10 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
     struct in_addr ina;
     if (::inet_pton(AF_INET,s.c_str(),&ina) > 0)
         return senf::INet4Address::from_inaddr(ina.s_addr);
+
+    if  (s.empty())
+        throw SyntaxException();
+
     int herr (0);
 
     // If available, we use the reentrant GNU variant. This has the additional advantage, that we
@@ -76,10 +80,9 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
 #   endif // __GLIBC__
 
     if (!ent)
-        ///\fixme Need to give better exception here
-        throw SyntaxException(); 
+        throw UnknownHostnameException(); 
     if (ent->h_addrtype != AF_INET)
-        throw SyntaxException();    
+        throw UnknownHostnameException();
 
     // We are only interested in the first address ...
     return senf::INet4Address::from_inaddr(

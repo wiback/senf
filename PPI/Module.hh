@@ -59,6 +59,8 @@ namespace module {
         \li \ref sourcesink_modules generate or absorb packets internally
         \li \ref routing_modules forward packets within the network
         \li \ref adapter_modules are used to connect incompatible connectors to each other
+
+        \todo Implement Spliters: PassiveSplitter, PrioritySplitter, CloneSplitter
      */
 
     /** \defgroup io_modules Input/Output Modules

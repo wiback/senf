@@ -30,7 +30,6 @@
 #include <iostream>
 #include <string>
 #include <boost/cstdint.hpp>
-#include <boost/function.hpp>
 #include <boost/array.hpp>
 #include <boost/operators.hpp>
 #include "Utils/SafeBool.hh"
@@ -53,7 +52,6 @@ namespace senf {
             therefore not be distinguished from initialization with a string literal. Therefore we
             need to disambiguate using the named constructors.
 
-        \todo Add additional classes for CIDR addresses and networks and network math.
         \ingroup addr_group
       */
     class INet4Address
@@ -66,8 +64,6 @@ namespace senf {
         
         typedef uint32_t address_type;  ///< Address representation as number in host byte order
         typedef uint32_t inaddr_type;   ///< Legacy address representation in network byte order
-        typedef boost::function<void (INet4Address const &)> Callback;
-                                        ///< Callback for asynchronous from_string call
 
         static INet4Address const None; ///< The empty (0) address
         static INet4Address const Loopback; ///< The loopback (127.0.0.1) address
@@ -96,20 +92,6 @@ namespace senf {
                                                  converted for some reason
                                              \param[in] s Address literal or hostname */
         
-        static void from_string(std::string const & s, Callback const & cb);
-                                        ///< Convert string to address (async/non-blocking)
-                                        /**< This member works like
-                                             from_string(std::string const &). However unlike
-                                             from_string(std::string const &), this call will not
-                                             block. Instead it will call \a cb passing the
-                                             INet4Address instance as soon as the address has been
-                                             resolved (which may be immediate if the address
-                                             represents an IP literal). \par
-                                             On error, the address passed to \a cb will be empty.
-                                             \param[in] s Address literal or hostname
-                                             \param[in] cb Callback to pass the address to 
-                                             \fixme Implement */
-
         template <class InputIterator> 
         static INet4Address from_data(InputIterator i);
                                         ///< Construct address from 4 bytes of raw data
@@ -150,9 +132,19 @@ namespace senf {
 
         ////@}
 
-        struct SyntaxException : public std::exception
-        { virtual char const * what() const throw() { return "invalid INet4 address syntax"; } };
+        /** \brief Base-class for INet4Address exceptions */
+        struct AddressException : public std::exception {};
 
+        /** \brief Invalid INet4 address syntax */
+        struct SyntaxException : public AddressException
+        { virtual char const * what() const throw() 
+                { return "invalid INet4 address syntax"; } };
+
+        /** \brief Resolver failure */
+        struct UnknownHostnameException : public AddressException
+        { virtual char const * what() const throw() 
+                { return "failed to resolve INet4 hostname"; } };
+        
     private:
         enum InAddr_t { IsInAddr };
         INet4Address(inaddr_type addr, InAddr_t);

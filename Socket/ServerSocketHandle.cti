@@ -95,8 +95,8 @@ template <class Policy>
 prefix_ typename senf::ServerSocketHandle<Policy>::ClientSocketHandle
 senf::ServerSocketHandle<Policy>::accept()
 {
-    Address address;
-    return acceptfrom(address);
+    return ClientSocketHandle(this->protocol().clone(),
+                              Policy::CommunicationPolicy::accept(*this));
 }
 
 template <class Policy>
@@ -106,7 +106,7 @@ senf::ServerSocketHandle<Policy>::acceptfrom()
 {
 
     Address address;
-    ClientSocketHandle handle = accept(address);
+    ClientSocketHandle handle = acceptfrom(address);
     return std::make_pair(handle,address);
 }
 

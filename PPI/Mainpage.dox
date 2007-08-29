@@ -402,10 +402,6 @@
     \section class_diagram Class Diagram
 
     \image html classes.png
-
-    \fixme Implement Spliters: PassiveSplitter, PrioritySplitter, CloneSplitter
-    \fixme Implement DiscardSink, CloneSource
-    \fixme Implement ThrottleBarrier
  */
 
 

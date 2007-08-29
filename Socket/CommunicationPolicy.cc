@@ -45,8 +45,8 @@ prefix_ void senf::ConnectedCommunicationPolicy::do_listen(FileHandle handle,
 }
 
 prefix_ int senf::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
-                                                                 struct sockaddr * addr,
-                                                                 unsigned len)
+                                                          struct sockaddr * addr,
+                                                          unsigned len)
 {
     int rv = -1;
     do {

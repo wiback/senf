@@ -332,13 +332,12 @@ namespace senf {
         <table class="senf">
         <tr><td>method</td> <td><tt>void listen(FileHandle, unsigned backlog)</tt></td> <td>Switch socket into listening state</td></tr>
         <tr><td>method</td> <td><tt>int accept(FileHandle, Address &)</tt></td>         <td>Accept a new connection</td></tr>
+        <tr><td>method</td> <td><tt>int accept(FileHandle)</tt></td>                    <td>Accept a new connection</td></tr>
         </table>
 
         The \c listen member is straight forward. The \c accept() member must return a new file
         descriptor (which will be used to create a new SocketHandle of the correct
-        type). Additionally, accept() should only be defined, if the Addressing policy is not \c
-        NoAddressingPolicy (which together with ConnectedCommunicationPolicy would identify a
-        point-to-point link with fixed communication partners).
+        type). 
 
         \note This Policy only has two meaningful states: ConnectedCommunicationPolicy and
         UnconnectedCommunicationPolicy. It is probably not sensible to define a new

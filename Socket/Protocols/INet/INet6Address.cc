@@ -47,6 +47,10 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
     struct in6_addr ina;
     if (::inet_pton(AF_INET6,s.c_str(),&ina) > 0)
         return senf::INet6Address::from_data(&ina.s6_addr[0]);
+
+    if (s.empty())
+        throw SyntaxException();
+
     int herr (0);
 
     // If available, we use the reentrant GNU variant. This has the additional advantage, that we
@@ -75,16 +79,16 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
         return senf::INet6Address::from_data(
             &reinterpret_cast<in6_addr*>(*(ent->h_addr_list))->s6_addr[0]);
 
-    ///\todo Throw better exceptions here ?
-
     if (resolve == ResolveINet4)
         try {
             return from_inet4address(INet4Address::from_string(s));
         } catch (INet4Address::SyntaxException const & ex) {
             throw SyntaxException();
+        } catch (INet4Address::UnknownHostnameException const & ex) {
+            throw UnknownHostnameException();
         }
     else
-        throw SyntaxException();
+        throw UnknownHostnameException();
 }
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Address const & addr)

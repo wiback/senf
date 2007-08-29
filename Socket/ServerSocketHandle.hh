@@ -170,8 +170,6 @@ namespace senf {
             This variant ...
 
             \returns handle of new client connection
-
-            \fixme Make this accept()-variant work with unspecified addressing policy
          */
         ClientSocketHandle
                      accept       ();

@@ -62,6 +62,8 @@ gdb -batch -x .run-test-gdb.cmd ./.test.bin 2>/dev/null | perl -e '
       if (/^(#?[0-9]| )/) {
         push @l,$_ if /^#/;
         $l[$#l] .= $_ if @l && /^ /;
+      } elsif (/^Current language:  auto;/) {
+        ;
       } else {
         $mode=0;
         if (/: fatal error in /) {
