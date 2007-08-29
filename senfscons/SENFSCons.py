@@ -219,6 +219,7 @@ def MakeEnvironment():
             env[opt.key] = SCons.Script.SConscript.Arguments.get(opt.key)
     if SCons.Script.SConscript.Arguments.get('final'):
         env['final'] = 1
+    env.Help("\nSupported build variables (either in SConfig or on the command line:\n")
     env.Help(opts.GenerateHelpText(env))
 
     # We want to pass the SSH_AUTH_SOCK system env-var so we can ssh

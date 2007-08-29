@@ -1,7 +1,7 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME      = Overview
-PROJECT_NUMBER    = "(Revision $(REVISION), generated $(TODAY))"
+PROJECT_NUMBER    = "(Version $(REVISION))"
 
 HTML_HEADER       = doclib/doxy-header-overview.html
 GENERATE_XML      = NO

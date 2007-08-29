@@ -33,22 +33,5 @@ DEB_DOC    = doxygen dia tidy xsltproc graphviz
 prerequisites:
 	aptitude install $(DEB_BASE) $(DEB_BOOST) $(DEB_DOC)
 
-#----------------------------------------------------------------------
-# Debian package info
-#----------------------------------------------------------------------
-PKG_NAME=senf-dev
-PKG_ARCH=i386
-PKG_VERS=0.0.$(SVN_REVISION)-1
-PKG_FILE = $(PKG_NAME)-$(PKG_VERS)_$(PKG_ARCH).deb
-
-#----------------------------------------------------------------------
-# Debian package structure
-#----------------------------------------------------------------------
-DEB_TOP = ./debian
-DEB_CTL = $(DEB_TOP)/DEBIAN
-DEB_LIB = $(DEB_TOP)/usr/lib/senf
-DEB_INC = $(DEB_TOP)/usr/include/senf
-DEB_DOC = $(DEB_TOP)/usr/share/doc/senf
-
 package:
 	$(SCONS) deb
