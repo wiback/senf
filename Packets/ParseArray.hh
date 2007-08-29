@@ -102,7 +102,7 @@ namespace senf {
 #if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_ParseArray_i_)
 #define HH_ParseArray_i_
 //#include "ParseArray.cci"
-//#include "ParseArray.ct"
+#include "ParseArray.ct"
 #include "ParseArray.cti"
 #endif
 

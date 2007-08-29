@@ -64,6 +64,7 @@ namespace senf {
         bool operator<(TypeIdValue const & other) const;
 
         std::string name() const;
+        std::type_info const & id() const;
 
     protected:
 
@@ -92,9 +93,7 @@ namespace senf {
     template <class Type>
     TypeIdValue const typeIdValue();
 
-    inline std::ostream & operator<<(std::ostream & os, TypeIdValue const & v)
-    { return os << v.name(); }
-    
+    std::ostream & operator<<(std::ostream & os, TypeIdValue const & v);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

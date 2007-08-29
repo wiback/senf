@@ -1,4 +1,6 @@
-// Copyright (C) 2007
+// $Id$
+//
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -19,43 +21,37 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief GenericSockAddr inline non-template implementation */
+    \brief TypeIdValue.test unit tests */
+
+//#include "TypeIdValue.test.hh"
+//#include "TypeIdValue.test.ih"
 
 // Custom includes
+#include "TypeIdValue.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-prefix_ senf::GenericSockAddr::GenericSockAddr()
-{}
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ struct sockaddr * senf::GenericSockAddr::sockaddr_p()
+BOOST_AUTO_UNIT_TEST(typeIdValue)
 {
-    return reinterpret_cast<sockaddr *>(&addr_);
+    // We don't care for the ordering, just that the following compiles
+    (void) ( senf::typeIdValue<int>() < senf::typeIdValue<float>() );
+    (void) ( senf::typeIdValue<int>() == senf::typeIdValue<float>() );
 }
 
-prefix_ struct sockaddr const * senf::GenericSockAddr::sockaddr_p()
-    const
-{
-    return reinterpret_cast<sockaddr const *>(&addr_);
-}
-
-prefix_ unsigned senf::GenericSockAddr::sockaddr_len()
-    const
-{
-    return sizeof(addr_);
-}
-
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

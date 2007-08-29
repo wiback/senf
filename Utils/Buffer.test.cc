@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
@@ -19,38 +21,39 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ParseArray non-inline template implementation  */
+    \brief Buffer.test unit tests */
 
-#include "ParseArray.ih"
+//#include "Buffer.test.hh"
+//#include "Buffer.test.ih"
 
 // Custom includes
+#include "Buffer.hh"
+
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
 #define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::Parse_Array<elements,ElementParser>
-
-template <unsigned elements, class ElementParser>
-prefix_ void senf::Parse_Array<elements,ElementParser>::init()
-    const
+BOOST_AUTO_UNIT_TEST(buffer)
 {
-    iterator i (begin());
-    iterator const e (end());
-    for (; i!=e; ++i)
-        (*i).init();
+    int size (128);
+
+    // Just check for compile errors, the rest can't be checked
+    SENF_SCOPED_BUFFER(char, buf, size);
+    (void) buf;
 }
 
-///////////////////////////////ct.e////////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

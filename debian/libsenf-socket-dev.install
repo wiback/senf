@@ -1,3 +1,3 @@
 debian/tmp/usr/lib/libSocket.a
-debian/tmp/usr/include/Scheduler
-debian/README usr/share/doc/libsenf-scheduler-dev
+debian/tmp/usr/include/Socket
+debian/README usr/share/doc/libsenf-socket-dev

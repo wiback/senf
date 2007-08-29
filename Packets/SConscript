@@ -5,26 +5,22 @@ import SENFSCons, glob
 
 ###########################################################################
 
-def makeAllIncludesHH(target = None, source = None, env = None):
-    file(target[0].abspath,"w").write("".join([ '#include "%s"\n' % f
-                                                for f in env['SOURCE_HEADERS']]))
-makeAllIncludesHH = env.Action(makeAllIncludesHH, varlist=['SOURCE_HEADERS'])
+def makeAllIncludesHH(target, headers):
+    file(env.File(target).abspath,"w").write("".join([ '#include "%s"\n' % f
+                                                       for f in headers ]))
 
 ###########################################################################
 
-sources = SENFSCons.GlobSources()
+source_headers = [ f for f in glob.glob("*.hh")
+                   if 'defined(SENF_PACKETS_DECL_ONLY)' in file(f).read() ]
+source_headers.sort()
+makeAllIncludesHH('all_includes.hh', source_headers)
 
 SENFSCons.StandardTargets(env)
-
-env.Command('all_includes.hh', 'SConscript', makeAllIncludesHH,
-            SOURCE_HEADERS = [ f for f in glob.glob("*.hh")
-                               if 'defined(SENF_PACKETS_DECL_ONLY)' in file(f).read() ])
-
 SENFSCons.Lib(env,
               library = 'Packets',
-              sources = sources,
+              sources = SENFSCons.GlobSources(),
               LIBS = [ 'Socket', 'Utils' ])
-
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png("structure.dia")
 ])

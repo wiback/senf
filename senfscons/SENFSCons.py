@@ -50,6 +50,7 @@ SCONS_TOOLS = [
     "Doxygen",
     "Dia2Png",
     "CopyToDir",
+    "InstallIncludes",
 ]
 
 opts = None
@@ -343,27 +344,28 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = []):
 
     return objects
 
-def InstallWithSources(env, targets, dir, sources, testSources = []):
+def InstallWithSources(env, targets, dir, sources, testSources = [], no_includes = False):
     if type(sources) is type(()):
-        sources = sources[0] + sources[1]
-    if testSources:
-        sources += testSources
+        sources, testSources = sources
     if type(sources) is not type([]):
         sources = [ sources ]
+    if type(testSources) is not type([]):
+        testSources = [ testSources ]
 
     installs = []
     installs.append( env.Install(dir, targets) )
 
-    for source in sources:
-        l = len(env.Dir('#').abspath)
-        source = str(source)
-        while '.' in source:
-            source = os.path.splitext(source)[0]
-        for ext in env['CPP_INCLUDE_EXTENSIONS']:
-            f = env.File(source+ext)
-            if f.exists():
-                installs.append(env.Install(
-                    '$INCLUDEINSTALLDIR' + f.dir.abspath[l:], f))
+    if not no_includes:
+        target = env.Dir(env['INCLUDEINSTALLDIR']).Dir(
+            env.Dir('.').get_path(env.Dir(env['INSTALL_BASE'])))
+        source = targets
+        if testSources:
+            source.append( env.File('.test.bin') )
+            
+            installs.append(env.InstallIncludes(
+                target = target,
+                source = targets,
+                INSTALL_BASE = env.Dir('.') ))
 
     return installs
 
@@ -568,25 +570,25 @@ def DoxyXRef(env, docs=None,
 # The library is added to the list of default targets.
 #
 #\ingroup target
-def Lib(env, library, sources, testSources = None, LIBS = [], OBJECTS = []):
+def Lib(env, library, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
     objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
     lib = None
     if objects:
         lib = env.Library(env.File(LibPath(library)),objects)
         env.Default(lib)
         env.Append(ALLLIBS = library)
-        install = InstallWithSources(env, lib, '$LIBINSTALLDIR', sources)
+        install = InstallWithSources(env, lib, '$LIBINSTALLDIR', sources, testSources, no_includes)
         env.Alias('install_all', install)
     return lib
 
 ## \brief Build Object from multiple sources
-def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = []):
+def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
     objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
     ob = None
     if objects:
         ob = env.Command(target+".o", objects, "ld -r -o $TARGET $SOURCES")
         env.Default(ob)
-        install = InstallWithSources(env, ob, '$OBJINSTALLDIR', sources)
+        install = InstallWithSources(env, ob, '$OBJINSTALLDIR', sources, testSources, no_includes)
         env.Alias('install_all', install)
     return ob
 
@@ -600,7 +602,7 @@ def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = []):
 # construction environment parameters or the framework helpers.
 #
 # \ingroup target
-def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = []):
+def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
     objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
     program = None
     if objects:
@@ -609,7 +611,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = []):
         program = progEnv.Program(target=binary,source=objects+OBJECTS)
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
-        install = InstallWithSources(env, program, '$BININSTALLDIR',
-                                     sources, testSources)
+        install = InstallWithSources(env, program, '$BININSTALLDIR', sources, testSources,
+                                     no_includes)
         env.Alias('install_all', install)
     return program

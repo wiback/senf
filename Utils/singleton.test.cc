@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
@@ -19,38 +21,52 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ParseArray non-inline template implementation  */
+    \brief singleton.test unit tests */
 
-#include "ParseArray.ih"
+//#include "singleton.test.hh"
+//#include "singleton.test.ih"
 
 // Custom includes
+#include "singleton.hh"
+
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
 #define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::Parse_Array<elements,ElementParser>
+namespace {
+    
+    class Test : public senf::singleton<Test>
+    {
+        friend class senf::singleton<Test>;
+        
+        Test() : foo_(1234) {}
 
-template <unsigned elements, class ElementParser>
-prefix_ void senf::Parse_Array<elements,ElementParser>::init()
-    const
-{
-    iterator i (begin());
-    iterator const e (end());
-    for (; i!=e; ++i)
-        (*i).init();
+        int foo_;
+
+    public:
+        using senf::singleton<Test>::instance;
+
+        int foo() { return foo_; }
+    };
 }
 
-///////////////////////////////ct.e////////////////////////////////////////
+BOOST_AUTO_UNIT_TEST(sInGlEtOn)
+{
+    BOOST_CHECK_EQUAL( Test::instance().foo(), 1234 );
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

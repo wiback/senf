@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
@@ -19,38 +21,50 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ParseArray non-inline template implementation  */
+    \brief pool_alloc_mixin.test unit tests */
 
-#include "ParseArray.ih"
+//#include "pool_alloc_mixin.test.hh"
+//#include "pool_alloc_mixin.test.ih"
 
 // Custom includes
+#include "pool_alloc_mixin.hh"
+#include <boost/scoped_ptr.hpp>
+
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
 #define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::Parse_Array<elements,ElementParser>
-
-template <unsigned elements, class ElementParser>
-prefix_ void senf::Parse_Array<elements,ElementParser>::init()
-    const
-{
-    iterator i (begin());
-    iterator const e (end());
-    for (; i!=e; ++i)
-        (*i).init();
+namespace {
+    class Test : public senf::pool_alloc_mixin<Test>
+    {};
 }
 
-///////////////////////////////ct.e////////////////////////////////////////
+BOOST_AUTO_UNIT_TEST(poolAllocMixin)
+{
+#ifndef NDEBUG
+    BOOST_CHECK_EQUAL( Test::allocCounter(), 0u );
+
+    {
+        boost::scoped_ptr<Test> test (new Test());
+        BOOST_CHECK_EQUAL( Test::allocCounter(), 1u );
+    }
+
+    BOOST_CHECK_EQUAL( Test::allocCounter(), 0u );
+#endif
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

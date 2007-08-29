@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
@@ -19,38 +21,39 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ParseArray non-inline template implementation  */
+    \brief hexdump.test unit tests */
 
-#include "ParseArray.ih"
+//#include "hexdump.test.hh"
+//#include "hexdump.test.ih"
 
 // Custom includes
+#include "hexdump.hh"
+#include <sstream>
+
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
 #define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::Parse_Array<elements,ElementParser>
-
-template <unsigned elements, class ElementParser>
-prefix_ void senf::Parse_Array<elements,ElementParser>::init()
-    const
+BOOST_AUTO_UNIT_TEST(hExDuMp)
 {
-    iterator i (begin());
-    iterator const e (end());
-    for (; i!=e; ++i)
-        (*i).init();
+    char data[] = { 0x18, 0x19, 0x20, 0x21, 0x7c, 0x7d, 0x7e, 0x7f };
+    std::stringstream s;
+    senf::hexdump(data, data+sizeof(data), s, 8);
+    BOOST_CHECK_EQUAL( s.str(), "  0000  18 19 20 21  7c 7d 7e 7f  .. ! |}..\n" );
 }
 
-///////////////////////////////ct.e////////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

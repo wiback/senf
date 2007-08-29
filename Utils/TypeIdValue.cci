@@ -26,6 +26,7 @@
 //#include "TypeIdValue.ih"
 
 // Custom includes
+#include "TypeInfo.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -64,9 +65,21 @@ prefix_ std::string senf::TypeIdValue::name()
     return std::string(value_->id().name());
 }
 
+prefix_ std::type_info const & senf::TypeIdValue::id()
+    const
+{
+    return value_->id();
+}
+
 prefix_ senf::TypeIdValue const senf::typeIdValue()
 {
     return TypeIdValue();
+}
+
+prefix_ std::ostream & senf::operator<<(std::ostream & os, TypeIdValue const & v)
+{
+    os << prettyName(v.id());
+    return os;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -14,7 +14,7 @@ fi
 cond=""
 if [ "$1" = "-c" ]; then
     shift
-    cond='( -name *.h -o -name *.hh -o -name *.ih -o -name *.c -o -name *.cc -o -name *.cci -o -name *.ct -o -name *.cti )'
+    cond='( -name *.h -o -name *.hh -o -name *.ih -o -name *.c -o -name *.cc -o -name *.cci -o -name *.ct -o -name *.cti -o -name *.mpp )'
 fi
 
 set -f
