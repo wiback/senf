@@ -25,6 +25,7 @@
 #define IH_PacketParser_ 1
 
 // Custom includes
+#include "Utils/mpl.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -35,35 +36,41 @@ namespace detail {
 
 #   ifndef DOXYGEN
 
-    template <PacketParserBase::size_type i>
-    struct Parser_TakeNum {};
-
+    // Use SFINAE to check, if Parser has an integer-valued fixed_bytes member. If not,
+    // 'Parser_TakeNum<Parser::fixed_bytes>' fails and the overload is removed from the overload
+    // set. 
     template <class Parser>
     PacketParserBase::size_type packetParserSize(
-        Parser p, int, Parser_TakeNum<Parser::fixed_bytes> * = 0);
+        Parser p, int, senf::mpl::take_uint<Parser::fixed_bytes> * = 0);
 
+    // An ellipsis is always the worst match. A call 'packetParserSize(p,0) will prefer above
+    // overload if that is not disabled by SFINAE.
     template <class Parser>
     PacketParserBase::size_type packetParserSize(Parser p, ...);
 
-    template <unsigned n> struct ParserInitBytes_RV { char _[16][n]; };
+    // Same as above: This overload is only enabled, if Parser has an integer values 'init_bytes'
+    // member.
+    template <class Parser>
+    senf::mpl::rv<0> ParserInitBytes_Choose_(senf::mpl::take_uint<Parser::init_bytes> *);
 
     template <class Parser>
-    ParserInitBytes_RV<1> ParserInitBytes_Choose_(Parser_TakeNum<Parser::init_bytes> *);
-    
-    template <class Parser>
-    ParserInitBytes_RV<2> ParserInitBytes_Choose_(...);
+    senf::mpl::rv<1> ParserInitBytes_Choose_(...);
 
-    template <class Parser, unsigned size>
+    // This version of ParserInitBytes_Choose uses 'Parser::init_bytes' to provide 'value' (via
+    // 'boost::integral_constant')
+    template <class Parser, unsigned _>
     struct ParserInitBytes_Choose 
         : public boost::integral_constant<PacketParserBase::size_type, Parser::init_bytes> {};
 
+    // If Parser::init_bytes is not defined, this specialization is chosen which instead uses
+    // 'Parser::fixed_bytes'
     template <class Parser>
-    struct ParserInitBytes_Choose<Parser, sizeof(ParserInitBytes_RV<2>)>
+    struct ParserInitBytes_Choose<Parser, 1>
         : public boost::integral_constant<PacketParserBase::size_type, Parser::fixed_bytes> {};
 
     template <class Parser>
     struct ParserInitBytes
-        : public ParserInitBytes_Choose<Parser, sizeof(ParserInitBytes_Choose_<Parser>(0))> {};
+        : public ParserInitBytes_Choose<Parser,SENF_MPL_RV(ParserInitBytes_Choose_<Parser>(0))> {};
 
 #   endif
 

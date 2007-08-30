@@ -307,9 +307,6 @@ namespace connector {
         OutputConnector();
     };
     
-    ///@{
-    ///\addtogroup connectors
-
     /** \brief Combination of PassiveConnector and InputConnector
 
         The PassiveInput automatically controls the connectors throttling state using a queueing
@@ -391,8 +388,6 @@ namespace connector {
 
         void connect(PassiveInput & target); ///< Internal: Use senf::ppi::connect() instead
     };
-
-    ///@}
 
 }}}
 

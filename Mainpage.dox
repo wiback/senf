@@ -134,15 +134,21 @@
     \see \ref build \n
          \ref svnsetup
 
+    \section libPPI libPPI: Packet Processing Infrastructure
+
+    The Packet Processing Infrastructure implements a modular framework for implementing packet
+    oriented network applications. The library provides a larget set of pre-defined modules as well
+    as the necessary helpers to implement application specific processing modules.
+
+    \see <a href="../../PPI/doc/html/index.html">libPPI API reference</a>
+
     \section libSocket libSocket: C++ abstraction of the BSD socket API
 
     This library provides a high performance and object oriented abstraction of the standard socket
     API. It utilizes a flexible and extensible policy based design. The library provides predefined
-    types for the important socket types (UDP and TCP sockets etc) including raw and packet
-    sockets. \n
+    types for the important socket types (UDP and TCP sockets etc) including raw and packet sockets.
 
-    \see <a href="../../Socket/doc/html/index.html">libSocket API
-    reference</a>
+    \see <a href="../../Socket/doc/html/index.html">libSocket API reference</a>
 
     \section libPackets libPackets: Network packet manipulation
 
@@ -150,8 +156,7 @@
     packetized network data. Included is a library of several protocol parsers covering the basic
     IPv4 and IPv6 network protocols down to the Ethernet layer.
 
-    \see <a href="../../Packets/doc/html/index.html">libPackets API
-    reference</a>
+    \see <a href="../../Packets/doc/html/index.html">libPackets API reference</a>
 
     \section libScheduler libScheduler: Asynchronous event handling
 

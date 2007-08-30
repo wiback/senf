@@ -10,8 +10,6 @@ namespace senf {
 
     <dt>SystemException</dt><dd>standard exception for system errors (errno)</dd>
 
-    <dt>\ref time</dt><dd>Very rudimentary microsecond time support</dd>
-
     <dt>\ref process</dt><dd>Some simple process management and daemon helpers<?dd>
 
     <dt>\ref membind</dt><dd>a simple <a
@@ -39,8 +37,11 @@ namespace senf {
     <dt>\ref TypeIdValue</dt><dd>class wrapping a typeid in a way that it can be used like any other
     value type, e.g. as the key in a map.</dd>
     
-    <dt>\ref hexdump<dt>
-        <dd>a simple but usefull function to write binary data in in hexadecimal format.</dd>
+    <dt>\ref hexdump<dt><dd>a simple but usefull function to write binary data in in hexadecimal
+    format.</dd>
+
+    <dt>\ref senfmpl</dt><dd>Some simple tools which help to solve common meta-programming
+    tasks</dd>
 
     </dl>
  */

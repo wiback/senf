@@ -57,12 +57,12 @@
     udp->source()      = 2000u;
     udp->destination() = 2001u;
     ip->ttl()          = 255u;
-    ip->source()       = senf::INet4Address("192.168.0.1"); // (*)
-    ip->destination()  = senf::INet4Address("192.168.0.2"); // (*)
-    eth->source()      = senf::MACAddress("00:11:22:33:44:55");
-    eth->destination() = senf::MACAddress("00:11:22:33:44:66");
+    ip->source()       = senf::INet4Address::from_string("192.168.0.1");
+    ip->destination()  = senf::INet4Address::from_string("192.168.0.2");
+    eth->source()      = senf::MACAddress::from_string("00:11:22:33:44:55");
+    eth->destination() = senf::MACAddress::from_string("00:11:22:33:44:66");
     
-    eth.finalize(); // (*)
+    eth.finalize();
     \endcode
 
     As seen above, packet fields are accessed using the <tt>-></tt> operator whereas other packet

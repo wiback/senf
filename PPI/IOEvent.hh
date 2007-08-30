@@ -52,6 +52,15 @@ namespace ppi {
         An IOEvent is signaled, whenever the FileHandle \a handle becomes readable or writable. The
         type of event is specified using the \a events mask with values from EventFlags.
 
+        There are two types of flags:
+        
+        \li <em>Event flags</em> (\ref Read, \ref Prio, \ref Write) specify the type of event. The
+            callback will be called whenever one of the specified events occurs on the filehandle
+        \li <em>Error flags</em> (\ref Hup, \ref Err) specify some type of error condition on the
+            filehandle. If you specify an error flag when registering the event, the error condition
+            will be passed to the callback, otherwise an ErrorException or HangupException will be
+            thrown.
+
         \see IOEventInfo
 
         \ingroup event_group
@@ -66,11 +75,13 @@ namespace ppi {
         // This is stupid, however there is no way to import the Scheduler::EventId enum together
         // with the enumeration symbols
 
-        enum EventFlags { Read  = Scheduler::EV_READ, 
-                          Prio = Scheduler::EV_PRIO,
-                          Write = Scheduler::EV_WRITE,
-                          Hup = Scheduler::EV_HUP,
-                          Err = Scheduler::EV_ERR };
+        enum EventFlags { 
+              Read  = Scheduler::EV_READ   /**< FileHandle is readable */
+            , Prio = Scheduler::EV_PRIO    /**< FileHandle priority data is readable */
+            , Write = Scheduler::EV_WRITE  /**< FileHandle is writable */
+            , Hup = Scheduler::EV_HUP      /**< Hangup condition on FileHandle */
+            , Err = Scheduler::EV_ERR      /**< Some other error condition on FileHandle */
+        };
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
