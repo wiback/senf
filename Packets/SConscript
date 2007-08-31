@@ -15,6 +15,7 @@ source_headers = [ f for f in glob.glob("*.hh")
                    if 'defined(SENF_PACKETS_DECL_ONLY)' in file(f).read() ]
 source_headers.sort()
 makeAllIncludesHH('all_includes.hh', source_headers)
+env.Clean('all','all_includes.hh')
 
 SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env,
@@ -26,3 +27,4 @@ SENFSCons.Doxygen(env, extra_sources = [
 ])
 
 SConscript(glob.glob("*/SConscript"))
+

@@ -1,6 +1,6 @@
 # -*- python -*-
 
-import sys, glob, os.path, datetime, pwd, time
+import sys, glob, os.path, datetime, pwd, time, fnmatch
 sys.path.append('senfscons')
 import SENFSCons
 
@@ -28,6 +28,22 @@ def updateRevision(target, source, env):
         'date': time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) }
     file('debian/changelog','w').write(changelog)
 
+def nonemptyFile(f):
+    try: return os.stat(f).st_size > 0
+    except OSError: return False
+
+def checkLocalConf(target, source, env):
+    if nonemptyFile('SConfig') or nonemptyFile('Doxyfile.local'):
+        print
+        print "You have made local modifications to 'SConfig' and/or 'Doxyfile.local'."
+        print "Building a debian package would remove those files."
+        print
+        print "To continue, remove the offending file(s) and try again. Alternatively,"
+        print "build a source package using 'scons debsrc' and may then build debian"
+        print "binary packages from this source-package without disrupting your print local"
+        print "configuration."
+        print
+        return 1
 
 ###########################################################################
 # Load utilities and setup libraries and configure build
@@ -67,6 +83,8 @@ env.Append(
            'LOGNAME' : logname, # needed by the debian build scripts
            'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1"
            },
+   CLEAN_PATTERNS = [ '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
+   BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn -IDoxyfile.local -ISConfig",
 )
 
 Export('env')
@@ -96,13 +114,20 @@ env.Default(libsenf)
 env.Alias('install_all', env.Install('$LIBINSTALLDIR', libsenf))
 
 env.AlwaysBuild(
-    env.Alias('deb', [], [ updateRevision,
-                           "dpkg-buildpackage -us -uc -rfakeroot -I.svn" ]))
+    env.Alias('deb', [], [ checkLocalConf,
+                           updateRevision,
+                           "$BUILDPACKAGE_COMMAND" ]))
 
 env.AlwaysBuild(
     env.Alias('debsrc', [], [ updateRevision,
-                              "dpkg-buildpackage -us -uc -rfakeroot -S -I.svn" ]))
+                              "$BUILDPACKAGE_COMMAND -S" ]))
 
 env.AlwaysBuild(
-    env.Alias('debbin', [], [ updateRevision,
-                              "dpkg-buildpackage -us -uc -rfakeroot -nc" ]))
+    env.Alias('debbin', [], [ checkLocalConf,
+                              updateRevision,
+                              "$BUILDPACKAGE_COMMAND -nc" ]))
+
+env.Clean('all', [ os.path.join(path,f)
+                   for path, subdirs, files in os.walk('.')
+                   for pattern in env['CLEAN_PATTERNS']
+                   for f in fnmatch.filter(files,pattern) ])
