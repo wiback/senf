@@ -82,6 +82,33 @@ BOOST_AUTO_UNIT_TEST(senfmpl)
     BOOST_CHECK( ! choice<C>::has_class_value );
 }
 
+namespace {
+
+#   define Begin() SENF_MPL_SLOT_DEF(accum, 0)
+#   define Add(n) SENF_MPL_SLOT_SET(accum, SENF_MPL_SLOT_GET(accum)+n)
+#   define End() BOOST_STATIC_CONSTANT(unsigned, total = SENF_MPL_SLOT_GET(accum))
+
+    struct Test
+    {
+        Begin();
+
+        Add(2);
+        Add(2);
+
+        // Here some comment ...
+
+        Add(4);
+
+        End();
+    };
+
+}
+
+BOOST_AUTO_UNIT_TEST(mplSlot)
+{
+    BOOST_CHECK_EQUAL( unsigned(Test::total), 8u );
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

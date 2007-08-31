@@ -149,29 +149,29 @@ namespace mpl {
      */
     template <class _> struct take_class {};
 
-    /** \brief Define 'previous value' slot
+    /** \brief Define MPL slot
 
-        The 'previous value' macros \ref SENF_MPL_PREVV_DEF(), \ref SENF_MPL_PREVV_SET() and \ref
-        SENF_MPL_PREVV_GET() provide a facility to get the last unsigned integer value assigned to
+        The slot macros \ref SENF_MPL_SLOT_DEF(), \ref SENF_MPL_SLOT_SET() and \ref
+        SENF_MPL_SLOT_GET() provide a facility to get the last unsigned integer value assigned to
         the slot before the current point in the current class.
         \code
         struct Foo
         {
-            // Define PREVV slot named 'accum' initialized to 0
-            SENF_MPL_PREVV_DEF(accum, 0);
+            // Define SLOT slot named 'accum' initialized to 0
+            SENF_MPL_SLOT_DEF(accum, 0);
 
             // Add 2 to 'accum'
-            SENF_MPL_PREVV_SET(accum, SENF_MPL_PREVV_GET(accum) + 2);
+            SENF_MPL_SLOT_SET(accum, SENF_MPL_SLOT_GET(accum) + 2);
 
             // Multiply 'accum' by 3
-            SENF_MPL_PREVV_SET(accum, SENF_MPL_PREVV_GET(accum) * 3);
+            SENF_MPL_SLOT_SET(accum, SENF_MPL_SLOT_GET(accum) * 3);
 
             // Define the result as a constant expression. result is now 6
-            static unsigned result = SENF_MPL_PREVV_GET(accum);
+            static unsigned result = SENF_MPL_SLOT_GET(accum);
         };
         \endcode
         Of course, it does not make sense to use these macros for simple arithmetic as in the
-        example. The SENF_MPL_PREVV macros allow to define macros which pass information from one
+        example. The SENF_MPL_SLOT macros allow to define macros which pass information from one
         macro invocation to the next.
 
         \implementation The implementation is based on __LINE__: We check backwards for a value
@@ -180,26 +180,27 @@ namespace mpl {
         \ingroup senfmpl
         \hideinitializer
      */
-#   define SENF_MPL_PREVV_DEF(name,value)                                                         \
-        template <unsigned _>                                                                     \
-        static senf::mpl::rv<0> _SENF_MPL_PREVV_ ## name (senf::mpl::rv<_> *);                    \
-        SENF_MPL_PREVV_SET(name,value)
+#   define SENF_MPL_SLOT_DEF(name,value)                                                          \
+        template <class _>                                                                        \
+        static senf::mpl::rv<0> _SENF_MPL_SLOT_ ## name (_);                                      \
+        SENF_MPL_SLOT_SET(name,value)
 
-    /** \brief Set 'prevision value' slot
-        \see \ref SENF_MPL_PREVV_DEF()
+    /** \brief Set MPL slot
+        \see \ref SENF_MPL_SLOT_DEF()
         \ingroup senfmpl
         \hideinitializer
      */
-#   define SENF_MPL_PREVV_SET(name,value)                                                         \
-        static senf::mpl::rv<unsigned(value)+1> _SENF_MPL_PREVV_ ## name (senf::mpl::rv<__LINE__>*)
+#   define SENF_MPL_SLOT_SET(name,value)                                                          \
+        static senf::mpl::rv<unsigned(value)+1>                                                   \
+            _SENF_MPL_SLOT_ ## name (senf::mpl::take_int<__LINE__>)
 
-    /** \brief Get current 'previous value' slot value
-        \see \ref SENF_MPL_PREVV_DEF()
+    /** \brief Get current MPL slot value
+        \see \ref SENF_MPL_SLOT_DEF()
         \ingroup senfmpl
         \hideinitializer
      */
-#   define SENF_MPL_PREVV_GET(name)                                                               \
-        SENF_MPL_PREVV_I_GET(name)
+#   define SENF_MPL_SLOT_GET(name)                                                                \
+        SENF_MPL_SLOT_I_GET(name)
 
 }}
 

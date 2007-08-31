@@ -1,0 +1,136 @@
+// $Id$
+//
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief mpl internal header */
+
+#ifndef IH_mpl_
+#define IH_mpl_ 1
+
+// Custom includes
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+#define SENF_MPL_SLOT_I_CHOOSE(a,b) (a != 0 ? a-1 : (b))
+
+#define SENF_MPL_SLOT_I_CHECK(name,a,b)                                                           \
+   SENF_MPL_SLOT_I_CHOOSE(                                                                        \
+       SENF_MPL_RV(_SENF_MPL_SLOT_ ## name (senf::mpl::take_int<(a)>())),                         \
+       b )
+
+#define SENF_MPL_SLOT_I_GET(name)                                                                 \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>1?__LINE__-1:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>2?__LINE__-2:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>3?__LINE__-3:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>4?__LINE__-4:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>5?__LINE__-5:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>6?__LINE__-6:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>7?__LINE__-7:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>8?__LINE__-8:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>9?__LINE__-9:0,                                          \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>10?__LINE__-10:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>11?__LINE__-11:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>12?__LINE__-12:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>13?__LINE__-13:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>14?__LINE__-14:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>15?__LINE__-15:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>16?__LINE__-16:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>17?__LINE__-17:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>18?__LINE__-18:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>19?__LINE__-19:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>20?__LINE__-20:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>21?__LINE__-21:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>22?__LINE__-22:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>23?__LINE__-23:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>24?__LINE__-24:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>25?__LINE__-25:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>26?__LINE__-26:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>27?__LINE__-27:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>28?__LINE__-28:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>29?__LINE__-29:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>30?__LINE__-30:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>31?__LINE__-31:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>32?__LINE__-32:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>33?__LINE__-33:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>34?__LINE__-34:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>35?__LINE__-35:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>36?__LINE__-36:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>37?__LINE__-37:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>38?__LINE__-38:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>39?__LINE__-39:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>40?__LINE__-40:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>41?__LINE__-41:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>42?__LINE__-42:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>43?__LINE__-43:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>44?__LINE__-44:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>45?__LINE__-45:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>46?__LINE__-46:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>47?__LINE__-47:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>48?__LINE__-48:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>49?__LINE__-49:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>50?__LINE__-50:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>51?__LINE__-51:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>52?__LINE__-52:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>53?__LINE__-53:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>54?__LINE__-54:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>55?__LINE__-55:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>56?__LINE__-56:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>57?__LINE__-57:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>58?__LINE__-58:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>59?__LINE__-59:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>60?__LINE__-60:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>61?__LINE__-61:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>62?__LINE__-62:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>63?__LINE__-63:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>64?__LINE__-64:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>65?__LINE__-65:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>66?__LINE__-66:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>67?__LINE__-67:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>68?__LINE__-68:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>69?__LINE__-69:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>70?__LINE__-70:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>71?__LINE__-71:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>72?__LINE__-72:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>73?__LINE__-73:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>74?__LINE__-74:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>75?__LINE__-75:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>76?__LINE__-76:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>77?__LINE__-77:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>78?__LINE__-78:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>79?__LINE__-79:0,                                        \
+    SENF_MPL_SLOT_I_CHECK(name, __LINE__>80?__LINE__-80:0,                                        \
+        0 ))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+    
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
