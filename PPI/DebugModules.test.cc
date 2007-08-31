@@ -36,7 +36,7 @@ namespace {
     std::stringstream logstream;
 }
 
-#include "Packets/Packets.hh"
+#include "../Packets/Packets.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
 

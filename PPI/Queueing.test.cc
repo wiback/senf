@@ -31,7 +31,7 @@
 #include "Module.hh"
 #include "Connectors.hh"
 #include "DebugModules.hh"
-#include "Packets/Packets.hh"
+#include "../Packets/Packets.hh"
 #include "Setup.hh"
 
 #include <boost/test/auto_unit_test.hpp>

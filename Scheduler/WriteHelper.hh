@@ -28,7 +28,7 @@
 #include <string>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/function.hpp>
-#include "Utils/intrusive_refcount.hh"
+#include "../Utils/intrusive_refcount.hh"
 #include "Scheduler.hh"
 
 //#include "WriteHelper.mpp"

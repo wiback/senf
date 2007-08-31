@@ -29,7 +29,7 @@
 // Custom includes
 #include "ThrottleBarrier.hh"
 #include "DebugModules.hh"
-#include "Packets/Packets.hh"
+#include "../Packets/Packets.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

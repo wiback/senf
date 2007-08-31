@@ -28,11 +28,11 @@
 
 // Custom includes
 #include <deque>
-#include "Utils/SafeBool.hh"
-#include "Packets/Packets.hh"
+#include "../Utils/SafeBool.hh"
+#include "../Packets/Packets.hh"
 #include "Module.hh"
 #include "ActiveFeeder.hh"
-#include "Utils/Logger.hh"
+#include "../Utils/Logger.hh"
 
 //#include "DebugModules.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

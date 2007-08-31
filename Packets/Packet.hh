@@ -27,8 +27,8 @@
 // Custom includes
 #include <boost/operators.hpp>
 
-#include "Utils/Exception.hh"
-#include "Utils/SafeBool.hh"
+#include "../Utils/Exception.hh"
+#include "../Utils/SafeBool.hh"
 #include "PacketInterpreter.hh"
 
 //#include "Packet.mpp"

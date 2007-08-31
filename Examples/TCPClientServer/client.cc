@@ -24,8 +24,8 @@
 // Custom includes
 #include <iostream>
 #include <sstream>
-#include "Socket/Protocols/INet/TCPSocketHandle.hh"
-#include "Socket/Protocols/INet/INetAddressing.hh"
+#include "../../Socket/Protocols/INet/TCPSocketHandle.hh"
+#include "../../Socket/Protocols/INet/INetAddressing.hh"
 
 int main(int argc, char const * argv[])
 {

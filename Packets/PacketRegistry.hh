@@ -30,7 +30,7 @@
 #include <map>
 #include <boost/utility.hpp> // for boost::noncopyable
 #include <boost/optional.hpp>
-#include "Utils/Exception.hh"
+#include "../Utils/Exception.hh"
 #include "Packet.hh"
 
 //#include "PacketRegistry.mpp"

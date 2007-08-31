@@ -25,7 +25,7 @@
 #define IH_ClientSocketHandle_ 1
 
 // Custom includes
-#include "Utils/IteratorTraits.hh"
+#include "../Utils/IteratorTraits.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

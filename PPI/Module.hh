@@ -29,7 +29,7 @@
 #include <vector>
 #include <boost/utility.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include "Scheduler/ClockService.hh"
+#include "../Scheduler/ClockService.hh"
 #include "predecl.hh"
 
 //#include "Module.mpp"

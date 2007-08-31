@@ -78,7 +78,7 @@
 // Custom includes
 #include <errno.h>
 #include <sys/epoll.h>
-#include "Utils/Exception.hh"
+#include "../Utils/Exception.hh"
 
 static const int EPollInitialSize = 16;
 

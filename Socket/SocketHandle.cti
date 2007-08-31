@@ -29,7 +29,7 @@
 // Custom includes
 #include <typeinfo>
 #include <boost/lexical_cast.hpp>
-#include "Utils/TypeInfo.hh"
+#include "../Utils/TypeInfo.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////

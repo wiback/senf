@@ -28,7 +28,7 @@
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include "Utils/SafeBool.hh"
+#include "../Utils/SafeBool.hh"
 #include "PacketTypes.hh"
 
 //#include "PacketData.mpp"

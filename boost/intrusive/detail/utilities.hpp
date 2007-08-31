@@ -13,9 +13,9 @@
 #ifndef BOOST_INTRUSIVE_DETAIL_UTILITIES_HPP
 #define BOOST_INTRUSIVE_DETAIL_UTILITIES_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
+#include "config_begin.hpp"
+#include "pointer_type.hpp"
+#include "pointer_to_other.hpp"
 #include <boost/get_pointer.hpp>
 #include <cstddef>
 
@@ -166,6 +166,6 @@ struct member_value_traits
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_DETAIL_UTILITIES_HPP

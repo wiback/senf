@@ -28,7 +28,7 @@
 #define HH_UDPProtocol_ 1
 
 // Custom includes
-#include "Socket/SocketProtocol.hh"
+#include "../../../Socket/SocketProtocol.hh"
 #include "INetAddressing.hh"
 
 //#include "UDPProtocol.mpp"

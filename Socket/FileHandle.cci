@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <errno.h>
-#include "Utils/Exception.hh"
+#include "../Utils/Exception.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////

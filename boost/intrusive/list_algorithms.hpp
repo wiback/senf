@@ -14,11 +14,11 @@
 #ifndef BOOST_INTRUSIVE_LIST_ALGORITHMS_HPP
 #define BOOST_INTRUSIVE_LIST_ALGORITHMS_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
+#include "detail/config_begin.hpp"
 #include <iterator>
 #include <boost/assert.hpp>
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
+#include "detail/pointer_type.hpp"
+#include "detail/pointer_to_other.hpp"
 #include <boost/get_pointer.hpp>
 #include <cstddef>
 
@@ -284,6 +284,6 @@ class list_algorithms
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "detail/config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_LIST_ALGORITHMS_HPP

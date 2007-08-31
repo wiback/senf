@@ -14,16 +14,16 @@
 #ifndef BOOST_INTRUSIVE_ISLIST_HPP
 #define BOOST_INTRUSIVE_ISLIST_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
+#include "detail/config_begin.hpp"
 #include <boost/utility.hpp>
 #include <boost/static_assert.hpp>
 #include <boost/assert.hpp>
 #include <boost/type_traits/is_convertible.hpp>
-#include <boost/intrusive/islist_hook.hpp>
-#include <boost/intrusive/slist_algorithms.hpp>
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
-#include <boost/intrusive/linking_policy.hpp>
+#include "islist_hook.hpp"
+#include "slist_algorithms.hpp"
+#include "detail/pointer_type.hpp"
+#include "detail/pointer_to_other.hpp"
+#include "linking_policy.hpp"
 #include <iterator>
 #include <cstddef>
 
@@ -1386,6 +1386,6 @@ inline void swap(islist<V, C, S>& x, islist<V, C, S>& y)
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "detail/config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_ISLIST_HPP

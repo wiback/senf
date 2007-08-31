@@ -11,7 +11,7 @@
 #ifndef BOOST_INTRUSIVE_POINTER_TYPE_HPP
 #define BOOST_INTRUSIVE_POINTER_TYPE_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
+#include "config_begin.hpp"
 
 namespace boost {
 namespace intrusive {
@@ -49,6 +49,6 @@ struct pointer_type<T, A, false>
 }  //namespace intrusive
 } // namespace boost
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "config_end.hpp"
 
 #endif   //#ifndef BOOST_INTRUSIVE_POINTER_TYPE_HPP

@@ -24,7 +24,7 @@
     \brief ClockService inline non-template implementation */
 
 // Custom includes
-#include "boost/date_time/posix_time/posix_time_types.hpp"
+#include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////

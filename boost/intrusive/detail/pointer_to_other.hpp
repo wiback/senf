@@ -11,7 +11,7 @@
 #ifndef BOOST_INTRUSIVE_POINTER_TO_OTHER_HPP
 #define BOOST_INTRUSIVE_POINTER_TO_OTHER_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
+#include "config_begin.hpp"
 #include <boost/version.hpp>
 
 #if (BOOST_VERSION < 103400)
@@ -60,6 +60,6 @@ struct pointer_to_other< T*, U >
 
 #endif   //#ifndef BOOST_POINTER_TO_OTHER_HPP_INCLUDED
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "config_end.hpp"
 
 #endif   //#ifndef BOOST_INTRUSIVE_POINTER_TO_OTHER_HPP

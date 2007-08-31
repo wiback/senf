@@ -22,7 +22,7 @@
 
 #include <string>
 #include <iostream>
-#include "Socket/Protocols/DVB/DVBFrontendHandle.hh"
+#include "../../Socket/Protocols/DVB/DVBFrontendHandle.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

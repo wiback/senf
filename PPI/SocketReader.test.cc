@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <algorithm>
-#include "Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "Scheduler/Scheduler.hh"
+#include "../Socket/Protocols/INet/UDPSocketHandle.hh"
+#include "../Scheduler/Scheduler.hh"
 #include "SocketReader.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"

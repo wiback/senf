@@ -27,7 +27,7 @@
 // Custom includes
 #include <memory>
 #include <boost/utility.hpp>
-#include "Utils/pool_alloc_mixin.hh"
+#include "../Utils/pool_alloc_mixin.hh"
 #include "PacketTypes.hh"
 
 //#include "PacketImpl.mpp"

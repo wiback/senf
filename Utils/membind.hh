@@ -58,11 +58,11 @@
 namespace senf {
 
 #define scOBTYPE T *
-#include "Utils/impl/membind.hh"
+#include "../Utils/impl/membind.hh"
 #undef scOBTYPE
 
 #define scOBTYPE T &
-#include "Utils/impl/membind.hh"
+#include "../Utils/impl/membind.hh"
 #undef scOBTYPE
 
 #ifdef DOXYGEN

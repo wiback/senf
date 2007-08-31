@@ -29,6 +29,7 @@
 
 // Custom includes
 #include "ClientSocketHandle.hh"
+#include "../config.h"
 
 #include "ProtocolClientSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -82,7 +83,7 @@ namespace senf {
          */
         ProtocolClientSocketHandle();
 
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolClientSocketHandle.mpp", 1))
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, SENF_ABSOLUTE_INCLUDE_PATH(Socket/ProtocolClientSocketHandle.mpp), 1))
 #       include BOOST_PP_ITERATE()
 
         /** \brief Create uninitialized socket variable

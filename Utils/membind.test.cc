@@ -28,7 +28,7 @@
 // Custom includes
 #include <sstream>
 #include <string>
-#include "Utils/membind.hh"
+#include "../Utils/membind.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

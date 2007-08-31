@@ -3,6 +3,9 @@ import SENFSCons, glob
 
 ###########################################################################
 
+SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
+                               if f not in ('all_includes.hh','PPI.hh') and not f.endswith('.test.hh') ])
+
 SConscript(glob.glob("*/SConscript"))
 
 sources = SENFSCons.GlobSources(subdirs=[ 'detail' ])
@@ -19,3 +22,5 @@ SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('classes.dia'),
     env.Dia2Png('ratestuffer.dia'),
 ])
+
+SENFSCons.InstallIncludeFiles(env, [ 'PPI.hh', 'all_includes.hh' ])

@@ -25,8 +25,8 @@
 #define HH_IpV6Packet_ 1
 
 // Custom includes
-#include "Socket/Protocols/INet/INet6Address.hh"
-#include "Packets/Packets.hh"
+#include "../../Socket/Protocols/INet/INet6Address.hh"
+#include "../../Packets/Packets.hh"
 #include "IpV4Packet.hh"
 
 //#include "IpV6Packet.mpp"

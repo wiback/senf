@@ -26,9 +26,9 @@
 
 #include <linux/dvb/dmx.h> 
 #include <boost/format.hpp>
-#include "Packets/PacketData.hh"
-#include "Utils/hexdump.hh"
-#include "Utils/membind.hh"
+#include "../../Packets/PacketData.hh"
+#include "../../Utils/hexdump.hh"
+#include "../../Utils/membind.hh"
 
 #define PID 271
 #define TRANSPORT_PACKET_SIZE 188

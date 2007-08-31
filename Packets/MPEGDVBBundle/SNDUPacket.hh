@@ -29,11 +29,11 @@
 // Custom includes
 #include <algorithm>
 #include <boost/crc.hpp>
-#include "Packets/PacketType.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/PacketRegistry.hh"
-#include "Packets/PacketParser.hh"
-#include "Packets/DefaultBundle/EthernetPacket.hh"
+#include "../../Packets/PacketType.hh"
+#include "../../Packets/ParseInt.hh"
+#include "../../Packets/PacketRegistry.hh"
+#include "../../Packets/PacketParser.hh"
+#include "../../Packets/DefaultBundle/EthernetPacket.hh"
 
 //#include "SNDUPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -65,7 +65,7 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 #	# Add here commands to install the package into debian/tmp
-	scons -j $(CONCURRENCY_LEVEL) install_all final=1\
+	scons  install_all final=1\
 		PREFIX='$(destdir)/usr' \
 		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc'
 #       We need to install the example sourcecode

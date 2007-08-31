@@ -25,7 +25,7 @@
 
 // Custom includes
 #include <errno.h>
-#include "Utils/Exception.hh"
+#include "../Utils/Exception.hh"
 #include "Scheduler.hh"
 
 #define prefix_

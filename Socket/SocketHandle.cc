@@ -30,7 +30,7 @@
 // Custom includes
 #include <sstream>
 #include <sys/socket.h>
-#include "Utils/TypeInfo.hh"
+#include "../Utils/TypeInfo.hh"
 
 //#include "SocketHandle.mpp"
 #define prefix_

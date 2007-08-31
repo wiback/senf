@@ -25,12 +25,12 @@
 #define HH_SocketWriter_ 1
 
 // Custom includes
-#include "Packets/Packets.hh"
-#include "Socket/ClientSocketHandle.hh"
-#include "Socket/SocketPolicy.hh"
-#include "Socket/ReadWritePolicy.hh"
-#include "Socket/FramingPolicy.hh"
-#include "Socket/CommunicationPolicy.hh"
+#include "../Packets/Packets.hh"
+#include "../Socket/ClientSocketHandle.hh"
+#include "../Socket/SocketPolicy.hh"
+#include "../Socket/ReadWritePolicy.hh"
+#include "../Socket/FramingPolicy.hh"
+#include "../Socket/CommunicationPolicy.hh"
 #include "Module.hh"
 #include "Connectors.hh"
 

@@ -27,7 +27,7 @@
 //#include "IdleEvent.ih"
 
 // Custom includes
-#include "Scheduler/Scheduler.hh"
+#include "../Scheduler/Scheduler.hh"
 
 //#include "IdleEvent.mpp"
 #define prefix_

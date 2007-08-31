@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <algorithm>
-#include "Socket/Protocols/Raw/MACAddress.hh"
-#include "Packets/Packets.hh"
+#include "../../Socket/Protocols/Raw/MACAddress.hh"
+#include "../../Packets/Packets.hh"
 
 //#include "EthernetPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

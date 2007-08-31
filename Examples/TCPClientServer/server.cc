@@ -28,10 +28,10 @@
 // Custom includes
 #include <string>
 #include <iostream>
-#include "Scheduler/Scheduler.hh"
-#include "Utils/membind.hh"
-#include "Socket/Protocols/INet/TCPSocketHandle.hh"
-#include "Socket/Protocols/INet/INetAddressing.hh"
+#include "../../Scheduler/Scheduler.hh"
+#include "../../Utils/membind.hh"
+#include "../../Socket/Protocols/INet/TCPSocketHandle.hh"
+#include "../../Socket/Protocols/INet/INetAddressing.hh"
 
 
 class Server

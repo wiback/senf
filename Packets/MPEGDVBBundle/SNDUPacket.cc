@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <iomanip>
-#include "Utils/hexdump.hh"
-#include "Packets/DefaultBundle/EthernetPacket.hh"
+#include "../../Utils/hexdump.hh"
+#include "../../Packets/DefaultBundle/EthernetPacket.hh"
 
 
 #define prefix_

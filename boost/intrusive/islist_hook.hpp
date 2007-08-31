@@ -14,13 +14,13 @@
 #ifndef BOOST_INTRUSIVE_ISLIST_HOOK_HPP
 #define BOOST_INTRUSIVE_ISLIST_HOOK_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
-#include <boost/intrusive/detail/utilities.hpp>
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
-#include <boost/intrusive/detail/slist_node.hpp>
-#include <boost/intrusive/slist_algorithms.hpp>
-#include <boost/intrusive/linking_policy.hpp>
+#include "detail/config_begin.hpp"
+#include "detail/utilities.hpp"
+#include "detail/pointer_type.hpp"
+#include "detail/pointer_to_other.hpp"
+#include "detail/slist_node.hpp"
+#include "slist_algorithms.hpp"
+#include "linking_policy.hpp"
 #include <boost/get_pointer.hpp>
 #include <stdexcept>
 

@@ -31,16 +31,16 @@
 #define HH_TCPSocketHandle_ 1
 
 // Custom includes
-#include "Utils/pool_alloc_mixin.hh"
+#include "../../../Utils/pool_alloc_mixin.hh"
 #include "INetProtocol.hh"
 #include "TCPProtocol.hh"
-#include "Socket/Protocols/BSDSocketProtocol.hh"
-#include "Socket/FramingPolicy.hh"
-#include "Socket/CommunicationPolicy.hh"
-#include "Socket/ReadWritePolicy.hh"
-#include "Socket/BufferingPolicy.hh"
-#include "Socket/ProtocolClientSocketHandle.hh"
-#include "Socket/ProtocolServerSocketHandle.hh"
+#include "../../../Socket/Protocols/BSDSocketProtocol.hh"
+#include "../../../Socket/FramingPolicy.hh"
+#include "../../../Socket/CommunicationPolicy.hh"
+#include "../../../Socket/ReadWritePolicy.hh"
+#include "../../../Socket/BufferingPolicy.hh"
+#include "../../../Socket/ProtocolClientSocketHandle.hh"
+#include "../../../Socket/ProtocolServerSocketHandle.hh"
 
 //#include "TCPSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

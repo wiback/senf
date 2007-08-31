@@ -32,7 +32,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/operators.hpp>
-#include "Utils/SafeBool.hh"
+#include "../../../Utils/SafeBool.hh"
 
 //#include "INet4Address.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

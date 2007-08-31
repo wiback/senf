@@ -32,10 +32,10 @@
 #include <exception>
 #include <netinet/in.h>
 #include <boost/operators.hpp>
-#include "Socket/SocketPolicy.hh"
-#include "Socket/ClientSocketHandle.hh"
-#include "Socket/CommunicationPolicy.hh"
-#include "Socket/Protocols/GenericAddressingPolicy.hh"
+#include "../../../Socket/SocketPolicy.hh"
+#include "../../../Socket/ClientSocketHandle.hh"
+#include "../../../Socket/CommunicationPolicy.hh"
+#include "../../../Socket/Protocols/GenericAddressingPolicy.hh"
 #include "INet4Address.hh"
 #include "INet6Address.hh"
 

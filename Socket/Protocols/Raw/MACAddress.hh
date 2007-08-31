@@ -30,7 +30,7 @@
 #include <boost/array.hpp>
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
-#include "Utils/SafeBool.hh"
+#include "../../../Utils/SafeBool.hh"
 
 //#include "MACAddress.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

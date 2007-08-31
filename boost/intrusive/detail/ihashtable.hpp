@@ -12,7 +12,7 @@
 #ifndef BOOST_INTRUSIVE_IHASHTABLE_HPP
 #define BOOST_INTRUSIVE_IHASHTABLE_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
+#include "config_begin.hpp"
 //std C++
 #include <functional>
 #include <iterator>
@@ -25,12 +25,12 @@
 #include <boost/static_assert.hpp>
 #include <boost/functional/hash.hpp>
 //General intrusive utilities
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
-#include <boost/intrusive/linking_policy.hpp>
+#include "pointer_type.hpp"
+#include "pointer_to_other.hpp"
+#include "../linking_policy.hpp"
 //Implementation utilities
-#include <boost/intrusive/iunordered_set_hook.hpp>
-#include <boost/intrusive/islist.hpp>
+#include "../iunordered_set_hook.hpp"
+#include "../islist.hpp"
 #include <cstddef>
 #include <iterator>
 
@@ -1012,6 +1012,6 @@ class ihashtable
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_IHASHTABLE_HPP

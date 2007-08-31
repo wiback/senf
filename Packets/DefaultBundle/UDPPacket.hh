@@ -27,7 +27,7 @@
 #define HH_UDPPacket_ 1
 
 // Custom includes
-#include "Packets/Packets.hh"
+#include "../../Packets/Packets.hh"
 
 //#include "UDPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

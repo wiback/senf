@@ -28,11 +28,11 @@
 
 // Custom includes
 #include <algorithm>
-#include "Packets/PacketType.hh"
-#include "Packets/ParseInt.hh"
-#include "Packets/PacketRegistry.hh"
-#include "Packets/PacketParser.hh"
-#include "Packets/MPEGDVBBundle/DSMCCSection.hh"
+#include "../../Packets/PacketType.hh"
+#include "../../Packets/ParseInt.hh"
+#include "../../Packets/PacketRegistry.hh"
+#include "../../Packets/PacketParser.hh"
+#include "../../Packets/MPEGDVBBundle/DSMCCSection.hh"
 
 
 //#include "DatagramSection.mpp"

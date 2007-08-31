@@ -87,7 +87,7 @@ namespace senf {
 
         ProtocolServerSocketHandle();
 
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, "Socket/ProtocolServerSocketHandle.mpp", 1))
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, SENF_ABSOLUTE_INCLUDE_PATH(Socket/ProtocolServerSocketHandle.mpp), 1))
 #       include BOOST_PP_ITERATE()
 
         /** \brief Create uninitialized socket variable

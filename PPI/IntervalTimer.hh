@@ -27,7 +27,7 @@
 #define HH_IntervalTimer_ 1
 
 // Custom includes
-#include "Scheduler/ClockService.hh"
+#include "../Scheduler/ClockService.hh"
 #include "Events.hh"
 
 //#include "IntervalTimer.mpp"

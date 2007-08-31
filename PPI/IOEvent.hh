@@ -27,7 +27,7 @@
 #define HH_IOEvent_ 1
 
 // Custom includes
-#include "Scheduler/Scheduler.hh"
+#include "../Scheduler/Scheduler.hh"
 #include "Events.hh"
 
 //#include "IOEvent.mpp"

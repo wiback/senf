@@ -27,7 +27,7 @@
 // Custom includes
 #include <boost/io/ios_state.hpp>
 #include "EthernetPacket.hh"
-#include "Socket/Protocols/INet/INetAddressing.hh"
+#include "../../Socket/Protocols/INet/INetAddressing.hh"
 
 //#include "IpV6Packet.mpp"
 #define prefix_

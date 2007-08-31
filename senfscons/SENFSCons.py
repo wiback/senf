@@ -346,6 +346,13 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = []):
 
     return objects
 
+def InstallIncludeFiles(env, files):
+    target = env.Dir(env['INCLUDEINSTALLDIR'])
+    base = env.Dir(env['INSTALL_BASE'])
+    for f in files:
+        src = env.File(f)
+        env.Alias('install_all', env.Install(target.Dir(src.dir.get_path(base)), src))
+
 def InstallWithSources(env, targets, dir, sources, testSources = [], no_includes = False):
     if type(sources) is type(()):
         sources, testSources = sources
@@ -363,7 +370,6 @@ def InstallWithSources(env, targets, dir, sources, testSources = [], no_includes
         source = targets
         if testSources:
             source.append( env.File('.test.bin') )
-            
             installs.append(env.InstallIncludes(
                 target = target,
                 source = targets,
@@ -617,3 +623,10 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
                                      no_includes)
         env.Alias('install_all', install)
     return program
+
+def AllIncludesHH(env, headers):
+    headers.sort()
+    file(env.File("all_includes.hh").abspath,"w").write("".join([ '#include "%s"\n' % f
+                                                                  for f in headers ]))
+    env.Clean('all','all_includes.hh')
+    

@@ -59,7 +59,7 @@
 
 // Custom includes
 #include <memory> // std::auto_ptr
-#include "Utils/SafeBool.hh"
+#include "../Utils/SafeBool.hh"
 
 //#include "FileHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

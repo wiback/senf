@@ -27,7 +27,7 @@
 #define HH_EventBinding_ 1
 
 // Custom includes
-#include "Scheduler/ClockService.hh"
+#include "../../Scheduler/ClockService.hh"
 #include "../predecl.hh"
 #include "Callback.hh"
 

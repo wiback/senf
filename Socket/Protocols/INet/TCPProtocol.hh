@@ -28,7 +28,7 @@
 #define HH_TCPProtocol_ 1
 
 // Custom includes
-#include "Socket/SocketProtocol.hh"
+#include "../../../Socket/SocketProtocol.hh"
 
 //#include "TCPProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

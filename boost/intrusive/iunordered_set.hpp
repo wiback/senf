@@ -13,8 +13,8 @@
 #ifndef BOOST_INTRUSIVE_IHASHSET_HPP
 #define BOOST_INTRUSIVE_IHASHSET_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
-#include <boost/intrusive/detail/ihashtable.hpp>
+#include "detail/config_begin.hpp"
+#include "detail/ihashtable.hpp"
 #include <iterator>
 
 namespace boost {
@@ -1649,6 +1649,6 @@ class iunordered_multiset
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "detail/config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_IHASHSET_HPP

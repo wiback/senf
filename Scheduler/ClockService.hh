@@ -30,7 +30,7 @@
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>
-#include "Utils/singleton.hh"
+#include "../Utils/singleton.hh"
 
 //#include "ClockService.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

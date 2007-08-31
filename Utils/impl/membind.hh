@@ -27,6 +27,7 @@
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/repetition/enum_shifted.hpp>
 #include <boost/preprocessor/iteration/iterate.hpp>
+#include "../../config.h"
 
 template <typename R, typename T>
 boost::function<R()> membind(R (T::* fn)(),scOBTYPE ob)
@@ -35,7 +36,7 @@ boost::function<R()> membind(R (T::* fn)(),scOBTYPE ob)
 }
 
 // for BOOST_PP_ITERATION() in 2..9 do
-#define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, "Utils/impl/membind.hh", 1))
+#define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, SENF_ABSOLUTE_INCLUDE_PATH(Utils/impl/membind.hh), 1))
 #include BOOST_PP_ITERATE()
 #elif BOOST_PP_ITERATION_DEPTH()==1 && BOOST_PP_ITERATION_FLAGS()==1
 // {{

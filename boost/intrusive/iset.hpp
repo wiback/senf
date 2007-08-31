@@ -13,8 +13,8 @@
 #ifndef BOOST_INTRUSIVE_ISET_HPP
 #define BOOST_INTRUSIVE_ISET_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
-#include <boost/intrusive/detail/irbtree.hpp>
+#include "detail/config_begin.hpp"
+#include "detail/irbtree.hpp"
 #include <iterator>
 
 namespace boost {
@@ -1567,6 +1567,6 @@ inline void swap(imultiset<V, P, C, S>& x, imultiset<V, P, C, S>& y)
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "detail/config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_ISET_HPP

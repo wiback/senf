@@ -39,12 +39,12 @@
 #ifndef BOOST_INTRUSIVE_RBTREE_NODE_HPP
 #define BOOST_INTRUSIVE_RBTREE_NODE_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
+#include "config_begin.hpp"
 #include <iterator>
 #include <boost/assert.hpp>
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
-#include <boost/intrusive/rbtree_algorithms.hpp>
+#include "pointer_type.hpp"
+#include "pointer_to_other.hpp"
+#include "../rbtree_algorithms.hpp"
 #include <boost/get_pointer.hpp>
 //#include <boost/interprocess/offset_ptr.hpp>
 #include <boost/type_traits/alignment_of.hpp>
@@ -354,6 +354,6 @@ class rbtree_iterator
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_RBTREE_NODE_HPP

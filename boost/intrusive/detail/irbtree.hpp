@@ -12,7 +12,7 @@
 #ifndef BOOST_INTRUSIVE_IRBTREE_HPP
 #define BOOST_INTRUSIVE_IRBTREE_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
+#include "config_begin.hpp"
 #include <functional>
 #include <iterator>
 #include <boost/utility.hpp>
@@ -20,13 +20,13 @@
 #include <utility>
 #include <boost/assert.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
-#include <boost/intrusive/iset_hook.hpp>
-#include <boost/intrusive/detail/rbtree_node.hpp>
-#include <boost/intrusive/detail/ebo_holder.hpp>
-#include <boost/intrusive/rbtree_algorithms.hpp>
-#include <boost/intrusive/linking_policy.hpp>
+#include "pointer_type.hpp"
+#include "pointer_to_other.hpp"
+#include "../iset_hook.hpp"
+#include "rbtree_node.hpp"
+#include "ebo_holder.hpp"
+#include "../rbtree_algorithms.hpp"
+#include "../linking_policy.hpp"
 #include <cstddef>
 #include <iterator>
 
@@ -1183,6 +1183,6 @@ inline void swap(irbtree<V, P, C, S>& x, irbtree<V, P, C, S>& y)
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_IRBTREE_HPP

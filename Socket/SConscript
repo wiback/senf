@@ -1,10 +1,12 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons
-import glob
+import SENFSCons, glob
 
 ###########################################################################
+
+SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
+                               if f not in ('all_includes.hh','Socket.hh') and not f.endswith('.test.hh') ])
 
 sources, testSources = SENFSCons.GlobSources()
 
@@ -29,3 +31,4 @@ SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('Handle.dia'),
 ])
 
+SENFSCons.InstallIncludeFiles(env, [ 'Socket.hh', 'all_includes.hh' ])

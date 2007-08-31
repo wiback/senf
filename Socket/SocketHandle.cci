@@ -27,7 +27,7 @@
 #include "SocketHandle.ih"
 
 // Custom includes
-#include "Utils/Exception.hh"
+#include "../Utils/Exception.hh"
 #include "SocketProtocol.hh"
 
 #define prefix_ inline

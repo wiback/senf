@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,57 +21,22 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DVBDemuxProtocol public header */
+    \brief Socket public header */
 
-#ifndef HH_DVBDemuxProtocol_
-#define HH_DVBDemuxProtocol_ 1
+#ifndef HH_Socket_
+#define HH_Socket_ 1
 
-#include <linux/dvb/dmx.h> 
+#include "all_includes.hh"
 
-// Custom includes
-#include "../../../Socket/SocketProtocol.hh"
-
-//#include "DVBProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
-
-namespace senf {
-
-    /// \addtogroup protocol_facets_group
-    /// @{
-
-    /** xxx
-     */
-    class DVBDemuxProtocol
-        : public virtual SocketProtocol
-    {
-    public:
-        void setBufferSize(unsigned long size) const;
-        
-        void startFiltering() const;
-        void stopFiltering() const;
-        
-        ///\name Abstract Interface Implementation
-        ///@{
-        
-        bool eof() const;
-
-        ///@}
-    };
-}
-
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "DVBDemuxProtocol.cci"
-//#include "DVBDemuxProtocol.ct"
-//#include "DVBDemuxProtocol.cti"
 #endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

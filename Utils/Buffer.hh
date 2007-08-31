@@ -78,7 +78,7 @@
         either pointer to \a type or array of \a type:
 
         \code
-          #include "Utils/Buffer.hh"
+          #include "../Utils/Buffer.hh"
 
           void foo(std::string const & str)
           {

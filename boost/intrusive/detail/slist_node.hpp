@@ -14,12 +14,12 @@
 #ifndef BOOST_INTRUSIVE_SLIST_NODE_HPP
 #define BOOST_INTRUSIVE_SLIST_NODE_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
+#include "config_begin.hpp"
 #include <iterator>
 #include <boost/assert.hpp>
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
-#include <boost/intrusive/slist_algorithms.hpp>
+#include "pointer_type.hpp"
+#include "pointer_to_other.hpp"
+#include "../slist_algorithms.hpp"
 #include <boost/get_pointer.hpp>
 #include <cstddef>
 
@@ -105,6 +105,6 @@ class slist_iterator
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_SLIST_NODE_HPP

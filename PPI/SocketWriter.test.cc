@@ -27,8 +27,8 @@
 //#include "SocketWriter.test.ih"
 
 // Custom includes
-#include "Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
+#include "../Socket/Protocols/INet/UDPSocketHandle.hh"
+#include "../Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
 #include "SocketReader.hh"
 #include "DebugModules.hh"
 #include "SocketWriter.hh"

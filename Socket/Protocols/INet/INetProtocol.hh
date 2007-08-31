@@ -34,10 +34,10 @@
 #define HH_INetProtocol_ 1
 
 // Custom includes
-#include "Socket/SocketProtocol.hh"
+#include "../../../Socket/SocketProtocol.hh"
 #include "INetAddressing.hh"
-#include "Socket/ClientSocketHandle.hh"
-#include "Socket/CommunicationPolicy.hh"
+#include "../../../Socket/ClientSocketHandle.hh"
+#include "../../../Socket/CommunicationPolicy.hh"
 
 //#include "INetProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

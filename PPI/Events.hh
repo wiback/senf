@@ -26,7 +26,7 @@
 
 // Custom includes
 #include <vector>
-#include "Scheduler/ClockService.hh"
+#include "../Scheduler/ClockService.hh"
 #include "predecl.hh"
 
 //#include "Events.mpp"

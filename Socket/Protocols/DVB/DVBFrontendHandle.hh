@@ -29,12 +29,12 @@
 // Custom includes
 #include <boost/cstdint.hpp>
 #include <linux/dvb/frontend.h> 
-#include "Socket/BufferingPolicy.hh"
-#include "Socket/FramingPolicy.hh"
-#include "Socket/CommunicationPolicy.hh"
-#include "Socket/ReadWritePolicy.hh"
-#include "Socket/ProtocolClientSocketHandle.hh"
-#include "Socket/SocketProtocol.hh"
+#include "../../../Socket/BufferingPolicy.hh"
+#include "../../../Socket/FramingPolicy.hh"
+#include "../../../Socket/CommunicationPolicy.hh"
+#include "../../../Socket/ReadWritePolicy.hh"
+#include "../../../Socket/ProtocolClientSocketHandle.hh"
+#include "../../../Socket/SocketProtocol.hh"
 
 //#include "DVBFrontendHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

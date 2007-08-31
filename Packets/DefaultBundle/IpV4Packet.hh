@@ -27,8 +27,8 @@
 #define HH_IpV4Packet_ 1
 
 // Custom includes
-#include "Socket/Protocols/INet/INet4Address.hh"
-#include "Packets/Packets.hh"
+#include "../../Socket/Protocols/INet/INet4Address.hh"
+#include "../../Packets/Packets.hh"
 
 //#include "IpV4Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -27,7 +27,7 @@
 //#include "ModuleManager.ih"
 
 // Custom includes
-#include "Scheduler/Scheduler.hh"
+#include "../Scheduler/Scheduler.hh"
 #include "Module.hh"
 
 //#include "ModuleManager.mpp"

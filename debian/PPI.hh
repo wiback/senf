@@ -20,53 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief CloneSource public header */
-
-#ifndef HH_CloneSource_
-#define HH_CloneSource_ 1
-
-// Custom includes
-#include "../Packets/Packets.hh"
-#include "Module.hh"
-#include "Connectors.hh"
-
-//#include "CloneSource.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
-
-namespace senf {
-namespace ppi {
-namespace module {
-
-    /** \brief Generate clone's of a template packet
-
-        CloneSource will provide clone's of a template \a packet on it's \a output.
-
-        \ingroup sourcesink_modules
-     */
-    class CloneSource
-        : public Module
-    {
-        SENF_PPI_MODULE(CloneSource);
-    public:
-
-        connector::PassiveOutput output;
-
-        CloneSource(senf::Packet packet);
-
-    private:
-        void request();
-
-        senf::Packet packet_;
-    };
-
-}}}
-
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "CloneSource.cci"
-//#include "CloneSource.ct"
-//#include "CloneSource.cti"
-#endif
+#include "PPI/PPI.hh"
 
 
 // Local Variables:

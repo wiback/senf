@@ -28,8 +28,8 @@
 #include <deque>
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
-#include "Utils/SafeBool.hh"
-#include "Packets/Packets.hh"
+#include "../Utils/SafeBool.hh"
+#include "../Packets/Packets.hh"
 #include "predecl.hh"
 #include "detail/Callback.hh"
 #include "Queueing.hh"

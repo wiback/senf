@@ -14,13 +14,13 @@
 #ifndef BOOST_INTRUSIVE_ISET_HOOK_HPP
 #define BOOST_INTRUSIVE_ISET_HOOK_HPP
 
-#include <boost/intrusive/detail/config_begin.hpp>
-#include <boost/intrusive/detail/utilities.hpp>
-#include <boost/intrusive/detail/pointer_type.hpp>
-#include <boost/intrusive/detail/pointer_to_other.hpp>
-#include <boost/intrusive/detail/rbtree_node.hpp>
-#include <boost/intrusive/rbtree_algorithms.hpp>
-#include <boost/intrusive/linking_policy.hpp>
+#include "detail/config_begin.hpp"
+#include "detail/utilities.hpp"
+#include "detail/pointer_type.hpp"
+#include "detail/pointer_to_other.hpp"
+#include "detail/rbtree_node.hpp"
+#include "rbtree_algorithms.hpp"
+#include "linking_policy.hpp"
 #include <boost/get_pointer.hpp>
 #include <stdexcept>
 
@@ -685,6 +685,6 @@ class iset_auto_member_hook
 } //namespace intrusive 
 } //namespace boost 
 
-#include <boost/intrusive/detail/config_end.hpp>
+#include "detail/config_end.hpp"
 
 #endif //BOOST_INTRUSIVE_ISET_HOOK_HPP

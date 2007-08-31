@@ -33,12 +33,12 @@
 // Custom includes
 #include "INetProtocol.hh"
 #include "UDPProtocol.hh"
-#include "Socket/Protocols/BSDSocketProtocol.hh"
-#include "Socket/FramingPolicy.hh"
-#include "Socket/CommunicationPolicy.hh"
-#include "Socket/ReadWritePolicy.hh"
-#include "Socket/BufferingPolicy.hh"
-#include "Socket/ProtocolClientSocketHandle.hh"
+#include "../../../Socket/Protocols/BSDSocketProtocol.hh"
+#include "../../../Socket/FramingPolicy.hh"
+#include "../../../Socket/CommunicationPolicy.hh"
+#include "../../../Socket/ReadWritePolicy.hh"
+#include "../../../Socket/BufferingPolicy.hh"
+#include "../../../Socket/ProtocolClientSocketHandle.hh"
 
 //#include "UDPSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

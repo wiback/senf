@@ -27,7 +27,7 @@
 //#include "IntervalTimer.ih"
 
 // Custom includes
-#include "Scheduler/Scheduler.hh"
+#include "../Scheduler/Scheduler.hh"
 #include "EventManager.hh"
 
 //#include "IntervalTimer.mpp"

@@ -25,15 +25,15 @@
 #define HH_PacketInterpreter_ 1
 
 // Custom includes
-#include <boost/intrusive/ilist.hpp>
+#include "../boost/intrusive/ilist.hpp"
 #include <boost/optional.hpp>
 #include <boost/range.hpp>
 #include <boost/type_traits/aligned_storage.hpp>
 #include <boost/type_traits/alignment_of.hpp>
-#include "Utils/intrusive_refcount.hh"
-#include "Utils/pool_alloc_mixin.hh"
+#include "../Utils/intrusive_refcount.hh"
+#include "../Utils/pool_alloc_mixin.hh"
 #include "PacketData.hh"
-#include "Utils/TypeIdValue.hh"
+#include "../Utils/TypeIdValue.hh"
 
 //#include "PacketInterpreter.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

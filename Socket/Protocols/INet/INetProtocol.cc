@@ -29,7 +29,7 @@
 // Custom includes
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "Utils/Exception.hh"
+#include "../../../Utils/Exception.hh"
 
 //#include "INetProtocol.mpp"
 #define prefix_
