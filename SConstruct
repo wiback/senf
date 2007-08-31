@@ -53,6 +53,10 @@ if os.environ.get('debian_build'):
 else:
     rev = 'r' + os.popen("svnversion").read().strip().lower()
 
+logname = os.environ.get('LOGNAME')
+if not logname:
+    logname = pwd.getpwuid(os.getuid()).pw_name
+
 env.Append(
    CPPPATH = [ '#' ],
    LIBS = [ 'iberty', '$BOOSTREGEXLIB' ],
@@ -60,7 +64,7 @@ env.Append(
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
    ENV = { 'TODAY' : str(datetime.date.today()),
            'REVISION' : rev,
-           'LOGNAME' : os.environ['LOGNAME'], # needed by the debian build scripts
+           'LOGNAME' : logname, # needed by the debian build scripts
            'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1"
            },
 )

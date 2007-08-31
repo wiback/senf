@@ -1,7 +1,10 @@
 #----------------------------------------------------------------------
 # Some SCONS shortcuts
 #----------------------------------------------------------------------
-SCONS=scons
+
+CONCURRENCY_LEVEL ?= 1
+
+SCONS=scons -j $(CONCURRENCY_LEVEL)
 
 default: build
 
@@ -11,27 +14,32 @@ build:
 clean:
 	$(SCONS) --clean all
 
-all_docs all_tests:
+all_docs all_tests all:
 	$(SCONS) $@
 
 #----------------------------------------------------------------------
 # Subversion stuff
 #----------------------------------------------------------------------
-SVN_REVISION = $(shell svnversion)
 
 svn_version:
-	@echo $(SVN_REVISION)
+	@svnversion
 
 #----------------------------------------------------------------------
 # Building SENF requires some debian packages
 #----------------------------------------------------------------------
-DEB_BASE   = scons build-essential binutils-dev
-DEB_BOOST  = libboost-dev libboost-test-dev
-DEB_BOOST += libboost-date-time-dev libboost-regex-dev libboost-thread-dev
-DEB_DOC    = doxygen dia tidy xsltproc graphviz
+DEB_BASE   = build-essential
+
+# This line parses the 'Build-Depends' entry from debian/control
+DEB_SENF   = $(shell perl -an -F'[:,]' -e '					\
+	       	         BEGIN{ $$,=" " }					\
+	       	         $$P=0 if /^\S/;					\
+			 map {s/\(.*\)//} @F;					\
+	       	         print @F if $$P;					\
+	       	         if (/^Build-Depends:/) { print @F[1..$$\#F]; $$P=1 }'	\
+	       	     debian/control | xargs echo)
 
 prerequisites:
-	aptitude install $(DEB_BASE) $(DEB_BOOST) $(DEB_DOC)
+	aptitude install $(DEB_BASE) $(DEB_SENF)
 
 package:
 	$(SCONS) deb
