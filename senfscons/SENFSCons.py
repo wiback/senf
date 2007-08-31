@@ -248,7 +248,8 @@ def MakeEnvironment():
                    LINKFLAGS = [ '-g' ])
 
     env.Append(CPPDEFINES = [ '$EXTRA_DEFINES' ],
-               LIBS = [ '$EXTRA_LIBS' ])
+               LIBS = [ '$EXTRA_LIBS' ],
+               ALLLIBS = [])
 
     return env
 
