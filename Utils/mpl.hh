@@ -27,6 +27,7 @@
 #define HH_mpl_ 1
 
 // Custom includes
+#include "../config.hh"
 
 //#include "mpl.mpp"
 #include "mpl.ih"
@@ -37,10 +38,6 @@ namespace mpl {
 
     /** \defgroup senfmpl Low-level template meta programming helpers
      */
-
-#   ifndef SENF_MPL_RV_ALIGNMENT
-#       define SENF_MPL_RV_ALIGNMENT 16
-#   endif
 
     /** \brief Return-value type used to implement overload selection
 

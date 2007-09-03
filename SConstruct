@@ -33,7 +33,7 @@ def nonemptyFile(f):
     except OSError: return False
 
 def checkLocalConf(target, source, env):
-    if nonemptyFile('SConfig') or nonemptyFile('Doxyfile.local'):
+    if [ True for f in env['CONFIG_FILES'] if nonemptyFile(f) ]:
         print
         print "You have made local modifications to 'SConfig' and/or 'Doxyfile.local'."
         print "Building a debian package would remove those files."
@@ -73,8 +73,11 @@ logname = os.environ.get('LOGNAME')
 if not logname:
     logname = pwd.getpwuid(os.getuid()).pw_name
 
+def configFilesOpts(target, source, env, for_signature):
+    return [ '-I%s' % os.path.split(f)[1] for f in env['CONFIG_FILES'] ]
+
 env.Append(
-   CPPPATH = [ ],
+   CPPPATH = [ '#' ],
    LIBS = [ 'iberty', '$BOOSTREGEXLIB' ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
@@ -83,8 +86,10 @@ env.Append(
            'LOGNAME' : logname, # needed by the debian build scripts
            'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1"
            },
+   CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
+   CONFIG_FILES_OPTS = configFilesOpts,
    CLEAN_PATTERNS = [ '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
-   BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn -IDoxyfile.local -ISConfig",
+   BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn $CONFIG_FILES_OPTS",
 )
 
 Export('env')
@@ -94,15 +99,9 @@ Export('env')
 if not env.GetOption('clean') and not os.path.exists("Doxyfile.local"):
     Execute(Touch("Doxyfile.local"))
 
-# Create config.h
-file("config.h","w").write(
-"""#ifndef H_config_
-#define H_config_ 1
-// This looks stupid. However, we need this since the debian packaged Version
-// of SENF is installed in a 'senf' subdirectory which the source Version is not
-#define SENF_ABSOLUTE_INCLUDE_PATH(senf_relative_include_file_path) <%s/senf_relative_include_file_path>
-#endif
-""" % env.Dir('#').abspath)
+# Create local_config.h
+if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
+    Execute(Touch("local_config.hh"))
 
 ###########################################################################
 # Define build targets
@@ -115,6 +114,8 @@ SENFSCons.Doxygen(env)
 SENFSCons.DoxyXRef(env,
                    HTML_HEADER = '#/doclib/doxy-header-overview.html',
                    HTML_FOOTER = '#/doclib/doxy-footer.html')
+
+SENFSCons.InstallIncludeFiles(env, [ 'config.hh' ])
 
 # Build combined library 'libsenf'
 libsenf = env.Library(
@@ -141,5 +142,3 @@ env.Clean('all', [ os.path.join(path,f)
                    for path, subdirs, files in os.walk('.')
                    for pattern in env['CLEAN_PATTERNS']
                    for f in fnmatch.filter(files,pattern) ])
-
-env.Clean('all', 'config.h')

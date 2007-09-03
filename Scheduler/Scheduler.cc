@@ -201,8 +201,8 @@ prefix_ void senf::Scheduler::process()
                 i->second.cb();
             else
                 break;
-            timerMap_.erase(i);
             timerQueue_.pop();
+            timerMap_.erase(i);
         }
 
         if (events <= 0)

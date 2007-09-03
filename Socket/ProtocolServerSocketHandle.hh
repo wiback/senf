@@ -29,6 +29,7 @@
 
 // Custom includes
 #include "ServerSocketHandle.hh"
+#include "../config.hh"
 
 #include "ProtocolServerSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

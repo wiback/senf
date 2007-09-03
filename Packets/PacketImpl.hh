@@ -121,7 +121,7 @@ namespace detail {
         interpreter_list interpreters_;
 
         void eraseInterpreters(interpreter_list::iterator b, interpreter_list::iterator e);
-        void updateIterators(PacketData * self, iterator pos, difference_type n);
+        void updateIterators(PacketData * self, difference_type pos, difference_type n);
     };
 
 }}

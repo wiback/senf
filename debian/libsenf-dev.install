@@ -6,7 +6,7 @@ debian/tmp/usr/include/Scheduler usr/include/senf
 debian/tmp/usr/include/Socket usr/include/senf
 debian/tmp/usr/include/Utils usr/include/senf
 boost usr/include/senf
-debian/config.h usr/include/senf
+debian/local_config.hh usr/include/senf
 debian/Socket.hh usr/include/senf
 debian/Packets.hh usr/include/senf
 debian/PPI.hh usr/include/senf

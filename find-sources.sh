@@ -22,6 +22,7 @@ set -f
 find . \
 	-name .svn -prune -o \
 	-name doc -prune -o \
+	-name debian -prune -o \
 	-name "*.a" -o \
 	-name "*.o" -o \
 	-name "*~" -o \

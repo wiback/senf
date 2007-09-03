@@ -29,7 +29,7 @@
 
 // Custom includes
 #include "ClientSocketHandle.hh"
-#include "../config.h"
+#include "../config.hh"
 
 #include "ProtocolClientSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

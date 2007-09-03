@@ -60,25 +60,29 @@ readfrom(Handle & handle, ForwardWritableRange & range, typename Handle::Address
 // senf::detail::WriteRange<Handle,ForwardReadableRange,IsContiguous>
 
 template <class Handle, class ForwardReadableRange, bool IsContiguous>
-prefix_ typename boost::range_iterator<ForwardReadableRange>::type
+prefix_ typename boost::range_const_iterator<ForwardReadableRange>::type
 senf::detail::WriteRange<Handle,ForwardReadableRange,IsContiguous>::
 write(Handle & handle, ForwardReadableRange & range)
 {
     typename boost::range_size<ForwardReadableRange>::type nwrite (boost::size(range));
+    typename boost::range_const_iterator<ForwardReadableRange>::type i (boost::begin(range));
     SENF_SCOPED_BUFFER(char, buffer, nwrite);
-    std::copy(boost::begin(range), boost::end(range), buffer);
-    return handle.write(std::make_pair(buffer, buffer+nwrite));
+    std::copy(i, boost::end(range), buffer);
+    std::advance(i, handle.write(std::make_pair(buffer, buffer+nwrite)) - buffer);
+    return i;
 }
 
 template <class Handle, class ForwardReadableRange, bool IsContiguous>
-prefix_ typename boost::range_iterator<ForwardReadableRange>::type
+prefix_ typename boost::range_const_iterator<ForwardReadableRange>::type
 senf::detail::WriteRange<Handle,ForwardReadableRange,IsContiguous>::
 writeto(Handle & handle, ForwardReadableRange & range, typename Handle::Address const & addr)
 {
     typename boost::range_size<ForwardReadableRange>::type nwrite (boost::size(range));
+    typename boost::range_const_iterator<ForwardReadableRange>::type i (boost::begin(range));
     SENF_SCOPED_BUFFER(char, buffer, nwrite);
-    std::copy(boost::begin(range), boost::end(range), buffer);
-    return handle.writeto(std::make_pair(buffer, buffer+nwrite), addr);
+    std::copy(i, boost::end(range), buffer);
+    std::advance(i, handle.writeto(std::make_pair(buffer, buffer+nwrite), addr) - buffer);
+    return i;
 }
 
 ///////////////////////////////////////////////////////////////////////////

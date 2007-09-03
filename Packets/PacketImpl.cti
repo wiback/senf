@@ -37,8 +37,9 @@ template <class ForwardIterator>
 prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, ForwardIterator f,
                                               ForwardIterator l)
 {
+    difference_type ix (std::distance(begin(),pos));
     data_.insert(pos,f,l);
-    updateIterators(self,pos,std::distance(f,l));
+    updateIterators(self,ix,std::distance(f,l));
 }
 
 template <class InputIterator>

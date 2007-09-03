@@ -68,13 +68,13 @@ prefix_ typename boost::range_const_iterator<ForwardReadableRange>::type
 senf::detail::WriteRange<Handle, ForwardReadableRange, true>::
 write(Handle & handle, ForwardReadableRange & range)
 {
-    typename boost::range_const_iterator<ForwardReadableRange>::type const i 
+    typename boost::range_const_iterator<ForwardReadableRange>::type i 
         (boost::const_begin(range));
     char const * const ic (reinterpret_cast<char const *>(storage_iterator(i)));
-    return i + (handle.write(ic,
-                             reinterpret_cast<char const *>(
-                                 storage_iterator(boost::const_end(range))))
-                - ic);
+    std::advance(i, handle.write(ic,
+                                 reinterpret_cast<char const *>(
+                                     storage_iterator(boost::const_end(range)))) - ic);
+    return i;
 }
 
 template <class Handle, class ForwardReadableRange>
@@ -82,14 +82,13 @@ prefix_ typename boost::range_const_iterator<ForwardReadableRange>::type
 senf::detail::WriteRange<Handle, ForwardReadableRange, true>::
 writeto(Handle & handle, ForwardReadableRange & range, typename Handle::Address const & addr)
 {
-    typename boost::range_const_iterator<ForwardReadableRange>::type const i 
+    typename boost::range_const_iterator<ForwardReadableRange>::type i 
         (boost::const_begin(range));
     char const * const ic (reinterpret_cast<char const *>(storage_iterator(i)));
-    return i + (handle.writeto(addr,
-                               ic,
-                               reinterpret_cast<char const *>(
-                                   storage_iterator(boost::const_end(range))))
-                - ic);
+    std::advance(i, handle.writeto(addr, ic,
+                                   reinterpret_cast<char const *>(
+                                       storage_iterator(boost::const_end(range)))) - ic);
+    return i;
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -148,27 +148,32 @@ prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::size()
 
 prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, byte v)
 {
+    difference_type ix (std::distance(begin(),pos));
     data_.insert(pos,v);
-    updateIterators(self,pos,1);
+    updateIterators(self,ix,1);
 }
 
 prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, size_type n,
                                               byte v)
 {
+    difference_type ix (std::distance(begin(),pos));
     data_.insert(pos,n,v);
-    updateIterators(self,pos,n);
+    updateIterators(self,ix,n);
 }
 
 prefix_ void senf::detail::PacketImpl::erase(PacketData * self, iterator pos)
 {
+    difference_type ix (std::distance(begin(),pos));
     data_.erase(pos);
-    updateIterators(self,pos,-1);
+    updateIterators(self,ix,-1);
 }
 
 prefix_ void senf::detail::PacketImpl::erase(PacketData * self, iterator first, iterator last)
 {
+    difference_type ix (std::distance(begin(),first));
+    difference_type delta (std::distance(first,last));
     data_.erase(first,last);
-    updateIterators(self,first,-std::distance(first,last));
+    updateIterators(self,ix,-delta);
 }
 
 ///////////////////////////////////////////////////////////////////////////

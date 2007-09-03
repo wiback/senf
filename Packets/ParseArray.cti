@@ -26,13 +26,6 @@
 #include "ParseArray.ih"
 
 // Custom includes
-#include <algorithm>
-#if defined(_STLP_ALGORITHM) || (__GNUC__<4 && __GNUC_MINOR__<4)
-#define copy_n std::copy_n
-#else
-#include <ext/algorithm>
-#define copy_n __gnu_cxx::copy_n
-#endif
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -154,7 +147,6 @@ prefix_ void senf::detail::Parse_Array_iterator<ElementParser>::advance(int n)
     i_ += n*ElementParser::fixed_bytes;
 }
 
-#undef copy_n
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

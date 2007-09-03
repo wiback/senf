@@ -23,15 +23,52 @@
 /** \file
     \brief config public header */
 
-#ifndef H_config_
-#define H_config_ 1
+#ifndef HH_config_
+#define HH_config_ 1
 
 // Custom includes
 
 //#include "config.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-#define SENF_ABSOLUTE_INCLUDE_PATH(senf_relative_include_file_path) <senf/senf_relative_include_file_path>
+# include "local_config.hh"
+
+# ifndef SENF_ABSOLUTE_INCLUDE_PATH
+#     define SENF_ABSOLUTE_INCLUDE_PATH(senf_relative_include_file_path) <senf_relative_include_file_path>
+# endif
+
+# ifndef SENF_copy_n
+#     include <algorithm>
+#     if defined(__GNUC__) && ! defined(_STLP_ALGORITHM) && (__GNUC__>=4 || (__GNUC__==3 && __GNUC_MINOR__>=4))
+#         include <ext/algorithm>
+#         define SENF_copy_n __gnu_cxx::copy_n
+#     else
+#         define SENF_copy_n std::copy_n
+#     endif
+# endif
+
+# ifndef SENF_MPL_RV_ALIGNMENT
+#     define SENF_MPL_RV_ALIGNMENT 16
+# endif
+
+# if !defined(SENF_BUFFER_USE_LOCALS) && !defined(SENF_BUFFER_USE_ALLOCA) && !defined(SENF_BUFFER_USE_NEW)
+#
+#     if defined(__GNUC__)
+#         define SENF_BUFFER_USE_LOCALS 1
+#
+#     // Add other compilers here ...
+#
+#     // dynamic arrays are part of C99. Which is NOT part of C++ 
+#     // but lets try nonetheless ...
+#     elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+#         define SENF_BUFFER_USE_LOCALS 1
+#     endif
+#
+#     if !defined(SENF_BUFFER_USE_LOCALS) && !defined(SENF_BUFFER_USE_ALLOCA)
+#         define SENF_BUFFER_USE_NEW 1
+#     endif
+#
+# endif
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "config.cci"

@@ -57,7 +57,7 @@ prefix_ void senf::detail::PacketImpl::clear(PacketData * self)
         truncateInterpreters(n);
     iterator first (boost::next(begin(),self->begin_));
     data_.erase(first, boost::next(begin(),self->end_));
-    updateIterators(self,first,-self->size());
+    updateIterators(self,self->begin_,-self->size());
 }
 
 // private members
@@ -73,7 +73,7 @@ prefix_ void senf::detail::PacketImpl::eraseInterpreters(interpreter_list::itera
     }
 }
 
-prefix_ void senf::detail::PacketImpl::updateIterators(PacketData * self, iterator pos,
+prefix_ void senf::detail::PacketImpl::updateIterators(PacketData * self, difference_type pos,
                                                        difference_type n)
 {
     // I hate to change the PacketData representation from here, I would have preferred to let
@@ -101,7 +101,7 @@ prefix_ void senf::detail::PacketImpl::updateIterators(PacketData * self, iterat
     // c)
     interpreter_list::iterator const i_end (interpreters_.end());
     if (++i != i_end)
-        if (std::distance(begin(), pos) < difference_type(i->begin_))
+        if (pos <= difference_type(i->begin_))
             // pos is before the packet, it must then be before all futher packets ...
             for (; i != i_end; ++i) {
                 i->begin_ += n;

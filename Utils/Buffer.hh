@@ -27,30 +27,10 @@
 #define HH_Buffer_ 1
 
 // Custom includes
+#include "../config.hh"
 
 //#include "Buffer.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
-
-#if !defined(SENF_BUFFER_USE_LOCALS) && !defined(SENF_BUFFER_USE_ALLOCA) && !defined(SENF_BUFFER_USE_NEW)
-#   
-#
-#   if defined(__GNUC__)
-#       define SENF_BUFFER_USE_LOCALS 1
-#
-#   // Add other compilers here ...
-#
-#   // dynamic arrays are part of C99. Which is NOT part of C++ 
-#   // but lets try nonetheless ...
-#   elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#       define SENF_BUFFER_USE_LOCALS 1
-#
-#   endif
-#
-#   if !defined(SENF_BUFFER_USE_LOCALS) && !defined(SENF_BUFFER_USE_ALLOCA)
-#       define SENF_BUFFER_USE_NEW 1
-#   endif
-#
-#endif
 
 #if defined(SENF_BUFFER_USE_LOCALS)
 

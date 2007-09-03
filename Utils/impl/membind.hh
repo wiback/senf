@@ -27,7 +27,7 @@
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/repetition/enum_shifted.hpp>
 #include <boost/preprocessor/iteration/iterate.hpp>
-#include "../../config.h"
+#include "../../config.hh"
 
 template <typename R, typename T>
 boost::function<R()> membind(R (T::* fn)(),scOBTYPE ob)

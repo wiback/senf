@@ -32,21 +32,20 @@
 
 namespace senf {
 
-    // It is not very nice that we need to specialize on the exact iterator names.
-    // The preprocessor guard will need to be expanded by also giving the correct
-    // version numbers. We need to disable it when using stlport and so on ... 
-    // The problem is, that typedefs are not expanded when specializing ...
+    // It is not very nice that we need to specialize on the exact iterator names.  The preprocessor
+    // guard will need to be expanded by also giving the correct version numbers.  The problem is,
+    // that typedefs are not expanded when specializing ...
 
 #if defined(__GNUG__)
     template <class T, class Alloc>
     struct contiguous_storage_iterator<
-        __gnu_cxx::__normal_iterator<T*, std::vector<T,Alloc> > >
+        ::__gnu_cxx::__normal_iterator<T*, std::vector<T,Alloc> > >
         : public boost::true_type
     {};
 
     template <class CharT, class Traits, class Alloc>
     struct contiguous_storage_iterator< 
-        __gnu_cxx::__normal_iterator<CharT*, std::basic_string<CharT, Traits, Alloc> > >
+        ::__gnu_cxx::__normal_iterator<CharT*, std::basic_string<CharT, Traits, Alloc> > >
         : public boost::true_type
     {};
 #endif
