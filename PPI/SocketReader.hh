@@ -74,22 +74,26 @@ namespace module {
     /** \brief Input module reading data from an arbitrary FileHandle
 
         This input module will read data from a FileHandle object and parse the data according to
-        the \a Reader.
-        
-        The \a Reader must fulfill the following interface:
+        the \a Reader. The default reader is senf::ppi::PacketReader <> which reads the data into a
+        senf::DataPacket. To parse the data according to some other packet type, pass that packet
+        type to senf::ppi::PacketReader:
         \code
-          class SomeReader
-          {
-          public:
-              typedef unspecified_type Handle;   // type of handle requested
-              SomeReader();                      // default constructible
-              Packet operator()(Handle handle);  // extraction function
-          };
+        senf::ppi::module::ActiveSocketReader< senf::ppi::PacketReader<senf::EthernetPacket> > reader;
         \endcode
-        
+        declares a \a reader module reading senf::EthrtnetPacket's.
+
+        A \a Reader must fulfill the following interface:
+        \code
+        class SomeReader
+        {
+        public:
+            typedef unspecified_type Handle;   // type of handle requested
+            SomeReader();                      // default constructible
+            Packet operator()(Handle handle);  // extraction function
+        };
+        \endcode
         Whenever the FileHandle object is ready for reading, the \a Reader's \c operator() is called
-        to read a packet. The default \a Reader is \c PacketReader<>, which will read packets from a
-        datagram SocketHandle into DataPacket's. You may 
+        to read a packet.
 
         \ingroup io_modules
      */

@@ -73,7 +73,10 @@ namespace module {
         output module is active. This requires the file handle to be able to signal its readiness to
         accept more data via the Scheduler.
 
-        The \a Writer must fulfill the following interface:
+        The default \a Writer is senf::ppi::PacketWriter which will write out the complete packet to
+        the file handle.
+
+        A \a Writer must fulfill the following interface:
         \code
           class SomeWriter
           {
@@ -83,6 +86,7 @@ namespace module {
               void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
+        Whenever a packet is received for sending, the \a Writer's \c operator() is called.
 
         \ingroup io_modules
      */
@@ -115,6 +119,9 @@ namespace module {
         mechanism. Either this is desired (like for a UDP socket) or some additional bandwidth
         shaping needs to be used.
 
+        The default \a Writer is senf::ppi::PacketWriter which will write out the complete packet to
+        the file handle.
+
         The \a Writer must fulfill the following interface:
         \code
           class SomeWriter
@@ -125,6 +132,7 @@ namespace module {
               void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
+        Whenever a packet is received for sending, the \a Writer's \c operator() is called.
 
         \ingroup io_modules
      */
