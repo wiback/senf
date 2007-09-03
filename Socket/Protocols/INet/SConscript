@@ -5,6 +5,9 @@ import SENFSCons, glob
 
 ###########################################################################
 
+SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
+                               if f not in ('all_includes.hh','INet.hh') and not f.endswith('.test.hh') ])
+
 sources = SENFSCons.GlobSources()
 
 allob = []
@@ -15,5 +18,7 @@ allob.extend(
 for sc in glob.glob("*/SConscript"):
     ob = SConscript(sc)
     if ob : allob.extend(ob)
+
+SENFSCons.InstallIncludeFiles(env, [ 'INet.hh', 'all_includes.hh' ])
 
 Return('allob')

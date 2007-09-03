@@ -68,7 +68,8 @@ install: build
 #	# Add here commands to install the package into debian/tmp
 	scons  install_all final=1\
 		PREFIX='$(destdir)/usr' \
-		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc'
+		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc' \
+		INCLUDEINSTALLDIR='$$PREFIX/include/senf' 
 #       We need to install the example sourcecode
 	find Examples \( -name "*.hh" -o -name "*.cc" \) -printf "%P\n" | \
 		while read src; do \

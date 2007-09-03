@@ -98,11 +98,10 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
         void init_client(INet4SocketAddress const & address) const;
-                                        ///< Create client socket and connect
-                                        /**< Creates a new client socket and connects to the given
+                                        ///< Create client socket and bind
+                                        /**< Creates a new client socket and bind to the given
                                              address.
-
-                                             \param[in] address remote address to connect to */
+                                             \param[in] local address to bind to */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
@@ -164,10 +163,9 @@ namespace senf {
                                              constructor */
         void init_client(INet6SocketAddress const & address) const;
                                         ///< Create client socket and connect
-                                        /**< Creates a new client socket and connects to the given
+                                        /**< Creates a new client socket and bind to the given
                                              address.
-
-                                             \param[in] address remote address to connect to */
+                                             \param[in] local address to bind to */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */

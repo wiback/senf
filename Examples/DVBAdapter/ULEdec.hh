@@ -22,10 +22,10 @@
 
 // Definition of non-inline non-template functions
 
-#include "../../Scheduler/Scheduler.hh"
-#include "../../Packets/MPEGDVBBundle/TransportPacket.hh"
-#include "../../Packets/MPEGDVBBundle/SNDUPacket.hh"
-#include "../../Socket/Protocols/DVB/DVBDemuxHandles.hh"
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Packets/MPEGDVBBundle/TransportPacket.hh>
+#include <senf/Packets/MPEGDVBBundle/SNDUPacket.hh>
+#include <senf/Socket/Protocols/DVB.hh>
 
 
 class ULEdec

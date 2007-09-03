@@ -64,7 +64,7 @@
 
     Above image depicts the module setup implementing the rate stuffer. A
     senf::ppi::module::ActiveSocketReader reads the incoming UDP packets and sends them into a
-    senf::ppi::module::PassiveQueue.
+    senf::ppi::module::PassiveQueue (via a senf::ppi::module::ThrottleBarrier).
 
     The \a queue feeds the packets into a senf::ppi::module::PriorityJoin. The CloneSource
     \a generator is fed as second input into the \a join to provide the stuffing packets.
@@ -74,6 +74,14 @@
     ensures that read requests of the RateStuffer's input are always serviced, either from the \a
     queue or, if the \a queue output is throttled, from the \a generator.
 
+    The \a barrier is not strictly necessary. However, it makes the behavior of the RateStuffer
+    predictable in the case where packets need to be dropped. Without the
+    senf::ppi::module::ThrottleBarrier, the packets will be left in the kernel socket queue. Packets
+    will only start to be dropped when that queue fills up. The size of this queue cannot be easily
+    manipulated and it's initial size is immense. So to stop the kernel queue from filling up with
+    increasingly out-of-date packets, we add the \a barrier which will explicitly read and drop
+    excess packets.
+
     \section code Example code
 
     \dontinclude ratestuffer.cc
@@ -82,7 +90,7 @@
 
     \skip Custom
     \skip #include
-    \until Setup
+    \until PPI
 
     We also define some namespace aliases
 
@@ -104,8 +112,8 @@
     \until }
 
     The event is initialized to fire eery \a interval nanoseconds.  The traffic is routed 'across'
-    the timer which controls the traffic. The timer is then registered to call
-    RateFilter::timeout().
+    the timer which controls the traffic. This routing lets the module automatically handle
+    throttling events. The timer is registered to call RateFilter::timeout().
 
     \until }
 
@@ -113,8 +121,10 @@
     and forwarded to \a output.
 
     This is all there is to the RateFilter module. Due to the routing setup, the timer will
-    automatically be disabled if either \a input or \a output become throttled (which is not even
-    needed here).
+    automatically be disabled should either \a input or \a output become throttled. However, in this
+    specific case this should never happen: The \a input is connected (via the \a join) to the
+    senf::ppi::module::CloneSource, which will never throttle. The \a output is connected to a UDP
+    socket which also never throttles.
 
     \subsection ratestuffer The RateStuffer subnet
 
@@ -144,7 +154,7 @@
     generator and set the timing \a interval of the \a rateFilter.
     
     The \a input and \a output connector references are bound to the corresponding connectors we
-    want to expose: \a input to the \a queue's \a input and \a output to the \a rateStuffer's \a
+    want to expose: \a input to the \a barrier's \a input and \a output to the \a rateFilter's \a
     output.
 
     \until };
@@ -153,7 +163,7 @@
     discipline of the \a queue. This Completes the RateStuffer. This subnetwork can now be used like
     a module.
 
-    \subsection main Connecting the modules
+    \subsection main Application setup
 
     The applications main() method starts out by initializing the socket handles
 

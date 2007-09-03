@@ -1,13 +1,9 @@
 debian/tmp/usr/lib/libsenf.a
 debian/tmp/usr/lib/*.o usr/lib/senf-packets
-debian/tmp/usr/include/Packets usr/include/senf
-debian/tmp/usr/include/PPI usr/include/senf
-debian/tmp/usr/include/Scheduler usr/include/senf
-debian/tmp/usr/include/Socket usr/include/senf
-debian/tmp/usr/include/Utils usr/include/senf
+debian/tmp/usr/include/senf usr/include
 boost usr/include/senf
-debian/local_config.hh usr/include/senf
-debian/Socket.hh usr/include/senf
-debian/Packets.hh usr/include/senf
-debian/PPI.hh usr/include/senf
+local_config.hh usr/include/senf
+include/senf/Socket.hh usr/include/senf
+include/senf/Packets.hh usr/include/senf
+include/senf/PPI.hh usr/include/senf
 README usr/share/doc/libsenf-dev

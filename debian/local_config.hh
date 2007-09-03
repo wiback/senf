@@ -1,2 +1,0 @@
-
-#define SENF_ABSOLUTE_INCLUDE_PATH(senf_relative_include_file_path) <senf/senf_relative_include_file_path>

@@ -265,6 +265,7 @@ SystemException
 td
 templated
 ThresholdQueueing
+ThrottleBarrier
 todo
 tr
 TruncatedPacketException

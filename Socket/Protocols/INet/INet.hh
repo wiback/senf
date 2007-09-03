@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,41 +20,23 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include <string>
-#include <iostream>
-#include <senf/Socket/Protocols/DVB.hh>
+/** \file
+    \brief INet public header */
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#ifndef HH_INet_
+#define HH_INet_ 1
 
-int main(int argc, char const * argv[])
-{
-    try {
-        senf::DVBFrontendHandle handle;
-        int16_t strength;
-        
-        while (true) {
-            handle.protocol().signalStrength(&strength);
-            std::cout << "signal strength: " << strength << "\n";
-            sleep(1);
-        }
-    }
-    catch (std::exception const & ex) {
-        std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
-    }
-    return 0;
-}
+#include "all_includes.hh"
 
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+#endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

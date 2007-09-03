@@ -16,4 +16,6 @@ for sc in glob.glob("*/SConscript"):
     ob = SConscript(sc)
     if ob : allob.extend(ob)
 
+SENFSCons.InstallIncludeFiles(env, [ 'INet.hh', 'Raw.hh' ])
+
 Return('allob')

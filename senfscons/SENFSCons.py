@@ -245,8 +245,8 @@ def MakeEnvironment():
                    CPPDEFINES = [ 'NDEBUG' ])
     else:
         env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
-    # The unit-test framework is not compiled with _GLIBCXX_DEBUG so this fails.
-    #               CPPDEFINES = [ '_GLIBCXX_DEBUG', 'BOOST_REGEX_NO_LIB' ],
+    # The boost-regex library is not compiled with _GLIBCXX_DEBUG so this fails.
+    #               CPPDEFINES = [ '_GLIBCXX_DEBUG' ],
                    LINKFLAGS = [ '-g' ])
 
     env.Append(CPPDEFINES = [ '$EXTRA_DEFINES' ],

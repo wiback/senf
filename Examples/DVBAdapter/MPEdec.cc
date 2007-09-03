@@ -29,15 +29,13 @@
 #include <linux/sockios.h>
 #include <linux/dvb/dmx.h> 
 
-#include "../../Scheduler/Scheduler.hh"
-#include "../../Packets/DefaultBundle/EthernetPacket.hh"
-#include "../../Packets/MPEGDVBBundle/DatagramSection.hh"
-#include "../../Utils/membind.hh"
-#include "../../Utils/hexdump.hh"
-#include "../../Socket/Protocols/DVB/DVBDemuxHandles.hh"
-#include "../../Packets/ParseInt.hh"
-#include "../../Packets/Packet.hh"
-#include "../../Packets/PacketData.hh"
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include <senf/Packets/MPEGDVBBundle/DatagramSection.hh>
+#include <senf/Utils/membind.hh>
+#include <senf/Utils/hexdump.hh>
+#include <senf/Socket/Protocols/DVB.hh>
+#include <senf/Packets.hh>
 
 #define PID 500
 

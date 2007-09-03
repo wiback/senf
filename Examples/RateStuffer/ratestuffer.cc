@@ -27,19 +27,8 @@
 //#include "ppitest.ih"
 
 // Custom includes
-#include "../../Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "../../Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
-#include "../../Socket/Protocols/INet/INetAddressing.hh"
-#include "../../PPI/SocketReader.hh"
-#include "../../PPI/SocketWriter.hh"
-#include "../../PPI/Module.hh"
-#include "../../PPI/IntervalTimer.hh"
-#include "../../PPI/Joins.hh"
-#include "../../PPI/ThrottleBarrier.hh"
-#include "../../PPI/PassiveQueue.hh"
-#include "../../PPI/Queueing.hh"
-#include "../../PPI/CloneSource.hh"
-#include "../../PPI/Setup.hh"
+#include <senf/Socket/Protocols/INet.hh>
+#include <senf/PPI.hh>
 
 //#include "ppitest.mpp"
 #define prefix_
@@ -136,8 +125,8 @@ public:
 
 int main(int argc, char * argv[])
 {
-    senf::UDPv4ClientSocketHandle inputSocket;
-    inputSocket.bind(senf::INet4SocketAddress("0.0.0.0:44344"));
+    senf::UDPv4ClientSocketHandle inputSocket(
+        senf::INet4SocketAddress("0.0.0.0:44344"));
 
     senf::ConnectedUDPv4ClientSocketHandle outputSocket(
         senf::INet4SocketAddress("localhost:44345"));

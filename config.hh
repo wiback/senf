@@ -34,7 +34,7 @@
 # include "local_config.hh"
 
 # ifndef SENF_ABSOLUTE_INCLUDE_PATH
-#     define SENF_ABSOLUTE_INCLUDE_PATH(senf_relative_include_file_path) <senf_relative_include_file_path>
+#     define SENF_ABSOLUTE_INCLUDE_PATH(senf_relative_include_file_path) <senf/senf_relative_include_file_path>
 # endif
 
 # ifndef SENF_copy_n

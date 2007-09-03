@@ -29,11 +29,11 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
-#include "../../Socket/Protocols/Raw/PacketSocketHandle.hh"
-#include "../../Scheduler/Scheduler.hh"
-#include "../../Utils/membind.hh"
-#include "../../Utils/hexdump.hh"
-#include "../../Packets/DefaultBundle/EthernetPacket.hh"
+#include <senf/Socket/Protocols/Raw.hh>
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Utils/membind.hh>
+#include <senf/Utils/hexdump.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 //#include "Sniffer.mpp"
 #define prefix_

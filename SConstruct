@@ -77,7 +77,7 @@ def configFilesOpts(target, source, env, for_signature):
     return [ '-I%s' % os.path.split(f)[1] for f in env['CONFIG_FILES'] ]
 
 env.Append(
-   CPPPATH = [ '#' ],
+   CPPPATH = [ '#/include' ],
    LIBS = [ 'iberty', '$BOOSTREGEXLIB' ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
@@ -90,6 +90,8 @@ env.Append(
    CONFIG_FILES_OPTS = configFilesOpts,
    CLEAN_PATTERNS = [ '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
    BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn $CONFIG_FILES_OPTS",
+   TOP_INCLUDES = [ 'Packets', 'PPI', 'Scheduler', 'Socket', 'Utils',
+                    'config.hh', 'local_config.hh' ]
 )
 
 Export('env')

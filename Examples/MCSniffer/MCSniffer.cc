@@ -29,11 +29,11 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
-#include "../../Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "../../Scheduler/Scheduler.hh"
-#include "../../Packets/DefaultBundle/EthernetPacket.hh"
-#include "../../Utils/membind.hh"
-#include "../../Utils/hexdump.hh"
+#include <senf/Socket/Protocols/INet.hh>
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include <senf/Utils/membind.hh>
+#include <senf/Utils/hexdump.hh>
 
 
 //#include "MCSniffer.mpp"
