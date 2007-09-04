@@ -31,7 +31,7 @@
 #include <netdb.h>
 #include <sys/socket.h>
 #include <boost/lexical_cast.hpp>
-#ifd defined(_REENTRANT) && !defined(__GLIBC__)
+#if defined(_REENTRANT) && !defined(__GLIBC__)
 #include <boost/thread/mutex.hpp>
 #endif
 
