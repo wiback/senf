@@ -151,9 +151,7 @@ namespace senf {
                                         ///< Add timeout event
                                         /**< \param[in] timeout timeout in nanoseconds
                                              \param[in] cb callback to call after \a timeout
-                                                 milliseconds
-                                             \todo Return some kind of handle/pointer and add
-                                                 support to update or revoke a timeout */
+                                                 milliseconds */
 
         void cancelTimeout(unsigned id);
 
