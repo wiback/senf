@@ -198,7 +198,7 @@ namespace connector {
                                              holds this input. In the second case, the pointer will
                                              automatically be bound to the containing instance.
 
-                                             \param[in] handle Handler to call on unthrottle
+                                             \param[in] handler Handler to call on unthrottle
                                                  notifications. */
         void onUnthrottle();            ///< Clear unthrottle notification handler
 
