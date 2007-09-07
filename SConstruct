@@ -62,6 +62,7 @@ install_all  Install SENF into $PREFIX
 deb          Build debian source and binary package
 debsrc       Build debian source package
 debbin       Build debian binary package
+linklint     Check links of doxygen documentation with 'linklint'
 """)
 
 if os.environ.get('debian_build'):
@@ -144,3 +145,14 @@ env.Clean('all', [ os.path.join(path,f)
                    for path, subdirs, files in os.walk('.')
                    for pattern in env['CLEAN_PATTERNS']
                    for f in fnmatch.filter(files,pattern) ])
+
+env.AlwaysBuild(env.Alias('linklint', [ 'all_docs' ], [
+    'rm -rf linklint',
+    'linklint -doc linklint -net -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
+    '[ -r linklint/errorX.html ] && python linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
+    '[ -r linklint/errorX.html.new ] && mv linklint/errorX.html.new linklint/errorX.html',
+    '[ -r linklint/errorAX.html ] && python linklint_addnames.py <linklint/errorAX.html >linklint/errorAX.html.new',
+    '[ -r linklint/errorAX.html.new ] && mv linklint/errorAX.html.new linklint/errorAX.html',
+    '@echo -e "\\nLokal link check results: linklint/index.html"',
+    '@echo -e "Remote link check results: linklint/urlindex.html\\n"'
+]))
