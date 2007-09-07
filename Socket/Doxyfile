@@ -1,7 +1,8 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = libSocket
-TAGFILES = "$(TOPDIR)/Utils/doc/Utils.tag"
 GENERATE_TAGFILE = doc/Socket.tag
 RECURSIVE = Yes
 SHOW_DIRECTORIES = Yes
+
+TAGFILES = "$(TOPDIR)/Utils/doc/Utils.tag"

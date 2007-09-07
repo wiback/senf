@@ -51,13 +51,14 @@ namespace senf {
         class only allows changing those fields which need to be changed. The other fields are
         read-only. They are filled by the operating system when receiving a packet
 
+        \nosubgrouping
      */
     class LLSocketAddress
     {
     public:
         /** \brief Valid pkttype() values
 
-            These are the possible values returned by arptype() 
+            These are the possible values returned by pkttype() 
          */
         enum PktType { Undefined = 0
                      , Host      = PACKET_HOST      /**< Packet destined for this host */
@@ -68,6 +69,10 @@ namespace senf {
                      , Outgoing  = PACKET_OUTGOING  /**< Packet sent out from this host */
         };
         
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
         LLSocketAddress();              ///< Create empty address
         explicit LLSocketAddress(unsigned proto, std::string const & iface="");
                                         ///< Create address for \c bind()
@@ -90,7 +95,9 @@ namespace senf {
                                              \param addr Address to send data to
                                              \param iface Interface to send packet from */
 
-        void clear();                   ///< Clear the address
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
 
         unsigned protocol() const;      ///< Return address protocol (ethertype)
         std::string interface() const;  ///< Return interface name

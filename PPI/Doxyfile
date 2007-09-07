@@ -1,9 +1,12 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = libPPI
-GENERATE_TAGFILE = doc/ppi.tag
+GENERATE_TAGFILE = doc/PPI.tag
 RECURSIVE = Yes
 SHOW_DIRECTORIES = Yes
 
-TAGFILES = "$(TOPDIR)/Packets/doc/Packets.tag" "$(TOPDIR)/Socket/doc/Socket.tag" "$(TOPDIR)/Utils/doc/Utils.tag" "$(TOPDIR)/Scheduler/doc/Scheduler.tag"
-GENERATE_TAGFILE = "doc/PPI.tag"
+TAGFILES = \
+	"$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
+	"$(TOPDIR)/Packets/doc/Packets.tag" \
+	"$(TOPDIR)/Socket/doc/Socket.tag" \
+	"$(TOPDIR)/Utils/doc/Utils.tag"

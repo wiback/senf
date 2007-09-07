@@ -1,7 +1,12 @@
-@INCLUDE         = "$(TOPDIR)/doclib/Doxyfile.global"
+@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
-PROJECT_NAME     = MPEGDVBBundle
-TAGFILES         = "$(TOPDIR)/Utils/doc/Utils.tag" "$(TOPDIR)/Packets/doc/Packets.tag"
+PROJECT_NAME = MPEGDVBBundle
 GENERATE_TAGFILE = doc/MPEGDVBBundle.tag
-INPUT            = .
+INPUT = .
 ALPHABETICAL_INDEX = NO
+
+TAGFILES = \
+	"$(TOPDIR)/Packets/doc/Packets.tag" \
+	"$(TOPDIR)/Socket/doc/Socket.tag" \
+	"$(TOPDIR)/Utils/doc/Utils.tag" 
+

@@ -178,8 +178,12 @@ namespace module {
     protected:
         Module();
 
+#ifndef DOXYGEN
         template <class Source, class Target>
         Route<Source, Target> & route(Source & source, Target & target); 
+#else
+        Route<connector::InputConnector, connector::OutputConnector> &
+        route(connector::InputConnector & input, connector::OutputConnector & output);
                                         ///< Define flow information
                                         /**< Using the route() and noroute() members, the
                                              information flow within the module is defined. Routing
@@ -200,10 +204,21 @@ namespace module {
                                              parameters like throttling parameters.
                                              
                                              \param[in] source Data source, object which controls
-                                                 incoming data
+                                                 incoming data (connector or event)
                                              \param[in] target Data target, object which controls
-                                                 outgoing data
+                                                 outgoing data (connector or event)
                                              \returns Route instance describing this route */
+
+        Route<connector::InputConnector, EventDescriptor> &
+        route(connector::InputConnector & input, EventDescriptor & output);
+                                        ///< Define flow information
+                                        /**< \see \ref route() */
+
+        Route<EventDescriptor, connector::OutputConnector> &
+        route(EventDescriptor & input, connector::OutputConnector & output);
+                                        ///< Define flow information
+                                        /**< \see \ref route() */
+#endif
 
         void noroute(connector::Connector & connector); ///< Define terminal connectors
                                         /**< The noroute() member explicitly declares, that a
@@ -244,9 +259,7 @@ namespace module {
 
 #ifndef DOXYGEN
         virtual void macro_SENF_PPI_MODULE_missing() = 0;
-#endif
 
-#ifndef DOXYGEN
     private:
 #endif
         virtual void init();            ///< Called just before the network is run

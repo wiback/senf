@@ -93,87 +93,176 @@
 #
 # You will find all this in the DoxyEmitter
 
-import os, sys, traceback
+import os, sys, traceback, string
 import os.path
 import glob, re
 import SCons.Action
 from fnmatch import fnmatch
 
-EnvVar = re.compile(r"\$\(([0-9A-Za-z_-]+)\)")
+class DoxyfileLexer:
+
+   def __init__(self,stream):
+      self._stream = stream
+      self._buffer = ""
+      self.lineno = 0
+      self._eof = False
+      self._fillbuffer()
+      
+   VARIABLE_RE = re.compile("[@A-Z_]+")
+   OPERATOR_RE = re.compile("\\+?=")
+   VALUE_RE = re.compile("\\S+")
+
+   def _readline(self):
+      if self._eof:
+         self._buffer = ""
+         return
+      self._buffer = self._stream.readline()
+      if not self._buffer:
+         self._eof = True
+         return
+      self._buffer = self._buffer.strip()
+      self.lineno += 1
+
+   def _skip(self, nchars=0):
+      self._buffer = self._buffer[nchars:].strip()
+      while self._buffer[:1] == '\\' and not self.eof():
+         self._readline()
+      if self._buffer[:1] == '#':
+         self._buffer=""
+      
+   def _fillbuffer(self):
+      while not self._buffer and not self.eof():
+         self._readline()
+         self._skip()
+
+   def _token(self, re, read=False):
+      if not self._buffer and read:
+         self._fillbuffer()
+      if not self._buffer:
+         return ""
+      m = re.match(self._buffer)
+      if m:
+         v = self._buffer[:m.end()]
+         self._skip(m.end())
+         return v
+      else:
+         raise ValueError,"Invalid input"
+
+   def var(self): return self._token(self.VARIABLE_RE, True)
+   def op(self): return self._token(self.OPERATOR_RE)
+
+   def next(self):
+      if not self._buffer:
+         raise StopIteration
+      if self._buffer[0] == '"':
+         return self._qstr()
+      m = self.VALUE_RE.match(self._buffer)
+      if m:
+         v = self._buffer[:m.end()]
+         self._skip(m.end())
+         return v
+      else:
+         raise ValueError
+
+   def __iter__(self):
+      return self
+
+   QSKIP_RE = re.compile("[^\\\"]+")
+   
+   def _qstr(self):
+      self._buffer = self._buffer[1:]
+      v = ""
+      while self._buffer:
+          m = self.QSKIP_RE.match(self._buffer)
+          if m:
+             v += self._buffer[:m.end()]
+             self._buffer = self._buffer[m.end():]
+          if self._buffer[:1] == '"':
+             self._skip(1)
+             return v
+          if self._buffer[:1] == '\\' and len(self._buffer)>1:
+             v += self._buffer[1]
+             self._buffer = self._buffer[2:]
+          else:
+             raise ValueError,"Unexpected charachter in string"
+      raise ValueError,"Unterminated string"
+
+   def eof(self):
+      return self._eof
+
+class DoxyfileParser:
+
+   ENVVAR_RE = re.compile(r"\$\(([0-9A-Za-z_-]+)\)")
+
+   def __init__(self, path, env, include_path=None, items = None):
+      self._env = env
+      self._include_path = include_path or []
+      self._lexer = DoxyfileLexer(file(path))
+      self._dir = os.path.split(path)[0]
+      self._items = items or {}
+
+   def parse(self):
+      while True:
+         var = self._lexer.var()
+         if not var: break;
+         op = self._lexer.op()
+         value = [ self._envsub(v) for v in self._lexer ]
+         if not value:
+            raise ValueError,"Missing value in assignment"
+         if var[0] == '@':
+            self._meta(var,op,value)
+         elif op == '=':
+            self._items[var] = value
+         else:
+            self._items.setdefault(var,[]).extend(value)
+
+   def _envsub(self,value):
+      return self.ENVVAR_RE.sub(lambda m, env=self._env : str(env.get(m.group(1),"")), value)
+
+   def _meta(self, cmd, op, value):
+      m = '_'+cmd[1:]
+      try:
+         m = getattr(self,m)
+      except AttributeError:
+         raise ValueError,'Unknown meta command ' + cmd
+      m(op,value)
+
+   def _INCLUDE(self, op, value):
+      if len(value) != 1:
+         raise ValueError,"Invalid argument to @INCLUDE"
+      
+      for d in [ self._dir ] + self._include_path:
+         p = os.path.join(d,value[0])
+         if os.path.exists(p):
+            self._items.setdefault('@INCLDUE',[]).append(p)
+            parser = DoxyfileParser(p, self._env, self._include_path, self._items)
+            parser.parse()
+            return
+
+      raise ValueError,"@INCLUDE file not found"
+
+   def _INCLUDE_PATH(self, op, value):
+      self._include_path.extend(value)
+
+   def items(self):
+      return self._items
 
 def DoxyfileParse(env,file):
    ENV = {}
    ENV.update(env.get("ENV",{}))
    ENV['TOPDIR'] = env.Dir('#').abspath
-   data = DoxyfileParse_(file,{},ENV)
+   parser = DoxyfileParser(file,ENV)
+   try:
+      parser.parse()
+   except ValueError, v:
+      print "WARNING: Error while parsing doxygen configuration '%s': %s" % (str(file),str(v))
+      return {}
+   data = parser.items()
    for k,v in data.items():
       if not v : del data[k]
       elif k in ("INPUT", "FILE_PATTERNS", "EXCLUDE_PATTERNS", "@INCLUDE", "TAGFILES") : continue
       elif len(v)==1 : data[k] = v[0]
    return data
-
-def DoxyfileParse_(file, data, ENV):
-   """
-   Parse a Doxygen source file and return a dictionary of all the values.
-   Values will be strings and lists of strings.
-   """
-   try:
-      dir = os.path.dirname(file)
-
-      import shlex
-      lex = shlex.shlex(instream=open(file), posix=True)
-      lex.wordchars += "*+=./-:@~$()"
-      lex.whitespace = lex.whitespace.replace("\n", "")
-      lex.escape = "\\"
-
-      lineno = lex.lineno
-      token = lex.get_token()
-      key = None
-      last_token = ""
-      key_token = True
-      next_key = False
-      new_data = True
-
-      def append_data(data, key, new_data, token):
-         if new_data or len(data[key]) == 0:
-            data[key].append(token)
-         else:
-            data[key][-1] += token
-
-      while token:
-         if token=='\n':
-            if last_token!='\\':
-               key_token = True
-         elif token=='\\':
-            pass
-         elif key_token:
-            key = token
-            key_token = False
-         else:
-            if token=="+=" or (token=="=" and key=="@INCLUDE"):
-               if not data.has_key(key):
-                  data[key] = []
-            elif token == "=":
-               data[key] = []
-            else:
-               token = EnvVar.sub(lambda m,ENV=ENV: str(ENV.get(m.group(1),"")),token)
-               append_data(data, key, new_data, token)
-               new_data = True
-               if key=='@INCLUDE':
-                  inc = os.path.join(dir,data['@INCLUDE'][-1])
-                  if os.path.exists(inc) :
-                     DoxyfileParse_(inc,data,ENV)
-
-         last_token = token
-         token = lex.get_token()
-
-         if last_token=='\\' and token!='\n':
-            new_data = False
-            append_data(data, key, new_data, '\\')
-
-      return data
-   except:
-      return {}
 
 def DoxySourceScan(node, env, path):
    """

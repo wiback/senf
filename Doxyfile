@@ -1,9 +1,14 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
-PROJECT_NAME      = Overview
-PROJECT_NUMBER    = "(Version $(REVISION))"
+PROJECT_NAME = Overview
+PROJECT_NUMBER = "(Version $(REVISION))"
+HTML_HEADER = doclib/doxy-header-overview.html
+GENERATE_XML = NO
+GENERATE_TAGFILE = doc/overview.tag
 
-HTML_HEADER       = doclib/doxy-header-overview.html
-GENERATE_XML      = NO
-
-GENERATE_TAGFILE  = doc/overview.tag
+TAGFILES = \
+	"$(TOPDIR)/PPI/doc/PPI.tag" \
+	"$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
+	"$(TOPDIR)/Packets/doc/Packets.tag" \
+	"$(TOPDIR)/Socket/doc/Socket.tag" \
+	"$(TOPDIR)/Utils/doc/Utils.tag"

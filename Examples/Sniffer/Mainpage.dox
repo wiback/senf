@@ -177,9 +177,9 @@
 
     \see \ref components \n
          \ref build \n
-         <a href="../../../Socket/doc/html/index.html"><b>libSocket API reference</b></a> \n
-         <a href="../../../Packets/doc/html/index.html"><b>libPackets API reference</b></a> \n
-         <a href="../../../Utils/doc/html/index.html"><b>libUtils API reference</b></a>
+         <a href="../../../../Socket/doc/html/index.html"><b>libSocket API reference</b></a> \n
+         <a href="../../../../Packets/doc/html/index.html"><b>libPackets API reference</b></a> \n
+         <a href="../../../../Utils/doc/html/index.html"><b>libUtils API reference</b></a>
  */
 
 
