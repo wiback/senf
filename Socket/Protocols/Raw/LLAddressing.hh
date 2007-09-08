@@ -98,6 +98,7 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
+        void clear();                   ///< Clear the address
 
         unsigned protocol() const;      ///< Return address protocol (ethertype)
         std::string interface() const;  ///< Return interface name
