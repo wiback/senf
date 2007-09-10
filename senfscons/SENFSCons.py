@@ -118,7 +118,7 @@ def Finalizer(f):
 # libraries are provided by the distribution, you probably don't need
 # to specify any parameters. If your configuration is more complex,
 # refer to the <a
-# href="http://www.boost.org/tools/build/v1/build_system.htm">Boost.Build</a>
+# href="http://www.boost.org/tools/build/v2/index.html">Boost.Build</a>
 # documentation for a definition of the terms used above (toolset,
 # variant, runtime ...).
 #

@@ -187,37 +187,60 @@ namespace module {
                                         ///< Define flow information
                                         /**< Using the route() and noroute() members, the
                                              information flow within the module is defined. Routing
-                                             may be specified either between inputs, outputs and
-                                             events. The routing information is used to perform
-                                             automatic throttling. The throttling behavior may
-                                             however be controlled manually.
+                                             may be defined between inputs, outputs and events. The
+                                             routing information is used to perform automatic
+                                             throttling. The throttling behavior may however be
+                                             controlled manually.
 
                                              Even if no automatic throttling is desired <em>it is
-                                             vital to define the flow information for all inputs and
-                                             outputs</em>. Without flow information important
+                                             essential to define the flow information for all inputs
+                                             and outputs</em>. Without flow information important
                                              internal state of the module cannot be
                                              initialized. This includes, explicitly defining
                                              terminal inputs and outputs using noroute. Event
-                                             routing however is optional.
+                                             routing is optional however.
 
                                              The return value may be used to alter routing
                                              parameters like throttling parameters.
-                                             
+
                                              \param[in] source Data source, object which controls
                                                  incoming data (connector or event)
                                              \param[in] target Data target, object which controls
                                                  outgoing data (connector or event)
-                                             \returns Route instance describing this route */
+                                             \returns Route instance describing this route 
+                                             \note The real implementation is not provided by three
+                                                 overloads but by a single template member */
 
         Route<connector::InputConnector, EventDescriptor> &
         route(connector::InputConnector & input, EventDescriptor & output);
                                         ///< Define flow information
-                                        /**< \see \ref route() */
+                                        /**< Route from a connector to an event.  Routing from a
+                                             connector to an event defines the event as the
+                                             conceptual 'receiver' of the data. This means, the
+                                             event is controlling the processing of received data
+                                             packets (Example: Routing from an input to an IOEvent
+                                             defines, that input data will be processed whenever the
+                                             event is signaled.).
+
+                                             This event routing allows to automatically
+                                             enable/disable the event on throttling notifications. 
+
+                                             \see \ref route() */
 
         Route<EventDescriptor, connector::OutputConnector> &
         route(EventDescriptor & input, connector::OutputConnector & output);
                                         ///< Define flow information
-                                        /**< \see \ref route() */
+                                        /**< Route from an event to a connector. Routing from an
+                                             event to a connector defeines the event as the
+                                             conceptual 'source' of the data. THis means, the event
+                                             controls how packets are sent (Example: Routing from an
+                                             IOEVent to an output defines, that output data will be
+                                             generated whenever the event is signaled).
+
+                                             This event routing allows to automatically
+                                             enable/disable the event on throttling notifications. 
+
+                                             \see \ref route() */
 #endif
 
         void noroute(connector::Connector & connector); ///< Define terminal connectors
@@ -231,8 +254,12 @@ namespace module {
                                              
                                              \param[in] connector Terminal connector to declare */
 
-        template <class Target, class Descriptor>
-        void registerEvent(Target target, Descriptor & descriptor);
+#ifndef DOXYGEN
+        template <class Descriptor, class Target>
+        void registerEvent(Descriptor & descriptor, Target target);
+#else
+        template <class Target>
+        void registerEvent(Target target, EventDescriptor & descriptor);
                                         ///< Register an external event
                                         /**< The \a target argument may be either an arbitrary
                                              callable object or it may be a member function pointer
@@ -242,14 +269,14 @@ namespace module {
                                              allows to access detailed information on the event
                                              delivered.
 
-                                             The \a descriptor describes the event to signal. This
-
-                                             may be a timer event or some type of I/O event on a
-                                             file descriptor or socket.
+                                             The \a descriptor describes the event to signal like a
+                                             timer event or some type of I/O event on a file
+                                             descriptor or socket.
 
                                              \param[in] target The handler to call whenever the
                                                  event is signaled
                                              \param[in] descriptor The type of event to register */
+#endif
 
         ClockService::clock_type time() const; ///< Time-stamp of the currently processing event
                                         /**< If available, this returns the scheduled time of the

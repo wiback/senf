@@ -37,7 +37,7 @@ template <class Writer>
 prefix_ senf::ppi::module::ActiveSocketWriter<Writer>::ActiveSocketWriter(Handle handle)
     : handle_(handle), event_(handle_, IOEvent::Write), writer_()
 {
-    registerEvent( &ActiveSocketWriter::write, event_ );
+    registerEvent( event_, &ActiveSocketWriter::write );
     route(input, event_);
 }
 

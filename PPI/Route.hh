@@ -44,6 +44,17 @@ namespace ppi {
     public:
         virtual ~RouteBase();
 
+#ifdef DOXYGEN
+        Source & source() const;        ///< Routing source
+                                        /**< \note The real implementation is in the \c
+                                             BaseRouteImplementation template in \c Route.ih. This
+                                             class is internal and not documented. */
+        Target & target() const;        ///< Routing target
+                                        /**< \note The real implementation is in the \c
+                                             BaseRouteImplementation template in \c Route.ih. This
+                                             class is internal and not documented. */
+#endif
+
     protected:
         RouteBase(module::Module & module);
 
@@ -119,9 +130,15 @@ namespace ppi {
         Route instances are created by Module::route statements. The Route class provides an
         interface to manipulate the flow processing.
 
-        The concrete interface provided depends on the type of route. If the route is a forwarding
-        route, it will be based on ForwardingRoute otherwise it will be based directly on
-        RouteBase.
+        Depending on the type of route, one of the following classes will be a baseclass:
+
+        <dl> <dt>ForwardingRoute</dt><dd>If the route is a \e forwarding route. This is a route
+        which forwards throttling notifications. This is the case, if one of the route endpoints is
+        a notify source (a connector::ActiveConnector) and the other is a
+        notify target (a connector::PassiveConnector or an EventDescriptor).
+
+        <dt>RouteBase</dt><dd>If the route is not a forwarding route, it is based directly on the
+        generic route base class</dd></dl>
      */
     template <class Source, class Target>
     class Route

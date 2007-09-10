@@ -193,6 +193,11 @@ prefix_ senf::ppi::connector::ActiveConnector::ActiveConnector()
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::InputConnector
 
+prefix_ senf::Packet senf::ppi::connector::InputConnector::read()
+{
+    return operator()();
+}
+
 prefix_ senf::ppi::connector::OutputConnector & senf::ppi::connector::InputConnector::peer()
     const
 {
@@ -254,6 +259,11 @@ prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet p)
 prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet p)
 {
     peer().enqueue(p);
+}
+
+prefix_ void senf::ppi::connector::OutputConnector::write(Packet p)
+{
+    operator()(p);
 }
 
 prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConnector::peer()

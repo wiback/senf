@@ -31,6 +31,8 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::Module
 
+#ifndef DOXYGEN
+
 template <class Source, class Target>
 prefix_ senf::ppi::Route<Source, Target> &
 senf::ppi::module::Module::route(Source & source, Target & target)
@@ -41,8 +43,20 @@ senf::ppi::module::Module::route(Source & source, Target & target)
                      new Route<Source,Target>(*this, source, target))));
 }
 
-template <class Target, class Descriptor>
-prefix_ void senf::ppi::module::Module::registerEvent(Target target, Descriptor & descriptor)
+#else
+prefix_ senf::ppi::Route<connector::InputConnector, connector::OutputConnector> &
+senf::ppi::module::Module::route(connector::InputConnector & input,
+                                 connector::OutputConnector & output)
+{}
+prefix_ senf::ppi::Route<connector::InputConnector, EventDescriptor> &
+senf::ppi::module::Module::route(connector::InputConnector & input, EventDescriptor & output)
+{}
+#endif
+
+#ifndef DOXYGEN
+
+template <class Descriptor, class Target>
+prefix_ void senf::ppi::module::Module::registerEvent(Descriptor & descriptor, Target target)
 {
     eventManager().registerEvent(
         *this,
@@ -50,6 +64,13 @@ prefix_ void senf::ppi::module::Module::registerEvent(Target target, Descriptor 
         descriptor);
     descriptor.enabled(true);
 }
+
+#else
+template <class Target>
+prefix_ void senf::ppi::module::Module::registerEvent(Target target,
+                                                      EventDescriptor & descriptor)
+{}
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::detail namespace members

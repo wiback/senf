@@ -25,7 +25,7 @@ fi
 rm -f ../svn-update.log
 
 echo '$ scons -k all'
-scons -k all
+scons -k all && scons fixlinks
 echo -n '# Build completed at '; date --utc
 
 exec >../upload.log 2>&1

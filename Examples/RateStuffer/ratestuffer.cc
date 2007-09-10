@@ -63,7 +63,7 @@ RateFilter::RateFilter(senf::ClockService::clock_type interval)
 {
     route(input,timer);
     route(timer,output);
-    registerEvent(&RateFilter::timeout, timer);
+    registerEvent(timer, &RateFilter::timeout);
 }
 
 void RateFilter::timeout()

@@ -53,7 +53,7 @@ namespace {
 
         TestModule() {
             noroute(output);
-            registerEvent(&TestModule::onEvent, event);
+            registerEvent(event, &TestModule::onEvent);
         }
 
         void onEvent() {

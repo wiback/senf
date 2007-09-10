@@ -255,6 +255,7 @@ namespace connector {
         typedef Queue::const_iterator queue_iterator; ///< Iterator type of the embedded queue
         typedef Queue::size_type size_type; ///< Unsigned type for counting queue elements
 
+
         Packet operator()();            ///< Get a packet
                                         /**< This member is the primary method to access received
                                              data. On passive connectors, this operator will just
@@ -264,6 +265,8 @@ namespace connector {
                                              request cannot be fulfilled, this is considered to be a
                                              logic error in the module implementation and an
                                              exception is raised. */
+
+        Packet read();                  ///< Alias for \ref operator()()
 
         OutputConnector & peer() const;
 
@@ -299,7 +302,9 @@ namespace connector {
         : public virtual Connector
     {
     public:
-        void operator()(Packet p);        ///< Send out a packet
+        void operator()(Packet p);      ///< Send out a packet
+
+        void write(Packet p);           ///< Alias for \ref operator()()
 
         InputConnector & peer() const;
 

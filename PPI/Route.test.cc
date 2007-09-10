@@ -70,7 +70,7 @@ namespace {
 
             passiveIn.onRequest(&RouteTester::inputRequest);
             passiveOut.onRequest(&RouteTester::outputRequest);
-            registerEvent(&RouteTester::onEvent, event);
+            registerEvent(event, &RouteTester::onEvent);
 
             activeIn.onThrottle(&RouteTester::throttleRequest);
             activeIn.onUnthrottle(&RouteTester::unthrottleRequest);

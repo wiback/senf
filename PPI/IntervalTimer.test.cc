@@ -60,7 +60,7 @@ namespace {
         :   timer ( senf::ClockService::milliseconds(d_) ), 
             n     ( n_ ) 
         {
-            registerEvent( &TimerTest::tick, timer );
+            registerEvent( timer, &TimerTest::tick );
         }
     };
 

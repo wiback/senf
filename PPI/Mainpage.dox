@@ -54,10 +54,8 @@
 
     The PPI interface is designed to be as simple as possible. It provides sane defaults for all
     configurable parameters to simplify getting started. It also automates all resource
-    management. Especially to simplify resource management, the PPI will take many configuration
-    objects by value. Even though this is not as efficient, it frees the user from most resource
-    management chores. This decision does not affect the runtime performance since it only affects
-    the configuration step.
+    management. The throttling infrastructure handles blocking conditions (like input exhaustion)
+    automatically 
 
     \section packets Packets
 

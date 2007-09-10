@@ -127,32 +127,38 @@ libsenf = env.Library(
 env.Default(libsenf)
 env.Alias('install_all', env.Install('$LIBINSTALLDIR', libsenf))
 
-env.AlwaysBuild(
-    env.Alias('deb', [], [ checkLocalConf,
-                           updateRevision,
-                           "$BUILDPACKAGE_COMMAND" ]))
-
-env.AlwaysBuild(
-    env.Alias('debsrc', [], [ updateRevision,
-                              "$BUILDPACKAGE_COMMAND -S" ]))
-
-env.AlwaysBuild(
-    env.Alias('debbin', [], [ checkLocalConf,
-                              updateRevision,
-                              "$BUILDPACKAGE_COMMAND -nc" ]))
-
 env.Clean('all', [ os.path.join(path,f)
                    for path, subdirs, files in os.walk('.')
                    for pattern in env['CLEAN_PATTERNS']
                    for f in fnmatch.filter(files,pattern) ])
 
-env.AlwaysBuild(env.Alias('linklint', [ 'all_docs' ], [
+env.AlwaysBuild(env.Alias('deb', [], [
+    checkLocalConf,
+    updateRevision,
+    "$BUILDPACKAGE_COMMAND" ]))
+
+env.AlwaysBuild(env.Alias('debsrc', [], [
+    updateRevision,
+    "$BUILDPACKAGE_COMMAND -S" ]))
+
+env.AlwaysBuild(env.Alias('debbin', [], [
+    checkLocalConf,
+    updateRevision,
+    "$BUILDPACKAGE_COMMAND -nc" ]))
+
+env.AlwaysBuild(env.Alias('linklint', [], [
     'rm -rf linklint',
     'linklint -doc linklint -net -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
-    '[ -r linklint/errorX.html ] && python linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
-    '[ -r linklint/errorX.html.new ] && mv linklint/errorX.html.new linklint/errorX.html',
-    '[ -r linklint/errorAX.html ] && python linklint_addnames.py <linklint/errorAX.html >linklint/errorAX.html.new',
-    '[ -r linklint/errorAX.html.new ] && mv linklint/errorAX.html.new linklint/errorAX.html',
+    '[ ! -r linklint/errorX.html ] || python linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
+    '[ ! -r linklint/errorX.html.new ] || mv linklint/errorX.html.new linklint/errorX.html',
+    '[ ! -r linklint/errorAX.html ] || python linklint_addnames.py <linklint/errorAX.html >linklint/errorAX.html.new',
+    '[ ! -r linklint/errorAX.html.new ] || mv linklint/errorAX.html.new linklint/errorAX.html',
     '@echo -e "\\nLokal link check results: linklint/index.html"',
     '@echo -e "Remote link check results: linklint/urlindex.html\\n"'
 ]))
+
+env.AlwaysBuild(env.Alias('fixlinks', [ 'linklint' ], [
+    '[ ! -r linklint/errorX.txt -o ! -r linklint/errorAX.txt ] || python doclib/fix-links.py -s .svn -s linklint -s debian linklint/errorX.txt linklint/errorAX.txt',
+]))    
+
+env.Clean('all', env.Dir('linklint'))
