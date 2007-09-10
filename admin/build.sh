@@ -24,8 +24,8 @@ if grep -qv '^At ' ../svn-update.log; then
 fi
 rm -f ../svn-update.log
 
-echo '$ scons -k all'
-scons -k all && scons fixlinks
+echo '$ scons -k all && scons fixlinks'
+scons -k all && scons linklint && scons fixlinks
 echo -n '# Build completed at '; date --utc
 
 exec >../upload.log 2>&1
