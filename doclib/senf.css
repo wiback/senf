@@ -398,6 +398,27 @@ table.members td:first-child {
         width: 35%;
 }
 
+div.toc {
+	width: 25%;
+        margin: 10px 0px;
+}
+
+div.toc ol {
+        padding: 0px;
+        margin: 0pt 0pt 0pt 40px;
+	list-style-type: decimal;
+}
+
+div.toc li {
+        padding: none;
+}
+
+div.toc div {
+        margin: 10px 0px;
+        font-weight: bold;
+        font-size: 120%
+}
+
 /* 
  * Local Variables:
  * indent-tabs-mode: nil
