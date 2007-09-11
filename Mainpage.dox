@@ -39,15 +39,15 @@
 
     To get started using this library, begin by checking out the code from the <a
     href="http://developer.berlios.de/svn/?group_id=7489">BerliOS SVN repository</a>. You may find
-    help on using the library at '\ref usage'. If you are interested in SENF, feel free to subscribe
+    help on using the library at '\ref senf_usage'. If you are interested in SENF, feel free to subscribe
     to the <a href="http://developer.berlios.de/mail/?group_id=7489">SENF mailing lists</a>. If you
-    want to contribute, read the docs and \e please adhere to the \ref conventions.
+    want to contribute, read the docs and \e please adhere to the \ref senf_conventions.
 
-    \see \ref usage\n
+    \see \ref senf_usage\n
          <a href="../../Examples/doc/html/index.html">Examples</a>
 */
 
-/** \page usage Using the SENF framework
+/** \page senf_usage Using the SENF framework
 
     The SENF Framework is a collection of loosely coupled modules. The libraries are heavily object
     oriented and template based. For compatibility reasons, the libraries are therefore built
@@ -57,12 +57,12 @@
     SENFSCons build environment and use SVN to manage the code repository. This is the
     configuration, described in this documentation.
 
-    \see \ref build \n
-         \ref components \n
-         \ref svnsetup \n
-         \ref overview
+    \see \ref senf_build \n
+         \ref senf_components \n
+         \ref senf_svnsetup \n
+         \ref senf_overview
 
-    \section Preliminaries
+    \section senf_preliminaries Preliminaries
 
     Before starting the development, make sure to fulfill the following requirements:
 
@@ -84,7 +84,7 @@
     which relies on \c epoll)
  */
 
-/** \page build Building the framework
+/** \page senf_build Building the framework
 
     This procedure will test building the complete framework including the unit tests and the
     Sniffer test application. This build is \e not needed to use the framework since every project
@@ -93,10 +93,10 @@
     After you have successfully built the library tests, you can continue to setup your own project
     using SENF.
 
-    \see \ref components \n
-         \ref svnsetup
+    \see \ref senf_components \n
+         \ref senf_svnsetup
 
-    \section checkout Getting the code
+    \section senf_checkout Getting the code
 
     To access the code, check out the code from the BerliOS repository. Change to your development
     directory and use the following subversion command
@@ -110,7 +110,7 @@
     http://subversion.tigris.org. A very good introduction and reference to subversion is available
     at http://svnbook.red-bean.com.
 
-    \section compile Building
+    \section senf_compile Building
 
     To build the library, execute all unit tests and build the Sniffer test application, use
 
@@ -126,13 +126,13 @@
     are just arbitrary examples).
  */
 
-/** \page components The SENF modules
+/** \page senf_components The SENF modules
 
     The framework is made up of several modular components. When using the library, it is possible
     to selectively choose to use only a subset of the implemented modules.
 
-    \see \ref build \n
-         \ref svnsetup
+    \see \ref senf_build \n
+         \ref senf_svnsetup
 
     \section libPPI libPPI: Packet Processing Infrastructure
 
@@ -191,14 +191,14 @@
     \see <a href="../../senfscons/doc/html/index.html">SENFSCons reference</a>
  */
 
-/** \page svnsetup Setting up a new project using SENF
+/** \page senf_svnsetup Setting up a new project using SENF
 
     The preferred way to use SENF in a new project is to rely on Subversion and make use of the
     SENFSCons build environment. The following sections will describe, how this setup works.
 
-    \see \ref build \n
-         \ref components \n
-         \ref overview
+    \see \ref senf_build \n
+         \ref senf_components \n
+         \ref senf_overview
 
     \section svnext Setting up the project repository
 
@@ -242,7 +242,7 @@
 
     and the code will be checked out into the corresponding directories.
 
-    \section new_conf Configuring SENFSCons
+    \section senf_new_conf Configuring SENFSCons
 
     To set up the build environment, copy the <tt>senfscons/SConstruct.template</tt> to
     <tt>SConstruct</tt> in the project root. The default setup of this file is to build all
@@ -289,7 +289,7 @@
          <a href="http://subversion.tigris.org">Subversion Homepage</a>
  */
 
-/** \page overview Introduction to the framework
+/** \page senf_overview Introduction to the framework
 
     The SENF framework is relatively complex and makes use of advanced features of the C++
     language. To make the most efficient use of the framework, you should have at least a basic
@@ -305,7 +305,7 @@
     standard library. It is designed, to integrate well into both libraries and to use the same
     concepts and ideas.
 
-    \section startup Getting starting developing with SENF
+    \section senf_startup Getting starting developing with SENF
 
     To introduce the framework and it's general structure, a simple example application is provided
     in the SENF repository in the \c Sniffer module. Peruse this example to get a first look at how
@@ -330,17 +330,17 @@
     The simplest way to get started is: copy the Sniffer application and start to modify it.
 
     \see <a href="../../Examples/doc/html/index.html">Examples</a> \n
-         \ref components \n
-         \ref svnsetup \n
-         \ref build
+         \ref senf_components \n
+         \ref senf_svnsetup \n
+         \ref senf_build
 
-    \section conventions Coding Conventions
+    \section senf_conventions Coding Conventions
     
     Here we have laid down the coding conventions used throughout the SENF framework. Please ad here
     to these conventions when changing or adding code. If you use emacs, you can use the C++ IDE for
     emacs from http://g0dil.de which greatly simplifies following these conventions.
 
-    \subsection conventions_file_naming File Naming
+    \subsection senf_conventions_file_naming File Naming
 
     Files should be named according to the main class they define. A single header file should
     define only one main class. Exceptions to this rule are OK.
@@ -387,7 +387,7 @@
         an implementation from one of the inline files into one of the non-inline files will change
         the type of implementation accordingly.
 
-    \subsection conventions_type_naming Type Naming
+    \subsection senf_conventions_type_naming Type Naming
 
     SENF prefers the use of the CapitalziedLettersToSeparateWords convention for class names. In
     this case, class names must start with a capital letter. There are some exceptions to this rule:
@@ -401,7 +401,7 @@
         name. This can also be used by the editor to highlight type names correctly. Additionally,
         this convention is compact and does not add additional or repeated overhead.
 
-    \subsection conventions_impl Implementation
+    \subsection senf_conventions_impl Implementation
 
     Only in very few places, SENF allows the use of inline implementations (not to be confused with
     inline functions). An \e implementation is inline, if it is written directly into the class

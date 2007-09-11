@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import sys,os.path,fnmatch, HTMLParser, getopt
+import sys,os.path,fnmatch, HTMLParser, getopt, re
 
 class HTMLFilter(HTMLParser.HTMLParser):
 
@@ -42,10 +42,10 @@ class HTMLFilter(HTMLParser.HTMLParser):
             self._out.write(data)
 
     def handle_charref(self,name):
-        self.handle_data(name)
+        self.handle_data('&#%s;' % name)
 
     def handle_entityref(self,name):
-        self.handle_data(name)
+        self.handle_data('&%s;' % name)
 
     def emit_starttag(self,tag,attrs):
         self.handle_data('<%s%s>' % (tag, "".join([' %s="%s"' % attr for attr in attrs])))
@@ -113,7 +113,15 @@ class AnchorIndex:
         for anchor in extractor.anchors():
             self._addAnchor(anchor, f)
 
+TAG_RE = re.compile("<[^>]*>")
+REF_RE = re.compile("&[^;]*;")
 
+def stripHTML(s):
+    s = TAG_RE.sub("",s)
+    s = s.replace("&nbsp;"," ").replace("\n"," ")
+    s = REF_RE.sub("?",s)
+    return s.strip()
+    
 class LinkFixer:
 
     def __init__(self, skipdirs=('.svn',)):
@@ -124,6 +132,7 @@ class LinkFixer:
         self._files = 0
         self._found = 0
         self._fixed = 0
+        self._removed = {}
 
     class LinkFilter(HTMLFilter):
 
@@ -132,39 +141,49 @@ class LinkFixer:
             self._index = index
             self._key = key
             self._topdir = topdir
-            self._skip_a = False
             self._found = 0
             self._fixed = 0
+            self._removed = {}
 
         def _s_A(self, attrs):
             self._skip_a = False
             if self._key in dict(attrs).get('href',''):
                 self._found += 1
                 ix = [ i for i, attr in enumerate(attrs) if attr[0] == 'href' ][0]
-                target = attrs[ix][1]
-                if '#' in target:
-                    anchor = target.split('#')[1]
-                    target = self._index[anchor]
-                    if target:
-                        target = '%s#%s' % (target, anchor)
+                anchor = attrs[ix][1]
+                if '#' in anchor:
+                    anchor = anchor.split('#')[1]
+                    a = anchor
+                    target = None
+                    while not target:
+                        target = self._index[a]
+                        if target:
+                            target = '%s#%s' % (target, a)
+                        elif a.startswith('g'):
+                            a = a[1:]
+                        else:
+                            break
                 else:
-                    target = self._index[os.path.split(target)[1]]
+                    anchor = os.path.split(anchor)[1]
+                    target = self._index[anchor]
                 if target:
                     self._fixed += 1
                     attrs[ix] = ('href', os.path.join(self._topdir,target))
                 else:
-                    self._skip_a = True
+                    self._removed[anchor] = {}
+                    self._collectFor = anchor
+                    self.startCollect()
                     return
             self.emit_starttag('a',attrs)
 
         def _e_A(self):
-            if self._skip_a:
-                self._skip_a = False
+            if self.collecting():
+                self._removed[self._collectFor][stripHTML(self.endCollect())] = None
             else:
                 self.emit_endtag('a')
 
         def stats(self):
-            return (self._found, self._fixed)
+            return (self._found, self._fixed, self._removed)
 
     def fix(self, path, target):
         self._files += 1
@@ -175,14 +194,17 @@ class LinkFixer:
                                     file(path,"w"))
         filt.feed(data)
         filt.close()
-        self._found += filt.stats()[0]
-        self._fixed += filt.stats()[1]
+        found, fixed, removed = filt.stats()
+        self._found += found
+        self._fixed += fixed
+        for anchor, labels in removed.items():
+            for label in labels.keys():
+                self._removed.setdefault((anchor,label),{})[path] = None
 
     def stats(self):
-        return (self._files, self._found, self._fixed)
+        return (self._files, self._found, self._fixed, self._removed)
     
-
-(opts, args) = getopt.getopt(sys.argv[1:], "s:")
+(opts, args) = getopt.getopt(sys.argv[1:], "vs:")
 if len(args) != 2:
     sys.stderr.write("""Usage:
 	fix-links.py [-s skip-dir]... <errrorX.txt> <errorAX.txt>
@@ -200,32 +222,48 @@ not be scanned for '*.html' files.
     sys.exit(1)
 
 skipdirs = [ val for opt, val in opts if opt == '-s' ]
+verbose = ( '-v', '' ) in opts
+
+if not os.path.exists(args[0]) and not os.path.exists(args[1]):
+    # No bad links to nothing to do
+    sys.exit(0)
 
 fixer = LinkFixer(skipdirs)
 fixer.init()
 
 target = None
-for l in file(args[0]):
-    l = l.rstrip()
-    if l.startswith('/'):
-        target = '#' + os.path.split(l)[1]
-    elif l.startswith('    /') and not l.endswith('/'):
-        sys.stderr.write("%s\n" % l)
-        fixer.fix(l[5:], target)
 
-for l in file(args[1]):
-    l = l.rstrip()
-    if l.startswith('/'):
-        target = l.split('#')[1]
-    elif l.startswith('    /') and not l.endswith('/'):
-        sys.stderr.write("%s\n" % l)
-        fixer.fix(l[5:], target)
+if os.path.exists(args[0]):
+    for l in file(args[0]):
+        l = l.rstrip()
+        if l.startswith('/'):
+            target = '#' + os.path.split(l)[1]
+        elif l.startswith('    /') and not l.endswith('/'):
+            sys.stderr.write("%s\n" % l)
+            fixer.fix(l[5:], target)
 
-files, found, fixed = fixer.stats()
+if os.path.exists(args[1]):
+    for l in file(args[1]):
+        l = l.rstrip()
+        if l.startswith('/'):
+            target = l.split('#')[1]
+        elif l.startswith('    /') and not l.endswith('/'):
+            sys.stderr.write("%s\n" % l)
+            fixer.fix(l[5:], target)
+
+total, found, fixed, removed = fixer.stats()
+
+if verbose:
+    sys.stderr.write("\nRemoved links:\n")
+    for (anchor, label), files in removed.items():
+        sys.stdout.write("%-36.36s %-48.48s %s\n"
+                         % ( anchor,
+                             "(%s)" % label[:46],
+                             " ".join(files.keys())) )
 
 sys.stderr.write("""
 Files processed : %5d
 Links processed : %5d
 Links fixed     : %5d
 Links removed   : %5d
-""" % (files, found, fixed, found-fixed))
+""" % (total, found, fixed, found-fixed))

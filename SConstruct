@@ -169,7 +169,7 @@ PhonyTarget(env, 'linklint', [
 ])
 
 PhonyTarget(env, 'fixlinks', [
-    '[ ! -r linklint/errorX.txt -o ! -r linklint/errorAX.txt ] || python doclib/fix-links.py -s .svn -s linklint -s debian linklint/errorX.txt linklint/errorAX.txt',
+    'python doclib/fix-links.py -v -s .svn -s linklint -s debian linklint/errorX.txt linklint/errorAX.txt',
 ])
 
 env.Clean('all', env.Dir('linklint'))
