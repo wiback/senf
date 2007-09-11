@@ -291,7 +291,7 @@ def StandardTargets(env):
 #
 # \ingroup target
 def GlobalTargets(env):
-    env.Depends(env.Alias('all'),'#')
+    env.Alias('all', [ 'default', 'all_tests', 'all_docs' ])
 
 ## \brief Return path of a built library within $LOCALLIBDIR
 # \internal
@@ -587,6 +587,7 @@ def Lib(env, library, sources, testSources = None, LIBS = [], OBJECTS = [], no_i
         lib = env.Library(env.File(LibPath(library)),objects)
         env.Default(lib)
         env.Append(ALLLIBS = library)
+        env.Alias('default', lib)
         install = InstallWithSources(env, lib, '$LIBINSTALLDIR', sources, testSources, no_includes)
         env.Alias('install_all', install)
     return lib
@@ -598,6 +599,7 @@ def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = [], no
     if objects:
         ob = env.Command(target+".o", objects, "ld -r -o $TARGET $SOURCES")
         env.Default(ob)
+        env.Alias('default', ob)
         install = InstallWithSources(env, ob, '$OBJINSTALLDIR', sources, testSources, no_includes)
         env.Alias('install_all', install)
     return ob
@@ -621,6 +623,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
         program = progEnv.Program(target=binary,source=objects+OBJECTS)
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
+        env.Alias('default', program)
         install = InstallWithSources(env, program, '$BININSTALLDIR', sources, testSources,
                                      no_includes)
         env.Alias('install_all', install)
@@ -629,6 +632,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
 def AllIncludesHH(env, headers):
     headers.sort()
     file(env.File("all_includes.hh").abspath,"w").write("".join([ '#include "%s"\n' % f
-                                                                  for f in headers ]))
-    env.Clean('all','all_includes.hh')
+                                                                       for f in headers ]))
+    env.Alias('all', 'all_includes.hh')
+    env.Clean('all', 'all_includes.hh')
     

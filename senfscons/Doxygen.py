@@ -248,6 +248,10 @@ class DoxyfileParser:
       return self._items
 
 def DoxyfileParse(env,file):
+   # We don't parse source files which do not contain the word 'doxyfile'. SCons will
+   # pass other dependencies to DoxyfileParse which are not doxyfiles ... grmpf ...
+   if not 'doxyfile' in file.lower():
+      return {}
    ENV = {}
    ENV.update(env.get("ENV",{}))
    ENV['TOPDIR'] = env.Dir('#').abspath

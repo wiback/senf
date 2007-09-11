@@ -186,3 +186,5 @@ env.Alias('install_all',
                                                   'search_functions.php',
                                                   'search_paths.php',
                                                   'senf.css' ] ))
+
+env.Clean('all', 'doxy-header.html') # I should not need this but I do ...

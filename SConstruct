@@ -6,6 +6,8 @@ import SENFSCons
 
 ###########################################################################
 
+# This hack is needed for SCons V 0.96.1 compatibility. In current SCons versions
+# we can just use 'env.AlwaysBuild(env.Alias(target), [], action)'
 def PhonyTarget(env, target, action):
     env.AlwaysBuild(env.Command(target + '.phony', 'SConstruct', env.Action(action)))
     env.Alias(target, target + '.phony')
@@ -129,6 +131,9 @@ libsenf = env.Library(
     SENFSCons.LibPath('senf'),
     Flatten([ env.File(SENFSCons.LibPath(lib)).sources for lib in env['ALLLIBS'] ]))
 env.Default(libsenf)
+env.Clean('all', 'libsenf.a')
+env.Alias('all', 'libsenf.a')
+
 env.Alias('install_all', env.Install('$LIBINSTALLDIR', libsenf))
 
 env.Clean('all', [ os.path.join(path,f)
