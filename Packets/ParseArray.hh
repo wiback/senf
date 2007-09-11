@@ -42,7 +42,7 @@
     sub-field or sub-collection of the collection is changed). Some collections may provide even
     more lifetime guarantees but this guarantee should be met by all collection wrappers.
 
-    \important Parser lifetime has to be tightly checked when working with collection parsers since
+    \warning Parser lifetime has to be tightly checked when working with collection parsers since
     \e every change of the collections size will invalidate \e all parsers and iterators referencing
     the \e complete packet chain. Collection wrappers do \e not invalidate if the change is \e after
     the collection.
