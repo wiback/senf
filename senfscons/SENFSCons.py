@@ -500,8 +500,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     l = len(env.Dir('#').abspath)
     if htmlnode:
         env.Alias('install_all',
-                  env.Install( '$DOCINSTALLDIR' + htmlnode.dir.dir.abspath[l:],
-                               htmlnode.dir ))
+                  env.Command('$DOCINSTALLDIR' + htmlnode.dir.abspath[l:], htmlnode.dir,
+                              [ SCons.Defaults.Copy('$TARGET','$SOURCE') ]))
     if tagnode:
         env.Alias('install_all',
                   env.Install( '$DOCINSTALLDIR' + tagnode.dir.abspath[l:],
