@@ -49,7 +49,7 @@ class Installer:
 
 def generator(target, source, env, for_signature):
     return [ SCons.Action.Action( Installer(trg, src),
-                                  SCons.Environment.installString([trg], [src], env) )
+                                  lambda a,b,c,s=SCons.Environment.installString([trg], [src], env):s )
              for trg, src in zip(target,source) ]
 
 InstallIncludes = SCons.Builder.Builder(emitter = emitter,
