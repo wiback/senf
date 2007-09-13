@@ -37,7 +37,7 @@
 
 BOOST_AUTO_UNIT_TEST(ioEvent)
 {
-    // Tested in SocketReader.test.cc and SocketWriter.test.cc
+    // Tested in SocketSource.test.cc and SocketSink.test.cc
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

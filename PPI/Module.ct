@@ -67,8 +67,8 @@ prefix_ void senf::ppi::module::Module::registerEvent(Descriptor & descriptor, T
 
 #else
 template <class Target>
-prefix_ void senf::ppi::module::Module::registerEvent(Target target,
-                                                      EventDescriptor & descriptor)
+prefix_ void senf::ppi::module::Module::registerEvent(EventDescriptor & descriptor,
+                                                      Target target)
 {}
 #endif
 

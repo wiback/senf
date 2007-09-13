@@ -44,7 +44,8 @@ namespace ppi {
         \section event_impl Implementing Events
 
         All events are derived from EventImplementation which is based on EventDescriptor.
-        \see EventImplementation
+        \see EventImplementation \n
+            \ref ppi_events        
      */
 
     // Implementation: The concrete EventDescriptor implementation will need to set things up so
@@ -58,6 +59,8 @@ namespace ppi {
     /** \brief Generic event interface base-class
 
         The EventDescriptor base-class provides an interface to control events.
+
+        \see \ref ppi_events
      */ 
     class EventDescriptor
     {

@@ -51,6 +51,7 @@ SCONS_TOOLS = [
     "Dia2Png",
     "CopyToDir",
     "InstallIncludes",
+    "ProgramNoScan",
 ]
 
 opts = None
@@ -363,8 +364,7 @@ def InstallWithSources(env, targets, dir, sources, testSources = [], no_includes
     if type(testSources) is not type([]):
         testSources = [ testSources ]
 
-    installs = []
-    installs.append( env.Install(dir, targets) )
+    installs = [ env.Install(dir, targets) ]
 
     if not no_includes:
         target = env.Dir(env['INCLUDEINSTALLDIR']).Dir(
@@ -620,7 +620,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
     if objects:
         progEnv = env.Copy()
         progEnv.Prepend(LIBS = LIBS)
-        program = progEnv.Program(target=binary,source=objects+OBJECTS)
+        program = progEnv.ProgramNoScan(target=binary,source=objects+OBJECTS)
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
         env.Alias('default', program)
@@ -631,8 +631,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
 
 def AllIncludesHH(env, headers):
     headers.sort()
-    file(env.File("all_includes.hh").abspath,"w").write("".join([ '#include "%s"\n' % f
-                                                                       for f in headers ]))
-    env.Alias('all', 'all_includes.hh')
-    env.Clean('all', 'all_includes.hh')
-    
+    target = env.File("all_includes.hh")
+    file(target.abspath,"w").write("".join([ '#include "%s"\n' % f
+                                             for f in headers ]))
+    env.Clean('all', target)

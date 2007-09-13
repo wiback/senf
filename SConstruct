@@ -61,6 +61,7 @@ env = SENFSCons.MakeEnvironment()
 env.Help("""
 Additional top-level build targets:
 
+prepare      Create all source files not part of the repository
 all_tests    Build and run unit tests for all modules
 all_docs     Build documentation for all modules
 all          Build everything
@@ -91,7 +92,8 @@ env.Append(
    ENV = { 'TODAY' : str(datetime.date.today()),
            'REVISION' : rev,
            'LOGNAME' : logname, # needed by the debian build scripts
-           'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1"
+           'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1",
+           'SCONS' : 1
            },
    CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
    CONFIG_FILES_OPTS = configFilesOpts,
@@ -103,8 +105,7 @@ env.Append(
 
 Export('env')
 
-# Create Doxyfile.local if not cleaning and the file does not exist
-# otherwise doxygen will barf on this non-existent file
+# Create Doxyfile.local otherwise doxygen will barf on this non-existent file
 if not env.GetOption('clean') and not os.path.exists("Doxyfile.local"):
     Execute(Touch("Doxyfile.local"))
 
@@ -114,6 +115,16 @@ if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
 
 ###########################################################################
 # Define build targets
+
+# Before defining any targets, check wether this is the first build in
+# pristine directory tree. If so, call 'scons prepare' so the dependencies
+# created later are correct
+
+if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
+   and not os.environ.get("SCONS"):
+    env.Execute([ "scons prepare" ])
+
+env.Clean('all', '.prepare-stamp')
 
 SConscript(glob.glob("*/SConscript"))
 
@@ -132,7 +143,7 @@ libsenf = env.Library(
     Flatten([ env.File(SENFSCons.LibPath(lib)).sources for lib in env['ALLLIBS'] ]))
 env.Default(libsenf)
 env.Clean('all', 'libsenf.a')
-env.Alias('all', 'libsenf.a')
+env.Alias('default', 'libsenf.a')
 
 env.Alias('install_all', env.Install('$LIBINSTALLDIR', libsenf))
 
@@ -172,4 +183,10 @@ PhonyTarget(env, 'fixlinks', [
     'python doclib/fix-links.py -v -s .svn -s linklint -s debian linklint/errorX.txt linklint/errorAX.txt',
 ])
 
+PhonyTarget(env, 'prepare', [])
+
 env.Clean('all', env.Dir('linklint'))
+
+env.Clean('all','.prepare-stamp')
+if not env.GetOption('clean') and not os.path.exists(".prepare-stamp"):
+    Execute(Touch(".prepare-stamp"))

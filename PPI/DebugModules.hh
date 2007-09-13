@@ -269,15 +269,15 @@ namespace debug {
     template < class Stream           = log::Debug, 
                class Area             = log::DefaultArea, 
                senf::log::Level level = log::VERBOSE >
-    class LogWriter
+    class LogSink
         : public module::Module
     {
-        SENF_PPI_MODULE(LogWriter);
+        SENF_PPI_MODULE(LogSink);
     public:
 
         connector::PassiveInput input;
 
-        LogWriter();
+        LogSink();
 
     private:
         void request();

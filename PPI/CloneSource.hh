@@ -42,7 +42,7 @@ namespace module {
 
         CloneSource will provide clone's of a template \a packet on it's \a output.
 
-        \ingroup sourcesink_modules
+        \ingroup io_modules
      */
     class CloneSource
         : public Module

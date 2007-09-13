@@ -24,6 +24,9 @@
     \brief GenericAddressingPolicy public header
  */
 
+/** \defgroup addr_group Addressing classes
+ */
+
 #ifndef HH_GenericAddressingPolicy_
 #define HH_GenericAddressingPolicy_ 1
 

@@ -41,7 +41,7 @@ namespace module {
 
         DiscardSink will accept any number of packets and will silently discard them.
 
-        \ingroup sourcesink_modules
+        \ingroup io_modules
       */
     class DiscardSink
         : public Module

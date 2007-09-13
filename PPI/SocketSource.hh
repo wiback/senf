@@ -19,10 +19,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SocketReader public header */
+    \brief SocketSource public header */
 
-#ifndef HH_SocketReader_
-#define HH_SocketReader_ 1
+#ifndef HH_SocketSource_
+#define HH_SocketSource_ 1
 
 // Custom includes
 #include "../Packets/Packets.hh"
@@ -34,13 +34,13 @@
 #include "Connectors.hh"
 #include "IOEvent.hh"
 
-//#include "SocketReader.mpp"
+//#include "SocketSource.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
 
-    /** \brief Read helper for module::ActiveSocketReader
+    /** \brief Read helper for module::ActiveSocketSource
 
         This read helper will read a datagram from a datagram socket. This datagram will then be
         interpreted as a packet of type \a Packet as defined in the packet library. \a Packet
@@ -48,7 +48,7 @@ namespace ppi {
         structure.
      */
     template <class Packet=DataPacket>
-    class PacketReader
+    class PacketSource
     {
     public:
         typedef senf::ClientSocketHandle<
@@ -74,43 +74,43 @@ namespace module {
     /** \brief Input module reading data from an arbitrary FileHandle
 
         This input module will read data from a FileHandle object and parse the data according to
-        the \a Reader. The default reader is senf::ppi::PacketReader <> which reads the data into a
+        the \a Source. The default reader is senf::ppi::PacketSource <> which reads the data into a
         senf::DataPacket. To parse the data according to some other packet type, pass that packet
-        type to senf::ppi::PacketReader:
+        type to senf::ppi::PacketSource:
         \code
-        senf::ppi::module::ActiveSocketReader< senf::ppi::PacketReader<senf::EthernetPacket> > reader;
+        senf::ppi::module::ActiveSocketSource< senf::ppi::PacketSource<senf::EthernetPacket> > reader;
         \endcode
         declares a \a reader module reading senf::EthrtnetPacket's.
 
-        A \a Reader must fulfill the following interface:
+        A \a Source must fulfill the following interface:
         \code
-        class SomeReader
+        class SomeSource
         {
         public:
             typedef unspecified_type Handle;   // type of handle requested
-            SomeReader();                      // default constructible
+            SomeSource();                      // default constructible
             Packet operator()(Handle handle);  // extraction function
         };
         \endcode
-        Whenever the FileHandle object is ready for reading, the \a Reader's \c operator() is called
+        Whenever the FileHandle object is ready for reading, the \a Source's \c operator() is called
         to read a packet.
 
         \ingroup io_modules
      */
-    template <class Reader=PacketReader<> >
-    class ActiveSocketReader 
+    template <class Source=PacketSource<> >
+    class ActiveSocketSource 
         : public Module
     {
-        SENF_PPI_MODULE(ActiveSocketReader);
+        SENF_PPI_MODULE(ActiveSocketSource);
 
     public:
-        typedef typename Reader::Handle Handle; ///< Handle type requested by the reader
+        typedef typename Source::Handle Handle; ///< Handle type requested by the reader
 
         connector::ActiveOutput output; ///< Output connector to which the data received is written
         
-        ActiveSocketReader(Handle handle); ///< Create new reader for the given handle
+        ActiveSocketSource(Handle handle); ///< Create new reader for the given handle
                                         /**< Data will be read from \a handle and be parsed by \a
-                                             Reader.
+                                             Source.
                                              \param[in] handle Handle to read data from */
 
     private:
@@ -118,15 +118,15 @@ namespace module {
         
         Handle handle_;
         IOEvent event_;
-        Reader reader_;
+        Source reader_;
     };
 
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "SocketReader.cci"
-#include "SocketReader.ct"
-//#include "SocketReader.cti"
+//#include "SocketSource.cci"
+#include "SocketSource.ct"
+//#include "SocketSource.cti"
 #endif
 
 

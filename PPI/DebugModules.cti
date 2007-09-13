@@ -32,20 +32,20 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::debug::LogWriter<Stream,Area,level>
+// senf::ppi::module::debug::LogSink<Stream,Area,level>
 
 template <class Stream, class Area, senf::log::Level level>
-prefix_ senf::ppi::module::debug::LogWriter<Stream,Area,level>::LogWriter()
+prefix_ senf::ppi::module::debug::LogSink<Stream,Area,level>::LogSink()
 {
     noroute(input);
-    input.onRequest(&LogWriter::request);
+    input.onRequest(&LogSink::request);
 }
 
 ////////////////////////////////////////
 // private members
 
 template <class Stream, class Area, senf::log::Level level>
-prefix_ void senf::ppi::module::debug::LogWriter<Stream,Area,level>::request()
+prefix_ void senf::ppi::module::debug::LogSink<Stream,Area,level>::request()
 {
     Packet packet (input());
     SENF_LOG_BLOCK((Stream)(Area)(level)({

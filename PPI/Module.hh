@@ -56,23 +56,16 @@ namespace module {
         The PPI provided general purpose modules can be grouped into several categories
 
         \li \ref io_modules receive external data or forward packets out of the PPI
-        \li \ref sourcesink_modules generate or absorb packets internally
         \li \ref routing_modules forward packets within the network
         \li \ref adapter_modules are used to connect incompatible connectors to each other
 
         \todo Implement Spliters: PassiveSplitter, PrioritySplitter, CloneSplitter
      */
 
-    /** \defgroup io_modules Input/Output Modules
+    /** \defgroup io_modules Source/Sink Modules
 
-        Input/Output Modules receive data from external sources or forward data from the PPI to
-        outside targets.
-     */
-
-    /** \defgroup sourcesink_modules Source/Sink Modules
-
-        Source and Sink modules generate or absorb packets internally. In contrast to \ref
-        io_modules, they do not communicate outside the PPI.
+        Source and Sink modules generate or absorb packets in some way: Reading data from a file
+        descriptor, discarding packets etc.
      */
 
     /** \defgroup routing_modules Routing Modules
@@ -125,7 +118,7 @@ namespace module {
                     .autoThrottling( false );
 
                 // Register event handlers
-                registerEvent( &SomeModule::read, event );
+                registerEvent( event, &SomeModule::read );
 
                 // Register passive connector handlers
                 input.onRequest( &SomeModule::outputRequest );
@@ -168,6 +161,8 @@ namespace module {
         If your module only has a single input connector, you should call this connector \c
         input. If it has only a single output connector, you should call it \c output. This allows
         to setup connections without stating the connector explicitly (see senf::ppi::connect()).
+
+        \see \ref ppi_modules
      */
     class Module
         : boost::noncopyable
@@ -208,6 +203,7 @@ namespace module {
                                              \param[in] target Data target, object which controls
                                                  outgoing data (connector or event)
                                              \returns Route instance describing this route 
+                                             \see \ref ppi_throttling
                                              \note The real implementation is not provided by three
                                                  overloads but by a single template member */
 
@@ -259,7 +255,7 @@ namespace module {
         void registerEvent(Descriptor & descriptor, Target target);
 #else
         template <class Target>
-        void registerEvent(Target target, EventDescriptor & descriptor);
+        void registerEvent(EventDescriptor & descriptor, Target target);
                                         ///< Register an external event
                                         /**< The \a target argument may be either an arbitrary
                                              callable object or it may be a member function pointer
@@ -275,7 +271,9 @@ namespace module {
 
                                              \param[in] target The handler to call whenever the
                                                  event is signaled
-                                             \param[in] descriptor The type of event to register */
+                                             \param[in] descriptor The type of event to register 
+                                             \note The real implementation has the second arguments
+                                                 type as an additional template parameter. */
 #endif
 
         ClockService::clock_type time() const; ///< Time-stamp of the currently processing event

@@ -117,8 +117,8 @@ public:
 //                   +----------------------------------------------------+
 //                   | stuffer                                            |
 //                   |                                                    |
-// [ udpReader ] O-->:---> [ queue ] -->O [      ]                        |
-//                   |                    [ join ] -->O [ rateFilter] O-->:O--> [ udpWriter ]
+// [ udpSource ] O-->:---> [ queue ] -->O [      ]                        |
+//                   |                    [ join ] -->O [ rateFilter] O-->:O--> [ udpSink ]
 //                   | [ generator ] -->O [      ]                        |
 //                   |                                                    |
 //                   +----------------------------------------------------+
@@ -131,14 +131,14 @@ int main(int argc, char * argv[])
     senf::ConnectedUDPv4ClientSocketHandle outputSocket(
         senf::INet4SocketAddress("localhost:44345"));
 
-    module::ActiveSocketReader<>  udpReader  ( inputSocket );
+    module::ActiveSocketSource<>  udpSource  ( inputSocket );
     RateStuffer                   stuffer    ( 1000000000ul, 
                                                senf::DataPacket::create(std::string("<idle>\n")),
                                                2u, 1u );
-    module::PassiveSocketWriter<> udpWriter  ( outputSocket );
+    module::PassiveSocketSink<> udpSink  ( outputSocket );
 
-    ppi::connect( udpReader, stuffer   );
-    ppi::connect( stuffer,   udpWriter );
+    ppi::connect( udpSource, stuffer   );
+    ppi::connect( stuffer,   udpSink );
 
     ppi::run();
 

@@ -21,9 +21,9 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SocketWriter non-inline template implementation  */
+    \brief SocketSink non-inline template implementation  */
 
-//#include "SocketWriter.ih"
+//#include "SocketSink.ih"
 
 // Custom includes
 
@@ -31,41 +31,41 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::ActiveSocketWriter<Writer>
+// senf::ppi::module::ActiveSocketSink<Sink>
 
-template <class Writer>
-prefix_ senf::ppi::module::ActiveSocketWriter<Writer>::ActiveSocketWriter(Handle handle)
+template <class Sink>
+prefix_ senf::ppi::module::ActiveSocketSink<Sink>::ActiveSocketSink(Handle handle)
     : handle_(handle), event_(handle_, IOEvent::Write), writer_()
 {
-    registerEvent( event_, &ActiveSocketWriter::write );
+    registerEvent( event_, &ActiveSocketSink::write );
     route(input, event_);
 }
 
 ////////////////////////////////////////
 // private members
 
-template <class Writer>
-prefix_ void senf::ppi::module::ActiveSocketWriter<Writer>::write()
+template <class Sink>
+prefix_ void senf::ppi::module::ActiveSocketSink<Sink>::write()
 {
     writer_(handle_,input());
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::PassiveSocketWriter<Writer>
+// senf::ppi::module::PassiveSocketSink<Sink>
 
-template <class Writer>
-prefix_ senf::ppi::module::PassiveSocketWriter<Writer>::PassiveSocketWriter(Handle handle)
+template <class Sink>
+prefix_ senf::ppi::module::PassiveSocketSink<Sink>::PassiveSocketSink(Handle handle)
     : handle_(handle), writer_()
 {
     noroute(input);
-    input.onRequest(&PassiveSocketWriter::write);
+    input.onRequest(&PassiveSocketSink::write);
 }
 
 ////////////////////////////////////////
 // private members
 
-template <class Writer>
-prefix_ void senf::ppi::module::PassiveSocketWriter<Writer>::write()
+template <class Sink>
+prefix_ void senf::ppi::module::PassiveSocketSink<Sink>::write()
 {
     writer_(handle_,input());
 }

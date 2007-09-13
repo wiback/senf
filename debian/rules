@@ -38,18 +38,20 @@ configure-stamp:
 	dh_testdir
 #	# Add here commands to configure the package.
 	rm -f Doxyfile.local SConfig local_config.hh
+	scons prepare
 #       If needed, we could create new files 'Doxyfile.local',
 #       'SConfig' and/or 'local_config.hh' here.  We don't remove them
 #       in 'clean' to allow building a source package from an
-#       individually configured svn working copy.
+#       individually configured svn working copy. (The files are ignored
+#       by dpkg-buildpackge because of appropriate -I arguments provided 
+#       by 'scons deb' and 'scons debsrc'
 	touch configure-stamp
 
 build: build-stamp
 build-stamp: configure-stamp 
 	dh_testdir
 #	# Add here commands to compile the package.
-	scons -j $(CONCURRENCY_LEVEL) final=1
-	scons -j $(CONCURRENCY_LEVEL) all_docs final=1
+	scons -j $(CONCURRENCY_LEVEL) default all_docs final=1
 	touch $@
 
 clean:
@@ -66,7 +68,7 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 #	# Add here commands to install the package into debian/tmp
-	scons  install_all final=1\
+	scons install_all final=1 \
 		PREFIX='$(destdir)/usr' \
 		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc' \
 		INCLUDEINSTALLDIR='$$PREFIX/include/senf' 

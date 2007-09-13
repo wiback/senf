@@ -55,8 +55,19 @@ namespace connector {
         All passive connectors call some onRequest callback whenever I/O needs to be performed. All
         input modules possess a packet queue.
 
-        We therefore have 4 connector types: senf::ppi::ActiveInput, senf::ppi::ActiveOutput,
-        senf::ppi::PassiveInput and senf::ppi::PassiveOutput.
+        We therefore have 4 connector types: 
+        \li senf::ppi::connector::ActiveInput
+        \li senf::ppi::connector::ActiveOutput
+        \li senf::ppi::connector::PassiveInput
+        \li senf::ppi::connector::PassiveOutput.
+
+        Connectors are declared as module data members and are then externally connected to other
+        modules.
+
+        \see 
+            senf::ppi::module::Module \n
+            senf::ppi::connect()
+            \ref ppi_connectors
      */
 
     /** \brief Connector base-class

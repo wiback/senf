@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SocketWriter inline non-template implementation */
+    \brief SocketSink inline non-template implementation */
 
 // Custom includes
 
@@ -29,9 +29,9 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::PacketWriter
+// senf::ppi::PacketSink
 
-prefix_ void senf::ppi::PacketWriter::operator()(Handle handle, Packet packet)
+prefix_ void senf::ppi::PacketSink::operator()(Handle handle, Packet packet)
 {
     handle.write(packet.data());
 }

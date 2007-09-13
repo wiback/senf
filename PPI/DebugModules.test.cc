@@ -132,10 +132,10 @@ BOOST_AUTO_UNIT_TEST(activeFeederSink)
     BOOST_CHECK( source.empty() );
 }
 
-BOOST_AUTO_UNIT_TEST(logWriter)
+BOOST_AUTO_UNIT_TEST(logSink)
 {
     debug::ActiveFeederSource source;
-    debug::LogWriter<> sink;
+    debug::LogSink<> sink;
 
     ppi::connect(source,sink);
     senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };

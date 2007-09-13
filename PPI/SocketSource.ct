@@ -21,9 +21,9 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SocketReader non-inline template implementation  */
+    \brief SocketSource non-inline template implementation  */
 
-//#include "SocketReader.ih"
+//#include "SocketSource.ih"
 
 // Custom includes
 
@@ -31,10 +31,10 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::PacketReader<Packet>
+// senf::ppi::PacketSource<Packet>
 
 template <class Packet>
-prefix_ Packet senf::ppi::PacketReader<Packet>::operator()(Handle handle)
+prefix_ Packet senf::ppi::PacketSource<Packet>::operator()(Handle handle)
 {
     Packet packet (Packet::create(Packet::noinit));
     handle.read(packet.data(),0u);
@@ -42,22 +42,22 @@ prefix_ Packet senf::ppi::PacketReader<Packet>::operator()(Handle handle)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::ActiveSocketReader<Reader>
+// senf::ppi::module::ActiveSocketSource<Source>
 
-template <class Reader>
-prefix_ senf::ppi::module::ActiveSocketReader<Reader>::
-ActiveSocketReader(Handle handle)
+template <class Source>
+prefix_ senf::ppi::module::ActiveSocketSource<Source>::
+ActiveSocketSource(Handle handle)
     : handle_(handle), event_(handle_, IOEvent::Read), reader_()
 {
-    registerEvent( event_, &ActiveSocketReader::read );
+    registerEvent( event_, &ActiveSocketSource::read );
     route(event_, output);
 }
 
 ////////////////////////////////////////
 // private members
 
-template <class Reader>
-prefix_ void senf::ppi::module::ActiveSocketReader<Reader>::read()
+template <class Source>
+prefix_ void senf::ppi::module::ActiveSocketSource<Source>::read()
 {
     output(reader_(handle_));
 }

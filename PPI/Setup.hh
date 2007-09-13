@@ -62,18 +62,21 @@ namespace ppi {
     /** \brief Connect modules
 
         senf::ppi::connect() establishes a connection between two modules or, to be more precise,
-        between two connectors. For enhanced usability, \a source and \a target may be a Connector,
-        a Module or a collection/subnetwork. Passing a Module or collection/subnetwork as \a source
-        will originate the connection on the \c output member of that Module or collection while
-        passing a module or collection/subnetwork as \a target will terminate the connection on that
-        Module or collections \c input member. For most simple modules, the specification of the
-        connector is therefore obsolete.
+        between two connectors. It will connect any input to any output connector as long as one is
+        active and the other passive.
 
-        Furthermore, the connect() call may be extended by special modules (e.g. PassiveJoin which
-        allows an arbitrary of input connections).
+        If a module has an output connector called \c output, the module may be directly specified
+        as \a source argument. In the same way, if a module has an input connector called \c input,
+        the module may be given directly as \a target argument. This simplifies the most common case
+        of a module with one input and one output connector.
+        
+        \see \ref ppi_connections
      */
-    template <class Source, class Target>
-    void connect(Source & source, Target & target);
+    void connect(connector::ActiveInput & source, connector::PassiveOutput & target);
+
+    /** \brief Connect modules
+        \see connect() */
+    void connect(connector::PassiveInput & source, connector::ActiveOutput & target);
 
 #endif
     
@@ -87,6 +90,8 @@ namespace ppi {
         enabled (Since the events are enabled and disabled by the throttle notifications which
         depend among other things on the packet queues, this is the same as checking for packets in
         any queue). It is Ok to call senf::ppi::run() multiple times during the program lifetime.
+
+        \see \ref ppi_run
      */
     void run();
 

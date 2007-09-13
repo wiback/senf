@@ -21,17 +21,17 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SocketReader.test unit tests */
+    \brief SocketSink.test unit tests */
 
-//#include "SocketReader.test.hh"
-//#include "SocketReader.test.ih"
+//#include "SocketSink.test.hh"
+//#include "SocketSink.test.ih"
 
 // Custom includes
-#include <algorithm>
 #include "../Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "../Scheduler/Scheduler.hh"
-#include "SocketReader.hh"
+#include "../Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
+#include "SocketSource.hh"
 #include "DebugModules.hh"
+#include "SocketSink.hh"
 #include "Setup.hh"
 
 #include <boost/test/auto_unit_test.hpp>
@@ -51,27 +51,46 @@ namespace {
     }
 }
 
-BOOST_AUTO_UNIT_TEST(socketReader)
+BOOST_AUTO_UNIT_TEST(passiveSocketSink)
 {
-    senf::UDPv4ClientSocketHandle inputSocket;
-    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
-    inputSocket.blocking(false);
-    module::ActiveSocketReader<> udpReader(inputSocket);
-    debug::PassiveSink sink;
-    ppi::connect(udpReader, sink);
+    senf::ConnectedUDPv4ClientSocketHandle outputSocket (
+        senf::INet4SocketAddress("localhost:44344"));
+    module::PassiveSocketSink<> udpSink(outputSocket);
+    debug::ActiveSource source;
+    ppi::connect(source, udpSink);
 
     std::string data ("TEST");
+    senf::Packet p (senf::DataPacket::create(data));
 
-    senf::UDPv4ClientSocketHandle outputSocket;
-    outputSocket.writeto(senf::INet4SocketAddress("localhost:44344"),data);
+    senf::UDPv4ClientSocketHandle inputSocket;
+    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
+    senf::ppi::init();
+    source.submit(p);
+
+    std::string input (inputSocket.read());
+    BOOST_CHECK_EQUAL( data, input );
+}
+
+BOOST_AUTO_UNIT_TEST(activeSocketSink)
+{
+    senf::ConnectedUDPv4ClientSocketHandle outputSocket (
+        senf::INet4SocketAddress("localhost:44344"));
+    module::ActiveSocketSink<> udpSink(outputSocket);
+    debug::PassiveSource source;
+    ppi::connect(source, udpSink);
+
+    std::string data ("TEST");
+    senf::Packet p (senf::DataPacket::create(data));
+
+    senf::UDPv4ClientSocketHandle inputSocket;
+    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
     senf::Scheduler::instance().timeout(
         senf::ClockService::now() + senf::ClockService::milliseconds(100), &timeout);
+    source.submit(p);
     senf::ppi::run();
 
-    BOOST_REQUIRE( ! sink.empty() );
-    BOOST_CHECK_EQUAL( sink.front().data().size(), data.size() );
-    BOOST_CHECK( std::equal( sink.front().data().begin(), sink.front().data().end(), 
-                             data.begin()) );
+    std::string input (inputSocket.read());
+    BOOST_CHECK_EQUAL( data, input );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

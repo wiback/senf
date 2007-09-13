@@ -61,6 +61,7 @@
     <li>\ref ppi_connections</li>
     <li>\ref ppi_throttling</li>
     <li>\ref ppi_events</li>
+    <li>\ref ppi_run</li>
     <li>\ref ppi_flows</li>
     </ol>
     </div>
@@ -364,6 +365,19 @@
     until the output is unthrottled again.
 
     \see senf::ppi::EventDescriptor
+
+    \section ppi_run Running the network
+
+    After the network has been set up, senf::ppi::run() is called to execute it. This call will only
+    return after all data has been processed. The PPI knows this, when no events are enabled any
+    more. Without events, nothing will happen any more since it is the events which drive the
+    PPI. Therefore the PPI surmises, that all data has been processed and returns from
+    senf::ppi::run().
+
+    This works very well with automatic throttling. When no data is available to be processed any
+    more and no more data can be expected to arrive (for Example since data has been read from a
+    file which is now exhausted) all events will be disabled automatically via trhottle
+    notifications and so signal that any processing should stop.
 
     \section ppi_flows Information Flow
 
