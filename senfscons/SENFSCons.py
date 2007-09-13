@@ -350,6 +350,9 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = []):
     return objects
 
 def InstallIncludeFiles(env, files):
+    # Hrmpf ... why do I need this in 0.97??
+    if env.GetOption('clean'):
+        return
     target = env.Dir(env['INCLUDEINSTALLDIR'])
     base = env.Dir(env['INSTALL_BASE'])
     for f in files:

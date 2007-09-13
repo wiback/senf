@@ -52,6 +52,8 @@ build-stamp: configure-stamp
 	dh_testdir
 #	# Add here commands to compile the package.
 	scons -j $(CONCURRENCY_LEVEL) default all_docs final=1
+	scons linklint
+	scons fixlinks
 	touch $@
 
 clean:

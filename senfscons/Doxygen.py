@@ -343,7 +343,9 @@ def DoxyEmitter(source, target, env):
       out_dir = data["OUTPUT_DIRECTORY"]
       dir = env.Dir( os.path.join(source[0].dir.abspath, out_dir) )
       dir.sources = source
-      if env.GetOption('clean'): targets.append(dir)
+      if env.GetOption('clean'):
+         targets.append(dir)
+         return (targets, source)
    else:
       out_dir = '.'
 
