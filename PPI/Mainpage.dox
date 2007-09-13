@@ -103,7 +103,7 @@
     provides an extensive set of reusable modules.
     
     The following example module declares three \ref ppi_connectors: \c payload, \c stuffing and
-    \coutput. These connectors are defined as \e public data members so they can be accessed from
+    \c output. These connectors are defined as \e public data members so they can be accessed from
     the outside. This is important as we will see below.
 
     \code
