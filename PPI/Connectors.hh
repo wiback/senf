@@ -277,7 +277,7 @@ namespace connector {
                                              logic error in the module implementation and an
                                              exception is raised. */
 
-        Packet read();                  ///< Alias for \ref operator()()
+        Packet read();                  ///< Alias for operator()()
 
         OutputConnector & peer() const;
 
@@ -315,7 +315,7 @@ namespace connector {
     public:
         void operator()(Packet p);      ///< Send out a packet
 
-        void write(Packet p);           ///< Alias for \ref operator()()
+        void write(Packet p);           ///< Alias for operator()(Packet p)
 
         InputConnector & peer() const;
 

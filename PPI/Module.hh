@@ -198,9 +198,9 @@ namespace module {
                                              The return value may be used to alter routing
                                              parameters like throttling parameters.
 
-                                             \param[in] source Data source, object which controls
+                                             \param[in] input Data source, object which controls
                                                  incoming data (connector or event)
-                                             \param[in] target Data target, object which controls
+                                             \param[in] output Data target, object which controls
                                                  outgoing data (connector or event)
                                              \returns Route instance describing this route 
                                              \see \ref ppi_throttling
@@ -227,8 +227,8 @@ namespace module {
         route(EventDescriptor & input, connector::OutputConnector & output);
                                         ///< Define flow information
                                         /**< Route from an event to a connector. Routing from an
-                                             event to a connector defeines the event as the
-                                             conceptual 'source' of the data. THis means, the event
+                                             event to a connector defines the event as the
+                                             conceptual 'source' of the data. This means, the event
                                              controls how packets are sent (Example: Routing from an
                                              IOEVent to an output defines, that output data will be
                                              generated whenever the event is signaled).

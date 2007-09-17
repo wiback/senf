@@ -102,9 +102,9 @@
     Of these modules, normally only the application modules need to be implemented since the library
     provides an extensive set of reusable modules.
     
-    The following example module declares three \ref ppi_connectors: \c payload, \c stuffing and
-    \c output. These connectors are defined as \e public data members so they can be accessed from
-    the outside. This is important as we will see below.
+    The following example module declares three \ref ppi_connectors "Connectors": \c payload, 
+    \c stuffing and \c output. These connectors are defined as \e public data members so they
+    can be accessed from the outside. This is important as we will see below.
 
     \code
       class RateStuffer
@@ -306,11 +306,11 @@
     example by manually throttling some passive connector (see \ref
     senf::ppi::connector::PassiveConnector). 
 
-    To enable/disable automatic throttling, the \ref senf::ppi::Module::route() command returns a
-    reference to a \ref senf::ppi::Route instance. If this route is \e forwarding route, (that is,
-    of the connectors is passive and the other is active), the return value will be derived from
-    \ref senf::ppi::ForwardingRoute which provides members to control the throttle notification
-    forwarding.
+    To enable/disable automatic throttling, the \ref senf::ppi::module::Module::route() command 
+    returns a reference to a \ref senf::ppi::Route instance. If this route is \e forwarding route,
+    (that is, of the connectors is passive and the other is active), the return value will be 
+    derived from \ref senf::ppi::ForwardingRoute which provides members to control the throttle
+    notification forwarding.
     
     \see 
         senf::ppi::module::Module \n

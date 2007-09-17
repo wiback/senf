@@ -44,8 +44,8 @@ namespace ppi {
 
         This read helper will read a datagram from a datagram socket. This datagram will then be
         interpreted as a packet of type \a Packet as defined in the packet library. \a Packet
-        defaults to \ref DataPacket, which will place the data uninterpreted into a packet data
-        structure.
+        defaults to DataPacket (type DataPacketType), which will place the data uninterpreted 
+        into a packet data structure.
      */
     template <class Packet=DataPacket>
     class PacketSource
