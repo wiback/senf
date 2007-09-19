@@ -18,59 +18,29 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNAddress non-inline non-template implementation */
+    \brief UNProtocol.test unit tests */
 
-#include "UNAddress.hh"
-//#include "UNAddress.ih"
+//#include "UNProtocol.test.hh"
+//#include "UNProtocol.test.ih"
 
 // Custom includes
+#include "UNProtocol.hh"
 
-//#include "UNAddress.mpp"
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::UNAddress::UNAddress()
-    //:path("")
+BOOST_AUTO_UNIT_TEST(unProtocol)
 {
-    path = boost::filesystem::path("");
+    std::string testS = "/tmp/senfTestSocket";
+    //zZ leer
 }
 
-prefix_ senf::UNAddress::UNAddress(boost::filesystem::path p)
-{
-    path = p; 
-}
-
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::fromString(std::string &  s)
-{
-    return senf::UNAddress::UNAddress(boost::filesystem::path(s));
-}
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::fromPath(boost::filesystem::path & p){
-    return senf::UNAddress::UNAddress(p);
-}
-
-prefix_  std::string senf::UNAddress::pathString()
-    const
-{
-    return  path.string();
-}
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::clone()
-{
-    senf::UNAddress::UNAddress local_addr = senf::UNAddress::UNAddress(pathString());
-    return  local_addr;
-}
-
-prefix_ std::ostream & senf::operator<<(std::ostream & os, UNAddress const & addr)
-{
-    os << addr.pathString();
-    return os;
-}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "UNAddress.mpp"
 
 
 // Local Variables:

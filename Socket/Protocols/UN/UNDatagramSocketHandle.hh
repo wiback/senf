@@ -110,7 +110,7 @@ namespace senf {
     typedef MakeSocketPolicy<
         UNDatagramSocket_Policy,
         UNAddressingPolicy
-        >::policy UDPv6Socket_Policy;
+        >::policy UNDatagramSocket_Policy;
 }
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "UNDatagramSocketHandle.cci"

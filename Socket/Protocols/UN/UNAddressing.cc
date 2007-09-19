@@ -55,6 +55,7 @@ prefix_ senf::UNSocketAddress::UNSocketAddress(boost::filesystem::path p)
     return senf::UNSocketAddress::UNSocketAddress(p);
 }
     prefix_ std::string senf::UNSocketAddress::path()
+        const
 {
     return std::string(sockAddr.sun_path);
 }
@@ -80,7 +81,6 @@ prefix_ sockaddr const  * senf::UNSocketAddress::sockaddr_p()
 }
 
 prefix_ unsigned senf::UNSocketAddress::sockaddr_len()
-    const
 {
     return sizeof(sockAddr);
 }

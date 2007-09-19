@@ -1,6 +1,9 @@
-// $Id$
+// $Id: main.test.cc 296 2007-07-10 20:39:34Z g0dil $
 //
-// Copyright (C) 2007 
+// Copyright (C) 2006
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,68 +20,30 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief UNAddress non-inline non-template implementation */
+// Definition of non-inline non-template functions
 
-#include "UNAddress.hh"
-//#include "UNAddress.ih"
+//#include "test.hh"
+//#include "test.ih"
 
 // Custom includes
+#define BOOST_AUTO_TEST_MAIN
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-//#include "UNAddress.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::UNAddress::UNAddress()
-    //:path("")
-{
-    path = boost::filesystem::path("");
-}
-
-prefix_ senf::UNAddress::UNAddress(boost::filesystem::path p)
-{
-    path = p; 
-}
-
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::fromString(std::string &  s)
-{
-    return senf::UNAddress::UNAddress(boost::filesystem::path(s));
-}
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::fromPath(boost::filesystem::path & p){
-    return senf::UNAddress::UNAddress(p);
-}
-
-prefix_  std::string senf::UNAddress::pathString()
-    const
-{
-    return  path.string();
-}
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::clone()
-{
-    senf::UNAddress::UNAddress local_addr = senf::UNAddress::UNAddress(pathString());
-    return  local_addr;
-}
-
-prefix_ std::ostream & senf::operator<<(std::ostream & os, UNAddress const & addr)
-{
-    os << addr.pathString();
-    return os;
-}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "UNAddress.mpp"
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
-// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:

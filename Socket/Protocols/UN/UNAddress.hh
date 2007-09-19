@@ -48,16 +48,17 @@ namespace senf {
         explicit UNAddress(boost::filesystem::path);///< Construct an address constant from given path
         static UNAddress fromString(std::string & s); ///< Convert string to address by interpreting the string as path
         static UNAddress fromPath(boost::filesystem::path & p);///< Convert path to address 
-        static std::string pathString(); ///< Return the path of the address as string
+        UNAddress clone(); ///< Clone object 
+        std::string pathString() const; ///< Return the path of the address as string
 
         /** \brief Base-class for UNAddress exceptions */
         struct AddressException : public std::exception {}; 
 
     private:
-        static boost::filesystem::path path;
+        boost::filesystem::path path;
     };
-const std::ostream & operator<<(std::ostream & os, UNAddress const & addr);
 
+std::ostream & operator<<(std::ostream & os, UNAddress const & addr);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

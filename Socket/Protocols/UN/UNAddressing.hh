@@ -42,7 +42,7 @@
 namespace senf {
     /** \brief Unix domain socket address
 
-        UNSocketAddress wraps the standard sockaddr_in datatype. It provides simple accessor methods
+        UNSocketAddress wraps the standard sockaddr_un datatype. It provides simple accessor methods
         to access the path. 
         
         \implementation This implementation is based on sockaddr_un.
@@ -59,14 +59,13 @@ namespace senf {
                                         ///< Construct an address constant from given path
         static UNSocketAddress from_string(std::string const s); ///< Create UNSocketAddress from string
         static UNSocketAddress from_path(boost::filesystem::path const p); ///< Create UNSocketAddress from path
-        static std::string path();  ///< Return path as string
-        static sockaddr_un sockaddr(); 
-
-        struct sockaddr * sockaddr_p();
+        std::string path() const ;  ///< Return path as string
+        struct sockaddr_un sockaddr(); 
+        struct sockaddr * sockaddr_p() ;
         struct sockaddr const * sockaddr_p() const;
-        unsigned sockaddr_len() const;
+        unsigned sockaddr_len();
     private:
-        static struct sockaddr_un sockAddr;
+        struct sockaddr_un sockAddr;
     };
 
     /** \brief Write path  os

@@ -18,59 +18,34 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNAddress non-inline non-template implementation */
+    \brief UNAddress.test unit tests */
 
-#include "UNAddress.hh"
-//#include "UNAddress.ih"
+//#include "UNAddress.test.hh"
+//#include "UNAddress.test.ih"
 
 // Custom includes
+#include "UNAddress.hh"
+#include <boost/filesystem/path.hpp>
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
-//#include "UNAddress.mpp"
+#include <iostream>
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::UNAddress::UNAddress()
-    //:path("")
+BOOST_AUTO_UNIT_TEST(unAddress)
 {
-    path = boost::filesystem::path("");
-}
-
-prefix_ senf::UNAddress::UNAddress(boost::filesystem::path p)
-{
-    path = p; 
-}
-
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::fromString(std::string &  s)
-{
-    return senf::UNAddress::UNAddress(boost::filesystem::path(s));
-}
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::fromPath(boost::filesystem::path & p){
-    return senf::UNAddress::UNAddress(p);
-}
-
-prefix_  std::string senf::UNAddress::pathString()
-    const
-{
-    return  path.string();
-}
-
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::clone()
-{
-    senf::UNAddress::UNAddress local_addr = senf::UNAddress::UNAddress(pathString());
-    return  local_addr;
-}
-
-prefix_ std::ostream & senf::operator<<(std::ostream & os, UNAddress const & addr)
-{
-    os << addr.pathString();
-    return os;
+    // das koennt sicher mehr sein...
+    std::string testS = "/tmp/senfTestSocket";
+    boost::filesystem::path testp = boost::filesystem::path(testS); 
+    senf::UNAddress addr1 = senf::UNAddress::fromString(testS);
+    senf::UNAddress addr2 = senf::UNAddress::fromPath(testp);
+    BOOST_CHECK( testS == addr1.pathString());
+    BOOST_CHECK( testS == addr2.pathString());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "UNAddress.mpp"
 
 
 // Local Variables:

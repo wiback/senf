@@ -18,39 +18,36 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNProtocol non-inline non-template implementation */
+    \brief UNAddressing.test unit tests */
 
-#include "UNProtocol.hh"
-//#include "UNProtocol.ih"
+//#include "UNAddressing.test.hh"
+//#include "UNAddressing.test.ih"
 
 // Custom includes
-#include <sys/socket.h>
-#include "../../../Utils/Exception.hh"
+#include "UNAddressing.hh"
 
-//#include "UNProtocol.mpp"
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
+
+#include <sys/socket.h>
+#include <sys/un.h>
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-prefix_ void senf::UNProtocol::connect(UNSocketAddress const & address) 
-    const 
+
+BOOST_AUTO_UNIT_TEST(unSocketAddress)
 {
-    if(::connect(body().fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
-        throw SystemException(errno);
+    std::string testS = "/tmp/senfTestSocket";
+    senf::UNSocketAddress addr (testS) ; 
+    int mySock = socket(AF_UNIX, SOCK_DGRAM, 0); 
+    if (bind(mySock, addr.sockaddr_p(), addr.sockaddr_len())) { 
+        std::cout << "Error while binding name to unix socket" << std::endl;
+    }
+
 }
-
-prefix_ void senf::UNProtocol::bind(UNSocketAddress const & address) 
-    const 
-{
-    if(::bind(body().fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
-        throw SystemException(errno);
-}
-
-
-
-
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "UNProtocol.mpp"
 
 
 // Local Variables:
