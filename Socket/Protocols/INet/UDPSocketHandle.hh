@@ -103,7 +103,7 @@ namespace senf {
                                              address.
                                              \param[in] local address to bind to */
                                         /**< \note This member is implicitly called from the
-                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
+                                            ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
 
         ///@}
