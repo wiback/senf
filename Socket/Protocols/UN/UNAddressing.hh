@@ -40,26 +40,56 @@
 //#include "UNAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
+    /** \brief Unix domain socket address
+
+        UNSocketAddress wraps the standard sockaddr_in datatype. It provides simple accessor methods
+        to access the path. 
+        
+        \implementation This implementation is based on sockaddr_un.
+
+        \ingroup addr_group
+     */
     class UNSocketAddress
         : public ComparableSafeBool<UNSocketAddress>
     {
     public:
 
-        //UNSocketAddress();
+        //UNSocketAddress(); 
         explicit UNSocketAddress(boost::filesystem::path p);
-                                        ///< Construct an address constant
-        static UNSocketAddress from_string(std::string const s);
-        static UNSocketAddress from_path(boost::filesystem::path const p);
-        static std::string path();
+                                        ///< Construct an address constant from given path
+        static UNSocketAddress from_string(std::string const s); ///< Create UNSocketAddress from string
+        static UNSocketAddress from_path(boost::filesystem::path const p); ///< Create UNSocketAddress from path
+        static std::string path();  ///< Return path as string
         static sockaddr_un sockaddr(); 
+
         struct sockaddr * sockaddr_p();
         struct sockaddr const * sockaddr_p() const;
         unsigned sockaddr_len() const;
     private:
         static struct sockaddr_un sockAddr;
     };
+
+    /** \brief Write path  os
+
+        \related UNSocketAddress
+     */
     std::ostream & operator<<(std::ostream & os, UNSocketAddress const & addr);
 
+    /// \addtogroup policy_impl_group
+    /// @{
+
+    /** \brief Addressing policy supporting unix domain addressing
+
+        \par Address Type:
+            UNAddress
+
+        This addressing policy implements addressing using unix domain
+        addresses.
+
+        The various members are directly imported from
+        GenericAddressingPolicy which see for a detailed
+        documentation.
+     */
 
     struct UNAddressingPolicy
         : public AddressingPolicyBase,

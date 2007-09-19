@@ -32,17 +32,27 @@
 //#include "UNAddress.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
+    /** \brief Unix domain address
+        
+        UNAddress represents a simple unix domain address which is given by a path to a socket. 
+        It is modelled as a boost::filesystem::path.
+
+        \ingroup addr_group
+      */
     class UNAddress 
         : public boost::filesystem::path,
           public ComparableSafeBool<UNAddress>
     {   
     public: 
-        UNAddress(); 
-        explicit UNAddress(boost::filesystem::path);
-        static UNAddress fromString(std::string & s);
-        static UNAddress fromPath(boost::filesystem::path & p);
-        static std::string pathString();
-        struct AddressException : public std::exception {};
+        UNAddress(); ///< Construct an empty address
+        explicit UNAddress(boost::filesystem::path);///< Construct an address constant from given path
+        static UNAddress fromString(std::string & s); ///< Convert string to address by interpreting the string as path
+        static UNAddress fromPath(boost::filesystem::path & p);///< Convert path to address 
+        static std::string pathString(); ///< Return the path of the address as string
+
+        /** \brief Base-class for UNAddress exceptions */
+        struct AddressException : public std::exception {}; 
+
     private:
         static boost::filesystem::path path;
     };

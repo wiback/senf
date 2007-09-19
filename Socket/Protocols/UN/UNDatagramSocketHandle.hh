@@ -50,8 +50,27 @@ namespace senf {
         ReadablePolicy,
         WriteablePolicy,
         SocketBufferingPolicy
-        >::policy UNDatagramSocket_Policy;   
+        >::policy UNDatagramSocket_Policy;   ///< Socket Policy of the Unix Domain Datagram Protocol
 
+    /** \brief Unix Domain Datagram Socket Protocol
+
+        \par Socket Handle typedefs:
+            \ref UNDatagramSocketHandle (ProtocolClientSocketHandle)
+
+        \par Policy Interface: (to be checked)
+            ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
+            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local(),
+            ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+
+        \par Address Type:
+            UNAddress
+
+        UNDatagramSocketProtocol provides an datagram protocol socket based on the unix domain  addressing.
+
+        This class is utilized as the protocol class of the ProtocolClientSocketHandle
+        via the Socket Handle typedefs above.
+
+    */
     class UNDatagramSocketProtocol
         : public ConcreteSocketProtocol<UNDatagramSocket_Policy>,
           public UNProtocol, 

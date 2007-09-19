@@ -49,11 +49,11 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        void connect(UNSocketAddress const & address) const; ///< Connect to remote address
+        void connect(UNSocketAddress const & address) const; ///< Connect to a  unix domain socket 
                                         /**< \todo make this obsolete by allowing access to the
                                              ClientSocketHandle from ConcreateSocketProtocol
                                              \param[in] address Address to connect to */
-        void bind(UNSocketAddress const & address) const; ///< Set local socket address
+        void bind(UNSocketAddress const & address) const; ///< Set local socket address (path)
                                         /**< \todo make this obsolete by allowing access to the
                                              ClientSocketHandle from ConcreateSocketProtocol
                                              \param[in] address Address to set */
