@@ -70,6 +70,7 @@ deb          Build debian source and binary package
 debsrc       Build debian source package
 debbin       Build debian binary package
 linklint     Check links of doxygen documentation with 'linklint'
+fixlinks     Fix broken links in doxygen documentation
 """)
 
 if os.environ.get('debian_build'):
@@ -86,7 +87,7 @@ def configFilesOpts(target, source, env, for_signature):
 
 env.Append(
    CPPPATH = [ '#/include' ],
-   LIBS = [ 'iberty', '$BOOSTREGEXLIB' ],
+   LIBS = [ 'iberty', '$BOOSTREGEXLIB', '$BOOSTFSLIB' ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
    ENV = { 'TODAY' : str(datetime.date.today()),
