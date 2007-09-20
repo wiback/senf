@@ -28,6 +28,7 @@
 // Custom includes
 #include "TLVPacket.hh"
 #include <senf/Packets.hh>
+#include <senf/Utils/hexdump.hh>
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -55,6 +56,8 @@ BOOST_AUTO_UNIT_TEST(tlvPacket_parse_packet_with_extended_length)
     BOOST_CHECK_EQUAL( p->length(), 0x0Au );
 
     senf::PacketData & p_value (p.next().data());
+    senf::hexdump( p_value.begin(), p_value.end(), std::cout );
+    
 //    BOOST_CHECK_EQUAL( p_value.size(), 0x0Au);
 }
 

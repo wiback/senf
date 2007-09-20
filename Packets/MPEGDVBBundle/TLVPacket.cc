@@ -21,15 +21,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DSMCCSection non-inline non-template implementation */
+    \brief TLVPacket non-inline non-template implementation */
 
 #include "TLVPacket.hh"
 //#include "TLVPacket.ih"
 
 // Custom includes
 #include <iomanip>
-#include "../../Utils/hexdump.hh"
-#include "../../Packets/DefaultBundle/EthernetPacket.hh"
 
 
 #define prefix_
@@ -39,13 +37,10 @@
 prefix_ senf::PacketParserBase::size_type senf::Parse_TLVPacket::bytes()
     const
 {
+//#include <iostream>
+//    std::cout << "XX: " << unsigned( 4 + senf::bytes( length() ) ) << "\n";
     return 4 + senf::bytes( length() );
 }
-
-//prefix_ void senf::TLVPacketType::init(packet p)
-//{
-//    p->init();
-//}
 
 prefix_ void senf::TLVPacketType::dump(packet p, std::ostream & os)
 {
@@ -55,15 +50,11 @@ prefix_ void senf::TLVPacketType::dump(packet p, std::ostream & os)
        << "  length: " << unsigned(p->length()) << "\n";
 }
 
-prefix_ senf::PacketParserBase::size_type senf::TLVPacketType::initSize()
-{
-    return 4 + 1;
-}
+//prefix_ senf::PacketParserBase::size_type senf::TLVPacketType::initSize()
+//{
+//    return 4 + 1;
+//}
 
-prefix_ senf::PacketParserBase::size_type senf::TLVPacketType::initHeadSize()
-{
-    return 4 + 1;
-}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

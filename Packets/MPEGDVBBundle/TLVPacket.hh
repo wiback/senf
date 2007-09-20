@@ -149,12 +149,12 @@ namespace senf {
 
         using mixin::nextPacketRange;
         using mixin::init;
-        
+        using mixin::initSize;
         
         static void dump(packet p, std::ostream & os);
         
-        static PacketParserBase::size_type initSize();
-        static PacketParserBase::size_type initHeadSize();
+//        static PacketParserBase::size_type initSize();
+//        static PacketParserBase::size_type initHeadSize();
     };
         
     typedef TLVPacketType::packet TLVPacket;
