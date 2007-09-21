@@ -110,8 +110,6 @@ namespace senf {
         typedef Parse_DatagramSection parser;
 
         using mixin::nextPacketRange;
-//          using mixin::nextPacketType;
-        //using mixin::initSize;
         using mixin::init;
         
         static void dump(packet p, std::ostream & os);

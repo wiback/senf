@@ -214,11 +214,11 @@ namespace senf {
 
     /** \brief Mixin to provide standard implementations for nextPacketRange and nextPacketType
 
-        This mixin class simplifies the definition of simple packets with fixed-size headers and/or
-        trailers. For this type of Packet, this mixin provides the nextPacketRange() member. If you
-        additionally provide the optional \a Registry argument, PacketTypeMixin provides a simple
-        implementation of nextPacketType. When using the PacketTypeMixin, the implementation of a
-        packet is simplified to:
+        This mixin class simplifies the definition of simple packets with fixed-size (!) headers 
+        and/or trailers. For this type of Packet, this mixin provides the nextPacketRange() 
+        member. If you additionally provide the optional \a Registry argument, PacketTypeMixin 
+        provides a simple implementation of nextPacketType. When using the PacketTypeMixin, the 
+        implementation of a packet is simplified to:
         \code
         // Here 'SomeRegistryTag' is optional
         struct SimplePacketType 

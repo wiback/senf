@@ -1,4 +1,4 @@
-// $Id: SNDUPacket.hh 423 2007-08-31 22:05:37Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SNDUPacket public header */
+    \brief TLVPacket public header */
 
 #ifndef HH_TLVPacket_
 #define HH_TLVPacket_ 1
@@ -36,7 +36,6 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
 
     struct UnsuportedTLVPacketException : public std::exception
     { 
@@ -53,17 +52,20 @@ namespace senf {
         
         SENF_PACKET_PARSER_NO_INIT(Parse_TLVPacketLength);
 
+#       endif
+
+        typedef boost::uint32_t value_type;
+        
         typedef Parse_Flag      <    0 > Parse_extended_length_flag;
         typedef Parse_UIntField < 1, 8 > Parse_fixed_length;
 
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((OverlayField)( extended_length_flag, Parse_extended_length_flag ))
-            ((Field       )( fixed_length_field,   Parse_fixed_length         ))
-        );
+        Parse_extended_length_flag extended_length_flag() const {
+            return parse<Parse_extended_length_flag>( 0 );
+        }
 
-#       endif
-        
-        typedef boost::uint32_t value_type;
+        Parse_fixed_length fixed_length_field() const {
+            return parse<Parse_fixed_length>( 0 );
+        }
         
         value_type value() const {
             switch( bytes() ) {
@@ -82,6 +84,8 @@ namespace senf {
             };
         }
         
+        static const size_type init_bytes = 1;
+
         size_type bytes() const {
             if ( extended_length_flag() )
                 return 1 + fixed_length_field();
@@ -108,25 +112,12 @@ namespace senf {
         
         SENF_PACKET_PARSER_INIT(Parse_TLVPacket);
         
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
+        SENF_PACKET_PARSER_DEFINE_FIELDS(
             ((Field)( type,   Parse_UInt32          ))
             ((Field)( length, Parse_TLVPacketLength ))
         );
         
 #       endif
-        
-//        Parse_UInt32 type() const { 
-//            return parse<Parse_UInt32>( 0 ); 
-//        }
-        
-//        Parse_TLVPacketLength length() const {
-//            return parse<Parse_TLVPacketLength>( 4 );
-//        }
-        
-        PacketParserBase::size_type bytes() const;
-        
-        static const size_type init_bytes = 4+1; // 4 bytes type + 1 byte length
-
     };
 
     /** \brief TLV Packet
@@ -140,21 +131,14 @@ namespace senf {
         \ingroup protocolbundle_mpegdvb
      */
     struct TLVPacketType
-        : public PacketTypeBase,
-          public PacketTypeMixin<TLVPacketType>
+        : public PacketTypeBase
     {
-        typedef PacketTypeMixin<TLVPacketType> mixin;
         typedef ConcretePacket<TLVPacketType> packet;
         typedef Parse_TLVPacket parser;
 
-        using mixin::nextPacketRange;
-        using mixin::init;
-        using mixin::initSize;
+        static optional_range nextPacketRange(packet p);
         
         static void dump(packet p, std::ostream & os);
-        
-//        static PacketParserBase::size_type initSize();
-//        static PacketParserBase::size_type initHeadSize();
     };
         
     typedef TLVPacketType::packet TLVPacket;

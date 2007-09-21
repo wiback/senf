@@ -30,7 +30,6 @@
 #include <algorithm>
 #include "../../Packets/PacketType.hh"
 #include "../../Packets/ParseInt.hh"
-#include "../../Packets/PacketRegistry.hh"
 #include "../../Packets/PacketParser.hh"
 
 //#include "TransportPacket.mpp"
@@ -40,7 +39,7 @@ namespace senf {
 
     /** \brief Parse a Transport Stream packet
 
-        Parser implementing the header of a MPEG Transport Stream Packet.
+        Parser implementing the header of a MPEG Transport Stream packet.
         
         \see TransportPacketType
      */
@@ -89,6 +88,40 @@ namespace senf {
     
     /** \brief Transport Stream packet
         
+        <table class="senf">
+          <tr style="text-align:center">
+            <th>Syntax</th><th>No. of bits</th></tr>
+          <tr>
+            <td>transport_packet() {</td> <td></td>
+          </tr>
+          <tr>
+            <td style="padding-left:2em">\ref Parse_TransportPacket::sync_byte() "sync_byte"</td>
+            <td>8</td></tr>
+          <tr>
+            <td style="padding-left:2em">\ref Parse_TransportPacket::transport_error_indicator() "transport_error_indicator"</td>
+            <td>1</td></tr>
+          <tr>
+            <td style="padding-left:2em">\ref Parse_TransportPacket::pusi() "payload_uni_start_indicator"</td>
+            <td>1</td></tr>
+          <tr>
+            <td style="padding-left:2em">\ref Parse_TransportPacket::transport_priority() "transport_priority"</td>
+            <td>1</td></tr>
+          <tr>
+            <td style="padding-left:2em">\ref Parse_TransportPacket::pid() "PID"</td>
+            <td>13</td></tr>
+          <tr>
+            <td style="padding-left:2em">\ref Parse_TransportPacket::transport_scrmbl_ctrl() "transport_scrambling_control"</td>
+            <td>2</td></tr>
+          <tr>
+            <td style="padding-left:2em">\ref Parse_TransportPacket::adaptation_field_ctrl() "adaptation_field_control"</td>
+            <td>2</td></tr>
+          <tr>
+            <td style="padding-left:2em">\ref Parse_TransportPacket::continuity_counter() "continuity_counter"</td>
+            <td>4</td></tr>
+          <tr>
+            <td>}</td> <td></td></tr>
+        </table>
+        
         \par Packet type (typedef):
             \ref TransportPacket
 
@@ -106,7 +139,6 @@ namespace senf {
         typedef Parse_TransportPacket parser;
     
         using mixin::nextPacketRange;
-    //          using mixin::nextPacketType;
         using mixin::init;
         using mixin::initSize;
         

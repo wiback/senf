@@ -1,4 +1,4 @@
-// $Id: SNDUPacket.cc 423 2007-08-31 22:05:37Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -33,15 +33,6 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-
-prefix_ senf::PacketParserBase::size_type senf::Parse_TLVPacket::bytes()
-    const
-{
-//#include <iostream>
-//    std::cout << "XX: " << unsigned( 4 + senf::bytes( length() ) ) << "\n";
-    return 4 + senf::bytes( length() );
-}
-
 prefix_ void senf::TLVPacketType::dump(packet p, std::ostream & os)
 {
     os << "TLVPacket:\n"
@@ -50,10 +41,15 @@ prefix_ void senf::TLVPacketType::dump(packet p, std::ostream & os)
        << "  length: " << unsigned(p->length()) << "\n";
 }
 
-//prefix_ senf::PacketParserBase::size_type senf::TLVPacketType::initSize()
-//{
-//    return 4 + 1;
-//}
+prefix_ senf::PacketInterpreterBase::optional_range 
+senf::TLVPacketType::nextPacketRange(packet p) 
+{
+    if (p.data().size() < 6)
+        return no_range();
+    return range(
+            boost::next(p.data().begin(), 4 + senf::bytes(p->length()) ),
+            p.data().end() );
+}
 
 
 ///////////////////////////////cc.e////////////////////////////////////////

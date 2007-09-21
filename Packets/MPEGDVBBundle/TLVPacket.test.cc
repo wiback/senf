@@ -1,4 +1,4 @@
-// $Id: TransportPacket.test.cc 389 2007-08-10 15:06:54Z tho $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -38,27 +38,49 @@
 
 using namespace senf;
 
+BOOST_AUTO_UNIT_TEST(tlvPacket_parser)
+{
+    // number of bytes to allocate for a new TLVPacket should be 5
+    BOOST_CHECK_EQUAL( init_bytes<Parse_TLVPacket>::value, 5u );
+}
+
+BOOST_AUTO_UNIT_TEST(tlvPacket_parse_packet_with_simple_length)
+{
+    unsigned char data[] = { 
+        0x01, 0x23, 0x45, 0x67, // type
+        0x0A, // first not set, length=10
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value (payload)
+    };
+            
+    senf::TLVPacket p (senf::TLVPacket::create(data));
+    
+    BOOST_CHECK_EQUAL( p->type(), 0x01234567u );
+    BOOST_CHECK_EQUAL( p->length(), 0x0Au );
+
+    PacketData & p_value (p.next().data());
+    BOOST_CHECK_EQUAL( p_value.size(), 0x0Au);
+    for (int i=0, j=p_value.size(); i<j; i++)
+        BOOST_CHECK_EQUAL( p_value[i], i);
+}
+
 BOOST_AUTO_UNIT_TEST(tlvPacket_parse_packet_with_extended_length)
 {
     unsigned char data[] = { 
         0x01, 0x23, 0x45, 0x67, // type
         0x81, // first and last bit set => one byte length following
         0x0A, // length (10 bytes value)
-        0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A  // value (payload)
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value (payload)
     };
             
     senf::TLVPacket p (senf::TLVPacket::create(data));
     
-#include <iostream>
-    p.dump(std::cout);
-
     BOOST_CHECK_EQUAL( p->type(), 0x01234567u );
     BOOST_CHECK_EQUAL( p->length(), 0x0Au );
 
-    senf::PacketData & p_value (p.next().data());
-    senf::hexdump( p_value.begin(), p_value.end(), std::cout );
-    
-//    BOOST_CHECK_EQUAL( p_value.size(), 0x0Au);
+    PacketData & p_value (p.next().data());
+    BOOST_CHECK_EQUAL( p_value.size(), 0x0Au);
+    for (int i=0, j=p_value.size(); i<j; i++)
+        BOOST_CHECK_EQUAL( p_value[i], i);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

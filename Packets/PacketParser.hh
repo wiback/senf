@@ -63,13 +63,13 @@
 
     Parsers can be grouped into several categories. These categories are not all defined rigorously
     but are nevertheless helpful when working with the parsers:
-    \li <em>Value parsers</em> provide the lowest level parsers (e.g. senf::Parse_UInt16 which
+    \li <em>\ref parserimpl_value</em> provide the lowest level parsers (e.g. senf::Parse_UInt16 which
         returns an integer value).
-    \li <em>Collection parsers</em> are parsers which model a collection of sub-elements like
+    \li <em>\ref parserimpl_collection</em> are parsers which model a collection of sub-elements like
         senf::Parse_List or senf::Parse_Vector.
-    \li <em>Composite parsers</em> collect several fields of arbitrary type into a new
+    \li <em>\ref parserimpl_composite</em> collect several fields of arbitrary type into a new
         parser. Parsers defined using the \ref packetparsermacros fall under this category.
-    \li <em>Packet parsers</em> are used to define a packet type.
+    \li <em>\ref parserimpl_packet</em> are used to define a packet type.
 
     \warning Parsers are like iterators: They are invalidated <em>whenever the size of the packet's
     data is changed</em>. You should not store a parser anywhere. If you want to keep a parser
@@ -118,7 +118,7 @@
 
     You will probably only very seldom need to implement a completely new collection
     parser. Instead, you can rely on senf::Parse_Vector or senf::Parse_List and implement new
-    polcies.
+    policies.
 
     \subsection parserimpl_composite Composite parsers
     
@@ -140,7 +140,8 @@
     interface. These members may access the packet data in any way. You just need to ensure, that
     the integration into the packet-type is correct (the senf::PacketTypeMixin will by default use
     senf::bytes() to find the end of the header).
-    
+
+    <hr>
  */
 
 #ifndef HH_PacketParser_
