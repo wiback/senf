@@ -28,10 +28,100 @@
 
 // Custom includes
 #include <iomanip>
-
+#include <senf/Utils/hexdump.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+prefix_ senf::Parse_TLVPacketLength::value_type senf::Parse_TLVPacketLength::value() const {
+    switch (bytes() ) {
+    case 1:
+        return fixed_length_field().value();
+    case 2:
+        return parse<Parse_UInt8>( 1 ).value();
+    case 3:
+        return parse<Parse_UInt16>( 1 ).value();
+    case 4:
+        return parse<Parse_UInt24>( 1 ).value();
+    case 5:
+        return parse<Parse_UInt32>( 1 ).value();
+    default:
+        throw(UnsuportedTLVPacketException());
+    };
+}
+
+prefix_ void senf::Parse_TLVPacketLength::value(value_type const & v) {
+    if (v > 4294967295u)
+        throw(UnsuportedTLVPacketException());
+        
+    if (v < 128u) {
+        if (bytes() != 1) resize(1);
+        fixed_length_field() = v;
+        return;
+    }
+    if (v < 256u) {
+        if (bytes() != 2) resize(2);
+        parse<Parse_UInt8>(1) = v;
+        return;
+    }
+    if (v < 65536u) {
+        if (bytes() != 3) resize(3);
+        parse<Parse_UInt16>(1) = v;
+        return;
+    }
+    if (v < 16777216u) {
+        if (bytes() != 4) resize(4);
+        parse<Parse_UInt24>(1) = v;
+        return;
+    }
+    if (v <= 4294967295u) {
+        if (bytes() != 5) resize(5);
+        parse<Parse_UInt32>(1) = v;
+        return;
+    }
+}
+
+prefix_ senf::Parse_TLVPacketLength const & senf::Parse_TLVPacketLength::operator= (value_type other) {
+    value(other);
+    return *this; 
+}
+
+prefix_ senf::Parse_TLVPacketLength::size_type senf::Parse_TLVPacketLength::bytes() const {
+    if ( extended_length_flag() )
+        return 1 + fixed_length_field();
+    else
+        return 1;
+}
+    
+prefix_ void senf::Parse_TLVPacketLength::init() const {
+    defaultInit();
+    extended_length_flag() = 0;
+}
+
+prefix_ void senf::Parse_TLVPacketLength::resize(size_type size) {
+    std::cout << "senf::Parse_TLVPacketLength::resize: " << unsigned(size) << "\n";
+//    hexdump(data().begin(), data().end(), std::cout);
+    
+    size_type current_size (bytes());
+    safe_data_iterator si (data(), i());
+    
+    if (current_size > size)
+        data().erase( si, boost::next(si, current_size-size));
+    else {
+        data().insert( si, size-current_size, 0);
+        Parse_TLVPacketLength(si,state()).init();
+    }
+    
+    if (size > 1) {
+        extended_length_flag() = 1;
+        fixed_length_field() = size-1;
+    } else {
+        extended_length_flag() = 0;
+    }
+    
+//    hexdump(data().begin(), data().end(), std::cout);
+}
+
 
 prefix_ void senf::TLVPacketType::dump(packet p, std::ostream & os)
 {
@@ -41,10 +131,25 @@ prefix_ void senf::TLVPacketType::dump(packet p, std::ostream & os)
        << "  length: " << unsigned(p->length()) << "\n";
 }
 
+prefix_ senf::PacketParserBase::size_type senf::TLVPacketType::initSize()
+{
+    return 5;  // 4 bytes type + 1 byte length
+}
+
+prefix_ void senf::TLVPacketType::init(packet p)
+{
+    p->init();
+}
+
+prefix_ void senf::TLVPacketType::finalize(packet p)
+{
+    p->length() = p.next().data().size();
+}
+
 prefix_ senf::PacketInterpreterBase::optional_range 
 senf::TLVPacketType::nextPacketRange(packet p) 
 {
-    if (p.data().size() < 6)
+    if (p.data().size() < 5)
         return no_range();
     return range(
             boost::next(p.data().begin(), 4 + senf::bytes(p->length()) ),

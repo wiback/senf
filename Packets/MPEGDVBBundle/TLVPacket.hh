@@ -44,10 +44,11 @@ namespace senf {
         }
     };
 
-    struct Parse_TLVPacketLength 
+    class Parse_TLVPacketLength 
         : public detail::packet::ParseIntOps<Parse_TLVPacketLength, boost::uint32_t>,
           public PacketParserBase
     {
+    public:
 #       ifndef DOXYGEN
         
         SENF_PACKET_PARSER_NO_INIT(Parse_TLVPacketLength);
@@ -55,7 +56,20 @@ namespace senf {
 #       endif
 
         typedef boost::uint32_t value_type;
+    
+        value_type value() const;
+
+        void value(value_type const & v);
         
+        Parse_TLVPacketLength const & operator= (value_type other);
+            
+        static const size_type init_bytes = 1;
+
+        size_type bytes() const;
+            
+        void init() const;
+
+    private:
         typedef Parse_Flag      <    0 > Parse_extended_length_flag;
         typedef Parse_UIntField < 1, 8 > Parse_fixed_length;
 
@@ -67,37 +81,8 @@ namespace senf {
             return parse<Parse_fixed_length>( 0 );
         }
         
-        value_type value() const {
-            switch( bytes() ) {
-                case 1:
-                    return fixed_length_field().value();
-                case 2:
-                    return parse<Parse_UInt8>( 1 ).value();
-                case 3:
-                    return parse<Parse_UInt16>( 1 ).value();
-                case 4:
-                    return parse<Parse_UInt24>( 1 ).value();
-                case 5:
-                    return parse<Parse_UInt32>( 1 ).value();
-                default:
-                    throw(UnsuportedTLVPacketException()); 
-            };
-        }
-        
-        static const size_type init_bytes = 1;
+        void resize(size_type size);
 
-        size_type bytes() const {
-            if ( extended_length_flag() )
-                return 1 + fixed_length_field();
-            else
-                return 1;
-        }
-        
-        void init() const {
-            defaultInit();
-            extended_length_flag() = 0;
-        }
-        
     };  
         
     /** \brief parse TLVPacket Packet
@@ -137,7 +122,9 @@ namespace senf {
         typedef Parse_TLVPacket parser;
 
         static optional_range nextPacketRange(packet p);
-        
+        static void init(packet p);
+        static size_type initSize();
+        static void finalize(packet p);
         static void dump(packet p, std::ostream & os);
     };
         

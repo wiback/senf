@@ -28,7 +28,6 @@
 // Custom includes
 #include "TLVPacket.hh"
 #include <senf/Packets.hh>
-#include <senf/Utils/hexdump.hh>
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -38,29 +37,31 @@
 
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(tlvPacket_parser)
+BOOST_AUTO_UNIT_TEST(tlvPacket_static)
 {
+    // check static values:
     // number of bytes to allocate for a new TLVPacket should be 5
     BOOST_CHECK_EQUAL( init_bytes<Parse_TLVPacket>::value, 5u );
+    BOOST_CHECK_EQUAL( TLVPacketType::initSize(), 5u );
 }
 
 BOOST_AUTO_UNIT_TEST(tlvPacket_parse_packet_with_simple_length)
 {
     unsigned char data[] = { 
         0x01, 0x23, 0x45, 0x67, // type
-        0x0A, // first not set, length=10
+        0x0A, // first bit not set, length=10
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value (payload)
     };
             
-    senf::TLVPacket p (senf::TLVPacket::create(data));
+    senf::TLVPacket tlvPacket (senf::TLVPacket::create(data));
     
-    BOOST_CHECK_EQUAL( p->type(), 0x01234567u );
-    BOOST_CHECK_EQUAL( p->length(), 0x0Au );
+    BOOST_CHECK_EQUAL( tlvPacket->type(), 0x01234567u );
+    BOOST_CHECK_EQUAL( tlvPacket->length(), 0x0Au );
 
-    PacketData & p_value (p.next().data());
-    BOOST_CHECK_EQUAL( p_value.size(), 0x0Au);
-    for (int i=0, j=p_value.size(); i<j; i++)
-        BOOST_CHECK_EQUAL( p_value[i], i);
+    PacketData & tlvPacket_value (tlvPacket.next().data());
+    BOOST_CHECK_EQUAL( tlvPacket_value.size(), 0x0Au);
+    for (int i=0, j=tlvPacket_value.size(); i<j; i++)
+        BOOST_CHECK_EQUAL( tlvPacket_value[i], i );
 }
 
 BOOST_AUTO_UNIT_TEST(tlvPacket_parse_packet_with_extended_length)
@@ -72,16 +73,51 @@ BOOST_AUTO_UNIT_TEST(tlvPacket_parse_packet_with_extended_length)
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value (payload)
     };
             
-    senf::TLVPacket p (senf::TLVPacket::create(data));
+    senf::TLVPacket tlvPacket (senf::TLVPacket::create(data));
     
-    BOOST_CHECK_EQUAL( p->type(), 0x01234567u );
-    BOOST_CHECK_EQUAL( p->length(), 0x0Au );
+    BOOST_CHECK_EQUAL( tlvPacket->type(), 0x01234567u );
+    BOOST_CHECK_EQUAL( tlvPacket->length(), 0x0Au );
 
-    PacketData & p_value (p.next().data());
-    BOOST_CHECK_EQUAL( p_value.size(), 0x0Au);
-    for (int i=0, j=p_value.size(); i<j; i++)
-        BOOST_CHECK_EQUAL( p_value[i], i);
+    PacketData & tlvPacket_value (tlvPacket.next().data());
+    BOOST_CHECK_EQUAL( tlvPacket_value.size(), 0x0Au);
+    for (int i=0, j=tlvPacket_value.size(); i<j; i++)
+        BOOST_CHECK_EQUAL( tlvPacket_value[i], i );
 }
+
+BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_simple_length)
+{
+    std::string payload ("Hello, world!");
+    TLVPacket tlvPacket (TLVPacket::create());
+    tlvPacket->type() = 42u;
+    DataPacket::createAfter( tlvPacket, payload );
+    tlvPacket.finalize();
+
+    BOOST_CHECK_EQUAL( tlvPacket->type(), 42u);
+    BOOST_CHECK_EQUAL( tlvPacket->length(), 13u);
+    
+    PacketData & tlvPacket_value (tlvPacket.next().data());
+    BOOST_CHECK( equal( tlvPacket_value.begin(), tlvPacket_value.end(), payload.begin() ));
+}
+
+/*
+BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_extended_length)
+{
+    std::string payload (
+            "This is a very long string with more than 127 characters to check if the TLV-Packet "
+            "works correctly with an extended length. That's all." );
+    TLVPacket tlvPacket (TLVPacket::create( payload.size() + 4 + 2));
+    tlvPacket->type() = 42u;
+    DataPacket::createAfter( tlvPacket, payload );
+    tlvPacket.finalize();
+        
+    BOOST_CHECK_EQUAL( tlvPacket->type(), 42u );
+    BOOST_CHECK_EQUAL( tlvPacket->length(), payload.size() );
+    
+    PacketData & tlvPacket_value (tlvPacket.next().data());
+   
+    BOOST_CHECK( equal( tlvPacket_value.begin(), tlvPacket_value.end(), payload.begin() ));
+}
+*/
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
