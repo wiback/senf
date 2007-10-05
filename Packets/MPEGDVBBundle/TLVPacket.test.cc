@@ -99,13 +99,13 @@ BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_simple_length)
     BOOST_CHECK( equal( tlvPacket_value.begin(), tlvPacket_value.end(), payload.begin() ));
 }
 
-/*
+
 BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_extended_length)
 {
     std::string payload (
             "This is a very long string with more than 127 characters to check if the TLV-Packet "
             "works correctly with an extended length. That's all." );
-    TLVPacket tlvPacket (TLVPacket::create( payload.size() + 4 + 2));
+    TLVPacket tlvPacket (TLVPacket::create());
     tlvPacket->type() = 42u;
     DataPacket::createAfter( tlvPacket, payload );
     tlvPacket.finalize();
@@ -114,10 +114,19 @@ BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_extended_length)
     BOOST_CHECK_EQUAL( tlvPacket->length(), payload.size() );
     
     PacketData & tlvPacket_value (tlvPacket.next().data());
-   
     BOOST_CHECK( equal( tlvPacket_value.begin(), tlvPacket_value.end(), payload.begin() ));
+
+    payload = std::string("This is a short string with less than 127 characters. That's all.");
+    DataPacket::createAfter( tlvPacket, payload );
+    tlvPacket.finalize();
+
+    BOOST_CHECK_EQUAL( tlvPacket->type(), 42u );
+    BOOST_CHECK_EQUAL( tlvPacket->length(), payload.size() );
+	    
+    PacketData & tlvPacket_value2 (tlvPacket.next().data());
+    BOOST_CHECK( equal( tlvPacket_value2.begin(), tlvPacket_value2.end(), payload.begin() ));	   
 }
-*/
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

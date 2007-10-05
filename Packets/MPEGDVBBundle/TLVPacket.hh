@@ -82,7 +82,6 @@ namespace senf {
         }
         
         void resize(size_type size);
-
     };  
         
     /** \brief parse TLVPacket Packet
