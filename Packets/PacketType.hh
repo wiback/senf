@@ -271,6 +271,11 @@ namespace senf {
 
             static void finalize(packet p)
             {
+                // Set the type field by querying the type of the next packet. This is an 
+                // optional assignment: If the key is not found, the value returned by 'key'
+                // is an empty optional and the assignment will be skipped.
+                p->typeField << key(p.next());
+
                 // optionally complete the packet by generating auto-generated information
                 // (like checksums)
             }
@@ -300,7 +305,7 @@ namespace senf {
             using mixin::init;         
 
             static registry_key_t nextPacketKey(packet p)
-            { return i.fields().typeField(); }
+            { return p->typeField(); }
         };
         \endcode
 
@@ -314,11 +319,30 @@ namespace senf {
     {
     public:
         typedef typename Registry::key_t registry_key_t;
+        typedef boost::optional<registry_key_t> optional_registry_key_t;
+
+        static optional_registry_key_t key (Packet p); ///< Find key of packet from registry
+                                        /**< key() will query the registry to find the key of the
+                                             given packet. Whereas \c nextPacketKey() as implemented
+                                             by the mixin user will provide the registry key of the
+                                             next packet from information stored in the current
+                                             packets header, the key() member will look up the type
+                                             of packet \a p in the registry and return it's
+                                             key. 
+                                             
+                                             If either \a p is an in - valid() packet or the packet
+                                             type is not found in the registry, the returned
+                                             optional value will be empty. */
+
+        ///@{
+        ///\name PacketType interface implementation
 
         static PacketInterpreterBase::optional_range nextPacketRange (Packet p);
         static PacketInterpreterBase::factory_t      nextPacketType  (Packet p);
         static PacketInterpreterBase::size_type      initSize        ();
         static void                                  init            (Packet p);
+        
+        ///@}
     };
 
 #   ifndef DOXYGEN

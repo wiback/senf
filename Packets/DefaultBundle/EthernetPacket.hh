@@ -132,6 +132,7 @@ namespace senf {
             { return p->type(); }
 
         static void dump(packet p, std::ostream & os);
+        static void finalize(packet p);
     };
 
     /** \brief Ethernet packet typedef */
@@ -202,6 +203,7 @@ namespace senf {
             { return p->type(); }
 
         static void dump(packet p, std::ostream & os);
+        static void finalize(packet p);
     };
 
     /** \brief Ethernet VLAN tag typedef */

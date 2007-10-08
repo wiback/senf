@@ -27,9 +27,12 @@
 //#include "IpV4Packet.ih"
 
 // Custom includes
+#include <iomanip>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <boost/io/ios_state.hpp>
+#include "../../Utils/IpChecksum.hh"
 #include "EthernetPacket.hh"
 
 #define prefix_
@@ -43,8 +46,27 @@ namespace {
         regsiterIpV4Packet2 (4); // IP-in-IP encapsulation
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::Parse_IpV4
+
+prefix_ boost::uint16_t senf::Parse_IpV4::calcChecksum()
+    const
+{
+    IpChecksum summer;
+    summer.feed( i(),                   i()+checksum_offset );
+    // Not needed since the number of 0-bytes is even
+    // summer.feed( 0u );
+    // summer.feed( 0u );
+    summer.feed( i()+checksum_offset+2, i()+bytes(*this)    );
+    return summer.sum();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::IpV4PacketType
+
 prefix_ void senf::IpV4PacketType::dump(packet p, std::ostream & os)
 {
+    boost::io::ios_all_saver ias(os);
     os << "Internet protocol Version 4:\n"
        << "  version       : " << p->version() << "\n"
        << "  IHL           : " << p->ihl() << "\n"
@@ -56,9 +78,17 @@ prefix_ void senf::IpV4PacketType::dump(packet p, std::ostream & os)
        << "  fragment      : " << p->frag() << "\n"
        << "  TTL           : " << unsigned(p->ttl()) << "\n"
        << "  protocol      : " << unsigned(p->protocol()) << "\n"
-       << "  CRC           : " << std::hex << p->crc() << std::dec << "\n"
+       << "  checksum      : 0x" 
+         << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << std::dec << "\n"
        << "  source        : " << p->source() << "\n"
        << "  destination   : " << p->destination() << "\n";
+}
+
+prefix_ void senf::IpV4PacketType::finalize(packet p)
+{
+    p->length()   << p.size();
+    p->protocol() << key(p.next());
+    p->checksum() << p->calcChecksum();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -53,8 +53,13 @@ prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
     os << ": \n"
        << "  destination   : " << p->destination() << "\n"
        << "  source        : " << p->source() << "\n"
-       << "  ethertype     : " 
+       << "  ethertype     : 0x" 
        << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
+}
+
+prefix_ void senf::EthernetPacketType::finalize(packet p)
+{
+    p->type() << key(p.next());
 }
 
 prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
@@ -64,8 +69,13 @@ prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
        << "  priority      : " << p->priority() << "\n"
        << "  cfi           : " << p->cfi() << "\n"
        << "  vlan-ID       : " << p->vlanId() << "\n"
-       << "  ethertype     : " 
+       << "  ethertype     : 0x" 
        << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
+}
+
+prefix_ void senf::EthVLanPacketType::finalize(packet p)
+{
+    p->type() << key(p.next());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

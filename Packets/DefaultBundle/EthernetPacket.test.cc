@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "EthernetPacket.hh"
+#include "IpV4Packet.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -66,6 +67,26 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_chain)
     BOOST_CHECK_EQUAL( v->type(), 0xabcd );
     BOOST_CHECK( v.next().is<senf::DataPacket>() );
     BOOST_CHECK_EQUAL( *v.next().data().begin(), 0xf0 );
+}
+
+BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
+{
+    senf::EthernetPacket eth (senf::EthernetPacket::create());
+    eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");
+    eth->destination() = senf::MACAddress::from_string("07:08:09:0a:0b:0c");
+    
+    senf::EthVLanPacket vlan (senf::EthVLanPacket::createAfter(eth));
+    vlan->priority() = 9u;
+    vlan->cfi() = true;
+    vlan->vlanId() = 0x234u;
+
+    eth.finalize();
+    BOOST_CHECK_EQUAL(eth->type(), 0x8100u);
+    BOOST_CHECK_EQUAL(vlan->type(), 0u);
+
+    senf::IpV4Packet ip (senf::IpV4Packet::createAfter(vlan));
+    eth.finalize();
+    BOOST_CHECK_EQUAL(vlan->type(), 0x0800u);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

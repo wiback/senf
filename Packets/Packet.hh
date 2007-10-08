@@ -184,6 +184,8 @@ namespace senf {
 
                                      Packet      next() const; 
                                         ///< Get next packet in chain
+                                        /**< \returns in - valid() packet, if no next packet 
+                                             exists */
         template <class OtherPacket> OtherPacket next() const; 
                                         ///< Get next packet of given type in chain
                                         /**< \throws InvalidPacketChainException if no such packet
@@ -192,7 +194,8 @@ namespace senf {
                                         ///< Get next packet of given type in chain
                                         /**< \param[in] nothrow This argument always has the value
                                              \c senf::nothrow
-                                             \returns in-valid() packet, if no such packet is found */
+                                             \returns in - valid() packet, if no such packet is
+                                             found */
         template <class OtherPacket> OtherPacket findNext() const;
                                         ///< Find next packet of given type in chain
                                         /**< findNext() is like next(), it will however return \c
@@ -205,11 +208,14 @@ namespace senf {
                                              *this if it is of the given type.
                                              \param[in] nothrow This argument always has the value
                                              \c senf::nothrow
-                                             \returns in-valid() packet, if no such packet is found */
+                                             \returns in - valid() packet, if no such packet is
+                                             found */
         
 
                                      Packet      prev() const; 
                                         ///< Get previous packet in chain
+                                        /**< \returns in - valid() packet, if no previous packet 
+                                             exists */
         template <class OtherPacket> OtherPacket prev() const; 
                                         ///< Get previous packet of given type in chain
                                         /**< \throws InvalidPacketChainException if no such packet
@@ -218,7 +224,8 @@ namespace senf {
                                         ///< Get previous packet of given type in chain
                                         /**< \param[in] nothrow This argument always has the value
                                              \c senf::nothrow
-                                             \returns in-valid() packet, if no such packet is found */
+                                             \returns in - valid() packet, if no such packet is
+                                             found */
         template <class OtherPacket> OtherPacket findPrev() const;
                                         ///< Find previous packet of given type in chain
                                         /**< findPrev() is like prev(), it will however return \c
@@ -231,7 +238,8 @@ namespace senf {
                                              *this if it is of the type 
                                              \param[in] nothrow This argument always has the value
                                              \c senf::nothrow
-                                             \returns in-valid() packet, if no such packet is found */
+                                             \returns in - valid() packet, if no such packet is
+                                             found */
 
 
                                      Packet      first() const;
@@ -244,7 +252,8 @@ namespace senf {
                                         ///< Return first packet of given type in chain
                                         /**< \param[in] nothrow This argument always has the value
                                              \c senf::nothrow
-                                             \returns in-valid() packet, if no such packet is found */
+                                             \returns in - valid() packet, if no such packet is
+                                             found */
 
                                      Packet      last() const;
                                         ///< Return last packet in chain
@@ -256,7 +265,8 @@ namespace senf {
                                         ///< Return last packet of given type in chain
                                         /**< \param[in] nothrow This argument always has the value
                                              \c senf::nothrow
-                                             \returns in-valid() packet, if no such packet is found */
+                                             \returns in - valid() packet, if no such packet is
+                                             found */
 
 
         template <class OtherPacket> OtherPacket parseNextAs() const;
@@ -321,10 +331,12 @@ namespace senf {
         bool boolean_test() const;      ///< Check, whether the packet is valid()
                                         /**< \see valid() */
         bool valid() const;             ///< Check, whether the packet is valid()
-                                        /**< An in-valid() packet does not allow any operation
-                                             except checking for validity and assignment. in-valid()
-                                             packets serve the same role as 0-pointers. */
-        
+                                        /**< An in - valid() packet does not allow any operation
+                                             except checking for validity and assignment. in -
+                                             valid() packets serve the same role as 0-pointers. 
+                                             
+                                             This is an alias for boolean_test() which is called
+                                             when using a packet in a boolean context. */
 
         void finalize() const;          ///< Update calculated fields
                                         /**< This call will update all calculated fields of the

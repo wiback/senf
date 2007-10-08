@@ -94,7 +94,7 @@ namespace senf {
             ((Field       )( frag,        Parse_Frag    ))
             ((Field       )( ttl,         Parse_8bit    ))
             ((Field       )( protocol,    Parse_8bit    ))
-            ((Field       )( crc,         Parse_16bit   ))
+            ((Field       )( checksum,    Parse_16bit   ))
             ((Field       )( source,      Parse_Addr    ))
             ((Field       )( destination, Parse_Addr    )) );
 
@@ -111,7 +111,7 @@ namespace senf {
         Parse_Frag    frag() const;
         Parse_8bit    ttl() const;
         Parse_8bit    protocol() const;
-        Parse_16bit   crc() const;
+        Parse_16bit   checksum() const;
         Parse_Addr    source() const;
         Parse_Addr    destination() const;
 
@@ -119,6 +119,13 @@ namespace senf {
 
         void init() {
             version() = 4;
+            // We don't support option headers at the moment ...
+            ihl() = 5;
+        }
+        
+        boost::uint16_t calcChecksum() const;
+        bool validateChecksum() const {
+            return checksum() == calcChecksum();
         }
     };
 
@@ -163,6 +170,7 @@ namespace senf {
             { return p->protocol(); }
 
         static void dump(packet p, std::ostream & os);
+        static void finalize(packet p);
     };
         
     /** \brief IpV4 packet typedef */

@@ -370,6 +370,7 @@ namespace senf {
 #   else
     /** \brief Generic parser copying
 
+
         This operator allows to copy the values of identical parsers. This operation does \e not
         depend on the parsers detailed implementation, it will just replace the data bytes of the
         target parser with those from the source parser. This allows to easily copy around complex
@@ -402,6 +403,28 @@ namespace senf {
      */
     template <class Parser, class Value>
     Parser operator<<(Parser target, Value const & value);
+#   endif
+
+#   ifndef DOXYGEN
+    template <class Parser, class Value>
+    typename boost::enable_if_c < 
+        boost::is_base_of<PacketParserBase, Parser>::value 
+            && ! boost::is_base_of<PacketParserBase, Value>::value,
+        Parser >::type
+    operator<<(Parser target, boost::optional<Value> const & value);
+#   else 
+    /** \brief Generic parser value assignment
+
+        This operator allows to assign a value to parsers which implement a <tt>value(</tt>\a
+        value<tt>)</tt> member. This special version allows to assign optional values: IF the
+        optional value is not set, the assignment will be skipped. 
+
+        This operator allows to use a common syntax for assigning values or parsers to a parser.
+
+        \ingroup packetparser
+     */
+    template <class Parser, class Value>
+    Parser operator<<(Parser target, boost::optional<Value> const & value);
 #   endif
 
     /** \defgroup packetparsermacros Helper macros for defining new packet parsers

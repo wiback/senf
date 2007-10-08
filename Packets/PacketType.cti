@@ -73,6 +73,13 @@ prefix_ void senf::PacketTypeMixin<Self,Registry>::init(Packet p)
     p.as< ConcretePacket<Self> >()->init();
 }
 
+template <class Self, class Registry>
+prefix_ typename senf::PacketTypeMixin<Self,Registry>::optional_registry_key_t
+senf::PacketTypeMixin<Self,Registry>::key(Packet p)
+{
+    return p ? PacketRegistry<Registry>::key(p, nothrow) : optional_registry_key_t();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::PacketTypeMixin<Self,void>
 

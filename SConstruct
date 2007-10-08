@@ -41,12 +41,16 @@ def nonemptyFile(f):
 def checkLocalConf(target, source, env):
     if [ True for f in env['CONFIG_FILES'] if nonemptyFile(f) ]:
         print
-        print "You have made local modifications to 'SConfig' and/or 'Doxyfile.local'."
+        print "You have made local modifications to one of the following local configuration"
+        print "files:"
+        for f in env['CONFIG_FILES']:
+            print "    ",f
+        print
         print "Building a debian package would remove those files."
         print
         print "To continue, remove the offending file(s) and try again. Alternatively,"
         print "build a source package using 'scons debsrc' and may then build debian"
-        print "binary packages from this source-package without disrupting your print local"
+        print "binary packages from this source-package without disrupting your local"
         print "configuration."
         print
         return 1
@@ -172,7 +176,7 @@ PhonyTarget(env, 'debbin', [
 
 PhonyTarget(env, 'linklint', [
     'rm -rf linklint',
-    'linklint -doc linklint -net -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
+    'linklint -doc linklint -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
     '[ ! -r linklint/errorX.html ] || python linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
     '[ ! -r linklint/errorX.html.new ] || mv linklint/errorX.html.new linklint/errorX.html',
     '[ ! -r linklint/errorAX.html ] || python linklint_addnames.py <linklint/errorAX.html >linklint/errorAX.html.new',

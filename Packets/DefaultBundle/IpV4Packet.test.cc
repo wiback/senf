@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "IpV4Packet.hh"
+#include "UDPPacket.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -59,9 +60,33 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
     BOOST_CHECK_EQUAL( p->frag(),        0x0708u     );
     BOOST_CHECK_EQUAL( p->ttl(),         0x09u       );
     BOOST_CHECK_EQUAL( p->protocol(),    0x0Au       );
-    BOOST_CHECK_EQUAL( p->crc(),         0x0B0Cu     );
+    BOOST_CHECK_EQUAL( p->checksum(),    0x0B0Cu     );
     BOOST_CHECK_EQUAL( p->source().value(), senf::INet4Address(0x11121314u) );
     BOOST_CHECK_EQUAL( p->destination().value(), senf::INet4Address(0x15161718u) );
+}
+
+BOOST_AUTO_UNIT_TEST(ipV4Packet_create)
+{
+    senf::IpV4Packet ip (senf::IpV4Packet::create());
+
+    BOOST_CHECK_EQUAL( ip->version(), 4u );
+    BOOST_CHECK_EQUAL( ip->ihl(), 5u );
+    BOOST_CHECK_EQUAL( ip.size(), 20u );
+
+    senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
+
+    BOOST_CHECK( ! ip->validateChecksum() );
+
+    ip.finalize();
+    BOOST_CHECK_EQUAL( ip->length(), 28u );
+    BOOST_CHECK_EQUAL( ip->protocol(), 17u );
+    BOOST_CHECK_EQUAL( ip->checksum(), 0xbad2 );
+
+    // Check, that the checksum field is correctly skipped
+    ip.finalize();
+    BOOST_CHECK_EQUAL( ip->checksum(), 0xbad2 );
+
+    BOOST_CHECK( ip->validateChecksum() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
