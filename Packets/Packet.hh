@@ -384,6 +384,7 @@ namespace senf {
         
         template <class PacketType>
         friend class ConcretePacket;
+        friend class PacketParserBase;
     };
 
     /** \brief Protocol specific packet handle

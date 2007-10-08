@@ -101,6 +101,9 @@ namespace senf {
             { return p->nextHeader(); }
         
         static void dump(packet p, std::ostream & os);
+
+        static void finalize(packet p)
+            { p->nextHeader() << key(p.next()); }
     };
 
     /** \brief IpV6 fragment extension packet typedef */

@@ -53,16 +53,21 @@ namespace senf {
             ((Field)( source,      Parse_16bit ))
             ((Field)( destination, Parse_16bit ))
             ((Field)( length,      Parse_16bit ))
-            ((Field)( crc,         Parse_16bit )) );
+            ((Field)( checksum,    Parse_16bit )) );
 
 #       else
 
         Parse_16bit source();
         Parse_16bit destination();
         Parse_16bit length();
-        Parse_16bit crc();
+        Parse_16bit checksum();
 
 #       endif
+
+        boost::uint16_t calcChecksum() const;
+        bool validateChecksum() const {
+            return checksum() == 0u || checksum() == calcChecksum();
+        }
     };
 
     /** \brief UDP packet
@@ -88,6 +93,8 @@ namespace senf {
         using mixin::init;
 
         static void dump(packet p, std::ostream & os);
+
+        static void finalize(packet p);
     };
 
     /** \brief UDP packet typedef */

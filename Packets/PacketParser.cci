@@ -53,6 +53,19 @@ prefix_ void senf::PacketParserBase::init()
     const
 {}
 
+prefix_ void senf::PacketParserBase::defaultInit()
+    const
+{}
+
+prefix_ senf::Packet senf::PacketParserBase::packet()
+    const
+{
+    // OUCH ... I hate this but for some awkward packet types, access to the packet
+    // from the parser is really needed (e.g. UDP when building the pseudo-header
+    // for calculating the checksum).
+    return Packet(PacketInterpreterBase::ptr(static_cast<PacketInterpreterBase*>(&data())));
+}
+
 ////////////////////////////////////////
 // protected members
 
@@ -68,11 +81,13 @@ prefix_ senf::PacketParserBase::PacketParserBase(data_iterator i, state_type s,
 }
 
 prefix_ bool senf::PacketParserBase::check(size_type size)
+    const
 {
     return size <= size_type(std::distance(i(),end()));
 }
 
 prefix_ void senf::PacketParserBase::validate(size_type size)
+    const
 {
     if (! check(size))
         throw TruncatedPacketException();
@@ -82,6 +97,7 @@ prefix_ void senf::PacketParserBase::validate(size_type size)
 // private members
 
 prefix_ senf::PacketParserBase::data_iterator senf::PacketParserBase::end()
+    const
 {
     return data_->end();
 }

@@ -28,7 +28,12 @@
 #include "IpV4Packet.hh"
 
 // Custom includes
+#include <iomanip>
+#include <boost/io/ios_state.hpp>
 #include "../../Packets/Packets.hh"
+#include "../../Utils/IpChecksum.hh"
+#include "IpV4Packet.hh"
+#include "IpV6Packet.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -38,13 +43,73 @@ namespace {
         registerUDPPacket (17);
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::Parse_UDP
+
+prefix_ boost::uint16_t senf::Parse_UDP::calcChecksum()
+    const
+{
+    IpChecksum summer;
+    summer.feed( i(), i()+checksum_offset );
+    summer.feed( i()+checksum_offset+2, data().end() );
+    
+    // Now on to the awkward part: the IP pseudo header
+    IpV4Packet ipv4 (packet().prev<IpV4Packet>(nothrow));
+    if (ipv4) {
+        // Pseudo header defined in RFC768
+        summer.feed( ipv4->source().i(), 
+                     ipv4->source().i() + Parse_IpV4::source_t::fixed_bytes );
+        ///\fixme What about a hop-by-hop routing option? Which destination is used in IpV4 ?
+        summer.feed( ipv4->destination().i(), 
+                     ipv4->destination().i() + Parse_IpV4::destination_t::fixed_bytes );
+        summer.feed( 0u );
+        ///\fixme May there be another header between the IpV4 header and UDP? if so, we
+        /// need to hack the correct protocol number here ...
+        summer.feed( 17u );
+        summer.feed( i() + length_offset, i() + length_offset + 2 );
+    } 
+    else {
+        // Pseudo header defined in RFC2460
+        IpV6Packet ipv6 (packet().prev<IpV6Packet>(nothrow));
+        if (ipv6) {
+            summer.feed( ipv6->source().i(), 
+                         ipv6->source().i() + Parse_IpV6::source_t::fixed_bytes );
+            ///\todo Implement routing header support
+            // The destination used here must be the *final* destination ...
+            summer.feed( ipv6->destination().i(), 
+                         ipv6->destination().i() + Parse_IpV6::destination_t::fixed_bytes );
+            /// This is a simplification. The value is really 32bit to support UDP Jumbograms
+            /// (RFC2147). However, skipping an even number of 0 bytes does not change the checksum
+            summer.feed( i() + length_offset, i() + length_offset + 2 );
+            // RFC2460 specifies, that this must always be 17, not the value used in the ipv6
+            // header
+            summer.feed( 0u );
+            summer.feed( 17u );
+        }
+    }
+    
+    boost::uint16_t rv (summer.sum());
+    return rv ? rv : 0xffffu;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::UDPPacketType
+
 prefix_ void senf::UDPPacketType::dump(packet p, std::ostream & os)
 {
+    boost::io::ios_all_saver ias(os);
     os << "UDP:\n"
        << "  source port   : " << p->source() << "\n"
        << "  dest port     : " << p->destination() << "\n"
        << "  length        : " << p->length() << "\n"
-       << "  crc           : " << std::hex << p->crc() << std::dec << "\n";
+       << "  checksum      : " 
+         << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << "\n";
+}
+
+prefix_ void senf::UDPPacketType::finalize(packet p)
+{
+    p->length() << p.size();
+    p->checksum() << p->calcChecksum();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -131,6 +131,8 @@ namespace senf {
             { return p->nextHeader(); }
         
         static void dump(packet p, std::ostream & os);
+
+        static void finalize(packet p);
     };
 
     /** \brief IpV6 packet typedef */

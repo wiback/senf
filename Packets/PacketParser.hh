@@ -159,6 +159,8 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    class Packet;
     
     /** \brief Parser Base class
 
@@ -292,10 +294,10 @@ namespace senf {
                                                  container does not hold at least \a size bytes
                                                  beginning at \a i. */
 
-        bool check(size_type size);     ///< Check size of data container
+        bool check(size_type size) const; ///< Check size of data container
                                         /**< \returns \c true, if the data container holds at least
                                              \a size beginning at i(), \c false otherwise. */
-        void validate(size_type size);  ///< Validate size of data container
+        void validate(size_type size) const; ///< Validate size of data container
                                         /**< \throws TruncatedPacketException if the raw data
                                              container does not hold at least \a size bytes
                                              beginning at i(). */
@@ -314,8 +316,13 @@ namespace senf {
                                              implementation. Re-implement this member in your own
                                              parsers if needed. */
 
+        Packet packet() const;          ///< Get packet this parser is parsing from
+                                        /**< \important This member should only be used from packet
+                                             parsers when access to previous or following packets is
+                                             needed e.g. for calculating checksums etc. */
+
     private:
-        data_iterator end();
+        data_iterator end() const;
 
         data_iterator i_;
         PacketData * data_;

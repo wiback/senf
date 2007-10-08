@@ -334,8 +334,8 @@ namespace senf {
                                              type is not found in the registry, the returned
                                              optional value will be empty. */
 
-        ///@{
         ///\name PacketType interface implementation
+        ///@{
 
         static PacketInterpreterBase::optional_range nextPacketRange (Packet p);
         static PacketInterpreterBase::factory_t      nextPacketType  (Packet p);

@@ -212,6 +212,7 @@ namespace senf {
         friend class intrusive_refcount_t<PacketInterpreterBase>;
         template <class PacketType> friend class PacketInterpreter;
         friend class detail::packet::test::TestDriver;
+        friend class PacketParserBase;
     };
 
     /** \brief Internal: Concrete packet interpreter

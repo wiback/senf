@@ -52,6 +52,7 @@ namespace {
 prefix_ boost::uint16_t senf::Parse_IpV4::calcChecksum()
     const
 {
+    validate(bytes(*this));
     IpChecksum summer;
     summer.feed( i(),                   i()+checksum_offset );
     // Not needed since the number of 0-bytes is even

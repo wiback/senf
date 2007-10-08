@@ -46,10 +46,6 @@ prefix_ Parser senf::PacketParserBase::parse(size_type n)
     return Parser(boost::next(i(),n),state());
 }
 
-prefix_ void senf::PacketParserBase::defaultInit()
-    const
-{}
-
 ///////////////////////////////////////////////////////////////////////////
 // namespace members
 

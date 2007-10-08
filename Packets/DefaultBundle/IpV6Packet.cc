@@ -25,6 +25,7 @@
 //#include "IpV6Packet.ih"
 
 // Custom includes
+#include <iomanip>
 #include <boost/io/ios_state.hpp>
 #include "EthernetPacket.hh"
 #include "../../Socket/Protocols/INet/INetAddressing.hh"
@@ -48,14 +49,22 @@ prefix_ void senf::IpV6PacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Internet protocol Version 6:\n"
-       << "  version       : " << unsigned(p->version()) << "\n"
-       << "  traffic class : " << std::hex << unsigned(p->trafficClass()) << "\n"
-       << "  flow label    : " << std::hex << unsigned(p->flowLabel()) << "\n"
-       << "  length        : " << std::dec << unsigned(p->length()) << "\n"
-       << "  next header   : " << unsigned(p->nextHeader()) << "\n"
-       << "  hop limit     : " << unsigned(p->hopLimit()) << "\n"
-       << "  source        : " << p->source() << "\n"
-       << "  destination   : " << p->destination() << "\n";
+       << "  version        : " << unsigned(p->version()) << "\n"
+       << "  traffic class  : 0x" 
+         << std::hex << std::setw(2) << std::setfill('0') << unsigned(p->trafficClass()) << "\n"
+       << "  flow label     : 0x" 
+         << std::hex << std::setw(5) << std::setfill('0') << unsigned(p->flowLabel()) << "\n"
+       << "  payload length : " << std::dec << unsigned(p->length()) << "\n"
+       << "  next header    : " << unsigned(p->nextHeader()) << "\n"
+       << "  hop limit      : " << unsigned(p->hopLimit()) << "\n"
+       << "  source         : " << p->source() << "\n"
+       << "  destination    : " << p->destination() << "\n";
+}
+
+prefix_ void senf::IpV6PacketType::finalize(packet p)
+{
+    p->length() << (p.size() - Parse_IpV6::fixed_bytes);
+    p->nextHeader() << key(p.next());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "UDPPacket.hh"
+#include "IpV4Packet.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -46,10 +47,37 @@ BOOST_AUTO_UNIT_TEST(udpPacket_packet)
     BOOST_CHECK_EQUAL( p->source(),            0x0102       );
     BOOST_CHECK_EQUAL( p->destination(),       0x0304       );
     BOOST_CHECK_EQUAL( p->length(),            0x0506       );
-    BOOST_CHECK_EQUAL( p->crc(),               0x0708       );
-
+    BOOST_CHECK_EQUAL( p->checksum(),          0x0708       );
 }
 
+BOOST_AUTO_UNIT_TEST(udpPacket_create)
+{
+    unsigned char data[] = { 0x45, 0x00, 0x00, 0x26, 0x00, 0x00, 0x40, 0x00,
+                             0x40, 0x11, 0x3c, 0xc5, 0x7f, 0x00, 0x00, 0x01,
+                             0x7f, 0x00, 0x00, 0x01, 0x5b, 0xa0, 0x30, 0x39,
+                             0x00, 0x12, 0xfa, 0x6e, 0x54, 0x45, 0x53, 0x54,
+                             0x2d, 0x57, 0x52, 0x49, 0x54, 0x45 };
+
+    senf::IpV4Packet ip (senf::IpV4Packet::create());
+    ip->source() = senf::INet4Address::Loopback;
+    ip->destination() = senf::INet4Address::Loopback;
+    ip->df() = true;
+    ip->ttl() = 64;
+    
+    senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
+    udp->source() = 23456;
+    udp->destination() = 12345;
+    
+    senf::DataPacket::createAfter(udp,std::string("TEST-WRITE"));
+
+    // validates, since the checksum is 0 and thus ignored !
+    BOOST_CHECK( udp->validateChecksum() );
+
+    ip.finalize();
+    BOOST_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
+                                   ip.data().begin(), ip.data().end() );
+    BOOST_CHECK( udp->validateChecksum() );
+}
 
 
 ///////////////////////////////cc.e////////////////////////////////////////
