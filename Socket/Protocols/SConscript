@@ -5,17 +5,15 @@ import SENFSCons, glob
 
 ###########################################################################
 
+SENFSCons.StandardTargets(env)
+
 sources = SENFSCons.GlobSources()
-
-allob = []
-
-allob.extend(
-    SENFSCons.Objects( env, sources = sources, LIBS = [ 'Socket', 'Utils' ] ) )
+objects = SENFSCons.Objects( env, sources = sources, LIBS = [ 'Socket', 'Utils' ] )
 
 for sc in glob.glob("*/SConscript"):
     ob = SConscript(sc)
-    if ob : allob.extend(ob)
+    if ob : objects.extend(ob)
 
 SENFSCons.InstallIncludeFiles(env, [ 'INet.hh', 'Raw.hh' ])
 
-Return('allob')
+Return('objects')

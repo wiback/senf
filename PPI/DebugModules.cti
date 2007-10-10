@@ -34,8 +34,8 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::debug::LogSink<Stream,Area,level>
 
-template <class Stream, class Area, senf::log::Level level>
-prefix_ senf::ppi::module::debug::LogSink<Stream,Area,level>::LogSink()
+template <class Stream, class Area, class Level>
+prefix_ senf::ppi::module::debug::LogSink<Stream,Area,Level>::LogSink()
 {
     noroute(input);
     input.onRequest(&LogSink::request);
@@ -44,11 +44,11 @@ prefix_ senf::ppi::module::debug::LogSink<Stream,Area,level>::LogSink()
 ////////////////////////////////////////
 // private members
 
-template <class Stream, class Area, senf::log::Level level>
-prefix_ void senf::ppi::module::debug::LogSink<Stream,Area,level>::request()
+template <class Stream, class Area, class Level>
+prefix_ void senf::ppi::module::debug::LogSink<Stream,Area,Level>::request()
 {
     Packet packet (input());
-    SENF_LOG_BLOCK((Stream)(Area)(level)({
+    SENF_LOG_BLOCK((Stream)(Area)(Level)({
         packet.dump(log);
         hexdump(packet.last().data().begin(), packet.last().data().end(),log);
     }));

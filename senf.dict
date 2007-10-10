@@ -37,6 +37,8 @@ CloneSource
 CommunicationPolicy
 CommunicationPolicyBase
 ConcretePacket
+conf
+CONFIG
 ConnectedCommunicationPolicy
 ConnectedUDPv
 const

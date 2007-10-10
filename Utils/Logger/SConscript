@@ -7,15 +7,11 @@ import SENFSCons, glob
 
 SENFSCons.StandardTargets(env)
 
-sources, testSources = SENFSCons.GlobSources()
+SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
+                               if f not in ('all_includes.hh','INet.hh') and not f.endswith('.test.hh') ])
+sources = SENFSCons.GlobSources()
 objects = SENFSCons.Objects( env, sources = sources )
 
-for sc in glob.glob("*/SConscript"):
-    ob = SConscript(sc)
-    if ob : objects.extend(ob)
-
-SENFSCons.Lib(env,
-              library = 'Utils',
-              sources = objects)
-
 SENFSCons.Doxygen(env)
+
+Return('objects')

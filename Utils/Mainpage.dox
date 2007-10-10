@@ -6,8 +6,6 @@ namespace senf {
 
     <dl>
 
-    <dt>\ref logger</dt><dd>highly flexible logging infrastructure</dd>
-
     <dt>SystemException</dt><dd>standard exception for system errors (errno)</dd>
 
     <dt>\ref process</dt><dd>Some simple process management and daemon helpers<?dd>

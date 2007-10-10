@@ -1,9 +1,9 @@
-// $Id$
+// $Id: main.test.cc 369 2007-08-01 07:51:36Z tho $
 //
-// Copyright (C) 2007
+// Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <g0dil@berlios.de>
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,22 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief Logger public header */
+// Definition of non-inline non-template functions
 
-#include "Logger/Logger.hh"
+//#include "test.hh"
+//#include "test.ih"
+
+// Custom includes
+#define BOOST_AUTO_TEST_MAIN
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
+
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
+
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

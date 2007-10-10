@@ -1,4 +1,4 @@
-// $Id$
+// $Id: Logger.hh 407 2007-08-23 22:40:59Z g0dil $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -23,7 +23,12 @@
 /** \file
     \brief Logger public header */
 
-#include "Logger/Logger.hh"
+#ifndef HH_Logger_
+#define HH_Logger_ 1
+
+#include "all_includes.hh"
+
+#endif
 
 
 // Local Variables:

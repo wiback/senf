@@ -1,0 +1,141 @@
+// $Id$
+//
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Parameters internal header */
+
+#ifndef IH_Parameters_
+#define IH_Parameters_ 1
+
+// Custom includes
+#include <iostream>
+#include <boost/preprocessor/seq/for_each_i.hpp>
+#include <boost/preprocessor/facilities/apply.hpp>
+#include <boost/preprocessor/punctuation/comma_if.hpp>
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/fold.hpp>
+#include "Defaults.hh"
+#include "../mpl.hh"
+#include "Stream.hh"
+#include "Area.hh"
+#include "Levels.hh"
+#include "Config.hh"
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+#ifndef _senf_LOG_STREAM
+#   define _senf_LOG_STREAM std::cerr
+#endif
+
+typedef senf::log::Debug       SENFLogDefaultStream;
+typedef senf::log::DefaultArea SENFLogDefaultArea;
+typedef senf::log::NONE        SENFLogDefaultLevel;
+
+namespace senf {
+namespace log {
+namespace detail {
+
+    struct AliasBase {};
+
+    template <class Base, class Param, unsigned N>
+    struct Parameters_ {};
+
+    senf::mpl::rv<1> Parameters_select_(StreamBase *);
+    template <class Base, class Param>
+    struct Parameters_<Base,Param,1> : public Base
+    { typedef Param stream; };
+
+    senf::mpl::rv<2> Parameters_select_(AreaBase *);
+    template <class Base, class Param>
+    struct Parameters_<Base,Param,2> : public Base
+    { typedef Param area; };
+
+    senf::mpl::rv<3> Parameters_select_(LevelBase *);
+    template <class Base, class Param>
+    struct Parameters_<Base,Param,3> : public Base
+    { typedef Param level; };
+
+    senf::mpl::rv<4> Parameters_select_(void *);
+    template <class Base>
+    struct Parameters_<Base,void,4> : public Base
+    {};
+
+    senf::mpl::rv<5> Parameters_select_(AliasBase *);
+    template <class Base, class Param>
+    struct Parameters_<Base,Param,5> 
+        : public Param::template apply<Base>::type
+    {};
+
+    template <class Base>
+    struct Parameters : public Base
+    {
+
+        static bool const compile_enabled = senf::log::Enabled<
+            typename Base::stream, 
+            typename Base::area, 
+            typename Base::level>::value;
+
+        static bool enabled() { return compile_enabled; }
+        static std::ostream & log_stream() { return _senf_LOG_STREAM; }
+    };
+
+    struct empty {};
+
+    struct Parameters_Merge_
+    {
+        template <class Base, class Param>
+        struct apply {
+            typedef Parameters_<
+                Base, 
+                Param, 
+                SENF_MPL_RV(Parameters_select_(static_cast<Param*>(0)))> type;
+        };
+    };
+
+}}}
+
+#define SENF_LOG_MERGE_ARG(r, data, i, elem) BOOST_PP_COMMA_IF(i) elem
+
+#define SENF_LOG_MERGE_PARAMETERS_I(base, args)                                                   \
+    boost::mpl::fold<                                                                             \
+        boost::mpl::vector< BOOST_PP_SEQ_FOR_EACH_I(SENF_LOG_MERGE_ARG, _, args) >,               \
+        base,                                                                                     \
+        senf::log::detail::Parameters_Merge_ >::type
+
+#define SENF_LOG_MERGE_PARAMETERS(args)                                                           \
+    senf::log::detail::Parameters< SENF_LOG_MERGE_PARAMETERS_I(                                   \
+        senf::log::detail::empty,                                                                 \
+        (SENFLogDefaultStream)(SENFLogDefaultArea)(SENFLogDefaultLevel)args) >
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

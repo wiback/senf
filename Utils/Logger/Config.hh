@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,53 +21,44 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Logger.test unit tests */
+    \brief Config public header */
 
-//#include "Logger.test.hh"
-//#include "Logger.test.ih"
+#ifndef HH_Config_
+#define HH_Config_ 1
 
 // Custom includes
-#include <sstream>
-#define _senf_LOG_STREAM logstream
-#include "Logger.hh"
+#include "Levels.hh"
 
-#include <boost/test/auto_unit_test.hpp>
-#include <boost/test/test_tools.hpp>
+//#include "Config.mpp"
+#include "Config.ih"
+///////////////////////////////hh.p////////////////////////////////////////
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+namespace senf {
+namespace log {
 
-BOOST_AUTO_UNIT_TEST(logger)
-{
-    std::stringstream logstream;
+    template <class Stream, class Area, class Level>
+    struct Enabled
+    {
+        static const bool value = (
+            (Level::value == senf::log::NONE::value ? Stream::defaultLevel::value : Level::value)
+                >= detail::Config<Stream,Area>::compileLimit::value );
+    };
 
-    SENF_LOG_DEFAULTS( (senf::log::Debug) (senf::log::NOTICE) );
-    SENF_LOG_DEF_ALIAS( LogFoo, (senf::log::Debug) (senf::log::CRITICAL) );
-    SENF_LOG_DEF_STREAM( myStream );
-    SENF_LOG_DEF_AREA( myArea );
+}}
 
-    SENF_LOG(("Log message"));
-
-    SENF_LOG((LogFoo) ("Another log message: " << 10));
-
-    SENF_LOG_BLOCK((senf::log::Debug) (senf::log::WARNING) ({
-        log << "Last message";
-        log << " continued here";
-    }));
-
-    BOOST_CHECK_EQUAL( logstream.str(), "Log message\nAnother log message: 10\nLast message continued here\n" );
-}
-
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "Config.cci"
+//#include "Config.ct"
+//#include "Config.cti"
+#endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

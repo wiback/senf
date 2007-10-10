@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,17 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Logger public header */
+    \brief Area public header */
 
-#include "Logger/Logger.hh"
+#ifndef HH_Area_
+#define HH_Area_ 1
+
+// Custom includes
+
+//#include "Area.mpp"
+#include "Area.ih"
+///////////////////////////////hh.p////////////////////////////////////////
+
+/** \brief Define log area
+
+    Defines a new log area named \a area. The area is defined as a symbol in the current scope.
+
+    \hideinitializer
+ */
+#define SENF_LOG_DEF_AREA(area)                                                                   \
+    struct area                                                                                   \
+        : public senf::log::detail::AreaBase                                                      \
+    {}
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "Area.cci"
+//#include "Area.ct"
+//#include "Area.cti"
+#endif
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

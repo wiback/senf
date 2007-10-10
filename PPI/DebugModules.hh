@@ -266,9 +266,9 @@ namespace debug {
         This module will log all packets sent to it's input using SENF_LOG to the given log
         \a Stream, \a Area and \a level.
      */
-    template < class Stream           = log::Debug, 
-               class Area             = log::DefaultArea, 
-               senf::log::Level level = log::VERBOSE >
+    template < class Stream = log::Debug, 
+               class Area   = log::DefaultArea, 
+               class Level  = log::VERBOSE >
     class LogSink
         : public module::Module
     {
