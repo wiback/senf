@@ -325,14 +325,14 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = []):
 
     objects = None
     if sources:
-        objects = env.Object([
-            source
-            for source in sources
-            if not str(source).endswith('.o') ]) + [
-            source
-            for source in sources
-            if str(source).endswith('.o') ]
-        
+        obsources = [ source
+                      for source in sources
+                      if not str(source).endswith('.o') ]
+        objects = [ source
+                    for source in sources
+                    if str(source).endswith('.o') ]
+        if obsources:
+            objects += env.Object(obsources)
 
     if testSources:
         test = env.BoostUnitTests(
