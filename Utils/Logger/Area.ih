@@ -27,6 +27,8 @@
 #define IH_Area_ 1
 
 // Custom includes
+#include <string>
+#include <vector>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -34,10 +36,38 @@ namespace senf {
 namespace log {
 namespace detail {
 
+    class StreamBase;
+
     struct AreaBase
-    {};
+    {
+        virtual ~AreaBase() {};
+        
+        std::string fullName() const;
+        virtual std::string v_name() const;
+
+        void init();
+
+        unsigned streamLimit(StreamBase const & stream) const;
+        void setStreamLimit(StreamBase const & stream, unsigned value) const;
+
+    private:
+        typedef std::vector<unsigned> StreamLimits;
+        // mutable since this is a cache and may therefore change at unexpected places ...
+        mutable StreamLimits streamLimits_;
+    };
 
 }}}
+
+#define SENF_LOG_DEF_AREA_I(area, decls)                                                          \
+    struct area                                                                                   \
+        : public senf::log::detail::AreaBase, public senf::singleton<area>                        \
+    {                                                                                             \
+        static std::string name() { return instance().v_name(); }                                 \
+        decls                                                                                     \
+    private:                                                                                      \
+        area() { init(); }                                                                        \
+        friend class senf::singleton<area>;                                                       \
+    }
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif

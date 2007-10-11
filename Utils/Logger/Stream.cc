@@ -21,38 +21,22 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Stream internal header */
+    \brief Stream non-inline non-template implementation */
 
-#ifndef IH_Stream_
-#define IH_Stream_ 1
+#include "Stream.hh"
+#include "Stream.ih"
 
 // Custom includes
-#include <string>
 
-///////////////////////////////ih.p////////////////////////////////////////
+//#include "Stream.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
-namespace log {
-namespace detail {
+unsigned senf::log::detail::StreamBase::nStreams = 0;
 
-    struct StreamBase 
-    {
-        StreamBase();
-        virtual ~StreamBase() {};
-        
-        std::string fullName() const;
-        virtual std::string v_name() const;
-
-        void init();
-
-        unsigned index;
-        static unsigned nStreams;
-    };
-
-}}}
-
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "Stream.mpp"
 
 
 // Local Variables:

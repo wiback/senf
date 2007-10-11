@@ -1,0 +1,93 @@
+// $Id$
+//
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Target inline non-template implementation */
+
+//#include "Target.ih"
+
+// Custom includes
+#include <algorithm>
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::log::Target
+
+prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
+                                      detail::AreaBase const * area, unsigned level)
+{
+    rib_.push_back(RoutingEntry(stream, area, level));
+
+    // Update the area/stream routing cache
+    if (area)
+        updateAreaCache(*area, stream, level);
+    else {
+        AreaRegistry::Registry::iterator i (AreaRegistry::instance().registry_.begin());
+        AreaRegistry::Registry::iterator const i_end (AreaRegistry::instance().registry_.end());
+        for (; i != i_end; ++i)
+            updateAreaCache(*(i->second), stream, level);
+    }
+        
+}
+
+prefix_ void
+senf::log::Target::updateAreaCache(detail::AreaBase const & area,
+                                   detail::StreamBase const * stream, unsigned level)
+{
+    if (stream) {
+        if (level < area.streamLimit(*stream))
+            area.setStreamLimit(*stream, level);
+    } else {
+        StreamRegistry::Registry::iterator i (StreamRegistry::instance().registry_.begin());
+        StreamRegistry::Registry::iterator const i_end (StreamRegistry::instance().registry_.end());
+        for(; i != i_end; ++i)
+            if (level < area.streamLimit(*(i->second)))
+                area.setStreamLimit(*(i->second),level);
+    }
+}
+
+prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
+                                        detail::AreaBase const * area, unsigned level)
+{
+    rib_.erase(std::remove(rib_.begin(), rib_.end(), RoutingEntry(stream, area, level)),
+               rib_.end());
+
+    ///\fixme Update area/stream routing cache
+    // Not doing anything here does not produce incorrect behavior, since removing a route
+    // can never lower the logging limit. Not updating the cache just reduces the performance.
+}
+
+/////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

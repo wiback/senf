@@ -27,6 +27,7 @@
 #define HH_Parameters_ 1
 
 // Custom includes
+#include "Area.hh"
 
 //#include "Parameters.mpp"
 #include "Parameters.ih"
@@ -63,6 +64,13 @@
             typedef typename SENF_LOG_MERGE_PARAMETERS_I(Base,args) type;                         \
         };                                                                                        \
     }
+
+#define SENF_LOG_CLASS_AREA()                                                                     \
+    SENF_LOG_DEF_AREA_I(SenfLogArea,                                                              \
+                        std::string v_name() const                                                \
+                            { std::string s (fullName()); return std::string(s,s.size()-13); });  \
+    SENF_LOG_DEFAULT_AREA(SenfLogArea)
+
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Parameters.cci"

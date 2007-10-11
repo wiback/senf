@@ -21,37 +21,25 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Stream internal header */
+    \brief preprocessor public header */
 
-#ifndef IH_Stream_
-#define IH_Stream_ 1
+#ifndef HH_preprocessor_
+#define HH_preprocessor_ 1
 
 // Custom includes
-#include <string>
+#include <boost/preprocessor/seq/size.hpp>
+#include <boost/preprocessor/seq/elem.hpp>
+#include <boost/preprocessor/dec.hpp>
 
-///////////////////////////////ih.p////////////////////////////////////////
+//#include "preprocessor.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-namespace senf {
-namespace log {
-namespace detail {
+#define SENF_PP_SEQ_BACK(seq) BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(seq)),seq)
 
-    struct StreamBase 
-    {
-        StreamBase();
-        virtual ~StreamBase() {};
-        
-        std::string fullName() const;
-        virtual std::string v_name() const;
-
-        void init();
-
-        unsigned index;
-        static unsigned nStreams;
-    };
-
-}}}
-
-///////////////////////////////ih.e////////////////////////////////////////
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "preprocessor.cci"
+//#include "preprocessor.ct"
+//#include "preprocessor.cti"
 #endif
 
 

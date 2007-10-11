@@ -21,38 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Stream internal header */
+    \brief Target non-inline non-template implementation */
 
-#ifndef IH_Stream_
-#define IH_Stream_ 1
+#include "Target.hh"
+//#include "Target.ih"
 
 // Custom includes
-#include <string>
 
-///////////////////////////////ih.p////////////////////////////////////////
+//#include "Target.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
-namespace log {
-namespace detail {
+///////////////////////////////////////////////////////////////////////////
+// senf::log::Target
 
-    struct StreamBase 
-    {
-        StreamBase();
-        virtual ~StreamBase() {};
-        
-        std::string fullName() const;
-        virtual std::string v_name() const;
+prefix_ senf::log::Target::~Target()
+{}
 
-        void init();
+prefix_ void senf::log::Target::write(detail::StreamBase const & stream, 
+                                      detail::AreaBase const & area,
+                                      unsigned level, std::string const & message)
+{
+    RIB::iterator i (rib_.begin());
+    RIB::iterator const i_end (rib_.end());
+    for (; i != i_end; ++i)
+        if ( ( ! i->stream || i->stream == &stream ) &&
+             ( ! i->area || i->area == &area ) &&
+             i->level <= level ) {
+            v_write(stream.v_name(), area.v_name(), level, message);
+            return;
+        }
+}
 
-        unsigned index;
-        static unsigned nStreams;
-    };
-
-}}}
-
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "Target.mpp"
 
 
 // Local Variables:

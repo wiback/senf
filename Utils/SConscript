@@ -8,7 +8,7 @@ import SENFSCons, glob
 SENFSCons.StandardTargets(env)
 
 sources, testSources = SENFSCons.GlobSources()
-objects = SENFSCons.Objects( env, sources = sources )
+objects = SENFSCons.Objects( env, sources = sources, testSources=testSources )
 
 for sc in glob.glob("*/SConscript"):
     ob = SConscript(sc)

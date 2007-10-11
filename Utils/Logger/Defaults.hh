@@ -37,7 +37,9 @@ namespace senf {
 namespace log {
 
     SENF_LOG_DEF_STREAM(Debug, MESSAGE, DISABLED, DISABLED);
-    SENF_LOG_DEF_AREA(DefaultArea);
+
+    SENF_LOG_DEF_AREA_I(DefaultArea,
+                        std::string v_name() const { return ""; });
 
 }}
 

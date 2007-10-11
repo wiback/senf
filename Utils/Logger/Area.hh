@@ -27,9 +27,12 @@
 #define HH_Area_ 1
 
 // Custom includes
+#include <map>
+#include <functional>
+#include <boost/iterator/transform_iterator.hpp>
+#include "../singleton.hh"
 
 //#include "Area.mpp"
-#include "Area.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 /** \brief Define log area
@@ -38,13 +41,48 @@
 
     \hideinitializer
  */
-#define SENF_LOG_DEF_AREA(area)                                                                   \
-    struct area                                                                                   \
-        : public senf::log::detail::AreaBase                                                      \
-    {}
+#define SENF_LOG_DEF_AREA(area) SENF_LOG_DEF_AREA_I(area, ; )
+
+namespace senf {
+namespace log { 
+
+    namespace detail { struct AreaBase; }
+    
+    class AreaRegistry
+        : public senf::singleton<AreaRegistry>
+    {
+        typedef std::map<std::string, detail::AreaBase const *> Registry;
+
+        struct SelectName 
+        {
+            typedef std::string result_type;
+            std::string const & operator()(Registry::value_type const & v) const;
+        };
+
+    public:
+        typedef boost::transform_iterator<SelectName, Registry::const_iterator> iterator;
+
+        using senf::singleton<AreaRegistry>::instance;
+
+        iterator begin();
+        iterator end();
+
+    private:
+        AreaRegistry();
+
+        void registerArea(detail::AreaBase const & area);
+
+        Registry registry_;
+
+        friend class senf::singleton<AreaRegistry>;
+        friend class detail::AreaBase;
+        friend class Target;
+    };        
+    
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Area.cci"
+#include "Area.cci"
 //#include "Area.ct"
 //#include "Area.cti"
 #endif

@@ -30,7 +30,10 @@
 #include <boost/preprocessor/expand.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/seq/to_tuple.hpp>
-#include "Defaults.hh"
+#include <boost/preprocessor/seq/fold_right.hpp>
+#include <boost/preprocessor/seq/pop_back.hpp>
+#include <boost/preprocessor/if.hpp>
+#include "../preprocessor.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -50,25 +53,49 @@ namespace detail {
         typedef typename Stream::compileLimit compileLimit;
     };
 
-#   define SENF_LOG_CONF_DEFINE(stream, area, level)                                              \
-           template <>                                                                            \
-           struct Config<stream, area>                                                            \
-           { typedef senf::log::level compileLimit; };
-
-#   ifdef SENF_LOG_CONF
-
-#       define _ void
-#       define SLC_elt(r, data, elt) \
-            BOOST_PP_EXPAND(SENF_LOG_CONF_DEFINE BOOST_PP_SEQ_TO_TUPLE(elt))
-
-        BOOST_PP_SEQ_FOR_EACH(SLC_elt, x, SENF_LOG_CONF)
-
-#       undef SLC_elt
-#       undef _
-
-#   endif
-
 }}}
+
+#define SENF_LOG_SEQ_TO_NAME_(s,data,elem) ::elem
+
+#define SENF_LOG_SEQ_TO_NAME(seq)                                                                 \
+    BOOST_PP_SEQ_FOR_EACH(SENF_LOG_SEQ_TO_NAME_, none, seq)
+
+#define SENF_LOG_PREDECL_(s, state, elem)                                                         \
+    namespace elem { state }
+
+#define SENF_LOG_PREDECL(seq)                                                                     \
+    BOOST_PP_SEQ_FOLD_RIGHT( SENF_LOG_PREDECL_,                                                   \
+                             class SENF_PP_SEQ_BACK(seq);,                                        \
+                             BOOST_PP_SEQ_POP_BACK(seq) )
+
+#define SENF_LOG_NIL(x)
+
+#define SENF_LOG_CONF_DEFINE(stream, area, level)                                                 \
+    SENF_LOG_PREDECL(stream)                                                                      \
+    BOOST_PP_IF(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(area)),                                            \
+                SENF_LOG_PREDECL,                                                                 \
+                SENF_LOG_NIL)(area)                                                               \
+    namespace senf { namespace log { namespace detail {                                           \
+        template <>                                                                               \
+        struct Config< SENF_LOG_SEQ_TO_NAME(stream),                                              \
+                       BOOST_PP_IF(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(area)),                         \
+                                   SENF_LOG_SEQ_TO_NAME(area),                                    \
+                                   void) >                                                        \
+        { typedef senf::log::level compileLimit; };                                               \
+    }}}
+
+#ifdef SENF_LOG_CONF
+
+#   define SLC_elt(s, state, elt)                                                                  \
+        SENF_LOG_CONF_DEFINE elt
+
+    // Need to use fold here to not exhaust the maximum FOR nesting depth ...
+    BOOST_PP_SEQ_FOLD_LEFT(SLC_elt, none, SENF_LOG_CONF)
+
+#   undef SLC_elt
+
+#endif
+
 
 
 

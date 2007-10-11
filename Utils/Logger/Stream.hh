@@ -27,10 +27,13 @@
 #define HH_Stream_ 1
 
 // Custom includes
+#include <map>
+#include <functional>
+#include <boost/iterator/transform_iterator.hpp>
 #include "Levels.hh"
+#include "../singleton.hh"
 
 //#include "Stream.mpp"
-#include "Stream.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 /** \brief Define log stream
@@ -47,18 +50,57 @@
  */
 #define SENF_LOG_DEF_STREAM(stream, defaultLevel_, runtimeLimit_, compileLimit_)                  \
     struct stream                                                                                 \
-        : public senf::log::detail::StreamBase                                                    \
+        : public senf::log::detail::StreamBase, public senf::singleton<stream>                    \
     {                                                                                             \
         typedef defaultLevel_ defaultLevel;                                                       \
         typedef runtimeLimit_ runtimeLimit;                                                       \
         typedef compileLimit_ compileLimit;                                                       \
-                                                                                                  \
-        static char const * name() { return #stream ; }                                           \
-        virtual char const * v_name() { return name(); }                                          \
+        static std::string name() { return instance().v_name(); }                                 \
+    private:                                                                                      \
+        stream() { init(); }                                                                      \
+        friend class senf::singleton<stream>;                                                     \
     }
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "Stream.cci"
+namespace senf {
+namespace log {
+
+    namespace detail { struct StreamBase; }
+
+    class StreamRegistry 
+        : public senf::singleton<StreamRegistry>
+    {
+        typedef std::map<std::string, detail::StreamBase const *> Registry;
+
+        struct SelectName 
+        {
+            typedef std::string result_type;
+            std::string const & operator()(Registry::value_type const & v) const;
+        };
+
+    public:
+        typedef boost::transform_iterator<SelectName, Registry::const_iterator> iterator;
+
+        using senf::singleton<StreamRegistry>::instance;
+
+        iterator begin();
+        iterator end();
+
+    private:
+        StreamRegistry();
+
+        void registerStream(detail::StreamBase const & stream);
+
+        Registry registry_;
+
+        friend class senf::singleton<StreamRegistry>;
+        friend class detail::StreamBase;
+        friend class Target;
+    };
+
+}}
+
+///////////////////////////////hh.e////////////////////////////////////////#
+#include "Stream.cci"
 //#include "Stream.ct"
 //#include "Stream.cti"
 #endif

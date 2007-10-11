@@ -29,12 +29,14 @@
 // Custom includes
 #include <sstream>
 
+// We need to put all tests into this single file to not violate the ODR
+
 #define _senf_LOG_STREAM logstream
 namespace {
     std::stringstream logstream;
 }
 
-#define SENF_LOG_CONF ((senf::log::Debug)(_)(VERBOSE))
+#define SENF_LOG_CONF (( (senf)(log)(Debug), (_), NOTICE ))
 
 #include "Log.hh"
 #include "Defaults.hh"
@@ -55,7 +57,7 @@ namespace {
         typedef int value;
     };
 
-    SENF_LOG_DEF_ALIAS( LogFoo, (senf::log::Debug) (senf::log::CRITICAL) );
+    SENF_LOG_DEF_ALIAS( LogCritical, (senf::log::Debug) (senf::log::CRITICAL) );
     SENF_LOG_DEF_STREAM( myStream, senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE );
     SENF_LOG_DEF_AREA( myArea );
 
@@ -65,11 +67,14 @@ BOOST_AUTO_UNIT_TEST(logger)
 {
     SENF_LOG_DEFAULT_STREAM(senf::log::Debug);
     SENF_LOG_DEFAULT_AREA(senf::log::DefaultArea);
-    SENF_LOG_DEFAULT_LEVEL(senf::log::NOTICE);
+    SENF_LOG_DEFAULT_LEVEL(senf::log::VERBOSE);
 
+    // should be disabled
     SENF_LOG(("Log message"));
-
-    SENF_LOG((LogFoo) ("Another log message: " << 10));
+    SENF_LOG((senf::log::VERBOSE)("Log message 2"));
+    // should be enabled
+    SENF_LOG((senf::log::IMPORTANT)("Important message"));
+    SENF_LOG((LogCritical) ("Another log message: " << 10));
 
     SENF_LOG_BLOCK((senf::log::Debug) (senf::log::IMPORTANT) ({
         log << "Last message";
@@ -77,7 +82,29 @@ BOOST_AUTO_UNIT_TEST(logger)
     }));
 
     BOOST_CHECK_EQUAL( logstream.str(), 
-                       "Log message\nAnother log message: 10\nLast message continued here\n" );
+                       "Important message\n"
+                       "Another log message: 10\n"
+                       "Last message continued here\n" );
+}
+
+BOOST_AUTO_UNIT_TEST(streamRegistry)
+{
+    char const * streams[] = { "(anonymous namespace)::myStream", "senf::log::Debug" };
+
+    BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::StreamRegistry::instance().begin(),
+                                   senf::log::StreamRegistry::instance().end(),
+                                   streams, streams+sizeof(streams)/sizeof(streams[0]) );
+    BOOST_CHECK_EQUAL( senf::log::detail::StreamBase::nStreams, 2u );
+}
+
+BOOST_AUTO_UNIT_TEST(areaRegistry)
+{
+    char const * areas[] = { "", "(anonymous namespace)::myArea" };
+
+    BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::AreaRegistry::instance().begin(),
+                                   senf::log::AreaRegistry::instance().end(),
+                                   areas, areas+sizeof(areas)/sizeof(areas[0]) );
+
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
