@@ -48,7 +48,7 @@ template <class Stream, class Area, class Level>
 prefix_ void senf::ppi::module::debug::LogSink<Stream,Area,Level>::request()
 {
     Packet packet (input());
-    SENF_LOG_BLOCK((Stream)(Area)(Level)({
+    SENF_LOG_BLOCK_TPL((Stream)(Area)(Level)({
         packet.dump(log);
         hexdump(packet.last().data().begin(), packet.last().data().end(),log);
     }));

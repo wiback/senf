@@ -126,6 +126,11 @@ namespace detail {
         senf::log::detail::empty,                                                                 \
         (SENFLogDefaultStream)(SENFLogDefaultArea)(SENFLogDefaultLevel)args) >
 
+#define SENF_LOG_MERGE_PARAMETERS_TPL(args)                                                       \
+    senf::log::detail::Parameters< typename SENF_LOG_MERGE_PARAMETERS_I(                          \
+        senf::log::detail::empty,                                                                 \
+        (SENFLogDefaultStream)(SENFLogDefaultArea)(SENFLogDefaultLevel)args) >
+
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
 

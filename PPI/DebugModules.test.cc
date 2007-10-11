@@ -36,7 +36,7 @@ namespace {
     std::stringstream logstream;
 }
 
-#define SENF_LOG_CONF ((senf::log::Debug)(_)(VERBOSE))
+#define SENF_LOG_CONF (( (senf)(log)(Debug), (_), VERBOSE ))
 
 #include "../Packets/Packets.hh"
 #include "DebugModules.hh"
