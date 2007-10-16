@@ -45,10 +45,10 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_FIELD( source,      senf::Parse_UInt16 );
-        SENF_PARSE_FIELD( destination, senf::Parse_UInt16 );
-        SENF_PARSE_FIELD( length,      senf::Parse_UInt16 );
-        SENF_PARSE_FIELD( checksum,    senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( source,      senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( destination, senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( length,      senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( checksum,    senf::Parse_UInt16 );
 
         SENF_PARSER_FINALIZE(Parse_UDP);
 

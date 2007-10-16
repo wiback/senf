@@ -49,8 +49,8 @@ namespace {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_FIELD( name, senf::Parse_UInt16 );
-        SENF_PARSE_FIELD( id,   senf::Parse_Int32  );
+        SENF_PARSER_FIELD( name, senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( id,   senf::Parse_Int32  );
 
         SENF_PARSER_FINALIZE(FooParser);
     };
@@ -59,8 +59,8 @@ namespace {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSE_FIELD( name, senf::Parse_UInt16 );
-        SENF_PARSE_FIELD( id,   senf::Parse_Int32  );
+        SENF_PARSER_FIELD( name, senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( id,   senf::Parse_Int32  );
 
         SENF_PARSER_FINALIZE(BarParser);
     };

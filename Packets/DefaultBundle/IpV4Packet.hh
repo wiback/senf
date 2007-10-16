@@ -69,23 +69,23 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_BITFIELD( version,   4, unsigned );
-        SENF_PARSE_BITFIELD( ihl,       4, unsigned );
+        SENF_PARSER_BITFIELD( version,   4, unsigned );
+        SENF_PARSER_BITFIELD( ihl,       4, unsigned );
 
-        SENF_PARSE_FIELD( tos,         Parse_UInt8        );
-        SENF_PARSE_FIELD( length,      Parse_UInt16       );
-        SENF_PARSE_FIELD( identifier,  Parse_UInt16       );
+        SENF_PARSER_FIELD( tos,         Parse_UInt8        );
+        SENF_PARSER_FIELD( length,      Parse_UInt16       );
+        SENF_PARSER_FIELD( identifier,  Parse_UInt16       );
 
-        SENF_PARSE_BITFIELD( reserved,  1, bool     );
-        SENF_PARSE_BITFIELD( df,        1, bool     );
-        SENF_PARSE_BITFIELD( mf,        1, bool     );
-        SENF_PARSE_BITFIELD( frag,     13, unsigned );
+        SENF_PARSER_BITFIELD( reserved,  1, bool     );
+        SENF_PARSER_BITFIELD( df,        1, bool     );
+        SENF_PARSER_BITFIELD( mf,        1, bool     );
+        SENF_PARSER_BITFIELD( frag,     13, unsigned );
 
-        SENF_PARSE_FIELD( ttl,         Parse_UInt8        );
-        SENF_PARSE_FIELD( protocol,    Parse_UInt8        );
-        SENF_PARSE_FIELD( checksum,    Parse_UInt16       );
-        SENF_PARSE_FIELD( source,      Parse_INet4Address );
-        SENF_PARSE_FIELD( destination, Parse_INet4Address );
+        SENF_PARSER_FIELD( ttl,         Parse_UInt8        );
+        SENF_PARSER_FIELD( protocol,    Parse_UInt8        );
+        SENF_PARSER_FIELD( checksum,    Parse_UInt16       );
+        SENF_PARSER_FIELD( source,      Parse_INet4Address );
+        SENF_PARSER_FIELD( destination, Parse_INet4Address );
 
         SENF_PARSER_INIT() {
             version() = 4;

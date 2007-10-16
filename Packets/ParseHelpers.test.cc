@@ -41,31 +41,35 @@ namespace {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_FIELD        ( normalField          , senf::Parse_UInt16 );
-        SENF_PARSE_FIELD_RO     ( roField              , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( normalField          , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD_RO     ( roField              , senf::Parse_UInt16 );
 
-        SENF_PARSE_CUSTOM_FIELD ( customField          , int, 2             ) {
+        SENF_PARSER_CUSTOM_FIELD ( customField          , int, 2             ) {
             return parse<senf::Parse_UInt16>(customField_offset);
         }
         
-        SENF_PARSE_BITFIELD     ( signedBitfield       , 4, signed          );
-        SENF_PARSE_BITFIELD     ( unsignedBitfield     , 3, unsigned        );
-        SENF_PARSE_BITFIELD     ( boolBitfield         , 1, bool            );
+        SENF_PARSER_BITFIELD     ( signedBitfield       , 4, signed          );
+        SENF_PARSER_BITFIELD     ( unsignedBitfield     , 3, unsigned        );
+        SENF_PARSER_BITFIELD     ( boolBitfield         , 1, bool            );
 
-        SENF_PARSE_BITFIELD_RO  ( roSignedBitfield     , 4, signed          );
-        SENF_PARSE_BITFIELD_RO  ( roUnsignedBitfield   , 3, unsigned        );
-        SENF_PARSE_BITFIELD_RO  ( roBoolBitfield       , 1, bool            );
+        SENF_PARSER_BITFIELD_RO  ( roSignedBitfield     , 4, signed          );
+        SENF_PARSER_BITFIELD_RO  ( roUnsignedBitfield   , 3, unsigned        );
+        SENF_PARSER_BITFIELD_RO  ( roBoolBitfield       , 1, bool            );
 
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( roField );
 
-        SENF_PARSE_FIELD        ( overlayOfRoField     , senf::Parse_Int16  );
+        SENF_PARSER_FIELD        ( overlayOfRoField     , senf::Parse_Int16  );
         SENF_PARSER_SKIP( 2 );
-        SENF_PARSE_FIELD        ( overlayOfBitfield    , senf::Parse_UInt8  );
+        SENF_PARSER_FIELD        ( overlayOfBitfield    , senf::Parse_UInt8  );
 
         SENF_PARSER_GOTO_OFFSET( 1 );
 
-        SENF_PARSE_FIELD        ( lowbyteOfNormalField , senf::Parse_UInt8  );
+        SENF_PARSER_PRIVATE_FIELD ( privLowbyteOfNormalField , senf::Parse_UInt8  );
+
+        unsigned lowbyteOfNormalField() { 
+            return privLowbyteOfNormalField();
+        }
 
         SENF_PARSER_GOTO( end );
 
@@ -78,12 +82,12 @@ namespace {
 
         SENF_PARSER_INHERIT( FixedBaseParser );
         
-        SENF_PARSE_FIELD        ( derivedField         , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( derivedField         , senf::Parse_UInt16 );
 
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( signedBitfield );
 
-        SENF_PARSE_FIELD        ( anotherOverlay       , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( anotherOverlay       , senf::Parse_UInt16 );
         
         SENF_PARSER_GOTO( end );
 
@@ -147,31 +151,35 @@ namespace {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSE_FIELD        ( normalField          , senf::Parse_UInt16 );
-        SENF_PARSE_FIELD_RO     ( roField              , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( normalField              , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD_RO     ( roField                  , senf::Parse_UInt16 );
 
-        SENF_PARSE_CUSTOM_FIELD ( customField          , int, 2, 2          ) {
+        SENF_PARSER_CUSTOM_FIELD ( customField              , int, 2, 2          ) {
             return parse<senf::Parse_UInt16>(customField_offset());
         }
         
-        SENF_PARSE_BITFIELD     ( signedBitfield       , 4, signed          );
-        SENF_PARSE_BITFIELD     ( unsignedBitfield     , 3, unsigned        );
-        SENF_PARSE_BITFIELD     ( boolBitfield         , 1, bool            );
+        SENF_PARSER_BITFIELD      ( signedBitfield           , 4, signed          );
+        SENF_PARSER_BITFIELD      ( unsignedBitfield         , 3, unsigned        );
+        SENF_PARSER_BITFIELD      ( boolBitfield             , 1, bool            );
 
-        SENF_PARSE_BITFIELD_RO  ( roSignedBitfield     , 4, signed          );
-        SENF_PARSE_BITFIELD_RO  ( roUnsignedBitfield   , 3, unsigned        );
-        SENF_PARSE_BITFIELD_RO  ( roBoolBitfield       , 1, bool            );
+        SENF_PARSER_BITFIELD_RO   ( roSignedBitfield         , 4, signed          );
+        SENF_PARSER_BITFIELD_RO   ( roUnsignedBitfield       , 3, unsigned        );
+        SENF_PARSER_BITFIELD_RO   ( roBoolBitfield           , 1, bool            );
 
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( roField );
 
-        SENF_PARSE_FIELD        ( overlayOfRoField     , senf::Parse_Int16  );
+        SENF_PARSER_FIELD         ( overlayOfRoField         , senf::Parse_Int16  );
         SENF_PARSER_SKIP( 2, 2 );
-        SENF_PARSE_FIELD        ( overlayOfBitfield    , senf::Parse_UInt8  );
+        SENF_PARSER_FIELD         ( overlayOfBitfield        , senf::Parse_UInt8  );
 
         SENF_PARSER_GOTO_OFFSET( 1, 1 );
 
-        SENF_PARSE_FIELD        ( lowbyteOfNormalField , senf::Parse_UInt8  );
+        SENF_PARSER_PRIVATE_FIELD ( privLowbyteOfNormalField , senf::Parse_UInt8  );
+
+        unsigned lowbyteOfNormalField() { 
+            return privLowbyteOfNormalField();
+        }
 
         SENF_PARSER_GOTO( end );
 
@@ -184,12 +192,12 @@ namespace {
 
         SENF_PARSER_INHERIT( VariableBaseParser );
         
-        SENF_PARSE_FIELD        ( derivedField         , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( derivedField         , senf::Parse_UInt16 );
 
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( signedBitfield );
 
-        SENF_PARSE_FIELD        ( anotherOverlay       , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( anotherOverlay       , senf::Parse_UInt16 );
         
         SENF_PARSER_GOTO( end );
 

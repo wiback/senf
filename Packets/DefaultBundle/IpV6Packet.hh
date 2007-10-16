@@ -64,15 +64,15 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_BITFIELD( version,       4, unsigned );
-        SENF_PARSE_BITFIELD( trafficClass,  8, unsigned );
-        SENF_PARSE_BITFIELD( flowLabel,    20, unsigned );
+        SENF_PARSER_BITFIELD( version,       4, unsigned );
+        SENF_PARSER_BITFIELD( trafficClass,  8, unsigned );
+        SENF_PARSER_BITFIELD( flowLabel,    20, unsigned );
 
-        SENF_PARSE_FIELD( length,       Parse_UInt16       );
-        SENF_PARSE_FIELD( nextHeader,   Parse_UInt8        );
-        SENF_PARSE_FIELD( hopLimit,     Parse_UInt8        );
-        SENF_PARSE_FIELD( source,       Parse_INet6Address );
-        SENF_PARSE_FIELD( destination,  Parse_INet6Address );
+        SENF_PARSER_FIELD( length,       Parse_UInt16       );
+        SENF_PARSER_FIELD( nextHeader,   Parse_UInt8        );
+        SENF_PARSER_FIELD( hopLimit,     Parse_UInt8        );
+        SENF_PARSER_FIELD( source,       Parse_INet6Address );
+        SENF_PARSER_FIELD( destination,  Parse_INet6Address );
 
         SENF_PARSER_INIT() {
             version() = 6;

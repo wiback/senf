@@ -45,23 +45,23 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_FIELD( table_id, Parse_UInt8 );
+        SENF_PARSER_FIELD    ( table_id            , Parse_UInt8   );
         
-        SENF_PARSE_BITFIELD( ssi,                  1, bool     );
-        SENF_PARSE_BITFIELD( private_indicator,    1, bool     );
-        SENF_PARSE_BITFIELD( reserved_1,           2, unsigned );
-        SENF_PARSE_BITFIELD( sec_length,          12, unsigned );
-
-        SENF_PARSE_FIELD( table_id_extension, Parse_UInt16 );
-
-        SENF_PARSE_BITFIELD( reserved_2,           2, unsigned );
-        SENF_PARSE_BITFIELD( version_num,          5, unsigned );
-        SENF_PARSE_BITFIELD( curr_next_indicator,  1, bool     );
-
-        SENF_PARSE_FIELD( sec_num,            Parse_UInt8  );
-        SENF_PARSE_FIELD( last_sec_num,       Parse_UInt8  );
+        SENF_PARSER_BITFIELD ( ssi                 ,  1 , bool     );
+        SENF_PARSER_BITFIELD ( private_indicator   ,  1 , bool     );
+        SENF_PARSER_SKIP_BITS( 2 );
+        SENF_PARSER_BITFIELD ( sec_length          , 12 , unsigned );
         
-        SENF_PARSER_FINALIZE(Parse_DSMCCSection);
+        SENF_PARSER_FIELD    ( table_id_extension  , Parse_UInt16  );
+        
+        SENF_PARSER_SKIP_BITS( 2 );
+        SENF_PARSER_BITFIELD ( version_num         ,  5 , unsigned );
+        SENF_PARSER_BITFIELD ( curr_next_indicator ,  1 , bool     );
+
+        SENF_PARSER_FIELD    ( sec_num             , Parse_UInt8   );
+        SENF_PARSER_FIELD    ( last_sec_num        , Parse_UInt8   );
+        
+        SENF_PARSER_FINALIZE( Parse_DSMCCSection );
 
         Parse_UInt32 crc() const { return parse<Parse_UInt32>( data().size()-4 ); }
     };

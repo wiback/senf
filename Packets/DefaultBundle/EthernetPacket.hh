@@ -70,9 +70,9 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_FIELD( destination, Parse_MAC    );
-        SENF_PARSE_FIELD( source,      Parse_MAC    );
-        SENF_PARSE_FIELD( type,        Parse_UInt16 );
+        SENF_PARSER_FIELD( destination, Parse_MAC    );
+        SENF_PARSER_FIELD( source,      Parse_MAC    );
+        SENF_PARSER_FIELD( type,        Parse_UInt16 );
 
         SENF_PARSER_FINALIZE(Parse_Ethernet);
     };
@@ -137,11 +137,11 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_BITFIELD( priority,  3, unsigned );
-        SENF_PARSE_BITFIELD( cfi,       1, bool     );
-        SENF_PARSE_BITFIELD( vlanId,   12, unsigned );
+        SENF_PARSER_BITFIELD( priority,  3, unsigned );
+        SENF_PARSER_BITFIELD( cfi,       1, bool     );
+        SENF_PARSER_BITFIELD( vlanId,   12, unsigned );
 
-        SENF_PARSE_FIELD( type, Parse_UInt16 );
+        SENF_PARSER_FIELD( type, Parse_UInt16 );
 
         SENF_PARSER_FINALIZE(Parse_EthVLan);
     };

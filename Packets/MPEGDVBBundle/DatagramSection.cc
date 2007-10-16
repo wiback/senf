@@ -45,13 +45,11 @@ prefix_ void senf::DatagramSectionType::dump(packet p, std::ostream & os)
        << "  table_id: 0x" << unsigned(p->table_id()) << "\n"
        << "  section_syntax_indicator: " << p->ssi() << "\n"
        << "  private_indicator: " << p->private_indicator() << "\n"
-       << "  reserved_1: " << p->reserved_1() << "\n"
        << std::dec
        << "  section_length: " << p->sec_length() << "\n"
        << std::hex 
        << "  MAC_address_6: " << unsigned(p->mac_addr_6()) << "\n"
        << "  MAC_address_5: " << unsigned(p->mac_addr_5()) << "\n"
-       << "  reserved_2: " << p->reserved_2() << "\n"
        << "  payload_scrambling_control: " << p->payload_scrmbl_ctrl() << "\n"
        << "  address_scrambling_control: " << p-> addr_scrmbl_ctrl()  << "\n"
        << "  LLC_SNAP_flag: " << p->llc_snap_flag() << "\n"

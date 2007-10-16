@@ -88,8 +88,8 @@ namespace senf {
     {
 #       include SENF_PARSER()
         
-        SENF_PARSE_FIELD( type,   Parse_UInt32 );
-        SENF_PARSE_FIELD( length, Parse_TLVPacketLength );
+        SENF_PARSER_FIELD( type,   Parse_UInt32 );
+        SENF_PARSER_FIELD( length, Parse_TLVPacketLength );
         
         SENF_PARSER_FINALIZE(Parse_TLVPacket);
     };

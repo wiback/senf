@@ -47,33 +47,25 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_INHERIT(Parse_DSMCCSection);
+        SENF_PARSER_INHERIT( Parse_DSMCCSection );
 
-        SENF_PARSE_FIELD( mac_addr_4, Parse_UInt8 );
-        SENF_PARSE_FIELD( mac_addr_3, Parse_UInt8 );
-        SENF_PARSE_FIELD( mac_addr_2, Parse_UInt8 );
-        SENF_PARSE_FIELD( mac_addr_1, Parse_UInt8 );
+        SENF_PARSER_FIELD    ( mac_addr_4          , Parse_UInt8  );
+        SENF_PARSER_FIELD    ( mac_addr_3          , Parse_UInt8  );
+        SENF_PARSER_FIELD    ( mac_addr_2          , Parse_UInt8  );
+        SENF_PARSER_FIELD    ( mac_addr_1          , Parse_UInt8  );
 
-        SENF_PARSER_FINALIZE(Parse_DatagramSection);
+        SENF_PARSER_FINALIZE( Parse_DatagramSection );
 
-        typedef Parse_UIntField < 2,  4 > Parse_payload_scrmbl_ctrl;
-        typedef Parse_UIntField < 4,  6 > Parse_addr_scrmbl_ctrl;
-        typedef Parse_Flag      <     6 > Parse_llc_snap_flag;
+        // Parse table_id_extension as two bytes
+        SENF_PARSER_GOTO( table_id_extension );
+        SENF_PARSER_FIELD    ( mac_addr_6          , Parse_UInt8  );
+        SENF_PARSER_FIELD    ( mac_addr_5          , Parse_UInt8  );
 
-        Parse_UInt8 mac_addr_6() const { return parse<Parse_UInt8>( 3 ); }
-        Parse_UInt8 mac_addr_5() const { return parse<Parse_UInt8>( 4 ); }
-
-        Parse_payload_scrmbl_ctrl payload_scrmbl_ctrl() const {
-            return parse<Parse_payload_scrmbl_ctrl>( 5 );
-        }
-
-        Parse_addr_scrmbl_ctrl addr_scrmbl_ctrl() const {
-            return parse<Parse_addr_scrmbl_ctrl>( 5 );
-        }
-
-        Parse_llc_snap_flag llc_snap_flag() const {
-            return parse<Parse_llc_snap_flag>( 5 );
-        }
+        // Divide 5 bit version_num field into several subfields.
+        SENF_PARSER_SKIP_BITS( 2 );
+        SENF_PARSER_BITFIELD ( payload_scrmbl_ctrl ,  2, unsigned );
+        SENF_PARSER_BITFIELD ( addr_scrmbl_ctrl    ,  2, unsigned );
+        SENF_PARSER_BITFIELD ( llc_snap_flag       ,  1, bool     );
     };
 
     /** \brief Datagram Section

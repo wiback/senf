@@ -45,12 +45,10 @@ prefix_ void senf::DSMCCSectionType::dump(packet p, std::ostream & os)
        << "  table_id: 0x" << unsigned(p->table_id()) << "\n"
        << "  section_syntax_indicator: " << p->ssi() << "\n"
        << "  private_indicator: " << p->private_indicator() << "\n"
-       << "  reserved_1: " << p->reserved_1() << "\n"
        << std::dec
        << "  section_length: " << p->sec_length() << "\n"
        << std::hex 
        << "  table_id_extension: " << p->table_id_extension() << "\n"
-       << "  reserved_2: " << p->reserved_2() << "\n"
        << "  version_number: " << p->version_num() << "\n"
        << "  current_next_indicator: " << p->curr_next_indicator() << "\n"
        << "  section_number: " << unsigned(p->sec_num()) << "\n"

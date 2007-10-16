@@ -43,14 +43,14 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSE_FIELD( nextHeader     , Parse_UInt8 );
-        SENF_PARSE_FIELD( reserved1      , Parse_UInt8 );
+        SENF_PARSER_FIELD( nextHeader     , Parse_UInt8 );
+        SENF_PARSER_FIELD( reserved1      , Parse_UInt8 );
 
-        SENF_PARSE_BITFIELD( fragmentOffset, 13, unsigned );
-        SENF_PARSE_BITFIELD( reserved2,       2, unsigned );
-        SENF_PARSE_BITFIELD( moreFragments,   1, bool     );
+        SENF_PARSER_BITFIELD( fragmentOffset, 13, unsigned );
+        SENF_PARSER_BITFIELD( reserved2,       2, unsigned );
+        SENF_PARSER_BITFIELD( moreFragments,   1, bool     );
 
-        SENF_PARSE_FIELD( id             , Parse_UInt32   );
+        SENF_PARSER_FIELD( id             , Parse_UInt32   );
 
         SENF_PARSER_FINALIZE(Parse_IpV6Extension_Fragment);
     };

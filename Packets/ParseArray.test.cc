@@ -44,8 +44,8 @@ namespace {
 
         typedef senf::Parse_Array<2,senf::Parse_UInt24> Parse_Array2;
         
-        SENF_PARSE_FIELD( array, Parse_Array2 );
-        SENF_PARSE_FIELD( index, senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( array, Parse_Array2 );
+        SENF_PARSER_FIELD( index, senf::Parse_UInt16 );
 
         SENF_PARSER_FINALIZE(SomePacketParser);
     };
@@ -56,7 +56,7 @@ namespace {
         
         typedef senf::Parse_Array<1,SomePacketParser> Parse_Array1;
 
-        SENF_PARSE_FIELD( fields, Parse_Array1 );
+        SENF_PARSER_FIELD( fields, Parse_Array1 );
 
         SENF_PARSER_FINALIZE(SomeOtherParser);
     };
