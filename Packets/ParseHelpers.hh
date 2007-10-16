@@ -146,79 +146,25 @@
     \ingroup packetparser
  */
 
-#define SENF_FIXED_PARSER() SENF_ABSOLUTE_INCLUDE_PATH(Packets/parse_fixed_setup.hh)
-#define SENF_PARSER()       SENF_ABSOLUTE_INCLUDE_PATH(Packets/parse_setup.hh)
+#define SENF_FIXED_PARSER()     SENF_ABSOLUTE_INCLUDE_PATH(Packets/parse_fixed_setup.hh)
+#define SENF_PARSER()           SENF_ABSOLUTE_INCLUDE_PATH(Packets/parse_setup.hh)
 
-#define SENF_FIXED_PARSER_INITIALIZE()                                                            \
-    private:                                                                                      \
-        SENF_MPL_SLOT_DEF_ZERO(index);                                                            \
-        SENF_MPL_SLOT_DEF_ZERO(offset);                                                           \
-        SENF_MPL_SLOT_DEF_ZERO(bit);                                                              \
-        SENF_MPL_SLOT_DEF_ZERO(bitfield_size);                                                    \
-        void init_chain(senf::mpl::rv<0>*) {}                                                     \
-    public:
+#define SENF_PARSER_INHERIT     BOOST_PP_CAT( SENF_PARSER_INHERIT_     , SENF_PARSER_TYPE )
 
-#define SENF_PARSER_INITIALIZE()                                                                  \
-    private:                                                                                      \
-        SENF_MPL_SLOT_DEF_ZERO(index);                                                            \
-        SENF_MPL_SLOT_DEF_ZERO(init_bytes);                                                       \
-        SENF_MPL_SLOT_DEF_ZERO(bit);                                                              \
-        SENF_MPL_SLOT_DEF_ZERO(bitfield_size);                                                    \
-        void init_chain(senf::mpl::rv<0>*) {}                                                     \
-        size_type field_offset_(senf::mpl::rv<0>*) const { return 0; }                            \
-    public:
+#define SENF_PARSE_FIELD        BOOST_PP_CAT( SENF_PARSE_FIELD_        , SENF_PARSER_TYPE )
+#define SENF_PARSE_FIELD_RO     BOOST_PP_CAT( SENF_PARSE_FIELD_RO_     , SENF_PARSER_TYPE )
+#define SENF_PARSE_CUSTOM_FIELD BOOST_PP_CAT( SENF_PARSE_CUSTOM_FIELD_ , SENF_PARSER_TYPE )
+#define SENF_PARSE_BITFIELD     BOOST_PP_CAT( SENF_PARSE_BITFIELD_     , SENF_PARSER_TYPE )
+#define SENF_PARSE_BITFIELD_RO  BOOST_PP_CAT( SENF_PARSE_BITFIELD_RO_  , SENF_PARSER_TYPE )
 
-#define SENF_PARSER_FIELD(name, type)              SENF_PARSER_FIELD_I(name, type, var, rw)
-#define SENF_PARSER_FIELD_RO(name, type)           SENF_PARSER_FIELD_I(name, type, var, ro)
-#define SENF_PARSER_CUSTOM_FIELD(name, type, size) SENF_PARSER_CUSTOM_FIELD_I(name, type, size, var)
+#define SENF_PARSER_FINALIZE    BOOST_PP_CAT( SENF_PARSER_FINALIZE_    , SENF_PARSER_TYPE )
 
-#define SENF_PARSER_FIXED_FIELD(name, type)              SENF_PARSER_FIELD_I(name, type, fix, rw)
-#define SENF_PARSER_FIXED_FIELD_RO(name, type)           SENF_PARSER_FIELD_I(name, type, fix, ro)
-#define SENF_PARSER_FIXED_CUSTOM_FIELD(name, type, size) SENF_PARSER_CUSTOM_FIELD_I(name, type, size, fix)
+#define SENF_PARSER_SKIP        BOOST_PP_CAT( SENF_PARSER_SKIP_        , SENF_PARSER_TYPE )
+#define SENF_PARSER_GOTO        BOOST_PP_CAT( SENF_PARSER_GOTO_        , SENF_PARSER_TYPE )
+#define SENF_PARSER_GOTO_OFFSET BOOST_PP_CAT( SENF_PARSER_GOTO_OFFSET_ , SENF_PARSER_TYPE )
+#define SENF_PARSER_LABEL       BOOST_PP_CAT( SENF_PARSER_LABEL_       , SENF_PARSER_TYPE )
 
-#define SENF_PARSER_FIELD_AFTER(name, type, prev)              SENF_PARSER_FIELD_I_AFTER(name, type, prev, var, rw)
-#define SENF_PARSER_FIELD_RO_AFTER(name, type, prev)           SENF_PARSER_FIELD_I_AFTER(name, type, prev, var, ro)
-#define SENF_PARSER_CUSTOM_FIELD_AFTER(name, type, size, prev) SENF_PARSER_CUSTOM_FIELD_I_AFTER(name, type, size, prev, var)
-
-#define SENF_PARSER_FIXED_FIELD_AFTER(name, type, prev)              SENF_PARSER_FIELD_I_AFTER(name, type, prev, fix, rw)
-#define SENF_PARSER_FIXED_FIELD_RO_AFTER(name, type, prev)           SENF_PARSER_FIELD_I_AFTER(name, type, prev, fix, ro)
-#define SENF_PARSER_FIXED_CUSTOM_FIELD_AFTER(name, type, size, prev) SENF_PARSER_CUSTOM_FIELD_I_AFTER(name, type, size, prev, fix)
-
-#define SENF_PARSER_BITFIELD(name, bits, type)    SENF_PARSER_BITFIELD_I(name, bits, type, var, rw)
-#define SENF_PARSER_BITFIELD_RO(name, bits, type) SENF_PARSER_BITFIELD_I(name, bits, type, var, ro)
-
-#define SENF_PARSER_FIXED_BITFIELD(name, bits, type)    SENF_PARSER_BITFIELD_I(name, bits, type, fix, rw)
-#define SENF_PARSER_FIXED_BITFIELD_RO(name, bits, type) SENF_PARSER_BITFIELD_I(name, bits, type, fix, ro)
-
-#define SENF_PARSER_INIT()                                                                        \
-     void init(int)
-
-#define SENF_PARSER_FINALIZE_GENERIC(name, base)                                                  \
-         void defaultInit() {                                                                     \
-             init_chain(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)>*>(0));                \
-         }                                                                                        \
-         name(data_iterator i, state_type s) : base(i,s) {}                                       \
-    private:                                                                                      \
-         template <class T> void init(T) { defaultInit(); }                                       \
-    public:                                                                                       \
-         void init() { init(0); }
-
-#define SENF_PARSER_FINALIZE_INHERITED_DYNAMIC(name, base)                                        \
-    SENF_PARSER_FINALIZE_GENERIC(name, base)                                                      \
-    size_type bytes() const {                                                                     \
-        return field_offset_(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)>*>(0));           \
-    }                                                                                             \
-    static size_type const init_bytes = SENF_MPL_SLOT_GET(init_bytes)
-
-#define SENF_PARSER_FINALIZE_INHERITED_FIXED(name, base)                                          \
-    SENF_PARSER_FINALIZE_GENERIC(name, base)                                                      \
-    static size_type const fixed_bytes = SENF_MPL_SLOT_GET(offset);
-
-#define SENF_PARSER_FINALIZE_FIXED(name)                                                          \
-    SENF_PARSER_FINALIZE_INHERITED_FIXED(name, senf::PacketParserBase)
-
-#define SENF_PARSER_FINALIZE_DYNAMIC(name)                                                        \
-    SENF_PARSER_FINALIZE_INHERITED_DYNAMIC(name, senf::PacketParserBase)
+#define SENF_PARSER_INIT()      void init(int)
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif

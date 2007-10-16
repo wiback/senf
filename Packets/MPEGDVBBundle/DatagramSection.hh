@@ -54,7 +54,7 @@ namespace senf {
         SENF_PARSE_FIELD( mac_addr_2, Parse_UInt8 );
         SENF_PARSE_FIELD( mac_addr_1, Parse_UInt8 );
 
-        SENF_PARSER_FINALIZE_INHERITED(Parse_DatagramSection, Parse_DSMCCSection);
+        SENF_PARSER_FINALIZE(Parse_DatagramSection);
 
         typedef Parse_UIntField < 2,  4 > Parse_payload_scrmbl_ctrl;
         typedef Parse_UIntField < 4,  6 > Parse_addr_scrmbl_ctrl;

@@ -241,6 +241,7 @@ namespace senf {
         typedef detail::packet::difference_type difference_type; ///< Signed integral type
         typedef detail::packet::byte byte; ///< Unsigned 8bit value, the raw value type
         typedef PacketData * state_type; ///< Type of the 'state' parameter
+        typedef PacketParserBase parser_base_type; ///< Base type of the next parser
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
