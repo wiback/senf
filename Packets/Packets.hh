@@ -24,11 +24,11 @@
 #ifndef HH_Packets_
 #define HH_Packets_ 1
 
-#define SENF_PACKETS_DECL_ONLY
+#define HH_Packets__decls_
 
 #include "all_includes.hh"
 
-#undef SENF_PACKETS_DECL_ONLY
+#undef HH_Packets__decls_
 
 #include "all_includes.hh"
 

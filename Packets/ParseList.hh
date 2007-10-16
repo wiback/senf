@@ -370,7 +370,7 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_ParseList_i_)
+#if !defined(HH_Packets__decls_) && !defined(HH_ParseList_i_)
 #define HH_ParseList_i_
 //#include "ParseList.cci"
 #include "ParseList.ct"

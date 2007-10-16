@@ -204,7 +204,7 @@ packet of which the key is requested
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_PacketRegistryImpl_i_)
+#if !defined(HH_Packets__decls_) && !defined(HH_PacketRegistryImpl_i_)
 #define HH_PacketRegistryImpl_i_
 //#include "PacketRegistry.cci"
 #include "PacketRegistry.ct"

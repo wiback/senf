@@ -62,43 +62,23 @@ namespace senf {
      */
     struct Parse_IpV6 : public PacketParserBase
     {
-        typedef Parse_UIntField <  0,  4 > Parse_Version;
-        typedef Parse_UIntField <  4, 12 > Parse_Class;
-        typedef Parse_UIntField < 12, 32 > Parse_FlowLabel;
-        typedef Parse_UInt8                Parse_8bit;
-        typedef Parse_UInt16               Parse_16bit;
-        typedef Parse_INet6Address         Parse_Addr;
+#       include SENF_FIXED_PARSER()
 
-#       ifndef DOXYGEN
+        SENF_PARSE_BITFIELD( version,       4, unsigned );
+        SENF_PARSE_BITFIELD( trafficClass,  8, unsigned );
+        SENF_PARSE_BITFIELD( flowLabel,    20, unsigned );
 
-        SENF_PACKET_PARSER_NO_INIT(Parse_IpV6);
+        SENF_PARSE_FIELD( length,       Parse_UInt16       );
+        SENF_PARSE_FIELD( nextHeader,   Parse_UInt8        );
+        SENF_PARSE_FIELD( hopLimit,     Parse_UInt8        );
+        SENF_PARSE_FIELD( source,       Parse_INet6Address );
+        SENF_PARSE_FIELD( destination,  Parse_INet6Address );
 
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((OverlayField)( version,      Parse_Version   ))
-            ((OverlayField)( trafficClass, Parse_Class     ))
-            ((Field       )( flowLabel,    Parse_FlowLabel ))
-            ((Field       )( length,       Parse_16bit     ))
-            ((Field       )( nextHeader,   Parse_8bit      ))
-            ((Field       )( hopLimit,     Parse_8bit      ))
-            ((Field       )( source,       Parse_Addr      ))
-            ((Field       )( destination,  Parse_Addr      )) );
-
-#       else
-
-        Parse_Version   version() const;
-        Parse_Class     trafficClass() const;
-        Parse_FlowLabel flowLabel() const;
-        Parse_16bit     length() const;
-        Parse_8bit      nextHeader() const;
-        Parse_8bit      hopLimit() const;
-        Parse_Addr      source() const;
-        Parse_Addr      destination() const;
-
-#       endif
-
-        void init() {
+        SENF_PARSER_INIT() {
             version() = 6;
         }
+
+        SENF_PARSER_FINALIZE(Parse_IpV6);
     };
 
     /** \brief IpV6 packet

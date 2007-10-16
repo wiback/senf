@@ -182,6 +182,17 @@ namespace mpl {
         static senf::mpl::rv<0> _SENF_MPL_SLOT_ ## name (_);                                      \
         SENF_MPL_SLOT_SET(name,value)
 
+    /** \brief Define MPL slot initialized to 0
+
+        This is like \ref SENF_MPL_SLOT_DEF() but initializes the slot to the fixed value 0. The
+        advantage over \ref SENF_MPL_SLOT_DEF() is, that this macro may be called from an include
+        file whereas all the other \\c SENF_MPL_SLOT_ macros must always be called from the relevant
+        file.
+     */
+#   define SENF_MPL_SLOT_DEF_ZERO(name)                                                           \
+        template <class _>                                                                        \
+        static senf::mpl::rv<0> _SENF_MPL_SLOT_ ## name (_);
+
     /** \brief Set MPL slot
         \see \ref SENF_MPL_SLOT_DEF()
         \ingroup senfmpl

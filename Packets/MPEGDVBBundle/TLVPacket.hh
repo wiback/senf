@@ -28,9 +28,7 @@
 
 // Custom includes
 #include <algorithm>
-#include "../../Packets/PacketType.hh"
-#include "../../Packets/ParseInt.hh"
-#include "../../Packets/PacketParser.hh"
+#include "../../Packets/Packets.hh"
 
 //#include "TLVPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -49,11 +47,7 @@ namespace senf {
           public PacketParserBase
     {
     public:
-#       ifndef DOXYGEN
-        
-        SENF_PACKET_PARSER_NO_INIT(Parse_TLVPacketLength);
-
-#       endif
+        Parse_TLVPacketLength(data_iterator i, state_type s) : PacketParserBase(i,s) {}
 
         typedef boost::uint32_t value_type;
     
@@ -92,16 +86,12 @@ namespace senf {
      */
     struct Parse_TLVPacket : public PacketParserBase
     {
-#       ifndef DOXYGEN
+#       include SENF_PARSER()
         
-        SENF_PACKET_PARSER_INIT(Parse_TLVPacket);
+        SENF_PARSE_FIELD( type,   Parse_UInt32 );
+        SENF_PARSE_FIELD( length, Parse_TLVPacketLength );
         
-        SENF_PACKET_PARSER_DEFINE_FIELDS(
-            ((Field)( type,   Parse_UInt32          ))
-            ((Field)( length, Parse_TLVPacketLength ))
-        );
-        
-#       endif
+        SENF_PARSER_FINALIZE(Parse_TLVPacket);
     };
 
     /** \brief TLV Packet

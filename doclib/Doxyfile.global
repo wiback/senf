@@ -27,7 +27,16 @@ SEARCHENGINE           = YES
 
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
-PREDEFINED             = DOXYGEN SENF_PPI_MODULE(x)=
+PREDEFINED             = DOXYGEN \
+                         "SENF_PPI_MODULE(x)=" \
+                         "SENF_PARSE_FIELD(name,type)=type name()" \
+                         "SENF_PARSE_FIELD_RO(name,type)=type::value_type name()" \
+                         "SENF_PARSE_FIELD_AFTER(name,type,prev)=type name()" \
+                         "SENF_PARSE_FIELD_AFTER_RO(name,type,prev)=type::value_type name()" \
+                         "SENF_PARSE_BITFIELD(name, bits, type)=type ## _ ## bits name()" \
+                         "SENF_PARSE_BITFIELD_RO(name, bits, type)=type ## _ ## bits name()" \
+                         "SENF_PARSER_FINALIZE(name)=" \
+                         "SENF_PARSER_INIT()=void init()"
 EXPAND_AS_DEFINED      = prefix_
 
 HTML_HEADER            = "$(TOPDIR)/doclib/doxy-header.html"

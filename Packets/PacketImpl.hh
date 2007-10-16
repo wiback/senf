@@ -128,7 +128,7 @@ namespace detail {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_PacketImpl_i_)
+#if !defined(HH_Packets__decls_) && !defined(HH_PacketImpl_i_)
 #define HH_PacketImpl_i_
 #include "PacketImpl.cci"
 //#include "PacketImpl.ct"

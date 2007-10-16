@@ -154,8 +154,9 @@
 #include "../Utils/SafeBool.hh"
 #include "PacketTypes.hh"
 #include "PacketData.hh"
+#include "ParseHelpers.hh"
 
-#include "PacketParser.mpp"
+//#include "PacketParser.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -434,227 +435,13 @@ namespace senf {
     Parser operator<<(Parser target, boost::optional<Value> const & value);
 #   endif
 
-    /** \defgroup packetparsermacros Helper macros for defining new packet parsers
-        
-        To simplify the definition of simple packet parsers, several macros are provided. Before
-        using these macros you should familiarize yourself with the packet parser interface as
-        described in senf::PacketParserBase.
-
-        These macros simplify providing the above defined interface. A typical packet declaration
-        using these macros has the following form (This is a concrete example from the definition of
-        the ethernet packet in <tt>DefaultBundle/EthernetPacket.hh</tt>)
-    
-        \code
-        struct Parse_EthVLan : public PacketParserBase
-        {
-            typedef Parse_UIntField < 0,  3 > Parse_Priority;
-            typedef Parse_Flag          < 3 > Parse_CFI;
-            typedef Parse_UIntField < 4, 16 > Parse_VLanId;
-            typedef Parse_UInt16              Parse_Type;
-
-            SENF_PACKET_PARSER_INIT(Parse_EthVLan);
-
-            SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-                ((OverlayField)( priority, Parse_Priority ))
-                ((OverlayField)( cfi,      Parse_CFI      ))
-                ((Field       )( vlanId,   Parse_VLanId   ))
-                ((Field       )( type,     Parse_Type     )) );
-        };
-        \endcode
-        
-        The macros take care of the following:
-        \li They define the accessor functions returning parsers of the given type.
-        \li They automatically calculate the offset of the fields from the preceding fields.
-        \li The macros provide a definition for \c init() 
-        \li The macros define the \c bytes(), \c fixed_bytes and \c init_bytes members as needed.
-
-        You may define either a fixed or a dynamically sized parser. Fixed size parsers are defined
-        using \ref SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS, dynamically sized parsers are defined
-        using \ref SENF_PACKET_PARSER_DEFINE_FIELDS. The different members are implemented such
-        that:
-        
-        \li The needed parser constructor is defined
-        \li \c init() calls \c defaultInit(). \c defaultInit() is defined to call \c init() on each
-            of the fields.
-        \li \c bytes() (on dynamically sized parser) respectively \c fixed_bytes (on fixed size
-            parsers) is defined to return the sum of the sizes of all fields.
-        \li On dynamically sized parsers, \c init_bytes is defined to return the sum of the
-            \c init_size's of all fields
-
-        The central definition macros are \ref SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS and \ref
-        SENF_PACKET_PARSER_DEFINE_FIELDS. The argument to both has the same structure. It is a
-        (boost preprocessor style) sequence of field definitions where each field definition
-        provides the builder macro to use and the name and type of the field to define:
-        \code
-          SENF_PACKET_PARSER_DEFINE[_FIXED]_FIELDS(
-              (( <builder> )( <name>, <type> ))
-              ...
-          )
-        \endcode
-        
-        For each field, this command will define
-        \li A method \a name() returning an instance of the \a type parser
-        \li \a name<tt>_t</tt> as a typedef for \a type, the fields value
-        \li \a name<tt>_offset</tt> to give the offset of the field from the beginning of the
-            parser. If the parser is a fixed size parser, this will be a static constant, otherwise
-            it will be a method.
-
-        The \a builder argument selects, how the field is defined
-        \li <tt>Field</tt> defines a field and increments the current position by the size of the
-            field
-        \li <tt>OverlayField</tt> defines a field like <tt>Field</tt> but does \e not increment the
-            position. In the above example, this is used to overlay the different bitfield parsers:
-            All overlaying bitfield parser except the last one (the one with the highest bit
-            numbers) is marked as OverlayField.
-
-        The \a name argument defines the name of the accessor method.
-
-        The \a type argument is the parser to return for that field. Since none of the arguments may
-        contain a comma, <em>This argument cannot be a multi-parameter template</em>. Always use
-        typedefs to access templated parsers as shown above.
-
-        The \ref SENF_PACKET_PARSER_INIT macro defines the constructor and the \c init() member. If
-        you want to provide your own \c init() implementation, use \ref
-        SENF_PACKET_PARSER_NO_INIT. The first statement in your init method should probably to call
-        \c defaultInit(). This will call the \c init() member of all the fields. Afterwards you can
-        set up the field values as needed:
-        \code
-          struct SomePacket : public senf::PacketParserBase
-          {
-              SENF_PACKET_PARSER_NO_INIT(SomePacket);
-        
-              typedef senf::Parse_UInt8 Parse_Type;
-              typedef senf::Parse_Vector< senf::Parse_UInt32,
-                                          senf::SimpleVectorSizer<senf::Parse_UInt16>
-                                        > Parse_Elements;
-
-              SENF_PACKET_PARSER_DEFINE_FIELDS(
-                  ((Field)( type,     Parse_Type     ))
-                  ((Field)( elements, Parse_Elements ))
-              );
-
-              void init() const {
-                  defaultInit();
-                  type() = 0x01;
-                  elements().push_back(0x01020304u);
-              }
-          }
-        \endcode
-        
-        \ingroup packetparser
-     */
-
-    /** \brief Define initialization members of a parser
-        
-        This macro defines the packet parser constructor and the \c init() member. \c init() is
-        defined to just call \c defaultInit() which is defined by the other macros to call \c init()
-        on each of the parsers fields.
-
-        \ingroup packetparsermacros
-        \hideinitializer
-     */
-#   define SENF_PACKET_PARSER_INIT(name)                                                          \
-    name(data_iterator i, state_type s) : senf::PacketParserBase(i,s) {}                          \
-    void init() const { defaultInit(); }
-
-    /** \brief Define initialization members of a parser except init()
-        
-        This macro is like SENF_PACKET_PARSER_INIT but does \e not define \c init(). This allows you
-        to provide your own implementation. You should call \c defaultInit() first before
-        initializing your data fields.
-
-        \ingroup packetparsermacros
-        \hideinitializer
-     */
-#   define SENF_PACKET_PARSER_NO_INIT(name)                                                       \
-    name(data_iterator i, state_type s) : senf::PacketParserBase(i,s) {}
-
-    /** \brief Define fields for a dynamically sized parser
-
-        Define the fields as specified in \a fields. This macro supports dynamically sized
-        subfields, the resulting parser will be dynamically sized.
-
-        \ingroup packetparsermacros
-        \hideinitializer
-     */
-#   define SENF_PACKET_PARSER_DEFINE_FIELDS(fields)                                               \
-    SENF_PACKET_PARSER_I_DEFINE_FIELDS(0,fields)
-        
-    /** \brief Define fields for a dynamically sized parser (with offset)
-
-        Define the fields as specified in \a fields. This macro supports dynamically sized
-        subfields, the resulting parser will be dynamically sized.
-
-        The \a offset argument gives the byte offset at which to start parsing the fields. This
-        helps defining extended parser deriving from a base parser:
-        \code
-           struct ExtendedParser : public BaseParser
-           {
-               ExtendedParser(data_iterator i, state_type s) : BaseParser(i,s) {}
-        
-               SENF_PACKET_PARSER_DEFINE_FIELDS_OFFSET(senf::bytes(BaseParser(*this)),
-                 ( ... fields ... ) );
-
-               void init() {
-                   BaseParser::init();
-                   defaultInit();
-                   // other init code
-               }
-           }
-        \endcode
-
-        \ingroup packetparsermacros
-        \hideinitializer
-     */
-#   define SENF_PACKET_PARSER_DEFINE_FIELDS_OFFSET(offset,fields)                                 \
-    SENF_PACKET_PARSER_I_DEFINE_FIELDS(offset,fields)
-
-    /** \brief Define fields for a fixed size parser
-
-        Define the fields as specified in \a fields. This macro only supports fixed size
-        subfields, the resulting parser will also be a fixed size parser.
-
-        \ingroup packetparsermacros
-        \hideinitializer
-     */
-#   define SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(fields)                                         \
-    SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(0,fields)
-
-    /** \brief Define fields for a fixed size parser
-
-        Define the fields as specified in \a fields. This macro only supports fixed size
-        subfields, the resulting parser will also be a fixed size parser.
-
-        The \a offset argument gives the byte offset at which to start parsing the fields. This
-        helps defining extended parser deriving from a base parser:
-        \code
-           struct ExtendedParser : public BaseParser
-           {
-               ExtendedParser(data_iterator i, state_type s) : BaseParser(i,s) {}
-
-               SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS_OFFSET(BaseParser::fixed_bytes,
-                 ( ... fields ... ) );
-
-               void init() {
-                   BaseParser::init();
-                   defaultInit();
-                   // other init code
-               }
-           }
-        \endcode
-
-        \ingroup packetparsermacros
-        \hideinitializer
-     */
-#   define SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS_OFFSET(offset,fields)                           \
-    SENF_PACKET_PARSER_I_DEFINE_FIXED_FIELDS(offset,fields)
-
     /** \brief Default parser parsing nothing
      */
     struct VoidPacketParser 
         : public PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(VoidPacketParser);
+#       include SENF_FIXED_PARSER()
+        SENF_PARSER_FINALIZE(VoidPacketParser);
     };
 
     /** \brief Iterator re-validating Parser wrapper
@@ -718,7 +505,7 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_PacketParser_i_)
+#if !defined(HH_Packets__decls_) && !defined(HH_PacketParser_i_)
 #define HH_PacketParser_i_
 #include "PacketParser.cci"
 #include "PacketParser.ct"

@@ -31,5 +31,7 @@ find . \
 	-name .test.bin -o \
 	-name "*.stamp" -o \
 	-name ".sconsign*" -o \
+	-name "semantic.cache" -o \
+	-name "all_includes.hh" -o \
     -type f $cond \( "$@" \)
 

@@ -49,7 +49,7 @@ prefix_ void senf::DSMCCSectionType::dump(packet p, std::ostream & os)
        << std::dec
        << "  section_length: " << p->sec_length() << "\n"
        << std::hex 
-       << "  table_id_extension: " << p->tabel_id_extension() << "\n"
+       << "  table_id_extension: " << p->table_id_extension() << "\n"
        << "  reserved_2: " << p->reserved_2() << "\n"
        << "  version_number: " << p->version_num() << "\n"
        << "  current_next_indicator: " << p->curr_next_indicator() << "\n"

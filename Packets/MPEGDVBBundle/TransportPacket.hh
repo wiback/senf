@@ -28,9 +28,7 @@
 
 // Custom includes
 #include <algorithm>
-#include "../../Packets/PacketType.hh"
-#include "../../Packets/ParseInt.hh"
-#include "../../Packets/PacketParser.hh"
+#include "../../Packets/Packets.hh"
 
 //#include "TransportPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -45,42 +43,20 @@ namespace senf {
      */
     struct Parse_TransportPacket : public PacketParserBase
     {
-        typedef Parse_Flag      <     0 > Parse_tei; // transport_error_indicator
-        typedef Parse_Flag      <     1 > Parse_pusi; // payload_unit_start_indicator
-        typedef Parse_Flag      <     2 > Parse_transportPrio;  // transport_priority
-        typedef Parse_UIntField < 2, 16 > Parse_pid;
-        typedef Parse_UIntField < 0,  2 > Parse_tsc; // transport_scrambling_control
-        typedef Parse_UIntField < 2,  4 > Parse_adaptCtrl; // adaptation_field_control
-        typedef Parse_UIntField < 4,  8 > Parse_contCounter; // continuity_counter
-    
-#       ifndef DOXYGEN
-        
-        SENF_PACKET_PARSER_INIT(Parse_TransportPacket);
-        
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((Field       ) ( sync_byte,                 Parse_UInt8         )) 
-            ((OverlayField) ( transport_error_indicator, Parse_tei           ))
-            ((OverlayField) ( pusi,                      Parse_pusi          ))
-            ((OverlayField) ( transport_priority,        Parse_transportPrio ))
-            ((Field       ) ( pid,                       Parse_pid           ))
-            ((OverlayField) ( transport_scrmbl_ctrl,     Parse_tsc           ))
-            ((OverlayField) ( adaptation_field_ctrl,     Parse_adaptCtrl     ))
-            ((Field       ) ( continuity_counter,        Parse_contCounter   ))      
-        );
-        
-#       else
-        
-        Parse_UInt8         sync_byte() const;
-        Parse_tei           transport_error_indicator() const;
-        Parse_pusi          pusi() const;
-        Parse_transportPrio transport_priority() const;
-        Parse_pid           pid() const;
-        Parse_tsc           transport_scrmbl_ctrl() const;
-        Parse_adaptCtrl     adaptation_field_ctrl() const;
-        Parse_contCounter   continuity_counter() const;
+#       include SENF_FIXED_PARSER()
 
-#       endif
+        SENF_PARSE_FIELD( sync_byte, Parse_UInt8 );
         
+        SENF_PARSE_BITFIELD( transport_error_indicator,  1, bool     );
+        SENF_PARSE_BITFIELD( pusi,                       1, bool     );
+        SENF_PARSE_BITFIELD( transport_priority,         1, bool     );
+        SENF_PARSE_BITFIELD( pid,                       13, unsigned );
+        SENF_PARSE_BITFIELD( transport_scrmbl_ctrl,      2, unsigned );
+        SENF_PARSE_BITFIELD( adaptation_field_ctrl,      2, unsigned );
+        SENF_PARSE_BITFIELD( continuity_counter,         4, unsigned );
+
+        SENF_PARSER_FINALIZE( Parse_TransportPacket );
+    
 //        Parse_UInt8 payload_pointer() const {
 //            return parse<Parse_UInt8>( Parse_TransportPacket::fixed_bytes ); 
 //        }

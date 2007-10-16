@@ -55,15 +55,13 @@ namespace {
 
     struct BarPacketParser : public senf::PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(BarPacketParser);
+#       include SENF_FIXED_PARSER()
         
-        typedef senf::Parse_UInt16 Parse_Type;
-        typedef senf::Parse_Int32  Parse_Length;
-        typedef senf::Parse_UInt16 Parse_Reserved;
+        SENF_PARSE_FIELD( type,     senf::Parse_UInt16 );
+        SENF_PARSE_FIELD( length,   senf::Parse_Int32  );
+        SENF_PARSE_FIELD( reserved, senf::Parse_UInt16 );
 
-        Parse_Type type() const { return parse<Parse_Type> (i()); }
-        Parse_Length length() const { return parse<Parse_Length> (i()+2); }
-        Parse_Reserved reserved() const { return parse<Parse_Reserved> (i()+6); }
+        SENF_PARSER_FINALIZE(BarPacketParser);
     };
 
     struct BarPacketType 
@@ -152,7 +150,7 @@ BOOST_AUTO_UNIT_TEST(packet)
     
     packet.finalize();
     BOOST_CHECK_EQUAL( packet.last().as<BarPacket>()->type(), 
-                       BarPacket::type::parser::Parse_Type::value_type(-1) );
+                       BarPacket::type::parser::type_t::value_type(-1) );
     packet.last().append(FooPacket::create());
     packet.finalize();
     BOOST_CHECK_EQUAL( packet.next<BarPacket>()->type(), 1u );

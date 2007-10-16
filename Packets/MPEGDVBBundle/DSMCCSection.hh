@@ -28,9 +28,7 @@
 
 // Custom includes
 #include <algorithm>
-#include "../../Packets/PacketType.hh"
-#include "../../Packets/ParseInt.hh"
-#include "../../Packets/PacketParser.hh"
+#include "../../Packets/Packets.hh"
 
 //#include "DSMCCSection.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -45,49 +43,26 @@ namespace senf {
      */
     struct Parse_DSMCCSection : public PacketParserBase
     {
-        typedef Parse_UInt8               Parse_table_id;
-        typedef Parse_Flag      <     0 > Parse_ssi;  // section_syntax_indicator
-        typedef Parse_Flag      <     1 > Parse_pi;   // private_indicator
-        typedef Parse_UIntField < 2,  4 > Parse_reserved_1;
-        typedef Parse_UIntField < 4, 16 > Parse_sec_length;
-        typedef Parse_UIntField < 0,  2 > Parse_reserved_2;
-        typedef Parse_UIntField < 2,  7 > Parse_version_num;
-        typedef Parse_Flag      <     7 > Parse_curr_next_indicator;
+#       include SENF_FIXED_PARSER()
 
-#       ifndef DOXYGEN
+        SENF_PARSE_FIELD( table_id, Parse_UInt8 );
         
-        SENF_PACKET_PARSER_INIT(Parse_DSMCCSection);
+        SENF_PARSE_BITFIELD( ssi,                  1, bool     );
+        SENF_PARSE_BITFIELD( private_indicator,    1, bool     );
+        SENF_PARSE_BITFIELD( reserved_1,           2, unsigned );
+        SENF_PARSE_BITFIELD( sec_length,          12, unsigned );
 
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((Field       ) ( table_id,            Parse_table_id            )) 
-            ((OverlayField) ( ssi,                 Parse_ssi                 ))
-            ((OverlayField) ( private_indicator,   Parse_pi                  ))
-            ((OverlayField) ( reserved_1,          Parse_reserved_1          ))
-            ((Field       ) ( sec_length,          Parse_sec_length          ))
-            ((Field       ) ( tabel_id_extension,  Parse_UInt16              ))
-            ((OverlayField) ( reserved_2,          Parse_reserved_2          ))
-            ((OverlayField) ( version_num,         Parse_version_num         ))
-            ((Field       ) ( curr_next_indicator, Parse_curr_next_indicator ))
-            ((Field       ) ( sec_num,             Parse_UInt8               ))
-            ((Field       ) ( last_sec_num,        Parse_UInt8               ))
-        );
+        SENF_PARSE_FIELD( table_id_extension, Parse_UInt16 );
+
+        SENF_PARSE_BITFIELD( reserved_2,           2, unsigned );
+        SENF_PARSE_BITFIELD( version_num,          5, unsigned );
+        SENF_PARSE_BITFIELD( curr_next_indicator,  1, bool     );
+
+        SENF_PARSE_FIELD( sec_num,            Parse_UInt8  );
+        SENF_PARSE_FIELD( last_sec_num,       Parse_UInt8  );
         
-#       else
-        
-        Parse_table_id table_id() const;
-        Parse_ssi                 ssi() const;                 
-        Parse_pi                  pi() const;
-        Parse_reserved_1          reserved_1() const;
-        Parse_sec_length          sec_length const;
-        Parse_UInt16              tabel_id_extension() const;
-        Parse_reserved_2          reserved_2() const;
-        Parse_version_num         version_num() const;
-        Parse_curr_next_indicator curr_next_indicator() const;
-        Parse_UInt8               sec_num() const;
-        Parse_UInt8               last_sec_num() const;
-        
-#       endif
-        
+        SENF_PARSER_FINALIZE(Parse_DSMCCSection);
+
         Parse_UInt32 crc() const { return parse<Parse_UInt32>( data().size()-4 ); }
     };
     

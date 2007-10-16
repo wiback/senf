@@ -67,63 +67,36 @@ namespace senf {
      */
     struct Parse_IpV4 : public PacketParserBase
     {
-        typedef Parse_UIntField <  0,  4 > Parse_Version;
-        typedef Parse_UIntField <  4,  8 > Parse_IHL;
-        typedef Parse_UInt8                Parse_8bit;
-        typedef Parse_UInt16               Parse_16bit;
-        typedef Parse_Flag      <  0     > Parse_R;
-        typedef Parse_Flag      <  1     > Parse_DF;
-        typedef Parse_Flag      <  2     > Parse_MF;
-        typedef Parse_UIntField <  3, 16 > Parse_Frag;
-        typedef Parse_UInt32               Parse_32bit;
-        typedef Parse_INet4Address         Parse_Addr;
+#       include SENF_FIXED_PARSER()
 
-#       ifndef DOXYGEN
+        SENF_PARSE_BITFIELD( version,   4, unsigned );
+        SENF_PARSE_BITFIELD( ihl,       4, unsigned );
 
-        SENF_PACKET_PARSER_NO_INIT(Parse_IpV4);
+        SENF_PARSE_FIELD( tos,         Parse_UInt8        );
+        SENF_PARSE_FIELD( length,      Parse_UInt16       );
+        SENF_PARSE_FIELD( identifier,  Parse_UInt16       );
 
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((OverlayField)( version,     Parse_Version ))
-            ((Field       )( ihl,         Parse_IHL     ))
-            ((Field       )( tos,         Parse_8bit    ))
-            ((Field       )( length,      Parse_16bit   ))
-            ((Field       )( identifier,  Parse_16bit   ))
-            ((OverlayField)( reserved,    Parse_R       ))
-            ((OverlayField)( df,          Parse_DF      ))
-            ((OverlayField)( mf,          Parse_MF      ))
-            ((Field       )( frag,        Parse_Frag    ))
-            ((Field       )( ttl,         Parse_8bit    ))
-            ((Field       )( protocol,    Parse_8bit    ))
-            ((Field       )( checksum,    Parse_16bit   ))
-            ((Field       )( source,      Parse_Addr    ))
-            ((Field       )( destination, Parse_Addr    )) );
+        SENF_PARSE_BITFIELD( reserved,  1, bool     );
+        SENF_PARSE_BITFIELD( df,        1, bool     );
+        SENF_PARSE_BITFIELD( mf,        1, bool     );
+        SENF_PARSE_BITFIELD( frag,     13, unsigned );
 
-#       else
+        SENF_PARSE_FIELD( ttl,         Parse_UInt8        );
+        SENF_PARSE_FIELD( protocol,    Parse_UInt8        );
+        SENF_PARSE_FIELD( checksum,    Parse_UInt16       );
+        SENF_PARSE_FIELD( source,      Parse_INet4Address );
+        SENF_PARSE_FIELD( destination, Parse_INet4Address );
 
-        Parse_Version version() const;
-        Parse_IHL     ihl() const;
-        Parse_8bit    tos() const;
-        Parse_16bit   length() const;
-        Parse_16bit   identifier() const;
-        Parse_R       reserved() const;
-        Parse_DF      df() const;
-        Parse_MF      mf() const;
-        Parse_Frag    frag() const;
-        Parse_8bit    ttl() const;
-        Parse_8bit    protocol() const;
-        Parse_16bit   checksum() const;
-        Parse_Addr    source() const;
-        Parse_Addr    destination() const;
-
-#       endif
-
-        void init() {
+        SENF_PARSER_INIT() {
             version() = 4;
             // We don't support option headers at the moment ...
             ihl() = 5;
         }
+
+        SENF_PARSER_FINALIZE(Parse_IpV4);
         
         boost::uint16_t calcChecksum() const;
+
         bool validateChecksum() const {
             return checksum() == calcChecksum();
         }

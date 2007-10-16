@@ -53,7 +53,7 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_DataPacket_impl_)
+#if !defined(HH_Packets__decls_) && !defined(HH_DataPacket_impl_)
 #define HH_DataPacket_impl_
 //#include "DataPacket.cci"
 //#include "DataPacket.ct"

@@ -43,28 +43,17 @@ namespace senf {
      */
     struct Parse_UDP : public PacketParserBase
     {
-        typedef Parse_UInt16 Parse_16bit;
+#       include SENF_FIXED_PARSER()
 
-#       ifndef DOXYGEN
+        SENF_PARSE_FIELD( source,      senf::Parse_UInt16 );
+        SENF_PARSE_FIELD( destination, senf::Parse_UInt16 );
+        SENF_PARSE_FIELD( length,      senf::Parse_UInt16 );
+        SENF_PARSE_FIELD( checksum,    senf::Parse_UInt16 );
 
-        SENF_PACKET_PARSER_INIT(Parse_UDP);
-
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((Field)( source,      Parse_16bit ))
-            ((Field)( destination, Parse_16bit ))
-            ((Field)( length,      Parse_16bit ))
-            ((Field)( checksum,    Parse_16bit )) );
-
-#       else
-
-        Parse_16bit source();
-        Parse_16bit destination();
-        Parse_16bit length();
-        Parse_16bit checksum();
-
-#       endif
+        SENF_PARSER_FINALIZE(Parse_UDP);
 
         boost::uint16_t calcChecksum() const;
+
         bool validateChecksum() const {
             return checksum() == 0u || checksum() == calcChecksum();
         }

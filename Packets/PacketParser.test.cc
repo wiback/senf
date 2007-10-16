@@ -38,7 +38,8 @@ namespace {
 
     struct SimpleParser : public senf::PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(SimpleParser);
+#       include SENF_FIXED_PARSER()
+        SENF_PARSER_FINALIZE(SimpleParser);
         
         using senf::PacketParserBase::check;
         using senf::PacketParserBase::validate;
@@ -46,20 +47,22 @@ namespace {
 
     struct FooParser : public senf::PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(FooParser);
+#       include SENF_FIXED_PARSER()
 
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((Field)( name, senf::Parse_UInt16 ))
-            ((Field)( id,   senf::Parse_Int32  )) );
+        SENF_PARSE_FIELD( name, senf::Parse_UInt16 );
+        SENF_PARSE_FIELD( id,   senf::Parse_Int32  );
+
+        SENF_PARSER_FINALIZE(FooParser);
     };
 
     struct BarParser : public senf::PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(BarParser);
+#       include SENF_PARSER()
 
-        SENF_PACKET_PARSER_DEFINE_FIELDS(
-            ((Field)( name, senf::Parse_UInt16 ))
-            ((Field)( id,   senf::Parse_Int32  )) );
+        SENF_PARSE_FIELD( name, senf::Parse_UInt16 );
+        SENF_PARSE_FIELD( id,   senf::Parse_Int32  );
+
+        SENF_PARSER_FINALIZE(BarParser);
     };
 }
 

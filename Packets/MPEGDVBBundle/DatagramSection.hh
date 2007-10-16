@@ -28,11 +28,8 @@
 
 // Custom includes
 #include <algorithm>
-#include "../../Packets/PacketType.hh"
-#include "../../Packets/ParseInt.hh"
-#include "../../Packets/PacketRegistry.hh"
-#include "../../Packets/PacketParser.hh"
-#include "../../Packets/MPEGDVBBundle/DSMCCSection.hh"
+#include "../../Packets/Packets.hh"
+#include "DSMCCSection.hh"
 
 
 //#include "DatagramSection.mpp"
@@ -48,47 +45,35 @@ namespace senf {
      */
     struct Parse_DatagramSection : public Parse_DSMCCSection
     {
-        Parse_DatagramSection(data_iterator i, state_type s) : senf::Parse_DSMCCSection(i,s) {}
+#       include SENF_FIXED_PARSER()
+
+        SENF_PARSER_INHERIT(Parse_DSMCCSection);
+
+        SENF_PARSE_FIELD( mac_addr_4, Parse_UInt8 );
+        SENF_PARSE_FIELD( mac_addr_3, Parse_UInt8 );
+        SENF_PARSE_FIELD( mac_addr_2, Parse_UInt8 );
+        SENF_PARSE_FIELD( mac_addr_1, Parse_UInt8 );
+
+        SENF_PARSER_FINALIZE_INHERITED(Parse_DatagramSection, Parse_DSMCCSection);
 
         typedef Parse_UIntField < 2,  4 > Parse_payload_scrmbl_ctrl;
         typedef Parse_UIntField < 4,  6 > Parse_addr_scrmbl_ctrl;
         typedef Parse_Flag      <     6 > Parse_llc_snap_flag;
-                
-#       ifndef DOXYGEN
-        
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS_OFFSET(Parse_DSMCCSection::fixed_bytes,
-            ((Field       ) ( mac_addr_4, Parse_UInt8 ))
-            ((Field       ) ( mac_addr_3, Parse_UInt8 ))
-            ((Field       ) ( mac_addr_2, Parse_UInt8 ))
-            ((Field       ) ( mac_addr_1, Parse_UInt8 ))
-        );
-        
-#       else
-        
-        Parse_UInt8 mac_addr_4() const;
-        Parse_UInt8 mac_addr_3() const;
-        Parse_UInt8 mac_addr_2() const;
-        Parse_UInt8 mac_addr_1() const;
-        
-#       endif
-        
+
         Parse_UInt8 mac_addr_6() const { return parse<Parse_UInt8>( 3 ); }
         Parse_UInt8 mac_addr_5() const { return parse<Parse_UInt8>( 4 ); }
+
         Parse_payload_scrmbl_ctrl payload_scrmbl_ctrl() const {
             return parse<Parse_payload_scrmbl_ctrl>( 5 );
         }
+
         Parse_addr_scrmbl_ctrl addr_scrmbl_ctrl() const {
             return parse<Parse_addr_scrmbl_ctrl>( 5 );
         }
+
         Parse_llc_snap_flag llc_snap_flag() const {
             return parse<Parse_llc_snap_flag>( 5 );
         }
-        
-        void init() 
-        {
-            Parse_DSMCCSection::init();
-            defaultInit();
-        }  
     };
 
     /** \brief Datagram Section

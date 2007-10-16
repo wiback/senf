@@ -362,7 +362,7 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_PacketType_i_)
+#if !defined(HH_Packets__decls_) && !defined(HH_PacketType_i_)
 #define HH_PacketType_i_
 #include "PacketType.cci"
 //#include "PacketType.ct"

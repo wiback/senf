@@ -594,7 +594,7 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_Packet_i_)
+#if !defined(HH_Packets__decls_) && !defined(HH_Packet_i_)
 #define HH_Packet_i_
 #include "Packet.cci"
 #include "Packet.ct"

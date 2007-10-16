@@ -29,11 +29,8 @@
 // Custom includes
 #include <algorithm>
 #include <boost/crc.hpp>
-#include "../../Packets/PacketType.hh"
-#include "../../Packets/ParseInt.hh"
-#include "../../Packets/PacketRegistry.hh"
-#include "../../Packets/PacketParser.hh"
-#include "../../Packets/DefaultBundle/EthernetPacket.hh"
+#include "../../Packets/Packets.hh"
+#include "../DefaultBundle/EthernetPacket.hh"
 
 //#include "SNDUPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -48,11 +45,7 @@ namespace senf {
      */
     struct Parse_SNDUPacket : public PacketParserBase
     {
-#       ifndef DOXYGEN
-        
-        SENF_PACKET_PARSER_NO_INIT(Parse_SNDUPacket);
-
-#       endif
+        Parse_SNDUPacket(data_iterator i, state_type s) : PacketParserBase(i,s) {}
         
         typedef Parse_Flag      <     0 > Parse_daaf;  // Destination Address Absent Field
         typedef Parse_UIntField < 1, 16 > Parse_length;

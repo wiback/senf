@@ -40,23 +40,25 @@ namespace {
 
     struct SomePacketParser : public senf::PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(SomePacketParser);
+#       include SENF_FIXED_PARSER()
 
         typedef senf::Parse_Array<2,senf::Parse_UInt24> Parse_Array2;
         
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((Field)( array, Parse_Array2 ))
-            ((Field)( index, senf::Parse_UInt16 )) );
+        SENF_PARSE_FIELD( array, Parse_Array2 );
+        SENF_PARSE_FIELD( index, senf::Parse_UInt16 );
+
+        SENF_PARSER_FINALIZE(SomePacketParser);
     };
 
     struct SomeOtherParser : public senf::PacketParserBase
     {
-        SENF_PACKET_PARSER_INIT(SomeOtherParser);
+#       include SENF_FIXED_PARSER()
         
         typedef senf::Parse_Array<1,SomePacketParser> Parse_Array1;
 
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((Field)( fields, Parse_Array1 )) );
+        SENF_PARSE_FIELD( fields, Parse_Array1 );
+
+        SENF_PARSER_FINALIZE(SomeOtherParser);
     };
 }
 

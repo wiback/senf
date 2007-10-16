@@ -1,0 +1,222 @@
+# // Copyright (C) 2007
+# // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+# // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+# //     Stefan Bund <g0dil@berlios.de>
+# //
+# // This program is free software; you can redistribute it and/or modify
+# // it under the terms of the GNU General Public License as published by
+# // the Free Software Foundation; either version 2 of the License, or
+# // (at your option) any later version.
+# //
+# // This program is distributed in the hope that it will be useful,
+# // but WITHOUT ANY WARRANTY; without even the implied warranty of
+# // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# // GNU General Public License for more details.
+# //
+# // You should have received a copy of the GNU General Public License
+# // along with this program; if not, write to the
+# // Free Software Foundation, Inc.,
+# // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
+# /** \file
+#     \brief ParseHelpers internal header */
+#
+# if !defined(IH_ParseHelpers_)
+# define IH_ParseHelpers_ 1
+#
+# // Custom includes
+# include <boost/preprocessor/cat.hpp>
+# include <boost/preprocessor/facilities/expand.hpp>
+# include "../Utils/mpl.hh"
+#
+# ////////////////////////////////ih.p///////////////////////////////////////
+#
+# define SENF_PARSER_I_FIELD_INTRO(name, type)                                                    \
+        typedef type BOOST_PP_CAT(name, _t);                                                      \
+        static size_type const BOOST_PP_CAT(name,_index) = SENF_MPL_SLOT_GET(index)+1;            \
+    private:                                                                                      \
+        SENF_MPL_SLOT_SET(index, BOOST_PP_CAT(name,_index));                                      \
+    public:
+#
+# define SENF_PARSER_I_FIELD_INIT_rw(name, type)                                                  \
+    private:                                                                                      \
+        void init_chain(senf::mpl::rv<BOOST_PP_CAT(name,_index)>*) {                              \
+            init_chain(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));              \
+            name().init();                                                                        \
+        }                                                                                         \
+    public:
+#
+# define SENF_PARSER_I_FIELD_INIT_ro(name, type)                                                  \
+    private:                                                                                      \
+        void init_chain(senf::mpl::rv<BOOST_PP_CAT(name,_index)>*) {                              \
+            init_chain(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));              \
+        }                                                                                         \
+    public:
+#
+# define SENF_PARSER_I_SIZE_var(name, type) senf::bytes(name())
+# define SENF_PARSER_I_INITBYTES_var(name, type) senf::init_bytes<type>::value
+#
+# define SENF_PARSER_I_ADVANCE_OFS_var(name, type, size, isize)                                   \
+    private:                                                                                      \
+        size_type BOOST_PP_CAT(name, _next_offset)() const {                                      \
+            return BOOST_PP_CAT(name,_offset)() + size;                                           \
+        }                                                                                         \
+        size_type field_offset_(senf::mpl::rv<BOOST_PP_CAT(name,_index)>*) const {                \
+            return BOOST_PP_CAT(name, _next_offset)();                                            \
+        }                                                                                         \
+        SENF_MPL_SLOT_SET(init_bytes, SENF_MPL_SLOT_GET(init_bytes) + isize);                     \
+    public:
+#
+# define SENF_PARSER_I_FIELD_OFS_var(name, type)                                                  \
+        size_type BOOST_PP_CAT(name,_offset)() const {                                            \
+            return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));    \
+        }
+#
+# define SENF_PARSER_I_FIELD_OFS_AFTER_var(name, type, prev)                                      \
+        size_type BOOST_PP_CAT(name,_offset)() const {                                            \
+            return BOOST_PP_CAT(prev,_next_offset)();                                             \
+        }
+#
+# define SENF_PARSER_I_SIZE_fix(name, type) type::fixed_bytes
+# define SENF_PARSER_I_INITBYTES_fix(name, type) void
+#
+# define SENF_PARSER_I_ADVANCE_OFS_fix(name, type, size, isize)                                   \
+    private:                                                                                      \
+        static size_type const BOOST_PP_CAT(name, _next_offset) =                                 \
+            BOOST_PP_CAT(name, _offset) + size;                                                   \
+        SENF_MPL_SLOT_SET(offset, BOOST_PP_CAT(name, _next_offset));                              \
+    public:
+#
+# define SENF_PARSER_I_FIELD_OFS_fix(name, type)                                                  \
+        static size_type const BOOST_PP_CAT(name, _offset) = SENF_MPL_SLOT_GET(offset);
+#
+# define SENF_PARSER_I_FIELD_OFS_AFTER_fix(name, type, prev)                                      \
+        static size_type const BOOST_PP_CAT(name, _offset) = BOOST_PP_CAT(prev, _next_offset);
+#
+# define SENF_PARSER_I_MAYBECALL_var() ()
+# define SENF_PARSER_I_MAYBECALL_fix()
+#
+# define SENF_PARSER_I_FIELD_VAL_rw(name,type,ofstype)                                            \
+        BOOST_PP_CAT(name, _t) name() const {                                                     \
+            return parse<type>(                                                                   \
+                BOOST_PP_CAT(name,_offset) BOOST_PP_CAT(SENF_PARSER_I_MAYBECALL_, ofstype)());    \
+        }
+#
+# define SENF_PARSER_I_FIELD_VAL_ro(name,type,ofstype)                                            \
+        BOOST_PP_CAT(name, _t)::value_type name() const {                                         \
+            return parse<type>(                                                                   \
+                BOOST_PP_CAT(name,_offset) BOOST_PP_CAT(SENF_PARSER_I_MAYBECALL_, ofstype)()      \
+                    .value()                                                                      \
+        }
+#
+# define SENF_PARSER_FIELD_I(name, type, ofstype, rwtype)                                         \
+        SENF_PARSER_I_BITFIELD_RESET()                                                            \
+        SENF_PARSER_I_FIELD_INTRO(name, type)                                                     \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_INIT_, rwtype) (name, type)                              \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_OFS_, ofstype) (name, type)                              \
+        BOOST_PP_CAT(SENF_PARSER_I_ADVANCE_OFS_, ofstype) (                                       \
+            name, type,                                                                           \
+            BOOST_PP_CAT(SENF_PARSER_I_SIZE_, ofstype) (name, type),                              \
+            BOOST_PP_CAT(SENF_PARSER_I_INITBYTES_, ofstype) (name, type) )                        \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_VAL_, rwtype) (name, type, ofstype)
+#
+# define SENF_PARSER_FIELD_I_AFTER(name, type, prev, ofstype, rwtype)                             \
+        SENF_PARSER_I_BITFIELD_RESET()                                                            \
+        SENF_PARSER_I_FIELD_INTRO(name, type)                                                     \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_INIT_, rwtype) (name, type)                              \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_OFS_AFTER_, ofstype) (name, type, prev);                 \
+        BOOST_PP_CAT(SENF_PARSER_I_ADVANCE_OFS_, ofstype) (                                       \
+            name, type,                                                                           \
+            BOOST_PP_CAT(SENF_PARSER_I_SIZE_, ofstype) (name, type),                              \
+            BOOST_PP_CAT(SENF_PARSER_I_INITBYTES_, ofstype) (name, type) )                        \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_VAL_, rwtype) (name, type, ofstype)
+#
+# define SENF_PARSER_CUSTOM_FIELD_I(name, type, size, isize, ofstype)                             \
+        SENF_PARSER_I_BITFIELD_RESET()                                                            \
+        SENF_PARSER_I_FIELD_INTRO(name, type)                                                     \
+        SENF_PARSER_I_FIELD_INIT_ro(name, type)                                                   \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_OFS_, ofstype) (name, type)                              \
+        BOOST_PP_CAT(SENF_PARSER_I_ADVANCE_OFS_, ofstype) (name, type, size, isize)               \
+        BOOST_PP_CAT(name, _t) name() const
+#
+# define SENF_PARSER_CUSTOM_FIELD_I_AFTER(name, type, size, isize, prev, ofstype)                 \
+        SENF_PARSER_I_BITFIELD_RESET()                                                            \
+        SENF_PARSER_I_FIELD_INTRO(name, type)                                                     \
+        SENF_PARSER_I_FIELD_INIT_ro(name, type)                                                   \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_OFS_AFTER, ofstype) (name, type, prev)                   \
+        BOOST_PP_CAT(SENF_PARSER_I_ADVANCE_OFS_, ofstype) (name, type, size)                      \
+        BOOST_PP_CAT(name, _t) name() const
+#
+# define SENF_PARSER_I_BITFIELD_RESET()                                                           \
+        SENF_MPL_SLOT_SET(bit, 0);                                                                \
+        SENF_MPL_SLOT_SET(bitfield_size, 0);
+#
+# define SENF_PARSER_BITFIELD_I(name, bits, type, ofstype, rwtype)                                \
+        static size_type const BOOST_PP_CAT(name, _bit) = SENF_MPL_SLOT_GET(bit);                 \
+    private:                                                                                      \
+        SENF_MPL_SLOT_SET(bit, BOOST_PP_CAT(name, _bit) + bits);                                  \
+        typedef BOOST_PP_CAT(SENF_PARSER_BITFIELD_TYPE_, type)( BOOST_PP_CAT(name, _bit), bits )  \
+             BOOST_PP_CAT(name,_bit_t );                                                          \
+    public:                                                                                       \
+        SENF_PARSER_BITFIELD_II( name, bits, BOOST_PP_CAT(name, _bit_t), ofstype, rwtype)
+#
+# define SENF_PARSER_BITFIELD_TYPE_signed(start, bits)   senf::Parse_IntField<start, start+bits>
+# define SENF_PARSER_BITFIELD_TYPE_unsigned(start, bits) senf::Parse_UIntField<start, start+bits>
+# define SENF_PARSER_BITFIELD_TYPE_bool(start, bits)     senf::Parse_Flag<start>
+#
+# define SENF_PARSER_BITFIELD_II(name, bits, type, ofstype, rwtype)                               \
+         SENF_PARSER_I_FIELD_INTRO(name, type)                                                    \
+         SENF_PARSER_I_FIELD_INIT_ro(name, type)                                                  \
+         BOOST_PP_CAT(SENF_PARSER_I_BITFIELD_OFS_, ofstype) (name, type)                          \
+         BOOST_PP_CAT(SENF_PARSER_I_ADVANCE_OFS_, ofstype) (                                      \
+             name, type,                                                                          \
+             BOOST_PP_CAT(name, _t)::fixed_bytes, BOOST_PP_CAT(name, _t)::fixed_bytes )           \
+    private:                                                                                      \
+         SENF_MPL_SLOT_SET(bitfield_size, BOOST_PP_CAT(name, _t)::fixed_bytes);                   \
+    public:                                                                                       \
+         BOOST_PP_CAT(SENF_PARSER_I_FIELD_VAL_, rwtype) (name, type, ofstype)
+#
+# define SENF_PARSER_I_BITFIELD_OFS_var(name, type)                                               \
+        size_type BOOST_PP_CAT(name,_offset)() const {                                            \
+            return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0))     \
+                - SENF_MPL_SLOT_GET(bitfield_size);                                               \
+        }
+#
+# define SENF_PARSER_I_BITFIELD_OFS_fix(name, type)                                               \
+        static size_type const BOOST_PP_CAT(name, _offset) = SENF_MPL_SLOT_GET(offset)            \
+            - SENF_MPL_SLOT_GET(bitfield_size);
+#
+# define SENF_PARSER_INHERIT_I(name)                                                              \
+    private:                                                                                      \
+        SENF_MPL_SLOT_SET(index, 1);                                                              \
+        SENF_MPL_SLOT_SET(init_bytes, senf::init_bytes<name>::value);                             \
+        size_type field_offset_(senf::mpl::rv<1>*) const {                                        \
+            return senf::bytes( *static_cast<name*>(this) );                                      \
+        }                                                                                         \
+        void init_chain(senf::mpl::rv<inherit_index_>*) {                                         \
+            name::init();                                                                         \
+        }                                                                                         \
+    public:
+#
+# define SENF_PARSER_FIXED_INHERIT_I(name)                                                        \
+    private:                                                                                      \
+        SENF_MPL_SLOT_SET(offset, name::fixed_bytes);                                             \
+        SENF_MPL_SLOT_SET(index, 1);                                                              \
+        void init_chain(senf::mpl::rv<1>*) {                                                      \
+            name::init();                                                                         \
+        }                                                                                         \
+    public:
+#
+#
+# ////////////////////////////////ih.e///////////////////////////////////////
+# endif
+#
+#
+# // Local Variables:
+# // mode: c++
+# // fill-column: 100
+# // c-file-style: "senf"
+# // indent-tabs-mode: nil
+# // ispell-local-dictionary: "american"
+# // compile-command: "scons -u test"
+# // End:

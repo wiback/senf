@@ -68,24 +68,13 @@ namespace senf {
      */
     struct Parse_Ethernet : public PacketParserBase
     {
-        typedef Parse_UInt16                      Parse_Type;
+#       include SENF_FIXED_PARSER()
 
-#       ifndef DOXYGEN
+        SENF_PARSE_FIELD( destination, Parse_MAC    );
+        SENF_PARSE_FIELD( source,      Parse_MAC    );
+        SENF_PARSE_FIELD( type,        Parse_UInt16 );
 
-        SENF_PACKET_PARSER_INIT(Parse_Ethernet);
-
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((Field)( destination, Parse_MAC  ))
-            ((Field)( source,      Parse_MAC  ))
-            ((Field)( type,        Parse_Type )) );
-
-#       else
-
-        Parse_MAC destination();
-        Parse_MAC source();
-        Parse_Type type();
-
-#       endif
+        SENF_PARSER_FINALIZE(Parse_Ethernet);
     };
 
     /** \brief EtherType registry
@@ -146,29 +135,15 @@ namespace senf {
      */
     struct Parse_EthVLan : public PacketParserBase
     {
-        typedef Parse_UIntField < 0,  3 > Parse_Priority;
-        typedef Parse_Flag          < 3 > Parse_CFI;
-        typedef Parse_UIntField < 4, 16 > Parse_VLanId;
-        typedef Parse_UInt16              Parse_Type;
+#       include SENF_FIXED_PARSER()
 
-#       ifndef DOXYGEN
+        SENF_PARSE_BITFIELD( priority,  3, unsigned );
+        SENF_PARSE_BITFIELD( cfi,       1, bool     );
+        SENF_PARSE_BITFIELD( vlanId,   12, unsigned );
 
-        SENF_PACKET_PARSER_INIT(Parse_EthVLan);
+        SENF_PARSE_FIELD( type, Parse_UInt16 );
 
-        SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS(
-            ((OverlayField)( priority, Parse_Priority ))
-            ((OverlayField)( cfi,      Parse_CFI      ))
-            ((Field       )( vlanId,   Parse_VLanId   ))
-            ((Field       )( type,     Parse_Type     )) );
-
-#       else
-
-        Parse_Priority priority();
-        Parse_CFI cfi();
-        Parse_VLanId vlanId();
-        Parse_Type type();
-
-#       endif
+        SENF_PARSER_FINALIZE(Parse_EthVLan);
     };
 
     /** \brief Ethernet VLAN tag

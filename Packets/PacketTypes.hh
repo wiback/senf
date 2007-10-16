@@ -77,7 +77,7 @@ namespace test {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(SENF_PACKETS_DECL_ONLY) && !defined(HH_PacketTypes_i_)
+#if !defined(HH_Packets__decls_) && !defined(HH_PacketTypes_i_)
 #define HH_PacketTypes_i_
 //#include "PacketTypes.cci"
 //#include "PacketTypes.ct"
