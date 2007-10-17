@@ -41,15 +41,6 @@
 //}
 
 
-prefix_ senf::PacketParserBase::size_type senf::Parse_SNDUPacket::bytes()
-    const
-{
-    if ( d_bit() )
-        return 2 + 2 + 4;  // D-Bit + 15 bits length + 16 bits type field + 32 bits crc
-    else
-        return 2 + 2 + 4 + 6;  // + 6 Byte NPA destination address
-}
-
 prefix_ boost::uint32_t senf::Parse_SNDUPacket::calcCrc()
     const
 {

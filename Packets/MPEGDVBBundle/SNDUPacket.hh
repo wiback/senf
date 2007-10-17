@@ -45,37 +45,29 @@ namespace senf {
      */
     struct Parse_SNDUPacket : public PacketParserBase
     {
-        Parse_SNDUPacket(data_iterator i, state_type s) : PacketParserBase(i,s) {}
-        
-        typedef Parse_Flag      <     0 > Parse_daaf;  // Destination Address Absent Field
-        typedef Parse_UIntField < 1, 16 > Parse_length;
-                
-        Parse_daaf d_bit() const {
-            return parse<Parse_daaf>( 0 );
-        }
-        Parse_length length() const {
-            return parse<Parse_length>( 0 );
-        }
-        Parse_UInt16 type() const {
-            return parse<Parse_UInt16>( 2 );
-        }
-        Parse_MAC destination() const {
-            BOOST_ASSERT( ! d_bit() );
-            return parse<Parse_MAC>( 4 );
-        }
-        Parse_UInt32 crc() const { 
-            return parse<Parse_UInt32>( data().size()-4 ); 
-        }
-        
-        void init() const {
-            defaultInit();
-            d_bit() = false;
-        }
-        
-        PacketParserBase::size_type bytes() const;
-        
-        static const size_type init_bytes = 2+2+4; // D-Bit + 15 bits length + 16 bits type field + 32 bits crc
+#       include SENF_PARSER()
 
+        SENF_PARSER_BITFIELD     ( d_bit       ,  1 , bool     );
+        SENF_PARSER_BITFIELD     ( length      , 15 , unsigned );
+
+        SENF_PARSER_FIELD        ( type        , Parse_UInt16  );
+
+        // This field only exists, if d_bit() is *not* set. New SNDUPackets are created with d_bit()
+        // set to 0, they have destination. We set the size of this field depending on the value of
+        // d_bit(), the init_bytes value is set to 6 bytes (the size of a MAC address)
+        SENF_PARSER_CUSTOM_FIELD ( destination , Parse_MAC     , d_bit() ? 0 : 6 , 6 ) {
+            BOOST_ASSERT( ! d_bit() );
+            return parse<destination_t>( destination_offset() );
+        }
+
+        // This field is placed at the end of the parser. It is therefore only considered for
+        // calculating init_bytes but not for calculating bytes()
+        SENF_PARSER_CUSTOM_FIELD ( crc         , Parse_UInt32  , 0 , 4 ) {
+            return parse<crc_t>( data().size() - 4 );
+        }
+
+        SENF_PARSER_FINALIZE( Parse_SNDUPacket );
+        
         boost::uint32_t calcCrc() const;
     };
 

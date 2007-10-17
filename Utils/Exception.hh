@@ -66,6 +66,7 @@ namespace senf {
         int err; ///< Error number
 
         virtual ~SystemException() throw();
+
     private:
         void init();
         std::string buffer_;
