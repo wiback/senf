@@ -29,6 +29,8 @@
 // Custom includes
 #include <exception>
 #include <string>
+#include <boost/preprocessor/repeat.hpp>
+#include <boost/preprocessor/cat.hpp>
 
 //#include "Exception.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -39,38 +41,68 @@ namespace senf {
 
         This exception is thrown to signal generic errno failures.
 
-        \todo make where and err accessors and make the member vars private
+        \todo make where and err accessors and make the member variables private
 
-        \idea Add a template class derived from SystemException which
-        takes the error number as a numeric argument. This allows
-        catching specific errno conditions: ErrnoException<EPIPE> etc.
+        \idea Add a template class derived from SystemException which takes the error number as a
+        numeric argument. This allows catching specific errno conditions: ErrnoException<EPIPE> etc.
 
-        \idea Add a generic error thrower which takes the origin
-        string and errno value as an argument and will throw a
-        corresponding template class instance. This would just be a
-        big switch statement containing all possible errno values,
-        probably created using some macro metaprogramming.
+        \idea Add a generic error thrower which takes the origin string and errno value as an
+        argument and will throw a corresponding template class instance. This would just be a big
+        switch statement containing all possible errno values, probably created using some macro
+        meta-programming.
      */
     class SystemException : public std::exception
     {
     public:
-        explicit SystemException(int err); ///< SystemException without error lokus info
-                                        /**< \param[in] err error number (the errno value) */
-        SystemException(char const * where, int err); ///< SystemException with error location info
+        SystemException();              ///< SystemException without error location infor
+                                        /**< The error code is taken from the current value of the
+                                             global 'errno' variable  */
+
+        explicit SystemException(int code); ///< SystemException without error location info
+                                        /**< \param[in] code error number (the errno value) */
+
+        explicit SystemException(char const * where); ///< SystemException with error location info
+                                        /**< The error code is taken from the current value of the
+                                             global 'errno' variable 
+                                             \param[in] where description of error origin */
+
+        SystemException(char const * where, int code); ///< SystemException with error location info 
                                         /**< \param[in] where description of error origin
-                                             \param[in] err error number (the errno value) */
+                                             \param[in] code error number (the errno value) */
 
         virtual char const * what() const throw(); ///< Return verbose error description
 
-        char const * where; ///< Error origin
-        int err; ///< Error number
+        char const * where() const;     ///< Error origin
+        int code() const;               ///< Error code (errno number)
+        char const * description() const; ///< Error description (strerror() value)
+
+        bool anyOf(int c0, int c1=0, int c2=0, int c3=0, int c4=0, int c5=0, 
+                   int c6=0, int c7=0, int c8=0, int c9=0);
 
         virtual ~SystemException() throw();
 
     private:
         void init();
+
+        char const * const where_;
+        int const code_;
         std::string buffer_;
     };
+
+    template <int Code>
+    class ErrnoException : public SystemException
+    {
+    public:
+        static int const fixed_code = Code;
+
+        ErrnoException();
+        explicit ErrnoException(char const * where);
+    };
+
+    void throwErrno();
+    void throwErrno(char const * where);
+    void throwErrno(int code);
+    void throwErrno(char const * where, int code);
 
     enum NoThrow_t { nothrow };
 
@@ -79,7 +111,7 @@ namespace senf {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Exception.cci"
 //#include "Exception.ct"
-//#include "Exception.cti"
+#include "Exception.cti"
 #endif
 
 

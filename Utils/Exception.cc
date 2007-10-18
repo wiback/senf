@@ -39,16 +39,40 @@ prefix_ void senf::SystemException::init()
     // however all other solutions to format the message are terribly
     // ugly (since thay must use a static and shared buffer ...)
     std::stringstream s;
-    if (where)
-        s << where << ": ";
-    s << "(" << err << ") " << std::strerror(err);
+    if (where_)
+        s << where_ << ": ";
+    s << "(" << code_ << ") " << description();
     buffer_ = s.str();
 }
 
-prefix_ char const * senf::SystemException::what()
-    const throw()
+prefix_ void senf::throwErrno(char const * where, int code)
 {
-    return buffer_.c_str();
+    switch (code) {
+
+    // BOOST_PP_REPEAT is limited to 256 repetitions. The max errno value I found in any header file
+    // was somewhere around 530 or so. I assume going to 1024 will be good enough. This explicit
+    // code will be optimized into a jump table by g++ (which is more efficient than trying to do
+    // the table oneself)
+
+#   define ExceptionCase(z, n, data) case n: throw ErrnoException<n>(where);
+    BOOST_PP_REPEAT(256, ExceptionCase, _) ;
+#   undef ExceptionCase
+
+#   define ExceptionCase(z, n, data) case 256+n: throw ErrnoException<256+n>(where);
+    BOOST_PP_REPEAT(256, ExceptionCase, _) ;
+#   undef ExceptionCase
+
+#   define ExceptionCase(z, n, data) case 512+n: throw ErrnoException<512+n>(where);
+    BOOST_PP_REPEAT(256, ExceptionCase, _) ;
+#   undef ExceptionCase
+
+#   define ExceptionCase(z, n, data) case 768+n: throw ErrnoException<768+n>(where);
+    BOOST_PP_REPEAT(256, ExceptionCase, _) ;
+#   undef ExceptionCase
+
+    default:
+        throw SystemException(where, code);
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

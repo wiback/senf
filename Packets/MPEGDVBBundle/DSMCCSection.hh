@@ -60,7 +60,7 @@ namespace senf {
 
         SENF_PARSER_FIELD    ( sec_num             , Parse_UInt8   );
         SENF_PARSER_FIELD    ( last_sec_num        , Parse_UInt8   );
-        
+
         SENF_PARSER_FINALIZE( Parse_DSMCCSection );
 
         Parse_UInt32 crc() const { return parse<Parse_UInt32>( data().size()-4 ); }

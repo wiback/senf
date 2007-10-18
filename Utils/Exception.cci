@@ -21,25 +21,94 @@
     \brief Exception inline non-template implementation */
 
 // Custom includes
+#include <errno.h>
+#include <cstring>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_  senf::SystemException::SystemException(int err_)
-    : where(0), err(err_)
+prefix_ senf::SystemException::SystemException()
+    : where_(0), code_(errno)
 {
     init();
 }
 
-prefix_ senf::SystemException::SystemException(char const * where_, int err_)
-    : where(where_), err(err_)
+prefix_  senf::SystemException::SystemException(int code)
+    : where_(0), code_(code)
 {
     init();
+}
+
+prefix_ senf::SystemException::SystemException(char const * where)
+    : where_(where), code_(errno)
+{
+    init();
+}
+
+prefix_ senf::SystemException::SystemException(char const * where, int code)
+    : where_(where), code_(code)
+{
+    init();
+}
+
+prefix_ char const * senf::SystemException::what()
+    const throw()
+{
+    return buffer_.c_str();
+}
+
+prefix_ char const * senf::SystemException::where()
+    const
+{
+    return where_;
+}
+
+prefix_ int senf::SystemException::code()
+    const
+{
+    return code_;
+}
+
+prefix_ char const * senf::SystemException::description()
+    const
+{
+    return std::strerror(code_);
+}
+
+prefix_ bool senf::SystemException::anyOf(int c0, int c1, int c2, int c3, int c4, int c5,
+                                          int c6, int c7, int c8, int c9)
+{
+    return 
+        (c0 && code_ == c0) ||
+        (c1 && code_ == c1) ||
+        (c2 && code_ == c2) ||
+        (c3 && code_ == c3) ||
+        (c4 && code_ == c4) ||
+        (c5 && code_ == c5) ||
+        (c6 && code_ == c6) ||
+        (c7 && code_ == c7) ||
+        (c8 && code_ == c8) ||
+        (c9 && code_ == c9);
 }
 
 prefix_  senf::SystemException::~SystemException()
     throw()
 {}
+
+prefix_ void senf::throwErrno()
+{
+    throwErrno(0, errno);
+}
+
+prefix_ void senf::throwErrno(char const * where)
+{
+    throwErrno(where, errno);
+}
+
+prefix_ void senf::throwErrno(int code)
+{
+    throwErrno(0, code);
+}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

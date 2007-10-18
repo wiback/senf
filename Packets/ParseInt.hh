@@ -299,6 +299,8 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::int32_t value_type;
+        static size_type const start_bit = Start;
+        static size_type const end_bit = End;
         static size_type const fixed_bytes = (End-1)/8+1;
 
         value_type value() const {
@@ -352,6 +354,8 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         typedef boost::uint32_t value_type;
+        static size_type const start_bit = Start;
+        static size_type const end_bit = End;
         static size_type const fixed_bytes = (End-1)/8+1;
 
         value_type value() const { return detail::packet::parse_bitfield<Start,End>::parse(i()); }
@@ -393,6 +397,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         typedef bool value_type;
+        static size_type const bit = Bit;
         static size_type const fixed_bytes = Bit/8+1;
 
         value_type value() const { return i()[Bit/8] & (1<<(7-(Bit%8))); }
