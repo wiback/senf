@@ -105,7 +105,7 @@
             BOOST_PP_CAT(SENF_PARSER_I_SIZE_, ofstype) (name, type),                              \
             BOOST_PP_CAT(SENF_PARSER_I_INITBYTES_, ofstype) (name, type),                         \
             access )                                                                              \
-        BOOST_PP_CAT(SENF_PARSER_I_FIELD_VAL_, rwtype) (name, type, ofstype, access)              \
+        BOOST_PP_CAT(SENF_PARSER_I_FIELD_VAL_, rwtype) (name, type, access)                       \
     public:
 #
 # ////////////////////////////////////////
@@ -186,7 +186,7 @@
             return parse<type>( SENF_PARSER_OFFSET(name) );                                       \
         }
 #
-# define SENF_PARSER_I_FIELD_VAL_ro(name, type, ofstype, access)                                  \
+# define SENF_PARSER_I_FIELD_VAL_ro(name, type, access)                                           \
         BOOST_PP_CAT(name, _t)::value_type name() const {                                         \
             return parse<type>( SENF_PARSER_OFFSET(name) ).value();                               \
         }
@@ -258,7 +258,7 @@
     private:                                                                                      \
          SENF_MPL_SLOT_SET(bitfield_size, BOOST_PP_CAT(name, _t)::fixed_bytes);                   \
     access:                                                                                       \
-         BOOST_PP_CAT(SENF_PARSER_I_FIELD_VAL_, rwtype) (name, type, ofstype, access)             \
+         BOOST_PP_CAT(SENF_PARSER_I_FIELD_VAL_, rwtype) (name, type, access)                      \
     public:
 #
 # ////////////////////////////////////////
