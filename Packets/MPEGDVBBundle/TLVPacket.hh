@@ -80,7 +80,7 @@ namespace senf {
         
     /** \brief parse TLVPacket Packet
     
-        XXX
+
         
         \see TLVPacketType
      */
@@ -95,6 +95,7 @@ namespace senf {
     };
 
     /** \brief TLV Packet
+        \image html TLV.png
         
         \par Packet type (typedef):
             \ref TLVPacket

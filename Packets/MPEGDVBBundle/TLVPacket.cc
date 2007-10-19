@@ -60,8 +60,8 @@ prefix_ void senf::Parse_TLVPacketLength::value(value_type const & v)
     if (v < 128u) {
         if (bytes() != 1) {
             resize(1);
-	    safeThis->extended_length_flag() = false;
-	} 
+            safeThis->extended_length_flag() = false;
+        }
         safeThis->fixed_length_field() = v;
         return;
     }

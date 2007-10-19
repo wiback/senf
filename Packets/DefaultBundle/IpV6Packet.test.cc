@@ -47,7 +47,6 @@ BOOST_AUTO_UNIT_TEST(ipV6Packet_packet)
 
     senf::IpV6Packet p (senf::IpV6Packet::create(data));
 
-
     BOOST_CHECK_EQUAL( p->version(),       0x06u      );
     BOOST_CHECK_EQUAL( p->trafficClass(),  0x01u      );
     BOOST_CHECK_EQUAL( p->flowLabel(),     0x22030u   );
