@@ -81,7 +81,7 @@
 
     \section parserlanguage The Parser Macro micro-language
 
-    The macros provided to help implement collection parsers implement a very small declarative
+    The macros provided to help implement composite parsers implement a very small declarative
     language. This way of to think of the macros simplifies understanding, how the macros work.
 
     Central to this language is the concept of <em>current offset</em>. The current offset is the
@@ -95,7 +95,7 @@
     constant expression, the other value is the \c init_bytes value at this point, which is an
     integral constant.
 
-    To demonstrate this functionality, here a more complex example (taken from MPEGDVBBundle and
+    To demonstrate this functionality, here a more complex example (taken from \c MPEGDVBBundle and
     then simplified by removing some fields)
     \code
     struct Parse_DSMCCSection : public PacketParserBase
@@ -183,31 +183,21 @@
         \ref SENF_PARSER_PRIVATE_FIELD_RO(), SENF_PARSER_CUSTOM_FIELD()
 
     There are quite a few commands available to define fields. All these macros do the same thing:
-    they define a field accessor plus some auxiliary symbols for the field:
-    \par ""
-        <em>type</em> <em>name</em><tt>()</tt> <tt>const</tt><br>
-        <tt>typedef</tt> <em>type</em> <em>name</em><tt>_t</tt><br>
-        <tt>size_type</tt> <tt>const</tt> <em>name</em><tt>_offset</tt><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<em>or</em><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<tt>size_type</tt> <em>name</em><tt>_offset()</tt> <tt>const</tt>
-    
-    Here \e type is the type of the field defined (the return value of the \e name() accessor) and
-    \e name is the field name. <em>name</em><tt>_offset</tt> gives the offset of the first byte of
-    the field from the start of the parser. This member is a constant for fixed size parser and a
-    member function for dynamically sized parsers. <em>name</em><tt>_t</tt> is just an alias for the
-    fields type (more precisely the return type of the <em>name</em>() accessor).
+    they define a field accessor plus some auxiliary symbols. The accessor will use the parser type
+    passed to the macro to parse the field. The current offset is adjusted according to the size of
+    that parser. Normally, the parser will return an instance of the given parser type.
 
     There are some properties the field defining macros might have. These properties are parts
     of the macro name:
 
-    \par RO: Read only fields
+    \par \c RO: Read only fields
         Macros with \c RO in their name define read only fields. This is only possible, if the
         field's parser is a value parser (that is, it must have a \c value_type typedef member and
         must provide the \c value() accessor member function). In this case, the value returned from
         the \e name() accessor member is not the parser but the parsers value and therefore it does
         not allow assignment to the field.
 
-    \par PRIVATE: Fields private to the parser class 
+    \par \c PRIVATE: Fields private to the parser class 
         A private field will not be accessible from the outside (it is made \c private to the parser
         class). This is very handy when providing other accessor members to access a field in a
         manner more suitable for the specific field, when combining several fields into a single
@@ -215,17 +205,16 @@
 
     The field defining macros come in groups which members only differ in their properties:
 
-    \par Define standard fields:
-        \ref SENF_PARSER_FIELD(), \ref SENF_PARSER_FIELD_RO(), \ref SENF_PARSER_PRIVATE_FIELD(),
-        \ref SENF_PARSER_PRIVATE_FIELD_RO() define standard fields.
+    <dl><dt><em>Standard fields:</em><dt><dd>\ref SENF_PARSER_FIELD(), \ref SENF_PARSER_FIELD_RO(),
+        \ref SENF_PARSER_PRIVATE_FIELD(), \ref SENF_PARSER_PRIVATE_FIELD_RO() define standard
+        fields.</dd>
 
-    \par Define arbitrary custom field:
-        \ref SENF_PARSER_CUSTOM_FIELD()
+    <dt><em>Arbitrary custom field:</em><dt><dd>\ref SENF_PARSER_CUSTOM_FIELD()</dd></dl>
 
     See the documentation of each of these macros for a detailed description of the macro arguments
     and usage. Bit-fields are handled in the following section.
 
-    \subsection parsermacrobitfields Bit-fields
+    \subsection parsermacrosbitfields Bit-fields
 
     \par "" 
         \ref SENF_PARSER_BITFIELD(), \ref SENF_PARSER_BITFIELD_RO(), \ref
@@ -233,8 +222,8 @@
 
     Bit-fields play a special role. They are quite frequent in packet definitions but don't fit into
     the byte offset based parsing infrastructure defined so far. Since defining the correctly
-    parameterized Parse_IntField, Parse_UIntField and Parse_Flag typedefs is quite tedious, these
-    helper macros are provided.
+    parameterized senf::Parse_IntField, senf::Parse_UIntField and senf::Parse_Flag typedefs is quite
+    tedious, these helper macros are provided.
 
     It is important to recognize, that the current offset does \e not include the current bit
     position. The current offset after defining a bit-field will be the first complete byte after
@@ -290,8 +279,368 @@
 ///\ingroup packetparsermacros
 ///\{
 
+///\name Control information
+///@{
+
+/** \brief Define fixed size parser
+    
+    This macro must be called using \c \#include at the beginning of every fixed size parser using
+    the packet parser helper macros:
+
+    \code
+    struct SomeParser : public senf::PacketParserBase
+    {
+    #   include SENF_FIXED_PARSER()
+    \endcode
+
+    The parser must directly or indirectly inherit from senf::PacketParserBase
+
+    \hideinitializer
+ */
 #define SENF_FIXED_PARSER()      SENF_ABSOLUTE_INCLUDE_PATH(Packets/parse_fixed_setup.hh)
+
+/** \brief Define dynamically sized parser
+    
+    This macro must be called using \c \#include at the beginning of every dynamically sized parser
+    using the packet parser helper macros:
+
+    \code
+    struct SomeParser : public senf::PacketParserBase
+    {
+    #   include SENF_PARSER()
+    \endcode
+
+    The parser must directly or indirectly inherit from senf::PacketParserBase
+
+    \hideinitializer
+ */
 #define SENF_PARSER()            SENF_ABSOLUTE_INCLUDE_PATH(Packets/parse_setup.hh)
+
+/** \brief Define parser initialization routine
+
+    This macro allows to replace the default initialization code. The default \c init()
+    implementation will call \c defaultInit() which in turn will call \c init() of every field
+    defined before \ref SENF_PARSER_FINALIZE().
+
+    \ref SENF_PARSER_INIT() allows to replace \c init() with custom code:
+    \code
+    SENF_PARSER_INIT() {
+        defaultInit();
+        foo() = 2;
+    }
+    \endcode
+    Defining the initialization code manually skips the automatic call of defaultInit(), which may
+    be performed manually. Should the initialization code be more complex, it should be placed into
+    a non-inline private member which is called from \ref SENF_PARSER_INIT()
+
+    \hideinitializer
+ */
+#define SENF_PARSER_INIT()       void init(int)
+
+#ifdef DOXYGEN
+
+/** \brief Define parser inheritance
+
+    If the a parser does not directly inherit senf::PacketParserBase, \ref SENF_PARSER_INHERIT()
+    must be called to define the parser's base-class. This call will additionally move the current
+    offset to the end of the inherited parser so additional fields can be added.
+    \code
+    struct MyParser : public BaseParser
+    {
+    #   include SENF_FIXED_PARSER() // or SENF_PARSER()
+
+        SENF_PARSER_INHERIT(BaseParser)
+    \endcode
+
+    \param[in] base name of base class
+    \hideinitializer
+ */
+#define SENF_PARSER_INHERIT(base)
+
+/** \brief Generate parser control members
+
+    \ref SENF_PARSER_FINALIZE() will generate the necessary parser control members (default
+    constructor, parser size, parser initialization). \ref SENF_PARSER_FINALIZE() needs not be the
+    last macro command within the parser though it will often be the last command since \ref
+    SENF_PARSER_FINALIZE() does not account for fields defined later.
+    
+    \ref SENF_PARSER_FINALIZE() uses the information from \ref SENF_PARSER_INHERIT() to construct
+    the parsers base class (which must be a valid parser class). 
+
+    \c defaultInit() is defined to initialize all fields <em>defined before the call to \ref
+    SENF_PARSER_FINALIZE()</em>. Fields defined later will \e not be initialized. If \ref
+    SENF_PARSER_INIT() is not used, \c init() is defined to call \c defaultInit().
+
+    The parsers size (either \c fixed_bytes for fixed size parsers or \c bytes() and \c init_bytes
+    for dynamically sized parsers) is set to the current offset. By manipulating the current offset
+    before calling \ref SENF_PARSER_FINALIZE(), the parser size can therefore be arbitrarily
+    manipulated. E.g., using \ref SENF_PARSER_GOTO_OFFSET() allows to set the size to an arbitrary
+    value.
+
+    \param[in] name name of the parser class currently being defined
+ */
+#define SENF_PARSER_FINALIZE(name)
+
+///@}
+
+///\name Parser fields
+///@{
+
+/** \brief Define normal parser field
+
+    The family of \ref SENF_PARSER_FIELD() macros is used to define standard fields of a composite
+    parser. Every field is accessed by an accessor method named after the \a name parameter. The
+    field will be parsed using the \a type parser which must be a valid packet parser. If the
+    current parser is defined as a fixed size parser, all sub parsers must also be fixed size,
+    otherwise dynamically sized parser (e.g. collection parsers) are Ok.
+
+    Defining a field will always define several members:
+
+    <dl><dt><em>return_type</em> <em>name</em><tt>()</tt> <tt>const</tt></dt><dd>The accessor member
+        will return the parsed value when called. For normal fields, <em>return_type</em> equals
+        <em>type</em>, the type of the sub parser. This allows to change the value via the returned
+        sub-parser. If the field is marked read-only (\ref SENF_PARSER_FIELD_RO() or \ref
+        SENF_PARSER_PRIVATE_FIELD_RO()), the return type will be
+        <em>type</em>::<tt>value_type</tt>.</dd>
+
+    <dt><tt>typedef</tt> <em>type</em> <em>name</em><tt>_t</tt></dt><dd>This typedef symbol is an
+        alias for the fields type.</dd>
+
+    <dt><tt>size_type</tt> <tt>const</tt> <em>name</em><tt>_offset</tt></dt><dd>Defined only for
+        fixed size parsers, this gives the fixed starting offset of the field from the beginning of
+        the parser.</dd>
+
+    <dt><tt>size_type</tt> <em>name</em><tt>_offset() const</tt></dt><dd>Defined only for
+        dynamically sized parsers, this member function will return the dynamic offset of the field
+        from the beginning of the parser.</dd></dl>
+
+    \param[in] name field name
+    \param[in] type parser type
+
+    \see \ref SENF_PARSER_FIELD_RO(), \ref SENF_PARSER_PRIVATE_FIELD(), \ref
+        SENF_PARSER_PRIVATE_FIELD_RO()
+    \hideinitializer
+ */
+#define SENF_PARSER_FIELD(name, type)
+
+/** \brief Define parser field (read-only)
+    
+    Define read-only parser field. Read-only fields may only be defined for \a type's which are
+    value parsers: The parser \a type must have a \c value_type typedef member and a \c value()
+    member, which returns the current value of the field.
+   
+    \see SENF_PARSER_FIELD() 
+    \hideinitializer
+*/
+#define SENF_PARSER_FIELD_RO(name, type)
+
+/** \brief Define parser field (private)
+
+    Define a parser field which is marked as \c private and may only be accessed from the parser
+    class itself.
+
+    \see SENF_PARSER_FIELD()
+    \hideinitializer
+ */
+#define SENF_PARSER_PRIVATE_FIELD(name, type)
+
+/** \brief Define parser field (private + read-only)
+
+    Define a read-only parser field which is marked as \c private and may only be accessed from the
+    parser class itself. Read-only fields may only be defined for \a type's which are value parsers:
+    The parser \a type must have a \c value_type typedef member and a \c value() member, which
+    returns the current value of the field.
+
+    \see SENF_PARSER_FIELD()
+    \hideinitializer
+ */
+#define SENF_PARSER_PRIVATE_FIELD_RO(name, type)
+
+/** \brief Define custom field accessor
+
+    This macro is used to define a field using a custom access method:
+    \code
+    // The following is the same as SENF_PARSER_FIELD( xyz, senf::Parse_UInt16 )
+    // in a fixed size parser.
+
+    SENF_PARSER_CUSTOM_FIELD(xyz, senf::Parse_UInt16, xyz_t::fixed_bytes) {
+        return parse<xyz_t>( xyz_offset );
+    }
+    \endcode
+    
+    The macro defines the same auxiliary symbols defined by \ref SENF_PARSER_FIELD(\a name, \a
+    type), the accessor method however is provided by the user.
+
+    \a size depends on the type of parser being defined: 
+
+    \li If defining a fixed parser, \a size is a single value \a bytes which must be a constant
+        integral expression giving the fixed size of the field.
+    \li If defining a dynamically sized parser, \a size is given by two parameters \a bytes and \a
+        init_bytes. \a bytes is an arbitrary (not necessarily constant) expression giving the
+        dynamic size of the field whereas \a init_bytes is the constant initial size assigned to the
+        field.
+
+    \param[in] name name of the field to define
+    \param[in] type return type of the accessor function
+    \param[in] size size of the field, either a single value \a bytes for fixed size parsers or two
+        separate arguments \a bytes and \a init_bytes for dynamically sized parsers
+ */
+#define SENF_PARSER_CUSTOM_FIELD(name, type, size)
+
+///@}
+
+///\name Bit fields
+///@{
+
+/** \brief Define bit-field
+
+    Bit fields are supported by a special family of parser macros. These macros simplify defining
+    fields using the senf::Parse_Int, senf::Parse_UInt and senf::Parse_Flag parsers by keeping track
+    of the current bit position and automatically creating the correct template parameters.
+    
+    The \a type parameter specifies the type of bitfield to define. This value is one of
+    \li \c signed, for signed bit fields (senf::Parse_IntField)
+    \li \c unsigned, for unsigned bit fields (senf::Parse_UIntField) or 
+    \li \c bool, for single-bit flags (senf::Parse_Flag). 
+
+    The \a bits parameter specifies the number of bits the field covers. For \c signed or \c
+    unsigned fields, this value may be any numeric value from 1 to 32, for \c bool fields, this
+    value \e must be 1.
+
+    For more information see \ref parsermacrosbitfields
+
+    \param[in] name name of the bit field
+    \param[in] bits number of bits
+    \param[in] type bit field type, one of \c signed, \c unsigned or \c bool
+
+    \see \ref SENF_PARSER_BITFIELD_RO(), \ref SENF_PARSER_PRIVATE_BITFIELD(), \ref
+    SENF_PARSER_PRIVATE_BITFIELD_RO()
+
+    \hideinitializer
+ */
+#define SENF_PARSER_BITFIELD(name, bits, type)
+
+/** \brief Define bit-field (read-only) 
+
+    Define read-only bit field.
+
+    \see \ref SENF_PARSER_BITFIELD()
+    \hideinitializer
+ */
+#define SENF_PARSER_BITFIELD_RO(name, bits, type)
+
+/** \brief Define bit-field (private) 
+
+    Define a bit field which is marked as \c private and may only be accessed from the parser class
+    itself.
+
+    \see \ref SENF_PARSER_BITFIELD()
+    \hideinitializer
+ */
+#define SENF_PARSER_PRIVATE_BITFIELD(name, bits, type)
+
+/** \brief Define bit-field (private + read-only) 
+
+    Define a read-only bit field which is marked as \c private and may only be accessed from the
+    parser class itself.
+
+    \see \ref SENF_PARSER_BITFIELD()
+    \hideinitializer
+ */
+#define SENF_PARSER_PRIVATE_BITFIELD_RO(name, bits, type)
+
+///@}
+
+///\name Current offset
+///@{
+
+/** \brief Skip bytes
+
+    Moves the offset by the given distance (which may be negative). \a skip depends on the type of
+    parser being defined and is either \a bytes or \a bytes, \a init_bytes.
+
+    \li If defining a fixed parser, \a bytes must be a constant integral expression which will be
+        added to the current offset
+    \li If defining a dynamically sized parser, the macro really takes two arguments, \a bytes and
+        \a init_bytes. \a bytes will adjust the current field offset whereas \a init_bytes will
+        adjust the parsers \c init_bytes value. \a bytes is allowed to be any integral expression,
+        and need \e not be constant. The second argument \a init_bytes on the other hand needs to be
+        a constant integral expression.
+
+    \param[in] bytes number of bytes to skip
+    \param[in] init_bytes only for dynamically sized parsers, value to adjust the \c init_bytes value
+        with.
+
+    \hideinitializer
+ */
+#define SENF_PARSER_SKIP(skip)
+
+/** \brief Skip bits within bitfield group
+
+    This command will skip the given number of bits within a bitfield group. This command does \e
+    only affect bitfield commands. Therefore, a SENF_PARSER_SKIP_BITS command which is not followed
+    by a bitfield command will be ignored.
+ */
+#define SENF_PARSER_SKIP_BITS(bits)
+
+/** \brief Change current offset
+
+    This command will change the current offset to the field or label \a name. Fields defined after
+    this command will start at that position and will therefore overlay any fields defined earlier
+    for these byte positions.
+
+    \ref SENF_PARSER_GOTO() does \e not take into account the current bit position within bit
+    fields. When passed the name of a field within a bit field group, this command will always jump
+    to the beginning of the \e complete group (\e not the field within the bit field), even if the
+    group covers multiple bytes before the bit field \a name.
+
+    \param[in] name field or label to jump to
+ */
+#define SENF_PARSER_GOTO(name)
+
+/** \brief Change current offset to explicit value
+
+    \ref SENF_PARSER_GOTO_OFFSET() allows to change the current offset manually to an arbitrary
+    value. The \a offset parameter depends on the type of field currently being defined. 
+   
+    \li If defining a <em>fixed size parser</em>, the \a offset argument is a single \a bytes value
+        which is an integral constant expression to which the offset will be set.
+    \li If defining a <em>dynamically sized parser</em>, the \a offset argument is given by two
+        parameters \a bytes and \a init_bytes. \a bytes can be any integral expression (not
+        necessarily constant) giving the new byte position. \a init_bytes must be a constant
+        integral expression and will set the current initial size of the packet to this value.
+
+    \param[in] offset Depending on the parser type, either single \a bytes value or two arguments \a
+        bytes and \a init_size.
+ */
+#define SENF_PARSER_GOTO_OFFSET(offset)
+
+/** \brief Define offset label
+
+    This command defines \a name as a label for the current offset. The member
+    <em>name</em><tt>_offset</tt> is defined (either as a constant for fixed size parsers or as a
+    member function for dynamically sized parsers) to return the position at the point of label
+    definition. 
+
+    \ref SENF_PARSER_GOTO() can later be used to jump to a position which has previously been
+    labeled with \ref SENF_PARSER_LABEL()
+
+    \param[in] name label name
+ */
+#define SENF_PARSER_LABEL(name)
+
+/** \brief Get field offset
+
+    This macro will return the offset of the given field or label. This macro may only be used
+    while defining the parser, normally while defining inline functions.
+
+    This macro will return the correct value when defining fixed or dynamically sized parsers.
+ */
+#define SENF_PARSER_OFFSET(name)
+
+///@}
+
+#else
 
 #define SENF_PARSER_INHERIT      BOOST_PP_CAT(SENF_PARSER_INHERIT_,      SENF_PARSER_TYPE)
 
@@ -312,23 +661,11 @@
 #define SENF_PARSER_GOTO_OFFSET  BOOST_PP_CAT(SENF_PARSER_GOTO_OFFSET_, SENF_PARSER_TYPE)
 #define SENF_PARSER_LABEL        BOOST_PP_CAT(SENF_PARSER_LABEL_,       SENF_PARSER_TYPE)
 
-/** \brief Define parser initialization routine
-
-    \code
-    SENF_PARSER_INIT() {
-        defaultInit();
-        foo() = 2;
-    }
-    \endcode
-    Defining the initialization code manually skips the automatic call of defaultInit(), which may
-    be performed manually. Should the initialization code be more complex, it should be placed into
-    a non-inline private member which is called from \ref SENF_PARSER_INIT()
-    
-    \hideinitializer
- */
-#define SENF_PARSER_INIT()       void init(int)
+#define SENF_PARSER_OFFSET       BOOST_PP_CAT(SENF_PARSER_OFFSET_,      SENF_PARSER_TYPE)
 
 #define SENF_PARSER_FINALIZE     BOOST_PP_CAT(SENF_PARSER_FINALIZE_,    SENF_PARSER_TYPE)
+
+#endif
 
 ///\}
 
