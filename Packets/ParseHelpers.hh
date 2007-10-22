@@ -214,6 +214,9 @@
     See the documentation of each of these macros for a detailed description of the macro arguments
     and usage. Bit-fields are handled in the following section.
 
+    There also some supplementary macros for defining fields of more complex composite types
+    (e.g. vectors). See the list of 'Defines' further down this page.
+
     \subsection parsermacrosbitfields Bit-fields
 
     \par "" 
@@ -580,6 +583,8 @@
     This command will skip the given number of bits within a bitfield group. This command does \e
     only affect bitfield commands. Therefore, a SENF_PARSER_SKIP_BITS command which is not followed
     by a bitfield command will be ignored.
+
+    \hideinitializer
  */
 #define SENF_PARSER_SKIP_BITS(bits)
 
@@ -595,6 +600,7 @@
     group covers multiple bytes before the bit field \a name.
 
     \param[in] name field or label to jump to
+    \hideinitializer
  */
 #define SENF_PARSER_GOTO(name)
 
@@ -612,6 +618,7 @@
 
     \param[in] offset Depending on the parser type, either single \a bytes value or two arguments \a
         bytes and \a init_size.
+    \hideinitializer
  */
 #define SENF_PARSER_GOTO_OFFSET(offset)
 
@@ -626,6 +633,7 @@
     labeled with \ref SENF_PARSER_LABEL()
 
     \param[in] name label name
+    \hideinitializer
  */
 #define SENF_PARSER_LABEL(name)
 
@@ -635,8 +643,28 @@
     while defining the parser, normally while defining inline functions.
 
     This macro will return the correct value when defining fixed or dynamically sized parsers.
+
+    \param[in] name field or label name
+    \returns offset of the field from parsers start
+    \hideinitializer
  */
 #define SENF_PARSER_OFFSET(name)
+
+/** \brief Get fixed field offset, if possible
+
+    This macro will return the fixed offset to the field \a name, a compile-time constant
+    expression. This is identical to \ref SENF_PARSER_OFFSET() when defining a fixed size parser.
+
+    Even in dynamically sized parsers this macro will work, if the field \a name is preceded by
+    fixed size fields only. This macro does \e not validate this condition, it will return an
+    arbitrary incorrect value otherwise.
+
+    \pre Field \a name preceded by fixed size fields only
+    \param[in] field or label name
+    \returns compile-time constant offset of the field from parsers start
+    \hideinitializer
+ */
+#define SENF_PARSER_FIXED_OFFSET(name)
 
 ///@}
 
@@ -662,6 +690,8 @@
 #define SENF_PARSER_LABEL        BOOST_PP_CAT(SENF_PARSER_LABEL_,       SENF_PARSER_TYPE)
 
 #define SENF_PARSER_OFFSET       BOOST_PP_CAT(SENF_PARSER_OFFSET_,      SENF_PARSER_TYPE)
+#define SENF_PARSER_FIXED_OFFSET BOOST_PP_CAT(SENF_PARSER_FIXED_OFFSET_,SENF_PARSER_TYPE)
+#define SENF_PARSER_CURRENT_FIXED_OFFSET BOOST_PP_CAT(SENF_PARSER_CURRENT_FIXED_OFFSET_, SENF_PARSER_TYPE)
 
 #define SENF_PARSER_FINALIZE     BOOST_PP_CAT(SENF_PARSER_FINALIZE_,    SENF_PARSER_TYPE)
 

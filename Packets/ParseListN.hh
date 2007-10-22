@@ -55,6 +55,22 @@ namespace senf {
         typedef Parse_List< detail::Parse_ListN_Policy<ElementParser,SizeParser> > parser;
     };
 
+    /** \brief Define Parse_ListN field
+
+        This macro is a special helper to define a senf::Parse_ListN type field, a list of elements
+        of type \a elt_type (a parser type) directly preceded by a numeric size field of type \a
+        size_type (another parser type).
+
+        \param[in] name field name
+        \param[in] elt_type list element type
+        \param[in] size_type size type
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#    define SENF_PARSER_LIST_N(name, elt_type, size_type)                                         \
+        typedef senf::Parse_ListN<elt_type, size_type>::parser BOOST_PP_CAT(name, _list_t);       \
+        SENF_PARSER_FIELD( name, BOOST_PP_CAT(name, _list_t) )
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

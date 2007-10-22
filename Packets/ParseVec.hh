@@ -137,59 +137,21 @@ namespace senf {
                               detail::Parse_VectorN_Sizer<SizeParser> > parser;
     };
 
-    /** \brief Example vector sizer. ONLY FOR EXPOSITION
-
-        This class shows the interface which must be implemented by a vector sizer policy. It is not
-        a vector sizer, it is only a declaration of the interface:
-        \code
-        struct ExampleVectorPolicy
-        {
-            // optional typedefs used to simplify all other declarations
-            typedef PacketParserBase::size_type size_type;
-            typedef PacketParserBase::data_iterator iterator;
-            typedef PacketParserBase::state_type state_type;
-
-            // mandatory members
-            static const size_type init_bytes = 0;
-            size_type  size  (iterator i, state_type s) const;
-            void       size  (iterator i, state_type s, size_type v) const;
-            iterator   begin (iterator i, state_type s) const;
-            size_type  bytes (iterator i, state_type s) const;
-            void       init  (iterator i, state_type s) const;
-        };
-        \endcode
-
-        A sizer may if needed define additional data members.
+    /** \brief Define Parse_VectorN field
+        
+        This macro is a special helper to define a senf::Parse_VectorN type field, a vector of
+        elements of type \a elt_type (a parser) directly preceded by a numeric size field of type \a
+        size_type (another parser).
+        
+        \param[in] name field name
+        \param[in] elt_type vector element type
+        \param[in] size_type size type
+        \hideinitializer
+        \ingroup packetparsermacros
      */
-    struct ExampleVectorPolicy
-    {
-        typedef PacketParserBase::size_type size_type;
-        typedef PacketParserBase::data_iterator iterator;
-        typedef PacketParserBase::state_type state_type;
-
-        static const size_type init_bytes = 0; ///< Size of a new vector of this size
-                                        /**< Initial size which needs to be allocated to this type
-                                             of list */
-
-        size_type  size  (iterator i, state_type s) const; ///< Get current vector size
-                                        /**< Return the current number of elements in the 
-                                             vector. */
-        void       size  (iterator i, state_type s, size_type v) const; ///< Change vector size
-                                        /**< Set the size of the vector to \a v. */
-        iterator   begin (iterator i, state_type s) const; 
-                                        ///< Return data_iterator to first element
-                                        /**< The returned data_iterator must point to the beginning
-                                             of the first vector element. The last iterator can than
-                                             automatically be calculated from the fixed element size
-                                             and the number of vector elements. */
-        size_type  bytes (iterator i, state_type s) const; ///< Size of vector parser
-                                        /**< Return the size of the complete vector in bytes. This
-                                             is not necessarily the same as \c size() * \e
-                                             fixed_element_bytes. */
-        void       init  (iterator i, state_type s) const; ///< Initialize new vector
-                                        /** Called to initialize a new vector after allocating
-                                            init_bytes number of bytes for the vector. */
-    };
+#   define SENF_PARSER_VEC_N(name, elt_type, size_type)                                           \
+        typedef senf::Parse_VectorN<elt_type, size_type>::parser BOOST_PP_CAT(name, _vec_t);      \
+        SENF_PARSER_FIELD( name, BOOST_PP_CAT(name, _vec_t) )
 
     /** \brief Parse_Vector container wrapper
 

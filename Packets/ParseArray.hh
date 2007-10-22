@@ -95,6 +95,21 @@ namespace senf {
         value_type operator[](difference_type i) const;
     };
 
+    /** \brief Define array field
+
+        This macro is a special helper to define a senf::Parse_Array type field, a fixed size
+        collection of fixed size elements.
+        
+        \param[in] name field name
+        \param[in] elt_type array element type
+        \param[in] size constant number of elements
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#   define SENF_PARSER_ARRAY(name, elt_type, size)                                                \
+        typedef senf::Parse_Array<size,elt_type> BOOST_PP_CAT(name, _array_t);                    \
+        SENF_PARSER_FIELD( name, BOOST_PP_CAT(name, _array_t) )
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

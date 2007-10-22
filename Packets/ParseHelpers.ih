@@ -368,6 +368,18 @@
 # define SENF_PARSER_OFFSET_var(name) BOOST_PP_CAT(name, _offset)()
 #
 # ///////////////////////////////////////////////////////////////////////////
+# // SENF_PARSER_FIXED_OFFSET_*
+#
+# define SENF_PARSER_FIXED_OFFSET_fix(name) BOOST_PP_CAT(name, _offset)
+# define SENF_PARSER_FIXED_OFFSET_var(name) BOOST_PP_CAT(name, _init_bytes)
+#
+# ///////////////////////////////////////////////////////////////////////////
+# // SENF_PARSER_FIXED_OFFSET_*
+#
+# define SENF_PARSER_CURRENT_FIXED_OFFSET_fix() SENF_MPL_SLOT_GET(offset)
+# define SENF_PARSER_CURRENT_FIXED_OFFSET_var() SENF_MPL_SLOT_GET(init_bytes)
+#
+# ///////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_FINALIZE_*
 #
 # define SENF_PARSER_FINALIZE_var(name)                                                           \

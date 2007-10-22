@@ -65,6 +65,23 @@ namespace senf {
         typedef Parse_List< detail::Parse_ListB_Policy<ElementParser,BytesParser> > parser;
     };
 
+    /** \brief Define Parse_ListB field
+
+        This macro is a special helper to define a senf::Parse_ListB type field, a list of elements
+        of type \a elt_type (a parser type) directly preceded by a numeric size field of type \a
+        size_type (another parser type) giving the total number of bytes of the list (not the
+        element count).
+
+        \param[in] name field name
+        \param[in] elt_type list element type
+        \param[in] size_type size type
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#    define SENF_PARSER_LIST_B(name, elt_type, size_type)                                         \
+        typedef senf::Parse_ListB<elt_type, size_type>::parser BOOST_PP_CAT(name, _list_t);       \
+        SENF_PARSER_FIELD( name, BOOST_PP_CAT(name, _list_t) )
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
