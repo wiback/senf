@@ -14,7 +14,6 @@ SENFSCons.Object(env, target = 'MPEGDVBBundle', sources=sources,
 SENFSCons.Lib(env, library = 'Packets_MPEGDVBBundle', sources = sources[0],
               LIBS = ['Packets', 'Socket', 'Utils'], no_includes = 1)
 
-myEnv = env.Clone(DIA2PNGMAXWIDTH = 600)
 SENFSCons.Doxygen(env, extra_sources = [
-    myEnv.Dia2Png("TLV.dia", )
+    env.Dia2Png("TLV.dia", DIA2PNGMAXWIDTH = 600)
 ])
