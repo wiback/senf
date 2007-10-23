@@ -197,7 +197,11 @@ ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i, iterator const i_end)
                 "SNDU length error. length=%d") % sndu_length) );
      }
     this->snduPacket = senf::SNDUPacket::create(sndu_length+4);
-    this->snduPacket->d_bit() = dbit;
+
+    if (dbit)
+        this->snduPacket->withoutDestination();
+    // else not needed since default on newly created packet is withDestination()
+
     this->snduPacket->length() = sndu_length;
     this->snduPacketData_iter = boost::next(this->snduPacket.data().begin(), 2);
     this->priv_sndu_type_1 = false;
@@ -283,6 +287,6 @@ int main(int argc, char const * argv[])
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -U"
 // comment-column: 40
 // End:

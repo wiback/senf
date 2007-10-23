@@ -34,6 +34,15 @@
 namespace senf {
 namespace detail {
 
+#   define SENF_PARSE_VARIANT_TPL_ARGS_DFL(n)                                                     \
+        BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SENF_LIMIT_PARSE_VARIANT,                            \
+                                             n,                                                   \
+                                             boost::mpl::na )
+
+#   define SENF_PARSE_VARIANT_TPL_ARGS(n) BOOST_PP_ENUM_PARAMS( SENF_LIMIT_PARSE_VARIANT, n )
+
+#   ifndef DOXYGEN
+
     template <class Variant, unsigned N>
     struct VariantBytes {
         static PacketParserBase::size_type bytes(Variant const & v, unsigned n);
@@ -43,7 +52,10 @@ namespace detail {
     struct VariantBytes<Variant,0> {
         static PacketParserBase::size_type bytes(Variant const & v, unsigned n);
     };
+
+#   endif
     
+    /** \brief Internal: Variant Policy used by senf::Parse_Variant_Direct */
     template <class ChooserType, unsigned Distance>
     struct Parse_Variant_Direct
     {
@@ -67,6 +79,16 @@ namespace detail {
             chooser(i,s).value(v);
         }
     };
+
+#   define SENF_PARSER_VARIANT_(r, data, elem) ,elem
+
+#   define SENF_PARSER_VARIANT_I(field, name, chooser, types)                                     \
+        typedef senf::Parse_Variant_Direct<                                                       \
+            BOOST_PP_CAT(chooser, _t),                                                            \
+            SENF_PARSER_CURRENT_FIXED_OFFSET() - SENF_PARSER_FIXED_OFFSET(chooser)                \
+            BOOST_PP_SEQ_FOR_EACH( SENF_PARSER_VARIANT_, _, types )                               \
+            >::parser BOOST_PP_CAT(name, _variant_t);                                             \
+        field( name, BOOST_PP_CAT(name, _variant_t) )
 
 }}
 

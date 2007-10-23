@@ -27,28 +27,35 @@ SEARCHENGINE           = YES
 
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
-PREDEFINED             = DOXYGEN \
-                         "SENF_PPI_MODULE(x)=" \
-                         "SENF_PARSER_INHERIT(name)=" \
-                         "SENF_PARSER_FIELD(name,type)=type name() const" \
-                         "SENF_PARSER_FIELD_RO(name,type)=type::value_type name() const" \
-                         "SENF_PARSER_BITFIELD(name, bits, type)=senf::ParseField_ ## type(bits) name() const" \
-                         "SENF_PARSER_BITFIELD_RO(name, bits, type)=senf::ParseField_ ## type(bits)::value_type name() const" \
-                         "SENF_PARSER_CUSTOM_FIELD(name, type, size, isize)=type name() const" \
-                         "SENF_PARSER_PRIVATE_FIELD(name,type)=private: type name() const; public:" \
-                         "SENF_PARSER_PRIVATE_FIELD_RO(name, type)=private: type::value_type name() const; public:" \
-                         "SENF_PARSER_PRIVATE_BITFIELD(name, bits, type)=private: senf::ParseField_ ## type(bits) name() const; public:" \
-                         "SENF_PARSER_PRIVATE_BITFIELD_RO(name, bits, type)=private: senf::ParseField_ ## type(bits)::value_type name() const; public:" \
-                         "SENF_PARSER_SKIP(x)=" \
-                         "SENF_PARSER_SKIP_BITS(x)=" \
-                         "SENF_PARSER_GOTO(x)=" \
-                         "SENF_PARSER_GOTO_OFFSET(x)=" \
-                         "SENF_PARSER_LABEL(x)=" \
-                         "SENF_PARSER_INIT()=void init()" \
-                         "SENF_PARSER_FINALIZE(name)=" \
-                         "ParseField_unsigned(b)=Parse_UIntField<?,?+b>" \
-                         "ParseField_signed(b)=Parse_IntField<?,?+b>" \
-                         "ParseField_bool(b)=Parse_Flag<?>"
+PREDEFINED             = \
+    DOXYGEN \
+    "SENF_PPI_MODULE(x)=" \
+    "SENF_PARSER_INHERIT(name)=" \
+    "SENF_PARSER_FIELD(name,type)=type name() const" \
+    "SENF_PARSER_FIELD_RO(name,type)=type::value_type name() const" \
+    "SENF_PARSER_BITFIELD(name, bits, type)=senf::ParseField_ ## type(bits) name() const" \
+    "SENF_PARSER_BITFIELD_RO(name, bits, type)=senf::ParseField_ ## type(bits)::value_type name() const" \
+    "SENF_PARSER_CUSTOM_FIELD(name, type, size, isize)=type name() const" \
+    "SENF_PARSER_PRIVATE_FIELD(name,type)=private: type name() const; public:" \
+    "SENF_PARSER_PRIVATE_FIELD_RO(name, type)=private: type::value_type name() const; public:" \
+    "SENF_PARSER_PRIVATE_BITFIELD(name, bits, type)=private: senf::ParseField_ ## type(bits) name() const; public:" \
+    "SENF_PARSER_PRIVATE_BITFIELD_RO(name, bits, type)=private: senf::ParseField_ ## type(bits)::value_type name() const; public:" \
+    "SENF_PARSER_SKIP(x)=" \
+    "SENF_PARSER_SKIP_BITS(x)=" \
+    "SENF_PARSER_GOTO(x)=" \
+    "SENF_PARSER_GOTO_OFFSET(x)=" \
+    "SENF_PARSER_LABEL(x)=" \
+    "SENF_PARSER_INIT()=void init()" \
+    "SENF_PARSER_FINALIZE(name)=" \
+    "ParseField_unsigned(b)=Parse_UIntField<?,?+b>" \
+    "ParseField_signed(b)=Parse_IntField<?,?+b>" \
+    "ParseField_bool(b)=Parse_Flag<?>" \
+    "SENF_PARSER_ARRAY(name,elt_type,size)=senf::Parse_Array<size,elt_type> name() const" \
+    "SENF_PARSER_LIST_B(name,elt_type,size_type)=senf::Parse_ListB<elt_type,size_type>::parser name() const" \
+    "SENF_PARSER_LIST_N(name,elt_type,size_type)=senf::Parse_ListN<elt_type,size_type>::parser name() const" \
+    "SENF_PARSER_VARIANT(name,chooser,types)=senf::Parse_Variant_Direct<chooser ## _t,?,types>::parser name() const" \
+    "SENF_PARSER_PRIVATE_VARIANT(name,chooser,types)=private: senf::Parse_Variant_Direct<chooser ## _t,?,types>::parser name() const; public:" \
+    "SENF_PARSER_VEC_N(name,elt_type,size_type)=senf::Parse_VectorN<elt_type,size_type> name() const"
 EXPAND_AS_DEFINED      = prefix_
 
 HTML_HEADER            = "$(TOPDIR)/doclib/doxy-header.html"
@@ -72,3 +79,8 @@ DOT_CLEANUP            = NO
 DOT_PATH               = "$(TOPDIR)/doclib"
 
 @INCLUDE = "$(TOPDIR)/Doxyfile.local"
+
+# Local Variables:
+# mode: indented-text
+# indent-tabs-mode: nil
+# End:

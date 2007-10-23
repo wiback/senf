@@ -107,6 +107,8 @@
     pointers, it should hold a copy of the value (it's Ok for \c value() to return such a reference
     as long as assigning it to a \c value_type variable will copy the value).
 
+    \see parseint
+
     \subsection parserimpl_collection Collection parsers
 
     A collection parser \a SomeParser should model STL containers. The parsers themselves will
@@ -119,6 +121,8 @@
     You will probably only very seldom need to implement a completely new collection
     parser. Instead, you can rely on senf::Parse_Vector or senf::Parse_List and implement new
     policies.
+
+    \see parsecollection
 
     \subsection parserimpl_composite Composite parsers
     

@@ -120,6 +120,7 @@ BOOST_AUTO_UNIT_TEST(parseVariantMacro)
         BOOST_CHECK( ! v.hasContent() );
         BOOST_CHECK_EQUAL( senf::bytes(v), 1u );
         v.hasContent(true);
+        // Parser invalidated
     }
     {
         TestParser v (p.data().begin(), & p.data());

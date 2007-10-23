@@ -47,27 +47,32 @@ namespace senf {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_BITFIELD     ( d_bit       ,  1 , bool     );
-        SENF_PARSER_BITFIELD     ( length      , 15 , unsigned );
+        /* We first define the fields as they appear in the field. Some of the fields are declared
+           private. We provide custom accessors for those fields further down. */
 
-        SENF_PARSER_FIELD        ( type        , Parse_UInt16  );
-
-        // This field only exists, if d_bit() is *not* set. New SNDUPackets are created with d_bit()
-        // set to 0, they have destination. We set the size of this field depending on the value of
-        // d_bit(), the init_bytes value is set to 6 bytes (the size of a MAC address)
-        SENF_PARSER_CUSTOM_FIELD ( destination , Parse_MAC     , d_bit() ? 0 : 6 , 6 ) {
-            BOOST_ASSERT( ! d_bit() );
-            return parse<destination_t>( destination_offset() );
-        }
-
-        // This field is placed at the end of the parser. It is therefore only considered for
-        // calculating init_bytes but not for calculating bytes()
-        SENF_PARSER_CUSTOM_FIELD ( crc         , Parse_UInt32  , 0 , 4 ) {
-            return parse<crc_t>( data().size() - 4 );
-        }
-
+        SENF_PARSER_PRIVATE_BITFIELD ( d_bit_       ,  1 , unsigned );
+        SENF_PARSER_BITFIELD         ( length       , 15 , unsigned );
+        SENF_PARSER_FIELD            ( type         , Parse_UInt16  );
+        SENF_PARSER_PRIVATE_VARIANT  ( destination_ , d_bit_        , 
+                                                      (Parse_MAC) (VoidPacketParser) );
+        
         SENF_PARSER_FINALIZE( Parse_SNDUPacket );
         
+        Parse_MAC destination()         /// Only defined if d_bit() == \c false
+            { return destination_().get<0>(); }
+
+        bool d_bit()                    /// Destination absent bit
+            { return d_bit_(); }
+
+        void withDestination()          /// Clear destination absent bit
+            { destination_().init<0>(); }
+        
+        void withoutDestination()       /// Set destination absent bit
+            { destination_().init<1>(); }
+
+        Parse_UInt32 crc() 
+            { return parse<Parse_UInt32>( data().size() - 4 ); }
+
         boost::uint32_t calcCrc() const;
     };
 

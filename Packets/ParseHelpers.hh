@@ -239,7 +239,7 @@
     at the end), those bit's will be skipped.
 
     Since consecutive bit-field commands are aggregated into a single bit-field group, the offset of
-    all these bit-fields will be the offset of the \e beginning of the bit-field irrespective of the
+    all these bit-fields will be the offset of the \e beginning of the group irrespective of the
     number of bits parsed so far. Changing the offset to some bitfield using \ref SENF_PARSER_GOTO()
     will therefore always go to the position at the beginning of this bitfield group. And since the
     current offset does not include the bit position, the bit position will be 0, the first bit. You
@@ -424,7 +424,7 @@
         SENF_PARSER_PRIVATE_FIELD_RO()
     \hideinitializer
  */
-#define SENF_PARSER_FIELD(name, type)
+#define SENF_PARSER_FIELD(name, type) 
 
 /** \brief Define parser field (read-only)
     
@@ -435,7 +435,7 @@
     \see SENF_PARSER_FIELD() 
     \hideinitializer
 */
-#define SENF_PARSER_FIELD_RO(name, type)
+#define SENF_PARSER_FIELD_RO(name, type) 
 
 /** \brief Define parser field (private)
 
@@ -445,7 +445,7 @@
     \see SENF_PARSER_FIELD()
     \hideinitializer
  */
-#define SENF_PARSER_PRIVATE_FIELD(name, type)
+#define SENF_PARSER_PRIVATE_FIELD(name, type) 
 
 /** \brief Define parser field (private + read-only)
 
@@ -457,7 +457,7 @@
     \see SENF_PARSER_FIELD()
     \hideinitializer
  */
-#define SENF_PARSER_PRIVATE_FIELD_RO(name, type)
+#define SENF_PARSER_PRIVATE_FIELD_RO(name, type) 
 
 /** \brief Define custom field accessor
 
@@ -488,7 +488,7 @@
     \param[in] size size of the field, either a single value \a bytes for fixed size parsers or two
         separate arguments \a bytes and \a init_bytes for dynamically sized parsers
  */
-#define SENF_PARSER_CUSTOM_FIELD(name, type, size)
+#define SENF_PARSER_CUSTOM_FIELD(name, type, size) 
 
 ///@}
 
@@ -521,7 +521,7 @@
 
     \hideinitializer
  */
-#define SENF_PARSER_BITFIELD(name, bits, type)
+#define SENF_PARSER_BITFIELD(name, bits, type) 
 
 /** \brief Define bit-field (read-only) 
 
@@ -530,7 +530,7 @@
     \see \ref SENF_PARSER_BITFIELD()
     \hideinitializer
  */
-#define SENF_PARSER_BITFIELD_RO(name, bits, type)
+#define SENF_PARSER_BITFIELD_RO(name, bits, type) 
 
 /** \brief Define bit-field (private) 
 
@@ -540,7 +540,7 @@
     \see \ref SENF_PARSER_BITFIELD()
     \hideinitializer
  */
-#define SENF_PARSER_PRIVATE_BITFIELD(name, bits, type)
+#define SENF_PARSER_PRIVATE_BITFIELD(name, bits, type) 
 
 /** \brief Define bit-field (private + read-only) 
 
@@ -665,6 +665,21 @@
     \hideinitializer
  */
 #define SENF_PARSER_FIXED_OFFSET(name)
+
+/** \brief Get current fixed offset, if possible
+ 
+    This macro will return the current fixed offset, a compile-time constant expression. This is
+    always possible when defining a fixed size parser.
+
+    Even in dynamically sized parsers this macro will work, up tp now only fixed size fields have
+    been defined. This macro does \e not validate this condition, it will return an arbitrary
+    incorrect value otherwise.
+
+    \pre Current position preceded by fixed-size parsers only
+    \returns compile-time constant offset from parsers start
+    \hideinitializer
+ */
+#define SENF_PARSER_CURRENT_FIXED_OFFSET()
 
 ///@}
 

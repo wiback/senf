@@ -86,6 +86,7 @@ EventManager
 eventsPerInterval
 EventType
 ExampleListPolicy
+ExampleVariantPolicy
 ExampleVectorPolicy
 ExtendedParser
 FFFF
@@ -155,10 +156,13 @@ MPEGDVBBundle
 multicast
 MyList
 MyParser
+MyVariant
+MyVariantPolicy
 MyVector
 namespace
 nc
 netcat
+NETwork
 NextPacket
 nextPacketKey
 nextPacketRange
@@ -213,6 +217,7 @@ parsermacrofields
 parsermacroinit
 parsermacrooffset
 parsermacrosbitfields
+ParseVariant
 ParseVec
 PassiveConnector
 PassiveInput
@@ -295,6 +300,8 @@ tr
 TruncatedPacketException
 tt
 ttl
+TypeA
+TypeB
 typeField
 udp
 UDPPacket
