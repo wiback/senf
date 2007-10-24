@@ -21,33 +21,22 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Defaults public header */
+    \brief StreamRegistry non-inline non-template implementation */
 
-#ifndef HH_Defaults_
-#define HH_Defaults_ 1
+#include "StreamRegistry.hh"
+#include "StreamRegistry.ih"
 
 // Custom includes
-#include "Stream.hh"
-#include "Area.hh"
 
-//#include "Defaults.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//#include "Stream.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
-namespace log {
+unsigned senf::log::detail::StreamBase::nStreams = 0;
 
-    SENF_LOG_DEF_STREAM(Debug, MESSAGE, DISABLED, DISABLED);
-
-    SENF_LOG_DEF_AREA_I(DefaultArea,
-                        std::string v_name() const { return ""; });
-
-}}
-
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "Defaults.cci"
-//#include "Defaults.ct"
-//#include "Defaults.cti"
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "Stream.mpp"
 
 
 // Local Variables:

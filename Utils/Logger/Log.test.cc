@@ -38,10 +38,7 @@ namespace {
 
 #define SENF_LOG_CONF (( (senf)(log)(Debug), (_), NOTICE ))
 
-#include "Log.hh"
-#include "Defaults.hh"
-#include "Parameters.hh"
-#include "Levels.hh"
+#include "Logger.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -49,12 +46,15 @@ namespace {
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
+namespace not_anonymous {
     
-    template <class T>
     struct Foo
     {
-        typedef int value;
+        SENF_LOG_CLASS_AREA();
+
+        static void log() {
+            SENF_LOG(("Foo::log"));
+        }
     };
 
     SENF_LOG_DEF_ALIAS( LogCritical, (senf::log::Debug) (senf::log::CRITICAL) );
@@ -62,6 +62,7 @@ namespace {
     SENF_LOG_DEF_AREA( myArea );
 
 }
+using namespace not_anonymous;
 
 BOOST_AUTO_UNIT_TEST(logger)
 {
@@ -81,15 +82,19 @@ BOOST_AUTO_UNIT_TEST(logger)
         log << " continued here";
     }));
 
+    Foo::log();
+    SENF_LOG((Foo)("Foo area"));
+
     BOOST_CHECK_EQUAL( logstream.str(), 
                        "Important message\n"
                        "Another log message: 10\n"
-                       "Last message continued here\n" );
+                       "Last message continued here\n"
+                       "Foo::log\n" );
 }
 
 BOOST_AUTO_UNIT_TEST(streamRegistry)
 {
-    char const * streams[] = { "(anonymous namespace)::myStream", "senf::log::Debug" };
+    char const * streams[] = { "not_anonymous::myStream", "senf::log::Debug" };
 
     BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::StreamRegistry::instance().begin(),
                                    senf::log::StreamRegistry::instance().end(),
@@ -99,7 +104,7 @@ BOOST_AUTO_UNIT_TEST(streamRegistry)
 
 BOOST_AUTO_UNIT_TEST(areaRegistry)
 {
-    char const * areas[] = { "", "(anonymous namespace)::myArea" };
+    char const * areas[] = { "", "not_anonymous::Foo", "not_anonymous::myArea" };
 
     BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::AreaRegistry::instance().begin(),
                                    senf::log::AreaRegistry::instance().end(),

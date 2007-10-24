@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Stream internal header */
+    \brief StreamRegistry internal header */
 
-#ifndef IH_Stream_
-#define IH_Stream_ 1
+#ifndef IH_StreamRegistry_
+#define IH_StreamRegistry_ 1
 
 // Custom includes
 #include <string>
@@ -35,6 +35,7 @@ namespace senf {
 namespace log {
 namespace detail {
 
+    /// Internal: Log stream base class
     struct StreamBase 
     {
         StreamBase();

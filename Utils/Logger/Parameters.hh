@@ -27,11 +27,15 @@
 #define HH_Parameters_ 1
 
 // Custom includes
-#include "Area.hh"
 
 //#include "Parameters.mpp"
 #include "Parameters.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
+
+///\addtogroup logging
+///\{
+///\name Default parameters
+///\{
 
 /** \brief Set scope default log stream
     \hideinitializer
@@ -48,29 +52,8 @@
  */
 #define SENF_LOG_DEFAULT_LEVEL(level) typedef level SENFLogDefaultLevel
 
-/** \brief Define log parameter alias
-
-    Defines a new parameter alias named \a alias as an alias for the parameters in \a args. The
-    alias is defined as a symbol in the current scope.
-
-    \hideinitializer
- */
-#define SENF_LOG_DEF_ALIAS(alias,args)                                                            \
-    struct alias : public senf::log::detail::AliasBase                                            \
-    {                                                                                             \
-        template <class Base>                                                                     \
-        struct apply                                                                              \
-        {                                                                                         \
-            typedef typename SENF_LOG_MERGE_PARAMETERS_I(Base,args) type;                         \
-        };                                                                                        \
-    }
-
-#define SENF_LOG_CLASS_AREA()                                                                     \
-    SENF_LOG_DEF_AREA_I(SenfLogArea,                                                              \
-                        std::string v_name() const                                                \
-                            { std::string s (fullName()); return std::string(s,s.size()-13); });  \
-    SENF_LOG_DEFAULT_AREA(SenfLogArea)
-
+///\}
+///\}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Parameters.cci"

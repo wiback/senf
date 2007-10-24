@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Kompetenzzentrum fuer NETwork research (NET)
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,21 +21,32 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Levels internal header */
+    \brief Definitions internal header */
 
-#ifndef IH_Levels_
-#define IH_Levels_ 1
+#ifndef IH_Definitions_
+#define IH_Definitions_ 1
 
 // Custom includes
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
+#define SENF_LOG_DEF_AREA_I(area, decls)                                                          \
+    struct area                                                                                   \
+        : public senf::log::detail::AreaBase, public senf::singleton<area>                        \
+    {                                                                                             \
+        static std::string name() { return instance().v_name(); }                                 \
+        decls                                                                                     \
+    private:                                                                                      \
+        area() { init(); }                                                                        \
+        friend class senf::singleton<area>;                                                       \
+    }
+
 namespace senf {
 namespace log {
 namespace detail {
-    
-    /// Internal: Log level base class
-    struct LevelBase {};
+
+    /// Internal: Alias base class
+    struct AliasBase {};
 
 }}}
 

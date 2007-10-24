@@ -33,11 +33,7 @@
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/fold.hpp>
-#include "Defaults.hh"
 #include "../mpl.hh"
-#include "Stream.hh"
-#include "Area.hh"
-#include "Levels.hh"
 #include "Config.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
@@ -46,18 +42,25 @@
 #   define _senf_LOG_STREAM std::cerr
 #endif
 
-typedef senf::log::Debug       SENFLogDefaultStream;
-typedef senf::log::DefaultArea SENFLogDefaultArea;
-typedef senf::log::NONE        SENFLogDefaultLevel;
-
 namespace senf {
 namespace log {
+    
+    class DefaultArea;
+    class Debug;
+    class NONE;
+
 namespace detail {
 
-    struct AliasBase {};
+    class StreamBase;
+    class AreaBase;
+    class LevelBase;
+    class AliasBase;
 
+    /// Internal: Parameter extractor
     template <class Base, class Param, unsigned N>
     struct Parameters_ {};
+
+#ifndef DOXYGEN
 
     senf::mpl::rv<1> Parameters_select_(StreamBase *);
     template <class Base, class Param>
@@ -85,10 +88,25 @@ namespace detail {
         : public Param::template apply<Base>::type
     {};
 
+    // This trick makes any class with a SENFLogArea typedef member usable as area. A typedef of
+    // this name is created by SENF_LOG_CLASS_AREA()
+    template <class T>
+    senf::mpl::rv<6> Parameters_select_(
+        T *, 
+        typename boost::disable_if< boost::is_convertible<T*,StreamBase*> >::type * = 0,
+        typename boost::disable_if< boost::is_convertible<T*,AreaBase*> >::type * = 0,
+        typename boost::disable_if< boost::is_convertible<T*,LevelBase*> >::type * = 0,
+        typename boost::disable_if< boost::is_convertible<T*,AliasBase*> >::type * = 0);
+    template <class Base, class Param>
+    struct Parameters_<Base,Param,6> : public Base
+    { typedef typename Param::SENFLogArea area; };
+
+#endif
+
+    /// Internal: Log message parameter collection
     template <class Base>
     struct Parameters : public Base
     {
-
         static bool const compile_enabled = senf::log::Enabled<
             typename Base::stream, 
             typename Base::area, 
@@ -98,10 +116,13 @@ namespace detail {
         static std::ostream & log_stream() { return _senf_LOG_STREAM; }
     };
 
+    /// Internal: Empty base class
     struct empty {};
 
-    struct Parameters_Merge_
+    /// Internal: Merge log message parameter list
+    struct Parameters_Merge
     {
+        /// Internal: Embedded mpl template meta-function
         template <class Base, class Param>
         struct apply {
             typedef Parameters_<
@@ -113,13 +134,17 @@ namespace detail {
 
 }}}
 
+typedef senf::log::Debug       SENFLogDefaultStream;
+typedef senf::log::DefaultArea SENFLogDefaultArea;
+typedef senf::log::NONE        SENFLogDefaultLevel;
+
 #define SENF_LOG_MERGE_ARG(r, data, i, elem) BOOST_PP_COMMA_IF(i) elem
 
 #define SENF_LOG_MERGE_PARAMETERS_I(base, args)                                                   \
     boost::mpl::fold<                                                                             \
         boost::mpl::vector< BOOST_PP_SEQ_FOR_EACH_I(SENF_LOG_MERGE_ARG, _, args) >,               \
         base,                                                                                     \
-        senf::log::detail::Parameters_Merge_ >::type
+        senf::log::detail::Parameters_Merge >::type
 
 #define SENF_LOG_MERGE_PARAMETERS(args)                                                           \
     senf::log::detail::Parameters< SENF_LOG_MERGE_PARAMETERS_I(                                   \

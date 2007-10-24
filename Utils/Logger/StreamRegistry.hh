@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Stream public header */
+    \brief StreamRegistry public header */
 
-#ifndef HH_Stream_
-#define HH_Stream_ 1
+#ifndef HH_StreamRegistry_
+#define HH_StreamRegistry_ 1
 
 // Custom includes
 #include <map>
@@ -33,39 +33,23 @@
 #include "Levels.hh"
 #include "../singleton.hh"
 
-//#include "Stream.mpp"
+//#include "StreamRegistry.mpp"
+#include "StreamRegistry.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
-
-/** \brief Define log stream
-
-    Defines a new log stream named \a stream. The stream is defined as a symbol in the current
-    scope.
-
-    \a defaultLevel defines the default log level for messages posted to this stream. \a
-    runtimeLimit defines the default log limit. Messages with a level below this will not be
-    output.  \a compileLimit defines the default log level limit at compile time: Messages
-    posted with a level below \a compileLimit will be discarded at compile time.
-
-    \hideinitializer
- */
-#define SENF_LOG_DEF_STREAM(stream, defaultLevel_, runtimeLimit_, compileLimit_)                  \
-    struct stream                                                                                 \
-        : public senf::log::detail::StreamBase, public senf::singleton<stream>                    \
-    {                                                                                             \
-        typedef defaultLevel_ defaultLevel;                                                       \
-        typedef runtimeLimit_ runtimeLimit;                                                       \
-        typedef compileLimit_ compileLimit;                                                       \
-        static std::string name() { return instance().v_name(); }                                 \
-    private:                                                                                      \
-        stream() { init(); }                                                                      \
-        friend class senf::singleton<stream>;                                                     \
-    }
 
 namespace senf {
 namespace log {
 
     namespace detail { struct StreamBase; }
 
+    /** \brief Stream registry 
+        
+        The stream registry keeps track of all streams defined. stream classes are defined as
+        singletons and will automatically register with this registry.
+
+        The stream registry exposes a forward sequence interface which is a sequence of the names of
+        all registered streams.
+     */
     class StreamRegistry 
         : public senf::singleton<StreamRegistry>
     {
@@ -79,6 +63,12 @@ namespace log {
 
     public:
         typedef boost::transform_iterator<SelectName, Registry::const_iterator> iterator;
+
+#       ifdef DOXYGEN
+        // Hmm ... doxygen does not understand using declarations ...
+        /// Access stream registry singleton instance
+        static AreaRegistry & instance();
+#       endif
 
         using senf::singleton<StreamRegistry>::instance;
 
@@ -100,9 +90,9 @@ namespace log {
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////#
-#include "Stream.cci"
-//#include "Stream.ct"
-//#include "Stream.cti"
+#include "StreamRegistry.cci"
+//#include "StreamRegistry.ct"
+//#include "StreamRegistry.cti"
 #endif
 
 

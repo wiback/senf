@@ -257,6 +257,26 @@ table.senf th {
         font-weight: bold;
 }
 
+table.ebnf {
+        margin: 0;
+        padding: 0;
+        border-spacing: 0;
+        border: none;
+        font-size: 120%; /* ????????  Why is THIS needed ?? */
+}
+
+table.ebnf td {
+        text-align: left;
+        border: none;
+        padding: 0;
+}
+
+table.ebnf td:first-child {
+        width: 1%;
+        padding-right: 1ex;
+        font-style: italic;
+}
+
 dl.xref-bug, dl.xref-fix, dl.xref-todo, dl.xref-idea {
         border: 1px solid #CC8888;
         padding: 2px 3px;

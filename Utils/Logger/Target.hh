@@ -28,8 +28,8 @@
 
 // Custom includes
 #include "../singleton.hh"
-#include "Stream.hh"
-#include "Area.hh"
+#include "StreamRegistry.hh"
+#include "AreaRegistry.hh"
 
 //#include "Target.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -37,7 +37,13 @@
 namespace senf {
 namespace log {
 
-    /** \brief
+    /** \brief Logging target base class
+
+        All enabled log messages are eventually routed to one or more logging targets. It is the
+        responsibility of the logging target to write the log messages somewhere: onto the console,
+        to a file, to mail them to the administrator or whatever. To this end, the logging target is
+        passed the log message and a complete set of logging parameters (\e stream, \e area and \e
+        level).
       */
     class Target
         : public senf::singleton<Target>

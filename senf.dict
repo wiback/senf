@@ -16,6 +16,7 @@ addtogroup
 aListCollection
 alloc
 arg
+args
 async
 autoThrottling
 aVectorCollection
@@ -50,6 +51,7 @@ DataPacket
 dd
 de
 DebugModules
+DefaultArea
 DefaultBundle
 defaultInit
 defgroup
@@ -101,6 +103,7 @@ foo
 FooParser
 ForwardingRoute
 fraunhofer
+FroblizerArea
 fuer
 GlobalScope
 hangup

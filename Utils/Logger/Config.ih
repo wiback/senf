@@ -41,11 +41,14 @@ namespace senf {
 namespace log {
 namespace detail {
 
+    /// Internal: Compile time configuration for given \a Stream and \a Area
     template <class Stream, class Area>
     struct Config
     {
         typedef typename Config<Stream,void>::compileLimit compileLimit;
     };
+
+#   ifndef DOXYGEN
 
     template <class Stream>
     struct Config<Stream, void>
@@ -53,12 +56,14 @@ namespace detail {
         typedef typename Stream::compileLimit compileLimit;
     };
 
+#   endif
+
 }}}
 
-#define SENF_LOG_SEQ_TO_NAME_(s,data,elem) ::elem
+#define SENF_LOG_SEQ_TO_NAME_(s,state,elem) state::elem
 
 #define SENF_LOG_SEQ_TO_NAME(seq)                                                                 \
-    BOOST_PP_SEQ_FOR_EACH(SENF_LOG_SEQ_TO_NAME_, none, seq)
+    BOOST_PP_SEQ_FOLD_LEFT(SENF_LOG_SEQ_TO_NAME_, , seq)
 
 #define SENF_LOG_PREDECL_(s, state, elem)                                                         \
     namespace elem { state }
@@ -86,11 +91,11 @@ namespace detail {
 
 #ifdef SENF_LOG_CONF
 
-#   define SLC_elt(s, state, elt)                                                                  \
+#   define SLC_elt(r, data, elt) \
         SENF_LOG_CONF_DEFINE elt
 
     // Need to use fold here to not exhaust the maximum FOR nesting depth ...
-    BOOST_PP_SEQ_FOLD_LEFT(SLC_elt, none, SENF_LOG_CONF)
+    BOOST_PP_SEQ_FOR_EACH(SLC_elt, none, SENF_LOG_CONF)
 
 #   undef SLC_elt
 

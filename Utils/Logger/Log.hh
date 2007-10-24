@@ -34,13 +34,56 @@
 #include "Parameters.hh"
 
 //#include "Log.mpp"
+#include "Log.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
+
+/** \defgroup logging Logging commands
+
+    The logging library provides several commands to create log messages. All these macro commands
+    take a variable number of arguments. Since this is not supported in a usable way by the C++
+    preprocessor, the arguments are encoded into a <a
+    href="http://www.boost.org/libs/preprocessor/doc/index.html">Boost.Preprocessor</a> like
+    sequence:
+
+    \code
+    SENF_LOG( (senf::log::Debug)(senf::log::NOTICE)(FroblizerArea)("The log message") );
+    \endcode
+
+    For each log message, the following information is needed:
+    \li The <em>log stream</em>,
+    \li the <em>log area</em>,
+    \li the <em>log level</em>,
+    \li and the log message itself
+    
+    These parameters may be specified <i>in arbitrary order</i> and even multiple times in the
+    parameter sequence. If some argument type occurs multiple times, the last occurrence wins. If
+    any one of the parameters is not specified, it's current default value will be used.
+
+    This current default value is set using \ref SENF_LOG_DEFAULT_STREAM, \ref SENF_LOG_DEFAULT_AREA
+    and \ref SENF_LOG_DEFAULT_LEVEL respectively. These macros set the default stream, area and/or
+    level of the current scope. The logging library defines the global defaults for these values to
+    be \c senf::log::Debug (\e stream), senf::log::DefaultArea (\e area), and senf::log::NONE (\e
+    level).
+
+    There is one special log level, senf::log::NONE. If the log level is set to this value, the log
+    level will be set from the stream provided default value.
+    
+
+    All these parameters must be <em>compile time constants</em> (they are all types, so it's
+    difficult form them to be something else).
+ */
+
+///\ingroup logging
+///\{
+
+///\name Generating log messages
+///\{
 
 /** \brief Write log message
 
     This macro will write it's last argument to the log stream. The last argument must be an
     expression which will be placed after a streaming \c operator<< (like
-    <i>some-log-sttream</i> \c << <i>last-macro-arg</i>).
+    <i>some-log-stream</i> \c << <i>last-macro-arg</i>).
     \code
     SENF_LOG((parameters...)("log message " << args << ...));
     \endcode
@@ -51,6 +94,12 @@
     SENF_LOG_BLOCK_( SENF_LOG_MERGE_PARAMETERS(BOOST_PP_SEQ_POP_BACK(args)),                      \
                      { log << BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args); })
 
+/** \brief Write log message (template context)
+
+    This macro is used like \ref SENF_LOG() if called from a template context
+
+    \hideinitializer
+ */
 #define SENF_LOG_TPL(args)                                                                        \
     SENF_LOG_BLOCK_( SENF_LOG_MERGE_PARAMETERS_TPL(BOOST_PP_SEQ_POP_BACK(args)),                  \
                      { log << BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args); })
@@ -72,18 +121,18 @@
     SENF_LOG_BLOCK_( SENF_LOG_MERGE_PARAMETERS(BOOST_PP_SEQ_POP_BACK(args)),                      \
                      BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args))
 
+/** \brief Write log message (template context)
+
+    This macro is used like \ref SENF_LOG_BLOCK() if called from a template context
+
+    \hideinitializer
+ */
 #define SENF_LOG_BLOCK_TPL(args)                                                                  \
     SENF_LOG_BLOCK_( SENF_LOG_MERGE_PARAMETERS_TPL(BOOST_PP_SEQ_POP_BACK(args)),                  \
                      BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args))
 
-#define SENF_LOG_BLOCK_(parameters, block)                                                        \
-    do {                                                                                          \
-        if (parameters::compile_enabled && parameters::enabled()) {                               \
-            std::ostream & log (parameters::log_stream());                                         \
-            do block while(0);                                                                    \
-            log << std::endl;                                                                     \
-        }                                                                                         \
-    } while(0) 
+///\}
+///\}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Log.cci"

@@ -21,78 +21,66 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Area inline non-template implementation */
+    \brief StreamRegistry inline non-template implementation */
 
-#include "Area.ih"
+#include "StreamRegistry.ih"
 
 // Custom includes
 #include "../TypeInfo.hh"
-#include "Levels.hh"
-#include "Stream.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::log::AreaRegistry
+// senf::log::StreamRegistry
 
 prefix_ std::string const &
-senf::log::AreaRegistry::SelectName::operator()(Registry::value_type const & v)
+senf::log::StreamRegistry::SelectName::operator()(Registry::value_type const & v)
     const
 {
     return v.first;
 }
 
-prefix_ senf::log::AreaRegistry::AreaRegistry()
+prefix_ senf::log::StreamRegistry::StreamRegistry()
 {}
 
-prefix_ senf::log::AreaRegistry::iterator senf::log::AreaRegistry::begin()
+prefix_ senf::log::StreamRegistry::iterator senf::log::StreamRegistry::begin()
 {
     return boost::make_transform_iterator(registry_.begin(), SelectName());
 }
 
-prefix_ senf::log::AreaRegistry::iterator senf::log::AreaRegistry::end()
+prefix_ senf::log::StreamRegistry::iterator senf::log::StreamRegistry::end()
 {
     return boost::make_transform_iterator(registry_.end(), SelectName());
 }
 
-prefix_ void senf::log::AreaRegistry::registerArea(detail::AreaBase const & area)
+prefix_ void senf::log::StreamRegistry::registerStream(detail::StreamBase const & stream)
 {
-    registry_.insert( std::make_pair(area.v_name(), &area) );
+    registry_.insert( std::make_pair(stream.v_name(), &stream) );
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::log::detail::AreaBase
+// senf::log::detail::StreamBase
 
-prefix_ std::string senf::log::detail::AreaBase::fullName()
+prefix_ senf::log::detail::StreamBase::StreamBase()
+    : index( nStreams++ )
+{}
+
+prefix_ std::string senf::log::detail::StreamBase::fullName()
     const
 {
     return prettyName(typeid(*this));
 }
 
-prefix_ std::string senf::log::detail::AreaBase::v_name()
+prefix_ std::string senf::log::detail::StreamBase::v_name()
     const
 {
     return fullName();
 }
 
-prefix_ void senf::log::detail::AreaBase::init()
+prefix_ void senf::log::detail::StreamBase::init()
 {
-    senf::log::AreaRegistry::instance().registerArea(*this);
-}
-
-prefix_ unsigned senf::log::detail::AreaBase::streamLimit(StreamBase const & stream)
-    const
-{
-    return stream.index >= streamLimits_.size() ? DISABLED::value : streamLimits_[stream.index];
-}
-
-prefix_ void senf::log::detail::AreaBase::setStreamLimit(StreamBase const & stream, unsigned value)
-    const
-{
-    if (stream.index >= streamLimits_.size())
-        streamLimits_.resize(stream.index+1,0u);
-    streamLimits_[stream.index] = value;
+    senf::log::StreamRegistry::instance().registerStream(*this);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Area public header */
+    \brief AreaRegistry public header */
 
-#ifndef HH_Area_
-#define HH_Area_ 1
+#ifndef HH_AreaRegistry_
+#define HH_AreaRegistry_ 1
 
 // Custom includes
 #include <map>
@@ -32,22 +32,23 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include "../singleton.hh"
 
-//#include "Area.mpp"
+//#include "AreaRegistry.mpp"
+#include "AreaRegistry.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
-
-/** \brief Define log area
-
-    Defines a new log area named \a area. The area is defined as a symbol in the current scope.
-
-    \hideinitializer
- */
-#define SENF_LOG_DEF_AREA(area) SENF_LOG_DEF_AREA_I(area, ; )
 
 namespace senf {
 namespace log { 
 
     namespace detail { struct AreaBase; }
-    
+
+    /** \brief Area registry 
+        
+        The area registry keeps track of all areas defined. Area classes are defined as singletons
+        and will automatically register with this registry.
+
+        The area registry exposes a forward sequence interface which is a sequence of the names of
+        all registered areas.
+     */
     class AreaRegistry
         : public senf::singleton<AreaRegistry>
     {
@@ -61,6 +62,12 @@ namespace log {
 
     public:
         typedef boost::transform_iterator<SelectName, Registry::const_iterator> iterator;
+
+#       ifdef DOXYGEN
+        // Hmm ... doxygen does not understand using declarations ...
+        /// Access area registry singleton instance
+        static AreaRegistry & instance();
+#       endif
 
         using senf::singleton<AreaRegistry>::instance;
 
@@ -82,9 +89,9 @@ namespace log {
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "Area.cci"
-//#include "Area.ct"
-//#include "Area.cti"
+#include "AreaRegistry.cci"
+//#include "AreaRegistry.ct"
+//#include "AreaRegistry.cti"
 #endif
 
 

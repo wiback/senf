@@ -35,7 +35,7 @@
 namespace senf {
 namespace log {
 
-    /** \brief Log levels
+    /** \defgroup loglevels Log levels
         
         These are the valid log levels with some additional special values:
 
@@ -44,14 +44,38 @@ namespace log {
         \c NONE is used to in some special places to inherit the default log level.
      */
 
+    ///\ingroup loglevels
+    ///\{
+    
+    /** \brief Log level VERBOSE
+        \see loglevels */
     struct VERBOSE   : public detail::LevelBase { static unsigned const value = 1; };
+
+    /** \brief Log level NOTICE
+        \see loglevels */
     struct NOTICE    : public detail::LevelBase { static unsigned const value = 2; };
+
+    /** \brief Log level MESSAGE
+        \see loglevels */
     struct MESSAGE   : public detail::LevelBase { static unsigned const value = 3; };
+
+    /** \brief Log level IMPORTANT
+        \see loglevels */
     struct IMPORTANT : public detail::LevelBase { static unsigned const value = 4; };
+
+    /** \brief Log level CRITICAL
+        \see loglevels */
     struct CRITICAL  : public detail::LevelBase { static unsigned const value = 5; };
 
+    /** \brief Disable logging
+        \see loglevels */
     struct DISABLED  : public detail::LevelBase { static unsigned const value = 6; };
+
+    /** \brief Inherit log level
+        \see loglevels */
     struct NONE      : public detail::LevelBase { static unsigned const value = 0; };
+
+    ///\}
 
 }}
 
