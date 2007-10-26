@@ -50,6 +50,9 @@ namespace log {
         to a file, to mail them to the administrator or whatever. To this end, the logging target is
         passed the log message and a complete set of logging parameters (\e stream, \e area and \e
         level).
+
+        \fixme optionally Integrate with Scheduler / ClockService to reduce number of gettimeofday()
+            calls.
       */
     class Target : private boost::noncopyable
     {

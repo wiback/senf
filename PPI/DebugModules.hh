@@ -264,7 +264,7 @@ namespace debug {
     /** \brief Log received packets
 
         This module will log all packets sent to it's input using SENF_LOG to the given log
-        \a Stream, \a Area and \a level.
+        \a Stream, \a Area and \a Level.
      */
     template < class Stream = log::Debug, 
                class Area   = log::DefaultArea, 

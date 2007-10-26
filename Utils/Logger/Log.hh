@@ -127,8 +127,8 @@
     \hideinitializer
  */
 #define SENF_LOG_BLOCK_TPL(args)                                                                  \
-    SENF_LOG_BLOCK_( SENF_LOG_MERGE_PARAMETERS_TPL(BOOST_PP_SEQ_POP_BACK(args)),                  \
-                     BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args))
+    SENF_LOG_BLOCK_TPL_( SENF_LOG_MERGE_PARAMETERS_TPL(BOOST_PP_SEQ_POP_BACK(args)),              \
+                         BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(args)),args))
 
 ///\}
 ///\}

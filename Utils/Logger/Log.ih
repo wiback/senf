@@ -40,6 +40,17 @@
         }                                                                                         \
     } while(0) 
 
+#define SENF_LOG_BLOCK_TPL_(parameters, block)                                                    \
+    do {                                                                                          \
+        if (parameters::compileEnabled && parameters::enabled()) {                                \
+            std::stringstream log;                                                                \
+            do block while(0);                                                                    \
+            senf::log::write<typename parameters::stream,                                         \
+                             typename parameters::area,                                           \
+                             typename parameters::level>(log.str());                              \
+        }                                                                                         \
+    } while(0) 
+
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
 
