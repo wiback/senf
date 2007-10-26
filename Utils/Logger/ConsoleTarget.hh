@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Kompetenzzentrum fuer NETwork research (NET)
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,39 +21,43 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief StreamRegistry internal header */
+    \brief ConsoleTarget public header */
 
-#ifndef IH_StreamRegistry_
-#define IH_StreamRegistry_ 1
+#ifndef HH_ConsoleTarget_
+#define HH_ConsoleTarget_ 1
 
 // Custom includes
-#include <string>
+#include "IOStreamTarget.hh"
 
-///////////////////////////////ih.p////////////////////////////////////////
+//#include "ConsoleTarget.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-namespace senf {
+namespace senf { 
 namespace log {
-namespace detail {
 
-    /// Internal: Log stream base class
-    struct StreamBase 
+    /** \brief Write log messages to std::cout
+
+        IOStreamTarget writing to std::cout
+     */
+    class ConsoleTarget : public IOStreamTarget
     {
-        StreamBase();
-        virtual ~StreamBase() {};
-        
-        std::string fullName() const;
-        virtual std::string v_name() const;
-        virtual unsigned defaultRuntimeLimit() const = 0;
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
 
-        void init();
+        ConsoleTarget();
 
-        unsigned index;
-        static unsigned nStreams;
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
     };
 
-}}}
+}}
 
-///////////////////////////////ih.e////////////////////////////////////////
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "ConsoleTarget.cci"
+//#include "ConsoleTarget.ct"
+//#include "ConsoleTarget.cti"
 #endif
 
 

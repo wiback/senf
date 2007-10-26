@@ -60,6 +60,8 @@ namespace log {
             typedef runtimeLimit_ runtimeLimit;                                                   \
             typedef compileLimit_ compileLimit;                                                   \
             static std::string name() { return instance().v_name(); }                             \
+            unsigned defaultRuntimeLimit() const { return runtimeLimit::value; }                  \
+            using senf::singleton<stream>::instance;                                              \
         private:                                                                                  \
             stream() { init(); }                                                                  \
             friend class senf::singleton<stream>;                                                 \
@@ -70,7 +72,6 @@ namespace log {
         Defines a new log area named \a area. The area is defined as a symbol in the current scope.
 
         \hideinitializer
-        \ingroup logging
      */
 #   define SENF_LOG_DEF_AREA(area) SENF_LOG_DEF_AREA_I(area, ; )
 
@@ -78,6 +79,8 @@ namespace log {
 
         This command declares the containing class to be it's own default log area. It is such like a
         combination of \ref SENF_LOG_DEF_AREA and \ref SENF_LOG_DEFAULT_AREA with a twist.
+
+        \hideinitializer
      */
 #   define SENF_LOG_CLASS_AREA()                                                                  \
         SENF_LOG_DEF_AREA_I(                                                                      \
@@ -105,7 +108,7 @@ namespace log {
         }
 
         /** \brief Default global log stream */
-        SENF_LOG_DEF_STREAM(Debug, MESSAGE, DISABLED, DISABLED);
+        SENF_LOG_DEF_STREAM(Debug, MESSAGE, MESSAGE, MESSAGE);
 
         /** \brief Default global log area */
         SENF_LOG_DEF_AREA_I(DefaultArea,

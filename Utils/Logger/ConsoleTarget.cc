@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Kompetenzzentrum fuer NETwork research (NET)
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,40 +21,28 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief StreamRegistry internal header */
+    \brief ConsoleTarget non-inline non-template implementation */
 
-#ifndef IH_StreamRegistry_
-#define IH_StreamRegistry_ 1
+#include "ConsoleTarget.hh"
+//#include "ConsoleTarget.ih"
 
 // Custom includes
-#include <string>
+#include <iostream>
 
-///////////////////////////////ih.p////////////////////////////////////////
+//#include "ConsoleTarget.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
-namespace log {
-namespace detail {
+///////////////////////////////////////////////////////////////////////////
+// senf::log::ConsoleTarget
 
-    /// Internal: Log stream base class
-    struct StreamBase 
-    {
-        StreamBase();
-        virtual ~StreamBase() {};
-        
-        std::string fullName() const;
-        virtual std::string v_name() const;
-        virtual unsigned defaultRuntimeLimit() const = 0;
+prefix_ senf::log::ConsoleTarget::ConsoleTarget()
+    : IOStreamTarget(std::cout)
+{}
 
-        void init();
-
-        unsigned index;
-        static unsigned nStreams;
-    };
-
-}}}
-
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "ConsoleTarget.mpp"
 
 
 // Local Variables:

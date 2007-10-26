@@ -35,6 +35,7 @@
         : public senf::log::detail::AreaBase, public senf::singleton<area>                        \
     {                                                                                             \
         static std::string name() { return instance().v_name(); }                                 \
+        using senf::singleton<area>::instance;                                                    \
         decls                                                                                     \
     private:                                                                                      \
         area() { init(); }                                                                        \

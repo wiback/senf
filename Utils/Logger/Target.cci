@@ -78,6 +78,19 @@ prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
     // can never lower the logging limit. Not updating the cache just reduces the performance.
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::log::TargetRegistry
+
+prefix_ void senf::log::TargetRegistry::registerTarget(Target * target)
+{
+    targets_.insert(target);
+}
+
+prefix_ void senf::log::TargetRegistry::unregisterTarget(Target * target)
+{
+    targets_.erase(target);
+}
+
 /////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

@@ -39,6 +39,15 @@ namespace mpl {
     /** \defgroup senfmpl Low-level template meta programming helpers
      */
 
+    /** \brief Marker class for empty default values etc.
+
+        This is like Boosts \c boost::mpl::na just an empty class used as template default argument
+        to mark missing arguments 
+        
+        \note Don't use this as an empty base class. We may add some informative members to this.
+     */
+    struct nil {};
+
     /** \brief Return-value type used to implement overload selection
 
         The senf::mpl::rv type is used together with \ref SENF_MPL_RV() to select template

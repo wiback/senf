@@ -33,14 +33,11 @@
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/fold.hpp>
+#include <boost/mpl/if.hpp>
 #include "../mpl.hh"
 #include "Config.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
-
-#ifndef _senf_LOG_STREAM
-#   define _senf_LOG_STREAM std::cerr
-#endif
 
 namespace senf {
 namespace log {
@@ -107,13 +104,20 @@ namespace detail {
     template <class Base>
     struct Parameters : public Base
     {
-        static bool const compile_enabled = senf::log::Enabled<
+        typedef typename boost::mpl::if_c< Base::level::value == NONE::value, 
+                                           typename Base::stream::defaultLevel, 
+                                           typename Base::level >::type level;
+
+        static bool const compileEnabled = senf::log::Enabled<
             typename Base::stream, 
             typename Base::area, 
-            typename Base::level>::value;
+            level>::value;
 
-        static bool enabled() { return compile_enabled; }
-        static std::ostream & log_stream() { return _senf_LOG_STREAM; }
+        static bool enabled() { 
+            return compileEnabled
+                && Base::area::instance().streamLimit(Base::stream::instance()) 
+                <= Base::level::value;
+        }
     };
 
     /// Internal: Empty base class

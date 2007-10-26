@@ -65,10 +65,9 @@
     be \c senf::log::Debug (\e stream), senf::log::DefaultArea (\e area), and senf::log::NONE (\e
     level).
 
-    There is one special log level, senf::log::NONE. If the log level is set to this value, the log
-    level will be set from the stream provided default value.
+    The log level senf::log::NONE is special. If the log level is set to this value, the log level
+    will be set from the stream provided default value.
     
-
     All these parameters must be <em>compile time constants</em> (they are all types, so it's
     difficult form them to be something else).
  */

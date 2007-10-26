@@ -26,20 +26,12 @@
 //#include "Log.test.hh"
 //#include "Log.test.ih"
 
-// Custom includes
-#include <sstream>
-
 // We need to put all tests into this single file to not violate the ODR
-
-#define _senf_LOG_STREAM logstream
-namespace {
-    std::stringstream logstream;
-}
 
 #define SENF_LOG_CONF (( (senf)(log)(Debug), (_), NOTICE ))
 
+// Custom includes
 #include "Logger.hh"
-
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
 
@@ -66,30 +58,46 @@ using namespace not_anonymous;
 
 BOOST_AUTO_UNIT_TEST(logger)
 {
+    senf::log::StringTarget target;
+
+    target.route<senf::log::Debug>();
+
+    // We cannot easily check the exact log string since that includes the current date/time
+    
     SENF_LOG_DEFAULT_STREAM(senf::log::Debug);
     SENF_LOG_DEFAULT_AREA(senf::log::DefaultArea);
     SENF_LOG_DEFAULT_LEVEL(senf::log::VERBOSE);
 
-    // should be disabled
     SENF_LOG(("Log message"));
+    BOOST_CHECK( target.str().empty() );
+    target.clear();
+
     SENF_LOG((senf::log::VERBOSE)("Log message 2"));
-    // should be enabled
+    BOOST_CHECK( target.str().empty() );
+    target.clear();
+    
     SENF_LOG((senf::log::IMPORTANT)("Important message"));
+    BOOST_CHECK( ! target.str().empty() );
+    target.clear();
+
     SENF_LOG((LogCritical) ("Another log message: " << 10));
+    BOOST_CHECK( ! target.str().empty() );
+    target.clear();
 
     SENF_LOG_BLOCK((senf::log::Debug) (senf::log::IMPORTANT) ({
         log << "Last message";
         log << " continued here";
     }));
+    BOOST_CHECK( ! target.str().empty() );
+    target.clear();
 
     Foo::log();
-    SENF_LOG((Foo)("Foo area"));
+    BOOST_CHECK( ! target.str().empty() );
+    target.clear();
 
-    BOOST_CHECK_EQUAL( logstream.str(), 
-                       "Important message\n"
-                       "Another log message: 10\n"
-                       "Last message continued here\n"
-                       "Foo::log\n" );
+    SENF_LOG((Foo)("Foo area"));
+    BOOST_CHECK( target.str().empty() );
+    target.clear();
 }
 
 BOOST_AUTO_UNIT_TEST(streamRegistry)

@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Kompetenzzentrum fuer NETwork research (NET)
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,40 +21,36 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief StreamRegistry internal header */
+    \brief StringTarget inline template implementation */
 
-#ifndef IH_StreamRegistry_
-#define IH_StreamRegistry_ 1
+//#include "StringTarget.ih"
 
 // Custom includes
-#include <string>
 
-///////////////////////////////ih.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
-namespace senf {
-namespace log {
-namespace detail {
+///////////////////////////////////////////////////////////////////////////
+// senf::log::StringTarget
 
-    /// Internal: Log stream base class
-    struct StreamBase 
-    {
-        StreamBase();
-        virtual ~StreamBase() {};
-        
-        std::string fullName() const;
-        virtual std::string v_name() const;
-        virtual unsigned defaultRuntimeLimit() const = 0;
+prefix_ senf::log::StringTarget::StringTarget()
+    : IOStreamTarget(stream_base::member)
+{}
 
-        void init();
+prefix_ std::string senf::log::StringTarget::str()
+    const
+{
+    return stream_base::member.str();
+}
 
-        unsigned index;
-        static unsigned nStreams;
-    };
+prefix_ void senf::log::StringTarget::clear()
+{
+    stream_base::member.str("");
+}
 
-}}}
 
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

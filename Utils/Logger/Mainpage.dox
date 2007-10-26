@@ -43,7 +43,7 @@
 
         // Define a new log stream with default level, runtime limit and compile time limit 
         // set to senf::log::MESSAGE
-        SENF_LOG_DEF_STREAM( UserLog, senf::log::MESSAAGE, senf::log::MESSAGE, senf::log::MESSAGE );
+        SENF_LOG_DEF_STREAM( UserLog, senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE );
 
         class Froblizer
         {

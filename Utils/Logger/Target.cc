@@ -35,22 +35,50 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target
 
-prefix_ senf::log::Target::~Target()
-{}
+prefix_ senf::log::Target::Target()
+{
+    TargetRegistry::instance().registerTarget(this);
+}
 
-prefix_ void senf::log::Target::write(detail::StreamBase const & stream, 
-                                      detail::AreaBase const & area,
-                                      unsigned level, std::string const & message)
+prefix_ senf::log::Target::~Target()
+{
+    while( ! rib_.empty()) {
+        // This is slower but simplifies the area cache handling and removing a target
+        // should be quite seldom
+        RIB::reverse_iterator i (rib_.rbegin());
+        unroute(i->stream, i->area, i->level);
+    }
+    TargetRegistry::instance().unregisterTarget(this);
+}
+
+prefix_ void senf::log::Target::write(boost::posix_time::ptime timestamp,
+                                      detail::StreamBase const & stream,
+                                      detail::AreaBase const & area, unsigned level,
+                                      std::string const & message)
 {
     RIB::iterator i (rib_.begin());
     RIB::iterator const i_end (rib_.end());
     for (; i != i_end; ++i)
         if ( ( ! i->stream || i->stream == &stream ) &&
              ( ! i->area || i->area == &area ) &&
-             i->level <= level ) {
-            v_write(stream.v_name(), area.v_name(), level, message);
+             (i->level == NONE::value ? i->stream->defaultRuntimeLimit() : i->level) <= level ) {
+            v_write(timestamp, stream.v_name(), area.v_name(), level, message);
             return;
         }
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::log::TargetRegistry
+
+prefix_ void senf::log::TargetRegistry::write(detail::StreamBase const & stream,
+                                              detail::AreaBase const & area, unsigned level,
+                                              std::string msg)
+{
+    boost::posix_time::ptime timestamp (boost::posix_time::microsec_clock::universal_time());
+    Targets::iterator i (targets_.begin());
+    Targets::iterator i_end (targets_.end());
+    for(; i != i_end; ++i)
+        (*i)->write(timestamp, stream, area, level, msg);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

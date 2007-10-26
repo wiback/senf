@@ -111,8 +111,6 @@ namespace senf {
 
 namespace impl {
 
-    struct nil {};
-
     template <class Base, class Policy, int _>
     struct MakeSocketPolicy_merge
     {};
@@ -150,7 +148,7 @@ namespace impl {
         {};
 
         template <class Base>
-        struct apply<Base,nil>
+        struct apply<Base,mpl::nil>
         {
             typedef Base type;
         };
@@ -201,7 +199,7 @@ namespace impl {
 
     template < BOOST_PP_ENUM_PARAMS_WITH_A_DEFAULT( SENF_SOCKET_POLICIES_N, 
                                                     class T, 
-                                                    senf::impl::nil ) >
+                                                    mpl::nil ) >
     class MakeSocketPolicy
         : public boost::mpl::if_< boost::is_convertible< T0*, SocketPolicyBase* >,
                                   impl::MakeSocketPolicy_impl< 

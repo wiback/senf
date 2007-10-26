@@ -46,6 +46,12 @@
     <em>Runtime</em> configuration on the other hand deals with routing all those messages, which
     are enabled at compile time to the logging targets. If a message is not routed, it will be
     discarded. This allows to additionally disable messages at run-time.
+
+    \fixme Restructure compile-time configuration: Only allow stream based configuration using
+        SENF_LOG_CONF. For more complex configuration, accept a macro SENF_LOG_CONFFILE which, if
+        defined, must define the path of a file to be included. Area specific configuration must be
+        done in this include file. The area must be complete (not only a predeclaration) at that
+        point.
  */
 
 namespace senf {
@@ -118,7 +124,7 @@ namespace log {
     struct Enabled
     {
         static const bool value = (
-            (Level::value == senf::log::NONE::value ? Stream::defaultLevel::value : Level::value)
+            (Level::value == NONE::value ? Stream::defaultLevel::value : Level::value)
                 >= detail::Config<Stream,Area>::compileLimit::value );
     };
 

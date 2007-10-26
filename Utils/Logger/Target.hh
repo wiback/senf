@@ -27,7 +27,11 @@
 #define HH_Target_ 1
 
 // Custom includes
+#include <set>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/utility.hpp>
 #include "../singleton.hh"
+#include "../mpl.hh"
 #include "StreamRegistry.hh"
 #include "AreaRegistry.hh"
 
@@ -37,6 +41,8 @@
 namespace senf {
 namespace log {
 
+    class TargetRegistry;
+
     /** \brief Logging target base class
 
         All enabled log messages are eventually routed to one or more logging targets. It is the
@@ -45,8 +51,7 @@ namespace log {
         passed the log message and a complete set of logging parameters (\e stream, \e area and \e
         level).
       */
-    class Target
-        : public senf::singleton<Target>
+    class Target : private boost::noncopyable
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -56,18 +61,23 @@ namespace log {
         ///\name Structors and default members
         ///@{
 
+        Target();
         virtual ~Target();
-
-        // default default constructor
-        // default copy constructor
-        // default copy assignment
-        // default destructor
-
-        // no conversion constructors
 
         ///@}
 
+        template <class Stream>
+        void route();
+
+        template <class Stream, class Arg0>
+        void route();
+
+        template <class Stream, class Area, class Level>
+        void route();
+
     protected:
+
+        std::string timestamp();
 
     private:
 
@@ -76,14 +86,29 @@ namespace log {
         void unroute(detail::StreamBase const * stream, detail::AreaBase const * area, 
                      unsigned level);
 
+        template <class Area>
+        void route(detail::StreamBase const * stream, detail::AreaBase const *);
+
+        template <class Level>
+        void route(detail::StreamBase const * stream, detail::LevelBase const *);
+
         void updateAreaCache(detail::AreaBase const & area, detail::StreamBase const * stream,
                              unsigned level);
 
-        void write(detail::StreamBase const & stream, detail::AreaBase const & area, 
-                   unsigned level, std::string const & message);
-        
-        virtual void v_write(std::string const & stream, std::string const & area, unsigned level,
+        void write(boost::posix_time::ptime timestamp, detail::StreamBase const & stream,
+                   detail::AreaBase const & area, unsigned level, std::string const & message);
+
+#   ifdef DOXYGEN
+    protected:
+#   endif
+
+        virtual void v_write(boost::posix_time::ptime, std::string const & stream, 
+                             std::string const & area, unsigned level, 
                              std::string const & message) = 0;
+
+#   ifdef DOXYGEN
+    private:
+#   endif
 
         struct RoutingEntry 
         {
@@ -104,14 +129,43 @@ namespace log {
         typedef std::vector<RoutingEntry> RIB;
 
         RIB rib_;
+        
+        friend class TargetRegistry;
     };
+
+    /** \brief Target registry
+
+        The TargetRegistry keeps a record of all existing targets. 
+      */
+    class TargetRegistry
+        : public senf::singleton<TargetRegistry>
+    {
+    public:
+        using senf::singleton<TargetRegistry>::instance;
+
+        void write(detail::StreamBase const & stream, detail::AreaBase const & area,
+                   unsigned level, std::string msg);
+
+    private:
+        void registerTarget(Target * target);
+        void unregisterTarget(Target * target);
+
+        typedef std::set<Target *> Targets;
+        Targets targets_;
+        
+        friend class Target;
+    };
+
+
+    template <class Stream, class Area, class Level>
+    void write(std::string msg);
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Target.cci"
 //#include "Target.ct"
-//#include "Target.cti"
+#include "Target.cti"
 #endif
 
 
