@@ -60,6 +60,8 @@ namespace log {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        enum action_t { ACCEPT, REJECT };
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -70,14 +72,28 @@ namespace log {
         ///@}
 
         template <class Stream>
-        void route();
+        void route(action_t action=ACCEPT);
 
-        template <class Stream, class Arg0>
-        void route();
+        template <class Stream, class Arg>
+        void route(action_t action=ACCEPT);
 
         template <class Stream, class Area, class Level>
-        void route();
+        void route(action_t action=ACCEPT);
 
+        void route(std::string const & stream, action_t action=ACCEPT);
+        void route(std::string const & stream, std::string const & area, action_t action=ACCEPT);
+        void route(std::string const & stream, unsigned level, action_t action=ACCEPT);
+        void route(std::string const & stream, std::string const & area, unsigned level, 
+                   action_t action=ACCEPT);
+
+        struct InvalidStreamException : public std::exception
+        { virtual char const * what() const throw() 
+                { return "senf::log::Target::InvalidStreamException"; } };
+
+        struct InvalidAreaException : public std::exception
+        { virtual char const * what() const throw() 
+                { return "senf::log::Target::InvalidAreaException"; } };
+        
     protected:
 
         std::string timestamp();
@@ -85,18 +101,17 @@ namespace log {
     private:
 
         void route(detail::StreamBase const * stream, detail::AreaBase const * area, 
-                   unsigned level);
+                   unsigned level, action_t action);
         void unroute(detail::StreamBase const * stream, detail::AreaBase const * area, 
-                     unsigned level);
+                     unsigned level, action_t action);
 
         template <class Area>
-        void route(detail::StreamBase const * stream, detail::AreaBase const *);
+        void route(detail::StreamBase const * stream, detail::AreaBase const *, action_t action);
 
         template <class Level>
-        void route(detail::StreamBase const * stream, detail::LevelBase const *);
-
-        void updateAreaCache(detail::AreaBase const & area, detail::StreamBase const * stream,
-                             unsigned level);
+        void route(detail::StreamBase const * stream, detail::LevelBase const *, action_t action);
+        
+        void updateRoutingCache(detail::StreamBase const * stream, detail::AreaBase const * area);
 
         void write(boost::posix_time::ptime timestamp, detail::StreamBase const & stream,
                    detail::AreaBase const & area, unsigned level, std::string const & message);
@@ -116,24 +131,21 @@ namespace log {
         struct RoutingEntry 
         {
             RoutingEntry(detail::StreamBase const * stream_, detail::AreaBase const * area_, 
-                         unsigned level_)
-                : stream(stream_), area(area_), level(level_) {}
-            RoutingEntry() 
-                : stream(0), area(0), level(0) {}
+                         unsigned level_, action_t action_);
+            RoutingEntry();
 
-            bool operator==(RoutingEntry const & other) 
-                { return stream == other.stream && area == other.area && level == other.level; }
+            bool operator==(RoutingEntry const & other);
 
             detail::StreamBase const * stream;
             detail::AreaBase const * area;
-            unsigned level;
+            unsigned level;            action_t action;
         };
 
         typedef std::vector<RoutingEntry> RIB;
 
         RIB rib_;
         
-        friend class TargetRegistry;
+        friend class detail::AreaBase;
     };
 
     /** \brief Target registry

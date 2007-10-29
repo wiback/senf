@@ -34,48 +34,88 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target
 
-prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
-                                      detail::AreaBase const * area, unsigned level)
+prefix_ void senf::log::Target::route(std::string const & stream, action_t action)
 {
-    rib_.push_back(RoutingEntry(stream, area, level));
-
-    // Update the area/stream routing cache
-    if (area)
-        updateAreaCache(*area, stream, level);
-    else {
-        AreaRegistry::Registry::iterator i (AreaRegistry::instance().registry_.begin());
-        AreaRegistry::Registry::iterator const i_end (AreaRegistry::instance().registry_.end());
-        for (; i != i_end; ++i)
-            updateAreaCache(*(i->second), stream, level);
-    }
-        
+    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
+    if (!s)
+        throw InvalidStreamException();
+    route(s, 0, NONE::value, action);
 }
 
-prefix_ void
-senf::log::Target::updateAreaCache(detail::AreaBase const & area,
-                                   detail::StreamBase const * stream, unsigned level)
+prefix_ void senf::log::Target::route(std::string const & stream, std::string const & area,
+                                      action_t action)
 {
-    if (stream) {
-        if (level < area.streamLimit(*stream))
-            area.setStreamLimit(*stream, level);
-    } else {
-        StreamRegistry::Registry::iterator i (StreamRegistry::instance().registry_.begin());
-        StreamRegistry::Registry::iterator const i_end (StreamRegistry::instance().registry_.end());
-        for(; i != i_end; ++i)
-            if (level < area.streamLimit(*(i->second)))
-                area.setStreamLimit(*(i->second),level);
-    }
+    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
+    if (!s)
+        throw InvalidStreamException();
+    detail::AreaBase const * a (AreaRegistry::instance().lookup(area));
+    if (!a)
+        throw InvalidAreaException();
+    route(s, a, NONE::value, action);
+}
+
+prefix_ void senf::log::Target::route(std::string const & stream, unsigned level, action_t action)
+{
+    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
+    if (!s)
+        throw InvalidStreamException();
+    route(s, 0, level, action);
+}
+
+prefix_ void senf::log::Target::route(std::string const & stream, std::string const & area,
+                                      unsigned level, action_t action)
+{
+    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
+    if (!s)
+        throw InvalidStreamException();
+    detail::AreaBase const * a (AreaRegistry::instance().lookup(area));
+    if (!a)
+        throw InvalidAreaException();
+    route(s, a, level, action);
+}
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
+                                      detail::AreaBase const * area, unsigned level,
+                                      action_t action)
+{
+    rib_.push_back(RoutingEntry(stream, area, level, action));
+    if (action == ACCEPT)
+        updateRoutingCache(stream, area);
 }
 
 prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
-                                        detail::AreaBase const * area, unsigned level)
+                                        detail::AreaBase const * area, unsigned level, 
+                                        action_t action)
 {
-    rib_.erase(std::remove(rib_.begin(), rib_.end(), RoutingEntry(stream, area, level)),
+    rib_.erase(std::remove(rib_.begin(), rib_.end(), RoutingEntry(stream, area, level, action)),
                rib_.end());
+    if (action == ACCEPT)
+        updateRoutingCache(stream, area);
+}
 
-    ///\fixme Update area/stream routing cache
-    // Not doing anything here does not produce incorrect behavior, since removing a route
-    // can never lower the logging limit. Not updating the cache just reduces the performance.
+///////////////////////////////////////////////////////////////////////////
+// senf::log::Target::RoutingEntry
+
+prefix_ senf::log::Target::RoutingEntry::RoutingEntry(detail::StreamBase const * stream_,
+                                                      detail::AreaBase const * area_,
+                                                      unsigned level_, action_t action_)
+    : stream(stream_), area(area_), level(level_), action(action_) 
+{}
+
+prefix_ senf::log::Target::RoutingEntry::RoutingEntry()
+    : stream(0), area(0), level(0), action(ACCEPT) 
+{}
+
+prefix_ bool senf::log::Target::RoutingEntry::operator==(RoutingEntry const & other)
+{ 
+    return 
+        stream == other.stream && 
+        area == other.area && 
+        level == other.level &&
+        action == other.action; 
 }
 
 ///////////////////////////////////////////////////////////////////////////

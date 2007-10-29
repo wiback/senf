@@ -77,8 +77,8 @@ namespace log {
 
     /** \brief Define new default log area for the class
 
-        This command declares the containing class to be it's own default log area. It is such like a
-        combination of \ref SENF_LOG_DEF_AREA and \ref SENF_LOG_DEFAULT_AREA with a twist.
+        This command declares the containing class to be it's own default log area. It is such like
+        a combination of \ref SENF_LOG_DEF_AREA and \ref SENF_LOG_DEFAULT_AREA with a twist.
 
         \hideinitializer
      */

@@ -65,7 +65,7 @@ namespace log {
         typedef boost::transform_iterator<SelectName, Registry::const_iterator> iterator;
 
 #       ifdef DOXYGEN
-        // Hmm ... doxygen does not understand using declarations ...
+        // Hmm ... doxygen does not understand 'using declarations' ...
         /// Access stream registry singleton instance
         static AreaRegistry & instance();
 #       endif
@@ -79,6 +79,7 @@ namespace log {
         StreamRegistry();
 
         void registerStream(detail::StreamBase const & stream);
+        detail::StreamBase const * lookup(std::string const & name);
 
         Registry registry_;
 

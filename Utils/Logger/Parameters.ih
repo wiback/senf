@@ -67,7 +67,7 @@ namespace detail {
     senf::mpl::rv<2> Parameters_select_(AreaBase *);
     template <class Base, class Param>
     struct Parameters_<Base,Param,2> : public Base
-    { typedef Param area; };
+    { typedef Param area; typedef Param area_base; };
 
     senf::mpl::rv<3> Parameters_select_(LevelBase *);
     template <class Base, class Param>
@@ -96,7 +96,7 @@ namespace detail {
         typename boost::disable_if< boost::is_convertible<T*,AliasBase*> >::type * = 0);
     template <class Base, class Param>
     struct Parameters_<Base,Param,6> : public Base
-    { typedef typename Param::SENFLogArea area; };
+    { typedef typename Param::SENFLogArea area; typedef Param area_base; };
 
 #endif
 
@@ -110,13 +110,12 @@ namespace detail {
 
         static bool const compileEnabled = senf::log::Enabled<
             typename Base::stream, 
-            typename Base::area, 
+            typename Base::area_base, 
             level>::value;
 
         static bool enabled() { 
             return compileEnabled
-                && Base::area::instance().streamLimit(Base::stream::instance()) 
-                <= Base::level::value;
+                && Base::area::instance().limit(Base::stream::instance()) <= level::value;
         }
     };
 

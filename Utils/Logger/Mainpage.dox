@@ -51,8 +51,7 @@
             // This is a combination of SENF_LOG_DEF_AREA and SENF_LOG_DEFAULT_AREA.
             SENF_LOG_CLASS_AREA();
 
-            // Set default log parameters for this scope. The values here are not really
-            // necessary since these are the global default values
+            // Set default log parameters for this scope.
             SENF_LOG_DEFAULT_STREAM(foo::UserLog);
             SENF_LOG_DEFAULT_LEVEL(senf::log::NOTICE);
 
@@ -89,9 +88,11 @@
         design goals
         \li Flexible configuration at compile and runtime
         \li Concise usage and simple interface
-        \li Zero overhead for compile-time disabled log messages I did not find any non-mcaro
-        implementation which was not either completely convoluted, unusable or slow. So I turned to
-        a macro based implementation which can provide all the design goals stated above.
+        \li Zero overhead for compile-time disabled log messages 
+
+        I did not find any non-mcaro implementation which was not either completely convoluted,
+        unusable or slow. So I turned to a macro based implementation which can provide all the
+        design goals stated above.
  */
 
 

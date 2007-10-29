@@ -28,7 +28,8 @@
 
 // We need to put all tests into this single file to not violate the ODR
 
-#define SENF_LOG_CONF (( (senf)(log)(Debug), (_), NOTICE ))
+#define SENF_LOG_CONF (( (senf)(log)(Debug), (_), NOTICE )) \
+                      (( (not_anonymous)(myStream), (not_anonymous)(Foo), VERBOSE ))
 
 // Custom includes
 #include "Logger.hh"
@@ -61,6 +62,7 @@ BOOST_AUTO_UNIT_TEST(logger)
     senf::log::StringTarget target;
 
     target.route<senf::log::Debug>();
+    target.route("not_anonymous::myStream", "not_anonymous::Foo");
 
     // We cannot easily check the exact log string since that includes the current date/time
     

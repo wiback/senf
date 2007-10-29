@@ -29,11 +29,17 @@
 // Custom includes
 #include <string>
 #include <vector>
+#include <list>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include "Levels.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
 namespace log {
+
+    class Target;
+
 namespace detail {
 
     class StreamBase;
@@ -48,13 +54,26 @@ namespace detail {
 
         void init();
 
-        unsigned streamLimit(StreamBase const & stream) const;
-        void setStreamLimit(StreamBase const & stream, unsigned value) const;
+        unsigned limit(StreamBase const & stream) const;
+        void updateRoutingCache(Target & target, StreamBase const & stream, unsigned limit) const; 
+        void removeRoutingCache(Target & target, StreamBase const & stream) const; 
+        void write(boost::posix_time::ptime timestamp, StreamBase const & stream, unsigned level,
+              std::string msg) const;
 
     private:
-        typedef std::vector<unsigned> StreamLimits;
-        // mutable since this is a cache and may therefore change at unexpected places ...
-        mutable StreamLimits streamLimits_;
+        struct RouteEntry {
+            RouteEntry(unsigned limit_, Target * target_) : limit(limit_), target(target_) {}
+            unsigned limit;
+            Target * target;
+        };
+        typedef std::list<RouteEntry> Routes;
+        struct CacheEntry {
+            CacheEntry() : limit (DISABLED::value), routes() {}
+            unsigned limit;
+            Routes routes;
+        };
+        typedef std::vector<CacheEntry> RoutingCache;
+        mutable RoutingCache routingCache_;
     };
 
 }}}

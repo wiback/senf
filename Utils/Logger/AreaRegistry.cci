@@ -61,6 +61,13 @@ prefix_ void senf::log::AreaRegistry::registerArea(detail::AreaBase const & area
     registry_.insert( std::make_pair(area.v_name(), &area) );
 }
 
+prefix_ senf::log::detail::AreaBase const *
+senf::log::AreaRegistry::lookup(std::string const & name)
+{
+    Registry::iterator i (registry_.find(name));
+    return i == registry_.end() ? 0 : i->second;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::AreaBase
 
@@ -81,18 +88,11 @@ prefix_ void senf::log::detail::AreaBase::init()
     senf::log::AreaRegistry::instance().registerArea(*this);
 }
 
-prefix_ unsigned senf::log::detail::AreaBase::streamLimit(StreamBase const & stream)
+prefix_ unsigned senf::log::detail::AreaBase::limit(StreamBase const & stream)
     const
 {
-    return stream.index >= streamLimits_.size() ? DISABLED::value : streamLimits_[stream.index];
-}
-
-prefix_ void senf::log::detail::AreaBase::setStreamLimit(StreamBase const & stream, unsigned value)
-    const
-{
-    if (stream.index >= streamLimits_.size())
-        streamLimits_.resize(stream.index+1,0u);
-    streamLimits_[stream.index] = value;
+    return stream.index >= routingCache_.size() ? 
+        DISABLED::value : routingCache_[stream.index].limit;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

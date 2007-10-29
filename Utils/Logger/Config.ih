@@ -94,7 +94,6 @@ namespace detail {
 #   define SLC_elt(r, data, elt) \
         SENF_LOG_CONF_DEFINE elt
 
-    // Need to use fold here to not exhaust the maximum FOR nesting depth ...
     BOOST_PP_SEQ_FOR_EACH(SLC_elt, none, SENF_LOG_CONF)
 
 #   undef SLC_elt

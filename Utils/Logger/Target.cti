@@ -35,21 +35,21 @@
 // senf::log::Target
 
 template <class Stream>
-prefix_ void senf::log::Target::route()
+prefix_ void senf::log::Target::route(action_t action)
 {
-    route(&Stream::instance(), 0, NONE::value);
+    route(&Stream::instance(), 0, NONE::value, action);
 }
 
-template <class Stream, class Arg0>
-prefix_ void senf::log::Target::route()
+template <class Stream, class Arg>
+prefix_ void senf::log::Target::route(action_t action)
 {
-    route<Arg0>(&Stream::instance(), static_cast<Arg0*>(0));
+    route<Arg>(&Stream::instance(), static_cast<Arg*>(0), action);
 }
 
 template <class Stream, class Area, class Level>
-prefix_ void senf::log::Target::route()
+prefix_ void senf::log::Target::route(action_t action)
 {
-    route(&Stream::instance(), &Area::instance(), Level::value);
+    route(&Stream::instance(), &Area::instance(), Level::value, action);
 }
 
 ////////////////////////////////////////
@@ -57,16 +57,16 @@ prefix_ void senf::log::Target::route()
 
 template <class Area>
 prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
-                                      detail::AreaBase const *)
+                                      detail::AreaBase const *, action_t action)
 {
-    route(stream, &Area::instance(), NONE::value);
+    route(stream, &Area::instance(), NONE::value, action);
 }
 
 template <class Level>
 prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
-                                      detail::LevelBase const *)
+                                      detail::LevelBase const *, action_t action)
 {
-    route(stream, 0, Level::value);
+    route(stream, 0, Level::value, action);
 }
 
 ///////////////////////////////////////////////////////////////////////////

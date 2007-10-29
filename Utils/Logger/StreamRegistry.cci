@@ -59,6 +59,13 @@ prefix_ void senf::log::StreamRegistry::registerStream(detail::StreamBase const 
     registry_.insert( std::make_pair(stream.v_name(), &stream) );
 }
 
+prefix_ senf::log::detail::StreamBase const *
+senf::log::StreamRegistry::lookup(std::string const & name)
+{
+    Registry::iterator i (registry_.find(name));
+    return i == registry_.end() ? 0 : i->second;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::StreamBase
 

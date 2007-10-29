@@ -78,6 +78,7 @@ namespace log {
         AreaRegistry();
 
         void registerArea(detail::AreaBase const & area);
+        detail::AreaBase const * lookup(std::string const & name);
 
         Registry registry_;
 
