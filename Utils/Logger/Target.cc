@@ -46,9 +46,87 @@ prefix_ senf::log::Target::~Target()
         // This is terribly slow but simplifies the area cache handling and removing a target should
         // be quite seldom
         RIB::reverse_iterator i (rib_.rbegin());
-        unroute(i->stream, i->area, i->level, i->action);
+        unroute(i->stream_, i->area_, i->level_, i->action_);
     }
     TargetRegistry::instance().unregisterTarget(this);
+}
+
+prefix_ void senf::log::Target::route(std::string const & stream, std::string const & area,
+                                      unsigned level, action_t action, int index)
+{
+    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
+    if (!s)
+        throw InvalidStreamException();
+    detail::AreaBase const * a (0);
+    if (! area.empty()) {
+        a = AreaRegistry::instance().lookup(area);
+        if (!a)
+            throw InvalidAreaException();
+    }
+    route(s, a, level, action, index);
+}
+
+prefix_ void senf::log::Target::unroute(int index)
+{
+    RIB::iterator i;
+    if (index < 0) {
+        if (RIB::size_type(-index) >= rib_.size())
+            i = rib_.begin();
+        else {
+            i = rib_.end();
+            std::advance(i, -index);
+        }
+    } else {
+        if (RIB::size_type(index+1) >= rib_.size()) {
+            i = rib_.end();
+            --i;
+        } else {
+            i = rib_.begin();
+            std::advance(i, index);
+        }
+    }
+    RoutingEntry entry (*i);
+    rib_.erase(i);
+    if (entry.action_ == ACCEPT)
+        updateRoutingCache(entry.stream_, entry.area_);
+}
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
+                                      detail::AreaBase const * area, unsigned level,
+                                      action_t action, int index)
+{
+    RIB::iterator i;
+    if (index < 0) {
+        if (RIB::size_type(-index-1) >= rib_.size())
+            i = rib_.begin();
+        else {
+            i = rib_.end();
+            std::advance(i, -index - 1);
+        }
+    } else {
+        if (RIB::size_type(index) >= rib_.size())
+            i = rib_.end();
+        else {
+            i = rib_.begin();
+            std::advance(i, index);
+        }
+    }
+    rib_.insert(i, RoutingEntry(stream, area, level, action));
+    if (action == ACCEPT)
+        updateRoutingCache(stream, area);
+}
+
+prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
+                                        detail::AreaBase const * area, unsigned level, 
+                                        action_t action)
+{
+    RIB::iterator i = std::find(rib_.begin(), rib_.end(), 
+                                RoutingEntry(stream, area, level, action));
+    if (i != rib_.end())
+        unroute(std::distance(rib_.begin(), i));
 }
 
 prefix_ void senf::log::Target::updateRoutingCache(detail::StreamBase const * stream,
@@ -72,10 +150,10 @@ prefix_ void senf::log::Target::updateRoutingCache(detail::StreamBase const * st
     RIB::iterator i (rib_.begin());
     RIB::iterator const i_end (rib_.end());
     for(; i != i_end; ++i)
-        if ( (! i->stream || i->stream == stream) &&
-             (! i->area || i->area == area) &&
-             i->action == ACCEPT ) {
-            unsigned l (i->level == NONE::value ? i->stream->defaultRuntimeLimit() : i->level);
+        if ( (! i->stream_ || i->stream_ == stream) &&
+             (! i->area_ || i->area_ == area) &&
+             i->action_ == ACCEPT ) {
+            unsigned l (i->level_ == NONE::value ? i->stream_->defaultRuntimeLimit() : i->level_);
             if (l < limit)
                 limit = l;
         }
@@ -93,10 +171,10 @@ prefix_ void senf::log::Target::write(boost::posix_time::ptime timestamp,
     RIB::iterator i (rib_.begin());
     RIB::iterator const i_end (rib_.end());
     for (; i != i_end; ++i)
-        if ( (! i->stream || i->stream == &stream) &&
-             (! i->area || i->area == &area) &&
-             (i->level == NONE::value ? i->stream->defaultRuntimeLimit() : i->level) <= level ) {
-            if (i->action == ACCEPT)
+        if ( (! i->stream_ || i->stream_ == &stream) &&
+             (! i->area_ || i->area_ == &area) &&
+             (i->level_ == NONE::value ? i->stream_->defaultRuntimeLimit() : i->level_) <= level ) {
+            if (i->action_ == ACCEPT)
                 v_write(timestamp, stream.v_name(), area.v_name(), level, message);
             return;
         }

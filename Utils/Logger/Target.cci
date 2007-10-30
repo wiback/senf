@@ -34,88 +34,62 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target
 
-prefix_ void senf::log::Target::route(std::string const & stream, action_t action)
+prefix_ iterator senf::log::Target::begin()
+    const
 {
-    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
-    if (!s)
-        throw InvalidStreamException();
-    route(s, 0, NONE::value, action);
+    return rib_.begin();
 }
 
-prefix_ void senf::log::Target::route(std::string const & stream, std::string const & area,
-                                      action_t action)
+prefix_ iterator senf::log::Target::end()
+    const
 {
-    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
-    if (!s)
-        throw InvalidStreamException();
-    detail::AreaBase const * a (AreaRegistry::instance().lookup(area));
-    if (!a)
-        throw InvalidAreaException();
-    route(s, a, NONE::value, action);
-}
-
-prefix_ void senf::log::Target::route(std::string const & stream, unsigned level, action_t action)
-{
-    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
-    if (!s)
-        throw InvalidStreamException();
-    route(s, 0, level, action);
-}
-
-prefix_ void senf::log::Target::route(std::string const & stream, std::string const & area,
-                                      unsigned level, action_t action)
-{
-    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
-    if (!s)
-        throw InvalidStreamException();
-    detail::AreaBase const * a (AreaRegistry::instance().lookup(area));
-    if (!a)
-        throw InvalidAreaException();
-    route(s, a, level, action);
-}
-
-////////////////////////////////////////
-// private members
-
-prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
-                                      detail::AreaBase const * area, unsigned level,
-                                      action_t action)
-{
-    rib_.push_back(RoutingEntry(stream, area, level, action));
-    if (action == ACCEPT)
-        updateRoutingCache(stream, area);
-}
-
-prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
-                                        detail::AreaBase const * area, unsigned level, 
-                                        action_t action)
-{
-    rib_.erase(std::remove(rib_.begin(), rib_.end(), RoutingEntry(stream, area, level, action)),
-               rib_.end());
-    if (action == ACCEPT)
-        updateRoutingCache(stream, area);
+    return rib_.end();
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target::RoutingEntry
 
-prefix_ senf::log::Target::RoutingEntry::RoutingEntry(detail::StreamBase const * stream_,
-                                                      detail::AreaBase const * area_,
-                                                      unsigned level_, action_t action_)
-    : stream(stream_), area(area_), level(level_), action(action_) 
+prefix_ senf::log::Target::RoutingEntry::RoutingEntry(detail::StreamBase const * stream,
+                                                      detail::AreaBase const * area,
+                                                      unsigned level, action_t action)
+    : stream_(stream), area_(area), level_(level), action_(action) 
 {}
 
 prefix_ senf::log::Target::RoutingEntry::RoutingEntry()
-    : stream(0), area(0), level(0), action(ACCEPT) 
+    : stream_(0), area_(0), level_(0), action_(ACCEPT) 
 {}
 
 prefix_ bool senf::log::Target::RoutingEntry::operator==(RoutingEntry const & other)
 { 
     return 
-        stream == other.stream && 
-        area == other.area && 
-        level == other.level &&
-        action == other.action; 
+        stream_ == other.stream_ && 
+        area_ == other.area_ && 
+        level_ == other.level_ &&
+        action_ == other.action_; 
+}
+
+prefix_ std::string senf::log::Target::RoutingEntry::stream()
+    const
+{
+    return stream_->v_name();
+}
+
+prefix_ std::string senf::log::Target::RoutingEntry::area()
+    const
+{
+    return area_->v_name();
+}
+
+prefix_ unsigned senf::log::Target::RoutingEntry::level()
+    const
+{
+    return level_;
+}
+
+prefix_ senf::log::Target::action_t senf::log::Target::RoutingEntry::action()
+    const
+{
+    return action_;
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -62,6 +62,34 @@ namespace log {
 
         enum action_t { ACCEPT, REJECT };
 
+        struct RoutingEntry 
+        {
+            RoutingEntry();
+            bool operator==(RoutingEntry const & other);
+
+            std::string stream() const;
+            std::string area() const;
+            unsigned level() const;
+            action_t action() const;
+            
+        private:
+            RoutingEntry(detail::StreamBase const * stream, detail::AreaBase const * area, 
+                         unsigned level, action_t action);
+
+            detail::StreamBase const * stream_;
+            detail::AreaBase const * area_;
+            unsigned level_;
+            action_t action_;
+            
+            friend class Target;
+        };
+
+    private:
+        typedef std::vector<RoutingEntry> RIB;
+
+    public:
+        typedef RIB::const_iterator iterator;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -71,45 +99,48 @@ namespace log {
 
         ///@}
 
-        template <class Stream>
-        void route(action_t action=ACCEPT);
+        template <class Stream> void route(action_t action = ACCEPT, int index = -1);
+        template <class Stream, class Arg> void route(action_t action = ACCEPT, int index = -1);
+        template <class Stream, class Area, class Level> void route(action_t action = ACCEPT, 
+                                                                    int index = -1);
 
-        template <class Stream, class Arg>
-        void route(action_t action=ACCEPT);
+        void route(std::string const & stream, std::string const & area = "", 
+                   unsigned level = NONE::value, action_t action = ACCEPT, int index = -1);
 
-        template <class Stream, class Area, class Level>
-        void route(action_t action=ACCEPT);
+        template <class Stream> void unroute(action_t action = ACCEPT);
+        template <class Stream, class Arg> void unroute(action_t action = ACCEPT);
+        template <class Stream, class Area, class Level> void unroute(action_t action = ACCEPT);
 
-        void route(std::string const & stream, action_t action=ACCEPT);
-        void route(std::string const & stream, std::string const & area, action_t action=ACCEPT);
-        void route(std::string const & stream, unsigned level, action_t action=ACCEPT);
-        void route(std::string const & stream, std::string const & area, unsigned level, 
-                   action_t action=ACCEPT);
+        void unroute(std::string const & stream, std::string const & area = "", 
+                     unsigned level = NONE::value, action_t action = ACCEPT);
+        void unroute(int index);
 
         struct InvalidStreamException : public std::exception
         { virtual char const * what() const throw() 
                 { return "senf::log::Target::InvalidStreamException"; } };
-
+        
         struct InvalidAreaException : public std::exception
         { virtual char const * what() const throw() 
                 { return "senf::log::Target::InvalidAreaException"; } };
+
+        iterator begin() const;
+        iterator end() const;
         
-    protected:
-
-        std::string timestamp();
-
     private:
-
         void route(detail::StreamBase const * stream, detail::AreaBase const * area, 
-                   unsigned level, action_t action);
+                   unsigned level, action_t action, int index);
         void unroute(detail::StreamBase const * stream, detail::AreaBase const * area, 
                      unsigned level, action_t action);
 
-        template <class Area>
-        void route(detail::StreamBase const * stream, detail::AreaBase const *, action_t action);
+        template <class Area> void route(detail::StreamBase const * stream, 
+                                         detail::AreaBase const *, action_t action, int index);
+        template <class Level> void route(detail::StreamBase const * stream, 
+                                          detail::LevelBase const *, action_t action, int index);
 
-        template <class Level>
-        void route(detail::StreamBase const * stream, detail::LevelBase const *, action_t action);
+        template <class Area> void unroute(detail::StreamBase const * stream, 
+                                           detail::AreaBase const *, action_t action);
+        template <class Level> void unroute(detail::StreamBase const * stream, 
+                                          detail::LevelBase const *, action_t action);
         
         void updateRoutingCache(detail::StreamBase const * stream, detail::AreaBase const * area);
 
@@ -127,21 +158,6 @@ namespace log {
 #   ifdef DOXYGEN
     private:
 #   endif
-
-        struct RoutingEntry 
-        {
-            RoutingEntry(detail::StreamBase const * stream_, detail::AreaBase const * area_, 
-                         unsigned level_, action_t action_);
-            RoutingEntry();
-
-            bool operator==(RoutingEntry const & other);
-
-            detail::StreamBase const * stream;
-            detail::AreaBase const * area;
-            unsigned level;            action_t action;
-        };
-
-        typedef std::vector<RoutingEntry> RIB;
 
         RIB rib_;
         
