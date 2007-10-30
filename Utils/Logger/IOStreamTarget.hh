@@ -56,9 +56,6 @@ namespace log {
         
         \note This class will permanently and globally change the date formating of the given
             stream.
-
-        \fixme Implement more robust formatting: Find line-breaks in the message and repeat the
-            prefix (with continuation markers)
       */
     class IOStreamTarget
         : public Target

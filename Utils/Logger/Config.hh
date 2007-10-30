@@ -47,6 +47,47 @@
     are enabled at compile time to the logging targets. If a message is not routed, it will be
     discarded. This allows to additionally disable messages at run-time. Message routing is managed
     via the \ref Target interface.
+
+    \section config_compile Compile time configuration
+
+    Compile time configuration is set on the compiler command line:
+    <pre>
+    g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Debug),(_),DISABLED ))
+                             (( (senf)(log)(Debug),(foo)(SomeClass),VERBOSE ))
+                             (( (foo)(Transactions),(_),NOTICE ))" ...
+    </pre>
+    The value is relatively complex; It's a Boost.Preprocessor style sequence of tuples, of which
+    the first and second elements are again sequences. What this boils down to, is that it allows to
+    configure compile time logging limits based on stream and optional area. 
+
+    The above example disables all debug logging by setting the default log limit for all areas on
+    the \c senf::log::Debug stream to \c DISABLED. It then re-enables debug logging only within the
+    \c foo::SomeClass area, where it is set to \c VERBOSE. Furthermore, the limit on the \c
+    foo::Transactions stream is set to \c NOTICE.
+
+    \section config_runtime Runtime configuration
+
+    The runtime configuration is performed by routing messages to one or more logging targets:
+    \code
+    senf::log::ConsoleLog consoleLog;
+    senf::log::FileLog fileLog ("my.log");
+
+    consoleLog.route<senf::log::Debug>();
+    consoleLog.route<foo::Transactions, foo::SomeClass>(senf::log::Target::REJECT);
+    consoleLog.route<foo::Transactions, senf::log::IMPORTANT>();
+
+    fileLog.route<foo::Transactions>();
+    \endcode Here we see an already relatively complex setup: All debug messages (that is, those,
+    which are not disabled at compile time) are routed to the console. We also route important
+    transactions to the console \e except transactions from the \c foo::SomeClass area. The \c
+    fileLog simply receives all transaction log messages.
+
+    The routing statements are processed by the targets in order, the first matching rule will
+    decide a log messages fate for that target.
+
+    \see 
+        \ref SENF_LOG_CONF: compile time configuration \n
+        \ref senf::log::Target: runtime configuration
  */
 
 namespace senf {
@@ -60,13 +101,7 @@ namespace log {
     /** \brief Compile time configuration
 
         This define symbol sets the compile time logger configuration. This symbol should normally
-        be set on the compiler command line:
-        <pre>
-        g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Debug),(_),DISABLED ))
-                                 (( (senf)(log)(Debug),(foo)(SomeClass),VERBOSE ))
-                                 (( (foo)(Transactions),(_),NOTICE ))" ...
-        </pre>
-        (As this option can get quite long, you might want to use the '-imacros' option instead)
+        be set on the compiler command line.
 
         The formal syntax of this option is:
 

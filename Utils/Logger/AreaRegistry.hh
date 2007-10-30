@@ -43,11 +43,13 @@ namespace log {
 
     /** \brief Area registry 
         
-        The area registry keeps track of all areas defined. Area classes are defined as singletons
-        and will automatically register with this registry.
+        The area registry keeps track of all areas defined. 
 
-        The area registry exposes a forward sequence interface which is a sequence of the names of
-        all registered areas.
+        The area registry exposes a forward sequence interface which allows to query the list of all
+        registered areas.
+
+        \implementation Area classes are defined as singletons and will automatically register with
+        this registry.
      */
     class AreaRegistry
         : public senf::singleton<AreaRegistry>
@@ -62,6 +64,7 @@ namespace log {
 
     public:
         typedef boost::transform_iterator<SelectName, Registry::const_iterator> iterator;
+                                        ///< Iterator type
 
 #       ifdef DOXYGEN
         // Hmm ... doxygen does not understand using declarations ...
@@ -71,8 +74,8 @@ namespace log {
 
         using senf::singleton<AreaRegistry>::instance;
 
-        iterator begin();
-        iterator end();
+        iterator begin();               ///< Beginning of area name sequence
+        iterator end();                 ///< End of area name sequence
 
     private:
         AreaRegistry();

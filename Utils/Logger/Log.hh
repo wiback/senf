@@ -49,15 +49,16 @@
     SENF_LOG( (senf::log::Debug)(senf::log::NOTICE)(FroblizerArea)("The log message") );
     \endcode
 
-    For each log message, the following information is needed:
+    The argument is comprised of a sequence of parameters and the log message itself. The parameters
+    are
     \li The <em>log stream</em>,
     \li the <em>log area</em>,
     \li the <em>log level</em>,
-    \li and the log message itself
     
-    These parameters may be specified <i>in arbitrary order</i> and even multiple times in the
-    parameter sequence. If some argument type occurs multiple times, the last occurrence wins. If
-    any one of the parameters is not specified, it's current default value will be used.
+    These parameters are optional and may be specified <i>in arbitrary order</i> (with the log
+    message always being the last sequence element) and even multiple times in the parameter
+    sequence. If some argument type occurs multiple times, the last occurrence wins. If any one of
+    the parameters is not specified, it's current default value will be used.
 
     This current default value is set using \ref SENF_LOG_DEFAULT_STREAM, \ref SENF_LOG_DEFAULT_AREA
     and \ref SENF_LOG_DEFAULT_LEVEL respectively. These macros set the default stream, area and/or

@@ -32,7 +32,31 @@
     \see
         \ref logging \n
         \ref config \n
+        \ref targets \n
+        \ref loglevels
 
+    \section logging_concepts Concepts
+
+    The log messages are devided along several categories: \e streams, \e areas and log \e levels.
+
+    A \e stream combines log messages with a single purpose. There is one default stream, called \c
+    senf::log::Debug. New streams are defined with \ref SENF_LOG_DEF_STREAM.
+
+    An \e area labels a log message with the source location of the message. An area is an arbitrary
+    tag which may be added to the message. There is one default area called \c
+    senf::log::DefaultArea. New areas are defined either with \ref SENF_LOG_DEF_AREA or \ref
+    SENF_LOG_CLASS_AREA, the latter being the more typical. The area will normally indicate the
+    class or subsystem from which the message was generated.
+
+    The log \e level gives information on the importance of the message. The list lof \ref loglevels
+    is fixed.
+
+    After log messages have been created, they have to be placed somewhere. This is the
+    responsibility of the \e target. A target is an arbitrary sink for log messages. The target
+    manages message routing and will pass the message on to it's destination, be it the system
+    console, some log file or some other place (e.g. an SQL database). The target is responsible for
+    formating the message.
+    
     \section logging_tutorial Tutorial introduction
 
     Using the logging library mostly concerns using \ref SENF_LOG statements in your code. There are
