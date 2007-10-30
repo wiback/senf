@@ -27,6 +27,7 @@
 //#include "Target.ih"
 
 // Custom includes
+#include <algorithm>
 
 //#include "Target.mpp"
 #define prefix_

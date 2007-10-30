@@ -26,7 +26,6 @@
 //#include "Target.ih"
 
 // Custom includes
-#include <algorithm>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -34,13 +33,13 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target
 
-prefix_ iterator senf::log::Target::begin()
+prefix_ senf::log::Target::iterator senf::log::Target::begin()
     const
 {
     return rib_.begin();
 }
 
-prefix_ iterator senf::log::Target::end()
+prefix_ senf::log::Target::iterator senf::log::Target::end()
     const
 {
     return rib_.end();
