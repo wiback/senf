@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2007 
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Kompetenzzentrum fuer NETwork research (NET)
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,27 +21,30 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Setup.test unit tests */
+    \brief auto_unit_test public header */
 
-//#include "Setup.test.hh"
-//#include "Setup.test.ih"
+#ifndef HH_auto_unit_test_
+#define HH_auto_unit_test_ 1
 
 // Custom includes
-#include "Setup.hh"
+#include <boost/version.hpp>
 
-#include "../Utils/auto_unit_test.hh"
-#include <boost/test/test_tools.hpp>
+//#include "auto_unit_test.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#if BOOST_VERSION >= 103400
 
-BOOST_AUTO_UNIT_TEST(setup)
-{
-    // Tested in nearly all other modules ...
-}
+#   define BOOST_AUTO_UNIT_TEST BOOST_AUTO_TEST_CASE
 
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+#endif
+
+#include <boost/test/auto_unit_test.hpp>
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "auto_unit_test.cci"
+//#include "auto_unit_test.ct"
+//#include "auto_unit_test.cti"
+#endif
 
 
 // Local Variables:

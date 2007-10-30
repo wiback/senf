@@ -30,7 +30,7 @@
 #include "Setup.hh"
 #include "Module.hh"
 
-#include <boost/test/auto_unit_test.hpp>
+#include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 #include <boost/type_traits.hpp>
 

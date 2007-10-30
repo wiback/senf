@@ -30,7 +30,7 @@
 #include <boost/lexical_cast.hpp>
 #include "INet6Address.hh"
 
-#include <boost/test/auto_unit_test.hpp>
+#include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

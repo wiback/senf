@@ -29,7 +29,7 @@
 #include "SocketPolicy.hh"
 #include "SocketPolicy.test.hh"
 
-#include <boost/test/auto_unit_test.hpp>
+#include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 #include <boost/mpl/assert.hpp>
 #include <boost/concept_check.hpp>
