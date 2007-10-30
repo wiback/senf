@@ -55,6 +55,43 @@ def checkLocalConf(target, source, env):
         print
         return 1
 
+def getLibDepends(script):
+    # OUCH ...
+    return os.popen("perl -0777 -n -e '$,=\" \"; print $1=~m/'\"'\"'([^'\"'\"']*)'\"'\"'/g if /LIBS\s*=\s*\[([^\]]*)\]/' %s" % script).read().split()
+
+# Original topological sort code written by Ofer Faigon
+# (www.bitformation.com) and used with permission
+def topological_sort(items, partial_order):
+    """Perform topological sort.
+       items is a list of items to be sorted.
+       partial_order is a list of pairs. If pair (a,b) is in it, it means
+       that item a should appear before item b.
+       Returns a list of the items in one of the possible orders, or None
+       if partial_order contains a loop.
+    """
+    def add_node(graph, node):
+        if not graph.has_key(node):
+            graph[node] = [0] 
+    def add_arc(graph, fromnode, tonode):
+        graph[fromnode].append(tonode)
+        graph[tonode][0] = graph[tonode][0] + 1
+    graph = {}
+    for v in items:
+        add_node(graph, v)
+    for a,b in partial_order:
+        add_arc(graph, a, b)
+    roots = [node for (node,nodeinfo) in graph.items() if nodeinfo[0] == 0]
+    while len(roots) != 0:
+        root = roots.pop()
+        yield root
+        for child in graph[root][1:]:
+            graph[child][0] = graph[child][0] - 1
+            if graph[child][0] == 0:
+                roots.append(child)
+        del graph[root]
+    if len(graph.items()) != 0:
+        raise RuntimeError, "Loop detected in partial_order"
+
 ###########################################################################
 # Load utilities and setup libraries and configure build
 
@@ -98,8 +135,8 @@ env.Append(
            'REVISION' : rev,
            'LOGNAME' : logname, # needed by the debian build scripts
            'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1",
-           'SCONS' : 1
-           },
+           'SCONS' : 1,
+         },
    CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
    CONFIG_FILES_OPTS = configFilesOpts,
    CLEAN_PATTERNS = [ '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
@@ -131,8 +168,18 @@ if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
 
 env.Clean('all', '.prepare-stamp')
 
-SConscript(glob.glob("*/SConscript"))
+scripts = []
+dependencies = []
 
+for script in glob.glob("*/SConscript"):
+    depends = getLibDepends(script)
+    script = script.split('/',1)[0]
+    scripts.append(script)
+    dependencies += [ (dep, script) for dep in depends ]
+
+for subdir in topological_sort(scripts, dependencies):
+    SConscript(os.path.join(subdir, "SConscript"))
+    
 SENFSCons.StandardTargets(env)
 SENFSCons.GlobalTargets(env)
 SENFSCons.Doxygen(env)
