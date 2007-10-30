@@ -34,7 +34,7 @@ def BoostUnitTests(env, target, objects, test_sources=None, LIBS = [], OBJECTS =
     else:
         test_sources = []
     testEnv = env.Copy(**kw)
-    testEnv.Prepend(LIBS = '$BOOSTTESTLIB')
+    testEnv.Prepend(_LIBFLAGS = ' -Wl,-Bstatic -l$BOOSTTESTLIB -Wl,-Bdynamic ')
     testEnv.Prepend(LIBS = LIBS)
     all_objects = []
     if not objects:

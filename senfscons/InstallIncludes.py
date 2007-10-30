@@ -7,6 +7,11 @@
 # \ingroup builder
 
 import SCons.Builder, SCons.Action, SCons.Environment, SCons.Node.FS
+try:
+    from SCons.Tool.install import installFunc, stringFunc
+except:
+    installFunc = SCons.Environment.installFunc
+    stringFunc = SCons.Environment.installString
 
 def recursiveChildren(f):
     rv = {}
@@ -45,11 +50,11 @@ class Installer:
         self.source = source
 
     def __call__(self, target, source, env):
-        SCons.Environment.installFunc([self.target], [self.source], env)
+        installFunc([self.target], [self.source], env)
 
 def generator(target, source, env, for_signature):
     return [ SCons.Action.Action( Installer(trg, src),
-                                  lambda a,b,c,s=SCons.Environment.installString([trg], [src], env):s )
+                                  lambda a,b,c,s=stringFunc([trg], [src], env):s )
              for trg, src in zip(target,source) ]
 
 InstallIncludes = SCons.Builder.Builder(emitter = emitter,

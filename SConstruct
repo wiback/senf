@@ -126,7 +126,7 @@ if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
 # created later are correct
 
 if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
-   and not os.environ.get("SCONS"):
+   and not os.environ.get("SCONS") and COMMAND_LINE_TARGETS != [ 'prepare' ]:
     env.Execute([ "scons prepare" ])
 
 env.Clean('all', '.prepare-stamp')
