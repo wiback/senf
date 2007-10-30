@@ -34,23 +34,55 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target
 
+// senf::log::Target::route
+
 template <class Stream>
 prefix_ void senf::log::Target::route(action_t action, int index)
 {
     route(&Stream::instance(), 0, NONE::value, action, index);
 }
 
-template <class Stream, class Arg>
-prefix_ void senf::log::Target::route(action_t action, int index)
+template <class Stream, class Level>
+prefix_ void senf::log::Target::
+route(action_t action, int index,
+      typename boost::enable_if< boost::is_convertible<Level*, detail::LevelBase *> >::type *)
 {
-    route<Arg>(&Stream::instance(), static_cast<Arg*>(0), action, index);
+    route(&Stream::instance(), 0, Level::value, action, index);
+}
+
+template <class Stream, class Area>
+prefix_ void senf::log::Target::
+route(action_t action, int index,
+      typename boost::enable_if< boost::is_convertible<Area*, detail::AreaBase *> >::type *)
+{
+    route(&Stream::instance(), &Area::instance(), NONE::value, action, index);
+}
+
+template <class Stream, class AreaClass>
+prefix_ void senf::log::Target::
+route(action_t action, int index,
+      typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *, detail::AreaBase *> >::type *)
+{
+    route(&Stream::instance(), &AreaClass::SENFLogArea::instance(), NONE::value, action, index);
 }
 
 template <class Stream, class Area, class Level>
-prefix_ void senf::log::Target::route(action_t action, int index)
+prefix_ void senf::log::Target::
+route(action_t action, int index,
+      typename boost::enable_if< boost::is_convertible<Area *, detail::AreaBase *> >::type *)
 {
     route(&Stream::instance(), &Area::instance(), Level::value, action, index);
 }
+
+template <class Stream, class AreaClass, class Level>
+prefix_ void senf::log::Target::
+route(action_t action, int index,
+      typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *, detail::AreaBase *> >::type *)
+{
+    route(&Stream::instance(), &AreaClass::SENFLogArea::instance(), Level::value, action, index);
+}
+
+// senf::log::target::ununroute
 
 template <class Stream>
 prefix_ void senf::log::Target::unroute(action_t action)
@@ -58,47 +90,44 @@ prefix_ void senf::log::Target::unroute(action_t action)
     unroute(&Stream::instance(), 0, NONE::value, action);
 }
 
-template <class Stream, class Arg>
-prefix_ void senf::log::Target::unroute(action_t action)
+template <class Stream, class Level>
+prefix_ void senf::log::Target::
+unroute(action_t action,
+      typename boost::enable_if< boost::is_convertible<Level*, detail::LevelBase *> >::type *)
 {
-    unroute<Arg>(&Stream::instance(), static_cast<Arg*>(0), action);
+    unroute(&Stream::instance(), 0, Level::value, action);
+}
+
+template <class Stream, class Area>
+prefix_ void senf::log::Target::
+unroute(action_t action,
+      typename boost::enable_if< boost::is_convertible<Area*, detail::AreaBase *> >::type *)
+{
+    unroute(&Stream::instance(), &Area::instance(), NONE::value, action);
+}
+
+template <class Stream, class AreaClass>
+prefix_ void senf::log::Target::
+unroute(action_t action,
+      typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *, detail::AreaBase *> >::type *)
+{
+    unroute(&Stream::instance(), &AreaClass::SENFLogArea::instance(), NONE::value, action);
 }
 
 template <class Stream, class Area, class Level>
-prefix_ void senf::log::Target::unroute(action_t action)
+prefix_ void senf::log::Target::
+unroute(action_t action,
+      typename boost::enable_if< boost::is_convertible<Area *, detail::AreaBase *> >::type *)
 {
     unroute(&Stream::instance(), &Area::instance(), Level::value, action);
 }
 
-////////////////////////////////////////
-// private members
-
-template <class Area>
-prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
-                                      detail::AreaBase const *, action_t action, int index)
+template <class Stream, class AreaClass, class Level>
+prefix_ void senf::log::Target::
+unroute(action_t action,
+      typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *, detail::AreaBase *> >::type *)
 {
-    route(stream, &Area::instance(), NONE::value, action, index);
-}
-
-template <class Level>
-prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
-                                      detail::LevelBase const *, action_t action, int index)
-{
-    route(stream, 0, Level::value, action, index);
-}
-
-template <class Area>
-prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
-                                        detail::AreaBase const *, action_t action)
-{
-    unroute(stream, &Area::instance(), NONE::value, action);
-}
-
-template <class Level>
-prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
-                                        detail::LevelBase const *, action_t action)
-{
-    unroute(stream, 0, Level::value, action);
+    unroute(&Stream::instance(), &AreaClass::SENFLogArea::instance(), Level::value, action);
 }
 
 ///////////////////////////////////////////////////////////////////////////

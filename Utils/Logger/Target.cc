@@ -67,6 +67,21 @@ prefix_ void senf::log::Target::route(std::string const & stream, std::string co
     route(s, a, level, action, index);
 }
 
+prefix_ void senf::log::Target::unroute(std::string const & stream, std::string const & area,
+                                        unsigned level, action_t action)
+{
+    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
+    if (!s)
+        throw InvalidStreamException();
+    detail::AreaBase const * a (0);
+    if (! area.empty()) {
+        a = AreaRegistry::instance().lookup(area);
+        if (!a)
+            throw InvalidAreaException();
+    }
+    unroute(s, a, level, action);
+}
+
 prefix_ void senf::log::Target::unroute(int index)
 {
     RIB::iterator i;
@@ -105,7 +120,7 @@ prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
             i = rib_.begin();
         else {
             i = rib_.end();
-            std::advance(i, -index - 1);
+            std::advance(i, index + 1 );
         }
     } else {
         if (RIB::size_type(index) >= rib_.size())

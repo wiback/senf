@@ -70,13 +70,13 @@ prefix_ bool senf::log::Target::RoutingEntry::operator==(RoutingEntry const & ot
 prefix_ std::string senf::log::Target::RoutingEntry::stream()
     const
 {
-    return stream_->v_name();
+    return stream_ ? stream_->v_name() : "";
 }
 
 prefix_ std::string senf::log::Target::RoutingEntry::area()
     const
 {
-    return area_->v_name();
+    return area_ ? area_->v_name() : "";
 }
 
 prefix_ unsigned senf::log::Target::RoutingEntry::level()

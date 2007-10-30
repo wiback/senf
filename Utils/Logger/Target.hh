@@ -30,6 +30,7 @@
 #include <set>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/utility.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 #include "../singleton.hh"
 #include "../mpl.hh"
 #include "StreamRegistry.hh"
@@ -99,17 +100,54 @@ namespace log {
 
         ///@}
 
-        template <class Stream> void route(action_t action = ACCEPT, int index = -1);
-        template <class Stream, class Arg> void route(action_t action = ACCEPT, int index = -1);
-        template <class Stream, class Area, class Level> void route(action_t action = ACCEPT, 
-                                                                    int index = -1);
+        template <class Stream> void route(
+            action_t action = ACCEPT, int index = -1);
+        template <class Stream, class Level> void route(
+            action_t action = ACCEPT, int index = -1,
+            typename boost::enable_if< boost::is_convertible<Level*,
+                                                             detail::LevelBase *> >::type * = 0);
+        template <class Stream, class Area> void route(
+            action_t action = ACCEPT, int index = -1,
+            typename boost::enable_if< boost::is_convertible<Area*,
+                                                             detail::AreaBase *> >::type * = 0);
+        template <class Stream, class AreaClass> void route(
+            action_t action = ACCEPT, int index = -1,
+            typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *,
+                                                             detail::AreaBase *> >::type * = 0);
+        template <class Stream, class Area, class Level> void route(
+            action_t action = ACCEPT, int index = -1,
+            typename boost::enable_if< boost::is_convertible<Area *,
+                                                             detail::AreaBase *> >::type * = 0);
+        template <class Stream, class AreaClass, class Level> void route(
+            action_t action = ACCEPT, int index = -1,
+            typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *,
+                                                             detail::AreaBase *> >::type * = 0);
 
         void route(std::string const & stream, std::string const & area = "", 
                    unsigned level = NONE::value, action_t action = ACCEPT, int index = -1);
 
-        template <class Stream> void unroute(action_t action = ACCEPT);
-        template <class Stream, class Arg> void unroute(action_t action = ACCEPT);
-        template <class Stream, class Area, class Level> void unroute(action_t action = ACCEPT);
+        template <class Stream> void unroute(
+            action_t action = ACCEPT);
+        template <class Stream, class Level> void unroute(
+            action_t action = ACCEPT,
+            typename boost::enable_if< boost::is_convertible<Level*,
+                                                             detail::LevelBase *> >::type * = 0);
+        template <class Stream, class Area> void unroute(
+            action_t action = ACCEPT,
+            typename boost::enable_if< boost::is_convertible<Area*,
+                                                             detail::AreaBase *> >::type * = 0);
+        template <class Stream, class AreaClass> void unroute(
+            action_t action = ACCEPT,
+            typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *,
+                                                             detail::AreaBase *> >::type * = 0);
+        template <class Stream, class Area, class Level> void unroute(
+            action_t action = ACCEPT,
+            typename boost::enable_if< boost::is_convertible<Area*,
+                                                             detail::AreaBase *> >::type * = 0);
+        template <class Stream, class AreaClass, class Level> void unroute(
+            action_t action = ACCEPT,
+            typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *,
+                                                             detail::AreaBase *> >::type * = 0);
 
         void unroute(std::string const & stream, std::string const & area = "", 
                      unsigned level = NONE::value, action_t action = ACCEPT);
@@ -132,16 +170,6 @@ namespace log {
         void unroute(detail::StreamBase const * stream, detail::AreaBase const * area, 
                      unsigned level, action_t action);
 
-        template <class Area> void route(detail::StreamBase const * stream, 
-                                         detail::AreaBase const *, action_t action, int index);
-        template <class Level> void route(detail::StreamBase const * stream, 
-                                          detail::LevelBase const *, action_t action, int index);
-
-        template <class Area> void unroute(detail::StreamBase const * stream, 
-                                           detail::AreaBase const *, action_t action);
-        template <class Level> void unroute(detail::StreamBase const * stream, 
-                                          detail::LevelBase const *, action_t action);
-        
         void updateRoutingCache(detail::StreamBase const * stream, detail::AreaBase const * area);
 
         void write(boost::posix_time::ptime timestamp, detail::StreamBase const & stream,

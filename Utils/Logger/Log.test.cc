@@ -26,43 +26,19 @@
 //#include "Log.test.hh"
 //#include "Log.test.ih"
 
-// We need to put all tests into this single file to not violate the ODR
-
-#define SENF_LOG_CONF (( (senf)(log)(Debug), (_), NOTICE )) \
-                      (( (not_anonymous)(myStream), (not_anonymous)(Foo), VERBOSE ))
-
 // Custom includes
-#include "Logger.hh"
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
+#include "main.test.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-namespace not_anonymous {
-    
-    struct Foo
-    {
-        SENF_LOG_CLASS_AREA();
-
-        static void log() {
-            SENF_LOG(("Foo::log"));
-        }
-    };
-
-    SENF_LOG_DEF_ALIAS( LogCritical, (senf::log::Debug) (senf::log::CRITICAL) );
-    SENF_LOG_DEF_STREAM( myStream, senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE );
-    SENF_LOG_DEF_AREA( myArea );
-
-}
-using namespace not_anonymous;
 
 BOOST_AUTO_UNIT_TEST(logger)
 {
     senf::log::StringTarget target;
 
     target.route<senf::log::Debug>();
-    target.route("not_anonymous::myStream", "not_anonymous::Foo");
 
     // We cannot easily check the exact log string since that includes the current date/time
     
@@ -82,7 +58,7 @@ BOOST_AUTO_UNIT_TEST(logger)
     BOOST_CHECK( ! target.str().empty() );
     target.clear();
 
-    SENF_LOG((LogCritical) ("Another log message: " << 10));
+    SENF_LOG((senf::log::test::LogCritical) ("Another log message: " << 10));
     BOOST_CHECK( ! target.str().empty() );
     target.clear();
 
@@ -93,33 +69,13 @@ BOOST_AUTO_UNIT_TEST(logger)
     BOOST_CHECK( ! target.str().empty() );
     target.clear();
 
-    Foo::log();
+    senf::log::test::Foo::log();
     BOOST_CHECK( ! target.str().empty() );
     target.clear();
 
-    SENF_LOG((Foo)("Foo area"));
+    SENF_LOG((senf::log::test::Foo)("Foo area"));
     BOOST_CHECK( target.str().empty() );
     target.clear();
-}
-
-BOOST_AUTO_UNIT_TEST(streamRegistry)
-{
-    char const * streams[] = { "not_anonymous::myStream", "senf::log::Debug" };
-
-    BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::StreamRegistry::instance().begin(),
-                                   senf::log::StreamRegistry::instance().end(),
-                                   streams, streams+sizeof(streams)/sizeof(streams[0]) );
-    BOOST_CHECK_EQUAL( senf::log::detail::StreamBase::nStreams, 2u );
-}
-
-BOOST_AUTO_UNIT_TEST(areaRegistry)
-{
-    char const * areas[] = { "", "not_anonymous::Foo", "not_anonymous::myArea" };
-
-    BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::AreaRegistry::instance().begin(),
-                                   senf::log::AreaRegistry::instance().end(),
-                                   areas, areas+sizeof(areas)/sizeof(areas[0]) );
-
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -45,7 +45,8 @@
 
     <em>Runtime</em> configuration on the other hand deals with routing all those messages, which
     are enabled at compile time to the logging targets. If a message is not routed, it will be
-    discarded. This allows to additionally disable messages at run-time.
+    discarded. This allows to additionally disable messages at run-time. Message routing is managed
+    via the \ref Target interface.
  */
 
 namespace senf {
@@ -62,7 +63,7 @@ namespace log {
         be set on the compiler command line:
         <pre>
         g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Debug),(_),DISABLED ))
-                                 (( (senf)(log)(Debug),(foo)(SomeClass),(VERBOSE) ))
+                                 (( (senf)(log)(Debug),(foo)(SomeClass),VERBOSE ))
                                  (( (foo)(Transactions),(_),NOTICE ))" ...
         </pre>
         (As this option can get quite long, you might want to use the '-imacros' option instead)
