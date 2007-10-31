@@ -43,8 +43,8 @@ namespace senf {
      */
     struct Parse_GREPacket : public PacketParserBase
     {
-        
-#include SENF_PARSER()
+#       include SENF_PARSER()
+
         SENF_PARSER_BITFIELD         ( checksum_present,  1, bool );
         SENF_PARSER_PRIVATE_BITFIELD ( reserved0_,       12, unsigned ); // TODO: SKIP !!
         SENF_PARSER_BITFIELD_RO      ( version_number,    3, unsigned ); // TODO: Always Zero !!
@@ -53,6 +53,7 @@ namespace senf {
                                                    (VoidPacketParser) (Parse_UInt16) );
         SENF_PARSER_PRIVATE_VARIANT  ( reserved1_, checksum_present,
                                                    (VoidPacketParser) (Parse_UInt16) );
+
         SENF_PARSER_FINALIZE( Parse_GREPacket );
 
       private: 

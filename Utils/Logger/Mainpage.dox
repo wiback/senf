@@ -37,25 +37,31 @@
 
     \section logging_concepts Concepts
 
-    The log messages are devided along several categories: \e streams, \e areas and log \e levels.
+    Log messages are arbitrarily created throughout the code using simple log statements (which are
+    macros). Besides the log message itself, every log message is labeled with additional
+    information: The \e stream, the \e area and a log \e level. If the message is not compile-time
+    disabled, the message is then directed to one of several log \e targets.
 
-    A \e stream combines log messages with a single purpose. There is one default stream, called \c
-    senf::log::Debug. New streams are defined with \ref SENF_LOG_DEF_STREAM.
+    A \e stream combines log messages with a single purpose: Debug messages, access logging and so
+    on. Any number of streams may be defined. There is one predefined default stream called \c
+    senf::log::Debug. (see: \ref SENF_LOG_DEF_STREAM)
 
-    An \e area labels a log message with the source location of the message. An area is an arbitrary
-    tag which may be added to the message. There is one default area called \c
-    senf::log::DefaultArea. New areas are defined either with \ref SENF_LOG_DEF_AREA or \ref
-    SENF_LOG_CLASS_AREA, the latter being the more typical. The area will normally indicate the
-    class or subsystem from which the message was generated.
+    The \e area gives information about the source location of the message. Areas may be defined and
+    assigned arbitrarily but should be used to label messages from a single class or subsystem. It
+    is possible to reuse a class as it's own area tag, which is often desireable.  (see: \ref
+    SENF_LOG_DEF_AREA, \ref SENF_LOG_CLASS_AREA)
 
-    The log \e level gives information on the importance of the message. The list lof \ref loglevels
-    is fixed.
+    The log \e level gives information on the importance of the message. The list of log-levels is
+    fixed. (see: \ref loglevels)
 
-    After log messages have been created, they have to be placed somewhere. This is the
-    responsibility of the \e target. A target is an arbitrary sink for log messages. The target
-    manages message routing and will pass the message on to it's destination, be it the system
-    console, some log file or some other place (e.g. an SQL database). The target is responsible for
-    formating the message.
+    Depending on their the \e stream, \e area and \e level information, log messages can be enabled
+    or disabled at \e compile time. Messages disabled at compile time should not generate any
+    code. (see: \ref SENF_LOG_CONF)
+
+    To be of any use, the log messages have to be written somewhere. This is the responsibility of
+    any number of \e targets. A \e target receives messages and using it's routing information
+    decides, wether the message is output or not. A message may be routed to multiple targets
+    simultaneously or may not be output by any target at all. (see: \ref targets)
     
     \section logging_tutorial Tutorial introduction
 
@@ -105,6 +111,18 @@
         SENF_LOG_DEFAULT_LEVEL(senf::log::VERBOSE);
 
         SENF_LOG(("Log to UserLog stream in Froblizer area however at VERBOSE level"));
+    }
+
+    int main(int, char **)
+    {
+        // Set up the routing targets
+        senf::log::ConsoleTarget console;
+        senf::log::FileTarget logfile ("my.log");
+
+        // Debug messages go to the console
+        console.route<senf::log::Debug>();
+        // Important user message are written to the log file
+        logfile.route<foo::UserLog, senf::log::IMPORTANT>();
     }
     \endcode
 

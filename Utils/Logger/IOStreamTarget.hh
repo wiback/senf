@@ -55,7 +55,9 @@ namespace log {
         \warning The class keeps a reference to the passed stream.
         
         \note This class will permanently and globally change the date formating of the given
-            stream.
+            stream if no \c boost::posix_time::time_facet has been set.
+
+        \ingroup targets
       */
     class IOStreamTarget
         : public Target

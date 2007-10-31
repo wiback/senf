@@ -23,7 +23,7 @@
 /** \file
     \brief Target inline template implementation */
 
-//#include "Target.ih"
+#include "Target.ih"
 
 // Custom includes
 #include "Levels.hh"
@@ -35,6 +35,8 @@
 // senf::log::Target
 
 // senf::log::Target::route
+
+#ifndef DOXYGEN
 
 template <class Stream>
 prefix_ void senf::log::Target::route(action_t action, int index)
@@ -130,11 +132,13 @@ unroute(action_t action,
     unroute(&Stream::instance(), &AreaClass::SENFLogArea::instance(), Level::value, action);
 }
 
+#endif 
+
 ///////////////////////////////////////////////////////////////////////////
-// namespace senf::log members
+// namespace senf::log::detail members
 
 template <class Stream, class Area, class Level>
-prefix_ void senf::log::write(std::string msg)
+prefix_ void senf::log::detail::write(std::string msg)
 {
     TargetRegistry::instance().write(Stream::instance(), Area::instance(), Level::value, msg);
 }

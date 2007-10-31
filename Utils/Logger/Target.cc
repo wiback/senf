@@ -24,7 +24,7 @@
     \brief Target non-inline non-template implementation */
 
 #include "Target.hh"
-//#include "Target.ih"
+#include "Target.ih"
 
 // Custom includes
 #include <algorithm>
@@ -38,7 +38,7 @@
 
 prefix_ senf::log::Target::Target()
 {
-    TargetRegistry::instance().registerTarget(this);
+    detail::TargetRegistry::instance().registerTarget(this);
 }
 
 prefix_ senf::log::Target::~Target()
@@ -49,7 +49,7 @@ prefix_ senf::log::Target::~Target()
         RIB::reverse_iterator i (rib_.rbegin());
         unroute(i->stream_, i->area_, i->level_, i->action_);
     }
-    TargetRegistry::instance().unregisterTarget(this);
+    detail::TargetRegistry::instance().unregisterTarget(this);
 }
 
 prefix_ void senf::log::Target::route(std::string const & stream, std::string const & area,
@@ -90,7 +90,7 @@ prefix_ void senf::log::Target::unroute(int index)
             i = rib_.begin();
         else {
             i = rib_.end();
-            std::advance(i, -index);
+            std::advance(i, index);
         }
     } else {
         if (RIB::size_type(index+1) >= rib_.size()) {
@@ -101,6 +101,8 @@ prefix_ void senf::log::Target::unroute(int index)
             std::advance(i, index);
         }
     }
+    if (i == rib_.end())
+        return;
     RoutingEntry entry (*i);
     rib_.erase(i);
     if (entry.action_ == ACCEPT)
@@ -199,9 +201,9 @@ prefix_ void senf::log::Target::write(boost::posix_time::ptime timestamp,
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::TargetRegistry
 
-prefix_ void senf::log::TargetRegistry::write(detail::StreamBase const & stream,
-                                              detail::AreaBase const & area, unsigned level,
-                                              std::string msg)
+prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
+                                                      AreaBase const & area, unsigned level,
+                                                      std::string msg)
 {
     boost::posix_time::ptime timestamp (boost::posix_time::microsec_clock::universal_time());
     area.write(timestamp, stream, level, msg);

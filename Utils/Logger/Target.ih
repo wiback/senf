@@ -21,45 +21,46 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ConsoleTarget public header */
+    \brief Target internal header */
 
-#ifndef HH_ConsoleTarget_
-#define HH_ConsoleTarget_ 1
+#ifndef IH_Target_
+#define IH_Target_ 1
 
 // Custom includes
-#include "IOStreamTarget.hh"
 
-//#include "ConsoleTarget.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+///////////////////////////////ih.p////////////////////////////////////////
 
-namespace senf { 
+namespace senf {
 namespace log {
+namespace detail {
 
-    /** \brief Write log messages to std::cout
-
-        IOStreamTarget writing to std::cout
-
-        \ingroup targets
-     */
-    class ConsoleTarget : public IOStreamTarget
+    /** \brief Internal: Target registry */
+    class TargetRegistry
+        : public senf::singleton<TargetRegistry>
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
+        using senf::singleton<TargetRegistry>::instance;
 
-        ConsoleTarget();
+        void write(StreamBase const & stream, AreaBase const & area, unsigned level, 
+                   std::string msg);
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
+    private:
+        void registerTarget(Target * target);
+        void unregisterTarget(Target * target);
+
+        typedef std::set<Target *> Targets;
+        Targets targets_;
+        
+        friend class senf::log::Target;
     };
 
-}}
+    /** \brief Internal: Write log message */
+    template <class Stream, class Area, class Level>
+    void write(std::string msg);
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "ConsoleTarget.cci"
-//#include "ConsoleTarget.ct"
-//#include "ConsoleTarget.cti"
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
 #endif
 
 

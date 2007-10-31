@@ -21,46 +21,36 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ConsoleTarget public header */
+    \brief FileTarget non-inline non-template implementation */
 
-#ifndef HH_ConsoleTarget_
-#define HH_ConsoleTarget_ 1
+#include "FileTarget.hh"
+//#include "FileTarget.ih"
 
 // Custom includes
-#include "IOStreamTarget.hh"
 
-//#include "ConsoleTarget.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//#include "FileTarget.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf { 
-namespace log {
+prefix_ senf::log::FileTarget::FileTarget(std::string file)
+    : ofstream_t(file.c_str(), std::ofstream::app), IOStreamTarget(ofstream_t::member), file_(file)
+{}
 
-    /** \brief Write log messages to std::cout
+prefix_ void senf::log::FileTarget::reopen()
+{
+    ofstream_t::member.close();
+    ofstream_t::member.open(file_.c_str(), std::ofstream::app);
+}
 
-        IOStreamTarget writing to std::cout
+prefix_ void senf::log::FileTarget::reopen(std::string file)
+{
+    file_ = file;
+    reopen();
+}
 
-        \ingroup targets
-     */
-    class ConsoleTarget : public IOStreamTarget
-    {
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
-        ConsoleTarget();
-
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
-    };
-
-}}
-
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "ConsoleTarget.cci"
-//#include "ConsoleTarget.ct"
-//#include "ConsoleTarget.cti"
-#endif
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "FileTarget.mpp"
 
 
 // Local Variables:

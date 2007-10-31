@@ -23,7 +23,7 @@
 /** \file
     \brief Target inline non-template implementation */
 
-//#include "Target.ih"
+#include "Target.ih"
 
 // Custom includes
 
@@ -92,14 +92,14 @@ prefix_ senf::log::Target::action_t senf::log::Target::RoutingEntry::action()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::log::TargetRegistry
+// senf::log::detail::TargetRegistry
 
-prefix_ void senf::log::TargetRegistry::registerTarget(Target * target)
+prefix_ void senf::log::detail::TargetRegistry::registerTarget(Target * target)
 {
     targets_.insert(target);
 }
 
-prefix_ void senf::log::TargetRegistry::unregisterTarget(Target * target)
+prefix_ void senf::log::detail::TargetRegistry::unregisterTarget(Target * target)
 {
     targets_.erase(target);
 }

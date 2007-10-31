@@ -21,60 +21,61 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief StringTarget public header */
+    \brief FileTarget public header */
 
-#ifndef HH_StringTarget_
-#define HH_StringTarget_ 1
+#ifndef HH_FileTarget_
+#define HH_FileTarget_ 1
 
 // Custom includes
-#include <sstream>
+#include <boost/utility.hpp>
+#include <fstream>
 #include "IOStreamTarget.hh"
 
-//#include "StringTarget.mpp"
+//#include "FileTarget.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace log {
-  
-    /** \brief Store log messages in a string buffer
 
-        This target is mostly useful for debug purposes. 
+    /** \brief Log target writing to a log file.
+
+        The FileTarget will save all log messages in the given file. Messages will be appended at
+        the end of the file.
+
+        After log files have been rotated, the reopen() member should be called to create a new log
+        file.
 
         \ingroup targets
       */
-    class StringTarget 
-        : private boost::base_from_member<std::stringstream>,
+    class FileTarget 
+        : private boost::base_from_member<std::ofstream>,
           public IOStreamTarget
     {
-        typedef boost::base_from_member<std::stringstream> stream_base;
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
+        typedef boost::base_from_member<std::ofstream> ofstream_t;
 
+    public:
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-        StringTarget();
+        explicit FileTarget(std::string file); ///< Construct FileTarget writing to \a file
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        std::string str() const;        ///< Get log messages accumulated so far
-        void clear();                   ///< Clear buffer
-
-    protected:
+        void reopen();                  ///< Reopen log after log-file rotation
+        void reopen(std::string file);  ///< Reopen log under a new name
 
     private:
-
+        std::string file_;
     };
 
-}}        
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "StringTarget.cci"
-//#include "StringTarget.ct"
-#include "StringTarget.cti"
+//#include "FileTarget.cci"
+//#include "FileTarget.ct"
+//#include "FileTarget.cti"
 #endif
 
 

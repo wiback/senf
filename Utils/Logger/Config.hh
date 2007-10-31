@@ -86,8 +86,8 @@
     decide a log messages fate for that target.
 
     \see 
-        \ref SENF_LOG_CONF: compile time configuration \n
-        \ref senf::log::Target: runtime configuration
+        \ref SENF_LOG_CONF compile time configuration \n
+        \ref senf::log::Target runtime configuration
  */
 
 namespace senf {

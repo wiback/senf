@@ -33,21 +33,25 @@
 
 #define SENF_LOG_BLOCK_(parameters, block)                                                        \
     do {                                                                                          \
-        if (parameters::compileEnabled && parameters::enabled()) {                                \
+        typedef parameters SENFLogParameters;                                                     \
+        if (SENFLogParameters::compileEnabled && SENFLogParameters::enabled()) {                  \
             std::stringstream log;                                                                \
             do block while(0);                                                                    \
-            senf::log::write<parameters::stream, parameters::area, parameters::level>(log.str()); \
+            senf::log::detail::write< SENFLogParameters::stream,                                  \
+                                      SENFLogParameters::area,                                    \
+                                      SENFLogParameters::level >(log.str());                      \
         }                                                                                         \
     } while(0) 
 
 #define SENF_LOG_BLOCK_TPL_(parameters, block)                                                    \
     do {                                                                                          \
-        if (parameters::compileEnabled && parameters::enabled()) {                                \
+        typedef parameters SENFLogParameters;                                                     \
+        if (SENFLogParameters::compileEnabled && SENFLogParameters::enabled()) {                  \
             std::stringstream log;                                                                \
             do block while(0);                                                                    \
-            senf::log::write<typename parameters::stream,                                         \
-                             typename parameters::area,                                           \
-                             typename parameters::level>(log.str());                              \
+            senf::log::detail::write<typename SENFLogParameters::stream,                          \
+                             typename SENFLogParameters::area,                                    \
+                             typename SENFLogParameters::level>(log.str());                       \
         }                                                                                         \
     } while(0) 
 
