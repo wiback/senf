@@ -40,7 +40,7 @@
     Log messages are arbitrarily created throughout the code using simple log statements (which are
     macros). Besides the log message itself, every log message is labeled with additional
     information: The \e stream, the \e area and a log \e level. If the message is not compile-time
-    disabled, the message is then directed to one of several log \e targets.
+    disabled, the message is then directed to one or several log \e targets.
 
     A \e stream combines log messages with a single purpose: Debug messages, access logging and so
     on. Any number of streams may be defined. There is one predefined default stream called \c
@@ -48,7 +48,8 @@
 
     The \e area gives information about the source location of the message. Areas may be defined and
     assigned arbitrarily but should be used to label messages from a single class or subsystem. It
-    is possible to reuse a class as it's own area tag, which is often desireable.  (see: \ref
+    is possible to reuse a class as it's own area tag, which is often desireable.  There is a
+    default area \c senf::log::DefaultArea which is used, when no other area is assigned. (see: \ref
     SENF_LOG_DEF_AREA, \ref SENF_LOG_CLASS_AREA)
 
     The log \e level gives information on the importance of the message. The list of log-levels is

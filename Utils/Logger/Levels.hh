@@ -39,9 +39,37 @@ namespace log {
         
         These are the valid log levels with some additional special values:
 
-        \c DISABLED is a special value used as level limit to disable all messages.
+        <dl><dt>VERBOSE</dt><dd>Really verbose log messages. Messages at this level are used for
+        internal debugging. They should be enabled only selectively within the areas currently under
+        inspection.</dd>
 
-        \c NONE is used to in some special places to inherit the default log level.
+        <dt>NOTICE</dt><dd>Arbitrary unimportant notice. Message which normally should be disabled
+        but might be informative to better understand the programs operation.</dd>
+
+        <dt>MESSAGE</dt><dd>Purely informative message which should be displayed if not explicitly
+        disabled.</dd>
+
+        <dt>IMPORTANT</dt><dd>Important information or warning which really should be read.</dd>
+
+        <dt>CRITICAL</dt><dd>Error condition which does not terminate the program completely but has
+        non-reversible adverse effects</dd>
+        
+        <dt>FATAL</dt><dd>Error condition which does terminate program execution or enforces a
+        restart or some kind of re-initialization with loss of state and context.</dd></dl>
+
+        There are also some special values which <em>must not be used as a log level</em>:
+        
+        <dl><dt>DISABLED</dt><dd>Disable all log messages.</dd> 
+
+        <dt>NONE</dt><dd>Special value which signifies inheritance of the default log
+        level.</dd></dl>
+
+        Log levels are classes, not numbers. Each log level class has a \c value member which gives
+        that levels numeric priority. The larger the number, the more important the message is.
+
+        \implementation The log levels need to be classes since areas and streams are classes: Since
+            log arguments (stream, area and level) may appear in any order and number, it is much
+            simpler to parse them if they are all of the same type.
      */
 
     ///\ingroup loglevels
@@ -67,9 +95,13 @@ namespace log {
         \see loglevels */
     struct CRITICAL  : public detail::LevelBase { static unsigned const value = 5; };
 
+    /** \brief Log level FATAL
+        \see loglevels */
+    struct FATAL     : public detail::LevelBase { static unsigned const value = 6; };
+
     /** \brief Disable logging
         \see loglevels */
-    struct DISABLED  : public detail::LevelBase { static unsigned const value = 6; };
+    struct DISABLED  : public detail::LevelBase { static unsigned const value = 7; };
 
     /** \brief Inherit log level
         \see loglevels */

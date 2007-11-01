@@ -37,7 +37,9 @@
 
 BOOST_AUTO_UNIT_TEST(areaRegistry)
 {
-    char const * areas[] = { "", "senf::log::test::Foo", "senf::log::test::myArea" };
+    char const * areas[] = { "senf::log::DefaultArea", 
+                             "senf::log::test::Foo", 
+                             "senf::log::test::myArea" };
 
     BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::AreaRegistry::instance().begin(),
                                    senf::log::AreaRegistry::instance().end(),

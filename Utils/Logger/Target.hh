@@ -379,9 +379,7 @@ namespace log {
                                              somehow format and write the log message. 
 
                                              Every log message always possesses a complete set of
-                                             meta information (\a stream, \a area and \a level). The
-                                             \a area may be an empty string if the message was
-                                             written from the senf::log::DefaultArea.
+                                             meta information (\a stream, \a area and \a level).
 
                                              \note This member must \e not block since it may be
                                                  called from any unknown context. This prohibits

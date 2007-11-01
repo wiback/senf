@@ -43,6 +43,8 @@ namespace log {
         <pre>
         <date> [<area>] <message>
         </pre>
+
+        The \e area will be omitted it it is \c senf::log::DefaultArea.
         
         The date formatting is set using the Boost.DateTime date_facet, e.g.:
         \code

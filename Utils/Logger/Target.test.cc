@@ -81,7 +81,7 @@ BOOST_AUTO_UNIT_TEST(target)
         "senf::log::Debug-senf::log::test::Foo-VERBOSE-REJECT",
         "senf::log::Debug--NONE-ACCEPT",
         "senf::log::test::myStream-senf::log::test::Foo-VERBOSE-ACCEPT",
-        "senf::log::test::myStream--NONE-REJECT",
+        "senf::log::test::myStream-senf::log::DefaultArea-NONE-REJECT",
         "senf::log::test::myStream--IMPORTANT-REJECT",
     };
 

@@ -107,12 +107,11 @@ namespace log {
             };                                                                                    \
         }
 
-        /** \brief Default global log stream */
-        SENF_LOG_DEF_STREAM(Debug, MESSAGE, MESSAGE, MESSAGE);
+    /** \brief Default global log stream */
+    SENF_LOG_DEF_STREAM(Debug, MESSAGE, MESSAGE, MESSAGE);
 
-        /** \brief Default global log area */
-        SENF_LOG_DEF_AREA_I(DefaultArea,
-                            std::string v_name() const { return ""; });
+    /** \brief Default global log area */
+    SENF_LOG_DEF_AREA(DefaultArea);
 
     ///\}
     ///\}
