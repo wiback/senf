@@ -27,6 +27,8 @@
 #define IH_Target_ 1
 
 // Custom includes
+#include <memory>
+#include <boost/scoped_ptr.hpp>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -44,14 +46,20 @@ namespace detail {
         void write(StreamBase const & stream, AreaBase const & area, unsigned level, 
                    std::string msg);
 
+        void timeSource(std::auto_ptr<TimeSource> source);
+
     private:
+        TargetRegistry();
+        
         void registerTarget(Target * target);
         void unregisterTarget(Target * target);
 
         typedef std::set<Target *> Targets;
         Targets targets_;
+        boost::scoped_ptr<TimeSource> timeSource_;
         
         friend class senf::log::Target;
+        friend class senf::singleton<TargetRegistry>;
     };
 
     /** \brief Internal: Write log message */

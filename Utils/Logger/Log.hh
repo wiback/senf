@@ -62,15 +62,34 @@
 
     This current default value is set using \ref SENF_LOG_DEFAULT_STREAM, \ref SENF_LOG_DEFAULT_AREA
     and \ref SENF_LOG_DEFAULT_LEVEL respectively. These macros set the default stream, area and/or
-    level of the current scope. The logging library defines the global defaults for these values to
-    be \c senf::log::Debug (\e stream), senf::log::DefaultArea (\e area), and senf::log::NONE (\e
-    level).
+    level <em>of the current scope</em>. They may be used with a class declaration to set defaults
+    for all class members or within a function or member body to set the default for that member
+    only. They may be used only \e once within each scope.
+
+    The logging library defines the global defaults for stream, area and level to be \c
+    senf::log::Debug, senf::log::DefaultArea, and senf::log::NONE respectively.
 
     The log level senf::log::NONE is special. If the log level is set to this value, the log level
     will be set from the stream provided default value.
     
     All these parameters must be <em>compile time constants</em> (they are all types, so it's
     difficult form them to be something else).
+
+    \section logging_aliases Aliases
+
+    To further simplify logging commands, aliases may be defined within any scope. An alias is an
+    arbitrary collection of log parameters:
+    \code
+    SENF_LOG_DEF_ALIAS( VerboseDebug, (senf::log::Debug)(senf::log::VERBOSE) );
+    \endcode
+    Within log statements, aliases may be used like normal parameters. They will be substituted for
+    the parameter sequence they represent:
+    \code
+    SENF_LOG( (VerboseDebug)("Debug message") )
+    // is equivalent to
+    SENF_LOG( (senf::log::Debug)(senf::log::VERBOSE)("Debug message") )
+    \endcode
+    Aliases may be used together with other parameters, even with further aliases in any order.
  */
 
 ///\ingroup logging

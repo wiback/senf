@@ -243,6 +243,15 @@ prefix_ void senf::Scheduler::process()
     }
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::SchedulerLogTimeSource
+
+prefix_ boost::posix_time::ptime senf::SchedulerLogTimeSource::operator()()
+    const
+{
+    return ClockService::abstime(Scheduler::instance().eventTime());
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

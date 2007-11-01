@@ -35,6 +35,7 @@
 #include <boost/call_traits.hpp>
 #include <boost/integer.hpp>
 #include "ClockService.hh"
+#include "../Utils/Logger/Target.hh"
 
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -238,6 +239,17 @@ namespace senf {
         \relates Scheduler
      */
     int retrieve_filehandle(int fd);
+
+    /** \brief Scheduler specific time source for Utils/Logger framework
+
+        This time source may be used to provide timing information for log messages within the
+        Utils/Logger framework. This time source will use Scheduler::eventTime() to provide timing
+        information.
+     */
+    struct SchedulerLogTimeSource : public senf::log::TimeSource
+    {
+        boost::posix_time::ptime operator()() const;
+    };
 
 }
 

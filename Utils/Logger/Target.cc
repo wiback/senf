@@ -199,14 +199,18 @@ prefix_ void senf::log::Target::write(boost::posix_time::ptime timestamp,
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::log::TargetRegistry
+// senf::log::TimeSource
 
-prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
-                                                      AreaBase const & area, unsigned level,
-                                                      std::string msg)
+prefix_ senf::log::TimeSource::~TimeSource()
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::log::SystemTimeSource
+
+prefix_ boost::posix_time::ptime senf::log::SystemTimeSource::operator()()
+    const
 {
-    boost::posix_time::ptime timestamp (boost::posix_time::microsec_clock::universal_time());
-    area.write(timestamp, stream, level, msg);
+    return boost::posix_time::microsec_clock::universal_time();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

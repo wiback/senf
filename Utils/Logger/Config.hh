@@ -65,6 +65,8 @@
     \c foo::SomeClass area, where it is set to \c VERBOSE. Furthermore, the limit on the \c
     foo::Transactions stream is set to \c NOTICE.
 
+    \see \ref SENF_LOG_CONF
+
     \section config_runtime Runtime configuration
 
     The runtime configuration is performed by routing messages to one or more logging targets:
@@ -85,9 +87,21 @@
     The routing statements are processed by the targets in order, the first matching rule will
     decide a log messages fate for that target.
 
-    \see 
-        \ref SENF_LOG_CONF compile time configuration \n
-        \ref senf::log::Target runtime configuration
+    \see \ref senf::log::Target
+
+    \section config_timesource Log message timing
+
+    One auxiliary aspect of logging is message timing. Each message is stamped with a time-stamp
+    giving the exact time the message was created. How the current date/time value is created may be
+    changed by setting a \e TimeSource. A TimeSource is an instance derived from
+    senf::log::TimeSource which will return the current universal time (UTC) when called.
+
+    By default, the logging library will call gettimeofday() for each log message. To change the
+    time source, just pass the new class or instance to senf::log::timeSource:
+    \code
+    // Use senf::Scheduler::instance().eventTime() to time log messages
+    senf::log::timeSource<senf::SchedulerLogTimeSource>();
+    \endcode
  */
 
 namespace senf {

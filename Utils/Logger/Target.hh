@@ -119,9 +119,6 @@ namespace log {
         cases messages might be lost but this cannot be avoided.
 
         \see \ref targets
-
-        \fixme optionally Integrate with Scheduler / ClockService to reduce number of gettimeofday()
-            calls.
       */
     class Target : private boost::noncopyable
     {
@@ -400,6 +397,55 @@ namespace log {
         
         friend class detail::AreaBase;
     };
+
+    /** \brief Log message time source abstract base class
+
+        Instances derived from TimeSource provide the Logging library with the current date/time
+        value. The \c operator() member must be implemented to return the current universal time
+        (UTC).
+
+        A new TimeSource may be installed using \ref senf::log::timeSource().
+
+        \ingroup config
+     */
+    struct TimeSource
+    {
+        virtual ~TimeSource();
+        virtual boost::posix_time::ptime operator()() const = 0;
+    };
+
+    /** \brief Default log message time source
+
+        This time source is installed by default and uses gettimeofday() (via the Boost.DateTime
+        library) to get the current universal time.
+        
+        \ingroup config
+     */
+    struct SystemTimeSource : public TimeSource
+    {
+        virtual boost::posix_time::ptime operator()() const;
+    };
+
+    /** \brief Change log message time source
+
+        Set the log message time source to \a source. The logging library will take ownership of \e
+        source and will take care to free it, if necessary.
+
+        Since the time source class will in almost all cases be default constructible, see the
+        template overload for a simpler interface.
+
+        \ingroup config
+     */
+    void timeSource(std::auto_ptr<TimeSource> source);
+
+    /** \brief Change log message time source
+
+        Set the log message time source to (an instance of) \a Source.  \a Source must be default
+        constructible, otherwise use the non-template senf::log::timeSource() overload.
+
+        \ingroup config
+     */
+    template <class Source> void timeSource();
 
 }}
 
