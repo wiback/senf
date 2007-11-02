@@ -1,4 +1,4 @@
-// $Id:DatagramSection.cc 327 2007-07-20 10:03:44Z tho $
+// $Id:GREPacket.cc 327 2007-07-20 10:03:44Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
