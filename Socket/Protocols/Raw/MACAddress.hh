@@ -30,7 +30,7 @@
 #include <boost/array.hpp>
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
-#include "../../../Utils/SafeBool.hh"
+#include "../../../Utils/safe_bool.hh"
 
 //#include "MACAddress.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace senf {
      */
     struct MACAddress
         : public boost::array<boost::uint8_t,6>, 
-          public ComparableSafeBool<MACAddress>
+          public comparable_safe_bool<MACAddress>
     {
         static MACAddress const Broadcast; ///< The broadcast address
         static MACAddress const None;   ///< The empty (0) address

@@ -32,7 +32,7 @@
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/operators.hpp>
-#include "../../../Utils/SafeBool.hh"
+#include "../../../Utils/safe_bool.hh"
 
 //#include "INet4Address.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -56,7 +56,7 @@ namespace senf {
       */
     class INet4Address
         : public boost::array<boost::uint8_t,4>, 
-          public ComparableSafeBool<INet4Address>
+          public comparable_safe_bool<INet4Address>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ namespace senf {
       */
     class INet4Network
         : public boost::equality_comparable<INet4Network>, 
-          public ComparableSafeBool<INet4Network>
+          public comparable_safe_bool<INet4Network>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

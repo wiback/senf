@@ -21,32 +21,47 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SafeBool inline non-template implementation */
+    \brief safe_bool inline template implementation */
+
+//#include "safe_bool.ih"
 
 // Custom includes
 
 #define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////cti.p///////////////////////////////////////
 
-prefix_ void senf::SafeBoolBase::this_type_does_not_support_comparisons()
+template <typename T>
+prefix_ senf::comparable_safe_bool<T>::operator bool_type()
     const
-{}
-
-prefix_ senf::SafeBoolBase::SafeBoolBase()
-{}
-
-prefix_ senf::SafeBoolBase::SafeBoolBase(const SafeBoolBase&)
-{}
-
-prefix_ senf::SafeBoolBase& senf::SafeBoolBase::operator=(const SafeBoolBase&)
 {
-    return *this;
+    return (static_cast<const T*>(this))->boolean_test()
+        ? &safe_bool_base::this_type_does_not_support_comparisons : 0;
 }
 
-prefix_ senf::SafeBoolBase::~SafeBoolBase()
+template <typename T>
+prefix_ bool senf::comparable_safe_bool<T>::operator!()
+    const
+{
+    return ! (static_cast<const T*>(this))->boolean_test();
+}
+
+template <typename T>
+prefix_ senf::comparable_safe_bool<T>::~comparable_safe_bool()
 {}
 
-///////////////////////////////cci.e///////////////////////////////////////
+template <typename T, typename U>
+prefix_ void senf::operator==(const safe_bool<T>& lhs, const safe_bool<U>& rhs)
+{
+    lhs.this_type_does_not_support_comparisons();
+}
+
+template <typename T, typename U>
+prefix_ void senf::operator!=(const safe_bool<T>& lhs, const safe_bool<U>& rhs)
+{
+    lhs.this_type_does_not_support_comparisons();
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

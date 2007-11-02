@@ -39,45 +39,43 @@ namespace senf {
 
     /** \brief Exception handling standard UNIX errors (errno)
 
-        This exception is thrown to signal generic errno failures.
+        This exception is thrown to signal generic \c errno failures. In addition to the \c errno
+        number (the code()), this class manages optional origin information. This parameter should
+        be provided to further describe, in what context the exception was created.
 
-        \todo make where and err accessors and make the member variables private
+        This exception should not be used directly. Instead the derived class ErrnoException should
+        be thrown via one of the senf::throwErrno() helpers.
 
-        \idea Add a template class derived from SystemException which takes the error number as a
-        numeric argument. This allows catching specific errno conditions: ErrnoException<EPIPE> etc.
-
-        \idea Add a generic error thrower which takes the origin string and errno value as an
-        argument and will throw a corresponding template class instance. This would just be a big
-        switch statement containing all possible errno values, probably created using some macro
-        meta-programming.
+        \see ErrnoException
      */
     class SystemException : public std::exception
     {
     public:
         SystemException();              ///< SystemException without error location infor
                                         /**< The error code is taken from the current value of the
-                                             global 'errno' variable  */
+                                             global \c errno variable  */
 
         explicit SystemException(int code); ///< SystemException without error location info
-                                        /**< \param[in] code error number (the errno value) */
+                                        /**< \param[in] code error number (the \c errno value) */
 
         explicit SystemException(char const * where); ///< SystemException with error location info
                                         /**< The error code is taken from the current value of the
-                                             global 'errno' variable 
+                                             global \c errno variable 
                                              \param[in] where description of error origin */
 
         SystemException(char const * where, int code); ///< SystemException with error location info 
                                         /**< \param[in] where description of error origin
-                                             \param[in] code error number (the errno value) */
+                                             \param[in] code error number (the \c errno value) */
 
         virtual char const * what() const throw(); ///< Return verbose error description
 
         char const * where() const;     ///< Error origin
-        int code() const;               ///< Error code (errno number)
+        int code() const;               ///< Error code (\c errno number)
         char const * description() const; ///< Error description (strerror() value)
 
         bool anyOf(int c0, int c1=0, int c2=0, int c3=0, int c4=0, int c5=0, 
                    int c6=0, int c7=0, int c8=0, int c9=0);
+                                        ///< \c true, if code() is one of \a c0 ... \a c9
 
         virtual ~SystemException() throw();
 
@@ -85,23 +83,54 @@ namespace senf {
         void init();
 
         char const * const where_;
-        int const code_;
+        int const code_;                // This must be const to make the derived ErrnoException
+                                        // class a valid derived class.
         std::string buffer_;
     };
 
+    /** \brief Error specific system exception
+
+        This template restricts the generic SystemException to a specific, compile-time constant
+        error number \p Code. This allows a specific \c errno number to be cached explicitly.
+
+        This exception is normally thrown via one of the senf::throwErrno() helpers. These helpers
+        take the numeric \c errno value (either from the \c errno variable or from their
+        argument) and will throw the corresponding ErrnoException:
+        \code
+        if ((fd = ::open(filename, O_RDWR)) < 0)
+             senf::throwErrno("open()");
+        \endcode
+     */
     template <int Code>
     class ErrnoException : public SystemException
     {
     public:
         static int const fixed_code = Code;
 
-        ErrnoException();
+        ErrnoException();               ///< ErrnoException without error location information
         explicit ErrnoException(char const * where);
+                                        ///< ErrnoException with error location information
     };
 
+    
+    /** \brief Throw ErrnoException based on current \c errno value
+        \related ErrnoException
+     */
     void throwErrno();
+
+    /** \brief Throw ErrnoException based on current \c errno value (with location info)
+        \related ErrnoException
+     */
     void throwErrno(char const * where);
+
+    /** \brief Throw ErrnoException based on given \c errno value
+        \related ErrnoException
+     */
     void throwErrno(int code);
+
+    /** \brief Throw ErrnoException based on given \c errno value (with location info)
+        \related ErrnoException
+     */
     void throwErrno(char const * where, int code);
 
     enum NoThrow_t { nothrow };

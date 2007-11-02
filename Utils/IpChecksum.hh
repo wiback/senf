@@ -34,7 +34,17 @@
 
 namespace senf {
     
-    /** \brief
+    /** \brief Calculate TCP/IP 16bit checksum value
+
+        This class allows calculation of the 16bit checksum value as defined in the TCP/IP v4
+        RFC's. This checksum is \e not a CRC.
+
+        To calculate the checksum, you create an instance of IpChecksum. You then repeatedly call
+        the feed() members to pass data in. After all data has been processed, the sum() member will
+        return the calculated checksum.
+
+        The mathematical properties of the checksum allow to skip any \e even number of zero bytes
+        without changing the checksum value.
       */
     class IpChecksum
     {
@@ -51,12 +61,13 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void feed(boost::uint8_t byte);
+        void feed(boost::uint8_t byte); ///< Feed single byte
 
         template <class InputIterator>
         void feed(InputIterator b, InputIterator e);
+                                        ///< Feed range of bytes
 
-        boost::uint16_t sum() const;
+        boost::uint16_t sum() const;    ///< Calculate checksum
     
     protected:
 

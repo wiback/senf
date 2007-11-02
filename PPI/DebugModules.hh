@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <deque>
-#include "../Utils/SafeBool.hh"
+#include "../Utils/safe_bool.hh"
 #include "../Packets/Packets.hh"
 #include "Module.hh"
 #include "ActiveFeeder.hh"
@@ -75,7 +75,7 @@ namespace debug {
      */
     class ActiveSource
         : public Module, 
-          public SafeBool<ActiveSource>
+          public safe_bool<ActiveSource>
     {
         SENF_PPI_MODULE(ActiveSource);
 
@@ -136,7 +136,7 @@ namespace debug {
      */
     class ActiveSink
         : public Module,
-          public SafeBool<ActiveSink>
+          public safe_bool<ActiveSink>
     {
         SENF_PPI_MODULE(ActiveSink);
 

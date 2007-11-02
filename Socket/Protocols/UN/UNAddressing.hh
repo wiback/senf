@@ -36,6 +36,7 @@
 #include "../../../Socket/ClientSocketHandle.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/Protocols/GenericAddressingPolicy.hh"
+#include "../../../Utils/safe_bool.hh"
 #include "UNAddress.hh"
 
 //#include "UNAddressing.mpp"
@@ -51,7 +52,7 @@ namespace senf {
         \ingroup addr_group
      */
     class UNSocketAddress
-        : public ComparableSafeBool<UNSocketAddress>
+        : public comparable_safe_bool<UNSocketAddress>
     {
     public:
 

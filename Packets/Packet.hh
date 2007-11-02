@@ -28,7 +28,7 @@
 #include <boost/operators.hpp>
 
 #include "../Utils/Exception.hh"
-#include "../Utils/SafeBool.hh"
+#include "../Utils/safe_bool.hh"
 #include "PacketInterpreter.hh"
 
 //#include "Packet.mpp"
@@ -135,7 +135,7 @@ namespace senf {
             \ref packetparser for a specification of the parser interface
       */
     class Packet
-        : public SafeBool<Packet>,
+        : public safe_bool<Packet>,
           public boost::equality_comparable<Packet>
     {
     public:

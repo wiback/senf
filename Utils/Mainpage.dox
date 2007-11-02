@@ -2,46 +2,79 @@ namespace senf {
 
 /** \mainpage The SENF Utilities Library
 
-    The Utilities Library is a collection of independent utilities. We have 
+    The Utilities Library is a collection of independent utilities.
 
-    <dl>
 
-    <dt>SystemException</dt><dd>standard exception for system errors (errno)</dd>
+    \section basic_helpers C++ Language helpers and simple library extensions
 
-    <dt>\ref process</dt><dd>Some simple process management and daemon helpers<?dd>
+    <table class="listing">
+    <tr><td>\ref membind</td><td>a simple <a
+    href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a> extension</td></tr>
 
-    <dt>\ref membind</dt><dd>a simple <a
-    href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a> extension</dd>
+    <tr><td>\ref senfmpl</td><td>Some simple tools which help to solve common meta-programming
+    tasks</td></tr>
 
-    <dt>intrusive_refcount</dt><dd>mixin to simplify writing classes for use with <a
-    href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a></dd>
+    <tr><td>\ref senfpp</td><td>Extensions to the Boost.Preprocessor library</td></tr>
+    </table>
 
-    <dt>SafeBool</dt><dd>a mixin class to provide a really safe replacement for <tt>operator
-    bool</tt></dd>
+
+    \section basic_mixins Basic mixin classes
     
-    <dt>pool_alloc_mixin</dt><dd>mixin to provide pool allocation to a class</dd>
+    <table class="listing">
+    <tr><td>\ref intrusive_refcount</td><td>mixin to simplify writing classes for use with <a
+    href="http://www.boost.org/libs/smart_ptr/intrusive_ptr.html">boost::intrusive_ptr</a></td></tr>
+
+    <tr><td>\ref safe_bool</td><td>a mixin class to provide a really safe replacement for
+    <tt>operator bool</tt>
     
-    <dt>\ref singleton</dt><dd>mixin to make a class a singleton</dd>
-
-    <dt>prettyName()</dt><dd>an interface to the C++ demangler of g++ to get formated type names
-    from typeinfo objects</dd>
-
-    <dt>\ref SENF_SCOPED_BUFFER</dt><dd>a portable way to efficiently allocate temporary
-    buffers</dd>
-
-    <dt>\ref contiguous_storage_iterator</dt><dd>traits class to check iterator type for raw pointer
-    accessibility</dd>
-
-    <dt>\ref TypeIdValue</dt><dd>class wrapping a typeid in a way that it can be used like any other
-    value type, e.g. as the key in a map.</dd>
+    <tr><td>\ref singleton</td><td>mixin to make a class a singleton</td></tr>
+    </table>
     
-    <dt>\ref hexdump<dt><dd>a simple but usefull function to write binary data in in hexadecimal
-    format.</dd>
 
-    <dt>\ref senfmpl</dt><dd>Some simple tools which help to solve common meta-programming
-    tasks</dd>
+    \section memory_management Memory Management
 
-    </dl>
+    <table class="listing">
+    <tr><td>\ref SENF_SCOPED_BUFFER</td><td>a portable way to efficiently allocate temporary
+    buffers</td></tr>
+
+    <tr><td>\ref pool_alloc_mixin</td><td>mixin to provide pool allocation to a class</td></tr>
+    
+    <tr><td>\ref contiguous_storage_iterator</td><td>traits class to check iterator type for raw
+    pointer accessibility</td></tr>
+    </table>
+
+
+    \section typeinfo C++ Type interface
+
+    <table class="listing">
+    <tr><td>\ref prettyName()</td><td>an interface to the C++ demangler of g++ to get formated type
+    names from typeinfo objects</td></tr>
+
+    <tr><td>\ref TypeIdValue</td><td>class wrapping a typeid in a way that it can be used like any
+    other value type, e.g. as the key in a map.</td></tr>
+    </table>
+    
+
+    \section miscstuff Miscellaneous
+
+    <table class="listing">
+    <tr><td>\ref SystemException</td><td>standard exception for system errors (errno)</td></tr>
+
+    <tr><td>\ref process</td><td>Some simple process management and daemon helpers</td></tr>
+
+    <tr><td>\ref hexdump</td><td>a simple but usefull function to write binary data in in
+    hexadecimal format.</td></tr>
+
+    <tr><td>\ref IpChecksum</td><td>calculating the 16 bit checksum used in the IP
+    specification</td></tr>
+    </table>
+
+    \section compatibility Compatibility
+
+    <table class="listing">
+    <tr><td>\ref auto_unit_test.hh</td><td>Boost auto unit test compatibility across Boost versions
+    1.33 and 1.34</td></tr>
+    </table>
  */
 
 }
@@ -53,6 +86,5 @@ namespace senf {
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// mode: flyspell
 // mode: auto-fill
 // End:

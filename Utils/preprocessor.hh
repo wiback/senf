@@ -34,7 +34,20 @@
 //#include "preprocessor.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
+/** \defgroup senfpp Preprocessor meta programming macros
+
+    preprocessor.hh provides some additional helper macros based on the Boost.Preprocessor library.
+ */
+
+///\{
+///\ingroup senfpp
+
+/** \brief Return last element of a sequence 
+    \hideinitializer 
+ */
 #define SENF_PP_SEQ_BACK(seq) BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(seq)),seq)
+
+///\}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "preprocessor.cci"

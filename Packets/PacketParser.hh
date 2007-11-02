@@ -155,7 +155,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
-#include "../Utils/SafeBool.hh"
+#include "../Utils/safe_bool.hh"
 #include "PacketTypes.hh"
 #include "PacketData.hh"
 #include "ParseHelpers.hh"
@@ -468,7 +468,7 @@ namespace senf {
       */
     template <class Parser>
     class SafePacketParser
-        : public SafeBool< SafePacketParser<Parser> >
+        : public safe_bool< SafePacketParser<Parser> >
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

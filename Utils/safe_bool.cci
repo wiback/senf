@@ -1,3 +1,4 @@
+
 // $Id$
 //
 // Copyright (C) 2007 
@@ -21,47 +22,32 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SafeBool inline template implementation */
-
-//#include "SafeBool.ih"
+    \brief safe_bool inline non-template implementation */
 
 // Custom includes
 
 #define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+///////////////////////////////cci.p///////////////////////////////////////
 
-template <typename T>
-prefix_ senf::ComparableSafeBool<T>::operator bool_type()
+prefix_ void senf::safe_bool_base::this_type_does_not_support_comparisons()
     const
-{
-    return (static_cast<const T*>(this))->boolean_test()
-        ? &SafeBoolBase::this_type_does_not_support_comparisons : 0;
-}
-
-template <typename T>
-prefix_ bool senf::ComparableSafeBool<T>::operator!()
-    const
-{
-    return ! (static_cast<const T*>(this))->boolean_test();
-}
-
-template <typename T>
-prefix_ senf::ComparableSafeBool<T>::~ComparableSafeBool()
 {}
 
-template <typename T, typename U>
-prefix_ void senf::operator==(const SafeBool<T>& lhs, const SafeBool<U>& rhs)
+prefix_ senf::safe_bool_base::safe_bool_base()
+{}
+
+prefix_ senf::safe_bool_base::safe_bool_base(const safe_bool_base&)
+{}
+
+prefix_ senf::safe_bool_base& senf::safe_bool_base::operator=(const safe_bool_base&)
 {
-    lhs.this_type_does_not_support_comparisons();
+    return *this;
 }
 
-template <typename T, typename U>
-prefix_ void senf::operator!=(const SafeBool<T>& lhs, const SafeBool<U>& rhs)
-{
-    lhs.this_type_does_not_support_comparisons();
-}
+prefix_ senf::safe_bool_base::~safe_bool_base()
+{}
 
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
 

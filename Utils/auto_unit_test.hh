@@ -21,7 +21,15 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief auto_unit_test public header */
+    \brief Boost.Test auto unit test compatibility across Boost V 1.33 and 1.34
+
+    This header file will allows to consistently use the Boost Version 1.33 syntax for defining auto
+    unit tests. If the available Boost version is 1.34, this file will automatically take care of
+    any necessary workarounds.
+
+    So, instead of <tt>#include <boost/test/auto_unit_test.hpp></tt>, you should always write
+    <tt>#include "../Utils/auto_unit_test.hh"<tt> (with possibliy adjusted path).
+ */
 
 #ifndef HH_auto_unit_test_
 #define HH_auto_unit_test_ 1

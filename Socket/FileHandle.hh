@@ -59,7 +59,7 @@
 
 // Custom includes
 #include <memory> // std::auto_ptr
-#include "../Utils/SafeBool.hh"
+#include "../Utils/safe_bool.hh"
 
 //#include "FileHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -100,7 +100,7 @@ namespace senf {
         senf::FileBody.
      */
     class FileHandle
-        : public SafeBool<FileHandle>
+        : public safe_bool<FileHandle>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

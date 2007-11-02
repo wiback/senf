@@ -21,13 +21,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SafeBool.test unit tests */
+    \brief safe_bool.test unit tests */
 
-//#include "SafeBool.test.hh"
-//#include "SafeBool.test.ih"
+//#include "safe_bool.test.hh"
+//#include "safe_bool.test.ih"
 
 // Custom includes
-#include "SafeBool.hh"
+#include "safe_bool.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -37,7 +37,7 @@
 
 namespace {
 
-    class TestTrue : public senf::SafeBool<TestTrue>
+    class TestTrue : public senf::safe_bool<TestTrue>
     {
     public:
         bool boolean_test() const {
@@ -45,7 +45,7 @@ namespace {
         }
     };
 
-    class TestFalse : public senf::SafeBool<TestFalse>
+    class TestFalse : public senf::safe_bool<TestFalse>
     {
     public:
         bool boolean_test() const {

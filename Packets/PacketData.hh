@@ -28,7 +28,7 @@
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include "../Utils/SafeBool.hh"
+#include "../Utils/safe_bool.hh"
 #include "PacketTypes.hh"
 
 //#include "PacketData.mpp"
@@ -175,7 +175,7 @@ namespace senf {
         : public boost::iterator_facade< safe_data_iterator,
                                          PacketData::value_type,
                                          boost::random_access_traversal_tag >,
-          public ComparableSafeBool<safe_data_iterator>
+          public comparable_safe_bool<safe_data_iterator>
     {
     public:
         typedef PacketData::size_type size_type;

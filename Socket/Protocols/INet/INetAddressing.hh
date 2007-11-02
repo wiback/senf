@@ -36,6 +36,7 @@
 #include "../../../Socket/ClientSocketHandle.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/Protocols/GenericAddressingPolicy.hh"
+#include "../../../Utils/safe_bool.hh"
 #include "INet4Address.hh"
 #include "INet6Address.hh"
 
@@ -56,7 +57,7 @@ namespace senf {
      */
     class INet4SocketAddress
         : public boost::equality_comparable<INet4SocketAddress>, 
-          public senf::ComparableSafeBool<INet4SocketAddress>
+          public senf::comparable_safe_bool<INet4SocketAddress>
     {
     public:
         INet4SocketAddress();

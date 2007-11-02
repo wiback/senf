@@ -28,8 +28,7 @@
 #include <stdio.h>
 #include <boost/operators.hpp>
 #include <boost/filesystem/path.hpp>
-#include "../../../Utils/SafeBool.hh"
-//#include "UNAddressing.mpp"
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 prefix_ senf::UNSocketAddress::UNSocketAddress(boost::filesystem::path p)

@@ -36,7 +36,7 @@
 namespace senf {
 namespace mpl {
 
-    /** \defgroup senfmpl Low-level template meta programming helpers
+    /** \defgroup senfmpl Template meta programming helpers
      */
 
     /** \brief Marker class for empty default values etc.

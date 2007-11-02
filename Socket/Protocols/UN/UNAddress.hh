@@ -28,7 +28,7 @@
 #include <string>
 #include <boost/operators.hpp>
 #include <boost/filesystem/path.hpp>
-#include "../../../Utils/SafeBool.hh"
+#include "../../../Utils/safe_bool.hh"
 
 //#include "UNAddress.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -42,7 +42,7 @@ namespace senf {
       */
     class UNAddress 
         : public boost::filesystem::path,
-          public ComparableSafeBool<UNAddress>
+          public comparable_safe_bool<UNAddress>
     {   
     public: 
         UNAddress(); ///< Construct an empty address

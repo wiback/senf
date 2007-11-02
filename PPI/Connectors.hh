@@ -28,7 +28,7 @@
 #include <deque>
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
-#include "../Utils/SafeBool.hh"
+#include "../Utils/safe_bool.hh"
 #include "../Packets/Packets.hh"
 #include "predecl.hh"
 #include "detail/Callback.hh"
@@ -334,7 +334,7 @@ namespace connector {
      */
     class PassiveInput 
         : public PassiveConnector, public InputConnector,
-          public SafeBool<PassiveInput>
+          public safe_bool<PassiveInput>
     {
     public:
         PassiveInput();
@@ -362,7 +362,7 @@ namespace connector {
      */
     class PassiveOutput
         : public PassiveConnector, public OutputConnector,
-          public SafeBool<PassiveOutput>
+          public safe_bool<PassiveOutput>
     {
     public:
         ActiveInput & peer() const;
@@ -378,7 +378,7 @@ namespace connector {
      */
     class ActiveInput
         : public ActiveConnector, public InputConnector,
-          public SafeBool<ActiveInput>
+          public safe_bool<ActiveInput>
     {
     public:
         PassiveOutput & peer() const;
@@ -395,7 +395,7 @@ namespace connector {
      */
     class ActiveOutput
         : public ActiveConnector, public OutputConnector,
-          public SafeBool<ActiveOutput>
+          public safe_bool<ActiveOutput>
     {
     public:
         PassiveInput & peer() const;
