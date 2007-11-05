@@ -109,7 +109,7 @@ namespace ppi {
         virtual void v_enable();
          virtual void v_disable();
         
-        void cb(int, Scheduler::EventId event);
+        void cb(Scheduler::EventId event);
 
         int fd_;
         unsigned events_;

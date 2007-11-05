@@ -38,7 +38,7 @@ prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
 }
 
 prefix_ unsigned senf::Scheduler::timeout(ClockService::clock_type timeout,
-                                          TimerCallback const & cb)
+                                          SimpleCallback const & cb)
 {
     ++ timerIdCounter_;
     TimerMap::iterator i (

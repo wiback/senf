@@ -82,7 +82,7 @@ public:
     }
          
 private:
-    void dumpPacket(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
+    void dumpPacket(senf::Scheduler::EventId event)
     {
         senf::EthernetPacket packet (
             senf::EthernetPacket::create(senf::EthernetPacket::noinit));

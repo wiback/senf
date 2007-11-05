@@ -57,7 +57,7 @@ public:
     }
 
 private:
-    void dumpPacket(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
+    void dumpPacket(senf::Scheduler::EventId event)
     {
         std::string data (sock.read());
         senf::EthernetPacket packet (

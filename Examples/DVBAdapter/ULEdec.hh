@@ -51,7 +51,7 @@ private:
     bool priv_sndu_type_1;
     iterator snduPacketData_iter;
 
-    void handleEvent(senf::FileHandle, senf::Scheduler::EventId event);
+    void handleEvent(senf::Scheduler::EventId event);
     void handleTSPacket(senf::TransportPacket tsPacket);
     void handleSNDUPacket();
     
@@ -82,6 +82,6 @@ struct ULEdecException : public std::exception
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -u"
 // comment-column: 40
 // End:

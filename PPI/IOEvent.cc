@@ -41,7 +41,7 @@
 
 prefix_ void senf::ppi::IOEvent::v_enable()
 {
-    Scheduler::instance().add(fd_, boost::bind(&IOEvent::cb,this,_1,_2), 
+    Scheduler::instance().add(fd_, boost::bind(&IOEvent::cb,this,_1), 
                               Scheduler::EventId(events_));
 }
 
@@ -50,7 +50,7 @@ prefix_ void senf::ppi::IOEvent::v_disable()
     Scheduler::instance().remove(fd_, Scheduler::EventId(events_));
 }
 
-prefix_ void senf::ppi::IOEvent::cb(int, Scheduler::EventId event)
+prefix_ void senf::ppi::IOEvent::cb(Scheduler::EventId event)
 {
     if ((event & ~events_) != 0) {
         if (event & Err)

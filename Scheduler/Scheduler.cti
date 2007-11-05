@@ -33,14 +33,10 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Handle>
-prefix_ void senf::Scheduler::add(Handle const & handle,
-                                         typename GenericCallback<Handle>::Callback const & cb,
-                                         int eventMask)
+prefix_ void senf::Scheduler::add(Handle const & handle, FdCallback const & cb, int eventMask)
 {
     // retrieve_filehandle is found via ADL
-    SimpleCallback scb (boost::bind(cb,handle,_1));
-    int fd = retrieve_filehandle(handle);
-    do_add(fd,scb,eventMask);
+    do_add(retrieve_filehandle(handle),cb,eventMask);
 }
 
 template <class Handle>

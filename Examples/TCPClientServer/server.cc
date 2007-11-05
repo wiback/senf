@@ -50,12 +50,12 @@ public:
     }
          
 private:
-    void accept(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
+    void accept(senf::Scheduler::EventId event)
     {
         senf::TCPv4ClientSocketHandle clientSock (serverSock.accept());
         senf::Scheduler::instance().add(
             clientSock,
-            senf::membind(&Server::readFromClient, this),
+            boost::bind(&Server::readFromClient, this, clientSock, _1),
             senf::Scheduler::EV_READ);
     }
     

@@ -186,9 +186,24 @@ namespace {
 
     bool is_close(ClockService::clock_type a, ClockService::clock_type b)
     {
-        return (a<b ? b-a : a-b) < 10100000UL; // a little bit over 10ms
+        return (a<b ? b-a : a-b) < ClockService::milliseconds(15);
     }
+    
+    ClockService::clock_type sigtime (0);
 
+    void sigusr()
+    {
+        sigtime = ClockService::now();
+        Scheduler::instance().terminate();
+    }
+        
+    void delay(unsigned long milliseconds)
+    {
+        struct timespec ts;
+        ts.tv_sec = milliseconds / 1000;
+        ts.tv_nsec = (milliseconds % 1000) * 1000000;
+        while (nanosleep(&ts,&ts) < 0 && errno == EINTR) ;
+    }
 }
 
 BOOST_AUTO_UNIT_TEST(scheduler)
@@ -215,7 +230,8 @@ BOOST_AUTO_UNIT_TEST(scheduler)
 
     BOOST_CHECK_NO_THROW( Scheduler::instance() );
 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().add(sock,&callback,Scheduler::EV_READ) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().add(sock,boost::bind(&callback, sock, _1),
+                                                    Scheduler::EV_READ) );
     event = Scheduler::EV_NONE;
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
     BOOST_CHECK_EQUAL( event, Scheduler::EV_READ );
@@ -234,7 +250,9 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
 
     HandleWrapper handle(sock,"TheTag");
-    BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,&handleCallback,Scheduler::EV_WRITE) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,
+                                                    boost::bind(&handleCallback,handle,_1),
+                                                    Scheduler::EV_WRITE) );
     strcpy(buffer,"WRITE");
     size=5;
     event = Scheduler::EV_NONE;
@@ -249,6 +267,15 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     BOOST_REQUIRE_EQUAL( size, 2 );
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "OK" );
+
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
+                              ClockService::now()+ClockService::milliseconds(200),&timeout) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().registerSignal(SIGUSR1, &sigusr) );
+    t = ClockService::now();
+    ::kill(::getpid(), SIGUSR1);
+    delay(100);
+    BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(100)) );
 
     ///////////////////////////////////////////////////////////////////////////
 

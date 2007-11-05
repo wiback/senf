@@ -59,7 +59,7 @@ ULEdec::ULEdec(unsigned short adapter, unsigned short device)
     this->priv_sndu_type_1 = false;
 }
 
-void ULEdec::handleEvent(senf::FileHandle, senf::Scheduler::EventId event)
+void ULEdec::handleEvent(senf::Scheduler::EventId event)
 {
     senf::TransportPacket ts_packet (
             senf::TransportPacket::create(188, senf::TransportPacket::noinit));

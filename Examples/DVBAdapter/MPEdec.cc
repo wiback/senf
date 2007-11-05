@@ -65,7 +65,7 @@ public:
     }
 
 private:
-    void dumpSection(senf::FileHandle /* ignored */, senf::Scheduler::EventId event)
+    void dumpSection(senf::Scheduler::EventId event)
     {
         std::string data (handle.read());
         senf::DatagramSection section (senf::DatagramSection::create(data));
@@ -98,6 +98,6 @@ int main(int argc, char const * argv[])
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -u"
 // comment-column: 40
 // End:
