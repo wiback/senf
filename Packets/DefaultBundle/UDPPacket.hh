@@ -67,6 +67,10 @@ namespace senf {
         \par Fields:
             \ref Parse_UDP
 
+        \par Finalize action:
+            Set \a length from payload size\n
+            Calculate \a checksum
+
         \ingroup protocolbundle_default
      */
     struct UDPPacketType

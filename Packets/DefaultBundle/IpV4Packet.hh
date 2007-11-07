@@ -124,6 +124,11 @@ namespace senf {
         \par Associated registries:
             \ref IpTypes
 
+        \par Finalize action:
+            Set \a length from payload size\n
+            Set \a protocol from type of next packet if found in \ref IpTypes\n
+            Calculate \a checksum
+
         \ingroup protocolbundle_default
      */
     struct IpV4PacketType

@@ -37,7 +37,13 @@ namespace log {
 
     /** \brief Write log messages to std::cout
 
-        IOStreamTarget writing to std::cout
+        IOStreamTarget writing to std::cout. This is a singleton target which always exists. Access
+        it via senf::log::ConsoleTarget::instance()
+        \code
+        senf::log::ConsoleTarget & console (senf::log::ConsoleTarget::instance());
+
+        console.route<senf::log::Debug>();
+        \endcode
 
         \ingroup targets
      */
@@ -47,17 +53,20 @@ namespace log {
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-
-        ConsoleTarget();
+        
+        static ConsoleTarget & instance();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
+
+    private:
+        ConsoleTarget();
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "ConsoleTarget.cci"
+#include "ConsoleTarget.cci"
 //#include "ConsoleTarget.ct"
 //#include "ConsoleTarget.cti"
 #endif

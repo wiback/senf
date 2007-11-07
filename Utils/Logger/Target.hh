@@ -51,8 +51,8 @@
 
 namespace senf {
 namespace log {
-
-    class TargetRegistry;
+    
+    namespace detail { class TargetRegistry; }
 
     /** \brief Logging target base class
         
@@ -396,6 +396,7 @@ namespace log {
         RIB rib_;
         
         friend class detail::AreaBase;
+        friend class detail::TargetRegistry;
     };
 
     /** \brief Log message time source abstract base class

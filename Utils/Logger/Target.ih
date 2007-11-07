@@ -48,6 +48,8 @@ namespace detail {
 
         void timeSource(std::auto_ptr<TimeSource> source);
 
+        void routed();
+
     private:
         TargetRegistry();
         
@@ -57,6 +59,8 @@ namespace detail {
         typedef std::set<Target *> Targets;
         Targets targets_;
         boost::scoped_ptr<TimeSource> timeSource_;
+
+        bool fallbackRouting_;
         
         friend class senf::log::Target;
         friend class senf::singleton<TargetRegistry>;

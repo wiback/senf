@@ -131,11 +131,11 @@ int main(int argc, char * argv[])
     senf::ConnectedUDPv4ClientSocketHandle outputSocket(
         senf::INet4SocketAddress("localhost:44345"));
 
-    module::ActiveSocketSource<>  udpSource  ( inputSocket );
-    RateStuffer                   stuffer    ( 1000000000ul, 
-                                               senf::DataPacket::create(std::string("<idle>\n")),
-                                               2u, 1u );
-    module::PassiveSocketSink<> udpSink  ( outputSocket );
+    module::ActiveSocketSource<>  udpSource ( inputSocket );
+    RateStuffer                   stuffer   ( 1000000000ul, 
+                                              senf::DataPacket::create(std::string("<idle>\n")),
+                                              2u, 1u );
+    module::PassiveSocketSink<>   udpSink   ( outputSocket );
 
     ppi::connect( udpSource, stuffer   );
     ppi::connect( stuffer,   udpSink );

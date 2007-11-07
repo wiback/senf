@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <algorithm>
+#include "ConsoleTarget.hh"
 
 //#include "Target.mpp"
 #define prefix_
@@ -135,6 +136,8 @@ prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
     rib_.insert(i, RoutingEntry(stream, area, level, action));
     if (action == ACCEPT)
         updateRoutingCache(stream, area);
+    // This disables the initial fallback routing
+    detail::TargetRegistry::instance().routed();
 }
 
 prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
@@ -196,6 +199,20 @@ prefix_ void senf::log::Target::write(boost::posix_time::ptime timestamp,
                 v_write(timestamp, stream.v_name(), area.v_name(), level, message);
             return;
         }
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::log::detail::TargetRegistry
+
+prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
+                                                      AreaBase const & area, unsigned level,
+                                                      std::string msg)
+{
+    if (fallbackRouting_)
+        static_cast<Target &>(ConsoleTarget::instance()).v_write( 
+            (*timeSource_)(), stream.v_name(), area.v_name(), level, msg );
+    else
+        area.write( (*timeSource_)(), stream, level, msg );
 }
 
 ///////////////////////////////////////////////////////////////////////////

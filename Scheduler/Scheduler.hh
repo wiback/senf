@@ -61,39 +61,57 @@ namespace senf {
         are defined on top of this functionality (e.g. ReadHelper or WriteHelper or the interval
         timers of the PPI).
 
-        \section sched_handlers Handlers
 
-        All handlers are managed as generic <a
+        \section sched_handlers Specifying handlers
+
+        All handlers are passed as generic <a
         href="http://www.boost.org/doc/html/function.html">Boost.Function</a> objects. This allows
         to pass any callable as a handler. Depending on the type of handler, some additional
-        arguments may be passed to the handler by the scheduler. If you want to pass additional
-        arguments to the handler, use <a
-        href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a>)).
+        arguments may be passed to the handler by the scheduler. 
+
+        If you need to pass additional information to your handler, use <a
+        href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a>:
+        \code
+        // Pass 'handle' as additional first argument to callback()
+        Scheduler::instance().add(handle, boost::bind(&callback, handle, _1))
+        // Call timeout() handler with argument 'n'
+        Scheduler::instance().timeout(boost::bind(&timeout, n))
+        \endcode
+
+        To use member-functions as callbacks, use either <a
+        href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a> or senf::membind()
+        \code
+        // e.g. in Foo::Foo() constructor:
+        Scheduler::instance().add(handle_, senf::membind(&Foo::callback, this))
+        \endcode
         
 
-        \section sched_fd File descriptors
+        \section sched_fd Registering file descriptors
         
         File descriptors are managed using add() or remove()
         \code
         Scheduler::instance().add(handle, &callback);
         Scheduler::instance().remove(handle);
-        \endcode
+        \endcode 
+
         The callback will be called with one additional argument. This argument is the event mask of
-        type EventId. This mask will tell, which of the registered events are
-        signaled. Additionally, EV_HUP or EV_ERR on hangup or error condition on the handle.
+        type EventId. This mask will tell, which of the registered events are signaled. The
+        additional flags EV_HUP or EV_ERR (on hangup or error condition) may be set additionally.
 
-        There is always only one handler registered for a file descriptor (registering multiple
-        callbacks for a single fd does not make sense).
+        Only a single handler may be registered for any combination of file descriptor and event
+        (registering multiple callbacks for a single fd and event does not make sense).
 
-        The scheduler will accept an almost arbitrary object as it's first argument. It will use
+        The scheduler will accept any object as \a handle argument as long as retrieve_filehandle()
+        may be called on that object
         \code
         int fd = retrieve_filehandle(handle);
-        \endcode
-        To fetch the file handle given some abstract handle type. The definition of
-        retrieve_filehandle() will be found using ADL.
+        \endcode 
+        to fetch the file handle given some abstract handle type. retrieve_filehandle() will be
+        found using ADL depending on the argument namespace. A default implementation is provided
+        for \c int arguments (file descriptors)
 
 
-        \section sched_timers Timers
+        \section sched_timers Registering timers
 
         The Scheduler has very simple timer support. There is only one type of timer: A single-shot
         deadline timer. More complex timers are built based on this. Timers are managed using
@@ -120,7 +138,7 @@ namespace senf {
         timeoutEarly. By default, this value is set to 0 but may be changed if needed.
 
 
-        \section sched_signals POSIX/UNIX signals
+        \section sched_signals Registering POSIX/UNIX signals
 
         The Scheduler also incorporates standard POSIX/UNIX signals. Signals registered with the
         scheduler will be handled \e synchronously within the event loop.

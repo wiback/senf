@@ -29,12 +29,104 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
-
 #include "Exception.hh"
 
 //#include "DaemonTools.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::Daemon
+
+prefix_ senf::Daemon::~Daemon()
+{}
+
+prefix_ void senf::Daemon::daemonize(bool v)
+{
+    daemonize_ = v;
+}
+
+prefix_ bool senf::Daemon::daemon()
+{
+    return daemonize_;
+}
+
+prefix_ void senf::Daemon::consoleLog(std::string path, StdStream which)
+{
+    int fd (-1);
+    if (! path.empty()) {
+        int fd (::open(path.c_str(), O_WRONLY | O_APPEND));
+        if (fd < 0)
+            throwErrno("open()");
+    }
+    switch (which) {
+    case StdOut:
+        stdout_ = fd;
+        break;
+    case StdErr:
+        stderr_ = fd;
+        break;
+    case Both:
+        stdout_ = fd;
+        stderr_ = fd;
+        break;
+    }
+}
+
+prefix_ void senf::Daemon::pidFile(std::string f, bool unique)
+{
+    pidfile_ = f;
+    unique_ = unique;
+}
+
+prefix_ void senf::Daemon::detach()
+{}
+
+prefix_ int senf::Daemon::start(int argc, char const ** argv)
+{
+    argc_ = argc;
+    argv_ = argv;
+
+    configure();
+    if (daemonize_)
+        fork();
+    if (! pidfile_.empty())
+        pidfileCreate();
+    main();
+    return 0;
+}
+
+////////////////////////////////////////
+// protected members
+
+prefix_ senf::Daemon::Daemon()
+    : argc_(0), argv_(0), daemonize_(true), stdout_(-1), stderr_(-1), pidfile_(""), unique_(true),
+      detached_(false)
+{}
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::Daemon::configure()
+{}
+
+prefix_ void senf::Daemon::main()
+{
+    init();
+    detach();
+    run();
+}
+
+prefix_ void senf::Daemon::init()
+{}
+
+prefix_ void senf::Daemon::run()
+{}
+
+prefix_ void senf::Daemon::pidfileCreate()
+{}
+
+///////////////////////////////////////////////////////////////////////////
 
 prefix_ void senf::daemonize()
 {

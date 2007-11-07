@@ -92,6 +92,10 @@ namespace senf {
         \par Associated registries:
             \ref IpTypes
 
+        \par Finalize action:
+            Set \a length from payload size\n
+            Set \a nextHeader from type of next packet if found in \ref IpTypes
+
         \ingroup protocolbundle_default
      */
     struct IpV6PacketType

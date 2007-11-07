@@ -86,6 +86,17 @@
 
     The routing statements are processed by the targets in order, the first matching rule will
     decide a log messages fate for that target.
+    
+    There are two cases, where this setup may lead to inadvertently lost log messages:
+    \li When using a library which does internally use the Logger but not initializing the logger in
+        your application.
+    \li When log messages are created during initialization of static objects.
+    Since no route is set up in these cases, the messages will be dropped.
+    
+    To counter this problem, the logger is initially in <em>fallback routing</em> state. If any log
+    message arrives in this state, the message will be unconditionally logged to the console. The
+    first routing statement on any target will take the logger out of this state and normal routing
+    will take place.
 
     \see \ref senf::log::Target
 

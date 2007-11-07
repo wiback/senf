@@ -100,6 +100,9 @@ namespace senf {
         \par Associated registries:
             \ref EtherTypes
 
+        \par Finalize action:
+            Set \a type from type of next packet if found in \ref EtherTypes
+
         \ingroup protocolbundle_default
      */
     struct EthernetPacketType
@@ -156,6 +159,9 @@ namespace senf {
 
         \par Associated registries:
             \ref EtherTypes
+
+        \par Finalize action:
+            Set \a type from type of next packet if found in \ref EtherTypes
 
         \ingroup protocolbundle_default
      */

@@ -174,7 +174,7 @@
     port 44345 on localhost. The \a outputSocket uses the senf::ConnectedUDPv4SocketProtocol which
     is compatible with the senf::ppi::module::PassiveSocketWriter module.
 
-    \until udpWriter
+    \until udpSink
 
     Here we allocate the components:
 
@@ -182,12 +182,10 @@
     \li \a stuffer for the real work and
     \li \a udpWriter to send the packets to \a outputSocket
 
-    \until udpWriter
+    \until udpSink
 
     The \ref senf::ppi::connect() calls setup the necessary connections.
     
-    \until run
-
     The module setup is complete, \ref senf::ppi::run() is called to enter the event loop.
 
     \until }

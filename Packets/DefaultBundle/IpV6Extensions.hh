@@ -66,6 +66,9 @@ namespace senf {
         \par Associated registries:
             \par IpTypes
         
+        \par Finalize action:
+            Set \a nextHeader from type of next packet if found in \ref IpTypes
+
         \ingroup protocolbundle_default
      */
     struct IpV6ExtensionType_Fragment

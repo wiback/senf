@@ -21,28 +21,30 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ConsoleTarget non-inline non-template implementation */
+    \brief ConsoleTarget inline non-template implementation */
 
-#include "ConsoleTarget.hh"
 //#include "ConsoleTarget.ih"
 
 // Custom includes
-#include <iostream>
 
-//#include "ConsoleTarget.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::ConsoleTarget
+
+prefix_ senf::log::ConsoleTarget & senf::log::ConsoleTarget::instance()
+{
+    static ConsoleTarget consoleTarget;
+    return consoleTarget;
+}
 
 prefix_ senf::log::ConsoleTarget::ConsoleTarget()
     : IOStreamTarget(std::cout)
 {}
 
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
-//#include "ConsoleTarget.mpp"
 
 
 // Local Variables:
