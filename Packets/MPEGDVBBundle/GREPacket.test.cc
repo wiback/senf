@@ -36,7 +36,7 @@
 
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(transportPacket_packet)
+BOOST_AUTO_UNIT_TEST(GREPacket_packet)
 {
     // TransportStream-Packet containing a ULE encoded IPv6 ping packet,
     // captured with dvbsnoop
