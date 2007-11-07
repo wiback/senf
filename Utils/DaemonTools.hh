@@ -190,6 +190,7 @@ namespace senf {
                                              implementation is not overridden. */
     private:
 
+        void fork();
         void pidfileCreate();
 
         int argc_;
