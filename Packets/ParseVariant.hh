@@ -180,15 +180,15 @@ namespace senf {
                                             (senf::Parse_UInt32) );
 
             senf::Parse_UInt8 uint8()  const { return content().get<1>(); }
-            senf::Parse_UInt8 uint16() const { return content().get<2>(); }
-            senf::Parse_UInt8 uint24() const { return content().get<3>(); }
-            senf::Parse_UInt8 uint32() const { return content().get<4>(); }
+            senf::Parse_UInt16 uint16() const { return content().get<2>(); }
+            senf::Parse_UInt24 uint24() const { return content().get<3>(); }
+            senf::Parse_UInt32 uint32() const { return content().get<4>(); }
 
             void disable()    const { content().init<0>(); }
             void set_uint8()  const { content().init<1>(); }
-            void set_uint16() const { content().init<1>(); }
-            void set_uint24)  const { content().init<1>(); }
-            void set_uint23() const { content().init<1>(); }
+            void set_uint16() const { content().init<2>(); }
+            void set_uint24)  const { content().init<3>(); }
+            void set_uint23() const { content().init<4>(); }
 
             SENF_PARSER_FINALIZE(SomeParser);
         };

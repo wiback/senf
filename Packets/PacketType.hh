@@ -222,8 +222,8 @@ namespace senf {
         \code
         // Here 'SomeRegistryTag' is optional
         struct SimplePacketType 
-            : public senf::PacketTypeBase
-              public senf:PacketTypeMixin<SimplePacketType, SomeRegistryTag>
+            : public senf::PacketTypeBase,
+              public senf::PacketTypeMixin<SimplePacketType, SomeRegistryTag>
         {
             typedef senf::PacketTypeMixin<SimplePacketType, SomeRegistryTag> mixin;
             typedef senf::ConcretePacket<SimplePacketType> packet;
@@ -292,8 +292,8 @@ namespace senf {
 
         \code
         struct SimplePacketType 
-            : public senf::PacketTypeBase
-              public senf:PacketTypeMixin<SimplePacketType, SomeRegistryTag>
+            : public senf::PacketTypeBase,
+              public senf::PacketTypeMixin<SimplePacketType, SomeRegistryTag>
         {
             typedef senf::PacketTypeMixin<SimplePacketType, SomeRegistryTag> mixin;
             typedef senf::ConcretePacket<SimplePacketType> packet;
