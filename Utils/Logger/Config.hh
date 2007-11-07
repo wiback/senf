@@ -71,7 +71,7 @@
 
     The runtime configuration is performed by routing messages to one or more logging targets:
     \code
-    senf::log::ConsoleLog consoleLog;
+    senf::log::ConsoleLog & consoleLog (senf::log::ConsoleLog::instance());
     senf::log::FileLog fileLog ("my.log");
 
     consoleLog.route<senf::log::Debug>();
@@ -79,10 +79,11 @@
     consoleLog.route<foo::Transactions, senf::log::IMPORTANT>();
 
     fileLog.route<foo::Transactions>();
-    \endcode Here we see an already relatively complex setup: All debug messages (that is, those,
-    which are not disabled at compile time) are routed to the console. We also route important
-    transactions to the console \e except transactions from the \c foo::SomeClass area. The \c
-    fileLog simply receives all transaction log messages.
+    \endcode 
+    Here we see an already relatively complex setup: All debug messages (that is, those, which are
+    not disabled at compile time) are routed to the console. We also route important transactions to
+    the console \e except transactions from the \c foo::SomeClass area. The \c fileLog simply
+    receives all transaction log messages.
 
     The routing statements are processed by the targets in order, the first matching rule will
     decide a log messages fate for that target.

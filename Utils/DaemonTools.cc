@@ -87,12 +87,29 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
     argc_ = argc;
     argv_ = argv;
 
+#   ifdef NDEBUG
+    try {
+#   endif
+
     configure();
     if (daemonize_)
         fork();
     if (! pidfile_.empty())
         pidfileCreate();
     main();
+
+#   ifdef NDEBUG
+    }
+    catch (std::exception & e) {
+        std::cerr << "\n*** Fatal exception: " << e.what() << std::endl;
+        return 1;
+    }
+    catch (...) {
+        std::cerr << "\n*** Fatal exception: (unknown)" << std::endl;
+        return 1;
+    }
+#   endif
+
     return 0;
 }
 
@@ -122,6 +139,11 @@ prefix_ void senf::Daemon::init()
 
 prefix_ void senf::Daemon::run()
 {}
+
+prefix_ void senf::Daemon::fork()
+{
+    
+}
 
 prefix_ void senf::Daemon::pidfileCreate()
 {}
