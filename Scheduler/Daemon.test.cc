@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <iostream>
+#include <fstream>
 #include <boost/filesystem/operations.hpp>
 #include "Daemon.hh"
 #include "../Utils/Exception.hh"
@@ -56,6 +57,7 @@ namespace {
         void configure() { 
             std::cout << "Running configure()" << std::endl; 
             pidFile("testDaemon.pid");
+            consoleLog("testDaemon.log");
         }
 
         void init() { 
@@ -83,7 +85,7 @@ namespace {
         }
         int status;
         if (::waitpid(pid, &status, 0) < 0) senf::throwErrno("::waitpid()");
-         return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
+        return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
     }
 
 }
@@ -96,6 +98,13 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
     BOOST_CHECK( boost::filesystem::exists("testDaemon.pid") );
     delay(1000);
     BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
+    BOOST_REQUIRE( boost::filesystem::exists("testDaemon.log") );
+    
+    std::ifstream log ("testDaemon.log");
+    std::stringstream data;
+    data << log.rdbuf();
+    BOOST_CHECK_EQUAL( data.str(), "Running init()\nRunning run()\n" );
+    BOOST_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log") );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

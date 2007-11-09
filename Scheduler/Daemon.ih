@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <deque>
+#include <list>
 #include <boost/utility.hpp>
 #include <boost/function.hpp>
 #include "../Scheduler/Scheduler.hh"
@@ -43,7 +44,7 @@ namespace detail {
     {
     public:
 
-        DaemonWatcher(int pid, int coutpipe, int cerrpipe);
+        DaemonWatcher(int pid, int coutpipe, int cerrpipe, int stdout, int stderr);
 
         void run();
 
@@ -54,18 +55,29 @@ namespace detail {
         public:
             typedef boost::function<void ()> Callback;
 
-            Forwarder(int src, int dst, Callback cb);
+            Forwarder(int src, Callback cb);
             ~Forwarder();
+
+            void addTarget(int fd);
 
         private:
 
-            void readData(Scheduler::EventId event);
-            void writeData(Scheduler::EventId event);
-
             typedef std::deque<char> Buffer;
+            struct Target
+            {
+                int fd;
+                Buffer::size_type offset;
+            };
+            typedef std::list<Target> Targets;
+
+            void readData(Scheduler::EventId event);
+            void writeData(Scheduler::EventId event, Targets::iterator target);
+
             Buffer buffer_;
             int src_;
-            int dst_;
+
+            Targets targets_;
+
             Callback cb_;
         };
         
@@ -77,6 +89,8 @@ namespace detail {
         int childPid_;
         int coutpipe_;
         int cerrpipe_;
+        int stdout_;
+        int stderr_;
         bool sigChld_;
 
         Forwarder coutForwarder_;

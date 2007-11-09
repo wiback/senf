@@ -54,7 +54,7 @@ static const int EPollInitialSize = 16;
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::Scheduler::Scheduler()
-    : timerIdCounter_(0), epollFd_ (epoll_create(EPollInitialSize)), terminate_(false),
+    : files_(0), timerIdCounter_(0), epollFd_ (epoll_create(EPollInitialSize)), terminate_(false),
       eventTime_(0), eventEarly_(ClockService::milliseconds(11)), eventAdjust_(0)
 {
     if (epollFd_<0)
@@ -120,8 +120,15 @@ prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMas
     ev.events = i->second.epollMask();
     ev.data.fd = fd;
 
-    if (epoll_ctl(epollFd_, action, fd, &ev)<0)
-        throw SystemException(errno);
+    if (! i->second.file && epoll_ctl(epollFd_, action, fd, &ev) < 0) {
+        if (errno == EPERM) {
+            // Argh ... epoll does not support ordinary files :-( :-(
+            i->second.file = true;
+            ++ files_;
+        }
+        else
+            throwErrno("::epoll_ctl()");
+    }
 }
 
 prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
@@ -140,13 +147,16 @@ prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
     ev.data.fd = fd;
 
     int action (EPOLL_CTL_MOD);
+    bool file (i->second.file);
     if (ev.events==0) {
         action = EPOLL_CTL_DEL;
         fdTable_.erase(i);
     }
 
-    if (epoll_ctl(epollFd_, action, fd, &ev)<0)
-        throw SystemException(errno);
+    if (! file && epoll_ctl(epollFd_, action, fd, &ev) < 0)
+        throwErrno("::epoll_ctl()");
+    if (file)
+        -- files_;
 }
 
 prefix_ void senf::Scheduler::registerSigHandlers()
@@ -205,14 +215,18 @@ prefix_ void senf::Scheduler::process()
         }
 
         int timeout (-1);
-        if (timerQueue_.empty()) {
-            if (fdTable_.empty())
-                break;
-        }
+        if (files_ > 0)
+            timeout = 0;
         else {
-            ClockService::clock_type delta (
-                (timerQueue_.top()->second.timeout - eventTime_ + eventAdjust_)/1000000UL);
-            timeout = delta < 0 ? 0 : delta;
+            if (timerQueue_.empty()) {
+                if (fdTable_.empty())
+                    break;
+            }
+            else {
+                ClockService::clock_type delta (
+                    (timerQueue_.top()->second.timeout - eventTime_ + eventAdjust_)/1000000UL);
+                timeout = delta < 0 ? 0 : delta;
+            }
         }
 
         ///\todo Handle more than one epoll_event per call
@@ -261,37 +275,41 @@ prefix_ void senf::Scheduler::process()
             continue;
         }
 
-        FdTable::iterator i = fdTable_.find(ev.data.fd);
-        BOOST_ASSERT (i != fdTable_.end() );
-        EventSpec spec (i->second);
+        for (FdTable::iterator i = fdTable_.begin(); i != fdTable_.end(); ++i) {
+            EventSpec spec (i->second);
+            unsigned extraFlags (0);
+            unsigned events (spec.file ? spec.epollMask() : ev.events);
 
-        unsigned extraFlags (0);
-        if (ev.events & EPOLLHUP) extraFlags |= EV_HUP;
-        if (ev.events & EPOLLERR) extraFlags |= EV_ERR;
+            if (! (spec.file || i->first == ev.data.fd))
+                continue;
+                
+            if (events & EPOLLHUP) extraFlags |= EV_HUP;
+            if (events & EPOLLERR) extraFlags |= EV_ERR;
 
-        if (ev.events & EPOLLIN) {
-            BOOST_ASSERT(spec.cb_read);
-            spec.cb_read(EventId(EV_READ | extraFlags));
-        }
-        else if (ev.events & EPOLLPRI) {
-            BOOST_ASSERT(spec.cb_prio);
-            spec.cb_prio(EventId(EV_PRIO | extraFlags));
-        }
-        else if (ev.events & EPOLLOUT) {
-            BOOST_ASSERT(spec.cb_write);
-            spec.cb_write(EventId(EV_WRITE | extraFlags));
-        }
-        else {
-            // This branch is only taken, if HUP or ERR is signaled but none of IN/OUT/PRI. 
-            // In this case we will signal all registered callbacks. The callbacks must be
-            // prepared to be called multiple times if they are registered to more than
-            // one event.
-            if (spec.cb_write) 
-                spec.cb_write(EventId(extraFlags));
-            if (spec.cb_prio) 
-                spec.cb_prio(EventId(extraFlags));
-            if (spec.cb_read) 
-                spec.cb_read(EventId(extraFlags));
+            if (events & EPOLLIN) {
+                BOOST_ASSERT(spec.cb_read);
+                spec.cb_read(EventId(EV_READ | extraFlags));
+            }
+            else if (events & EPOLLPRI) {
+                BOOST_ASSERT(spec.cb_prio);
+                spec.cb_prio(EventId(EV_PRIO | extraFlags));
+            }
+            else if (events & EPOLLOUT) {
+                BOOST_ASSERT(spec.cb_write);
+                spec.cb_write(EventId(EV_WRITE | extraFlags));
+            }
+            else {
+                // This branch is only taken, if HUP or ERR is signaled but none of IN/OUT/PRI. 
+                // In this case we will signal all registered callbacks. The callbacks must be
+                // prepared to be called multiple times if they are registered to more than
+                // one event.
+                if (spec.cb_write) 
+                    spec.cb_write(EventId(extraFlags));
+                if (spec.cb_prio) 
+                    spec.cb_prio(EventId(extraFlags));
+                if (spec.cb_read) 
+                    spec.cb_read(EventId(extraFlags));
+            }
         }
     }
 }

@@ -153,6 +153,9 @@ namespace senf {
         wait for signals \e only.
 
         \todo Fix EventId parameter (probably to int) to allow |-ing without casting ...
+        
+        \todo Fix the file support to use threads (?) fork (?) and a pipe so it works reliably even
+            over e.g. NFS.
       */
     class Scheduler
         : boost::noncopyable
@@ -320,7 +323,11 @@ namespace senf {
             FdCallback cb_prio;
             FdCallback cb_write;
 
+            EventSpec() : file(false) {}
+
             int epollMask() const;
+
+            bool file;
         };
 
         /** \brief Timer event specification
@@ -364,6 +371,7 @@ namespace senf {
         typedef std::vector<SimpleCallback> SigHandlers;
 
         FdTable fdTable_;
+        unsigned files_;
 
         unsigned timerIdCounter_;
         TimerQueue timerQueue_;

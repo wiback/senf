@@ -97,7 +97,8 @@ namespace senf {
         void daemonize(bool);           ///< Configure whether to run in fore- or background
         bool daemon();                  ///< \c true, if running as daemon
 
-        void consoleLog(std::string, StdStream which = Both); ///< Configure console log file
+        void consoleLog(std::string const &, StdStream which = Both); 
+                                        ///< Configure console log file
                                         /**< May be called multiple times to set the log file
                                              for stdout and stderr seperately. Any standard stream
                                              not assigned to a log file will be redirected to
@@ -106,7 +107,7 @@ namespace senf {
                                              When running in the foreground, the log files will be
                                              ignored. */
 
-        void pidFile(std::string);      ///< Configure pid file
+        void pidFile(std::string const &); ///< Configure pid file
 
         ///\}
         ///\name Auxiliary helpers
