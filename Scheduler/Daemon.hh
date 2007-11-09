@@ -106,7 +106,7 @@ namespace senf {
                                              When running in the foreground, the log files will be
                                              ignored. */
 
-        void pidFile(std::string, bool unique = true); ///< Configure pid file
+        void pidFile(std::string);      ///< Configure pid file
 
         ///\}
         ///\name Auxiliary helpers
@@ -161,7 +161,7 @@ namespace senf {
     private:
 
         void fork();
-        void pidfileCreate();
+        bool pidfileCreate();
 
         int argc_;
         char const ** argv_;
@@ -170,7 +170,6 @@ namespace senf {
         int stdout_;
         int stderr_;
         std::string pidfile_;
-        bool unique_;
 
         bool detached_;
     };

@@ -69,18 +69,18 @@ namespace detail {
             Callback cb_;
         };
         
-        void pipeClosed();
+        void pipeClosed(int id);
+        void sigChld();
         void childDied();
         void childOk();
 
         int childPid_;
         int coutpipe_;
         int cerrpipe_;
+        bool sigChld_;
 
         Forwarder coutForwarder_;
         Forwarder cerrForwarder_;
-
-        bool timerRunning_;
     };
 
 }}

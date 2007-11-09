@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <iostream>
+#include <boost/filesystem/operations.hpp>
 #include "Daemon.hh"
 #include "../Utils/Exception.hh"
 
@@ -52,11 +53,18 @@ namespace {
 
     class MyDaemon : public senf::Daemon
     {
-        void configure() { std::cout << "Running configure()" << std::endl; }
-        void init() { std::cout << "Running init()" << std::endl; }
+        void configure() { 
+            std::cout << "Running configure()" << std::endl; 
+            pidFile("testDaemon.pid");
+        }
+
+        void init() { 
+            std::cout << "Running init()" << std::endl; 
+        }
+
         void run() {
-            delay(2000);
             std::cout << "Running run()" << std::endl; 
+            delay(1500);
         }
     };
 
@@ -84,6 +92,10 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
 {
     char const * args[] = { "run", 0 };
     BOOST_CHECK_EQUAL( run(1,args), 0 );
+
+    BOOST_CHECK( boost::filesystem::exists("testDaemon.pid") );
+    delay(1000);
+    BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
+#include <sstream>
 #include "../Utils/Exception.hh"
 #include "../Utils/membind.hh"
 
@@ -48,7 +49,10 @@
 // senf::Daemon
 
 prefix_ senf::Daemon::~Daemon()
-{}
+{
+    if (! pidfile_.empty())
+        LIBC_CALL( ::unlink, (pidfile_.c_str()) );
+}
 
 prefix_ void senf::Daemon::daemonize(bool v)
 {
@@ -82,18 +86,19 @@ prefix_ void senf::Daemon::consoleLog(std::string path, StdStream which)
     }
 }
 
-prefix_ void senf::Daemon::pidFile(std::string f, bool unique)
+prefix_ void senf::Daemon::pidFile(std::string f)
 {
     pidfile_ = f;
-    unique_ = unique;
 }
 
 prefix_ void senf::Daemon::detach()
 {
-    LIBC_CALL_RV( nul, ::open, ("/dev/null", O_WRONLY) );
-    LIBC_CALL( ::dup2, (nul, 1) );
-    LIBC_CALL( ::dup2, (nul, 2) );
-    LIBC_CALL( ::close, (nul) );
+    if (daemonize_) {
+        LIBC_CALL_RV( nul, ::open, ("/dev/null", O_WRONLY) );
+        LIBC_CALL( ::dup2, (nul, 1) );
+        LIBC_CALL( ::dup2, (nul, 2) );
+        LIBC_CALL( ::close, (nul) );
+    }
 }
 
 prefix_ int senf::Daemon::start(int argc, char const ** argv)
@@ -105,12 +110,17 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
     try {
 #   endif
 
-    configure();
-    if (daemonize_)
-        fork();
-    if (! pidfile_.empty())
-        pidfileCreate();
-    main();
+        configure();
+
+        if (daemonize_)
+            fork();
+        if (! pidfile_.empty() && ! pidfileCreate()) {
+            std::cerr << "\n*** PID file '" << pidfile_ << "' creation failed. Daemon running ?" 
+                      << std::endl;
+            return 1;
+        }
+
+        main();
 
 #   ifdef NDEBUG
     }
@@ -131,7 +141,7 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
 // protected members
 
 prefix_ senf::Daemon::Daemon()
-    : argc_(0), argv_(0), daemonize_(true), stdout_(-1), stderr_(-1), pidfile_(""), unique_(true),
+    : argc_(0), argv_(0), daemonize_(true), stdout_(-1), stderr_(-1), pidfile_(""),
       detached_(false)
 {}
 
@@ -189,44 +199,137 @@ prefix_ void senf::Daemon::fork()
         return;
     }
 
+    // Ouch ... ensure, the daemon watcher does not remove the pidfile ...
+    pidfile_ = "";
+    
     LIBC_CALL( ::close, (coutpipe[1]) );
     LIBC_CALL( ::close, (cerrpipe[1]) );
 
     detail::DaemonWatcher watcher (pid, coutpipe[0], cerrpipe[0]);
     watcher.run();
 
-    ::exit(0);
-
+    ::_exit(0);
 }
 
-prefix_ void senf::Daemon::pidfileCreate()
-{}
+prefix_ bool senf::Daemon::pidfileCreate()
+{
+    // Create temporary file pidfile_.hostname.pid and hard-link it to pidfile_ If the hardlink
+    // fails, the pidfile exists. If the link count of the temporary file is not 2 after this, there
+    // was some race condition, probably over NFS.
+
+    std::string tempname;
+
+    {
+        char hostname[HOST_NAME_MAX+1];
+        LIBC_CALL( ::gethostname, (hostname, HOST_NAME_MAX+1) );
+        hostname[HOST_NAME_MAX] = 0;
+        std::stringstream tempname_s;
+        tempname_s << pidfile_ << "." << hostname << "." << ::getpid();
+        tempname = tempname_s.str();
+    }
+
+    while (1) {
+        {
+            std::ofstream pidf (tempname.c_str());
+            pidf << ::getpid() << std::endl;
+        }
+
+        if (::link(tempname.c_str(), pidfile_.c_str()) < 0) {
+            if (errno != EEXIST) 
+                throwErrno("::link()");
+        }
+        else {
+            struct ::stat s;
+            LIBC_CALL( ::stat, (tempname.c_str(), &s) );
+            LIBC_CALL( ::unlink, (tempname.c_str()) );
+            return s.st_nlink == 2;
+        }
+
+        // pidfile exists. Check, whether the pid in the pidfile still exists.
+        {
+            int old_pid (-1);
+            std::ifstream pidf (pidfile_.c_str());
+            if ( ! (pidf >> old_pid)
+                 || old_pid < 0 
+                 || ::kill(old_pid, 0) >= 0 
+                 || errno == EPERM )
+                return false;
+        }
+
+        // If we reach this point, the pid file exists but the process mentioned within the
+        // pid file does *not* exists. We assume, the pid file to be stale.
+
+        // I hope, the following procedure is without race condition: We remove our generated
+        // temporary pid file and recreate it as hard-link to the old pid file. Now we check, that
+        // the hard-link count of this file is 2. If it is not, we terminate, since someone else
+        // must have already created his hardlink. We then truncate the file and write our pid.
+
+        LIBC_CALL( ::unlink, (tempname.c_str() ));
+        if (::link(pidfile_.c_str(), tempname.c_str()) < 0) {
+            if (errno != ENOENT) throwErrno("::link()");
+            // Hmm ... the pidfile mysteriously disappeared ... try again.
+            continue;
+        }
+
+        {
+            struct ::stat s;
+            LIBC_CALL( ::stat, (tempname.c_str(), &s) );
+            if (s.st_nlink != 2) {
+                LIBC_CALL( ::unlink, (tempname.c_str()) );
+                return false;
+            }
+        }
+        
+        {
+            std::ofstream pidf (tempname.c_str());
+            pidf << ::getpid() << std::endl;
+        }
+
+        LIBC_CALL( ::unlink, (tempname.c_str()) );
+        break;
+    }
+    return true;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::DaemonWatcher
 
 prefix_ senf::detail::DaemonWatcher::DaemonWatcher(int pid, int coutpipe, int cerrpipe)
-    : childPid_(pid), coutpipe_(coutpipe), cerrpipe_(cerrpipe), 
-      coutForwarder_(coutpipe_, 1, senf::membind(&DaemonWatcher::pipeClosed, this)),
-      cerrForwarder_(cerrpipe_, 2, senf::membind(&DaemonWatcher::pipeClosed, this))
+    : childPid_(pid), coutpipe_(coutpipe), cerrpipe_(cerrpipe), sigChld_(false),
+      coutForwarder_(coutpipe_, 1, boost::bind(&DaemonWatcher::pipeClosed, this, 1)),
+      cerrForwarder_(cerrpipe_, 2, boost::bind(&DaemonWatcher::pipeClosed, this, 2))
 {}
 
 prefix_ void senf::detail::DaemonWatcher::run()
 {
-    Scheduler::instance().registerSignal(SIGCHLD, senf::membind(&DaemonWatcher::childDied, this));
+    Scheduler::instance().registerSignal(SIGCHLD, senf::membind(&DaemonWatcher::sigChld, this));
     Scheduler::instance().process();
 }
 
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::detail::DaemonWatcher::pipeClosed()
+prefix_ void senf::detail::DaemonWatcher::pipeClosed(int id)
 {
-    if (! timerRunning_) {
-        Scheduler::instance().timeout(Scheduler::instance().eventTime() + ClockService::seconds(1),
-                                      senf::membind(&DaemonWatcher::childOk, this));
-        timerRunning_ = true;
+    switch (id) {
+    case 1 : coutpipe_ = -1; break;
+    case 2 : cerrpipe_ = -1; break;
     }
+
+    if (coutpipe_ == -1 && cerrpipe_ == -1) {
+        if (sigChld_)
+            childDied(); // does not return
+        Scheduler::instance().timeout(
+            Scheduler::instance().eventTime() + ClockService::seconds(1),
+            senf::membind(&DaemonWatcher::childOk, this));
+    }
+}
+
+prefix_ void senf::detail::DaemonWatcher::sigChld()
+{
+    sigChld_ = true;
+    if (coutpipe_ == -1 && cerrpipe_ == -1)
+        childDied(); // does not return
 }
 
 prefix_ void senf::detail::DaemonWatcher::childDied()
@@ -237,11 +340,11 @@ prefix_ void senf::detail::DaemonWatcher::childDied()
         ::signal(WTERMSIG(status),SIG_DFL);
         ::kill(::getpid(), WTERMSIG(status));
         // should not be reached
-        ::exit(1);
+        ::_exit(1);
     }
     if (WEXITSTATUS(status) == 0)
-        ::exit(1);
-    ::exit(WEXITSTATUS(status));
+        ::_exit(1);
+    ::_exit(WEXITSTATUS(status));
 }
 
 prefix_ void senf::detail::DaemonWatcher::childOk()
