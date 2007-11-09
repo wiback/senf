@@ -37,7 +37,7 @@
 #include <boost/call_traits.hpp>
 #include <boost/integer.hpp>
 #include "ClockService.hh"
-#include "../Utils/Logger/Target.hh"
+#include "../Utils/Logger.hh"
 
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -158,6 +158,9 @@ namespace senf {
         : boost::noncopyable
     {
     public:
+
+        SENF_LOG_CLASS_AREA();
+
         ///////////////////////////////////////////////////////////////////////////
         // Types
 

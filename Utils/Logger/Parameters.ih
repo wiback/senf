@@ -38,6 +38,7 @@
 #include <boost/type_traits/is_convertible.hpp>
 #include "../mpl.hh"
 #include "Config.hh"
+#include "Target.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -117,7 +118,8 @@ namespace detail {
 
         static bool enabled() { 
             return compileEnabled
-                && Base::area::instance().limit(Base::stream::instance()) <= level::value;
+                && ( senf::log::detail::TargetRegistry::instance().fallbackRouting() ||
+                     Base::area::instance().limit(Base::stream::instance()) <= level::value );
         }
     };
 

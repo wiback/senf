@@ -28,6 +28,10 @@
 
 // Custom includes
 
+#ifdef SENF_LOG_CONF
+#undef SENF_LOG_CONF
+#endif
+
 #define SENF_LOG_CONF (( (senf)(log)(Debug), (_), NOTICE )) \
                       (( (senf)(log)(test)(myStream), (senf)(log)(test)(Foo), VERBOSE ))
 

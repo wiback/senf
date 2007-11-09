@@ -104,6 +104,11 @@ prefix_ void senf::log::detail::TargetRegistry::routed()
     fallbackRouting_ = false;
 }
 
+prefix_ bool senf::log::detail::TargetRegistry::fallbackRouting()
+{
+    return fallbackRouting_;
+}
+
 ////////////////////////////////////////
 // private members
 

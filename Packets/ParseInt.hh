@@ -284,15 +284,6 @@ namespace senf {
     inline std::ostream & operator<<(std::ostream & os, Parse_UInt32 const & i)
     { os << i.value(); return os; }
 
-    template <int X, int Y>
-    struct ctime_pow {
-        static const int result = X * ctime_pow<X,Y-1>::result;
-    };
-    template<int X>
-    struct ctime_pow<X,0> {
-        static const int result = 1;
-    };
-    
     /** \brief Parse signed bitfield with up to 32bit's
         
         This parser will parse a bitfield beginning at the bit \a Start and ending \e before \a
@@ -328,8 +319,8 @@ namespace senf {
         static size_type const start_bit = Start;
         static size_type const end_bit = End;
         static size_type const fixed_bytes = (End-1)/8+1;
-        static value_type const min_value = -ctime_pow<2,(End-Start)-1>::result;
-        static value_type const max_value =  ctime_pow<2,(End-Start)-1>::result - 1;
+        static value_type const max_value = boost::low_bits_mask_t<End-Start-1>::sig_bits;
+        static value_type const min_value = - max_value - 1;
 
 
         value_type value() const {
@@ -386,8 +377,8 @@ namespace senf {
         static size_type const start_bit = Start;
         static size_type const end_bit = End;
         static size_type const fixed_bytes = (End-1)/8+1;
-        static value_type const min_value = 0;
-        static value_type const max_value = ctime_pow<2,(End-Start)>::result - 1;
+        static value_type const min_value = 0u;
+        static value_type const max_value = boost::low_bits_mask_t<End-Start>::sig_bits;
 
         value_type value() const { return detail::packet::parse_bitfield<Start,End>::parse(i()); }
         void value(value_type v) { detail::packet::parse_bitfield<Start,End>::write(i(),v); }

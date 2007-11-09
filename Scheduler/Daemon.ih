@@ -21,57 +21,69 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Target internal header */
+    \brief Daemon internal header */
 
-#ifndef IH_Target_
-#define IH_Target_ 1
+#ifndef IH_Daemon_
+#define IH_Daemon_ 1
 
 // Custom includes
-#include <memory>
-#include <boost/scoped_ptr.hpp>
+#include <deque>
+#include <boost/utility.hpp>
+#include <boost/function.hpp>
+#include "../Scheduler/Scheduler.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
-namespace log {
 namespace detail {
 
-    /** \brief Internal: Target registry */
-    class TargetRegistry
-        : public senf::singleton<TargetRegistry>
+    /** \brief Internal: Watch daemon process for successful startup */
+    class DaemonWatcher
+        : boost::noncopyable
     {
     public:
-        using senf::singleton<TargetRegistry>::instance;
 
-        void write(StreamBase const & stream, AreaBase const & area, unsigned level, 
-                   std::string msg);
+        DaemonWatcher(int pid, int coutpipe, int cerrpipe);
 
-        void timeSource(std::auto_ptr<TimeSource> source);
-
-        void routed();
-        bool fallbackRouting();
+        void run();
 
     private:
-        TargetRegistry();
-        
-        void registerTarget(Target * target);
-        void unregisterTarget(Target * target);
 
-        typedef std::set<Target *> Targets;
-        Targets targets_;
-        boost::scoped_ptr<TimeSource> timeSource_;
+        class Forwarder 
+        {
+        public:
+            typedef boost::function<void ()> Callback;
 
-        bool fallbackRouting_;
+            Forwarder(int src, int dst, Callback cb);
+            ~Forwarder();
+
+        private:
+
+            void readData(Scheduler::EventId event);
+            void writeData(Scheduler::EventId event);
+
+            typedef std::deque<char> Buffer;
+            Buffer buffer_;
+            int src_;
+            int dst_;
+            Callback cb_;
+        };
         
-        friend class senf::log::Target;
-        friend class senf::singleton<TargetRegistry>;
+        void pipeClosed();
+        void childDied();
+        void childOk();
+
+        int childPid_;
+        int coutpipe_;
+        int cerrpipe_;
+
+        Forwarder coutForwarder_;
+        Forwarder cerrForwarder_;
+
+        bool timerRunning_;
     };
 
-    /** \brief Internal: Write log message */
-    template <class Stream, class Area, class Level>
-    void write(std::string msg);
-
-}}}
+}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif

@@ -267,15 +267,19 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     BOOST_REQUIRE_EQUAL( size, 2 );
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "OK" );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().remove(handle) );
 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
-                              ClockService::now()+ClockService::milliseconds(200),&timeout) );
+    unsigned tid (Scheduler::instance().timeout(
+                      ClockService::now()+ClockService::milliseconds(200),&timeout));
     BOOST_CHECK_NO_THROW( Scheduler::instance().registerSignal(SIGUSR1, &sigusr) );
     t = ClockService::now();
     ::kill(::getpid(), SIGUSR1);
     delay(100);
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
     BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(100)) );
+    BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+ClockService::milliseconds(100)) );
+    Scheduler::instance().cancelTimeout(tid);
+    BOOST_CHECK_NO_THROW( Scheduler::instance().unregisterSignal(SIGUSR1) );
 
     ///////////////////////////////////////////////////////////////////////////
 

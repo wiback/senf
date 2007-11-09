@@ -170,7 +170,7 @@ prefix_ void senf::Scheduler::sigHandler(int signal, ::siginfo_t * siginfo, void
     // queue. Since signals are only unblocked during epoll_wait, we even wouldn't need to
     // synchronize access to that queue any further.
 
-    ::write(instance().sigpipe_[1], siginfo, sizeof(siginfo));
+    ::write(instance().sigpipe_[1], siginfo, sizeof(*siginfo));
 
     // We ignore errors. The file handle is set to non-blocking IO. If any failure occurs (pipe
     // full), the signal will be dropped. That's like kernel signal handling which may also drop
@@ -250,10 +250,12 @@ prefix_ void senf::Scheduler::process()
         // Check the signal queue
         if (ev.data.fd == sigpipe_[0]) {
             ::siginfo_t siginfo;
-            if (::read(sigpipe_[0], &siginfo, sizeof(siginfo)) < int(sizeof(siginfo)))
+            if (::read(sigpipe_[0], &siginfo, sizeof(siginfo)) < int(sizeof(siginfo))) {
                 // We ignore truncated records which may only occur if the signal
                 // queue became filled up
+                SENF_LOG((senf::log::IMPORTANT)("Truncated signal record!"));
                 continue;
+            }
             if (siginfo.si_signo < int(sigHandlers_.size()) && sigHandlers_[siginfo.si_signo])
                 sigHandlers_[siginfo.si_signo]();
             continue;
