@@ -80,6 +80,8 @@ namespace senf {
 
         typedef boost::int8_t value_type;
         static size_type const fixed_bytes = 1;
+        static value_type const min_value = -128;
+        static value_type const max_value = 127;
 
         value_type value() const { return i()[0]; }
         void value(value_type v) { i()[0] = v; }
@@ -105,6 +107,8 @@ namespace senf {
 
         typedef boost::uint8_t value_type;
         static size_type const fixed_bytes = 1;
+        static value_type const min_value = 0u;
+        static value_type const max_value = 255u;
 
         value_type value() const { return i()[0]; }
         void value(value_type v) { i()[0] = v; }
@@ -130,6 +134,9 @@ namespace senf {
 
         typedef boost::int16_t value_type;
         static size_type const fixed_bytes = 2;
+        static value_type const min_value = -32768;
+        static value_type const max_value = 32767;
+
 
         value_type value() const { return detail::packet::parse_uint16(i()); }
         void value(value_type v) { detail::packet::write_uint16(i(),v); }
@@ -155,6 +162,8 @@ namespace senf {
 
         typedef boost::uint16_t value_type;
         static size_type const fixed_bytes = 2;
+        static value_type const min_value = 0u;
+        static value_type const max_value = 65535u;
 
         value_type value() const { return detail::packet::parse_uint16(i()); }
         void value(value_type v) { detail::packet::write_uint16(i(),v); }
@@ -180,6 +189,8 @@ namespace senf {
 
         typedef boost::int32_t value_type;
         static size_type const fixed_bytes = 3;
+        static value_type const min_value = -8388608;
+        static value_type const max_value = 8388607;
 
         value_type value() const {
             value_type v (detail::packet::parse_uint24(i())); return v&0x800000 ? v|0xff000000 : v; }
@@ -206,6 +217,8 @@ namespace senf {
 
         typedef boost::uint32_t value_type;
         static size_type const fixed_bytes = 3;
+        static value_type const min_value = 0u;
+        static value_type const max_value = 16777215u;
 
         value_type value() const { return detail::packet::parse_uint24(i()); }
         void value(value_type v) { detail::packet::write_uint24(i(),v); }
@@ -231,6 +244,8 @@ namespace senf {
 
         typedef boost::int32_t value_type;
         static size_type const fixed_bytes = 4;
+        static value_type const min_value = -2147483647 - 1;
+        static value_type const max_value = 2147483647;
 
         value_type value() const { return detail::packet::parse_uint32(i()); }
         void value(value_type v) { detail::packet::write_uint32(i(),v); }
@@ -256,6 +271,8 @@ namespace senf {
 
         typedef boost::uint32_t value_type;
         static size_type const fixed_bytes = 4;
+        static value_type const min_value = 0u;
+        static value_type const max_value = 4294967295u;
 
         value_type value() const { return detail::packet::parse_uint32(i()); }
         void value(value_type v) { detail::packet::write_uint32(i(),v); }
@@ -267,6 +284,15 @@ namespace senf {
     inline std::ostream & operator<<(std::ostream & os, Parse_UInt32 const & i)
     { os << i.value(); return os; }
 
+    template <int X, int Y>
+    struct ctime_pow {
+        static const int result = X * ctime_pow<X,Y-1>::result;
+    };
+    template<int X>
+    struct ctime_pow<X,0> {
+        static const int result = 1;
+    };
+    
     /** \brief Parse signed bitfield with up to 32bit's
         
         This parser will parse a bitfield beginning at the bit \a Start and ending \e before \a
@@ -302,6 +328,9 @@ namespace senf {
         static size_type const start_bit = Start;
         static size_type const end_bit = End;
         static size_type const fixed_bytes = (End-1)/8+1;
+        static value_type const min_value = -ctime_pow<2,(End-Start)-1>::result;
+        static value_type const max_value =  ctime_pow<2,(End-Start)-1>::result - 1;
+
 
         value_type value() const {
             value_type v (detail::packet::parse_bitfield<Start,End>::parse(i()));
@@ -357,6 +386,8 @@ namespace senf {
         static size_type const start_bit = Start;
         static size_type const end_bit = End;
         static size_type const fixed_bytes = (End-1)/8+1;
+        static value_type const min_value = 0;
+        static value_type const max_value = ctime_pow<2,(End-Start)>::result - 1;
 
         value_type value() const { return detail::packet::parse_bitfield<Start,End>::parse(i()); }
         void value(value_type v) { detail::packet::parse_bitfield<Start,End>::write(i(),v); }
@@ -399,6 +430,8 @@ namespace senf {
         typedef bool value_type;
         static size_type const bit = Bit;
         static size_type const fixed_bytes = Bit/8+1;
+        static value_type const min_value = 0;
+        static value_type const max_value = 1;
 
         value_type value() const { return i()[Bit/8] & (1<<(7-(Bit%8))); }
         void value(value_type v) {
