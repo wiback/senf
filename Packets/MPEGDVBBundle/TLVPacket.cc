@@ -134,39 +134,6 @@ prefix_ void senf::Parse_TLVPacketLength::resize(size_type size)
         data().insert( si, size-current_size, 0);
 }
 
-prefix_ void senf::TLVPacketType::dump(packet p, std::ostream & os)
-{
-    os << "TLVPacket:\n"
-       << std::dec
-       << "  type: " <<  unsigned(p->type()) << "\n"
-       << "  length: " << unsigned(p->length()) << "\n";
-}
-
-prefix_ senf::PacketParserBase::size_type senf::TLVPacketType::initSize()
-{
-    return 5;  // 4 bytes type + 1 byte length
-}
-
-prefix_ void senf::TLVPacketType::init(packet p)
-{
-    p->init();
-}
-
-prefix_ void senf::TLVPacketType::finalize(packet p)
-{
-    p->length() = p.next().data().size();
-}
-
-prefix_ senf::PacketInterpreterBase::optional_range 
-senf::TLVPacketType::nextPacketRange(packet p) 
-{
-    if (p.data().size() < 5)
-        return no_range();
-    return range(
-            boost::next(p.data().begin(), 4 + senf::bytes(p->length()) ),
-            p.data().end() );
-}
-
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

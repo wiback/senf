@@ -35,6 +35,12 @@
 
 namespace senf {
 
+    /** \brief xxx
+        
+        \todo document me
+        \todo add usefull exceptions strings
+         
+    */
     struct UnsuportedTLVPacketException : public std::exception
     { 
         virtual char const * what() const throw() { 
@@ -42,6 +48,9 @@ namespace senf {
         }
     };
 
+    /** \brief xxx
+        \todo document me
+    */
     class Parse_TLVPacketLength 
         : public detail::packet::ParseIntOps<Parse_TLVPacketLength, boost::uint32_t>,
           public PacketParserBase
@@ -50,15 +59,15 @@ namespace senf {
         Parse_TLVPacketLength(data_iterator i, state_type s) : PacketParserBase(i,s) {}
 
         typedef boost::uint32_t value_type;
-    
-        value_type value() const;
+        static const size_type init_bytes = 1;
+        static value_type const min_value = 0;
+        static value_type const max_value = 4294967295u;
 
+        value_type value() const;
         void value(value_type const & v);
         
         Parse_TLVPacketLength const & operator= (value_type other);
-            
-        static const size_type init_bytes = 1;
-
+    
         size_type bytes() const;
             
         void init() const;
@@ -80,52 +89,54 @@ namespace senf {
         
     /** \brief parse TLVPacket Packet
     
-
-        
+        \todo document me
+     
         \see TLVPacketType
      */
+    template <class LengthParser>
     struct Parse_TLVPacket : public PacketParserBase
     {
 #       include SENF_PARSER()
         
         SENF_PARSER_FIELD( type,   Parse_UInt32 );
-        SENF_PARSER_FIELD( length, Parse_TLVPacketLength );
+        SENF_PARSER_FIELD( length, LengthParser );
         
         SENF_PARSER_FINALIZE(Parse_TLVPacket);
     };
-
-    /** \brief TLV Packet
-        \image html TLV.png
+    
+    /** \brief generic TLV Packet type
         
-        \par Packet type (typedef):
-            \ref TLVPacket
-
-        \par Fields:
-            \ref Parse_TLVPacket
-
+        \todo document me
+        
         \ingroup protocolbundle_mpegdvb
      */
+    template <class LengthParser>
     struct TLVPacketType
         : public PacketTypeBase
     {
-        typedef ConcretePacket<TLVPacketType> packet;
-        typedef Parse_TLVPacket parser;
+        typedef ConcretePacket<TLVPacketType<LengthParser> > packet;
+        typedef Parse_TLVPacket<LengthParser> parser;
 
         static optional_range nextPacketRange(packet p);
-        static void init(packet p);
         static size_type initSize();
+        
         static void finalize(packet p);
+        
         static void dump(packet p, std::ostream & os);
     };
-        
-    typedef TLVPacketType::packet TLVPacket;
+
+    typedef TLVPacketType<Parse_TLVPacketLength>::packet TLVPacket;
     
+    typedef TLVPacketType<Parse_UInt8>::packet  TLVFix8Packet;
+    typedef TLVPacketType<Parse_UInt16>::packet TLVFix16Packet;
+    typedef TLVPacketType<Parse_UInt24>::packet TLVFix24Packet;
+    typedef TLVPacketType<Parse_UInt32>::packet TLVFix32Packet;
 }
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "TLVPacket.cci"
-//#include "TLVPacket.ct"
+#include "TLVPacket.ct"
 //#include "TLVPacket.cti"
 #endif
 

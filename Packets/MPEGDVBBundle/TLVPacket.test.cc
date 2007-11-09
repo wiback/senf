@@ -31,60 +31,58 @@
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
+#include <vector>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 using namespace senf;
 
-BOOST_AUTO_UNIT_TEST(tlvPacket_static)
+
+template <class TLVPacketType>
+void check_TLVPacket(TLVPacketType tlvPacket, boost::uint32_t type, boost::uint32_t length)
+{
+    BOOST_CHECK_EQUAL( tlvPacket->type(), type );
+    BOOST_CHECK_EQUAL( tlvPacket->length(), length );
+
+    PacketData & tlvPacket_value (tlvPacket.next().data());
+    BOOST_CHECK_EQUAL( tlvPacket_value.size(), length);
+    for (int i=0, j=tlvPacket_value.size(); i<j; i++)
+        BOOST_CHECK_EQUAL( tlvPacket_value[i], i );
+}
+
+
+BOOST_AUTO_UNIT_TEST(TLVPacket_static)
 {
     // check static values:
     // number of bytes to allocate for a new TLVPacket should be 5
-    BOOST_CHECK_EQUAL( init_bytes<Parse_TLVPacket>::value, 5u );
-    BOOST_CHECK_EQUAL( TLVPacketType::initSize(), 5u );
+    BOOST_CHECK_EQUAL( TLVPacket::type::initSize(), 5u );
 }
 
-BOOST_AUTO_UNIT_TEST(tlvPacket_parse_packet_with_simple_length)
+BOOST_AUTO_UNIT_TEST(TLVPacket_parse_packet_with_simple_length)
 {
     unsigned char data[] = { 
         0x01, 0x23, 0x45, 0x67, // type
         0x0A, // first bit not set, length=10
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value (payload)
     };
-            
     senf::TLVPacket tlvPacket (senf::TLVPacket::create(data));
-    
-    BOOST_CHECK_EQUAL( tlvPacket->type(), 0x01234567u );
-    BOOST_CHECK_EQUAL( tlvPacket->length(), 0x0Au );
-
-    PacketData & tlvPacket_value (tlvPacket.next().data());
-    BOOST_CHECK_EQUAL( tlvPacket_value.size(), 0x0Au);
-    for (int i=0, j=tlvPacket_value.size(); i<j; i++)
-        BOOST_CHECK_EQUAL( tlvPacket_value[i], i );
+    check_TLVPacket( tlvPacket, 0x01234567u, 0x0Au );
 }
 
-BOOST_AUTO_UNIT_TEST(tlvPacket_parse_packet_with_extended_length)
+BOOST_AUTO_UNIT_TEST(TLVPacket_parse_packet_with_extended_length)
 {
     unsigned char data[] = { 
         0x01, 0x23, 0x45, 0x67, // type
         0x81, // first and last bit set => one byte length following
         0x0A, // length (10 bytes value)
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value (payload)
-    };
-            
+    };        
     senf::TLVPacket tlvPacket (senf::TLVPacket::create(data));
-    
-    BOOST_CHECK_EQUAL( tlvPacket->type(), 0x01234567u );
-    BOOST_CHECK_EQUAL( tlvPacket->length(), 0x0Au );
-
-    PacketData & tlvPacket_value (tlvPacket.next().data());
-    BOOST_CHECK_EQUAL( tlvPacket_value.size(), 0x0Au);
-    for (int i=0, j=tlvPacket_value.size(); i<j; i++)
-        BOOST_CHECK_EQUAL( tlvPacket_value[i], i );
+    check_TLVPacket( tlvPacket, 0x01234567u, 0x0Au );
 }
 
-BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_simple_length)
+BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_simple_length)
 {
     std::string payload ("Hello, world!");
     TLVPacket tlvPacket (TLVPacket::create());
@@ -100,7 +98,7 @@ BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_simple_length)
 }
 
 
-BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_extended_length)
+BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_extended_length)
 {
     std::string payload (
             "This is a very long string with more than 127 characters to check if the TLV-Packet "
@@ -125,6 +123,89 @@ BOOST_AUTO_UNIT_TEST(tlvPacket_create_packet_with_extended_length)
 	    
     PacketData & tlvPacket_value2 (tlvPacket.next().data());
     BOOST_CHECK( equal( tlvPacket_value2.begin(), tlvPacket_value2.end(), payload.begin() ));	   
+}
+
+BOOST_AUTO_UNIT_TEST(TLVPacket_create_invalid_packet)
+{
+    
+}
+
+BOOST_AUTO_UNIT_TEST(TLVFixPacket_static)
+{
+    // check static values:
+    // number of bytes to allocate for a new TLVFixPacket should be 4+bytes_of_length
+    BOOST_CHECK_EQUAL( TLVFix8Packet::type::initSize(),  4+1u );
+    BOOST_CHECK_EQUAL( TLVFix16Packet::type::initSize(), 4+2u );
+    BOOST_CHECK_EQUAL( TLVFix24Packet::type::initSize(), 4+3u );
+    BOOST_CHECK_EQUAL( TLVFix32Packet::type::initSize(), 4+4u );
+}
+
+
+template <class TLVFixPacketType>
+void test_TLVFixPacket_parsing(unsigned lengthParser_size)
+{
+    std::vector<char> data;
+    data.push_back(0x01); data.push_back(0x23); data.push_back(0x45); data.push_back(0x67); // type
+    data.insert(data.end(), lengthParser_size-1, 0x00);
+    data.push_back(0x0A); // length
+    for( int i=0; i < 10; i++ ) {
+        data.push_back(i); // payload
+    }
+    TLVFixPacketType tlvPacket (TLVFixPacketType::create(
+            boost::make_iterator_range(data.begin(), data.end())));
+    check_TLVPacket( tlvPacket, 0x01234567u, 0x0Au );
+}
+
+BOOST_AUTO_UNIT_TEST(TLVFixPacket_parse_packet)
+{
+    test_TLVFixPacket_parsing<TLVFix8Packet>( Parse_UInt8::fixed_bytes);
+    test_TLVFixPacket_parsing<TLVFix16Packet>( Parse_UInt16::fixed_bytes);
+    test_TLVFixPacket_parsing<TLVFix24Packet>( Parse_UInt24::fixed_bytes);
+    test_TLVFixPacket_parsing<TLVFix32Packet>( Parse_UInt32::fixed_bytes);
+}
+
+
+template <class TLVFixPacketType>
+void test_TLVFixPacket_creating()
+{
+    std::string payload ("Hello, world!");
+    TLVFixPacketType tlvPacket (TLVFixPacketType::create());
+    tlvPacket->type() = 42u;
+    DataPacket::createAfter( tlvPacket, payload );
+    tlvPacket.finalize();
+
+    BOOST_CHECK_EQUAL( tlvPacket->type(), 42u);
+    BOOST_CHECK_EQUAL( tlvPacket->length(), 13u);
+    
+    PacketData & tlvPacket_value (tlvPacket.next().data());
+    BOOST_CHECK( equal( tlvPacket_value.begin(), tlvPacket_value.end(), payload.begin() ));
+}
+
+BOOST_AUTO_UNIT_TEST(TLVFixPacket_create_packet)
+{
+    test_TLVFixPacket_creating<TLVFix8Packet>();
+    test_TLVFixPacket_creating<TLVFix16Packet>();
+    test_TLVFixPacket_creating<TLVFix24Packet>();
+    test_TLVFixPacket_creating<TLVFix32Packet>();
+}
+
+
+template <class TLVFixPacketType>
+void test_invalid_TLVFixPacket_creating(boost::uint32_t max_value)
+{
+    TLVFixPacketType tlvPacket (TLVFixPacketType::create());
+    tlvPacket->type() = 42u;
+    DataPacket payload (DataPacket::createAfter( tlvPacket, max_value+1));
+    //DataPacket::createAfter( payload, 1); // this is one byte to much.
+    BOOST_CHECK_THROW( tlvPacket.finalize(), UnsuportedTLVPacketException);
+}
+
+BOOST_AUTO_UNIT_TEST(TLVFixPacket_create_invalid_packet)
+{
+    test_invalid_TLVFixPacket_creating<TLVFix8Packet> ( Parse_UInt8::max_value);
+    test_invalid_TLVFixPacket_creating<TLVFix16Packet>( Parse_UInt16::max_value);
+    test_invalid_TLVFixPacket_creating<TLVFix24Packet>( Parse_UInt24::max_value);
+    //test_invalid_TLVFixPacket_creating<TLVFix32Packet>( Parse_UInt32::max_value);
 }
 
 
