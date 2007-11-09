@@ -2,7 +2,7 @@
 # Some SCONS shortcuts
 #----------------------------------------------------------------------
 
-CONCURRENCY_LEVEL ?= 1
+CONCURRENCY_LEVEL ?= 2
 
 SCONS=scons -j $(CONCURRENCY_LEVEL)
 
@@ -15,6 +15,9 @@ clean:
 	$(SCONS) --clean all
 
 all_docs all_tests all:
+	$(SCONS) $@
+	
+%/test:
 	$(SCONS) $@
 
 #----------------------------------------------------------------------
