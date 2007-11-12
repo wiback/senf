@@ -58,7 +58,12 @@ namespace senf {
                                         /**< \todo make this obsolete by allowing access to the
                                              ClientSocketHandle from ConcreateSocketProtocol
                                              \param[in] address Address to set */
-    };
+        ///\name Abstract Interface Implementation
+         ///@{
+
+         unsigned available() const;
+         bool eof() const;
+   };
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

@@ -33,28 +33,20 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 prefix_ senf::UNSocketAddress::UNSocketAddress(boost::filesystem::path p)
 {
-    chdir(p.branch_path().string().c_str());
-//Check if the unix domain socket already exists...
-    if(!remove(p.leaf().c_str()))
-	printf("File already existed and therefore was deleted!\n");
-    else
-	printf("File not found, will be created.\n");
-    fflush(stdout);
-
-    sockAddr.sun_family = AF_UNIX; 
-    strcpy(sockAddr.sun_path, p.string().c_str());
+	sockAddr.sun_family = AF_UNIX;
+	strcpy(sockAddr.sun_path, p.string().c_str());
 }
 
-    prefix_ senf::UNSocketAddress fromString(std::string s)
-{
+prefix_ senf::UNSocketAddress fromString(std::string s) {
     return senf::UNSocketAddress::UNSocketAddress(boost::filesystem::path(s));
 }
 
-    prefix_ senf::UNSocketAddress fromPath(boost::filesystem::path p)
+prefix_ senf::UNSocketAddress fromPath(boost::filesystem::path p)
 {
     return senf::UNSocketAddress::UNSocketAddress(p);
 }
-    prefix_ std::string senf::UNSocketAddress::path()
+
+prefix_ std::string senf::UNSocketAddress::path()
         const
 {
     return std::string(sockAddr.sun_path);
@@ -64,7 +56,7 @@ prefix_ sockaddr_un senf::UNSocketAddress::sockaddr()
 {
     struct sockaddr_un out; 
     out.sun_family = sockAddr.sun_family;
-    strcpy(out.sun_path, sockAddr.sun_path);
+    strncpy(out.sun_path, sockAddr.sun_path, sizeof( out.sun_path));
     return out; 
 }
 
@@ -81,6 +73,7 @@ prefix_ sockaddr const  * senf::UNSocketAddress::sockaddr_p()
 }
 
 prefix_ unsigned senf::UNSocketAddress::sockaddr_len()
+	const
 {
     return sizeof(sockAddr);
 }

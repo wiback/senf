@@ -35,7 +35,7 @@
 
 BOOST_AUTO_UNIT_TEST(unProtocol)
 {
-    std::string testS = "/tmp/senfTestSocket";
+  
     //zZ leer
 }
 

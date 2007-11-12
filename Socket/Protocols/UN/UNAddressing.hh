@@ -65,7 +65,7 @@ namespace senf {
         struct sockaddr_un sockaddr(); 
         struct sockaddr * sockaddr_p() ;
         struct sockaddr const * sockaddr_p() const;
-        unsigned sockaddr_len();
+        unsigned sockaddr_len() const;
     private:
         struct sockaddr_un sockAddr;
     };
@@ -91,7 +91,6 @@ namespace senf {
         GenericAddressingPolicy which see for a detailed
         documentation.
      */
-
     struct UNAddressingPolicy
         : public AddressingPolicyBase,
           private GenericAddressingPolicy<UNSocketAddress>

@@ -108,10 +108,6 @@ namespace senf {
 
     typedef ProtocolClientSocketHandle<UNDatagramSocketProtocol> UNDatagramClientSocketHandle;
 
-    typedef MakeSocketPolicy<
-        UNDatagramSocket_Policy,
-        UNAddressingPolicy
-        >::policy UNDatagramSocket_Policy;
 }
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "UNDatagramSocketHandle.cci"

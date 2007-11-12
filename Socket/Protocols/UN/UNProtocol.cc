@@ -26,11 +26,28 @@
 
 // Custom includes
 #include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
 #include "../../../Utils/Exception.hh"
 
 //#include "UNProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+prefix_ unsigned senf::UNProtocol::available()
+    const
+{
+    int n;
+    if (::ioctl(body().fd(),SIOCINQ,&n) < 0)
+        throw senf::SystemException(errno);
+    return n;
+}
+
+prefix_ bool senf::UNProtocol::eof()
+    const
+{
+    return false;
+}
+
 prefix_ void senf::UNProtocol::connect(UNSocketAddress const & address) 
     const 
 {
