@@ -36,6 +36,8 @@
 #include <signal.h>
 #include <sstream>
 #include <algorithm>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include "../Utils/Exception.hh"
 #include "../Utils/membind.hh"
 
@@ -67,23 +69,30 @@ prefix_ bool senf::Daemon::daemon()
 
 prefix_ void senf::Daemon::consoleLog(std::string const & path, StdStream which)
 {
+    switch (which) {
+    case StdOut : stdoutLog_ = path; break;
+    case StdErr : stderrLog_ = path; break;
+    case Both : stdoutLog_ = path; stderrLog_ = path; break;
+    }
+}
+
+
+prefix_ void senf::Daemon::openLog()
+{
     int fd (-1);
-    if (! path.empty()) {
-        fd = ::open(path.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
+    if (! stdoutLog_.empty()) {
+        fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
         if (fd < 0)
             throwErrno("::open()");
+        stdout_ = fd;
     }
-    switch (which) {
-    case StdOut:
-        stdout_ = fd;
-        break;
-    case StdErr:
+    if (stderrLog_ == stdoutLog_)
         stderr_ = fd;
-        break;
-    case Both:
-        stdout_ = fd;
+    else if (! stderrLog_.empty()) {
+        fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
+        if (fd < 0)
+            throwErrno("::open()");
         stderr_ = fd;
-        break;
     }
 }
 
@@ -92,19 +101,49 @@ prefix_ void senf::Daemon::pidFile(std::string const & f)
     pidfile_ = f;
 }
 
+namespace {
+    bool signaled (false);
+    void waitusr(int) {
+        signaled = true;
+    }
+}
+
 prefix_ void senf::Daemon::detach()
 {
     if (daemonize_) {
+        // Wow .. ouch .. 
+        // To ensure all data is written to the console log file in the correct order, we suspend
+        // execution here until the parent process tells us to continue via SIGUSR1: We block
+        // SIGUSR1 and install our own signal handler saving the old handler and signal mask. Then
+        // we close stdin/stderr which will send a HUP condition to the parent process. We wait for
+        // SIGUSR1 and reinstall the old signal mask and action.
+        ::sigset_t oldsig;
+        ::sigset_t usrsig;
+        ::sigemptyset(&usrsig);
+        LIBC_CALL( ::sigaddset, (&usrsig, SIGUSR1) );
+        LIBC_CALL( ::sigprocmask, (SIG_BLOCK, &usrsig, &oldsig) );
+        struct ::sigaction oldact;
+        struct ::sigaction usract;
+        ::memset(&usract, 0, sizeof(usract));
+        usract.sa_handler = &waitusr;
+        LIBC_CALL( ::sigaction, (SIGUSR1, &usract, &oldact) );
+        ::sigset_t waitsig (oldsig);
+        LIBC_CALL( ::sigdelset, (&waitsig, SIGUSR1) );
+
         LIBC_CALL_RV( nul, ::open, ("/dev/null", O_WRONLY) );
         LIBC_CALL( ::dup2, (stdout_ == -1 ? nul : stdout_, 1) );
         LIBC_CALL( ::dup2, (stderr_ == -1 ? nul : stderr_, 2) );
         LIBC_CALL( ::close, (nul) );
 
-        // We need to wait here to give the daemon watcher time to flush all data to the log file.
-        struct timespec ts;
-        ts.tv_sec = 0;
-        ts.tv_nsec = 100 * 1000000ul;
-        while (::nanosleep(&ts,&ts) < 0 && errno == EINTR) ;
+        signaled = false;
+        while (! signaled) {
+            ::sigsuspend(&waitsig);
+            if (errno != EINTR)
+                throwErrno("::sigsuspend()");
+        }
+
+        LIBC_CALL( ::sigaction, (SIGUSR1, &oldact, 0) );
+        LIBC_CALL( ::sigprocmask, (SIG_SETMASK, &oldsig, 0) );
     }
 }
 
@@ -121,8 +160,10 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
 
         configure();
 
-        if (daemonize_)
+        if (daemonize_) {
+            openLog();
             fork();
+        }
         if (! pidfile_.empty() && ! pidfileCreate()) {
             std::cerr << "\n*** PID file '" << pidfile_ << "' creation failed. Daemon running ?" 
                       << std::endl;
@@ -160,7 +201,31 @@ prefix_ senf::Daemon::Daemon()
 // private members
 
 prefix_ void senf::Daemon::configure()
-{}
+{
+    for (int i (1); i<argc_; ++i) {
+        if (argv_[i] == std::string("--no-daemon"))
+            daemonize(false);
+        else if (boost::starts_with(argv_[i], std::string("--console-log="))) {
+            std::string arg (std::string(argv_[i]), 14u);
+            std::string::size_type komma (arg.find(','));
+            if (komma == std::string::npos) {
+                boost::trim(arg);
+                consoleLog(arg);
+            } else {
+                std::string arg1 (arg,0,komma);
+                std::string arg2 (arg,komma+1);
+                boost::trim(arg1);
+                boost::trim(arg2);
+                if (arg1 == std::string("none")) consoleLog("",StdOut);
+                else if (! arg1.empty() )        consoleLog(arg1, StdOut);
+                if (arg2 == std::string("none")) consoleLog("",StdErr);
+                else if (! arg2.empty() )        consoleLog(arg2, StdErr);
+            }
+        }
+        else if (boost::starts_with(argv_[i], std::string("--pid-file="))) 
+            pidFile(std::string(std::string(argv_[i]), 11u));
+    }
+}
 
 prefix_ void senf::Daemon::main()
 {
@@ -339,6 +404,8 @@ prefix_ void senf::detail::DaemonWatcher::pipeClosed(int id)
     if (coutpipe_ == -1 && cerrpipe_ == -1) {
         if (sigChld_)
             childDied(); // does not return
+        if (::kill(childPid_, SIGUSR1) < 0)
+            if (errno != ESRCH) throwErrno("::kill()");
         Scheduler::instance().timeout(
             Scheduler::instance().eventTime() + ClockService::seconds(1),
             senf::membind(&DaemonWatcher::childOk, this));

@@ -135,13 +135,14 @@ namespace senf {
     protected:
         Daemon();
 
+        virtual void configure();       ///< Called before forking to configure the daemon class
+
 #   ifdef DOXYGEN
     protected:
 #   else
     private:
 #   endif
 
-        virtual void configure();       ///< Called before forking to configure the daemon class
         virtual void main();            ///< Called after forking to execute the main application
                                         /**< The default implementation will call init(), detach()
                                              and then run(). It is preferred to override init() and
@@ -161,6 +162,7 @@ namespace senf {
                                              implementation is not overridden. */
     private:
 
+        void openLog();
         void fork();
         bool pidfileCreate();
 
@@ -168,6 +170,8 @@ namespace senf {
         char const ** argv_;
 
         bool daemonize_;
+        std::string stdoutLog_;
+        std::string stderrLog_;
         int stdout_;
         int stderr_;
         std::string pidfile_;

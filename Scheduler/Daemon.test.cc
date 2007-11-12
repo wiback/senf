@@ -56,8 +56,9 @@ namespace {
     {
         void configure() { 
             std::cout << "Running configure()" << std::endl; 
-            pidFile("testDaemon.pid");
-            consoleLog("testDaemon.log");
+            pidFile("invalid.pid");
+            consoleLog("invalid.log");
+            senf::Daemon::configure();
         }
 
         void init() { 
@@ -92,9 +93,13 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(testDaemon)
 {
-    char const * args[] = { "run", 0 };
-    BOOST_CHECK_EQUAL( run(1,args), 0 );
+    char const * args[] = { "run", 
+                            "--console-log=testDaemon.log,none", 
+                            "--pid-file=testDaemon.pid" };
+    BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args),args), 0 );
 
+    BOOST_CHECK( ! boost::filesystem::exists("invalid.log") );
+    BOOST_CHECK( ! boost::filesystem::exists("invalid.pid") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.pid") );
     delay(1000);
     BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
