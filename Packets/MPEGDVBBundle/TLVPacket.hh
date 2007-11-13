@@ -114,9 +114,10 @@ namespace senf {
     struct TLVPacketType
         : public PacketTypeBase
     {
+#ifndef DOXYGEN
         typedef ConcretePacket<TLVPacketType<LengthParser> > packet;
         typedef Parse_TLVPacket<LengthParser> parser;
-
+#endif
         static optional_range nextPacketRange(packet p);
         static size_type initSize();
         
@@ -127,10 +128,10 @@ namespace senf {
 
     typedef TLVPacketType<Parse_TLVPacketLength>::packet TLVPacket;
     
-    typedef TLVPacketType<Parse_UInt8>::packet  TLVFix8Packet;
-    typedef TLVPacketType<Parse_UInt16>::packet TLVFix16Packet;
-    typedef TLVPacketType<Parse_UInt24>::packet TLVFix24Packet;
-    typedef TLVPacketType<Parse_UInt32>::packet TLVFix32Packet;
+    typedef ConcretePacket<TLVPacketType<Parse_UInt8> >  TLVFix8Packet;
+    typedef ConcretePacket<TLVPacketType<Parse_UInt16> > TLVFix16Packet;
+    typedef ConcretePacket<TLVPacketType<Parse_UInt24> > TLVFix24Packet;
+    typedef ConcretePacket<TLVPacketType<Parse_UInt32> > TLVFix32Packet;
 }
 
 

@@ -102,10 +102,11 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<IpV6PacketType, IpTypes>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<IpV6PacketType, IpTypes> mixin;
         typedef ConcretePacket<IpV6PacketType> packet;
         typedef Parse_IpV6 parser;
-
+#endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::initSize;
@@ -120,7 +121,7 @@ namespace senf {
     };
 
     /** \brief IpV6 packet typedef */
-    typedef IpV6PacketType::packet IpV6Packet;
+    typedef ConcretePacket<IpV6PacketType> IpV6Packet;
 
     ///@}
 }

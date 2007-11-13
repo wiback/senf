@@ -135,10 +135,11 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<IpV4PacketType, IpTypes>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<IpV4PacketType, IpTypes> mixin;
         typedef ConcretePacket<IpV4PacketType> packet;
         typedef Parse_IpV4 parser;
-
+#endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::initSize;
@@ -152,7 +153,7 @@ namespace senf {
     };
         
     /** \brief IpV4 packet typedef */
-    typedef IpV4PacketType::packet IpV4Packet;
+    typedef ConcretePacket<IpV4PacketType> IpV4Packet;
 }
 
 

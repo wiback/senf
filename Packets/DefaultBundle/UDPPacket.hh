@@ -77,10 +77,11 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<UDPPacketType>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<UDPPacketType> mixin;
         typedef ConcretePacket<UDPPacketType> packet;
         typedef Parse_UDP parser;
-
+#endif
         using mixin::nextPacketRange;
         using mixin::initSize;
         using mixin::init;
@@ -91,7 +92,7 @@ namespace senf {
     };
 
     /** \brief UDP packet typedef */
-    typedef UDPPacketType::packet UDPPacket;
+    typedef ConcretePacket<UDPPacketType> UDPPacket;
 }
 
 

@@ -109,10 +109,11 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<EthernetPacketType, EtherTypes>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<EthernetPacketType, EtherTypes> mixin;
         typedef ConcretePacket<EthernetPacketType> packet;
         typedef Parse_Ethernet parser;
-
+#endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::initSize;
@@ -128,7 +129,7 @@ namespace senf {
     };
 
     /** \brief Ethernet packet typedef */
-    typedef EthernetPacketType::packet EthernetPacket;
+    typedef ConcretePacket<EthernetPacketType> EthernetPacket;
 
     /** \brief Parse an ethernet VLAN tag
         
@@ -169,10 +170,11 @@ namespace senf {
         : public PacketTypeBase, 
           public PacketTypeMixin<EthVLanPacketType, EtherTypes>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<EthVLanPacketType, EtherTypes> mixin;
         typedef ConcretePacket<EthVLanPacketType> packet;
         typedef Parse_EthVLan parser;
-
+#endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::initSize;
@@ -188,7 +190,7 @@ namespace senf {
     };
 
     /** \brief Ethernet VLAN tag typedef */
-    typedef EthVLanPacketType::packet EthVLanPacket;
+    typedef ConcretePacket<EthVLanPacketType> EthVLanPacket;
 }
 
 

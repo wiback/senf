@@ -75,10 +75,11 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<IpV6ExtensionType_Fragment, IpTypes>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<IpV6ExtensionType_Fragment, IpTypes> mixin;
         typedef ConcretePacket<IpV6ExtensionType_Fragment> packet;
         typedef Parse_IpV6Extension_Fragment parser;
-
+#endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::initSize;
@@ -94,7 +95,7 @@ namespace senf {
     };
 
     /** \brief IpV6 fragment extension packet typedef */
-    typedef IpV6ExtensionType_Fragment::packet IpV6Extension_Fragment;
+    typedef ConcretePacket<IpV6ExtensionType_Fragment> IpV6Extension_Fragment;
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
