@@ -49,6 +49,7 @@ struct senf::ClockService::Impl
     void block();
     void unblock();
 
+    /// Internal: temporarily block signals (RAII idiom)
     struct Blocker {
         Blocker(Impl * i) : impl(i) { impl->block(); }
         ~Blocker() { impl->unblock(); }

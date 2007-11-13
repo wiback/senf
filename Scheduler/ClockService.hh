@@ -160,6 +160,7 @@ namespace senf {
         boost::posix_time::ptime heartbeat_;
 
         // I don't want this header to depend on the legacy C headers.
+        /// Internal: ClockService private data (PIMPL idiom)
         struct Impl;
         boost::scoped_ptr<Impl> impl_;
 

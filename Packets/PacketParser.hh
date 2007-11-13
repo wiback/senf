@@ -181,10 +181,8 @@ namespace senf {
         Both kinds of parser need to derive from PacketParserBase and implement several required
         members. Which members to implement depends on the parsers flavor. There are two ways how to
         do this.
-        \li If the parser just consists of a simple sequence of consecutive fields (sub-parsers),
-            the \ref SENF_PACKET_PARSER_DEFINE_FIELDS and \ref
-            SENF_PACKET_PARSER_DEFINE_FIXED_FIELDS macros provide a simple and convenient way to
-            define the packet
+        \li If the parser just consists of sequence of consecutive fields (sub-parsers), the \ref
+            packetparsermacros provide a simple yet flexible way to define a packet parser.
         \li In more complex cases, you need to implement the necessary members manually.
 
         This documentation is about the manual implementation. You should nevertheless read through
