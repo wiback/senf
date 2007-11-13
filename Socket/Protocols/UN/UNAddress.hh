@@ -27,7 +27,6 @@
 // Custom includes
 #include <string>
 #include <boost/operators.hpp>
-#include <boost/filesystem/path.hpp>
 #include "../../../Utils/safe_bool.hh"
 
 //#include "UNAddress.mpp"
@@ -41,14 +40,12 @@ namespace senf {
         \ingroup addr_group
       */
     class UNAddress 
-        : public boost::filesystem::path,
-          public comparable_safe_bool<UNAddress>
+        : public comparable_safe_bool<UNAddress>
     {   
     public: 
         UNAddress(); ///< Construct an empty address
-        explicit UNAddress(boost::filesystem::path);///< Construct an address constant from given path
+        explicit UNAddress(std::string);///< Construct an address constant from given path
         static UNAddress fromString(std::string & s); ///< Convert string to address by interpreting the string as path
-        static UNAddress fromPath(boost::filesystem::path & p);///< Convert path to address 
         UNAddress clone(); ///< Clone object 
         std::string pathString() const; ///< Return the path of the address as string
 
@@ -56,7 +53,7 @@ namespace senf {
         struct AddressException : public std::exception {}; 
 
     private:
-        boost::filesystem::path path;
+        std::string path;
     };
 
 std::ostream & operator<<(std::ostream & os, UNAddress const & addr);

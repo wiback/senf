@@ -33,10 +33,10 @@
 prefix_ senf::UNAddress::UNAddress()
     //:path("")
 {
-    path = boost::filesystem::path("");
+    path = "";
 }
 
-prefix_ senf::UNAddress::UNAddress(boost::filesystem::path p)
+prefix_ senf::UNAddress::UNAddress(std::string p)
 {
     path = p; 
 }
@@ -44,17 +44,14 @@ prefix_ senf::UNAddress::UNAddress(boost::filesystem::path p)
 
 prefix_ senf::UNAddress::UNAddress senf::UNAddress::fromString(std::string &  s)
 {
-    return senf::UNAddress::UNAddress(boost::filesystem::path(s));
+    return senf::UNAddress::UNAddress(s);
 }
 
-prefix_ senf::UNAddress::UNAddress senf::UNAddress::fromPath(boost::filesystem::path & p){
-    return senf::UNAddress::UNAddress(p);
-}
 
 prefix_  std::string senf::UNAddress::pathString()
     const
 {
-    return  path.string();
+    return  path;
 }
 
 prefix_ senf::UNAddress::UNAddress senf::UNAddress::clone()

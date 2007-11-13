@@ -27,24 +27,19 @@
 // Custom includes
 #include <stdio.h>
 #include <boost/operators.hpp>
-#include <boost/filesystem/path.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-prefix_ senf::UNSocketAddress::UNSocketAddress(boost::filesystem::path p)
+prefix_ senf::UNSocketAddress::UNSocketAddress(std::string p)
 {
 	sockAddr.sun_family = AF_UNIX;
-	strcpy(sockAddr.sun_path, p.string().c_str());
+	strcpy(sockAddr.sun_path, p.c_str());
 }
 
 prefix_ senf::UNSocketAddress fromString(std::string s) {
-    return senf::UNSocketAddress::UNSocketAddress(boost::filesystem::path(s));
+    return senf::UNSocketAddress::UNSocketAddress(s);
 }
 
-prefix_ senf::UNSocketAddress fromPath(boost::filesystem::path p)
-{
-    return senf::UNSocketAddress::UNSocketAddress(p);
-}
 
 prefix_ std::string senf::UNSocketAddress::path()
         const

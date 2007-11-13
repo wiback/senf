@@ -31,7 +31,6 @@
 #include <sys/un.h>
 #include <boost/cstdint.hpp>
 #include <boost/operators.hpp>
-#include "boost/filesystem/path.hpp"
 #include "../../../Socket/SocketPolicy.hh"
 #include "../../../Socket/ClientSocketHandle.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
@@ -57,10 +56,9 @@ namespace senf {
     public:
 
         //UNSocketAddress(); 
-        explicit UNSocketAddress(boost::filesystem::path p);
+        explicit UNSocketAddress(std::string p);
                                         ///< Construct an address constant from given path
         static UNSocketAddress from_string(std::string const s); ///< Create UNSocketAddress from string
-        static UNSocketAddress from_path(boost::filesystem::path const p); ///< Create UNSocketAddress from path
         std::string path() const ;  ///< Return path as string
         struct sockaddr_un sockaddr(); 
         struct sockaddr * sockaddr_p() ;
