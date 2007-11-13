@@ -175,8 +175,8 @@
     This function is straight forward. The exception handling is the same as in \c loop_main(). The
     code then just creates a \c Sniffer instance and calls it's \c run() member.
 
-    \see \ref components \n
-         \ref build \n
+    \see \ref senf_components \n
+         \ref senf_build \n
          <a href="../../../../Socket/doc/html/index.html"><b>libSocket API reference</b></a> \n
          <a href="../../../../Packets/doc/html/index.html"><b>libPackets API reference</b></a> \n
          <a href="../../../../Utils/doc/html/index.html"><b>libUtils API reference</b></a>

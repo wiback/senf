@@ -101,7 +101,7 @@ namespace senf {
                                         ///< Create client socket and bind
                                         /**< Creates a new client socket and bind to the given
                                              address.
-                                             \param[in] local address to bind to */
+                                             \param[in] address local address to bind to */
                                         /**< \note This member is implicitly called from the
                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
@@ -165,7 +165,7 @@ namespace senf {
                                         ///< Create client socket and connect
                                         /**< Creates a new client socket and bind to the given
                                              address.
-                                             \param[in] local address to bind to */
+                                             \param[in] address local address to bind to */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */

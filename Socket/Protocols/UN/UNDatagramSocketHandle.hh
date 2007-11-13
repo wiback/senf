@@ -34,8 +34,6 @@
 #include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
 
-
-
 //#include "UNDatagramSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -56,7 +54,7 @@ namespace senf {
     /** \brief Unix Domain Datagram Socket Protocol
 
         \par Socket Handle typedefs:
-            \ref UNDatagramSocketHandle (ProtocolClientSocketHandle)
+            \ref UNDatagramClientSocketHandle (ProtocolClientSocketHandle)
 
         \par Policy Interface: (to be checked)
             ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
@@ -93,7 +91,7 @@ namespace senf {
                                         ///< Create client socket and bind
                                         /**< Creates a new client socket and bind to the given
                                              address.
-                                             \param[in] local address to bind to */
+                                             \param[in] address local address to bind to */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
