@@ -38,8 +38,8 @@
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include "../Utils/Exception.hh"
-#include "../Utils/membind.hh"
+#include "../Exception.hh"
+#include "../membind.hh"
 
 //#include "Daemon.mpp"
 #define prefix_

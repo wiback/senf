@@ -1,6 +1,9 @@
-// $Id$
+// $Id: main.test.cc 369 2007-08-01 07:51:36Z tho $
 //
-// Copyright (C) 2006 Stefan Bund <g0dil@senf.berlios.de>
+// Copyright (C) 2006
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,47 +20,22 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief DaemonTools  non-inline non-template implementation */
+// Definition of non-inline non-template functions
 
-#include "DaemonTools.hh"
-//#include "DaemonTools.ih"
+//#include "test.hh"
+//#include "test.ih"
 
 // Custom includes
-#include <errno.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include "Exception.hh"
+#define BOOST_AUTO_TEST_MAIN
+#include "../../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
-//#include "DaemonTools.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::daemonize()
-{
-    int pid = fork();
-    if (pid < 0)
-        throw senf::SystemException("fork",errno);
-    if (pid > 0)
-        ::_exit(0);
-    if (::setsid() < 0)
-        throw senf::SystemException("setsid",errno);
-}
-
-prefix_ void senf::redirect_stdio(std::string const & path)
-{
-    int fd = ::open(path.c_str(),O_RDWR);
-    if (fd < 0) throw senf::SystemException("open",errno);
-    if (dup2(fd,0) < 0) throw senf::SystemException("dup2",errno);
-    if (dup2(fd,1) < 0) throw senf::SystemException("dup2",errno);
-    if (dup2(fd,2) < 0) throw senf::SystemException("dup2",errno);
-    if (::close(fd) < 0) throw senf::SystemException("close",errno);
-}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "DaemonTools.mpp"
 
 
 // Local Variables:
