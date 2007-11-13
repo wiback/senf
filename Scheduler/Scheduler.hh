@@ -351,6 +351,7 @@ namespace senf {
 
         typedef std::map<int,EventSpec> FdTable;
         typedef std::map<unsigned,TimerSpec> TimerMap; // sorted by id
+        typedef std::vector<unsigned> FdEraseList;
 
 #       ifndef DOXYGEN
 
@@ -371,6 +372,7 @@ namespace senf {
         typedef std::vector<SimpleCallback> SigHandlers;
 
         FdTable fdTable_;
+        FdEraseList fdErase_;
         unsigned files_;
 
         unsigned timerIdCounter_;

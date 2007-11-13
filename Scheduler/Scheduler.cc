@@ -150,7 +150,7 @@ prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
     bool file (i->second.file);
     if (ev.events==0) {
         action = EPOLL_CTL_DEL;
-        fdTable_.erase(i);
+        fdErase_.push_back(fd);
     }
 
     if (! file && epoll_ctl(epollFd_, action, fd, &ev) < 0)
@@ -161,7 +161,7 @@ prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
 
 prefix_ void senf::Scheduler::registerSigHandlers()
 {
-    for (unsigned signal; signal < sigHandlers_.size(); ++signal)
+    for (unsigned signal (1); signal < sigHandlers_.size(); ++signal) {
         if (sigHandlers_[signal]) {
             struct ::sigaction sa;
             sa.sa_sigaction = & Scheduler::sigHandler;
@@ -172,6 +172,7 @@ prefix_ void senf::Scheduler::registerSigHandlers()
             if (::sigaction(signal, &sa, 0) < 0)
                 throw SystemException(errno);
         }
+    }
 }
 
 prefix_ void senf::Scheduler::sigHandler(int signal, ::siginfo_t * siginfo, void *)
@@ -213,6 +214,10 @@ prefix_ void senf::Scheduler::process()
             timerMap_.erase(i);
             timerQueue_.pop();
         }
+
+        for (FdEraseList::iterator i (fdErase_.begin()); i != fdErase_.end(); ++i) 
+            fdTable_.erase(*i);
+        fdErase_.clear();
 
         int timeout (-1);
         if (files_ > 0)
@@ -258,11 +263,8 @@ prefix_ void senf::Scheduler::process()
             timerMap_.erase(i);
         }
 
-        if (events <= 0)
-            continue;
-
         // Check the signal queue
-        if (ev.data.fd == sigpipe_[0]) {
+        if (events > 0 && ev.data.fd == sigpipe_[0]) {
             ::siginfo_t siginfo;
             if (::read(sigpipe_[0], &siginfo, sizeof(siginfo)) < int(sizeof(siginfo))) {
                 // We ignore truncated records which may only occur if the signal
@@ -276,25 +278,26 @@ prefix_ void senf::Scheduler::process()
         }
 
         for (FdTable::iterator i = fdTable_.begin(); i != fdTable_.end(); ++i) {
-            EventSpec spec (i->second);
-            unsigned extraFlags (0);
-            unsigned events (spec.file ? spec.epollMask() : ev.events);
+            EventSpec & spec (i->second);
 
-            if (! (spec.file || i->first == ev.data.fd))
+            if (! (spec.file || (events > 0 && i->first == ev.data.fd)))
                 continue;
                 
-            if (events & EPOLLHUP) extraFlags |= EV_HUP;
-            if (events & EPOLLERR) extraFlags |= EV_ERR;
+            unsigned extraFlags (0);
+            unsigned mask (spec.file ? spec.epollMask() : ev.events);
 
-            if (events & EPOLLIN) {
+            if (mask & EPOLLHUP) extraFlags |= EV_HUP;
+            if (mask & EPOLLERR) extraFlags |= EV_ERR;
+
+            if (mask & EPOLLIN) {
                 BOOST_ASSERT(spec.cb_read);
                 spec.cb_read(EventId(EV_READ | extraFlags));
             }
-            else if (events & EPOLLPRI) {
+            else if (mask & EPOLLPRI) {
                 BOOST_ASSERT(spec.cb_prio);
                 spec.cb_prio(EventId(EV_PRIO | extraFlags));
             }
-            else if (events & EPOLLOUT) {
+            else if (mask & EPOLLOUT) {
                 BOOST_ASSERT(spec.cb_write);
                 spec.cb_write(EventId(EV_WRITE | extraFlags));
             }

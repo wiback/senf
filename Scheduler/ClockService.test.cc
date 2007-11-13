@@ -52,13 +52,13 @@ namespace detail {
 namespace {
 
     bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
-                        unsigned long delta = 50000000ul)
+                        unsigned long delta = senf::ClockService::milliseconds(100))
     {
         return (a<b ? b-a : a-b ) < delta;
     }
 
     bool is_close_pt(boost::posix_time::ptime a, boost::posix_time::ptime b,
-                     boost::posix_time::time_duration delta = boost::posix_time::milliseconds(50) )
+                     boost::posix_time::time_duration delta = boost::posix_time::milliseconds(100) )
     {
         return (a<b ? b-a : a-b ) < delta;
     }
@@ -105,7 +105,8 @@ BOOST_AUTO_UNIT_TEST(clockService)
     t2 = senf::ClockService::now();
     BOOST_CHECK_PREDICATE( is_close_clock,
                            (t1 + senf::ClockService::seconds(senf::ClockService::CheckInterval))
-                           (t2) );
+                           (t2)
+                           (senf::ClockService::milliseconds(500)) );
 
     t1 = t2;
 

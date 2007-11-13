@@ -64,6 +64,7 @@ namespace {
             (*fn)();
             _exit(0);
         }
+        ::sleep(1);
     }
 
     void wait()

@@ -186,7 +186,7 @@ namespace {
 
     bool is_close(ClockService::clock_type a, ClockService::clock_type b)
     {
-        return (a<b ? b-a : a-b) < ClockService::milliseconds(15);
+        return (a<b ? b-a : a-b) < ClockService::milliseconds(100);
     }
     
     ClockService::clock_type sigtime (0);
@@ -240,14 +240,14 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     BOOST_CHECK_EQUAL( buffer, "READ" );
 
     BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
-                              ClockService::now()+ClockService::milliseconds(100),&timeout) );
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
                               ClockService::now()+ClockService::milliseconds(200),&timeout) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
+                              ClockService::now()+ClockService::milliseconds(400),&timeout) );
     ClockService::clock_type t (ClockService::now());
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(100)) );
-    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
     BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(400)) );
 
     HandleWrapper handle(sock,"TheTag");
     BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,
@@ -270,14 +270,14 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     BOOST_CHECK_NO_THROW( Scheduler::instance().remove(handle) );
 
     unsigned tid (Scheduler::instance().timeout(
-                      ClockService::now()+ClockService::milliseconds(200),&timeout));
+                      ClockService::now()+ClockService::milliseconds(400),&timeout));
     BOOST_CHECK_NO_THROW( Scheduler::instance().registerSignal(SIGUSR1, &sigusr) );
     t = ClockService::now();
     ::kill(::getpid(), SIGUSR1);
     delay(100);
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(100)) );
-    BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+ClockService::milliseconds(100)) );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
+    BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+ClockService::milliseconds(200)) );
     Scheduler::instance().cancelTimeout(tid);
     BOOST_CHECK_NO_THROW( Scheduler::instance().unregisterSignal(SIGUSR1) );
 

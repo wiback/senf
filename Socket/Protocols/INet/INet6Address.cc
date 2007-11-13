@@ -97,7 +97,7 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Address const & 
     char buffer[5*8];
     std::copy(addr.begin(),addr.end(),&ina.s6_addr[0]);
     ::inet_ntop(AF_INET6,&ina,buffer,sizeof(buffer));
-    buffer[5*8] = 0;
+    buffer[sizeof(buffer)-1] = 0;
     os << buffer;
     return os;
 }

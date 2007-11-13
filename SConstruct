@@ -8,8 +8,8 @@ import SENFSCons
 
 # This hack is needed for SCons V 0.96.1 compatibility. In current SCons versions
 # we can just use 'env.AlwaysBuild(env.Alias(target), [], action)'
-def PhonyTarget(env, target, action):
-    env.AlwaysBuild(env.Command(target + '.phony', 'SConstruct', env.Action(action)))
+def PhonyTarget(env, target, action, sources=[]):
+    env.AlwaysBuild(env.Command(target + '.phony', [ 'SConstruct' ] + sources, env.Action(action)))
     env.Alias(target, target + '.phony')
 
 def updateRevision(target, source, env):
@@ -238,6 +238,10 @@ PhonyTarget(env, 'fixlinks', [
 ])
 
 PhonyTarget(env, 'prepare', [])
+
+PhonyTarget(env, 'valgrind', [
+    'find -name .test.bin | while read test; do echo; echo "Running $$test"; echo; valgrind --tool=memcheck --error-exitcode=99 --suppressions=valgrind.sup $$test $BOOSTTESTARGS; [ $$? -ne 99 ] || exit 1; done'
+    ], [ 'all_tests' ])
 
 env.Clean('all', env.Dir('linklint'))
 

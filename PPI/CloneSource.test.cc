@@ -40,7 +40,7 @@
 
 BOOST_AUTO_UNIT_TEST(cloneSource)
 {
-    char data[] = { 0xAB };
+    senf::PacketData::byte data[] = { 0xAB };
     senf::Packet p (senf::DataPacket::create(data));
 
     senf::ppi::module::CloneSource source (p);

@@ -65,7 +65,7 @@ namespace {
     };
 
     bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
-                        unsigned long delta = 50000000ul)
+                        unsigned long delta = senf::ClockService::milliseconds(100))
     {
         return (a<b ? b-a : a-b ) < delta;
     }

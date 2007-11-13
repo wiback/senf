@@ -97,6 +97,7 @@ BOOST_AUTO_UNIT_TEST(fileHandle)
             if (fcntl(fds[1],F_SETFL,flags|O_NONBLOCK) == -1)
                 BOOST_FAIL(strerror(errno));
             char buffer[1024];
+            ::memset(buffer, 0, sizeof(buffer));
             while (write(fds[1],buffer,1024) == 1024) ;
 
             FHandle fh2(fds[1]);
