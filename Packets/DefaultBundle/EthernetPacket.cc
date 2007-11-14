@@ -44,22 +44,41 @@ namespace {
 prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
-    if (p->type() <= 1500)
+    if (p->type_length() <= 1500)
         os << "Ethernet 802.3";
-    else if (p->type() >= 0x600)
+    else if (p->type_length() >= 0x600)
         os << "Ethernet II (DIX)";
     else
         os << "Ethernet 802.3 (bad ethertype >1500 and <1536)";
     os << ": \n"
-       << "  destination   : " << p->destination() << "\n"
-       << "  source        : " << p->source() << "\n"
-       << "  ethertype     : 0x" 
-       << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
+       << "  destination : " << p->destination() << "\n"
+       << "  source      : " << p->source() << "\n"
+       << "  type/length : 0x" 
+       << std::hex << std::setw(4) << std::setfill('0') << p->type_length() << "\n";
+}
+
+prefix_ senf::PacketInterpreterBase::factory_t senf::EthernetPacketType::nextPacketType(packet p)
+{
+    if (p->type_length() >= 1536) {
+        PkReg_Entry const * e;
+        e = PacketRegistry<senf::EtherTypes>::lookup( p->type_length(), nothrow );
+        return e ? e->factory() : no_factory();
+    }
+    if (p->type_length() <= 1500)
+        return EthLlcSnapPacket::factory();
+    return no_factory();
 }
 
 prefix_ void senf::EthernetPacketType::finalize(packet p)
 {
-    p->type() << key(p.next());
+    optional_registry_key_t k = key(p.next());
+    if (k)
+        p->type_length() << k;
+    else
+        if (p.next().is<EthLlcSnapPacket>())
+            p->type_length() << p.next().data().size();
+        else
+            p->type_length() << 0;
 }
 
 prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
@@ -77,6 +96,25 @@ prefix_ void senf::EthVLanPacketType::finalize(packet p)
 {
     p->type() << key(p.next());
 }
+
+prefix_ void senf::EthLlcSnapPacketType::dump(packet p, std::ostream & os)
+{
+    boost::io::ios_all_saver ias(os);
+    os << "Ethernet LLC/SNAP"
+       << "  LLC\n"
+       << "    DSAP: " << p->dsap() << "\n"
+       << "    SSAP: " << p->ssap() << "\n"
+       << "  SNAP\n"
+       << "    ProtocolId: " << p->protocolId() << "\n"
+       << "    type      : 0x" 
+       << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
+}
+
+prefix_ void senf::EthLlcSnapPacketType::finalize(packet p)
+{
+    p->type() << key(p.next());
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

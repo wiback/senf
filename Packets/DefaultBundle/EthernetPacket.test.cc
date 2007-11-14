@@ -45,7 +45,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_packet)
 
     BOOST_CHECK_EQUAL( p->destination()[3], 0x04 );
     BOOST_CHECK_EQUAL( p->source()[0], 0x07 );
-    BOOST_CHECK_EQUAL( p->type(), 0x1011 );
+    BOOST_CHECK_EQUAL( p->type_length(), 0x1011 );
 }
 
 BOOST_AUTO_UNIT_TEST(ethernetPacket_chain)
@@ -81,7 +81,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
     vlan->vlanId() = 0x234u;
 
     eth.finalize();
-    BOOST_CHECK_EQUAL(eth->type(), 0x8100u);
+    BOOST_CHECK_EQUAL(eth->type_length(), 0x8100u);
     BOOST_CHECK_EQUAL(vlan->type(), 0u);
 
     senf::IpV4Packet ip (senf::IpV4Packet::createAfter(vlan));

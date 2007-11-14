@@ -72,7 +72,7 @@ namespace senf {
 
         SENF_PARSER_FIELD( destination, Parse_MAC    );
         SENF_PARSER_FIELD( source,      Parse_MAC    );
-        SENF_PARSER_FIELD( type,        Parse_UInt16 );
+        SENF_PARSER_FIELD( type_length, Parse_UInt16 );
 
         SENF_PARSER_FINALIZE(Parse_Ethernet);
     };
@@ -115,15 +115,11 @@ namespace senf {
         typedef Parse_Ethernet parser;
 #endif
         using mixin::nextPacketRange;
-        using mixin::nextPacketType;
+  //      using mixin::nextPacketType;
         using mixin::initSize;
         using mixin::init;
 
-        /** \todo Add LLC/SNAP support -> only use the registry
-            for type() values >=1536, otherwise expect an LLC header */
-        static registry_key_t nextPacketKey(packet p) 
-            { return p->type(); }
-
+        static factory_t nextPacketType(packet p);
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
     };
@@ -191,6 +187,69 @@ namespace senf {
 
     /** \brief Ethernet VLAN tag typedef */
     typedef ConcretePacket<EthVLanPacketType> EthVLanPacket;
+
+
+    /** \brief Parse an ethernet LLC/SNAP header
+        
+        \todo document me
+
+        \see EthVLanPacketType
+     */
+    struct Parse_EthLlcSnapPacket : public PacketParserBase
+    {
+#       include SENF_FIXED_PARSER()
+
+        SENF_PARSER_FIELD( dsap, Parse_UInt8 );
+        SENF_PARSER_FIELD( ssap, Parse_UInt8 );
+        SENF_PARSER_FIELD( ctrl, Parse_UInt8 );
+
+        SENF_PARSER_FIELD( protocolId, Parse_UInt24 );
+        SENF_PARSER_FIELD( type, Parse_UInt24 );
+
+        SENF_PARSER_FINALIZE(Parse_EthLlcSnapPacket);
+    };
+
+    /** \brief Ethernet LLC/SNAP header
+
+        \todo document me
+
+        \par Packet type (typedef):
+            \ref EthLlcSnapPacketType
+
+        \par Fields:
+            \ref Parse_EthLlcSnapPacket
+
+        \par Associated registries:
+            \ref EtherTypes
+
+        \par Finalize action:
+            XXXX
+
+        \ingroup protocolbundle_default
+     */
+    struct EthLlcSnapPacketType
+        : public PacketTypeBase, 
+          public PacketTypeMixin<EthLlcSnapPacketType, EtherTypes>
+    {
+#ifndef DOXYGEN
+        typedef PacketTypeMixin<EthLlcSnapPacketType, EtherTypes> mixin;
+        typedef ConcretePacket<EthLlcSnapPacketType> packet;
+        typedef Parse_EthLlcSnapPacket parser;
+#endif
+        using mixin::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::initSize;
+        using mixin::init;
+                
+        static registry_key_t nextPacketKey(packet p) 
+            { return p->type(); }
+
+        static void dump(packet p, std::ostream & os);
+        static void finalize(packet p);
+    };
+
+    /** \brief Ethernet VLAN tag typedef */
+    typedef ConcretePacket<EthLlcSnapPacketType> EthLlcSnapPacket;
 }
 
 
