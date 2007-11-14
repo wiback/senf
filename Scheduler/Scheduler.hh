@@ -179,13 +179,14 @@ namespace senf {
             sole member is a typedef symbol defining the callback type given the handle type.
 
             The Callback is any callable object taking a \c Handle and an \c EventId as argument.
-        template <class Handle>
-        struct GenericCallback {
-            typedef boost::function<void (typename boost::call_traits<Handle>::param_type,
-                                          EventId) > Callback;
-        };
+            \code
+            template <class Handle>
+            struct GenericCallback {
+                typedef boost::function<void (typename boost::call_traits<Handle>::param_type,
+                                              EventId) > Callback;
+            };
+            \endcode
          */
-
         typedef boost::function<void (EventId)> FdCallback;
 
         /** \brief Callback type for timer events */

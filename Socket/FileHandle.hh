@@ -26,7 +26,19 @@
 
 /** \defgroup handle_group The Handle Hierarchy
 
-    \image html FhHierarchy.png
+    \htmlonly 
+    <map name="FhHierarchy">
+      <area shape="rect" alt="FileHandle" href="classsenf_1_1FileHandle.html" title="FileHandle" coords="247,1,345,27" />
+      <area shape="rect" alt="SocketHandle" href="classsenf_1_1SocketHandle.html" title="SocketHandle" coords="235,61,355,87" />
+      <area shape="rect" alt="ClientSocketHandle" href="classsenf_1_1ClientSocketHandle.html" title="ClientSocketHandle" coords="32,140,198,167" />
+      <area shape="rect" alt="ServerSocketHandle" href="classsenf_1_1ServerSocketHandle.html" title="ServerSocketHandle" coords="386,140,558,168" />
+      <area shape="rect" alt="ProtocolServerSocketHandle" href="classsenf_1_1ProtocolServerSocketHandle.html" title="ProtocolServerSocketHandle" coords="354,202,590,228" />
+      <area shape="rect" alt="ProtocolClientSocketHandle" href="classsenf_1_1ProtocolClientSocketHandle.html" title="ProtocolClientSocketHandle" coords="1,202,230,228" />
+    </map>
+    <center>
+      <img src="FhHierarchy.png" border="0" alt="FhHierarchy" usemap="#FhHierarchy">
+    </center>
+    \endhtmlonly
 
     The senf::FileHandle class is the base of a hierarchy of socket handle classes (realized as
     templates). These classes provide an interface to the complete socket API. While going down the
