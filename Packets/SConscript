@@ -19,3 +19,4 @@ SENFSCons.Doxygen(env, extra_sources = [
 
 SConscript(glob.glob("*/SConscript"))
 
+SENFSCons.InstallIncludeFiles(env, [ 'parse_fixed_setup.hh' , 'parse_setup.hh' ])

@@ -1,0 +1,84 @@
+// $Id$
+//
+// Copyright (C) 2007 
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer NETwork research (NET)
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \mainpage Daemon process management
+
+    The Daemon class provides the infrastructure to implement robust daemon processes. A daemon
+    process is implemented by deriving from senf::Daemon and implementing the necessary (virtual)
+    member functions.
+    \code
+    class MyDaemon : public senf::Daemon
+    {
+        void configure() {
+            // Set configuration parameters like daemonize(), pidFile() etc
+            consoleLog("MyDaemon.log");
+            // The default version provided by senf::Daemon will parse some special command line
+            // parameters to configure the daemon manager. You may optionally call this version
+            // here after setting default parameters
+            senf::Daemon::configure();
+        }
+
+        void init() {
+            // Initialize application. Setup all necessary objects. After init()
+            // has completed, the startup should not fail
+        }
+
+        void run() {
+            // Main application code should be called here.
+        }
+    };
+
+    // Provide main() function
+    SENF_DAEMON_MAIN(MyDaemon);
+    \endcode
+
+    The startup procedure is divided into three steps:
+    \li First, configure() is called. configure() should be as simple as possible. It just needs to
+        set the daemon parameters. No further setup should be done here.
+    \li init() is called after fork() but while still connected to the terminal. init() should do
+        all necessary application setup. Here, all configuration or user errors should be detected
+        and properly diagnosed.
+    \li After init() returns, the application will detach from the terminal. Now run() is called to
+        enter the application main loop.
+
+    Since there are times, where separating init() and run() into two separate functions is
+    difficult, instead of defining init() and run(), the member main() may be defined. This member
+    must call detach() as soon as initialization is completed to detach from the foreground
+    terminal.
+
+    \see 
+        \ref senf::Daemon class \n
+        \ref SENF_DAEMON_MAIN() main() implementation macro
+ */
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// mode: flyspell
+// mode: auto-fill
+// End:

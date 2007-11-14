@@ -1,5 +1,5 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
-PROJECT_NAME = libLogger
+PROJECT_NAME = Logger
 GENERATE_TAGFILE = doc/Logger.tag
 ALPHABETICAL_INDEX = NO

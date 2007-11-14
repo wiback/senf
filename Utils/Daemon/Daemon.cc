@@ -110,7 +110,7 @@ namespace {
 
 prefix_ void senf::Daemon::detach()
 {
-    if (daemonize_) {
+    if (daemonize_ && ! detached_) {
         // Wow .. ouch .. 
         // To ensure all data is written to the console log file in the correct order, we suspend
         // execution here until the parent process tells us to continue via SIGUSR1: We block
@@ -144,7 +144,22 @@ prefix_ void senf::Daemon::detach()
 
         LIBC_CALL( ::sigaction, (SIGUSR1, &oldact, 0) );
         LIBC_CALL( ::sigprocmask, (SIG_SETMASK, &oldsig, 0) );
+
+        detached_ = true;
     }
+}
+
+namespace {
+    /* Purposely *not* derived from std::exception */
+    struct  DaemonFailureException {
+        DaemonFailureException(unsigned c) : code(c) {}
+        unsigned code;
+    };
+}
+
+prefix_ void senf::Daemon::fail(unsigned code)
+{
+    throw DaemonFailureException(code);
 }
 
 prefix_ int senf::Daemon::start(int argc, char const ** argv)
@@ -152,12 +167,7 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
     argc_ = argc;
     argv_ = argv;
 
-#   ifdef NDEBUG
-
     try {
-
-#   endif
-
         configure();
 
         if (daemonize_) {
@@ -171,10 +181,13 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
         }
 
         main();
-
-#   ifdef NDEBUG
-
     }
+    catch (DaemonFailureException & e) {
+        return e.code > 0 ? e.code : 1;
+    }
+
+#ifdef NDEBUG
+
     catch (std::exception & e) {
         std::cerr << "\n*** Fatal exception: " << e.what() << std::endl;
         return 1;

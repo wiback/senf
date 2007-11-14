@@ -19,3 +19,4 @@ SENFSCons.Lib(env,
               sources = objects)
 
 SENFSCons.Doxygen(env)
+SENFSCons.InstallIncludeFiles(env, [ 'Logger.hh', 'Daemon.hh' ])

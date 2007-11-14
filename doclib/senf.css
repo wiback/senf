@@ -238,7 +238,7 @@ dl.note {
 
 table.senf {
         width: 95%;
-        margin: 0 auto;
+        margin: 10pt auto;
         border: 1px solid #AAAAAA;
         padding: 2px;
         border-spacing: 0;
@@ -249,6 +249,7 @@ table.senf td,th {
         background-color: #EEEEEE;
         padding: 2px 4px;
         text-align: left;
+        vertical-align: top;
 }
 
 table.senf th {
@@ -278,7 +279,7 @@ table.ebnf td:first-child {
 }
 
 table.listing {
-        margin: 0;
+        margin: 10pt 0;
         padding: 0;
         border-spacing: 0;
         border: none;
