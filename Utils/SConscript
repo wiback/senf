@@ -14,9 +14,12 @@ for sc in glob.glob("*/SConscript"):
     ob = SConscript(sc)
     if ob : objects.extend(ob)
 
-SENFSCons.Lib(env,
-              library = 'Utils',
-              sources = objects)
+lib = SENFSCons.Lib(env,
+                    library = 'Utils',
+                    sources = objects,
+                    no_includes = True)
+
+SENFSCons.InstallSourceIncludes(env, Flatten([ lib, '.test.bin', 'Logger/.test.bin' ]))
 
 SENFSCons.Doxygen(env)
 SENFSCons.InstallIncludeFiles(env, [ 'Logger.hh', 'Daemon.hh' ])

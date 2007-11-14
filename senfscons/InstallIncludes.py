@@ -24,6 +24,10 @@ def filterIncludes(files, extensions):
     return [ f for f in files
              if f.get_suffix() in extensions ]
 
+def filterIncludesInv(files, extensions):
+    return [ f for f in files
+             if '.' + str(f).split('.',1)[-1] not in extensions ]
+
 def filterDirectory(files, dir):
     return [ f for f in files
              if f.abspath.startswith(dir.abspath) ]
@@ -35,6 +39,7 @@ def excludeDirectories(files, dirs):
 def emitter(target, source, env):
     source = recursiveChildren(source)
     source = filterIncludes(source, env['CPP_INCLUDE_EXTENSIONS'])
+    source = filterIncludesInv(source, env['CPP_EXCLUDE_EXTENSIONS'])
     source = filterDirectory(source, env['INSTALL_BASE'])
     source = excludeDirectories(source, env['INCLUDE_IGNORED_DIRECTORIES'])
 

@@ -78,6 +78,8 @@ def InitOpts():
     opts.Add('DOCINSTALLDIR', 'Documentation install dir', '$PREFIX/doc')
     opts.Add('CPP_INCLUDE_EXTENSIONS', 'File extensions to include in source install',
              [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti', '.mpp' ])
+    opts.Add('CPP_EXCLUDE_EXTENSIONS', 'File extensions to exclude from source install',
+             [ '.test.hh' ])
 
 # A finalizer is any callable object. All finalizers will be called
 # in MakeEnvironment. We use them so every finalizer has knowledge of
@@ -316,7 +318,7 @@ def LibPath(lib): return '$LOCALLIBDIR/lib%s.a' % lib
 # provide both \a sources and \a testSources.
 #
 # \ingroup target
-def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = []):
+def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
@@ -360,6 +362,14 @@ def InstallIncludeFiles(env, files):
         src = env.File(f)
         env.Alias('install_all', env.Install(target.Dir(src.dir.get_path(base)), src))
 
+def InstallSourceIncludes(env, sources):
+    target = env.Dir(env['INCLUDEINSTALLDIR']).Dir(
+        env.Dir('.').get_path(env.Dir(env['INSTALL_BASE'])))
+    install = env.InstallIncludes( target = target,
+                                   source = sources,
+                                   INSTALL_BASE = env.Dir('.') )
+    env.Alias( 'install_all', install )
+
 def InstallWithSources(env, targets, dir, sources, testSources = [], no_includes = False):
     if type(sources) is type(()):
         sources, testSources = sources
@@ -369,17 +379,14 @@ def InstallWithSources(env, targets, dir, sources, testSources = [], no_includes
         testSources = [ testSources ]
 
     installs = [ env.Install(dir, targets) ]
+    env.Alias( 'install_all', installs[:] )
 
     if not no_includes:
-        target = env.Dir(env['INCLUDEINSTALLDIR']).Dir(
-            env.Dir('.').get_path(env.Dir(env['INSTALL_BASE'])))
-        source = targets
+        sources = targets
         if testSources:
-            source.append( env.File('.test.bin') )
-            installs.append(env.InstallIncludes(
-                target = target,
-                source = targets,
-                INSTALL_BASE = env.Dir('.') ))
+            sources.append( env.File('.test.bin') )
+        installs.append(
+            InstallSourceIncludes(env, sources))
 
     return installs
 
@@ -592,8 +599,7 @@ def Lib(env, library, sources, testSources = None, LIBS = [], OBJECTS = [], no_i
         env.Default(lib)
         env.Append(ALLLIBS = library)
         env.Alias('default', lib)
-        install = InstallWithSources(env, lib, '$LIBINSTALLDIR', sources, testSources, no_includes)
-        env.Alias('install_all', install)
+        InstallWithSources(env, lib, '$LIBINSTALLDIR', sources, testSources, no_includes)
     return lib
 
 ## \brief Build Object from multiple sources
@@ -604,8 +610,7 @@ def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = [], no
         ob = env.Command(target+".o", objects, "ld -r -o $TARGET $SOURCES")
         env.Default(ob)
         env.Alias('default', ob)
-        install = InstallWithSources(env, ob, '$OBJINSTALLDIR', sources, testSources, no_includes)
-        env.Alias('install_all', install)
+        InstallWithSources(env, ob, '$OBJINSTALLDIR', sources, testSources, no_includes)
     return ob
 
 ## \brief Build executable
@@ -628,9 +633,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
         env.Alias('default', program)
-        install = InstallWithSources(env, program, '$BININSTALLDIR', sources, testSources,
-                                     no_includes)
-        env.Alias('install_all', install)
+        InstallWithSources(env, program, '$BININSTALLDIR', sources, testSources, no_includes)
     return program
 
 def AllIncludesHH(env, headers):
