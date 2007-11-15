@@ -58,8 +58,8 @@ namespace senf {
 
     /** \brief Parse an IpV4 packet
 
-        Parser implementing the IpV4 header. The fields implemented are:
-
+        Parser implementing the IpV4 header.
+        
         \see IpV4PacketType \n
             <a href="http://tools.ietf.org/html/rfc791">RFC 791</a>
 
@@ -114,6 +114,35 @@ namespace senf {
     };
 
     /** \brief IpV4 packet
+
+        <table class="packet" cellpadding="5" cellspacing="1" border="1">
+          <tr>
+            <th width="12%">0</th> <th width="12%">4</th> <th width="12%">8</th>
+            <th width="12%">12</th> <th width="3%">16</th>
+            <th width="3%"></th> <th width="3%"></th> <th width="3%"></th>
+            <th width="12%">20</th> <th width="12%">24</th> <th width="6%">28</th>
+            <th style="text-align:right" width="6%">31</th>
+          </tr><tr>
+            <td>\ref Parse_IpV4::version() "Version"</td>
+            <td>\ref Parse_IpV4::ihl() "IHL"</td>
+            <td colspan="2">\ref Parse_IpV4::tos() "TOS"</td>
+            <td colspan="8">\ref Parse_IpV4::length() "Length"</td> 
+          </tr><tr>
+            <td colspan="4">\ref Parse_IpV4::identifier() "Identifier"</td>
+            <td>\ref Parse_IpV4::reserved() "R"</td>
+            <td>\ref Parse_IpV4::df() "DF"</td>
+            <td>\ref Parse_IpV4::mf() "MF"</td>
+            <td colspan="5">\ref Parse_IpV4::frag() "Fragment Offset"</td>
+          </tr><tr>
+            <td colspan="2">\ref Parse_IpV4::ttl() "Time to Live (ttl)"</td>
+            <td colspan="2">\ref Parse_IpV4::protocol() "Protocol"</td>
+            <td colspan="8">\ref Parse_IpV4::checksum() "Header Checksum"</td>
+          </tr><tr>
+            <td colspan="12">\ref Parse_IpV4::source() "Source Address"</td>
+          </tr><tr>
+            <td colspan="12">\ref Parse_IpV4::destination() "Destination Address"</td>
+          </tr>
+        </table>
         
         \par Packet type (typedef):
             \ref IpV4Packet

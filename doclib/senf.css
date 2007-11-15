@@ -235,6 +235,30 @@ dl.note {
         background-color: #F0F8F8;
         padding: 4px;
 }
+ 
+table.packet {
+        width: 95%;
+        margin: 10pt auto;
+        border: 1px solid #AAAAAA;
+        padding: 2px;
+        border-spacing: 0;
+		white-space: nowrap;
+		text-align: center;
+		table-layout: fixed; 
+}
+
+table.packet td,th {
+        border: 2px solid white;
+        background-color: #EEEEEE;
+        padding: 6px 4px;
+}
+
+table.packet th {
+        background-color: white;
+        text-align: left;
+		font-weight: normal;
+        padding: 0px;
+}
 
 table.senf {
         width: 95%;
