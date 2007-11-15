@@ -35,6 +35,40 @@
 //#include "Exception.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
+/** \defgroup exception System exceptions
+
+    The senf::SystemException class and it's derived class template senf::ErrnoException are used to
+    signal generic system failures based on \c errno codes. 
+
+    senf::SystemException is a generic \c errno based exception which carries an error number and
+    origin information. senf::ErrnoException is a derived class specialized for a specific error
+    code. This simplifies managing error conditions:
+
+    \code
+    try {
+        something.open(path);
+        // ...
+    }
+    catch (senf::ErrnoException<ENOFILE> & e) {
+        // Create new file
+    }
+    catch (senf::SystemException & e) {
+        // Catch all other system exceptions
+        std::cerr << "Error accessing '" << path << "': " << e.what() << std::endl;
+    }
+    \endcode
+
+    This exception is normally thrown using the senf::throwErrno() helper:
+
+    \code
+    if ((fd = ::open(path.c_str(), O_RDWR)) < 0)
+        senf::throwErrno("::open()");
+    \endcode
+
+    The senf::throwErrno() helper will throw the correct exception class based on some \c errno
+    value.
+ */
+
 namespace senf {
 
     /** \brief Exception handling standard UNIX errors (errno)
@@ -47,6 +81,7 @@ namespace senf {
         be thrown via one of the senf::throwErrno() helpers.
 
         \see ErrnoException
+        \ingroup exception
      */
     class SystemException : public std::exception
     {
@@ -100,6 +135,7 @@ namespace senf {
         if ((fd = ::open(filename, O_RDWR)) < 0)
              senf::throwErrno("open()");
         \endcode
+        \ingroup exception
      */
     template <int Code>
     class ErrnoException : public SystemException
@@ -114,22 +150,22 @@ namespace senf {
 
     
     /** \brief Throw ErrnoException based on current \c errno value
-        \related ErrnoException
+        \ingroup exception
      */
     void throwErrno();
 
     /** \brief Throw ErrnoException based on current \c errno value (with location info)
-        \related ErrnoException
+        \ingroup exception
      */
     void throwErrno(char const * where);
 
     /** \brief Throw ErrnoException based on given \c errno value
-        \related ErrnoException
+        \ingroup exception
      */
     void throwErrno(int code);
 
     /** \brief Throw ErrnoException based on given \c errno value (with location info)
-        \related ErrnoException
+        \ingroup exception
      */
     void throwErrno(char const * where, int code);
 

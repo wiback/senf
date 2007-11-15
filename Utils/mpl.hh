@@ -105,8 +105,8 @@ namespace mpl {
         never called.
 
         This number is than forwarded as template argument to \c select which is specialized for
-        each case. Therefore, <tt>choice<A></tt> has a \c frobble() member whereas
-        <tt>choice<B></tt> has a \c dazzle() member.
+        each case. Therefore, <tt>choice\<A\></tt> has a \c frobble() member whereas
+        <tt>choice\<B\></tt> has a \c dazzle() member.
 
         \see \ref SENF_MPL_RV
         \ingroup senfmpl

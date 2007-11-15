@@ -58,9 +58,7 @@ namespace senf {
     \section miscstuff Miscellaneous
 
     <table class="listing">
-    <tr><td>\ref SystemException</td><td>standard exception for system errors (errno)</td></tr>
-
-    <tr><td>\ref process</td><td>Some simple process management and daemon helpers</td></tr>
+    <tr><td>\ref exception</td><td>standard exception for system errors (errno)</td></tr>
 
     <tr><td>\ref hexdump</td><td>a simple but usefull function to write binary data in in
     hexadecimal format.</td></tr>
