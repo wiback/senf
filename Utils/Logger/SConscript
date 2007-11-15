@@ -8,10 +8,12 @@ import SENFSCons, glob
 SENFSCons.StandardTargets(env)
 
 SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
-                               if ( f not in ('all_includes.hh','Logger.hh')
+                               if ( f not in ('all_includes.hh','Logger.hh','SenfLog.hh')
                                     and not f.endswith('.test.hh') ) ])
 sources = SENFSCons.GlobSources()
 objects = SENFSCons.Objects( env, sources = sources, LIBS = [ 'Utils' ] )
+
+SENFSCons.InstallIncludeFiles(env, [ 'SenfLog.hh' ])
 
 SENFSCons.Doxygen(env)
 

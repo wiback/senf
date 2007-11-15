@@ -32,7 +32,7 @@
 #include "../Packets/Packets.hh"
 #include "Module.hh"
 #include "ActiveFeeder.hh"
-#include "../Utils/Logger.hh"
+#include "../Utils/Logger/SenfLog.hh"
 
 //#include "DebugModules.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -366,7 +366,8 @@ def InstallSourceIncludes(env, sources):
     target = env.Dir(env['INCLUDEINSTALLDIR']).Dir(
         env.Dir('.').get_path(env.Dir(env['INSTALL_BASE'])))
     install = env.InstallIncludes( target = target,
-                                   source = sources,
+                                   source = [ type(x) is str and env.File(x) or x
+                                              for x in sources ],
                                    INSTALL_BASE = env.Dir('.') )
     env.Alias( 'install_all', install )
 

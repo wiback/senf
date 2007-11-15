@@ -37,7 +37,7 @@
 #include <boost/call_traits.hpp>
 #include <boost/integer.hpp>
 #include "ClockService.hh"
-#include "../Utils/Logger.hh"
+#include "../Utils/Logger/SenfLog.hh"
 
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

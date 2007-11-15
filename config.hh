@@ -70,6 +70,10 @@
 #
 # endif
 
+# ifndef SENF_SENFLOG_LIMIT
+#     define SENF_SENFLOG_LIMIT senf::log::VERBOSE
+# endif
+
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "config.cci"
 //#include "config.ct"
