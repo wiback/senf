@@ -104,11 +104,19 @@ prefix_ void senf::Scheduler::unregisterSignal(unsigned signal)
 
 prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMask)
 {
+    if (eventMask == 0)
+        return;
+
     FdTable::iterator i (fdTable_.find(fd));
     int action (EPOLL_CTL_MOD);
     if (i == fdTable_.end()) {
         action = EPOLL_CTL_ADD;
         i = fdTable_.insert(std::make_pair(fd, EventSpec())).first;
+    }
+    if (i->second.epollMask() == 0) {
+        action = EPOLL_CTL_ADD;
+        fdErase_.erase( std::remove(fdErase_.begin(), fdErase_.end(), unsigned(fd)),
+                        fdErase_.end() );
     }
 
     if (eventMask & EV_READ)  i->second.cb_read = cb;
@@ -133,6 +141,9 @@ prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMas
 
 prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
 {
+    if (eventMask == 0)
+        return;
+
     FdTable::iterator i (fdTable_.find(fd));
     if (i == fdTable_.end())
         return;
