@@ -204,9 +204,16 @@ namespace senf {
         SENF_PARSER_FIELD( ctrl, Parse_UInt8 );
 
         SENF_PARSER_FIELD( protocolId, Parse_UInt24 );
-        SENF_PARSER_FIELD( type, Parse_UInt24 );
+        SENF_PARSER_FIELD( type, Parse_UInt16 );
 
         SENF_PARSER_FINALIZE(Parse_EthLlcSnapPacket);
+        
+        SENF_PARSER_INIT() {
+            dsap() = 0xaa;
+            ssap() = 0xaa;
+            ctrl() = 0x03;
+            protocolId() = 0x000000;
+        }
     };
 
     /** \brief Ethernet LLC/SNAP header

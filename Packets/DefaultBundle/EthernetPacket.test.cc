@@ -35,12 +35,13 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(ethernetPacket_packet)
+BOOST_AUTO_UNIT_TEST(ethernetPacket_parse)
 {
-    senf::PacketData::byte data[] = 
-        { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
-          0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,  // source MAC
-          0x10, 0x11 };                        // EtherType
+    senf::PacketData::byte data[] = { 
+        0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
+        0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,  // source MAC
+        0x10, 0x11 
+    };                        // EtherType
     senf::EthernetPacket p (senf::EthernetPacket::create(data));
 
     BOOST_CHECK_EQUAL( p->destination()[3], 0x04 );
@@ -48,15 +49,16 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_packet)
     BOOST_CHECK_EQUAL( p->type_length(), 0x1011 );
 }
 
-BOOST_AUTO_UNIT_TEST(ethernetPacket_chain)
+BOOST_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
 {
-    unsigned char data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
-                             0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,  // source MAC
-                             0x81, 0x00,                          // EtherType: VLan
-                             0x92, 0x34,                          // VLAN prio, cfi, id
-                             0xab, 0xcd,                          // EtherType
-                             0xf0, 0xf1, 0xf2, 0xf3, 0xf4 };      // Payload
-
+    unsigned char data[] = {
+        0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
+        0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,  // source MAC
+        0x81, 0x00,                          // EtherType: VLan
+        0x92, 0x34,                          // VLAN prio, cfi, id
+        0xab, 0xcd,                          // EtherType
+        0xf0, 0xf1, 0xf2, 0xf3, 0xf4 
+    };      // Payload
     senf::EthernetPacket p (senf::EthernetPacket::create(data));
 
     BOOST_REQUIRE( p.next().is<senf::EthVLanPacket>() );
@@ -87,6 +89,47 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
     senf::IpV4Packet ip (senf::IpV4Packet::createAfter(vlan));
     eth.finalize();
     BOOST_CHECK_EQUAL(vlan->type(), 0x0800u);
+}
+
+BOOST_AUTO_UNIT_TEST(llcsnap_parse)
+{
+    senf::PacketData::byte data[] = {
+        0xaa,             // DSAP
+        0xaa,             // SSAP
+        0x03,             // ctrl
+        0x00, 0x00, 0x00, // Protocol Identification Field
+        0x10, 0x11        // EtherType 
+    };
+    senf::EthLlcSnapPacket p (senf::EthLlcSnapPacket::create(data));
+
+    BOOST_CHECK_EQUAL( p->dsap(), 0xaa );
+    BOOST_CHECK_EQUAL( p->ssap(), 0xaa );
+    BOOST_CHECK_EQUAL( p->ctrl(), 0x03 );
+    BOOST_CHECK_EQUAL( p->protocolId(), 0x000000u );
+    BOOST_CHECK_EQUAL( p->type(), 0x1011 );
+}
+
+BOOST_AUTO_UNIT_TEST(llcsnap_create)
+{
+    senf::EthernetPacket eth (senf::EthernetPacket::create());
+    eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");
+    eth->destination() = senf::MACAddress::from_string("07:08:09:0a:0b:0c");
+    
+    senf::EthLlcSnapPacket llcsnap (senf::EthLlcSnapPacket::createAfter(eth));
+    senf::DataPacket payload  (senf::DataPacket::createAfter(
+            llcsnap, std::string("Hello, world!")));
+    eth.finalize();
+    
+    BOOST_CHECK_EQUAL( eth->type_length(), 8u + 13u);
+    BOOST_CHECK_EQUAL( llcsnap->dsap(), 0xaa );
+    BOOST_CHECK_EQUAL( llcsnap->ssap(), 0xaa );
+    BOOST_CHECK_EQUAL( llcsnap->ctrl(), 0x03 );
+    BOOST_CHECK_EQUAL( llcsnap->protocolId(), 0x000000u );
+    BOOST_CHECK_EQUAL( llcsnap->type(), 0u);
+
+    senf::IpV4Packet ip (senf::IpV4Packet::createAfter(llcsnap));
+    eth.finalize();
+    BOOST_CHECK_EQUAL(llcsnap->type(), 0x0800u);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -100,14 +100,15 @@ prefix_ void senf::EthVLanPacketType::finalize(packet p)
 prefix_ void senf::EthLlcSnapPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
-    os << "Ethernet LLC/SNAP"
+    os << "Ethernet LLC/SNAP\n"
+       << std::hex << std::setfill('0')
        << "  LLC\n"
-       << "    DSAP: " << p->dsap() << "\n"
-       << "    SSAP: " << p->ssap() << "\n"
-       << "  SNAP\n"
-       << "    ProtocolId: " << p->protocolId() << "\n"
-       << "    type      : 0x" 
-       << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
+       << "    DSAP: 0x" << unsigned(p->dsap()) << "\n"
+       << "    SSAP: 0x" << unsigned(p->ssap()) << "\n"
+       << "    controlId: 0x" << unsigned(p->ctrl()) << "\n"
+       << "  SNAP\n"       
+       << "    ProtocolId: 0x" << std::setw(6) << unsigned(p->protocolId()) << "\n"
+       << "    type      : 0x" << std::setw(4) << unsigned(p->type()) << "\n";
 }
 
 prefix_ void senf::EthLlcSnapPacketType::finalize(packet p)
