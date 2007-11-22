@@ -37,12 +37,21 @@ namespace {
     struct VoidPacket_Type : public senf::PacketTypeBase
     {};
     typedef senf::ConcretePacket<VoidPacket_Type> VoidPacket;
+
+    struct MyVec : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+
+        SENF_PARSER_PRIVATE_FIELD( size, senf::Parse_UInt8 );
+        SENF_PARSER_VEC_N( vec, size, senf::Parse_UInt16 );
+
+        SENF_PARSER_FINALIZE(MyVec);
+    };
 }
 
 BOOST_AUTO_UNIT_TEST(parseListN)
 {
-    typedef senf::Parse_VectorN<senf::Parse_UInt16,senf::Parse_UInt8>::parser ParseVec;
-    typedef senf::Parse_ListN<ParseVec,senf::Parse_UInt16>::parser ParseList;
+    typedef senf::Parse_ListN<MyVec,senf::Parse_UInt16>::parser ParseList;
     
     VoidPacket vp (VoidPacket::create(ParseList::init_bytes));
 
@@ -62,35 +71,35 @@ BOOST_AUTO_UNIT_TEST(parseListN)
         BOOST_CHECK_EQUAL( p.bytes(), 3u );
         BOOST_CHECK_EQUAL( p.size(), 1u );
         BOOST_CHECK_EQUAL( p.front().bytes(), 1u );
-        BOOST_CHECK_EQUAL( p.front().size(), 0u );
+        BOOST_CHECK_EQUAL( p.front().vec().size(), 0u );
         BOOST_CHECK_EQUAL( vp.data()[1], 0x01u );
 
-        p.front().push_back(0x1234u);
-        BOOST_CHECK_EQUAL( p.front().size(), 1u );
+        p.front().vec().push_back(0x1234u);
+        BOOST_CHECK_EQUAL( p.front().vec().size(), 1u );
         BOOST_CHECK_EQUAL( p.front().bytes(), 3u );
-        BOOST_CHECK_EQUAL( p.front()[0], 0x1234u );
+        BOOST_CHECK_EQUAL( p.front().vec()[0], 0x1234u );
         BOOST_CHECK_EQUAL( p.size(), 1u );
         BOOST_CHECK_EQUAL( p.bytes(), 5u );
 
-        p.front().push_back(0x2345u);
-        BOOST_CHECK_EQUAL( p.front().back(), 0x2345u );
+        p.front().vec().push_back(0x2345u);
+        BOOST_CHECK_EQUAL( p.front().vec().back(), 0x2345u );
         BOOST_CHECK_EQUAL( p.bytes(), 7u );
 
         p.push_back_space();
         BOOST_CHECK_EQUAL( p.size(), 2u );
         BOOST_CHECK_EQUAL( p.bytes(), 8u );
         
-        p.back().push_front(0x0123u);
-        BOOST_CHECK_EQUAL( p.front().size(), 2u );
-        BOOST_CHECK_EQUAL( p.back().size(), 1u );
+        p.back().vec().push_front(0x0123u);
+        BOOST_CHECK_EQUAL( p.front().vec().size(), 2u );
+        BOOST_CHECK_EQUAL( p.back().vec().size(), 1u );
 
         p.push_front_space(2u);
         BOOST_CHECK_EQUAL( p.size(), 4u );
-        BOOST_CHECK_EQUAL( p.front().size(), 0u);
+        BOOST_CHECK_EQUAL( p.front().vec().size(), 0u);
         
         p.resize(3u);
         BOOST_CHECK_EQUAL( p.size(), 3u );
-        BOOST_CHECK_EQUAL( p.back()[0], 0x1234u );
+        BOOST_CHECK_EQUAL( p.back().vec()[0], 0x1234u );
         BOOST_CHECK_EQUAL( p.bytes(), 9u );
 
 #       undef p
@@ -99,8 +108,7 @@ BOOST_AUTO_UNIT_TEST(parseListN)
 
 BOOST_AUTO_UNIT_TEST(parseListN_container)
 {
-    typedef senf::Parse_VectorN<senf::Parse_UInt16,senf::Parse_UInt8>::parser ParseVec;
-    typedef senf::Parse_ListN<ParseVec,senf::Parse_UInt16>::parser ParseList;
+    typedef senf::Parse_ListN<MyVec,senf::Parse_UInt16>::parser ParseList;
     
     VoidPacket vp (VoidPacket::create(ParseList::init_bytes));
 

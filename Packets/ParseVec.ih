@@ -37,14 +37,14 @@ namespace detail {
 
         This is the sizer policy used by Parse_VectorN
      */
-    template <class SizeParser>
+    template <class SizeParser, unsigned Distance>
     struct Parse_VectorN_Sizer
     {
         typedef PacketParserBase::size_type size_type;
         typedef PacketParserBase::data_iterator iterator;
         typedef PacketParserBase::state_type state_type;
 
-        static const size_type init_bytes = SizeParser::fixed_bytes;
+        static const size_type init_bytes = 0;
 
         size_type  size  (iterator i, state_type s) const;
         void       size  (iterator i, state_type s, size_type v) const;
@@ -52,6 +52,14 @@ namespace detail {
         size_type  bytes (iterator i, state_type s) const;
         void       init  (iterator i, state_type s) const;
     };
+
+#   define SENF_PARSER_VEC_N_I(field, name, size, elt_type)                                       \
+        typedef senf::Parse_VectorN< elt_type,                                                    \
+                                     BOOST_PP_CAT(size, _t),                                      \
+                                     SENF_PARSER_CURRENT_FIXED_OFFSET()                           \
+                                         - SENF_PARSER_FIXED_OFFSET(size)                         \
+            >::parser BOOST_PP_CAT(name, _vec_t);                                                 \
+        field( name, BOOST_PP_CAT(name, _vec_t) )
 
 }}
 

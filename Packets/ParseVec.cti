@@ -165,40 +165,42 @@ prefix_ void senf::Parse_Vector<ElementParser,Sizer>::resize(size_type n, Value 
 ///////////////////////////////////////////////////////////////////////////
 // senf::SimpleSizeParser<SizeParser,offset>
 
-template <class SizeParser>
-prefix_ typename senf::detail::Parse_VectorN_Sizer<SizeParser>::size_type
-senf::detail::Parse_VectorN_Sizer<SizeParser>::size(iterator i, state_type s)
+template <class SizeParser, unsigned Distance>
+prefix_ typename senf::detail::Parse_VectorN_Sizer<SizeParser,Distance>::size_type
+senf::detail::Parse_VectorN_Sizer<SizeParser,Distance>::size(iterator i, state_type s)
     const
 {
-    return SizeParser(i,s).value();
+    return SizeParser(boost::prior(i, Distance), s).value();
 }
 
-template <class SizeParser>
-prefix_ void senf::detail::Parse_VectorN_Sizer<SizeParser>::size(iterator i, state_type s,
-                                                              size_type v)
+template <class SizeParser, unsigned Distance>
+prefix_ void senf::detail::Parse_VectorN_Sizer<SizeParser,Distance>::size(iterator i,
+                                                                          state_type s,
+                                                                          size_type v)
     const
 {
-    SizeParser(i,s).value(v);
+    SizeParser(boost::prior(i, Distance), s).value(v);
 }
 
-template <class SizeParser>
-prefix_ typename senf::detail::Parse_VectorN_Sizer<SizeParser>::iterator
-senf::detail::Parse_VectorN_Sizer<SizeParser>::begin(iterator i, state_type s)
+template <class SizeParser, unsigned Distance>
+prefix_ typename senf::detail::Parse_VectorN_Sizer<SizeParser,Distance>::iterator
+senf::detail::Parse_VectorN_Sizer<SizeParser,Distance>::begin(iterator i, state_type s)
     const
 {
-    return boost::next(i,SizeParser::fixed_bytes);
+    return i;
 }
 
-template <class SizeParser>
-prefix_ typename senf::detail::Parse_VectorN_Sizer<SizeParser>::size_type
-senf::detail::Parse_VectorN_Sizer<SizeParser>::bytes(iterator i, state_type s)
+template <class SizeParser, unsigned Distance>
+prefix_ typename senf::detail::Parse_VectorN_Sizer<SizeParser,Distance>::size_type
+senf::detail::Parse_VectorN_Sizer<SizeParser,Distance>::bytes(iterator i, state_type s)
     const
 {
-    return SizeParser::fixed_bytes;
+    return 0;
 }
 
-template <class SizeParser>
-prefix_ void senf::detail::Parse_VectorN_Sizer<SizeParser>::init(iterator i, state_type s)
+template <class SizeParser, unsigned Distance>
+prefix_ void senf::detail::Parse_VectorN_Sizer<SizeParser,Distance>::init(iterator i,
+                                                                          state_type s)
     const
 {}
 

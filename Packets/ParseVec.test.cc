@@ -48,20 +48,20 @@ BOOST_AUTO_UNIT_TEST(parseVec)
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
     typedef senf::Parse_Vector<
         senf::Parse_UInt16,
-        senf::detail::Parse_VectorN_Sizer<senf::Parse_UInt8>
+        senf::detail::Parse_VectorN_Sizer<senf::Parse_UInt8, 1u>
         > Parse_UInt16Vec;
 
     {
-        Parse_UInt16Vec v (p->data().begin(), &p->data());
+        Parse_UInt16Vec v (boost::next(p->data().begin(), 1), &p->data());
         
         BOOST_CHECK_EQUAL( v[0], 0x1011 );
         BOOST_CHECK_EQUAL( v[2], 0x1415 );
         BOOST_CHECK_EQUAL( v.size(), 3u );
-        BOOST_CHECK_EQUAL( v.bytes(), 7u );
+        BOOST_CHECK_EQUAL( v.bytes(), 6u );
         BOOST_CHECK( ! v.empty() );
         p->data()[0] = 0x06;
         BOOST_CHECK_EQUAL( v.size(), 6u );
-        BOOST_CHECK_EQUAL( v.bytes(), 13u );
+        BOOST_CHECK_EQUAL( v.bytes(), 12u );
         
         Parse_UInt16Vec::iterator b (v.begin());
         Parse_UInt16Vec::iterator e (v.end());
@@ -75,7 +75,7 @@ BOOST_AUTO_UNIT_TEST(parseVec)
     // we don't need to check them again below ...
 
     {
-#       define v Parse_UInt16Vec(p->data().begin(),&p->data())
+#       define v Parse_UInt16Vec(boost::next(p->data().begin(),1),&p->data())
 
         v.push_back(0xf0f1u,2);
         BOOST_CHECK_EQUAL( v.size(), 8u );
@@ -123,9 +123,9 @@ BOOST_AUTO_UNIT_TEST(parseVec_wrapper)
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
     typedef senf::Parse_Vector<
         senf::Parse_UInt16,
-        senf::detail::Parse_VectorN_Sizer<senf::Parse_UInt8>
+        senf::detail::Parse_VectorN_Sizer<senf::Parse_UInt8, 1u>
         > Parse_UInt16Vec;
-    Parse_UInt16Vec v (p->data().begin(), &p->data());
+    Parse_UInt16Vec v (boost::next(p->data().begin(),1), &p->data());
     Parse_UInt16Vec::container w (v);
 
     BOOST_CHECK_EQUAL( w[0], 0x1011 );

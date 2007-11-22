@@ -37,7 +37,16 @@ namespace {
     struct VoidPacket : public senf::PacketTypeBase
     {};
 
-    typedef senf::Parse_VectorN<senf::Parse_UInt16,senf::Parse_UInt8>::parser ParseVec;
+    struct ParseVec : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+
+        SENF_PARSER_PRIVATE_FIELD( size, senf::Parse_UInt8 );
+        SENF_PARSER_VEC_N( vec, size, senf::Parse_UInt16 );
+
+        SENF_PARSER_FINALIZE(ParseVec);
+    };
+
     typedef senf::Parse_ListB<ParseVec,senf::Parse_UInt16>::parser ParseList;
 }
 
@@ -80,8 +89,8 @@ BOOST_AUTO_UNIT_TEST(parseListB_container)
         BOOST_CHECK_EQUAL( c.size(), 1u );
         BOOST_CHECK_EQUAL( c.bytes(), 3u );
 
-        BOOST_CHECK_EQUAL( c.front().size(), 0u );
-        c.front().push_back(0x1234u);
+        BOOST_CHECK_EQUAL( c.front().vec().size(), 0u );
+        c.front().vec().push_back(0x1234u);
         BOOST_CHECK_EQUAL( c.bytes(), 5u );
 
         {
@@ -90,7 +99,7 @@ BOOST_AUTO_UNIT_TEST(parseListB_container)
             ParseList::container c2 (ParseList(pi2->data().begin(),&pi2->data()));
             c2.push_back_space();
             {
-                ParseVec::container c2v (c2.front());
+                ParseVec::vec_t::container c2v (c2.front().vec());
                 c2v.push_back(0x2345u);
                 c2v.push_back(0x3456u);
             }
@@ -101,33 +110,33 @@ BOOST_AUTO_UNIT_TEST(parseListB_container)
             c.insert(c.end(),c2.back());
             BOOST_CHECK_EQUAL( c.size(), 2u );
             BOOST_CHECK_EQUAL( c.bytes(), 10u );
-            BOOST_CHECK_EQUAL( c.back()[0], 0x2345u );
+            BOOST_CHECK_EQUAL( c.back().vec()[0], 0x2345u );
             BOOST_CHECK_EQUAL( c.back().bytes(), c2.back().bytes() );
 
-            c2.back()[0] << 0x1357u;
+            c2.back().vec()[0] << 0x1357u;
             c.insert(boost::next(c.begin()), 2u, c2.back());
             BOOST_CHECK_EQUAL( c.size(), 4u );
             BOOST_CHECK_EQUAL( c.bytes(), 20u );
-            BOOST_CHECK_EQUAL( (*boost::next(c.begin()))[0], 0x1357u ); 
-            BOOST_CHECK_EQUAL( (*boost::next(c.begin(),2))[0], 0x1357u );
+            BOOST_CHECK_EQUAL( (*boost::next(c.begin())).vec()[0], 0x1357u ); 
+            BOOST_CHECK_EQUAL( (*boost::next(c.begin(),2)).vec()[0], 0x1357u );
 
-            c2.back()[0] << 0x2468u;
+            c2.back().vec()[0] << 0x2468u;
             c.insert(c.begin(),c2.begin(),c2.end());
             BOOST_CHECK_EQUAL( c.size(), 5u );
             BOOST_CHECK_EQUAL( c.bytes(), 25u );
-            BOOST_CHECK_EQUAL( c.front()[0], 0x2468u );
+            BOOST_CHECK_EQUAL( c.front().vec()[0], 0x2468u );
 
             c.erase(c.begin(),2);
             BOOST_CHECK_EQUAL( c.size(), 3u );
             BOOST_CHECK_EQUAL( c.bytes(), 17u );
-            BOOST_CHECK_EQUAL( c.front()[0],0x1357u );
-            BOOST_CHECK_EQUAL( c.back()[0], 0x2345u );
+            BOOST_CHECK_EQUAL( c.front().vec()[0],0x1357u );
+            BOOST_CHECK_EQUAL( c.back().vec()[0], 0x2345u );
             
             c.erase((boost::next(c.begin(),2)),c.end());
             BOOST_CHECK_EQUAL( c.size(), 2u );
             BOOST_CHECK_EQUAL( c.bytes(), 12u );
-            BOOST_CHECK_EQUAL( c.front()[0],0x1357u );
-            BOOST_CHECK_EQUAL( c.back()[0], 0x1357u );
+            BOOST_CHECK_EQUAL( c.front().vec()[0],0x1357u );
+            BOOST_CHECK_EQUAL( c.back().vec()[0], 0x1357u );
 
             c.clear();
             BOOST_CHECK_EQUAL( c.size(), 0u );

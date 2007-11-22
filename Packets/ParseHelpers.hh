@@ -338,7 +338,7 @@
 
     \hideinitializer
  */
-#define SENF_PARSER_INIT()       void init(int)
+#define SENF_PARSER_INIT()       void init(int) const
 
 #ifdef DOXYGEN
 

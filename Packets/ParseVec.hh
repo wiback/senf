@@ -35,6 +35,7 @@
 #include "ParseArray.hh" // for Parse_Array_iterator
 
 //#include "ParseVec.mpp"
+#include "ParseVec.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -111,8 +112,6 @@ namespace senf {
         friend class Parse_Vector_Container<ElementParser,Sizer>;
     };
 
-    namespace detail { template <class SizeParser> class Parse_VectorN_Sizer; }
-
     /** \brief Vector with prefix sizing
         
         This is a 'template typedef'. It defines a vector with a <em>directly preceding</em> size
@@ -130,28 +129,42 @@ namespace senf {
         \see Parse_Vector
         \ingroup parsecollection
      */
-    template <class ElementParser, class SizeParser>
+    template <class ElementParser, class SizeParser, unsigned Distance>
     struct Parse_VectorN
     {
         typedef Parse_Vector< ElementParser,
-                              detail::Parse_VectorN_Sizer<SizeParser> > parser;
+                              detail::Parse_VectorN_Sizer<SizeParser, Distance> > parser;
     };
 
     /** \brief Define Parse_VectorN field
         
         This macro is a special helper to define a senf::Parse_VectorN type field, a vector of
-        elements of type \a elt_type (a parser) directly preceded by a numeric size field of type \a
-        size_type (another parser).
+        elements of type \a elt_type (a parser) which size is given by the \a size field.
+
+        \code
+        // The size field should be declared private (size is accessible via the vector)
+        SENF_PARSER_PRIVATE_FIELD ( vec_size_, senf::Parse_UInt16 );
+        // Define the vector, here it has 32bit unsigned integer elements
+        SENF_PARSER_VEC_N         ( vec,       _vec_size, senf::Parse_UInt32 );
+        \endcode
         
         \param[in] name field name
+        \param[in] size name of field giving the vector size
         \param[in] elt_type vector element type
-        \param[in] size_type size type
         \hideinitializer
         \ingroup packetparsermacros
      */
-#   define SENF_PARSER_VEC_N(name, elt_type, size_type)                                           \
-        typedef senf::Parse_VectorN<elt_type, size_type>::parser BOOST_PP_CAT(name, _vec_t);      \
-        SENF_PARSER_FIELD( name, BOOST_PP_CAT(name, _vec_t) )
+#   define SENF_PARSER_VEC_N(name, size, elt_type)                                                \
+        SENF_PARSER_VEC_N_I(SENF_PARSER_FIELD, name, size, elt_type)
+
+    /** \brief Define Parse_VectorN field
+
+        \see \ref SENF_PARSER_VEC_N()
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#   define SENF_PARSER_PRIVATE_VEC_N(name, size, elt_type)                                        \
+        SENF_PARSER_VEC_N_I(SENF_PARSER_PRIVATE_FIELD, name, size, elt_type)
 
     /** \brief Parse_Vector container wrapper
 
