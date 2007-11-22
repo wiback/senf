@@ -56,7 +56,7 @@ namespace detail {
 #   endif
     
     /** \brief Internal: Variant Policy used by senf::Parse_Variant_Direct */
-    template <class ChooserType, unsigned Distance>
+    template <class ChooserType, unsigned Distance, class Translator>
     struct Parse_Variant_Direct
     {
         typedef PacketParserBase::data_iterator data_iterator;
@@ -72,20 +72,27 @@ namespace detail {
         }
         
         unsigned variant(data_iterator i, state_type s) const {
-            return chooser(i,s).value();
+            return Translator::fromChooser(chooser(i,s).value());
         }
 
         void variant(unsigned v, data_iterator i, state_type s) {
-            chooser(i,s).value(v);
+            chooser(i,s).value(Translator::toChooser(v));
         }
+    };
+
+    /** \brief Internal: Identity chooser translator */
+    struct Parse_Variant_IdentityTranslator {
+        static unsigned fromChooser(unsigned value) { return value; }
+        static unsigned toChooser(unsigned value) { return value; }
     };
 
 #   define SENF_PARSER_VARIANT_(r, data, elem) ,elem
 
-#   define SENF_PARSER_VARIANT_I(field, name, chooser, types)                                     \
+#   define SENF_PARSER_VARIANT_I(field, name, chooser, translator, types)                         \
         typedef senf::Parse_Variant_Direct<                                                       \
             BOOST_PP_CAT(chooser, _t),                                                            \
-            SENF_PARSER_CURRENT_FIXED_OFFSET() - SENF_PARSER_FIXED_OFFSET(chooser)                \
+            SENF_PARSER_CURRENT_FIXED_OFFSET() - SENF_PARSER_FIXED_OFFSET(chooser),               \
+            translator                                                                            \
             BOOST_PP_SEQ_FOR_EACH( SENF_PARSER_VARIANT_, _, types )                               \
             >::parser BOOST_PP_CAT(name, _variant_t);                                             \
         field( name, BOOST_PP_CAT(name, _variant_t) )

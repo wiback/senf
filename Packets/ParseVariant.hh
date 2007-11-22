@@ -151,10 +151,11 @@ namespace senf {
         \see senf::Parser_Variant
         \ingroup parsecollection
      */
-    template <class ChooserType, unsigned Distance, SENF_PARSE_VARIANT_TPL_ARGS_DFL(class P)>
+    template <class ChooserType, unsigned Distance, class Translator,
+              SENF_PARSE_VARIANT_TPL_ARGS_DFL(class P)>
     struct Parse_Variant_Direct
     {
-        typedef Parse_Variant< detail::Parse_Variant_Direct<ChooserType, Distance>,
+        typedef Parse_Variant< detail::Parse_Variant_Direct<ChooserType, Distance, Translator>,
                                SENF_PARSE_VARIANT_TPL_ARGS(P) > parser;
     };
 
@@ -210,8 +211,12 @@ namespace senf {
         \hideinitializer
         \ingroup packetparsermacros
      */
-#   define SENF_PARSER_VARIANT(name, chooser, types) \
-        SENF_PARSER_VARIANT_I(SENF_PARSER_FIELD, name, chooser, types)
+#   define SENF_PARSER_VARIANT(name, chooser, types)                                              \
+        SENF_PARSER_VARIANT_I(SENF_PARSER_FIELD,                                                  \
+                              name,                                                               \
+                              chooser,                                                            \
+                              senf::detail::Parse_Variant_IdentityTranslator,                     \
+                              types)
 
     /** \brief Define Parse_Variant_Direct field (private)
         
@@ -219,8 +224,61 @@ namespace senf {
         \hideinitializer
         \ingroup packetparsermacros
      */
-#   define SENF_PARSER_PRIVATE_VARIANT(name, chooser, types) \
-        SENF_PARSER_VARIANT_I(SENF_PARSER_PRIVATE_FIELD, name, chooser, types)
+#   define SENF_PARSER_PRIVATE_VARIANT(name, chooser, types)                                      \
+        SENF_PARSER_VARIANT_I(SENF_PARSER_PRIVATE_FIELD,                                          \
+                              name,                                                               \
+                              chooser,                                                            \
+                              senf::detail::Parse_Variant_IdentityTranslator,                     \
+                              types)
+
+    /** \brief Define Parse_Variant_Direct field with translator
+        
+        This is like \ref SENF_PARSER_VARIANT(), however it allows to specify a \a translator
+        argument which translates between \a chooser values and type indices:
+        \code
+        struct SomeTranslator {
+            static unsigned fromChooser(chooser_field_t::value_type value) {
+                switch (value) {
+                case 1  : return 0 ;
+                case 5  : return 1 ;
+                default : return 2 ;
+                }
+            }
+
+            static chooser_field_t::value_type foChooser(unsigned value) {
+                static chooser_field_t::value_type table[] const = { 1, 5, 0 };
+                return table[value];
+            }
+        };
+        \endcode
+        The \a translator class must have two publicly accessible static members, \c fromChooser and
+        \c toChooser. \c fromChooser takes the value as returned by the \a chooser field and must
+        return the corresponding class index whereas \c toChooser takes the class index and must
+        return the value to write into the \a chooser field.
+
+        \see \ref SENF_PARSER_VARIANT()
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#   define SENF_PARSER_VARIANT_TRANS(name, chooser, translator, types)                            \
+        SENF_PARSER_VARIANT_I(SENF_PARSER_FIELD,                                                  \
+                              name,                                                               \
+                              chooser,                                                            \
+                              translator,                                                         \
+                              types)
+
+    /** \brief Define Parse_Variant_Direct field with translator (private)
+        
+        \see \ref SENF_PARSER_VARIANT_TRANS()
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#   define SENF_PARSER_PRIVATE_VARIANT_TRANS(name, chooser, types)                                \
+        SENF_PARSER_VARIANT_I(SENF_PARSER_PRIVATE_FIELD,                                          \
+                              name,                                                               \
+                              chooser,                                                            \
+                              translator,                                                         \
+                              types)
 
 }
 

@@ -38,7 +38,7 @@
 BOOST_AUTO_UNIT_TEST(parseVariant)
 {
     typedef senf::Parse_Array<10, senf::Parse_UInt8> Array10;
-    typedef senf::Parse_Variant_Direct< senf::Parse_UInt8, 1, 
+    typedef senf::Parse_Variant_Direct< senf::Parse_UInt8, 1, senf::detail::Parse_Variant_IdentityTranslator,
         senf::VoidPacketParser,
         Array10, 
         senf:: Parse_UInt32 
