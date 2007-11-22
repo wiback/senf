@@ -43,7 +43,7 @@ prefix_ void senf::UNDatagramSocketProtocol::init_client() const
     body().fd(sock);
 }
 
-prefix_ void senf::UNDatagramSocketProtocol::init_client(UNSocketAddress const & address) const
+prefix_ void senf::UNDatagramSocketProtocol::init_client(UNSocketAddress const & address) const 
 {
     init_client();
     bind(address);

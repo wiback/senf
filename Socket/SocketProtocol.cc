@@ -24,6 +24,7 @@
     \brief SocketProtocol and ConcreteSocketProtocol non-inline non-template implementation
  */
 
+#include <sys/socket.h>
 #include "SocketProtocol.hh"
 //#include "SocketProtocol.ih"
 
@@ -32,6 +33,29 @@
 //#include "SocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+prefix_ void senf::SocketProtocol::close()
+    const
+{
+    if (::shutdown(body().fd(),SHUT_RDWR) < 0)
+        throw SystemException(errno);
+    if (::close(body().fd()) < 0)
+        throw SystemException(errno);
+}
+
+prefix_ void senf::SocketProtocol::terminate()
+    const
+{
+    struct linger ling;
+    ling.l_onoff = 0;
+    ling.l_linger = 0;
+
+    // We purposely IGNORE any errors: this method is used to try and
+    // terminate the connection ignoring any possible problems
+
+    ::setsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling));
+    ::shutdown(body().fd(),SHUT_RDWR);
+    ::close(body().fd());
+}
 
 prefix_ void senf::SocketProtocol::state(SocketStateMap & map, unsigned lod)
     const

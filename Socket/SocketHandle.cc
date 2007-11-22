@@ -38,24 +38,12 @@
 
 prefix_ void senf::SocketBody::v_close()
 {
-    if (::shutdown(fd(),SHUT_RDWR) < 0)
-        throw SystemException(errno);
-    if (::close(fd()) < 0)
-        throw SystemException(errno);
+    protocol().close();
 }
 
 prefix_ void senf::SocketBody::v_terminate()
 {
-    struct linger ling;
-    ling.l_onoff = 0;
-    ling.l_linger = 0;
-
-    // We purposely IGNORE any errors: this method is used to try and
-    // terminate the connection ignoring any possible problems
-
-    ::setsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling));
-    ::shutdown(fd(),SHUT_RDWR);
-    ::close(fd());
+    protocol().terminate();
 }
 
 prefix_ bool senf::SocketBody::v_eof()

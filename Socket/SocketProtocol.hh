@@ -181,6 +181,19 @@ namespace senf {
                                              \c true only, if at end-of-file. If the protocol does
                                              not support the notion of EOF, this member should
                                              always return \c false. */
+
+        virtual void close() const;           ///< Close socket
+                                        /**< This override will automatically \c shutdown() the
+                                             socket whenever it is closed.
+                                             \throws senf::SystemException */
+        virtual void terminate() const;       ///< Forcibly close socket
+                                        /**< This override will automatically \c shutdown() the
+                                           socket whenever it is called. Additionally it will
+                                           disable SO_LINGER to ensure, that v_terminate will not
+                                           block. Like the overriden method, this member will ignore
+                                           failures and will never throw. It therefore safe to be
+                                           called from a destructor. */
+
         virtual void state(SocketStateMap & map, unsigned lod) const;
                                         ///< Return socket state information
                                         /**< This member is called to add state information to the

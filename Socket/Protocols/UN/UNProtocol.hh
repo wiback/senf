@@ -58,12 +58,28 @@ namespace senf {
                                         /**< \todo make this obsolete by allowing access to the
                                              ClientSocketHandle from ConcreateSocketProtocol
                                              \param[in] address Address to set */
-        ///\name Abstract Interface Implementation
-         ///@{
+        
+        virtual void close() const;   ///< Close socket
+                              /**< This override will automatically \c shutdown() the
+                                   socket whenever it is closed.
+                                   \throws senf::SystemException */  
+        virtual void terminate() const;       ///< Forcibly close socket
+                                        /**< This override will automatically \c shutdown() the
+                                           socket whenever it is called. Additionally it will
+                                           disable SO_LINGER to ensure, that v_terminate will not
+                                           block. Like the overriden method, this member will ignore
+                                           failures and will never throw. It therefore safe to be
+                                           called from a destructor. */        ///\name Abstract Interface Implementation
+        ///@{
 
          unsigned available() const;
          bool eof() const;
-   };
+         
+    private:
+        void check_and_unlink() const;  
+      
+        std::string path_;
+    };
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
