@@ -101,7 +101,7 @@ namespace senf {
 
         struct SyntaxException : public std::exception
         { virtual char const * what() const throw() 
-                { return "Invalid IpV4 socket address syntax"; } };
+                { return "Invalid IPv4 socket address syntax"; } };
 
     private:
         struct ::sockaddr_in addr_;
@@ -164,7 +164,7 @@ namespace senf {
                                                  address cannot be resolved.
                                              \param[in] addr Address to parse
                                              \param[in] resolve If this is
-                                                 INet6Address::ResolveINet4, support IpV4
+                                                 INet6Address::ResolveINet4, support IPv4
                                                  addresses. See INet6Address. */
         INet6SocketAddress(INet6Address const & addr, unsigned port);
                                         ///< Initialize from address and port
@@ -200,7 +200,7 @@ namespace senf {
 
         struct SyntaxException : public std::exception
         { virtual char const * what() const throw() 
-                { return "Invalid IpV6 socket address syntax"; } };
+                { return "Invalid IPv6 socket address syntax"; } };
 
     protected:
 

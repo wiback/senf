@@ -41,14 +41,14 @@
 
 namespace senf {
 
-    /** \brief IpV6 network address
+    /** \brief IPv6 network address
 
-        This implementation of an IpV6 address is based strictly on 
+        This implementation of an IPv6 address is based strictly on 
         <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>: Internet Protocol
         Version 6 (IPv6) Addressing Architecture. This class provides accessors to all the
         information fields defined in this document.
 
-        The IpV6 addressing architecture however has several other components defined in other
+        The IPv6 addressing architecture however has several other components defined in other
         RFC's. These RFC's should be implemented in additional modules:
 
         \li <a href="http://tools.ietf.org/html/rfc4193">RFC 4193</a>:
@@ -68,8 +68,8 @@ namespace senf {
 
         <table class="senf">
         <tr><th>Prefix</th>                  <th>Description</th>                        <th>Definition</th> <th>Note</th></tr>
-        <tr><td><tt>::/96</tt></td>          <td>IpV4 compatible IpV6 address</td>       <td>RFC4291</td>    <td>deprecated</td></tr>
-        <tr><td><tt>::ffff:0:0/96</tt></td>  <td>IpV6 mapped IpV4 address</td>           <td>RFC4291</td>    <td></td></tr>
+        <tr><td><tt>::/96</tt></td>          <td>IPv4 compatible IPv6 address</td>       <td>RFC4291</td>    <td>deprecated</td></tr>
+        <tr><td><tt>::ffff:0:0/96</tt></td>  <td>IPv6 mapped IPv4 address</td>           <td>RFC4291</td>    <td></td></tr>
         <tr><td><tt>2000::/3</tt></td>       <td>Global unicast addresses</td>           <td>RFC3587</td>    <td>only noted, not defined</td></tr>
         <tr><td><tt>2001:db8::/32</tt></td>  <td>Documentation-only prefix</td>          <td>RFC3849</td>    <td></td></tr>
         <tr><td><tt>2002::/16</tt></td>      <td>6to4 addressing</td>                    <td>RFC3056</td>    <td></td></tr>
@@ -153,8 +153,8 @@ namespace senf {
                                              \param[in] s Address literal or hostname 
                                              \param[in] resolve If this is set to \c ResolveINet4,
                                                  the call will additionally try to interpret \a s as
-                                                 an IpV4 address if no valid IpV6 address is
-                                                 found. The address will be returned as mapped IpV6
+                                                 an IPv4 address if no valid IPv6 address is
+                                                 found. The address will be returned as mapped IPv6
                                                  address. */
 
         template <class InputIterator> 
@@ -165,14 +165,14 @@ namespace senf {
                                              network byte order. */
 
         static INet6Address from_inet4address(INet4Address addr);
-                                        ///< Construct an IpV6-mapped IpV4 address
+                                        ///< Construct an IPv6-mapped IPv4 address
                                         /**< This will construct an address of the form
                                              <tt>::FFFF::w.x.y.z</tt> where <tt>w.x.y.z</tt> is
                                              the INet4Address value. This kind of address is called
-                                             an IpV6-mapped IpV4 address (see 
+                                             an IPv6-mapped IPv4 address (see 
                                              <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>).
                                              \par 
-                                             IpV4 compatible IpV6 addresses are not directly
+                                             IPv4 compatible IPv6 addresses are not directly
                                              supported, they are deprecated in the RFC. */
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -199,16 +199,16 @@ namespace senf {
         bool globalScope() const;       ///< \c true, if address is global unicast or multicast
         bool linkScope() const;         ///< \c true, if address is link-local unicast or multicast
 
-        INet4Address inet4address() const; ///< Return embedded IpV4 address
-                                        /**< Returns the IpV4 address embedded within an IpV4
-                                             compatible or IpV4 mapped unicast address. This address
-                                             is given by the last 32 bits of the IpV6 address. \par
-                                             The value returned is only a valid IpV4 address if
+        INet4Address inet4address() const; ///< Return embedded IPv4 address
+                                        /**< Returns the IPv4 address embedded within an IPv4
+                                             compatible or IPv4 mapped unicast address. This address
+                                             is given by the last 32 bits of the IPv6 address. \par
+                                             The value returned is only a valid IPv4 address if
                                              either ipv4Compatible() or ipv4Mapped() return \c
                                              true. */ 
-        bool ipv4Compatible() const;    ///< \c true, if address is IpV4 compatible
-                                        /**< IpV4 compatible IpV6 addresses are deprecated. */
-        bool ipv4Mapped() const;        ///< \c true, if address is IpV4 mapped
+        bool ipv4Compatible() const;    ///< \c true, if address is IPv4 compatible
+                                        /**< IPv4 compatible IPv6 addresses are deprecated. */
+        bool ipv4Mapped() const;        ///< \c true, if address is IPv4 mapped
 
         bool globalMulticastAddr() const; ///< \c true, if T bit is \e not set
                                         /**< Any multicast address with a cleared T bit must be
@@ -288,9 +288,9 @@ namespace senf {
         : public detail::CheckINet6Network_impl<a0,a1,a2,a3,a4,a5,a6,a7,a8>
     {};
 
-    /** \brief IpV6 network prefix
+    /** \brief IPv6 network prefix
 
-        This class represents an IpV6 network prefix in CIDR notation. 
+        This class represents an IPv6 network prefix in CIDR notation. 
       */
     class INet6Network
         : public boost::equality_comparable<INet6Network>, 

@@ -39,7 +39,7 @@
 
 namespace senf {
     
-    /** \brief IpV4 Internet address
+    /** \brief IPv4 Internet address
         
         INet4Address represents a simple IP address. It is modelled as a fixed-size
         container/sequence of 4 bytes.
@@ -187,9 +187,9 @@ namespace senf {
         static bool match(INet4Address const & addr);
     };
 
-    /** \brief IpV4 network prefix
+    /** \brief IPv4 network prefix
 
-        This class represents an IpV4 network prefix in CIDR notation. 
+        This class represents an IPv4 network prefix in CIDR notation. 
       */
     class INet4Network
         : public boost::equality_comparable<INet4Network>, 

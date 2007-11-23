@@ -54,7 +54,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
     int herr (0);
 
     // If available, we use the reentrant GNU variant. This has the additional advantage, that we
-    // can explicitly ask for IpV4 addresses
+    // can explicitly ask for IPv4 addresses
 
 #   ifdef __GLIBC__
 
