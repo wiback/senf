@@ -3,4 +3,4 @@
 // Kompetenzzentrum NETwork research (NET)
 //     David Wagner <david.wagner@fokus.fraunhofer.de>
 //
-#include "DtcpPacket.hh"
+#include "DTCPPacket.hh"
