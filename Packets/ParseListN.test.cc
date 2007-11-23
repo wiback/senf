@@ -44,7 +44,7 @@ namespace {
 
         SENF_PARSER_PRIVATE_FIELD( size, senf::Parse_UInt8 );
         SENF_PARSER_VEC_N( vec, size, senf::Parse_UInt16 );
-
+        
         SENF_PARSER_FINALIZE(MyVec);
     };
 }

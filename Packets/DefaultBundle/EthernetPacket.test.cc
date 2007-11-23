@@ -27,7 +27,7 @@
 
 // Custom includes
 #include "EthernetPacket.hh"
-#include "IpV4Packet.hh"
+#include "IPv4Packet.hh"
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -86,7 +86,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
     BOOST_CHECK_EQUAL(eth->type_length(), 0x8100u);
     BOOST_CHECK_EQUAL(vlan->type(), 0u);
 
-    senf::IpV4Packet ip (senf::IpV4Packet::createAfter(vlan));
+    senf::IPv4Packet ip (senf::IPv4Packet::createAfter(vlan));
     eth.finalize();
     BOOST_CHECK_EQUAL(vlan->type(), 0x0800u);
 }
@@ -127,7 +127,7 @@ BOOST_AUTO_UNIT_TEST(llcsnap_create)
     BOOST_CHECK_EQUAL( llcsnap->protocolId(), 0x000000u );
     BOOST_CHECK_EQUAL( llcsnap->type(), 0u);
 
-    senf::IpV4Packet ip (senf::IpV4Packet::createAfter(llcsnap));
+    senf::IPv4Packet ip (senf::IPv4Packet::createAfter(llcsnap));
     eth.finalize();
     BOOST_CHECK_EQUAL(llcsnap->type(), 0x0800u);
 }

@@ -22,11 +22,11 @@
 
 // Unit tests
 
-//#include "IpV4Packet.test.hh"
-//#include "IpV4Packet.test.ih"
+//#include "IPv4Packet.test.hh"
+//#include "IPv4Packet.test.ih"
 
 // Custom includes
-#include "IpV4Packet.hh"
+#include "IPv4Packet.hh"
 #include "UDPPacket.hh"
 
 #include "../../Utils/auto_unit_test.hh"
@@ -47,7 +47,7 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
                              0x15, 0x16, 0x17, 0x18
                            };
 
-    senf::IpV4Packet p (senf::IpV4Packet::create(data));
+    senf::IPv4Packet p (senf::IPv4Packet::create(data));
 
     BOOST_CHECK_EQUAL( p->version(),     0x00u       );
     BOOST_CHECK_EQUAL( p->ihl(),         0x01u       );
@@ -67,7 +67,7 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
 
 BOOST_AUTO_UNIT_TEST(ipV4Packet_create)
 {
-    senf::IpV4Packet ip (senf::IpV4Packet::create());
+    senf::IPv4Packet ip (senf::IPv4Packet::create());
 
     BOOST_CHECK_EQUAL( ip->version(), 4u );
     BOOST_CHECK_EQUAL( ip->ihl(), 5u );

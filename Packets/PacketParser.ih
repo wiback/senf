@@ -61,6 +61,16 @@ namespace detail {
     template <class Parser, unsigned _>
     struct ParserInitBytes_Choose 
         : public boost::integral_constant<PacketParserBase::size_type, Parser::init_bytes> {};
+    // ^^-- g++ error signaled here:
+    //    error: 'fixed_bytes' is not a member of 'some-class-name'
+    //
+    // The 'some-class-name' class (as given in the error message) does not seem to be a parser at
+    // all (it has neither a 'fixed_bytes' nor an 'init_bytes' member).
+    //
+    // Either 'some-class-name' is not the class you wanted to use (it really is no parser) or you
+    // left out either 'init_bytes' or 'fixed_bytes' when defining the parser. This will also
+    // happen, if you forget to call 'SENF_PARSER_FINALIZE()' when defining a composite parser.
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     // If Parser::init_bytes is not defined, this specialization is chosen which instead uses
     // 'Parser::fixed_bytes'

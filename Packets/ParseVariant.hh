@@ -164,8 +164,9 @@ namespace senf {
         This macro is a special helper to define a senf::Parse_Variant_Direct type field. This is a
         variant field which chooses the sub-type by directly taking the value of some other field.
 
-        This is a dynamically sized parser. Nevertheless, the chooser field \e must have a \e fixed
-        distance to this field, the \a chooser must be a fixed-size value parser.
+        \warning
+          This is a dynamically sized parser. Nevertheless, the chooser field \e must have a
+          \e fixed distance to this field, the \a chooser must be a fixed-size value parser.
 
         \code
         struct SomeParser : public PacketParserBase
@@ -180,7 +181,7 @@ namespace senf {
                                             (senf::Parse_UInt24)
                                             (senf::Parse_UInt32) );
 
-            senf::Parse_UInt8 uint8()  const { return content().get<1>(); }
+            senf::Parse_UInt8  uint8()  const { return content().get<1>(); }
             senf::Parse_UInt16 uint16() const { return content().get<2>(); }
             senf::Parse_UInt24 uint24() const { return content().get<3>(); }
             senf::Parse_UInt32 uint32() const { return content().get<4>(); }
@@ -244,8 +245,7 @@ namespace senf {
                 default : return 2 ;
                 }
             }
-
-            static chooser_field_t::value_type foChooser(unsigned value) {
+            static chooser_field_t::value_type toChooser(unsigned value) {
                 static chooser_field_t::value_type table[] const = { 1, 5, 0 };
                 return table[value];
             }

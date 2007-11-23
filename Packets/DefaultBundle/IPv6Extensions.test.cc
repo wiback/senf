@@ -19,14 +19,14 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV6Extensions.test unit tests */
+    \brief IPv6Extensions.test unit tests */
 
-//#include "IpV6Extensions.test.hh"
-//#include "IpV6Extensions.test.ih"
+//#include "IPv6Extensions.test.hh"
+//#include "IPv6Extensions.test.ih"
 
 // Custom includes
-#include "IpV6Extensions.hh"
-#include "IpV6Packet.hh"
+#include "IPv6Extensions.hh"
+#include "IPv6Packet.hh"
 #include "UDPPacket.hh"
 #include "../../Socket/Protocols/INet/INetAddressing.hh"
 
@@ -64,16 +64,16 @@ BOOST_AUTO_UNIT_TEST(ipv6Extension_Fragment_packet)
         0x11, 0x12, 0x13, 0x14
     };
 
-    senf::IpV6Packet p (senf::IpV6Packet::create(data));
+    senf::IPv6Packet p (senf::IPv6Packet::create(data));
 
     BOOST_CHECK_EQUAL( p->version(), 6u );
     BOOST_CHECK_EQUAL( p->length(), 20u );
     BOOST_CHECK_EQUAL( p->nextHeader(), 44u );
     BOOST_CHECK_EQUAL( p->source().value(), senf::INet6Address::from_string("2001::1") );
     BOOST_CHECK_EQUAL( p->destination().value(), senf::INet6Address::from_string("2001::2") );
-    BOOST_CHECK( p.next().is<senf::IpV6Extension_Fragment>() );
+    BOOST_CHECK( p.next().is<senf::IPv6Extension_Fragment>() );
 
-    senf::IpV6Extension_Fragment f (p.next().as<senf::IpV6Extension_Fragment>());
+    senf::IPv6Extension_Fragment f (p.next().as<senf::IPv6Extension_Fragment>());
 
     BOOST_CHECK_EQUAL( f->nextHeader(), 17u );
     BOOST_CHECK_EQUAL( f->fragmentOffset(), 160u );

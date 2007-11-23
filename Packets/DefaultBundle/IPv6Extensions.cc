@@ -19,23 +19,23 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV6Extensions non-inline non-template implementation */
+    \brief IPv6Extensions non-inline non-template implementation */
 
-#include "IpV6Extensions.hh"
-//#include "IpV6Extensions.ih"
+#include "IPv6Extensions.hh"
+//#include "IPv6Extensions.ih"
 
 // Custom includes
 
-//#include "IpV6Extensions.mpp"
+//#include "IPv6Extensions.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6Extension_Fragment>
-        registerIpV6ExtensionType_Fragment (44);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_Fragment>
+        registerIPv6ExtensionType_Fragment (44);
 }
 
-prefix_ void senf::IpV6ExtensionType_Fragment::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6ExtensionType_Fragment::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 fragment extension:\n"
        << "  next header    : " << unsigned(p->nextHeader()) << "\n"
@@ -46,7 +46,7 @@ prefix_ void senf::IpV6ExtensionType_Fragment::dump(packet p, std::ostream & os)
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "IpV6Extensions.mpp"
+//#include "IPv6Extensions.mpp"
 
 
 // Local Variables:

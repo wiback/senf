@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV4Packet non-inline non-template implementation */
+    \brief IPv4Packet non-inline non-template implementation */
 
-#include "IpV4Packet.hh"
-//#include "IpV4Packet.ih"
+#include "IPv4Packet.hh"
+//#include "IPv4Packet.ih"
 
 // Custom includes
 #include <iomanip>
@@ -39,17 +39,17 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV4Packet>
-        registerIpV4Packet (0x0800);
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IPv4Packet>
+        registerIPv4Packet (0x0800);
 
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV4Packet>
-        regsiterIpV4Packet2 (4); // IP-in-IP encapsulation
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv4Packet>
+        regsiterIPv4Packet2 (4); // IP-in-IP encapsulation
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::Parse_IpV4
+// senf::Parse_IPv4
 
-prefix_ boost::uint16_t senf::Parse_IpV4::calcChecksum()
+prefix_ boost::uint16_t senf::Parse_IPv4::calcChecksum()
     const
 {
     validate(bytes(*this));
@@ -63,9 +63,9 @@ prefix_ boost::uint16_t senf::Parse_IpV4::calcChecksum()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::IpV4PacketType
+// senf::IPv4PacketType
 
-prefix_ void senf::IpV4PacketType::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv4PacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Internet protocol Version 4:\n"
@@ -85,7 +85,7 @@ prefix_ void senf::IpV4PacketType::dump(packet p, std::ostream & os)
        << "  destination   : " << p->destination() << "\n";
 }
 
-prefix_ void senf::IpV4PacketType::finalize(packet p)
+prefix_ void senf::IPv4PacketType::finalize(packet p)
 {
     p->length()   << p.size();
     p->protocol() << key(p.next());

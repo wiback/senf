@@ -27,7 +27,7 @@
 
 // Custom includes
 #include "UDPPacket.hh"
-#include "IpV4Packet.hh"
+#include "IPv4Packet.hh"
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -58,7 +58,7 @@ BOOST_AUTO_UNIT_TEST(udpPacket_create)
                              0x00, 0x12, 0xfa, 0x6e, 0x54, 0x45, 0x53, 0x54,
                              0x2d, 0x57, 0x52, 0x49, 0x54, 0x45 };
 
-    senf::IpV4Packet ip (senf::IpV4Packet::create());
+    senf::IPv4Packet ip (senf::IPv4Packet::create());
     ip->source() = senf::INet4Address::Loopback;
     ip->destination() = senf::INet4Address::Loopback;
     ip->df() = true;

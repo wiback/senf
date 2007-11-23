@@ -19,13 +19,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV6Packet unit tests */
+    \brief IPv6Packet unit tests */
 
-//#include "IpV6Packet.test.hh"
-//#include "IpV6Packet.test.ih"
+//#include "IPv6Packet.test.hh"
+//#include "IPv6Packet.test.ih"
 
 // Custom includes
-#include "IpV6Packet.hh"
+#include "IPv6Packet.hh"
 #include "../../Socket/Protocols/INet/INetAddressing.hh"
 #include "../../Packets/DataPacket.hh"
 
@@ -45,7 +45,7 @@ BOOST_AUTO_UNIT_TEST(ipV6Packet_packet)
                              0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
                              0xff };
 
-    senf::IpV6Packet p (senf::IpV6Packet::create(data));
+    senf::IPv6Packet p (senf::IPv6Packet::create(data));
 
     BOOST_CHECK_EQUAL( p->version(),       0x06u      );
     BOOST_CHECK_EQUAL( p->trafficClass(),  0x01u      );

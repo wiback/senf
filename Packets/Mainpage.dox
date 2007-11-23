@@ -35,7 +35,7 @@
 
     \code
     senf::EthernetPacket eth      (senf::EthernetPacket::create());
-    senf::IpV4Packet     ip       (senf::IpV4Packet    ::createAfter(ethernet));
+    senf::IPv4Packet     ip       (senf::IPv4Packet    ::createAfter(ethernet));
     senf::UDPPacket      udp      (senf::UDPPacket     ::createAfter(ip));
     senf::DataPacket     payload  (senf::DataPacket    ::createAfter(udp, 
                                                                      std::string("Hello, world!")));
@@ -80,7 +80,7 @@
 
     \code
     eth.next() == ip;                   // true
-    eth.next().is<IpV4Packet>();        // true
+    eth.next().is<IPv4Packet>();        // true
     eth.next().next() == udp;           // true
     eth.next().is<UDPPacket>();         // false
     eth.next<UDPPacket>() == udp;       // true
@@ -88,7 +88,7 @@
     udp.next<UDPPacket>();              // throws InvalidPacketChainException
     udp.next<UDPPacket>(senf::nothrow); // a senf::Packet testing as false
     udp.findNext<UDPPacket()> == udp;   // true
-    udp.first<IpV4Packet>() == ip;      // true
+    udp.first<IPv4Packet>() == ip;      // true
 
     udp.prev() == ip;                   // true
     udp.prev<EthernetPacket>() == eth   // true

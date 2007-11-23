@@ -19,22 +19,22 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV6Packet public header */
+    \brief IPv6Packet public header */
 
-#ifndef HH_IpV6Packet_
-#define HH_IpV6Packet_ 1
+#ifndef HH_IPv6Packet_
+#define HH_IPv6Packet_ 1
 
 // Custom includes
 #include "../../Socket/Protocols/INet/INet6Address.hh"
 #include "../../Packets/Packets.hh"
-#include "IpV4Packet.hh"
+#include "IPv4Packet.hh"
 
-//#include "IpV6Packet.mpp"
+//#include "IPv6Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 
-    /** \brief Parse an IpV6 address
+    /** \brief Parse an IPv6 address
         
         \see INet6Address
      */
@@ -55,12 +55,12 @@ namespace senf {
             { value(other); return *this; }
     };
 
-    /** \brief Parse an IpV6 packet
+    /** \brief Parse an IPv6 packet
 
-        \see IpV6PacketType \n
+        \see IPv6PacketType \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
-    struct Parse_IpV6 : public PacketParserBase
+    struct Parse_IPv6 : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -78,16 +78,16 @@ namespace senf {
             version() = 6;
         }
 
-        SENF_PARSER_FINALIZE(Parse_IpV6);
+        SENF_PARSER_FINALIZE(Parse_IPv6);
     };
 
-    /** \brief IpV6 packet
+    /** \brief IPv6 packet
 
         \par Packet type (typedef):
-            \ref IpV6Packet
+            \ref IPv6Packet
         
         \par Fields:
-            \ref Parse_IpV6
+            \ref Parse_IPv6
 
         \par Associated registries:
             \ref IpTypes
@@ -98,14 +98,14 @@ namespace senf {
 
         \ingroup protocolbundle_default
      */
-    struct IpV6PacketType
+    struct IPv6PacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<IpV6PacketType, IpTypes>
+          public PacketTypeMixin<IPv6PacketType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IpV6PacketType, IpTypes> mixin;
-        typedef ConcretePacket<IpV6PacketType> packet;
-        typedef Parse_IpV6 parser;
+        typedef PacketTypeMixin<IPv6PacketType, IpTypes> mixin;
+        typedef ConcretePacket<IPv6PacketType> packet;
+        typedef Parse_IPv6 parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -120,8 +120,8 @@ namespace senf {
         static void finalize(packet p);
     };
 
-    /** \brief IpV6 packet typedef */
-    typedef ConcretePacket<IpV6PacketType> IpV6Packet;
+    /** \brief IPv6 packet typedef */
+    typedef ConcretePacket<IPv6PacketType> IPv6Packet;
 
     ///@}
 }
@@ -129,9 +129,9 @@ namespace senf {
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
 #ifndef SENF_PACKETS_DECL_ONLY
-//#include "IpV6Packet.cci"
-//#include "IpV6Packet.ct"
-//#include "IpV6Packet.cti"
+//#include "IPv6Packet.cci"
+//#include "IPv6Packet.ct"
+//#include "IPv6Packet.cti"
 #endif
 
 

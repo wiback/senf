@@ -19,10 +19,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV6Packet non-inline non-template implementation */
+    \brief IPv6Packet non-inline non-template implementation */
 
-#include "IpV6Packet.hh"
-//#include "IpV6Packet.ih"
+#include "IPv6Packet.hh"
+//#include "IPv6Packet.ih"
 
 // Custom includes
 #include <iomanip>
@@ -30,22 +30,22 @@
 #include "EthernetPacket.hh"
 #include "../../Socket/Protocols/INet/INetAddressing.hh"
 
-//#include "IpV6Packet.mpp"
+//#include "IPv6Packet.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IpV6Packet>
-        registerIpV6Packet (0x86dd);
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IPv6Packet>
+        registerIPv6Packet (0x86dd);
 
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IpV6Packet>
-        registerIpV6Packet2 (41); // IP6-in-IP(6) encapsulation
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Packet>
+        registerIPv6Packet2 (41); // IP6-in-IP(6) encapsulation
 
     senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::DataPacket>
         registerNoNextHeader (59);
 }
 
-prefix_ void senf::IpV6PacketType::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6PacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Internet protocol Version 6:\n"
@@ -61,15 +61,15 @@ prefix_ void senf::IpV6PacketType::dump(packet p, std::ostream & os)
        << "  destination    : " << p->destination() << "\n";
 }
 
-prefix_ void senf::IpV6PacketType::finalize(packet p)
+prefix_ void senf::IPv6PacketType::finalize(packet p)
 {
-    p->length() << (p.size() - Parse_IpV6::fixed_bytes);
+    p->length() << (p.size() - Parse_IPv6::fixed_bytes);
     p->nextHeader() << key(p.next());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "IpV6Packet.mpp"
+//#include "IPv6Packet.mpp"
 
 
 // Local Variables:

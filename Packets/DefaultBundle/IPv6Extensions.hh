@@ -19,27 +19,27 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV6Extensions public header */
+    \brief IPv6Extensions public header */
 
-#ifndef HH_IpV6Extensions_
-#define HH_IpV6Extensions_ 1
+#ifndef HH_IPv6Extensions_
+#define HH_IPv6Extensions_ 1
 
 // Custom includes
-#include "IpV6Packet.hh"
+#include "IPv6Packet.hh"
 
-//#include "IpV6Extensions.mpp"
+//#include "IPv6Extensions.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 
-    /** \brief Parse in IpV6 fragment extension header
+    /** \brief Parse in IPv6 fragment extension header
         
-        Parser implementing the IpV6 fragment extension. The fields implemented are:
+        Parser implementing the IPv6 fragment extension. The fields implemented are:
 
-        \see IpV6ExtensionType_Fragment \n
+        \see IPv6ExtensionType_Fragment \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
-    struct Parse_IpV6Extension_Fragment : public PacketParserBase
+    struct Parse_IPv6Extension_Fragment : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -52,16 +52,16 @@ namespace senf {
 
         SENF_PARSER_FIELD( id             , Parse_UInt32   );
 
-        SENF_PARSER_FINALIZE(Parse_IpV6Extension_Fragment);
+        SENF_PARSER_FINALIZE(Parse_IPv6Extension_Fragment);
     };
 
-    /** \brief IpV6 fragment extension
+    /** \brief IPv6 fragment extension
 
         \par Packet type (typedef):
-            \ref IpV6Extension_Fragment
+            \ref IPv6Extension_Fragment
 
         \par Fields:
-            \ref Parse_IpV6Extension_Fragment
+            \ref Parse_IPv6Extension_Fragment
         
         \par Associated registries:
             \par IpTypes
@@ -71,14 +71,14 @@ namespace senf {
 
         \ingroup protocolbundle_default
      */
-    struct IpV6ExtensionType_Fragment
+    struct IPv6ExtensionType_Fragment
         : public PacketTypeBase,
-          public PacketTypeMixin<IpV6ExtensionType_Fragment, IpTypes>
+          public PacketTypeMixin<IPv6ExtensionType_Fragment, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IpV6ExtensionType_Fragment, IpTypes> mixin;
-        typedef ConcretePacket<IpV6ExtensionType_Fragment> packet;
-        typedef Parse_IpV6Extension_Fragment parser;
+        typedef PacketTypeMixin<IPv6ExtensionType_Fragment, IpTypes> mixin;
+        typedef ConcretePacket<IPv6ExtensionType_Fragment> packet;
+        typedef Parse_IPv6Extension_Fragment parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -94,16 +94,16 @@ namespace senf {
             { p->nextHeader() << key(p.next()); }
     };
 
-    /** \brief IpV6 fragment extension packet typedef */
-    typedef ConcretePacket<IpV6ExtensionType_Fragment> IpV6Extension_Fragment;
+    /** \brief IPv6 fragment extension packet typedef */
+    typedef ConcretePacket<IPv6ExtensionType_Fragment> IPv6Extension_Fragment;
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
 #ifndef SENF_PACKETS_DECL_ONLY
-//#include "IpV6Extensions.cci"
-//#include "IpV6Extensions.ct"
-//#include "IpV6Extensions.cti"
+//#include "IPv6Extensions.cci"
+//#include "IPv6Extensions.ct"
+//#include "IPv6Extensions.cti"
 #endif
 
 

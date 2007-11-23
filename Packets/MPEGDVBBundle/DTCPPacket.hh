@@ -7,28 +7,28 @@
 #define DTCPPACKET_HH_
 
 #include "../../Packets/Packets.hh"
-#include "../../Packets/DefaultBundle/IpV4Packet.hh"
-#include "../../Packets/DefaultBundle/IpV6Packet.hh"
+#include "../../Packets/DefaultBundle/IPv4Packet.hh"
+#include "../../Packets/DefaultBundle/IPv6Packet.hh"
 
 namespace senf {
     
     //first we have to define some helpers
-    struct DTCPIpV4AddressListParser : public PacketParserBase {
+    struct DTCPIPv4AddressListParser : public PacketParserBase {
 #       include SENF_PARSER()        
         SENF_PARSER_PRIVATE_FIELD ( num_of_fbips, Parse_UInt8 );
         SENF_PARSER_PRIVATE_FIELD ( reserved ,    Parse_UInt8 );   //must be zero 
         SENF_PARSER_VEC_N         ( fbiplist,     num_of_fbips, Parse_INet4Address );
 
-	SENF_PARSER_FINALIZE(DTCPIpV4AddressListParser);
+	SENF_PARSER_FINALIZE(DTCPIPv4AddressListParser);
     };
         
-    struct DTCPIpV6AddressListParser : public PacketParserBase {
+    struct DTCPIPv6AddressListParser : public PacketParserBase {
 #       include SENF_PARSER()        
         SENF_PARSER_PRIVATE_FIELD ( num_of_fbips, Parse_UInt8 );
         SENF_PARSER_PRIVATE_FIELD ( reserved,     Parse_UInt8 );   //must be zero 
         SENF_PARSER_VEC_N         ( fbiplist,     num_of_fbips, Parse_INet6Address );
 
-	SENF_PARSER_FINALIZE(DTCPIpV6AddressListParser);
+	SENF_PARSER_FINALIZE(DTCPIPv6AddressListParser);
     };
 
     /** \brief Parse a DTCP packet
@@ -56,9 +56,9 @@ namespace senf {
          *                                                       (senf::VoidPacketParser) //1
          *                                                       (senf::VoidPacketParser) //2
          *                                                       (senf::VoidPacketParser) //3
-         *                                                       (senf::Parse_ListB< IpV4Packet, num_of_fbips>) //4 
+         *                                                       (senf::Parse_ListB< IPv4Packet, num_of_fbips>) //4 
          *                                                       (senf::VoidPacketParser) //5
-         *                                                       (senf::Parse_ListB< IpV6Packet, num_of_fbips>) ); //6
+         *                                                       (senf::Parse_ListB< IPv6Packet, num_of_fbips>) ); //6
          * This can't work for two reasons: 
          * 		-SENF_PARSER_PRIVATE_VARIANT only accepts 6 templates in types but you have to start from 0.
          * 		-you NEVER can use templated Parsers in these macros since the macro-preprocessor won't recognize the <> brackets and will
@@ -87,8 +87,8 @@ namespace senf {
 		};
     
         SENF_PARSER_VARIANT_TRANS    ( fbiplist,             ip_version, ip_version_translator,
-                                                                 (senf::DTCPIpV4AddressListParser)        //IPv4 
-                                                                 (senf::DTCPIpV6AddressListParser) );     //IPv6
+                                                                 (senf::DTCPIPv4AddressListParser)        //IPv4 
+                                                                 (senf::DTCPIPv6AddressListParser) );     //IPv6
 
 	SENF_PARSER_FINALIZE(Parse_DTCPPacket);
     };

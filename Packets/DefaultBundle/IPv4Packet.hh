@@ -21,21 +21,21 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpV4Packet public header */
+    \brief IPv4Packet public header */
 
-#ifndef HH_IpV4Packet_
-#define HH_IpV4Packet_ 1
+#ifndef HH_IPv4Packet_
+#define HH_IPv4Packet_ 1
 
 // Custom includes
 #include "../../Socket/Protocols/INet/INet4Address.hh"
 #include "../../Packets/Packets.hh"
 
-//#include "IpV4Packet.mpp"
+//#include "IPv4Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 
-    /** \brief Parse in IpV4 address
+    /** \brief Parse in IPv4 address
 
         \see INet4Address
      */
@@ -56,16 +56,16 @@ namespace senf {
             { value(other); return *this; }
     };
 
-    /** \brief Parse an IpV4 packet
+    /** \brief Parse an IPv4 packet
 
-        Parser implementing the IpV4 header.
+        Parser implementing the IPv4 header.
         
-        \see IpV4PacketType \n
+        \see IPv4PacketType \n
             <a href="http://tools.ietf.org/html/rfc791">RFC 791</a>
 
         \todo Implement options
      */
-    struct Parse_IpV4 : public PacketParserBase
+    struct Parse_IPv4 : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -93,7 +93,7 @@ namespace senf {
             ihl() = 5;
         }
 
-        SENF_PARSER_FINALIZE(Parse_IpV4);
+        SENF_PARSER_FINALIZE(Parse_IPv4);
         
         boost::uint16_t calcChecksum() const;
 
@@ -113,7 +113,7 @@ namespace senf {
         typedef boost::uint16_t key_t;
     };
 
-    /** \brief IpV4 packet
+    /** \brief IPv4 packet
 
         <table class="packet" cellpadding="5" cellspacing="1" border="1">
           <tr>
@@ -123,32 +123,32 @@ namespace senf {
             <th width="12%">20</th> <th width="12%">24</th> <th width="6%">28</th>
             <th style="text-align:right" width="6%">31</th>
           </tr><tr>
-            <td>\ref Parse_IpV4::version() "Version"</td>
-            <td>\ref Parse_IpV4::ihl() "IHL"</td>
-            <td colspan="2">\ref Parse_IpV4::tos() "TOS"</td>
-            <td colspan="8">\ref Parse_IpV4::length() "Length"</td> 
+            <td>\ref Parse_IPv4::version() "Version"</td>
+            <td>\ref Parse_IPv4::ihl() "IHL"</td>
+            <td colspan="2">\ref Parse_IPv4::tos() "TOS"</td>
+            <td colspan="8">\ref Parse_IPv4::length() "Length"</td> 
           </tr><tr>
-            <td colspan="4">\ref Parse_IpV4::identifier() "Identifier"</td>
-            <td>\ref Parse_IpV4::reserved() "R"</td>
-            <td>\ref Parse_IpV4::df() "DF"</td>
-            <td>\ref Parse_IpV4::mf() "MF"</td>
-            <td colspan="5">\ref Parse_IpV4::frag() "Fragment Offset"</td>
+            <td colspan="4">\ref Parse_IPv4::identifier() "Identifier"</td>
+            <td>\ref Parse_IPv4::reserved() "R"</td>
+            <td>\ref Parse_IPv4::df() "DF"</td>
+            <td>\ref Parse_IPv4::mf() "MF"</td>
+            <td colspan="5">\ref Parse_IPv4::frag() "Fragment Offset"</td>
           </tr><tr>
-            <td colspan="2">\ref Parse_IpV4::ttl() "Time to Live (ttl)"</td>
-            <td colspan="2">\ref Parse_IpV4::protocol() "Protocol"</td>
-            <td colspan="8">\ref Parse_IpV4::checksum() "Header Checksum"</td>
+            <td colspan="2">\ref Parse_IPv4::ttl() "Time to Live (ttl)"</td>
+            <td colspan="2">\ref Parse_IPv4::protocol() "Protocol"</td>
+            <td colspan="8">\ref Parse_IPv4::checksum() "Header Checksum"</td>
           </tr><tr>
-            <td colspan="12">\ref Parse_IpV4::source() "Source Address"</td>
+            <td colspan="12">\ref Parse_IPv4::source() "Source Address"</td>
           </tr><tr>
-            <td colspan="12">\ref Parse_IpV4::destination() "Destination Address"</td>
+            <td colspan="12">\ref Parse_IPv4::destination() "Destination Address"</td>
           </tr>
         </table>
         
         \par Packet type (typedef):
-            \ref IpV4Packet
+            \ref IPv4Packet
 
         \par Fields:
-            \ref Parse_IpV4
+            \ref Parse_IPv4
 
         \par Associated registries:
             \ref IpTypes
@@ -160,14 +160,14 @@ namespace senf {
 
         \ingroup protocolbundle_default
      */
-    struct IpV4PacketType
+    struct IPv4PacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<IpV4PacketType, IpTypes>
+          public PacketTypeMixin<IPv4PacketType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IpV4PacketType, IpTypes> mixin;
-        typedef ConcretePacket<IpV4PacketType> packet;
-        typedef Parse_IpV4 parser;
+        typedef PacketTypeMixin<IPv4PacketType, IpTypes> mixin;
+        typedef ConcretePacket<IPv4PacketType> packet;
+        typedef Parse_IPv4 parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -181,17 +181,17 @@ namespace senf {
         static void finalize(packet p);
     };
         
-    /** \brief IpV4 packet typedef */
-    typedef ConcretePacket<IpV4PacketType> IpV4Packet;
+    /** \brief IPv4 packet typedef */
+    typedef ConcretePacket<IPv4PacketType> IPv4Packet;
 }
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
 #ifndef SENF_PACKETS_DECL_ONLY
-//#include IpV4Packet.cci"
-//#include "IpV4Packet.ct"
-//#include "IpV4Packet.cti"
+//#include IPv4Packet.cci"
+//#include "IPv4Packet.ct"
+//#include "IPv4Packet.cti"
 #endif
 
 
