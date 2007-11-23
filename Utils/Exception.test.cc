@@ -31,12 +31,33 @@
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
+#include <boost/format.hpp>
+#include <errno.h>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 BOOST_AUTO_UNIT_TEST(errnoException)
-{}
+{
+    BOOST_CHECK_THROW( senf::throwErrno(), senf::SystemException );
+    BOOST_CHECK_THROW( senf::throwErrno(ENOENT), senf::SystemException );
+    BOOST_CHECK_THROW( senf::throwErrno(""), senf::SystemException );
+    BOOST_CHECK_THROW( senf::throwErrno("", ENOENT), senf::SystemException );
+
+    try {
+        try {
+            senf::throwErrno("::open()", ENOENT);
+        }
+        catch(senf::SystemException & e) {
+            e << ": x=" << 1 << boost::format(", y=%d") % 2;
+            throw;
+        }
+    }
+    catch (senf::SystemException & e) {
+        BOOST_CHECK_EQUAL( e.code(), ENOENT );
+        BOOST_CHECK_EQUAL( e.what(), "::open(): (2) No such file or directory: x=1, y=2" );
+    }
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

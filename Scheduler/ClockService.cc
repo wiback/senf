@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-#define CheckError(op,args) if (op args < 0) throw SystemException(# op, errno)
+#define CheckError(op,args) if (op args < 0) throwErrno(# op, errno)
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ClockService::Impl

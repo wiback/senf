@@ -51,7 +51,7 @@ namespace {
             {
                 int rv = ::open(name.c_str(),O_RDWR|O_NONBLOCK) ;
                 if (rv<0)
-                    throw senf::SystemException(errno);
+                    senf::throwErrno();
                 fd(rv);
             }
     };

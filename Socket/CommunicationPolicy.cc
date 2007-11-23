@@ -58,7 +58,7 @@ prefix_ int senf::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
             case EINTR:
                 break;
             default:
-                throw SystemException(errno);
+                throwErrno();
             }
     } while (rv<0);
     return rv;

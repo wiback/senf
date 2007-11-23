@@ -53,7 +53,7 @@ prefix_ unsigned senf::ReadablePolicy::read(FileHandle handle, char * buffer,
                 rv = 0;
                 break;
             default:
-                throw SystemException(errno);
+                throwErrno();
             }
     } while (rv<0);
     return rv;
@@ -74,7 +74,7 @@ prefix_ unsigned senf::ReadablePolicy::do_readfrom(FileHandle handle, char * buf
                 rv = 0;
                 break;
             default:
-                throw SystemException(errno);
+                throwErrno();
             }
     } while (rv<0);
     return rv;
@@ -100,7 +100,7 @@ prefix_ unsigned senf::WriteablePolicy::do_write(FileHandle handle, char const *
                 rv = 0;
                 break;
             default:
-                throw SystemException(errno);
+                throwErrno();
             }
     } while (rv<0);
     return rv;
@@ -121,7 +121,7 @@ prefix_ unsigned senf::WriteablePolicy::do_writeto(FileHandle handle,
                 rv = 0;
                 break;
             default:
-                throw SystemException(errno);
+                throwErrno();
             }
     } while (rv<0);
     return rv;

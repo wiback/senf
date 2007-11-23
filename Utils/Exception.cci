@@ -27,40 +27,25 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::SystemException::SystemException()
-    : where_(0), code_(errno)
-{
-    init();
-}
+prefix_ senf::SystemException::SystemException(SystemException const & other)
+    : std::stringstream(other.str(),std::ios::out), code_(other.code_)
+{}
 
-prefix_  senf::SystemException::SystemException(int code)
-    : where_(0), code_(code)
+prefix_ senf::SystemException::SystemException(std::string const & where, int code)
+    : std::stringstream(std::ios::out), code_(code)
 {
-    init();
-}
-
-prefix_ senf::SystemException::SystemException(char const * where)
-    : where_(where), code_(errno)
-{
-    init();
-}
-
-prefix_ senf::SystemException::SystemException(char const * where, int code)
-    : where_(where), code_(code)
-{
-    init();
+    if (! where.empty())
+        (*this) << where << ": ";
+    (*this) << "(" << code_ << ") " << description();
 }
 
 prefix_ char const * senf::SystemException::what()
     const throw()
 {
+    /// \fixme Replace the 'stringstream' base-class with our own stream with a specialized
+    /// streambuf which allows to efficiently access the contents as a C string.
+    buffer_ = this->str();
     return buffer_.c_str();
-}
-
-prefix_ char const * senf::SystemException::where()
-    const
-{
-    return where_;
 }
 
 prefix_ int senf::SystemException::code()
@@ -97,17 +82,17 @@ prefix_  senf::SystemException::~SystemException()
 
 prefix_ void senf::throwErrno()
 {
-    throwErrno(0, errno);
+    throwErrno("", errno);
 }
 
-prefix_ void senf::throwErrno(char const * where)
+prefix_ void senf::throwErrno(std::string const & where)
 {
     throwErrno(where, errno);
 }
 
 prefix_ void senf::throwErrno(int code)
 {
-    throwErrno(0, code);
+    throwErrno("", code);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

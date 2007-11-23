@@ -78,7 +78,7 @@ prefix_ void senf::WriteHelper<Handle>::process(Handle handle,
     bool complete_ (false);
     try {
         if (event != senf::Scheduler::EV_WRITE)
-            throw senf::SystemException(EPIPE);
+            throwErrno(EPIPE);
         offset_ = handle.write(std::make_pair(offset_,data_.end()));
         if (offset_ == data_.end()) {
             data_.erase();

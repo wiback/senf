@@ -29,8 +29,11 @@
 // Custom includes
 #include <exception>
 #include <string>
+#include <iostream>
+#include <sstream>
 #include <boost/preprocessor/repeat.hpp>
 #include <boost/preprocessor/cat.hpp>
+#include <boost/utility.hpp>
 
 //#include "Exception.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -73,38 +76,39 @@ namespace senf {
 
     /** \brief Exception handling standard UNIX errors (errno)
 
-        This exception is thrown to signal generic \c errno failures. In addition to the \c errno
-        number (the code()), this class manages optional origin information. This parameter should
-        be provided to further describe, in what context the exception was created.
+        This exception is thrown to signal generic \c errno failures. 
 
-        This exception should not be used directly. Instead the derived class ErrnoException should
-        be thrown via one of the senf::throwErrno() helpers.
+        This exception cannot be thrown directly. Instead the derived class ErrnoException should be
+        thrown via one of the senf::throwErrno helpers.
+
+        The error message associated with the SystemException may be extended arbitrarily by using
+        the exception like a stream:
+        \code
+        try {
+            // This throw would normally be within some function called from here.
+            senf::throwErrno("::open()");
+
+            // Or you may want to use a more descriptive argument string:
+            senf::throwErrno("::open(\"" + filename + "\")");
+
+            // Or even use boost::format here
+            senf::throwErrno((boost::format("::open(\"%s\")") % filename).str());
+        }
+        catch (SystemException & e) {
+            // You can add further error information later by catching and re-throwing the exception
+            e << " [while operating on user '" << user << "']";
+            throw;
+        }
+        \endcode
 
         \see ErrnoException
         \ingroup exception
      */
-    class SystemException : public std::exception
+    class SystemException : public std::exception, public std::stringstream
     {
     public:
-        SystemException();              ///< SystemException without error location infor
-                                        /**< The error code is taken from the current value of the
-                                             global \c errno variable  */
-
-        explicit SystemException(int code); ///< SystemException without error location info
-                                        /**< \param[in] code error number (the \c errno value) */
-
-        explicit SystemException(char const * where); ///< SystemException with error location info
-                                        /**< The error code is taken from the current value of the
-                                             global \c errno variable 
-                                             \param[in] where description of error origin */
-
-        SystemException(char const * where, int code); ///< SystemException with error location info 
-                                        /**< \param[in] where description of error origin
-                                             \param[in] code error number (the \c errno value) */
-
         virtual char const * what() const throw(); ///< Return verbose error description
 
-        char const * where() const;     ///< Error origin
         int code() const;               ///< Error code (\c errno number)
         char const * description() const; ///< Error description (strerror() value)
 
@@ -114,13 +118,16 @@ namespace senf {
 
         virtual ~SystemException() throw();
 
-    private:
-        void init();
+    protected:
+        SystemException(std::string const & where, int code); 
+        SystemException(SystemException const & other);
 
-        char const * const where_;
+    private:
         int const code_;                // This must be const to make the derived ErrnoException
                                         // class a valid derived class.
-        std::string buffer_;
+        mutable std::string buffer_;
+
+        friend void throwErrno(std::string const &, int);
     };
 
     /** \brief Error specific system exception
@@ -135,6 +142,9 @@ namespace senf {
         if ((fd = ::open(filename, O_RDWR)) < 0)
              senf::throwErrno("open()");
         \endcode
+
+        \see SystemException
+
         \ingroup exception
      */
     template <int Code>
@@ -143,9 +153,10 @@ namespace senf {
     public:
         static int const fixed_code = Code;
 
-        ErrnoException();               ///< ErrnoException without error location information
-        explicit ErrnoException(char const * where);
+        explicit ErrnoException(std::string const & where);
                                         ///< ErrnoException with error location information
+        
+        ErrnoException(ErrnoException const & other);
     };
 
     
@@ -157,7 +168,7 @@ namespace senf {
     /** \brief Throw ErrnoException based on current \c errno value (with location info)
         \ingroup exception
      */
-    void throwErrno(char const * where);
+    void throwErrno(std::string const & where);
 
     /** \brief Throw ErrnoException based on given \c errno value
         \ingroup exception
@@ -167,7 +178,7 @@ namespace senf {
     /** \brief Throw ErrnoException based on given \c errno value (with location info)
         \ingroup exception
      */
-    void throwErrno(char const * where, int code);
+    void throwErrno(std::string const & where, int code);
 
     enum NoThrow_t { nothrow };
 

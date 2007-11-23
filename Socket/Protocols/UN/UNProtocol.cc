@@ -39,7 +39,7 @@ prefix_ unsigned senf::UNProtocol::available()
 {
     int n;
     if (::ioctl(body().fd(),SIOCINQ,&n) < 0)
-        throw senf::SystemException(errno);
+        throwErrno();
     return n;
 }
 
@@ -53,14 +53,14 @@ prefix_ void senf::UNProtocol::connect(UNSocketAddress const & address)
     const 
 {
     if(::connect(body().fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ void senf::UNProtocol::bind(UNSocketAddress const & address) 
     const 
 {
     if(::bind(body().fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
-        throw SystemException(errno);
+        throwErrno();
     
 }
 

@@ -33,19 +33,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::SystemException::init()
-{
-    // We normallyl don't want to consume memory in an exception,
-    // however all other solutions to format the message are terribly
-    // ugly (since thay must use a static and shared buffer ...)
-    std::stringstream s;
-    if (where_)
-        s << where_ << ": ";
-    s << "(" << code_ << ") " << description();
-    buffer_ = s.str();
-}
-
-prefix_ void senf::throwErrno(char const * where, int code)
+prefix_ void senf::throwErrno(std::string const & where, int code)
 {
     switch (code) {
 

@@ -45,7 +45,7 @@ prefix_ unsigned senf::UDPProtocol::available()
 {
     int n;
     if (::ioctl(body().fd(),SIOCINQ,&n) < 0)
-        throw senf::SystemException(errno);
+        throwErrno();
     return n;
 }
 
@@ -61,7 +61,7 @@ prefix_ bool senf::UDPProtocol::mcLoop()
     int value;
     socklen_t len (sizeof(value));
     if (::getsockopt(body().fd(),SOL_IP,IP_MULTICAST_LOOP,&value,&len) < 0)
-        throw SystemException(errno);
+        throwErrno();
     return value;
 }
 
@@ -70,7 +70,7 @@ prefix_ void senf::UDPProtocol::mcLoop(bool value)
 {
     int ivalue (value);
     if (::setsockopt(body().fd(),SOL_IP,IP_MULTICAST_LOOP,&ivalue,sizeof(ivalue)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ void senf::UDPProtocol::mcAddMembership(INet4SocketAddress const & mcAddr)
@@ -81,7 +81,7 @@ prefix_ void senf::UDPProtocol::mcAddMembership(INet4SocketAddress const & mcAdd
     mreqn.imr_address.s_addr = htons(INADDR_ANY);
     mreqn.imr_ifindex = 0;
     if (::setsockopt(body().fd(),SOL_IP,IP_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ void senf::UDPProtocol::mcAddMembership(INet4SocketAddress const & mcAddr,
@@ -93,7 +93,7 @@ prefix_ void senf::UDPProtocol::mcAddMembership(INet4SocketAddress const & mcAdd
     mreqn.imr_address = reinterpret_cast<struct sockaddr_in const *>(localAddr.sockaddr_p())->sin_addr;
     mreqn.imr_ifindex = 0;
     if (::setsockopt(body().fd(),SOL_IP,IP_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ void senf::UDPProtocol::mcDropMembership(INet4SocketAddress const & mcAddr)
@@ -104,7 +104,7 @@ prefix_ void senf::UDPProtocol::mcDropMembership(INet4SocketAddress const & mcAd
     mreqn.imr_address.s_addr = htons(INADDR_ANY);
     mreqn.imr_ifindex = 0;
     if (::setsockopt(body().fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ void senf::UDPProtocol::mcDropMembership(INet4SocketAddress const & mcAddr,
@@ -116,7 +116,7 @@ prefix_ void senf::UDPProtocol::mcDropMembership(INet4SocketAddress const & mcAd
     mreqn.imr_address = reinterpret_cast<struct sockaddr_in const *>(localAddr.sockaddr_p())->sin_addr;
     mreqn.imr_ifindex = 0;
     if (::setsockopt(body().fd(),SOL_IP,IP_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ void senf::UDPProtocol::mcIface(std::string const & iface)
@@ -127,10 +127,10 @@ prefix_ void senf::UDPProtocol::mcIface(std::string const & iface)
     if (!iface.empty()) {
         mreqn.imr_ifindex = if_nametoindex(iface.c_str());
         if (mreqn.imr_ifindex == 0)
-            throw SystemException(EINVAL);
+            throwErrno(EINVAL);
     }
     if (::setsockopt(body().fd(),SOL_IP,IP_MULTICAST_IF,&mreqn,sizeof(mreqn)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ unsigned senf::UDPProtocol::mcTTL()
@@ -139,7 +139,7 @@ prefix_ unsigned senf::UDPProtocol::mcTTL()
     int value;
     socklen_t len (sizeof(value));
     if (::getsockopt(body().fd(),SOL_IP,IP_MULTICAST_TTL,&value,&len) < 0)
-        throw SystemException(errno);
+        throwErrno();
     return value;
 }
 
@@ -147,7 +147,7 @@ prefix_ void senf::UDPProtocol::mcTTL(unsigned value)
     const
 {
     if (::setsockopt(body().fd(),SOL_IP,IP_MULTICAST_TTL,&value,sizeof(value)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 

@@ -58,24 +58,24 @@ prefix_ senf::Scheduler::Scheduler()
       eventTime_(0), eventEarly_(ClockService::milliseconds(11)), eventAdjust_(0)
 {
     if (epollFd_<0)
-        throw SystemException(errno);
+        throwErrno();
 
     if (::pipe(sigpipe_) < 0)
-        throw SystemException(errno);
+        throwErrno();
 
     int flags (::fcntl(sigpipe_[1],F_GETFL));
     if (flags < 0) 
-        throw SystemException(errno);
+        throwErrno();
     flags |= O_NONBLOCK;
     if (::fcntl(sigpipe_[1], F_SETFL, flags) < 0) 
-        throw SystemException(errno);
+        throwErrno();
 
     ::epoll_event ev;
     ::memset(&ev, 0, sizeof(ev));
     ev.events = EV_READ;
     ev.data.fd = sigpipe_[0];
     if (::epoll_ctl(epollFd_, EPOLL_CTL_ADD, sigpipe_[0], &ev) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ void senf::Scheduler::registerSignal(unsigned signal, SimpleCallback const & cb)
@@ -181,7 +181,7 @@ prefix_ void senf::Scheduler::registerSigHandlers()
             if (signal == SIGCHLD)
                 sa.sa_flags |= SA_NOCLDSTOP;
             if (::sigaction(signal, &sa, 0) < 0)
-                throw SystemException(errno);
+                throwErrno();
         }
     }
 }
@@ -254,7 +254,7 @@ prefix_ void senf::Scheduler::process()
 
         if (events<0)
             if (errno != EINTR)
-                throw SystemException(errno);
+                throwErrno();
 
         eventTime_ = ClockService::now();
 

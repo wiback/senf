@@ -46,7 +46,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_client()
 {
     int sock = ::socket(PF_INET,SOCK_STREAM,0);
     if (sock < 0)
-        throw SystemException(errno);
+        throwErrno();
     body().fd(sock);
 }
 
@@ -63,7 +63,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_server()
 {
     int sock = ::socket(PF_INET,SOCK_STREAM,0);
     if (sock < 0)
-        throw SystemException(errno);
+        throwErrno();
     body().fd(sock);
 }
 
@@ -75,7 +75,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_server(INet4SocketAddress const & a
     bind(address);
     reuseaddr(true);
     if (::listen(body().fd(),backlog) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::TCPv4SocketProtocol::clone()
@@ -92,7 +92,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_client()
 {
     int sock = ::socket(PF_INET6,SOCK_STREAM,0);
     if (sock < 0)
-        throw SystemException(errno);
+        throwErrno();
     body().fd(sock);
 }
 
@@ -109,7 +109,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_server()
 {
     int sock = ::socket(PF_INET6,SOCK_STREAM,0);
     if (sock < 0)
-        throw SystemException(errno);
+        throwErrno();
     body().fd(sock);
 }
 
@@ -121,7 +121,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_server(INet6SocketAddress const & a
     bind(address);
     reuseaddr(true);
     if (::listen(body().fd(),backlog) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::TCPv6SocketProtocol::clone()

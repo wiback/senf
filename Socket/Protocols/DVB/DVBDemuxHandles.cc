@@ -47,7 +47,7 @@ prefix_ void senf::DVBDemuxSectionProtocol::init_client(unsigned short adapter, 
             "/dev/dvb/adapter%d/demux%d") % adapter % device);
     int fd = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0)
-        throw SystemException(errno);
+        throwErrno();
     body().fd(fd);
 }
 
@@ -67,7 +67,7 @@ prefix_ void senf::DVBDemuxSectionProtocol::setSectionFilter(struct dmx_sct_filt
     const
 {
     if (::ioctl(body().fd(), DMX_SET_FILTER, filter) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 // ----------------------------------------------------------------
@@ -79,7 +79,7 @@ prefix_ void senf::DVBDemuxPESProtocol::init_client(unsigned short adapter, unsi
             "/dev/dvb/adapter%d/demux%d") % adapter % device);
     int fd = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0)
-        throw SystemException(errno);
+        throwErrno();
     body().fd(fd);
 }
 
@@ -99,7 +99,7 @@ prefix_ void senf::DVBDemuxPESProtocol::setPESFilter(struct dmx_pes_filter_param
     const
 {
     if (::ioctl(body().fd(), DMX_SET_PES_FILTER, filter) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 // ----------------------------------------------------------------
@@ -111,7 +111,7 @@ prefix_ void senf::DVBDvrProtocol::init_client(unsigned short adapter, unsigned 
             "/dev/dvb/adapter%d/dvr%d") % adapter % device);
     int fd = open(devDvr.c_str(), O_RDONLY | O_NONBLOCK);
     if (fd < 0)
-        throw SystemException(errno);
+        throwErrno();
     body().fd(fd);
 }
 

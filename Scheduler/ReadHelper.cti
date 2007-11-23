@@ -94,7 +94,7 @@ template <class Handle>
 prefix_ void senf::ReadHelper<Handle>::throw_error()
     const
 {
-    if (errno_ != 0) throw SystemException(errno_);
+    if (errno_ != 0) throwErrno(errno_);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

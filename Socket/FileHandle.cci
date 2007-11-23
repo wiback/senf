@@ -54,7 +54,7 @@ prefix_  senf::FileBody::~FileBody()
 prefix_ void senf::FileBody::close()
 {
     if (!valid())
-        throw SystemException(EBADF);
+        throwErrno(EBADF);
     v_close();
     fd_ = -1;
 }

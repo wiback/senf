@@ -42,7 +42,7 @@ prefix_ unsigned senf::SocketBufferingPolicy::rcvbuf(FileHandle handle)
     unsigned size;
     socklen_t len (sizeof(size));
     if (::getsockopt(handle.fd(),SOL_SOCKET,SO_RCVBUF,&size,&len) < 0)
-        throw SystemException(errno);
+        throwErrno();
     // Linux doubles the bufer size on setting the RCVBUF to cater for internal
     // headers. We fix this up here .. (see lkml FAQ)
     return size/2;
@@ -51,7 +51,7 @@ prefix_ unsigned senf::SocketBufferingPolicy::rcvbuf(FileHandle handle)
 prefix_ void senf::SocketBufferingPolicy::rcvbuf(FileHandle handle, unsigned size)
 {
     if (::setsockopt(handle.fd(),SOL_SOCKET,SO_RCVBUF,&size,sizeof(size)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 prefix_ unsigned senf::SocketBufferingPolicy::sndbuf(FileHandle handle)
@@ -59,7 +59,7 @@ prefix_ unsigned senf::SocketBufferingPolicy::sndbuf(FileHandle handle)
     unsigned size;
     socklen_t len (sizeof(size));
     if (::getsockopt(handle.fd(),SOL_SOCKET,SO_SNDBUF,&size,&len) < 0)
-        throw SystemException(errno);
+        throwErrno();
     // Linux doubles the bufer size on setting the SNDBUF to cater for internal
     // headers. We fix this up here .. (see lkml FAQ)
     return size/2;
@@ -69,7 +69,7 @@ prefix_ unsigned senf::SocketBufferingPolicy::sndbuf(FileHandle handle)
 prefix_ void senf::SocketBufferingPolicy::sndbuf(FileHandle handle, unsigned size)
 {
     if (::setsockopt(handle.fd(),SOL_SOCKET,SO_SNDBUF,&size,sizeof(size)) < 0)
-        throw SystemException(errno);
+        throwErrno();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

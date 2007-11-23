@@ -39,7 +39,7 @@ prefix_ void senf::UNDatagramSocketProtocol::init_client() const
 {
     int sock = ::socket(PF_UNIX,SOCK_DGRAM,0);
     if (sock < 0)
-        throw SystemException(errno);
+        throwErrno();
     body().fd(sock);
 }
 
