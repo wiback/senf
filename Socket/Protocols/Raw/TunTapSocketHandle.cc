@@ -50,7 +50,7 @@ prefix_ void senf::TapProtocol::init_client(std::string const & interface_name, 
 {
     int fd;
     if ( (fd = ::open("/dev/net/tun", O_RDWR)) < 0 )
-        throw SystemException(errno);
+        throwErrno();
     struct ifreq ifr;
     ::memset( &ifr, 0, sizeof(ifr));
     ifr.ifr_flags = IFF_TAP;
@@ -58,7 +58,7 @@ prefix_ void senf::TapProtocol::init_client(std::string const & interface_name, 
         ifr.ifr_flags |= IFF_NO_PI;
     interface_name.copy( ifr.ifr_name, IFNAMSIZ);
     if (::ioctl(fd, TUNSETIFF, (void *) &ifr) < 0 )
-        throw SystemException(errno);
+        throwErrno();
     body().fd(fd);
 }
 
@@ -75,7 +75,7 @@ prefix_ unsigned senf::TapProtocol::available()
         return 0;
     ssize_t l = ::recv(body().fd(),0,0,MSG_PEEK | MSG_TRUNC);
     if (l < 0)
-        throw SystemException(errno);
+        throwErrno();
     return l;
 }
 
