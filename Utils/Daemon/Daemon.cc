@@ -151,15 +151,15 @@ prefix_ void senf::Daemon::detach()
 
 namespace {
     /* Purposely *not* derived from std::exception */
-    struct  DaemonFailureException {
-        DaemonFailureException(unsigned c) : code(c) {}
+    struct  DaemonExitException {
+        DaemonExitException(unsigned c) : code(c) {}
         unsigned code;
     };
 }
 
-prefix_ void senf::Daemon::fail(unsigned code)
+prefix_ void senf::Daemon::exit(unsigned code)
 {
-    throw DaemonFailureException(code);
+    throw DaemonExitException(code);
 }
 
 prefix_ int senf::Daemon::start(int argc, char const ** argv)
@@ -182,8 +182,8 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
 
         main();
     }
-    catch (DaemonFailureException & e) {
-        return e.code > 0 ? e.code : 1;
+    catch (DaemonExitException & e) {
+        return e.code;
     }
 
 #ifdef NDEBUG

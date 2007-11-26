@@ -85,7 +85,7 @@ prefix_ void senf::ReadHelper<Handle>::process(Handle handle,
         }
     }
     catch (senf::SystemException const & ex) {
-        errno_ = ex.code();
+        errno_ = ex.errorNumber();
         done();
         return;
     }

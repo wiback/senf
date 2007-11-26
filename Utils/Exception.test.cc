@@ -54,7 +54,7 @@ BOOST_AUTO_UNIT_TEST(errnoException)
         }
     }
     catch (senf::SystemException & e) {
-        BOOST_CHECK_EQUAL( e.code(), ENOENT );
+        BOOST_CHECK_EQUAL( e.errorNumber(), ENOENT );
         BOOST_CHECK_EQUAL( e.what(), "::open(): (2) No such file or directory: x=1, y=2" );
     }
 }

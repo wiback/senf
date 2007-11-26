@@ -48,7 +48,7 @@ prefix_ char const * senf::SystemException::what()
     return buffer_.c_str();
 }
 
-prefix_ int senf::SystemException::code()
+prefix_ int senf::SystemException::errorNumber()
     const
 {
     return code_;

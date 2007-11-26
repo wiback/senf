@@ -109,12 +109,12 @@ namespace senf {
     public:
         virtual char const * what() const throw(); ///< Return verbose error description
 
-        int code() const;               ///< Error code (\c errno number)
+        int errorNumber() const;        ///< Error code (\c errno number)
         char const * description() const; ///< Error description (strerror() value)
 
         bool anyOf(int c0, int c1=0, int c2=0, int c3=0, int c4=0, int c5=0, 
                    int c6=0, int c7=0, int c8=0, int c9=0);
-                                        ///< \c true, if code() is one of \a c0 ... \a c9
+                                        ///< \c true, if errorNumber() is one of \a c0 ... \a c9
 
         virtual ~SystemException() throw();
 
