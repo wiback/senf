@@ -156,7 +156,7 @@ namespace senf {
         int argc();                     ///< Access command line parameter count
         char const ** argv();           ///< Access command line parameters
 
-        void exit(unsigned code=0);     ///< Terminate daemon with failure
+        static void exit(unsigned code=0);     ///< Terminate daemon with failure
 
         ///\}
         
