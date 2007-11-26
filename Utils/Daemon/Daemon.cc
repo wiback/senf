@@ -151,7 +151,7 @@ prefix_ void senf::Daemon::detach()
 
 namespace {
     /* Purposely *not* derived from std::exception */
-    struct  DaemonExitException {
+    struct DaemonExitException {
         DaemonExitException(unsigned c) : code(c) {}
         unsigned code;
     };
@@ -223,7 +223,8 @@ prefix_ void senf::Daemon::configure()
             std::string::size_type komma (arg.find(','));
             if (komma == std::string::npos) {
                 boost::trim(arg);
-                consoleLog(arg);
+                if (arg == std::string("none")) consoleLog("");
+                else if (!arg.empty())          consoleLog(arg);
             } else {
                 std::string arg1 (arg,0,komma);
                 std::string arg2 (arg,komma+1);
