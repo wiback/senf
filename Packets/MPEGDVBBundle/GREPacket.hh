@@ -41,6 +41,13 @@ namespace senf {
         
         \see GREPacketType
      */
+    struct GREChecksumParser : public PacketParserBase {
+#       include SENF_PARSER()        
+        SENF_PARSER_PRIVATE_FIELD ( checksum1_, 	Parse_UInt16 );
+        SENF_PARSER_PRIVATE_FIELD ( reserved1_, Parse_UInt16 );
+  	SENF_PARSER_FINALIZE(GREChecksumParser);
+    };
+
     struct Parse_GREPacket : public PacketParserBase
     {
 #       include SENF_PARSER()
@@ -50,10 +57,8 @@ namespace senf {
         SENF_PARSER_BITFIELD_RO      ( version_number,    3, unsigned ); // TODO: Always Zero !!
         SENF_PARSER_FIELD            ( protocol_type,    Parse_UInt16 );
         SENF_PARSER_PRIVATE_VARIANT  ( checksum_,  checksum_present,
-                                                   (VoidPacketParser) (Parse_UInt16) );
-        SENF_PARSER_PRIVATE_VARIANT  ( reserved1_, checksum_present,
-                                                   (VoidPacketParser) (Parse_UInt16) );
-
+                                                   (VoidPacketParser) (GREChecksumParser) );
+ 
         SENF_PARSER_FINALIZE( Parse_GREPacket );
 
       private: 
