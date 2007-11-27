@@ -43,7 +43,7 @@ namespace senf {
      */
     struct GREChecksumParser : public PacketParserBase {
 #       include SENF_PARSER()        
-        SENF_PARSER_PRIVATE_FIELD ( checksum1_, 	Parse_UInt16 );
+        SENF_PARSER_FIELD ( checksum1_, Parse_UInt16 );
         SENF_PARSER_PRIVATE_FIELD ( reserved1_, Parse_UInt16 );
   	SENF_PARSER_FINALIZE(GREChecksumParser);
     };
@@ -63,7 +63,7 @@ namespace senf {
 
       private: 
         Parse_UInt16 checksum() const /// only defined if checksum_present() == \c true
-             { return checksum_().get<1>(); }
+             { return checksum_().get<1>().checksum1_(); }
     };
     
     /** \brief GRE packet
