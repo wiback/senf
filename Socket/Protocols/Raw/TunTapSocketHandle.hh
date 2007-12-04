@@ -52,7 +52,7 @@ namespace senf {
     typedef MakeSocketPolicy<
         NoAddressingPolicy,
         DatagramFramingPolicy,
-        UnconnectedCommunicationPolicy,
+        ConnectedCommunicationPolicy,
         ReadablePolicy,
         WriteablePolicy,
         SocketBufferingPolicy
