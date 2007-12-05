@@ -32,7 +32,7 @@
 #include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
 
-//#include "UDPSocketHandle.mpp"
+
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
