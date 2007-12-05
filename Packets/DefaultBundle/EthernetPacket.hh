@@ -3,7 +3,7 @@
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
 // Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//     Thorsten Horstmann <thorsten.horstmann@fokus.fraunhofer.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -115,7 +115,6 @@ namespace senf {
         typedef Parse_Ethernet parser;
 #endif
         using mixin::nextPacketRange;
-  //      using mixin::nextPacketType;
         using mixin::initSize;
         using mixin::init;
 
@@ -188,77 +187,7 @@ namespace senf {
     /** \brief Ethernet VLAN tag typedef */
     typedef ConcretePacket<EthVLanPacketType> EthVLanPacket;
 
-
-    /** \brief Parse an ethernet LLC/SNAP header
-        
-        \todo document me
-
-        \see EthVLanPacketType
-     */
-    struct Parse_EthLlcSnapPacket : public PacketParserBase
-    {
-#       include SENF_FIXED_PARSER()
-
-        SENF_PARSER_FIELD( dsap, Parse_UInt8 );
-        SENF_PARSER_FIELD( ssap, Parse_UInt8 );
-        SENF_PARSER_FIELD( ctrl, Parse_UInt8 );
-
-        SENF_PARSER_FIELD( protocolId, Parse_UInt24 );
-        SENF_PARSER_FIELD( type, Parse_UInt16 );
-
-        SENF_PARSER_FINALIZE(Parse_EthLlcSnapPacket);
-        
-        SENF_PARSER_INIT() {
-            dsap() = 0xaa;
-            ssap() = 0xaa;
-            ctrl() = 0x03;
-            protocolId() = 0x000000;
-        }
-    };
-
-    /** \brief Ethernet LLC/SNAP header
-
-        \todo document me
-
-        \par Packet type (typedef):
-            \ref EthLlcSnapPacketType
-
-        \par Fields:
-            \ref Parse_EthLlcSnapPacket
-
-        \par Associated registries:
-            \ref EtherTypes
-
-        \par Finalize action:
-            XXXX
-
-        \ingroup protocolbundle_default
-     */
-    struct EthLlcSnapPacketType
-        : public PacketTypeBase, 
-          public PacketTypeMixin<EthLlcSnapPacketType, EtherTypes>
-    {
-#ifndef DOXYGEN
-        typedef PacketTypeMixin<EthLlcSnapPacketType, EtherTypes> mixin;
-        typedef ConcretePacket<EthLlcSnapPacketType> packet;
-        typedef Parse_EthLlcSnapPacket parser;
-#endif
-        using mixin::nextPacketRange;
-        using mixin::nextPacketType;
-        using mixin::initSize;
-        using mixin::init;
-                
-        static registry_key_t nextPacketKey(packet p) 
-            { return p->type(); }
-
-        static void dump(packet p, std::ostream & os);
-        static void finalize(packet p);
-    };
-
-    /** \brief Ethernet VLAN tag typedef */
-    typedef ConcretePacket<EthLlcSnapPacketType> EthLlcSnapPacket;
 }
-
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif

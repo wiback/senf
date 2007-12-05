@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "EthernetPacket.hh"
+#include "LlcSnapPacket.hh"
 #include "IPv4Packet.hh"
 
 #include "../../Utils/auto_unit_test.hh"
@@ -91,31 +92,13 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
     BOOST_CHECK_EQUAL(vlan->type(), 0x0800u);
 }
 
-BOOST_AUTO_UNIT_TEST(llcsnap_parse)
-{
-    senf::PacketData::byte data[] = {
-        0xaa,             // DSAP
-        0xaa,             // SSAP
-        0x03,             // ctrl
-        0x00, 0x00, 0x00, // Protocol Identification Field
-        0x10, 0x11        // EtherType 
-    };
-    senf::EthLlcSnapPacket p (senf::EthLlcSnapPacket::create(data));
-
-    BOOST_CHECK_EQUAL( p->dsap(), 0xaa );
-    BOOST_CHECK_EQUAL( p->ssap(), 0xaa );
-    BOOST_CHECK_EQUAL( p->ctrl(), 0x03 );
-    BOOST_CHECK_EQUAL( p->protocolId(), 0x000000u );
-    BOOST_CHECK_EQUAL( p->type(), 0x1011 );
-}
-
-BOOST_AUTO_UNIT_TEST(llcsnap_create)
+BOOST_AUTO_UNIT_TEST(ethernetPacket_llcsnap)
 {
     senf::EthernetPacket eth (senf::EthernetPacket::create());
     eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");
     eth->destination() = senf::MACAddress::from_string("07:08:09:0a:0b:0c");
     
-    senf::EthLlcSnapPacket llcsnap (senf::EthLlcSnapPacket::createAfter(eth));
+    senf::LlcSnapPacket llcsnap (senf::LlcSnapPacket::createAfter(eth));
     senf::DataPacket payload  (senf::DataPacket::createAfter(
             llcsnap, std::string("Hello, world!")));
     eth.finalize();
@@ -125,11 +108,11 @@ BOOST_AUTO_UNIT_TEST(llcsnap_create)
     BOOST_CHECK_EQUAL( llcsnap->ssap(), 0xaa );
     BOOST_CHECK_EQUAL( llcsnap->ctrl(), 0x03 );
     BOOST_CHECK_EQUAL( llcsnap->protocolId(), 0x000000u );
-    BOOST_CHECK_EQUAL( llcsnap->type(), 0u);
+    BOOST_CHECK_EQUAL( llcsnap->type_length(), 0u);
 
     senf::IPv4Packet ip (senf::IPv4Packet::createAfter(llcsnap));
     eth.finalize();
-    BOOST_CHECK_EQUAL(llcsnap->type(), 0x0800u);
+    BOOST_CHECK_EQUAL(llcsnap->type_length(), 0x0800u);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
