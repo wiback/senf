@@ -63,6 +63,9 @@ namespace senf {
             INet4Address
 
         RawV4SocketProtocol provides an internet protocol raw socket based on IPv4 addressing.
+        This socket will put data written to it onto the IPv4 layer: if you call writeto don't inlude the header!
+        On the other hand `read` will return the packet data including the IP header. 
+        This behaviour is strange and differs from the behaviour of IPv6 RAW sockets and should be changed in the future. 
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
@@ -134,6 +137,9 @@ namespace senf {
             INet6Address
 
         RawV6SocketProtocol provides an internet protocol stream socket based on IPv6 addressing.
+        This socket will put data written to it onto the IPv6 layer: if you call writeto don't inlude the header!
+        On the other hand `read` will return the packet data on top of the IPv6 layer, excluding the IP header. 
+        NB: This behaviour is differs from the behaviour of IPv4 RAW sockets. 
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle
         via the Socket Handle typedefs above.
