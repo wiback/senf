@@ -69,15 +69,31 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::TapProtocol::clone()
 }
 
 prefix_ unsigned senf::TapProtocol::available()
-    const
+  const
 {
-    if (! body().readable())
-        return 0;
-    ssize_t l = ::recv(body().fd(),0,0,MSG_PEEK | MSG_TRUNC);
-    if (l < 0)
-        throwErrno();
-    return l;
+  if (! body().readable())
+      return 0;
+  ssize_t l = ::recv(body().fd(),0,0,MSG_PEEK | MSG_TRUNC);
+  if (l < 0)
+      //throwErrno();
+      return 1588;
+  return l;
 }
+
+/*
+#include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
+
+prefix_ unsigned senf::TapProtocol::available()
+  const
+{
+  if (! body().readable())
+      return 0;
+  int n;
+  if (::ioctl(body().fd(),SIOCINQ,&n) < 0)
+      throwErrno();
+  return n;
+}
+*/
 
 prefix_ bool senf::TapProtocol::eof()
     const
