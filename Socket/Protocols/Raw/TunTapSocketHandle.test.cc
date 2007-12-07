@@ -47,7 +47,7 @@ BOOST_AUTO_UNIT_TEST(tapSocketHandle)
     }
     
     senf::TapSocketHandle handle ("tap_unittest");
-    int ret = system( "ifconfig tap_unittest up");
+    int ret = system( "/sbin/ifconfig tap_unittest up");
     BOOST_CHECK_EQUAL( WEXITSTATUS(ret), 0);
     
     senf::PacketSocketHandle sock;
