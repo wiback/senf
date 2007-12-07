@@ -9,10 +9,15 @@ sources = SENFSCons.GlobSources()
 
 SENFSCons.StandardTargets(env)
 
-SENFSCons.Object(env, target = 'MPEGDVBBundle', sources=sources,
-                 LIBS = ['Packets', 'Socket', 'Utils'])
-SENFSCons.Lib(env, library = 'Packets_MPEGDVBBundle', sources = sources[0],
-              LIBS = ['Packets', 'Socket', 'Utils'], no_includes = 1)
+SENFSCons.Object(env, 
+    target = 'MPEGDVBBundle', 
+    sources = sources,
+    LIBS = ['Packets_DefaultBundle', 'Packets', 'Socket', 'Utils'])
+
+SENFSCons.Lib(env, 
+    library = 'Packets_MPEGDVBBundle', 
+    sources = sources[0],
+    no_includes = 1)
 
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png("TLV.dia")

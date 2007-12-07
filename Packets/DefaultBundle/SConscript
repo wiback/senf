@@ -9,9 +9,14 @@ sources = SENFSCons.GlobSources()
 
 SENFSCons.StandardTargets(env)
 
-SENFSCons.Object(env, target = 'DefaultBundle', sources=sources,
-                 LIBS = ['Packets', 'Socket', 'Utils'])
-SENFSCons.Lib(env, library = 'Packets_DefaultBundle', sources = sources[0],
-              LIBS = ['Packets', 'Socket', 'Utils'], no_includes = 1)
+SENFSCons.Object(env, 
+    target = 'DefaultBundle', 
+    sources=sources,
+    LIBS = ['Packets', 'Socket', 'Utils'])
+
+SENFSCons.Lib(env, 
+    library = 'Packets_DefaultBundle',
+    sources = sources[0],
+    no_includes = 1)
                  
 SENFSCons.Doxygen(env)
