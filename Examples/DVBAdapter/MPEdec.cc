@@ -31,7 +31,7 @@
 
 #include <senf/Scheduler/Scheduler.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
-#include <senf/Packets/MPEGDVBBundle/DatagramSection.hh>
+#include <senf/Packets/MPEGDVBBundle/MPESection.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/hexdump.hh>
 #include <senf/Socket/Protocols/DVB.hh>
@@ -68,7 +68,7 @@ private:
     void dumpSection(senf::Scheduler::EventId event)
     {
         std::string data (handle.read());
-        senf::DatagramSection section (senf::DatagramSection::create(data));
+        senf::MPESection section (senf::MPESection::create(data));
         section.dump(std::cout);
         senf::PacketData & datagramData (section.next().data());
         senf::hexdump(datagramData.begin(), datagramData.end(), std::cout);
