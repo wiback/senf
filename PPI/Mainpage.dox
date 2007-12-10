@@ -253,8 +253,8 @@
     This application will read udp-packets coming in on port 1111 and will forward
     them to port 2222 on host 2.3.4.5 with a fixed rate of 10 packets / second.
     
-    We start of by instantiating the necessary modules. Then the connections between these modules
-    are set up by successively connecting each output connector to an in put connector. As can be
+    We start out by instantiating the necessary modules. Then the connections between these modules
+    are set up by successively connecting each output connector to an input connector. As can be
     seen, the name of the connector can be left of if it is named \c output or \c input
     respectively.
 
