@@ -142,7 +142,8 @@
 # define SENF_PARSER_I_FIELD_OFS_var(name, type, access)                                          \
         size_type BOOST_PP_CAT(name,_offset)() const {                                            \
             return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));    \
-        }
+        }                                                                                         \
+        static size_type const BOOST_PP_CAT(name, _init_bytes) = SENF_MPL_SLOT_GET(init_bytes);
 #
 # define SENF_PARSER_I_FIELD_OFS_fix(name, type, access)                                          \
         static size_type const BOOST_PP_CAT(name, _offset) = SENF_MPL_SLOT_GET(offset);
@@ -161,7 +162,6 @@
         size_type BOOST_PP_CAT(name, _next_offset)() const {                                      \
             return BOOST_PP_CAT(name,_offset)() + size;                                           \
         }                                                                                         \
-        static size_type const BOOST_PP_CAT(name, _init_bytes) = SENF_MPL_SLOT_GET(init_bytes);   \
         static size_type const BOOST_PP_CAT(name, _next_init_bytes) =                             \
             BOOST_PP_CAT(name, _init_bytes) + isize;                                              \
     private:                                                                                      \
@@ -211,22 +211,22 @@
 # // SENF_PARSER_BITFIELD_*
 # // SENF_PARSER_P_BITFIELD_*
 #
-# define SENF_PARSER_BITFIELD_var(name, bits, type)                                                \
+# define SENF_PARSER_BITFIELD_var(name, bits, type)                                               \
       SENF_PARSER_BITFIELD_I(name, bits, type, var, rw, public)
-# define SENF_PARSER_BITFIELD_RO_var(name, bits, type)                                             \
+# define SENF_PARSER_BITFIELD_RO_var(name, bits, type)                                            \
       SENF_PARSER_BITFIELD_I(name, bits, type, var, ro, public)
-# define SENF_PARSER_BITFIELD_fix(name, bits, type)                                                \
+# define SENF_PARSER_BITFIELD_fix(name, bits, type)                                               \
       SENF_PARSER_BITFIELD_I(name, bits, type, fix, rw, public)
-# define SENF_PARSER_BITFIELD_RO_fix(name, bits, type)                                             \
+# define SENF_PARSER_BITFIELD_RO_fix(name, bits, type)                                            \
       SENF_PARSER_BITFIELD_I(name, bits, type, fix, ro, public)
 #
-# define SENF_PARSER_P_BITFIELD_var(name, bits, type)                                              \
+# define SENF_PARSER_P_BITFIELD_var(name, bits, type)                                             \
       SENF_PARSER_BITFIELD_I(name, bits, type, var, rw, private)
-# define SENF_PARSER_P_BITFIELD_RO_var(name, bits, type)                                           \
+# define SENF_PARSER_P_BITFIELD_RO_var(name, bits, type)                                          \
       SENF_PARSER_BITFIELD_I(name, bits, type, var, ro, private)
-# define SENF_PARSER_P_BITFIELD_fix(name, bits, type)                                              \
+# define SENF_PARSER_P_BITFIELD_fix(name, bits, type)                                             \
       SENF_PARSER_BITFIELD_I(name, bits, type, fix, rw, private)
-# define SENF_PARSER_P_BITFIELD_RO_fix(name, bits, type)                                           \
+# define SENF_PARSER_P_BITFIELD_RO_fix(name, bits, type)                                          \
       SENF_PARSER_BITFIELD_I(name, bits, type, fix, ro, private)
 #
 # ////////////////////////////////////////
@@ -268,7 +268,9 @@
         size_type BOOST_PP_CAT(name,_offset)() const {                                            \
             return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0))     \
                 - SENF_MPL_SLOT_GET(bitfield_size);                                               \
-        }
+        }                                                                                         \
+        static size_type const BOOST_PP_CAT(name, _init_bytes) = SENF_MPL_SLOT_GET(init_bytes)    \
+            - SENF_MPL_SLOT_GET(bitfield_size);
 #
 # define SENF_PARSER_I_BITFIELD_OFS_fix(name, type, access)                                       \
         static size_type const BOOST_PP_CAT(name, _offset) = SENF_MPL_SLOT_GET(offset)            \
@@ -334,16 +336,16 @@
           SENF_PARSER_I_BITFIELD_RESET()                                                          \
           SENF_PARSER_I_FIELD_INTRO(name, void, private)                                          \
           SENF_PARSER_I_FIELD_INIT_ro(name, void, private)                                        \
-          BOOST_PP_CAT( SENF_PARSER_I_GOTO_SET_OFS_, ofstype ) (name, offset, initsize)            \
+          BOOST_PP_CAT( SENF_PARSER_I_GOTO_SET_OFS_, ofstype ) (name, offset, initsize)           \
       public:
 #
-# define SENF_PARSER_I_GOTO_SET_OFS_var(name, offs, initsize)                                      \
+# define SENF_PARSER_I_GOTO_SET_OFS_var(name, offs, initsize)                                     \
           size_type field_offset_(senf::mpl::rv<BOOST_PP_CAT(name,_index)>*) const {              \
               return offs;                                                                        \
           }                                                                                       \
           SENF_MPL_SLOT_SET(init_bytes, initsize);
 #
-# define SENF_PARSER_I_GOTO_SET_OFS_fix(name, offs, initsize)                                      \
+# define SENF_PARSER_I_GOTO_SET_OFS_fix(name, offs, initsize)                                     \
           SENF_MPL_SLOT_SET(offset, offs);
 #
 # ///////////////////////////////////////////////////////////////////////////
@@ -399,7 +401,7 @@
          }                                                                                        \
          name(data_iterator i, state_type s) : parser_base_type(i,s) {}                           \
     private:                                                                                      \
- template <class T> void init(T) const { defaultInit(); }                                 \
+         template <class T> void init(T) const { defaultInit(); }                                 \
     public:                                                                                       \
          void init() const { init(0); }
 #

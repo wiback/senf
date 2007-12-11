@@ -12,7 +12,7 @@ SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env,
               library = 'Packets',
               sources = SENFSCons.GlobSources(),
-              LIBS = [ 'Socket', 'Utils' ])
+              LIBS = [ 'Utils' ])
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png("structure.dia")
 ])
