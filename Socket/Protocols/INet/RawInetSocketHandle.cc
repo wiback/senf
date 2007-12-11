@@ -32,7 +32,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::UDPv4SocketProtocol
+// senf::RawV4SocketProtocol
 
 prefix_ void senf::RawV4SocketProtocol::init_client()
     const
@@ -65,7 +65,7 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::RawV4SocketProtocol::clone()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::UDPv6SocketProtocol::
+// senf::RawV6SocketProtocol::
 
 prefix_ void senf::RawV6SocketProtocol::init_client()
     const
