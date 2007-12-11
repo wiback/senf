@@ -78,8 +78,7 @@ prefix_ void senf::EthernetPacketType::finalize(packet p)
     else
         if (p.next().is<LlcSnapPacket>())
             p->type_length() << p.next().data().size();
-        else
-            p->type_length() << 0;
+    // Do NOT reset type_length if the type is not known ... doing this will destroy read packets
 }
 
 prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
