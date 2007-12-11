@@ -27,27 +27,24 @@
 //#include "GREPacket.ih"
 
 // Custom includes
+#include <boost/io/ios_state.hpp>
 #include <iomanip>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace {
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthernetPacket>
+        registerTransparentEthernetBridging (0x6558);
+}
+
 prefix_ void senf::GREPacketType::dump(packet p, std::ostream & os)
 {
-    /*
-    os << "GREPacket:\n"
-       << std::hex
-       << "  syncByte: 0x" << unsigned(p->sync_byte()) << "\n"
-       << "  transport_error_indicator: 0x" << unsigned(p->transport_error_indicator()) << "\n"
-       << "  payload_unit_start_indicator (pusi): 0x" << unsigned(p->pusi()) << "\n"
-       << "  transport_priority: 0x" << unsigned(p->transport_priority()) << "\n"
-       << std::dec
-       << "  pid: " << unsigned(p->pid()) << "\n"
-       << std::hex
-       << "  transport_scrambling_control: 0x" << unsigned(p->transport_scrmbl_ctrl()) << "\n"
-       << "  adaptation_field_control: 0x" << unsigned(p->adaptation_field_ctrl()) << "\n"
-       << "  continuity_counter: 0x" << unsigned(p->continuity_counter()) << "\n";
-    */
+    boost::io::ios_all_saver ias(os);
+    os << "GRE Encapsulation:\n"
+       << "  checksum_present : " << p->checksum_present() << "\n"
+       << "  protocol_type    : 0x" << std::hex << p->protocol_type() << "\n"
+       ;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

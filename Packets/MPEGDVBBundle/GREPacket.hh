@@ -29,6 +29,7 @@
 // Custom includes
 #include <algorithm>
 #include "../../Packets/Packets.hh"
+#include "../DefaultBundle/EthernetPacket.hh"
 
 //#include "GREPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -78,17 +79,20 @@ namespace senf {
      */
     struct GREPacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<GREPacketType>
+          public PacketTypeMixin<GREPacketType, EtherTypes>
     {
-        typedef PacketTypeMixin<GREPacketType> mixin;
+        typedef PacketTypeMixin<GREPacketType, EtherTypes> mixin;
         typedef ConcretePacket<GREPacketType> packet;
         typedef Parse_GREPacket parser;
     
         using mixin::nextPacketRange;
+        using mixin::nextPacketType;
         using mixin::init;
         using mixin::initSize;
         
         static void dump(packet p, std::ostream & os);
+        static EtherTypes::key_t nextPacketKey(packet p) { return p->protocol_type(); }
+        static void finalize(packet p) { p->protocol_type() << key(p.next()); }
     };
     
     /** \brief GRE packet typedef */
