@@ -1,4 +1,4 @@
-// $Id: EthernetPacket.cc 523 2007-11-16 10:34:57Z tho $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)

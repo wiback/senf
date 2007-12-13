@@ -1,4 +1,4 @@
-// $Id: EthernetPacket.test.cc 530 2007-11-23 12:47:50Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
