@@ -58,7 +58,7 @@ namespace senf {
     private:
         void openSocket();
         void doIoctl(ifreq& ifr, int request);
-        void ifr_name(ifreq& ifr);
+        void ifrName(ifreq& ifr);
         int sockfd_;
         int ifindex_;
     };

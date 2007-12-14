@@ -55,7 +55,7 @@ prefix_ senf::NetdeviceController::NetdeviceController(int interface_index)
 prefix_ std::string senf::NetdeviceController::interfaceName()
 {
     struct ifreq ifr;
-    ifr_name( ifr);
+    ifrName( ifr);
     return std::string( ifr.ifr_name);
 }
 
@@ -69,7 +69,7 @@ prefix_ senf::MACAddress senf::NetdeviceController::hardwareAddress()
 prefix_ int senf::NetdeviceController::mtu()
 {
     struct ifreq ifr;
-    ifr_name(ifr);
+    ifrName( ifr);
     doIoctl( ifr, SIOCGIFMTU);
     return ifr.ifr_mtu;
 }
@@ -77,7 +77,7 @@ prefix_ int senf::NetdeviceController::mtu()
 prefix_ void senf::NetdeviceController::mtu(int new_mtu)
 {
     struct ifreq ifr;
-    ifr_name( ifr);
+    ifrName( ifr);
     ifr.ifr_mtu = new_mtu;
     doIoctl( ifr, SIOCSIFMTU);
 }
@@ -99,7 +99,7 @@ prefix_ void senf::NetdeviceController::openSocket()
         throwErrno();
 }
 
-prefix_ void senf::NetdeviceController::ifr_name(ifreq& ifr)
+prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
 {
     ::memset( &ifr, 0, sizeof(ifr));
     ifr.ifr_ifindex = ifindex_;
