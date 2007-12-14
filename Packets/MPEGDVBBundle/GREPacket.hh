@@ -55,7 +55,7 @@ namespace senf {
 
         SENF_PARSER_BITFIELD         ( checksum_present,  1, bool );
         SENF_PARSER_PRIVATE_BITFIELD ( reserved0_,       12, unsigned ); // TODO: SKIP !!
-        SENF_PARSER_BITFIELD_RO      ( version_number,    3, unsigned ); // TODO: Always Zero !!
+        SENF_PARSER_BITFIELD         ( version_number,    3, unsigned ); // TODO: Always Zero !!
         SENF_PARSER_FIELD            ( protocol_type,    Parse_UInt16 );
         SENF_PARSER_PRIVATE_VARIANT  ( checksum_,  checksum_present,
                                                    (VoidPacketParser) (GREChecksumParser) );
@@ -91,8 +91,19 @@ namespace senf {
         using mixin::initSize;
         
         static void dump(packet p, std::ostream & os);
-        static EtherTypes::key_t nextPacketKey(packet p) { return p->protocol_type(); }
-        static void finalize(packet p) { p->protocol_type() << key(p.next()); }
+        static EtherTypes::key_t nextPacketKey(packet p) {
+          return p->protocol_type();
+        }
+        static void finalize(packet p) {
+          p->protocol_type() << key(p.next());
+          p->version_number() = 0; // as per RFC2784, 2.3.1
+
+          if (p->checksum_present()) { 
+            // compute checksum
+          } else {
+            // ???
+          }
+        }
     };
     
     /** \brief GRE packet typedef */
