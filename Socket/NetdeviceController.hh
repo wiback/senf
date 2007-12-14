@@ -1,4 +1,4 @@
-// $Id: AddressingPolicy.hh 296 2007-07-10 20:39:34Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -29,7 +29,9 @@
 
 // Custom includes
 #include <string>
+#include <net/if.h>
 #include "Protocols/Raw/MACAddress.hh"
+
 
 //#include "NetdeviceController.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -43,15 +45,22 @@ namespace senf {
     class NetdeviceController
     {
     public:
-        NetdeviceController(std::string const interface_name);
-        
+        NetdeviceController(std::string const & interface_name);
+        NetdeviceController(int interface_index);
         virtual ~NetdeviceController();
         
         MACAddress hardwareAddress();
+        std::string interfaceName();
+        int interfaceIndex();
+        int mtu();
+        void mtu(int new_mtu);
     
     private:
+        void openSocket();
+        void doIoctl(ifreq& ifr, int request);
+        void set_ifr_name(ifreq& ifr);
         int sockfd_;
-        std::string interfacename_;
+        int ifindex_;
     };
 
 }

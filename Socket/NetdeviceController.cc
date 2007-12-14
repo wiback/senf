@@ -1,4 +1,4 @@
-// $Id: BufferingPolicy.cc 533 2007-11-23 17:34:30Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief BufferingPolicy non-inline non-template implementation
+    \brief NetdeviceController non-inline non-template implementation
  */
 
 #include "NetdeviceController.hh"
@@ -31,37 +31,88 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
-#include <netinet/ether.h>
 #include "../Utils/Exception.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::NetdeviceController::NetdeviceController(std::string const interface_name)
+prefix_ senf::NetdeviceController::NetdeviceController(std::string const & interface_name)
 {
-    sockfd_ = ::socket(PF_PACKET, SOCK_DGRAM, 0);
-    if (sockfd_ < 0)
-        throwErrno();
-    interfacename_ = interface_name;
+    openSocket();
+    struct ifreq ifr;
+    ::memset( &ifr, 0, sizeof(ifr));
+    interface_name.copy( ifr.ifr_name, IFNAMSIZ);
+    doIoctl( ifr, SIOCGIFINDEX);
+    ifindex_ = ifr.ifr_ifindex;
+}
+
+prefix_ senf::NetdeviceController::NetdeviceController(int interface_index)
+{
+    openSocket();
+    ifindex_ = interface_index;
+}
+
+prefix_ std::string senf::NetdeviceController::interfaceName()
+{
+    struct ifreq ifr;
+    set_ifr_name( ifr);
+    return std::string( ifr.ifr_name);
 }
 
 prefix_ senf::MACAddress senf::NetdeviceController::hardwareAddress()
 {
     struct ifreq ifr;
-    ::memset( &ifr, 0, sizeof(ifr));
-    interfacename_.copy( ifr.ifr_name, IFNAMSIZ);
-    if ( ::ioctl( sockfd_, SIOCGIFHWADDR , &ifr ) < 0 )
-        throwErrno();
-    return senf::MACAddress::from_string( 
-            ether_ntoa( (struct ether_addr*) ifr.ifr_hwaddr.sa_data ) );
+    doIoctl( ifr, SIOCGIFHWADDR);
+    return senf::MACAddress::from_data( ifr.ifr_hwaddr.sa_data);
+}
+
+prefix_ int senf::NetdeviceController::mtu()
+{
+    struct ifreq ifr;
+    set_ifr_name(ifr);
+    doIoctl( ifr, SIOCGIFMTU);
+    return ifr.ifr_mtu;
+}
+
+prefix_ void senf::NetdeviceController::mtu(int new_mtu)
+{
+    struct ifreq ifr;
+    set_ifr_name( ifr);
+    ifr.ifr_mtu = new_mtu;
+    doIoctl( ifr, SIOCSIFMTU);
+}
+
+prefix_ int senf::NetdeviceController::interfaceIndex()
+{
+    return ifindex_;
 }
 
 prefix_ senf::NetdeviceController::~NetdeviceController()
 {
-    close( sockfd_ );
+    close( sockfd_);
+}
+
+prefix_ void senf::NetdeviceController::openSocket()
+{
+    sockfd_ = ::socket( PF_INET, SOCK_DGRAM, 0);
+    if ( sockfd_ < 0)
+        throwErrno();
+}
+
+prefix_ void senf::NetdeviceController::set_ifr_name(ifreq& ifr)
+{
+    ::memset( &ifr, 0, sizeof(ifr));
+    ifr.ifr_ifindex = ifindex_;
+    if ( ::ioctl( sockfd_, SIOCGIFNAME, &ifr ) < 0 )
+        throwErrno();
 }
 
 
+prefix_ void senf::NetdeviceController::doIoctl(ifreq& ifr, int request)
+{
+    if ( ::ioctl( sockfd_, request, &ifr ) < 0 )
+        throwErrno();
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
