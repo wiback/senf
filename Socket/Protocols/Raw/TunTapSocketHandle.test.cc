@@ -1,4 +1,4 @@
-// $Id: PacketSocketHandle.test.cc 483 2007-10-30 14:48:42Z g0dil $
+// $Id$
 //
 // Copyright (C) 2006
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
