@@ -37,6 +37,7 @@
 BOOST_AUTO_UNIT_TEST(NetdeviceController)
 {
 //    senf::NetdeviceController ctrl ("eth0");
+//    std::cout << ctrl.hardwareAddress() << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

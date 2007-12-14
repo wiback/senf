@@ -62,6 +62,7 @@ prefix_ std::string senf::NetdeviceController::interfaceName()
 prefix_ senf::MACAddress senf::NetdeviceController::hardwareAddress()
 {
     struct ifreq ifr;
+    ifrName( ifr);
     doIoctl( ifr, SIOCGIFHWADDR);
     return senf::MACAddress::from_data( ifr.ifr_hwaddr.sa_data);
 }

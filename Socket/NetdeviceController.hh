@@ -51,7 +51,7 @@ namespace senf {
         
         MACAddress hardwareAddress();
         std::string interfaceName();
-        int interfaceIndex();
+        int interfaceIndex(); ///< return the interface index of the interface
         int mtu();
         void mtu(int new_mtu);
     
