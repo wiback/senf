@@ -87,9 +87,12 @@ namespace module {
         class SomeSource
         {
         public:
-            typedef unspecified_type Handle;   // type of handle requested
-            SomeSource();                      // default constructible
-            Packet operator()(Handle handle);  // extraction function
+            typedef unspecified_type Handle;                       // type of handle requested
+
+            SomeSource();                                          // EITHER default constructible
+            SomeSource(SomeSource const & other);                  // OR copy constructible
+
+            Packet operator()(Handle handle);                      // extraction function
         };
         \endcode
         Whenever the FileHandle object is ready for reading, the \a Source's \c operator() is called
@@ -111,7 +114,16 @@ namespace module {
         ActiveSocketSource(Handle handle); ///< Create new reader for the given handle
                                         /**< Data will be read from \a handle and be parsed by \a
                                              Source.
+                                             \pre Requires \a Source to be default constructible
                                              \param[in] handle Handle to read data from */
+        ActiveSocketSource(Handle handle, Source source);
+                                        ///< Create new reader for the given handle
+                                        /**< Data will be read from \a handle and be parsed by \a
+                                             Source.
+                                             \pre Requires \a Source to be copy constructible
+                                             \param[in] handle Handle to read data from */
+
+        Source & source();              ///< Access source helper
 
     private:
         void read();
@@ -126,7 +138,7 @@ namespace module {
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "SocketSource.cci"
 #include "SocketSource.ct"
-//#include "SocketSource.cti"
+#include "SocketSource.cti"
 #endif
 
 

@@ -41,6 +41,15 @@ prefix_ senf::ppi::module::ActiveSocketSink<Sink>::ActiveSocketSink(Handle handl
     route(input, event_);
 }
 
+template <class Sink>
+prefix_ senf::ppi::module::ActiveSocketSink<Sink>::ActiveSocketSink(Handle handle,
+                                                                    Sink const & sink)
+    : handle_(handle), event_(handle_, IOEvent::Write), writer_(sink)
+{
+    registerEvent( event_, &ActiveSocketSink::write );
+    route(input, event_);
+}
+
 ////////////////////////////////////////
 // private members
 
@@ -56,6 +65,15 @@ prefix_ void senf::ppi::module::ActiveSocketSink<Sink>::write()
 template <class Sink>
 prefix_ senf::ppi::module::PassiveSocketSink<Sink>::PassiveSocketSink(Handle handle)
     : handle_(handle), writer_()
+{
+    noroute(input);
+    input.onRequest(&PassiveSocketSink::write);
+}
+
+template <class Sink>
+prefix_ senf::ppi::module::PassiveSocketSink<Sink>::PassiveSocketSink(Handle handle,
+                                                                      Sink const & sink)
+    : handle_(handle), writer_(sink)
 {
     noroute(input);
     input.onRequest(&PassiveSocketSink::write);

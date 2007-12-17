@@ -112,6 +112,7 @@ debsrc       Build debian source package
 debbin       Build debian binary package
 linklint     Check links of doxygen documentation with 'linklint'
 fixlinks     Fix broken links in doxygen documentation
+valgrind     Run all tests under valgrind/memcheck
 """)
 
 if os.environ.get('debian_build'):

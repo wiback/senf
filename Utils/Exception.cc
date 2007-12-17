@@ -35,6 +35,7 @@
 
 prefix_ void senf::throwErrno(std::string const & where, int code)
 {
+#ifndef SENF_NO_ERRNOEXC
     switch (code) {
 
     // BOOST_PP_REPEAT is limited to 256 repetitions. The max errno value I found in any header file
@@ -61,6 +62,9 @@ prefix_ void senf::throwErrno(std::string const & where, int code)
     default:
         throw SystemException(where, code);
     }
+#else 
+    throw SystemException(where, code);
+#endif
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

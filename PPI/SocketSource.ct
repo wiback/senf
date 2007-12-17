@@ -53,6 +53,15 @@ ActiveSocketSource(Handle handle)
     route(event_, output);
 }
 
+template <class Source>
+prefix_ senf::ppi::module::ActiveSocketSource<Source>::ActiveSocketSource(Handle handle,
+                                                                          Source source)
+    : handle_(handle), event_(handle_, IOEvent::Read), reader_(source)
+{
+    registerEvent( event_, &ActiveSocketSource::read );
+    route(event_, output);
+}
+
 ////////////////////////////////////////
 // private members
 

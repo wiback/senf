@@ -82,7 +82,10 @@ namespace module {
           {
           public:
               typedef unspecified Handle;                          // type of handle requested
-              SomeSink();                                        // default constructible
+
+              SomeSink();                                          // EITHER default constructible OR
+              SomeSink(SomeSink const & other);                    // copy constructible
+
               void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
@@ -102,7 +105,18 @@ namespace module {
         
         ActiveSocketSink(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Sink.
+                                             \pre Requires \a Sink to be default constructible
                                              \param[in] handle Handle to write data to */
+        ActiveSocketSink(Handle handle, Sink const & sink); 
+                                        ///< Create new writer for the given handle
+                                        /**< Data will be written to \a handle using \a Sink.
+                                             \pre Requires \a Sink to be copy constructible
+                                             \param[in] handle Handle to write data to 
+                                             \param[in] sink Sink helper writing packet date to the
+                                                 socket */
+
+        Sink & sink();                  ///< Access the sink helper
+
     private:
         void write();
 
@@ -128,7 +142,10 @@ namespace module {
           {
           public:
               typedef unspecified Handle;                          // type of handle requested
-              SomeSink();                                        // default constructible
+
+              SomeSink();                                          // EITHER default constructible
+              SomeSink(SomeSink const & other);                    // OR copy constructible
+
               void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
@@ -148,7 +165,15 @@ namespace module {
         
         PassiveSocketSink(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Sink.
+                                             \pre Requires \a Sink to be default constructible
                                              \param[in] handle Handle to write data to */
+        PassiveSocketSink(Handle handle, Sink const & sink);
+                                        ///< Create new writer for the given handle
+                                        /**< Data will be written to \a handle using \a Sink.
+                                             \pre Requires \a Sink to be copy constructible
+                                             \param[in] handle Handle to write data to */
+
+        Sink & sink();                  ///< Access the sink helper
 
     private:
         void write();
@@ -163,7 +188,7 @@ namespace module {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "SocketSink.cci"
 #include "SocketSink.ct"
-//#include "SocketSink.cti"
+#include "SocketSink.cti"
 #endif
 
 

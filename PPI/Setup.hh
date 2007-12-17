@@ -37,11 +37,27 @@
 namespace senf {
 namespace ppi {
 
+    /** \brief Connect modules
+
+        senf::ppi::connect() establishes a connection between two modules or, to be more precise,
+        between two connectors. It will connect any input to any output connector as long as one is
+        active and the other passive.
+
+        If a module has an output connector called \c output, the module may be directly specified
+        as \a source argument. In the same way, if a module has an input connector called \c input,
+        the module may be given directly as \a target argument. This simplifies the most common case
+        of a module with one input and one output connector.
+        
+        \see \ref ppi_connections
+     */
+    void connect(connector::ActiveOutput & source, connector::PassiveInput & target);
+
+    /** \brief Connect modules
+        \see connect() */
+    void connect(connector::PassiveOutput & source, connector::ActiveInput & target);
+
 #ifndef DOXYGEN    
 
-    void connect(connector::ActiveOutput & source, connector::PassiveInput & target);
-    void connect(connector::PassiveOutput & source, connector::ActiveInput & target);
-    
     template <class T, class C>
     void connect(T & source, C & target,
                  typename boost::disable_if< boost::is_base_of<connector::Connector, T> >::type * = 0,
@@ -56,27 +72,6 @@ namespace ppi {
     void connect(T1 & source, T2 & target,
                  typename boost::disable_if< boost::is_base_of<connector::Connector, T1> >::type * = 0,
                  typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type * = 0);
-
-#else
-
-    /** \brief Connect modules
-
-        senf::ppi::connect() establishes a connection between two modules or, to be more precise,
-        between two connectors. It will connect any input to any output connector as long as one is
-        active and the other passive.
-
-        If a module has an output connector called \c output, the module may be directly specified
-        as \a source argument. In the same way, if a module has an input connector called \c input,
-        the module may be given directly as \a target argument. This simplifies the most common case
-        of a module with one input and one output connector.
-        
-        \see \ref ppi_connections
-     */
-    void connect(connector::ActiveInput & source, connector::PassiveOutput & target);
-
-    /** \brief Connect modules
-        \see connect() */
-    void connect(connector::PassiveInput & source, connector::ActiveOutput & target);
 
 #endif
     
