@@ -59,23 +59,23 @@
 
     Here \c someField(), \c someOtherField() and \c someVector() are accessor methods named after
     the field name. Each returns a parser object. Simple parsers can be used like their
-    corresponding basic type (e.g. a Parse_UInt16 field can be used like an unsigned integer), more
+    corresponding basic type (e.g. a UInt16Parser field can be used like an unsigned integer), more
     complex parsers provide type specific access members. Assigning a value to a parser will change
     the underlying representation (the packet data). 
 
     Parsers can be grouped into several categories. These categories are not all defined rigorously
     but are nevertheless helpful when working with the parsers:
-    \li <em>\ref parserimpl_value</em> provide the lowest level parsers (e.g. senf::Parse_UInt16 which
+    \li <em>\ref parserimpl_value</em> provide the lowest level parsers (e.g. senf::UInt16Parser which
         returns an integer value).
     \li <em>\ref parserimpl_collection</em> are parsers which model a collection of sub-elements like
-        senf::Parse_List or senf::Parse_Vector.
+        senf::ListParser or senf::VectorParser.
     \li <em>\ref parserimpl_composite</em> collect several fields of arbitrary type into a new
         parser. Parsers defined using the \ref packetparsermacros fall under this category.
     \li <em>\ref parserimpl_packet</em> are used to define a packet type.
 
     \warning Parsers are like iterators: They are invalidated <em>whenever the size of the packet's
     data is changed</em>. You should not store a parser anywhere. If you want to keep a parser
-    reference, use the senf::SafePacketParser wrapper. You still will need to take extra care to
+    reference, use the senf::SafePacketParserWrapper wrapper. You still will need to take extra care to
     ensure the parser is not invalidated.
 
     \section parserimpl Packet parser categories
@@ -121,7 +121,7 @@
     \endcode
 
     You will probably only very seldom need to implement a completely new collection
-    parser. Instead, you can rely on senf::Parse_Vector or senf::Parse_List and implement new
+    parser. Instead, you can rely on senf::VectorParser or senf::ListParser and implement new
     policies.
 
     \see parsecollection
@@ -218,8 +218,8 @@ namespace senf {
               // used to construct the sub-parsers. This member either takes an iterator to the
               // data to be parsed or just an offset in bytes.
 
-              senf::Parse_UInt16 type() const { return parse<Parse_UInt16>( 0 ); }
-              senf::Parse_UInt16 size() const { return parse<Parse_UInt16>( 2 ); }
+              senf::UInt16Parser type() const { return parse<UInt16Parser>( 0 ); }
+              senf::UInt16Parser size() const { return parse<UInt16Parser>( 2 ); }
           };
         \endcode
         
@@ -333,7 +333,7 @@ namespace senf {
         data_iterator i_;
         PacketData * data_;
 
-        template <class Parser> friend class SafePacketParser;
+        template <class Parser> friend class SafePacketParserWrapper;
     };
 
     /** \brief Return raw size parsed by the given parser object
@@ -461,14 +461,14 @@ namespace senf {
             location will \e not be updated accordingly and therefore the parser will be
             invalid.
 
-        Additionally a SafePacketParser has an uninitialized state. The only allowed operations in
+        Additionally a SafePacketParserWrapper has an uninitialized state. The only allowed operations in
         this state are the boolean test for validity and assigning another parser.
 
         \ingroup packetparser
       */
     template <class Parser>
-    class SafePacketParser
-        : public safe_bool< SafePacketParser<Parser> >
+    class SafePacketParserWrapper
+        : public safe_bool< SafePacketParserWrapper<Parser> >
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -481,12 +481,12 @@ namespace senf {
         // default copy constructor
         // default copy assignment
         // default destructor
-        SafePacketParser();             ///< Create an empty uninitialized SafePacketParser
+        SafePacketParserWrapper();             ///< Create an empty uninitialized SafePacketParserWrapper
 
         // conversion constructors
-        SafePacketParser(Parser parser); ///< Initialize SafePacketParser from \a parser
+        SafePacketParserWrapper(Parser parser); ///< Initialize SafePacketParserWrapper from \a parser
 
-        SafePacketParser & operator=(Parser parser); ///< Assign \a parser to \c this
+        SafePacketParserWrapper & operator=(Parser parser); ///< Assign \a parser to \c this
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////

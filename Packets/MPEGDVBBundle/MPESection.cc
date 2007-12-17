@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-//prefix_ boost::uint32_t senf::Parse_MPESection::calcCrc()
+//prefix_ boost::uint32_t senf::MPESectionParser::calcCrc()
 //    const
 //{
 //    return std::for_each(

@@ -1,4 +1,4 @@
-// $Id$
+// $Id:GREPacket.test.cc 560 2007-12-13 14:39:37Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -40,7 +40,7 @@ BOOST_AUTO_UNIT_TEST(GREPacket_packet)
 {
     senf::GREPacket p (senf::GREPacket::create());
 
-    BOOST_CHECK_EQUAL( senf::Parse_GREPacket::init_bytes+0u, 4u );
+    BOOST_CHECK_EQUAL( senf::GREPacketParser::init_bytes+0u, 4u );
     //BOOST_CHECK_EQUAL( p->bytes(), 4u );
 }
 

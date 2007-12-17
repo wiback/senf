@@ -47,7 +47,7 @@
     the ethernet packet in <tt>DefaultBundle/EthernetPacket.hh</tt>)
 
     \code
-    struct Parse_EthVLan : public PacketParserBase
+    struct EthVLanPacketParser : public PacketParserBase
     {
     #   include SENF_FIXED_PARSER()
 
@@ -55,9 +55,9 @@
         SENF_PARSER_BITFIELD( cfi,       1, bool     );
         SENF_PARSER_BITFIELD( vlanId,   12, unsigned );
 
-        SENF_PARSER_FIELD( type, Parse_UInt16 );
+        SENF_PARSER_FIELD( type, UInt16Parser );
 
-        SENF_PARSER_FINALIZE(Parse_EthVLan);
+        SENF_PARSER_FINALIZE(EthVLanPacketParser);
     };
     \endcode
 
@@ -102,14 +102,14 @@
     {
     #   include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD    ( table_id            , Parse_UInt8   );
+        SENF_PARSER_FIELD    ( table_id            , UInt8Parser   );
         
         SENF_PARSER_BITFIELD ( ssi                 ,  1 , bool     );
         SENF_PARSER_BITFIELD ( private_indicator   ,  1 , bool     );
         SENF_PARSER_SKIP_BITS( 2 );
         SENF_PARSER_BITFIELD ( sec_length          , 12 , unsigned );
         
-        SENF_PARSER_FIELD    ( table_id_extension  , Parse_UInt16  );
+        SENF_PARSER_FIELD    ( table_id_extension  , UInt16Parser  );
         
         SENF_PARSER_FINALIZE( Parse_DSMCCSection );
     };
@@ -120,15 +120,15 @@
 
         SENF_PARSER_INHERIT( Parse_DSMCCSection );
 
-        SENF_PARSER_FIELD    ( mac_addr_4          , Parse_UInt8   );
-        SENF_PARSER_FIELD    ( mac_addr_3          , Parse_UInt8   );
+        SENF_PARSER_FIELD    ( mac_addr_4          , UInt8Parser   );
+        SENF_PARSER_FIELD    ( mac_addr_3          , UInt8Parser   );
 
         SENF_PARSER_FINALIZE( Parse_DatagramSection );
 
         // Parse table_id_extension as two bytes
         SENF_PARSER_GOTO( table_id_extension );
-        SENF_PARSER_FIELD    ( mac_addr_6          , Parse_UInt8   );
-        SENF_PARSER_FIELD    ( mac_addr_5          , Parse_UInt8   );
+        SENF_PARSER_FIELD    ( mac_addr_6          , UInt8Parser   );
+        SENF_PARSER_FIELD    ( mac_addr_5          , UInt8Parser   );
     };
     \endcode
 
@@ -225,7 +225,7 @@
 
     Bit-fields play a special role. They are quite frequent in packet definitions but don't fit into
     the byte offset based parsing infrastructure defined so far. Since defining the correctly
-    parameterized senf::Parse_IntField, senf::Parse_UIntField and senf::Parse_Flag typedefs is quite
+    parameterized senf::IntFieldParser, senf::UIntFieldParser and senf::FlagParser typedefs is quite
     tedious, these helper macros are provided.
 
     It is important to recognize, that the current offset does \e not include the current bit
@@ -463,10 +463,10 @@
 
     This macro is used to define a field using a custom access method:
     \code
-    // The following is the same as SENF_PARSER_FIELD( xyz, senf::Parse_UInt16 )
+    // The following is the same as SENF_PARSER_FIELD( xyz, senf::UInt16Parser )
     // in a fixed size parser.
 
-    SENF_PARSER_CUSTOM_FIELD(xyz, senf::Parse_UInt16, xyz_t::fixed_bytes) {
+    SENF_PARSER_CUSTOM_FIELD(xyz, senf::UInt16Parser, xyz_t::fixed_bytes) {
         return parse<xyz_t>( xyz_offset );
     }
     \endcode
@@ -498,13 +498,13 @@
 /** \brief Define bit-field
 
     Bit fields are supported by a special family of parser macros. These macros simplify defining
-    fields using the senf::Parse_Int, senf::Parse_UInt and senf::Parse_Flag parsers by keeping track
+    fields using the senf::Parse_Int, senf::Parse_UInt and senf::FlagParser parsers by keeping track
     of the current bit position and automatically creating the correct template parameters.
     
     The \a type parameter specifies the type of bitfield to define. This value is one of
-    \li \c signed, for signed bit fields (senf::Parse_IntField)
-    \li \c unsigned, for unsigned bit fields (senf::Parse_UIntField) or 
-    \li \c bool, for single-bit flags (senf::Parse_Flag). 
+    \li \c signed, for signed bit fields (senf::IntFieldParser)
+    \li \c unsigned, for unsigned bit fields (senf::UIntFieldParser) or 
+    \li \c bool, for single-bit flags (senf::FlagParser). 
 
     The \a bits parameter specifies the number of bits the field covers. For \c signed or \c
     unsigned fields, this value may be any numeric value from 1 to 32, for \c bool fields, this

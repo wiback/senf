@@ -47,9 +47,9 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::Parse_IPv4
+// senf::IPv4PacketParser
 
-prefix_ boost::uint16_t senf::Parse_IPv4::calcChecksum()
+prefix_ boost::uint16_t senf::IPv4PacketParser::calcChecksum()
     const
 {
     validate(bytes(*this));

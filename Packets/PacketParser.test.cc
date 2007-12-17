@@ -51,8 +51,8 @@ namespace {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD( name, senf::Parse_UInt16 );
-        SENF_PARSER_FIELD( id,   senf::Parse_Int32  );
+        SENF_PARSER_FIELD( name, senf::UInt16Parser );
+        SENF_PARSER_FIELD( id,   senf::Int32Parser  );
 
         SENF_PARSER_FINALIZE(FooParser);
     };
@@ -61,8 +61,8 @@ namespace {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_FIELD( name, senf::Parse_UInt16 );
-        SENF_PARSER_FIELD( id,   senf::Parse_Int32  );
+        SENF_PARSER_FIELD( name, senf::UInt16Parser );
+        SENF_PARSER_FIELD( id,   senf::Int32Parser  );
 
         SENF_PARSER_FINALIZE(BarParser);
     };
@@ -83,7 +83,7 @@ BOOST_AUTO_UNIT_TEST(packetParserBase)
     // otherwise ...
     BOOST_CHECK_EQUAL( FooParser::fixed_bytes+0, 6u );
     BOOST_CHECK_EQUAL( BarParser(pi->data().begin(),&pi->data()).bytes(), 6u );
-    BOOST_CHECK_EQUAL( senf::bytes(senf::Parse_UInt16(pi->data().begin(),&pi->data())), 2u );
+    BOOST_CHECK_EQUAL( senf::bytes(senf::UInt16Parser(pi->data().begin(),&pi->data())), 2u );
     BOOST_CHECK_EQUAL( senf::bytes(FooParser(pi->data().begin(),&pi->data())), 6u );
     BOOST_CHECK_EQUAL( senf::bytes(BarParser(pi->data().begin(),&pi->data())), 6u );
 
@@ -94,11 +94,11 @@ BOOST_AUTO_UNIT_TEST(packetParserBase)
 BOOST_AUTO_UNIT_TEST(safePacketParser)
 {
     senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(6u));
-    senf::SafePacketParser<senf::Parse_UInt16> p;
+    senf::SafePacketParserWrapper<senf::UInt16Parser> p;
     
     BOOST_CHECK( !p );
 
-    p =  senf::Parse_UInt16(pi->data().begin(),&pi->data());
+    p =  senf::UInt16Parser(pi->data().begin(),&pi->data());
 
     BOOST_CHECK( p );
     (*p) = 0x1234u;

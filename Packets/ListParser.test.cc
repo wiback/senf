@@ -21,40 +21,25 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketParser non-inline template implementation  */
+    \brief ListParser.test unit tests */
 
-#include "PacketParser.ih"
+//#include "ListParser.test.hh"
+//#include "ListParser.test.ih"
 
 // Custom includes
+#include "Packets.hh"
+
+#include "../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
 #define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+///////////////////////////////cc.p////////////////////////////////////////
 
-#ifndef DOXYGEN
-template <class Parser>
-prefix_ typename boost::enable_if< 
-        boost::is_base_of<senf::PacketParserBase, Parser>,
-        Parser >::type senf::operator<<(Parser target, Parser source)
-{
-    PacketParserBase::size_type target_sz (bytes(target));
-    PacketParserBase::size_type source_sz (bytes(source));
-    SafePacketParserWrapper<Parser> safe_target (target);
-    if (target_sz > source_sz)
-        target.data().erase(boost::next(target.i(),source_sz),boost::next(target.i(),target_sz));
-    else if (target_sz < source_sz)
-        target.data().insert(boost::next(target.i(),target_sz),source_sz-target_sz,0u);
-    Parser new_target (*safe_target);
-    std::copy( source.i(), boost::next(source.i(),source_sz),
-               PacketParserBase::data_iterator(new_target.i()) );
-    return new_target;
-}
-#else
-template <class Parser>
-prefix_ Parser senf::operator<<(Parser target, Parser source)
-{}
-#endif
+// Since the list cannot be instantiated without a policy, there is nothing to test without atleast
+// a very simple policy. Since ListBParser provides a policy which is as simple as it can get, all
+// testing is performed in ListBParser.test.cc
 
-///////////////////////////////ct.e////////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 

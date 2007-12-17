@@ -41,7 +41,7 @@
 //}
 
 
-prefix_ boost::uint32_t senf::Parse_SNDUPacket::calcCrc()
+prefix_ boost::uint32_t senf::SNDUPacketParser::calcCrc()
     const
 {
     return std::for_each(

@@ -44,9 +44,9 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::Parse_UDP
+// senf::UDPPacketParser
 
-prefix_ boost::uint16_t senf::Parse_UDP::calcChecksum()
+prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
     const
 {
     IpChecksum summer;
@@ -58,10 +58,10 @@ prefix_ boost::uint16_t senf::Parse_UDP::calcChecksum()
     if (ipv4) {
         // Pseudo header defined in RFC768
         summer.feed( ipv4->source().i(), 
-                     ipv4->source().i() + Parse_IPv4::source_t::fixed_bytes );
+                     ipv4->source().i() + IPv4PacketParser::source_t::fixed_bytes );
         ///\fixme What about a hop-by-hop routing option? Which destination is used in IPv4 ?
         summer.feed( ipv4->destination().i(), 
-                     ipv4->destination().i() + Parse_IPv4::destination_t::fixed_bytes );
+                     ipv4->destination().i() + IPv4PacketParser::destination_t::fixed_bytes );
         summer.feed( 0u );
         ///\fixme May there be another header between the IPv4 header and UDP? if so, we
         /// need to hack the correct protocol number here ...
@@ -73,11 +73,11 @@ prefix_ boost::uint16_t senf::Parse_UDP::calcChecksum()
         IPv6Packet ipv6 (packet().prev<IPv6Packet>(nothrow));
         if (ipv6) {
             summer.feed( ipv6->source().i(), 
-                         ipv6->source().i() + Parse_IPv6::source_t::fixed_bytes );
+                         ipv6->source().i() + IPv6PacketParser::source_t::fixed_bytes );
             ///\todo Implement routing header support
             // The destination used here must be the *final* destination ...
             summer.feed( ipv6->destination().i(), 
-                         ipv6->destination().i() + Parse_IPv6::destination_t::fixed_bytes );
+                         ipv6->destination().i() + IPv6PacketParser::destination_t::fixed_bytes );
             /// This is a simplification. The value is really 32bit to support UDP Jumbograms
             /// (RFC2147). However, skipping an even number of 0 bytes does not change the checksum
             summer.feed( i() + length_offset, i() + length_offset + 2 );

@@ -44,26 +44,26 @@ namespace senf {
      */
     struct GREChecksumParser : public PacketParserBase {
 #       include SENF_PARSER()        
-        SENF_PARSER_FIELD ( checksum1_, Parse_UInt16 );
-        SENF_PARSER_PRIVATE_FIELD ( reserved1_, Parse_UInt16 );
+        SENF_PARSER_FIELD ( checksum1_, UInt16Parser );
+        SENF_PARSER_PRIVATE_FIELD ( reserved1_, UInt16Parser );
   	SENF_PARSER_FINALIZE(GREChecksumParser);
     };
 
-    struct Parse_GREPacket : public PacketParserBase
+    struct GREPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
 
         SENF_PARSER_BITFIELD         ( checksum_present,  1, bool );
         SENF_PARSER_PRIVATE_BITFIELD ( reserved0_,       12, unsigned ); // TODO: SKIP !!
         SENF_PARSER_BITFIELD         ( version_number,    3, unsigned ); // TODO: Always Zero !!
-        SENF_PARSER_FIELD            ( protocol_type,    Parse_UInt16 );
+        SENF_PARSER_FIELD            ( protocol_type,    UInt16Parser );
         SENF_PARSER_PRIVATE_VARIANT  ( checksum_,  checksum_present,
                                                    (VoidPacketParser) (GREChecksumParser) );
  
-        SENF_PARSER_FINALIZE( Parse_GREPacket );
+        SENF_PARSER_FINALIZE( GREPacketParser );
 
       private: 
-        Parse_UInt16 checksum() const /// only defined if checksum_present() == \c true
+        UInt16Parser checksum() const /// only defined if checksum_present() == \c true
              { return checksum_().get<1>().checksum1_(); }
     };
     
@@ -73,7 +73,7 @@ namespace senf {
             \ref GREPacket
 
         \par Fields:
-            \ref Parse_GREPacket
+            \ref GREPacketParser
 
         \ingroup protocolbundle_mpegdvb
      */
@@ -83,7 +83,7 @@ namespace senf {
     {
         typedef PacketTypeMixin<GREPacketType, EtherTypes> mixin;
         typedef ConcretePacket<GREPacketType> packet;
-        typedef Parse_GREPacket parser;
+        typedef GREPacketParser parser;
     
         using mixin::nextPacketRange;
         using mixin::nextPacketType;

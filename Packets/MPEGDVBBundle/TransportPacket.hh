@@ -1,4 +1,4 @@
-// $Id$
+// $Id:TransportPacket.hh 560 2007-12-13 14:39:37Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -41,11 +41,11 @@ namespace senf {
         
         \see TransportPacketType
      */
-    struct Parse_TransportPacket : public PacketParserBase
+    struct TransportPacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD    ( sync_byte                 , Parse_UInt8   );
+        SENF_PARSER_FIELD    ( sync_byte                 , UInt8Parser   );
         
         SENF_PARSER_BITFIELD ( transport_error_indicator ,  1 , bool     );
         SENF_PARSER_BITFIELD ( pusi                      ,  1 , bool     );
@@ -55,10 +55,10 @@ namespace senf {
         SENF_PARSER_BITFIELD ( adaptation_field_ctrl     ,  2 , unsigned );
         SENF_PARSER_BITFIELD ( continuity_counter        ,  4 , unsigned );
 
-        SENF_PARSER_FINALIZE( Parse_TransportPacket );
+        SENF_PARSER_FINALIZE( TransportPacketParser );
     
-//        Parse_UInt8 payload_pointer() const {
-//            return parse<Parse_UInt8>( Parse_TransportPacket::fixed_bytes ); 
+//        UInt8Parser payload_pointer() const {
+//            return parse<UInt8Parser>( TransportPacketParser::fixed_bytes ); 
 //        }
     };
     
@@ -71,28 +71,28 @@ namespace senf {
             <td>transport_packet() {</td> <td></td>
           </tr>
           <tr>
-            <td style="padding-left:2em">\ref Parse_TransportPacket::sync_byte() "sync_byte"</td>
+            <td style="padding-left:2em">\ref TransportPacketParser::sync_byte() "sync_byte"</td>
             <td>8</td></tr>
           <tr>
-            <td style="padding-left:2em">\ref Parse_TransportPacket::transport_error_indicator() "transport_error_indicator"</td>
+            <td style="padding-left:2em">\ref TransportPacketParser::transport_error_indicator() "transport_error_indicator"</td>
             <td>1</td></tr>
           <tr>
-            <td style="padding-left:2em">\ref Parse_TransportPacket::pusi() "payload_uni_start_indicator"</td>
+            <td style="padding-left:2em">\ref TransportPacketParser::pusi() "payload_uni_start_indicator"</td>
             <td>1</td></tr>
           <tr>
-            <td style="padding-left:2em">\ref Parse_TransportPacket::transport_priority() "transport_priority"</td>
+            <td style="padding-left:2em">\ref TransportPacketParser::transport_priority() "transport_priority"</td>
             <td>1</td></tr>
           <tr>
-            <td style="padding-left:2em">\ref Parse_TransportPacket::pid() "PID"</td>
+            <td style="padding-left:2em">\ref TransportPacketParser::pid() "PID"</td>
             <td>13</td></tr>
           <tr>
-            <td style="padding-left:2em">\ref Parse_TransportPacket::transport_scrmbl_ctrl() "transport_scrambling_control"</td>
+            <td style="padding-left:2em">\ref TransportPacketParser::transport_scrmbl_ctrl() "transport_scrambling_control"</td>
             <td>2</td></tr>
           <tr>
-            <td style="padding-left:2em">\ref Parse_TransportPacket::adaptation_field_ctrl() "adaptation_field_control"</td>
+            <td style="padding-left:2em">\ref TransportPacketParser::adaptation_field_ctrl() "adaptation_field_control"</td>
             <td>2</td></tr>
           <tr>
-            <td style="padding-left:2em">\ref Parse_TransportPacket::continuity_counter() "continuity_counter"</td>
+            <td style="padding-left:2em">\ref TransportPacketParser::continuity_counter() "continuity_counter"</td>
             <td>4</td></tr>
           <tr>
             <td>}</td> <td></td></tr>
@@ -102,7 +102,7 @@ namespace senf {
             \ref TransportPacket
 
         \par Fields:
-            \ref Parse_TransportPacket
+            \ref TransportPacketParser
 
         \ingroup protocolbundle_mpegdvb
      */
@@ -112,7 +112,7 @@ namespace senf {
     {
         typedef PacketTypeMixin<TransportPacketType> mixin;
         typedef ConcretePacket<TransportPacketType> packet;
-        typedef Parse_TransportPacket parser;
+        typedef TransportPacketParser parser;
     
         using mixin::nextPacketRange;
         using mixin::init;

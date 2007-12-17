@@ -105,20 +105,20 @@ prefix_ senf::PacketParserBase::size_type senf::detail::packetParserSize(Parser 
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::SafePacketParser<Parser>
+// senf::SafePacketParserWrapper<Parser>
 
 template <class Parser>
-prefix_ senf::SafePacketParser<Parser>::SafePacketParser()
+prefix_ senf::SafePacketParserWrapper<Parser>::SafePacketParserWrapper()
     : parser_(), i_()
 {}
 
 template <class Parser>
-prefix_ senf::SafePacketParser<Parser>::SafePacketParser(Parser parser)
+prefix_ senf::SafePacketParserWrapper<Parser>::SafePacketParserWrapper(Parser parser)
     : parser_(parser), i_(parser)
 {}
 
 template <class Parser>
-prefix_ senf::SafePacketParser<Parser> & senf::SafePacketParser<Parser>::operator=(Parser parser)
+prefix_ senf::SafePacketParserWrapper<Parser> & senf::SafePacketParserWrapper<Parser>::operator=(Parser parser)
 {
     parser_ = parser;
     i_ = parser;
@@ -126,7 +126,7 @@ prefix_ senf::SafePacketParser<Parser> & senf::SafePacketParser<Parser>::operato
 }
 
 template <class Parser>
-prefix_ Parser senf::SafePacketParser<Parser>::operator*()
+prefix_ Parser senf::SafePacketParserWrapper<Parser>::operator*()
     const
 {
     BOOST_ASSERT( i_ );
@@ -135,7 +135,7 @@ prefix_ Parser senf::SafePacketParser<Parser>::operator*()
 }
 
 template <class Parser>
-prefix_ Parser const * senf::SafePacketParser<Parser>::operator->()
+prefix_ Parser const * senf::SafePacketParserWrapper<Parser>::operator->()
     const
 {
     BOOST_ASSERT( i_ );
@@ -144,7 +144,7 @@ prefix_ Parser const * senf::SafePacketParser<Parser>::operator->()
 }
 
 template <class Parser>
-prefix_ bool senf::SafePacketParser<Parser>::boolean_test()
+prefix_ bool senf::SafePacketParserWrapper<Parser>::boolean_test()
     const
 {
     return i_;

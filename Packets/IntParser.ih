@@ -1,0 +1,275 @@
+// $Id$
+//
+// Copyright (C) 2006
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief IntParser internal header */
+
+#ifndef IH_IntParser_
+#define IH_IntParser_ 1
+
+// Custom includes
+#include "PacketTypes.hh"
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+namespace detail {
+namespace packet {
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Integer operators
+
+    /** \brief Internal: Integer operation mixin for integer parsers
+
+        \internal
+
+        This class contains all the integer operations supported by the integer parsers. It is
+        inherited by each integer parser.
+     */
+    template <class Derived, class Value>
+    class IntParserOps
+    {
+    public:
+        typedef Value value_type;
+
+        operator Value () const { return derived().value(); }
+
+#       define unary(op) \
+            Value operator op () const { return op derived().value(); }
+#       define mutator(op) \
+            template <class Other> Derived const & operator op ## =  (Other other) \
+                { derived().value( derived().value() op other ); return derived(); }
+
+        unary(~)
+        unary(!)
+        unary(-)
+
+        mutator(+)
+        mutator(-)
+        mutator(*)
+        mutator(/)
+        mutator(%)
+        mutator(<<)
+        mutator(>>)
+        mutator(&)
+        mutator(|)
+        mutator(^)
+
+#       undef unary
+#       undef mutator
+
+        Derived const & operator ++ ()
+            { derived().value( derived().value()+1 ); return derived(); }
+        Derived const & operator -- ()
+            { derived().value( derived().value()-1 ); return derived(); }
+
+        Value operator ++ (int)
+            { Value v (derived().value()); derived().value( v+1 ); return v; }
+        Value operator -- (int)
+            { Value v (derived().value()); derived().value( v-1 ); return v; }
+
+    private:
+        Derived & derived() { return *static_cast<Derived *>(this); }
+        Derived const & derived() const { return *static_cast<Derived const *>(this); };
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Network byte order integer extraction
+
+    /** \brief Internal: Extract 16bit network byte order value
+        
+        \internal
+     */
+    inline boost::uint16_t parse_uint16(iterator i)
+    {
+        return i[1] | i[0]<<8;
+    }
+
+    /** \brief Internal: Write 16bit network byte order value
+        
+        \internal
+     */
+    inline void write_uint16(iterator i, boost::uint16_t v)
+    {
+        i[0] = ( v >>  8 ) & 0xff;
+        i[1] = ( v       ) & 0xff;
+    }
+
+    /** \brief Internal: Extract 24bit network byte order value
+        
+        \internal
+     */
+    inline boost::uint32_t parse_uint24(iterator i)
+    {
+        return i[2] | i[1]<<8 | i[0]<<16;
+    }
+
+    /** \brief Internal: Write 24bit network byte order value
+        
+        \internal
+     */
+    inline void write_uint24(iterator i, boost::uint32_t v)
+    {
+        i[0] = ( v >> 16 ) & 0xff;
+        i[1] = ( v >>  8 ) & 0xff;
+        i[2] = ( v       ) & 0xff;
+    }
+
+    /** \brief Internal: Extract 32bit network byte order value
+        
+        \internal
+     */
+    inline boost::uint32_t parse_uint32(iterator i)
+    {
+        return i[3] | i[2]<<8 | i[1]<<16 | i[0]<<24;
+    }
+
+    /** \brief Internal: Write 32bit network byte order value
+        
+        \internal
+     */
+    inline void write_uint32(iterator i, boost::uint32_t v)
+    {
+        i[0] = ( v >> 24 ) & 0xff;
+        i[1] = ( v >> 16 ) & 0xff;
+        i[2] = ( v >>  8 ) & 0xff;
+        i[3] = ( v       ) & 0xff;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // bitfield extraction
+
+    // Doxygen doesn't like this stuff ... 
+
+#   ifndef DOXYGEN
+
+    template <unsigned offset, unsigned endb, unsigned start, unsigned end>
+    struct parse_bitfield_i
+    {
+        static boost::uint32_t parse(iterator i) {
+            return ( ( ( parse_uint32(i+offset+1)>>(40-end) ) // Beware of sign extension !!
+                       & boost::low_bits_mask_t<32-(40-end)>::sig_bits )
+                     | (i[offset]<<(32-(40-end))) )
+                & boost::low_bits_mask_t<end-start>::sig_bits;
+        }
+
+        static void write(iterator i, boost::uint32_t v) {
+            write_uint32(i+offset+1,
+                         (parse_uint32(i+offset+1) & ~(boost::low_bits_mask_t<end-8>::sig_bits<<(40-end)))
+                         | ((v & boost::low_bits_mask_t<end-8>::sig_bits) << (40-end)));
+            i[offset] = (i[offset] & ~(boost::low_bits_mask_t<8-start>::sig_bits))
+                | ((v>>(end-8)) & boost::low_bits_mask_t<8-start>::sig_bits);
+        }
+    };
+
+    template <unsigned offset, unsigned start, unsigned end>
+    struct parse_bitfield_i<offset, 3, start, end>
+    {
+        static boost::uint32_t parse(iterator i) {
+            return ( parse_uint32(i+offset)>>(32-end) )
+                & boost::low_bits_mask_t<end-start>::sig_bits;
+        }
+
+        static void write(iterator i, boost::uint32_t v) {
+            write_uint32(i+offset,
+                         (parse_uint32(i+offset) & ~(boost::low_bits_mask_t<end-start>::sig_bits<<(32-end)))
+                         | ((v & boost::low_bits_mask_t<end-start>::sig_bits) << (32-end)));
+        }
+    };
+
+    template <unsigned offset, unsigned start, unsigned end>
+    struct parse_bitfield_i<offset, 2, start, end>
+    {
+        static boost::uint32_t parse(iterator i) {
+            return ( parse_uint24(i+offset)>>(24-end) )
+                & boost::low_bits_mask_t<end-start>::sig_bits;
+        }
+
+        static void write(iterator i, boost::uint32_t v) {
+            write_uint24(i+offset,
+                         (parse_uint24(i+offset) & ~(boost::low_bits_mask_t<end-start>::sig_bits<<(24-end)))
+                         | ((v & boost::low_bits_mask_t<end-start>::sig_bits) << (24-end)));
+        }
+    };
+
+    template <unsigned offset, unsigned start, unsigned end>
+    struct parse_bitfield_i<offset, 1, start, end>
+    {
+        static boost::uint32_t parse(iterator i) {
+            return ( parse_uint16(i+offset)>>(16-end) )
+                & boost::low_bits_mask_t<end-start>::sig_bits;
+        }
+
+        static void write(iterator i, boost::uint32_t v) {
+            write_uint16(i+offset,
+                         (parse_uint16(i+offset) & ~(boost::low_bits_mask_t<end-start>::sig_bits<<(16-end)))
+                         | ((v & boost::low_bits_mask_t<end-start>::sig_bits) << (16-end)));
+        }
+    };
+
+    template <unsigned offset, unsigned start, unsigned end>
+    struct parse_bitfield_i<offset, 0, start, end>
+    {
+        static boost::uint32_t parse(iterator i) {
+            return ( i[offset]>>(8-end) )
+                & boost::low_bits_mask_t<end-start>::sig_bits;
+        }
+
+        static void write(iterator i, boost::uint32_t v) {
+            i[offset] = (i[offset] & ~(boost::low_bits_mask_t<end-start>::sig_bits<<(8-end)))
+                | ((v & boost::low_bits_mask_t<end-start>::sig_bits) << (8-end));
+        }
+    };
+
+#   endif
+
+    /** \brief Internal: Bitfield read/write helper
+
+        \internal
+        
+        Using template specializations, this class provides optimized bitfield parsers and
+        writers. For each number of bytes the bitfield covers (from 1 to 5 bytes), a template
+        specialization is provided in \c parse_bitfield_i.
+
+        This helper always processes unsigned values. For signed values sign extension still needs
+        to be performed.
+     */
+    template <unsigned start, unsigned end>
+    struct parse_bitfield
+        : public parse_bitfield_i<start/8,(end-1)/8-start/8,start%8,end-8*(start/8)>
+    {};
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

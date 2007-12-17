@@ -40,9 +40,9 @@ namespace senf {
         
         \see INet6Address
      */
-    struct Parse_INet6Address : public PacketParserBase
+    struct INet6AddressParser : public PacketParserBase
     {
-        Parse_INet6Address(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+        INet6AddressParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +53,7 @@ namespace senf {
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
         operator value_type() { return value(); }
         byte & operator[](size_type index) { return *boost::next(i(),index); }
-        Parse_INet6Address const & operator= (value_type const & other) 
+        INet6AddressParser const & operator= (value_type const & other) 
             { value(other); return *this; }
     };
 
@@ -62,7 +62,7 @@ namespace senf {
         \see IPv6PacketType \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
-    struct Parse_IPv6 : public PacketParserBase
+    struct IPv6PacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -70,17 +70,17 @@ namespace senf {
         SENF_PARSER_BITFIELD( trafficClass,  8, unsigned );
         SENF_PARSER_BITFIELD( flowLabel,    20, unsigned );
 
-        SENF_PARSER_FIELD( length,       Parse_UInt16       );
-        SENF_PARSER_FIELD( nextHeader,   Parse_UInt8        );
-        SENF_PARSER_FIELD( hopLimit,     Parse_UInt8        );
-        SENF_PARSER_FIELD( source,       Parse_INet6Address );
-        SENF_PARSER_FIELD( destination,  Parse_INet6Address );
+        SENF_PARSER_FIELD( length,       UInt16Parser       );
+        SENF_PARSER_FIELD( nextHeader,   UInt8Parser        );
+        SENF_PARSER_FIELD( hopLimit,     UInt8Parser        );
+        SENF_PARSER_FIELD( source,       INet6AddressParser );
+        SENF_PARSER_FIELD( destination,  INet6AddressParser );
 
         SENF_PARSER_INIT() {
             version() = 6;
         }
 
-        SENF_PARSER_FINALIZE(Parse_IPv6);
+        SENF_PARSER_FINALIZE(IPv6PacketParser);
     };
 
     /** \brief IPv6 packet
@@ -89,7 +89,7 @@ namespace senf {
             \ref IPv6Packet
         
         \par Fields:
-            \ref Parse_IPv6
+            \ref IPv6PacketParser
 
         \par Associated registries:
             \ref IpTypes
@@ -107,7 +107,7 @@ namespace senf {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<IPv6PacketType, IpTypes> mixin;
         typedef ConcretePacket<IPv6PacketType> packet;
-        typedef Parse_IPv6 parser;
+        typedef IPv6PacketParser parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;

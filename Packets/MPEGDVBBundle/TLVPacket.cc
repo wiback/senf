@@ -33,30 +33,30 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::Parse_TLVPacketLength::value_type senf::Parse_TLVPacketLength::value() const 
+prefix_ senf::TLVPacketLengthParser::value_type senf::TLVPacketLengthParser::value() const 
 {
     switch (bytes() ) {
     case 1:
         return fixed_length_field().value();
     case 2:
-        return parse<Parse_UInt8>( 1 ).value();
+        return parse<UInt8Parser>( 1 ).value();
     case 3:
-        return parse<Parse_UInt16>( 1 ).value();
+        return parse<UInt16Parser>( 1 ).value();
     case 4:
-        return parse<Parse_UInt24>( 1 ).value();
+        return parse<UInt24Parser>( 1 ).value();
     case 5:
-        return parse<Parse_UInt32>( 1 ).value();
+        return parse<UInt32Parser>( 1 ).value();
     default:
         throw(UnsuportedTLVPacketException());
     };
 }
 
-prefix_ void senf::Parse_TLVPacketLength::value(value_type const & v) 
+prefix_ void senf::TLVPacketLengthParser::value(value_type const & v) 
 {
     if (v > 4294967295u)
         throw(UnsuportedTLVPacketException());
     
-    SafePacketParser<Parse_TLVPacketLength> safeThis (*this);
+    SafePacketParserWrapper<TLVPacketLengthParser> safeThis (*this);
     if (v < 128u) {
         if (bytes() != 1) {
             resize(1);
@@ -71,7 +71,7 @@ prefix_ void senf::Parse_TLVPacketLength::value(value_type const & v)
             safeThis->extended_length_flag() = true;
 	    safeThis->fixed_length_field() = 1;
 	}
-        safeThis->parse<Parse_UInt8>(1) = v;
+        safeThis->parse<UInt8Parser>(1) = v;
         return;
     }
     if (v < 65536u) {
@@ -80,7 +80,7 @@ prefix_ void senf::Parse_TLVPacketLength::value(value_type const & v)
 	    safeThis->extended_length_flag() = true;
 	    safeThis->fixed_length_field() = 2;
 	}
-        safeThis->parse<Parse_UInt16>(1) = v;
+        safeThis->parse<UInt16Parser>(1) = v;
         return;
     }
     if (v < 16777216u) {
@@ -89,7 +89,7 @@ prefix_ void senf::Parse_TLVPacketLength::value(value_type const & v)
 	    safeThis->extended_length_flag() = true;
 	    safeThis->fixed_length_field() = 3;
 	}
-        safeThis->parse<Parse_UInt24>(1) = v;
+        safeThis->parse<UInt24Parser>(1) = v;
         return;
     }
     if (v <= 4294967295u) {
@@ -98,18 +98,18 @@ prefix_ void senf::Parse_TLVPacketLength::value(value_type const & v)
 	    safeThis->extended_length_flag() = true;
 	    safeThis->fixed_length_field() = 4;
 	}
-        safeThis->parse<Parse_UInt32>(1) = v;
+        safeThis->parse<UInt32Parser>(1) = v;
         return;
     }
 }
 
-prefix_ senf::Parse_TLVPacketLength const & senf::Parse_TLVPacketLength::operator= (value_type other) 
+prefix_ senf::TLVPacketLengthParser const & senf::TLVPacketLengthParser::operator= (value_type other) 
 {
     value(other);
     return *this; 
 }
 
-prefix_ senf::Parse_TLVPacketLength::size_type senf::Parse_TLVPacketLength::bytes() const 
+prefix_ senf::TLVPacketLengthParser::size_type senf::TLVPacketLengthParser::bytes() const 
 {
     if ( extended_length_flag() )
         return 1 + fixed_length_field();
@@ -117,13 +117,13 @@ prefix_ senf::Parse_TLVPacketLength::size_type senf::Parse_TLVPacketLength::byte
         return 1;
 }
     
-prefix_ void senf::Parse_TLVPacketLength::init() const 
+prefix_ void senf::TLVPacketLengthParser::init() const 
 {
     defaultInit();
     extended_length_flag() = 0;
 }
 
-prefix_ void senf::Parse_TLVPacketLength::resize(size_type size) 
+prefix_ void senf::TLVPacketLengthParser::resize(size_type size) 
 {
     size_type current_size (bytes());
     safe_data_iterator si (data(), i());

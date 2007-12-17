@@ -41,16 +41,16 @@ namespace senf {
         \see UDPPacketType
             <a href="http://tools.ietf.org/html/rfc768">RFC 768</a>
      */
-    struct Parse_UDP : public PacketParserBase
+    struct UDPPacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD( source,      senf::Parse_UInt16 );
-        SENF_PARSER_FIELD( destination, senf::Parse_UInt16 );
-        SENF_PARSER_FIELD( length,      senf::Parse_UInt16 );
-        SENF_PARSER_FIELD( checksum,    senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( source,      senf::UInt16Parser );
+        SENF_PARSER_FIELD( destination, senf::UInt16Parser );
+        SENF_PARSER_FIELD( length,      senf::UInt16Parser );
+        SENF_PARSER_FIELD( checksum,    senf::UInt16Parser );
 
-        SENF_PARSER_FINALIZE(Parse_UDP);
+        SENF_PARSER_FINALIZE(UDPPacketParser);
 
         boost::uint16_t calcChecksum() const;
 
@@ -65,7 +65,7 @@ namespace senf {
             \ref UDPPacket
 
         \par Fields:
-            \ref Parse_UDP
+            \ref UDPPacketParser
 
         \par Finalize action:
             Set \a length from payload size\n
@@ -80,7 +80,7 @@ namespace senf {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<UDPPacketType> mixin;
         typedef ConcretePacket<UDPPacketType> packet;
-        typedef Parse_UDP parser;
+        typedef UDPPacketParser parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::initSize;

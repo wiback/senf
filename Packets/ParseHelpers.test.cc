@@ -41,11 +41,11 @@ namespace {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD        ( normalField          , senf::Parse_UInt16 );
-        SENF_PARSER_FIELD_RO     ( roField              , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( normalField          , senf::UInt16Parser );
+        SENF_PARSER_FIELD_RO     ( roField              , senf::UInt16Parser );
 
         SENF_PARSER_CUSTOM_FIELD ( customField          , int, 2             ) {
-            return parse<senf::Parse_UInt16>(customField_offset);
+            return parse<senf::UInt16Parser>(customField_offset);
         }
         
         SENF_PARSER_BITFIELD     ( signedBitfield       , 4, signed          );
@@ -59,13 +59,13 @@ namespace {
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( roField );
 
-        SENF_PARSER_FIELD        ( overlayOfRoField     , senf::Parse_Int16  );
+        SENF_PARSER_FIELD        ( overlayOfRoField     , senf::Int16Parser  );
         SENF_PARSER_SKIP( 2 );
-        SENF_PARSER_FIELD        ( overlayOfBitfield    , senf::Parse_UInt8  );
+        SENF_PARSER_FIELD        ( overlayOfBitfield    , senf::UInt8Parser  );
 
         SENF_PARSER_GOTO_OFFSET( 1 );
 
-        SENF_PARSER_PRIVATE_FIELD ( privLowbyteOfNormalField , senf::Parse_UInt8  );
+        SENF_PARSER_PRIVATE_FIELD ( privLowbyteOfNormalField , senf::UInt8Parser  );
 
         unsigned lowbyteOfNormalField() { 
             return privLowbyteOfNormalField();
@@ -82,12 +82,12 @@ namespace {
 
         SENF_PARSER_INHERIT( FixedBaseParser );
         
-        SENF_PARSER_FIELD        ( derivedField         , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( derivedField         , senf::UInt16Parser );
 
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( signedBitfield );
 
-        SENF_PARSER_FIELD        ( anotherOverlay       , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( anotherOverlay       , senf::UInt16Parser );
         
         SENF_PARSER_GOTO( end );
 
@@ -151,11 +151,11 @@ namespace {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_FIELD        ( normalField              , senf::Parse_UInt16 );
-        SENF_PARSER_FIELD_RO     ( roField                  , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( normalField              , senf::UInt16Parser );
+        SENF_PARSER_FIELD_RO     ( roField                  , senf::UInt16Parser );
 
         SENF_PARSER_CUSTOM_FIELD ( customField              , int, 2, 2          ) {
-            return parse<senf::Parse_UInt16>(customField_offset());
+            return parse<senf::UInt16Parser>(customField_offset());
         }
         
         SENF_PARSER_BITFIELD      ( signedBitfield           , 4, signed          );
@@ -169,13 +169,13 @@ namespace {
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( roField );
 
-        SENF_PARSER_FIELD         ( overlayOfRoField         , senf::Parse_Int16  );
+        SENF_PARSER_FIELD         ( overlayOfRoField         , senf::Int16Parser  );
         SENF_PARSER_SKIP( 2, 2 );
-        SENF_PARSER_FIELD         ( overlayOfBitfield        , senf::Parse_UInt8  );
+        SENF_PARSER_FIELD         ( overlayOfBitfield        , senf::UInt8Parser  );
 
         SENF_PARSER_GOTO_OFFSET( 1, 1 );
 
-        SENF_PARSER_PRIVATE_FIELD ( privLowbyteOfNormalField , senf::Parse_UInt8  );
+        SENF_PARSER_PRIVATE_FIELD ( privLowbyteOfNormalField , senf::UInt8Parser  );
 
         unsigned lowbyteOfNormalField() { 
             return privLowbyteOfNormalField();
@@ -192,12 +192,12 @@ namespace {
 
         SENF_PARSER_INHERIT( VariableBaseParser );
         
-        SENF_PARSER_FIELD        ( derivedField         , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( derivedField         , senf::UInt16Parser );
 
         SENF_PARSER_LABEL( end );
         SENF_PARSER_GOTO( signedBitfield );
 
-        SENF_PARSER_FIELD        ( anotherOverlay       , senf::Parse_UInt16 );
+        SENF_PARSER_FIELD        ( anotherOverlay       , senf::UInt16Parser );
         
         SENF_PARSER_GOTO( end );
 

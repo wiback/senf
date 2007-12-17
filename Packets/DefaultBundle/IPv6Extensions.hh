@@ -41,20 +41,20 @@ namespace senf {
         \see IPv6ExtensionType_Fragment \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
-    struct Parse_IPv6Extension_Fragment : public PacketParserBase
+    struct IPv6PacketParserExtension_Fragment : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD( nextHeader     , Parse_UInt8 );
-        SENF_PARSER_FIELD( reserved1      , Parse_UInt8 );
+        SENF_PARSER_FIELD( nextHeader     , UInt8Parser );
+        SENF_PARSER_FIELD( reserved1      , UInt8Parser );
 
         SENF_PARSER_BITFIELD( fragmentOffset, 13, unsigned );
         SENF_PARSER_BITFIELD( reserved2,       2, unsigned );
         SENF_PARSER_BITFIELD( moreFragments,   1, bool     );
 
-        SENF_PARSER_FIELD( id             , Parse_UInt32   );
+        SENF_PARSER_FIELD( id             , UInt32Parser   );
 
-        SENF_PARSER_FINALIZE(Parse_IPv6Extension_Fragment);
+        SENF_PARSER_FINALIZE(IPv6PacketParserExtension_Fragment);
     };
 
     /** \brief IPv6 fragment extension
@@ -63,7 +63,7 @@ namespace senf {
             \ref IPv6Extension_Fragment
 
         \par Fields:
-            \ref Parse_IPv6Extension_Fragment
+            \ref IPv6PacketParserExtension_Fragment
         
         \par Associated registries:
             \par IpTypes
@@ -80,7 +80,7 @@ namespace senf {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<IPv6ExtensionType_Fragment, IpTypes> mixin;
         typedef ConcretePacket<IPv6ExtensionType_Fragment> packet;
-        typedef Parse_IPv6Extension_Fragment parser;
+        typedef IPv6PacketParserExtension_Fragment parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;

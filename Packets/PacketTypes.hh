@@ -47,7 +47,7 @@ namespace detail {
 
 namespace packet {
 
-    /** \brief Internal: Tempalte typedef for used smart pointer
+    /** \brief Internal: Template typedef for used smart pointer
 
         \internal
      */

@@ -1,0 +1,131 @@
+// $Id$
+//
+// Copyright (C) 2006
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief VectorParser non-inline template implementation */
+
+#include "VectorParser.ih"
+
+// Custom includes
+
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::VectorParser<ElementParser,Sizer>
+
+template <class ElementParser, class Sizer>
+prefix_ void senf::VectorParser<ElementParser,Sizer>::init()
+    const
+{
+    sizer_.init(i(),state());
+    iterator i (begin());
+    iterator const e (end());
+    for (; i!=e; ++i)
+        i->init();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::VectorParser_Container<ElementParser,Sizer>
+
+template <class ElementParser, class Sizer>
+prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::init()
+    const
+{
+    iterator i (begin());
+    iterator const e (end());
+    for (; i!=e; ++i)
+        i->init();
+}
+
+// Mutators
+
+template <class ElementParser, class Sizer>
+prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::iterator
+senf::VectorParser_Container<ElementParser,Sizer>::shift(iterator pos, size_type n)
+{
+    size_type ix (std::distance(data().begin(),pos.raw()));
+    data().insert(pos.raw(),n*ElementParser::fixed_bytes,0);
+    setSize(size()+n);
+    return iterator(boost::next(data().begin(),ix),state());
+}
+
+template <class ElementParser, class Sizer>
+template <class Value>
+prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::insert(iterator pos,
+                                                                       size_type n,
+                                                                       Value const & t)
+{
+    for (iterator j (shift(pos,n)); n; --n, ++j) 
+        *j << t;
+}
+
+#ifndef DOXYGEN
+template <class ElementParser, class Sizer>
+template <class ForwardIterator>
+prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::
+insert(iterator pos, ForwardIterator f, ForwardIterator l,
+       typename boost::disable_if< boost::is_convertible<ForwardIterator,size_type> >::type *)
+{
+    for (iterator j (shift(pos,std::distance(f,l))); f!=l; ++f,++j)
+        *j << *f;
+}
+#else
+template <class ElementParser, class Sizer>
+template <class ForwardIterator>
+prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::
+insert(iterator pos, ForwardIterator f, ForwardIterator l)
+{}
+#endif
+
+template <class ElementParser, class Sizer>
+prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::resize(size_type n)
+{
+    if (size()>=n)
+        erase(boost::next(begin(),n),end());
+    else
+        push_back_space(n-size());
+}
+
+template <class ElementParser, class Sizer>
+template <class Value>
+prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::resize(size_type n, Value value)
+{
+    if (size()>=n)
+        erase(boost::next(begin(),n),end());
+    else
+        push_back(value,n-size());
+}
+
+///////////////////////////////ct.e////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

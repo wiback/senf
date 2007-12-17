@@ -40,18 +40,18 @@ namespace senf {
         
         \todo document me
      */
-    struct Parse_LlcSnapPacket : public PacketParserBase
+    struct LlcSnapPacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD( dsap, Parse_UInt8 );
-        SENF_PARSER_FIELD( ssap, Parse_UInt8 );
-        SENF_PARSER_FIELD( ctrl, Parse_UInt8 );
+        SENF_PARSER_FIELD( dsap, UInt8Parser );
+        SENF_PARSER_FIELD( ssap, UInt8Parser );
+        SENF_PARSER_FIELD( ctrl, UInt8Parser );
 
-        SENF_PARSER_FIELD( protocolId, Parse_UInt24 );
-        SENF_PARSER_FIELD( type_length, Parse_UInt16 );
+        SENF_PARSER_FIELD( protocolId, UInt24Parser );
+        SENF_PARSER_FIELD( type_length, UInt16Parser );
 
-        SENF_PARSER_FINALIZE(Parse_LlcSnapPacket);
+        SENF_PARSER_FINALIZE(LlcSnapPacketParser);
         
         SENF_PARSER_INIT() {
             dsap() = 0xaa;
@@ -69,7 +69,7 @@ namespace senf {
             \ref LlcSnapPacketType
 
         \par Fields:
-            \ref Parse_LlcSnapPacket
+            \ref LlcSnapPacketParser
 
         \par Associated registries:
             \ref EtherTypes
@@ -86,7 +86,7 @@ namespace senf {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<LlcSnapPacketType, EtherTypes> mixin;
         typedef ConcretePacket<LlcSnapPacketType> packet;
-        typedef Parse_LlcSnapPacket parser;
+        typedef LlcSnapPacketParser parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::initSize;

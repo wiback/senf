@@ -21,38 +21,27 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketParser non-inline template implementation  */
+    \brief ArrayParser non-inline template implementation  */
 
-#include "PacketParser.ih"
+#include "ArrayParser.ih"
 
 // Custom includes
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-#ifndef DOXYGEN
-template <class Parser>
-prefix_ typename boost::enable_if< 
-        boost::is_base_of<senf::PacketParserBase, Parser>,
-        Parser >::type senf::operator<<(Parser target, Parser source)
+///////////////////////////////////////////////////////////////////////////
+// senf::ArrayParser<elements,ElementParser>
+
+template <unsigned elements, class ElementParser>
+prefix_ void senf::ArrayParser<elements,ElementParser>::init()
+    const
 {
-    PacketParserBase::size_type target_sz (bytes(target));
-    PacketParserBase::size_type source_sz (bytes(source));
-    SafePacketParserWrapper<Parser> safe_target (target);
-    if (target_sz > source_sz)
-        target.data().erase(boost::next(target.i(),source_sz),boost::next(target.i(),target_sz));
-    else if (target_sz < source_sz)
-        target.data().insert(boost::next(target.i(),target_sz),source_sz-target_sz,0u);
-    Parser new_target (*safe_target);
-    std::copy( source.i(), boost::next(source.i(),source_sz),
-               PacketParserBase::data_iterator(new_target.i()) );
-    return new_target;
+    iterator i (begin());
+    iterator const e (end());
+    for (; i!=e; ++i)
+        (*i).init();
 }
-#else
-template <class Parser>
-prefix_ Parser senf::operator<<(Parser target, Parser source)
-{}
-#endif
 
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
@@ -61,9 +50,9 @@ prefix_ Parser senf::operator<<(Parser target, Parser source)
 // Local Variables:
 // mode: c++
 // fill-column: 100
-// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:

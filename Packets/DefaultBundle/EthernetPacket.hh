@@ -43,9 +43,9 @@ namespace senf {
         \see MACAddress \n
             EthernetPacket
      */
-    struct Parse_MAC : public PacketParserBase
+    struct MACAddressParser : public PacketParserBase
     {
-        Parse_MAC(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+        MACAddressParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
        
         ///////////////////////////////////////////////////////////////////////////
 
@@ -57,7 +57,7 @@ namespace senf {
         operator value_type () { return value(); }
         byte & operator[](size_type index) { return *boost::next(i(),index);  }
 
-        Parse_MAC const & operator= (value_type const & other) { value(other); return *this; }
+        MACAddressParser const & operator= (value_type const & other) { value(other); return *this; }
     };
     
     /** \brief Parse an Ethernet packet
@@ -66,15 +66,15 @@ namespace senf {
 
         \see EthernetPacketType
      */
-    struct Parse_Ethernet : public PacketParserBase
+    struct EthernetPacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD( destination, Parse_MAC    );
-        SENF_PARSER_FIELD( source,      Parse_MAC    );
-        SENF_PARSER_FIELD( type_length, Parse_UInt16 );
+        SENF_PARSER_FIELD( destination, MACAddressParser    );
+        SENF_PARSER_FIELD( source,      MACAddressParser    );
+        SENF_PARSER_FIELD( type_length, UInt16Parser );
 
-        SENF_PARSER_FINALIZE(Parse_Ethernet);
+        SENF_PARSER_FINALIZE(EthernetPacketParser);
     };
 
     /** \brief EtherType registry
@@ -95,7 +95,7 @@ namespace senf {
             \ref EthernetPacket
 
         \par Fields:
-            \ref Parse_Ethernet
+            \ref EthernetPacketParser
 
         \par Associated registries:
             \ref EtherTypes
@@ -112,7 +112,7 @@ namespace senf {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<EthernetPacketType, EtherTypes> mixin;
         typedef ConcretePacket<EthernetPacketType> packet;
-        typedef Parse_Ethernet parser;
+        typedef EthernetPacketParser parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::initSize;
@@ -132,7 +132,7 @@ namespace senf {
 
         \see EthVLanPacketType
      */
-    struct Parse_EthVLan : public PacketParserBase
+    struct EthVLanPacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -140,9 +140,9 @@ namespace senf {
         SENF_PARSER_BITFIELD( cfi,       1, bool     );
         SENF_PARSER_BITFIELD( vlanId,   12, unsigned );
 
-        SENF_PARSER_FIELD( type, Parse_UInt16 );
+        SENF_PARSER_FIELD( type, UInt16Parser );
 
-        SENF_PARSER_FINALIZE(Parse_EthVLan);
+        SENF_PARSER_FINALIZE(EthVLanPacketParser);
     };
 
     /** \brief Ethernet VLAN tag
@@ -151,7 +151,7 @@ namespace senf {
             \ref EthVLanPacket
 
         \par Fields:
-            \ref Parse_EthVLan
+            \ref EthVLanPacketParser
 
         \par Associated registries:
             \ref EtherTypes
@@ -168,7 +168,7 @@ namespace senf {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<EthVLanPacketType, EtherTypes> mixin;
         typedef ConcretePacket<EthVLanPacketType> packet;
-        typedef Parse_EthVLan parser;
+        typedef EthVLanPacketParser parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;

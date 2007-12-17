@@ -51,12 +51,12 @@ namespace senf {
     /** \brief xxx
         \todo document me
     */
-    class Parse_TLVPacketLength 
-        : public detail::packet::ParseIntOps<Parse_TLVPacketLength, boost::uint32_t>,
+    class TLVPacketLengthParser 
+        : public detail::packet::IntParserOps<TLVPacketLengthParser, boost::uint32_t>,
           public PacketParserBase
     {
     public:
-        Parse_TLVPacketLength(data_iterator i, state_type s) : PacketParserBase(i,s) {}
+        TLVPacketLengthParser(data_iterator i, state_type s) : PacketParserBase(i,s) {}
 
         typedef boost::uint32_t value_type;
         static const size_type init_bytes = 1;
@@ -66,22 +66,22 @@ namespace senf {
         value_type value() const;
         void value(value_type const & v);
         
-        Parse_TLVPacketLength const & operator= (value_type other);
+        TLVPacketLengthParser const & operator= (value_type other);
     
         size_type bytes() const;
             
         void init() const;
 
     private:
-        typedef Parse_Flag      <    0 > Parse_extended_length_flag;
-        typedef Parse_UIntField < 1, 8 > Parse_fixed_length;
+        typedef FlagParser      <    0 > ExtendedLengthFlagParser;
+        typedef UIntFieldParser < 1, 8 > FixedLengthParser;
 
-        Parse_extended_length_flag extended_length_flag() const {
-            return parse<Parse_extended_length_flag>( 0 );
+        ExtendedLengthFlagParser extended_length_flag() const {
+            return parse<ExtendedLengthFlagParser>( 0 );
         }
 
-        Parse_fixed_length fixed_length_field() const {
-            return parse<Parse_fixed_length>( 0 );
+        FixedLengthParser fixed_length_field() const {
+            return parse<FixedLengthParser>( 0 );
         }
         
         void resize(size_type size);
@@ -94,14 +94,14 @@ namespace senf {
         \see TLVPacketType
      */
     template <class LengthParser>
-    struct Parse_TLVPacket : public PacketParserBase
+    struct TLVPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
         
-        SENF_PARSER_FIELD( type,   Parse_UInt32 );
+        SENF_PARSER_FIELD( type,   UInt32Parser );
         SENF_PARSER_FIELD( length, LengthParser );
         
-        SENF_PARSER_FINALIZE(Parse_TLVPacket);
+        SENF_PARSER_FINALIZE(TLVPacketParser);
     };
     
     /** \brief generic TLV Packet type
@@ -116,7 +116,7 @@ namespace senf {
     {
 #ifndef DOXYGEN
         typedef ConcretePacket<TLVPacketType<LengthParser> > packet;
-        typedef Parse_TLVPacket<LengthParser> parser;
+        typedef TLVPacketParser<LengthParser> parser;
 #endif
         static optional_range nextPacketRange(packet p);
         static size_type initSize();
@@ -126,12 +126,12 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
     };
 
-    typedef TLVPacketType<Parse_TLVPacketLength>::packet TLVPacket;
+    typedef TLVPacketType<TLVPacketLengthParser>::packet TLVPacket;
     
-    typedef ConcretePacket<TLVPacketType<Parse_UInt8> >  TLVFix8Packet;
-    typedef ConcretePacket<TLVPacketType<Parse_UInt16> > TLVFix16Packet;
-    typedef ConcretePacket<TLVPacketType<Parse_UInt24> > TLVFix24Packet;
-    typedef ConcretePacket<TLVPacketType<Parse_UInt32> > TLVFix32Packet;
+    typedef ConcretePacket<TLVPacketType<UInt8Parser> >  TLVFix8Packet;
+    typedef ConcretePacket<TLVPacketType<UInt16Parser> > TLVFix16Packet;
+    typedef ConcretePacket<TLVPacketType<UInt24Parser> > TLVFix24Packet;
+    typedef ConcretePacket<TLVPacketType<UInt32Parser> > TLVFix32Packet;
 }
 
 

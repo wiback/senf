@@ -158,10 +158,10 @@ void test_TLVFixPacket_parsing(unsigned lengthParser_size)
 
 BOOST_AUTO_UNIT_TEST(TLVFixPacket_parse_packet)
 {
-    test_TLVFixPacket_parsing<TLVFix8Packet>( Parse_UInt8::fixed_bytes);
-    test_TLVFixPacket_parsing<TLVFix16Packet>( Parse_UInt16::fixed_bytes);
-    test_TLVFixPacket_parsing<TLVFix24Packet>( Parse_UInt24::fixed_bytes);
-    test_TLVFixPacket_parsing<TLVFix32Packet>( Parse_UInt32::fixed_bytes);
+    test_TLVFixPacket_parsing<TLVFix8Packet>( UInt8Parser::fixed_bytes);
+    test_TLVFixPacket_parsing<TLVFix16Packet>( UInt16Parser::fixed_bytes);
+    test_TLVFixPacket_parsing<TLVFix24Packet>( UInt24Parser::fixed_bytes);
+    test_TLVFixPacket_parsing<TLVFix32Packet>( UInt32Parser::fixed_bytes);
 }
 
 
@@ -202,10 +202,10 @@ void test_invalid_TLVFixPacket_creating(boost::uint32_t max_value)
 
 BOOST_AUTO_UNIT_TEST(TLVFixPacket_create_invalid_packet)
 {
-    test_invalid_TLVFixPacket_creating<TLVFix8Packet> ( Parse_UInt8::max_value);
-    test_invalid_TLVFixPacket_creating<TLVFix16Packet>( Parse_UInt16::max_value);
-    test_invalid_TLVFixPacket_creating<TLVFix24Packet>( Parse_UInt24::max_value);
-    //test_invalid_TLVFixPacket_creating<TLVFix32Packet>( Parse_UInt32::max_value);
+    test_invalid_TLVFixPacket_creating<TLVFix8Packet> ( UInt8Parser::max_value);
+    test_invalid_TLVFixPacket_creating<TLVFix16Packet>( UInt16Parser::max_value);
+    test_invalid_TLVFixPacket_creating<TLVFix24Packet>( UInt24Parser::max_value);
+    //test_invalid_TLVFixPacket_creating<TLVFix32Packet>( UInt32Parser::max_value);
 }
 
 

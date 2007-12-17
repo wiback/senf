@@ -21,38 +21,47 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketParser non-inline template implementation  */
+    \brief ListNParser non-inline template implementation  */
 
-#include "PacketParser.ih"
+#include "ListNParser.ih"
 
 // Custom includes
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-#ifndef DOXYGEN
-template <class Parser>
-prefix_ typename boost::enable_if< 
-        boost::is_base_of<senf::PacketParserBase, Parser>,
-        Parser >::type senf::operator<<(Parser target, Parser source)
+template <class ElementParser, class SizeParser>
+prefix_ void
+senf::detail::ListNParser_Policy<ElementParser,SizeParser>::iterator_policy::
+setFromPosition(iterator i, state_type s, iterator p)
 {
-    PacketParserBase::size_type target_sz (bytes(target));
-    PacketParserBase::size_type source_sz (bytes(source));
-    SafePacketParserWrapper<Parser> safe_target (target);
-    if (target_sz > source_sz)
-        target.data().erase(boost::next(target.i(),source_sz),boost::next(target.i(),target_sz));
-    else if (target_sz < source_sz)
-        target.data().insert(boost::next(target.i(),target_sz),source_sz-target_sz,0u);
-    Parser new_target (*safe_target);
-    std::copy( source.i(), boost::next(source.i(),source_sz),
-               PacketParserBase::data_iterator(new_target.i()) );
-    return new_target;
+    l_ = i;
+    if (p == data(s).end()) {
+        n_ = 0;
+        return;
+    }
+    n_ = SizeParser(i,s);
+    iterator j (boost::next(i,SizeParser::fixed_bytes));
+    for (; n_; --n_, j += ElementParser(j,s).bytes())
+        if (j==p)
+            return;
+    BOOST_ASSERT( false );
 }
-#else
-template <class Parser>
-prefix_ Parser senf::operator<<(Parser target, Parser source)
-{}
-#endif
+
+template <class ElementParser, class SizeParser>
+prefix_ typename senf::detail::ListNParser_Policy<ElementParser,SizeParser>::iterator
+senf::detail::ListNParser_Policy<ElementParser,SizeParser>::iterator_policy::raw(iterator i,
+                                                                                 state_type s)
+    const
+{
+    if (i != data(s).end())
+        return i;
+    size_type n (SizeParser(l_,s));
+    iterator j (boost::next(l_,SizeParser::fixed_bytes));
+    for (; n; --n)
+        j += ElementParser(j,s).bytes();
+    return j;
+}
 
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_

@@ -59,9 +59,9 @@ namespace {
     {
 #       include SENF_FIXED_PARSER()
         
-        SENF_PARSER_FIELD( type,     senf::Parse_UInt16 );
-        SENF_PARSER_FIELD( length,   senf::Parse_Int32  );
-        SENF_PARSER_FIELD( reserved, senf::Parse_UInt16 );
+        SENF_PARSER_FIELD( type,     senf::UInt16Parser );
+        SENF_PARSER_FIELD( length,   senf::Int32Parser  );
+        SENF_PARSER_FIELD( reserved, senf::UInt16Parser );
 
         SENF_PARSER_FINALIZE(BarPacketParser);
     };

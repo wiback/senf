@@ -43,7 +43,7 @@ namespace senf {
         
         \see SNDUPacketType
      */
-    struct Parse_SNDUPacket : public PacketParserBase
+    struct SNDUPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
 
@@ -52,13 +52,13 @@ namespace senf {
 
         SENF_PARSER_PRIVATE_BITFIELD ( d_bit_       ,  1 , unsigned );
         SENF_PARSER_BITFIELD         ( length       , 15 , unsigned );
-        SENF_PARSER_FIELD            ( type         , Parse_UInt16  );
+        SENF_PARSER_FIELD            ( type         , UInt16Parser  );
         SENF_PARSER_PRIVATE_VARIANT  ( destination_ , d_bit_        , 
-                                                      (Parse_MAC) (VoidPacketParser) );
+                                                      (MACAddressParser) (VoidPacketParser) );
         
-        SENF_PARSER_FINALIZE( Parse_SNDUPacket );
+        SENF_PARSER_FINALIZE( SNDUPacketParser );
         
-        Parse_MAC destination()         /// Only defined if d_bit() == \c false
+        MACAddressParser destination()         /// Only defined if d_bit() == \c false
             { return destination_().get<0>(); }
 
         bool d_bit()                    /// Destination absent bit
@@ -70,8 +70,8 @@ namespace senf {
         void withoutDestination()       /// Set destination absent bit
             { destination_().init<1>(); }
 
-        Parse_UInt32 crc() 
-            { return parse<Parse_UInt32>( data().size() - 4 ); }
+        UInt32Parser crc() 
+            { return parse<UInt32Parser>( data().size() - 4 ); }
 
         boost::uint32_t calcCrc() const;
     };
@@ -87,7 +87,7 @@ namespace senf {
             \ref SNDUPacket
 
         \par Fields:
-            \ref Parse_SNDUPacket
+            \ref SNDUPacketParser
 
         \ingroup protocolbundle_mpegdvb
      */
@@ -97,7 +97,7 @@ namespace senf {
     {
 //        typedef PacketTypeMixin<SNDUPacketType, ULEExtHeaderType> mixin;
         typedef ConcretePacket<SNDUPacketType> packet;
-        typedef Parse_SNDUPacket parser;
+        typedef SNDUPacketParser parser;
 
 //        using mixin::nextPacketRange;
 //        using mixin::nextPacketType;

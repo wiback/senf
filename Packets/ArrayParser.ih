@@ -1,0 +1,90 @@
+// $Id$
+//
+// Copyright (C) 2006
+// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief ArrayParser internal header */
+
+#ifndef IH_ArrayParser_
+#define IH_ArrayParser_ 1
+
+// Custom includes
+#include <boost/iterator/iterator_facade.hpp>
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+/** \brief Internal: Array and Vector iterator
+
+    \internal
+
+    This is the iterator type used for both ArrayParser and VectorParser. It is a model of random
+    access iterator.
+ */
+template <class ElementParser>
+class senf::detail::ArrayParser_iterator
+    : public boost::iterator_facade< ArrayParser_iterator<ElementParser>,
+                                     ElementParser,
+                                     boost::random_access_traversal_tag,
+                                     ElementParser >
+{
+public:
+    ArrayParser_iterator();
+    ArrayParser_iterator(PacketParserBase::data_iterator const & i,
+                         PacketParserBase::state_type s);
+
+    // Needed to elide the []-proxy of iterator_facade
+    ElementParser operator[](int i) const;
+
+    PacketParserBase::data_iterator raw() const; ///< Return data_iterator
+                                        /**< Returns the raw data_iterator pointing to the beginning
+                                             of the current element */
+
+protected:
+
+private:
+    friend class boost::iterator_core_access;
+    
+    // iterator_facade interface
+
+    ElementParser dereference() const;
+    bool equal(ArrayParser_iterator const & other) const;
+    int distance_to(ArrayParser_iterator const & other) const;
+    void increment();
+    void decrement();
+    void advance(int n);
+
+    PacketParserBase::data_iterator i_;
+    PacketParserBase::state_type s_;
+};
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

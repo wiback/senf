@@ -232,9 +232,9 @@
 # ////////////////////////////////////////
 # // SENF_PARSER_BITFIELD_I
 #
-# define SENF_PARSER_BITFIELD_TYPE_signed(start, bits)   senf::Parse_IntField<start, start+bits>
-# define SENF_PARSER_BITFIELD_TYPE_unsigned(start, bits) senf::Parse_UIntField<start, start+bits>
-# define SENF_PARSER_BITFIELD_TYPE_bool(start, bits)     senf::Parse_Flag<start>
+# define SENF_PARSER_BITFIELD_TYPE_signed(start, bits)   senf::IntFieldParser<start, start+bits>
+# define SENF_PARSER_BITFIELD_TYPE_unsigned(start, bits) senf::UIntFieldParser<start, start+bits>
+# define SENF_PARSER_BITFIELD_TYPE_bool(start, bits)     senf::FlagParser<start>
 #
 # define SENF_PARSER_BITFIELD_I(name, bits, type, ofstype, rwtype, access)                        \
     access:                                                                                       \

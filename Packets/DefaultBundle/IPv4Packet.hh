@@ -39,9 +39,9 @@ namespace senf {
 
         \see INet4Address
      */
-    struct Parse_INet4Address : public PacketParserBase
+    struct INet4AddressParser : public PacketParserBase
     {
-        Parse_INet4Address(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+        INet4AddressParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +52,7 @@ namespace senf {
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
         operator value_type() { return value(); }
         byte & operator[](size_type index) { return *boost::next(i(),index); }
-        Parse_INet4Address const & operator= (value_type const & other) 
+        INet4AddressParser const & operator= (value_type const & other) 
             { value(other); return *this; }
     };
 
@@ -65,27 +65,27 @@ namespace senf {
 
         \todo Implement options
      */
-    struct Parse_IPv4 : public PacketParserBase
+    struct IPv4PacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
         SENF_PARSER_BITFIELD( version,   4, unsigned );
         SENF_PARSER_BITFIELD( ihl,       4, unsigned );
 
-        SENF_PARSER_FIELD( tos,         Parse_UInt8        );
-        SENF_PARSER_FIELD( length,      Parse_UInt16       );
-        SENF_PARSER_FIELD( identifier,  Parse_UInt16       );
+        SENF_PARSER_FIELD( tos,         UInt8Parser        );
+        SENF_PARSER_FIELD( length,      UInt16Parser       );
+        SENF_PARSER_FIELD( identifier,  UInt16Parser       );
 
         SENF_PARSER_BITFIELD( reserved,  1, bool     );
         SENF_PARSER_BITFIELD( df,        1, bool     );
         SENF_PARSER_BITFIELD( mf,        1, bool     );
         SENF_PARSER_BITFIELD( frag,     13, unsigned );
 
-        SENF_PARSER_FIELD( ttl,         Parse_UInt8        );
-        SENF_PARSER_FIELD( protocol,    Parse_UInt8        );
-        SENF_PARSER_FIELD( checksum,    Parse_UInt16       );
-        SENF_PARSER_FIELD( source,      Parse_INet4Address );
-        SENF_PARSER_FIELD( destination, Parse_INet4Address );
+        SENF_PARSER_FIELD( ttl,         UInt8Parser        );
+        SENF_PARSER_FIELD( protocol,    UInt8Parser        );
+        SENF_PARSER_FIELD( checksum,    UInt16Parser       );
+        SENF_PARSER_FIELD( source,      INet4AddressParser );
+        SENF_PARSER_FIELD( destination, INet4AddressParser );
 
         SENF_PARSER_INIT() {
             version() = 4;
@@ -93,7 +93,7 @@ namespace senf {
             ihl() = 5;
         }
 
-        SENF_PARSER_FINALIZE(Parse_IPv4);
+        SENF_PARSER_FINALIZE(IPv4PacketParser);
         
         boost::uint16_t calcChecksum() const;
 
@@ -123,24 +123,24 @@ namespace senf {
             <th width="12%">20</th> <th width="12%">24</th> <th width="6%">28</th>
             <th style="text-align:right" width="6%">31</th>
           </tr><tr>
-            <td>\ref Parse_IPv4::version() "Version"</td>
-            <td>\ref Parse_IPv4::ihl() "IHL"</td>
-            <td colspan="2">\ref Parse_IPv4::tos() "TOS"</td>
-            <td colspan="8">\ref Parse_IPv4::length() "Length"</td> 
+            <td>\ref IPv4PacketParser::version() "Version"</td>
+            <td>\ref IPv4PacketParser::ihl() "IHL"</td>
+            <td colspan="2">\ref IPv4PacketParser::tos() "TOS"</td>
+            <td colspan="8">\ref IPv4PacketParser::length() "Length"</td> 
           </tr><tr>
-            <td colspan="4">\ref Parse_IPv4::identifier() "Identifier"</td>
-            <td>\ref Parse_IPv4::reserved() "R"</td>
-            <td>\ref Parse_IPv4::df() "DF"</td>
-            <td>\ref Parse_IPv4::mf() "MF"</td>
-            <td colspan="5">\ref Parse_IPv4::frag() "Fragment Offset"</td>
+            <td colspan="4">\ref IPv4PacketParser::identifier() "Identifier"</td>
+            <td>\ref IPv4PacketParser::reserved() "R"</td>
+            <td>\ref IPv4PacketParser::df() "DF"</td>
+            <td>\ref IPv4PacketParser::mf() "MF"</td>
+            <td colspan="5">\ref IPv4PacketParser::frag() "Fragment Offset"</td>
           </tr><tr>
-            <td colspan="2">\ref Parse_IPv4::ttl() "Time to Live (ttl)"</td>
-            <td colspan="2">\ref Parse_IPv4::protocol() "Protocol"</td>
-            <td colspan="8">\ref Parse_IPv4::checksum() "Header Checksum"</td>
+            <td colspan="2">\ref IPv4PacketParser::ttl() "Time to Live (ttl)"</td>
+            <td colspan="2">\ref IPv4PacketParser::protocol() "Protocol"</td>
+            <td colspan="8">\ref IPv4PacketParser::checksum() "Header Checksum"</td>
           </tr><tr>
-            <td colspan="12">\ref Parse_IPv4::source() "Source Address"</td>
+            <td colspan="12">\ref IPv4PacketParser::source() "Source Address"</td>
           </tr><tr>
-            <td colspan="12">\ref Parse_IPv4::destination() "Destination Address"</td>
+            <td colspan="12">\ref IPv4PacketParser::destination() "Destination Address"</td>
           </tr>
         </table>
         
@@ -148,7 +148,7 @@ namespace senf {
             \ref IPv4Packet
 
         \par Fields:
-            \ref Parse_IPv4
+            \ref IPv4PacketParser
 
         \par Associated registries:
             \ref IpTypes
@@ -167,7 +167,7 @@ namespace senf {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<IPv4PacketType, IpTypes> mixin;
         typedef ConcretePacket<IPv4PacketType> packet;
-        typedef Parse_IPv4 parser;
+        typedef IPv4PacketParser parser;
 #endif
         using mixin::nextPacketRange;
         using mixin::nextPacketType;

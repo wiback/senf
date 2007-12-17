@@ -1,4 +1,4 @@
-// $Id$
+// $Id:MPESection.hh 560 2007-12-13 14:39:37Z tho $
 //
 // Copyright (C) 2007
 // Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
@@ -36,7 +36,7 @@
 
 namespace senf {
 
-    struct Parse_MPERealTimeParameters : public PacketParserBase
+    struct MPERealTimeParametersParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -45,7 +45,7 @@ namespace senf {
         SENF_PARSER_BITFIELD ( frame_boundary,           1,  bool     );
         SENF_PARSER_BITFIELD ( address,                  18, unsigned );
         
-        SENF_PARSER_FINALIZE( Parse_MPERealTimeParameters );
+        SENF_PARSER_FINALIZE( MPERealTimeParametersParser );
     };
     
 
@@ -55,19 +55,19 @@ namespace senf {
         
         \see MPESectionType
      */
-    struct Parse_MPESection : public PacketParserBase
+    struct MPESectionParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD( table_id, Parse_UInt8 );
+        SENF_PARSER_FIELD( table_id, UInt8Parser );
         
         SENF_PARSER_BITFIELD        ( section_syntax_indicator, 1,  bool     );
         SENF_PARSER_BITFIELD        ( private_indicator,        1,  bool     );
         SENF_PARSER_PRIVATE_BITFIELD( reserved_1,               2,  unsigned );
         SENF_PARSER_BITFIELD        ( section_length,           12, unsigned );
         
-        SENF_PARSER_FIELD( mac_addr_6, Parse_UInt8 );
-        SENF_PARSER_FIELD( mac_addr_5, Parse_UInt8 );
+        SENF_PARSER_FIELD( mac_addr_6, UInt8Parser );
+        SENF_PARSER_FIELD( mac_addr_5, UInt8Parser );
         
         SENF_PARSER_PRIVATE_BITFIELD( reserved_2,          2, unsigned );
         SENF_PARSER_BITFIELD        ( payload_scrmbl_ctrl, 2, unsigned );
@@ -75,12 +75,12 @@ namespace senf {
         SENF_PARSER_BITFIELD        ( llc_snap_flag,       1, bool     );
         SENF_PARSER_BITFIELD        ( curr_next_indicator, 1, bool     );
 
-        SENF_PARSER_FIELD( section_num,      Parse_UInt8 );
-        SENF_PARSER_FIELD( last_section_num, Parse_UInt8 );
+        SENF_PARSER_FIELD( section_num,      UInt8Parser );
+        SENF_PARSER_FIELD( last_section_num, UInt8Parser );
 
-        SENF_PARSER_FIELD( real_time_parameters, Parse_MPERealTimeParameters );
+        SENF_PARSER_FIELD( real_time_parameters, MPERealTimeParametersParser );
         
-        SENF_PARSER_FINALIZE( Parse_MPESection );
+        SENF_PARSER_FINALIZE( MPESectionParser );
         
         SENF_PARSER_PRIVATE_BITFIELD( ip_datagram_version, 4, unsigned );
         
@@ -95,7 +95,7 @@ namespace senf {
             curr_next_indicator() = 1;
         }
         
-        Parse_UInt32 crc() const { return parse<Parse_UInt32>( data().size()-4 ); }
+        UInt32Parser crc() const { return parse<UInt32Parser>( data().size()-4 ); }
         
 //        typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> crc32_t;
 //        boost::uint32_t calcCrc() const;
@@ -110,7 +110,7 @@ namespace senf {
             \ref MPESection
 
         \par Fields:
-            \ref Parse_MPESection
+            \ref MPESectionParser
 
         \ingroup protocolbundle_mpegdvb
      */
@@ -120,7 +120,7 @@ namespace senf {
     {
         typedef PacketTypeMixin<MPESectionType> mixin;
         typedef ConcretePacket<MPESectionType> packet;
-        typedef Parse_MPESection parser;
+        typedef MPESectionParser parser;
 
         using mixin::nextPacketRange;
         using mixin::init;
