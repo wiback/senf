@@ -30,7 +30,6 @@
 // Custom includes
 #include <sys/socket.h>
 #include <sys/ioctl.h>
-#include <net/if.h>
 #include "../Utils/Exception.hh"
 
 #define prefix_
