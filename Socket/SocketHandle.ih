@@ -44,8 +44,8 @@ namespace senf {
 
         /** \brief String supporting automatic type conversion
 
-            The ConvertibleString class is used to simplify creating a text representation of
-            arbitrary values. ConvertibleString is an ordinary string with an additional constructor
+            The StreamableString class is used to simplify creating a text representation of
+            arbitrary values. StreamableString is an ordinary string with an additional constructor
             which allows constructing the string from any arbitrary, streamable type.
 
             \note It is generally not advisable to derive from the standard library container
@@ -53,36 +53,30 @@ namespace senf {
             additional functionality is added. It is absolutely safe to convert the derived class
             back to the base type.
          */
-        class ConvertibleString : public std::string
+        class StreamableString : public std::string
         {
         public:
-            ConvertibleString();
-            ConvertibleString(bool v);  ///< Bool conversion constructor
-                                        /**< The bool conversion is defined explicitly to use a
-                                           specialized representation (the strings 'true' and
-                                           'false') */
-            template <class T>
-            ConvertibleString(T const & other);
-                                        ///< Conversion constructor
-                                        /**< This constructor will assign the string from any
-                                           arbitrary type. It will use boost::lexical_cast to
-                                           convert the argument to its string representation. */
+            using std::string::operator=;
 
             template <class T>
-            ConvertibleString & operator+= (ConvertibleString const & other);
-                                        ///< Add additional values with separator
-                                        /**< This operator facilitates the representation of
-                                           multiple values in a single string. Each value is first
-                                           converted to a string (using the type conversion
-                                           machinery of C++ and the ConvertibleString conversion
-                                           constructors). It is then appended to the current string
-                                           with ', ' as a separator (if the current string is
-                                           non-empty). */
+            StreamableString & operator<<(T const & other);
+                                        ///< Value assigment
+                                        /**< This operator will assign the string from any
+                                             arbitrary type. It will use boost::lexical_cast to
+                                             convert the argument to its string representation. 
+
+                                             If the string is non-empty, an additional separating
+                                             comma is added to the string. */
+
+            StreamableString & operator<<(bool v);  ///< Bool assignment
+                                        /**< The bool assignment is defined explicitly to use a
+                                             specialized representation (the strings 'true' and
+                                             'false'). */
         };
 
     }
 
-    typedef std::map< std::string, detail::ConvertibleString > SocketStateMap;
+    typedef std::map< std::string, detail::StreamableString > SocketStateMap;
 
     namespace detail {
         /** \brief Helper to convert SocketStateMap to multiline string representation

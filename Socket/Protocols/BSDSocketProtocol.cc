@@ -42,7 +42,7 @@ prefix_ std::pair<bool,unsigned> senf::BSDSocketProtocol::linger()
     struct linger ling;
     socklen_t len = sizeof(ling);
     ::memset(&ling,sizeof(ling),0);
-    if (::getsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,&len) < 0)
+    if (::getsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,&len) < 0)
         throwErrno();
     return std::make_pair(ling.l_onoff, ling.l_linger);
 }
@@ -53,7 +53,7 @@ prefix_ void senf::BSDSocketProtocol::linger(bool enable, unsigned timeout)
     struct linger ling;
     ling.l_onoff = enable;
     ling.l_linger = timeout;
-    if (::setsockopt(body().fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling)) < 0)
+    if (::setsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling)) < 0)
         throwErrno();
 }
 
@@ -61,7 +61,7 @@ prefix_ struct timeval senf::BSDSocketProtocol::timestamp()
     const
 {
     struct timeval tv;
-    if (::ioctl(body().fd(), SIOCGSTAMP, &tv) < 0)
+    if (::ioctl(fd(), SIOCGSTAMP, &tv) < 0)
         throwErrno();
     return tv;
 }
@@ -73,7 +73,7 @@ prefix_ bool senf::AddressableBSDSocketProtocol::reuseaddr()
 {
     int value;
     socklen_t len (sizeof(value));
-    if (::getsockopt(body().fd(),SOL_SOCKET,SO_REUSEADDR,&value,&len) < 0)
+    if (::getsockopt(fd(),SOL_SOCKET,SO_REUSEADDR,&value,&len) < 0)
         throwErrno();
     return value;
 }
@@ -82,7 +82,7 @@ prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
     const
 {
     int ivalue (value);
-    if (::setsockopt(body().fd(),SOL_SOCKET,SO_REUSEADDR,&ivalue,sizeof(ivalue)) < 0)
+    if (::setsockopt(fd(),SOL_SOCKET,SO_REUSEADDR,&ivalue,sizeof(ivalue)) < 0)
         throwErrno();
 }
 

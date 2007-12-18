@@ -37,7 +37,7 @@ prefix_ unsigned senf::RawInetProtocol::available()
     const
 {
     int n;
-    if (::ioctl(body().fd(),SIOCINQ,&n) < 0)
+    if (::ioctl(fd(),SIOCINQ,&n) < 0)
         throwErrno();
     return n;
 }
@@ -47,4 +47,18 @@ prefix_ bool senf::RawInetProtocol::eof()
 {
     return false;
 }
+
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "UDPProtocol.mpp"
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

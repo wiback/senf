@@ -44,7 +44,7 @@ prefix_ bool senf::TCPProtocol::nodelay()
 {
     int value;
     socklen_t len (sizeof(value));
-    if (::getsockopt(body().fd(),SOL_TCP,TCP_NODELAY,&value,&len) < 0)
+    if (::getsockopt(fd(),SOL_TCP,TCP_NODELAY,&value,&len) < 0)
         throwErrno();
     return value;
 }
@@ -53,7 +53,7 @@ prefix_ void senf::TCPProtocol::nodelay(bool value)
     const
 {
     int ivalue (value);
-    if (::setsockopt(body().fd(),SOL_TCP,TCP_NODELAY,&ivalue,sizeof(ivalue)) < 0)
+    if (::setsockopt(fd(),SOL_TCP,TCP_NODELAY,&ivalue,sizeof(ivalue)) < 0)
         throwErrno();
 }
 
@@ -61,7 +61,7 @@ prefix_ unsigned senf::TCPProtocol::siocinq()
     const
 {
     int n;
-    if (::ioctl(body().fd(),SIOCINQ,&n) < 0)
+    if (::ioctl(fd(),SIOCINQ,&n) < 0)
         throwErrno();
     return n;
 }
@@ -70,7 +70,7 @@ prefix_ unsigned senf::TCPProtocol::siocoutq()
     const
 {
     int n;
-    if (::ioctl(body().fd(),SIOCOUTQ,&n) < 0)
+    if (::ioctl(fd(),SIOCOUTQ,&n) < 0)
         throwErrno();
     return n;
 }
@@ -84,7 +84,7 @@ prefix_ unsigned senf::TCPProtocol::available()
 prefix_ bool senf::TCPProtocol::eof()
     const
 {
-    return body().readable() && available()==0;
+    return fh().readable() && available()==0;
 }
 
 

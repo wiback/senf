@@ -51,7 +51,7 @@ prefix_ void senf::PacketProtocol::init_client(SocketType type, int protocol)
     int sock = ::socket(PF_PACKET, socktype, htons(protocol));
     if (sock < 0)
         throwErrno();
-    body().fd(sock);
+    fd(sock);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::PacketProtocol::clone()
@@ -63,9 +63,9 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::PacketProtocol::clone()
 prefix_ unsigned senf::PacketProtocol::available()
     const
 {
-    if (! body().readable())
+    if (! fh().readable())
         return 0;
-    ssize_t l = ::recv(body().fd(),0,0,MSG_PEEK | MSG_TRUNC);
+    ssize_t l = ::recv(fd(),0,0,MSG_PEEK | MSG_TRUNC);
     if (l < 0)
         throwErrno();
     return l;
@@ -100,14 +100,14 @@ prefix_ void senf::PacketProtocol::mcAdd(std::string const & interface,
                                          MACAddress const & address)
     const
 {
-    do_mc(body().fd(),interface,address,true);
+    do_mc(fd(),interface,address,true);
 }
 
 prefix_ void senf::PacketProtocol::mcDrop(std::string const & interface,
                                           MACAddress const & address)
     const
 {
-    do_mc(body().fd(),interface,address,false);
+    do_mc(fd(),interface,address,false);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

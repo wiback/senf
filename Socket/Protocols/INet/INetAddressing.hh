@@ -83,7 +83,7 @@ namespace senf {
         INet4Address address() const;   ///< Return address
         unsigned port() const;          ///< Return port number
 
-        bool boolean_test() const;      ///< \c true, if address is empty (i.e. 0.0.0.0:0)
+        bool boolean_test() const;      ///< \c true, if address is not empty (i.e. 0.0.0.0:0)
 
         void clear();                   ///< Clear address/port to 0.0.0.0:0
 

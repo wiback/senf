@@ -126,8 +126,8 @@ namespace senf {
 
                                              \param map string to string mapping to be filled with
                                                  state information
-                                             \param lod level of detail requested. The interpretation
-                                                 of this value is protocol specific
+                                             \param lod level of detail requested. The
+                                                 interpretation of this value is protocol specific
 
                                              \implementation This member will be re-implemented in
                                                  every derived class. This is very important since
@@ -139,9 +139,9 @@ namespace senf {
                                         /**< Formats the complete state map value and returns it as
                                              a single multi-line string.
 
-                                             param lod  level of detail requested. The interpretation
-                                                of this value is protocol specific
-
+                                             \param lod level of detail requested. The
+                                                interpretation of this value is protocol specific
+                                             
                                              \implementation This member will be re-implemented in
                                                  every derived class. See the state()
                                                  documentation. */
@@ -169,8 +169,7 @@ namespace senf {
                                              \param isChecked has to be \c true
 
                                              \todo Answer, why the heck I need the \c isChecked
-                                                 parameter ??
-                                        */
+                                                 parameter ?? */
 
         SocketBody & body();            ///< Access socket body
                                         /**< This member replaces the corresponding FileHandle

@@ -64,11 +64,11 @@ namespace senf {
         \par Address Type:
             UNAddress
 
-        UNDatagramSocketProtocol provides an datagram protocol socket based on the unix domain  addressing.
+        UNDatagramSocketProtocol provides an datagram protocol socket based on the unix domain
+        addressing.
 
-        This class is utilized as the protocol class of the ProtocolClientSocketHandle
-        via the Socket Handle typedefs above.
-
+        This class is utilized as the protocol class of the ProtocolClientSocketHandle via the
+        Socket Handle typedefs above.
     */
     class UNDatagramSocketProtocol
         : public ConcreteSocketProtocol<UNDatagramSocket_Policy>,
@@ -105,6 +105,8 @@ namespace senf {
     };
 
     typedef ProtocolClientSocketHandle<UNDatagramSocketProtocol> UNDatagramClientSocketHandle;
+
+    ///@}
 
 }
 ///////////////////////////////hh.e////////////////////////////////////////

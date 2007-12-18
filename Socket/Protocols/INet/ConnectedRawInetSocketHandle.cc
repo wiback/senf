@@ -47,7 +47,7 @@ senf::ConnectedRawV4SocketProtocol::init_client(int const & protocol)
     int sock = ::socket(PF_INET, SOCK_RAW, protocol);
     if (sock < 0)
         throwErrno();
-    body().fd(sock);
+    fd(sock);
 }
 
 prefix_ void
@@ -79,7 +79,7 @@ prefix_ void senf::ConnectedRawV6SocketProtocol::init_client(int const & protoco
     int sock = ::socket(PF_INET6,SOCK_RAW,protocol);
     if (sock < 0)
         throwErrno();
-    body().fd(sock);
+    fd(sock);
 }
 
 prefix_ void
@@ -98,3 +98,15 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::ConnectedRawV6SocketProtocol::
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "ConnectedRawInetSocketHandle.mpp"
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

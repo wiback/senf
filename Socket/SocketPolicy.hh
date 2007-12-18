@@ -505,10 +505,15 @@ namespace senf {
     {
         /** \brief Check dynamic policy compatibility
 
-            This method will check the socket policy \a other against this policy. It will check,
-            whether \a other is a base policy (or the same) of this policy. This check is done
-            against the \e dynamic type of \a other using RTTI. It will throw \c std::bad_cast, if
-            the policy is not compatible.
+            This check will validate, that a socket with \a other as it's policy is convertible to a
+            socket with the current SocketPolicy as it's policy. This is true, if for each policy
+            axis, the policy class of that axis as defined in the \a other policy is convertible to
+            the policy class of that same axis in the current SocketPolicy instance (as is defined
+            by the template arguments). This again is true, if the \a other policy class is derived
+            from (or is the same as) the policy class taken from the current SocketPolicy instance.
+
+            In other words, this call checks, that the current SocketPolicy (as defined via the
+            template arguments) is more generic than the \a other socket policy.
 
             \param[in] other SocketPolicy to check
             \throws std::bad_cast if \a other is not a compatible policy

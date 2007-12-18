@@ -36,11 +36,12 @@
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/Protocols/GenericAddressingPolicy.hh"
 #include "../../../Utils/safe_bool.hh"
-#include "UNAddress.hh"
 
 //#include "UNAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
+
 namespace senf {
+
     /** \brief Unix domain socket address
 
         UNSocketAddress wraps the standard sockaddr_un datatype. It provides simple accessor methods
@@ -49,26 +50,37 @@ namespace senf {
         \implementation This implementation is based on sockaddr_un.
 
         \ingroup addr_group
+
+        \fixme Why both std::string constructor and from_string member ?
      */
     class UNSocketAddress
         : public comparable_safe_bool<UNSocketAddress>
     {
     public:
-
-        //UNSocketAddress(); 
+        UNSocketAddress(); 
         explicit UNSocketAddress(std::string p);
                                         ///< Construct an address constant from given path
-        static UNSocketAddress from_string(std::string const s); ///< Create UNSocketAddress from string
-        std::string path() const ;  ///< Return path as string
-        struct sockaddr_un sockaddr(); 
+        static UNSocketAddress from_string(std::string const s); 
+                                        ///< Create UNSocketAddress from string
+
+        bool operator==(UNSocketAddress const & other) const;
+                                        ///< Compare UNSocketAddress for equality
+
+        std::string path() const ;      ///< Return path as string
+
+        bool boolean_test() const;      ///< \c true, if address is not empty
+        
+        void clear();                   ///< Clear address
+
         struct sockaddr * sockaddr_p() ;
         struct sockaddr const * sockaddr_p() const;
         unsigned sockaddr_len() const;
+
     private:
-        struct sockaddr_un sockAddr;
+        struct sockaddr_un addr_;
     };
 
-    /** \brief Write path  os
+    /** \brief Write path to os
 
         \related UNSocketAddress
      */
@@ -100,7 +112,10 @@ namespace senf {
         using GenericAddressingPolicy<UNSocketAddress>::connect;
         using GenericAddressingPolicy<UNSocketAddress>::bind;
     };
+
+    ///@}
 }
+
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "UNAddressing.cci"
 //#include "UNAddressing.ct"

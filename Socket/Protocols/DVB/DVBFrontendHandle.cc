@@ -45,10 +45,10 @@ prefix_ void senf::DVBFrontendProtocol::init_client(uint8_t adapter, boost::uint
 {
     std::string devFrontend = str( boost::format(
             "/dev/dvb/adapter%d/frontend%d") % adapter % device);
-    int fd = open(devFrontend.c_str(), O_RDONLY | O_NONBLOCK);
-    if (fd < 0)
+    int f = open(devFrontend.c_str(), O_RDONLY | O_NONBLOCK);
+    if (f < 0)
         throwErrno();
-    body().fd(fd);
+    fd(f);
 }
 
 prefix_ unsigned senf::DVBFrontendProtocol::available()
@@ -73,7 +73,7 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBFrontendProtocol::clone()
 prefix_ void senf::DVBFrontendProtocol::signalStrength(int16_t *strength)
     const
 {
-    if (::ioctl(body().fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)
+    if (::ioctl(fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)
         throwErrno();
 }
 

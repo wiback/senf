@@ -30,54 +30,69 @@
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+prefix_ senf::UNSocketAddress::UNSocketAddress()
+{}
+
 prefix_ senf::UNSocketAddress::UNSocketAddress(std::string p)
 {
-	sockAddr.sun_family = AF_UNIX;
-	strcpy(sockAddr.sun_path, p.c_str());
+    clear();
+    ::strncpy(addr_.sun_path, p.c_str(), sizeof(addr_.sun_path));
+    addr_.sun_path[sizeof(addr_.sun_path)-1] = 0;
 }
 
-prefix_ senf::UNSocketAddress fromString(std::string s) {
+prefix_ senf::UNSocketAddress fromString(std::string s) 
+{
     return senf::UNSocketAddress::UNSocketAddress(s);
 }
 
+prefix_ bool senf::UNSocketAddress::operator==(UNSocketAddress const & other)
+    const
+{
+    return path() == other.path();
+}
 
 prefix_ std::string senf::UNSocketAddress::path()
         const
 {
-    return std::string(sockAddr.sun_path);
+    return std::string(addr_.sun_path);
 }
 
-prefix_ sockaddr_un senf::UNSocketAddress::sockaddr()
+prefix_ bool senf::UNSocketAddress::boolean_test()
+    const
 {
-    struct sockaddr_un out; 
-    out.sun_family = sockAddr.sun_family;
-    strncpy(out.sun_path, sockAddr.sun_path, sizeof( out.sun_path));
-    return out; 
+    return addr_.sun_path[0] != 0;
+}
+
+prefix_ void senf::UNSocketAddress::clear()
+{
+    ::memset(&addr_, 0, sizeof(addr_));
+    addr_.sun_family = AF_UNIX;
 }
 
 prefix_ sockaddr * senf::UNSocketAddress::sockaddr_p()
 {
-    return reinterpret_cast <struct sockaddr  *> (&sockAddr); 
+    return reinterpret_cast <struct sockaddr  *> (&addr_); 
 }
-
 
 prefix_ sockaddr const  * senf::UNSocketAddress::sockaddr_p()
     const
 {
-    return reinterpret_cast <struct sockaddr const  *> (&sockAddr); 
+    return reinterpret_cast <struct sockaddr const  *> (&addr_); 
 }
 
 prefix_ unsigned senf::UNSocketAddress::sockaddr_len()
 	const
 {
-    return sizeof(sockAddr);
+    return sizeof(addr_);
 }
 
-prefix_ std::ostream & operator<<(std::ostream & os, senf::UNSocketAddress::UNSocketAddress const & addr){
+prefix_ std::ostream & operator<<(std::ostream & os,
+                                  senf::UNSocketAddress::UNSocketAddress const & addr)
+{
     os << addr.path();
     return os;
 }
-
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

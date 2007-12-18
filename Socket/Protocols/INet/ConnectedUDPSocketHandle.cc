@@ -47,7 +47,7 @@ prefix_ void senf::ConnectedUDPv4SocketProtocol::init_client()
     int sock = ::socket(PF_INET,SOCK_DGRAM,0);
     if (sock < 0)
         throwErrno();
-    body().fd(sock);
+    fd(sock);
 }
 
 prefix_ void
@@ -73,7 +73,7 @@ prefix_ void senf::ConnectedUDPv6SocketProtocol::init_client()
     int sock = ::socket(PF_INET6,SOCK_DGRAM,0);
     if (sock < 0)
         throwErrno();
-    body().fd(sock);
+    fd(sock);
 }
 
 prefix_ void

@@ -62,16 +62,16 @@ namespace senf {
     /** \brief IPv4 TCP Socket Protocol
 
         \par Socket Handle typedefs:
-        \ref TCPv4ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv4ServerSocketHandle
-        (ProtocolServerSocketHandle)
-
+            \ref TCPv4ClientSocketHandle (ProtocolClientSocketHandle), \ref TCPv4ServerSocketHandle
+            (ProtocolServerSocketHandle)
+        
         \par Policy Interface:
-        ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
-        ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
-        ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+            ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
+            ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
+            ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
 
         \par Address Type:
-        INet4Address
+            INet4Address
 
         TCPv4SocketProtocol provides an internet protocol stream socket based on the TCP protocol
         and IPv4 addressing.

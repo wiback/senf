@@ -182,6 +182,8 @@ namespace senf {
                                        \c new. To configure the FileHandle behavior, A derived class
                                        may provide any class derived from FileBody here. */
 
+        explicit FileHandle(FileBody::ptr body);
+
         FileBody & body();          ///< Access body
         FileBody const & body() const; ///< Access body in const context
         static FileBody & body(FileHandle & handle); ///< Access body of another FileHandle instance
@@ -192,6 +194,8 @@ namespace senf {
 
     private:
         FileBody::ptr body_;
+
+        friend class FileBody;
     };
 
     /** \brief Adapt FileHandle to senf::Scheduler

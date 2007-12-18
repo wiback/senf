@@ -48,8 +48,8 @@ prefix_ void senf::TapProtocol::init_client()
 prefix_ void senf::TapProtocol::init_client(std::string const & interface_name, bool const NO_PI) 
     const
 {
-    int fd;
-    if ( (fd = ::open("/dev/net/tun", O_RDWR)) < 0 )
+    int f;
+    if ( (f = ::open("/dev/net/tun", O_RDWR)) < 0 )
         throwErrno();
     struct ifreq ifr;
     ::memset( &ifr, 0, sizeof(ifr));
@@ -57,9 +57,9 @@ prefix_ void senf::TapProtocol::init_client(std::string const & interface_name, 
     if (NO_PI)
         ifr.ifr_flags |= IFF_NO_PI;
     interface_name.copy( ifr.ifr_name, IFNAMSIZ);
-    if (::ioctl(fd, TUNSETIFF, (void *) &ifr) < 0 )
+    if (::ioctl(f, TUNSETIFF, (void *) &ifr) < 0 )
         throwErrno();
-    body().fd(fd);
+    fd(f);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::TapProtocol::clone()
@@ -71,9 +71,9 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::TapProtocol::clone()
 prefix_ unsigned senf::TapProtocol::available()
   const
 {
-  if (! body().readable())
+  if (! fh().readable())
       return 0;
-  ssize_t l = ::recv(body().fd(),0,0,MSG_PEEK | MSG_TRUNC);
+  ssize_t l = ::recv(fd(),0,0,MSG_PEEK | MSG_TRUNC);
   if (l < 0)
       //throwErrno();
       return 1588;

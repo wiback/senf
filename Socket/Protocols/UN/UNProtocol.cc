@@ -38,7 +38,7 @@ prefix_ unsigned senf::UNProtocol::available()
     const
 {
     int n;
-    if (::ioctl(body().fd(),SIOCINQ,&n) < 0)
+    if (::ioctl(fd(),SIOCINQ,&n) < 0)
         throwErrno();
     return n;
 }
@@ -52,14 +52,14 @@ prefix_ bool senf::UNProtocol::eof()
 prefix_ void senf::UNProtocol::connect(UNSocketAddress const & address) 
     const 
 {
-    if(::connect(body().fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
+    if(::connect(fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
         throwErrno();
 }
 
 prefix_ void senf::UNProtocol::bind(UNSocketAddress const & address) 
     const 
 {
-    if(::bind(body().fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
+    if(::bind(fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
         throwErrno();
     
 }
@@ -85,27 +85,35 @@ prefix_ void senf::UNProtocol::terminate()
 prefix_ void senf::UNProtocol::check_and_unlink()
     const
 {
-//  struct sockaddr_un test;
-//  socklen_t len;
-//  memset( (char*)&test, 0xff, sizeof( test));
-//  int fd = inputSocket.fd() ;
-////    printf( "fd: %d\n", fd);
-//
-//  int r = getsockname( fd, (struct sockaddr *)&test, &len);
-//  if( r < 0){
-//    perror( "bla:");
-//  }
-//  else{
-//    printf( "name: %d %d %s\n", r, len , test.sun_path);
-//    unsigned char *p = (unsigned char*) &test;for( r=0; r< len; r++) printf( "%2.2x ", (int)(p[r])); printf ("\n");
-//  }
-    struct sockaddr_un test;
-    socklen_t len = sizeof( test);
-    int r = ::getsockname( body().fd(), (struct sockaddr *)&test, &len);
-    if( r == 0 && ::strlen(test.sun_path) > 0){
-      ::unlink( test.sun_path);
+    typedef ClientSocketHandle<MakeSocketPolicy<UNAddressingPolicy>::policy> UNSocketHandle;
+    try {
+        UNSocketAddress una (static_socket_cast<UNSocketHandle>(fh()).local());
+        ::unlink(una.path().c_str());
+    }
+    catch (SystemException & e) {
     }
 }
+    
+// //  struct sockaddr_un test;
+// //  socklen_t len;
+// //  memset( (char*)&test, 0xff, sizeof( test));
+// //  int fd = inputSocket.fd() ;
+// ////    printf( "fd: %d\n", fd);
+// //
+// //  int r = getsockname( fd, (struct sockaddr *)&test, &len);
+// //  if( r < 0){
+// //    perror( "bla:");
+// //  }
+// //  else{
+// //    printf( "name: %d %d %s\n", r, len , test.sun_path);
+// //    unsigned char *p = (unsigned char*) &test;for( r=0; r< len; r++) printf( "%2.2x ", (int)(p[r])); printf ("\n");
+// //  }
+//     struct sockaddr_un test;
+//     socklen_t len = sizeof( test);
+//     int r = ::getsockname(fd(), (struct sockaddr *)&test, &len);
+//     if( r == 0 && ::strlen(test.sun_path) > 0){
+//       ::unlink( test.sun_path);
+//     }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

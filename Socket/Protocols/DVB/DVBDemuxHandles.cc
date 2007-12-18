@@ -45,10 +45,10 @@ prefix_ void senf::DVBDemuxSectionProtocol::init_client(unsigned short adapter, 
 {
     std::string devDemux = str( boost::format(
             "/dev/dvb/adapter%d/demux%d") % adapter % device);
-    int fd = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
-    if (fd < 0)
+    int f = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
+    if (f < 0)
         throwErrno();
-    body().fd(fd);
+    fd(f);
 }
 
 prefix_ unsigned senf::DVBDemuxSectionProtocol::available()
@@ -66,7 +66,7 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBDemuxSectionProtocol::clone
 prefix_ void senf::DVBDemuxSectionProtocol::setSectionFilter(struct dmx_sct_filter_params *filter)
     const
 {
-    if (::ioctl(body().fd(), DMX_SET_FILTER, filter) < 0)
+    if (::ioctl(fd(), DMX_SET_FILTER, filter) < 0)
         throwErrno();
 }
 
@@ -77,10 +77,10 @@ prefix_ void senf::DVBDemuxPESProtocol::init_client(unsigned short adapter, unsi
 {
     std::string devDemux = str( boost::format(
             "/dev/dvb/adapter%d/demux%d") % adapter % device);
-    int fd = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
-    if (fd < 0)
+    int f = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
+    if (f < 0)
         throwErrno();
-    body().fd(fd);
+    fd(f);
 }
 
 prefix_ unsigned senf::DVBDemuxPESProtocol::available()
@@ -98,7 +98,7 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBDemuxPESProtocol::clone()
 prefix_ void senf::DVBDemuxPESProtocol::setPESFilter(struct dmx_pes_filter_params *filter)
     const
 {
-    if (::ioctl(body().fd(), DMX_SET_PES_FILTER, filter) < 0)
+    if (::ioctl(fd(), DMX_SET_PES_FILTER, filter) < 0)
         throwErrno();
 }
 
@@ -109,10 +109,10 @@ prefix_ void senf::DVBDvrProtocol::init_client(unsigned short adapter, unsigned 
 {
     std::string devDvr = str( boost::format(
             "/dev/dvb/adapter%d/dvr%d") % adapter % device);
-    int fd = open(devDvr.c_str(), O_RDONLY | O_NONBLOCK);
-    if (fd < 0)
+    int f = open(devDvr.c_str(), O_RDONLY | O_NONBLOCK);
+    if (f < 0)
         throwErrno();
-    body().fd(fd);
+    fd(f);
 }
 
 prefix_ unsigned senf::DVBDvrProtocol::available()

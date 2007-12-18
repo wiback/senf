@@ -61,14 +61,12 @@ prefix_ bool senf::SocketBody::isServer()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::detail::ConvertibleString
+// senf::detail::StreamableString
 
-prefix_ senf::detail::ConvertibleString::ConvertibleString()
-{}
-
-prefix_ senf::detail::ConvertibleString::ConvertibleString(bool v)
-    : std::string(v ? "true" : "false")
-{}
+prefix_ senf::detail::StreamableString & senf::detail::StreamableString::operator<<(bool v)
+{
+    return (*this) << std::string(v ? "true" : "false");
+}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

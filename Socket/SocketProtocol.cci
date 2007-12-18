@@ -32,6 +32,28 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::SocketProtocol
+
+prefix_ senf::FileHandle senf::SocketProtocol::fh()
+    const
+{
+    return body().handle();
+}
+
+prefix_ int senf::SocketProtocol::fd()
+    const
+{
+    return body().fd();
+}
+
+prefix_ void senf::SocketProtocol::fd(int fd)
+    const
+{
+    BOOST_ASSERT(! body().valid());
+    body().fd(fd);
+}
+
 prefix_ senf::SocketProtocol::SocketProtocol()
     : body_(0)
 {}

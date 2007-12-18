@@ -40,7 +40,7 @@ prefix_ void senf::UNDatagramSocketProtocol::init_client() const
     int sock = ::socket(PF_UNIX,SOCK_DGRAM,0);
     if (sock < 0)
         throwErrno();
-    body().fd(sock);
+    fd(sock);
 }
 
 prefix_ void senf::UNDatagramSocketProtocol::init_client(UNSocketAddress const & address) const 

@@ -32,13 +32,16 @@
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::StreamableString
+
 template <class T>
-prefix_ senf::detail::ConvertibleString &
-senf::detail::ConvertibleString::operator+=(ConvertibleString const & other)
+prefix_ senf::detail::StreamableString &
+senf::detail::StreamableString::operator<<(T const & other)
 {
     if (!empty())
-        this->std::string::operator+=(", ");
-    this->std::string::operator+=(other);
+        (*this) += ", ";
+    (*this) += boost::lexical_cast<std::string>(other);
     return *this;
 }
 

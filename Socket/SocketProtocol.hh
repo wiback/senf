@@ -147,11 +147,6 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        SocketBody & body() const;      ///< Access the socket body
-                                        /**< \todo we don't need body(), we should better provide a
-                                             handle() member which will return a simple FIleHandle
-                                             object (we cannot return some other derived class since
-                                             we don't know the Protocol or Policy at this point) */
         virtual SocketPolicyBase const & policy() const = 0;
                                         ///< Access the policy instance
 
@@ -165,15 +160,25 @@ namespace senf {
                                              \attention This member must be implemented in every \e
                                                  leaf protocol class to return a new instance of the
                                                  appropriate type. */
+
         virtual unsigned available() const = 0;
                                         ///< Return number of bytes available for reading without
                                         ///< blocking
                                         /**< This member will check in a (very, sigh) protocol
-                                             dependent way, how many bytes are guaranteed to be
-                                             readable from the socket without blocking even if the
-                                             socket is blocking. If the socket does not support
-                                             reading (viz. NotReadablePolicy is set), this member
-                                             should always return \c 0.*/
+                                             dependent way, how many bytes may be read from a socket
+                                             in a single (non-blocking) read operation. If the
+                                             socket does not support reading (viz. NotReadablePolicy
+                                             is set), this member should always return \c 0.
+                                             
+                                             Depending on the protocol, it may not be possible to
+                                             return a good value. In this case, an upper bound may
+                                             be returned (e.g.: When reading from a socket which
+                                             returns ethernet frames, returning 1500 from
+                                             available() is ok). However, this should only be done
+                                             as a last resort. Also beware, that this number should
+                                             not be to large since the socket layer will always need
+                                             to allocate that number of bytes for the data to be
+                                             read. */
 
         virtual bool eof() const = 0;   ///< Check for end-of-file condition
                                         /**< This is another check which (like available()) is
@@ -186,12 +191,13 @@ namespace senf {
                                         /**< This override will automatically \c shutdown() the
                                              socket whenever it is closed.
                                              \throws senf::SystemException */
+
         virtual void terminate() const;       ///< Forcibly close socket
                                         /**< This override will automatically \c shutdown() the
                                            socket whenever it is called. Additionally it will
                                            disable SO_LINGER to ensure, that v_terminate will not
                                            block. Like the overriden method, this member will ignore
-                                           failures and will never throw. It therefore safe to be
+                                           failures and will never throw. It is therefore safe to be
                                            called from a destructor. */
 
         virtual void state(SocketStateMap & map, unsigned lod) const;
@@ -221,23 +227,43 @@ namespace senf {
                                              assigning non-string values to the map:
 
                                              \code
-                                               map["socket.protocol.ip.address"] = peer();
-                                               map["socket.protocol.tcp.backlog"] = backlog();
+                                               map["socket.protocol.ip.address"] << peer();
+                                               map["socket.protocol.tcp.backlog"] << backlog();
                                              \endcode
 
                                              This will work even if peer() returns an ip-address
                                              object or backlog() returns an integer. The values are
                                              automatically converted to their string representation.
 
-                                             The operator "+=" also has been reimplemented to
-                                             simplify adding multiple values to a single entry: It
-                                             will automatically add a ", " separator if the string
-                                             is non-empty. */
+                                             Additionally, if the slot the date is written to is not
+                                             empty, the <tt>\<\<</tt> operator will add add a comma
+                                             as separator. */
 
     protected:
+        FileHandle fh() const;          ///< Get a FileHandle for this instance
+                                        /**< This member will re turn a FileHandle instance for this
+                                             protocol instance. You may cast this FileHandle
+                                             instance to a ClientSocketHandle / ServerSocketHandle
+                                             as long as you know some of the socket policy using
+                                             static_socket_cast or dynamic_socket_cast */
+
+        int fd() const;                 ///< Get file descriptor
+                                        /**< Returns the file descriptor this protocol instance
+                                             references. This is the same as <tt>fh().fd()</tt> but
+                                             is implemented here since it is needed so often. */
+
+        void fd(int) const;             ///< Initialize file descriptor
+                                        /**< Assigns the file descriptor to the file handle, this
+                                             protocol instance references. Only valid, if the file
+                                             handle has not yet been assigned any descriptor (To
+                                             change the file descriptor association later, use \c
+                                             ::dup2()). */
 
     private:
         // backpointer to owning SocketBody instance
+        
+        SocketBody & body() const;
+
         SocketBody * body_;
         friend class SocketBody;
    };

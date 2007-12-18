@@ -36,6 +36,7 @@
 
 namespace senf {
 
+    class FileHandle;
 
     /** \brief FileHandle referenced body
 
@@ -89,6 +90,8 @@ namespace senf {
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
+
+        FileHandle handle();
 
         int fd() const;
         void fd(int fd);

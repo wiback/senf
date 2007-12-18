@@ -67,6 +67,11 @@ prefix_ void senf::FileBody::terminate()
     }
 }
 
+prefix_ senf::FileHandle senf::FileBody::handle()
+{
+    return FileHandle(ptr(this));
+}
+
 prefix_ int senf::FileBody::fd()
     const
 {
@@ -192,6 +197,10 @@ prefix_ senf::FileHandle::FileHandle()
 
 prefix_  senf::FileHandle::FileHandle(std::auto_ptr<FileBody> body)
     : body_(body.release())
+{}
+
+prefix_ senf::FileHandle::FileHandle(FileBody::ptr body)
+    : body_(body)
 {}
 
 prefix_ senf::FileBody & senf::FileHandle::body()
