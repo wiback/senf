@@ -428,6 +428,13 @@
         Together with splitting inlines and non-inlines into separate files, this allows to
         automatically include the inline definitions at the right places. See above.
 
+    Private data members are named with a trailing underscore character.
+
+    \par Rationale:
+        This helps distinguishing local variables from parameter names. The trailing underscore
+        does not interfere with other naming conventions and is allowed by the standard (underscore
+        at the beginning of the name are problematic since some classes of names beginning with an
+        underscore are reserved for the standard library implementation)
  */
 
 
