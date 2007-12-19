@@ -74,7 +74,8 @@ namespace senf {
         : public ConcreteSocketProtocol<ConnectedUNDatagramSocket_Policy>,
           public UNProtocol, 
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol
+          public AddressableBSDSocketProtocol,
+          public senf::pool_alloc_mixin<ConnectedUNDatagramSocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
