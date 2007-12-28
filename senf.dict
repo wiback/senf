@@ -104,7 +104,6 @@ FooParser
 ForwardingRoute
 fraunhofer
 FroblizerArea
-fuer
 GlobalScope
 hangup
 HangupException
@@ -142,8 +141,6 @@ ipv
 iterator
 join
 key
-Kommunikationssysteme
-Kompetenzzentrum
 li
 LinkScope
 ListB

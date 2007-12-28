@@ -1,9 +1,9 @@
 // $Id:TransportPacket.hh 560 2007-12-13 14:39:37Z tho $
 //
 // Copyright (C) 2007 
-// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
+// Fraunhofer Institute for Open Communication Systems (FOKUS) 
 // Kompetenzzentrum NETwork research (NET)
-//     David Wagner <david.wagner@fokus.fraunhofer.de>
+//     David Wagner <dw6@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

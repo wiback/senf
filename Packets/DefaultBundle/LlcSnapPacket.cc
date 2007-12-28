@@ -1,9 +1,9 @@
 // $Id$
 //
 // Copyright (C) 2007
-// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
-//     Stefan Bund <stefan.bund@fokus.fraunhofer.de>
+// Fraunhofer Institute for Open Communication Systems (FOKUS) 
+// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

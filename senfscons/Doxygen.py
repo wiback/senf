@@ -18,8 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 # The Modifications are Copyright (C) 2006,2007
-# Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-# Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+# Fraunhofer Institute for Open Communication Systems (FOKUS) 
+# Competence Center NETwork research (NET), St. Augustin, GERMANY 
 #     Stefan Bund <g0dil@berlios.de>
 
 ## \file
