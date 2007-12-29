@@ -1,4 +1,4 @@
-// $Id: Log.test.cc 369 2007-08-01 07:51:36Z tho $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 

@@ -1,4 +1,4 @@
-// $Id: ConnectedUDPSocketHandle.hh 357 2007-07-26 22:48:39Z g0dil $
+// $Id$
 //
 // Copyright (C) 2006
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 

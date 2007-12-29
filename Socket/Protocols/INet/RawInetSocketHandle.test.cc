@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007 
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 
 // Kompetenzzentrum NETwork research (NET)
@@ -17,6 +19,7 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
 /** \file
     \brief RawInetSocketHandle.test unit tests */
 

@@ -1,4 +1,4 @@
-// $Id: Logger.hh 407 2007-08-23 22:40:59Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 
