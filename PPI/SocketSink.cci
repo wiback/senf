@@ -24,16 +24,32 @@
     \brief SocketSink inline non-template implementation */
 
 // Custom includes
+#include "SocketSink.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::PacketSink
+// senf::ppi::ConnectedDgramWriter
 
-prefix_ void senf::ppi::PacketSink::operator()(Handle handle, Packet packet)
+prefix_ void senf::ppi::ConnectedDgramWriter::operator()(Handle handle, Packet packet)
 {
     handle.write(packet.data());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::PassiveSocketSink<Writer>
+
+template <class Writer>
+prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::replaceHandle(Handle handle)
+{
+    handle_ = handle;
+}
+
+template <class Writer>
+prefix_ void senf::ppi::module::ActiveSocketSink<Writer>::replaceHandle(Handle handle)
+{
+    handle_ = handle;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -31,19 +31,19 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::ActiveSocketSink<Sink>
+// senf::ppi::module::ActiveSocketSink<Writer>
 
-template <class Sink>
-prefix_ Sink & senf::ppi::module::ActiveSocketSink<Sink>::sink()
+template <class Writer>
+prefix_ Writer & senf::ppi::module::ActiveSocketSink<Writer>::writer()
 {
     return writer_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::PassiveSocketSink<Sink>
+// senf::ppi::module::PassiveSocketSink<Writer>
 
-template <class Sink>
-prefix_ Sink & senf::ppi::module::PassiveSocketSink<Sink>::sink()
+template <class Writer>
+prefix_ Writer & senf::ppi::module::PassiveSocketSink<Writer>::writer()
 {
     return writer_;
 }

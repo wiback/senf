@@ -31,10 +31,10 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::PacketSource<Packet>
+// senf::ppi::DgramReader<Packet>
 
 template <class Packet>
-prefix_ Packet senf::ppi::PacketSource<Packet>::operator()(Handle handle)
+prefix_ Packet senf::ppi::DgramReader<Packet>::operator()(Handle handle)
 {
     Packet packet (Packet::create(Packet::noinit));
     handle.read(packet.data(),0u);
@@ -42,10 +42,10 @@ prefix_ Packet senf::ppi::PacketSource<Packet>::operator()(Handle handle)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::ActiveSocketSource<Source>
+// senf::ppi::module::ActiveSocketSource<Reader>
 
-template <class Source>
-prefix_ senf::ppi::module::ActiveSocketSource<Source>::
+template <class Reader>
+prefix_ senf::ppi::module::ActiveSocketSource<Reader>::
 ActiveSocketSource(Handle handle)
     : handle_(handle), event_(handle_, IOEvent::Read), reader_()
 {
@@ -53,10 +53,10 @@ ActiveSocketSource(Handle handle)
     route(event_, output);
 }
 
-template <class Source>
-prefix_ senf::ppi::module::ActiveSocketSource<Source>::ActiveSocketSource(Handle handle,
-                                                                          Source source)
-    : handle_(handle), event_(handle_, IOEvent::Read), reader_(source)
+template <class Reader>
+prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Handle handle,
+                                                                          Reader reader)
+    : handle_(handle), event_(handle_, IOEvent::Read), reader_(reader)
 {
     registerEvent( event_, &ActiveSocketSource::read );
     route(event_, output);
@@ -65,8 +65,8 @@ prefix_ senf::ppi::module::ActiveSocketSource<Source>::ActiveSocketSource(Handle
 ////////////////////////////////////////
 // private members
 
-template <class Source>
-prefix_ void senf::ppi::module::ActiveSocketSource<Source>::read()
+template <class Reader>
+prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::read()
 {
     output(reader_(handle_));
 }

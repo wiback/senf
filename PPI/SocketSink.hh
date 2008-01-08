@@ -42,11 +42,11 @@
 namespace senf {
 namespace ppi {
 
-    /** \brief Write helper for module::ActiveSocketSink / module::PassiveSocketSink
+    /** \brief Writer for module::ActiveSocketSink / module::PassiveSocketSink
         
-        This write helper will write the packets completely as datagrams to the given socket.
+        This writer will write the packets completely as datagrams to the given socket which must be connected. 
      */
-    class PacketSink
+    class ConnectedDgramWriter
     {
     public:
         typedef senf::ClientSocketHandle<
@@ -69,119 +69,125 @@ namespace senf {
 namespace ppi {
 namespace module {
 
-    /** \brief Output module writing data to arbitrary FileHandle
+    /** \brief Output module writing data to a FileHandle using the provided Writer.
+        If using the default ConnectedDgramWriter the filehandle must be writable, connected and 
+        able to handle complete datagrams.  
         
-        This output module will write data to a FileHandle object using a given \a Sink. This
+        This output module will write data to a FileHandle object using a given \a Writer. This
         output module is active. This requires the file handle to be able to signal its readiness to
         accept more data via the Scheduler.
 
-        The default \a Sink is senf::ppi::PacketSink which will write out the complete packet to
+        The default \a Writer is senf::ppi::ConnectedDgramWriter which will write out the complete packet to
         the file handle.
 
-        A \a Sink must fulfill the following interface:
+        A \a Writer must fulfill the following interface:
         \code
-          class SomeSink
+          class SomeWriter
           {
           public:
               typedef unspecified Handle;                          // type of handle requested
 
-              SomeSink();                                          // EITHER default constructible OR
-              SomeSink(SomeSink const & other);                    // copy constructible
+              SomeWriter();                                          // EITHER default constructible OR
+              SomeWriter(SomeWriter const & other);                    // copy constructible
 
               void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
-        Whenever a packet is received for sending, the \a Sink's \c operator() is called.
+        Whenever a packet is received for sending, the \a Writer's \c operator() is called.
 
         \ingroup io_modules
      */
-    template <class Sink=PacketSink>
+    template <class Writer=ConnectedDgramWriter>
     class ActiveSocketSink : public Module
     {
         SENF_PPI_MODULE(ActiveSocketSink);
 
     public:
-        typedef typename Sink::Handle Handle; ///< Handle type requested by writer
+        typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
         connector::ActiveInput input; ///< Input connector from which data is received
         
         ActiveSocketSink(Handle handle); ///< Create new writer for the given handle
-                                        /**< Data will be written to \a handle using \a Sink.
-                                             \pre Requires \a Sink to be default constructible
+                                        /**< Data will be written to \a handle using \a Writer.
+                                             \pre Requires \a Writer to be default constructible
                                              \param[in] handle Handle to write data to */
-        ActiveSocketSink(Handle handle, Sink const & sink); 
+        ActiveSocketSink(Handle handle, Writer const & writer); 
                                         ///< Create new writer for the given handle
-                                        /**< Data will be written to \a handle using \a Sink.
-                                             \pre Requires \a Sink to be copy constructible
+                                        /**< Data will be written to \a handle using \a Writer.
+                                             \pre Requires \a Writer to be copy constructible
                                              \param[in] handle Handle to write data to 
-                                             \param[in] sink Sink helper writing packet date to the
+                                             \param[in] writer Writer helper writing packet date to the
                                                  socket */
 
-        Sink & sink();                  ///< Access the sink helper
-
+        Writer & writer();                  ///< Access the Writer
+        void replaceHandle(Handle newHandle);
+                                        ///< Replace the handle to which the packets are written
     private:
         void write();
 
         Handle handle_;
         IOEvent event_;
-        Sink writer_;
+        Writer writer_;
     };
 
-    /** \brief Output module writing data to arbitrary FileHandle
+    /** \brief Output module writing data to a FileHandle using the provided \a Writer.
+        If using the default ConnectedDgramWriter the filehandle must be writable, connected and 
+        able to handle complete datagrams.  
         
-        This output module will write data to a FileHandle object using a given \a Sink. This
+        This output module will write data to a FileHandle object using a given \a Writer. This
         output module is passive. This implies, that the output handle may not block. This also
         implies, that data will probably get lost if written to fast for the underlying transport
         mechanism. Either this is desired (like for a UDP socket) or some additional bandwidth
         shaping needs to be used.
 
-        The default \a Sink is senf::ppi::PacketSink which will write out the complete packet to
+        The default \a Writer is senf::ppi::ConnectedDgramWriter which will write out the complete packet to
         the file handle.
 
-        The \a Sink must fulfill the following interface:
+        The \a Writer must fulfill the following interface:
         \code
-          class SomeSink
+          class SomeWriter
           {
           public:
               typedef unspecified Handle;                          // type of handle requested
 
-              SomeSink();                                          // EITHER default constructible
-              SomeSink(SomeSink const & other);                    // OR copy constructible
+              SomeWriter();                                          // EITHER default constructible
+              SomeWriter(SomeWriter const & other);                    // OR copy constructible
 
               void operator()(Handle handle, Packet packet);       // insertion function
           };
         \endcode
-        Whenever a packet is received for sending, the \a Sink's \c operator() is called.
+        Whenever a packet is received for sending, the \a Writer's \c operator() is called.
 
         \ingroup io_modules
      */
-    template <class Sink=PacketSink>
+    template <class Writer=ConnectedDgramWriter>
     class PassiveSocketSink : public Module
     {
         SENF_PPI_MODULE(PassiveSocketSink);
 
     public:
-        typedef typename Sink::Handle Handle; ///< Handle type requested by writer
+        typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
         connector::PassiveInput input; ///< Input connector from which data is received
         
         PassiveSocketSink(Handle handle); ///< Create new writer for the given handle
-                                        /**< Data will be written to \a handle using \a Sink.
-                                             \pre Requires \a Sink to be default constructible
+                                        /**< Data will be written to \a handle using \a Writer.
+                                             \pre Requires \a Writer to be default constructible
                                              \param[in] handle Handle to write data to */
-        PassiveSocketSink(Handle handle, Sink const & sink);
+        PassiveSocketSink(Handle handle, Writer const & writer);
                                         ///< Create new writer for the given handle
-                                        /**< Data will be written to \a handle using \a Sink.
-                                             \pre Requires \a Sink to be copy constructible
+                                        /**< Data will be written to \a handle using \a Writer.
+                                             \pre Requires \a Writer to be copy constructible
                                              \param[in] handle Handle to write data to */
 
-        Sink & sink();                  ///< Access the sink helper
-
+        Writer & writer();                  ///< Access the Writer
+        void replaceHandle(Handle newHandle);
+                                        ///< Replace the handle to which the packets are written
     private:
         void write();
 
         Handle handle_;
-        Sink writer_;
+        Writer writer_;
     };
 
 }}}

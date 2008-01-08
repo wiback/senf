@@ -31,10 +31,10 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::ActiveSocketSource<Source>
+// senf::ppi::module::ActiveSocketSource<Reader>
 
-template <class Source>
-prefix_ Source & senf::ppi::module::ActiveSocketSource<Source>::source()
+template <class Reader>
+prefix_ Reader & senf::ppi::module::ActiveSocketSource<Reader>::reader()
 {
     return reader_;
 }
