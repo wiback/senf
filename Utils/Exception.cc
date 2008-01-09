@@ -27,8 +27,6 @@
 //#include "Exception.ih"
 
 // Custom includes
-#include <cstring>
-#include <sstream>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

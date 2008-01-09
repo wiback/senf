@@ -27,7 +27,7 @@ namespace senfscons {
     The Senf Build Environment is based on the <a href="http://www.scons.org">SCons</a> software
     construction tool. SCons is a <a href="http://www.python.org">python</a> based replacement for
     \c make. SENFScons consists of several SCons builders as well as some global configuration and
-    build utilities. SEBFScons tightly integrates the <a
+    build utilities. SENFScons tightly integrates the <a
     href="http://www.boost.org/libs/test/doc/index.html">Boost.Test</a> unit testing framework. It
     also incorporates a very flexible infrastructure to build software documentation using <a
     href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a>. This infrastructure uses quite a bit
