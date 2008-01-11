@@ -117,7 +117,7 @@
     int main(int, char **)
     {
         // Set up the routing targets
-        senf::log::ConsoleTarget console;
+        senf::log::ConsoleTarget & console (senf::log::ConsoleTarget::instance());
         senf::log::FileTarget logfile ("my.log");
 
         // Debug messages go to the console
