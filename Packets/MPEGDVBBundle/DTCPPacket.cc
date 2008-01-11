@@ -22,3 +22,25 @@
 
 
 #include "DTCPPacket.hh"
+#include <boost/io/ios_state.hpp>
+#include <iomanip>
+
+#define prefix_
+
+prefix_ void senf::DTCPPacketType::dump(packet p, std::ostream & os)
+{
+    boost::io::ios_all_saver ias(os);
+    os << "DTCPPacket" << std::endl
+       << "  version              : " << p->version_number()              << std::endl
+       << "  command              : " << p->command()                     << std::endl
+       << "  interval             : " << p->interval()                    << std::endl
+       << "  sequence_number      : " << p->sequence_number()             << std::endl
+       << "  receive_capable_feed : " << p->receive_capable_feed()        << std::endl
+       << "  ip_version           : " << p->ip_version()                  << std::endl
+       << "  tunnel_protocol      : " << p->tunnel_protocol()             << std::endl
+       ;
+       
+		//TODO: print included IPs
+}
+
+#undef prefix_
