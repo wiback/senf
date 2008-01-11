@@ -57,7 +57,7 @@
 
     \code
     senf::EthernetPacket eth      (senf::EthernetPacket::create());
-    senf::IPv4Packet     ip       (senf::IPv4Packet    ::createAfter(ethernet));
+    senf::IPv4Packet     ip       (senf::IPv4Packet    ::createAfter(eth));
     senf::UDPPacket      udp      (senf::UDPPacket     ::createAfter(ip));
     senf::DataPacket     payload  (senf::DataPacket    ::createAfter(udp, 
                                                                      std::string("Hello, world!")));
