@@ -82,7 +82,7 @@ namespace module {
         \code
         senf::ppi::module::ActiveSocketSource< senf::ppi::DgramReader<senf::EthernetPacket> > source;
         \endcode
-        declares a \a reader module reading senf::EthrtnetPacket's.
+        declares a \a reader module reading senf::EthernetPacket's
 
         A \a Reader must fulfill the following interface:
         \code
