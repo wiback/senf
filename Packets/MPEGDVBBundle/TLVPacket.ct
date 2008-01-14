@@ -31,8 +31,8 @@
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-template <class LengthParser>
-prefix_ void senf::TLVPacketType<LengthParser>::dump(packet p, std::ostream & os)
+template <class TypeParser, class LengthParser>
+prefix_ void senf::TLVPacketType<TypeParser, LengthParser>::dump(packet p, std::ostream & os)
 {
     os << "TLVPacket:"
        << std::dec
@@ -40,8 +40,8 @@ prefix_ void senf::TLVPacketType<LengthParser>::dump(packet p, std::ostream & os
        << "  length: " << unsigned(p->length()) << "\n";
 }
 
-template <class LengthParser>
-prefix_ void senf::TLVPacketType<LengthParser>::finalize(packet p)
+template <class TypeParser, class LengthParser>
+prefix_ void senf::TLVPacketType<TypeParser, LengthParser>::finalize(packet p)
 {
     PacketData::size_type size = p.next().data().size();
     if ( size > LengthParser::max_value )
@@ -49,15 +49,15 @@ prefix_ void senf::TLVPacketType<LengthParser>::finalize(packet p)
     p->length() = size;
 }
 
-template <class LengthParser>
-prefix_ senf::PacketParserBase::size_type senf::TLVPacketType<LengthParser>::initSize()
+template <class TypeParser, class LengthParser>
+prefix_ senf::PacketParserBase::size_type senf::TLVPacketType<TypeParser, LengthParser>::initSize()
 {
-    return 4 + senf::init_bytes<LengthParser>::value;
+    return senf::init_bytes<TypeParser>::value + senf::init_bytes<LengthParser>::value;
 }
 
-template <class LengthParser>
+template <class TypeParser, class LengthParser>
 prefix_ senf::PacketInterpreterBase::optional_range 
-senf::TLVPacketType<LengthParser>::nextPacketRange(packet p) 
+senf::TLVPacketType<TypeParser, LengthParser>::nextPacketRange(packet p) 
 {
     if (p.data().size() < 5)
         return no_range();

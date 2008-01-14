@@ -51,12 +51,12 @@ namespace senf {
     /** \brief xxx
         \todo document me
     */
-    class TLVPacketLengthParser 
-        : public detail::packet::IntParserOps<TLVPacketLengthParser, boost::uint32_t>,
+    class DynamicTLVLengthParser 
+        : public detail::packet::IntParserOps<DynamicTLVLengthParser, boost::uint32_t>,
           public PacketParserBase
     {
     public:
-        TLVPacketLengthParser(data_iterator i, state_type s) : PacketParserBase(i,s) {}
+        DynamicTLVLengthParser(data_iterator i, state_type s) : PacketParserBase(i,s) {}
 
         typedef boost::uint32_t value_type;
         static const size_type init_bytes = 1;
@@ -66,10 +66,8 @@ namespace senf {
         value_type value() const;
         void value(value_type const & v);
         
-        TLVPacketLengthParser const & operator= (value_type other);
-    
+        DynamicTLVLengthParser const & operator= (value_type other);
         size_type bytes() const;
-            
         void init() const;
 
     private:
@@ -93,12 +91,12 @@ namespace senf {
      
         \see TLVPacketType
      */
-    template <class LengthParser>
+    template <class TypeParser, class LengthParser>
     struct TLVPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
         
-        SENF_PARSER_FIELD( type,   UInt32Parser );
+        SENF_PARSER_FIELD( type,   TypeParser );
         SENF_PARSER_FIELD( length, LengthParser );
         
         SENF_PARSER_FINALIZE(TLVPacketParser);
@@ -110,14 +108,13 @@ namespace senf {
         
         \ingroup protocolbundle_mpegdvb
      */
-    template <class LengthParser>
+    template <class TypeParser, class LengthParser>
     struct TLVPacketType
         : public PacketTypeBase
     {
-#ifndef DOXYGEN
-        typedef ConcretePacket<TLVPacketType<LengthParser> > packet;
-        typedef TLVPacketParser<LengthParser> parser;
-#endif
+        typedef ConcretePacket<TLVPacketType<TypeParser, LengthParser> > packet;
+        typedef TLVPacketParser<TypeParser, LengthParser> parser;
+
         static optional_range nextPacketRange(packet p);
         static size_type initSize();
         
@@ -125,13 +122,8 @@ namespace senf {
         
         static void dump(packet p, std::ostream & os);
     };
-
-    typedef TLVPacketType<TLVPacketLengthParser>::packet TLVPacket;
     
-    typedef ConcretePacket<TLVPacketType<UInt8Parser> >  TLVFix8Packet;
-    typedef ConcretePacket<TLVPacketType<UInt16Parser> > TLVFix16Packet;
-    typedef ConcretePacket<TLVPacketType<UInt24Parser> > TLVFix24Packet;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser> > TLVFix32Packet;
+    typedef ConcretePacket<TLVPacketType<UInt32Parser, DynamicTLVLengthParser> > MIHInfoElement;
 }
 
 

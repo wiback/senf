@@ -33,7 +33,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::TLVPacketLengthParser::value_type senf::TLVPacketLengthParser::value() const 
+prefix_ senf::DynamicTLVLengthParser::value_type senf::DynamicTLVLengthParser::value() const 
 {
     switch (bytes() ) {
     case 1:
@@ -51,12 +51,12 @@ prefix_ senf::TLVPacketLengthParser::value_type senf::TLVPacketLengthParser::val
     };
 }
 
-prefix_ void senf::TLVPacketLengthParser::value(value_type const & v) 
+prefix_ void senf::DynamicTLVLengthParser::value(value_type const & v) 
 {
     if (v > 4294967295u)
         throw(UnsuportedTLVPacketException());
     
-    SafePacketParserWrapper<TLVPacketLengthParser> safeThis (*this);
+    SafePacketParserWrapper<DynamicTLVLengthParser> safeThis (*this);
     if (v < 128u) {
         if (bytes() != 1) {
             resize(1);
@@ -103,13 +103,13 @@ prefix_ void senf::TLVPacketLengthParser::value(value_type const & v)
     }
 }
 
-prefix_ senf::TLVPacketLengthParser const & senf::TLVPacketLengthParser::operator= (value_type other) 
+prefix_ senf::DynamicTLVLengthParser const & senf::DynamicTLVLengthParser::operator= (value_type other) 
 {
     value(other);
     return *this; 
 }
 
-prefix_ senf::TLVPacketLengthParser::size_type senf::TLVPacketLengthParser::bytes() const 
+prefix_ senf::DynamicTLVLengthParser::size_type senf::DynamicTLVLengthParser::bytes() const 
 {
     if ( extended_length_flag() )
         return 1 + fixed_length_field();
@@ -117,13 +117,13 @@ prefix_ senf::TLVPacketLengthParser::size_type senf::TLVPacketLengthParser::byte
         return 1;
 }
     
-prefix_ void senf::TLVPacketLengthParser::init() const 
+prefix_ void senf::DynamicTLVLengthParser::init() const 
 {
     defaultInit();
     extended_length_flag() = 0;
 }
 
-prefix_ void senf::TLVPacketLengthParser::resize(size_type size) 
+prefix_ void senf::DynamicTLVLengthParser::resize(size_type size) 
 {
     size_type current_size (bytes());
     safe_data_iterator si (data(), i());
