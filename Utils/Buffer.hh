@@ -53,7 +53,7 @@
         type.
 
         This macro is used when \a size is a dynamic expression and not a constant value. For constant
-        values, use \c boost::aray (or C++ builtin arrays). Depending on compiler support, this version
+        values, use \c boost::array (or C++ builtin arrays). Depending on compiler support, this version
         will try to avoid dynamic memory allocation. The type of the declared local variable \a sym is
         either pointer to \a type or array of \a type:
 
