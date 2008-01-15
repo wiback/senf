@@ -2,7 +2,7 @@
 
 if [ -z "$1" ]; then
     cat <<EOF
-Usage: $0 <name>.<ext> [<author>]
+Usage: $0 [-f] <name>.<ext> [<author>]
 
 Will add the file with that name to the current directory by copying
 the appropriate template and replacing the @NAME@ placeholders
@@ -23,11 +23,19 @@ If <author> is given, it is also set correctly replaced. If <author>
 is unset but the environment variable SENF_AUTHOR is set, it's value
 is used. Otherwise, the @AUTHOR@ placeholder will need to be replaced
 manually.
+
+$0 will refrain from overwriting existing files except when the '-f'
+option is specified.
 EOF
     exit 1
 fi
 
 base="`dirname "$0"`"; base="`cd "$base"; pwd`"
+
+if [ "$1" == "-f" ]; then
+    force=1
+    shift
+fi
 
 type="${1##*.}"
 name="`basename "$1" ".$type"`"
@@ -39,7 +47,7 @@ fi
 
 [ -z "$2" ] || SENF_AUTHOR="$2"
 
-if [ -r "$1" ] ; then
+if [ -z "$force" -a -r "$1" ] ; then
     echo "Target file '$1' exists."
     exit 1
 fi
