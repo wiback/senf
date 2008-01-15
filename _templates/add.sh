@@ -37,8 +37,11 @@ if [ "$1" == "-f" ]; then
     shift
 fi
 
-type="${1##*.}"
-name="`basename "$1" ".$type"`"
+name="`basename "$1"`"
+case "$name" in
+    *.*) type="${name#*.}"; name="${name%.$type}" ;;
+    *) type="" ;;
+esac
 
 if [ ! -r "$base/Example.$type" ] ; then
     echo "Don't know about file type '$type'"
