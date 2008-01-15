@@ -47,3 +47,6 @@ fi
 sed -e "s/@NAME@/$name/g" -e "s/@AUTHOR@/${SENF_AUTHOR:-@AUTHOR@}/g" \
     < "$base/Example.$type" \
     > "$1"
+
+svn add "$1"
+svn propset svn:keywords "Author Date Id Revision" "$1"
