@@ -53,6 +53,7 @@ namespace module {
         connector::PassiveOutput output;
 
         CloneSource(senf::Packet packet);
+        void replacePacket(senf::Packet packet);
 
     private:
         void request();
