@@ -120,8 +120,6 @@ namespace module {
                                                  socket */
 
         Writer & writer();                  ///< Access the Writer
-        void replaceHandle(Handle newHandle);
-                                        ///< Replace the handle to which the packets are written
     private:
         void write();
 
@@ -182,7 +180,11 @@ namespace module {
 
         Writer & writer();                  ///< Access the Writer
         void replaceHandle(Handle newHandle);
-                                        ///< Replace the handle to which the packets are written
+                                        /**< Replace the handle to which the packets are written
+                                         * Normally you should access the handle and call connect with
+                                         * the new address. This also works for other 
+                                         * (active) ConnectedSocketSinks/Sources */
+                                        
     private:
         void write();
 

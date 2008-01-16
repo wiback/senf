@@ -127,9 +127,6 @@ namespace module {
 
         Reader & reader();              ///< Access Reader helper
         
-        void replaceHandle(Handle newHandle);
-                                        ///< Replace the handle from which the packets are read
-
     private:
         void read();
         

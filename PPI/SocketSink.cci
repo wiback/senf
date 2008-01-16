@@ -46,12 +46,6 @@ prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::replaceHandle(Handle 
     handle_ = handle;
 }
 
-template <class Writer>
-prefix_ void senf::ppi::module::ActiveSocketSink<Writer>::replaceHandle(Handle handle)
-{
-    handle_ = handle;
-}
-
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
