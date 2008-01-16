@@ -51,9 +51,9 @@
 
     The argument is comprised of a sequence of parameters and the log message itself. The parameters
     are
-    \li The <em>log stream</em>,
+    \li the <em>log stream</em>,
     \li the <em>log area</em>,
-    \li the <em>log level</em>,
+    \li the <em>log level</em>.
     
     These parameters are optional and may be specified <i>in arbitrary order</i> (with the log
     message always being the last sequence element) and even multiple times in the parameter
