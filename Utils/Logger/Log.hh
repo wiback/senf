@@ -92,7 +92,7 @@
     Aliases may be used together with other parameters, even with further aliases in any order.
  */
 
-///\ingroup logging
+///\addtogroup logging
 ///\{
 
 ///\name Generating log messages

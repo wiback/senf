@@ -83,8 +83,8 @@
 
     \section ppi_modules Modules
 
-    A module is represented by a class derived from senf::ppi::Module. Each module has several
-    components:
+    A module is represented by a class derived from senf::ppi::module::Module. Each module has
+    several components:
 
     \li It may have any number of \ref ppi_connectors (inputs and outputs)
     \li Each module declares flow information which details the route packets take within the
