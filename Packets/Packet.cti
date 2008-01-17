@@ -69,14 +69,16 @@ template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::next()
     const
 {
-    return next().as<OtherPacket>();
+    Packet p (next())
+    return p ? p.as<OtherPacket>() : OtherPacket();
 }
 
 template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::prev()
     const
 {
-    return prev().as<OtherPacket>();
+    Packet p (prev());
+    return p ? p.as<OtherPacket>() : OtherPacket();
 }
 
 template <class OtherPacket>
