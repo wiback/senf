@@ -155,7 +155,7 @@ BOOST_AUTO_UNIT_TEST(packet)
                        BarPacket::type::parser::type_t::value_type(-1) );
     packet.last().append(FooPacket::create());
     packet.finalize();
-    BOOST_CHECK_EQUAL( packet.next<BarPacket>()->type(), 1u );
+    BOOST_CHECK_EQUAL( packet.find<BarPacket>()->type(), 1u );
 
     BOOST_CHECK( packet.factory() == FooPacket::factory() );
 
@@ -166,25 +166,19 @@ BOOST_AUTO_UNIT_TEST(packet)
     BOOST_REQUIRE( packet.next() );
     BOOST_REQUIRE( packet.next().is<BarPacket>() );
     BOOST_CHECK( packet.last().is<FooPacket>() );
-    BOOST_CHECK_EQUAL( packet.last<BarPacket>()->type(), 1u );
+    BOOST_CHECK_EQUAL( packet.last().rfind<BarPacket>()->type(), 1u );
     BOOST_CHECK_EQUAL( packet.next().size(), 11u );
     BOOST_REQUIRE( packet.next().next() );
     BOOST_CHECK( packet.next().next().is<FooPacket>() );
     BOOST_CHECK( ! packet.next().next().next() );
     BOOST_CHECK_EQUAL( packet.next().next().data()[0], 0x81u );
 
-    BOOST_CHECK( packet.first<FooPacket>() == packet );
-    BOOST_CHECK( packet.first<FooPacket>(senf::nothrow) == packet );
-    BOOST_CHECK( packet.last<BarPacket>() == packet.last().prev() );
-    BOOST_CHECK( packet.last<BarPacket>(senf::nothrow) == packet.last().prev() );
-    BOOST_CHECK( packet.findNext<FooPacket>() == packet );
-    BOOST_CHECK( packet.findNext<FooPacket>(senf::nothrow) == packet );
-    BOOST_CHECK( packet.last().findPrev<FooPacket>() == packet.last() );
-    BOOST_CHECK( packet.last().findPrev<FooPacket>(senf::nothrow) == packet.last() );
+    BOOST_CHECK( packet.first().find<FooPacket>() == packet );
+    BOOST_CHECK( packet.last().rfind<BarPacket>() == packet.last().prev() );
+    BOOST_CHECK( packet.find<FooPacket>() == packet );
+    BOOST_CHECK( packet.last().rfind<FooPacket>() == packet.last() );
     BOOST_CHECK( packet.next<BarPacket>() == packet.next() );
-    BOOST_CHECK( packet.next<BarPacket>(senf::nothrow) == packet.next() );
-    BOOST_CHECK( packet.last().prev<FooPacket>() == packet );
-    BOOST_CHECK( packet.last().prev<FooPacket>(senf::nothrow) == packet );
+    BOOST_CHECK( packet.last().prev().prev<FooPacket>() == packet );
 }
 
 BOOST_AUTO_UNIT_TEST(concretePacket)

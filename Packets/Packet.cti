@@ -60,6 +60,8 @@ template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::as()
     const
 {
+    if (!is<OtherPacket>())
+        throw std::bad_cast();
     return OtherPacket(ptr()->as<typename OtherPacket::type>());
 }
 
@@ -67,81 +69,28 @@ template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::next()
     const
 {
-    OtherPacket p (next<OtherPacket>(nothrow));
-    if (!p) throw InvalidPacketChainException();
-    return p;
-}
-
-
-template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::next(NoThrow_t)
-    const
-{
-    Packet p (next());
-    return p ? p.findNext<OtherPacket>(nothrow) : OtherPacket();
+    return next().as<OtherPacket>();
 }
 
 template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::prev()
     const
 {
-    OtherPacket p (prev<OtherPacket>(nothrow));
-    if (!p) throw InvalidPacketChainException();
-    return p;
-}
-
-template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::prev(NoThrow_t)
-    const
-{
-    Packet p (prev());
-    return p ? p.findPrev<OtherPacket>(nothrow) : OtherPacket();
-}
-
-template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::findNext()
-    const
-{
-    OtherPacket p (findNext<OtherPacket>(nothrow));
-    if (!p) throw InvalidPacketChainException();
-    return p;
-}
-
-template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::findPrev()
-    const
-{
-    OtherPacket p (findPrev<OtherPacket>(nothrow));
-    if (!p) throw InvalidPacketChainException();
-    return p;
+    return prev().as<OtherPacket>();
 }
 
 template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::last()
     const
 {
-    return last().findPrev<OtherPacket>();
-}
-
-template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::last(NoThrow_t)
-    const
-{
-    return last().findPrev<OtherPacket>(nothrow);
+    return last().as<OtherPacket>();
 }
 
 template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::first()
     const
 {
-    return first().findNext<OtherPacket>();
-}
-
-template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::first(NoThrow_t)
-    const
-{
-    return first().findNext<OtherPacket>(nothrow);
+    return first().as<OtherPacket>();
 }
 
 ///////////////////////////////////////////////////////////////////////////

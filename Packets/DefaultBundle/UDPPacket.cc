@@ -54,11 +54,11 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
     summer.feed( i()+checksum_offset+2, data().end() );
     
     // Now on to the awkward part: the IP pseudo header
-    IPv4Packet ipv4 (packet().prev<IPv4Packet>(nothrow));
+    IPv4Packet ipv4 (packet().rfind<IPv4Packet>());
     if (ipv4) {
         // Pseudo header defined in RFC768
         summer.feed( ipv4->source().i(), 
-                     ipv4->source().i() + IPv4PacketParser::source_t::fixed_bytes );
+                     ipv4->source().i() + IPv4Packet::Parser::source_t::fixed_bytes );
         ///\fixme What about a hop-by-hop routing option? Which destination is used in IPv4 ?
         summer.feed( ipv4->destination().i(), 
                      ipv4->destination().i() + IPv4PacketParser::destination_t::fixed_bytes );
@@ -70,10 +70,10 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
     } 
     else {
         // Pseudo header defined in RFC2460
-        IPv6Packet ipv6 (packet().prev<IPv6Packet>(nothrow));
+        IPv6Packet ipv6 (packet().rfind<IPv6Packet>());
         if (ipv6) {
             summer.feed( ipv6->source().i(), 
-                         ipv6->source().i() + IPv6PacketParser::source_t::fixed_bytes );
+                         ipv6->source().i() + IPv6Packet::Parser::source_t::fixed_bytes );
             ///\todo Implement routing header support
             // The destination used here must be the *final* destination ...
             summer.feed( ipv6->destination().i(), 

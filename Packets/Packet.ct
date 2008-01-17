@@ -34,7 +34,7 @@
 // senf::Packet
 
 template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::findNext(NoThrow_t)
+prefix_ OtherPacket senf::Packet::find()
     const
 {
     Packet p (*this);
@@ -47,7 +47,7 @@ prefix_ OtherPacket senf::Packet::findNext(NoThrow_t)
 }
 
 template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::findPrev(NoThrow_t)
+prefix_ OtherPacket senf::Packet::rfind()
     const
 {
     Packet p (*this);

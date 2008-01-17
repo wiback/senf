@@ -145,12 +145,12 @@ namespace senf {
         // Types
         
         typedef void type;              ///< Type of the packet.
-        typedef senf::detail::packet::size_type size_type; ///< Unsigned type to represent packet size
+        typedef senf::detail::packet::size_type size_type;
+                                        ///< Unsigned type to represent packet size
         typedef PacketInterpreterBase::factory_t factory_t; ///< Packet factory type (see below)
 
-                                        /// Special argument flag
-                                        /** Used in some ConcretePacket constructors */
-        enum NoInit_t { noinit };       
+        enum NoInit_t { noinit };       ///< Special argument flag
+                                        /**< Used in some ConcretePacket constructors */
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -161,14 +161,14 @@ namespace senf {
         // default destructor
         
         Packet();                       ///< Create uninitialized packet handle
-                                        /**< An uninitialized handle is not valid(). It does not
+                                        /**< An uninitialized handle is in - valid(). It does not
                                              allow any operation except assignment and checking for
                                              validity. */
         Packet clone() const;           ///< Create copy packet
-                                        /**< clone() will create a complete copy the packet. The
-                                             returned packet will have the same data and packet
-                                             chain. It does however not share any data with the
-                                             original packet. */
+                                        /**< clone() will create a complete copy of \c this
+                                             packet. The returned packet will have the same data and
+                                             packet chain. It does however not share any data with
+                                             the original packet. */
 
         // conversion constructors
 
@@ -189,90 +189,51 @@ namespace senf {
                                         /**< \returns in - valid() packet, if no next packet 
                                              exists */
         template <class OtherPacket> OtherPacket next() const; 
-                                        ///< Get next packet of given type in chain
-                                        /**< \throws InvalidPacketChainException if no such packet
-                                             is found */
-        template <class OtherPacket> OtherPacket next(NoThrow_t) const; 
-                                        ///< Get next packet of given type in chain
-                                        /**< \param[in] nothrow This argument always has the value
-                                             \c senf::nothrow
-                                             \returns in - valid() packet, if no such packet is
-                                             found */
-        template <class OtherPacket> OtherPacket findNext() const;
-                                        ///< Find next packet of given type in chain
-                                        /**< findNext() is like next(), it will however return \c
-                                             *this if it is of the given type. 
-                                             \throws InvalidPacketChainException if no such packet
-                                                 is found */
-        template <class OtherPacket> OtherPacket findNext(NoThrow_t) const;
-                                        ///< Find next packet of given type in chain
-                                        /**< findNext() is like next(), it will however return \c
-                                             *this if it is of the given type.
-                                             \param[in] nothrow This argument always has the value
-                                             \c senf::nothrow
-                                             \returns in - valid() packet, if no such packet is
-                                             found */
+                                        ///< Get next packet in chain and cast to \a OtherPacket
+                                        /**< \throws std::bad_cast if the next() packet is not of
+                                             type \a OtherPacket
+                                             \returns in - valid() packet, if no next packet
+                                                 exists */
+        template <class OtherPacket> OtherPacket find() const;
+                                        ///< Search chain forward for packet of type \a OtherPacket
+                                        /**< The search will start with the current packet.
+                                             \returns in - valid() packet, if no packet of type \a
+                                                 OtherPacket can be found. */
         
-
                                      Packet      prev() const; 
                                         ///< Get previous packet in chain
                                         /**< \returns in - valid() packet, if no previous packet 
                                              exists */
         template <class OtherPacket> OtherPacket prev() const; 
-                                        ///< Get previous packet of given type in chain
-                                        /**< \throws InvalidPacketChainException if no such packet
-                                             is found */
-        template <class OtherPacket> OtherPacket prev(NoThrow_t) const;
-                                        ///< Get previous packet of given type in chain
-                                        /**< \param[in] nothrow This argument always has the value
-                                             \c senf::nothrow
-                                             \returns in - valid() packet, if no such packet is
-                                             found */
-        template <class OtherPacket> OtherPacket findPrev() const;
-                                        ///< Find previous packet of given type in chain
-                                        /**< findPrev() is like prev(), it will however return \c
-                                             *this if it is of the type 
-                                             \throws InvalidPacketChainException if no such packet
-                                                 is found */
-        template <class OtherPacket> OtherPacket findPrev(NoThrow_t) const;
-                                        ///< Find previous packet of given type in chain
-                                        /**< findPrev() is like prev(), it will however return \c
-                                             *this if it is of the type 
-                                             \param[in] nothrow This argument always has the value
-                                             \c senf::nothrow
-                                             \returns in - valid() packet, if no such packet is
-                                             found */
+                                        ///< Get previous packet in chain and cast to \a OtherPacket
+                                        /**< \throws std::bad_cast, if the previous packet is not of
+                                             type \a OtherPacket
+                                             \returns in - valid() packet, if no previous packet 
+                                                 exists */
+        template <class OtherPacket> OtherPacket rfind() const;
+                                        ///< Search chain backwards for packet of type \a OtherPacket
+                                        /**< The search will start with the current packet.
+                                             \returns in - valid() packet, if no packet of type \a
+                                                 OtherPacket can be found. */
 
 
                                      Packet      first() const;
                                         ///< Return first packet in chain
         template <class OtherPacket> OtherPacket first() const;
-                                        ///< Return first packet of given type in chain
-                                        /**< \throws InvalidPacketChainException if no such packet
-                                             is found */
-        template <class OtherPacket> OtherPacket first(NoThrow_t) const;
-                                        ///< Return first packet of given type in chain
-                                        /**< \param[in] nothrow This argument always has the value
-                                             \c senf::nothrow
-                                             \returns in - valid() packet, if no such packet is
-                                             found */
+                                        ///< Return first packet in chain and cast
+                                        /**< \throws std::bad_cast if the first() packet is not of
+                                             type \a OtherPacket */
 
                                      Packet      last() const;
                                         ///< Return last packet in chain
         template <class OtherPacket> OtherPacket last() const;
-                                        ///< Return last packet of given type in chain
-                                        /**< \throws InvalidPacketChainException if no such packet
-                                             is found */
-        template <class OtherPacket> OtherPacket last(NoThrow_t) const;
-                                        ///< Return last packet of given type in chain
-                                        /**< \param[in] nothrow This argument always has the value
-                                             \c senf::nothrow
-                                             \returns in - valid() packet, if no such packet is
-                                             found */
+                                        ///< Return last packet in chain and cast
+                                        /**< \throws std::bad_cast if the last() packet is not of
+                                             type \a OtherPacket  */
 
 
         template <class OtherPacket> OtherPacket parseNextAs() const;
-                                        ///< Parse payload as given by \a OtherPacket and add packet
+                                        ///< Interpret payload of \c this as \a OtherPacket
                                         /**< parseNextAs() will throw away the packet chain after
                                              the current packet if necessary. It will then parse the
                                              payload section of \c this packet as given by \a
@@ -281,32 +242,32 @@ namespace senf {
                                              \returns new packet instance sharing the same data and
                                                  placed after \c this packet in the chain. */
                                      Packet      parseNextAs(factory_t factory) const;
-                                        ///< Parse payload as given by \a factory and add packet
+                                        ///< Interpret payload of \c this as \a factory type packet
                                         /**< parseNextAs() will throw away the packet chain after
                                              the current packet if necessary. It will then parse the
                                              payload section of \c this packet as given by \a
-                                             OtherPacket. The new packet is added to the chain after
+                                             factory. The new packet is added to the chain after
                                              \c this.
                                              \returns new packet instance sharing the same data and
                                                  placed after \c this packet in the chain. */
+
         template <class OtherPacket> bool        is() const;
                                         ///< Check, whether \c this packet is of the given type
         template <class OtherPacket> OtherPacket as() const;
                                         ///< Cast current packet to the given type
                                         /**< This operations returns a handle to the same packet
                                              header/interpreter however cast to the given
-                                             ConcretePacket type. <b>This conversion is
-                                             unchecked</b>. If the packet really is of a different
-                                             type, this will wreak havoc with the packet
-                                             data-structures. You can validate whether the
-                                             conversion is valid using is(). */
+                                             ConcretePacket type.
+                                             \throws std::bad_cast if the current packet is not of
+                                                 type \a OtherPacket */
 
         Packet append(Packet packet) const; ///< Append the given packet to \c this packet
                                         /**< This operation will replace the payload section of \c
                                              this packet with \a packet. This operation will replace
                                              the packet chain after \c this packet with a clone of
                                              \a packet and will replace the raw data of the payload
-                                             of \c this with the raw data if \a packet.
+                                             of \c this with the raw data of \a packet. \c this
+                                             packet will not share any date with \a packet.
                                              \returns Packet handle to the cloned \a packet, placed
                                                  after \c this in the packet/header/interpreter
                                                  chain. */
@@ -430,6 +391,7 @@ namespace senf {
         // Types
         
         typedef PacketType type;
+        typedef typename PacketType::parser Parser;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -565,7 +527,7 @@ namespace senf {
 
         // Field access
 
-        typename type::parser * operator->() const; ///< Access packet fields
+        Parser * operator->() const;    ///< Access packet fields
                                         /**< This operator allows to access the parsed fields of the
                                              packet using the notation <tt>packet->field()</tt>. The
                                              fields of the packet are specified by the PacketType's
