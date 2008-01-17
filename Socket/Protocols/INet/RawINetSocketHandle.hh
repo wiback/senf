@@ -1,4 +1,4 @@
-// $Id$
+// $Id: RawINetSocketHandle.hh 597 2008-01-15 09:16:20Z g0dil $
 //
 // Copyright (C) 2007 
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 
@@ -26,12 +26,12 @@
 
 // Custom includes
 #include "INetProtocol.hh"
-#include "RawInetProtocol.hh"
+#include "RawINetProtocol.hh"
+#include "MulticastProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
 
 
@@ -47,8 +47,7 @@ namespace senf {
         DatagramFramingPolicy,
         UnconnectedCommunicationPolicy,
         ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        WriteablePolicy
         >::policy RawV4Socket_Policy;   ///< Socket Policy of the RawV4 Protocol
 
     /** \brief IPv4 RAW Socket Protocol
@@ -77,10 +76,12 @@ namespace senf {
     class RawV4SocketProtocol
         : public ConcreteSocketProtocol<RawV4Socket_Policy>,
           public IPv4Protocol,
-          public RawInetProtocol,
+          public RawINetProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol//,
-//          public senf::pool_alloc_mixin<RawV4Socket_Policy>
+          public AddressableBSDSocketProtocol,
+	  public MulticastProtocol,
+	  public INet4MulticastProtocol,
+	  public senf::pool_alloc_mixin<RawV4SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -121,8 +122,7 @@ namespace senf {
         DatagramFramingPolicy,
         UnconnectedCommunicationPolicy,
         ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        WriteablePolicy
         >::policy RawV6Socket_Policy;   ///< Socket Policy of the RawV6 Protocol
 
     /** \brief IPv6 RAW Socket Protocol
@@ -151,10 +151,12 @@ namespace senf {
     class RawV6SocketProtocol
         : public ConcreteSocketProtocol<RawV6Socket_Policy>,
           public IPv6Protocol,
-          public RawInetProtocol,
+          public RawINetProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol//,
-//          public senf::pool_alloc_mixin<RawV6SocketProtocol>
+          public AddressableBSDSocketProtocol,
+	  public MulticastProtocol,
+	  public INet4MulticastProtocol,
+	  public senf::pool_alloc_mixin<RawV6SocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

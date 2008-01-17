@@ -1,4 +1,4 @@
-// $Id$
+// $Id: ConnectedRawINetSocketHandle.cc 597 2008-01-15 09:16:20Z g0dil $
 //
 // Copyright (C) 2007 
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 
@@ -20,7 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include "ConnectedRawInetSocketHandle.hh"
+#include "ConnectedRawINetSocketHandle.hh"
 
 // Custom includes
 #include <sys/types.h>
@@ -57,7 +57,7 @@ senf::ConnectedRawV4SocketProtocol::init_client(int const & protocol, INet4Socke
     const
 {
     init_client(protocol);
-    connect(address);
+    clientHandle().connect(address);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::ConnectedRawV4SocketProtocol::clone()
@@ -89,7 +89,7 @@ senf::ConnectedRawV6SocketProtocol::init_client(int const & protocol, INet6Socke
     const
 {
     init_client(protocol);
-    connect(address);
+    clientHandle().connect(address);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::ConnectedRawV6SocketProtocol::clone()
@@ -100,7 +100,7 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::ConnectedRawV6SocketProtocol::
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "ConnectedRawInetSocketHandle.mpp"
+//#include "ConnectedRawINetSocketHandle.mpp"
 
 
 // Local Variables:

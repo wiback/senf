@@ -48,7 +48,7 @@ prefix_ void senf::UNDatagramSocketProtocol::init_client() const
 prefix_ void senf::UNDatagramSocketProtocol::init_client(UNSocketAddress const & address) const 
 {
     init_client();
-    bind(address);
+    clientHandle().bind(address);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::UNDatagramSocketProtocol::clone()

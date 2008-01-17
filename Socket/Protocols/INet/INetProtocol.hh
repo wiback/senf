@@ -47,6 +47,28 @@ namespace senf {
     /// \addtogroup protocol_facets_group
     /// @{
 
+    class INetProtocol
+        : public virtual SocketProtocol
+    {
+    public:
+        void bindInterface(std::string const & iface) const;
+                                        ///< Bind socket to specific interface
+                                        /**< When a socket is bound to an interface, it will only
+                                             receive data received on that interface. If the
+                                             interface name is empty, the binding is removed.
+
+                                             \param[in] iface name of interface to bind to or empty
+                                                 to remove binding
+
+                                             \implementation Sets the SO_BINDTODEVICE socket option
+                                          */
+        std::string bindInterface();    ///< Get bound interface
+                                        /**< Returns the interface, the socket is currently bound
+                                             to. Returns the empty string, if not bound to any
+                                             interface.
+                                             \returns Bound interface name */
+    };
+
     /** \brief Protocol facet providing IPv4 Addressing related API
 
         This protocol facet introduces all the socket api protocol members which are related to IPv4
@@ -62,14 +84,6 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        void connect(INet4SocketAddress const & address) const; ///< Connect to remote address
-                                        /**< \todo make this obsolete by allowing access to the
-                                             ClientSocketHandle from ConcreateSocketProtocol
-                                             \param[in] address Address to connect to */
-        void bind(INet4SocketAddress const & address) const; ///< Set local socket address
-                                        /**< \todo make this obsolete by allowing access to the
-                                             ClientSocketHandle from ConcreateSocketProtocol
-                                             \param[in] address Address to set */
     };
 
     /** \brief Protocol facet providing IPv6 Addressing related API
@@ -81,14 +95,6 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        void connect(INet6SocketAddress const & address) const; ///< Connect to remote address
-                                        /**< \todo make this obsolete by allowing access to the
-                                             ClientSocketHandle from ConcreateSocketProtocol
-                                             \param[in] address Address to connect to */
-        void bind(INet6SocketAddress const & address) const; ///< Set local socket address
-                                        /**< \todo make this obsolete by allowing access to the
-                                             ClientSocketHandle from ConcreateSocketProtocol
-                                             \param[in] address Address to set */
     };
 
     /// @}

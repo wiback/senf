@@ -27,6 +27,7 @@
 //#include "SocketProtocol.ih"
 
 // Custom includes
+#include "SocketHandle.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -44,6 +45,25 @@ senf::ConcreteSocketProtocol<SocketPolicy>::policy()
     const
 {
     return policy_;
+}
+
+////////////////////////////////////////
+// protected members
+
+template <class SocketPolicy>
+prefix_ senf::ClientSocketHandle<SocketPolicy>
+senf::ConcreteSocketProtocol<SocketPolicy>::clientHandle()
+    const
+{
+    return static_socket_cast< ClientSocketHandle<Policy> >(fh());
+}
+
+template <class SocketPolicy>
+prefix_ senf::ServerSocketHandle<SocketPolicy>
+senf::ConcreteSocketProtocol<SocketPolicy>::serverHandle()
+    const
+{
+    return static_socket_cast< ServerSocketHandle<Policy> >(fh());
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

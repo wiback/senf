@@ -1,4 +1,4 @@
-// $Id$
+// $Id: RawINetProtocol.hh 597 2008-01-15 09:16:20Z g0dil $
 //
 // Copyright (C) 2007 
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 
@@ -30,7 +30,6 @@
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
 
 namespace senf {
@@ -44,7 +43,7 @@ namespace senf {
         which are available on a PF_INET[6]/RAW socket.
         
      */
-    class RawInetProtocol
+    class RawINetProtocol
         : public virtual SocketProtocol
     {
     public:

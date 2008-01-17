@@ -27,8 +27,8 @@
 #define HH_BSDSocketProtocol_ 1
 
 // Custom includes
-#include <sys/time.h>
 #include "../../Socket/SocketProtocol.hh"
+#include <boost/cstdint.hpp>
 
 //#include "BSDSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -60,13 +60,6 @@ namespace senf {
                                              \param[in] enable \c true to activate linger
                                              \param[in] timeout linger timeout in seconds */
 
-        struct timeval timestamp() const; ///< Return packet timestamp of last packet
-                                        /**< The returned timestamp represents the time, at which
-                                             the last network packet passed to the user has been
-                                             received from the network. This allows precise network
-                                             timing.
-                                             \returns timestamp when packet was received 
-                                             \todo Move this to DatagramSocketProtocol class */
     };
 
     /** \brief Protocol facet providing basic connection oriented BSD socket functions
@@ -85,6 +78,33 @@ namespace senf {
                                         /**< A \c true value enables \c SO_REUSEADDR, \c false will
                                              disable it.
                                              \param[in] value new \c SO_REUSEADDR state */
+
+        boost::uint8_t priority() const;  ///< Get packet priority assigned to outgoing packets
+                                        /**< This call will return the priority value assigned to
+                                             packets sent via this socket. Depending on the
+                                             protocol, this value may also be placed inside the
+                                             packet headers (for IPv4, this is the TOS value).
+                                             \returns current socket priority */
+        void priority(boost::uint8_t value) const; ///< Set packet priority (e.g. TOS)
+                                        /**< Changes the packet queueing priority. Additionally may
+                                             set protocol specific options. For IPv4 sockets, it
+                                             sets the TOS field.
+                                             \param[in] v new socket priority */
+
+        unsigned rcvbuf() const;        ///< Check receive buffer size
+                                        /**< \param[in] handle socket handle to check
+                                             \returns size of receive buffer in bytes */
+        void rcvbuf(unsigned size) const; ///< Change receive buffer size
+                                        /**< \param[in] handle socket handle
+                                             \param[in] size new receive buffer size */
+
+        unsigned sndbuf() const;        ///< Check send buffer size
+                                        /**< \param[in] handle socket handle to check
+                                             \returns size of send buffer in bytes */
+        void sndbuf(unsigned size) const; ///< Change size of send buffer
+                                        /**< \param[in] handle socket handle
+                                             \param[in] size new send buffer size */
+        
     };
 
     /// @}

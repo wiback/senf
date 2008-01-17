@@ -55,7 +55,7 @@ senf::TCPv4SocketProtocol::init_client(INet4SocketAddress const & address)
     const
 {
     init_client();
-    connect(address);
+    clientHandle().connect(address);
 }
 
 prefix_ void senf::TCPv4SocketProtocol::init_server()
@@ -72,7 +72,7 @@ prefix_ void senf::TCPv4SocketProtocol::init_server(INet4SocketAddress const & a
     const
 {
     init_server();
-    bind(address);
+    serverHandle().bind(address);
     reuseaddr(true);
     if (::listen(fd(),backlog) < 0)
         throwErrno();
@@ -101,7 +101,7 @@ senf::TCPv6SocketProtocol::init_client(INet6SocketAddress const & address)
     const
 {
     init_client();
-    connect(address);
+    clientHandle().connect(address);
 }
 
 prefix_ void senf::TCPv6SocketProtocol::init_server()
@@ -118,7 +118,7 @@ prefix_ void senf::TCPv6SocketProtocol::init_server(INet6SocketAddress const & a
     const
 {
     init_server();
-    bind(address);
+    serverHandle().bind(address);
     reuseaddr(true);
     if (::listen(fd(),backlog) < 0)
         throwErrno();

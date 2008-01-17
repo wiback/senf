@@ -33,11 +33,12 @@
 // Custom includes
 #include "INetProtocol.hh"
 #include "UDPProtocol.hh"
+#include "MulticastProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
+#include "../../../Socket/Protocols/DatagramSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
 
 //#include "UDPSocketHandle.mpp"
@@ -53,8 +54,7 @@ namespace senf {
         DatagramFramingPolicy,
         UnconnectedCommunicationPolicy,
         ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        WriteablePolicy
         >::policy UDPv4Socket_Policy;   ///< Socket Policy of the UDPv4 Protocol
 
     /** \brief IPv4 UDP Socket Protocol
@@ -82,7 +82,10 @@ namespace senf {
         : public ConcreteSocketProtocol<UDPv4Socket_Policy>,
           public IPv4Protocol,
           public UDPProtocol,
+          public MulticastProtocol,
+          public INet4MulticastProtocol,
           public BSDSocketProtocol,
+          public DatagramSocketProtocol,
           public AddressableBSDSocketProtocol,
           public senf::pool_alloc_mixin<UDPv4SocketProtocol>
     {
@@ -112,6 +115,7 @@ namespace senf {
         std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
+
     };
 
     typedef ProtocolClientSocketHandle<UDPv4SocketProtocol> UDPv4ClientSocketHandle;
@@ -146,7 +150,10 @@ namespace senf {
         : public ConcreteSocketProtocol<UDPv6Socket_Policy>,
           public IPv6Protocol,
           public UDPProtocol,
+          public MulticastProtocol,
+          public INet6MulticastProtocol,
           public BSDSocketProtocol,
+          public DatagramSocketProtocol,
           public AddressableBSDSocketProtocol,
           public senf::pool_alloc_mixin<UDPv6SocketProtocol>
     {

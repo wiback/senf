@@ -130,11 +130,6 @@ BOOST_AUTO_UNIT_TEST(clientSocketHandle)
     BOOST_CHECK_NO_THROW( myh.bind(0) );
     BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.peer(), 1u ) );
     BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.local(), 2u ) );
-
-    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.rcvbuf(), 0u ) );
-    BOOST_CHECK_NO_THROW( myh.rcvbuf(1) );
-    BOOST_CHECK_NO_THROW( BOOST_CHECK_EQUAL( myh.sndbuf(), 0u ) );
-    BOOST_CHECK_NO_THROW( myh.sndbuf(1) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

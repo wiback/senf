@@ -56,8 +56,6 @@ namespace {
     struct WritablePolicy : public WritePolicyBase {};
     struct UnwritablePolicy : public WritePolicyBase {};
 
-    struct SocketBufferingPolicy : public BufferingPolicyBase {};
-
     template <class Policy>
     struct ConvertibleValue
     {
@@ -95,8 +93,7 @@ BOOST_AUTO_UNIT_TEST(socketPolicy)
         UnspecifiedFramingPolicy,
         ConnectedCommunicationPolicy,
         ReadablePolicy,
-        UnspecifiedWritePolicy,
-        UnspecifiedBufferingPolicy> Policy2;
+        UnspecifiedWritePolicy> Policy2;
 
     BOOST_MPL_ASSERT(( boost::is_same<Policy1,Policy2> ));
 
@@ -109,8 +106,7 @@ BOOST_AUTO_UNIT_TEST(socketPolicy)
         UnspecifiedFramingPolicy,
         UnspecifiedCommunicationPolicy,
         ReadablePolicy,
-        UnspecifiedWritePolicy,
-        UnspecifiedBufferingPolicy> Policy4;
+        UnspecifiedWritePolicy> Policy4;
 
     BOOST_MPL_ASSERT(( boost::is_same<Policy3,Policy4> ));
     BOOST_MPL_ASSERT_NOT(( boost::is_same<Policy1, Policy3> ));

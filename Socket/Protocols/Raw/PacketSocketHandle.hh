@@ -36,7 +36,6 @@
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "LLAddressing.hh"
 
@@ -54,8 +53,7 @@ namespace senf {
         DatagramFramingPolicy,
         UnconnectedCommunicationPolicy,
         ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        WriteablePolicy
         >::policy Packet_Policy;        ///< Policy of PacketProtocol
 
     /** \brief Raw Packet-Socket access (Linux)
@@ -125,6 +123,7 @@ namespace senf {
         void mcDrop(std::string const & interface, MACAddress const & address) const;
                                         ///< Disable reception of a multicast group
                                         /**< \see \ref mcAdd() */
+
         ///@}
 
         ///\name Abstract Interface Implementation

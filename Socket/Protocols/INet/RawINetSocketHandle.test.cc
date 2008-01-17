@@ -1,4 +1,4 @@
-// $Id$
+// $Id: RawINetSocketHandle.test.cc 597 2008-01-15 09:16:20Z g0dil $
 //
 // Copyright (C) 2007 
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 
@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief RawInetSocketHandle.test unit tests */
+    \brief RawINetSocketHandle.test unit tests */
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -29,7 +29,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "RawInetSocketHandle.hh"
+#include "RawINetSocketHandle.hh"
 #include <iostream>
 
 #include "../../../Utils/auto_unit_test.hh"
@@ -148,10 +148,10 @@ BOOST_AUTO_UNIT_TEST(RawV4ClientSocketHandle)
         alarm(10);
         start(server_v4);
         senf::RawV4ClientSocketHandle sock(47);  //IPPROTO_GRE
-        BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.sndbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:0"), test) );
 		senf::RawV4ClientSocketHandle sockrec(48);  //IPPROTO_GRE+1
 		std::string in = sockrec.read();
@@ -178,10 +178,10 @@ BOOST_AUTO_UNIT_TEST(RawV6ClientSocketHandle)
         start(server_v6);
         sleep(1);
         senf::RawV6ClientSocketHandle sock(47);  //IPPROTO_GRE
-        BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.sndbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.writeto(senf::INet6SocketAddress("[::1]:0"), test) );
 		senf::RawV6ClientSocketHandle sockrec(48);  //IPPROTO_GRE+1
 		std::string in = sockrec.read();
@@ -193,3 +193,17 @@ BOOST_AUTO_UNIT_TEST(RawV6ClientSocketHandle)
         throw;
     }
 }
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

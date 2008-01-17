@@ -55,7 +55,7 @@ senf::UDPv4SocketProtocol::init_client(INet4SocketAddress const & address)
     const
 {
     init_client();
-    bind(address);
+    clientHandle().bind(address);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::UDPv4SocketProtocol::clone()
@@ -81,7 +81,7 @@ senf::UDPv6SocketProtocol::init_client(INet6SocketAddress const & address)
     const
 {
     init_client();
-    bind(address);
+    clientHandle().bind(address);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::UDPv6SocketProtocol::clone()

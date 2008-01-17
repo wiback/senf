@@ -38,7 +38,6 @@
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
 #include "../../../Socket/ProtocolServerSocketHandle.hh"
 
@@ -55,8 +54,7 @@ namespace senf {
         StreamFramingPolicy,
         ConnectedCommunicationPolicy,
         ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        WriteablePolicy
         >::policy TCPv4Socket_Policy;   ///< Socket Policy of the TCPv4 Protocol
 
     /** \brief IPv4 TCP Socket Protocol

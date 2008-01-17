@@ -23,9 +23,6 @@
 /** \file
     \brief Policy Framework public header
 
-    \todo We should probably remove BufferingPolicy from the interface, it does not make much sense
-        (how did I come to include it ??)
-
     \todo Do we want to support separate read and write policies. This allows to treat pipes within
         this framework however, is this worth the effort?
 
@@ -41,7 +38,6 @@
     \htmlonly
         <map name="socketPolicy">
           <area shape="rect" alt="SocketPolicy" href="structsenf_1_1SocketPolicy.html" title="SocketPolicy" coords="276,90,558,213" />
-          <area shape="rect" alt="BufferingPolicyBase" href="structsenf_1_1BufferingPolicyBase.html" title="BufferingPolicyBase" coords="25,282,190,306" />
           <area shape="rect" alt="WritePolicyBase" href="structsenf_1_1WritePolicyBase.html" title="WritePolicyBase" coords="39,243,174,268" />
           <area shape="rect" alt="ReadPolicyBase" href="structsenf_1_1ReadPolicyBase.html" title="ReadPolicyBase" coords="42,204,174,231" />
           <area shape="rect" alt="CommunicationPolicyBase" href="structsenf_1_1CommunicationPolicyBase.html" title="CommunicationPolicyBase" coords="0,166,215,193" />
@@ -70,9 +66,6 @@
     <dt><em>readPolicy</em></dt><dd>configures the readability of the socket</dd>
 
     <dt><em>writePolicy</em></dt><dd>configures the writability of the socket</dd>
-
-    <dt><em>bufferingPolicy</em></dt><dd>configures, if and how buffering is configured for a
-    socket</dd> </dl>
 
     The template senf::SocketPolicy combines these policy axis to form a concrete socket policy. In
     a concrete policy, each of these policy axis is assigned a value, the policy value. This value
@@ -112,7 +105,7 @@
     separately but at the same time for each policy axis:
 
     \code
-    // This defines an incomplete policy where addressingPolicy, writePolicy and bufferingPolicy
+    // This defines an incomplete policy where addressingPolicy and writePolicy
     // are unspecified
     typedef senf::MakeSocketPolicy<
         senf::StreamFramingPolicy,
@@ -128,8 +121,7 @@
     //     StreamFramingPolicy,
     //     ConnectedCommunicationPolicy,
     //     ReadablePolicy,
-    //     WritablePolicy,
-    //     SocketBufferingPolicy>::policy
+    //     WritablePolicy>::policy
     senf::TCPv4ClientSocketHandle tcpHandle (...);
 
     MyReadableHandle myHandle (tcpHandle); // Conversion to more basic socket handle
@@ -144,7 +136,7 @@
     
     In the following discussion we will use the following conventions:
     \li \e Axis is one or \c AddressingPolicy, \c FramingPolicy, \c CommunicationPolicy, \c
-        ReadPolicy, \c WritePolicy or \c BufferingPolicy
+        ReadPolicy or \c WritePolicy
     \li \e socketPolicy is any socket policy (that is, an instantiation of the SocketPolicy
         template)
     \li \e trait is an any policy class (that is, any class derived from one of the axis base
@@ -176,7 +168,7 @@
     derives from SocketPolicyBase. This is simpler than checking the template directly).</dd>
 
     <dt>\c template \c SocketPolicy < \e addressingPolicy, \e framingPolicy, \e communicationPolicy,
-    \e readPolicy, \e writePolicy, \e bufferingPolicy ></dt> <dd>This is the central SocketPolicy
+    \e readPolicy, \e writePolicy ></dt> <dd>This is the central SocketPolicy
     template. It combines a complete set of policy classes, one for each axis.</dd>
 
     <dt>\c template \c MakeSocketPolicy < \e args ></dt> <dd>\c MakeSocketPolicy is a template
@@ -197,10 +189,10 @@
 
     \section policy_implement Implementing Policy Classes
 
-    To define a new policy class, derive from the corresponding base class for your policy
-    axes. The only policy axis which might possibly need to be extended are the addressing policy
-    (AddressingPolicyBase) and the buffering policy (BufferingPolicyBase). See the Documentation of
-    these classes for more information on which members can be implemented.
+    To define a new policy class, derive from the corresponding base class for your policy axes. The
+    only policy axis which might possibly need to be extended is the addressing policy
+    (AddressingPolicyBase). See the Documentation of these classes for more information on which
+    members can be implemented.
 
     All members you define must be static. For any of the policy classes, you must only define those
     members which are supported by your implementation. If you leave out a member you automatically
@@ -280,8 +272,7 @@ namespace senf {
         (FramingPolicy)                         \
         (CommunicationPolicy)                   \
         (ReadPolicy)                            \
-        (WritePolicy)                           \
-        (BufferingPolicy)
+        (WritePolicy)
 
     // Wer define these classes explicitly (and not with some macro
     // magic) because
@@ -394,18 +385,6 @@ namespace senf {
     struct WritePolicyBase
     {
         virtual ~WritePolicyBase() {}
-    };
-
-    /** \brief Policy defining the buffering interface
-
-        The BufferingPolicy defines the buffer handling of the socket. It may provide the following
-        members:
-
-        \see policy_group
-     */
-    struct BufferingPolicyBase
-    {
-        virtual ~BufferingPolicyBase() {}
     };
 
     // The implementation file will for each Policy declared above

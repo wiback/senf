@@ -90,8 +90,8 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
     BOOST_CHECK_EQUAL( myh.dumpState(),
                        "file.handle: -1\n"
                        "file.refcount: 3\n"
-                       "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy, senf::test::SomeBufferingPolicy> >\n"
-                       "socket.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy, senf::test::SomeBufferingPolicy>\n"
+                       "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy> >\n"
+                       "socket.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
                        "socket.protocol: senf::test::SomeProtocol\n"
                        "socket.server: false\n" );
 }

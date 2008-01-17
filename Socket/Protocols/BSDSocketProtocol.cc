@@ -57,15 +57,6 @@ prefix_ void senf::BSDSocketProtocol::linger(bool enable, unsigned timeout)
         throwErrno();
 }
 
-prefix_ struct timeval senf::BSDSocketProtocol::timestamp()
-    const
-{
-    struct timeval tv;
-    if (::ioctl(fd(), SIOCGSTAMP, &tv) < 0)
-        throwErrno();
-    return tv;
-}
-
 ///////////////////////////////////////////////////////////////////////////
 
 prefix_ bool senf::AddressableBSDSocketProtocol::reuseaddr()
@@ -86,7 +77,63 @@ prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
         throwErrno();
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
+prefix_ boost::uint8_t senf::AddressableBSDSocketProtocol::priority()
+    const
+{
+    int value;
+    socklen_t len (sizeof(value));
+    if (::getsockopt(fd(),SOL_SOCKET,SO_PRIORITY,&value,&len) < 0)
+        throwErrno();
+    return value;
+}
+
+prefix_ void senf::AddressableBSDSocketProtocol::priority(boost::uint8_t value)
+    const
+{
+    int ivalue (value);
+    if (::setsockopt(fd(),SOL_SOCKET,SO_PRIORITY,&ivalue,sizeof(ivalue)) < 0)
+        throwErrno();
+}
+
+prefix_ unsigned senf::AddressableBSDSocketProtocol::rcvbuf()
+    const
+{
+    unsigned size;
+    socklen_t len (sizeof(size));
+    if (::getsockopt(fd(),SOL_SOCKET,SO_RCVBUF,&size,&len) < 0)
+        throwErrno();
+    // Linux doubles the bufer size on setting the RCVBUF to cater for internal
+    // headers. We fix this up here .. (see lkml FAQ)
+    return size/2;
+}
+
+prefix_ void senf::AddressableBSDSocketProtocol::rcvbuf(unsigned size)
+    const
+{
+    if (::setsockopt(fd(),SOL_SOCKET,SO_RCVBUF,&size,sizeof(size)) < 0)
+        throwErrno();
+}
+
+prefix_ unsigned senf::AddressableBSDSocketProtocol::sndbuf()
+    const
+{
+    unsigned size;
+    socklen_t len (sizeof(size));
+    if (::getsockopt(fd(),SOL_SOCKET,SO_SNDBUF,&size,&len) < 0)
+        throwErrno();
+    // Linux doubles the bufer size on setting the SNDBUF to cater for internal
+    // headers. We fix this up here .. (see lkml FAQ)
+    return size/2;
+}
+
+prefix_ void senf::AddressableBSDSocketProtocol::sndbuf(unsigned size)
+    const
+{
+    if (::setsockopt(fd(),SOL_SOCKET,SO_SNDBUF,&size,sizeof(size)) < 0)
+        throwErrno();
+}
+
+/////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "BSDSocketProtocol.mpp"
 

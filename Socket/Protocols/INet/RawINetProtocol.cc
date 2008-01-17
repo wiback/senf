@@ -1,9 +1,9 @@
-// $Id$
+// $Id: RawINetProtocol.cc 597 2008-01-15 09:16:20Z g0dil $
 //
-// Copyright (C) 2006
+// Copyright (C) 2007 
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 
 // Competence Center NETwork research (NET), St. Augustin, GERMANY 
-//     Stefan Bund <g0dil@berlios.de>
+//     David Wagner <dw6@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,17 +20,12 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief TCPProtocol non-inline non-template implementation
- */
 
-#include "UDPProtocol.hh"
-//#include "UDPProtocol.ih"
+#include "RawINetProtocol.hh"
 
 // Custom includes
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <netinet/tcp.h>
 #include <sys/ioctl.h>
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
 #include <net/if.h> // for if_nametoindex
@@ -40,7 +35,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned senf::UDPProtocol::available()
+prefix_ unsigned senf::RawINetProtocol::available()
     const
 {
     int n;
@@ -49,7 +44,7 @@ prefix_ unsigned senf::UDPProtocol::available()
     return n;
 }
 
-prefix_ bool senf::UDPProtocol::eof()
+prefix_ bool senf::RawINetProtocol::eof()
     const
 {
     return false;
@@ -63,9 +58,9 @@ prefix_ bool senf::UDPProtocol::eof()
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

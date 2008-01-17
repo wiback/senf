@@ -29,6 +29,7 @@
 // Custom includes
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <net/if.h>
 #include "../../../Utils/Exception.hh"
 
 //#include "INetProtocol.mpp"
@@ -36,39 +37,31 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::INetProtocol
+
+prefix_ void senf::INetProtocol::bindInterface(std::string const & iface)
+    const
+{
+    if (::setsockopt(fd(), SOL_SOCKET, SO_BINDTODEVICE, iface.c_str(), iface.size()) < 0)
+        throwErrno("::setsockopt(SO_BINDTODEVICE)");
+}
+
+prefix_ std::string senf::INetProtocol::bindInterface()
+{
+    char iface[IFNAMSIZ];
+    socklen_t size (sizeof(iface));
+    ::memset(iface, 0, sizeof(iface));
+    if (::getsockopt(fd(), SOL_SOCKET, SO_BINDTODEVICE, iface, &size) < 0)
+        throwErrno("::getsockopt(SO_BINDTODEVICE)");
+    iface[size < IFNAMSIZ ? size : IFNAMSIZ-1] = 0;
+    return iface;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::IPv4Protocol
-
-prefix_ void senf::IPv4Protocol::connect(INet4SocketAddress const & address)
-    const
-{
-    if (::connect(fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
-        throwErrno();
-}
-
-prefix_ void senf::IPv4Protocol::bind(INet4SocketAddress const & address)
-    const
-{
-    if (::bind(fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
-        throwErrno();
-}
-
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::IPv6Protocol
-
-prefix_ void senf::IPv6Protocol::connect(INet6SocketAddress const & address)
-    const
-{
-    if (::connect(fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
-        throwErrno();
-}
-
-prefix_ void senf::IPv6Protocol::bind(INet6SocketAddress const & address)
-    const
-{
-    if (::bind(fd(),address.sockaddr_p(), address.sockaddr_len()) < 0)
-        throwErrno();
-}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

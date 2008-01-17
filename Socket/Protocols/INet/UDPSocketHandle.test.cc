@@ -146,10 +146,10 @@ BOOST_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
         senf::UDPv4ClientSocketHandle sock;
         BOOST_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress("127.0.0.1:23456")) );
         BOOST_CHECK( sock.local() == senf::INet4SocketAddress("127.0.0.1:23456") );
-        BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.sndbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:12345"),
                                            std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );

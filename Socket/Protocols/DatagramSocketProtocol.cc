@@ -1,9 +1,9 @@
 // $Id$
 //
 // Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
-//     David Wagner <dw6@berlios.de>
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,39 +20,33 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief DatagramSocketProtocol non-inline non-template implementation */
 
-#include "RawInetProtocol.hh"
+#include "DatagramSocketProtocol.hh"
+//#include "DatagramSocketProtocol.ih"
 
 // Custom includes
+#include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <sys/ioctl.h>
-#include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
-#include <net/if.h> // for if_nametoindex
-#include "../../../Socket/SocketHandle.hh"
 
-//#include "UDPProtocol.mpp"
+//#include "DatagramSocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned senf::RawInetProtocol::available()
+prefix_ struct timeval senf::DatagramSocketProtocol::timestamp()
     const
 {
-    int n;
-    if (::ioctl(fd(),SIOCINQ,&n) < 0)
+    struct timeval tv;
+    if (::ioctl(fd(), SIOCGSTAMP, &tv) < 0)
         throwErrno();
-    return n;
-}
-
-prefix_ bool senf::RawInetProtocol::eof()
-    const
-{
-    return false;
+    return tv;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "UDPProtocol.mpp"
+//#include "DatagramSocketProtocol.mpp"
 
 
 // Local Variables:

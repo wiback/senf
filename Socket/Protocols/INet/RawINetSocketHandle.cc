@@ -1,4 +1,4 @@
-// $Id$
+// $Id: RawINetSocketHandle.cc 597 2008-01-15 09:16:20Z g0dil $
 //
 // Copyright (C) 2007 
 // Fraunhofer Institute for Open Communication Systems (FOKUS) 
@@ -20,7 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include "RawInetSocketHandle.hh"
+#include "RawINetSocketHandle.hh"
 
 // Custom includes
 #include <sys/types.h>
@@ -57,7 +57,7 @@ senf::RawV4SocketProtocol::init_client(int const & protocol, INet4SocketAddress 
     const
 {
     init_client(protocol);
-    bind(address);
+    clientHandle().bind(address);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::RawV4SocketProtocol::clone()
@@ -89,7 +89,7 @@ senf::RawV6SocketProtocol::init_client(int const & protocol, INet6SocketAddress 
     const
 {
     init_client(protocol);
-    bind(address);
+    clientHandle().bind(address);
 }
 
 prefix_ std::auto_ptr<senf::SocketProtocol> senf::RawV6SocketProtocol::clone()
@@ -100,7 +100,7 @@ prefix_ std::auto_ptr<senf::SocketProtocol> senf::RawV6SocketProtocol::clone()
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "RawInetSocketHandle.mpp"
+//#include "RawINetSocketHandle.mpp"
 
 
 // Local Variables:

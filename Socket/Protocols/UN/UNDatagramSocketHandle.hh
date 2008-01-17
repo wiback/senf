@@ -33,7 +33,6 @@
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
 
 //#include "UNDatagramSocketHandle.mpp"
@@ -49,8 +48,7 @@ namespace senf {
         DatagramFramingPolicy,
         UnconnectedCommunicationPolicy,
         ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        WriteablePolicy
         >::policy UNDatagramSocket_Policy;   ///< Socket Policy of the Unix Domain Datagram Protocol
 
     /** \brief Unix Domain Datagram Socket Protocol

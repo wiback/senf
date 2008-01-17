@@ -36,7 +36,6 @@
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "LLAddressing.hh"
 
@@ -54,8 +53,7 @@ namespace senf {
         DatagramFramingPolicy,
         ConnectedCommunicationPolicy,
         ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        WriteablePolicy
         >::policy Tap_Policy;        ///< Policy for TAP
 
     /** \brief TAP

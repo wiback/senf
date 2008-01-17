@@ -94,26 +94,12 @@ namespace test {
             }
     };
 
-    struct SomeBufferingPolicy : public senf::BufferingPolicyBase
-    {
-        static unsigned rcvbuf(FileHandle handle)
-            { return 0; }
-        static unsigned rcvbuf(FileHandle handle, unsigned size)
-            { return 0; }
-
-        static unsigned sndbuf(FileHandle handle)
-            { return 0; }
-        static unsigned sndbuf(FileHandle handle, unsigned size)
-            { return 0; }
-    };
-
     typedef senf::MakeSocketPolicy<
         SomeAddressingPolicy,
         SomeFramingPolicy,
         SomeCommunicationPolicy,
         SomeReadPolicy,
-        SomeWritePolicy,
-        SomeBufferingPolicy
+        SomeWritePolicy
         >::policy SomeSocketPolicy;
 
 }}

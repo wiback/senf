@@ -39,17 +39,17 @@
 
     \htmlonly
     <map name="protocols">
-      <area shape="rect" alt="SocketPolicy" href="structsenf_1_1SocketPolicy.html" title="SocketPolicy" coords="416,50,536,68" />
-      <area shape="rect" alt="ConcreteSocketProtocol" href="classsenf_1_1ConcreteSocketProtocol.html" title="ConcreteSocketProtocol" coords="268,65,456,88" />
-      <area shape="rect" alt="SocketProtocol" href="classsenf_1_1SocketProtocol.html" title="SocketProtocol" coords="1,2,120,26" />
-      <area shape="rect" alt="BSDSocketProtocol" href="classsenf_1_1BSDSocketProtocol.html" title="BSDSocketProtocol" coords="124,118,276,143" />
-      <area shape="rect" alt="AddressableBSDSocketProtocol" href="classsenf_1_1AddressableBSDSocketProtocol.html" title="AddressableBSDSocketProtocol" coords="82,200,314,224" />
-      <area shape="rect" alt="IPv4Protocol" href="classsenf_1_1IPv4Protocol.html" title="IPv4Protocol" coords="149,272,252,296" />
-      <area shape="rect" alt="IPv6Protocol" href="classsenf_1_1IPv6Protocol.html" title="IPv6Protocol" coords="149,335,251,359" />
-      <area shape="rect" alt="TCPProtocol" href="classsenf_1_1TCPProtocol.html" title="TCPProtocol" coords="151,398,248,420" />
-      <area shape="rect" alt="TCPv4SocketProtocol" href="classsenf_1_1TCPv4SocketProtocol.html" title="TCPv4SocketProtocol" coords="288,471,405,494" />
-      <area shape="rect" alt="TCPv6SocketProtocol" href="classsenf_1_1TCPv6SocketProtocol.html" title="TCPv6SocketProtocol" coords="424,470,540,494" />
-      <area shape="rect" alt="PacketProtocol" href="classsenf_1_1PacketProtocol.html" title="PacketProtocol" coords="560,469,680,495" />
+    <area shape="rect" alt="SocketPolicy" href="structsenf_1_1SocketPolicy.html" title="SocketPolicy" coords="416,50,536,68" />
+    <area shape="rect" alt="ConcreteSocketProtocol" href="classsenf_1_1ConcreteSocketProtocol.html" title="ConcreteSocketProtocol" coords="268,65,456,88" />
+    <area shape="rect" alt="SocketProtocol" href="classsenf_1_1SocketProtocol.html" title="SocketProtocol" coords="1,2,120,26" />
+    <area shape="rect" alt="BSDSocketProtocol" href="classsenf_1_1BSDSocketProtocol.html" title="BSDSocketProtocol" coords="124,118,276,143" />
+    <area shape="rect" alt="AddressableBSDSocketProtocol" href="classsenf_1_1AddressableBSDSocketProtocol.html" title="AddressableBSDSocketProtocol" coords="82,200,314,224" />
+    <area shape="rect" alt="IPv4Protocol" href="classsenf_1_1IPv4Protocol.html" title="IPv4Protocol" coords="149,272,252,296" />
+    <area shape="rect" alt="IPv6Protocol" href="classsenf_1_1IPv6Protocol.html" title="IPv6Protocol" coords="149,335,251,359" />
+    <area shape="rect" alt="TCPProtocol" href="classsenf_1_1TCPProtocol.html" title="TCPProtocol" coords="151,398,248,420" />
+    <area shape="rect" alt="TCPv4SocketProtocol" href="classsenf_1_1TCPv4SocketProtocol.html" title="TCPv4SocketProtocol" coords="288,471,405,494" />
+    <area shape="rect" alt="TCPv6SocketProtocol" href="classsenf_1_1TCPv6SocketProtocol.html" title="TCPv6SocketProtocol" coords="424,470,540,494" />
+    <area shape="rect" alt="PacketProtocol" href="classsenf_1_1PacketProtocol.html" title="PacketProtocol" coords="560,469,680,495" />
     </map>
     <img src="Protocols.png" border="0" alt="Protocols" usemap="#protocols">
     \endhtmlonly
@@ -148,7 +148,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         virtual SocketPolicyBase const & policy() const = 0;
-                                        ///< Access the policy instance
+        ///< Access the policy instance
 
         ///////////////////////////////////////////////////////////////////////////
         // Virtual interface
@@ -187,18 +187,18 @@ namespace senf {
                                              not support the notion of EOF, this member should
                                              always return \c false. */
 
-        virtual void close() const;           ///< Close socket
+        virtual void close() const;     ///< Close socket
                                         /**< This override will automatically \c shutdown() the
                                              socket whenever it is closed.
                                              \throws senf::SystemException */
-
-        virtual void terminate() const;       ///< Forcibly close socket
+        
+        virtual void terminate() const; ///< Forcibly close socket
                                         /**< This override will automatically \c shutdown() the
-                                           socket whenever it is called. Additionally it will
-                                           disable SO_LINGER to ensure, that v_terminate will not
-                                           block. Like the overriden method, this member will ignore
-                                           failures and will never throw. It is therefore safe to be
-                                           called from a destructor. */
+                                             socket whenever it is called. Additionally it will
+                                             disable SO_LINGER to ensure, that v_terminate will not
+                                             block. Like the overriden method, this member will ignore
+                                             failures and will never throw. It is therefore safe to be
+                                             called from a destructor. */
 
         virtual void state(SocketStateMap & map, unsigned lod) const;
                                         ///< Return socket state information
@@ -209,7 +209,7 @@ namespace senf {
                                              \a lod value with a default value of 0. The
                                              interpretation of the \a lod value is completely
                                              implementation defined.
-
+                                             
                                              Every class derived from SocketProtocol should
                                              reimplement state(). The reimplemented method should
                                              call (all) baseclass-implementations of this
@@ -220,21 +220,21 @@ namespace senf {
                                              keys are interpreted as hierarchical strings with '.'
                                              as a separator (like hostnames or struct or class
                                              members). They are automatically sorted correctly.
-
+                                             
                                              The values are std:string with one additional feature:
                                              they allow assignment or conversion from *any* type as
                                              long as that type is streamable. This simplifies
                                              assigning non-string values to the map:
-
+                                             
                                              \code
-                                               map["socket.protocol.ip.address"] << peer();
-                                               map["socket.protocol.tcp.backlog"] << backlog();
+                                                 map["socket.protocol.ip.address"] << peer();
+                                                 map["socket.protocol.tcp.backlog"] << backlog();
                                              \endcode
-
+                                             
                                              This will work even if peer() returns an ip-address
                                              object or backlog() returns an integer. The values are
                                              automatically converted to their string representation.
-
+                                             
                                              Additionally, if the slot the date is written to is not
                                              empty, the <tt>\<\<</tt> operator will add add a comma
                                              as separator. */
@@ -266,8 +266,10 @@ namespace senf {
 
         SocketBody * body_;
         friend class SocketBody;
-   };
-
+    };
+    
+    template <class Policy> class ClientSocketHandle;
+    template <class Policy> class ServerSocketHandle;
 
     /** \brief Concrete Socket Protocol implementation base class
 
@@ -312,6 +314,14 @@ namespace senf {
         Policy const & policy() const;
 
     protected:
+        ClientSocketHandle<Policy> clientHandle() const; 
+                                        ///< Get client handle for associated socket
+                                        /**< Returns a client handle for the socket associated with
+                                             this protocol instance */
+        ServerSocketHandle<Policy> serverHandle() const;
+                                        ///< Get server handle for associated socket
+                                        /**< Returns a server handle for the socket associated with
+                                             this protocol instance */
 
     private:
         Policy policy_;

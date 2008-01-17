@@ -51,23 +51,6 @@ prefix_ bool senf::UNProtocol::eof()
     return false;
 }
 
-prefix_ void senf::UNProtocol::connect(UNSocketAddress const & address) 
-    const 
-{
-    if(::connect(fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
-        throwErrno();
-}
-
-prefix_ void senf::UNProtocol::bind(UNSocketAddress const & address) 
-    const 
-{
-    if(::bind(fd(), address.sockaddr_p(), sizeof(sockaddr_un)) < 0)
-        throwErrno();
-    
-}
-
-
-
 prefix_ void senf::UNProtocol::close() 
     const
 {
@@ -96,27 +79,6 @@ prefix_ void senf::UNProtocol::check_and_unlink()
     }
 }
     
-// //  struct sockaddr_un test;
-// //  socklen_t len;
-// //  memset( (char*)&test, 0xff, sizeof( test));
-// //  int fd = inputSocket.fd() ;
-// ////    printf( "fd: %d\n", fd);
-// //
-// //  int r = getsockname( fd, (struct sockaddr *)&test, &len);
-// //  if( r < 0){
-// //    perror( "bla:");
-// //  }
-// //  else{
-// //    printf( "name: %d %d %s\n", r, len , test.sun_path);
-// //    unsigned char *p = (unsigned char*) &test;for( r=0; r< len; r++) printf( "%2.2x ", (int)(p[r])); printf ("\n");
-// //  }
-//     struct sockaddr_un test;
-//     socklen_t len = sizeof( test);
-//     int r = ::getsockname(fd(), (struct sockaddr *)&test, &len);
-//     if( r == 0 && ::strlen(test.sun_path) > 0){
-//       ::unlink( test.sun_path);
-//     }
-
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "UNProtocol.mpp"

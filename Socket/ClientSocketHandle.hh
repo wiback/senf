@@ -63,8 +63,6 @@ namespace senf {
         <tr><td>bind()</td>       <td>AddressingPolicy::bind (\ref senf::AddressingPolicyBase)</td>      <td></td></tr>
         <tr><td>peer()</td>       <td>AddressingPolicy::peer (\ref senf::AddressingPolicyBase)</td>      <td></td></tr>
         <tr><td>local()</td>      <td>AddressingPolicy::local (\ref senf::AddressingPolicyBase)</td>     <td></td></tr>
-        <tr><td>rcvbuf()</td>     <td>BufferingPolicy::sndbuf (\ref senf::BufferingPolicyBase)</td>      <td></td></tr>
-        <tr><td>sndbuf()</td>     <td>BufferingPolicy::rcvbuf (\ref senf::BufferingPolicyBase)</td>      <td></td></tr>
         </table>
 
         It is important to note, that not all members are always accessible. Which are depends on
@@ -419,24 +417,6 @@ namespace senf {
         void         local        (Address & addr);
                                         ///< Query local address
                                         /**< \see \ref local() */
-
-        ///@}
-
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Buffering
-        ///@{
-
-        unsigned     rcvbuf      ();    ///< Check size of receive buffer
-                                        /**< \returns size of receive buffer in bytes */
-        void         rcvbuf      (unsigned size);
-                                        ///< Set size of receive buffer
-                                        /**< \param[in] size size of receive buffer in bytes */
-
-        unsigned     sndbuf      ();    ///< Check size of send buffer
-                                        /**< \returns size of send buffer in bytes */
-        void         sndbuf      (unsigned size);
-                                        ///< Set size of send buffer
-                                        /**< \param[in] size size of send buffer in bytes */
 
         ///@}
 

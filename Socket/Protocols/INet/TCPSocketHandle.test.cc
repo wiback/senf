@@ -159,8 +159,6 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
 
         BOOST_CHECK_THROW( sock.connect(senf::INet4SocketAddress("127.0.0.1:12345")), 
                            senf::SystemException );
-        BOOST_CHECK_THROW( sock.protocol().connect(senf::INet4SocketAddress("127.0.0.1:12345")),
-                           senf::SystemException );
     }
 
     try {
@@ -172,10 +170,10 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK( sock.peer() == senf::INet4SocketAddress("127.0.0.1:12345") );
         BOOST_CHECK( sock.local() == senf::INet4SocketAddress("127.0.0.1:23456") );
         BOOST_CHECK( sock.blocking() );
-        BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.sndbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
         BOOST_CHECK( !sock.eof() );
@@ -243,10 +241,10 @@ BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
         BOOST_CHECK( sock.peer() == senf::INet6SocketAddress("[::1]:12345") );
         BOOST_CHECK( sock.local() == senf::INet6SocketAddress("[::1]:23456") );
         BOOST_CHECK( sock.blocking() );
-        BOOST_CHECK_NO_THROW( sock.rcvbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.rcvbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.sndbuf(2048) );
-        BOOST_CHECK_EQUAL( sock.sndbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
+        BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
+        BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
         // this fails with ENOFILE ... why ????

@@ -33,7 +33,6 @@
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/BufferingPolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
 
 //#include "UNDatagramSocketHandle.mpp"
@@ -49,8 +48,7 @@ namespace senf {
         DatagramFramingPolicy,
         ConnectedCommunicationPolicy,
         ReadablePolicy,
-        WriteablePolicy,
-        SocketBufferingPolicy
+        WriteablePolicy
         >::policy ConnectedUNDatagramSocket_Policy;   ///< Socket Policy of the Unix Domain Datagram Protocol (connected)
 
     /** \brief Unix Domain Datagram Socket Protocol (connected)
@@ -111,4 +109,19 @@ namespace senf {
 
 }
 
-#endif /*CONNECTEDUNDATAGRAMSOCKETHANDLE_HH_*/
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "ConnectedUNDatagramSocketHandle.cci"
+//#include "ConnectedUNDatagramSocketHandle.ct"
+//#include "ConnectedUNDatagramSocketHandle.cti"
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

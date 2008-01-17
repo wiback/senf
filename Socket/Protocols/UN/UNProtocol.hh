@@ -44,23 +44,11 @@ namespace senf {
 
         This protocol facet introduces all the socket api protocol members which are related to Unix 
         Domain addressing.
-
-        \todo connect() is only available on stream sockets. We want to access bind() and connect()
-        via the ClientSocketHandle -> see SocketProtocol todo point
      */
     class UNProtocol
         : public virtual SocketProtocol
     {
     public:
-        void connect(UNSocketAddress const & address) const; ///< Connect to a  unix domain socket 
-                                        /**< \todo make this obsolete by allowing access to the
-                                             ClientSocketHandle from ConcreateSocketProtocol
-                                             \param[in] address Address to connect to */
-        void bind(UNSocketAddress const & address) const; ///< Set local socket address (path)
-                                        /**< \todo make this obsolete by allowing access to the
-                                             ClientSocketHandle from ConcreateSocketProtocol
-                                             \param[in] address Address to set */
-        
         virtual void close() const;   ///< Close socket
                               /**< This override will automatically \c shutdown() the
                                    socket whenever it is closed.
@@ -82,6 +70,8 @@ namespace senf {
       
         std::string path_;
     };
+
+    ///@}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
