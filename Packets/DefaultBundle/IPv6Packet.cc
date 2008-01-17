@@ -42,9 +42,6 @@ namespace {
 
     senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Packet>
         registerIPv6Packet2 (41); // IP6-in-IP(6) encapsulation
-
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::DataPacket>
-        registerNoNextHeader (59);
 }
 
 prefix_ void senf::IPv6PacketType::dump(packet p, std::ostream & os)
@@ -66,7 +63,12 @@ prefix_ void senf::IPv6PacketType::dump(packet p, std::ostream & os)
 prefix_ void senf::IPv6PacketType::finalize(packet p)
 {
     p->length() << (p.size() - IPv6PacketParser::fixed_bytes);
-    p->nextHeader() << key(p.next(nothrow));
+    try {
+        p->nextHeader() << key(p.next());
+    }
+    catch (InvalidPacketChainException & ex) {
+        p->nextHeader() << 59; // No next header
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
