@@ -47,11 +47,27 @@ prefix_ senf::Packet senf::Packet::clone()
 prefix_ senf::Packet senf::Packet::next()
     const
 {
+    Packet p (next(nothrow));
+    if (!p) throw InvalidPacketChainException();
+    return p;
+}
+
+prefix_ senf::Packet senf::Packet::next(NoThrow_t)
+    const
+{
     PacketInterpreterBase::ptr p (ptr()->next());
     return !p && ptr()->nextPacketRange() ? checkNext() : Packet(p);
 }
 
 prefix_ senf::Packet senf::Packet::prev()
+    const
+{
+    Packet p (prev(nothrow));
+    if (!p) throw InvalidPacketChainException();
+    return p;
+}
+
+prefix_ senf::Packet senf::Packet::prev(NoThrow_t)
     const
 {
     return Packet(ptr()->prev());
@@ -67,7 +83,7 @@ prefix_ senf::Packet senf::Packet::last()
     const
 {
     Packet p (ptr()->last());
-    return p.next() ? checkLast() : p;
+    return p.next(nothrow) ? checkLast() : p;
 }
 
 prefix_ senf::Packet senf::Packet::parseNextAs(factory_t factory)

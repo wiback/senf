@@ -50,10 +50,10 @@ prefix_ senf::Packet senf::Packet::checkLast()
     const
 {
     Packet p (*this);
-    Packet n (p.next());
+    Packet n (p.next(nothrow));
     while (n) {
         p = n;
-        n = p.next();
+        n = p.next(nothrow);
     }
     return p;
 }

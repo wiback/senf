@@ -188,7 +188,17 @@ namespace senf {
                                         ///< Get next packet in chain
                                         /**< \returns in - valid() packet, if no next packet 
                                              exists */
+                                     Packet      next(NoThrow_t) const; 
+                                        ///< Get next packet in chain
+                                        /**< \returns in - valid() packet, if no next packet 
+                                             exists */
         template <class OtherPacket> OtherPacket next() const; 
+                                        ///< Get next packet in chain and cast to \a OtherPacket
+                                        /**< \throws std::bad_cast if the next() packet is not of
+                                             type \a OtherPacket
+                                             \returns in - valid() packet, if no next packet
+                                                 exists */
+        template <class OtherPacket> OtherPacket next(NoThrow_t) const; 
                                         ///< Get next packet in chain and cast to \a OtherPacket
                                         /**< \throws std::bad_cast if the next() packet is not of
                                              type \a OtherPacket
@@ -199,8 +209,17 @@ namespace senf {
                                         /**< The search will start with the current packet.
                                              \returns in - valid() packet, if no packet of type \a
                                                  OtherPacket can be found. */
+        template <class OtherPacket> OtherPacket find(NoThrow_t) const;
+                                        ///< Search chain forward for packet of type \a OtherPacket
+                                        /**< The search will start with the current packet.
+                                             \returns in - valid() packet, if no packet of type \a
+                                                 OtherPacket can be found. */
         
                                      Packet      prev() const; 
+                                        ///< Get previous packet in chain
+                                        /**< \returns in - valid() packet, if no previous packet 
+                                             exists */
+                                     Packet      prev(NoThrow_t) const; 
                                         ///< Get previous packet in chain
                                         /**< \returns in - valid() packet, if no previous packet 
                                              exists */
@@ -210,7 +229,18 @@ namespace senf {
                                              type \a OtherPacket
                                              \returns in - valid() packet, if no previous packet 
                                                  exists */
+        template <class OtherPacket> OtherPacket prev(NoThrow_t) const; 
+                                        ///< Get previous packet in chain and cast to \a OtherPacket
+                                        /**< \throws std::bad_cast, if the previous packet is not of
+                                             type \a OtherPacket
+                                             \returns in - valid() packet, if no previous packet 
+                                                 exists */
         template <class OtherPacket> OtherPacket rfind() const;
+                                        ///< Search chain backwards for packet of type \a OtherPacket
+                                        /**< The search will start with the current packet.
+                                             \returns in - valid() packet, if no packet of type \a
+                                                 OtherPacket can be found. */
+        template <class OtherPacket> OtherPacket rfind(NoThrow_t) const;
                                         ///< Search chain backwards for packet of type \a OtherPacket
                                         /**< The search will start with the current packet.
                                              \returns in - valid() packet, if no packet of type \a

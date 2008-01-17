@@ -54,7 +54,7 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
     summer.feed( i()+checksum_offset+2, data().end() );
     
     // Now on to the awkward part: the IP pseudo header
-    IPv4Packet ipv4 (packet().rfind<IPv4Packet>());
+    IPv4Packet ipv4 (packet().rfind<IPv4Packet>(nothrow));
     if (ipv4) {
         // Pseudo header defined in RFC768
         summer.feed( ipv4->source().i(), 
@@ -70,7 +70,7 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
     } 
     else {
         // Pseudo header defined in RFC2460
-        IPv6Packet ipv6 (packet().rfind<IPv6Packet>());
+        IPv6Packet ipv6 (packet().rfind<IPv6Packet>(nothrow));
         if (ipv6) {
             summer.feed( ipv6->source().i(), 
                          ipv6->source().i() + IPv6Packet::Parser::source_t::fixed_bytes );

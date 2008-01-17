@@ -69,16 +69,48 @@ template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::next()
     const
 {
-    Packet p (next())
-    return p ? p.as<OtherPacket>() : OtherPacket();
+    return next().as<OtherPacket>();
+}
+
+template <class OtherPacket>
+prefix_ OtherPacket senf::Packet::next(NoThrow_t)
+    const
+{
+    Packet p (next(nothrow));
+    return p && p.is<OtherPacket>() ? p.as<OtherPacket>() : OtherPacket();
+}
+
+template <class OtherPacket>
+prefix_ OtherPacket senf::Packet::find()
+    const
+{
+    OtherPacket p (find<OtherPacket>(nothrow));
+    if (!p) throw InvalidPacketChainException();
+    return p;
 }
 
 template <class OtherPacket>
 prefix_ OtherPacket senf::Packet::prev()
     const
 {
-    Packet p (prev());
-    return p ? p.as<OtherPacket>() : OtherPacket();
+    return prev().as<OtherPacket>();
+}
+
+template <class OtherPacket>
+prefix_ OtherPacket senf::Packet::prev(NoThrow_t)
+    const
+{
+    Packet p (prev(nothrow));
+    return p && p.is<OtherPacket>() ? p.as<OtherPacket>() : OtherPacket();
+}
+
+template <class OtherPacket>
+prefix_ OtherPacket senf::Packet::rfind()
+    const
+{
+    OtherPacket p (rfind<OtherPacket>(nothrow));
+    if (!p) throw InvalidPacketChainException();
+    return p;
 }
 
 template <class OtherPacket>

@@ -72,7 +72,7 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::EthernetPacketType::nextPac
 
 prefix_ void senf::EthernetPacketType::finalize(packet p)
 {
-    optional_registry_key_t k = key(p.next());
+    optional_registry_key_t k = key(p.next(nothrow));
     if (k)
         p->type_length() << k;
     else
@@ -94,7 +94,7 @@ prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
 
 prefix_ void senf::EthVLanPacketType::finalize(packet p)
 {
-    p->type() << key(p.next());
+    p->type() << key(p.next(nothrow));
 }
 
 

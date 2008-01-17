@@ -88,7 +88,7 @@ namespace {
                << "length: " << p->length() << "\n";
         }
         static void finalize(packet p) {
-            if (p.next())
+            if (p.next(senf::nothrow))
                 p->type() = senf::PacketRegistry<RegTag>::key(p.next());
             else
                 p->type() = -1;
@@ -113,8 +113,8 @@ BOOST_AUTO_UNIT_TEST(packet)
 
     BOOST_REQUIRE( packet );
     BOOST_CHECK( packet.next() );
-    BOOST_CHECK( ! packet.next().next() );
-    BOOST_CHECK( ! packet.prev() );
+    BOOST_CHECK( ! packet.next().next(senf::nothrow) );
+    BOOST_CHECK( ! packet.prev(senf::nothrow) );
     BOOST_CHECK( packet.next().prev() == packet );
     BOOST_CHECK( packet.next() != packet );
     BOOST_CHECK_EQUAL( packet.size(), 12u );
@@ -170,7 +170,7 @@ BOOST_AUTO_UNIT_TEST(packet)
     BOOST_CHECK_EQUAL( packet.next().size(), 11u );
     BOOST_REQUIRE( packet.next().next() );
     BOOST_CHECK( packet.next().next().is<FooPacket>() );
-    BOOST_CHECK( ! packet.next().next().next() );
+    BOOST_CHECK( ! packet.next().next().next(senf::nothrow) );
     BOOST_CHECK_EQUAL( packet.next().next().data()[0], 0x81u );
 
     BOOST_CHECK( packet.first().find<FooPacket>() == packet );

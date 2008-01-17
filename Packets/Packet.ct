@@ -34,12 +34,12 @@
 // senf::Packet
 
 template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::find()
+prefix_ OtherPacket senf::Packet::find(NoThrow_t)
     const
 {
     Packet p (*this);
     while (p && ! p.is<OtherPacket>()) 
-        p = p.next();
+        p = p.next(nothrow);
     if (p) 
         return p.as<OtherPacket>();
     else
@@ -47,12 +47,12 @@ prefix_ OtherPacket senf::Packet::find()
 }
 
 template <class OtherPacket>
-prefix_ OtherPacket senf::Packet::rfind()
+prefix_ OtherPacket senf::Packet::rfind(NoThrow_t)
     const
 {
     Packet p (*this);
     while (p && ! p.is<OtherPacket>()) 
-        p = p.prev();
+        p = p.prev(nothrow);
     if (p) 
         return p.as<OtherPacket>();
     else

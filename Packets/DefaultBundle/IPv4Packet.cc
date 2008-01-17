@@ -88,7 +88,7 @@ prefix_ void senf::IPv4PacketType::dump(packet p, std::ostream & os)
 prefix_ void senf::IPv4PacketType::finalize(packet p)
 {
     p->length()   << p.size();
-    p->protocol() << key(p.next());
+    p->protocol() << key(p.next(nothrow));
     p->checksum() << p->calcChecksum();
 }
 
