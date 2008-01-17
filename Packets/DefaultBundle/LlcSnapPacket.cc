@@ -61,7 +61,7 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::LlcSnapPacketType::nextPack
 
 prefix_ void senf::LlcSnapPacketType::finalize(packet p)
 {
-    optional_registry_key_t k = key(p.next());
+    optional_registry_key_t k = key(p.next(nothrow));
     if (k)
         p->type_length() << k;
     else

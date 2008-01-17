@@ -276,7 +276,7 @@ namespace senf {
                 // Set the type field by querying the type of the next packet. This is an 
                 // optional assignment: If the key is not found, the value returned by 'key'
                 // is an empty optional and the assignment will be skipped.
-                p->typeField << key(p.next());
+                p->typeField << key(p.next(senf::nothrow));
 
                 // optionally complete the packet by generating auto-generated information
                 // (like checksums)

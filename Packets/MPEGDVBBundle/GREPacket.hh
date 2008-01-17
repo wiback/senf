@@ -95,7 +95,7 @@ namespace senf {
           return p->protocol_type();
         }
         static void finalize(packet p) {
-          p->protocol_type() << key(p.next());
+          p->protocol_type() << key(p.next(nothrow));
           p->version_number() = 0; // as per RFC2784, 2.3.1
 
           if (p->checksum_present()) { 

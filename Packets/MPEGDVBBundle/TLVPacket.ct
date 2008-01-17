@@ -43,10 +43,15 @@ prefix_ void senf::TLVPacketType<TypeParser, LengthParser>::dump(packet p, std::
 template <class TypeParser, class LengthParser>
 prefix_ void senf::TLVPacketType<TypeParser, LengthParser>::finalize(packet p)
 {
-    PacketData::size_type size = p.next().data().size();
-    if ( size > LengthParser::max_value )
-        throw(UnsuportedTLVPacketException());
-    p->length() = size;
+    try {
+        PacketData::size_type size = p.next().data().size();
+        if ( size > LengthParser::max_value )
+            throw(UnsuportedTLVPacketException());
+        p->length() = size;
+    }
+    catch (InvalidPacketChainException & ex) {
+        ;
+    }
 }
 
 template <class TypeParser, class LengthParser>

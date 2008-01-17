@@ -66,7 +66,7 @@ prefix_ void senf::IPv6PacketType::dump(packet p, std::ostream & os)
 prefix_ void senf::IPv6PacketType::finalize(packet p)
 {
     p->length() << (p.size() - IPv6PacketParser::fixed_bytes);
-    p->nextHeader() << key(p.next());
+    p->nextHeader() << key(p.next(nothrow));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

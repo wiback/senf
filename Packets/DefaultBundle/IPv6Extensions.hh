@@ -93,7 +93,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);
 
         static void finalize(packet p)
-            { p->nextHeader() << key(p.next()); }
+            { p->nextHeader() << key(p.next(nothrow)); }
     };
 
     /** \brief IPv6 fragment extension packet typedef */

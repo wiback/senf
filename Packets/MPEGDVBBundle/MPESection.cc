@@ -99,7 +99,7 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MPESectionType::nextPacketT
 
 prefix_ void senf::MPESectionType::finalize(packet p)
 {
-    p->llc_snap_flag() = p.next().is<LlcSnapPacket>() ? 1 : 0;
+    p->llc_snap_flag() = p.next(nothrow) && p.next().is<LlcSnapPacket>() ? 1 : 0;
     p->section_length() = p.data().size() - 3;
 //    p->crc() = p->calcCrc();
 }
