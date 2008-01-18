@@ -66,9 +66,36 @@ namespace connector {
         Connectors are declared as module data members and are then externally connected to other
         modules.
 
+        The connectors each take an optional template argument. If this argument is specified, it
+        must be the type of packet expected or sent on this connector. If it is not specified,
+        packets will be passed using the generic Packet handle.
+
+        \code
+        class IpFilter : public senf::ppi::module::Module
+        {
+            SENF_PPI_MODULE(SomeModule);
+
+        public:
+            senf::ppi::connector::ActiveInput<senf::EthernetPacket> input;
+            senf::ppi::connector::PassiveOutput<senf::IpPacket> output;
+
+            IpFilter() {
+                route(input, output);
+                input.onRequest(&IpFilter::onRequest);
+            }
+
+        private:
+            void onRequest() {
+                // 'input()' will return a senf::EthernetPacket packet handle
+                try { output( input().find<IpPacket>() ); }
+                catch (senf::InvalidPacketChainException & ex) { ; }
+            }
+        };
+        \endcode
+
         \see 
             senf::ppi::module::Module \n
-            senf::ppi::connect()
+            senf::ppi::connect() \n
             \ref ppi_connectors
      */
 
@@ -327,9 +354,9 @@ namespace connector {
     
     /** \brief Combination of PassiveConnector and InputConnector
 
-        The GenericPassiveInput automatically controls the connectors throttling state using a queueing
-        discipline. The standard queueing discipline is ThresholdQueueing, which throttles the
-        connection whenever the queue length reaches the high threshold and unthrottles the
+        The GenericPassiveInput automatically controls the connectors throttling state using a
+        queueing discipline. The standard queueing discipline is ThresholdQueueing, which throttles
+        the connection whenever the queue length reaches the high threshold and unthrottles the
         connection when the queue reaches the low threshold. The default queueing discipline is
         <tt>ThresholdQueueing(1,0)</tt> which will throttle the input whenever the queue is
         non-empty.
@@ -339,8 +366,6 @@ namespace connector {
           public safe_bool<GenericPassiveInput>
     {
     public:
-        GenericPassiveInput();
-
         GenericActiveOutput & peer() const;
 
         bool boolean_test() const;      ///< \c true, if ! empty()
@@ -351,6 +376,9 @@ namespace connector {
                                              QueueingDiscipline interface.
                                              
                                              \param[in] disc New queueing discipline */
+
+    protected:
+        GenericPassiveInput();
 
     private:
         void v_enqueueEvent();
@@ -374,6 +402,10 @@ namespace connector {
         void connect(GenericActiveInput & target); ///< Internal: Use senf::ppi::connect() instead
 
         friend class GenericActiveInput;
+
+    protected:
+        GenericPassiveOutput();
+
     };
 
     /** \brief Combination of ActiveConnector and InputConnector
@@ -388,6 +420,9 @@ namespace connector {
         bool boolean_test() const;      ///< \c true, if ! empty() or ! throttled()
 
         void request();                 ///< request more packets without dequeuing any packet
+
+    protected:
+        GenericActiveInput();
 
     private:
         void v_requestEvent();
@@ -405,29 +440,118 @@ namespace connector {
         bool boolean_test() const;      ///< \c true if peer() is ! throttled()
 
         void connect(GenericPassiveInput & target); ///< Internal: Use senf::ppi::connect() instead
+
+    protected:
+        GenericActiveOutput();
+
     };
 
-#   define TypedConnector(Name, Mixin, dir)                                                       \
+#ifndef DOXYGEN
+
+#   define TypedConnector_Input read
+#   define TypedConnector_Output write
+#   define TypedConnector(type, dir)                                                              \
         template <class PacketType>                                                               \
-        class Name                                                                                \
-            : public Generic ## Name, detail::TypedInputMixin<Name<PacketType>, PacketType>       \
+        class type ## dir                                                                         \
+            : public Generic ## type ## dir,                                                      \
+              private detail::Typed ## dir ## Mixin<type ## dir <PacketType>, PacketType>         \
         {                                                                                         \
-            typedef detail::TypedInputMixin<Name<PacketType>, PacketType> mixin;                  \
+            typedef detail::Typed ## dir ## Mixin<type ## dir <PacketType>, PacketType> mixin;    \
         public:                                                                                   \
             using mixin::operator();                                                              \
-            using mixin:: dir ;                                                                   \
+            using mixin::TypedConnector_ ## dir ;                                                 \
         };                                                                                        \
         template <>                                                                               \
-        class Name <Packet>                                                                       \
-            : public Generic ## Name                                                              \
+        class type ## dir <Packet> : public Generic ## type ## dir                                \
         {}
 
-    TypedConnector(PassiveInput, TypedInputMixin, read);
-    TypedConnector(PassiveOutput, TypedOutputMixin, write);
-    TypedConnector(ActiveInput, TypedInputMixin, read);
-    TypedConnector(ActiveOutput, TypedOutputMixin, write);
+    TypedConnector( Passive, Input  );
+    TypedConnector( Passive, Output );
+    TypedConnector( Active,  Input  );
+    TypedConnector( Active,  Output );
 
 #   undef TypedConnector
+#   undef TypedConnector_Input
+#   undef TypedConnector_Output
+
+#else
+
+    /** \brief Connector actively reading packets
+
+        The ActiveInput connector template reads data actively from a connected module. This class
+        is completely implemented via it's base-class, GenericActiveInput, the only difference is
+        that read packets are returned as \a PacketType instead of generic senf::Packet references.
+
+        \see GenericActiveInput \n
+            senf::ppi::connectro
+     */
+    template <class PacketType>
+    class ActiveInput : public GenericActiveInput
+    {
+    public:
+        PacketType operator()();        ///< Read packet
+                                        /**< \throws std::bad_cast, if the connector receives a
+                                             Packet which is not of type \a PacketType.
+                                             \returns newly read packet reference. */
+        PacketType read();              ///< Alias for operator()
+    };
+
+    /** \brief Connector passively receiving packets
+
+        The PassiveInput connector template receives packets sent to it from a connected
+        module. This class is completely implemented via it's base-class, GenericPassiveInput, the
+        only difference is that read packets are returned as \a PacketType instead of generic
+        senf::Packet references.
+
+        \see GenericPassiveInput \n
+            senf::ppi::connector
+     */
+    template <class PacketType=Packet>
+    class PassiveInput : public GenericPassiveInput
+    {
+    public:
+        PacketType operator()();        ///< Read packet
+                                        /**< \throws std::bad_cast, if the connector receives a
+                                             Packet which is not of type \a PacketType.
+                                             \returns newly read packet reference. */
+        PacketType read();              ///< Alias for operator()
+    };
+
+    /** \brief Connector actively sending packets
+
+        The ActiveOutput connector template sends data actively to a connected module. This class is
+        completely implemented via it's base-class, GenericActiveOutput, the only difference is that
+        it only sends packets of type \a PacketType.
+
+        \see GenericActiveOutput \n
+            senf::ppi::connector
+     */
+    template <class PacketType>
+    class ActiveOutput : public GenericActiveOutput
+    {
+    public:
+        PacketType operator()();
+        PacketType write();
+    };
+
+    /** \brief Connector passively providing packets
+
+        The PassiveOutput connector template provides data passively to a connected module whenever
+        signaled. This class is completely implemented via it's base-class, GenericPassiveOutput, the
+        only difference is that it only sends packets of type \a PacketType.
+
+        \see GenericPassiveOutput \n
+            senf::ppi::connector
+     */
+    template <class PacketType>
+    class PassiveOutput : public GenericPassiveOutput
+    {
+    public:
+        PacketType operator()();
+        PacketType write();
+    };
+
+#endif
 
 }}}
 

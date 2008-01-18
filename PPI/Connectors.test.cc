@@ -158,17 +158,17 @@ BOOST_AUTO_UNIT_TEST(outputConnector)
 
 namespace {
 
-    class GenericPassiveInputTest
+    class PassiveInputTest
         : public ppi::module::Module
     {
-        SENF_PPI_MODULE(GenericPassiveInputTest);
+        SENF_PPI_MODULE(PassiveInputTest);
 
     public:
-        ppi::connector::GenericPassiveInput input;
+        ppi::connector::PassiveInput<> input;
 
-        GenericPassiveInputTest() : counter() {
+        PassiveInputTest() : counter() {
             noroute(input);
-            input.onRequest(&GenericPassiveInputTest::request);
+            input.onRequest(&PassiveInputTest::request);
         }
 
         void request() {
@@ -182,7 +182,7 @@ namespace {
 BOOST_AUTO_UNIT_TEST(passiveInput)
 {
     debug::ActiveSource source;
-    GenericPassiveInputTest target;
+    PassiveInputTest target;
 
     ppi::connect(source,target);
     ppi::init();

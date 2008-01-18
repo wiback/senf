@@ -53,8 +53,8 @@ namespace module {
     /** \brief Join multiple packet streams with passive inputs
 
         The PassiveJoin will combine any number of packet streams. You may connect any number of
-        GenericActiveOutput's  to the PassiveJoin instance. The combined stream is then provided on the
-        GenericActiveOutput \a output.
+        ActiveOutput<>'s  to the PassiveJoin instance. The combined stream is then provided on the
+        ActiveOutput<> \a output.
 
         Since PassiveJoin allows any number of incoming packet streams, the input connectors are
         dynamically managed. A special senf::ppi::connect() overload is used to dynamically create
@@ -74,12 +74,12 @@ namespace module {
     {
         SENF_PPI_MODULE(PassiveJoin);
     public:
-        connector::GenericActiveOutput output;
+        connector::ActiveOutput<> output;
 
         PassiveJoin();
 
     private:
-        connector::GenericPassiveInput & newInput();
+        connector::PassiveInput<> & newInput();
 
 #ifndef DOXYGEN
         // I didn't get template friend functions to work ...
@@ -93,15 +93,15 @@ namespace module {
         void onThrottle();
         void onUnthrottle();
 
-        typedef boost::ptr_vector<connector::GenericPassiveInput > Inputs;
+        typedef boost::ptr_vector<connector::PassiveInput<> > Inputs;
         Inputs inputs_;
     };
 
     /** \brief Join multiple packet streams with active inputs
 
         The PriorityJoin will combine any number of packet streams. You may connect any number of
-        GenericPassiveInput's  to the PassiveJoin instance. The combined stream is then provided on the
-        GenericPassiveOutput \a output.
+        PassiveInput<>'s  to the PassiveJoin instance. The combined stream is then provided on the
+        PassiveOutput<> \a output.
 
         When a packet request is received on Priorityjoin's \a output, The request will be serviced
         from the first unthrottled input. The order, in which connectors are connected to the
@@ -128,12 +128,12 @@ namespace module {
     {
         SENF_PPI_MODULE(PriorityJoin);
     public:
-        connector::GenericPassiveOutput output;
+        connector::PassiveOutput<> output;
 
         PriorityJoin();
 
     private:
-        connector::GenericActiveInput & newInput();
+        connector::ActiveInput<> & newInput();
 
 #ifndef DOXYGEN
     public:
@@ -146,7 +146,7 @@ namespace module {
         void onThrottle();
         void onUnthrottle();
 
-        typedef boost::ptr_vector<connector::GenericActiveInput> Inputs;
+        typedef boost::ptr_vector<connector::ActiveInput<> > Inputs;
         Inputs inputs_;
     };
 

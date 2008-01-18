@@ -317,6 +317,9 @@ prefix_ void senf::ppi::connector::GenericPassiveOutput::connect(GenericActiveIn
     Connector::connect(target);
 }
 
+prefix_ senf::ppi::connector::GenericPassiveOutput::GenericPassiveOutput()
+{}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::GenericActiveInput
 
@@ -337,6 +340,9 @@ prefix_ void senf::ppi::connector::GenericActiveInput::request()
     peer().emit();
 }
 
+prefix_ senf::ppi::connector::GenericActiveInput::GenericActiveInput()
+{}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::GenericActiveOutput
 
@@ -356,6 +362,9 @@ prefix_ void senf::ppi::connector::GenericActiveOutput::connect(GenericPassiveIn
 {
     Connector::connect(target);
 }
+
+prefix_ senf::ppi::connector::GenericActiveOutput::GenericActiveOutput()
+{}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

@@ -42,10 +42,10 @@
 ////////////////////////////////////////
 // private members
 
-prefix_ senf::ppi::connector::GenericPassiveInput & senf::ppi::module::PassiveJoin::newInput()
+prefix_ senf::ppi::connector::PassiveInput<> & senf::ppi::module::PassiveJoin::newInput()
 {
-    inputs_.push_back(new connector::GenericPassiveInput());
-    connector::GenericPassiveInput & input (inputs_.back());
+    inputs_.push_back(new connector::PassiveInput<>());
+    connector::PassiveInput<> & input (inputs_.back());
 
     noroute(input);
     input.onRequest(boost::bind(&PassiveJoin::request,this,boost::ref(input)));
@@ -80,10 +80,10 @@ prefix_ void senf::ppi::module::PassiveJoin::onUnthrottle()
 ////////////////////////////////////////
 // private members
 
-prefix_ senf::ppi::connector::GenericActiveInput & senf::ppi::module::PriorityJoin::newInput()
+prefix_ senf::ppi::connector::ActiveInput<> & senf::ppi::module::PriorityJoin::newInput()
 {
-    inputs_.push_back(new connector::GenericActiveInput());
-    connector::GenericActiveInput & input (inputs_.back());
+    inputs_.push_back(new connector::ActiveInput<>()); 
+    connector::ActiveInput<> & input (inputs_.back());
 
     noroute(input);
     input.onThrottle(&PriorityJoin::onThrottle);

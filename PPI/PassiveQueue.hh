@@ -45,8 +45,9 @@ namespace module {
         requested from the passive output, a packet is dequeued. 
 
         The PassiveQueue will automatically throttle in both directions. Throttling on the input
-        connector is the standard throttling as implemented in connector::GenericPassiveInput. Additional,
-        forward throttling notifications are sent out whenever the queue is empty.
+        connector is the standard throttling as implemented in
+        connector::PassiveInput<>. Additional forward throttling notifications are sent out
+        whenever the queue is empty.
 
         \ingroup adapter_modules
      */
