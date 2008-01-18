@@ -31,6 +31,9 @@
     <dt><a href="../../RateStuffer/doc/html/index.html">RateStuffer</a></dt><dd>Example application
     showing of the PPI infrastructure</dd>
 
+    <dt><a href="../../UDPClientServer/doc/html/index.html">UDPClientServer</a></dt><dd>Example for an 
+    UDP Client Server application</dd>
+
     </dl>
     \endhtmlonly
 */
