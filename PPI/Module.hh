@@ -106,8 +106,8 @@ namespace module {
         public:
             // Define connectors. Any number and type of connectors may be defined. Connectors
             // must be public since they need to be accessed to connect modules with each other.
-            senf::ppi::connector::PassiveInput input;
-            senf::ppi::connector::ActiveOutput output;
+            senf::ppi::connector::PassiveInput<> input;
+            senf::ppi::connector::ActiveOutput<> output;
 
             SomeModule(senf::FileHandle h) 
               : handle ( h ), 

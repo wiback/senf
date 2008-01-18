@@ -50,11 +50,11 @@ namespace {
         SENF_PPI_MODULE(RouteTester);
 
     public:
-        connector::ActiveInput activeIn;
-        connector::PassiveInput passiveIn;
+        connector::ActiveInput<> activeIn;
+        connector::PassiveInput<> passiveIn;
 
-        connector::ActiveOutput activeOut;
-        connector::PassiveOutput passiveOut;
+        connector::ActiveOutput<> activeOut;
+        connector::PassiveOutput<> passiveOut;
 
         ppi::DebugEvent event;
 

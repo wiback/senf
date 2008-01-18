@@ -162,7 +162,7 @@ namespace connector {
         // called by ForwardingRoute to register a new route
         void registerRoute(ForwardingRoute & route);
 
-        typedef detail::Callback<>::type Callback;
+        typedef ppi::detail::Callback<>::type Callback;
         Callback callback_;
 
         bool remoteThrottled_;
@@ -187,7 +187,7 @@ namespace connector {
     class ActiveConnector 
         : public virtual Connector
     {
-        typedef detail::Callback<>::type Callback;
+        typedef ppi::detail::Callback<>::type Callback;
     public:
         template <class Handler>
         void onThrottle(Handler handler); ///< Register throttle notification handler
@@ -327,21 +327,21 @@ namespace connector {
     
     /** \brief Combination of PassiveConnector and InputConnector
 
-        The PassiveInput automatically controls the connectors throttling state using a queueing
+        The GenericPassiveInput automatically controls the connectors throttling state using a queueing
         discipline. The standard queueing discipline is ThresholdQueueing, which throttles the
         connection whenever the queue length reaches the high threshold and unthrottles the
         connection when the queue reaches the low threshold. The default queueing discipline is
         <tt>ThresholdQueueing(1,0)</tt> which will throttle the input whenever the queue is
         non-empty.
      */
-    class PassiveInput 
+    class GenericPassiveInput 
         : public PassiveConnector, public InputConnector,
-          public safe_bool<PassiveInput>
+          public safe_bool<GenericPassiveInput>
     {
     public:
-        PassiveInput();
+        GenericPassiveInput();
 
-        ActiveOutput & peer() const;
+        GenericActiveOutput & peer() const;
 
         bool boolean_test() const;      ///< \c true, if ! empty()
 
@@ -362,28 +362,28 @@ namespace connector {
 
     /** \brief Combination of PassiveConnector and OutputConnector
      */
-    class PassiveOutput
+    class GenericPassiveOutput
         : public PassiveConnector, public OutputConnector,
-          public safe_bool<PassiveOutput>
+          public safe_bool<GenericPassiveOutput>
     {
     public:
-        ActiveInput & peer() const;
+        GenericActiveInput & peer() const;
 
         bool boolean_test() const;      ///< Always \c true
 
-        void connect(ActiveInput & target); ///< Internal: Use senf::ppi::connect() instead
+        void connect(GenericActiveInput & target); ///< Internal: Use senf::ppi::connect() instead
 
-        friend class ActiveInput;
+        friend class GenericActiveInput;
     };
 
     /** \brief Combination of ActiveConnector and InputConnector
      */
-    class ActiveInput
+    class GenericActiveInput
         : public ActiveConnector, public InputConnector,
-          public safe_bool<ActiveInput>
+          public safe_bool<GenericActiveInput>
     {
     public:
-        PassiveOutput & peer() const;
+        GenericPassiveOutput & peer() const;
 
         bool boolean_test() const;      ///< \c true, if ! empty() or ! throttled()
 
@@ -395,17 +395,39 @@ namespace connector {
 
     /** \brief Combination of ActiveConnector and OutputConnector
      */
-    class ActiveOutput
+    class GenericActiveOutput
         : public ActiveConnector, public OutputConnector,
-          public safe_bool<ActiveOutput>
+          public safe_bool<GenericActiveOutput>
     {
     public:
-        PassiveInput & peer() const;
+        GenericPassiveInput & peer() const;
 
         bool boolean_test() const;      ///< \c true if peer() is ! throttled()
 
-        void connect(PassiveInput & target); ///< Internal: Use senf::ppi::connect() instead
+        void connect(GenericPassiveInput & target); ///< Internal: Use senf::ppi::connect() instead
     };
+
+#   define TypedConnector(Name, Mixin, dir)                                                       \
+        template <class PacketType>                                                               \
+        class Name                                                                                \
+            : public Generic ## Name, detail::TypedInputMixin<Name<PacketType>, PacketType>       \
+        {                                                                                         \
+            typedef detail::TypedInputMixin<Name<PacketType>, PacketType> mixin;                  \
+        public:                                                                                   \
+            using mixin::operator();                                                              \
+            using mixin:: dir ;                                                                   \
+        };                                                                                        \
+        template <>                                                                               \
+        class Name <Packet>                                                                       \
+            : public Generic ## Name                                                              \
+        {}
+
+    TypedConnector(PassiveInput, TypedInputMixin, read);
+    TypedConnector(PassiveOutput, TypedOutputMixin, write);
+    TypedConnector(ActiveInput, TypedInputMixin, read);
+    TypedConnector(ActiveOutput, TypedOutputMixin, write);
+
+#   undef TypedConnector
 
 }}}
 

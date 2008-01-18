@@ -80,7 +80,7 @@ namespace debug {
         SENF_PPI_MODULE(ActiveSource);
 
     public:
-        connector::ActiveOutput output;
+        connector::ActiveOutput<> output;
 
         ActiveSource();
 
@@ -106,7 +106,7 @@ namespace debug {
     public:
         typedef Queue::size_type size_type;
         
-        connector::PassiveOutput output;
+        connector::PassiveOutput<> output;
 
         PassiveSource();
 
@@ -141,7 +141,7 @@ namespace debug {
         SENF_PPI_MODULE(ActiveSink);
 
     public:
-        connector::ActiveInput input;
+        connector::ActiveInput<> input;
 
         ActiveSink();
 
@@ -167,7 +167,7 @@ namespace debug {
         typedef Queue::size_type size_type;
         typedef Queue::const_iterator iterator;
 
-        connector::PassiveInput input;
+        connector::PassiveInput<> input;
 
         PassiveSink();
 
@@ -213,7 +213,7 @@ namespace debug {
     public:
         typedef PassiveSource::size_type size_type;
         
-        connector::ActiveOutput & output;
+        connector::ActiveOutput<> & output;
 
         ActiveFeederSource();
 
@@ -246,7 +246,7 @@ namespace debug {
         typedef PassiveSink::size_type size_type;
         typedef PassiveSink::iterator iterator;
 
-        connector::ActiveInput & input;
+        connector::ActiveInput<> & input;
         
         ActiveFeederSink();
 
@@ -275,7 +275,7 @@ namespace debug {
         SENF_PPI_MODULE(LogSink);
     public:
 
-        connector::PassiveInput input;
+        connector::PassiveInput<> input;
 
         LogSink();
 

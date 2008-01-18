@@ -32,6 +32,9 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    class Packet;
+
 namespace ppi {
 
     class EventDescriptor;
@@ -77,10 +80,24 @@ namespace ppi {
         class PassiveConnector;
         class InputConnector;
         class OutputConnector;
-        class ActiveInput;
-        class ActiveOutput;
-        class PassiveInput;
-        class PassiveOutput;
+        class GenericActiveInput;
+        class GenericActiveOutput;
+        class GenericPassiveInput;
+        class GenericPassiveOutput;
+        template <class PacketType=Packet> class PassiveInput;
+        template <class PacketType=Packet> class PassiveOutput;
+        template <class PacketType=Packet> class ActiveInput;
+        template <class PacketType=Packet> class ActiveOutput;
+
+#ifndef DOXYGEN
+
+        namespace detail {
+            template <class Self, class PacketType> class TypedInputMixin;
+            template <class Self, class PacketType> class TypedOutputMixin;
+        }
+
+#endif
+
     }
 
 }}

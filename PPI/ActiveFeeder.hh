@@ -54,8 +54,8 @@ namespace module {
     {
         SENF_PPI_MODULE(ActiveFeeder);
     public:
-        connector::ActiveInput input;
-        connector::ActiveOutput output;
+        connector::ActiveInput<> input;
+        connector::ActiveOutput<> output;
 
         ActiveFeeder();
 

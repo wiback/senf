@@ -48,7 +48,7 @@ namespace module {
     {
         SENF_PPI_MODULE(DiscardSink);
     public:
-        connector::PassiveInput input;
+        connector::PassiveInput<> input;
         
         DiscardSink();
 

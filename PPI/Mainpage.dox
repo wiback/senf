@@ -117,9 +117,9 @@
           senf::ppi::IntervalTimer timer_;
 
       public:
-          senf::ppi::connector::ActiveInput payload;
-          senf::ppi::connector::ActiveInput stuffing;
-          senf::ppi::connector::ActiveOutput output;
+          senf::ppi::connector::GenericActiveInput payload;
+          senf::ppi::connector::GenericActiveInput stuffing;
+          senf::ppi::connector::GenericActiveOutput output;
 
           RateStuffer(unsigned packetsPerSecond)
               : timer_(1000u, packetsPerSecond)
@@ -160,7 +160,7 @@
       {
           SENF_PPI_MODULE(CopyPacketGenerator);
       public:
-          senf::ppi::connector::PassiveOutput output;
+          senf::ppi::connector::GenericPassiveOutput output;
 
           CopyPacketGenerator(Packet template)
               : template_ (template)
@@ -188,10 +188,10 @@
     The input and output attachment points of a module are called connectors. Each connector may be
     active or passive. This gives us 4 types of connectors:
 
-    \li senf::ppi::connector::ActiveInput
-    \li senf::ppi::connector::ActiveOutput
-    \li senf::ppi::connector::PassiveInput
-    \li senf::ppi::connector::PassiveOutput
+    \li senf::ppi::connector::GenericActiveInput
+    \li senf::ppi::connector::GenericActiveOutput
+    \li senf::ppi::connector::GenericPassiveInput
+    \li senf::ppi::connector::GenericPassiveOutput
 
     An \e active connector (input or output) is <em>activated by the module</em> to send data or to
     poll for available packets. This means, the modules processing routine will call the connector

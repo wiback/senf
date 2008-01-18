@@ -49,7 +49,7 @@ namespace {
         SENF_PPI_MODULE(TestModule);
 
     public:
-        connector::ActiveOutput output;
+        connector::ActiveOutput<> output;
 
         ppi::DebugEvent event;
 

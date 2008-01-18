@@ -42,10 +42,10 @@
 ////////////////////////////////////////
 // private members
 
-prefix_ senf::ppi::connector::PassiveInput & senf::ppi::module::PassiveJoin::newInput()
+prefix_ senf::ppi::connector::GenericPassiveInput & senf::ppi::module::PassiveJoin::newInput()
 {
-    inputs_.push_back(new connector::PassiveInput());
-    connector::PassiveInput & input (inputs_.back());
+    inputs_.push_back(new connector::GenericPassiveInput());
+    connector::GenericPassiveInput & input (inputs_.back());
 
     noroute(input);
     input.onRequest(boost::bind(&PassiveJoin::request,this,boost::ref(input)));
@@ -53,7 +53,7 @@ prefix_ senf::ppi::connector::PassiveInput & senf::ppi::module::PassiveJoin::new
     return input;
 }
 
-prefix_ void senf::ppi::module::PassiveJoin::request(connector::PassiveInput & input)
+prefix_ void senf::ppi::module::PassiveJoin::request(connector::GenericPassiveInput & input)
 {
     output(input());
 }
@@ -63,7 +63,7 @@ prefix_ void senf::ppi::module::PassiveJoin::onThrottle()
     using boost::lambda::_1;
     using boost::lambda::bind;
     std::for_each(inputs_.begin(), inputs_.end(),
-                  bind(&connector::PassiveInput::throttle, _1));
+                  bind(&connector::GenericPassiveInput::throttle, _1));
 }
 
 prefix_ void senf::ppi::module::PassiveJoin::onUnthrottle()
@@ -71,7 +71,7 @@ prefix_ void senf::ppi::module::PassiveJoin::onUnthrottle()
     using boost::lambda::_1;
     using boost::lambda::bind;
     std::for_each(inputs_.begin(), inputs_.end(),
-                  bind(&connector::PassiveInput::unthrottle, _1));
+                  bind(&connector::GenericPassiveInput::unthrottle, _1));
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -80,10 +80,10 @@ prefix_ void senf::ppi::module::PassiveJoin::onUnthrottle()
 ////////////////////////////////////////
 // private members
 
-prefix_ senf::ppi::connector::ActiveInput & senf::ppi::module::PriorityJoin::newInput()
+prefix_ senf::ppi::connector::GenericActiveInput & senf::ppi::module::PriorityJoin::newInput()
 {
-    inputs_.push_back(new connector::ActiveInput());
-    connector::ActiveInput & input (inputs_.back());
+    inputs_.push_back(new connector::GenericActiveInput());
+    connector::GenericActiveInput & input (inputs_.back());
 
     noroute(input);
     input.onThrottle(&PriorityJoin::onThrottle);
@@ -97,7 +97,7 @@ prefix_ void senf::ppi::module::PriorityJoin::request()
     using boost::lambda::_1;
     using boost::lambda::bind;
     Inputs::iterator i (std::find_if(inputs_.begin(), inputs_.end(),
-                                     ! bind(&connector::ActiveInput::throttled, _1)));
+                                     ! bind(&connector::GenericActiveInput::throttled, _1)));
     if (i != inputs_.end())
         output((*i)());
 }
@@ -105,7 +105,7 @@ prefix_ void senf::ppi::module::PriorityJoin::request()
 prefix_ void senf::ppi::module::PriorityJoin::onThrottle()
 {
     if (std::find_if(inputs_.begin(), inputs_.end(),
-                     ! bind(&connector::ActiveInput::throttled, _1)) == inputs_.end())
+                     ! bind(&connector::GenericActiveInput::throttled, _1)) == inputs_.end())
         output.throttle();
 }
 

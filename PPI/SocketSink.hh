@@ -105,7 +105,7 @@ namespace module {
     public:
         typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
-        connector::ActiveInput input; ///< Input connector from which data is received
+        connector::ActiveInput<> input; ///< Input connector from which data is received
         
         ActiveSocketSink(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
@@ -166,7 +166,7 @@ namespace module {
     public:
         typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
-        connector::PassiveInput input; ///< Input connector from which data is received
+        connector::PassiveInput<> input; ///< Input connector from which data is received
         
         PassiveSocketSink(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.

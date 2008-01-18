@@ -36,7 +36,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::ThresholdQueueing
 
-prefix_ void senf::ppi::ThresholdQueueing::update(connector::PassiveInput & input, Event event)
+prefix_ void senf::ppi::ThresholdQueueing::update(connector::GenericPassiveInput & input, Event event)
 {
     switch (event) {
     case ENQUEUE:    

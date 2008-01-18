@@ -50,11 +50,11 @@ namespace ppi {
         
         \see \ref ppi_connections
      */
-    void connect(connector::ActiveOutput & source, connector::PassiveInput & target);
+    void connect(connector::GenericActiveOutput & source, connector::GenericPassiveInput & target);
 
     /** \brief Connect modules
         \see connect() */
-    void connect(connector::PassiveOutput & source, connector::ActiveInput & target);
+    void connect(connector::GenericPassiveOutput & source, connector::GenericActiveInput & target);
 
 #ifndef DOXYGEN    
 

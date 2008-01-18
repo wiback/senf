@@ -23,7 +23,7 @@
 /** \file
     \brief Connectors inline template implementation */
 
-//#include "Connectors.ih"
+#include "Connectors.ih"
 
 // Custom includes
 
@@ -31,12 +31,44 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connectors::detail::TypedInputMixin<Self,PacketType>
+
+template <class Self, class PacketType>
+prefix_ typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type
+senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::operator()()
+{
+    return static_cast<Self*>(this)->InputConnector::operator()().template as<Type>();
+}
+
+template <class Self, class PacketType>
+prefix_ typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type
+senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::read()
+{
+    return static_cast<Self*>(this)->InputConnector::read().template as<Type>();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::detail::TypedOutputMixin<Self,PacketType>
+
+template <class Self, class PacketType>
+prefix_ void senf::ppi::connector::detail::TypedOutputMixin<Self,PacketType>::operator()(Type p)
+{
+    static_cast<Self*>(this)->OutputConnector::operator()(p);
+}
+
+template <class Self, class PacketType>
+prefix_ void senf::ppi::connector::detail::TypedOutputMixin<Self,PacketType>::write(Type p)
+{
+    static_cast<Self*>(this)->OutputConnector::write(p);
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector
 
 template <class Handler>
 prefix_ void senf::ppi::connector::PassiveConnector::onRequest(Handler handler)
 {
-    callback_ = detail::Callback<>::make(handler, module());
+    callback_ = ppi::detail::Callback<>::make(handler, module());
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -45,20 +77,20 @@ prefix_ void senf::ppi::connector::PassiveConnector::onRequest(Handler handler)
 template <class Handler>
 prefix_ void senf::ppi::connector::ActiveConnector::onThrottle(Handler handler)
 {
-    throttleCallback_ = detail::Callback<>::make(handler, module());
+    throttleCallback_ = ppi::detail::Callback<>::make(handler, module());
 }
 
 template <class Handler>
 prefix_ void senf::ppi::connector::ActiveConnector::onUnthrottle(Handler handler)
 {
-    unthrottleCallback_ = detail::Callback<>::make(handler, module());
+    unthrottleCallback_ = ppi::detail::Callback<>::make(handler, module());
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::PassiveInput
+// senf::ppi::connector::GenericPassiveInput
 
 template <class QDisc>
-prefix_ void senf::ppi::connector::PassiveInput::qdisc(QDisc const & disc)
+prefix_ void senf::ppi::connector::GenericPassiveInput::qdisc(QDisc const & disc)
 {
     qdisc_.reset(new QDisc(disc));
 }

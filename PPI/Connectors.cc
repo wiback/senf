@@ -24,7 +24,7 @@
     \brief Connectors non-inline non-template implementation */
 
 #include "Connectors.hh"
-//#include "Connectors.ih"
+#include "Connectors.ih"
 
 // Custom includes
 #include "Route.hh"
@@ -116,34 +116,34 @@ prefix_ void senf::ppi::connector::InputConnector::v_dequeueEvent()
 {}
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::ActiveInput
+// senf::ppi::connector::GenericActiveInput
 
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::connector::ActiveInput::v_requestEvent()
+prefix_ void senf::ppi::connector::GenericActiveInput::v_requestEvent()
 {
     request();
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::PassiveInput
+// senf::ppi::connector::GenericPassiveInput
 
 ////////////////////////////////////////
 // private members 
 
-prefix_ void senf::ppi::connector::PassiveInput::v_enqueueEvent()
+prefix_ void senf::ppi::connector::GenericPassiveInput::v_enqueueEvent()
 {
     emit();
     qdisc_->update(*this, QueueingDiscipline::ENQUEUE);
 }
 
-prefix_ void senf::ppi::connector::PassiveInput::v_dequeueEvent()
+prefix_ void senf::ppi::connector::GenericPassiveInput::v_dequeueEvent()
 {
     qdisc_->update(*this, QueueingDiscipline::DEQUEUE);
 }
 
-prefix_ void senf::ppi::connector::PassiveInput::v_unthrottleEvent()
+prefix_ void senf::ppi::connector::GenericPassiveInput::v_unthrottleEvent()
 {
     size_type n (queueSize());
     while (n) {

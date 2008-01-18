@@ -41,10 +41,10 @@ namespace ppi {
 #ifndef DOXYGEN
 
     template <class Source>
-    connector::PassiveInput & connect(Source & source, module::PassiveJoin & target);
+    connector::GenericPassiveInput & connect(Source & source, module::PassiveJoin & target);
     
     template <class Source>
-    connector::ActiveInput & connect(Source & source, module::PriorityJoin & target);
+    connector::GenericActiveInput & connect(Source & source, module::PriorityJoin & target);
 
 #endif
 
@@ -53,8 +53,8 @@ namespace module {
     /** \brief Join multiple packet streams with passive inputs
 
         The PassiveJoin will combine any number of packet streams. You may connect any number of
-        ActiveOutput's  to the PassiveJoin instance. The combined stream is then provided on the
-        ActiveOutput \a output.
+        GenericActiveOutput's  to the PassiveJoin instance. The combined stream is then provided on the
+        GenericActiveOutput \a output.
 
         Since PassiveJoin allows any number of incoming packet streams, the input connectors are
         dynamically managed. A special senf::ppi::connect() overload is used to dynamically create
@@ -74,34 +74,34 @@ namespace module {
     {
         SENF_PPI_MODULE(PassiveJoin);
     public:
-        connector::ActiveOutput output;
+        connector::GenericActiveOutput output;
 
         PassiveJoin();
 
     private:
-        connector::PassiveInput & newInput();
+        connector::GenericPassiveInput & newInput();
 
 #ifndef DOXYGEN
         // I didn't get template friend functions to work ...
     public:
 #endif
         template <class Source>
-        connector::PassiveInput & connect(Source & source);
+        connector::GenericPassiveInput & connect(Source & source);
 
     private:
-        void request(connector::PassiveInput & input);
+        void request(connector::GenericPassiveInput & input);
         void onThrottle();
         void onUnthrottle();
 
-        typedef boost::ptr_vector<connector::PassiveInput> Inputs;
+        typedef boost::ptr_vector<connector::GenericPassiveInput > Inputs;
         Inputs inputs_;
     };
 
     /** \brief Join multiple packet streams with active inputs
 
         The PriorityJoin will combine any number of packet streams. You may connect any number of
-        PassiveInput's  to the PassiveJoin instance. The combined stream is then provided on the
-        PassiveOutput \a output.
+        GenericPassiveInput's  to the PassiveJoin instance. The combined stream is then provided on the
+        GenericPassiveOutput \a output.
 
         When a packet request is received on Priorityjoin's \a output, The request will be serviced
         from the first unthrottled input. The order, in which connectors are connected to the
@@ -128,25 +128,25 @@ namespace module {
     {
         SENF_PPI_MODULE(PriorityJoin);
     public:
-        connector::PassiveOutput output;
+        connector::GenericPassiveOutput output;
 
         PriorityJoin();
 
     private:
-        connector::ActiveInput & newInput();
+        connector::GenericActiveInput & newInput();
 
 #ifndef DOXYGEN
     public:
 #endif
         template <class Source>
-        connector::ActiveInput & connect(Source & source);
+        connector::GenericActiveInput & connect(Source & source);
 
     private:
         void request();
         void onThrottle();
         void onUnthrottle();
 
-        typedef boost::ptr_vector<connector::ActiveInput> Inputs;
+        typedef boost::ptr_vector<connector::GenericActiveInput> Inputs;
         Inputs inputs_;
     };
 

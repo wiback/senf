@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,52 +21,43 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief CloneSource public header */
+    \brief Connectors internal header */
 
-#ifndef HH_CloneSource_
-#define HH_CloneSource_ 1
+#ifndef IH_Connectors_
+#define IH_Connectors_ 1
 
 // Custom includes
-#include "../Packets/Packets.hh"
-#include "Module.hh"
-#include "Connectors.hh"
 
-//#include "CloneSource.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
-namespace module {
+namespace connector {
+namespace detail {
 
-    /** \brief Generate clone's of a template packet
-
-        CloneSource will provide clone's of a template \a packet on it's \a output.
-
-        \ingroup io_modules
-     */
-    class CloneSource
-        : public Module
+    template <class Self, class PacketType>
+    class TypedInputMixin
     {
-        SENF_PPI_MODULE(CloneSource);
     public:
-
-        connector::PassiveOutput<> output;
-
-        CloneSource(senf::Packet packet);
-        void replacePacket(senf::Packet packet);
-
-    private:
-        void request();
-
-        senf::Packet packet_;
+        typedef PacketType Type;
+        
+        Type operator()();
+        Type read();
     };
 
-}}}
+    template <class Self, class PacketType>
+    class TypedOutputMixin
+    {
+    public:
+        typedef PacketType Type;
+        
+        void operator()(Type p);
+        void write(Type p);
+    };
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "CloneSource.cci"
-//#include "CloneSource.ct"
-//#include "CloneSource.cti"
+}}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
 #endif
 
 

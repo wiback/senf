@@ -59,7 +59,7 @@ namespace ppi {
 
         enum Event { ENQUEUE, DEQUEUE }; ///< Possible queueing events
         
-        virtual void update(connector::PassiveInput & input, Event event) = 0;
+        virtual void update(connector::GenericPassiveInput & input, Event event) = 0;
                                         ///< Calculate new queueing state
                                         /**< Whenever the queue is manipulated, this member is
                                              called to calculate the new throttling state. The
@@ -84,7 +84,7 @@ namespace ppi {
     public:
         ThresholdQueueing(unsigned high, unsigned low);
 
-        virtual void update(connector::PassiveInput & input, Event event);
+        virtual void update(connector::GenericPassiveInput & input, Event event);
 
     private:
         unsigned high_;

@@ -279,80 +279,80 @@ prefix_ senf::ppi::connector::OutputConnector::OutputConnector()
 {}
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::PassiveInput
+// senf::ppi::connector::GenericPassiveInput
 
-prefix_ senf::ppi::connector::PassiveInput::PassiveInput()
+prefix_ senf::ppi::connector::GenericPassiveInput::GenericPassiveInput()
     : qdisc_(new ThresholdQueueing(1,0))
 {}
 
-prefix_ senf::ppi::connector::ActiveOutput & senf::ppi::connector::PassiveInput::peer()
+prefix_ senf::ppi::connector::GenericActiveOutput & senf::ppi::connector::GenericPassiveInput::peer()
     const
 {
-    return dynamic_cast<ActiveOutput&>(Connector::peer());
+    return dynamic_cast<GenericActiveOutput&>(Connector::peer());
 }
 
-prefix_ bool senf::ppi::connector::PassiveInput::boolean_test()
+prefix_ bool senf::ppi::connector::GenericPassiveInput::boolean_test()
     const
 {
     return ! empty();
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::PassiveOutput
+// senf::ppi::connector::GenericPassiveOutput
 
-prefix_ senf::ppi::connector::ActiveInput & senf::ppi::connector::PassiveOutput::peer()
+prefix_ senf::ppi::connector::GenericActiveInput & senf::ppi::connector::GenericPassiveOutput::peer()
     const
 {
-    return dynamic_cast<ActiveInput&>(Connector::peer());
+    return dynamic_cast<GenericActiveInput&>(Connector::peer());
 }
 
-prefix_ bool senf::ppi::connector::PassiveOutput::boolean_test()
+prefix_ bool senf::ppi::connector::GenericPassiveOutput::boolean_test()
     const
 {
     return  true;
 }
 
-prefix_ void senf::ppi::connector::PassiveOutput::connect(ActiveInput & target)
+prefix_ void senf::ppi::connector::GenericPassiveOutput::connect(GenericActiveInput & target)
 {
     Connector::connect(target);
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::ActiveInput
+// senf::ppi::connector::GenericActiveInput
 
-prefix_ senf::ppi::connector::PassiveOutput & senf::ppi::connector::ActiveInput::peer()
+prefix_ senf::ppi::connector::GenericPassiveOutput & senf::ppi::connector::GenericActiveInput::peer()
     const
 {
-    return dynamic_cast<PassiveOutput&>(Connector::peer());
+    return dynamic_cast<GenericPassiveOutput&>(Connector::peer());
 }
 
-prefix_ bool senf::ppi::connector::ActiveInput::boolean_test()
+prefix_ bool senf::ppi::connector::GenericActiveInput::boolean_test()
     const
 {
     return ! empty() || ! peer().throttled();
 }
 
-prefix_ void senf::ppi::connector::ActiveInput::request()
+prefix_ void senf::ppi::connector::GenericActiveInput::request()
 {
     peer().emit();
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::connector::ActiveOutput
+// senf::ppi::connector::GenericActiveOutput
 
-prefix_ senf::ppi::connector::PassiveInput & senf::ppi::connector::ActiveOutput::peer()
+prefix_ senf::ppi::connector::GenericPassiveInput & senf::ppi::connector::GenericActiveOutput::peer()
     const
 {
-    return dynamic_cast<PassiveInput&>(Connector::peer());
+    return dynamic_cast<GenericPassiveInput&>(Connector::peer());
 }
 
-prefix_ bool senf::ppi::connector::ActiveOutput::boolean_test()
+prefix_ bool senf::ppi::connector::GenericActiveOutput::boolean_test()
     const
 {
     return ! peer().throttled();
 }
 
-prefix_ void senf::ppi::connector::ActiveOutput::connect(PassiveInput & target)
+prefix_ void senf::ppi::connector::GenericActiveOutput::connect(GenericPassiveInput & target)
 {
     Connector::connect(target);
 }

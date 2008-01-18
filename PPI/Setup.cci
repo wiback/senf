@@ -34,14 +34,14 @@
 
 #ifndef DOXYGEN
 
-prefix_ void senf::ppi::connect(connector::ActiveOutput & source,
-                                connector::PassiveInput & target)
+prefix_ void senf::ppi::connect(connector::GenericActiveOutput & source,
+                                connector::GenericPassiveInput & target)
 {
     source.connect(target);
 }
 
-prefix_ void senf::ppi::connect(connector::PassiveOutput & source,
-                                connector::ActiveInput & target)
+prefix_ void senf::ppi::connect(connector::GenericPassiveOutput & source,
+                                connector::GenericActiveInput & target)
 {
     source.connect(target);
 }

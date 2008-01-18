@@ -50,8 +50,8 @@ namespace {
     {
         SENF_PPI_MODULE(QueueTester);
     public:
-        connector::PassiveInput input;
-        connector::ActiveOutput output;
+        connector::PassiveInput<> input;
+        connector::ActiveOutput<> output;
 
         QueueTester() {
             route(input, output);
