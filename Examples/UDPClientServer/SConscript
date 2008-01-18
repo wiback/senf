@@ -1,0 +1,12 @@
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+SENFSCons.Binary(env, 'udpClient', 'udpClient.cc',
+                LIBS = [ 'Packets', 'Socket', 'Utils' ]);
+
+SENFSCons.Binary(env, 'udpServer', 'udpServer.cc',
+                LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ]);
+
+SENFSCons.Doxygen(env)

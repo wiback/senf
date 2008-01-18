@@ -1,0 +1,102 @@
+// $Id: Mainpage.dox 625 2008-01-16 12:00:00Z Pug $
+//
+// Copyright (C) 2007 
+// Fraunhofer Institute for Open Communication Systems (FOKUS) 
+// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \mainpage UDP Client/Server example application 
+	
+	\dontinclude udpServer.cc
+	
+	This Application is a command line based client/server application, which sends some strings from client to server, where they are printed on the command line.
+
+	After installing the Library,  the udpServer and the udpClient can be found in the senf/Example/udpServer directory and compiled with 
+	
+	<pre>
+		#scons -u
+		<Then you can start the client/server with>
+
+		#./udpServer
+		#./udpClient
+	</pre>
+	
+	When we take a look to the code, we start with the Server: 
+	First we include the necessary headers: 
+	
+	\skip // Custom includes
+    	\until membind
+    	
+    	The Scheduler will be needed because we implement a non blocking UDP Server with the senf integrated Scheduler. The  scheduler library provides a simple yet flexible abstraction of the standard asynchronous UNIX mainloop utilizing \c select or \c poll.
+	
+	\section UDP_serverApplication UDP server application
+	
+	First we define a class which is responsible for opening a socket and print out the incoming data on stdout. 
+	We create a \c UDPv4ClientSocketHandle, which is an unconnected and uninitialized UDP (Ipv4) socket.
+	
+	\until serverSock;
+	
+	The constructor initialize the Server Object with a given address and port. In our case the server listens static on the loopback device with port 4243.
+	
+	\until {}
+	
+	The public \c run() member is called to run the sniffer. It first adds the socket to the Scheduler. The \c add() call takes two Arguments, the socket to bind to (which can be a lot of things and must not necessarily be a socket instance) and callback function to call, whenever there is an event on that socket.The callback is specified as a <a href="http://www.boost.org/doc/html/function.html">Boost.Function</a> object. A third argument may be specified to restrict the events, on which the function is called, here we used the EV_READ Argument, because we just want the program to read from the socket. The default argument is set to \c senf::Scheduler::EV_ALL, which allows all actions on the socket.
+	
+	\until }
+	
+	Calling the Schedulers \c process() method will start the event loop. This call does not return (ok, it does return in special cases if \c senf::Scheduler::terminate() is called which does not apply here).
+	The Callback Function is the \c readFromClient() Function, which is declared as private here and will be called whenever an event on the socket is encountered. The scheduler passes the event ID to the function.
+	
+	\until event)
+	
+	In the function the data from the socket is put into a standard string and dumped out on stdout. 
+	
+	\until };
+	
+	In the main function we need to create an Object of our Server with the loopback address and the port.
+	
+	\until return 0;
+	
+	That's it. We finish of by catching the exception and giving as much detail as possible if an exception is caught. The \c prettyName function from the \c Utils library is used, to get a nice, printable representation of the dynamic type of the exception instance. It is an interface to the g++ demangler. This is necessary since the name member of the C++ \c type_info instance is a mangled name in g++.
+	
+	\section UDP_clientApplication UDP client application
+	
+	\dontinclude udpClient.cc
+	
+	The client application uses the same mechanisms, but implements them in a small main function. It sends numbers as strings to the server. 
+	
+	\skip  argv[])
+	\until return 0;
+	
+	First a \c UDPV4CLIENTSOCKETHANDLE is created. With the function \c writeto(senf::INet4SocketAddress, string) the string s will be written to the specified address and port, which is constructed here from a  static string \c "127.0.0.1:4243". In this example Integers from zero to ten are send to the Server socket. 
+
+	The exception handling is again the same as with the server application.
+*/	
+	
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// mode: flyspell
+// mode: auto-fill
+// End:
