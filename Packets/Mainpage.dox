@@ -108,7 +108,7 @@
     eth.find<UDPPacket>() == udp;       // true
 
     udp.find<EthernetPacket>();         // throws InvalidPacketChainException
-    udp.find<EthernetPacket>(senf::nothrow); // An in-valid senf::Packet which tests as 'false'
+    udp.find<EthernetPacket>(senf::nothrow); // An in-valid() senf::Packet which tests as 'false'
     udp.find<UDPPacket()> == udp;       // true
     udp.first<IPv4Packet>();            // throws InvalidPacketChainException
 
