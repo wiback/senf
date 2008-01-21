@@ -92,18 +92,22 @@ namespace senf {
                                              \param[in] v new socket priority */
 
         unsigned rcvbuf() const;        ///< Check receive buffer size
-                                        /**< \param[in] handle socket handle to check
-                                             \returns size of receive buffer in bytes */
+                                        /**< \returns size of receive buffer in bytes 
+                                             \internal Linux doubles the buffer size internally when
+                                                 changing it to cater for additional space needed by
+                                                 the linux kernel. This call will therefore return
+                                                 only half the value reported by the kernel. */
         void rcvbuf(unsigned size) const; ///< Change receive buffer size
-                                        /**< \param[in] handle socket handle
-                                             \param[in] size new receive buffer size */
+                                        /**< \param[in] size new receive buffer size */
 
         unsigned sndbuf() const;        ///< Check send buffer size
-                                        /**< \param[in] handle socket handle to check
-                                             \returns size of send buffer in bytes */
+                                        /**< \returns size of send buffer in bytes 
+                                             \internal Linux doubles the buffer size internally when
+                                                 changing it to cater for additional space needed by
+                                                 the linux kernel. This call will therefore return
+                                                 only half the value reported by the kernel. */
         void sndbuf(unsigned size) const; ///< Change size of send buffer
-                                        /**< \param[in] handle socket handle
-                                             \param[in] size new send buffer size */
+                                        /**< \param[in] size new send buffer size */
         
     };
 

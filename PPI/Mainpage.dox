@@ -78,8 +78,9 @@
     \section ppi_packets Packets
 
     The PPI processes packets and uses the <a href="@TOPDIR@/Packets/doc/html/index.html">Packet
-    library</a> to handle them. All packets are passed around as generic \ref senf::Packet
-    references, the PPI does not enforce any packet type restrictions.
+    library</a> to handle them. All packets are internally passed around as generic \ref
+    senf::Packet references, however connectors may optionally be defined as sending or receiving
+    packets of a specific type only.
 
     \section ppi_modules Modules
 
@@ -211,6 +212,9 @@
 
     To provide this flexibility, all input connectors incorporate a packet queue. This queue is
     exposed to the module and allows the module to optionally process packets in batches.
+
+    Connectors take an optional template argument which allows to specify the type of packet this
+    connector sends or received. This template arguments defaults to \ref senf::Packet.
 
     \see \ref senf::ppi::connector
 

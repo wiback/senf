@@ -105,19 +105,20 @@
     eth.next().is<IPv4Packet>();        // true
     eth.next().next() == udp;           // true
     eth.next().is<UDPPacket>();         // false
-    eth.next<UDPPacket>() == udp;       // true
+    eth.find<UDPPacket>() == udp;       // true
 
-    udp.next<UDPPacket>();              // throws InvalidPacketChainException
-    udp.next<UDPPacket>(senf::nothrow); // a senf::Packet testing as false
-    udp.findNext<UDPPacket()> == udp;   // true
-    udp.first<IPv4Packet>() == ip;      // true
+    udp.find<EthernetPacket>();         // throws InvalidPacketChainException
+    udp.find<EthernetPacket>(senf::nothrow); // An in-valid senf::Packet which tests as 'false'
+    udp.find<UDPPacket()> == udp;       // true
+    udp.first<IPv4Packet>();            // throws InvalidPacketChainException
 
     udp.prev() == ip;                   // true
-    udp.prev<EthernetPacket>() == eth   // true
+    udp.prev<EthernetPacket>();         // throws Inv
     \endcode
 
-    ... and so on. It is therefore not necessary to stash away a reference for every interpreter (as
-    each of the sub-packets are called) as long as at least one reference is available.
+    ... and so on. See the senf::Packet documentation for more. Using these members, the complete
+    chain of packet interpreters (as these sub-packets or headers are called) may be traversed from
+    any packet handle.
 
     These chain navigation functions are also used to parse a packet. Let's read an Ethernet packet
     from a packet socket handle:
@@ -133,17 +134,20 @@
 
     \code
     try {
-        senf::UDPPacket udp (packet.findNext<UDPPacket>(senf::nothrow));
-        if (udp && udp->destination() == 2001u) {
+        senf::UDPPacket udp (packet.find<UDPPacket>());
+        if (udp->destination() == 2001u) {
             // Voila ...
         }
-    } catch (senf::TruncatedPacketException const &) {
-        std::cerr << "Ooops !! Broken packet received ...\n"
+    } catch (senf::TruncatedPacketException &) {
+        std::cerr << "Ooops !! Broken packet received\n";
+    } catch (senf::InvalidPacketChainException &) {
+        std::cerr << "Not a udp packet\n";
     }
     \endcode
 
     TruncatedPacketException is thrown by <tt>udp->destination()</tt> if that field cannot be
-    accessed. More generally, whenever a field cannot be accessed because it would be out of bounds
+    accessed (that is it would be beyond the data read which means we have read a truncated
+    packet). More generally, whenever a field cannot be accessed because it would be out of bounds
     of the data read, this exception is generated.
 
     This is only a very short introduction to the library to give a feel for the implementation. For
