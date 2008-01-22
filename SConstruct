@@ -227,9 +227,9 @@ PhonyTarget(env, 'debbin', [
 PhonyTarget(env, 'linklint', [
     'rm -rf linklint',
     'linklint -doc linklint -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
-    '[ ! -r linklint/errorX.html ] || python linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
+    '[ ! -r linklint/errorX.html ] || python doclib/linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
     '[ ! -r linklint/errorX.html.new ] || mv linklint/errorX.html.new linklint/errorX.html',
-    '[ ! -r linklint/errorAX.html ] || python linklint_addnames.py <linklint/errorAX.html >linklint/errorAX.html.new',
+    '[ ! -r linklint/errorAX.html ] || python doclib/linklint_addnames.py <linklint/errorAX.html >linklint/errorAX.html.new',
     '[ ! -r linklint/errorAX.html.new ] || mv linklint/errorAX.html.new linklint/errorAX.html',
     'echo -e "\\nLokal link check results: linklint/index.html\\nRemote link check results: linklint/urlindex.html\\n"',
 ])

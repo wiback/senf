@@ -20,7 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \mainpage RateStuffer: A simple example featuring the Packet Processing Infrastructure
+/** \mainpage Example introducing the Packet Processing Infrastructure
 
     This example application implements a simple PPI application: It will read UDP packets from an
     input port and will forward them to another port at a fixed packet rate. If the input stream

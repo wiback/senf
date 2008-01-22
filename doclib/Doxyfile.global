@@ -30,6 +30,8 @@ EXPAND_ONLY_PREDEF     = YES
 PREDEFINED             = \
     DOXYGEN \
     "SENF_PPI_MODULE(x)=" \
+    "SENF_PARSER()=" \
+    "SENF_FIXED_PARSER()=" \
     "SENF_PARSER_INHERIT(name)=" \
     "SENF_PARSER_FIELD(name,type)=type name() const" \
     "SENF_PARSER_FIELD_RO(name,type)=type::value_type name() const" \

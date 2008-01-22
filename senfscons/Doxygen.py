@@ -234,7 +234,7 @@ class DoxyfileParser:
       for d in [ self._dir ] + self._include_path:
          p = os.path.join(d,value[0])
          if os.path.exists(p):
-            self._items.setdefault('@INCLDUE',[]).append(p)
+            self._items.setdefault('@INCLUDE',[]).append(p)
             parser = DoxyfileParser(p, self._env, self._include_path, self._items)
             parser.parse()
             return
@@ -305,10 +305,8 @@ def DoxySourceScan(node, env, path):
          for root, dirs, files in entries:
             for f in files:
                filename = os.path.normpath(os.path.join(root, f))
-               if ( reduce(lambda x, y: x or fnmatch(f, y),
-                           file_patterns, False)
-                    and not reduce(lambda x, y: x or fnmatch(f, y),
-                                   exclude_patterns, False) ):
+               if (         reduce(lambda x, y: x or fnmatch(f, y), file_patterns,    False)
+                    and not reduce(lambda x, y: x or fnmatch(f, y), exclude_patterns, False) ):
                   sources.append(filename)
 
    for key in dep_add_keys:

@@ -39,11 +39,11 @@ fi
 
 name="`basename "$1"`"
 case "$name" in
-    *.*) type="${name#*.}"; name="${name%.$type}" ;;
+    *.*) type=".${name#*.}"; name="${name%.$type}" ;;
     *) type="" ;;
 esac
 
-if [ ! -r "$base/Example.$type" ] ; then
+if [ ! -r "$base/Example$type" ] ; then
     echo "Don't know about file type '$type'"
     exit 1
 fi
@@ -56,7 +56,7 @@ if [ -z "$force" -a -r "$1" ] ; then
 fi
 
 sed -e "s/@NAME@/$name/g" -e "s/@AUTHOR@/${SENF_AUTHOR:-@AUTHOR@}/g" \
-    < "$base/Example.$type" \
+    < "$base/Example$type" \
     > "$1"
 
 svn add "$1"

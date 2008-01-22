@@ -478,7 +478,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         for type in env.get("DOXY_XREF_TYPES",[ "bug", "todo" ]):
             xref = os.path.join(xmlnode.dir.abspath,type+".xml")
             xref_pp = env.Command(xref+'i', [ xref, os.path.join(basedir,'xrefxtract.xslt'), xmlnode ],
-                                  [ "test -s $SOURCE && xsltproc -o $TARGET" +
+                                  [ "test -s $SOURCE && xsltproc --nonet -o $TARGET" +
                                     " --stringparam module $MODULE" +
                                     " --stringparam type $TYPE" +
                                     " ${SOURCES[1]} $SOURCE || touch $TARGET" ],

@@ -3,7 +3,7 @@
 // Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+//     @AUTHOR@
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Example.test unit tests */
+    \brief @NAME@ unit tests */
 
-//#include "Example.test.hh"
-//#include "Example.test.ih"
+//#include "@NAME@.test.hh"
+//#include "@NAME@.test.ih"
 
 // Custom includes
-#include "Example.hh"
+#include "@NAME@.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>

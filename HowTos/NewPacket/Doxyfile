@@ -1,11 +1,7 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
-INPUT = . doclib
-
-PROJECT_NAME = Overview
-PROJECT_NUMBER = "(Version $(REVISION))"
-GENERATE_XML = NO
-GENERATE_TAGFILE = doc/overview.tag
+PROJECT_NAME = "HowTo: Defining and using a new libPackets packet type"
+EXAMPLE_PATH = .
 
 TAGFILES = \
 	"$(TOPDIR)/PPI/doc/PPI.tag" \

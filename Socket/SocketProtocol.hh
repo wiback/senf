@@ -162,8 +162,8 @@ namespace senf {
                                                  appropriate type. */
 
         virtual unsigned available() const = 0;
-                                        ///< Return number of bytes available for reading without
-                                        ///< blocking
+                                        ///< Return (maximum) number of bytes available for reading
+                                        ///< without < blocking
                                         /**< This member will check in a (very, sigh) protocol
                                              dependent way, how many bytes may be read from a socket
                                              in a single (non-blocking) read operation. If the
@@ -176,9 +176,9 @@ namespace senf {
                                              returns ethernet frames, returning 1500 from
                                              available() is ok). However, this should only be done
                                              as a last resort. Also beware, that this number should
-                                             not be to large since the socket layer will always need
-                                             to allocate that number of bytes for the data to be
-                                             read. */
+                                             not be too large since the socket layer will always
+                                             need to allocate that number of bytes for the data to
+                                             be read. */
 
         virtual bool eof() const = 0;   ///< Check for end-of-file condition
                                         /**< This is another check which (like available()) is

@@ -18,6 +18,7 @@ alloc
 arg
 args
 async
+Augustin
 autoThrottling
 aVectorCollection
 BaseParser
@@ -76,6 +77,7 @@ EthernetPacket
 EthernetPacketType
 EthernetParser
 ethertype
+EtherTypes
 EthVLan
 EUI
 EUID
@@ -105,6 +107,8 @@ ForwardingRoute
 fraunhofer
 FroblizerArea
 GlobalScope
+GRE
+GREPacket
 hangup
 HangupException
 hh
@@ -112,12 +116,14 @@ hideinitializer
 Hmm
 hostname
 hostnames
+howto
 href
 htm
 html
 http
 IANA
 IdleEvent
+ietf
 ih
 impl
 INet
@@ -142,6 +148,7 @@ iterator
 join
 key
 li
+libPackets
 LinkScope
 ListB
 ListN
@@ -163,6 +170,7 @@ namespace
 nc
 netcat
 NETwork
+newpacket
 NextPacket
 nextPacketKey
 nextPacketRange
@@ -248,7 +256,7 @@ registerPacketType
 registerSomePacket
 RegistrationProxy
 rerference
-RFC
+rfc
 RO
 RP
 SafePacketParser
@@ -316,6 +324,7 @@ unthrottled
 unthrottles
 unthrottling
 VectorN
+Ver
 vlanId
 VLanId
 VoidPacketParser

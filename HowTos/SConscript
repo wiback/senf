@@ -1,7 +1,7 @@
-import sys, glob, os.path, datetime
-sys.path.append('senfscons')
+# -*- python -*-
+
 Import('env')
-import SENFSCons
+import SENFSCons, glob
 
 ###########################################################################
 
@@ -15,7 +15,7 @@ for dox in sorted(glob.glob("*/Mainpage.dox")):
         HOWTOS.append( (dox.split('/',1)[0], title) )
 
 MAINPAGE="""
-/** \mainpage Examples
+/** \mainpage HowTo's
 
     \htmlonly
     <dl>

@@ -671,9 +671,9 @@
     This macro will return the current fixed offset, a compile-time constant expression. This is
     always possible when defining a fixed size parser.
 
-    Even in dynamically sized parsers this macro will work, up tp now only fixed size fields have
-    been defined. This macro does \e not validate this condition, it will return an arbitrary
-    incorrect value otherwise.
+    Even in dynamically sized parsers this macro will work, if all parser defined \e before the
+    current position are fixed-size parsers. This macro does \e not validate this condition, it will
+    return an arbitrary incorrect value otherwise.
 
     \pre Current position preceded by fixed-size parsers only
     \returns compile-time constant offset from parsers start
