@@ -34,6 +34,7 @@ cc
 cd
 cerr
 cfi
+checksumPresent
 CIDR
 ClientSocketHandle
 CloneSource
@@ -58,12 +59,15 @@ defaultInit
 defgroup
 deque
 dil
+disableChecksum
 dl
 DNS
 dontinclude
+dox
 DSMCCSection
 dt
 ElementParser
+enableChecksum
 endcode
 enum
 eof
@@ -109,6 +113,7 @@ FroblizerArea
 GlobalScope
 GRE
 GREPacket
+GREParser
 hangup
 HangupException
 hh
@@ -121,7 +126,7 @@ href
 htm
 html
 http
-IANA
+iana
 IdleEvent
 ietf
 ih
@@ -186,6 +191,8 @@ onRequest
 onThrottle
 onUnthrottle
 Ooops
+OptFields
+optionalFields
 org
 os
 ostream
@@ -242,6 +249,7 @@ prev
 PriorityJoin
 protocolbundle
 protocolbundles
+protocolType
 QueueingDiscipline
 queueSize
 RateFilter
@@ -317,6 +325,7 @@ udpReader
 udpWriter
 UInt
 UIntField
+UIntFieldParser
 Unhandled
 unicast
 unthrottle

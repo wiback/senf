@@ -9,7 +9,7 @@
 
   <xsl:param name="topdir" select="''"/>
   
-  <xsl:template match="*">
+  <xsl:template match="*" name="copy">
     <xsl:copy>
       <xsl:call-template name="copy-attributes"/>
       <xsl:apply-templates/>
@@ -33,15 +33,12 @@
     </xsl:for-each>
   </xsl:template>
 
-  <!-- Remove the automatically inserted search form (we build our own) -->
-  <xsl:template match="li[form]"> 
-  </xsl:template>
-  
-  <!-- Replace @TOPDIR@ with  relative top directory path -->
+  <!-- Replace @TOPDIR@ with relative top directory path -->
+
   <xsl:template match="@*[contains(current(),'@TOPDIR@')]">
-    <xsl:value-of select="substring-before(current(),'@TOPDIR')"/>
+    <xsl:value-of select="substring-before(current(),'@TOPDIR@')"/>
     <xsl:value-of select="$topdir"/>
-    <xsl:value-of select="substring-after(current(),'@TOPDIR')"/>
+    <xsl:value-of select="substring-after(current(),'@TOPDIR@')"/>
   </xsl:template>
   
   <!-- Add 'class' attribute to some special paragraphs/lists -->
@@ -55,6 +52,43 @@
     </xsl:copy>
   </xsl:template>
 
+  <!-- Add '<br/>' tag after every ', ' -->
+  <!-- This code is not very robust, it works with the doxygen output though -->
+
+  <xsl:template name="break-comma">
+    <xsl:copy>
+      <xsl:call-template name="copy-attributes"/>
+      <xsl:attribute name="class">commalist</xsl:attribute>
+      <xsl:apply-templates mode="break-comma"/>
+    </xsl:copy>
+  </xsl:template>
+ 
+  <xsl:template match="text()[1]" mode="break-comma">
+    <xsl:value-of select="current()"/><br/>
+  </xsl:template>
+
+  <xsl:template match="*" mode="break-comma">
+    <xsl:call-template name="copy"/>
+  </xsl:template>
+
+  <xsl:template match="text()[contains(current(),' and') or contains(current(),'and ')]" mode="break-comma" priority="1">
+    <xsl:value-of select="substring-before(current(),'and')"/>
+    <br/>
+    <xsl:value-of select="substring-after(current(),'and')"/>
+  </xsl:template>
+
+  <xsl:template match="text()[contains(current(),',')]" mode="break-comma">
+    <xsl:value-of select="substring-before(current(),',')"/>
+    <xsl:text>,</xsl:text><br/>
+    <xsl:value-of select="substring-after(current(),',')"/>
+  </xsl:template>
+
+  <!-- ====================================================================== -->
+
+  <!-- Remove the automatically inserted search form (we build our own) -->
+  <xsl:template match="li[form]"> 
+  </xsl:template>
+  
   <xsl:template match="dl[dt/b/a/text()='Bug:']">
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">xref-bug</xsl:with-param>
@@ -155,6 +189,14 @@
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">implementedin</xsl:with-param>
     </xsl:call-template>
+  </xsl:template>
+
+  <xsl:template match="p[starts-with(text(),'Inherited by ')]">
+    <xsl:call-template name="break-comma"/>
+  </xsl:template>
+
+  <xsl:template match="p[starts-with(text(),'Inherits ')]">
+    <xsl:call-template name="break-comma"/>
   </xsl:template>
 
   <!-- Remove external items from the namespace index -->

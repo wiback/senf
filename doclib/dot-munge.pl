@@ -1,19 +1,17 @@
 #!/usr/bin/perl -i -n
 
-# Reduce font size
+# Reduce fontsize and change font
 s/fontsize=10/fontsize=8/g; 
-##s/fontname="FreeSans.ttf"/fontname="Bitstream Vera Sans Mono"/g;
 s/fontname="FreeSans.ttf"/fontname="Verdana"/g;
-##s/fontname="FreeSans.ttf"/fontname="Lucida Sans Typewriter"/g;
 
-# Wrap long labels (templates)
+# Wrap long labels (templates and pathnames)
 if (/label=\"([^"]*)\"/) {                                  #"])){ # To make emacs happy ...
     $pre=$`; 
     $post=$';                                               #';    # To make emacs happy ...
     $label=$1;
 
-    # Break at each komma
-    $label=~s/,/,\\r\\ \\ \\ \\ \\ \\ \\ \\ /g; 
+    # Break at each komma or /
+    $label=~s{[,/]}{$&\\r\\ \\ \\ \\ \\ \\ \\ \\ }g; 
 
     # If more than one '<' is in the label, break after each '<'
     if (($label=~tr/</</)>1) { 
@@ -22,10 +20,17 @@ if (/label=\"([^"]*)\"/) {                                  #"])){ # To make ema
 
     # If at least one break is in there ...
     if ($label=~/\\r/) {
+	# If it's a pathname, make all but the last line flush left
+	# Otherwise only make first line flush left
+	if ($label=~m{/}) {
+	    $label=~s/\\r(\\ )*/\\ \\ \\ \\ \\ \\ \\ \\ \\l/g;
+	    # Re-add blanks before last line
+	    $label=~s/^.*\\l/$&\\ \\ \\ \\ \\ \\ \\ \\ /;
+	} else {
+	    $label=~s/\\r/\\ \\ \\ \\ \\ \\ \\ \\ \\l/;
+	}
         # Make last line flush right
         $label.="\\r";
-        # and first line flush left
-        $label=~s/\\r/\\ \\ \\ \\ \\ \\ \\ \\ \\l/;
     }
     print "${pre}label=\"${label}\"${post}";
 } else { 

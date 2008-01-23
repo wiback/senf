@@ -480,7 +480,13 @@ div.toc li {
 div.toc div {
         margin: 10px 0px;
         font-weight: bold;
-        font-size: 120%
+        font-size: 120%;
+}
+
+p.commalist {
+        white-space: nowrap;
+        margin-left: 4em;
+        text-indent: -4em;
 }
 
 /* 
