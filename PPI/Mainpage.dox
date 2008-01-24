@@ -53,20 +53,7 @@
 
 /** \page ppi_overview PPI Overview and Concepts
 
-    <div class="toc">
-    <div>Contents</div>
-    <ol>
-    <li>\ref ppi_design</li>
-    <li>\ref ppi_packets</li>
-    <li>\ref ppi_modules</li>
-    <li>\ref ppi_connectors</li>
-    <li>\ref ppi_connections</li>
-    <li>\ref ppi_throttling</li>
-    <li>\ref ppi_events</li>
-    <li>\ref ppi_run</li>
-    <li>\ref ppi_flows</li>
-    </ol>
-    </div>
+    \autotoc
 
     \section ppi_design Design considerations
 

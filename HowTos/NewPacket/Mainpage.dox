@@ -20,10 +20,13 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \mainpage libPackets: How to define and use a new Packet Type
+/** \mainpage HowTo: Defining and using a new 'libPacket' Packet Type 
 
     This howto will introduce the facilities needed to define a new packet type. As example, the
     \c GREPacket type is defined. 
+
+    \autotoc
+
 
     \section howto_newpacket_start Getting started
 
@@ -57,6 +60,7 @@
     \li The GRE packet header is a dynamically sized header.
     \li The GRE packet header utilizes the senf::EtherTypes registry for next-header selection
 
+
     \section howto_newpacket_parser Implementing the GRE Parser
 
     The next step in creating a new packet type is to implement the parser. The parser is
@@ -66,20 +70,23 @@
     these members manually but the SENF library provides a large set of helper macros which simplify
     this task considerably.
 
+
+    \subsection howto_newpacket_parser_skeleton The PacketParser skeleton
+
     \code
-    struct GREParser : public senf::PacketParser
+    struct GREPacketParser : public senf::PacketParser
     {
     #   include SENF_PARSER()
 
         // Define fields
 
-        SENF_PARSER_FINALIZE(GREParser);
+        SENF_PARSER_FINALIZE(GREPacketParser);
     };
     \endcode
 
     This is the standard skeleton of any parser class: We need to inherit senf::PacketParser and
     start out by including either \ref SENF_PARSER() or \ref SENF_FIXED_PARSER(). Which, depends on
-    whether we define a fixed size or a dynamically sized parser. As \c GREParser is dynamically
+    whether we define a fixed size or a dynamically sized parser. As \c GREPacketParser is dynamically
     sized, we include \ref SENF_PARSER().
 
     After the fields are defined, we need to call the \ref SENF_PARSER_FINALIZE() macro to close of
@@ -89,6 +96,9 @@
     This is already a valid parser, albeit not a very usable one since it defines no fields. We now
     go back to define the parser fields and begin with the simple part: Those fields which are
     always present.
+
+
+    \subsection howto_newpacket_parser_simple Simple field definitions
 
     \code
     SENF_PARSER_BITFIELD  ( checksumPresent, 1, bool     );
@@ -131,25 +141,28 @@
     is defined as a dynamically sized parser, this offset is not a constant, it is an expression
     which calculates the offset of a field depending on the preceding data).
 
+
+    \subsection howto_newpacket_parser_variant Defining optional fields: The 'variant' parser
+
     We now come to the optional fields. Since there are two fields which need to be disabled/enabled
     together, we first need to define an additional sub-parser which combines those two
     fields. After this parser is defined, we can use \ref SENF_PARSER_VARIANT() to add this parser
     as an optional parser to the GRE header.
     
     \code
-    struct GREParser_OptFields : public senf::PacketParser
+    struct GREPacketParser_OptFields : public senf::PacketParser
     {
     #   include SENF_FIXED_PARSER()
 
         SENF_PARSER_FIELD ( checksum, senf::UInt16Parser );
         SENF_PARSER_SKIP  (           2                  );
 
-        SENF_PARSER_FINALIZE(GREParser_OptFields);
+        SENF_PARSER_FINALIZE(GREPacketParser_OptFields);
     };
     \endcode
 
     This parser only parses the two optional fields of which the reserved field is just skipped. The
-    parser this time is a fixed size parser. We can now use this parser to continue the \c GREParser
+    parser this time is a fixed size parser. We can now use this parser to continue the \c GREPacketParser
     implementation:
 
     \code
@@ -161,7 +174,7 @@
 
     SENF_PARSER_VARIANT   ( optionalFields,  checksumPresent,
                                              (senf::VoidPacketParser)
-                                             (GREParser_OptFields) );
+                                             (GREPacketParser_OptFields) );
     \endcode
 
     For a variant parser, two things need to be specified: A selector and a list of variant
@@ -170,10 +183,10 @@
     parser which returns a value which is implicitly convertible to \c unsigned). This value is used
     as index into the list of variant types. So in our case, 0 is associated with
     senf::VoidPacketParser whereas 1 is associated with \c
-    GREParser_OptFields. (senf::VoidPacketParser is a special empty parser which is used in a
+    GREPacketParser_OptFields. (senf::VoidPacketParser is a special empty parser which is used in a
     Variant to denote cases in which the variant parser should not parse anything)
 
-    This parser will work, it is however not very safe and not very usable. If \a p is a GREParser
+    This parser will work, it is however not very safe and not very usable. If \a p is a GREPacketParser
     instance, than we access the fields via:
     \code
     p.checksumPresent()                    = true;
@@ -192,41 +205,47 @@
     enabled, the variant parser needs to insert additional 4 bytes of data and remove those bytes,
     when the checksumPresent field is disabled. 
 
-    To fix this, we make the checksumPresent field read-only:
+
+    \subsection howto_newpacket_parser_fixvariant Fixing access by providing custom accessor members
+
+    Since we don't want to allow che \a checksumPresent() field to be changed directly, we mark this
+    field as read-only:
 
     \code
     SENF_PARSER_BITFIELD_RO ( checksumPresent,  1, bool     );
     \endcode
 
-    To change the checksumPresent value, we now need to use the variant parsers \a init member:
+    To change the \a checksumPresent() value, the variant parser provides special members to change
+    the currently selected variant:
 
     \code
     p.optionalFields().init<0>();
     p.optionalFields().init<1>();
     \endcode
     
-    The first statements switches to the first variant and therefore in this case disables the
-    checksum field. The second statement will switch to the second variant and enable the checksum
-    field. 
+    These statements also change the selector field (in this case \a checksumPresent()) to the
+    correct value: The first statements switches to the first variant and therefore in this case
+    disables the checksum field. The second statement will switch to the second variant and enable
+    the checksum field.
 
-    This again is not very usable. So we complete the parser by providing simple additional members
-    which wrap these complicated calls. While doing this, we also mark the variant as a private
-    field so it is not directly accessible any more (since we now have the additional helpers which
-    are used to access the variant, we don't want anyone to mess around with it directly). Here the
-    final \c GREParser
+    Again, these statements are relatively complex. So we complete the parser by providing simple
+    additional members which wrap these complicated calls. While doing this, we also mark the
+    variant as a private field so it is not directly accessible any more (since we now have the
+    additional helpers which are used to access the variant, we don't want anyone to mess around
+    with it directly). Here the final \c GREPacketParser
 
     \code
-    struct GREParser_OptFields : public senf::PacketParser
+    struct GREPacketParser_OptFields : public senf::PacketParser
     {
     #   include SENF_FIXED_PARSER()
 
         SENF_PARSER_FIELD           ( checksum,        senf::UInt16Parser         );
         SENF_PARSER_SKIP            (                   2                         );
 
-        SENF_PARSER_FINALIZE(GREParser_OptFields);
+        SENF_PARSER_FINALIZE(GREPacketParser_OptFields);
     };
 
-    struct GREParser : public senf::PacketParser
+    struct GREPacketParser : public senf::PacketParser
     {
     #   include SENF_PARSER()
 
@@ -238,16 +257,16 @@
 
         SENF_PARSER_PRIVATE_VARIANT ( optionalFields_, checksumPresent,
                                                          (senf::VoidPacketParser)
-                                                         (GREParser_OptFields)    );
+                                                         (GREPacketParser_OptFields)    );
 
-        typedef GREParser_OptFields::checksum_t checksum_t;
+        typedef GREPacketParser_OptFields::checksum_t checksum_t;
         checksum_t checksum() const
             { return optionalFields_().get<1>().checksum(); }
 
         void enableChecksum()  const { optionalFields_().init<1>(); }
         void disableChecksum() const { optionalFields_().init<0>(); }
     
-        SENF_PARSER_FINALIZE(GREParser);
+        SENF_PARSER_FINALIZE(GREPacketParser);
     };
     \endcode
 
@@ -256,14 +275,126 @@
     define some additional symbols providing further information about the field. Of these
     additional symbols, the most important is <em>field</em><code>_t</code>, which is the (parser)
     type returned by the field. This helps to work with a parser in more complex situations
-    (e.g. when using collection parsers) since it allows to access the parser type without exact
+    (e.g. when using \ref parsecollection) since it allows to access the parser type without exact
     knowledge of this type (which may become quite complex if templates are involved) as long as the
     field name is known. Since we provide an accessor for the \a checksum field, we also provide the
     \a checksum_t typedef for this accessor.
 
-    The \c GREParser is now simple and safe to use. The only responsibility of the user now is to
+    The \c GREPacketParser is now simple and safe to use. The only responsibility of the user now is to
     only access \a checksum() if the \a checksumPresent() field is set. Otherwise, the behavior is
     undefined (in debug builds, the parser will terminate the application with an assert).
+
+
+    \section howto_newpacket_type Defining the packet type
+
+    After we have implemented the \c GREPacketParser we need now to build the packet type. This is
+    done by providing a special policy class called the 'packet type'. This class encapsulates all
+    the information the packet library needs to know about a packet:
+
+    \subsection howto_newpacket_type_skeleton The packet type skeleton
+
+    For every type of packet, the 'packet type' class will look roughly the same. If the packet
+    utilizes a registry and is not hopelessly complex, the packet type will almost always look like
+    this:
+    \code
+    struct GREPacketType
+        : public senf::PacketTypeBase,
+          public senf::PacketTypeMixin<GREPacketType, EtherTypes>
+    {
+        typedef senf::PacketTypeMixin<GREPacketType, EtherTypes> mixin;
+        typedef senf::ConcretePacket<GREPacketType> packet;
+        typedef senf::GREPacketParser parser;
+    
+        using mixin::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::init;
+        using mixin::initSize;
+
+        // Define members here
+    };
+    \endcode
+    We note, that \c GREPacketType derives from two classes: senf::PacketTypeBase and
+    senf::PacketTypeMixin. senf::PacketTypeBase must be inherited by every packet type class. the
+    senf::PacketTypeMixin provides default implementations for some members which are useful for
+    most kinds of packets. If a packet type is very complex and these defaults don't work, the mixin
+    class can and should be left out.
+
+    Of the typedefs, only \a parser is mandatory. It defines the packet parser to use to interpret
+    this type of packet. \a mixin and \a packet are defined to simplify the following
+    definitions (More on \a packet and senf::ConcretePacket later).
+
+    The next block of statements imports all the default implementations provided by the mixin
+    class:
+    
+    \li \a nextPacketRange provides information about where the next packet lives within the GRE
+        packet.
+    \li \a nextPacketType provides the type of the next packet from information in the GRE packet.
+    \li \a init is called to initialize a new GRE packet. This call is forwarded to \c
+        GREPacketparser::init.
+    \li \a initSize is called to find the size of an empty (newly create) GRE packet. This is also
+        provided by GREPacketParser.
+    
+    With these default implementations provided by the mixin, only a few additional members are
+    needed to complete the \c GREPacketType: \a nextPacketKey, \a finalize, and \a dump
+
+
+    \subsection howto_newpacket_type_registry Utilizing the packet registry
+
+    We want the GRE packet to utilize the senf::EtherTypes registry to find the type of packet
+    contained in the GRE payload. A registry maps an arbitrary key value to a packet type
+    represented by a packet factory instance. The details have already been taken care of by the
+    senf::PacketTypeMixin (it provides the \a nextPacketType member). However, to lookup the packet
+    in the registry, the mixin needs to know the key value. To this end, we implement \a
+    nextPacketKey(), which is very simple:
+
+    \code
+    static key_t nextPacketKey(packet p) { return p->protocolType(); }
+    \endcode
+
+    All \c GREPacketType members are static. They are passed the packet in question as an
+    argument. \a nextPacketKey() just needs to return the value of the correct packet field. And
+    since the \c parser type (as defined as a typedef) allows direct access to the packet parser
+    using the <tt>-></tt> operator, we can simply access that value.
+
+    The \c key_t return type is a typedef provided by the mixin class it is taken from the type of
+    registry, in this case it is senf::EtherTypes::key_t (which is defined as a 16 bit unsigned
+    integer value).
+
+    With this information, the packet library can now find out the type of packet needed to parse
+    the GRE payload -- as long as the protocolType() is registered with the senf::EtherTypes
+    registry. If this is not the case, the packet library will not try to interpret the payload, it
+    will return a senf::DataPacket.
+
+    One special case of GRE encapsulation occurs when layer 2 frames and especially ethernet frames
+    are carried in the GRE payload. The ETHERTYPE registry normally only contains layer 3 protocols
+    (like IP or IPX) however for this special case, the value 0x6558 has been added to the ETHERTYPE
+    registry. So we need to add this value to inform the packet library to parse the payload as an
+    ethernet packet if the \a protocolType() is 0x6558. This happens in the implementation file (the
+    \c .cc file):
+
+    \code
+    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x6558, senf::EthernetPacket );
+    \endcode
+
+    This macro registers the value 0x6558 in the senf::EtherTypes registry and associates it with
+    the packet type senf::EthernetPacket. This macro declares an anonymous static variable, it
+    therefore must always be placed in the implementation file and \e never in an include file.
+
+    Additionally, we want the GRE packet to be parsed when present as an IP payload. Therefore we
+    additionally need to register GRE in the senf::IpTypes registry. Looking at the <a
+    href="http://www.iana.org/assignments/protocol-numbers">IP protocol numbers</a>, we find that
+    GRE has been assigned the value 47:
+
+    \code
+    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 47, GREPacket );
+    \endcode
+
+    But wait -- what is \c GREPacket ? This question is answered a few section farther on.
+    
+    \fixme Document the needed \c \#include files
+    \fixme Provide an advanced section with additional info: How to ensure, that the first 5 bits in
+        reserver0 are not set. How to enforce version == 0 (that is, make version() read-only and
+        return no_factory for the next packet type if any of the conditions is violated)
  */
 
 

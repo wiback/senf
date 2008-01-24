@@ -193,6 +193,19 @@ packet of which the key is requested
         static Registry & registry();
     };
 
+    /** \brief Statically add an entry to a packet registry
+
+        This macro will declare an anonymous global variable in such a way, that constructing this
+        variable will add a registration to the given packet registry.
+
+        \hideinitializer
+     */
+#   define SENF_PACKET_REGISTRY_REGISTER( registry, value, type )                                       \
+        namespace {                                                                                     \
+            senf::PacketRegistry< registry >::RegistrationProxy< type >                                 \
+                packetRegistration_ ## __LINE__ ( value );                                              \
+        }
+
     /** \brief Entry not found in registry
 
         This exception is signaled whenever a throwing lookup operation fails.

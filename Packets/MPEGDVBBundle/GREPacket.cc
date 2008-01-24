@@ -33,10 +33,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthernetPacket>
-        registerTransparentEthernetBridging (0x6558);
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x6558, senf::EthernetPacket );
 
 prefix_ void senf::GREPacketType::dump(packet p, std::ostream & os)
 {

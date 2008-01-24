@@ -86,23 +86,6 @@ senf::PacketTypeMixin<Self,Registry>::key(Packet p)
 // senf::PacketTypeMixin<Self,void>
 
 template <class Self>
-prefix_ senf::PacketInterpreterBase::optional_range
-senf::PacketTypeMixin<Self,void>::nextPacketRange(Packet p)
-{
-    if (p.data().size() < Self::initSize())
-        return PacketTypeBase::no_range();
-    typename Self::size_type sz (Self::initHeadSize());
-    ///\idea This if condition could be replaced with a compile time switch by checking, wether
-    /// (the function address) Self::initHeadSize is different from PacketTypeBase::initHeadSize
-    if (sz == PacketTypeBase::size_type(-1))
-        return PacketTypeBase::range(boost::next(p.data().begin(),Self::initSize()),
-                                     p.data().end());
-    else
-        return PacketTypeBase::range(boost::next(p.data().begin(),sz),
-                                     boost::prior(p.data().end(),Self::initSize()-sz));
-}
-
-template <class Self>
 prefix_ senf::PacketInterpreterBase::size_type senf::PacketTypeMixin<Self,void>::initSize()
 {
     return senf::init_bytes< typename Self::parser >::value;

@@ -88,7 +88,7 @@ HEADER = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http
 <link href="@TOPDIR@/doclib/senf.css" rel="stylesheet" type="text/css">
 <link rel="shortcut icon" href="@TOPDIR@/doclib/favicon.ico">
 <style type="text/css">
-div.tabs ul li.$projectname a { background-color: #EDE497; }
+div.tabs li.$projectname a { background-color: #EDE497; }
 </style>
 </head>
 <body>
@@ -125,6 +125,7 @@ div.tabs ul li.$projectname a { background-color: #EDE497; }
 {{      for name, path, level in modules():
           <li class="${name} level${level}"><a href="@TOPDIR@/${path}/index.html">${name}</a></li>
 }}
+        <li class="glossary level0"><a href="@TOPDIR@/doc/html/glossary.html">Glossary</a></li>
       </ul>
     </div>"""
 

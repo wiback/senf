@@ -1,0 +1,73 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \page glossary Glossary
+
+    <table class="glossary">
+
+    <tr><td>complete policy</td> <td>libSocket</td> <td>socket policy where each axis is specified
+    completely</td></tr>
+
+    <tr><td>incomplete policy</td> <td>libSocket</td> <td>socket policy, where at least one axis is
+    not fully specified</td></tr>
+
+    <tr><td>policy axis</td> <td>libSocket</td> <td>one aspect defined in the socket policy, typedef
+    and member of the senf::SocketPolicy template</td></tr>
+
+    <tr><td>policy class</td> <td>libSocket</td> <td>implementation of a single policy axis, class
+    derived from the axis base class</td></tr>
+
+    <tr><td>policy interface</td> <td>libSocket</td> <td>interface directly provided by
+    senf::ClientSocketHandle/senf::ServerSocketHandle and defined through the policy</td>
+
+    <tr><td>policy</td> <td>libSocket</td> <td>collection of policy classes, one for each policy
+    axis, instantiation of the SocketPolicy template</td></tr>
+
+    <tr><td>protocol class</td> <td>libSocket</td> <td>definition of a protocol as a class, class
+    inheriting from senf::ConcreteSocketProtocol.</td></tr>
+
+    <tr><td>protocol facet</td> <td>libSocket</td> <td>a class providing some subset of the protocol
+    interface, class derived from senf:;SocketProtocol but not from
+    senf::ConcreteSocketProtocol</td></tr>
+
+    <tr><td>protocol interface</td> <td>libSocket</td> <td>interface provided by the protocol class
+    and accessible via the
+    senf::ProtocolClientSocketHandle::protocol()/senf::ProtocolServerSocketHandle::protocol()
+    member</td></tr>
+
+    <tr><td>socket policy</td> <td>libSocket</td> <td>another name for 'policy'</td></tr>
+
+    </table>
+ */
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// mode: flyspell
+// mode: auto-fill
+// End:

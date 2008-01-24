@@ -85,6 +85,69 @@
 
   <!-- ====================================================================== -->
 
+  <!-- Hack Glossary menu highlight -->
+
+  <xsl:template match="div[@class='tabs menu']/ul[1]">
+    <xsl:choose>
+      <xsl:when test="//h1[.//text()='Glossary']">
+        <xsl:call-template name="add-class">
+          <xsl:with-param name="class">glossary</xsl:with-param>
+        </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:copy>
+          <xsl:call-template name="copy-attributes"/>
+          <xsl:apply-templates/>
+        </xsl:copy>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
+  <!-- Autogenerate table-of-contents for a page -->
+
+  <xsl:template match="div[@id='autotoc']">
+    <xsl:copy>
+      <xsl:call-template name="copy-attributes"/>
+      <h1>Contents</h1>
+      <ul>
+        <xsl:for-each select="following::h2|following::h3|following::h4">
+          <xsl:element name="li">
+            <xsl:attribute name="class"><xsl:value-of select="concat('level_',local-name())"/></xsl:attribute>
+            <b><xsl:call-template name="section-number"/></b>
+            <xsl:element name="a">
+              <xsl:attribute name="href"><xsl:value-of select="concat('#',a/@name)"/></xsl:attribute>
+              <xsl:value-of select="string(current())"/>
+            </xsl:element>
+          </xsl:element>
+        </xsl:for-each>
+      </ul>
+    </xsl:copy>
+  </xsl:template>
+
+  <xsl:template name="section-number">
+    <xsl:number level="any" from="h1" count="h2"/>
+    <xsl:text>.</xsl:text>
+    <xsl:if test="self::h3|self::h4">
+      <xsl:number level="any" from="h2" count="h3"/>
+      <xsl:text>.</xsl:text>
+    </xsl:if>
+    <xsl:if test="self::h4">
+      <xsl:number level="any" from="h3" count="h4"/>
+      <xsl:text>.</xsl:text>
+    </xsl:if>
+    <xsl:text> </xsl:text>
+  </xsl:template>
+  
+  <xsl:template match="h2|h3|h4">
+    <xsl:copy>
+      <xsl:call-template name="copy-attributes"/>
+      <xsl:if test="preceding::div[@id='autotoc']">
+        <xsl:call-template name="section-number"/>
+      </xsl:if>
+      <xsl:apply-templates/>
+    </xsl:copy>
+  </xsl:template>
+
   <!-- Remove the automatically inserted search form (we build our own) -->
   <xsl:template match="li[form]"> 
   </xsl:template>

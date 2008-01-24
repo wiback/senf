@@ -367,7 +367,7 @@ namespace senf {
 #if !defined(HH_Packets__decls_) && !defined(HH_PacketType_i_)
 #define HH_PacketType_i_
 #include "PacketType.cci"
-//#include "PacketType.ct"
+#include "PacketType.ct"
 #include "PacketType.cti"
 #endif
 

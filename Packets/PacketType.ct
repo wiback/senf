@@ -1,0 +1,65 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief PacketType non-inline template implementation  */
+
+//#include "PacketType.ih"
+
+// Custom includes
+
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketTypeMixin<Self,void>
+
+template <class Self>
+prefix_ senf::PacketInterpreterBase::optional_range
+senf::PacketTypeMixin<Self,void>::nextPacketRange(Packet p)
+{
+    if (p.data().size() < Self::initSize())
+        return PacketTypeBase::no_range();
+    typename Self::size_type sz (Self::initHeadSize());
+    ///\idea This if condition could be replaced with a compile time switch by checking, wether
+    /// (the function address) Self::initHeadSize is different from PacketTypeBase::initHeadSize
+    if (sz == PacketTypeBase::size_type(-1))
+        return PacketTypeBase::range(boost::next(p.data().begin(),Self::initSize()),
+                                     p.data().end());
+    else
+        return PacketTypeBase::range(boost::next(p.data().begin(),sz),
+                                     boost::prior(p.data().end(),Self::initSize()-sz));
+}
+
+///////////////////////////////ct.e////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

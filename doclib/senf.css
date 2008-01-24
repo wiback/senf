@@ -184,7 +184,7 @@ div.tabs li.current span {
         padding-bottom: 6px;
 }
 
-div.tabs ul li a:hover, div.tabs ul li.current a {
+div.tabs ul li a:hover, div.tabs ul li.current a, div.tabs ul.glossary li a:hover {
         color: #726921;
         text-decoration: none;
         background-color: #EDE497;
@@ -193,6 +193,14 @@ div.tabs ul li a:hover, div.tabs ul li.current a {
 div.tabs ul li.level1 a {
         padding-left: 1.5em;
         font-size: 90%;
+}
+
+div.tabs ul.glossary li a {
+        background-color: #FDF7C3;
+}
+
+div.tabs ul.glossary li.glossary a {
+        background-color: #EDE497;
 }
 
 #footer {
@@ -487,6 +495,29 @@ p.commalist {
         white-space: nowrap;
         margin-left: 4em;
         text-indent: -4em;
+}
+
+#autotoc h1 {
+        font-size: 120%;
+        text-align: left;
+}
+
+#autotoc ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 1em 0 1em 2em;
+}
+
+#autotoc ul li.level_h2 {
+        margin: .5em 0 .2em 0;
+}
+
+#autotoc ul li.level_h3 {
+        margin-left: 1.5em;
+}
+
+#autotoc ul li.level_h4 {
+        margin-left: 3em;
 }
 
 /* 
