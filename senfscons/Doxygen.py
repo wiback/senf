@@ -464,7 +464,7 @@ def generate(env):
       'Doxygen': doxyfile_builder,
    })
 
-   env.AppendUnique(
+   env.SetDefault(
       DOXYGEN = 'doxygen',
    )
 

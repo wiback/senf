@@ -20,12 +20,14 @@ args
 async
 Augustin
 autoThrottling
+autotoc
 aVectorCollection
 BaseParser
 berlios
 bitfield
 bool
 bund
+calculateChecksum
 callback
 callbacks
 catched
@@ -104,6 +106,7 @@ FileHandle
 findNext
 findPrev
 fixme
+fixvariant
 fokus
 foo
 FooParser
@@ -113,6 +116,8 @@ FroblizerArea
 GlobalScope
 GRE
 GREPacket
+GREPacketParser
+GREPacketType
 GREParser
 hangup
 HangupException
@@ -122,6 +127,7 @@ Hmm
 hostname
 hostnames
 howto
+HowTo
 href
 htm
 html
@@ -147,12 +153,15 @@ InvalidPacketChainException
 IOEvent
 IOEventInfo
 ip
+IpTypes
 IpV
 ipv
+IPX
 iterator
 join
 key
 li
+libPacket
 libPackets
 LinkScope
 ListB

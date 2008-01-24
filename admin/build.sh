@@ -24,12 +24,12 @@ if grep -qv '^At ' ../svn-update.log; then
 fi
 rm -f ../svn-update.log
 
-echo '$ scons -k all'
-scons -k all
-echo '$ scons linklint'
-scons linklint
-echo '$ scons fixlinks'
-scons fixlinks
+echo "\$ nice scons -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
+nice scons -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
+echo "\$ nice scons linklint ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
+nice scons linklint ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
+echo "\$ nice scons fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
+nice scons fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
 echo -n '# Build completed at '; date --utc
 
 exec >../upload.log 2>&1
@@ -41,6 +41,8 @@ fi
 echo -n '# Upload started at '; date --utc
 rsync -rzv --del --delete-excluded \
 	--filter="- .svn" \
+	--filter="- linklint" \
+	--filter="- debian" \
 	--filter="+ */" \
 	--filter="+ *.html" \
 	--filter="+ *.css" \

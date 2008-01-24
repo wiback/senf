@@ -208,7 +208,7 @@
 
     \subsection howto_newpacket_parser_fixvariant Fixing access by providing custom accessor members
 
-    Since we don't want to allow che \a checksumPresent() field to be changed directly, we mark this
+    Since we don't want to allow the \a checksumPresent() field to be changed directly, we mark this
     field as read-only:
 
     \code
@@ -232,42 +232,19 @@
     additional members which wrap these complicated calls. While doing this, we also mark the
     variant as a private field so it is not directly accessible any more (since we now have the
     additional helpers which are used to access the variant, we don't want anyone to mess around
-    with it directly). Here the final \c GREPacketParser
+    with it directly).
 
     \code
-    struct GREPacketParser_OptFields : public senf::PacketParser
-    {
-    #   include SENF_FIXED_PARSER()
+    SENF_PARSER_PRIVATE_VARIANT ( optionalFields_, checksumPresent,
+                                                     (senf::VoidPacketParser)
+                                                     (GREPacketParser_OptFields)    );
 
-        SENF_PARSER_FIELD           ( checksum,        senf::UInt16Parser         );
-        SENF_PARSER_SKIP            (                   2                         );
+    typedef GREPacketParser_OptFields::checksum_t checksum_t;
+    checksum_t checksum() const
+        { return optionalFields_().get<1>().checksum(); }
 
-        SENF_PARSER_FINALIZE(GREPacketParser_OptFields);
-    };
-
-    struct GREPacketParser : public senf::PacketParser
-    {
-    #   include SENF_PARSER()
-
-        SENF_PARSER_BITFIELD_RO     ( checksumPresent,  1, bool                   );
-        SENF_PARSER_SKIP_BITS       (                  12                         );
-        SENF_PARSER_BITFIELD        ( version,          3, unsigned               );
-
-        SENF_PARSER_FIELD           ( protocolType,    senf::UInt16Parser         );
-
-        SENF_PARSER_PRIVATE_VARIANT ( optionalFields_, checksumPresent,
-                                                         (senf::VoidPacketParser)
-                                                         (GREPacketParser_OptFields)    );
-
-        typedef GREPacketParser_OptFields::checksum_t checksum_t;
-        checksum_t checksum() const
-            { return optionalFields_().get<1>().checksum(); }
-
-        void enableChecksum()  const { optionalFields_().init<1>(); }
-        void disableChecksum() const { optionalFields_().init<0>(); }
-    
-        SENF_PARSER_FINALIZE(GREPacketParser);
-    };
+    void enableChecksum()  const { optionalFields_().init<1>(); }
+    void disableChecksum() const { optionalFields_().init<0>(); }
     \endcode
 
     Above code has one other twist we need to discuss: the \a checksum_t typedef. This is added as a
@@ -284,12 +261,108 @@
     only access \a checksum() if the \a checksumPresent() field is set. Otherwise, the behavior is
     undefined (in debug builds, the parser will terminate the application with an assert).
 
+    
+    \subsection howto_newpacket_parser_add Providing additional functionality
+
+    The \c GREPacketParser is now complete. But we can do better: A packet parser is not restricted
+    to simply parsing data. Depending on the packet type, additional members can be arbitrarily
+    defined. In the case of \c GREPacket, we provide one additional member, \a calculateChecksum()
+    which does just that: It calculates the checksum of the GRE packet.
+
+    \code
+    checksum_t::value_type calculateChecksum() const 
+    {
+        if (!checksumEnabled()) 
+            return 0;
+
+        senf::IpChecksum cs;
+        cs.feed( i(), i()+4 );
+        // Skip even number of 0 bytes (the 2 bytes checksum field)
+        // cs.feed(0); cs.feed(0);
+        cs.feed( i()+6, data().end() );
+
+        return cs.sum()
+    }
+    \endcode
+
+    This code just implements what is defined in the RFC: The checksum covers the complete GRE
+    packet including it's header with the checksum field temporarily set to 0. Instead of really
+    changing the checksum field we manually pass the correct data to \a cs. 
+
+    In this code we utilize some additional information provided by senf::PacketParserBase. The \a
+    i() member returns an iterator to the first byte the parser is interpreting whereas \a data()
+    returns a reference to the packet data container for the packet being parsed. Access to \a
+    data() should be restricted as much as possible. It is safe when defining new packet parsers
+    (like GREPacketParser). It's usage from sub parsers (like GREPacketParser_OptFields or even
+    senf::UInt16Parser) would be much more arcane and should be avoided.
+
+
+    \subsection howto_newpacket_parser_final The complete GREPacketParser implementation
+
+    So this is now the complete implementation of the \c GREPacketParser:
+
+    \code
+    #include <senf/Packets.hh>
+    #include <senf/Utils/IpChecksum.hh>
+    
+    struct GREPacketParser_OptFields : public senf::PacketParser
+    {
+    #   include SENF_FIXED_PARSER()
+
+        SENF_PARSER_FIELD           ( checksum,        senf::UInt16Parser            );
+        SENF_PARSER_SKIP            (                   2                            );
+
+        SENF_PARSER_FINALIZE(GREPacketParser_OptFields);
+    };
+
+    struct GREPacketParser : public senf::PacketParser
+    {
+    #   include SENF_PARSER()
+
+        SENF_PARSER_BITFIELD_RO     ( checksumPresent,  1, bool                      );
+        SENF_PARSER_SKIP_BITS       (                  12                            );
+        SENF_PARSER_BITFIELD        ( version,          3, unsigned                  );
+
+        SENF_PARSER_FIELD           ( protocolType,    senf::UInt16Parser            );
+
+        SENF_PARSER_PRIVATE_VARIANT ( optionalFields_, checksumPresent,
+                                                         (senf::VoidPacketParser)
+                                                         (GREPacketParser_OptFields) );
+
+        typedef GREPacketParser_OptFields::checksum_t checksum_t;
+        checksum_t checksum() const
+            { return optionalFields_().get<1>().checksum(); }
+
+        void enableChecksum()  const { optionalFields_().init<1>(); }
+        void disableChecksum() const { optionalFields_().init<0>(); }
+    
+        SENF_PARSER_FINALIZE(GREPacketParser);
+
+        checksum_t::value_type calculateChecksum() const;
+    };
+    
+    GREPacketParser::checksum_t::value_type GREPacketParser::calculateChecksum() const
+    {
+        if (!checksumEnabled()) 
+            return 0;
+
+        senf::IpChecksum cs;
+        cs.feed( i(), i()+4 );
+        // Skip even number of 0 bytes (the 2 bytes checksum field)
+        // cs.feed(0); cs.feed(0);
+        cs.feed( i()+6, data().end() );
+
+        return cs.sum()
+    }
+    \endcode
+
 
     \section howto_newpacket_type Defining the packet type
 
     After we have implemented the \c GREPacketParser we need now to build the packet type. This is
     done by providing a special policy class called the 'packet type'. This class encapsulates all
     the information the packet library needs to know about a packet:
+
 
     \subsection howto_newpacket_type_skeleton The packet type skeleton
 
@@ -330,7 +403,7 @@
         packet.
     \li \a nextPacketType provides the type of the next packet from information in the GRE packet.
     \li \a init is called to initialize a new GRE packet. This call is forwarded to \c
-        GREPacketparser::init.
+        GREPacketParser::init.
     \li \a initSize is called to find the size of an empty (newly create) GRE packet. This is also
         provided by GREPacketParser.
     
@@ -389,7 +462,35 @@
     SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 47, GREPacket );
     \endcode
 
-    But wait -- what is \c GREPacket ? This question is answered a few section farther on.
+    But wait -- what is \c GREPacket ? This question is answered a few section further down.
+
+
+    \subsection howto_newpacket_type_invariants Providing packet invariants
+
+    Many packets have some invariants that must hold: The payload size must be equal to some field,
+    a checksum must match and so on. When packets are newly created or changed, these invariants
+    have to be updated to be correct. This is the responsibility of the \a finalize() member. This
+    is also the place, where the \a protocolType() field is assigned.
+
+    \code
+    static void finalize(packet p) 
+    {
+        if (p->checksumPresent())
+            p->checksum() << p->calculateChecksum();
+        p->protocolType() << key(p->next(senf::nothrow));
+    }
+    \endcode
+    
+    \a finalize() first updates the \a checksum() field if present. It then sets the \a
+    protocolType() field depending on the \e next packet. The \c key() function is provided by the
+    mixin class: It will lookup the \e type of a packet in the registry and return that packets key
+    in the registry.
+
+    Here we are using the more generic parser assignment expressed using the \c << operator. This
+    operator in the most cases works like an ordinary assignment, however it can also be used to
+    assign parsers to each other efficiently and it supports 'optional values' (as provided by <a
+    href="http://www.boost.org/libs/optional/doc/optional.html">Boost.Optional</a> and as returned
+    by \c key()).
     
     \fixme Document the needed \c \#include files
     \fixme Provide an advanced section with additional info: How to ensure, that the first 5 bits in

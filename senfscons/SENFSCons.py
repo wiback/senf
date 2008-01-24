@@ -218,11 +218,12 @@ def MakeEnvironment():
     global opts, finalizers
     InitOpts()
     env = SCons.Environment.Environment(options=opts)
-    for opt in opts.options:
-        if SCons.Script.SConscript.Arguments.get(opt.key):
-            env[opt.key] = SCons.Script.SConscript.Arguments.get(opt.key)
-    if SCons.Script.SConscript.Arguments.get('final'):
-        env['final'] = 1
+    env.Replace(**SCons.Script.SConscript.Arguments)
+    #for opt in opts.options:
+    #    if SCons.Script.SConscript.Arguments.get(opt.key):
+    #        env[opt.key] = SCons.Script.SConscript.Arguments.get(opt.key)
+    #if SCons.Script.SConscript.Arguments.get('final'):
+    #    env['final'] = 1
     env.Help("\nSupported build variables (either in SConfig or on the command line:\n")
     env.Help(opts.GenerateHelpText(env))
 
