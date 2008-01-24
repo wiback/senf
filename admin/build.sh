@@ -24,12 +24,12 @@ if grep -qv '^At ' ../svn-update.log; then
 fi
 rm -f ../svn-update.log
 
-echo "\$ nice scons -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
-nice scons -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
-echo "\$ nice scons linklint ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
-nice scons linklint ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
-echo "\$ nice scons fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
-nice scons fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
+echo "\$ nice ${SCONS:-scons} -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
+nice ${SCONS:-scons} -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
+echo "\$ nice ${SCONS:-scons} linklint ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
+nice ${SCONS:-scons} linklint ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
+echo "\$ nice ${SCONS:-scons} fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
+nice ${SCONS:-scons} fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
 echo -n '# Build completed at '; date --utc
 
 exec >../upload.log 2>&1
