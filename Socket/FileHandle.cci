@@ -27,6 +27,7 @@
 //#include "FileHandle.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include <errno.h>
 #include "../Utils/Exception.hh"
 
@@ -205,14 +206,14 @@ prefix_ senf::FileHandle::FileHandle(FileBody::ptr body)
 
 prefix_ senf::FileBody & senf::FileHandle::body()
 {
-    BOOST_ASSERT(body_);
+    SENF_ASSERT(body_);
     return *body_;
 }
 
 prefix_ senf::FileBody const & senf::FileHandle::body()
     const
 {
-    BOOST_ASSERT(body_);
+    SENF_ASSERT(body_);
     return *body_;
 }
 

@@ -24,6 +24,7 @@
     \brief Packet inline non-template implementation */
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -162,7 +163,7 @@ prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr packet)
 prefix_ senf::PacketInterpreterBase::ptr senf::Packet::ptr()
     const
 {
-    BOOST_ASSERT(packet_);
+    SENF_ASSERT(packet_);
     return packet_;
 }
 

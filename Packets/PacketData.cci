@@ -24,6 +24,7 @@
     \brief PacketData inline non-template implementation */
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include <iterator>
 #include "PacketImpl.hh"
 #include "PacketParser.hh"
@@ -37,14 +38,14 @@
 prefix_ senf::PacketData::iterator senf::PacketData::begin()
     const
 {
-    BOOST_ASSERT(begin_ <= impl().size());
+    SENF_ASSERT(begin_ <= impl().size());
     return boost::next(impl().begin(),begin_);
 }
 
 prefix_ senf::PacketData::iterator senf::PacketData::end()
     const
 {
-    BOOST_ASSERT(end_ <= impl().size());
+    SENF_ASSERT(end_ <= impl().size());
     return boost::next(impl().begin(),end_);
 }
 
@@ -63,13 +64,13 @@ prefix_ bool senf::PacketData::empty()
 prefix_ senf::PacketData::byte senf::PacketData::operator[](size_type n)
     const
 {
-    BOOST_ASSERT( n < size() );
+    SENF_ASSERT( n < size() );
     return *( boost::next(begin(),n) );
 }
 
 prefix_ senf::PacketData::byte & senf::PacketData::operator[](size_type n)
 {
-    BOOST_ASSERT( n < size() );
+    SENF_ASSERT( n < size() );
     return *( boost::next(begin(),n) );
 }
 
@@ -114,7 +115,7 @@ prefix_ senf::PacketData::PacketData(size_type b, size_type e)
 prefix_ senf::detail::PacketImpl & senf::PacketData::impl()
     const
 {
-    BOOST_ASSERT( impl_ );
+    SENF_ASSERT( impl_ );
     return *impl_;
 }
 
@@ -139,7 +140,7 @@ prefix_  senf::safe_data_iterator::safe_data_iterator(PacketParserBase const & p
 
 prefix_ senf::safe_data_iterator & senf::safe_data_iterator::operator=(PacketData::iterator i)
 {
-    BOOST_ASSERT(data_);
+    SENF_ASSERT(data_);
     i_ = std::distance(data_->begin(),i);
     return *this;
 }
@@ -167,7 +168,7 @@ prefix_ bool senf::safe_data_iterator::boolean_test()
 prefix_ senf::PacketData & senf::safe_data_iterator::data()
     const
 {
-    BOOST_ASSERT(data_);
+    SENF_ASSERT(data_);
     return *data_;
 }
 
@@ -180,7 +181,7 @@ prefix_ senf::safe_data_iterator::value_type & senf::safe_data_iterator::derefer
 prefix_ bool senf::safe_data_iterator::equal(safe_data_iterator const & other)
     const
 {
-    BOOST_ASSERT(data_ == other.data_);
+    SENF_ASSERT(data_ == other.data_);
     return i_ == other.i_;
 }
 
@@ -188,7 +189,7 @@ prefix_ senf::safe_data_iterator::difference_type
 senf::safe_data_iterator::distance_to(safe_data_iterator const & other)
     const
 {
-    BOOST_ASSERT(data_ == other.data_);
+    SENF_ASSERT(data_ == other.data_);
     return other.i_ - i_;
 }
 
@@ -199,20 +200,20 @@ prefix_ void senf::safe_data_iterator::increment()
 
 prefix_ void senf::safe_data_iterator::decrement()
 {
-    BOOST_ASSERT(i_>0);
+    SENF_ASSERT(i_>0);
     --i_;
 }
 
 prefix_ void senf::safe_data_iterator::advance(difference_type n)
 {
-    BOOST_ASSERT( -n < difference_type(i_) );
+    SENF_ASSERT( -n < difference_type(i_) );
     i_ += n;
 }
 
 prefix_ senf::PacketData::iterator senf::safe_data_iterator::i()
     const
 {
-    BOOST_ASSERT(data_);
+    SENF_ASSERT(data_);
     return boost::next(data_->begin(),i_);
 }
 

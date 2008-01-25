@@ -26,6 +26,7 @@
 #include "PacketParser.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include "PacketData.hh"
 
 #define prefix_ inline
@@ -129,7 +130,7 @@ template <class Parser>
 prefix_ Parser senf::SafePacketParserWrapper<Parser>::operator*()
     const
 {
-    BOOST_ASSERT( i_ );
+    SENF_ASSERT( i_ );
     parser_->i_ = PacketParserBase::data_iterator(i_);
     return *parser_;
 }
@@ -138,7 +139,7 @@ template <class Parser>
 prefix_ Parser const * senf::SafePacketParserWrapper<Parser>::operator->()
     const
 {
-    BOOST_ASSERT( i_ );
+    SENF_ASSERT( i_ );
     parser_->i_ = PacketParserBase::data_iterator(i_);
     return & (*parser_);
 }

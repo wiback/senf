@@ -26,6 +26,7 @@
 #include "ArrayParser.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -68,7 +69,7 @@ prefix_ typename senf::ArrayParser<elements,ElementParser>::value_type
 senf::ArrayParser<elements,ElementParser>::operator[](difference_type i)
     const
 {
-    BOOST_ASSERT( i>=0 && i < difference_type(elements) );
+    SENF_ASSERT( i>=0 && i < difference_type(elements) );
     return begin()[i];
 }
 

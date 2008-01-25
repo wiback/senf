@@ -26,6 +26,7 @@
 #include "ListNParser.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -45,7 +46,7 @@ setFromPosition(iterator i, state_type s, iterator p)
     for (; n_; --n_, j += ElementParser(j,s).bytes())
         if (j==p)
             return;
-    BOOST_ASSERT( false );
+    SENF_ASSERT( false );
 }
 
 template <class ElementParser, class SizeParser>

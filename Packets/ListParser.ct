@@ -26,6 +26,7 @@
 #include "ListParser.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -49,7 +50,7 @@ prefix_ typename senf::ListParser<ListPolicy>::value_type
 senf::ListParser<ListPolicy>::back()
     const
 {
-    BOOST_ASSERT( ! empty() );
+    SENF_ASSERT( ! empty() );
     iterator i (begin()), j;
     iterator const e (end());
     for (j=i; i!=e; j=i, ++i) ;
@@ -64,7 +65,7 @@ prefix_ typename senf::ListParser_Container<ListPolicy>::value_type
 senf::ListParser_Container<ListPolicy>::back()
     const
 {
-    BOOST_ASSERT( ! empty() );
+    SENF_ASSERT( ! empty() );
     iterator i (begin()), j;
     iterator const e (end());
     for (j=i; i!=e; j=i, ++i) ;

@@ -27,6 +27,7 @@
 #include "SocketHandle.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include <typeinfo>
 #include <boost/lexical_cast.hpp>
 #include "../Utils/TypeInfo.hh"
@@ -65,14 +66,14 @@ template <class SocketPolicy>
 prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle(FileHandle other, bool isChecked)
     : FileHandle(other)
 {
-    BOOST_ASSERT( isChecked );
-    BOOST_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
+    SENF_ASSERT( isChecked );
+    SENF_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
 }
 
 template <class SocketPolicy>
 prefix_ senf::SocketBody & senf::SocketHandle<SocketPolicy>::body()
 {
-    BOOST_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
+    SENF_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
     return static_cast<SocketBody &>(FileHandle::body());
 }
 
@@ -80,7 +81,7 @@ template <class SocketPolicy>
 prefix_ senf::SocketBody const & senf::SocketHandle<SocketPolicy>::body()
     const
 {
-    BOOST_ASSERT( dynamic_cast<SocketBody const *>(&FileHandle::body()) );
+    SENF_ASSERT( dynamic_cast<SocketBody const *>(&FileHandle::body()) );
     return static_cast<SocketBody const &>(FileHandle::body());
 }
 
@@ -123,7 +124,7 @@ prefix_ Target senf::static_socket_cast(Source handle)
         boost::is_convertible<Target*,FileHandle*>::value &&
         ( boost::is_convertible<Source,Target>::value ||
           boost::is_convertible<Target,Source>::value ) ));
-    BOOST_ASSERT( check_socket_cast<Target>(handle) );
+    SENF_ASSERT( check_socket_cast<Target>(handle) );
     return Target::cast_static(handle);
 }
 

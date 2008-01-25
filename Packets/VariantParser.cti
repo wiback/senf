@@ -26,6 +26,7 @@
 #include "VariantParser.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include <boost/mpl/size.hpp>
 
 #define prefix_ inline
@@ -78,7 +79,7 @@ prefix_ typename boost::mpl::at<
 senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::get()
     const
 {
-    BOOST_ASSERT( variant() == N );
+    SENF_ASSERT( variant() == N );
     return typename boost::mpl::at<parsers, boost::mpl::int_<N> >::type(
         VariantPolicy::begin(i(), state()), state() );
 }

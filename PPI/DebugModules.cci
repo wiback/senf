@@ -24,6 +24,7 @@
     \brief DebugModules inline non-template implementation */
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include "Setup.hh"
 
 #define prefix_ inline
@@ -89,7 +90,7 @@ senf::ppi::module::debug::PassiveSource::size()
 
 prefix_ void senf::ppi::module::debug::PassiveSource::request()
 {
-    BOOST_ASSERT( ! packets_.empty() );
+    SENF_ASSERT( ! packets_.empty() );
     output(packets_.front());
     packets_.pop_front();
     if (packets_.empty())

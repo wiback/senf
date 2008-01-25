@@ -27,7 +27,7 @@
 //#include "SocketProtocol.ih"
 
 // Custom includes
-#include <boost/assert.hpp>
+#include <../Utils/senfassert.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -50,7 +50,7 @@ prefix_ int senf::SocketProtocol::fd()
 prefix_ void senf::SocketProtocol::fd(int fd)
     const
 {
-    BOOST_ASSERT(! body().valid());
+    SENF_ASSERT(! body().valid());
     body().fd(fd);
 }
 
@@ -64,7 +64,7 @@ prefix_  senf::SocketProtocol::~SocketProtocol()
 prefix_ senf::SocketBody & senf::SocketProtocol::body()
     const
 {
-    BOOST_ASSERT( body_ );
+    SENF_ASSERT( body_ );
     return *body_;
 }
 

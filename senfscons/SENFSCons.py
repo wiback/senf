@@ -247,7 +247,7 @@ def MakeEnvironment():
 
     if env['final']:
         env.Append(CXXFLAGS = [ '-O3' ],
-                   CPPDEFINES = [ 'NDEBUG' ])
+                   CPPDEFINES = [ 'SENF_NO_DEBUG' ])
     else:
         env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
     # The boost-regex library is not compiled with _GLIBCXX_DEBUG so this fails.

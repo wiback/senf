@@ -24,7 +24,7 @@
     \brief Events inline non-template implementation */
 
 // Custom includes
-#include <boost/assert.hpp>
+#include <../Utils/senfassert.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -42,7 +42,7 @@ prefix_ bool senf::ppi::EventDescriptor::enabled()
 
 prefix_ void senf::ppi::EventDescriptor::enabled(bool v)
 {
-    BOOST_ASSERT(v_isRegistered());
+    SENF_ASSERT(v_isRegistered());
     if (v && ! enabled_)
         v_enable();
     else if (! v && enabled_)

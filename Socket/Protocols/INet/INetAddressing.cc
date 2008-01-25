@@ -34,6 +34,7 @@
 #include <net/if.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
+#include "../../../Utils/senfassert.hh"
 
 //#include "INetAddressing.mpp"
 #define prefix_
@@ -138,8 +139,8 @@ prefix_ std::string senf::INet6SocketAddress::iface()
     if (sockaddr_.sin6_scope_id == 0)
         return "";
     char buffer[IFNAMSIZ];
-#ifndef NDEBUG
-    BOOST_ASSERT( if_indextoname(sockaddr_.sin6_scope_id,buffer) );
+#ifndef SENF_NO_DEBUG
+    SENF_ASSERT( if_indextoname(sockaddr_.sin6_scope_id,buffer) );
 #else
     if_indextoname(sockaddr_.sin6_scope_id,buffer);
 #endif

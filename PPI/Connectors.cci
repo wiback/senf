@@ -24,6 +24,7 @@
     \brief Connectors inline non-template implementation */
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -34,14 +35,14 @@
 prefix_ senf::ppi::connector::Connector & senf::ppi::connector::Connector::peer()
     const
 {
-    BOOST_ASSERT(peer_);
+    SENF_ASSERT(peer_);
     return *peer_;
 }
 
 prefix_ senf::ppi::module::Module & senf::ppi::connector::Connector::module()
     const
 {
-    BOOST_ASSERT(module_);
+    SENF_ASSERT(module_);
     return *module_;
 }
 
@@ -60,7 +61,7 @@ prefix_ senf::ppi::connector::Connector::~Connector()
 
 prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 {
-    BOOST_ASSERT( ! peer_ && ! target.peer_ );
+    SENF_ASSERT( ! peer_ && ! target.peer_ );
     peer_ = & target;
     target.peer_ = this;
 }
@@ -121,7 +122,7 @@ prefix_ senf::ppi::connector::PassiveConnector::PassiveConnector()
 
 prefix_ void senf::ppi::connector::PassiveConnector::emit()
 {
-    BOOST_ASSERT(callback_);
+    SENF_ASSERT(callback_);
     if (!throttled())
         callback_();
 }
@@ -221,7 +222,7 @@ senf::ppi::connector::InputConnector::end()
 prefix_ senf::Packet senf::ppi::connector::InputConnector::peek()
     const
 {
-    BOOST_ASSERT( ! queue_.empty() );
+    SENF_ASSERT( ! queue_.empty() );
     return queue_.back();
 }
 

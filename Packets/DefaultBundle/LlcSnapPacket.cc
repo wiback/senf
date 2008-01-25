@@ -67,7 +67,7 @@ prefix_ void senf::LlcSnapPacketType::finalize(packet p)
     else if (p.next().is<EthernetPacket>())
         p->type_length() << p.next().data().size();
     else
-        ///\fixme Is this correct ??
+        ///\fixme Is this correct ?? we at least need an 'if (! p.next().is<DataPacket>() )'
         p->type_length() << 0;
 }
 

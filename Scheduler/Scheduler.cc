@@ -42,6 +42,7 @@
 //#include "Scheduler.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include <errno.h>
 #include <sys/epoll.h>
 #include <unistd.h>
@@ -301,15 +302,15 @@ prefix_ void senf::Scheduler::process()
             if (mask & EPOLLERR) extraFlags |= EV_ERR;
 
             if (mask & EPOLLIN) {
-                BOOST_ASSERT(spec.cb_read);
+                SENF_ASSERT(spec.cb_read);
                 spec.cb_read(EventId(EV_READ | extraFlags));
             }
             else if (mask & EPOLLPRI) {
-                BOOST_ASSERT(spec.cb_prio);
+                SENF_ASSERT(spec.cb_prio);
                 spec.cb_prio(EventId(EV_PRIO | extraFlags));
             }
             else if (mask & EPOLLOUT) {
-                BOOST_ASSERT(spec.cb_write);
+                SENF_ASSERT(spec.cb_write);
                 spec.cb_write(EventId(EV_WRITE | extraFlags));
             }
             else {

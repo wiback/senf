@@ -29,6 +29,7 @@
 //#include "ProtocolServerSocketHandle.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include "ProtocolClientSocketHandle.hh"
 
 #define prefix_ inline
@@ -52,7 +53,7 @@ template <class SocketProtocol>
 prefix_ SocketProtocol const &
 senf::ProtocolServerSocketHandle<SocketProtocol>::protocol()
 {
-    BOOST_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
+    SENF_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
     // Need dynamic_cast here, since senf::SocketProtocol is a
     // virtual base
     return dynamic_cast<SocketProtocol const &>(this->body().protocol());

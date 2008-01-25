@@ -27,6 +27,7 @@
 //#include "IOEvent.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include <boost/bind.hpp>
 
 //#include "IOEvent.mpp"
@@ -59,7 +60,7 @@ prefix_ void senf::ppi::IOEvent::cb(Scheduler::EventId event)
             throw HangupException();
         else
             // This cannot happen.
-            BOOST_ASSERT(false);
+            SENF_ASSERT(false);
     } else {
         IOEventInfo info = { event };
         callback(info);

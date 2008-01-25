@@ -24,6 +24,7 @@
 
 #include "ULEdec.hh"
 
+#include <cassert>
 #include <linux/dvb/dmx.h> 
 #include <boost/format.hpp>
 #include <senf/Packets.hh>
@@ -115,7 +116,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
                     if ( (*payload_iter++ << 8 | *payload_iter++) != ULE_END_INDICATOR )
                         std::cerr << "delimiting error\n";
             } else {
-                BOOST_ASSERT( std::distance( payload_iter, payload_end ) == 0 );
+                assert( std::distance( payload_iter, payload_end ) == 0 );
             }
         }
         break;
@@ -143,7 +144,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
                 std::advance(payload_iter, payload_pointer);
             } else {
                 payload_iter = readContSNDUPacket( payload_iter, payload_end );
-                BOOST_ASSERT( isSDNUPacketComplete() );
+                assert( isSDNUPacketComplete() );
                 try {
                     handleSNDUPacket();
                 } catch (ULEdecException const & ex) {
@@ -158,7 +159,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
             do {
                 payload_iter = readNewSNDUPacket( payload_iter, payload_end );
                 if (! isSDNUPacketComplete()) {
-                    BOOST_ASSERT( std::distance( payload_iter, payload_end ) == 0 );
+                    assert( std::distance( payload_iter, payload_end ) == 0 );
                     this->receiver_state = Reassembly;
                     break;
                 }

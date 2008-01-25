@@ -26,6 +26,7 @@
 #include "PacketRegistry.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include <iostream>
 
 #define prefix_
@@ -42,7 +43,7 @@ template <class KeyType>
 template <class PacketType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key)
 {
-#ifdef NDEBUG
+#ifdef SENF_NO_DEBUG
     registry_.insert(std::make_pair(key, Entry_ptr(new detail::PkReg_EntryImpl<PacketType>())));
     reverseRegistry_.insert(std::make_pair(senf::typeIdValue<PacketType>(), key));
 #else
@@ -50,12 +51,12 @@ prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key
         registry_.insert(
             std::make_pair(key, Entry_ptr(new detail::PkReg_EntryImpl<PacketType>()))).second);
     // If this assertion fails, a Packet was registered with an already known key
-    BOOST_ASSERT( isUnique );
+    SENF_ASSERT( isUnique );
     bool isNew (
         reverseRegistry_.insert(
             std::make_pair(senf::typeIdValue<PacketType>(), key)).second);
     // If this assertion fails, the same Packet was registered with two different keys
-    BOOST_ASSERT( isNew );
+    SENF_ASSERT( isNew );
 #endif
 }
 

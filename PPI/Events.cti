@@ -26,6 +26,7 @@
 #include "Events.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include "detail/EventBinding.hh"
 
 #define prefix_ inline
@@ -58,7 +59,7 @@ template <class EventType, class Self>
 prefix_ senf::ppi::detail::EventBinding<EventType> &
 senf::ppi::EventImplementationHelper<EventType,Self>::binding()
 {
-    BOOST_ASSERT( static_cast<Self*>(this)->binding_ );
+    SENF_ASSERT( static_cast<Self*>(this)->binding_ );
     return * static_cast<Self*>(this)->binding_;
 }
 
@@ -88,7 +89,7 @@ template <class Self>
 prefix_ senf::ppi::detail::EventBinding<void> &
 senf::ppi::EventImplementationHelper<void,Self>::binding()
 {
-    BOOST_ASSERT( static_cast<Self*>(this)->binding_ );
+    SENF_ASSERT( static_cast<Self*>(this)->binding_ );
     return * static_cast<Self*>(this)->binding_;
 }
 

@@ -186,7 +186,7 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
         return e.code;
     }
 
-#ifdef NDEBUG
+#ifdef SENF_NO_DEBUG
 
     catch (std::exception & e) {
         std::cerr << "\n*** Fatal exception: " << e.what() << std::endl;

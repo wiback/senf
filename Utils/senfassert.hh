@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,42 +21,33 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief pool_alloc_mixin.test unit tests */
+    \brief senfassert public header */
 
-//#include "pool_alloc_mixin.test.hh"
-//#include "pool_alloc_mixin.test.ih"
+#ifndef HH_senfassert_
+#define HH_senfassert_ 1
 
 // Custom includes
-#include "pool_alloc_mixin.hh"
-#include <boost/scoped_ptr.hpp>
+#include "../Utils/senfassert.hh"
 
-#include "../Utils/auto_unit_test.hh"
-#include <boost/test/test_tools.hpp>
+//#include "senfassert.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#ifdef SENF_NO_DEBUG
 
-namespace {
-    class Test : public senf::pool_alloc_mixin<Test>
-    {};
-}
+#   define SENF_ASSERT(x)
 
-BOOST_AUTO_UNIT_TEST(poolAllocMixin)
-{
-#ifndef SENF_NO_DEBUG
-    BOOST_CHECK_EQUAL( Test::allocCounter(), 0u );
+#else
 
-    {
-        boost::scoped_ptr<Test> test (new Test());
-        BOOST_CHECK_EQUAL( Test::allocCounter(), 1u );
-    }
+#   include <cassert>
+#   define SENF_ASSERT(x) assert(x)
 
-    BOOST_CHECK_EQUAL( Test::allocCounter(), 0u );
 #endif
-}
 
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "senfassert.cci"
+//#include "senfassert.ct"
+//#include "senfassert.cti"
+#endif
 
 
 // Local Variables:

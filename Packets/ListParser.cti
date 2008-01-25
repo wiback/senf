@@ -26,6 +26,7 @@
 #include "ListParser.ih"
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -91,7 +92,7 @@ prefix_ typename senf::ListParser<ListPolicy>::value_type
 senf::ListParser<ListPolicy>::front()
     const
 {
-    BOOST_ASSERT( ! empty() );
+    SENF_ASSERT( ! empty() );
     return *begin();
 }
 
@@ -263,7 +264,7 @@ prefix_ typename senf::ListParser_Container<ListPolicy>::value_type
 senf::ListParser_Container<ListPolicy>::front()
     const
 {
-    BOOST_ASSERT( ! empty() );
+    SENF_ASSERT( ! empty() );
     return *begin();
 }
 

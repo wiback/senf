@@ -39,11 +39,11 @@ def nonemptyFile(f):
     except OSError: return False
 
 def checkLocalConf(target, source, env):
-    if [ True for f in env['CONFIG_FILES'] if nonemptyFile(f) ]:
+    if [ True for f in env['LOCAL_CONFIG_FILES'] if nonemptyFile(f) ]:
         print
         print "You have made local modifications to one of the following local configuration"
         print "files:"
-        for f in env['CONFIG_FILES']:
+        for f in env['LOCAL_CONFIG_FILES']:
             print "    ",f
         print
         print "Building a debian package would remove those files."
@@ -125,7 +125,7 @@ if not logname:
     logname = pwd.getpwuid(os.getuid()).pw_name
 
 def configFilesOpts(target, source, env, for_signature):
-    return [ '-I%s' % os.path.split(f)[1] for f in env['CONFIG_FILES'] ]
+    return [ '-I%s' % os.path.split(f)[1] for f in env['LOCAL_CONFIG_FILES'] ]
 
 env.Append(
    CPPPATH = [ '#/include' ],
@@ -138,7 +138,7 @@ env.Append(
            'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1",
            'SCONS' : 1,
          },
-   CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
+   LOCAL_CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
    CONFIG_FILES_OPTS = configFilesOpts,
    CLEAN_PATTERNS = [ '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
    BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn $CONFIG_FILES_OPTS",

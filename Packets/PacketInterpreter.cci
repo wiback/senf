@@ -24,6 +24,7 @@
     \brief PacketInterpreter inline non-template implementation */
 
 // Custom includes
+#include "../Utils/senfassert.hh"
 #include <boost/utility.hpp>
 
 #define prefix_ inline
@@ -155,14 +156,14 @@ prefix_ bool senf::PacketInterpreterBase::release()
 
 prefix_ void senf::PacketInterpreterBase::assignImpl(detail::PacketImpl * impl)
 {
-    BOOST_ASSERT(!impl_);
+    SENF_ASSERT(!impl_);
     impl_ = impl;
     impl_->add_ref(refcount());
 }
 
 prefix_ void senf::PacketInterpreterBase::releaseImpl()
 {
-    BOOST_ASSERT(impl_);
+    SENF_ASSERT(impl_);
     refcount_t refc (refcount());
     if (refc) {
         impl_->release(refc);

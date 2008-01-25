@@ -84,7 +84,7 @@ namespace senf {
         static void operator delete (void *p, size_t size);
                                         ///< Operator delete utilizing pool allocation
 
-#ifndef NDEBUG
+#ifndef SENF_NO_DEBUG
         static unsigned long allocCounter();
     private:
         static unsigned long allocCounter(long delta);
