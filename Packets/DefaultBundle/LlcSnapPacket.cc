@@ -61,14 +61,14 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::LlcSnapPacketType::nextPack
 
 prefix_ void senf::LlcSnapPacketType::finalize(packet p)
 {
-    optional_registry_key_t k = key(p.next(nothrow));
+    optional_key_t k (key(p.next(nothrow)));
     if (k)
         p->type_length() << k;
+    else if (p.next().is<EthernetPacket>())
+        p->type_length() << p.next().data().size();
     else
-        if (p.next().is<EthernetPacket>())
-            p->type_length() << p.next().data().size();
-        else
-            p->type_length() << 0;
+        ///\fixme Is this correct ??
+        p->type_length() << 0;
 }
 
 

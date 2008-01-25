@@ -39,6 +39,13 @@ prefix_ senf::PacketParserBase::data_iterator senf::PacketParserBase::i()
     return i_;
 }
 
+prefix_ data_iterator senf::PacketParserBase::i(size_type offset)
+    const
+{
+    validate(offset);
+    return boost::next(i_, offset);
+}
+
 prefix_ senf::PacketParserBase::state_type senf::PacketParserBase::state()
     const
 {

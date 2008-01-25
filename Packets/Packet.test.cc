@@ -93,7 +93,7 @@ namespace {
             else
                 p->type() = -1;
         }
-        static registry_key_t nextPacketKey(packet p) {
+        static key_t nextPacketKey(packet p) {
             return p->type();
         }
     };

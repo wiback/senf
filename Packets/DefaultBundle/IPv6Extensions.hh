@@ -87,7 +87,7 @@ namespace senf {
         using mixin::initSize;
         using mixin::init;
 
-        static registry_key_t nextPacketKey(packet p) 
+        static key_t nextPacketKey(packet p) 
             { return p->nextHeader(); }
         
         static void dump(packet p, std::ostream & os);

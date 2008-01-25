@@ -264,10 +264,23 @@ namespace senf {
                                              here. The size of the interpreted is given by
                                              <tt>senf::bytes(</tt><em>parser
                                              instance</em><tt>)</tt>. */
+
+        data_iterator i(size_type offset) const; ///< Return iterator \a offset bytes from the start
+                                        /**< The return value is the same as i() + \a
+                                             offset. However, the parser checks, that the iterator is
+                                             still within range of the raw data
+                                             container. Otherwise a TruncatedPacketException is
+                                             thrown. 
+                                             
+                                             \throws TruncatedPacketException if the raw data
+                                                 container does not hold at least \a offset bytes
+                                                 starting at i(). */
+
         state_type state() const;       ///< Return state of this parser
                                         /**< The value returned should be interpreted as an opaque
                                              value provided just to be forwarded to other
                                              parsers. */
+
         PacketData & data() const;      ///< Access the packets raw data container
                                         /**< This member will return the raw data container holding
                                              the data which is parsed by \c this parser. */
@@ -282,6 +295,7 @@ namespace senf {
                                         /**< This is the constructor used by most parsers. The
                                              parameters are just forwarded from the derived classes
                                              constructor parameters. */
+
         PacketParserBase(data_iterator i, state_type s, size_type size); 
                                         ///< Size checking constructor
                                         /**< In addition to the standard constructor, this
@@ -303,6 +317,7 @@ namespace senf {
         bool check(size_type size) const; ///< Check size of data container
                                         /**< \returns \c true, if the data container holds at least
                                              \a size beginning at i(), \c false otherwise. */
+
         void validate(size_type size) const; ///< Validate size of data container
                                         /**< \throws TruncatedPacketException if the raw data
                                              container does not hold at least \a size bytes
@@ -312,6 +327,7 @@ namespace senf {
                                         /**< Creates a new instance of \a Parser to parse data
                                              beginning at \a i. Automatically passes \a state() to
                                              the new parser. */
+
         template <class Parser> Parser parse(size_type n) const; ///< Create sub-parser
                                         /**< Creates a new instance of \a Parser to parse data
                                          * beginning at i()<tt> + </tt>\a n. Automatically passes \a

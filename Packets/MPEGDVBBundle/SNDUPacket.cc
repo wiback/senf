@@ -50,7 +50,7 @@ prefix_ boost::uint32_t senf::SNDUPacketParser::calcCrc()
             ule_crc32() ).checksum();
 }
 
-//prefix_ senf::SNDUPacketType::registry_key_t senf::SNDUPacketType::nextPacketKey(packet p)
+//prefix_ senf::SNDUPacketType::key_t senf::SNDUPacketType::nextPacketKey(packet p)
 //{
 //    return p->type(); 
 //}

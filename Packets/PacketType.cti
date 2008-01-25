@@ -58,9 +58,7 @@ senf::PacketTypeMixin<Self,Registry>::nextPacketType(Packet p)
 {
     if (p.data().size() < Self::initSize())
         return Self::no_factory();
-    PkReg_Entry const * e (PacketRegistry<Registry>::lookup( 
-                               Self::nextPacketKey(p.as< ConcretePacket<Self> >()), nothrow));
-    return e ? e->factory() : PacketTypeBase::no_factory();
+    return lookup( Self::nextPacketKey(p.as< ConcretePacket<Self> >()) );
 }
 
 template <class Self, class Registry>
@@ -76,10 +74,17 @@ prefix_ void senf::PacketTypeMixin<Self,Registry>::init(Packet p)
 }
 
 template <class Self, class Registry>
-prefix_ typename senf::PacketTypeMixin<Self,Registry>::optional_registry_key_t
+prefix_ typename senf::PacketTypeMixin<Self,Registry>::optional_key_t
 senf::PacketTypeMixin<Self,Registry>::key(Packet p)
 {
-    return p ? PacketRegistry<Registry>::key(p, nothrow) : optional_registry_key_t();
+    return p ? PacketRegistry<Registry>::key(p, nothrow) : optional_key_t();
+}
+
+template <class Self, class Registry>
+prefix_ senf::PacketTypeBase::factory_t senf::PacketTypeMixin<Self,Registry>::lookup(key_t key)
+{
+    PkReg_Entry const * entry (PacketRegistry<Registry>::lookup( key, senf::nothrow ));
+    return entry ? entry->factory() : PacketTypeBase::no_factory();
 }
 
 ///////////////////////////////////////////////////////////////////////////

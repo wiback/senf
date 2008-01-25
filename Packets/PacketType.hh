@@ -263,7 +263,7 @@ namespace senf {
                 // member.
             }
 
-            static registry_key_t nextPacketKey(packet p)
+            static key_t nextPacketKey(packet p)
             {
                 // Return the key in the registry under which the next packet
                 // header is to be found. This member must be given if a Registry argument is
@@ -306,7 +306,7 @@ namespace senf {
             using mixin::initSize;
             using mixin::init;         
 
-            static registry_key_t nextPacketKey(packet p)
+            static key_t nextPacketKey(packet p)
             { return p->typeField(); }
         };
         \endcode
@@ -320,10 +320,10 @@ namespace senf {
     class PacketTypeMixin
     {
     public:
-        typedef typename Registry::key_t registry_key_t;
-        typedef boost::optional<registry_key_t> optional_registry_key_t;
+        typedef typename Registry::key_t key_t;
+        typedef boost::optional<key_t> optional_key_t;
 
-        static optional_registry_key_t key (Packet p); ///< Find key of packet from registry
+        static optional_key_t key (Packet p); ///< Find key of packet from registry
                                         /**< key() will query the registry to find the key of the
                                              given packet. Whereas \c nextPacketKey() as implemented
                                              by the mixin user will provide the registry key of the
@@ -335,6 +335,11 @@ namespace senf {
                                              If either \a p is an in - valid() packet or the packet
                                              type is not found in the registry, the returned
                                              optional value will be empty. */
+
+        static PacketTypeBase::factory_t lookup (key_t key); ///< Lookup the key in the registry
+                                        /**< lookup() will query the registry and find the factory
+                                             for the given key. If the key cannot be found,
+                                             no_factory() will be returned. */
 
         ///\name PacketType interface implementation
         ///@{

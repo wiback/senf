@@ -60,24 +60,18 @@ prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::EthernetPacketType::nextPacketType(packet p)
 {
-    if (p->type_length() >= 1536) {
-        PkReg_Entry const * e;
-        e = PacketRegistry<senf::EtherTypes>::lookup( p->type_length(), nothrow );
-        return e ? e->factory() : no_factory();
-    }
-    if (p->type_length() <= 1500)
-        return LlcSnapPacket::factory();
-    return no_factory();
+    if      (p->type_length() >= 1536) return lookup(p->type_length());
+    else if (p->type_length() <= 1500) return LlcSnapPacket::factory();
+    else                               return no_factory();
 }
 
 prefix_ void senf::EthernetPacketType::finalize(packet p)
 {
-    optional_registry_key_t k = key(p.next(nothrow));
+    optional_key_t k (key(p.next(nothrow)));
     if (k)
         p->type_length() << k;
-    else
-        if (p.next().is<LlcSnapPacket>())
-            p->type_length() << p.next().data().size();
+    else if (p.next().is<LlcSnapPacket>())
+        p->type_length() << p.next().data().size();
     // Do NOT reset type_length if the type is not known ... doing this will destroy read packets
 }
 

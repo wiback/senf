@@ -103,7 +103,7 @@ namespace senf {
 //        using mixin::nextPacketType;
 //        using mixin::init;
         
-//        static registry_key_t nextPacketKey(packet p);
+//        static key_t nextPacketKey(packet p);
         
         static void init(packet p);
 

@@ -177,7 +177,7 @@ namespace senf {
 
         /** \todo Add LLC/SNAP support -> only use the registry
             for type() values >=1536, otherwise expect an LLC header */
-        static registry_key_t nextPacketKey(packet p) 
+        static key_t nextPacketKey(packet p) 
             { return p->type(); }
 
         static void dump(packet p, std::ostream & os);
