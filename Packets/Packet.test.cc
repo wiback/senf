@@ -49,9 +49,15 @@ namespace {
         using senf::PacketTypeMixin<FooPacketType>::nextPacketRange;
         using senf::PacketTypeMixin<FooPacketType>::initSize;
         using senf::PacketTypeMixin<FooPacketType>::init;
-        typedef senf::PacketInterpreter<FooPacketType> interpreter;
-        static interpreter::size_type initSize()
+        static size_type initSize()
             { return 4u; }
+
+        // We need to implement initHeadSize() to force the mixin to switch into 'fixed-size'
+        // mode. Otherwise, mixin::nextPacketRange() would query the parser for it's size to find
+        // the header size. Since the parser is VoidPacketParser, the header size would therefore be
+        // 0
+        static size_type initHeadSize() 
+            { return initSize(); }
     };
     typedef senf::ConcretePacket<FooPacketType> FooPacket;
 
@@ -62,6 +68,10 @@ namespace {
         SENF_PARSER_FIELD( type,     senf::UInt16Parser );
         SENF_PARSER_FIELD( length,   senf::Int32Parser  );
         SENF_PARSER_FIELD( reserved, senf::UInt16Parser );
+
+        SENF_PARSER_INIT() {
+            reserved() << 0xA0A0u;
+        }
 
         SENF_PARSER_FINALIZE(BarPacketParser);
     };
@@ -77,11 +87,6 @@ namespace {
         using mixin::nextPacketType;
         using mixin::initSize;
         using mixin::init;
-        static size_type initSize() 
-            { return 8u; }
-        static void init(packet p) {
-            p->reserved() = 0xA0A0u;
-        }
         static void dump(packet p, std::ostream & os) {
             os << "BarPacket:\n"
                << "type: " << p->type() << "\n"
@@ -117,6 +122,10 @@ BOOST_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( ! packet.prev(senf::nothrow) );
     BOOST_CHECK( packet.next().prev() == packet );
     BOOST_CHECK( packet.next() != packet );
+    BOOST_CHECK_EQUAL( std::distance(packet.data().begin(), packet.next().data().begin()), 4 );
+    BOOST_CHECK_EQUAL( std::distance(packet.data().begin(), packet.data().end()), 12 );
+    BOOST_CHECK_EQUAL( std::distance(packet.next().data().begin(), packet.next().data().end()), 8 );
+    BOOST_CHECK( packet.data().end() == packet.next().data().end() );
     BOOST_CHECK_EQUAL( packet.size(), 12u );
     BOOST_CHECK_EQUAL( packet.next().size(), 8u );
     BOOST_CHECK( packet.is<FooPacket>() );

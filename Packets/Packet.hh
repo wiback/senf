@@ -569,6 +569,13 @@ namespace senf {
                                              / recreation ...)
                                              \see \ref packetparser for the parser interface. */
 
+        Parser parser() const;          ///< Access packet field parser directly
+                                        /**< Access the parser of the packet. This is the same
+                                             object returned by the operator->() operator. The
+                                             operator however does not allow to access this object
+                                             itself, only it's members.
+                                             \see \ref packetparser for the parser interface */
+
     protected:
 
     private:

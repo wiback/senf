@@ -248,11 +248,19 @@ senf::ConcretePacket<PacketType>::clone()
 // Field access
 
 template <class PacketType>
-prefix_ typename senf::ConcretePacket<PacketType>::type::parser *
+prefix_ typename senf::ConcretePacket<PacketType>::Parser *
 senf::ConcretePacket<PacketType>::operator->()
     const
 {
     return ptr()->fields_p();
+}
+
+template <class PacketType>
+prefix_ typename senf::ConcretePacket<PacketType>::Parser
+senf::ConcretePacket<PacketType>::parser()
+    const
+{
+    return ptr()->fields();
 }
 
 // private members

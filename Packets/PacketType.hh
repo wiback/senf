@@ -216,11 +216,16 @@ namespace senf {
 
     /** \brief Mixin to provide standard implementations for nextPacketRange and nextPacketType
 
-        This mixin class simplifies the definition of simple packets with fixed-size (!) headers 
-        and/or trailers. For this type of Packet, this mixin provides the nextPacketRange() 
-        member. If you additionally provide the optional \a Registry argument, PacketTypeMixin 
-        provides a simple implementation of nextPacketType. When using the PacketTypeMixin, the 
-        implementation of a packet is simplified to:
+        This mixin class simplifies the definition of simple packets:
+        
+        \li The packets consist of three sections: The header, the payload and an optional trailer.
+        \li If the packet has a trailer, both the header and the trailer must have a fixed size.
+
+        This mixin provides the nextPacketRange() member as well as initSize() and init(). If you
+        additionally provide the optional \a Registry argument, PacketTypeMixin provides a simple
+        implementation of nextPacketType(). 
+
+        When using the PacketTypeMixin, the implementation of a packet is simplified to:
         \code
         // Here 'SomeRegistryTag' is optional
         struct SimplePacketType 
@@ -232,36 +237,9 @@ namespace senf {
             typedef SomePacketParser parser;
         
             using mixin::nextPacketRange;
-            // Only if the optional 'Registry' argument is provided
-            using mixin::nextPacketType;            
-            // Only if using the default implementation
+            using mixin::nextPacketType;  // Only if the optional 'Registry' argument is provided
             using mixin::initSize;
-            // Only if using the default implementation
-            using mixin::init;         
-
-            static interpreter::size_type initSize()
-            {
-                // This member is optional. If it is not defined, 'senf::init_size<parser>::value'
-                // will be returned.
-        
-                // The value returned is the length of the header if initHeadSize() is not defined.
-                // If initHeadSize is defined, this value is the combined size of the header
-                // and trailer while initHeadSize() will return the size of the header only.
-                return packet_size;
-            }
-        
-            static interpreter::size_type initHeadSize()
-            {
-                // This member is optional. It returns the header size if the packet has a
-                // trailer.
-                return header_size;
-            }
-
-            static void init(packet p)
-            {
-                // This member is optional. The default implementation calls the parsers init()
-                // member.
-            }
+            using mixin::init;
 
             static key_t nextPacketKey(packet p)
             {
@@ -286,11 +264,18 @@ namespace senf {
             {
                 // Write out a readable representation of the packet for debug purposes
             }
+
+            static interpreter::size_type initHeadSize()
+            {
+                // This member is optional. It returns the \e fixed header size if the packet has a
+                // trailer.
+                return header_size;
+            }
+
         };
         \endcode
 
-        Most of the members are optional, which reduces the implementation of a fixed-sized header
-        packet with no trailer and a simple next-packet header to
+        Most of the members are optional, which reduces the minimal implementation of a packet to:
 
         \code
         struct SimplePacketType 
@@ -304,15 +289,19 @@ namespace senf {
             using mixin::nextPacketRange;
             using mixin::nextPacketType;            
             using mixin::initSize;
-            using mixin::init;         
+            using mixin::init;
 
-            static key_t nextPacketKey(packet p)
-            { return p->typeField(); }
+            // 'typeField()' is one of the fields defined in the parser which holds
+            // the next-header information
+
+            static key_t nextPacketKey(packet p) { return p->typeField(); }
+            static void finalize(packet p)       { p->typeField() << key(p.next(senf::nothrow)); }
+
+            static void dump(packet p) {
+                // should always be implemented although optional
+            }
         };
         \endcode
-
-        If needed, you may additionally add a \c finalize() member. You also should add a \c dump()
-        member to help debugging but both members are optional.
 
         \ingroup packet_module
      */

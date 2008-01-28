@@ -5,6 +5,11 @@ body {
         font-size: 10pt;
 }
 
+/* Argh .. doxygen.css has font-size:90% for td ... */
+td {
+        font-size: 100%;
+}
+
 #head {
         height: 62px;
         border-top: 5px solid #DECD40;
@@ -290,12 +295,15 @@ table.senf th {
         font-weight: bold;
 }
 
+table.fixedcolumn td:first-child {
+        width: 35%; 
+}
+
 table.ebnf {
         margin: 0;
         padding: 0;
         border-spacing: 0;
         border: none;
-        font-size: 120%; /* ????????  Why is THIS needed ?? */
 }
 
 table.ebnf td {
@@ -315,7 +323,6 @@ table.listing {
         padding: 0;
         border-spacing: 0;
         border: none;
-        font-size: 120%; /* ????????  Why is THIS needed ?? */
 }
 
 table.listing td {

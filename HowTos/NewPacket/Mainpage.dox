@@ -848,7 +848,7 @@
         senf::RawV6ClientSocketHandle isock (47u); // 47 = Read GRE packets
         senf::PacketSocketHandle osock;
 
-        while (1) {
+        while (true) {
             try {
                 GREPacket gre (GREPacket::create(senf::noinit));
                 isock.read(gre.data(),0u);
@@ -887,7 +887,7 @@
         senf::TapSocketHandle tap ("tap0");
         senf::ConnectedRawV6ClientSocketHandle osock (47u, senf::INet6SocketAddress(argv[1]));
     
-        while (1) {
+        while (true) {
             senf::EthernetPacket eth (senf::EthernetPacket::create(senf::noinit));
             isock.read(eth.data(),0u);
             GREPacket gre (senf::GREPacket::createBefore(eth));
@@ -900,27 +900,43 @@
     
     \section howto_newpacket_further Further reading
 
-    Lets start with references to the important API's (Use the 'Show all members' link to get the
-    complete API of one of the classes and templates):
+    Lets start with references to the important API's (Use the <i>List of all members</i> link to
+    get the complete API of one of the classes and templates):
 
-    \li senf::ConcretePacket : this is the API provided by the packet handles.
-    \li senf::PacketData : this API provides raw data access accessible via the handles 'data'
-        member.
-    \li senf::PacketParserBase : this is the generic parser API. This API is accessible via the
-        packets \c -> operator or via the sub-parsers returned by the field accessors.
+    <table class="senf fixedcolumn">
+
+    <tr><td>senf::ConcretePacket</td> <td>this is the API provided by the packet handles.</td></tr>
+
+    <tr><td>senf::PacketData</td> <td>this API provides raw data access accessible via the handles
+    'data' member.</td></tr>
+
+    <tr><td>senf::PacketParserBase</td> <td>this is the generic parser API. This API is accessible
+    via the packets \c -> operator or via the sub-parsers returned by the field accessors.</td></tr>
+
+    </table>
 
     When implementing new packet's, the following information will be helpful:
 
-    \li senf::PacketTypeBase : here you find a description of the members which need to be
-        implemented to provide a 'packet type'. Most of these members will normally be provided by
-        the mixin helper.
-    \li senf::PacketTypeMixin : here you find all about the packet type mixin and how to use it.
-    \li \ref packetparser : This section describes the packet parser facility.
-    \li \ref packetparsermacros : A complete list and documentation of all the packet parser macros.
-    \li There are several lists of available reusable packet parsers: \ref parseint, \ref
-        parsecollection. However, this list is not complete as there are other protocol specific
-        reusable parsers (without claiming to be exhaustive: senf::INet4AddressParser,
-        senf::INet6AddressParser, senf::MACAddressParser)
+    <table class="senf fixedcolumn">
+    
+    <tr><td>senf::PacketTypeBase</td> <td>here you find a description of the members which need to
+    be implemented to provide a 'packet type'. Most of these members will normally be provided by
+    the mixin helper.</td></tr>
+
+    <tr><td>senf::PacketTypeMixin</td> <td>here you find all about the packet type mixin and how to
+    use it.</td></tr>
+
+    <tr><td>\ref packetparser</td> <td>This section describes the packet parser facility.</td></tr>
+    
+    <tr><td>\link packetparsermacros Packet parser macros\endlink</td> <td>A complete list and
+    documentation of all the packet parser macros.</td></tr>
+    
+    <tr><td>\ref parseint, \n \ref parsecollection</td> <td>There are several lists of available
+    reusable packet parsers: . However, this list is not complete as there are other protocol
+    specific reusable parsers (without claiming to be exhaustive: senf::INet4AddressParser,
+    senf::INet6AddressParser, senf::MACAddressParser)</td></tr>
+
+    </table>
 
  */
 
