@@ -1,0 +1,3 @@
+debian/tmp/usr/lib/libsenf_g.a
+debian/tmp/usr/lib/*.o usr/lib/debug/senf-packets
+README usr/share/doc/libsenf-dbg

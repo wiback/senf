@@ -7,13 +7,36 @@ Build-Depends: debhelper (>= 5), scons, binutils-dev, libboost-dev,
 	graphviz, perl-base, linklint 
 Standards-Version: 3.7.2 Section: libs
 
-Package: libsenf-dev
+Package: libsenf
 Section: libdevel
 Architecture: any
+Description: SENF Extensible Network Framework, static library
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.
+
+Package: libsenf-dbg
+Section: libdevel
+Architecture: any
+Description: SENF Extensible Network Framework, static library (debug build)
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.
+
+Package: libsenf-dev
+Section: libdevel
+Architecture: all
 Depends: binutils-dev, libboost-dev, libboost-regex-dev, 
 	libboost-date-time-dev, libboost-thread-dev,
-	libboost-filesystem-dev
-Description: SENF Extensible Network Framework, development files
+	libboost-filesystem-dev, libsenf | libsenf-dbg
+Recommends: libsenf, libsenf-dbg
+Description: SENF Extensible Network Framework, header files
  The SENF Simple and Extensible Network Framework aims to be a
  complete set of libraries to facilitate the development of network
  applications focusing on network protocols on the layers below the

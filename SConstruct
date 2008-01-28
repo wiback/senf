@@ -143,7 +143,11 @@ env.Append(
    CLEAN_PATTERNS = [ '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
    BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn $CONFIG_FILES_OPTS",
    TOP_INCLUDES = [ 'Packets', 'PPI', 'Scheduler', 'Socket', 'Utils',
-                    'config.hh', 'local_config.hh' ]
+                    'config.hh', 'local_config.hh' ],
+)
+
+env.SetDefault(
+       LIBSENF = "senf"
 )
 
 Export('env')
@@ -194,11 +198,11 @@ SENFSCons.InstallIncludeFiles(env, [ 'config.hh' ])
 
 # Build combined library 'libsenf'
 libsenf = env.Library(
-    SENFSCons.LibPath('senf'),
+    SENFSCons.LibPath(env['LIBSENF']),
     Flatten([ env.File(SENFSCons.LibPath(lib)).sources for lib in env['ALLLIBS'] ]))
 env.Default(libsenf)
-env.Clean('all', 'libsenf.a')
-env.Alias('default', 'libsenf.a')
+env.Clean('all', libsenf)
+env.Alias('default', libsenf)
 
 env.Alias('install_all', env.Install('$LIBINSTALLDIR', libsenf))
 
@@ -210,7 +214,7 @@ env.Clean('all', [ os.path.join(path,f)
 PhonyTarget(env, 'deb', [
     checkLocalConf,
     updateRevision,
-    "$BUILDPACKAGE_COMMAND",
+    "$BUILDPACKAGE_COMMAND -tc",
 ])
 
 PhonyTarget(env, 'debsrc', [
@@ -221,7 +225,8 @@ PhonyTarget(env, 'debsrc', [
 PhonyTarget(env, 'debbin', [
     checkLocalConf,
     updateRevision,
-    "$BUILDPACKAGE_COMMAND -nc",
+    "$BUILDPACKAGE_COMMAND -b -nc",
+    "fakeroot ./debian/rules debclean"
 ])
 
 PhonyTarget(env, 'linklint', [

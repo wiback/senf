@@ -372,7 +372,7 @@
 
     \section howto_newpacket_type Defining the packet type
 
-    After we have implemented the \c GREPacketParser we need now to build the packet type. This is
+    After we have implemented the \c GREPacketParser we now need to build the packet type. This is
     done by providing a special policy class called the 'packet type'. This class encapsulates all
     the information the packet library needs to know about a packet:
 
@@ -494,16 +494,18 @@
     \code
     static void finalize(packet p) 
     {
+        p->protocolType() << key(p.next(senf::nothrow));
         if (p->checksumPresent())
             p->checksum() << p->calculateChecksum();
-        p->protocolType() << key(p.next(senf::nothrow));
     }
     \endcode
     
-    \a finalize() first updates the \a checksum() field if present. It then sets the \a
-    protocolType() field depending on the \e next packet. The \c key() function is provided by the
-    mixin class: It will lookup the \e type of a packet in the registry and return that packets key
-    in the registry.
+    \a finalize() firs sets the \a protocolType() field depending on the \e next packet. The \c
+    key() function is provided by the mixin class: It will lookup the \e type of a packet in the
+    registry and return that packets key in the registry. 
+
+    It then updates the \a checksum() field if present (this always needs to be done last since the
+    checksum depends on the other field values).
 
     Here we are using the more generic parser assignment expressed using the \c << operator. This
     operator in the most cases works like an ordinary assignment, however it can also be used to
@@ -569,9 +571,9 @@
         static key_t nextPacketKey(packet p) { return p->protocolType(); }
     
         static void finalize(packet p) {
+            p->protocolType() << key(p.next(senf::nothrow)); 
             if (p->checksumPresent()) p->checksum() << p->calculateChecksum();
-            p->protocolType() << key(p.next(senf::nothrow));
-        }
+       }
     
         static void dump(packet p, std::ostream & os);
     };
@@ -776,8 +778,8 @@
             { return p->valid() ? lookup(p->protocolType()) : no_factory(); }
     
         static void finalize(packet p) {
-            if (p->checksumPresent()) p->checksum() << p->calculateChecksum();
             p->protocolType() << key(p.next(senf::nothrow));
+            if (p->checksumPresent()) p->checksum() << p->calculateChecksum();
         }
     
         static void dump(packet p, std::ostream & os);
