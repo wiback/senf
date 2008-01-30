@@ -77,7 +77,7 @@ writeTemplate = env.Action(writeTemplate, varlist = [ 'TEMPLATE' ])
 EXTRA_MODULES = [
     ('Overview', '#/doc/html'),
     ('Examples', '#/Examples/doc/html'),
-    ('HowTo\'s', '#/HowTos/doc/html'),
+    ('HowTos', '#/HowTos/doc/html'),
     ('SENFSCons', '#/senfscons/doc/html') ]
 
 HEADER = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

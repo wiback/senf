@@ -1,6 +1,6 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
-PROJECT_NAME = "HowTo: Defining and using a new libPackets packet type"
+PROJECT_NAME = NewPacket
 EXAMPLE_PATH = .
 
 TAGFILES = \
