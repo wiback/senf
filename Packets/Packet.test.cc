@@ -195,10 +195,10 @@ BOOST_AUTO_UNIT_TEST(concretePacket)
     senf::PacketData::byte data[] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06 };
 
     BOOST_CHECK_EQUAL( FooPacket::create().size(), 4u );
-    BOOST_CHECK_EQUAL( FooPacket::create(FooPacket::noinit).size(), 0u );
+    BOOST_CHECK_EQUAL( FooPacket::create(senf::noinit).size(), 0u );
     BOOST_CHECK_THROW( FooPacket::create(2u), senf::TruncatedPacketException );
     BOOST_CHECK_EQUAL( FooPacket::create(10u).size(), 10u );
-    BOOST_CHECK_EQUAL( FooPacket::create(2u,FooPacket::noinit).size(), 2u );
+    BOOST_CHECK_EQUAL( FooPacket::create(2u,senf::noinit).size(), 2u );
     BOOST_CHECK_EQUAL( FooPacket::create(data).size(), 6u );
 
     senf::Packet packet (FooPacket::create());
@@ -206,14 +206,14 @@ BOOST_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( FooPacket::createAfter(packet).size(), 4u );
     BOOST_CHECK_EQUAL( packet.size(), 8u );
 
-    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,FooPacket::noinit).size(), 0u );
+    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,senf::noinit).size(), 0u );
     BOOST_CHECK_EQUAL( packet.size(), 4u );
 
     BOOST_CHECK_THROW( FooPacket::createAfter(packet,2u), senf::TruncatedPacketException );
     BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,10u).size(), 10u );
     BOOST_CHECK_EQUAL( packet.size(), 14u );
     
-    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,2u,FooPacket::noinit).size(), 2u );
+    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,2u,senf::noinit).size(), 2u );
     BOOST_CHECK_EQUAL( packet.size(), 6u );
     
     BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,data).size(), 6u );
@@ -222,7 +222,7 @@ BOOST_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( FooPacket::createBefore(packet).size(), 14u );
     BOOST_CHECK_EQUAL( packet.size(), 10u );
 
-    BOOST_CHECK_EQUAL( FooPacket::createBefore(packet,FooPacket::noinit).size(), 10u );
+    BOOST_CHECK_EQUAL( FooPacket::createBefore(packet,senf::noinit).size(), 10u );
     BOOST_CHECK_EQUAL( packet.size(), 10u );
 
     BOOST_CHECK( packet.clone() != packet );

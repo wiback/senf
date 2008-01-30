@@ -36,7 +36,7 @@ prefix_ senf::INet4Address::INet4Address()
     std::fill(begin(), end(), 0u);
 }
 
-prefix_ senf::INet4Address::INet4Address(NoInit_t)
+prefix_ senf::INet4Address::INet4Address(senf::NoInit_t)
 {}
 
 prefix_ senf::INet4Address senf::INet4Address::from_inaddr(inaddr_type v)

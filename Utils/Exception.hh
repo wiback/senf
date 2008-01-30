@@ -180,8 +180,6 @@ namespace senf {
      */
     void throwErrno(std::string const & where, int code);
 
-    enum NoThrow_t { nothrow };
-
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

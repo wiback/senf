@@ -37,7 +37,7 @@
 
 template <class SocketProtocol>
 prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::
-ProtocolClientSocketHandle(UninitializedType)
+ProtocolClientSocketHandle(senf::NoInit_t)
 {}
 
 template <class SocketProtocol>

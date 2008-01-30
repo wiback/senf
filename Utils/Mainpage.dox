@@ -87,6 +87,8 @@ namespace senf {
 
     <tr><td>\ref IpChecksum</td><td>calculating the 16 bit checksum used in the IP
     specification</td></tr>
+
+    <tr><td>\ref utils_tags</td><td>Miscellaneous type tags</td></tr>
     </table>
 
     \section compatibility Compatibility

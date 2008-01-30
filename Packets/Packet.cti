@@ -154,9 +154,9 @@ senf::ConcretePacket<PacketType>::create()
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::create(NoInit_t)
+senf::ConcretePacket<PacketType>::create(senf::NoInit_t)
 {
-    return ConcretePacket(interpreter::create(interpreter::noinit));
+    return ConcretePacket(interpreter::create(senf::noinit));
 }
 
 template <class PacketType>
@@ -168,9 +168,9 @@ senf::ConcretePacket<PacketType>::create(size_type size)
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::create(size_type size, NoInit_t)
+senf::ConcretePacket<PacketType>::create(size_type size, senf::NoInit_t)
 {
-    return ConcretePacket(interpreter::create(size,interpreter::noinit));
+    return ConcretePacket(interpreter::create(size,senf::noinit));
 }
 
 template <class PacketType>
@@ -192,9 +192,9 @@ senf::ConcretePacket<PacketType>::createAfter(Packet packet)
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createAfter(Packet packet, NoInit_t)
+senf::ConcretePacket<PacketType>::createAfter(Packet packet, senf::NoInit_t)
 {
-    return ConcretePacket(interpreter::createAfter(packet.ptr(),interpreter::noinit));
+    return ConcretePacket(interpreter::createAfter(packet.ptr(),senf::noinit));
 }
 
 template <class PacketType>
@@ -206,9 +206,9 @@ senf::ConcretePacket<PacketType>::createAfter(Packet packet, size_type size)
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createAfter(Packet packet, size_type size, NoInit_t)
+senf::ConcretePacket<PacketType>::createAfter(Packet packet, size_type size, senf::NoInit_t)
 {
-    return ConcretePacket(interpreter::createAfter(packet.ptr(), size, interpreter::noinit));
+    return ConcretePacket(interpreter::createAfter(packet.ptr(), size, senf::noinit));
 }
 
 template <class PacketType>
@@ -230,9 +230,9 @@ senf::ConcretePacket<PacketType>::createBefore(Packet packet)
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createBefore(Packet packet, NoInit_t)
+senf::ConcretePacket<PacketType>::createBefore(Packet packet, senf::NoInit_t)
 {
-    return ConcretePacket(interpreter::createBefore(packet.ptr(), interpreter::noinit));
+    return ConcretePacket(interpreter::createBefore(packet.ptr(), senf::noinit));
 }
 
 // Create a clone of the current packet

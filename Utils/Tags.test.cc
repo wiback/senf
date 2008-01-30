@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -21,30 +21,23 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MACAddress non-inline template implementation  */
+    \brief Tags.test unit tests */
 
-//#include "MACAddress.ih"
+//#include "Tags.test.hh"
+//#include "Tags.test.ih"
 
 // Custom includes
+#include "Tags.hh"
+
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
 
 #define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::MACAddress
+// Nothing to test
 
-template <class InputIterator>
-prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_data(InputIterator i)
-{
-    MACAddress mac (senf::noinit);
-    iterator j (mac.begin());
-    iterator const j_end (mac.end());
-    for (;j!=j_end;++j,++i)
-        *j = *i;
-    return mac;
-}
-
-///////////////////////////////ct.e////////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 

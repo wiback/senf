@@ -30,6 +30,7 @@
 #include <boost/operators.hpp>
 
 #include "../Utils/Exception.hh"
+#include "../Utils/Tags.hh"
 #include "../Utils/safe_bool.hh"
 #include "PacketInterpreter.hh"
 
@@ -148,9 +149,6 @@ namespace senf {
         typedef senf::detail::packet::size_type size_type;
                                         ///< Unsigned type to represent packet size
         typedef PacketInterpreterBase::factory_t factory_t; ///< Packet factory type (see below)
-
-        enum NoInit_t { noinit };       ///< Special argument flag
-                                        /**< Used in some ConcretePacket constructors */
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -446,10 +444,10 @@ namespace senf {
         static ConcretePacket create(); ///< Create default initialized packet
                                         /**< The packet will be initialized to it's default empty
                                              state. */
-        static ConcretePacket create(NoInit_t); ///< Create uninitialized empty packet
+        static ConcretePacket create(senf::NoInit_t); ///< Create uninitialized empty packet
                                         /**< This will create a completely empty and uninitialized
                                              packet with <tt>size() == 0</tt>.
-                                             \param[in] noinit This parameter must always have the
+                                             \param[in] senf::noinit This parameter must always have the
                                                  value \c senf::noinit. */
         static ConcretePacket create(size_type size); ///< Create default initialized packet
                                         /**< This member will create a default initialized packet
@@ -460,11 +458,12 @@ namespace senf {
                                              \throws TruncatedPacketException if \a size is smaller
                                                  than the smallest permissible size for this type of
                                                  packet. */
-        static ConcretePacket create(size_type size, NoInit_t); ///< Create uninitialized packet
+        static ConcretePacket create(size_type size, senf::NoInit_t); 
+                                        ///< Create uninitialized packet
                                         /**< Creates an uninitialized (all-zero) packet of the exact
                                              given size. 
                                              \param[in] size Size of the packet to create in bytes
-                                             \param[in] noinit This parameter must always have the
+                                             \param[in] senf::noinit This parameter must always have the
                                                  value \c senf::noinit. */
         template <class ForwardReadableRange>
         static ConcretePacket create(ForwardReadableRange const & range); 
@@ -485,14 +484,14 @@ namespace senf {
                                              state. It will be appended as next header/interpreter
                                              after \a packet in that packets interpreter chain.
                                              \param[in] packet Packet to append new packet to. */
-        static ConcretePacket createAfter(Packet packet, NoInit_t);
+        static ConcretePacket createAfter(Packet packet, senf::NoInit_t);
                                         ///< Create uninitialized empty packet after\a packet
                                         /**< This will create a completely empty and uninitialized
                                              packet with <tt>size() == 0</tt>. It will be appended
                                              as next header/interpreter after \a packet in that
                                              packets interpreter chain.
                                              \param[in] packet Packet to append new packet to.
-                                             \param[in] noinit This parameter must always have the
+                                             \param[in] senf::noinit This parameter must always have the
                                                  value \c senf::noinit. */
         static ConcretePacket createAfter(Packet packet, size_type size);
                                         ///< Create default initialized packet after \a packet
@@ -507,7 +506,7 @@ namespace senf {
                                              \throws TruncatedPacketException if \a size is smaller
                                                  than the smallest permissible size for this type of
                                                  packet. */
-        static ConcretePacket createAfter(Packet packet, size_type size, NoInit_t);
+        static ConcretePacket createAfter(Packet packet, size_type size, senf::NoInit_t);
                                         ///< Create uninitialized packet after \a packet
                                         /**< Creates an uninitialized (all-zero) packet of the exact
                                              given size.  It will be appended as next
@@ -515,7 +514,7 @@ namespace senf {
                                              interpreter chain.
                                              \param[in] packet Packet to append new packet to.
                                              \param[in] size Size of the packet to create in bytes
-                                             \param[in] noinit This parameter must always have the
+                                             \param[in] senf::noinit This parameter must always have the
                                                  value \c senf::noinit. */
         template <class ForwardReadableRange>
         static ConcretePacket createAfter(Packet packet, 
@@ -541,7 +540,7 @@ namespace senf {
                                              header/interpreter before \a packet in that packets
                                              interpreter chain.
                                              \param[in] packet Packet to prepend new packet to. */
-        static ConcretePacket createBefore(Packet packet, NoInit_t);
+        static ConcretePacket createBefore(Packet packet, senf::NoInit_t);
                                         ///< Create uninitialized empty packet before \a packet
                                         /**< Creates a completely empty and uninitialized packet. It
                                              will be prepended as previous header/interpreter before

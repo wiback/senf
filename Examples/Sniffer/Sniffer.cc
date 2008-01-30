@@ -48,7 +48,7 @@ int loop_main (int argc, char const * argv[])
 
         while (true) { // forever
             senf::EthernetPacket packet (senf::EthernetPacket::create(
-                                             senf::EthernetPacket::noinit));
+                                             senf::noinit));
             sock.read(packet.data(),0);
             packet.dump(std::cout);
             senf::hexdump(
@@ -85,7 +85,7 @@ private:
     void dumpPacket(senf::Scheduler::EventId event)
     {
         senf::EthernetPacket packet (
-            senf::EthernetPacket::create(senf::EthernetPacket::noinit));
+            senf::EthernetPacket::create(senf::noinit));
         sock.read(packet.data(),0);
         packet.dump(std::cout);
         senf::hexdump(

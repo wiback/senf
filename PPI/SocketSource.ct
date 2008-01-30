@@ -36,7 +36,7 @@
 template <class Packet>
 prefix_ Packet senf::ppi::DgramReader<Packet>::operator()(Handle handle)
 {
-    Packet packet (Packet::create(Packet::noinit));
+    Packet packet (Packet::create(senf::noinit));
     handle.read(packet.data(),0u);
     return packet;
 }

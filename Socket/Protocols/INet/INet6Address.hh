@@ -33,6 +33,7 @@
 #include <boost/array.hpp>
 #include <boost/operators.hpp>
 #include "../../../Utils/safe_bool.hh"
+#include "../../../Utils/Tags.hh"
 #include "INet4Address.hh"
 
 //#include "INet6Address.mpp"
@@ -108,7 +109,6 @@ namespace senf {
         static INet6Address const AllNodes;    ///< The 'all nodes' link-local multicast address
         static INet6Address const AllRouters;  ///< The 'all routers' link-local multicast address
 
-        enum NoInit_t { noinit };
         enum Resolve_t { ResolveINet6, ResolveINet4 };
 
         /** \brief Possible scope values
@@ -134,7 +134,7 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        explicit INet6Address(NoInit_t); ///< Construct uninitialized (!) address
+        explicit INet6Address(senf::NoInit_t); ///< Construct uninitialized (!) address
         INet6Address(boost::uint16_t a0=0u, boost::uint16_t a1=0u, boost::uint16_t a2=0u,
                      boost::uint16_t a3=0u, boost::uint16_t a4=0u, boost::uint16_t a5=0u,
                      boost::uint16_t a6=0u, boost::uint16_t a7=0u);

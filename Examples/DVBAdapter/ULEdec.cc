@@ -63,7 +63,7 @@ ULEdec::ULEdec(unsigned short adapter, unsigned short device)
 void ULEdec::handleEvent(senf::Scheduler::EventId event)
 {
     senf::TransportPacket ts_packet (
-            senf::TransportPacket::create(188, senf::TransportPacket::noinit));
+            senf::TransportPacket::create(188, senf::noinit));
     dvrHandle.read( ts_packet.data() );
    
     // Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control.

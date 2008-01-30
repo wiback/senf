@@ -32,7 +32,7 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::INet6Address::INet6Address(NoInit_t)
+prefix_ senf::INet6Address::INet6Address(senf::NoInit_t)
 {}
 
 prefix_ senf::INet6Address::INet6Address(boost::uint16_t a0, boost::uint16_t a1,

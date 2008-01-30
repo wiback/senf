@@ -33,6 +33,7 @@
 #include <boost/array.hpp>
 #include <boost/operators.hpp>
 #include "../../../Utils/safe_bool.hh"
+#include "../../../Utils/Tags.hh"
 
 //#include "INet4Address.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -69,14 +70,12 @@ namespace senf {
         static INet4Address const Loopback; ///< The loopback (127.0.0.1) address
         static INet4Address const Broadcast; ////< The global broadcast (255.255.255.255) address
 
-        enum NoInit_t { noinit };
-
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
         INet4Address();                 ///< Construct an empty address
-        explicit INet4Address(NoInit_t); ///< Construct uninitialized (!) address
+        explicit INet4Address(senf::NoInit_t); ///< Construct uninitialized (!) address
         explicit INet4Address(address_type value);
                                         ///< Construct an address constant
 

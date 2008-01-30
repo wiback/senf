@@ -36,7 +36,7 @@
 template <class InputIterator>
 prefix_ senf::INet6Address senf::INet6Address::from_data(InputIterator i)
 {
-    INet6Address addr (INet6Address::noinit);
+    INet6Address addr (senf::noinit);
     iterator j (addr.begin());
     iterator const j_end (addr.end());
     for (;j!=j_end;++j,++i)

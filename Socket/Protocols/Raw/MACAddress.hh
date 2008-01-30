@@ -33,6 +33,7 @@
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
 #include "../../../Utils/safe_bool.hh"
+#include "../../../Utils/Tags.hh"
 
 //#include "MACAddress.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -58,10 +59,8 @@ namespace senf {
         static MACAddress const Broadcast; ///< The broadcast address
         static MACAddress const None;   ///< The empty (0) address
 
-        enum NoInit_t { noinit };
-        
         MACAddress();                   ///< Construct zero-initialized address
-        MACAddress(NoInit_t);           ///< Construct uninitialized (!) address
+        MACAddress(senf::NoInit_t);     ///< Construct uninitialized (!) address
         explicit MACAddress(boost::uint64_t v); ///< Construct MACAddress constants
 
         static MACAddress from_string(std::string const & s);

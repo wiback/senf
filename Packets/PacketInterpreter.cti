@@ -75,9 +75,9 @@ senf::PacketInterpreter<PacketType>::create()
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::create(NoInit_t)
+senf::PacketInterpreter<PacketType>::create(senf::NoInit_t)
 {
-    return create(0,noinit);
+    return create(0,senf::noinit);
 }
 
 template <class PacketType>
@@ -101,9 +101,9 @@ senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr pack
 
 template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::ptr
-senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet, NoInit_t)
+senf::PacketInterpreter<PacketType>::createAfter(PacketInterpreterBase::ptr packet, senf::NoInit_t)
 {
-    return createAfter(packet, 0, noinit);
+    return createAfter(packet, 0, senf::noinit);
 }
 
 // Create clone of current packet

@@ -30,6 +30,7 @@
 // Custom includes
 #include "ClientSocketHandle.hh"
 #include "../config.hh"
+#include "../Utils/Tags.hh"
 
 #include "ProtocolClientSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -66,7 +67,6 @@ namespace senf {
         // Types
 
         typedef SocketProtocol Protocol; ///< The sockets protocol
-        enum UninitializedType { Uninitialized }; ///< Flag to call 'uninitialized' constructor
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -95,7 +95,7 @@ namespace senf {
 
             \implementation The socket handle will have no \c body allocated.
          */
-        ProtocolClientSocketHandle(UninitializedType);
+        ProtocolClientSocketHandle(senf::NoInit_t);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////

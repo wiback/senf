@@ -72,7 +72,7 @@ namespace {
 
 prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_string(std::string const & s)
 {
-    MACAddress mac (MACAddress::noinit);
+    MACAddress mac (senf::noinit);
     typedef boost::char_separator<char> separator;
     typedef boost::tokenizer<separator> tokenizer;
     separator sep (":-");
@@ -92,7 +92,7 @@ prefix_ senf::MACAddress senf::MACAddress::from_eui64(boost::uint64_t v)
 {
     if ( boost::uint16_t(v>>24)  != 0xfffe )
         throw SyntaxException();
-    MACAddress mac (MACAddress::noinit);
+    MACAddress mac (senf::noinit);
     mac[0] = boost::uint8_t( v>>56 );
     mac[1] = boost::uint8_t( v>>48 );
     mac[2] = boost::uint8_t( v>>40 );

@@ -125,7 +125,7 @@
     
     \code
     senf::PacketSocketHandle sock ("eth0");
-    senf::EthernetPacket packet (senf::EthernetPacket::create(senf::Packet::noinit));
+    senf::EthernetPacket packet (senf::EthernetPacket::create(senf::noinit));
     sock.read(packet.data(),0u);
     \endcode
 
