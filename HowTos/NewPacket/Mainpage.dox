@@ -20,7 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \mainpage HowTo: Defining and using a new 'libPacket' Packet Type 
+/** \mainpage Defining and using a new 'libPacket' Packet Type 
 
     This howto will introduce the facilities needed to define a new packet type. As example, the
     \c GREPacket type is defined. 

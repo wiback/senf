@@ -463,13 +463,13 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
             docs,
             SCons.Action.Action(("for html in %s/*.html; do " +
                         "    echo $$html;" +
-                        "    sed -e 's/id=\"current\"/class=\"current\"/' $${html}" +
-                        "        | tidy -ascii -q --show-warnings no --fix-uri no " +
-                        "        | xsltproc --nonet --html --stringparam topdir %s -o $${html}.new %s - 2>&1" +
+                        "    mv $${html} $${html}.orig;" +
+                        "    sed -e 's/id=\"current\"/class=\"current\"/' $${html}.orig" +
+                        "        | tidy -ascii -q --wrap 0 --show-warnings no --fix-uri no " +
+                        "        | xsltproc --nonet --html --stringparam topdir %s -o $${html} %s - 2>&1" +
                         "        | grep '^-'" +
                         "        | grep -v 'ID .* already defined';" +
-                        "    mv $${html}.new $${html}; " +
-                        "done")
+                        "done; true")
                        % (htmlnode.dir.abspath, reltopdir, xslfile.abspath)))
         for doc in docs:
             env.Depends(doc, xslfile)

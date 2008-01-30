@@ -141,7 +141,7 @@ env.Append(
    LOCAL_CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
    CONFIG_FILES_OPTS = configFilesOpts,
    CLEAN_PATTERNS = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
-   BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn $CONFIG_FILES_OPTS",
+   BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn -I_templates $CONFIG_FILES_OPTS",
    TOP_INCLUDES = [ 'Packets', 'PPI', 'Scheduler', 'Socket', 'Utils',
                     'config.hh', 'local_config.hh' ],
 )
@@ -153,7 +153,8 @@ env.SetDefault(
 Export('env')
 
 # Create Doxyfile.local otherwise doxygen will barf on this non-existent file
-if not env.GetOption('clean') and not os.path.exists("Doxyfile.local"):
+# Create it even when cleaning, to silence the doxygen builder warnings
+if not os.path.exists("Doxyfile.local"):
     Execute(Touch("Doxyfile.local"))
 
 # Create local_config.h
