@@ -18,10 +18,4 @@ The main goals of this library are (in no particular order):
  - extensible design
  - concise interface
 
-Getting started
----------------
-
-Information on using the library including some extensively documented
-examples are found in the 'libsenf-doc' package.
-
  -- Stefan Bund <senf-dev@lists.berlios.de>  Tue, 28 Aug 2007 10:02:23 +0200

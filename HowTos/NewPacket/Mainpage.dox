@@ -715,8 +715,8 @@
     GREPacket.hh:
 
     \code
-    #ifndef GRE_PACKET_HH
-    #define GRE_PACKET_HH
+    #ifndef HH_GREPacket_
+    #define HH_GREPacket_
 
     #include <senf/Packets.hh>
     
@@ -934,7 +934,7 @@
     documentation of all the packet parser macros.</td></tr>
     
     <tr><td>\ref parseint, \n \ref parsecollection</td> <td>There are several lists of available
-    reusable packet parsers: . However, this list is not complete as there are other protocol
+    reusable packet parsers. However, these lists are not complete as there are other protocol
     specific reusable parsers (without claiming to be exhaustive: senf::INet4AddressParser,
     senf::INet6AddressParser, senf::MACAddressParser)</td></tr>
 
@@ -951,6 +951,5 @@
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u doc"
-// mode: flyspell
 // mode: auto-fill
 // End:

@@ -1,0 +1,30 @@
+
+Th SENF debian distribution consists of the following packages:
+
+  libsenf       non-debug static library   /usr/lib/libsenf.a 
+                                           /usr/lib/senf-packets/
+
+  libsenf-dbg   debug static library       /usr/lib/libsenf_g.a
+                                           /usr/lib/debug/senf-packets/
+
+  libsenf-dev   include files              /usr/include/senf
+
+  libsenf-doc   documentation              /usr/share/doc/libsenf-doc/
+
+
+So to develop using SENF, you will need 'libsenf-dev' and one of
+'libsenf' or 'libsenf-dbg' however, you will probably want to install
+both, 'libsenf' and 'libsenf-dbg'.
+
+To compile an application against the debug library, just link against
+the libsenf_g.a library.
+
+To compile an application against the non-debug library, link against
+libsenf.a AND ENSURE, THE PREPROCESSOR SYMBOL 'SENF_NO_DEBUG' IS
+DEFINED in your build, best by adding '-DSENF_NO_DEBUG' to CPPFLAGS.
+
+Lets repeat that:
+
+  VERY IMPORTANT: When building against libsenf.a, you MUST define
+  SENF_NO_DEBUG. Don't say, you haven't been warned ...
+

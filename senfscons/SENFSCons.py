@@ -300,7 +300,7 @@ def GlobalTargets(env):
 
 ## \brief Return path of a built library within $LOCALLIBDIR
 # \internal
-def LibPath(lib): return '$LOCALLIBDIR/lib%s.a' % lib
+def LibPath(lib): return '${LOCALLIBDIR}/${LIBPREFIX}%s${LIBADDSUFFIX}${LIBSUFFIX}' % lib
 
 ## \brief Build object files
 #
@@ -342,7 +342,7 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = [], no_includ
             target = 'test',
             objects = objects,
             test_sources = testSources,
-            LIBS = LIBS,
+            LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ],
             OBJECTS = OBJECTS,
             DEPENDS = [ env.File(LibPath(x)) for x in LIBS ])
         env.Alias('all_tests', test)
@@ -609,7 +609,7 @@ def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = [], no
     objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
     ob = None
     if objects:
-        ob = env.Command(target+".o", objects, "ld -r -o $TARGET $SOURCES")
+        ob = env.Command(target+"${OBJADDSUFFIX}${OBJSUFFIX}", objects, "ld -r -o $TARGET $SOURCES")
         env.Default(ob)
         env.Alias('default', ob)
         InstallWithSources(env, ob, '$OBJINSTALLDIR', sources, testSources, no_includes)
@@ -630,7 +630,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
     program = None
     if objects:
         progEnv = env.Copy()
-        progEnv.Prepend(LIBS = LIBS)
+        progEnv.Prepend(LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ])
         program = progEnv.ProgramNoScan(target=binary,source=objects+OBJECTS)
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])

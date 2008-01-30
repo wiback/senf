@@ -1,3 +1,4 @@
 debian/tmp/usr/share/doc/libsenf-doc
-README usr/share/doc/libsenf-doc
 debian/index.html usr/share/doc/libsenf-doc
+README usr/share/doc/libsenf-doc
+debian/README.Debian usr/share/doc/libsenf-doc

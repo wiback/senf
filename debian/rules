@@ -50,41 +50,32 @@ configure-stamp:
 #       by 'scons deb' and 'scons debsrc'
 	touch configure-stamp
 
-build: #build-arch build-indep
+build: build-arch build-indep
 
-build-arch: build-arch-$(LIBTYPE)-stamp
-build-arch-$(LIBTYPE)-stamp: configure-stamp
+build-arch: build-arch-final build-arch-debug
+
+build-arch-final: build-arch-final-stamp
+build-arch-final-stamp: configure-stamp
 # 	Add here commands to compile the arch part of the package.
-	scons -j $(CONCURRENCY_LEVEL) default $(SCONS_OPTIONS)
+	scons -j $(CONCURRENCY_LEVEL) default final=1
+	scons $(destdir)/usr/lib final=1 PREFIX='$(destdir)/usr'
+	touch $@
+
+build-arch-debug: build-arch-debug-stamp
+build-arch-debug-stamp: configure-stamp
+# 	Add here commands to compile the arch part of the package.
+	scons -j $(CONCURRENCY_LEVEL) default LIBADDSUFFIX=_g OBJADDSUFFIX=_g
+	scons $(destdir)/usr/lib LIBADDSUFFIX=_g OBJADDSUFFIX=_g \
+		PREFIX='$(destdir)/usr' OBJINSTALLDIR='$$LIBINSTALLDIR/debug'
 	touch $@
 
 build-indep: build-indep-stamp
 build-indep-stamp: configure-stamp
 # 	Add here commands to compile the indep part of the package.
 	scons -j $(CONCURRENCY_LEVEL) all_docs
+	scons all_docs
 	scons linklint
 	scons fixlinks
-	touch $@
-
-clean: debclean
-# 	Add here commands to clean up after the build process.
-	-scons -c all
-	-scons -c all LIBSENF=senf_g
-
-debclean:
-	dh_testdir
-	dh_testroot
-	rm -f build-arch-*-stamp build-indep-stamp configure-stamp
-	dh_clean
-
-install: #install-indep install-arch
-install-indep: build-indep
-	dh_testdir
-	dh_testroot
-	dh_clean -k -i
-	dh_installdirs -i
-# 	Add here commands to install the indep part of the package into
-# 	debian/<package>-doc.
 	scons $(destdir)/usr/include $(destdir)/usr/share/doc $(SCONS_OPTIONS) \
 		PREFIX='$(destdir)/usr' \
 		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc' \
@@ -96,17 +87,37 @@ install-indep: build-indep
 			mkdir -p "$$dir"; \
 			cp "Examples/$$src" "$$dir"; \
 		done
+	touch $@
+
+clean: debclean
+# 	Add here commands to clean up after the build process.
+	-scons -c all
+	-scons -c all LIBADDSUFFIX=_g OBJADDSUFFIX=_g
+
+debclean:
+	dh_testdir
+	dh_testroot
+	rm -f build-arch-*-stamp build-indep-stamp configure-stamp
+	dh_clean
+
+install: install-arch install-indep
+install-indep: build-indep
+	dh_testdir
+	dh_testroot
+	dh_clean -k -i -Xdebian/tmp
+	dh_installdirs -i
+# 	Add here commands to install the indep part of the package into
+# 	debian/<package>-doc.
 	dh_install -X.svn -i
 
 install-arch: build-arch
 	dh_testdir
 	dh_testroot
-	dh_clean -k -s
-	dh_installdirs # options provided by DH_OPTIONS
+	dh_clean -k -s -Xdebian/tmp
+	dh_installdirs -s
 # 	Add here commands to install the arch part of the package into 
 # 	debian/tmp.
-	scons $(destdir)/usr/lib $(SCONS_OPTIONS) PREFIX='$(destdir)/usr'
-	dh_install -X.svn # options provided by DH_OPTIONS
+	dh_install -X.svn -s
 
 # Must not depend on anything. This is to be called by
 # binary-arch/binary-indep
@@ -143,24 +154,7 @@ binary-common:
 binary-indep: build-indep install-indep
 	$(MAKE) -f debian/rules DH_OPTIONS=-i binary-common
 
-binary-arch: binary-arch-final binary-arch-debug
-
-binary-arch-final:
-	$(MAKE) -f debian/rules \
-		DH_OPTIONS="-s -Nlibsenf-dbg" \
-		SCONS_OPTIONS="final=1" \
-		LIBTYPE="final" \
-			binary-arch-common
-
-binary-arch-debug:
-	$(MAKE) -f debian/rules \
-		DH_OPTIONS="-plibsenf-dbg" \
-		SCONS_OPTIONS="LIBSENF=senf_g" \
-		LIBTYPE="debug" \
-			binary-arch-common
-
-binary-arch-common: build-arch install-arch
-	$(MAKE) -f debian/rules DH_OPTIONS="$(DH_OPTIONS)" binary-common
+binary-arch: build-arch install-arch
 
 binary: binary-arch binary-indep
 .PHONY: build clean binary-indep binary-arch binary install install-indep install-arch \

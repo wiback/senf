@@ -191,14 +191,14 @@ SENFSCons.StandardTargets(env)
 SENFSCons.GlobalTargets(env)
 SENFSCons.Doxygen(env)
 SENFSCons.DoxyXRef(env,
-                   HTML_HEADER = '#/doclib/doxy-header-overview.html',
+                   HTML_HEADER = '#/doclib/doxy-header.html',
                    HTML_FOOTER = '#/doclib/doxy-footer.html')
 
 SENFSCons.InstallIncludeFiles(env, [ 'config.hh' ])
 
 # Build combined library 'libsenf'
 libsenf = env.Library(
-    SENFSCons.LibPath(env['LIBSENF']),
+    'senf${LIBADDSUFFIX}',
     Flatten([ env.File(SENFSCons.LibPath(lib)).sources for lib in env['ALLLIBS'] ]))
 env.Default(libsenf)
 env.Clean('all', libsenf)
@@ -225,7 +225,7 @@ PhonyTarget(env, 'debsrc', [
 PhonyTarget(env, 'debbin', [
     checkLocalConf,
     updateRevision,
-    "$BUILDPACKAGE_COMMAND -b -nc",
+    "$BUILDPACKAGE_COMMAND -b",
     "fakeroot ./debian/rules debclean"
 ])
 

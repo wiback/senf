@@ -5,3 +5,4 @@ include/senf/Socket.hh usr/include/senf
 include/senf/Packets.hh usr/include/senf
 include/senf/PPI.hh usr/include/senf
 README usr/share/doc/libsenf-dev
+debian/README.Debian usr/share/doc/libsenf-dev
