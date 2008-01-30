@@ -33,4 +33,7 @@ file("Mainpage.dox","w").write(yaptu.process(MAINPAGE, globals(), env.Dictionary
 
 SConscript(glob.glob("*/SConscript"))
 
+env.Clean('all','Mainpage.dox')
+env.Clean('all_docs','Mainpage.dox')
+
 SENFSCons.Doxygen(env)

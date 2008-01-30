@@ -140,7 +140,7 @@ env.Append(
          },
    LOCAL_CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
    CONFIG_FILES_OPTS = configFilesOpts,
-   CLEAN_PATTERNS = [ '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
+   CLEAN_PATTERNS = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
    BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn $CONFIG_FILES_OPTS",
    TOP_INCLUDES = [ 'Packets', 'PPI', 'Scheduler', 'Socket', 'Utils',
                     'config.hh', 'local_config.hh' ],
