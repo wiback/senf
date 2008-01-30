@@ -78,8 +78,11 @@ build-indep-stamp: configure-stamp
 	scons fixlinks
 	scons $(destdir)/usr/include $(destdir)/usr/share/doc $(SCONS_OPTIONS) \
 		PREFIX='$(destdir)/usr' \
-		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc' \
+		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc/html' \
 		INCLUDEINSTALLDIR='$$PREFIX/include/senf' 
+#	Remove all the files not really needed from the documentation directories
+	find $(destdir)/usr/share/doc/libsenf-doc/html \
+		-type f ! -regex '.*\.\(html\|css\|png\|php\|idx\|tag\)' | xargs rm -f
 #       We need to install the example sourcecode
 	find Examples \( -name "*.hh" -o -name "*.cc" \) -printf "%P\n" | \
 		while read src; do \
