@@ -48,6 +48,17 @@ prefix_ Writer & senf::ppi::module::PassiveSocketSink<Writer>::writer()
     return writer_;
 }
 
+template <class Writer>
+prefix_ typename Writer::Handle & senf::ppi::module::PassiveSocketSink<Writer>::handle()
+{
+    return handle_;
+}
+
+template <class Writer>
+prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::replaceHandle(Handle handle)
+{
+    handle_ = handle;
+}
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

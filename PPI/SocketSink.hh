@@ -179,6 +179,11 @@ namespace module {
                                              \param[in] handle Handle to write data to */
 
         Writer & writer();                  ///< Access the Writer
+        Handle & handle(); 					/**< Access the handle. This is intendet to be mainly used to reconnect the under
+        										lying socket. */
+       /* void reconnect(senf::SocketAddress newAddress);
+        								///< Reconnect the handle to which the packets are written
+       */
         void replaceHandle(Handle newHandle);
                                         /**< Replace the handle to which the packets are written
                                          * Normally you should access the handle and call connect with
