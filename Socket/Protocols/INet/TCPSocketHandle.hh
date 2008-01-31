@@ -80,7 +80,6 @@ namespace senf {
      */
     class TCPv4SocketProtocol
         : public ConcreteSocketProtocol<TCPv4Socket_Policy,TCPv4SocketProtocol>,
-          public IPv4Protocol,
           public TCPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
@@ -156,7 +155,6 @@ namespace senf {
      */
     class TCPv6SocketProtocol
         : public ConcreteSocketProtocol<TCPv6Socket_Policy,TCPv6SocketProtocol>,
-          public IPv6Protocol,
           public TCPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol

@@ -80,7 +80,6 @@ namespace senf {
      */
     class UDPv4SocketProtocol
         : public ConcreteSocketProtocol<UDPv4Socket_Policy, UDPv4SocketProtocol>,
-          public IPv4Protocol,
           public UDPProtocol,
           public MulticastProtocol,
           public INet4MulticastProtocol,
@@ -142,7 +141,6 @@ namespace senf {
      */
     class UDPv6SocketProtocol
         : public ConcreteSocketProtocol<UDPv6Socket_Policy, UDPv6SocketProtocol>,
-          public IPv6Protocol,
           public UDPProtocol,
           public MulticastProtocol,
           public INet6MulticastProtocol,

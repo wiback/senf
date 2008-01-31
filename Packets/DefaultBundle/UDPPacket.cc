@@ -78,8 +78,8 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
             // The destination used here must be the *final* destination ...
             summer.feed( ipv6->destination().i(), 
                          ipv6->destination().i() + IPv6PacketParser::destination_t::fixed_bytes );
-            /// This is a simplification. The value is really 32bit to support UDP Jumbograms
-            /// (RFC2147). However, skipping an even number of 0 bytes does not change the checksum
+            // This is a simplification. The value is really 32bit to support UDP Jumbograms
+            // (RFC2147). However, skipping an even number of 0 bytes does not change the checksum
             summer.feed( i() + length_offset, i() + length_offset + 2 );
             // RFC2460 specifies, that this must always be 17, not the value used in the ipv6
             // header

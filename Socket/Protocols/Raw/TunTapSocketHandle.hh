@@ -22,8 +22,6 @@
 
 /** \file
     \brief PacketProtocol and PacketSocketHandle public header
-
-    \todo Implement global promisc() helper based on ioctl() interface.
  */
 
 #ifndef HH_TunTapSocketHandle_

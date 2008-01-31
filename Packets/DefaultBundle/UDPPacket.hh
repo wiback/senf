@@ -38,7 +38,7 @@ namespace senf {
 
         Parser implementing the UDP header. The fields implemented are:
 
-        \see UDPPacketType
+        \see UDPPacketType \n
             <a href="http://tools.ietf.org/html/rfc768">RFC 768</a>
      */
     struct UDPPacketParser : public PacketParserBase

@@ -26,6 +26,8 @@ rm -f ../svn-update.log
 
 echo "\$ nice ${SCONS:-scons} -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
 nice ${SCONS:-scons} -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
+echo "\$ nice ${SCONS:-scons} all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
+nice ${SCONS:-scons} all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
 echo "\$ nice ${SCONS:-scons} linklint ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
 nice ${SCONS:-scons} linklint ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
 echo "\$ nice ${SCONS:-scons} fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"

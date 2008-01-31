@@ -23,9 +23,6 @@
 /** \file
     \brief Scheduler non-inline non-template implementation
 
-    \idea Implement signal handling (See source for more discussion
-    about this)
-
     \idea Multithreading support: To support multithreading, the
     static member Scheduler::instance() must return a thread-local
     value (that is Scheduler::instance() must allocate one Scheduler

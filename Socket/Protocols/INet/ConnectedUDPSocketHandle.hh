@@ -78,7 +78,6 @@ namespace senf {
      */
     class ConnectedUDPv4SocketProtocol
         : public ConcreteSocketProtocol<ConnectedUDPv4Socket_Policy, ConnectedUDPv4SocketProtocol>,
-          public IPv4Protocol,
           public UDPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
@@ -138,7 +137,6 @@ namespace senf {
      */
     class ConnectedUDPv6SocketProtocol
         : public ConcreteSocketProtocol<ConnectedUDPv6Socket_Policy, ConnectedUDPv6SocketProtocol>,
-          public IPv6Protocol,
           public UDPProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol

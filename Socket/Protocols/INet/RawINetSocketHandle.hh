@@ -75,7 +75,6 @@ namespace senf {
      */
     class RawV4SocketProtocol
         : public ConcreteSocketProtocol<RawV4Socket_Policy, RawV4SocketProtocol>,
-          public IPv4Protocol,
           public RawINetProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
@@ -144,7 +143,6 @@ namespace senf {
      */
     class RawV6SocketProtocol
         : public ConcreteSocketProtocol<RawV6Socket_Policy,RawV6SocketProtocol>,
-          public IPv6Protocol,
           public RawINetProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,

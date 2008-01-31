@@ -51,8 +51,7 @@ namespace senf {
                                              timing.
                                              \pre The \c SO_TIMESTAMP socket option must not be set
                                                  on the socket.
-                                             \returns timestamp when last packet was received
-                                             \todo Move this to DatagramSocketProtocol class */
+                                             \returns timestamp when last packet was received */
     };
     
 

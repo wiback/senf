@@ -22,11 +22,6 @@
 
 /** \file
     \brief SocketProtocol and ConcreteSocketProtocol public header
-
-    \idea We should optimize the protocol handling. Allocating a protocol instance for every socket
-        body seems quite wasteful. We could derive SocketPolicy from SocketBody (probably privately,
-        since private inheritance models more of 'has a' than 'is a'). This would allow to reduce
-        the number of heap-allocations per socket to one which is good.
  */
 
 // The private inheritance idea should indeed work very well: We just need to change the
@@ -72,9 +67,6 @@
     \see
         \ref handle_group \n
         \ref policy_group
-
-    \todo Complete the protocol interface implementations. Better distribution of members to
-        protocol facets and more precise distribution of functionality among the facets.
  */
 
 /** \defgroup concrete_protocol_group Protocol Implementations (Concrete Protocol Classes)

@@ -23,14 +23,11 @@
 /** \file
     \brief Policy Framework public header
 
-    \todo Do we want to support separate read and write policies. This allows to treat pipes within
-        this framework however, is this worth the effort?
-
-    \idea Creating a new Socket will create 4 (!) new instances (The handle, the body, the policy
-        and the protocol) of which 3 (argh) (body, policy and protocol) live on the heap. This is
-        expensive. We should convert all the policy classes to singletons and assign the same
-        instance to all socket bodies with the same policy. This would reduce the number of heap
-        allocations per socket handle to two.
+    \idea Creating a new Socket will create 3 new instances (The handle, the body, the policy) of
+        which 2 (argh) (body, policy) live on the heap. This is expensive. We should convert all the
+        policy classes to singletons and assign the same instance to all socket bodies with the same
+        policy. This would reduce the number of heap allocations per socket handle to one (which is
+        already optimized using the pool_alloc_mixin)
  */
 
 /** \defgroup policy_group The Policy Framework

@@ -75,7 +75,6 @@ namespace senf {
      */
     class ConnectedRawV4SocketProtocol
         : public ConcreteSocketProtocol<ConnectedRawV4Socket_Policy, ConnectedRawV4SocketProtocol>,
-          public IPv4Protocol,
           public RawINetProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
@@ -144,7 +143,6 @@ namespace senf {
      */
     class ConnectedRawV6SocketProtocol
         : public ConcreteSocketProtocol<ConnectedRawV6Socket_Policy, ConnectedRawV6SocketProtocol>,
-          public IPv6Protocol,
           public RawINetProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol

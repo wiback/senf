@@ -41,6 +41,7 @@ namespace senf {
     /** \brief NetdeviceController
      
         \todo document me
+        \todo Add 'promisc' member to enable/disable promiscuous mode
      */
     class NetdeviceController
     {

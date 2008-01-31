@@ -69,34 +69,6 @@ namespace senf {
                                              \returns Bound interface name */
     };
 
-    /** \brief Protocol facet providing IPv4 Addressing related API
-
-        This protocol facet introduces all the socket api protocol members which are related to IPv4
-        addressing.
-
-        \todo Is it safe, not to allow setting the interface index on add/drop? what does it do
-        (especially if the local address is given ?). What have I been thinking here ???
-
-        \todo connect() is only available on stream sockets. We want to access bind() and connect()
-        via the ClientSocketHandle -> see SocketProtocol todo point
-     */
-    class IPv4Protocol
-        : public virtual SocketProtocol
-    {
-    public:
-    };
-
-    /** \brief Protocol facet providing IPv6 Addressing related API
-
-        This protocol facet introduces all the socket api protocol members which are related to IPv6
-        addressing.
-     */
-    class IPv6Protocol
-        : public virtual SocketProtocol
-    {
-    public:
-    };
-
     /// @}
 
 }

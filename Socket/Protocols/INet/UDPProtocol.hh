@@ -43,8 +43,6 @@ namespace senf {
 
         This protocol facet provides all those protocol functions,
         which are available on any UDP socket.
-        
-        \todo the multicast add/remove/iface semantics are quite unclear ...
      */
     class UDPProtocol
         : public virtual SocketProtocol
