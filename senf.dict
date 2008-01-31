@@ -73,6 +73,8 @@ dl
 DNS
 dontinclude
 dox
+doxyfile
+doxygen
 DSMCCSection
 dt
 ElementParser
@@ -279,6 +281,7 @@ PriorityJoin
 protocolbundle
 protocolbundles
 protocolType
+py
 QueueingDiscipline
 queueSize
 RateFilter
@@ -306,6 +309,7 @@ ScopeId
 screenshot
 sec
 senf
+senfscons
 ServerSocketHandle
 setBegin
 setEnd
