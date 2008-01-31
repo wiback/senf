@@ -71,7 +71,8 @@ namespace senf {
         Socket Handle typedefs above.
     */
     class UNDatagramSocketProtocol
-        : public ConcreteSocketProtocol<UNDatagramSocket_Policy>,
+        : public ConcreteSocketProtocol<UNDatagramSocket_Policy,
+                                        UNDatagramSocketProtocol>,
           public UNProtocol, 
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
@@ -96,11 +97,6 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
         
-        ///@}
-        ///\name Abstract Interface Implementation
-
-        std::auto_ptr<SocketProtocol> clone() const;
-
         ///@}
     };
 

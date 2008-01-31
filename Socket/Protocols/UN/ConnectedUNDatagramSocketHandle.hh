@@ -71,11 +71,11 @@ namespace senf {
 
     */
     class ConnectedUNDatagramSocketProtocol
-        : public ConcreteSocketProtocol<ConnectedUNDatagramSocket_Policy>,
+        : public ConcreteSocketProtocol<ConnectedUNDatagramSocket_Policy,
+                                        ConnectedUNDatagramSocketProtocol>,
           public UNProtocol, 
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<ConnectedUNDatagramSocketProtocol>
+          public AddressableBSDSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -97,11 +97,6 @@ namespace senf {
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
         
-        ///@}
-        ///\name Abstract Interface Implementation
-
-        std::auto_ptr<SocketProtocol> clone() const;
-
         ///@}
     };
 

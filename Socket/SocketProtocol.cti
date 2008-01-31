@@ -35,32 +35,56 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ConcreteSocketProtocol<SocketPolicy>
 
-template <class SocketPolicy>
-prefix_ senf::ConcreteSocketProtocol<SocketPolicy>::~ConcreteSocketProtocol()
+template <class SocketPolicy, class Self>
+prefix_ senf::ConcreteSocketProtocol<SocketPolicy,Self>::~ConcreteSocketProtocol()
 {}
 
-template <class SocketPolicy>
-prefix_ typename senf::ConcreteSocketProtocol<SocketPolicy>::Policy const &
-senf::ConcreteSocketProtocol<SocketPolicy>::policy()
+template <class SocketPolicy, class Self>
+prefix_ typename senf::ConcreteSocketProtocol<SocketPolicy,Self>::Policy const &
+senf::ConcreteSocketProtocol<SocketPolicy,Self>::policy()
     const
 {
     return policy_;
 }
 
+template <class SocketPolicy, class Self>
+prefix_ std::auto_ptr<senf::SocketBody>
+senf::ConcreteSocketProtocol<SocketPolicy,Self>::clone(bool isServer)
+    const
+{
+    return std::auto_ptr<SocketBody>(new ProtocolSocketBody<Self>(isServer));
+}
+
+template <class SocketPolicy, class Self>
+prefix_ std::auto_ptr<senf::SocketBody>
+senf::ConcreteSocketProtocol<SocketPolicy,Self>::clone(int fd, bool isServer)
+    const
+{
+    return std::auto_ptr<SocketBody>(new ProtocolSocketBody<Self>(isServer, fd));
+}
+
+template <class SocketPolicy, class Self>
+prefix_ senf::SocketBody & senf::ConcreteSocketProtocol<SocketPolicy,Self>::body()
+    const
+{
+    return const_cast< ProtocolSocketBody<Self> &>(
+        static_cast< ProtocolSocketBody<Self> const & >(*this));
+}
+
 ////////////////////////////////////////
 // protected members
 
-template <class SocketPolicy>
+template <class SocketPolicy, class Self>
 prefix_ senf::ClientSocketHandle<SocketPolicy>
-senf::ConcreteSocketProtocol<SocketPolicy>::clientHandle()
+senf::ConcreteSocketProtocol<SocketPolicy,Self>::clientHandle()
     const
 {
     return static_socket_cast< ClientSocketHandle<Policy> >(fh());
 }
 
-template <class SocketPolicy>
+template <class SocketPolicy, class Self>
 prefix_ senf::ServerSocketHandle<SocketPolicy>
-senf::ConcreteSocketProtocol<SocketPolicy>::serverHandle()
+senf::ConcreteSocketProtocol<SocketPolicy,Self>::serverHandle()
     const
 {
     return static_socket_cast< ServerSocketHandle<Policy> >(fh());

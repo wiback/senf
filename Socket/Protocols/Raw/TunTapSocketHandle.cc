@@ -62,12 +62,6 @@ prefix_ void senf::TapProtocol::init_client(std::string const & interface_name, 
     fd(f);
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::TapProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new TapProtocol());
-}
-
 prefix_ unsigned senf::TapProtocol::available()
   const
 {

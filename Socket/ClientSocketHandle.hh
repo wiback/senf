@@ -429,8 +429,7 @@ namespace senf {
 
     protected:
         ClientSocketHandle(FileHandle other, bool isChecked);
-        explicit ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol,
-                                    int fd = -1);
+        explicit ClientSocketHandle(std::auto_ptr<SocketBody> body);
 
     private:
         unsigned available();

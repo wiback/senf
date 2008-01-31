@@ -31,7 +31,6 @@
 #define HH_TCPSocketHandle_ 1
 
 // Custom includes
-#include "../../../Utils/pool_alloc_mixin.hh"
 #include "INetProtocol.hh"
 #include "TCPProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
@@ -80,12 +79,11 @@ namespace senf {
         \see TCPv6SocketProtocol
      */
     class TCPv4SocketProtocol
-        : public ConcreteSocketProtocol<TCPv4Socket_Policy>,
+        : public ConcreteSocketProtocol<TCPv4Socket_Policy,TCPv4SocketProtocol>,
           public IPv4Protocol,
           public TCPProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<TCPv4SocketProtocol>
+          public AddressableBSDSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -124,11 +122,6 @@ namespace senf {
                                              constructor */
 
         ///@}
-        ///\name Abstract Interface Implementation
-
-        std::auto_ptr<SocketProtocol> clone() const;
-
-        ///@}
     };
 
     typedef ProtocolClientSocketHandle<TCPv4SocketProtocol> TCPv4ClientSocketHandle;
@@ -162,12 +155,11 @@ namespace senf {
         \see TCPv4SocketProtocol
      */
     class TCPv6SocketProtocol
-        : public ConcreteSocketProtocol<TCPv6Socket_Policy>,
+        : public ConcreteSocketProtocol<TCPv6Socket_Policy,TCPv6SocketProtocol>,
           public IPv6Protocol,
           public TCPProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<TCPv6SocketProtocol>
+          public AddressableBSDSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -204,11 +196,6 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolServerSocketHandle::ProtocolServerSocketHandle()
                                              constructor */
-
-        ///@}
-        ///\name Abstract Interface Implementation
-
-        std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
     };

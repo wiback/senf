@@ -78,12 +78,6 @@ prefix_ void senf::TCPv4SocketProtocol::init_server(INet4SocketAddress const & a
         throwErrno();
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::TCPv4SocketProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new TCPv4SocketProtocol());
-}
-
 ///////////////////////////////////////////////////////////////////////////
 // senf::TCPv6SocketProtocol::
 
@@ -122,12 +116,6 @@ prefix_ void senf::TCPv6SocketProtocol::init_server(INet6SocketAddress const & a
     reuseaddr(true);
     if (::listen(fd(),backlog) < 0)
         throwErrno();
-}
-
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::TCPv6SocketProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new TCPv6SocketProtocol());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

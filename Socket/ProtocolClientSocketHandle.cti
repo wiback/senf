@@ -43,7 +43,7 @@ ProtocolClientSocketHandle(senf::NoInit_t)
 template <class SocketProtocol>
 prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::ProtocolClientSocketHandle()
     : ClientSocketHandle<typename SocketProtocol::Policy>(
-        std::auto_ptr<senf::SocketProtocol>(new SocketProtocol()))
+        std::auto_ptr<senf::SocketBody>(new senf::ProtocolSocketBody<SocketProtocol>(false)))
 {
     this->protocol().init_client();
 }

@@ -74,12 +74,11 @@ namespace senf {
         \see RawV6SocketProtocol
      */
     class ConnectedRawV4SocketProtocol
-        : public ConcreteSocketProtocol<ConnectedRawV4Socket_Policy>,
+        : public ConcreteSocketProtocol<ConnectedRawV4Socket_Policy, ConnectedRawV4SocketProtocol>,
           public IPv4Protocol,
           public RawINetProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol//,
-//          public senf::pool_alloc_mixin<RawV4Socket_Policy>
+          public AddressableBSDSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -100,11 +99,6 @@ namespace senf {
                                              address.
                                              \param[in] protocol Layer 4 protocol to filter for / to send 
                                              \param[in] address local address to connect to */
-
-        ///@}
-        ///\name Abstract Interface Implementation
-
-        std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
     };
@@ -149,12 +143,11 @@ namespace senf {
         \see RawV6SocketProtocol
      */
     class ConnectedRawV6SocketProtocol
-        : public ConcreteSocketProtocol<ConnectedRawV6Socket_Policy>,
+        : public ConcreteSocketProtocol<ConnectedRawV6Socket_Policy, ConnectedRawV6SocketProtocol>,
           public IPv6Protocol,
           public RawINetProtocol,
           public BSDSocketProtocol,
-          public AddressableBSDSocketProtocol//,
-//          public senf::pool_alloc_mixin<RawV6SocketProtocol>
+          public AddressableBSDSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -179,11 +172,6 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor (??) */
-
-        ///@}
-        ///\name Abstract Interface Implementation
-
-        std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
     };

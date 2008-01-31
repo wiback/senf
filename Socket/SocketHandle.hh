@@ -147,7 +147,7 @@ namespace senf {
                                                  documentation. */
 
     protected:
-        explicit SocketHandle(std::auto_ptr<SocketProtocol> protocol, bool isServer);
+        explicit SocketHandle(std::auto_ptr<SocketBody> body);
                                         ///< Initialize SocketHandle providing the protocol
                                         /**< \param protocol Protocol class of the protocol
                                                  implemented by this socket handle

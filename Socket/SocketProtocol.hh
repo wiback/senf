@@ -153,14 +153,6 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Virtual interface
 
-        virtual std::auto_ptr<SocketProtocol> clone() const = 0;
-                                        ///< Polymorphically return a copy of this protocol class
-                                        /**< This member will create a new copy of the protocol
-                                             class on the heap.
-                                             \attention This member must be implemented in every \e
-                                                 leaf protocol class to return a new instance of the
-                                                 appropriate type. */
-
         virtual unsigned available() const = 0;
                                         ///< Return (maximum) number of bytes available for reading
                                         ///< without < blocking
@@ -260,11 +252,10 @@ namespace senf {
                                              ::dup2()). */
 
     private:
-        // backpointer to owning SocketBody instance
-        
-        SocketBody & body() const;
+        virtual std::auto_ptr<SocketBody> clone(bool isServer) const = 0;
+        virtual std::auto_ptr<SocketBody> clone(int fd, bool isServer) const = 0;
+        virtual SocketBody & body() const = 0;
 
-        SocketBody * body_;
         friend class SocketBody;
     };
     
@@ -288,7 +279,7 @@ namespace senf {
         
         \doc init_client init_server
      */
-    template <class SocketPolicy>
+    template <class SocketPolicy, class Self>
     class ConcreteSocketProtocol
         : public virtual SocketProtocol
     {
@@ -312,7 +303,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         Policy const & policy() const;
-
+        
     protected:
         ClientSocketHandle<Policy> clientHandle() const; 
                                         ///< Get client handle for associated socket
@@ -324,8 +315,11 @@ namespace senf {
                                              this protocol instance */
 
     private:
-        Policy policy_;
+        virtual std::auto_ptr<SocketBody> clone(bool isServer) const;
+        virtual std::auto_ptr<SocketBody> clone(int fd, bool isServer) const;
+        virtual SocketBody & body() const;
 
+        Policy policy_;
     };
 
     /// @}

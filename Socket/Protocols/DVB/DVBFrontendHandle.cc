@@ -63,13 +63,6 @@ prefix_ bool senf::DVBFrontendProtocol::eof()
     return false;
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBFrontendProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new DVBFrontendProtocol());
-}
-
-
 prefix_ void senf::DVBFrontendProtocol::signalStrength(int16_t *strength)
     const
 {

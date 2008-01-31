@@ -27,7 +27,8 @@
 //#include "SocketProtocol.ih"
 
 // Custom includes
-#include <../Utils/senfassert.hh>
+#include "../Utils/senfassert.hh"
+#include "../Utils/Logger/SenfLog.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -55,18 +56,10 @@ prefix_ void senf::SocketProtocol::fd(int fd)
 }
 
 prefix_ senf::SocketProtocol::SocketProtocol()
-    : body_(0)
 {}
 
 prefix_  senf::SocketProtocol::~SocketProtocol()
 {}
-
-prefix_ senf::SocketBody & senf::SocketProtocol::body()
-    const
-{
-    SENF_ASSERT( body_ );
-    return *body_;
-}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

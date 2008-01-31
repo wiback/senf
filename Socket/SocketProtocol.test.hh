@@ -32,11 +32,10 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
 namespace test {
 
     class SomeProtocol
-        : public ConcreteSocketProtocol<SomeSocketPolicy>
+        : public ConcreteSocketProtocol<SomeSocketPolicy,SomeProtocol>
     {
     public:
         ~SomeProtocol() {}
@@ -44,8 +43,6 @@ namespace test {
         void init_client() const {}
         void init_server() const {}
 
-        std::auto_ptr<SocketProtocol> clone() const
-            { return std::auto_ptr<SocketProtocol>(new SomeProtocol()); }
         unsigned available() const
             { return Policy::ReadPolicy::TEST_SIZE; }
         bool eof() const

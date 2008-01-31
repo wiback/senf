@@ -35,6 +35,9 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::SocketHandle<SocketPolicy>
+
 template <class SocketPolicy>
 prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle()
 {}
@@ -57,9 +60,8 @@ senf::SocketHandle<SocketPolicy>::operator=(SocketHandle<OtherPolicy> other)
 
 template <class SocketPolicy>
 prefix_
-senf::SocketHandle<SocketPolicy>::SocketHandle(std::auto_ptr<SocketProtocol> protocol,
-                                                      bool isServer)
-    : FileHandle(std::auto_ptr<FileBody>(new SocketBody(protocol,isServer)))
+senf::SocketHandle<SocketPolicy>::SocketHandle(std::auto_ptr<SocketBody> body)
+    : FileHandle(std::auto_ptr<FileBody>(body.release()))
 {}
 
 template <class SocketPolicy>
@@ -181,6 +183,19 @@ prefix_ std::string senf::SocketHandle<SocketPolicy>::dumpState(unsigned lod)
     state(map,lod);
     return detail::dumpState(map);
 }
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ProtocolSocketBody<SProtocol>
+
+template <class SProtocol>
+prefix_ senf::ProtocolSocketBody<SProtocol>::ProtocolSocketBody(bool isServer)
+    : SocketBody(isServer)
+{}
+
+template <class SProtocol>
+prefix_ senf::ProtocolSocketBody<SProtocol>::ProtocolSocketBody(bool isServer, int fd)
+    : SocketBody(isServer, fd)
+{}
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

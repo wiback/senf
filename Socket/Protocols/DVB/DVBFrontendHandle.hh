@@ -54,7 +54,7 @@ namespace senf {
     /** \brief xxx
      */
     class DVBFrontendProtocol
-        : public ConcreteSocketProtocol<DVBFrontend_Policy>
+        : public ConcreteSocketProtocol<DVBFrontend_Policy, DVBFrontendProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,6 @@ namespace senf {
         
         unsigned available() const;
         bool eof() const;
-
-        std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
         

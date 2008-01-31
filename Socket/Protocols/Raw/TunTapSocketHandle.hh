@@ -73,9 +73,8 @@ namespace senf {
         Socket Handle typedefs above.
      */
     class TapProtocol
-        : public ConcreteSocketProtocol<Tap_Policy>,
-          public BSDSocketProtocol,
-          public senf::pool_alloc_mixin<TapProtocol>
+        : public ConcreteSocketProtocol<Tap_Policy,TapProtocol>,
+          public BSDSocketProtocol
     {
     public:
         ///\name Constructors
@@ -99,7 +98,6 @@ namespace senf {
         ///\name Abstract Interface Implementation
         ///@{
 
-        std::auto_ptr<SocketProtocol> clone() const;
         unsigned available() const;
         bool eof() const;
 

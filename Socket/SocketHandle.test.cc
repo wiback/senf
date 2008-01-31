@@ -37,15 +37,15 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    namespace sl = senf;
 
     class MySocketHandle
-        : public sl::SocketHandle<sl::test::SomeProtocol::Policy>
+        : public senf::SocketHandle<senf::test::SomeProtocol::Policy>
     {
     public:
         MySocketHandle()
-            : sl::SocketHandle<sl::test::SomeProtocol::Policy>(
-                std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()),false)
+            : senf::SocketHandle<senf::test::SomeProtocol::Policy>(
+                std::auto_ptr<senf::SocketBody>(
+                    new senf::ProtocolSocketBody<senf::test::SomeProtocol>(false)))
             {}
     };
 
@@ -53,30 +53,29 @@ namespace {
         : public senf::FileHandle
     {
     public:
-        FDHandle()
-            : senf::FileHandle(std::auto_ptr<senf::FileBody>(
-                                          new senf::FileBody())) {}
+        FDHandle() : senf::FileHandle(std::auto_ptr<senf::FileBody>(new senf::FileBody())) {}
     };
+
 }
 
 BOOST_AUTO_UNIT_TEST(socketHandle)
 {
-    typedef sl::MakeSocketPolicy<
-        sl::test::SomeCommunicationPolicy,
-        sl::test::SomeReadPolicy
+    typedef senf::MakeSocketPolicy<
+        senf::test::SomeCommunicationPolicy,
+        senf::test::SomeReadPolicy
         >::policy OtherSocketPolicy;
-    typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
+    typedef senf::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
 
     MySocketHandle myh;
     OtherSocketHandle osh (myh);
     osh = myh;
 
-    typedef sl::SocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
+    typedef senf::SocketHandle<senf::test::SomeProtocol::Policy> SomeSocketHandle;
     SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
 
     BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
 
-    typedef sl::SocketHandle< sl::MakeSocketPolicy<
+    typedef senf::SocketHandle< senf::MakeSocketPolicy<
         OtherSocketPolicy,
         senf::NoAddressingPolicy
         >::policy> SomeOtherSocketHandle;
@@ -91,8 +90,8 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
                        "file.handle: -1\n"
                        "file.refcount: 3\n"
                        "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy> >\n"
-                       "socket.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
                        "socket.protocol: senf::test::SomeProtocol\n"
+                       "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
                        "socket.server: false\n" );
 }
 

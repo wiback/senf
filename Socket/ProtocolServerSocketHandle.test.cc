@@ -69,8 +69,8 @@ BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
                            "file.handle: -1\n"
                            "file.refcount: 2\n"
                            "handle: senf::ProtocolServerSocketHandle<(anonymous namespace)::MyProtocol>\n"
-                           "socket.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
                            "socket.protocol: (anonymous namespace)::MyProtocol\n"
+                           "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
                            "socket.server: true\n" );
 
     }

@@ -34,31 +34,40 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol,
-                                            bool isServer)
-    : protocol_(protocol), isServer_(isServer)
-{
-    SENF_ASSERT( ! protocol_->body_ );
-    protocol_->body_ = this;
-}
+prefix_ senf::SocketBody::SocketBody(bool isServer)
+    : isServer_(isServer)
+{}
 
-prefix_ senf::SocketBody::SocketBody(std::auto_ptr<SocketProtocol> protocol,
-                                            bool isServer, int fd)
-    : FileBody(fd), protocol_(protocol), isServer_(isServer)
+prefix_ senf::SocketBody::SocketBody(bool isServer, int fd)
+    : FileBody(fd), isServer_(isServer)
+{}
+
+prefix_ senf::SocketProtocol & senf::SocketBody::protocol()
 {
-    SENF_ASSERT( ! protocol_->body_ );
-    protocol_->body_ = this;
+    return const_cast<SocketProtocol &>(v_protocol());
 }
 
 prefix_ senf::SocketProtocol const & senf::SocketBody::protocol()
     const
 {
-    return *protocol_;
+    return v_protocol();
 }
 
 prefix_ bool senf::SocketBody::isServer()
 {
     return isServer_;
+}
+
+prefix_ std::auto_ptr<senf::SocketBody> senf::SocketBody::clone(bool isServer)
+    const
+{
+    return protocol().clone(isServer);
+}
+
+prefix_ std::auto_ptr<senf::SocketBody> senf::SocketBody::clone(int fd, bool isServer)
+    const
+{
+    return protocol().clone(fd, isServer);
 }
 
 ///////////////////////////////////////////////////////////////////////////

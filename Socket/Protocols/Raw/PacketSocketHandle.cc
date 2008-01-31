@@ -54,12 +54,6 @@ prefix_ void senf::PacketProtocol::init_client(SocketType type, int protocol)
     fd(sock);
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::PacketProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new PacketProtocol());
-}
-
 prefix_ unsigned senf::PacketProtocol::available()
     const
 {

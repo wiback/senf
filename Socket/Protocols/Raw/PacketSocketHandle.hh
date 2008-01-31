@@ -77,9 +77,8 @@ namespace senf {
         Socket Handle typedefs above.
      */
     class PacketProtocol
-        : public ConcreteSocketProtocol<Packet_Policy>,
-          public BSDSocketProtocol,
-          public senf::pool_alloc_mixin<PacketProtocol>
+        : public ConcreteSocketProtocol<Packet_Policy, PacketProtocol>,
+          public BSDSocketProtocol
     {
     public:
         enum SocketType { RawSocket, DatagramSocket };
@@ -129,7 +128,6 @@ namespace senf {
         ///\name Abstract Interface Implementation
         ///@{
 
-        std::auto_ptr<SocketProtocol> clone() const;
         unsigned available() const;
         bool eof() const;
 

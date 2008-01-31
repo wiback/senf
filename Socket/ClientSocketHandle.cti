@@ -124,12 +124,9 @@ prefix_ senf::ClientSocketHandle<Policy>::ClientSocketHandle(FileHandle other, b
 
 template <class Policy>
 prefix_
-senf::ClientSocketHandle<Policy>::ClientSocketHandle(std::auto_ptr<SocketProtocol> protocol,
-                                                     int fd)
-    : SocketHandle<Policy>(protocol,false) 
-{
-    this->body().fd(fd);
-}
+senf::ClientSocketHandle<Policy>::ClientSocketHandle(std::auto_ptr<SocketBody> body)
+    : SocketHandle<Policy>(body) 
+{}
 
 #ifndef DOXYGEN
 template <class Policy>

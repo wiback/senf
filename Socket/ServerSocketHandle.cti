@@ -48,8 +48,8 @@ ServerSocketHandle(ServerSocketHandle<OtherPolicy> other,
 
 template <class SocketPolicy>
 prefix_  senf::ServerSocketHandle<SocketPolicy>::
-ServerSocketHandle(std::auto_ptr<SocketProtocol> protocol)
-    : SocketHandle<SocketPolicy>(protocol,true)
+ServerSocketHandle(std::auto_ptr<SocketBody> body)
+    : SocketHandle<SocketPolicy>(body)
 {}
 
 template <class SocketPolicy>
@@ -95,8 +95,8 @@ template <class Policy>
 prefix_ typename senf::ServerSocketHandle<Policy>::ClientSocketHandle
 senf::ServerSocketHandle<Policy>::accept()
 {
-    return ClientSocketHandle(this->protocol().clone(),
-                              Policy::CommunicationPolicy::accept(*this));
+    return ClientSocketHandle(this->body().clone(
+                                  Policy::CommunicationPolicy::accept(*this), false));
 }
 
 template <class Policy>

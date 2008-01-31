@@ -43,7 +43,7 @@ ProtocolServerSocketHandle(senf::NoInit_t)
 template <class SocketProtocol>
 prefix_ senf::ProtocolServerSocketHandle<SocketProtocol>::ProtocolServerSocketHandle()
     : ServerSocketHandle<typename SocketProtocol::Policy>(
-        std::auto_ptr<senf::SocketProtocol>(new SocketProtocol()))
+        std::auto_ptr<senf::SocketBody>(new ProtocolSocketBody<SocketProtocol>(true)))
 {}
 
 #define BOOST_PP_ITERATION_PARAMS_1 (4, (1, 9, SENF_ABSOLUTE_INCLUDE_PATH(Socket/ProtocolServerSocketHandle.mpp), 2))

@@ -57,12 +57,6 @@ prefix_ unsigned senf::DVBDemuxSectionProtocol::available()
     return 4096;
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBDemuxSectionProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new DVBDemuxSectionProtocol());
-}
-
 prefix_ void senf::DVBDemuxSectionProtocol::setSectionFilter(struct dmx_sct_filter_params *filter)
     const
 {
@@ -89,12 +83,6 @@ prefix_ unsigned senf::DVBDemuxPESProtocol::available()
     return 4096; //???
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBDemuxPESProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new DVBDemuxPESProtocol());
-}
-
 prefix_ void senf::DVBDemuxPESProtocol::setPESFilter(struct dmx_pes_filter_params *filter)
     const
 {
@@ -119,12 +107,6 @@ prefix_ unsigned senf::DVBDvrProtocol::available()
     const
 {
     return 188;
-}
-
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::DVBDvrProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new DVBDvrProtocol());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

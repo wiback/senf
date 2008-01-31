@@ -60,12 +60,6 @@ senf::RawV4SocketProtocol::init_client(int const & protocol, INet4SocketAddress 
     clientHandle().bind(address);
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::RawV4SocketProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new RawV4SocketProtocol());
-}
-
 ///////////////////////////////////////////////////////////////////////////
 // senf::RawV6SocketProtocol::
 
@@ -90,12 +84,6 @@ senf::RawV6SocketProtocol::init_client(int const & protocol, INet6SocketAddress 
 {
     init_client(protocol);
     clientHandle().bind(address);
-}
-
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::RawV6SocketProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new RawV6SocketProtocol());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

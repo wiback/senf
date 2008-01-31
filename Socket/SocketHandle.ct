@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <boost/lexical_cast.hpp>
+#include "../Utils/TypeInfo.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -43,6 +44,23 @@ senf::detail::StreamableString::operator<<(T const & other)
         (*this) += ", ";
     (*this) += boost::lexical_cast<std::string>(other);
     return *this;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ProtocolSocketBody<SProtocol>
+
+template <class SProtocol>
+prefix_ senf::SocketProtocol const & senf::ProtocolSocketBody<SProtocol>::v_protocol()
+    const
+{
+    return *this;
+}
+
+template <class SProtocol>
+prefix_ std::string senf::ProtocolSocketBody<SProtocol>::v_protocolName()
+    const
+{
+    return senf::prettyName(typeid(SProtocol));
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

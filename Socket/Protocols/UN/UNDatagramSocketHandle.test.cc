@@ -40,19 +40,26 @@ BOOST_AUTO_UNIT_TEST(unDatagramSocketHandle)
     std::string testString ("Hallo Welt.");
     std::string socketPath (".socket-UNDatagramSocketHandle.test");
 
+    BOOST_CHECKPOINT( 1 );
     senf::UNSocketAddress addr (socketPath);
+    BOOST_CHECKPOINT( 2 );
     senf::UNDatagramClientSocketHandle inputSocket(addr);
+    BOOST_CHECKPOINT( 3 );
     senf::UNDatagramClientSocketHandle outputSocket;
 
 
+    BOOST_CHECKPOINT( 4 );
     outputSocket.writeto( addr, testString);
 
+    BOOST_CHECKPOINT( 5 );
     BOOST_CHECK_EQUAL( inputSocket.read(), testString);
 
       
     
 
+    BOOST_CHECKPOINT( 6 );
     outputSocket.close();
+    BOOST_CHECKPOINT( 7 );
     inputSocket.close();
 
 //    if( unlink(socketPath.c_str()) != 0)

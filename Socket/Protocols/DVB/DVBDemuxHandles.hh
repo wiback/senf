@@ -52,7 +52,7 @@ namespace senf {
     /** \brief xxx
      */
     class DVBDemuxSectionProtocol
-        : public ConcreteSocketProtocol<DVBDemux_Policy>,
+        : public ConcreteSocketProtocol<DVBDemux_Policy, DVBDemuxSectionProtocol>,
           public DVBDemuxProtocol
     {
     public:
@@ -72,8 +72,6 @@ namespace senf {
         ///@{
         
         unsigned available() const;
-
-        std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
         
@@ -87,7 +85,7 @@ namespace senf {
     /** \brief xxx
      */
     class DVBDemuxPESProtocol
-        : public ConcreteSocketProtocol<DVBDemux_Policy>,
+        : public ConcreteSocketProtocol<DVBDemux_Policy,DVBDemuxPESProtocol>,
           public DVBDemuxProtocol
     {
     public:
@@ -107,8 +105,6 @@ namespace senf {
         ///@{
         
         unsigned available() const;
-
-        std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
         
@@ -124,7 +120,7 @@ namespace senf {
     /** \brief xxx
          */
     class DVBDvrProtocol
-        : public ConcreteSocketProtocol<DVBDemux_Policy>,
+        : public ConcreteSocketProtocol<DVBDemux_Policy, DVBDvrProtocol>,
           public DVBDemuxProtocol
     {
     public:
@@ -145,8 +141,6 @@ namespace senf {
         
         unsigned available() const;
 
-        std::auto_ptr<SocketProtocol> clone() const;
-        
         ///@}
      };
 

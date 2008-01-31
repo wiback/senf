@@ -50,12 +50,6 @@ prefix_ void senf::ConnectedUNDatagramSocketProtocol::init_client(UNSocketAddres
     clientHandle().connect(address);
 }
 
-prefix_ std::auto_ptr<senf::SocketProtocol> senf::ConnectedUNDatagramSocketProtocol::clone()
-    const
-{
-    return std::auto_ptr<SocketProtocol>(new ConnectedUNDatagramSocketProtocol());
-}
-
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "UNDatagramSocketHandle.mpp"

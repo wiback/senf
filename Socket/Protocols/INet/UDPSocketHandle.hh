@@ -79,15 +79,14 @@ namespace senf {
         \see UDPv6SocketProtocol
      */
     class UDPv4SocketProtocol
-        : public ConcreteSocketProtocol<UDPv4Socket_Policy>,
+        : public ConcreteSocketProtocol<UDPv4Socket_Policy, UDPv4SocketProtocol>,
           public IPv4Protocol,
           public UDPProtocol,
           public MulticastProtocol,
           public INet4MulticastProtocol,
           public BSDSocketProtocol,
           public DatagramSocketProtocol,
-          public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<UDPv4SocketProtocol>
+          public AddressableBSDSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -108,11 +107,6 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                             ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-
-        ///@}
-        ///\name Abstract Interface Implementation
-
-        std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
 
@@ -147,15 +141,14 @@ namespace senf {
         \see UDPv4SocketProtocol
      */
     class UDPv6SocketProtocol
-        : public ConcreteSocketProtocol<UDPv6Socket_Policy>,
+        : public ConcreteSocketProtocol<UDPv6Socket_Policy, UDPv6SocketProtocol>,
           public IPv6Protocol,
           public UDPProtocol,
           public MulticastProtocol,
           public INet6MulticastProtocol,
           public BSDSocketProtocol,
           public DatagramSocketProtocol,
-          public AddressableBSDSocketProtocol,
-          public senf::pool_alloc_mixin<UDPv6SocketProtocol>
+          public AddressableBSDSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -176,11 +169,6 @@ namespace senf {
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-
-        ///@}
-        ///\name Abstract Interface Implementation
-
-        std::auto_ptr<SocketProtocol> clone() const;
 
         ///@}
     };

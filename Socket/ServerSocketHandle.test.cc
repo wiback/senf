@@ -39,45 +39,45 @@
 
 namespace {
 
-    namespace sl = senf;
-
     class MySocketHandle
-        : public sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>
+        : public senf::ServerSocketHandle<senf::test::SomeProtocol::Policy>
     {
     public:
         MySocketHandle()
-            : sl::ServerSocketHandle<sl::test::SomeProtocol::Policy>(
-                std::auto_ptr<sl::SocketProtocol>(new sl::test::SomeProtocol()))
+            : senf::ServerSocketHandle<senf::test::SomeProtocol::Policy>(
+                std::auto_ptr<senf::SocketBody>(
+                    new senf::ProtocolSocketBody<senf::test::SomeProtocol>(true)))
             {}
     };
+
 }
 
 BOOST_AUTO_UNIT_TEST(serverSocketHandle)
 {
-    typedef sl::MakeSocketPolicy<
-        sl::test::SomeFramingPolicy,
-        sl::test::SomeReadPolicy,
-        sl::test::SomeWritePolicy
+    typedef senf::MakeSocketPolicy<
+        senf::test::SomeFramingPolicy,
+        senf::test::SomeReadPolicy,
+        senf::test::SomeWritePolicy
         >::policy OtherSocketPolicy;
-    typedef sl::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
+    typedef senf::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
 
     MySocketHandle myh;
     OtherSocketHandle osh (myh);
     osh = myh;
 
-    typedef sl::ServerSocketHandle<sl::test::SomeProtocol::Policy> SomeSocketHandle;
-    SomeSocketHandle ssh = sl::static_socket_cast<SomeSocketHandle>(osh);
+    typedef senf::ServerSocketHandle<senf::test::SomeProtocol::Policy> SomeSocketHandle;
+    SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
 
-    typedef sl::ServerSocketHandle<sl::MakeSocketPolicy<
+    typedef senf::ServerSocketHandle<senf::MakeSocketPolicy<
         OtherSocketPolicy,
         senf::NoAddressingPolicy
         >::policy> SomeOtherSocketHandle;
-    typedef sl::ClientSocketHandle<OtherSocketPolicy> OtherClientHandle;
+    typedef senf::ClientSocketHandle<OtherSocketPolicy> OtherClientHandle;
 
-    BOOST_CHECK_NO_THROW( sl::dynamic_socket_cast<SomeSocketHandle>(osh) );
-    BOOST_CHECK_THROW( sl::dynamic_socket_cast<SomeOtherSocketHandle>(osh),
+    BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
+    BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeOtherSocketHandle>(osh),
                        std::bad_cast );
-    BOOST_CHECK_THROW( sl::dynamic_socket_cast<OtherClientHandle>(osh),
+    BOOST_CHECK_THROW( senf::dynamic_socket_cast<OtherClientHandle>(osh),
                        std::bad_cast );
 
     BOOST_CHECK_NO_THROW( myh.bind(0) );

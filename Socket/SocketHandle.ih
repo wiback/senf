@@ -85,6 +85,8 @@ namespace senf {
         std::string dumpState(SocketStateMap const & map);
     }
 
+    template <class Policy, class Self> class ConcreteSocketProtocol;
+
     /** \brief SocketHandle referenced body
 
         \internal
@@ -95,13 +97,9 @@ namespace senf {
         properly. If this invariant is violated, your Program will probably crash.
      */
     class SocketBody
-        : public FileBody, 
-          public senf::pool_alloc_mixin<SocketBody>
+        : public FileBody
     {
     public:
-        using senf::pool_alloc_mixin<SocketBody>::operator new;
-        using senf::pool_alloc_mixin<SocketBody>::operator delete;
-
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
@@ -111,19 +109,12 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        SocketBody(std::auto_ptr<SocketProtocol> protocol, bool isServer);
-                                        /**<
-                                           \param protocol Protocol class implementing the desired
-                                           protocol
-                                           \param isServer \c true, if this socket is a server
-                                           socket, false otherwise */
-        SocketBody(std::auto_ptr<SocketProtocol> protocol, bool isServer, int fd);
-                                        /**<
-                                           \param protocol Protocol class implementing the desired
-                                           protocol
-                                           \param isServer \c true, if this socket is a server
-                                           socket, false otherwise
-                                           \param fd socket file descriptor */
+        SocketBody(bool isServer);      /**< \param isServer \c true, if this socket is a server
+                                             socket, false otherwise */
+        SocketBody(bool isServer, int fd);
+                                        /**< \param isServer \c true, if this socket is a server
+                                             socket, false otherwise
+                                             \param fd socket file descriptor */
 
         // no copy
         // no conversion constructors
@@ -131,13 +122,17 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        SocketProtocol const & protocol() const;
-                                        ///< Access the protocol instance
+        SocketProtocol & protocol(); ///< Access the protocol instance
+        SocketProtocol const & protocol() const; ///< Access the protocol instance (const)
+
         bool isServer();                ///< Check socket type
                                         /**< \return \c true, if this is a server socket, \c false
                                            otherwise */
 
         void state(SocketStateMap & map, unsigned lod);
+
+        std::auto_ptr<SocketBody> clone(bool isServer) const;
+        std::auto_ptr<SocketBody> clone(int fd, bool isServer) const;
 
     private:
         virtual void v_close();         ///< Close socket
@@ -156,8 +151,36 @@ namespace senf {
                                            dependent, this member will forward the call to
                                            senf::SocketPolicy::eof() */
 
-        boost::scoped_ptr<SocketProtocol> protocol_;
+        virtual SocketProtocol const & v_protocol() const = 0;
+        virtual std::string v_protocolName() const = 0;
+
         bool isServer_;
+    };
+
+    template <class SProtocol>
+    class ProtocolSocketBody 
+        : public SocketBody, 
+          private SProtocol,
+          public senf::pool_alloc_mixin< ProtocolSocketBody<SProtocol> >
+    {
+    public:
+        typedef SProtocol Protocol;
+
+        using senf::pool_alloc_mixin< ProtocolSocketBody<SProtocol> >::operator new;
+        using senf::pool_alloc_mixin< ProtocolSocketBody<SProtocol> >::operator delete;
+
+        ProtocolSocketBody(bool isServer); /**< \param isServer \c true, if this socket is a server
+                                             socket, false otherwise */
+        ProtocolSocketBody(bool isServer, int fd);
+                                        /**< \param isServer \c true, if this socket is a server
+                                             socket, false otherwise
+                                             \param fd socket file descriptor */
+        
+    private:
+        virtual SocketProtocol const & v_protocol() const;
+        virtual std::string v_protocolName() const;
+
+        friend class ConcreteSocketProtocol<typename SProtocol::Policy, SProtocol>;
     };
 
 }

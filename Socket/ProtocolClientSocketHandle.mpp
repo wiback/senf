@@ -62,7 +62,7 @@ template < mpp_TemplateParameters() >
 prefix_ senf::ProtocolClientSocketHandle<SocketProtocol>::
 ProtocolClientSocketHandle( mpp_MethodParameters() )
     : ClientSocketHandle<typename SocketProtocol::Policy>(
-        std::auto_ptr<senf::SocketProtocol>(new SocketProtocol()))
+        std::auto_ptr<senf::SocketBody>(new ProtocolSocketBody<SocketProtocol>(false)))
 {
     this->protocol().init_client( mpp_CallParameters() );
 }
@@ -88,4 +88,6 @@ ProtocolClientSocketHandle( mpp_MethodParameters() )
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
 // End:
