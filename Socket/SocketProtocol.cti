@@ -33,7 +33,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ConcreteSocketProtocol<SocketPolicy>
+// senf::ConcreteSocketProtocol<SocketPolicy,Self>
 
 template <class SocketPolicy, class Self>
 prefix_ senf::ConcreteSocketProtocol<SocketPolicy,Self>::~ConcreteSocketProtocol()

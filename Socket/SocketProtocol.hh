@@ -266,7 +266,8 @@ namespace senf {
 
         ConcreteSocketProtocol is the base class of a concrete socket protocol implementation. The
         final protocol class must inherit from ConcreteSocketProtocol. The template argument \a
-        SocketPolicy must be set to the complete socket policy of the protocol.
+        SocketPolicy must be set to the complete socket policy of the protocol. \a Self is the name
+        of the final protocol class which inherits this class.
 
         A protocol implementation may define the protocol interface directly. It can also
         (additionally) make use of multiple inheritance to combine a set of protocol facets into a
