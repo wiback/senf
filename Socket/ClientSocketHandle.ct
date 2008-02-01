@@ -93,17 +93,17 @@ writeto(Handle & handle, ForwardReadableRange & range, typename Handle::Address 
 
 // senf::ClientSocketHandle<Policy>::read
 
-template <class Policy>
-prefix_ std::string senf::ClientSocketHandle<Policy>::read(unsigned limit)
+template <class SPolicy>
+prefix_ std::string senf::ClientSocketHandle<SPolicy>::read(unsigned limit)
 {
     std::string rv;
     this->read(rv,limit);
     return rv;
 }
 
-template <class Policy>
+template <class SPolicy>
 template <class Sequence>
-prefix_ void senf::ClientSocketHandle<Policy>::read(Sequence & container, unsigned limit)
+prefix_ void senf::ClientSocketHandle<SPolicy>::read(Sequence & container, unsigned limit)
 {
     unsigned nread (available());
     if (limit>0 && nread>limit)
@@ -113,21 +113,21 @@ prefix_ void senf::ClientSocketHandle<Policy>::read(Sequence & container, unsign
                     container.end());
 }
 
-// senf::ClientSocketHandle<Policy>::readfrom
+// senf::ClientSocketHandle<SPolicy>::readfrom
 
-template <class Policy>
-prefix_ std::pair<std::string, typename Policy::AddressingPolicy::Address>
-senf::ClientSocketHandle<Policy>::readfrom(unsigned limit)
+template <class SPolicy>
+prefix_ std::pair<std::string, typename SPolicy::AddressingPolicy::Address>
+senf::ClientSocketHandle<SPolicy>::readfrom(unsigned limit)
 {
     std::string rv;
-    typename Policy::AddressingPolicy::Address addr;
+    typename SPolicy::AddressingPolicy::Address addr;
     this->readfrom(rv,addr,limit);
     return std::make_pair(rv,addr);
 }
 
-template <class Policy>
+template <class SPolicy>
 template <class Sequence>
-prefix_ void senf::ClientSocketHandle<Policy>::readfrom(Sequence & container, Address & from,
+prefix_ void senf::ClientSocketHandle<SPolicy>::readfrom(Sequence & container, Address & from,
                                                         unsigned limit)
 {
     unsigned nread (available());
@@ -141,10 +141,10 @@ prefix_ void senf::ClientSocketHandle<Policy>::readfrom(Sequence & container, Ad
 ////////////////////////////////////////
 // private members
 
-// senf::ClientSocketHandle<Policy>::available
+// senf::ClientSocketHandle<SPolicy>::available
 
-template <class Policy>
-prefix_ unsigned senf::ClientSocketHandle<Policy>::available()
+template <class SPolicy>
+prefix_ unsigned senf::ClientSocketHandle<SPolicy>::available()
 {
     unsigned nread = this->protocol().available();
     if (nread == 0 && this->blocking()) {

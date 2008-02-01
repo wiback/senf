@@ -42,7 +42,7 @@ namespace senf {
     /// \addtogroup handle_group
     /// @{
 
-    template <class Policy> class ClientSocketHandle;
+    template <class SPolicy> class ClientSocketHandle;
 
     /** \brief Generic SocketHandle with server interface
 
@@ -72,16 +72,16 @@ namespace senf {
         classes. You can also find a summary of all members available in the leaf protocol class
         documentation.
       */
-    template <class Policy>
+    template <class SPolicy>
     class ServerSocketHandle
-        : public SocketHandle<Policy>
+        : public SocketHandle<SPolicy>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
         /// Address type from the addressing policy
-        typedef typename Policy::AddressingPolicy::Address Address;
+        typedef typename SPolicy::AddressingPolicy::Address Address;
         /// 'Best' type for passing address as parameter
         /** Depending on the type of \c Address, this will be either <tt>Address</tt> or <tt>Address
             const &</tt>. See <a
@@ -90,7 +90,7 @@ namespace senf {
          */
         typedef typename boost::call_traits<Address>::param_type AddressParam;
         /// Corresponding client socket handle with the same policy
-        typedef ClientSocketHandle<Policy> ClientSocketHandle;
+        typedef ClientSocketHandle<SPolicy> ClientSocketHandle;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -107,10 +107,10 @@ namespace senf {
         // conversion constructors
         template <class OtherPolicy>
         ServerSocketHandle(ServerSocketHandle<OtherPolicy> other,
-                           typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type * = 0);
+                           typename SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type * = 0);
 
         template <class OtherPolicy>
-        typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const &
+        typename SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type const &
         operator=(ServerSocketHandle<OtherPolicy> other);
 
         ///@}

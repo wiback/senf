@@ -32,51 +32,51 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 #ifndef DOXYGEN
-template <class Policy>
+template <class SPolicy>
 prefix_ unsigned senf::ReadablePolicy::
-readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
-         typename Policy::AddressingPolicy::Address & address,
-         typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type *)
+readfrom(ClientSocketHandle<SPolicy> handle, char * buffer, unsigned size,
+         typename SPolicy::AddressingPolicy::Address & address,
+         typename IfCommunicationPolicyIs<SPolicy,UnconnectedCommunicationPolicy>::type *)
 {
     return do_rcvfrom(handle, buffer, size, address.sockaddr_p(), address.sockaddr_len());
 }
 #else
-template <class Policy>
+template <class SPolicy>
 prefix_ unsigned senf::ReadablePolicy::
-readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
+readfrom(ClientSocketHandle<SPolicy> handle, char * buffer, unsigned size,
          typename Policy::AddressingPolicy::Address & address)
 {}
 #endif
 
 #ifndef DOXYGEN
-template <class Policy>
+template <class SPolicy>
 prefix_ unsigned senf::WriteablePolicy::
-write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
-      typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
+write(ClientSocketHandle<SPolicy> handle, char const * buffer, unsigned size,
+      typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
     return do_write(handle,buffer,size);
 }
 #else
-template <class Policy>
+template <class SPolicy>
 prefix_ unsigned senf::WriteablePolicy::
-write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size)
+write(ClientSocketHandle<SPolicy> handle, char const * buffer, unsigned size)
 {}
 #endif
 
 #ifndef DOXYGEN
-template <class Policy>
+template <class SPolicy>
 prefix_ unsigned senf::WriteablePolicy::
-writeto(ClientSocketHandle<Policy> handle,
-        typename boost::call_traits<typename Policy::AddressingPolicy::Address>::param_type addr,
+writeto(ClientSocketHandle<SPolicy> handle,
+        typename boost::call_traits<typename SPolicy::AddressingPolicy::Address>::param_type addr,
         char const * buffer, unsigned size,
-        typename IfCommunicationPolicyIs<Policy,UnconnectedCommunicationPolicy>::type *)
+        typename IfCommunicationPolicyIs<SPolicy,UnconnectedCommunicationPolicy>::type *)
 {
     return do_writeto(handle, buffer, size, addr.sockaddr_p(), addr.sockaddr_len());
 }
 #else
-template <class Policy>
+template <class SPolicy>
 prefix_ unsigned senf::WriteablePolicy::
-writeto(ClientSocketHandle<Policy> handle,
+writeto(ClientSocketHandle<SPolicy> handle,
         typename Policy::AddressingPolicy::Address const & addr,
         char const * buffer, unsigned size)
 {}

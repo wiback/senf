@@ -207,10 +207,10 @@
     \code
       struct ExampleAddressingPolicy
       {
-          template <class Policy>
-          void connect(senf::SocketHandle<Policy> handle, Address & addr,
+          template <class SPolicy>
+          void connect(senf::SocketHandle<SPolicy> handle, Address & addr,
                        typename senf::IfCommmunicationPolicyIs<
-                           Policy, senf::ConnectedCommunicationPolicy>::type * = 0);
+                           SPolicy, senf::ConnectedCommunicationPolicy>::type * = 0);
       };
     \endcode
 

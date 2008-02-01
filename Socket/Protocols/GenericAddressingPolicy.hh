@@ -85,12 +85,12 @@ namespace senf {
         : private GenericAddressingPolicy_Base
     {
 #       ifndef DOXYGEN
-        template <class Policy>
-        static void peer(SocketHandle<Policy> handle, Address & addr,
-                         typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+        template <class SPolicy>
+        static void peer(SocketHandle<SPolicy> handle, Address & addr,
+                         typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type * = 0);
 #       else
-        template <class Policy>
-        static void peer(SocketHandle<Policy> handle, Address & addr);
+        template <class SPolicy>
+        static void peer(SocketHandle<SPolicy> handle, Address & addr);
                                         ///< Return address of remote peer on connected sockets
                                         /**< This member is only available if the socket handles
                                              communication policy is ConnectedCommunicationPolicy.
@@ -104,12 +104,12 @@ namespace senf {
                                              \param[out] addr local socket address */
 
 #       ifndef DOXYGEN
-        template <class Policy>
-        static void connect(SocketHandle<Policy> handle, Address const & addr,
-                            typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type * = 0);
+        template <class SPolicy>
+        static void connect(SocketHandle<SPolicy> handle, Address const & addr,
+                            typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type * = 0);
 #       else
-        template <class Policy>
-        static void connect(SocketHandle<Policy> handle, Address const & addr);
+        template <class SPolicy>
+        static void connect(SocketHandle<SPolicy> handle, Address const & addr);
                                         ///< Connect to remote host
                                         /**< This member is only available if the socket handles
                                              communication policy is ConnectedCommunicationPolicy.
@@ -142,6 +142,6 @@ namespace senf {
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -u ../test"
 // comment-column: 40
 // End:

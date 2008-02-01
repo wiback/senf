@@ -85,13 +85,6 @@ prefix_ std::string senf::detail::dumpState(SocketStateMap const & map)
     return s.str();
 }
 
-template <class Policy>
-prefix_ std::ostream & senf::operator<<(std::ostream & os, SocketHandle<Policy> handle)
-{
-    os << handle.dumpState();
-    return os;
-}
-
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "SocketHandle.mpp"

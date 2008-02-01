@@ -36,42 +36,42 @@
 
 #ifndef DOXYGEN
 template <class Address>
-template <class Policy>
+template <class SPolicy>
 prefix_ void senf::GenericAddressingPolicy<Address>::
-peer(SocketHandle<Policy> handle, Address & addr,
-     typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
+peer(SocketHandle<SPolicy> handle, Address & addr,
+     typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
     addr.clear();
     do_peer(handle,addr.sockaddr_p(),addr.sockaddr_len());
 }
 #else
 template <class Address>
-template <class Policy>
+template <class SPolicy>
 prefix_ void senf::GenericAddressingPolicy<Address>::
-peer(SocketHandle<Policy> handle, Address & addr)
+peer(SocketHandle<SPolicy> handle, Address & addr)
 {}
 #endif
 
 #ifndef DOXYGEN
 template <class Address>
-template <class Policy>
+template <class SPolicy>
 prefix_ void senf::GenericAddressingPolicy<Address>::
-connect(SocketHandle<Policy> handle, Address const & addr,
-        typename IfCommunicationPolicyIs<Policy,ConnectedCommunicationPolicy>::type *)
+connect(SocketHandle<SPolicy> handle, Address const & addr,
+        typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
     do_connect(handle,addr.sockaddr_p(),addr.sockaddr_len());
 }
 #else
 template <class Address>
-template <class Policy>
+template <class SPolicy>
 prefix_ void senf::GenericAddressingPolicy<Address>::
-connect(SocketHandle<Policy> handle, Address const & addr)
+connect(SocketHandle<SPolicy> handle, Address const & addr)
 {}
 #endif
 
 template <class Address>
 prefix_ void senf::GenericAddressingPolicy<Address>::local(FileHandle handle,
-                                                                  Address & addr)
+                                                           Address & addr)
 {
     addr.clear();
     do_local(handle,addr.sockaddr_p(),addr.sockaddr_len());
@@ -94,6 +94,6 @@ prefix_ void senf::GenericAddressingPolicy<Address>::bind(FileHandle handle,
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -u ../test"
 // comment-column: 40
 // End:

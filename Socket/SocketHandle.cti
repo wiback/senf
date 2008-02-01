@@ -36,85 +36,85 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::SocketHandle<SocketPolicy>
+// senf::SocketHandle<SPolicy>
 
-template <class SocketPolicy>
-prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle()
+template <class SPolicy>
+prefix_ senf::SocketHandle<SPolicy>::SocketHandle()
 {}
 
-template <class SocketPolicy>
+template <class SPolicy>
 template <class OtherPolicy>
-prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle(SocketHandle<OtherPolicy> other,
+prefix_ senf::SocketHandle<SPolicy>::SocketHandle(SocketHandle<OtherPolicy> other,
                                                               typename IsCompatible<OtherPolicy>::type *)
     : FileHandle(other)
 {}
 
-template <class SocketPolicy>
+template <class SPolicy>
 template <class OtherPolicy>
-prefix_ typename senf::SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const &
-senf::SocketHandle<SocketPolicy>::operator=(SocketHandle<OtherPolicy> other)
+prefix_ typename senf::SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type const &
+senf::SocketHandle<SPolicy>::operator=(SocketHandle<OtherPolicy> other)
 {
     assign(other);
     return *this;
 }
 
-template <class SocketPolicy>
+template <class SPolicy>
 prefix_
-senf::SocketHandle<SocketPolicy>::SocketHandle(std::auto_ptr<SocketBody> body)
+senf::SocketHandle<SPolicy>::SocketHandle(std::auto_ptr<SocketBody> body)
     : FileHandle(std::auto_ptr<FileBody>(body.release()))
 {}
 
-template <class SocketPolicy>
-prefix_ senf::SocketHandle<SocketPolicy>::SocketHandle(FileHandle other, bool isChecked)
+template <class SPolicy>
+prefix_ senf::SocketHandle<SPolicy>::SocketHandle(FileHandle other, bool isChecked)
     : FileHandle(other)
 {
     SENF_ASSERT( isChecked );
     SENF_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
 }
 
-template <class SocketPolicy>
-prefix_ senf::SocketBody & senf::SocketHandle<SocketPolicy>::body()
+template <class SPolicy>
+prefix_ senf::SocketBody & senf::SocketHandle<SPolicy>::body()
 {
     SENF_ASSERT( dynamic_cast<SocketBody *>(&FileHandle::body()) );
     return static_cast<SocketBody &>(FileHandle::body());
 }
 
-template <class SocketPolicy>
-prefix_ senf::SocketBody const & senf::SocketHandle<SocketPolicy>::body()
+template <class SPolicy>
+prefix_ senf::SocketBody const & senf::SocketHandle<SPolicy>::body()
     const
 {
     SENF_ASSERT( dynamic_cast<SocketBody const *>(&FileHandle::body()) );
     return static_cast<SocketBody const &>(FileHandle::body());
 }
 
-template <class SocketPolicy>
-prefix_ senf::SocketProtocol const & senf::SocketHandle<SocketPolicy>::protocol()
+template <class SPolicy>
+prefix_ senf::SocketProtocol const & senf::SocketHandle<SPolicy>::protocol()
     const
 {
     return body().protocol();
 }
 
-template <class SocketPolicy>
-prefix_ void senf::SocketHandle<SocketPolicy>::assign(FileHandle other)
+template <class SPolicy>
+prefix_ void senf::SocketHandle<SPolicy>::assign(FileHandle other)
 {
     FileHandle::operator=(other);
 }
 
-template <class SocketPolicy>
-prefix_ senf::SocketHandle<SocketPolicy>
-senf::SocketHandle<SocketPolicy>::cast_static(FileHandle handle)
+template <class SPolicy>
+prefix_ senf::SocketHandle<SPolicy>
+senf::SocketHandle<SPolicy>::cast_static(FileHandle handle)
 {
     return SocketHandle(handle,true);
 }
 
-template <class SocketPolicy>
-prefix_ senf::SocketHandle<SocketPolicy>
-senf::SocketHandle<SocketPolicy>::cast_dynamic(FileHandle handle)
+template <class SPolicy>
+prefix_ senf::SocketHandle<SPolicy>
+senf::SocketHandle<SPolicy>::cast_dynamic(FileHandle handle)
 {
     // throws bad_cast if the body is not a SocketBody
     SocketBody & body (dynamic_cast<SocketBody&>(FileHandle::body(handle)));
     // throws bad_cast if the policy is not compatible
-    SocketPolicy::checkBaseOf(body.protocol().policy());
+    SPolicy::checkBaseOf(body.protocol().policy());
     return cast_static(handle);
 }
 
@@ -164,8 +164,8 @@ prefix_ bool senf::check_socket_cast(Source handle)
     return true;
 }
 
-template <class SocketPolicy>
-prefix_ void senf::SocketHandle<SocketPolicy>::state(SocketStateMap & map, unsigned lod)
+template <class SPolicy>
+prefix_ void senf::SocketHandle<SPolicy>::state(SocketStateMap & map, unsigned lod)
 {
     // We use typeid here even though the type of *this is static
     // (SocketHandle is not polymorphic and has no vtable). This will
@@ -176,8 +176,8 @@ prefix_ void senf::SocketHandle<SocketPolicy>::state(SocketStateMap & map, unsig
     body().state(map,lod);
 }
 
-template <class SocketPolicy>
-prefix_ std::string senf::SocketHandle<SocketPolicy>::dumpState(unsigned lod)
+template <class SPolicy>
+prefix_ std::string senf::SocketHandle<SPolicy>::dumpState(unsigned lod)
 {
     SocketStateMap map;
     state(map,lod);
@@ -196,6 +196,15 @@ template <class SProtocol>
 prefix_ senf::ProtocolSocketBody<SProtocol>::ProtocolSocketBody(bool isServer, int fd)
     : SocketBody(isServer, fd)
 {}
+
+///////////////////////////////////////////////////////////////////////////
+
+template <class SPolicy>
+prefix_ std::ostream & senf::operator<<(std::ostream & os, SocketHandle<SPolicy> handle)
+{
+    os << handle.dumpState();
+    return os;
+}
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

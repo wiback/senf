@@ -42,7 +42,7 @@ namespace senf {
     /// \addtogroup handle_group
     /// @{
 
-    template <class Policy> class ServerSocketHandle;
+    template <class SPolicy> class ServerSocketHandle;
 
     /** \brief Generic SocketHandle with client interface
 
@@ -85,16 +85,16 @@ namespace senf {
         \see \ref policy_group \n
              \ref protocol_group
       */
-    template <class Policy>
+    template <class SPolicy>
     class ClientSocketHandle
-        : public SocketHandle<Policy>
+        : public SocketHandle<SPolicy>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
         /// Address type from the addressing policy
-        typedef typename Policy::AddressingPolicy::Address Address;
+        typedef typename SPolicy::AddressingPolicy::Address Address;
         /// 'Best' type for passing address as parameter
         /** Depending on the type of \c Address, this will be either <tt>Address</tt> or <tt>Address
             const &</tt>. See <a
@@ -106,7 +106,7 @@ namespace senf {
         /** This class will probably only be usable, if the \c CommunicationPolicy is \c
             ConnectedCommunicationPolicy and the \c AddressingPolicy is not \c
             NoAddressingPolicy. */
-        typedef ServerSocketHandle<Policy> ServerSocketHandle;
+        typedef ServerSocketHandle<SPolicy> ServerSocketHandle;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -124,18 +124,18 @@ namespace senf {
 #       ifndef DOXYGEN
         template <class OtherPolicy>
         ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,
-                           typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type * = 0);
+                           typename SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type * = 0);
 #       else
         ClientSocketHandle(ClientSocketHandle<OtherPolicy> other);
 #       endif
 
 #       ifndef DOXYGEN
         template <class OtherPolicy>
-        typename SocketHandle<Policy>::template IsCompatible<OtherPolicy>::type const &
+        typename SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type const &
         operator=(ClientSocketHandle<OtherPolicy> other);
 #       else
         template <class OtherPolicy>
-        OtherPolicy const & operator=(ClientSocketHandle<OtherPolicy> other);
+        ClientSocketHandle<OtherPolicy> const & operator=(ClientSocketHandle<OtherPolicy> other);
 #       endif        
 
         ///@}
@@ -434,7 +434,7 @@ namespace senf {
     private:
         unsigned available();
 
-        friend class senf::ServerSocketHandle<Policy>;
+        friend class senf::ServerSocketHandle<SPolicy>;
     };
 
     /// @}

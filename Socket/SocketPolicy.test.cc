@@ -56,7 +56,7 @@ namespace {
     struct WritablePolicy : public WritePolicyBase {};
     struct UnwritablePolicy : public WritePolicyBase {};
 
-    template <class Policy>
+    template <class SPolicy>
     struct ConvertibleValue
     {
         ConvertibleValue() {}
@@ -64,14 +64,14 @@ namespace {
 
         template <class OtherPolicy>
         ConvertibleValue(ConvertibleValue<OtherPolicy> const & other,
-                         typename boost::enable_if< SocketPolicyIsBaseOf<Policy,OtherPolicy> >::type * = 0)
+                         typename boost::enable_if< SocketPolicyIsBaseOf<SPolicy,OtherPolicy> >::type * = 0)
             {}
 
         ConvertibleValue const & operator=(ConvertibleValue const & other)
             { return *this; }
 
         template <class OtherPolicy>
-        typename boost::enable_if< SocketPolicyIsBaseOf<Policy,OtherPolicy>,
+        typename boost::enable_if< SocketPolicyIsBaseOf<SPolicy,OtherPolicy>,
                                    ConvertibleValue >::type const &
         operator=(ConvertibleValue<OtherPolicy> const & other)
             { return *this; }

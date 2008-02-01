@@ -42,7 +42,7 @@ namespace senf {
     /// \addtogroup policy_impl_group
     /// @{
 
-    template <class Policy> class ServerSocketHandle;
+    template <class SPolicy> class ServerSocketHandle;
 
     /** \brief CommunicationPolicy for connected sockets
 
@@ -52,26 +52,26 @@ namespace senf {
     struct ConnectedCommunicationPolicy : public CommunicationPolicyBase
     {
 #       ifndef DOXYGEN
-        template <class Policy>
-        static void listen(ServerSocketHandle<Policy> handle, unsigned backlog,
-                           typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type * = 0);
+        template <class SPolicy>
+        static void listen(ServerSocketHandle<SPolicy> handle, unsigned backlog,
+                           typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type * = 0);
 #       else
-        template <class Policy>
-        static void listen(ServerSocketHandle<Policy> handle, unsigned backlog);
+        template <class SPolicy>
+        static void listen(ServerSocketHandle<SPolicy> handle, unsigned backlog);
                                         ///< Enable establishing new connections on the socket
                                         /**< \param[in] handle socket handle to enable reception on
                                              \param[in] backlog size of backlog queue */
 #       endif
 
 #       ifndef DOXYGEN
-        template <class Policy>
-        static int accept(ServerSocketHandle<Policy> handle,
-                          typename ServerSocketHandle<Policy>::Address & address,
-                          typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type * = 0);
+        template <class SPolicy>
+        static int accept(ServerSocketHandle<SPolicy> handle,
+                          typename ServerSocketHandle<SPolicy>::Address & address,
+                          typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type * = 0);
 #       else
-        template <class Policy>
-        static int accept(ServerSocketHandle<Policy> handle,
-                          typename ServerSocketHandle<Policy>::Address & address);
+        template <class SPolicy>
+        static int accept(ServerSocketHandle<SPolicy> handle,
+                          typename ServerSocketHandle<SPolicy>::Address & address);
                                         ///< accept a new connection on the socket.
                                         /**< The accept() member will return a new client file
                                              descriptor. This file descriptor will be used by the

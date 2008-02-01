@@ -59,14 +59,14 @@ namespace senf {
                                              \param[in] size size of buffer
                                              \returns number of bytes read */
 #       ifndef DOXYGEN
-        template <class Policy>
-        static unsigned readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
-                                 typename Policy::AddressingPolicy::Address & address,
+        template <class SPolicy>
+        static unsigned readfrom(ClientSocketHandle<SPolicy> handle, char * buffer, unsigned size,
+                                 typename SPolicy::AddressingPolicy::Address & address,
                                  typename IfCommunicationPolicyIs<
-                                     Policy,UnconnectedCommunicationPolicy>::type * = 0);
+                                     SPolicy,UnconnectedCommunicationPolicy>::type * = 0);
 #       else
-        template <class Policy>
-        static unsigned readfrom(ClientSocketHandle<Policy> handle, char * buffer, unsigned size,
+        template <class SPolicy>
+        static unsigned readfrom(ClientSocketHandle<SPolicy> handle, char * buffer, unsigned size,
                                  typename Policy::AddressingPolicy::Address & address);
                                         ///< read data from socket returning peer address
                                         /**< \param[in] handle socket handle to read from
@@ -98,13 +98,13 @@ namespace senf {
     struct WriteablePolicy : public WritePolicyBase
     {
 #       ifndef DOXYGEN
-        template <class Policy>
-        static unsigned write(ClientSocketHandle<Policy> handle, char const * buffer, unsigned size,
+        template <class SPolicy>
+        static unsigned write(ClientSocketHandle<SPolicy> handle, char const * buffer, unsigned size,
                               typename IfCommunicationPolicyIs<
-                                  Policy,ConnectedCommunicationPolicy>::type * = 0);
+                                  SPolicy,ConnectedCommunicationPolicy>::type * = 0);
 #       else
-        template <class Policy>
-        static unsigned write(ClientSocketHandle<Policy> handle, char const * buffer, 
+        template <class SPolicy>
+        static unsigned write(ClientSocketHandle<SPolicy> handle, char const * buffer, 
                               unsigned size);
                                         ///< write data to socket
                                         /**< This member is only enabled if the socket uses
@@ -118,16 +118,16 @@ namespace senf {
                                              \returns number of bytes written */
 #       endif
 #       ifndef DOXYGEN
-        template <class Policy>
-        static unsigned writeto(ClientSocketHandle<Policy> handle,
+        template <class SPolicy>
+        static unsigned writeto(ClientSocketHandle<SPolicy> handle,
                                 typename boost::call_traits<
-                                    typename Policy::AddressingPolicy::Address>::param_type addr,
+                                    typename SPolicy::AddressingPolicy::Address>::param_type addr,
                                 char const * buffer, unsigned size,
                                 typename IfCommunicationPolicyIs<
-                                    Policy,UnconnectedCommunicationPolicy>::type * = 0);
+                                    SPolicy,UnconnectedCommunicationPolicy>::type * = 0);
 #       else
-        template <class Policy>
-        static unsigned writeto(ClientSocketHandle<Policy> handle,
+        template <class SPolicy>
+        static unsigned writeto(ClientSocketHandle<SPolicy> handle,
                                 typename Policy::AddressingPolicy::Address const & addr,
                                 char const * buffer, unsigned size);
                                         ///< write data to socket sending to given peer

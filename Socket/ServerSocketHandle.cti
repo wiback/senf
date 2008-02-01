@@ -34,28 +34,28 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
-template <class Policy>
-prefix_ senf::ServerSocketHandle<Policy>::ServerSocketHandle()
+template <class SPolicy>
+prefix_ senf::ServerSocketHandle<SPolicy>::ServerSocketHandle()
 {}
 
-template <class SocketPolicy>
+template <class SPolicy>
 template <class OtherPolicy>
-prefix_ senf::ServerSocketHandle<SocketPolicy>::
+prefix_ senf::ServerSocketHandle<SPolicy>::
 ServerSocketHandle(ServerSocketHandle<OtherPolicy> other,
-                   typename SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type *)
-    : SocketHandle<SocketPolicy>(other,true)
+                   typename SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type *)
+    : SocketHandle<SPolicy>(other,true)
 {}
 
-template <class SocketPolicy>
-prefix_  senf::ServerSocketHandle<SocketPolicy>::
+template <class SPolicy>
+prefix_  senf::ServerSocketHandle<SPolicy>::
 ServerSocketHandle(std::auto_ptr<SocketBody> body)
-    : SocketHandle<SocketPolicy>(body)
+    : SocketHandle<SPolicy>(body)
 {}
 
-template <class SocketPolicy>
+template <class SPolicy>
 template <class OtherPolicy>
-prefix_ typename senf::SocketHandle<SocketPolicy>::template IsCompatible<OtherPolicy>::type const &
-senf::ServerSocketHandle<SocketPolicy>::operator=(ServerSocketHandle<OtherPolicy> other)
+prefix_ typename senf::SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type const &
+senf::ServerSocketHandle<SPolicy>::operator=(ServerSocketHandle<OtherPolicy> other)
 {
     assign(other);
     return *this;
@@ -64,45 +64,45 @@ senf::ServerSocketHandle<SocketPolicy>::operator=(ServerSocketHandle<OtherPolicy
 ///////////////////////////////////////////////////////////////////////////
 // Server socket interface
 
-template <class Policy>
-prefix_ void senf::ServerSocketHandle<Policy>::bind(AddressParam addr)
+template <class SPolicy>
+prefix_ void senf::ServerSocketHandle<SPolicy>::bind(AddressParam addr)
 {
-    Policy::AddressingPolicy::bind(*this,addr);
+    SPolicy::AddressingPolicy::bind(*this,addr);
 }
 
-template <class Policy>
-prefix_ void senf::ServerSocketHandle<Policy>::listen(unsigned backlog)
+template <class SPolicy>
+prefix_ void senf::ServerSocketHandle<SPolicy>::listen(unsigned backlog)
 {
-    Policy::CommunicationPolicy::listen(*this,backlog);
+    SPolicy::CommunicationPolicy::listen(*this,backlog);
 }
 
-template <class Policy>
-prefix_ typename senf::ServerSocketHandle<Policy>::Address
-senf::ServerSocketHandle<Policy>::local()
+template <class SPolicy>
+prefix_ typename senf::ServerSocketHandle<SPolicy>::Address
+senf::ServerSocketHandle<SPolicy>::local()
 {
-    typename Policy::AddressingPolicy::Address addr;
+    typename SPolicy::AddressingPolicy::Address addr;
     this->local(addr);
     return addr;
 }
 
-template <class Policy>
-prefix_ void senf::ServerSocketHandle<Policy>::local(Address & addr)
+template <class SPolicy>
+prefix_ void senf::ServerSocketHandle<SPolicy>::local(Address & addr)
 {
-    Policy::AddressingPolicy::local(*this,addr);
+    SPolicy::AddressingPolicy::local(*this,addr);
 }
 
-template <class Policy>
-prefix_ typename senf::ServerSocketHandle<Policy>::ClientSocketHandle
-senf::ServerSocketHandle<Policy>::accept()
+template <class SPolicy>
+prefix_ typename senf::ServerSocketHandle<SPolicy>::ClientSocketHandle
+senf::ServerSocketHandle<SPolicy>::accept()
 {
     return ClientSocketHandle(this->body().clone(
-                                  Policy::CommunicationPolicy::accept(*this), false));
+                                  SPolicy::CommunicationPolicy::accept(*this), false));
 }
 
-template <class Policy>
-prefix_ std::pair<typename senf::ServerSocketHandle<Policy>::ClientSocketHandle,
-                  typename senf::ServerSocketHandle<Policy>::Address>
-senf::ServerSocketHandle<Policy>::acceptfrom()
+template <class SPolicy>
+prefix_ std::pair<typename senf::ServerSocketHandle<SPolicy>::ClientSocketHandle,
+                  typename senf::ServerSocketHandle<SPolicy>::Address>
+senf::ServerSocketHandle<SPolicy>::acceptfrom()
 {
 
     Address address;
@@ -110,48 +110,48 @@ senf::ServerSocketHandle<Policy>::acceptfrom()
     return std::make_pair(handle,address);
 }
 
-template <class Policy>
-prefix_ typename senf::ServerSocketHandle<Policy>::ClientSocketHandle
-senf::ServerSocketHandle<Policy>::acceptfrom(Address & addr)
+template <class SPolicy>
+prefix_ typename senf::ServerSocketHandle<SPolicy>::ClientSocketHandle
+senf::ServerSocketHandle<SPolicy>::acceptfrom(Address & addr)
 {
     return ClientSocketHandle(this->protocol().clone(),
-                              Policy::CommunicationPolicy::accept(*this,addr));
+                              SPolicy::CommunicationPolicy::accept(*this,addr));
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
-template <class Policy>
-prefix_ senf::ServerSocketHandle<Policy>::ServerSocketHandle(FileHandle other,
+template <class SPolicy>
+prefix_ senf::ServerSocketHandle<SPolicy>::ServerSocketHandle(FileHandle other,
                                                                     bool isChecked)
-    : SocketHandle<Policy>(other, isChecked)
+    : SocketHandle<SPolicy>(other, isChecked)
 {}
 
-template <class Policy>
-prefix_ senf::ServerSocketHandle<Policy>
-senf::ServerSocketHandle<Policy>::cast_static(FileHandle handle)
+template <class SPolicy>
+prefix_ senf::ServerSocketHandle<SPolicy>
+senf::ServerSocketHandle<SPolicy>::cast_static(FileHandle handle)
 {
     return ServerSocketHandle(handle,true);
 }
 
-template <class Policy>
-prefix_ senf::ServerSocketHandle<Policy>
-senf::ServerSocketHandle<Policy>::cast_dynamic(FileHandle handle)
+template <class SPolicy>
+prefix_ senf::ServerSocketHandle<SPolicy>
+senf::ServerSocketHandle<SPolicy>::cast_dynamic(FileHandle handle)
 {
-    SocketHandle<Policy> h (SocketHandle<Policy>::cast_dynamic(handle));
+    SocketHandle<SPolicy> h (SocketHandle<SPolicy>::cast_dynamic(handle));
     if (! static_cast<SocketBody&>(FileHandle::body(handle)).isServer())
         throw std::bad_cast();
     return cast_static(handle);
 }
 
-template <class Policy>
-prefix_ void senf::ServerSocketHandle<Policy>::state(SocketStateMap & map, unsigned lod)
+template <class SPolicy>
+prefix_ void senf::ServerSocketHandle<SPolicy>::state(SocketStateMap & map, unsigned lod)
 {
     map["handle"] = prettyName(typeid(*this));
     this->body().state(map,lod);
 }
 
-template <class Policy>
-prefix_ std::string senf::ServerSocketHandle<Policy>::dumpState(unsigned lod)
+template <class SPolicy>
+prefix_ std::string senf::ServerSocketHandle<SPolicy>::dumpState(unsigned lod)
 {
     SocketStateMap map;
     state(map,lod);

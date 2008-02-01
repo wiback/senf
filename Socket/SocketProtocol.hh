@@ -251,8 +251,8 @@ namespace senf {
         friend class SocketBody;
     };
     
-    template <class Policy> class ClientSocketHandle;
-    template <class Policy> class ServerSocketHandle;
+    template <class SPolicy> class ClientSocketHandle;
+    template <class SPolicy> class ServerSocketHandle;
 
     /** \brief Concrete Socket Protocol implementation base class
 

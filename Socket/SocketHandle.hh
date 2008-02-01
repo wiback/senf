@@ -63,7 +63,7 @@ namespace senf {
 
         \todo Create a SocketHandleBase class and move some non-Policy dependent code there
      */
-    template <class SocketPolicy>
+    template <class SPolicy>
     class SocketHandle
         : public FileHandle
     {
@@ -71,7 +71,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef SocketPolicy Policy;
+        typedef SPolicy Policy;
 
         /** \brief Check policy compatibility
 
@@ -81,8 +81,7 @@ namespace senf {
          */
         template <class OtherPolicy>
         struct IsCompatible
-            : public boost::enable_if< SocketPolicyIsBaseOf<SocketPolicy,OtherPolicy>,
-                                       SocketHandle >
+            : public boost::enable_if< SocketPolicyIsBaseOf<Policy,OtherPolicy>, SocketHandle >
         {};
 
         ///////////////////////////////////////////////////////////////////////////
@@ -200,8 +199,8 @@ namespace senf {
 
         \related senf::SocketHandle
      */
-    template <class Policy>
-    std::ostream & operator<<(std::ostream & os, SocketHandle<Policy> handle);
+    template <class SPolicy>
+    std::ostream & operator<<(std::ostream & os, SocketHandle<SPolicy> handle);
 
     /** \brief static socket (down-)cast
 

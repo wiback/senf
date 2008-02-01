@@ -32,34 +32,34 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 #ifndef DOXYGEN
-template <class Policy>
+template <class SPolicy>
 prefix_ void senf::ConnectedCommunicationPolicy::
-listen(ServerSocketHandle<Policy> handle, unsigned backlog,
-       typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type *)
+listen(ServerSocketHandle<SPolicy> handle, unsigned backlog,
+       typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type *)
 {
     do_listen(handle, backlog);
 }
 #else
-template <class Policy>
+template <class SPolicy>
 prefix_ void senf::ConnectedCommunicationPolicy::
-listen(ServerSocketHandle<Policy> handle, unsigned backlog)
+listen(ServerSocketHandle<SPolicy> handle, unsigned backlog)
 {}
 #endif
 
 #ifndef DOXYGEN
-template <class Policy>
+template <class SPolicy>
 prefix_ int senf::ConnectedCommunicationPolicy::
-accept(ServerSocketHandle<Policy> handle,
-       typename ServerSocketHandle<Policy>::Address & address,
-       typename IfAddressingPolicyIsNot<Policy,NoAddressingPolicy>::type *)
+accept(ServerSocketHandle<SPolicy> handle,
+       typename ServerSocketHandle<SPolicy>::Address & address,
+       typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type *)
 {
     return do_accept(handle,address.sockaddr_p(),address.sockaddr_len());
 }
 #else
-template <class Policy>
+template <class SPolicy>
 prefix_ int senf::ConnectedCommunicationPolicy::
-accept(ServerSocketHandle<Policy> handle,
-       typename ServerSocketHandle<Policy>::Address & address)
+accept(ServerSocketHandle<SPolicy> handle,
+       typename ServerSocketHandle<SPolicy>::Address & address)
 {}
 #endif
 
