@@ -63,7 +63,7 @@
     \image html ratestuffer.png
 
     Above image depicts the module setup implementing the rate stuffer. A
-    senf::ppi::module::ActiveSocketReader reads the incoming UDP packets and sends them into a
+    senf::ppi::module::ActiveSocketSource reads the incoming UDP packets and sends them into a
     senf::ppi::module::PassiveQueue (via a senf::ppi::module::ThrottleBarrier).
 
     The \a queue feeds the packets into a senf::ppi::module::PriorityJoin. The CloneSource

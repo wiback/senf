@@ -36,7 +36,7 @@
 namespace senf {
 namespace log {
   
-    /** \brief Store log messages in a string buffer
+    /** \brief Store %log messages in a string buffer
 
         This target is mostly useful for debug purposes. 
 

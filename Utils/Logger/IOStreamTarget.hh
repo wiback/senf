@@ -37,9 +37,9 @@
 namespace senf {
 namespace log {
 
-    /** \brief Write log messages to arbitrary std::ostream
+    /** \brief Write %log messages to arbitrary std::ostream
 
-        This target will write log messages to an arbitrary std::ostream in the format
+        This target will write %log messages to an arbitrary std::ostream in the format
         <pre>
         <date> [<area>] <message>
         </pre>

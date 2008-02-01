@@ -37,12 +37,12 @@
 namespace senf {
 namespace log {
 
-    /** \brief Log target writing to a log file.
+    /** \brief Log target writing to a %log file.
 
-        The FileTarget will save all log messages in the given file. Messages will be appended at
+        The FileTarget will save all %log messages in the given file. Messages will be appended at
         the end of the file.
 
-        After log files have been rotated, the reopen() member should be called to create a new log
+        After %log files have been rotated, the reopen() member should be called to create a new %log
         file.
 
         \ingroup targets
@@ -63,8 +63,8 @@ namespace log {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void reopen();                  ///< Reopen log after log-file rotation
-        void reopen(std::string file);  ///< Reopen log under a new name
+        void reopen();                  ///< Reopen %log after log-file rotation
+        void reopen(std::string file);  ///< Reopen %log under a new name
 
     private:
         std::string file_;

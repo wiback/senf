@@ -45,15 +45,15 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD    ( sync_byte                 , UInt8Parser   );
-        
-        SENF_PARSER_BITFIELD ( transport_error_indicator ,  1 , bool     );
-        SENF_PARSER_BITFIELD ( pusi                      ,  1 , bool     );
-        SENF_PARSER_BITFIELD ( transport_priority        ,  1 , bool     );
-        SENF_PARSER_BITFIELD ( pid                       , 13 , unsigned );
-        SENF_PARSER_BITFIELD ( transport_scrmbl_ctrl     ,  2 , unsigned );
-        SENF_PARSER_BITFIELD ( adaptation_field_ctrl     ,  2 , unsigned );
-        SENF_PARSER_BITFIELD ( continuity_counter        ,  4 , unsigned );
+        SENF_PARSER_FIELD    ( sync_byte,                  UInt8Parser  );
+
+        SENF_PARSER_BITFIELD ( transport_error_indicator,   1, bool     );
+        SENF_PARSER_BITFIELD ( pusi,                        1, bool     );
+        SENF_PARSER_BITFIELD ( transport_priority,          1, bool     );
+        SENF_PARSER_BITFIELD ( pid,                        13, unsigned );
+        SENF_PARSER_BITFIELD ( transport_scrmbl_ctrl,       2, unsigned );
+        SENF_PARSER_BITFIELD ( adaptation_field_ctrl,       2, unsigned );
+        SENF_PARSER_BITFIELD ( continuity_counter,          4, unsigned );
 
         SENF_PARSER_FINALIZE( TransportPacketParser );
     

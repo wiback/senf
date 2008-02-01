@@ -227,10 +227,10 @@
       CopyPacketGenerator generator (stuffingPacket);
 
       senf::UDPv4ClientSocketHandle inputSocket (1111);
-      senf::ppi::module::ActiveSocketReader udpInput (inputSocket);
+      senf::ppi::module::ActiveSocketSource<> udpInput (inputSocket);
 
       senf::UDPv4ClientSocketHandle outputSocket ("2.3.4.5:2222");
-      senf::ppi::module::PassiveSocketWriter udpOutput (outputSocket);
+      senf::ppi::module::PassiveSocketSink<> udpOutput (outputSocket);
 
       senf::ppi::module::PassiveQueue adaptor;
 

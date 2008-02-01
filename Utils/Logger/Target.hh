@@ -56,7 +56,7 @@ namespace log {
 
     /** \brief Logging target base class
         
-        Targets are the final destination of log messages. Every message is eventually routed to one
+        Targets are the final destination of %log messages. Every message is eventually routed to one
         or several targets.
 
         \section target_routing Routing
@@ -383,7 +383,7 @@ namespace log {
                                                  simple logging over NFS or many other network
                                                  protocols.
 
-                                             \param[in] timestamp log message timing information
+                                             \param[in] timestamp %log message timing information
                                              \param[in] stream message stream
                                              \param[in] area message area
                                              \param[in] level message level
@@ -415,7 +415,7 @@ namespace log {
         virtual boost::posix_time::ptime operator()() const = 0;
     };
 
-    /** \brief Default log message time source
+    /** \brief Default %log message time source
 
         This time source is installed by default and uses gettimeofday() (via the Boost.DateTime
         library) to get the current universal time.
