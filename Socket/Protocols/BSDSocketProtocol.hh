@@ -89,7 +89,7 @@ namespace senf {
                                         /**< Changes the packet queueing priority. Additionally may
                                              set protocol specific options. For IPv4 sockets, it
                                              sets the TOS field.
-                                             \param[in] v new socket priority */
+                                             \param[in] value new socket priority */
 
         unsigned rcvbuf() const;        ///< Check receive buffer size
                                         /**< \returns size of receive buffer in bytes 
