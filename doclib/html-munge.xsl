@@ -269,5 +269,14 @@
   <!-- Remove [external] references from the modules page -->
   <xsl:template match="div[@id='content2']/ul/li[a/@class='elRef'][a/@doxygen][code/text()='[external]'][not(ul)]">
   </xsl:template>
-  
+
+  <!-- Insert 'senf/'  into include paths -->
+  <xsl:template match="code[starts-with(text(),'#include &lt;')]/a">
+    <xsl:copy>
+      <xsl:call-template name="copy-attributes"/>
+      <xsl:text>senf/</xsl:text>
+      <xsl:apply-templates/>
+    </xsl:copy>
+  </xsl:template>
+
 </xsl:stylesheet>
