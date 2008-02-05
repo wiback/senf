@@ -51,7 +51,7 @@
     \section UDP_serverApplication UDP server application
 
     First we define a class which is responsible for opening a socket and print out the incoming
-    data on stdout. We create a \c UDPv4ClientSocketHandle, which is an unconnected and
+    data on stdout. We create a \c ::UDPv4ClientSocketHandle, which is an unconnected and
     uninitialized UDP (Ipv4) socket.
 
     \until serverSock;
@@ -62,21 +62,21 @@
     \until {}
 
     The public \c run() member is called to run the sniffer. It first adds the socket to the
-    Scheduler. The \c add() call takes two Arguments, the socket to bind to (which can be a
-    lot of things and must not necessarily be a socket instance) and callback function to call,
-    whenever there is an event on that socket.The callback is specified as a
-    <a href="http://www.boost.org/doc/html/function.html">Boost.Function</a> object. A third
-    argument may be specified to restrict the events, on which the function is called, here we
+    Scheduler. The <tt> \link senf::Scheduler::add add() \endlink </tt> call takes two Arguments,
+    the socket to bind to (which can be a lot of things and must not necessarily be a socket
+    instance) and callback function to call, whenever there is an event on that socket.The callback
+    is specified as a <a href="http://www.boost.org/doc/html/function.html">Boost.Function</a> object.
+    A third argument may be specified to restrict the events, on which the function is called, here we
     used the EV_READ Argument, because we just want the program to read from the socket.
     The default argument is set to \c senf::Scheduler::EV_ALL, which allows all actions on the socket.
 
     \until }
 
-    Calling the Schedulers \c process() method will start the event loop. This call does not
-    return (ok, it does return in special cases if \c senf::Scheduler::terminate() is called which
-    does not apply here). The Callback Function is the \c readFromClient() Function, which is
-    declared as private here and will be called whenever an event on the socket is encountered.
-    The scheduler passes the event ID to the function.
+    Calling the Schedulers <tt> \link senf::Scheduler::process process()\endlink </tt> method will
+    start the event loop. This call does not return (ok, it does return in special cases if 
+    \c senf::Scheduler::terminate() is called which does not apply here). The Callback Function is 
+    the \c readFromClient() Function, which is declared as private here and will be called whenever
+    an event on the socket is encountered. The scheduler passes the event ID to the function.
 
     \until event)
 
@@ -104,7 +104,7 @@
     \skip  argv[])
     \until return 0;
 
-    First a \c UDPv4ClientSocketHandle is created. With the function
+    First a \c ::UDPv4ClientSocketHandle is created. With the function
     \c writeto(senf::INet4SocketAddress, string) the string s will be written to the specified
     address and port, which is constructed here from a  static string \c "127.0.0.1:4243". In this
     example Integers from zero to ten are send to the Server socket.
