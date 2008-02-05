@@ -466,9 +466,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                         "    mv $${html} $${html}.orig;" +
                         "    sed -e 's/id=\"current\"/class=\"current\"/' $${html}.orig" +
                         "        | tidy -ascii -q --wrap 0 --show-warnings no --fix-uri no " +
-                        "        | xsltproc --nonet --html --stringparam topdir %s -o $${html} %s - 2>&1" +
-                        "        | grep '^-'" +
-                        "        | grep -v 'ID .* already defined';" +
+                        "        | sed -e 's/name=\"\([^\"]*\)\" id=\"\\1\"/name=\"\\1\"/g'" +
+                        "        | xsltproc --novalid --nonet --html --stringparam topdir %s -o $${html} %s -;"
                         "done; true")
                        % (htmlnode.dir.abspath, reltopdir, xslfile.abspath)))
         for doc in docs:
