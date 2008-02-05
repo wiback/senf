@@ -111,7 +111,7 @@
 
     \until }
 
-    The event is initialized to fire eery \a interval nanoseconds.  The traffic is routed 'across'
+    The event is initialized to fire every \a interval nanoseconds.  The traffic is routed 'across'
     the timer which controls the traffic. This routing lets the module automatically handle
     throttling events. The timer is registered to call RateFilter::timeout().
 

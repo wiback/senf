@@ -660,7 +660,7 @@
     arbitrary incorrect value otherwise.
 
     \pre Field \a name preceded by fixed size fields only
-    \param[in] field or label name
+    \param[in] name field or label name
     \returns compile-time constant offset of the field from parsers start
     \hideinitializer
  */

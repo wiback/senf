@@ -46,7 +46,7 @@
     <em>Runtime</em> configuration on the other hand deals with routing all those messages, which
     are enabled at compile time to the logging targets. If a message is not routed, it will be
     discarded. This allows to additionally disable messages at run-time. Message routing is managed
-    via the \ref Targets interface.
+    via the ::Target interface.
 
     \section config_compile Compile time configuration
 

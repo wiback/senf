@@ -71,7 +71,7 @@ namespace senf {
         additionally needs erase() and insert(). The container policy will also need the
         element_type, parser_type and container_type typedefs.
 
-        \see \ref Parse_List
+        \see \ref ListParser
      */
     struct ExampleListPolicy
     {
@@ -126,7 +126,7 @@ namespace senf {
         /** \brief Example of a list iterator policy. ONLY FOR EXPOSITION.
 
             \see \ref ExampleListPolicy \n
-                \ref Parse_List
+                 \ref ListParser
          */
         struct iterator_policy
         {
@@ -167,7 +167,7 @@ namespace senf {
         /** \brief Example of a list container policy. ONLY FOR EXPOSITION
 
             \see \ref ExampleListPolicy \n
-                \ref Parse_List
+                 \ref ListParser
          */
         struct container_policy
         {
