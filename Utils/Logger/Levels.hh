@@ -37,9 +37,9 @@ namespace log {
 
     /** \defgroup loglevels Log levels
         
-        These are the valid log levels with some additional special values:
+        These are the valid %log levels with some additional special values:
 
-        <dl><dt>VERBOSE</dt><dd>Really verbose log messages. Messages at this level are used for
+        <dl><dt>VERBOSE</dt><dd>Really verbose %log messages. Messages at this level are used for
         internal debugging. They should be enabled only selectively within the areas currently under
         inspection.</dd>
 
@@ -57,22 +57,21 @@ namespace log {
         <dt>FATAL</dt><dd>Error condition which does terminate program execution or enforces a
         restart or some kind of re-initialization with loss of state and context.</dd></dl>
 
-        There are also some special values which <em>must not be used as a log level</em>:
+        There are also some special values which <em>must not be used as a %log level</em>:
         
-        <dl><dt>DISABLED</dt><dd>Disable all log messages.</dd> 
+        <dl><dt>DISABLED</dt><dd>Disable all %log messages.</dd> 
 
-        <dt>NONE</dt><dd>Special value which signifies inheritance of the default log
+        <dt>NONE</dt><dd>Special value which signifies inheritance of the default %log
         level.</dd></dl>
 
-        Log levels are classes, not numbers. Each log level class has a \c value member which gives
+        Log levels are classes, not numbers. Each %log level class has a \c value member which gives
         that levels numeric priority. The larger the number, the more important the message is.
 
-        \implementation The log levels need to be classes since areas and streams are classes: Since
-            log arguments (stream, area and level) may appear in any order and number, it is much
+        \implementation The %log levels need to be classes since areas and streams are classes: Since
+            %log arguments (stream, area and level) may appear in any order and number, it is much
             simpler to parse them if they are all of the same type.
      */
 
-    ///\ingroup loglevels
     ///\{
     
     /** \brief Log level VERBOSE

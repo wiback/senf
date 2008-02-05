@@ -114,7 +114,7 @@ namespace log {
 
         The target may process in any arbitrary way: reformat, writing it into an SQL DB, whatever
         can be envisioned. However, there is one important limitation: The \c v_write call must not
-        block. So for more complex scenarios, additional measures must be taken (e.g. writing a log
+        block. So for more complex scenarios, additional measures must be taken (e.g. writing a %log
         backend daemon which receives the messages via UDP and processes them). Of course, in rare
         cases messages might be lost but this cannot be avoided.
 

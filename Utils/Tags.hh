@@ -47,7 +47,6 @@
 
     Of course, this only works with objects which explicitly declare, that they take an optional
     senf::NoThrow_t type aprameter.
-
  */
 
 namespace senf {
@@ -61,7 +60,6 @@ namespace senf {
         There is only a single value for this type: \ref senf::nothrow which is the value to pass
         wherever an (optional) senf::NoThrow_t parameter is requested.
 
-        \see \ref utils_tags
         \ingroup utils_tags
      */
     enum NoThrow_t { nothrow };
@@ -75,7 +73,6 @@ namespace senf {
         There is only a single value for this type: \ref senf::noinit which is the value to pass
         wherever an (optional) senf::NoInit_t parameter is requested.
 
-        \see \ref utils_tags
         \ingroup utils_tags
      */
     enum NoInit_t { noinit };

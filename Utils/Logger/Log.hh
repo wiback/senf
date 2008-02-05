@@ -39,7 +39,7 @@
 
 /** \defgroup logging Logging commands
 
-    The logging library provides several commands to create log messages. All these macro commands
+    The logging library provides several commands to create %log messages. All these macro commands
     take a variable number of arguments. Since this is not supported in a usable way by the C++
     preprocessor, the arguments are encoded into a <a
     href="http://www.boost.org/libs/preprocessor/doc/index.html">Boost.Preprocessor</a> like
@@ -49,13 +49,13 @@
     SENF_LOG( (senf::log::Debug)(senf::log::NOTICE)(FroblizerArea)("The log message") );
     \endcode
 
-    The argument is comprised of a sequence of parameters and the log message itself. The parameters
-    are
-    \li the <em>log stream</em>,
-    \li the <em>log area</em>,
-    \li the <em>log level</em>.
+    The argument is comprised of a sequence of parameters and the %log message itself. 
+    The parameters are
+    - the <em>%log stream</em>,
+    - the <em>%log area</em>,
+    - the <em>%log level</em>.
     
-    These parameters are optional and may be specified <i>in arbitrary order</i> (with the log
+    These parameters are optional and may be specified <i>in arbitrary order</i> (with the %log
     message always being the last sequence element) and even multiple times in the parameter
     sequence. If some argument type occurs multiple times, the last occurrence wins. If any one of
     the parameters is not specified, it's current default value will be used.
@@ -69,20 +69,20 @@
     The logging library defines the global defaults for stream, area and level to be \c
     senf::log::Debug, senf::log::DefaultArea, and senf::log::NONE respectively.
 
-    The log level senf::log::NONE is special. If the log level is set to this value, the log level
+    The %log level senf::log::NONE is special. If the %log level is set to this value, the %log level
     will be set from the stream provided default value.
     
     All these parameters must be <em>compile time constants</em> (they are all types, so it's
-    difficult form them to be something else).
+    difficult for them to be something else).
 
     \section logging_aliases Aliases
 
     To further simplify logging commands, aliases may be defined within any scope. An alias is an
-    arbitrary collection of log parameters:
+    arbitrary collection of %log parameters:
     \code
     SENF_LOG_DEF_ALIAS( VerboseDebug, (senf::log::Debug)(senf::log::VERBOSE) );
     \endcode
-    Within log statements, aliases may be used like normal parameters. They will be substituted for
+    Within %log statements, aliases may be used like normal parameters. They will be substituted for
     the parameter sequence they represent:
     \code
     SENF_LOG( (VerboseDebug)("Debug message") )

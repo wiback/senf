@@ -47,17 +47,17 @@ namespace senf {
 
     /** \brief Singleton class to manage the event loop
 
-        The Scheduler singleton manages the central event loop. It manages and dispatches all types
+        The %scheduler singleton manages the central event loop. It manages and dispatches all types
         of events managed by the scheduler library:
         \li File descriptor notifications
         \li Timeouts
         \li UNIX Signals
 
-        The scheduler is entered by calling it's process() member. This call will continue to run as
+        The %scheduler is entered by calling it's process() member. This call will continue to run as
         long as there is something to do, or until one of the handlers calls terminate(). The
-        Scheduler has 'something to do' as long as there is any file descriptor or timeout active.
+        %scheduler has 'something to do' as long as there is any file descriptor or timeout active.
 
-        The Scheduler only provides low level primitive scheduling capability. Additional helpers
+        The %scheduler only provides low level primitive scheduling capability. Additional helpers
         are defined on top of this functionality (e.g. ReadHelper or WriteHelper or the interval
         timers of the PPI).
 
@@ -67,7 +67,7 @@ namespace senf {
         All handlers are passed as generic <a
         href="http://www.boost.org/doc/html/function.html">Boost.Function</a> objects. This allows
         to pass any callable as a handler. Depending on the type of handler, some additional
-        arguments may be passed to the handler by the scheduler. 
+        arguments may be passed to the handler by the %scheduler. 
 
         If you need to pass additional information to your handler, use <a
         href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a>:
@@ -101,7 +101,7 @@ namespace senf {
         Only a single handler may be registered for any combination of file descriptor and event
         (registering multiple callbacks for a single fd and event does not make sense).
 
-        The scheduler will accept any object as \a handle argument as long as retrieve_filehandle()
+        The %scheduler will accept any object as \a handle argument as long as retrieve_filehandle()
         may be called on that object
         \code
         int fd = retrieve_filehandle(handle);
@@ -113,7 +113,7 @@ namespace senf {
 
         \section sched_timers Registering timers
 
-        The Scheduler has very simple timer support. There is only one type of timer: A single-shot
+        The %scheduler has very simple timer support. There is only one type of timer: A single-shot
         deadline timer. More complex timers are built based on this. Timers are managed using
         timeout() and cancelTimeout()
         \code
@@ -128,7 +128,7 @@ namespace senf {
         There are two parameters which adjust the exact: \a timeoutEarly and \a timeoutAdjust. \a
         timeoutEarly is the time, a callback may be called before the deadline time is
         reached. Setting this value below the scheduling granularity of the kernel will have the
-        scheduler go into a <em>busy wait</em> (that is, an endless loop consuming 100% of CPU
+        %scheduler go into a <em>busy wait</em> (that is, an endless loop consuming 100% of CPU
         recources) until the deadline time is reached! This is seldom desired. The default setting
         of 11ms is adequate in most cases (it's slightly above the lowest linux scheduling
         granularity). 
@@ -140,14 +140,14 @@ namespace senf {
 
         \section sched_signals Registering POSIX/UNIX signals
 
-        The Scheduler also incorporates standard POSIX/UNIX signals. Signals registered with the
-        scheduler will be handled \e synchronously within the event loop.
+        The %scheduler also incorporates standard POSIX/UNIX signals. Signals registered with the
+        %scheduler will be handled \e synchronously within the event loop.
         \code
         Scheduler::instance().registerSignal(SIGUSR1, &callback);
         Scheduler::instance().unregisterSignal(SIGUSR1);
         \endcode
-        When registering a signal with the scheduler, that signal will automatically be blocked so
-        it can be handled within the scheduler. 
+        When registering a signal with the %scheduler, that signal will automatically be blocked so
+        it can be handled within the %scheduler. 
 
         A registered signal does \e not count as 'something to do'. It is therefore not possible to
         wait for signals \e only.
@@ -202,13 +202,13 @@ namespace senf {
         // default destructor
         // no conversion constructors
 
-        /** \brief Return Scheduler instance
+        /** \brief Return %scheduler instance
 
             This static member is used to access the singleton instance. This member is save to
-            return a correctly initialized Scheduler instance even if called at global construction
+            return a correctly initialized %scheduler instance even if called at global construction
             time
 
-            \implementation This static member just defines the Scheduler as a static method
+            \implementation This static member just defines the %scheduler as a static method
                 variable. The C++ standard then provides above guarantee. The instance will be
                 initialized the first time, the code flow passes the variable declaration found in
                 the instance() body.
@@ -224,7 +224,7 @@ namespace senf {
         template <class Handle>
         void add(Handle const & handle, FdCallback const & cb,
                  int eventMask = EV_ALL); ///< Add file handle event callback
-                                        /**< add() will add a callback to the Scheduler. The
+                                        /**< add() will add a callback to the %scheduler. The
                                              callback will be called for the given type of event on
                                              the given  arbitrary file-descriptor or
                                              handle-like object. If there already is a Callback
@@ -394,14 +394,14 @@ namespace senf {
 
     /** \brief Default file descriptor accessor
 
-        retrieve_filehandle() provides the Scheduler with support for explicit file descriptors as
+        retrieve_filehandle() provides the %scheduler with support for explicit file descriptors as
         file handle argument.
 
         \relates Scheduler
      */
     int retrieve_filehandle(int fd);
 
-    /** \brief Scheduler specific time source for Utils/Logger framework
+    /** \brief %scheduler specific time source for Utils/Logger framework
 
         This time source may be used to provide timing information for log messages within the
         Utils/Logger framework. This time source will use Scheduler::eventTime() to provide timing
