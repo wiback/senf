@@ -4,7 +4,7 @@
 
 int main(int argc, char const * argv[])
 {
-try
+    try
     {
         for (int i=0; i<=10; i++)
         {

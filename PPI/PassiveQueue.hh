@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -37,12 +37,12 @@
 namespace senf {
 namespace ppi {
 namespace module {
-    
+
     /** \brief Adaptor to connect active a pair of active connectors.
 
         This adaptor queue is used to connect two active connectors to each other. The queue
         receives data in it's passive input and places them in it's queue. Whenever data is
-        requested from the passive output, a packet is dequeued. 
+        requested from the passive output, a packet is dequeued.
 
         The PassiveQueue will automatically throttle in both directions. Throttling on the input
         connector is the standard throttling as implemented in
@@ -51,14 +51,14 @@ namespace module {
 
         \ingroup adapter_modules
      */
-    class PassiveQueue 
+    class PassiveQueue
         : public module::Module
     {
         SENF_PPI_MODULE(PassiveQueue);
     public:
         connector::PassiveInput<> input;
         connector::PassiveOutput<> output;
-        
+
         PassiveQueue();
 
         template <class QDiscipline>
@@ -66,7 +66,7 @@ namespace module {
                                         /**< This call changes the queueing discipline of the
                                              queue. This call is just forwarded to the \a input
                                              connector.
-                                             
+
                                              \see connector::GenericPassiveInput::qdisc() */
 
     private:

@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ namespace module = senf::ppi::module;
 namespace ppi = senf::ppi;
 
 namespace {
-    
+
     class TimerTest : public module::Module
     {
         SENF_PPI_MODULE(TimerTest);
@@ -57,14 +57,14 @@ namespace {
 
     public:
         TimerTest(senf::ClockService::clock_type d_, unsigned n_)
-        :   timer ( senf::ClockService::milliseconds(d_) ), 
-            n     ( n_ ) 
+        :   timer ( senf::ClockService::milliseconds(d_) ),
+            n     ( n_ )
         {
             registerEvent( timer, &TimerTest::tick );
         }
     };
 
-    bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
+    bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b,
                         unsigned long delta = senf::ClockService::milliseconds(100))
     {
         return (a<b ? b-a : a-b ) < delta;
@@ -76,7 +76,7 @@ BOOST_AUTO_UNIT_TEST(intervalTimer)
     TimerTest timer (100,4);
     senf::ClockService::clock_type start (senf::ClockService::now());
     senf::ppi::run();
-    BOOST_CHECK_PREDICATE( is_close_clock, 
+    BOOST_CHECK_PREDICATE( is_close_clock,
                            (senf::ClockService::now())
                            (start+senf::ClockService::milliseconds(400)) );
 }

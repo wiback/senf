@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 namespace senf {
 
     /** \brief Example of a list policy. ONLY FOR EXPOSITION.
-        
+
         This class shows the interface which must be implemented by a list policy. It is not a list
         policy only a declaration of the interface:
         \code
@@ -46,7 +46,7 @@ namespace senf {
             size_type bytes  (data_iterator i, state_type s) const;
             size_type size   (data_iterator i, state_type s) const;
             void      init   (data_iterator i, state_type s) const;
-        
+
             // Members needed only in the container policy
             void      erase  (data_iterator i, state_type s, iterator p) const;
             void      insert (data_iterator i, state_type s, iterator p) const;
@@ -70,7 +70,7 @@ namespace senf {
         define the elements bytes(), size() and init(), the container policy needs all these and
         additionally needs erase() and insert(). The container policy will also need the
         element_type, parser_type and container_type typedefs.
-        
+
         \see \ref Parse_List
      */
     struct ExampleListPolicy
@@ -128,7 +128,7 @@ namespace senf {
             \see \ref ExampleListPolicy \n
                 \ref Parse_List
          */
-        struct iterator_policy 
+        struct iterator_policy
         {
             iterator setBegin(iterator i, state_type s); ///< Initialize iterator to begin()
                                         /**< Initialize the policy from the given List (i,s). Set
@@ -145,13 +145,13 @@ namespace senf {
                                              special sentinel value (e.g. data().end()) if
                                              needed. */
 
-            void setFromPosition(iterator i, state_type s, iterator p); 
+            void setFromPosition(iterator i, state_type s, iterator p);
                                         ///< Initialize iterator from the given raw position
                                         /**< Set the iterator to the Element at raw position p. This
                                              operation can potentially be very inefficient if the
                                              list needs to be traversed from the beginning until the
                                              iterator is found. */
-            
+
             iterator next(iterator i, state_type s); ///< Advance to next element
                                         /**< given an iterator to an element, go to the next
                                              element. */
@@ -165,7 +165,7 @@ namespace senf {
         };
 
         /** \brief Example of a list container policy. ONLY FOR EXPOSITION
-            
+
             \see \ref ExampleListPolicy \n
                 \ref Parse_List
          */

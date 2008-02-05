@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ namespace ppi {
 
     template <class Source>
     connector::GenericPassiveInput & connect(Source & source, module::PassiveJoin & target);
-    
+
     template <class Source>
     connector::GenericActiveInput & connect(Source & source, module::PriorityJoin & target);
 
@@ -120,7 +120,7 @@ namespace module {
         \endcode
         Here, \a module1 has higher priority than \a module2 which will only be queried if \a
         module1 is throttled.
-        
+
         \ingroup routing_modules
      */
     class PriorityJoin

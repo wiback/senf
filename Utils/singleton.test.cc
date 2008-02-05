@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -36,11 +36,11 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    
+
     class Test : public senf::singleton<Test>
     {
         friend class senf::singleton<Test>;
-        
+
         Test() : foo_(1234) {}
 
         int foo_;

@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -82,7 +82,7 @@ prefix_ void senf::ppi::module::PassiveJoin::onUnthrottle()
 
 prefix_ senf::ppi::connector::ActiveInput<> & senf::ppi::module::PriorityJoin::newInput()
 {
-    inputs_.push_back(new connector::ActiveInput<>()); 
+    inputs_.push_back(new connector::ActiveInput<>());
     connector::ActiveInput<> & input (inputs_.back());
 
     noroute(input);

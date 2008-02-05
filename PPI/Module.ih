@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -39,24 +39,24 @@ namespace detail {
 
     // Placing these into a class simplifies the friend declaration
     template <class Source, class Target>
-    struct RouteHelper 
+    struct RouteHelper
     {
         static void route(Module & module, Source & source, Target & target,
-                          connector::InputConnector &, 
+                          connector::InputConnector &,
                           connector::OutputConnector &);
 
-    
+
         static void route(Module & module, Source & source, Target & target,
-                          connector::InputConnector &, 
+                          connector::InputConnector &,
                           EventDescriptor &);
-        
+
         static void route(Module & module, Source & source, Target & target,
                           EventDescriptor &,
                           connector::OutputConnector &);
     };
 
 #endif
-       
+
 }}}}
 
 ///////////////////////////////ih.e////////////////////////////////////////

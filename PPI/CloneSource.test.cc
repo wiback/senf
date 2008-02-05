@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -48,7 +48,7 @@ BOOST_AUTO_UNIT_TEST(cloneSource)
 
     senf::ppi::connect(source,sink);
     senf::ppi::init();
-    
+
     BOOST_CHECK( sink.request() != p );
     BOOST_CHECK( sink.request().data()[0] == p.data()[0] );
     BOOST_CHECK( sink.request().data()[0] == p.data()[0] );

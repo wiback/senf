@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -119,7 +119,7 @@
     SENF_MPL_SLOT_I_CHECK(name, __LINE__>79?__LINE__-79:0,                                        \
     SENF_MPL_SLOT_I_CHECK(name, __LINE__>80?__LINE__-80:0,                                        \
         0 ))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
-    
+
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif

@@ -16,7 +16,7 @@ public:
     {
         senf::Scheduler::instance().add(
                 serverSock,
-                senf::membind(&Server::readFromClient, this), 
+                senf::membind(&Server::readFromClient, this),
                 senf::Scheduler::EV_READ);
         senf::Scheduler::instance().process();
     }

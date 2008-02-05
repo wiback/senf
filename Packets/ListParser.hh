@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -35,7 +35,7 @@
 
 namespace senf {
 
-    namespace detail { template <class ElementParser, class IteratorPolicy> 
+    namespace detail { template <class ElementParser, class IteratorPolicy>
                        class ListParser_Iterator; }
 
     template <class ListPolicy>
@@ -45,7 +45,7 @@ namespace senf {
 
         A List is a sequential collection of elements. The element type is given as an arbitrary
         parser. The list is more flexible than a vector: It is not limited to fixed-size elements
-        and it might not have direct access to the size of the collection. 
+        and it might not have direct access to the size of the collection.
 
         The cost is however, that a List is only a model of an STL forward sequence. The parser
         provides a reduced interface to this sequence, the container wrapper provides the complete
@@ -60,7 +60,7 @@ namespace senf {
         \ingroup parsecollection
       */
     template <class ListPolicy>
-    class ListParser 
+    class ListParser
         : public PacketParserBase,
           private ListPolicy
     {
@@ -80,20 +80,20 @@ namespace senf {
         // Container interface
 
         typedef typename ListPolicy::element_type value_type;
-        typedef detail::ListParser_Iterator< 
+        typedef detail::ListParser_Iterator<
             value_type, typename ListPolicy::iterator_policy > iterator;
         typedef iterator const_iterator;
         typedef typename ListPolicy::container_type container;
 
         size_type size() const;
         bool empty() const;
-        
+
         iterator begin() const;
         iterator end() const;
 
         value_type front() const;
         value_type back() const;
-        
+
         template <class Value> void push_back        (Value value, size_type n=1) const;
                                void push_back_space  (size_type n=1) const;
         template <class Value> void push_front       (Value value, size_type n=1) const;
@@ -114,7 +114,7 @@ namespace senf {
         the vector in the packet data).
 
         The vector container wrapper provides a complete STL random-access sequence interface.
-        
+
         \code
         SomePacket p (...);
         SomePacket::aListCollection_t::container c (p->aListCollection());
@@ -140,7 +140,7 @@ namespace senf {
             value_type, typename ListPolicy::iterator_policy> iterator;
         typedef iterator const_iterator;
         typedef PacketParserBase::state_type state_type;
-        
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -152,7 +152,7 @@ namespace senf {
 
         ListParser_Container(parser_type const & list);
         ~ListParser_Container();
-        
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
@@ -209,7 +209,7 @@ namespace senf {
 
         size_type bytes() const;
         void init() const;
-        
+
         ///@}
 
     private:
@@ -217,7 +217,7 @@ namespace senf {
         size_type i_;
     };
 
-        
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

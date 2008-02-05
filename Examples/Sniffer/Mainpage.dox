@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -123,8 +123,8 @@
     representation of the \e dynamic type of the exception instance. It is an interface to the g++
     demangler. This is necessary since the \c name member of the C++ \c type_info instance is a
     mangled name in \c g++.
-    
-    That's it for the simple blocking implementation. 
+
+    That's it for the simple blocking implementation.
 
     \section example_scheduler Using the Scheduler
 
@@ -154,7 +154,7 @@
     Calling the Schedulers \c process() method will start the event loop. This call does not return
     (ok, it does return in special cases if \c senf::Scheduler::terminate() is called which does not
     apply here).
-    
+
     \until {
 
     The \c dumpPacket() member is called by the scheduler whenever an event on the socket is

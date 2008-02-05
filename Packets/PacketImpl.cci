@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 // Memory management:
-// 
+//
 // * The PacketImpl destructor will *explicitly* clean-up the interpreters_ list by removing
 //   each element from the list and deleting it if it's (intrusive) refcount is 0
 // * The PacketInterpreters use safe hooks -> they know wether they are part of a list or not
@@ -115,7 +115,7 @@ prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::next(PacketInter
 }
 
 prefix_ senf::PacketInterpreterBase * senf::detail::PacketImpl::prev(PacketInterpreterBase * p)
-{ 
+{
     interpreter_list::iterator i (interpreter_list::current(*p));
     return (i == interpreters_.begin()) ? 0 : &*(--i);
 }

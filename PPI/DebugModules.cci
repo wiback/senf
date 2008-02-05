@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -175,7 +175,7 @@ prefix_ senf::Packet senf::ppi::module::debug::PassiveSink::front()
 prefix_ senf::Packet senf::ppi::module::debug::PassiveSink::pop_front()
 {
     Packet p (front());
-    if (p) 
+    if (p)
         packets_.pop_front();
     return p;
 }

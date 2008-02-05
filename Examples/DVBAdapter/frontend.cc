@@ -1,8 +1,8 @@
 // $Id$
 //
 // Copyright (C) 2007
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@ int main(int argc, char const * argv[])
     try {
         senf::DVBFrontendHandle handle;
         int16_t strength;
-        
+
         while (true) {
             handle.protocol().signalStrength(&strength);
             std::cout << "signal strength: " << strength << "\n";

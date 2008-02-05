@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -55,15 +55,15 @@ namespace senf {
               : public senf::singleton<SomeClass>
           {
               // Must have default constructor
-              SomeClass(); 
-        
+              SomeClass();
+
               // Give singleton access to the constructor
               friend class senf::singleton<SomeClass>;
 
         public:
               // By default 'instance()' is protected. If you want, you may make it public:
               using senf::singleton<SomeClass>::instance;
-              
+
               // ...
           };
 
@@ -74,7 +74,7 @@ namespace senf {
               SomeClass::instance().doSomething();
           }
         \endcode
-        
+
         \warning The singleton class should \e not have any static data members since it cannot be
             guaranteed, that these members will be constructed before the singleton instance.
 
@@ -94,7 +94,7 @@ namespace senf {
         /** \brief Internal
             \internal
          */
-        struct force_creation 
+        struct force_creation
         {
             force_creation();
             void nop() const;

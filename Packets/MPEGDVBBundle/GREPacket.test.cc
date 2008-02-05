@@ -1,8 +1,8 @@
 // $Id:GREPacket.test.cc 560 2007-12-13 14:39:37Z tho $
 //
 // Copyright (C) 2007
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Joachim Kaeber <jkaeber@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify

@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@
 
 prefix_ void senf::ppi::IOEvent::v_enable()
 {
-    Scheduler::instance().add(fd_, boost::bind(&IOEvent::cb,this,_1), 
+    Scheduler::instance().add(fd_, boost::bind(&IOEvent::cb,this,_1),
                               Scheduler::EventId(events_));
 }
 

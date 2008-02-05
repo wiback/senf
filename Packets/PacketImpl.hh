@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -37,9 +37,9 @@
 
 namespace senf {
 namespace detail {
-    
+
     /** \brief Internal: Packet data storage
-        
+
         \internal
 
         This is the class holding the packet data and the interpreter chain. All manipulations of
@@ -47,7 +47,7 @@ namespace detail {
         PacketImpl will update the interpreters (that is the vector indices stored therein) whenever
         the data is changed.
      */
-    class PacketImpl 
+    class PacketImpl
         : boost::noncopyable,
           public pool_alloc_mixin<PacketImpl>
     {
@@ -70,7 +70,7 @@ namespace detail {
         ~PacketImpl();
 
         // rerference/memory management
- 
+
         void add_ref(refcount_t n=1);
         void release(refcount_t n=1);
         refcount_t refcount() const;

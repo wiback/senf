@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -43,12 +43,12 @@ BOOST_AUTO_UNIT_TEST(discardSink)
 
     senf::ppi::module::debug::ActiveSource source;
     senf::ppi::module::DiscardSink sink;
-    
+
     senf::ppi::connect(source,sink);
     senf::ppi::init();
 
     senf::Packet p (senf::DataPacket::create());
-    
+
     source.submit(p);
     source.submit(p);
 }

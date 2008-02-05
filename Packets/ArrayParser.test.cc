@@ -1,8 +1,8 @@
 // $Id$
 //
 // Copyright (C) 2006
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ namespace {
 #       include SENF_FIXED_PARSER()
 
         typedef senf::ArrayParser<2,senf::UInt24Parser> ArrayParser2;
-        
+
         SENF_PARSER_FIELD( array, ArrayParser2 );
         SENF_PARSER_FIELD( index, senf::UInt16Parser );
 
@@ -53,7 +53,7 @@ namespace {
     struct SomeOtherParser : public senf::PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
-        
+
         typedef senf::ArrayParser<1,SomePacketParser> ArrayParser1;
 
         SENF_PARSER_FIELD( fields, ArrayParser1 );
@@ -65,7 +65,7 @@ namespace {
 BOOST_AUTO_UNIT_TEST(ArrayParser_test)
 {
     senf::PacketParserBase::byte data[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05 };
-    senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));   
+    senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
 
     {
         typedef senf::ArrayParser<6,senf::UInt8Parser> UInt8ParserArray6;
@@ -74,7 +74,7 @@ BOOST_AUTO_UNIT_TEST(ArrayParser_test)
         BOOST_CHECK_EQUAL( v[0], 0x00 );
         BOOST_CHECK_EQUAL( v[5], 0x05 );
         BOOST_CHECK_EQUAL( *v.begin(), 0x00 );
-        BOOST_CHECK_EQUAL( std::distance(v.begin(),v.end()), 
+        BOOST_CHECK_EQUAL( std::distance(v.begin(),v.end()),
                            UInt8ParserArray6::difference_type(v.size()) );
         BOOST_CHECK_EQUAL( v.size(), 6u );
         UInt8ParserArray6::iterator i1 (v.begin());
@@ -87,7 +87,7 @@ BOOST_AUTO_UNIT_TEST(ArrayParser_test)
         --i1;
         BOOST_CHECK( i1==i2 );
     }
-    
+
     {
         SomeOtherParser v (p->data().begin(),&p->data());
 

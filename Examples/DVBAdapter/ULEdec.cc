@@ -1,8 +1,8 @@
 // $Id$
 //
 // Copyright (C) 2007
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 #include "ULEdec.hh"
 
 #include <cassert>
-#include <linux/dvb/dmx.h> 
+#include <linux/dvb/dmx.h>
 #include <boost/format.hpp>
 #include <senf/Packets.hh>
 #include <senf/Utils/hexdump.hh>
@@ -35,7 +35,7 @@
 #define TRANSPORT_PACKET_SIZE 188
 // max. payload_pointer = ts packet payload size ( = ts packet size - ts header - payload_pointer)
 //                          - 2 bytes min. sndu header
-#define MAX_PAYLOAD_POINTER ( TRANSPORT_PACKET_SIZE - 4 - 1 - 2 )   
+#define MAX_PAYLOAD_POINTER ( TRANSPORT_PACKET_SIZE - 4 - 1 - 2 )
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -65,11 +65,11 @@ void ULEdec::handleEvent(senf::Scheduler::EventId event)
     senf::TransportPacket ts_packet (
             senf::TransportPacket::create(188, senf::noinit));
     dvrHandle.read( ts_packet.data() );
-   
+    
     // Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control.
-    if ( (ts_packet->sync_byte() != TRANSPORT_PACKET_SYNC_BYTE) || 
-         (ts_packet->transport_error_indicator() == true) || 
-         (ts_packet->transport_scrmbl_ctrl() != 0)) 
+    if ( (ts_packet->sync_byte() != TRANSPORT_PACKET_SYNC_BYTE) ||
+         (ts_packet->transport_error_indicator() == true) ||
+         (ts_packet->transport_scrmbl_ctrl() != 0))
     {
         std::cerr << "invalid ts packet\n";
         // drop partly decoded SNDU, reset state, resync on PUSI.
@@ -78,21 +78,21 @@ void ULEdec::handleEvent(senf::Scheduler::EventId event)
     
     handleTSPacket(ts_packet);
 }
-    
+
 void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
 {
     senf::PacketData & payloadData (ts_packet.next().data());
     iterator payload_iter = payloadData.begin();
     iterator payload_end = payloadData.end();
-    
+
     std::cout << "New TS Packet:\n"
               << "----------------------------------------------------------------------------\n";
     senf::hexdump(payload_iter, payload_end, std::cout);
     std::cout << "----------------------------------------------------------------------------\n";
-    
+
     // Synchronize continuity counter
     this->priv_tscc = ts_packet->continuity_counter();
-    
+
     switch (ts_packet->pusi()) {
     case 0: {
         switch (this->receiver_state) {
@@ -125,7 +125,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
         // a PUSI value of 1 indicates the presence of a Payload Pointer.
         unsigned char payload_pointer = *payload_iter++;
         if (payload_pointer > MAX_PAYLOAD_POINTER) {
-            std::cerr << str( boost::format( 
+            std::cerr << str( boost::format(
                     "invalid payload_pointer (%d)\n") % unsigned(payload_pointer) ) ;
             this->receiver_state = Idle;
             return;
@@ -171,7 +171,7 @@ void ULEdec::handleTSPacket(senf::TransportPacket ts_packet)
             return;
         }
     }
-    
+
     } // end pusi-switch
 }
 
@@ -186,7 +186,7 @@ ULEdec::iterator ULEdec::readContSNDUPacket(iterator i, iterator const i_end)
 
 
 ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i, iterator const i_end)
-{ 
+{
     bool dbit = false;
     senf::Packet::size_type sndu_length = *i++ << 8 | *i++;
     if (sndu_length & 0x8000) {
@@ -206,7 +206,7 @@ ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i, iterator const i_end)
     this->snduPacket->length() = sndu_length;
     this->snduPacketData_iter = boost::next(this->snduPacket.data().begin(), 2);
     this->priv_sndu_type_1 = false;
-    
+
     switch (std::distance(i, i_end)) {
     case 1:
         this->priv_sndu_type_1 = true;
@@ -214,13 +214,13 @@ ULEdec::iterator ULEdec::readNewSNDUPacket(iterator i, iterator const i_end)
         this->snduPacketData_iter++;
     case 0:
         break;
-        
-    default: 
+
+    default:
         this->snduPacket->type() = *i++ << 8 | *i++;
         std::advance(this->snduPacketData_iter, 2);
         i = readRawSNDUPacketData(i, i_end);
     }
-    
+
     return i;
 }
 
@@ -241,7 +241,7 @@ void ULEdec::handleSNDUPacket()
     this->snduPacket.dump(std::cout);
     std::cout << "----------------------------------------------------------------------------\n\n";
     if (this->snduPacket->crc() != this->snduPacket->calcCrc()) {
-        throw ULEdecException( str( boost::format( 
+        throw ULEdecException( str( boost::format(
                 "CRC Error. received crc:%d calculated crc:%d")
                     % this->snduPacket->crc() % this->snduPacket->calcCrc() ) );
     }
@@ -250,7 +250,7 @@ void ULEdec::handleSNDUPacket()
 //            nextPacket.data().begin(),
 //            nextPacket.data().end(),
 //            std::cout);
-    
+
 }
 
 
@@ -281,7 +281,7 @@ int main(int argc, char const * argv[])
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
- 
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -1,8 +1,8 @@
 // $Id$
 //
 // Copyright (C) 2007
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -39,16 +39,16 @@ class Server
 public:
     Server(senf::INet4Address const & host, unsigned int port)
         : serverSock(senf::INet4SocketAddress(host, port)) {}
-    
-    void run() 
+
+    void run()
     {
         senf::Scheduler::instance().add(
-            serverSock, 
+            serverSock,
             senf::membind(&Server::accept, this),
             senf::Scheduler::EV_READ);
         senf::Scheduler::instance().process();
     }
-         
+
 private:
     void accept(senf::Scheduler::EventId event)
     {
@@ -58,7 +58,7 @@ private:
             boost::bind(&Server::readFromClient, this, clientSock, _1),
             senf::Scheduler::EV_READ);
     }
-    
+
     void readFromClient(senf::TCPv4ClientSocketHandle clientSock, senf::Scheduler::EventId event)
     {
         if (!clientSock) {

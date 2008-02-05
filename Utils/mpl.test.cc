@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    
-    template <unsigned _> 
+
+    template <unsigned _>
     struct select {
         static bool const has_int_value = false;
         static bool const has_class_value = false;
@@ -62,7 +62,7 @@ namespace {
     template <class T>
     senf::mpl::rv<2> select_(int, senf::mpl::take_class<typename T::value> * = 0);
 
-    template <class T> 
+    template <class T>
     struct choice : public select<SENF_MPL_RV( select_<T>(0) )> {};
 
     struct A { static const int value = 0; };
@@ -70,7 +70,7 @@ namespace {
     struct C {};
 }
 
-BOOST_AUTO_UNIT_TEST(senfmpl) 
+BOOST_AUTO_UNIT_TEST(senfmpl)
 {
     BOOST_CHECK( choice<A>::has_int_value );
     BOOST_CHECK( ! choice<A>::has_class_value );

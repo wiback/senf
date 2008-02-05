@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -64,7 +64,7 @@ namespace ppi {
         ///\name Structors and default members
         ///@{
 
-        explicit IntervalTimer(ClockService::clock_type interval, 
+        explicit IntervalTimer(ClockService::clock_type interval,
                                unsigned eventsPerInterval=1);
 
         ///@}

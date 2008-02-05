@@ -1,8 +1,8 @@
 // $Id$
 //
 // Copyright (C) 2006
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -63,8 +63,8 @@ namespace senf {
     /** \brief Fixed size collection of fixed size elements
 
         ArrayParser will parse a sequence of <em>fixed size</em> parsers. The number of array
-        elements is given by the \e elements template parameter and is fixed at compile time. 
-        
+        elements is given by the \e elements template parameter and is fixed at compile time.
+
         Each element will be parsed by \a ElementParser, which can be any <em>fixed size</em>
         parser. The array models an STL random-access sequence with the restriction that elements
         cannot be added or removed since the size is fixed.
@@ -99,7 +99,7 @@ namespace senf {
 
         This macro is a special helper to define a senf::ArrayParser type field, a fixed size
         collection of fixed size elements.
-        
+
         \param[in] name field name
         \param[in] elt_type array element type
         \param[in] size constant number of elements

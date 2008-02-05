@@ -1,8 +1,8 @@
 // $Id$
 //
 // Copyright (C) 2006
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -69,18 +69,18 @@ class Sniffer
     senf::PacketSocketHandle sock;
 
 public:
-    Sniffer(std::string const & interface) 
+    Sniffer(std::string const & interface)
     {
-        sock.bind(senf::LLSocketAddress(interface)); 
+        sock.bind(senf::LLSocketAddress(interface));
     }
 
-    void run() 
+    void run()
     {
         senf::Scheduler::instance().add(
             sock, senf::membind(&Sniffer::dumpPacket, this));
         senf::Scheduler::instance().process();
     }
-         
+
 private:
     void dumpPacket(senf::Scheduler::EventId event)
     {

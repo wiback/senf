@@ -1,8 +1,8 @@
 // $Id$
 //
 // Copyright (C) 2007
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -33,20 +33,20 @@ int main(int argc, char const * argv[])
             senf::TCPv4ClientSocketHandle sock;
             sock.connect(senf::INet4SocketAddress("127.0.0.1:4243"));
             sock.protocol().linger(true);
-            
+
             std::stringstream s;
             s << i++;
             sock.write(s.str());
 
             sock.close();
-            
+
             std::cout << i << std::endl;
         }
     }
     catch (std::exception const & ex) {
         std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
     }
-    
+
     return 0;
 }
 

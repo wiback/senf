@@ -1,8 +1,8 @@
 // $Id$
 //
 // Copyright (C) 2007
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 #include <iomanip>
 #include <sys/ioctl.h>
 #include <linux/sockios.h>
-#include <linux/dvb/dmx.h> 
+#include <linux/dvb/dmx.h>
 
 #include <senf/Scheduler/Scheduler.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
@@ -48,7 +48,7 @@ class MySniffer
 
 public:
     MySniffer(unsigned short adapter=0, unsigned short device=0)
-        : handle( adapter, device ) 
+        : handle( adapter, device )
     {
         struct dmx_sct_filter_params sec_filter;
         memset(&sec_filter, 0, sizeof (struct dmx_sct_filter_params));

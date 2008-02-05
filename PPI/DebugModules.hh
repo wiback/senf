@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institute for Open Communication Systems (FOKUS) 
-// Competence Center NETwork research (NET), St. Augustin, GERMANY 
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ namespace senf {
 namespace ppi {
 namespace module {
 namespace debug {
-    
+
     /** \namespace senf::ppi::module::debug
         \brief Debug modules
 
@@ -49,7 +49,7 @@ namespace debug {
         manually pass packets into a network and read back the output packets.
 
         There are three categories of modules:
-    
+
         \li <i>Active modules</i> (ActiveSource, ActiveSink) are triggered by external
             calls. Calling \c submit() / \c request() will send the request into the module network
             synchronously. From this it follows, that senf::ppi::run() should \e not be
@@ -74,7 +74,7 @@ namespace debug {
             signaled in the network</em>.
      */
     class ActiveSource
-        : public Module, 
+        : public Module,
           public safe_bool<ActiveSource>
     {
         SENF_PPI_MODULE(ActiveSource);
@@ -91,7 +91,7 @@ namespace debug {
     };
 
     /** \brief Debug packet source with passive output
-        
+
         This module provides a queue of packets for reading by the network. Each submit() call adds
         a packet to the queue which will be sent into the network when requested. The output is
         automatically throttled when the queue becomes empty.
@@ -105,14 +105,14 @@ namespace debug {
 
     public:
         typedef Queue::size_type size_type;
-        
+
         connector::PassiveOutput<> output;
 
         PassiveSource();
 
         void throttle();                ///< Throttle output connector
         void unthrottle();              ///< Unthrottle output connector
-        
+
         void submit(Packet packet);     ///< Enqueue packet
 
         bool empty();                   ///< \c true if queue is empty
@@ -121,10 +121,10 @@ namespace debug {
     private:
         void request();
         void init();
-        
+
         Queue packets_;
     };
-    
+
     /** \brief Debug packet sink with active input
 
         This module requests packets from the network. Each call to request() will pass a packet
@@ -191,7 +191,7 @@ namespace debug {
     };
 
     /** \brief Active, queue-based packet source
-        
+
         The ActiveFeederSource contains a packet queue containing the packets to be precessed. These
         packets are actively fed into the network when it is run with senf::ppi::run() until it is
         empty, when senf::ppi::run() will return.
@@ -212,7 +212,7 @@ namespace debug {
 
     public:
         typedef PassiveSource::size_type size_type;
-        
+
         connector::ActiveOutput<> & output;
 
         ActiveFeederSource();
@@ -223,7 +223,7 @@ namespace debug {
     };
 
     /** \brief Active, queue-based packet sink
-    
+
         The ActiveFeederSink contains a packet queue to receive the packets from the network. The
         ActiveFeederSink will actively request packets from the network until it's input is
         throttled.
@@ -234,7 +234,7 @@ namespace debug {
             eventually or senf::ppi::run will not return.
 
         ActiveFeederSink is not a module but a collection of two modules: a PassiveSink and an
-        ActiveFeeder. 
+        ActiveFeeder.
      */
     class ActiveFeederSink
     {
@@ -247,7 +247,7 @@ namespace debug {
         typedef PassiveSink::iterator iterator;
 
         connector::ActiveInput<> & input;
-        
+
         ActiveFeederSink();
 
         bool empty();
@@ -260,14 +260,14 @@ namespace debug {
 
         void clear();
     };
-   
+
     /** \brief Log received packets
 
         This module will log all packets sent to it's input using SENF_LOG to the given log
         \a Stream, \a Area and \a Level.
      */
-    template < class Stream = log::Debug, 
-               class Area   = log::DefaultArea, 
+    template < class Stream = log::Debug,
+               class Area   = log::DefaultArea,
                class Level  = log::VERBOSE >
     class LogSink
         : public module::Module
