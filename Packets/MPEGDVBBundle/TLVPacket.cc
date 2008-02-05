@@ -67,37 +67,37 @@ prefix_ void senf::DynamicTLVLengthParser::value(value_type const & v)
     }
     if (v < 256u) {
         if (bytes() != 2) {
-	    resize(2);
+            resize(2);
             safeThis->extended_length_flag() = true;
-	    safeThis->fixed_length_field() = 1;
-	}
+            safeThis->fixed_length_field() = 1;
+        }
         safeThis->parse<UInt8Parser>(1) = v;
         return;
     }
     if (v < 65536u) {
         if (bytes() != 3) {
-	    resize(3);
-	    safeThis->extended_length_flag() = true;
-	    safeThis->fixed_length_field() = 2;
-	}
+            resize(3);
+            safeThis->extended_length_flag() = true;
+            safeThis->fixed_length_field() = 2;
+        }
         safeThis->parse<UInt16Parser>(1) = v;
         return;
     }
     if (v < 16777216u) {
         if (bytes() != 4) {
-	    resize(4);
-	    safeThis->extended_length_flag() = true;
-	    safeThis->fixed_length_field() = 3;
-	}
+            resize(4);
+            safeThis->extended_length_flag() = true;
+            safeThis->fixed_length_field() = 3;
+        }
         safeThis->parse<UInt24Parser>(1) = v;
         return;
     }
     if (v <= 4294967295u) {
         if (bytes() != 5) {
-	    resize(5);
-	    safeThis->extended_length_flag() = true;
-	    safeThis->fixed_length_field() = 4;
-	}
+            resize(5);
+            safeThis->extended_length_flag() = true;
+            safeThis->fixed_length_field() = 4;
+        }
         safeThis->parse<UInt32Parser>(1) = v;
         return;
     }

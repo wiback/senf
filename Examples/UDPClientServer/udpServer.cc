@@ -12,31 +12,32 @@ public:
     Server(senf::INet4Address const & host, unsigned int port)
         : serverSock(senf::INet4SocketAddress(host, port)) {}
 
-	void run() 
-	{
-		senf::Scheduler::instance().add(serverSock, senf::membind(&Server::readFromClient, this), senf::Scheduler::EV_READ);
-		senf::Scheduler::instance().process();
-	}
+    void run()
+    {
+        senf::Scheduler::instance().add(
+                serverSock,
+                senf::membind(&Server::readFromClient, this), 
+                senf::Scheduler::EV_READ);
+        senf::Scheduler::instance().process();
+    }
 
 private:
-    	void readFromClient(senf::Scheduler::EventId event)
-	{
-		std::string data (serverSock.read());
-		std::cout << "> " << data<<std::endl ;
-	}
+    void readFromClient(senf::Scheduler::EventId event)
+    {
+        std::string data (serverSock.read());
+        std::cout << "> " << data<<std::endl ;
+    }
 };
 
 int main(int argc, char const * argv[])
 {
-	try 
-	{
-		Server testSock(senf::INet4Address::Loopback, 4243);
-		testSock.run();
-	}
-	
-	catch (std::exception const & ex) {
+    try {
+        Server testSock(senf::INet4Address::Loopback, 4243);
+        testSock.run();
+    }
+
+    catch (std::exception const & ex) {
         std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";
-    	}
-    	
-    	return 0;
+    }
+    return 0;
 }

@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////
 //
-// (C) Copyright Ion Gaztañaga  2006-2007
+// (C) Copyright Ion Gaztaï¿½aga  2006-2007
 //
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
@@ -221,13 +221,13 @@ class ihashtable
          ++local_it_;
          size_type   buckets_len = bucket_info_->buckets_len_;
          bucket_ptr  buckets     = bucket_info_->buckets_;
-			while (local_it_ == islist_from_bucket(buckets[n_bucket_]).end()){
-				if (++n_bucket_ == buckets_len){
-					local_it_ = invalid_local_it(*bucket_info_);
-               break;
-            }
-            local_it_ = islist_from_bucket(buckets[n_bucket_]).begin();
-			}
+         while (local_it_ == islist_from_bucket(buckets[n_bucket_]).end()){
+             if (++n_bucket_ == buckets_len) {
+                 local_it_ = invalid_local_it(*bucket_info_);
+                 break;
+             }
+             local_it_ = islist_from_bucket(buckets[n_bucket_]).begin();
+         }
          return static_cast<Self&> (*this);
       }
 

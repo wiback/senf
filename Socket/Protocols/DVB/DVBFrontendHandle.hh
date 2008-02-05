@@ -44,7 +44,7 @@ namespace senf {
     /// @{
 
     typedef MakeSocketPolicy<
-    	NoAddressingPolicy,
+        NoAddressingPolicy,
         DatagramFramingPolicy,
         UnconnectedCommunicationPolicy,
         NotReadablePolicy,

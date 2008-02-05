@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //
 // (C) Copyright Olaf Krzikalla 2004-2006.
-// (C) Copyright Ion Gaztañaga  2006-2007.
+// (C) Copyright Ion Gaztaï¿½aga  2006-2007.
 //
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
@@ -364,11 +364,11 @@ class rbtree_algorithms
          x = y_right;    // x might be null.
       }
       else if(!y_right){ // z has exactly one non-null child. y == z.
-         x = y_left;    	// x is not null.
+         x = y_left;     // x is not null.
       }
       else{
          y = minimum (y_right);
-         x = NodeTraits::get_right(y);  	// x might be null.
+         x = NodeTraits::get_right(y);   // x might be null.
       }
 
       if(y != z){
@@ -808,11 +808,11 @@ class rbtree_algorithms
       //Since we've found the upper bound there is no other value with the same key if:
       //    - There is no previous node
       //    - The previous node is less than the key
-	   if(!prev || comp(prev, key)){
+      if(!prev || comp(prev, key)){
          commit_data.link_left = left_child;
          commit_data.node      = y;
          return std::pair<node_ptr, bool>(node_ptr(), true);
-	   }
+      }
       //If the previous value was not less than key, it means that it's equal
       //(because we've checked the upper bound)
       else{
@@ -864,20 +864,20 @@ class rbtree_algorithms
       (const_node_ptr header,  node_ptr hint, const KeyType &key
       ,KeyNodePtrCompare comp, insert_commit_data &commit_data)
    {
-      //hint must be bigger than the key
-	   if(hint == header || comp(key, hint)){
+       //hint must be bigger than the key
+       if(hint == header || comp(key, hint)){
          node_ptr prev = hint;
          //The previous value should be less than the key
-		   if(prev == NodeTraits::get_left(header) || comp((prev = prev_node(hint)), key)){
+         if(prev == NodeTraits::get_left(header) || comp((prev = prev_node(hint)), key)){
             commit_data.link_left = unique(header) || !NodeTraits::get_left(hint);
             commit_data.node      = commit_data.link_left ? hint : prev;
             return std::pair<node_ptr, bool>(node_ptr(), true);
-		   }
+         }
          else{
             return insert_unique_check(header, key, comp, commit_data);
             //return std::pair<node_ptr, bool>(prev, false);
          }
-	   }
+       }
       //The hint was wrong, use hintless insert
       else{
          return insert_unique_check(header, key, comp, commit_data);

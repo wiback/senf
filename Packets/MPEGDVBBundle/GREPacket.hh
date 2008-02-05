@@ -46,7 +46,7 @@ namespace senf {
 #       include SENF_PARSER()        
         SENF_PARSER_FIELD ( checksum1_, UInt16Parser );
         SENF_PARSER_PRIVATE_FIELD ( reserved1_, UInt16Parser );
-  	SENF_PARSER_FINALIZE(GREChecksumParser);
+        SENF_PARSER_FINALIZE(GREChecksumParser);
     };
 
     struct GREPacketParser : public PacketParserBase

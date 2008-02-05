@@ -35,7 +35,7 @@
 namespace senf { 
 namespace log {
 
-    /** \brief Write log messages to std::cout
+    /** \brief Write %log messages to std::cout
 
         IOStreamTarget writing to std::cout. This is a singleton target which always exists. Access
         it via senf::log::ConsoleTarget::instance()

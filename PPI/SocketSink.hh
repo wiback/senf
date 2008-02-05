@@ -178,11 +178,11 @@ namespace module {
                                              \pre Requires \a Writer to be copy constructible
                                              \param[in] handle Handle to write data to */
 
-        Writer & writer();                  ///< Access the Writer
-        Handle & handle(); 					/**< Access the handle. This is intendet to be mainly used to reconnect the under
-        										lying socket. */
+        Writer & writer();      ///< Access the Writer
+        Handle & handle();      /**< Access the handle. This is intendet to be mainly used to reconnect 
+                                     the underlying socket. */
        /* void reconnect(senf::SocketAddress newAddress);
-        								///< Reconnect the handle to which the packets are written
+        ///< Reconnect the handle to which the packets are written
        */
         void replaceHandle(Handle newHandle);
                                         /**< Replace the handle to which the packets are written

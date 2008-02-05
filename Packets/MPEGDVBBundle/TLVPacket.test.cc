@@ -127,9 +127,9 @@ BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_extended_length)
 
     BOOST_CHECK_EQUAL( tlvPacket->type(), 42u );
     BOOST_CHECK_EQUAL( tlvPacket->length(), payload.size() );
-	    
+
     PacketData & tlvPacket_value2 (tlvPacket.next().data());
-    BOOST_CHECK( equal( tlvPacket_value2.begin(), tlvPacket_value2.end(), payload.begin() ));	   
+    BOOST_CHECK( equal( tlvPacket_value2.begin(), tlvPacket_value2.end(), payload.begin() ));
 }
 
 

@@ -144,7 +144,7 @@ BOOST_AUTO_UNIT_TEST(RawV4ClientSocketHandle)
         return;
     }
     try {
-    	std::string test = "TEST-WRITE";
+        std::string test = "TEST-WRITE";
         alarm(10);
         start(server_v4);
         senf::RawV4ClientSocketHandle sock(47);  //IPPROTO_GRE
@@ -153,9 +153,9 @@ BOOST_AUTO_UNIT_TEST(RawV4ClientSocketHandle)
         BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:0"), test) );
-		senf::RawV4ClientSocketHandle sockrec(48);  //IPPROTO_GRE+1
-		std::string in = sockrec.read();
-		BOOST_CHECK_EQUAL(in.substr(20), test); 
+        senf::RawV4ClientSocketHandle sockrec(48);  //IPPROTO_GRE+1
+        std::string in = sockrec.read();
+        BOOST_CHECK_EQUAL(in.substr(20), test); 
         BOOST_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:0"),"QUIT"));
         //sock.close();
         //sockrec.close();
@@ -173,7 +173,7 @@ BOOST_AUTO_UNIT_TEST(RawV6ClientSocketHandle)
         return;
     }
     try {
-    	std::string test = "TEST-WRITE";
+        std::string test = "TEST-WRITE";
         alarm(5);
         start(server_v6);
         sleep(1);
@@ -183,9 +183,9 @@ BOOST_AUTO_UNIT_TEST(RawV6ClientSocketHandle)
         BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.writeto(senf::INet6SocketAddress("[::1]:0"), test) );
-		senf::RawV6ClientSocketHandle sockrec(48);  //IPPROTO_GRE+1
-		std::string in = sockrec.read();
-		BOOST_CHECK_EQUAL(in, test); 
+        senf::RawV6ClientSocketHandle sockrec(48);  //IPPROTO_GRE+1
+        std::string in = sockrec.read();
+        BOOST_CHECK_EQUAL(in, test); 
         BOOST_CHECK_NO_THROW( sock.writeto(senf::INet6SocketAddress("[::1]:0"),"QUIT"));
         alarm(0);
     } catch (...) {

@@ -84,7 +84,7 @@ prefix_ sockaddr const  * senf::UNSocketAddress::sockaddr_p()
 }
 
 prefix_ unsigned senf::UNSocketAddress::sockaddr_len()
-	const
+    const
 {
     return sizeof(addr_);
 }

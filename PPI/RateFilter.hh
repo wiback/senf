@@ -29,7 +29,7 @@
 namespace senf {
 namespace ppi {
 namespace module {
-	
+
 class RateFilter
     : public Module
 {

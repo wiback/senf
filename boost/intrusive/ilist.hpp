@@ -1,7 +1,7 @@
 /////////////////////////////////////////////////////////////////////////////
 //
 // (C) Copyright Olaf Krzikalla 2004-2006.
-// (C) Copyright Ion Gaztañaga  2006-2007
+// (C) Copyright Ion Gaztaï¿½aga  2006-2007
 //
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE_1_0.txt or copy at
@@ -450,7 +450,7 @@ class ilist
    //! <b>Throws</b>: Nothing.
    //! 
    //! <b>Complexity</b>: Constant.
-   reverse_iterator rend()	
+   reverse_iterator rend()
    { return reverse_iterator(begin()); }
 
    //! <b>Effects</b>: Returns a const_reverse_iterator pointing to the end
@@ -459,7 +459,7 @@ class ilist
    //! <b>Throws</b>: Nothing.
    //! 
    //! <b>Complexity</b>: Constant.
-   const_reverse_iterator rend() const	
+   const_reverse_iterator rend() const
    { return const_reverse_iterator(begin()); }
 
    //! <b>Effects</b>: Returns the number of the elements contained in the list.
@@ -1091,22 +1091,22 @@ class ilist
    template<class BinaryPredicate, class Destroyer>
    void unique_and_destroy(BinaryPredicate pred, Destroyer destroyer)
    {
-		if(!this->empty()){
-			iterator first = begin();
-			iterator after = first;
-         ++after;
-			while(after != this->end()){
-            if(pred(*first, *after)){
-               pointer p = after.operator->();
-               after = erase(after);
-               destroyer(p);
+       if(!this->empty()) {
+            iterator first = begin();
+            iterator after = first;
+            ++after;
+            while(after != this->end()) {
+                if(pred(*first, *after)) {
+                    pointer p = after.operator->();
+                    after = erase(after);
+                    destroyer(p);
+                }
+                else {
+                    first = after++;
+                }
             }
-				else{
-					first = after++;
-            }
-         }
-      }
-   }
+        }
+    }
 
    //! <b>Requires</b>: value must be a reference to a value inserted in a list.
    //! 

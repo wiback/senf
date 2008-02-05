@@ -41,7 +41,7 @@ namespace senf {
         SENF_PARSER_PRIVATE_FIELD ( reserved ,    UInt8Parser );   //must be zero 
         SENF_PARSER_VEC_N         ( fbiplist,     num_of_fbips, INet4AddressParser );
 
-	SENF_PARSER_FINALIZE(DTCPIPv4AddressListParser);
+        SENF_PARSER_FINALIZE(DTCPIPv4AddressListParser);
     };
         
     struct DTCPIPv6AddressListParser : public PacketParserBase {
@@ -50,7 +50,7 @@ namespace senf {
         SENF_PARSER_PRIVATE_FIELD ( reserved,     UInt8Parser );   //must be zero 
         SENF_PARSER_VEC_N         ( fbiplist,     num_of_fbips, INet6AddressParser );
 
-	SENF_PARSER_FINALIZE(DTCPIPv6AddressListParser);
+        SENF_PARSER_FINALIZE(DTCPIPv6AddressListParser);
     };
 
     /** \brief Parse a DTCP packet
@@ -71,9 +71,9 @@ namespace senf {
         SENF_PARSER_BITFIELD         ( receive_capable_feed, 1, bool );      // 0=send only, 1=receive_capable_feed
         SENF_PARSER_BITFIELD_RO      ( ip_version,           4, unsigned );  // 4=IPv4, 6=IPv6
         SENF_PARSER_FIELD    ( tunnel_protocol,      UInt8Parser ); 
-		/* Please consider the following comments on the implementation given in this class: 
-		 * 1. you could think of simply using SENF_PARSER_PRIVATE_VARIANT and List / Vectorparser like this:
-		 * SENF_PARSER_PRIVATE_VARIANT  ( fbiplist,             ip_version,
+        /* Please consider the following comments on the implementation given in this class: 
+         * 1. you could think of simply using SENF_PARSER_PRIVATE_VARIANT and List / Vectorparser like this:
+         * SENF_PARSER_PRIVATE_VARIANT  ( fbiplist,             ip_version,
          *                                                       (senf::VoidPacketParser) //ip_version=0
          *                                                       (senf::VoidPacketParser) //1
          *                                                       (senf::VoidPacketParser) //2
@@ -82,44 +82,44 @@ namespace senf {
          *                                                       (senf::VoidPacketParser) //5
          *                                                       (senf::ListBParser< IPv6Packet, num_of_fbips>) ); //6
          * This can't work for two reasons: 
-         * 		-SENF_PARSER_PRIVATE_VARIANT only accepts 6 templates in types but you have to start from 0.
-         * 		-you NEVER can use templated Parsers in these macros since the macro-preprocessor won't recognize the <> brackets and will
-         * 			interpret the ","
+         *      -SENF_PARSER_PRIVATE_VARIANT only accepts 6 templates in types but you have to start from 0.
+         *      -you NEVER can use templated Parsers in these macros since the macro-preprocessor won't recognize the <> brackets and will
+         *      interpret the ","
          * 
          * The first problem is solved by using (actually inventing)  SENF_PARSER_VARIANT_TRANS which has the same limitations 
-         * 		concerning the number of types but isn't limited to the values used. This is achieved by a translating function 
-         * 		as you can see. 
+         *      concerning the number of types but isn't limited to the values used. This is achieved by a translating function 
+         *      as you can see. 
          * The second problem is solved by introducing Helper-Parser which cover both the list and the number field. By that no 
-         * 		templates have to be used. 
-		*/
+         *      templates have to be used. 
+         */
 
-		struct ip_version_translator {
-		    static unsigned fromChooser(ip_version_t::value_type in) {
-			switch (in) { 
-				case 4: return 0;
-				case 6: return 1;
-			}
-			return 1; //default. should rather throw an exception 
-		    }
-		    static ip_version_t::value_type toChooser(unsigned in) {
-			switch (in) {
-			    case 0: return 4;
-			    case 1: return 6; 
-			}
-			return 6; //default. should rather throw an exception 
-		    }
-		};
+        struct ip_version_translator {
+            static unsigned fromChooser(ip_version_t::value_type in) {
+                switch (in) { 
+                case 4: return 0;
+                case 6: return 1;
+                }
+                return 1; //default. should rather throw an exception 
+            }
+            static ip_version_t::value_type toChooser(unsigned in) {
+                switch (in) {
+                case 0: return 4;
+                case 1: return 6; 
+                }
+                return 6; //default. should rather throw an exception 
+            }
+        };
     
         SENF_PARSER_VARIANT_TRANS    ( fbiplist,             ip_version, ip_version_translator,
                                                                  (senf::DTCPIPv4AddressListParser)        //IPv4 
                                                                  (senf::DTCPIPv6AddressListParser) );     //IPv6
                                                                  
-		DTCPIPv4AddressListParser getIpv4AddressList () const { return fbiplist().get<0>(); }  // this is the absolute index 
-		DTCPIPv6AddressListParser getIpv6AddressList () const { return fbiplist().get<1>(); }
-		void setIpVersion4() const { fbiplist().init<0>(); }
-		void setIpVersion6() const { fbiplist().init<1>(); }
+        DTCPIPv4AddressListParser getIpv4AddressList () const { return fbiplist().get<0>(); }  // this is the absolute index 
+        DTCPIPv6AddressListParser getIpv6AddressList () const { return fbiplist().get<1>(); }
+        void setIpVersion4() const { fbiplist().init<0>(); }
+        void setIpVersion6() const { fbiplist().init<1>(); }
 
-	SENF_PARSER_FINALIZE(DTCPPacketParser);
+        SENF_PARSER_FINALIZE(DTCPPacketParser);
     };
     
     /** \brief DTCP packet

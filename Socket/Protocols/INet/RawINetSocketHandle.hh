@@ -78,8 +78,8 @@ namespace senf {
           public RawINetProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
-	  public MulticastProtocol,
-	  public INet4MulticastProtocol
+          public MulticastProtocol,
+          public INet4MulticastProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -146,8 +146,8 @@ namespace senf {
           public RawINetProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
-	  public MulticastProtocol,
-	  public INet4MulticastProtocol
+          public MulticastProtocol,
+          public INet4MulticastProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
