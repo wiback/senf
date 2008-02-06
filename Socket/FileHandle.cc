@@ -38,6 +38,36 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::FileBody
+
+prefix_ void senf::FileBody::close()
+{
+    if (!valid())
+        throwErrno(EBADF);
+    v_close();
+    fd_ = -1;
+}
+
+prefix_ void senf::FileBody::terminate()
+{
+    if (valid()) {
+        v_terminate();
+        fd_ = -1;
+    }
+}
+
+prefix_ void senf::FileBody::destroyClose()
+{
+    if (valid())
+        try {
+            close();
+        }
+        catch (...) {
+            terminate();
+        }
+}
+
 prefix_ void senf::FileBody::v_close()
 {
     if (::close(fd_) != 0)

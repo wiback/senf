@@ -36,6 +36,19 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::SocketBody
+
+prefix_ void senf::SocketBody::state(SocketStateMap & map, unsigned lod)
+{
+    map["file.handle"]     << fd();
+    map["file.refcount"]   << refcount();
+    map["socket.server"]   << isServer();
+    map["socket.protocol"] << v_protocolName();
+    map["socket.protocol.policy"]   << prettyName(typeid(protocol().policy()));
+    protocol().state(map,lod);
+}
+
 prefix_ void senf::SocketBody::v_close()
 {
     protocol().close();
@@ -50,16 +63,6 @@ prefix_ bool senf::SocketBody::v_eof()
     const
 {
     return protocol().eof();
-}
-
-prefix_ void senf::SocketBody::state(SocketStateMap & map, unsigned lod)
-{
-    map["file.handle"]     << fd();
-    map["file.refcount"]   << refcount();
-    map["socket.server"]   << isServer();
-    map["socket.protocol"] << v_protocolName();
-    map["socket.protocol.policy"]   << prettyName(typeid(protocol().policy()));
-    protocol().state(map,lod);
 }
 
 ///////////////////////////////////////////////////////////////////////////

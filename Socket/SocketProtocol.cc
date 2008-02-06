@@ -33,6 +33,7 @@
 //#include "SocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
 prefix_ void senf::SocketProtocol::close()
     const
 {

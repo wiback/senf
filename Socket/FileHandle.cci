@@ -41,33 +41,6 @@ prefix_ senf::FileBody::FileBody(int fd)
     : fd_(fd)
 {}
 
-prefix_  senf::FileBody::~FileBody()
-{
-    if (valid())
-        try {
-            close();
-        }
-        catch (...) {
-            terminate();
-        }
-}
-
-prefix_ void senf::FileBody::close()
-{
-    if (!valid())
-        throwErrno(EBADF);
-    v_close();
-    fd_ = -1;
-}
-
-prefix_ void senf::FileBody::terminate()
-{
-    if (valid()) {
-        v_terminate();
-        fd_ = -1;
-    }
-}
-
 prefix_ senf::FileHandle senf::FileBody::handle()
 {
     return FileHandle(ptr(this));
@@ -195,6 +168,12 @@ prefix_ int senf::FileHandle::fd()
 prefix_ senf::FileHandle::FileHandle()
     : body_(0)
 {}
+
+prefix_ senf::FileHandle::~FileHandle()
+{
+    if (body_ && ! body().is_shared())
+        body().destroyClose();
+}
 
 prefix_  senf::FileHandle::FileHandle(std::auto_ptr<FileBody> body)
     : body_(body.release())

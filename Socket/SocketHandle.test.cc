@@ -45,7 +45,7 @@ namespace {
         MySocketHandle()
             : senf::SocketHandle<senf::test::SomeProtocol::Policy>(
                 std::auto_ptr<senf::SocketBody>(
-                    new senf::ProtocolSocketBody<senf::test::SomeProtocol>(false)))
+                    new senf::ProtocolSocketBody<senf::test::SomeProtocol>(false, 0)))
             {}
     };
 
@@ -66,33 +66,38 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
         >::policy OtherSocketPolicy;
     typedef senf::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
 
-    MySocketHandle myh;
-    OtherSocketHandle osh (myh);
-    osh = myh;
+    {
+        MySocketHandle myh;
+        OtherSocketHandle osh (myh);
+        osh = myh;
 
-    typedef senf::SocketHandle<senf::test::SomeProtocol::Policy> SomeSocketHandle;
-    SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
+        typedef senf::SocketHandle<senf::test::SomeProtocol::Policy> SomeSocketHandle;
+        SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
 
-    BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
+        BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
 
-    typedef senf::SocketHandle< senf::MakeSocketPolicy<
-        OtherSocketPolicy,
-        senf::NoAddressingPolicy
-        >::policy> SomeOtherSocketHandle;
+        typedef senf::SocketHandle< senf::MakeSocketPolicy<
+            OtherSocketPolicy,
+            senf::NoAddressingPolicy
+            >::policy> SomeOtherSocketHandle;
 
-    BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeOtherSocketHandle>(osh),
-                       std::bad_cast );
-    BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(
-                           senf::FileHandle(FDHandle())),
-                       std::bad_cast );
+        BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeOtherSocketHandle>(osh),
+                           std::bad_cast );
+        BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(
+                               senf::FileHandle(FDHandle())),
+                           std::bad_cast );
 
-    BOOST_CHECK_EQUAL( myh.dumpState(),
-                       "file.handle: -1\n"
-                       "file.refcount: 3\n"
-                       "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy> >\n"
-                       "socket.protocol: senf::test::SomeProtocol\n"
-                       "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
-                       "socket.server: false\n" );
+        BOOST_CHECK_EQUAL( myh.dumpState(),
+                           "file.handle: 0\n"
+                           "file.refcount: 3\n"
+                           "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy> >\n"
+                           "socket.protocol: senf::test::SomeProtocol\n"
+                           "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
+                           "socket.server: false\n" );
+    }
+    
+    // Ensure, the destructor is called and calls the correct close() implementation
+    BOOST_CHECK_EQUAL( senf::test::SomeProtocol::closeCount(), 1u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

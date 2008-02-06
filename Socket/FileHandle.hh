@@ -123,6 +123,7 @@ namespace senf {
         ///@{
 
         FileHandle();
+        ~FileHandle();
 
         // my default constructor
         // default copy constructor

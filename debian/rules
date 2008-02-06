@@ -76,7 +76,7 @@ build-indep-stamp: configure-stamp
 	scons all_docs
 	scons linklint
 	scons fixlinks
-	scons $(destdir)/usr/include $(destdir)/usr/share/doc $(SCONS_OPTIONS) \
+	scons $(destdir)/usr/include $(destdir)/usr/share/doc \
 		PREFIX='$(destdir)/usr' \
 		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc/html' \
 		INCLUDEINSTALLDIR='$$PREFIX/include/senf' 

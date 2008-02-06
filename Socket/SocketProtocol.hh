@@ -174,7 +174,8 @@ namespace senf {
         virtual void close() const;     ///< Close socket
                                         /**< This override will automatically \c shutdown() the
                                              socket whenever it is closed.
-                                             \throws senf::SystemException */
+                                             \throws senf::SystemException 
+                                             \fixme Move into (at least) BSDSOcketProtocol */
         
         virtual void terminate() const; ///< Forcibly close socket
                                         /**< This override will automatically \c shutdown() the
@@ -182,7 +183,8 @@ namespace senf {
                                              disable SO_LINGER to ensure, that v_terminate will not
                                              block. Like the overriden method, this member will ignore
                                              failures and will never throw. It is therefore safe to be
-                                             called from a destructor. */
+                                             called from a destructor. 
+                                             \fixme Move into (at least) BSDSocketProtocol */
 
         virtual void state(SocketStateMap & map, unsigned lod) const;
                                         ///< Return socket state information

@@ -27,6 +27,7 @@
 #include "SocketProtocol.hh"
 #include "SocketPolicy.test.hh"
 #include "ProtocolClientSocketHandle.hh"
+#include "../Utils/Logger/SenfLog.hh"
 
 //#include "SocketProtocol.test.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -40,13 +41,24 @@ namespace test {
     public:
         ~SomeProtocol() {}
 
-        void init_client() const {}
-        void init_server() const {}
+        void init_client() const { fd(0); }
+        void init_server() const { fd(0); }
 
         unsigned available() const
             { return Policy::ReadPolicy::TEST_SIZE; }
         bool eof() const
             { return false; }
+
+        virtual void close() const {
+            SENF_LOG(( "Closing socket ..." ));
+            closeCount(1);
+        }
+
+        static unsigned closeCount(unsigned inc=0) {
+            static unsigned counter (0);
+            counter += inc;
+            return counter;
+        }
     };
 
 }}
