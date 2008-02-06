@@ -101,7 +101,7 @@
     void foo::Froblizer::froblize()
     {
         SENF_LOG(("This is the UserLog at level NOTICE in the FroblizeArea"));
-        SENF_LOG((senf::log::WARNING) ("Same stream and area but at warning level"));
+        SENF_LOG((senf::log::IMPORTANT) ("Same stream and area but at important level"));
         SENF_LOG((LogEmerg) ("This goes to the DebugLog at level CRITICAL in the FroblizerArea"));
     }
 

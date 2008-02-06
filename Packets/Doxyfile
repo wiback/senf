@@ -6,4 +6,5 @@ INPUT = .
 EXAMPLE_PATH = . DefaultBundle
 
 TAGFILES = \
-	"$(TOPDIR)/Utils/doc/Utils.tag"
+	"$(TOPDIR)/Utils/doc/Utils.tag" \
+	"$(TOPDIR)/Socket/doc/Socket.tag" 
