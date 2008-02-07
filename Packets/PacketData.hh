@@ -97,18 +97,19 @@ namespace senf {
         ///\name Sequence interface to raw data
         ///@{
 
-        iterator begin() const; /**< Returns an <em>random access iterator</em> referring
-                                     to the first byte of the packet data. */
-        iterator end() const; /**< Returns an <em>random access iterator</em> referring to the 
-                                   element past the end of the packet data. */
+        iterator begin() const; ///< Return iterator to beginning
+                                /**< Returns an <em>random access iterator</em> referring to the
+                                     first byte of the packet data. */
+        iterator end() const; ///< Return iterator to end 
+                              /**< Returns an <em>random access iterator</em> referring to the 
+                                   byte past the end of the packet data. */
         size_type size() const; ///< Returns the number of bytes in the packet data.
         bool empty() const; ///< Test whether the packet data is empty.
-                                        /**< Returns whether the packet data is empty, i.e. 
-                                             whether its size is 0. This function does not modify
-                                             the content of the packet data in any way. To clear
-                                             the content use clear() */        
-        byte operator[](size_type n) const;
-        byte & operator[](size_type n);
+                            /**< Returns whether the packet data is empty, i.e. whether its size
+                                 is 0. This function does not modify the content of the packet 
+                                 data in any way. To clear the content use clear() */        
+        byte operator[](size_type n) const; ///< Access byte in the packet data
+        byte & operator[](size_type n); ///< Access byte in the packet data
 
         // Modifying the raw packet data
 
@@ -128,8 +129,7 @@ namespace senf {
 
         void erase(iterator pos);
         void erase(iterator first, iterator last);
-        void clear(); /**< All bytes of the packet data dropped, 
-                           leaving the container with a size of 0. */
+        void clear(); ///< All bytes of the packet data dropped, leaving the container with a size of 0. */
         
         void resize(size_type n, byte v=0);
 

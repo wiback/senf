@@ -41,7 +41,7 @@ namespace senf {
 
     /** \defgroup packet_module Packet Handling
 
-        The basic groundwork of the Packet library is the packet handling:
+        The basic groundwork of the %Packet library is the packet handling:
 
         \li The packet classes provide access to a chain of packet headers (more generically called
             interpreters).
@@ -98,16 +98,16 @@ namespace senf {
     ///\addtogroup packet_module
     ///@{
     
-    /** \brief Main Packet class
+    /** \brief Main %Packet class
 
-        Packet is the main externally visible class of the packet library. Packet is a handle into
-        the internal packet representation. From Packet you may access the data of that specific
+        %Packet is the main externally visible class of the packet library. %Packet is a handle into
+        the internal packet representation. From %Packet you may access the data of that specific
         sub-packet/header/interpreter and navigate to the neighboring
         sub-packets/headers/interpreters.
 
-        Packet is protocol agnostic. This class only provides non-protocol dependent members. To
+        %Packet is protocol agnostic. This class only provides non-protocol dependent members. To
         access the protocol specific features of a packet (like header fields) the ConcretePacket
-        class extending Packet is provided.
+        class extending %Packet is provided.
 
         \section packet_semantics Semantics
         
@@ -133,7 +133,7 @@ namespace senf {
         \ref ConcretePacket < \ref EthernetPacketType >).
 
         \see 
-            \ref ConcretePacket for the type specific interface\n
+            \ref ConcretePacket for the %type specific interface\n
             \ref PacketData for the sequence interface\n
             \ref packetparser for a specification of the parser interface
       */

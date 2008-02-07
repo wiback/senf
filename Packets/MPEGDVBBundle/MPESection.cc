@@ -92,7 +92,7 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MPESectionType::nextPacketT
         if (p->ip_datagram_version().value() == 4)
             return IPv4Packet::factory();
         if (p->ip_datagram_version().value() == 6)
-            return IPv4Packet::factory();
+            return IPv6Packet::factory();
     }
     return no_factory();
 }
