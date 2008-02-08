@@ -38,12 +38,14 @@
 template <class Type>
 prefix_ bool senf::PacketInterpreterBase::is()
 {
+    { static void const * const _ ((void*)&Type::dump); (void) _; }
     return dynamic_cast< PacketInterpreter<Type>* >(this);
 }
 
 template <class Type>
 prefix_ typename senf::PacketInterpreter<Type>::ptr senf::PacketInterpreterBase::as()
 {
+    { static void const * const _ ((void*)&Type::dump); (void) _; }
     return typename PacketInterpreter<Type>::ptr(
         static_cast< PacketInterpreter<Type>* >(this));
 }

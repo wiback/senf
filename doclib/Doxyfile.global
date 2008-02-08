@@ -10,7 +10,7 @@ ALIASES                = "fixme=\xrefitem fixme \"Fix\" \"Fixmes\"" \
                          "idea=\xrefitem idea \"Idea\" \"Ideas\"" \
                          "implementation=\par \"Implementation note:\"" \
                          "doc=\xrefitem doc \"Documentation request\" \"Documentation Requests\"" \
-                         "autotoc=\htmlonly <div id="autotoc"></div> \endhtmlonly"
+                         "autotoc=\htmlonly <div id=\"autotoc\"></div> \endhtmlonly"
 REPEAT_BRIEF           = YES
 ALWAYS_DETAILED_SEC    = YES
 MULTILINE_CPP_IS_BRIEF = YES

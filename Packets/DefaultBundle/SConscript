@@ -19,4 +19,6 @@ SENFSCons.Lib(env,
     sources = sources[0],
     no_includes = 1)
                  
+SConscript(glob.glob("*/SConscript"))
+
 SENFSCons.Doxygen(env)

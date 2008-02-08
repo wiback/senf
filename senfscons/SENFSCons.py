@@ -302,6 +302,18 @@ def GlobalTargets(env):
 # \internal
 def LibPath(lib): return '${LOCALLIBDIR}/${LIBPREFIX}%s${LIBADDSUFFIX}${LIBSUFFIX}' % lib
 
+def Test(env, sources, LIBS = [], OBJECTS = []):
+    test = env.BoostUnitTests(
+        target = 'test',
+        objects = [],
+        test_sources = sources,
+        LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ],
+        OBJECTS = OBJECTS,
+        DEPENDS = [ env.File(LibPath(x)) for x in LIBS ])
+    env.Alias('all_tests', test)
+    env.Alias(env.File('test'), test)
+    
+
 ## \brief Build object files
 #
 # This target helper will build object files from the given
