@@ -284,6 +284,71 @@ BOOST_AUTO_UNIT_TEST(activeOutput)
     // connect() is tested indirectly via ppi::connect
 }
 
+namespace {
+
+    class TypedInputTest
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(TypedInputTest);
+
+    public:
+        ppi::connector::PassiveInput<senf::DataPacket> input;
+
+        TypedInputTest() {
+            noroute(input);
+            input.onRequest(&TypedInputTest::request);
+        }
+
+        void request() {
+            (void) input();
+            (void) input.read();
+        }
+    };
+
+    class TypedOutputTest
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(TypedOutputTest);
+
+    public:
+        ppi::connector::PassiveOutput<senf::DataPacket> output;
+
+        TypedOutputTest() {
+            noroute(output);
+            output.onRequest(&TypedOutputTest::request);
+        }
+
+        void request() {
+            senf::DataPacket pkg (senf::DataPacket::create());
+            output(pkg);
+            output.write(pkg);
+        }
+    };
+
+}
+
+BOOST_AUTO_UNIT_TEST(typedInput)
+{
+    debug::ActiveSource source;
+    TypedInputTest target;
+
+    ppi::connect(source,target);
+    ppi::init();
+
+    senf::Packet p (senf::DataPacket::create());
+    source.submit(p);
+}
+
+BOOST_AUTO_UNIT_TEST(tyepdOutput)
+{
+    TypedOutputTest source;
+    debug::ActiveSink target;
+
+    ppi::connect(source,target);
+    ppi::init();
+    
+    (void) target.request();
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

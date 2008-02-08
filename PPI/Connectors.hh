@@ -460,6 +460,8 @@ namespace connector {
         public:                                                                                   \
             using mixin::operator();                                                              \
             using mixin::TypedConnector_ ## dir ;                                                 \
+        private:                                                                                  \
+             friend class detail::Typed ## dir ## Mixin<type ## dir <PacketType>, PacketType>;    \
         };                                                                                        \
         template <>                                                                               \
         class type ## dir <Packet> : public Generic ## type ## dir                                \
@@ -485,7 +487,7 @@ namespace connector {
         \see GenericActiveInput \n
             senf::ppi::connector
      */
-    template <class PacketType>
+    template <class PacketType=Packet>
     class ActiveInput : public GenericActiveInput
     {
     public:
@@ -526,12 +528,12 @@ namespace connector {
         \see GenericActiveOutput \n
             senf::ppi::connector
      */
-    template <class PacketType>
+    template <class PacketType=Packet>
     class ActiveOutput : public GenericActiveOutput
     {
     public:
-        PacketType operator()();
-        PacketType write();
+        operator()(PacketType packet);  ///< Send out a packet
+        write(PacketType packet);       ///< Alias for operator()
     };
 
     /** \brief Connector passively providing packets
@@ -543,12 +545,12 @@ namespace connector {
         \see GenericPassiveOutput \n
             senf::ppi::connector
      */
-    template <class PacketType>
+    template <class PacketType=Packet>
     class PassiveOutput : public GenericPassiveOutput
     {
     public:
-        PacketType operator()();
-        PacketType write();
+        operator()(PacketType packet);  ///< Send out a packet
+        write(PacketType packet);       ///< Alias for operator()
     };
 
 #endif

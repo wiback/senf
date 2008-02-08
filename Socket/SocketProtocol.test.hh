@@ -27,7 +27,6 @@
 #include "SocketProtocol.hh"
 #include "SocketPolicy.test.hh"
 #include "ProtocolClientSocketHandle.hh"
-#include "../Utils/Logger/SenfLog.hh"
 
 //#include "SocketProtocol.test.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -50,7 +49,6 @@ namespace test {
             { return false; }
 
         virtual void close() const {
-            SENF_LOG(( "Closing socket ..." ));
             closeCount(1);
         }
 

@@ -37,14 +37,15 @@ template <class Self, class PacketType>
 prefix_ typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type
 senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::operator()()
 {
-    return static_cast<Self*>(this)->InputConnector::operator()().template as<Type>();
+    return read();
 }
 
 template <class Self, class PacketType>
 prefix_ typename senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::Type
 senf::ppi::connector::detail::TypedInputMixin<Self,PacketType>::read()
 {
-    return static_cast<Self*>(this)->InputConnector::read().template as<Type>();
+    Packet p (static_cast<Self*>(this)->InputConnector::read());
+    return p ? p.as<Type>() : Type();
 }
 
 ///////////////////////////////////////////////////////////////////////////

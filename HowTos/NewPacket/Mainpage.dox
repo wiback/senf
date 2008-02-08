@@ -76,7 +76,7 @@
     \code
     #include <senf/Packets.hh>
 
-    struct GREPacketParser : public senf::PacketParser
+    struct GREPacketParser : public senf::PacketParserBase
     {
     #   include SENF_PARSER()
 
@@ -86,10 +86,10 @@
     };
     \endcode
 
-    This is the standard skeleton of any parser class: We need to inherit senf::PacketParser and
+    This is the standard skeleton of any parser class: We need to inherit senf::PacketParserBase and
     start out by including either \ref SENF_PARSER() or \ref SENF_FIXED_PARSER(). Which, depends on
-    whether we define a fixed size or a dynamically sized parser. As \c GREPacketParser is dynamically
-    sized, we include \ref SENF_PARSER().
+    whether we define a fixed size or a dynamically sized parser. As \c GREPacketParser is
+    dynamically sized, we include \ref SENF_PARSER().
 
     After the fields are defined, we need to call the \ref SENF_PARSER_FINALIZE() macro to close of
     the parser definition. This call takes the name of the parser being defined as it's sole
@@ -152,7 +152,7 @@
     as an optional parser to the GRE header.
     
     \code
-    struct GREPacketParser_OptFields : public senf::PacketParser
+    struct GREPacketParser_OptFields : public senf::PacketParserBase
     {
     #   include SENF_FIXED_PARSER()
 
@@ -313,7 +313,7 @@
     \code
     #include <senf/Packets.hh>
     
-    struct GREPacketParser_OptFields : public senf::PacketParser
+    struct GREPacketParser_OptFields : public senf::PacketParserBase
     {
     #   include SENF_FIXED_PARSER()
 
@@ -323,7 +323,7 @@
         SENF_PARSER_FINALIZE(GREPacketParser_OptFields);
     };
 
-    struct GREPacketParser : public senf::PacketParser
+    struct GREPacketParser : public senf::PacketParserBase
     {
     #   include SENF_PARSER()
 
@@ -720,7 +720,7 @@
 
     #include <senf/Packets.hh>
     
-    struct GREPacketParser_OptFields : public senf::PacketParser
+    struct GREPacketParser_OptFields : public senf::PacketParserBase
     {
     #   include SENF_FIXED_PARSER()
 
@@ -730,7 +730,7 @@
         SENF_PARSER_FINALIZE(GREPacketParser_OptFields);
     };
 
-    struct GREPacketParser : public senf::PacketParser
+    struct GREPacketParser : public senf::PacketParserBase
     {
     #   include SENF_PARSER()
 
