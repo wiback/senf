@@ -34,9 +34,9 @@
 
 namespace senf {
 
-    /** \brief Daemon process
+    /** \brief %Daemon process
 
-        senf::Daemon provides simple management for daemon processes. Specifically, the Daemon class
+        %senf::Daemon provides simple management for daemon processes. Specifically, the %Daemon class
         implements
         \li <i>Safe startup.</i> If the startup fails, the foreground process which launches the
             daemon will terminate with an appropriate error exit code.

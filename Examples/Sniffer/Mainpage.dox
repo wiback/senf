@@ -43,15 +43,12 @@
     code starts out by including the necessary headers
 
     \skip // Custom includes
-    \until membind
+    \until #include <senf/Scheduler/Scheduler.hh>
 
-    (The additional includes found in the source but not shown here are part of a short-time fix
-    which will be removed as soon as possible). The example application now contains a helper
-    routine to produce a packet hexdump. We will skip this routine here. The example includes two
-    implementations, one using blocking calls and a while loop, the other using the senf::Scheduler
-    for asynchronous event notification. They are implemented in \c loop_main() and \c
-    scheduler_main(). They will be documented below. For now, we skip these implementations and go
-    straight to the \c main() function
+    The example includes two implementations, one using blocking calls and a while loop, the other
+    using the senf::Scheduler for asynchronous event notification. They are implemented in 
+    \c loop_main() and \c scheduler_main(). They will be documented below. For now, we skip these 
+    implementations and go straight to the \c main() function
 
     \skip int main(
     \until return 1;
@@ -75,21 +72,23 @@
     the application, it might be better to let the exception \c abort the execution so you can get a
     backtrace of the exception origin in the debugger.
 
-    We now create a packet socket and bind it to the \c eth0 interface. A packet socket is a linux
-    specific type of socket which returns ethernet packets directly from the network wire. By
-    uncommenting the last line, you may switch the interface into promiscuous mode.
+    We now create a packet socket and bind it to the interface given as second command line argument.
+    A packet socket is a linux specific type of socket which returns ethernet packets directly from 
+    the network wire. By uncommenting the last line, you may switch the interface into promiscuous mode.
 
     \until //
 
     We will now read packets from the socket forever, that is until the user hits Ctrl-C
 
     \skip while
-    \until read
+    \until while
 
     The next step is, to parse the data read from the socket as an Ethernet packet
 
-    \until ;
+    \until sock.read
 
+    \doc the following section is obsolete!
+    
     Lets digest this line step by step: We declare a variable named \c packet as a smart pointer to
     an \c EthernetPacket instance. \c ptr is a typedef member of all Packet classes for the
     corresponding smart pointer type. We then initialize this pointer with a call to the static \c

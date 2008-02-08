@@ -30,10 +30,10 @@
 #include <iostream>
 #include <iomanip>
 #include <senf/Socket/Protocols/Raw.hh>
-#include <senf/Scheduler/Scheduler.hh>
 #include <senf/Utils/membind.hh>
 #include <senf/Utils/hexdump.hh>
 #include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include <senf/Scheduler/Scheduler.hh>
 
 //#include "Sniffer.mpp"
 #define prefix_
