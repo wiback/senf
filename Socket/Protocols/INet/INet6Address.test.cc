@@ -40,6 +40,8 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 {
     using senf::INet6Address;
     using senf::INet4Address;
+    using senf::AddressSyntaxException;
+    using senf::UnknownHostnameException;
 
     {
         INet6Address addr1 (INet6Address::from_string("0102:0304:0506:0708:090A:0B0C:0D0E:0F00"));
@@ -69,7 +71,7 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         addr1 = INet6Address::None;
         addr2 = INet6Address::from_string("::");
         BOOST_CHECK_EQUAL( addr1, addr2 );
-        BOOST_CHECK_THROW( INet6Address::from_string(""), INet6Address::SyntaxException );
+        BOOST_CHECK_THROW( INet6Address::from_string(""), AddressSyntaxException );
         BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr1), "::" );
         unsigned char data[] = { 0x12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x21, 0 };
         INet6Address addr3 (INet6Address::from_data(data));
@@ -77,7 +79,7 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK_EQUAL( INet6Address::from_inet4address(INet4Address(0x01020304)),
                            INet6Address::from_string("::ffff:1.2.3.4") );
 
-        BOOST_CHECK_THROW( INet6Address::from_string("1.2.3.4"), INet6Address::UnknownHostnameException );
+        BOOST_CHECK_THROW( INet6Address::from_string("1.2.3.4"), UnknownHostnameException );
         BOOST_CHECK_EQUAL( INet6Address::from_string("1.2.3.4", INet6Address::ResolveINet4),
                            INet6Address::from_string("::ffff:1.2.3.4") );
     }

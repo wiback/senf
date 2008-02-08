@@ -41,26 +41,26 @@ namespace {
     boost::uint8_t hexToNibble(char c)
     {
         if (c<'0')
-            throw senf::MACAddress::SyntaxException();
+            throw senf::AddressSyntaxException();
         else if (c<='9')
             return c-'0';
         else if (c<'A')
-            throw senf::MACAddress::SyntaxException();
+            throw senf::AddressSyntaxException();
         else if (c<='F')
             return c-'A'+10;
         else if (c<'a')
-            throw senf::MACAddress::SyntaxException();
+            throw senf::AddressSyntaxException();
         else if (c<='f')
             return c-'a'+10;
         else
-            throw senf::MACAddress::SyntaxException();
+            throw senf::AddressSyntaxException();
     }
     
     template <class Range>
     boost::uint8_t hexToByte(Range const & range)
     {
         if (boost::size(range) != 2)
-            throw senf::MACAddress::SyntaxException();
+            throw senf::AddressSyntaxException();
         typename boost::range_const_iterator<Range>::type i (boost::begin(range));
         return hexToNibble(i[0])*16+hexToNibble(i[1]);
     }
@@ -84,14 +84,14 @@ prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_string(std::string c
     for (; i!=i_end && j!=j_end; ++i, ++j)
         *j = hexToByte(*i);
     if (i!=i_end || j!=j_end)
-        throw SyntaxException();
+        throw AddressSyntaxException();
     return mac;
 }
 
 prefix_ senf::MACAddress senf::MACAddress::from_eui64(boost::uint64_t v)
 {
     if ( boost::uint16_t(v>>24)  != 0xfffe )
-        throw SyntaxException();
+        throw AddressSyntaxException();
     MACAddress mac (senf::noinit);
     mac[0] = boost::uint8_t( v>>56 );
     mac[1] = boost::uint8_t( v>>48 );

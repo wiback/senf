@@ -49,7 +49,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
         return senf::INet6Address::from_data(&ina.s6_addr[0]);
 
     if (s.empty())
-        throw SyntaxException();
+        throw AddressSyntaxException();
 
     int herr (0);
 
@@ -80,13 +80,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
             &reinterpret_cast<in6_addr*>(*(ent->h_addr_list))->s6_addr[0]);
 
     if (resolve == ResolveINet4)
-        try {
-            return from_inet4address(INet4Address::from_string(s));
-        } catch (INet4Address::SyntaxException const & ex) {
-            throw SyntaxException();
-        } catch (INet4Address::UnknownHostnameException const & ex) {
-            throw UnknownHostnameException();
-        }
+        return from_inet4address(INet4Address::from_string(s));
     else
         throw UnknownHostnameException();
 }
@@ -116,11 +110,11 @@ prefix_ senf::INet6Network::INet6Network(std::string s)
     using boost::lambda::_2;
     std::string::size_type i (s.find('/'));
     if (i == std::string::npos)
-        throw INet6Address::SyntaxException();
+        throw AddressSyntaxException();
     try {
         prefix_len_ = boost::lexical_cast<unsigned>(std::string(s,i+1));
     } catch (boost::bad_lexical_cast const &) {
-        throw INet6Address::SyntaxException();
+        throw AddressSyntaxException();
     }
     address_ = INet6Address::from_string(std::string(s, 0, i));
     detail::apply_mask(prefix_len_, address_.begin(), address_.end(), _1 &= _2);

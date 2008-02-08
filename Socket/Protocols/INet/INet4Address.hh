@@ -34,6 +34,7 @@
 #include <boost/operators.hpp>
 #include "../../../Utils/safe_bool.hh"
 #include "../../../Utils/Tags.hh"
+#include "../AddressExceptions.hh"
 
 //#include "INet4Address.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -87,7 +88,7 @@ namespace senf {
                                              \attention This call may block if \a s represents a
                                                  hostname which must be looked up via some network
                                                  protocol like DNS or NIS
-                                             \throws SyntaxException if the address cannot be
+                                             \throws AddressSyntaxException if the address cannot be
                                                  converted for some reason
                                              \param[in] s Address literal or hostname */
         
@@ -131,19 +132,6 @@ namespace senf {
 
         ////@}
 
-        /** \brief Base-class for INet4Address exceptions */
-        struct AddressException : public std::exception {};
-
-        /** \brief Invalid INet4 address syntax */
-        struct SyntaxException : public AddressException
-        { virtual char const * what() const throw() 
-                { return "invalid INet4 address syntax"; } };
-
-        /** \brief Resolver failure */
-        struct UnknownHostnameException : public AddressException
-        { virtual char const * what() const throw() 
-                { return "failed to resolve INet4 hostname"; } };
-        
     private:
         enum InAddr_t { IsInAddr };
         INet4Address(inaddr_type addr, InAddr_t);

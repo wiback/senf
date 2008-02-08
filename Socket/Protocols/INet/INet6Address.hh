@@ -35,6 +35,7 @@
 #include "../../../Utils/safe_bool.hh"
 #include "../../../Utils/Tags.hh"
 #include "INet4Address.hh"
+#include "../AddressExceptions.hh"
 
 //#include "INet6Address.mpp"
 #include "INet6Address.ih"
@@ -148,7 +149,7 @@ namespace senf {
                                              \attention This call may block if \a s represents a
                                                  hostname which must be looked up via some network
                                                  protocol like DNS or NIS
-                                             \throws SyntaxException if the address cannot be
+                                             \throws AddressSyntaxException if the address cannot be
                                                  converted for some reason
                                              \param[in] s Address literal or hostname 
                                              \param[in] resolve If this is set to \c ResolveINet4,
@@ -236,18 +237,6 @@ namespace senf {
 
         ///@}
 
-        /** \brief Base-class for INet6Address exceptions */
-        struct AddressException : public std::exception {};
-
-        /** \brief Invalid INet4 address syntax */
-        struct SyntaxException : public AddressException
-        { virtual char const * what() const throw() 
-                { return "invalid INet6 address syntax"; } };
-
-        /** \brief Resolver failure */
-        struct UnknownHostnameException : public AddressException
-        { virtual char const * what() const throw() 
-                { return "failed to resolve INet6 hostname"; } };
     };
 
     /** \brief Output INet6Address instance as it's string representation

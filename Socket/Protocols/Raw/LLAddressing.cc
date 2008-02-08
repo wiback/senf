@@ -35,6 +35,7 @@
 #include <boost/algorithm/string/finder.hpp>
 
 #include "../../../Utils/Exception.hh"
+#include "../AddressExceptions.hh"
 
 //#include "LLAddressing.mpp"
 #define prefix_
@@ -47,7 +48,7 @@ prefix_ std::string senf::LLSocketAddress::interface()
         return std::string();
     char name[IFNAMSIZ];
     if (! ::if_indextoname(addr_.sll_ifindex, name))
-        throw InvalidLLSocketAddressException();
+        throw AddressSyntaxException();
     return std::string(name);
 }
 
@@ -58,7 +59,7 @@ prefix_ void senf::LLSocketAddress::interface(std::string const & iface)
     else {
         addr_.sll_ifindex = if_nametoindex(iface.c_str());
         if (addr_.sll_ifindex == 0)
-            throw InvalidLLSocketAddressException();
+            throw AddressSyntaxException();
     }
 }
 

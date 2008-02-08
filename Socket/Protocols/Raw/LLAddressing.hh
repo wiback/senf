@@ -126,12 +126,6 @@ namespace senf {
         struct ::sockaddr_ll addr_;
     };
 
-    /** \brief Signal invalid link local address syntax
-        \related LLSocketAddress
-     */
-    struct InvalidLLSocketAddressException : public std::exception
-    { char const * what() const throw() { return "invalid ll address"; } };
-
     /// @}
 
     /// \addtogroup policy_impl_group

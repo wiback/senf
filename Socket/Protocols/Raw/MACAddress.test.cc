@@ -74,14 +74,14 @@ BOOST_AUTO_UNIT_TEST(macAddress)
     BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(mac2), "a1:b2:c3:d4:e5:f6" );
 
     BOOST_CHECK_THROW( senf::MACAddress::from_string("1:2:3:4:5:6"), 
-                       senf::MACAddress::SyntaxException );
+                       senf::AddressSyntaxException );
     BOOST_CHECK_THROW( senf::MACAddress::from_string("01:02:03:04:05"), 
-                       senf::MACAddress::SyntaxException );
+                       senf::AddressSyntaxException );
     BOOST_CHECK_THROW( senf::MACAddress::from_string("01:02:03:04:05:z6"), 
-                       senf::MACAddress::SyntaxException );
+                       senf::AddressSyntaxException );
 
     BOOST_CHECK_EQUAL( mac, senf::MACAddress::from_eui64(0xa1b2c3fffed4e5f6llu) );
-    BOOST_CHECK_THROW( senf::MACAddress::from_eui64(0u), senf::MACAddress::SyntaxException );
+    BOOST_CHECK_THROW( senf::MACAddress::from_eui64(0u), senf::AddressSyntaxException );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

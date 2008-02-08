@@ -34,6 +34,7 @@
 #include <boost/type_traits.hpp>
 #include "../../../Utils/safe_bool.hh"
 #include "../../../Utils/Tags.hh"
+#include "../AddressExceptions.hh"
 
 //#include "MACAddress.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -83,8 +84,8 @@ namespace senf {
                                              to a MAC address. This conversion is only possible, if
                                              the EUI-64 is MAC compatible: the 4th/5th byte (in
                                              transmission order) must be 0xFFFE.
-                                             \throws SyntaxException if \a v is not a MAC compatible
-                                                 EUI-64. */
+                                             \throws AddressSyntaxException if \a v is not a MAC
+                                                 compatible EUI-64. */
 
         bool local() const;             ///< \c true, if address is locally administered
         bool multicast() const;             ///< \c true, if address is a group/multicast address
@@ -96,9 +97,6 @@ namespace senf {
         
         boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
 
-        /** \brief Bad MAC address syntax or conversion */
-        struct SyntaxException : public std::exception
-        { virtual char const * what() const throw() { return "invalid MAC address syntax"; } };
     };
 
     /** \brief Write MAC address

@@ -67,9 +67,9 @@ namespace senf {
                                              initialize the host and port members. Since it uses the
                                              INet4Address::from_string constructor, this call may
                                              block while waiting for the resolver.
-                                             \throws SyntaxException if the address syntax is
+                                             \throws AddressSyntaxException if the address syntax is
                                                  invalid
-                                             \throws INet4Address::UnknownHostnameException if the
+                                             \throws UnknownHostnameException if the
                                                  address cannot be resolved. */
 
         INet4SocketAddress(INet4Address const & addr, unsigned port); 
@@ -98,10 +98,6 @@ namespace senf {
         unsigned sockaddr_len() const;
 
         /// @}
-
-        struct SyntaxException : public std::exception
-        { virtual char const * what() const throw() 
-                { return "Invalid IPv4 socket address syntax"; } };
 
     private:
         struct ::sockaddr_in addr_;
@@ -158,9 +154,9 @@ namespace senf {
         explicit INet6SocketAddress(std::string const & addr, 
                                     INet6Address::Resolve_t resolve = INet6Address::ResolveINet6);
                                         ///< Initialize/convert from string representation
-                                        /**< \throws SyntaxException if the address syntax is
+                                        /**< \throws AddressSyntaxException if the address syntax is
                                                  invalid
-                                             \throws INet6Address::UnknownHostnameException if the
+                                             \throws UnknownHostnameException if the
                                                  address cannot be resolved.
                                              \param[in] addr Address to parse
                                              \param[in] resolve If this is
@@ -197,10 +193,6 @@ namespace senf {
         unsigned sockaddr_len() const;
 
         ///@}
-
-        struct SyntaxException : public std::exception
-        { virtual char const * what() const throw() 
-                { return "Invalid IPv6 socket address syntax"; } };
 
     protected:
 
