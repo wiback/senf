@@ -167,11 +167,23 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        /** \brief Types of file descriptor events */
-        enum EventId { EV_NONE=0,
-                       EV_READ=1, EV_PRIO=2, EV_WRITE=4, 
-                       EV_ALL=7,
-                       EV_HUP=8, EV_ERR=16 };
+        /** \brief Types of file descriptor events 
+
+            These events are grouped into to classes:
+            \li Ordinary file descriptor events for which handlers may be registered. These are
+                EV_READ, EV_PRIO and EV_WRITE. EV_ALL is a combination of these three.
+            \li Error flags. These additional flags may be passed to a handler to pass an error
+                condition to the handler. 
+         */
+        enum EventId { 
+            EV_NONE  =  0   /**< No event */
+          , EV_READ  =  1   /**< File descriptor is readable */
+          , EV_PRIO  =  2   /**< File descriptor has OOB data */
+          , EV_WRITE =  4   /**< File descriptor is writable */
+          , EV_ALL   =  7   /**< Used to register all events at once (read/prio/write) */
+          , EV_HUP   =  8   /**< Hangup condition on file handle */
+          , EV_ERR   = 16   /**< Error condition on file handle */
+        };
 
         /** \brief Template typedef for Callback type
 

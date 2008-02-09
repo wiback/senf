@@ -60,7 +60,10 @@ PREDEFINED             = \
     "SENF_PARSER_LIST_N(name,elt_type,size_type)=senf::Parse_ListN<elt_type,size_type>::parser name() const" \
     "SENF_PARSER_VARIANT(name,chooser,types)=senf::Parse_Variant_Direct<chooser ## _t,?,types>::parser name() const" \
     "SENF_PARSER_PRIVATE_VARIANT(name,chooser,types)=private: senf::Parse_Variant_Direct<chooser ## _t,?,types>::parser name() const; public:" \
-    "SENF_PARSER_VEC_N(name,elt_type,size_type)=senf::Parse_VectorN<elt_type,size_type> name() const"
+    "SENF_PARSER_VEC_N(name,elt_type,size_type)=senf::Parse_VectorN<elt_type,size_type> name() const" \
+    "SENF_LOG_CLASS_AREA()=" \
+    "SENF_LOG_DEFAULT_AREA(area)=" \
+    "SENF_LOG_DEFAULT_STREAM(stream)="
 EXPAND_AS_DEFINED      = prefix_ SENF_LOG_DEF_STREAM SENF_LOG_DEF_AREA SENF_LOG_DEF_AREA_I
 
 HTML_HEADER            = "$(TOPDIR)/doclib/doxy-header.html"
