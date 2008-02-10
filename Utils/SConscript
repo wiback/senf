@@ -7,6 +7,9 @@ import SENFSCons, glob
 
 SENFSCons.StandardTargets(env)
 
+# OUCH ... another hack to work around a scons bug ...
+Execute(Touch("Logger/all_includes.hh"))
+
 sources, testSources = SENFSCons.GlobSources()
 objects = SENFSCons.Objects( env, sources = sources, testSources=testSources )
 
