@@ -137,6 +137,7 @@ env.Append(
            'LOGNAME' : logname, # needed by the debian build scripts
            'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1",
            'SCONS' : 1,
+           'PATH' : os.environ.get('PATH')
          },
    LOCAL_CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
    CONFIG_FILES_OPTS = configFilesOpts,
@@ -215,7 +216,8 @@ env.Clean('all', [ os.path.join(path,f)
 PhonyTarget(env, 'deb', [
     checkLocalConf,
     updateRevision,
-    "$BUILDPACKAGE_COMMAND -tc",
+    "$BUILDPACKAGE_COMMAND",
+    "fakeroot ./debian/rules debclean"
 ])
 
 PhonyTarget(env, 'debsrc', [

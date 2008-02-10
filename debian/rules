@@ -19,14 +19,10 @@ export debian_build
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-#DPKG_ARCH#
-
 CFLAGS = -Wall -g
 
 CONCURRENCY_LEVEL ?= 1
 export CONCURRENCY_LEVEL
-
-LIBTYPE ?= UNSPEC
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0
@@ -39,7 +35,7 @@ destdir=$(CURDIR)/debian/tmp
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
-#	# Add here commands to configure the package.
+#	Add here commands to configure the package.
 	rm -f Doxyfile.local SConfig local_config.hh
 	scons prepare
 #       If needed, we could create new files 'Doxyfile.local',
