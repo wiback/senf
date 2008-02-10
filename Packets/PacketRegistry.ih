@@ -44,6 +44,7 @@ namespace detail {
         : public PkReg_Entry
     {
         virtual Packet::factory_t factory() const;
+        virtual std::string name() const;
     };
 
     /** \brief Internal: Singleton class implementing the packet registry.
@@ -55,12 +56,17 @@ namespace detail {
         : private boost::noncopyable
     {
     public:
+        typedef KeyType key_t;
+        typedef PkReg_Entry Entry;
+
+    private:
+        typedef boost::intrusive_ptr<Entry> Entry_ptr;
+        typedef std::map<key_t, Entry_ptr> PacketMap;
+        typedef std::map<senf::TypeIdValue, key_t> ReversePacketMap;
+
+    public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-
-        typedef KeyType key_t;
-
-        typedef PkReg_Entry Entry;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -87,10 +93,6 @@ namespace detail {
     protected:
 
     private:
-        typedef boost::intrusive_ptr<Entry> Entry_ptr;
-        typedef std::map<key_t, Entry_ptr> PacketMap;
-        typedef std::map<senf::TypeIdValue, key_t> ReversePacketMap;
-
         PacketMap registry_;
         ReversePacketMap reverseRegistry_;
     };

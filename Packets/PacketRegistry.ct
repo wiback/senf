@@ -28,6 +28,7 @@
 // Custom includes
 #include "../Utils/senfassert.hh"
 #include <iostream>
+#include "../Utils/TypeInfo.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -37,6 +38,13 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::detail::PkReg_EntryImpl<Pac
     const
 {
     return PacketType::factory();
+}
+
+template <class PacketType>
+prefix_ std::string senf::detail::PkReg_EntryImpl<PacketType>::name()
+    const
+{
+    return prettyName(typeid(PacketType));
 }
 
 template <class KeyType>

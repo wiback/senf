@@ -48,6 +48,7 @@ namespace senf {
         virtual ~PkReg_Entry();
         virtual Packet::factory_t factory() const = 0;
                                         ///< Get factory of the registered packet type
+        virtual std::string name() const = 0;
     };
 
     namespace detail { template <class Key> class PacketRegistryImpl; }
