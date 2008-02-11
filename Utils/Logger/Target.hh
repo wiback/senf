@@ -205,9 +205,9 @@ namespace log {
                                              See the class description for information on the \a
                                              action and \a index parameters 
 
-                                             \param[in] Stream mandatory stream to match
-                                             \param[in] Area optional area to match
-                                             \param[in] Level optional level, matches messages with
+                                             \tparam Stream mandatory stream to match
+                                             \tparam Area optional area to match
+                                             \tparam Level optional level, matches messages with
                                                  at least the given level. 
                                              \param[in] action routing action to take
                                              \param[in] index position of new route in the routing
@@ -254,9 +254,9 @@ namespace log {
                                              found, it will be removed, otherwise the call will be
                                              ignored
 
-                                             \param[in] Stream mandatory stream to match
-                                             \param[in] Area optional area to match
-                                             \param[in] Level optional level, matches messages with
+                                             \tparam Stream mandatory stream to match
+                                             \tparam Area optional area to match
+                                             \tparam Level optional level, matches messages with
                                                  at least the given level. 
                                              \param[in] action routing action to take */
 
@@ -373,9 +373,9 @@ namespace log {
                              std::string const & message) = 0;
                                         ///< Called to write out the routing message
                                         /**< This member must be defined in the derived class to
-                                             somehow format and write the log message. 
+                                             somehow format and write the %log message. 
 
-                                             Every log message always possesses a complete set of
+                                             Every %log message always possesses a complete set of
                                              meta information (\a stream, \a area and \a level).
 
                                              \note This member must \e not block since it may be

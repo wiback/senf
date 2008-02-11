@@ -44,19 +44,21 @@ namespace senf {
 
     /** \brief basic SocketHandle supporting protocol and policy abstraction
 
-        The senf::SocketHandle class introduces the two abstraction layers of the socket
+        The %senf::SocketHandle class introduces the two abstraction layers of the socket
         library. senf::SocketHandle does \e not provide socket functions it only provides the
         infrastructure necessary to support both, the protocol and the policy interface.
 
-        senf::SocketHandle takes the socket policy as a template argument. senf::SocketHandle also
+        %SocketHandle takes the socket policy as a template argument. %SocketHandle also
         introduces the protocol class. However, the class has no public constructors (see the
         derived classes senf::ProtocolClientSocketHandle and senf::ProtocolServerSocketHandle).
 
-        The most important functionality provided by senf::SocketHandle is the conversion
+        The most important functionality provided by %SocketHandle is the conversion
         constructor. This allows to implicitly convert between compatible socket handle types as
         specified by the socket policy. The conversion constructor is defined in such a way, that
         only valid conversions are possible (see the implementation source for a more complete
         discussion).
+
+        \tparam SPolicy socket policy
 
         \note This class is \e not meant to be used as a base-class outside the library
         implementation; The protected interface is for internal use only.
