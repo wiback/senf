@@ -2,9 +2,12 @@
 #
 # Dump the complete subversion repository from berlios into the dumps/ folder
 
+PATH=${HOME}/bin:${PATH}
+LOGDIR=${HOME}/log
+
 target=`date +'%Y%m%d.dump.gz'`
-dumpdir=/home/senf/dumps
-log=/home/senf/dump.log
+dumpdir=${HOME}/dumps
+log=${LOGDIR}/dump.log
 keep=4
 
 ###########################################################################

@@ -1,13 +1,16 @@
 #!/bin/sh -e
 
+PATH=${HOME}/bin:${PATH}
+LOGDIR=${HOME}/log
+
 cd /home/senf/src
 
-rm -f build.log ../upload.log
-touch build.log ../upload.log
+rm -f ${LOGDIR}/build.log ${LOGDIR}/upload.log
+touch ${LOGDIR}/build.log ${LOGDIR}/upload.log
 
-trap 'exec >/dev/null 2>&1; cat build.log ../upload.log 1>&3; exit 1' ERR
+trap 'exec >/dev/null 2>&1; cat ${LOGDIR}/build.log ${LOGDIR}/upload.log 1>&3; exit 1' ERR
 
-exec 3>&1 >build.log 2>&1
+exec 3>&1 > ${LOGDIR}/build.log 2>&1
 
 echo -n '# Starting build at '; date --utc
 
@@ -17,12 +20,12 @@ if [ "$1" == "-c" ]; then
 fi
 
 echo '$ svn update'
-svn update | tee ../svn-update.log
-if grep -qv '^At ' ../svn-update.log; then
+svn update | tee ${LOGDIR}/svn-update.log
+if grep -qv '^At ' ${LOGDIR}/svn-update.log; then
     echo '$ rm -f doc/html/html.stamp'
     rm -f doc/html/html.stamp
 fi
-rm -f ../svn-update.log
+rm -f ${LOGDIR}/svn-update.log
 
 echo "\$ nice ${SCONS:-scons} -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
 nice ${SCONS:-scons} -kj2 all ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
@@ -34,10 +37,10 @@ echo "\$ nice ${SCONS:-scons} fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}"
 nice ${SCONS:-scons} fixlinks ${DOXYGEN:+DOXYGEN="$DOXYGEN"}
 echo -n '# Build completed at '; date --utc
 
-exec >../upload.log 2>&1
+exec > ${LOGDIR}/upload.log 2>&1
 
 if [ "$1" == "-c" ]; then
-    cp build.log build-full.log
+    cp ${LOGDIR}/build.log ${LOGDIR}/build-full.log
 fi
 
 echo -n '# Upload started at '; date --utc
@@ -57,4 +60,4 @@ rsync -rzv --del --delete-excluded \
 echo -n '# Upload completed at '; date --utc
 
 exec >/dev/null 2>&1
-scp ../upload.log g0dil@shell.berlios.de:/home/groups/senf/htdocs/upload.log
+scp ${LOGDIR}/upload.log g0dil@shell.berlios.de:/home/groups/senf/htdocs/upload.log
