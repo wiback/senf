@@ -110,6 +110,9 @@ int scheduler_main(int argc, char const * argv[])
 
 int main(int argc, char const * argv[])
 {
+    std::cout << "Registered packets:\n\n";
+    senf::dumpPacketRegistries(std::cout);
+
     if (argc >= 3)
         if (std::string(argv[1]) == "loop")
             return loop_main(argc,argv);

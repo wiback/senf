@@ -33,25 +33,11 @@
 #include "../Utils/Exception.hh"
 #include "Packet.hh"
 
+#include "PacketRegistry.ih"
 //#include "PacketRegistry.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
-    /** \brief Registry entry
-
-        Value returned by a registry lookup
-     */
-    struct PkReg_Entry 
-        : public intrusive_refcount
-    {
-        virtual ~PkReg_Entry();
-        virtual Packet::factory_t factory() const = 0;
-                                        ///< Get factory of the registered packet type
-        virtual std::string name() const = 0;
-    };
-
-    namespace detail { template <class Key> class PacketRegistryImpl; }
 
     /** \brief Packet registration facility
 
@@ -98,6 +84,8 @@ namespace senf {
     class PacketRegistry
     {
     public:
+        typedef typename detail::PacketRegistryImpl<typename Tag::key_t>::iterator iterator;
+
         /** \brief Statically register a packet type in a PacketRegistry
 
             To use this class, define a global symbol in the following way:
@@ -189,6 +177,14 @@ packet of which the key is requested
          */
         static PkReg_Entry const * lookup(typename Tag::key_t key, NoThrow_t);
 
+        /** \brief Beginning iterator to list of registered keys
+         */
+        static iterator begin();
+
+        /** \brief End iterator to list of registered keys
+         */
+        static iterator end();
+
     private:
         typedef detail::PacketRegistryImpl<typename Tag::key_t> Registry;
         static Registry & registry();
@@ -201,11 +197,18 @@ packet of which the key is requested
 
         \hideinitializer
      */
-#   define SENF_PACKET_REGISTRY_REGISTER( registry, value, type )                                       \
-        namespace {                                                                                     \
-            senf::PacketRegistry< registry >::RegistrationProxy< type >                                 \
-                packetRegistration_ ## __LINE__ ( value );                                              \
+#   define SENF_PACKET_REGISTRY_REGISTER( registry, value, type )                                 \
+        namespace {                                                                               \
+            senf::PacketRegistry< registry >::RegistrationProxy< type >                           \
+                packetRegistration_ ## __LINE__ ( value );                                        \
         }
+
+    /** \brief Dump all packet registries
+
+        This command will dump all packet registries to the given stream. This is to help debugging
+        registration problems.
+     */
+    void dumpPacketRegistries(std::ostream & os);
 
     /** \brief Entry not found in registry
 
@@ -220,7 +223,7 @@ packet of which the key is requested
 #endif
 #if !defined(HH_Packets__decls_) && !defined(HH_PacketRegistryImpl_i_)
 #define HH_PacketRegistryImpl_i_
-//#include "PacketRegistry.cci"
+#include "PacketRegistry.cci"
 #include "PacketRegistry.ct"
 #include "PacketRegistry.cti"
 #endif

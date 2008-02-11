@@ -27,6 +27,7 @@
 
 // Custom includes
 #include <string>
+#include <sstream>
 #include "Packets.hh"
 
 #include "../Utils/auto_unit_test.hh"
@@ -74,6 +75,31 @@ BOOST_AUTO_UNIT_TEST(packetRegistry_test)
     BOOST_CHECK_EQUAL( PacketRegistry<StringTag>::key<FooPacket>(), "foo" );
     BOOST_CHECK( ! PacketRegistry<StringTag>::lookup("blub", senf::nothrow) );
     BOOST_CHECK( PacketRegistry<BaseTag>::lookup(1u, senf::nothrow) );
+
+    unsigned elts1[] = { 1u, 2u };
+    BOOST_CHECK_EQUAL_COLLECTIONS( PacketRegistry<BaseTag>::begin(), PacketRegistry<BaseTag>::end(),
+                                   elts1+0, elts1+sizeof(elts1)/sizeof(elts1[0]) );
+
+    std::string elts2[] = { "bar", "foo" };
+    BOOST_CHECK_EQUAL_COLLECTIONS( PacketRegistry<StringTag>::begin(), PacketRegistry<StringTag>::end(),
+                                   elts2+0, elts2+sizeof(elts2)/sizeof(elts2[0]) );
+
+    std::stringstream s;
+    senf::dumpPacketRegistries(s);
+    BOOST_CHECK_EQUAL( s.str(),
+                       "(anonymous namespace)::BaseTag:\n"
+                       "1 senf::ConcretePacket<(anonymous namespace)::FooPacketType>\n"
+                       "2 senf::ConcretePacket<(anonymous namespace)::BarPacketType>\n"
+                       "\n"
+                       "(anonymous namespace)::RegTag:\n"
+                       "1 senf::ConcretePacket<(anonymous namespace)::FooPacketType>\n"
+                       "2 senf::ConcretePacket<(anonymous namespace)::BarPacketType>\n"
+                       "\n"
+                       "(anonymous namespace)::StringTag:\n"
+                       "bar senf::ConcretePacket<(anonymous namespace)::BarPacketType>\n"
+                       "foo senf::ConcretePacket<(anonymous namespace)::FooPacketType>\n"
+                       "\n" );
+
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

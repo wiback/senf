@@ -27,12 +27,28 @@
 #define IH_PacketRegistryImpl_ 1
 
 // Custom includes
+#include <ext/functional>
 #include <boost/intrusive_ptr.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 #include "../Utils/TypeIdValue.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
+
+    /** \brief Registry entry
+
+        Value returned by a registry lookup
+     */
+    struct PkReg_Entry 
+        : public intrusive_refcount
+    {
+        virtual ~PkReg_Entry();
+        virtual Packet::factory_t factory() const = 0;
+                                        ///< Get factory of the registered packet type
+        virtual std::string name() const = 0;
+    };
+
 namespace detail {
     
     /** \brief Internal: Registry entry implementation for a specific packet type
@@ -47,13 +63,33 @@ namespace detail {
         virtual std::string name() const;
     };
 
+    /** \brief Internal: Registry implementation base-class and registry of registries
+        
+        \internal
+     */
+    class PacketRegistryImplBase
+        : private boost::noncopyable
+    {
+    public:
+        virtual ~PacketRegistryImplBase();
+
+        static void dump(std::ostream & os);
+
+    protected:
+        typedef std::map<std::string, PacketRegistryImplBase*>  RegistryMap;
+        static RegistryMap & registries();
+
+    private:
+        virtual void v_dump(std::ostream & os) = 0;
+    };
+
     /** \brief Internal: Singleton class implementing the packet registry.
 
         \internal
      */
     template <class KeyType>
     class PacketRegistryImpl 
-        : private boost::noncopyable
+        : public PacketRegistryImplBase
     {
     public:
         typedef KeyType key_t;
@@ -68,15 +104,14 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        typedef boost::transform_iterator< __gnu_cxx::select1st<typename PacketMap::value_type>,
+                                           typename PacketMap::const_iterator > iterator;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-
-        // default default constructor
-        // no copy constructor
-        // no copy assignment
-        // default destructor
-        // no conversion constructors
+        
+        PacketRegistryImpl(std::string const & name);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -90,9 +125,14 @@ namespace detail {
         Entry const & lookup(key_t key);
         Entry const * lookup(key_t key, bool);
 
+        iterator begin() const;
+        iterator end() const;
+
     protected:
 
     private:
+        virtual void v_dump(std::ostream & os);
+
         PacketMap registry_;
         ReversePacketMap reverseRegistry_;
     };

@@ -30,6 +30,9 @@
 #define prefix_ inline
 ///////////////////////////////PacketRegistry..p///////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>
+
 template <class Tag>
 template <class PacketType>
 prefix_ senf::PacketRegistry<Tag>::RegistrationProxy<PacketType>::
@@ -37,6 +40,9 @@ RegistrationProxy(typename Tag::key_t key)
 {
     PacketRegistry<Tag>::template registerPacket<PacketType>(key);
 }
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketRegistry<Tag>
 
 template <class Tag>
 template <class PacketType>
@@ -83,6 +89,45 @@ prefix_ senf::PkReg_Entry const * senf::PacketRegistry<Tag>::lookup(typename Tag
                                                                     NoThrow_t)
 {
     return registry().lookup(key,true);
+}
+
+template <class Tag>
+prefix_ typename senf::PacketRegistry<Tag>::iterator senf::PacketRegistry<Tag>::begin()
+{
+    return registry().begin();
+}
+
+template <class Tag>
+prefix_ typename senf::PacketRegistry<Tag>::iterator senf::PacketRegistry<Tag>::end()
+{
+    return registry().end();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::PacketRegistryImpl<KeyType>
+
+template <class KeyType>
+prefix_ senf::detail::PacketRegistryImpl<KeyType>::PacketRegistryImpl(std::string const & name)
+{
+    registries()[name] = this;
+}
+
+template <class KeyType>
+prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::iterator
+senf::detail::PacketRegistryImpl<KeyType>::begin()
+    const
+{
+    return boost::make_transform_iterator(
+        registry_.begin(), __gnu_cxx::select1st<typename PacketMap::value_type>());
+}
+
+template <class KeyType>
+prefix_ typename senf::detail::PacketRegistryImpl<KeyType>::iterator
+senf::detail::PacketRegistryImpl<KeyType>::end()
+    const
+{
+    return boost::make_transform_iterator(
+        registry_.end(), __gnu_cxx::select1st<typename PacketMap::value_type>());
 }
 
 ///////////////////////////////PacketRegistry..e///////////////////////////////////////

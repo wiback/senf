@@ -5,6 +5,7 @@ import SENFSCons
 
 SENFSCons.Binary(env, 'sniffer', SENFSCons.GlobSources(),
                  LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ],
-                 OBJECTS = [ '#/Packets/DefaultBundle/DefaultBundle.o' ]);
+                 OBJECTS = [ '#/Packets/DefaultBundle/DefaultBundle.o',
+                             '#/Packets/MPEGDVBBundle/MPEGDVBBundle.o' ])
 
 SENFSCons.Doxygen(env)

@@ -33,6 +33,9 @@
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::PkReg_EntryImpl<PacketType>
+
 template <class PacketType>
 prefix_ senf::PacketInterpreterBase::factory_t senf::detail::PkReg_EntryImpl<PacketType>::factory()
     const
@@ -46,6 +49,20 @@ prefix_ std::string senf::detail::PkReg_EntryImpl<PacketType>::name()
 {
     return prettyName(typeid(PacketType));
 }
+
+///////////////////////////////////////////////////////////////////////////
+// senf::PacketRegistry<Tag>
+
+template <class Tag>
+prefix_ typename senf::PacketRegistry<Tag>::Registry &
+senf::PacketRegistry<Tag>::registry()
+{
+    static Registry registry (prettyName(typeid(Tag)));
+    return registry;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::PacketRegistryImpl<KeyType>:
 
 template <class KeyType>
 template <class PacketType>
@@ -108,12 +125,13 @@ senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key, bool)
     return i->second.get();
 }
 
-template <class Tag>
-prefix_ typename senf::PacketRegistry<Tag>::Registry &
-senf::PacketRegistry<Tag>::registry()
+template <class KeyType>
+prefix_ void senf::detail::PacketRegistryImpl<KeyType>::v_dump(std::ostream & os)
 {
-    static Registry registry;
-    return registry;
+    typename PacketMap::const_iterator i (registry_.begin());
+    typename PacketMap::const_iterator const i_end (registry_.end());
+    for (; i != i_end; ++i)
+        os << i->first << " " << i->second->name() << "\n";
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
