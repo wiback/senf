@@ -127,7 +127,7 @@ namespace senf {
 
                                              \param map string to string mapping to be filled with
                                                  state information
-                                             \param lod level of detail requested. The
+                                             \param lod level of %detail requested. The
                                                  interpretation of this value is protocol specific
 
                                              \implementation This member will be re-implemented in
@@ -140,7 +140,7 @@ namespace senf {
                                         /**< Formats the complete state map value and returns it as
                                              a single multi-line string.
 
-                                             \param lod level of detail requested. The
+                                             \param lod level of %detail requested. The
                                                 interpretation of this value is protocol specific
                                              
                                              \implementation This member will be re-implemented in

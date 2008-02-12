@@ -339,7 +339,7 @@ namespace senf {
                                              parsers if needed. */
 
         Packet packet() const;          ///< Get packet this parser is parsing from
-                                        /**< \important This member should only be used from packet
+                                        /**< \note This member should only be used from packet
                                              parsers when access to previous or following packets is
                                              needed e.g. for calculating checksums etc. */
 

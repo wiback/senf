@@ -31,11 +31,11 @@
     senf/Example/udpServer directory and compiled with
 
     <pre>
-        #scons -u
+        # scons -u
         <Then you can start the client/server with>
 
-        #./udpServer
-        #./udpClient
+        # ./udpServer
+        # ./udpClient
     </pre>
 
     When we take a look to the code, we start with the Server:
