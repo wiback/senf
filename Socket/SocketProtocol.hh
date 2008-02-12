@@ -39,12 +39,12 @@
     <area shape="rect" alt="SocketProtocol" href="classsenf_1_1SocketProtocol.html" title="SocketProtocol" coords="1,2,120,26" />
     <area shape="rect" alt="BSDSocketProtocol" href="classsenf_1_1BSDSocketProtocol.html" title="BSDSocketProtocol" coords="124,118,276,143" />
     <area shape="rect" alt="AddressableBSDSocketProtocol" href="classsenf_1_1AddressableBSDSocketProtocol.html" title="AddressableBSDSocketProtocol" coords="82,200,314,224" />
-    <area shape="rect" alt="IPv4Protocol" href="classsenf_1_1IPv4Protocol.html" title="IPv4Protocol" coords="149,272,252,296" />
-    <area shape="rect" alt="IPv6Protocol" href="classsenf_1_1IPv6Protocol.html" title="IPv6Protocol" coords="149,335,251,359" />
-    <area shape="rect" alt="TCPProtocol" href="classsenf_1_1TCPProtocol.html" title="TCPProtocol" coords="151,398,248,420" />
+    <area shape="rect" alt="IPv4SocketProtocol" href="classsenf_1_1IPv4SocketProtocol.html" title="IPv4SocketProtocol" coords="149,272,252,296" />
+    <area shape="rect" alt="IPv6SocketProtocol" href="classsenf_1_1IPv6SocketProtocol.html" title="IPv6SocketProtocol" coords="149,335,251,359" />
+    <area shape="rect" alt="TCPSocketProtocol" href="classsenf_1_1TCPSocketProtocol.html" title="TCPSocketProtocol" coords="151,398,248,420" />
     <area shape="rect" alt="TCPv4SocketProtocol" href="classsenf_1_1TCPv4SocketProtocol.html" title="TCPv4SocketProtocol" coords="288,471,405,494" />
     <area shape="rect" alt="TCPv6SocketProtocol" href="classsenf_1_1TCPv6SocketProtocol.html" title="TCPv6SocketProtocol" coords="424,470,540,494" />
-    <area shape="rect" alt="PacketProtocol" href="classsenf_1_1PacketProtocol.html" title="PacketProtocol" coords="560,469,680,495" />
+    <area shape="rect" alt="PacketSocketProtocol" href="classsenf_1_1PacketSocketProtocol.html" title="PacketSocketProtocol" coords="560,469,680,495" />
     </map>
     <img src="Protocols.png" border="0" alt="Protocols" usemap="#protocols">
     \endhtmlonly
@@ -266,7 +266,7 @@ namespace senf {
         A protocol implementation may define the protocol interface directly. It can also
         (additionally) make use of multiple inheritance to combine a set of protocol facets into a
         specific protocol implementation (i.e. TCPv4SocketProtocol inherits from
-        ConcreteSocketProtocol and from the protocol facets IPv4Protocol, TCPProtocol,
+        ConcreteSocketProtocol and from the protocol facets IPv4SocketProtocol, TCPSocketProtocol,
         BSDSocketProtocol and AddressableBSDSocketProtocol). The protocol facets are not concrete
         protocols themselves, they are combined to build concrete protocols. This structure will
         remove a lot of code duplication. It is important to ensure, that the protocol facets do not

@@ -150,7 +150,7 @@ namespace senf {
     ProtocolClientSocketHandle or ProtocolServerSocketHandle. You will probably not use these
     templates as is but use proper typedefs (for example TCPv4ClientSocketHandle or
     PacketSocketHandle). The documentation for these socket handles are found in the protocol class
-    (for example TCPv4SocketProtocol or PacketProtocol).
+    (for example TCPv4SocketProtocol or PacketSocketProtocol).
 
     \section usage_reusable Writing Reusable Components
 
@@ -210,8 +210,8 @@ namespace senf {
     After the protocol class has been defined, you will probably want to provide typedefs for the
     new protocol sockets. If the new protocol is connection oriented, this will be like
     \code
-    typedef ProtocolClientSocketHandle<MyProtocolClass> MyProtocolClientSocketHandle;
-    typedef ProtocolServerSocketHandle<MyProtocolClass> MyProtocolServerSocketHandle;
+    typedef ProtocolClientSocketHandle<MySocketProtocolClass> MySocketProtocolClientSocketHandle;
+    typedef ProtocolServerSocketHandle<MySocketProtocolClass> MySocketProtocolServerSocketHandle;
     \endcode
 
     \section extend_policy Extending the policy framework

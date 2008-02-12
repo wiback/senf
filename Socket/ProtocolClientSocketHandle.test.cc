@@ -36,16 +36,16 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    struct MyProtocol : public senf::test::SomeProtocol
+    struct MySocketProtocol : public senf::test::SomeSocketProtocol
     {
-        using senf::test::SomeProtocol::init_client;
+        using senf::test::SomeSocketProtocol::init_client;
         void init_client(char const *,unsigned) const {}
     };
 }
 
 BOOST_AUTO_UNIT_TEST(protocolClientSocketHandle)
 {
-    typedef senf::ProtocolClientSocketHandle<MyProtocol> MySocketHandle;
+    typedef senf::ProtocolClientSocketHandle<MySocketProtocol> MySocketHandle;
 
     {
         typedef senf::MakeSocketPolicy<

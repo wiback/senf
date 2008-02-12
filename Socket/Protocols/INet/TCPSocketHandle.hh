@@ -31,8 +31,8 @@
 #define HH_TCPSocketHandle_ 1
 
 // Custom includes
-#include "INetProtocol.hh"
-#include "TCPProtocol.hh"
+#include "INetSocketProtocol.hh"
+#include "TCPSocketProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
@@ -80,7 +80,7 @@ namespace senf {
      */
     class TCPv4SocketProtocol
         : public ConcreteSocketProtocol<TCPv4Socket_Policy,TCPv4SocketProtocol>,
-          public TCPProtocol,
+          public TCPSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
     {
@@ -155,7 +155,7 @@ namespace senf {
      */
     class TCPv6SocketProtocol
         : public ConcreteSocketProtocol<TCPv6Socket_Policy,TCPv6SocketProtocol>,
-          public TCPProtocol,
+          public TCPSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
     {

@@ -39,13 +39,13 @@
 namespace {
 
     class MySocketHandle
-        : public senf::SocketHandle<senf::test::SomeProtocol::Policy>
+        : public senf::SocketHandle<senf::test::SomeSocketProtocol::Policy>
     {
     public:
         MySocketHandle()
-            : senf::SocketHandle<senf::test::SomeProtocol::Policy>(
+            : senf::SocketHandle<senf::test::SomeSocketProtocol::Policy>(
                 std::auto_ptr<senf::SocketBody>(
-                    new senf::ProtocolSocketBody<senf::test::SomeProtocol>(false, 0)))
+                    new senf::ProtocolSocketBody<senf::test::SomeSocketProtocol>(false, 0)))
             {}
     };
 
@@ -71,7 +71,7 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
         OtherSocketHandle osh (myh);
         osh = myh;
 
-        typedef senf::SocketHandle<senf::test::SomeProtocol::Policy> SomeSocketHandle;
+        typedef senf::SocketHandle<senf::test::SomeSocketProtocol::Policy> SomeSocketHandle;
         SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
 
         BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
@@ -91,13 +91,13 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
                            "file.handle: 0\n"
                            "file.refcount: 3\n"
                            "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy> >\n"
-                           "socket.protocol: senf::test::SomeProtocol\n"
+                           "socket.protocol: senf::test::SomeSocketProtocol\n"
                            "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
                            "socket.server: false\n" );
     }
     
     // Ensure, the destructor is called and calls the correct close() implementation
-    BOOST_CHECK_EQUAL( senf::test::SomeProtocol::closeCount(), 1u );
+    BOOST_CHECK_EQUAL( senf::test::SomeSocketProtocol::closeCount(), 1u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

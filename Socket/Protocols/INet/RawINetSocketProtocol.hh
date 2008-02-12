@@ -1,4 +1,4 @@
-// $Id: RawINetProtocol.hh 597 2008-01-15 09:16:20Z g0dil $
+// $Id: RawINetSocketProtocol.hh 597 2008-01-15 09:16:20Z g0dil $
 //
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
@@ -25,7 +25,7 @@
 
 // Custom includes
 #include "INetAddressing.hh"
-#include "INetProtocol.hh"
+#include "INetSocketProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
@@ -43,7 +43,7 @@ namespace senf {
         which are available on a PF_INET[6]/RAW socket.
         
      */
-    class RawINetProtocol
+    class RawINetSocketProtocol
         : public virtual SocketProtocol
     {
     public:

@@ -34,11 +34,11 @@
 namespace senf {
 namespace test {
 
-    class SomeProtocol
-        : public ConcreteSocketProtocol<SomeSocketPolicy,SomeProtocol>
+    class SomeSocketProtocol
+        : public ConcreteSocketProtocol<SomeSocketPolicy,SomeSocketProtocol>
     {
     public:
-        ~SomeProtocol() {}
+        ~SomeSocketProtocol() {}
 
         void init_client() const { fd(0); }
         void init_server() const { fd(0); }

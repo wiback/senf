@@ -21,17 +21,17 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MulticastProtocol public header */
+    \brief MulticastSocketProtocol public header */
 
-#ifndef HH_MulticastProtocol_
-#define HH_MulticastProtocol_ 1
+#ifndef HH_MulticastSocketProtocol_
+#define HH_MulticastSocketProtocol_ 1
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"
 #include "INet4Address.hh"
 #include "INet6Address.hh"
 
-//#include "MulticastProtocol.mpp"
+//#include "MulticastSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -39,7 +39,7 @@ namespace senf {
     ///\addtogroup protocol_facets_group
     ///\{
    
-    class MulticastProtocol 
+    class MulticastSocketProtocol 
         : public virtual SocketProtocol
     {
     public:
@@ -67,7 +67,7 @@ namespace senf {
                                              data from */
     };
 
-    class INet4MulticastProtocol
+    class INet4MulticastSocketProtocol
         : public virtual SocketProtocol
     {
     public:
@@ -122,7 +122,7 @@ namespace senf {
                                              \param[in] iface interface name */
     };
 
-    class INet6MulticastProtocol
+    class INet6MulticastSocketProtocol
         : public virtual SocketProtocol
     {
     public:
@@ -178,9 +178,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "MulticastProtocol.cci"
-//#include "MulticastProtocol.ct"
-//#include "MulticastProtocol.cti"
+//#include "MulticastSocketProtocol.cci"
+//#include "MulticastSocketProtocol.ct"
+//#include "MulticastSocketProtocol.cti"
 #endif
 
 

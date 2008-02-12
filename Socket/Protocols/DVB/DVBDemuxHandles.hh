@@ -31,7 +31,7 @@
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
 #include "../../../Socket/ProtocolClientSocketHandle.hh"
-#include "DVBDemuxProtocol.hh"
+#include "DVBDemuxSocketProtocol.hh"
 
 //#include "DVBDemuxHandles.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -51,9 +51,9 @@ namespace senf {
 
     /** \brief xxx
      */
-    class DVBDemuxSectionProtocol
-        : public ConcreteSocketProtocol<DVBDemux_Policy, DVBDemuxSectionProtocol>,
-          public DVBDemuxProtocol
+    class DVBDemuxSectionSocketProtocol
+        : public ConcreteSocketProtocol<DVBDemux_Policy, DVBDemuxSectionSocketProtocol>,
+          public DVBDemuxSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -78,15 +78,15 @@ namespace senf {
         void setSectionFilter(struct dmx_sct_filter_params *filter) const;    
     };
 
-    typedef ProtocolClientSocketHandle<DVBDemuxSectionProtocol> DVBDemuxSectionHandle;
+    typedef ProtocolClientSocketHandle<DVBDemuxSectionSocketProtocol> DVBDemuxSectionHandle;
     
     // ----------------------------------------------------------------
     
     /** \brief xxx
      */
-    class DVBDemuxPESProtocol
-        : public ConcreteSocketProtocol<DVBDemux_Policy,DVBDemuxPESProtocol>,
-          public DVBDemuxProtocol
+    class DVBDemuxPESSocketProtocol
+        : public ConcreteSocketProtocol<DVBDemux_Policy,DVBDemuxPESSocketProtocol>,
+          public DVBDemuxSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ namespace senf {
         void setPESFilter(struct dmx_pes_filter_params *filter) const;    
     };
 
-    typedef ProtocolClientSocketHandle<DVBDemuxPESProtocol> DVBDemuxPESHandle;
+    typedef ProtocolClientSocketHandle<DVBDemuxPESSocketProtocol> DVBDemuxPESHandle;
 
     
     // ----------------------------------------------------------------
@@ -119,9 +119,9 @@ namespace senf {
     
     /** \brief xxx
          */
-    class DVBDvrProtocol
-        : public ConcreteSocketProtocol<DVBDemux_Policy, DVBDvrProtocol>,
-          public DVBDemuxProtocol
+    class DVBDvrSocketProtocol
+        : public ConcreteSocketProtocol<DVBDemux_Policy, DVBDvrSocketProtocol>,
+          public DVBDemuxSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ namespace senf {
         ///@}
      };
 
-     typedef ProtocolClientSocketHandle<DVBDvrProtocol> DVBDvrHandle;
+     typedef ProtocolClientSocketHandle<DVBDvrSocketProtocol> DVBDvrHandle;
 
     ///@}
     

@@ -30,8 +30,8 @@
     for SOCK_DGRAM (UDP) and not SOCK_STREAM (TCP) sockets
  */
 
-#ifndef HH_INetProtocol_
-#define HH_INetProtocol_ 1
+#ifndef HH_INetSocketProtocol_
+#define HH_INetSocketProtocol_ 1
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"
@@ -39,7 +39,7 @@
 #include "../../../Socket/ClientSocketHandle.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 
-//#include "INetProtocol.mpp"
+//#include "INetSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -47,7 +47,7 @@ namespace senf {
     /// \addtogroup protocol_facets_group
     /// @{
 
-    class INetProtocol
+    class INetSocketProtocol
         : public virtual SocketProtocol
     {
     public:
@@ -74,9 +74,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "INetProtocol.cci"
-//#include "INetProtocol.ct"
-//#include "INetProtocol.cti"
+//#include "INetSocketProtocol.cci"
+//#include "INetSocketProtocol.ct"
+//#include "INetSocketProtocol.cti"
 #endif
 
 

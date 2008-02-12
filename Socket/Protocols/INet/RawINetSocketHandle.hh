@@ -25,9 +25,9 @@
 
 
 // Custom includes
-#include "INetProtocol.hh"
-#include "RawINetProtocol.hh"
-#include "MulticastProtocol.hh"
+#include "INetSocketProtocol.hh"
+#include "RawINetSocketProtocol.hh"
+#include "MulticastSocketProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
@@ -75,11 +75,11 @@ namespace senf {
      */
     class RawV4SocketProtocol
         : public ConcreteSocketProtocol<RawV4Socket_Policy, RawV4SocketProtocol>,
-          public RawINetProtocol,
+          public RawINetSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
-          public MulticastProtocol,
-          public INet4MulticastProtocol
+          public MulticastSocketProtocol,
+          public INet4MulticastSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -143,11 +143,11 @@ namespace senf {
      */
     class RawV6SocketProtocol
         : public ConcreteSocketProtocol<RawV6Socket_Policy,RawV6SocketProtocol>,
-          public RawINetProtocol,
+          public RawINetSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
-          public MulticastProtocol,
-          public INet4MulticastProtocol
+          public MulticastSocketProtocol,
+          public INet4MulticastSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

@@ -40,7 +40,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::DVBFrontendHandle
 
-prefix_ void senf::DVBFrontendProtocol::init_client(uint8_t adapter, boost::uint8_t device)
+prefix_ void senf::DVBFrontendSocketProtocol::init_client(uint8_t adapter, boost::uint8_t device)
     const
 {
     std::string devFrontend = str( boost::format(
@@ -51,19 +51,19 @@ prefix_ void senf::DVBFrontendProtocol::init_client(uint8_t adapter, boost::uint
     fd(f);
 }
 
-prefix_ unsigned senf::DVBFrontendProtocol::available()
+prefix_ unsigned senf::DVBFrontendSocketProtocol::available()
     const
 {
     return 0;
 }
 
-prefix_ bool senf::DVBFrontendProtocol::eof()
+prefix_ bool senf::DVBFrontendSocketProtocol::eof()
     const
 {
     return false;
 }
 
-prefix_ void senf::DVBFrontendProtocol::signalStrength(int16_t *strength)
+prefix_ void senf::DVBFrontendSocketProtocol::signalStrength(int16_t *strength)
     const
 {
     if (::ioctl(fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)

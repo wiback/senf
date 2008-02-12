@@ -38,7 +38,7 @@
 
 BOOST_AUTO_UNIT_TEST(socketProtocol)
 {
-    senf::test::SomeProtocol protocol;
+    senf::test::SomeSocketProtocol protocol;
 
     // This would fail an assertion ...
     // BOOST_CHECK( protocol.body() == 0 );

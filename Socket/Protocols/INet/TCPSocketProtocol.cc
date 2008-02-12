@@ -21,11 +21,11 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TCPProtocol non-inline non-template implementation
+    \brief TCPSocketProtocol non-inline non-template implementation
  */
 
-#include "TCPProtocol.hh"
-//#include "TCPProtocol.ih"
+#include "TCPSocketProtocol.hh"
+//#include "TCPSocketProtocol.ih"
 
 // Custom includes
 #include <sys/socket.h>
@@ -35,11 +35,11 @@
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
 #include "../../../Socket/SocketHandle.hh"
 
-//#include "TCPProtocol.mpp"
+//#include "TCPSocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ bool senf::TCPProtocol::nodelay()
+prefix_ bool senf::TCPSocketProtocol::nodelay()
     const
 {
     int value;
@@ -49,7 +49,7 @@ prefix_ bool senf::TCPProtocol::nodelay()
     return value;
 }
 
-prefix_ void senf::TCPProtocol::nodelay(bool value)
+prefix_ void senf::TCPSocketProtocol::nodelay(bool value)
     const
 {
     int ivalue (value);
@@ -57,7 +57,7 @@ prefix_ void senf::TCPProtocol::nodelay(bool value)
         throw SystemException();
 }
 
-prefix_ unsigned senf::TCPProtocol::siocinq()
+prefix_ unsigned senf::TCPSocketProtocol::siocinq()
     const
 {
     int n;
@@ -66,7 +66,7 @@ prefix_ unsigned senf::TCPProtocol::siocinq()
     return n;
 }
 
-prefix_ unsigned senf::TCPProtocol::siocoutq()
+prefix_ unsigned senf::TCPSocketProtocol::siocoutq()
     const
 {
     int n;
@@ -75,13 +75,13 @@ prefix_ unsigned senf::TCPProtocol::siocoutq()
     return n;
 }
 
-prefix_ unsigned senf::TCPProtocol::available()
+prefix_ unsigned senf::TCPSocketProtocol::available()
     const
 {
     return siocinq();
 }
 
-prefix_ bool senf::TCPProtocol::eof()
+prefix_ bool senf::TCPSocketProtocol::eof()
     const
 {
     return fh().readable() && available()==0;
@@ -90,7 +90,7 @@ prefix_ bool senf::TCPProtocol::eof()
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "TCPProtocol.mpp"
+//#include "TCPSocketProtocol.mpp"
 
 
 // Local Variables:

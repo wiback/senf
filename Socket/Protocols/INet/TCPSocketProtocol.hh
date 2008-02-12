@@ -21,16 +21,16 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TCPProtocol public header
+    \brief TCPSocketProtocol public header
  */
 
-#ifndef HH_TCPProtocol_
-#define HH_TCPProtocol_ 1
+#ifndef HH_TCPSocketProtocol_
+#define HH_TCPSocketProtocol_ 1
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"
 
-//#include "TCPProtocol.mpp"
+//#include "TCPSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -43,7 +43,7 @@ namespace senf {
         This protocol facet provides all those protocol functions,
         which are available on any TCP socket.
      */
-    class TCPProtocol
+    class TCPSocketProtocol
         : public virtual SocketProtocol
     {
     public:
@@ -72,9 +72,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "TCPProtocol.cci"
-//#include "TCPProtocol.ct"
-//#include "TCPProtocol.cti"
+//#include "TCPSocketProtocol.cci"
+//#include "TCPSocketProtocol.ct"
+//#include "TCPSocketProtocol.cti"
 #endif
 
 

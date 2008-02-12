@@ -69,7 +69,8 @@ namespace senf {
                                         /**< The string representation must exactly match the form
                                              <tt>dd:dd:dd:dd:dd:dd</tt> where <tt>d</tt> is any
                                              hexadecimal digit. In place of ':', '-' is also
-                                             accepted as a delimiter. */
+                                             accepted as a delimiter.
+                                             \throws AddressSyntaxException */
 
         template <class InputIterator> 
         static MACAddress from_data(InputIterator i);

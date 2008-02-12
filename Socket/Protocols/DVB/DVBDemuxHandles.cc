@@ -40,7 +40,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::DVBDemuxHandles
 
-prefix_ void senf::DVBDemuxSectionProtocol::init_client(unsigned short adapter, unsigned short device)
+prefix_ void senf::DVBDemuxSectionSocketProtocol::init_client(unsigned short adapter, unsigned short device)
     const
 {
     std::string devDemux = str( boost::format(
@@ -51,13 +51,13 @@ prefix_ void senf::DVBDemuxSectionProtocol::init_client(unsigned short adapter, 
     fd(f);
 }
 
-prefix_ unsigned senf::DVBDemuxSectionProtocol::available()
+prefix_ unsigned senf::DVBDemuxSectionSocketProtocol::available()
     const
 {
     return 4096;
 }
 
-prefix_ void senf::DVBDemuxSectionProtocol::setSectionFilter(struct dmx_sct_filter_params *filter)
+prefix_ void senf::DVBDemuxSectionSocketProtocol::setSectionFilter(struct dmx_sct_filter_params *filter)
     const
 {
     if (::ioctl(fd(), DMX_SET_FILTER, filter) < 0)
@@ -66,7 +66,7 @@ prefix_ void senf::DVBDemuxSectionProtocol::setSectionFilter(struct dmx_sct_filt
 
 // ----------------------------------------------------------------
 
-prefix_ void senf::DVBDemuxPESProtocol::init_client(unsigned short adapter, unsigned short device)
+prefix_ void senf::DVBDemuxPESSocketProtocol::init_client(unsigned short adapter, unsigned short device)
     const
 {
     std::string devDemux = str( boost::format(
@@ -77,13 +77,13 @@ prefix_ void senf::DVBDemuxPESProtocol::init_client(unsigned short adapter, unsi
     fd(f);
 }
 
-prefix_ unsigned senf::DVBDemuxPESProtocol::available()
+prefix_ unsigned senf::DVBDemuxPESSocketProtocol::available()
     const
 {
     return 4096; //???
 }
 
-prefix_ void senf::DVBDemuxPESProtocol::setPESFilter(struct dmx_pes_filter_params *filter)
+prefix_ void senf::DVBDemuxPESSocketProtocol::setPESFilter(struct dmx_pes_filter_params *filter)
     const
 {
     if (::ioctl(fd(), DMX_SET_PES_FILTER, filter) < 0)
@@ -92,7 +92,7 @@ prefix_ void senf::DVBDemuxPESProtocol::setPESFilter(struct dmx_pes_filter_param
 
 // ----------------------------------------------------------------
 
-prefix_ void senf::DVBDvrProtocol::init_client(unsigned short adapter, unsigned short device)
+prefix_ void senf::DVBDvrSocketProtocol::init_client(unsigned short adapter, unsigned short device)
     const
 {
     std::string devDvr = str( boost::format(
@@ -103,7 +103,7 @@ prefix_ void senf::DVBDvrProtocol::init_client(unsigned short adapter, unsigned 
     fd(f);
 }
 
-prefix_ unsigned senf::DVBDvrProtocol::available()
+prefix_ unsigned senf::DVBDvrSocketProtocol::available()
     const
 {
     return 188;

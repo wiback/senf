@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketProtocol and PacketSocketHandle non-inline non-template implementation
+    \brief PacketSocketProtocol and PacketSocketHandle non-inline non-template implementation
  */
 
 #include "PacketSocketHandle.hh"
@@ -40,7 +40,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::PacketProtocol::init_client(SocketType type, int protocol)
+prefix_ void senf::PacketSocketProtocol::init_client(SocketType type, int protocol)
     const
 {
     int socktype = SOCK_RAW;
@@ -54,7 +54,7 @@ prefix_ void senf::PacketProtocol::init_client(SocketType type, int protocol)
     fd(sock);
 }
 
-prefix_ unsigned senf::PacketProtocol::available()
+prefix_ unsigned senf::PacketSocketProtocol::available()
     const
 {
     if (! fh().readable())
@@ -65,7 +65,7 @@ prefix_ unsigned senf::PacketProtocol::available()
     return l;
 }
 
-prefix_ bool senf::PacketProtocol::eof()
+prefix_ bool senf::PacketSocketProtocol::eof()
     const
 {
     return false;
@@ -90,14 +90,14 @@ namespace {
 
 }
 
-prefix_ void senf::PacketProtocol::mcAdd(std::string const & interface,
+prefix_ void senf::PacketSocketProtocol::mcAdd(std::string const & interface,
                                          MACAddress const & address)
     const
 {
     do_mc(fd(),interface,address,true);
 }
 
-prefix_ void senf::PacketProtocol::mcDrop(std::string const & interface,
+prefix_ void senf::PacketSocketProtocol::mcDrop(std::string const & interface,
                                           MACAddress const & address)
     const
 {

@@ -53,8 +53,8 @@ namespace senf {
 
     /** \brief xxx
      */
-    class DVBFrontendProtocol
-        : public ConcreteSocketProtocol<DVBFrontend_Policy, DVBFrontendProtocol>
+    class DVBFrontendSocketProtocol
+        : public ConcreteSocketProtocol<DVBFrontend_Policy, DVBFrontendSocketProtocol>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ namespace senf {
         void signalStrength(int16_t *strength) const;
     };
 
-    typedef ProtocolClientSocketHandle<DVBFrontendProtocol> DVBFrontendHandle;
+    typedef ProtocolClientSocketHandle<DVBFrontendSocketProtocol> DVBFrontendHandle;
 
     ///@}
 }

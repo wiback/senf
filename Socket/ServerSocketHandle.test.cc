@@ -40,13 +40,13 @@
 namespace {
 
     class MySocketHandle
-        : public senf::ServerSocketHandle<senf::test::SomeProtocol::Policy>
+        : public senf::ServerSocketHandle<senf::test::SomeSocketProtocol::Policy>
     {
     public:
         MySocketHandle()
-            : senf::ServerSocketHandle<senf::test::SomeProtocol::Policy>(
+            : senf::ServerSocketHandle<senf::test::SomeSocketProtocol::Policy>(
                 std::auto_ptr<senf::SocketBody>(
-                    new senf::ProtocolSocketBody<senf::test::SomeProtocol>(true)))
+                    new senf::ProtocolSocketBody<senf::test::SomeSocketProtocol>(true)))
             {}
     };
 
@@ -65,7 +65,7 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
     OtherSocketHandle osh (myh);
     osh = myh;
 
-    typedef senf::ServerSocketHandle<senf::test::SomeProtocol::Policy> SomeSocketHandle;
+    typedef senf::ServerSocketHandle<senf::test::SomeSocketProtocol::Policy> SomeSocketHandle;
     SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
 
     typedef senf::ServerSocketHandle<senf::MakeSocketPolicy<

@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketProtocol and PacketSocketHandle public header
+    \brief PacketSocketProtocol and PacketSocketHandle public header
  */
 
 #ifndef HH_PacketSocketHandle_
@@ -52,7 +52,7 @@ namespace senf {
         UnconnectedCommunicationPolicy,
         ReadablePolicy,
         WriteablePolicy
-        >::policy Packet_Policy;        ///< Policy of PacketProtocol
+        >::policy Packet_Policy;        ///< Policy of PacketSocketProtocol
 
     /** \brief Raw Packet-Socket access (Linux)
 
@@ -67,15 +67,15 @@ namespace senf {
         \par Address Type:
         LLSocketAddress
 
-        The PacketProtocol provides access to the linux packet socket API. This API gives access to
+        The PacketSocketProtocol provides access to the linux packet socket API. This API gives access to
         the low level network packets. The packet socket allows read() and write() operations. The
-        PacketProtocol has no concept of a server socket.
+        PacketSocketProtocol has no concept of a server socket.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle via the
         Socket Handle typedefs above.
      */
-    class PacketProtocol
-        : public ConcreteSocketProtocol<Packet_Policy, PacketProtocol>,
+    class PacketSocketProtocol
+        : public ConcreteSocketProtocol<Packet_Policy, PacketSocketProtocol>,
           public BSDSocketProtocol
     {
     public:
@@ -132,8 +132,8 @@ namespace senf {
         ///@}
     };
 
-    typedef ProtocolClientSocketHandle<PacketProtocol> PacketSocketHandle;
-                                        ///< SocketHandle of the PacketProtocol
+    typedef ProtocolClientSocketHandle<PacketSocketProtocol> PacketSocketHandle;
+                                        ///< SocketHandle of the PacketSocketProtocol
                                         /**< \related PacketPrototol */
 
     /// @}

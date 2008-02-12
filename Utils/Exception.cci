@@ -82,14 +82,6 @@ prefix_  senf::SystemException::~SystemException()
     throw()
 {}
 
-prefix_ void senf::SystemException::init(std::string const & where, int code)
-{
-    code_ = code;
-    if (! where.empty())
-        (*this) << where << ": ";
-    (*this) << "(" << code << ") " << description();
-}
-
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

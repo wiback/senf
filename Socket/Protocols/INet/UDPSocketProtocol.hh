@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,42 +21,50 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Exception non-inline non-template implementation */
+    \brief UDPSocketProtocol public header
+ */
 
-#include "Exception.hh"
-//#include "Exception.ih"
+#ifndef HH_UDPSocketProtocol_
+#define HH_UDPSocketProtocol_ 1
 
 // Custom includes
+#include "../../../Socket/SocketProtocol.hh"
+#include "INetAddressing.hh"
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+//#include "UDPSocketProtocol.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::Exception
+namespace senf {
 
-prefix_ senf::Exception::~Exception()
-    throw()
-{}
+    /// \addtogroup protocol_facets_group
+    /// @{
 
-prefix_ char const * senf::Exception::what()
-    const throw()
-{
-    return message_.c_str();
+    /** \brief Protocol facat to support UDP operations
+
+        This protocol facet provides all those protocol functions,
+        which are available on any UDP socket.
+     */
+    class UDPSocketProtocol
+        : public virtual SocketProtocol
+    {
+    public:
+        ///\name Abstract Interface Implementation
+        ///@{
+
+        unsigned available() const;
+        bool eof() const;
+
+        ///@}
+    };
+
+    /// @}
 }
 
-///////////////////////////////////////////////////////////////////////////
-// senf::SystemException
-
-prefix_ void senf::SystemException::init(std::string const & where, int code)
-{
-    code_ = code;
-    if (! where.empty())
-        (*this) << where << ": ";
-    (*this) << "(" << code << ") " << description();
-}
-
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "UDPSocketProtocol.cci"
+//#include "UDPSocketProtocol.ct"
+//#include "UDPSocketProtocol.cti"
+#endif
 
 
 // Local Variables:

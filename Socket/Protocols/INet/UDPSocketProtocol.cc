@@ -21,11 +21,11 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TCPProtocol non-inline non-template implementation
+    \brief TCPSocketProtocol non-inline non-template implementation
  */
 
-#include "UDPProtocol.hh"
-//#include "UDPProtocol.ih"
+#include "UDPSocketProtocol.hh"
+//#include "UDPSocketProtocol.ih"
 
 // Custom includes
 #include <sys/socket.h>
@@ -36,11 +36,11 @@
 #include <net/if.h> // for if_nametoindex
 #include "../../../Socket/SocketHandle.hh"
 
-//#include "UDPProtocol.mpp"
+//#include "UDPSocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ unsigned senf::UDPProtocol::available()
+prefix_ unsigned senf::UDPSocketProtocol::available()
     const
 {
     int n;
@@ -49,7 +49,7 @@ prefix_ unsigned senf::UDPProtocol::available()
     return n;
 }
 
-prefix_ bool senf::UDPProtocol::eof()
+prefix_ bool senf::UDPSocketProtocol::eof()
     const
 {
     return false;
@@ -57,7 +57,7 @@ prefix_ bool senf::UDPProtocol::eof()
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "UDPProtocol.mpp"
+//#include "UDPSocketProtocol.mpp"
 
 
 // Local Variables:

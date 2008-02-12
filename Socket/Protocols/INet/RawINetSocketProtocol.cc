@@ -1,9 +1,9 @@
-// $Id$
+// $Id: RawINetSocketProtocol.cc 597 2008-01-15 09:16:20Z g0dil $
 //
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Thorsten Horstmann <tho@berlios.de>
+//     David Wagner <dw6@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,46 +20,31 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief DVBDemuxProtocol non-inline non-template implementation */
 
-#include "DVBDemuxProtocol.hh"
-//#include "DVBDemuxProtocol.ih"
+#include "RawINetSocketProtocol.hh"
 
 // Custom includes
 #include <sys/socket.h>
-#include <iostream>
-#include <string>
+#include <netinet/in.h>
 #include <sys/ioctl.h>
-#include <linux/sockios.h>
+#include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
+#include <net/if.h> // for if_nametoindex
 #include "../../../Socket/SocketHandle.hh"
 
-//#include "DVBDemuxProtocol.mpp"
+//#include "UDPSocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::DVBDemuxProtocol::setBufferSize(unsigned long size)
+prefix_ unsigned senf::RawINetSocketProtocol::available()
     const
 {
-    if (::ioctl(fd(), DMX_SET_BUFFER_SIZE, size) < 0)
+    int n;
+    if (::ioctl(fd(),SIOCINQ,&n) < 0)
         throw SystemException();
+    return n;
 }
 
-prefix_ void senf::DVBDemuxProtocol::startFiltering()
-    const
-{
-    if (::ioctl(fd(), DMX_START) < 0)
-        throw SystemException();
-}
-
-prefix_ void senf::DVBDemuxProtocol::stopFiltering()
-    const
-{
-    if (::ioctl(fd(), DMX_STOP) < 0)
-        throw SystemException();
-}
-
-prefix_ bool senf::DVBDemuxProtocol::eof()
+prefix_ bool senf::RawINetSocketProtocol::eof()
     const
 {
     return false;
@@ -67,15 +52,15 @@ prefix_ bool senf::DVBDemuxProtocol::eof()
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "DVBDemuxProtocol.mpp"
+//#include "UDPSocketProtocol.mpp"
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

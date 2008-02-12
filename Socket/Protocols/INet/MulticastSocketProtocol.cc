@@ -21,31 +21,31 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MulticastProtocol non-inline non-template implementation */
+    \brief MulticastSocketProtocol non-inline non-template implementation */
 
-#include "MulticastProtocol.hh"
-//#include "MulticastProtocol.ih"
+#include "MulticastSocketProtocol.hh"
+//#include "MulticastSocketProtocol.ih"
 
 // Custom includes
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <net/if.h> // for if_nametoindex
 
-//#include "MulticastProtocol.mpp"
+//#include "MulticastSocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::MulticastProtocol
+// senf::MulticastSocketProtocol
 
-prefix_ void senf::MulticastProtocol::broadcastEnabled(bool v)
+prefix_ void senf::MulticastSocketProtocol::broadcastEnabled(bool v)
 {
     int ivalue (v);
     if (::setsockopt(fd(), SOL_SOCKET, SO_BROADCAST, &ivalue, sizeof(ivalue)) < 0)
         throw SystemException("::setsockopt(SO_BROADCAST)");
 }
 
-prefix_ bool senf::MulticastProtocol::broadcastEnabled()
+prefix_ bool senf::MulticastSocketProtocol::broadcastEnabled()
 {
     int value (0);
     ::socklen_t len (sizeof(value));
@@ -54,7 +54,7 @@ prefix_ bool senf::MulticastProtocol::broadcastEnabled()
     return value;
 }
 
-prefix_ bool senf::MulticastProtocol::mcLoop()
+prefix_ bool senf::MulticastSocketProtocol::mcLoop()
     const
 {
     int value;
@@ -64,7 +64,7 @@ prefix_ bool senf::MulticastProtocol::mcLoop()
     return value;
 }
 
-prefix_ void senf::MulticastProtocol::mcLoop(bool value)
+prefix_ void senf::MulticastSocketProtocol::mcLoop(bool value)
     const
 {
     int ivalue (value);
@@ -72,7 +72,7 @@ prefix_ void senf::MulticastProtocol::mcLoop(bool value)
         throw SystemException();
 }
 
-prefix_ void senf::MulticastProtocol::mcIface(std::string const & iface)
+prefix_ void senf::MulticastSocketProtocol::mcIface(std::string const & iface)
     const
 {
     struct ip_mreqn mreqn;
@@ -86,7 +86,7 @@ prefix_ void senf::MulticastProtocol::mcIface(std::string const & iface)
         throw SystemException();
 }
 
-prefix_ unsigned senf::MulticastProtocol::mcTTL()
+prefix_ unsigned senf::MulticastSocketProtocol::mcTTL()
     const
 {
     int value;
@@ -96,7 +96,7 @@ prefix_ unsigned senf::MulticastProtocol::mcTTL()
     return value;
 }
 
-prefix_ void senf::MulticastProtocol::mcTTL(unsigned value)
+prefix_ void senf::MulticastSocketProtocol::mcTTL(unsigned value)
     const
 {
     if (::setsockopt(fd(),SOL_IP,IP_MULTICAST_TTL,&value,sizeof(value)) < 0)
@@ -104,9 +104,9 @@ prefix_ void senf::MulticastProtocol::mcTTL(unsigned value)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::INet4MulticastProtocol
+// senf::INet4MulticastSocketProtocol
 
-prefix_ void senf::INet4MulticastProtocol::mcAddMembership(INet4Address const & mcAddr)
+prefix_ void senf::INet4MulticastSocketProtocol::mcAddMembership(INet4Address const & mcAddr)
     const
 {
     struct ip_mreqn mreqn;
@@ -117,7 +117,7 @@ prefix_ void senf::INet4MulticastProtocol::mcAddMembership(INet4Address const & 
         throw SystemException("::setsockopt(IP_ADD_MEMBERSHIP");
 }
 
-prefix_ void senf::INet4MulticastProtocol::mcAddMembership(INet4Address const & mcAddr,
+prefix_ void senf::INet4MulticastSocketProtocol::mcAddMembership(INet4Address const & mcAddr,
                                                            INet4Address const & localAddr)
     const
 {
@@ -129,7 +129,7 @@ prefix_ void senf::INet4MulticastProtocol::mcAddMembership(INet4Address const & 
         throw SystemException("::setsockopt(IP_ADD_MEMBERSHIP");
 }
 
-prefix_ void senf::INet4MulticastProtocol::mcAddMembership(INet4Address const & mcAddr,
+prefix_ void senf::INet4MulticastSocketProtocol::mcAddMembership(INet4Address const & mcAddr,
                                                            std::string const & iface)
     const
 {
@@ -143,7 +143,7 @@ prefix_ void senf::INet4MulticastProtocol::mcAddMembership(INet4Address const & 
         throw SystemException("::setsockopt(IP_ADD_MEMBERSHIP");
 }
 
-prefix_ void senf::INet4MulticastProtocol::mcDropMembership(INet4Address const & mcAddr)
+prefix_ void senf::INet4MulticastSocketProtocol::mcDropMembership(INet4Address const & mcAddr)
     const
 {
     struct ip_mreqn mreqn;
@@ -154,7 +154,7 @@ prefix_ void senf::INet4MulticastProtocol::mcDropMembership(INet4Address const &
         throw SystemException();
 }
 
-prefix_ void senf::INet4MulticastProtocol::mcDropMembership(INet4Address const & mcAddr,
+prefix_ void senf::INet4MulticastSocketProtocol::mcDropMembership(INet4Address const & mcAddr,
                                                             INet4Address const & localAddr)
     const
 {
@@ -166,7 +166,7 @@ prefix_ void senf::INet4MulticastProtocol::mcDropMembership(INet4Address const &
         throw SystemException();
 }
 
-prefix_ void senf::INet4MulticastProtocol::mcDropMembership(INet4Address const & mcAddr,
+prefix_ void senf::INet4MulticastSocketProtocol::mcDropMembership(INet4Address const & mcAddr,
                                                             std::string const & iface)
     const
 {
@@ -181,9 +181,9 @@ prefix_ void senf::INet4MulticastProtocol::mcDropMembership(INet4Address const &
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::INet6MulticastProtocol
+// senf::INet6MulticastSocketProtocol
 
-prefix_ void senf::INet6MulticastProtocol::mcAddMembership(INet6Address const & mcAddr)
+prefix_ void senf::INet6MulticastSocketProtocol::mcAddMembership(INet6Address const & mcAddr)
     const
 {
     struct ipv6_mreq mreqn;
@@ -193,7 +193,7 @@ prefix_ void senf::INet6MulticastProtocol::mcAddMembership(INet6Address const & 
         throw SystemException("::setsockopt(IPV6_ADD_MEMBERSHIP");
 }
 
-prefix_ void senf::INet6MulticastProtocol::mcAddMembership(INet6Address const & mcAddr,
+prefix_ void senf::INet6MulticastSocketProtocol::mcAddMembership(INet6Address const & mcAddr,
                                                            std::string const & iface)
 {
     struct ipv6_mreq mreqn;
@@ -205,7 +205,7 @@ prefix_ void senf::INet6MulticastProtocol::mcAddMembership(INet6Address const & 
         throw SystemException("::setsockopt(IPV6_ADD_MEMBERSHIP");
 }
 
-prefix_ void senf::INet6MulticastProtocol::mcDropMembership(INet6Address const & mcAddr)
+prefix_ void senf::INet6MulticastSocketProtocol::mcDropMembership(INet6Address const & mcAddr)
     const
 {
     struct ipv6_mreq mreqn;
@@ -216,7 +216,7 @@ prefix_ void senf::INet6MulticastProtocol::mcDropMembership(INet6Address const &
 }
 
 prefix_ void
-senf::INet6MulticastProtocol::mcDropMembership(INet6Address const & mcAddr,
+senf::INet6MulticastSocketProtocol::mcDropMembership(INet6Address const & mcAddr,
                                                std::string const & iface)
     const
 {
@@ -231,7 +231,7 @@ senf::INet6MulticastProtocol::mcDropMembership(INet6Address const & mcAddr,
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "MulticastProtocol.mpp"
+//#include "MulticastSocketProtocol.mpp"
 
 
 // Local Variables:

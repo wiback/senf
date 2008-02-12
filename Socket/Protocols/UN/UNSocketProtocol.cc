@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+//     David Wagner <dw6@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,59 +21,75 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief INet[46]Protocol non-inline non-template implementation */
+    \brief UNSocketProtocol non-inline non-template implementation */
 
-#include "INetProtocol.hh"
-//#include "INetProtocol.ih"
+#include "UNSocketProtocol.hh"
+//#include "UNSocketProtocol.ih"
 
 // Custom includes
+#include <fstream>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <net/if.h>
+#include <sys/ioctl.h>
+#include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
 #include "../../../Utils/Exception.hh"
 
-//#include "INetProtocol.mpp"
+//#include "UNSocketProtocol.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////
-// senf::INetProtocol
-
-prefix_ void senf::INetProtocol::bindInterface(std::string const & iface)
+prefix_ unsigned senf::UNSocketProtocol::available()
     const
 {
-    if (::setsockopt(fd(), SOL_SOCKET, SO_BINDTODEVICE, iface.c_str(), iface.size()) < 0)
-        throw SystemException("::setsockopt(SO_BINDTODEVICE)");
+    int n;
+    if (::ioctl(fd(),SIOCINQ,&n) < 0)
+        throw SystemException();
+    return n;
 }
 
-prefix_ std::string senf::INetProtocol::bindInterface()
+prefix_ bool senf::UNSocketProtocol::eof()
+    const
 {
-    char iface[IFNAMSIZ];
-    socklen_t size (sizeof(iface));
-    ::memset(iface, 0, sizeof(iface));
-    if (::getsockopt(fd(), SOL_SOCKET, SO_BINDTODEVICE, iface, &size) < 0)
-        throw SystemException("::getsockopt(SO_BINDTODEVICE)");
-    iface[size < IFNAMSIZ ? size : IFNAMSIZ-1] = 0;
-    return iface;
+    return false;
 }
 
-///////////////////////////////////////////////////////////////////////////
-// senf::IPv4Protocol
+prefix_ void senf::UNSocketProtocol::close() 
+    const
+{
+    check_and_unlink();
+  
+    SocketProtocol::close();
+}
 
-///////////////////////////////////////////////////////////////////////////
-// senf::IPv6Protocol
+prefix_ void senf::UNSocketProtocol::terminate() 
+    const
+{
+    check_and_unlink();
+    
+    SocketProtocol::terminate();
+}
 
+prefix_ void senf::UNSocketProtocol::check_and_unlink()
+    const
+{
+    typedef ClientSocketHandle<MakeSocketPolicy<UNAddressingPolicy>::policy> UNSocketHandle;
+    try {
+        UNSocketAddress una (static_socket_cast<UNSocketHandle>(fh()).local());
+        ::unlink(una.path().c_str());
+    }
+    catch (SystemException & e) {
+    }
+}
+    
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "INetProtocol.mpp"
+//#include "UNSocketProtocol.mpp"
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

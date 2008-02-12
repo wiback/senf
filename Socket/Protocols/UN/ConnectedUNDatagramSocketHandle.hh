@@ -28,7 +28,7 @@
 
 // Custom includes
 #include "UNAddressing.hh"
-#include "UNProtocol.hh"
+#include "UNSocketProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
@@ -73,7 +73,7 @@ namespace senf {
     class ConnectedUNDatagramSocketProtocol
         : public ConcreteSocketProtocol<ConnectedUNDatagramSocket_Policy,
                                         ConnectedUNDatagramSocketProtocol>,
-          public UNProtocol, 
+          public UNSocketProtocol, 
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
     {

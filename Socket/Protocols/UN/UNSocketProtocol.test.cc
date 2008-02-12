@@ -3,7 +3,7 @@
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+//     David Wagner <dw6@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,58 +21,37 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UDPProtocol public header
- */
+    \brief UNSocketProtocol.test unit tests */
 
-#ifndef HH_UDPProtocol_
-#define HH_UDPProtocol_ 1
+//#include "UNSocketProtocol.test.hh"
+//#include "UNSocketProtocol.test.ih"
 
 // Custom includes
-#include "../../../Socket/SocketProtocol.hh"
-#include "INetAddressing.hh"
+#include "UNSocketProtocol.hh"
 
-//#include "UDPProtocol.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#include "../../../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
-namespace senf {
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-    /// \addtogroup protocol_facets_group
-    /// @{
-
-    /** \brief Protocol facat to support UDP operations
-
-        This protocol facet provides all those protocol functions,
-        which are available on any UDP socket.
-     */
-    class UDPProtocol
-        : public virtual SocketProtocol
-    {
-    public:
-        ///\name Abstract Interface Implementation
-        ///@{
-
-        unsigned available() const;
-        bool eof() const;
-
-        ///@}
-    };
-
-    /// @}
+BOOST_AUTO_UNIT_TEST(unProtocol)
+{
+  
+    //zZ leer
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "UDPProtocol.cci"
-//#include "UDPProtocol.ct"
-//#include "UDPProtocol.cti"
-#endif
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

@@ -24,8 +24,8 @@
 #define CONNECTEDRAWINETSOCKETHANDLE_HH_
 
 // Custom includes
-#include "INetProtocol.hh"
-#include "RawINetProtocol.hh"
+#include "INetSocketProtocol.hh"
+#include "RawINetSocketProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
@@ -75,7 +75,7 @@ namespace senf {
      */
     class ConnectedRawV4SocketProtocol
         : public ConcreteSocketProtocol<ConnectedRawV4Socket_Policy, ConnectedRawV4SocketProtocol>,
-          public RawINetProtocol,
+          public RawINetSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
     {
@@ -143,7 +143,7 @@ namespace senf {
      */
     class ConnectedRawV6SocketProtocol
         : public ConcreteSocketProtocol<ConnectedRawV6Socket_Policy, ConnectedRawV6SocketProtocol>,
-          public RawINetProtocol,
+          public RawINetSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol
     {

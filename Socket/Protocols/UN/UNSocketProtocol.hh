@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNProtocol public header */
+    \brief UNSocketProtocol public header */
 
-#ifndef HH_UNProtocol_
-#define HH_UNProtocol_ 1
+#ifndef HH_UNSocketProtocol_
+#define HH_UNSocketProtocol_ 1
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"
@@ -32,7 +32,7 @@
 #include "../../../Socket/ClientSocketHandle.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 
-//#include "UNProtocol.mpp"
+//#include "UNSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -45,7 +45,7 @@ namespace senf {
         This protocol facet introduces all the socket api protocol members which are related to Unix 
         Domain addressing.
      */
-    class UNProtocol
+    class UNSocketProtocol
         : public virtual SocketProtocol
     {
     public:
@@ -75,9 +75,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "UNProtocol.cci"
-//#include "UNProtocol.ct"
-//#include "UNProtocol.cti"
+//#include "UNSocketProtocol.cci"
+//#include "UNSocketProtocol.ct"
+//#include "UNSocketProtocol.cti"
 #endif
 
 

@@ -39,13 +39,13 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::TapProtocol::init_client() 
+prefix_ void senf::TapSocketProtocol::init_client() 
     const
 {
     init_client(std::string());
 }
 
-prefix_ void senf::TapProtocol::init_client(std::string const & interface_name, bool const NO_PI) 
+prefix_ void senf::TapSocketProtocol::init_client(std::string const & interface_name, bool const NO_PI) 
     const
 {
     int f;
@@ -62,7 +62,7 @@ prefix_ void senf::TapProtocol::init_client(std::string const & interface_name, 
     fd(f);
 }
 
-prefix_ unsigned senf::TapProtocol::available()
+prefix_ unsigned senf::TapSocketProtocol::available()
   const
 {
   if (! fh().readable())
@@ -77,7 +77,7 @@ prefix_ unsigned senf::TapProtocol::available()
 /*
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
 
-prefix_ unsigned senf::TapProtocol::available()
+prefix_ unsigned senf::TapSocketProtocol::available()
   const
 {
   if (! body().readable())
@@ -89,7 +89,7 @@ prefix_ unsigned senf::TapProtocol::available()
 }
 */
 
-prefix_ bool senf::TapProtocol::eof()
+prefix_ bool senf::TapSocketProtocol::eof()
     const
 {
     return false;

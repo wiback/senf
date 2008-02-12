@@ -21,17 +21,17 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DVBDemuxProtocol public header */
+    \brief DVBDemuxSocketProtocol public header */
 
-#ifndef HH_DVBDemuxProtocol_
-#define HH_DVBDemuxProtocol_ 1
+#ifndef HH_DVBDemuxSocketProtocol_
+#define HH_DVBDemuxSocketProtocol_ 1
 
 #include <linux/dvb/dmx.h> 
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"
 
-//#include "DVBProtocol.mpp"
+//#include "DVBSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -41,7 +41,7 @@ namespace senf {
 
     /** xxx
      */
-    class DVBDemuxProtocol
+    class DVBDemuxSocketProtocol
         : public virtual SocketProtocol
     {
     public:
@@ -62,9 +62,9 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "DVBDemuxProtocol.cci"
-//#include "DVBDemuxProtocol.ct"
-//#include "DVBDemuxProtocol.cti"
+//#include "DVBDemuxSocketProtocol.cci"
+//#include "DVBDemuxSocketProtocol.ct"
+//#include "DVBDemuxSocketProtocol.cti"
 #endif
 
 

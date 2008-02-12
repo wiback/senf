@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketProtocol and PacketSocketHandle public header
+    \brief PacketSocketProtocol and PacketSocketHandle public header
  */
 
 #ifndef HH_TunTapSocketHandle_
@@ -70,8 +70,8 @@ namespace senf {
         This class is utilized as the protocol class of the ProtocolClientSocketHandle via the
         Socket Handle typedefs above.
      */
-    class TapProtocol
-        : public ConcreteSocketProtocol<Tap_Policy,TapProtocol>,
+    class TapSocketProtocol
+        : public ConcreteSocketProtocol<Tap_Policy,TapSocketProtocol>,
           public BSDSocketProtocol
     {
     public:
@@ -102,8 +102,8 @@ namespace senf {
         ///@}
     };
 
-    typedef ProtocolClientSocketHandle<TapProtocol> TapSocketHandle;
-                                        ///< SocketHandle of TapProtocol
+    typedef ProtocolClientSocketHandle<TapSocketProtocol> TapSocketHandle;
+                                        ///< SocketHandle of TapSocketProtocol
                                         /**< \related TapPrototol */
 
     /// @}

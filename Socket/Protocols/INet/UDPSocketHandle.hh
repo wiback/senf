@@ -31,9 +31,9 @@
 #define HH_UDPSocketHandle_ 1
 
 // Custom includes
-#include "INetProtocol.hh"
-#include "UDPProtocol.hh"
-#include "MulticastProtocol.hh"
+#include "INetSocketProtocol.hh"
+#include "UDPSocketProtocol.hh"
+#include "MulticastSocketProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
 #include "../../../Socket/Protocols/DatagramSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
@@ -80,9 +80,9 @@ namespace senf {
      */
     class UDPv4SocketProtocol
         : public ConcreteSocketProtocol<UDPv4Socket_Policy, UDPv4SocketProtocol>,
-          public UDPProtocol,
-          public MulticastProtocol,
-          public INet4MulticastProtocol,
+          public UDPSocketProtocol,
+          public MulticastSocketProtocol,
+          public INet4MulticastSocketProtocol,
           public BSDSocketProtocol,
           public DatagramSocketProtocol,
           public AddressableBSDSocketProtocol
@@ -141,9 +141,9 @@ namespace senf {
      */
     class UDPv6SocketProtocol
         : public ConcreteSocketProtocol<UDPv6Socket_Policy, UDPv6SocketProtocol>,
-          public UDPProtocol,
-          public MulticastProtocol,
-          public INet6MulticastProtocol,
+          public UDPSocketProtocol,
+          public MulticastSocketProtocol,
+          public INet6MulticastSocketProtocol,
           public BSDSocketProtocol,
           public DatagramSocketProtocol,
           public AddressableBSDSocketProtocol
