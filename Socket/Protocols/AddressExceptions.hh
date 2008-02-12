@@ -34,7 +34,7 @@
 
 namespace senf {
 
-    /** \brief Base-class for INet4Address exceptions */
+    /** \brief Base-class for Address exceptions */
     struct AddressException : public senf::Exception
     {
     protected:
@@ -42,13 +42,19 @@ namespace senf {
             : senf::Exception(msg) {}
     };
 
-    /** \brief Invalid INet4 address syntax */
+    /** \brief Invalid address syntax */
     struct AddressSyntaxException : public AddressException
-    { AddressSyntaxException() : AddressException("invalid INet4 address syntax") {} };
+    {
+        AddressSyntaxException() : AddressException("invalid address syntax") {}
+        AddressSyntaxException(std::string const & msg) : AddressException(msg) {}
+    };
 
     /** \brief Resolver failure */
     struct UnknownHostnameException : public AddressException
-    { UnknownHostnameException() : AddressException("failed to resolve INet4 hostname") {} };
+    { 
+        UnknownHostnameException() : AddressException("failed to resolve hostname") {} 
+        UnknownHostnameException(std::string const & msg) : AddressException(msg) {}
+    };
 
 }        
 

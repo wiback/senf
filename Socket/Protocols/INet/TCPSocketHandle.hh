@@ -64,11 +64,10 @@ namespace senf {
         
         \par Policy Interface:
             ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
-            ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
-            ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+            ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer()
 
         \par Address Type:
-            INet4Address
+            INet4SocketAddress
 
         TCPv4SocketProtocol provides an internet protocol stream socket based on the TCP protocol
         and IPv4 addressing.
@@ -139,11 +138,10 @@ namespace senf {
 
         \par Policy Interface:
         ClientSocketHandle::read(), ClientSocketHandle::write(), ClientSocketHandle::bind(),
-        ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer(),
-        ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+        ClientSocketHandle::local(), ClientSocketHandle::connect(), ClientSocketHandle::peer()
 
         \par Address Type:
-        INet6Address
+            INet6Address
 
         TCPv6SocketProtocol provides an internet protocol stream socket based on the TCP protocol
         and IPv6 addressing.

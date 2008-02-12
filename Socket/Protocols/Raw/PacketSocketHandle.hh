@@ -62,11 +62,10 @@ namespace senf {
 
         \par Policy Interface:
         ClientSocketHandle::read(), ClientSocketHandle::readfrom(), ClientSocketHandle::writeto(),
-        ClientSocketHandle::bind(), ClientSocketHandle::local(), ClientSocketHandle::rcvbuf(),
-        ClientSocketHandle::sndbuf()
+        ClientSocketHandle::bind(), ClientSocketHandle::local()
 
         \par Address Type:
-        LLSocketAddress
+            LLSocketAddress
 
         The PacketSocketProtocol provides access to the linux packet socket API. This API gives access to
         the low level network packets. The packet socket allows read() and write() operations. The

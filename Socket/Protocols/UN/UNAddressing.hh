@@ -94,7 +94,7 @@ namespace senf {
     /** \brief Addressing policy supporting unix domain addressing
 
         \par Address Type:
-            UNAddress
+            UNSocketAddress
 
         This addressing policy implements addressing using unix domain
         addresses.

@@ -58,11 +58,10 @@ namespace senf {
 
         \par Policy Interface:
             ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
-            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local(),
-            ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local()
 
         \par Address Type:
-            INet4Address
+            INet4SocketAddress
 
         RawV4SocketProtocol provides an internet protocol raw socket based on IPv4 addressing.
         This socket will put data written to it onto the IPv4 layer: if you call writeto don't inlude the header!
@@ -127,8 +126,7 @@ namespace senf {
 
         \par Policy Interface: 
             ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
-            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local(),
-            ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local()
 
         \par Address Type:
             INet6Address

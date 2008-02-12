@@ -64,11 +64,10 @@ namespace senf {
 
         \par Policy Interface:
             ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
-            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local(),
-            ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local()
 
         \par Address Type:
-            INet4Address
+            INet4SocketAddress
 
         UDPv4SocketProtocol provides an internet protocol stream socket based on the UDP protocol
         and IPv4 addressing.
@@ -125,8 +124,7 @@ namespace senf {
 
         \par Policy Interface: 
             ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
-            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local(),
-            ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local()
 
         \par Address Type:
             INet6Address

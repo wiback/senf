@@ -261,7 +261,7 @@ div.tabs li.$projectname a { background-color: #EDE497; }
       <li><a class="ext" href="http://svn.berlios.de/viewcvs/senf/trunk/">Browse SVN</a></li>
       <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">ChangeLog</a></li>
       <li><a class="ext" href="http://developer.berlios.de/projects/senf">BerliOS</a></li>
-      <li><a class="ext" href="http://openfacts.berlios.de/index-en.phtml?title=SENF+Network+Framework">Wiki</a></li>
+      <li><a class="ext" href="http://openfacts2.berlios.de/wikien/index.php/BerliosProject:SENF_Network_Framework">Wiki</a></li>
       <li><a href="@TOPDIR@/doc/html/index.html">Home</a></li>
     </ul>
     <h2>${TITLE}</h2>

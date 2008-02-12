@@ -58,11 +58,10 @@ namespace senf {
 
         \par Policy Interface: (to be checked)
             ClientSocketHandle::read(), ClientSocketHandle::readfrom(),
-            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local(),
-            ClientSocketHandle::rcvbuf(), ClientSocketHandle::sndbuf()
+            ClientSocketHandle::writeto(), ClientSocketHandle::bind(), ClientSocketHandle::local()
 
         \par Address Type:
-            UNAddress
+            UNSocketAddress
 
         UNDatagramSocketProtocol provides an datagram protocol socket based on the unix domain
         addressing.

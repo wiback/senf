@@ -213,7 +213,7 @@ namespace senf {
     /** \brief Addressing policy supporting IPv4 addressing
 
         \par Address Type:
-            INet4Address
+            INet4SocketAddress
 
         This addressing policy implements addressing using Internet V4
         addresses.

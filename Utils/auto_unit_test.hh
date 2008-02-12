@@ -28,7 +28,9 @@
     any necessary workarounds.
 
     So, instead of <tt>\#include <boost/test/auto_unit_test.hpp></tt>, you should always write
-    <tt>\#include "../Utils/auto_unit_test.hh"</tt> (with possibliy adjusted path).
+    <pre>
+        #include "../Utils/auto_unit_test.hh"
+    </pre> (with possibliy adjusted path).
  */
 
 #ifndef HH_auto_unit_test_
