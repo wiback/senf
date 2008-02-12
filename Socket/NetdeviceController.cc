@@ -96,7 +96,7 @@ prefix_ void senf::NetdeviceController::openSocket()
 {
     sockfd_ = ::socket( PF_INET, SOCK_DGRAM, 0);
     if ( sockfd_ < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
@@ -104,14 +104,14 @@ prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
     ::memset( &ifr, 0, sizeof(ifr));
     ifr.ifr_ifindex = ifindex_;
     if ( ::ioctl( sockfd_, SIOCGIFNAME, &ifr ) < 0 )
-        throwErrno();
+        throw SystemException();
 }
 
 
 prefix_ void senf::NetdeviceController::doIoctl(ifreq& ifr, int request)
 {
     if ( ::ioctl( sockfd_, request, &ifr ) < 0 )
-        throwErrno();
+        throw SystemException();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

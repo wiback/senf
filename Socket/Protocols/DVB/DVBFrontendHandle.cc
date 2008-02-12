@@ -47,7 +47,7 @@ prefix_ void senf::DVBFrontendProtocol::init_client(uint8_t adapter, boost::uint
             "/dev/dvb/adapter%d/frontend%d") % adapter % device);
     int f = open(devFrontend.c_str(), O_RDONLY | O_NONBLOCK);
     if (f < 0)
-        throwErrno();
+        throw SystemException();
     fd(f);
 }
 
@@ -67,7 +67,7 @@ prefix_ void senf::DVBFrontendProtocol::signalStrength(int16_t *strength)
     const
 {
     if (::ioctl(fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

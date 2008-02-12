@@ -48,7 +48,7 @@ senf::RawV4SocketProtocol::init_client(int const & protocol)
 {
     int sock = ::socket(PF_INET, SOCK_RAW, protocol);
     if (sock < 0)
-        throwErrno();
+        throw SystemException();
     fd(sock);
 }
 
@@ -74,7 +74,7 @@ prefix_ void senf::RawV6SocketProtocol::init_client(int const & protocol)
 {
     int sock = ::socket(PF_INET6,SOCK_RAW,protocol);
     if (sock < 0)
-        throwErrno();
+        throw SystemException();
     fd(sock);
 }
 

@@ -62,7 +62,7 @@ prefix_ void senf::WriteHelper<Handle>::throw_error()
     const
 {
     if (errno_ != 0)
-        throwErrno(errno_);
+        throw SystemException(errno_);
 }
 
 

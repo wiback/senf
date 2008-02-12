@@ -27,6 +27,7 @@
 #define HH_AddressExceptions_ 1
 
 // Custom includes
+#include "../Utils/Exception.hh"
 
 //#include "AddressExceptions.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -34,17 +35,20 @@
 namespace senf {
 
     /** \brief Base-class for INet4Address exceptions */
-    struct AddressException : public std::exception {};
+    struct AddressException : public senf::Exception
+    {
+    protected:
+        AddressException(std::string const & msg)
+            : senf::Exception(msg) {}
+    };
 
     /** \brief Invalid INet4 address syntax */
     struct AddressSyntaxException : public AddressException
-    { virtual char const * what() const throw() 
-            { return "invalid INet4 address syntax"; } };
+    { AddressSyntaxException() : AddressException("invalid INet4 address syntax") {} };
 
     /** \brief Resolver failure */
     struct UnknownHostnameException : public AddressException
-    { virtual char const * what() const throw() 
-            { return "failed to resolve INet4 hostname"; } };
+    { UnknownHostnameException() : AddressException("failed to resolve INet4 hostname") {} };
 
 }        
 

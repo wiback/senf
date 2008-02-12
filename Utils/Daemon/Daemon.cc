@@ -45,8 +45,8 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-#define LIBC_CALL(fn, args) if (fn args < 0) throwErrno(#fn "()")
-#define LIBC_CALL_RV(var, fn, args) int var (fn args); if (var < 0) throwErrno(#fn "()")
+#define LIBC_CALL(fn, args) if (fn args < 0) throw SystemException(#fn "()")
+#define LIBC_CALL_RV(var, fn, args) int var (fn args); if (var < 0) throw SystemException(#fn "()")
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::Daemon
@@ -83,7 +83,7 @@ prefix_ void senf::Daemon::openLog()
     if (! stdoutLog_.empty()) {
         fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
         if (fd < 0)
-            throwErrno("::open()");
+            throw SystemException("::open()");
         stdout_ = fd;
     }
     if (stderrLog_ == stdoutLog_)
@@ -91,7 +91,7 @@ prefix_ void senf::Daemon::openLog()
     else if (! stderrLog_.empty()) {
         fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
         if (fd < 0)
-            throwErrno("::open()");
+            throw SystemException("::open()");
         stderr_ = fd;
     }
 }
@@ -139,7 +139,7 @@ prefix_ void senf::Daemon::detach()
         while (! signaled) {
             ::sigsuspend(&waitsig);
             if (errno != EINTR)
-                throwErrno("::sigsuspend()");
+                throw SystemException("::sigsuspend()");
         }
 
         LIBC_CALL( ::sigaction, (SIGUSR1, &oldact, 0) );
@@ -326,7 +326,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
 
         if (::link(tempname.c_str(), pidfile_.c_str()) < 0) {
             if (errno != EEXIST) 
-                throwErrno("::link()");
+                throw SystemException("::link()");
         }
         else {
             struct ::stat s;
@@ -356,7 +356,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
 
         LIBC_CALL( ::unlink, (tempname.c_str() ));
         if (::link(pidfile_.c_str(), tempname.c_str()) < 0) {
-            if (errno != ENOENT) throwErrno("::link()");
+            if (errno != ENOENT) throw SystemException("::link()");
             // Hmm ... the pidfile mysteriously disappeared ... try again.
             continue;
         }
@@ -419,7 +419,7 @@ prefix_ void senf::detail::DaemonWatcher::pipeClosed(int id)
         if (sigChld_)
             childDied(); // does not return
         if (::kill(childPid_, SIGUSR1) < 0)
-            if (errno != ESRCH) throwErrno("::kill()");
+            if (errno != ESRCH) throw SystemException("::kill()");
         Scheduler::instance().timeout(
             Scheduler::instance().eventTime() + ClockService::seconds(1),
             senf::membind(&DaemonWatcher::childOk, this));
@@ -436,7 +436,7 @@ prefix_ void senf::detail::DaemonWatcher::sigChld()
 prefix_ void senf::detail::DaemonWatcher::childDied()
 {
     int status (0);
-    if (::waitpid(childPid_,&status,0) < 0) throwErrno("::waitpid()");
+    if (::waitpid(childPid_,&status,0) < 0) throw SystemException("::waitpid()");
     if (WIFSIGNALED(status)) {
         ::signal(WTERMSIG(status),SIG_DFL);
         ::kill(::getpid(), WTERMSIG(status));
@@ -487,7 +487,7 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(Scheduler::EventId
     while (1) {
         n = ::read(src_,buf,1024);
         if (n<0) {
-            if (errno != EINTR) throwErrno("::read()");
+            if (errno != EINTR) throw SystemException("::read()");
         } else 
             break;
     }
@@ -531,7 +531,7 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(Scheduler::EventI
 
     int w (::write(target->fd, buf, n));
     if (w < 0) {
-        if (errno != EINTR) throwErrno("::write()");
+        if (errno != EINTR) throw SystemException("::write()");
         return;
     }
     target->offset += w;

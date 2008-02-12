@@ -44,7 +44,7 @@
 prefix_ void senf::FileBody::close()
 {
     if (!valid())
-        throwErrno(EBADF);
+        throw SystemException(EBADF);
     v_close();
     fd_ = -1;
 }
@@ -71,7 +71,7 @@ prefix_ void senf::FileBody::destroyClose()
 prefix_ void senf::FileBody::v_close()
 {
     if (::close(fd_) != 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ void senf::FileBody::v_terminate()
@@ -95,17 +95,17 @@ prefix_ bool senf::FileBody::blocking()
     const
 {
     int flags = ::fcntl(fd(),F_GETFL);
-    if (flags < 0) throwErrno();
+    if (flags < 0) throw SystemException();
     return ! (flags & O_NONBLOCK);
 }
 
 prefix_ void senf::FileBody::blocking(bool status)
 {
     int flags = ::fcntl(fd(),F_GETFL);
-    if (flags < 0) throwErrno();
+    if (flags < 0) throw SystemException();
     if (status) flags &= ~O_NONBLOCK;
     else        flags |= O_NONBLOCK;
-    if (::fcntl(fd(), F_SETFL, flags) < 0) throwErrno();
+    if (::fcntl(fd(), F_SETFL, flags) < 0) throw SystemException();
 }
 
 /* We don't take POLLIN/POLLOUT as argument to avoid having to include
@@ -126,7 +126,7 @@ prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, bool block)
             case EINTR:
                 break;
             default:
-                throwErrno();
+                throw SystemException();
             }
     } while (rv<0);
     return rv>0;

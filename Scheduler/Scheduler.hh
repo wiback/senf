@@ -295,9 +295,9 @@ namespace senf {
                                         ///< Remove signal handler for \a signal
 
         /// The signal number passed to registerSignal or unregisterSignal is invalid
-        struct InvalidSignalNumberException : public std::exception
-        { virtual char const * what() const throw() 
-                { return "senf::Scheduler::InvalidSignalNumberException"; } };
+        struct InvalidSignalNumberException : public senf::Exception
+        { InvalidSignalNumberException() 
+              : senf::Exception("senf::Scheduler::InvalidSignalNumberException"){} };
 
 
         ///\}

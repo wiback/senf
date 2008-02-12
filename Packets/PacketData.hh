@@ -31,6 +31,7 @@
 #include <boost/type_traits.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include "../Utils/safe_bool.hh"
+#include "../Utils/Exception.hh"
 #include "PacketTypes.hh"
 
 //#include "PacketData.mpp"
@@ -159,8 +160,8 @@ namespace senf {
         This exception is signaled whenever an operation tries to access an out-of-bounds data
         byte. If the packet has been implemented correctly, this signals a malformed packet.
      */
-    struct TruncatedPacketException : public std::exception
-    { virtual char const * what() const throw() { return "truncated packet"; } };
+    struct TruncatedPacketException : public senf::Exception
+    { TruncatedPacketException() : senf::Exception("truncated packet"){} };
 
     /** \brief Re-validating data iterator
 

@@ -40,7 +40,7 @@ prefix_ void senf::ConnectedUNDatagramSocketProtocol::init_client() const
 {
     int sock = ::socket(PF_UNIX,SOCK_DGRAM,0);
     if (sock < 0)
-        throwErrno();
+        throw SystemException();
    fd(sock);
 }
 

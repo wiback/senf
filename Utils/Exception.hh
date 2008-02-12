@@ -38,147 +38,143 @@
 //#include "Exception.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-/** \defgroup exception System exceptions
+/** \defgroup exception Exception classes
 
-    The senf::SystemException class and it's derived class template senf::ErrnoException are used to
-    signal generic system failures based on \c errno codes. 
-
-    senf::SystemException is a generic \c errno based exception which carries an error number and
-    origin information. senf::ErrnoException is a derived class specialized for a specific error
-    code. This simplifies managing error conditions:
+    All exceptions in senf are derived from senf::Exception. This class adds the possibility to
+    extend the exception description while it is processed:
 
     \code
     try {
-        something.open(path);
-        // ...
+
+        // Some code which might raise an arbitrary senf exception
+
     }
-    catch (senf::ErrnoException<ENOFILE> & e) {
-        // Create new file
-    }
-    catch (senf::SystemException & e) {
-        // Catch all other system exceptions
-        std::cerr << "Error accessing '" << path << "': " << e.what() << std::endl;
+    catch (senf::Exception & e) {
+        e << "\handling user " << user;
+        throw;
     }
     \endcode
 
-    This exception is normally thrown using the senf::throwErrno() helper:
+    This will add the user information to any senf exception thrown. The Exception is however not a
+    stream. If you need to do more extensive formating, either use an intermediate string-stream or
+    use <a href="http://www.boost.org/libs/format/doc/format.html">Boost.Format</a>:
 
     \code
-    if ((fd = ::open(path.c_str(), O_RDWR)) < 0)
-        senf::throwErrno("::open()");
+    try { 
+        // ...
+    }
+    catch (senf::Exception & e) {
+        e << boost::format("\ncall id 0x%04x@%s") % id % address;
+    }
     \endcode
 
-    The senf::throwErrno() helper will throw the correct exception class based on some \c errno
-    value.
+    senf::SystemException is thrown for all operating system errors (failures which result in the
+    operating system setting the errno value). It is also derived from senf::Exception and can
+    therefore be extended as well.
+
+    Defining your own exception classes derived from senf::Exception is very simple:
+
+    \code
+    struct FooException : public senf::Exception
+    { FooException() : senf::Exception("Foo hit the fan") {} };
+    \endcode
  */
 
 namespace senf {
 
-    /** \brief Exception handling standard UNIX errors (errno)
+    /** \brief Generic exception base-class
 
-        This exception is thrown to signal generic \c errno failures. 
+        Exception is a generic exception base-class which allows the exception to be later extended
+        by catching and re-throwing it (See example in \ref exception).
 
-        This exception cannot be thrown directly. Instead the derived class ErrnoException should be
-        thrown via one of the senf::throwErrno helpers.
-
-        The error message associated with the SystemException may be extended arbitrarily by using
-        the exception like a stream:
-        \code
-        try {
-            // This throw would normally be within some function called from here.
-            senf::throwErrno("::open()");
-
-            // Or you may want to use a more descriptive argument string:
-            senf::throwErrno("::open(\"" + filename + "\")");
-
-            // Or even use boost::format here
-            senf::throwErrno((boost::format("::open(\"%s\")") % filename).str());
-        }
-        catch (SystemException & e) {
-            // You can add further error information later by catching and re-throwing the exception
-            e << " [while operating on user '" << user << "']";
-            throw;
-        }
-        \endcode
-
-        \see ErrnoException
         \ingroup exception
-     */
-    class SystemException : public std::exception, public std::stringstream
+      */
+    class Exception
+        : public std::exception
     {
     public:
-        virtual char const * what() const throw(); ///< Return verbose error description
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
+        virtual ~Exception() throw();
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+        virtual char const * what() const throw();
+
+        template <class Arg>
+        Exception & operator<<(Arg const & arg); ///< Extend exception description
+                                        /**< Adds \a arg converted to string to the end of the
+                                             exception description string. This operator allows to
+                                             use Exception instances like streams. The conversion is
+                                             performed using <code>boost::lexical_cast</code> and is
+                                             therefor identical to a streaming operation. 
+                                             \see \ref exception */
+
+    protected:
+        Exception(std::string const & description = ""); ///< Initialize exception with string
+                                        /**< \a description is the initial error description
+                                             string. This should probably be a string constant
+                                             describing the exception for most derived
+                                             exceptions. */
+
+    private:
+        std::string message_;
+    };
+
+
+    /** \brief Exception handling standard UNIX errors (errno)
+
+        This exception is thrown to signal generic \c errno failures. Normally the \c errno value is
+        automatically taken from the \c errno variable but it may also be specified explicitly:
+
+        \code
+        // Standard usage: Take \c errno from environment
+        throw senf::SystemException("::open()") 
+            << " while opening configuration file: " << filename;
+
+        // You may however explicitly specify the errno value
+        throw senf::SystemException("::open()", ENOFILE)
+
+        // Or leave the location information empty
+        throw senf::SystemException(ENOFILE);
+        throw senf::SystemException();
+        \endcode
+
+        \ingroup exception
+     */
+    class SystemException : public Exception
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
+        explicit SystemException(std::string const & where = ""); 
+        explicit SystemException(int code);
+        SystemException(std::string const & where, int code);
+
+        virtual ~SystemException() throw();
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
 
         int errorNumber() const;        ///< Error code (\c errno number)
-        char const * description() const; ///< Error description (strerror() value)
+        char const * description() const; ///< Error description (\c strerror() value)
 
         bool anyOf(int c0, int c1=0, int c2=0, int c3=0, int c4=0, int c5=0, 
                    int c6=0, int c7=0, int c8=0, int c9=0);
                                         ///< \c true, if errorNumber() is one of \a c0 ... \a c9
 
-        virtual ~SystemException() throw();
 
-    protected:
-        SystemException(std::string const & where, int code); 
-        SystemException(SystemException const & other);
 
     private:
-        int const code_;                // This must be const to make the derived ErrnoException
-                                        // class a valid derived class.
-        mutable std::string buffer_;
-
-        friend void throwErrno(std::string const &, int);
-    };
-
-    /** \brief Error specific system exception
-
-        This template restricts the generic SystemException to a specific, compile-time constant
-        error number \p Code. This allows a specific \c errno number to be cached explicitly.
-
-        This exception is normally thrown via one of the senf::throwErrno() helpers. These helpers
-        take the numeric \c errno value (either from the \c errno variable or from their
-        argument) and will throw the corresponding ErrnoException:
-        \code
-        if ((fd = ::open(filename, O_RDWR)) < 0)
-             senf::throwErrno("open()");
-        \endcode
-
-        \see SystemException
-
-        \ingroup exception
-     */
-    template <int Code>
-    class ErrnoException : public SystemException
-    {
-    public:
-        static int const fixed_code = Code;
-
-        explicit ErrnoException(std::string const & where);
-                                        ///< ErrnoException with error location information
+        void init(std::string const & where, int code);
         
-        ErrnoException(ErrnoException const & other);
+        int code_;
     };
-
-    
-    /** \brief Throw ErrnoException based on current \c errno value
-        \ingroup exception
-     */
-    void throwErrno();
-
-    /** \brief Throw ErrnoException based on current \c errno value (with location info)
-        \ingroup exception
-     */
-    void throwErrno(std::string const & where);
-
-    /** \brief Throw ErrnoException based on given \c errno value
-        \ingroup exception
-     */
-    void throwErrno(int code);
-
-    /** \brief Throw ErrnoException based on given \c errno value (with location info)
-        \ingroup exception
-     */
-    void throwErrno(std::string const & where, int code);
 
 }
 

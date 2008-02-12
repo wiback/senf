@@ -40,7 +40,7 @@ prefix_ struct timeval senf::DatagramSocketProtocol::timestamp()
 {
     struct timeval tv;
     if (::ioctl(fd(), SIOCGSTAMP, &tv) < 0)
-        throwErrno();
+        throw SystemException();
     return tv;
 }
 

@@ -40,7 +40,7 @@ prefix_ unsigned senf::RawINetProtocol::available()
 {
     int n;
     if (::ioctl(fd(),SIOCINQ,&n) < 0)
-        throwErrno();
+        throw SystemException();
     return n;
 }
 

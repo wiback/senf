@@ -38,9 +38,9 @@ prefix_ void senf::SocketProtocol::close()
     const
 {
     if (::shutdown(body().fd(),SHUT_RDWR) < 0)
-        throwErrno();
+        throw SystemException();
     if (::close(body().fd()) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ void senf::SocketProtocol::terminate()

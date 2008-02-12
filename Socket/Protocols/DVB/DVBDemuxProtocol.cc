@@ -42,21 +42,21 @@ prefix_ void senf::DVBDemuxProtocol::setBufferSize(unsigned long size)
     const
 {
     if (::ioctl(fd(), DMX_SET_BUFFER_SIZE, size) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ void senf::DVBDemuxProtocol::startFiltering()
     const
 {
     if (::ioctl(fd(), DMX_START) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ void senf::DVBDemuxProtocol::stopFiltering()
     const
 {
     if (::ioctl(fd(), DMX_STOP) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ bool senf::DVBDemuxProtocol::eof()

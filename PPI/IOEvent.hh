@@ -29,6 +29,7 @@
 // Custom includes
 #include "../Scheduler/Scheduler.hh"
 #include "Events.hh"
+#include "../Utils/Exception.hh"
 
 //#include "IOEvent.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -94,14 +95,12 @@ namespace ppi {
         ///////////////////////////////////////////////////////////////////////////
 
         /** \brief Unhandled error condition */
-        struct ErrorException : public std::exception
-        { virtual char const * what() const throw() 
-                { return "senf::ppi::IOEvent::ErrorException"; } };
+        struct ErrorException : public senf::Exception
+        { ErrorException() : senf::Exception("senf::ppi::IOEvent::ErrorException"){} };
 
         /** \brief Unhandled hangup condition */
-        struct HangupException : public std::exception
-        { virtual char const * what() const throw() 
-                { return "senf::ppi::IOEvent::HangupException"; } };
+        struct HangupException : public senf::Exception
+        { HangupException() : senf::Exception("senf::ppi::IOEvent::HangupException"){} };
 
     protected:
 

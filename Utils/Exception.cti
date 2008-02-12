@@ -26,23 +26,17 @@
 //#include "Exception.ih"
 
 // Custom includes
+#include <boost/lexical_cast.hpp>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
-template <int Code>
-prefix_ senf::ErrnoException<Code>::ErrnoException(std::string const & where)
-    : SystemException(where,fixed_code)
-{}
-
-// I for some reason need to explicitly define this constructor even though it's defined identically
-// to the default version (even though SyntaxException has a custom copy constructor, the
-// non-existent std::stringstream copy constructor will be called otherwise). I believe this is a
-// g++ bug.
-template <int Code>
-prefix_ senf::ErrnoException<Code>::ErrnoException(ErrnoException const & other)
-    : SystemException(other)
-{}
+template <class Arg>
+prefix_ senf::Exception & senf::Exception::operator<<(Arg const & arg)
+{
+    message_ += boost::lexical_cast<std::string>(arg);
+    return *this;
+}
 
 /////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

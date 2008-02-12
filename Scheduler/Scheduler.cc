@@ -56,24 +56,24 @@ prefix_ senf::Scheduler::Scheduler()
       eventTime_(0), eventEarly_(ClockService::milliseconds(11)), eventAdjust_(0)
 {
     if (epollFd_<0)
-        throwErrno();
+        throw SystemException();
 
     if (::pipe(sigpipe_) < 0)
-        throwErrno();
+        throw SystemException();
 
     int flags (::fcntl(sigpipe_[1],F_GETFL));
     if (flags < 0) 
-        throwErrno();
+        throw SystemException();
     flags |= O_NONBLOCK;
     if (::fcntl(sigpipe_[1], F_SETFL, flags) < 0) 
-        throwErrno();
+        throw SystemException();
 
     ::epoll_event ev;
     ::memset(&ev, 0, sizeof(ev));
     ev.events = EV_READ;
     ev.data.fd = sigpipe_[0];
     if (::epoll_ctl(epollFd_, EPOLL_CTL_ADD, sigpipe_[0], &ev) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ void senf::Scheduler::registerSignal(unsigned signal, SimpleCallback const & cb)
@@ -133,7 +133,7 @@ prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMas
             ++ files_;
         }
         else
-            throwErrno("::epoll_ctl()");
+            throw SystemException("::epoll_ctl()");
     }
 }
 
@@ -163,7 +163,7 @@ prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
     }
 
     if (! file && epoll_ctl(epollFd_, action, fd, &ev) < 0)
-        throwErrno("::epoll_ctl()");
+        throw SystemException("::epoll_ctl()");
     if (file)
         -- files_;
 }
@@ -179,7 +179,7 @@ prefix_ void senf::Scheduler::registerSigHandlers()
             if (signal == SIGCHLD)
                 sa.sa_flags |= SA_NOCLDSTOP;
             if (::sigaction(signal, &sa, 0) < 0)
-                throwErrno();
+                throw SystemException();
         }
     }
 }
@@ -252,7 +252,7 @@ prefix_ void senf::Scheduler::process()
 
         if (events<0)
             if (errno != EINTR)
-                throwErrno();
+                throw SystemException();
 
         eventTime_ = ClockService::now();
 

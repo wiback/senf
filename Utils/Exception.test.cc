@@ -39,23 +39,18 @@
 
 BOOST_AUTO_UNIT_TEST(errnoException)
 {
-    BOOST_CHECK_THROW( senf::throwErrno(), senf::SystemException );
-    BOOST_CHECK_THROW( senf::throwErrno(ENOENT), senf::SystemException );
-    BOOST_CHECK_THROW( senf::throwErrno(""), senf::SystemException );
-    BOOST_CHECK_THROW( senf::throwErrno("", ENOENT), senf::SystemException );
-
     try {
         try {
-            senf::throwErrno("::open()", ENOENT);
+            throw senf::SystemException("::open()", ENOENT);
         }
-        catch(senf::SystemException & e) {
-            e << ": x=" << 1 << boost::format(", y=%d") % 2;
+        catch(senf::Exception & e) {
+            e << "\nx=" << 1 << boost::format("\ny=%d") % 2;
             throw;
         }
     }
     catch (senf::SystemException & e) {
         BOOST_CHECK_EQUAL( e.errorNumber(), ENOENT );
-        BOOST_CHECK_EQUAL( e.what(), "::open(): (2) No such file or directory: x=1, y=2" );
+        BOOST_CHECK_EQUAL( e.what(), "::open(): (2) No such file or directory\nx=1\ny=2" );
     }
 }
 

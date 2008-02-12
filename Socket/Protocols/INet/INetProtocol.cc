@@ -43,7 +43,7 @@ prefix_ void senf::INetProtocol::bindInterface(std::string const & iface)
     const
 {
     if (::setsockopt(fd(), SOL_SOCKET, SO_BINDTODEVICE, iface.c_str(), iface.size()) < 0)
-        throwErrno("::setsockopt(SO_BINDTODEVICE)");
+        throw SystemException("::setsockopt(SO_BINDTODEVICE)");
 }
 
 prefix_ std::string senf::INetProtocol::bindInterface()
@@ -52,7 +52,7 @@ prefix_ std::string senf::INetProtocol::bindInterface()
     socklen_t size (sizeof(iface));
     ::memset(iface, 0, sizeof(iface));
     if (::getsockopt(fd(), SOL_SOCKET, SO_BINDTODEVICE, iface, &size) < 0)
-        throwErrno("::getsockopt(SO_BINDTODEVICE)");
+        throw SystemException("::getsockopt(SO_BINDTODEVICE)");
     iface[size < IFNAMSIZ ? size : IFNAMSIZ-1] = 0;
     return iface;
 }

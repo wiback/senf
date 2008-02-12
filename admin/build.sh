@@ -16,7 +16,7 @@ echo -n '# Starting build at '; date --utc
 
 if [ "$1" == "-c" ]; then
     echo '$ find -mindepth 1 -maxdepth 1 ! -name .svn | xargs rm -rf'
-    find -mindepth 1 -maxdepth 1 ! -name .svn ! -name build.log | xargs rm -rf
+    find -mindepth 1 -maxdepth 1 ! -name .svn | xargs rm -rf
 fi
 
 echo '$ svn update'

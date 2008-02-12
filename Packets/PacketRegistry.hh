@@ -214,8 +214,8 @@ packet of which the key is requested
 
         This exception is signaled whenever a throwing lookup operation fails.
      */
-    struct PacketTypeNotRegisteredException : public std::exception
-    { virtual char const * what() const throw() { return "packet type not registered"; } };
+    struct PacketTypeNotRegisteredException : public senf::Exception
+    { PacketTypeNotRegisteredException() : senf::Exception("packet type not registered"){} };
 
 }
 

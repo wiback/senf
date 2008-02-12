@@ -50,7 +50,7 @@ prefix_ void senf::PacketProtocol::init_client(SocketType type, int protocol)
         protocol = ETH_P_ALL;
     int sock = ::socket(PF_PACKET, socktype, htons(protocol));
     if (sock < 0)
-        throwErrno();
+        throw SystemException();
     fd(sock);
 }
 
@@ -61,7 +61,7 @@ prefix_ unsigned senf::PacketProtocol::available()
         return 0;
     ssize_t l = ::recv(fd(),0,0,MSG_PEEK | MSG_TRUNC);
     if (l < 0)
-        throwErrno();
+        throw SystemException();
     return l;
 }
 
@@ -78,14 +78,14 @@ namespace {
         struct packet_mreq mreq;
         mreq.mr_ifindex = ::if_nametoindex(interface.c_str());
         if (mreq.mr_ifindex == 0)
-            senf::throwErrno(EINVAL);
+            throw senf::SystemException(EINVAL);
         mreq.mr_type = PACKET_MR_MULTICAST;
         mreq.mr_alen = 6;
         std::copy(address.begin(), address.end(), &mreq.mr_address[0]);
         if (::setsockopt(fd, SOL_PACKET,
                          add ? PACKET_ADD_MEMBERSHIP : PACKET_DROP_MEMBERSHIP,
                          &mreq, sizeof(mreq)) < 0)
-            senf::throwErrno();
+            throw senf::SystemException();
     }
 
 }

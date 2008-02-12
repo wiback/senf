@@ -71,7 +71,7 @@ prefix_ void senf::ReadHelper<Handle>::process(Handle handle,
 {
     try {
         if (event != senf::Scheduler::EV_READ)
-            throwErrno(EPIPE);
+            throw SystemException(EPIPE);
         std::string rcv;
         handle.read(rcv, maxSize_ - data_.size());
         data_.append(rcv);

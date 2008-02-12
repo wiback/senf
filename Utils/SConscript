@@ -1,14 +1,15 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob
+import SENFSCons, glob, os.path
 
 ###########################################################################
 
 SENFSCons.StandardTargets(env)
 
 # OUCH ... another hack to work around a scons bug ...
-Execute(Touch("Logger/all_includes.hh"))
+if not os.path.exists("Logger/all_includes.hh"):
+    Execute(Touch("Logger/all_includes.hh"))
 
 sources, testSources = SENFSCons.GlobSources()
 objects = SENFSCons.Objects( env, sources = sources, testSources=testSources )

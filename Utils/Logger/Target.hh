@@ -35,6 +35,7 @@
 #include "../mpl.hh"
 #include "StreamRegistry.hh"
 #include "AreaRegistry.hh"
+#include "../Exception.hh"
 
 //#include "Target.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -341,14 +342,14 @@ namespace log {
         ///\}
 
         /** \brief Exception: Invalid stream */
-        struct InvalidStreamException : public std::exception
-        { virtual char const * what() const throw() 
-                { return "senf::log::Target::InvalidStreamException"; } };
+        struct InvalidStreamException : public senf::Exception
+        { InvalidStreamException() 
+              : senf::Exception("senf::log::Target::InvalidStreamException"){} };
         
         /** \brief Exception: Invalid area */
-        struct InvalidAreaException : public std::exception
-        { virtual char const * what() const throw() 
-                { return "senf::log::Target::InvalidAreaException"; } };
+        struct InvalidAreaException : public senf::Exception
+        { InvalidAreaException() 
+              : senf::Exception("senf::log::Target::InvalidAreaException"){} };
 
         iterator begin() const;         ///< Iterator to beginning of routing table
         iterator end() const;           ///< Iterator past the end of routing table

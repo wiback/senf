@@ -43,7 +43,7 @@ prefix_ std::pair<bool,unsigned> senf::BSDSocketProtocol::linger()
     socklen_t len = sizeof(ling);
     ::memset(&ling,sizeof(ling),0);
     if (::getsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,&len) < 0)
-        throwErrno();
+        throw SystemException();
     return std::make_pair(ling.l_onoff, ling.l_linger);
 }
 
@@ -54,7 +54,7 @@ prefix_ void senf::BSDSocketProtocol::linger(bool enable, unsigned timeout)
     ling.l_onoff = enable;
     ling.l_linger = timeout;
     if (::setsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,sizeof(ling)) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ prefix_ bool senf::AddressableBSDSocketProtocol::reuseaddr()
     int value;
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_SOCKET,SO_REUSEADDR,&value,&len) < 0)
-        throwErrno();
+        throw SystemException();
     return value;
 }
 
@@ -74,7 +74,7 @@ prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
 {
     int ivalue (value);
     if (::setsockopt(fd(),SOL_SOCKET,SO_REUSEADDR,&ivalue,sizeof(ivalue)) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ boost::uint8_t senf::AddressableBSDSocketProtocol::priority()
@@ -83,7 +83,7 @@ prefix_ boost::uint8_t senf::AddressableBSDSocketProtocol::priority()
     int value;
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_SOCKET,SO_PRIORITY,&value,&len) < 0)
-        throwErrno();
+        throw SystemException();
     return value;
 }
 
@@ -92,7 +92,7 @@ prefix_ void senf::AddressableBSDSocketProtocol::priority(boost::uint8_t value)
 {
     int ivalue (value);
     if (::setsockopt(fd(),SOL_SOCKET,SO_PRIORITY,&ivalue,sizeof(ivalue)) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ unsigned senf::AddressableBSDSocketProtocol::rcvbuf()
@@ -101,7 +101,7 @@ prefix_ unsigned senf::AddressableBSDSocketProtocol::rcvbuf()
     unsigned size;
     socklen_t len (sizeof(size));
     if (::getsockopt(fd(),SOL_SOCKET,SO_RCVBUF,&size,&len) < 0)
-        throwErrno();
+        throw SystemException();
     // Linux doubles the bufer size on setting the RCVBUF to cater for internal
     // headers. We fix this up here .. (see lkml FAQ)
     return size/2;
@@ -111,7 +111,7 @@ prefix_ void senf::AddressableBSDSocketProtocol::rcvbuf(unsigned size)
     const
 {
     if (::setsockopt(fd(),SOL_SOCKET,SO_RCVBUF,&size,sizeof(size)) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 prefix_ unsigned senf::AddressableBSDSocketProtocol::sndbuf()
@@ -120,7 +120,7 @@ prefix_ unsigned senf::AddressableBSDSocketProtocol::sndbuf()
     unsigned size;
     socklen_t len (sizeof(size));
     if (::getsockopt(fd(),SOL_SOCKET,SO_SNDBUF,&size,&len) < 0)
-        throwErrno();
+        throw SystemException();
     // Linux doubles the bufer size on setting the SNDBUF to cater for internal
     // headers. We fix this up here .. (see lkml FAQ)
     return size/2;
@@ -130,7 +130,7 @@ prefix_ void senf::AddressableBSDSocketProtocol::sndbuf(unsigned size)
     const
 {
     if (::setsockopt(fd(),SOL_SOCKET,SO_SNDBUF,&size,sizeof(size)) < 0)
-        throwErrno();
+        throw SystemException();
 }
 
 /////////////////////////////cc.e////////////////////////////////////////

@@ -41,12 +41,9 @@ namespace senf {
         \todo add usefull exceptions strings
          
     */
-    struct UnsuportedTLVPacketException : public std::exception
-    { 
-        virtual char const * what() const throw() { 
-            return "length of length can be max. 4 bytes. Sorry.";
-        }
-    };
+    struct UnsuportedTLVPacketException : public senf::Exception
+    { UnsuportedTLVPacketException() 
+          : senf::Exception("length of length can be max. 4 bytes. Sorry."){} };
 
     /** \brief xxx
         \todo document me

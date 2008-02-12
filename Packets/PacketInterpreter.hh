@@ -379,8 +379,8 @@ namespace senf {
         This exception signals an invalid operation on the chain like trying to find a non-existent
         chain member and other similar error conditions. 
      */
-    struct InvalidPacketChainException : public std::exception
-    { virtual char const * what() const throw() { return "invalid packet chain"; } };
+    struct InvalidPacketChainException : public senf::Exception
+    { InvalidPacketChainException() : senf::Exception("invalid packet chain"){} };
     
 }
 

@@ -80,12 +80,12 @@ namespace {
     int run(int argc, char const ** argv)
     {
         int pid (::fork());
-        if (pid < 0) senf::throwErrno("::fork()");
+        if (pid < 0) throw senf::SystemException("::fork()");
         if (pid == 0) {
             ::_exit(myMain(argc, argv));
         }
         int status;
-        if (::waitpid(pid, &status, 0) < 0) senf::throwErrno("::waitpid()");
+        if (::waitpid(pid, &status, 0) < 0) throw senf::SystemException("::waitpid()");
         return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
     }
 

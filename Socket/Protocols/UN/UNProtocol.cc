@@ -41,7 +41,7 @@ prefix_ unsigned senf::UNProtocol::available()
 {
     int n;
     if (::ioctl(fd(),SIOCINQ,&n) < 0)
-        throwErrno();
+        throw SystemException();
     return n;
 }
 
