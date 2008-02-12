@@ -40,7 +40,7 @@
 
 /** \defgroup exception Exception classes
 
-    All exceptions in senf are derived from senf::Exception. This class adds the possibility to
+    All exceptions in %senf are derived from senf::Exception. This class adds the possibility to
     extend the exception description while it is processed:
 
     \code
@@ -55,7 +55,7 @@
     }
     \endcode
 
-    This will add the user information to any senf exception thrown. The Exception is however not a
+    This will add the user information to any %senf exception thrown. The Exception is however not a
     stream. If you need to do more extensive formating, either use an intermediate string-stream or
     use <a href="http://www.boost.org/libs/format/doc/format.html">Boost.Format</a>:
 

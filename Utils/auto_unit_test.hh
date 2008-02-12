@@ -29,7 +29,7 @@
 
     So, instead of <tt>\#include <boost/test/auto_unit_test.hpp></tt>, you should always write
     <pre>
-        #include "../Utils/auto_unit_test.hh"
+    \#include "../Utils/auto_unit_test.hh"
     </pre> (with possibliy adjusted path).
  */
 
