@@ -108,7 +108,7 @@ namespace senf {
         \code
         INet6Address ina = ...;
         Packet::iterator i = ...;
-        std::copy(ina.begin(), ina.end(), i);
+        std::copy(ina.begin(), ina.end(), i); // Copies 16 bytes
         \endcode
 
         \see CheckINet6Network \n INet6Network

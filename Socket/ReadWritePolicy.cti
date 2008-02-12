@@ -38,7 +38,7 @@ readfrom(ClientSocketHandle<SPolicy> handle, char * buffer, unsigned size,
          typename SPolicy::AddressingPolicy::Address & address,
          typename IfCommunicationPolicyIs<SPolicy,UnconnectedCommunicationPolicy>::type *)
 {
-    return do_rcvfrom(handle, buffer, size, address.sockaddr_p(), address.sockaddr_len());
+    return do_readfrom(handle, buffer, size, address.sockaddr_p(), address.sockaddr_len());
 }
 #else
 template <class SPolicy>
