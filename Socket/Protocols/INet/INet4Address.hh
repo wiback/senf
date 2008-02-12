@@ -46,6 +46,36 @@ namespace senf {
         INet4Address represents a simple IP address. It is modelled as a fixed-size
         container/sequence of 4 bytes.
 
+        The following statements all create the same INet4 address <code>211.194.177.160</code>
+        \code
+        // Used to construct constant INet4 addresses
+        INet4Address(0xD3C2B1A0)
+        
+        // Construct an INet4 address from it's string representation. All the standard address
+        // representations are supported
+        INet4Address::from_string("211.194.177.160")
+        INet4Address::from_string("211.12759456")
+
+        // Construct an INet4 address from raw data. 'from_data' takes an arbitrary iterator (e.g. a
+        // pointer) as argument. Here we use a fixed array but normally you will need this to build
+        // an INet4 address in a packet parser
+        char rawBytes[] = { 0xD3, 0xC2, 0xB1, 0xA0 };
+        INet4Address::from_data(rawBytes)
+
+        // Construct an INet4 address from the standard POSIX representation: a 32-bit integer in
+        // network byte oder. This is used to interface with POSIX routines
+        struct sockaddr_in saddr = ...;
+        INet4Address::from_inaddr(saddr.sin_addr.s_addr)
+        \endcode
+
+        Since INet4Address is based on \c boost::array, you can access the raw data bytes of the
+        address (in network byte order) using \c begin(), \c end() or \c operator[]
+        \code
+        INet4Address ina = ...;
+        Packet::iterator i = ...;
+        std::copy(ina.begin(), ina.end(), i); // Copies 4 bytes
+        \endcode
+
         \see CheckINet4Network \n INet4Network
 
         \implementation We awkwardly need to use static named constructors (<tt>from_</tt> members)

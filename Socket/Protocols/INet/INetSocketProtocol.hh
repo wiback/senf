@@ -47,6 +47,8 @@ namespace senf {
     /// \addtogroup protocol_facets_group
     /// @{
 
+    /** \brief Generic addressing type independent INet protocol facet
+     */
     class INetSocketProtocol
         : public virtual SocketProtocol
     {

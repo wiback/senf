@@ -39,6 +39,8 @@ namespace senf {
     ///\addtogroup protocol_facets_group
     ///\{
    
+    /** \brief Generic addressing type independent multicast protocol facet
+     */
     class MulticastSocketProtocol 
         : public virtual SocketProtocol
     {
@@ -67,6 +69,8 @@ namespace senf {
                                              data from */
     };
 
+    /** \brief Multicast protocol facet for INet4 addressable multicast enabled sockets
+     */
     class INet4MulticastSocketProtocol
         : public virtual SocketProtocol
     {
@@ -122,6 +126,8 @@ namespace senf {
                                              \param[in] iface interface name */
     };
 
+    /** \brief Multicast protocol facet for INet6 addressable multicast enabled sockets
+     */
     class INet6MulticastSocketProtocol
         : public virtual SocketProtocol
     {

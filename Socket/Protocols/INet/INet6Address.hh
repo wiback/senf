@@ -85,8 +85,31 @@ namespace senf {
         <tr><td><tt>ff70::/12</tt></td>      <td>Multicast address with embedded RP</td> <td>RFC3956</td>    <td></td></tr>
         </table>
 
-        The INet6Address class is based on \c boost::array and is built as a fixed-size sequence of
-        16 bytes.
+        The following statements all create the same INet6 address
+        <code>2001:db8::a0b1:1a2b:3dff:fe4e:5f00</code>:
+        \code
+        \\ Used to construct constant INet6 addresses
+        INet6Address(0x2001u,0xDB8u,0x0u,0xA0B1u 0x1A2Bu,0x3DFFu,0xFE4Eu,0x5F00u)
+
+        // Construct INet6 address from it's string representation
+        INet6Address::from_string("2001:db8::a0b1:1a2b:3dff:fe4e:5f00")
+
+        // Construct an INet6 address from raw data. 'from_data' takes an arbitrary iterator (e.g. a
+        // pointer) as argument. Here we use a fixed array but normally you will need this to build
+        // an INet6 address in a packet parser
+        char rawBytes[] = { 0x20, 0x01, 0x0D, 0xB8, 0x00, 0x00, 0xA0, 0xB1,
+                            0x1a, 0x2b, 0x3d, 0xff, 0xfe, 0x4e, 0xff, 0x00 };
+        INet6Address::from_data(rawBytes)
+        \endcode
+
+        Since INet6Address class is based on \c boost::array and is built as a fixed-size sequence
+        of 16 bytes, you can access the raw data bytes of the address (in network byte order) using
+        \c begin(), \c end() or \c operator[]
+        \code
+        INet6Address ina = ...;
+        Packet::iterator i = ...;
+        std::copy(ina.begin(), ina.end(), i);
+        \endcode
 
         \see CheckINet6Network \n INet6Network
         \ingroup addr_group

@@ -29,6 +29,7 @@
 #include "RawINetSocketProtocol.hh"
 #include "MulticastSocketProtocol.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
+#include "../../../Socket/Protocols/DatagramSocketProtocol.hh"
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
@@ -78,6 +79,7 @@ namespace senf {
           public RawINetSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
+	  public DatagramSocketProtocol,
           public MulticastSocketProtocol,
           public INet4MulticastSocketProtocol
     {
@@ -146,8 +148,9 @@ namespace senf {
           public RawINetSocketProtocol,
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
+	  public DatagramSocketProtocol,
           public MulticastSocketProtocol,
-          public INet4MulticastSocketProtocol
+          public INet6MulticastSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

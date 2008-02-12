@@ -45,6 +45,37 @@ namespace senf {
         
         The Ethernet MAC is modelled as a fixed-size container/sequence of 6 bytes.
 
+        The following statements all create the same MAC address <code>00:1A:2B:3C:4D:5F</code>
+        \code
+        // Used to construct constant MAC addresses
+        MACAddress(0x001A2B3C4D5Flu)
+
+        // Construct a MAC address from it's string representation:
+        MACAddress::from_string("00:1a:2b:3c:4d:5f")   // case is ignored
+        MACAddress::from_string("00-1A-2B-3C-4D-5F")   // '-' as separator is allowed too
+
+        // Construct a MAC address from raw data.  'from_data' takes an arbitrary iterator (e.g. a
+        // pointer) as argument. Here we use a fixed array but normally you will need this to build
+        // a MAC address in a packet parser
+        char rawBytes[] = { 0x00, 0x1A, 0x2B, 0x3C, 0x4D, 0x5F };
+        MACAddress::from_data(rawBytes)
+
+        // Construct a MAC from the EUID64 as used by INet6 interfaces.  The eui64 will come from an
+        // INet6 address:
+        MACAddress::from_eui64(0x001A2BFFFE3C4D5Ful)
+        MACAddress::from_eui64(
+            INet6Address(0x2001u,0xDB8u,0x1u,0x0u,0x001Au,0x2BFFu,0xFE3Cu,0x3D5Fu).id())
+        \endcode
+
+        Since MACAddress is based on \c boost::array, you can access the raw data bytes of the
+        address using \c begin(), \c end() or \c operator[]:
+        \code
+        MACAddress mac = ...;
+        Packet::iterator i = ...;
+
+        std::copy(mac.begin(), mac.end(), i); // Copies 6 bytes
+        \endcode
+
         \implementation We awkwardly need to use static named constructors (<tt>from_</tt> members)
             instead of ordinarily overloaded constructors for one simple reason: <tt>char *</tt>
             doubles as string literal and as arbitrary data iterator. The iterator constructor can
@@ -91,7 +122,7 @@ namespace senf {
         bool local() const;             ///< \c true, if address is locally administered
         bool multicast() const;             ///< \c true, if address is a group/multicast address
         bool broadcast() const;         ///< \c true, if address is the broadcast address
-        bool boolean_test() const;      ///< \c true, if address is the zero address
+        bool boolean_test() const;      ///< \c true, if address is not the zero address
 
         boost::uint32_t oui() const;    ///< Return first 3 bytes of the address
         boost::uint32_t nic() const;    ///< Return last 3 bytes of the address

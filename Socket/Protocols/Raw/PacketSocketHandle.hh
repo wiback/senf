@@ -35,6 +35,7 @@
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
 #include "../../../Socket/Protocols/BSDSocketProtocol.hh"
+#include "../../../Socket/Protocols/DatagramSocketProtocol.hh"
 #include "LLAddressing.hh"
 
 //#include "PacketSocketHandle.mpp"
@@ -76,6 +77,7 @@ namespace senf {
      */
     class PacketSocketProtocol
         : public ConcreteSocketProtocol<Packet_Policy, PacketSocketProtocol>,
+	  public DatagramSocketProtocol,
           public BSDSocketProtocol
     {
     public:

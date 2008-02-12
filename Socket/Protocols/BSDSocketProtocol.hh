@@ -59,27 +59,7 @@ namespace senf {
                                              forever.
                                              \param[in] enable \c true to activate linger
                                              \param[in] timeout linger timeout in seconds */
-
-    };
-
-    /** \brief Protocol facet providing basic connection oriented BSD socket functions
-
-        AddressableBSDSocketProtocol provides the BSD socket API as it generically applies to
-        addressable (connection oriented) sockets.
-     */
-    class AddressableBSDSocketProtocol
-        : public virtual SocketProtocol
-    {
-    public:
-        bool reuseaddr() const;         ///< Return current reuseaddr state
-                                        /**< \returns \c true if \c SO_REUSEADDR is currently
-                                             enabled, \c false otherwise*/
-        void reuseaddr(bool value) const; ///< Set reuseraddr state
-                                        /**< A \c true value enables \c SO_REUSEADDR, \c false will
-                                             disable it.
-                                             \param[in] value new \c SO_REUSEADDR state */
-
-        boost::uint8_t priority() const;  ///< Get packet priority assigned to outgoing packets
+       boost::uint8_t priority() const;  ///< Get packet priority assigned to outgoing packets
                                         /**< This call will return the priority value assigned to
                                              packets sent via this socket. Depending on the
                                              protocol, this value may also be placed inside the
@@ -109,6 +89,24 @@ namespace senf {
         void sndbuf(unsigned size) const; ///< Change size of send buffer
                                         /**< \param[in] size new send buffer size */
         
+     };
+
+    /** \brief Protocol facet providing basic connection oriented BSD socket functions
+
+        AddressableBSDSocketProtocol provides the BSD socket API as it generically applies to
+        addressable (connection oriented) sockets.
+     */
+    class AddressableBSDSocketProtocol
+        : public virtual SocketProtocol
+    {
+    public:
+        bool reuseaddr() const;         ///< Return current reuseaddr state
+                                        /**< \returns \c true if \c SO_REUSEADDR is currently
+                                             enabled, \c false otherwise*/
+        void reuseaddr(bool value) const; ///< Set reuseraddr state
+                                        /**< A \c true value enables \c SO_REUSEADDR, \c false will
+                                             disable it.
+                                             \param[in] value new \c SO_REUSEADDR state */
     };
 
     /// @}
