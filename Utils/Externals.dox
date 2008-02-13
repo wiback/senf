@@ -1,0 +1,16 @@
+/**\defgroup externals External objects referenced from within SENF */
+///\addtogroup externals
+///\{
+namespace boost { class array {}; }
+namespace boost { class base_from_member {}; }
+namespace boost { class enable_if {}; }
+namespace boost { class equality_comparable {}; }
+namespace boost { class false_type {}; }
+namespace boost { class iterator_facade {}; }
+namespace boost { class noncopyable {}; }
+namespace boost { class singleton_pool {}; }
+namespace boost { class totally_ordered {}; }
+namespace boost { class true_type {}; }
+namespace std { class exception {}; }
+namespace std { class string {}; }
+///\}

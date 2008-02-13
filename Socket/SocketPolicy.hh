@@ -32,17 +32,16 @@
 
 /** \defgroup policy_group The Policy Framework
 
-    \htmlonly
-        <map name="socketPolicy">
-          <area shape="rect" alt="SocketPolicy" href="structsenf_1_1SocketPolicy.html" title="SocketPolicy" coords="276,90,558,213" />
-          <area shape="rect" alt="WritePolicyBase" href="structsenf_1_1WritePolicyBase.html" title="WritePolicyBase" coords="39,243,174,268" />
-          <area shape="rect" alt="ReadPolicyBase" href="structsenf_1_1ReadPolicyBase.html" title="ReadPolicyBase" coords="42,204,174,231" />
-          <area shape="rect" alt="CommunicationPolicyBase" href="structsenf_1_1CommunicationPolicyBase.html" title="CommunicationPolicyBase" coords="0,166,215,193" />
-          <area shape="rect" alt="FramingPolicyBase" href="structsenf_1_1FramingPolicyBase.html" title="FramingPolicyBase" coords="30,129,185,155" />
-          <area shape="rect" alt="AddressingPolicyBase" href="structsenf_1_1AddressingPolicyBase.html" title="AddressingPolicyBase" coords="17,90,200,116" />
-        </map>
-        <img src="SocketPolicy.png" border="0" alt="Socket Policy" usemap="#socketPolicy">
-    \endhtmlonly
+    <div class="diamap" name="SocketPolicy">
+    <span coords="39,229,182,257">\ref WritePolicyBase</span>
+    <span coords="17,76,210,105">\ref AddressingPolicyBase</span>
+    <span coords="29,114,194,143">\ref FramingPolicyBase</span>
+    <span coords="368,0,463,28">\ref PolicyBase</span>
+    <span coords="275,2,691,185">\ref SocketPolicy</span>
+    <span coords="0,152,227,181">\ref CommunicationPolicyBase</span>
+    <span coords="41,191,180,219">\ref ReadPolicyBase</span>
+    </div>
+    \htmlonly <img src="SocketPolicy.png" border="0" alt="SocketPolicy" usemap="#SocketPolicy"> \endhtmlonly
         
     \section policy_group_introduction Introduction to the Policy Framework
 

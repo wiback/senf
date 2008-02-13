@@ -430,7 +430,7 @@ div.ah {
         margin-right: 10px;
 }
 
-div.nav {
+div.nav, div.navpath {
         width: auto;
         background-color: white;
         border: none;
@@ -447,6 +447,14 @@ div.qindex {
         margin: 2px 0;
         padding: 2px;
         line-height: 140%;
+}
+
+table.qindextable {
+        font-size: 90%;
+}
+
+table.qindextable td {
+        width: 33%;
 }
 
 dl.parameters dd table {

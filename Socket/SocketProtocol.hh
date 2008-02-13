@@ -32,21 +32,19 @@
 
 /** \defgroup protocol_group The Protocol Classes
 
-    \htmlonly
-    <map name="Protocols">
-    <area shape="rect" alt="SocketProtocol" href="classsenf_1_1SocketProtocol.html" title="SocketProtocol" coords="0,0,118,25"/>
-    <area shape="rect" alt="UNSocketProtocol" href="classsenf_1_1UNSocketProtocol.html" title="UNSocketProtocol" coords="139,392,279,418"/>
-    <area shape="rect" alt="PacketSocketProtocol" href="classsenf_1_1PacketSocketProtocol.html" title="PacketSocketProtocol" coords="527,412,693,438"/>
-    <area shape="rect" alt="ConcreteSocketProtocol" href="classsenf_1_1ConcreteSocketProtocol.html" title="ConcreteSocketProtocol" coords="214,49,471,86"/>
-    <area shape="rect" alt="BSDSocketProtocol" href="classsenf_1_1BSDSocketProtocol.html" title="BSDSocketProtocol" coords="135,112,283,137"/>
-    <area shape="rect" alt="DatagramSocketProtocol" href="classsenf_1_1DatagramSocketProtocol.html" title="DatagramSocketProtocol" coords="114,258,304,284"/>
-    <area shape="rect" alt="TCPSocketProtocol" href="classsenf_1_1TCPSocketProtocol.html" title="TCPSocketProtocol" coords="136,320,281,346"/>
-    <area shape="rect" alt="UNDatagramSocketProtocol" href="classsenf_1_1UNDatagramSocketProtocol.html" title="UNDatagramSocketProtocol" coords="395,446,604,472"/>
-    <area shape="rect" alt="AddressableBSDSocketProtocol" href="classsenf_1_1AddressableBSDSocketProtocol.html" title="AddressableBSDSocketProtocol" coords="89,189,329,215"/>
-    <area shape="rect" alt="TCPv4SocketProtocol" href="classsenf_1_1TCPv4SocketProtocol.html" title="TCPv4SocketProtocol" coords="282,481,444,507"/>
-    </map>
-    <img src="Protocols.png" border="0" alt="Protocols" usemap="#Protocols">
-    \endhtmlonly
+     <div class="diamap" name="Protocols">
+     <span coords="0,0,118,25">\ref SocketProtocol</span>
+     <span coords="139,381,279,407">\ref UNSocketProtocol</span>
+     <span coords="527,412,693,438">\ref PacketSocketProtocol</span>
+     <span coords="214,49,471,86">\ref ConcreteSocketProtocol</span>
+     <span coords="135,112,283,137">\ref BSDSocketProtocol</span>
+     <span coords="114,258,304,284">\ref DatagramSocketProtocol</span>
+     <span coords="136,320,281,346">\ref TCPSocketProtocol</span>
+     <span coords="395,446,604,472">\ref UNDatagramSocketProtocol</span>
+     <span coords="89,189,329,215">\ref AddressableBSDSocketProtocol</span>
+     <span coords="282,481,444,507">\ref TCPv4SocketProtocol</span>
+     </div>
+     \htmlonly <img src="Protocols.png" border="0" alt="Protocols" usemap="#Protocols"> \endhtmlonly
 
     The socket handle classes and templates only implement the most important socket API methods
     using the policy framework. To access the complete API, the protocol interface is

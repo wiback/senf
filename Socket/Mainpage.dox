@@ -247,7 +247,48 @@ namespace senf {
 
     \section class_diagram Class Diagram
 
-    \image html SocketLibrary-classes.png
+    <div class="diamap" name="SocketLibrary-classes">
+    <span coords="472,667,559,689">\ref IPv4Protocol</span>
+    <span coords="29,773,139,794">\ref WritePolicyBase</span>
+    <span coords="97,939,238,960">\ref SocketBufferingPolicy</span>
+    <span coords="97,390,223,411">\ref NoAddressingPolicy</span>
+    <span coords="97,736,217,758">\ref NotReadablePolicy</span>
+    <span coords="418,609,613,631">\ref AdressableBSDSocketProtocol</span>
+    <span coords="18,895,153,917">\ref BufferingPolicyBase</span>
+    <span coords="22,426,148,447">\ref FramingPolicyBase</span>
+    <span coords="409,0,495,36">\ref FileBody</span>
+    <span coords="97,469,249,491">\ref DatagramFramingPolicy</span>
+    <span coords="97,317,240,339">\ref INet6AddressingPolicy</span>
+    <span coords="453,544,578,566">\ref BSDSocketProtocol</span>
+    <span coords="97,281,240,303">\ref INet4AddressingPolicy</span>
+    <span coords="452,177,706,209">\ref ProtocolServerSocketHandle</span>
+    <span coords="412,259,486,281">\ref PolicyBase</span>
+    <span coords="474,768,557,790">\ref TCPProtocol</span>
+    <span coords="97,700,197,722">\ref ReadablePolicy</span>
+    <span coords="342,249,654,411">\ref SocketPolicy</span>
+    <span coords="0,541,173,563">\ref CommunicationPolicyBase</span>
+    <span coords="640,859,736,881">\ref TCPv6Protocol</span>
+    <span coords="353,428,453,465">\ref SocketProtocol</span>
+    <span coords="97,585,297,606">\ref ConnectedCommunicationPolicy</span>
+    <span coords="172,177,420,209">\ref ProtocolClientSocketHandle</span>
+    <span coords="472,718,559,739">\ref IPv6Protocol</span>
+    <span coords="97,816,192,838">\ref WritablePolicy</span>
+    <span coords="383,62,520,98">\ref SocketBody</span>
+    <span coords="698,888,798,910">\ref PacketProtocol</span>
+    <span coords="97,852,213,874">\ref NotWritablePolicy</span>
+    <span coords="31,657,138,679">\ref ReadPolicyBase</span>
+    <span coords="213,60,369,91">\ref SocketHandle</span>
+    <span coords="197,126,385,158">\ref ClientSocketHandle</span>
+    <span coords="97,621,311,642">\ref UnconnectedCommunicationPolicy</span>
+    <span coords="567,480,786,526">\ref ConcreteSocketProtocol</span>
+    <span coords="582,830,678,852">\ref TCPv4Protocol</span>
+    <span coords="97,505,234,527">\ref StreamFramingPolicy</span>
+    <span coords="13,238,161,259">\ref AddressingPolicyBase</span>
+    <span coords="224,0,294,36">\ref FileHandle</span>
+    <span coords="97,353,222,375">\ref LLAddressingPolicy</span>
+    <span coords="476,126,671,158">\ref ServerSocketHandle</span>
+    </div>
+    \htmlonly <img src="SocketLibrary-classes.png" border="0" alt="SocketLibrary-classes" usemap="#SocketLibrary-classes"> \endhtmlonly
 
     \section impl_notes Arbitrary Implementation Notes
 

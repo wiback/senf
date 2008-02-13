@@ -405,7 +405,8 @@
     senf::PacketTypeMixin. senf::PacketTypeBase must be inherited by every packet type class. the
     senf::PacketTypeMixin provides default implementations for some members which are useful for
     most kinds of packets. If a packet type is very complex and these defaults don't work, the mixin
-    class can and should be left out.
+    class can and should be left out. More on this (what the default members do exactly and when the
+    mixin can be used) can be found in the senf::PacketTypeMixin documentation.
 
     Of the typedefs, only \a parser is mandatory. It defines the packet parser to use to interpret
     this type of packet. \a mixin and \a packet are defined to simplify the following
@@ -626,10 +627,12 @@
     \endcode
 
     We have added an additional private bitfield \a reserved0_5bits_() and we made the \a version_()
-    field private since we do not want the user to change the value. We could have used a read-only
-    field in this special case (since the valid value is 0) but generally in a case like this since
-    the field will be initialized by the parser (see next section on how). the field should be
-    private with an additional public read-only accessor.
+    field private since we do not want the user to change the value (0 is the only valid value, any
+    other value is not supported by this parser anyways). In this special case, a read-only field
+    would do. But more generally, if there are fields which must have a fixed value, they must be
+    defined as private fields so they can be initialized by the parser to their correct value (see
+    next section on how). An additional public read-only accessor allows users of the parser to read
+    out the value (but not change it).
 
     We will now add two additional simple members to the parser
 

@@ -479,6 +479,8 @@ namespace connector {
 #else
 
     /** \brief Connector actively reading packets
+        
+        \tparam PacketType Type of packet to read. Defaults to senf::Packet
 
         The ActiveInput connector template reads data actively from a connected module. This class
         is completely implemented via it's base-class, GenericActiveInput, the only difference is
@@ -499,6 +501,8 @@ namespace connector {
     };
 
     /** \brief Connector passively receiving packets
+
+        \tparam PacketType Type of packet to read. Defaults to senf::Packet
 
         The PassiveInput connector template receives packets sent to it from a connected
         module. This class is completely implemented via it's base-class, GenericPassiveInput, the
@@ -521,6 +525,8 @@ namespace connector {
 
     /** \brief Connector actively sending packets
 
+        \tparam PacketType Type of packet to send. Defaults to senf::Packet
+
         The ActiveOutput connector template sends data actively to a connected module. This class is
         completely implemented via it's base-class, GenericActiveOutput, the only difference is that
         it only sends packets of type \a PacketType.
@@ -537,6 +543,8 @@ namespace connector {
     };
 
     /** \brief Connector passively providing packets
+
+        \tparam PacketType Type of packet to send. Defaults to senf::Packet
 
         The PassiveOutput connector template provides data passively to a connected module whenever
         signaled. This class is completely implemented via it's base-class, GenericPassiveOutput, the

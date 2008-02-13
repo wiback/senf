@@ -147,9 +147,34 @@
       <xsl:apply-templates/>
     </xsl:copy>
   </xsl:template>
+  
+  <!-- Build dia image-map from special div/span elements -->
+  <xsl:template match="div[@class='diamap']">
+    <xsl:element name="map">
+      <xsl:attribute name="name"><xsl:value-of select="@name"/></xsl:attribute>
+      <xsl:for-each select="span">
+        <xsl:if test="a">
+          <xsl:variable name="name" select="string(a[1])"/>
+          <xsl:element name="area">
+            <xsl:attribute name="shape">rect</xsl:attribute>
+            <xsl:attribute name="alt"><xsl:value-of select="$name"/></xsl:attribute>
+            <xsl:attribute name="title"><xsl:value-of select="$name"/></xsl:attribute>
+            <xsl:attribute name="href"><xsl:value-of select="a[1]/@href"/></xsl:attribute>
+            <xsl:attribute name="coords"><xsl:value-of select="@coords"/></xsl:attribute>
+          </xsl:element>
+        </xsl:if>
+      </xsl:for-each>
+    </xsl:element>
+  </xsl:template>
 
   <!-- Remove the automatically inserted search form (we build our own) -->
   <xsl:template match="li[form]"> 
+  </xsl:template>
+
+  <xsl:template match="table[preceding-sibling::*[1][self::div][@class='qindex']]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">qindextable</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
   
   <xsl:template match="dl[dt/b/a/text()='Bug:']">
@@ -176,7 +201,7 @@
     </xsl:call-template>
   </xsl:template>
 
-  <xsl:template match="dl[dt/b/text()='Parameters:']">
+  <xsl:template match="dl[dt/b/text()='Parameters:']|dl[dt/b/text()='Template Parameters:']">
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">parameters</xsl:with-param>
     </xsl:call-template>

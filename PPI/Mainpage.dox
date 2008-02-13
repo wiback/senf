@@ -461,7 +461,28 @@
 
     \section ppi_classdiagram Class Diagram
 
-    \image html classes.png
+    <div class="diamap" name="classes">
+    <span coords="652,428,796,455">\ref senf::ppi::connector::PassiveConnector</span>
+    <span coords="198,381,316,408">\ref senf::ppi::EventManager</span>
+    <span coords="462,543,571,570">\ref senf::ppi::connector::ActiveOutput</span>
+    <span coords="468,494,564,521">\ref senf::ppi::connector::ActiveInput</span>
+    <span coords="414,36,505,63">\ref senf::ppi::RouteBase</span>
+    <span coords="432,325,529,379">\ref senf::ppi::Route</span>
+    <span coords="194,154,319,181">\ref (some module)</span>
+    <span coords="19,293,252,333">\ref senf::ppi::EventImplementation</span>
+    <span coords="225,36,289,63">\ref senf::ppi::module::Module</span>
+    <span coords="309,331,397,358">\ref senf::ppi::connector::Connector</span>
+    <span coords="597,543,717,570">\ref senf::ppi::connector::PassiveOutput</span>
+    <span coords="66,432,210,459">\ref senf::ppi::detail::EventBindingBase</span>
+    <span coords="378,428,505,455">\ref senf::ppi::connector::InputConnector</span>
+    <span coords="491,124,694,210">\ref senf::ppi::RouteImplementation</span>
+    <span coords="283,464,423,491">\ref senf::ppi::connector::OutputConnector</span>
+    <span coords="512,428,645,455">\ref senf::ppi::connector::ActiveConnector</span>
+    <span coords="85,487,259,527">\ref senf::ppi::detail::EventBinding</span>
+    <span coords="39,216,170,243">\ref senf::ppi::EventDescriptor</span>
+    <span coords="604,494,710,521">\ref senf::ppi::connector::PassiveInput</span>
+    </div>
+    \htmlonly <img src="classes.png" border="0" alt="classes" usemap="#classes"> \endhtmlonly
  */
 
 
