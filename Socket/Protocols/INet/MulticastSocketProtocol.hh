@@ -45,14 +45,14 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        void broadcastEnabled(bool v) const; ///< Enable broadcast send/receive
+        void broadcastEnabled(bool v);  ///< Enable broadcast send/receive
                                         /**< If this option is enabled, broadcast UDP messages will
                                              be received on the socket and the socket will be
                                              allowed to send out broadcast UDP messages
                                              \param[in] v \c true to enable broadcast send/receive,
                                                  \c false to disable */
 
-        bool broadcastEnabled() const;  ///< Get broadcast send/receive state
+        bool broadcastEnabled();        ///< Get broadcast send/receive state
                                         /**< \returns Current state of the broadcastEnabled()
                                              option. */
 
@@ -60,8 +60,9 @@ namespace senf {
         unsigned mcTTL() const;         ///< Return current multicast TTL
         void mcTTL(unsigned value) const; ///< Set multicast TTL
 
-        bool mcLoop() const;            ///< Return current multicast loopback state
+        bool mcLoop() const;            ///< Return current multicast loopback state. 
         void mcLoop(bool value) const;  ///< Set multicast loopback state
+        /**< If set to false via \c mcLoop(value) multicast messages will not be looped back  to local sockets. Default value is \c true (1).   */
 
         void mcIface(std::string const & iface = std::string()) const;
                                         ///< Set multicast send interface of the socket
