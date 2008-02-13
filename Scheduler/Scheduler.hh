@@ -72,8 +72,12 @@ namespace senf {
         If you need to pass additional information to your handler, use <a
         href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a>:
         \code
+        // Handle callback function
+        void callback(UDPv4ClientSocketHandle handle, senf::Scheduler::EventId event) {..}
         // Pass 'handle' as additional first argument to callback()
-        Scheduler::instance().add(handle, boost::bind(&callback, handle, _1))
+        Scheduler::instance().add(handle, boost::bind(&callback, handle, _1), EV_READ)
+         // Timeout function
+        void timeout( int n) {..}
         // Call timeout() handler with argument 'n'
         Scheduler::instance().timeout(boost::bind(&timeout, n))
         \endcode
@@ -82,7 +86,7 @@ namespace senf {
         href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a> or senf::membind()
         \code
         // e.g. in Foo::Foo() constructor:
-        Scheduler::instance().add(handle_, senf::membind(&Foo::callback, this))
+        Scheduler::instance().add(handle_, senf::membind(&Foo::callback, this)), EV_READ)
         \endcode
         
 
@@ -90,7 +94,7 @@ namespace senf {
         
         File descriptors are managed using add() or remove()
         \code
-        Scheduler::instance().add(handle, &callback);
+        Scheduler::instance().add(handle, &callback, EV_ALL);
         Scheduler::instance().remove(handle);
         \endcode 
 
