@@ -45,14 +45,14 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        void broadcastEnabled(bool v);  ///< Enable broadcast send/receive
+        void broadcastEnabled(bool v) const; ///< Enable broadcast send/receive
                                         /**< If this option is enabled, broadcast UDP messages will
                                              be received on the socket and the socket will be
                                              allowed to send out broadcast UDP messages
                                              \param[in] v \c true to enable broadcast send/receive,
                                                  \c false to disable */
 
-        bool broadcastEnabled();        ///< Get broadcast send/receive state
+        bool broadcastEnabled() const;  ///< Get broadcast send/receive state
                                         /**< \returns Current state of the broadcastEnabled()
                                              option. */
 

@@ -39,6 +39,7 @@
 // senf::MulticastSocketProtocol
 
 prefix_ void senf::MulticastSocketProtocol::broadcastEnabled(bool v)
+    const
 {
     int ivalue (v);
     if (::setsockopt(fd(), SOL_SOCKET, SO_BROADCAST, &ivalue, sizeof(ivalue)) < 0)
@@ -46,6 +47,7 @@ prefix_ void senf::MulticastSocketProtocol::broadcastEnabled(bool v)
 }
 
 prefix_ bool senf::MulticastSocketProtocol::broadcastEnabled()
+    const
 {
     int value (0);
     ::socklen_t len (sizeof(value));
@@ -57,7 +59,7 @@ prefix_ bool senf::MulticastSocketProtocol::broadcastEnabled()
 prefix_ bool senf::MulticastSocketProtocol::mcLoop()
     const
 {
-    int value;
+    int value (0);
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_IP,IP_MULTICAST_LOOP,&value,&len) < 0)
         throw SystemException();
@@ -89,7 +91,7 @@ prefix_ void senf::MulticastSocketProtocol::mcIface(std::string const & iface)
 prefix_ unsigned senf::MulticastSocketProtocol::mcTTL()
     const
 {
-    int value;
+    int value (0);
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_IP,IP_MULTICAST_TTL,&value,&len) < 0)
         throw SystemException();
