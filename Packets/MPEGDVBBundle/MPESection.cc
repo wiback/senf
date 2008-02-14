@@ -36,14 +36,14 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-//prefix_ boost::uint32_t senf::MPESectionParser::calcCrc()
-//    const
-//{
-//    return std::for_each(
-//            data().begin(), 
-//            boost::prior(data().end(), 4), 
-//            crc32_t() ).checksum();
-//}
+prefix_ boost::uint32_t senf::MPESectionParser::calcCrc()
+    const
+{
+    return std::for_each(
+            data().begin(),
+            boost::prior(data().end(), 4),
+            crc32_t() ).checksum();
+}
 
 
 prefix_ void senf::MPESectionType::dump(packet p, std::ostream & os)
@@ -101,7 +101,7 @@ prefix_ void senf::MPESectionType::finalize(packet p)
 {
     p->llc_snap_flag() = p.next(nothrow) && p.next().is<LlcSnapPacket>() ? 1 : 0;
     p->section_length() = p.data().size() - 3;
-//    p->crc() = p->calcCrc();
+    p->crc() = p->calcCrc();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

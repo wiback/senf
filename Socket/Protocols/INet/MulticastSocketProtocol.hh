@@ -177,8 +177,7 @@ namespace senf {
                                              multicast groups received. The group is left from the
                                              interface with the given local address.
                                              \param[in] mcAddr address of group to leave
-                                             \param[in] localAddr address of interface to leave
-                                                 from */
+                                             \param[in] iface interface name */
     };
 
     ///\}

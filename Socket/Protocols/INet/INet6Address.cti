@@ -31,6 +31,8 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
+#ifndef DOXYGEN
+
 template <unsigned a>
 prefix_ bool senf::detail::CheckINet6Network_impl5<a,0,0>::match(boost::uint8_t v0,
                                                                  boost::uint8_t v1)
@@ -160,6 +162,8 @@ match(INet6Address const & addr)
         addr[12] == boost::uint8_t(a6>>8) && addr[13] == boost::uint8_t(a6) &&
         CheckINet6Network_impl4<a7,restbits>::match(addr[14],addr[15]);
 }
+
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

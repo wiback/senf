@@ -250,7 +250,8 @@ namespace senf {
                                                  the Handle interface defined above.
                                              \param[in] cb callback
                                              \param[in] eventMask arbitrary combination via '|'
-                                                 operator of EventId designators. */
+                                                 operator of \ref senf::Scheduler::EventId "EventId"
+                                                 designators. */
         template <class Handle>
         void remove(Handle const & handle, int eventMask = EV_ALL); ///< Remove event callback
                                         /**< remove() will remove any callback registered for any of
@@ -259,8 +260,8 @@ namespace senf {
                                              \param[in] handle file descriptor or handle providing
                                                  the Handle interface defined above.
                                              \param[in] eventMask arbitrary combination via '|'
-                                                 operator of EventId designators. */
-
+                                                 operator of \ref senf::Scheduler::EventId "EventId"
+                                                 designators. */
         ///\}
 
         ///\name Timeouts

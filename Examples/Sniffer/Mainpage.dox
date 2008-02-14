@@ -28,7 +28,7 @@
     tethereal. The application uses a packet socket to read Ethernet packets from the \c eth0
     interface and dumps the parsed packets out to the standard output.
 
-    To try out the example application, check out the library, go to the \c Sniffer
+    To try out the example application, check out the library, go to the \c %Sniffer
     directory and execute
 
     <pre>
@@ -39,7 +39,7 @@
     < Hit Ctrl-C when you've seen enough >
     </pre>
 
-    We will now look at the code which is found in \c Sniffer.cc in the \c Sniffer directory. The
+    We will now look at the code which is found in \c Sniffer.cc in the \c %Sniffer directory. The
     code starts out by including the necessary headers
 
     \skip // Custom includes

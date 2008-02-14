@@ -55,8 +55,9 @@ namespace senf {
         
         \see MPESectionType
      */
-    struct MPESectionParser : public PacketParserBase
+    class MPESectionParser : public PacketParserBase
     {
+    public:
 #       include SENF_FIXED_PARSER()
 
         SENF_PARSER_FIELD( table_id, UInt8Parser );
@@ -96,11 +97,12 @@ namespace senf {
         }
         
         UInt32Parser crc() const { return parse<UInt32Parser>( data().size()-4 ); }
-        
-//        typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> crc32_t;
-//        boost::uint32_t calcCrc() const;
+        boost::uint32_t calcCrc() const;
         
         friend class MPESectionType;
+        
+    private:
+        typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> crc32_t;        
     };
     
     
