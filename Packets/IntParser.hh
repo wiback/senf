@@ -426,8 +426,8 @@ namespace senf {
 
         value_type value() const { return i()[Bit/8] & (1<<(7-(Bit%8))); }
         void value(value_type v) {
-            if (v) i()[0] |= 1<<(7-(Bit%8));
-            else   i()[0] &= ~(1<<(7-(Bit%8)));
+            if (v) i()[Bit/8] |= 1<<(7-(Bit%8));
+            else   i()[Bit/8] &= ~(1<<(7-(Bit%8)));
         }
         FlagParser const & operator= (value_type other) { value(other); return *this; }
     };
