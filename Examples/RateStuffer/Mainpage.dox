@@ -60,7 +60,16 @@
 
     \section setup Module setup
 
-    \image html ratestuffer.png
+    <div class="diamap" name="ratestuffer">
+        <span coords="101,139,220,206">\ref senf::ppi::module::ThrottleBarrier</span>
+        <span coords="241,152,365,219">\ref senf::ppi::module::PassiveQueue</span>
+        <span coords="606,346,748,400">\ref senf::ppi::module::PassiveSocketSink<></span>
+        <span coords="528,190,647,257">\ref RateFilter</span>
+        <span coords="387,165,511,245">\ref senf::ppi::module::PriorityJoin</span>
+        <span coords="0,0,149,53">\ref senf::ppi::module::ActiveSocketSource<></span>
+        <span coords="241,235,365,289">\ref senf::ppi::module::CloneSource</span>
+    </div>
+    \htmlonly <img src="ratestuffer.png" border="0" alt="ratestuffer" usemap="#ratestuffer"> \endhtmlonly
 
     Above image depicts the module setup implementing the rate stuffer. A
     senf::ppi::module::ActiveSocketSource reads the incoming UDP packets and sends them into a
@@ -70,7 +79,7 @@
     \a generator is fed as second input into the \a join to provide the stuffing packets.
 
     The RateFilter \a rateFilter reads packets from it's input at a fixed rate and writes them into
-    the senf::ppi::module::PassiveSocketWriter \a udpWriter. The senf::ppi::module::PriorityJoin
+    the senf::ppi::module::PassiveSocketSink \a udpSink. The senf::ppi::module::PriorityJoin
     ensures that read requests of the RateStuffer's input are always serviced, either from the \a
     queue or, if the \a queue output is throttled, from the \a generator.
 
@@ -137,11 +146,11 @@
     \until rateFilter
     
     First the needed modules are declared. We have 
-    \li the \a barrier to discard incoming packets sent to fast
-    \li the \a queue to receive incoming packets and create throttling notifications
-    \li the \a generator to create the stuffing packets
-    \li the \a join to combine the input stream from the \a queue with the stuffing packet stream
-    \li the \a rateFilter to generate the fixed rate output stream
+    - the \a barrier to discard incoming packets sent to fast
+    - the \a queue to receive incoming packets and create throttling notifications
+    - the \a generator to create the stuffing packets
+    - the \a join to combine the input stream from the \a queue with the stuffing packet stream
+    - the \a rateFilter to generate the fixed rate output stream
 
     \until output
 
@@ -172,15 +181,15 @@
 
     The \a inputSocket is listening on port 44344 while the \a outputSocket will send packets to
     port 44345 on localhost. The \a outputSocket uses the senf::ConnectedUDPv4SocketProtocol which
-    is compatible with the senf::ppi::module::PassiveSocketWriter module.
+    is compatible with the senf::ppi::module::PassiveSocketSink module.
 
     \until udpSink
 
     Here we allocate the components:
 
-    \li \a udpReader to read the packets from \a inputSocket
-    \li \a stuffer for the real work and
-    \li \a udpWriter to send the packets to \a outputSocket
+    - \a udpSource to read the packets from \a inputSocket
+    - \a stuffer for the real work and
+    - \a udpSink to send the packets to \a outputSocket
 
     \until udpSink
 
