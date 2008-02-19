@@ -27,8 +27,7 @@
 //#include "UNAddressing.ih"
 
 // Custom includes
-#include <stdio.h>
-#include <boost/operators.hpp>
+
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -36,16 +35,11 @@
 prefix_ senf::UNSocketAddress::UNSocketAddress()
 {}
 
-prefix_ senf::UNSocketAddress::UNSocketAddress(std::string p)
+prefix_ senf::UNSocketAddress::UNSocketAddress(std::string const & path)
 {
     clear();
-    ::strncpy(addr_.sun_path, p.c_str(), sizeof(addr_.sun_path));
+    ::strncpy(addr_.sun_path, path.c_str(), sizeof(addr_.sun_path));
     addr_.sun_path[sizeof(addr_.sun_path)-1] = 0;
-}
-
-prefix_ senf::UNSocketAddress fromString(std::string s) 
-{
-    return senf::UNSocketAddress::UNSocketAddress(s);
 }
 
 prefix_ bool senf::UNSocketAddress::operator==(UNSocketAddress const & other)
@@ -55,7 +49,7 @@ prefix_ bool senf::UNSocketAddress::operator==(UNSocketAddress const & other)
 }
 
 prefix_ std::string senf::UNSocketAddress::path()
-        const
+    const
 {
     return std::string(addr_.sun_path);
 }
@@ -77,7 +71,7 @@ prefix_ sockaddr * senf::UNSocketAddress::sockaddr_p()
     return reinterpret_cast <struct sockaddr  *> (&addr_); 
 }
 
-prefix_ sockaddr const  * senf::UNSocketAddress::sockaddr_p()
+prefix_ sockaddr const * senf::UNSocketAddress::sockaddr_p()
     const
 {
     return reinterpret_cast <struct sockaddr const  *> (&addr_); 

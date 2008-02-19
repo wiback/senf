@@ -31,11 +31,6 @@
 #include <string>
 #include <sys/socket.h>
 #include <sys/un.h>
-#include <boost/cstdint.hpp>
-#include <boost/operators.hpp>
-#include "../../../Socket/SocketPolicy.hh"
-#include "../../../Socket/ClientSocketHandle.hh"
-#include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/Protocols/GenericAddressingPolicy.hh"
 #include "../../../Utils/safe_bool.hh"
 
@@ -52,18 +47,14 @@ namespace senf {
         \implementation This implementation is based on sockaddr_un.
 
         \ingroup addr_group
-
-        \fixme Why both std::string constructor and from_string member ?
      */
     class UNSocketAddress
         : public comparable_safe_bool<UNSocketAddress>
     {
     public:
         UNSocketAddress(); 
-        explicit UNSocketAddress(std::string p);
+        explicit UNSocketAddress(std::string const & path);
                                         ///< Construct an address constant from given path
-        static UNSocketAddress from_string(std::string const s); 
-                                        ///< Create UNSocketAddress from string
 
         bool operator==(UNSocketAddress const & other) const;
                                         ///< Compare UNSocketAddress for equality
