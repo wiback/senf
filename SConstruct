@@ -129,7 +129,7 @@ def configFilesOpts(target, source, env, for_signature):
 
 env.Append(
    CPPPATH = [ '#/include' ],
-   LIBS = [ 'iberty', '$BOOSTREGEXLIB', '$BOOSTFSLIB' ],
+   LIBS = [ 'iberty', '$BOOSTREGEXLIB' ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
    ENV = { 'TODAY' : str(datetime.date.today()),
