@@ -88,7 +88,7 @@
 
     \until return 0;
 
-    That's it. We finish of by catching the exception and giving as much detail as possible if an
+    That's it. We finish of by catching the exception and giving as much %detail as possible if an
     exception is caught. The \c prettyName function from the \c Utils library is used, to get a nice,
     printable representation of the dynamic type of the exception instance. It is an interface to
     the g++ demangler. This is necessary since the name member of the C++ \c type_info instance is

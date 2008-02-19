@@ -74,27 +74,27 @@ namespace log {
 
     ///\{
     
-    /** \brief Log level VERBOSE
+    /** \brief Log level %VERBOSE
         \see loglevels */
     struct VERBOSE   : public detail::LevelBase { static unsigned const value = 1; };
 
-    /** \brief Log level NOTICE
+    /** \brief Log level %NOTICE
         \see loglevels */
     struct NOTICE    : public detail::LevelBase { static unsigned const value = 2; };
 
-    /** \brief Log level MESSAGE
+    /** \brief Log level %MESSAGE
         \see loglevels */
     struct MESSAGE   : public detail::LevelBase { static unsigned const value = 3; };
 
-    /** \brief Log level IMPORTANT
+    /** \brief Log level %IMPORTANT
         \see loglevels */
     struct IMPORTANT : public detail::LevelBase { static unsigned const value = 4; };
 
-    /** \brief Log level CRITICAL
+    /** \brief Log level %CRITICAL
         \see loglevels */
     struct CRITICAL  : public detail::LevelBase { static unsigned const value = 5; };
 
-    /** \brief Log level FATAL
+    /** \brief Log level %FATAL
         \see loglevels */
     struct FATAL     : public detail::LevelBase { static unsigned const value = 6; };
 
@@ -102,7 +102,7 @@ namespace log {
         \see loglevels */
     struct DISABLED  : public detail::LevelBase { static unsigned const value = 7; };
 
-    /** \brief Inherit log level
+    /** \brief Inherit %log level
         \see loglevels */
     struct NONE      : public detail::LevelBase { static unsigned const value = 0; };
 

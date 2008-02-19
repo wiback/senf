@@ -69,12 +69,12 @@ namespace senf {
 namespace ppi {
 namespace module {
 
-    /** \brief Output module writing data to a FileHandle using the provided Writer.
+    /** \brief Output %module writing data to a FileHandle using the provided Writer.
         If using the default ConnectedDgramWriter the filehandle must be writable, connected and 
         able to handle complete datagrams.  
         
-        This output module will write data to a FileHandle object using a given \a Writer. This
-        output module is active. This requires the file handle to be able to signal its readiness to
+        This output %module will write data to a FileHandle object using a given \a Writer. This
+        output %module is active. This requires the file handle to be able to signal its readiness to
         accept more data via the Scheduler.
 
         The default \a Writer is senf::ppi::ConnectedDgramWriter which will write out the complete packet to
@@ -87,8 +87,8 @@ namespace module {
           public:
               typedef unspecified Handle;                          // type of handle requested
 
-              SomeWriter();                                          // EITHER default constructible OR
-              SomeWriter(SomeWriter const & other);                    // copy constructible
+              SomeWriter();                                        // EITHER default constructible OR
+              SomeWriter(SomeWriter const & other);                // copy constructible
 
               void operator()(Handle handle, Packet packet);       // insertion function
           };
