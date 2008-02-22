@@ -106,7 +106,7 @@
 
     First a \c ::UDPv4ClientSocketHandle is created. With the function
     \c writeto(senf::INet4SocketAddress, string) the string s will be written to the specified
-    address and port, which is constructed here from a  static string \c "127.0.0.1:4243". In this
+    address and port, which is constructed here from a  static string read from the console with the format \c IP:PORT. In this
     example Integers from zero to ten are send to the Server socket.
 
     The exception handling is again the same as with the server application.

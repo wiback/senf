@@ -33,7 +33,7 @@ int main(int argc, char const * argv[])
             senf::UDPv4ClientSocketHandle sock;
             std::stringstream s;
             s << i;
-            sock.writeto(senf::INet4SocketAddress("127.0.0.1:4243"),s.str());
+            sock.writeto(senf::INet4SocketAddress(argv[1]),s.str());
             std::cout << i << std::endl;
         }
     }
