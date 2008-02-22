@@ -35,8 +35,8 @@ Architecture: all
 Depends: binutils-dev, libboost-dev, libboost-regex-dev, 
 	libboost-date-time-dev, libboost-thread-dev, libboost-serialization-dev,
 	libboost-filesystem-dev, libsenf (=${source:Version}) | libsenf-dbg (=${source:Version})
-Recommends: libsenf (=${binary:Version}), libsenf-dbg (=${binary:Version})
-Suggests: libsenf-doc (=${binary:Version})
+Recommends: libsenf (=${source:Version}), libsenf-dbg (=${source:Version})
+Suggests: libsenf-doc (=${source:Version})
 Description: SENF Extensible Network Framework, header files
  The SENF Simple and Extensible Network Framework aims to be a
  complete set of libraries to facilitate the development of network

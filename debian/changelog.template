@@ -1,4 +1,4 @@
-libsenf (0.0r%(rev)s) unstable; urgency=low
+libsenf (%(version)s) unstable; urgency=low
 
   * Packaging revision %(rev)s
 

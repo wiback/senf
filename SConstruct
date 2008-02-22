@@ -1,6 +1,6 @@
 # -*- python -*-
 
-import sys, glob, os.path, datetime, pwd, time, fnmatch
+import sys, glob, os.path, datetime, pwd, time, fnmatch, string
 sys.path.append('senfscons')
 import SENFSCons
 
@@ -28,7 +28,20 @@ def updateRevision(target, source, env):
         rev = rev[:-1]
     if 'm' in rev:
         rev = rev[:-1]
+    url = None
+    for line in os.popen("svn info"):
+        elts=line.split(':',1)
+        if elts[0] == 'URL':
+            url = elts[1].strip()
+    version = None
+    if '/tags/' in url:
+        version = url.rsplit('/',1)[-1].split('_',1)[0]
+        if version[0] not in string.digits:
+            version = None
+    if version is None:
+        version = '1:0r%s' % rev
     changelog = file('debian/changelog.template').read() % {
+        'version': version,
         'rev': rev,
         'user': pwd.getpwuid(os.getuid()).pw_gecos.split(',')[0].strip(),
         'date': time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime()) }
