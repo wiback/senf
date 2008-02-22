@@ -49,7 +49,7 @@
 // ProtocolClientSocketHandle (constructor) declaration
 
 template < mpp_TemplateParameters() >
-ProtocolClientSocketHandle( mpp_MethodParameters() );
+explicit ProtocolClientSocketHandle( mpp_MethodParameters() );
 
 // ////////////////////////////////////////////////////////////////////////
 #elif BOOST_PP_ITERATION_FLAGS()==2 // ////////////////////////////////////

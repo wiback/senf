@@ -53,7 +53,7 @@
 // ProtocolServerSocketHandle (constructor) declaration
 
 template < mpp_PSSH_TemplateParameters() >
-ProtocolServerSocketHandle( mpp_PSSH_MethodParameters() );
+explicit ProtocolServerSocketHandle( mpp_PSSH_MethodParameters() );
 
 //////
 #elif BOOST_PP_ITERATION_FLAGS()==2
