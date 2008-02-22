@@ -67,6 +67,14 @@ prefix_ bool senf::Daemon::daemon()
     return daemonize_;
 }
 
+prefix_ int senf::Daemon::argc() {
+    return argc_;
+}
+
+prefix_ char const ** senf::Daemon::argv() {
+    return argv_;
+}
+
 prefix_ void senf::Daemon::consoleLog(std::string const & path, StdStream which)
 {
     switch (which) {
