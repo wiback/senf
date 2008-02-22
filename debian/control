@@ -3,8 +3,8 @@ Priority: extra
 Maintainer: Stefan Bund <senf-dev@lists.berlios.de>
 Build-Depends: debhelper (>= 5), scons (>= 0.97), binutils-dev, libboost-dev, 
 	libboost-test-dev, libboost-date-time-dev, libboost-regex-dev, 
-	libboost-filesystem-dev, doxygen (>= 1.5.5), dia, tidy, xsltproc,
-	graphviz, perl-base, linklint, netpbm
+	libboost-filesystem-dev, libboost-serialization-dev, doxygen (>= 1.5.5), 
+	dia, tidy, xsltproc, graphviz, perl-base, linklint, netpbm
 Standards-Version: 3.7.2 Section: libs
 
 Package: libsenf
@@ -33,8 +33,8 @@ Package: libsenf-dev
 Section: libdevel
 Architecture: all
 Depends: binutils-dev, libboost-dev, libboost-regex-dev, 
-	libboost-date-time-dev, libboost-thread-dev,
-	libboost-filesystem-dev, libsenf (=${binary:Version}) | libsenf-dbg (=${binary:Version})
+	libboost-date-time-dev, libboost-thread-dev, libboost-serialization-dev,
+	libboost-filesystem-dev, libsenf (=${source:Version}) | libsenf-dbg (=${source:Version})
 Recommends: libsenf (=${binary:Version}), libsenf-dbg (=${binary:Version})
 Suggests: libsenf-doc (=${binary:Version})
 Description: SENF Extensible Network Framework, header files
