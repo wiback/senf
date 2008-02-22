@@ -92,6 +92,9 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
         BOOST_CHECK_EQUAL( addr.port(), 0u );
         BOOST_CHECK_EQUAL( addr.iface(), "" );
         addr = senf::INet6SocketAddress("[12::21]:12345");
+        BOOST_CHECK( addr == senf::INet6SocketAddress("[12::21]:12345") );
+        BOOST_CHECK( addr != senf::INet6SocketAddress("[12::21%lo]:12345") );
+        BOOST_CHECK( addr );
         BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("12::21") );
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
         BOOST_CHECK_EQUAL( addr.iface(), "" );

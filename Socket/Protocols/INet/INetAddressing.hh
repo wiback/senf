@@ -141,6 +141,8 @@ namespace senf {
         \ingroup addr_group
      */
     class INet6SocketAddress
+        : public boost::equality_comparable<INet6SocketAddress>, 
+          public senf::comparable_safe_bool<INet6SocketAddress>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -171,7 +173,6 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         bool operator==(INet6SocketAddress const & other) const; ///< Check addresses for equality
-        bool operator!=(INet6SocketAddress const & other) const; ///< Inverse of above
 
         void clear();                   ///< Clear socket address
 
@@ -184,6 +185,8 @@ namespace senf {
 
         std::string iface() const;      ///< Get interface name
         void iface(std::string const & iface); ///< Change interface
+
+        bool boolean_test() const;      ///< \c true, if address is not empty (i.e. [::]:0)
 
         ///\name Generic SocketAddress interface
         ///@{

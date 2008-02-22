@@ -118,10 +118,10 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK_EQUAL( INet6Address(0xff0f).scope(), INet6Address::ReservedScope );
         BOOST_CHECK_EQUAL( INet6Address(0u,0u,0u,0u,0u,0xFFFF,0x0102u,0x0304).inet4address(),
                            INet4Address(0x01020304) );
-        BOOST_CHECK( INet6Address(0u,0u,0u,0u,0u,0u,0x0102u,0x0304).ipv4Compatible() );
-        BOOST_CHECK( INet6Address(0u,0u,0u,0u,0u,0xFFFF,0x0102,0x0304).ipv4Mapped() );
-        BOOST_CHECK( ! addr.ipv4Compatible() );
-        BOOST_CHECK( ! addr.ipv4Mapped() );
+        BOOST_CHECK( INet6Address(0u,0u,0u,0u,0u,0u,0x0102u,0x0304).inet4Compatible() );
+        BOOST_CHECK( INet6Address(0u,0u,0u,0u,0u,0xFFFF,0x0102,0x0304).inet4Mapped() );
+        BOOST_CHECK( ! addr.inet4Compatible() );
+        BOOST_CHECK( ! addr.inet4Mapped() );
     
         BOOST_CHECK( INet6Address::AllNodes.globalMulticastAddr() );
         BOOST_CHECK( ! INet6Address::AllNodes.prefixMulticastAddr() );

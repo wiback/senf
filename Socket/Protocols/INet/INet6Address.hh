@@ -43,52 +43,54 @@
 
 namespace senf {
 
-    /** \brief IPv6 network address
+    /** \brief INet6 network address
 
-        This implementation of an IPv6 address is based strictly on 
+        This implementation of an INet6 address is based strictly on 
         <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>: Internet Protocol
-        Version 6 (IPv6) Addressing Architecture. This class provides accessors to all the
+        Version 6 (INet6) Addressing Architecture. This class provides accessors to all the
         information fields defined in this document.
 
-        The IPv6 addressing architecture however has several other components defined in other
+        The INet6 addressing architecture however has several other components defined in other
         RFC's. These RFC's should be implemented in additional modules:
 
         \li <a href="http://tools.ietf.org/html/rfc4193">RFC 4193</a>:
             Unique Local Addresses (ULA). Defines the fc00::/7 prefix
         \li <a href="http://tools.ietf.org/html/rfc3306">RFC 3306</a>:
-            Unicast-Prefix-based IPv6 Multicast Addresses. Defines the ff30::/12 prefix
+            Unicast-Prefix-based INet6 Multicast Addresses. Defines the ff30::/12 prefix
         \li <a href="http://tools.ietf.org/html/rfc3956">RFC 3956</a>:
-            Embedding the Rendezvous Point (RP) Address in an IPv6 Multicast
+            Embedding the Rendezvous Point (RP) Address in an INet6 Multicast
             Address. Defines the ff70::/12 prefix
         \li <a href="http://tools.ietf.org/html/rfc3056">RFC 3056</a>:
-            Connection of IPv6 Domains via IPv4 Clouds. Defines 6to4 tunneling and the
+            Connection of INet6 Domains via INet4 Clouds. Defines 6to4 tunneling and the
             2002::/16 prefix
         \li <a href="http://tools.ietf.org/html/rfc3849">RFC 3849</a>:
-            IPv6 Address Prefix Reserved for Documentation. Defines the 2001:db8::/32 prefix
+            INet6 Address Prefix Reserved for Documentation. Defines the 2001:db8::/32 prefix
         
         Here an overview of well-known prefixes:
 
+        \htmlonly
         <table class="senf">
-        <tr><th>Prefix</th>                  <th>Description</th>                        <th>Definition</th> <th>Note</th></tr>
-        <tr><td><tt>::/96</tt></td>          <td>IPv4 compatible IPv6 address</td>       <td>RFC4291</td>    <td>deprecated</td></tr>
-        <tr><td><tt>\::ffff:0:0/96</tt></td>  <td>IPv6 mapped IPv4 address</td>           <td>RFC4291</td>    <td></td></tr>
-        <tr><td><tt>2000::/3</tt></td>       <td>Global unicast addresses</td>           <td>RFC3587</td>    <td>only noted, not defined</td></tr>
-        <tr><td><tt>2001:db8::/32</tt></td>  <td>Documentation-only prefix</td>          <td>RFC3849</td>    <td></td></tr>
-        <tr><td><tt>2002::/16</tt></td>      <td>6to4 addressing</td>                    <td>RFC3056</td>    <td></td></tr>
-        <tr><td><tt>fc00::/7</tt></td>       <td>ULA</td>                                <td>RFC4193</td>    <td></td></tr>
-        <tr><td><tt>fe80::/64</tt></td>      <td>Link-local addresses</td>               <td>RFC4291</td>    <td></td></tr>
-        <tr><td><tt>fec0::/10</tt></td>      <td>Site-local addresses </td>              <td>RFC4291</td>    <td>deprecated</td></tr>
-        <tr><td><tt>ff00::/8</tt></td>       <td>Multicast</td>                          <td>RFC4291</td>    <td></td></tr>
-        <tr><td><tt>ff00::/12</tt></td>      <td>Globally allocated multicast</td>       <td>RFC4291</td>    <td></td></tr>
-        <tr><td><tt>ff10::/12</tt></td>      <td>Locally allocated multicast</td>        <td>RFC4291</td>    <td></td></tr>
-        <tr><td><tt>ff30::/12</tt></td>      <td>Unicast prefic based multicast</td>     <td>RFC3306</td>    <td></td></tr>
-        <tr><td><tt>ff70::/12</tt></td>      <td>Multicast address with embedded RP</td> <td>RFC3956</td>    <td></td></tr>
+        <tr><th>Prefix</th>                  <th>Description</th>                         <th>Definition</th>  <th>Note</th></tr>
+        <tr><td><tt>::/96</tt></td>          <td>INet4 compatible INet6 address</td>      <td>RFC4291</td>     <td>deprecated</td></tr>
+        <tr><td><tt>::ffff:0:0/96</tt></td>  <td>INet6 mapped INet4 address</td>          <td>RFC4291</td>     <td></td></tr>
+        <tr><td><tt>2000::/3</tt></td>       <td>Global unicast addresses</td>            <td>RFC3587</td>     <td>only noted, not defined</td></tr>
+        <tr><td><tt>2001:db8::/32</tt></td>  <td>Documentation-only prefix</td>           <td>RFC3849</td>     <td></td></tr>
+        <tr><td><tt>2002::/16</tt></td>      <td>6to4 addressing</td>                     <td>RFC3056</td>     <td></td></tr>
+        <tr><td><tt>fc00::/7</tt></td>       <td>ULA</td>                                 <td>RFC4193</td>     <td></td></tr>
+        <tr><td><tt>fe80::/64</tt></td>      <td>Link-local addresses</td>                <td>RFC4291</td>     <td></td></tr>
+        <tr><td><tt>fec0::/10</tt></td>      <td>Site-local addresses </td>               <td>RFC4291</td>     <td>deprecated</td></tr>
+        <tr><td><tt>ff00::/8</tt></td>       <td>Multicast</td>                           <td>RFC4291</td>     <td></td></tr>
+        <tr><td><tt>ff00::/12</tt></td>      <td>Globally allocated multicast</td>        <td>RFC4291</td>     <td></td></tr>
+        <tr><td><tt>ff10::/12</tt></td>      <td>Locally allocated multicast</td>         <td>RFC4291</td>     <td></td></tr>
+        <tr><td><tt>ff30::/12</tt></td>      <td>Unicast prefic based multicast</td>      <td>RFC3306</td>     <td></td></tr>
+        <tr><td><tt>ff70::/12</tt></td>      <td>Multicast address with embedded RP</td>  <td>RFC3956</td>     <td></td></tr>
         </table>
+        \endhtmlonly
 
         The following statements all create the same INet6 address
         <code>2001:db8::a0b1:1a2b:3dff:fe4e:5f00</code>:
         \code
-        \\ Used to construct constant INet6 addresses
+        // Used to construct constant INet6 addresses
         INet6Address(0x2001u,0xDB8u,0x0u,0xA0B1u 0x1A2Bu,0x3DFFu,0xFE4Eu,0x5F00u)
 
         // Construct INet6 address from it's string representation
@@ -177,8 +179,8 @@ namespace senf {
                                              \param[in] s Address literal or hostname 
                                              \param[in] resolve If this is set to \c ResolveINet4,
                                                  the call will additionally try to interpret \a s as
-                                                 an IPv4 address if no valid IPv6 address is
-                                                 found. The address will be returned as mapped IPv6
+                                                 an INet4 address if no valid INet6 address is
+                                                 found. The address will be returned as mapped INet6
                                                  address. */
 
         template <class InputIterator> 
@@ -189,14 +191,14 @@ namespace senf {
                                              network byte order. */
 
         static INet6Address from_inet4address(INet4Address addr);
-                                        ///< Construct an IPv6-mapped IPv4 address
+                                        ///< Construct an INet6-mapped INet4 address
                                         /**< This will construct an address of the form
                                              <tt>::FFFF::w.x.y.z</tt> where <tt>w.x.y.z</tt> is
                                              the INet4Address value. This kind of address is called
-                                             an IPv6-mapped IPv4 address (see 
+                                             an INet6-mapped INet4 address (see 
                                              <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>).
                                              \par 
-                                             IPv4 compatible IPv6 addresses are not directly
+                                             INet4 compatible INet6 addresses are not directly
                                              supported, they are deprecated in the RFC. */
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -223,16 +225,16 @@ namespace senf {
         bool globalScope() const;       ///< \c true, if address is global unicast or multicast
         bool linkScope() const;         ///< \c true, if address is link-local unicast or multicast
 
-        INet4Address inet4address() const; ///< Return embedded IPv4 address
-                                        /**< Returns the IPv4 address embedded within an IPv4
-                                             compatible or IPv4 mapped unicast address. This address
-                                             is given by the last 32 bits of the IPv6 address. \par
-                                             The value returned is only a valid IPv4 address if
-                                             either ipv4Compatible() or ipv4Mapped() return \c
+        INet4Address inet4address() const; ///< Return embedded INet4 address
+                                        /**< Returns the INet4 address embedded within an INet4
+                                             compatible or INet4 mapped unicast address. This address
+                                             is given by the last 32 bits of the INet6 address. \par
+                                             The value returned is only a valid INet4 address if
+                                             either inet4Compatible() or inet4Mapped() return \c
                                              true. */ 
-        bool ipv4Compatible() const;    ///< \c true, if address is IPv4 compatible
-                                        /**< IPv4 compatible IPv6 addresses are deprecated. */
-        bool ipv4Mapped() const;        ///< \c true, if address is IPv4 mapped
+        bool inet4Compatible() const;   ///< \c true, if address is INet4 compatible
+                                        /**< INet4 compatible INet6 addresses are deprecated. */
+        bool inet4Mapped() const;       ///< \c true, if address is INet4 mapped
 
         bool globalMulticastAddr() const; ///< \c true, if T bit is \e not set
                                         /**< Any multicast address with a cleared T bit must be
@@ -300,9 +302,9 @@ namespace senf {
         : public detail::CheckINet6Network_impl<a0,a1,a2,a3,a4,a5,a6,a7,a8>
     {};
 
-    /** \brief IPv6 network prefix
+    /** \brief INet6 network prefix
 
-        This class represents an IPv6 network prefix in CIDR notation. 
+        This class represents an INet6 network prefix in CIDR notation. 
       */
     class INet6Network
         : public boost::equality_comparable<INet6Network>, 

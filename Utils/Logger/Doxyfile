@@ -4,5 +4,4 @@ PROJECT_NAME = Logger
 GENERATE_TAGFILE = doc/Logger.tag
 ALPHABETICAL_INDEX = NO
 
-TAGFILES = \
-    "$(TOPDIR)/Utils/doc/Utils.tag"
+TAGFILES = "$(TOPDIR)/Utils/doc/Utils.tag"

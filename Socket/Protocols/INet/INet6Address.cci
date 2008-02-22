@@ -157,13 +157,13 @@ prefix_ senf::INet4Address senf::INet6Address::inet4address()
     return INet4Address::from_data(&(*this)[12]);
 }
 
-prefix_ bool senf::INet6Address::ipv4Compatible()
+prefix_ bool senf::INet6Address::inet4Compatible()
     const
 {
     return CheckINet6Network<0u,96>::match(*this);
 }
 
-prefix_ bool senf::INet6Address::ipv4Mapped()
+prefix_ bool senf::INet6Address::inet4Mapped()
     const
 {
     return CheckINet6Network<0u,0u,0u,0u,0u,0xFFFFu,96>::match(*this);

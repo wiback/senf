@@ -147,6 +147,12 @@ prefix_ void senf::INet6SocketAddress::iface(std::string const & iface)
     assignIface(iface);
 }
 
+prefix_ bool senf::INet6SocketAddress::boolean_test()
+    const
+{
+    return address() || port() || sockaddr_.sin6_scope_id;
+}
+
 prefix_ struct sockaddr * senf::INet6SocketAddress::sockaddr_p()
 {
     return reinterpret_cast<struct sockaddr *>(&sockaddr_);

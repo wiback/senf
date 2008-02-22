@@ -112,12 +112,6 @@ prefix_ bool senf::INet6SocketAddress::operator==(INet6SocketAddress const & oth
         sockaddr_.sin6_scope_id == other.sockaddr_.sin6_scope_id;
 }
 
-prefix_ bool senf::INet6SocketAddress::operator!=(INet6SocketAddress const & other)
-    const
-{
-    return ! operator==(other);
-}
-
 prefix_ void senf::INet6SocketAddress::clear()
 {
     ::memset(&sockaddr_,0,sizeof(sockaddr_));
