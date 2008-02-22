@@ -79,7 +79,6 @@ namespace senf {
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
 	  public DatagramSocketProtocol,
-          public MulticastSocketProtocol,
           public INet4MulticastSocketProtocol
     {
     public:
@@ -147,7 +146,6 @@ namespace senf {
           public BSDSocketProtocol,
           public AddressableBSDSocketProtocol,
 	  public DatagramSocketProtocol,
-          public MulticastSocketProtocol,
           public INet6MulticastSocketProtocol
     {
     public:

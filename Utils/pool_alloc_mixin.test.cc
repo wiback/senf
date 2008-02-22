@@ -43,7 +43,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(poolAllocMixin)
 {
-#ifndef SENF_NO_DEBUG
+#ifdef SENF_DEBUG
     BOOST_CHECK_EQUAL( Test::allocCounter(), 0u );
 
     {

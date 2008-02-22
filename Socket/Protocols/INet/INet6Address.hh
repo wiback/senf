@@ -71,7 +71,7 @@ namespace senf {
         <table class="senf">
         <tr><th>Prefix</th>                  <th>Description</th>                        <th>Definition</th> <th>Note</th></tr>
         <tr><td><tt>::/96</tt></td>          <td>IPv4 compatible IPv6 address</td>       <td>RFC4291</td>    <td>deprecated</td></tr>
-        <tr><td><tt>::ffff:0:0/96</tt></td>  <td>IPv6 mapped IPv4 address</td>           <td>RFC4291</td>    <td></td></tr>
+        <tr><td><tt>\::ffff:0:0/96</tt></td>  <td>IPv6 mapped IPv4 address</td>           <td>RFC4291</td>    <td></td></tr>
         <tr><td><tt>2000::/3</tt></td>       <td>Global unicast addresses</td>           <td>RFC3587</td>    <td>only noted, not defined</td></tr>
         <tr><td><tt>2001:db8::/32</tt></td>  <td>Documentation-only prefix</td>          <td>RFC3849</td>    <td></td></tr>
         <tr><td><tt>2002::/16</tt></td>      <td>6to4 addressing</td>                    <td>RFC3056</td>    <td></td></tr>

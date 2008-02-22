@@ -1,9 +1,9 @@
 Source: libsenf
 Priority: extra
 Maintainer: Stefan Bund <senf-dev@lists.berlios.de>
-Build-Depends: debhelper (>= 5), scons, binutils-dev, libboost-dev, 
+Build-Depends: debhelper (>= 5), scons (>= 0.97), binutils-dev, libboost-dev, 
 	libboost-test-dev, libboost-date-time-dev, libboost-regex-dev, 
-	libboost-filesystem-dev, doxygen, dia, tidy, xsltproc,
+	libboost-filesystem-dev, doxygen (>= 1.5.5), dia, tidy, xsltproc,
 	graphviz, perl-base, linklint, netpbm
 Standards-Version: 3.7.2 Section: libs
 

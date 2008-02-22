@@ -68,7 +68,7 @@ template <class KeyType>
 template <class PacketType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::registerPacket(key_t key)
 {
-#ifdef SENF_NO_DEBUG
+#ifndef SENF_DEBUG
     registry_.insert(std::make_pair(key, Entry_ptr(new detail::PkReg_EntryImpl<PacketType>())));
     reverseRegistry_.insert(std::make_pair(senf::typeIdValue<PacketType>(), key));
 #else

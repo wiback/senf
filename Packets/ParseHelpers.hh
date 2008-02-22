@@ -180,7 +180,7 @@
 
     \par ""
         \ref SENF_PARSER_FIELD(), \ref SENF_PARSER_FIELD_RO(), \ref SENF_PARSER_PRIVATE_FIELD(),
-        \ref SENF_PARSER_PRIVATE_FIELD_RO(), SENF_PARSER_CUSTOM_FIELD()
+        \ref SENF_PARSER_CUSTOM_FIELD()
 
     There are quite a few commands available to define fields. All these macros do the same thing:
     they define a field accessor plus some auxiliary symbols. The accessor will use the parser type
@@ -206,8 +206,7 @@
     The field defining macros come in groups which members only differ in their properties:
 
     <dl><dt><em>Standard fields:</em><dt><dd>\ref SENF_PARSER_FIELD(), \ref SENF_PARSER_FIELD_RO(),
-        \ref SENF_PARSER_PRIVATE_FIELD(), \ref SENF_PARSER_PRIVATE_FIELD_RO() define standard
-        fields.</dd>
+        \ref SENF_PARSER_PRIVATE_FIELD() define standard fields.</dd>
 
     <dt><em>Arbitrary custom field:</em><dt><dd>\ref SENF_PARSER_CUSTOM_FIELD()</dd></dl>
 
@@ -221,7 +220,7 @@
 
     \par "" 
         \ref SENF_PARSER_BITFIELD(), \ref SENF_PARSER_BITFIELD_RO(), \ref
-        SENF_PARSER_PRIVATE_BITFIELD(), \ref SENF_PARSER_PRIVATE_BITFIELD_RO() \n
+        SENF_PARSER_PRIVATE_BITFIELD()\n
 
     Bit-fields play a special role. They are quite frequent in packet definitions but don't fit into
     the byte offset based parsing infrastructure defined so far. Since defining the correctly
@@ -402,9 +401,8 @@
     <dl><dt><em>return_type</em> <em>name</em><tt>()</tt> <tt>const</tt></dt><dd>The accessor member
         will return the parsed value when called. For normal fields, <em>return_type</em> equals
         <em>type</em>, the type of the sub parser. This allows to change the value via the returned
-        sub-parser. If the field is marked read-only (\ref SENF_PARSER_FIELD_RO() or \ref
-        SENF_PARSER_PRIVATE_FIELD_RO()), the return type will be
-        <em>type</em>::<tt>value_type</tt>.</dd>
+        sub-parser. If the field is marked read-only (\ref SENF_PARSER_FIELD_RO()), the return type
+        will be <em>type</em>::<tt>value_type</tt>.</dd>
 
     <dt><tt>typedef</tt> <em>type</em> <em>name</em><tt>_t</tt></dt><dd>This typedef symbol is an
         alias for the fields type.</dd>
@@ -420,8 +418,7 @@
     \param[in] name field name
     \param[in] type parser type
 
-    \see \ref SENF_PARSER_FIELD_RO(), \ref SENF_PARSER_PRIVATE_FIELD(), \ref
-        SENF_PARSER_PRIVATE_FIELD_RO()
+    \see \ref SENF_PARSER_FIELD_RO(), \ref SENF_PARSER_PRIVATE_FIELD()
     \hideinitializer
  */
 #define SENF_PARSER_FIELD(name, type) 
@@ -431,6 +428,10 @@
     Define read-only parser field. Read-only fields may only be defined for \a type's which are
     value parsers: The parser \a type must have a \c value_type typedef member and a \c value()
     member, which returns the current value of the field.
+
+    Defining such a field really defines \e two accessors: A read/write \e private field and a
+    read-only \e public accessor. The name of the private read/write field is given by adding a
+    trailing '_' to \a name. The read-only public accessor is called \a name.
    
     \see SENF_PARSER_FIELD() 
     \hideinitializer
@@ -446,18 +447,6 @@
     \hideinitializer
  */
 #define SENF_PARSER_PRIVATE_FIELD(name, type) 
-
-/** \brief Define parser field (private + read-only)
-
-    Define a read-only parser field which is marked as \c private and may only be accessed from the
-    parser class itself. Read-only fields may only be defined for \a type's which are value parsers:
-    The parser \a type must have a \c value_type typedef member and a \c value() member, which
-    returns the current value of the field.
-
-    \see SENF_PARSER_FIELD()
-    \hideinitializer
- */
-#define SENF_PARSER_PRIVATE_FIELD_RO(name, type) 
 
 /** \brief Define custom field accessor
 
@@ -516,18 +505,16 @@
     \param[in] bits number of bits
     \param[in] type bit field type, one of \c signed, \c unsigned or \c bool
 
-    \see \ref SENF_PARSER_BITFIELD_RO(), \ref SENF_PARSER_PRIVATE_BITFIELD(), \ref
-    SENF_PARSER_PRIVATE_BITFIELD_RO()
-
+    \see \ref SENF_PARSER_BITFIELD_RO(), \ref SENF_PARSER_PRIVATE_BITFIELD()
     \hideinitializer
  */
 #define SENF_PARSER_BITFIELD(name, bits, type) 
 
 /** \brief Define bit-field (read-only) 
 
-    Define read-only bit field.
+    Define read-only bit field. This is for bit-fields what \ref SENF_PARSER_FIELD_RO is for ordinary fields.
 
-    \see \ref SENF_PARSER_BITFIELD()
+    \see \ref SENF_PARSER_BITFIELD() \n \ref SENF_PARSER_FIELD_RO()
     \hideinitializer
  */
 #define SENF_PARSER_BITFIELD_RO(name, bits, type) 
@@ -541,16 +528,6 @@
     \hideinitializer
  */
 #define SENF_PARSER_PRIVATE_BITFIELD(name, bits, type) 
-
-/** \brief Define bit-field (private + read-only) 
-
-    Define a read-only bit field which is marked as \c private and may only be accessed from the
-    parser class itself.
-
-    \see \ref SENF_PARSER_BITFIELD()
-    \hideinitializer
- */
-#define SENF_PARSER_PRIVATE_BITFIELD_RO(name, bits, type)
 
 ///@}
 
@@ -685,30 +662,28 @@
 
 #else
 
-#define SENF_PARSER_INHERIT      BOOST_PP_CAT(SENF_PARSER_INHERIT_,      SENF_PARSER_TYPE)
+#define SENF_PARSER_INHERIT              BOOST_PP_CAT( SENF_PARSER_INHERIT_,              SENF_PARSER_TYPE )
 
-#define SENF_PARSER_FIELD        BOOST_PP_CAT(SENF_PARSER_FIELD_,        SENF_PARSER_TYPE)
-#define SENF_PARSER_FIELD_RO     BOOST_PP_CAT(SENF_PARSER_FIELD_RO_,     SENF_PARSER_TYPE)
-#define SENF_PARSER_BITFIELD     BOOST_PP_CAT(SENF_PARSER_BITFIELD_,     SENF_PARSER_TYPE)
-#define SENF_PARSER_BITFIELD_RO  BOOST_PP_CAT(SENF_PARSER_BITFIELD_RO_,  SENF_PARSER_TYPE)
-#define SENF_PARSER_CUSTOM_FIELD BOOST_PP_CAT(SENF_PARSER_CUSTOM_FIELD_, SENF_PARSER_TYPE)
+#define SENF_PARSER_FIELD                BOOST_PP_CAT( SENF_PARSER_FIELD_,                SENF_PARSER_TYPE )
+#define SENF_PARSER_FIELD_RO             BOOST_PP_CAT( SENF_PARSER_FIELD_RO_,             SENF_PARSER_TYPE )
+#define SENF_PARSER_BITFIELD             BOOST_PP_CAT( SENF_PARSER_BITFIELD_,             SENF_PARSER_TYPE )
+#define SENF_PARSER_BITFIELD_RO          BOOST_PP_CAT( SENF_PARSER_BITFIELD_RO_,          SENF_PARSER_TYPE )
+#define SENF_PARSER_CUSTOM_FIELD         BOOST_PP_CAT( SENF_PARSER_CUSTOM_FIELD_,         SENF_PARSER_TYPE )
 
-#define SENF_PARSER_PRIVATE_FIELD       BOOST_PP_CAT(SENF_PARSER_P_FIELD_,       SENF_PARSER_TYPE)
-#define SENF_PARSER_PRIVATE_FIELD_RO    BOOST_PP_CAT(SENF_PARSER_P_FIELD_RO_,    SENF_PARSER_TYPE)
-#define SENF_PARSER_PRIVATE_BITFIELD    BOOST_PP_CAT(SENF_PARSER_P_BITFIELD_,    SENF_PARSER_TYPE)
-#define SENF_PARSER_PRIVATE_BITFIELD_RO BOOST_PP_CAT(SENF_PARSER_P_BITFIELD_RO_, SENF_PARSER_TYPE)
+#define SENF_PARSER_PRIVATE_FIELD        BOOST_PP_CAT( SENF_PARSER_P_FIELD_,              SENF_PARSER_TYPE )
+#define SENF_PARSER_PRIVATE_BITFIELD     BOOST_PP_CAT( SENF_PARSER_P_BITFIELD_,           SENF_PARSER_TYPE )
 
-#define SENF_PARSER_SKIP         BOOST_PP_CAT(SENF_PARSER_SKIP_,        SENF_PARSER_TYPE)
-#define SENF_PARSER_SKIP_BITS    BOOST_PP_CAT(SENF_PARSER_SKIP_BITS_,   SENF_PARSER_TYPE)
-#define SENF_PARSER_GOTO         BOOST_PP_CAT(SENF_PARSER_GOTO_,        SENF_PARSER_TYPE)
-#define SENF_PARSER_GOTO_OFFSET  BOOST_PP_CAT(SENF_PARSER_GOTO_OFFSET_, SENF_PARSER_TYPE)
-#define SENF_PARSER_LABEL        BOOST_PP_CAT(SENF_PARSER_LABEL_,       SENF_PARSER_TYPE)
+#define SENF_PARSER_SKIP                 BOOST_PP_CAT( SENF_PARSER_SKIP_,                 SENF_PARSER_TYPE )
+#define SENF_PARSER_SKIP_BITS            BOOST_PP_CAT( SENF_PARSER_SKIP_BITS_,            SENF_PARSER_TYPE )
+#define SENF_PARSER_GOTO                 BOOST_PP_CAT( SENF_PARSER_GOTO_,                 SENF_PARSER_TYPE )
+#define SENF_PARSER_GOTO_OFFSET          BOOST_PP_CAT( SENF_PARSER_GOTO_OFFSET_,          SENF_PARSER_TYPE )
+#define SENF_PARSER_LABEL                BOOST_PP_CAT( SENF_PARSER_LABEL_,                SENF_PARSER_TYPE )
 
-#define SENF_PARSER_OFFSET       BOOST_PP_CAT(SENF_PARSER_OFFSET_,      SENF_PARSER_TYPE)
-#define SENF_PARSER_FIXED_OFFSET BOOST_PP_CAT(SENF_PARSER_FIXED_OFFSET_,SENF_PARSER_TYPE)
-#define SENF_PARSER_CURRENT_FIXED_OFFSET BOOST_PP_CAT(SENF_PARSER_CURRENT_FIXED_OFFSET_, SENF_PARSER_TYPE)
+#define SENF_PARSER_OFFSET               BOOST_PP_CAT( SENF_PARSER_OFFSET_,               SENF_PARSER_TYPE )
+#define SENF_PARSER_FIXED_OFFSET         BOOST_PP_CAT( SENF_PARSER_FIXED_OFFSET_,         SENF_PARSER_TYPE )
+#define SENF_PARSER_CURRENT_FIXED_OFFSET BOOST_PP_CAT( SENF_PARSER_CURRENT_FIXED_OFFSET_, SENF_PARSER_TYPE )
 
-#define SENF_PARSER_FINALIZE     BOOST_PP_CAT(SENF_PARSER_FINALIZE_,    SENF_PARSER_TYPE)
+#define SENF_PARSER_FINALIZE             BOOST_PP_CAT( SENF_PARSER_FINALIZE_,             SENF_PARSER_TYPE )
 
 #endif
 

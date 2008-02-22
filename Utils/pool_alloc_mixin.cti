@@ -37,7 +37,7 @@ prefix_ void * senf::pool_alloc_mixin<Self>::operator new(size_t size)
     // When deriving from Self you may not change the class's size without
     // inheriting from pool_alloc_mixin again. See pool_alloc_mixin documentation.
     SENF_ASSERT( size <= sizeof(Self) );
-#ifndef SENF_NO_DEBUG
+#ifdef SENF_DEBUG
     allocCounter(1);
 #endif
     return boost::singleton_pool< pool_alloc_mixin_tag, sizeof(Self) >::malloc();
@@ -46,13 +46,13 @@ prefix_ void * senf::pool_alloc_mixin<Self>::operator new(size_t size)
 template <class Self>
 prefix_ void senf::pool_alloc_mixin<Self>::operator delete(void * p, size_t size)
 {
-#ifndef SENF_NO_DEBUG
+#ifdef SENF_DEBUG
     allocCounter(-1);
 #endif
     boost::singleton_pool< pool_alloc_mixin_tag, sizeof(Self) >::free(p);
 }
 
-#ifndef SENF_NO_DEBUG
+#ifdef SENF_DEBUG
 
 template <class Self>
 prefix_ unsigned long senf::pool_alloc_mixin<Self>::allocCounter()

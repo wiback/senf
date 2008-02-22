@@ -623,29 +623,20 @@
     SENF_PARSER_BITFIELD_RO      ( checksumPresent,  1, bool                      );
     SENF_PARSER_PRIVATE_BITFIELD ( reserved0_5bits_, 5, unsigned                  );
     SENF_PARSER_SKIP_BITS        (                   7                            );
-    SENF_PARSER_PRIVATE_BITFIELD ( version_,         3, unsigned                  );
+    SENF_PARSER_BITFIELD_RO      ( version,          3, unsigned                  );
     \endcode
 
-    We have added an additional private bitfield \a reserved0_5bits_() and we made the \a version_()
-    field private since we do not want the user to change the value (0 is the only valid value, any
-    other value is not supported by this parser anyways). In this special case, a read-only field
-    would do. But more generally, if there are fields which must have a fixed value, they must be
-    defined as private fields so they can be initialized by the parser to their correct value (see
-    next section on how). An additional public read-only accessor allows users of the parser to read
-    out the value (but not change it).
+    We have added an additional private bitfield \a reserved0_5bits_() and we made the \a version()
+    field read-only.
 
-    We will now add two additional simple members to the parser
+    We will now add a simple additional member to the parser:
 
     \code
-    typedef version__t version_t;
-    version_t::value_type version() const { return version_(); }
-
     bool valid() const { return version() == 0 && reserved0_5bits_() == 0; }
     \endcode
 
-    I think, both are quite straight forward: \a version() will allow the user to read out the value
-    of the version field. However, since it does \e not return a parser but a numeric value, the
-    access is read-only. The \a valid() member will just check the restrictions as defined in the RFC.
+    I think, this is quite straight forward: \a valid() will just check the restrictions as defined
+    in the RFC.
 
     Now to the packet type. We want to refrain from parsing the payload if the packet is
     invalid. This is important: If the packet is not valid, we have no idea, whether the payload is
@@ -708,8 +699,9 @@
     SENF_PARSER_INIT() { version_() << 1u; }
     \endcode
 
-    to \c GREPacketParser. Here we see, why we have defined \a version_() as a private and not a
-    read-only field.
+    to \c GREPacketParser. For every read-only defined field, the macros automatically define a \e
+    private read-write accessor which may be used internally. This read-write accessor is used here
+    to initialize the value.
 
 
     \section howto_newpacket_final The ultimate GRE packet implementation completed
@@ -740,7 +732,7 @@
         SENF_PARSER_BITFIELD_RO      ( checksumPresent,  1, bool                      );
         SENF_PARSER_PRIVATE_BITFIELD ( reserved0_5bits_, 5, unsigned                  );
         SENF_PARSER_SKIP_BITS        (                   7                            );
-        SENF_PARSER_PRIVATE_BITFIELD ( version_,         3, unsigned                  );
+        SENF_PARSER_BITFIELD_RO      ( version,          3, unsigned                  );
 
         SENF_PARSER_FIELD            ( protocolType,    senf::UInt16Parser            );
 

@@ -73,7 +73,7 @@ namespace senf {
     /** \brief Multicast protocol facet for INet4 addressable multicast enabled sockets
      */
     class INet4MulticastSocketProtocol
-        : public virtual SocketProtocol
+        : public MulticastSocketProtocol
     {
     public:
         void mcAddMembership(INet4Address const & mcAddr) const;
@@ -130,7 +130,7 @@ namespace senf {
     /** \brief Multicast protocol facet for INet6 addressable multicast enabled sockets
      */
     class INet6MulticastSocketProtocol
-        : public virtual SocketProtocol
+        : public MulticastSocketProtocol
     {
     public:
         void mcAddMembership(INet6Address const & mcAddr) const;

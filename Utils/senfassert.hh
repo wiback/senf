@@ -32,7 +32,7 @@
 //#include "senfassert.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-#ifdef SENF_NO_DEBUG
+#ifndef SENF_DEBUG
 
 #   define SENF_ASSERT(x)
 

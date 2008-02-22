@@ -61,7 +61,7 @@
 
     <dt><em>readPolicy</em></dt><dd>configures the readability of the socket</dd>
 
-    <dt><em>writePolicy</em></dt><dd>configures the writability of the socket</dd>
+    <dt><em>writePolicy</em></dt><dd>configures the writability of the socket</dd></dl>
 
     The template senf::SocketPolicy combines these policy axis to form a concrete socket policy. In
     a concrete policy, each of these policy axis is assigned a value, the policy value. This value

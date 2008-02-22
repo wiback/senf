@@ -246,12 +246,12 @@ def MakeEnvironment():
                LIBPATH = [ '$LOCALLIBDIR' ])
 
     if env['final']:
-        env.Append(CXXFLAGS = [ '-O3' ],
-                   CPPDEFINES = [ 'SENF_NO_DEBUG' ])
+        env.Append(CXXFLAGS = [ '-O3' ])
     else:
+        # The boost-regex library is not compiled with _GLIBCXX_DEBUG so this fails:
+        #          CPPDEFINES = [ '_GLIBCXX_DEBUG' ],
         env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
-    # The boost-regex library is not compiled with _GLIBCXX_DEBUG so this fails.
-    #               CPPDEFINES = [ '_GLIBCXX_DEBUG' ],
+                   CPPDEFINES = [ 'SENF_DEBUG' ],
                    LINKFLAGS = [ '-g' ])
 
     env.Append(CPPDEFINES = [ '$EXTRA_DEFINES' ],

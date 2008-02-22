@@ -130,7 +130,7 @@ prefix_ std::string senf::INet6SocketAddress::iface()
     if (sockaddr_.sin6_scope_id == 0)
         return "";
     char buffer[IFNAMSIZ];
-#ifndef SENF_NO_DEBUG
+#ifdef SENF_DEBUG
     SENF_ASSERT( if_indextoname(sockaddr_.sin6_scope_id,buffer) );
 #else
     if_indextoname(sockaddr_.sin6_scope_id,buffer);
