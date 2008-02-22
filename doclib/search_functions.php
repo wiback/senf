@@ -318,7 +318,7 @@ function search()
   $files = array();
   $j=0;
   for ($i=0; $i<sizeof($paths); $i++) {
-	if (!($f=@fopen($paths[$i]."search.idx","rb"))) 
+    if (!($f=@fopen($paths[$i]."search.idx","rb"))) 
     {
       die("Error: Search index file could NOT be opened!");
       continue;

@@ -428,9 +428,9 @@ namespace log {
         virtual boost::posix_time::ptime operator()() const;
     };
 
-    /** \brief Change log message time source
+    /** \brief Change %log message time source
 
-        Set the log message time source to \a source. The logging library will take ownership of \e
+        Set the %log message time source to \a source. The logging library will take ownership of \e
         source and will take care to free it, if necessary.
 
         Since the time source class will in almost all cases be default constructible, see the
@@ -440,9 +440,9 @@ namespace log {
      */
     void timeSource(std::auto_ptr<TimeSource> source);
 
-    /** \brief Change log message time source
+    /** \brief Change %log message time source
 
-        Set the log message time source to (an instance of) \a Source.  \a Source must be default
+        Set the %log message time source to (an instance of) \a Source.  \a Source must be default
         constructible, otherwise use the non-template senf::log::timeSource() overload.
 
         \ingroup config

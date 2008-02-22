@@ -6,7 +6,7 @@ RECURSIVE = Yes
 SHOW_DIRECTORIES = Yes
 
 TAGFILES = \
-	"$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
-	"$(TOPDIR)/Packets/doc/Packets.tag" \
-	"$(TOPDIR)/Socket/doc/Socket.tag" \
-	"$(TOPDIR)/Utils/doc/Utils.tag"
+    "$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
+    "$(TOPDIR)/Packets/doc/Packets.tag" \
+    "$(TOPDIR)/Socket/doc/Socket.tag" \
+    "$(TOPDIR)/Utils/doc/Utils.tag"

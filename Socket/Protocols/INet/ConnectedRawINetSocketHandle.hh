@@ -77,7 +77,7 @@ namespace senf {
         : public ConcreteSocketProtocol<ConnectedRawV4Socket_Policy, ConnectedRawV4SocketProtocol>,
           public RawINetSocketProtocol,
           public BSDSocketProtocol,
-	  public DatagramSocketProtocol,
+          public DatagramSocketProtocol,
           public AddressableBSDSocketProtocol
     {
     public:
@@ -145,7 +145,7 @@ namespace senf {
         : public ConcreteSocketProtocol<ConnectedRawV6Socket_Policy, ConnectedRawV6SocketProtocol>,
           public RawINetSocketProtocol,
           public BSDSocketProtocol,
-	  public DatagramSocketProtocol,
+          public DatagramSocketProtocol,
           public AddressableBSDSocketProtocol
     {
     public:

@@ -20,15 +20,15 @@ if (/label=\"([^"]{48,})\"/) {                              #"])){ # To make ema
 
     # If at least one break is in there ...
     if ($label=~/\\r/) {
-	# If it's a pathname, make all but the last line flush left
-	# Otherwise only make first line flush left
-	if ($label=~m{/}) {
-	    $label=~s/\\r(\\ )*/\\ \\ \\ \\ \\ \\ \\ \\ \\l/g;
-	    # Re-add blanks before last line
-	    $label=~s/^.*\\l/$&\\ \\ \\ \\ \\ \\ \\ \\ /;
-	} else {
-	    $label=~s/\\r/\\ \\ \\ \\ \\ \\ \\ \\ \\l/;
-	}
+    # If it's a pathname, make all but the last line flush left
+    # Otherwise only make first line flush left
+    if ($label=~m{/}) {
+        $label=~s/\\r(\\ )*/\\ \\ \\ \\ \\ \\ \\ \\ \\l/g;
+        # Re-add blanks before last line
+        $label=~s/^.*\\l/$&\\ \\ \\ \\ \\ \\ \\ \\ /;
+    } else {
+        $label=~s/\\r/\\ \\ \\ \\ \\ \\ \\ \\ \\l/;
+    }
         # Make last line flush right
         $label.="\\r";
     }

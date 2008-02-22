@@ -4,10 +4,9 @@ PROJECT_NAME = Sniffer
 EXAMPLE_PATH = .
 
 TAGFILES = \
-	"$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
-	"$(TOPDIR)/Packets/doc/Packets.tag" \
-	"$(TOPDIR)/Packets/DefaultBundle/doc/DefaultBundle.tag" \
-	"$(TOPDIR)/Socket/doc/Socket.tag" \
-	"$(TOPDIR)/Utils/doc/Utils.tag" \
+    "$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
+    "$(TOPDIR)/Packets/doc/Packets.tag" \
+    "$(TOPDIR)/Packets/DefaultBundle/doc/DefaultBundle.tag" \
+    "$(TOPDIR)/Socket/doc/Socket.tag" \
+    "$(TOPDIR)/Utils/doc/Utils.tag" \
     "$(TOPDIR)/doc/overview.tag"
-	

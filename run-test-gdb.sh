@@ -67,15 +67,15 @@ gdb -batch -x .run-test-gdb.cmd ./.test.bin 2>&1 | perl -e '
         if (/: fatal error in /) {
           print "\n";
           for (@l[1..$#l]) {
-             last if /^#[0-9]+ +0x[0-9a-f]+ in boost::unit_test::ut_detail::invoker/;
-             if ($silent) {
-	       unless (/at \/usr\/lib\/gcc\//) {
-		 print;
-		 $silent=0;
-	       }
-             } else {
-               print unless /in \?\?/;
-               $silent=1 if /__gnu_debug::/;
+            last if /^#[0-9]+ +0x[0-9a-f]+ in boost::unit_test::ut_detail::invoker/;
+            if ($silent) {
+              unless (/at \/usr\/lib\/gcc\//) {
+                print;
+                $silent=0;
+              }
+            } else {
+              print unless /in \?\?/;
+              $silent=1 if /__gnu_debug::/;
              }
           }
           print;

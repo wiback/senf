@@ -76,7 +76,7 @@ namespace senf {
      */
     class PacketSocketProtocol
         : public ConcreteSocketProtocol<Packet_Policy, PacketSocketProtocol>,
-	  public DatagramSocketProtocol,
+          public DatagramSocketProtocol,
           public BSDSocketProtocol
     {
     public:

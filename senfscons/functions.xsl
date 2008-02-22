@@ -8,7 +8,7 @@
   extension-element-prefixes="str exsl func">
   
 <func:function name="str:split">
-	<xsl:param name="string" select="''" />
+  <xsl:param name="string" select="''" />
   <xsl:param name="pattern" select="' '" />
   <xsl:choose>
     <xsl:when test="not($string)">

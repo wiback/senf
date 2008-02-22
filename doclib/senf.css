@@ -255,9 +255,9 @@ table.packet {
         border: 1px solid #AAAAAA;
         padding: 2px;
         border-spacing: 0;
-		white-space: nowrap;
-		text-align: center;
-		table-layout: fixed; 
+        white-space: nowrap;
+        text-align: center;
+        table-layout: fixed; 
 }
 
 table.packet td,th {
@@ -269,7 +269,7 @@ table.packet td,th {
 table.packet th {
         background-color: white;
         text-align: left;
-		font-weight: normal;
+        font-weight: normal;
         padding: 0px;
 }
 
@@ -486,14 +486,14 @@ table.members td:first-child {
 }
 
 div.toc {
-	width: 25%;
+        width: 25%;
         margin: 10px 0px;
 }
 
 div.toc ol {
         padding: 0px;
         margin: 0pt 0pt 0pt 40px;
-	list-style-type: decimal;
+        list-style-type: decimal;
 }
 
 div.toc li {

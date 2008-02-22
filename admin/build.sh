@@ -45,18 +45,18 @@ fi
 
 echo -n '# Upload started at '; date --utc
 rsync -rzv --del --delete-excluded \
-	--filter="- .svn" \
-	--filter="- linklint" \
-	--filter="- debian" \
-	--filter="+ */" \
-	--filter="+ *.html" \
-	--filter="+ *.css" \
-	--filter="+ *.png" \
-	--filter="+ *.php" \
-	--filter="+ *.idx" \
-	--filter="+ *.log" \
-	--filter="- *" \
-	. g0dil@shell.berlios.de://home/groups/senf/htdocs/src
+    --filter="- .svn" \
+    --filter="- linklint" \
+    --filter="- debian" \
+    --filter="+ */" \
+    --filter="+ *.html" \
+    --filter="+ *.css" \
+    --filter="+ *.png" \
+    --filter="+ *.php" \
+    --filter="+ *.idx" \
+    --filter="+ *.log" \
+    --filter="- *" \
+    . g0dil@shell.berlios.de://home/groups/senf/htdocs/src
 echo -n '# Upload completed at '; date --utc
 
 exec >/dev/null 2>&1

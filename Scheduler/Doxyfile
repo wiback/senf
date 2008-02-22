@@ -5,5 +5,5 @@ GENERATE_TAGFILE = doc/Scheduler.tag
 ALPHABETICAL_INDEX = NO
 
 TAGFILES = \
-	"$(TOPDIR)/Socket/doc/Socket.tag" \
-	"$(TOPDIR)/Utils/doc/Utils.tag"
+    "$(TOPDIR)/Socket/doc/Socket.tag" \
+    "$(TOPDIR)/Utils/doc/Utils.tag"

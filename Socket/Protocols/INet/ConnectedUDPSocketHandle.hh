@@ -80,7 +80,7 @@ namespace senf {
         : public ConcreteSocketProtocol<ConnectedUDPv4Socket_Policy, ConnectedUDPv4SocketProtocol>,
           public UDPSocketProtocol,
           public BSDSocketProtocol,
-	  public DatagramSocketProtocol,
+          public DatagramSocketProtocol,
           public AddressableBSDSocketProtocol
     {
     public:
@@ -139,7 +139,7 @@ namespace senf {
         : public ConcreteSocketProtocol<ConnectedUDPv6Socket_Policy, ConnectedUDPv6SocketProtocol>,
           public UDPSocketProtocol,
           public BSDSocketProtocol,
-	  public DatagramSocketProtocol,
+          public DatagramSocketProtocol,
           public AddressableBSDSocketProtocol
     {
     public:

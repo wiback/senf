@@ -2,7 +2,7 @@
 
 BEGIN {
     ($topdir=$0) =~ s{doclib/.*$}{};
-		      print $topdir,"\n";
+    print $topdir,"\n";
 }
 
 s/\s*$//;
