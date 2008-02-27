@@ -65,6 +65,18 @@
     \c foo::SomeClass area, where it is set to \c VERBOSE. Furthermore, the limit on the \c
     foo::Transactions stream is set to \c NOTICE.
 
+    There are two standard uses for this configuration: Either to disable most logging in final
+    builds by changing the compile time limit to something like senf::log::IMPORTANT or to enable
+    senf::log::VERBOSE messages for some area:
+    <pre>
+    # Disable debug logging below 'IMPORTANT' level
+    g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Debug), (_), IMPORTANT ))"
+
+    # Or enable verbose messages for the 'some::Area' area
+    g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Verbose), (some)(Area), VERBOSE ))"
+    </pre>
+
+
     \see \ref SENF_LOG_CONF
 
     \section config_runtime Runtime configuration

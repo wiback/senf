@@ -30,7 +30,7 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-#define SENF_LOG_DEF_AREA_I(area, decls)                                                          \
+#define SENF_LOG_DEFINE_AREA_I(area, decls)                                                          \
     struct area                                                                                   \
         : public senf::log::detail::AreaBase, public senf::singleton<area>                        \
     {                                                                                             \

@@ -44,13 +44,13 @@
 
     A \e stream combines log messages with a single purpose: Debug messages, access logging and so
     on. Any number of streams may be defined. There is one predefined default stream called \c
-    senf::log::Debug. (see: \ref SENF_LOG_DEF_STREAM)
+    senf::log::Debug. (see: \ref SENF_LOG_DEFINE_STREAM)
 
     The \e area gives information about the source location of the message. Areas may be defined and
     assigned arbitrarily but should be used to label messages from a single class or subsystem. It
     is possible to reuse a class as it's own area tag, which is often desireable.  There is a
     default area \c senf::log::DefaultArea which is used, when no other area is assigned. (see: \ref
-    SENF_LOG_DEF_AREA, \ref SENF_LOG_CLASS_AREA)
+    SENF_LOG_DEFINE_AREA, \ref SENF_LOG_CLASS_AREA)
 
     The log \e level gives information on the importance of the message. The list of log-levels is
     fixed. (see: \ref loglevels)
@@ -58,6 +58,15 @@
     Depending on their the \e stream, \e area and \e level information, log messages can be enabled
     or disabled at \e compile time. Messages disabled at compile time should not generate any
     code. (see: \ref SENF_LOG_CONF)
+
+    \attention The default log stream senf::log::Debug has senf::log::VERBOSE messages
+        <em>disabled</em> at compile time. senf::log::VERBOSE message will therefore only appear,
+        if you explictly enable the messages for the area in question using (here for the area
+        <code>some::Area</code>)
+        <pre> 
+        g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Debug), (some)(Area), VERBOSE ))" 
+        </pre>
+        in addition to routing the messages at runtime. For more, see \ref config.
 
     To be of any use, the log messages have to be written somewhere. This is the responsibility of
     any number of \e targets. A \e target receives messages and using it's routing information
@@ -74,12 +83,12 @@
 
         // Define a new log stream with default level, runtime limit and compile time limit 
         // set to senf::log::MESSAGE
-        SENF_LOG_DEF_STREAM( UserLog, senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE );
+        SENF_LOG_DEFINE_STREAM( UserLog, senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE );
 
         class Froblizer
         {
             // Define a log area which will automatically be used by all members of this class.
-            // This is a combination of SENF_LOG_DEF_AREA and SENF_LOG_DEFAULT_AREA.
+            // This is a combination of SENF_LOG_DEFINE_AREA and SENF_LOG_DEFAULT_AREA.
             SENF_LOG_CLASS_AREA();
 
             // Set default log parameters for this scope.
@@ -89,7 +98,7 @@
             // Define an alias for emergency debug messages
             // The log area is inherited from the default at the place, where this
             // alias is used *not* where it is defined
-            SENF_LOG_DEF_ALIAS(LogEmerg, (senf::log::Debug)(senf::log::CRITICAL));
+            SENF_LOG_DEFINE_ALIAS(LogEmerg, (senf::log::Debug)(senf::log::CRITICAL));
 
             void test();
 

@@ -98,10 +98,10 @@ namespace log {
 
         The different object representations are:
         \li The \e streams is statically represented by it's name, which is the name of a class
-            defined with \ref SENF_LOG_DEF_STREAM. The dynamic representation is a string
+            defined with \ref SENF_LOG_DEFINE_STREAM. The dynamic representation is a string
             representation of this name.
         \li The \e area is statically represented by it's name, which again is the name of a class
-            defined with \ref SENF_LOG_DEF_STREAM. The dynamic representation again is a string
+            defined with \ref SENF_LOG_DEFINE_STREAM. The dynamic representation again is a string
             representation of this class's name. The dynamic representation represents an absent
             area with the empty string.
         \li The \e level is statically represented by a level class from \ref

@@ -50,9 +50,13 @@ namespace log {
         output.  \a compileLimit defines the default log level limit at compile time: Messages
         posted with a level below \a compileLimit will be discarded at compile time.
 
+        Normally the \a compileLimit will be \c NOTICE. This will enable all messages
+        <em>except</em> \c VERBOSE messages. These must then be enabled explicitly using the compile
+        time \ref config macro.
+
         \hideinitializer
      */
-#   define SENF_LOG_DEF_STREAM(stream, defaultLevel_, runtimeLimit_, compileLimit_)               \
+#   define SENF_LOG_DEFINE_STREAM(stream, defaultLevel_, runtimeLimit_, compileLimit_)               \
         struct stream                                                                             \
             : public senf::log::detail::StreamBase, public senf::singleton<stream>                \
         {                                                                                         \
@@ -73,17 +77,17 @@ namespace log {
 
         \hideinitializer
      */
-#   define SENF_LOG_DEF_AREA(area) SENF_LOG_DEF_AREA_I(area, ; )
+#   define SENF_LOG_DEFINE_AREA(area) SENF_LOG_DEFINE_AREA_I(area, ; )
 
     /** \brief Define new default log area for the class
 
         This command declares the containing class to be it's own default log area. It is such like
-        a combination of \ref SENF_LOG_DEF_AREA and \ref SENF_LOG_DEFAULT_AREA with a twist.
+        a combination of \ref SENF_LOG_DEFINE_AREA and \ref SENF_LOG_DEFAULT_AREA with a twist.
 
         \hideinitializer
      */
 #   define SENF_LOG_CLASS_AREA()                                                                  \
-        SENF_LOG_DEF_AREA_I(                                                                      \
+        SENF_LOG_DEFINE_AREA_I(                                                                      \
             SENFLogArea,                                                                          \
             std::string v_name() const                                                            \
                 { std::string s (fullName()); return std::string(s,0,s.size()-13); });            \
@@ -97,7 +101,7 @@ namespace log {
 
         \hideinitializer
      */
-#   define SENF_LOG_DEF_ALIAS(alias,args)                                                         \
+#   define SENF_LOG_DEFINE_ALIAS(alias,args)                                                         \
         struct alias : public senf::log::detail::AliasBase                                        \
         {                                                                                         \
             template <class Base>                                                                 \
@@ -108,10 +112,10 @@ namespace log {
         }
 
     /** \brief Default global log stream */
-    SENF_LOG_DEF_STREAM(Debug, MESSAGE, MESSAGE, MESSAGE);
+    SENF_LOG_DEFINE_STREAM(Debug, MESSAGE, MESSAGE, NOTICE);
 
     /** \brief Default global %log area */
-    SENF_LOG_DEF_AREA(DefaultArea);
+    SENF_LOG_DEFINE_AREA(DefaultArea);
 
     ///\}
     ///\}

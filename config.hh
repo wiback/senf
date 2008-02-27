@@ -73,7 +73,7 @@
 #     ifndef SENF_DEBUG
 #         define SENF_SENFLOG_LIMIT senf::log::IMPORTANT
 #     else
-#         define SENF_SENFLOG_LIMIT senf::log::VERBOSE
+#         define SENF_SENFLOG_LIMIT senf::log::NOTICE
 #     endif
 # endif
 # 

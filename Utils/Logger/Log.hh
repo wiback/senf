@@ -80,7 +80,7 @@
     To further simplify logging commands, aliases may be defined within any scope. An alias is an
     arbitrary collection of %log parameters:
     \code
-    SENF_LOG_DEF_ALIAS( VerboseDebug, (senf::log::Debug)(senf::log::VERBOSE) );
+    SENF_LOG_DEFINE_ALIAS( VerboseDebug, (senf::log::Debug)(senf::log::VERBOSE) );
     \endcode
     Within %log statements, aliases may be used like normal parameters. They will be substituted for
     the parameter sequence they represent:

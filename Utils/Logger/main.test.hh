@@ -53,9 +53,9 @@ namespace test {
         }
     };
 
-    SENF_LOG_DEF_ALIAS( LogCritical, (senf::log::Debug) (senf::log::CRITICAL) );
-    SENF_LOG_DEF_STREAM( myStream, senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE );
-    SENF_LOG_DEF_AREA( myArea );
+    SENF_LOG_DEFINE_ALIAS( LogCritical, (senf::log::Debug) (senf::log::CRITICAL) );
+    SENF_LOG_DEFINE_STREAM( myStream, senf::log::MESSAGE, senf::log::MESSAGE, senf::log::MESSAGE );
+    SENF_LOG_DEFINE_AREA( myArea );
 
 }}}
 

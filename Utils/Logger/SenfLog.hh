@@ -35,7 +35,7 @@
 
 namespace senf {
 
-    SENF_LOG_DEF_STREAM(SenfLog, senf::log::MESSAGE, senf::log::MESSAGE, SENF_SENFLOG_LIMIT);
+    SENF_LOG_DEFINE_STREAM(SenfLog, senf::log::MESSAGE, senf::log::MESSAGE, SENF_SENFLOG_LIMIT);
     SENF_LOG_DEFAULT_STREAM(SenfLog);
 
 }
