@@ -59,7 +59,7 @@ td {
 }
 
 #head ul { 
-        display: inline; /* f�r IE ... */
+        display: inline; /* fuer IE ... */
         font-size: 13px;
         height: 0px;
         margin: 0;
@@ -68,15 +68,15 @@ td {
 
 #head li { 
         list-style-type: none;
-        margin: 0 0 0 10px;
-        padding: 0 10px 0 0;
-        float: right;
-        border-right: 1px solid #726921;
+        margin: 0 10px 0 0;
+        padding: 0 0 0 10px;
+        float: left;
+        border-left: 1px solid #726921;
         height: 14px;
 }
 
 #head li:first-child { 
-        border-right: none;
+        border-left: none;
         padding: 0;
 }
 
