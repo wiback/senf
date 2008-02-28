@@ -208,9 +208,11 @@ prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
                                                       AreaBase const & area, unsigned level,
                                                       std::string msg)
 {
-    if (fallbackRouting_)
-        static_cast<Target &>(ConsoleTarget::instance()).v_write( 
-            (*timeSource_)(), stream.v_name(), area.v_name(), level, msg );
+    if (fallbackRouting_) {
+        if (level >= stream.defaultRuntimeLimit())
+            static_cast<Target &>(ConsoleTarget::instance()).v_write( 
+                (*timeSource_)(), stream.v_name(), area.v_name(), level, msg );
+    }
     else
         area.write( (*timeSource_)(), stream, level, msg );
 }
