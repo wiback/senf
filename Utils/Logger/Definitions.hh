@@ -56,7 +56,7 @@ namespace log {
 
         \hideinitializer
      */
-#   define SENF_LOG_DEFINE_STREAM(stream, defaultLevel_, runtimeLimit_, compileLimit_)               \
+#   define SENF_LOG_DEFINE_STREAM(stream, defaultLevel_, runtimeLimit_, compileLimit_)            \
         struct stream                                                                             \
             : public senf::log::detail::StreamBase, public senf::singleton<stream>                \
         {                                                                                         \
@@ -86,8 +86,9 @@ namespace log {
 
         \hideinitializer
      */
+    // See Definitions.ih for implementation details on SENF_LOG_CLASS_AREA
 #   define SENF_LOG_CLASS_AREA()                                                                  \
-        SENF_LOG_DEFINE_AREA_I(                                                                      \
+        SENF_LOG_DEFINE_AREA_I(                                                                   \
             SENFLogArea,                                                                          \
             std::string v_name() const                                                            \
                 { std::string s (fullName()); return std::string(s,0,s.size()-13); });            \
@@ -101,7 +102,7 @@ namespace log {
 
         \hideinitializer
      */
-#   define SENF_LOG_DEFINE_ALIAS(alias,args)                                                         \
+#   define SENF_LOG_DEFINE_ALIAS(alias,args)                                                      \
         struct alias : public senf::log::detail::AliasBase                                        \
         {                                                                                         \
             template <class Base>                                                                 \

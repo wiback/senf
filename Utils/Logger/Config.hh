@@ -152,7 +152,7 @@ namespace log {
             <tr><td>stream</td>       <td>::= \e scope_seq \n</td></tr>
             <tr><td>optional_area</td><td>::= <tt>(_)</tt> | \e scope_seq \n</td></tr>
             <tr><td>level</td>        <td>::= \c VERBOSE | \c NOTICE | \c MESSAGE | \c IMPORTANT | \c CRITICAL | \c DISABLED \n</td></tr>
-            <tr><td>scope_seq</td>    <td>::= \e scope \e scope \e scope* \n</td></tr>
+            <tr><td>scope_seq</td>    <td>::= \e scope \e scope* \n</td></tr>
             <tr><td>scope</td>        <td>::= <tt>(</tt> \e name <tt>)</tt> \n</td></tr>
             <tr><td>name</td>         <td>::= arbitrary C++ identifier</td></tr>
             </table>

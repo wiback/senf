@@ -33,12 +33,15 @@
 #endif
 
 #define SENF_LOG_CONF (( (senf)(log)(Debug), (_), NOTICE )) \
+                      (( (senf)(log)(test)(myStream), (GlobalTestArea), IMPORTANT )) \
                       (( (senf)(log)(test)(myStream), (senf)(log)(test)(Foo), VERBOSE ))
 
 #include "Logger.hh"
 
 //#include "main.test.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
+
+SENF_LOG_DEFINE_AREA(GlobalTestArea);
 
 namespace senf {
 namespace log {

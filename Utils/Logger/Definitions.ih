@@ -30,7 +30,42 @@
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
-#define SENF_LOG_DEFINE_AREA_I(area, decls)                                                          \
+// Implementation details concerning SENF_LOG_CLASS_AREA
+//
+// The SENF_LOG_CLASS_AREA statement shall declare the containing class as it's own default area. Of
+// course, we cannot make the containing class into an area. Therefor we need to trick around a bit:
+//
+// We begin by defining an area SENFLogArea with in the class. This area however is hacked, so that
+// it's name() member will return the name of the containing class (which is simple: just cut of the
+// last couple of characters of the name since the name will always end in '::SENFLogArea').
+//
+// This however does not allow the use of the containing class as an area. There are several places
+// which need to be adjusted to allow using the containing class as an area: The logging statements
+// (SENF_LOG), the compile time configuration via SENF_LOG_CONF and the runtime configuration via
+// route statements.
+//
+// Lets begin with the compile time configuration. The compile time configuration is done using
+// specialization of the senf::log::detail::Config template. This doesn't care, what the area
+// template argument really is. Therefore, compile-time configuration just uses the containing class
+// as is. So we need to make sure, that the logging statements use the containing class when
+// checking the compile-time limit whereas they need to use the nested SENFLogArea when calling the
+// targets.
+//
+// So let's look at the logging statements. The central logic for parsing the logging parameters is
+// in SENF_LOG_MERGE_PARAMETERS in Parameters.ih. Here we have a special case which detects classes
+// with a SENFLogArea member and then set's things up correctly: It uses the containing class for
+// compile time checking (this is, what 'area_base' typedef is for) while using the nested
+// SENFLogArea for routing (this is, what the 'area' typedef is for).
+//
+// So the last thing which needs to be adjusted is the routing which is part of the Target
+// class. Here for each template taking an area as an argument we really provide TWO templates, one
+// taking the area directly, the other checking for a nested SENFLogArea member. We can
+// differentiate these overloads using boost::enable_if and friends.
+//
+// This setup makes a class with SENF_LOG_CLASS_AREA() look like an ordinary area even though the
+// implementation is somewhat different.
+
+#define SENF_LOG_DEFINE_AREA_I(area, decls)                                                       \
     struct area                                                                                   \
         : public senf::log::detail::AreaBase, public senf::singleton<area>                        \
     {                                                                                             \

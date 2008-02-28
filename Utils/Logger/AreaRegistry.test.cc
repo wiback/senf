@@ -37,7 +37,8 @@
 
 BOOST_AUTO_UNIT_TEST(areaRegistry)
 {
-    char const * areas[] = { "senf::log::DefaultArea", 
+    char const * areas[] = { "GlobalTestArea",
+                             "senf::log::DefaultArea", 
                              "senf::log::test::Foo", 
                              "senf::log::test::myArea" };
 

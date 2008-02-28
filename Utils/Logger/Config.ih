@@ -41,17 +41,19 @@ namespace senf {
 namespace log {
 namespace detail {
 
+    struct na {};
+
     /// Internal: Compile time configuration for given \a Stream and \a Area
     template <class Stream, class Area>
     struct Config
     {
-        typedef typename Config<Stream,void>::compileLimit compileLimit;
+        typedef typename Config<Stream,na>::compileLimit compileLimit;
     };
 
 #   ifndef DOXYGEN
 
     template <class Stream>
-    struct Config<Stream, void>
+    struct Config<Stream, na>
     {
         typedef typename Stream::compileLimit compileLimit;
     };
@@ -68,35 +70,40 @@ namespace detail {
 #define SENF_LOG_PREDECL_(s, state, elem)                                                         \
     namespace elem { state }
 
-#define SENF_LOG_PREDECL(seq)                                                                     \
+#define SENF_LOG_PREDECL_long(seq)                                                                \
     BOOST_PP_SEQ_FOLD_RIGHT( SENF_LOG_PREDECL_,                                                   \
                              class SENF_PP_SEQ_BACK(seq);,                                        \
                              BOOST_PP_SEQ_POP_BACK(seq) )
+
+#define SENF_LOG_PREDECL_short(seq)                                                               \
+        class SENF_PP_SEQ_BACK(seq);
+
+#define SENF_LOG_PREDECL(seq)                                                                     \
+    BOOST_PP_CAT(SENF_LOG_PREDECL_,                                                               \
+                 BOOST_PP_IF(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(seq)),long,short))(seq)
 
 #define SENF_LOG_NIL(x)
 
 #define SENF_LOG_CONF_DEFINE(stream, area, level)                                                 \
     SENF_LOG_PREDECL(stream)                                                                      \
-    BOOST_PP_IF(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(area)),                                            \
-                SENF_LOG_PREDECL,                                                                 \
-                SENF_LOG_NIL)(area)                                                               \
+    SENF_LOG_PREDECL(area)                                                                        \
     namespace senf { namespace log { namespace detail {                                           \
         template <>                                                                               \
         struct Config< SENF_LOG_SEQ_TO_NAME(stream),                                              \
-                       BOOST_PP_IF(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(area)),                         \
-                                   SENF_LOG_SEQ_TO_NAME(area),                                    \
-                                   void) >                                                        \
+                       SENF_LOG_SEQ_TO_NAME(area) >                                               \
         { typedef senf::log::level compileLimit; };                                               \
     }}}
 
 #ifdef SENF_LOG_CONF
 
+#   define _ senf::log::detail::na
 #   define SLC_elt(r, data, elt) \
         SENF_LOG_CONF_DEFINE elt
 
     BOOST_PP_SEQ_FOR_EACH(SLC_elt, none, SENF_LOG_CONF)
 
 #   undef SLC_elt
+#   undef _
 
 #endif
 

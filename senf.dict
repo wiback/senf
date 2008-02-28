@@ -124,6 +124,7 @@ ForwardingRoute
 fraunhofer
 FroblizerArea
 GlobalScope
+GlobalTestArea
 gre
 GREPacket
 GREPacketParser
