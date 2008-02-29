@@ -47,7 +47,8 @@ prefix_ void senf::DVBFrontendSocketProtocol::init_client(uint8_t adapter, boost
             "/dev/dvb/adapter%d/frontend%d") % adapter % device);
     int f = open(devFrontend.c_str(), O_RDONLY | O_NONBLOCK);
     if (f < 0)
-        throw SystemException();
+        throw SystemException("Could not open frontend device of DVB adapter ")<< devFrontend;
+    
     fd(f);
 }
 
@@ -67,7 +68,7 @@ prefix_ void senf::DVBFrontendSocketProtocol::signalStrength(int16_t *strength)
     const
 {
     if (::ioctl(fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)
-        throw SystemException();
+        throw SystemException( "Could not get signal strength of DVB adapter");
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
