@@ -38,6 +38,9 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::IOStreamTarget
 
+const char * const senf::log::IOStreamTarget::LEVELNAMES_[8] = {
+        "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
+
 prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)
     : stream_(os)
 {
@@ -69,7 +72,8 @@ prefix_ void senf::log::IOStreamTarget::v_write(boost::posix_time::ptime timesta
     for (; i != i_end; ++i) {
         stream_ << timestamp << sep;
         if (area != "senf::log::DefaultArea")
-            stream_ << "[" << area << "] ";
+            stream_ << "[" << area << "]";
+        stream_ << "[" << LEVELNAMES_[level] << "] ";
         stream_ << *i << "\n";
         sep = '-';
     }

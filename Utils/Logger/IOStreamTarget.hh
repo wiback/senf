@@ -82,8 +82,8 @@ namespace log {
                      std::string const & message);
 
         std::ostream & stream_;
+        static char const * const LEVELNAMES_[8];
     };
-
 
 }}
 

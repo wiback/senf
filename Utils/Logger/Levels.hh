@@ -41,7 +41,7 @@ namespace log {
 
         <dl><dt>VERBOSE</dt><dd>Really verbose %log messages. Messages at this level are used for
         internal debugging. They should be enabled only selectively within the areas currently under
-        inspection. The default log stream senf::log::Debug has these messages <em>disabled</em> at
+        inspection. The default %log stream senf::log::Debug has these messages <em>disabled</em> at
         compile time by default. To enable them, see \ref config.</dd>
 
         <dt>NOTICE</dt><dd>Arbitrary unimportant notice. Message which normally should be disabled

@@ -88,6 +88,7 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
 
     {
         INet6SocketAddress addr;
+        BOOST_CHECK( ! addr );
         BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr.address()), "::" );
         BOOST_CHECK_EQUAL( addr.port(), 0u );
         BOOST_CHECK_EQUAL( addr.iface(), "" );

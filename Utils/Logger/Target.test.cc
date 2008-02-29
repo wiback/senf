@@ -43,8 +43,8 @@ namespace {
         typedef std::string result_type;
         std::string operator()(senf::log::Target::RoutingEntry const & entry) const
             {
-                static char const * levels[] = { "NONE", "VERBOSE", "NOTICE", "MESSAGE",
-                                                 "IMPORTANT", "CRITICAL","DISABLED" };
+                static char const * levels[] = { 
+                        "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
                 static char const * actions[] = { "ACCEPT", "REJECT" };
                 std::stringstream s;
                 s << entry.stream() << "-" << entry.area() << "-" << levels[entry.level()] << "-" 
