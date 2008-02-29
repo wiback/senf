@@ -50,16 +50,16 @@ namespace senf {
         NetdeviceController(int interface_index);
         virtual ~NetdeviceController();
         
-        MACAddress hardwareAddress();
-        std::string interfaceName();
-        int interfaceIndex(); ///< return the interface index of the interface
-        int mtu();
-        void mtu(int new_mtu);
+        MACAddress hardwareAddress() const;
+        std::string interfaceName() const;
+        int interfaceIndex() const; ///< return the interface index of the interface
+        int mtu() const;
+        void mtu(int new_mtu) const;
     
     private:
         void openSocket();
-        void doIoctl(ifreq& ifr, int request);
-        void ifrName(ifreq& ifr);
+        void doIoctl(ifreq& ifr, int request) const;
+        void ifrName(ifreq& ifr) const;
         int sockfd_;
         int ifindex_;
     };

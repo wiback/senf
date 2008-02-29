@@ -52,6 +52,7 @@ prefix_ senf::NetdeviceController::NetdeviceController(int interface_index)
 }
 
 prefix_ std::string senf::NetdeviceController::interfaceName()
+    const
 {
     struct ifreq ifr;
     ifrName( ifr);
@@ -59,6 +60,7 @@ prefix_ std::string senf::NetdeviceController::interfaceName()
 }
 
 prefix_ senf::MACAddress senf::NetdeviceController::hardwareAddress()
+    const
 {
     struct ifreq ifr;
     ifrName( ifr);
@@ -67,6 +69,7 @@ prefix_ senf::MACAddress senf::NetdeviceController::hardwareAddress()
 }
 
 prefix_ int senf::NetdeviceController::mtu()
+    const
 {
     struct ifreq ifr;
     ifrName( ifr);
@@ -75,6 +78,7 @@ prefix_ int senf::NetdeviceController::mtu()
 }
 
 prefix_ void senf::NetdeviceController::mtu(int new_mtu)
+    const
 {
     struct ifreq ifr;
     ifrName( ifr);
@@ -83,6 +87,7 @@ prefix_ void senf::NetdeviceController::mtu(int new_mtu)
 }
 
 prefix_ int senf::NetdeviceController::interfaceIndex()
+    const
 {
     return ifindex_;
 }
@@ -100,6 +105,7 @@ prefix_ void senf::NetdeviceController::openSocket()
 }
 
 prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
+    const
 {
     ::memset( &ifr, 0, sizeof(ifr));
     ifr.ifr_ifindex = ifindex_;
@@ -109,6 +115,7 @@ prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
 
 
 prefix_ void senf::NetdeviceController::doIoctl(ifreq& ifr, int request)
+    const
 {
     if ( ::ioctl( sockfd_, request, &ifr ) < 0 )
         throw SystemException();
