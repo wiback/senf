@@ -269,7 +269,8 @@ namespace senf {
 
         unsigned timeout(ClockService::clock_type timeout, SimpleCallback const & cb); 
                                         ///< Add timeout event
-                                        /**< \param[in] timeout timeout in nanoseconds
+                                        /**< \returns timer id
+                                             \param[in] timeout timeout in nanoseconds
                                              \param[in] cb callback to call after \a timeout
                                                  milliseconds */
 
