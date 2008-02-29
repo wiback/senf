@@ -41,10 +41,10 @@ namespace log {
 
         This target will write %log messages to an arbitrary std::ostream in the format
         <pre>
-        <date> [<area>] <message>
+        <date> [<area>][<level>] <message>
         </pre>
 
-        The \e area will be omitted it it is \c senf::log::DefaultArea.
+        The \e area will be omitted if it is \c senf::log::DefaultArea.
         
         The date formatting is set using the Boost.DateTime date_facet, e.g.:
         \code
