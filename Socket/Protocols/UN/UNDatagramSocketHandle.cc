@@ -51,7 +51,7 @@ prefix_ void senf::UNDatagramSocketProtocol::init_client(UNSocketAddress const &
     try {
         clientHandle().bind(address);
     } catch (SystemException & e) {
-        e << "Could not bind to address " << address.path();
+        e << "; could not bind to address \"" << address.path() << "\"";
         throw;
     }
 }
