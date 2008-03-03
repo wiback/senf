@@ -31,6 +31,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
+#include <senf/Utils/Logger.hh>
 #include "../../../Utils/Exception.hh"
 
 //#include "UNSocketProtocol.mpp"
@@ -41,7 +42,7 @@ prefix_ unsigned senf::UNSocketProtocol::available()
 {
     int n;
     if (::ioctl(fd(),SIOCINQ,&n) < 0)
-        throw SystemException();
+        throw SystemException("Could not call available() on UNSocket");
     return n;
 }
 
@@ -76,6 +77,7 @@ prefix_ void senf::UNSocketProtocol::check_and_unlink()
         ::unlink(una.path().c_str());
     }
     catch (SystemException & e) {
+        SENF_LOG(("UNSocketProtocol::check_and_unlink() failed; " << e.description() ));
     }
 }
     

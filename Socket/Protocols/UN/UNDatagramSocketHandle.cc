@@ -41,14 +41,19 @@ prefix_ void senf::UNDatagramSocketProtocol::init_client() const
 {
     int sock = ::socket(PF_UNIX,SOCK_DGRAM,0);
     if (sock < 0)
-        throw SystemException();
+        throw SystemException( "Could not create socket(PF_UNIX,SOCK_DGRAM,0)" );
     fd(sock);
 }
 
 prefix_ void senf::UNDatagramSocketProtocol::init_client(UNSocketAddress const & address) const 
 {
     init_client();
-    clientHandle().bind(address);
+    try {
+        clientHandle().bind(address);
+    } catch (SystemException & e) {
+        e << "Could not bind to address " << address.path();
+        throw;
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
