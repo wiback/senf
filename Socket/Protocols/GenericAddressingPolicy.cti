@@ -87,6 +87,7 @@ prefix_ void senf::GenericAddressingPolicy<Address>::local(FileHandle handle,
     try {
         do_local(handle,addr.sockaddr_p(),addr.sockaddr_len());
     } catch (SystemException & e) {
+        // TODO: identify socket by some meaningful attribute
         e << "; could not get name for address \"" << addr << "\"";
         throw;
     }
