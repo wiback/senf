@@ -83,7 +83,7 @@ prefix_ unsigned senf::UNSocketAddress::sockaddr_len()
     return sizeof(addr_);
 }
 
-prefix_ std::ostream & operator<<(std::ostream & os,
+prefix_ std::ostream & senf::operator<<(std::ostream & os,
                                   senf::UNSocketAddress::UNSocketAddress const & addr)
 {
     os << addr.path();

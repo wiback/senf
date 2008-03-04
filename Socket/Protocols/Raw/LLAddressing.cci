@@ -114,6 +114,13 @@ prefix_ unsigned senf::LLSocketAddress::sockaddr_len()
     return sizeof(addr_);
 }
 
+prefix_ std::ostream & senf::operator<<(std::ostream & os, LLSocketAddress const & llAddr)
+{
+    // TODO: expose more bytes from sockaddr_ll addr_
+    os << "[some LLSocketAddress]";
+    return os;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

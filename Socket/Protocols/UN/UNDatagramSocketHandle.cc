@@ -48,12 +48,7 @@ prefix_ void senf::UNDatagramSocketProtocol::init_client() const
 prefix_ void senf::UNDatagramSocketProtocol::init_client(UNSocketAddress const & address) const 
 {
     init_client();
-    try {
-        clientHandle().bind(address);
-    } catch (SystemException & e) {
-        e << "; could not bind to address \"" << address.path() << "\"";
-        throw;
-    }
+    clientHandle().bind(address);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

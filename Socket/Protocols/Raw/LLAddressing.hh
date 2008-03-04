@@ -155,6 +155,11 @@ namespace senf {
     };
 
     /// @}
+
+    /** \brief Write link layer address
+        \related LLSocketAddress
+     */
+    std::ostream & operator<<(std::ostream & os, LLSocketAddress const & llAddr);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

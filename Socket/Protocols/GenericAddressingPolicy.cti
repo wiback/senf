@@ -42,7 +42,12 @@ peer(SocketHandle<SPolicy> handle, Address & addr,
      typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
     addr.clear();
-    do_peer(handle,addr.sockaddr_p(),addr.sockaddr_len());
+    try {
+        do_peer(handle,addr.sockaddr_p(),addr.sockaddr_len());
+    } catch (SystemException & e) {
+        e << "; could not get peer for address \"" << addr << "\"";
+        throw;
+    }
 }
 #else
 template <class Address>
@@ -59,7 +64,12 @@ prefix_ void senf::GenericAddressingPolicy<Address>::
 connect(SocketHandle<SPolicy> handle, Address const & addr,
         typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
-    do_connect(handle,addr.sockaddr_p(),addr.sockaddr_len());
+    try {
+        do_connect(handle,addr.sockaddr_p(),addr.sockaddr_len());
+    } catch (SystemException & e) {
+        e << "; could not connect to address \"" << addr << "\"";
+        throw;
+    }
 }
 #else
 template <class Address>
@@ -74,14 +84,24 @@ prefix_ void senf::GenericAddressingPolicy<Address>::local(FileHandle handle,
                                                            Address & addr)
 {
     addr.clear();
-    do_local(handle,addr.sockaddr_p(),addr.sockaddr_len());
+    try {
+        do_local(handle,addr.sockaddr_p(),addr.sockaddr_len());
+    } catch (SystemException & e) {
+        e << "; could not get name for address \"" << addr << "\"";
+        throw;
+    }
 }
 
 template <class Address>
 prefix_ void senf::GenericAddressingPolicy<Address>::bind(FileHandle handle,
                                                                  Address const & addr)
 {
-    do_bind(handle,addr.sockaddr_p(),addr.sockaddr_len());
+    try {
+        do_bind(handle,addr.sockaddr_p(),addr.sockaddr_len());
+    } catch (SystemException & e) {
+        e << "; could not bind to address \"" << addr << "\"";
+        throw;
+    }
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////
