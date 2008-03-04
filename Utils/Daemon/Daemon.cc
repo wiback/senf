@@ -38,6 +38,7 @@
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/format.hpp>
 #include "../Exception.hh"
 #include "../membind.hh"
 
@@ -53,8 +54,14 @@
 
 prefix_ senf::Daemon::~Daemon()
 {
-    if (! pidfile_.empty())
-        LIBC_CALL( ::unlink, (pidfile_.c_str()) );
+    if (! pidfile_.empty()) {
+        try {
+            LIBC_CALL( ::unlink, (pidfile_.c_str()) );
+        } catch (SystemException e) {
+            e << "; could not unlink " << pidfile_.c_str();
+            throw;
+        }
+    }
 }
 
 prefix_ void senf::Daemon::daemonize(bool v)
@@ -316,6 +323,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
     // was some race condition, probably over NFS.
 
     std::string tempname;
+    boost::format linkErrorFormat("; could not link \"%1%\" to \"%2%\"");
 
     {
         char hostname[HOST_NAME_MAX+1];
@@ -334,7 +342,8 @@ prefix_ bool senf::Daemon::pidfileCreate()
 
         if (::link(tempname.c_str(), pidfile_.c_str()) < 0) {
             if (errno != EEXIST) 
-                throw SystemException("::link()");
+                throw SystemException("::link()")
+                    << linkErrorFormat % pidfile_.c_str() % tempname.c_str();
         }
         else {
             struct ::stat s;
@@ -364,7 +373,9 @@ prefix_ bool senf::Daemon::pidfileCreate()
 
         LIBC_CALL( ::unlink, (tempname.c_str() ));
         if (::link(pidfile_.c_str(), tempname.c_str()) < 0) {
-            if (errno != ENOENT) throw SystemException("::link()");
+            if (errno != ENOENT)
+                throw SystemException("::link()")
+                    << linkErrorFormat % tempname.c_str() % pidfile_.c_str();
             // Hmm ... the pidfile mysteriously disappeared ... try again.
             continue;
         }
