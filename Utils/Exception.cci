@@ -35,9 +35,9 @@ prefix_ senf::Exception::Exception(std::string const & description)
 
 ///////////////////////////////////////////////////////////////////////////
 
-prefix_ senf::SystemException::SystemException(std::string const & where)
+prefix_ senf::SystemException::SystemException(std::string const & descr)
 {
-    init(where, errno);
+    init(descr, errno);
 }
 
 prefix_ senf::SystemException::SystemException(int code)
@@ -45,9 +45,9 @@ prefix_ senf::SystemException::SystemException(int code)
     init("", code);
 }
 
-prefix_ senf::SystemException::SystemException(std::string const & where, int code)
+prefix_ senf::SystemException::SystemException(std::string const & descr, int code)
 {
-    init(where, code);
+    init(descr, code);
 }
 
 prefix_ int senf::SystemException::errorNumber()
@@ -56,7 +56,7 @@ prefix_ int senf::SystemException::errorNumber()
     return code_;
 }
 
-prefix_ char const * senf::SystemException::description()
+prefix_ char const * senf::SystemException::errorString()
     const
 {
     return std::strerror(code_);

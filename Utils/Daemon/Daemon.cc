@@ -57,8 +57,8 @@ prefix_ senf::Daemon::~Daemon()
     if (! pidfile_.empty()) {
         try {
             LIBC_CALL( ::unlink, (pidfile_.c_str()) );
-        } catch (SystemException e) {
-            e << "; could not unlink " << pidfile_.c_str();
+        } catch (Exception e) {
+            // e << "; could not unlink " << pidfile_.c_str();
             // throw;
         }
     }
@@ -323,7 +323,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
     // was some race condition, probably over NFS.
 
     std::string tempname;
-    boost::format linkErrorFormat(" Could not link \"%1%\" to \"%2%\".");
+    boost::format linkErrorFormat("; could not link \"%1%\" to \"%2%\".");
 
     {
         char hostname[HOST_NAME_MAX+1];

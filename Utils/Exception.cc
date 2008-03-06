@@ -47,12 +47,11 @@ prefix_ char const * senf::Exception::what()
 ///////////////////////////////////////////////////////////////////////////
 // senf::SystemException
 
-prefix_ void senf::SystemException::init(std::string const & where, int code)
+prefix_ void senf::SystemException::init(std::string const & descr, int code)
 {
     code_ = code;
-    if (! where.empty())
-        (*this) << where << ": ";
-    (*this) << "(" << code << ") " << description();
+    (*this) << "[" << errorString() << "]";
+    if (! descr.empty()) (*this) << "; " << descr;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

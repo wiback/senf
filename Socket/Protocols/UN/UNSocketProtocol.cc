@@ -77,7 +77,7 @@ prefix_ void senf::UNSocketProtocol::check_and_unlink()
         ::unlink(una.path().c_str());
     }
     catch (SystemException & e) {
-        SENF_LOG(("UNSocketProtocol::check_and_unlink() failed; " << e.description() ));
+        SENF_LOG(("UNSocketProtocol::check_and_unlink() failed; " << e.errorString() ));
     }
 }
     

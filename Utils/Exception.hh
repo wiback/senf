@@ -152,9 +152,9 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        explicit SystemException(std::string const & where = ""); 
+        explicit SystemException(std::string const & descr = ""); 
         explicit SystemException(int code);
-        SystemException(std::string const & where, int code);
+        SystemException(std::string const & descr, int code);
 
         virtual ~SystemException() throw();
 
@@ -162,7 +162,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         int errorNumber() const;        ///< Error code (\c errno number)
-        char const * description() const; ///< Error description (\c strerror() value)
+        char const * errorString() const; ///< Error string (\c strerror() value)
 
         bool anyOf(int c0, int c1=0, int c2=0, int c3=0, int c4=0, int c5=0, 
                    int c6=0, int c7=0, int c8=0, int c9=0);
@@ -171,9 +171,10 @@ namespace senf {
 
 
     private:
-        void init(std::string const & where, int code);
+        void init(std::string const & descr, int code);
         
         int code_;
+        std::string what_;
     };
 
 }
