@@ -42,7 +42,7 @@ prefix_ unsigned senf::UNSocketProtocol::available()
 {
     int n;
     if (::ioctl(fd(),SIOCINQ,&n) < 0)
-        throw SystemException("Could not call available() on UNSocket");
+        throw SystemException("Could not call available() on UNSocket.");
     return n;
 }
 
@@ -77,7 +77,7 @@ prefix_ void senf::UNSocketProtocol::check_and_unlink()
         ::unlink(una.path().c_str());
     }
     catch (SystemException & e) {
-        SENF_LOG(("UNSocketProtocol::check_and_unlink() failed; " << e.errorString() ));
+        SENF_LOG(("UNSocketProtocol::check_and_unlink() failed; [" << e.errorString() << "]."));
     }
 }
     

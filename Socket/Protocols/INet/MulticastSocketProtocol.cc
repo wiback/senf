@@ -116,7 +116,7 @@ prefix_ void senf::INet4MulticastSocketProtocol::mcAddMembership(INet4Address co
     mreqn.imr_address.s_addr = htons(INADDR_ANY);
     mreqn.imr_ifindex = 0;
     if (::setsockopt(fd(),SOL_IP,IP_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
-        throw SystemException("::setsockopt(IP_ADD_MEMBERSHIP");
+        throw SystemException("::setsockopt(IP_ADD_MEMBERSHIP)");
 }
 
 prefix_ void senf::INet4MulticastSocketProtocol::mcAddMembership(INet4Address const & mcAddr,

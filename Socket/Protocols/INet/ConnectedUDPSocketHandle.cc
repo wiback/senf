@@ -46,7 +46,7 @@ prefix_ void senf::ConnectedUDPv4SocketProtocol::init_client()
 {
     int sock = ::socket(PF_INET,SOCK_DGRAM,0);
     if (sock < 0)
-        throw SystemException();
+        throw SystemException("::socket(PF_INET,SOCK_DGRAM,0) failed.");
     fd(sock);
 }
 
@@ -66,7 +66,7 @@ prefix_ void senf::ConnectedUDPv6SocketProtocol::init_client()
 {
     int sock = ::socket(PF_INET6,SOCK_DGRAM,0);
     if (sock < 0)
-        throw SystemException();
+        throw SystemException("::socket(PF_INET6,SOCK_DGRAM,0) failed.");
     fd(sock);
 }
 

@@ -47,7 +47,7 @@ prefix_ void senf::DVBDemuxSectionSocketProtocol::init_client(unsigned short ada
             "/dev/dvb/adapter%d/demux%d") % adapter % device);
     int f = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
     if (f < 0){
-        throw SystemException( "Could not open demux device of DVB adapter ") << devDemux;
+        throw SystemException("Could not open demux device of DVB adapter ") << devDemux << ".";
     }
     fd(f);
 }
@@ -62,7 +62,7 @@ prefix_ void senf::DVBDemuxSectionSocketProtocol::setSectionFilter(struct dmx_sc
     const
 {
     if (::ioctl(fd(), DMX_SET_FILTER, filter) < 0)
-        throw SystemException("Could not set section filter of DVB adapter");
+        throw SystemException("Could not set section filter of DVB adapter.");
 }
 
 // ----------------------------------------------------------------
@@ -74,7 +74,7 @@ prefix_ void senf::DVBDemuxPESSocketProtocol::init_client(unsigned short adapter
             "/dev/dvb/adapter%d/demux%d") % adapter % device);
     int f = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
     if (f < 0)
-        throw SystemException( "Could not open demux device of DVB adapter ") << devDemux;
+        throw SystemException( "Could not open demux device of DVB adapter ") << devDemux << ".";
     fd(f);
 }
 
@@ -88,7 +88,7 @@ prefix_ void senf::DVBDemuxPESSocketProtocol::setPESFilter(struct dmx_pes_filter
     const
 {
     if (::ioctl(fd(), DMX_SET_PES_FILTER, filter) < 0)
-        throw SystemException("Could not set PES filter of DVB adapter");
+        throw SystemException("Could not set PES filter of DVB adapter.");
 }
 
 // ----------------------------------------------------------------
@@ -100,7 +100,7 @@ prefix_ void senf::DVBDvrSocketProtocol::init_client(unsigned short adapter, uns
             "/dev/dvb/adapter%d/dvr%d") % adapter % device);
     int f = open(devDvr.c_str(), O_RDONLY | O_NONBLOCK);
     if (f < 0)
-        throw SystemException( "Could not open dvr device of DVB adapter ") << devDvr;
+        throw SystemException( "Could not open dvr device of DVB adapter ") << devDvr << ".";
     fd(f);
 }
 

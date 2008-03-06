@@ -42,22 +42,23 @@ prefix_ void senf::DVBDemuxSocketProtocol::setBufferSize(unsigned long size)
     const
 {
     if (::ioctl(fd(), DMX_SET_BUFFER_SIZE, size) < 0)
-        throw SystemException(
-                "Could not set the size of the buffer on DVB adapter. requested size: ") << size;
+        throw SystemException()
+              << "Could not set the size of the buffer on DVB adapter. requested size: "
+              << size << ".";
 }
 
 prefix_ void senf::DVBDemuxSocketProtocol::startFiltering()
     const
 {
     if (::ioctl(fd(), DMX_START) < 0)
-        throw SystemException("Could not start filtering operation on DVB adapter");
+        throw SystemException("Could not start filtering operation on DVB adapter.");
 }
 
 prefix_ void senf::DVBDemuxSocketProtocol::stopFiltering()
     const
 {
     if (::ioctl(fd(), DMX_STOP) < 0)
-        throw SystemException("Could not stop filtering operation on DVB adapter");
+        throw SystemException("Could not stop filtering operation on DVB adapter.");
 }
 
 prefix_ bool senf::DVBDemuxSocketProtocol::eof()

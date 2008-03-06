@@ -51,7 +51,7 @@ prefix_ void senf::SystemException::init(std::string const & descr, int code)
 {
     code_ = code;
     (*this) << "[" << errorString() << "]";
-    if (! descr.empty()) (*this) << "; " << descr;
+    if (! descr.empty()) (*this) << " " << descr;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

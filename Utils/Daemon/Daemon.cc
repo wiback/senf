@@ -98,7 +98,8 @@ prefix_ void senf::Daemon::openLog()
     if (! stdoutLog_.empty()) {
         fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
         if (fd < 0)
-            throw SystemException("::open()");
+            throw SystemException()
+                  << " Could not open \"" << stdoutLog_ << "\" for redirecting stdout.";
         stdout_ = fd;
     }
     if (stderrLog_ == stdoutLog_)
@@ -106,7 +107,8 @@ prefix_ void senf::Daemon::openLog()
     else if (! stderrLog_.empty()) {
         fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
         if (fd < 0)
-            throw SystemException("::open()");
+            throw SystemException()
+                  << " Could not open \"" << stderrLog_ << "\" for redirecting stderr.";
         stderr_ = fd;
     }
 }
@@ -323,7 +325,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
     // was some race condition, probably over NFS.
 
     std::string tempname;
-    boost::format linkErrorFormat("; could not link \"%1%\" to \"%2%\".");
+    boost::format linkErrorFormat(" Could not link \"%1%\" to \"%2%\".");
 
     {
         char hostname[HOST_NAME_MAX+1];
@@ -337,13 +339,18 @@ prefix_ bool senf::Daemon::pidfileCreate()
     while (1) {
         {
             std::ofstream pidf (tempname.c_str());
+            if (! pidf)
+                throw SystemException()
+                      << " Could not open pidfile \"" << tempname << "\" for output.";
             pidf << ::getpid() << std::endl;
+            if (! pidf)
+                throw SystemException()
+                      << " Could not write to pidfile \"" << tempname << "\".";
         }
 
         if (::link(tempname.c_str(), pidfile_.c_str()) < 0) {
             if (errno != EEXIST) 
-                throw SystemException("::link()")
-                    << linkErrorFormat % pidfile_.c_str() % tempname.c_str();
+                throw SystemException() << linkErrorFormat % pidfile_ % tempname;
         }
         else {
             struct ::stat s;
@@ -374,8 +381,7 @@ prefix_ bool senf::Daemon::pidfileCreate()
         LIBC_CALL( ::unlink, (tempname.c_str() ));
         if (::link(pidfile_.c_str(), tempname.c_str()) < 0) {
             if (errno != ENOENT)
-                throw SystemException("::link()")
-                    << linkErrorFormat % tempname.c_str() % pidfile_.c_str();
+                throw SystemException() << linkErrorFormat % tempname % pidfile_;
             // Hmm ... the pidfile mysteriously disappeared ... try again.
             continue;
         }

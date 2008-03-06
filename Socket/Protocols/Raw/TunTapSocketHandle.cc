@@ -50,7 +50,7 @@ prefix_ void senf::TapSocketProtocol::init_client(std::string const & interface_
 {
     int f;
     if ( (f = ::open("/dev/net/tun", O_RDWR)) < 0 )
-        throw SystemException( "Could not open tap control device: /dev/net/tun");
+        throw SystemException( "Could not open tap control device: /dev/net/tun.");
     struct ifreq ifr;
     ::memset( &ifr, 0, sizeof(ifr));
     ifr.ifr_flags = IFF_TAP;
@@ -58,7 +58,7 @@ prefix_ void senf::TapSocketProtocol::init_client(std::string const & interface_
         ifr.ifr_flags |= IFF_NO_PI;
     interface_name.copy( ifr.ifr_name, IFNAMSIZ);
     if (::ioctl(f, TUNSETIFF, (void *) &ifr) < 0 )
-        throw SystemException( "Could not create tap device: ") << ifr.ifr_name;
+        throw SystemException( "Could not create tap device: ") << ifr.ifr_name << ".";
     fd(f);
 }
 
