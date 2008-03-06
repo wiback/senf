@@ -44,7 +44,7 @@ peer(SocketHandle<SPolicy> handle, Address & addr,
     addr.clear();
     try {
         do_peer(handle,addr.sockaddr_p(),addr.sockaddr_len());
-    } catch (SystemException & e) {
+    } catch (Exception & e) {
         e << "; could not get peer for address \"" << addr << "\"";
         throw;
     }
@@ -66,7 +66,7 @@ connect(SocketHandle<SPolicy> handle, Address const & addr,
 {
     try {
         do_connect(handle,addr.sockaddr_p(),addr.sockaddr_len());
-    } catch (SystemException & e) {
+    } catch (Exception & e) {
         e << "; could not connect to address \"" << addr << "\"";
         throw;
     }
@@ -86,7 +86,7 @@ prefix_ void senf::GenericAddressingPolicy<Address>::local(FileHandle handle,
     addr.clear();
     try {
         do_local(handle,addr.sockaddr_p(),addr.sockaddr_len());
-    } catch (SystemException & e) {
+    } catch (Exception & e) {
         // TODO: identify socket by some meaningful attribute
         e << "; could not get name for address \"" << addr << "\"";
         throw;
@@ -99,7 +99,7 @@ prefix_ void senf::GenericAddressingPolicy<Address>::bind(FileHandle handle,
 {
     try {
         do_bind(handle,addr.sockaddr_p(),addr.sockaddr_len());
-    } catch (SystemException & e) {
+    } catch (Exception & e) {
         e << "; could not bind to address \"" << addr << "\"";
         throw;
     }
