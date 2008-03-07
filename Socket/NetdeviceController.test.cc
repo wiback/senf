@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "NetdeviceController.hh"
+#include "Protocols/Raw/MACAddress.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -34,10 +35,30 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(NetdeviceController)
-{
-//    senf::NetdeviceController ctrl ("eth0");
-//    std::cout << ctrl.hardwareAddress() << "\n";
+BOOST_AUTO_UNIT_TEST(NetdeviceController) {
+
+    senf::NetdeviceController ctrl ("wlan0");
+    std::cout << "name: " << ctrl.interfaceName() << "\n";
+
+    senf::MACAddress oldAddr(ctrl.hardwareAddress());
+    int oldMTU = ctrl.mtu();
+
+    std::cout << "hw addr: " << oldAddr << "\n";
+    std::cout << "mtu: " << oldMTU << "\n";
+
+    if (getuid() != 0) {
+        BOOST_WARN_MESSAGE(false, "Cannot run some tests of senf::NetdeviceController as non-root user");
+        return;
+    }
+
+    ctrl.mtu(oldMTU - 16);
+    std::cout << "new mtu: " << ctrl.mtu() << "\n";
+    ctrl.mtu(oldMTU);
+
+    senf::MACAddress newAddr(senf::MACAddress::from_string("00:18:de:2e:ec:00"));
+    ctrl.hardwareAddress(newAddr);
+    std::cout << "new hw addr: " << ctrl.hardwareAddress() << "\n";
+    ctrl.hardwareAddress(oldAddr);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

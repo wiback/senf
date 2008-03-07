@@ -50,12 +50,17 @@ namespace senf {
         NetdeviceController(int interface_index);
         virtual ~NetdeviceController();
         
-        MACAddress hardwareAddress() const;
-        std::string interfaceName() const;
-        int interfaceIndex() const; ///< return the interface index of the interface
-        int mtu() const;
-        void mtu(int new_mtu) const;
+        int interfaceIndex() const; ///< return the interface index
     
+        MACAddress hardwareAddress() const; ///< return hardware address
+        void hardwareAddress(const MACAddress &newAddress); ///< set hardware address
+
+        std::string interfaceName() const; ///< return interface name
+        void interfaceName(const std::string &newName) const; ///< set interface name
+
+        int mtu() const; ///< return the Maximum Transmission Unit
+        void mtu(int new_mtu) const; //< set the Maximum Transmission Unit
+
     private:
         void openSocket();
         void doIoctl(ifreq& ifr, int request) const;

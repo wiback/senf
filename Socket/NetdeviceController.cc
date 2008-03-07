@@ -68,6 +68,14 @@ prefix_ senf::MACAddress senf::NetdeviceController::hardwareAddress()
     return senf::MACAddress::from_data( ifr.ifr_hwaddr.sa_data);
 }
 
+prefix_ void senf::NetdeviceController::hardwareAddress(const MACAddress &newAddress) {
+    struct ifreq ifr;
+    ifrName( ifr);
+    ifr.ifr_hwaddr.sa_family = 1; // TODO: lookup named constant; PF_LOCAL ???
+    std::copy(newAddress.begin(), newAddress.end(), ifr.ifr_hwaddr.sa_data);
+    doIoctl( ifr, SIOCSIFHWADDR);
+}
+
 prefix_ int senf::NetdeviceController::mtu()
     const
 {
