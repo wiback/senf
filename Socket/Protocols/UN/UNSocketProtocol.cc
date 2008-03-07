@@ -42,7 +42,7 @@ prefix_ unsigned senf::UNSocketProtocol::available()
 {
     int n;
     if (::ioctl(fd(),SIOCINQ,&n) < 0)
-        throw SystemException("Could not call available() on UNSocket.");
+        SENF_THROW_SYSTEM_EXCEPTION("Could not call available() on UNSocket.");
     return n;
 }
 

@@ -41,7 +41,7 @@ prefix_ void senf::GenericAddressingPolicy_Base::do_local(FileHandle handle,
                                                                  unsigned len)
 {
     if (::getsockname(handle.fd(),addr,&len) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
 prefix_ void senf::GenericAddressingPolicy_Base::do_peer(FileHandle handle,
@@ -49,7 +49,7 @@ prefix_ void senf::GenericAddressingPolicy_Base::do_peer(FileHandle handle,
                                                                 unsigned len)
 {
     if (::getpeername(handle.fd(),addr,&len) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
 prefix_ void senf::GenericAddressingPolicy_Base::do_bind(FileHandle handle,
@@ -57,7 +57,7 @@ prefix_ void senf::GenericAddressingPolicy_Base::do_bind(FileHandle handle,
                                                                 unsigned len)
 {
     if (::bind(handle.fd(),addr,len) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
 prefix_ void senf::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
@@ -72,15 +72,15 @@ prefix_ void senf::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
                 int err = 0;
                 socklen_t len = sizeof(err);
                 if (::getsockopt(handle.fd(),SOL_SOCKET,SO_ERROR,&err,&len) < 0)
-                    throw SystemException();
+                    SENF_THROW_SYSTEM_EXCEPTION("");
                 if (err != 0)
-                    throw SystemException(err);
+                    throw SystemException(err SENF_EXC_DEBUGINFO);
                 return;
             }
             case EINTR:
                 break;
             default:
-                throw SystemException();
+                SENF_THROW_SYSTEM_EXCEPTION("");
             }
         else
             return;

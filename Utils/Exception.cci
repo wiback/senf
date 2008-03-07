@@ -35,19 +35,20 @@ prefix_ senf::Exception::Exception(std::string const & description)
 
 ///////////////////////////////////////////////////////////////////////////
 
-prefix_ senf::SystemException::SystemException(std::string const & descr)
+prefix_ senf::SystemException::SystemException(std::string const & descr _SENF_EXC_DEBUG_ARGS_ND)
 {
-    init(descr, errno);
+    init(descr, errno _SENF_EXC_DEBUG_ARGS_P);
 }
 
-prefix_ senf::SystemException::SystemException(int code)
+prefix_ senf::SystemException::SystemException(int code _SENF_EXC_DEBUG_ARGS_ND)
 {
-    init("", code);
+    init("", code _SENF_EXC_DEBUG_ARGS_P);
 }
 
-prefix_ senf::SystemException::SystemException(std::string const & descr, int code)
+prefix_ senf::SystemException::SystemException(std::string const & descr, int code 
+                                               _SENF_EXC_DEBUG_ARGS_ND)
 {
-    init(descr, code);
+    init(descr, code _SENF_EXC_DEBUG_ARGS_P);
 }
 
 prefix_ int senf::SystemException::errorNumber()

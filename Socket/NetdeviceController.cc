@@ -109,7 +109,7 @@ prefix_ void senf::NetdeviceController::openSocket()
 {
     sockfd_ = ::socket( PF_INET, SOCK_DGRAM, 0);
     if ( sockfd_ < 0)
-        throw SystemException("Could not open socket for NetdeviceController.");
+        SENF_THROW_SYSTEM_EXCEPTION("Could not open socket for NetdeviceController.");
 }
 
 prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
@@ -118,7 +118,7 @@ prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
     ::memset( &ifr, 0, sizeof(ifr));
     ifr.ifr_ifindex = ifindex_;
     if ( ::ioctl( sockfd_, SIOCGIFNAME, &ifr ) < 0 )
-        throw SystemException("NetdeviceController")
+        SENF_THROW_SYSTEM_EXCEPTION("NetdeviceController")
         << " could not discover the name of the interface with index " << ifindex_ << ".";
 }
 
@@ -126,7 +126,7 @@ prefix_ void senf::NetdeviceController::doIoctl(ifreq& ifr, int request)
     const
 {
     if ( ::ioctl( sockfd_, request, &ifr ) < 0 )
-        throw SystemException("NetdeviceController::doIoctl failed.");
+        SENF_THROW_SYSTEM_EXCEPTION("NetdeviceController::doIoctl failed.");
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

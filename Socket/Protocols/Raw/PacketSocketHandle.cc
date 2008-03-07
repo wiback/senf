@@ -50,7 +50,7 @@ prefix_ void senf::PacketSocketProtocol::init_client(SocketType type, int protoc
         protocol = ETH_P_ALL;
     int sock = ::socket(PF_PACKET, socktype, htons(protocol));
     if (sock < 0)
-        throw SystemException("::socket(...) failed.");
+        SENF_THROW_SYSTEM_EXCEPTION("::socket(...) failed.");
     fd(sock);
 }
 
@@ -61,7 +61,7 @@ prefix_ unsigned senf::PacketSocketProtocol::available()
         return 0;
     ssize_t l = ::recv(fd(),0,0,MSG_PEEK | MSG_TRUNC);
     if (l < 0)
-        throw SystemException("::recv(socket_fd) failed.");
+        SENF_THROW_SYSTEM_EXCEPTION("::recv(socket_fd) failed.");
     return l;
 }
 

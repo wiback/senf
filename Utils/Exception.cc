@@ -47,9 +47,14 @@ prefix_ char const * senf::Exception::what()
 ///////////////////////////////////////////////////////////////////////////
 // senf::SystemException
 
-prefix_ void senf::SystemException::init(std::string const & descr, int code)
+prefix_ void senf::SystemException::init(std::string const & descr, int code
+                                         _SENF_EXC_DEBUG_ARGS_ND)
 {
     code_ = code;
+#   ifdef SENF_DEBUG
+    if (file && line)
+        (*this) << "Exception at " << file << ":" << line << "\n";
+#   endif
     (*this) << "[" << errorString() << "]";
     if (! descr.empty()) (*this) << " " << descr;
 }

@@ -58,7 +58,7 @@ prefix_ int senf::ConnectedCommunicationPolicy::do_accept(FileHandle handle,
             case EINTR:
                 break;
             default:
-                throw SystemException("ConnectedCommunicationPolicy::do_accept failed.");
+                SENF_THROW_SYSTEM_EXCEPTION("ConnectedCommunicationPolicy::do_accept failed.");
             }
     } while (rv<0);
     return rv;

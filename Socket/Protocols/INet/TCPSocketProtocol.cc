@@ -45,7 +45,7 @@ prefix_ bool senf::TCPSocketProtocol::nodelay()
     int value;
     socklen_t len (sizeof(value));
     if (::getsockopt(fd(),SOL_TCP,TCP_NODELAY,&value,&len) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
     return value;
 }
 
@@ -54,7 +54,7 @@ prefix_ void senf::TCPSocketProtocol::nodelay(bool value)
 {
     int ivalue (value);
     if (::setsockopt(fd(),SOL_TCP,TCP_NODELAY,&ivalue,sizeof(ivalue)) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
 prefix_ unsigned senf::TCPSocketProtocol::siocinq()
@@ -62,7 +62,7 @@ prefix_ unsigned senf::TCPSocketProtocol::siocinq()
 {
     int n;
     if (::ioctl(fd(),SIOCINQ,&n) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
     return n;
 }
 
@@ -71,7 +71,7 @@ prefix_ unsigned senf::TCPSocketProtocol::siocoutq()
 {
     int n;
     if (::ioctl(fd(),SIOCOUTQ,&n) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
     return n;
 }
 

@@ -37,7 +37,7 @@
 
 BOOST_AUTO_UNIT_TEST(NetdeviceController) {
 
-    senf::NetdeviceController ctrl ("wlan0");
+    senf::NetdeviceController ctrl ("lo");
     std::cout << "name: " << ctrl.interfaceName() << "\n";
 
     senf::MACAddress oldAddr(ctrl.hardwareAddress());

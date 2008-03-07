@@ -124,6 +124,15 @@ namespace senf {
         std::string message_;
     };
 
+#   ifdef SENF_DEBUG
+#       define _SENF_EXC_DEBUG_ARGS ,char const * file=0,int line=0
+#       define _SENF_EXC_DEBUG_ARGS_ND ,char const *file,int line
+#       define _SENF_EXC_DEBUG_ARGS_P ,file,line
+#   else
+#       define _SENF_EXC_DEBUG_ARGS
+#       define _SENF_EXC_DEBUG_ARGS_ND
+#       define _SENF_EXC_DEBUG_ARGS_P
+#   endif
 
     /** \brief Exception handling standard UNIX errors (errno)
 
@@ -143,6 +152,18 @@ namespace senf {
         throw senf::SystemException();
         \endcode
 
+        From within SENF (<em>and only there because it depends on the \c SENF_DEBUG symbol</em>),
+        SystemException should be thrown using wrapper macros which add additional information to
+        the exception description:
+        \code
+        // Standard usage: Take \c errno from environment
+        SENF_THROW_SYSTEM_EXCEPTION()
+            << " while opening configuration file: " << filename;
+
+        // You may however explicitly specify the errno value
+        throw senf::SystemException("::open()", ENOFILE SENF_EXC_DEBUGINFO)
+        \endcode
+
         \ingroup exception
      */
     class SystemException : public Exception
@@ -152,9 +173,9 @@ namespace senf {
         ///\name Structors and default members
         ///@{
 
-        explicit SystemException(std::string const & descr = ""); 
-        explicit SystemException(int code);
-        SystemException(std::string const & descr, int code);
+        explicit SystemException(std::string const & descr = "" _SENF_EXC_DEBUG_ARGS);
+        explicit SystemException(int code _SENF_EXC_DEBUG_ARGS);
+        SystemException(std::string const & descr, int code _SENF_EXC_DEBUG_ARGS);
 
         virtual ~SystemException() throw();
 
@@ -171,11 +192,19 @@ namespace senf {
 
 
     private:
-        void init(std::string const & descr, int code);
+        void init(std::string const & descr, int code _SENF_EXC_DEBUG_ARGS_ND);
         
         int code_;
         std::string what_;
     };
+
+#   ifdef SENF_DEBUG
+#       define SENF_EXC_DEBUGINFO ,__FILE__,__LINE__
+#   else
+#       define SENF_EXC_DEBUGINFO
+#   endif
+
+#   define SENF_THROW_SYSTEM_EXCEPTION(desc) throw SystemException(desc SENF_EXC_DEBUGINFO)
 
 }
 

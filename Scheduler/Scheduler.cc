@@ -56,24 +56,24 @@ prefix_ senf::Scheduler::Scheduler()
       eventTime_(0), eventEarly_(ClockService::milliseconds(11)), eventAdjust_(0)
 {
     if (epollFd_<0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
 
     if (::pipe(sigpipe_) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
 
     int flags (::fcntl(sigpipe_[1],F_GETFL));
     if (flags < 0) 
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
     flags |= O_NONBLOCK;
     if (::fcntl(sigpipe_[1], F_SETFL, flags) < 0) 
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
 
     ::epoll_event ev;
     ::memset(&ev, 0, sizeof(ev));
     ev.events = EV_READ;
     ev.data.fd = sigpipe_[0];
     if (::epoll_ctl(epollFd_, EPOLL_CTL_ADD, sigpipe_[0], &ev) < 0)
-        throw SystemException();
+        SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
 prefix_ void senf::Scheduler::registerSignal(unsigned signal, SimpleCallback const & cb)
@@ -133,7 +133,7 @@ prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMas
             ++ files_;
         }
         else
-            throw SystemException("::epoll_ctl()");
+            SENF_THROW_SYSTEM_EXCEPTION("::epoll_ctl()");
     }
 }
 
@@ -163,7 +163,7 @@ prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
     }
 
     if (! file && epoll_ctl(epollFd_, action, fd, &ev) < 0)
-        throw SystemException("::epoll_ctl()");
+        SENF_THROW_SYSTEM_EXCEPTION("::epoll_ctl()");
     if (file)
         -- files_;
 }
@@ -179,7 +179,7 @@ prefix_ void senf::Scheduler::registerSigHandlers()
             if (signal == SIGCHLD)
                 sa.sa_flags |= SA_NOCLDSTOP;
             if (::sigaction(signal, &sa, 0) < 0)
-                throw SystemException();
+                SENF_THROW_SYSTEM_EXCEPTION("");
         }
     }
 }
@@ -252,7 +252,7 @@ prefix_ void senf::Scheduler::process()
 
         if (events<0)
             if (errno != EINTR)
-                throw SystemException();
+                SENF_THROW_SYSTEM_EXCEPTION("");
 
         eventTime_ = ClockService::now();
 
