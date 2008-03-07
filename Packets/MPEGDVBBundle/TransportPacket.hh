@@ -119,13 +119,11 @@ namespace senf {
         using mixin::initSize;
         
         static void dump(packet p, std::ostream & os);
+        static const byte SYNC_BYTE = 0x47;
     };
     
     /** \brief Transport packet typedef */
-    typedef TransportPacketType::packet TransportPacket;
-    
-    #define TRANSPORT_PACKET_SYNC_BYTE 0x47
-  
+    typedef ConcretePacket<TransportPacketType> TransportPacket;
 }
 
 

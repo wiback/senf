@@ -39,14 +39,18 @@ namespace senf {
     /// \addtogroup protocol_facets_group
     /// @{
 
-    /** xxx
+    /** \todo Document me!
      */
     class DVBDemuxSocketProtocol
         : public virtual SocketProtocol
     {
     public:
-        void setBufferSize(unsigned long size) const;
-        
+        void setBufferSize(unsigned long size) const; 
+                                ///< set the size of the circular buffer used for filtered data.
+                                /**< The default size is two maximum sized sections, i.e. if this
+                                     function is not called a buffer size of 2 * 4096 bytes will
+                                     be used.
+                                     \param[in] size Size of circular buffer. */
         void startFiltering() const;
         void stopFiltering() const;
         

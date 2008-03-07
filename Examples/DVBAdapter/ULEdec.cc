@@ -67,7 +67,7 @@ void ULEdec::handleEvent(senf::Scheduler::EventId event)
     dvrHandle.read( ts_packet.data() );
     
     // Check TS error conditions: sync_byte, transport_error_indicator, scrambling_control.
-    if ( (ts_packet->sync_byte() != TRANSPORT_PACKET_SYNC_BYTE) ||
+    if ( (ts_packet->sync_byte() != senf::TransportPacketType::SYNC_BYTE) ||
          (ts_packet->transport_error_indicator() == true) ||
          (ts_packet->transport_scrmbl_ctrl() != 0))
     {
