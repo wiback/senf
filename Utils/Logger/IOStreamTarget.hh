@@ -40,9 +40,7 @@ namespace log {
     /** \brief Write %log messages to arbitrary std::ostream
 
         This target will write %log messages to an arbitrary std::ostream in the format
-        <pre>
-        <date> [<area>][<level>] <message>
-        </pre>
+        \verbatim <date> [<level>][<area>] <message> \endverbatim
 
         The \e area will be omitted if it is \c senf::log::DefaultArea.
         
