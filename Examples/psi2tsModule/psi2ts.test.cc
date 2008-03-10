@@ -1,4 +1,4 @@
-// $Id: Example.test.cc 698 2008-02-18 13:41:37Z tho $
+// $Id$
 //
 // Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)

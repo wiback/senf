@@ -1,4 +1,4 @@
-// $Id: Example.hh 661 2008-02-05 09:53:54Z tho $
+// $Id$
 //
 // Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
