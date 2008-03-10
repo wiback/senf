@@ -286,17 +286,18 @@ BOOST_AUTO_UNIT_TEST(activeOutput)
 
 namespace {
 
-    class TypedInputTest
+    template <class PacketType = senf::DataPacket>
+    class TypedPassiveInput
         : public ppi::module::Module
     {
-        SENF_PPI_MODULE(TypedInputTest);
+        SENF_PPI_MODULE(TypedPassiveInput);
 
     public:
-        ppi::connector::PassiveInput<senf::DataPacket> input;
+        ppi::connector::PassiveInput<PacketType> input;
 
-        TypedInputTest() {
+        TypedPassiveInput() {
             noroute(input);
-            input.onRequest(&TypedInputTest::request);
+            input.onRequest(&TypedPassiveInput::request);
         }
 
         void request() {
@@ -305,17 +306,32 @@ namespace {
         }
     };
 
-    class TypedOutputTest
+    template <class PacketType = senf::DataPacket>
+    class TypedActiveInput
         : public ppi::module::Module
     {
-        SENF_PPI_MODULE(TypedOutputTest);
+        SENF_PPI_MODULE(TypedActiveInput);
 
     public:
-        ppi::connector::PassiveOutput<senf::DataPacket> output;
+        ppi::connector::ActiveInput<PacketType> input;
 
-        TypedOutputTest() {
+        TypedActiveInput() {
+            noroute(input);
+        }
+    };
+
+    template <class PacketType = senf::DataPacket>
+    class TypedPassiveOutput
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(TypedPassiveOutput);
+
+    public:
+        ppi::connector::PassiveOutput<PacketType> output;
+
+        TypedPassiveOutput() {
             noroute(output);
-            output.onRequest(&TypedOutputTest::request);
+            output.onRequest(&TypedPassiveOutput::request);
         }
 
         void request() {
@@ -325,12 +341,31 @@ namespace {
         }
     };
 
+    template <class PacketType = senf::DataPacket>
+    class TypedActiveOutput
+        : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(TypedActiveOutput);
+
+    public:
+        ppi::connector::ActiveOutput<PacketType> output;
+
+        TypedActiveOutput() {
+            noroute(output);
+        }
+    };
+
+    struct MyPacketType : public senf::PacketTypeBase
+    {};
+
+    typedef senf::ConcretePacket<MyPacketType> MyPacket;
+
 }
 
 BOOST_AUTO_UNIT_TEST(typedInput)
 {
     debug::ActiveSource source;
-    TypedInputTest target;
+    TypedPassiveInput<> target;
 
     ppi::connect(source,target);
     ppi::init();
@@ -341,13 +376,49 @@ BOOST_AUTO_UNIT_TEST(typedInput)
 
 BOOST_AUTO_UNIT_TEST(tyepdOutput)
 {
-    TypedOutputTest source;
+    TypedPassiveOutput<> source;
     debug::ActiveSink target;
 
     ppi::connect(source,target);
     ppi::init();
     
     (void) target.request();
+}
+
+BOOST_AUTO_UNIT_TEST(connectorTest)
+{
+    {
+        TypedPassiveInput<> input;
+        TypedActiveOutput<MyPacket> output;
+        BOOST_CHECK_THROW( ppi::connect(output, input), 
+                           ppi::connector::IncompatibleConnectorsException );
+    }
+    {
+        TypedPassiveInput<MyPacket> input;
+        TypedActiveOutput<> output;
+        BOOST_CHECK_THROW( ppi::connect(output, input), 
+                           ppi::connector::IncompatibleConnectorsException );
+    }
+    {
+        TypedPassiveInput<> input;
+        TypedActiveOutput<> output;
+        BOOST_CHECK_NO_THROW( ppi::connect(output, input) );
+    }
+    { 
+        TypedPassiveInput<> input;
+        debug::ActiveSource output;
+        BOOST_CHECK_NO_THROW( ppi::connect(output, input) );
+    }
+    {
+        debug::ActiveSink input;
+        TypedPassiveOutput<> output;
+        BOOST_CHECK_NO_THROW( ppi::connect(output, input) );
+    }
+    {
+        debug::ActiveSink input;
+        debug::PassiveSource output;
+        BOOST_CHECK_NO_THROW( ppi::connect(output, input) );
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

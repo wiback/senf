@@ -31,11 +31,12 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
-template <class Arg>
-prefix_ senf::Exception & senf::Exception::operator<<(Arg const & arg)
+template <class Exc, class Arg>
+prefix_ typename boost::enable_if< boost::is_convertible<Exc*,senf::Exception*>, Exc & >::type
+senf::operator<<(Exc const & exc, Arg const & arg)
 {
-    message_ += boost::lexical_cast<std::string>(arg);
-    return *this;
+    const_cast<Exc &>(exc).append( boost::lexical_cast<std::string>(arg) );
+    return const_cast<Exc &>(exc);
 }
 
 /////////////////////////////cti.e///////////////////////////////////////

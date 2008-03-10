@@ -29,11 +29,24 @@
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::Exception
+
 prefix_ senf::Exception::Exception(std::string const & description)
     : message_(description)
 {}
 
+prefix_ std::string const & senf::Exception::message()
+    const
+{
+    return message_;
+}
+
+prefix_ void senf::Exception::append(std::string text)
+{
+    message_ += text;
+}
+
 ///////////////////////////////////////////////////////////////////////////
+// senf::SystemException
 
 prefix_ senf::SystemException::SystemException(std::string const & descr _SENF_EXC_DEBUG_ARGS_ND)
 {

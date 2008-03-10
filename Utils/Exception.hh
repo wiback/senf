@@ -34,6 +34,7 @@
 #include <boost/preprocessor/repeat.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/utility.hpp>
+#include <boost/type_traits/is_convertible.hpp>
 
 //#include "Exception.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -103,15 +104,10 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         virtual char const * what() const throw();
+        std::string const & message() const;
 
-        template <class Arg>
-        Exception & operator<<(Arg const & arg); ///< Extend exception description
-                                        /**< Adds \a arg converted to string to the end of the
-                                             exception description string. This operator allows to
-                                             use Exception instances like streams. The conversion is
-                                             performed using <code>boost::lexical_cast</code> and is
-                                             therefor identical to a streaming operation. 
-                                             \see \ref exception */
+        void append(std::string text); ///< Extend exception description
+                                        /**< Adds \a text to the description text. */
 
     protected:
         Exception(std::string const & description = ""); ///< Initialize exception with string
@@ -123,6 +119,17 @@ namespace senf {
     private:
         std::string message_;
     };
+
+    template <class Exc, class Arg>
+    typename boost::enable_if< boost::is_convertible<Exc*,Exception*>, Exc & >::type
+    operator<<(Exc const & exc, Arg const & arg); ///< Extend exception description
+                                        /**< Adds \a arg converted to string to the end of the
+                                             exception description string. This operator allows to
+                                             use Exception instances like streams. The conversion is
+                                             performed using <code>boost::lexical_cast</code> and is
+                                             therefor identical to a streaming operation. 
+                                             \see \ref exception */
+
 
 #   ifdef SENF_DEBUG
 #       define _SENF_EXC_DEBUG_ARGS ,char const * file=0,int line=0

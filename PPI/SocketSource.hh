@@ -53,6 +53,7 @@ namespace ppi {
     class DgramReader
     {
     public:
+        typedef Packet PacketType;
         typedef senf::ClientSocketHandle<
             senf::MakeSocketPolicy< senf::ReadablePolicy,
                                     senf::DatagramFramingPolicy >::policy > Handle;
@@ -111,7 +112,8 @@ namespace module {
     public:
         typedef typename Reader::Handle Handle; ///< Handle type requested by the reader
 
-        connector::ActiveOutput<> output; ///< Output connector to which the data received is written
+        connector::ActiveOutput<typename Reader::PacketType> output; 
+                                        ///< Output connector to which the data received is written
         
         ActiveSocketSource(Handle handle); ///< Create new reader for the given handle
                                         /**< Data will be read from \a handle and be parsed by \a

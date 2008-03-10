@@ -28,10 +28,30 @@
 
 // Custom includes
 #include "Route.hh"
+#include "Module.hh"
 
 //#include "Connectors.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::connector::Connector
+
+prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
+{
+    SENF_ASSERT( module_ && ! peer_ && target.module_ && ! target.peer_ );
+    if (! (packetTypeID() == typeid(void) ||
+           target.packetTypeID() == typeid(void) || 
+           packetTypeID() == target.packetTypeID()) )
+        throw IncompatibleConnectorsException() 
+            << ": " << prettyName(packetTypeID()) 
+            << " [in module " << prettyName(typeid(*module_))  << "] "
+            << ", " << prettyName(target.packetTypeID())
+            << " [in module " << prettyName(typeid(*target.module_)) << "]";
+            
+    peer_ = & target;
+    target.peer_ = this;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector

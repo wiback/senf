@@ -31,6 +31,7 @@
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 #include "../Utils/safe_bool.hh"
+#include "../Utils/Exception.hh"
 #include "../Packets/Packets.hh"
 #include "predecl.hh"
 #include "detail/Callback.hh"
@@ -99,6 +100,9 @@ namespace connector {
             \ref ppi_connectors
      */
 
+    struct IncompatibleConnectorsException : public senf::Exception
+    { IncompatibleConnectorsException() : senf::Exception("Incompatible connectors") {} };
+
     /** \brief Connector base-class
 
         This connector provides access to the generic connector facilities. This includes the
@@ -119,6 +123,8 @@ namespace connector {
         void connect(Connector & target);
 
     private:
+        virtual std::type_info const & packetTypeID() = 0;
+
         void setModule(module::Module & module);
 
         Connector * peer_;
@@ -450,22 +456,27 @@ namespace connector {
 
 #   define TypedConnector_Input read
 #   define TypedConnector_Output write
-#   define TypedConnector(type, dir)                                                              \
+#   define TypedConnector(pType, dir)                                                              \
         template <class PacketType>                                                               \
-        class type ## dir                                                                         \
-            : public Generic ## type ## dir,                                                      \
-              private detail::Typed ## dir ## Mixin<type ## dir <PacketType>, PacketType>         \
+        class pType ## dir                                                                         \
+            : public Generic ## pType ## dir,                                                      \
+              private detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType>         \
         {                                                                                         \
-            typedef detail::Typed ## dir ## Mixin<type ## dir <PacketType>, PacketType> mixin;    \
+            typedef detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType> mixin;    \
         public:                                                                                   \
             using mixin::operator();                                                              \
             using mixin::TypedConnector_ ## dir ;                                                 \
         private:                                                                                  \
-             friend class detail::Typed ## dir ## Mixin<type ## dir <PacketType>, PacketType>;    \
+            virtual std::type_info const & packetTypeID()                                         \
+                { return typeid(typename PacketType::type); }                                     \
+            friend class detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType>;     \
         };                                                                                        \
         template <>                                                                               \
-        class type ## dir <Packet> : public Generic ## type ## dir                                \
-        {}
+        class pType ## dir <Packet> : public Generic ## pType ## dir                                \
+        {                                                                                         \
+        private:                                                                                  \
+            virtual std::type_info const & packetTypeID() { return typeid(void); }                \
+        }
 
     TypedConnector( Passive, Input  );
     TypedConnector( Passive, Output );

@@ -73,10 +73,10 @@ BOOST_AUTO_UNIT_TEST(transportPacket_packet)
     BOOST_CHECK(       ! p->transport_error_indicator()                                  );
     BOOST_CHECK(         p->pusi()                                                       );
     BOOST_CHECK(       ! p->transport_priority()                                         );
-    BOOST_CHECK_EQUAL(   p->pid(),                      0x010fu                          );  
-    BOOST_CHECK_EQUAL(   p->transport_scrmbl_ctrl(),    0x0u                             );             
+    BOOST_CHECK_EQUAL(   p->pid(),                      0x010fu                          );
+    BOOST_CHECK_EQUAL(   p->transport_scrmbl_ctrl(),    0x0u                             );
     BOOST_CHECK_EQUAL(   p->adaptation_field_ctrl(),    0x1u                             );
-    BOOST_CHECK_EQUAL(   p->continuity_counter(),       0x0eu                            );  
+    BOOST_CHECK_EQUAL(   p->continuity_counter(),       0x0eu                            );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
