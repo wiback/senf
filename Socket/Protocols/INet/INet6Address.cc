@@ -82,7 +82,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
     if (resolve == ResolveINet4)
         return from_inet4address(INet4Address::from_string(s));
     else
-        throw UnknownHostnameException();
+        throw UnknownHostnameException(s);
 }
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Address const & addr)

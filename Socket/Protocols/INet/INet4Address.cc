@@ -80,9 +80,9 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
 #   endif // __GLIBC__
 
     if (!ent)
-        throw UnknownHostnameException(); 
+        throw UnknownHostnameException(s);
     if (ent->h_addrtype != AF_INET)
-        throw UnknownHostnameException();
+        throw UnknownHostnameException(s);
 
     // We are only interested in the first address ...
     return senf::INet4Address::from_inaddr(

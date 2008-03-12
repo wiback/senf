@@ -46,14 +46,16 @@ namespace senf {
     struct AddressSyntaxException : public AddressException
     {
         AddressSyntaxException() : AddressException("invalid address syntax") {}
-        AddressSyntaxException(std::string const & msg) : AddressException(msg) {}
+        AddressSyntaxException(const std::string &addr)
+            : AddressException("Invalid address syntax (\"" + addr + "\")") {}
     };
 
     /** \brief Resolver failure */
     struct UnknownHostnameException : public AddressException
     { 
         UnknownHostnameException() : AddressException("failed to resolve hostname") {} 
-        UnknownHostnameException(std::string const & msg) : AddressException(msg) {}
+        UnknownHostnameException(const std::string &hostname)
+            : AddressException("Failed to resolve hostname (\"" + hostname + "\")") {}
     };
 
 }        
