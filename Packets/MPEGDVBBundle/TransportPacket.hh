@@ -56,6 +56,12 @@ namespace senf {
         SENF_PARSER_BITFIELD ( continuity_counter,          4, unsigned );
 
         SENF_PARSER_FINALIZE( TransportPacketParser );
+        
+        void init_fields() const;
+        SENF_PARSER_INIT() {
+            defaultInit();
+            init_fields();
+        }
     
 //        UInt8Parser payload_pointer() const {
 //            return parse<UInt8Parser>( TransportPacketParser::fixed_bytes ); 

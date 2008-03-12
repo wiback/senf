@@ -32,6 +32,15 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+prefix_ void senf::TransportPacketParser::init_fields()
+    const
+{
+    sync_byte() = TransportPacketType::SYNC_BYTE;
+    transport_error_indicator() = 0;
+    transport_scrmbl_ctrl() = 0;
+    adaptation_field_ctrl() = 0x1u;
+}
+            
 prefix_ void senf::TransportPacketType::dump(packet p, std::ostream & os)
 {
     os << "TransportPacket:\n"
