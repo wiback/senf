@@ -123,7 +123,7 @@ namespace connector {
         void connect(Connector & target);
 
     private:
-        virtual std::type_info const & packetTypeID() = 0;
+        virtual std::type_info const & packetTypeID();
 
         void setModule(module::Module & module);
 
@@ -456,27 +456,24 @@ namespace connector {
 
 #   define TypedConnector_Input read
 #   define TypedConnector_Output write
-#   define TypedConnector(pType, dir)                                                              \
+#   define TypedConnector(pType, dir)                                                             \
         template <class PacketType>                                                               \
-        class pType ## dir                                                                         \
-            : public Generic ## pType ## dir,                                                      \
-              private detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType>         \
+        class pType ## dir                                                                        \
+            : public Generic ## pType ## dir,                                                     \
+              private detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType>        \
         {                                                                                         \
-            typedef detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType> mixin;    \
+            typedef detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType> mixin;   \
         public:                                                                                   \
             using mixin::operator();                                                              \
             using mixin::TypedConnector_ ## dir ;                                                 \
         private:                                                                                  \
             virtual std::type_info const & packetTypeID()                                         \
                 { return typeid(typename PacketType::type); }                                     \
-            friend class detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType>;     \
+            friend class detail::Typed ## dir ## Mixin<pType ## dir <PacketType>, PacketType>;    \
         };                                                                                        \
         template <>                                                                               \
-        class pType ## dir <Packet> : public Generic ## pType ## dir                                \
-        {                                                                                         \
-        private:                                                                                  \
-            virtual std::type_info const & packetTypeID() { return typeid(void); }                \
-        }
+        class pType ## dir <Packet> : public Generic ## pType ## dir                              \
+        {}
 
     TypedConnector( Passive, Input  );
     TypedConnector( Passive, Output );

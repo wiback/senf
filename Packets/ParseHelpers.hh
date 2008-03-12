@@ -278,7 +278,7 @@
 
     \ingroup packetparser
  */
-///\ingroup packetparsermacros
+///\addtogroup packetparsermacros
 ///\{
 
 ///\name Control information

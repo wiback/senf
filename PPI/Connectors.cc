@@ -53,6 +53,11 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
     target.peer_ = this;
 }
 
+prefix_ std::type_info const & senf::ppi::connector::Connector::packetTypeID()
+{
+    return typeid(void);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector
 
