@@ -61,6 +61,13 @@ namespace senf {
     private:
         refcount_t refcount_;
         
+        template <class S> void intrusive_ptr_add_ref();
+        template <class S> void intrusive_ptr_release();
+        
+        template <class S>
+        friend void senf::intrusive_ptr_add_ref(intrusive_refcount_t<S> * p);
+        template <class S>
+        friend void senf::intrusive_ptr_release(intrusive_refcount_t<S> * p);
     };
 
     /** \brief Customizable reference count mixin for intrusive_ptr
@@ -115,15 +122,6 @@ namespace senf {
     {
     protected:
         intrusive_refcount_t();
-
-    private:
-        void intrusive_ptr_add_ref();
-        void intrusive_ptr_release();
-
-        template <class S>
-        friend void senf::intrusive_ptr_add_ref(intrusive_refcount_t<S> * p);
-        template <class S>
-        friend void senf::intrusive_ptr_release(intrusive_refcount_t<S> * p);
     };
 
     /** \brief Reference count mixin for intrusive_ptr

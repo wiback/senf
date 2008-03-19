@@ -211,7 +211,7 @@ namespace senf {
         void releaseImpl();
 
         friend class detail::PacketImpl;
-        friend class intrusive_refcount_t<PacketInterpreterBase>;
+        friend class intrusive_refcount_base;
         template <class PacketType> friend class PacketInterpreter;
         friend class detail::packet::test::TestDriver;
         friend class PacketParserBase;

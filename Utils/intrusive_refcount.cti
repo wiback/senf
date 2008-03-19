@@ -30,28 +30,28 @@
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
-template <class Self>
-prefix_ void senf::intrusive_refcount_t<Self>::intrusive_ptr_add_ref()
+template <class S>
+prefix_ void senf::intrusive_refcount_base::intrusive_ptr_add_ref()
 {
-    static_cast<Self*>(this)->add_ref();
+    static_cast<S*>(this)->add_ref();
 }
 
-template <class Self>
-prefix_ void senf::intrusive_refcount_t<Self>::intrusive_ptr_release()
+template <class S>
+prefix_ void senf::intrusive_refcount_base::intrusive_ptr_release()
 {
-    if (static_cast<Self*>(this)->release()) delete this;
+    if (static_cast<S*>(this)->release()) delete this;
 }
 
 template <class Self>
 prefix_ void senf::intrusive_ptr_add_ref(intrusive_refcount_t<Self>* p)
 {
-    p->intrusive_ptr_add_ref();
+    p->intrusive_ptr_add_ref<Self>();
 }
 
 template <class Self>
 prefix_ void senf::intrusive_ptr_release(intrusive_refcount_t<Self>* p)
 {
-    p->intrusive_ptr_release();
+    p->intrusive_ptr_release<Self>();
 }
 
 template <class Self>
