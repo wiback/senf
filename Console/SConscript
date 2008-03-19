@@ -5,10 +5,17 @@ import SENFSCons
 
 ###########################################################################
 
-sources = SENFSCons.GlobSources()
+sources = SENFSCons.GlobSources( exclude = [ 'testServer.cc' ] )
 SENFSCons.StandardTargets(env)
+
 SENFSCons.Lib(env,
               library = 'Console',
               sources = sources,
               LIBS = [ 'Socket', 'Scheduler', 'Utils' ])
+
+SENFSCons.Binary(env, 'testServer',
+                 sources = [ 'testServer.cc' ],
+                 no_includes = True,
+                 LIBS = [ 'Console', 'Socket', 'Scheduler', 'Utils' ])
+
 SENFSCons.Doxygen(env)

@@ -43,7 +43,7 @@ prefix_ senf::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_ty
     // scheduler. This ensures, that the refcount is at least 1 as
     // long as the helper is registered with the scheduler.
     senf::Scheduler::instance()
-        .add(handle,boost::bind(&ReadHelper::dispatchProcess,ptr(this),_1,_2),
+        .add(handle,boost::bind(&ReadHelper::dispatchProcess,ptr(this), handle, _1),
              senf::Scheduler::EV_READ);
 }
 
