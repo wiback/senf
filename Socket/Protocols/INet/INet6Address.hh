@@ -29,6 +29,7 @@
 // Custom includes
 #include <iostream>
 #include <string>
+#include <netinet/in.h>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/operators.hpp>
@@ -165,6 +166,8 @@ namespace senf {
                      boost::uint16_t a3=0u, boost::uint16_t a4=0u, boost::uint16_t a5=0u,
                      boost::uint16_t a6=0u, boost::uint16_t a7=0u);
                                         ///< Construct an address constant
+        
+        INet6Address(in6_addr in6addr); ///< Construct from std c struct
 
         static INet6Address from_string(std::string const & s, Resolve_t resolve = ResolveINet6);
                                         ///< Convert string to address
