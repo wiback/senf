@@ -1,0 +1,10 @@
+@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
+
+PROJECT_NAME = libConsole
+GENERATE_TAGFILE = doc/Console.tag
+ALPHABETICAL_INDEX = NO
+
+TAGFILES = \
+    "$(TOPDIR)/Socket/doc/Socket.tag" \
+    "$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
+    "$(TOPDIR)/Utils/doc/Utils.tag"

@@ -1,0 +1,128 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Node inline non-template implementation */
+
+//#include "Node.ih"
+
+// Custom includes
+#include "../Utils/senfassert.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::GenericNode
+
+prefix_ std::string const & senf::console::GenericNode::name()
+    const
+{
+    return name_;
+}
+
+prefix_ senf::console::GenericNode::GenericNode(std::string const & name, bool managed)
+    : name_ (name), managed_ (managed)
+{}
+
+prefix_ void senf::console::GenericNode::name(std::string const & name)
+{
+    name_ = name;
+}
+
+prefix_ void senf::console::GenericNode::name(GenericNode & node, std::string const & name)
+{
+    node.name_ = name;
+}
+
+prefix_ senf::console::DirectoryNode & senf::console::GenericNode::parent()
+    const
+{
+    SENF_ASSERT( parent_ );
+    return *parent_;
+}
+
+prefix_ bool senf::console::GenericNode::managed()
+    const
+{
+    return managed_;
+}
+
+prefix_ bool senf::console::GenericNode::release()
+{
+    // Beware ! call release() first so the call is not short-circuited way !
+    return intrusive_refcount_base::release() && managed_;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::DirectoryNode
+
+prefix_ void senf::console::DirectoryNode::add(std::auto_ptr<GenericNode> node, bool uniquify)
+{
+    SENF_ASSERT( node->managed() );
+    add(GenericNode::ptr(node.release()), uniquify);
+}
+
+prefix_ void senf::console::DirectoryNode::add(GenericNode & node, bool uniquify)
+{
+    SENF_ASSERT( ! node.managed() );
+    add(GenericNode::ptr(&node),uniquify);
+}
+
+prefix_ senf::console::DirectoryNode &
+senf::console::DirectoryNode::operator[](std::string const & name)
+    const
+{
+    return dynamic_cast<DirectoryNode&>(lookup(name));
+}
+
+prefix_ senf::console::CommandNode &
+senf::console::DirectoryNode::operator()(std::string const & name)
+    const
+{
+    return dynamic_cast<CommandNode&>(lookup(name));
+}
+
+prefix_ senf::console::DirectoryNode::DirectoryNode(std::string const & name, bool managed)
+    : GenericNode(name, managed)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::CommandNode
+
+prefix_ senf::console::CommandNode::CommandNode(std::string const & name, bool managed)
+    : GenericNode(name, managed)
+{}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

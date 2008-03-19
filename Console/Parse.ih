@@ -1,0 +1,258 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Parse internal header */
+
+#ifndef IH_Parse_
+#define IH_Parse_ 1
+
+// Custom includes
+#include <boost/regex.hpp>
+#include <boost/spirit.hpp>
+#include <boost/spirit/utility/regex.hpp>
+#include <boost/spirit/actor.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <boost/ref.hpp>
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+namespace console {
+namespace detail {
+
+    struct append_action
+    {
+        template <class T, class Value>
+        void act(T & ref, Value const & value) const
+            { ref += T(1, value); }
+
+        template <class T, class Iterator>
+        void act(T & ref, Iterator const & f, Iterator const & l) const
+            { ref += T(f,l); }
+    };
+
+    template <class T>
+    inline boost::spirit::ref_value_actor<T, append_action> 
+    append_a(T & ref)
+    {
+        return boost::spirit::ref_value_actor<T, append_action>(ref);
+    }
+    
+    template <class T, class Value>
+    inline boost::spirit::ref_const_ref_actor<T, Value, append_action> 
+    append_a(T & ref, Value const & value)
+    {
+        return boost::spirit::ref_const_ref_actor<T, Value, append_action>(ref, value);
+    }
+
+    template <class ParseDispatcher>
+    struct CommandGrammar : boost::spirit::grammar<CommandGrammar<ParseDispatcher> >
+    {
+        ///////////////////////////////////////////////////////////////////////////
+        // The parse context (variables needed while parsing)
+
+        struct Context {
+            std::string str;
+            char ch;
+        };
+
+        Context & context;
+
+        ///////////////////////////////////////////////////////////////////////////
+        // Dispatching semantic actions
+
+        ParseDispatcher & dispatcher;
+
+        struct Dispatch_actor
+        {
+            Dispatch_actor(boost::function<void ()> fn_) : fn (fn_) {}
+
+            template <class Value>
+            void operator()(Value const & value) const
+                { fn(); }
+
+            template <class Iterator>
+            void operator()(Iterator const & f, Iterator const & l) const
+                { fn(); }
+
+            boost::function<void ()> fn;
+        };
+        
+        template <class Callback>
+        Dispatch_actor dispatch(Callback cb) const
+            { return Dispatch_actor(boost::bind(cb, boost::ref(dispatcher))); }
+
+        template <class Callback, class Arg>
+        Dispatch_actor dispatch(Callback cb, Arg const & arg) const
+            { return Dispatch_actor(boost::bind(cb, boost::ref(dispatcher), arg)); }
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        CommandGrammar(ParseDispatcher & d, Context & c) 
+            : context(c), dispatcher(d) {}
+
+        template <class Scanner>
+        struct definition
+        {
+            boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token;
+            boost::spirit::rule<Scanner> punctuation, hexbyte, balanced_tokens, simple_argument;
+            boost::spirit::rule<Scanner> complex_argument;
+
+            definition(CommandGrammar const & self) {
+                using namespace boost::spirit;
+                typedef ParseDispatcher PD;
+                
+                command 
+                    =    path                     [ self.dispatch(&PD::beginCommand, 
+                                                                  boost::cref(self.context.str)) ]
+                      >> * argument
+                      >> ! ch_p(';')
+                      >> eps_p                    [ self.dispatch(&PD::endCommand) ]
+                    ;
+
+                argument
+                    =    simple_argument          [ self.dispatch(&PD::pushArgument, 
+                                                                  boost::cref(self.context.str)) ]
+                    |    complex_argument
+                    ;
+                
+                simple_argument         // All these return their value in context.str
+                    =    string
+                    |    hexstring
+                    |    path
+                    ;
+                
+                complex_argument        // Argument consists of multiple tokens
+                    =    ch_p('(')                [ self.dispatch(&PD::openGroup) ]
+                       >> * token
+                       >> ch_p(')')               [ self.dispatch(&PD::closeGroup) ]
+                    ;
+
+                string                  // Returns value in context.str
+                    =    eps_p                    [ clear_a(self.context.str) ]
+                      >> lexeme_d
+                         [
+                             ch_p('"')
+                          >> * ( ( lex_escape_ch_p[ assign_a(self.context.ch) ] 
+                                   - '"' 
+                                 )                [ append_a(self.context.str,
+                                                             self.context.ch) ] 
+                               )
+                          >> ch_p('"')
+                         ]
+                    ;
+
+                hexstring               // Returns value in context.str
+                    =    eps_p                    [ clear_a(self.context.str) ]
+                      >> confix_p( "x\"", * hexbyte, '"' )
+                    ;
+
+                path                    // Returns value in context.str
+                    =    eps_p                    [ clear_a(self.context.str) ]
+                      >> ( ! ch_p('/')            [ append_a(self.context.str) ] 
+                         ) 
+                      >> (   word                 [ append_a(self.context.str) ] 
+                           % ch_p('/')            [ append_a(self.context.str) ] 
+                         )
+                    ;
+
+                balanced_tokens 
+                    =    ch_p('(')                [ self.dispatch(&PD::pushPunctuation, "(") ]
+                      >> * token
+                      >> ch_p(')')                [ self.dispatch(&PD::pushPunctuation, ")") ]
+                    ;
+
+                token
+                    =    simple_argument          [ self.dispatch(&PD::pushWord, 
+                                                                  boost::cref(self.context.str)) ]
+                    |    punctuation              [ self.dispatch(&PD::pushPunctuation,
+                                                                  boost::cref(self.context.str)) ]
+                    |    balanced_tokens
+                    ;
+
+                punctuation             // Returns value in context.str
+                    =    regex_p("[,=]")          [ assign_a(self.context.str) ]
+                    ;
+
+                word
+                    =    regex_p("[^ \t\n\r;,=(){}/\"]+")
+                    ;
+
+                hexbyte
+                    =    uint_parser<char, 16, 2, 2>()
+                                                  [ append_a(self.context.str) ]
+                    ;
+
+                BOOST_SPIRIT_DEBUG_RULE(command);
+                BOOST_SPIRIT_DEBUG_RULE(path);
+                BOOST_SPIRIT_DEBUG_RULE(argument);
+                BOOST_SPIRIT_DEBUG_RULE(word);
+                BOOST_SPIRIT_DEBUG_RULE(string);
+                BOOST_SPIRIT_DEBUG_RULE(hexstring);
+                BOOST_SPIRIT_DEBUG_RULE(token);
+                BOOST_SPIRIT_DEBUG_RULE(punctuation);
+                BOOST_SPIRIT_DEBUG_RULE(hexbyte);
+                BOOST_SPIRIT_DEBUG_RULE(balanced_tokens);
+                BOOST_SPIRIT_DEBUG_RULE(simple_argument);
+                BOOST_SPIRIT_DEBUG_RULE(complex_argument);
+            }
+
+            boost::spirit::rule<Scanner> const & start() const { return command; }
+        };
+    };
+
+    struct SkipGrammar
+        : public boost::spirit::grammar<SkipGrammar>
+    {
+        template <class Scanner>
+        struct definition
+        {
+            boost::spirit::rule<Scanner> rule;
+
+            definition(SkipGrammar const & self) {
+                rule 
+                    =    boost::spirit::regex_p("[ \t]+") 
+                    |    boost::spirit::comment_p('#')
+                    ;
+            }
+
+            boost::spirit::rule<Scanner> const & start() const { return rule; }
+        };
+    };
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
