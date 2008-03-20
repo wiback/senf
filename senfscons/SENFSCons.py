@@ -153,6 +153,7 @@ def FinalizeBoost(env):
     env['BOOSTTESTLIB'] = 'boost_unit_test_framework' + env['BOOST_VARIANT']
     env['BOOSTREGEXLIB'] = 'boost_regex' + env['BOOST_VARIANT']
     env['BOOSTFSLIB'] = 'boost_filesystem' + env['BOOST_VARIANT']
+    env['BOOSTIOSTREAMSLIB'] = 'boost_iostreams' + env['BOOST_VARIANT']
 
     env.Append(LIBPATH = [ '$BOOST_LIBDIR' ],
                CPPPATH = [ '$BOOST_INCLUDES' ])
