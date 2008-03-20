@@ -72,8 +72,8 @@ prefix_ void senf::TCPv4SocketProtocol::init_server(INet4SocketAddress const & a
     const
 {
     init_server();
-    serverHandle().bind(address);
     reuseaddr(true);
+    serverHandle().bind(address);
     if (::listen(fd(),backlog) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
