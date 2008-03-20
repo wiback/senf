@@ -27,7 +27,11 @@
 #include "Server.ih"
 
 // Custom includes
+#include <unistd.h>
+#include <iostream>
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/stream.hpp>
 #include "../Utils/senfassert.hh"
 #include "../Utils/membind.hh"
 #include "../Utils/Logger/SenfLog.hh"
@@ -38,14 +42,18 @@
 
 prefix_ void senf::console::start(senf::INet4SocketAddress const & address)
 {
-    senf::console::detail::Server::start(senf::TCPv4ServerSocketHandle(address));
+    senf::TCPv4ServerSocketHandle handle (address);
+    handle.protocol().reuseaddr();
+    senf::console::detail::Server::start(handle);
     SENF_LOG((detail::Server::SENFLogArea)(log::NOTICE)( 
                  "Console server started at " << address ));
 }
 
 prefix_ void senf::console::start(senf::INet6SocketAddress const & address)
 {
-    senf::console::detail::Server::start(senf::TCPv6ServerSocketHandle(address));
+    senf::TCPv6ServerSocketHandle handle (address);
+    handle.protocol().reuseaddr();
+    senf::console::detail::Server::start(handle);
     SENF_LOG((detail::Server::SENFLogArea)(log::NOTICE)( 
                  "Console server started at " << address ));
 }
@@ -91,8 +99,9 @@ prefix_ void senf::console::detail::Server::removeClient(Client & client)
 // senf::console::detail::Client
 
 prefix_ senf::console::detail::Client::Client(ClientHandle handle)
-    : handle_ (handle)
+    : handle_ (handle), out_(::dup(handle.fd()))
 {
+    out_ << "# " << std::flush;
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
                                         senf::membind(&Client::clientData, this) );
 }
@@ -114,11 +123,22 @@ prefix_ void senf::console::detail::Client::clientData(ReadHelper<ClientHandle>:
         return;
     }
 
+#   warning fix Client::clientData implementation
+    // Remove the 'dup' needed here so we don't close the same fd twice (see Client constructor)
+    // Make output non-blocking
+    // Don't register a new ReadHelper every round
+
     std::string data (tail_ + helper->data());
     tail_ = helper->tail();
     boost::trim(data); // Gets rid of superfluous  \r or \n characters
 
-    SENF_LOG(( this << ": " << data ));
+    ParseCommandInfo command;
+    if (parser_.parseCommand(data, command))
+        executor_(command, out_);
+    else 
+        out_ << "syntax error" << std::endl;
+
+    out_ << "# " << std::flush;
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
                                         senf::membind(&Client::clientData, this) );
 }

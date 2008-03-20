@@ -31,11 +31,15 @@
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/stream.hpp>
 #include "../Utils/intrusive_refcount.hh"
 #include "../Socket/Protocols/INet/TCPSocketHandle.hh"
 #include "../Socket/ServerSocketHandle.hh"
 #include "../Scheduler/Scheduler.hh"
 #include "../Scheduler/ReadHelper.hh"
+#include "Parse.hh"
+#include "Executor.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -105,6 +109,11 @@ namespace detail {
         
         ClientHandle handle_;
         std::string tail_;
+        SingleCommandParser parser_;
+        Executor executor_;
+
+        typedef boost::iostreams::stream<boost::iostreams::file_descriptor_sink> fdostream;
+        fdostream out_;
 
         friend class Server;
     };
