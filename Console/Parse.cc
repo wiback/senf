@@ -27,6 +27,7 @@
 #include "Parse.ih"
 
 // Custom includes
+#include "../Utils/String.hh"
 #include <boost/iterator/transform_iterator.hpp>
 
 //#include "Parse.mpp"
@@ -42,7 +43,10 @@ namespace detail {
         static void init(ParseCommandInfo & info)
             { info.init(); }
 
-        static void setCommand(ParseCommandInfo & info, std::string const & commandPath)
+        static void setBuiltin(ParseCommandInfo & info, ParseCommandInfo::BuiltinCommand builtin)
+            { info.setBuiltin(builtin); }
+
+        static void setCommand(ParseCommandInfo & info, std::vector<std::string> & commandPath)
             { info.setCommand(commandPath); }
 
         static void startArgument(ParseCommandInfo & info)
@@ -82,7 +86,7 @@ namespace detail {
             ParseDispatcher & dispatcher;
         };
 
-        void beginCommand(std::string const & command)
+        void beginCommand(std::vector<std::string> & command)
             { ParserAccess::init(info());
               ParserAccess::setCommand(info(), command); }
 
@@ -105,6 +109,27 @@ namespace detail {
 
         void pushWord(std::string const & token)
             { ParserAccess::addToken(info(), ParserAccess::makeToken(token)); }
+
+        void builtin_cd(std::vector<std::string> & path)
+            { ParserAccess::init(info());
+              ParserAccess::setBuiltin(info(), ParseCommandInfo::BuiltinCD);
+              setBuiltinPathArg(path);
+              ParserAccess::finalize(info()); }
+
+        void builtin_ls(std::vector<std::string> & path)
+            { ParserAccess::init(info());
+              ParserAccess::setBuiltin(info(), ParseCommandInfo::BuiltinLS);
+              setBuiltinPathArg(path);
+              ParserAccess::finalize(info()); }
+
+        void setBuiltinPathArg(std::vector<std::string> & path)
+            {
+                ParserAccess::startArgument(info());
+                for (std::vector<std::string>::const_iterator i (path.begin());
+                     i != path.end(); ++i)
+                    ParserAccess::addToken(info(), ParserAccess::makeToken(*i));
+                ParserAccess::endArgument(info());
+            }
     };
 
 }}}
@@ -139,15 +164,43 @@ prefix_ void senf::console::ParseCommandInfo::finalize()
     tempArguments_.clear();
 }
 
+prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
+                                                 ParseCommandInfo const & info)
+{
+    if (info.builtin() == ParseCommandInfo::NoBuiltin) 
+        stream << senf::stringJoin(info.commandPath(), "/");
+    else {
+        char const * builtins[] = { "", "cd", "ls" };
+        stream << "builtin-" << builtins[info.builtin()];
+    }
+        
+    ParseCommandInfo::ArgumentsRange args (info.arguments());
+    for (ParseCommandInfo::argument_iterator i (args.begin()); i != args.end(); ++i) {
+        ParseCommandInfo::token_iterator j (i->begin());
+        stream << " [";
+        if ( j != i->end() ) {
+            for (;;) {
+                stream << "'" << j->value() << "'";
+                if ( ++j != i->end() ) stream << ' ';
+                else                   break;
+            }
+        }
+        stream << "]";
+    }
+
+    return stream;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::SingleCommandParser
 
 struct senf::console::SingleCommandParser::Impl
 {
+    typedef detail::CommandGrammar<detail::ParseDispatcher> Grammar;
+
     detail::ParseDispatcher dispatcher;
-    detail::CommandGrammar<detail::ParseDispatcher>::Context context;
-    detail::CommandGrammar<detail::ParseDispatcher> grammar;
-    detail::SkipGrammar skipGrammar;
+    Grammar::Context context;
+    Grammar grammar;
 
     Impl() : dispatcher(), context(), grammar(dispatcher, context) {}
 };
@@ -163,7 +216,10 @@ prefix_ bool senf::console::SingleCommandParser::parseCommand(std::string comman
                                                               ParseCommandInfo & info)
 {
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
-    return boost::spirit::parse( command.c_str(), impl().grammar, impl().skipGrammar ).full;
+    return boost::spirit::parse( command.c_str(), 
+                                 impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
+                                 impl().grammar.use_parser<Impl::Grammar::SkipParser>()
+        ).full;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

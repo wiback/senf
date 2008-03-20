@@ -27,9 +27,10 @@
 #define IH_Parse_ 1
 
 // Custom includes
+#include <vector>
 #include <boost/regex.hpp>
 #include <boost/spirit.hpp>
-#include <boost/spirit/utility/regex.hpp>
+#include <boost/spirit/utility/grammar_def.hpp>
 #include <boost/spirit/actor.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
@@ -70,10 +71,16 @@ namespace detail {
     struct CommandGrammar : boost::spirit::grammar<CommandGrammar<ParseDispatcher> >
     {
         ///////////////////////////////////////////////////////////////////////////
+        // Start rules
+
+        enum { CommandParser, SkipParser };
+
+        ///////////////////////////////////////////////////////////////////////////
         // The parse context (variables needed while parsing)
 
         struct Context {
             std::string str;
+            std::vector<std::string> path;
             char ch;
         };
 
@@ -113,19 +120,61 @@ namespace detail {
             : context(c), dispatcher(d) {}
 
         template <class Scanner>
-        struct definition
+        struct definition 
+            : public boost::spirit::grammar_def< boost::spirit::rule<Scanner>, 
+                                                 boost::spirit::rule<Scanner> >
         {
             boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token;
             boost::spirit::rule<Scanner> punctuation, hexbyte, balanced_tokens, simple_argument;
-            boost::spirit::rule<Scanner> complex_argument;
+            boost::spirit::rule<Scanner> complex_argument, builtin, skip;
 
-            definition(CommandGrammar const & self) {
+            boost::spirit::chset<> special_p, punctuation_p, space_p, invalid_p, word_p;
+
+            boost::spirit::distinct_parser<> keyword_p;
+
+            definition(CommandGrammar const & self) : 
+
+                // Characters with a special meaning within the parser
+                // and characters reserved for future extensions
+                special_p ("/(){};"),
+
+                // Characters which are returned as punctuation tokens
+                punctuation_p (",="),
+
+                // Whitespace characters (we don't want newlines in there)
+                space_p (" \t"),
+
+                // Invalid characters: All chars below \x20 (space) which are not space_p
+                // (don't put a \0 in the chset<> argument *string* ...)
+                invalid_p (
+                    boost::spirit::chset<>('\0') | boost::spirit::chset<>("\x01-\x20") - space_p ),
+
+                // Valid word characters
+                word_p (
+                    boost::spirit::anychar_p - special_p - punctuation_p - space_p - invalid_p),
+
+                // Keywords must not be followed by a word char or '/'
+                keyword_p ( word_p | boost::spirit::ch_p('/') )
+
+            {
                 using namespace boost::spirit;
                 typedef ParseDispatcher PD;
-                
+
+                builtin
+                    =    keyword_p("cd") 
+                      >> path
+                      >> eps_p                    [ self.dispatch(&PD::builtin_cd,
+                                                                  boost::ref(self.context.path)) ]
+                    |    keyword_p("ls") 
+                      >> ! path
+                      >> eps_p                    [ self.dispatch(&PD::builtin_cd,
+                                                                  boost::ref(self.context.path)) ]
+                    ;
+
                 command 
-                    =    path                     [ self.dispatch(&PD::beginCommand, 
-                                                                  boost::cref(self.context.str)) ]
+                    =    builtin
+                    |    path                     [ self.dispatch(&PD::beginCommand, 
+                                                                  boost::ref(self.context.path)) ]
                       >> * argument
                       >> ! ch_p(';')
                       >> eps_p                    [ self.dispatch(&PD::endCommand) ]
@@ -133,14 +182,14 @@ namespace detail {
 
                 argument
                     =    simple_argument          [ self.dispatch(&PD::pushArgument, 
-                                                                  boost::cref(self.context.str)) ]
+                                                                  boost::ref(self.context.str)) ]
                     |    complex_argument
                     ;
                 
                 simple_argument         // All these return their value in context.str
                     =    string
                     |    hexstring
-                    |    path
+                    |    word
                     ;
                 
                 complex_argument        // Argument consists of multiple tokens
@@ -168,13 +217,12 @@ namespace detail {
                       >> confix_p( "x\"", * hexbyte, '"' )
                     ;
 
-                path                    // Returns value in context.str
-                    =    eps_p                    [ clear_a(self.context.str) ]
-                      >> ( ! ch_p('/')            [ append_a(self.context.str) ] 
-                         ) 
-                      >> (   word                 [ append_a(self.context.str) ] 
-                           % ch_p('/')            [ append_a(self.context.str) ] 
-                         )
+                path                    // Returns value in context.path
+                    =    eps_p                    [ clear_a(self.context.path) ]
+                      >> ( ! ch_p('/')            [ push_back_a(self.context.path, "") ] ) 
+                      >> (   word                 [ push_back_a(self.context.path) ] 
+                           % ch_p('/') )
+                      >> ( ! ch_p('/')            [ push_back_a(self.context.path,"") ] )
                     ;
 
                 balanced_tokens 
@@ -185,18 +233,18 @@ namespace detail {
 
                 token
                     =    simple_argument          [ self.dispatch(&PD::pushWord, 
-                                                                  boost::cref(self.context.str)) ]
+                                                                  boost::ref(self.context.str)) ]
                     |    punctuation              [ self.dispatch(&PD::pushPunctuation,
-                                                                  boost::cref(self.context.str)) ]
+                                                                  boost::ref(self.context.str)) ]
                     |    balanced_tokens
                     ;
 
                 punctuation             // Returns value in context.str
-                    =    regex_p("[,=]")          [ assign_a(self.context.str) ]
+                    =    punctuation_p            [ assign_a(self.context.str) ]
                     ;
 
-                word
-                    =    regex_p("[^ \t\n\r;,=(){}/\"]+")
+                word                    // Returns value in context.str
+                    =    lexeme_d[ + word_p ]     [ assign_a(self.context.str) ]
                     ;
 
                 hexbyte
@@ -204,40 +252,31 @@ namespace detail {
                                                   [ append_a(self.context.str) ]
                     ;
 
-                BOOST_SPIRIT_DEBUG_RULE(command);
-                BOOST_SPIRIT_DEBUG_RULE(path);
-                BOOST_SPIRIT_DEBUG_RULE(argument);
-                BOOST_SPIRIT_DEBUG_RULE(word);
-                BOOST_SPIRIT_DEBUG_RULE(string);
-                BOOST_SPIRIT_DEBUG_RULE(hexstring);
-                BOOST_SPIRIT_DEBUG_RULE(token);
-                BOOST_SPIRIT_DEBUG_RULE(punctuation);
-                BOOST_SPIRIT_DEBUG_RULE(hexbyte);
-                BOOST_SPIRIT_DEBUG_RULE(balanced_tokens);
-                BOOST_SPIRIT_DEBUG_RULE(simple_argument);
-                BOOST_SPIRIT_DEBUG_RULE(complex_argument);
-            }
-
-            boost::spirit::rule<Scanner> const & start() const { return command; }
-        };
-    };
-
-    struct SkipGrammar
-        : public boost::spirit::grammar<SkipGrammar>
-    {
-        template <class Scanner>
-        struct definition
-        {
-            boost::spirit::rule<Scanner> rule;
-
-            definition(SkipGrammar const & self) {
-                rule 
-                    =    boost::spirit::regex_p("[ \t]+") 
-                    |    boost::spirit::comment_p('#')
+                skip
+                    =    space_p
+                    |    comment_p('#')
                     ;
-            }
 
-            boost::spirit::rule<Scanner> const & start() const { return rule; }
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(command,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(path,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(argument,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(word,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(string,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(hexstring,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(token,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(punctuation,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(hexbyte,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(balanced_tokens,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(simple_argument,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(complex_argument,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(builtin,1);
+
+                start_parsers(
+                    command,            // CommandParser
+                    skip                // SkipParser
+                );
+
+            }
         };
     };
 

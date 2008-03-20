@@ -26,10 +26,14 @@
 //#include "Parse.test.hh"
 //#include "Parse.test.ih"
 
+// #define BOOST_SPIRIT_DEBUG
+// #define BOOST_SPIRIT_DEBUG_TRACENODE 0
+
 // Custom includes
 #include <sstream>
 #include "Parse.hh"
 #include "Parse.ih"
+#include "../Utils/String.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -39,14 +43,16 @@
 
 namespace 
 {
+    
+
     struct TestParseDispatcher 
     {
         TestParseDispatcher(std::ostream & os) : os_ (os) {}
 
         std::ostream & os_;
 
-        void beginCommand(std::string const & command) 
-            { os_ << "beginCommand( " << command << " )\n"; }
+        void beginCommand(std::vector<std::string> const & command) 
+            { os_ << "beginCommand( " << senf::stringJoin(command, "/") << " )\n"; }
         void endCommand() 
             { os_ << "endCommand()\n"; }
         
@@ -60,6 +66,11 @@ namespace
             { os_ << "pushPunctuation( " << token << " )\n"; }
         void pushWord(std::string const & token)
             { os_ << "pushWord( " << token << " )\n"; }
+
+        void builtin_cd(std::vector<std::string> const & path)
+            { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
+        void builtin_ls(std::vector<std::string> const & path)
+            { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
     };
 }
 
@@ -68,12 +79,13 @@ BOOST_AUTO_UNIT_TEST(commandParser)
     senf::console::detail::CommandGrammar<TestParseDispatcher>::Context context;
     std::stringstream ss;
     TestParseDispatcher dispatcher (ss);
-    senf::console::detail::CommandGrammar<TestParseDispatcher> grammar (dispatcher, context);
-    senf::console::detail::SkipGrammar skipGrammar;
+    
+    typedef senf::console::detail::CommandGrammar<TestParseDispatcher> Grammar;
+    Grammar grammar (dispatcher, context);
 
     char text[] = 
         "# Comment\n"
-        "doo / bii / doo arg/../path"
+        "doo / bii / doo arg"
         "                flab::blub"
         "                123.434>a"
         "                (a,b,c (huhu))"
@@ -83,11 +95,11 @@ BOOST_AUTO_UNIT_TEST(commandParser)
 
     BOOST_CHECK( boost::spirit::parse( 
                      text, 
-                     grammar, 
-                     skipGrammar ) . full );
+                     grammar.use_parser<Grammar::CommandParser>(), 
+                     grammar.use_parser<Grammar::SkipParser>() ) . full );
     BOOST_CHECK_EQUAL( ss.str(), 
                        "beginCommand( doo/bii/doo )\n"
-                       "pushArgument( arg/../path )\n"
+                       "pushArgument( arg )\n"
                        "pushArgument( flab::blub )\n"
                        "pushArgument( 123.434>a )\n"
                        "openGroup()\n"
@@ -111,7 +123,7 @@ BOOST_AUTO_UNIT_TEST(singleCommandParser)
 
     char const text[] = 
         "# Comment\n"
-        "doo / bii / doo arg/../path"
+        "doo / bii / doo arg"
         "                flab::blub"
         "                123.434>a"
         "                (a,b,c (huhu))"
@@ -122,35 +134,38 @@ BOOST_AUTO_UNIT_TEST(singleCommandParser)
     senf::console::ParseCommandInfo info;
     BOOST_CHECK( parser.parseCommand(text, info) );
 
-    BOOST_CHECK_EQUAL( info.commandPath(), "doo/bii/doo" );
-    BOOST_REQUIRE_EQUAL( info.arguments(), 6u );
-    BOOST_REQUIRE_EQUAL( info.tokens(), 13u );
+    char const * path[] = { "doo", "bii", "doo" };
 
-    char const * tokens[] = { "arg/../path", 
+    BOOST_CHECK_EQUAL_COLLECTIONS( info.commandPath().begin(), info.commandPath().end(),
+                                   path, path + sizeof(path)/sizeof(path[0]) );
+    BOOST_REQUIRE_EQUAL( info.arguments().size(), 6u );
+    BOOST_REQUIRE_EQUAL( info.tokens().size(), 13u );
+
+    char const * tokens[] = { "arg", 
                               "flab::blub", 
                               "123.434>a", 
                               "a", ",", "b", ",", "c", "(", "huhu", ")",
                               "foo\"bar",
                               "\x01\x02\x03\x04" };
 
-    BOOST_REQUIRE_EQUAL( info.begin_arguments()[0].size(), 1u );
-    BOOST_CHECK_EQUAL( info.begin_arguments()[0].begin()->value(), tokens[0] );
+    BOOST_REQUIRE_EQUAL( info.arguments().begin()[0].size(), 1u );
+    BOOST_CHECK_EQUAL( info.arguments().begin()[0].begin()->value(), tokens[0] );
 
-    BOOST_REQUIRE_EQUAL( info.begin_arguments()[1].size(), 1u );
-    BOOST_CHECK_EQUAL( info.begin_arguments()[1].begin()->value(), tokens[1] );
+    BOOST_REQUIRE_EQUAL( info.arguments().begin()[1].size(), 1u );
+    BOOST_CHECK_EQUAL( info.arguments().begin()[1].begin()->value(), tokens[1] );
 
-    BOOST_REQUIRE_EQUAL( info.begin_arguments()[2].size(), 1u );
-    BOOST_CHECK_EQUAL( info.begin_arguments()[2].begin()->value(), tokens[2] );
+    BOOST_REQUIRE_EQUAL( info.arguments().begin()[2].size(), 1u );
+    BOOST_CHECK_EQUAL( info.arguments().begin()[2].begin()->value(), tokens[2] );
 
-    BOOST_REQUIRE_EQUAL( info.begin_arguments()[3].size(), 8u );
+    BOOST_REQUIRE_EQUAL( info.arguments().begin()[3].size(), 8u );
     for (unsigned i (0); i<8; ++i)
-        BOOST_CHECK_EQUAL( info.begin_arguments()[3].begin()[i].value(), tokens[3+i] );
+        BOOST_CHECK_EQUAL( info.arguments().begin()[3].begin()[i].value(), tokens[3+i] );
 
-    BOOST_REQUIRE_EQUAL( info.begin_arguments()[4].size(), 1u );
-    BOOST_CHECK_EQUAL( info.begin_arguments()[4].begin()->value(), tokens[11] );
+    BOOST_REQUIRE_EQUAL( info.arguments().begin()[4].size(), 1u );
+    BOOST_CHECK_EQUAL( info.arguments().begin()[4].begin()->value(), tokens[11] );
 
-    BOOST_REQUIRE_EQUAL( info.begin_arguments()[5].size(), 1u );
-    BOOST_CHECK_EQUAL( info.begin_arguments()[5].begin()->value(), tokens[12] );
+    BOOST_REQUIRE_EQUAL( info.arguments().begin()[5].size(), 1u );
+    BOOST_CHECK_EQUAL( info.arguments().begin()[5].begin()->value(), tokens[12] );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

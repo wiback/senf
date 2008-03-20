@@ -40,7 +40,8 @@ int main(int, char const **)
 {
     senf::log::ConsoleTarget::instance().route< senf::SenfLog, senf::log::NOTICE >();
 
-    senf::console::start( senf::INet4SocketAddress("127.0.0.1:23232") );
+    senf::console::Server::start( senf::INet4SocketAddress("127.0.0.1:23232") )
+        .name("testServer ");
 
     senf::Scheduler::instance().process();
 }

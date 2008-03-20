@@ -27,6 +27,19 @@
 #define HH_Server_ 1
 
 // Custom includes
+#include <set>
+#include <boost/utility.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/stream.hpp>
+#include "../Utils/intrusive_refcount.hh"
+#include "../Socket/Protocols/INet/TCPSocketHandle.hh"
+#include "../Socket/ServerSocketHandle.hh"
+#include "../Scheduler/Scheduler.hh"
+#include "../Scheduler/ReadHelper.hh"
+#include "Parse.hh"
+#include "Executor.hh"
 #include "../Socket/Protocols/INet/INetAddressing.hh"
 
 //#include "Server.mpp"
@@ -35,13 +48,88 @@
 namespace senf {
 namespace console {
 
-    void start(senf::INet4SocketAddress const & address);
-    void start(senf::INet6SocketAddress const & address);
+    class Client;
+
+    /** \brief
+      */
+    class Server
+        : boost::noncopyable
+    {
+        SENF_LOG_CLASS_AREA();
+        SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        typedef senf::ServerSocketHandle<
+            senf::MakeSocketPolicy< senf::TCPv4SocketProtocol::Policy, 
+                                    senf::UnspecifiedAddressingPolicy>::policy > ServerHandle;
+
+        ~Server();
+
+        static Server & start(senf::INet4SocketAddress const & address);
+        static Server & start(senf::INet6SocketAddress const & address);
+
+        void name(std::string const & name);
+
+    protected:
+
+    private:
+        Server(ServerHandle handle);
+
+        static void start(ServerHandle handle);
+
+        void newClient(Scheduler::EventId event);
+        void removeClient(Client & client);
+        
+        ServerHandle handle_;
+        
+        typedef std::set< boost::intrusive_ptr<Client> > Clients;
+        Clients clients_;
+        std::string name_;
+        
+        static boost::scoped_ptr<Server> instance_;
+        
+        friend class Client;
+    };
+    
+    /** \brief
+     */
+    class Client
+        : public senf::intrusive_refcount
+    {
+        SENF_LOG_CLASS_AREA();
+        SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
+    public:
+        typedef Server::ServerHandle::ClientSocketHandle ClientHandle;
+
+        ~Client();
+
+        void stopClient();
+
+    protected:
+        
+    private:
+        Client(ClientHandle handle, std::string const & name);
+
+        void clientData(ReadHelper<ClientHandle>::ptr helper);
+        
+        ClientHandle handle_;
+        std::string tail_;
+        SingleCommandParser parser_;
+        Executor executor_;
+        std::string name_;
+
+        typedef boost::iostreams::stream<boost::iostreams::file_descriptor_sink> fdostream;
+        fdostream out_;
+
+        friend class Server;
+    };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Server.cci"
+#include "Server.cci"
 //#include "Server.ct"
 //#include "Server.cti"
 #endif

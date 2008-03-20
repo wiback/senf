@@ -64,10 +64,13 @@ namespace console {
     class ParseCommandInfo
     {
         typedef std::vector<ArgumentToken> Tokens;
+        typedef std::vector<std::string> CommandPath;
         
     public:
+        typedef CommandPath::const_iterator path_iterator;
         typedef Tokens::const_iterator token_iterator;
         typedef boost::iterator_range<token_iterator> argument_value_type;
+
 
     private:
         typedef std::vector<argument_value_type> Arguments;
@@ -76,21 +79,23 @@ namespace console {
         typedef Arguments::const_iterator argument_iterator;
         typedef Arguments::size_type size_type;
 
-        std::string const & commandPath() const;
-        
-        size_type arguments() const;
-        argument_iterator begin_arguments() const;
-        argument_iterator end_arguments() const;
-        
-        size_type tokens() const;
-        token_iterator begin_tokens() const;
-        token_iterator end_tokens() const;
+        typedef boost::iterator_range<path_iterator> CommandPathRange;
+        typedef boost::iterator_range<argument_iterator> ArgumentsRange;
+        typedef boost::iterator_range<token_iterator> TokensRange;
+
+        enum BuiltinCommand { NoBuiltin, BuiltinCD, BuiltinLS };
+
+        BuiltinCommand builtin() const;
+        CommandPathRange commandPath() const;
+        ArgumentsRange arguments() const;
+        TokensRange tokens() const;
         
     protected:
 
     private:
         void init();
-        void setCommand(std::string const & commandPath);
+        void setBuiltin(BuiltinCommand builtin);
+        void setCommand(std::vector<std::string> & commandPath);
         void startArgument();
         void endArgument();
         void addToken(ArgumentToken const & token);
@@ -98,17 +103,20 @@ namespace console {
 
         struct MakeRange;
 
-        std::string commandPath_;
+        std::vector<std::string> commandPath_;
 
         typedef std::pair<Tokens::size_type, Tokens::size_type> TempArgumentRange;
         typedef std::vector<TempArgumentRange> TempArguments;
 
+        BuiltinCommand builtin_;
         Tokens tokens_;
         Arguments arguments_;
         TempArguments tempArguments_;
 
         friend class detail::ParserAccess;
     };
+
+    std::ostream & operator<<(std::ostream & stream, ParseCommandInfo const & info);
 
     /** \brief
       */

@@ -24,7 +24,7 @@
     \brief Server non-inline non-template implementation */
 
 #include "Server.hh"
-#include "Server.ih"
+//#include "Server.ih"
 
 // Custom includes
 #include <unistd.h>
@@ -40,55 +40,57 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::console::start(senf::INet4SocketAddress const & address)
+prefix_ senf::console::Server &
+senf::console::Server::start(senf::INet4SocketAddress const & address)
 {
     senf::TCPv4ServerSocketHandle handle (address);
-    handle.protocol().reuseaddr();
-    senf::console::detail::Server::start(handle);
-    SENF_LOG((detail::Server::SENFLogArea)(log::NOTICE)( 
+    senf::console::Server::start(handle);
+    SENF_LOG((Server::SENFLogArea)(log::NOTICE)( 
                  "Console server started at " << address ));
+    return *instance_;
 }
 
-prefix_ void senf::console::start(senf::INet6SocketAddress const & address)
+prefix_ senf::console::Server &
+senf::console::Server::start(senf::INet6SocketAddress const & address)
 {
     senf::TCPv6ServerSocketHandle handle (address);
-    handle.protocol().reuseaddr();
-    senf::console::detail::Server::start(handle);
-    SENF_LOG((detail::Server::SENFLogArea)(log::NOTICE)( 
+    senf::console::Server::start(handle);
+    SENF_LOG((Server::SENFLogArea)(log::NOTICE)( 
                  "Console server started at " << address ));
+    return *instance_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::Server
+// senf::console::Server
 
-boost::scoped_ptr<senf::console::detail::Server> senf::console::detail::Server::instance_;
+boost::scoped_ptr<senf::console::Server> senf::console::Server::instance_;
 
-prefix_ void senf::console::detail::Server::start(ServerHandle handle)
+prefix_ void senf::console::Server::start(ServerHandle handle)
 {
     SENF_ASSERT( ! instance_ );
     instance_.reset(new Server(handle));
 }
 
-prefix_ senf::console::detail::Server::Server(ServerHandle handle)
+prefix_ senf::console::Server::Server(ServerHandle handle)
     : handle_ (handle)
 {
     Scheduler::instance().add( handle_, senf::membind(&Server::newClient, this) );
 }
 
-prefix_ senf::console::detail::Server::~Server()
+prefix_ senf::console::Server::~Server()
 {
     Scheduler::instance().remove(handle_);
 }
 
-prefix_ void senf::console::detail::Server::newClient(Scheduler::EventId event)
+prefix_ void senf::console::Server::newClient(Scheduler::EventId event)
 {
     ServerHandle::ClientSocketHandle client (handle_.accept());
-    boost::intrusive_ptr<Client> p (new Client(client));
+    boost::intrusive_ptr<Client> p (new Client(client, name_));
     clients_.insert( p );
     SENF_LOG(( "Registered new client " << p.get() ));
 }
 
-prefix_ void senf::console::detail::Server::removeClient(Client & client)
+prefix_ void senf::console::Server::removeClient(Client & client)
 {
     SENF_LOG(( "Disposing client " << & client ));
     // THIS DELETES THE CLIENT INSTANCE !!
@@ -96,26 +98,26 @@ prefix_ void senf::console::detail::Server::removeClient(Client & client)
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::Client
+// senf::console::Client
 
-prefix_ senf::console::detail::Client::Client(ClientHandle handle)
-    : handle_ (handle), out_(::dup(handle.fd()))
+prefix_ senf::console::Client::Client(ClientHandle handle, std::string const & name)
+    : handle_ (handle), name_ (name), out_(::dup(handle.fd()))
 {
-    out_ << "# " << std::flush;
+    out_ << name_ << "# " << std::flush;
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
                                         senf::membind(&Client::clientData, this) );
 }
 
-prefix_ senf::console::detail::Client::~Client()
+prefix_ senf::console::Client::~Client()
 {}
 
-prefix_ void senf::console::detail::Client::stopClient()
+prefix_ void senf::console::Client::stopClient()
 {
     // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER removeClient RETURNS
     Server::instance_->removeClient(*this);
 }
 
-prefix_ void senf::console::detail::Client::clientData(ReadHelper<ClientHandle>::ptr helper)
+prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr helper)
 {
     if (helper->error() || handle_.eof()) {
         // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
@@ -132,13 +134,19 @@ prefix_ void senf::console::detail::Client::clientData(ReadHelper<ClientHandle>:
     tail_ = helper->tail();
     boost::trim(data); // Gets rid of superfluous  \r or \n characters
 
+    if (data == "exit") {
+        // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
+        stopClient();
+        return;
+    }
+        
     ParseCommandInfo command;
     if (parser_.parseCommand(data, command))
         executor_(command, out_);
     else 
         out_ << "syntax error" << std::endl;
 
-    out_ << "# " << std::flush;
+    out_ << name_ << "# " << std::flush;
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
                                         senf::membind(&Client::clientData, this) );
 }

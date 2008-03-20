@@ -21,31 +21,25 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Executor non-inline non-template implementation */
+    \brief Server inline non-template implementation */
 
-#include "Executor.hh"
-//#include "Executor.ih"
+//#include "Server.ih"
 
 // Custom includes
 
-//#include "Executor.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::Executor
+// senf::console::Server
 
-prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & command,
-                                                 std::ostream & output)
+prefix_ void senf::console::Server::name(std::string const & name)
 {
-#   warning Implement Executor::operator()
-    SENF_LOG(( "Executing: " << command ));
-    return true;
+    name_ = name;
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
-//#include "Executor.mpp"
 
 
 // Local Variables:

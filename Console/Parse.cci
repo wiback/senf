@@ -48,50 +48,31 @@ prefix_ senf::console::ArgumentToken::ArgumentToken(std::string token)
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ParseCommandInfo
 
-prefix_ std::string const & senf::console::ParseCommandInfo::commandPath()
+prefix_ senf::console::ParseCommandInfo::BuiltinCommand
+senf::console::ParseCommandInfo::builtin()
     const
 {
-    return commandPath_;
+    return builtin_;
 }
 
-prefix_ senf::console::ParseCommandInfo::size_type senf::console::ParseCommandInfo::arguments()
+prefix_ senf::console::ParseCommandInfo::CommandPathRange
+senf::console::ParseCommandInfo::commandPath()
     const
 {
-    return arguments_.size();
+    return boost::make_iterator_range(commandPath_.begin(), commandPath_.end());
 }
 
-prefix_ senf::console::ParseCommandInfo::argument_iterator
-senf::console::ParseCommandInfo::begin_arguments()
+prefix_ senf::console::ParseCommandInfo::ArgumentsRange
+senf::console::ParseCommandInfo::arguments()
     const
 {
-    return arguments_.begin();
+    return boost::make_iterator_range(arguments_.begin(), arguments_.end());
 }
 
-prefix_ senf::console::ParseCommandInfo::argument_iterator
-senf::console::ParseCommandInfo::end_arguments()
+prefix_ senf::console::ParseCommandInfo::TokensRange senf::console::ParseCommandInfo::tokens()
     const
 {
-    return arguments_.end();
-}
-
-prefix_ senf::console::ParseCommandInfo::size_type senf::console::ParseCommandInfo::tokens()
-    const
-{
-    return tokens_.size();
-}
-
-prefix_ senf::console::ParseCommandInfo::token_iterator
-senf::console::ParseCommandInfo::begin_tokens()
-    const
-{
-    return tokens_.begin();
-}
-
-prefix_ senf::console::ParseCommandInfo::token_iterator
-senf::console::ParseCommandInfo::end_tokens()
-    const
-{
-    return tokens_.end();
+    return boost::make_iterator_range(tokens_.begin(), tokens_.end());
 }
 
 ////////////////////////////////////////
@@ -99,15 +80,23 @@ senf::console::ParseCommandInfo::end_tokens()
 
 prefix_ void senf::console::ParseCommandInfo::init()
 {
-    commandPath_ = "";
+    builtin_ = NoBuiltin;
+    commandPath_.clear();
     tokens_.clear();
     arguments_.clear();
     tempArguments_.clear();
 }
 
-prefix_ void senf::console::ParseCommandInfo::setCommand(std::string const & commandPath)
+prefix_ void senf::console::ParseCommandInfo::setBuiltin(BuiltinCommand builtin)
 {
-    commandPath_ = commandPath;
+    builtin_ = builtin;
+}
+
+prefix_ void
+senf::console::ParseCommandInfo::setCommand(std::vector<std::string> & commandPath)
+{
+    commandPath_.clear();
+    commandPath_.swap(commandPath);
 }
 
 prefix_ void senf::console::ParseCommandInfo::startArgument()
