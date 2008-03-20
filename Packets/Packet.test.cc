@@ -197,7 +197,8 @@ BOOST_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( FooPacket::create().size(), 4u );
     BOOST_CHECK_EQUAL( FooPacket::create(senf::noinit).size(), 0u );
     BOOST_CHECK_THROW( FooPacket::create(2u), senf::TruncatedPacketException );
-    BOOST_CHECK_EQUAL( FooPacket::create(10u).size(), 10u );
+    // No 'u' suffix here to check, that the disable_if works ...
+    BOOST_CHECK_EQUAL( FooPacket::create(10).size(), 10u );
     BOOST_CHECK_EQUAL( FooPacket::create(2u,senf::noinit).size(), 2u );
     BOOST_CHECK_EQUAL( FooPacket::create(data).size(), 6u );
 
@@ -210,7 +211,8 @@ BOOST_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( packet.size(), 4u );
 
     BOOST_CHECK_THROW( FooPacket::createAfter(packet,2u), senf::TruncatedPacketException );
-    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,10u).size(), 10u );
+    // No 'u' suffix here to check, that the disable_if works ...
+    BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,10).size(), 10u );
     BOOST_CHECK_EQUAL( packet.size(), 14u );
     
     BOOST_CHECK_EQUAL( FooPacket::createAfter(packet,2u,senf::noinit).size(), 2u );

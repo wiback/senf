@@ -28,7 +28,8 @@
 
 // Custom includes
 #include <boost/operators.hpp>
-
+#include <boost/utility.hpp>
+#include <boost/type_traits/is_integral.hpp>
 #include "../Utils/Exception.hh"
 #include "../Utils/Tags.hh"
 #include "../Utils/safe_bool.hh"
@@ -465,6 +466,12 @@ namespace senf {
                                              \param[in] size Size of the packet to create in bytes
                                              \param[in] senf::noinit This parameter must always have the
                                                  value \c senf::noinit. */
+#ifndef DOXYGEN
+        template <class ForwardReadableRange>
+        static ConcretePacket create(
+            ForwardReadableRange const & range,
+            typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type * = 0); 
+#else
         template <class ForwardReadableRange>
         static ConcretePacket create(ForwardReadableRange const & range); 
                                         ///< Create packet from given data
@@ -475,6 +482,7 @@ namespace senf {
                                              \param[in] range <a
                                                  href="http://www.boost.org/libs/range/index.html">Boost.Range</a> 
                                                  of data to construct packet from. */
+#endif
 
         // Create packet as new packet after a given packet
 
@@ -516,6 +524,13 @@ namespace senf {
                                              \param[in] size Size of the packet to create in bytes
                                              \param[in] senf::noinit This parameter must always have the
                                                  value \c senf::noinit. */
+#ifndef DOXYGEN
+        template <class ForwardReadableRange>
+        static ConcretePacket createAfter(
+            Packet packet, 
+            ForwardReadableRange const & range,
+            typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type * = 0);
+#else
         template <class ForwardReadableRange>
         static ConcretePacket createAfter(Packet packet, 
                                           ForwardReadableRange const & range);
@@ -530,6 +545,7 @@ namespace senf {
                                              \param[in] range <a
                                                  href="http://www.boost.org/libs/range/index.html">Boost.Range</a> 
                                                  of data to construct packet from. */
+#endif
 
         // Create packet as new packet (header) before a given packet
 

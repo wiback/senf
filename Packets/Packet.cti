@@ -175,8 +175,9 @@ senf::ConcretePacket<PacketType>::create(size_type size, senf::NoInit_t)
 
 template <class PacketType>
 template <class ForwardReadableRange>
-prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::create(ForwardReadableRange const & range)
+prefix_ senf::ConcretePacket<PacketType> senf::ConcretePacket<PacketType>::
+create(ForwardReadableRange const & range,
+       typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type *)
 {
     return ConcretePacket(interpreter::create(range));
 }
@@ -213,8 +214,9 @@ senf::ConcretePacket<PacketType>::createAfter(Packet packet, size_type size, sen
 
 template <class PacketType>
 template <class ForwardReadableRange>
-prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createAfter(Packet packet, ForwardReadableRange const & range)
+prefix_ senf::ConcretePacket<PacketType> senf::ConcretePacket<PacketType>::
+createAfter(Packet packet, ForwardReadableRange const & range,
+            typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type *)
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr(), range));
 }
