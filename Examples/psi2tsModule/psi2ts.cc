@@ -29,6 +29,7 @@
 // Custom includes
 
 //#include "psi2ts.cc.mpp"
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
@@ -59,14 +60,18 @@ prefix_ void Psi2TsModule::onRequest()
     advance_max( end, 184, sec_end);
     
     do {
-        senf::TransportPacket tsPacket (senf::TransportPacket::create());
+        senf::TransportPacket tsPacket (senf::TransportPacket::create(188));
         tsPacket->continuity_counter() = next_continuity_counter();
         if (state_ == IDLE) {
             state_ = PROC;
             tsPacket->pusi() = true;
         }
-        senf::DataPacket::createAfter( tsPacket, boost::make_iterator_range(begin, end));
+        senf::PacketData & payloadData (tsPacket.next().data());
+        std::copy( begin, end, payloadData.begin() );
         tsPacket.finalize();
+        
+        output.write( tsPacket);
+        
         advance_max( begin, 184, sec_end);
         advance_max( end,   184, sec_end);
     } while (begin != end);
