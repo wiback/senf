@@ -34,14 +34,17 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::GenericNode
 
+prefix_ senf::console::GenericNode::~GenericNode()
+{}
+
 prefix_ std::string const & senf::console::GenericNode::name()
     const
 {
     return name_;
 }
 
-prefix_ senf::console::GenericNode::GenericNode(std::string const & name, bool managed)
-    : name_ (name), managed_ (managed)
+prefix_ senf::console::GenericNode::GenericNode(std::string const & name)
+    : name_ (name), parent_ (0)
 {}
 
 prefix_ void senf::console::GenericNode::name(std::string const & name)
@@ -54,38 +57,22 @@ prefix_ void senf::console::GenericNode::name(GenericNode & node, std::string co
     node.name_ = name;
 }
 
-prefix_ senf::console::DirectoryNode & senf::console::GenericNode::parent()
+prefix_ boost::shared_ptr<senf::console::DirectoryNode> senf::console::GenericNode::parent()
     const
 {
-    SENF_ASSERT( parent_ );
-    return *parent_;
-}
-
-prefix_ bool senf::console::GenericNode::managed()
-    const
-{
-    return managed_;
-}
-
-prefix_ bool senf::console::GenericNode::release()
-{
-    // Beware ! call release() first so the call is not short-circuited way !
-    return intrusive_refcount_base::release() && managed_;
+    return boost::static_pointer_cast<DirectoryNode>(
+        parent_ ? parent_->shared_from_this() : ptr() );
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::DirectoryNode
 
-prefix_ void senf::console::DirectoryNode::add(std::auto_ptr<GenericNode> node, bool uniquify)
+prefix_ senf::console::GenericNode &
+senf::console::DirectoryNode::add(std::auto_ptr<GenericNode> node, bool uniquify)
 {
-    SENF_ASSERT( node->managed() );
-    add(GenericNode::ptr(node.release()), uniquify);
-}
-
-prefix_ void senf::console::DirectoryNode::add(GenericNode & node, bool uniquify)
-{
-    SENF_ASSERT( ! node.managed() );
-    add(GenericNode::ptr(&node),uniquify);
+    GenericNode::ptr p (node.release());
+    add(p, uniquify);
+    return *p;
 }
 
 prefix_ senf::console::DirectoryNode &
@@ -102,15 +89,28 @@ senf::console::DirectoryNode::operator()(std::string const & name)
     return dynamic_cast<CommandNode&>(lookup(name));
 }
 
-prefix_ senf::console::DirectoryNode::DirectoryNode(std::string const & name, bool managed)
-    : GenericNode(name, managed)
+prefix_ senf::console::DirectoryNode &
+senf::console::DirectoryNode::mkdir(std::string const & name)
+{
+    return static_cast<DirectoryNode &>(
+        add(std::auto_ptr<GenericNode>(new DirectoryNode(name))));
+}
+
+prefix_ senf::console::DirectoryNode::ChildrenRange senf::console::DirectoryNode::children()
+    const
+{
+    return boost::make_iterator_range(children_.begin(), children_.end());
+}
+
+prefix_ senf::console::DirectoryNode::DirectoryNode(std::string const & name)
+    : GenericNode(name)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandNode
 
-prefix_ senf::console::CommandNode::CommandNode(std::string const & name, bool managed)
-    : GenericNode(name, managed)
+prefix_ senf::console::CommandNode::CommandNode(std::string const & name)
+    : GenericNode(name)
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -113,6 +113,7 @@ namespace console {
         Client(ClientHandle handle, std::string const & name);
 
         void clientData(ReadHelper<ClientHandle>::ptr helper);
+        void showPrompt();
         
         ClientHandle handle_;
         std::string tail_;

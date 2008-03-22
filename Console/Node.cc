@@ -32,11 +32,33 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+prefix_ senf::console::DirectoryNode & senf::console::root()
+{
+    static DirectoryNode::ptr rootNode(new DirectoryNode(""));
+    return *rootNode;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::GenericNode
+
+prefix_ std::string senf::console::GenericNode::path()
+    const
+{
+    std::string path (name());
+    ptr node (parent());
+    while (node) {
+        path = node->name() + "/" + path;
+        node = node->parent();
+    }
+    return path.empty() ? "/" : path;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //senf::console::DirectoryNode
 
 prefix_ void senf::console::DirectoryNode::add(GenericNode::ptr node, bool uniquify)
 {
+    BOOST_ASSERT( ! node->parent() );
     if (children_.find(node->name()) != children_.end()) {
         if (! uniquify)
             throw DuplicateNodeNameException() << ": '" << node->name() << "'";
@@ -49,6 +71,7 @@ prefix_ void senf::console::DirectoryNode::add(GenericNode::ptr node, bool uniqu
         name(*node, newName);
     }
     children_.insert(std::make_pair(node->name(),node));
+    node->parent_ = this;
 }
 
 prefix_ senf::console::GenericNode &

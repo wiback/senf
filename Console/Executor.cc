@@ -38,13 +38,81 @@
 prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & command,
                                                  std::ostream & output)
 {
-#   warning Implement Executor::operator()
     SENF_LOG(( "Executing: " << command ));
-    if (command.builtin() == ParseCommandInfo::BuiltinEXIT)
+
+    if (cwd_.expired())
+        cwd_ = boost::static_pointer_cast<DirectoryNode>(
+            root().shared_from_this());
+
+    switch(command.builtin()) {
+    case ParseCommandInfo::NoBuiltin :
+        break;
+
+    case ParseCommandInfo::BuiltinCD :
+        if ( command.arguments() &&
+             ! chdir(command.arguments().begin()[0]) )
+            output << "invalid directory\n";
+        break;
+
+    case ParseCommandInfo::BuiltinLS :
+        for (DirectoryNode::child_iterator i (cwd().children().begin());
+             i != cwd().children().end(); ++i)
+            output << i->first << "\n";
+        break;
+
+    case ParseCommandInfo::BuiltinPUSHD :
+        dirstack_.push_back(cwd_);
+        if ( command.arguments()
+             && ! chdir(command.arguments().begin()[0]) )
+            output << "invalid directory\n";
+        break;
+
+    case ParseCommandInfo::BuiltinPOPD :
+        if (! dirstack_.empty()) {
+            cwd_ = dirstack_.back();
+            dirstack_.pop_back();
+        }
+        break;
+
+    case ParseCommandInfo::BuiltinEXIT :
         throw ExitException();
+    }
     return true;
 }
 
+prefix_ bool senf::console::Executor::chdir(ParseCommandInfo::argument_value_type const & path)
+{
+    try {
+        DirectoryNode::ptr dir (cwd_.lock());
+        ParseCommandInfo::token_iterator i (path.begin());
+        ParseCommandInfo::token_iterator const i_end (path.end());
+        if (i != i_end && i->value().empty()) {
+            dir = boost::static_pointer_cast<DirectoryNode>(
+                root().shared_from_this());
+            ++ i;
+        }
+        for (; i != i_end; ++i) {
+            if (i->value() == "..") {
+                dir = dir->parent(); 
+                if (! dir)
+                    dir = boost::static_pointer_cast<DirectoryNode>(
+                        root().shared_from_this());
+            }
+            else if (! i->value().empty() && i->value() != ".")
+                dir = boost::static_pointer_cast<DirectoryNode>(
+                    (*dir)[i->value()].shared_from_this());
+        }
+        cwd_ = dir;
+    }
+    catch (std::bad_cast &) {
+        return false;
+    }
+    catch (UnknownNodeNameException &) {
+        return false;
+    }
+    return true;
+}
+        
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Executor.mpp"

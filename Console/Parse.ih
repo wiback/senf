@@ -126,7 +126,7 @@ namespace detail {
         {
             boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
                 punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin, 
-                skip, commands, block, statement;
+                skip, commands, block, statement, relpath, abspath;
             boost::spirit::chset<> special_p, punctuation_p, space_p, invalid_p, word_p;
             boost::spirit::distinct_parser<> keyword_p;
 
@@ -157,13 +157,50 @@ namespace detail {
                 using namespace boost::spirit;
                 typedef ParseDispatcher PD;
 
+                ///////////////////////////////////////////////////////////////////
+                // Spirit grammar
+                //
+                // Syntax summary:
+                // This is EBNF with some minor tweaks to accommodate C++ syntax
+                //
+                //   * and +    precede their argument
+                //   >>         is followed by
+                //   !          optional
+                //   a % b      match any number of a's separated by b
+                //   a - b      match a but not b
+                //
+                // Beside this, we use some special parsers (ch_p, eps_p, confix_p, lex_escape_ch_p,
+                // keyword_p, comment_p) and directives (lexeme_d), however, the parser should be
+                // quite readable.
+                //   
+                //   ch_p             match character
+                //   eps_p            always matches nothing (to attach unconditional actions)
+                //   confix_p(a,b,c)  match b, preceded by a and terminated by c. Used to parse
+                //                    string literals and comments
+                //   lex_escape_ch_p  match a lex style escape char. This is like a C++ style
+                //                    literal string escape char, however \x will be replaced by 'x'
+                //                    for any char 'x' if it has no special meaning.
+                //   keyword_p        match a delimited keyword
+                //   comment_p(a,b)   match comment starting with a and terminated with b. b
+                //                    defaults to end-of-line
+                //
+                //   lexeme_d         don't skip whitespace (as defined by the skip parser)
+                //
+                // Aligned to the right at column 50 are semantic actions.
+                //
+                // For clarity, I have used 'ch_p' explicitly throughout even though it is auxiliary
+                // in most cases.
+                //
+                // More info is in the Boost.Spirit documentation
+
                 commands
                     =  * command
                     ;
 
                 command 
-                    =    builtin
+                    =    builtin >> (ch_p(';') | end_p)
                     |    path  >> ( block | statement )
+                    |    ch_p(';') // Ignore empty commands
                     ;
 
                 builtin
@@ -232,10 +269,20 @@ namespace detail {
 
                 path                    // Returns value in context.path
                     =    eps_p                    [ clear_a(self.context.path) ]
-                      >> ( ! ch_p('/')            [ push_back_a(self.context.path, "") ] ) 
-                      >> (   word                 [ push_back_a(self.context.path) ] 
+                      >> relpath | abspath
+                    ;
+
+                relpath
+                    =    (   word                 [ push_back_a(self.context.path) ] 
                            % ch_p('/') )
                       >> ( ! ch_p('/')            [ push_back_a(self.context.path,"") ] )
+                    ;
+
+                abspath
+                    =    ch_p('/')                [ push_back_a(self.context.path, "") ]
+                      >> ! (    (   word          [ push_back_a(self.context.path) ] 
+                                  % ch_p('/') )
+                             >> ( ! ch_p('/')     [ push_back_a(self.context.path,"") ] ) )
                     ;
 
                 balanced_tokens 
@@ -269,6 +316,13 @@ namespace detail {
                     =    space_p | comment_p('#')
                     ;
 
+                ///////////////////////////////////////////////////////////////////
+
+                start_parsers(
+                    commands,           // CommandParser
+                    skip                // SkipParser
+                );
+
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(command,1);
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(path,1);
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(argument,1);
@@ -282,12 +336,11 @@ namespace detail {
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(simple_argument,1);
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(complex_argument,1);
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(builtin,1);
-
-                start_parsers(
-                    commands,           // CommandParser
-                    skip                // SkipParser
-                );
-
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(commands,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(block,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(statement,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(relpath,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(abspath,1);
             }
         };
     };

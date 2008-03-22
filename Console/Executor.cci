@@ -21,37 +21,32 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief test non-inline non-template implementation */
+    \brief Executor inline non-template implementation */
 
-//#include "test.hh"
-//#include "test.ih"
+//#include "Executor.ih"
 
 // Custom includes
-#include <iostream>
-#include "Server.hh"
-#include "../Scheduler/Scheduler.hh"
-#include "../Utils/Logger/SenfLog.hh"
 
-//#include "test.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
-int main(int, char const **)
+///////////////////////////////////////////////////////////////////////////
+// senf::console::Executor
+
+prefix_ senf::console::Executor::Executor()
 {
-    senf::log::ConsoleTarget::instance().route< senf::SenfLog, senf::log::NOTICE >();
-
-    senf::console::root().mkdir("network").mkdir("eth0");
-    senf::console::root().mkdir("server");
-
-    senf::console::Server::start( senf::INet4SocketAddress("127.0.0.1:23232") )
-        .name("testServer");
-
-    senf::Scheduler::instance().process();
+    cwd_ = boost::static_pointer_cast<DirectoryNode>(
+        root().shared_from_this());
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
+prefix_ senf::console::DirectoryNode & senf::console::Executor::cwd()
+    const
+{
+    return cwd_.expired() ? root() : *cwd_.lock();
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
-//#include "test.mpp"
 
 
 // Local Variables:
@@ -61,5 +56,5 @@ int main(int, char const **)
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -U testServer"
+// compile-command: "scons -u test"
 // End:

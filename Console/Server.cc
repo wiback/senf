@@ -104,7 +104,7 @@ prefix_ void senf::console::Server::removeClient(Client & client)
 prefix_ senf::console::Client::Client(ClientHandle handle, std::string const & name)
     : handle_ (handle), name_ (name), out_(::dup(handle.fd()))
 {
-    out_ << name_ << "# " << std::flush;
+    showPrompt();
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
                                         senf::membind(&Client::clientData, this) );
 }
@@ -145,9 +145,14 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
         return;
     }        
 
-    out_ << name_ << "# " << std::flush;
+    showPrompt();
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
                                         senf::membind(&Client::clientData, this) );
+}
+
+prefix_ void senf::console::Client::showPrompt()
+{
+    out_ << name_ << ":" << executor_.cwd().path() << "# " << std::flush;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

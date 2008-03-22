@@ -27,8 +27,10 @@
 #define HH_Executor_ 1
 
 // Custom includes
+#include <boost/utility.hpp>
 #include "Parse.hh"
 #include "../Utils/Logger/SenfLog.hh"
+#include "Node.hh"
 
 //#include "Executor.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -39,6 +41,7 @@ namespace console {
     /** \brief
       */
     class Executor
+        : boost::noncopyable
     {
         SENF_LOG_CLASS_AREA();
         SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
@@ -51,20 +54,32 @@ namespace console {
         struct ExitException {}; // NOT derived from std::exception !
 
         ///////////////////////////////////////////////////////////////////////////
+        //\/name Structors and default members
+        ///\{
         
+        Executor();
+
+        ///\}
+        ///////////////////////////////////////////////////////////////////////////
+
         bool operator()(ParseCommandInfo const & command, std::ostream & output);
-    
+        DirectoryNode & cwd() const;
+
     protected:
 
     private:
+        bool chdir(ParseCommandInfo::argument_value_type const & path);
 
+        DirectoryNode::weak_ptr cwd_;
+        typedef std::vector<DirectoryNode::weak_ptr> DirStack;
+        DirStack dirstack_;
     };
 
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Executor.cci"
+#include "Executor.cci"
 //#include "Executor.ct"
 //#include "Executor.cti"
 #endif

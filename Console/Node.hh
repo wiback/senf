@@ -28,9 +28,11 @@
 
 // Custom includes
 #include <map>
-#include <boost/intrusive_ptr.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 #include <boost/utility.hpp>
-#include "../Utils/intrusive_refcount.hh"
+#include <boost/range/iterator_range.hpp>
 #include "../Utils/Exception.hh"
 
 //#include "Node.mpp"
@@ -45,59 +47,77 @@ namespace console {
     /** \brief
       */
     class GenericNode 
-        : public intrusive_refcount_t<GenericNode>
+        : public boost::enable_shared_from_this<GenericNode>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef boost::intrusive_ptr<GenericNode> ptr;
+        typedef boost::shared_ptr<GenericNode> ptr;
+        typedef boost::weak_ptr<GenericNode> weak_ptr;
 
         ///////////////////////////////////////////////////////////////////////////
 
+        virtual ~GenericNode();
+
         std::string const & name() const;
-        DirectoryNode & parent() const;
+        boost::shared_ptr<DirectoryNode> parent() const;
         bool managed() const;
 
+        std::string path() const;
+
     protected:
-        explicit GenericNode(std::string const & name, bool managed = false);
+        explicit GenericNode(std::string const & name);
 
         void name(std::string const & name);
         static void name(GenericNode & node, std::string const & name);
         void parent(DirectoryNode * parent);
 
     private:
-        bool release();
-
         std::string name_;
-        bool managed_;
         DirectoryNode * parent_;
 
         friend class intrusive_refcount_base;
+        friend class DirectoryNode;
     };
 
     /** \brief
       */
     class DirectoryNode : public GenericNode
     {
-    public:
-        typedef boost::intrusive_ptr<DirectoryNode> ptr;
+        typedef std::map<std::string, GenericNode::ptr> ChildMap;
 
-        void add(std::auto_ptr<GenericNode> node, bool uniquify = true);
-        void add(GenericNode & node, bool uniquify = true);
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        typedef boost::shared_ptr<DirectoryNode> ptr;
+        typedef boost::weak_ptr<DirectoryNode> weak_ptr;
+
+        typedef boost::iterator_range<ChildMap::const_iterator> ChildrenRange;
+        typedef ChildMap::const_iterator child_iterator;
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        GenericNode & add(std::auto_ptr<GenericNode> node, bool uniquify = true);
 
         DirectoryNode & operator[](std::string const & name) const;
         CommandNode & operator()(std::string const & name) const;
 
+        DirectoryNode & mkdir(std::string const & name);
+        
+        ChildrenRange children() const;
+
     protected:
-        explicit DirectoryNode(std::string const & name, bool managed = false);
+        explicit DirectoryNode(std::string const & name);
 
     private:
         void add(GenericNode::ptr node, bool uniquify);
         GenericNode & lookup(std::string const & name) const;
 
-        typedef std::map<std::string, GenericNode::ptr> ChildMap;
         ChildMap children_;
+
+        friend DirectoryNode & root();
     };
 
     struct DuplicateNodeNameException : public senf::Exception
@@ -111,14 +131,22 @@ namespace console {
     class CommandNode : public GenericNode
     {
     public:
-        typedef boost::intrusive_ptr<CommandNode> ptr;
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        typedef boost::shared_ptr<CommandNode> ptr;
+        typedef boost::weak_ptr<CommandNode> weak_ptr;
+
+        ///////////////////////////////////////////////////////////////////////////
 
     protected:
-        explicit CommandNode(std::string const & name, bool managed = false);
+        explicit CommandNode(std::string const & name);
 
     private:
 
     };
+
+    DirectoryNode & root();
 
 }}
 
