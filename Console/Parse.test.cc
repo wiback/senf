@@ -51,6 +51,11 @@ namespace
 
         std::ostream & os_;
 
+        void pushDirectory(std::vector<std::string> const & path)
+            { os_ << "pushDirectory( " << senf::stringJoin(path,"/") << " )\n"; }
+        void popDirectory()
+            { os_ << "popDirectory()\n"; }
+
         void beginCommand(std::vector<std::string> const & command) 
             { os_ << "beginCommand( " << senf::stringJoin(command, "/") << " )\n"; }
         void endCommand() 
@@ -71,10 +76,12 @@ namespace
             { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
         void builtin_ls(std::vector<std::string> const & path)
             { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
+        void builtin_exit()
+            { os_ << "builtin_exit()\n"; }
     };
 }
 
-BOOST_AUTO_UNIT_TEST(commandParser)
+BOOST_AUTO_UNIT_TEST(commandGrammar)
 {
     senf::console::detail::CommandGrammar<TestParseDispatcher>::Context context;
     std::stringstream ss;
@@ -117,9 +124,15 @@ BOOST_AUTO_UNIT_TEST(commandParser)
                        "endCommand()\n" );
 }
 
-BOOST_AUTO_UNIT_TEST(singleCommandParser)
+namespace {
+    senf::console::ParseCommandInfo info;
+    void setInfo(senf::console::ParseCommandInfo const & i)
+    { info = i; }
+}
+
+BOOST_AUTO_UNIT_TEST(commandParser)
 {
-    senf::console::SingleCommandParser parser;
+    senf::console::CommandParser parser;
 
     char const text[] = 
         "# Comment\n"
@@ -131,8 +144,7 @@ BOOST_AUTO_UNIT_TEST(singleCommandParser)
         "                x\"01 02 # Inner comment\n"
         "                   0304\"";
 
-    senf::console::ParseCommandInfo info;
-    BOOST_CHECK( parser.parseCommand(text, info) );
+    BOOST_CHECK( parser.parse(text, &setInfo) );
 
     char const * path[] = { "doo", "bii", "doo" };
 

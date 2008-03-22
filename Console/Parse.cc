@@ -67,68 +67,76 @@ namespace detail {
 
     struct ParseDispatcher
     {
-        ParseDispatcher()
-            : info_ (0) {}
-        
-        ParseCommandInfo * info_;
-
-        ParseCommandInfo & info() {
-            SENF_ASSERT( info_ );
-            return *info_;
-        }
+        ParseCommandInfo info_;
+        CommandParser::Callback cb_;
 
         struct BindInfo {
-            BindInfo( ParseDispatcher & d, ParseCommandInfo & i)
-                : dispatcher (d) { dispatcher.info_ = &i; }
-
-            ~BindInfo() { dispatcher.info_  = 0; }
+            BindInfo( ParseDispatcher & d, CommandParser::Callback cb)
+                : dispatcher (d) { dispatcher.cb_ = cb; }
+            ~BindInfo() { dispatcher.cb_  = 0; }
 
             ParseDispatcher & dispatcher;
         };
 
         void beginCommand(std::vector<std::string> & command)
-            { ParserAccess::init(info());
-              ParserAccess::setCommand(info(), command); }
+            { ParserAccess::init(info_);
+              ParserAccess::setCommand(info_, command); }
 
         void endCommand()
-            { ParserAccess::finalize(info()); }
+            { ParserAccess::finalize(info_); cb_(info_); }
 
         void pushArgument(std::string const & argument)
-            { ParserAccess::startArgument(info()); 
-              ParserAccess::addToken(info(), ParserAccess::makeToken(argument)); 
-              ParserAccess::endArgument(info()); }
+            { ParserAccess::startArgument(info_); 
+              ParserAccess::addToken(info_, ParserAccess::makeToken(argument)); 
+              ParserAccess::endArgument(info_); }
 
         void openGroup()
-            { ParserAccess::startArgument(info()); }
+            { ParserAccess::startArgument(info_); }
 
         void closeGroup()
-            { ParserAccess::endArgument(info()); }
+            { ParserAccess::endArgument(info_); }
 
         void pushPunctuation(std::string const & token)
-            { ParserAccess::addToken(info(), ParserAccess::makeToken(token)); }
+            { ParserAccess::addToken(info_, ParserAccess::makeToken(token)); }
 
         void pushWord(std::string const & token)
-            { ParserAccess::addToken(info(), ParserAccess::makeToken(token)); }
+            { ParserAccess::addToken(info_, ParserAccess::makeToken(token)); }
 
         void builtin_cd(std::vector<std::string> & path)
-            { ParserAccess::init(info());
-              ParserAccess::setBuiltin(info(), ParseCommandInfo::BuiltinCD);
+            { ParserAccess::init(info_);
+              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinCD);
               setBuiltinPathArg(path);
-              ParserAccess::finalize(info()); }
+              ParserAccess::finalize(info_); cb_(info_); }
 
         void builtin_ls(std::vector<std::string> & path)
-            { ParserAccess::init(info());
-              ParserAccess::setBuiltin(info(), ParseCommandInfo::BuiltinLS);
+            { ParserAccess::init(info_);
+              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinLS);
               setBuiltinPathArg(path);
-              ParserAccess::finalize(info()); }
+              ParserAccess::finalize(info_); cb_(info_); }
+
+        void pushDirectory(std::vector<std::string> & path)
+            { ParserAccess::init(info_);
+              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinPUSHD);
+              setBuiltinPathArg(path);
+              ParserAccess::finalize(info_); cb_(info_); }
+
+        void popDirectory()
+            { ParserAccess::init(info_);
+              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinPOPD);
+              ParserAccess::finalize(info_); cb_(info_); }
+        
+        void builtin_exit()
+            { ParserAccess::init(info_);
+              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinEXIT);
+              ParserAccess::finalize(info_); cb_(info_); }
 
         void setBuiltinPathArg(std::vector<std::string> & path)
             {
-                ParserAccess::startArgument(info());
+                ParserAccess::startArgument(info_);
                 for (std::vector<std::string>::const_iterator i (path.begin());
                      i != path.end(); ++i)
-                    ParserAccess::addToken(info(), ParserAccess::makeToken(*i));
-                ParserAccess::endArgument(info());
+                    ParserAccess::addToken(info_, ParserAccess::makeToken(*i));
+                ParserAccess::endArgument(info_);
             }
     };
 
@@ -139,13 +147,13 @@ namespace detail {
 
 struct senf::console::ParseCommandInfo::MakeRange
 {
+    typedef ParseCommandInfo::argument_value_type result_type;
+    
     MakeRange() {}
     MakeRange(ParseCommandInfo::token_iterator b) : b_ (b) {}
-
+    
     senf::console::ParseCommandInfo::token_iterator b_;
-
-    typedef ParseCommandInfo::argument_value_type result_type;
-        
+    
     result_type operator()(TempArguments::iterator::value_type const & v) const {
         return result_type( b_ + v.first, b_ + v.second );
     }
@@ -170,7 +178,7 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
     if (info.builtin() == ParseCommandInfo::NoBuiltin) 
         stream << senf::stringJoin(info.commandPath(), "/");
     else {
-        char const * builtins[] = { "", "cd", "ls" };
+        char const * builtins[] = { "", "cd", "ls", "pushd", "popd", "exit" };
         stream << "builtin-" << builtins[info.builtin()];
     }
         
@@ -192,9 +200,9 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::SingleCommandParser
+// senf::console::CommandParser
 
-struct senf::console::SingleCommandParser::Impl
+struct senf::console::CommandParser::Impl
 {
     typedef detail::CommandGrammar<detail::ParseDispatcher> Grammar;
 
@@ -205,17 +213,17 @@ struct senf::console::SingleCommandParser::Impl
     Impl() : dispatcher(), context(), grammar(dispatcher, context) {}
 };
 
-prefix_ senf::console::SingleCommandParser::SingleCommandParser()
+prefix_ senf::console::CommandParser::CommandParser()
     : impl_ (new Impl())
 {}
 
-prefix_ senf::console::SingleCommandParser::~SingleCommandParser()
+prefix_ senf::console::CommandParser::~CommandParser()
 {}
 
-prefix_ bool senf::console::SingleCommandParser::parseCommand(std::string command,
-                                                              ParseCommandInfo & info)
+prefix_ bool senf::console::CommandParser::parse(std::string command, Callback cb)
 {
-    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
+    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, cb);
+#   warning don't use c_str() in parse and add istream parser. Implement error checking in parser.
     return boost::spirit::parse( command.c_str(), 
                                  impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
                                  impl().grammar.use_parser<Impl::Grammar::SkipParser>()

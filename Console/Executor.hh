@@ -48,6 +48,8 @@ namespace console {
 
         typedef boost::iterator_range< ParseCommandInfo::argument_iterator> Arguments;
 
+        struct ExitException {}; // NOT derived from std::exception !
+
         ///////////////////////////////////////////////////////////////////////////
         
         bool operator()(ParseCommandInfo const & command, std::ostream & output);

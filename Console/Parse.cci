@@ -117,7 +117,7 @@ prefix_ void senf::console::ParseCommandInfo::addToken(ArgumentToken const & tok
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::SingleCommandParser
 
-prefix_ senf::console::SingleCommandParser::Impl & senf::console::SingleCommandParser::impl()
+prefix_ senf::console::CommandParser::Impl & senf::console::CommandParser::impl()
 {
     SENF_ASSERT(impl_);
     return *impl_;

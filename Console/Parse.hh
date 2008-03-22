@@ -32,6 +32,7 @@
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/function.hpp>
 
 //#include "Parse.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -83,7 +84,12 @@ namespace console {
         typedef boost::iterator_range<argument_iterator> ArgumentsRange;
         typedef boost::iterator_range<token_iterator> TokensRange;
 
-        enum BuiltinCommand { NoBuiltin, BuiltinCD, BuiltinLS };
+        enum BuiltinCommand { NoBuiltin, 
+                              BuiltinCD, 
+                              BuiltinLS, 
+                              BuiltinPUSHD, 
+                              BuiltinPOPD,
+                              BuiltinEXIT };
 
         BuiltinCommand builtin() const;
         CommandPathRange commandPath() const;
@@ -120,24 +126,26 @@ namespace console {
 
     /** \brief
       */
-    class SingleCommandParser
+    class CommandParser
         : boost::noncopyable
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        typedef boost::function<void (ParseCommandInfo const &)> Callback;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-        SingleCommandParser();
-        ~SingleCommandParser();
+        CommandParser();
+        ~CommandParser();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        bool parseCommand(std::string command, ParseCommandInfo & info);
+        bool parse(std::string command, Callback cb);
 
     private:
         struct Impl;

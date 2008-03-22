@@ -32,6 +32,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <boost/bind.hpp>
 #include "../Utils/senfassert.hh"
 #include "../Utils/membind.hh"
 #include "../Utils/Logger/SenfLog.hh"
@@ -134,17 +135,15 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
     tail_ = helper->tail();
     boost::trim(data); // Gets rid of superfluous  \r or \n characters
 
-    if (data == "exit") {
+    try {
+        if (! parser_.parse(data, boost::bind<void>(boost::ref(executor_), _1, boost::ref(out_))))
+            out_ << "syntax error" << std::endl;
+    }
+    catch (Executor::ExitException &) {
         // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
         stopClient();
         return;
-    }
-        
-    ParseCommandInfo command;
-    if (parser_.parseCommand(data, command))
-        executor_(command, out_);
-    else 
-        out_ << "syntax error" << std::endl;
+    }        
 
     out_ << name_ << "# " << std::flush;
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),

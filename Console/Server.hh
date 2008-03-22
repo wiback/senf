@@ -116,7 +116,7 @@ namespace console {
         
         ClientHandle handle_;
         std::string tail_;
-        SingleCommandParser parser_;
+        CommandParser parser_;
         Executor executor_;
         std::string name_;
 

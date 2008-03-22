@@ -124,25 +124,22 @@ namespace detail {
             : public boost::spirit::grammar_def< boost::spirit::rule<Scanner>, 
                                                  boost::spirit::rule<Scanner> >
         {
-            boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token;
-            boost::spirit::rule<Scanner> punctuation, hexbyte, balanced_tokens, simple_argument;
-            boost::spirit::rule<Scanner> complex_argument, builtin, skip;
-
+            boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
+                punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin, 
+                skip, commands, block, statement;
             boost::spirit::chset<> special_p, punctuation_p, space_p, invalid_p, word_p;
-
             boost::spirit::distinct_parser<> keyword_p;
 
             definition(CommandGrammar const & self) : 
 
                 // Characters with a special meaning within the parser
-                // and characters reserved for future extensions
                 special_p ("/(){};"),
 
                 // Characters which are returned as punctuation tokens
                 punctuation_p (",="),
 
-                // Whitespace characters (we don't want newlines in there)
-                space_p (" \t"),
+                // Whitespace characters
+                space_p (" \t\n\r"),
 
                 // Invalid characters: All chars below \x20 (space) which are not space_p
                 // (don't put a \0 in the chset<> argument *string* ...)
@@ -160,6 +157,15 @@ namespace detail {
                 using namespace boost::spirit;
                 typedef ParseDispatcher PD;
 
+                commands
+                    =  * command
+                    ;
+
+                command 
+                    =    builtin
+                    |    path  >> ( block | statement )
+                    ;
+
                 builtin
                     =    keyword_p("cd") 
                       >> path
@@ -167,16 +173,23 @@ namespace detail {
                                                                   boost::ref(self.context.path)) ]
                     |    keyword_p("ls") 
                       >> ! path
-                      >> eps_p                    [ self.dispatch(&PD::builtin_cd,
+                      >> eps_p                    [ self.dispatch(&PD::builtin_ls,
                                                                   boost::ref(self.context.path)) ]
+                    |    keyword_p("exit")        [ self.dispatch(&PD::builtin_exit) ]
                     ;
 
-                command 
-                    =    builtin
-                    |    path                     [ self.dispatch(&PD::beginCommand, 
+                block
+                    =    ch_p('{')                [ self.dispatch(&PD::pushDirectory,
+                                                                  boost::ref(self.context.path)) ]
+                      >> * command 
+                      >> ch_p('}')                [ self.dispatch(&PD::popDirectory) ]
+                    ;
+
+                statement
+                    = eps_p                       [ self.dispatch(&PD::beginCommand, 
                                                                   boost::ref(self.context.path)) ]
                       >> * argument
-                      >> ! ch_p(';')
+                      >> (ch_p(';') | end_p)
                       >> eps_p                    [ self.dispatch(&PD::endCommand) ]
                     ;
 
@@ -194,8 +207,8 @@ namespace detail {
                 
                 complex_argument        // Argument consists of multiple tokens
                     =    ch_p('(')                [ self.dispatch(&PD::openGroup) ]
-                       >> * token
-                       >> ch_p(')')               [ self.dispatch(&PD::closeGroup) ]
+                      >> * token
+                      >> ch_p(')')                [ self.dispatch(&PD::closeGroup) ]
                     ;
 
                 string                  // Returns value in context.str
@@ -253,8 +266,7 @@ namespace detail {
                     ;
 
                 skip
-                    =    space_p
-                    |    comment_p('#')
+                    =    space_p | comment_p('#')
                     ;
 
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(command,1);
@@ -272,7 +284,7 @@ namespace detail {
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(builtin,1);
 
                 start_parsers(
-                    command,            // CommandParser
+                    commands,           // CommandParser
                     skip                // SkipParser
                 );
 

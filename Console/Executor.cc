@@ -40,6 +40,8 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
 {
 #   warning Implement Executor::operator()
     SENF_LOG(( "Executing: " << command ));
+    if (command.builtin() == ParseCommandInfo::BuiltinEXIT)
+        throw ExitException();
     return true;
 }
 
