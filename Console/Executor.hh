@@ -68,7 +68,9 @@ namespace console {
     protected:
 
     private:
-        bool chdir(ParseCommandInfo::argument_value_type const & path);
+        DirectoryNode & traverseTo(ParseCommandInfo::argument_value_type const & path);
+
+        struct InvalidDirectoryException {};
 
         DirectoryNode::weak_ptr cwd_;
         DirectoryNode::weak_ptr oldCwd_;

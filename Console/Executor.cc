@@ -32,6 +32,17 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace {
+
+    struct TraverseTokens {
+        typedef std::string const & result_type;
+        result_type operator()(senf::console::ArgumentToken const & token) const {
+            return token.value();
+        }
+    };
+    
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Executor
 
@@ -40,96 +51,85 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
 {
     SENF_LOG(( "Executing: " << command ));
 
+    ///\fixme Whenever checking cwd_.expired(), we also need to check, wether
+    /// the node is still connected to the root.
     if (cwd_.expired())
-        cwd_ = boost::static_pointer_cast<DirectoryNode>(
-            root().shared_from_this());
+        cwd_ = root().thisptr();
 
-    switch(command.builtin()) {
-    case ParseCommandInfo::NoBuiltin :
-        break;
-
-    case ParseCommandInfo::BuiltinCD :
-        if ( command.arguments() &&
-             ! chdir(command.arguments().begin()[0]) )
-            output << "invalid directory\n";
-        break;
-
-    case ParseCommandInfo::BuiltinLS :
-        for (DirectoryNode::child_iterator i (cwd().children().begin());
-             i != cwd().children().end(); ++i) {
-            output << i->first;
-            try {
-                (void) cwd()(i->first);
+    try {
+        switch(command.builtin()) {
+        case ParseCommandInfo::NoBuiltin :
+            break;
+            
+        case ParseCommandInfo::BuiltinCD :
+            if ( command.arguments() ) {
+                if (command.arguments().begin()->size() == 1 
+                    && command.arguments().begin()->begin()->value() == "-") {
+                    if (oldCwd_.expired()) {
+                        oldCwd_ = cwd_;
+                        cwd_ = root().thisptr();
+                    } else
+                        swap(cwd_, oldCwd_);
+                }
+                else {
+                    oldCwd_ = cwd_;
+                    cwd_ = traverseTo(command.arguments().begin()[0]).thisptr();
+                }
             }
-            catch (std::bad_cast &) {
-                output << "/";
+            break;
+            
+        case ParseCommandInfo::BuiltinLS : {
+            DirectoryNode const & dir (
+                command.arguments().empty() ? cwd() : traverseTo(command.arguments().begin()[0]));
+            for (DirectoryNode::child_iterator i (dir.children().begin());
+                 i != dir.children().end(); ++i) {
+                output << i->first;
+                if (boost::dynamic_pointer_cast<DirectoryNode>(i->second))
+                    output << "/";
+                output << "\n";
             }
-            output << "\n";
+            break;
         }
-        break;
 
-    case ParseCommandInfo::BuiltinPUSHD :
-        dirstack_.push_back(cwd_);
-        if ( command.arguments()
-             && ! chdir(command.arguments().begin()[0]) )
-            output << "invalid directory\n";
-        break;
-
-    case ParseCommandInfo::BuiltinPOPD :
-        if (! dirstack_.empty()) {
-            cwd_ = dirstack_.back();
-            dirstack_.pop_back();
+        case ParseCommandInfo::BuiltinPUSHD :
+            dirstack_.push_back(cwd_);
+            if ( command.arguments() )
+                cwd_ = traverseTo(command.arguments().begin()[0]).thisptr();
+            break;
+            
+        case ParseCommandInfo::BuiltinPOPD :
+            if (! dirstack_.empty()) {
+                cwd_ = dirstack_.back();
+                dirstack_.pop_back();
+            }
+            break;
+            
+        case ParseCommandInfo::BuiltinEXIT :
+            throw ExitException();
         }
-        break;
-
-    case ParseCommandInfo::BuiltinEXIT :
-        throw ExitException();
+    }
+    catch (InvalidDirectoryException &) {
+        output << "invalid directory" << std::endl;
     }
     return true;
 }
 
-prefix_ bool senf::console::Executor::chdir(ParseCommandInfo::argument_value_type const & path)
+prefix_ senf::console::DirectoryNode &
+senf::console::Executor::traverseTo(ParseCommandInfo::argument_value_type const & path)
 {
-    if (path.size() == 1 && path.begin()->value() == "-") {
-        if (oldCwd_.expired()) {
-            oldCwd_ = cwd_;
-            cwd_ = boost::static_pointer_cast<DirectoryNode>(
-                root().shared_from_this());
-        } else
-            swap(cwd_, oldCwd_);
+    try {
+        return dynamic_cast<DirectoryNode&>(
+            cwd().traverse(
+                boost::make_iterator_range(
+                    boost::make_transform_iterator(path.begin(), TraverseTokens()),
+                    boost::make_transform_iterator(path.end(), TraverseTokens()))));
     }
-    else {
-        try {
-            DirectoryNode::ptr dir (cwd_.lock());
-            ParseCommandInfo::token_iterator i (path.begin());
-            ParseCommandInfo::token_iterator const i_end (path.end());
-            if (i != i_end && i->value().empty()) {
-                dir = boost::static_pointer_cast<DirectoryNode>(
-                    root().shared_from_this());
-                ++ i;
-            }
-            for (; i != i_end; ++i) {
-                if (i->value() == "..") {
-                    dir = dir->parent(); 
-                    if (! dir)
-                        dir = boost::static_pointer_cast<DirectoryNode>(
-                            root().shared_from_this());
-                }
-                else if (! i->value().empty() && i->value() != ".")
-                    dir = boost::static_pointer_cast<DirectoryNode>(
-                        (*dir)[i->value()].shared_from_this());
-            }
-            oldCwd_ = cwd_;
-            cwd_ = dir;
-        }
-        catch (std::bad_cast &) {
-            return false;
-        }
-        catch (UnknownNodeNameException &) {
-            return false;
-        }
+    catch (std::bad_cast &) {
+        throw InvalidDirectoryException();
     }
-    return true;
+    catch (UnknownNodeNameException &) {
+        throw InvalidDirectoryException();
+    }
 }
         
 ///////////////////////////////cc.e////////////////////////////////////////

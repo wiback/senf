@@ -45,7 +45,9 @@ prefix_ std::string const & senf::console::GenericNode::name()
 
 prefix_ senf::console::GenericNode::GenericNode(std::string const & name)
     : name_ (name), parent_ (0)
-{}
+{
+    ///\fixme Provide a default name if 'name' is empty ?
+}
 
 prefix_ void senf::console::GenericNode::name(std::string const & name)
 {
@@ -64,6 +66,17 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode> senf::console::GenericNo
         parent_ ? parent_->shared_from_this() : ptr() );
 }
 
+prefix_ senf::console::GenericNode::ptr senf::console::GenericNode::thisptr()
+{
+    return shared_from_this();
+}
+
+prefix_ senf::console::GenericNode::cptr senf::console::GenericNode::thisptr()
+    const
+{
+    return shared_from_this();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::DirectoryNode
 
@@ -79,14 +92,14 @@ prefix_ senf::console::DirectoryNode &
 senf::console::DirectoryNode::operator[](std::string const & name)
     const
 {
-    return dynamic_cast<DirectoryNode&>(lookup(name));
+    return dynamic_cast<DirectoryNode&>(get(name));
 }
 
 prefix_ senf::console::CommandNode &
 senf::console::DirectoryNode::operator()(std::string const & name)
     const
 {
-    return dynamic_cast<CommandNode&>(lookup(name));
+    return dynamic_cast<CommandNode&>(get(name));
 }
 
 prefix_ senf::console::DirectoryNode &
@@ -106,12 +119,34 @@ prefix_ senf::console::DirectoryNode::DirectoryNode(std::string const & name)
     : GenericNode(name)
 {}
 
+prefix_ senf::console::DirectoryNode::ptr senf::console::DirectoryNode::thisptr()
+{
+    return boost::static_pointer_cast<DirectoryNode>(shared_from_this());
+}
+
+prefix_ senf::console::DirectoryNode::cptr senf::console::DirectoryNode::thisptr()
+    const
+{
+    return boost::static_pointer_cast<DirectoryNode const>(shared_from_this());
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandNode
 
 prefix_ senf::console::CommandNode::CommandNode(std::string const & name)
     : GenericNode(name)
 {}
+
+prefix_ senf::console::CommandNode::ptr senf::console::CommandNode::thisptr()
+{
+    return boost::static_pointer_cast<CommandNode>(shared_from_this());
+}
+
+prefix_ senf::console::CommandNode::cptr senf::console::CommandNode::thisptr()
+    const
+{
+    return boost::static_pointer_cast<CommandNode const>(shared_from_this());
+}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

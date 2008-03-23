@@ -280,9 +280,8 @@ namespace detail {
 
                 abspath
                     =    ch_p('/')                [ push_back_a(self.context.path, "") ]
-                      >> ! (    (   word          [ push_back_a(self.context.path) ] 
-                                  % ch_p('/') )
-                             >> ( ! ch_p('/')     [ push_back_a(self.context.path,"") ] ) )
+                      >> ( relpath
+                         | eps_p                  [ push_back_a(self.context.path, "") ] )
                     ;
 
                 balanced_tokens 

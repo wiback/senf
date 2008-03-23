@@ -54,6 +54,7 @@ namespace console {
         // Types
 
         typedef boost::shared_ptr<GenericNode> ptr;
+        typedef boost::shared_ptr<GenericNode const> cptr;
         typedef boost::weak_ptr<GenericNode> weak_ptr;
 
         ///////////////////////////////////////////////////////////////////////////
@@ -65,6 +66,9 @@ namespace console {
         bool managed() const;
 
         std::string path() const;
+
+        ptr thisptr();
+        cptr thisptr() const;
 
     protected:
         explicit GenericNode(std::string const & name);
@@ -92,6 +96,7 @@ namespace console {
         // Types
 
         typedef boost::shared_ptr<DirectoryNode> ptr;
+        typedef boost::shared_ptr<DirectoryNode const> cptr;
         typedef boost::weak_ptr<DirectoryNode> weak_ptr;
 
         typedef boost::iterator_range<ChildMap::const_iterator> ChildrenRange;
@@ -103,17 +108,23 @@ namespace console {
 
         DirectoryNode & operator[](std::string const & name) const;
         CommandNode & operator()(std::string const & name) const;
+        GenericNode & get(std::string const & name) const;
 
         DirectoryNode & mkdir(std::string const & name);
         
         ChildrenRange children() const;
+
+        template <class ForwardRange>
+        GenericNode & traverse(ForwardRange const & range);
+
+        ptr thisptr();
+        cptr thisptr() const;
 
     protected:
         explicit DirectoryNode(std::string const & name);
 
     private:
         void add(GenericNode::ptr node, bool uniquify);
-        GenericNode & lookup(std::string const & name) const;
 
         ChildMap children_;
 
@@ -135,9 +146,13 @@ namespace console {
         // Types
 
         typedef boost::shared_ptr<CommandNode> ptr;
+        typedef boost::shared_ptr<CommandNode const> cptr;
         typedef boost::weak_ptr<CommandNode> weak_ptr;
 
         ///////////////////////////////////////////////////////////////////////////
+
+        ptr thisptr();
+        cptr thisptr() const;
 
     protected:
         explicit CommandNode(std::string const & name);
@@ -152,7 +167,7 @@ namespace console {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Node.cci"
-//#include "Node.ct"
+#include "Node.ct"
 //#include "Node.cti"
 #endif
 

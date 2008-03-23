@@ -75,7 +75,7 @@ prefix_ void senf::console::DirectoryNode::add(GenericNode::ptr node, bool uniqu
 }
 
 prefix_ senf::console::GenericNode &
-senf::console::DirectoryNode::lookup(std::string const & name)
+senf::console::DirectoryNode::get(std::string const & name)
     const
 {
     ChildMap::const_iterator i (children_.find(name));
