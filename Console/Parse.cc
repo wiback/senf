@@ -27,8 +27,11 @@
 #include "Parse.ih"
 
 // Custom includes
-#include "../Utils/String.hh"
+#include <cerrno>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/spirit/iterator/file_iterator.hpp>
+#include "../Utils/String.hh"
+#include "../Utils/Exception.hh"
 
 //#include "Parse.mpp"
 #define prefix_
@@ -223,8 +226,20 @@ prefix_ senf::console::CommandParser::~CommandParser()
 prefix_ bool senf::console::CommandParser::parse(std::string command, Callback cb)
 {
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, cb);
-#   warning don't use c_str() in parse and add istream parser. Implement error checking in parser.
-    return boost::spirit::parse( command.c_str(), 
+    return boost::spirit::parse( command.begin(), command.end(), 
+                                 impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
+                                 impl().grammar.use_parser<Impl::Grammar::SkipParser>()
+        ).full;
+}
+
+prefix_ bool senf::console::CommandParser::parseFile(std::string filename, Callback cb)
+{
+    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, cb);
+    boost::spirit::file_iterator<> i (filename);
+    if (!i) throw SystemException(ENOENT SENF_EXC_DEBUGINFO);
+    boost::spirit::file_iterator<> const i_end (i.make_end());
+    
+    return boost::spirit::parse( i, i_end, 
                                  impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
                                  impl().grammar.use_parser<Impl::Grammar::SkipParser>()
         ).full;

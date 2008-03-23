@@ -56,8 +56,16 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
 
     case ParseCommandInfo::BuiltinLS :
         for (DirectoryNode::child_iterator i (cwd().children().begin());
-             i != cwd().children().end(); ++i)
-            output << i->first << "\n";
+             i != cwd().children().end(); ++i) {
+            output << i->first;
+            try {
+                (void) cwd()(i->first);
+            }
+            catch (std::bad_cast &) {
+                output << "/";
+            }
+            output << "\n";
+        }
         break;
 
     case ParseCommandInfo::BuiltinPUSHD :
@@ -82,33 +90,44 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
 
 prefix_ bool senf::console::Executor::chdir(ParseCommandInfo::argument_value_type const & path)
 {
-    try {
-        DirectoryNode::ptr dir (cwd_.lock());
-        ParseCommandInfo::token_iterator i (path.begin());
-        ParseCommandInfo::token_iterator const i_end (path.end());
-        if (i != i_end && i->value().empty()) {
-            dir = boost::static_pointer_cast<DirectoryNode>(
+    if (path.size() == 1 && path.begin()->value() == "-") {
+        if (oldCwd_.expired()) {
+            oldCwd_ = cwd_;
+            cwd_ = boost::static_pointer_cast<DirectoryNode>(
                 root().shared_from_this());
-            ++ i;
-        }
-        for (; i != i_end; ++i) {
-            if (i->value() == "..") {
-                dir = dir->parent(); 
-                if (! dir)
-                    dir = boost::static_pointer_cast<DirectoryNode>(
-                        root().shared_from_this());
-            }
-            else if (! i->value().empty() && i->value() != ".")
+        } else
+            swap(cwd_, oldCwd_);
+    }
+    else {
+        try {
+            DirectoryNode::ptr dir (cwd_.lock());
+            ParseCommandInfo::token_iterator i (path.begin());
+            ParseCommandInfo::token_iterator const i_end (path.end());
+            if (i != i_end && i->value().empty()) {
                 dir = boost::static_pointer_cast<DirectoryNode>(
-                    (*dir)[i->value()].shared_from_this());
+                    root().shared_from_this());
+                ++ i;
+            }
+            for (; i != i_end; ++i) {
+                if (i->value() == "..") {
+                    dir = dir->parent(); 
+                    if (! dir)
+                        dir = boost::static_pointer_cast<DirectoryNode>(
+                            root().shared_from_this());
+                }
+                else if (! i->value().empty() && i->value() != ".")
+                    dir = boost::static_pointer_cast<DirectoryNode>(
+                        (*dir)[i->value()].shared_from_this());
+            }
+            oldCwd_ = cwd_;
+            cwd_ = dir;
         }
-        cwd_ = dir;
-    }
-    catch (std::bad_cast &) {
-        return false;
-    }
-    catch (UnknownNodeNameException &) {
-        return false;
+        catch (std::bad_cast &) {
+            return false;
+        }
+        catch (UnknownNodeNameException &) {
+            return false;
+        }
     }
     return true;
 }

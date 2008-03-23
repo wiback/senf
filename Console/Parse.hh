@@ -146,6 +146,7 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
 
         bool parse(std::string command, Callback cb);
+        bool parseFile(std::string filename, Callback cb);
 
     private:
         struct Impl;

@@ -71,6 +71,7 @@ namespace console {
         bool chdir(ParseCommandInfo::argument_value_type const & path);
 
         DirectoryNode::weak_ptr cwd_;
+        DirectoryNode::weak_ptr oldCwd_;
         typedef std::vector<DirectoryNode::weak_ptr> DirStack;
         DirStack dirstack_;
     };

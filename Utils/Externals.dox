@@ -11,6 +11,9 @@ namespace boost { class noncopyable {}; }
 namespace boost { class singleton_pool {}; }
 namespace boost { class totally_ordered {}; }
 namespace boost { class true_type {}; }
+namespace boost { class enable_shared_from_this {}; }
+namespace boost { namespace spirit { class grammar {}; } }
+namespace boost { namespace spirit { class grammar_def {}; } }
 namespace std { class exception {}; }
 namespace std { class string {}; }
 ///\}
