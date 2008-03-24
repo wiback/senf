@@ -59,8 +59,9 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
     try {
         switch(command.builtin()) {
         case ParseCommandInfo::NoBuiltin :
+            traverseToCommand(command.commandPath())(output, command.arguments());
             break;
-            
+
         case ParseCommandInfo::BuiltinCD :
             if ( command.arguments() ) {
                 if (command.arguments().begin()->size() == 1 
@@ -111,11 +112,14 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
     catch (InvalidDirectoryException &) {
         output << "invalid directory" << std::endl;
     }
+    catch (InvalidCommandException &) {
+        output << "invalid command" << std::endl;
+    }
     return true;
 }
 
 prefix_ senf::console::DirectoryNode &
-senf::console::Executor::traverseTo(ParseCommandInfo::argument_value_type const & path)
+senf::console::Executor::traverseTo (ParseCommandInfo::argument_value_type const & path)
 {
     try {
         return dynamic_cast<DirectoryNode&>(
@@ -130,6 +134,20 @@ senf::console::Executor::traverseTo(ParseCommandInfo::argument_value_type const 
     catch (UnknownNodeNameException &) {
         throw InvalidDirectoryException();
     }
+}
+
+prefix_ senf::console::CommandNode &
+senf::console::Executor::traverseToCommand(ParseCommandInfo::CommandPathRange const & path)
+{
+    try {
+        return dynamic_cast<CommandNode &>( cwd().traverse(path) );
+    }
+    catch (std::bad_cast &) {
+        throw InvalidCommandException();
+    }
+    catch (UnknownNodeNameException &) {
+        throw InvalidCommandException();
+    }        
 }
         
 ///////////////////////////////cc.e////////////////////////////////////////

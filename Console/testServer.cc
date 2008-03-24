@@ -29,6 +29,7 @@
 // Custom includes
 #include <iostream>
 #include "Server.hh"
+#include "Node.hh"
 #include "../Scheduler/Scheduler.hh"
 #include "../Utils/Logger/SenfLog.hh"
 
@@ -36,12 +37,34 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace {
+    struct MyCommand : public senf::console::CommandNode
+    {
+        MyCommand(std::string name) : senf::console::CommandNode(name) {}
+        void operator()(std::ostream & output, 
+                        senf::console::ParseCommandInfo::ArgumentsRange const & arguments) {
+            senf::console::ParseCommandInfo::argument_iterator i (arguments.begin());
+            senf::console::ParseCommandInfo::argument_iterator i_end (arguments.end());
+            for (; i != i_end; ++i) {
+                senf::console::ParseCommandInfo::token_iterator j (i->begin());
+                senf::console::ParseCommandInfo::token_iterator j_end (i->end());
+                for (; j != j_end; ++j) 
+                    output << j->value() << ' ';
+            }
+            output << "\n";
+        }
+    };
+}
+
 int main(int, char const **)
 {
     senf::log::ConsoleTarget::instance().route< senf::SenfLog, senf::log::NOTICE >();
 
     senf::console::root().mkdir("network").mkdir("eth0");
     senf::console::root().mkdir("server");
+
+    senf::console::root()["network"].add(
+        std::auto_ptr<senf::console::GenericNode>(new MyCommand("route")));
 
     senf::console::Server::start( senf::INet4SocketAddress("127.0.0.1:23232") )
         .name("testServer");

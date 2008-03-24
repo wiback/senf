@@ -34,6 +34,7 @@
 #include <boost/utility.hpp>
 #include <boost/range/iterator_range.hpp>
 #include "../Utils/Exception.hh"
+#include "Parse.hh"
 
 //#include "Node.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -150,6 +151,9 @@ namespace console {
         typedef boost::weak_ptr<CommandNode> weak_ptr;
 
         ///////////////////////////////////////////////////////////////////////////
+
+        virtual void operator()(std::ostream & output, 
+                                ParseCommandInfo::ArgumentsRange const & arguments) = 0;
 
         ptr thisptr();
         cptr thisptr() const;

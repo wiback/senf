@@ -69,8 +69,10 @@ namespace console {
 
     private:
         DirectoryNode & traverseTo(ParseCommandInfo::argument_value_type const & path);
+        CommandNode & traverseToCommand(ParseCommandInfo::CommandPathRange const & path);
 
         struct InvalidDirectoryException {};
+        struct InvalidCommandException {};
 
         DirectoryNode::weak_ptr cwd_;
         DirectoryNode::weak_ptr oldCwd_;

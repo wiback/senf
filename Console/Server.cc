@@ -143,7 +143,13 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
         // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
         stopClient();
         return;
-    }        
+    }
+    catch (std::exception & ex) {
+        out_ << ex.what() << std::endl;
+    }
+    catch (...) {
+        out_ << "unidentified error (unknown exception thrown)" << std::endl;
+    }
 
     showPrompt();
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
