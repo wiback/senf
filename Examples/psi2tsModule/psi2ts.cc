@@ -43,8 +43,9 @@ namespace {
 }
 
 
-prefix_ Psi2TsModule::Psi2TsModule()
+prefix_ Psi2TsModule::Psi2TsModule(unsigned pid)
 {
+    pid_ = pid;
     continuity_counter_ = 0;
     state_ = IDLE;
     route( input, output );
@@ -62,12 +63,17 @@ prefix_ void Psi2TsModule::onRequest()
     do {
         senf::TransportPacket tsPacket (senf::TransportPacket::create(188));
         tsPacket->continuity_counter() = next_continuity_counter();
+        tsPacket->pid() = pid_;
         if (state_ == IDLE) {
             state_ = PROC;
             tsPacket->pusi() = true;
         }
         senf::PacketData & payloadData (tsPacket.next().data());
-        std::copy( begin, end, payloadData.begin() );
+        std::fill(
+                std::copy( begin, end, payloadData.begin() ),
+                payloadData.end(),
+                0xff
+        );
         tsPacket.finalize();
         
         output.write( tsPacket);
