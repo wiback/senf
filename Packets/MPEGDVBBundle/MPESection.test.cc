@@ -184,7 +184,7 @@ BOOST_AUTO_UNIT_TEST(MPESection_create)
             0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x52, 0xdf,
             0x6a, 0x1d
     };    
-    BOOST_CHECK( equal( sec.data().begin(), sec.data().end(), sec_data ));    
+    BOOST_CHECK( equal( sec.data().begin(), sec.data().end(), sec_data ));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
