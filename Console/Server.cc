@@ -126,11 +126,6 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
         return;
     }
 
-    ///\fixme Fix Client::clientData implementation
-    /// Remove the 'dup' needed here so we don't close the same fd twice (see Client constructor)
-    /// Make output non-blocking
-    /// Don't register a new ReadHelper every round
-
     std::string data (tail_ + helper->data());
     tail_ = helper->tail();
     boost::trim(data); // Gets rid of superfluous  \r or \n characters

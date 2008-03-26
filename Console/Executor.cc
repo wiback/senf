@@ -51,9 +51,7 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
 {
     SENF_LOG(( "Executing: " << command ));
 
-    ///\fixme Whenever checking cwd_.expired(), we also need to check, wether
-    /// the node is still connected to the root.
-    if (cwd_.expired())
+    if (cwd_.expired() || ! cwd().active())
         cwd_ = root().thisptr();
 
     try {
@@ -66,7 +64,7 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
             if ( command.arguments() ) {
                 if (command.arguments().begin()->size() == 1 
                     && command.arguments().begin()->begin()->value() == "-") {
-                    if (oldCwd_.expired()) {
+                    if (oldCwd_.expired() || ! oldCwd_.lock()->active()) {
                         oldCwd_ = cwd_;
                         cwd_ = root().thisptr();
                     } else
@@ -107,6 +105,23 @@ prefix_ bool senf::console::Executor::operator()(ParseCommandInfo const & comman
             
         case ParseCommandInfo::BuiltinEXIT :
             throw ExitException();
+
+        case ParseCommandInfo::BuiltinHELP :
+            try {
+                GenericNode & node (
+                    command.arguments() 
+                    ? cwd().traverse(
+                        boost::make_iterator_range(
+                            boost::make_transform_iterator(command.arguments().begin()[0].begin(), TraverseTokens()),
+                            boost::make_transform_iterator(command.arguments().begin()[0].end(), TraverseTokens())))
+                    : cwd() );
+                node.help(output);
+                output << std::flush;
+            }
+            catch (UnknownNodeNameException &) {
+                output << "invalid path" << std::endl;
+            }
+            break;
         }
     }
     catch (InvalidDirectoryException &) {

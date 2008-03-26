@@ -33,11 +33,16 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/utility.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/typeof/typeof.hpp>
+#include <boost/type_traits/remove_reference.hpp>
 #include "../Utils/Exception.hh"
+#include "../Utils/mpl.hh"
 #include "Parse.hh"
 
 //#include "Node.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
+
+#include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
 
 namespace senf {
 namespace console {
@@ -64,21 +69,28 @@ namespace console {
 
         std::string const & name() const;
         boost::shared_ptr<DirectoryNode> parent() const;
-        bool managed() const;
 
         std::string path() const;
+
+        ptr unlink();
+
+        bool active() const;
+
+        void help(std::ostream & output) const;
 
         ptr thisptr();
         cptr thisptr() const;
 
     protected:
-        explicit GenericNode(std::string const & name);
+        GenericNode();
 
         void name(std::string const & name);
         static void name(GenericNode & node, std::string const & name);
         void parent(DirectoryNode * parent);
 
     private:
+        virtual void v_help(std::ostream & output) const = 0;
+
         std::string name_;
         DirectoryNode * parent_;
 
@@ -86,7 +98,27 @@ namespace console {
         friend class DirectoryNode;
     };
 
+    class SimpleCommandNode;
+
+    template <class Object>
+    struct NodeCreateTraits
+    {
+        typedef BOOST_TYPEOF_TPL( senf_console_add_node( 
+                                      * static_cast<DirectoryNode *>(0),
+                                      * static_cast<std::string const *>(0),
+                                      * static_cast<Object const *>(0),
+                                      0) ) result_type;
+
+        typedef typename boost::remove_reference<result_type>::type NodeType;
+
+        struct Creator {
+            static NodeType & create(DirectoryNode & node, std::string const & name, 
+                                     Object const & ob);
+        };
+    };
+
     /** \brief
+        ///\fixme Provide a default name for added nodes if 'name' is empty ?
       */
     class DirectoryNode : public GenericNode
     {
@@ -104,8 +136,27 @@ namespace console {
         typedef ChildMap::const_iterator child_iterator;
 
         ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///\{
 
-        GenericNode & add(std::auto_ptr<GenericNode> node, bool uniquify = true);
+        static std::auto_ptr<DirectoryNode> create();
+
+        ///\}
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Children
+        ///\{
+
+        template <class NodeType>
+        NodeType & add(std::string const & name, std::auto_ptr<NodeType> node);
+
+        template <class NodeType>
+        NodeType & add(std::string const & name, boost::shared_ptr<NodeType> node);
+
+        template <class Object>
+        typename NodeCreateTraits<Object>::NodeType & add (std::string const & name, 
+                                                           Object const & ob);
+
+        GenericNode::ptr remove(std::string const & name);
 
         DirectoryNode & operator[](std::string const & name) const;
         CommandNode & operator()(std::string const & name) const;
@@ -115,28 +166,43 @@ namespace console {
         
         ChildrenRange children() const;
 
+        ///\}
+        ///////////////////////////////////////////////////////////////////////////
+
         template <class ForwardRange>
         GenericNode & traverse(ForwardRange const & range);
+
+        DirectoryNode & doc(std::string const & doc);
 
         ptr thisptr();
         cptr thisptr() const;
 
     protected:
-        explicit DirectoryNode(std::string const & name);
+        DirectoryNode();
 
     private:
-        void add(GenericNode::ptr node, bool uniquify);
+        void add(GenericNode::ptr node);
+        virtual void v_help(std::ostream & output) const;
 
         ChildMap children_;
+        std::string doc_;
 
         friend DirectoryNode & root();
     };
 
-    struct DuplicateNodeNameException : public senf::Exception
-    { DuplicateNodeNameException() : senf::Exception("Duplicate node name") {}};
+    BOOST_TYPEOF_REGISTER_TYPE(DirectoryNode);
 
     struct UnknownNodeNameException : public senf::Exception
     { UnknownNodeNameException() : senf::Exception("Unknown node name") {}};
+
+    // We need this specialization since we cannot passe auto_ptr via const & !!
+    template <class Type>
+    struct NodeCreateTraits< std::auto_ptr<Type> >
+    {};
+
+    template <class Type>
+    struct NodeCreateTraits< boost::shared_ptr<Type> >
+    {};
 
     /** \brief
       */
@@ -150,20 +216,57 @@ namespace console {
         typedef boost::shared_ptr<CommandNode const> cptr;
         typedef boost::weak_ptr<CommandNode> weak_ptr;
 
+        typedef ParseCommandInfo::ArgumentsRange Arguments;
+
         ///////////////////////////////////////////////////////////////////////////
 
-        virtual void operator()(std::ostream & output, 
-                                ParseCommandInfo::ArgumentsRange const & arguments) = 0;
+        virtual void operator()(std::ostream & output, Arguments const & arguments) = 0;
 
         ptr thisptr();
         cptr thisptr() const;
 
     protected:
-        explicit CommandNode(std::string const & name);
+        CommandNode();
 
     private:
-
     };
+
+    /** \brief
+      */
+    class SimpleCommandNode : public CommandNode
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        typedef boost::function<void (std::ostream &, Arguments const &)> Function;
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        virtual void operator()(std::ostream & output, Arguments const & arguments);
+
+        ptr thisptr();
+        cptr thisptr() const;
+
+        static std::auto_ptr<SimpleCommandNode> create(Function const & fn);
+
+        SimpleCommandNode & doc(std::string const & doc);
+
+    protected:
+        SimpleCommandNode(Function const & fn);
+
+    private:
+        virtual void v_help(std::ostream & output) const;
+
+        Function fn_;
+        std::string doc_;
+    };
+
+    template <class Function>
+    SimpleCommandNode & senf_console_add_node(DirectoryNode & node, std::string const & name, 
+                                              Function const & fn, ...);
+
+    BOOST_TYPEOF_REGISTER_TYPE(SimpleCommandNode);
 
     DirectoryNode & root();
 
@@ -172,7 +275,7 @@ namespace console {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Node.cci"
 #include "Node.ct"
-//#include "Node.cti"
+#include "Node.cti"
 #endif
 
 

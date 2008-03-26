@@ -51,6 +51,7 @@ namespace console {
     class Client;
 
     /** \brief
+        ///\fixme Use special non-blocking streambuf
       */
     class Server
         : boost::noncopyable
@@ -94,6 +95,11 @@ namespace console {
     };
     
     /** \brief
+
+        \fixme Fix Client::clientData implementation
+            Remove the 'dup' needed here so we don't close the same fd twice (see Client constructor)
+            Make output non-blocking
+            Don't register a new ReadHelper every round
      */
     class Client
         : public senf::intrusive_refcount

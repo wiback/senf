@@ -208,11 +208,16 @@ namespace detail {
                       >> path
                       >> eps_p                    [ self.dispatch(&PD::builtin_cd,
                                                                   boost::ref(self.context.path)) ]
-                    |    keyword_p("ls") 
+                    |    keyword_p("ls")
                       >> ! path
                       >> eps_p                    [ self.dispatch(&PD::builtin_ls,
                                                                   boost::ref(self.context.path)) ]
                     |    keyword_p("exit")        [ self.dispatch(&PD::builtin_exit) ]
+                    
+                    |    keyword_p("help")
+                      >> ! path
+                      >> eps_p                    [ self.dispatch(&PD::builtin_help,
+                                                                  boost::ref(self.context.path)) ]
                     ;
 
                 block

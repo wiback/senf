@@ -133,6 +133,12 @@ namespace detail {
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinEXIT);
               ParserAccess::finalize(info_); cb_(info_); }
 
+        void builtin_help(std::vector<std::string> & path)
+            { ParserAccess::init(info_);
+              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinHELP);
+              setBuiltinPathArg(path);
+              ParserAccess::finalize(info_); cb_(info_); }
+
         void setBuiltinPathArg(std::vector<std::string> & path)
             {
                 ParserAccess::startArgument(info_);
@@ -181,7 +187,7 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
     if (info.builtin() == ParseCommandInfo::NoBuiltin) 
         stream << senf::stringJoin(info.commandPath(), "/");
     else {
-        char const * builtins[] = { "", "cd", "ls", "pushd", "popd", "exit" };
+        char const * builtins[] = { "", "cd", "ls", "pushd", "popd", "exit", "help" };
         stream << "builtin-" << builtins[info.builtin()];
     }
         

@@ -43,11 +43,9 @@ prefix_ std::string const & senf::console::GenericNode::name()
     return name_;
 }
 
-prefix_ senf::console::GenericNode::GenericNode(std::string const & name)
-    : name_ (name), parent_ (0)
-{
-    ///\fixme Provide a default name if 'name' is empty ?
-}
+prefix_ senf::console::GenericNode::GenericNode()
+    : parent_ (0)
+{}
 
 prefix_ void senf::console::GenericNode::name(std::string const & name)
 {
@@ -66,6 +64,18 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode> senf::console::GenericNo
         parent_ ? parent_->shared_from_this() : ptr() );
 }
 
+prefix_ senf::console::GenericNode::ptr senf::console::GenericNode::unlink()
+{
+    SENF_ASSERT( parent() );
+    return parent()->remove(name());
+}
+
+prefix_ void senf::console::GenericNode::help(std::ostream & output)
+    const
+{
+    v_help(output);
+}
+
 prefix_ senf::console::GenericNode::ptr senf::console::GenericNode::thisptr()
 {
     return shared_from_this();
@@ -80,12 +90,10 @@ prefix_ senf::console::GenericNode::cptr senf::console::GenericNode::thisptr()
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::DirectoryNode
 
-prefix_ senf::console::GenericNode &
-senf::console::DirectoryNode::add(std::auto_ptr<GenericNode> node, bool uniquify)
+prefix_ std::auto_ptr<senf::console::DirectoryNode>
+senf::console::DirectoryNode::create()
 {
-    GenericNode::ptr p (node.release());
-    add(p, uniquify);
-    return *p;
+    return std::auto_ptr<DirectoryNode>(new DirectoryNode());
 }
 
 prefix_ senf::console::DirectoryNode &
@@ -105,8 +113,8 @@ senf::console::DirectoryNode::operator()(std::string const & name)
 prefix_ senf::console::DirectoryNode &
 senf::console::DirectoryNode::mkdir(std::string const & name)
 {
-    return static_cast<DirectoryNode &>(
-        add(std::auto_ptr<GenericNode>(new DirectoryNode(name))));
+    std::auto_ptr<DirectoryNode> node (create());
+    return add(name, node);
 }
 
 prefix_ senf::console::DirectoryNode::ChildrenRange senf::console::DirectoryNode::children()
@@ -115,9 +123,15 @@ prefix_ senf::console::DirectoryNode::ChildrenRange senf::console::DirectoryNode
     return boost::make_iterator_range(children_.begin(), children_.end());
 }
 
-prefix_ senf::console::DirectoryNode::DirectoryNode(std::string const & name)
-    : GenericNode(name)
+prefix_ senf::console::DirectoryNode::DirectoryNode()
 {}
+
+prefix_ senf::console::DirectoryNode &
+senf::console::DirectoryNode::doc(std::string const & doc)
+{
+    doc_ = doc;
+    return *this;
+}
 
 prefix_ senf::console::DirectoryNode::ptr senf::console::DirectoryNode::thisptr()
 {
@@ -133,10 +147,6 @@ prefix_ senf::console::DirectoryNode::cptr senf::console::DirectoryNode::thisptr
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandNode
 
-prefix_ senf::console::CommandNode::CommandNode(std::string const & name)
-    : GenericNode(name)
-{}
-
 prefix_ senf::console::CommandNode::ptr senf::console::CommandNode::thisptr()
 {
     return boost::static_pointer_cast<CommandNode>(shared_from_this());
@@ -146,6 +156,35 @@ prefix_ senf::console::CommandNode::cptr senf::console::CommandNode::thisptr()
     const
 {
     return boost::static_pointer_cast<CommandNode const>(shared_from_this());
+}
+
+prefix_ senf::console::CommandNode::CommandNode()
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::SimpleCommandNode
+
+prefix_ void senf::console::SimpleCommandNode::operator()(std::ostream & output,
+                                                          Arguments const & arguments)
+{
+    fn_(output, arguments);
+}
+
+prefix_ senf::console::SimpleCommandNode::SimpleCommandNode(Function const & fn)
+    : fn_ (fn)
+{}
+
+prefix_ std::auto_ptr<senf::console::SimpleCommandNode>
+senf::console::SimpleCommandNode::create(Function const & fn)
+{
+    return std::auto_ptr<SimpleCommandNode>(new SimpleCommandNode(fn));
+}
+
+prefix_ senf::console::SimpleCommandNode &
+senf::console::SimpleCommandNode::doc(std::string const & doc)
+{
+    doc_ = doc;
+    return *this;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

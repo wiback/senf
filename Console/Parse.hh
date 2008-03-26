@@ -89,7 +89,8 @@ namespace console {
                               BuiltinLS, 
                               BuiltinPUSHD, 
                               BuiltinPOPD,
-                              BuiltinEXIT };
+                              BuiltinEXIT,
+                              BuiltinHELP };
 
         BuiltinCommand builtin() const;
         CommandPathRange commandPath() const;

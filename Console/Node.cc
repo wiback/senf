@@ -34,7 +34,7 @@
 
 prefix_ senf::console::DirectoryNode & senf::console::root()
 {
-    static DirectoryNode::ptr rootNode(new DirectoryNode(""));
+    static DirectoryNode::ptr rootNode(new DirectoryNode());
     return *rootNode;
 }
 
@@ -53,15 +53,33 @@ prefix_ std::string senf::console::GenericNode::path()
     return path.empty() ? "/" : path;
 }
 
+prefix_ bool senf::console::GenericNode::active()
+    const
+{
+    cptr node (thisptr());
+    while (node->parent())
+        node = node->parent();
+    return node == root().thisptr();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //senf::console::DirectoryNode
 
-prefix_ void senf::console::DirectoryNode::add(GenericNode::ptr node, bool uniquify)
+prefix_ senf::console::GenericNode::ptr
+senf::console::DirectoryNode::remove(std::string const & name)
+{
+    ChildMap::iterator i (children_.find(name));
+    if (i == children_.end()) 
+        throw UnknownNodeNameException() << ": '" << name << "'";
+    GenericNode::ptr node (i->second);
+    children_.erase(i);
+    return node;
+}
+
+prefix_ void senf::console::DirectoryNode::add(GenericNode::ptr node)
 {
     BOOST_ASSERT( ! node->parent() );
     if (children_.find(node->name()) != children_.end()) {
-        if (! uniquify)
-            throw DuplicateNodeNameException() << ": '" << node->name() << "'";
         unsigned suffix (0);
         std::string newName;
         do {
@@ -82,6 +100,21 @@ senf::console::DirectoryNode::get(std::string const & name)
     if (i == children_.end())
         throw UnknownNodeNameException() << ": '" << name << "'";
     return *(i->second);
+}
+
+prefix_ void senf::console::DirectoryNode::v_help(std::ostream & output)
+    const
+{
+    output << doc_ << "\n";
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::SimpleCommandNode
+
+prefix_ void senf::console::SimpleCommandNode::v_help(std::ostream & output)
+    const
+{
+    output << doc_ << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

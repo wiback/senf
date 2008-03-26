@@ -78,6 +78,8 @@ namespace
             { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
         void builtin_exit()
             { os_ << "builtin_exit()\n"; }
+        void builtin_help(std::vector<std::string> const & path)
+            { os_ << "builtin_help( " << senf::stringJoin(path, "/") << " )\n"; }
     };
 }
 
