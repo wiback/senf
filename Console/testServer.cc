@@ -67,23 +67,39 @@ namespace {
         }
     };
 
+    void shutdownServer(std::ostream &,
+                        senf::console::CommandNode::Arguments const &)
+    {
+        senf::Scheduler::instance().terminate();
+        throw senf::console::Executor::ExitException();
+    }
+
 }
 
 int main(int, char const **)
 {
     senf::log::ConsoleTarget::instance().route< senf::SenfLog, senf::log::NOTICE >();
 
-    senf::console::root().doc("This is the console test application");
-    senf::console::root().mkdir("network")
+    senf::console::root()
+        .doc("This is the console test application");
+    senf::console::root()
+        .mkdir("network")
         .doc("Network related settings");
-    senf::console::root()["network"].mkdir("eth0")
+    senf::console::root()["network"]
+        .mkdir("eth0")
         .doc("Ethernet device eth0");
-    senf::console::root().mkdir("server");
-    senf::console::root()["network"].add("route", &fn)
+    senf::console::root()
+        .mkdir("server");
+    senf::console::root()["server"]
+        .add("shutdown", &shutdownServer)
+        .doc("Terminate server application");
+    senf::console::root()["network"]
+        .add("route", &fn)
         .doc("Example of a directly registered function");
 
     TestObject test;
-    senf::console::root().add("testob", test.dir)
+    senf::console::root()
+        .add("testob", test.dir)
         .doc("Example of an instance directory");
 
     senf::console::Server::start( senf::INet4SocketAddress("127.0.0.1:23232") )

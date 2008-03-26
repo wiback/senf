@@ -52,11 +52,6 @@ prefix_ void senf::console::GenericNode::name(std::string const & name)
     name_ = name;
 }
 
-prefix_ void senf::console::GenericNode::name(GenericNode & node, std::string const & name)
-{
-    node.name_ = name;
-}
-
 prefix_ boost::shared_ptr<senf::console::DirectoryNode> senf::console::GenericNode::parent()
     const
 {
@@ -66,8 +61,10 @@ prefix_ boost::shared_ptr<senf::console::DirectoryNode> senf::console::GenericNo
 
 prefix_ senf::console::GenericNode::ptr senf::console::GenericNode::unlink()
 {
-    SENF_ASSERT( parent() );
-    return parent()->remove(name());
+    if (parent_)
+        return parent()->remove(name());
+    else
+        return thisptr();
 }
 
 prefix_ void senf::console::GenericNode::help(std::ostream & output)
@@ -90,10 +87,9 @@ prefix_ senf::console::GenericNode::cptr senf::console::GenericNode::thisptr()
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::DirectoryNode
 
-prefix_ std::auto_ptr<senf::console::DirectoryNode>
-senf::console::DirectoryNode::create()
+prefix_ senf::console::DirectoryNode::ptr senf::console::DirectoryNode::create()
 {
-    return std::auto_ptr<DirectoryNode>(new DirectoryNode());
+    return ptr(new DirectoryNode());
 }
 
 prefix_ senf::console::DirectoryNode &
@@ -113,8 +109,7 @@ senf::console::DirectoryNode::operator()(std::string const & name)
 prefix_ senf::console::DirectoryNode &
 senf::console::DirectoryNode::mkdir(std::string const & name)
 {
-    std::auto_ptr<DirectoryNode> node (create());
-    return add(name, node);
+    return add(name, create());
 }
 
 prefix_ senf::console::DirectoryNode::ChildrenRange senf::console::DirectoryNode::children()
@@ -174,10 +169,10 @@ prefix_ senf::console::SimpleCommandNode::SimpleCommandNode(Function const & fn)
     : fn_ (fn)
 {}
 
-prefix_ std::auto_ptr<senf::console::SimpleCommandNode>
+prefix_ senf::console::SimpleCommandNode::ptr
 senf::console::SimpleCommandNode::create(Function const & fn)
 {
-    return std::auto_ptr<SimpleCommandNode>(new SimpleCommandNode(fn));
+    return ptr(new SimpleCommandNode(fn));
 }
 
 prefix_ senf::console::SimpleCommandNode &

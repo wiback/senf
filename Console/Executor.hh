@@ -38,7 +38,21 @@
 namespace senf {
 namespace console {
 
-    /** \brief
+    /** \brief Execute config/console commands
+
+        The Executor interprets parsed config/console commands and executes them. It manages the
+        current execution context (current directory, directory stack and so on).
+
+        The executor is normally called directly by the parser callback for each command.
+
+        Executing the built-in 'exit' command will throw Executor::ExitException. This exception
+        (which is not derived from std::exception since it's not a real exception) must be handled
+        by the caller.
+
+        All directories are managed using weak pointers. If any of the directories expires (current
+        directory, directory stack, last directory) it will be replaced with the root
+        directory. Directories expire when they are destructed or when they are detached from the
+        config tree root node.
       */
     class Executor
         : boost::noncopyable
@@ -51,7 +65,7 @@ namespace console {
 
         typedef boost::iterator_range< ParseCommandInfo::argument_iterator> Arguments;
 
-        struct ExitException {}; // NOT derived from std::exception !
+        struct ExitException {};        ///< Thrown by built-in 'exit' command
 
         ///////////////////////////////////////////////////////////////////////////
         //\/name Structors and default members
@@ -62,15 +76,19 @@ namespace console {
         ///\}
         ///////////////////////////////////////////////////////////////////////////
 
-        bool operator()(ParseCommandInfo const & command, std::ostream & output);
-        DirectoryNode & cwd() const;
+        void operator()(ParseCommandInfo const & command, std::ostream & output);
+                                        ///< Execute command
+                                        /**< Output will be written to \a output. */
+        DirectoryNode & cwd() const;    ///< Current working directory
 
     protected:
 
     private:
-        DirectoryNode & traverseTo(ParseCommandInfo::argument_value_type const & path);
-        CommandNode & traverseToCommand(ParseCommandInfo::CommandPathRange const & path);
+        GenericNode & traverseNode(ParseCommandInfo::argument_value_type const & path);
+        DirectoryNode & traverseDirectory(ParseCommandInfo::argument_value_type const & path);
+        CommandNode & traverseCommand(ParseCommandInfo::CommandPathRange const & path);
 
+        struct InvalidPathException {};
         struct InvalidDirectoryException {};
         struct InvalidCommandException {};
 

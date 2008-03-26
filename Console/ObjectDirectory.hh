@@ -37,6 +37,11 @@
 namespace senf {
 namespace console {
 
+    /** \brief Internal: Node creation helper traits (ObjectDirectory proxy)
+        
+        This class is used like NodeCreateTraits to customize the child node creation. This trait
+        class is used however by the ObjectDirectory proxy.
+     */
     template <class Owner, class Object>
     struct OwnerNodeCreateTraits
     {
@@ -54,9 +59,41 @@ namespace console {
         };
     };
     
+    /** \brief Internal: Marker base class for all ObjectDirectory proxies
+     */
     struct ObjectDirectoryBase {};
 
-    /** \brief
+    /** \brief DirectoryNode member proxy
+
+        ObjectDirectory is used whenever a class wants to manage it's own directory. The class
+        allows to declare the directory as a public member object. This allows the user of the class
+        to register the directory in the command tree. By using the proxy, the node is automatically
+        detached from the tree (and thereby destroyed) when the object (and thereby the proxy) is
+        destroyed.
+
+        \code
+        class MyClass
+        {
+        public:
+            ObjectDirectory<MyClass> configDir;
+
+            MyClass() : configDir(this) 
+            {
+                configDIr.add(...);
+            }
+        };
+        \endcode
+
+        The ObjectDirectory proxy implements 'add()' to add new children to the proxied
+        DirectoryNode. All add() variants supported by DirectoryNode are supported by
+        ObjectDirectory.
+
+        \idea This proxy could be made obsolete by allowing to allocate node objects
+            statically. This could be achieved by moving back to an intrusive_ptr implementation for
+            normal pointing needs with an added twist: Give each node a smart_ptr member pointing to
+            itself with a null deleter. This allows to create weak_ptr's to the nodes which will
+            automatically expire when the node is deleted (either statically or by the
+            intrusive_ptr).
       */
     template <class Owner>
     class ObjectDirectory : public ObjectDirectoryBase
@@ -80,20 +117,23 @@ namespace console {
         template <class Object>
         typename OwnerNodeCreateTraits<Owner, Object>::NodeType & add(std::string const & name,
                                                                       Object const & ob);
+                                        ///< Create new child node
+                                        /**< Adds a new child node to the (proxied)
+                                             DirectoryNode. How the node is added is configured
+                                             using the OwnerNodeCreateTraits template. The default
+                                             implementation just forwards the call to the proxied
+                                             directory node. */
 
-        DirectoryNode & node() const;
+        DirectoryNode & node() const;   ///< Access the proxied DirectoryNode
 
     protected:
 
     private:
-        static SimpleCommandNode & create(DirectoryNode & node, Owner * owner, 
-                                          std::string const & name, 
-                                          SimpleCommandNode::Function const & fn);
-
         DirectoryNode::ptr node_;
         Owner * owner_;
     };
 
+#ifndef DOXYGEN
     template <class Owner, class Function>
     SimpleCommandNode & senf_console_add_node(
         DirectoryNode & node, Owner & owner, std::string const & name, Function const & fn);
@@ -107,6 +147,8 @@ namespace console {
     DirectoryNode & senf_console_add_node(
         DirectoryNode & dir, std::string const & name, Node const & node, int, 
         typename boost::enable_if< boost::is_convertible<Node*, ObjectDirectoryBase*> >::type * = 0);
+#endif
+
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

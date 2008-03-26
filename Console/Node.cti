@@ -47,16 +47,6 @@ senf::console::NodeCreateTraits<Object>::Creator::create(DirectoryNode & node,
 
 template <class NodeType>
 prefix_ NodeType & senf::console::DirectoryNode::add(std::string const & name,
-                                                     std::auto_ptr<NodeType> node)
-{
-    GenericNode::ptr p (node);
-    p->name(name);
-    add(p);
-    return static_cast<NodeType &>(*p);
-}
-
-template <class NodeType>
-prefix_ NodeType & senf::console::DirectoryNode::add(std::string const & name,
                                                      boost::shared_ptr<NodeType> node)
 {
     SENF_ASSERT( ! node->parent() );

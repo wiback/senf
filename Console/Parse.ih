@@ -42,6 +42,8 @@ namespace senf {
 namespace console {
 namespace detail {
 
+#ifndef DOXYGEN
+
     struct append_action
     {
         template <class T, class Value>
@@ -348,6 +350,8 @@ namespace detail {
             }
         };
     };
+
+#endif
 
 }}}
 

@@ -50,8 +50,12 @@ namespace console {
 
     class Client;
 
-    /** \brief
-        ///\fixme Use special non-blocking streambuf
+    /** \brief Interactive console server
+
+        This class provides an interactive console TCP server.
+
+        \todo Add readline support
+        \todo Add interactivity detection using timeout
       */
     class Server
         : boost::noncopyable
@@ -69,9 +73,12 @@ namespace console {
         ~Server();
 
         static Server & start(senf::INet4SocketAddress const & address);
+                                        ///< Start server on given IPv4 address/port
         static Server & start(senf::INet6SocketAddress const & address);
+                                        ///< Start server on given IPv6 address/port
 
-        void name(std::string const & name);
+        void name(std::string const & name); ///< Set server name
+                                        /**< This information is used in the prompt string. */
 
     protected:
 
@@ -94,12 +101,18 @@ namespace console {
         friend class Client;
     };
     
-    /** \brief
+    /** \brief Server client instance
+
+        Whenever a new client connects, a new instance of this class is created. This class shows a
+        command prompt, receives the commands, parses them and then passes (using a CommandParser)
+        and passes the commands to an Executor instance.
 
         \fixme Fix Client::clientData implementation
-            Remove the 'dup' needed here so we don't close the same fd twice (see Client constructor)
-            Make output non-blocking
-            Don't register a new ReadHelper every round
+        \fixme Remove the 'dup' needed here so we don't close the same fd twice (see Client
+            constructor)
+        \fixme Make output non-blocking (use a non-blocking/discarding streambuf) and possibly set
+            socket send buffer size
+        \fixme Don't register a new ReadHelper every round
      */
     class Client
         : public senf::intrusive_refcount
@@ -111,7 +124,8 @@ namespace console {
 
         ~Client();
 
-        void stopClient();
+        void stopClient();              ///< Stop the client
+                                        /**< This will close the client socket. */
 
     protected:
         

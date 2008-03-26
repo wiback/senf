@@ -73,20 +73,27 @@ senf::console::DirectoryNode::remove(std::string const & name)
         throw UnknownNodeNameException() << ": '" << name << "'";
     GenericNode::ptr node (i->second);
     children_.erase(i);
+    node->parent_ = 0;
     return node;
 }
 
 prefix_ void senf::console::DirectoryNode::add(GenericNode::ptr node)
 {
     BOOST_ASSERT( ! node->parent() );
+    if (node->name().empty()) {
+        node->name("unnamed");
+        SENF_LOG((senf::log::MESSAGE)("Adding 'unnamed' node"));
+    }
     if (children_.find(node->name()) != children_.end()) {
         unsigned suffix (0);
         std::string newName;
         do {
             ++suffix;
-            newName = node->name() + boost::lexical_cast<std::string>(suffix);
+            newName = node->name() + "-" + boost::lexical_cast<std::string>(suffix);
         } while (children_.find(newName) != children_.end());
-        name(*node, newName);
+        SENF_LOG((senf::log::MESSAGE)("Uniquifying node '" << node->name() << "' to '" 
+                                      << newName << "'"));
+        node->name(newName);
     }
     children_.insert(std::make_pair(node->name(),node));
     node->parent_ = this;

@@ -42,12 +42,16 @@ namespace console {
 
     namespace detail { struct ParserAccess; }
 
-    /** \brief
+    /** \brief Single argument token
+
+        All command arguments are split into tokens by the parser. Each token is returned as an
+        ArgumentToken instance. 
       */
     class ArgumentToken
     {
     public:
-        std::string const & value() const;
+        std::string const & value() const; ///< String value of token
+                                        /**< This value is properly unquoted */
 
     protected:
 
@@ -59,8 +63,16 @@ namespace console {
         friend class detail::ParserAccess;
     };
 
+    /** \brief Console command
 
-    /** \brief
+        Every command parsed is returned in a ParseCommandInfo instance. This information is purely
+        taken from the parser, no semantic information is attached at this point, the config/console
+        is not involved in any why. ParseCommandInfo consist of
+        
+        \li the type of command: builtin or normal command represented by a possibly relative path
+            into the command tree.
+        \li the command
+        \li the arguments. Every argument consists of a range of ArgumentToken instances.
       */
     class ParseCommandInfo
     {
@@ -92,11 +104,22 @@ namespace console {
                               BuiltinEXIT,
                               BuiltinHELP };
 
-        BuiltinCommand builtin() const;
-        CommandPathRange commandPath() const;
-        ArgumentsRange arguments() const;
-        TokensRange tokens() const;
-        
+        BuiltinCommand builtin() const; ///< Command type
+                                        /**< \returns \c NoBuiltin, if the command is an ordinary
+                                             command, otherwise the id of the builtin command */
+        CommandPathRange commandPath() const; ///< Command path
+                                        /**< This is the path to the command if it is not a builtin
+                                             command. Every element of the returned range
+                                             constitutes one path element. If the first element is
+                                             empty, the path is an absolute path, otherwise it is
+                                             relative. If the last element is an empty string, the
+                                             path ends in a '/' char. */
+        ArgumentsRange arguments() const; ///< Command arguments
+                                        /**< The returned range contains one token range for each
+                                             agument. */
+        TokensRange tokens() const;     ///< All argument tokens
+                                        /**< The returned range contains \e all argument tokens in a
+                                             single range not divided into separate arguments. */
     protected:
 
     private:
@@ -123,9 +146,25 @@ namespace console {
         friend class detail::ParserAccess;
     };
 
+    /**< \brief Output ParseCommandInfo instance
+         \related ParseCommandInfo
+      */
     std::ostream & operator<<(std::ostream & stream, ParseCommandInfo const & info);
 
-    /** \brief
+    /** \brief Parse commands
+
+        This class implements a parser for the console/config language. It supports parsing strings
+        as well as files. For every parsed command, a callback function is called.
+
+        \implementation The implementation is based on Boost.Spirit. See the file \ref Parse.ih for
+            the formal language grammar.
+
+        \implementation Parsing an arbitrary iostream is not supported since arbitrary streams are
+            not seekable. If this is needed, it can however be provided using stream iterators and
+            some special iterator adaptors from Boost.Spirit. However, the amount of backtracking
+            needs to be analyzed before this is viable.
+
+        \todo Implement more detailed error reporting and error recovery.
       */
     class CommandParser
         : boost::noncopyable
@@ -146,8 +185,10 @@ namespace console {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        bool parse(std::string command, Callback cb);
-        bool parseFile(std::string filename, Callback cb);
+        bool parse(std::string command, Callback cb); ///< Parse string
+        bool parseFile(std::string filename, Callback cb); ///< Parse file
+                                        /**< \throws SystemException if the file cannot be
+                                             read. */
 
     private:
         struct Impl;

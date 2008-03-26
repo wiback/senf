@@ -49,7 +49,7 @@ senf::console::OwnerNodeCreateTraits<Owner,Object>::Creator::create(DirectoryNod
 
 template <class Owner>
 prefix_ senf::console::ObjectDirectory<Owner>::ObjectDirectory(Owner * owner)
-    : node_ (DirectoryNode::create().release()), owner_ (owner)
+    : node_ (DirectoryNode::create()), owner_ (owner)
 {}
 
 template <class Owner>
