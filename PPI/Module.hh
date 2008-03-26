@@ -232,7 +232,7 @@ namespace module {
                                              event to a connector defines the event as the
                                              conceptual 'source' of the data. This means, the event
                                              controls how packets are sent (Example: Routing from an
-                                             IOEVent to an output defines, that output data will be
+                                             IOEvent to an output defines, that output data will be
                                              generated whenever the event is signaled).
 
                                              This event routing allows to automatically
