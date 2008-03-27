@@ -45,8 +45,8 @@ prefix_ senf::log::Target::Target()
 prefix_ senf::log::Target::~Target()
 {
     while( ! rib_.empty()) {
-        // This is terribly slow but simplifies the area cache handling and removing a target should
-        // be quite seldom
+        // This is slow but simplifies the area cache handling and removing a target should be
+        // relatively seldom
         RIB::reverse_iterator i (rib_.rbegin());
         unroute(i->stream_, i->area_, i->level_, i->action_);
     }

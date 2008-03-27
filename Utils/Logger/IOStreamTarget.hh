@@ -73,12 +73,11 @@ namespace log {
         ///////////////////////////////////////////////////////////////////////////
 
     protected:
-
-    private:
         void v_write(boost::posix_time::ptime timestamp, std::string const & stream, 
                      std::string const & area, unsigned level, 
                      std::string const & message);
 
+    private:
         std::ostream & stream_;
         static char const * const LEVELNAMES_[8];
     };

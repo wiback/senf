@@ -73,8 +73,8 @@ prefix_ void senf::log::IOStreamTarget::v_write(boost::posix_time::ptime timesta
         stream_ << timestamp << sep;
         stream_ << "[" << LEVELNAMES_[level] << "]";
         if (area != "senf::log::DefaultArea")
-            stream_ << "[" << area << "] ";
-        stream_ << *i << "\n";
+            stream_ << "[" << area << "]";
+        stream_ << " " << *i << "\n";
         sep = '-';
     }
     stream_ << std::flush;

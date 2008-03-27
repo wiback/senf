@@ -53,6 +53,7 @@ namespace console {
 
         typedef typename boost::remove_reference<result_type>::type NodeType;
 
+        /// Internal
         struct Creator {
             static NodeType & create(DirectoryNode & node, Owner & owner, 
                                      std::string const & name, Object const & ob);

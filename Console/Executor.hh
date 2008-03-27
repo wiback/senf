@@ -65,7 +65,8 @@ namespace console {
 
         typedef boost::iterator_range< ParseCommandInfo::argument_iterator> Arguments;
 
-        struct ExitException {};        ///< Thrown by built-in 'exit' command
+        /// Thrown by built-in 'exit' command
+        struct ExitException {};        
 
         ///////////////////////////////////////////////////////////////////////////
         //\/name Structors and default members

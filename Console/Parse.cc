@@ -41,6 +41,8 @@ namespace senf {
 namespace console {
 namespace detail {
 
+#ifndef DOXYGEN
+
     struct ParserAccess
     {
         static void init(ParseCommandInfo & info)
@@ -149,10 +151,14 @@ namespace detail {
             }
     };
 
+#endif
+
 }}}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ParseCommandInfo
+
+#ifndef DOXYGEN
 
 struct senf::console::ParseCommandInfo::MakeRange
 {
@@ -167,6 +173,8 @@ struct senf::console::ParseCommandInfo::MakeRange
         return result_type( b_ + v.first, b_ + v.second );
     }
 };
+
+#endif
 
 prefix_ void senf::console::ParseCommandInfo::finalize()
 {
@@ -211,6 +219,8 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandParser
 
+#ifndef DOXYGEN
+
 struct senf::console::CommandParser::Impl
 {
     typedef detail::CommandGrammar<detail::ParseDispatcher> Grammar;
@@ -221,6 +231,8 @@ struct senf::console::CommandParser::Impl
 
     Impl() : dispatcher(), context(), grammar(dispatcher, context) {}
 };
+
+#endif
 
 prefix_ senf::console::CommandParser::CommandParser()
     : impl_ (new Impl())

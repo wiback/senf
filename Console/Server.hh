@@ -41,6 +41,7 @@
 #include "Parse.hh"
 #include "Executor.hh"
 #include "../Socket/Protocols/INet/INetAddressing.hh"
+#include "../Utils/Logger.hh"
 
 //#include "Server.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -113,10 +114,17 @@ namespace console {
         \fixme Make output non-blocking (use a non-blocking/discarding streambuf) and possibly set
             socket send buffer size
         \fixme Don't register a new ReadHelper every round
+        \fixme Ensure, that output errors (or any errors) in the console don't terminate the
+            application
      */
     class Client
-        : public senf::intrusive_refcount
+        : public senf::intrusive_refcount, 
+          private boost::base_from_member< boost::iostreams::stream<boost::iostreams::file_descriptor_sink> >,
+          public senf::log::IOStreamTarget
     {
+        typedef boost::base_from_member< 
+            boost::iostreams::stream<boost::iostreams::file_descriptor_sink> > out_t;
+
         SENF_LOG_CLASS_AREA();
         SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
     public:
@@ -134,15 +142,17 @@ namespace console {
 
         void clientData(ReadHelper<ClientHandle>::ptr helper);
         void showPrompt();
+
+        virtual void v_write(boost::posix_time::ptime timestamp, std::string const & stream, 
+                             std::string const & area, unsigned level, 
+                             std::string const & message);
         
         ClientHandle handle_;
         std::string tail_;
         CommandParser parser_;
         Executor executor_;
         std::string name_;
-
-        typedef boost::iostreams::stream<boost::iostreams::file_descriptor_sink> fdostream;
-        fdostream out_;
+        unsigned promptLen_;
 
         friend class Server;
     };

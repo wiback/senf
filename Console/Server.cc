@@ -102,11 +102,13 @@ prefix_ void senf::console::Server::removeClient(Client & client)
 // senf::console::Client
 
 prefix_ senf::console::Client::Client(ClientHandle handle, std::string const & name)
-    : handle_ (handle), name_ (name), out_(::dup(handle.fd()))
+    : out_t(::dup(handle.fd())), senf::log::IOStreamTarget(out_t::member),
+      handle_ (handle), name_ (name), promptLen_(0)
 {
     showPrompt();
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
                                         senf::membind(&Client::clientData, this) );
+    route< senf::SenfLog, senf::log::NOTICE >();
 }
 
 prefix_ senf::console::Client::~Client()
@@ -120,6 +122,7 @@ prefix_ void senf::console::Client::stopClient()
 
 prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr helper)
 {
+    promptLen_ = 0;
     if (helper->error() || handle_.eof()) {
         // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
         stopClient();
@@ -131,8 +134,9 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
     boost::trim(data); // Gets rid of superfluous  \r or \n characters
 
     try {
-        if (! parser_.parse(data, boost::bind<void>(boost::ref(executor_), _1, boost::ref(out_))))
-            out_ << "syntax error" << std::endl;
+        if (! parser_.parse(data, boost::bind<void>(boost::ref(executor_), _1, 
+                                                    boost::ref(out_t::member))))
+            out_t::member << "syntax error" << std::endl;
     }
     catch (Executor::ExitException &) {
         // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
@@ -140,10 +144,10 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
         return;
     }
     catch (std::exception & ex) {
-        out_ << ex.what() << std::endl;
+        out_t::member << ex.what() << std::endl;
     }
     catch (...) {
-        out_ << "unidentified error (unknown exception thrown)" << std::endl;
+        out_t::member << "unidentified error (unknown exception thrown)" << std::endl;
     }
 
     showPrompt();
@@ -153,7 +157,21 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
 
 prefix_ void senf::console::Client::showPrompt()
 {
-    out_ << name_ << ":" << executor_.cwd().path() << "# " << std::flush;
+    std::string path (executor_.cwd().path());
+    out_t::member << name_ << ":" << path << "# " << std::flush;
+    promptLen_ = name_.size() + 1 + path.size() + 1;
+}
+
+prefix_ void senf::console::Client::v_write(boost::posix_time::ptime timestamp,
+                                            std::string const & stream,
+                                            std::string const & area, unsigned level,
+                                            std::string const & message)
+{
+    if (promptLen_)
+        out_t::member << '\r' << std::string(' ', promptLen_) << '\r';
+    IOStreamTarget::v_write(timestamp, stream, area, level, message);
+    if (promptLen_)
+        showPrompt();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
