@@ -43,8 +43,6 @@
 
 namespace 
 {
-    
-
     struct TestParseDispatcher 
     {
         TestParseDispatcher(std::ostream & os) : os_ (os) {}
@@ -75,7 +73,7 @@ namespace
         void builtin_cd(std::vector<std::string> const & path)
             { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
         void builtin_ls(std::vector<std::string> const & path)
-            { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
+            { os_ << "builtin_ls( " << senf::stringJoin(path, "/") << " )\n"; }
         void builtin_exit()
             { os_ << "builtin_exit()\n"; }
         void builtin_help(std::vector<std::string> const & path)
@@ -100,7 +98,12 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
         "                (a,b,c (huhu))"
         "                \"foo\\\"bar\" #\n"
         "                x\"01 02 # Inner comment\n"
-        "                   0304\"";
+        "                   0304\";"
+        "ls /foo/bar;"
+        "cd /foo/bar;"
+        "exit;"
+        "foo/bar/ { ls; }"
+        "help /foo/bar";
 
     BOOST_CHECK( boost::spirit::parse( 
                      text, 
@@ -123,7 +126,14 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
                        "closeGroup()\n"
                        "pushArgument( foo\"bar )\n"
                        "pushArgument( \x01\x02\x03\x04 )\n"
-                       "endCommand()\n" );
+                       "endCommand()\n"
+                       "builtin_ls( /foo/bar )\n"
+                       "builtin_cd( /foo/bar )\n"
+                       "builtin_exit()\n"
+                       "pushDirectory( foo/bar/ )\n"
+                       "builtin_ls(  )\n"
+                       "popDirectory()\n"
+                       "builtin_help( /foo/bar )\n" );
 }
 
 namespace {

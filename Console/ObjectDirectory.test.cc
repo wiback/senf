@@ -27,6 +27,7 @@
 //#include "ObjectDirectory.test.ih"
 
 // Custom includes
+#include <sstream>
 #include "ObjectDirectory.hh"
 
 #include <boost/test/auto_unit_test.hpp>
@@ -35,8 +36,33 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(ownerDirectory)
-{}
+namespace {
+    struct TestObject {
+        typedef TestObject Self;
+
+        senf::console::ObjectDirectory<Self> dir;
+        TestObject() : dir(this) {
+            dir.add("member", &Self::member);
+        }
+
+        void member(std::ostream & os, senf::console::CommandNode::Arguments const &) {
+            os << "member";
+        }
+    };
+}
+
+BOOST_AUTO_UNIT_TEST(objectDirectory)
+{
+    {
+        TestObject ob;
+        senf::console::root().add("ob",ob.dir);
+        std::stringstream ss;
+        senf::console::ParseCommandInfo info;
+        senf::console::root()["ob"]("member")(ss, info.arguments());
+        BOOST_CHECK_EQUAL( ss.str(), "member" );
+    }
+    BOOST_CHECK_THROW( senf::console::root()["ob"], senf::console::UnknownNodeNameException );
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

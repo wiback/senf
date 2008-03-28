@@ -21,32 +21,43 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Server inline non-template implementation */
+    \brief Server internal header */
 
-#include "Server.ih"
+#ifndef IH_Server_
+#define IH_Server_ 1
 
 // Custom includes
+#include <boost/iostreams/concepts.hpp>
+#include <boost/iostreams/stream.hpp>
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////ih.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::NonblockingSocketSink
+namespace senf {
+namespace console {
+namespace detail {
 
-prefix_ senf::console::detail::NonblockingSocketSink::NonblockingSocketSink(Handle handle)
-    : handle_ (handle)
-{}
+    class NonblockingSocketSink 
+        : public boost::iostreams::sink
+    {
+    public:
+        typedef ClientSocketHandle< 
+            MakeSocketPolicy<StreamFramingPolicy,
+                             WriteablePolicy,
+                             ConnectedCommunicationPolicy>::policy > Handle;
 
-///////////////////////////////////////////////////////////////////////////
-// senf::console::Server
+        NonblockingSocketSink(Handle handle);
+        std::streamsize write(const char * s, std::streamsize n);
+        
+    private:
+        Handle handle_;
+    };
 
-prefix_ void senf::console::Server::name(std::string const & name)
-{
-    name_ = name;
-}
+    typedef boost::iostreams::stream<NonblockingSocketSink> NonblockingSocketOStream;
 
-///////////////////////////////cci.e///////////////////////////////////////
-#undef prefix_
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
 
 
 // Local Variables:

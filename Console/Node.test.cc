@@ -27,7 +27,9 @@
 //#include "Node.test.ih"
 
 // Custom includes
+#include <sstream>
 #include "Node.hh"
+#include <boost/iterator/transform_iterator.hpp>
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -35,8 +37,136 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(node)
-{}
+BOOST_AUTO_UNIT_TEST(gnericNode)
+{
+    senf::console::GenericNode & node (
+        senf::console::root().mkdir("dir1").mkdir("dir2").doc("help info"));
+    senf::console::GenericNode::weak_ptr wp (node.thisptr());
+
+    BOOST_CHECK_EQUAL( node.name(), "dir2" );
+    BOOST_CHECK( node.parent() );
+    BOOST_CHECK_EQUAL( node.path(), "/dir1/dir2" );
+    BOOST_CHECK( node.active() );
+    std::stringstream ss;
+    node.help(ss);
+    BOOST_CHECK_EQUAL( ss.str(), "help info\n" );
+    
+    {
+        senf::console::GenericNode::ptr p (senf::console::root()["dir1"].unlink());
+        BOOST_CHECK( ! node.active() );
+        BOOST_CHECK( ! wp.expired() );
+    }
+    BOOST_CHECK( wp.expired() );
+}
+
+namespace {
+    void callback(std::ostream & os, senf::console::SimpleCommandNode::Arguments arguments)
+    {
+        os << "callback";
+    }
+
+    template <class T>
+    struct select1st {
+        typedef T result_type;
+        template <class U> result_type operator()(U const & u) const { return u.first; }
+    };
+}
+
+BOOST_AUTO_UNIT_TEST(directoryNode)
+{
+    senf::console::DirectoryNode::ptr p (senf::console::DirectoryNode::create());
+
+    BOOST_CHECK( & senf::console::root().add("dir1", p) == p.get() );
+
+    senf::console::SimpleCommandNode & fnnode (
+        senf::console::root().add( "fn", senf::console::SimpleCommandNode::create(&callback) ));
+    BOOST_CHECK( &senf::console::root()["dir1"] == p.get() );
+    BOOST_CHECK_THROW( senf::console::root()["dir2"], senf::console::UnknownNodeNameException );
+    BOOST_CHECK_THROW( senf::console::root()("dir1"), std::bad_cast );
+    BOOST_CHECK( &senf::console::root()("fn") == &fnnode );
+    BOOST_CHECK_THROW( senf::console::root()("fn2"), senf::console::UnknownNodeNameException );
+    BOOST_CHECK_THROW( senf::console::root()["fn"], std::bad_cast );
+    BOOST_CHECK( &senf::console::root().get("dir1") == p.get() );
+    
+    senf::console::root().mkdir("dir2").mkdir("dir3");
+    char const * const children[] = { "dir1", "dir2", "fn" };
+    BOOST_CHECK_EQUAL_COLLECTIONS( 
+        boost::make_transform_iterator(senf::console::root().children().begin(), 
+                                       select1st<std::string const &>()),
+        boost::make_transform_iterator(senf::console::root().children().end(),
+                                       select1st<std::string const &>()),
+        children, 
+        children+sizeof(children)/sizeof(children[0]) );
+
+    char const * const path[] = { "..", "dir2", "dir3" };
+    BOOST_CHECK( &senf::console::root()["dir1"].traverse( boost::make_iterator_range(
+                                                              path, 
+                                                              path+sizeof(path)/sizeof(path[0])) )
+                 == &senf::console::root()["dir2"]["dir3"] );
+
+    p->doc("test doc");
+    std::stringstream ss;
+    p->help(ss);
+    BOOST_CHECK_EQUAL( ss.str(), "test doc\n" );
+
+    BOOST_CHECK( senf::console::root().remove("dir1") == p );
+    senf::console::root().remove("dir2");
+    senf::console::root().remove("fn");
+
+    BOOST_CHECK_EQUAL( senf::console::root().children().size(), 0u );
+}
+
+namespace {
+    struct Functor {
+        void operator()(std::ostream & os, 
+                        senf::console::SimpleCommandNode::Arguments const &) {
+            os << "functor";
+        }
+    };
+}
+
+BOOST_AUTO_UNIT_TEST(senfConsoleAddNode)
+{
+    senf::console::root().add("fn1", &callback);
+    senf::console::root().add("fn2", Functor());
+    
+    senf::console::ParseCommandInfo info;
+
+    {
+        std::stringstream ss;
+        senf::console::root()("fn1")(ss, info.arguments());
+        BOOST_CHECK_EQUAL( ss.str(), "callback" );
+    }
+
+    {
+        std::stringstream ss;
+        senf::console::root()("fn2")(ss, info.arguments());
+        BOOST_CHECK_EQUAL( ss.str(), "functor" );
+    }
+    
+    senf::console::root().remove("fn1");
+    senf::console::root().remove("fn2");
+}
+
+BOOST_AUTO_UNIT_TEST(simpleCommandNode)
+{
+    senf::console::root().add("fn", senf::console::SimpleCommandNode::create(&callback))
+        .doc("help text");
+    {
+        std::stringstream ss;
+        senf::console::ParseCommandInfo info;
+        senf::console::root()("fn")(ss, info.arguments());
+        BOOST_CHECK_EQUAL( ss.str(), "callback" );
+    }
+    
+    {
+        std::stringstream ss;
+        senf::console::root().get("fn").help(ss);
+        BOOST_CHECK_EQUAL( ss.str(), "help text\n" );
+    }
+
+    senf::console::root().remove("fn");
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

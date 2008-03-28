@@ -44,6 +44,9 @@ namespace detail {
 
 #ifndef DOXYGEN
 
+    ///////////////////////////////////////////////////////////////////////////
+    // append_a
+
     struct append_action
     {
         template <class T, class Value>
@@ -58,16 +61,15 @@ namespace detail {
     template <class T>
     inline boost::spirit::ref_value_actor<T, append_action> 
     append_a(T & ref)
-    {
-        return boost::spirit::ref_value_actor<T, append_action>(ref);
-    }
+    { return boost::spirit::ref_value_actor<T, append_action>(ref); }
     
     template <class T, class Value>
     inline boost::spirit::ref_const_ref_actor<T, Value, append_action> 
     append_a(T & ref, Value const & value)
-    {
-        return boost::spirit::ref_const_ref_actor<T, Value, append_action>(ref, value);
-    }
+    { return boost::spirit::ref_const_ref_actor<T, Value, append_action>(ref, value); }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Grammar
 
     template <class ParseDispatcher>
     struct CommandGrammar : boost::spirit::grammar<CommandGrammar<ParseDispatcher> >
@@ -165,7 +167,7 @@ namespace detail {
                 // Syntax summary:
                 // This is EBNF with some minor tweaks to accommodate C++ syntax
                 //
-                //   * and +    precede their argument
+                //   * and +    like EBNF but they precede their argument
                 //   >>         is followed by
                 //   !          optional
                 //   a % b      match any number of a's separated by b
@@ -190,7 +192,7 @@ namespace detail {
                 //
                 // Aligned to the right at column 50 are semantic actions.
                 //
-                // For clarity, I have used 'ch_p' explicitly throughout even though it is auxiliary
+                // For clarity, I have used 'ch_p' explicitly throughout even though it is optional
                 // in most cases.
                 //
                 // More info is in the Boost.Spirit documentation
@@ -350,6 +352,8 @@ namespace detail {
             }
         };
     };
+
+
 
 #endif
 

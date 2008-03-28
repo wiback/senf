@@ -24,7 +24,7 @@
     \brief Server non-inline non-template implementation */
 
 #include "Server.hh"
-//#include "Server.ih"
+#include "Server.ih"
 
 // Custom includes
 #include <unistd.h>
@@ -40,6 +40,25 @@
 //#include "Server.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::NonBlockingSocketSink
+
+prefix_ std::streamsize senf::console::detail::NonblockingSocketSink::write(const char * s,
+                                                                            std::streamsize n)
+{
+    try {
+        if (handle_.writeable()) 
+            handle_.write(s, s+n);
+    }
+    catch (SystemException & ex) {
+        ;
+    }
+    return n;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::Server
 
 prefix_ senf::console::Server &
 senf::console::Server::start(senf::INet4SocketAddress const & address)
@@ -60,9 +79,6 @@ senf::console::Server::start(senf::INet6SocketAddress const & address)
                  "Console server started at " << address ));
     return *instance_;
 }
-
-///////////////////////////////////////////////////////////////////////////
-// senf::console::Server
 
 boost::scoped_ptr<senf::console::Server> senf::console::Server::instance_;
 
@@ -102,7 +118,7 @@ prefix_ void senf::console::Server::removeClient(Client & client)
 // senf::console::Client
 
 prefix_ senf::console::Client::Client(ClientHandle handle, std::string const & name)
-    : out_t(::dup(handle.fd())), senf::log::IOStreamTarget(out_t::member),
+    : out_t(handle), senf::log::IOStreamTarget(out_t::member),
       handle_ (handle), name_ (name), promptLen_(0)
 {
     showPrompt();
@@ -132,6 +148,11 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
     std::string data (tail_ + helper->data());
     tail_ = helper->tail();
     boost::trim(data); // Gets rid of superfluous  \r or \n characters
+
+    if (data.empty())
+        data = lastCommand_;
+    else
+        lastCommand_ = data;
 
     try {
         if (! parser_.parse(data, boost::bind<void>(boost::ref(executor_), _1, 

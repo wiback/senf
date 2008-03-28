@@ -370,13 +370,18 @@ namespace console {
         typedef boost::function<void (std::ostream &, Arguments const &)> Function;
 
         ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///\{
+
+        static ptr create(Function const & fn);
+
+        ///\}
+        ///////////////////////////////////////////////////////////////////////////
 
         virtual void operator()(std::ostream & output, Arguments const & arguments);
 
         ptr thisptr();
         cptr thisptr() const;
-
-        static ptr create(Function const & fn);
 
         SimpleCommandNode & doc(std::string const & doc);
 

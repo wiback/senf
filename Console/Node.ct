@@ -42,19 +42,19 @@ senf::console::DirectoryNode::traverse(ForwardRange const & range)
     DirectoryNode::ptr dir (thisptr());
     const_iterator i (boost::begin(range));
     const_iterator const i_end (boost::end(range));
-    if (i != i_end && i->empty()) {
+    if (i != i_end && *i == std::string("")) {
         dir = root().thisptr();
         ++ i;
     }
     while (i != i_end) {
         const_iterator next_i (i);
         ++ next_i;
-        if (*i == "..") {
+        if (*i == std::string("..")) {
             dir = dir->parent();
             if (! dir)
                 dir = root().thisptr();
         }
-        else if (! i->empty()  && *i != ".") {
+        else if (*i != std::string("") && *i != std::string(".")) {
             if (next_i == i_end)
                 return dir->get(*i);
             else {

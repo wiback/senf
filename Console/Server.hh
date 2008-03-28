@@ -31,8 +31,6 @@
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/iostreams/device/file_descriptor.hpp>
-#include <boost/iostreams/stream.hpp>
 #include "../Utils/intrusive_refcount.hh"
 #include "../Socket/Protocols/INet/TCPSocketHandle.hh"
 #include "../Socket/ServerSocketHandle.hh"
@@ -44,6 +42,7 @@
 #include "../Utils/Logger.hh"
 
 //#include "Server.mpp"
+#include "Server.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -109,21 +108,16 @@ namespace console {
         and passes the commands to an Executor instance.
 
         \fixme Fix Client::clientData implementation
-        \fixme Remove the 'dup' needed here so we don't close the same fd twice (see Client
-            constructor)
-        \fixme Make output non-blocking (use a non-blocking/discarding streambuf) and possibly set
-            socket send buffer size
         \fixme Don't register a new ReadHelper every round
         \fixme Ensure, that output errors (or any errors) in the console don't terminate the
             application
      */
     class Client
         : public senf::intrusive_refcount, 
-          private boost::base_from_member< boost::iostreams::stream<boost::iostreams::file_descriptor_sink> >,
+          private boost::base_from_member< detail::NonblockingSocketOStream >,
           public senf::log::IOStreamTarget
     {
-        typedef boost::base_from_member< 
-            boost::iostreams::stream<boost::iostreams::file_descriptor_sink> > out_t;
+        typedef boost::base_from_member< detail::NonblockingSocketOStream > out_t;
 
         SENF_LOG_CLASS_AREA();
         SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
@@ -153,6 +147,7 @@ namespace console {
         Executor executor_;
         std::string name_;
         unsigned promptLen_;
+        std::string lastCommand_;
 
         friend class Server;
     };
