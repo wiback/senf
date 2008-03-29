@@ -58,7 +58,7 @@ namespace console {
         : boost::noncopyable
     {
         SENF_LOG_CLASS_AREA();
-        SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
+        SENF_LOG_DEFAULT_LEVEL( senf::log::VERBOSE );
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types

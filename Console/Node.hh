@@ -23,6 +23,171 @@
 /** \file
     \brief Node public header */
 
+/** \defgroup node_tree The console/config file-system node tree
+    
+    The console/config node tree is the central data-structure of the library. Into this tree, all
+    commands and parameters are entered. The tree is then exposed using a file-system like
+    interface.
+    
+    \autotoc
+
+    \section console_tree The tree
+
+    \subsection console_nodes Node types
+
+    The console/config library tree consists of two basic node types:
+    
+    \li senf::console::DirectoryNode provides internal nodes with an arbitrary number of children
+    \li senf::console::CommandNode describes a command entry in the tree
+
+    senf::console::CommandNode is the base-class of all command nodes of which there are several,
+    depending on the type of command.
+
+    There is a single root node, the senf::console::DirectoryNode called senf::console::root(). From
+    this node, the tree is traversed.
+
+    All nodes are allocated on the heap and are managed using a smart pointer.
+    
+    \subsection console_manipulate Manipulating the node tree
+
+    There are several ways to add nodes to the tree:
+
+    \li A senf::console::DirectoryNode can be added using senf::console::DirectoryNode::mkdir().
+    \li An arbitrary node can be created and then (possibly later) added to the tree using the
+        corresponding senf::console::DirectoryNode::add() overload.
+    \li A senf::console::CommandNode is normally added to the tree by directly adding a callback
+        using one of the overloaded senf::console::DirectoryNode::add() members.
+
+    When directly adding a node callback, the type of node added depends on the type of
+    callback. The callback types which can be added are listed at \ref console_callbacks.
+    
+    \code
+    void callback(std::ostream & os, senf::console::Arguments const & args) { ... }
+    // ...
+    myDirectory.add("foo",&callback);
+    \endcode
+
+    Every node is identified among it's siblings by it's name. The name of the node is set when
+    adding the node to the tree. If the name is empty or non-unique, a unique name will be
+    automatically provided.
+
+    To remove a node from the tree, just use the nodes senf::console::GenericNode::unlink()
+    member. This call removes the node from it's parent and returns a (smart) node pointer.
+
+    \li If you ignore the return value, the node (and it's children) will be deleted.
+    \li Alternatively, you may store away the node and re-attach it later.
+    \li An node (or subtree) can be moved to a different place by unlinking the node at it's old
+        place and re-adding it at it's new location.
+    \li To rename a node, unlink and re-add it with a different name.
+
+    \code
+    myDirectory.add("bar", myDirectory("foo").unlink());
+    \endcode
+
+    \subsection console_node_param Assigning additional node parameters
+
+    Depending on the node type added, additional node parameters may be set. For example, every node
+    has a documentation parameter which is used by the online-help system. To assign these
+    parameters, the node exposes corresponding member functions. Since
+    senf::console::DirectoryNode::add() returns the newly added node by reference, additional
+    parameters may just be added to the end of the add command:
+    \code
+    myDirectory.add("foo",&fooCallback).doc("The foo method");
+    \endcode
+    Since the parameter setters all return the node reference, additional parameters may just be
+    added to the end of the command.
+    
+    \subsection console_tree_traverse Traversing the tree
+
+    The simplest way to access tree elements is to save the return value of the
+    senf::console::DirectoryNode::add() members. However, saving the reference will not ensure, that
+    the node is not removed. If the node might be removed from the tree, you should use a smart
+    pointer (either <tt>ptr</tt> or <tt>weak_ptr</tt>) to hold the node.
+
+    Another possibility is to traverse the tree explicitly. For this purpose, the operators '[]' and
+    '()' have been overloaded in senf::console::DirectoryNode.
+    \code
+    senf::console::root()["myDirectory"]("foo")
+    \endcode
+    The '[]' operator will return a senf::console::DirectoryNode whereas '()' will return a
+    senf::console::CommandNode. If the node is not found or is not of the correct type, an exception
+    will be raised.
+
+    \section console_object_dir Assigning a directory to an object instance
+
+    Most objects will register several commands. So it makes sense for these objects to manage their
+    own directory. Since directories are however allocated on the heap, they cannot be directly
+    added to a class. To facilitate this usage, the senf::console::ObjectDirectory is used. This
+    class provides a senf::console::DirectoryNode facade. Internally, it automatically creates a
+    senf::console::DirectoryNode to which all calls are forwarded.
+
+    The senf::console::ObjectDirectory member should be declared public. This allows the user of the
+    class to add the node to the tree.
+
+    \section console_long_example Example
+
+    The following is a more complete example. It uses most of the features you will be using from
+    the console library.
+
+    \code
+    // Define callback function.
+    void mycommand(std::ostream & os, senf::console::Arguments const & args)
+    {
+        // ...
+        os << "!! Important message ...\n";
+    }
+
+    class SomeClass
+    {
+    public:
+        // Declare a directory node (proxy) for use by this class. This must be public so we can add
+        // it to the node tree later.
+        senf::console::ObjectDirectory<SomeClass> dir;
+
+        SomeClass() : dir(this) 
+        {
+            // You may document the directory here or later when adding it to the tree
+            dir.doc("Manager for something");
+
+            // Add a member function (the pointer-to-member is automatically bound to this instance)
+            dir.add("member", &SomeClass::member)
+                .doc("Do the member operation");
+        }
+
+        void member(std::ostream & os, senf::console::Arguments const & args)
+        {
+            // ...
+        }
+    };
+
+    int main(int, char**)
+    {
+        // Provide global documentation
+        senf::console::root()
+            .doc("This is someServer server");
+
+        // Add a new directory to the root and document it. All the mutators return the node object
+        // itself so operations can be chained.
+        senf::console::DirectoryNode & mydir (
+                .mkdir("myserver")
+                .doc("My server specific directory"));
+
+        // Add a command to that directory
+        mydir.add("mycommand", &mycommand)
+            .doc("mycommand <foo> [<bar>]\n\n"
+                 "If <bar> is given, flurgle the <foo>, otherwise burgle it");
+
+        // Create a SomeClass instance and add it's directory.
+        SomeClass someClass;
+        mydir.add("someClass", someClass.dir);
+
+        // Start the interactive console server
+        senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, 23232u))
+            .name("someServer");
+    }
+    \endcode
+ */
+
 #ifndef HH_Node_
 #define HH_Node_ 1
 
@@ -65,6 +230,8 @@ namespace console {
 
         Every active (non-orphaned) node (except the root() node) has a non-empty node name. This
         name is assigned to the node when adding the node to the tree.
+
+        \ingroup node_tree
       */
     class GenericNode 
         : public boost::enable_shared_from_this<GenericNode>
@@ -168,6 +335,8 @@ namespace console {
         '-n' where n is a number starting at 1. If the name is empty, int is set to 'unnamed' and
         then uniquified as above. Automatically providing unique names simplifies adding
         configuration/console support to generic components.
+
+        \ingroup node_tree
       */
     class DirectoryNode : public GenericNode
     {
@@ -319,6 +488,8 @@ namespace console {
 
         To execute a command, CommandNode::operator()() is called. This abstract virtual function
         must be implemented in a derived class.
+
+        \ingroup node_tree
       */
     class CommandNode : public GenericNode
     {
@@ -351,11 +522,15 @@ namespace console {
     private:
     };
 
+    typedef CommandNode::Arguments Arguments;
+
     /** \brief Most simple CommandNode implementation
 
         This CommandNode implementation simply forwards the \a output and \a arguments arguments to
         an arbitrary callback.
-      */
+ 
+        \ingroup node_tree
+     */
     class SimpleCommandNode : public CommandNode
     {
         SENF_LOG_CLASS_AREA();

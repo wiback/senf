@@ -140,7 +140,8 @@ namespace detail {
                 special_p ("/(){};"),
 
                 // Characters which are returned as punctuation tokens
-                punctuation_p (",="),
+                // (only allowed within '()')
+                punctuation_p (",=/{};"),
 
                 // Whitespace characters
                 space_p (" \t\n\r"),

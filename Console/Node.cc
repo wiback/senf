@@ -74,6 +74,7 @@ senf::console::DirectoryNode::remove(std::string const & name)
     GenericNode::ptr node (i->second);
     children_.erase(i);
     node->parent_ = 0;
+    node->name_.clear();
     return node;
 }
 

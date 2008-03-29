@@ -26,6 +26,71 @@
     configure, control and manipulate a running application in any way. Additionally this library
     provides support for configuration files and command line parsing which can be used with or
     without the network console.
+
+    \section console_intro Introduction
+
+    There are two components to the Config/console framework:
+
+    \li Building the node tree by registering objects and callbacks
+    \li Utilizing the config/console framework by writing configuration files or using the
+        interactive console.
+
+    Basic data structure of the console and config framework is the config/console node tree. This
+    tree. This tree works like a file-system. Commands are added to this tree and can then be called
+    from configuration files or from the interactive console.
+
+    To get started using the config/console library, see
+    \li \ref node_tree
+    \li \ref console_parser
+
+    \section console_example Example
+
+    The following example shows a \e very short summary on how to integrate the config/console
+    library. See above links for more:
+
+    \code
+    // Define callback function.
+    void mycommand(std::ostream & os, senf::console::Arguments const & args)
+    {
+        // ...
+        os << "!! Important message ...\n";
+    }
+
+    int main(int, char**)
+    {
+        // Provide global documentation
+        senf::console::root()
+            .doc("This is someServer server");
+
+        // Add a command
+        senf::console::root()
+            .add("mycommand", &mycommand)
+            .doc("mycommand <foo> [<bar>]\n\n"
+                 "If <bar> is given, flurgle the <foo>, otherwise burgle it");
+
+        // Start the interactive console server
+        senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, 23232u))
+            .name("someServer");
+    }
+    \endcode
+
+    after this registration, the console can be accessed easily via telnet:
+    
+    <pre>
+    $ telnet localhost 23232
+    Trying 127.0.0.1...
+    Connected to localhost.
+    Escape character is '^]'
+    xxxx-xx-xx xx:xx:xx.xxxxxx-0000 [NOTICE][senf::console::Server] Registered new client 0xxxxxxx
+    someServer:/# ls
+    mycommand
+    someServer:/# mycommand
+    !! Important message  ...
+    someServer:/# exit
+    xxxx-xx-xx xx:xx:xx.xxxxxx-0000 [NOTICE][senf::console::Server] Disposing client 0xxxxxxx
+    Connection closed by foreign host.
+    $
+    </pre>
  */
 
 

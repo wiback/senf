@@ -67,6 +67,59 @@ senf::console::ObjectDirectory<Owner>::add(std::string const & name, Object cons
 }
 
 template <class Owner>
+prefix_ senf::console::GenericNode::ptr
+senf::console::ObjectDirectory<Owner>::remove(std::string const & name)
+{
+   return node().remove(name);
+}
+
+template <class Owner>
+prefix_ senf::console::DirectoryNode &
+senf::console::ObjectDirectory<Owner>::operator[](std::string const & name)
+    const
+{
+    return node()[name];
+}
+
+template <class Owner>
+prefix_ senf::console::CommandNode &
+senf::console::ObjectDirectory<Owner>::operator()(std::string const & name)
+    const
+{
+    return node()(name);
+}
+
+template <class Owner>
+prefix_ senf::console::GenericNode &
+senf::console::ObjectDirectory<Owner>::get(std::string const & name)
+    const
+{
+    return node().get(name);
+}
+
+template <class Owner>
+prefix_ senf::console::DirectoryNode &
+senf::console::ObjectDirectory<Owner>::mkdir(std::string const & name)
+{
+    return node().mkdir(name);
+}
+
+template <class Owner>
+prefix_ senf::console::DirectoryNode::ChildrenRange
+senf::console::ObjectDirectory<Owner>::children()
+    const
+{
+    return node().children();
+}
+
+template <class Owner>
+prefix_ senf::console::DirectoryNode &
+senf::console::ObjectDirectory<Owner>::doc(std::string const & doc)
+{
+    return node.doc(doc);
+}
+
+template <class Owner>
 prefix_ senf::console::DirectoryNode & senf::console::ObjectDirectory<Owner>::node()
     const
 {

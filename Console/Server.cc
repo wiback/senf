@@ -67,7 +67,7 @@ senf::console::Server::start(senf::INet4SocketAddress const & address)
     senf::console::Server::start(handle);
     SENF_LOG((Server::SENFLogArea)(log::NOTICE)( 
                  "Console server started at " << address ));
-    return *instance_;
+    return instance();
 }
 
 prefix_ senf::console::Server &
@@ -77,15 +77,31 @@ senf::console::Server::start(senf::INet6SocketAddress const & address)
     senf::console::Server::start(handle);
     SENF_LOG((Server::SENFLogArea)(log::NOTICE)( 
                  "Console server started at " << address ));
-    return *instance_;
+    return instance();
 }
 
-boost::scoped_ptr<senf::console::Server> senf::console::Server::instance_;
+prefix_ senf::console::Server & senf::console::Server::instance()
+{
+    SENF_ASSERT( instancePtr() );
+    return *instancePtr();
+}
+
+prefix_ boost::scoped_ptr<senf::console::Server> & senf::console::Server::instancePtr()
+{
+    // We cannot make 'instance' a global or class-static variable, since it will then be destructed
+    // at an unknown time which may fail if the scheduler or the file-handle pool allocators have
+    // already been destructed.
+    static boost::scoped_ptr<senf::console::Server> instance;
+    return instance;
+}
 
 prefix_ void senf::console::Server::start(ServerHandle handle)
 {
-    SENF_ASSERT( ! instance_ );
-    instance_.reset(new Server(handle));
+    // Uah .... ensure the scheduler is created before the instance pointer so it get's destructed
+    // AFTER it.
+    (void) senf::Scheduler::instance();
+    SENF_ASSERT( ! instancePtr() );
+    instancePtr().reset(new Server(handle));
 }
 
 prefix_ senf::console::Server::Server(ServerHandle handle)
@@ -133,7 +149,7 @@ prefix_ senf::console::Client::~Client()
 prefix_ void senf::console::Client::stopClient()
 {
     // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER removeClient RETURNS
-    Server::instance_->removeClient(*this);
+    Server::instance().removeClient(*this);
 }
 
 prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr helper)

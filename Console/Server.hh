@@ -56,6 +56,13 @@ namespace console {
 
         \todo Add readline support
         \todo Add interactivity detection using timeout
+        \idea To support blocking commands, we could give the Client 'suspend()' and 'resume()'
+            members. suspend() would probably throw some kind of exception to transfer control back
+            to the Client instance. on resume(), the command would be called again, maybe setting
+            some flag or something. Example for use: Host name resolution: Here we can just built
+            our own little host-name cache. When the name is not found, we ask the resolver to
+            resolve it and call 'resume' when the name is found. Since it is in the cache now, the
+            command will now complete.
       */
     class Server
         : boost::noncopyable
@@ -76,6 +83,7 @@ namespace console {
                                         ///< Start server on given IPv4 address/port
         static Server & start(senf::INet6SocketAddress const & address);
                                         ///< Start server on given IPv6 address/port
+        static Server & instance();
 
         void name(std::string const & name); ///< Set server name
                                         /**< This information is used in the prompt string. */
@@ -86,6 +94,7 @@ namespace console {
         Server(ServerHandle handle);
 
         static void start(ServerHandle handle);
+        static boost::scoped_ptr<Server> & instancePtr();
 
         void newClient(Scheduler::EventId event);
         void removeClient(Client & client);
@@ -95,8 +104,6 @@ namespace console {
         typedef std::set< boost::intrusive_ptr<Client> > Clients;
         Clients clients_;
         std::string name_;
-        
-        static boost::scoped_ptr<Server> instance_;
         
         friend class Client;
     };
@@ -109,8 +116,6 @@ namespace console {
 
         \fixme Fix Client::clientData implementation
         \fixme Don't register a new ReadHelper every round
-        \fixme Ensure, that output errors (or any errors) in the console don't terminate the
-            application
      */
     class Client
         : public senf::intrusive_refcount, 

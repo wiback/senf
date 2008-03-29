@@ -112,10 +112,24 @@
       <ul>
         <xsl:for-each select="following::h2|following::h3|following::h4">
           <xsl:element name="li">
-            <xsl:attribute name="class"><xsl:value-of select="concat('level_',local-name())"/></xsl:attribute>
-            <b><xsl:call-template name="section-number"/></b>
+            <xsl:attribute name="class">
+              <xsl:value-of select="concat('level_',local-name())"/>
+            </xsl:attribute>
+            <b><xsl:call-template name="section-number"/><xsl:text> </xsl:text></b>
             <xsl:element name="a">
-              <xsl:attribute name="href"><xsl:value-of select="concat('#',a/@name)"/></xsl:attribute>
+              <xsl:choose>
+                <xsl:when test="a/@name">
+                  <xsl:attribute name="href">
+                    <xsl:value-of select="concat('#',a/@name)"/>
+                  </xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:attribute name="href">
+                    <xsl:text>#autotoc-</xsl:text>
+                    <xsl:call-template name="section-number"/>
+                  </xsl:attribute>
+                </xsl:otherwise>
+              </xsl:choose>
               <xsl:value-of select="string(current())"/>
             </xsl:element>
           </xsl:element>
@@ -125,7 +139,7 @@
   </xsl:template>
 
   <xsl:template name="section-number">
-    <xsl:number level="any" from="h1" count="h2"/>
+    <xsl:number level="any" from="div[@id='autotoc']" count="h2"/>
     <xsl:text>.</xsl:text>
     <xsl:if test="self::h3|self::h4">
       <xsl:number level="any" from="h2" count="h3"/>
@@ -135,19 +149,38 @@
       <xsl:number level="any" from="h3" count="h4"/>
       <xsl:text>.</xsl:text>
     </xsl:if>
-    <xsl:text> </xsl:text>
   </xsl:template>
   
   <xsl:template match="h2|h3|h4">
     <xsl:copy>
       <xsl:call-template name="copy-attributes"/>
-      <xsl:if test="preceding::div[@id='autotoc']">
-        <xsl:call-template name="section-number"/>
-      </xsl:if>
-      <xsl:apply-templates/>
+      <xsl:choose>
+        <xsl:when test="preceding::div[@id='autotoc']">
+          <xsl:call-template name="section-number"/>
+          <xsl:text> </xsl:text>
+          <xsl:choose>
+            <xsl:when test="a">
+              <xsl:apply-templates/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:element name="a">
+                <xsl:attribute name="class"><xsl:text>anchor</xsl:text></xsl:attribute>
+                <xsl:attribute name="name">
+                  <xsl:text>autotoc-</xsl:text>
+                  <xsl:call-template name="section-number"/>
+                </xsl:attribute>
+                <xsl:apply-templates/>
+              </xsl:element>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
+      </xsl:choose>
     </xsl:copy>
   </xsl:template>
-  
+
   <!-- Build dia image-map from special div/span elements -->
   <xsl:template match="div[@class='diamap']">
     <xsl:element name="map">

@@ -95,6 +95,8 @@ namespace console {
             itself with a null deleter. This allows to create weak_ptr's to the nodes which will
             automatically expire when the node is deleted (either statically or by the
             intrusive_ptr).
+
+        \ingroup node_tree
       */
     template <class Owner>
     class ObjectDirectory : public ObjectDirectoryBase
@@ -126,6 +128,20 @@ namespace console {
                                              directory node. */
 
         DirectoryNode & node() const;   ///< Access the proxied DirectoryNode
+
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Proxied members (see DirectoryNode)
+        ///\{
+
+        GenericNode::ptr remove(std::string const & name);
+        DirectoryNode & operator[](std::string const & name) const;
+        CommandNode & operator()(std::string const & name) const;
+        GenericNode & get(std::string const & name) const;
+        DirectoryNode & mkdir(std::string const & name);
+        DirectoryNode::ChildrenRange children() const;
+        DirectoryNode & doc(std::string const & doc);
+
+        ///\}
 
     protected:
 
