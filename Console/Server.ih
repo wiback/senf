@@ -36,6 +36,10 @@ namespace senf {
 namespace console {
 namespace detail {
 
+    /** \brief Internal: Nonblocking boost::iostreams::sink
+
+        The sink discards data if the output socket would.
+     */
     class NonblockingSocketSink 
         : public boost::iostreams::sink
     {

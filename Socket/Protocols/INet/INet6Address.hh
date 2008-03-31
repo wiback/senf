@@ -162,12 +162,12 @@ namespace senf {
         ///@{
 
         explicit INet6Address(senf::NoInit_t); ///< Construct uninitialized (!) address
-        INet6Address(boost::uint16_t a0=0u, boost::uint16_t a1=0u, boost::uint16_t a2=0u,
-                     boost::uint16_t a3=0u, boost::uint16_t a4=0u, boost::uint16_t a5=0u,
-                     boost::uint16_t a6=0u, boost::uint16_t a7=0u);
+        explicit INet6Address(boost::uint16_t a0=0u, boost::uint16_t a1=0u, boost::uint16_t a2=0u,
+                              boost::uint16_t a3=0u, boost::uint16_t a4=0u, boost::uint16_t a5=0u,
+                              boost::uint16_t a6=0u, boost::uint16_t a7=0u);
                                         ///< Construct an address constant
         
-        INet6Address(in6_addr in6addr); ///< Construct from std c struct
+        static INet6Address from_in6addr(in6_addr const & in6addr); ///< Construct from std C struct
 
         static INet6Address from_string(std::string const & s, Resolve_t resolve = ResolveINet6);
                                         ///< Convert string to address

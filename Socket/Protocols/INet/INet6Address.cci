@@ -58,11 +58,10 @@ prefix_ senf::INet6Address::INet6Address(boost::uint16_t a0, boost::uint16_t a1,
     (*this)[15] = boost::uint8_t(a7);
 }
 
-prefix_ senf::INet6Address::INet6Address(in6_addr in6addr){
-	senf::INet6Address::from_data(&in6addr.s6_addr[0]);
+prefix_ senf::INet6Address senf::INet6Address::from_in6addr(in6_addr const & in6addr)
+{
+    return senf::INet6Address::from_data(&in6addr.s6_addr[0]);
 }
-
-
 
 prefix_ senf::INet6Address senf::INet6Address::from_inet4address(INet4Address addr4)
 {

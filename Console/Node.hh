@@ -33,6 +33,67 @@
 
     \section console_tree The tree
 
+    We will start by giving a more complete example. This example contains most of the stuff needed
+    for using the console/config library.
+
+    \code
+    // Define callback function.
+    void mycommand(std::ostream & os, senf::console::Arguments const & args)
+    {
+        // ...
+        os << "!! Important message ...\n";
+    }
+
+    class SomeClass
+    {
+    public:
+        // Declare a directory node (proxy) for use by this class. This must be public so we can add
+        // it to the node tree later.
+        senf::console::ObjectDirectory<SomeClass> dir;
+
+        SomeClass() : dir(this) 
+        {
+            // You may document the directory here or later when adding it to the tree
+            dir.doc("Manager for something");
+
+            // Add a member function (the pointer-to-member is automatically bound to this instance)
+            dir.add("member", &SomeClass::member)
+                .doc("Do the member operation");
+        }
+
+        void member(std::ostream & os, senf::console::Arguments const & args)
+        {
+            // ...
+        }
+    };
+
+    int main(int, char**)
+    {
+        // Provide global documentation
+        senf::console::root()
+            .doc("This is someServer server");
+
+        // Add a new directory to the root and document it. All the mutators return the node object
+        // itself so operations can be chained.
+        senf::console::DirectoryNode & mydir (
+                .mkdir("myserver")
+                .doc("My server specific directory"));
+
+        // Add a command to that directory
+        mydir.add("mycommand", &mycommand)
+            .doc("mycommand <foo> [<bar>]\n\n"
+                 "If <bar> is given, flurgle the <foo>, otherwise burgle it");
+
+        // Create a SomeClass instance and add it's directory.
+        SomeClass someClass;
+        mydir.add("someClass", someClass.dir);
+
+        // Start the interactive console server
+        senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, 23232u))
+            .name("someServer");
+    }
+    \endcode
+
     \subsection console_nodes Node types
 
     The console/config library tree consists of two basic node types:
@@ -123,69 +184,6 @@
 
     The senf::console::ObjectDirectory member should be declared public. This allows the user of the
     class to add the node to the tree.
-
-    \section console_long_example Example
-
-    The following is a more complete example. It uses most of the features you will be using from
-    the console library.
-
-    \code
-    // Define callback function.
-    void mycommand(std::ostream & os, senf::console::Arguments const & args)
-    {
-        // ...
-        os << "!! Important message ...\n";
-    }
-
-    class SomeClass
-    {
-    public:
-        // Declare a directory node (proxy) for use by this class. This must be public so we can add
-        // it to the node tree later.
-        senf::console::ObjectDirectory<SomeClass> dir;
-
-        SomeClass() : dir(this) 
-        {
-            // You may document the directory here or later when adding it to the tree
-            dir.doc("Manager for something");
-
-            // Add a member function (the pointer-to-member is automatically bound to this instance)
-            dir.add("member", &SomeClass::member)
-                .doc("Do the member operation");
-        }
-
-        void member(std::ostream & os, senf::console::Arguments const & args)
-        {
-            // ...
-        }
-    };
-
-    int main(int, char**)
-    {
-        // Provide global documentation
-        senf::console::root()
-            .doc("This is someServer server");
-
-        // Add a new directory to the root and document it. All the mutators return the node object
-        // itself so operations can be chained.
-        senf::console::DirectoryNode & mydir (
-                .mkdir("myserver")
-                .doc("My server specific directory"));
-
-        // Add a command to that directory
-        mydir.add("mycommand", &mycommand)
-            .doc("mycommand <foo> [<bar>]\n\n"
-                 "If <bar> is given, flurgle the <foo>, otherwise burgle it");
-
-        // Create a SomeClass instance and add it's directory.
-        SomeClass someClass;
-        mydir.add("someClass", someClass.dir);
-
-        // Start the interactive console server
-        senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, 23232u))
-            .name("someServer");
-    }
-    \endcode
  */
 
 #ifndef HH_Node_
