@@ -21,9 +21,9 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ObjectDirectory inline template implementation */
+    \brief ScopedDirectory inline template implementation */
 
-//#include "ObjectDirectory.ih"
+//#include "ScopedDirectory.ih"
 
 // Custom includes
 #include <boost/bind.hpp>
@@ -45,85 +45,21 @@ senf::console::OwnerNodeCreateTraits<Owner,Object>::Creator::create(DirectoryNod
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::ObjectDirectory<Owner>
+// senf::console::ScopedDirectory<Owner>
 
 template <class Owner>
-prefix_ senf::console::ObjectDirectory<Owner>::ObjectDirectory(Owner * owner)
-    : node_ (DirectoryNode::create()), owner_ (owner)
-{}
-
-template <class Owner>
-prefix_ senf::console::ObjectDirectory<Owner>::~ObjectDirectory()
+prefix_ senf::console::ScopedDirectory<Owner>::ScopedDirectory(Owner * owner)
+    : owner_ (owner)
 {
-    node_->unlink();
+    SENF_ASSERT(owner_);
 }
 
 template <class Owner>
 template <class Object>
 prefix_ typename senf::console::OwnerNodeCreateTraits<Owner, Object>::NodeType &
-senf::console::ObjectDirectory<Owner>::add(std::string const & name, Object const & ob)
+senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object const & ob)
 {
-    return OwnerNodeCreateTraits<Owner, Object>::Creator::create(*node_, *owner_, name, ob);
-}
-
-template <class Owner>
-prefix_ senf::console::GenericNode::ptr
-senf::console::ObjectDirectory<Owner>::remove(std::string const & name)
-{
-   return node().remove(name);
-}
-
-template <class Owner>
-prefix_ senf::console::DirectoryNode &
-senf::console::ObjectDirectory<Owner>::operator[](std::string const & name)
-    const
-{
-    return node()[name];
-}
-
-template <class Owner>
-prefix_ senf::console::CommandNode &
-senf::console::ObjectDirectory<Owner>::operator()(std::string const & name)
-    const
-{
-    return node()(name);
-}
-
-template <class Owner>
-prefix_ senf::console::GenericNode &
-senf::console::ObjectDirectory<Owner>::get(std::string const & name)
-    const
-{
-    return node().get(name);
-}
-
-template <class Owner>
-prefix_ senf::console::DirectoryNode &
-senf::console::ObjectDirectory<Owner>::mkdir(std::string const & name)
-{
-    return node().mkdir(name);
-}
-
-template <class Owner>
-prefix_ senf::console::DirectoryNode::ChildrenRange
-senf::console::ObjectDirectory<Owner>::children()
-    const
-{
-    return node().children();
-}
-
-template <class Owner>
-prefix_ senf::console::DirectoryNode &
-senf::console::ObjectDirectory<Owner>::doc(std::string const & doc)
-{
-    return node.doc(doc);
-}
-
-template <class Owner>
-prefix_ senf::console::DirectoryNode & senf::console::ObjectDirectory<Owner>::node()
-    const
-{
-    return *node_;
+    return OwnerNodeCreateTraits<Owner, Object>::Creator::create(node(), *owner_, name, ob);
 }
 
 template <class Owner, class Function>
@@ -146,9 +82,19 @@ senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & n
 template <class Node>
 prefix_ senf::console::DirectoryNode & senf::console::
 senf_console_add_node(DirectoryNode & dir, std::string const & name, Node const & node, int,
-                      typename boost::enable_if< boost::is_convertible<Node*, ObjectDirectoryBase*> >::type *)
+                      typename boost::enable_if< boost::is_convertible<Node*, ScopedDirectoryBase*> >::type *)
 {
     return dir.add(name, node.node().thisptr());
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ScopedDirectory<void>
+
+template <class Object>
+prefix_ typename senf::console::NodeCreateTraits<Object>::NodeType &
+senf::console::ScopedDirectory<void>::add(std::string const & name, Object const & ob)
+{
+    return node().add(name, ob);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

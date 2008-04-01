@@ -21,26 +21,26 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ObjectDirectory public header */
+    \brief ScopedDirectory public header */
 
-#ifndef HH_ObjectDirectory_
-#define HH_ObjectDirectory_ 1
+#ifndef HH_ScopedDirectory_
+#define HH_ScopedDirectory_ 1
 
 // Custom includes
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include "Node.hh"
 
-//#include "ObjectDirectory.mpp"
+//#include "ScopedDirectory.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace console {
 
-    /** \brief Internal: Node creation helper traits (ObjectDirectory proxy)
+    /** \brief Internal: Node creation helper traits (ScopedDirectory proxy)
         
         This class is used like NodeCreateTraits to customize the child node creation. This trait
-        class is used however by the ObjectDirectory proxy.
+        class is used however by the ScopedDirectory proxy.
      */
     template <class Owner, class Object>
     struct OwnerNodeCreateTraits
@@ -60,73 +60,11 @@ namespace console {
         };
     };
     
-    /** \brief Internal: Marker base class for all ObjectDirectory proxies
+    /** \brief Internal: Marker base class for all ScopedDirectory proxies
      */
-    struct ObjectDirectoryBase {};
-
-    /** \brief DirectoryNode member proxy
-
-        ObjectDirectory is used whenever a class wants to manage it's own directory. The class
-        allows to declare the directory as a public member object. This allows the user of the class
-        to register the directory in the command tree. By using the proxy, the node is automatically
-        detached from the tree (and thereby destroyed) when the object (and thereby the proxy) is
-        destroyed.
-
-        \code
-        class MyClass
-        {
-        public:
-            ObjectDirectory<MyClass> configDir;
-
-            MyClass() : configDir(this) 
-            {
-                configDIr.add(...);
-            }
-        };
-        \endcode
-
-        The ObjectDirectory proxy implements 'add()' to add new children to the proxied
-        DirectoryNode. All add() variants supported by DirectoryNode are supported by
-        ObjectDirectory.
-
-        \idea This proxy could be made obsolete by allowing to allocate node objects
-            statically. This could be achieved by moving back to an intrusive_ptr implementation for
-            normal pointing needs with an added twist: Give each node a smart_ptr member pointing to
-            itself with a null deleter. This allows to create weak_ptr's to the nodes which will
-            automatically expire when the node is deleted (either statically or by the
-            intrusive_ptr).
-
-        \ingroup node_tree
-      */
-    template <class Owner>
-    class ObjectDirectory : public ObjectDirectoryBase
+    class ScopedDirectoryBase
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-        
-        typedef Owner owner;
-
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
-        ObjectDirectory(Owner * owner);
-        ~ObjectDirectory();
-
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
-
-        template <class Object>
-        typename OwnerNodeCreateTraits<Owner, Object>::NodeType & add(std::string const & name,
-                                                                      Object const & ob);
-                                        ///< Create new child node
-                                        /**< Adds a new child node to the (proxied)
-                                             DirectoryNode. How the node is added is configured
-                                             using the OwnerNodeCreateTraits template. The default
-                                             implementation just forwards the call to the proxied
-                                             directory node. */
-
         DirectoryNode & node() const;   ///< Access the proxied DirectoryNode
 
         ///////////////////////////////////////////////////////////////////////////
@@ -144,10 +82,88 @@ namespace console {
         ///\}
 
     protected:
+        ScopedDirectoryBase();
+        ~ScopedDirectoryBase();
 
     private:
         DirectoryNode::ptr node_;
+    };
+
+    /** \brief DirectoryNode member proxy
+
+        ScopedDirectory is used whenever a class wants to manage it's own directory. The class
+        allows to declare the directory as a public member object. This allows the user of the class
+        to register the directory in the command tree. By using the proxy, the node is automatically
+        detached from the tree (and thereby destroyed) when the object (and thereby the proxy) is
+        destroyed.
+
+        \code
+        class MyClass
+        {
+        public:
+            ScopedDirectory<MyClass> configDir;
+
+            MyClass() : configDir(this) 
+            {
+                configDIr.add(...);
+            }
+        };
+        \endcode
+
+        The ScopedDirectory proxy implements 'add()' to add new children to the proxied
+        DirectoryNode. All add() variants supported by DirectoryNode are supported by
+        ScopedDirectory.
+
+        \idea This proxy could be made obsolete by allowing to allocate node objects
+            statically. This could be achieved by moving back to an intrusive_ptr implementation for
+            normal pointing needs with an added twist: Give each node a smart_ptr member pointing to
+            itself with a null deleter. This allows to create weak_ptr's to the nodes which will
+            automatically expire when the node is deleted (either statically or by the
+            intrusive_ptr).
+
+        \ingroup node_tree
+      */
+    template <class Owner=void>
+    class ScopedDirectory : public ScopedDirectoryBase
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+        
+        typedef Owner owner;
+
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
+        ScopedDirectory(Owner * owner);
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+        template <class Object>
+        typename OwnerNodeCreateTraits<Owner, Object>::NodeType & add(std::string const & name,
+                                                                      Object const & ob);
+                                        ///< Create new child node
+                                        /**< Adds a new child node to the (proxied)
+                                             DirectoryNode. How the node is added is configured
+                                             using the OwnerNodeCreateTraits template. The default
+                                             implementation just forwards the call to the proxied
+                                             directory node. */
+
+    protected:
+
+    private:
         Owner * owner_;
+    };
+
+    template <>
+    class ScopedDirectory<void> : public ScopedDirectoryBase
+    {
+    public:
+        template <class Object>
+        typename NodeCreateTraits<Object>::NodeType & add(std::string const & name,
+                                                          Object const & ob);
     };
 
 #ifndef DOXYGEN
@@ -163,15 +179,15 @@ namespace console {
     template <class Node>
     DirectoryNode & senf_console_add_node(
         DirectoryNode & dir, std::string const & name, Node const & node, int, 
-        typename boost::enable_if< boost::is_convertible<Node*, ObjectDirectoryBase*> >::type * = 0);
+        typename boost::enable_if< boost::is_convertible<Node*, ScopedDirectoryBase*> >::type * = 0);
 #endif
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "ObjectDirectory.cci"
-//#include "ObjectDirectory.ct"
-#include "ObjectDirectory.cti"
+#include "ScopedDirectory.cci"
+//#include "ScopedDirectory.ct"
+#include "ScopedDirectory.cti"
 #endif
 
 

@@ -21,14 +21,14 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ObjectDirectory.test unit tests */
+    \brief OverloadedCommand.test unit tests */
 
-//#include "ObjectDirectory.test.hh"
-//#include "ObjectDirectory.test.ih"
+//#include "OverloadedCommand.test.hh"
+//#include "OverloadedCommand.test.ih"
 
 // Custom includes
 #include <sstream>
-#include "ObjectDirectory.hh"
+#include "OverloadedCommand.hh"
 
 #include <boost/test/auto_unit_test.hpp>
 #include <boost/test/test_tools.hpp>
@@ -37,31 +37,41 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    struct TestObject {
-        typedef TestObject Self;
 
-        senf::console::ObjectDirectory<Self> dir;
-        TestObject() : dir(this) {
-            dir.add("member", &Self::member);
-        }
+    void fn1(std::ostream &, senf::console::CommandOverload::Arguments const &)
+    {
+        throw senf::console::SyntaxErrorException("fn1 error");
+    }
 
-        void member(std::ostream & os, senf::console::CommandNode::Arguments const &) {
-            os << "member";
-        }
-    };
+    void fn2(std::ostream &, senf::console::CommandOverload::Arguments const &)
+    {
+        throw senf::console::SyntaxErrorException("fn2 error");
+    }
+
+    void fn3(std::ostream & os, senf::console::CommandOverload::Arguments const &)
+    {
+        os << "fn3\n";
+    }
+
 }
 
-BOOST_AUTO_UNIT_TEST(objectDirectory)
+BOOST_AUTO_UNIT_TEST(overladedCommand)
 {
-    {
-        TestObject ob;
-        senf::console::root().add("ob",ob.dir);
-        std::stringstream ss;
-        senf::console::ParseCommandInfo info;
-        senf::console::root()["ob"]("member")(ss, info.arguments());
-        BOOST_CHECK_EQUAL( ss.str(), "member" );
-    }
-    BOOST_CHECK_THROW( senf::console::root()["ob"], senf::console::UnknownNodeNameException );
+    senf::console::OverloadedCommandNode & cmd (
+        senf::console::root().add("overload", senf::console::OverloadedCommandNode::create()));
+    cmd.add(senf::console::SimpleCommandOverload::create(&fn1));
+    cmd.add(senf::console::SimpleCommandOverload::create(&fn2));
+
+    senf::console::ParseCommandInfo info;
+    std::stringstream ss;
+    BOOST_CHECK_THROW( senf::console::root()("overload")(ss, info.arguments()),
+                       senf::console::SyntaxErrorException );
+
+    cmd.add(senf::console::SimpleCommandOverload::create(&fn3));
+    BOOST_CHECK_NO_THROW( senf::console::root()("overload")(ss, info.arguments()) );
+    BOOST_CHECK_EQUAL( ss.str(), "fn3\n" );
+
+    cmd.unlink();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

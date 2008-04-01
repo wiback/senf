@@ -805,9 +805,6 @@
                                                           (senf::VoidPacketParser)
                                                           (GREPacketParser_OptFields) );
 
-        typedef version__t version_t;
-        version_t::value_type version() const { return version_(); }
-
         bool valid() const { return version() == 0 && reserved0_5bits_() == 0; }
 
         typedef GREPacketParser_OptFields::checksum_t checksum_t;

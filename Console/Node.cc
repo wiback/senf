@@ -117,12 +117,28 @@ prefix_ void senf::console::DirectoryNode::v_help(std::ostream & output)
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::SyntaxErrorException
+
+prefix_ char const * senf::console::SyntaxErrorException::what()
+    const throw()
+{
+    return message().empty() ? "syntax error" : message().c_str();
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::SimpleCommandNode
 
 prefix_ void senf::console::SimpleCommandNode::v_help(std::ostream & output)
     const
 {
     output << doc_ << "\n";
+}
+
+prefix_ void senf::console::SimpleCommandNode::v_execute(std::ostream & output,
+                                                         Arguments const & arguments)
+    const
+{
+    fn_(output, arguments);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

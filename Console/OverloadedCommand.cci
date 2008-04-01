@@ -1,0 +1,126 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief OverloadedCommand inline non-template implementation */
+
+//#include "OverloadedCommand.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::CommandOverload
+
+prefix_ senf::console::CommandOverload::~CommandOverload()
+{}
+
+prefix_ void senf::console::CommandOverload::operator()(std::ostream & os,
+                                                        Arguments const & arguments)
+{
+    v_execute(os, arguments);
+}
+
+prefix_ void senf::console::CommandOverload::help(std::ostream & os)
+{
+    v_help(os);
+}
+
+prefix_ senf::console::OverloadedCommandNode & senf::console::CommandOverload::node()
+{
+    SENF_ASSERT( node_ );
+    return *node_;
+}
+
+prefix_ senf::console::CommandOverload::CommandOverload()
+    : node_(0)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::OverloadedCommandNode
+
+prefix_ senf::console::OverloadedCommandNode::ptr senf::console::OverloadedCommandNode::create()
+{
+    return ptr(new OverloadedCommandNode());
+}
+
+prefix_ void senf::console::OverloadedCommandNode::add(CommandOverload::ptr overload)
+{
+    overloads_.push_back(overload);
+}
+
+prefix_ senf::console::OverloadedCommandNode::ptr senf::console::OverloadedCommandNode::thisptr()
+{
+    return boost::static_pointer_cast<OverloadedCommandNode>(shared_from_this());
+}
+
+prefix_ senf::console::OverloadedCommandNode::cptr senf::console::OverloadedCommandNode::thisptr()
+    const
+{
+    return boost::static_pointer_cast<OverloadedCommandNode const>(shared_from_this());
+}
+
+prefix_ senf::console::OverloadedCommandNode &
+senf::console::OverloadedCommandNode::doc(std::string const & doc)
+{
+    doc_ = doc;
+    return *this;
+}
+
+prefix_ senf::console::OverloadedCommandNode::OverloadedCommandNode()
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::SimpleCommandOverload
+
+prefix_ senf::console::SimpleCommandOverload::ptr
+senf::console::SimpleCommandOverload::create(Function fn)
+{
+    return ptr(new SimpleCommandOverload(fn));
+}
+
+prefix_ senf::console::SimpleCommandOverload &
+senf::console::SimpleCommandOverload::doc(std::string const & doc)
+{
+    doc_ = doc;
+    return *this;
+}
+
+prefix_ senf::console::SimpleCommandOverload::SimpleCommandOverload(Function fn)
+    : fn_ (fn)
+{}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

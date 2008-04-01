@@ -30,7 +30,7 @@
 #include <iostream>
 #include "Server.hh"
 #include "Node.hh"
-#include "ObjectDirectory.hh"
+#include "ScopedDirectory.hh"
 #include "../Scheduler/Scheduler.hh"
 #include "../Utils/Logger/SenfLog.hh"
 
@@ -55,7 +55,7 @@ namespace {
 
     struct TestObject
     {
-        senf::console::ObjectDirectory<TestObject> dir;
+        senf::console::ScopedDirectory<TestObject> dir;
 
         TestObject() : dir(this) {
             dir.add("blub", &TestObject::blub)

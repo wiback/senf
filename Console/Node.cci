@@ -140,6 +140,13 @@ prefix_ senf::console::DirectoryNode::cptr senf::console::DirectoryNode::thisptr
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::SyntaxErrorException
+
+prefix_ senf::console::SyntaxErrorException::SyntaxErrorException(std::string const & msg)
+    : Exception(msg)
+{}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandNode
 
 prefix_ senf::console::CommandNode::ptr senf::console::CommandNode::thisptr()
@@ -156,14 +163,15 @@ prefix_ senf::console::CommandNode::cptr senf::console::CommandNode::thisptr()
 prefix_ senf::console::CommandNode::CommandNode()
 {}
 
+prefix_ void senf::console::CommandNode::operator()(std::ostream & output,
+                                                    Arguments const & arguments)
+    const
+{
+    v_execute(output, arguments);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::SimpleCommandNode
-
-prefix_ void senf::console::SimpleCommandNode::operator()(std::ostream & output,
-                                                          Arguments const & arguments)
-{
-    fn_(output, arguments);
-}
 
 prefix_ senf::console::SimpleCommandNode::SimpleCommandNode(Function const & fn)
     : fn_ (fn)
@@ -180,6 +188,17 @@ senf::console::SimpleCommandNode::doc(std::string const & doc)
 {
     doc_ = doc;
     return *this;
+}
+
+prefix_ senf::console::SimpleCommandNode::ptr senf::console::SimpleCommandNode::thisptr()
+{
+    return boost::static_pointer_cast<SimpleCommandNode>(shared_from_this());
+}
+
+prefix_ senf::console::SimpleCommandNode::cptr senf::console::SimpleCommandNode::thisptr()
+    const
+{
+    return boost::static_pointer_cast<SimpleCommandNode const>(shared_from_this());
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

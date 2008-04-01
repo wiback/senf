@@ -49,7 +49,7 @@
     public:
         // Declare a directory node (proxy) for use by this class. This must be public so we can add
         // it to the node tree later.
-        senf::console::ObjectDirectory<SomeClass> dir;
+        senf::console::ScopedDirectory<SomeClass> dir;
 
         SomeClass() : dir(this) 
         {
@@ -178,11 +178,11 @@
 
     Most objects will register several commands. So it makes sense for these objects to manage their
     own directory. Since directories are however allocated on the heap, they cannot be directly
-    added to a class. To facilitate this usage, the senf::console::ObjectDirectory is used. This
+    added to a class. To facilitate this usage, the senf::console::ScopedDirectory is used. This
     class provides a senf::console::DirectoryNode facade. Internally, it automatically creates a
     senf::console::DirectoryNode to which all calls are forwarded.
 
-    The senf::console::ObjectDirectory member should be declared public. This allows the user of the
+    The senf::console::ScopedDirectory member should be declared public. This allows the user of the
     class to add the node to the tree.
  */
 
@@ -324,8 +324,8 @@ namespace console {
         mkdir() or add(). Special add() members however allow externally allocated node objects.
 
         Nodes may be added to the tree only once, otherwise chaos will ensue. Since nodes are always
-        managed dynamically, there is a special ObjectDirectory proxy template which provides a
-        DirectoryNode facade. ObjectDirectory is used if a class wants to manage it's own directory
+        managed dynamically, there is a special ScopedDirectory proxy template which provides a
+        DirectoryNode facade. ScopedDirectory is used if a class wants to manage it's own directory
         as a data member.
 
         Every node is assigned a (new) name when it is added to a directory. If the directory
@@ -357,7 +357,7 @@ namespace console {
 
         static ptr create();            ///< Create node object.
                                         /**< You should normally use either mkdir() or
-                                             ObjectDirectory instead of create() */
+                                             ScopedDirectory instead of create() */
 
         ///\}
         ///////////////////////////////////////////////////////////////////////////
@@ -479,6 +479,13 @@ namespace console {
     {};
 #endif
 
+    struct SyntaxErrorException : public senf::Exception
+    {
+        explicit SyntaxErrorException(std::string const & msg = "");
+
+        virtual char const * what() const throw();
+    };
+
     /** \brief Config/console tree command node
 
         The CommandNode is the base-class for the tree leaf nodes. Concrete command node
@@ -504,8 +511,8 @@ namespace console {
 
         ///////////////////////////////////////////////////////////////////////////
 
-        virtual void operator()(std::ostream & output, Arguments const & arguments) = 0;
-                                        ///< Called to execute the command
+        void operator()(std::ostream & output, Arguments const & arguments) const;
+                                        ///< Execute the command
                                         /**< \param[in] output stream where result messages may be
                                                  written to
                                              \param[in] arguments command arguments. This is a
@@ -516,6 +523,16 @@ namespace console {
 
     protected:
         CommandNode();
+
+#ifndef DOXYGEN
+    private:
+#endif
+        virtual void v_execute(std::ostream & output, Arguments const & arguments) const = 0;
+                                        ///< Called to execute the command
+                                        /**< \param[in] output stream where result messages may be
+                                                 written to
+                                             \param[in] arguments command arguments. This is a
+                                                 range of ranges of ArgumentToken instances. */
 
     private:
     };
@@ -551,8 +568,6 @@ namespace console {
         ///\}
         ///////////////////////////////////////////////////////////////////////////
 
-        virtual void operator()(std::ostream & output, Arguments const & arguments);
-
         ptr thisptr();
         cptr thisptr() const;
 
@@ -563,6 +578,8 @@ namespace console {
 
     private:
         virtual void v_help(std::ostream & output) const;
+        virtual void v_execute(std::ostream & output, Arguments const & arguments) const;
+        
 
         Function fn_;
         std::string doc_;
