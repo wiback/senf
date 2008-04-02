@@ -16,6 +16,7 @@ AddressParser
 addtogroup
 aListCollection
 alloc
+anotherCallback
 api
 arg
 argc
@@ -46,7 +47,9 @@ checksumPresent
 CIDR
 ClientSocketHandle
 CloneSource
+cmd
 CommandNode
+CommandOverload
 CommandParser
 CommunicationPolicy
 CommunicationPolicyBase
@@ -250,6 +253,8 @@ OutputConnector
 outputRequest
 outputSocket
 OverlayField
+OverloadedCommand
+OverloadedCommandNode
 PacketData
 PacketImpl
 PacketInterpreter
@@ -339,6 +344,8 @@ setEnd
 setfill
 setFromPosition
 setw
+SimpleCommandNode
+SimpleCommandOverload
 SimplePacketType
 SimpleVectorSizer
 SiteScope
@@ -371,6 +378,7 @@ STL
 strerror
 struct
 structors
+SyntaxErrorException
 SyntaxException
 SystemException
 TapSocketHandle

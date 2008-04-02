@@ -39,7 +39,10 @@ namespace console {
 
     class OverloadedCommandNode;
 
-    /** \brief
+    /** \brief Base class for command overload of OverloadedCommandNode
+
+        This class is the base class of the commands which may be added to an
+        OverloadedCommandNode.
       */
     class CommandOverload
         : public senf::intrusive_refcount
@@ -56,9 +59,14 @@ namespace console {
         virtual ~CommandOverload();
 
         void operator()(std::ostream & os, Arguments const & arguments);
-        void help(std::ostream & os);
+                                        ///< Call the overload
+                                        /**< If the \a arguments are not acceptable for this
+                                             overload, a SyntaxErrorException must be thrown. */
+        void help(std::ostream & os);   ///< Provide help for this specific overload
 
-        OverloadedCommandNode & node();
+        OverloadedCommandNode & node(); ///< Access owning node
+                                        /**< \pre The command \e must have been added to an
+                                             OverloadedCommandNode. */
 
     protected:
         CommandOverload();
@@ -77,9 +85,22 @@ namespace console {
 
     /** \brief Command node which allows multiple registered callbacks
 
-        OverloadedCommand is like SimpleCommand but allows to register multiple commands to a single
-        node. This works by calling each command in the list consecutively until no 'SyntaxError'
-        exception is thrown. 
+        OverloadedCommandNode is like SimpleCommandNode but allows to register multiple commands to
+        a single node. This works by calling each command in the list consecutively until no
+        'SyntaxErrorException' exception is thrown.
+
+        This works by first adding an OverloadedCommandNode to the directory in question and then
+        adding commands to that node. Commands are derived from CommandOverload. 
+        \code
+        senf::console::DirectoryNode & dir (...);
+        senf::console::OverloadedCommandNode & cmd (
+            dir.add("cmd", senf::console::OverloadedCommandNode::create()) );
+        cmd.add(senf::console::SimpleCommandOverload::create(&callback));
+        cmd.add(senf::console::SimpleCommandOverload::create(&anotherCallback));
+        \endcode
+
+        However, this facility is mostly used not directly but indirectly (and automatically) when
+        adding argument parsing callbacks.
 
         \warning For this to work, the commands <b>must</b> do all syntax checking before doing any
             operation
@@ -105,13 +126,15 @@ namespace console {
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-
-        void add(CommandOverload::ptr overload);
+        
+        template <class Command>
+        Command & add(boost::intrusive_ptr<Command> overload); ///< Add an additional overload
 
         ptr thisptr();
         cptr thisptr() const;
 
         OverloadedCommandNode & doc(std::string const & doc);
+                                        ///< Assign global help for all overloads
 
     protected:
 
@@ -127,7 +150,10 @@ namespace console {
         std::string doc_;
     };
 
-    /** \brief
+    /** \brief Basic command overload
+
+        This is an implementation of CommandOverload which allows to call an arbitrary callback with
+        the correct signature (<tt>void (std::ostream &, Arguments const &)</tt>)
       */
     class SimpleCommandOverload
         : public CommandOverload
@@ -144,11 +170,14 @@ namespace console {
         ///@{
 
         static SimpleCommandOverload::ptr create(Function fn);
+                                        ///< Create new SimpleCommandOverload
+                                        /**< \param[in] fn callback to call */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
         SimpleCommandOverload & doc(std::string const & doc);
+                                        ///< Assign overload specific documentation
 
     protected:
 
@@ -167,7 +196,7 @@ namespace console {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "OverloadedCommand.cci"
 //#include "OverloadedCommand.ct"
-//#include "OverloadedCommand.cti"
+#include "OverloadedCommand.cti"
 #endif
 
 

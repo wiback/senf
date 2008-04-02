@@ -58,18 +58,28 @@ namespace {
 BOOST_AUTO_UNIT_TEST(overladedCommand)
 {
     senf::console::OverloadedCommandNode & cmd (
-        senf::console::root().add("overload", senf::console::OverloadedCommandNode::create()));
-    cmd.add(senf::console::SimpleCommandOverload::create(&fn1));
-    cmd.add(senf::console::SimpleCommandOverload::create(&fn2));
+        senf::console::root()
+            .add("overload", senf::console::OverloadedCommandNode::create())
+            .doc("cmd") );
+    cmd.add(senf::console::SimpleCommandOverload::create(&fn1)).doc("fn1");
+    cmd.add(senf::console::SimpleCommandOverload::create(&fn2)).doc("fn2");
 
-    senf::console::ParseCommandInfo info;
-    std::stringstream ss;
-    BOOST_CHECK_THROW( senf::console::root()("overload")(ss, info.arguments()),
-                       senf::console::SyntaxErrorException );
-
-    cmd.add(senf::console::SimpleCommandOverload::create(&fn3));
-    BOOST_CHECK_NO_THROW( senf::console::root()("overload")(ss, info.arguments()) );
-    BOOST_CHECK_EQUAL( ss.str(), "fn3\n" );
+    {
+        senf::console::ParseCommandInfo info;
+        std::stringstream ss;
+        BOOST_CHECK_THROW( senf::console::root()("overload")(ss, info.arguments()),
+                           senf::console::SyntaxErrorException );
+        
+        cmd.add(senf::console::SimpleCommandOverload::create(&fn3)).doc("fn3");
+        BOOST_CHECK_NO_THROW( senf::console::root()("overload")(ss, info.arguments()) );
+        BOOST_CHECK_EQUAL( ss.str(), "fn3\n" );
+    }
+    
+    {
+        std::stringstream ss;
+        cmd.help(ss);
+        BOOST_CHECK_EQUAL( ss.str(), "cmd\n\nfn1\n\nfn2\n\nfn3" );
+    }
 
     cmd.unlink();
 }

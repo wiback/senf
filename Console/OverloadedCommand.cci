@@ -65,11 +65,6 @@ prefix_ senf::console::OverloadedCommandNode::ptr senf::console::OverloadedComma
     return ptr(new OverloadedCommandNode());
 }
 
-prefix_ void senf::console::OverloadedCommandNode::add(CommandOverload::ptr overload)
-{
-    overloads_.push_back(overload);
-}
-
 prefix_ senf::console::OverloadedCommandNode::ptr senf::console::OverloadedCommandNode::thisptr()
 {
     return boost::static_pointer_cast<OverloadedCommandNode>(shared_from_this());
