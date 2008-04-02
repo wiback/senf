@@ -253,7 +253,7 @@ def MakeEnvironment():
         #          CPPDEFINES = [ '_GLIBCXX_DEBUG' ],
         env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
                    CPPDEFINES = [ 'SENF_DEBUG' ],
-                   LINKFLAGS = [ '-g' ])
+                   LINKFLAGS = [ '-g', '-rdynamic' ])
 
     env.Append(CPPDEFINES = [ '$EXTRA_DEFINES' ],
                LIBS = [ '$EXTRA_LIBS' ],

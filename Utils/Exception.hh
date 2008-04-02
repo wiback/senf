@@ -79,6 +79,11 @@
     struct FooException : public senf::Exception
     { FooException() : senf::Exception("Foo hit the fan") {} };
     \endcode
+
+    If SENF is compiled in debug mode (SENF_DEBUG is defined), the exception message will
+    automatically include a stack backtrace. For this to work, you need to add the
+    <tt>-rdynamic</tt> option to all link commands. This feature depends on <tt>gcc</tt> and
+    the GNU-libc.
  */
 
 namespace senf {
@@ -117,6 +122,9 @@ namespace senf {
                                              exceptions. */
 
     private:
+#ifdef SENF_DEBUG
+        void addBacktrace();
+#endif
         std::string message_;
     };
 

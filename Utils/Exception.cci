@@ -32,7 +32,11 @@
 
 prefix_ senf::Exception::Exception(std::string const & description)
     : message_(description)
-{}
+{
+#ifdef SENF_DEBUG
+    addBacktrace();
+#endif
+}
 
 prefix_ std::string const & senf::Exception::message()
     const

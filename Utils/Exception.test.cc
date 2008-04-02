@@ -51,7 +51,11 @@ BOOST_AUTO_UNIT_TEST(errnoException)
     catch (senf::SystemException & e) {
         BOOST_CHECK_EQUAL( e.errorNumber(), ENOENT );
         BOOST_CHECK_EQUAL( e.errorString(), "No such file or directory" );
-        BOOST_CHECK_EQUAL( e.what(), "[No such file or directory] ::open()\nmore\nx=1\ny=2" );
+        std::string what (e.what());
+        std::string::size_type pos (what.find("-- \n"));
+        if (pos != std::string::npos)
+            what = std::string(what, pos+4);
+        BOOST_CHECK_EQUAL( what, "[No such file or directory] ::open()\nmore\nx=1\ny=2" );
     }
 }
 

@@ -27,6 +27,10 @@
 //#include "Exception.ih"
 
 // Custom includes
+#include <execinfo.h>
+#include <sstream>
+#include "../config.hh"
+#include "impl/demangle.h"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -43,6 +47,38 @@ prefix_ char const * senf::Exception::what()
 {
     return message_.c_str();
 }
+
+#ifdef SENF_DEBUG
+prefix_ void senf::Exception::addBacktrace()
+{
+    void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
+    unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
+    char ** symbols = ::backtrace_symbols(entries, nEntries);
+    
+    std::stringstream ss;
+    ss << "\nException at\n";
+    for (unsigned i=0; i<nEntries; ++i) {
+        std::string sym (symbols[i]);
+        std::string::size_type fnStart (sym.find("("));
+        if (fnStart != std::string::npos) {
+            std::string::size_type fnEnd (sym.find(")",fnStart+1));
+            if (fnEnd != std::string::npos) {
+                std::string fn (sym,fnStart+1, fnEnd-fnStart-1);
+                char * demangled ( ::cplus_demangle(fn.c_str(), 
+                                                    DMGL_TYPES|DMGL_AUTO) );
+                if (demangled) {
+                    ss << "  " << demangled << "( ... )" << std::string(sym,fnEnd+1) << "\n";
+                    continue;
+                }
+            }
+        }
+        ss << "  " << sym << "\n";
+    }
+    ss << "-- \n" << message_;
+    message_ = ss.str();
+    free(symbols);
+}
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::SystemException

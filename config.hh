@@ -76,6 +76,10 @@
 #         define SENF_SENFLOG_LIMIT senf::log::NOTICE
 #     endif
 # endif
+#
+# ifndef SENF_DEBUG_BACKTRACE_NUMCALLERS
+#     define SENF_DEBUG_BACKTRACE_NUMCALLERS 64
+# endif
 # 
 # ///////////////////////////////hh.e////////////////////////////////////////
 # endif
