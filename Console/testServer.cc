@@ -41,11 +41,12 @@
 namespace {
     
     void fn(std::ostream & output, senf::console::ParseCommandInfo const & command) {
-        senf::console::CommandNode::Arguments::iterator i (command.arguments().begin());
-        senf::console::CommandNode::Arguments::iterator i_end (command.arguments().end());
+        typedef senf::console::ParseCommandInfo::ArgumentsRange::iterator iterator;
+        iterator i (command.arguments().begin());
+        iterator i_end (command.arguments().end());
         for (; i != i_end; ++i) {
-            senf::console::ParseCommandInfo::ArgumentsRange::value_type::iterator j (i->begin());
-            senf::console::ParseCommandInfo::ArgumentsRange::value_type::iterator j_end (i->end());
+            iterator::value_type::iterator j (i->begin());
+            iterator::value_type::iterator j_end (i->end());
             for (; j != j_end; ++j) 
                 output << j->value() << ' ';
         }

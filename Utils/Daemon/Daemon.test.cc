@@ -71,13 +71,13 @@ namespace {
         }
     };
 
-    int myMain(int argc, char const ** argv)
+    int myMain(int argc, char ** argv)
     {
         MyDaemon instance;
         return instance.start(argc, argv);
     }
 
-    int run(int argc, char const ** argv)
+    int run(int argc, char ** argv)
     {
         int pid (::fork());
         if (pid < 0) throw senf::SystemException("::fork()");
@@ -93,9 +93,9 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(testDaemon)
 {
-    char const * args[] = { "run", 
-                            "--console-log=testDaemon.log,none", 
-                            "--pid-file=testDaemon.pid" };
+    char * args[] = { "run", 
+                      "--console-log=testDaemon.log,none", 
+                      "--pid-file=testDaemon.pid" };
     BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args),args), 0 );
 
     BOOST_CHECK( ! boost::filesystem::exists("invalid.log") );
