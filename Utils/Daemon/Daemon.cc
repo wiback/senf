@@ -82,7 +82,7 @@ prefix_ int senf::Daemon::argc()
     return argc_;
 }
 
-prefix_ char const ** senf::Daemon::argv() 
+prefix_ char ** senf::Daemon::argv() 
 {
     return argv_;
 }
@@ -184,7 +184,7 @@ prefix_ void senf::Daemon::exit(unsigned code)
     throw DaemonExitException(code);
 }
 
-prefix_ int senf::Daemon::start(int argc, char const ** argv)
+prefix_ int senf::Daemon::start(int argc, char ** argv)
 {
     argc_ = argc;
     argv_ = argv;
