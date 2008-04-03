@@ -48,7 +48,7 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
 }
 
 prefix_ void senf::console::OverloadedCommandNode::v_execute(std::ostream & output,
-                                                             Arguments const & arguments)
+                                                             ParseCommandInfo const & command)
     const
 {
     Overloads::const_iterator i (overloads_.begin());
@@ -56,7 +56,7 @@ prefix_ void senf::console::OverloadedCommandNode::v_execute(std::ostream & outp
     SyntaxErrorException err;
     for (; i != i_end; ++i) {
         try {
-            (**i)(output, arguments);
+            (**i)(output, command);
             return;
         }
         catch (SyntaxErrorException & ex) {
@@ -76,10 +76,10 @@ prefix_ void senf::console::SimpleCommandOverload::v_help(std::ostream & os)
 }
 
 prefix_ void senf::console::SimpleCommandOverload::v_execute(std::ostream & os,
-                                                             Arguments const & arguments)
+                                                             ParseCommandInfo const & command)
     const
 {
-    fn_(os, arguments);
+    fn_(os, command);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

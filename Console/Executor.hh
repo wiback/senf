@@ -63,8 +63,6 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef boost::iterator_range< ParseCommandInfo::argument_iterator> Arguments;
-
         /// Thrown by built-in 'exit' command
         struct ExitException {};        
 
@@ -77,9 +75,15 @@ namespace console {
         ///\}
         ///////////////////////////////////////////////////////////////////////////
 
-        void operator()(ParseCommandInfo const & command, std::ostream & output);
+        void execute(std::ostream & output, ParseCommandInfo const & command);
                                         ///< Execute command
-                                        /**< Output will be written to \a output. */
+                                        /**< Output will be written to \a output. 
+                                             Same as operator()(). */
+
+        void operator()(std::ostream & output, ParseCommandInfo const & command);
+                                        ///< Execute command
+                                        /**< Output will be written to \a output. 
+                                             Same as execute(). */
         DirectoryNode & cwd() const;    ///< Current working directory
 
     protected:

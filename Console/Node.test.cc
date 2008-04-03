@@ -60,7 +60,7 @@ BOOST_AUTO_UNIT_TEST(gnericNode)
 }
 
 namespace {
-    void callback(std::ostream & os, senf::console::SimpleCommandNode::Arguments arguments)
+    void callback(std::ostream & os, senf::console::ParseCommandInfo const & command)
     {
         os << "callback";
     }
@@ -118,8 +118,7 @@ BOOST_AUTO_UNIT_TEST(directoryNode)
 
 namespace {
     struct Functor {
-        void operator()(std::ostream & os, 
-                        senf::console::SimpleCommandNode::Arguments const &) {
+        void operator()(std::ostream & os, senf::console::ParseCommandInfo const &) {
             os << "functor";
         }
     };
@@ -134,13 +133,13 @@ BOOST_AUTO_UNIT_TEST(senfConsoleAddNode)
 
     {
         std::stringstream ss;
-        senf::console::root()("fn1")(ss, info.arguments());
+        senf::console::root()("fn1")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "callback" );
     }
 
     {
         std::stringstream ss;
-        senf::console::root()("fn2")(ss, info.arguments());
+        senf::console::root()("fn2")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "functor" );
     }
     
@@ -155,7 +154,7 @@ BOOST_AUTO_UNIT_TEST(simpleCommandNode)
     {
         std::stringstream ss;
         senf::console::ParseCommandInfo info;
-        senf::console::root()("fn")(ss, info.arguments());
+        senf::console::root()("fn")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "callback" );
     }
     

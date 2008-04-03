@@ -46,7 +46,7 @@ namespace {
             dir.add("member", &Self::member);
         }
 
-        void member(std::ostream & os, senf::console::CommandNode::Arguments const &) {
+        void member(std::ostream & os, senf::console::ParseCommandInfo const &) {
             os << "member";
         }
     };
@@ -59,14 +59,14 @@ BOOST_AUTO_UNIT_TEST(scopedDirectory)
         senf::console::root().add("ob",ob.dir);
         std::stringstream ss;
         senf::console::ParseCommandInfo info;
-        senf::console::root()["ob"]("member")(ss, info.arguments());
+        senf::console::root()["ob"]("member")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "member" );
     }
     BOOST_CHECK_THROW( senf::console::root()["ob"], senf::console::UnknownNodeNameException );
 }
 
 namespace {
-    void callback(std::ostream & os, senf::console::CommandNode::Arguments const &) {
+    void callback(std::ostream & os, senf::console::ParseCommandInfo const &) {
         os << "cb";
     }
 }
@@ -79,7 +79,7 @@ BOOST_AUTO_UNIT_TEST(scopedDirectoryVoid)
         dir.add("cb", &callback);
         std::stringstream ss;
         senf::console::ParseCommandInfo info;
-        senf::console::root()["dir"]("cb")(ss, info.arguments());
+        senf::console::root()["dir"]("cb")(ss, info);
         BOOST_CHECK_EQUAL( ss.str(), "cb" );
     }
     BOOST_CHECK_THROW( senf::console::root()["dir"],

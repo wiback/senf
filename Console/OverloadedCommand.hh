@@ -52,16 +52,23 @@ namespace console {
         // Types
 
         typedef boost::intrusive_ptr<CommandOverload> ptr;
-        typedef CommandNode::Arguments Arguments;
 
         ///////////////////////////////////////////////////////////////////////////
 
         virtual ~CommandOverload();
 
-        void operator()(std::ostream & os, Arguments const & arguments);
+        void execute(std::ostream & os, ParseCommandInfo const & command);
                                         ///< Call the overload
                                         /**< If the \a arguments are not acceptable for this
-                                             overload, a SyntaxErrorException must be thrown. */
+                                             overload, a SyntaxErrorException must be thrown. 
+                                             Same as operator()() */
+
+        void operator()(std::ostream & os, ParseCommandInfo const & command);
+                                        ///< Call the overload
+                                        /**< If the \a arguments are not acceptable for this
+                                             overload, a SyntaxErrorException must be thrown. 
+                                             Same as execute() */
+
         void help(std::ostream & os);   ///< Provide help for this specific overload
 
         OverloadedCommandNode & node(); ///< Access owning node
@@ -75,7 +82,7 @@ namespace console {
     private:
 #endif
         virtual void v_help(std::ostream & os) const = 0;
-        virtual void v_execute(std::ostream & os, Arguments const & arguments) const = 0;
+        virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const = 0;
 
     private:
         OverloadedCommandNode * node_;
@@ -142,7 +149,7 @@ namespace console {
         OverloadedCommandNode();
 
         virtual void v_help(std::ostream & output) const;
-        virtual void v_execute(std::ostream & output, Arguments const & arguments) const;
+        virtual void v_execute(std::ostream & output, ParseCommandInfo const & command) const;
 
         typedef std::vector<CommandOverload::ptr> Overloads;
 
@@ -153,7 +160,8 @@ namespace console {
     /** \brief Basic command overload
 
         This is an implementation of CommandOverload which allows to call an arbitrary callback with
-        the correct signature (<tt>void (std::ostream &, Arguments const &)</tt>)
+        the correct signature 
+        (<tt>void (std::ostream &, senf::console::ParseCommandInfo const &)</tt>)
       */
     class SimpleCommandOverload
         : public CommandOverload
@@ -163,7 +171,7 @@ namespace console {
         // Types
 
         typedef boost::intrusive_ptr<SimpleCommandOverload> ptr;
-        typedef boost::function<void (std::ostream &, Arguments const &)> Function;
+        typedef boost::function<void (std::ostream &, ParseCommandInfo const &)> Function;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -185,7 +193,7 @@ namespace console {
         SimpleCommandOverload(Function fn);
 
         virtual void v_help(std::ostream & os) const;
-        virtual void v_execute(std::ostream & os, Arguments const & arguments) const;
+        virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const;
 
         Function fn_;
         std::string doc_;

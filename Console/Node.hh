@@ -38,7 +38,7 @@
 
     \code
     // Define callback function.
-    void mycommand(std::ostream & os, senf::console::Arguments const & args)
+    void mycommand(std::ostream & os, senf::console::ParseCommandInfo const & command)
     {
         // ...
         os << "!! Important message ...\n";
@@ -61,7 +61,7 @@
                 .doc("Do the member operation");
         }
 
-        void member(std::ostream & os, senf::console::Arguments const & args)
+        void member(std::ostream & os, senf::console::ParseCommandInfo const & command)
         {
             // ...
         }
@@ -123,7 +123,7 @@
     callback. The callback types which can be added are listed at \ref console_callbacks.
     
     \code
-    void callback(std::ostream & os, senf::console::Arguments const & args) { ... }
+    void callback(std::ostream & os, senf::console::ParseCommandInfo const & command) { ... }
     // ...
     myDirectory.add("foo",&callback);
     \endcode
@@ -132,8 +132,9 @@
     adding the node to the tree. If the name is empty or non-unique, a unique name will be
     automatically provided.
 
-    To remove a node from the tree, just use the nodes senf::console::GenericNode::unlink()
-    member. This call removes the node from it's parent and returns a (smart) node pointer.
+    To remove a node from the tree, just use the nodes senf::console::GenericNode::unlink() or the
+    parents senf::console::DirectoryNode::remove() member. This call removes the node from it's
+    parent and returns a (smart) node pointer.
 
     \li If you ignore the return value, the node (and it's children) will be deleted.
     \li Alternatively, you may store away the node and re-attach it later.
@@ -142,7 +143,7 @@
     \li To rename a node, unlink and re-add it with a different name.
 
     \code
-    myDirectory.add("bar", myDirectory("foo").unlink());
+    myDirectory.add("bar", myDirectory.remove("foo"));
     \endcode
 
     \subsection console_node_param Assigning additional node parameters
@@ -168,11 +169,14 @@
     Another possibility is to traverse the tree explicitly. For this purpose, the operators '[]' and
     '()' have been overloaded in senf::console::DirectoryNode.
     \code
+    senf::console::root().getDirectory("myDirectory").getCommand("foo")
+    \\ or more concise but otherwise completely identical
     senf::console::root()["myDirectory"]("foo")
     \endcode
-    The '[]' operator will return a senf::console::DirectoryNode whereas '()' will return a
-    senf::console::CommandNode. If the node is not found or is not of the correct type, an exception
-    will be raised.
+
+    getDirectory and the '[]' operator will return a senf::console::DirectoryNode whereas getCommand
+    and the '()' operator will return a senf::console::CommandNode. If the node is not found or is
+    not of the correct type, an exception will be raised.
 
     \section console_object_dir Assigning a directory to an object instance
 
@@ -407,24 +411,42 @@ namespace console {
                                              be saved and/or re-attached at some other place in the
                                              tree. */
 
-        DirectoryNode & operator[](std::string const & name) const;
-                                        ///< Get directory child node
-                                        /**< \throws UnknownNodeNameException if a child \a name
-                                                 does not exist. 
-                                             \throws std::bad_cast if the child \a name is not a
-                                                 directory node. */
-
-        CommandNode & operator()(std::string const & name) const;
-                                        ///< Get command child node
-                                        /**< \throws UnknownNodeNameException if a child \a name
-                                                 does not exist
-                                             \throws std::bad_cast if the child \a name is not a
-                                                 command node. */
-
         GenericNode & get(std::string const & name) const;
                                         ///< Get child node
                                         /**< \throws UnknownNodeNameException if a child \a name
                                                  does not exist */
+
+        DirectoryNode & getDirectory(std::string const & name) const;
+                                        ///< Get directory child node
+                                        /**< Same as operator[]
+                                             \throws UnknownNodeNameException if a child \a name
+                                                 does not exist. 
+                                             \throws std::bad_cast if the child \a name is not a
+                                                 directory node. */
+        
+        DirectoryNode & operator[](std::string const & name) const;
+                                        ///< Get directory child node
+                                        /**< Same as getDirectory
+                                             \throws UnknownNodeNameException if a child \a name
+                                                 does not exist. 
+                                             \throws std::bad_cast if the child \a name is not a
+                                                 directory node. */
+
+        CommandNode & getCommand(std::string const & name) const;
+                                        ///< Get command child node
+                                        /**< Same as operator()
+                                             \throws UnknownNodeNameException if a child \a name
+                                                 does not exist
+                                             \throws std::bad_cast if the child \a name is not a
+                                                 command node. */
+
+        CommandNode & operator()(std::string const & name) const;
+                                        ///< Get command child node
+                                        /**< Same as getCommand()
+                                             \throws UnknownNodeNameException if a child \a name
+                                                 does not exist
+                                             \throws std::bad_cast if the child \a name is not a
+                                                 command node. */
 
         DirectoryNode & mkdir(std::string const & name);
                                         ///< Create sub-directory node
@@ -439,7 +461,7 @@ namespace console {
         template <class ForwardRange>
         GenericNode & traverse(ForwardRange const & range);
                                         ///< Traverse node path starting at this node
-                                        /**< The <tt>FordwareRange::value_type</tt> must be
+                                        /**< The <tt>ForwardRange::value_type</tt> must be
                                              (convertible to) std::string. Each range element
                                              constitutes a step along the node traversal.
 
@@ -491,8 +513,7 @@ namespace console {
         The CommandNode is the base-class for the tree leaf nodes. Concrete command node
         implementations are derived from this class.
 
-        To execute a command, CommandNode::operator()() is called. This abstract virtual function
-        must be implemented in a derived class.
+        To execute a command, CommandNode::operator()() or CommandNode::execute() is called.
 
         \ingroup node_tree
       */
@@ -507,13 +528,20 @@ namespace console {
         typedef boost::shared_ptr<CommandNode const> cptr;
         typedef boost::weak_ptr<CommandNode> weak_ptr;
 
-        typedef ParseCommandInfo::ArgumentsRange Arguments;
-
         ///////////////////////////////////////////////////////////////////////////
 
-        void operator()(std::ostream & output, Arguments const & arguments) const;
+        void execute(std::ostream & output, ParseCommandInfo const & command) const;
                                         ///< Execute the command
-                                        /**< \param[in] output stream where result messages may be
+                                        /**< Same as operator()()
+                                             \param[in] output stream where result messages may be
+                                                 written to
+                                             \param[in] arguments command arguments. This is a
+                                                 range of ranges of ArgumentToken instances. */
+
+        void operator()(std::ostream & output, ParseCommandInfo const & command) const;
+                                        ///< Execute the command
+                                        /**< Same as execute()
+                                             \param[in] output stream where result messages may be
                                                  written to
                                              \param[in] arguments command arguments. This is a
                                                  range of ranges of ArgumentToken instances. */
@@ -527,7 +555,7 @@ namespace console {
 #ifndef DOXYGEN
     private:
 #endif
-        virtual void v_execute(std::ostream & output, Arguments const & arguments) const = 0;
+        virtual void v_execute(std::ostream & output, ParseCommandInfo const & command) const = 0;
                                         ///< Called to execute the command
                                         /**< \param[in] output stream where result messages may be
                                                  written to
@@ -536,8 +564,6 @@ namespace console {
 
     private:
     };
-
-    typedef CommandNode::Arguments Arguments;
 
     /** \brief Most simple CommandNode implementation
 
@@ -557,7 +583,7 @@ namespace console {
         typedef boost::shared_ptr<SimpleCommandNode const> cptr;
         typedef boost::weak_ptr<SimpleCommandNode> weak_ptr;
 
-        typedef boost::function<void (std::ostream &, Arguments const &)> Function;
+        typedef boost::function<void (std::ostream &, ParseCommandInfo const &)> Function;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -578,7 +604,7 @@ namespace console {
 
     private:
         virtual void v_help(std::ostream & output) const;
-        virtual void v_execute(std::ostream & output, Arguments const & arguments) const;
+        virtual void v_execute(std::ostream & output, ParseCommandInfo const & command) const;
         
 
         Function fn_;

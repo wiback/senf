@@ -171,8 +171,9 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
         lastCommand_ = data;
 
     try {
-        if (! parser_.parse(data, boost::bind<void>(boost::ref(executor_), _1, 
-                                                    boost::ref(out_t::member))))
+        if (! parser_.parse(data, boost::bind<void>( boost::ref(executor_),
+                                                     boost::ref(out_t::member),
+                                                     _1 )) )
             out_t::member << "syntax error" << std::endl;
     }
     catch (Executor::ExitException &) {

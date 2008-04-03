@@ -160,6 +160,9 @@ namespace senf {
         
         \todo Fix the file support to use threads (?) fork (?) and a pipe so it works reliably even
             over e.g. NFS.
+
+        \todo Add a check in the alarm callback which is already called every x seconds to check,
+            that a single callback is not blocking.
       */
     class Scheduler
         : boost::noncopyable

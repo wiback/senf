@@ -50,7 +50,7 @@
 
     \code
     // Define callback function.
-    void mycommand(std::ostream & os, senf::console::Arguments const & args)
+    void mycommand(std::ostream & os, senf::console::ParseCommandInfo const & command)
     {
         // ...
         os << "!! Important message ...\n";

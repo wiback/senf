@@ -38,17 +38,17 @@
 
 namespace {
 
-    void fn1(std::ostream &, senf::console::CommandOverload::Arguments const &)
+    void fn1(std::ostream &, senf::console::ParseCommandInfo const &)
     {
         throw senf::console::SyntaxErrorException("fn1 error");
     }
 
-    void fn2(std::ostream &, senf::console::CommandOverload::Arguments const &)
+    void fn2(std::ostream &, senf::console::ParseCommandInfo const &)
     {
         throw senf::console::SyntaxErrorException("fn2 error");
     }
 
-    void fn3(std::ostream & os, senf::console::CommandOverload::Arguments const &)
+    void fn3(std::ostream & os, senf::console::ParseCommandInfo const &)
     {
         os << "fn3\n";
     }
@@ -67,11 +67,11 @@ BOOST_AUTO_UNIT_TEST(overladedCommand)
     {
         senf::console::ParseCommandInfo info;
         std::stringstream ss;
-        BOOST_CHECK_THROW( senf::console::root()("overload")(ss, info.arguments()),
+        BOOST_CHECK_THROW( senf::console::root()("overload")(ss, info),
                            senf::console::SyntaxErrorException );
         
         cmd.add(senf::console::SimpleCommandOverload::create(&fn3)).doc("fn3");
-        BOOST_CHECK_NO_THROW( senf::console::root()("overload")(ss, info.arguments()) );
+        BOOST_CHECK_NO_THROW( senf::console::root()("overload")(ss, info) );
         BOOST_CHECK_EQUAL( ss.str(), "fn3\n" );
     }
     

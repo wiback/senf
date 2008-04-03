@@ -46,10 +46,24 @@ senf::console::ScopedDirectoryBase::remove(std::string const & name)
 }
 
 prefix_ senf::console::DirectoryNode &
+senf::console::ScopedDirectoryBase::getDirectory(std::string const & name)
+    const
+{
+    return node().getDirectory(name);
+}
+
+prefix_ senf::console::DirectoryNode &
 senf::console::ScopedDirectoryBase::operator[](std::string const & name)
     const
 {
     return node()[name];
+}
+
+prefix_ senf::console::CommandNode &
+senf::console::ScopedDirectoryBase::getCommand(std::string const & name)
+    const
+{
+    return node().getCommand(name);
 }
 
 prefix_ senf::console::CommandNode &

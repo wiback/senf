@@ -40,13 +40,12 @@
 
 namespace {
     
-    void fn(std::ostream & output, 
-            senf::console::CommandNode::Arguments const & arguments) {
-        senf::console::CommandNode::Arguments::iterator i (arguments.begin());
-        senf::console::CommandNode::Arguments::iterator i_end (arguments.end());
+    void fn(std::ostream & output, senf::console::ParseCommandInfo const & command) {
+        senf::console::CommandNode::Arguments::iterator i (command.arguments().begin());
+        senf::console::CommandNode::Arguments::iterator i_end (command.arguments().end());
         for (; i != i_end; ++i) {
-            senf::console::CommandNode::Arguments::value_type::iterator j (i->begin());
-            senf::console::CommandNode::Arguments::value_type::iterator j_end (i->end());
+            senf::console::ParseCommandInfo::ArgumentsRange::value_type::iterator j (i->begin());
+            senf::console::ParseCommandInfo::ArgumentsRange::value_type::iterator j_end (i->end());
             for (; j != j_end; ++j) 
                 output << j->value() << ' ';
         }
@@ -62,13 +61,12 @@ namespace {
                 .doc("Example of a member function");
         }
         
-        void blub(std::ostream & output, senf::console::CommandNode::Arguments const & args) {
+        void blub(std::ostream & output, senf::console::ParseCommandInfo const &) {
             output << "blub\n";
         }
     };
 
-    void shutdownServer(std::ostream &,
-                        senf::console::CommandNode::Arguments const &)
+    void shutdownServer(std::ostream &, senf::console::ParseCommandInfo const &)
     {
         senf::Scheduler::instance().terminate();
         throw senf::console::Executor::ExitException();

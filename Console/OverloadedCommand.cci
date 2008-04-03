@@ -36,10 +36,16 @@
 prefix_ senf::console::CommandOverload::~CommandOverload()
 {}
 
-prefix_ void senf::console::CommandOverload::operator()(std::ostream & os,
-                                                        Arguments const & arguments)
+prefix_ void senf::console::CommandOverload::execute(std::ostream & os,
+                                                     ParseCommandInfo const & command)
 {
-    v_execute(os, arguments);
+    v_execute(os, command);
+}
+
+prefix_ void senf::console::CommandOverload::operator()(std::ostream & os,
+                                                        ParseCommandInfo const & command)
+{
+    execute(os, command);
 }
 
 prefix_ void senf::console::CommandOverload::help(std::ostream & os)

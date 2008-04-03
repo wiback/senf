@@ -46,8 +46,8 @@ namespace {
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Executor
 
-prefix_ void senf::console::Executor::operator()(ParseCommandInfo const & command,
-                                                 std::ostream & output)
+prefix_ void senf::console::Executor::execute(std::ostream & output,
+                                              ParseCommandInfo const & command)
 {
     SENF_LOG(( "Executing: " << command ));
 
@@ -57,7 +57,7 @@ prefix_ void senf::console::Executor::operator()(ParseCommandInfo const & comman
     try {
         switch(command.builtin()) {
         case ParseCommandInfo::NoBuiltin :
-            traverseCommand(command.commandPath())(output, command.arguments());
+            traverseCommand(command.commandPath())(output, command);
             break;
 
         case ParseCommandInfo::BuiltinCD :

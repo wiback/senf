@@ -39,6 +39,12 @@ prefix_ senf::console::Executor::Executor()
         root().shared_from_this());
 }
 
+prefix_ void senf::console::Executor::operator()(std::ostream & output,
+                                                 ParseCommandInfo const & command)
+{
+    return execute(output, command);
+}
+
 prefix_ senf::console::DirectoryNode & senf::console::Executor::cwd()
     const
 {

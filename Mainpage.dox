@@ -60,8 +60,8 @@
     configuration, described in this documentation.
 
     \see \ref senf_build \n
+         \ref senf_setup \n
          \ref senf_components \n
-         \ref senf_svnsetup \n
          \ref senf_overview
 
     \section senf_preliminaries Preliminaries
@@ -86,7 +86,7 @@
     which relies on \c epoll)
  */
 
-/** \page senf_build Building the framework
+/** \page senf_build Building the SENF framework
 
     This procedure will test building the complete framework including the unit tests and the
     Sniffer test application. This build is \e not needed to use the framework since every project
@@ -95,8 +95,9 @@
     After you have successfully built the library tests, you can continue to setup your own project
     using SENF.
 
-    \see \ref senf_components \n
-         \ref senf_svnsetup
+    \see \ref senf_setup \n
+         \ref senf_components \n
+         \ref senf_overview
 
     \section senf_checkout Getting the code
 
@@ -108,7 +109,7 @@
     </pre>
 
     This will create a new directory \c senf within the current directory. For further documentation
-    on the use of Subversion, see the \c svn manpage or the subversion homepage at
+    on the use of Subversion, see the \c svn man-page or the subversion homepage at
     http://subversion.tigris.org. A very good introduction and reference to subversion is available
     at http://svnbook.red-bean.com.
 
@@ -128,13 +129,72 @@
     are just arbitrary examples).
  */
 
+/** \page senf_setup Setting up a new project using SENF
+
+    The most simple way to use SENF for now is to checkout the svn repository and build SENF
+    yourselves. After you have built SENF, reference your SENF build directory from your build
+    environment. The most flexible way to do this, is to use a symbolic link to your SENF build.
+
+    Here an example \c SConstruct file for a project using SENF. This script expects SENF to be
+    found in the <tt>%senf</tt> sub-directory of the directory, where the \c SConstruct file is
+    found. This may either be a SENF checkout (if managing your project via subversion, you can use
+    <tt>svn:externals</tt> for this) or a symbolic link to your SENF checkout.
+
+    \code
+    import os.path, glob
+
+    env = Environment(
+
+        LIBS     = [ 'senf', 'iberty', 'boost_regex', 'boost_iostreams' ],
+        CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long' ],
+
+    )
+
+    # If we have a symbolic link 'senf' pointing to our own senf build, use it (and assume
+    # it's in debug mode)
+    if os.path.exists('senf'):
+        print "\nUsing SENF in 'senf'\n"
+        env.Append(
+
+            CPPDEFINES = [ 'SENF_DEBUG' ],
+            LIBPATH    = [ 'senf' ],
+            CPPPATH    = [ 'senf/include' ],
+            CXXFLAGS   = [ '-O0', '-g', '-fno-inline' ],
+            LINKFLAGS  = [ '-g', '-rdynamic' ],
+
+        )
+        env.Execute([ 'scons -C senf libsenf.a' ])
+    else:
+        print "\nUsing system installed SENF\n"
+
+    # replace 'mytarget' with the name of your target executable
+    env.Program(
+        target = 'mytarget',
+        source = glob.glob('*.cc'),
+    );
+    \endcode
+
+    This script automatically set's up the build correctly when using a self-compiled SENF in debug
+    mode (which is the default mode):
+    \li It links in all the required libraries in the correct order: First \c libsenf, then the
+        other needed libraries \c liberty, \c libboost_regex and \c libboost_iostreams.
+    \li It defines the <tt>SENF_DEBUG</tt> preprocessor symbol correctly
+    \li It correctly sets the include and library path
+    \li It adds sensible debug flags
+    \li It adds <tt>-rdynamic</tt> to the link command. This is needed to get a nice backtrace from
+        exceptions. 
+    \li It automatically rebuilds SENF if needed
+
+    \see \ref senf_components \n
+         \ref senf_overview
+ */
+
 /** \page senf_components The SENF modules
 
     The framework is made up of several modular components. When using the library, it is possible
     to selectively choose to use only a subset of the implemented modules.
 
-    \see \ref senf_build \n
-         \ref senf_svnsetup
+    \see \ref senf_overview
 
     \section libPPI libPPI: Packet Processing Infrastructure
 
@@ -193,104 +253,6 @@
     \see <a href="../../senfscons/doc/html/index.html">SENFSCons reference</a>
  */
 
-/** \page senf_svnsetup Setting up a new project using SENF
-
-    The preferred way to use SENF in a new project is to rely on Subversion and make use of the
-    SENFSCons build environment. The following sections will describe, how this setup works.
-
-    \see \ref senf_build \n
-         \ref senf_components \n
-         \ref senf_overview
-
-    \section svnext Setting up the project repository
-
-    The most seamless integration is possible if you rely on Subversion to manage the new
-    project. Subversion does support 'external repositories'. This allows to import code from a
-    foreign repository into the checkout without importing it into your repository. The code will
-    always stay at the remote repository, updates are automatically available.
-
-    First setup a new empty repository as described for example in the Subversion book at
-    http://svnbook.red-bean.com or as mandated by your site policy. We will call the project 'Foo'
-    and assume, that the project has been checked out into the 'Foo' directory.
-
-    You now have to decide, which modules you want to use. Every module resides in it's own
-    subdirectory in the SENF repository. Instead of directly checking out the code, we will use \c
-    svn:externals. This will instruct \c svn to automatically check out the needed directories from
-    the BerliOS SENF repository. Change to the 'Foo' directory and type
-
-    <pre>
-    $ svn propedit svn:externals .
-    </pre>
-
-    The default editor (probably VI) will be started with the current value of the svn:externals
-    property (which will probably be empty). Now add all the modules you want plus \c senfscons and
-    possibly \c doclib (if you want to build the documentation). You will almost certainly need the
-    \c Utils module, since all other modules depend on it.
-
-    For example, if you want to use the \c Scheduler and \c Socket module, the file will look like
-
-    <pre>
-    senfscons http://svn.berlios.de/svnroot/repos/senf/trunk/senfscons
-    Utils http://svn.berlios.de/svnroot/repos/senf/trunk/Utils
-    Scheduler http://svn.berlios.de/svnroot/repos/senf/trunk/Scheduler
-    Socket http://svn.berlios.de/svnroot/repos/senf/trunk/Socket
-    </pre>
-
-    exit the editor and the property will be set. Now run
-
-    <pre>
-    $ svn update
-    </pre>
-
-    and the code will be checked out into the corresponding directories.
-
-    \section senf_new_conf Configuring SENFSCons
-
-    To set up the build environment, copy the <tt>senfscons/SConstruct.template</tt> to
-    <tt>SConstruct</tt> in the project root. The default setup of this file is to build all
-    subdirectories (using the \c SConscript files of the subdirectories). You can add additional
-    global targets and configuration parameters here.
-
-    If you want to use a non-default compiler or the boost library is not installed in the system
-    directories, you will have to copy <tt>senfscons/SConfig.template</tt> to <tt>SConfig</tt> in
-    the project root and edit it there. You should \e never add \c SConfig to the repository since
-    it should only contain local settings necessary for building on your local system. You should
-    therefore add \c SConfig to the list of files ignored by Subversion in the project root. In the
-    project root execute
-
-    <pre>
-    $ svn propedit svn:ignore .
-    </pre>
-
-    and add \c SConfig as a new line to the property.
-
-    \section new_build Building the project
-
-    You should now be able to build your project using
-
-    <pre>
-    $ scons
-    </pre>
-
-    If you have not changed the \c SConstruct file, this will build all modules you have imported
-    into your project. To build and execute the unit tests, use
-
-    <pre>
-    $ scons all_tests
-    </pre>
-
-    you can also build only a subdirectory by changing to it and running
-
-    <pre>
-    $ scons -u [target]
-    </pre>
-
-    \see <a href="../../senfscons/doc/html/index.html">SENFSCons reference</a> \n
-         <a href="http://www.scons.org/documentation.php">SCons documentation</a> \n
-         <a href="http://svnbook.red-bean.com">Subversion online book</a> \n
-         <a href="http://subversion.tigris.org">Subversion Homepage</a>
- */
-
 /** \page senf_overview Introduction to the framework
 
     The SENF framework is relatively complex and makes use of advanced features of the C++
@@ -333,8 +295,7 @@
 
     \see <a href="../../Examples/doc/html/index.html">Examples</a> \n
          \ref senf_components \n
-         \ref senf_svnsetup \n
-         \ref senf_build
+         \ref senf_setup
 
     \section senf_conventions Coding Conventions
     
@@ -446,6 +407,7 @@
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
+// compile-command: "scons doc"
 // mode: flyspell
 // mode: auto-fill
 // End:

@@ -42,7 +42,7 @@ namespace {
     void setCommand(senf::console::ParseCommandInfo const & cmd) {
         commands.push_back(cmd);
     }
-    void testCommand(std::ostream & os, senf::console::Executor::Arguments) {
+    void testCommand(std::ostream & os, senf::console::ParseCommandInfo const & command) {
         os << "testCommand\n";
     }
 }
@@ -60,7 +60,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("cd dir1", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinCD );
         BOOST_CHECK( &executor.cwd() == &senf::console::root()["dir1"] );
         BOOST_CHECK_EQUAL( os.str(), "" );
@@ -69,7 +69,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("cd /dir2", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinCD );
         BOOST_CHECK( &executor.cwd() == &senf::console::root()["dir2"] );
         BOOST_CHECK_EQUAL( os.str(), "" );
@@ -78,7 +78,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("cd dir1", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinCD );
         BOOST_CHECK( &executor.cwd() == &senf::console::root()["dir2"] );
         BOOST_CHECK_EQUAL( os.str(), "invalid directory\n" );
@@ -87,7 +87,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("cd /", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinCD );
         BOOST_CHECK( &executor.cwd() == &senf::console::root() );
         BOOST_CHECK_EQUAL( os.str(), "" );
@@ -96,7 +96,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("ls", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
         BOOST_CHECK_EQUAL( os.str(), "dir1/\ndir2/\n" );
     }
@@ -104,7 +104,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("ls dir1", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
         BOOST_CHECK_EQUAL( os.str(), "dir3/\n" );
     }
@@ -112,7 +112,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("ls dir3", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
         BOOST_CHECK_EQUAL( os.str(), "invalid directory\n" );
     }
@@ -120,7 +120,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("dir1/dir3 { }", &setCommand);
-        executor(commands.rbegin()[1], os);
+        executor(os, commands.rbegin()[1]);
         BOOST_CHECK_EQUAL( commands.rbegin()[1].builtin(), senf::console::ParseCommandInfo::BuiltinPUSHD );
         BOOST_CHECK( &executor.cwd() == &senf::console::root()["dir1"]["dir3"] );
         BOOST_CHECK_EQUAL( os.str(), "" );
@@ -128,7 +128,7 @@ BOOST_AUTO_UNIT_TEST(executor)
 
     {
         std::stringstream os;
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinPOPD );
         BOOST_CHECK( &executor.cwd() == &senf::console::root() );
         BOOST_CHECK_EQUAL( os.str(), "" );
@@ -138,14 +138,14 @@ BOOST_AUTO_UNIT_TEST(executor)
         std::stringstream os;
         parser.parse("exit", &setCommand);
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinEXIT );
-        BOOST_CHECK_THROW( executor(commands.back(), os), senf::console::Executor::ExitException );
+        BOOST_CHECK_THROW( executor(os, commands.back()), senf::console::Executor::ExitException );
         BOOST_CHECK_EQUAL( os.str(), "" );
     }
 
     {
         std::stringstream os;
         parser.parse("help /dir2", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinHELP );
         BOOST_CHECK_EQUAL( os.str(), "senf::console::DirectoryNode at /dir2\n\nHelptext\n" );
     }
@@ -153,7 +153,7 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("dir2/test", &setCommand);
-        executor(commands.back(), os);
+        executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::NoBuiltin );
         BOOST_CHECK_EQUAL( os.str(), "testCommand\n" );
     }

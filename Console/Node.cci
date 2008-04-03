@@ -93,7 +93,7 @@ prefix_ senf::console::DirectoryNode::ptr senf::console::DirectoryNode::create()
 }
 
 prefix_ senf::console::DirectoryNode &
-senf::console::DirectoryNode::operator[](std::string const & name)
+senf::console::DirectoryNode::getDirectory(std::string const & name)
     const
 {
     try {
@@ -102,14 +102,28 @@ senf::console::DirectoryNode::operator[](std::string const & name)
     SENF_WRAP_EXC(std::bad_cast)
 }
 
+prefix_ senf::console::DirectoryNode &
+senf::console::DirectoryNode::operator[](std::string const & name)
+    const
+{
+    return getDirectory(name);
+}
+
 prefix_ senf::console::CommandNode &
-senf::console::DirectoryNode::operator()(std::string const & name)
+senf::console::DirectoryNode::getCommand(std::string const & name)
     const
 {
     try {
         return dynamic_cast<CommandNode&>(get(name));
     }
     SENF_WRAP_EXC(std::bad_cast)
+}
+
+prefix_ senf::console::CommandNode &
+senf::console::DirectoryNode::operator()(std::string const & name)
+    const
+{
+    return getCommand(name);
 }
 
 prefix_ senf::console::DirectoryNode &
@@ -169,11 +183,18 @@ prefix_ senf::console::CommandNode::cptr senf::console::CommandNode::thisptr()
 prefix_ senf::console::CommandNode::CommandNode()
 {}
 
-prefix_ void senf::console::CommandNode::operator()(std::ostream & output,
-                                                    Arguments const & arguments)
+prefix_ void senf::console::CommandNode::execute(std::ostream & output,
+                                                 ParseCommandInfo const & command)
     const
 {
-    v_execute(output, arguments);
+    v_execute(output, command);
+}
+
+prefix_ void senf::console::CommandNode::operator()(std::ostream & output,
+                                                    ParseCommandInfo const & command)
+    const
+{
+    execute(output, command);
 }
 
 ///////////////////////////////////////////////////////////////////////////

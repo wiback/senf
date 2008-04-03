@@ -66,7 +66,7 @@
         // ...
     }
     catch (senf::ExceptionMixin & e) {
-        e << boost::format("\ncall id 0x%04x@%s") % id % address;
+        e << boost::format("\n" "call id 0x%04x@%s") % id % address;
     }
     \endcode
 
@@ -87,7 +87,7 @@
     the GNU-libc.
 
     To apply these features (extensibility, backtrace) to a non-senf exception, the non-senf
-    exception can be wrapped and rethrown.
+    exception can be wrapped and re-thrown.
     \code
     void foo() {
         try {
@@ -106,7 +106,7 @@
             foo();
         }
         catch (senf::ExceptionMixin & ex) {
-            ex << "\nadd this info";
+            ex << "\n" "add this info";
         }
     }
     catch (std::bad_cast const & ex) {
@@ -120,6 +120,12 @@
 
     \todo Link against libcwd to add file-name/line-number information to the backtrace and remove
         the dependency on -rdynamic
+    \todo Or better, use addr2line to obtain that information when showing the backtrace when
+        catched within Daemon (<tt>addr2line -fsiCe argv[0]</tt>)
+    \todo Add signal handlers for the bad signals which writes a backtrace to stderr and
+        terminates. This should probably write out a raw backtrace without de-mangling or
+        line-numbers since we don't want to mess with dynamic memory when the heap might be
+        corrupted ... Another handler for e.g. SIGUSR2 is nice to show a debug backtrace on demand
  */
 
 namespace senf {
@@ -322,3 +328,4 @@ namespace senf {
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
+ 

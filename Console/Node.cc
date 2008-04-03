@@ -135,10 +135,10 @@ prefix_ void senf::console::SimpleCommandNode::v_help(std::ostream & output)
 }
 
 prefix_ void senf::console::SimpleCommandNode::v_execute(std::ostream & output,
-                                                         Arguments const & arguments)
+                                                         ParseCommandInfo const & command)
     const
 {
-    fn_(output, arguments);
+    fn_(output, command);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

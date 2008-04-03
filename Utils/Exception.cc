@@ -30,6 +30,11 @@
 #include <execinfo.h>
 #include <sstream>
 #include "../config.hh"
+
+// Copied from the binutils sources 
+#define HAVE_DECL_BASENAME 1
+#define HAVE_DECL_ASPRINTF 1
+#define HAVE_DECL_VASPRINTF 1
 #include "impl/demangle.h"
 
 #define prefix_

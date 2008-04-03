@@ -72,7 +72,9 @@ namespace console {
         ///\{
 
         GenericNode::ptr remove(std::string const & name);
+        DirectoryNode & getDirectory(std::string const & name) const;
         DirectoryNode & operator[](std::string const & name) const;
+        CommandNode & getCommand(std::string const & name) const;
         CommandNode & operator()(std::string const & name) const;
         GenericNode & get(std::string const & name) const;
         DirectoryNode & mkdir(std::string const & name);
@@ -173,8 +175,8 @@ namespace console {
 
     template <class Owner>
     SimpleCommandNode & senf_console_add_node(
-        DirectoryNode & node, Owner & owner, std::string const & name, 
-        void (Owner::*fn)(std::ostream & output, CommandNode::Arguments const & arguments));
+        DirectoryNode & node, Owner & owner, std::string const & name,
+        void (Owner::*fn)(std::ostream &, ParseCommandInfo const &));
 
     template <class Node>
     DirectoryNode & senf_console_add_node(

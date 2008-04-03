@@ -47,6 +47,12 @@ namespace ppi {
         as \a source argument. In the same way, if a module has an input connector called \c input,
         the module may be given directly as \a target argument. This simplifies the most common case
         of a module with one input and one output connector.
+
+        The connect call will check at runtime, whether the two connectors are type-compatible:
+        \li Either or both of the connectors are untyped (they accept/send arbitrary senf::Packet's)
+        \li Both connectors send/accept the exactly same packet type.
+
+        \throws IncompatibleConnectorsException if the two connectors are not type compatible.
         
         \see \ref ppi_connections
      */
