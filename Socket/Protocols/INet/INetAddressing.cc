@@ -46,16 +46,16 @@
 prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & addr)
 {
     clear();
-    unsigned i = addr.find(':');
-    if (i == std::string::npos)
-        throw AddressSyntaxException();
+    unsigned portIx = addr.find(':');
     try {
-        port(boost::lexical_cast< ::u_int16_t >(std::string(addr,i+1)));
+        port( boost::lexical_cast< ::u_int16_t >(portIx == std::string::npos 
+                                                 ? addr : std::string(addr,portIx+1)) );
     }
     catch (boost::bad_lexical_cast const &) {
-        throw AddressSyntaxException();
+        throw AddressSyntaxException() << "invalid port number";
     }
-    address(INet4Address::from_string(std::string(addr,0,i)));
+    if (portIx != std::string::npos)
+        address( INet4Address::from_string(std::string(addr,0,portIx)) );
 }
 
 prefix_ senf::INet4SocketAddress::INet4SocketAddress(INet4Address const & addr, unsigned p)
@@ -81,8 +81,9 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
 
     // Format of addr: "[" address [ "%" interface ] "]" ":" port
     //             or: host ":" port
+    //             or: port
 
-    static boost::regex const addressRx ("(?:\\[([a-f0-9A-F:]+)(?:%(.+))?\\]|(.+)):([0-9]+)");
+    static boost::regex const addressRx ("(?:(?:\\[([a-f0-9A-F:]+)(?:%(.+))?\\]|(.+)):)?([0-9]+)");
     // Subexpression numbers:
     enum { NumericAddr = 1,
            ZoneId      = 2,
@@ -98,10 +99,12 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
 
     sockaddr_.sin6_port = htons(boost::lexical_cast<boost::uint16_t>(match[Port]));
 
-    INet6Address a (INet6Address::from_string(
-                        match[NumericAddr].matched ? match[NumericAddr] : match[Hostname],
-                        resolve));
-    std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
+    if (match[NumericAddr].matched || match[Hostname].matched) {
+        INet6Address a (INet6Address::from_string(
+                            match[NumericAddr].matched ? match[NumericAddr] : match[Hostname],
+                            resolve));
+        std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
+    }
 }
 
 prefix_ bool senf::INet6SocketAddress::operator==(INet6SocketAddress const & other)

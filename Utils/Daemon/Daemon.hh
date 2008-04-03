@@ -209,6 +209,7 @@ namespace senf {
         int stdout_;
         int stderr_;
         std::string pidfile_;
+        bool pidfileCreated_;
 
         bool detached_;
     };

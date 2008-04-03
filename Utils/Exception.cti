@@ -32,11 +32,31 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Exc, class Arg>
-prefix_ typename boost::enable_if< boost::is_convertible<Exc*,senf::Exception*>, Exc & >::type
+prefix_ typename boost::enable_if< boost::is_convertible<Exc*,senf::ExceptionMixin*>, Exc & >::type
 senf::operator<<(Exc const & exc, Arg const & arg)
 {
     const_cast<Exc &>(exc).append( boost::lexical_cast<std::string>(arg) );
     return const_cast<Exc &>(exc);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::WrapExcecption<BaseException>
+
+template <class BaseException>
+prefix_ senf::WrapException<BaseException>::WrapException(BaseException const & base)
+    : ExceptionMixin(base.what()), BaseException(base)
+{}
+
+template <class BaseException>
+prefix_ senf::WrapException<BaseException>::~WrapException()
+    throw()
+{}
+
+template <class BaseException>
+prefix_ char const * senf::WrapException<BaseException>::what()
+    const throw()
+{
+    return message().c_str();
 }
 
 /////////////////////////////cti.e///////////////////////////////////////

@@ -27,6 +27,7 @@
 #include "SocketPolicy.ih"
 
 // Custom includes
+#include "../Utils/Exception.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -46,7 +47,10 @@ checkBaseOf(SocketPolicyBase const & other)
         (void) dynamic_cast<BOOST_PP_CAT(SomePolicy,_) const &>(                                  \
             other.BOOST_PP_CAT(the,SomePolicy)());
 
-    BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SENF_SOCKET_POLICIES )
+    try {
+        BOOST_PP_SEQ_FOR_EACH( SP_CheckPolicy, , SENF_SOCKET_POLICIES )
+    }
+    SENF_WRAP_EXC(std::bad_cast)
 
 #   undef SP_CheckPolicy
 }

@@ -26,6 +26,7 @@
 //#include "Packet.ih"
 
 // Custom includes
+#include "../Utils/Exception.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -61,7 +62,7 @@ prefix_ OtherPacket senf::Packet::as()
     const
 {
     if (!is<OtherPacket>())
-        throw std::bad_cast();
+        throw WrapException<std::bad_cast>(std::bad_cast());
     return OtherPacket(ptr()->as<typename OtherPacket::type>());
 }
 

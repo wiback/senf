@@ -57,7 +57,7 @@
 
 prefix_ senf::Daemon::~Daemon()
 {
-    if (! pidfile_.empty()) {
+    if (pidfileCreated_) {
         try {
             LIBC_CALL( ::unlink, (pidfile_.c_str()) );
         } catch (Exception e) {
@@ -77,11 +77,13 @@ prefix_ bool senf::Daemon::daemon()
     return daemonize_;
 }
 
-prefix_ int senf::Daemon::argc() {
+prefix_ int senf::Daemon::argc() 
+{
     return argc_;
 }
 
-prefix_ char const ** senf::Daemon::argv() {
+prefix_ char const ** senf::Daemon::argv() 
+{
     return argv_;
 }
 
@@ -194,10 +196,14 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
             openLog();
             fork();
         }
-        if (! pidfile_.empty() && ! pidfileCreate()) {
-            std::cerr << "\n*** PID file '" << pidfile_ << "' creation failed. Daemon running ?" 
-                      << std::endl;
-            return 1;
+        if (! pidfile_.empty()) {
+            if (pidfileCreate())
+                pidfileCreated_ = true;
+            else {
+                std::cerr << "PID file '" << pidfile_ 
+                          << "' creation failed. Daemon running ?" << std::endl;
+                return 1;
+            }
         }
 
         main();
@@ -209,11 +215,11 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
 #ifndef SENF_DEBUG
 
     catch (std::exception & e) {
-        std::cerr << "\n*** Fatal exception: " << e.what() << std::endl;
+        std::cerr << "\n*** Fatal exception: " << e.what() << "\n" << std::endl;
         return 1;
     }
     catch (...) {
-        std::cerr << "\n*** Fatal exception: (unknown)" << std::endl;
+        std::cerr << "\n*** Fatal exception: (unknown)" << "\n" << std::endl;
         return 1;
     }
 
@@ -227,7 +233,7 @@ prefix_ int senf::Daemon::start(int argc, char const ** argv)
 
 prefix_ senf::Daemon::Daemon()
     : argc_(0), argv_(0), daemonize_(true), stdout_(-1), stderr_(-1), pidfile_(""),
-      detached_(false)
+      pidfileCreated_(false), detached_(false)
 {}
 
 ////////////////////////////////////////
@@ -369,8 +375,10 @@ prefix_ bool senf::Daemon::pidfileCreate()
             if ( ! (pidf >> old_pid)
                  || old_pid < 0 
                  || ::kill(old_pid, 0) >= 0 
-                 || errno == EPERM )
+                 || errno == EPERM ) {
+                LIBC_CALL( ::unlink, (tempname.c_str()) );
                 return false;
+            }
         }
 
         // If we reach this point, the pid file exists but the process mentioned within the

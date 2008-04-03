@@ -37,6 +37,38 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+BOOST_AUTO_UNIT_TEST(wrapException)
+{
+    bool bad_cast (false);
+
+    try {
+        try {
+            try {
+                try {
+                    try {
+                        throw std::bad_cast();
+                    }
+                    SENF_WRAP_EXC(std::bad_cast)
+                }
+                SENF_WRAP_EXC(std::bad_cast)
+            }
+            catch (senf::ExceptionMixin & ex) {
+                ex << "\nspecial exception";
+                throw;
+            }
+        }
+        catch (std::exception const & ex) {
+            BOOST_CHECK( std::string(ex.what()).find("-- \n") != std::string::npos );
+            BOOST_CHECK( std::string(ex.what()).find("special exception") != std::string::npos );
+            throw;
+        }
+    }
+    catch (std::bad_cast &) {
+        bad_cast = true;
+    }
+    BOOST_CHECK( bad_cast );
+}
+
 BOOST_AUTO_UNIT_TEST(errnoException)
 {
     try {

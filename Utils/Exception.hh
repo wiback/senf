@@ -42,7 +42,8 @@
 /** \defgroup exception Exception classes
 
     All exceptions in %senf are derived from senf::Exception. This class adds the possibility to
-    extend the exception description while it is processed:
+    extend the exception description while it is processed. The functionality is provided by a mixin
+    class senf::ExceptionMixin:
 
     \code
     try {
@@ -50,7 +51,7 @@
         // Some code which might raise an arbitrary senf exception
 
     }
-    catch (senf::Exception & e) {
+    catch (senf::ExceptionMixin & e) {
         e << "\handling user " << user;
         throw;
     }
@@ -64,7 +65,7 @@
     try { 
         // ...
     }
-    catch (senf::Exception & e) {
+    catch (senf::ExceptionMixin & e) {
         e << boost::format("\ncall id 0x%04x@%s") % id % address;
     }
     \endcode
@@ -84,38 +85,63 @@
     automatically include a stack backtrace. For this to work, you need to add the
     <tt>-rdynamic</tt> option to all link commands. This feature depends on <tt>gcc</tt> and
     the GNU-libc.
+
+    To apply these features (extensibility, backtrace) to a non-senf exception, the non-senf
+    exception can be wrapped and rethrown.
+    \code
+    void foo() {
+        try {
+            // ... code that might throw std::bad_cast or somelib::FooException
+        }
+        SENF_WRAP_EXC(std::bad_cast)
+        SENF_WRAP_EXC(somelib::FooException)
+    }
+    \endcode The re-thrown exception can then be caught as <tt>std::bad_cast</tt> or as
+    senf::ExceptionMixin as needed. It is safe, to wrap an exception twice (the macro will detect
+    this case).
+    \code
+    bar() {
+    try {
+        try {
+            foo();
+        }
+        catch (senf::ExceptionMixin & ex) {
+            ex << "\nadd this info";
+        }
+    }
+    catch (std::bad_cast const & ex) {
+        std::cerr << ex.what() << std::endl;
+    }
+    \endcode
+    The final error output will include
+    \li a backtrace if compiled in debug mode
+    \li the original error message from the <tt>std::bad_cast</tt> exception
+    \li the additional error message "add this info"
+
+    \todo Link against libcwd to add file-name/line-number information to the backtrace and remove
+        the dependency on -rdynamic
  */
 
 namespace senf {
 
-    /** \brief Generic exception base-class
+    /** \brief Generic extensible exception mixin
 
-        Exception is a generic exception base-class which allows the exception to be later extended
+        ExceptionMixin is a generic exception mixin which allows the exception to be later extended
         by catching and re-throwing it (See example in \ref exception).
 
         \ingroup exception
       */
-    class Exception
-        : public std::exception
+    class ExceptionMixin
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
-        virtual ~Exception() throw();
-
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
-
-        virtual char const * what() const throw();
         std::string const & message() const;
 
         void append(std::string text); ///< Extend exception description
                                         /**< Adds \a text to the description text. */
 
     protected:
-        Exception(std::string const & description = ""); ///< Initialize exception with string
+        explicit ExceptionMixin(std::string const & description = ""); 
+                                        ///< Initialize exception with string
                                         /**< \a description is the initial error description
                                              string. This should probably be a string constant
                                              describing the exception for most derived
@@ -128,8 +154,65 @@ namespace senf {
         std::string message_;
     };
 
+    /** \brief Extensible exception base-class
+
+        This base-class is an exception which already includes the ExceptionMixin. All SENF
+        exceptions are derived from this class. Other user-exception may be defined by deriving from
+        this class too.
+
+        \see \ref exception
+
+        \ingroup exception
+     */
+    class Exception
+        : public ExceptionMixin, public std::exception
+    {
+    public:
+        virtual ~Exception() throw();
+
+        virtual char const * what() const throw();
+
+    protected:
+        explicit Exception(std::string const & description = "");
+    };
+    
+    /** \brief Wrapper for standard non-senf exceptions
+
+        This class wraps an exception of type \a BaseException and adds functionality from
+        senf::ExceptionMixin.
+
+        \ingroup exception
+     */
+    template <class BaseException>
+    class WrapException
+        : public ExceptionMixin, public BaseException
+    {
+    public:
+        typedef BaseException Base;
+
+        WrapException(BaseException const & base);
+        virtual ~WrapException() throw();
+
+        virtual char const * what() const throw();
+    };
+
+    /** \brief Wrap a non-senf exception
+
+        This macro allows to wrap a non-senf exception adding functionality from ExceptionMixin
+        using the WrapException template. For an example, see \ref exception.
+
+        \ingroup exception
+     */
+#   define SENF_WRAP_EXC(Ex)                                                                      \
+        catch (Ex const & base) {                                                                 \
+            if (dynamic_cast<senf::ExceptionMixin const *>(&base))                                \
+                throw;                                                                            \
+            else                                                                                  \
+                throw senf::WrapException<Ex>(base);                                              \
+        }
+
     template <class Exc, class Arg>
-    typename boost::enable_if< boost::is_convertible<Exc*,Exception*>, Exc & >::type
+    typename boost::enable_if< boost::is_convertible<Exc*,ExceptionMixin*>, Exc & >::type
     operator<<(Exc const & exc, Arg const & arg); ///< Extend exception description
                                         /**< Adds \a arg converted to string to the end of the
                                              exception description string. This operator allows to

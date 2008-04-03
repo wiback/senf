@@ -38,18 +38,8 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::Exception
 
-prefix_ senf::Exception::~Exception()
-    throw()
-{}
-
-prefix_ char const * senf::Exception::what()
-    const throw()
-{
-    return message_.c_str();
-}
-
 #ifdef SENF_DEBUG
-prefix_ void senf::Exception::addBacktrace()
+prefix_ void senf::ExceptionMixin::addBacktrace()
 {
     void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
     unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
@@ -79,6 +69,19 @@ prefix_ void senf::Exception::addBacktrace()
     free(symbols);
 }
 #endif
+
+/////////////////////////////////////////////////////////////////////////// 
+// senf::Exception
+
+prefix_ senf::Exception::~Exception()
+    throw()
+{}
+
+prefix_ char const * senf::Exception::what()
+    const throw()
+{
+    return message().c_str();
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::SystemException

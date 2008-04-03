@@ -28,9 +28,9 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::Exception
+// senf::ExceptionMixin
 
-prefix_ senf::Exception::Exception(std::string const & description)
+prefix_ senf::ExceptionMixin::ExceptionMixin(std::string const & description)
     : message_(description)
 {
 #ifdef SENF_DEBUG
@@ -38,16 +38,23 @@ prefix_ senf::Exception::Exception(std::string const & description)
 #endif
 }
 
-prefix_ std::string const & senf::Exception::message()
+prefix_ std::string const & senf::ExceptionMixin::message()
     const
 {
     return message_;
 }
 
-prefix_ void senf::Exception::append(std::string text)
+prefix_ void senf::ExceptionMixin::append(std::string text)
 {
     message_ += text;
 }
+
+///////////////////////////////////////////////////////////////////////////
+// senf::Exception
+
+prefix_ senf::Exception::Exception(std::string const & description)
+    : ExceptionMixin(description)
+{}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::SystemException

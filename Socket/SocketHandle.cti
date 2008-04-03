@@ -113,7 +113,7 @@ senf::SocketHandle<SPolicy>::cast_dynamic(FileHandle handle)
 {
     // throws bad_cast if the body is not a SocketBody
     SocketBody & body (dynamic_cast<SocketBody&>(FileHandle::body(handle)));
-    // throws bad_cast if the policy is not compatible
+    // throws bad_cast if the policy is not compatible (already wrapped ...)
     SPolicy::checkBaseOf(body.protocol().policy());
     return cast_static(handle);
 }
@@ -138,7 +138,10 @@ prefix_ Target senf::dynamic_socket_cast(Source handle)
         boost::is_convertible<Target*,FileHandle*>::value &&
         ( boost::is_convertible<Source,Target>::value ||
           boost::is_convertible<Target,Source>::value ) ));
-    return Target::cast_dynamic(handle);
+    try {
+        return Target::cast_dynamic(handle);
+    }
+    SENF_WRAP_EXC(std::bad_cast)
 }
 
 template <class Target, class Source>

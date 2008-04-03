@@ -96,14 +96,20 @@ prefix_ senf::console::DirectoryNode &
 senf::console::DirectoryNode::operator[](std::string const & name)
     const
 {
-    return dynamic_cast<DirectoryNode&>(get(name));
+    try {
+        return dynamic_cast<DirectoryNode&>(get(name));
+    }
+    SENF_WRAP_EXC(std::bad_cast)
 }
 
 prefix_ senf::console::CommandNode &
 senf::console::DirectoryNode::operator()(std::string const & name)
     const
 {
-    return dynamic_cast<CommandNode&>(get(name));
+    try {
+        return dynamic_cast<CommandNode&>(get(name));
+    }
+    SENF_WRAP_EXC(std::bad_cast)
 }
 
 prefix_ senf::console::DirectoryNode &
