@@ -47,9 +47,10 @@ namespace connector {
     /** \namespace senf::ppi::connector
         \brief Connector classes
 
-        A connector has two independent properties
-        - it may be \e active or \e passive
-        - it may be an \e input or an \e output
+        A connector has three independent properties
+        \li it may be \e active or \e passive
+        \li it may be an \e input or an \e output
+        \li it has an (optional) packet type
 
         \e Active connectors are activated from within the module, \e passive connectors are
         signaled by the external framework. \e Input modules receive packets, \e output modules send
@@ -58,11 +59,12 @@ namespace connector {
         All passive connectors call some onRequest callback whenever I/O needs to be performed. All
         input modules possess a packet queue.
 
-        We therefore have 4 connector types:
-        - senf::ppi::connector::ActiveInput
-        - senf::ppi::connector::ActiveOutput
-        - senf::ppi::connector::PassiveInput
-        - senf::ppi::connector::PassiveOutput.
+        We therefore have 4 connector types each of which is parameterized by the type of packet
+        traversing the connector:
+        \li senf::ppi::connector::ActiveInput
+        \li senf::ppi::connector::ActiveOutput 
+        \li senf::ppi::connector::PassiveInput 
+        \li senf::ppi::connector::PassiveOutput.
 
         Connectors are declared as module data members and are then externally connected to other
         modules.
@@ -100,6 +102,16 @@ namespace connector {
             \ref ppi_connectors
      */
 
+    /** \brief Incompatible connectors connected
+
+        This exception is thrown, when two incompatible connectors are connected. This happens if
+        both connectors of a senf::ppi::connect() statement declare a packet type (the connector
+        template argument) but they don't declare the same packet type.
+
+        You need to ensure, that both connectors use the same packet type.
+
+        \see senf::ppi::connect()
+     */
     struct IncompatibleConnectorsException : public senf::Exception
     { IncompatibleConnectorsException() : senf::Exception("Incompatible connectors") {} };
 

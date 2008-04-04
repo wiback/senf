@@ -52,7 +52,8 @@ namespace ppi {
         \li Either or both of the connectors are untyped (they accept/send arbitrary senf::Packet's)
         \li Both connectors send/accept the exactly same packet type.
 
-        \throws IncompatibleConnectorsException if the two connectors are not type compatible.
+        \throws connector::IncompatibleConnectorsException if the two connectors are not type
+            compatible.
         
         \see \ref ppi_connections
      */
