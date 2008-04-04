@@ -92,6 +92,24 @@ prefix_ char ** senf::Daemon::argv()
     return argv_;
 }
 
+namespace {
+
+    struct IsDaemonOpt {
+        bool operator()(std::string const & str) const {
+            return str == "--no-daemon"
+                || boost::starts_with(str, std::string("--pid-file="))
+                || boost::starts_with(str, std::string("--console-log="));
+        }
+    };
+}
+
+prefix_ void senf::Daemon::removeDaemonArgs()
+{
+    char ** last (std::remove_if(argv_+1, argv_+argc_, IsDaemonOpt()));
+    *last = 0;
+    argc_ = last - argv_;
+}
+
 prefix_ void senf::Daemon::consoleLog(std::string const & path, StdStream which)
 {
     switch (which) {

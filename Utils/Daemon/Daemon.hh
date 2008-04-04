@@ -158,6 +158,7 @@ namespace senf {
 
         int argc();                     ///< Access command line parameter count
         char ** argv();                 ///< Access command line parameters
+        void removeDaemonArgs();        ///< Remove the daemon arguments from argc()/argv()
 
         static void exit(unsigned code=0); ///< Terminate daemon with failure
 
