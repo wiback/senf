@@ -154,9 +154,9 @@ namespace senf {
                                              successful startup. */
 
         int argc();                     ///< Access command line parameter count
-        char ** argv();           ///< Access command line parameters
+        char ** argv();                 ///< Access command line parameters
 
-        static void exit(unsigned code=0);     ///< Terminate daemon with failure
+        static void exit(unsigned code=0); ///< Terminate daemon with failure
 
         ///\}
         
@@ -195,10 +195,10 @@ namespace senf {
                                              This member is only called, if the default main()
                                              implementation is not overridden. */
     private:
-
         void openLog();
         void fork();
         bool pidfileCreate();
+        void installSighandlers();
 
         int argc_;
         char ** argv_;

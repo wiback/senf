@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
+#include <execinfo.h>
 #include <sstream>
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
@@ -41,6 +42,10 @@
 #include <boost/format.hpp>
 #include "../Exception.hh"
 #include "../membind.hh"
+#include "../Backtrace.hh"
+
+// #define __USE_GNU
+#include <ucontext.h>
 
 //#include "Daemon.mpp"
 #define prefix_
@@ -196,6 +201,7 @@ prefix_ int senf::Daemon::start(int argc, char ** argv)
             openLog();
             fork();
         }
+        installSighandlers();
         if (! pidfile_.empty()) {
             if (pidfileCreate())
                 pidfileCreated_ = true;
@@ -415,6 +421,69 @@ prefix_ bool senf::Daemon::pidfileCreate()
         break;
     }
     return true;
+}
+
+
+#ifdef SENF_DEBUG
+
+namespace {
+    void fatalSignalsHandler(int sig, ::siginfo_t * info, void * arg)
+    {
+        static char const * const signames[] = {
+            "", 
+            "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", 
+            "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", 
+            "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", 
+            "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGIO", 
+            "SIGPWR", "SIGSYS" };
+
+        // ::ucontext_t * ucontext = static_cast<ucontext_t*>(arg);
+        std::cerr << "\n" << "Signal " << sig;
+        if (unsigned(sig) < sizeof(signames) / sizeof(signames[0]))
+            std::cerr << " (" << signames[unsigned(sig)] << ")";
+        std::cerr << " received\n";
+
+        if (sig == SIGSEGV)
+            std::cerr << "Invalid memory access at " << info->si_addr << "\n";
+
+        static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
+        unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
+
+        // Hack the callers address into the backtrace
+        // entries[1] = reinterpret_cast<void *>(ucontext->uc_mcontext.gregs[REG_EIP]);
+
+        std::cerr << "Backtrace:\n";
+        senf::formatBacktrace(std::cerr, entries, nEntries);
+        std::cerr << "-- \n";
+
+        if (sig != SIGUSR2) {
+            ::signal(sig, SIG_DFL);
+            ::kill(::getpid(), sig);
+        }
+    }
+
+}
+
+#endif
+
+prefix_ void senf::Daemon::installSighandlers()
+{
+#ifdef SENF_DEBUG
+    struct ::sigaction sa;
+    sa.sa_sigaction = &fatalSignalsHandler;
+    ::sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART | SA_SIGINFO;
+
+    ::sigaction(SIGILL,    &sa, NULL);
+    ::sigaction(SIGTRAP,   &sa, NULL);
+    ::sigaction(SIGABRT,   &sa, NULL);
+    ::sigaction(SIGFPE,    &sa, NULL);
+    ::sigaction(SIGBUS,    &sa, NULL);
+    ::sigaction(SIGSEGV,   &sa, NULL);
+    ::sigaction(SIGSTKFLT, &sa, NULL);
+    ::sigaction(SIGSYS,    &sa, NULL);
+    ::sigaction(SIGUSR2,   &sa, NULL);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////

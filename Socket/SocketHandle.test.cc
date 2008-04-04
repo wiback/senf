@@ -94,6 +94,8 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
                            "socket.protocol: senf::test::SomeSocketProtocol\n"
                            "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
                            "socket.server: false\n" );
+
+        BOOST_CHECK_NO_THROW( myh.facet<senf::test::SomeSocketProtocol>() );
     }
     
     // Ensure, the destructor is called and calls the correct close() implementation

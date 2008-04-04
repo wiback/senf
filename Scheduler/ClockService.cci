@@ -47,6 +47,16 @@ prefix_ senf::ClockService::clock_type senf::ClockService::clock(abstime_type ti
     return instance().clock_m(time);
 }
 
+prefix_ senf::ClockService::clock_type senf::ClockService::from_time_t(time_t const & time)
+{
+    return clock( boost::posix_time::from_time_t(time) );
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::from_timeval(timeval const & time)
+{
+    return from_time_t(time.tv_sec) + ClockService::microseconds(time.tv_usec);
+}
+
 prefix_ senf::ClockService::clock_type senf::ClockService::nanoseconds(clock_type v)
 {
     return v;

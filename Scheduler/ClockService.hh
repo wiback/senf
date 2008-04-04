@@ -27,6 +27,7 @@
 #define HH_ClockService_ 1
 
 // Custom includes
+#include <sys/time.h> 
 #include <boost/utility.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>
@@ -129,6 +130,16 @@ namespace senf {
                                         /**< This member converst an absolute time value into the
                                              corresponding clock value.
                                              \see abstime */
+
+        static clock_type from_time_t(time_t const & time); 
+                                        ///< Convert legacy time_t to clock value
+                                        /**< This member converts an absolute time value 
+                                             represented as a time_t value into a clock value */
+
+        static clock_type from_timeval(timeval const & time); 
+                                        ///< Convert legacy timeval to clock value
+                                        /**< This member converts an absolute time value
+                                             represented as a timeval value into a clock value */
 
         static clock_type nanoseconds(clock_type v);
         static clock_type microseconds(clock_type v);

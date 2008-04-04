@@ -147,6 +147,16 @@ namespace senf {
                                                  every derived class. See the state()
                                                  documentation. */
 
+        template <class Facet>
+        Facet const & facet();          ///< Access a protocol facet
+                                        /**< This member will try to access the given protocol facet
+                                             of the socket. If \a Facet is a valid facet of the
+                                             protocol, it is returned, otherwise \c std::bad_cast
+                                             will be thrown.
+                                             \throws std::bad_cast if \a Facet is not a protocol
+                                                 facet of this socket
+                                             \returns the \a Facet protocol facet of this socket */
+
     protected:
         explicit SocketHandle(std::auto_ptr<SocketBody> body);
                                         ///< Initialize SocketHandle providing the protocol
