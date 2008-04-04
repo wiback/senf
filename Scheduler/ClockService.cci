@@ -57,39 +57,74 @@ prefix_ senf::ClockService::clock_type senf::ClockService::from_timeval(timeval 
     return from_time_t(time.tv_sec) + ClockService::microseconds(time.tv_usec);
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::nanoseconds(clock_type v)
+prefix_ senf::ClockService::clock_type senf::ClockService::nanoseconds(int64_type v)
 {
     return v;
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::microseconds(clock_type v)
+prefix_ senf::ClockService::clock_type senf::ClockService::microseconds(int64_type v)
 {
     return v * nanoseconds(1000);
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::milliseconds(clock_type v)
+prefix_ senf::ClockService::clock_type senf::ClockService::milliseconds(int64_type v)
 {
     return v * microseconds(1000);
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::seconds(clock_type v)
+prefix_ senf::ClockService::clock_type senf::ClockService::seconds(int64_type v)
 {
     return v * milliseconds(1000);
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::minutes(clock_type v)
+prefix_ senf::ClockService::clock_type senf::ClockService::minutes(int64_type v)
 {
     return v * seconds(60);
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::hours(clock_type v)
+prefix_ senf::ClockService::clock_type senf::ClockService::hours(int64_type v)
 {
     return v * minutes(60);
 }
 
-prefix_ senf::ClockService::clock_type senf::ClockService::days(clock_type v)
+prefix_ senf::ClockService::clock_type senf::ClockService::days(int64_type v)
 {
     return v * hours(24);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::in_nanoseconds(int64_type v)
+{
+    return v;
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::in_microseconds(int64_type v)
+{
+    return v / nanoseconds(1000);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::in_milliseconds(int64_type v)
+{
+    return v / microseconds(1000);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::in_seconds(int64_type v)
+{
+    return v / milliseconds(1000);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::in_minutes(int64_type v)
+{
+    return v / seconds(60);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::in_hours(int64_type v)
+{
+    return v / minutes(60);
+}
+
+prefix_ senf::ClockService::clock_type senf::ClockService::in_days(int64_type v)
+{
+    return v / hours(24);
 }
 
 prefix_ void senf::ClockService::restart()

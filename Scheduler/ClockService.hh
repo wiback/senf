@@ -98,6 +98,7 @@ namespace senf {
             nanoseconds relative to some implementation defined reference time.
          */
         typedef boost::int_fast64_t clock_type;
+        typedef boost::int_fast64_t int64_type;
 
         /** \brief Absolute time data type
 
@@ -141,13 +142,21 @@ namespace senf {
                                         /**< This member converts an absolute time value
                                              represented as a timeval value into a clock value */
 
-        static clock_type nanoseconds(clock_type v);
-        static clock_type microseconds(clock_type v);
-        static clock_type milliseconds(clock_type v);
-        static clock_type seconds(clock_type v);
-        static clock_type minutes(clock_type v);
-        static clock_type hours(clock_type v);
-        static clock_type days(clock_type v);
+        static clock_type nanoseconds(int64_type v); ///< Convert \a v nanoseconds to clock_type
+        static clock_type microseconds(int64_type v); ///< Convert \a v microseconds to clock_type
+        static clock_type milliseconds(int64_type v); ///< Convert \a v milliseconds to clock_type
+        static clock_type seconds(int64_type v); ///< Convert \a v seconds to clock_type
+        static clock_type minutes(int64_type v); ///< Convert \a v minutes to clock_type
+        static clock_type hours(int64_type v); ///< Convert \a v hours to clock_type
+        static clock_type days(int64_type v); ///< Convert \a v days to clock_type
+
+        static int64_type in_nanoseconds(clock_type v); ///< Convert \a v to nanoseconds
+        static int64_type in_microseconds(clock_type v); ///< Convert \a v to microseconds
+        static int64_type in_milliseconds(clock_type v); ///< Convert \a v to milliseconds
+        static int64_type in_seconds(clock_type v); ///< Convert \a v to seconds
+        static int64_type in_minutes(clock_type v); ///< Convert \a v to minutes
+        static int64_type in_hours(clock_type v); ///< Convert \a v to hours
+        static int64_type in_days(clock_type v); ///< Convert \a v to days
 
         static void restart();
 
