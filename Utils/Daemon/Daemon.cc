@@ -123,6 +123,35 @@ prefix_ void senf::Daemon::openLog()
     }
 }
 
+prefix_ void senf::Daemon::logReopen()
+{
+    if (! stdoutLog_.empty()) {
+        int fd (::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666));
+        if (fd < 0) 
+            goto error;
+        if (::dup2(fd, 1) < 0) 
+            goto error;
+        if (stderrLog_ == stdoutLog_) {
+            if (::dup2(fd, 2) < 0) 
+                goto error;
+            return;
+        }
+    }
+    if (! stderrLog_.empty()) {
+        int fd (::open(stderrLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666));
+        if (fd < 0) 
+            goto error;
+        if (::dup2(fd, 2) < 0) 
+            goto error;
+    }
+    return;
+
+ error:
+    SENF_LOG(
+        (senf::log::CRITICAL)
+        ("log-file reopen failed: (" << errno << ") " << ::strerror(errno)) );
+}
+
 prefix_ void senf::Daemon::pidFile(std::string const & f)
 {
     pidfile_ = f;
@@ -234,13 +263,24 @@ prefix_ int senf::Daemon::start(int argc, char ** argv)
     return 0;
 }
 
+prefix_ senf::Daemon & senf::Daemon::instance()
+{
+    BOOST_ASSERT( instance_ );
+    return *instance_;
+}
+
 ////////////////////////////////////////
 // protected members
 
 prefix_ senf::Daemon::Daemon()
     : argc_(0), argv_(0), daemonize_(true), stdout_(-1), stderr_(-1), pidfile_(""),
       pidfileCreated_(false), detached_(false)
-{}
+{
+    BOOST_ASSERT( ! instance_ );
+    instance_ = this;
+}
+
+senf::Daemon * senf::Daemon::instance_ (0);
 
 ////////////////////////////////////////
 // private members
@@ -466,12 +506,25 @@ namespace {
 
 #endif
 
+namespace {
+    void sighupHandler(int sig)
+    {
+        senf::Daemon::instance().logReopen();
+    }
+}
+
 prefix_ void senf::Daemon::installSighandlers()
 {
-#ifdef SENF_DEBUG
     struct ::sigaction sa;
-    sa.sa_sigaction = &fatalSignalsHandler;
+
     ::sigemptyset(&sa.sa_mask);
+    sa.sa_handler = &sighupHandler;
+    sa.sa_flags = SA_RESTART;
+
+    ::sigaction(SIGHUP,   &sa, NULL);
+
+#ifdef SENF_DEBUG
+    sa.sa_sigaction = &fatalSignalsHandler;
     sa.sa_flags = SA_RESTART | SA_SIGINFO;
 
     ::sigaction(SIGILL,    &sa, NULL);

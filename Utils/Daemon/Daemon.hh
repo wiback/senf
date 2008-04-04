@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <boost/utility.hpp>
+#include "../Logger/SenfLog.hh"
 
 //#include "Daemon.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -103,6 +104,8 @@ namespace senf {
     class Daemon : boost::noncopyable
     {
     public:
+        SENF_LOG_CLASS_AREA();
+
         ///////////////////////////////////////////////////////////////////////////
         // Types
         
@@ -158,11 +161,17 @@ namespace senf {
 
         static void exit(unsigned code=0); ///< Terminate daemon with failure
 
+        void logReopen();               ///< Reopen the log files
+                                        /**< This is used when rotating the logs. By default,
+                                             SIGHUP calls logReopen. */
+
         ///\}
         
         int start(int argc, char ** argv); ///< Called from main() to launch daemon.
                                         /**< Normally not called directly but from the
                                              \ref SENF_DAEMON_MAIN macro. */
+
+        static Daemon & instance();     ///< Return the Daemon instance
 
     protected:
         Daemon();
@@ -212,6 +221,8 @@ namespace senf {
         bool pidfileCreated_;
 
         bool detached_;
+
+        static Daemon * instance_;
     };
 
     /** \brief Provide \c main() function

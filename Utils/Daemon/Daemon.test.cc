@@ -77,9 +77,11 @@ namespace {
         return instance.start(argc, argv);
     }
 
+    int pid;
+
     int run(int argc, char ** argv)
     {
-        int pid (::fork());
+        pid  = ::fork();
         if (pid < 0) throw senf::SystemException("::fork()");
         if (pid == 0) {
             ::_exit(myMain(argc, argv));
@@ -100,16 +102,29 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
 
     BOOST_CHECK( ! boost::filesystem::exists("invalid.log") );
     BOOST_CHECK( ! boost::filesystem::exists("invalid.pid") );
-    BOOST_CHECK( boost::filesystem::exists("testDaemon.pid") );
-    delay(1000);
-    BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
+    BOOST_REQUIRE( boost::filesystem::exists("testDaemon.pid") );
     BOOST_REQUIRE( boost::filesystem::exists("testDaemon.log") );
     
-    std::ifstream log ("testDaemon.log");
+    boost::filesystem::rename("testDaemon.log", "testDaemon.log.1");
+    {
+        std::ifstream pidFile ("testDaemon.pid");
+        int pid (0);
+        BOOST_REQUIRE( pidFile >> pid );
+        BOOST_REQUIRE( pid != 0 );
+        ::kill(pid, SIGHUP);
+    }
+
+    delay(1000);
+    BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
+    BOOST_CHECK( boost::filesystem::exists("testDaemon.log") );
+    BOOST_REQUIRE( boost::filesystem::exists("testDaemon.log.1") );
+    
+    std::ifstream log ("testDaemon.log.1");
     std::stringstream data;
     data << log.rdbuf();
     BOOST_CHECK_EQUAL( data.str(), "Running init()\nRunning run()\n" );
     BOOST_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log") );
+    BOOST_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log.1") );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
