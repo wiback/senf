@@ -84,6 +84,17 @@
     The library is only tested with gcc-3.4 and 4.0 on Linux. On other POSIX platforms with a BSD
     Socket API, the library should be usable, possibly with some tweaking (except for the Scheduler,
     which relies on \c epoll)
+
+    \section senf_compiler_options Compiler and Linker Options
+
+    If SENF is compiled in debug mode (SENF_DEBUG is defined), exception messages will
+    automatically include a stack backtrace. For this to work, you need to add the -rdynamic option
+    to all link commands. This feature depends on gcc and the GNU-libc.
+
+    It is <B>very important</B> that both the SENF library and the application using it are either
+    compiled with or without this compiler switch (-DSENF_DEBUG). Otherwise, the compiler will emit
+    error messages which might be hard to debug.
+
  */
 
 /** \page senf_build Building the SENF framework
@@ -404,6 +415,7 @@
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// :vim:textwidth=100
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
