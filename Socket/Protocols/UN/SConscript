@@ -13,7 +13,7 @@ sources = SENFSCons.GlobSources()
 allob = []
 
 allob.extend(
-    SENFSCons.Objects( env, sources = sources, LIBS = [ 'Socket', 'Utils' ] ) )
+    SENFSCons.Objects( env, sources = sources, LIBS = [ 'Socket', 'Scheduler', 'Utils' ] ) )
 
 for sc in glob.glob("*/SConscript"):
     ob = SConscript(sc)

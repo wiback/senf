@@ -4,7 +4,7 @@ import SENFSCons
 ###########################################################################
 
 SENFSCons.Binary( env, 'ratestuffer', SENFSCons.GlobSources(),
-                  LIBS = [ 'PPI', 'Scheduler', 'Packets', 'Socket', 'Utils' ] );
+                  LIBS = [ 'PPI', 'Scheduler', 'Packets', 'Socket', 'Scheduler', 'Utils' ] );
 
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('ratestuffer.dia')

@@ -10,5 +10,5 @@ SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env,
              library = 'Scheduler',
              sources = sources,
-             LIBS = [ 'Socket', 'Utils' ])
+             LIBS = [ 'Utils' ])
 SENFSCons.Doxygen(env)

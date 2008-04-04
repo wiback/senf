@@ -35,13 +35,13 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ struct timeval senf::DatagramSocketProtocol::timestamp()
+prefix_ senf::ClockService::clock_type senf::DatagramSocketProtocol::timestamp()
     const
 {
     struct timeval tv;
     if (::ioctl(fd(), SIOCGSTAMP, &tv) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("");
-    return tv;
+    return ClockService::from_timeval(tv);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

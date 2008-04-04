@@ -29,6 +29,7 @@
 // Custom includes
 #include <sys/time.h>
 #include "../../Socket/SocketProtocol.hh"
+#include "../../Scheduler/ClockService.hh"
 
 //#include "DatagramSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -44,11 +45,16 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        struct timeval timestamp() const; ///< Return packet timestamp of last packet
+        ClockService::clock_type timestamp() const; ///< Return packet timestamp of last packet
                                         /**< The returned timestamp represents the time, at which
                                              the last network packet passed to the user has been
                                              received from the network. This allows precise network
                                              timing.
+
+                                             The returned value can be converted to the
+                                             senf::ClockService::clock_type representation using
+                                             semf::ClockService::from_timeval().
+
                                              \pre The \c SO_TIMESTAMP socket option must not be set
                                                  on the socket.
                                              \returns timestamp when last packet was received */
