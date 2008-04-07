@@ -75,6 +75,16 @@ prefix_ void senf::BSDSocketProtocol::priority(boost::uint8_t value)
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
+prefix_ int senf::BSDSocketProtocol::error()
+    const
+{
+    int err;
+    socklen_t len (sizeof(err));
+    if (::getsockopt(fd(),SOL_SOCKET,SO_ERROR,&err,&len) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("");
+    return err;
+}
+
 prefix_ unsigned senf::BSDSocketProtocol::rcvbuf()
     const
 {

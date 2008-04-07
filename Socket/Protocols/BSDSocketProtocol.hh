@@ -71,6 +71,11 @@ namespace senf {
                                              sets the TOS field.
                                              \param[in] value new socket priority */
 
+        int error() const;              ///< Get and clear pending socket error
+                                        /**< This call will get <em>and clear</em> a pending socket
+                                             error. This includes asynchronous errors received via
+                                             the network (e.g. via ICMP). */
+
         unsigned rcvbuf() const;        ///< Check receive buffer size
                                         /**< \returns size of receive buffer in bytes 
                                              \internal Linux doubles the buffer size internally when
