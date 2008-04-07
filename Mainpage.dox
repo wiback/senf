@@ -87,14 +87,13 @@
 
     \section senf_compiler_options Compiler and Linker Options
 
-    If SENF is compiled in debug mode (SENF_DEBUG is defined), exception messages will
-    automatically include a stack backtrace. For this to work, you need to add the -rdynamic option
-    to all link commands. This feature depends on gcc and the GNU-libc.
+    If SENF is compiled in debug mode (SENF_DEBUG is defined), exception messages will automatically
+    include a stack backtrace. For this to work, you need to add the -rdynamic option to all link
+    commands. This feature depends on gcc and the GNU-libc.
 
-    It is <B>very important</B> that both the SENF library and the application using it are either
-    compiled with or without this compiler switch (-DSENF_DEBUG). Otherwise, the compiler will emit
-    error messages which might be hard to debug.
-
+    It is <B>very important</B> that both the SENF library and the application using it are compiled
+    \e both either with or without this compiler switch (-DSENF_DEBUG). Otherwise, the compiler will
+    emit error messages which might be hard to debug.
  */
 
 /** \page senf_build Building the SENF framework
@@ -152,7 +151,7 @@
     <tt>svn:externals</tt> for this) or a symbolic link to your SENF checkout.
 
     \code
-    import os.path, glob
+    import glob
 
     env = Environment(
 
@@ -161,40 +160,18 @@
 
     )
 
-    # If we have a symbolic link 'senf' pointing to our own senf build, use it (and assume
-    # it's in debug mode)
-    if os.path.exists('senf'):
-        print "\nUsing SENF in 'senf'\n"
-        env.Append(
-
-            CPPDEFINES = [ 'SENF_DEBUG' ],
-            LIBPATH    = [ 'senf' ],
-            CPPPATH    = [ 'senf/include' ],
-            CXXFLAGS   = [ '-O0', '-g', '-fno-inline' ],
-            LINKFLAGS  = [ '-g', '-rdynamic' ],
-
-        )
-        env.Execute([ 'scons -C senf libsenf.a' ])
-    else:
-        print "\nUsing system installed SENF\n"
-
-    # replace 'mytarget' with the name of your target executable
     env.Program(
         target = 'mytarget',
         source = glob.glob('*.cc'),
     );
     \endcode
 
-    This script automatically set's up the build correctly when using a self-compiled SENF in debug
-    mode (which is the default mode):
-    \li It links in all the required libraries in the correct order: First \c libsenf, then the
-        other needed libraries \c liberty, \c libboost_regex and \c libboost_iostreams.
-    \li It defines the <tt>SENF_DEBUG</tt> preprocessor symbol correctly
-    \li It correctly sets the include and library path
-    \li It adds sensible debug flags
-    \li It adds <tt>-rdynamic</tt> to the link command. This is needed to get a nice backtrace from
-        exceptions. 
-    \li It automatically rebuilds SENF if needed
+    When building against a self-built SENF which will probably be in debug mode, the '-DSENF_DEBUG'
+    option must be added to the compile command.
+
+    The most simple way to build using SENF is to use a very simple SCons helper which automatically
+    supports debug and final builds, uses SENF either centrally installed or locally built and has
+    some other nice features. See \ref senfutil for more info and an example for this utility.
 
     \see \ref senf_components \n
          \ref senf_overview
@@ -210,7 +187,7 @@
     \section libPPI libPPI: Packet Processing Infrastructure
 
     The Packet Processing Infrastructure implements a modular framework for implementing packet
-    oriented network applications. The library provides a larget set of pre-defined modules as well
+    oriented network applications. The library provides a large set of pre-defined modules as well
     as the necessary helpers to implement application specific processing modules.
 
     \see <a href="../../PPI/doc/html/index.html">libPPI API reference</a>
@@ -249,7 +226,7 @@
     \li senf::intrusive_refcount to simplify the implementation of classes usable with
         boost::intrusive_ptr
     \li boost::bind extensions
-    \li An interface to the \c g++ demangler integrated with type_info
+    \li An interface to the \c g++ de-mangler integrated with type_info
     \li Typedefs and rudimentary methods to simplify handling high-resolution time values
 
     \see <a href="../../Utils/doc/html/index.html">libUtils API reference</a>
@@ -297,7 +274,7 @@
     \li To interpret low level network packets, use the <a
         href="../../Packets/doc/html/index.html">Packets library</a>. This library will provide
         efficient and convenient access to all protocol fields. It supports parsing as well as
-        modifying and creating packets. It has default support for the most important internet
+        modifying and creating packets. It has default support for the most important Internet
         protocols and is highly extensible with new protocols.
     \li Go over the <a href="../../Utils/doc/html/index.html">Utils library</a>. It contains small
         helpers to simplify tasks like daemonization, exception handling, debugging and so on.
@@ -412,10 +389,10 @@
  */
 
 
+// :vim:textwidth=100
 // Local Variables:
 // mode: c++
 // fill-column: 100
-// :vim:textwidth=100
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"

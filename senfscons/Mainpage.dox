@@ -34,6 +34,61 @@ namespace senfscons {
     of pre- and postprocessing (which is integrated with the provided Doxygen builder) to fix some
     doxygen problems and generate a (IMHO) more readable layout.
 
+    \section senfutil Building Projects using SENF
+
+    When building projects using senf, SENFSCons has a very simple helper module \ref senfutil to
+    make the building of libraries utilizing senf simpler:
+    \code
+    import sys
+    sys.path.extend(('senf/senfscons','/usr/lib/senf/senfscons'))
+    import os.path, glob, senfutil
+
+    env = Environment()
+
+    senfutil.SetupForSENF( env )
+
+    env.Append(
+
+        LIBS            = [ ],
+        CXXFLAGS        = [ '-Wall', '-Woverloaded-virtual' ],
+        LINKFLAGS       = [ ],
+
+        CXXFLAGS_debug  = [ ],
+        LINKFLAGS_debug = [ ],
+        LOGLEVELS_debug = [ 'senf::log::Debug||VERBOSE' ],
+
+        CXXFLAGS_final  = [ '-O3' ],
+        LINKFLAGS_final = [ ],
+        LOGLEVELS_final = [ ],
+
+        SENF_BUILDOPTS  = [ ],
+
+    )
+
+    env.Default(
+        env.Program( target = 'udpforward',
+                     source = glob.glob('*.cc') )
+    )
+
+    env.Clean(DEFAULT_TARGETS, [ 'udpforward.log', 'udpforward.pid' ])
+    \endcode
+
+    This example builds a simple binary from a number of source files (all '.cc' files). It links
+    against the SENF library and automatically sets all the correct compiler options using
+    <tt>senfutil.SetupForSENF( env )</tt>.
+
+    This script automatically uses a SENF installation either symlinked or imported into the current
+    project in directory 'senf' or, if this directory does not exist, a globaly installed SENF. A
+    locally installed SENF is automatically recompiled if needed. Parallel building is also
+    supported.
+
+    This script automatically supports the \c final and \c LOGLEVELS command line parameters. The
+    LOGLEVELS parameter uses a much more readable syntax than SENF_LOG_CONF:
+    <pre>
+    $ scons -j2 final=1 \
+          LOGLEVELS='senf::log::Debug||IMPORTANT myapp::Transactions|mytrans::Area|VERBOSE'
+    </pre>
+
     \section layout The Project Layout
 
     A Project using the SENFSCons infrastructure will always use a consistent directory layout. The

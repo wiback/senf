@@ -84,6 +84,13 @@ namespace senf {
             in the normal case (no clock skew) and still encapsulate the dependency on legacy C
             headers. Using the senf::singleton mixin ensures, that the instance is constructed
             before main even when instance() is not called.
+
+        \bug There is a deadlock condition between ClockService and the streaming of Boost.DateTime
+            values: Boost.DateTime seems to call tzset() whenever writing a date/time value (ugh)
+            and since tzset changes basic date/time values, it seems to block gettimeofday() which
+            leads to the SIGLARM handler blocking indefinitely. Resolution either a) find out, why
+            tzset() of all functions is called or b) move the ClockService heartbeat functionality
+            into the Scheduler.
       */
     class ClockService
         : singleton<ClockService>
