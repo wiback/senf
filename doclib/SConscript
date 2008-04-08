@@ -216,7 +216,7 @@ def indices():
              if doc.name == "search.idx" ]
 
 def writeTemplate(target = None, source = None, env = None):
-    file(target[0].abspath,"w").write(source[0].read())
+    file(target[0].abspath,"w").write(yaptu.process(str(env['TEMPLATE']), globals(), env.Dictionary()))
 
 writeTemplate = env.Action(writeTemplate, varlist = [ 'TEMPLATE' ])
 
@@ -304,33 +304,28 @@ function paths() {
 }
 ?>"""
 
-header = yaptu.process(HEADER, globals(), env.Dictionary(),
-                       TITLE = "Documentation and API reference")
-
-footer = yaptu.process(FOOTER, globals(), env.Dictionary())
-
-search_php = yaptu.process(HEADER + SEARCH_PHP.replace('<?','[[').replace('?>',']]') + FOOTER,
-                           globals(), env.Dictionary(),
-                           TITLE = "Search results")
-
-search_paths_php = yaptu.process(SEARCH_PATHS_PHP, globals(), env.Dictionary())
-
-env.Command('doxy-header.html', Value(header), writeTemplate)
-env.Command('doxy-footer.html', Value(footer), writeTemplate)
-
+env.Command('doxy-header.html', 'SConscript', writeTemplate,
+            TEMPLATE = Literal(HEADER),
+            TITLE = "Documentation and API reference")
+env.Command('doxy-footer.html', 'SConscript', writeTemplate,
+            TEMPLATE = Literal(FOOTER))
 env.Alias('all_docs',
-          env.Command('search.php', [ Value(search_php), 'html-munge.xsl' ],
+          env.Command('search.php', [ 'html-munge.xsl', 'SConscript' ],
                       [ writeTemplate,
-                        'xsltproc --nonet --html --stringparam topdir .. -o - ${SOURCES[1]} $TARGET 2>/dev/null'
+                        'xsltproc --nonet --html --stringparam topdir .. -o - $SOURCE $TARGET 2>/dev/null'
                             + "| sed"
                             +   r" -e 's/\[\[/<?/g' -e 's/\]\]/?>/g'"
                             +   r" -e 's/\$$projectname/Overview/g'"
                             +   r" -e 's/\$$title/Search results/g'"
                             +       "> ${TARGETS[0]}.tmp",
-                        'mv ${TARGET}.tmp ${TARGET}' ] ))
-
+                        'mv ${TARGET}.tmp ${TARGET}' ],
+                      TEMPLATE = Literal(HEADER
+                                         + SEARCH_PHP.replace('<?','[[').replace('?>',']]')
+                                         + FOOTER),
+                      TITLE = "Search results"))
 env.Alias('all_docs',
-          env.Command('search_paths.php', Value(search_paths_php), writeTemplate))
+          env.Command('search_paths.php', 'SConscript', writeTemplate,
+                      TEMPLATE = Literal(SEARCH_PATHS_PHP)))
 
 env.Alias('install_all',
           env.Install( '$DOCINSTALLDIR/doclib', [ 'favicon.ico',
