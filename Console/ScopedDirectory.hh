@@ -49,7 +49,8 @@ namespace console {
                                       * static_cast<DirectoryNode *>(0),
                                       * static_cast<Owner *>(0),
                                       * static_cast<std::string const *>(0),
-                                      * static_cast<Object const *>(0)) ) result_type;
+                                      * static_cast<Object const *>(0),
+                                      * static_cast<int *>(0)) ) result_type;
 
         typedef typename boost::remove_reference<result_type>::type NodeType;
 
@@ -172,12 +173,12 @@ namespace console {
 #ifndef DOXYGEN
     template <class Owner, class Function>
     SimpleCommandNode & senf_console_add_node(
-        DirectoryNode & node, Owner & owner, std::string const & name, Function const & fn);
+        DirectoryNode & node, Owner & owner, std::string const & name, Function const & fn, ...);
 
     template <class Owner>
     SimpleCommandNode & senf_console_add_node(
         DirectoryNode & node, Owner & owner, std::string const & name,
-        void (Owner::*fn)(std::ostream &, ParseCommandInfo const &));
+        void (Owner::*fn)(std::ostream &, ParseCommandInfo const &), int);
 
     template <class Node>
     DirectoryNode & senf_console_add_node(

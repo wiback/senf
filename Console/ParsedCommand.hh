@@ -32,6 +32,7 @@
 #include <boost/type_traits/is_member_pointer.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/utility.hpp>
 #include "../config.hh"
 #include "OverloadedCommand.hh"
 #include "ParseParameter.hh"
@@ -74,9 +75,19 @@ namespace console {
                                             1))
 #   include BOOST_PP_ITERATE()
 
+#ifndef DOXYGEN
+
     template <class Function>
     ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> &
     senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
+
+    template <class Owner, class Function>
+    ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> &
+    senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
+                          Function fn, int,
+                          typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+
+#endif
 
 }}
 

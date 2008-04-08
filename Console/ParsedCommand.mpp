@@ -33,6 +33,7 @@
 #include <boost/preprocessor/arithmetic/inc.hpp>
 #include <boost/preprocessor/repetition/repeat.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#include <boost/type_traits/remove_const.hpp>
 #include <boost/bind.hpp>
 
 // ///////////////////////////mpp.p////////////////////////////////////////
@@ -68,9 +69,10 @@ public:
     typedef boost::function<typename traits::result_type(std::ostream &
                                                          mpp_TrailingArgTypes())> Function;
 
-#   define mpp_l(z,n,d)                                                                         \
-        typedef typename boost::remove_reference<typename traits::mpp_ArgTypeN(n)>::type        \
-            mpp_ArgTypeN(n);
+#   define mpp_l(z,n,d)                                                                           \
+        typedef typename boost::remove_const<                                                     \
+            typename boost::remove_reference< typename traits::mpp_ArgTypeN(n) >::type >::type    \
+                mpp_ArgTypeN(n);
     BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ )
 #   undef mpp_l
 

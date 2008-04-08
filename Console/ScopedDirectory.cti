@@ -41,7 +41,7 @@ senf::console::OwnerNodeCreateTraits<Owner,Object>::Creator::create(DirectoryNod
                                                                     std::string const & name,
                                                                     Object const & ob)
 {
-    return senf_console_add_node(node, owner, name, ob);
+    return senf_console_add_node(node, owner, name, ob, 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object cons
 template <class Owner, class Function>
 prefix_ senf::console::SimpleCommandNode & senf::console::
 senf_console_add_node(DirectoryNode & node, Owner & , std::string const & name,
-                      Function const & fn)
+                      Function const & fn, ...)
 {
     return node.add(name,fn);
 }
@@ -73,7 +73,7 @@ senf_console_add_node(DirectoryNode & node, Owner & , std::string const & name,
 template <class Owner>
 prefix_ senf::console::SimpleCommandNode & senf::console::
 senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
-                      void (Owner::*fn)(std::ostream &, ParseCommandInfo const &))
+                      void (Owner::*fn)(std::ostream &, ParseCommandInfo const &), int)
 {
     return node.add(name, boost::bind(fn,boost::ref(owner),_1,_2));
 }

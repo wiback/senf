@@ -113,8 +113,55 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
             senf::console::SyntaxErrorException );
     }
+
+    {
+        std::stringstream ss;
+
+        dir.add("cb", &cb1);
+        dir.add("cb", &cb5);
+        dir.add("cb", &cb2);
+        parser.parse("test/cb 111 222.4; test/cb 222; test/cb",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
+        BOOST_CHECK_EQUAL( ss.str(), "333\n" "Value: 222\n" "1.2\n" );
+    }
 }
 
+namespace {
+
+    struct Test 
+    {
+        senf::console::ScopedDirectory<Test> dir;
+        std::string name_;
+
+        Test(std::string const & name) : dir(this), name_ (name) {
+            dir.add("name", &Test::name);
+        }
+
+        std::string name(std::string const & suffix) {
+            return name_ + suffix;
+        }
+
+    };
+}
+
+BOOST_AUTO_UNIT_TEST(memberParsedCommand)
+{
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+    
+    {
+        Test obj ("bar");
+        dir.add("obj", obj.dir);
+        
+        std::stringstream ss;
+        parser.parse("test/obj/name \": foo\"",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
+        BOOST_CHECK_EQUAL( ss.str(), "bar: foo\n" );
+    }
+}
+    
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

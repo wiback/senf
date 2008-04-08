@@ -26,6 +26,7 @@
 #include "ParsedCommand.ih"
 
 // Custom includes
+#include "../Utils/membind.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -110,6 +111,26 @@ senf::console::senf_console_add_node(DirectoryNode & node, std::string const & n
 
     return cmdNode.add( CreateParsedCommandOverload<
                             typename CmdTraits::traits, ! CmdTraits::has_ostream_arg>::create(fn) );
+}
+
+template <class Owner, class Function>
+prefix_ senf::console::ParsedCommandOverload<
+    typename senf::console::detail::ParsedCommandTraits<Function>::traits> &
+senf::console::
+senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
+                      Function fn, int,
+                      typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type *)
+{
+    OverloadedCommandNode & cmdNode (
+        node.hasChild(name) 
+        ? dynamic_cast<OverloadedCommandNode &>(node(name))
+        : node.add(name, OverloadedCommandNode::create()) );
+
+    typedef senf::console::detail::ParsedCommandTraits<Function> CmdTraits;
+
+    return cmdNode.add( CreateParsedCommandOverload<
+                            typename CmdTraits::traits, ! CmdTraits::has_ostream_arg>::create(
+                                senf::membind(fn,&owner)) );
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////
