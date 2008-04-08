@@ -80,6 +80,10 @@
 # ifndef SENF_DEBUG_BACKTRACE_NUMCALLERS
 #     define SENF_DEBUG_BACKTRACE_NUMCALLERS 64
 # endif
+#
+# ifndef SENF_CONSOLE_MAX_COMMAND_ARITY 
+#     define SENF_CONSOLE_MAX_COMMAND_ARITY 6
+# endif
 # 
 # ///////////////////////////////hh.e////////////////////////////////////////
 # endif

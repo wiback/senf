@@ -1,0 +1,210 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief ParsedCommand Boost.Preprocesser external iteration include */
+
+#if !BOOST_PP_IS_ITERATING && !defined(MPP_ParsedCommand_)
+#define MPP_ParsedCommand_ 1
+
+// Custom includes
+#include <boost/preprocessor/iteration/iterate.hpp>
+#include <boost/preprocessor/repetition/enum_trailing.hpp>
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/arithmetic/inc.hpp>
+#include <boost/preprocessor/repetition/repeat.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+#include <boost/bind.hpp>
+
+// ///////////////////////////mpp.p////////////////////////////////////////
+#elif BOOST_PP_IS_ITERATING // ////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Local Macros
+
+#define mpp_ArgTypeN(n) BOOST_PP_CAT(BOOST_PP_CAT(arg, BOOST_PP_INC(n)), _type)
+#define mpp_ArgN(n) BOOST_PP_CAT(arg, BOOST_PP_INC(n))
+
+#define mpp_ArgTypes_(z,n,d) typename traits::mpp_ArgTypeN(n)
+#define mpp_TrailingArgTypes() BOOST_PP_ENUM_TRAILING( BOOST_PP_ITERATION(), mpp_ArgTypes_, _ )
+
+#define mpp_Args_(z,n,d) boost::cref(mpp_ArgN(n))
+#define mpp_TrailingArgs() BOOST_PP_ENUM_TRAILING( BOOST_PP_ITERATION(), mpp_Args_, _ )
+
+#define mpp_BindArgs_(z,n,d) BOOST_PP_CAT( _, BOOST_PP_INC(BOOST_PP_INC(n)))
+#define mpp_TrailingBindArgs() BOOST_PP_ENUM_TRAILING( BOOST_PP_ITERATION(), mpp_BindArgs_, _ )
+
+// ////////////////////////////////////////////////////////////////////////
+#if BOOST_PP_ITERATION_FLAGS()==1 // //////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+
+// Header file (.hh)
+
+template <class FunctionTraits>
+class ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERATION() >
+    : public ParsedCommandOverloadBase
+{
+public:
+    typedef boost::intrusive_ptr<ParsedCommandOverload> ptr;
+    typedef FunctionTraits traits;
+    typedef boost::function<typename traits::result_type(std::ostream &
+                                                         mpp_TrailingArgTypes())> Function;
+
+#   define mpp_l(z,n,d)                                                                         \
+        typedef typename boost::remove_reference<typename traits::mpp_ArgTypeN(n)>::type        \
+            mpp_ArgTypeN(n);
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ )
+#   undef mpp_l
+
+    static ptr create(Function fn);
+
+protected:
+
+private:
+    ParsedCommandOverload(Function fn);
+
+    virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const;
+
+    Function function_;
+};
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==2 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+
+// inline template implementation (.cti)
+
+template <class FunctionTraits>
+prefix_ typename senf::console::ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERATION() >::ptr
+senf::console::ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERATION() >::create(Function fn)
+{
+    return ptr(new ParsedCommandOverload(fn));
+}
+
+template <class FunctionTraits>
+prefix_
+senf::console::ParsedCommandOverload<FunctionTraits,BOOST_PP_ITERATION()>::
+ParsedCommandOverload(Function fn)
+    : function_ (fn) 
+{
+#   define mpp_l(z,n,d) addParameter< mpp_ArgTypeN(n) >();
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ )
+#   undef mpp_l
+}
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==3 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+
+// non-inline template implementation (.ct)
+
+template <class FunctionTraits>
+prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERATION() >::
+v_execute(std::ostream & os, ParseCommandInfo const & command)
+    const
+{
+    if ( command.arguments().size() > BOOST_PP_ITERATION()
+         || (command.arguments().size() < BOOST_PP_ITERATION()
+             && ! arg( BOOST_PP_ITERATION()-1 ).hasDefault) )
+        throw SyntaxErrorException("invalid number of arguments");
+
+    // First define local variables argN for the parameters. The variables are initialized to their
+    // default values
+#   define mpp_l(z,n,d) mpp_ArgTypeN(n) mpp_ArgN(n) (arg< mpp_ArgTypeN(n) >( n ).defaultValue);
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ ) 
+#   undef mpp_l
+    
+    ParseCommandInfo::argument_iterator i (command.arguments().begin());
+    ParseCommandInfo::argument_iterator const i_end (command.arguments().end());
+
+    // Now parse the arguments which are provided leaving the trailing arguments at their default
+    // value. We have already checked above, whether those default values are valid. Be aware, that
+    // the following cases do NOT have 'break' statements !
+
+    switch (BOOST_PP_ITERATION() - command.arguments().size()) {
+
+#   define mpp_l(z,n,d)                                                                           \
+        case n :                                                                                  \
+            detail::ParameterTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ ) 
+#   undef mpp_l
+
+    default : // This happens, if ALL arguments are defaulted
+        ;
+    }
+
+    // Now call the function binding the arguments to the values parsed above. callAndWrite is
+    // specialized to ignore a 'void' return value but automatically write all other values to the
+    // output stream.
+    detail::ReturnValueTraits<typename traits::result_type>::callAndWrite(
+        boost::bind(function_, boost::ref(os)
+                    mpp_TrailingArgs()),
+        os );
+}
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==4 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+
+// CreateParsedCommandOverload
+
+template <class Traits>
+struct CreateParsedCommandOverload<Traits, true, BOOST_PP_ITERATION()>
+{
+    typedef Traits traits;
+
+    template <class Function>
+    static typename senf::console::ParsedCommandOverload<traits>::ptr create(Function fn)
+        {
+            return senf::console::ParsedCommandOverload<traits>::create(
+                boost::bind(fn  mpp_TrailingBindArgs()) );
+        }
+
+};
+
+// ////////////////////////////////////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Undefine local Macros
+
+#undef mpp_TrailingArgs
+#undef mpp_Args_
+
+#undef mpp_TrailingArgTypes
+#undef mpp_ArgTypes_
+
+#undef mpp_ArgN
+#undef mpp_ArgTypeN
+
+// ////////////////////////////////////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+// ///////////////////////////mpp.e////////////////////////////////////////
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

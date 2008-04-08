@@ -1,0 +1,97 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief type_traits Boost.Preprocesser external iteration include */
+
+#if !BOOST_PP_IS_ITERATING && !defined(MPP_type_traits_)
+#define MPP_type_traits_ 1
+
+// Custom includes
+#include <boost/preprocessor/iteration/iterate.hpp>
+#include <boost/preprocessor/repetition/enum.hpp>
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/arithmetic/inc.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#include <boost/preprocessor/punctuation/comma_if.hpp>
+#include <boost/preprocessor/arithmetic/dec.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+
+// ///////////////////////////mpp.p////////////////////////////////////////
+#elif BOOST_PP_IS_ITERATING // ////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Local Macros
+
+#define mpp_Arg(n) BOOST_PP_CAT(BOOST_PP_CAT(arg, BOOST_PP_INC(n)), _type)
+
+#define mpp_OtherArgs_(z,n,d) BOOST_PP_COMMA_IF( BOOST_PP_DEC(n) ) typename traits::mpp_Arg(n)
+#define mpp_OtherArgs() BOOST_PP_REPEAT_FROM_TO( 1, BOOST_PP_ITERATION(), mpp_OtherArgs_, _ )
+
+// ////////////////////////////////////////////////////////////////////////
+#if BOOST_PP_ITERATION_FLAGS()==1 // //////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+
+template <class Traits>
+struct function_traits_remove_arg<Traits, BOOST_PP_ITERATION()>
+{
+    typedef Traits traits;
+    typedef boost::function_traits<typename traits::result_type( mpp_OtherArgs() )> type;
+};
+
+template < class C, class RV
+           BOOST_PP_ENUM_TRAILING_PARAMS( BOOST_PP_ITERATION(), class A ) >
+struct remove_member_pointer<RV (C::*)(BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ))>
+{
+    typedef RV type (BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ));
+};
+
+template < class C, class RV
+           BOOST_PP_ENUM_TRAILING_PARAMS( BOOST_PP_ITERATION(), class A ) >
+struct member_class<RV (C::*)(BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ))>
+{
+    typedef C type;
+};
+
+// ////////////////////////////////////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Undefine local Macros
+
+#undef mpp_Args
+#undef mpp_Args_
+
+#undef mpp_Arg
+
+// ////////////////////////////////////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+// ///////////////////////////mpp.e////////////////////////////////////////
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

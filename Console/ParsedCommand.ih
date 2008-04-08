@@ -1,0 +1,90 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief ParsedCommand internal header */
+
+#ifndef IH_ParsedCommand_
+#define IH_ParsedCommand_ 1
+
+// Custom includes
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+namespace console {
+namespace detail {
+
+    template <class Function, bool isFN=senf::is_any_function<Function>::value>
+    struct ParsedCommandTraits
+    {};
+
+    template <class Traits, bool flag=(Traits::arity>0)>
+    struct FirstArgType
+    {
+        typedef void type;
+    };
+
+    template <class Traits>
+    struct FirstArgType<Traits,true>
+    {
+        typedef typename Traits::arg1_type type;
+    };
+
+    template <class Function>
+    struct ParsedCommandTraits<Function, true>
+    {
+        typedef Function base_type;
+        typedef typename senf::remove_member_pointer<
+            typename boost::remove_pointer<base_type>::type>::type function_type;
+        typedef boost::function_traits<function_type> base_traits;
+
+        typedef typename FirstArgType<base_traits>::type first_arg_type;
+
+        static const bool has_ostream_arg = boost::is_same<first_arg_type, std::ostream &>::value;
+
+        typedef typename boost::mpl::if_c<
+            has_ostream_arg, 
+            typename function_traits_remove_arg<base_traits>::type, 
+            base_traits>
+        ::type traits;
+
+        static const bool is_member = boost::is_member_pointer<base_type>::value;
+        
+        typedef typename senf::member_class<base_type>::type class_type;
+    };
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

@@ -84,9 +84,10 @@ _RE_BEGIN = re.compile('{{')
 _RE_END = re.compile('}}')
 _RE_CONT = re.compile(r'\|\|')
 
-def process(text,*args):
+def process(text,*args,**kw):
     vardict = {}
     for arg in args : vardict.update(arg)
+    vardict.update(kw)
     output = StringIO()
     c = copier(_RE_EXPR, vardict, _RE_BEGIN, _RE_END, _RE_CONT,
                ouf = output)

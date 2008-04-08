@@ -210,8 +210,6 @@
 //#include "Node.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-#include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
-
 namespace senf {
 namespace console {
 
@@ -411,6 +409,9 @@ namespace console {
                                              be saved and/or re-attached at some other place in the
                                              tree. */
 
+        bool hasChild(std::string const & name) const;
+                                        ///< \c true, if there is a child with name \a name
+
         GenericNode & get(std::string const & name) const;
                                         ///< Get child node
                                         /**< \throws UnknownNodeNameException if a child \a name
@@ -488,8 +489,6 @@ namespace console {
 
         friend DirectoryNode & root();
     };
-
-    BOOST_TYPEOF_REGISTER_TYPE(DirectoryNode);
 
     /// Exception: Unknown node name
     struct UnknownNodeNameException : public senf::Exception
@@ -617,11 +616,15 @@ namespace console {
                                               Function const & fn, ...);
 #endif
 
-    BOOST_TYPEOF_REGISTER_TYPE(SimpleCommandNode);
-
     DirectoryNode & root();
 
 }}
+
+#include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
+
+BOOST_TYPEOF_REGISTER_TYPE(senf::console::DirectoryNode)
+BOOST_TYPEOF_REGISTER_TYPE(senf::console::SimpleCommandNode)
+
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Node.cci"

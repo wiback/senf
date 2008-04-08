@@ -72,6 +72,7 @@ namespace console {
         ///\{
 
         GenericNode::ptr remove(std::string const & name);
+        bool hasChild(std::string const & name) const;
         DirectoryNode & getDirectory(std::string const & name) const;
         DirectoryNode & operator[](std::string const & name) const;
         CommandNode & getCommand(std::string const & name) const;
