@@ -321,7 +321,7 @@ env.Command('doxy-footer.html', Value(footer), writeTemplate)
 env.Alias('all_docs',
           env.Command('search.php', [ Value(search_php), 'html-munge.xsl' ],
                       [ writeTemplate,
-                        'xsltproc --nonet --html --stringparam topdir .. -o - $SOURCE $TARGET 2>/dev/null'
+                        'xsltproc --nonet --html --stringparam topdir .. -o - ${SOURCES[1]} $TARGET 2>/dev/null'
                             + "| sed"
                             +   r" -e 's/\[\[/<?/g' -e 's/\]\]/?>/g'"
                             +   r" -e 's/\$$projectname/Overview/g'"
