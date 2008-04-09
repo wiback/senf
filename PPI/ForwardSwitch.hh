@@ -35,18 +35,20 @@ class ForwardSwitch
     SENF_PPI_MODULE(ForwardSwitch);
 public:
 
-    connector::ActiveInput<> input;
+    connector::PassiveInput<> input;
     connector::ActiveOutput<> output;
 
     ForwardSwitch(bool state);
 
 private:
+    void onRequest();	
 	bool forward_;
     bool forward();
     bool forward(bool state);
-    void stopForwarding();
-    void startForwarding();
+    bool stopForwarding();
+    bool startForwarding();
 };
 
 }}} //namespaces
+#include "ForwardSwitch.cci"
 #endif /*FORWARDSWITCH_HH_*/

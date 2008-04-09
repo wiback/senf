@@ -20,30 +20,37 @@
 
 #include "ForwardSwitch.hh"
 
-#define prefix_
+#define prefix_ inline
 
-prefix_ ForwardSwitch::ForwardSwitch(bool state) 
+prefix_  senf::ppi::module::ForwardSwitch::ForwardSwitch(bool state) 
 {
     route( input, output );
     input.onRequest( &ForwardSwitch::onRequest );
     forward_ = state;
 }
 
-prefix_ bool ForwardSwitch::forward(){
+prefix_  void senf::ppi::module::ForwardSwitch::onRequest() 
+{
+	if(forward_){
+		output(input());
+	}
+}
+
+prefix_ bool  senf::ppi::module::ForwardSwitch::forward(){
 	return forward_;
 }
 
-prefix_ bool ForwardSwitch::forward(bool state){
+prefix_ bool  senf::ppi::module::ForwardSwitch::forward(bool state){
 	forward_ = state;
 	return state;
 }
 
-prefix_ void ForwardSwitch::stopForwarding(){
+prefix_ bool  senf::ppi::module::ForwardSwitch::stopForwarding(){
 	return forward(false);
 }
 
 
-prefix_ void ForwardSwitch::startForwarding(){
+prefix_ bool  senf::ppi::module::ForwardSwitch::startForwarding(){
 	return forward(true);
 }
 
