@@ -205,6 +205,7 @@
 #include "../Utils/Exception.hh"
 #include "../Utils/mpl.hh"
 #include "../Utils/Logger/SenfLog.hh"
+#include "../Utils/type_traits.hh"
 #include "Parse.hh"
 
 //#include "Node.mpp"
@@ -306,14 +307,16 @@ namespace console {
                                       * static_cast<DirectoryNode *>(0),
                                       * static_cast<std::string const *>(0),
                                       * static_cast<Object const *>(0),
-                                      0) ) result_type;
+                                      0) ) base_type;
+        typedef typename senf::remove_cvref<base_type>::type value_type;
 
-        typedef typename boost::remove_reference<result_type>::type NodeType;
+        typedef typename value_type::node_type NodeType;
+        typedef typename value_type::return_type result_type;
 
         /// Internal
         struct Creator {
-            static NodeType & create(DirectoryNode & node, std::string const & name, 
-                                     Object const & ob);
+            static result_type create(DirectoryNode & node, std::string const & name, 
+                                      Object const & ob);
         };
     };
 
@@ -353,6 +356,9 @@ namespace console {
         typedef boost::iterator_range<ChildMap::const_iterator> ChildrenRange;
         typedef ChildMap::const_iterator child_iterator;
 
+        typedef DirectoryNode node_type;
+        typedef DirectoryNode & return_type;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///\{
@@ -376,8 +382,8 @@ namespace console {
                                              \a name is empty, it is set to 'unnamed'. */
 
         template <class Object>
-        typename NodeCreateTraits<Object>::NodeType & add (std::string const & name, 
-                                                           Object const & ob);
+        typename NodeCreateTraits<Object>::result_type add (std::string const & name, 
+                                                            Object const & ob);
                                         ///< Generic child node factory
                                         /**< This member is used to create a new child node of the
                                              current directory. The type of node created depends on
@@ -583,6 +589,9 @@ namespace console {
         typedef boost::weak_ptr<SimpleCommandNode> weak_ptr;
 
         typedef boost::function<void (std::ostream &, ParseCommandInfo const &)> Function;
+
+        typedef SimpleCommandNode node_type;
+        typedef SimpleCommandNode & return_type;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members

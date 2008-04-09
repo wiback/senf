@@ -34,7 +34,7 @@
 // senf::console::NodeCreateTraits<Object>::Creator
 
 template <class Object>
-prefix_ typename senf::console::NodeCreateTraits<Object>::NodeType &
+prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
 senf::console::NodeCreateTraits<Object>::Creator::create(DirectoryNode & node,
                                                          std::string const & name,
                                                          Object const & ob)
@@ -56,7 +56,7 @@ prefix_ NodeType & senf::console::DirectoryNode::add(std::string const & name,
 }
 
 template <class Object>
-prefix_ typename senf::console::NodeCreateTraits<Object>::NodeType &
+prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
 senf::console::DirectoryNode::add(std::string const & name, Object const & ob)
 {
     return NodeCreateTraits<Object>::Creator::create(*this, name, ob);

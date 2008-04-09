@@ -70,9 +70,8 @@ public:
                                                          mpp_TrailingArgTypes())> Function;
 
 #   define mpp_l(z,n,d)                                                                           \
-        typedef typename boost::remove_const<                                                     \
-            typename boost::remove_reference< typename traits::mpp_ArgTypeN(n) >::type >::type    \
-                mpp_ArgTypeN(n);
+        typedef typename senf::remove_cvref< typename traits::mpp_ArgTypeN(n) >::type             \
+            mpp_ArgTypeN(n);
     BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ )
 #   undef mpp_l
 

@@ -45,6 +45,7 @@ namespace mpl {
         to mark missing arguments 
         
         \note Don't use this as an empty base class. We may add some informative members to this.
+        \ingroup senfmpl
      */
     struct nil {};
 

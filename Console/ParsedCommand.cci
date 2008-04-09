@@ -49,6 +49,58 @@ prefix_ void senf::console::ParsedCommandOverloadBase::doc(std::string const & d
     doc_ = d;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ParsedCommandAttributorBase
+
+prefix_ senf::console::OverloadedCommandNode &
+senf::console::ParsedCommandAttributorBase::node()
+    const
+{
+    return overload_.node();
+}
+
+prefix_ senf::console::ParsedCommandAttributorBase::operator OverloadedCommandNode &()
+    const
+{
+    return node();
+}
+
+prefix_ senf::console::ParsedCommandAttributorBase::
+ParsedCommandAttributorBase(ParsedCommandOverloadBase & overload, unsigned index)
+    : overload_ (overload), index_ (index)
+{}
+
+prefix_ void senf::console::ParsedCommandAttributorBase::argName(std::string const & name)
+    const
+{
+    overload().arg(index_).name = name;
+}
+
+prefix_ void senf::console::ParsedCommandAttributorBase::argDoc(std::string const & doc)
+    const
+{
+    overload().arg(index_).doc = doc;
+}
+
+prefix_ senf::console::ParsedCommandOverloadBase &
+senf::console::ParsedCommandAttributorBase::overload()
+    const
+{
+    return overload_;
+}
+
+prefix_ void senf::console::ParsedCommandAttributorBase::overloadDoc(std::string const & doc)
+    const
+{
+    overload().doc(doc);
+}
+
+prefix_ void senf::console::ParsedCommandAttributorBase::nodeDoc(std::string const & doc)
+    const
+{
+    node().doc(doc);
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

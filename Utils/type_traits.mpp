@@ -35,6 +35,7 @@
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/arithmetic/dec.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/enum_params.hpp>
 
 // ///////////////////////////mpp.p////////////////////////////////////////
 #elif BOOST_PP_IS_ITERATING // ////////////////////////////////////////////
@@ -69,6 +70,12 @@ template < class C, class RV
 struct member_class<RV (C::*)(BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ))>
 {
     typedef C type;
+};
+
+template <class Traits>
+struct function_traits_arg_type<Traits, BOOST_PP_ITERATION(), true>
+{
+    typedef typename Traits::mpp_Arg(BOOST_PP_ITERATION()) type;
 };
 
 // ////////////////////////////////////////////////////////////////////////

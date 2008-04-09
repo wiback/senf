@@ -138,6 +138,9 @@ namespace console {
         typedef boost::shared_ptr<OverloadedCommandNode const> cptr;
         typedef boost::weak_ptr<OverloadedCommandNode> weak_ptr;
 
+        typedef OverloadedCommandNode node_type;
+        typedef OverloadedCommandNode & return_type;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{

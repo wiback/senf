@@ -50,13 +50,15 @@ namespace console {
                                       * static_cast<Owner *>(0),
                                       * static_cast<std::string const *>(0),
                                       * static_cast<Object const *>(0),
-                                      * static_cast<int *>(0)) ) result_type;
+                                      * static_cast<int *>(0)) ) base_type;
+        typedef typename senf::remove_cvref<base_type>::type value_type;
 
-        typedef typename boost::remove_reference<result_type>::type NodeType;
+        typedef typename value_type::node_type NodeType;
+        typedef typename value_type::return_type result_type;
 
         /// Internal
         struct Creator {
-            static NodeType & create(DirectoryNode & node, Owner & owner, 
+            static result_type create(DirectoryNode & node, Owner & owner, 
                                      std::string const & name, Object const & ob);
         };
     };
@@ -146,8 +148,8 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
 
         template <class Object>
-        typename OwnerNodeCreateTraits<Owner, Object>::NodeType & add(std::string const & name,
-                                                                      Object const & ob);
+        typename OwnerNodeCreateTraits<Owner, Object>::result_type add(std::string const & name,
+                                                                       Object const & ob);
                                         ///< Create new child node
                                         /**< Adds a new child node to the (proxied)
                                              DirectoryNode. How the node is added is configured
@@ -166,8 +168,8 @@ namespace console {
     {
     public:
         template <class Object>
-        typename NodeCreateTraits<Object>::NodeType & add(std::string const & name,
-                                                          Object const & ob);
+        typename NodeCreateTraits<Object>::result_type add(std::string const & name,
+                                                           Object const & ob);
     };
 
 #ifndef DOXYGEN

@@ -118,28 +118,30 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
 
-        senf::console::ParsedCommandOverloadBase & c1 (dir.add("cb", &cb1));
-        c1.doc(
-            "Lo nam balnearius Opprimo Pennatus, no decentia sui, dicto esse se pulchritudo,\n"
-            "pupa Sive res indifferenter. Captivo pa.");
-        c1.arg(0).doc = "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf.";
-        c1.arg(1).name = "checkup";
-        c1.arg(1).doc = "Florgel, dargel and durgel";
-        c1.arg<double>(1).defaultValue = 2.1;
-        c1.arg(1).hasDefault = true;
-        senf::console::ParsedCommandOverloadBase & c5 (dir.add("cb", &cb5));
-        c5.doc(
-            "Uus Primordia fundo falsidicus corium, diurnitas humo pro leto. Sui Ueraciter\n"
-            "hio eruca lenis qua Agalmate ut fors penitentia. Iugum obdormio anxio nuncupo\n"
-            "iam, in vos nam Custodi.");
+        senf::console::OverloadedCommandNode & cbNode ( dir.add("cb", &cb1)
+            .doc(
+                "Ops fortunate, ops me ut orgia vociferatio contumax per, rudo re loco emitto\n"
+                "intolerabiliter ita iugo. Subcribo gravo. Devenio luna fonticulus Castanea\n"
+                "horum fascino Os interpretor non ipse conjuratio hora, qui filius denuntio ait\n"
+                "sono te odium Anhelo. Dum Cedo audax celox alius una Agnosco hic, ibi retineo\n"
+                "lux sto ioco. Per Re dono. Copiose reus scitus jus diligens sis scapulare\n"
+                "Servitium transi.")
+            .overloadDoc(
+                "Lo nam balnearius Opprimo Pennatus, no decentia sui, dicto esse se pulchritudo,\n"
+                "pupa Sive res indifferenter. Captivo pa.")
+            .arg("", "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf.")
+            .arg("checkup", "Florgel, dargel and durgel", 2.1) );
+
+        dir.add("cb", &cb5)
+            .overloadDoc(
+                "Uus Primordia fundo falsidicus corium, diurnitas humo pro leto. Sui Ueraciter\n"
+                "hio eruca lenis qua Agalmate ut fors penitentia. Iugum obdormio anxio nuncupo\n"
+                "iam, in vos nam Custodi.");
+
+        (void) cbNode;
+
         dir.add("cb", &cb2);
-        static_cast<senf::console::OverloadedCommandNode&>(dir("cb")).doc(
-            "Ops fortunate, ops me ut orgia vociferatio contumax per, rudo re loco emitto\n"
-            "intolerabiliter ita iugo. Subcribo gravo. Devenio luna fonticulus Castanea\n"
-            "horum fascino Os interpretor non ipse conjuratio hora, qui filius denuntio ait\n"
-            "sono te odium Anhelo. Dum Cedo audax celox alius una Agnosco hic, ibi retineo\n"
-            "lux sto ioco. Per Re dono. Copiose reus scitus jus diligens sis scapulare\n"
-            "Servitium transi.");
+
         parser.parse("test/cb 111 222.4; test/cb 222; test/cb foo; test/cb",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
         BOOST_CHECK_EQUAL( ss.str(), "333\n" "224\n" "Value: foo\n" "1.2\n" );

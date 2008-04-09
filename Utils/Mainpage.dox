@@ -27,7 +27,7 @@ namespace senf {
     The Utilities Library is a collection of independent utilities.
 
 
-    \section basic_helpers C++ Language helpers and simple library extensions
+    \section basic_helpers C++ Language helpers and library extensions
 
     <table class="listing">
     <tr><td>\ref membind</td><td>a simple <a
@@ -37,10 +37,12 @@ namespace senf {
     tasks</td></tr>
 
     <tr><td>\ref senfpp</td><td>Extensions to the Boost.Preprocessor library</td></tr>
+
+    <tr><td>\ref typetraits</td><td>Extensions to the Boost.TypeTraits library</td></tr>
     </table>
 
 
-    \section basic_mixins Basic mixin classes
+    \section basic_mixins Mixin classes
     
     <table class="listing">
     <tr><td>\ref intrusive_refcount</td><td>mixin to simplify writing classes for use with <a

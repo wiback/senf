@@ -58,6 +58,122 @@ prefix_ void senf::console::ParsedCommandOverloadBase::addParameter()
 #include BOOST_PP_ITERATE()
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::ParsedCommandAttributorBase
+
+template <class Type>
+prefix_ void senf::console::ParsedCommandAttributorBase::defaultValue(Type const & value)
+    const
+{
+    overload().arg<Type>(index_).defaultValue = value;
+    overload().arg(index_).hasDefault = true;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ParsedCommandAttributor<Overload>
+
+template <class Overload>
+prefix_ Overload & senf::console::ParsedCommandAttributor<Overload>::overload()
+    const
+{
+    return static_cast<Overload &>(ParsedCommandAttributorBase::overload());
+}
+
+template <class Overload>
+prefix_
+senf::console::ParsedCommandAttributor<Overload>::ParsedCommandAttributor(Overload & overload,
+                                                                          unsigned index)
+    : ParsedCommandAttributorBase (overload, index)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ParsedAttributeAttributorBase<Overload,Self>
+
+template <class Overload, class Self>
+prefix_ Self
+senf::console::ParsedAttributeAttributorBase<Overload,Self>::doc(std::string const & doc)
+    const
+{
+    this->ParsedCommandAttributorBase::nodeDoc(doc);
+    return static_cast<Self const &>(*this);
+}
+
+template <class Overload, class Self>
+prefix_ Self senf::console::ParsedAttributeAttributorBase<Overload,Self>::
+overloadDoc(std::string const & doc)
+    const
+{
+    this->ParsedCommandAttributorBase::overloadDoc(doc);
+    return static_cast<Self const &>(*this);
+}
+
+template <class Overload, class Self>
+prefix_
+senf::console::ParsedAttributeAttributorBase<Overload,Self>::
+ParsedAttributeAttributorBase(Overload & overload, unsigned index)
+    : ParsedCommandAttributor<Overload> (overload, index)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ParsedAttributeAttributor<Overload,index,flag>
+
+template <class Overload, unsigned index, bool flag>
+prefix_ senf::console::ParsedAttributeAttributor<Overload, index+1>
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::arg(std::string const & name,
+                                                                   std::string const & doc)
+    const
+{
+    this->argName(name);
+    this->argDoc(doc);
+    return next();
+}
+
+template <class Overload, unsigned index, bool flag>
+prefix_ senf::console::ParsedAttributeAttributor<Overload, index+1>
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::arg(std::string const & name,
+                                                                   std::string const & doc,
+                                                                   value_type const & value)
+    const
+{
+    this->argName(name);
+    this->argDoc(doc);
+    defaultValue(value);
+    return next();
+}
+
+template <class Overload, unsigned index, bool flag>
+prefix_
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+ParsedAttributeAttributor(Overload & overload)
+    : ParsedAttributeAttributorBase<Overload, ParsedAttributeAttributor> (overload, index)
+{}
+
+template <class Overload, unsigned index, bool flag>
+prefix_ senf::console::ParsedAttributeAttributor<Overload, index+1>
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::next()
+    const
+{
+    return ParsedAttributeAttributor<Overload, index+1>(this->overload());
+}
+
+template <class Overload, unsigned index, bool flag>
+prefix_ void senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+defaultValue(value_type const & value)
+    const
+{
+    ParsedCommandAttributorBase::defaultValue<arg_type>(value);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ParsedAttributeAttributor<Overload, index, false>
+
+template <class Overload, unsigned index>
+prefix_
+senf::console::ParsedAttributeAttributor<Overload, index, false>::
+ParsedAttributeAttributor(Overload & overload)
+    : ParsedAttributeAttributorBase<Overload, ParsedAttributeAttributor> (overload, index)
+{}
+
+///////////////////////////////////////////////////////////////////////////
 // namespace members
 
 namespace {
@@ -98,8 +214,9 @@ namespace {
 }
 
 template <class Function>
-prefix_ senf::console::ParsedCommandOverload<
-    typename senf::console::detail::ParsedCommandTraits<Function>::traits> &
+prefix_ senf::console::ParsedAttributeAttributor<
+    senf::console::ParsedCommandOverload<
+        typename senf::console::detail::ParsedCommandTraits<Function>::traits> >
 senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
                                      Function fn, int)
 {
@@ -108,15 +225,19 @@ senf::console::senf_console_add_node(DirectoryNode & node, std::string const & n
         ? dynamic_cast<OverloadedCommandNode &>(node(name))
         : node.add(name, OverloadedCommandNode::create()) );
 
-    typedef senf::console::detail::ParsedCommandTraits<Function> CmdTraits;
+    typedef detail::ParsedCommandTraits<Function> CmdTraits;
+    typedef ParsedCommandOverload<typename CmdTraits::traits> Overload;
+    typedef ParsedAttributeAttributor<Overload> Attributor;
 
-    return cmdNode.add( CreateParsedCommandOverload<
-                            typename CmdTraits::traits, ! CmdTraits::has_ostream_arg>::create(fn) );
+    return Attributor(
+        cmdNode.add( CreateParsedCommandOverload<
+                         typename CmdTraits::traits, ! CmdTraits::has_ostream_arg>::create(fn) ) );
 }
 
 template <class Owner, class Function>
-prefix_ senf::console::ParsedCommandOverload<
-    typename senf::console::detail::ParsedCommandTraits<Function>::traits> &
+prefix_ senf::console::ParsedAttributeAttributor<
+    senf::console::ParsedCommandOverload<
+        typename senf::console::detail::ParsedCommandTraits<Function>::traits> >
 senf::console::
 senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                       Function fn, int,
@@ -127,11 +248,14 @@ senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & n
         ? dynamic_cast<OverloadedCommandNode &>(node(name))
         : node.add(name, OverloadedCommandNode::create()) );
 
-    typedef senf::console::detail::ParsedCommandTraits<Function> CmdTraits;
+    typedef detail::ParsedCommandTraits<Function> CmdTraits;
+    typedef ParsedCommandOverload<typename CmdTraits::traits> Overload;
+    typedef ParsedAttributeAttributor<Overload> Attributor;
 
-    return cmdNode.add( CreateParsedCommandOverload<
-                            typename CmdTraits::traits, ! CmdTraits::has_ostream_arg>::create(
-                                senf::membind(fn,&owner)) );
+    return Attributor(
+        cmdNode.add( CreateParsedCommandOverload<
+                         typename CmdTraits::traits, ! CmdTraits::has_ostream_arg>::create(
+                             senf::membind(fn,&owner)) ) );
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

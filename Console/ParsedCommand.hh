@@ -80,14 +80,136 @@ namespace console {
                                             1))
 #   include BOOST_PP_ITERATE()
 
+    class ParsedCommandAttributorBase
+    {
+    public:
+        OverloadedCommandNode & node() const;
+        operator OverloadedCommandNode & () const;
+
+    protected:
+        ParsedCommandAttributorBase(ParsedCommandOverloadBase & overload, unsigned index);
+
+        void argName(std::string const & name) const;
+        void argDoc(std::string const & doc) const;
+        template <class Type> void defaultValue(Type const & value) const;
+
+        ParsedCommandOverloadBase & overload() const;
+        void overloadDoc(std::string const & doc) const;
+
+        void nodeDoc(std::string const & doc) const;
+        
+    private:
+        ParsedCommandOverloadBase & overload_;
+        unsigned index_;
+    };
+
+    template <class Overload>
+    class ParsedCommandAttributor
+        : public ParsedCommandAttributorBase
+    {
+    public:
+        Overload & overload() const;
+
+    protected:
+        ParsedCommandAttributor(Overload & overload, unsigned index);
+
+    private:
+    };
+
+    template <class Overload, class Self>
+    class ParsedAttributeAttributorBase
+        : public ParsedCommandAttributor<Overload>
+    {
+    public:
+        Self doc(std::string const & doc) const;
+        Self overloadDoc(std::string const & doc) const;
+
+    protected:
+        ParsedAttributeAttributorBase(Overload & overload, unsigned index);
+
+    private:
+    };
+
+    template <class Overload, unsigned index=0, bool flag=(index < unsigned(Overload::traits::arity))>
+    class ParsedAttributeAttributor
+        : public ParsedAttributeAttributorBase< Overload, 
+                                                ParsedAttributeAttributor<Overload, index, flag> >
+    {
+    public:
+        typedef typename senf::function_traits_arg_type< 
+            typename Overload::traits, int(index) >::type arg_type;
+        typedef typename senf::remove_cvref< arg_type >::type value_type;
+
+        typedef OverloadedCommandNode node_type;
+        typedef ParsedAttributeAttributor return_type;
+
+        ParsedAttributeAttributor<Overload, index+1> arg(std::string const & name = "",
+                                                         std::string const & doc = "") const;
+        ParsedAttributeAttributor<Overload, index+1> arg(std::string const & name,
+                                                         std::string const & doc,
+                                                         value_type const & value) const;
+
+    private:
+        explicit ParsedAttributeAttributor(Overload & overload);
+
+        ParsedAttributeAttributor<Overload, index+1> next() const;
+
+        void defaultValue(value_type const & value) const;
+
+        template <class O, unsigned i, bool f>
+        friend class ParsedAttributeAttributor;
+        
+        template <class Function>
+        friend ParsedAttributeAttributor<
+            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
+        senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
+        
+        template <class Owner, class Function>
+        friend ParsedAttributeAttributor<
+            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
+        senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
+                              Function fn, int,
+                              typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+    };
+
+    template <class Overload, unsigned index>
+    class ParsedAttributeAttributor<Overload, index, false>
+        : public ParsedAttributeAttributorBase< Overload, 
+                                                ParsedAttributeAttributor<Overload, index, false> >
+    {
+    public:
+        typedef OverloadedCommandNode node_type;
+        typedef ParsedAttributeAttributor return_type;
+
+    private:
+        explicit ParsedAttributeAttributor(Overload & overload);
+
+        template <class O, unsigned i, bool f>
+        friend class ParsedAttributeAttributor;
+        
+        template <class Function>
+        friend ParsedAttributeAttributor<
+            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
+        senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
+        
+        template <class Owner, class Function>
+        friend ParsedAttributeAttributor<
+            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
+        senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
+                              Function fn, int,
+                              typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+    };
+
 #ifndef DOXYGEN
 
     template <class Function>
-    ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> &
+    ParsedAttributeAttributor<
+        ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
     senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
 
     template <class Owner, class Function>
-    ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> &
+    ParsedAttributeAttributor<
+        ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
     senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                           Function fn, int,
                           typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
@@ -99,6 +221,7 @@ namespace console {
 #include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
 
 BOOST_TYPEOF_REGISTER_TEMPLATE(senf::console::ParsedCommandOverload, (class,unsigned))
+BOOST_TYPEOF_REGISTER_TEMPLATE(senf::console::ParsedAttributeAttributor, (class, unsigned, bool))
 BOOST_TYPEOF_REGISTER_TEMPLATE(boost::function_traits, 1)
 
 ///////////////////////////////hh.e////////////////////////////////////////
