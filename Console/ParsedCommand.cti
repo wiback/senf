@@ -28,6 +28,7 @@
 // Custom includes
 #include "../Utils/membind.hh"
 #include <boost/format.hpp>
+#include <boost/parameter/binding.hpp>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -117,9 +118,45 @@ ParsedAttributeAttributorBase(Overload & overload, unsigned index)
 // senf::console::ParsedAttributeAttributor<Overload,index,flag>
 
 template <class Overload, unsigned index, bool flag>
-prefix_ senf::console::ParsedAttributeAttributor<Overload, index+1>
-senf::console::ParsedAttributeAttributor<Overload,index,flag>::arg(std::string const & name,
-                                                                   std::string const & doc)
+template <class ArgumentPack>
+prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+argInfo(ArgumentPack const & args)
+    const
+{
+    typedef typename boost::parameter::binding<
+        ArgumentPack, tag::detail::default_value_>::type default_value_t;
+    return argInfo( args, boost::is_same<default_value_t, void>() );
+}
+
+template <class Overload, unsigned index, bool flag>
+template <class ArgumentPack>
+prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+argInfo(ArgumentPack const & args, boost::mpl::true_)
+    const
+{
+    return argInfo( args[tag::name_ | ""], 
+                    args[tag::description_ | ""] );
+
+}
+
+template <class Overload, unsigned index, bool flag>
+template <class ArgumentPack>
+prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+argInfo(ArgumentPack const & args, boost::mpl::false_)
+    const
+{
+    return argInfo( args[tag::name_ | ""], 
+                    args[tag::description_ | ""], 
+                    args[tag::default_value_ | value_type()] );
+}
+
+template <class Overload, unsigned index, bool flag>
+prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::argInfo(std::string const & name,
+                                                                       std::string const & doc)
     const
 {
     this->argName(name);
@@ -128,10 +165,10 @@ senf::console::ParsedAttributeAttributor<Overload,index,flag>::arg(std::string c
 }
 
 template <class Overload, unsigned index, bool flag>
-prefix_ senf::console::ParsedAttributeAttributor<Overload, index+1>
-senf::console::ParsedAttributeAttributor<Overload,index,flag>::arg(std::string const & name,
-                                                                   std::string const & doc,
-                                                                   value_type const & value)
+prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::argInfo(std::string const & name,
+                                                                       std::string const & doc,
+                                                                       value_type const & value)
     const
 {
     this->argName(name);
@@ -170,7 +207,7 @@ template <class Overload, unsigned index>
 prefix_
 senf::console::ParsedAttributeAttributor<Overload, index, false>::
 ParsedAttributeAttributor(Overload & overload)
-    : ParsedAttributeAttributorBase<Overload, ParsedAttributeAttributor> (overload, index)
+    : ParsedCommandAttributor<Overload> (overload, index)
 {}
 
 ///////////////////////////////////////////////////////////////////////////

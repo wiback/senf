@@ -118,25 +118,33 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
 
-        senf::console::OverloadedCommandNode & cbNode ( dir.add("cb", &cb1)
+        using namespace senf::console::tag;
+
+        dir.add("cb", &cb1)
             .doc(
                 "Ops fortunate, ops me ut orgia vociferatio contumax per, rudo re loco emitto\n"
                 "intolerabiliter ita iugo. Subcribo gravo. Devenio luna fonticulus Castanea\n"
                 "horum fascino Os interpretor non ipse conjuratio hora, qui filius denuntio ait\n"
                 "sono te odium Anhelo. Dum Cedo audax celox alius una Agnosco hic, ibi retineo\n"
                 "lux sto ioco. Per Re dono. Copiose reus scitus jus diligens sis scapulare\n"
-                "Servitium transi.")
+                "Servitium transi." )
+
             .overloadDoc(
                 "Lo nam balnearius Opprimo Pennatus, no decentia sui, dicto esse se pulchritudo,\n"
-                "pupa Sive res indifferenter. Captivo pa.")
-            .arg("", "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf.")
-            .arg("checkup", "Florgel, dargel and durgel", 2.1) );
+                "pupa Sive res indifferenter. Captivo pa." )
 
-        dir.add("cb", &cb5)
-            .overloadDoc(
-                "Uus Primordia fundo falsidicus corium, diurnitas humo pro leto. Sui Ueraciter\n"
-                "hio eruca lenis qua Agalmate ut fors penitentia. Iugum obdormio anxio nuncupo\n"
-                "iam, in vos nam Custodi.");
+            .arg( description_   = "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf." )
+
+            .arg( name_          = "checkup", 
+                  description_   = "Florgel, dargel and durgel",
+                  default_value_ = 2.1 );
+
+        senf::console::OverloadedCommandNode & cbNode (
+            dir.add("cb", &cb5)
+                .overloadDoc(
+                    "Uus Primordia fundo falsidicus corium, diurnitas humo pro leto. Sui Ueraciter\n"
+                    "hio eruca lenis qua Agalmate ut fors penitentia. Iugum obdormio anxio nuncupo\n"
+                    "iam, in vos nam Custodi." ) );
 
         (void) cbNode;
 

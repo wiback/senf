@@ -33,6 +33,8 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/utility.hpp>
+#include <boost/parameter/keyword.hpp>
+#include <boost/parameter/parameters.hpp>
 #include "../config.hh"
 #include "OverloadedCommand.hh"
 #include "ParseParameter.hh"
@@ -115,6 +117,12 @@ namespace console {
 
     private:
     };
+    
+    namespace tag {
+        BOOST_PARAMETER_KEYWORD(detail, name_);
+        BOOST_PARAMETER_KEYWORD(detail, description_);
+        BOOST_PARAMETER_KEYWORD(detail, default_value_);
+    }
 
     template <class Overload, class Self>
     class ParsedAttributeAttributorBase
@@ -130,7 +138,9 @@ namespace console {
     private:
     };
 
-    template <class Overload, unsigned index=0, bool flag=(index < unsigned(Overload::traits::arity))>
+    template < class Overload, 
+               unsigned index=0, 
+               bool flag=(index < unsigned(Overload::traits::arity)) >
     class ParsedAttributeAttributor
         : public ParsedAttributeAttributorBase< Overload, 
                                                 ParsedAttributeAttributor<Overload, index, flag> >
@@ -139,18 +149,36 @@ namespace console {
         typedef typename senf::function_traits_arg_type< 
             typename Overload::traits, int(index) >::type arg_type;
         typedef typename senf::remove_cvref< arg_type >::type value_type;
+        typedef ParsedAttributeAttributor<Overload, index+1> next_type;
 
         typedef OverloadedCommandNode node_type;
         typedef ParsedAttributeAttributor return_type;
 
-        ParsedAttributeAttributor<Overload, index+1> arg(std::string const & name = "",
-                                                         std::string const & doc = "") const;
-        ParsedAttributeAttributor<Overload, index+1> arg(std::string const & name,
-                                                         std::string const & doc,
-                                                         value_type const & value) const;
+        typedef boost::parameter::parameters<
+            tag::detail::name_,
+            tag::detail::description_,
+            tag::detail::default_value_> arg_params;
+
+        next_type arg() const;
+
+#       define BOOST_PP_ITERATION_PARAMS_1 \
+            (4, (1, 3, SENF_ABSOLUTE_INCLUDE_PATH(Console/ParsedCommand.mpp), 5))
+#       include BOOST_PP_ITERATE()
 
     private:
         explicit ParsedAttributeAttributor(Overload & overload);
+
+        template <class ArgumentPack>
+        next_type argInfo(ArgumentPack const & args) const;
+
+        template <class ArgumentPack>
+        next_type argInfo(ArgumentPack const & args, boost::mpl::true_) const;
+        template <class ArgumentPack>
+        next_type argInfo(ArgumentPack const & args, boost::mpl::false_) const;
+
+        next_type argInfo(std::string const & name, std::string const & doc) const;
+        next_type argInfo(std::string const & name, std::string const & doc,
+                          value_type const & value) const;
 
         ParsedAttributeAttributor<Overload, index+1> next() const;
 
@@ -169,13 +197,13 @@ namespace console {
             ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
         senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                               Function fn, int,
-                              typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+                              typename boost::enable_if_c<
+                                  detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
     };
 
     template <class Overload, unsigned index>
     class ParsedAttributeAttributor<Overload, index, false>
-        : public ParsedAttributeAttributorBase< Overload, 
-                                                ParsedAttributeAttributor<Overload, index, false> >
+        : public ParsedCommandAttributor< Overload >
     {
     public:
         typedef OverloadedCommandNode node_type;
@@ -197,7 +225,8 @@ namespace console {
             ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
         senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                               Function fn, int,
-                              typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+                              typename boost::enable_if_c<
+                                  detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
     };
 
 #ifndef DOXYGEN
@@ -212,7 +241,8 @@ namespace console {
         ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
     senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                           Function fn, int,
-                          typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+                          typename boost::enable_if_c<
+                              detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
 
 #endif
 

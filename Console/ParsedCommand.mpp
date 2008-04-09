@@ -29,6 +29,8 @@
 // Custom includes
 #include <boost/preprocessor/iteration/iterate.hpp>
 #include <boost/preprocessor/repetition/enum_trailing.hpp>
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
 #include <boost/preprocessor/repetition/repeat.hpp>
@@ -165,6 +167,19 @@ struct CreateParsedCommandOverload<Traits, true, BOOST_PP_ITERATION()>
         }
 
 };
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==5 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+
+// Create keyword arg forwarding functions
+
+template <BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), class A ) > 
+next_type arg ( BOOST_PP_ENUM_BINARY_PARAMS( BOOST_PP_ITERATION(), A, const & a ),
+                typename arg_params::match< BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), A ) >::type
+                    kw = arg_params()) const {
+    return argInfo( kw(BOOST_PP_ENUM_PARAMS( BOOST_PP_ITERATION(), a )) );
+}
 
 // ////////////////////////////////////////////////////////////////////////
 #endif // /////////////////////////////////////////////////////////////////
