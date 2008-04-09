@@ -44,6 +44,11 @@ senf::console::ParsedCommandOverloadBase::arg(unsigned n)
     return * parameters_[n];
 }
 
+prefix_ void senf::console::ParsedCommandOverloadBase::doc(std::string const & d)
+{
+    doc_ = d;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

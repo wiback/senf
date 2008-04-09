@@ -51,20 +51,25 @@ namespace console {
     public:
         typedef boost::intrusive_ptr<ParsedCommandOverloadBase> ptr;
 
-    protected:
-        ParsedCommandOverloadBase();
-
         detail::ParameterInfoBase & arg(unsigned n) const;
         template <class Type> detail::ParameterInfo<Type> & arg(unsigned n) const;
+
+        void doc(std::string const & d);
+
+    protected:
+        ParsedCommandOverloadBase();
 
         template <class Type>
         void addParameter();
 
     private:
-        virtual void v_help(std::ostream & os) const;
+        virtual unsigned v_numArguments() const;
+        virtual void v_argumentDoc(unsigned index, ArgumentDoc & doc) const;
+        virtual std::string v_doc() const;
 
         typedef std::vector<detail::ParameterInfoBase::ptr> Parameters;
         Parameters parameters_;
+        std::string doc_;
     };
 
     template <class FunctionTraits, unsigned arity=FunctionTraits::arity>

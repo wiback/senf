@@ -78,7 +78,22 @@ BOOST_AUTO_UNIT_TEST(overladedCommand)
     {
         std::stringstream ss;
         cmd.help(ss);
-        BOOST_CHECK_EQUAL( ss.str(), "cmd\n\nfn1\n\nfn2\n\nfn3" );
+        BOOST_CHECK_EQUAL( ss.str(), 
+                           "Usage:\n" 
+                           "    1- overload ...\n"
+                           "    2- overload ...\n"
+                           "    3- overload ...\n"
+                           "\n"
+                           "cmd\n"
+                           "\n"
+                           "Variant 1:\n"
+                           "fn1\n"
+                           "\n"
+                           "Variant 2:\n"
+                           "fn2\n"
+                           "\n"
+                           "Variant 3:\n"
+                           "fn3\n" );
     }
 
     cmd.unlink();

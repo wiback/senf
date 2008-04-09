@@ -38,6 +38,7 @@ prefix_ Command &
 senf::console::OverloadedCommandNode::add(boost::intrusive_ptr<Command> overload)
 {
     overloads_.push_back(overload);
+    overload->node_ = this;
     return *overload;
 }
 

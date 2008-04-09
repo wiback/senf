@@ -39,6 +39,13 @@ namespace console {
 
     class OverloadedCommandNode;
 
+    struct ArgumentDoc {
+        std::string name;
+        std::string type;
+        std::string defaultValue;
+        std::string doc;
+    };
+
     /** \brief Base class for command overload of OverloadedCommandNode
 
         This class is the base class of the commands which may be added to an
@@ -52,6 +59,7 @@ namespace console {
         // Types
 
         typedef boost::intrusive_ptr<CommandOverload> ptr;
+        typedef boost::intrusive_ptr<CommandOverload const> cptr;
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -68,12 +76,15 @@ namespace console {
                                         /**< If the \a arguments are not acceptable for this
                                              overload, a SyntaxErrorException must be thrown. 
                                              Same as execute() */
-
-        void help(std::ostream & os);   ///< Provide help for this specific overload
-
-        OverloadedCommandNode & node(); ///< Access owning node
+        
+        unsigned numArguments() const;
+        void argumentDoc(unsigned index, ArgumentDoc & doc) const;
+        std::string doc() const;
+        
+        OverloadedCommandNode & node() const; ///< Access owning node
                                         /**< \pre The command \e must have been added to an
                                              OverloadedCommandNode. */
+        unsigned overloadIndex() const;
 
     protected:
         CommandOverload();
@@ -81,7 +92,9 @@ namespace console {
 #ifndef DOXYGEN
     private:
 #endif
-        virtual void v_help(std::ostream & os) const = 0;
+        virtual unsigned v_numArguments() const = 0;
+        virtual void v_argumentDoc(unsigned index, ArgumentDoc & doc) const = 0;
+        virtual std::string v_doc() const = 0;
         virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const = 0;
 
     private:
@@ -143,6 +156,8 @@ namespace console {
         OverloadedCommandNode & doc(std::string const & doc);
                                         ///< Assign global help for all overloads
 
+        unsigned overloadIndex(CommandOverload const & overload);
+
     protected:
 
     private:
@@ -192,7 +207,9 @@ namespace console {
     private:
         SimpleCommandOverload(Function fn);
 
-        virtual void v_help(std::ostream & os) const;
+        virtual unsigned v_numArguments() const;
+        virtual void v_argumentDoc(unsigned index, ArgumentDoc & doc) const;
+        virtual std::string v_doc() const;
         virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const;
 
         Function fn_;

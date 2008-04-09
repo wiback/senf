@@ -125,33 +125,18 @@ v_execute(std::ostream & os, ParseCommandInfo const & command)
 {
     if ( command.arguments().size() > BOOST_PP_ITERATION()
          || (command.arguments().size() < BOOST_PP_ITERATION()
-             && ! arg( BOOST_PP_ITERATION()-1 ).hasDefault) )
+             && ! arg( command.arguments().size() ).hasDefault) )
         throw SyntaxErrorException("invalid number of arguments");
 
-    // First define local variables argN for the parameters. The variables are initialized to their
-    // default values
-#   define mpp_l(z,n,d) mpp_ArgTypeN(n) mpp_ArgN(n) (arg< mpp_ArgTypeN(n) >( n ).defaultValue);
-    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ ) 
-#   undef mpp_l
-    
     ParseCommandInfo::argument_iterator i (command.arguments().begin());
     ParseCommandInfo::argument_iterator const i_end (command.arguments().end());
 
-    // Now parse the arguments which are provided leaving the trailing arguments at their default
-    // value. We have already checked above, whether those default values are valid. Be aware, that
-    // the following cases do NOT have 'break' statements !
-
-    switch (BOOST_PP_ITERATION() - command.arguments().size()) {
-
 #   define mpp_l(z,n,d)                                                                           \
-        case n :                                                                                  \
+        mpp_ArgTypeN(n) mpp_ArgN(n) (arg< mpp_ArgTypeN(n) >( n ).defaultValue);                   \
+        if (i != i_end)                                                                           \
             detail::ParameterTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );
     BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ ) 
 #   undef mpp_l
-
-    default : // This happens, if ALL arguments are defaulted
-        ;
-    }
 
     // Now call the function binding the arguments to the values parsed above. callAndWrite is
     // specialized to ignore a 'void' return value but automatically write all other values to the

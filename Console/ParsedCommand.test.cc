@@ -27,6 +27,7 @@
 //#include "ParsedCommand.test.ih"
 
 // Custom includes
+#include <iostream>
 #include <sstream>
 #include "ParsedCommand.hh"
 #include "Executor.hh"
@@ -42,10 +43,10 @@
 namespace {
 
     int cb1(int a, double b) { return int(a+b); }
-    double cb2() { return 1.2; }
-    void cb3(int) {}
+    double cb2(){ return 1.2; }
+    void cb3(int i) { }
     std::string cb4(std::ostream & os) { os << "text\n"; return "value"; }
-    void cb5(std::ostream & os, int v) { os << "Value: " << v << "\n"; }
+    void cb5(std::ostream & os, std::string v) { os << "Value: " << v << "\n"; }
 }
 
 BOOST_AUTO_UNIT_TEST(parsedCommand)
@@ -117,12 +118,63 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
 
-        dir.add("cb", &cb1);
-        dir.add("cb", &cb5);
+        senf::console::ParsedCommandOverloadBase & c1 (dir.add("cb", &cb1));
+        c1.doc(
+            "Lo nam balnearius Opprimo Pennatus, no decentia sui, dicto esse se pulchritudo,\n"
+            "pupa Sive res indifferenter. Captivo pa.");
+        c1.arg(0).doc = "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf.";
+        c1.arg(1).name = "checkup";
+        c1.arg(1).doc = "Florgel, dargel and durgel";
+        c1.arg<double>(1).defaultValue = 2.1;
+        c1.arg(1).hasDefault = true;
+        senf::console::ParsedCommandOverloadBase & c5 (dir.add("cb", &cb5));
+        c5.doc(
+            "Uus Primordia fundo falsidicus corium, diurnitas humo pro leto. Sui Ueraciter\n"
+            "hio eruca lenis qua Agalmate ut fors penitentia. Iugum obdormio anxio nuncupo\n"
+            "iam, in vos nam Custodi.");
         dir.add("cb", &cb2);
-        parser.parse("test/cb 111 222.4; test/cb 222; test/cb",
+        static_cast<senf::console::OverloadedCommandNode&>(dir("cb")).doc(
+            "Ops fortunate, ops me ut orgia vociferatio contumax per, rudo re loco emitto\n"
+            "intolerabiliter ita iugo. Subcribo gravo. Devenio luna fonticulus Castanea\n"
+            "horum fascino Os interpretor non ipse conjuratio hora, qui filius denuntio ait\n"
+            "sono te odium Anhelo. Dum Cedo audax celox alius una Agnosco hic, ibi retineo\n"
+            "lux sto ioco. Per Re dono. Copiose reus scitus jus diligens sis scapulare\n"
+            "Servitium transi.");
+        parser.parse("test/cb 111 222.4; test/cb 222; test/cb foo; test/cb",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
-        BOOST_CHECK_EQUAL( ss.str(), "333\n" "Value: 222\n" "1.2\n" );
+        BOOST_CHECK_EQUAL( ss.str(), "333\n" "224\n" "Value: foo\n" "1.2\n" );
+    }
+
+    {
+        std::stringstream ss;
+        senf::console::root()["test"]("cb").help(ss);
+        BOOST_CHECK_EQUAL( 
+            ss.str(), 
+            "Usage:\n"
+            "    1- cb arg11:int [checkup:double]\n"
+            "    2- cb arg21:string\n"
+            "    3- cb\n"
+            "\n"
+            "With:\n"
+            "    arg11     Bar didelfrump di desgorb. Nu widsoflar brimeldrgf.\n"
+            "    checkup   Florgel, dargel and durgel\n"
+            "        default: 2.1\n"
+            "\n"
+            "Ops fortunate, ops me ut orgia vociferatio contumax per, rudo re loco emitto\n"
+            "intolerabiliter ita iugo. Subcribo gravo. Devenio luna fonticulus Castanea\n"
+            "horum fascino Os interpretor non ipse conjuratio hora, qui filius denuntio ait\n"
+            "sono te odium Anhelo. Dum Cedo audax celox alius una Agnosco hic, ibi retineo\n"
+            "lux sto ioco. Per Re dono. Copiose reus scitus jus diligens sis scapulare\n"
+            "Servitium transi.\n"
+            "\n"
+            "Variant 1:\n"
+            "Lo nam balnearius Opprimo Pennatus, no decentia sui, dicto esse se pulchritudo,\n"
+            "pupa Sive res indifferenter. Captivo pa.\n"
+            "\n"
+            "Variant 2:\n"
+            "Uus Primordia fundo falsidicus corium, diurnitas humo pro leto. Sui Ueraciter\n"
+            "hio eruca lenis qua Agalmate ut fors penitentia. Iugum obdormio anxio nuncupo\n"
+            "iam, in vos nam Custodi.\n" );
     }
 }
 
@@ -140,8 +192,8 @@ namespace {
         std::string name(std::string const & suffix) {
             return name_ + suffix;
         }
-
     };
+
 }
 
 BOOST_AUTO_UNIT_TEST(memberParsedCommand)

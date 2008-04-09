@@ -35,15 +35,118 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::OverloadedCommandNode
 
+///////////////////////////////////////////////////////////////////////////
+// So soll die doku aussehen:
+//
+// Usage:
+//      1- foo arg1:int arg2:double
+//      2- foo arg3:string
+//      3- foo
+//
+// With:
+//      arg1 -   arg1-doc
+//      arg2 -   arg2-doc
+//          default: 1.23
+//      arg3 -   arg3-doc
+//
+// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj 
+// sdflkja sldkfjslkdfj sdlkfj lskjdf lskjdf lksj dflkj lsdkfj lskdjf lskjkd
+// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj 
+// sdflkja sldkfjslkdfj sdlkfj lskjdf lskjdf lksj dflkj lsdkfj lskdjf lskjkd
+// Generic documentation foo blalsdljfl laj flkajslkjs fdlkj oiwlksdj ;llkaj 
+// sdflkja sldkfjslkdfj sdlkfj lskjdf lskjdf lksj dflkj lsdkfj lskdjf lskjkd
+//
+// Variant 1: 
+// Variant 1 doc la;ksjf lkj sdlkfj lkjekj sdflkj ekljsdlkfj wlej
+// slkj dkj sldkfj lwekljsdf skldjf lskjdf l jsd
+//
+// Variant 2:
+// Variant 2 doc lskdfj lwkej lksjdflksjf
+//
+// Variatn 3:
+// Variant 3 doc slkjflw ekj lskdfj lskdjf laksdj flksj elkj aldskjf lwkejlksdj
+// ldkfaj wlekj slkdfj lskdjf lwkejlkasdjf 
+
 prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
     const
 {
-    os << doc_;
-    Overloads::const_iterator i (overloads_.begin());
-    Overloads::const_iterator const i_end (overloads_.end());
-    for (; i != i_end; ++i) {
-        os << "\n\n";
-        (*i)->help(os);
+    typedef std::vector<ArgumentDoc> ArgumentDocs;
+    ArgumentDocs argumentDocs;
+    bool haveDocumentedArg (false);
+
+    os << "Usage:\n";
+    {
+        Overloads::const_iterator i (overloads_.begin());
+        Overloads::const_iterator const i_end (overloads_.end());
+        unsigned index (1);
+        for (; i != i_end; ++i, ++index) {
+            os << "    " << index << "- " << name();
+            for (unsigned j (0); j < (*i)->numArguments(); ++j) {
+                ArgumentDoc arg;
+                (*i)->argumentDoc(j, arg);
+
+                os << ' ';
+                if (! arg.defaultValue.empty())
+                    os << '[';
+                if (! arg.name.empty()) os << arg.name;
+                if (! arg.type.empty()) os << ':' << arg.type;
+                if (arg.name.empty() && arg.type.empty()) os << "...";
+                if (! arg.defaultValue.empty())
+                    os << ']';
+
+                if (! arg.name.empty()) {
+                    ArgumentDocs::iterator k (argumentDocs.begin());
+                    ArgumentDocs::iterator const k_end (argumentDocs.end());
+                    for (; k != k_end; ++k)
+                        if (k->name == arg.name && k->defaultValue == arg.defaultValue) {
+                            if (! arg.doc.empty() && k->doc.empty()) {
+                                k->doc == arg.doc;
+                                haveDocumentedArg = true;
+                            }
+                            break;
+                        }
+                    if (k == k_end) {
+                        argumentDocs.push_back(arg);
+                        if (! arg.doc.empty())
+                            haveDocumentedArg = true;
+                    }
+                }
+            }
+            os << '\n';
+        }
+    }
+
+    if (haveDocumentedArg) {
+        os << "\n" "With:\n";
+        ArgumentDocs::const_iterator i (argumentDocs.begin());
+        ArgumentDocs::const_iterator const i_end (argumentDocs.end());
+        for (; i != i_end; ++i) {
+            if (! i->doc.empty()) {
+                os << "    " 
+                   << i->name 
+                   << std::string(i->name.length()<8 ? 8-i->name.length() : 0, ' ')
+                   << "  "
+                   << i->doc
+                   << '\n';
+                if (! i->defaultValue.empty())
+                    os << "        default: " << i->defaultValue << '\n';
+            }
+        }
+    }
+    
+    if (! doc_.empty())
+        os << "\n" << doc_ << "\n";
+    
+    {
+        Overloads::const_iterator i (overloads_.begin());
+        Overloads::const_iterator const i_end (overloads_.end());
+        unsigned index (1);
+        for (; i != i_end; ++i, ++index) {
+            std::string overloadDoc ((*i)->doc());
+            if (! overloadDoc.empty())
+                os << "\n" << "Variant " << index << ":\n"
+                   << overloadDoc << "\n";
+        }
     }
 }
 
@@ -69,10 +172,20 @@ prefix_ void senf::console::OverloadedCommandNode::v_execute(std::ostream & outp
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::SimpleCommandOverload
 
-prefix_ void senf::console::SimpleCommandOverload::v_help(std::ostream & os)
+prefix_ unsigned senf::console::SimpleCommandOverload::v_numArguments()
     const
 {
-    os << doc_;
+    return 1;
+}
+
+prefix_ void senf::console::SimpleCommandOverload::v_argumentDoc(unsigned index, ArgumentDoc & doc)
+    const
+{}
+
+prefix_ std::string senf::console::SimpleCommandOverload::v_doc()
+    const
+{
+    return doc_;
 }
 
 prefix_ void senf::console::SimpleCommandOverload::v_execute(std::ostream & os,

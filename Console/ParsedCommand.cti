@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "../Utils/membind.hh"
+#include <boost/format.hpp>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -39,7 +40,7 @@ prefix_ senf::console::detail::ParameterInfo<Type> &
 senf::console::ParsedCommandOverloadBase::arg(unsigned n)
     const
 {
-    return static_cast<detail::ParameterInfo<Type> &>(arg(n));
+    return dynamic_cast<detail::ParameterInfo<Type> &>(arg(n));
 }
 
 template <class Type>

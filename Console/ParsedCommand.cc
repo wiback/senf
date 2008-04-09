@@ -35,9 +35,31 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ParsedCommandOverloadBase
 
-prefix_ void senf::console::ParsedCommandOverloadBase::v_help(std::ostream & os)
+prefix_ unsigned senf::console::ParsedCommandOverloadBase::v_numArguments()
     const
-{}
+{
+    return parameters_.size();
+}
+
+prefix_ void senf::console::ParsedCommandOverloadBase::v_argumentDoc(unsigned index,
+                                                                     ArgumentDoc & doc)
+    const
+{
+    BOOST_ASSERT( index < parameters_.size() );
+    detail::ParameterInfoBase & arg (*parameters_[index]);
+    doc.name = arg.name.empty() 
+        ? (boost::format("arg%d%d") % overloadIndex() % (index+1)).str()
+        : arg.name;
+    doc.type = arg.type;
+    doc.defaultValue = arg.defaultValueStr();
+    doc.doc = arg.doc;
+}
+
+prefix_ std::string senf::console::ParsedCommandOverloadBase::v_doc()
+    const
+{
+    return doc_;
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

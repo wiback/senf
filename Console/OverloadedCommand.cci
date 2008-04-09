@@ -48,15 +48,35 @@ prefix_ void senf::console::CommandOverload::operator()(std::ostream & os,
     execute(os, command);
 }
 
-prefix_ void senf::console::CommandOverload::help(std::ostream & os)
+prefix_ unsigned senf::console::CommandOverload::numArguments()
+    const
 {
-    v_help(os);
+    return v_numArguments();
+}
+
+prefix_ void senf::console::CommandOverload::argumentDoc(unsigned index, ArgumentDoc & doc)
+    const
+{
+    return v_argumentDoc(index,doc);
+}
+
+prefix_ std::string senf::console::CommandOverload::doc()
+    const
+{
+    return v_doc();
 }
 
 prefix_ senf::console::OverloadedCommandNode & senf::console::CommandOverload::node()
+    const
 {
     SENF_ASSERT( node_ );
     return *node_;
+}
+
+prefix_ unsigned senf::console::CommandOverload::overloadIndex()
+    const
+{
+    return node().overloadIndex(*this);
 }
 
 prefix_ senf::console::CommandOverload::CommandOverload()
@@ -87,6 +107,13 @@ senf::console::OverloadedCommandNode::doc(std::string const & doc)
 {
     doc_ = doc;
     return *this;
+}
+
+prefix_ unsigned
+senf::console::OverloadedCommandNode::overloadIndex(CommandOverload const & overload)
+{
+    return find(overloads_.begin(), overloads_.end(), CommandOverload::cptr(&overload)) 
+        - overloads_.begin() + 1;
 }
 
 prefix_ senf::console::OverloadedCommandNode::OverloadedCommandNode()

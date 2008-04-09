@@ -65,9 +65,9 @@ namespace senf {
         template <class S> void intrusive_ptr_release();
         
         template <class S>
-        friend void senf::intrusive_ptr_add_ref(intrusive_refcount_t<S> * p);
+        friend void senf::intrusive_ptr_add_ref(intrusive_refcount_t<S> const * p);
         template <class S>
-        friend void senf::intrusive_ptr_release(intrusive_refcount_t<S> * p);
+        friend void senf::intrusive_ptr_release(intrusive_refcount_t<S> const * p);
     };
 
     /** \brief Customizable reference count mixin for intrusive_ptr
@@ -158,9 +158,9 @@ namespace senf {
     };
 
     template <class Self>
-    void intrusive_ptr_add_ref(intrusive_refcount_t<Self> * p);
+    void intrusive_ptr_add_ref(intrusive_refcount_t<Self> const * p);
     template <class Self>
-    void intrusive_ptr_release(intrusive_refcount_t<Self> * p);
+    void intrusive_ptr_release(intrusive_refcount_t<Self> const * p);
 
 }
 

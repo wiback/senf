@@ -48,8 +48,11 @@ namespace detail {
         std::string type;
         std::string name;
         bool hasDefault;
+        std::string doc;
         
         ParameterInfoBase(std::string const & type);
+
+        virtual std::string defaultValueStr() const = 0;
     };
     
     template <class ParameterType>
@@ -62,6 +65,8 @@ namespace detail {
         ParameterInfo();
 
         ParameterType defaultValue;
+
+        virtual std::string defaultValueStr() const;
     };
     
     template <class Type>
@@ -88,6 +93,7 @@ namespace detail {
         typedef Type type;
         static void parse(ParseCommandInfo::TokensRange const & tokens, Type & out);
         static std::string typeDescription();
+        static std::string dump(Type const & value);
     };
     
 }}}

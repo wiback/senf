@@ -54,6 +54,13 @@ prefix_ senf::console::detail::ParameterInfo<ParameterType>::ParameterInfo()
       defaultValue ()
 {}
 
+template <class ParameterType>
+prefix_ std::string senf::console::detail::ParameterInfo<ParameterType>::defaultValueStr()
+    const
+{
+    return hasDefault ? ParameterTraits<ParameterType>::dump(defaultValue) : "";
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::ReturnValueTraits<Type>
 
@@ -92,7 +99,15 @@ parse(ParseCommandInfo::TokensRange const & tokens, Type & out)
 template <class Type>
 prefix_ std::string senf::console::detail::ParameterTraits<Type>::typeDescription()
 {
-    return prettyName(typeid(Type));
+    std::string type (prettyName(typeid(Type)));
+    std::string::size_type i (type.rfind(':'));
+    return i == std::string::npos ? type : type.substr(i+1);
+}
+
+template <class Type>
+prefix_ std::string senf::console::detail::ParameterTraits<Type>::dump(Type const & value)
+{
+    return boost::lexical_cast<std::string>(value);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////
