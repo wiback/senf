@@ -119,13 +119,13 @@ namespace console {
         cmd.add(senf::console::SimpleCommandOverload::create(&anotherCallback));
         \endcode
 
-        However, this facility is mostly used not directly but indirectly (and automatically) when
+        However, this facility is normally used not directly but indirectly (and automatically) when
         adding argument parsing callbacks.
 
         \warning For this to work, the commands <b>must</b> do all syntax checking before doing any
             operation
 
-        \ingroup node_tree
+        \ingroup console_commands
       */
     class OverloadedCommandNode
         : public CommandNode

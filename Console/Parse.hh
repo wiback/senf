@@ -26,7 +26,7 @@
 #ifndef HH_Parse_
 #define HH_Parse_ 1
 
-/** \defgroup console_parser The console/config parser
+/** \defgroup console_parser The parser
 
     The console/config library defines a simple language used to interact with the console or to
     configure the application.  The parser is not concerned about interpreting commands or

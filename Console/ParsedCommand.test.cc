@@ -118,7 +118,7 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
 
-        using namespace senf::console::tag;
+        using namespace senf::console::kw;
 
         dir.add("cb", &cb1)
             .doc(
@@ -133,11 +133,11 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
                 "Lo nam balnearius Opprimo Pennatus, no decentia sui, dicto esse se pulchritudo,\n"
                 "pupa Sive res indifferenter. Captivo pa." )
 
-            .arg( description_   = "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf." )
+            .arg( description   = "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf." )
 
-            .arg( name_          = "checkup", 
-                  description_   = "Florgel, dargel and durgel",
-                  default_value_ = 2.1 );
+            .arg( name          = "checkup", 
+                  description   = "Florgel, dargel and durgel",
+                  default_value = 2.1 );
 
         senf::console::OverloadedCommandNode & cbNode (
             dir.add("cb", &cb5)

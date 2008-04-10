@@ -118,63 +118,67 @@ ParsedAttributeAttributorBase(Overload & overload, unsigned index)
 // senf::console::ParsedAttributeAttributor<Overload,index,flag>
 
 template <class Overload, unsigned index, bool flag>
+prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
+senf::console::ParsedAttributeAttributor<Overload,index,flag>::arg()
+    const
+{
+    return next();
+}
+
+template <class Overload, unsigned index, bool flag>
 template <class ArgumentPack>
 prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
 senf::console::ParsedAttributeAttributor<Overload,index,flag>::
 argInfo(ArgumentPack const & args)
     const
 {
-    typedef typename boost::parameter::binding<
-        ArgumentPack, tag::detail::default_value_>::type default_value_t;
-    return argInfo( args, boost::is_same<default_value_t, void>() );
+#   define HaveArg(tag) boost::is_same< \
+        typename boost::parameter::binding<ArgumentPack, tag>::type, void >()
+
+    argInfo( kw::name,          args, HaveArg(kw::type::name)          );
+    argInfo( kw::description,   args, HaveArg(kw::type::description)   );
+    argInfo( kw::default_value, args, HaveArg(kw::type::default_value) );
+
+    return next();
+
+#   undef HaveArg
+}
+
+template <class Overload, unsigned index, bool flag>
+template <class Kw, class ArgumentPack>
+prefix_ void senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+argInfo(Kw const &, ArgumentPack const &, boost::mpl::true_)
+    const
+{}
+
+template <class Overload, unsigned index, bool flag>
+template <class ArgumentPack>
+prefix_ void senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+argInfo(boost::parameter::keyword<kw::type::name> const &, ArgumentPack const & args,
+        boost::mpl::false_)
+    const
+{
+    this->argName(args[kw::name]);
 }
 
 template <class Overload, unsigned index, bool flag>
 template <class ArgumentPack>
-prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
-senf::console::ParsedAttributeAttributor<Overload,index,flag>::
-argInfo(ArgumentPack const & args, boost::mpl::true_)
+prefix_ void senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+argInfo(boost::parameter::keyword<kw::type::description> const &, ArgumentPack const & args,
+        boost::mpl::false_)
     const
 {
-    return argInfo( args[tag::name_ | ""], 
-                    args[tag::description_ | ""] );
-
+    this->argDoc(args[kw::description]);
 }
 
 template <class Overload, unsigned index, bool flag>
 template <class ArgumentPack>
-prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
-senf::console::ParsedAttributeAttributor<Overload,index,flag>::
-argInfo(ArgumentPack const & args, boost::mpl::false_)
+prefix_ void senf::console::ParsedAttributeAttributor<Overload,index,flag>::
+argInfo(boost::parameter::keyword<kw::type::default_value> const &, ArgumentPack const & args,
+        boost::mpl::false_)
     const
 {
-    return argInfo( args[tag::name_ | ""], 
-                    args[tag::description_ | ""], 
-                    args[tag::default_value_ | value_type()] );
-}
-
-template <class Overload, unsigned index, bool flag>
-prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
-senf::console::ParsedAttributeAttributor<Overload,index,flag>::argInfo(std::string const & name,
-                                                                       std::string const & doc)
-    const
-{
-    this->argName(name);
-    this->argDoc(doc);
-    return next();
-}
-
-template <class Overload, unsigned index, bool flag>
-prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
-senf::console::ParsedAttributeAttributor<Overload,index,flag>::argInfo(std::string const & name,
-                                                                       std::string const & doc,
-                                                                       value_type const & value)
-    const
-{
-    this->argName(name);
-    this->argDoc(doc);
-    defaultValue(value);
-    return next();
+    this->defaultValue(args[kw::default_value]);
 }
 
 template <class Overload, unsigned index, bool flag>
@@ -185,7 +189,7 @@ ParsedAttributeAttributor(Overload & overload)
 {}
 
 template <class Overload, unsigned index, bool flag>
-prefix_ senf::console::ParsedAttributeAttributor<Overload, index+1>
+prefix_ typename senf::console::ParsedAttributeAttributor<Overload,index,flag>::next_type
 senf::console::ParsedAttributeAttributor<Overload,index,flag>::next()
     const
 {
@@ -207,7 +211,8 @@ template <class Overload, unsigned index>
 prefix_
 senf::console::ParsedAttributeAttributor<Overload, index, false>::
 ParsedAttributeAttributor(Overload & overload)
-    : ParsedCommandAttributor<Overload> (overload, index)
+    : ParsedAttributeAttributorBase< Overload, 
+                                     ParsedAttributeAttributor<Overload, index, false> > (overload, index)
 {}
 
 ///////////////////////////////////////////////////////////////////////////

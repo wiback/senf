@@ -47,6 +47,85 @@
 namespace senf {
 namespace console {
 
+    /** \brief CommandOverload implementation with automatic argument parsing
+
+        ParsedCommandOverloadBase implements a CommandOverload implementation supporting automatic
+        parsing of arguments. This is \e not a node, it's a CommandOverload which is then added to
+        an OverloadedCommandNode instance.
+
+        Automatic argument parsing and return value processing consists of several components:
+        \li \ref overload_add Adding overload instances to the tree
+        \li (Advanced) \ref overload_parse
+        \li (Advanced) \ref overload_format
+
+        \section overload_add Adding argument parsing callbacks to the tree
+
+        Adding appropriate callbacks to the tree is very simple: just path a function pointer to
+        DirectoryNode::add() or a member function pointer to ScopedDirectory::add().
+        \code
+        std::string taskStatus(int id);
+
+        senf::console::root().add("taskStatus", &taskStatus);
+        \endcode
+
+        There are quite a number of additional parameters available to be set. These parameters are
+        documented in ParsedAttributeAttributor. Parameters are set by adding them as additional
+        calls after adding the node:
+
+        \code
+        senf::console::root().add("taskStatus", &taskStatus)
+            .doc("Query the current task status")
+            .arg( name = "id",
+                  description = "numeric id of task to check, -1 for the current task."
+                  default_value = -1 );
+        \endcode
+
+        You may also add an additional \c std::ostream & Argument as first argument to the
+        callback. If this argument is present, the stream connected to the console which issued the
+        command will be passed there. This allows writing arbitrary messages to the console.
+
+        Additionally, overloading is supported by registering multiple commands under the same
+        name. So, elaborating on above example:
+        \code
+        std::string taskStatus(int id);
+        std::string taskStatus(std::string const & name);
+
+        senf::console::root()
+            .add("taskStatus", static_cast<std::string (*)(int)>(&taskStatus))
+            .doc("Query the current task status")
+            .overloadDoc("Query status by id")
+            .arg( name = "id",
+                  description = "numeric id of task to check, -1 for the current task."
+                  default_value = -1 );
+        senf::console::root()
+            .add("taskStatus", static_cast<std::string (*)(std::string const &)>(&taskStatus))
+            .overloadDoc("Query status by name")
+            .arg( name = "name",
+                  description = "name of task to check" );
+        \endcode
+
+        We can see here, that taking the address of an overloaded function requires a cast. If you
+        can give unique names to each of the C++ overloads (not the overloads in the console), you
+        should do so to make the unwieldy casts unnecessary.
+
+        \section overload_parse Custom parameter parsers
+        
+        By default, parameters are parsed using \c boost::lexical_cast and therefore using \c
+        iostreams. This means, that any type which can be read from a stream can automatically be
+        used as argument type.
+
+        However, argument parsing can be configured by specializing
+        senf::console::detail::ParameterTraits. See that class for more information.
+
+        \section overload_format Custom return-value formatters
+
+        By default, return values are streamed to an ostream. This automatically allows any
+        streamable type to be used as return value. To add new types or customize the formating, the
+        senf::console::detail::ReturnValueTraits template needs to be specialized for that type. See
+        that class for more information.
+
+        \ingroup console_commands
+     */
     class ParsedCommandOverloadBase
         : public CommandOverload
     {
@@ -118,10 +197,10 @@ namespace console {
     private:
     };
     
-    namespace tag {
-        BOOST_PARAMETER_KEYWORD(detail, name_);
-        BOOST_PARAMETER_KEYWORD(detail, description_);
-        BOOST_PARAMETER_KEYWORD(detail, default_value_);
+    namespace kw {
+        BOOST_PARAMETER_KEYWORD(type, name);
+        BOOST_PARAMETER_KEYWORD(type, description);
+        BOOST_PARAMETER_KEYWORD(type, default_value);
     }
 
     template <class Overload, class Self>
@@ -155,9 +234,9 @@ namespace console {
         typedef ParsedAttributeAttributor return_type;
 
         typedef boost::parameter::parameters<
-            tag::detail::name_,
-            tag::detail::description_,
-            tag::detail::default_value_> arg_params;
+            kw::type::name,
+            kw::type::description,
+            kw::type::default_value> arg_params;
 
         next_type arg() const;
 
@@ -171,16 +250,23 @@ namespace console {
         template <class ArgumentPack>
         next_type argInfo(ArgumentPack const & args) const;
 
+        template <class Kw, class ArgumentPack>
+        void argInfo(Kw const &, ArgumentPack const &, boost::mpl::true_) 
+            const;
         template <class ArgumentPack>
-        next_type argInfo(ArgumentPack const & args, boost::mpl::true_) const;
+        void argInfo(boost::parameter::keyword<kw::type::name> const &, 
+                     ArgumentPack const & args, boost::mpl::false_) 
+            const;
         template <class ArgumentPack>
-        next_type argInfo(ArgumentPack const & args, boost::mpl::false_) const;
+        void argInfo(boost::parameter::keyword<kw::type::description> const &, 
+                     ArgumentPack const & args, boost::mpl::false_) 
+            const;
+        template <class ArgumentPack>
+        void argInfo(boost::parameter::keyword<kw::type::default_value> const &, 
+                     ArgumentPack const & args, boost::mpl::false_) 
+            const;
 
-        next_type argInfo(std::string const & name, std::string const & doc) const;
-        next_type argInfo(std::string const & name, std::string const & doc,
-                          value_type const & value) const;
-
-        ParsedAttributeAttributor<Overload, index+1> next() const;
+        next_type next() const;
 
         void defaultValue(value_type const & value) const;
 
@@ -203,7 +289,8 @@ namespace console {
 
     template <class Overload, unsigned index>
     class ParsedAttributeAttributor<Overload, index, false>
-        : public ParsedCommandAttributor< Overload >
+        : public ParsedAttributeAttributorBase< Overload, 
+                                                ParsedAttributeAttributor<Overload, index, false> >
     {
     public:
         typedef OverloadedCommandNode node_type;

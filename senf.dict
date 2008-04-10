@@ -105,6 +105,7 @@ enableChecksum
 endcode
 endif
 endl
+endlink
 ENOFILE
 enum
 env
@@ -146,6 +147,7 @@ FileHandle
 FileTarget
 findNext
 findPrev
+fixedcolumn
 fixme
 fixvariant
 flurgle

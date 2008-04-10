@@ -23,7 +23,7 @@
 /** \file
     \brief Node public header */
 
-/** \defgroup node_tree The console/config file-system node tree
+/** \defgroup node_tree The node tree
     
     The console/config node tree is the central data-structure of the library. Into this tree, all
     commands and parameters are entered. The tree is then exposed using a file-system like
@@ -117,7 +117,8 @@
     \li An arbitrary node can be created and then (possibly later) added to the tree using the
         corresponding senf::console::DirectoryNode::add() overload.
     \li A senf::console::CommandNode is normally added to the tree by directly adding a callback
-        using one of the overloaded senf::console::DirectoryNode::add() members.
+        using one of the overloaded senf::console::DirectoryNode::add() members. See \ref
+        console_commands.
 
     When directly adding a node callback, the type of node added depends on the type of
     callback. The callback types which can be added are listed at \ref console_callbacks.
@@ -520,6 +521,9 @@ namespace console {
 
         To execute a command, CommandNode::operator()() or CommandNode::execute() is called.
 
+        Subclass instances of this node type are automatically created when adding commands to the
+        tree. See \ref console_commands.
+
         \ingroup node_tree
       */
     class CommandNode : public GenericNode
@@ -573,9 +577,14 @@ namespace console {
     /** \brief Most simple CommandNode implementation
 
         This CommandNode implementation simply forwards the \a output and \a arguments arguments to
-        an arbitrary callback.
+        an arbitrary callback. Thus, it allows to add callbacks with the signature
+        \code
+        void callback(std::ostream & os, senf::console::ParseCommandInfo const & command)
+        { ... }
+        \endcode
+        to the tree.
  
-        \ingroup node_tree
+        \ingroup console_commands
      */
     class SimpleCommandNode : public CommandNode
     {

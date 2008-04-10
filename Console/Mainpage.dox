@@ -42,6 +42,7 @@
     To get started using the config/console library, see
     \li \ref node_tree
     \li \ref console_parser
+    \li \ref console_commands
 
     \section console_example Example
 
@@ -93,6 +94,294 @@
     </pre>
  */
 
+/** \defgroup console_commands Supported command types
+
+    The Console/config library supports quite a number of different command types. All these types
+    of command are registered, by passing them to DirectoryNode::add()
+
+    \autotoc
+
+    \section console_manualparse Manually parsing command arguments
+
+    This is the most primitive type of command. It will be called with an output stream and with a
+    senf::console::ParseCommandInfo reference which holds information about the command parsed.
+
+    From this information the command callback gets a list of arguments or tokens which then can be
+    interpreted in an arbitrary way.
+    \code
+    void test1(std::ostream & os, senf::console::ParseCommandInfo const & command)
+    {
+        // We take exactly one argument
+        if (command.arguments().size() != 1) 
+            raise senf::console::SyntaxErrorException("invalid number of arguments");
+
+        senf::console::ParseCommandInfo::TokenRange & argTokens (
+            command.arguments()[0]);
+
+        // The argument must have exactly one token
+        if (argTokens.size() != 1)
+            raise senf::console::SyntaxErrorException("argument syntax error");
+
+        // Retrieve the token value
+        std::string arg (argTokens[0].value());
+
+        // In this example, we just write the argument to the output stream
+        os << arg << std::endl;
+    }
+    \endcode
+    
+    Registering this callback is done by simply adding it. To provide online help, pass it to
+    'doc()':
+    \code
+    senf::console::root()
+        .add("test1", &test1)
+        .doc("Usage:\n"
+             "    test1 arg\n"
+             "\n"
+             "Echo 'arg' to the console");
+    \endcode
+
+    The callback may now be called interactively on the console by it's registered name:
+    \htmlonly
+    <pre>
+    server:/$ test1
+    invalid number of arguments
+    server:/$ test1 stefan@j32.de
+    stefan@j32.de
+    server:/$ test1 (echo me)
+    argument syntax error
+    server:/$ help test1
+    Usage:
+        test1 arg
+
+    Echo 'arg' to the console
+    server:/$
+    </pre>
+    \endhtmlonly
+
+    As you can see above, the arguments and tokens are returned as <a
+    href="http://www.boost.org/doc/libs/1_33_1/libs/range/doc/utility_class.html#iter_range">
+    boost::iterator_range</a> instances. These behave much like containers: They have \c begin() and
+    \c end() and some other useful members.
+    
+    The parser will have divided the argument tokens into arguments already. This simplifies further
+    parsing. If however you want to access the list of argument tokens as a single list, you can do
+    so using senf::console::ParseCommandInfo::tokens().
+    
+    Parsing arguments is quite simple but can get very tedious. To simplify this task, the parsing
+    can be delegated to the Console/config library. See the next section.
+
+
+    \section console_autoparse Automatic argument parsing
+    
+    To greatly simplify parsing complex commands, we turn to automatic argument parsing. This
+    feature allows to register (almost) arbitrary callbacks.
+
+    \code
+    std::string test2(std::string const & arg)
+    {
+        return arg;
+    }
+    \endcode
+
+    This extremely simple callback may be registered by adding it to a
+    senf::console::DirectoryNode.
+    \code
+    senf::console::root()
+        .add("test2", &test2);
+    \endcode
+    The functionality is now identical to \c test1:
+    \htmlonly
+    <pre>
+    server:/$ test2
+    invalid number of arguments
+    server:/$ test2 stefan@j32.de
+    stefan@j32.de
+    server:/$ test2 (echo me)
+    argument syntax error
+    server:/$ help test2
+    Usage:
+        test2 arg11:string
+    server:/$
+    </pre>
+    \endhtmlonly
+
+    As we can see, some documentation is automatically provided. To add more info, we need to add
+    some additional attributes when registering the command:
+    \code
+    namespace kw = senf::console::kw;
+
+    senf::console::root()
+        .add("test2", &test2)
+        .doc("Echo 'arg' to the console")
+        .arg( kw::name = "arg",
+              kw::description = "Message to output" );
+    \endcode
+
+    (Sadly, there is no way to automatically find out the \e name of an argument, just it's type.)
+    Every callback argument corresponds with a call of the \c arg() attribute. Argument attributes
+    are set using keywords from the \ref senf::console::kw namespace. You will probably wither use
+    this namespace via a namespace alias (as above) or via a <tt>using namespace
+    senf::console::kw</tt> declaration (as in all the following examples)
+
+    You don't need
+    to specify any information for an argument: To skip an argument, just call \c arg() without
+    attributes for this argument.
+
+    After adding this information, the online help is much more intelligible
+    \htmlonly
+    <pre>
+    server:/$ help test2
+    Usage:
+        test2 arg:string
+
+    With:
+        arg       Message to output
+
+    Echo 'arg' to the console
+    server:/$
+    </pre>
+    \endhtmlonly
+
+    \subsection command_ostream Accessing the console stream
+
+    Commands may have an optional first argument of type <tt>std::ostream &</tt>. This argument is
+    not considered part of the real interface. When the command is executed, the callback will be
+    passed the current console's output stream object in this argument. With this, the callback can
+    output arbitrary messages to the network console. See the next section for an example.
+
+    \subsection command_overload Command overloading
+
+    Automatically parsed commands can be overloaded: You can register multiple commands under the
+    same name. If this happens, each command is tried in turn until no SyntaxErrorException is
+    raised.
+
+    \code
+    void test3(std::ostream & os, unsigned n, std::string text)
+    {
+        // It's perfectly valid to check additional constraints here and throw a
+        // SyntaxErrorException. In this case, the next overload will be tried. However, you must
+        // ensure, That no action takes place before this check !
+        if ( n==0 ) throw senf::console::SyntaxErrorException("invalid value for parameter 'n'");
+        while (n-- > 0) os << text << std::endl;
+    }
+
+    using namespace senf::console::kw;
+    
+    senf::console::root()
+        .add("test3", &test3)
+        .doc("Echo text to the console")
+        .overloadDoc("Repeat 'text' for 'n' lines")
+        .arg( name = "n", description = "Number of repetitions" )
+        .arg( name = "text", description = "Message to output" );
+    senf::console::root()
+        .add("test3", &test2)
+        .overloadDoc("Echo the 'text' argument")
+        .arg( name = "text", description = "Message to output" );
+    \endcode
+
+    We can now call \c test2 with one or two arguments:
+
+    \htmlonly
+    <pre>
+    server:/$ test3 "The sky is blue"
+    The sky is blue
+    server:/$ test3 4 ok
+    ok
+    ok
+    ok
+    ok
+    server:/$ help test3
+    Usage:
+        1- test3 n:unsigned text:string
+        2- test3 text:string
+    
+    With:
+        n         Numer of repetitions
+        text      Messsage to output
+
+    Echo text to the console
+
+    Variant 1:
+    Repeat 'text' for 'n' lines
+    
+    Variant 2:
+    Echo the 'text' argument
+    senf:/$    And 
+
+    </pre>
+    \endhtmlonly
+
+    \subsection console_defaults Default values
+    
+    Another information which can not be automatically gathered from the type system is default
+    values. These have to be explicitly declared:
+    \code
+    using namespace senf::console::kw;
+
+    senf::console::root()
+        .add("test4", &test2b)
+        .arg()
+        .arg( default_value = "ok" );
+    \endcode
+    (Default values must not necessarily be declared in the callback function too.) Of course,
+    default values can be used together with overloading. 
+
+    There must be no argument without default value after an argument with a default value
+    declared. This fill fail at compile time. 
+
+    \subsection console_auto_summary Attribute summary
+
+    Here a summary of all the attributes available for automatically parsed command nodes:
+    
+    <table class="senf fixedwidth">
+    
+    <tr><td style="width:12em">\c doc ( \e text )</td><td>Documentation for all overloads</td></tr>
+
+    <tr><td>\c overloadDoc ( \e text )</td><td>Documentation for a specific overliad</td></tr>
+
+    <tr><td>\c arg ( \e attributes )</td><td>Set parameter attributes. All attributes are
+    optional. The attribute keywords are defined in the \ref senf::console::kw namespace. Valid
+    Attributes are:
+    \li \e name: Parameter name
+    \li \e description: One-line description of the argument
+    \li \e default_value: Arguments default value</td></tr>
+
+    </table>
+    
+    \section console_memberfn Registering member functions
+    
+    Member functions are supported like non-member functions. They must however be added through a
+    senf::console::ScopedDirectory<> instance to bind them to their instance.
+    \code
+    class Test 
+    {
+    public:
+        ScopedDirectory<Test> dir;
+
+        Test(std::string label) : dir(this), label_ (label) {
+            dir.add("test4", &Test::test2);
+            dir.add("test4", &Test::test3);
+        }
+
+        std::string test2(std::string const & text) { return label_ + ": " + text; }
+        void test3(std::ostream & os, unsigned n, std::string const & text) {
+            while (n-- > 0) os << label << ": " << text << std::endl; }
+
+    private:
+        std::string label_;
+    };
+
+    // ...
+
+    Test testOb ("test");
+    senf::console::root().add("testobj", testOb.dir);
+    \endcode
+
+    Binding via senf::console::ScopedDirectory ensures, that the commands are automatically removed
+    from the tree when an object is destroyed.
+ */
+
 
 // Local Variables:
 // mode: c++
@@ -102,6 +391,6 @@
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// mode: flyspell
 // mode: auto-fill
 // End:
+

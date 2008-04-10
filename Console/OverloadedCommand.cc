@@ -80,7 +80,9 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
         Overloads::const_iterator const i_end (overloads_.end());
         unsigned index (1);
         for (; i != i_end; ++i, ++index) {
-            os << "    " << index << "- " << name();
+            os << "    ";
+            if (overloads_.size() > 1) os << index << "- ";
+            os << name();
             for (unsigned j (0); j < (*i)->numArguments(); ++j) {
                 ArgumentDoc arg;
                 (*i)->argumentDoc(j, arg);
@@ -143,9 +145,12 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
         unsigned index (1);
         for (; i != i_end; ++i, ++index) {
             std::string overloadDoc ((*i)->doc());
-            if (! overloadDoc.empty())
-                os << "\n" << "Variant " << index << ":\n"
-                   << overloadDoc << "\n";
+            if (! overloadDoc.empty()) {
+                os << "\n";
+                if (overloads_.size() > 1)
+                    os << "Variant " << index << ":\n";
+                os << overloadDoc << "\n";
+            }
         }
     }
 }

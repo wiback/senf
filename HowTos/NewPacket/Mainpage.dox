@@ -141,7 +141,7 @@
 
     \subsection howto_newpacket_parser_simple Simple field definitions
 
-    Packet parser fields are defined using special \ref packetpasermacros. We take the fields
+    Packet parser fields are defined using special \ref packetparsermacros. We take the fields
     directly from the packet definition (the GRE RFC in this case). This will give us to the
     following code fragment:
 
