@@ -502,9 +502,10 @@ namespace connector {
         
         \tparam PacketType Type of packet to read. Defaults to senf::Packet
 
-        The ActiveInput connector template reads data actively from a connected module. This class
-        is completely implemented via it's base-class, GenericActiveInput, the only difference is
-        that read packets are returned as \a PacketType instead of generic senf::Packet references.
+        The %ActiveInput %connector template reads data actively from a connected %module. This
+        class is completely implemented via it's base-class, GenericActiveInput, the only 
+        difference is that read packets are returned as \a PacketType instead of generic 
+        senf::Packet references.
 
         \see GenericActiveInput \n
             senf::ppi::connector
@@ -514,7 +515,7 @@ namespace connector {
     {
     public:
         PacketType operator()();        ///< Read packet
-                                        /**< \throws std::bad_cast, if the connector receives a
+                                        /**< \throws std::bad_cast, if the %connector receives a
                                              Packet which is not of type \a PacketType.
                                              \returns newly read packet reference. */
         PacketType read();              ///< Alias for operator()
@@ -524,9 +525,9 @@ namespace connector {
 
         \tparam PacketType Type of packet to read. Defaults to senf::Packet
 
-        The PassiveInput connector template receives packets sent to it from a connected
-        module. This class is completely implemented via it's base-class, GenericPassiveInput, the
-        only difference is that read packets are returned as \a PacketType instead of generic
+        The %PassiveInput %connector template receives packets sent to it from a connected
+        %module. This class is completely implemented via it's base-class, GenericPassiveInput, 
+        the only difference is that read packets are returned as \a PacketType instead of generic
         senf::Packet references.
 
         \see GenericPassiveInput \n
@@ -537,7 +538,7 @@ namespace connector {
     {
     public:
         PacketType operator()();        ///< Read packet
-                                        /**< \throws std::bad_cast, if the connector receives a
+                                        /**< \throws std::bad_cast, if the %connector receives a
                                              Packet which is not of type \a PacketType.
                                              \returns newly read packet reference. */
         PacketType read();              ///< Alias for operator()
@@ -547,9 +548,9 @@ namespace connector {
 
         \tparam PacketType Type of packet to send. Defaults to senf::Packet
 
-        The ActiveOutput connector template sends data actively to a connected module. This class is
-        completely implemented via it's base-class, GenericActiveOutput, the only difference is that
-        it only sends packets of type \a PacketType.
+        The %ActiveOutput %connector template sends data actively to a connected %module. This 
+        class is completely implemented via it's base-class, GenericActiveOutput, the only
+        difference is that it only sends packets of type \a PacketType.
 
         \see GenericActiveOutput \n
             senf::ppi::connector
@@ -566,9 +567,10 @@ namespace connector {
 
         \tparam PacketType Type of packet to send. Defaults to senf::Packet
 
-        The PassiveOutput connector template provides data passively to a connected module whenever
-        signaled. This class is completely implemented via it's base-class, GenericPassiveOutput, the
-        only difference is that it only sends packets of type \a PacketType.
+        The %PassiveOutput %connector template provides data passively to a connected %module 
+        whenever signaled. This class is completely implemented via it's base-class, 
+        GenericPassiveOutput, the only difference is that it only sends packets of type 
+        \a PacketType.
 
         \see GenericPassiveOutput \n
             senf::ppi::connector

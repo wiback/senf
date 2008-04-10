@@ -48,7 +48,6 @@ prefix_ void senf::DVBFrontendSocketProtocol::init_client(uint8_t adapter, boost
     int f = open(devFrontend.c_str(), O_RDONLY | O_NONBLOCK);
     if (f < 0)
         SENF_THROW_SYSTEM_EXCEPTION("") << "Could not open frontend device of DVB adapter " << devFrontend << ".";
-    
     fd(f);
 }
 
