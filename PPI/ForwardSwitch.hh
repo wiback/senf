@@ -39,14 +39,14 @@ public:
     connector::ActiveOutput<> output;
 
     ForwardSwitch(bool state);
-
-private:
-    void onRequest();	
-	bool forward_;
     bool forward();
     bool forward(bool state);
     bool stopForwarding();
     bool startForwarding();
+private:
+    void onRequest();	
+	bool forward_;
+
 };
 
 }}} //namespaces
