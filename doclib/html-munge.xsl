@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  version="1.0">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  version="1.0"
+  xmlns:str="http://exslt.org/strings">
 
   <xsl:output 
     method="html" 
@@ -198,6 +199,33 @@
         </xsl:if>
       </xsl:for-each>
     </xsl:element>
+  </xsl:template>
+
+  <!-- Add grouping to all-members page -->
+
+  <xsl:template match="table[preceding-sibling::h1[1][contains(text(),'Member List')]]">
+    <table class="allmembers">
+      <tr><td colspan="3"><h2>Public static member functions</h2></td></tr>
+      <xsl:apply-templates select="tr[contains(td[3],'static')][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))]"/>
+
+      <tr><td colspan="3"><h2>Public member functions</h2></td></tr>
+      <xsl:apply-templates select="tr[not(contains(td[1],'typedef'))][not(contains(td[3],'static'))][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))][not(contains(td[3],'pure virtual'))]"/>
+
+      <tr><td colspan="r"><h2>Public typedefs</h2></td></tr>
+      <xsl:apply-templates select="tr[contains(td[1],'typedef')][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))][not(contains(td[3],'pure virtual'))]"/>
+
+      <tr><td colspan="3"><h2>Non-public members</h2></td></tr>
+      <xsl:apply-templates select="tr[contains(td[3],'protected') or contains(td[3],'private') or contains(td[3],'friend')][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))][not(contains(td[3],'pure virtual'))]"/>
+
+    </table>
+  </xsl:template>
+
+  <xsl:template match="table[preceding-sibling::h1[1][contains(text(),'Member List')]]/tr/td[2]/a/text()[contains(.,'&lt;')]">
+    <xsl:value-of select="substring-before(.,'&lt;')"/>
+  </xsl:template>
+
+  <xsl:template match="table[preceding-sibling::h1[1][contains(text(),'Member List')]]/tr/td[1]/a/text()[contains(.,'::')]">
+    <xsl:value-of select="str:split(.,'::')[position()=last()]"/>
   </xsl:template>
 
   <!-- Remove the automatically inserted search form (we build our own) -->
