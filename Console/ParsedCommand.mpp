@@ -33,6 +33,7 @@
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
+#include <boost/preprocessor/arithmetic/sub.hpp>
 #include <boost/preprocessor/repetition/repeat.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/type_traits/remove_const.hpp>
@@ -124,20 +125,25 @@ prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERA
 v_execute(std::ostream & os, ParseCommandInfo const & command)
     const
 {
-    if ( command.arguments().size() > BOOST_PP_ITERATION()
-         || (command.arguments().size() < BOOST_PP_ITERATION()
-             && ! arg( command.arguments().size() ).hasDefault) )
+    if ( command.arguments().size() > BOOST_PP_ITERATION() )
         throw SyntaxErrorException("invalid number of arguments");
+    int nDefaults ( BOOST_PP_ITERATION() - command.arguments().size() );
 
-    ParseCommandInfo::argument_iterator i (command.arguments().begin());
-    ParseCommandInfo::argument_iterator const i_end (command.arguments().end());
+    typedef typename boost::range_const_reverse_iterator<ParseCommandInfo::ArgumentsRange>::type
+        riterator;
+    riterator i (boost::rbegin(command.arguments()));
+    riterator const i_end (boost::rend(command.arguments()));
 
 #   define mpp_l(z,n,d)                                                                           \
+        if (i == i_end)                                                                           \
+            throw SyntaxErrorException("invalid number of arguments");                            \
         mpp_ArgTypeN(n) mpp_ArgN(n) (arg< mpp_ArgTypeN(n) >( n ).defaultValue);                   \
-        if (i != i_end)                                                                           \
+        if (! arg(n).hasDefault || nDefaults-- <= 0)                                              \
             ArgumentTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );
-    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ ) 
+#   define mpp_l_(z,n,d) mpp_l(z, BOOST_PP_SUB(BOOST_PP_DEC(BOOST_PP_ITERATION()), n), d)
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l_, _ ) 
 #   undef mpp_l
+#   undef mpp_l_
 
     detail::CheckVoidReturn<typename traits::result_type>::call(
         boost::bind(function_, boost::ref(os)

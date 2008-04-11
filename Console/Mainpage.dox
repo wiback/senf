@@ -109,7 +109,7 @@
     From this information the command callback gets a list of arguments or tokens which then can be
     interpreted in an arbitrary way.
     \code
-    void test1(std::ostream & os, senf::console::ParseCommandInfo const & command)
+    void fun1(std::ostream & os, senf::console::ParseCommandInfo const & command)
     {
         // We take exactly one argument
         if (command.arguments().size() != 1) 
@@ -134,7 +134,7 @@
     'doc()':
     \code
     senf::console::root()
-        .add("test1", &test1)
+        .add("test1", &fun1)
         .doc("Usage:\n"
              "    test1 arg\n"
              "\n"
@@ -178,7 +178,7 @@
     feature allows to register (almost) arbitrary callbacks.
 
     \code
-    std::string test2(std::string const & arg)
+    std::string fun(std::string const & arg)
     {
         return arg;
     }
@@ -188,7 +188,7 @@
     senf::console::DirectoryNode.
     \code
     senf::console::root()
-        .add("test2", &test2);
+        .add("test2", &fun2);
     \endcode
     The functionality is now identical to \c test1:
     \htmlonly
@@ -257,7 +257,7 @@
     raised.
 
     \code
-    void test3(std::ostream & os, unsigned n, std::string text)
+    void fun3(std::ostream & os, unsigned n, std::string text)
     {
         // It's perfectly valid to check additional constraints here and throw a
         // SyntaxErrorException. In this case, the next overload will be tried. However, you must
@@ -269,18 +269,18 @@
     using namespace senf::console::kw;
     
     senf::console::root()
-        .add("test3", &test3)
+        .add("test3", &fun3)
         .doc("Echo text to the console")
         .overloadDoc("Repeat 'text' for 'n' lines")
         .arg( name = "n", description = "Number of repetitions" )
         .arg( name = "text", description = "Message to output" );
     senf::console::root()
-        .add("test3", &test2)
+        .add("test3", &fun2)
         .overloadDoc("Echo the 'text' argument")
-        .arg( name = "text", description = "Message to output" );
+        .arg( name = "text" );
     \endcode
 
-    We can now call \c test2 with one or two arguments:
+    We can now call \c test3 with one or two arguments:
 
     \htmlonly
     <pre>
@@ -320,15 +320,36 @@
     using namespace senf::console::kw;
 
     senf::console::root()
-        .add("test4", &test2b)
-        .arg()
-        .arg( default_value = "ok" );
+        .add("test4", &fun3)
+        .arg( name = "n", description = "Number of repetitions", default_value = 1 )
+        .arg( name = "text", description = "Message to output" );
     \endcode
-    (Default values must not necessarily be declared in the callback function too.) Of course,
-    default values can be used together with overloading. 
 
-    There must be no argument without default value after an argument with a default value
-    declared. This fill fail at compile time. 
+    (Default values must not necessarily be declared in the callback function too.) Of course,
+    default values can be used together with overloading. Default (optional) value support is quite
+    flexible, it is not mandatory, for default values to be specified only for the trailing
+    arguments.
+    
+    \htmlonly
+    <pre>
+    server:/$ test4 echo
+    echo
+    server:/$ test4 4 ok
+    ok
+    ok
+    ok
+    ok
+    server:/$ help test4
+    Usage:
+        test4 n:unsigned [text:string]
+    
+    With:
+        n         Number of repetitions
+        text      Message to output
+            default value: ok
+    server:/$
+    </pre>
+    \endhtmlonly
 
     \subsection console_auto_summary Attribute summary
 
