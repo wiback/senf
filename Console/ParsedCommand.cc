@@ -46,7 +46,7 @@ prefix_ void senf::console::ParsedCommandOverloadBase::v_argumentDoc(unsigned in
     const
 {
     BOOST_ASSERT( index < parameters_.size() );
-    detail::ParameterInfoBase & arg (*parameters_[index]);
+    detail::ArgumentInfoBase & arg (*parameters_[index]);
     doc.name = arg.name.empty() 
         ? (boost::format("arg%d%d") % overloadIndex() % (index+1)).str()
         : arg.name;

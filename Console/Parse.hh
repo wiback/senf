@@ -227,11 +227,11 @@ namespace console {
         friend class detail::ParserAccess;
     };
 
-    /** \brief Console command
+    /** \brief Single parsed console command
 
         Every command parsed is returned in a ParseCommandInfo instance. This information is purely
         taken from the parser, no semantic information is attached at this point, the config/console
-        is not involved in any why. ParseCommandInfo consist of
+        node tree is not involved in any why. ParseCommandInfo consist of
         
         \li the type of command: built-in or normal command represented by a possibly relative path
             into the command tree.
@@ -279,9 +279,9 @@ namespace console {
                                              constitutes one path element. If the first element is
                                              empty, the path is an absolute path, otherwise it is
                                              relative. If the last element is an empty string, the
-                                             path ends in a '/' char. */
+                                             path ends with a '/' char. */
         ArgumentsRange arguments() const; ///< Command arguments
-                                        /**< The returned range contains one token range for each
+                                        /**< The returned range contains one TokensRange for each
                                              argument. */
         TokensRange tokens() const;     ///< All argument tokens
                                         /**< The returned range contains \e all argument tokens in a

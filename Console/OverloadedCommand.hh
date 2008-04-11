@@ -39,11 +39,15 @@ namespace console {
 
     class OverloadedCommandNode;
 
+    /** \brief Documentation for a single argument
+
+        This struct is used by CommandOverload::argumentDoc()
+     */
     struct ArgumentDoc {
-        std::string name;
-        std::string type;
-        std::string defaultValue;
-        std::string doc;
+        std::string name; ///< Argument name
+        std::string type; ///< Argument type (string representation)
+        std::string defaultValue; ///< Default value (string representation) or empty string
+        std::string doc; ///< Documentation for this argument
     };
 
     /** \brief Base class for command overload of OverloadedCommandNode
@@ -77,14 +81,22 @@ namespace console {
                                              overload, a SyntaxErrorException must be thrown. 
                                              Same as execute() */
         
-        unsigned numArguments() const;
+        unsigned numArguments() const;  ///< Number of arguments this overload takes
         void argumentDoc(unsigned index, ArgumentDoc & doc) const;
-        std::string doc() const;
+                                        ///< Get information on argument \a index
+                                        /**< The information is returned in \e doc. \e doc must be
+                                             empty before this call.
+                                             \pre \a index < numArguments()
+                                             \param[in] index Argument index
+                                             \param[outp doc Argument documentation */
+
+        std::string doc() const;        ///< Get overload documentation
         
         OverloadedCommandNode & node() const; ///< Access owning node
                                         /**< \pre The command \e must have been added to an
                                              OverloadedCommandNode. */
-        unsigned overloadIndex() const;
+
+        unsigned overloadIndex() const; ///< Get index of overload in it's OverloadedCommandNode
 
     protected:
         CommandOverload();
@@ -93,9 +105,25 @@ namespace console {
     private:
 #endif
         virtual unsigned v_numArguments() const = 0;
+                                        ///< Return the number of arguments
+                                        /**< This member must be implemented in the derived class to
+                                             return the number of arguments, the command expects. */
+
         virtual void v_argumentDoc(unsigned index, ArgumentDoc & doc) const = 0;
+                                        ///< Return argument documentation
+                                        /**< The member must be implemented int the derived class to
+                                             return all documentation information for the \a
+                                             index'th parameter in \a doc. */
+
         virtual std::string v_doc() const = 0;
+                                        ///< Return overload documentation
+                                        /**< This member must be implemented in the derived class to
+                                             return the overloads documentation string. */
+
         virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const = 0;
+                                        ///< Execute the overload
+                                        /**< This member must be implemented in the derived class
+                                             o execute the overload. */
 
     private:
         OverloadedCommandNode * node_;
@@ -153,15 +181,16 @@ namespace console {
         template <class Command>
         Command & add(boost::intrusive_ptr<Command> overload); ///< Add an additional overload
 
-        ptr thisptr();
-        cptr thisptr() const;
-
         OverloadedCommandNode & doc(std::string const & doc);
                                         ///< Assign global help for all overloads
 
         unsigned overloadIndex(CommandOverload const & overload);
+                                        ///< Return the overload index for \a overload
+                                        /**< overloadIndex returns the index of \a overload in the
+                                             internal list of overloads. */
 
-    protected:
+        ptr thisptr();
+        cptr thisptr() const;
 
     private:
         OverloadedCommandNode();
@@ -205,10 +234,8 @@ namespace console {
         SimpleCommandOverload & doc(std::string const & doc);
                                         ///< Assign overload specific documentation
 
-    protected:
-
     private:
-        SimpleCommandOverload(Function fn);
+        explicit SimpleCommandOverload(Function fn);
 
         virtual unsigned v_numArguments() const;
         virtual void v_argumentDoc(unsigned index, ArgumentDoc & doc) const;

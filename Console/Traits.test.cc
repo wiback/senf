@@ -21,13 +21,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ParseParameter.test unit tests */
+    \brief Traits.test unit tests */
 
-//#include "ParseParameter.test.hh"
-//#include "ParseParameter.test.ih"
+//#include "Traits.test.hh"
+//#include "Traits.test.ih"
 
 // Custom includes
-#include "ParseParameter.hh"
+#include "Traits.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>

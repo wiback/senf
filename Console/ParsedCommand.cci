@@ -36,7 +36,7 @@
 prefix_ senf::console::ParsedCommandOverloadBase::ParsedCommandOverloadBase()
 {}
 
-prefix_ senf::console::detail::ParameterInfoBase &
+prefix_ senf::console::detail::ArgumentInfoBase &
 senf::console::ParsedCommandOverloadBase::arg(unsigned n)
     const
 {

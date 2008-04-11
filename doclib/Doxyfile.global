@@ -1165,7 +1165,8 @@ PREDEFINED             = DOXYGEN \
                          "SENF_LOG_CLASS_AREA()=" \
                          "SENF_LOG_DEFAULT_AREA(area)=" \
                          "SENF_LOG_DEFAULT_STREAM(stream)=" \
-                         "BOOST_PP_ITERATE()="
+                         "BOOST_PP_ITERATE()=" \
+                         "BOOST_PARAMETER_KEYWORD(ns, name)=unspecified_keyword_type name;"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then 
 # this tag can be used to specify a list of macro names that should be expanded. 

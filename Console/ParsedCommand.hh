@@ -37,7 +37,7 @@
 #include <boost/parameter/parameters.hpp>
 #include "../config.hh"
 #include "OverloadedCommand.hh"
-#include "ParseParameter.hh"
+#include "Traits.hh"
 #include "../Utils/type_traits.hh"
 
 #include "ParsedCommand.ih"
@@ -46,6 +46,8 @@
 
 namespace senf {
 namespace console {
+
+    namespace detail { class ArgumentInfoBase; }
 
     /** \brief CommandOverload implementation with automatic argument parsing
 
@@ -69,7 +71,7 @@ namespace console {
         \endcode
 
         There are quite a number of additional parameters available to be set. These parameters are
-        documented in ParsedAttributeAttributor. Parameters are set by adding them as additional
+        documented in ParsedArgumentAttributor. Parameters are set by adding them as additional
         calls after adding the node:
 
         \code
@@ -115,13 +117,13 @@ namespace console {
         used as argument type.
 
         However, argument parsing can be configured by specializing
-        senf::console::detail::ParameterTraits. See that class for more information.
+        senf::console::ArgumentTraits. See that class for more information.
 
         \section overload_format Custom return-value formatters
 
         By default, return values are streamed to an ostream. This automatically allows any
         streamable type to be used as return value. To add new types or customize the formating, the
-        senf::console::detail::ReturnValueTraits template needs to be specialized for that type. See
+        senf::console::ReturnValueTraits template needs to be specialized for that type. See
         that class for more information.
 
         \ingroup console_commands
@@ -132,8 +134,8 @@ namespace console {
     public:
         typedef boost::intrusive_ptr<ParsedCommandOverloadBase> ptr;
 
-        detail::ParameterInfoBase & arg(unsigned n) const;
-        template <class Type> detail::ParameterInfo<Type> & arg(unsigned n) const;
+        detail::ArgumentInfoBase & arg(unsigned n) const;
+        template <class Type> detail::ArgumentInfo<Type> & arg(unsigned n) const;
 
         void doc(std::string const & d);
 
@@ -148,24 +150,56 @@ namespace console {
         virtual void v_argumentDoc(unsigned index, ArgumentDoc & doc) const;
         virtual std::string v_doc() const;
 
-        typedef std::vector<detail::ParameterInfoBase::ptr> Parameters;
+        typedef std::vector<detail::ArgumentInfoBase::ptr> Parameters;
         Parameters parameters_;
         std::string doc_;
     };
 
+    /** \brief Parsed command overload
+
+        ParsedCommandOverload provides the command overload added to an OverloadedCommandNode for an
+        automatically parsed command.
+
+        This class is normally instantiated automatically when adding a function or member-function
+        pointer as callback to the tree. Manually instantiation this type of overload is \e not
+        simple, since the function signature has to be manipulated correctly to support the optional
+        \c std::ostream first argument.
+
+        \implementation This class is specialized for each supported number of command arguments.
+     */
     template <class FunctionTraits, unsigned arity=FunctionTraits::arity>
-    class ParsedCommandOverload {};
+    class ParsedCommandOverload : public ParsedCommandOverloadBase
+    {
+    public:
+        typedef boost::intrusive_ptr<ParsedCommandOverload> ptr;
+
+#ifdef DOXYGEN
+        static ptr create(Function fn);
+#endif
+    };
+
+#ifndef DOXYGEN
 
 #   define BOOST_PP_ITERATION_PARAMS_1 (4, (0, SENF_CONSOLE_MAX_COMMAND_ARITY,                     \
                                             SENF_ABSOLUTE_INCLUDE_PATH(Console/ParsedCommand.mpp), \
                                             1))
 #   include BOOST_PP_ITERATE()
 
+#endif
+
+    /** \brief Generic ParsedCommandOverladBase attributes
+
+        Attributes for parsed commands are not set directly on the node. They are set via a special
+        attributor temporary returned when adding a parsed command to the tree.
+        
+        This class is the base class for those attributors. It provides members which do not depend
+        in any way on the exact type of command added.
+     */
     class ParsedCommandAttributorBase
     {
     public:
-        OverloadedCommandNode & node() const;
-        operator OverloadedCommandNode & () const;
+        OverloadedCommandNode & node() const; ///< Return the node object
+        operator OverloadedCommandNode & () const; ///< Automatically convert to node object
 
     protected:
         ParsedCommandAttributorBase(ParsedCommandOverloadBase & overload, unsigned index);
@@ -184,75 +218,133 @@ namespace console {
         unsigned index_;
     };
 
+    /** \brief Non argument dependent ParsedCommandBase attributes 
+        
+        Attributes for parsed commands are not set directly on the node. They are set via a special
+        attributor temporary returned when adding a parsed command to the tree.
+
+        This class adds all those members, which do depend on the type of command added (and thereby
+        on that commands signature) but do not depend on the type of any single argument.
+        
+        \fixme Implement compile-time checking, that after a defaulted arg only defaulted args are
+            allowed.
+     */
     template <class Overload>
     class ParsedCommandAttributor
         : public ParsedCommandAttributorBase
     {
     public:
-        Overload & overload() const;
+        Overload & overload() const;    ///< Get the command overload
 
     protected:
         ParsedCommandAttributor(Overload & overload, unsigned index);
 
     private:
     };
-    
+
+    /** \brief Keyword argument tags
+
+        The tags defined in this namespace are used as keyword arguments via the <a
+        href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
+        library.
+
+        For the keyword tags, the standard C++ scoping rules apply:
+        \li Either qualify them with their complete namespace: <tt>arg( senf::console::kw::name =
+            "name" )</tt>
+        \li or use a namespace alias: <tt>namespace kw = senf::console::kw; arg( kw::name = "name"
+            );</tt>
+        \li import the keywords into your namespace: <tt>using namespace senf::console::kw; arg(
+            name = "name");</tt>
+
+        The second alternative is preferred, the <tt>using namespace</tt> directive may be used as
+        long as the keyword names do not clash with another visible symbol.
+     */
     namespace kw {
-        BOOST_PARAMETER_KEYWORD(type, name);
-        BOOST_PARAMETER_KEYWORD(type, description);
-        BOOST_PARAMETER_KEYWORD(type, default_value);
+        BOOST_PARAMETER_KEYWORD(type, name) ///< Argument name
+        BOOST_PARAMETER_KEYWORD(type, description) ///< One-line Argument description
+        BOOST_PARAMETER_KEYWORD(type, default_value) ///< Argument default value
     }
 
+    /** \brief Derived class dependent ParsedCommandBase attributes
+
+        Attributes for parsed commands are not set directly on the node. They are set via a special
+        attributor temporary returned when adding a parsed command to the tree.
+        
+        This class adds all those members, which do not depend on any specific argument but which
+        need to return the correct attributor type.
+     */
     template <class Overload, class Self>
-    class ParsedAttributeAttributorBase
+    class ParsedArgumentAttributorBase
         : public ParsedCommandAttributor<Overload>
     {
     public:
-        Self doc(std::string const & doc) const;
-        Self overloadDoc(std::string const & doc) const;
+        Self doc(std::string const & doc) const; ///< Set documentation for all overloads
+        Self overloadDoc(std::string const & doc) const; ///< Set overload specific documentation
 
     protected:
-        ParsedAttributeAttributorBase(Overload & overload, unsigned index);
+        ParsedArgumentAttributorBase(Overload & overload, unsigned index);
 
     private:
     };
 
+    
+    /** \brief Argument dependent ParsedCommandBase attributes
+
+        Attributes for parsed commands are not set directly on the node. They are set via a special
+        attributor temporary returned when adding a parsed command to the tree.
+        
+        This class adds all those members, which depend on a specific argument. Each call to \c arg
+        will advance to the next argument.
+     */
     template < class Overload, 
                unsigned index=0, 
                bool flag=(index < unsigned(Overload::traits::arity)) >
-    class ParsedAttributeAttributor
-        : public ParsedAttributeAttributorBase< Overload, 
-                                                ParsedAttributeAttributor<Overload, index, flag> >
+    class ParsedArgumentAttributor
+        : public ParsedArgumentAttributorBase< Overload, 
+                                                ParsedArgumentAttributor<Overload, index, flag> >
     {
-    public:
-        typedef typename senf::function_traits_arg_type< 
-            typename Overload::traits, int(index) >::type arg_type;
-        typedef typename senf::remove_cvref< arg_type >::type value_type;
-        typedef ParsedAttributeAttributor<Overload, index+1> next_type;
-
-        typedef OverloadedCommandNode node_type;
-        typedef ParsedAttributeAttributor return_type;
-
         typedef boost::parameter::parameters<
             kw::type::name,
             kw::type::description,
             kw::type::default_value> arg_params;
 
-        next_type arg() const;
+    public:
+        typedef OverloadedCommandNode node_type;
+        typedef ParsedArgumentAttributor return_type;
+
+        typedef typename senf::function_traits_arg_type< 
+            typename Overload::traits, int(index) >::type arg_type;
+        typedef typename senf::remove_cvref< arg_type >::type value_type;
+        typedef ParsedArgumentAttributor<Overload, index+1> next_type;
+
+        next_type arg() const;          ///< Set argument attributes
+                                        /**< This member changes the attributes for the current
+                                             argument. The attributes are passed to arg() as keyword
+                                             arguments using the <a
+                                             href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
+                                             library. The valid keywords are defined in the
+                                             senf::console::kw namespace. 
+
+                                             This member is only present, if there is an argument at
+                                             the current index. */
+
+#ifndef DOXYVEN
 
 #       define BOOST_PP_ITERATION_PARAMS_1 \
             (4, (1, 3, SENF_ABSOLUTE_INCLUDE_PATH(Console/ParsedCommand.mpp), 5))
 #       include BOOST_PP_ITERATE()
 
+#endif
+
     private:
-        explicit ParsedAttributeAttributor(Overload & overload);
+        explicit ParsedArgumentAttributor(Overload & overload);
 
         template <class ArgumentPack>
         next_type argInfo(ArgumentPack const & args) const;
-
         template <class Kw, class ArgumentPack>
         void argInfo(Kw const &, ArgumentPack const &, boost::mpl::true_) 
             const;
+
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::name> const &, 
                      ArgumentPack const & args, boost::mpl::false_) 
@@ -271,60 +363,64 @@ namespace console {
         void defaultValue(value_type const & value) const;
 
         template <class O, unsigned i, bool f>
-        friend class ParsedAttributeAttributor;
+        friend class ParsedArgumentAttributor;
+
+#ifndef DOXYGEN
         
         template <class Function>
-        friend ParsedAttributeAttributor<
+        friend ParsedArgumentAttributor<
             ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
         senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
         
         template <class Owner, class Function>
-        friend ParsedAttributeAttributor<
+        friend ParsedArgumentAttributor<
             ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
         senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                               Function fn, int,
                               typename boost::enable_if_c<
                                   detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
-    };
 
-    template <class Overload, unsigned index>
-    class ParsedAttributeAttributor<Overload, index, false>
-        : public ParsedAttributeAttributorBase< Overload, 
-                                                ParsedAttributeAttributor<Overload, index, false> >
-    {
-    public:
-        typedef OverloadedCommandNode node_type;
-        typedef ParsedAttributeAttributor return_type;
-
-    private:
-        explicit ParsedAttributeAttributor(Overload & overload);
-
-        template <class O, unsigned i, bool f>
-        friend class ParsedAttributeAttributor;
-        
-        template <class Function>
-        friend ParsedAttributeAttributor<
-            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
-        senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
-        
-        template <class Owner, class Function>
-        friend ParsedAttributeAttributor<
-            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
-        senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
-                              Function fn, int,
-                              typename boost::enable_if_c<
-                                  detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+#endif
     };
 
 #ifndef DOXYGEN
 
+    template <class Overload, unsigned index>
+    class ParsedArgumentAttributor<Overload, index, false>
+        : public ParsedArgumentAttributorBase< Overload, 
+                                                ParsedArgumentAttributor<Overload, index, false> >
+    {
+    public:
+        typedef OverloadedCommandNode node_type;
+        typedef ParsedArgumentAttributor return_type;
+
+    private:
+        explicit ParsedArgumentAttributor(Overload & overload);
+
+        template <class O, unsigned i, bool f>
+        friend class ParsedArgumentAttributor;
+        
+        template <class Function>
+        friend ParsedArgumentAttributor<
+            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
+        senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
+        
+        template <class Owner, class Function>
+        friend ParsedArgumentAttributor<
+            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
+        senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
+                              Function fn, int,
+                              typename boost::enable_if_c<
+                                  detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+    };
+
     template <class Function>
-    ParsedAttributeAttributor<
+    ParsedArgumentAttributor<
         ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
     senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
 
     template <class Owner, class Function>
-    ParsedAttributeAttributor<
+    ParsedArgumentAttributor<
         ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
     senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                           Function fn, int,
@@ -338,7 +434,7 @@ namespace console {
 #include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
 
 BOOST_TYPEOF_REGISTER_TEMPLATE(senf::console::ParsedCommandOverload, (class,unsigned))
-BOOST_TYPEOF_REGISTER_TEMPLATE(senf::console::ParsedAttributeAttributor, (class, unsigned, bool))
+BOOST_TYPEOF_REGISTER_TEMPLATE(senf::console::ParsedArgumentAttributor, (class, unsigned, bool))
 BOOST_TYPEOF_REGISTER_TEMPLATE(boost::function_traits, 1)
 
 ///////////////////////////////hh.e////////////////////////////////////////

@@ -507,6 +507,11 @@ namespace console {
     {};
 #endif
 
+    /**  \brief Syntax error parsing command arguments exception
+
+        All errors while parsing the arguments of a command must be signaled by throwing an instance
+        of SyntaxErrorException. This is important, so command overloading works.
+     */
     struct SyntaxErrorException : public senf::Exception
     {
         explicit SyntaxErrorException(std::string const & msg = "");

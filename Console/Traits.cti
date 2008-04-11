@@ -21,9 +21,9 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ParseParameter inline template implementation */
+    \brief Traits inline template implementation */
 
-//#include "ParseParameter.ih"
+//#include "Traits.ih"
 
 // Custom includes
 #include "../Utils/TypeInfo.hh"
@@ -32,62 +32,25 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::ParameterInfoBase
-
-prefix_ senf::console::detail::ParameterInfoBase::ParameterInfoBase(std::string const & type_)
-    : type (type_), name (), hasDefault (false)
-{}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::ParameterInfo<ParameterType>
-
-template <class ParameterType>
-prefix_ typename senf::console::detail::ParameterInfo<ParameterType>::ptr
-senf::console::detail::ParameterInfo<ParameterType>::create()
-{
-    return ptr(new ParameterInfo());
-}
-
-template <class ParameterType>
-prefix_ senf::console::detail::ParameterInfo<ParameterType>::ParameterInfo()
-    : ParameterInfoBase ( ParameterTraits<ParameterType>::typeDescription() ),
-      defaultValue ()
-{}
-
-template <class ParameterType>
-prefix_ std::string senf::console::detail::ParameterInfo<ParameterType>::defaultValueStr()
-    const
-{
-    return hasDefault ? ParameterTraits<ParameterType>::dump(defaultValue) : "";
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::ReturnValueTraits<Type>
 
 template <class Type>
-template <class Fn>
-prefix_ void senf::console::detail::ReturnValueTraits<Type>::callAndWrite(Fn const & fn,
-                                                                          std::ostream & os)
+prefix_ void senf::console::ReturnValueTraits<Type>::format(Type const & value,
+                                                            std::ostream & os)
 {
-    os << fn() << "\n";
-}
-
-template <class Fn>
-prefix_ void senf::console::detail::ReturnValueTraits<void>::callAndWrite(Fn const & fn,
-                                                                          std::ostream & os)
-{
-    fn();
+    os << value;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::ParameterTraits<Type>
+// senf::console::ArgumentTraits<Type>
 
 template <class Type>
-prefix_ void senf::console::detail::ParameterTraits<Type>::
+prefix_ void senf::console::ArgumentTraits<Type>::
 parse(ParseCommandInfo::TokensRange const & tokens, Type & out)
 {
     if (tokens.size() != 1)
         throw SyntaxErrorException("parameter syntax error");
+
     try {
         out = boost::lexical_cast<Type>(tokens.begin()[0].value());
     }
@@ -97,7 +60,7 @@ parse(ParseCommandInfo::TokensRange const & tokens, Type & out)
 }
 
 template <class Type>
-prefix_ std::string senf::console::detail::ParameterTraits<Type>::typeDescription()
+prefix_ std::string senf::console::ArgumentTraits<Type>::description()
 {
     std::string type (prettyName(typeid(Type)));
     std::string::size_type i (type.rfind(':'));
@@ -105,7 +68,7 @@ prefix_ std::string senf::console::detail::ParameterTraits<Type>::typeDescriptio
 }
 
 template <class Type>
-prefix_ std::string senf::console::detail::ParameterTraits<Type>::dump(Type const & value)
+prefix_ std::string senf::console::ArgumentTraits<Type>::str(Type const & value)
 {
     return boost::lexical_cast<std::string>(value);
 }

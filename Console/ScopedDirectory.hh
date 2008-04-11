@@ -163,6 +163,8 @@ namespace console {
         Owner * owner_;
     };
 
+#ifndef DOXYGEN
+
     template <>
     class ScopedDirectory<void> : public ScopedDirectoryBase
     {
@@ -172,7 +174,6 @@ namespace console {
                                                            Object const & ob);
     };
 
-#ifndef DOXYGEN
     template <class Owner, class Function>
     SimpleCommandNode & senf_console_add_node(
         DirectoryNode & node, Owner & owner, std::string const & name, Function const & fn, ...);

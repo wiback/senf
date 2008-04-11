@@ -348,16 +348,18 @@
     \li \e default_value: Arguments default value</td></tr>
 
     </table>
+
+    See senf::console::ParsedArgumentAttributor 'List of all members' 
     
     \section console_memberfn Registering member functions
     
     Member functions are supported like non-member functions. They must however be added through a
-    senf::console::ScopedDirectory<> instance to bind them to their instance.
+    senf::console::ScopedDirectory instance to bind them to their instance.
     \code
     class Test 
     {
     public:
-        ScopedDirectory<Test> dir;
+        senf::console::ScopedDirectory<Test> dir;
 
         Test(std::string label) : dir(this), label_ (label) {
             dir.add("test4", &Test::test2);
@@ -379,7 +381,7 @@
     \endcode
 
     Binding via senf::console::ScopedDirectory ensures, that the commands are automatically removed
-    from the tree when an object is destroyed.
+    from the tree when the object is destroyed.
  */
 
 

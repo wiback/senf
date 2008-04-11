@@ -135,14 +135,11 @@ v_execute(std::ostream & os, ParseCommandInfo const & command)
 #   define mpp_l(z,n,d)                                                                           \
         mpp_ArgTypeN(n) mpp_ArgN(n) (arg< mpp_ArgTypeN(n) >( n ).defaultValue);                   \
         if (i != i_end)                                                                           \
-            detail::ParameterTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );
+            ArgumentTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );
     BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ ) 
 #   undef mpp_l
 
-    // Now call the function binding the arguments to the values parsed above. callAndWrite is
-    // specialized to ignore a 'void' return value but automatically write all other values to the
-    // output stream.
-    detail::ReturnValueTraits<typename traits::result_type>::callAndWrite(
+    detail::CheckVoidReturn<typename traits::result_type>::call(
         boost::bind(function_, boost::ref(os)
                     mpp_TrailingArgs()),
         os );
