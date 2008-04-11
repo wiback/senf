@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <iomanip>
+#include <boost/io/ios_state.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -40,9 +41,23 @@ prefix_ void senf::TransportPacketParser::init_fields()
     transport_scrmbl_ctrl() = 0;
     adaptation_field_ctrl() = 0x1u;
 }
+
+prefix_ senf::UInt8Parser senf::TransportPacketParser::pointer_field()
+    const
+{
+    return pointer_field_().get<1>(); 
+}
+
+prefix_ void senf::TransportPacketParser::setPUSI(bool pusi)
+    const
+{
+    if (pusi) pointer_field_().init<1>();
+    else      pointer_field_().init<0>();
+}
             
 prefix_ void senf::TransportPacketType::dump(packet p, std::ostream & os)
 {
+    boost::io::ios_all_saver ias(os);
     os << "TransportPacket:\n"
        << std::hex
        << "  syncByte: 0x" << unsigned(p->sync_byte()) << "\n"
@@ -55,8 +70,8 @@ prefix_ void senf::TransportPacketType::dump(packet p, std::ostream & os)
        << "  transport_scrambling_control: 0x" << unsigned(p->transport_scrmbl_ctrl()) << "\n"
        << "  adaptation_field_control: 0x" << unsigned(p->adaptation_field_ctrl()) << "\n"
        << "  continuity_counter: 0x" << unsigned(p->continuity_counter()) << "\n";
-//    if (p->pusi())
-//        os << "  payload_pointer: 0x" << unsigned(p->payload_pointer()) << "\n";
+    if (p->pusi())
+        os << "  pointer_field: 0x" << unsigned(p->pointer_field()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

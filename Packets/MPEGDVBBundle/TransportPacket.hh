@@ -27,13 +27,19 @@
 #define HH_TransportPacket_ 1
 
 // Custom includes
-#include <algorithm>
 #include "../../Packets/Packets.hh"
 
 //#include "TransportPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+//    struct PSIPayloadPacketParser : public PacketParserBase
+//    {
+//        static const size_type fixed_bytes = 184;
+//
+//    };
+
 
     /** \brief Parse a Transport Stream packet
 
@@ -43,29 +49,31 @@ namespace senf {
      */
     struct TransportPacketParser : public PacketParserBase
     {
-#       include SENF_FIXED_PARSER()
+#       include SENF_PARSER()
 
-        SENF_PARSER_FIELD    ( sync_byte,                  UInt8Parser  );
+        SENF_PARSER_FIELD       ( sync_byte,                  UInt8Parser );
 
-        SENF_PARSER_BITFIELD ( transport_error_indicator,   1, bool     );
-        SENF_PARSER_BITFIELD ( pusi,                        1, bool     );
-        SENF_PARSER_BITFIELD ( transport_priority,          1, bool     );
-        SENF_PARSER_BITFIELD ( pid,                        13, unsigned );
-        SENF_PARSER_BITFIELD ( transport_scrmbl_ctrl,       2, unsigned );
-        SENF_PARSER_BITFIELD ( adaptation_field_ctrl,       2, unsigned );
-        SENF_PARSER_BITFIELD ( continuity_counter,          4, unsigned );
+        SENF_PARSER_BITFIELD    ( transport_error_indicator,  1, bool     );
+        SENF_PARSER_BITFIELD_RO ( pusi,                       1, bool     );
+        SENF_PARSER_BITFIELD    ( transport_priority,         1, bool     );
+        SENF_PARSER_BITFIELD    ( pid,                       13, unsigned );
+        SENF_PARSER_BITFIELD    ( transport_scrmbl_ctrl,      2, unsigned );
+        SENF_PARSER_BITFIELD    ( adaptation_field_ctrl,      2, unsigned );
+        SENF_PARSER_BITFIELD    ( continuity_counter,         4, unsigned );
 
+        SENF_PARSER_PRIVATE_VARIANT ( pointer_field_, pusi,
+                (senf::VoidPacketParser) (UInt8Parser) );
+        
         SENF_PARSER_FINALIZE( TransportPacketParser );
         
+        UInt8Parser pointer_field() const;
         void init_fields() const;
+        void setPUSI(bool pusi) const;
+
         SENF_PARSER_INIT() {
             defaultInit();
             init_fields();
         }
-    
-//        UInt8Parser payload_pointer() const {
-//            return parse<UInt8Parser>( TransportPacketParser::fixed_bytes ); 
-//        }
     };
     
     /** \brief Transport Stream packet
