@@ -3,11 +3,11 @@ import SENFSCons, glob
 
 ###########################################################################
 
-sources = SENFSCons.GlobSources()
+#sources = SENFSCons.GlobSources()
 
-SENFSCons.StandardTargets(env)
+#SENFSCons.StandardTargets(env)
 
-SENFSCons.Object(env, 
-    target = 'psi2ts.o', 
-    sources = sources,
-    LIBS = ['senf'])
+#SENFSCons.Object(env, 
+#    target = 'psi2ts.o', 
+#    sources = sources,
+#    LIBS = ['senf'])
