@@ -52,6 +52,7 @@ SCONS_TOOLS = [
     "CopyToDir",
     "InstallIncludes",
     "ProgramNoScan",
+    "CompileCheck",
 ]
 
 opts = None
@@ -304,13 +305,17 @@ def GlobalTargets(env):
 def LibPath(lib): return '${LOCALLIBDIR}/${LIBPREFIX}%s${LIBADDSUFFIX}${LIBSUFFIX}' % lib
 
 def Test(env, sources, LIBS = [], OBJECTS = []):
-    test = env.BoostUnitTests(
+    test = [ env.BoostUnitTests(
         target = 'test',
         objects = [],
         test_sources = sources,
         LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ],
         OBJECTS = OBJECTS,
-        DEPENDS = [ env.File(LibPath(x)) for x in LIBS ])
+        DEPENDS = [ env.File(LibPath(x)) for x in LIBS ]) ]
+    compileTestSources = [ src for src in sources
+                           if 'COMPILE_CHECK' in file(src).read() ]
+    if compileTestSources:
+        test.extend(env.CompileCheck(source = compileTestSources))
     env.Alias('all_tests', test)
     env.Alias(env.File('test'), test)
     
@@ -351,13 +356,17 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = [], no_includ
             objects += env.Object(obsources)
 
     if testSources:
-        test = env.BoostUnitTests(
+        test = [ env.BoostUnitTests(
             target = 'test',
             objects = objects,
             test_sources = testSources,
             LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ],
             OBJECTS = OBJECTS,
-            DEPENDS = [ env.File(LibPath(x)) for x in LIBS ])
+            DEPENDS = [ env.File(LibPath(x)) for x in LIBS ]) ]
+        compileTestSources = [ src for src in testSources
+                               if 'COMPILE_CHECK' in file(src).read() ]
+        if compileTestSources:
+            test.extend(env.CompileCheck(source = compileTestSources))
         env.Alias('all_tests', test)
         # Hmm ... here I'd like to use an Alias instead of a file
         # however the alias does not seem to live in the subdirectory

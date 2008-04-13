@@ -341,7 +341,7 @@
     ok
     server:/$ help test4
     Usage:
-        test4 n:unsigned [text:string]
+        test4 [n:unsigned] text:string
     
     With:
         n         Number of repetitions

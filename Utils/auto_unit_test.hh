@@ -50,6 +50,8 @@
 
 #include <boost/test/auto_unit_test.hpp>
 
+#define COMPILE_FAIL(n) void n()
+
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "auto_unit_test.cci"
 //#include "auto_unit_test.ct"

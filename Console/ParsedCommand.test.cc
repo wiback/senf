@@ -223,6 +223,19 @@ BOOST_AUTO_UNIT_TEST(memberParsedCommand)
         BOOST_CHECK_EQUAL( ss.str(), "bar: foo\n" );
     }
 }
+
+#ifdef COMPILE_CHECK
+
+COMPILE_FAIL(argParser)
+{
+    senf::console::ScopedDirectory<> dir;
+    dir.add("cb", &cb1)
+        .arg()
+        .arg()
+        .arg();
+}
+
+#endif
     
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
