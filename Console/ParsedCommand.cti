@@ -28,7 +28,7 @@
 // Custom includes
 #include "../Utils/membind.hh"
 #include <boost/format.hpp>
-#include <boost/parameter/binding.hpp>
+#include "../Utils/parameter.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -99,6 +99,13 @@ prefix_ void senf::console::ParsedCommandAttributorBase::defaultValue(Type const
     overload().arg(index_).hasDefault = true;
 }
 
+template <class Type, class Fn>
+prefix_ void senf::console::ParsedCommandAttributorBase::parser(Fn fn)
+    const
+{
+    overload().arg<Type>(index_).parser = fn;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ParsedCommandAttributor<Overload>
 
@@ -162,12 +169,15 @@ senf::console::ParsedArgumentAttributor<Overload,index,flag>::
 argInfo(ArgumentPack const & args)
     const
 {
-#   define HaveArg(tag) boost::is_same< \
-        typename boost::parameter::binding<ArgumentPack, tag>::type, void >()
+#   define ProcessArg(tag) \
+        argInfo( kw:: tag, args, senf::has_parameter< ArgumentPack, kw::type:: tag >() )
 
-    argInfo( kw::name,          args, HaveArg(kw::type::name)          );
-    argInfo( kw::description,   args, HaveArg(kw::type::description)   );
-    argInfo( kw::default_value, args, HaveArg(kw::type::default_value) );
+    ProcessArg(name);
+    ProcessArg(description);
+    ProcessArg(default_value);
+    ProcessArg(type_name);
+    ProcessArg(default_doc);
+    ProcessArg(parser);
 
     return next();
 
@@ -177,7 +187,7 @@ argInfo(ArgumentPack const & args)
 template <class Overload, unsigned index, bool flag>
 template <class Kw, class ArgumentPack>
 prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
-argInfo(Kw const &, ArgumentPack const &, boost::mpl::true_)
+argInfo(Kw const &, ArgumentPack const &, boost::mpl::false_)
     const
 {}
 
@@ -185,7 +195,7 @@ template <class Overload, unsigned index, bool flag>
 template <class ArgumentPack>
 prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
 argInfo(boost::parameter::keyword<kw::type::name> const &, ArgumentPack const & args,
-        boost::mpl::false_)
+        boost::mpl::true_)
     const
 {
     this->argName(args[kw::name]);
@@ -195,7 +205,7 @@ template <class Overload, unsigned index, bool flag>
 template <class ArgumentPack>
 prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
 argInfo(boost::parameter::keyword<kw::type::description> const &, ArgumentPack const & args,
-        boost::mpl::false_)
+        boost::mpl::true_)
     const
 {
     this->argDoc(args[kw::description]);
@@ -205,10 +215,41 @@ template <class Overload, unsigned index, bool flag>
 template <class ArgumentPack>
 prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
 argInfo(boost::parameter::keyword<kw::type::default_value> const &, ArgumentPack const & args,
-        boost::mpl::false_)
+        boost::mpl::true_)
     const
 {
     this->defaultValue(args[kw::default_value]);
+}
+
+template <class Overload, unsigned index, bool flag>
+template <class ArgumentPack>
+prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
+argInfo(boost::parameter::keyword<kw::type::type_name> const &, ArgumentPack const & args,
+        boost::mpl::true_)
+    const
+{
+    this->typeName(args[kw::type_name]);
+}
+
+template <class Overload, unsigned index, bool flag>
+template <class ArgumentPack>
+prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
+argInfo(boost::parameter::keyword<kw::type::default_doc> const &, ArgumentPack const & args,
+        boost::mpl::true_)
+    const
+{
+    BOOST_STATIC_ASSERT(( senf::has_parameter<ArgumentPack, kw::type::default_value>::value ));
+    this->defaultDoc(args[kw::default_doc]);
+}
+
+template <class Overload, unsigned index, bool flag>
+template <class ArgumentPack>
+prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
+argInfo(boost::parameter::keyword<kw::type::parser> const &, ArgumentPack const & args,
+        boost::mpl::true_)
+    const
+{
+    this->parser(args[kw::parser]);
 }
 
 template <class Overload, unsigned index, bool flag>
@@ -231,7 +272,15 @@ prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::
 defaultValue(value_type const & value)
     const
 {
-    ParsedCommandAttributorBase::defaultValue<arg_type>(value);
+    ParsedCommandAttributorBase::defaultValue<value_type>(value);
+}
+
+template <class Overload, unsigned index, bool flag>
+template <class Fn>
+prefix_ void senf::console::ParsedArgumentAttributor<Overload,index,flag>::parser(Fn fn)
+    const
+{
+    ParsedCommandAttributorBase::parser<value_type>(fn);
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -27,10 +27,12 @@
 #define HH_ParsedCommand_ 1
 
 // Custom includes
+
+#define BOOST_PARAMETER_MAX_ARITY 6
+
 #include <vector>
 #include <boost/type_traits/function_traits.hpp>
 #include <boost/type_traits/is_member_pointer.hpp>
-#include <boost/type_traits/is_same.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/utility.hpp>
 #include <boost/parameter/keyword.hpp>
@@ -194,6 +196,8 @@ namespace console {
         
         This class is the base class for those attributors. It provides members which do not depend
         in any way on the exact type of command added.
+
+        \see \ref console_autoparse
      */
     class ParsedCommandAttributorBase
     {
@@ -207,6 +211,9 @@ namespace console {
         void argName(std::string const & name) const;
         void argDoc(std::string const & doc) const;
         template <class Type> void defaultValue(Type const & value) const;
+        void typeName(std::string const & doc) const;
+        void defaultDoc(std::string const & doc) const;
+        template <class Type, class Fn> void parser(Fn fn) const;
 
         ParsedCommandOverloadBase & overload() const;
         void overloadDoc(std::string const & doc) const;
@@ -225,9 +232,8 @@ namespace console {
 
         This class adds all those members, which do depend on the type of command added (and thereby
         on that commands signature) but do not depend on the type of any single argument.
-        
-        \fixme Implement compile-time checking, that after a defaulted arg only defaulted args are
-            allowed.
+
+        \see \ref console_autoparse
      */
     template <class Overload>
     class ParsedCommandAttributor
@@ -248,21 +254,144 @@ namespace console {
         href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
         library.
 
-        For the keyword tags, the standard C++ scoping rules apply:
-        \li Either qualify them with their complete namespace: <tt>arg( senf::console::kw::name =
-            "name" )</tt>
-        \li or use a namespace alias: <tt>namespace kw = senf::console::kw; arg( kw::name = "name"
-            );</tt>
-        \li import the keywords into your namespace: <tt>using namespace senf::console::kw; arg(
-            name = "name");</tt>
+        For the keyword tags, the standard C++ scoping rules apply
+        \code
+        // Either qualify them with their complete namespace
+        dir.add(...)
+            .arg( senf::console::kw::name = "name" );
+        
+        // Or use a namespace alias
+        namespace kw = senf::console::kw;
+        dir.add(...)
+            .arg( kw::name = "name" );
+
+        // Or import the keywords into the current namespace (beware of name collisions)
+        using namespace senf::console::kw;
+        dir.add(...)
+            .arg( name = "name" );
+        \endcode
 
         The second alternative is preferred, the <tt>using namespace</tt> directive may be used as
         long as the keyword names do not clash with another visible symbol.
+
+        \section kw_attributes Argument attribute values
+
+        The keywords are used to set argument attributes.  The keywords \ref default_value and \ref
+        parser influence, how an argument is parsed/interpreted whereas \ref name, \ref description,
+        \ref type_name and \ref default_doc are used to change the arguments documentation:
+        \code
+        void command(int);
+
+        dir.add("command", &command)
+            .arg( kw::name          = "name",
+                  kw::description   = "description",
+                  kw::default_value = 1,
+                  kw::type_name     = "type_name",
+                  kw::default_doc   = "default_doc" );
+        \endcode
+        Will create the following documentation:
+        \htmlonly
+        <pre>
+        Usage:
+            command [name:type_name]
+        
+        With:
+            name      description
+                default: default_doc
+        </pre>
+        \endhtmlonly
+
+        \see \ref senf::console::ParsedArgumentAttributor::arg()
      */
     namespace kw {
         BOOST_PARAMETER_KEYWORD(type, name) ///< Argument name
-        BOOST_PARAMETER_KEYWORD(type, description) ///< One-line Argument description
+                                        /**< Sets the displayed name of the argument. */
+        BOOST_PARAMETER_KEYWORD(type, description) ///< One-line argument description
+                                        /**< This description is shown in the argument
+                                             reference. If several overloads have same-named
+                                             arguments, only one of them should be documented. This
+                                             documentation then applies to all arguments of that
+                                             name. */
         BOOST_PARAMETER_KEYWORD(type, default_value) ///< Argument default value
+                                        /**< If a default value is specified for an argument, that
+                                             argument is optional. If an overload is called with
+                                             fewer arguments than defined, optional values will be
+                                             used beginning at the last optional argument and going
+                                             forward until all arguments have values assigned. E.g.,
+                                             an overload with 5 parameters \a a - \a e with two
+                                             defaults attached:
+                                             <pre>
+                                             command a:int [b:int] c:int [d:int] e:int
+                                             </pre>
+                                             When calling the overload, the arguments will be
+                                             assigned in the following way:
+                                             <table class="senf fixedwidth">
+                                             <tr>
+                                               <td><tt>command 1 2</tt></td>
+                                               <td>SyntaxErrorException: invalid number of
+                                                 arguments</td>
+                                             </tr>
+                                             <tr>
+                                               <td><tt>command 1 2 3</tt></td>
+                                               <td>\a a = 1, \n
+                                                   \a b = \e default, \n
+                                                   \a c = 2, \n
+                                                   \a d = \e default, \n
+                                                   \a e = 3</td>
+                                             </tr>
+                                             <tr>
+                                               <td><tt>command 1 2 3 4</tt></td>
+                                               <td>\a a = 1, \n
+                                                   \a b = 2, \n
+                                                   \a c = 3, \n
+                                                   \a d = \e default, \n
+                                                   \a e = 4</td>
+                                             </tr>
+                                             <tr>
+                                               <td><tt>command 1 2 3 4 5</tt></td>
+                                               <td>\a a = 1, \n
+                                                   \a b = 2, \n
+                                                   \a c = 3, \n
+                                                   \a d = 4, \n
+                                                   \a e = 5</td>
+                                             </tr>
+                                             <tr>
+                                               <td><tt>command 1 2 3 4 5 6</tt></td>
+                                               <td>SyntaxErrorException: invalid number of
+                                                 arguments</td>
+                                             </tr>
+                                             </table>
+                                             So, if you assign default values as you are used to
+                                             they will work like in C++ and most other languages */
+        BOOST_PARAMETER_KEYWORD(type, type_name) ///< Type name of this arguments type
+                                        /**< By default, the type of an argument is extracted from
+                                             the C++ type name by taking the last component of the
+                                             fully scoped name. This value can be changed by setting
+                                             this attribute. */
+        BOOST_PARAMETER_KEYWORD(type, default_doc) ///< String rep of default value
+                                        /**< By default, the default value is documented by
+                                             converting the value to it's string representation
+                                             using \c boost::lexical_cast / \c iostreams. The
+                                             displayed value can be changed by setting this
+                                             attribute. */
+        BOOST_PARAMETER_KEYWORD(type, parser) ///< Argument parser
+                                        /**< The argument parser is used to convert the argument
+                                             token list returned by the console/config parser into
+                                             the appropriate value. If not set explicitly, this
+                                             conversion is supplied by the ArgumentTraits
+                                             class. 
+
+                                             Setting the \a parser attribute allows to use a custom
+                                             parser. The parser is an arbitrary callable object with
+                                             the signature
+                                             \code
+                                             void parser(senf::console::ParseCommandInfo::TokensRange const & tokens, value_type & out);
+                                             \endcode
+                                             where \c value_type is the type of the overload
+                                             parameter. The parser must read and parse the complete
+                                             \a tokens range and return the parsed value in \a
+                                             out. If the parser fails, it must raise a
+                                             senf::console::SyntaxErrorException. */
     }
 
     /** \brief Derived class dependent ParsedCommandBase attributes
@@ -272,6 +401,8 @@ namespace console {
         
         This class adds all those members, which do not depend on any specific argument but which
         need to return the correct attributor type.
+
+        \see \ref console_autoparse
      */
     template <class Overload, class Self>
     class ParsedArgumentAttributorBase
@@ -295,6 +426,8 @@ namespace console {
         
         This class adds all those members, which depend on a specific argument. Each call to \c arg
         will advance to the next argument.
+
+        \see \ref console_autoparse
      */
     template < class Overload, 
                unsigned index=0, 
@@ -306,7 +439,10 @@ namespace console {
         typedef boost::parameter::parameters<
             kw::type::name,
             kw::type::description,
-            kw::type::default_value> arg_params;
+            kw::type::default_value,
+            kw::type::type_name,
+            kw::type::default_doc,
+            kw::type::parser> arg_params;
 
     public:
         typedef OverloadedCommandNode node_type;
@@ -322,16 +458,26 @@ namespace console {
                                              argument. The attributes are passed to arg() as keyword
                                              arguments using the <a
                                              href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
-                                             library. The valid keywords are defined in the
-                                             senf::console::kw namespace. 
-
-                                             This member is only present, if there is an argument at
-                                             the current index. */
+                                             library. 
+                                             \code
+                                             ...
+                                                 .arg( kw::name          = "name", 
+                                                       kw::default_value = 1 )
+                                             ...
+                                             \endcode
+                                             The valid keywords are defined in the senf::console::kw
+                                             namespace.
+                                             
+                                             Each call to arg() will increment the argument index
+                                             and advance to the next argument. This member is only
+                                             present, if there is an argument at the current. */
 
 #ifndef DOXYVEN
 
-#       define BOOST_PP_ITERATION_PARAMS_1 \
-            (4, (1, 3, SENF_ABSOLUTE_INCLUDE_PATH(Console/ParsedCommand.mpp), 5))
+#       define BOOST_PP_ITERATION_PARAMS_1                                                        \
+            (4, (1, BOOST_PARAMETER_MAX_ARITY,                                                    \
+                 SENF_ABSOLUTE_INCLUDE_PATH(Console/ParsedCommand.mpp),                           \
+                 5))
 #       include BOOST_PP_ITERATE()
 
 #endif
@@ -342,25 +488,38 @@ namespace console {
         template <class ArgumentPack>
         next_type argInfo(ArgumentPack const & args) const;
         template <class Kw, class ArgumentPack>
-        void argInfo(Kw const &, ArgumentPack const &, boost::mpl::true_) 
+        void argInfo(Kw const &, ArgumentPack const &, boost::mpl::false_) 
             const;
 
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::name> const &, 
-                     ArgumentPack const & args, boost::mpl::false_) 
+                     ArgumentPack const & args, boost::mpl::true_) 
             const;
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::description> const &, 
-                     ArgumentPack const & args, boost::mpl::false_) 
+                     ArgumentPack const & args, boost::mpl::true_) 
             const;
         template <class ArgumentPack>
         void argInfo(boost::parameter::keyword<kw::type::default_value> const &, 
-                     ArgumentPack const & args, boost::mpl::false_) 
+                     ArgumentPack const & args, boost::mpl::true_) 
+            const;
+        template <class ArgumentPack>
+        void argInfo(boost::parameter::keyword<kw::type::type_name> const &, 
+                     ArgumentPack const & args, boost::mpl::true_) 
+            const;
+        template <class ArgumentPack>
+        void argInfo(boost::parameter::keyword<kw::type::default_doc> const &, 
+                     ArgumentPack const & args, boost::mpl::true_) 
+            const;
+        template <class ArgumentPack>
+        void argInfo(boost::parameter::keyword<kw::type::parser> const &, 
+                     ArgumentPack const & args, boost::mpl::true_) 
             const;
 
         next_type next() const;
 
         void defaultValue(value_type const & value) const;
+        template <class Fn> void parser(Fn fn) const;
 
         template <class O, unsigned i, bool f>
         friend class ParsedArgumentAttributor;

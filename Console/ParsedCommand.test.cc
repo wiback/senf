@@ -46,7 +46,18 @@ namespace {
     double cb2(){ return 1.2; }
     void cb3(int i) { }
     std::string cb4(std::ostream & os) { os << "text\n"; return "value"; }
-    void cb5(std::ostream & os, std::string v) { os << "Value: " << v << "\n"; }
+    void cb5(std::ostream & os, std::string const & v) { os << "Value: " << v << "\n"; }
+
+    struct TestParser 
+    {
+        typedef senf::console::ParseCommandInfo::TokensRange const & first_argument_type;
+        typedef std::string & second_argument_type;
+        typedef void result_type;
+
+        result_type operator()(first_argument_type, second_argument_type out) const
+            { out = "true"; }
+    };
+
 }
 
 BOOST_AUTO_UNIT_TEST(parsedCommand)
@@ -116,6 +127,20 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
     }
 
     {
+        namespace kw = senf::console::kw;
+        std::stringstream ss;
+
+        // Just for the fun of it, use a functor and not a function pointer as parser ...
+        dir.add("cb6", &cb5)
+            .arg( kw::parser = TestParser() );
+        BOOST_CHECK_NO_THROW(
+            parser.parse("test/cb6 false",
+                         boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+        BOOST_CHECK_EQUAL( ss.str(), "Value: true\n" );
+                     
+    }
+
+    {
         std::stringstream ss;
 
         using namespace senf::console::kw;
@@ -136,23 +161,35 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
             .arg( description   = "Bar didelfrump di desgorb. Nu widsoflar brimeldrgf." )
 
             .arg( name          = "checkup", 
+                  type_name     = "number",
                   description   = "Florgel, dargel and durgel",
-                  default_value = 2.1 );
+                  default_value = 2.1,
+                  default_doc   = "(double) 2.1" );
 
         senf::console::OverloadedCommandNode & cbNode (
             dir.add("cb", &cb5)
                 .overloadDoc(
                     "Uus Primordia fundo falsidicus corium, diurnitas humo pro leto. Sui Ueraciter\n"
                     "hio eruca lenis qua Agalmate ut fors penitentia. Iugum obdormio anxio nuncupo\n"
-                    "iam, in vos nam Custodi." ) );
+                    "iam, in vos nam Custodi." ) 
+                .arg( "text", default_value = "" ) );
 
         (void) cbNode;
 
-        dir.add("cb", &cb2);
+        BOOST_CHECK_NO_THROW(
+            parser.parse("test/cb 111 222.4",
+                         boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+        BOOST_CHECK_NO_THROW(
+            parser.parse("test/cb 222",
+                         boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+        BOOST_CHECK_NO_THROW(
+            parser.parse("test/cb foo",
+                         boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+        BOOST_CHECK_NO_THROW(
+            parser.parse("test/cb",
+                         boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
 
-        parser.parse("test/cb 111 222.4; test/cb 222; test/cb foo; test/cb",
-                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
-        BOOST_CHECK_EQUAL( ss.str(), "333\n" "224\n" "Value: foo\n" "1.2\n" );
+        BOOST_CHECK_EQUAL( ss.str(), "333\n" "224\n" "Value: foo\n" "Value: \n" );
     }
 
     {
@@ -161,14 +198,15 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
         BOOST_CHECK_EQUAL( 
             ss.str(), 
             "Usage:\n"
-            "    1- cb arg11:int [checkup:double]\n"
-            "    2- cb arg21:string\n"
-            "    3- cb\n"
+            "    1- cb arg11:int [checkup:number]\n"
+            "    2- cb [text:string]\n"
             "\n"
             "With:\n"
             "    arg11     Bar didelfrump di desgorb. Nu widsoflar brimeldrgf.\n"
             "    checkup   Florgel, dargel and durgel\n"
-            "        default: 2.1\n"
+            "        default: (double) 2.1\n"
+            "    text      \n"
+            "        default: (empty)\n"
             "\n"
             "Ops fortunate, ops me ut orgia vociferatio contumax per, rudo re loco emitto\n"
             "intolerabiliter ita iugo. Subcribo gravo. Devenio luna fonticulus Castanea\n"
@@ -229,10 +267,22 @@ BOOST_AUTO_UNIT_TEST(memberParsedCommand)
 COMPILE_FAIL(argParser)
 {
     senf::console::ScopedDirectory<> dir;
+
+    // Fails, since there are only two arguments defined
     dir.add("cb", &cb1)
         .arg()
         .arg()
         .arg();
+}
+
+COMPILE_FAIL(defaultDoc)
+{
+    senf::console::ScopedDirectory<> dir;
+    using namespace senf::console::kw;
+
+    // Fails, since default_value is missing but default_doc is given
+    dir.add("cb",&cb1)
+        .arg(default_doc = "doc");
 }
 
 #endif

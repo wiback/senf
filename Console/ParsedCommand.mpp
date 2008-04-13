@@ -135,11 +135,15 @@ v_execute(std::ostream & os, ParseCommandInfo const & command)
     riterator const i_end (boost::rend(command.arguments()));
 
 #   define mpp_l(z,n,d)                                                                           \
-        if (i == i_end)                                                                           \
-            throw SyntaxErrorException("invalid number of arguments");                            \
         mpp_ArgTypeN(n) mpp_ArgN(n) (arg< mpp_ArgTypeN(n) >( n ).defaultValue);                   \
-        if (! arg(n).hasDefault || nDefaults-- <= 0)                                              \
-            ArgumentTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );
+        if (! arg(n).hasDefault || nDefaults-- <= 0) {                                            \
+            if (i == i_end)                                                                       \
+                throw SyntaxErrorException("invalid number of arguments");                        \
+            if (arg< mpp_ArgTypeN(n) >(n).parser)                                                 \
+                arg< mpp_ArgTypeN(n) >(n).parser( *(i++), mpp_ArgN(n) );                          \
+            else                                                                                  \
+                ArgumentTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );                  \
+        }
 #   define mpp_l_(z,n,d) mpp_l(z, BOOST_PP_SUB(BOOST_PP_DEC(BOOST_PP_ITERATION()), n), d)
     BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l_, _ ) 
 #   undef mpp_l

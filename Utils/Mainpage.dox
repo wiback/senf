@@ -36,9 +36,17 @@ namespace senf {
     <tr><td>\ref senfmpl</td><td>Some simple tools which help to solve common meta-programming
     tasks</td></tr>
 
-    <tr><td>\ref senfpp</td><td>Extensions to the Boost.Preprocessor library</td></tr>
+    <tr><td>\ref senfpp</td><td>Extensions to the <a
+    href="http://www.boost.org/doc/libs/1_33_1/libs/preprocessor/doc/index.html">Boost.Preprocessor</a>
+    library</td></tr>
 
-    <tr><td>\ref typetraits</td><td>Extensions to the Boost.TypeTraits library</td></tr>
+    <tr><td>\ref typetraits</td><td>Extensions to the <a
+    href="http://www.boost.org/doc/libs/1_33_1/doc/html/boost_typetraits.html">Boost.TypeTraits</a>
+    library</td></tr>
+
+    <tr><td>\ref boost_parameter</td><td>Utilities concerning the <a
+    href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
+    library</td></tr>
     </table>
 
 

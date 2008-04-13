@@ -96,7 +96,7 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
                 if (! arg.defaultValue.empty())
                     os << ']';
 
-                if (! arg.name.empty()) {
+                if (! arg.name.empty() || ! arg.defaultValue.empty()) {
                     ArgumentDocs::iterator k (argumentDocs.begin());
                     ArgumentDocs::iterator const k_end (argumentDocs.end());
                     for (; k != k_end; ++k)
@@ -123,7 +123,7 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
         ArgumentDocs::const_iterator i (argumentDocs.begin());
         ArgumentDocs::const_iterator const i_end (argumentDocs.end());
         for (; i != i_end; ++i) {
-            if (! i->doc.empty()) {
+            if (! i->doc.empty() || ! i->defaultValue.empty()) {
                 os << "    " 
                    << i->name 
                    << std::string(i->name.length()<8 ? 8-i->name.length() : 0, ' ')

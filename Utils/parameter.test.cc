@@ -21,55 +21,25 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ParsedCommand non-inline non-template implementation */
+    \brief parameter.test unit tests */
 
-#include "ParsedCommand.hh"
-#include "ParsedCommand.ih"
+//#include "parameter.test.hh"
+//#include "parameter.test.ih"
 
 // Custom includes
+#include "parameter.hh"
 
-#include "ParsedCommand.mpp"
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::console::ParsedCommandOverloadBase
-
-prefix_ unsigned senf::console::ParsedCommandOverloadBase::v_numArguments()
-    const
-{
-    return parameters_.size();
-}
-
-prefix_ void senf::console::ParsedCommandOverloadBase::v_argumentDoc(unsigned index,
-                                                                     ArgumentDoc & doc)
-    const
-{
-    BOOST_ASSERT( index < parameters_.size() );
-    detail::ArgumentInfoBase & arg (*parameters_[index]);
-    doc.name = arg.name.empty() 
-        ? (boost::format("arg%d%d") % overloadIndex() % (index+1)).str()
-        : arg.name;
-    doc.type = arg.type;
-    if (arg.hasDefault) {
-        doc.defaultValue = arg.defaultDoc.empty()
-            ? arg.defaultValueStr()
-            : arg.defaultDoc;
-        if (doc.defaultValue.empty())
-            doc.defaultValue = "(empty)";
-    }
-    doc.doc = arg.doc;
-}
-
-prefix_ std::string senf::console::ParsedCommandOverloadBase::v_doc()
-    const
-{
-    return doc_;
-}
+BOOST_AUTO_UNIT_TEST(parameter)
+{}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-#include "ParsedCommand.mpp"
 
 
 // Local Variables:

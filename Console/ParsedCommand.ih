@@ -27,6 +27,9 @@
 #define IH_ParsedCommand_ 1
 
 // Custom includes
+#include <boost/function.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include "Parse.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -43,6 +46,7 @@ namespace detail {
         
         std::string type;
         std::string name;
+        std::string defaultDoc;
         bool hasDefault;
         std::string doc;
         
@@ -56,19 +60,18 @@ namespace detail {
         : public ArgumentInfoBase
     {
         typedef boost::intrusive_ptr<ArgumentInfo> ptr;
+        typedef boost::function<void (ParseCommandInfo::TokensRange const &, 
+                                      ParameterType &)> Parser;
 
         static ptr create();
         ArgumentInfo();
 
         ParameterType defaultValue;
+        Parser parser;
 
         virtual std::string defaultValueStr() const;
     };
     
-    template <class Function, bool isFN=senf::is_any_function<Function>::value>
-    struct ParsedCommandTraits
-    {};
-
     // FirstArgType returns void, if the function has no arguments, otherwise it returns arg1_type
 
     template <class Traits, bool flag=(Traits::arity>0)>
@@ -82,6 +85,10 @@ namespace detail {
     {
         typedef typename Traits::arg1_type type;
     };
+
+    template <class Function, bool isFN=senf::is_any_function<Function>::value>
+    struct ParsedCommandTraits
+    {};
 
     template <class Function>
     struct ParsedCommandTraits<Function, true>

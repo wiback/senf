@@ -19,6 +19,7 @@ def CompileCheck(target, source, env):
     tests = scanTests(file(source[0].abspath))
     errf = os.popen(env.subst('$CXXCOM -DCOMPILE_CHECK 2>&1', source=source, target=target))
     passedTests = {}
+    delay_name = None
     for error in errf:
         elts = error.split(':',2)
         if len(elts) != 3 : continue
@@ -26,13 +27,25 @@ def CompileCheck(target, source, env):
         if not os.path.exists(filename) : continue
         try: line = int(line)
         except ValueError : continue
+        message = message.strip()
+
+        if delay_name and not message.startswith('instantiated from '):
+            print "Passed test '%s': %s" % (delay_name, message)
+            delay_name = None
+            continue
+            
         filename = os.path.abspath(filename)
         if filename != source[0].abspath : continue
 
         for name,lines in tests.iteritems():
             if line >= lines[0] and line <= lines[1]:
                 passedTests[name] = 1
-                print "Passed test '%s': %s" % (name, message.strip())
+                if message.startswith('instantiated from '):
+                    delay_name = name
+                else:
+                    print "Passed test '%s': %s" % (name, message)
+    if delay_name:
+        print "Passed test '%s': <unknown message ??>" % delay_name
     failedTests = set(tests.iterkeys()) - set(passedTests.iterkeys())
     if failedTests:
         for test in failedTests:

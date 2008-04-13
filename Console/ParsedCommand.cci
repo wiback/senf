@@ -82,6 +82,18 @@ prefix_ void senf::console::ParsedCommandAttributorBase::argDoc(std::string cons
     overload().arg(index_).doc = doc;
 }
 
+prefix_ void senf::console::ParsedCommandAttributorBase::typeName(std::string const & doc)
+    const
+{
+    overload().arg(index_).type = doc;
+}
+
+prefix_ void senf::console::ParsedCommandAttributorBase::defaultDoc(std::string const & doc)
+    const
+{
+    overload().arg(index_).defaultDoc = doc;
+}
+
 prefix_ senf::console::ParsedCommandOverloadBase &
 senf::console::ParsedCommandAttributorBase::overload()
     const
