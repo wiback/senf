@@ -23,17 +23,19 @@
 #define prefix_ inline
 
 prefix_  senf::ppi::module::ForwardSwitch::ForwardSwitch(bool state) 
+    :forward_(state)
 {
     route( input, output );
     input.onRequest( &ForwardSwitch::onRequest );
-    forward_ = state;
 }
 
 prefix_  void senf::ppi::module::ForwardSwitch::onRequest() 
 {
-	if(forward_){
-		output(input());
-	}
+    if(forward_){
+        output.write(input.read());
+    } else {
+        input.read(); // and discard automatically
+    }
 }
 
 prefix_ bool  senf::ppi::module::ForwardSwitch::forward(){
