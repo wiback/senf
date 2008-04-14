@@ -207,26 +207,96 @@
 
   <xsl:template match="table[preceding-sibling::h1[1][contains(text(),'Member List')]]">
     <table class="allmembers">
-      <tr><td colspan="3"><h2>Public static member functions</h2></td></tr>
-      <xsl:apply-templates select="tr[contains(td[3],'static')][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))]"/>
 
-      <tr><td colspan="3"><h2>Public member functions</h2></td></tr>
-      <xsl:apply-templates select="tr[not(contains(td[1],'typedef'))][not(contains(td[3],'static'))][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))][not(contains(td[3],'pure virtual'))]"/>
+      <!-- We need to filter the table rows by looking for indications on the object type       -->
+      <!-- The table has 3 acolumns:                                                            -->
+      <!--    td[1] is the name of the object,                                                  -->
+      <!--    td[2] is the name of the class the object is defined in                           -->
+      <!--    td[3] contains additional flags                                                   -->
+      <!--                                                                                      -->
+      <!-- The conditions we have are:                                                          -->
+      <!--                                                                                      -->
+      <!--    contains(td[3],'static')        static member (variable or function)              -->
+      <!--    contains(td[3],'protected')     protected member of arbitrary type                -->
+      <!--    contains(td[3],'private')       private member of arbitrary type                  -->
+      <!--    contains(td{3],'friend')        friend declaration (function or class)            -->
+      <!--    contains(td[3],'pure virtual')  entry is a pure-virtual member function           -->
+      <!--    starts-with(td[1]/text(),'(')   function entry (member, static or friend)         -->
+      <!--    contains(td[1], 'typedef')      entry is a typdef                                 -->
+      <!--    contains(td[1], 'enum ')        entry is enum type or enumerator                  -->
+      <!--    contains(td[1], 'enum name')    entry is the name of an enum type                 -->
+      <!--    contains(td[1], 'enum value')   entry is an enumerator value                      -->
+      <!--    str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]==string(td[1]/a) -->
+      <!--                                    entry is a constructor                            -->
+      <!--    not(starts-with(td[1]/a,'~'))   entry is a destructor                             -->
 
-      <tr><td colspan="r"><h2>Public typedefs</h2></td></tr>
-      <xsl:apply-templates select="tr[contains(td[1],'typedef')][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))][not(contains(td[3],'pure virtual'))]"/>
+      <xsl:variable name="public-static-memfn">
+        <xsl:apply-templates select="tr[contains(td[3],'static')][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))][starts-with(td[1]/text(),'(')]"/>
+      </xsl:variable>
+      <xsl:if test="string($public-static-memfn)">
+        <tr><td colspan="3"><h2>Static Public Member Functions</h2></td></tr>
+        <xsl:copy-of select="$public-static-memfn"/>
+      </xsl:if>
 
-      <tr><td colspan="3"><h2>Non-public members</h2></td></tr>
-      <xsl:apply-templates select="tr[contains(td[3],'protected') or contains(td[3],'private') or contains(td[3],'friend')][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))][not(contains(td[3],'pure virtual'))]"/>
+      <xsl:variable name="public-static-var">
+        <xsl:apply-templates select="tr[not(contains(td[1],'typedef'))][contains(td[3],'static')][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(starts-with(td[1]/text(),'('))]"/>
+      </xsl:variable>
+      <xsl:if test="string($public-static-var)">
+        <tr><td colspan="3"><h2>Static Public Attributes</h2></td></tr>
+        <xsl:copy-of select="$public-static-var"/>
+      </xsl:if>
+      
+      <xsl:variable name="public-memfn">
+        <xsl:apply-templates select="tr[not(contains(td[1],'typedef'))][not(contains(td[3],'static'))][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))][starts-with(td[1]/text(),'(')][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))][not(contains(td[3],'pure virtual'))]"/>
+      </xsl:variable>
+      <xsl:if test="string($public-memfn)">
+        <tr><td colspan="3"><h2>Public Member Functions</h2></td></tr>
+        <xsl:copy-of select="$public-memfn"/>
+      </xsl:if>
+
+      <xsl:variable name="public-var">
+        <xsl:apply-templates select="tr[not(contains(td[1],'typedef'))][not(contains(td[1],'enum '))][not(contains(td[3],'static'))][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(starts-with(td[1]/text(),'('))]"/>
+      </xsl:variable>
+      <xsl:if test="string($public-var)">
+        <tr><td colspan="3"><h2>Public Attributes</h2></td></tr>
+        <xsl:copy-of select="$public-var"/>
+      </xsl:if>
+      
+      <xsl:variable name="public-enum">
+        <xsl:apply-templates select="tr[contains(td[1],'enum value')][not(contains(td[3],'protected'))][not(contains(td[3],'private'))]"/>
+      </xsl:variable>
+      <xsl:if test="string($public-enum)">
+        <tr><td colspan="3"><h2>Public Enumerators</h2></td></tr>
+        <xsl:copy-of select="$public-enum"/>
+      </xsl:if>
+      
+      <xsl:variable name="public-type">
+        <xsl:apply-templates select="tr[contains(td[1],'typedef') or contains(td[1],'enum name')][not(contains(td[3],'protected'))][not(contains(td[3],'private'))][not(contains(td[3],'friend'))]"/>
+      </xsl:variable>
+      <xsl:if test="string($public-type)">
+        <tr><td colspan="r"><h2>Public Types</h2></td></tr>
+        <xsl:copy-of select="$public-type"/>
+      </xsl:if>
+      
+      <xsl:variable name="non-public">
+        <xsl:apply-templates select="tr[contains(td[3],'protected') or contains(td[3],'private') or contains(td[3],'friend')][str:split(substring-before(concat(td[2]/a,'&lt;'),'&lt;'),'::')[position()=last()]!=string(td[1]/a)][not(starts-with(td[1]/a,'~'))][not(contains(td[3],'pure virtual'))]"/>
+      </xsl:variable>
+      <xsl:if test="string($non-public)">
+        <tr><td colspan="3"><h2>Non-Public Members</h2></td></tr>
+        <xsl:copy-of select="$non-public"/>
+      </xsl:if>
 
     </table>
   </xsl:template>
 
   <xsl:template match="table[preceding-sibling::h1[1][contains(text(),'Member List')]]/tr/td[2]/a/text()[contains(.,'&lt;')]">
+    <!-- this removes the template args form the second column to make the table more compact -->
     <xsl:value-of select="substring-before(.,'&lt;')"/>
   </xsl:template>
 
   <xsl:template match="table[preceding-sibling::h1[1][contains(text(),'Member List')]]/tr/td[1]/a/text()[contains(.,'::')]">
+    <!-- for some weird reason, some members have a fully qualified name in the first column -->
+    <!-- remove the qualification here -->
     <xsl:value-of select="str:split(.,'::')[position()=last()]"/>
   </xsl:template>
 
@@ -234,12 +304,15 @@
   <xsl:template match="li[form]"> 
   </xsl:template>
 
+  <!-- Add CSS class to alphabetical class index table -->
   <xsl:template match="table[preceding-sibling::*[1][self::div][@class='qindex']]">
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">qindextable</xsl:with-param>
     </xsl:call-template>
   </xsl:template>
-  
+
+  <!-- Add CSS class to special paragraphs -->
+
   <xsl:template match="dl[dt/b/a/text()='Bug:']">
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">xref-bug</xsl:with-param>
@@ -273,36 +346,6 @@
   <xsl:template match="dl[dt/b/text()='Implementation note:']">
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">implementation</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template match="table[descendant::td[@class='memItemLeft']]">
-    <xsl:call-template name="add-class">
-      <xsl:with-param name="class">members</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template match="a[@href=string(current())]" priority="1">
-    <xsl:call-template name="add-class">
-      <xsl:with-param name="class">literal</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template match="a[contains(@href,'http://')]">
-    <xsl:call-template name="add-class">
-      <xsl:with-param name="class">ext</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template match="a[not(@href)]">
-    <xsl:call-template name="add-class">
-      <xsl:with-param name="class">anchor</xsl:with-param>
-    </xsl:call-template>
-  </xsl:template>
-
-  <xsl:template match="div[@class='memdoc']/p[1]">
-    <xsl:call-template name="add-class">
-      <xsl:with-param name="class">memtitle</xsl:with-param>
     </xsl:call-template>
   </xsl:template>
 
@@ -348,6 +391,41 @@
 
   <xsl:template match="p[starts-with(text(),'Inherits ')]">
     <xsl:call-template name="break-comma"/>
+  </xsl:template>
+
+  <!-- Add CSS class to the member overview table of a class documentation -->
+  <xsl:template match="table[descendant::td[@class='memItemLeft']]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">members</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Add CSS class to literal links (links, where link text and href attribute are the same -->
+  <xsl:template match="a[@href=string(current())]" priority="1">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">literal</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Add CSS class to external links -->
+  <xsl:template match="a[contains(@href,'http://')]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">ext</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Add CSS class to anchor-only links -->
+  <xsl:template match="a[not(@href)]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">anchor</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+  <!-- Add CSS class to the brief documentation paragraph of the member documentation -->
+  <xsl:template match="div[@class='memdoc']/p[1]">
+    <xsl:call-template name="add-class">
+      <xsl:with-param name="class">memtitle</xsl:with-param>
+    </xsl:call-template>
   </xsl:template>
 
   <!-- Remove external items from the namespace index -->

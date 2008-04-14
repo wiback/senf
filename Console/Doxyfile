@@ -2,7 +2,6 @@
 
 PROJECT_NAME = libConsole
 GENERATE_TAGFILE = doc/Console.tag
-ALPHABETICAL_INDEX = NO
 
 TAGFILES = \
     "$(TOPDIR)/Socket/doc/Socket.tag" \
