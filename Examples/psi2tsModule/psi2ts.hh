@@ -44,7 +44,7 @@ class Psi2TsModule
 public: 
     senf::ppi::connector::PassiveInput<> input;
     senf::ppi::connector::ActiveOutput<senf::TransportPacket> output;
-    Psi2TsModule(unsigned pid); 
+    Psi2TsModule(unsigned pid, senf::ClockService::clock_type timout=0);
     void onRequest();
     
 private:
@@ -54,7 +54,7 @@ private:
     unsigned next_continuity_counter();
     state state_;
     unsigned pid_;
-        
+    senf::ClockService::clock_type timeout_;
 };
 
 

@@ -46,6 +46,8 @@ void check_transportpacket_header(senf::TransportPacket tsPacket, bool pusi, uns
     BOOST_CHECK_EQUAL( tsPacket->transport_scrmbl_ctrl(),     0x0u                                   );
     BOOST_CHECK_EQUAL( tsPacket->adaptation_field_ctrl(),     0x1u                                   );
     BOOST_CHECK_EQUAL( tsPacket->continuity_counter(),        counter                                );
+    if (pusi)
+        BOOST_CHECK_EQUAL( tsPacket->pointer_field(),         0x0u                                   );
         
 }
 
@@ -87,7 +89,7 @@ BOOST_AUTO_UNIT_TEST(one_section_to_one_transportpacket)
             ts_payload_data.end(),
             0xffu));
 }
-
+#include <senf/Utils/hexdump.hh>
 BOOST_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
 {
     senf::ppi::module::debug::ActiveSource source;
@@ -99,7 +101,7 @@ BOOST_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
     senf::ppi::connect( psi2ts, sink);
     senf::ppi::init();
     
-    std::string sec_data ( 184, 0x42);
+    std::string sec_data ( 183, 0x42);
     std::string sec_data2 ( "psi2ts_test: one_section_to_two_transportpackets");
     sec_data.append( sec_data2);
     senf::Packet sec_packet (senf::DataPacket::create(sec_data));
@@ -111,6 +113,7 @@ BOOST_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
     senf::TransportPacket ts_packet = sink.pop_front().as<senf::TransportPacket>();
     check_transportpacket_header( ts_packet, true, PID, 1);
     senf::PacketData & ts_payload_data1 = ts_packet.next().data();
+
     BOOST_CHECK( equal_elements( ts_payload_data1.begin(), ts_payload_data1.end(), 0x42));
     
     ts_packet = sink.pop_front().as<senf::TransportPacket>();

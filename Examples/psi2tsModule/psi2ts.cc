@@ -43,30 +43,32 @@ namespace {
 }
 
 
-prefix_ Psi2TsModule::Psi2TsModule(unsigned pid)
+prefix_ Psi2TsModule::Psi2TsModule(unsigned pid, senf::ClockService::clock_type timeout)
 {
     pid_ = pid;
     continuity_counter_ = 0;
     state_ = IDLE;
     route( input, output );
     input.onRequest( &Psi2TsModule::onRequest );
+    timeout_ = timeout;
 }
-
+#include <senf/Utils/hexdump.hh>
 prefix_ void Psi2TsModule::onRequest()
 {
     senf::PacketData & section = input.read().data();
     iterator sec_end = section.end();
     iterator begin = section.begin();
     iterator end = section.begin();
-    advance_max( end, 184, sec_end);
-    
+    advance_max( end, 183, sec_end);
+
     do {
         senf::TransportPacket tsPacket (senf::TransportPacket::create(188));
         tsPacket->continuity_counter() = next_continuity_counter();
         tsPacket->pid() = pid_;
         if (state_ == IDLE) {
             state_ = PROC;
-            tsPacket->pusi() = true;
+            tsPacket->setPUSI(true);
+            tsPacket->pointer_field() = 0;
         }
         senf::PacketData & payloadData (tsPacket.next().data());
         std::fill(

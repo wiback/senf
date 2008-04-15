@@ -6,10 +6,10 @@ import os.path
 
 ###########################################################################
 
-for f in glob.glob('*.cc'):
-    bin = os.path.splitext(f)[0]
-    
-    SENFSCons.Binary(env, bin, f,
-                 LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ],
-                 OBJECTS = [ '#/Packets/DefaultBundle/DefaultBundle.o',
-                             '#/Packets/MPEGDVBBundle/MPEGDVBBundle.o' ]);
+#for f in glob.glob('*.cc'):
+#    bin = os.path.splitext(f)[0]
+#    
+#    SENFSCons.Binary(env, bin, f,
+#                 LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ],
+#                 OBJECTS = [ '#/Packets/DefaultBundle/DefaultBundle.o',
+#                             '#/Packets/MPEGDVBBundle/MPEGDVBBundle.o' ]);
