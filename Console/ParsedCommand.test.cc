@@ -58,6 +58,8 @@ namespace {
             { out = "true"; }
     };
 
+    void testFormatter(double, std::ostream & os)
+    { os << "formatter"; }
 }
 
 BOOST_AUTO_UNIT_TEST(parsedCommand)
@@ -137,7 +139,17 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
             parser.parse("test/cb6 false",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
         BOOST_CHECK_EQUAL( ss.str(), "Value: true\n" );
-                     
+    }
+
+    {
+        std::stringstream ss;
+
+        dir.add("cb7", &cb2)
+            .formatter( &testFormatter );
+        BOOST_CHECK_NO_THROW(
+            parser.parse("test/cb7",
+                         boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+        BOOST_CHECK_EQUAL( ss.str(), "formatter\n" );
     }
 
     {

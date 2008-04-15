@@ -168,8 +168,11 @@ namespace console {
         \c std::ostream first argument.
 
         \implementation This class is specialized for each supported number of command arguments.
+
+        \todo Implement automatic binding of member functions for parser and formatter
      */
-    template <class FunctionTraits, unsigned arity=FunctionTraits::arity>
+    template <class FunctionTraits, class ReturnType=typename FunctionTraits::result_type, 
+              unsigned arity=FunctionTraits::arity>
     class ParsedCommandOverload : public ParsedCommandOverloadBase
     {
     public:
@@ -213,12 +216,11 @@ namespace console {
         template <class Type> void defaultValue(Type const & value) const;
         void typeName(std::string const & doc) const;
         void defaultDoc(std::string const & doc) const;
-        template <class Type, class Fn> void parser(Fn fn) const;
 
         ParsedCommandOverloadBase & overload() const;
         void overloadDoc(std::string const & doc) const;
-
         void nodeDoc(std::string const & doc) const;
+        template <class Type, class Fn> void parser(Fn fn) const;
         
     private:
         ParsedCommandOverloadBase & overload_;
@@ -404,8 +406,25 @@ namespace console {
 
         \see \ref console_autoparse
      */
-    template <class Overload, class Self>
+    template <class Overload, class Self, class ReturnType=typename Overload::traits::result_type>
     class ParsedArgumentAttributorBase
+        : public ParsedCommandAttributor<Overload>
+    {
+    public:
+        Self doc(std::string const & doc) const; ///< Set documentation for all overloads
+        Self overloadDoc(std::string const & doc) const; ///< Set overload specific documentation
+        Self formatter(typename Overload::Formatter f) const; ///< Set return value formatter
+
+    protected:
+        ParsedArgumentAttributorBase(Overload & overload, unsigned index);
+
+    private:
+    };
+
+#ifndef DOXYGEN
+
+    template <class Overload, class Self>
+    class ParsedArgumentAttributorBase<Overload, Self, void>
         : public ParsedCommandAttributor<Overload>
     {
     public:
@@ -418,6 +437,7 @@ namespace console {
     private:
     };
 
+#endif
     
     /** \brief Argument dependent ParsedCommandBase attributes
 

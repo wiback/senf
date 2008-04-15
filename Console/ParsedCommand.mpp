@@ -50,7 +50,7 @@
 #define mpp_ArgTypes_(z,n,d) typename traits::mpp_ArgTypeN(n)
 #define mpp_TrailingArgTypes() BOOST_PP_ENUM_TRAILING( BOOST_PP_ITERATION(), mpp_ArgTypes_, _ )
 
-#define mpp_Args_(z,n,d) boost::cref(mpp_ArgN(n))
+#define mpp_Args_(z,n,d) mpp_ArgN(n)
 #define mpp_TrailingArgs() BOOST_PP_ENUM_TRAILING( BOOST_PP_ITERATION(), mpp_Args_, _ )
 
 #define mpp_BindArgs_(z,n,d) BOOST_PP_CAT( _, BOOST_PP_INC(BOOST_PP_INC(n)))
@@ -62,8 +62,8 @@
 
 // Header file (.hh)
 
-template <class FunctionTraits>
-class ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERATION() >
+template <class FunctionTraits, class ReturnValue>
+class ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION() >
     : public ParsedCommandOverloadBase
 {
 public:
@@ -71,6 +71,40 @@ public:
     typedef FunctionTraits traits;
     typedef boost::function<typename traits::result_type(std::ostream &
                                                          mpp_TrailingArgTypes())> Function;
+    typedef typename senf::remove_cvref<typename traits::result_type>::type result_type;
+    typedef boost::function<void (result_type const &, std::ostream &)> Formatter;
+
+#   define mpp_l(z,n,d)                                                                           \
+        typedef typename senf::remove_cvref< typename traits::mpp_ArgTypeN(n) >::type             \
+            mpp_ArgTypeN(n);
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ )
+#   undef mpp_l
+
+    static ptr create(Function fn);
+
+    void formatter(Formatter f);
+
+protected:
+
+private:
+    ParsedCommandOverload(Function fn);
+
+    virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const;
+
+    Function function_;
+    Formatter formatter_;
+};
+
+template <class FunctionTraits>
+class ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >
+    : public ParsedCommandOverloadBase
+{
+public:
+    typedef boost::intrusive_ptr<ParsedCommandOverload> ptr;
+    typedef FunctionTraits traits;
+    typedef boost::function<typename traits::result_type(std::ostream &
+                                                         mpp_TrailingArgTypes())> Function;
+    typedef void result_type;
 
 #   define mpp_l(z,n,d)                                                                           \
         typedef typename senf::remove_cvref< typename traits::mpp_ArgTypeN(n) >::type             \
@@ -96,16 +130,44 @@ private:
 
 // inline template implementation (.cti)
 
+template <class FunctionTraits, class ReturnValue>
+prefix_ typename senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION() >::ptr
+senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION() >::
+create(Function fn)
+{
+    return ptr(new ParsedCommandOverload(fn));
+}
+
+template <class FunctionTraits, class ReturnValue>
+void
+senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION() >::
+formatter(Formatter f)
+{
+    formatter_ = f;
+}
+
+template <class FunctionTraits, class ReturnValue>
+prefix_
+senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION()>::
+ParsedCommandOverload(Function fn)
+    : function_ (fn) 
+{
+#   define mpp_l(z,n,d) addParameter< mpp_ArgTypeN(n) >();
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l, _ )
+#   undef mpp_l
+}
+
 template <class FunctionTraits>
-prefix_ typename senf::console::ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERATION() >::ptr
-senf::console::ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERATION() >::create(Function fn)
+prefix_ typename senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >::ptr
+senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >::
+create(Function fn)
 {
     return ptr(new ParsedCommandOverload(fn));
 }
 
 template <class FunctionTraits>
 prefix_
-senf::console::ParsedCommandOverload<FunctionTraits,BOOST_PP_ITERATION()>::
+senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >::
 ParsedCommandOverload(Function fn)
     : function_ (fn) 
 {
@@ -120,8 +182,8 @@ ParsedCommandOverload(Function fn)
 
 // non-inline template implementation (.ct)
 
-template <class FunctionTraits>
-prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, BOOST_PP_ITERATION() >::
+template <class FunctionTraits, class ReturnValue>
+prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION() >::
 v_execute(std::ostream & os, ParseCommandInfo const & command)
     const
 {
@@ -149,10 +211,43 @@ v_execute(std::ostream & os, ParseCommandInfo const & command)
 #   undef mpp_l
 #   undef mpp_l_
 
-    detail::CheckVoidReturn<typename traits::result_type>::call(
-        boost::bind(function_, boost::ref(os)
-                    mpp_TrailingArgs()),
-        os );
+    if (formatter_)
+        formatter_( function_(os mpp_TrailingArgs()), os );
+    else
+        ReturnValueTraits<result_type>::format( function_(os mpp_TrailingArgs()), os );
+    os << "\n";
+}
+
+template <class FunctionTraits>
+prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >::
+v_execute(std::ostream & os, ParseCommandInfo const & command)
+    const
+{
+    if ( command.arguments().size() > BOOST_PP_ITERATION() )
+        throw SyntaxErrorException("invalid number of arguments");
+    int nDefaults ( BOOST_PP_ITERATION() - command.arguments().size() );
+
+    typedef typename boost::range_const_reverse_iterator<ParseCommandInfo::ArgumentsRange>::type
+        riterator;
+    riterator i (boost::rbegin(command.arguments()));
+    riterator const i_end (boost::rend(command.arguments()));
+
+#   define mpp_l(z,n,d)                                                                           \
+        mpp_ArgTypeN(n) mpp_ArgN(n) (arg< mpp_ArgTypeN(n) >( n ).defaultValue);                   \
+        if (! arg(n).hasDefault || nDefaults-- <= 0) {                                            \
+            if (i == i_end)                                                                       \
+                throw SyntaxErrorException("invalid number of arguments");                        \
+            if (arg< mpp_ArgTypeN(n) >(n).parser)                                                 \
+                arg< mpp_ArgTypeN(n) >(n).parser( *(i++), mpp_ArgN(n) );                          \
+            else                                                                                  \
+                ArgumentTraits< mpp_ArgTypeN(n) >::parse( *(i++), mpp_ArgN(n) );                  \
+        }
+#   define mpp_l_(z,n,d) mpp_l(z, BOOST_PP_SUB(BOOST_PP_DEC(BOOST_PP_ITERATION()), n), d)
+    BOOST_PP_REPEAT( BOOST_PP_ITERATION(), mpp_l_, _ ) 
+#   undef mpp_l
+#   undef mpp_l_
+
+    function_(os mpp_TrailingArgs());
 }
 
 // ////////////////////////////////////////////////////////////////////////

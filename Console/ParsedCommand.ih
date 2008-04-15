@@ -106,23 +106,11 @@ namespace detail {
             base_traits>
         ::type traits;
 
+        typedef typename senf::remove_cvref<typename base_traits::result_type>::type result_type;
+
         static const bool is_member = boost::is_member_pointer<base_type>::value;
         
         typedef typename senf::member_class<base_type>::type class_type;
-    };
-
-    template <class Type>
-    struct CheckVoidReturn
-    {
-        template <class Fn>
-        static void call(Fn fn, std::ostream & os);
-    };
-
-    template <>
-    struct CheckVoidReturn<void>
-    {
-        template <class Fn>
-        static void call(Fn fn, std::ostream & os);
     };
 
 #endif
