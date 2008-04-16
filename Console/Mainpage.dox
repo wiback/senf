@@ -266,7 +266,7 @@
     
     To greatly simplify parsing complex commands, we turn to automatic argument parsing. 
 
-    \subsection console_autoadd Adding automatically parsed commands
+    \subsection console_autoadd Adding
 
     Automatically parsed commands are registered by just adding a callback which has the correct
     arguments and return-value defined:
@@ -332,7 +332,7 @@
     </pre>
     \endhtmlonly
 
-    \subsection command_overload Command overloading
+    \subsection command_overload Overloading
 
     Automatically parsed commands can be overloaded: You can register multiple commands under the
     same name. Each overload is tried in turn until no SyntaxErrorException is raised.
@@ -358,7 +358,7 @@
     server:/$
     </pre>
 
-    \subsection console_attributes Attributes of automatically parsed commands
+    \subsection console_attributes Attributes
 
     As have seen so far, some documentation is automatically provided. We can add more info, by
     setting additional attributes. 
@@ -444,13 +444,9 @@
     </pre>
     \endhtmlonly
 
-
-    \subsection console_argattribpos Passing argument attributes as positional arguments
-
     Since most of the time, we only need to set the name and possibly a description for arguments,
     there is a shortcut: name and description can be specified as positional arguments in this
-    order. So the following will give the exactly same result as the example in the previous section
-
+    order. So the following will give the exactly same result as above:
     \code
     namespace kw = senf::console::kw;
 
@@ -513,7 +509,7 @@
     \endhtmlonly
 
 
-    \subsection console_boostfn Adding non-function-pointer callable objects
+    \subsection console_boostfn Non-function-pointer commands
 
     It is possible to add other callable objects besides function (and member-function)
     pointers. However, since it is not possible to automatically deduce the argument and return
@@ -550,8 +546,8 @@
 
     <table class="senf fixedwidth">
 
-    <tr><td>\link senf::console::ParsedArgumentAttributorBase::doc() .doc\endlink ( \e doc )</td><td>Set
-    documentation for all overloads</td></tr>
+    <tr><td style="width:14em">\link senf::console::ParsedArgumentAttributorBase::doc() .doc\endlink
+    ( \e doc )</td><td>Set documentation for all overloads</td></tr>
     
     <tr><td>\link senf::console::ParsedArgumentAttributorBase::overloadDoc()
     .overloadDoc\endlink ( \e doc )</td><td>Set documentation for a specific overload</td></tr>
@@ -565,7 +561,8 @@
     
     <table class="senf fixed width">
 
-    <tr><td>\link senf::console::kw::name kw::name\endlink</td><td>Parameter name</td></tr>
+    <tr><td style="width:14em">\link senf::console::kw::name kw::name\endlink</td><td>Parameter
+    name</td></tr>
 
     <tr><td>\link senf::console::kw::description kw::description\endlink</td><td>One-line
     description of the argument</td></tr>
@@ -581,7 +578,7 @@
         \ref senf::console::kw for a list of all argument attribute keywords
 
         
-    \section console_memberfn Registering member functions
+    \section console_memberfn Member functions
     
     Member functions are supported like non-member functions. They must however be added through a
     senf::console::ScopedDirectory instance to bind them to their instance.
