@@ -512,6 +512,38 @@
     </pre>
     \endhtmlonly
 
+
+    \subsection console_boostfn Adding non-function-pointer callable objects
+
+    It is possible to add other callable objects besides function (and member-function)
+    pointers. However, since it is not possible to automatically deduce the argument and return
+    types in this case, the callables have to be wrapped in a \c boost::function object:
+
+    \code
+    senf::console::root()
+        .add("test8", 
+             boost::function<void (std::ostream &, std::string const &)>(
+                 boost::bind(&fun3, _1, 4u, _2)));
+    \endcode
+
+    This works with any callable object where argument types cannot be deduced automatically:
+    Boost.Bind expressions, Boost.Lambda expressions, functors and so on.
+    
+    \htmlonly
+    <pre>
+    server:/$ test8 ok
+    ok
+    ok
+    ok
+    ok
+    server:/$ help test8
+    Usage:
+        test8 arg11:string
+    server:/$
+    </pre>
+    \endhtmlonly
+
+
     \subsection console_attr_summary Attribute summary
 
     Here a summary of the most common attributes

@@ -331,7 +331,16 @@ ParsedArgumentAttributor(Overload & overload)
 ///////////////////////////////////////////////////////////////////////////
 // namespace members
 
-namespace {
+namespace senf {
+namespace console {
+namespace detail {
+
+    struct ParsedCommandAddNodeAccess
+    {
+        template <class Attributor, class Node>
+        static Attributor attributor(Node & node)
+            { return Attributor(node); }
+    };
 
     // What is THIS about ??
 
@@ -347,14 +356,16 @@ namespace {
     // If however, it does NOT take an std::ostream first argument, 'ignoreOneArg' will be true and
     // the create member will use boost::bind to DROP the first argument.
     
-    template <class Traits, bool ignoreOneArg, unsigned arity=Traits::arity>
+    template <class Traits, 
+              bool ignoreOneArg=! Traits::has_ostream_arg, 
+              unsigned arity=Traits::traits::arity>
     struct CreateParsedCommandOverload
     {};
 
     template <class Traits, unsigned arity>
     struct CreateParsedCommandOverload<Traits, false, arity>
     {
-        typedef Traits traits;
+        typedef typename Traits::traits traits;
         
         template <class Function>
         static typename senf::console::ParsedCommandOverload<traits>::ptr create(Function fn) 
@@ -366,51 +377,49 @@ namespace {
                                             4))
 #   include BOOST_PP_ITERATE()
 
-}
+    template <class Signature, class Fn>
+    typename senf::console::detail::ParsedCommandTraits<Signature>::Attributor
+    addOverloadedCommandNode(senf::console::DirectoryNode & node,  std::string const & name, Fn fn)
+    {
+        senf::console::OverloadedCommandNode & cmdNode (
+            node.hasChild(name) 
+            ? dynamic_cast<senf::console::OverloadedCommandNode &>(node(name))
+            : node.add(name, senf::console::OverloadedCommandNode::create()) );
+
+        typedef senf::console::detail::ParsedCommandTraits<Signature> CmdTraits;
+        typedef senf::console::ParsedCommandOverload<typename CmdTraits::traits> Overload;
+        typedef senf::console::ParsedArgumentAttributor<Overload> Attributor;
+
+        return senf::console::detail::ParsedCommandAddNodeAccess::attributor<Attributor>(
+            cmdNode.add( CreateParsedCommandOverload<CmdTraits>::create(fn) ) );
+    }
+
+}}}
 
 template <class Function>
-prefix_ senf::console::ParsedArgumentAttributor<
-    senf::console::ParsedCommandOverload<
-        typename senf::console::detail::ParsedCommandTraits<Function>::traits> >
+typename senf::console::detail::ParsedCommandTraits<Function>::Attributor
 senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
                                      Function fn, int)
 {
-    OverloadedCommandNode & cmdNode (
-        node.hasChild(name) 
-        ? dynamic_cast<OverloadedCommandNode &>(node(name))
-        : node.add(name, OverloadedCommandNode::create()) );
+    return senf::console::detail::addOverloadedCommandNode<Function>(node, name, fn);
+}
 
-    typedef detail::ParsedCommandTraits<Function> CmdTraits;
-    typedef ParsedCommandOverload<typename CmdTraits::traits> Overload;
-    typedef ParsedArgumentAttributor<Overload> Attributor;
-
-    return Attributor(
-        cmdNode.add( CreateParsedCommandOverload<
-                         typename CmdTraits::traits, ! CmdTraits::has_ostream_arg>::create(fn) ) );
+template <class Signature>
+typename senf::console::detail::ParsedCommandTraits<Signature>::Attributor
+senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
+                                     boost::function<Signature> fn, int)
+{
+    return senf::console::detail::addOverloadedCommandNode<Signature>(node, name, fn);
 }
 
 template <class Owner, class Function>
-prefix_ senf::console::ParsedArgumentAttributor<
-    senf::console::ParsedCommandOverload<
-        typename senf::console::detail::ParsedCommandTraits<Function>::traits> >
-senf::console::
-senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
-                      Function fn, int,
-                      typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type *)
+typename senf::console::detail::ParsedCommandTraits<Function>::Attributor
+senf::console::senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
+                                     Function fn, int,
+                                     typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_member>::type *)
 {
-    OverloadedCommandNode & cmdNode (
-        node.hasChild(name) 
-        ? dynamic_cast<OverloadedCommandNode &>(node(name))
-        : node.add(name, OverloadedCommandNode::create()) );
-
-    typedef detail::ParsedCommandTraits<Function> CmdTraits;
-    typedef ParsedCommandOverload<typename CmdTraits::traits> Overload;
-    typedef ParsedArgumentAttributor<Overload> Attributor;
-
-    return Attributor(
-        cmdNode.add( CreateParsedCommandOverload<
-                         typename CmdTraits::traits, ! CmdTraits::has_ostream_arg>::create(
-                             senf::membind(fn,&owner)) ) );
+    return senf::console::detail::addOverloadedCommandNode<Function>(
+        node, name, senf::membind(fn,&owner));
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

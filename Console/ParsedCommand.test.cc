@@ -50,11 +50,8 @@ namespace {
 
     struct TestParser 
     {
-        typedef senf::console::ParseCommandInfo::TokensRange const & first_argument_type;
-        typedef std::string & second_argument_type;
-        typedef void result_type;
-
-        result_type operator()(first_argument_type, second_argument_type out) const
+        void operator()(senf::console::ParseCommandInfo::TokensRange const &,
+                        std::string & out) const
             { out = "true"; }
     };
 
@@ -144,7 +141,9 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
     {
         std::stringstream ss;
 
-        dir.add("cb7", &cb2)
+        // This tests adding boost::function objects and at the same time validates, that 
+        // compatible types also work
+        dir.add("cb7", boost::function<float()>(&cb2))
             .formatter( &testFormatter );
         BOOST_CHECK_NO_THROW(
             parser.parse("test/cb7",

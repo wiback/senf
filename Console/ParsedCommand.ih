@@ -35,6 +35,17 @@
 
 namespace senf {
 namespace console {
+
+    template < class FunctionTraits, 
+               class ReturnType=typename FunctionTraits::result_type, 
+              unsigned arity=FunctionTraits::arity >
+    class ParsedCommandOverload;
+
+    template < class Overload, 
+               unsigned index=0, 
+               bool flag=(index < unsigned(Overload::traits::arity)) >
+    class ParsedArgumentAttributor;
+
 namespace detail {
 
 #ifndef DOXYGEN
@@ -90,10 +101,10 @@ namespace detail {
     struct ParsedCommandTraits
     {};
 
-    template <class Function>
-    struct ParsedCommandTraits<Function, true>
+    template <class Fn>
+    struct ParsedCommandTraits<Fn, true>
     {
-        typedef Function base_type;
+        typedef Fn base_type;
         typedef typename senf::remove_any_pointer<base_type>::type function_type;
         typedef boost::function_traits<function_type> base_traits;
         typedef typename FirstArgType<base_traits>::type first_arg_type;
@@ -111,7 +122,12 @@ namespace detail {
         static const bool is_member = boost::is_member_pointer<base_type>::value;
         
         typedef typename senf::member_class<base_type>::type class_type;
+
+        typedef ParsedCommandOverload<traits> Overload;
+        typedef ParsedArgumentAttributor<Overload> Attributor;
     };
+
+    struct ParsedCommandAddNodeAccess;
 
 #endif
 

@@ -259,7 +259,7 @@ v_execute(std::ostream & os, ParseCommandInfo const & command)
 template <class Traits>
 struct CreateParsedCommandOverload<Traits, true, BOOST_PP_ITERATION()>
 {
-    typedef Traits traits;
+    typedef typename Traits::traits traits;
 
     template <class Function>
     static typename senf::console::ParsedCommandOverload<traits>::ptr create(Function fn)

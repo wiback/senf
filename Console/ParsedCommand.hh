@@ -171,8 +171,7 @@ namespace console {
 
         \todo Implement automatic binding of member functions for parser and formatter
      */
-    template <class FunctionTraits, class ReturnType=typename FunctionTraits::result_type, 
-              unsigned arity=FunctionTraits::arity>
+    template <class FunctionTraits, class ReturnType, unsigned arity>
     class ParsedCommandOverload : public ParsedCommandOverloadBase
     {
     public:
@@ -329,42 +328,32 @@ namespace console {
                                              assigned in the following way:
                                              <table class="senf fixedwidth">
                                              <tr>
-                                               <td><tt>command 1 2</tt></td>
-                                               <td>SyntaxErrorException: invalid number of
+                                               <td style="whitespace:no-wrap"><tt>command 1 2</tt></td>
+                                               <td colspan="5">SyntaxErrorException: invalid number of
                                                  arguments</td>
                                              </tr>
                                              <tr>
-                                               <td><tt>command 1 2 3</tt></td>
-                                               <td>\a a = 1, \n
-                                                   \a b = \e default, \n
-                                                   \a c = 2, \n
-                                                   \a d = \e default, \n
-                                                   \a e = 3</td>
+                                               <td style="white-space:nowrap"><tt>command 1 2 3</tt></td>
+                                               <td style="width:6em">\a a = 1</td><td style="width:6em">\a b = \e default</td><td style="width:6em">\a c = 2</td><td style="width:6em">\a d = \e default</td><td style="width:6em">\a e = 3</td>
                                              </tr>
                                              <tr>
-                                               <td><tt>command 1 2 3 4</tt></td>
-                                               <td>\a a = 1, \n
-                                                   \a b = 2, \n
-                                                   \a c = 3, \n
-                                                   \a d = \e default, \n
-                                                   \a e = 4</td>
+                                               <td style="white-space:nowrap"><tt>command 1 2 3 4</tt></td>
+                                               <td>\a a = 1</td><td>\a b = 2</td><td>\a c = 3</td><td>\a d = \e default</td><td>\a e = 4</td>
                                              </tr>
                                              <tr>
-                                               <td><tt>command 1 2 3 4 5</tt></td>
-                                               <td>\a a = 1, \n
-                                                   \a b = 2, \n
-                                                   \a c = 3, \n
-                                                   \a d = 4, \n
-                                                   \a e = 5</td>
+                                               <td style="white-space:nowrap"><tt>command 1 2 3 4 5</tt></td>
+                                               <td>\a a = 1</td><td>\a b = 2</td><td>\a c = 3</td><td>\a d = 4</td><td>\a e = 5</td>
                                              </tr>
                                              <tr>
-                                               <td><tt>command 1 2 3 4 5 6</tt></td>
-                                               <td>SyntaxErrorException: invalid number of
+                                               <td style="white-space:nowrap"><tt>command 1 2 3 4 5 6</tt></td>
+                                               <td colspan="5">SyntaxErrorException: invalid number of
                                                  arguments</td>
                                              </tr>
                                              </table>
-                                             So, if you assign default values as you are used to
-                                             they will work like in C++ and most other languages */
+                                             So, if you use default values as you are used to,
+                                             assigning default values to consecutive trailing
+                                             arguments, they work like they do in C++ and most other
+                                             languages */
         BOOST_PARAMETER_KEYWORD(type, type_name) ///< Type name of this arguments type
                                         /**< By default, the type of an argument is extracted from
                                              the C++ type name by taking the last component of the
@@ -413,7 +402,18 @@ namespace console {
     public:
         Self doc(std::string const & doc) const; ///< Set documentation for all overloads
         Self overloadDoc(std::string const & doc) const; ///< Set overload specific documentation
-        Self formatter(typename Overload::Formatter f) const; ///< Set return value formatter
+        Self formatter(typename Overload::Formatter formatter) const; 
+                                        ///< Set return value formatter
+                                        /**< This member is only available, if the \a ReturnType of
+                                             the installed callback is not \c void.
+
+                                             If \a ReturnType is not \c void, the \a formatter must
+                                             be a callable with a signature compatible with
+                                             \code
+                                             void formatter(ReturnType const & value, std::ostream & os);
+                                             \endcode
+                                             The \a formatter takes the return value of the call \a
+                                             value and writes it properly formated to \a os. */
 
     protected:
         ParsedArgumentAttributorBase(Overload & overload, unsigned index);
@@ -449,9 +449,7 @@ namespace console {
 
         \see \ref console_autoparse
      */
-    template < class Overload, 
-               unsigned index=0, 
-               bool flag=(index < unsigned(Overload::traits::arity)) >
+    template < class Overload, unsigned index, bool flag>
     class ParsedArgumentAttributor
         : public ParsedArgumentAttributorBase< Overload, 
                                                 ParsedArgumentAttributor<Overload, index, flag> >
@@ -490,7 +488,8 @@ namespace console {
                                              
                                              Each call to arg() will increment the argument index
                                              and advance to the next argument. This member is only
-                                             present, if there is an argument at the current. */
+                                             present, if there is an argument at the current
+                                             index. */
 
 #ifndef DOXYVEN
 
@@ -544,22 +543,7 @@ namespace console {
         template <class O, unsigned i, bool f>
         friend class ParsedArgumentAttributor;
 
-#ifndef DOXYGEN
-        
-        template <class Function>
-        friend ParsedArgumentAttributor<
-            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
-        senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
-        
-        template <class Owner, class Function>
-        friend ParsedArgumentAttributor<
-            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
-        senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
-                              Function fn, int,
-                              typename boost::enable_if_c<
-                                  detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
-
-#endif
+        friend class detail::ParsedCommandAddNodeAccess;
     };
 
 #ifndef DOXYGEN
@@ -578,29 +562,20 @@ namespace console {
 
         template <class O, unsigned i, bool f>
         friend class ParsedArgumentAttributor;
-        
-        template <class Function>
-        friend ParsedArgumentAttributor<
-            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
-        senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
-        
-        template <class Owner, class Function>
-        friend ParsedArgumentAttributor<
-            ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
-        senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
-                              Function fn, int,
-                              typename boost::enable_if_c<
-                                  detail::ParsedCommandTraits<Function>::is_member>::type * = 0);
+
+        friend class detail::ParsedCommandAddNodeAccess;
     };
 
     template <class Function>
-    ParsedArgumentAttributor<
-        ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
+    typename detail::ParsedCommandTraits<Function>::Attributor
     senf_console_add_node(DirectoryNode & node, std::string const & name, Function fn, int);
 
+    template <class Signature>
+    typename detail::ParsedCommandTraits<Signature>::Attributor
+    senf_console_add_node(DirectoryNode & node, std::string const & name, boost::function<Signature> fn, int);
+
     template <class Owner, class Function>
-    ParsedArgumentAttributor<
-        ParsedCommandOverload<typename detail::ParsedCommandTraits<Function>::traits> >
+    typename detail::ParsedCommandTraits<Function>::Attributor
     senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                           Function fn, int,
                           typename boost::enable_if_c<
