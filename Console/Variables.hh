@@ -27,6 +27,9 @@
 #define HH_Variables_ 1
 
 // Custom includes
+#include <boost/utility.hpp>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/ref.hpp>
 #include "ParsedCommand.hh"
 
 #include "Variables.ih"
@@ -36,40 +39,68 @@
 namespace senf {
 namespace console {
 
+    class ScopedDirectoryBase;
+    template <class Variable> class VariableAttributor;
+
+    template <class Variable>
+    VariableAttributor<Variable> senf_console_add_node(
+        DirectoryNode & node, std::string const & name, Variable & var, int,
+        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0);
+
+    template <class Variable>
+    typename detail::VariableNodeCreator<Variable>::result_type
+    senf_console_add_node(DirectoryNode & node, std::string const & name, 
+                          boost::reference_wrapper<Variable> var, int);
+
+    template <class Variable>
+    class ConstVariableAttributor
+    {
+    public:
+        typedef typename detail::QueryVariable<Variable>::Traits::Overload QueryOverload;
+        typedef typename QueryOverload::Formatter Formatter;
+        typedef OverloadedCommandNode node_type;
+        typedef ConstVariableAttributor return_type;
+
+        ConstVariableAttributor doc(std::string const & doc);
+        ConstVariableAttributor formatter(Formatter formatter);
+
+    protected:
+        explicit ConstVariableAttributor(QueryOverload & queryOverload);
+
+    private:
+        QueryOverload & queryOverload_;
+
+        friend class detail::VariableNodeCreator<Variable const>;
+    };
+
     template <class Variable>
     class VariableAttributor
+        : public ConstVariableAttributor<Variable>
     {
     public:
         typedef typename detail::SetVariable<Variable>::Traits::Overload SetOverload;
-        typedef typename detail::QueryVariable<Variable>::Traits::Overload QueryOverload;
-
+        typedef typename detail::ArgumentInfo<typename SetOverload::arg1_type>::Parser Parser;
         typedef OverloadedCommandNode node_type;
         typedef VariableAttributor return_type;
 
+        typedef typename ConstVariableAttributor<Variable>::Formatter Formatter;
+        typedef typename ConstVariableAttributor<Variable>::QueryOverload QueryOverload;
+
+        VariableAttributor parser(Parser parser);
+        VariableAttributor typeName(std::string const & name);
+ 
+        VariableAttributor doc(std::string const & doc);
+        VariableAttributor formatter(Formatter formatter);
+       
     protected:
 
     private:
         VariableAttributor(QueryOverload & queryOverload, SetOverload & setOverload);
 
-        QueryOverload & queryOverload_;
         SetOverload & setOverload_;
 
-#ifndef DOXYGEN
-
-        template <class V>
-        friend VariableAttributor<V> senf_console_add_node(DirectoryNode & node, 
-                                                           std::string const & name, 
-                                                           V * var, int);
-
-#endif
-
+        friend class detail::VariableNodeCreator<Variable>;
     };
-
-    template <class Variable>
-    VariableAttributor<Variable> senf_console_add_node(DirectoryNode & node, 
-                                                       std::string const & name, 
-                                                       Variable * var, int);
-
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

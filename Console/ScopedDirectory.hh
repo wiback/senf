@@ -49,7 +49,7 @@ namespace console {
                                       * static_cast<DirectoryNode *>(0),
                                       * static_cast<Owner *>(0),
                                       * static_cast<std::string const *>(0),
-                                      * static_cast<Object const *>(0),
+                                      * static_cast<Object *>(0),
                                       * static_cast<int *>(0)) ) base_type;
         typedef typename senf::remove_cvref<base_type>::type value_type;
 
@@ -59,7 +59,7 @@ namespace console {
         /// Internal
         struct Creator {
             static result_type create(DirectoryNode & node, Owner & owner, 
-                                     std::string const & name, Object const & ob);
+                                     std::string const & name, Object & ob);
         };
     };
     
@@ -157,6 +157,12 @@ namespace console {
                                              implementation just forwards the call to the proxied
                                              directory node. */
 
+        template <class Object>
+        typename OwnerNodeCreateTraits<Owner, Object>::result_type add(std::string const & name,
+                                                                       Object & ob);
+                                        ///< Create new child node
+                                        /**< \see add() */
+
     protected:
 
     private:
@@ -172,6 +178,10 @@ namespace console {
         template <class Object>
         typename NodeCreateTraits<Object>::result_type add(std::string const & name,
                                                            Object const & ob);
+
+        template <class Object>
+        typename NodeCreateTraits<Object>::result_type add(std::string const & name,
+                                                           Object & ob);
     };
 
     template <class Owner, class Function>

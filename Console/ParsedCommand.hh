@@ -137,15 +137,13 @@ namespace console {
         typedef boost::intrusive_ptr<ParsedCommandOverloadBase> ptr;
 
         detail::ArgumentInfoBase & arg(unsigned n) const;
-        template <class Type> detail::ArgumentInfo<Type> & arg(unsigned n) const;
 
         void doc(std::string const & d);
 
     protected:
         ParsedCommandOverloadBase();
 
-        template <class Type>
-        void addParameter();
+        template <class Type> void addParameter();
 
     private:
         virtual unsigned v_numArguments() const;
@@ -212,14 +210,12 @@ namespace console {
 
         void argName(std::string const & name) const;
         void argDoc(std::string const & doc) const;
-        template <class Type> void defaultValue(Type const & value) const;
         void typeName(std::string const & doc) const;
         void defaultDoc(std::string const & doc) const;
 
         ParsedCommandOverloadBase & overload() const;
         void overloadDoc(std::string const & doc) const;
         void nodeDoc(std::string const & doc) const;
-        template <class Type, class Fn> void parser(Fn fn) const;
         
     private:
         ParsedCommandOverloadBase & overload_;

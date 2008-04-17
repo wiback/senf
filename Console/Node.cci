@@ -235,6 +235,14 @@ prefix_ senf::console::SimpleCommandNode::cptr senf::console::SimpleCommandNode:
     return boost::static_pointer_cast<SimpleCommandNode const>(shared_from_this());
 }
 
+prefix_ senf::console::SimpleCommandNode &
+senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
+                                     SimpleCommandNode::Function fn, int)
+{
+    return node.add(name, SimpleCommandNode::create(fn));
+}
+
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

@@ -40,6 +40,14 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace {
+    void testParser(senf::console::ParseCommandInfo::TokensRange const &, int & value)
+    { value = 0; }
+
+    void testFormatter(int value, std::ostream & os)
+    { os << '[' << value << ']'; }
+}
+
 BOOST_AUTO_UNIT_TEST(variables)
 {
     senf::console::Executor executor;
@@ -50,11 +58,46 @@ BOOST_AUTO_UNIT_TEST(variables)
     int var (5);
 
     std::stringstream ss;
-    dir.add("var", &var);
+    dir.add("var", var)
+        .doc("Current blorg limit")
+        .formatter(&testFormatter)
+        .parser(&testParser)
+        .typeName("number");
     parser.parse("test/var; test/var 10; test/var",
                  boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
-    BOOST_CHECK_EQUAL( ss.str(), "5\n10\n" );
+    BOOST_CHECK_EQUAL( ss.str(), "[5]\n[0]\n" );
+
+    ss.str("");
+    dir("var").help(ss);
+    BOOST_CHECK_EQUAL(ss.str(), 
+                      "Usage:\n"
+                      "    1- var new_value:number\n"
+                      "    2- var\n"
+                      "\n"
+                      "Current blorg limit\n");
+
+    dir.add("refvar", boost::ref(var))
+        .doc("Current blorg limit")
+        .formatter(&testFormatter)
+        .parser(&testParser)
+        .typeName("number");
+
+    dir.add("crefvar", boost::cref(var))
+        .doc("Current blorg limit")
+        .formatter(&testFormatter);
 }
+
+#ifdef COMPILE_CHECK
+
+COMPILE_FAIL(constVariable)
+{
+    senf::console::ScopedDirectory<> dir;
+    int var;
+    dir.add("var", boost::cref(var))
+        .parser(&testParser);
+}
+
+#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

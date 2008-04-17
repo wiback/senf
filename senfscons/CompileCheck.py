@@ -64,7 +64,7 @@ def generate(env):
 
     builder = env.Builder(
         action = CompileCheck,
-        suffix = '.tsto',
+        suffix = '.checked',
         src_suffix = '.cc',
         source_scanner = SCons.Scanner.C.CScanner(),
         single_source=1

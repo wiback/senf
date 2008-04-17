@@ -39,7 +39,7 @@ prefix_ typename senf::console::OwnerNodeCreateTraits<Owner,Object>::result_type
 senf::console::OwnerNodeCreateTraits<Owner,Object>::Creator::create(DirectoryNode & node,
                                                                     Owner & owner,
                                                                     std::string const & name,
-                                                                    Object const & ob)
+                                                                    Object & ob)
 {
     return senf_console_add_node(node, owner, name, ob, 0);
 }
@@ -58,6 +58,14 @@ template <class Owner>
 template <class Object>
 prefix_ typename senf::console::OwnerNodeCreateTraits<Owner, Object>::result_type
 senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object const & ob)
+{
+    return OwnerNodeCreateTraits<Owner, Object const>::Creator::create(node(), *owner_, name, ob);
+}
+
+template <class Owner>
+template <class Object>
+prefix_ typename senf::console::OwnerNodeCreateTraits<Owner, Object>::result_type
+senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object & ob)
 {
     return OwnerNodeCreateTraits<Owner, Object>::Creator::create(node(), *owner_, name, ob);
 }
@@ -92,6 +100,13 @@ senf_console_add_node(DirectoryNode & dir, std::string const & name, Node const 
 template <class Object>
 prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
 senf::console::ScopedDirectory<void>::add(std::string const & name, Object const & ob)
+{
+    return node().add(name, ob);
+}
+
+template <class Object>
+prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
+senf::console::ScopedDirectory<void>::add(std::string const & name, Object & ob)
 {
     return node().add(name, ob);
 }

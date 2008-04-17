@@ -48,8 +48,12 @@ namespace console {
 
 namespace detail {
 
-#ifndef DOXYGEN
+    /** \brief Internal: Argument information structure
+        
+        This class is used to hold argument information for automatically parsed commands. 
 
+        \see ParsedCommandOverloadBase
+     */
     struct ArgumentInfoBase
         : public intrusive_refcount
     {
@@ -66,6 +70,12 @@ namespace detail {
         virtual std::string defaultValueStr() const = 0;
     };
     
+    /** \brief Internal: Argument information structure
+        
+        This class is used to hold argument information for automatically parsed commands. 
+
+        \see ParsedCommandOverloadBase
+     */
     template <class ParameterType>
     struct ArgumentInfo 
         : public ArgumentInfoBase
@@ -83,6 +93,8 @@ namespace detail {
         virtual std::string defaultValueStr() const;
     };
     
+#ifndef DOXYGEN
+
     // FirstArgType returns void, if the function has no arguments, otherwise it returns arg1_type
 
     template <class Traits, bool flag=(Traits::arity>0)>

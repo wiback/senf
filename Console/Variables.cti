@@ -73,30 +73,119 @@ prefix_ void senf::console::detail::SetVariable<Variable>::onChange(OnChangeHand
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::ConstVariableAttributor<Variable>
+
+template <class Variable>
+prefix_ senf::console::ConstVariableAttributor<Variable>
+senf::console::ConstVariableAttributor<Variable>::doc(std::string const & doc)
+{
+    queryOverload_.node().doc(doc);
+    return *this;
+}
+
+template <class Variable>
+prefix_ senf::console::ConstVariableAttributor<Variable>
+senf::console::ConstVariableAttributor<Variable>::formatter(Formatter formatter)
+{
+    queryOverload_.formatter(formatter);
+    return *this;
+}
+
+template <class Variable>
+prefix_ senf::console::ConstVariableAttributor<Variable>::
+ConstVariableAttributor(QueryOverload & queryOverload)
+    : queryOverload_ (queryOverload)
+{}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::VariableAttributor<Variable>
+
+template <class Variable>
+prefix_ senf::console::VariableAttributor<Variable>
+senf::console::VariableAttributor<Variable>::parser(Parser parser)
+{
+    setOverload_.template arg<0>().parser = parser;
+    return *this;
+}
+
+template <class Variable>
+prefix_ senf::console::VariableAttributor<Variable>
+senf::console::VariableAttributor<Variable>::typeName(std::string const & name)
+{
+    setOverload_.arg(0).type = name;
+    return *this;
+}
+
+template <class Variable>
+prefix_ typename senf::console::VariableAttributor<Variable>
+senf::console::VariableAttributor<Variable>::doc(std::string const & doc)
+{
+    ConstVariableAttributor<Variable>::doc(doc);
+    return *this;
+}
+
+template <class Variable>
+prefix_ typename senf::console::VariableAttributor<Variable>
+senf::console::VariableAttributor<Variable>::formatter(Formatter formatter)
+{
+    ConstVariableAttributor<Variable>::formatter(formatter);
+    return *this;
+}
 
 template <class Variable>
 prefix_
 senf::console::VariableAttributor<Variable>::VariableAttributor(QueryOverload & queryOverload,
                                                                 SetOverload & setOverload)
-    : queryOverload_ (queryOverload), setOverload_ (setOverload)
+    : ConstVariableAttributor<Variable> (queryOverload), setOverload_ (setOverload)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
 
-template <class Variable>
+template <class Variable, bool isConst>
 prefix_ senf::console::VariableAttributor<Variable>
-senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
-                                     Variable * var, int)
+senf::console::detail::VariableNodeCreator<Variable,isConst>::add(DirectoryNode & node,
+                                                                  std::string const & name,
+                                                                  Variable & var)
 {
     typename VariableAttributor<Variable>::SetOverload & setOverload ( 
         node.add(name, typename detail::SetVariable<Variable>::Function(
-                     detail::SetVariable<Variable>(*var))).overload() );
+                     detail::SetVariable<Variable>(var)))
+            .arg("new_value")
+            .overload() );
     typename VariableAttributor<Variable>::QueryOverload & queryOverload ( 
         node.add(name, typename detail::QueryVariable<Variable>::Function(
-                     detail::QueryVariable<Variable>(*var))).overload() );
+                     detail::QueryVariable<Variable>(var))).overload() );
 
     return VariableAttributor<Variable>(queryOverload, setOverload);
+}
+
+template <class Variable>
+prefix_ senf::console::ConstVariableAttributor<Variable>
+senf::console::detail::VariableNodeCreator<Variable, true>::add(DirectoryNode & node,
+                                                                std::string const & name,
+                                                                Variable & var)
+{
+    typename VariableAttributor<Variable>::QueryOverload & queryOverload ( 
+        node.add(name, typename detail::QueryVariable<Variable>::Function(
+                     detail::QueryVariable<Variable>(var))).overload() );
+
+    return ConstVariableAttributor<Variable>(queryOverload);
+}
+
+template <class Variable>
+prefix_ senf::console::VariableAttributor<Variable> senf::console::
+senf_console_add_node(DirectoryNode & node, std::string const & name, Variable & var, int,
+                      typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *)
+{
+    return detail::VariableNodeCreator<Variable>::add(node, name, var);
+}
+
+template <class Variable>
+prefix_ typename senf::console::detail::VariableNodeCreator<Variable>::result_type
+senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
+                                     boost::reference_wrapper<Variable> var, int)
+{
+    return detail::VariableNodeCreator<Variable>::add(node, name, var.get());
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

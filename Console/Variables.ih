@@ -28,11 +28,16 @@
 
 // Custom includes
 #include <boost/function.hpp>
+#include <boost/type_traits/is_const.hpp>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
 namespace console {
+
+    template <class Variable> class ConstVariableAttributor;
+    template <class Variable> class VariableAttributor;
+
 namespace detail {
 
     template <class Variable>
@@ -64,6 +69,22 @@ namespace detail {
 
         Variable & var_;
         OnChangeHandler handler_;
+    };
+
+    template <class Variable, bool isConst=boost::is_const<Variable>::value>
+    struct VariableNodeCreator
+    {
+        typedef VariableAttributor<Variable> result_type;
+        static VariableAttributor<Variable> add(DirectoryNode & node, std::string const & name,
+                                                Variable & var);
+    };
+
+    template <class Variable>
+    struct VariableNodeCreator<Variable, true>
+    {
+        typedef ConstVariableAttributor<Variable> result_type;
+        static ConstVariableAttributor<Variable> add(DirectoryNode & node, std::string const & name,
+                                                     Variable & var);
     };
 
 }}}

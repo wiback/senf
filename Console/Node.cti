@@ -37,7 +37,7 @@ template <class Object>
 prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
 senf::console::NodeCreateTraits<Object>::Creator::create(DirectoryNode & node,
                                                          std::string const & name,
-                                                         Object const & ob)
+                                                         Object & ob)
 {
     return senf_console_add_node(node, name, ob, 0);
 }
@@ -59,17 +59,14 @@ template <class Object>
 prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
 senf::console::DirectoryNode::add(std::string const & name, Object const & ob)
 {
-    return NodeCreateTraits<Object>::Creator::create(*this, name, ob);
+    return NodeCreateTraits<Object const>::Creator::create(*this, name, ob);
 }
 
-///////////////////////////////////////////////////////////////////////////
-// senf::console::SimpleCommandNode
-
-template <class Function>
-prefix_ senf::console::SimpleCommandNode & senf::console::
-senf_console_add_node(DirectoryNode & node, std::string const & name, Function const & fn, ...)
+template <class Object>
+prefix_ typename senf::console::NodeCreateTraits<Object>::result_type
+senf::console::DirectoryNode::add(std::string const & name, Object & ob)
 {
-    return node.add(name, SimpleCommandNode::create(fn));
+    return NodeCreateTraits<Object>::Creator::create(*this, name, ob);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

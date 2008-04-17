@@ -307,7 +307,7 @@ namespace console {
         typedef BOOST_TYPEOF_TPL( senf_console_add_node( 
                                       * static_cast<DirectoryNode *>(0),
                                       * static_cast<std::string const *>(0),
-                                      * static_cast<Object const *>(0),
+                                      * static_cast<Object *>(0),
                                       0) ) base_type;
         typedef typename senf::remove_cvref<base_type>::type value_type;
 
@@ -317,7 +317,7 @@ namespace console {
         /// Internal
         struct Creator {
             static result_type create(DirectoryNode & node, std::string const & name, 
-                                      Object const & ob);
+                                      Object & ob);
         };
     };
 
@@ -383,8 +383,8 @@ namespace console {
                                              \a name is empty, it is set to 'unnamed'. */
 
         template <class Object>
-        typename NodeCreateTraits<Object>::result_type add (std::string const & name, 
-                                                            Object const & ob);
+        typename NodeCreateTraits<Object>::result_type add(std::string const & name, 
+                                                           Object const & ob);
                                         ///< Generic child node factory
                                         /**< This member is used to create a new child node of the
                                              current directory. The type of node created depends on
@@ -408,6 +408,12 @@ namespace console {
                                              (Do not forget the last unnamed 'int' parameter which
                                              is not used but serves to disambiguate the
                                              overloads). */
+
+        template <class Object>
+        typename NodeCreateTraits<Object>::result_type add(std::string const & name, 
+                                                           Object & ob);
+                                        ///< Generic child node factory
+                                        /**< \see add() */
 
         GenericNode::ptr remove(std::string const & name);
                                         ///< Remove node \a name from the tree
@@ -634,9 +640,10 @@ namespace console {
     };
 
 #ifndef DOXYGEN
-    template <class Function>
+
     SimpleCommandNode & senf_console_add_node(DirectoryNode & node, std::string const & name, 
-                                              Function const & fn, ...);
+                                              SimpleCommandNode::Function fn, int);
+
 #endif
 
     DirectoryNode & root();
