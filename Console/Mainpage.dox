@@ -358,6 +358,21 @@
     server:/$
     </pre>
 
+    One note: When taking the address of an overloaded function (member or non-member), the C++
+    language forces you to cast that address to one of the possible types so the compiler knows,
+    which overload is requested. So to add a function which is overloaded in C++, each overload
+    needs to be added explicitly, casting to the correct type:
+    \code
+    void over(int);
+    void over(int,int);
+
+    senf::console::root()
+        .add("over", static_cast<void (*)(int)>(&over));
+    senf::console::root()
+        .add("over", static_cast<void (*)(int,int)>(&over));
+    \endcode
+
+
     \subsection console_attributes Attributes
 
     As have seen so far, some documentation is automatically provided. We can add more info, by
@@ -583,21 +598,19 @@
     Member functions are supported like non-member functions. They must however be added through a
     senf::console::ScopedDirectory instance to bind them to their instance.
     \code
-    class Test 
+    class Test1
     {
     public:
-        senf::console::ScopedDirectory<Test> dir;
+        senf::console::ScopedDirectory<Test1> dir;
 
-        Test(std::string label) : dir(this), label_ (label) 
-        {
-            dir.add("test4", &Test::test2);
-            dir.add("test4", &Test::test3);
-        }
-
-        std::string test2(std::string const & text)
+        Test1(std::string label) : dir(this), label_ (label) 
+            { dir.add("test", &Test::test1);
+              dir.add("test", &Test::test2); }
+    
+        std::string test1(std::string const & text)
             { return label_ + ": " + text; }
 
-        void test3(std::ostream & os, unsigned n, std::string const & text) 
+        void test2(std::ostream & os, unsigned n, std::string const & text) 
             { while (n-- > 0) os << label << ": " << text << std::endl; }
 
     private:
@@ -606,12 +619,117 @@
 
     // ...
 
-    Test testOb ("test");
-    senf::console::root().add("testobj", testOb.dir);
+    Test1 test1ob ("test");
+    senf::console::root().add("test1ob", test1ob.dir);
     \endcode
 
     Binding via senf::console::ScopedDirectory ensures, that the commands are automatically removed
     from the tree when the object is destroyed.
+
+
+    \section console_variables Variables
+    
+    \subsection console_varadd Adding
+
+    The console/config library supports the direct registration of variables as commands. A
+    variable command consists of two overloads, one to query the current value and one to change the
+    value. 
+    \code
+    class Test2
+    {
+    public:
+        senf::console::ScopedDirectory<Test2> dir;
+
+        Test2() : dir(this), var_(0)
+            { dir.add("var", var_); }
+
+    private:
+        int var_;
+    };
+
+    Test2 test2ob;
+    senf::console::root().add("test2ob", test2ob.dir);
+    \endcode
+    This shows the most common scenario: A member variable is added to a ScopedDirectory of the same
+    class. This ensures, that the variable command node is removed from the tree when the instance
+    (and thereby the variable) are destroyed. The variable can now be used like any other command:
+    \htmlonly
+    <pre>
+    server:/$ test2ob/var
+    0
+    server:/$ test2ob/var 10
+    server:/$ test2ob/var
+    10
+    server:/$ help test2ob
+    Usage:
+        1- var new_value:int
+        2- var
+    server:/$
+    </pre>
+    \endhtmlonly
+
+
+    \subsection console_varro Read-only variables
+    
+    The library also supports read-only variables. To make a variable read-only, just wrap it in \c
+    boost::cref() (where \c cref stands for \c const reference)
+    \code
+    int var (0);
+
+    senf::console::root().add("var1", boost::cref(var));
+    \endcode
+    A read-only variable only has a single overload:
+    \htmlonly
+    <pre>
+    server:/$ var1
+    0
+    server:/$ help var1
+    Usage:
+        var1
+    server:/$ 
+    </pre>
+    \endhtmlonly
+
+
+    \subsection console_varattr Attributes
+
+    The most important Variable command attributes are
+
+    <table class="senf fixedwidth">
+
+    <tr><td style="width:14em">\link senf::console::VariableAttributor::doc() .doc\endlink
+    ( \e doc )</td><td>Set variable documentation</td></tr>
+    
+    <tr><td>\link senf::console::VariableAttributor::onChange() .onchange\endlink
+    ( \e handler )</td><td>Set change handler</td></tr>
+    
+    </table>
+
+    \see senf::console::VariableAttributor for the complete attribute interface
+
+    \subsection console_varchange Change notification
+
+    A \e handler can be set to be called, whenever the variable is changed. It will be called with a
+    reference to the old value. The handler is called, after the value has been changed
+
+    \code
+    int var (0);
+
+    // Since this is int, it would make sense to declare the argument pass-by-value (int old)
+    // but for more complex args, use a const & here
+    void varChanged(int const & old)
+    {
+        // ...
+    }
+
+    senf::console::root().add("var2",var)
+        .onChange(&varChanged);
+    \endcode
+    
+    After this setup, \c varChanged will be called, whenever the value has changed.
+
+
+    \see senf::console::VariableAttributor for the complete attribute interface
  */
 
 

@@ -310,6 +310,8 @@ namespace senf {
 namespace console {
 namespace detail {
 
+#ifndef DOXYGEN
+
     struct ParsedCommandAddNodeAccess
     {
         template <class Attributor, class Node>
@@ -368,6 +370,8 @@ namespace detail {
         return senf::console::detail::ParsedCommandAddNodeAccess::attributor<Attributor>(
             cmdNode.add( CreateParsedCommandOverload<CmdTraits>::create(fn) ) );
     }
+
+#endif
 
 }}}
 

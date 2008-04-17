@@ -52,6 +52,10 @@ namespace console {
     senf_console_add_node(DirectoryNode & node, std::string const & name, 
                           boost::reference_wrapper<Variable> var, int);
 
+    /** \brief Variable command attributes (const)
+        
+        \see VariableAttributor
+     */
     template <class Variable>
     class ConstVariableAttributor
     {
@@ -72,32 +76,92 @@ namespace console {
 
         friend class detail::VariableNodeCreator<Variable const>;
     };
+ 
+    /** \brief Variable command attributes
 
-    template <class Variable>
+        Variable commands allow to register any arbitrary variable as a command node. The variable
+        will be registered as two command overloads: One which takes a single argument of the
+        variables type to set the variable and another one taking no arguments and just querying the
+        current variable value.
+        \code
+        int var;
+        ScopedDirectory<> dir;
+
+        dir.add("var", var);
+        \endcode
+
+        Variables should be registered only with a ScopedDirectory declared in the same scope
+        (e.g. as a class member for member variables). This ensures, that the variable node is
+        removed from the tree when the scope is destroyed.
+
+        Since a variable command is added as a combination of two ordinary overloads, it is possible
+        to register additional overloads with the same name before or after registering the
+        variable. 
+
+        It is also possible, to register a variable read-only. To achieve this, just wrap it with \c
+        boost::cref(). Such a variable cannot be changed only queried. Therefore, it does not have
+        the parser() and typeName() attributes.
+        \code
+        dir.add("const_var", boost::cref(var))
+        \endcode
+
+        \ingroup console_commands
+     */
+   template <class Variable>
     class VariableAttributor
         : public ConstVariableAttributor<Variable>
     {
     public:
         typedef typename detail::SetVariable<Variable>::Traits::Overload SetOverload;
         typedef typename detail::ArgumentInfo<typename SetOverload::arg1_type>::Parser Parser;
+        typedef typename detail::SetVariable<Variable>::OnChangeHandler OnChangeHandler;
         typedef OverloadedCommandNode node_type;
         typedef VariableAttributor return_type;
 
         typedef typename ConstVariableAttributor<Variable>::Formatter Formatter;
         typedef typename ConstVariableAttributor<Variable>::QueryOverload QueryOverload;
 
-        VariableAttributor parser(Parser parser);
-        VariableAttributor typeName(std::string const & name);
- 
-        VariableAttributor doc(std::string const & doc);
-        VariableAttributor formatter(Formatter formatter);
+        VariableAttributor doc(std::string const & doc); ///< Set documentation of the variable
+        VariableAttributor formatter(Formatter formatter); ///< Set formatter
+                                        /**< The \a formatter must be a callable with a signature
+                                             compatible with
+                                             \code
+                                             void formatter(Variable const & value, std::ostream & os);
+                                             \endcode
+                                             The \a formatter takes the return value of the call \a
+                                             value and writes it properly formated to \a os. */
        
+        VariableAttributor parser(Parser parser); ///< Set argument parser
+                                        /**< The parser is an arbitrary callable object with
+                                             the signature
+                                             \code
+                                                 void parser(senf::console::ParseCommandInfo::TokensRange const & tokens, value_type & out);
+                                             \endcode
+
+                                             where \c value_type is the type of the overload
+                                             parameter. The parser must read and parse the complete
+                                             \a tokens range and return the parsed value in \a
+                                             out. If the parser fails, it must raise a
+                                             senf::console::SyntaxErrorException. */
+        VariableAttributor typeName(std::string const & name); ///< Set name of the variable type
+        VariableAttributor onChange(OnChangeHandler handler); ///< Set change callback
+                                        /**< The \a handler callback is called, whenever the value
+                                             of the variable is changed. The new value has already
+                                             been set, when the callback is called, the old value is
+                                             passed to the callback. The callback must have a
+                                             signature compatible to
+                                             \code
+                                             void handler(Variable const & oldValue);
+                                             \endcode */
+ 
     protected:
 
     private:
-        VariableAttributor(QueryOverload & queryOverload, SetOverload & setOverload);
+        VariableAttributor(QueryOverload & queryOverload, SetOverload & setOverload, 
+                           Variable & var);
 
         SetOverload & setOverload_;
+        Variable & var_;
 
         friend class detail::VariableNodeCreator<Variable>;
     };

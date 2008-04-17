@@ -40,12 +40,15 @@ namespace console {
 
 namespace detail {
 
+#ifndef DOXYGEN
+
     template <class Variable>
     struct QueryVariable
     {
         typedef Variable const & Signature ();
         typedef boost::function<Signature> Function;
         typedef detail::ParsedCommandTraits<Signature> Traits;
+        typedef Variable const & result_type;
 
         QueryVariable(Variable const & var);
 
@@ -61,11 +64,11 @@ namespace detail {
         typedef boost::function<Signature> Function;
         typedef detail::ParsedCommandTraits<Signature> Traits;
         typedef boost::function<void (Variable const &)> OnChangeHandler;
+        typedef void result_type;
         
-        SetVariable(Variable & var);
+        SetVariable(Variable & var, OnChangeHandler handler = OnChangeHandler());
         
         void operator()(Variable const & value) const;
-        void onChange(OnChangeHandler handler);
 
         Variable & var_;
         OnChangeHandler handler_;
@@ -86,6 +89,8 @@ namespace detail {
         static ConstVariableAttributor<Variable> add(DirectoryNode & node, std::string const & name,
                                                      Variable & var);
     };
+
+#endif
 
 }}}
 

@@ -49,8 +49,9 @@ prefix_ Variable const & senf::console::detail::QueryVariable<Variable>::operato
 // senf::console::detail::SetVariable<Variable>
 
 template <class Variable>
-prefix_ senf::console::detail::SetVariable<Variable>::SetVariable(Variable & var)
-    : var_ (var)
+prefix_ senf::console::detail::SetVariable<Variable>::SetVariable(Variable & var,
+                                                                  OnChangeHandler handler)
+    : var_ (var), handler_ (handler)
 {}
 
 template <class Variable>
@@ -64,12 +65,6 @@ prefix_ void senf::console::detail::SetVariable<Variable>::operator()(Variable c
     }
     else
         var_ = value;
-}
-
-template <class Variable>
-prefix_ void senf::console::detail::SetVariable<Variable>::onChange(OnChangeHandler handler)
-{
-    handler_ = handler;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -118,6 +113,15 @@ senf::console::VariableAttributor<Variable>::typeName(std::string const & name)
 
 template <class Variable>
 prefix_ typename senf::console::VariableAttributor<Variable>
+senf::console::VariableAttributor<Variable>::onChange(OnChangeHandler handler)
+{
+    setOverload_.function( 
+        boost::bind(detail::SetVariable<Variable>(var_, handler),_2));
+    return *this;
+}
+
+template <class Variable>
+prefix_ typename senf::console::VariableAttributor<Variable>
 senf::console::VariableAttributor<Variable>::doc(std::string const & doc)
 {
     ConstVariableAttributor<Variable>::doc(doc);
@@ -135,8 +139,9 @@ senf::console::VariableAttributor<Variable>::formatter(Formatter formatter)
 template <class Variable>
 prefix_
 senf::console::VariableAttributor<Variable>::VariableAttributor(QueryOverload & queryOverload,
-                                                                SetOverload & setOverload)
-    : ConstVariableAttributor<Variable> (queryOverload), setOverload_ (setOverload)
+                                                                SetOverload & setOverload,
+                                                                Variable & var)
+    : ConstVariableAttributor<Variable> (queryOverload), setOverload_ (setOverload), var_ (var)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
@@ -156,7 +161,7 @@ senf::console::detail::VariableNodeCreator<Variable,isConst>::add(DirectoryNode 
         node.add(name, typename detail::QueryVariable<Variable>::Function(
                      detail::QueryVariable<Variable>(var))).overload() );
 
-    return VariableAttributor<Variable>(queryOverload, setOverload);
+    return VariableAttributor<Variable>(queryOverload, setOverload, var);
 }
 
 template <class Variable>

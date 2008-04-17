@@ -95,6 +95,8 @@ public:
     template <unsigned n>
     detail::ArgumentInfo<typename boost::mpl::at_c<arg_types, n>::type> & arg() const;
 
+    void function(Function fn);
+
 protected:
 
 private:
@@ -130,6 +132,8 @@ public:
     using ParsedCommandOverloadBase::arg;
     template <unsigned n>
     detail::ArgumentInfo<typename boost::mpl::at_c<arg_types, n>::type> & arg() const;
+
+    void function(Function fn);
 
 protected:
 
@@ -178,6 +182,14 @@ arg() const
 }
 
 template <class FunctionTraits, class ReturnValue>
+void
+senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION() >::
+function(Function fn)
+{
+    function_ = fn;
+}
+
+template <class FunctionTraits, class ReturnValue>
 prefix_
 senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION()>::
 ParsedCommandOverload(Function fn)
@@ -208,6 +220,14 @@ arg() const
 {
     return static_cast< detail::ArgumentInfo< 
         typename boost::mpl::at_c<arg_types, n>::type > & >(arg(n));
+}
+
+template <class FunctionTraits>
+void
+senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >::
+function(Function fn)
+{
+    function_ = fn;
 }
 
 template <class FunctionTraits>

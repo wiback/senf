@@ -46,6 +46,10 @@ namespace {
 
     void testFormatter(int value, std::ostream & os)
     { os << '[' << value << ']'; }
+
+    static bool changed_ (false);
+    void testCallback(int oldValue)
+    { changed_ = true; }
 }
 
 BOOST_AUTO_UNIT_TEST(variables)
@@ -62,10 +66,12 @@ BOOST_AUTO_UNIT_TEST(variables)
         .doc("Current blorg limit")
         .formatter(&testFormatter)
         .parser(&testParser)
-        .typeName("number");
+        .typeName("number")
+        .onChange(&testCallback);
     parser.parse("test/var; test/var 10; test/var",
                  boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 ));
     BOOST_CHECK_EQUAL( ss.str(), "[5]\n[0]\n" );
+    BOOST_CHECK( changed_ );
 
     ss.str("");
     dir("var").help(ss);
