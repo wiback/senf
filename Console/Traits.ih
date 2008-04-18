@@ -1,0 +1,96 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Traits internal header */
+
+#ifndef IH_Traits_
+#define IH_Traits_ 1
+
+// Custom includes
+#include <string>
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/stringize.hpp>
+#include <boost/bimap.hpp>
+#include <boost/assign/list_inserter.hpp>
+#include "../Utils/singleton.hh"
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+namespace console {
+namespace detail {
+
+    typedef boost::bimap<std::string, long> EnumTable;
+
+    long parseEnum(EnumTable const & table, ParseCommandInfo::TokensRange const & tokens);
+    std::string formatEnum(EnumTable const & table, long value);
+
+    template <class EnumType>
+    struct EnumTraits : public senf::singleton< EnumTraits<EnumType> >
+    {
+        using senf::singleton< EnumTraits<EnumType> >::instance;
+        EnumTable table;
+    };
+
+#   define SENF_CONSOLE_REGISTER_ENUM_ELT(r,d,e) (BOOST_PP_STRINGIZE(e), static_cast<long>(e))
+
+#   define SENF_CONSOLE_REGISTER_ENUM_(Type, Values)                                              \
+        void senf_console_init_enum_table(Type)                                                   \
+        {                                                                                         \
+            senf::console::detail::EnumTraits<Type> & traits (                                    \
+                senf::console::detail::EnumTraits<Type>::instance() );                            \
+            if (traits.table.empty())                                                             \
+                boost::assign::insert(traits.table)                                               \
+                    BOOST_PP_SEQ_FOR_EACH( SENF_CONSOLE_REGISTER_ENUM_ELT, _, Values );           \
+        }                                                                                         \
+        void senf_console_parse_argument(                                                         \
+            senf::console::ParseCommandInfo::TokensRange const & tokens, Type & out)              \
+        {                                                                                         \
+            senf_console_init_enum_table( Type() );                                               \
+            out = static_cast<Type>(                                                              \
+                senf::console::detail::parseEnum(                                                 \
+                    senf::console::detail::EnumTraits<Type>::instance().table, tokens));          \
+        }                                                                                         \
+        void senf_console_format_value(Type value, std::ostream & os)                             \
+        {                                                                                         \
+            senf_console_init_enum_table( Type() );                                               \
+            os << senf::console::detail::formatEnum(                                              \
+                senf::console::detail::EnumTraits<Type>::instance().table,                        \
+                static_cast<long>(value) );                                                       \
+        }
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

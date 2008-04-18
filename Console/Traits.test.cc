@@ -28,6 +28,10 @@
 
 // Custom includes
 #include "Traits.hh"
+#include "ParsedCommand.hh"
+#include "Executor.hh"
+#include "Parse.hh"
+#include "ScopedDirectory.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -35,8 +39,45 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(parseParameter)
-{}
+namespace {
+    enum TestEnum { Foo, Bar };
+    SENF_CONSOLE_REGISTER_ENUM( TestEnum, (Foo)(Bar) );
+
+    TestEnum test (TestEnum value) { return value; }
+}
+
+BOOST_AUTO_UNIT_TEST(enumSupport)
+{
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+
+    dir.add("test",&test);
+    
+    std::stringstream ss;
+    BOOST_CHECK_NO_THROW(
+        parser.parse("test/test Foo",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "Foo\n" );
+
+    ss.str("");
+    BOOST_CHECK_NO_THROW(
+        parser.parse("test/test Bar",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "Bar\n" );
+
+    BOOST_CHECK_THROW(
+        parser.parse("test/test (Foo Bar)",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
+        senf::console::SyntaxErrorException );
+
+    BOOST_CHECK_THROW(
+        parser.parse("test/test Baz",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
+        senf::console::SyntaxErrorException );
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

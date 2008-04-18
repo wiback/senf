@@ -33,6 +33,7 @@
 #include "Parse.hh"
 #include "Node.hh"
 
+#include "Traits.ih"
 //#include "Traits.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -56,6 +57,9 @@ namespace console {
         static void format(Type const & value, std::ostream & os);
                                         ///< Write \a value to \a os
     };
+    
+    template <class Type>
+    void senf_console_format_value(Type const & value, std::ostream & os);
 
     /** \brief Customize argument parsing
         
@@ -91,9 +95,15 @@ namespace console {
         static std::string str(Type const & value); ///< Stringify value
                                         /**< To show default values in the online help, this
                                              function converts a value back into a one-line string
-                                             representation. */
+                                             representation. The default implementation uses the
+                                             ReturnValueTraits for this conversion. */
     };
-    
+
+    template <class Type>
+    void senf_console_parse_argument(ParseCommandInfo::TokensRange const & tokens, Type & out);
+
+#   define SENF_CONSOLE_REGISTER_ENUM(Type, Values) SENF_CONSOLE_REGISTER_ENUM_(Type, Values)
+
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

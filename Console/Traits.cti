@@ -23,9 +23,11 @@
 /** \file
     \brief Traits inline template implementation */
 
-//#include "Traits.ih"
+#include "Traits.ih"
 
 // Custom includes
+#include <sstream>
+#include <boost/lexical_cast.hpp>
 #include "../Utils/TypeInfo.hh"
 
 #define prefix_ inline
@@ -38,6 +40,12 @@ template <class Type>
 prefix_ void senf::console::ReturnValueTraits<Type>::format(Type const & value,
                                                             std::ostream & os)
 {
+    senf_console_format_value(value, os);
+}
+
+template <class Type>
+prefix_ void senf::console::senf_console_format_value(Type const & value, std::ostream & os)
+{
     os << value;
 }
 
@@ -47,6 +55,14 @@ prefix_ void senf::console::ReturnValueTraits<Type>::format(Type const & value,
 template <class Type>
 prefix_ void senf::console::ArgumentTraits<Type>::
 parse(ParseCommandInfo::TokensRange const & tokens, Type & out)
+{
+    senf_console_parse_argument(tokens,out);
+}
+
+template <class Type>
+prefix_ void
+senf::console::senf_console_parse_argument(ParseCommandInfo::TokensRange const & tokens,
+                                           Type & out)
 {
     if (tokens.size() != 1)
         throw SyntaxErrorException("parameter syntax error");
@@ -70,7 +86,9 @@ prefix_ std::string senf::console::ArgumentTraits<Type>::description()
 template <class Type>
 prefix_ std::string senf::console::ArgumentTraits<Type>::str(Type const & value)
 {
-    return boost::lexical_cast<std::string>(value);
+    std::stringstream ss;
+    senf::console::ReturnValueTraits<Type>::format(value, ss);
+    return ss.str();
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////
