@@ -41,7 +41,7 @@ prefix_ long senf::console::detail::parseEnum(EnumTable const & table,
 
     EnumTable::left_map::const_iterator i (table.left.find(tokens.begin()[0].value()));
     if (i == table.left.end())
-        throw SyntaxErrorException("parameter syntax error: Invalid enum value");
+        throw SyntaxErrorException("parameter syntax error: invalid enum value");
     return i->second;
 }
 

@@ -30,6 +30,7 @@
 #include <string>
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/stringize.hpp>
+#include <boost/preprocessor/facilities/empty.hpp>
 #include <boost/bimap.hpp>
 #include <boost/assign/list_inserter.hpp>
 #include "../Utils/singleton.hh"
@@ -39,6 +40,8 @@
 namespace senf {
 namespace console {
 namespace detail {
+
+#ifndef DOXYGEN
 
     typedef boost::bimap<std::string, long> EnumTable;
 
@@ -52,32 +55,35 @@ namespace detail {
         EnumTable table;
     };
 
-#   define SENF_CONSOLE_REGISTER_ENUM_ELT(r,d,e) (BOOST_PP_STRINGIZE(e), static_cast<long>(e))
+#   define SENF_CONSOLE_REGISTER_ENUM_ELT(r,d,e) \
+        (BOOST_PP_STRINGIZE(e), static_cast<long>(d e))
 
-#   define SENF_CONSOLE_REGISTER_ENUM_(Type, Values)                                              \
-        void senf_console_init_enum_table(Type)                                                   \
+#   define SENF_CONSOLE_REGISTER_ENUM_(Prefix, Type, Values)                                      \
+        void senf_console_init_enum_table(Prefix Type)                                            \
         {                                                                                         \
-            senf::console::detail::EnumTraits<Type> & traits (                                    \
-                senf::console::detail::EnumTraits<Type>::instance() );                            \
+            senf::console::detail::EnumTraits<Prefix Type> & traits (                             \
+                senf::console::detail::EnumTraits<Prefix Type>::instance() );                     \
             if (traits.table.empty())                                                             \
                 boost::assign::insert(traits.table)                                               \
-                    BOOST_PP_SEQ_FOR_EACH( SENF_CONSOLE_REGISTER_ENUM_ELT, _, Values );           \
+                    BOOST_PP_SEQ_FOR_EACH( SENF_CONSOLE_REGISTER_ENUM_ELT, Prefix, Values );      \
         }                                                                                         \
         void senf_console_parse_argument(                                                         \
-            senf::console::ParseCommandInfo::TokensRange const & tokens, Type & out)              \
+            senf::console::ParseCommandInfo::TokensRange const & tokens, Prefix Type & out)       \
         {                                                                                         \
-            senf_console_init_enum_table( Type() );                                               \
-            out = static_cast<Type>(                                                              \
+            senf_console_init_enum_table( Prefix Type() );                                        \
+            out = static_cast<Prefix Type>(                                                       \
                 senf::console::detail::parseEnum(                                                 \
-                    senf::console::detail::EnumTraits<Type>::instance().table, tokens));          \
+                    senf::console::detail::EnumTraits<Prefix Type>::instance().table, tokens));   \
         }                                                                                         \
-        void senf_console_format_value(Type value, std::ostream & os)                             \
+        void senf_console_format_value(Prefix Type value, std::ostream & os)                      \
         {                                                                                         \
-            senf_console_init_enum_table( Type() );                                               \
+            senf_console_init_enum_table( Prefix Type() );                                        \
             os << senf::console::detail::formatEnum(                                              \
-                senf::console::detail::EnumTraits<Type>::instance().table,                        \
+                senf::console::detail::EnumTraits<Prefix Type>::instance().table,                 \
                 static_cast<long>(value) );                                                       \
         }
+
+#endif
 
 }}}
 

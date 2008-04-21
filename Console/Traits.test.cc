@@ -44,6 +44,13 @@ namespace {
     SENF_CONSOLE_REGISTER_ENUM( TestEnum, (Foo)(Bar) );
 
     TestEnum test (TestEnum value) { return value; }
+
+    struct TestClass {
+        enum MemberEnum { MemberFoo, MemberBar };
+        static MemberEnum test (MemberEnum value) { return value; }
+    };
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER( TestClass, MemberEnum, (MemberFoo)(MemberBar) );
+    
 }
 
 BOOST_AUTO_UNIT_TEST(enumSupport)
@@ -76,6 +83,20 @@ BOOST_AUTO_UNIT_TEST(enumSupport)
         parser.parse("test/test Baz",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )),
         senf::console::SyntaxErrorException );
+
+    dir.add("member", &TestClass::test);
+
+    ss.str("");
+    BOOST_CHECK_NO_THROW(
+        parser.parse("test/member MemberFoo",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "MemberFoo\n" );
+
+    ss.str("");
+    BOOST_CHECK_NO_THROW(
+        parser.parse("test/member MemberBar",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "MemberBar\n" );
 }
 
 

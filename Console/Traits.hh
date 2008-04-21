@@ -43,9 +43,12 @@ namespace console {
     /** \brief Customize return value formating
 
         ReturnValueTraits provides return value formatting. The default implementation provided here
-        will just write the value to the output stream. 
+        will forward the call directly to senf_console_format_value(). The default implementation of
+        that function will write the \a value to \a os using standard iostream formatting.
 
-        To customize this behavior for some type, specialize this class for the type.
+        To customize this behavior for some type, either provide an implementation of
+        senf_console_format_value() in the types namespace or provide a specialization of
+        ReturnValueTraits.
 
         The output should \e not end in a newline since one is added automatically.
      */
@@ -57,7 +60,13 @@ namespace console {
         static void format(Type const & value, std::ostream & os);
                                         ///< Write \a value to \a os
     };
-    
+
+    /** \brief Return value formatter
+
+        \see ReturnValuetraits
+
+        \related ReturnValueTraits
+     */
     template <class Type>
     void senf_console_format_value(Type const & value, std::ostream & os);
 
@@ -67,12 +76,18 @@ namespace console {
         string-description of a type and to convert a value back into it's string representation
         used to display default values.
         
-        The default implementation provided here will use \c boost::lexical_cast and thereby \c
-        iostreams to convert an argument consisting of a single input token into the required
-        type. Types are named by returning the last component of the fully scoped name (e.g. \c
-        "string" for \c std::string). Values are formatted again using \c boost::lexical_cast.
+        The default implementation provided here 
+        \li will use senf_console_parse_argument() to parse a value. This functions default
+            implementation uses \c boost::lexical_cast and thereby \c iostreams to convert an
+            argument consisting of a single input token into the required type.
+        \li will name types by returning the last component of the fully scoped name (e.g. \c
+            "string" for \c std::string). 
+        \li Will format values (for default value display) by forwarding the value to the
+            ReturnValueTraits of that type.
 
-        To customize this behavior for some type, specialize this class for the type.
+        To customize just the argument parsing, just provide an implementation of
+        senf_console_parse_argument(). Alternatively or to customize type naming or default value
+        formatting, specialize ArgumentTraits  for the type.
      */
     template <class Type>
     struct ArgumentTraits
@@ -99,10 +114,47 @@ namespace console {
                                              ReturnValueTraits for this conversion. */
     };
 
+    /** \brief Argument parser
+
+        \see ArgumentTraits
+
+        \related ArgumentTraits
+     */
     template <class Type>
     void senf_console_parse_argument(ParseCommandInfo::TokensRange const & tokens, Type & out);
 
-#   define SENF_CONSOLE_REGISTER_ENUM(Type, Values) SENF_CONSOLE_REGISTER_ENUM_(Type, Values)
+    /** \brief Register enum type for argument parsing
+
+        Enum types need to be registered explicitly to support parsing. 
+        \code
+        enum Foo { Foo1, Foo2 };
+        SENF_CONSOLE_REGISTER_ENUM( Foo, (Foo1)(Foo2) );
+        \endcode
+        This macro will register an enum type and it's enumerators defined at namespace scope. See
+        \ref SENF_CONSOLE_REGISTER_ENUM_MEMBER to register a member enum type.
+
+        \ingroup console_commands
+     */
+#   define SENF_CONSOLE_REGISTER_ENUM(Type, Values) \
+        SENF_CONSOLE_REGISTER_ENUM_(BOOST_PP_EMPTY(), Type, Values)
+
+    /** \brief Register enum type for argument parsing
+
+        Enum types need to be registered explicitly to support parsing. 
+        \code
+        class SomeClass
+        {
+            enum Foo { Foo1, Foo2 };
+        };
+
+        SENF_CONSOLE_REGISTER_ENUM_MEMBER( SomeClass, Foo, (Foo1)(Foo2) );
+        \endcode This macro will register an enum type and it's enumerators defined in a class. See
+        \ref SENF_CONSOLE_REGISTER_ENUM to register an enum type declared at namespace scope.
+
+        \ingroup console_commands
+     */
+#   define SENF_CONSOLE_REGISTER_ENUM_MEMBER(Class, Type, Values) \
+        SENF_CONSOLE_REGISTER_ENUM_(Class::, Type, Values)
 
 }}
 

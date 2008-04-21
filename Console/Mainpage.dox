@@ -108,7 +108,7 @@
     \see \ref node_tree
 
 
-    \section intro_commands Console/config commands
+    \section intro_commands Registering console/config commands
 
     The console/config language does not define, how arguments are passed to the commands, it just
     tokenizes the input and passes the tokens to the commands which then handle the
@@ -203,7 +203,7 @@
         if (command.arguments().size() != 1) 
             raise senf::console::SyntaxErrorException("invalid number of arguments");
 
-        senf::console::ParseCommandInfo::TokenRange & argTokens (
+        senf::console::ParseCommandInfo::TokensRange & argTokens (
             command.arguments()[0]);
 
         // The argument must have exactly one token
@@ -303,7 +303,7 @@
 
     Commands may have an optional first argument of type <tt>std::ostream &</tt>. This argument is
     not considered part of the real interface. When the command is executed, the callback will be
-    passed the current console's output stream object in this argument. With this, the callback can
+    passed the current consoles output stream object in this argument. With this, the callback can
     output arbitrary messages to the network console.
     \code
     void fun3(std::ostream & os, unsigned n, std::string text)
@@ -700,7 +700,7 @@
     <tr><td style="width:14em">\link senf::console::VariableAttributor::doc() .doc\endlink
     ( \e doc )</td><td>Set variable documentation</td></tr>
     
-    <tr><td>\link senf::console::VariableAttributor::onChange() .onchange\endlink
+    <tr><td>\link senf::console::VariableAttributor::onChange() .onChange\endlink
     ( \e handler )</td><td>Set change handler</td></tr>
     
     </table>
@@ -729,7 +729,146 @@
     After this setup, \c varChanged will be called, whenever the value has changed.
 
 
-    \see senf::console::VariableAttributor for the complete attribute interface
+    \section console_args Registering special argument types
+
+    By default, argument types which can be read and written using \c iostreams are automatically
+    supported. Other types need to be registered explicitly
+
+
+    \subsection console_args_enum Registering enum types
+
+    Enum types are a special case, since it is not possible, to find a string representation for the
+    enumerator values automatically. Therefore, enum types need to be registered manually.
+    \code
+    enum MyEnum { Sit, Run, Jump };
+    SENF_CONSOLE_REGISTER_ENUM( MyEnum, (Sit)(Run)(Jump) );
+
+    MyEnum fun4(MyEnum v) { return v }
+
+    senf::console::root()
+        .add("test9", &fun4);
+    \endcode
+
+    After an enum type is registered, it can be used like any other type for arguments or
+    return-values:
+
+    \htmlonly
+    <pre>
+    server:/$ test9 Sit
+    Sit
+    server:/$ test9 Crawl
+    argument syntax error: invalid enum value
+    server:/$ help test9
+    Usage:
+        test9 arg11:MyEnum
+    server:/$
+    </pre>
+    \endhtmlonly
+
+    \ref SENF_CONSOLE_REGISTER_ENUM() can only be used, to register enums at namespace scope. To
+    register enums defined within some class, use \ref SENF_CONSOLE_REGISTER_ENUM_MEMBER()
+
+    \code
+    class Test3
+    {
+    public:
+        enum Color { Red, Green, Blue };
+    
+        senf::console::ScopedDirectory<MyClass> dir;
+
+        Test3();
+
+        Color mem3(Color c) { return c }
+    };
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER( Test3, Color, (Red)(Green)(Blue) );
+
+    Test3::Test3() : dir(this)
+        { dir.add("test", &MyClass::mem3); }
+    
+    Test3 test3ob;
+    senf::console::root().add("test3ob", test3ob.dir);
+    \endcode
+
+    Using this command/type is identical
+    \htmlonly
+    <pre>
+    server:/$ test3ob/test Red
+    Red
+    server:/$ test3ob/test White
+    argument syntax error: invalid enum value
+    server:/$ help test3ob/test
+    Usage:
+        test arg11:Color
+    </pre>
+    \endhtmlonly
+
+
+    \subsection console_args_custom Customizing argument and return value parsing/formatting
+
+    To support or customize parsing/formatting of other types, they need to be registered. In it's
+    simplest case, this works, by just providing an appropriate overload for
+    senf_console_parse_argument() and senf_console_format_value():
+    \code
+    struct Coordinate
+    {
+        Coordinate() : x(0), y(0) {}
+        Coordinate(int x_, int y_) : x(x_), y(y_) {}
+
+        int x, y;
+    }
+
+    void senf_console_parse_argument(senf::console::ParseCommandInfo::TokensRange const & tokens,
+                                     MyClass & out)
+    {
+        if (tokens.size() != 2)
+            throw SyntaxErrorException("parameter syntax error");
+        senf::console::ArgumentTraits<int>::parse(
+            senf::console::ParseCommandInfo::TokensRange( tokens.begin(), tokens.begin()+1 ),
+            out.x )
+        senf::console::ArgumentTraits<int>::parse(
+            senf::console::ParseCommandInfo::TokensRange( tokens.begin()+1, tokens.end() ),
+            out.y )
+    }
+
+    void senf_console_format_value(Coordinate const & value, std::ostream & os)
+    {
+        os << '(' << value.x << ' ' << value.y << ')';
+    }
+    \endcode
+    The parser will accept an argument with two tokens which are each forwarded to the integer
+    parser. The formatter writes out the value as a parenthesized pair.
+
+    \code
+    Coordinate fun5(Coordinate const & p) { return Coordinate(2*p.x, 2*p.y) }
+    
+    namespace kw = senf::console::kw;
+
+    senf::console::root()
+        .add("test10", &fun5)
+        .arg("x","coordinate to double",
+             kw::default_value = Coordinate())
+    \endcode
+    We can now call \c test10 with a coordinate argument:
+    \htmlonly
+    <pre>
+    server:/$ test10 (2 7)
+    (4 14)
+    server:/$ help test10
+    Usage:
+        test10 [x:Coordinate]
+
+    With:
+        x         Coordinate to double
+            default: (0 0)
+    server:/$
+    </pre>
+    \endhtmlonly
+    
+    If you want to customize the formatting of default values differently from the formating of
+    return-values or if you want to change the displayed name of a type, you will need to specialize
+    the senf::console::ArgumentTraits class instead of implementing
+    senf_console_parse_argument(). See senf::console::ArgumentTraits and
+    senf::console::ReturnValueTraits for more.
  */
 
 
