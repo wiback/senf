@@ -45,6 +45,81 @@ prefix_ void senf::console::Server::name(std::string const & name)
     name_ = name;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ClientReader
+
+prefix_ senf::console::detail::ClientReader::~ClientReader()
+{}
+
+prefix_ senf::console::Client & senf::console::detail::ClientReader::client()
+    const
+{
+    return client_;
+}
+
+prefix_ std::string senf::console::detail::ClientReader::promptString()
+    const
+{
+    return client().promptString();
+}
+
+prefix_ senf::console::detail::ClientReader::ClientHandle senf::console::detail::ClientReader::handle()
+    const
+{
+    return client().handle();
+}
+
+prefix_ senf::console::detail::ClientReader::OutputStream & senf::console::detail::ClientReader::stream()
+    const
+{
+    return client().stream();
+}
+
+prefix_ void senf::console::detail::ClientReader::stopClient()
+{
+    client().stop();
+}
+
+prefix_ void senf::console::detail::ClientReader::handleInput(std::string const & input)
+    const
+{
+    client().handleInput(input);
+}
+
+prefix_ void senf::console::detail::ClientReader::disablePrompt()
+{
+    v_disablePrompt();
+}
+
+prefix_ void senf::console::detail::ClientReader::enablePrompt()
+{
+    v_enablePrompt();
+}
+
+prefix_ senf::console::detail::ClientReader::ClientReader(Client & client)
+    : client_ (client)
+{}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::Client
+
+prefix_ std::string senf::console::Client::promptString()
+    const
+{
+    return name_ + ":" + executor_.cwd().path() + "$ ";
+}
+
+prefix_ senf::console::Client::ClientHandle senf::console::Client::handle()
+    const
+{
+    return handle_;
+}
+
+prefix_ senf::console::detail::NonblockingSocketOStream & senf::console::Client::stream()
+{
+    return out_t::member;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

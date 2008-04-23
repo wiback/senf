@@ -71,6 +71,7 @@ void shutdownServer()
 
 int main(int, char **)
 {
+    ::signal(SIGPIPE, SIG_IGN);
     senf::log::ConsoleTarget::instance().route< senf::SenfLog, senf::log::NOTICE >();
 
     senf::console::root()

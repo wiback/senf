@@ -34,6 +34,10 @@
 
 namespace senf {
 namespace console {
+
+    class Server;
+    class Client;
+
 namespace detail {
 
     /** \brief Internal: Nonblocking boost::iostreams::sink
@@ -58,6 +62,67 @@ namespace detail {
 
     typedef boost::iostreams::stream<NonblockingSocketSink> NonblockingSocketOStream;
 
+    typedef senf::ServerSocketHandle<
+        senf::MakeSocketPolicy< senf::TCPv4SocketProtocol::Policy, 
+                                senf::UnspecifiedAddressingPolicy>::policy > ServerHandle;
+
+    /** \brief Internal: Generic client interface
+
+        The ClientReader encapsulates the interaction of a single network client with the user: It
+        manages prompt display and reading an interactive command.
+     */
+    class ClientReader
+    {
+    public:
+        typedef ServerHandle::ClientSocketHandle ClientHandle;
+        typedef NonblockingSocketOStream OutputStream;
+
+        virtual ~ClientReader() = 0;
+
+        Client & client() const;
+        std::string promptString() const;
+        ClientHandle handle() const;
+        OutputStream & stream() const;
+        void stopClient();
+        
+        void handleInput(std::string const & input) const;
+
+        void disablePrompt();
+        void enablePrompt();
+
+    protected:
+        ClientReader(Client & client);
+
+    private:
+        virtual void v_disablePrompt() = 0;
+        virtual void v_enablePrompt() = 0;
+
+        Client & client_;
+    };
+
+    /** \brief Internal: Primitive ClientReader implementation
+        
+        This implementation uses the cooked telnet mode to read lines from the console. It does not
+        support explicit line editing or any other advanced features.
+     */
+    class DumbClientReader
+        : public ClientReader
+    {
+    public:
+        DumbClientReader(Client & client);
+
+    private:
+        virtual void v_disablePrompt();
+        virtual void v_enablePrompt();
+
+        void clientData(senf::ReadHelper<ClientHandle>::ptr helper);
+        void showPrompt();
+
+        std::string tail_;
+        unsigned promptLen_;
+        bool promptActive_;
+    };
+    
 }}}
 
 ///////////////////////////////ih.e////////////////////////////////////////

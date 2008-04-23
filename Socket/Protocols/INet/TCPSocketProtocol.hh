@@ -59,6 +59,9 @@ namespace senf {
         unsigned siocinq() const;       ///< Return current size of the input queue
         unsigned siocoutq() const;      ///< Return current size of the output queue
 
+        enum ShutType { ShutRD, ShutWR, ShutRDWR };
+        void shutdown(ShutType type) const;
+
         ///\name Abstract Interface Implementation
         ///@{
 

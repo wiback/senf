@@ -75,6 +75,13 @@ prefix_ unsigned senf::TCPSocketProtocol::siocoutq()
     return n;
 }
 
+prefix_ void senf::TCPSocketProtocol::shutdown(ShutType type)
+    const
+{
+    if (::shutdown(fd(), type) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("");
+}
+
 prefix_ unsigned senf::TCPSocketProtocol::available()
     const
 {

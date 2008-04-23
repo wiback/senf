@@ -76,10 +76,8 @@ namespace console {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-
-        typedef senf::ServerSocketHandle<
-            senf::MakeSocketPolicy< senf::TCPv4SocketProtocol::Policy, 
-                                    senf::UnspecifiedAddressingPolicy>::policy > ServerHandle;
+        
+        typedef detail::ServerHandle ServerHandle;
 
         ~Server();
 
@@ -128,12 +126,13 @@ namespace console {
 
         SENF_LOG_CLASS_AREA();
         SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
+
     public:
         typedef Server::ServerHandle::ClientSocketHandle ClientHandle;
 
         ~Client();
 
-        void stopClient();              ///< Stop the client
+        void stop();                    ///< Stop the client
                                         /**< This will close the client socket. */
 
     protected:
@@ -141,8 +140,11 @@ namespace console {
     private:
         Client(Server & server, ClientHandle handle, std::string const & name);
 
-        void clientData(ReadHelper<ClientHandle>::ptr helper);
-        void showPrompt();
+        std::string promptString() const;
+        ClientHandle handle() const;
+        detail::NonblockingSocketOStream & stream();
+
+        void handleInput(std::string input);
 
         virtual void v_write(boost::posix_time::ptime timestamp, std::string const & stream, 
                              std::string const & area, unsigned level, 
@@ -150,14 +152,14 @@ namespace console {
         
         Server & server_;
         ClientHandle handle_;
-        std::string tail_;
         CommandParser parser_;
         Executor executor_;
         std::string name_;
-        unsigned promptLen_;
         std::string lastCommand_;
+        boost::scoped_ptr<detail::ClientReader> reader_;
 
         friend class Server;
+        friend class detail::ClientReader;
     };
 
 }}

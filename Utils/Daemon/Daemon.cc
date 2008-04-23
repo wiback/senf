@@ -541,6 +541,9 @@ prefix_ void senf::Daemon::installSighandlers()
 
     ::sigaction(SIGHUP,   &sa, NULL);
 
+    sa.sa_handler = SIG_IGN;
+    ::sigaction(SIGPIPE, &sa, NULL);
+
 #ifdef SENF_DEBUG
     sa.sa_sigaction = &fatalSignalsHandler;
     sa.sa_flags = SA_RESTART | SA_SIGINFO;

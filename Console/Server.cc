@@ -126,41 +126,85 @@ prefix_ void senf::console::Server::removeClient(Client & client)
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::DumbClientReader
+
+prefix_ senf::console::detail::DumbClientReader::DumbClientReader(Client & client)
+    : ClientReader(client), promptLen_ (0), promptActive_ (false)
+{
+    showPrompt();
+    ReadHelper<ClientHandle>::dispatch( handle(), 16384u, ReadUntil("\n"),
+                                        senf::membind(&DumbClientReader::clientData, this) );
+}
+
+prefix_ void
+senf::console::detail::DumbClientReader::clientData(senf::ReadHelper<ClientHandle>::ptr helper)
+{
+    if (helper->error() || handle().eof()) {
+        // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
+        stopClient();
+        return;
+    }
+    
+    promptLen_ = 0;
+    promptActive_ = false;
+
+    std::string data (tail_ + helper->data());
+    tail_ = helper->tail();
+    boost::trim(data);                  // Gets rid of superfluous  \r or \n characters
+    handleInput(data);
+
+    showPrompt();
+    ReadHelper<ClientHandle>::dispatch( handle(), 16384u, ReadUntil("\n"),
+                                        senf::membind(&DumbClientReader::clientData, this) );
+
+}
+
+prefix_ void senf::console::detail::DumbClientReader::showPrompt()
+{
+    std::string prompt (promptString());
+
+    stream() << prompt << std::flush;
+    promptLen_ = prompt.size();
+    promptActive_ = true;
+}
+
+prefix_ void senf::console::detail::DumbClientReader::v_disablePrompt()
+{
+    if (promptActive_ && promptLen_ > 0) {
+        stream() << '\r' << std::string(' ', promptLen_) << '\r';
+        promptLen_ = 0;
+    }
+}
+
+prefix_ void senf::console::detail::DumbClientReader::v_enablePrompt()
+{
+    if (promptActive_ && ! promptLen_)
+        showPrompt();
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::Client
 
 prefix_ senf::console::Client::Client(Server & server, ClientHandle handle,
                                       std::string const & name)
     : out_t(handle), senf::log::IOStreamTarget(out_t::member), server_ (server),
-      handle_ (handle), name_ (name), promptLen_(0) 
+      handle_ (handle), name_ (name), reader_ (0)
 {
-    showPrompt();
-    ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
-                                        senf::membind(&Client::clientData, this) );
+    reader_.reset( new detail::DumbClientReader (*this) );
     route< senf::SenfLog, senf::log::NOTICE >();
 }
 
 prefix_ senf::console::Client::~Client()
 {}
 
-prefix_ void senf::console::Client::stopClient()
+prefix_ void senf::console::Client::stop()
 {
     // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER removeClient RETURNS
     server_.removeClient(*this);
 }
 
-prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr helper)
+prefix_ void senf::console::Client::handleInput(std::string data)
 {
-    promptLen_ = 0;
-    if (helper->error() || handle_.eof()) {
-        // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
-        stopClient();
-        return;
-    }
-
-    std::string data (tail_ + helper->data());
-    tail_ = helper->tail();
-    boost::trim(data); // Gets rid of superfluous  \r or \n characters
-
     if (data.empty())
         data = lastCommand_;
     else
@@ -168,32 +212,24 @@ prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr hel
 
     try {
         if (! parser_.parse(data, boost::bind<void>( boost::ref(executor_),
-                                                     boost::ref(out_t::member),
+                                                     boost::ref(stream()),
                                                      _1 )) )
-            out_t::member << "syntax error" << std::endl;
+            stream() << "syntax error" << std::endl;
     }
     catch (Executor::ExitException &) {
-        // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER stopClient RETURNS
-        stopClient();
+        // This generates an EOF condition on the Handle. This EOF condition is expected
+        // to be handled gracefully by the ClientReader. We cannot call stop() here, since we
+        // are called from the client reader callback and that will continue executing even if we
+        // call stop here ...
+        handle_.facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD);
         return;
     }
     catch (std::exception & ex) {
-        out_t::member << ex.what() << std::endl;
+        stream() << ex.what() << std::endl;
     }
     catch (...) {
-        out_t::member << "unidentified error (unknown exception thrown)" << std::endl;
+        stream() << "unidentified error (unknown exception thrown)" << std::endl;
     }
-
-    showPrompt();
-    ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
-                                        senf::membind(&Client::clientData, this) );
-}
-
-prefix_ void senf::console::Client::showPrompt()
-{
-    std::string path (executor_.cwd().path());
-    out_t::member << name_ << ":" << path << "# " << std::flush;
-    promptLen_ = name_.size() + 1 + path.size() + 1;
 }
 
 prefix_ void senf::console::Client::v_write(boost::posix_time::ptime timestamp,
@@ -201,11 +237,9 @@ prefix_ void senf::console::Client::v_write(boost::posix_time::ptime timestamp,
                                             std::string const & area, unsigned level,
                                             std::string const & message)
 {
-    if (promptLen_)
-        out_t::member << '\r' << std::string(' ', promptLen_) << '\r';
+    reader_->disablePrompt();
     IOStreamTarget::v_write(timestamp, stream, area, level, message);
-    if (promptLen_)
-        showPrompt();
+    reader_->enablePrompt();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
