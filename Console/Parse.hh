@@ -239,6 +239,14 @@ namespace console {
         \li the arguments. Every argument consists of a range of ArgumentToken instances.
 
         \ingroup console_parser
+
+        \todo Completely change the 'arguments()' member implementation: let the parser just
+            generate a flat list of tokens and implement an 'argument iterator' with the following
+            features: 1. return argument ranges, automatically detecting paranthesis 2. trying to
+            increment the iterator beyond it's range just throws an argument syntax error. For this
+            to work, the parser needs to not drop the outermost '()' pair 3. detect bad paranthesis
+            (should not be necessary since the parser already does this). This allows to use this
+            same iterator to parse nested complex arguments.
       */
     class ParseCommandInfo
     {

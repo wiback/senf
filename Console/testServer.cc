@@ -21,61 +21,55 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief test non-inline non-template implementation */
-
-//#include "test.hh"
-//#include "test.ih"
+    \brief testServer implementation */
 
 // Custom includes
 #include <iostream>
-#include "Server.hh"
-#include "Node.hh"
-#include "ScopedDirectory.hh"
-#include "../Scheduler/Scheduler.hh"
-#include "../Utils/Logger/SenfLog.hh"
+#include <senf/Console.hh>
+#include <senf/Scheduler/Scheduler.hh>
 
-//#include "test.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+namespace kw = senf::console::kw;
 
-namespace {
-    
-    void fn(std::ostream & output, senf::console::ParseCommandInfo const & command) {
-        typedef senf::console::ParseCommandInfo::ArgumentsRange::iterator iterator;
-        iterator i (command.arguments().begin());
-        iterator i_end (command.arguments().end());
-        for (; i != i_end; ++i) {
-            iterator::value_type::iterator j (i->begin());
-            iterator::value_type::iterator j_end (i->end());
-            for (; j != j_end; ++j) 
-                output << j->value() << ' ';
-        }
-        output << "\n";
+void echo(std::ostream & output, senf::console::ParseCommandInfo const & command)
+{
+    typedef senf::console::ParseCommandInfo::ArgumentsRange::iterator iterator;
+    iterator i (command.arguments().begin());
+    iterator i_end (command.arguments().end());
+    for (; i != i_end; ++i) {
+        iterator::value_type::iterator j (i->begin());
+        iterator::value_type::iterator j_end (i->end());
+        for (; j != j_end; ++j) 
+            output << j->value() << ' ';
     }
-
-    struct TestObject
-    {
-        senf::console::ScopedDirectory<TestObject> dir;
-
-        TestObject() : dir(this) {
-            dir.add("blub", &TestObject::blub)
-                .doc("Example of a member function");
-        }
-        
-        void blub(std::ostream & output, senf::console::ParseCommandInfo const &) {
-            output << "blub\n";
-        }
-    };
-
-    void shutdownServer(std::ostream &, senf::console::ParseCommandInfo const &)
-    {
-        senf::Scheduler::instance().terminate();
-        throw senf::console::Executor::ExitException();
-    }
-
+    output << "\n";
 }
 
-int main(int, char const **)
+struct TestObject
+{
+    senf::console::ScopedDirectory<TestObject> dir;
+
+    TestObject() 
+        : dir(this) 
+        {
+            dir.add("vat", &TestObject::vat)
+                .arg("vat", "VAT in %", kw::default_value = 19)
+                .arg("amount", "Amount including VAT")
+                .doc("Returns the amount of {vat}-% VAT included in {amount}");
+        }
+
+    double vat (int vat, double amount) 
+        {
+            return amount * vat/(100.0+vat);
+        }
+};
+
+void shutdownServer()
+{
+    senf::Scheduler::instance().terminate();
+    throw senf::console::Executor::ExitException();
+}
+
+int main(int, char **)
 {
     senf::log::ConsoleTarget::instance().route< senf::SenfLog, senf::log::NOTICE >();
 
@@ -93,23 +87,19 @@ int main(int, char const **)
         .add("shutdown", &shutdownServer)
         .doc("Terminate server application");
     senf::console::root()["network"]
-        .add("route", &fn)
-        .doc("Example of a directly registered function");
+        .add("echo", &echo)
+        .doc("Example of a function utilizing manual argument parsing");
 
     TestObject test;
     senf::console::root()
         .add("testob", test.dir)
         .doc("Example of an instance directory");
 
-    senf::console::Server::start( senf::INet4SocketAddress("0.0.0.0:23232") )
+    senf::console::Server::start( senf::INet4SocketAddress(23232) )
         .name("testServer");
 
     senf::Scheduler::instance().process();
 }
-
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
-//#include "test.mpp"
 
 
 // Local Variables:

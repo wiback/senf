@@ -63,6 +63,10 @@ namespace console {
             our own little host-name cache. When the name is not found, we ask the resolver to
             resolve it and call 'resume' when the name is found. Since it is in the cache now, the
             command will now complete.
+        
+        \implementation We do \e not provide an \c instance() member so we can easily later extend
+            the server to allow registering more than one instance, e.g. with each instance on a
+            differently firewalled port and with different security restrictions.
       */
     class Server
         : boost::noncopyable
@@ -83,8 +87,6 @@ namespace console {
                                         ///< Start server on given IPv4 address/port
         static Server & start(senf::INet6SocketAddress const & address);
                                         ///< Start server on given IPv6 address/port
-        static Server & instance();
-
         void name(std::string const & name); ///< Set server name
                                         /**< This information is used in the prompt string. */
 
@@ -93,7 +95,7 @@ namespace console {
     private:
         Server(ServerHandle handle);
 
-        static void start(ServerHandle handle);
+        static Server & start(ServerHandle handle);
         static boost::scoped_ptr<Server> & instancePtr();
 
         void newClient(Scheduler::EventId event);
@@ -137,7 +139,7 @@ namespace console {
     protected:
         
     private:
-        Client(ClientHandle handle, std::string const & name);
+        Client(Server & server, ClientHandle handle, std::string const & name);
 
         void clientData(ReadHelper<ClientHandle>::ptr helper);
         void showPrompt();
@@ -146,6 +148,7 @@ namespace console {
                              std::string const & area, unsigned level, 
                              std::string const & message);
         
+        Server & server_;
         ClientHandle handle_;
         std::string tail_;
         CommandParser parser_;

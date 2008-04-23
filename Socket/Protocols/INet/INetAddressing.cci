@@ -120,6 +120,12 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(INet6Address const & addr, 
     assignIface(iface);
 }
 
+prefix_ senf::INet6SocketAddress::INet6SocketAddress(unsigned port)
+{
+    clear();
+    sockaddr_.sin6_port = htons(port);
+}
+
 prefix_ senf::INet6Address senf::INet6SocketAddress::address()
     const
 {

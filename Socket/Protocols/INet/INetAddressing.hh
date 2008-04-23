@@ -60,6 +60,10 @@ namespace senf {
           public senf::comparable_safe_bool<INet4SocketAddress>
     {
     public:
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
         INet4SocketAddress();
         explicit INet4SocketAddress(std::string const & addr); ///< Set address and port
                                         /**< This constructor expects a string of the form
@@ -76,6 +80,13 @@ namespace senf {
                                         ///< Set address and port explicitly
                                         /**< \param[in] addr IP address
                                              \param[in] port port number */
+
+        explicit INet4SocketAddress(unsigned port);
+                                        ///< Set port, address is set to 0.0.0.0
+                                        /**< \param[in] port port number */
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
 
         bool operator==(INet4SocketAddress const & other) const;
                                         ///< Check INet4SocketAddress for equality
@@ -146,9 +157,6 @@ namespace senf {
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
@@ -168,6 +176,10 @@ namespace senf {
                                         ///< Initialize from address and port
         INet6SocketAddress(INet6Address const & addr, unsigned port, std::string const & iface);
                                         ///< Initialize explicitly from given parameters
+        explicit INet6SocketAddress(unsigned port);
+                                        ///< Initialize from port and set to 'unspecified' addr
+                                        /**< The address is set to [::]
+                                             \param[in] port port number  */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////

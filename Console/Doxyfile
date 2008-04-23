@@ -2,6 +2,8 @@
 
 PROJECT_NAME = libConsole
 GENERATE_TAGFILE = doc/Console.tag
+EXAMPLE_PATH = .
+EXCLUDE = testServer.cc
 
 TAGFILES = \
     "$(TOPDIR)/Socket/doc/Socket.tag" \

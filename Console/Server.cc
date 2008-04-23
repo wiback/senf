@@ -64,26 +64,20 @@ prefix_ senf::console::Server &
 senf::console::Server::start(senf::INet4SocketAddress const & address)
 {
     senf::TCPv4ServerSocketHandle handle (address);
-    senf::console::Server::start(handle);
+    Server & server (senf::console::Server::start(handle));
     SENF_LOG((Server::SENFLogArea)(log::NOTICE)( 
                  "Console server started at " << address ));
-    return instance();
+    return server;
 }
 
 prefix_ senf::console::Server &
 senf::console::Server::start(senf::INet6SocketAddress const & address)
 {
     senf::TCPv6ServerSocketHandle handle (address);
-    senf::console::Server::start(handle);
+    Server & server (senf::console::Server::start(handle));
     SENF_LOG((Server::SENFLogArea)(log::NOTICE)( 
                  "Console server started at " << address ));
-    return instance();
-}
-
-prefix_ senf::console::Server & senf::console::Server::instance()
-{
-    SENF_ASSERT( instancePtr() );
-    return *instancePtr();
+    return server;
 }
 
 prefix_ boost::scoped_ptr<senf::console::Server> & senf::console::Server::instancePtr()
@@ -95,13 +89,14 @@ prefix_ boost::scoped_ptr<senf::console::Server> & senf::console::Server::instan
     return instance;
 }
 
-prefix_ void senf::console::Server::start(ServerHandle handle)
+prefix_ senf::console::Server & senf::console::Server::start(ServerHandle handle)
 {
     // Uah .... ensure the scheduler is created before the instance pointer so it get's destructed
     // AFTER it.
     (void) senf::Scheduler::instance();
     SENF_ASSERT( ! instancePtr() );
     instancePtr().reset(new Server(handle));
+    return * instancePtr();
 }
 
 prefix_ senf::console::Server::Server(ServerHandle handle)
@@ -118,7 +113,7 @@ prefix_ senf::console::Server::~Server()
 prefix_ void senf::console::Server::newClient(Scheduler::EventId event)
 {
     ServerHandle::ClientSocketHandle client (handle_.accept());
-    boost::intrusive_ptr<Client> p (new Client(client, name_));
+    boost::intrusive_ptr<Client> p (new Client(*this, client, name_));
     clients_.insert( p );
     SENF_LOG(( "Registered new client " << p.get() ));
 }
@@ -133,9 +128,10 @@ prefix_ void senf::console::Server::removeClient(Client & client)
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Client
 
-prefix_ senf::console::Client::Client(ClientHandle handle, std::string const & name)
-    : out_t(handle), senf::log::IOStreamTarget(out_t::member),
-      handle_ (handle), name_ (name), promptLen_(0)
+prefix_ senf::console::Client::Client(Server & server, ClientHandle handle,
+                                      std::string const & name)
+    : out_t(handle), senf::log::IOStreamTarget(out_t::member), server_ (server),
+      handle_ (handle), name_ (name), promptLen_(0) 
 {
     showPrompt();
     ReadHelper<ClientHandle>::dispatch( handle_, 16384u, ReadUntil("\n"),
@@ -149,7 +145,7 @@ prefix_ senf::console::Client::~Client()
 prefix_ void senf::console::Client::stopClient()
 {
     // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER removeClient RETURNS
-    Server::instance().removeClient(*this);
+    server_.removeClient(*this);
 }
 
 prefix_ void senf::console::Client::clientData(ReadHelper<ClientHandle>::ptr helper)

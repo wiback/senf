@@ -109,14 +109,14 @@ namespace detail {
         typedef typename Traits::arg1_type type;
     };
 
-    template <class Function, bool isFN=senf::is_any_function<Function>::value>
-    struct ParsedCommandTraits
+    template <class FnunctionP, class Function, bool isFN=boost::is_function<Function>::value>
+    struct ParsedCommandTraits_i
     {};
 
-    template <class Fn>
-    struct ParsedCommandTraits<Fn, true>
+    template <class FunctionP, class Function>
+    struct ParsedCommandTraits_i<FunctionP, Function, true>
     {
-        typedef Fn base_type;
+        typedef FunctionP base_type;
         typedef typename senf::remove_any_pointer<base_type>::type function_type;
         typedef boost::function_traits<function_type> base_traits;
         typedef typename FirstArgType<base_traits>::type first_arg_type;
@@ -138,6 +138,17 @@ namespace detail {
         typedef ParsedCommandOverload<traits> Overload;
         typedef ParsedArgumentAttributor<Overload> Attributor;
     };
+
+    // Disable auto-parsing for ParseCommandInfo arg -> register manually parsed command
+    template <class FunctionP>
+    struct ParsedCommandTraits_i<FunctionP, void (std::ostream &, ParseCommandInfo const &), true>
+    {};
+
+    template <class FunctionP>
+    struct ParsedCommandTraits
+        : public ParsedCommandTraits_i< FunctionP, 
+                                        typename senf::remove_any_pointer<FunctionP>::type >
+    {};
 
     struct ParsedCommandAddNodeAccess;
 

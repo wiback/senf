@@ -65,6 +65,12 @@ prefix_ senf::INet4SocketAddress::INet4SocketAddress(INet4Address const & addr, 
     port(p);
 }
 
+prefix_ senf::INet4SocketAddress::INet4SocketAddress(unsigned p)
+{
+    clear();
+    port(p);
+}
+
 prefix_ void senf::INet4SocketAddress::clear()
 {
     ::memset(&addr_,0,sizeof(addr_));

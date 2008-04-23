@@ -51,6 +51,8 @@
     library. See above links for more:
 
     \code
+    #include <senf/Console.hh>
+
     // Define callback function.
     void mycommand(std::ostream & os, int foo, int bar)
     {
@@ -97,6 +99,46 @@
     $
     </pre>
 
+    \see \ref console_testserver for a complete example application
+
+    \section intro_init Initialization
+
+    To make the console accessible, it must be initialized when the program is started:
+    \code
+    #include <senf/Console.hh>
+
+    int main(int argc, char * argv [])
+    {
+        // Configure console nodes, add commands ...
+
+        // Start console server
+        senf::console::start(senf::INet4SocketAddress(12345u))
+           .name("myserver");
+
+        // You need to enter the scheduler main-loop for the server to work
+        senf::Scheduler::instance().process();
+       
+        // Alternatively enter the main-loop via the PPI
+        // senf::ppi::run();
+    }
+    \endcode
+
+    This will start the server on IPv4 port 12345. The servers name (as displayed in the interactive
+    console prompt) is set to 'myserver'.
+
+    After launching the application, the server can be accessed at the given port:
+    \htmlonly
+    <pre>
+    bash$ telnet localhost 12345
+    Trying 127.0.0.1...
+    Connected to localhost.
+    Escape character is '^]'.
+
+    myserver:/$ exit
+    Connection closed by foreign host.
+    bash$
+    </pre>
+    \endhtmlonly
 
     \section intro_nodes The node tree
 
@@ -818,7 +860,7 @@
     }
 
     void senf_console_parse_argument(senf::console::ParseCommandInfo::TokensRange const & tokens,
-                                     MyClass & out)
+                                     Coordinate & out)
     {
         if (tokens.size() != 2)
             throw SyntaxErrorException("parameter syntax error");
