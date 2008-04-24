@@ -36,6 +36,7 @@
 #include "../Utils/senfassert.hh"
 #include "../Utils/membind.hh"
 #include "../Utils/Logger/SenfLog.hh"
+#include "Readline.hh"
 
 //#include "Server.mpp"
 #define prefix_
@@ -48,8 +49,11 @@ prefix_ std::streamsize senf::console::detail::NonblockingSocketSink::write(cons
                                                                             std::streamsize n)
 {
     try {
-        if (handle_.writeable()) 
-            handle_.write(s, s+n);
+        if (client_.handle().writeable()) {
+            std::string data (s, n);
+            client_.translate(data);
+            client_.handle().write( data );
+        }
     }
     catch (SystemException & ex) {
         ;
@@ -182,25 +186,24 @@ prefix_ void senf::console::detail::DumbClientReader::v_enablePrompt()
         showPrompt();
 }
 
+prefix_ void senf::console::detail::DumbClientReader::v_translate(std::string & data)
+{}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Client
 
 prefix_ senf::console::Client::Client(Server & server, ClientHandle handle,
                                       std::string const & name)
-    : out_t(handle), senf::log::IOStreamTarget(out_t::member), server_ (server),
-      handle_ (handle), name_ (name), reader_ (0)
+    : out_t(boost::ref(*this)), senf::log::IOStreamTarget(out_t::member), server_ (server),
+      handle_ (handle), name_ (name), reader_ (new detail::SafeReadlineClientReader (*this))
 {
-    reader_.reset( new detail::DumbClientReader (*this) );
-    route< senf::SenfLog, senf::log::NOTICE >();
+    handle_.facet<senf::TCPSocketProtocol>().nodelay();
+    // route< senf::SenfLog, senf::log::NOTICE >();
 }
 
-prefix_ senf::console::Client::~Client()
-{}
-
-prefix_ void senf::console::Client::stop()
+prefix_ void senf::console::Client::translate(std::string & data)
 {
-    // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER removeClient RETURNS
-    server_.removeClient(*this);
+    reader_->translate(data);
 }
 
 prefix_ void senf::console::Client::handleInput(std::string data)
@@ -239,6 +242,7 @@ prefix_ void senf::console::Client::v_write(boost::posix_time::ptime timestamp,
 {
     reader_->disablePrompt();
     IOStreamTarget::v_write(timestamp, stream, area, level, message);
+    out_t::member << std::flush;
     reader_->enablePrompt();
 }
 

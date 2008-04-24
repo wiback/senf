@@ -77,17 +77,14 @@ int main(int, char **)
     senf::console::root()
         .doc("This is the console test application");
     senf::console::root()
-        .mkdir("network")
+        .mkdir("test")
         .doc("Network related settings");
-    senf::console::root()["network"]
-        .mkdir("eth0")
-        .doc("Ethernet device eth0");
     senf::console::root()
         .mkdir("server");
     senf::console::root()["server"]
         .add("shutdown", &shutdownServer)
         .doc("Terminate server application");
-    senf::console::root()["network"]
+    senf::console::root()["test"]
         .add("echo", &echo)
         .doc("Example of a function utilizing manual argument parsing");
 

@@ -53,11 +53,11 @@ namespace detail {
                              WriteablePolicy,
                              ConnectedCommunicationPolicy>::policy > Handle;
 
-        NonblockingSocketSink(Handle handle);
+        NonblockingSocketSink(Client & client);
         std::streamsize write(const char * s, std::streamsize n);
         
     private:
-        Handle handle_;
+        Client & client_;
     };
 
     typedef boost::iostreams::stream<NonblockingSocketSink> NonblockingSocketOStream;
@@ -75,20 +75,20 @@ namespace detail {
     {
     public:
         typedef ServerHandle::ClientSocketHandle ClientHandle;
-        typedef NonblockingSocketOStream OutputStream;
 
         virtual ~ClientReader() = 0;
 
         Client & client() const;
         std::string promptString() const;
         ClientHandle handle() const;
-        OutputStream & stream() const;
+        std::ostream & stream() const;
         void stopClient();
         
         void handleInput(std::string const & input) const;
 
         void disablePrompt();
         void enablePrompt();
+        void translate(std::string & data);
 
     protected:
         ClientReader(Client & client);
@@ -96,6 +96,7 @@ namespace detail {
     private:
         virtual void v_disablePrompt() = 0;
         virtual void v_enablePrompt() = 0;
+        virtual void v_translate(std::string & data) = 0;
 
         Client & client_;
     };
@@ -114,6 +115,7 @@ namespace detail {
     private:
         virtual void v_disablePrompt();
         virtual void v_enablePrompt();
+        virtual void v_translate(std::string & data);
 
         void clientData(senf::ReadHelper<ClientHandle>::ptr helper);
         void showPrompt();

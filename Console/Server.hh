@@ -135,17 +135,18 @@ namespace console {
         void stop();                    ///< Stop the client
                                         /**< This will close the client socket. */
 
+        std::string const & name() const;
+        ClientHandle handle() const;
+        std::ostream & stream();
+        std::string promptString() const;
+
     protected:
         
     private:
         Client(Server & server, ClientHandle handle, std::string const & name);
 
-        std::string promptString() const;
-        ClientHandle handle() const;
-        detail::NonblockingSocketOStream & stream();
-
+        void translate(std::string & data);
         void handleInput(std::string input);
-
         virtual void v_write(boost::posix_time::ptime timestamp, std::string const & stream, 
                              std::string const & area, unsigned level, 
                              std::string const & message);
@@ -160,6 +161,7 @@ namespace console {
 
         friend class Server;
         friend class detail::ClientReader;
+        friend class detail::NonblockingSocketSink;
     };
 
 }}

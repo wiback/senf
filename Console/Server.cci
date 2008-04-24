@@ -33,8 +33,8 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NonblockingSocketSink
 
-prefix_ senf::console::detail::NonblockingSocketSink::NonblockingSocketSink(Handle handle)
-    : handle_ (handle)
+prefix_ senf::console::detail::NonblockingSocketSink::NonblockingSocketSink(Client & client)
+    : client_ (client)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ prefix_ senf::console::detail::ClientReader::ClientHandle senf::console::detail:
     return client().handle();
 }
 
-prefix_ senf::console::detail::ClientReader::OutputStream & senf::console::detail::ClientReader::stream()
+prefix_ std::ostream & senf::console::detail::ClientReader::stream()
     const
 {
     return client().stream();
@@ -96,12 +96,32 @@ prefix_ void senf::console::detail::ClientReader::enablePrompt()
     v_enablePrompt();
 }
 
+prefix_ void senf::console::detail::ClientReader::translate(std::string & data)
+{
+    v_translate(data);
+}
+
 prefix_ senf::console::detail::ClientReader::ClientReader(Client & client)
     : client_ (client)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Client
+
+prefix_ senf::console::Client::~Client()
+{}
+
+prefix_ void senf::console::Client::stop()
+{
+    // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER removeClient RETURNS
+    server_.removeClient(*this);
+}
+
+prefix_ std::string const & senf::console::Client::name()
+    const
+{
+    return name_;
+}
 
 prefix_ std::string senf::console::Client::promptString()
     const
@@ -115,7 +135,7 @@ prefix_ senf::console::Client::ClientHandle senf::console::Client::handle()
     return handle_;
 }
 
-prefix_ senf::console::detail::NonblockingSocketOStream & senf::console::Client::stream()
+prefix_ std::ostream & senf::console::Client::stream()
 {
     return out_t::member;
 }
