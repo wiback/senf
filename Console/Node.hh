@@ -518,11 +518,16 @@ namespace console {
         All errors while parsing the arguments of a command must be signaled by throwing an instance
         of SyntaxErrorException. This is important, so command overloading works.
      */
-    struct SyntaxErrorException : public senf::Exception
+    struct SyntaxErrorException : public std::exception
     {
         explicit SyntaxErrorException(std::string const & msg = "");
+        virtual ~SyntaxErrorException() throw();
 
         virtual char const * what() const throw();
+        std::string const & message() const;
+
+    private:
+        std::string message_;
     };
 
     /** \brief Config/console tree command node

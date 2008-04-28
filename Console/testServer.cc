@@ -69,6 +69,11 @@ void shutdownServer()
     throw senf::console::Executor::ExitException();
 }
 
+void enableLogging(std::ostream & os)
+{
+    senf::console::Client::get(os).route<senf::SenfLog,senf::log::NOTICE>();
+}
+
 int main(int, char **)
 {
     ::signal(SIGPIPE, SIG_IGN);
@@ -77,10 +82,17 @@ int main(int, char **)
     senf::console::root()
         .doc("This is the console test application");
     senf::console::root()
+        .mkdir("console")
+        .doc("Console settings");
+    senf::console::root()
         .mkdir("test")
-        .doc("Network related settings");
+        .doc("Test functions");
     senf::console::root()
         .mkdir("server");
+
+    senf::console::root()["console"]
+        .add("showlog", &enableLogging)
+        .doc("Enable display of log messages on the current console");
     senf::console::root()["server"]
         .add("shutdown", &shutdownServer)
         .doc("Terminate server application");
@@ -89,7 +101,7 @@ int main(int, char **)
         .doc("Example of a function utilizing manual argument parsing");
 
     TestObject test;
-    senf::console::root()
+    senf::console::root()["test"]
         .add("testob", test.dir)
         .doc("Example of an instance directory");
 

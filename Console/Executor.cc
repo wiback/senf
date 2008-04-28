@@ -56,9 +56,17 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
 
     try {
         switch(command.builtin()) {
-        case ParseCommandInfo::NoBuiltin :
-            traverseCommand(command.commandPath())(output, command);
+        case ParseCommandInfo::NoBuiltin : {
+            GenericNode & node ( traverseCommand(command.commandPath()) );
+            DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
+            if ( dir ) {
+                oldCwd_ = cwd_;
+                cwd_ = dir->thisptr();
+            } else {
+                dynamic_cast<CommandNode &>(node)(output, command);
+            }
             break;
+        }
 
         case ParseCommandInfo::BuiltinCD :
             if ( command.arguments() ) {
@@ -146,6 +154,20 @@ senf::console::Executor::traverseNode(ParseCommandInfo::argument_value_type cons
     }
 }
 
+prefix_ senf::console::GenericNode &
+senf::console::Executor::traverseCommand(ParseCommandInfo::CommandPathRange const & path)
+{
+    try {
+        return cwd().traverse(path);
+    }
+    catch (std::bad_cast &) {
+        throw InvalidPathException();
+    }
+    catch (UnknownNodeNameException &) {
+        throw InvalidPathException();
+    }
+}
+
 prefix_ senf::console::DirectoryNode &
 senf::console::Executor::traverseDirectory(ParseCommandInfo::argument_value_type const & path)
 {
@@ -160,20 +182,6 @@ senf::console::Executor::traverseDirectory(ParseCommandInfo::argument_value_type
     }
 }
 
-prefix_ senf::console::CommandNode &
-senf::console::Executor::traverseCommand(ParseCommandInfo::CommandPathRange const & path)
-{
-    try {
-        return dynamic_cast<CommandNode &>( cwd().traverse(path) );
-    }
-    catch (std::bad_cast &) {
-        throw InvalidCommandException();
-    }
-    catch (UnknownNodeNameException &) {
-        throw InvalidCommandException();
-    }        
-}
-        
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Executor.mpp"

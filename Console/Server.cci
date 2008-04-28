@@ -37,6 +37,12 @@ prefix_ senf::console::detail::NonblockingSocketSink::NonblockingSocketSink(Clie
     : client_ (client)
 {}
 
+prefix_ senf::console::Client & senf::console::detail::NonblockingSocketSink::client()
+    const
+{
+    return client_;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Server
 
@@ -127,6 +133,11 @@ prefix_ std::string senf::console::Client::promptString()
     const
 {
     return name_ + ":" + executor_.cwd().path() + "$ ";
+}
+
+prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)
+{
+    return dynamic_cast<detail::NonblockingSocketOStream&>(os)->client();
 }
 
 prefix_ senf::console::Client::ClientHandle senf::console::Client::handle()

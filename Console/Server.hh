@@ -137,6 +137,8 @@ namespace console {
         std::ostream & stream();
         std::string promptString() const;
 
+        static Client & get(std::ostream & os);
+
     protected:
         
     private:

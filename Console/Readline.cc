@@ -59,8 +59,13 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::ReadlineClientReader
 
-extern int readline_echoing_p;
-extern int _rl_bell_preference;
+extern "C" {
+    extern int readline_echoing_p;
+    extern int _rl_bell_preference;
+
+    void _rl_erase_entire_line();
+}
+
 
 namespace {
 
@@ -164,10 +169,14 @@ prefix_ void senf::console::detail::ReadlineClientReader::callback(std::string l
 }
 
 prefix_ void senf::console::detail::ReadlineClientReader::v_disablePrompt()
-{}
+{
+    _rl_erase_entire_line();
+}
 
 prefix_ void senf::console::detail::ReadlineClientReader::v_enablePrompt()
-{}
+{
+    rl_forced_update_display();
+}
 
 prefix_ void senf::console::detail::ReadlineClientReader::v_translate(std::string & data)
 {

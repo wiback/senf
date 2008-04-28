@@ -90,8 +90,8 @@ namespace console {
 
     private:
         GenericNode & traverseNode(ParseCommandInfo::argument_value_type const & path);
+        GenericNode & traverseCommand(ParseCommandInfo::CommandPathRange const & path); 
         DirectoryNode & traverseDirectory(ParseCommandInfo::argument_value_type const & path);
-        CommandNode & traverseCommand(ParseCommandInfo::CommandPathRange const & path);
 
         struct InvalidPathException {};
         struct InvalidDirectoryException {};

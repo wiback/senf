@@ -78,6 +78,11 @@ namespace detail {
         char promptBuffer_[1024];
         SchedulerBinding schedBinding_;
         bool terminate_;
+
+        char * savedLineBuffer_;
+        int savedPoint_;
+        int savedEnd_;
+        int savedMark_;
     };
 
     /** \brief Internal: Safe GNU readline based ClientReader implementation

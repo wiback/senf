@@ -170,8 +170,18 @@ prefix_ senf::console::DirectoryNode::cptr senf::console::DirectoryNode::thisptr
 // senf::console::SyntaxErrorException
 
 prefix_ senf::console::SyntaxErrorException::SyntaxErrorException(std::string const & msg)
-    : Exception(msg)
+    : message_(msg)
 {}
+
+prefix_ senf::console::SyntaxErrorException::~SyntaxErrorException()
+    throw()
+{}
+
+prefix_ std::string const & senf::console::SyntaxErrorException::message()
+    const
+{
+    return message_;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandNode

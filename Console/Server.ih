@@ -55,6 +55,8 @@ namespace detail {
 
         NonblockingSocketSink(Client & client);
         std::streamsize write(const char * s, std::streamsize n);
+
+        Client & client() const;
         
     private:
         Client & client_;
