@@ -637,8 +637,9 @@
         
     \section console_memberfn Member functions
     
-    Member functions are supported like non-member functions. They must however be added through a
-    senf::console::ScopedDirectory instance to bind them to their instance.
+    Non-static member functions are supported like non-member functions (static member functions are
+    identical to non-members). They must however be added through a senf::console::ScopedDirectory
+    instance to bind them to their instance.
     \code
     class Test1
     {

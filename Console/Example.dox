@@ -65,7 +65,6 @@
     the scheduler). Throwing a senf::console::Executor::ExitException is like entering the \c exit
     built-in command at the console.
     
-    \until network
     \until Example
 
     The \c main routine enables more verbose console logging and adds some directories and callbacks

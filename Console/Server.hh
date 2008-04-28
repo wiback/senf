@@ -113,9 +113,6 @@ namespace console {
         Whenever a new client connects, a new instance of this class is created. This class shows a
         command prompt, receives the commands, parses them and then passes (using a CommandParser)
         and passes the commands to an Executor instance.
-
-        \fixme Fix Client::clientData implementation
-        \fixme Don't register a new ReadHelper every round
      */
     class Client
         : public senf::intrusive_refcount, 
