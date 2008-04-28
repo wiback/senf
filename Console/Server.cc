@@ -167,7 +167,8 @@ prefix_ void senf::console::detail::DumbClientReader::showPrompt()
 {
     std::string prompt (promptString());
 
-    stream() << prompt << std::flush;
+    stream() << std::flush;
+    handle().write(prompt);
     promptLen_ = prompt.size();
     promptActive_ = true;
 }
