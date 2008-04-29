@@ -60,8 +60,11 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             GenericNode & node ( traverseCommand(command.commandPath()) );
             DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
             if ( dir ) {
-                oldCwd_ = cwd_;
-                cwd_ = dir->thisptr();
+                if (autocd_) {
+                    oldCwd_ = cwd_;
+                    cwd_ = dir->thisptr();
+                } else
+                    throw InvalidCommandException();
             } else {
                 dynamic_cast<CommandNode &>(node)(output, command);
             }
@@ -144,7 +147,8 @@ senf::console::Executor::traverseNode(ParseCommandInfo::argument_value_type cons
         return cwd().traverse(
             boost::make_iterator_range(
                 boost::make_transform_iterator(path.begin(), TraverseTokens()),
-                boost::make_transform_iterator(path.end(), TraverseTokens())));
+                boost::make_transform_iterator(path.end(), TraverseTokens())),
+            autocomplete_);
     }
     catch (std::bad_cast &) {
         throw InvalidPathException();
@@ -158,7 +162,7 @@ prefix_ senf::console::GenericNode &
 senf::console::Executor::traverseCommand(ParseCommandInfo::CommandPathRange const & path)
 {
     try {
-        return cwd().traverse(path);
+        return cwd().traverse(path, autocomplete_);
     }
     catch (std::bad_cast &) {
         throw InvalidPathException();

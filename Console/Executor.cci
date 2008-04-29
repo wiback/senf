@@ -34,6 +34,7 @@
 // senf::console::Executor
 
 prefix_ senf::console::Executor::Executor()
+    : autocd_ (false), autocomplete_ (false)
 {
     oldCwd_ = cwd_ = boost::static_pointer_cast<DirectoryNode>(
         root().shared_from_this());
@@ -49,6 +50,30 @@ prefix_ senf::console::DirectoryNode & senf::console::Executor::cwd()
     const
 {
     return cwd_.expired() ? root() : *cwd_.lock();
+}
+
+prefix_ bool senf::console::Executor::autocd()
+    const
+{
+    return autocd_;
+}
+
+prefix_ senf::console::Executor & senf::console::Executor::autocd(bool v)
+{
+    autocd_ = v;
+    return *this;
+}
+
+prefix_ bool senf::console::Executor::autocomplete()
+    const
+{
+    return autocomplete_;
+}
+
+prefix_ senf::console::Executor & senf::console::Executor::autocomplete(bool v)
+{
+    autocomplete_ = true;
+    return *this;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

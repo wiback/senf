@@ -46,9 +46,16 @@ prefix_ senf::console::Client & senf::console::detail::NonblockingSocketSink::cl
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Server
 
-prefix_ void senf::console::Server::name(std::string const & name)
+prefix_ senf::console::Server & senf::console::Server::name(std::string const & name)
 {
     name_ = name;
+    return *this;
+}
+
+prefix_ void senf::console::Server::stop()
+{
+    // commit suicide
+    instancePtr().reset(0);
 }
 
 ///////////////////////////////////////////////////////////////////////////

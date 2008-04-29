@@ -98,10 +98,26 @@ BOOST_AUTO_UNIT_TEST(directoryNode)
         children, 
         children+sizeof(children)/sizeof(children[0]) );
 
+    char const * const completions[] = { "dir1", "dir2" };
+    BOOST_CHECK_EQUAL_COLLECTIONS(
+        boost::make_transform_iterator(senf::console::root().completions("dir").begin(), 
+                                       select1st<std::string const &>()),
+        boost::make_transform_iterator(senf::console::root().completions("dir").end(),
+                                       select1st<std::string const &>()),
+        completions, 
+        completions+sizeof(completions)/sizeof(completions[0]) );
+
     char const * const path[] = { "..", "dir2", "dir3" };
     BOOST_CHECK( &senf::console::root()["dir1"].traverse( boost::make_iterator_range(
                                                               path, 
                                                               path+sizeof(path)/sizeof(path[0])) )
+                 == &senf::console::root()["dir2"]["dir3"] );
+
+    char const * const incompletePath[] = { "d" };
+    BOOST_CHECK( &senf::console::root()["dir2"].traverse( boost::make_iterator_range(
+                                                              incompletePath, 
+                                                              incompletePath+sizeof(incompletePath)/sizeof(incompletePath[0])),
+                                                          true )
                  == &senf::console::root()["dir2"]["dir3"] );
 
     p->doc("test doc");

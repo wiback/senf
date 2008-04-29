@@ -465,15 +465,18 @@ namespace console {
         DirectoryNode & mkdir(std::string const & name);
                                         ///< Create sub-directory node
         
-        ChildrenRange children() const;
-                                        ///< Return iterator range over all children.
+        ChildrenRange children() const; ///< Return iterator range over all children.
+                                        /**< The returned range is sorted by child name. */
+
+        ChildrenRange completions(std::string const & s) const;
+                                        ///< Return iterator range of completions for \a s
                                         /**< The returned range is sorted by child name. */
 
         ///\}
         ///////////////////////////////////////////////////////////////////////////
 
         template <class ForwardRange>
-        GenericNode & traverse(ForwardRange const & range);
+        GenericNode & traverse(ForwardRange const & range, bool autocomplete=false);
                                         ///< Traverse node path starting at this node
                                         /**< The <tt>ForwardRange::value_type</tt> must be
                                              (convertible to) std::string. Each range element
@@ -482,7 +485,11 @@ namespace console {
                                              If the range starts with an empty element, the
                                              traversal is started at the root() node, otherwise it
                                              is started at \a this node. The traversal supports '.',
-                                             '..' and ignores further empty elements. */
+                                             '..' and ignores further empty elements. 
+
+                                             If \a autocomplete is set to \c true, invalid path
+                                             components which can be uniquely completed will be
+                                             completed automatically while traversing the tree. */
 
         DirectoryNode & doc(std::string const & doc);
                                         ///< Set node documentation

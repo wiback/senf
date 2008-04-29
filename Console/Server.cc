@@ -198,6 +198,7 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle,
     : out_t(boost::ref(*this)), senf::log::IOStreamTarget(out_t::member), server_ (server),
       handle_ (handle), name_ (name), reader_ (new detail::SafeReadlineClientReader (*this))
 {
+    executor_.autocd(true).autocomplete(true);
     handle_.facet<senf::TCPSocketProtocol>().nodelay();
     // route< senf::SenfLog, senf::log::NOTICE >();
 }

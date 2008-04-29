@@ -85,9 +85,12 @@ namespace console {
                                         ///< Start server on given IPv4 address/port
         static Server & start(senf::INet6SocketAddress const & address);
                                         ///< Start server on given IPv6 address/port
-        void name(std::string const & name); ///< Set server name
+        Server & name(std::string const & name); ///< Set server name
                                         /**< This information is used in the prompt string. */
-
+        
+        void stop();                    ///< Stop the server
+                                        /**< All clients will be closed */
+        
     protected:
 
     private:

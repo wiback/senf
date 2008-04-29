@@ -145,6 +145,14 @@ prefix_ senf::console::DirectoryNode::ChildrenRange senf::console::DirectoryNode
     return boost::make_iterator_range(children_.begin(), children_.end());
 }
 
+prefix_ senf::console::DirectoryNode::ChildrenRange
+senf::console::DirectoryNode::completions(std::string const & s)
+    const
+{
+    return boost::make_iterator_range(children_.lower_bound(s),
+                                      children_.lower_bound(s + "\xff"));
+}
+
 prefix_ senf::console::DirectoryNode::DirectoryNode()
 {}
 

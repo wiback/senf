@@ -86,6 +86,24 @@ namespace console {
                                              Same as execute(). */
         DirectoryNode & cwd() const;    ///< Current working directory
 
+        bool autocd() const;            ///< Get current autocd status
+                                        /**< if autocd is enabled, specifying a directory name as
+                                             command will cd to that directory. Disabled by
+                                             default (but enabled automatically by the interactive
+                                             console). */
+        Executor & autocd(bool v);      ///< Set autocd status
+                                        /**< \see autocd() */
+
+        bool autocomplete() const;      ///< Get current autocomplete status
+                                        /**< if autocomplete is enabled, path components which can
+                                             be uniquely completed will be completed
+                                             automatically. Disabled by default (but enabled
+                                             automatically by the interactive console) void
+                                             autocomplete(bool v). */
+
+        Executor & autocomplete(bool v); ///< Set autocomplete status
+                                        /**< \see autocomplete() */
+
     protected:
 
     private:
@@ -101,6 +119,9 @@ namespace console {
         DirectoryNode::weak_ptr oldCwd_;
         typedef std::vector<DirectoryNode::weak_ptr> DirStack;
         DirStack dirstack_;
+
+        bool autocd_;
+        bool autocomplete_;
     };
 
 

@@ -36,7 +36,7 @@
 
 template <class ForwardRange>
 prefix_ senf::console::GenericNode &
-senf::console::DirectoryNode::traverse(ForwardRange const & range)
+senf::console::DirectoryNode::traverse(ForwardRange const & range, bool autocomplete)
 {
     typedef typename boost::range_const_iterator<ForwardRange>::type const_iterator;
     DirectoryNode::ptr dir (thisptr());
@@ -55,12 +55,18 @@ senf::console::DirectoryNode::traverse(ForwardRange const & range)
                 dir = root().thisptr();
         }
         else if (*i != std::string("") && *i != std::string(".")) {
+            std::string name (*i);
+            if (! dir->hasChild(name) && autocomplete) {
+                ChildrenRange completions (dir->completions(name));
+                if (completions.size() == 1)
+                    name = completions.begin()->first;
+            }
             if (next_i == i_end)
-                return dir->get(*i);
+                return dir->get(name);
             else {
                 // Why does g++ give an error on this line ???? :
-                // dir = dynamic_cast<DirectoryNode&>( dir->get(*i) ).thisptr();
-                DirectoryNode & d (dynamic_cast<DirectoryNode&>( dir->get(*i) ));
+                // dir = dynamic_cast<DirectoryNode&>( dir->get(name) ).thisptr();
+                DirectoryNode & d (dynamic_cast<DirectoryNode&>( dir->get(name) ));
                 dir = d.thisptr();
             }
         }
