@@ -33,8 +33,10 @@ namespace senfscons {
     href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a>. This infrastructure uses quite a bit
     of pre- and postprocessing (which is integrated with the provided Doxygen builder) to fix some
     doxygen problems and generate a (IMHO) more readable layout.
+    
+    \autotoc
 
-    \section senfutil Building Projects using SENF
+    \section senfutil_overview Building Projects using SENF
 
     When building projects using senf, SENFSCons has a very simple helper module \ref senfutil to
     make the building of libraries utilizing senf simpler:
@@ -89,11 +91,16 @@ namespace senfscons {
           LOGLEVELS='senf::log::Debug||IMPORTANT myapp::Transactions|mytrans::Area|VERBOSE'
     </pre>
 
-    \section layout The Project Layout
+    \section senfscons_intro Introduction to the SENFSCons build system
 
-    A Project using the SENFSCons infrastructure will always use a consistent directory layout. The
-    top-level directory will contain one subdirectory for every module. The main target will often
-    be considered to be just another module using the facilities provided by library modules.
+    Here we give an overview on how SENF itself is built. The SENFSCons system aims to be quite
+    flexible at separates SENF specific tasks from generic tasks to facilitate reuse.
+
+    \subsection senfscons_layout The Project Layout
+
+    The SENFSCons infrastructure will always use a consistent directory layout. The top-level
+    directory will contain one subdirectory for every module. The main target will often be
+    considered to be just another module using the facilities provided by library modules.
 
     The top-level project directory must contain the SENFSCons module in 'senfscons'.
 
@@ -105,7 +112,7 @@ namespace senfscons {
     cross-link the different module documentations. The unit-tests as well are run on a per-module
     basis.
 
-    \section Standard Build Configuration
+    \subsection senfscons_buildconf Standard Build Configuration
 
     When the \c SConsctruct and \c SConscript files are build using the default SENFSCons helpers,
     by default all libraries and binaries are built. Some additional targets are

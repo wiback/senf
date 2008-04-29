@@ -71,7 +71,7 @@ namespace log {
         implementation is more efficient and utilizes a routing cache).
 
         Each routing entry consists of the following parameters
-        \li (mandatory) \e stream. The entry will match only messages directed at that stream
+        \li (optional) \e stream. The entry will match only messages directed at that stream
         \li (optional) \e area. If the area is specified, only messages directed at that area are
             matched, otherwise any area will be allowed
         \li (optional) \e level. If the log level is specified, messages will be accepted if their
@@ -193,10 +193,11 @@ namespace log {
         template <class Stream, class Area, class Level> void route(
             action_t action = ACCEPT, int index = -1); ///< Add route (static)
                                         /**< Add a route for the given combination of \a Stream, \a
-                                             Area and \a Level. The \a Stream parameter is mandatory
-                                             while either \a Area or \a Level are optional (the
-                                             template signature is shown simplified here):
+                                             Area and \a Level. All parameters (\a Stream, \a Area
+                                             and \a Level) are optional (the template signature is
+                                             shown simplified here). Examples:
                                              \code
+                                             target.route<SomeLevel>();
                                              target.route<SomeStream>();
                                              target.route<SomeStream, SomeLevel>();
                                              target.route<SomeStream, SomeArea>();
@@ -206,9 +207,9 @@ namespace log {
                                              See the class description for information on the \a
                                              action and \a index parameters 
 
-                                             \tparam Stream mandatory stream to match
-                                             \tparam Area optional area to match
-                                             \tparam Level optional level, matches messages with
+                                             \tparam Stream stream to match
+                                             \tparam Area area to match
+                                             \tparam Level level, matches messages with
                                                  at least the given level. 
                                              \param[in] action routing action to take
                                              \param[in] index position of new route in the routing
@@ -220,9 +221,9 @@ namespace log {
                    unsigned level = NONE::value, action_t action = ACCEPT, int index = -1);
                                         ///< Add route (dynamic)
                                         /**< Add a route for the given combination of \a stream, \a
-                                             area and \a level. The \a stream parameter is mandatory
-                                             while either \a area or \a level may be left
-                                             unspecified by setting them to the empty string or
+                                             area and \a level. All parameters (\a Stream, \a Area
+                                             and \a Level) are optional and may be omitted by
+                                             setting them to the empty string or the
                                              senf::log::NONE::value respectively.
 
                                              See the class description for information on the \a
@@ -233,10 +234,10 @@ namespace log {
                                              \throws InvalidAreaException if the given \a area is
                                                  not found in the AreaRegistry
 
-                                             \param[in] stream mandatory stream to match
-                                             \param[in] area optional area to match
-                                             \param[in] level optional level, matches messages with
-                                                 at least the given level.
+                                             \param[in] stream stream to match
+                                             \param[in] area area to match
+                                             \param[in] level level, matches messages with at least
+                                                 the given level.
                                              \param[in] action routing action to take
                                              \param[in] index position of new route in the routing
                                                  table */
@@ -255,9 +256,9 @@ namespace log {
                                              found, it will be removed, otherwise the call will be
                                              ignored
 
-                                             \tparam Stream mandatory stream to match
-                                             \tparam Area optional area to match
-                                             \tparam Level optional level, matches messages with
+                                             \tparam Stream stream to match
+                                             \tparam Area area to match
+                                             \tparam Level level, matches messages with
                                                  at least the given level. 
                                              \param[in] action routing action to take */
 
@@ -276,10 +277,10 @@ namespace log {
                                              found, it will be removed, otherwise the call will be
                                              ignored
 
-                                             \param[in] stream mandatory stream to match
-                                             \param[in] area optional area to match
-                                             \param[in] level optional level, matches messages with
-                                                 at least the given level.
+                                             \param[in] stream stream to match
+                                             \param[in] area area to match
+                                             \param[in] level level, matches messages with at least
+                                                 the given level.
                                              \param[in] action routing action to take */
         void unroute(int index=-1);     ///< Remove route (indexed)
                                         /**< This call will remove the route with the given index.
@@ -291,51 +292,19 @@ namespace log {
 
 #       ifndef DOXYGEN
 
-        template <class Stream> void route(
-            action_t action = ACCEPT, int index = -1);
-        template <class Stream, class Level> void route(
-            action_t action = ACCEPT, int index = -1,
-            typename boost::enable_if< boost::is_convertible<Level*,
-                                                             detail::LevelBase *> >::type * = 0);
-        template <class Stream, class Area> void route(
-            action_t action = ACCEPT, int index = -1,
-            typename boost::enable_if< boost::is_convertible<Area*,
-                                                             detail::AreaBase *> >::type * = 0);
-        template <class Stream, class AreaClass> void route(
-            action_t action = ACCEPT, int index = -1,
-            typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *,
-                                                             detail::AreaBase *> >::type * = 0);
-        template <class Stream, class Area, class Level> void route(
-            action_t action = ACCEPT, int index = -1,
-            typename boost::enable_if< boost::is_convertible<Area *,
-                                                             detail::AreaBase *> >::type * = 0);
-        template <class Stream, class AreaClass, class Level> void route(
-            action_t action = ACCEPT, int index = -1,
-            typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *,
-                                                             detail::AreaBase *> >::type * = 0);
+        template <class A1>
+        void route(action_t action = ACCEPT, int index = -1);
+        template <class A1, class A2>
+        void route(action_t action = ACCEPT, int index = -1);
+        template <class A1, class A2, class A3>
+        void route(action_t action = ACCEPT, int index = -1);
 
-        template <class Stream> void unroute(
-            action_t action = ACCEPT);
-        template <class Stream, class Level> void unroute(
-            action_t action = ACCEPT,
-            typename boost::enable_if< boost::is_convertible<Level*,
-                                                             detail::LevelBase *> >::type * = 0);
-        template <class Stream, class Area> void unroute(
-            action_t action = ACCEPT,
-            typename boost::enable_if< boost::is_convertible<Area*,
-                                                             detail::AreaBase *> >::type * = 0);
-        template <class Stream, class AreaClass> void unroute(
-            action_t action = ACCEPT,
-            typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *,
-                                                             detail::AreaBase *> >::type * = 0);
-        template <class Stream, class Area, class Level> void unroute(
-            action_t action = ACCEPT,
-            typename boost::enable_if< boost::is_convertible<Area*,
-                                                             detail::AreaBase *> >::type * = 0);
-        template <class Stream, class AreaClass, class Level> void unroute(
-            action_t action = ACCEPT,
-            typename boost::enable_if< boost::is_convertible<typename AreaClass::SENFLogArea *,
-                                                             detail::AreaBase *> >::type * = 0);
+        template <class A1>
+        void unroute(action_t action = ACCEPT);
+        template <class A1, class A2>
+        void unroute(action_t action = ACCEPT);
+        template <class A1, class A2, class A3>
+        void unroute(action_t action = ACCEPT);
 
 #       endif
 

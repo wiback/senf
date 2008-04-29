@@ -171,7 +171,9 @@
 
     The most simple way to build using SENF is to use a very simple SCons helper which automatically
     supports debug and final builds, uses SENF either centrally installed or locally built and has
-    some other nice features. See \ref senfutil for more info and an example for this utility.
+    some other nice features. See <a
+    href="../../senfscons/doc/html/index.html#senfutil_overview">Building Projects using SENF</a>
+    for more info and an example for this utility.
 
     \see \ref senf_components \n
          \ref senf_overview

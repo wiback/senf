@@ -185,6 +185,53 @@
     \endcode
 
     \see \ref console_parser
+
+
+    \section console_misc Further features
+
+    \subsection console_serverclient Server and Client objects
+
+    The senf::console::Server and senf::console::Client objects offer further API calls. To access
+    the server instance you need to store away the senf::console::Server reference returned when
+    starting the server so you can later refer to it:
+    \code
+    int main(int, char**)
+    {
+        senf::console::Server & server ( senf::console::start( ... ) );
+    
+        // Do something ...
+
+        server.stop()
+    }
+    \endcode
+
+    The client instance can be accessed via the \c std::ostream arg of any command callback
+    \code
+    void someCallback(std::ostream & os, ... )
+    {
+        senf::console::Client & client (senf::console::Client::get(os));
+    
+        // Use the client's log target
+        client.route<senf::log::Debug, senf::Log::IMPORTANT>();
+    }
+    \endcode
+
+    \see 
+        senf::console::Server for the Server API \n
+        <a href="classsenf_1_1console_1_1Client-members.html">senf::console::Client / List of all
+        members</a> for the Client API
+
+
+    \subsection console_shell Features of the interactive console shell
+
+    The interactive shell will use the GNU readline library for the first connected
+    instance. Further users will not have access to this functionality since GNU readline is
+    completely non-reentrant.
+
+    The shell supports auto-cd and auto-completion: If you enter the name of a directory at the
+    prompt, the console will change to that directory. With auto-completion, any unique beginning of
+    a path component will be completed automatically and transparently to th corresponding full
+    name.
  */
 
 /** \defgroup console_commands Supported command types

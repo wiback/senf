@@ -35,8 +35,6 @@ def SetupForSENF(env):
     opts.Add( BoolOption('final', 'Build final (optimized) build', False) )
     opts.Update(env)
 
-    print env.subst('$LOGLEVELS')
-
     if env.subst('$LOGLEVELS'):
         env.Append( expandLogOption=expandLogOption )
         env.Append( CPPDEFINES = { 'SENF_LOG_CONF': '$expandLogOption' } )

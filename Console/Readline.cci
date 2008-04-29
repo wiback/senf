@@ -62,6 +62,12 @@ prefix_ void senf::console::detail::ReadlineClientReader::terminate()
     terminate_ = true;
 }
 
+prefix_ void senf::console::detail::ReadlineClientReader::eof()
+{
+    stream() << '\n' << std::flush;
+    stopClient();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::SafeReadlineClientReader
 

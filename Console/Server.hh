@@ -54,7 +54,6 @@ namespace console {
 
         This class provides an interactive console TCP server.
 
-        \todo Add readline support
         \todo Add interactivity detection using timeout
         \idea To support blocking commands, we could give the Client 'suspend()' and 'resume()'
             members. suspend() would probably throw some kind of exception to transfer control back

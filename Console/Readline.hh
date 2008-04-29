@@ -63,6 +63,7 @@ namespace detail {
         void callback(std::string line);
         void write(std::string text);
         void terminate();
+        void eof();
         
     private:
         virtual void v_disablePrompt();

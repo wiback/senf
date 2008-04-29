@@ -13,4 +13,5 @@ TAGFILES = \
     "$(TOPDIR)/Packets/doc/Packets.tag" \
     "$(TOPDIR)/Packets/DefaultBundle/doc/DefaultBundle.tag" \
     "$(TOPDIR)/Socket/doc/Socket.tag" \
-    "$(TOPDIR)/Utils/doc/Utils.tag"
+    "$(TOPDIR)/Utils/doc/Utils.tag" \
+    "$(TOPDIR)/senfscons/doc/senfscons.tag"

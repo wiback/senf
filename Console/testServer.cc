@@ -71,37 +71,45 @@ void shutdownServer()
 
 void enableLogging(std::ostream & os)
 {
-    senf::console::Client::get(os).route<senf::SenfLog,senf::log::NOTICE>();
+    senf::console::Client::get(os).route<senf::log::NOTICE>();
 }
 
 int main(int, char **)
 {
     ::signal(SIGPIPE, SIG_IGN);
-    senf::log::ConsoleTarget::instance().route< senf::SenfLog, senf::log::NOTICE >();
+    senf::log::ConsoleTarget::instance().route< senf::log::VERBOSE >();
 
     senf::console::root()
         .doc("This is the console test application");
+
     senf::console::root()
         .mkdir("console")
         .doc("Console settings");
+
+    senf::console::DirectoryNode & serverDir (
+        senf::console::root()
+            .mkdir("server")
+            .doc("server commands") );
+
+    senf::console::ScopedDirectory<> testDir;
     senf::console::root()
-        .mkdir("test")
+        .add("test", testDir)
         .doc("Test functions");
-    senf::console::root()
-        .mkdir("server");
 
     senf::console::root()["console"]
         .add("showlog", &enableLogging)
         .doc("Enable display of log messages on the current console");
-    senf::console::root()["server"]
+
+    serverDir
         .add("shutdown", &shutdownServer)
         .doc("Terminate server application");
-    senf::console::root()["test"]
+
+    testDir
         .add("echo", &echo)
         .doc("Example of a function utilizing manual argument parsing");
 
     TestObject test;
-    senf::console::root()["test"]
+    testDir
         .add("testob", test.dir)
         .doc("Example of an instance directory");
 

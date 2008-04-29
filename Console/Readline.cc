@@ -72,16 +72,20 @@ namespace {
     int readline_getc_function(FILE *)
     {
         if (senf::console::detail::ReadlineClientReader::active())
-            return senf::console::detail::ReadlineClientReader::instance().getc();
+            return senf::console::detail::ReadlineClientReader::instance().getc()
         else
             return -1;
     }
 
     void readline_callback(char * input)
     {
-        if (senf::console::detail::ReadlineClientReader::active() && input)
-            return senf::console::detail::ReadlineClientReader::instance().callback(
-                std::string(input) );
+        if (senf::console::detail::ReadlineClientReader::active()) {
+            if (input)
+                return senf::console::detail::ReadlineClientReader::instance().callback(
+                    std::string(input) );
+            else // input == 0 -> EOF (or Ctrl-D)
+                senf::console::detail::ReadlineClientReader::instance().eof();
+        }
     }
 
     ssize_t readline_cookie_write_function(void * cookie, char const * buffer, size_t size)
@@ -99,6 +103,14 @@ namespace {
 
     void readline_deprep_term()
     {}
+
+    int restart_line(int count, int key)
+    {
+        rl_kill_full_line(count, key);
+        rl_crlf();
+        rl_forced_update_display();
+        return 0;
+    }
 
 }
 
@@ -129,6 +141,7 @@ prefix_ senf::console::detail::ReadlineClientReader::ReadlineClientReader(Client
     rl_deprep_term_function = &readline_deprep_term;
     rl_getc_function = &readline_getc_function;
     rl_bind_key('\t', &rl_insert);
+    rl_bind_key('\x03', &restart_line);
     using_history();
     
     // Don't ask me, where I found this ...
@@ -191,11 +204,11 @@ prefix_ void senf::console::detail::ReadlineClientReader::charEvent(Scheduler::E
         stopClient();
         return;
     }
-    ch_ = ch;
+    ch_ = static_cast<unsigned char>(ch);
 
     if (skipChars_ > 0)
         --skipChars_;
-    else if (ch_ == static_cast<char>(0xff))
+    else if (ch_ == 0xff)
         skipChars_ = 2;
     else if (ch_ != 0)
         rl_callback_read_char();

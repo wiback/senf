@@ -71,6 +71,74 @@ namespace detail {
     template <class Stream, class Area, class Level>
     void write(std::string msg);
 
+    senf::mpl::rv<0u> RouteParameterCheck_(...);
+    senf::mpl::rv<1u> RouteParameterCheck_(StreamBase *);
+    senf::mpl::rv<2u> RouteParameterCheck_(AreaBase *);
+    template <class T> senf::mpl::rv<3u> RouteParameterCheck_(T*, typename T::SENFLogArea * = 0);
+    senf::mpl::rv<4u> RouteParameterCheck_(LevelBase *);
+
+    template < class T, class A2, class A1,
+               unsigned type = SENF_MPL_RV( RouteParameterCheck_(static_cast<T*>(0)) ) >
+    struct RouteParameters
+    {};
+
+    template <class A2, class A1>
+    struct RouteParameters<mpl::nil,A2,A1,0u>
+        : public RouteParameters<A2,A1,mpl::nil>
+    {};
+
+    struct NilLevel {
+        static unsigned const value = NONE::value;
+    };
+
+    template <>
+    struct RouteParameters<mpl::nil,mpl::nil,mpl::nil,0u>
+    {
+        typedef mpl::nil Stream;
+        typedef mpl::nil Area;
+        typedef NilLevel Level;
+    };
+
+    template <class T, class A2, class A1>
+    struct RouteParameters<T,A2,A1,1u>
+        : public RouteParameters<A2,A1,mpl::nil>
+    {
+        typedef T Stream;
+    };
+
+    template <class T, class A2, class A1>
+    struct RouteParameters<T,A2,A1,2u>
+        : public RouteParameters<A2,A1,mpl::nil>
+    {
+        typedef T Area;
+    };
+
+    template <class T, class A2, class A1>
+    struct RouteParameters<T,A2,A1,3u>
+        : public RouteParameters<A2,A1,mpl::nil>
+    {
+        typedef typename T::SENFLogArea Area;
+    };
+
+    template <class T, class A2, class A1>
+    struct RouteParameters<T,A2,A1,4u>
+        : public RouteParameters<A2,A1,mpl::nil>
+    {
+        typedef T Level;
+    };
+
+    template <class T, class RV>
+    struct InstanceP
+    {
+        static RV * value() { return & T::instance(); }
+    };
+
+    template <class RV>
+    struct InstanceP<mpl::nil, RV>
+    {
+        static RV * value() { return 0; }
+    };
+
 }}}
 
 ///////////////////////////////ih.e////////////////////////////////////////

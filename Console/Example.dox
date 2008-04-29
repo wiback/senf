@@ -64,18 +64,66 @@
     main-loop after shutdownServer returns (which is ultimately called via the console server from
     the scheduler). Throwing a senf::console::Executor::ExitException is like entering the \c exit
     built-in command at the console.
+
+    The next callback accesses the client instance directly to manipulate the logging:
+    
+    \until }
+
+    The senf::console::Client instance can be accessed using the senf::console::Client::get() helper
+    via the output stream. Since every Client is a senf::log::Target, we can route arbitrary log
+    messages to the console instance.
+
+    We now define \c main() which initializes the node tree and starts the console server
+    
+    \until route
+    
+    Here we just setup more verbose logging and set \c SIGPIPE signals to be ignored. \c SIGPIPE's
+    are a pain and really should be disabled.
+    
+    \until settings
+
+    This shows, how to set the top-level documentation and create a new subdirectory directly
+
+    \until mkdir
+
+    Here we create another new directory but save a reference so we can later access the node
+    directly. All the add commands return such a node reference of the correct type (this is a lie,
+    but it works like this anyways and it's an implementation detail that must not concern you
+    here).
+    
+    This way of stroing a refernce is not bad, but even better is to use a \c
+    senf::console::ScopedDirectory<> for this
+
+    \until functions
+    
+    This will automatically remove the node from the tree when the senf::console::ScopedDiretory
+    instance is destroyed and keeps the node alive even when unlinked from the tree (a plain
+    reference becomes invalid when anyone later unlinks the node from the tree). This is much safer
+    and is the preferred way to keep a hold on a directory.
+
+    The next statements add commands to the various directories declared so far
     
     \until Example
 
-    The \c main routine enables more verbose console logging and adds some directories and callbacks
-    to the tree so we have some stuff to play around with.
-
-    The following few lines of code instantiate a \c TestObject instance and add this object's
-    directory node to the tree
-
-    \until Example
+    We now continue by creating an instance of our test class \c TestObject
     
-    Now we are ready to start the server and enter the Scheduler main-loop
+    \until Example
+
+    We add that objects directory to the \c test dir. We now have created a directory structure like
+    tis:
+    <pre>
+    /
+      console/
+        showlog
+      server/
+        shutdown
+      test/
+        echo
+        testob/
+          vat
+    </pre>
+
+    We now start the server (giving it a nice descriptive name) and run the scheduler.
 
     \until }
  */
