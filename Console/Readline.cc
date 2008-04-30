@@ -72,7 +72,7 @@ namespace {
     int readline_getc_function(FILE *)
     {
         if (senf::console::detail::ReadlineClientReader::active())
-            return senf::console::detail::ReadlineClientReader::instance().getc()
+            return senf::console::detail::ReadlineClientReader::instance().getc();
         else
             return -1;
     }
