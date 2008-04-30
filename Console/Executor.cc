@@ -60,7 +60,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             GenericNode & node ( traverseCommand(command.commandPath()) );
             DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
             if ( dir ) {
-                if (autocd_) {
+                if (autocd_ && command.arguments().empty()) {
                     oldCwd_ = cwd_;
                     cwd_ = dir->thisptr();
                 } else

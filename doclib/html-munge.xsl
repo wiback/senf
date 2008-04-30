@@ -44,7 +44,7 @@
     <xsl:value-of select="substring-after(current(),'@TOPDIR@')"/>
   </xsl:template>
   
-  <!-- Add 'class' attribute to some special paragraphs/lists -->
+  <!-- Add 'class' attribute  -->
   
   <xsl:template name="add-class">
     <xsl:param name="class"/>
@@ -201,6 +201,62 @@
         </xsl:if>
       </xsl:for-each>
     </xsl:element>
+  </xsl:template>
+
+  <!-- Reformat detailed member documentation -->
+
+  <xsl:template match="table[@class='memname'][contains(preceding::h1[1],' Class ')][contains(preceding::h1[1],' Reference')]">
+    <xsl:variable name="name"><xsl:value-of select="str:split(tr/td[@class='memname'],'::')[position()=last()]"/></xsl:variable>
+    <table class="memname">
+      <tr>
+        <td class="memtype" colspan="5">
+          <xsl:for-each select="tr/td[@class='memname']/*|tr/td[@class='memname']/text()">
+            <xsl:choose>
+              <xsl:when test="position()=last()">
+                <xsl:value-of select="substring(.,1,string-length(.)-string-length($name))"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:copy-of select="."/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </td>
+      </tr>
+
+      <xsl:choose>
+        <xsl:when test="tr/td[@class='paramtype']">
+          <tr>
+            <td class="memname"><xsl:copy-of select="$name"/></td>
+            <td class="memparen">(</td>
+            <xsl:copy-of select="tr[1]/td[@class='paramtype']"/>
+            <xsl:copy-of select="tr[1]/td[@class='paramname']"/>
+            <td class="memparen"><xsl:if test="not(tr[td[@class='paramkey']])">)</xsl:if></td>
+          </tr>
+
+          <xsl:for-each select="tr[td[@class='paramkey']]">
+            <tr>
+              <td class="memname"></td>
+              <td class="memparen"></td>
+              <xsl:copy-of select="td[@class='paramtype']"/>
+              <xsl:copy-of select="td[@class='paramname']"/>
+              <td class="memparen"><xsl:if test="position()=last()">)</xsl:if></td>
+            </tr>
+          </xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <tr>
+            <td class="memname"><xsl:copy-of select="$name"/></td>
+            <td class="memparen"><xsl:if test="tr/td[.='(']">()</xsl:if></td>
+            <td class="paramtype"></td>
+            <td class="paramname"></td>
+            <td class="memparen"></td>
+          </tr>
+        </xsl:otherwise>
+      </xsl:choose>
+      <tr>
+        <td colspan="5" class="memattrs"><xsl:copy-of select="tr/td[@width='100%']/code"/></td>
+      </tr>
+    </table>
   </xsl:template>
 
   <!-- Add grouping to all-members page -->
@@ -384,6 +440,8 @@
       <xsl:with-param name="class">implementedin</xsl:with-param>
     </xsl:call-template>
   </xsl:template>
+
+  <!-- Break the following lists after each komma -->
 
   <xsl:template match="p[starts-with(text(),'Inherited by ')]">
     <xsl:call-template name="break-comma"/>

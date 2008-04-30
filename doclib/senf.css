@@ -548,6 +548,43 @@ p.commalist {
         margin-left: 3em;
 }
 
+table.memname {
+        width: 100%; 
+        font-weight: normal; 
+        white-space: normal;
+}
+
+table.memname td {
+        vertical-align: top;
+}
+
+table.memname td.memtype {
+        width: 100%;
+}
+
+table.memname td.memname {
+        width: 35%; 
+        text-align: right; 
+        font-weight: bold;
+}
+
+table.memname td.memparen {
+        width: 1%;
+}
+
+table.memname td.paramtype {
+        width: 30%; 
+        text-align: right;
+}
+
+table.memname td.paramname {
+        width: 33%;
+}
+
+table.memname td.memattrs {
+        text-align: right;
+}
+
 /* 
  * Local Variables:
  * indent-tabs-mode: nil
