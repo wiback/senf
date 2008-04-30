@@ -29,6 +29,8 @@
 // Custom includes
 #include <memory>
 #include <boost/scoped_ptr.hpp>
+#include <boost/type_traits/is_same.hpp>
+#include <boost/static_assert.hpp>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -71,14 +73,21 @@ namespace detail {
     template <class Stream, class Area, class Level>
     void write(std::string msg);
 
+#ifndef DOXYGEN
+
+    // This code takes the routing target template arguments in any order and sorts them 
+    // by type (Stream, Area and Level).
+
     senf::mpl::rv<0u> RouteParameterCheck_(...);
     senf::mpl::rv<1u> RouteParameterCheck_(StreamBase *);
     senf::mpl::rv<2u> RouteParameterCheck_(AreaBase *);
     template <class T> senf::mpl::rv<3u> RouteParameterCheck_(T*, typename T::SENFLogArea * = 0);
     senf::mpl::rv<4u> RouteParameterCheck_(LevelBase *);
 
+    // For g++ 4.0 (at least) we need to provide the fully scoped name for this default value.
+    // no idea why. It works without the scope in 4.1
     template < class T, class A2, class A1,
-               unsigned type = SENF_MPL_RV( RouteParameterCheck_(static_cast<T*>(0)) ) >
+               unsigned type = SENF_MPL_RV( senf::Log::detail::RouteParameterCheck_(static_cast<T*>(0)) ) >
     struct RouteParameters
     {};
 
@@ -103,6 +112,8 @@ namespace detail {
     struct RouteParameters<T,A2,A1,1u>
         : public RouteParameters<A2,A1,mpl::nil>
     {
+        typedef RouteParameters<A2,A1,mpl::nil> base;
+        BOOST_STATIC_ASSERT( boost::is_same<typename base::Stream, mpl::nil>::value );
         typedef T Stream;
     };
 
@@ -110,6 +121,8 @@ namespace detail {
     struct RouteParameters<T,A2,A1,2u>
         : public RouteParameters<A2,A1,mpl::nil>
     {
+        typedef RouteParameters<A2,A1,mpl::nil> base;
+        BOOST_STATIC_ASSERT( boost::is_same<typename base::Area, mpl::nil>::value );
         typedef T Area;
     };
 
@@ -117,6 +130,8 @@ namespace detail {
     struct RouteParameters<T,A2,A1,3u>
         : public RouteParameters<A2,A1,mpl::nil>
     {
+        typedef RouteParameters<A2,A1,mpl::nil> base;
+        BOOST_STATIC_ASSERT( boost::is_same<typename base::Area, mpl::nil>::value );
         typedef typename T::SENFLogArea Area;
     };
 
@@ -124,6 +139,8 @@ namespace detail {
     struct RouteParameters<T,A2,A1,4u>
         : public RouteParameters<A2,A1,mpl::nil>
     {
+        typedef RouteParameters<A2,A1,mpl::nil> base;
+        BOOST_STATIC_ASSERT( boost::is_same<typename base::Level, NilLevel>::value );
         typedef T Level;
     };
 
@@ -138,6 +155,8 @@ namespace detail {
     {
         static RV * value() { return 0; }
     };
+
+#endif
 
 }}}
 
