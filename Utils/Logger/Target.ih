@@ -87,7 +87,7 @@ namespace detail {
     // For g++ 4.0 (at least) we need to provide the fully scoped name for this default value.
     // no idea why. It works without the scope in 4.1
     template < class T, class A2, class A1,
-               unsigned type = SENF_MPL_RV( senf::Log::detail::RouteParameterCheck_(static_cast<T*>(0)) ) >
+               unsigned type = SENF_MPL_RV( senf::log::detail::RouteParameterCheck_(static_cast<T*>(0)) ) >
     struct RouteParameters
     {};
 
@@ -113,7 +113,7 @@ namespace detail {
         : public RouteParameters<A2,A1,mpl::nil>
     {
         typedef RouteParameters<A2,A1,mpl::nil> base;
-        BOOST_STATIC_ASSERT( boost::is_same<typename base::Stream, mpl::nil>::value );
+        BOOST_STATIC_ASSERT(( boost::is_same<typename base::Stream, mpl::nil>::value ));
         typedef T Stream;
     };
 
@@ -122,7 +122,7 @@ namespace detail {
         : public RouteParameters<A2,A1,mpl::nil>
     {
         typedef RouteParameters<A2,A1,mpl::nil> base;
-        BOOST_STATIC_ASSERT( boost::is_same<typename base::Area, mpl::nil>::value );
+        BOOST_STATIC_ASSERT(( boost::is_same<typename base::Area, mpl::nil>::value ));
         typedef T Area;
     };
 
@@ -131,7 +131,7 @@ namespace detail {
         : public RouteParameters<A2,A1,mpl::nil>
     {
         typedef RouteParameters<A2,A1,mpl::nil> base;
-        BOOST_STATIC_ASSERT( boost::is_same<typename base::Area, mpl::nil>::value );
+        BOOST_STATIC_ASSERT(( boost::is_same<typename base::Area, mpl::nil>::value ));
         typedef typename T::SENFLogArea Area;
     };
 
@@ -140,7 +140,7 @@ namespace detail {
         : public RouteParameters<A2,A1,mpl::nil>
     {
         typedef RouteParameters<A2,A1,mpl::nil> base;
-        BOOST_STATIC_ASSERT( boost::is_same<typename base::Level, NilLevel>::value );
+        BOOST_STATIC_ASSERT(( boost::is_same<typename base::Level, NilLevel>::value ));
         typedef T Level;
     };
 
