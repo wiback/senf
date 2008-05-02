@@ -185,6 +185,8 @@ create(ForwardReadableRange const & range,
     return ConcretePacket(interpreter::create(range));
 }
 
+#endif
+
 // Create packet as new packet after a given packet
 
 template <class PacketType>
@@ -193,8 +195,6 @@ senf::ConcretePacket<PacketType>::createAfter(Packet packet)
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr()));
 }
-
-#endif
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
@@ -217,6 +217,8 @@ senf::ConcretePacket<PacketType>::createAfter(Packet packet, size_type size, sen
     return ConcretePacket(interpreter::createAfter(packet.ptr(), size, senf::noinit));
 }
 
+#ifndef DOXYGEN
+
 template <class PacketType>
 template <class ForwardReadableRange>
 prefix_ senf::ConcretePacket<PacketType> senf::ConcretePacket<PacketType>::
@@ -225,6 +227,8 @@ createAfter(Packet packet, ForwardReadableRange const & range,
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr(), range));
 }
+
+#endif
 
 // Create packet as new packet (header) before a given packet
 

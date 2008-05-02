@@ -52,6 +52,6 @@ def SetupForSENF(env):
 
         env.Default(
             env.AlwaysBuild(
-                env.Command('senf/libsenf.a', [],  [ 'scons -C senf $SENF_BUILDOPTS libsenf.a' ])))
+                env.Command('senf/libsenf.a', [],  [ 'scons -C %s $SENF_BUILDOPTS libsenf.a' % os.path.realpath('senf')])))
     else:
         print '\nUsing global SENF\n'

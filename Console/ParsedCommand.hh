@@ -358,7 +358,8 @@ namespace console {
         BOOST_PARAMETER_KEYWORD(type, default_doc) ///< String rep of default value
                                         /**< By default, the default value is documented by
                                              converting the value to it's string representation
-                                             using \c boost::lexical_cast / \c iostreams. The
+                                             using the corresponding return value formatter which by
+                                             default uses \c boost::lexical_cast / \c iostreams. The
                                              displayed value can be changed by setting this
                                              attribute. */
         BOOST_PARAMETER_KEYWORD(type, parser) ///< Argument parser

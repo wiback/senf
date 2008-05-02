@@ -192,7 +192,7 @@ prefix_ void senf::INet6MulticastSocketProtocol::mcAddMembership(INet6Address co
     struct ipv6_mreq mreqn;
     std::copy(mcAddr.begin(), mcAddr.end(), mreqn.ipv6mr_multiaddr.s6_addr);
     mreqn.ipv6mr_interface = 0;
-    if (::setsockopt(fd(),SOL_IP,IPV6_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
+    if (::setsockopt(fd(),SOL_IPV6,IPV6_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IPV6_ADD_MEMBERSHIP");
 }
 
@@ -204,7 +204,7 @@ prefix_ void senf::INet6MulticastSocketProtocol::mcAddMembership(INet6Address co
     mreqn.ipv6mr_interface = if_nametoindex(iface.c_str());
     if (mreqn.ipv6mr_interface == 0)
         throw SystemException("::if_nametoindex()",ENOENT SENF_EXC_DEBUGINFO);
-    if (::setsockopt(fd(),SOL_IP,IPV6_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
+    if (::setsockopt(fd(),SOL_IPV6,IPV6_ADD_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("::setsockopt(IPV6_ADD_MEMBERSHIP");
 }
 
@@ -214,7 +214,7 @@ prefix_ void senf::INet6MulticastSocketProtocol::mcDropMembership(INet6Address c
     struct ipv6_mreq mreqn;
     std::copy(mcAddr.begin(), mcAddr.end(), mreqn.ipv6mr_multiaddr.s6_addr);
     mreqn.ipv6mr_interface = 0;
-    if (::setsockopt(fd(),SOL_IP,IPV6_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
+    if (::setsockopt(fd(),SOL_IPV6,IPV6_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
@@ -228,7 +228,7 @@ senf::INet6MulticastSocketProtocol::mcDropMembership(INet6Address const & mcAddr
     mreqn.ipv6mr_interface = if_nametoindex(iface.c_str());
     if (mreqn.ipv6mr_interface == 0)
         throw SystemException("::if_nametoindex()",ENOENT SENF_EXC_DEBUGINFO);
-    if (::setsockopt(fd(),SOL_IP,IPV6_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
+    if (::setsockopt(fd(),SOL_IPV6,IPV6_DROP_MEMBERSHIP,&mreqn,sizeof(mreqn)) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
