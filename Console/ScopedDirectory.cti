@@ -70,6 +70,8 @@ senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object & ob
     return OwnerNodeCreateTraits<Owner, Object>::Creator::create(node(), *owner_, name, ob);
 }
 
+#ifndef DOXYGEN
+
 template <class Owner, class Function>
 prefix_ senf::console::SimpleCommandNode & senf::console::
 senf_console_add_node(DirectoryNode & node, Owner & , std::string const & name,
@@ -93,6 +95,8 @@ senf_console_add_node(DirectoryNode & dir, std::string const & name, Node const 
 {
     return dir.add(name, node.node().thisptr());
 }
+
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ScopedDirectory<void>

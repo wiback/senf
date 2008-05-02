@@ -375,6 +375,8 @@ namespace detail {
 
 }}}
 
+#ifndef DOXYGEN
+
 template <class Function>
 typename senf::console::detail::ParsedCommandTraits<Function>::Attributor
 senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
@@ -400,6 +402,8 @@ senf::console::senf_console_add_node(DirectoryNode & node, Owner & owner, std::s
     return senf::console::detail::addOverloadedCommandNode<Function>(
         node, name, senf::membind(fn,&owner));
 }
+
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

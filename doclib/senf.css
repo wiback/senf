@@ -585,6 +585,16 @@ table.memname td.memattrs {
         text-align: right;
 }
 
+table.memname.macro td.paramtype {
+        text-align: left;
+	color: #602020;
+        font-style: italic;
+}
+
+table.memname.macro td.memattrs {
+        display: none;
+}
+
 /* 
  * Local Variables:
  * indent-tabs-mode: nil

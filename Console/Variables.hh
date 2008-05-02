@@ -42,6 +42,8 @@ namespace console {
     class ScopedDirectoryBase;
     template <class Variable> class VariableAttributor;
 
+#ifndef DOXYGEN
+
     template <class Variable>
     VariableAttributor<Variable> senf_console_add_node(
         DirectoryNode & node, std::string const & name, Variable & var, int,
@@ -51,6 +53,8 @@ namespace console {
     typename detail::VariableNodeCreator<Variable>::result_type
     senf_console_add_node(DirectoryNode & node, std::string const & name, 
                           boost::reference_wrapper<Variable> var, int);
+
+#endif
 
     /** \brief Variable command attributes (const)
         

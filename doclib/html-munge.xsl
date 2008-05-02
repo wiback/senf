@@ -205,9 +205,15 @@
 
   <!-- Reformat detailed member documentation -->
 
-  <xsl:template match="table[@class='memname'][contains(preceding::h1[1],' Class ')][contains(preceding::h1[1],' Reference')]">
-    <xsl:variable name="name"><xsl:value-of select="str:split(tr/td[@class='memname'],'::')[position()=last()]"/></xsl:variable>
-    <table class="memname">
+  <xsl:template match="table[@class='memname']">
+    <xsl:variable name="name1"><xsl:value-of select="str:split(tr/td[@class='memname'],'::')[position()=last()]"/></xsl:variable>
+    <xsl:variable name="name2"><xsl:value-of select="str:split(tr/td[@class='memname'],' ')[position()=last()]"/></xsl:variable>
+    <xsl:variable name="name"><xsl:value-of select="substring($name1,string-length($name1)-string-length($name2))"/></xsl:variable>
+    <xsl:element name="table">
+      <xsl:attribute name="class">
+        <xsl:text>memname</xsl:text>
+        <xsl:if test="contains(tr/td[@class='memname'],'#define')"><xsl:text> macro</xsl:text></xsl:if>
+      </xsl:attribute>
       <tr>
         <td class="memtype" colspan="5">
           <xsl:for-each select="tr/td[@class='memname']/*|tr/td[@class='memname']/text()">
@@ -254,9 +260,13 @@
         </xsl:otherwise>
       </xsl:choose>
       <tr>
-        <td colspan="5" class="memattrs"><xsl:copy-of select="tr/td[@width='100%']/code"/></td>
+        <td colspan="5" class="memattrs"><xsl:copy-of select="tr/td[@width='100%']/*|tr/td[@width='100%']/text()"/></td>
       </tr>
-    </table>
+    </xsl:element>
+  </xsl:template>
+
+  <!-- no idea, where these &nbsp;'s come frome ... -->
+  <xsl:template match="div[@class='memproto']/text()[.='&#160;&#x0a;']">
   </xsl:template>
 
   <!-- Add grouping to all-members page -->
@@ -480,7 +490,7 @@
   </xsl:template>
 
   <!-- Add CSS class to the brief documentation paragraph of the member documentation -->
-  <xsl:template match="div[@class='memdoc']/p[1]">
+  <xsl:template match="div[@class='memdoc']/p[1][not(contains(.,'Definition at line'))]">
     <xsl:call-template name="add-class">
       <xsl:with-param name="class">memtitle</xsl:with-param>
     </xsl:call-template>
