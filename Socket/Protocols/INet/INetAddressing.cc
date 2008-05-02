@@ -89,12 +89,12 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
     //             or: host ":" port
     //             or: port
 
-    static boost::regex const addressRx ("(?:(?:\\[([a-f0-9A-F:]+)(?:%(.+))?\\]|(.+)):)?([0-9]+)");
+    static boost::regex const addressRx ("(?:(?:\\[([^%]+)(?:%(.+))?\\]|(.+)):)?([0-9]+)");
     // Subexpression numbers:
-    enum { NumericAddr = 1,
-           ZoneId      = 2,
-           Hostname    = 3,
-           Port        = 4 };
+    enum { Address  = 1,
+           ZoneId   = 2,
+           Hostname = 3,
+           Port     = 4 };
     
     boost::smatch match;
     if (! regex_match(addr, match, addressRx))
@@ -105,9 +105,9 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
 
     sockaddr_.sin6_port = htons(boost::lexical_cast<boost::uint16_t>(match[Port]));
 
-    if (match[NumericAddr].matched || match[Hostname].matched) {
+    if (match[Address].matched || match[Hostname].matched) {
         INet6Address a (INet6Address::from_string(
-                            match[NumericAddr].matched ? match[NumericAddr] : match[Hostname],
+                            match[Address].matched ? match[Address] : match[Hostname],
                             resolve));
         std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
     }

@@ -127,7 +127,7 @@ prefix_ bool senf::INet6Address::unicast()
 prefix_ bool senf::INet6Address::multicast()
     const
 {
-    return (*this)[0] == 0xFFu;
+    return (*this)[0] == 0xFFu || inet4Mapped() && inet4address().multicast();
 }
 
 prefix_ senf::INet6Address::ScopeId senf::INet6Address::scope()

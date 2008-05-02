@@ -41,6 +41,7 @@ BerliOS
 bitfield
 bool
 boostfn
+broadcastEnabled
 bund
 calculateChecksum
 callables
@@ -209,6 +210,7 @@ iberty
 IDE
 IdleEvent
 ietf
+iface
 ifndef
 ih
 impl
@@ -262,9 +264,11 @@ libSocket
 libUtils
 LINKFLAGS
 LinkScope
+linux
 ListB
 ListN
 ListPolicy
+localAddr
 localhost
 loopback
 mac
@@ -272,6 +276,10 @@ MACAddress
 MACAddressParser
 mainpage
 manualparse
+mcAddMembership
+mcAddr
+mcDropMembership
+mcLoop
 mem
 memberfn
 mixin
@@ -279,6 +287,7 @@ mkdir
 MPEGDVBBundle
 mpp
 multicast
+MulticastSocketProtocol
 MyClass
 mycommand
 mydir
@@ -412,6 +421,7 @@ RegistrationProxy
 repos
 rerference
 rfc
+RFCs
 RO
 RP
 SafePacketParser

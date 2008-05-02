@@ -128,6 +128,9 @@ namespace senf {
     };
 
     /** \brief Multicast protocol facet for INet6 addressable multicast enabled sockets
+
+        This implementation supports INet6 mapped INet4 multicast addresses. This is a linux
+        specific extension and NOT part of the relevant RFCs.
      */
     class INet6MulticastSocketProtocol
         : public MulticastSocketProtocol
@@ -139,14 +142,6 @@ namespace senf {
                                              groups received. The group is joined on the default
                                              interface.
                                              \param[in] mcAddr address of group to join */
-        void mcAddMembership(INet6Address const & mcAddr, INet6Address const & localAddr) 
-            const;
-                                        ///< join multicast group on a specific interface
-                                        /**< This member will add \a mcAddr to the list of multicast
-                                             groups received. The group is joined on the interface
-                                             with the given local address.
-                                             \param[in] mcAddr address of group to join
-                                             \param[in] localAddr address of interface to join on */
         void mcAddMembership(INet6Address const & mcAddr, std::string const & iface);
                                         ///< join multicast group on a specific interface
                                         /**< This member will add \a mcAddr to the list of multicast
@@ -161,15 +156,6 @@ namespace senf {
                                              multicast groups received. The group is left from the
                                              default interface.
                                              \param[in] mcAddr address of group to leave */
-        void mcDropMembership(INet6Address const & mcAddr, INet6Address const & localAddr) 
-            const;
-                                        ///< leave multicast group on a specific interface
-                                        /**< This member will remove \a mcAddr from the list of
-                                             multicast groups received. The group is left from the
-                                             interface with the given local address.
-                                             \param[in] mcAddr address of group to leave
-                                             \param[in] localAddr address of interface to leave
-                                                 from */
         void mcDropMembership(INet6Address const & mcAddr, std::string const & iface) 
             const;
                                         ///< leave multicast group on a specific interface

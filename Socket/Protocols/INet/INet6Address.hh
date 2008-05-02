@@ -216,6 +216,12 @@ namespace senf {
 
         bool unicast() const;           ///< \c true, if address is unicast
         bool multicast() const;         ///< \c true, if address is multicast
+                                        /**< To support a linux specific extension, INet4 multicast
+                                             addressed mapped to INet6 are also interpreted as
+                                             multicast addresses. This is NOT part of the standard,
+                                             however the standard officially only allows unicast v4
+                                             addresses to be mapped to v6 so this does not collide
+                                             with any standard conforming use. */
 
         ScopeId scope() const;          ///< Get address's scope
                                         /**< The scope of an address is one of the \ref ScopeId
