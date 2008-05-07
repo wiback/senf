@@ -113,7 +113,7 @@ int main(int, char **)
         .add("testob", test.dir)
         .doc("Example of an instance directory");
 
-    senf::console::Server::start( senf::INet4SocketAddress(23232) )
+    senf::console::Server::start( senf::INet4SocketAddress(23232u) )
         .name("testServer");
 
     senf::Scheduler::instance().process();

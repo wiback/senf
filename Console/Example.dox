@@ -82,24 +82,25 @@
     
     \until settings
 
-    This shows, how to set the top-level documentation and create a new subdirectory directly
+    This shows, how to set the top-level documentation and create a new subdirectory.
 
-    \until mkdir
+    \until doc
 
-    Here we create another new directory but save a reference so we can later access the node
+    Here we create another new directory and save a reference so we can later access the node
     directly. All the add commands return such a node reference of the correct type (this is a lie,
     but it works like this anyways and it's an implementation detail that must not concern you
     here).
     
-    This way of stroing a refernce is not bad, but even better is to use a \c
-    senf::console::ScopedDirectory<> for this
+    Instead of creating a new directory directly and later sotring a reference, it is better to use
+    \c senf::console::ScopedDirectory<> like this:
 
     \until functions
     
-    This will automatically remove the node from the tree when the senf::console::ScopedDiretory
-    instance is destroyed and keeps the node alive even when unlinked from the tree (a plain
-    reference becomes invalid when anyone later unlinks the node from the tree). This is much safer
-    and is the preferred way to keep a hold on a directory.
+    This will automatically remove the node from the tree when the \c senf::console::ScopedDirectory
+    instance is destroyed. It also protects against the problem of dangling references: When using a
+    plain reference, removing the directory from the tree will destroy the node. The reference
+    however will still reference the (now nonexistent) directory and any access via the reference
+    will crash the program. 
 
     The next statements add commands to the various directories declared so far
     
