@@ -27,7 +27,6 @@
 #include "Server.ih"
 
 // Custom includes
-#include <unistd.h>
 #include <iostream>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
@@ -248,6 +247,24 @@ prefix_ void senf::console::Client::v_write(boost::posix_time::ptime timestamp,
     reader_->enablePrompt();
 }
 
+prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Client const & client)
+{
+    //    typedef senf::ClientSocketHandle<MakeSocketPolicy<INet4AddressingPolicy>::policy > v4Socket;
+    if( senf::check_socket_cast<TCPv4ServerSocketHandle::ClientSocketHandle>( client.handle())) {
+        os<<senf::dynamic_socket_cast<TCPv4ServerSocketHandle::ClientSocketHandle>( client.handle()).peer();
+    }
+    else if( senf::check_socket_cast<TCPv6ServerSocketHandle::ClientSocketHandle>( client.handle())) {
+        os<<senf::dynamic_socket_cast<TCPv6ServerSocketHandle::ClientSocketHandle>( client.handle()).peer();
+    }
+    else{
+        os<<((void *)&client);
+    }
+    return os;
+}
+prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Client * client)
+{
+    return os<<*client;
+}
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Server.mpp"

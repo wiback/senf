@@ -110,7 +110,7 @@ int main(int, char **)
 
     TestObject test;
     testDir
-        .add("testob", test.dir)
+        .add("extra", test.dir)
         .doc("Example of an instance directory");
 
     senf::console::Server::start( senf::INet4SocketAddress(23232u) )
