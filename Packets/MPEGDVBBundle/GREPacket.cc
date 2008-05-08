@@ -29,11 +29,13 @@
 // Custom includes
 #include <boost/io/ios_state.hpp>
 #include <iomanip>
+#include <senf/Packets/DefaultBundle/IPv4Packet.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x6558, senf::EthernetPacket );
+SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 47, senf::GREPacket );
 
 prefix_ void senf::GREPacketType::dump(packet p, std::ostream & os)
 {
