@@ -30,6 +30,7 @@
 #include <map>
 #include <boost/utility.hpp> // for boost::noncopyable
 #include <boost/optional.hpp>
+#include <boost/preprocessor/cat.hpp>
 #include "../Utils/Exception.hh"
 #include "Packet.hh"
 
@@ -200,7 +201,7 @@ packet of which the key is requested
 #   define SENF_PACKET_REGISTRY_REGISTER( registry, value, type )                                 \
         namespace {                                                                               \
             senf::PacketRegistry< registry >::RegistrationProxy< type >                           \
-                packetRegistration_ ## __LINE__ ( value );                                        \
+                BOOST_PP_CAT(packetRegistration_, __LINE__) ( value );                            \
         }
 
     /** \brief Dump all packet registries

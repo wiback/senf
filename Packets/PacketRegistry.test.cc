@@ -55,12 +55,10 @@ namespace {
     struct OtherPacketType : public PacketTypeBase {};
     typedef senf::ConcretePacket<OtherPacketType> OtherPacket;
 
-    namespace reg {
-        PacketRegistry<StringTag>::RegistrationProxy<FooPacket> registerFoo ("foo");
-        PacketRegistry<StringTag>::RegistrationProxy<BarPacket> registerBar ("bar");
-    }
-
 }
+
+SENF_PACKET_REGISTRY_REGISTER(StringTag, "foo", FooPacket);
+SENF_PACKET_REGISTRY_REGISTER(StringTag, "bar", BarPacket);
 
 BOOST_AUTO_UNIT_TEST(packetRegistry_test)
 {
