@@ -41,8 +41,20 @@ prefix_ std::string const & senf::console::ArgumentToken::value()
     return token_;
 }
 
-prefix_ senf::console::ArgumentToken::ArgumentToken(std::string token)
-    : token_ (token)
+prefix_ senf::console::ArgumentToken::TokenType senf::console::ArgumentToken::type()
+    const
+{
+    return type_;
+}
+
+prefix_ bool senf::console::ArgumentToken::is(unsigned tokens)
+    const
+{
+    return tokens & type_;
+}
+
+prefix_ senf::console::ArgumentToken::ArgumentToken(TokenType type, std::string token)
+    : type_(type), token_ (token)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
@@ -66,7 +78,8 @@ prefix_ senf::console::ParseCommandInfo::ArgumentsRange
 senf::console::ParseCommandInfo::arguments()
     const
 {
-    return boost::make_iterator_range(arguments_.begin(), arguments_.end());
+    return boost::make_iterator_range( ArgumentIterator(tokens_.begin()),
+                                       ArgumentIterator(tokens_.end()) );
 }
 
 prefix_ senf::console::ParseCommandInfo::TokensRange senf::console::ParseCommandInfo::tokens()
@@ -83,8 +96,6 @@ prefix_ void senf::console::ParseCommandInfo::init()
     builtin_ = NoBuiltin;
     commandPath_.clear();
     tokens_.clear();
-    arguments_.clear();
-    tempArguments_.clear();
 }
 
 prefix_ void senf::console::ParseCommandInfo::setBuiltin(BuiltinCommand builtin)
@@ -99,19 +110,43 @@ senf::console::ParseCommandInfo::setCommand(std::vector<std::string> & commandPa
     commandPath_.swap(commandPath);
 }
 
-prefix_ void senf::console::ParseCommandInfo::startArgument()
-{
-    tempArguments_.push_back( TempArgumentRange( tokens_.size(), tokens_.size() ) );
-}
-
-prefix_ void senf::console::ParseCommandInfo::endArgument()
-{
-    tempArguments_.back().second = tokens_.size();
-}
-
 prefix_ void senf::console::ParseCommandInfo::addToken(ArgumentToken const & token)
 {
     tokens_.push_back(token);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ParseCommandInfo::ArgumentIterator
+
+prefix_ senf::console::ParseCommandInfo::ArgumentIterator::ArgumentIterator()
+{}
+
+prefix_ senf::console::ParseCommandInfo::ArgumentIterator::
+ArgumentIterator(ParseCommandInfo::TokensRange::iterator i)
+    : b_(i), e_(i)
+{}
+
+prefix_ senf::console::ParseCommandInfo::ArgumentIterator::reference
+senf::console::ParseCommandInfo::ArgumentIterator::dereference()
+    const
+{
+    if (b_ == e_) setRange();
+    return b_->is(ArgumentToken::ArgumentGroupOpen) 
+        ? boost::make_iterator_range(boost::next(b_), boost::prior(e_))
+        : boost::make_iterator_range(b_, e_);
+}
+
+prefix_ bool
+senf::console::ParseCommandInfo::ArgumentIterator::equal(ArgumentIterator const & other)
+    const
+{
+    return b_ == other.b_;
+}
+
+prefix_ void senf::console::ParseCommandInfo::ArgumentIterator::increment()
+{
+    if (b_ == e_) setRange();
+    b_ = e_;
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -194,6 +194,7 @@
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/range/iterator_range.hpp>
+#include <boost/iterator/iterator_facade.hpp>
 #include <boost/function.hpp>
 
 //#include "Parse.mpp"
@@ -214,14 +215,54 @@ namespace console {
     class ArgumentToken
     {
     public:
+        enum TokenType { 
+            PathSeparator       = 0x0001,
+            ArgumentGroupOpen   = 0x0002,
+            ArgumentGroupClose  = 0x0004,
+            DirectoryGroupOpen  = 0x0008,
+            DirectoryGroupClose = 0x0010,
+            CommandTerminator   = 0x0020,
+            OtherPunctuation    = 0x0040,
+            BasicString         = 0x0080,
+            HexString           = 0x0100,
+            Word                = 0x0200
+        };
+
+        enum TokenGroup {
+            ArgumentGrouper     = ArgumentGroupOpen 
+                                | ArgumentGroupClose,
+
+            DirectoryGrouper    = DirectoryGroupOpen 
+                                | DirectoryGroupClose,
+
+            Punctuation         = DirectoryGroupOpen 
+                                | DirectoryGroupClose 
+                                | PathSeparator 
+                                | CommandTerminator 
+                                | OtherPunctuation,
+
+            String              = BasicString 
+                                | HexString,
+
+            SimpleArgument      = Word 
+                                | BasicString 
+                                | HexString
+        };
+        
         std::string const & value() const; ///< String value of token
                                         /**< This value is properly unquoted */
+
+        TokenType type() const;         ///< Token type
+
+        bool is(unsigned tokens) const; ///< Check, whether tokens type matches \a tokens
+                                        /**< \a tokens is a bit-mask of token types to check. */
 
     protected:
 
     private:
-        explicit ArgumentToken(std::string token);
+        ArgumentToken(TokenType type, std::string token);
 
+        TokenType type_;
         std::string token_;
 
         friend class detail::ParserAccess;
@@ -239,32 +280,18 @@ namespace console {
         \li the arguments. Every argument consists of a range of ArgumentToken instances.
 
         \ingroup console_parser
-
-        \todo Completely change the 'arguments()' member implementation: let the parser just
-            generate a flat list of tokens and implement an 'argument iterator' with the following
-            features: 1. return argument ranges, automatically detecting paranthesis 2. trying to
-            increment the iterator beyond it's range just throws an argument syntax error. For this
-            to work, the parser needs to not drop the outermost '()' pair 3. detect bad paranthesis
-            (should not be necessary since the parser already does this). This allows to use this
-            same iterator to parse nested complex arguments.
       */
     class ParseCommandInfo
     {
         typedef std::vector<ArgumentToken> Tokens;
         typedef std::vector<std::string> CommandPath;
-        
+        class ArgumentIterator; 
+
     public:
         typedef CommandPath::const_iterator path_iterator;
         typedef Tokens::const_iterator token_iterator;
-        typedef boost::iterator_range<token_iterator> argument_value_type;
-
-
-    private:
-        typedef std::vector<argument_value_type> Arguments;
-
-    public:
-        typedef Arguments::const_iterator argument_iterator;
-        typedef Arguments::size_type size_type;
+        typedef ArgumentIterator argument_iterator;
+        typedef Tokens::size_type size_type;
 
         typedef boost::iterator_range<path_iterator> CommandPathRange;
         typedef boost::iterator_range<argument_iterator> ArgumentsRange;
@@ -300,24 +327,40 @@ namespace console {
         void init();
         void setBuiltin(BuiltinCommand builtin);
         void setCommand(std::vector<std::string> & commandPath);
-        void startArgument();
-        void endArgument();
         void addToken(ArgumentToken const & token);
-        void finalize();
 
         struct MakeRange;
 
         std::vector<std::string> commandPath_;
-
-        typedef std::pair<Tokens::size_type, Tokens::size_type> TempArgumentRange;
-        typedef std::vector<TempArgumentRange> TempArguments;
-
         BuiltinCommand builtin_;
         Tokens tokens_;
-        Arguments arguments_;
-        TempArguments tempArguments_;
 
         friend class detail::ParserAccess;
+    };
+
+    class ParseCommandInfo::ArgumentIterator
+        : public boost::iterator_facade< ParseCommandInfo::ArgumentIterator, 
+                                         ParseCommandInfo::TokensRange,
+                                         boost::bidirectional_traversal_tag,
+                                         ParseCommandInfo::TokensRange >
+    {
+        ArgumentIterator();
+
+    private:
+        ArgumentIterator(ParseCommandInfo::TokensRange::iterator i);
+
+        reference dereference() const;
+        bool equal(ArgumentIterator const & other) const;
+        void increment();
+        void decrement();
+
+        mutable ParseCommandInfo::TokensRange::iterator b_;
+        mutable ParseCommandInfo::TokensRange::iterator e_;
+
+        void setRange() const;
+
+        friend class boost::iterator_core_access;
+        friend class ParseCommandInfo;
     };
 
     /**< \brief Output ParseCommandInfo instance

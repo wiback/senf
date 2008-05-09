@@ -32,14 +32,11 @@ namespace kw = senf::console::kw;
 
 void echo(std::ostream & output, senf::console::ParseCommandInfo const & command)
 {
-    typedef senf::console::ParseCommandInfo::ArgumentsRange::iterator iterator;
-    iterator i (command.arguments().begin());
-    iterator i_end (command.arguments().end());
+    typedef senf::console::ParseCommandInfo::TokensRange::iterator iterator;
+    iterator i (command.tokens().begin());
+    iterator i_end (command.tokens().end());
     for (; i != i_end; ++i) {
-        iterator::value_type::iterator j (i->begin());
-        iterator::value_type::iterator j_end (i->end());
-        for (; j != j_end; ++j) 
-            output << j->value() << ' ';
+        output << i->value() << ' ';
     }
     output << "\n";
 }

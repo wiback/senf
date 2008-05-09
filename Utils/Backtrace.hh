@@ -35,6 +35,7 @@
 namespace senf {
 
     void formatBacktrace(std::ostream & os, void ** backtrace, unsigned numEntries);
+    void backtrace(std::ostream & os, unsigned numEntries);
 
 }
 

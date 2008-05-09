@@ -84,7 +84,14 @@ namespace {
         pid  = ::fork();
         if (pid < 0) throw senf::SystemException("::fork()");
         if (pid == 0) {
-            ::_exit(myMain(argc, argv));
+            try {
+                ::_exit(myMain(argc, argv));
+            } catch (std::exception & ex) {
+                std::cerr << "Unexpected exception: " << ex.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Unexpected exception" << std::endl;
+            }
+            ::_exit(2);
         }
         int status;
         if (::waitpid(pid, &status, 0) < 0) throw senf::SystemException("::waitpid()");

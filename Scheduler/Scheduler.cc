@@ -45,6 +45,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "../Utils/Exception.hh"
+#include "../Utils/Backtrace.hh"
 
 static const int EPollInitialSize = 16;
 
@@ -56,24 +57,24 @@ prefix_ senf::Scheduler::Scheduler()
       eventTime_(0), eventEarly_(ClockService::milliseconds(11)), eventAdjust_(0)
 {
     if (epollFd_<0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::epoll_create()");
 
     if (::pipe(sigpipe_) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::pipe()");
 
     int flags (::fcntl(sigpipe_[1],F_GETFL));
     if (flags < 0) 
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::fcntl(F_GETFL)");
     flags |= O_NONBLOCK;
     if (::fcntl(sigpipe_[1], F_SETFL, flags) < 0) 
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::fcntl(F_SETFL)");
 
     ::epoll_event ev;
     ::memset(&ev, 0, sizeof(ev));
     ev.events = EV_READ;
     ev.data.fd = sigpipe_[0];
     if (::epoll_ctl(epollFd_, EPOLL_CTL_ADD, sigpipe_[0], &ev) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::epoll_ctl(EPOLL_CTL_ADD)");
 }
 
 prefix_ void senf::Scheduler::registerSignal(unsigned signal, SimpleCallback const & cb)
@@ -111,7 +112,7 @@ prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMas
         action = EPOLL_CTL_ADD;
         i = fdTable_.insert(std::make_pair(fd, EventSpec())).first;
     }
-    if (i->second.epollMask() == 0) {
+    else if (i->second.epollMask() == 0) {
         action = EPOLL_CTL_ADD;
         fdErase_.erase( std::remove(fdErase_.begin(), fdErase_.end(), unsigned(fd)),
                         fdErase_.end() );
@@ -126,14 +127,23 @@ prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMas
     ev.events = i->second.epollMask();
     ev.data.fd = fd;
 
-    if (! i->second.file && epoll_ctl(epollFd_, action, fd, &ev) < 0) {
-        if (errno == EPERM) {
-            // Argh ... epoll does not support ordinary files :-( :-(
-            i->second.file = true;
-            ++ files_;
+    for (;;) {
+        if ( (!i->second.file) && (epoll_ctl(epollFd_, action, fd, &ev) < 0) ) {
+            switch (errno) {
+            case EPERM :
+                // Argh ... epoll does not support ordinary files :-( :-(
+                i->second.file = true;
+                ++ files_;
+                return;
+            case ENOENT :
+                action = EPOLL_CTL_ADD;
+                break;
+            default:
+                SENF_THROW_SYSTEM_EXCEPTION("::epoll_ctl()");
+            }
         }
         else
-            SENF_THROW_SYSTEM_EXCEPTION("::epoll_ctl()");
+            return;
     }
 }
 
@@ -162,7 +172,7 @@ prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
         fdErase_.push_back(fd);
     }
 
-    if (! file && epoll_ctl(epollFd_, action, fd, &ev) < 0)
+    if (! file && epoll_ctl(epollFd_, action, fd, &ev) < 0 && errno != ENOENT)
         SENF_THROW_SYSTEM_EXCEPTION("::epoll_ctl()");
     if (file)
         -- files_;
@@ -179,7 +189,7 @@ prefix_ void senf::Scheduler::registerSigHandlers()
             if (signal == SIGCHLD)
                 sa.sa_flags |= SA_NOCLDSTOP;
             if (::sigaction(signal, &sa, 0) < 0)
-                SENF_THROW_SYSTEM_EXCEPTION("");
+                SENF_THROW_SYSTEM_EXCEPTION("::sigaction()");
         }
     }
 }
@@ -246,13 +256,15 @@ prefix_ void senf::Scheduler::process()
         ///\todo Handle more than one epoll_event per call
         struct epoll_event ev;
         
-        ::sigprocmask(SIG_UNBLOCK, &sigset_, 0);
-        int events (epoll_wait(epollFd_, &ev, 1, timeout));
-        ::sigprocmask(SIG_BLOCK, &sigset_, 0);
+        if (::sigprocmask(SIG_UNBLOCK, &sigset_, 0) < 0)
+            SENF_THROW_SYSTEM_EXCEPTION("::sigprocmask(SIG_UNBLOCK)");
+        int events (::epoll_wait(epollFd_, &ev, 1, timeout));
+        if (::sigprocmask(SIG_BLOCK, &sigset_, 0) < 0)
+            SENF_THROW_SYSTEM_EXCEPTION("::sigprocmask(SIG_BLOCK)");
 
         if (events<0)
             if (errno != EINTR)
-                SENF_THROW_SYSTEM_EXCEPTION("");
+                SENF_THROW_SYSTEM_EXCEPTION("::epoll_wait()");
 
         eventTime_ = ClockService::now();
 

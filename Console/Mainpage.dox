@@ -288,15 +288,21 @@
     \code
     void fun1(std::ostream & os, senf::console::ParseCommandInfo const & command)
     {
-        // We take exactly one argument
-        if (command.arguments().size() != 1) 
+        ParseCommandInfo::ArgumentsRange args (command.arguments());
+        ParseCommandInfo::ArgumentsRange::iterator arg (args.begin());
+
+        // Check that we are not missing our argument
+        if (arg == args.end())
             raise senf::console::SyntaxErrorException("invalid number of arguments");
 
-        senf::console::ParseCommandInfo::TokensRange & argTokens (
-            command.arguments()[0]);
+        senf::console::ParseCommandInfo::TokensRange & arg1Tokens ( *(arg++) );
+
+        // Check that we don't have additional arguments
+        if (arg != args.end())
+            raise senf::console::SyntaxErrorException("invalid number of arguments");
 
         // The argument must have exactly one token
-        if (argTokens.size() != 1)
+        if (arg1Tokens.size() != 1)
             raise senf::console::SyntaxErrorException("argument syntax error");
 
         // Retrieve the token value

@@ -54,20 +54,11 @@ namespace detail {
         static void setCommand(ParseCommandInfo & info, std::vector<std::string> & commandPath)
             { info.setCommand(commandPath); }
 
-        static void startArgument(ParseCommandInfo & info)
-            { info.startArgument(); }
-
-        static void endArgument(ParseCommandInfo & info)
-            { info.endArgument(); }
-
         static void addToken(ParseCommandInfo & info, ArgumentToken const & token)
             { info.addToken(token); }
 
-        static void finalize(ParseCommandInfo & info)
-            { info.finalize(); }
-
-        static ArgumentToken makeToken(std::string const & token)
-            { return ArgumentToken(token); }
+        static ArgumentToken makeToken(ArgumentToken::TokenType type, std::string const & token)
+            { return ArgumentToken(type, token); }
     };
 
     struct ParseDispatcher
@@ -88,66 +79,77 @@ namespace detail {
               ParserAccess::setCommand(info_, command); }
 
         void endCommand()
-            { ParserAccess::finalize(info_); cb_(info_); }
+            { cb_(info_); }
 
-        void pushArgument(std::string const & argument)
-            { ParserAccess::startArgument(info_); 
-              ParserAccess::addToken(info_, ParserAccess::makeToken(argument)); 
-              ParserAccess::endArgument(info_); }
+        void pushArgument(ArgumentToken::TokenType type, std::string const & argument)
+            { ParserAccess::addToken(info_, ParserAccess::makeToken(type, argument)); }
 
         void openGroup()
-            { ParserAccess::startArgument(info_); }
+            { pushPunctuation("("); }
 
         void closeGroup()
-            { ParserAccess::endArgument(info_); }
+            { pushPunctuation(")"); }
 
         void pushPunctuation(std::string const & token)
-            { ParserAccess::addToken(info_, ParserAccess::makeToken(token)); }
+            {
+                ArgumentToken::TokenType type;
+                switch (token[0]) {
+                case '/' : type = ArgumentToken::PathSeparator; break;
+                case '(' : type = ArgumentToken::ArgumentGroupOpen; break;
+                case ')' : type = ArgumentToken::ArgumentGroupClose; break;
+                case '{' : type = ArgumentToken::DirectoryGroupOpen; break;
+                case '}' : type = ArgumentToken::DirectoryGroupClose; break;
+                case ';' : type = ArgumentToken::CommandTerminator; break;
+                default :  type = ArgumentToken::OtherPunctuation; break;
+                }
+                ParserAccess::addToken(info_, ParserAccess::makeToken(type, token));
+            }
 
-        void pushWord(std::string const & token)
-            { ParserAccess::addToken(info_, ParserAccess::makeToken(token)); }
+        void pushWord(ArgumentToken::TokenType type, std::string const & token)
+            { ParserAccess::addToken(info_, ParserAccess::makeToken(type, token)); }
 
         void builtin_cd(std::vector<std::string> & path)
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinCD);
               setBuiltinPathArg(path);
-              ParserAccess::finalize(info_); cb_(info_); }
+              cb_(info_); }
 
         void builtin_ls(std::vector<std::string> & path)
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinLS);
               setBuiltinPathArg(path);
-              ParserAccess::finalize(info_); cb_(info_); }
+              cb_(info_); }
 
         void pushDirectory(std::vector<std::string> & path)
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinPUSHD);
               setBuiltinPathArg(path);
-              ParserAccess::finalize(info_); cb_(info_); }
+              cb_(info_); }
 
         void popDirectory()
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinPOPD);
-              ParserAccess::finalize(info_); cb_(info_); }
+              cb_(info_); }
         
         void builtin_exit()
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinEXIT);
-              ParserAccess::finalize(info_); cb_(info_); }
+              cb_(info_); }
 
         void builtin_help(std::vector<std::string> & path)
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinHELP);
               setBuiltinPathArg(path);
-              ParserAccess::finalize(info_); cb_(info_); }
+              cb_(info_); }
 
         void setBuiltinPathArg(std::vector<std::string> & path)
             {
-                ParserAccess::startArgument(info_);
+                pushPunctuation("(");
                 for (std::vector<std::string>::const_iterator i (path.begin());
                      i != path.end(); ++i)
-                    ParserAccess::addToken(info_, ParserAccess::makeToken(*i));
-                ParserAccess::endArgument(info_);
+                    ParserAccess::addToken(info_, 
+                                           ParserAccess::makeToken(ArgumentToken::Word, *i));
+                pushPunctuation(")");
             }
     };
 
@@ -157,37 +159,6 @@ namespace detail {
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ParseCommandInfo
-
-#ifndef DOXYGEN
-
-struct senf::console::ParseCommandInfo::MakeRange
-{
-    typedef ParseCommandInfo::argument_value_type result_type;
-    
-    MakeRange() {}
-    MakeRange(ParseCommandInfo::token_iterator b) : b_ (b) {}
-    
-    senf::console::ParseCommandInfo::token_iterator b_;
-    
-    result_type operator()(TempArguments::iterator::value_type const & v) const {
-        return result_type( b_ + v.first, b_ + v.second );
-    }
-};
-
-#endif
-
-prefix_ void senf::console::ParseCommandInfo::finalize()
-{
-    arguments_.resize( tempArguments_.size() );
-
-    std::copy( boost::make_transform_iterator( tempArguments_.begin(), 
-                                               MakeRange(tokens_.begin()) ),
-               boost::make_transform_iterator( tempArguments_.end(), 
-                                               MakeRange() ),
-               arguments_.begin() );
-
-    tempArguments_.clear();
-}
 
 prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
                                                  ParseCommandInfo const & info)
@@ -214,6 +185,48 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
     }
 
     return stream;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ParseCommandInfo::ArgumentIterator
+
+prefix_ void senf::console::ParseCommandInfo::ArgumentIterator::setRange()
+    const
+{
+    if (b_->is(ArgumentToken::ArgumentGroupOpen)) {
+        unsigned level (0);
+        e_ = b_;
+        for (;;) {
+            if (e_->is(ArgumentToken::ArgumentGroupOpen))
+                ++ level;
+            else if (e_->is(ArgumentToken::ArgumentGroupClose)) {
+                -- level;
+                if (level == 0)
+                    break;
+            }
+            ++e_;
+        }
+    }
+    ++ e_;
+}
+
+prefix_ void senf::console::ParseCommandInfo::ArgumentIterator::decrement()
+{
+    e_ = b_;
+    --b_;
+    if (b_->is(ArgumentToken::ArgumentGroupClose)) {
+        unsigned level (0);
+        for (;;) {
+            if (b_->is(ArgumentToken::ArgumentGroupClose))
+                ++ level;
+            else if (b_->is(ArgumentToken::ArgumentGroupOpen)) {
+                -- level;
+                if (level == 0)
+                    break;
+            }
+            --b_;
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

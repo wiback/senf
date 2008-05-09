@@ -60,7 +60,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             GenericNode & node ( traverseCommand(command.commandPath()) );
             DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
             if ( dir ) {
-                if (autocd_ && command.arguments().empty()) {
+                if (autocd_ && command.tokens().empty()) {
                     oldCwd_ = cwd_;
                     cwd_ = dir->thisptr();
                 } else
@@ -83,14 +83,14 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
                 }
                 else {
                     oldCwd_ = cwd_;
-                    cwd_ = traverseDirectory(command.arguments().begin()[0]).thisptr();
+                    cwd_ = traverseDirectory(*command.arguments().begin()).thisptr();
                 }
             }
             break;
             
         case ParseCommandInfo::BuiltinLS : {
             DirectoryNode const & dir ( command.arguments()
-                                        ? traverseDirectory(command.arguments().begin()[0])
+                                        ? traverseDirectory(*command.arguments().begin())
                                         : cwd() );
             for (DirectoryNode::child_iterator i (dir.children().begin());
                  i != dir.children().end(); ++i) {
@@ -105,7 +105,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
         case ParseCommandInfo::BuiltinPUSHD :
             dirstack_.push_back(cwd_);
             if ( command.arguments() )
-                cwd_ = traverseDirectory(command.arguments().begin()[0]).thisptr();
+                cwd_ = traverseDirectory(*command.arguments().begin()).thisptr();
             break;
             
         case ParseCommandInfo::BuiltinPOPD :
@@ -120,7 +120,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
 
         case ParseCommandInfo::BuiltinHELP :
             GenericNode const & node (command.arguments() 
-                                      ? traverseNode(command.arguments().begin()[0])
+                                      ? traverseNode(*command.arguments().begin())
                                       : cwd());
             output << prettyName(typeid(node)) << " at " << node.path() << "\n\n";
             node.help(output);
@@ -141,7 +141,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
 }
 
 prefix_ senf::console::GenericNode &
-senf::console::Executor::traverseNode(ParseCommandInfo::argument_value_type const & path)
+senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path)
 {
     try {
         return cwd().traverse(
@@ -173,7 +173,7 @@ senf::console::Executor::traverseCommand(ParseCommandInfo::CommandPathRange cons
 }
 
 prefix_ senf::console::DirectoryNode &
-senf::console::Executor::traverseDirectory(ParseCommandInfo::argument_value_type const & path)
+senf::console::Executor::traverseDirectory(ParseCommandInfo::TokensRange const & path)
 {
     try {
         return dynamic_cast<DirectoryNode&>( traverseNode(path) );

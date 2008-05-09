@@ -30,6 +30,7 @@
 #include <execinfo.h>
 #include <cxxabi.h>
 #include <boost/regex.hpp>
+#include "Buffer.hh"
 
 //#include "Backtrace.mpp"
 #define prefix_
@@ -72,6 +73,12 @@ prefix_ void senf::formatBacktrace(std::ostream & os, void ** backtrace, unsigne
     free(symbols);
 }
 
+prefix_ void senf::backtrace(std::ostream & os, unsigned numEntries)
+{
+    SENF_SCOPED_BUFFER( void*, entries, numEntries);
+    unsigned n ( ::backtrace(entries, numEntries) );
+    senf::formatBacktrace(os, entries, n);
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

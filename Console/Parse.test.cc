@@ -59,7 +59,8 @@ namespace
         void endCommand() 
             { os_ << "endCommand()\n"; }
         
-        void pushArgument(std::string const & argument)
+        void pushArgument(senf::console::ArgumentToken::TokenType type, 
+                          std::string const & argument)
             { os_ << "pushArgument( " << argument << " )\n"; }
         void openGroup()
             { os_ << "openGroup()\n"; }
@@ -67,7 +68,8 @@ namespace
             { os_ << "closeGroup()\n"; }
         void pushPunctuation(std::string const & token)
             { os_ << "pushPunctuation( " << token << " )\n"; }
-        void pushWord(std::string const & token)
+        void pushWord(senf::console::ArgumentToken::TokenType type, 
+                      std::string const & token)
             { os_ << "pushWord( " << token << " )\n"; }
 
         void builtin_cd(std::vector<std::string> const & path)
@@ -166,34 +168,48 @@ BOOST_AUTO_UNIT_TEST(commandParser)
 
     BOOST_CHECK_EQUAL_COLLECTIONS( info.commandPath().begin(), info.commandPath().end(),
                                    path, path + sizeof(path)/sizeof(path[0]) );
-    BOOST_REQUIRE_EQUAL( info.arguments().size(), 6u );
-    BOOST_REQUIRE_EQUAL( info.tokens().size(), 13u );
+    BOOST_CHECK_EQUAL( info.tokens().size(), 15u );
 
     char const * tokens[] = { "arg", 
                               "flab::blub", 
                               "123.434>a", 
-                              "a", ",", "b", ",", "c", "(", "huhu", ")",
+                              "(", "a", ",", "b", ",", "c", "(", "huhu", ")", ")",
                               "foo\"bar",
                               "\x01\x02\x03\x04" };
 
-    BOOST_REQUIRE_EQUAL( info.arguments().begin()[0].size(), 1u );
-    BOOST_CHECK_EQUAL( info.arguments().begin()[0].begin()->value(), tokens[0] );
+    senf::console::ParseCommandInfo::argument_iterator args (info.arguments().begin());
+    BOOST_REQUIRE( args != info.arguments().end() );
+    BOOST_REQUIRE_EQUAL( args->size(), 1u );
+    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[0] );
 
-    BOOST_REQUIRE_EQUAL( info.arguments().begin()[1].size(), 1u );
-    BOOST_CHECK_EQUAL( info.arguments().begin()[1].begin()->value(), tokens[1] );
+    ++ args;
+    BOOST_REQUIRE( args != info.arguments().end() );
+    BOOST_REQUIRE_EQUAL( args->size(), 1u );
+    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[1] );
+                         
+    ++ args;
+    BOOST_REQUIRE( args != info.arguments().end() );
+    BOOST_REQUIRE_EQUAL( args->size(), 1u );
+    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[2] );
 
-    BOOST_REQUIRE_EQUAL( info.arguments().begin()[2].size(), 1u );
-    BOOST_CHECK_EQUAL( info.arguments().begin()[2].begin()->value(), tokens[2] );
-
-    BOOST_REQUIRE_EQUAL( info.arguments().begin()[3].size(), 8u );
+    ++ args;
+    BOOST_REQUIRE( args != info.arguments().end() );
+    BOOST_REQUIRE_EQUAL( args->size(), 8u );
     for (unsigned i (0); i<8; ++i)
-        BOOST_CHECK_EQUAL( info.arguments().begin()[3].begin()[i].value(), tokens[3+i] );
+        BOOST_CHECK_EQUAL( args->begin()[i].value(), tokens[4+i] );
 
-    BOOST_REQUIRE_EQUAL( info.arguments().begin()[4].size(), 1u );
-    BOOST_CHECK_EQUAL( info.arguments().begin()[4].begin()->value(), tokens[11] );
+    ++ args;
+    BOOST_REQUIRE( args != info.arguments().end() );
+    BOOST_REQUIRE_EQUAL( args->size(), 1u );
+    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[13] );
 
-    BOOST_REQUIRE_EQUAL( info.arguments().begin()[5].size(), 1u );
-    BOOST_CHECK_EQUAL( info.arguments().begin()[5].begin()->value(), tokens[12] );
+    ++ args;
+    BOOST_REQUIRE( args != info.arguments().end() );
+    BOOST_REQUIRE_EQUAL( args->size(), 1u );
+    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[14] );
+
+    ++ args;
+    BOOST_CHECK( args == info.arguments().end() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

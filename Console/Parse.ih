@@ -82,10 +82,21 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
         // The parse context (variables needed while parsing)
 
+        typedef ArgumentToken::TokenType TokenType;
+
         struct Context {
             std::string str;
             std::vector<std::string> path;
             char ch;
+            TokenType type;
+            
+            // OUCH ... This is sooooo stupid .. push_back_a and assign_a take their 
+            // arguments by const-reference and STORE the REFERENCE ... they do NOT accept
+            // literal values !!!!!! 
+            static const TokenType BasicString;
+            static const TokenType HexString;
+            static const TokenType Word;
+            static const std::string EmptyString;
         };
 
         Context & context;
@@ -117,6 +128,10 @@ namespace detail {
         template <class Callback, class Arg>
         Dispatch_actor dispatch(Callback cb, Arg const & arg) const
             { return Dispatch_actor(boost::bind(cb, boost::ref(dispatcher), arg)); }
+
+        template <class Callback, class Arg1, class Arg2>
+        Dispatch_actor dispatch(Callback cb, Arg1 const & arg1, Arg2 const & arg2) const
+            { return Dispatch_actor(boost::bind(cb, boost::ref(dispatcher), arg1, arg2)); }
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -242,6 +257,7 @@ namespace detail {
 
                 argument
                     =    simple_argument          [ self.dispatch(&PD::pushArgument, 
+                                                                  boost::ref(self.context.type),
                                                                   boost::ref(self.context.str)) ]
                     |    complex_argument
                     ;
@@ -260,6 +276,8 @@ namespace detail {
 
                 string                  // Returns value in context.str
                     =    eps_p                    [ clear_a(self.context.str) ]
+                      >> eps_p                    [ assign_a(self.context.type, 
+                                                             self.context.BasicString) ]
                       >> lexeme_d
                          [
                              ch_p('"')
@@ -274,6 +292,8 @@ namespace detail {
 
                 hexstring               // Returns value in context.str
                     =    eps_p                    [ clear_a(self.context.str) ]
+                      >> eps_p                    [ assign_a(self.context.type, 
+                                                             self.context.HexString) ]
                       >> confix_p( "x\"", * hexbyte, '"' )
                     ;
 
@@ -283,13 +303,15 @@ namespace detail {
                     ;
 
                 relpath
-                    =    (   word                 [ push_back_a(self.context.path) ] 
+                    =    (   word                 [ push_back_a(self.context.path) ]
                            % ch_p('/') )
-                      >> ( ! ch_p('/')            [ push_back_a(self.context.path,"") ] )
+                      >> ( ! ch_p('/')            [ push_back_a(self.context.path,
+                                                                self.context.EmptyString) ] )
                     ;
 
                 abspath
-                    =    ch_p('/')                [ push_back_a(self.context.path, "") ]
+                    =    ch_p('/')                [ push_back_a(self.context.path,
+                                                                self.context.EmptyString) ]
                       >> ( relpath
                          | eps_p                  [ push_back_a(self.context.path, "") ] )
                     ;
@@ -301,7 +323,8 @@ namespace detail {
                     ;
 
                 token
-                    =    simple_argument          [ self.dispatch(&PD::pushWord, 
+                    =    simple_argument          [ self.dispatch(&PD::pushWord,
+								  boost::ref(self.context.type), 
                                                                   boost::ref(self.context.str)) ]
                     |    punctuation              [ self.dispatch(&PD::pushPunctuation,
                                                                   boost::ref(self.context.str)) ]
@@ -313,7 +336,12 @@ namespace detail {
                     ;
 
                 word                    // Returns value in context.str
-                    =    lexeme_d[ + word_p ]     [ assign_a(self.context.str) ]
+                    =    lexeme_d
+                         [
+                             eps_p                [ assign_a(self.context.type,
+						             self.context.Word) ]
+                          >> (+ word_p)           [ assign_a(self.context.str) ]
+                         ]
                     ;
 
                 hexbyte
@@ -354,7 +382,20 @@ namespace detail {
         };
     };
 
+    template <class ParseDispatcher>
+    ArgumentToken::TokenType const CommandGrammar<ParseDispatcher>::Context::BasicString (
+        ArgumentToken::BasicString);
 
+    template <class ParseDispatcher>
+    ArgumentToken::TokenType const CommandGrammar<ParseDispatcher>::Context::HexString(
+        ArgumentToken::HexString);
+
+    template <class ParseDispatcher>
+    ArgumentToken::TokenType const CommandGrammar<ParseDispatcher>::Context::Word(
+        ArgumentToken::Word);
+
+    template <class ParseDispatcher>
+    std::string const CommandGrammar<ParseDispatcher>::Context::EmptyString;
 
 #endif
 

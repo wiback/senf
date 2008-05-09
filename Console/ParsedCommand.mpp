@@ -252,9 +252,12 @@ prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, B
 v_execute(std::ostream & os, ParseCommandInfo const & command)
     const
 {
-    if ( command.arguments().size() > BOOST_PP_ITERATION() )
+    // We NEED to know the number of arguments beforehand so we can assign default values
+    // correctly ... hrmpf ...
+    unsigned nArgs ( command.arguments().size() );
+    if ( nArgs > BOOST_PP_ITERATION() )
         throw SyntaxErrorException("invalid number of arguments");
-    int nDefaults ( BOOST_PP_ITERATION() - command.arguments().size() );
+    int nDefaults ( BOOST_PP_ITERATION() - nArgs );
 
     typedef typename boost::range_const_reverse_iterator<ParseCommandInfo::ArgumentsRange>::type
         riterator;
@@ -288,9 +291,12 @@ prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP
 v_execute(std::ostream & os, ParseCommandInfo const & command)
     const
 {
-    if ( command.arguments().size() > BOOST_PP_ITERATION() )
+    // We NEED to know the number of arguments beforehand so we can assign default values
+    // correctly ... hrmpf ...
+    unsigned nArgs ( command.arguments().size() );
+    if ( nArgs > BOOST_PP_ITERATION() )
         throw SyntaxErrorException("invalid number of arguments");
-    int nDefaults ( BOOST_PP_ITERATION() - command.arguments().size() );
+    int nDefaults ( BOOST_PP_ITERATION() - nArgs );
 
     typedef typename boost::range_const_reverse_iterator<ParseCommandInfo::ArgumentsRange>::type
         riterator;
