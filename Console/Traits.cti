@@ -60,19 +60,9 @@ parse(ParseCommandInfo::TokensRange const & tokens, Type & out)
 }
 
 template <class Type>
-prefix_ void
-senf::console::senf_console_parse_argument(ParseCommandInfo::TokensRange const & tokens,
-                                           Type & out)
+prefix_ void senf::console::parse(ParseCommandInfo::TokensRange const & tokens, Type & out)
 {
-    if (tokens.size() != 1)
-        throw SyntaxErrorException("parameter syntax error");
-
-    try {
-        out = boost::lexical_cast<Type>(tokens.begin()[0].value());
-    }
-    catch (std::bad_cast & ex) {
-        throw SyntaxErrorException("parameter syntax error");
-    }
+    ArgumentTraits<Type>::parse(tokens, out);
 }
 
 template <class Type>

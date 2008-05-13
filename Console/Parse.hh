@@ -196,6 +196,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/function.hpp>
+#include "../Utils/safe_bool.hh"
 
 //#include "Parse.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -285,9 +286,10 @@ namespace console {
     {
         typedef std::vector<ArgumentToken> Tokens;
         typedef std::vector<std::string> CommandPath;
-        class ArgumentIterator; 
 
     public:
+        class ArgumentIterator; 
+
         typedef CommandPath::const_iterator path_iterator;
         typedef Tokens::const_iterator token_iterator;
         typedef ArgumentIterator argument_iterator;
@@ -338,17 +340,27 @@ namespace console {
         friend class detail::ParserAccess;
     };
 
+    /** \brief Iterator parsing argument groups
+
+        This special iterator parses a token range returned by the parser into argument ranges. An
+        argument range is either a single token or it is a range of tokens enclosed in matching
+        parenthesis. The ParseCommandInfo::arguments() uses this iterator type. To recursively parse
+        complex arguments, you can however use this iterator to divide a multi-token argument into
+        further argument groups (e.g. to parse a list or vector of items).
+
+        This iterator is a bidirectional iterator \e not a random access iterator.
+     */
     class ParseCommandInfo::ArgumentIterator
         : public boost::iterator_facade< ParseCommandInfo::ArgumentIterator, 
                                          ParseCommandInfo::TokensRange,
                                          boost::bidirectional_traversal_tag,
                                          ParseCommandInfo::TokensRange >
     {
+    public:
         ArgumentIterator();
+        explicit ArgumentIterator(ParseCommandInfo::TokensRange::iterator i);
 
     private:
-        ArgumentIterator(ParseCommandInfo::TokensRange::iterator i);
-
         reference dereference() const;
         bool equal(ArgumentIterator const & other) const;
         void increment();
@@ -361,6 +373,128 @@ namespace console {
 
         friend class boost::iterator_core_access;
         friend class ParseCommandInfo;
+    };
+
+    /**  \brief Syntax error parsing command arguments exception
+
+        All errors while parsing the arguments of a command must be signaled by throwing an instance
+        of SyntaxErrorException. This is important, so command overloading works.
+     */
+    struct SyntaxErrorException : public std::exception
+    {
+        explicit SyntaxErrorException(std::string const & msg = "");
+        virtual ~SyntaxErrorException() throw();
+
+        virtual char const * what() const throw();
+        std::string const & message() const;
+
+    private:
+        std::string message_;
+    };
+
+    /** \brief Wrapper checking argument iterator access for validity
+        
+        CheckedArgumentIteratorWrapper is a wrapper around a range of arguments parsed using the
+        ParseCommandInfo::ArgumentIterator. It is used to parse arguments either in a command
+        (registered with manual argument parsing) or when defining a custom parser.
+        \code
+        void fn(std::ostream & out, senf::console::ParseCommandInfo command)
+        {
+            std:;string arg1;
+            unsigned arg2 (0);
+            
+            {
+                senf::console::CheckedArgumentIteratorWrapper arg (command.arguments());
+                senf::console::parse( *(arg++), arg1 );
+                senf::console::parse( *(arg++), arg2 );
+            }
+
+            // ...
+        }
+        \endcode
+
+        To use the wrapper, you must ensure that:
+        \li You increment the iterator \e past all arguments you parse. The iterator must point to
+            the end of the range when parsing is complete.
+        \li The iterator wrapper is destroyed after parsing but before executing the command itself
+            begins. 
+
+        Accessing a non-existent argument or failing to parse all arguments will raise a
+        senf::console::SyntaxErrorException.
+
+        \see \link console_arg_custom Example customer parser \endlink
+      */
+    class CheckedArgumentIteratorWrapper
+        : boost::noncopyable,
+          public boost::iterator_facade< CheckedArgumentIteratorWrapper,
+                                         ParseCommandInfo::TokensRange,
+                                         boost::forward_traversal_tag,
+                                         ParseCommandInfo::TokensRange >,
+          public senf::safe_bool<CheckedArgumentIteratorWrapper>
+
+    {
+        typedef boost::iterator_facade< CheckedArgumentIteratorWrapper,
+                                        ParseCommandInfo::TokensRange,
+                                        boost::forward_traversal_tag,
+                                        ParseCommandInfo::TokensRange > IteratorFacade;
+
+    public:
+        explicit CheckedArgumentIteratorWrapper(
+            ParseCommandInfo::ArgumentsRange const & range,
+            std::string const & msg = "invalid number of arguments");
+                                        ///< Make wrapper from ArgumentsRange
+                                        /**< This constructs a wrapper from a
+                                             ParseCommandInfo::ArgumentsRange. 
+                                             \param[in] range Range of arguments to parse
+                                             \param[in] msg Error message */
+        explicit CheckedArgumentIteratorWrapper(
+            ParseCommandInfo::TokensRange const & range,
+            std::string const & msg = "invalid number of arguments");
+                                        ///< Make wrapper from TokensRange
+                                        /**< This constructs a wrapper from a
+                                             ParseCommandInfo::TokensRange. The TokensRange is first
+                                             converted into an ParseCommandInfo::ArgumentsRange
+                                             which is then wrapped.
+                                             \param[in] range Range of tokens to  parse
+                                             \param[in] msg Error message */
+
+        ~CheckedArgumentIteratorWrapper(); ///< Check, if all arguments are parsed
+                                        /**< The destructor validates, that all arguments are parsed
+                                             correctly when leaving the scope, in which the wrapper
+                                             is instantiated normally (not by an exception).
+
+                                             \warning This destructor will throw a
+                                             SyntaxErrorException, if not all arguments are parsed
+                                             and when no other exception is in progress. */
+
+        operator ParseCommandInfo::ArgumentIterator(); 
+                                        ///< Use wrapper as ParseCommandInfo::ArgumentIterator
+
+        bool boolean_test() const;      ///< \c true, if more arguments are available
+        bool done() const;              ///< \c true, if all arguments are parsed
+
+        void clear();                   ///< Set range empty
+                                        /**< This call will point the current iterator to the end of
+                                             the tokens range.
+                                             \post done() == \c true; */
+
+        bool operator==(ParseCommandInfo::ArgumentIterator const & other) const;
+                                        ///< Compare wrapper against ArgumentIterator
+        bool operator!=(ParseCommandInfo::ArgumentIterator const & other) const;
+                                        ///< Compare wrapper against ArgumentIterator
+        
+        using IteratorFacade::operator++;
+        ParseCommandInfo::ArgumentIterator operator++(int);
+        
+    private:
+        reference dereference() const;
+        void increment();
+
+        ParseCommandInfo::ArgumentIterator i_;
+        ParseCommandInfo::ArgumentIterator e_;
+        std::string msg_;
+
+        friend class boost::iterator_core_access;
     };
 
     /**< \brief Output ParseCommandInfo instance

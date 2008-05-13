@@ -212,6 +212,41 @@ BOOST_AUTO_UNIT_TEST(commandParser)
     BOOST_CHECK( args == info.arguments().end() );
 }
 
+namespace {
+    void parseArgs(senf::console::ParseCommandInfo::ArgumentsRange const & args)
+    {
+        senf::console::CheckedArgumentIteratorWrapper arg (args);
+        senf::console::ParseCommandInfo::TokensRange arg1 (*(arg++));
+        senf::console::ParseCommandInfo::TokensRange arg2 (*(arg++));
+    }
+}
+
+BOOST_AUTO_UNIT_TEST(checkedArgumentIterator)
+{
+    senf::console::CommandParser parser;
+
+    BOOST_CHECK( parser.parse("foo a", &setInfo) );
+    BOOST_CHECK_THROW( parseArgs(info.arguments()), senf::console::SyntaxErrorException );
+
+    BOOST_CHECK( parser.parse("foo a b", &setInfo) );
+    BOOST_CHECK_NO_THROW( parseArgs(info.arguments()) );
+
+    BOOST_CHECK( parser.parse("foo a b c", &setInfo) );
+    BOOST_CHECK_THROW( parseArgs(info.arguments()), senf::console::SyntaxErrorException );
+    
+    senf::console::CheckedArgumentIteratorWrapper arg (info.arguments());
+    BOOST_CHECK( arg == info.arguments().begin() );
+    BOOST_CHECK( arg != info.arguments().end() );
+    BOOST_CHECK( arg );
+    ++ arg;
+    BOOST_CHECK( arg );
+    arg.clear();
+    BOOST_CHECK( arg.done() );
+
+    senf::console::ParseCommandInfo::ArgumentIterator i (arg);
+    BOOST_CHECK( i == info.arguments().end() );
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

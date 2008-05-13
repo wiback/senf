@@ -123,6 +123,16 @@ namespace console {
     template <class Type>
     void senf_console_parse_argument(ParseCommandInfo::TokensRange const & tokens, Type & out);
 
+    /** \brief Parse token range
+
+        This helper will invoke the correct ArgumentTraits::parse function to parse the input tokens
+        into the passed in variable.
+
+        \see ArgumentTraits
+     */
+    template <class Type>
+    void parse(ParseCommandInfo::TokensRange const & tokens, Type & out);
+
     /** \brief Register enum type for argument parsing
 
         Enum types need to be registered explicitly to support parsing. 
@@ -160,7 +170,7 @@ namespace console {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Traits.cci"
-//#include "Traits.ct"
+#include "Traits.ct"
 #include "Traits.cti"
 #endif
 

@@ -288,28 +288,22 @@
     \code
     void fun1(std::ostream & os, senf::console::ParseCommandInfo const & command)
     {
-        ParseCommandInfo::ArgumentsRange args (command.arguments());
-        ParseCommandInfo::ArgumentsRange::iterator arg (args.begin());
+        // Here we declare variables for the arguments
+        std::string value;
 
-        // Check that we are not missing our argument
-        if (arg == args.end())
-            raise senf::console::SyntaxErrorException("invalid number of arguments");
+        {
+            // We parse the arguments using the CheckedArgumentIteratorWrapper. This wrapper
+            // will throw a SyntaxErrorException if we access a nonexistent argument or if we
+            // do not parse all arguments.
+            senf::console::CheckedArgumentIteratorWrapper args (command.arguments());
 
-        senf::console::ParseCommandInfo::TokensRange & arg1Tokens ( *(arg++) );
+            senf::console::ParseCommandInfo::TokensRange argTokens ( *(args++) );
+            if (arg1Tokens.size() != 1)
+                raise senf::console::SyntaxErrorException("argument syntax error");
+            value = arg1Tokens[0];
+        }
 
-        // Check that we don't have additional arguments
-        if (arg != args.end())
-            raise senf::console::SyntaxErrorException("invalid number of arguments");
-
-        // The argument must have exactly one token
-        if (arg1Tokens.size() != 1)
-            raise senf::console::SyntaxErrorException("argument syntax error");
-
-        // Retrieve the token value
-        std::string arg (argTokens[0].value());
-
-        // In this example, we just write the argument to the output stream
-        os << arg << std::endl;
+        os << value << std::endl;
     }
     \endcode
     
@@ -916,23 +910,23 @@
     void senf_console_parse_argument(senf::console::ParseCommandInfo::TokensRange const & tokens,
                                      Coordinate & out)
     {
-        if (tokens.size() != 2)
-            throw SyntaxErrorException("parameter syntax error");
-        senf::console::ArgumentTraits<int>::parse(
-            senf::console::ParseCommandInfo::TokensRange( tokens.begin(), tokens.begin()+1 ),
-            out.x )
-        senf::console::ArgumentTraits<int>::parse(
-            senf::console::ParseCommandInfo::TokensRange( tokens.begin()+1, tokens.end() ),
-            out.y )
+        senf::console::CheckedArgumentIteratorWrapper arg (tokens);
+        senf::console::parse( *(arg++), out.x );
+        senf::console::parse( *(arg++), out.y );
     }
 
     void senf_console_format_value(Coordinate const & value, std::ostream & os)
     {
         os << '(' << value.x << ' ' << value.y << ')';
     }
-    \endcode
+    \endcode 
+
     The parser will accept an argument with two tokens which are each forwarded to the integer
-    parser. The formatter writes out the value as a parenthesized pair.
+    parser. The senf::console::CheckedArgumentIteratorWrapper ensures two things: That all input
+    tokens are parsed and no extra trailing tokens are left unparsed and it checks, that all
+    referenced tokens really exist.
+
+    The formatter writes out the value as a parenthesized pair.
 
     \code
     Coordinate fun5(Coordinate const & p) { return Coordinate(2*p.x, 2*p.y) }

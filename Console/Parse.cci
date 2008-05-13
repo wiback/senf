@@ -150,6 +150,86 @@ prefix_ void senf::console::ParseCommandInfo::ArgumentIterator::increment()
 }
 
 ///////////////////////////////////////////////////////////////////////////
+
+prefix_ senf::console::CheckedArgumentIteratorWrapper::
+CheckedArgumentIteratorWrapper(ParseCommandInfo::ArgumentsRange const & range,
+                               std::string const & msg)
+    : i_ (range.begin()), e_ (range.end()), msg_ (msg)
+{}
+
+prefix_ senf::console::CheckedArgumentIteratorWrapper::
+CheckedArgumentIteratorWrapper(ParseCommandInfo::TokensRange const & range,
+                               std::string const & msg)
+    : i_ (range.begin()), e_ (range.end()), msg_ (msg)
+{}
+
+prefix_ senf::console::CheckedArgumentIteratorWrapper::~CheckedArgumentIteratorWrapper()
+{
+    if (i_ != e_ && ! std::uncaught_exception())
+        throw SyntaxErrorException(msg_);
+}
+
+prefix_ senf::console::CheckedArgumentIteratorWrapper::operator ParseCommandInfo::ArgumentIterator()
+{
+    return i_;
+}
+
+prefix_ bool senf::console::CheckedArgumentIteratorWrapper::boolean_test()
+    const
+{
+    return i_ != e_;
+}
+
+prefix_ bool senf::console::CheckedArgumentIteratorWrapper::done()
+    const
+{
+    return i_ == e_;
+}
+
+prefix_ void senf::console::CheckedArgumentIteratorWrapper::clear()
+{
+    i_ = e_;
+}
+
+prefix_ senf::console::CheckedArgumentIteratorWrapper::reference
+senf::console::CheckedArgumentIteratorWrapper::dereference()
+    const
+{
+    if (i_ == e_)
+        throw SyntaxErrorException(msg_);
+    return *i_;
+}
+
+prefix_ void senf::console::CheckedArgumentIteratorWrapper::increment()
+{
+    if (i_ == e_)
+        throw SyntaxErrorException(msg_);
+    ++ i_;
+}
+
+prefix_ bool senf::console::CheckedArgumentIteratorWrapper::
+operator==(ParseCommandInfo::ArgumentIterator const & other)
+    const
+{
+    return i_ == other;
+}
+
+prefix_ bool senf::console::CheckedArgumentIteratorWrapper::
+operator!=(ParseCommandInfo::ArgumentIterator const & other)
+    const
+{
+    return i_ != other;
+}
+
+prefix_ senf::console::ParseCommandInfo::ArgumentIterator
+senf::console::CheckedArgumentIteratorWrapper::operator++(int)
+{
+    ParseCommandInfo::ArgumentIterator i (i_);
+    increment();
+    return i;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::SingleCommandParser
 
 prefix_ senf::console::CommandParser::Impl & senf::console::CommandParser::impl()
