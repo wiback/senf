@@ -117,7 +117,7 @@ namespace senf
         >::value ));
         \endcode
 
-        \tparam MemberPointer type to return member pointer from
+        \tparam MemberPointer type to remove member pointer from
      */
     template < class MemberPointer > struct remove_member_pointer
     {

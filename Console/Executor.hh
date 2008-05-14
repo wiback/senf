@@ -66,6 +66,12 @@ namespace console {
         /// Thrown by built-in 'exit' command
         struct ExitException {};        
 
+        /// Executor policy function
+        typedef boost::function<void (DirectoryNode &,std::string const &)> SecurityPolicy;
+
+        /// Thrown by the SecurityPolicy to silently ignore a command
+        struct IgnoreCommandException {};
+
         ///////////////////////////////////////////////////////////////////////////
         //\/name Structors and default members
         ///\{
@@ -104,6 +110,20 @@ namespace console {
         Executor & autocomplete(bool v); ///< Set autocomplete status
                                         /**< \see autocomplete() */
 
+        DirectoryNode & chroot() const; ///< Get root node
+                                        /**< The root node defaults to senf::console::root(). If
+                                             changed, all path references are relative to this node
+                                             and objects outside that tree cannot be accessed. */ 
+        Executor & chroot(DirectoryNode & node); ///< chroot into given directory
+                                        /**< After this call, all path's are interpreted relative to
+                                             \a node and only nodes in the tree rooted at \a node
+                                             are accessible via the executor. This value defaults to
+                                             senf::console::root(). */
+
+        Executor & policy(SecurityPolicy policy); ///< Set security policy
+                                        /**< The security policy is called before traversing a node
+                                             to validate that access. */
+
     protected:
 
     private:
@@ -111,10 +131,15 @@ namespace console {
         GenericNode & traverseCommand(ParseCommandInfo::CommandPathRange const & path); 
         DirectoryNode & traverseDirectory(ParseCommandInfo::TokensRange const & path);
 
+        template <class ForwardRange>
+        GenericNode & traverse(DirectoryNode & dir, ForwardRange const & range);
+
         struct InvalidPathException {};
         struct InvalidDirectoryException {};
         struct InvalidCommandException {};
-
+        
+        DirectoryNode::ptr root_;
+        SecurityPolicy policy_;
         DirectoryNode::weak_ptr cwd_;
         DirectoryNode::weak_ptr oldCwd_;
         typedef std::vector<DirectoryNode::weak_ptr> DirStack;
@@ -129,7 +154,7 @@ namespace console {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Executor.cci"
-//#include "Executor.ct"
+#include "Executor.ct"
 //#include "Executor.cti"
 #endif
 

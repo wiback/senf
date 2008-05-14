@@ -218,6 +218,8 @@ namespace console {
     class DirectoryNode;
     class CommandNode;
 
+    DirectoryNode & root();
+
     /** \brief Config/console node tree base-class
 
         GenericNode is the base class of all node objects. There are two basic node types derived
@@ -259,6 +261,10 @@ namespace console {
         std::string path() const;       ///< Node path
                                         /**< The node path is built by joining the names of all
                                              parent nodes with '/' chars. */
+        std::string path(DirectoryNode const & root) const;       
+                                        ///< Node path up to \a root
+                                        /**< The node path is built by joining the names of all
+                                             parent nodes up to \a root with '/' chars. */
 
         ptr unlink();                   ///< Remove node from it's parent directory
                                         /**< You may either discard the return value and thereby
@@ -271,6 +277,16 @@ namespace console {
 
         ptr thisptr();                  ///< Get smart pointer to node
         cptr thisptr() const;           ///< Get smart pointer to node (const)
+
+        bool isChildOf(DirectoryNode & parent) const;
+                                        ///< \c true, if node is a child of \a parent
+                                        /**< Will also return \c true, if \a parent is the current
+                                             node. */
+
+        bool operator== (GenericNode & other) const;
+                                        /// \c true, if this and \a other are the same node
+        bool operator!= (GenericNode & other) const;
+                                        /// \c true, if this and \a other are different nodes
 
     protected:
         GenericNode();
@@ -476,7 +492,8 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
 
         template <class ForwardRange>
-        GenericNode & traverse(ForwardRange const & range, bool autocomplete=false);
+        GenericNode & traverse(ForwardRange const & range, bool autocomplete=false,
+                               DirectoryNode & root = root());
                                         ///< Traverse node path starting at this node
                                         /**< The <tt>ForwardRange::value_type</tt> must be
                                              (convertible to) std::string. Each range element
@@ -640,8 +657,6 @@ namespace console {
                                               SimpleCommandNode::Function fn, int);
 
 #endif
-
-    DirectoryNode & root();
 
 }}
 

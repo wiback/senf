@@ -155,7 +155,7 @@
 
     env = Environment(
 
-        LIBS     = [ 'senf', 'iberty', 'boost_regex', 'boost_iostreams' ],
+        LIBS     = [ 'senf', 'boost_regex', 'boost_iostreams' ],
         CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long' ],
 
     )

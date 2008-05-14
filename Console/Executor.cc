@@ -52,7 +52,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
     SENF_LOG(( "Executing: " << command ));
 
     if (cwd_.expired() || ! cwd().active())
-        cwd_ = root().thisptr();
+        cwd_ = root_;
 
     try {
         switch(command.builtin()) {
@@ -77,7 +77,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
                     && command.arguments().begin()->begin()->value() == "-") {
                     if (oldCwd_.expired() || ! oldCwd_.lock()->active()) {
                         oldCwd_ = cwd_;
-                        cwd_ = root().thisptr();
+                        cwd_ = root_;
                     } else
                         swap(cwd_, oldCwd_);
                 }
@@ -138,17 +138,18 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
     catch (InvalidCommandException &) {
         output << "invalid command" << std::endl;
     }
+    catch (IgnoreCommandException &) {}
 }
 
 prefix_ senf::console::GenericNode &
 senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path)
 {
     try {
-        return cwd().traverse(
+        return traverse(
+            cwd(),
             boost::make_iterator_range(
                 boost::make_transform_iterator(path.begin(), TraverseTokens()),
-                boost::make_transform_iterator(path.end(), TraverseTokens())),
-            autocomplete_);
+                boost::make_transform_iterator(path.end(), TraverseTokens())) );
     }
     catch (std::bad_cast &) {
         throw InvalidPathException();
@@ -162,7 +163,7 @@ prefix_ senf::console::GenericNode &
 senf::console::Executor::traverseCommand(ParseCommandInfo::CommandPathRange const & path)
 {
     try {
-        return cwd().traverse(path, autocomplete_);
+        return traverse(cwd(), path);
     }
     catch (std::bad_cast &) {
         throw InvalidPathException();

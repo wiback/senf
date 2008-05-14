@@ -40,8 +40,8 @@ BOOST_AUTO_UNIT_TEST(hExDuMp)
 {
     char data[] = { 0x18, 0x19, 0x20, 0x21, 0x7c, 0x7d, 0x7e, 0x7f };
     std::stringstream s;
-    senf::hexdump(data, data+sizeof(data), s, 8);
-    BOOST_CHECK_EQUAL( s.str(), "  0000  18 19 20 21  7c 7d 7e 7f  .. ! |}..\n" );
+    senf::hexdump(data, data+sizeof(data), s, 10);
+    BOOST_CHECK_EQUAL( s.str(), "  0000  18 19 20 21 7c  7d 7e 7f        .. !| }..\n" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

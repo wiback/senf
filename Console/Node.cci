@@ -23,7 +23,7 @@
 /** \file
     \brief Node inline non-template implementation */
 
-//#include "Node.ih"
+#include "Node.ih"
 
 // Custom includes
 #include "../Utils/senfassert.hh"
@@ -82,6 +82,18 @@ prefix_ senf::console::GenericNode::cptr senf::console::GenericNode::thisptr()
     const
 {
     return shared_from_this();
+}
+
+prefix_ bool senf::console::GenericNode::operator==(GenericNode & other)
+    const
+{
+    return this == & other;
+}
+
+prefix_ bool senf::console::GenericNode::operator!=(GenericNode & other)
+    const
+{
+    return this != & other;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -173,6 +185,15 @@ prefix_ senf::console::DirectoryNode::cptr senf::console::DirectoryNode::thisptr
 {
     return boost::static_pointer_cast<DirectoryNode const>(shared_from_this());
 }
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::NodeTraverser
+
+prefix_ senf::console::detail::NodeTraverser::NodeTraverser(DirectoryNode & root,
+                                                            DirectoryNode & dir,
+                                                            bool autocomplete)
+    : root_ (root), dir_ (dir.thisptr()), autocomplete_ (autocomplete), init_ (false)
+{}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::SyntaxErrorException

@@ -24,7 +24,7 @@
     \brief Node non-inline non-template implementation */
 
 #include "Node.hh"
-//#include "Node.ih"
+#include "Node.ih"
 
 // Custom includes
 
@@ -53,6 +53,23 @@ prefix_ std::string senf::console::GenericNode::path()
     return path.empty() ? "/" : path;
 }
 
+prefix_ std::string senf::console::GenericNode::path(DirectoryNode const & root)
+    const
+{
+    std::string path;
+    cptr node (thisptr());
+    while (node && node != root.thisptr()) {
+        if (! path.empty())
+            path = node->name() + "/" + path;
+        else
+            path = node->name();
+        node = node->parent();
+    }
+    if (path.empty() || path[0] != '/')
+        path = "/" + path;
+    return path;
+}
+
 prefix_ bool senf::console::GenericNode::active()
     const
 {
@@ -60,6 +77,15 @@ prefix_ bool senf::console::GenericNode::active()
     while (node->parent())
         node = node->parent();
     return node == root().thisptr();
+}
+
+prefix_ bool senf::console::GenericNode::isChildOf(DirectoryNode & parent)
+    const
+{
+    cptr node (thisptr());
+    while (node && node != parent.thisptr())
+        node = node->parent();
+    return node;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -114,6 +140,53 @@ prefix_ void senf::console::DirectoryNode::v_help(std::ostream & output)
     const
 {
     output << doc_ << "\n";
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::NodeTraverser
+
+prefix_ void senf::console::detail::NodeTraverser::operator()(std::string const & name)
+{
+    if (! init_) {
+        init_ = true;
+        if (name == std::string("")) {
+            dir_ = root_.thisptr();
+            return;
+        }
+    }
+    if (! elt_.empty()) {
+        if (elt_ == "..") {
+            dir_ = dir_->parent();
+            if (! dir_ || ! dir_->isChildOf(root_))
+                dir_ = root_.thisptr();
+        }
+        else if (elt_ != "" && elt_ != ".") {
+            if (! dir_->hasChild(elt_) && autocomplete_) {
+                DirectoryNode::ChildrenRange completions (dir_->completions(elt_));
+                if (completions.size() == 1)
+                    elt_ = completions.begin()->first;
+            }
+            // Why does g++ give an error on this line ???? :
+            // dir = dynamic_cast<DirectoryNode&>( dir->get(name) ).thisptr();
+            DirectoryNode & d (dynamic_cast<DirectoryNode&>( dir_->get(elt_) ));
+            dir_ = d.thisptr();
+        }
+    }
+    elt_ = name;
+}
+
+prefix_ senf::console::GenericNode & senf::console::detail::NodeTraverser::node()
+{
+    if (elt_ != "" && elt_ != ".") {
+        if (! dir_->hasChild(elt_) && autocomplete_) {
+            DirectoryNode::ChildrenRange completions (dir_->completions(elt_));
+            if (completions.size() == 1)
+                elt_ = completions.begin()->first;
+        }
+        return dir_->get(elt_);
+    }
+    else
+        return * dir_;
 }
 
 ///////////////////////////////////////////////////////////////////////////

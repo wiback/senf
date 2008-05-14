@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,39 +21,44 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief public header for hexdump */
+    \brief Executor non-inline template implementation  */
 
-#ifndef HH_hexdump_
-#define HH_hexdump_ 1
+//#include "Executor.ih"
 
 // Custom includes
-#include <iostream>
 
-//#include "hexdump.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
 
-namespace senf {
+///////////////////////////////////////////////////////////////////////////
+// senf::console::Executor
 
-    /** \brief Write range [ i, i_end ) to output stream in hexadecimal format
-     */
-    template <class Iterator>
-    void hexdump(Iterator i, Iterator i_end, std::ostream & stream, unsigned block_size=16);
+template <class ForwardRange>
+prefix_ senf::console::GenericNode &
+senf::console::Executor::traverse(DirectoryNode & dir, ForwardRange const & range)
+{
+    typedef typename boost::range_const_iterator<ForwardRange>::type const_iterator;
+    detail::NodeTraverser traverser (*root_, dir, autocomplete_);
+    const_iterator i (boost::begin(range));
+    const_iterator const i_end (boost::end(range));
+    for (; i != i_end; ++i) {
+        if ( policy_ && (*i) != std::string("") && (*i) != std::string(".") )
+            policy_( dynamic_cast<DirectoryNode &>(traverser.node()), *i );
+        traverser( *i );
+    }
+    return traverser.node();
 }
 
-///////////////////////////////hh.e////////////////////////////////////////
-#include "hexdump.cci"
-#include "hexdump.ct"
-//#include "hexdump.cti"
-//#include "hexdump.mpp"
-#endif
+///////////////////////////////ct.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

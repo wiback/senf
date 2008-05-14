@@ -23,7 +23,7 @@
 /** \file
     \brief Node inline template implementation */
 
-//#include "Node.ih"
+#include "Node.ih"
 
 // Custom includes
 

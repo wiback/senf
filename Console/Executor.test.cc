@@ -163,6 +163,71 @@ BOOST_AUTO_UNIT_TEST(executor)
     senf::console::root().remove("dir2");
 }
 
+BOOST_AUTO_UNIT_TEST(executorChroot)
+{
+    senf::console::root().mkdir("dir1").mkdir("dir3");
+    senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
+
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+
+    executor.chroot( senf::console::root()["dir2"] );
+
+    BOOST_CHECK( & executor.chroot() == & senf::console::root()["dir2"] );
+
+    {
+        std::stringstream os;
+        parser.parse("../test", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::NoBuiltin );
+        BOOST_CHECK_EQUAL( os.str(), "testCommand\n" );
+    }
+
+    commands.clear();
+    senf::console::root().remove("dir1");
+    senf::console::root().remove("dir2");
+}
+
+namespace {
+    
+    void testPolicy(senf::console::DirectoryNode & dir, std::string const & entry)
+    {
+        if (dir == senf::console::root() && entry == "dir2")
+            throw senf::console::Executor::IgnoreCommandException();
+    }
+}
+
+BOOST_AUTO_UNIT_TEST(executorPolicy)
+{
+    senf::console::root().mkdir("dir1").mkdir("dir3");
+    senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
+
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+
+    executor.policy(&testPolicy);
+
+    {
+        std::stringstream os;
+        parser.parse("ls dir1", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
+        BOOST_CHECK_EQUAL( os.str(), "dir3/\n" );
+    }
+
+    {
+        std::stringstream os;
+        parser.parse("dir2/test", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::NoBuiltin );
+        BOOST_CHECK_EQUAL( os.str(), "" );
+    }
+
+    commands.clear();
+    senf::console::root().remove("dir1");
+    senf::console::root().remove("dir2");
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

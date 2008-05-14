@@ -27,27 +27,18 @@
 //#include "TypeInfo.ih"
 
 // Custom includes
-#include "malloc.h"
-
-// Copied from the binutils sources 
-#define HAVE_DECL_BASENAME 1
-#define HAVE_DECL_ASPRINTF 1
-#define HAVE_DECL_VASPRINTF 1
-#include "impl/demangle.h"
+#include <cxxabi.h>
+#include <malloc.h>
 
 //#include "TypeInfo.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-
-// WARNING: This is completely g++ and libiberty dependent. The demangling
-// interface isn't even explicitly exportet from libiberty. However, it is
-// *EXTREMELY* helpful for debugging ...
-
 prefix_ std::string senf::prettyName(std::type_info const & type)
 {
     char const * mangled = type.name();
-    char * demangled = ::cplus_demangle(mangled,DMGL_TYPES|DMGL_AUTO);
+    int status (0);
+    char * demangled ( abi::__cxa_demangle(mangled, 0, 0, &status) );
     std::string name (demangled ? demangled : mangled);
     if (demangled)
         ::free(demangled);
