@@ -66,6 +66,12 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
         >::policy OtherSocketPolicy;
     typedef senf::SocketHandle<OtherSocketPolicy> OtherSocketHandle;
 
+    typedef senf::MakeSocketPolicy<
+        senf::test::SomeCommunicationPolicy,
+        senf::test::SomeAddressingPolicy
+        >::policy AnotherSocketPolicy;
+    typedef senf::SocketHandle<AnotherSocketPolicy> AnotherSocketHandle;
+
     {
         MySocketHandle myh;
         OtherSocketHandle osh (myh);
@@ -75,6 +81,7 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
         SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
 
         BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
+        BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<AnotherSocketHandle>(osh) );
 
         typedef senf::SocketHandle< senf::MakeSocketPolicy<
             OtherSocketPolicy,

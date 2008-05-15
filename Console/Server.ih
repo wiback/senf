@@ -80,13 +80,19 @@ namespace detail {
 
         virtual ~ClientReader() = 0;
 
+        // Called by subclasses to get information from the Client
+
         Client & client() const;
         std::string promptString() const;
         ClientHandle handle() const;
         std::ostream & stream() const;
+
+        // Called by subclasses to perform actions in the Client
+
         void stopClient();
-        
         void handleInput(std::string const & input) const;
+
+        // Called by the Client
 
         void disablePrompt();
         void enablePrompt();

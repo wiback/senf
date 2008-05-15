@@ -133,11 +133,11 @@ prefix_ Target senf::static_socket_cast(Source handle)
 template <class Target, class Source>
 prefix_ Target senf::dynamic_socket_cast(Source handle)
 {
-    BOOST_STATIC_ASSERT((
-        boost::is_convertible<Source*,FileHandle*>::value &&
-        boost::is_convertible<Target*,FileHandle*>::value &&
-        ( boost::is_convertible<Source,Target>::value ||
-          boost::is_convertible<Target,Source>::value ) ));
+//     BOOST_STATIC_ASSERT((
+//         boost::is_convertible<Source*,FileHandle*>::value &&
+//         boost::is_convertible<Target*,FileHandle*>::value &&
+//         ( boost::is_convertible<Source,Target>::value ||
+//           boost::is_convertible<Target,Source>::value ) ));
     try {
         return Target::cast_dynamic(handle);
     }
@@ -147,11 +147,11 @@ prefix_ Target senf::dynamic_socket_cast(Source handle)
 template <class Target, class Source>
 prefix_ bool senf::check_socket_cast(Source handle)
 {
-    BOOST_STATIC_ASSERT((
-        boost::is_convertible<Source*,FileHandle*>::value &&
-        boost::is_convertible<Target*,FileHandle*>::value &&
-        ( boost::is_convertible<Source,Target>::value ||
-          boost::is_convertible<Target,Source>::value ) ));
+//     BOOST_STATIC_ASSERT((
+//         boost::is_convertible<Source*,FileHandle*>::value &&
+//         boost::is_convertible<Target*,FileHandle*>::value &&
+//         ( boost::is_convertible<Source,Target>::value ||
+//           boost::is_convertible<Target,Source>::value ) ));
     // we don't have a non-throwing variant of cast_dynamic
     // for two reasons:
     // a) since the handle is passed back by value, we cannot return

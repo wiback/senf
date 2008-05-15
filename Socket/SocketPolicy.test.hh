@@ -31,7 +31,6 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
 namespace test {
 
     struct SomeAddressingPolicy : public senf::AddressingPolicyBase

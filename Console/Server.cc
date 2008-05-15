@@ -249,22 +249,26 @@ prefix_ void senf::console::Client::v_write(boost::posix_time::ptime timestamp,
 
 prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Client const & client)
 {
-    //    typedef senf::ClientSocketHandle<MakeSocketPolicy<INet4AddressingPolicy>::policy > v4Socket;
-    if( senf::check_socket_cast<TCPv4ServerSocketHandle::ClientSocketHandle>( client.handle())) {
-        os<<senf::dynamic_socket_cast<TCPv4ServerSocketHandle::ClientSocketHandle>( client.handle()).peer();
-    }
-    else if( senf::check_socket_cast<TCPv6ServerSocketHandle::ClientSocketHandle>( client.handle())) {
-        os<<senf::dynamic_socket_cast<TCPv6ServerSocketHandle::ClientSocketHandle>( client.handle()).peer();
-    }
-    else{
-        os<<((void *)&client);
-    }
+    typedef ClientSocketHandle< MakeSocketPolicy<
+        INet4AddressingPolicy,ConnectedCommunicationPolicy>::policy > V4Socket;
+    typedef ClientSocketHandle< MakeSocketPolicy<
+        INet6AddressingPolicy,ConnectedCommunicationPolicy>::policy > V6Socket;
+
+    if (check_socket_cast<V4Socket>(client.handle()))
+        os << dynamic_socket_cast<V4Socket>(client.handle()).peer();
+    else if (check_socket_cast<V6Socket>(client.handle()))
+        os << dynamic_socket_cast<V6Socket>(client.handle()).peer();
+    else
+        os << static_cast<void const *>(&client);
+
     return os;
 }
+
 prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Client * client)
 {
-    return os<<*client;
+    return os << *client;
 }
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Server.mpp"
