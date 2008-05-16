@@ -30,6 +30,7 @@
 #include <locale>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 //#include "IOStreamTarget.mpp"
 #define prefix_
@@ -53,7 +54,7 @@ prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::log::IOStreamTarget::v_write(boost::posix_time::ptime timestamp,
+prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
                                                 std::string const & stream,
                                                 std::string const & area, unsigned level,
                                                 std::string const & message)

@@ -184,7 +184,7 @@ prefix_ void senf::log::Target::updateRoutingCache(detail::StreamBase const * st
         area->updateRoutingCache(*this, *stream, limit);
 }
 
-prefix_ void senf::log::Target::write(boost::posix_time::ptime timestamp,
+prefix_ void senf::log::Target::write(time_type timestamp,
                                       detail::StreamBase const & stream,
                                       detail::AreaBase const & area, unsigned level,
                                       std::string const & message)
@@ -211,25 +211,10 @@ prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
     if (fallbackRouting_) {
         if (level >= stream.defaultRuntimeLimit())
             static_cast<Target &>(ConsoleTarget::instance()).v_write( 
-                (*timeSource_)(), stream.v_name(), area.v_name(), level, msg );
+                TimeSource::now(), stream.v_name(), area.v_name(), level, msg );
     }
     else
-        area.write( (*timeSource_)(), stream, level, msg );
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::log::TimeSource
-
-prefix_ senf::log::TimeSource::~TimeSource()
-{}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::log::SystemTimeSource
-
-prefix_ boost::posix_time::ptime senf::log::SystemTimeSource::operator()()
-    const
-{
-    return boost::posix_time::microsec_clock::universal_time();
+        area.write( TimeSource::now(), stream, level, msg );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

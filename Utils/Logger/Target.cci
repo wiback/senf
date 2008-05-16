@@ -26,6 +26,7 @@
 #include "Target.ih"
 
 // Custom includes
+#include "AreaRegistry.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -94,11 +95,6 @@ prefix_ senf::log::Target::action_t senf::log::Target::RoutingEntry::action()
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::TargetRegistry
 
-prefix_ void senf::log::detail::TargetRegistry::timeSource(std::auto_ptr<TimeSource> source)
-{
-    timeSource_.reset(source.release());
-}
-
 prefix_ void senf::log::detail::TargetRegistry::routed()
 {
     fallbackRouting_ = false;
@@ -113,7 +109,7 @@ prefix_ bool senf::log::detail::TargetRegistry::fallbackRouting()
 // private members
 
 prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
-    : timeSource_(new SystemTimeSource()), fallbackRouting_(true)
+    : fallbackRouting_(true)
 {}
 
 prefix_ void senf::log::detail::TargetRegistry::registerTarget(Target * target)
@@ -124,14 +120,6 @@ prefix_ void senf::log::detail::TargetRegistry::registerTarget(Target * target)
 prefix_ void senf::log::detail::TargetRegistry::unregisterTarget(Target * target)
 {
     targets_.erase(target);
-}
-
-///////////////////////////////////////////////////////////////////////////
-// namespace senf::log members
-
-prefix_ void senf::log::timeSource(std::auto_ptr<TimeSource> source)
-{
-    detail::TargetRegistry::instance().timeSource(source);
 }
 
 /////////////////////////////cci.e///////////////////////////////////////

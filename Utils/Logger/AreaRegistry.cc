@@ -84,7 +84,7 @@ prefix_ void senf::log::detail::AreaBase::removeRoutingCache(Target & target,
     routingCache_[stream.index].limit = l;
 }
 
-prefix_ void senf::log::detail::AreaBase::write(boost::posix_time::ptime timestamp,
+prefix_ void senf::log::detail::AreaBase::write(time_type timestamp,
                                                 StreamBase const & stream, unsigned level,
                                                 std::string msg)
     const

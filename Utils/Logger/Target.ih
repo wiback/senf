@@ -28,7 +28,6 @@
 
 // Custom includes
 #include <memory>
-#include <boost/scoped_ptr.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/static_assert.hpp>
 
@@ -48,8 +47,6 @@ namespace detail {
         void write(StreamBase const & stream, AreaBase const & area, unsigned level, 
                    std::string msg);
 
-        void timeSource(std::auto_ptr<TimeSource> source);
-
         void routed();
         bool fallbackRouting();
 
@@ -61,7 +58,6 @@ namespace detail {
 
         typedef std::set<Target *> Targets;
         Targets targets_;
-        boost::scoped_ptr<TimeSource> timeSource_;
 
         bool fallbackRouting_;
         

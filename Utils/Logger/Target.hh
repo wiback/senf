@@ -28,14 +28,14 @@
 
 // Custom includes
 #include <set>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <vector>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 #include "../singleton.hh"
 #include "../mpl.hh"
 #include "StreamRegistry.hh"
-#include "AreaRegistry.hh"
 #include "../Exception.hh"
+#include "TimeSource.hh"
 
 //#include "Target.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -54,6 +54,7 @@ namespace senf {
 namespace log {
     
     namespace detail { class TargetRegistry; }
+    namespace detail { class AreaBase; }
 
     /** \brief Logging target base class
         
@@ -331,14 +332,14 @@ namespace log {
 
         void updateRoutingCache(detail::StreamBase const * stream, detail::AreaBase const * area);
 
-        void write(boost::posix_time::ptime timestamp, detail::StreamBase const & stream,
+        void write(time_type timestamp, detail::StreamBase const & stream,
                    detail::AreaBase const & area, unsigned level, std::string const & message);
 
 #   ifdef DOXYGEN
     protected:
 #   endif
 
-        virtual void v_write(boost::posix_time::ptime timestamp, std::string const & stream, 
+        virtual void v_write(time_type timestamp, std::string const & stream, 
                              std::string const & area, unsigned level, 
                              std::string const & message) = 0;
                                         ///< Called to write out the routing message
@@ -368,55 +369,6 @@ namespace log {
         friend class detail::AreaBase;
         friend class detail::TargetRegistry;
     };
-
-    /** \brief Log message time source abstract base class
-
-        Instances derived from TimeSource provide the Logging library with the current date/time
-        value. The \c operator() member must be implemented to return the current universal time
-        (UTC).
-
-        A new TimeSource may be installed using \ref senf::log::timeSource().
-
-        \ingroup config
-     */
-    struct TimeSource
-    {
-        virtual ~TimeSource();
-        virtual boost::posix_time::ptime operator()() const = 0;
-    };
-
-    /** \brief Default %log message time source
-
-        This time source is installed by default and uses gettimeofday() (via the Boost.DateTime
-        library) to get the current universal time.
-        
-        \ingroup config
-     */
-    struct SystemTimeSource : public TimeSource
-    {
-        virtual boost::posix_time::ptime operator()() const;
-    };
-
-    /** \brief Change %log message time source
-
-        Set the %log message time source to \a source. The logging library will take ownership of \e
-        source and will take care to free it, if necessary.
-
-        Since the time source class will in almost all cases be default constructible, see the
-        template overload for a simpler interface.
-
-        \ingroup config
-     */
-    void timeSource(std::auto_ptr<TimeSource> source);
-
-    /** \brief Change %log message time source
-
-        Set the %log message time source to (an instance of) \a Source.  \a Source must be default
-        constructible, otherwise use the non-template senf::log::timeSource() overload.
-
-        \ingroup config
-     */
-    template <class Source> void timeSource();
 
 }}
 

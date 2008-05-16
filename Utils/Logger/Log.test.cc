@@ -55,10 +55,12 @@ BOOST_AUTO_UNIT_TEST(logger)
     target.clear();
     
     SENF_LOG((senf::log::IMPORTANT)("Important message"));
+    std::cerr << target.str();
     BOOST_CHECK( ! target.str().empty() );
     target.clear();
 
     SENF_LOG((senf::log::test::LogCritical) ("Another log message: " << 10));
+    std::cerr << target.str();
     BOOST_CHECK( ! target.str().empty() );
     target.clear();
 
@@ -66,10 +68,12 @@ BOOST_AUTO_UNIT_TEST(logger)
         log << "Last message";
         log << " continued here";
     }));
+    std::cerr << target.str();
     BOOST_CHECK( ! target.str().empty() );
     target.clear();
 
     senf::log::test::Foo::log();
+    std::cerr << target.str();
     BOOST_CHECK( ! target.str().empty() );
     target.clear();
 

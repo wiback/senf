@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,63 +21,38 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief AreaRegistry internal header */
+    \brief TimeSource internal header */
 
-#ifndef IH_AreaRegistry_
-#define IH_AreaRegistry_ 1
+#ifndef IH_TimeSource_
+#define IH_TimeSource_ 1
 
 // Custom includes
-#include <string>
-#include <vector>
-#include <list>
-#include "Levels.hh"
-#include "TimeSource.hh"
+#include <boost/scoped_ptr.hpp>
+#include "../singleton.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
 namespace log {
-
-    class Target;
-
 namespace detail {
 
-    class StreamBase;
-
-    /** \brief Internal: Area base class */
-    struct AreaBase
+    class TimeSourceManager
+        : public senf::singleton<TimeSourceManager>
     {
-        virtual ~AreaBase() {};
+    public:
+        TimeSourceManager();
+
+        using senf::singleton<TimeSourceManager>::instance;
+
+        time_type now();
+        void timeSource(std::auto_ptr<TimeSource> source);
         
-        std::string fullName() const;
-        virtual std::string v_name() const;
-
-        void init();
-
-        unsigned limit(StreamBase const & stream) const;
-        void updateRoutingCache(Target & target, StreamBase const & stream, unsigned limit) const; 
-        void removeRoutingCache(Target & target, StreamBase const & stream) const; 
-        void write(time_type timestamp, StreamBase const & stream, unsigned level,
-              std::string msg) const;
-
     private:
-        struct RouteEntry {
-            RouteEntry(unsigned limit_, Target * target_) : limit(limit_), target(target_) {}
-            unsigned limit;
-            Target * target;
-        };
-        typedef std::list<RouteEntry> Routes;
-        struct CacheEntry {
-            CacheEntry() : limit (DISABLED::value), routes() {}
-            unsigned limit;
-            Routes routes;
-        };
-        typedef std::vector<CacheEntry> RoutingCache;
-        mutable RoutingCache routingCache_;
+        
+        boost::scoped_ptr<TimeSource> timeSource_;
     };
 
 }}}
-
 
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
