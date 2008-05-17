@@ -21,26 +21,47 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Console public header */
+    \brief Config non-inline non-template implementation */
 
-#ifndef HH_Console_
-#define HH_Console_ 1
+#include "Config.hh"
+//#include "Config.ih"
 
 // Custom includes
 
-//#include "Console.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//#include "Config.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-#include "Server.hh"
-#include "ParsedCommand.hh"
-#include "ScopedDirectory.hh"
-#include "Config.hh"
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ConfigFile
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "Console.cci"
-//#include "Console.ct"
-//#include "Console.cti"
-#endif
+prefix_ void senf::console::ConfigFile::parse()
+{
+    if (! parser_.parseFile(filename_, boost::bind<void>( boost::ref(executor_),
+                                                          boost::ref(std::cerr),
+                                                          _1 )) )
+        throw SyntaxErrorException();
+}
+
+prefix_ void senf::console::ConfigFile::parse(DirectoryNode & restrict)
+{
+    restrict_ = restrict.thisptr();
+    parse();
+    parsedNodes_.push_back(restrict_);
+    restrict_.reset();
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+prefix_ void senf::console::readConfig(std::string const & filename)
+{
+    ConfigFile cfg (filename);
+    cfg.parse();
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "Config.mpp"
 
 
 // Local Variables:

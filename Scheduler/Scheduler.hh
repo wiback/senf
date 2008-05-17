@@ -430,7 +430,7 @@ namespace senf {
      */
     struct SchedulerLogTimeSource : public senf::log::TimeSource
     {
-        boost::posix_time::ptime operator()() const;
+        senf::log::time_type operator()() const;
     };
 
 }

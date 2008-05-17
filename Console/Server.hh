@@ -148,7 +148,7 @@ namespace console {
 
         void translate(std::string & data);
         void handleInput(std::string input);
-        virtual void v_write(boost::posix_time::ptime timestamp, std::string const & stream, 
+        virtual void v_write(senf::log::time_type timestamp, std::string const & stream, 
                              std::string const & area, unsigned level, 
                              std::string const & message);
         

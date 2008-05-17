@@ -35,7 +35,7 @@
 
 prefix_ senf::console::Executor::Executor()
     : root_(senf::console::root().thisptr()), cwd_ (root_), oldCwd_ (cwd_),
-      autocd_ (false), autocomplete_ (false)
+      autocd_ (false), autocomplete_ (false), skipping_ (false)
 {}
 
 prefix_ void senf::console::Executor::operator()(std::ostream & output,

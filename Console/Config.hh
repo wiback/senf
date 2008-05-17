@@ -21,25 +21,63 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Console public header */
+    \brief Config public header */
 
-#ifndef HH_Console_
-#define HH_Console_ 1
+#ifndef HH_Console_Config_
+#define HH_Console_Config_ 1
 
 // Custom includes
+#include <boost/utility.hpp>
+#include "Parse.hh"
+#include "Executor.hh"
 
-//#include "Console.mpp"
+//#include "Config.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-#include "Server.hh"
-#include "ParsedCommand.hh"
-#include "ScopedDirectory.hh"
-#include "Config.hh"
+namespace senf {
+namespace console {
+
+    /** \brief
+      */
+    class ConfigFile
+        : boost::noncopyable
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+
+        explicit ConfigFile(std::string const & filename);
+
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+        void parse();
+        void parse(DirectoryNode & restrict);
+
+    protected:
+
+    private:
+        void policyCallback(DirectoryNode & dir, std::string const & item);
+
+        typedef std::vector<DirectoryNode::weak_ptr> ParsedNodes;
+
+        std::string filename_;
+        CommandParser parser_;
+        Executor executor_;
+
+        DirectoryNode::ptr restrict_;
+        ParsedNodes parsedNodes_;
+    };
+
+    void readConfig(std::string const & filename);
+
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Console.cci"
-//#include "Console.ct"
-//#include "Console.cti"
+#include "Config.cci"
+//#include "Config.ct"
+//#include "Config.cti"
 #endif
 
 

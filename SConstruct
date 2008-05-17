@@ -157,7 +157,7 @@ env.Append(
    CONFIG_FILES_OPTS = configFilesOpts,
    CLEAN_PATTERNS = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
    BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn -I_templates $CONFIG_FILES_OPTS",
-   TOP_INCLUDES = [ 'Packets', 'PPI', 'Scheduler', 'Socket', 'Utils',
+   TOP_INCLUDES = [ 'Packets', 'PPI', 'Scheduler', 'Socket', 'Utils', 'Console',
                     'config.hh', 'local_config.hh' ],
 )
 
@@ -169,7 +169,7 @@ Export('env')
 
 # Create Doxyfile.local otherwise doxygen will barf on this non-existent file
 # Create it even when cleaning, to silence the doxygen builder warnings
-if not os.path.exists("Doxyfile.local"):
+if not env.GetOption('clean') and not os.path.exists("Doxyfile.local"):
     Execute(Touch("Doxyfile.local"))
 
 # Create local_config.h
@@ -222,10 +222,11 @@ env.Alias('default', libsenf)
 
 env.Alias('install_all', env.Install('$LIBINSTALLDIR', libsenf))
 
-env.Clean('all', [ os.path.join(path,f)
-                   for path, subdirs, files in os.walk('.')
-                   for pattern in env['CLEAN_PATTERNS']
-                   for f in fnmatch.filter(files,pattern) ])
+if env.GetOption('clean'):
+    env.Clean('all', [ os.path.join(path,f)
+                       for path, subdirs, files in os.walk('.')
+                       for pattern in env['CLEAN_PATTERNS']
+                       for f in fnmatch.filter(files,pattern) ])
 
 PhonyTarget(env, 'deb', [
     checkLocalConf,

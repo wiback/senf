@@ -52,6 +52,11 @@
 
 #define COMPILE_FAIL(n) void n()
 
+#define SENF_CHECK_NO_THROW(expr)                                                                 \
+    BOOST_CHECK_NO_THROW(                                                                         \
+        try { (void) expr ; }                                                                     \
+        catch (std::exception & e) { std::cerr << e.what() << std::endl; throw; } )
+
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "auto_unit_test.cci"
 //#include "auto_unit_test.ct"

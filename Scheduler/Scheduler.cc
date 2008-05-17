@@ -341,10 +341,10 @@ prefix_ void senf::Scheduler::process()
 ///////////////////////////////////////////////////////////////////////////
 // senf::SchedulerLogTimeSource
 
-prefix_ boost::posix_time::ptime senf::SchedulerLogTimeSource::operator()()
+prefix_ senf::log::time_type senf::SchedulerLogTimeSource::operator()()
     const
 {
-    return ClockService::abstime(Scheduler::instance().eventTime());
+    return Scheduler::instance().eventTime();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

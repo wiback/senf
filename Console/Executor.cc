@@ -57,6 +57,8 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
     try {
         switch(command.builtin()) {
         case ParseCommandInfo::NoBuiltin : {
+            if (skipping_)
+                break;
             GenericNode & node ( traverseCommand(command.commandPath()) );
             DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
             if ( dir ) {
@@ -72,23 +74,33 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
         }
 
         case ParseCommandInfo::BuiltinCD :
-            if ( command.arguments() ) {
-                if (command.arguments().begin()->size() == 1 
-                    && command.arguments().begin()->begin()->value() == "-") {
-                    if (oldCwd_.expired() || ! oldCwd_.lock()->active()) {
+            if (skipping_)
+                break;
+            try {
+                if ( command.arguments() ) {
+                    if (command.arguments().begin()->size() == 1 
+                        && command.arguments().begin()->begin()->value() == "-") {
+                        if (oldCwd_.expired() || ! oldCwd_.lock()->active()) {
+                            oldCwd_ = cwd_;
+                            cwd_ = root_;
+                        } else
+                            swap(cwd_, oldCwd_);
+                    }
+                    else {
                         oldCwd_ = cwd_;
-                        cwd_ = root_;
-                    } else
-                        swap(cwd_, oldCwd_);
-                }
-                else {
-                    oldCwd_ = cwd_;
                     cwd_ = traverseDirectory(*command.arguments().begin()).thisptr();
+                    }
                 }
+            }
+            catch (IgnoreCommandException &) {
+                throw SyntaxErrorException(
+                    "'cd' cannot be skipped (don't use 'cd' in conf-files)");
             }
             break;
             
         case ParseCommandInfo::BuiltinLS : {
+            if (skipping_)
+                break;
             DirectoryNode const & dir ( command.arguments()
                                         ? traverseDirectory(*command.arguments().begin())
                                         : cwd() );
@@ -103,22 +115,34 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
         }
 
         case ParseCommandInfo::BuiltinPUSHD :
-            dirstack_.push_back(cwd_);
-            if ( command.arguments() )
-                cwd_ = traverseDirectory(*command.arguments().begin()).thisptr();
+            dirstack_.push_back(DirEntry(cwd_, skipping_));
+            if ( ! skipping_ && command.arguments() ) {
+                try {
+                    cwd_ = traverseDirectory(*command.arguments().begin()).thisptr();
+                }
+                catch (IgnoreCommandException &) {
+                    cwd_.reset();
+                    skipping_ = true;
+                }
+            }
             break;
             
         case ParseCommandInfo::BuiltinPOPD :
             if (! dirstack_.empty()) {
-                cwd_ = dirstack_.back();
+                cwd_ = dirstack_.back().dir;
+                skipping_ = dirstack_.back().skip;
                 dirstack_.pop_back();
             }
             break;
             
         case ParseCommandInfo::BuiltinEXIT :
+            if (skipping_)
+                break;
             throw ExitException();
 
         case ParseCommandInfo::BuiltinHELP :
+            if (skipping_)
+                break;
             GenericNode const & node (command.arguments() 
                                       ? traverseNode(*command.arguments().begin())
                                       : cwd());

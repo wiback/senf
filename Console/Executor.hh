@@ -142,11 +142,18 @@ namespace console {
         SecurityPolicy policy_;
         DirectoryNode::weak_ptr cwd_;
         DirectoryNode::weak_ptr oldCwd_;
-        typedef std::vector<DirectoryNode::weak_ptr> DirStack;
+        struct DirEntry {
+            DirEntry(DirectoryNode::weak_ptr dir_, bool skip_) : dir(dir_), skip(skip_) {}
+            DirectoryNode::weak_ptr dir;
+            bool skip;
+        };
+        typedef std::vector<DirEntry> DirStack;
         DirStack dirstack_;
 
         bool autocd_;
         bool autocomplete_;
+        
+        bool skipping_;
     };
 
 

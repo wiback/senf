@@ -236,7 +236,7 @@ prefix_ void senf::console::Client::handleInput(std::string data)
     }
 }
 
-prefix_ void senf::console::Client::v_write(boost::posix_time::ptime timestamp,
+prefix_ void senf::console::Client::v_write(senf::log::time_type timestamp,
                                             std::string const & stream,
                                             std::string const & area, unsigned level,
                                             std::string const & message)
