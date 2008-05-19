@@ -142,7 +142,7 @@ def configFilesOpts(target, source, env, for_signature):
 
 env.Append(
    CPPPATH = [ '#/include' ],
-   LIBS = [ 'readline', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB' ],
+   LIBS = [ 'readline', 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB' ],
    TEST_EXTRA_LIBS = [ '$BOOSTFSLIB' ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
    DOXY_HTML_XSL = '#/doclib/html-munge.xsl',

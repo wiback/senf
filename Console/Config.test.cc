@@ -76,8 +76,18 @@ BOOST_AUTO_UNIT_TEST(configFile)
     dir1.add("fun1",&fun1);
 
     {
-        var1 = 0;
         senf::console::ConfigFile cfg (cfgf.name());
+
+        var1 = 0;
+        SENF_CHECK_NO_THROW( cfg.parse() )
+        BOOST_CHECK_EQUAL( var1, 10 );
+
+        var1 = 0;
+        SENF_CHECK_NO_THROW( cfg.parse() )
+        BOOST_CHECK_EQUAL( var1, 0 );
+
+        var1 = 0;
+        cfg.reset();
         SENF_CHECK_NO_THROW( cfg.parse() )
         BOOST_CHECK_EQUAL( var1, 10 );
     }
@@ -98,9 +108,11 @@ BOOST_AUTO_UNIT_TEST(configFileRestrict)
         var1 = 0;
         var2 = false;
         senf::console::ConfigFile cfg (cfgf.name());
-        SENF_CHECK_NO_THROW( cfg.parse(dir1.node()) );
+        SENF_CHECK_NO_THROW( cfg.parse(dir1) );
         BOOST_CHECK_EQUAL( var1, 10 );
         BOOST_CHECK_EQUAL( var2, false );
+        BOOST_CHECK( cfg.parsed(dir1) );
+        BOOST_CHECK( ! cfg.complete() );
 
         senf::console::ScopedDirectory<> dir2;
         senf::console::root().add("dir2", dir2);
@@ -111,6 +123,7 @@ BOOST_AUTO_UNIT_TEST(configFileRestrict)
         SENF_CHECK_NO_THROW( cfg.parse() );
         BOOST_CHECK_EQUAL( var1, 0 );
         BOOST_CHECK_EQUAL( var2, true );
+        BOOST_CHECK( cfg.complete() );
     }
 }
 
@@ -135,15 +148,17 @@ BOOST_AUTO_UNIT_TEST(configFileSkipGroup)
         var1 = 0;
         var2 = false;
         senf::console::ConfigFile cfg (cfgf.name());
-        SENF_CHECK_NO_THROW( cfg.parse(dir1.node()) );
+        SENF_CHECK_NO_THROW( cfg.parse(dir1) );
         BOOST_CHECK_EQUAL( var1, 10 );
         BOOST_CHECK_EQUAL( var2, false );
+        BOOST_CHECK( cfg.parsed(dir1) );
 
         var1 = 0;
         var2 = false;
         SENF_CHECK_NO_THROW( cfg.parse(dir2["dir3"]) );
         BOOST_CHECK_EQUAL( var1, 0 );
         BOOST_CHECK_EQUAL( var2, true );
+        BOOST_CHECK( ! cfg.parsed(dir2) );
 
         var1 = 0;
         var2 = false;

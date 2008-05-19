@@ -35,27 +35,90 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ConfigFile
 
-prefix_ void senf::console::ConfigFile::parse()
+#ifndef DOXYGEN
+
+namespace {
+    struct BindPolicy
+    {
+        BindPolicy(senf::console::Executor & e, senf::console::Executor::SecurityPolicy p) 
+            : e_ (e) 
+            { e_.policy(p); }
+        
+        ~BindPolicy() 
+            { e_.policy(senf::console::Executor::SecurityPolicy()); }
+        
+        senf::console::Executor & e_;
+    };
+}
+
+#endif
+
+prefix_ void senf::console::ConfigFile::parse(DirectoryNode & restrict)
 {
+    DirectoryNode::ptr r (restrict.thisptr());
+    BindPolicy bp ( executor_, 
+                    boost::bind(&ConfigFile::policyCallback, this, r, _1, _2) );
     if (! parser_.parseFile(filename_, boost::bind<void>( boost::ref(executor_),
                                                           boost::ref(std::cerr),
                                                           _1 )) )
         throw SyntaxErrorException();
+    insertParsedNode(r);
 }
 
-prefix_ void senf::console::ConfigFile::parse(DirectoryNode & restrict)
+prefix_ bool senf::console::ConfigFile::parsed(GenericNode & node)
+    const
 {
-    restrict_ = restrict.thisptr();
-    parse();
-    parsedNodes_.push_back(restrict_);
-    restrict_.reset();
+    ParsedNodes::const_iterator i (parsedNodes_.begin());
+    ParsedNodes::const_iterator const i_end (parsedNodes_.end());
+    for (; i != i_end; ++i)
+        if ( ! i->expired() && node.isChildOf(*(i->lock())) )
+            return true;
+    return false;
+}
+
+prefix_ void senf::console::ConfigFile::policyCallback(DirectoryNode::ptr restrict,
+                                                       DirectoryNode & dir,
+                                                       std::string const & name)
+{
+    if (dir.hasChild(name)) {
+        GenericNode & item (dir.get(name));
+        if (restrict && ! item.isChildOf(*restrict)) {
+            DirectoryNode * itemdir (dynamic_cast<DirectoryNode*>(&item));
+            if (! itemdir || ! restrict->isChildOf(*itemdir))
+                throw Executor::IgnoreCommandException();
+        }
+        if (parsed(item))
+            throw Executor::IgnoreCommandException();
+    }
+    else if (restrict && ! dir.isChildOf(*restrict))
+        throw Executor::IgnoreCommandException();
+}
+
+namespace {
+    struct RemoveNodesFn
+    {
+        RemoveNodesFn(senf::console::DirectoryNode::ptr newNode) : newNode_ (newNode) {}
+
+        bool operator()(senf::console::DirectoryNode::weak_ptr node) const
+            { return node.expired() || node.lock()->isChildOf(*newNode_); }
+
+        senf::console::DirectoryNode::ptr newNode_;
+    };
+}
+
+prefix_ void senf::console::ConfigFile::insertParsedNode(DirectoryNode::ptr node)
+{
+    parsedNodes_.erase(
+        std::remove_if(parsedNodes_.begin(), parsedNodes_.end(), RemoveNodesFn(node)),
+        parsedNodes_.end());
+    parsedNodes_.push_back(node);
 }
 
 ///////////////////////////////////////////////////////////////////////////
 
-prefix_ void senf::console::readConfig(std::string const & filename)
+prefix_ void senf::console::readConfig(std::string const & filename, DirectoryNode & root)
 {
-    ConfigFile cfg (filename);
+    ConfigFile cfg (filename, root);
     cfg.parse();
 }
 

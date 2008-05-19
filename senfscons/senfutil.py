@@ -8,7 +8,7 @@ from SCons.Script import *
 # c) check for a local SENF, set options accordingly and update that SENF if needed
 
 def SetupForSENF(env):
-    env.Append( LIBS           = [ 'senf', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB' ],
+    env.Append( LIBS           = [ 'senf', 'readline', 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB' ],
                 BOOSTREGEXLIB  = 'boost_regex',
                 BOOSTIOSTREAMSLIB = 'boost_iostreams',
                 CXXFLAGS       = [ '-Wno-long-long',

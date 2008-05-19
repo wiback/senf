@@ -69,6 +69,7 @@ namespace console {
     {
     public:
         DirectoryNode & node() const;   ///< Access the proxied DirectoryNode
+        operator DirectoryNode & () const; ///< Access the proxied DirectoryNode
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Proxied members (see DirectoryNode)

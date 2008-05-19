@@ -120,7 +120,7 @@ namespace console {
                                              are accessible via the executor. This value defaults to
                                              senf::console::root(). */
 
-        Executor & policy(SecurityPolicy policy); ///< Set security policy
+        Executor & policy(SecurityPolicy policy = SecurityPolicy()); ///< Set security policy
                                         /**< The security policy is called before traversing a node
                                              to validate that access. */
 

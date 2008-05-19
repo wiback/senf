@@ -37,7 +37,22 @@
 namespace senf {
 namespace console {
 
-    /** \brief
+    /** \brief Console node tree based config file parser
+
+        A ConfigFile instance allows flexible parsing of a config file against the console node
+        tree. If you just want to parse a file completely, the senf::console::readConfig() function
+        will do that. ConfigFile however allows to incrementally parse only a subdirectory of the
+        complete configuration file.
+        \code
+        senf::console::ConfigFile cf ("/my/config/file")
+
+        // Parse only statements under the directory of some object. The object 'ob'
+        // must have been registered somewhere in the node tree
+        cf.parse(ob.dir);
+        
+        // Parse rest of the config file
+        cf.parse();
+        \endcode
       */
     class ConfigFile
         : boost::noncopyable
@@ -47,18 +62,36 @@ namespace console {
         ///\name Structors and default members
         ///@{
 
-        explicit ConfigFile(std::string const & filename);
+        explicit ConfigFile(std::string const & filename, DirectoryNode & root = root());
+                                        ///< Create ConfigFile object for \a filename
+                                        /**< The \a filename configuration file will be parsed using
+                                             parse() calls. All configuration statements will be
+                                             interpreted relative to \a root as root node. */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void parse();
-        void parse(DirectoryNode & restrict);
+        void parse();                   ///< Parse config file
+                                        /**< All nodes already parsed are skipped */
+        void parse(DirectoryNode & restrict); ///< Parse config file under \a restrict
+                                        /**< Only nodes which are children of \a restrict are
+                                             parsed.  */
+
+        bool complete() const;          ///< \c true, if all nodes have been parsed
+        bool parsed(GenericNode & node) const; ///< \c true. if \a node has been parsed
+
+        void reset();                   ///< Reset node parse info state
+                                        /**< After a call to reset(), all information about already
+                                             parsed nodes is cleared. Calling parse() will parse the
+                                             complete config file again. */
 
     protected:
 
     private:
-        void policyCallback(DirectoryNode & dir, std::string const & item);
+        void policyCallback(DirectoryNode::ptr restrict, DirectoryNode & dir, 
+                            std::string const & item);
+
+        void insertParsedNode(DirectoryNode::ptr node);
 
         typedef std::vector<DirectoryNode::weak_ptr> ParsedNodes;
 
@@ -66,11 +99,19 @@ namespace console {
         CommandParser parser_;
         Executor executor_;
 
-        DirectoryNode::ptr restrict_;
         ParsedNodes parsedNodes_;
     };
 
-    void readConfig(std::string const & filename);
+    /** \brief Read configuration file
+
+        The configuration file \a filename will be loaded, interpreting all node's relative to \a
+        root as root node.
+
+        This function uses a local ConfigFile object to perform the parsing.
+
+        \related ConfigFile
+     */
+    void readConfig(std::string const & filename, DirectoryNode & root = root());
 
 }}
 

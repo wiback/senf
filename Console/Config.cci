@@ -34,33 +34,29 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ConfigFile
 
-prefix_ senf::console::ConfigFile::ConfigFile(std::string const & filename)
+prefix_ senf::console::ConfigFile::ConfigFile(std::string const & filename,
+                                              DirectoryNode & root)
     : filename_ (filename)
 {
-    executor_.policy(senf::membind(&ConfigFile::policyCallback, this));
+    executor_.chroot(root);
 }
 
-prefix_ void senf::console::ConfigFile::policyCallback(DirectoryNode & dir,
-                                                       std::string const & name)
+prefix_ void senf::console::ConfigFile::parse()
 {
-    if (dir.hasChild(name)) {
-        GenericNode & item (dir.get(name));
-        if (restrict_ && ! item.isChildOf(*restrict_)) {
-            DirectoryNode * itemdir (dynamic_cast<DirectoryNode*>(&item));
-            if (! itemdir || ! restrict_->isChildOf(*itemdir))
-                throw Executor::IgnoreCommandException();
-        }
-        ParsedNodes::const_iterator i (parsedNodes_.begin());
-        ParsedNodes::const_iterator const i_end (parsedNodes_.end());
-        for (; i != i_end; ++i) {
-            if ( ! i->expired() && item.isChildOf(*(i->lock())) )
-                throw Executor::IgnoreCommandException();
-        }
-    }
-    else {
-        if (restrict_ && ! dir.isChildOf(*restrict_))
-            throw Executor::IgnoreCommandException();
-    }
+    parse(executor_.chroot());
+}
+
+prefix_ bool senf::console::ConfigFile::complete()
+    const
+{
+    return parsedNodes_.size() == 1 
+        && ! parsedNodes_[0].expired() 
+        && *parsedNodes_[0].lock() == executor_.chroot();
+}
+
+prefix_ void senf::console::ConfigFile::reset()
+{
+    parsedNodes_.clear();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

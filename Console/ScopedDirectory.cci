@@ -39,6 +39,12 @@ prefix_ senf::console::DirectoryNode & senf::console::ScopedDirectoryBase::node(
     return *node_;
 }
 
+prefix_ senf::console::ScopedDirectoryBase::operator DirectoryNode &()
+    const
+{
+    return node();
+}
+
 prefix_ senf::console::GenericNode::ptr
 senf::console::ScopedDirectoryBase::remove(std::string const & name)
 {
