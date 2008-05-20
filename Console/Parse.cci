@@ -73,6 +73,61 @@ prefix_ senf::console::Token::Token(TokenType type, std::string token)
     : type_(type), token_ (token)
 {}
 
+prefix_ senf::console::Token senf::console::NoneToken()
+{
+    return Token(Token::None,"");
+}
+
+prefix_ senf::console::Token senf::console::PathSeparatorToken()
+{
+    return Token(Token::PathSeparator,"/");
+}
+
+prefix_ senf::console::Token senf::console::ArgumentGroupOpenToken()
+{
+    return Token(Token::ArgumentGroupOpen,"(");
+}
+
+prefix_ senf::console::Token senf::console::ArgumentGroupCloseToken()
+{
+    return Token(Token::ArgumentGroupClose,")");
+}
+
+prefix_ senf::console::Token senf::console::DirectoryGroupOpenToken()
+{
+    return Token(Token::DirectoryGroupOpen,"{");
+}
+
+prefix_ senf::console::Token senf::console::DirectoryGroupCloseToken()
+{
+    return Token(Token::DirectoryGroupClose,"}");
+}
+
+prefix_ senf::console::Token senf::console::CommandTerminatorToken()
+{
+    return Token(Token::CommandTerminator,";");
+}
+
+prefix_ senf::console::Token senf::console::OtherPunctuationToken(std::string const & value)
+{
+    return Token(Token::OtherPunctuation, value);
+}
+
+prefix_ senf::console::Token senf::console::BasicStringToken(std::string const & value)
+{
+    return Token(Token::BasicString, value);
+}
+
+prefix_ senf::console::Token senf::console::HexStringToken(std::string const & value)
+{
+    return Token(Token::HexString, value);
+}
+
+prefix_ senf::console::Token senf::console::WordToken(std::string const & value)
+{
+    return Token(Token::Word, value);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ParseCommandInfo
 

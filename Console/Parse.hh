@@ -274,6 +274,19 @@ namespace console {
 
     std::ostream & operator<<(std::ostream & os, Token const & token);
 
+    
+    Token NoneToken();
+    Token PathSeparatorToken();
+    Token ArgumentGroupOpenToken();
+    Token ArgumentGroupCloseToken();
+    Token DirectoryGroupOpenToken();
+    Token DirectoryGroupCloseToken();
+    Token CommandTerminatorToken();
+    Token OtherPunctuationToken(std::string const & value);
+    Token BasicStringToken(std::string const & value);
+    Token HexStringToken(std::string const & value);
+    Token WordToken(std::string const & value);
+
     /** \brief Single parsed console command
 
         Every command parsed is returned in a ParseCommandInfo instance. This information is purely

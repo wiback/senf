@@ -34,20 +34,16 @@
 // senf::console::Executor
 
 prefix_ senf::console::Executor::Executor()
-    : root_(senf::console::root().thisptr()), cwd_ (root_), oldCwd_ (cwd_),
-      autocd_ (false), autocomplete_ (false), skipping_ (false)
-{}
+    : root_(senf::console::root().thisptr()), cwd_ (), oldCwd_ (),
+      autocd_ (false), autocomplete_ (false)
+{
+    cwd_.push_back(root_);
+}
 
 prefix_ void senf::console::Executor::operator()(std::ostream & output,
                                                  ParseCommandInfo const & command)
 {
     return execute(output, command);
-}
-
-prefix_ senf::console::DirectoryNode & senf::console::Executor::cwd()
-    const
-{
-    return cwd_.expired() ? root() : *cwd_.lock();
 }
 
 prefix_ bool senf::console::Executor::autocd()
@@ -83,8 +79,9 @@ prefix_ senf::console::DirectoryNode & senf::console::Executor::chroot()
 prefix_ senf::console::Executor & senf::console::Executor::chroot(DirectoryNode & node)
 {
     root_ = node.thisptr();
-    cwd_ = root_;
-    oldCwd_ = root_;
+    cwd_.clear();
+    cwd_.push_back(root_);
+    oldCwd_ = cwd_;
     return *this;
 }
 
@@ -92,6 +89,12 @@ prefix_ senf::console::Executor & senf::console::Executor::policy(SecurityPolicy
 {
     policy_ = policy;
     return *this;
+}
+
+prefix_ bool senf::console::Executor::skipping()
+    const
+{
+    return cwd_.empty();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -91,6 +91,7 @@ namespace console {
                                         /**< Output will be written to \a output. 
                                              Same as execute(). */
         DirectoryNode & cwd() const;    ///< Current working directory
+        bool skipping() const;
 
         bool autocd() const;            ///< Get current autocd status
                                         /**< if autocd is enabled, specifying a directory name as
@@ -127,11 +128,20 @@ namespace console {
     protected:
 
     private:
-        GenericNode & traverseNode(ParseCommandInfo::TokensRange const & path);
-        DirectoryNode & traverseDirectory(ParseCommandInfo::TokensRange const & path);
+        typedef std::vector<DirectoryNode::weak_ptr> Path;
 
-        template <class ForwardRange>
-        GenericNode & traverse(DirectoryNode & dir, ForwardRange const & range);
+        void exec(std::ostream & output, ParseCommandInfo const & command);
+
+        void cd(ParseCommandInfo::TokensRange dir);
+        void ls(std::ostream & output, ParseCommandInfo::TokensRange dir);
+        void pushd(ParseCommandInfo::TokensRange dir);
+        void popd();
+        void exit();
+        void help(std::ostream & output, ParseCommandInfo::TokensRange path);
+
+        GenericNode & traverseNode(ParseCommandInfo::TokensRange const & path);
+        void traverseDirectory(ParseCommandInfo::TokensRange const & path,
+                               Path & dir);
 
         struct InvalidPathException {};
         struct InvalidDirectoryException {};
@@ -139,28 +149,21 @@ namespace console {
         
         DirectoryNode::ptr root_;
         SecurityPolicy policy_;
-        DirectoryNode::weak_ptr cwd_;
-        DirectoryNode::weak_ptr oldCwd_;
-        struct DirEntry {
-            DirEntry(DirectoryNode::weak_ptr dir_, bool skip_) : dir(dir_), skip(skip_) {}
-            DirectoryNode::weak_ptr dir;
-            bool skip;
-        };
-        typedef std::vector<DirEntry> DirStack;
+        mutable Path cwd_;
+        Path oldCwd_;
+
+        typedef std::vector<Path> DirStack;
         DirStack dirstack_;
 
         bool autocd_;
         bool autocomplete_;
-        
-        bool skipping_;
     };
-
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Executor.cci"
-#include "Executor.ct"
+//#include "Executor.ct"
 //#include "Executor.cti"
 #endif
 

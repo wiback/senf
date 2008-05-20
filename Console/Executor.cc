@@ -27,6 +27,8 @@
 //#include "Executor.ih"
 
 // Custom includes
+#include <boost/utility.hpp>
+#include "../Utils/senfassert.hh"
 
 //#include "Executor.mpp"
 #define prefix_
@@ -46,51 +48,37 @@ namespace {
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Executor
 
+prefix_ senf::console::DirectoryNode & senf::console::Executor::cwd()
+    const
+{
+    SENF_ASSERT( ! cwd_.empty() );
+    while (cwd_.size()>1 && (cwd_.back().expired() || ! cwd_.back().lock()->active()))
+        cwd_.pop_back();
+    return * cwd_.back().lock();
+}
+
 prefix_ void senf::console::Executor::execute(std::ostream & output,
                                               ParseCommandInfo const & command)
 {
     SENF_LOG(( "Executing: " << command ));
 
-    if (cwd_.expired() || ! cwd().active())
-        cwd_ = root_;
+    if (! skipping())
+        (void) cwd(); // Prune the cwd path of expired entries
 
     try {
         switch(command.builtin()) {
-        case ParseCommandInfo::NoBuiltin : {
-            if (skipping_)
-                break;
-            GenericNode & node ( traverseNode(command.commandPath()) );
-            DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
-            if ( dir ) {
-                if (autocd_ && command.tokens().empty()) {
-                    oldCwd_ = cwd_;
-                    cwd_ = dir->thisptr();
-                } else
-                    throw InvalidCommandException();
-            } else {
-                dynamic_cast<CommandNode &>(node)(output, command);
-            }
+        case ParseCommandInfo::NoBuiltin : 
+            if (skipping())
+                return;
+            exec(output, command);
             break;
-        }
 
         case ParseCommandInfo::BuiltinCD :
-            if (skipping_)
+            if (skipping())
                 break;
             try {
-                if ( command.arguments() ) {
-                    if (command.arguments().begin()->size() == 1 
-                        && command.arguments().begin()->begin()->value() == "-") {
-                        if (oldCwd_.expired() || ! oldCwd_.lock()->active()) {
-                            oldCwd_ = cwd_;
-                            cwd_ = root_;
-                        } else
-                            swap(cwd_, oldCwd_);
-                    }
-                    else {
-                        oldCwd_ = cwd_;
-                    cwd_ = traverseDirectory(*command.arguments().begin()).thisptr();
-                    }
-                }
+                // The parser ensures, we have exactly one argument
+                cd(*command.arguments().begin());
             }
             catch (IgnoreCommandException &) {
                 throw SyntaxErrorException(
@@ -98,57 +86,37 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             }
             break;
             
-        case ParseCommandInfo::BuiltinLS : {
-            if (skipping_)
+        case ParseCommandInfo::BuiltinLS :
+            if (skipping())
                 break;
-            DirectoryNode const & dir ( command.arguments()
-                                        ? traverseDirectory(*command.arguments().begin())
-                                        : cwd() );
-            for (DirectoryNode::child_iterator i (dir.children().begin());
-                 i != dir.children().end(); ++i) {
-                output << i->first;
-                if (boost::dynamic_pointer_cast<DirectoryNode>(i->second))
-                    output << "/";
-                output << "\n";
-            }
+            // The parser ensures, we have either one or no argument
+            ls( output,
+                command.tokens().empty() ? command.tokens() : *command.arguments().begin() );
             break;
-        }
 
         case ParseCommandInfo::BuiltinPUSHD :
-            dirstack_.push_back(DirEntry(cwd_, skipping_));
-            if ( ! skipping_ && command.arguments() ) {
-                try {
-                    cwd_ = traverseDirectory(*command.arguments().begin()).thisptr();
-                }
-                catch (IgnoreCommandException &) {
-                    cwd_.reset();
-                    skipping_ = true;
-                }
-            }
+            // The parser ensures, we have exactly one argument
+            pushd( *command.arguments().begin() );
             break;
             
         case ParseCommandInfo::BuiltinPOPD :
-            if (! dirstack_.empty()) {
-                cwd_ = dirstack_.back().dir;
-                skipping_ = dirstack_.back().skip;
-                dirstack_.pop_back();
-            }
+            // The parser ensures, we have no arguments
+            popd();
             break;
             
         case ParseCommandInfo::BuiltinEXIT :
-            if (skipping_)
+            if (skipping())
                 break;
-            throw ExitException();
+            // The parser ensures, we have no arguments
+            exit();
+            break;
 
         case ParseCommandInfo::BuiltinHELP :
-            if (skipping_)
+            if (skipping())
                 break;
-            GenericNode const & node (command.arguments() 
-                                      ? traverseNode(*command.arguments().begin())
-                                      : cwd());
-            output << prettyName(typeid(node)) << " at " << node.path() << "\n\n";
-            node.help(output);
-            output << std::flush;
+            // The parser ensures, we have either one or no arguments
+            help( output,
+                  command.tokens().empty() ? command.tokens() : *command.arguments().begin() );
             break;
 
         }
@@ -165,34 +133,148 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
     catch (IgnoreCommandException &) {}
 }
 
+prefix_ void senf::console::Executor::exec(std::ostream & output,
+                                           ParseCommandInfo const & command)
+{
+    GenericNode & node ( traverseNode(command.commandPath()) );
+    DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
+    if ( dir ) {
+        if (autocd_ && command.tokens().empty()) {
+            cd( boost::make_iterator_range(
+                    command.commandPath().begin(),
+                    command.commandPath().end()) );
+        } else
+            throw InvalidCommandException();
+    } else {
+        dynamic_cast<CommandNode &>(node)(output, command);
+    }
+}
+
+
+prefix_ void senf::console::Executor::cd(ParseCommandInfo::TokensRange dir)
+{
+    if (dir.size() == 1 && *dir.begin() == WordToken("-")) {
+        cwd_.swap(oldCwd_);
+        (void) cwd(); // Prune any expired items
+    }
+    else {
+        // We need to use a temporary so an error somewhere while traversing the dir does not cause
+        // the current directory to change.
+        Path newDir (cwd_);
+        traverseDirectory(dir, newDir);
+        oldCwd_.swap(cwd_);
+        cwd_.swap(newDir);
+    }
+}
+
+prefix_ void senf::console::Executor::ls(std::ostream & output,
+                                         ParseCommandInfo::TokensRange path)
+{
+    Path dir (cwd_);
+    traverseDirectory(path, dir);
+    DirectoryNode & node (*dir.back().lock());
+    DirectoryNode::child_iterator i (node.children().begin());
+    DirectoryNode::child_iterator const i_end (node.children().end());
+    for (; i != i_end; ++i) {
+        output << i->first;
+        if (boost::dynamic_pointer_cast<DirectoryNode>(i->second))
+            output << "/";
+        output << "\n";
+    }
+}
+
+prefix_ void senf::console::Executor::pushd(ParseCommandInfo::TokensRange dir)
+{
+    Path newDir (cwd_);
+    if (! skipping()) {
+        try {
+            traverseDirectory(dir, newDir);
+        }
+        catch (IgnoreCommandException &) {
+            newDir.clear();
+        }
+    }
+    dirstack_.push_back(Path());
+    dirstack_.back().swap(cwd_);
+    cwd_.swap(newDir);
+}
+
+prefix_ void senf::console::Executor::popd()
+{
+    if (! dirstack_.empty()) {
+        cwd_.swap(dirstack_.back());
+        dirstack_.pop_back();
+    }
+}
+
+prefix_ void senf::console::Executor::exit()
+{
+    throw ExitException();
+}
+
+prefix_ void senf::console::Executor::help(std::ostream & output,
+                                           ParseCommandInfo::TokensRange path)
+{
+    GenericNode const & node (traverseNode(path));
+    output << prettyName(typeid(node)) << " at " << node.path() << "\n\n";
+    node.help(output);
+    output << std::flush;
+}
+
 prefix_ senf::console::GenericNode &
 senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path)
 {
+    if (path.empty())
+        return *cwd_.back().lock();
     try {
-        return traverse(
-            cwd(),
-            boost::make_iterator_range(
-                boost::make_transform_iterator(path.begin(), TraverseTokens()),
-                boost::make_transform_iterator(path.end(), TraverseTokens())) );
-    }
-    catch (std::bad_cast &) {
-        throw InvalidPathException();
+        Path dir (cwd_);
+        traverseDirectory(boost::make_iterator_range(
+                              path.begin(),
+                              boost::prior(path.end())),
+                          dir);
+        DirectoryNode & base (*dir.back().lock());
+        std::string const & name (boost::prior(path.end())->value());
+        if (policy_)
+            policy_( base, name );
+        return dir.back().lock()->get(name);
     }
     catch (UnknownNodeNameException &) {
         throw InvalidPathException();
     }
 }
 
-prefix_ senf::console::DirectoryNode &
-senf::console::Executor::traverseDirectory(ParseCommandInfo::TokensRange const & path)
+prefix_ void
+senf::console::Executor::traverseDirectory(ParseCommandInfo::TokensRange const & path,
+                                           Path & dir)
 {
     try {
-        return dynamic_cast<DirectoryNode&>( traverseNode(path) );
+        ParseCommandInfo::TokensRange::const_iterator i (path.begin());
+        ParseCommandInfo::TokensRange::const_iterator const i_end (path.end());
+        for (; i != i_end; ++i) {
+            if (*i == NoneToken()) {
+                if (i == path.begin()) {
+                    dir.clear();
+                    dir.push_back(root_);
+                }
+            }
+            else if (*i == WordToken("..")) {
+                if (dir.size() > 1)
+                    dir.pop_back();
+            }
+            else if (*i ==  WordToken("."))
+                ;
+            else {
+                DirectoryNode & base (*dir.back().lock());
+                if (policy_)
+                    policy_( base, i->value() );
+                dir.push_back(base[i->value()].thisptr());
+            }
+        }
     }
     catch (std::bad_cast &) {
         throw InvalidDirectoryException();
     }
-    catch (InvalidPathException &) {
+    catch (UnknownNodeNameException &) {
         throw InvalidDirectoryException();
     }
 }
