@@ -568,7 +568,7 @@ namespace console {
                                              \param[in] output stream where result messages may be
                                                  written to
                                              \param[in] arguments command arguments. This is a
-                                                 range of ranges of ArgumentToken instances. */
+                                                 range of ranges of Token instances. */
 
         void operator()(std::ostream & output, ParseCommandInfo const & command) const;
                                         ///< Execute the command
@@ -576,7 +576,7 @@ namespace console {
                                              \param[in] output stream where result messages may be
                                                  written to
                                              \param[in] arguments command arguments. This is a
-                                                 range of ranges of ArgumentToken instances. */
+                                                 range of ranges of Token instances. */
 
         ptr thisptr();
         cptr thisptr() const;
@@ -592,7 +592,7 @@ namespace console {
                                         /**< \param[in] output stream where result messages may be
                                                  written to
                                              \param[in] arguments command arguments. This is a
-                                                 range of ranges of ArgumentToken instances. */
+                                                 range of ranges of Token instances. */
 
     private:
     };

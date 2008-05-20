@@ -49,36 +49,26 @@ namespace
 
         std::ostream & os_;
 
-        void pushDirectory(std::vector<std::string> const & path)
-            { os_ << "pushDirectory( " << senf::stringJoin(path,"/") << " )\n"; }
+        void pushDirectory(std::vector<senf::console::Token> const & path)
+            { os_ << "pushDirectory( " << senf::stringJoin(path, "/") << " )\n"; }
         void popDirectory()
             { os_ << "popDirectory()\n"; }
 
-        void beginCommand(std::vector<std::string> const & command) 
+        void beginCommand(std::vector<senf::console::Token> const & command) 
             { os_ << "beginCommand( " << senf::stringJoin(command, "/") << " )\n"; }
         void endCommand() 
             { os_ << "endCommand()\n"; }
         
-        void pushArgument(senf::console::ArgumentToken::TokenType type, 
-                          std::string const & argument)
-            { os_ << "pushArgument( " << argument << " )\n"; }
-        void openGroup()
-            { os_ << "openGroup()\n"; }
-        void closeGroup()
-            { os_ << "closeGroup()\n"; }
-        void pushPunctuation(std::string const & token)
-            { os_ << "pushPunctuation( " << token << " )\n"; }
-        void pushWord(senf::console::ArgumentToken::TokenType type, 
-                      std::string const & token)
-            { os_ << "pushWord( " << token << " )\n"; }
+        void pushToken(senf::console::Token token)
+            { os_ << "pushToken( " << token << " )\n"; }
 
-        void builtin_cd(std::vector<std::string> const & path)
+        void builtin_cd(std::vector<senf::console::Token> const & path)
             { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
-        void builtin_ls(std::vector<std::string> const & path)
+        void builtin_ls(std::vector<senf::console::Token> const & path)
             { os_ << "builtin_ls( " << senf::stringJoin(path, "/") << " )\n"; }
         void builtin_exit()
             { os_ << "builtin_exit()\n"; }
-        void builtin_help(std::vector<std::string> const & path)
+        void builtin_help(std::vector<senf::console::Token> const & path)
             { os_ << "builtin_help( " << senf::stringJoin(path, "/") << " )\n"; }
     };
 }
@@ -112,34 +102,34 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
                      grammar.use_parser<Grammar::CommandParser>(), 
                      grammar.use_parser<Grammar::SkipParser>() ) . full );
     BOOST_CHECK_EQUAL( ss.str(), 
-                       "beginCommand( doo/bii/doo )\n"
-                       "pushArgument( arg )\n"
-                       "pushArgument( flab::blub )\n"
-                       "pushArgument( 123.434>a )\n"
-                       "openGroup()\n"
-                       "pushWord( a )\n"
-                       "pushPunctuation( , )\n"
-                       "pushWord( b )\n"
-                       "pushPunctuation( ; )\n"
-                       "pushWord( c )\n"
-                       "pushPunctuation( ( )\n"
-                       "pushWord( huhu )\n"
-                       "pushPunctuation( / )\n"
-                       "pushPunctuation( { )\n"
-                       "pushWord( haha )\n"
-                       "pushPunctuation( } )\n"
-                       "pushPunctuation( ) )\n"
-                       "closeGroup()\n"
-                       "pushArgument( foo\"bar )\n"
-                       "pushArgument( \x01\x02\x03\x04 )\n"
+                       "beginCommand( Word('doo')/Word('bii')/Word('doo') )\n"
+                       "pushToken( Word('arg') )\n"
+                       "pushToken( Word('flab::blub') )\n"
+                       "pushToken( Word('123.434>a') )\n"
+                       "pushToken( ArgumentGroupOpen('(') )\n"
+                       "pushToken( Word('a') )\n"
+                       "pushToken( OtherPunctuation(',') )\n"
+                       "pushToken( Word('b') )\n"
+                       "pushToken( CommandTerminator(';') )\n"
+                       "pushToken( Word('c') )\n"
+                       "pushToken( ArgumentGroupOpen('(') )\n"
+                       "pushToken( Word('huhu') )\n"
+                       "pushToken( PathSeparator('/') )\n"
+                       "pushToken( DirectoryGroupOpen('{') )\n"
+                       "pushToken( Word('haha') )\n"
+                       "pushToken( DirectoryGroupClose('}') )\n"
+                       "pushToken( ArgumentGroupClose(')') )\n"
+                       "pushToken( ArgumentGroupClose(')') )\n"
+                       "pushToken( BasicString('foo\"bar') )\n"
+                       "pushToken( HexString('\x01\x02\x03\x04') )\n"
                        "endCommand()\n"
-                       "builtin_ls( /foo/bar )\n"
-                       "builtin_cd( /foo/bar )\n"
+                       "builtin_ls( None('')/Word('foo')/Word('bar') )\n"
+                       "builtin_cd( None('')/Word('foo')/Word('bar') )\n"
                        "builtin_exit()\n"
-                       "pushDirectory( foo/bar/ )\n"
+                       "pushDirectory( Word('foo')/Word('bar')/None('') )\n"
                        "builtin_ls(  )\n"
                        "popDirectory()\n"
-                       "builtin_help( /foo/bar )\n" );
+                       "builtin_help( None('')/Word('foo')/Word('bar') )\n" );
 }
 
 namespace {
@@ -164,7 +154,11 @@ BOOST_AUTO_UNIT_TEST(commandParser)
 
     BOOST_CHECK( parser.parse(text, &setInfo) );
 
-    char const * path[] = { "doo", "bii", "doo" };
+    senf::console::Token path[] = { 
+        senf::console::Token(senf::console::Token::Word, "doo"), 
+        senf::console::Token(senf::console::Token::Word, "bii"),
+        senf::console::Token(senf::console::Token::Word, "doo")
+    };
 
     BOOST_CHECK_EQUAL_COLLECTIONS( info.commandPath().begin(), info.commandPath().end(),
                                    path, path + sizeof(path)/sizeof(path[0]) );

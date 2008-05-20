@@ -209,20 +209,21 @@ namespace console {
     /** \brief Single argument token
 
         All command arguments are split into tokens by the parser. Each token is returned as an
-        ArgumentToken instance. 
+        Token instance. 
 
         \ingroup console_parser
       */
-    class ArgumentToken
+    class Token
     {
     public:
         enum TokenType { 
-            PathSeparator       = 0x0001,
-            ArgumentGroupOpen   = 0x0002,
-            ArgumentGroupClose  = 0x0004,
-            DirectoryGroupOpen  = 0x0008,
-            DirectoryGroupClose = 0x0010,
-            CommandTerminator   = 0x0020,
+            None                = 0,
+            PathSeparator       = 0x0001, // '/'
+            ArgumentGroupOpen   = 0x0002, // '('
+            ArgumentGroupClose  = 0x0004, // ')'
+            DirectoryGroupOpen  = 0x0008, // '{'
+            DirectoryGroupClose = 0x0010, // '}'
+            CommandTerminator   = 0x0020, // ';'
             OtherPunctuation    = 0x0040,
             BasicString         = 0x0080,
             HexString           = 0x0100,
@@ -250,6 +251,9 @@ namespace console {
                                 | HexString
         };
         
+        Token();
+        Token(TokenType type, std::string token);
+
         std::string const & value() const; ///< String value of token
                                         /**< This value is properly unquoted */
 
@@ -258,16 +262,17 @@ namespace console {
         bool is(unsigned tokens) const; ///< Check, whether tokens type matches \a tokens
                                         /**< \a tokens is a bit-mask of token types to check. */
 
+        bool operator==(Token const & other) const;
+        bool operator!=(Token const & other) const;
+
     protected:
 
     private:
-        ArgumentToken(TokenType type, std::string token);
-
         TokenType type_;
         std::string token_;
-
-        friend class detail::ParserAccess;
     };
+
+    std::ostream & operator<<(std::ostream & os, Token const & token);
 
     /** \brief Single parsed console command
 
@@ -278,13 +283,13 @@ namespace console {
         \li the type of command: built-in or normal command represented by a possibly relative path
             into the command tree.
         \li the command
-        \li the arguments. Every argument consists of a range of ArgumentToken instances.
+        \li the arguments. Every argument consists of a range of Token instances.
 
         \ingroup console_parser
       */
     class ParseCommandInfo
     {
-        typedef std::vector<ArgumentToken> Tokens;
+        typedef std::vector<Token> Tokens;
         typedef std::vector<std::string> CommandPath;
 
     public:
@@ -310,7 +315,7 @@ namespace console {
         BuiltinCommand builtin() const; ///< Command type
                                         /**< \returns \c NoBuiltin, if the command is an ordinary
                                              command, otherwise the id of the built-in command */
-        CommandPathRange commandPath() const; ///< Command path
+        TokensRange commandPath() const; ///< Command path
                                         /**< This is the path to the command if it is not a built-in
                                              command. Every element of the returned range
                                              constitutes one path element. If the first element is
@@ -328,12 +333,12 @@ namespace console {
     private:
         void init();
         void setBuiltin(BuiltinCommand builtin);
-        void setCommand(std::vector<std::string> & commandPath);
-        void addToken(ArgumentToken const & token);
+        void setCommand(std::vector<Token> & commandPath);
+        void addToken(Token const & token);
 
         struct MakeRange;
 
-        std::vector<std::string> commandPath_;
+        std::vector<Token> commandPath_;
         BuiltinCommand builtin_;
         Tokens tokens_;
 

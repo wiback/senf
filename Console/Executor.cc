@@ -36,7 +36,7 @@ namespace {
 
     struct TraverseTokens {
         typedef std::string const & result_type;
-        result_type operator()(senf::console::ArgumentToken const & token) const {
+        result_type operator()(senf::console::Token const & token) const {
             return token.value();
         }
     };
@@ -59,7 +59,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
         case ParseCommandInfo::NoBuiltin : {
             if (skipping_)
                 break;
-            GenericNode & node ( traverseCommand(command.commandPath()) );
+            GenericNode & node ( traverseNode(command.commandPath()) );
             DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
             if ( dir ) {
                 if (autocd_ && command.tokens().empty()) {
@@ -174,20 +174,6 @@ senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path
             boost::make_iterator_range(
                 boost::make_transform_iterator(path.begin(), TraverseTokens()),
                 boost::make_transform_iterator(path.end(), TraverseTokens())) );
-    }
-    catch (std::bad_cast &) {
-        throw InvalidPathException();
-    }
-    catch (UnknownNodeNameException &) {
-        throw InvalidPathException();
-    }
-}
-
-prefix_ senf::console::GenericNode &
-senf::console::Executor::traverseCommand(ParseCommandInfo::CommandPathRange const & path)
-{
-    try {
-        return traverse(cwd(), path);
     }
     catch (std::bad_cast &) {
         throw InvalidPathException();

@@ -30,7 +30,6 @@
 #include <cerrno>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/spirit/iterator/file_iterator.hpp>
-#include "../Utils/String.hh"
 #include "../Utils/Exception.hh"
 
 //#include "Parse.mpp"
@@ -51,14 +50,11 @@ namespace detail {
         static void setBuiltin(ParseCommandInfo & info, ParseCommandInfo::BuiltinCommand builtin)
             { info.setBuiltin(builtin); }
 
-        static void setCommand(ParseCommandInfo & info, std::vector<std::string> & commandPath)
+        static void setCommand(ParseCommandInfo & info, std::vector<Token> & commandPath)
             { info.setCommand(commandPath); }
 
-        static void addToken(ParseCommandInfo & info, ArgumentToken const & token)
+        static void addToken(ParseCommandInfo & info, Token const & token)
             { info.addToken(token); }
-
-        static ArgumentToken makeToken(ArgumentToken::TokenType type, std::string const & token)
-            { return ArgumentToken(type, token); }
     };
 
     struct ParseDispatcher
@@ -74,53 +70,29 @@ namespace detail {
             ParseDispatcher & dispatcher;
         };
 
-        void beginCommand(std::vector<std::string> & command)
+        void beginCommand(std::vector<Token> & command)
             { ParserAccess::init(info_);
               ParserAccess::setCommand(info_, command); }
 
         void endCommand()
             { cb_(info_); }
 
-        void pushArgument(ArgumentToken::TokenType type, std::string const & argument)
-            { ParserAccess::addToken(info_, ParserAccess::makeToken(type, argument)); }
+        void pushToken(Token const & token)
+            { ParserAccess::addToken(info_, token); }
 
-        void openGroup()
-            { pushPunctuation("("); }
-
-        void closeGroup()
-            { pushPunctuation(")"); }
-
-        void pushPunctuation(std::string const & token)
-            {
-                ArgumentToken::TokenType type;
-                switch (token[0]) {
-                case '/' : type = ArgumentToken::PathSeparator; break;
-                case '(' : type = ArgumentToken::ArgumentGroupOpen; break;
-                case ')' : type = ArgumentToken::ArgumentGroupClose; break;
-                case '{' : type = ArgumentToken::DirectoryGroupOpen; break;
-                case '}' : type = ArgumentToken::DirectoryGroupClose; break;
-                case ';' : type = ArgumentToken::CommandTerminator; break;
-                default :  type = ArgumentToken::OtherPunctuation; break;
-                }
-                ParserAccess::addToken(info_, ParserAccess::makeToken(type, token));
-            }
-
-        void pushWord(ArgumentToken::TokenType type, std::string const & token)
-            { ParserAccess::addToken(info_, ParserAccess::makeToken(type, token)); }
-
-        void builtin_cd(std::vector<std::string> & path)
+        void builtin_cd(std::vector<Token> & path)
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinCD);
               setBuiltinPathArg(path);
               cb_(info_); }
 
-        void builtin_ls(std::vector<std::string> & path)
+        void builtin_ls(std::vector<Token> & path)
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinLS);
               setBuiltinPathArg(path);
               cb_(info_); }
 
-        void pushDirectory(std::vector<std::string> & path)
+        void pushDirectory(std::vector<Token> & path)
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinPUSHD);
               setBuiltinPathArg(path);
@@ -136,20 +108,19 @@ namespace detail {
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinEXIT);
               cb_(info_); }
 
-        void builtin_help(std::vector<std::string> & path)
+        void builtin_help(std::vector<Token> & path)
             { ParserAccess::init(info_);
               ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinHELP);
               setBuiltinPathArg(path);
               cb_(info_); }
 
-        void setBuiltinPathArg(std::vector<std::string> & path)
+        void setBuiltinPathArg(std::vector<Token> & path)
             {
-                pushPunctuation("(");
-                for (std::vector<std::string>::const_iterator i (path.begin());
+                pushToken(Token(Token::ArgumentGroupOpen, "("));
+                for (std::vector<Token>::const_iterator i (path.begin());
                      i != path.end(); ++i)
-                    ParserAccess::addToken(info_, 
-                                           ParserAccess::makeToken(ArgumentToken::Word, *i));
-                pushPunctuation(")");
+                    pushToken(*i);
+                pushToken(Token(Token::ArgumentGroupClose, ")"));
             }
     };
 
@@ -158,13 +129,56 @@ namespace detail {
 }}}
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::Token
+
+prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Token const & token)
+{
+    static char const * tokenTypeName[] = {
+        "None",
+        "PathSeparator",
+        "ArgumentGroupOpen",
+        "ArgumentGroupClose",
+        "DirectoryGroupOpen",
+        "DirectoryGroupClose",
+        "CommandTerminator",
+        "OtherPunctuation",
+        "BasicString",
+        "HexString",
+        "Word" };
+    // The real table is:
+    //     static const int bitPosition[32] = {
+    //         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 
+    //         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9 };
+    // However, we have replaced all values > sizeof(tokenTypeName) with 0
+    static const int bitPosition[32] = {
+        0, 1, 0, 2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 4, 8, 
+        0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 6, 0, 5, 10, 9 };
+    os << tokenTypeName[ token.type() 
+                         ? bitPosition[((token.type() & -token.type()) * 0x077CB531UL) >> 27]+1
+                         : 0 ]
+       << "('"
+       << token.value()
+       << "')";
+    return os;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::ParseCommandInfo
 
 prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
                                                  ParseCommandInfo const & info)
 {
-    if (info.builtin() == ParseCommandInfo::NoBuiltin) 
-        stream << senf::stringJoin(info.commandPath(), "/");
+    if (info.builtin() == ParseCommandInfo::NoBuiltin) {
+        ParseCommandInfo::TokensRange::const_iterator i (info.commandPath().begin());
+        ParseCommandInfo::TokensRange::const_iterator const i_end (info.commandPath().end());
+        if (i != i_end) {
+            for (;;) {
+                stream << i->value();
+                if ( ++i != i_end ) stream << "/";
+                else                break;
+            }
+        }
+    }
     else {
         char const * builtins[] = { "", "cd", "ls", "pushd", "popd", "exit", "help" };
         stream << "builtin-" << builtins[info.builtin()];
@@ -193,13 +207,13 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
 prefix_ void senf::console::ParseCommandInfo::ArgumentIterator::setRange()
     const
 {
-    if (b_->is(ArgumentToken::ArgumentGroupOpen)) {
+    if (b_->is(Token::ArgumentGroupOpen)) {
         unsigned level (0);
         e_ = b_;
         for (;;) {
-            if (e_->is(ArgumentToken::ArgumentGroupOpen))
+            if (e_->is(Token::ArgumentGroupOpen))
                 ++ level;
-            else if (e_->is(ArgumentToken::ArgumentGroupClose)) {
+            else if (e_->is(Token::ArgumentGroupClose)) {
                 -- level;
                 if (level == 0)
                     break;
@@ -214,12 +228,12 @@ prefix_ void senf::console::ParseCommandInfo::ArgumentIterator::decrement()
 {
     e_ = b_;
     --b_;
-    if (b_->is(ArgumentToken::ArgumentGroupClose)) {
+    if (b_->is(Token::ArgumentGroupClose)) {
         unsigned level (0);
         for (;;) {
-            if (b_->is(ArgumentToken::ArgumentGroupClose))
+            if (b_->is(Token::ArgumentGroupClose))
                 ++ level;
-            else if (b_->is(ArgumentToken::ArgumentGroupOpen)) {
+            else if (b_->is(Token::ArgumentGroupOpen)) {
                 -- level;
                 if (level == 0)
                     break;

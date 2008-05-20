@@ -33,27 +33,43 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::ArgumentToken
+// senf::console::Token
 
-prefix_ std::string const & senf::console::ArgumentToken::value()
+prefix_ std::string const & senf::console::Token::value()
     const
 {
     return token_;
 }
 
-prefix_ senf::console::ArgumentToken::TokenType senf::console::ArgumentToken::type()
+prefix_ senf::console::Token::TokenType senf::console::Token::type()
     const
 {
     return type_;
 }
 
-prefix_ bool senf::console::ArgumentToken::is(unsigned tokens)
+prefix_ bool senf::console::Token::is(unsigned tokens)
     const
 {
     return tokens & type_;
 }
 
-prefix_ senf::console::ArgumentToken::ArgumentToken(TokenType type, std::string token)
+prefix_ bool senf::console::Token::operator==(Token const & other)
+    const
+{
+    return type() == other.type() && value() == other.value();
+}
+
+prefix_ bool senf::console::Token::operator!=(Token const & other)
+    const
+{
+    return ! operator==(other);
+}
+
+prefix_ senf::console::Token::Token()
+    : type_(None), token_()
+{}
+
+prefix_ senf::console::Token::Token(TokenType type, std::string token)
     : type_(type), token_ (token)
 {}
 
@@ -67,7 +83,7 @@ senf::console::ParseCommandInfo::builtin()
     return builtin_;
 }
 
-prefix_ senf::console::ParseCommandInfo::CommandPathRange
+prefix_ senf::console::ParseCommandInfo::TokensRange
 senf::console::ParseCommandInfo::commandPath()
     const
 {
@@ -104,13 +120,13 @@ prefix_ void senf::console::ParseCommandInfo::setBuiltin(BuiltinCommand builtin)
 }
 
 prefix_ void
-senf::console::ParseCommandInfo::setCommand(std::vector<std::string> & commandPath)
+senf::console::ParseCommandInfo::setCommand(std::vector<Token> & commandPath)
 {
     commandPath_.clear();
     commandPath_.swap(commandPath);
 }
 
-prefix_ void senf::console::ParseCommandInfo::addToken(ArgumentToken const & token)
+prefix_ void senf::console::ParseCommandInfo::addToken(Token const & token)
 {
     tokens_.push_back(token);
 }
@@ -131,7 +147,7 @@ senf::console::ParseCommandInfo::ArgumentIterator::dereference()
     const
 {
     if (b_ == e_) setRange();
-    return b_->is(ArgumentToken::ArgumentGroupOpen) 
+    return b_->is(Token::ArgumentGroupOpen) 
         ? boost::make_iterator_range(boost::next(b_), boost::prior(e_))
         : boost::make_iterator_range(b_, e_);
 }

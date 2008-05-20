@@ -128,7 +128,6 @@ namespace console {
 
     private:
         GenericNode & traverseNode(ParseCommandInfo::TokensRange const & path);
-        GenericNode & traverseCommand(ParseCommandInfo::CommandPathRange const & path); 
         DirectoryNode & traverseDirectory(ParseCommandInfo::TokensRange const & path);
 
         template <class ForwardRange>
