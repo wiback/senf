@@ -165,10 +165,11 @@ namespace console {
         friend class detail::NonblockingSocketSink;
     };
         
-    /** \brief Output INet4Address instance as it's string representation
-            \related INet4Address
+    /** \brief Output Console Client instance as it's string representation
          */
     std::ostream & operator<<(std::ostream & os, Client const & client);
+    /** \brief Output Console Client instance as it's string representation
+         */
     std::ostream & operator<<(std::ostream & os, Client * client);
 
 }}
