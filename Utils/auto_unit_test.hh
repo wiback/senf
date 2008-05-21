@@ -50,8 +50,44 @@
 
 #include <boost/test/auto_unit_test.hpp>
 
+/** \defgroup unittest Boost.Test extensions
+
+    This module defines some additional extensions to Boost.Test
+ */
+
+/** \brief Check for compile failure
+
+    COMPILE_RAIL() is used to check, that a certain piece of code will produce a compile time
+    failure.
+
+    \code
+    #ifdef COMPILE_CHECK
+
+    COMPILE_FAIL(foo)
+    {
+        // fails to compile ....
+        int x = "foo";
+    }
+    
+    COMPILE_FAIL(bar)
+    { ... }
+
+    #endif
+    \endcode
+
+    This check is performed by the extended unit-test builder in \c senfscons.
+    
+    \ingroup unittest
+ */
 #define COMPILE_FAIL(n) void n()
 
+/** \brief Show exception information
+
+    \ref SENF_CHECK_NO_THROW() is an extension to \c BOOST_CHECK_NO_THROW() which will write out the
+    unabridged exception information when an exception is thrown in addition to signaling an error.
+
+    \ingroup unittest
+ */
 #define SENF_CHECK_NO_THROW(expr)                                                                 \
     BOOST_CHECK_NO_THROW(                                                                         \
         try { (void) expr ; }                                                                     \

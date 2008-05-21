@@ -33,8 +33,27 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+    /** \defgroup backtraces Backtrace formatting and parsing
 
+        These functions help format and barse backtrace information as returned by the glibc
+        ::backtrace function.
+     */
+
+    /** \brief Formnat a given backtrace
+
+        This functions will write \a backtrace formatted to \a os. This includes demangling symbol
+        names and interpreting some additional kernel symbols.
+
+        \ingroup backtraces
+     */
     void formatBacktrace(std::ostream & os, void ** backtrace, unsigned numEntries);
+
+    /** \brief Write a backtrace to \a os
+
+        backtrace() will write a backtrace of the current call stack to \a os.
+
+        \ingroup backtraces
+     */
     void backtrace(std::ostream & os, unsigned numEntries);
 
 }

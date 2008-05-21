@@ -82,11 +82,8 @@ prefix_ void senf::console::ConfigFile::policyCallback(DirectoryNode::ptr restri
 {
     if (dir.hasChild(name)) {
         GenericNode & item (dir.get(name));
-        if (restrict && ! item.isChildOf(*restrict)) {
-            DirectoryNode * itemdir (dynamic_cast<DirectoryNode*>(&item));
-            if (! itemdir || ! restrict->isChildOf(*itemdir))
-                throw Executor::IgnoreCommandException();
-        }
+        if (restrict && ! item.isChildOf(*restrict) && ! item.isDirectory())
+            throw Executor::IgnoreCommandException();
         if (parsed(item))
             throw Executor::IgnoreCommandException();
     }

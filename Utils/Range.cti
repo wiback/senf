@@ -21,34 +21,27 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Node non-inline template implementation  */
+    \brief Range inline template implementation */
 
-#include "Node.ih"
+//#include "Range.ih"
 
 // Custom includes
-#include <boost/range.hpp>
 
-#define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::console::DirectoryNode
-
-template <class ForwardRange>
-prefix_ senf::console::GenericNode &
-senf::console::DirectoryNode::traverse(ForwardRange const & range, bool autocomplete,
-                                       DirectoryNode & root)
+template <class Range, class Fn>
+prefix_ boost::iterator_range< 
+        boost::transform_iterator< Fn,
+                                   typename boost::range_const_iterator<Range>::type > >
+senf::make_transform_range(Range const & range, Fn const & fn)
 {
-    typedef typename boost::range_const_iterator<ForwardRange>::type const_iterator;
-    detail::NodeTraverser traverser (root, *this, autocomplete);
-    const_iterator i (boost::begin(range));
-    const_iterator const i_end (boost::end(range));
-    for (; i != i_end; ++i)
-        traverser( *i );
-    return traverser.node();
+    return boost::make_iterator_range(
+        boost::make_transform_iterator(boost::begin(range), fn),
+        boost::make_transform_iterator(boost::end(range), fn) );
 }
 
-///////////////////////////////ct.e////////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

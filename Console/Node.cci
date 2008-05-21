@@ -96,6 +96,45 @@ prefix_ bool senf::console::GenericNode::operator!=(GenericNode & other)
     return this != & other;
 }
 
+prefix_ bool senf::console::GenericNode::isDirectory()
+    const
+{
+    return dynamic_cast<DirectoryNode const *>(this);
+}
+
+prefix_ bool senf::console::GenericNode::isLink()
+    const
+{
+    return dynamic_cast<LinkNode const *>(this);
+}
+
+prefix_ bool senf::console::GenericNode::isCommand()
+    const
+{
+    return dynamic_cast<CommandNode const *>(this);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::LinkNode
+
+prefix_ senf::console::LinkNode::ptr senf::console::LinkNode::create(GenericNode & node)
+{
+    GenericNode::ptr p (node.thisptr());
+    while ( p->isLink() )
+        p = dynamic_cast<LinkNode&>(*p).follow().thisptr();
+    return ptr(new LinkNode(*p));
+}
+
+prefix_ senf::console::GenericNode & senf::console::LinkNode::follow()
+    const
+{
+    return *node_;
+}
+
+prefix_ senf::console::LinkNode::LinkNode(GenericNode & node)
+    : node_ (node.thisptr())
+{}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::DirectoryNode
 
@@ -109,6 +148,16 @@ prefix_ bool senf::console::DirectoryNode::hasChild(std::string const & name)
 {
     ChildMap::const_iterator i (children_.find(name));
     return i != children_.end();
+}
+
+prefix_ senf::console::GenericNode &
+senf::console::DirectoryNode::get(std::string const & name)
+    const
+{
+    GenericNode & node (getLink(name));
+    return node.isLink()
+        ? dynamic_cast<LinkNode&>(node).follow()
+        : node;
 }
 
 prefix_ senf::console::DirectoryNode &
@@ -163,6 +212,11 @@ senf::console::DirectoryNode::completions(std::string const & s)
 {
     return boost::make_iterator_range(children_.lower_bound(s),
                                       children_.lower_bound(s + "\xff"));
+}
+
+prefix_ void senf::console::DirectoryNode::link(std::string const & name, GenericNode & target)
+{
+    add(name, LinkNode::create(target));
 }
 
 prefix_ senf::console::DirectoryNode::DirectoryNode()

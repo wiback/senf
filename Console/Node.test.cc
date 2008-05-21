@@ -37,7 +37,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(gnericNode)
+BOOST_AUTO_UNIT_TEST(genericNode)
 {
     senf::console::GenericNode & node (
         senf::console::root().mkdir("dir1").mkdir("dir2").doc("help info"));
@@ -107,19 +107,6 @@ BOOST_AUTO_UNIT_TEST(directoryNode)
         completions, 
         completions+sizeof(completions)/sizeof(completions[0]) );
 
-    char const * const path[] = { "..", "dir2", "dir3" };
-    BOOST_CHECK( &senf::console::root()["dir1"].traverse( boost::make_iterator_range(
-                                                              path, 
-                                                              path+sizeof(path)/sizeof(path[0])) )
-                 == &senf::console::root()["dir2"]["dir3"] );
-
-    char const * const incompletePath[] = { "d" };
-    BOOST_CHECK( &senf::console::root()["dir2"].traverse( boost::make_iterator_range(
-                                                              incompletePath, 
-                                                              incompletePath+sizeof(incompletePath)/sizeof(incompletePath[0])),
-                                                          true )
-                 == &senf::console::root()["dir2"]["dir3"] );
-
     p->doc("test doc");
     std::stringstream ss;
     p->help(ss);
@@ -130,6 +117,17 @@ BOOST_AUTO_UNIT_TEST(directoryNode)
     senf::console::root().remove("fn");
 
     BOOST_CHECK_EQUAL( senf::console::root().children().size(), 0u );
+}
+
+BOOST_AUTO_UNIT_TEST(linkNode)
+{
+    senf::console::root().mkdir("dir1");
+    senf::console::root().link("link1", senf::console::root()["dir1"]);
+
+    BOOST_CHECK( senf::console::root()["dir1"] == senf::console::root()["link1"] );
+
+    senf::console::root().remove("dir1");
+    senf::console::root().remove("link1");
 }
 
 namespace {

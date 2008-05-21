@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,38 +21,37 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief preprocessor public header */
+    \brief Range public header */
 
-#ifndef HH_preprocessor_
-#define HH_preprocessor_ 1
+#ifndef HH_Range_
+#define HH_Range_ 1
 
 // Custom includes
-#include <boost/preprocessor/seq/size.hpp>
-#include <boost/preprocessor/seq/elem.hpp>
-#include <boost/preprocessor/dec.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/iterator/transform_iterator.hpp>
 
-//#include "preprocessor.mpp"
+//#include "Range.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-/** \defgroup senfpp Preprocessor meta programming
+namespace senf {
+    
+    /** \brief Make a \c boost::iterator_range from \c boost::trasform_iterator
 
-    preprocessor.hh provides some additional helper macros based on the Boost.Preprocessor library.
- */
+        This helper is like \c boost::make_transform_iterator, however for ranges instead of
+        iterators. 
+     */
+    template <class Range, class Fn>
+    boost::iterator_range< 
+        boost::transform_iterator< Fn,
+                                   typename boost::range_const_iterator<Range>::type > >
+    make_transform_range(Range const & range, Fn const & fn);
 
-///\{
-///\ingroup senfpp
-
-/** \brief Return last element of a sequence 
-    \hideinitializer 
- */
-#define SENF_PP_SEQ_BACK(seq) BOOST_PP_SEQ_ELEM(BOOST_PP_DEC(BOOST_PP_SEQ_SIZE(seq)),seq)
-
-///\}
+}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "preprocessor.cci"
-//#include "preprocessor.ct"
-//#include "preprocessor.cti"
+//#include "Range.cci"
+//#include "Range.ct"
+#include "Range.cti"
 #endif
 
 

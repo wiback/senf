@@ -34,6 +34,11 @@
 
 namespace senf {
     
+    /** \brief Join string range with separator into single string
+
+        This utility will build string by joining all elements of \a range into a single string
+        using \a sep as separator. The \a range may contain values of any streamable type.
+     */
     template <class ForwardReadableRange>
     std::string stringJoin(ForwardReadableRange const & range, std::string sep);
 

@@ -28,7 +28,11 @@
 
 // Custom includes
 #include <boost/utility.hpp>
+#include <boost/range/iterator_range.hpp>
+#include <boost/bind.hpp>
 #include "../Utils/senfassert.hh"
+#include "../Utils/Range.hh"
+#include "../Utils/String.hh"
 
 //#include "Executor.mpp"
 #define prefix_
@@ -55,6 +59,18 @@ prefix_ senf::console::DirectoryNode & senf::console::Executor::cwd()
     while (cwd_.size()>1 && (cwd_.back().expired() || ! cwd_.back().lock()->active()))
         cwd_.pop_back();
     return * cwd_.back().lock();
+}
+
+prefix_ std::string senf::console::Executor::cwdPath()
+    const
+{
+    if (skipping())
+        return "";
+    return "/" + senf::stringJoin(
+        senf::make_transform_range(
+            boost::make_iterator_range(boost::next(cwd_.begin()), cwd_.end()),
+            boost::bind(&DirectoryNode::name, boost::bind(&DirectoryNode::weak_ptr::lock, _1))),
+        "/" );
 }
 
 prefix_ void senf::console::Executor::execute(std::ostream & output,
@@ -122,13 +138,13 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
         }
     }
     catch (InvalidPathException &) {
-        output << "invalid path" << std::endl;
+        throw SyntaxErrorException("invalid path");
     }
     catch (InvalidDirectoryException &) {
-        output << "invalid directory" << std::endl;
+        throw SyntaxErrorException("invalid directory");
     }
     catch (InvalidCommandException &) {
-        output << "invalid command" << std::endl;
+        throw SyntaxErrorException("invalid command");
     }
     catch (IgnoreCommandException &) {}
 }

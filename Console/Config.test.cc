@@ -168,6 +168,40 @@ BOOST_AUTO_UNIT_TEST(configFileSkipGroup)
     }
 }
 
+BOOST_AUTO_UNIT_TEST(configRestrictAndLink)
+{
+    TempFile cfgf ("test.cfg");
+    cfgf << "dir1/fun1 10;\n"
+         << "link1 { dir3 { fun2; } fun1 5; }"
+         << TempFile::close;
+    
+    senf::console::ScopedDirectory<> dir1;
+    senf::console::root().add("dir1", dir1);
+    dir1.add("fun1",&fun1);
+    
+    senf::console::ScopedDirectory<> dir2;
+    dir1.add("dir2", dir2);
+    
+    dir2.mkdir("dir3").add("fun2", &fun2);
+    dir2.add("fun1", &fun1);
+
+    senf::console::ScopedDirectory<> dir4;
+    senf::console::root().add("dir4", dir4);
+    dir4.link("link1", dir2);
+
+    {
+        senf::console::ConfigFile cfg (cfgf.name(), dir4);
+
+        var1 = 0;
+        var2 = false;
+        SENF_CHECK_NO_THROW( cfg.parse(dir2["dir3"]) );
+        BOOST_CHECK_EQUAL( var1, 0 );
+        BOOST_CHECK_EQUAL( var2, true );
+
+        BOOST_CHECK_THROW( cfg.parse(), senf::console::SyntaxErrorException );
+    }
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

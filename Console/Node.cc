@@ -89,6 +89,16 @@ prefix_ bool senf::console::GenericNode::isChildOf(DirectoryNode & parent)
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::LinkNode
+
+prefix_ void senf::console::LinkNode::v_help(std::ostream & os)
+    const
+{
+    os << "link to ";
+    follow().help(os);
+}
+
+///////////////////////////////////////////////////////////////////////////
 //senf::console::DirectoryNode
 
 prefix_ senf::console::GenericNode::ptr
@@ -127,7 +137,7 @@ prefix_ void senf::console::DirectoryNode::add(GenericNode::ptr node)
 }
 
 prefix_ senf::console::GenericNode &
-senf::console::DirectoryNode::get(std::string const & name)
+senf::console::DirectoryNode::getLink(std::string const & name)
     const
 {
     ChildMap::const_iterator i (children_.find(name));

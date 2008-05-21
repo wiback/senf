@@ -139,7 +139,7 @@ prefix_ std::string const & senf::console::Client::name()
 prefix_ std::string senf::console::Client::promptString()
     const
 {
-    return name_ + ":" + executor_.cwd().path() + "$ ";
+    return name_ + ":" + executor_.cwdPath() + "$ ";
 }
 
 prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)

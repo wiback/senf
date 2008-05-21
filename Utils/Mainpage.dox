@@ -99,13 +99,27 @@ namespace senf {
     specification</td></tr>
 
     <tr><td>\ref utils_tags</td><td>Miscellaneous type tags</td></tr>
+
+    <tr><td>stringJoin()</td><td>Utility to join a string range into
+    a single string (with separator)</td><?tr>
+    
+    <tr><td>make_transform_range()</td><td>\c boost::make_transform_iterator() with support for
+    ranges</td></tr>
+
+    <tr><td>\ref backtraces</td><td>Utilities to parse and format backtrace information as provided
+    by the GNU libc</td></tr>
     </table>
 
-    \section compatibility Compatibility
+
+    \section testing Correctness and testing
 
     <table class="listing">
     <tr><td>\ref auto_unit_test.hh</td><td>Boost auto unit test compatibility across Boost versions
     1.33 and 1.34</td></tr>
+
+    <tr><td>\ref SENF_ASSERT()</td><td>SENF specific assertion macro</td></tr>
+
+    <tr><td>\ref unittest</td><td>Additional unit test extension for Boost.Test</td></tr>
     </table>
  */
 

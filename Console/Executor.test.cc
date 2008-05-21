@@ -62,7 +62,8 @@ BOOST_AUTO_UNIT_TEST(executor)
         parser.parse("cd dir1", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinCD );
-        BOOST_CHECK( &executor.cwd() == &senf::console::root()["dir1"] );
+        BOOST_CHECK( executor.cwd() == senf::console::root()["dir1"] );
+        BOOST_CHECK_EQUAL( executor.cwdPath(), "/dir1" );
         BOOST_CHECK_EQUAL( os.str(), "" );
     }
 
@@ -78,10 +79,10 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("cd dir1", &setCommand);
-        executor(os, commands.back());
+        BOOST_CHECK_THROW( executor(os, commands.back()), senf::console::SyntaxErrorException );
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinCD );
         BOOST_CHECK( &executor.cwd() == &senf::console::root()["dir2"] );
-        BOOST_CHECK_EQUAL( os.str(), "invalid directory\n" );
+        BOOST_CHECK_EQUAL( os.str(), "" );
     }
 
     {
@@ -112,9 +113,9 @@ BOOST_AUTO_UNIT_TEST(executor)
     {
         std::stringstream os;
         parser.parse("ls dir3", &setCommand);
-        executor(os, commands.back());
+        BOOST_CHECK_THROW( executor(os, commands.back()), senf::console::SyntaxErrorException );
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
-        BOOST_CHECK_EQUAL( os.str(), "invalid directory\n" );
+        BOOST_CHECK_EQUAL( os.str(), "" );
     }
     
     {

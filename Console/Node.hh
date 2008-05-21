@@ -215,6 +215,7 @@
 namespace senf {
 namespace console {
 
+    class LinkNode;
     class DirectoryNode;
     class CommandNode;
 
@@ -288,6 +289,10 @@ namespace console {
         bool operator!= (GenericNode & other) const;
                                         /// \c true, if this and \a other are different nodes
 
+        bool isDirectory() const;       ///< \c true, if this is a drectory node
+        bool isLink() const;            ///< \c true, if this is a link node
+        bool isCommand() const;         ///< \c true, if this is a command node
+
     protected:
         GenericNode();
 
@@ -308,6 +313,47 @@ namespace console {
         DirectoryNode * parent_;
 
         friend class DirectoryNode;
+    };
+
+    /** \brief Config/console tree link node
+
+        A LinkNode references another node and provides an additional alias name for that node. A
+        LinkNode works like a mixture of UNIX symlinks and hardlinks: It is an explicit link like a
+        UNIX symlink but references another node directly (not via it's path) like a UNIX
+        hardlink. Therefore, a LinkNode works across chroot().
+      */
+    class LinkNode
+        : public GenericNode
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        typedef boost::shared_ptr<LinkNode> ptr;
+        typedef boost::shared_ptr<LinkNode const> cptr;
+        typedef boost::weak_ptr<LinkNode> weak_ptr;
+
+        ///////////////////////////////////////////////////////////////////////////
+        ///\name Structors and default members
+        ///@{
+        
+        static ptr create(GenericNode & node); ///< Create new link node.
+                                        /**< You should normally use DirectoryNode::link() to
+                                             create a link node. */
+        
+        ///@}
+        ///////////////////////////////////////////////////////////////////////////
+
+        GenericNode & follow() const;   ///< Access the referenced node
+
+    protected:
+
+    private:
+        explicit LinkNode(GenericNode & node);
+
+        virtual void v_help(std::ostream &) const;
+
+        GenericNode::ptr node_;
     };
 
     class SimpleCommandNode;
@@ -445,6 +491,10 @@ namespace console {
                                         ///< Get child node
                                         /**< \throws UnknownNodeNameException if a child \a name
                                                  does not exist */
+        GenericNode & getLink(std::string const & name) const;
+                                        ///< Get child node without dereferencing links
+                                        /**< \throws UnknownNodeNameException if a child \a name
+                                                 does not exist */
 
         DirectoryNode & getDirectory(std::string const & name) const;
                                         ///< Get directory child node
@@ -488,28 +538,12 @@ namespace console {
                                         ///< Return iterator range of completions for \a s
                                         /**< The returned range is sorted by child name. */
 
+        void link(std::string const & name, GenericNode & target);
+
         ///\}
         ///////////////////////////////////////////////////////////////////////////
 
-        template <class ForwardRange>
-        GenericNode & traverse(ForwardRange const & range, bool autocomplete=false,
-                               DirectoryNode & root = root());
-                                        ///< Traverse node path starting at this node
-                                        /**< The <tt>ForwardRange::value_type</tt> must be
-                                             (convertible to) std::string. Each range element
-                                             constitutes a step along the node traversal.
-
-                                             If the range starts with an empty element, the
-                                             traversal is started at the root() node, otherwise it
-                                             is started at \a this node. The traversal supports '.',
-                                             '..' and ignores further empty elements. 
-
-                                             If \a autocomplete is set to \c true, invalid path
-                                             components which can be uniquely completed will be
-                                             completed automatically while traversing the tree. */
-
-        DirectoryNode & doc(std::string const & doc);
-                                        ///< Set node documentation
+        DirectoryNode & doc(std::string const & doc); ///< Set node documentation
 
         ptr thisptr();
         cptr thisptr() const;
@@ -668,7 +702,7 @@ BOOST_TYPEOF_REGISTER_TYPE(senf::console::SimpleCommandNode)
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Node.cci"
-#include "Node.ct"
+//#include "Node.ct"
 #include "Node.cti"
 #endif
 

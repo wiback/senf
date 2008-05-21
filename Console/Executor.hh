@@ -91,7 +91,8 @@ namespace console {
                                         /**< Output will be written to \a output. 
                                              Same as execute(). */
         DirectoryNode & cwd() const;    ///< Current working directory
-        bool skipping() const;
+        std::string cwdPath() const;    ///< Return pathname of current directory
+        bool skipping() const;          ///< \c true, if currently skipping a directory group
 
         bool autocd() const;            ///< Get current autocd status
                                         /**< if autocd is enabled, specifying a directory name as
