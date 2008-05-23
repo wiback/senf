@@ -21,13 +21,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Config.test unit tests */
+    \brief ConfigFile.test unit tests */
 
-//#include "Config.test.hh"
-//#include "Config.test.ih"
+//#include "ConfigFile.test.hh"
+//#include "ConfigFile.test.ih"
 
 // Custom includes
-#include "Config.hh"
+#include "ConfigFile.hh"
 #include <fstream>
 #include "ScopedDirectory.hh"
 #include "ParsedCommand.hh"
@@ -61,7 +61,6 @@ namespace {
         std::string name_;
         std::ofstream file_;
     };
-
     
 }
 

@@ -77,7 +77,7 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
         // Start rules
 
-        enum { CommandParser, SkipParser };
+        enum { CommandParser, SkipParser, ArgumentsParser };
 
         ///////////////////////////////////////////////////////////////////////////
         // The parse context (variables needed while parsing)
@@ -174,11 +174,12 @@ namespace detail {
         template <class Scanner>
         struct definition 
             : public boost::spirit::grammar_def< boost::spirit::rule<Scanner>, 
+                                                 boost::spirit::rule<Scanner>,
                                                  boost::spirit::rule<Scanner> >
         {
             boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
                 punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin, 
-                skip, commands, block, statement, relpath, abspath;
+                skip, commands, block, statement, relpath, abspath, arguments;
             boost::spirit::chset<> special_p, punctuation_p, space_p, invalid_p, word_p;
             boost::spirit::distinct_parser<> keyword_p;
 
@@ -284,9 +285,13 @@ namespace detail {
                 statement
                     = eps_p                       [ self.dispatch(&PD::beginCommand, 
                                                                   boost::ref(self.context.path)) ]
-                      >> * argument
+                      >> arguments
                       >> (ch_p(';') | end_p)
                       >> eps_p                    [ self.dispatch(&PD::endCommand) ]
+                    ;
+
+                arguments
+                    =    * argument
                     ;
 
                 argument
@@ -392,7 +397,8 @@ namespace detail {
 
                 start_parsers(
                     commands,           // CommandParser
-                    skip                // SkipParser
+                    skip,               // SkipParser
+                    arguments           // ArgumentsParser
                 );
 
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(command,1);

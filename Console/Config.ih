@@ -1,0 +1,143 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Config internal header */
+
+#ifndef IH_Console_Config_
+#define IH_Console_Config_ 1
+
+// Custom includes
+#include <boost/utility.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include "Executor.hh"
+#include "../Utils/intrusive_refcount.hh"
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+namespace console {
+namespace detail {
+
+    class RestrictedExecutor
+        : boost::noncopyable
+    {
+    public:
+        typedef void result_type;
+
+        ///////////////////////////////////////////////////////////////////////////
+        //\/name Structors and default members
+        ///\{
+
+        RestrictedExecutor(DirectoryNode & root = senf::console::root());
+
+        ///\}
+        ///////////////////////////////////////////////////////////////////////////
+
+        void execute(std::ostream & output, ParseCommandInfo const & command);
+                                        ///< Execute command
+                                        /**< Output will be written to \a output. 
+                                             Same as operator()(). */
+
+        void operator()(std::ostream & output, ParseCommandInfo const & command);
+                                        ///< Execute command
+                                        /**< Output will be written to \a output. 
+                                             Same as execute(). */
+
+        bool complete() const;          ///< \c true, if all nodes have been parsed
+        bool parsed(GenericNode & node) const; ///< \c true. if \a node has been parsed
+        void reset();                   ///< Reset node parse info state
+                                        /**< After a call to reset(), all information about already
+                                             parsed nodes is cleared. Calling parse() will parse the
+                                             complete config file again. */
+
+        DirectoryNode & root() const;
+
+        class RestrictGuard;
+
+    protected:
+
+    private:
+        void policyCallback(DirectoryNode & dir, std::string const & item);
+        void insertParsedNode(DirectoryNode & node);
+
+        typedef std::vector<DirectoryNode::weak_ptr> ParsedNodes;
+
+        Executor executor_;
+        ParsedNodes parsedNodes_;
+        DirectoryNode::ptr restrict_;
+
+        friend class RestrictGuard;
+    };
+
+    class RestrictedExecutor::RestrictGuard
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        //\/name Structors and default members
+        ///\{
+
+        explicit RestrictGuard(RestrictedExecutor & executor);
+        RestrictGuard(RestrictedExecutor & executor, DirectoryNode & restrict);
+        ~RestrictGuard();
+
+        ///\}
+        ///////////////////////////////////////////////////////////////////////////
+
+    protected:
+
+    private:
+        RestrictedExecutor & executor_;
+
+    };
+
+    /** \brief
+      */
+    class ConfigSource
+        : public senf::intrusive_refcount
+    {
+    public:
+        typedef boost::intrusive_ptr<ConfigSource> ptr;
+
+        void parse(RestrictedExecutor & executor);
+
+    protected:
+
+    private:
+        virtual void v_parse(RestrictedExecutor & executor) = 0;
+    };
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

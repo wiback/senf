@@ -72,6 +72,8 @@ namespace console {
         /// Thrown by the SecurityPolicy to silently ignore a command
         struct IgnoreCommandException {};
 
+        typedef void result_type;
+
         ///////////////////////////////////////////////////////////////////////////
         //\/name Structors and default members
         ///\{

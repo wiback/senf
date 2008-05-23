@@ -24,48 +24,40 @@
     \brief Config non-inline non-template implementation */
 
 #include "Config.hh"
-//#include "Config.ih"
+#include "Config.ih"
 
 // Custom includes
+#include "../Utils/membind.hh"
 
 //#include "Config.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::ConfigFile
+// senf::console::detail::RestrictedExecutor
 
-#ifndef DOXYGEN
-
-namespace {
-    struct BindPolicy
-    {
-        BindPolicy(senf::console::Executor & e, senf::console::Executor::SecurityPolicy p) 
-            : e_ (e) 
-            { e_.policy(p); }
-        
-        ~BindPolicy() 
-            { e_.policy(senf::console::Executor::SecurityPolicy()); }
-        
-        senf::console::Executor & e_;
-    };
-}
-
-#endif
-
-prefix_ void senf::console::ConfigFile::parse(DirectoryNode & restrict)
+prefix_ senf::console::detail::RestrictedExecutor::RestrictedExecutor(DirectoryNode & root)
 {
-    DirectoryNode::ptr r (restrict.thisptr());
-    BindPolicy bp ( executor_, 
-                    boost::bind(&ConfigFile::policyCallback, this, r, _1, _2) );
-    if (! parser_.parseFile(filename_, boost::bind<void>( boost::ref(executor_),
-                                                          boost::ref(std::cerr),
-                                                          _1 )) )
-        throw SyntaxErrorException();
-    insertParsedNode(r);
+    executor_
+        .chroot(root)
+        .policy(senf::membind(&RestrictedExecutor::policyCallback, this));
 }
 
-prefix_ bool senf::console::ConfigFile::parsed(GenericNode & node)
+prefix_ void
+senf::console::detail::RestrictedExecutor::execute(std::ostream & output,
+                                                   ParseCommandInfo const & command)
+{
+    executor_.execute(output, command);
+}
+
+prefix_ void
+senf::console::detail::RestrictedExecutor::operator()(std::ostream & output,
+                                                      ParseCommandInfo const & command)
+{
+    execute(output, command);
+}
+
+prefix_ bool senf::console::detail::RestrictedExecutor::parsed(GenericNode & node)
     const
 {
     ParsedNodes::const_iterator i (parsedNodes_.begin());
@@ -76,18 +68,17 @@ prefix_ bool senf::console::ConfigFile::parsed(GenericNode & node)
     return false;
 }
 
-prefix_ void senf::console::ConfigFile::policyCallback(DirectoryNode::ptr restrict,
-                                                       DirectoryNode & dir,
-                                                       std::string const & name)
+prefix_ void senf::console::detail::RestrictedExecutor::policyCallback(DirectoryNode & dir,
+                                                                       std::string const & name)
 {
     if (dir.hasChild(name)) {
         GenericNode & item (dir.get(name));
-        if (restrict && ! item.isChildOf(*restrict) && ! item.isDirectory())
+        if (restrict_ && ! item.isChildOf(*restrict_) && ! item.isDirectory())
             throw Executor::IgnoreCommandException();
         if (parsed(item))
             throw Executor::IgnoreCommandException();
     }
-    else if (restrict && ! dir.isChildOf(*restrict))
+    else if (restrict_ && ! dir.isChildOf(*restrict_))
         throw Executor::IgnoreCommandException();
 }
 
@@ -103,20 +94,63 @@ namespace {
     };
 }
 
-prefix_ void senf::console::ConfigFile::insertParsedNode(DirectoryNode::ptr node)
+prefix_ void
+senf::console::detail::RestrictedExecutor::insertParsedNode(DirectoryNode & node)
 {
     parsedNodes_.erase(
-        std::remove_if(parsedNodes_.begin(), parsedNodes_.end(), RemoveNodesFn(node)),
+        std::remove_if(parsedNodes_.begin(), parsedNodes_.end(), RemoveNodesFn(node.thisptr())),
         parsedNodes_.end());
-    parsedNodes_.push_back(node);
+    parsedNodes_.push_back(node.thisptr());
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::ConfigBundle
 
-prefix_ void senf::console::readConfig(std::string const & filename, DirectoryNode & root)
+prefix_ void senf::console::ConfigBundle::parse()
 {
-    ConfigFile cfg (filename, root);
-    cfg.parse();
+    detail::RestrictedExecutor::RestrictGuard guard (executor_);
+    parseInternal();
+}
+
+prefix_ void senf::console::ConfigBundle::parse(DirectoryNode & restrict)
+{
+    detail::RestrictedExecutor::RestrictGuard guard (executor_, restrict);
+    parseInternal();
+}
+
+prefix_ void senf::console::ConfigBundle::parseInternal()
+{
+    Sources::const_iterator i (sources_.begin());
+    Sources::const_iterator const i_end (sources_.end());
+    for (; i != i_end; ++i)
+        (*i)->parse(executor_);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::RestrictedExecutor::RestrictGuard
+
+prefix_ senf::console::detail::RestrictedExecutor::RestrictGuard::
+RestrictGuard(RestrictedExecutor & executor)
+    : executor_ (executor)
+{
+    // This MUST BE root() not chroot() since restriction does NOT follow symlinks.
+    // Therefore, if chroot() is a directory of symlinks, restricting to it will
+    // execute NOTHING.
+    executor_.restrict_ = senf::console::root().thisptr();
+}
+
+prefix_ senf::console::detail::RestrictedExecutor::RestrictGuard::
+RestrictGuard(RestrictedExecutor & executor, DirectoryNode & restrict)
+    : executor_ (executor)
+{
+    executor_.restrict_ = restrict.thisptr();
+}
+
+prefix_ senf::console::detail::RestrictedExecutor::RestrictGuard::~RestrictGuard()
+{
+    if (! std::uncaught_exception())
+        executor_.insertParsedNode( *executor_.restrict_ );
+    executor_.restrict_ = senf::console::root().thisptr();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

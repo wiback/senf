@@ -274,7 +274,6 @@ namespace console {
 
     std::ostream & operator<<(std::ostream & os, Token const & token);
 
-    
     Token NoneToken();
     Token PathSeparatorToken();
     Token ArgumentGroupOpenToken();
@@ -325,6 +324,8 @@ namespace console {
                               BuiltinEXIT,
                               BuiltinHELP };
 
+        ParseCommandInfo();
+
         BuiltinCommand builtin() const; ///< Command type
                                         /**< \returns \c NoBuiltin, if the command is an ordinary
                                              command, otherwise the id of the built-in command */
@@ -341,21 +342,22 @@ namespace console {
         TokensRange tokens() const;     ///< All argument tokens
                                         /**< The returned range contains \e all argument tokens in a
                                              single range not divided into separate arguments. */
+
+        void clear();
+
+        void builtin(BuiltinCommand builtin);
+        void command(std::vector<Token> & commandPath);
+
+        void addToken(Token const & token);
+
     protected:
 
     private:
-        void init();
-        void setBuiltin(BuiltinCommand builtin);
-        void setCommand(std::vector<Token> & commandPath);
-        void addToken(Token const & token);
-
         struct MakeRange;
 
         std::vector<Token> commandPath_;
         BuiltinCommand builtin_;
         Tokens tokens_;
-
-        friend class detail::ParserAccess;
     };
 
     /** \brief Iterator parsing argument groups
@@ -560,6 +562,8 @@ namespace console {
         bool parseFile(std::string filename, Callback cb); ///< Parse file
                                         /**< \throws SystemException if the file cannot be
                                              read. */
+
+        bool parseArguments(std::string arguments, ParseCommandInfo & info);
 
     private:
         struct Impl;

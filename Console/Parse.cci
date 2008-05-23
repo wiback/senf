@@ -131,6 +131,10 @@ prefix_ senf::console::Token senf::console::WordToken(std::string const & value)
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ParseCommandInfo
 
+prefix_ senf::console::ParseCommandInfo::ParseCommandInfo()
+    : builtin_ (NoBuiltin)
+{}
+
 prefix_ senf::console::ParseCommandInfo::BuiltinCommand
 senf::console::ParseCommandInfo::builtin()
     const
@@ -159,26 +163,25 @@ prefix_ senf::console::ParseCommandInfo::TokensRange senf::console::ParseCommand
     return boost::make_iterator_range(tokens_.begin(), tokens_.end());
 }
 
-////////////////////////////////////////
-// private members
-
-prefix_ void senf::console::ParseCommandInfo::init()
+prefix_ void senf::console::ParseCommandInfo::clear()
 {
     builtin_ = NoBuiltin;
     commandPath_.clear();
     tokens_.clear();
 }
 
-prefix_ void senf::console::ParseCommandInfo::setBuiltin(BuiltinCommand builtin)
+prefix_ void senf::console::ParseCommandInfo::builtin(BuiltinCommand builtin)
 {
     builtin_ = builtin;
+    commandPath_.clear();
 }
 
 prefix_ void
-senf::console::ParseCommandInfo::setCommand(std::vector<Token> & commandPath)
+senf::console::ParseCommandInfo::command(std::vector<Token> & commandPath)
 {
     commandPath_.clear();
     commandPath_.swap(commandPath);
+    builtin_ = NoBuiltin;
 }
 
 prefix_ void senf::console::ParseCommandInfo::addToken(Token const & token)

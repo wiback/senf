@@ -42,85 +42,70 @@ namespace detail {
 
 #ifndef DOXYGEN
 
-    struct ParserAccess
-    {
-        static void init(ParseCommandInfo & info)
-            { info.init(); }
-
-        static void setBuiltin(ParseCommandInfo & info, ParseCommandInfo::BuiltinCommand builtin)
-            { info.setBuiltin(builtin); }
-
-        static void setCommand(ParseCommandInfo & info, std::vector<Token> & commandPath)
-            { info.setCommand(commandPath); }
-
-        static void addToken(ParseCommandInfo & info, Token const & token)
-            { info.addToken(token); }
-    };
-
     struct ParseDispatcher
     {
-        ParseCommandInfo info_;
+        ParseCommandInfo * info_;
         CommandParser::Callback cb_;
 
         struct BindInfo {
-            BindInfo( ParseDispatcher & d, CommandParser::Callback cb)
-                : dispatcher (d) { dispatcher.cb_ = cb; }
-            ~BindInfo() { dispatcher.cb_  = 0; }
+            BindInfo( ParseDispatcher & d, ParseCommandInfo & info, CommandParser::Callback cb)
+                : dispatcher (d) { dispatcher.info_ = &info; dispatcher.cb_ = cb; }
+            ~BindInfo() { dispatcher.info_ = 0; dispatcher.cb_  = 0; }
 
             ParseDispatcher & dispatcher;
         };
 
         void beginCommand(std::vector<Token> & command)
-            { ParserAccess::init(info_);
-              ParserAccess::setCommand(info_, command); }
+            { info_->clear();
+              info_->command(command); }
 
         void endCommand()
-            { cb_(info_); }
+            { cb_(*info_); }
 
         void pushToken(Token const & token)
-            { ParserAccess::addToken(info_, token); }
+            { info_->addToken(token); }
 
         void builtin_cd(std::vector<Token> & path)
-            { ParserAccess::init(info_);
-              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinCD);
+            { info_->clear();
+              info_->builtin(ParseCommandInfo::BuiltinCD);
               setBuiltinPathArg(path);
-              cb_(info_); }
+              cb_(*info_); }
 
         void builtin_ls(std::vector<Token> & path)
-            { ParserAccess::init(info_);
-              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinLS);
+            { info_->clear();
+              info_->builtin(ParseCommandInfo::BuiltinLS);
               setBuiltinPathArg(path);
-              cb_(info_); }
+              cb_(*info_); }
 
         void pushDirectory(std::vector<Token> & path)
-            { ParserAccess::init(info_);
-              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinPUSHD);
+            { info_->clear();
+              info_->builtin(ParseCommandInfo::BuiltinPUSHD);
               setBuiltinPathArg(path);
-              cb_(info_); }
+              cb_(*info_); }
 
         void popDirectory()
-            { ParserAccess::init(info_);
-              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinPOPD);
-              cb_(info_); }
+            { info_->clear();
+              info_->builtin(ParseCommandInfo::BuiltinPOPD);
+              cb_(*info_); }
         
         void builtin_exit()
-            { ParserAccess::init(info_);
-              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinEXIT);
-              cb_(info_); }
+            { info_->clear();
+              info_->builtin(ParseCommandInfo::BuiltinEXIT);
+              cb_(*info_); }
 
         void builtin_help(std::vector<Token> & path)
-            { ParserAccess::init(info_);
-              ParserAccess::setBuiltin(info_, ParseCommandInfo::BuiltinHELP);
+            { info_->clear();
+              info_->builtin(ParseCommandInfo::BuiltinHELP);
               setBuiltinPathArg(path);
-              cb_(info_); }
+              cb_(*info_); }
 
         void setBuiltinPathArg(std::vector<Token> & path)
             {
-                pushToken(Token(Token::ArgumentGroupOpen, "("));
+                pushToken(ArgumentGroupOpenToken());
                 for (std::vector<Token>::const_iterator i (path.begin());
                      i != path.end(); ++i)
                     pushToken(*i);
-                pushToken(Token(Token::ArgumentGroupClose, ")"));
+                pushToken(ArgumentGroupCloseToken());
             }
     };
 
@@ -270,7 +255,8 @@ prefix_ senf::console::CommandParser::~CommandParser()
 
 prefix_ bool senf::console::CommandParser::parse(std::string command, Callback cb)
 {
-    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, cb);
+    ParseCommandInfo info;
+    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info, cb);
     return boost::spirit::parse( command.begin(), command.end(), 
                                  impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
                                  impl().grammar.use_parser<Impl::Grammar::SkipParser>()
@@ -279,13 +265,24 @@ prefix_ bool senf::console::CommandParser::parse(std::string command, Callback c
 
 prefix_ bool senf::console::CommandParser::parseFile(std::string filename, Callback cb)
 {
-    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, cb);
+    ParseCommandInfo info;
+    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info, cb);
     boost::spirit::file_iterator<> i (filename);
     if (!i) throw SystemException(ENOENT SENF_EXC_DEBUGINFO);
     boost::spirit::file_iterator<> const i_end (i.make_end());
     
     return boost::spirit::parse( i, i_end, 
                                  impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
+                                 impl().grammar.use_parser<Impl::Grammar::SkipParser>()
+        ).full;
+}
+
+prefix_ bool senf::console::CommandParser::parseArguments(std::string arguments,
+                                                          ParseCommandInfo & info)
+{
+    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info, 0);
+    return boost::spirit::parse( arguments.begin(), arguments.end(), 
+                                 impl().grammar.use_parser<Impl::Grammar::ArgumentsParser>(),
                                  impl().grammar.use_parser<Impl::Grammar::SkipParser>()
         ).full;
 }

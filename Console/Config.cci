@@ -23,7 +23,7 @@
 /** \file
     \brief Config inline non-template implementation */
 
-//#include "Config.ih"
+#include "Config.ih"
 
 // Custom includes
 #include "../Utils/membind.hh"
@@ -32,21 +32,41 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::ConfigFile
+// senf::console::ConfigBundle
 
-prefix_ senf::console::ConfigFile::ConfigFile(std::string const & filename,
-                                              DirectoryNode & root)
-    : filename_ (filename)
+prefix_ senf::console::ConfigBundle::ConfigBundle()
+{}
+
+prefix_ senf::console::ConfigBundle::ConfigBundle(DirectoryNode & root)
+    : executor_ (root)
+{}
+
+prefix_ void senf::console::ConfigBundle::add(detail::ConfigSource::ptr source)
 {
-    executor_.chroot(root);
+    sources_.push_back(source);
 }
 
-prefix_ void senf::console::ConfigFile::parse()
+prefix_ bool senf::console::ConfigBundle::complete()
+    const
 {
-    parse(executor_.chroot());
+    return executor_.complete();
 }
 
-prefix_ bool senf::console::ConfigFile::complete()
+prefix_ bool senf::console::ConfigBundle::parsed(GenericNode & node)
+    const
+{
+    return executor_.parsed(node);
+}
+
+prefix_ void senf::console::ConfigBundle::reset()
+{
+    executor_.reset();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::RestrictedExecutor
+
+prefix_ bool senf::console::detail::RestrictedExecutor::complete()
     const
 {
     return parsedNodes_.size() == 1 
@@ -54,9 +74,65 @@ prefix_ bool senf::console::ConfigFile::complete()
         && *parsedNodes_[0].lock() == executor_.chroot();
 }
 
-prefix_ void senf::console::ConfigFile::reset()
+prefix_ void senf::console::detail::RestrictedExecutor::reset()
 {
     parsedNodes_.clear();
+}
+
+prefix_ senf::console::DirectoryNode & senf::console::detail::RestrictedExecutor::root()
+    const
+{
+    return executor_.chroot();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ConfigSource
+
+prefix_ void senf::console::detail::ConfigSource::parse(RestrictedExecutor & executor)
+{
+    v_parse(executor);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::BundleMixin
+
+prefix_ senf::console::detail::BundleMixin::BundleMixin()
+{}
+
+prefix_ senf::console::detail::BundleMixin::BundleMixin(DirectoryNode & root)
+    : bundle_ (root)
+{}
+
+prefix_ void senf::console::detail::BundleMixin::parse()
+{
+    bundle_.parse();
+}
+
+prefix_ void senf::console::detail::BundleMixin::parse(DirectoryNode & restrict)
+{
+    bundle_.parse(restrict);
+}
+
+prefix_ bool senf::console::detail::BundleMixin::complete()
+    const
+{
+    return bundle_.complete();
+}
+
+prefix_ bool senf::console::detail::BundleMixin::parsed(GenericNode & node)
+    const
+{
+    return bundle_.parsed(node);
+}
+
+prefix_ void senf::console::detail::BundleMixin::reset()
+{
+    bundle_.reset();
+}
+
+prefix_ void senf::console::detail::BundleMixin::add(ConfigSource::ptr source)
+{
+    bundle_.add(source);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////
