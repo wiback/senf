@@ -27,11 +27,6 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::SchedulerBinding::~SchedulerBinding()
-{
-    disable();
-}
-
 prefix_ void senf::SchedulerBinding::enable()
 {
     if (! enabled_) {
@@ -51,6 +46,11 @@ prefix_ void senf::SchedulerBinding::disable()
 prefix_ bool senf::SchedulerBinding::enabled()
 {
     return enabled_;
+}
+
+prefix_ senf::SchedulerBinding::~SchedulerBinding()
+{
+    disable();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

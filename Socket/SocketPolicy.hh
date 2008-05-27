@@ -292,7 +292,7 @@ namespace senf {
      */
     struct AddressingPolicyBase
     {
-        virtual ~AddressingPolicyBase() {}
+        virtual ~AddressingPolicyBase();
 
         class Address { Address(); };
     };
@@ -309,7 +309,7 @@ namespace senf {
      */
     struct FramingPolicyBase
     {
-        virtual ~FramingPolicyBase() {}
+        virtual ~FramingPolicyBase();
     };
 
     /** \brief Policy defining, how peers are selected
@@ -334,7 +334,7 @@ namespace senf {
      */
     struct CommunicationPolicyBase
     {
-        virtual ~CommunicationPolicyBase() {}
+        virtual ~CommunicationPolicyBase();
     };
 
     /** \brief Policy defining the readability
@@ -357,7 +357,7 @@ namespace senf {
      */
     struct ReadPolicyBase
     {
-        virtual ~ReadPolicyBase() {}
+        virtual ~ReadPolicyBase();
     };
 
     /** \brief Policy defining the writability
@@ -380,7 +380,7 @@ namespace senf {
      */
     struct WritePolicyBase
     {
-        virtual ~WritePolicyBase() {}
+        virtual ~WritePolicyBase();
     };
 
     // The implementation file will for each Policy declared above

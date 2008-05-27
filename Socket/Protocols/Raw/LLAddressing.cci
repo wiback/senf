@@ -31,9 +31,25 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
+prefix_ void senf::LLSocketAddress::clear()
+{
+    ::memset(&addr_,0,sizeof(addr_));
+    addr_.sll_family = AF_PACKET;
+}
+
+prefix_ void senf::LLSocketAddress::address(MACAddress const & addr)
+{
+    std::copy(addr.begin(), addr.end(),&addr_.sll_addr[0]);
+}
+
 prefix_ senf::LLSocketAddress::LLSocketAddress()
 {
     clear();
+}
+
+prefix_ void senf::LLSocketAddress::protocol(unsigned prot)
+{
+    addr_.sll_protocol = htons(prot);
 }
 
 prefix_ senf::LLSocketAddress::LLSocketAddress(unsigned prot, std::string const & iface)
@@ -55,12 +71,6 @@ prefix_ senf::LLSocketAddress::LLSocketAddress(MACAddress const & addr,
     clear();
     address(addr);
     interface(iface);
-}
-
-prefix_ void senf::LLSocketAddress::clear()
-{
-    ::memset(&addr_,0,sizeof(addr_));
-    addr_.sll_family = AF_PACKET;
 }
 
 prefix_ unsigned senf::LLSocketAddress::protocol()
@@ -85,16 +95,6 @@ prefix_ senf::MACAddress senf::LLSocketAddress::address()
     const
 {
     return MACAddress::from_data(&addr_.sll_addr[0]);
-}
-
-prefix_ void senf::LLSocketAddress::address(MACAddress const & addr)
-{
-    std::copy(addr.begin(), addr.end(),&addr_.sll_addr[0]);
-}
-
-prefix_ void senf::LLSocketAddress::protocol(unsigned prot)
-{
-    addr_.sll_protocol = htons(prot);
 }
 
 prefix_ struct sockaddr * senf::LLSocketAddress::sockaddr_p()

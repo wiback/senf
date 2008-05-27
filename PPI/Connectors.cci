@@ -71,11 +71,51 @@ prefix_ void senf::ppi::connector::Connector::setModule(module::Module & module)
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::PassiveConnector
 
+prefix_ senf::ppi::connector::ActiveConnector & senf::ppi::connector::PassiveConnector::peer()
+    const
+{
+    return dynamic_cast<ActiveConnector&>(Connector::peer());
+}
+
 prefix_ bool senf::ppi::connector::PassiveConnector::throttled()
     const
 {
     return nativeThrottled_ || remoteThrottled_;
 }
+
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::connector::PassiveConnector::emitThrottle()
+{
+    peer().notifyThrottle();
+}
+
+prefix_ void senf::ppi::connector::PassiveConnector::emitUnthrottle()
+{
+    peer().notifyUnthrottle();
+    v_unthrottleEvent();
+}
+
+prefix_ void senf::ppi::connector::PassiveConnector::notifyThrottle()
+{
+    if (!throttled()) {
+        remoteThrottled_ = true;
+        emitThrottle();
+    }
+    else
+        remoteThrottled_ = true;
+}
+
+prefix_ void senf::ppi::connector::PassiveConnector::v_unthrottleEvent()
+{}
+
+prefix_ void senf::ppi::connector::PassiveConnector::registerRoute(ForwardingRoute & route)
+{
+    routes_.push_back(&route);
+}
+
+// public members 
 
 prefix_ bool senf::ppi::connector::PassiveConnector::nativeThrottled()
     const
@@ -101,12 +141,6 @@ prefix_ void senf::ppi::connector::PassiveConnector::unthrottle()
 
 }
 
-prefix_ senf::ppi::connector::ActiveConnector & senf::ppi::connector::PassiveConnector::peer()
-    const
-{
-    return dynamic_cast<ActiveConnector&>(Connector::peer());
-}
-
 ////////////////////////////////////////
 // protected members
 
@@ -119,38 +153,6 @@ prefix_ void senf::ppi::connector::PassiveConnector::emit()
     SENF_ASSERT(callback_);
     if (!throttled())
         callback_();
-}
-
-////////////////////////////////////////
-// private members
-
-prefix_ void senf::ppi::connector::PassiveConnector::notifyThrottle()
-{
-    if (!throttled()) {
-        remoteThrottled_ = true;
-        emitThrottle();
-    }
-    else
-        remoteThrottled_ = true;
-}
-
-prefix_ void senf::ppi::connector::PassiveConnector::emitThrottle()
-{
-    peer().notifyThrottle();
-}
-
-prefix_ void senf::ppi::connector::PassiveConnector::emitUnthrottle()
-{
-    peer().notifyUnthrottle();
-    v_unthrottleEvent();
-}
-
-prefix_ void senf::ppi::connector::PassiveConnector::v_unthrottleEvent()
-{}
-
-prefix_ void senf::ppi::connector::PassiveConnector::registerRoute(ForwardingRoute & route)
-{
-    routes_.push_back(&route);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -251,6 +253,12 @@ prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet p)
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::connector::OutputConnector
 
+prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConnector::peer()
+    const
+{
+    return dynamic_cast<InputConnector&>(Connector::peer());
+}
+
 prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet p)
 {
     peer().enqueue(p);
@@ -259,12 +267,6 @@ prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet p)
 prefix_ void senf::ppi::connector::OutputConnector::write(Packet p)
 {
     operator()(p);
-}
-
-prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConnector::peer()
-    const
-{
-    return dynamic_cast<InputConnector&>(Connector::peer());
 }
 
 ////////////////////////////////////////

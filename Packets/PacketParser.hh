@@ -465,63 +465,6 @@ namespace senf {
         SENF_PARSER_FINALIZE(VoidPacketParser);
     };
 
-    /** \brief Iterator re-validating Parser wrapper
-
-        An ordinary parser will be invalidated whenever the raw data container's size is
-        changed. This can complicate some algorithms considerably.
-
-        This wrapper will update the parsers iterator (the value returned by the i() member) on
-        every access. This ensures that the iterator will stay valid.
-
-        \attention Beware however, if you insert or remove data before the safe wrapper, the
-            location will \e not be updated accordingly and therefore the parser will be
-            invalid.
-
-        Additionally a SafePacketParserWrapper has an uninitialized state. The only allowed operations in
-        this state are the boolean test for validity and assigning another parser.
-
-        \ingroup packetparser
-      */
-    template <class Parser>
-    class SafePacketParserWrapper
-        : public safe_bool< SafePacketParserWrapper<Parser> >
-    {
-    public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
-        // default copy constructor
-        // default copy assignment
-        // default destructor
-        SafePacketParserWrapper();             ///< Create an empty uninitialized SafePacketParserWrapper
-
-        // conversion constructors
-        SafePacketParserWrapper(Parser parser); ///< Initialize SafePacketParserWrapper from \a parser
-
-        SafePacketParserWrapper & operator=(Parser parser); ///< Assign \a parser to \c this
-
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
-
-        Parser operator*() const;       ///< Access the stored parser
-                                        /**< On every access, the stored parsers iterator will be
-                                             updated / re-validated. */
-        Parser const * operator->() const; ///< Access the stored parser
-                                        /**< On every access, the stored parsers iterator will be
-                                             updated / re-validated. */
-        bool boolean_test() const;      ///< Check validity
-
-    protected:
-
-    private:
-        mutable boost::optional<Parser> parser_;
-        senf::safe_data_iterator i_;
-    };
-
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

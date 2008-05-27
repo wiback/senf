@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,28 +21,47 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief StreamRegistry non-inline non-template implementation */
+    \brief SafeIterator.test unit tests */
 
-#include "StreamRegistry.hh"
-#include "StreamRegistry.ih"
+//#include "SafeIterator.test.hh"
+//#include "SafeIterator.test.ih"
 
 // Custom includes
+#include "Packets.hh"
 
-//#include "Stream.mpp"
+#include <boost/test/auto_unit_test.hpp>
+#include <boost/test/test_tools.hpp>
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-unsigned senf::log::detail::StreamBase::nStreams = 0;
+namespace {
+    struct VoidPacket : public senf::PacketTypeBase {};
+}
 
-///////////////////////////////////////////////////////////////////////////
-// senf::log::detail::StreamBase
+BOOST_AUTO_UNIT_TEST(safePacketParser)
+{
+    senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(6u));
+    senf::SafePacketParserWrapper<senf::UInt16Parser> p;
+    
+    BOOST_CHECK( !p );
 
-prefix_ senf::log::detail::StreamBase::~StreamBase()
-{}
+    p =  senf::UInt16Parser(pi->data().begin(),&pi->data());
+
+    BOOST_CHECK( p );
+    (*p) = 0x1234u;
+    
+    BOOST_CHECK_EQUAL( (*p), 0x1234u );
+    BOOST_CHECK_EQUAL( p->data()[0], 0x12u );
+
+    p->data().resize(1024u);
+    BOOST_CHECK_EQUAL( (*p), 0x1234u );
+    (*p) = 0x2345u;
+    BOOST_CHECK_EQUAL( p->data()[0], 0x23u );
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "Stream.mpp"
 
 
 // Local Variables:

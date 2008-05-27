@@ -132,6 +132,9 @@ prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, bool block)
     return rv>0;
 }
 
+prefix_ senf::FileBody::~FileBody()
+{}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

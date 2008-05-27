@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,28 +21,23 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief StreamRegistry non-inline non-template implementation */
+    \brief intrusive_refcount non-inline non-template implementation */
 
-#include "StreamRegistry.hh"
-#include "StreamRegistry.ih"
+#include "intrusive_refcount.hh"
+//#include "intrusive_refcount.ih"
 
 // Custom includes
 
-//#include "Stream.mpp"
+//#include "intrusive_refcount.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-unsigned senf::log::detail::StreamBase::nStreams = 0;
-
-///////////////////////////////////////////////////////////////////////////
-// senf::log::detail::StreamBase
-
-prefix_ senf::log::detail::StreamBase::~StreamBase()
+prefix_ senf::intrusive_refcount_base::~intrusive_refcount_base()
 {}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "Stream.mpp"
+//#include "intrusive_refcount.mpp"
 
 
 // Local Variables:

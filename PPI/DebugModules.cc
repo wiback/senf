@@ -21,50 +21,40 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TimeSource inline non-template implementation */
+    \brief DebugModules non-inline non-template implementation */
 
-#include "TimeSource.ih"
+#include "DebugModules.hh"
+//#include "DebugModules.ih"
 
 // Custom includes
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "DebugModules.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::log::detail::TimeSourceManager
+// senf::ppi::module::debug::PassiveSource
 
-prefix_ senf::log::detail::TimeSourceManager::TimeSourceManager()
-    : timeSource_ (new SystemTimeSource())
-{}
-
-prefix_ senf::log::time_type senf::log::detail::TimeSourceManager::now()
+prefix_ void senf::ppi::module::debug::PassiveSource::request()
 {
-    return (*timeSource_)();
-}
-
-prefix_ void senf::log::detail::TimeSourceManager::timeSource(std::auto_ptr<TimeSource> source)
-{
-    timeSource_.reset(source.release());
+    SENF_ASSERT( ! packets_.empty() );
+    output(packets_.front());
+    packets_.pop_front();
+    if (packets_.empty())
+        output.throttle();
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::log::TimeSource
+// senf::ppi::module::debug::PassiveSink
 
-prefix_ senf::log::time_type senf::log::TimeSource::now()
+prefix_ void senf::ppi::module::debug::PassiveSink::request()
 {
-    return detail::TimeSourceManager::instance().now();
+    packets_.push_back(input());
 }
 
-///////////////////////////////////////////////////////////////////////////
-// namespace senf::log members
-
-prefix_ void senf::log::timeSource(std::auto_ptr<TimeSource> source)
-{
-    detail::TimeSourceManager::instance().timeSource(source);
-}
-
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "DebugModules.mpp"
 
 
 // Local Variables:

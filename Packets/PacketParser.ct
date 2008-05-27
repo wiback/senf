@@ -54,6 +54,14 @@ prefix_ Parser senf::operator<<(Parser target, Parser source)
 {}
 #endif
 
+// Why is this function reported as not inlineable ?
+
+template <class Parser>
+prefix_ senf::PacketParserBase::size_type senf::detail::packetParserSize(Parser p, ...)
+{
+    return p.bytes();
+}
+
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 

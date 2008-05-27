@@ -86,12 +86,6 @@ prefix_ boost::uint64_t senf::INet6Address::network()
         ((boost::uint64_t((*this)[7]) & 0xff)       );
 }
 
-prefix_ bool senf::INet6Address::hasEuid64()
-    const
-{
-    return unicast() && ((*this)[0]&0xE0u) != 0u;
-}
-
 prefix_ boost::uint64_t senf::INet6Address::id()
     const
 {
@@ -118,10 +112,16 @@ prefix_ bool senf::INet6Address::groupId()
     return (*this)[8] & 1u;
 }
 
-prefix_ bool senf::INet6Address::unicast()
+prefix_ senf::INet4Address senf::INet6Address::inet4address()
     const
 {
-    return ! multicast();
+    return INet4Address::from_data(&(*this)[12]);
+}
+
+prefix_ bool senf::INet6Address::inet4Mapped()
+    const
+{
+    return CheckINet6Network<0u,0u,0u,0u,0u,0xFFFFu,96>::match(*this);
 }
 
 prefix_ bool senf::INet6Address::multicast()
@@ -144,6 +144,18 @@ prefix_ senf::INet6Address::ScopeId senf::INet6Address::scope()
         : GlobalScope;
 }
 
+prefix_ bool senf::INet6Address::unicast()
+    const
+{
+    return ! multicast();
+}
+
+prefix_ bool senf::INet6Address::hasEuid64()
+    const
+{
+    return unicast() && ((*this)[0]&0xE0u) != 0u;
+}
+
 prefix_ bool senf::INet6Address::globalScope()
     const
 {
@@ -156,22 +168,10 @@ prefix_ bool senf::INet6Address::linkScope()
     return scope() == LinkScope;
 }
 
-prefix_ senf::INet4Address senf::INet6Address::inet4address()
-    const
-{
-    return INet4Address::from_data(&(*this)[12]);
-}
-
 prefix_ bool senf::INet6Address::inet4Compatible()
     const
 {
     return CheckINet6Network<0u,96>::match(*this);
-}
-
-prefix_ bool senf::INet6Address::inet4Mapped()
-    const
-{
-    return CheckINet6Network<0u,0u,0u,0u,0u,0xFFFFu,96>::match(*this);
 }
 
 prefix_ bool senf::INet6Address::globalMulticastAddr()

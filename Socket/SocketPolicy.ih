@@ -71,7 +71,7 @@ namespace senf {
 
     struct SocketPolicyBase
     {
-        virtual ~SocketPolicyBase() {}
+        virtual ~SocketPolicyBase();
 
 #       define SP_Declare(x1,x2,SomePolicy)                                                       \
             virtual BOOST_PP_CAT(SomePolicy,Base) const & BOOST_PP_CAT(the,SomePolicy) ()         \

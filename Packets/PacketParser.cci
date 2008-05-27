@@ -33,11 +33,49 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::PacketParserBase
 
+// public members
+
 prefix_ senf::PacketParserBase::data_iterator senf::PacketParserBase::i()
     const
 {
     return i_;
 }
+
+// private members
+
+prefix_ senf::PacketParserBase::data_iterator senf::PacketParserBase::end()
+    const
+{
+    return data_->end();
+}
+
+// protected members
+
+prefix_ bool senf::PacketParserBase::check(size_type size)
+    const
+{
+    return size <= size_type(std::distance(i(),end()));
+}
+
+prefix_ void senf::PacketParserBase::validate(size_type size) 
+   const
+{
+    if (! check(size))
+        throw TruncatedPacketException();
+}
+
+prefix_ senf::PacketParserBase::PacketParserBase(data_iterator i, state_type s)
+    : i_ (i), data_ (s)
+{}
+
+prefix_ senf::PacketParserBase::PacketParserBase(data_iterator i, state_type s, 
+                                                 size_type size)
+    : i_ (i), data_ (s)
+{
+    validate(size);
+}
+
+// public members
 
 prefix_ senf::PacketParserBase::data_iterator senf::PacketParserBase::i(size_type offset)
     const
@@ -73,42 +111,6 @@ prefix_ senf::Packet senf::PacketParserBase::packet()
     // from the parser is really needed (e.g. UDP when building the pseudo-header
     // for calculating the checksum).
     return Packet(PacketInterpreterBase::ptr(static_cast<PacketInterpreterBase*>(&data())));
-}
-
-////////////////////////////////////////
-// protected members
-
-prefix_ senf::PacketParserBase::PacketParserBase(data_iterator i, state_type s)
-    : i_ (i), data_ (s)
-{}
-
-prefix_ senf::PacketParserBase::PacketParserBase(data_iterator i, state_type s, 
-                                                 size_type size)
-    : i_ (i), data_ (s)
-{
-    validate(size);
-}
-
-prefix_ bool senf::PacketParserBase::check(size_type size)
-    const
-{
-    return size <= size_type(std::distance(i(),end()));
-}
-
-prefix_ void senf::PacketParserBase::validate(size_type size)
-    const
-{
-    if (! check(size))
-        throw TruncatedPacketException();
-}
-
-////////////////////////////////////////
-// private members
-
-prefix_ senf::PacketParserBase::data_iterator senf::PacketParserBase::end()
-    const
-{
-    return data_->end();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -36,6 +36,21 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketImpl
 
+// This function has a problem being inlined. Somehow, often when calling this, the size of the 
+// resulting inlined code would be huge. Need to further debug this.
+
+prefix_ void senf::detail::PacketImpl::release(refcount_t n)
+{
+    SENF_ASSERT(refcount_ >= n);
+    // uah ... we need to be extremely careful here. If refcount_ is n, we want to commit suicide,
+    // however the destructor will remove all PacketInterpreters from the list and will thereby
+    // decrement refcount -> only decrenebt refcount_ when *not* caling delete
+    if (refcount_ == n)
+        delete this;
+    else
+        refcount_ -= n;
+}
+
 // interpreter chain
 
 prefix_ void senf::detail::PacketImpl::appendInterpreter(PacketInterpreterBase * p)

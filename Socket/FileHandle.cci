@@ -96,6 +96,19 @@ prefix_ void senf::FileBody::waitWriteable()
 ///////////////////////////////////////////////////////////////////////////
 // senf::FileHandle
 
+prefix_ senf::FileBody & senf::FileHandle::body()
+{
+    SENF_ASSERT(body_);
+    return *body_;
+}
+
+prefix_ senf::FileBody const & senf::FileHandle::body()
+    const
+{
+    SENF_ASSERT(body_);
+    return *body_;
+}
+
 prefix_ void senf::FileHandle::close()
 {
     body().close();
@@ -182,19 +195,6 @@ prefix_  senf::FileHandle::FileHandle(std::auto_ptr<FileBody> body)
 prefix_ senf::FileHandle::FileHandle(FileBody::ptr body)
     : body_(body)
 {}
-
-prefix_ senf::FileBody & senf::FileHandle::body()
-{
-    SENF_ASSERT(body_);
-    return *body_;
-}
-
-prefix_ senf::FileBody const & senf::FileHandle::body()
-    const
-{
-    SENF_ASSERT(body_);
-    return *body_;
-}
 
 prefix_ senf::FileBody & senf::FileHandle::body(FileHandle & handle)
 {

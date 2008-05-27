@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <algorithm>
+#include <boost/utility/value_init.hpp>
 #include "../Utils/Buffer.hh"
 
 #define prefix_
@@ -120,9 +121,9 @@ prefix_ std::pair<std::string, typename SPolicy::AddressingPolicy::Address>
 senf::ClientSocketHandle<SPolicy>::readfrom(unsigned limit)
 {
     std::string rv;
-    typename SPolicy::AddressingPolicy::Address addr;
-    this->readfrom(rv,addr,limit);
-    return std::make_pair(rv,addr);
+    boost::value_initialized<typename SPolicy::AddressingPolicy::Address> addr;
+    this->readfrom(rv,addr.data(),limit);
+    return std::make_pair(rv,addr.data());
 }
 
 template <class SPolicy>

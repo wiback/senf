@@ -47,7 +47,7 @@ namespace detail {
     /** \brief Internal: Area base class */
     struct AreaBase
     {
-        virtual ~AreaBase() {};
+        virtual ~AreaBase();
         
         std::string fullName() const;
         virtual std::string v_name() const;

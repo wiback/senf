@@ -35,6 +35,40 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::Module
 
+////////////////////////////////////////
+// private members
+
+prefix_ void senf::ppi::module::Module::init()
+{}
+
+prefix_ senf::ppi::EventManager & senf::ppi::module::Module::eventManager()
+    const
+{
+    return EventManager::instance();
+}
+
+prefix_ senf::ppi::ModuleManager & senf::ppi::module::Module::moduleManager()
+    const
+{
+    return ModuleManager::instance();
+}
+
+prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector & connector)
+{
+    connectorRegistry_.push_back(&connector);
+    connector.setModule(*this);
+}
+
+prefix_ senf::ppi::RouteBase &
+senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
+{
+    routes_.push_back(route.release());
+    return routes_.back();
+}
+
+////////////////////////////////////////
+// public members
+
 prefix_ senf::ppi::module::Module::~Module()
 {
     moduleManager().unregisterModule(*this);
@@ -69,37 +103,6 @@ prefix_ void senf::ppi::module::Module::noroute(connector::Connector & connector
 prefix_ void senf::ppi::module::Module::destroy()
 {
     eventManager().destroyModule(*this);
-}
-
-////////////////////////////////////////
-// private members
-
-prefix_ void senf::ppi::module::Module::init()
-{}
-
-prefix_ senf::ppi::EventManager & senf::ppi::module::Module::eventManager()
-    const
-{
-    return EventManager::instance();
-}
-
-prefix_ senf::ppi::ModuleManager & senf::ppi::module::Module::moduleManager()
-    const
-{
-    return ModuleManager::instance();
-}
-
-prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector & connector)
-{
-    connectorRegistry_.push_back(&connector);
-    connector.setModule(*this);
-}
-
-prefix_ senf::ppi::RouteBase &
-senf::ppi::module::Module::addRoute(std::auto_ptr<RouteBase> route)
-{
-    routes_.push_back(route.release());
-    return routes_.back();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -91,27 +91,6 @@ BOOST_AUTO_UNIT_TEST(packetParserBase)
     BOOST_CHECK_EQUAL( senf::init_bytes<BarParser>::value, 6u );
 }
 
-BOOST_AUTO_UNIT_TEST(safePacketParser)
-{
-    senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(6u));
-    senf::SafePacketParserWrapper<senf::UInt16Parser> p;
-    
-    BOOST_CHECK( !p );
-
-    p =  senf::UInt16Parser(pi->data().begin(),&pi->data());
-
-    BOOST_CHECK( p );
-    (*p) = 0x1234u;
-    
-    BOOST_CHECK_EQUAL( (*p), 0x1234u );
-    BOOST_CHECK_EQUAL( p->data()[0], 0x12u );
-
-    p->data().resize(1024u);
-    BOOST_CHECK_EQUAL( (*p), 0x1234u );
-    (*p) = 0x2345u;
-    BOOST_CHECK_EQUAL( p->data()[0], 0x23u );
-}
-
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

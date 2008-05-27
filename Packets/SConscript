@@ -5,8 +5,8 @@ import SENFSCons, glob
 
 ###########################################################################
 
-SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
-                               if 'defined(HH_Packets__decls_)' in file(f).read() ])
+#SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
+#                               if 'defined(HH_Packets__decls_)' in file(f).read() ])
 
 SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env,

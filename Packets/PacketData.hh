@@ -29,7 +29,6 @@
 // Custom includes
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
-#include <boost/iterator/iterator_facade.hpp>
 #include "../Utils/safe_bool.hh"
 #include "../Utils/Exception.hh"
 #include "PacketTypes.hh"
@@ -163,67 +162,6 @@ namespace senf {
     struct TruncatedPacketException : public senf::Exception
     { TruncatedPacketException() : senf::Exception("truncated packet"){} };
 
-    /** \brief Re-validating data iterator
-
-        This class is a wrapper around a PacketData::iterator instance. It will revalidate the
-        iterator on every access. This keeps the iterator valid even when the data container is
-        resized and thereby possibly relocated. The iterator will always point to the byte at the
-        same offset from the packets beginning. If data is inserted before this iterators position,
-        the data pointed to will of course change.
-
-        For this to work, the safe_data_iterator must be initialized with the container to which the
-        iterator belongs. After this initialization it can be used like any other iterator.
-     */
-    class safe_data_iterator
-        : public boost::iterator_facade< safe_data_iterator,
-                                         PacketData::value_type,
-                                         boost::random_access_traversal_tag >,
-          public comparable_safe_bool<safe_data_iterator>
-    {
-    public:
-        typedef PacketData::size_type size_type;
-
-        safe_data_iterator(); ///< Make uninitialized iterator
-        explicit safe_data_iterator(PacketData & data); 
-                                        ///< Construct iterator only setting the data container
-        safe_data_iterator(PacketData & data, PacketData::iterator i);
-                                        ///< Initialize iterator to given position
-        explicit safe_data_iterator(PacketParserBase const & parser);
-                                        ///< Initialize iterator from parser
-                                        /**< The iterator will point to the parsers start
-                                             position. */
-
-        safe_data_iterator & operator=(PacketData::iterator i); ///< Assign iterator
-                                        /**< The iteator \a i must be from the container wo which \c
-                                             this iterator has been initialized. */
-        safe_data_iterator & operator=(PacketParserBase const & parser);
-                                        ///< Assign iterator from parser
-                                        /**< The iterator will point to the parser start
-                                             position. */
-
-        operator PacketData::iterator() const; ///< Convert to iterator
-
-        bool boolean_test() const;      ///< Check, if iterator is initialized
-
-        PacketData & data() const;      ///< Access data container
-
-    private:
-        friend class boost::iterator_core_access;
-
-        // iterator_facade interface
-
-        value_type & dereference() const;
-        bool equal(safe_data_iterator const & other) const;
-        difference_type distance_to(safe_data_iterator const & other) const;
-        void increment();
-        void decrement();
-        void advance(difference_type n);
-
-        PacketData::iterator i() const;
-
-        PacketData * data_;
-        size_type i_;
-    };
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

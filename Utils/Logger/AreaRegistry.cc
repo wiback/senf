@@ -36,6 +36,9 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::AreaBase
 
+prefix_ senf::log::detail::AreaBase::~AreaBase()
+{}
+
 prefix_ void senf::log::detail::AreaBase::updateRoutingCache(Target & target,
                                                              StreamBase const & stream,
                                                              unsigned limit)

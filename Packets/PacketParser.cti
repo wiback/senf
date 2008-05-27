@@ -99,58 +99,6 @@ senf::detail::packetParserSize(Parser p, int, senf::mpl::take_uint<Parser::fixed
     return Parser::fixed_bytes;
 }
 
-template <class Parser>
-prefix_ senf::PacketParserBase::size_type senf::detail::packetParserSize(Parser p, ...)
-{
-    return p.bytes();
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::SafePacketParserWrapper<Parser>
-
-template <class Parser>
-prefix_ senf::SafePacketParserWrapper<Parser>::SafePacketParserWrapper()
-    : parser_(), i_()
-{}
-
-template <class Parser>
-prefix_ senf::SafePacketParserWrapper<Parser>::SafePacketParserWrapper(Parser parser)
-    : parser_(parser), i_(parser)
-{}
-
-template <class Parser>
-prefix_ senf::SafePacketParserWrapper<Parser> & senf::SafePacketParserWrapper<Parser>::operator=(Parser parser)
-{
-    parser_ = parser;
-    i_ = parser;
-    return *this;
-}
-
-template <class Parser>
-prefix_ Parser senf::SafePacketParserWrapper<Parser>::operator*()
-    const
-{
-    SENF_ASSERT( i_ );
-    parser_->i_ = PacketParserBase::data_iterator(i_);
-    return *parser_;
-}
-
-template <class Parser>
-prefix_ Parser const * senf::SafePacketParserWrapper<Parser>::operator->()
-    const
-{
-    SENF_ASSERT( i_ );
-    parser_->i_ = PacketParserBase::data_iterator(i_);
-    return & (*parser_);
-}
-
-template <class Parser>
-prefix_ bool senf::SafePacketParserWrapper<Parser>::boolean_test()
-    const
-{
-    return i_;
-}
-
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

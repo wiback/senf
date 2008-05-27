@@ -39,7 +39,7 @@ namespace detail {
     struct StreamBase 
     {
         StreamBase();
-        virtual ~StreamBase() {};
+        virtual ~StreamBase();
         
         std::string fullName() const;
         virtual std::string v_name() const;

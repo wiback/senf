@@ -45,9 +45,6 @@ prefix_ senf::intrusive_refcount_base::intrusive_refcount_base()
     : refcount_(0)
 {}
 
-prefix_  senf::intrusive_refcount_base::~intrusive_refcount_base()
-{}
-
 prefix_ void senf::intrusive_refcount_base::add_ref()
 {
     ++refcount_;

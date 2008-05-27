@@ -83,10 +83,11 @@ namespace senf {
                                            constructor not some arbitrary id even if you overload
                                            all the virtual members. If the file descriptor is -1 the
                                            resulting body/handle is not valid() */
+        virtual ~FileBody();
 
-        // NO DESTRUCTOR HERE - destructors and virtual functions don't mix. What would be in the
-        // the destructor is in 'destroyClose()' which is called from FileHandle::~FileHandle()
-        // *before* the last handle dies.
+        // NO DESTRUCTOR HERE (that is, only an empty virtual destructor) - destructors and virtual
+        // functions don't mix. What would be in the the destructor is in 'destroyClose()' which is
+        // called from FileHandle::~FileHandle() *before* the last handle dies.
 
         // no copy
         // no conversion constructors

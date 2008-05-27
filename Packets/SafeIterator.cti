@@ -21,49 +21,62 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TimeSource inline non-template implementation */
+    \brief SafeIterator inline template implementation */
 
-#include "TimeSource.ih"
+//#include "SafeIterator.ih"
 
 // Custom includes
 
 #define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::log::detail::TimeSourceManager
+// senf::SafePacketParserWrapper<Parser>
 
-prefix_ senf::log::detail::TimeSourceManager::TimeSourceManager()
-    : timeSource_ (new SystemTimeSource())
+template <class Parser>
+prefix_ senf::SafePacketParserWrapper<Parser>::SafePacketParserWrapper()
+    : parser_(), i_()
 {}
 
-prefix_ senf::log::time_type senf::log::detail::TimeSourceManager::now()
+template <class Parser>
+prefix_ senf::SafePacketParserWrapper<Parser>::SafePacketParserWrapper(Parser parser)
+    : parser_(parser), i_(parser)
+{}
+
+template <class Parser>
+prefix_ senf::SafePacketParserWrapper<Parser> & senf::SafePacketParserWrapper<Parser>::operator=(Parser parser)
 {
-    return (*timeSource_)();
+    parser_ = parser;
+    i_ = parser;
+    return *this;
 }
 
-prefix_ void senf::log::detail::TimeSourceManager::timeSource(std::auto_ptr<TimeSource> source)
+template <class Parser>
+prefix_ Parser senf::SafePacketParserWrapper<Parser>::operator*()
+    const
 {
-    timeSource_.reset(source.release());
+    SENF_ASSERT( i_ );
+    parser_->i_ = PacketParserBase::data_iterator(i_);
+    return *parser_;
 }
 
-///////////////////////////////////////////////////////////////////////////
-// senf::log::TimeSource
-
-prefix_ senf::log::time_type senf::log::TimeSource::now()
+template <class Parser>
+prefix_ Parser const * senf::SafePacketParserWrapper<Parser>::operator->()
+    const
 {
-    return detail::TimeSourceManager::instance().now();
+    SENF_ASSERT( i_ );
+    parser_->i_ = PacketParserBase::data_iterator(i_);
+    return & (*parser_);
 }
 
-///////////////////////////////////////////////////////////////////////////
-// namespace senf::log members
-
-prefix_ void senf::log::timeSource(std::auto_ptr<TimeSource> source)
+template <class Parser>
+prefix_ bool senf::SafePacketParserWrapper<Parser>::boolean_test()
+    const
 {
-    detail::TimeSourceManager::instance().timeSource(source);
+    return i_;
 }
 
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

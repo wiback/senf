@@ -1,0 +1,143 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief SafeIterator inline non-template implementation */
+
+//#include "SafeIterator.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::safe_data_iterator
+
+prefix_ senf::safe_data_iterator::safe_data_iterator()
+    : data_(0), i_(0)
+{}
+
+prefix_  senf::safe_data_iterator::safe_data_iterator(PacketData & data)
+    : data_(&data), i_(0)
+{}
+
+prefix_ senf::safe_data_iterator::safe_data_iterator(PacketData & data, PacketData::iterator i)
+    : data_(&data), i_(std::distance(data.begin(),i))
+{}
+
+prefix_  senf::safe_data_iterator::safe_data_iterator(PacketParserBase const & parser)
+    : data_(&parser.data()), i_(std::distance(data_->begin(),parser.i()))
+{}
+
+prefix_ senf::PacketData::iterator senf::safe_data_iterator::i()
+    const
+{
+    SENF_ASSERT(data_);
+    return boost::next(data_->begin(),i_);
+}
+
+prefix_ senf::safe_data_iterator & senf::safe_data_iterator::operator=(PacketData::iterator i)
+{
+    SENF_ASSERT(data_);
+    i_ = std::distance(data_->begin(),i);
+    return *this;
+}
+
+prefix_ senf::safe_data_iterator &
+senf::safe_data_iterator::operator=(PacketParserBase const & parser)
+{
+    data_ = &parser.data();
+    i_ = std::distance(data_->begin(),parser.i());
+    return *this;
+}
+
+prefix_ senf::safe_data_iterator::operator senf::PacketData::iterator()
+    const
+{
+    return i();
+}
+
+prefix_ bool senf::safe_data_iterator::boolean_test()
+    const
+{
+    return data_;
+}
+
+prefix_ senf::PacketData & senf::safe_data_iterator::data()
+    const
+{
+    SENF_ASSERT(data_);
+    return *data_;
+}
+
+prefix_ senf::safe_data_iterator::value_type & senf::safe_data_iterator::dereference()
+    const
+{
+    return *i();
+}
+
+prefix_ bool senf::safe_data_iterator::equal(safe_data_iterator const & other)
+    const
+{
+    SENF_ASSERT(data_ == other.data_);
+    return i_ == other.i_;
+}
+
+prefix_ senf::safe_data_iterator::difference_type
+senf::safe_data_iterator::distance_to(safe_data_iterator const & other)
+    const
+{
+    SENF_ASSERT(data_ == other.data_);
+    return other.i_ - i_;
+}
+
+prefix_ void senf::safe_data_iterator::increment()
+{
+    ++i_;
+}
+
+prefix_ void senf::safe_data_iterator::decrement()
+{
+    SENF_ASSERT(i_>0);
+    --i_;
+}
+
+prefix_ void senf::safe_data_iterator::advance(difference_type n)
+{
+    SENF_ASSERT( -n < difference_type(i_) );
+    i_ += n;
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

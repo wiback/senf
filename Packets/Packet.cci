@@ -32,10 +32,25 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::Packet
 
+// protected members
+
+prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr packet)
+    : packet_(packet)
+{}
+
+prefix_ senf::PacketInterpreterBase::ptr senf::Packet::ptr()
+    const
+{
+    SENF_ASSERT(packet_);
+    return packet_;
+}
+
 // public structors
 
 prefix_ senf::Packet::Packet()
 {}
+
+// public members
 
 prefix_ senf::Packet senf::Packet::clone()
     const
@@ -45,6 +60,13 @@ prefix_ senf::Packet senf::Packet::clone()
 
 // Interpreter chain access
 
+prefix_ senf::Packet senf::Packet::next(NoThrow_t)
+    const
+{
+    PacketInterpreterBase::ptr p (ptr()->next());
+    return !p && ptr()->nextPacketRange() ? checkNext() : Packet(p);
+}
+
 prefix_ senf::Packet senf::Packet::next()
     const
 {
@@ -53,11 +75,10 @@ prefix_ senf::Packet senf::Packet::next()
     return p;
 }
 
-prefix_ senf::Packet senf::Packet::next(NoThrow_t)
+prefix_ senf::Packet senf::Packet::prev(NoThrow_t)
     const
 {
-    PacketInterpreterBase::ptr p (ptr()->next());
-    return !p && ptr()->nextPacketRange() ? checkNext() : Packet(p);
+    return Packet(ptr()->prev());
 }
 
 prefix_ senf::Packet senf::Packet::prev()
@@ -66,12 +87,6 @@ prefix_ senf::Packet senf::Packet::prev()
     Packet p (prev(nothrow));
     if (!p) throw InvalidPacketChainException();
     return p;
-}
-
-prefix_ senf::Packet senf::Packet::prev(NoThrow_t)
-    const
-{
-    return Packet(ptr()->prev());
 }
 
 prefix_ senf::Packet senf::Packet::first()
@@ -152,19 +167,6 @@ prefix_ bool senf::Packet::boolean_test()
     const
 {
     return packet_ && packet_->valid();
-}
-
-// protected members
-
-prefix_  senf::Packet::Packet(PacketInterpreterBase::ptr packet)
-    : packet_(packet)
-{}
-
-prefix_ senf::PacketInterpreterBase::ptr senf::Packet::ptr()
-    const
-{
-    SENF_ASSERT(packet_);
-    return packet_;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -140,8 +140,20 @@ if not logname:
 def configFilesOpts(target, source, env, for_signature):
     return [ '-I%s' % os.path.split(f)[1] for f in env['LOCAL_CONFIG_FILES'] ]
 
+# Options used to debug inlining:
+#
+# INLINE_OPTS = [ '-finline-limit=20000', '--param','large-function-growth=10000',
+#                 '--param', 'large-function-insns=10000', '--param','inline-unit-growth=10000',
+#                 '-fvisibility-inlines-hidden', '-fno-inline-functions', '-Winline' ]
+#
+# BEWARE: You need lots of ram to compile with these settings (approx 1G)
+#
+
+INLINE_OPTS = [ '-finline-limit=5000' ]
+
 env.Append(
    CPPPATH = [ '#/include' ],
+   CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long' ] + INLINE_OPTS,
    LIBS = [ 'readline', 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB' ],
    TEST_EXTRA_LIBS = [ '$BOOSTFSLIB' ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],

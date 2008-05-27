@@ -88,15 +88,6 @@ senf::ppi::module::debug::PassiveSource::size()
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::module::debug::PassiveSource::request()
-{
-    SENF_ASSERT( ! packets_.empty() );
-    output(packets_.front());
-    packets_.pop_front();
-    if (packets_.empty())
-        output.throttle();
-}
-
 prefix_ void senf::ppi::module::debug::PassiveSource::init()
 {
     if (empty())
@@ -183,14 +174,6 @@ prefix_ senf::Packet senf::ppi::module::debug::PassiveSink::pop_front()
 prefix_ void senf::ppi::module::debug::PassiveSink::clear()
 {
     packets_.erase(packets_.begin(), packets_.end());
-}
-
-////////////////////////////////////////
-// private members
-
-prefix_ void senf::ppi::module::debug::PassiveSink::request()
-{
-    packets_.push_back(input());
 }
 
 ///////////////////////////////////////////////////////////////////////////

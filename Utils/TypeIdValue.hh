@@ -72,7 +72,7 @@ namespace senf {
         template <class Type> TypeIdValue(Type *);
 
         struct Value {
-            virtual ~Value() {}
+            virtual ~Value();
             virtual std::type_info const & id() = 0;
             virtual Value * clone() = 0;
         };

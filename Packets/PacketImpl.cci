@@ -25,7 +25,7 @@
 
 // Custom includes
 #include "../Utils/senfassert.hh"
-#include "PacketInterpreter.hh"
+// #include "PacketInterpreter.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -76,18 +76,6 @@ prefix_ senf::detail::PacketImpl::~PacketImpl()
 prefix_ void senf::detail::PacketImpl::add_ref(refcount_t n)
 {
     refcount_ += n;
-}
-
-prefix_ void senf::detail::PacketImpl::release(refcount_t n)
-{
-    SENF_ASSERT(refcount_ >= n);
-    // uah ... we need to be extremely careful here. If refcount_ is n, we want to commit suicide,
-    // however the destructor will remove all PacketInterpreters from the list and will thereby
-    // decrement refcount -> only decrenebt refcount_ when *not* caling delete
-    if (refcount_ == n)
-        delete this;
-    else
-        refcount_ -= n;
 }
 
 prefix_ senf::detail::PacketImpl::refcount_t senf::detail::PacketImpl::refcount()

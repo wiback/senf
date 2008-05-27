@@ -243,8 +243,7 @@ def MakeEnvironment():
 
     # These are the default compilation parameters. We should probably
     # make these configurable
-    env.Append(CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long' ],
-               LOCALLIBDIR = [ '#' ],
+    env.Append(LOCALLIBDIR = [ '#' ],
                LIBPATH = [ '$LOCALLIBDIR' ])
 
     if env['final']:
@@ -252,7 +251,7 @@ def MakeEnvironment():
     else:
         # The boost-regex library is not compiled with _GLIBCXX_DEBUG so this fails:
         #          CPPDEFINES = [ '_GLIBCXX_DEBUG' ],
-        env.Append(CXXFLAGS = [ '-O0', '-g', '-fno-inline' ],
+        env.Append(CXXFLAGS = [ '-O0', '-g' ],
                    CPPDEFINES = [ 'SENF_DEBUG' ],
                    LINKFLAGS = [ '-g', '-rdynamic' ])
 
