@@ -34,6 +34,17 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::GenericNode
 
+prefix_ senf::console::GenericNode::ptr senf::console::GenericNode::thisptr()
+{
+    return shared_from_this();
+}
+
+prefix_ senf::console::GenericNode::cptr senf::console::GenericNode::thisptr()
+    const
+{
+    return shared_from_this();
+}
+
 prefix_ senf::console::GenericNode::~GenericNode()
 {}
 
@@ -73,17 +84,6 @@ prefix_ void senf::console::GenericNode::help(std::ostream & output)
     v_help(output);
 }
 
-prefix_ senf::console::GenericNode::ptr senf::console::GenericNode::thisptr()
-{
-    return shared_from_this();
-}
-
-prefix_ senf::console::GenericNode::cptr senf::console::GenericNode::thisptr()
-    const
-{
-    return shared_from_this();
-}
-
 prefix_ bool senf::console::GenericNode::operator==(GenericNode & other)
     const
 {
@@ -117,18 +117,18 @@ prefix_ bool senf::console::GenericNode::isCommand()
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::LinkNode
 
+prefix_ senf::console::GenericNode & senf::console::LinkNode::follow()
+    const
+{
+    return *node_;
+}
+
 prefix_ senf::console::LinkNode::ptr senf::console::LinkNode::create(GenericNode & node)
 {
     GenericNode::ptr p (node.thisptr());
     while ( p->isLink() )
         p = dynamic_cast<LinkNode&>(*p).follow().thisptr();
     return ptr(new LinkNode(*p));
-}
-
-prefix_ senf::console::GenericNode & senf::console::LinkNode::follow()
-    const
-{
-    return *node_;
 }
 
 prefix_ senf::console::LinkNode::LinkNode(GenericNode & node)
@@ -248,23 +248,6 @@ prefix_ senf::console::detail::NodeTraverser::NodeTraverser(DirectoryNode & root
                                                             bool autocomplete)
     : root_ (root), dir_ (dir.thisptr()), autocomplete_ (autocomplete), init_ (false)
 {}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::console::SyntaxErrorException
-
-prefix_ senf::console::SyntaxErrorException::SyntaxErrorException(std::string const & msg)
-    : message_(msg)
-{}
-
-prefix_ senf::console::SyntaxErrorException::~SyntaxErrorException()
-    throw()
-{}
-
-prefix_ std::string const & senf::console::SyntaxErrorException::message()
-    const
-{
-    return message_;
-}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandNode

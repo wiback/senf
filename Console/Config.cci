@@ -32,38 +32,6 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::ConfigBundle
-
-prefix_ senf::console::ConfigBundle::ConfigBundle()
-{}
-
-prefix_ senf::console::ConfigBundle::ConfigBundle(DirectoryNode & root)
-    : executor_ (root)
-{}
-
-prefix_ void senf::console::ConfigBundle::add(detail::ConfigSource::ptr source)
-{
-    sources_.push_back(source);
-}
-
-prefix_ bool senf::console::ConfigBundle::complete()
-    const
-{
-    return executor_.complete();
-}
-
-prefix_ bool senf::console::ConfigBundle::parsed(GenericNode & node)
-    const
-{
-    return executor_.parsed(node);
-}
-
-prefix_ void senf::console::ConfigBundle::reset()
-{
-    executor_.reset();
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::RestrictedExecutor
 
 prefix_ bool senf::console::detail::RestrictedExecutor::complete()
@@ -83,6 +51,33 @@ prefix_ senf::console::DirectoryNode & senf::console::detail::RestrictedExecutor
     const
 {
     return executor_.chroot();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ConfigBundle
+
+prefix_ senf::console::ConfigBundle::ConfigBundle()
+{}
+
+prefix_ senf::console::ConfigBundle::ConfigBundle(DirectoryNode & root)
+    : executor_ (root)
+{}
+
+prefix_ bool senf::console::ConfigBundle::complete()
+    const
+{
+    return executor_.complete();
+}
+
+prefix_ bool senf::console::ConfigBundle::parsed(GenericNode & node)
+    const
+{
+    return executor_.parsed(node);
+}
+
+prefix_ void senf::console::ConfigBundle::reset()
+{
+    executor_.reset();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -128,11 +123,6 @@ prefix_ bool senf::console::detail::BundleMixin::parsed(GenericNode & node)
 prefix_ void senf::console::detail::BundleMixin::reset()
 {
     bundle_.reset();
-}
-
-prefix_ void senf::console::detail::BundleMixin::add(ConfigSource::ptr source)
-{
-    bundle_.add(source);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

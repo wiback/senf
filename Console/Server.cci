@@ -59,6 +59,46 @@ prefix_ void senf::console::Server::stop()
 }
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::Client
+
+prefix_ senf::console::Client::~Client()
+{}
+
+prefix_ void senf::console::Client::stop()
+{
+    // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER removeClient RETURNS
+    server_.removeClient(*this);
+}
+
+prefix_ std::string const & senf::console::Client::name()
+    const
+{
+    return name_;
+}
+
+prefix_ std::string senf::console::Client::promptString()
+    const
+{
+    return name_ + ":" + executor_.cwdPath() + "$ ";
+}
+
+prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)
+{
+    return dynamic_cast<detail::NonblockingSocketOStream&>(os)->client();
+}
+
+prefix_ senf::console::Client::ClientHandle senf::console::Client::handle()
+    const
+{
+    return handle_;
+}
+
+prefix_ std::ostream & senf::console::Client::stream()
+{
+    return out_t::member;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::ClientReader
 
 prefix_ senf::console::detail::ClientReader::~ClientReader()
@@ -117,46 +157,6 @@ prefix_ void senf::console::detail::ClientReader::translate(std::string & data)
 prefix_ senf::console::detail::ClientReader::ClientReader(Client & client)
     : client_ (client)
 {}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::console::Client
-
-prefix_ senf::console::Client::~Client()
-{}
-
-prefix_ void senf::console::Client::stop()
-{
-    // THIS COMMITS SUICIDE. THE INSTANCE IS GONE AFTER removeClient RETURNS
-    server_.removeClient(*this);
-}
-
-prefix_ std::string const & senf::console::Client::name()
-    const
-{
-    return name_;
-}
-
-prefix_ std::string senf::console::Client::promptString()
-    const
-{
-    return name_ + ":" + executor_.cwdPath() + "$ ";
-}
-
-prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)
-{
-    return dynamic_cast<detail::NonblockingSocketOStream&>(os)->client();
-}
-
-prefix_ senf::console::Client::ClientHandle senf::console::Client::handle()
-    const
-{
-    return handle_;
-}
-
-prefix_ std::ostream & senf::console::Client::stream()
-{
-    return out_t::member;
-}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

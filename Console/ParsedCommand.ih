@@ -66,6 +66,7 @@ namespace detail {
         std::string doc;
         
         ArgumentInfoBase(std::string const & type);
+        virtual ~ArgumentInfoBase();
 
         virtual std::string defaultValueStr() const = 0;
     };

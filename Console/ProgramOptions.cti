@@ -1,0 +1,92 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief ProgramOptions inline template implementation */
+
+#include "ProgramOptions.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ProgramOptionsSource
+
+template <class Container>
+prefix_ senf::console::detail::ProgramOptionsSource &
+senf::console::detail::ProgramOptionsSource::nonOptions(Container & container)
+{
+    nonOptions_.reset(new NonOptionContainerImpl<Container>(container));
+    return *this;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ProgramOptionsSource::NonOptionContainerImpl
+
+template <class Container>
+prefix_
+senf::console::detail::ProgramOptionsSource::NonOptionContainerImpl<Container>::
+NonOptionContainerImpl(Container & c)
+    : c_ (c)
+{}
+
+template <class Container>
+prefix_ void
+senf::console::detail::ProgramOptionsSource::NonOptionContainerImpl<Container>::clear()
+{
+    c_.clear();
+}
+
+template <class Container>
+prefix_ void
+senf::console::detail::ProgramOptionsSource::NonOptionContainerImpl<Container>::
+push_back(std::string const & value)
+{
+    c_.push_back(value);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ProgramOptions
+
+template <class Container>
+prefix_ senf::console::ProgramOptions &
+senf::console::ProgramOptions::nonOptions(Container & container)
+{
+    config_.nonOptions(container);
+    return *this;
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

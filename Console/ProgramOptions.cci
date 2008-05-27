@@ -44,14 +44,35 @@ prefix_ senf::console::detail::ProgramOptionsSource::ProgramOptionsSource(int ar
     : argc_ (argc), argv_ (argv)
 {}
 
+prefix_ senf::console::detail::ProgramOptionsSource &
+senf::console::detail::ProgramOptionsSource::alias(char letter, std::string const & longOpt,
+                                                   bool withArg)
+{
+    shortOptions_.insert(std::make_pair(letter, ShortOption(withArg, longOpt)));
+    return *this;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ProgramOptionsSource::ShortOption
+
+prefix_ senf::console::detail::ProgramOptionsSource::ShortOption::
+ShortOption(bool withArg_, std::string const & longOpt_)
+    : withArg (withArg_), longOpt (longOpt_)
+{}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ProgramOptions
 
 prefix_ senf::console::ProgramOptions::ProgramOptions(int argc, char ** argv,
                                                       DirectoryNode & root)
-    : detail::BundleMixin (root)
+    : detail::BundleMixin (root), config_ (add(detail::ProgramOptionsSource::create(argc, argv)))
+{}
+
+prefix_ senf::console::ProgramOptions &
+senf::console::ProgramOptions::alias(char letter, std::string const & longOpt, bool withArg)
 {
-    add(detail::ProgramOptionsSource::create(argc, argv));
+    config_.alias(letter, longOpt, withArg);
+    return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////

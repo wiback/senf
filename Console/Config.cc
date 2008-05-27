@@ -153,6 +153,12 @@ prefix_ senf::console::detail::RestrictedExecutor::RestrictGuard::~RestrictGuard
     executor_.restrict_ = senf::console::root().thisptr();
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ConfigSource
+
+prefix_ senf::console::detail::ConfigSource::~ConfigSource()
+{}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Config.mpp"

@@ -31,6 +31,42 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::OverloadedCommandNode
+
+prefix_ senf::console::OverloadedCommandNode::ptr senf::console::OverloadedCommandNode::create()
+{
+    return ptr(new OverloadedCommandNode());
+}
+
+prefix_ senf::console::OverloadedCommandNode::ptr senf::console::OverloadedCommandNode::thisptr()
+{
+    return boost::static_pointer_cast<OverloadedCommandNode>(shared_from_this());
+}
+
+prefix_ senf::console::OverloadedCommandNode::cptr senf::console::OverloadedCommandNode::thisptr()
+    const
+{
+    return boost::static_pointer_cast<OverloadedCommandNode const>(shared_from_this());
+}
+
+prefix_ senf::console::OverloadedCommandNode &
+senf::console::OverloadedCommandNode::doc(std::string const & doc)
+{
+    doc_ = doc;
+    return *this;
+}
+
+prefix_ unsigned
+senf::console::OverloadedCommandNode::overloadIndex(CommandOverload const & overload)
+{
+    return find(overloads_.begin(), overloads_.end(), CommandOverload::cptr(&overload)) 
+        - overloads_.begin() + 1;
+}
+
+prefix_ senf::console::OverloadedCommandNode::OverloadedCommandNode()
+{}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandOverload
 
 prefix_ senf::console::CommandOverload::~CommandOverload()
@@ -81,42 +117,6 @@ prefix_ unsigned senf::console::CommandOverload::overloadIndex()
 
 prefix_ senf::console::CommandOverload::CommandOverload()
     : node_(0)
-{}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::console::OverloadedCommandNode
-
-prefix_ senf::console::OverloadedCommandNode::ptr senf::console::OverloadedCommandNode::create()
-{
-    return ptr(new OverloadedCommandNode());
-}
-
-prefix_ senf::console::OverloadedCommandNode::ptr senf::console::OverloadedCommandNode::thisptr()
-{
-    return boost::static_pointer_cast<OverloadedCommandNode>(shared_from_this());
-}
-
-prefix_ senf::console::OverloadedCommandNode::cptr senf::console::OverloadedCommandNode::thisptr()
-    const
-{
-    return boost::static_pointer_cast<OverloadedCommandNode const>(shared_from_this());
-}
-
-prefix_ senf::console::OverloadedCommandNode &
-senf::console::OverloadedCommandNode::doc(std::string const & doc)
-{
-    doc_ = doc;
-    return *this;
-}
-
-prefix_ unsigned
-senf::console::OverloadedCommandNode::overloadIndex(CommandOverload const & overload)
-{
-    return find(overloads_.begin(), overloads_.end(), CommandOverload::cptr(&overload)) 
-        - overloads_.begin() + 1;
-}
-
-prefix_ senf::console::OverloadedCommandNode::OverloadedCommandNode()
 {}
 
 ///////////////////////////////////////////////////////////////////////////

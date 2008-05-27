@@ -200,15 +200,6 @@ prefix_ senf::console::GenericNode & senf::console::detail::NodeTraverser::node(
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::SyntaxErrorException
-
-prefix_ char const * senf::console::SyntaxErrorException::what()
-    const throw()
-{
-    return message().empty() ? "syntax error" : message().c_str();
-}
-
-///////////////////////////////////////////////////////////////////////////
 // senf::console::SimpleCommandNode
 
 prefix_ void senf::console::SimpleCommandNode::v_help(std::ostream & output)

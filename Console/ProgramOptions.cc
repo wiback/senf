@@ -28,35 +28,70 @@
 
 // Custom includes
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/format.hpp>
 
 //#include "ProgramOptions.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ProgramOptionsSource::NonOptionContainer
+
+prefix_ senf::console::detail::ProgramOptionsSource::NonOptionContainer::~NonOptionContainer()
+{}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::ProgramOptionsSource
 
 prefix_ void senf::console::detail::ProgramOptionsSource::v_parse(RestrictedExecutor & executor)
 {
-    char ** argp (argv_);
-    int n (argc_);
+    if (nonOptions_)
+        nonOptions_->clear();
+    if (argc_ <= 1)
+        return;
+    char ** argp (argv_+1);
+    int n (argc_-1);
     for (; n; --n, ++argp) {
         std::string arg (*argp);
-        if (boost::algorithm::starts_with(arg, std::string("--")))
+        if (arg == "--") {
+            for (; n; --n, ++argp)
+                parseNonOption(arg, executor);
+            break;
+        }
+        else if (boost::algorithm::starts_with(arg, std::string("--")) && arg.size() > 2)
             parseLongOption(arg.substr(2), executor);
+        else if (boost::algorithm::starts_with(arg, std::string("-")) && arg.size() > 1) {
+            for (std::string::size_type i (1); i<arg.size(); ++i) {
+                char opt (arg[i]);
+                ShortOptions::iterator j (shortOptions_.find(opt));
+                if (j == shortOptions_.end())
+                    throw SyntaxErrorException(
+                        (boost::format("invalid short option '%c'") % opt).str());
+                std::string param;
+                if (j->second.withArg) {
+                    if (i >= arg.size()-1) {
+                        if (n > 0) {
+                            param = *(++argp);
+                            --n;
+                        }
+                    }
+                    else 
+                        param = arg.substr(i+1);
+                    i = arg.size();
+                }
+                std::string longOpt (j->second.longOpt);
+                if (! param.empty() ) {
+                    longOpt += "=";
+                    longOpt += param;
+                }
+                if (boost::algorithm::starts_with(longOpt, std::string("--")))
+                    longOpt = longOpt.substr(2);
+                parseLongOption(longOpt, executor);
+            }
+        }
         else
             parseNonOption(arg, executor);
     }
-}
-
-namespace {
-    struct MakeWordToken
-    {
-        typedef senf::console::Token result_type;
-        template <class Range>
-        result_type operator()(Range const & r) const
-            { return senf::console::WordToken(std::string(boost::begin(r), boost::end(r))); }
-    };
 }
 
 prefix_ void
@@ -77,18 +112,24 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
     while (b < name.size()) {
         std::string::size_type e (name.size());
         for (;e != std::string::npos && e > b; e = name.rfind('-', e)) {
-            DirectoryNode::ChildrenRange completions (cwd->completions(name.substr(b,e-b)));
-            if (completions.size() == 1) {
-                path.push_back(WordToken(completions.begin()->first));
-                if (e < name.size())
-                    cwd = cwd->getDirectory(completions.begin()->first).thisptr();
-                b = e+1;
-                e = b+1;
-                break;
+            std::string key (name.substr(b,e-b));
+            if (! cwd->hasChild(key)) {
+                DirectoryNode::ChildrenRange completions (cwd->completions(key));
+                if (completions.size() == 1)
+                    key = completions.begin()->first;
+                else
+                    continue;
             }
+            path.push_back(WordToken(key));
+            if (e < name.size())
+                cwd = cwd->getDirectory(key).thisptr();
+            b = e+1;
+            e = b+1;
+            break;
         }
         if (e == std::string::npos || e <= b) {
-            // This will produce a correct error message later
+            // This will produce a correct error message later or will skip the node,
+            // if parsing is restricted to a subtree
             path.push_back(WordToken(name.substr(b)));
             b = name.size();
         }
@@ -102,7 +143,11 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
 prefix_ void
 senf::console::detail::ProgramOptionsSource::parseNonOption(std::string const & arg,
                                                             RestrictedExecutor & executor)
-{}
+{
+    if (! nonOptions_)
+        throw SyntaxErrorException("invalid non-option argument");
+    nonOptions_->push_back(arg);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 

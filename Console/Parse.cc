@@ -287,6 +287,15 @@ prefix_ bool senf::console::CommandParser::parseArguments(std::string arguments,
         ).full;
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::console::SyntaxErrorException
+
+prefix_ char const * senf::console::SyntaxErrorException::what()
+    const throw()
+{
+    return message().empty() ? "syntax error" : message().c_str();
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Parse.mpp"

@@ -49,6 +49,13 @@ namespace console {
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
+        
+        template <class Container>
+        ProgramOptions & nonOptions(Container & container);
+        ProgramOptions & alias(char letter, std::string const & longOpt, bool withArg=false);
+
+    private:
+        detail::ProgramOptionsSource & config_;
     };
 
     void parseOptions(int argc, char ** argv, DirectoryNode & root = root());
@@ -59,7 +66,7 @@ namespace console {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "ProgramOptions.cci"
 //#include "ProgramOptions.ct"
-//#include "ProgramOptions.cti"
+#include "ProgramOptions.cti"
 #endif
 
 

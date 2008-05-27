@@ -21,39 +21,36 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ConfigFile internal header */
+    \brief Config inline template implementation */
 
-#ifndef IH_ConfigFile_
-#define IH_ConfigFile_ 1
+#include "Config.ih"
 
 // Custom includes
 
-///////////////////////////////ih.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
-namespace senf {
-namespace console {
-namespace detail {
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ConfigBundle
 
-    class ConfigFileSource : public ConfigSource
-    {
-    public:
-        typedef boost::intrusive_ptr<ConfigFileSource> ptr;
+template <class Source>
+prefix_ Source & senf::console::ConfigBundle::add(boost::intrusive_ptr<Source> source)
+{
+    sources_.push_back(source);
+    return *source;
+}
 
-        static ptr create(std::string const & filename);
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::BundleMixin
 
-    private:
-        ConfigFileSource(std::string const & filename);
+template <class Source>
+prefix_ Source & senf::console::detail::BundleMixin::add(boost::intrusive_ptr<Source> source)
+{
+    return bundle_.add(source);
+}
 
-        virtual void v_parse(RestrictedExecutor & executor);
-
-        std::string filename_;
-        CommandParser parser_;
-    };
-
-}}}
-
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

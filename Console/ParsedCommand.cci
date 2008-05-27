@@ -31,6 +31,13 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ArgumentInfoBase
+
+prefix_ senf::console::detail::ArgumentInfoBase::ArgumentInfoBase(std::string const & type_)
+    : type (type_), name (), hasDefault (false)
+{}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::ParsedCommandOverloadBase
 
 prefix_ senf::console::ParsedCommandOverloadBase::ParsedCommandOverloadBase()
@@ -70,6 +77,13 @@ ParsedCommandAttributorBase(ParsedCommandOverloadBase & overload, unsigned index
     : overload_ (overload), index_ (index)
 {}
 
+prefix_ senf::console::ParsedCommandOverloadBase &
+senf::console::ParsedCommandAttributorBase::overload()
+    const
+{
+    return overload_;
+}
+
 prefix_ void senf::console::ParsedCommandAttributorBase::argName(std::string const & name)
     const
 {
@@ -92,13 +106,6 @@ prefix_ void senf::console::ParsedCommandAttributorBase::defaultDoc(std::string 
     const
 {
     overload().arg(index_).defaultDoc = doc;
-}
-
-prefix_ senf::console::ParsedCommandOverloadBase &
-senf::console::ParsedCommandAttributorBase::overload()
-    const
-{
-    return overload_;
 }
 
 prefix_ void senf::console::ParsedCommandAttributorBase::overloadDoc(std::string const & doc)

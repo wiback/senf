@@ -63,7 +63,8 @@ namespace console {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void add(detail::ConfigSource::ptr source);
+        template <class Source>
+        Source & add(boost::intrusive_ptr<Source> source);
 
         void parse();                   ///< Parse config file
                                         /**< All nodes already parsed are skipped */
@@ -112,8 +113,9 @@ namespace detail {
                                              complete config file again. */
 
     protected:
-        void add(ConfigSource::ptr source);
-
+        template <class Source>
+        Source & add(boost::intrusive_ptr<Source> source);
+        
     private:
         ConfigBundle bundle_;
     };
@@ -123,7 +125,7 @@ namespace detail {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Config.cci"
 //#include "Config.ct"
-//#include "Config.cti"
+#include "Config.cti"
 #endif
 
 

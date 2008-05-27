@@ -117,6 +117,7 @@ namespace detail {
     {
     public:
         typedef boost::intrusive_ptr<ConfigSource> ptr;
+        virtual ~ConfigSource();
 
         void parse(RestrictedExecutor & executor);
 

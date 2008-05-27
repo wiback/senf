@@ -58,7 +58,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     root.mkdir("name-with-dashes").add("fun-2", &fun2);
 
     {
-        char * argv[] = { "--dir1-fun1=foo","--fun2" };
+        char * argv[] = { "", "--dir1-fun1=foo","--fun2" };
         senf::console::ProgramOptions opts (sizeof(argv)/sizeof(argv[0]), argv, root);
 
         SENF_CHECK_NO_THROW( opts.parse() );
@@ -67,7 +67,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     }
 
     {
-        char * argv[] = { "--d-f=foo","--fun" };
+        char * argv[] = { "", "--d-f=foo","--fun" };
         senf::console::ProgramOptions opts (sizeof(argv)/sizeof(argv[0]), argv, root);
 
         val1 = "";
@@ -79,7 +79,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     }
 
     {
-        char * argv[] = { "--name-w-fun" };
+        char * argv[] = { "", "--name-w-fun" };
         senf::console::ProgramOptions opts (sizeof(argv)/sizeof(argv[0]), argv, root);
 
         val1 = "";
@@ -87,6 +87,51 @@ BOOST_AUTO_UNIT_TEST(programOptions)
 
         SENF_CHECK_NO_THROW( opts.parse() );
         BOOST_CHECK_EQUAL( val1, "" );
+        BOOST_CHECK_EQUAL( val2, true );
+    }
+    
+    {
+        char * argv[] = { "", "-ab" };
+        senf::console::ProgramOptions opts(sizeof(argv)/sizeof(argv[0]), argv, root);
+        opts
+            .alias('a', "--dir1-fun1=baz")
+            .alias('b', "--fun2");
+
+        val1 = "";
+        val2 = false;
+
+        SENF_CHECK_NO_THROW( opts.parse() );
+        BOOST_CHECK_EQUAL( val1, "baz" );
+        BOOST_CHECK_EQUAL( val2, true );
+    }
+
+    {
+        char * argv[] = { "", "-badoo" };
+        senf::console::ProgramOptions opts(sizeof(argv)/sizeof(argv[0]), argv, root);
+        opts
+            .alias('a', "--dir1-fun1", true)
+            .alias('b', "--fun2");
+
+        val1 = "";
+        val2 = false;
+
+        SENF_CHECK_NO_THROW( opts.parse() );
+        BOOST_CHECK_EQUAL( val1, "doo" );
+        BOOST_CHECK_EQUAL( val2, true );
+    }
+
+    {
+        char * argv[] = { "", "-a","dii","-b" };
+        senf::console::ProgramOptions opts(sizeof(argv)/sizeof(argv[0]), argv, root);
+        opts
+            .alias('a', "--dir1-fun1", true)
+            .alias('b', "--fun2");
+
+        val1 = "";
+        val2 = false;
+
+        SENF_CHECK_NO_THROW( opts.parse() );
+        BOOST_CHECK_EQUAL( val1, "dii" );
         BOOST_CHECK_EQUAL( val2, true );
     }
 }
