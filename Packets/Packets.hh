@@ -28,11 +28,45 @@
 
 #define HH_Packets__decls_
 
+#include "PacketTypes.hh"
+#include "PacketImpl.hh"
+#include "PacketData.hh"
+#include "PacketInterpreter.hh"
+#include "Packet.hh"
+#include "PacketType.hh"
+#include "PacketRegistry.hh"
+#include "PacketParser.hh"
+#include "SafeIterator.hh"
+#include "ArrayParser.hh"
+#include "ListParser.hh"
+#include "ListBParser.hh"
+#include "ListNParser.hh"
+#include "VariantParser.hh"
+#include "VectorParser.hh"
+#include "ParseHelpers.hh"
+#include "DataPacket.hh"
 #include "all_includes.hh"
 
 #undef HH_Packets__decls_
 
-#include "all_includes.hh"
+#include "PacketTypes.hh"
+#include "PacketImpl.hh"
+#include "PacketData.hh"
+#include "PacketInterpreter.hh"
+#include "Packet.hh"
+#include "PacketType.hh"
+#include "PacketRegistry.hh"
+#include "PacketParser.hh"
+#include "SafeIterator.hh"
+#include "ArrayParser.hh"
+#include "IntParser.hh"
+#include "ListParser.hh"
+#include "ListBParser.hh"
+#include "ListNParser.hh"
+#include "VariantParser.hh"
+#include "VectorParser.hh"
+#include "ParseHelpers.hh"
+#include "DataPacket.hh"
 
 #endif
 
