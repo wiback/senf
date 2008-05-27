@@ -249,7 +249,7 @@ senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path
                               boost::prior(path.end())),
                           dir);
         DirectoryNode & base (*dir.back().lock());
-        std::string const & name (boost::prior(path.end())->value());
+        std::string const & name (complete(base, boost::prior(path.end())->value()));
         if (policy_)
             policy_( base, name );
         return dir.back().lock()->get(name);
@@ -281,9 +281,10 @@ senf::console::Executor::traverseDirectory(ParseCommandInfo::TokensRange const &
                 ;
             else {
                 DirectoryNode & base (*dir.back().lock());
+                std::string name (complete(base, i->value()));
                 if (policy_)
-                    policy_( base, i->value() );
-                dir.push_back(base[i->value()].thisptr());
+                    policy_( base, name );
+                dir.push_back(base[name].thisptr());
             }
         }
     }
@@ -293,6 +294,17 @@ senf::console::Executor::traverseDirectory(ParseCommandInfo::TokensRange const &
     catch (UnknownNodeNameException &) {
         throw InvalidDirectoryException();
     }
+}
+
+prefix_ std::string senf::console::Executor::complete(DirectoryNode & dir,
+                                                      std::string const & name)
+{
+    if (! dir.hasChild(name)) {
+        DirectoryNode::ChildrenRange completions (dir.completions(name));
+        if (completions.size() == 1)
+            return completions.begin()->first;
+    }
+    return name;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

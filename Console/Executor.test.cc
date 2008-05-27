@@ -229,6 +229,38 @@ BOOST_AUTO_UNIT_TEST(executorPolicy)
     senf::console::root().remove("dir2");
 }
 
+BOOST_AUTO_UNIT_TEST(executorAuto)
+{
+    senf::console::root().mkdir("dir1").mkdir("dir3");
+    senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
+
+    senf::console::Executor executor;
+    executor
+        .autocomplete(true)
+        .autocd(true);
+    senf::console::CommandParser parser;
+
+    {
+        std::stringstream os;
+        parser.parse("dir2", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( executor.cwdPath(), "/dir2" );
+        BOOST_CHECK_EQUAL( os.str(), "" );
+    }
+    
+    {
+        std::stringstream os;
+        parser.parse("t", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( os.str(), "testCommand\n" );
+    }
+    
+
+    commands.clear();
+    senf::console::root().remove("dir1");
+    senf::console::root().remove("dir2");
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

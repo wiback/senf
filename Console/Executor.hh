@@ -145,6 +145,7 @@ namespace console {
         GenericNode & traverseNode(ParseCommandInfo::TokensRange const & path);
         void traverseDirectory(ParseCommandInfo::TokensRange const & path,
                                Path & dir);
+        std::string complete(DirectoryNode & dir, std::string const & name);
 
         struct InvalidPathException {};
         struct InvalidDirectoryException {};
