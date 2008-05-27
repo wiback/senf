@@ -45,7 +45,6 @@
 #include "VectorParser.hh"
 #include "ParseHelpers.hh"
 #include "DataPacket.hh"
-#include "all_includes.hh"
 
 #undef HH_Packets__decls_
 
