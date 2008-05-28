@@ -45,7 +45,7 @@ prefix_ void senf::console::detail::ConfigFileSource::v_parse(RestrictedExecutor
 
 ///////////////////////////////////////////////////////////////////////////
 
-prefix_ void senf::console::readConfig(std::string const & filename, DirectoryNode & root)
+prefix_ void senf::console::parseFile(std::string const & filename, DirectoryNode & root)
 {
     ConfigFile cfg (filename, root);
     cfg.parse();

@@ -66,6 +66,8 @@ namespace console {
         \implementation We do \e not provide an \c instance() member so we can easily later extend
             the server to allow registering more than one instance, e.g. with each instance on a
             differently firewalled port and with different security restrictions.
+        
+        \ingroup console_access
       */
     class Server
         : boost::noncopyable
@@ -115,6 +117,8 @@ namespace console {
         Whenever a new client connects, a new instance of this class is created. This class shows a
         command prompt, receives the commands, parses them and then passes (using a CommandParser)
         and passes the commands to an Executor instance.
+
+        \ingroup console_access
      */
     class Client
         : public senf::intrusive_refcount, 
@@ -166,10 +170,13 @@ namespace console {
     };
         
     /** \brief Output Console Client instance as it's string representation
-         */
+        \related Client
+     */
     std::ostream & operator<<(std::ostream & os, Client const & client);
+
     /** \brief Output Console Client instance as it's string representation
-         */
+        \related Client
+     */
     std::ostream & operator<<(std::ostream & os, Client * client);
 
 }}

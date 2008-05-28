@@ -52,6 +52,10 @@ namespace console {
         // Parse rest of the config file
         cf.parse();
         \endcode
+
+        If your application uses multiple configuration sources, use a ConfigBundle and FileConfig
+
+        \ingroup console_access
       */
     class ConfigFile 
         : public detail::BundleMixin
@@ -80,8 +84,15 @@ namespace console {
 
         \related ConfigFile
      */
-    void readConfig(std::string const & filename, DirectoryNode & root = root());
+    void parseFile(std::string const & filename, DirectoryNode & root = root());
 
+    /** \brief ConfigBundle source reading a configuration file
+
+        This constructor is used to create a config source parsing the given configuration file to
+        add to a ConfigBundle.
+
+        \related ConfigFile
+     */
     detail::ConfigFileSource::ptr FileConfig(std::string const & filename);
 
 }}

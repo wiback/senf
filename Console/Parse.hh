@@ -251,8 +251,9 @@ namespace console {
                                 | HexString
         };
         
-        Token();
-        Token(TokenType type, std::string token);
+        Token();                        ///< Create empty token
+        Token(TokenType type, std::string token); ///< Create token with given type and value
+
 
         std::string const & value() const; ///< String value of token
                                         /**< This value is properly unquoted */
@@ -274,16 +275,48 @@ namespace console {
 
     std::ostream & operator<<(std::ostream & os, Token const & token);
 
+    /** \brief Create a \c None token
+        \related Token */
     Token NoneToken();
+
+    /** \brief Create a \c PathSeparator ['/'] token
+        \related Token */
     Token PathSeparatorToken();
+
+    /** \brief Create an \c ArgumentGroupOpen ['('] token
+        \related Token */
     Token ArgumentGroupOpenToken();
+
+    /** \brief Create a \c ArgumentGroupClose [')'] token
+        \related Token */
     Token ArgumentGroupCloseToken();
+
+    /** \brief Create a \c DirectoryGroupOpen ['{'] token
+        \related Token */
     Token DirectoryGroupOpenToken();
+
+    /** \brief Create a \c DirectoryGroupClose ['}'] token
+        \related Token */
     Token DirectoryGroupCloseToken();
+
+    /** \brief Create a \c CommandTerminator [';'] token
+        \related Token */
     Token CommandTerminatorToken();
+
+    /** \brief Create a \c OtherPunctuation ['=', ','] token with the given \a value
+        \related Token */
     Token OtherPunctuationToken(std::string const & value);
+
+    /** \brief Create a \c BasicString token with the given \a value
+        \related Token */
     Token BasicStringToken(std::string const & value);
+
+    /** \brief Create a \c HexString token with the given \a value
+        \related Token */
     Token HexStringToken(std::string const & value);
+
+    /** \brief Create a \c Word token with the given \a value
+        \related Token */
     Token WordToken(std::string const & value);
 
     /** \brief Single parsed console command
@@ -343,12 +376,16 @@ namespace console {
                                         /**< The returned range contains \e all argument tokens in a
                                              single range not divided into separate arguments. */
 
-        void clear();
+        void clear();                   ///< Clear all data members
 
-        void builtin(BuiltinCommand builtin);
-        void command(std::vector<Token> & commandPath);
+        void builtin(BuiltinCommand builtin); ///< Assign builtin command 
+        void command(std::vector<Token> & commandPath); ///< Assign non-builtin command
 
-        void addToken(Token const & token);
+        void addToken(Token const & token); ///< Add argument token
+                                        /**< You \e must ensure, that the resulting argument tokens
+                                             are properly nested regarding '()' groups, otherwise
+                                             interpreting arguments using the arguments() call will
+                                             crash the program. */
 
     protected:
 
@@ -564,6 +601,11 @@ namespace console {
                                              read. */
 
         bool parseArguments(std::string arguments, ParseCommandInfo & info);
+                                        ///< Parse \a argumtns
+                                        /**< parseArguments() parses the string \a arguments which
+                                             contains arbitrary command arguments (without the name
+                                             of the command). The argument tokens are written into
+                                             \a info. */
 
     private:
         struct Impl;

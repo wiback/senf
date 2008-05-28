@@ -36,6 +36,8 @@ namespace senf {
 namespace console {
 namespace detail {
     
+#ifndef DOXYGEN
+
     class ProgramOptionsSource : public ConfigSource
     {
     public:
@@ -89,6 +91,8 @@ namespace detail {
         ShortOptions shortOptions_;
         boost::scoped_ptr<NonOptionContainer> nonOptions_;
     };
+
+#endif
 
 }}}
 

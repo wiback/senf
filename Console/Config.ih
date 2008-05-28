@@ -38,6 +38,11 @@ namespace senf {
 namespace console {
 namespace detail {
 
+    /** \brief Internal: Executor wrapper implementing restricted execution
+        
+        A RestrictedExecutor will only process commands which a re children of a given node. It does
+        \e not follow any links.
+     */
     class RestrictedExecutor
         : boost::noncopyable
     {
@@ -89,6 +94,11 @@ namespace detail {
         friend class RestrictGuard;
     };
 
+    /** \brief Internal: Set restricted node of a RestrictedExecutor
+        
+        A RestrictGuard will set the node to which to restrict. It will automatically reset the node
+        in it's destructor.
+     */
     class RestrictedExecutor::RestrictGuard
     {
     public:
@@ -110,7 +120,10 @@ namespace detail {
 
     };
 
-    /** \brief
+    /** \brief Internal: ConfigSource base class
+
+        All configuration sources derive from ConfigSource. A ConigSource somehow reads
+        configuration commands and passes them to a RestrictedExecutor.
       */
     class ConfigSource
         : public senf::intrusive_refcount

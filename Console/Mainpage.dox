@@ -33,13 +33,15 @@
 
     There are three parts to the Config/console library:
 
-    \li The console/config library is based on a \link node_tree tree of console/config
-        nodes. \endlink
-    \li Besides directories, the node contains command nodes. Commands are based on \link
-        console_commands variables or callbacks.\endlink
-    \li The console/config library is utilized by writing configuration files or interactive
-        commands in \link console_parser the console/config language.\endlink
+    The Config/Console library is built around several components
 
+    \li The \link node_tree Node tree\endlink represents all configuration options and commands
+        organized in a filesystem like structure.
+    \li \link console_commands Actions\endlink are added to the node tree in the form of command
+        nodes.
+    \li There exist several interfaces to \link console_access access\endlink entries in the node
+        tree: interactive console, reading configuration files etc.
+    
     The node tree works like a directory structure. Commands are entered into this directory
     structure and can be called passing arbitrary arguments. Configuration parameters are just
     commands which set their respective parameter, however the library allows commands to do much
@@ -62,7 +64,7 @@
 
     namespace kw = senf::console::kw;
 
-    int main(int, char**)
+    int main(int argc, char** argv)
     {
         // Provide global documentation
         senf::console::root()
@@ -75,13 +77,25 @@
             .arg("foo")
             .arg(kw::name = "bar", kw::default_value = 0);
 
+       // Parse command line parameters
+       senf::console::parseOptions(argc,argv);
+
         // Start the interactive console server
         senf::console::Server::start(senf::INet4SocketAddress(senf::INet4Address::None, 23232u))
             .name("someServer");
+
+        // Run the scheduler
+       senf::Scheduler::instance().process();
     }
     \endcode
 
-    after this registration, the console can be accessed easily via telnet:
+    after this registration, we can call the command from the command-line using
+
+    <pre>
+    $ someServer --mycommand="1 2"
+    </pre>
+
+    the console can be accessed easily via telnet:
     
     <pre>
     $ telnet localhost 23232
@@ -101,7 +115,313 @@
 
     \see \ref console_testserver for a complete example application
 
-    \section intro_init Initialization
+    \section intro_usage Access
+
+    There are several ways to access the node tree:
+    \li By parsing configuration files
+    \li By parsing command line parameters
+    \li By providing interactive console access
+
+    \see console_access
+
+    \section intro_nodes The node tree
+
+    The basic idea is, that the console/config library manages a directory structure of parameters
+    and auxiliary commands. Parameters are just commands which set a parameter value so everything
+    is either a directory entry (senf::console::DirectoryNode) or a command
+    (senf::console::CommandNode).
+    
+    \see \ref node_tree
+
+
+    \section intro_commands Registering console/config commands
+
+    The console/config language does not define, how arguments are passed to the commands, it just
+    tokenizes the input and passes the tokens to the commands which then handle the
+    conversion.
+
+    Since parsing the tokens into something usable is quite tedious and error prone, the library
+    implements automatic argument parsing where the argument tokens are automatically parsed
+    depending on argument types. This enables you to register a command taking an integer argument
+    which will be called with an already parsed integer value (or throw a
+    senf::console::SyntaxErrorException if the conversion fails). This will be the most often used
+    command.
+
+    \see \ref console_commands
+ */
+
+/** \defgroup console_access Accessing the Console/Config tree
+
+    The Console/Config library provides several ways to use the node tree to configure and control
+    an application.
+
+    \autotoc
+
+    \section console_access_config Configuration support
+
+    The configuration support of the Console/Config library revolves around the ConfigSource
+    concept. Each ConfigSource will somehow provide commands which will then be executed against the
+    node tree.
+
+    To simplify the usage, there will always be three interfaces to a specific config source:
+    \li A constructor to build a bare config source which is then added to a
+        senf::console::ConfigBundle (see \ref console_access_multiple)
+    \li A class parsing and executing a single config source. The visible interface of this class is
+        a combination of the constructor and the senf::console::ConfigBundle interfaces.
+    \li A helper function which will do the complete parsing of a single source with default
+        parameters.
+
+    When parsing these configuration sources, it is always possible to optionally change the root
+    node used during parsing and it is also possible to restrict parsing to a command subset. See
+    \ref console_access_partial.
+
+    \subsection console_access_file Configuration files
+
+    <table class="senf fixedwidth">
+    <tr><td><b>Constructor</b></td> <td>senf::console::FileConfig()</td></tr>
+    <tr><td><b>Class</b></td>       <td>senf::console::ConfigFile</td></tr>
+    <tr><td><b>Helper</b></td>      <td>senf::console::parseFile()</td></tr>
+    </table>
+
+    In it's simplest form, parsing a configuration file consists of calling
+    senf::console::parseFile() with the name of the respective config file as argument.
+
+    \code
+    senf::console::parseFile("some.conf");
+    \endcode
+
+    To get more flexible, instantiate a senf::console::ConfigFile instance at use that to parse the
+    file
+    
+    \code
+    senf::console::ConfigFile cf ("some.conf");
+    cf.parse();
+    \endcode
+
+    If the application supports other configuration sources besides a single configuration file
+    (like command line options) or if it supports multiple configuration files (e.g. a system-wide
+    and a user specific configuration file) see \ref console_access_multiple and add one (or more)
+    senf::console::FileConfig() source to a senf::console::ConfigBundle.
+
+    \subsubsection console_access_file_syntax Configuration file syntax
+
+    Configuration files are written in a simple configuration language. This language is almost
+    declarative (e.g. it does not have any control-flow statements) but is processed imperatively
+    from top to bottom. This is very simple and flexible.
+
+    Commands are referenced by their path in the node tree. To simplify working with deeply nested
+    directory structures, the current directory may be changed persistently or temporarily for some
+    commands.
+    \code
+    /server/port 1234;
+    
+    /logger/targets/console {
+        accept senf::log::Debug IMPORTANT;
+        accept server::ServerLog CRITICAL;
+    }
+    \endcode
+
+    \see \ref console_parser
+
+    \subsection console_access_options Command line options
+
+    <table class="senf fixedwidth">
+    <tr><td><b>Constructor</b></td> <td>senf::console::OptionsConfig()</td></tr>
+    <tr><td><b>Class</b></td>       <td>senf::console::ProgramOptions</td></tr>
+    <tr><td><b>Helper</b></td>      <td>senf::console::parseOptions()</td></tr>
+    </table>
+
+    Command line options can either be parsed by calling the senf::console::parseOptions() helper
+
+    \code
+    senf::console::parseOptions(argc, argv)
+    \endcode
+
+    or more flexibly by instantiating a senf::console::ProgramOptions class
+
+    \code
+    std::vector<std::string> args;
+    senf::console::ProgramOptions opts (argc, argv);
+    opts
+        .nonOptions(args)
+        .alias('c', "--mycommand",true)
+        .alias('C', "--mycommand=2 3");
+    opts.parse();
+    \endcode
+
+    This registeres two short options and accumulates all non-option arguments in \c args.
+    
+    If the application supports other configuration sources besides the command line options (like
+    configuration files) see \ref console_access_multiple and add a senf::console::OptionsConfig()
+    source to a senf::console::ConfigBundle.
+
+    See \ref senf::console::ProgramOptions for the source specific additional parameters. These
+    apply to senf::console::ProgramOptions and to the senf::console::OptionsConfig() source.
+
+    \subsubsection console_access_options_syntax Options syntax
+
+    Command line options are primarily parsed as long-options. Long options start with '--'. Further
+    '-' characters serve as directory separators if required (that is, they are \e only interpreted
+    as directory separator is there is no entry in the current (sub-) directory matching more than a
+    single name component). This still allows using hyphens in node names.
+
+    Options can be abbreviated at each directory boundary: A command <tt>/foo/bar/do</tt> can be
+    called as <tt>--f-b-d</tt> as long as this name is unique.
+
+    Everything after the first '=' character is parsed into argument tokens using the normal
+    config/console parser. If the option has no '=' character, the list of argument tokens will be
+    empty.
+    
+    <table style="font-size:80%" class="senf">
+    <tr><th>Command</th><th>File syntax</th><th>Option syntax</th></tr>
+
+    <tr>
+      <td><tt>void doo()</tt></td>
+      <td><tt>/path/to/doo;</tt></td>
+      <td><tt>--path-to-doo</tt></td>
+    </tr>
+
+    <tr>
+      <td><tt>void doo(std::string const &)</tt></td>
+      <td><tt>/path/to/doo john.doe@everywhere.org;</tt></td>
+      <td><tt>--path-to-doo="john.doe@everywhere.org"</tt></td>
+    </tr>
+    
+    <tr>
+      <td><tt>void doo(std::string const &)</tt></td>
+      <td><tt>/path/to/doo "some test";</tt></td>
+      <td><tt>--path-to-doo='"some text"'</tt></td>
+    </tr>
+
+    <tr>
+      <td><tt>void doo(std::string const &, int)</tt></td>
+      <td><tt>/path/to/doo take 1;</tt></td>
+      <td><tt>--path-to-doo="take 1"</tt></td>
+    </tr>
+    </table>
+
+    The last column is additionally quoted using standard \c sh quoting: quotes in arguments need to
+    be additionally quoted for the shell.
+
+    Short options are registered as aliases for long options. They can be registered with or without
+    an implied parameter and can optionally take a parameter. so after
+
+    \code
+    opts
+        .alias('c', "--mycommand",true)
+        .alias('C', "--mycommand=2 3");
+    \endcode
+
+    we can call
+
+    <pre>
+    $ program -C -c "4 5"
+    $ program -Cc"4 5"
+    </pre>
+
+    which is the same as
+    
+    <pre>
+    $ program --mycommand="2 3" --mycommand="4 5"
+    </pre>
+
+    (Beware, that the second argument to \c alias() is \e not shell quoted). 
+
+    \subsection console_access_root Changing the root node
+
+    When used in it's default state, parsing will always interpret all commands relative to the
+    senf::console::root() node and will parse a file completely.
+
+    The first possibility to control this is to change the root node. This is done by 
+    \li passing that root node to the helper class or to the parse helper as an additional argument
+        (see the respective documentation).
+    \li passing it to the senf:;console::ConfigBundle constructor when parsing multiple sources.
+    
+    for example:
+
+    \code
+    senf::console::parseFile("/etc/myserver.conf", senf::console::root()['config']);
+    \endcode
+
+    This functionality is even more powerful by combining it with \c link nodes: This allows to
+    selectively choose commands from the node tree which are to be made accessible for
+    configuration. See \ref node_tree.
+
+    \subsection console_access_partial Partial / incremental configuration
+
+    Another feature provided by senf::console::ConfigBundle and all helper classes is partial
+    parsing.
+
+    \code
+    // Create a console/config aware object and place it into the node tree
+    FooObject foo;
+    senf::console::add("foo", foo.dir);
+
+    // Open configuration file
+    senf::console::ConfigFile cf ("/etc/myserver.conf");
+    
+    // Parse only commands in the configuration file which are in the foo.dir directory
+    cf.parse(foo.dir);
+
+    ...
+
+    // Anywhere later, parse the rest of the configuration file
+    cf.parse();
+    \endcode
+
+    This feature allows to parse parts of one or more configuration sources before the
+    console/config tree has been fully established. Partial parsing can be applied any number of
+    times to arbitrary nodes. Any command already parsed will be skipped automatically.
+
+    When combining partial parsing with \c chroot() and \c link's, it is important to realize, that
+    <em>partial parsing always applies to the \e real target and ignores links</em>. This is very
+    important: It allows a subsystem to parse it's configuration parameters irrespective of any
+    links pointing to nodes of that subsystem.
+
+    \subsection console_access_multiple Multiple sources
+
+    Most of the time, an application will utilize multiple configuration sources: A global
+    configuration file, maybe a user specific local configuration file, command line options ...
+
+    When parsing configuration commands, especially using partial / incremental parsing, all parse
+    commands should be applied to each configuration source in turn. This is the responsibility of
+    senf::console::ConfigBundle.
+
+    \code
+    senf::console::ScopedDirectory<> config;
+    senf::console::root().add("config", config);
+
+    // Let's enable all logger commands for configuration
+    config.link("logger", senf::console::root()["logger"]);
+
+    // Create bundle and add sources
+    std::vector<std::string> args;
+    senf::console::ConfigBundle conf (senf::console::root()["config"]);
+    conf.add( senf::console::FileConfig("/etc/myserver.conf") );
+    conf.add( senf::console::FileConfig(".myserver.conf") );
+    conf.add( senf::console::OptionsConfig(senf::Daemon::instance().argc(), 
+                                           senf::Daemon::instance().argv()) )
+        .nonOptions(args)
+        .alias('c', "--mycommand",true)
+        .alias('C', "--mycommand=2 3");
+
+    // Parse the logger subsystem commands in '/logger'
+    conf.parse(senf::console::root()['logger']);
+    
+    ...
+
+    // Parse all other configuration commands. All necessary commands and links in '/config' must by
+    // now have been created.  
+    conf.parse();
+    \endcode
+
+    This example parses three configuration sources: Two configuration files and additional
+    parameters specified on the command line. All the configuration commands are placed into the
+    <tt>/config</tt> directory (directly or via links). The configuration sources are parsed in the
+    order they are specified, so in this case, the command line options will override any options
+    specified in one of the configuration files.
+
+    \section console_access_console The interactive console
 
     To make the console accessible, it must be initialized when the program is started:
     \code
@@ -139,55 +459,6 @@
     bash$
     </pre>
     \endhtmlonly
-
-    \section intro_nodes The node tree
-
-    The basic idea is, that the console/config library manages a directory structure of parameters
-    and auxiliary commands. Parameters are just commands which set a parameter value so everything
-    is either a directory entry (senf::console::DirectoryNode) or a command
-    (senf::console::CommandNode).
-    
-    \see \ref node_tree
-
-
-    \section intro_commands Registering console/config commands
-
-    The console/config language does not define, how arguments are passed to the commands, it just
-    tokenizes the input and passes the tokens to the commands which then handle the
-    conversion.
-
-    Since parsing the tokens into something usable is quite tedious and error prone, the library
-    implements automatic argument parsing where the argument tokens are automatically parsed
-    depending on argument types. This enables you to register a command taking an integer argument
-    which will be called with an already parsed integer value (or throw a
-    senf::console::SyntaxErrorException if the conversion fails). This will be the most often used
-    command.
-
-    \see \ref console_commands
-    
-
-    \section intro_language The console/config language
-
-    To call the commands and set parameters, a very simple language is defined. The language is
-    almost declarative (e.g. it does not have any control-flow statements) but is processed
-    imperatively from top to bottom. This is very simple and flexible.
-
-    Commands are referenced by their path in the node tree. To simplify working with deeply nested
-    directory structures, the current directory may be changed persistently or temporarily for some
-    commands.
-    \code
-    /server/port 1234;
-    
-    /logger/targets/console {
-        accept senf::log::Debug IMPORTANT;
-        accept server::ServerLog CRITICAL;
-    }
-    \endcode
-
-    \see \ref console_parser
-
-
-    \section console_misc Further features
 
     \subsection console_serverclient Server and Client objects
 
@@ -232,6 +503,7 @@
     prompt, the console will change to that directory. With auto-completion, any unique beginning of
     a path component will be completed automatically and transparently to th corresponding full
     name.
+
  */
 
 /** \defgroup console_commands Supported command types

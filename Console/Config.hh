@@ -38,34 +38,44 @@
 namespace senf {
 namespace console {
 
-    /** \brief
+    /** \brief Combine multiple configuration sources
+
+        A ConfigBundle combines several sources and parses them together, in the order they were
+        added. Parse restrictions are applied uniformly to all sources.
+        \code
+        // Add three configuration sources: A system configuration file, a user configuration file
+        // and command line options
+        senf::console::ConfigBundle conf;
+        conf.add( senf::console::FileConfig("/etc/some.conf") );
+        conf.add( senf::console::FileConfig("local.conf") );
+        conf.add( senf::console::OptionsConfig(senf::Daemon::instance().argc(),
+                                               senf::Daemon::instance().argv()) );
+
+        conf.parse();
+        \endcode
+
+        This bundle may also be passed to other code which may use restricted parsing to parse
+        partial information from all configuration sources.
+        
+        \ingroup console_access
       */
     class ConfigBundle
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
         ConfigBundle();
-        ConfigBundle(DirectoryNode & root);
-
-        // default default constructor
-        // default copy constructor
-        // default copy assignment
-        // default destructor
-
-        // no conversion constructors
+        ConfigBundle(DirectoryNode & root); ///< Set custom root node
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
         template <class Source>
         Source & add(boost::intrusive_ptr<Source> source);
-
+                                        ///< Add configuration source
+       
         void parse();                   ///< Parse config file
                                         /**< All nodes already parsed are skipped */
         void parse(DirectoryNode & restrict); ///< Parse config file under \a restrict
@@ -93,6 +103,12 @@ namespace console {
 namespace detail {
     // hrmpf ... Can't place this into Config.ih ...
 
+    /** \brief Internal: Provide ConfigBundle facade for a single-source config.
+
+        The BundleMixin is used to define supplementary configuration objects for one specific
+        configuration source. A BundleMixin is \e not a ConfigBundle since it has no public \c add()
+        member.
+     */
     class BundleMixin
     {
     public:

@@ -37,6 +37,33 @@
 namespace senf {
 namespace console {
 
+    /** \brief Console node tree based command line option parser
+
+        A ProgramOptions instance allows flexible parsing of command line options against the
+        console node tree. If you just want to parse all options, the senf::console::parseOptions()
+        function will do that. ProgramOptions however allows to incrementally parse only a
+        subset of the given command line options.
+        \code
+        std::vector<std::string> args;
+        senf::console::ProgramOptions cf (argc, argv);
+        cf
+            .nonOptions(args)
+            .alias('n', "--foo-bar=x")
+            .alias('x', "--xxx", true);
+
+        // Parse only options under the directory of some object. The object 'ob'
+        // must have been registered somewhere in the node tree
+        cf.parse(ob.dir);
+        
+        // Parse rest of the config file
+        cf.parse();
+        \endcode
+
+        If your application uses multiple configuration sources, use a ConfigBundle and
+        OptionsConfig.
+
+        \ingroup console_access
+      */
     class ProgramOptions
         : public detail::BundleMixin
     {
@@ -46,20 +73,55 @@ namespace console {
         ///@{
         
         ProgramOptions(int argc, char ** argv, DirectoryNode & root = root());
+                                        ///< Create ProgramOptions parser for given options
+                                        /**< The given argc/argv values are those passed to main by
+                                             the operating system. Especially argv[0] is \e not an
+                                             option and is ignored. */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
         
         template <class Container>
         ProgramOptions & nonOptions(Container & container);
+                                        ///< Set container to add non-option arguments to
+                                        /**< \a container must have a \c clear() and a \c
+                                             push_back(std::string) member. All non-options are
+                                             added to \a container. Before parsing the command-line,
+                                             \a clear() is called. */
         ProgramOptions & alias(char letter, std::string const & longOpt, bool withArg=false);
+                                        ///< Set short option alias
+                                        /**< A short option is always an alias for a long option
+                                             with or without argument. if \a withArg is \c true, the
+                                             short option will expect an argument on the command
+                                             line. This argument will be appended (with an
+                                             additional '=') to \a longOpt. If \a withArg is \c
+                                             false (the default), \a longOpt may optional contain an
+                                             argument. 
+                                             \param[in] letter option letter
+                                             \param[in] longOpt long option alias
+                                             \param[in] withArg \c true, if the option should take
+                                                 an argument. */
 
     private:
         detail::ProgramOptionsSource & config_;
     };
 
+    /** \brief Parse command line options
+
+        The command line otpions in \a argc / \a argv will be parsed, interpreting all node's
+        relative to \a root as root node.
+
+        \related ProgramOptions
+     */
     void parseOptions(int argc, char ** argv, DirectoryNode & root = root());
 
+    /** \brief ConfigBundle source reading command line options
+
+        This cosntructor is used to create aconfig source parsing the given command line options to
+        add to a ConfigBundle.
+
+        \related ProgramOptions
+     */
     detail::ProgramOptionsSource::ptr OptionsConfig(int argc, char ** argv);
 }}
 

@@ -40,6 +40,8 @@ namespace senf {
 namespace console {
 namespace detail {
 
+#ifndef DOXYGEN
+
     /** \brief Internal: GNU readline based ClientReader implementation
         
         This implementation of the ClientReader interface uses GNU readline library to provide a
@@ -106,6 +108,8 @@ namespace detail {
 
         boost::scoped_ptr<ClientReader> reader_;
     };
+
+#endif
 
 }}}
 
