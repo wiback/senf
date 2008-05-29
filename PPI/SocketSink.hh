@@ -35,6 +35,8 @@
 #include "../Socket/CommunicationPolicy.hh"
 #include "Module.hh"
 #include "Connectors.hh"
+#include "../Socket/Protocols/INet/INetAddressing.hh"
+#include "IOEvent.hh"
 
 //#include "SocketSink.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -63,6 +65,35 @@ namespace ppi {
                                              \param[in] packet Packet to write */
     };
 
+    class IPv6SourceForcingDgramWriter
+    {
+    public:
+        IPv6SourceForcingDgramWriter();
+        IPv6SourceForcingDgramWriter(senf::INet6Address sourceAddr, senf::INet6SocketAddress destAddr);
+        typedef senf::ClientSocketHandle<
+            senf::MakeSocketPolicy< senf::WriteablePolicy,
+                                    senf::DatagramFramingPolicy>::policy > Handle;
+                                        ///< Handle type supported by this writer
+        
+        void source(senf::INet6Address & source);
+        senf::INet6Address source();
+        void destination(senf::INet6SocketAddress & dest);
+        senf::INet6SocketAddress destination();
+
+        void operator()(Handle handle, Packet packet);
+                                        ///< Write \a packet to \a handle
+                                        /**< Write the complete \a packet as a datagram to \a
+                                             handle.
+                                             \param[in] handle Handle to write data to
+                                             \param[in] packet Packet to write */
+    private:
+        int sendtoandfrom(int sock, const void *data, size_t dataLen, const in6_addr *dst, int port, const in6_addr *src);
+        senf::INet6Address source_;
+        senf::INet6Address destination_;
+        unsigned int protocolId_;
+};    
+    
+    
 }}
 
 namespace senf {
