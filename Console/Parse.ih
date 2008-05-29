@@ -32,6 +32,8 @@
 #include <boost/spirit.hpp>
 #include <boost/spirit/utility/grammar_def.hpp>
 #include <boost/spirit/actor.hpp>
+#include <boost/spirit/dynamic.hpp>
+#include <boost/spirit/phoenix.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/ref.hpp>
@@ -97,6 +99,11 @@ namespace detail {
         };
 
         Context & context;
+
+        ///////////////////////////////////////////////////////////////////////////
+        // Configuration
+
+        bool incremental;
 
         ///////////////////////////////////////////////////////////////////////////
         // Dispatching semantic actions
@@ -169,7 +176,7 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
 
         CommandGrammar(ParseDispatcher & d, Context & c) 
-            : context(c), dispatcher(d) {}
+            : context(c), incremental(false), dispatcher(d) {}
 
         template <class Scanner>
         struct definition 
@@ -179,7 +186,8 @@ namespace detail {
         {
             boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
                 punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin, 
-                skip, commands, block, statement, relpath, abspath, arguments;
+                skip, statement, relpath, abspath, arguments, group_start, group_close, 
+                statement_end;
             boost::spirit::chset<> special_p, punctuation_p, space_p, invalid_p, word_p;
             boost::spirit::distinct_parser<> keyword_p;
 
@@ -209,6 +217,7 @@ namespace detail {
 
             {
                 using namespace boost::spirit;
+                using namespace phoenix;
                 typedef ParseDispatcher PD;
                 typedef Token AT;
 
@@ -218,11 +227,13 @@ namespace detail {
                 // Syntax summary:
                 // This is EBNF with some minor tweaks to accommodate C++ syntax
                 //
-                //   * and +    like EBNF but they precede their argument
-                //   >>         is followed by
-                //   !          optional
-                //   a % b      match any number of a's separated by b
-                //   a - b      match a but not b
+                //   * a        any number of a's
+                //   + a        at least one a
+                //   ! a        an optional a
+                //   a >> b     a followed by b
+                //   a | b      a or b
+                //   a % b      any number of a's separated by b's
+                //   a - b      a but not b
                 //
                 // Beside this, we use some special parsers (ch_p, eps_p, confix_p, lex_escape_ch_p,
                 // keyword_p, comment_p) and directives (lexeme_d), however, the parser should be
@@ -248,13 +259,10 @@ namespace detail {
                 //
                 // More info is in the Boost.Spirit documentation
 
-                commands
-                    =  * command
-                    ;
-
                 command 
-                    =    builtin >> (ch_p(';') | end_p)
-                    |    path  >> ( block | statement )
+                    =    builtin >> statement_end
+                    |    path >> ( group_start | statement )
+                    |    group_close
                     |    ch_p(';') // Ignore empty commands
                     ;
 
@@ -275,19 +283,20 @@ namespace detail {
                                                                   boost::ref(self.context.path)) ]
                     ;
 
-                block
+                group_start
                     =    ch_p('{')                [ self.dispatch(&PD::pushDirectory,
                                                                   boost::ref(self.context.path)) ]
-                      >> * command 
-                      >> ch_p('}')                [ self.dispatch(&PD::popDirectory) ]
+                    ;
+
+                group_close
+                    =    ch_p('}')                [ self.dispatch(&PD::popDirectory) ]
                     ;
 
                 statement
-                    = eps_p                       [ self.dispatch(&PD::beginCommand, 
+                    =    eps_p                    [ self.dispatch(&PD::beginCommand, 
                                                                   boost::ref(self.context.path)) ]
                       >> arguments
-                      >> (ch_p(';') | end_p)
-                      >> eps_p                    [ self.dispatch(&PD::endCommand) ]
+                      >> statement_end            [ self.dispatch(&PD::endCommand) ]
                     ;
 
                 arguments
@@ -378,8 +387,7 @@ namespace detail {
                 word                    // Returns value in context.token
                     =    lexeme_d
                          [
-                             eps_p
-                          >> (+ word_p)           [ assign_a(self.context.str) ]
+                             (+ word_p)           [ assign_a(self.context.str) ]
                          ]
                       >> eps_p                    [ self.set_token_a(AT::Word, self.context.str) ]
                     ;
@@ -389,6 +397,16 @@ namespace detail {
                                                   [ append_a(self.context.str) ]
                     ;
 
+                statement_end
+                    =    if_p(var(self.incremental)) [
+                               ch_p(';')
+                         ]
+                         .else_p [
+                               ch_p(';') 
+                             | end_p
+                         ]
+                    ;
+
                 skip
                     =    space_p | comment_p('#')
                     ;
@@ -396,7 +414,7 @@ namespace detail {
                 ///////////////////////////////////////////////////////////////////
 
                 start_parsers(
-                    commands,           // CommandParser
+                    command,            // CommandParser
                     skip,               // SkipParser
                     arguments           // ArgumentsParser
                 );

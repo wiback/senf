@@ -377,6 +377,7 @@ namespace console {
                                              single range not divided into separate arguments. */
 
         void clear();                   ///< Clear all data members
+        bool empty();                   ///< \c true, if the data is empty
 
         void builtin(BuiltinCommand builtin); ///< Assign builtin command 
         void command(std::vector<Token> & commandPath); ///< Assign non-builtin command
@@ -595,24 +596,41 @@ namespace console {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        bool parse(std::string command, Callback cb); ///< Parse string
-        bool parseFile(std::string filename, Callback cb); ///< Parse file
+        bool parse(std::string const & command, Callback cb); ///< Parse string
+        bool parseFile(std::string const & filename, Callback cb); ///< Parse file
                                         /**< \throws SystemException if the file cannot be
                                              read. */
 
-        bool parseArguments(std::string arguments, ParseCommandInfo & info);
+        bool parseArguments(std::string const & arguments, ParseCommandInfo & info);
                                         ///< Parse \a argumtns
                                         /**< parseArguments() parses the string \a arguments which
                                              contains arbitrary command arguments (without the name
                                              of the command). The argument tokens are written into
                                              \a info. */
 
+        std::string::size_type parseIncremental(std::string const & commands, Callback cb);
+                                        ///< Incremental parse
+                                        /**< An incremental parse will parse all complete statements
+                                             in \a commands. parseIncremental() will return the
+                                             number of characters successfully parsed from \a
+                                             commands. 
+                                             
+                                             \note The incremental parser \e requires all statements
+                                                 to be terminated explicitly. This means, that the
+                                                 last ';' is \e not optional in this case. */
+
     private:
         struct Impl;
+        struct SetIncremental;
+
+        template <class Iterator>
+        Iterator parseLoop(Iterator b, Iterator e, Callback cb);
 
         Impl & impl();
 
         boost::scoped_ptr<Impl> impl_;
+
+        friend class SetIncremental;
     };
 
 }}

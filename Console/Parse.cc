@@ -45,12 +45,11 @@ namespace detail {
     struct ParseDispatcher
     {
         ParseCommandInfo * info_;
-        CommandParser::Callback cb_;
 
         struct BindInfo {
-            BindInfo( ParseDispatcher & d, ParseCommandInfo & info, CommandParser::Callback cb)
-                : dispatcher (d) { dispatcher.info_ = &info; dispatcher.cb_ = cb; }
-            ~BindInfo() { dispatcher.info_ = 0; dispatcher.cb_  = 0; }
+            BindInfo( ParseDispatcher & d, ParseCommandInfo & info)
+                : dispatcher (d) { dispatcher.info_ = &info; }
+            ~BindInfo() { dispatcher.info_ = 0; }
 
             ParseDispatcher & dispatcher;
         };
@@ -60,7 +59,7 @@ namespace detail {
               info_->command(command); }
 
         void endCommand()
-            { cb_(*info_); }
+            { }
 
         void pushToken(Token const & token)
             { info_->addToken(token); }
@@ -68,36 +67,30 @@ namespace detail {
         void builtin_cd(std::vector<Token> & path)
             { info_->clear();
               info_->builtin(ParseCommandInfo::BuiltinCD);
-              setBuiltinPathArg(path);
-              cb_(*info_); }
+              setBuiltinPathArg(path); }
 
         void builtin_ls(std::vector<Token> & path)
             { info_->clear();
               info_->builtin(ParseCommandInfo::BuiltinLS);
-              setBuiltinPathArg(path);
-              cb_(*info_); }
+              setBuiltinPathArg(path); }
 
         void pushDirectory(std::vector<Token> & path)
             { info_->clear();
               info_->builtin(ParseCommandInfo::BuiltinPUSHD);
-              setBuiltinPathArg(path);
-              cb_(*info_); }
+              setBuiltinPathArg(path); }
 
         void popDirectory()
             { info_->clear();
-              info_->builtin(ParseCommandInfo::BuiltinPOPD);
-              cb_(*info_); }
+              info_->builtin(ParseCommandInfo::BuiltinPOPD); }
         
         void builtin_exit()
             { info_->clear();
-              info_->builtin(ParseCommandInfo::BuiltinEXIT);
-              cb_(*info_); }
+              info_->builtin(ParseCommandInfo::BuiltinEXIT); }
 
         void builtin_help(std::vector<Token> & path)
             { info_->clear();
               info_->builtin(ParseCommandInfo::BuiltinHELP);
-              setBuiltinPathArg(path);
-              cb_(*info_); }
+              setBuiltinPathArg(path); }
 
         void setBuiltinPathArg(std::vector<Token> & path)
             {
@@ -132,14 +125,16 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Token const 
         "Word" };
     // The real table is:
     //     static const int bitPosition[32] = {
-    //         0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 
-    //         31, 27, 13, 23, 21, 19, 16, 7, 26, 12, 18, 6, 11, 5, 10, 9 };
-    // However, we have replaced all values > sizeof(tokenTypeName) with 0
+    //          0,  1, 28,  2, 29, 14, 24,  3, 30, 22, 20, 15, 25, 17,  4,  8, 
+    //         31, 27, 13, 23, 21, 19, 16,  7, 26, 12, 18,  6, 11,  5, 10,  9 };
+    // However, we have replaced all values >= sizeof(tokenTypeName) with 0
+    // and have added 1 to all the remaining values
     static const int bitPosition[32] = {
-        0, 1, 0, 2, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 4, 8, 
-        0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 6, 0, 5, 10, 9 };
+        1, 2, 0, 3, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 5, 9, 
+        0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 7, 0, 6, 0, 10 };
+    // We need to check token.type() against 0 explicitly since 0 and 1 will both be mapped to 0
     os << tokenTypeName[ token.type() 
-                         ? bitPosition[((token.type() & -token.type()) * 0x077CB531UL) >> 27]+1
+                         ? bitPosition[((token.type() & -token.type()) * 0x077CB531UL) >> 27]
                          : 0 ]
        << "('"
        << token.value()
@@ -165,7 +160,7 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
         }
     }
     else {
-        char const * builtins[] = { "", "cd", "ls", "pushd", "popd", "exit", "help" };
+        char const * builtins[] = { 0, "cd", "ls", "pushd", "popd", "exit", "help" };
         stream << "builtin-" << builtins[info.builtin()];
     }
         
@@ -253,38 +248,77 @@ prefix_ senf::console::CommandParser::CommandParser()
 prefix_ senf::console::CommandParser::~CommandParser()
 {}
 
-prefix_ bool senf::console::CommandParser::parse(std::string command, Callback cb)
+// This template member is placed here, since it is ONLY called from the implementation.  Otherwise,
+// we would need to expose the Impl member to the public, which we don't want to do.
+
+template <class Iterator>
+prefix_ Iterator senf::console::CommandParser::parseLoop(Iterator b, Iterator e, Callback cb)
 {
     ParseCommandInfo info;
-    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info, cb);
-    return boost::spirit::parse( command.begin(), command.end(), 
-                                 impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
-                                 impl().grammar.use_parser<Impl::Grammar::SkipParser>()
-        ).full;
+    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
+    boost::spirit::parse_info<Iterator> result;
+
+    for(;;) {
+        result = boost::spirit::parse(
+            b, e, * impl().grammar.use_parser<Impl::Grammar::SkipParser>());
+        b = result.stop;
+        if (b == e) 
+            return e;
+        info.clear();
+        result = boost::spirit::parse(b, e,
+                                      impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
+                                      impl().grammar.use_parser<Impl::Grammar::SkipParser>());
+        if (! result.hit) 
+            return b;
+        if (! info.empty()) 
+            cb(info);
+        b = result.stop;
+    }
 }
 
-prefix_ bool senf::console::CommandParser::parseFile(std::string filename, Callback cb)
+prefix_ bool senf::console::CommandParser::parse(std::string const & command, Callback cb)
 {
-    ParseCommandInfo info;
-    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info, cb);
+    return parseLoop(command.begin(), command.end(), cb) == command.end();
+}
+
+prefix_ bool senf::console::CommandParser::parseFile(std::string const & filename, Callback cb)
+{
     boost::spirit::file_iterator<> i (filename);
     if (!i) throw SystemException(ENOENT SENF_EXC_DEBUGINFO);
     boost::spirit::file_iterator<> const i_end (i.make_end());
     
-    return boost::spirit::parse( i, i_end, 
-                                 impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
-                                 impl().grammar.use_parser<Impl::Grammar::SkipParser>()
-        ).full;
+    return parseLoop(i, i_end, cb) == i_end;
 }
 
-prefix_ bool senf::console::CommandParser::parseArguments(std::string arguments,
+prefix_ bool senf::console::CommandParser::parseArguments(std::string const & arguments,
                                                           ParseCommandInfo & info)
 {
-    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info, 0);
+    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
     return boost::spirit::parse( arguments.begin(), arguments.end(), 
                                  impl().grammar.use_parser<Impl::Grammar::ArgumentsParser>(),
                                  impl().grammar.use_parser<Impl::Grammar::SkipParser>()
         ).full;
+}
+
+struct senf::console::CommandParser::SetIncremental
+{
+    SetIncremental(CommandParser & parser) : parser_ (parser) {
+        parser_.impl().grammar.incremental = true;
+    }
+
+    ~SetIncremental() {
+        parser_.impl().grammar.incremental = false;
+    }
+
+    CommandParser & parser_;
+};
+
+prefix_ std::string::size_type
+senf::console::CommandParser::parseIncremental(std::string const & commands, Callback cb)
+{
+    SetIncremental si (*this);
+    return std::distance( commands.begin(), 
+                          parseLoop(commands.begin(), commands.end(), cb) );
 }
 
 ///////////////////////////////////////////////////////////////////////////

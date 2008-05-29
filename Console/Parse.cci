@@ -170,6 +170,11 @@ prefix_ void senf::console::ParseCommandInfo::clear()
     tokens_.clear();
 }
 
+prefix_ bool senf::console::ParseCommandInfo::empty()
+{
+    return builtin_ == NoBuiltin && commandPath_.empty();
+}
+
 prefix_ void senf::console::ParseCommandInfo::builtin(BuiltinCommand builtin)
 {
     builtin_ = builtin;

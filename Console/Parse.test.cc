@@ -82,60 +82,104 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
     typedef senf::console::detail::CommandGrammar<TestParseDispatcher> Grammar;
     Grammar grammar (dispatcher, context);
 
-    char text[] = 
-        "# Comment\n"
-        "doo / bii / doo arg"
-        "                flab::blub"
-        "                123.434>a"
-        "                (a,b;c (huhu/{haha}))"
-        "                \"foo\\\"bar\" #\n"
-        "                x\"01 02 # Inner comment\n"
-        "                   0304\";"
-        "ls /foo/bar;"
-        "cd /foo/bar;"
-        "exit;"
-        "foo/bar/ { ls; }"
-        "help /foo/bar";
+    {
+        static char text[] = 
+            "# Comment\n"
+            "doo / bii / doo arg"
+            "                flab::blub"
+            "                123.434>a"
+            "                (a,b;c (huhu/{haha}))"
+            "                \"foo\\\"bar\" #\n"
+            "                x\"01 02 # Inner comment\n"
+            "                   0304\";";
 
-    BOOST_CHECK( boost::spirit::parse( 
-                     text, 
-                     grammar.use_parser<Grammar::CommandParser>(), 
-                     grammar.use_parser<Grammar::SkipParser>() ) . full );
-    BOOST_CHECK_EQUAL( ss.str(), 
-                       "beginCommand( Word('doo')/Word('bii')/Word('doo') )\n"
-                       "pushToken( Word('arg') )\n"
-                       "pushToken( Word('flab::blub') )\n"
-                       "pushToken( Word('123.434>a') )\n"
-                       "pushToken( ArgumentGroupOpen('(') )\n"
-                       "pushToken( Word('a') )\n"
-                       "pushToken( OtherPunctuation(',') )\n"
-                       "pushToken( Word('b') )\n"
-                       "pushToken( CommandTerminator(';') )\n"
-                       "pushToken( Word('c') )\n"
-                       "pushToken( ArgumentGroupOpen('(') )\n"
-                       "pushToken( Word('huhu') )\n"
-                       "pushToken( PathSeparator('/') )\n"
-                       "pushToken( DirectoryGroupOpen('{') )\n"
-                       "pushToken( Word('haha') )\n"
-                       "pushToken( DirectoryGroupClose('}') )\n"
-                       "pushToken( ArgumentGroupClose(')') )\n"
-                       "pushToken( ArgumentGroupClose(')') )\n"
-                       "pushToken( BasicString('foo\"bar') )\n"
-                       "pushToken( HexString('\x01\x02\x03\x04') )\n"
-                       "endCommand()\n"
-                       "builtin_ls( None('')/Word('foo')/Word('bar') )\n"
-                       "builtin_cd( None('')/Word('foo')/Word('bar') )\n"
-                       "builtin_exit()\n"
-                       "pushDirectory( Word('foo')/Word('bar')/None('') )\n"
-                       "builtin_ls(  )\n"
-                       "popDirectory()\n"
-                       "builtin_help( None('')/Word('foo')/Word('bar') )\n" );
+        BOOST_CHECK( boost::spirit::parse( 
+                         text, 
+                         grammar.use_parser<Grammar::CommandParser>(), 
+                         grammar.use_parser<Grammar::SkipParser>() ) . full );
+        BOOST_CHECK_EQUAL( ss.str(), 
+                           "beginCommand( Word('doo')/Word('bii')/Word('doo') )\n"
+                           "pushToken( Word('arg') )\n"
+                           "pushToken( Word('flab::blub') )\n"
+                           "pushToken( Word('123.434>a') )\n"
+                           "pushToken( ArgumentGroupOpen('(') )\n"
+                           "pushToken( Word('a') )\n"
+                           "pushToken( OtherPunctuation(',') )\n"
+                           "pushToken( Word('b') )\n"
+                           "pushToken( CommandTerminator(';') )\n"
+                           "pushToken( Word('c') )\n"
+                           "pushToken( ArgumentGroupOpen('(') )\n"
+                           "pushToken( Word('huhu') )\n"
+                           "pushToken( PathSeparator('/') )\n"
+                           "pushToken( DirectoryGroupOpen('{') )\n"
+                           "pushToken( Word('haha') )\n"
+                           "pushToken( DirectoryGroupClose('}') )\n"
+                           "pushToken( ArgumentGroupClose(')') )\n"
+                           "pushToken( ArgumentGroupClose(')') )\n"
+                           "pushToken( BasicString('foo\"bar') )\n"
+                           "pushToken( HexString('\x01\x02\x03\x04') )\n"
+                           "endCommand()\n" );
+    }
+
+    {
+        ss.str("");
+        BOOST_CHECK( boost::spirit::parse( 
+                         "ls /foo/bar;", 
+                         grammar.use_parser<Grammar::CommandParser>(), 
+                         grammar.use_parser<Grammar::SkipParser>() ) . full );
+        BOOST_CHECK_EQUAL( ss.str(), "builtin_ls( None('')/Word('foo')/Word('bar') )\n" );
+    }
+
+    {
+        ss.str("");
+        BOOST_CHECK( boost::spirit::parse( 
+                         "cd /foo/bar;", 
+                         grammar.use_parser<Grammar::CommandParser>(), 
+                         grammar.use_parser<Grammar::SkipParser>() ) . full );
+        BOOST_CHECK_EQUAL( ss.str(), "builtin_cd( None('')/Word('foo')/Word('bar') )\n" );
+    }
+
+    {
+        ss.str("");
+        BOOST_CHECK( boost::spirit::parse( 
+                         "exit;", 
+                         grammar.use_parser<Grammar::CommandParser>(), 
+                         grammar.use_parser<Grammar::SkipParser>() ) . full );
+        BOOST_CHECK_EQUAL( ss.str(), "builtin_exit()\n" );
+    }
+
+    {
+        ss.str("");
+        BOOST_CHECK( boost::spirit::parse( 
+                         "foo/bar/ {", 
+                         grammar.use_parser<Grammar::CommandParser>(), 
+                         grammar.use_parser<Grammar::SkipParser>() ) . full );
+        BOOST_CHECK_EQUAL( ss.str(), "pushDirectory( Word('foo')/Word('bar')/None('') )\n" );
+    }
+
+    {
+        ss.str("");
+        BOOST_CHECK( boost::spirit::parse( 
+                         "}", 
+                         grammar.use_parser<Grammar::CommandParser>(), 
+                         grammar.use_parser<Grammar::SkipParser>() ) . full );
+        BOOST_CHECK_EQUAL( ss.str(), "popDirectory()\n" );
+    }
+
+    {
+        ss.str("");
+        BOOST_CHECK( boost::spirit::parse( 
+                         "help /foo/bar", 
+                         grammar.use_parser<Grammar::CommandParser>(), 
+                         grammar.use_parser<Grammar::SkipParser>() ) . full );
+        BOOST_CHECK_EQUAL( ss.str(), "builtin_help( None('')/Word('foo')/Word('bar') )\n" );
+    }
 }
 
 namespace {
-    senf::console::ParseCommandInfo info;
+    std::vector<senf::console::ParseCommandInfo> commands;
     void setInfo(senf::console::ParseCommandInfo const & i)
-    { info = i; }
+    { commands.push_back(i); }
 }
 
 BOOST_AUTO_UNIT_TEST(commandParser)
@@ -150,60 +194,68 @@ BOOST_AUTO_UNIT_TEST(commandParser)
         "                (a,b,c (huhu))"
         "                \"foo\\\"bar\" #\n"
         "                x\"01 02 # Inner comment\n"
-        "                   0304\"";
+        "                   0304\";"
+        "ls /foo/bar; ";
 
     BOOST_CHECK( parser.parse(text, &setInfo) );
+    BOOST_CHECK_EQUAL( commands.size(), 2u );
 
-    senf::console::Token path[] = { 
-        senf::console::Token(senf::console::Token::Word, "doo"), 
-        senf::console::Token(senf::console::Token::Word, "bii"),
-        senf::console::Token(senf::console::Token::Word, "doo")
-    };
+    {
+        senf::console::ParseCommandInfo const & info (commands.front());
 
-    BOOST_CHECK_EQUAL_COLLECTIONS( info.commandPath().begin(), info.commandPath().end(),
-                                   path, path + sizeof(path)/sizeof(path[0]) );
-    BOOST_CHECK_EQUAL( info.tokens().size(), 15u );
+        senf::console::Token path[] = { 
+            senf::console::Token(senf::console::Token::Word, "doo"), 
+            senf::console::Token(senf::console::Token::Word, "bii"),
+            senf::console::Token(senf::console::Token::Word, "doo")
+        };
 
-    char const * tokens[] = { "arg", 
-                              "flab::blub", 
-                              "123.434>a", 
-                              "(", "a", ",", "b", ",", "c", "(", "huhu", ")", ")",
-                              "foo\"bar",
-                              "\x01\x02\x03\x04" };
+        BOOST_CHECK_EQUAL_COLLECTIONS( info.commandPath().begin(), info.commandPath().end(),
+                                       path, path + sizeof(path)/sizeof(path[0]) );
+        BOOST_CHECK_EQUAL( info.tokens().size(), 15u );
+        
+        char const * tokens[] = { "arg", 
+                                  "flab::blub", 
+                                  "123.434>a", 
+                                  "(", "a", ",", "b", ",", "c", "(", "huhu", ")", ")",
+                                  "foo\"bar",
+                                  "\x01\x02\x03\x04" };
 
-    senf::console::ParseCommandInfo::argument_iterator args (info.arguments().begin());
-    BOOST_REQUIRE( args != info.arguments().end() );
-    BOOST_REQUIRE_EQUAL( args->size(), 1u );
-    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[0] );
+        senf::console::ParseCommandInfo::argument_iterator args (info.arguments().begin());
+        BOOST_REQUIRE( args != info.arguments().end() );
+        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_CHECK_EQUAL( args->begin()->value(), tokens[0] );
+        
+        ++ args;
+        BOOST_REQUIRE( args != info.arguments().end() );
+        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_CHECK_EQUAL( args->begin()->value(), tokens[1] );
+        
+        ++ args;
+        BOOST_REQUIRE( args != info.arguments().end() );
+        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_CHECK_EQUAL( args->begin()->value(), tokens[2] );
+        
+        ++ args;
+        BOOST_REQUIRE( args != info.arguments().end() );
+        BOOST_REQUIRE_EQUAL( args->size(), 8u );
+        for (unsigned i (0); i<8; ++i)
+            BOOST_CHECK_EQUAL( args->begin()[i].value(), tokens[4+i] );
+        
+        ++ args;
+        BOOST_REQUIRE( args != info.arguments().end() );
+        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_CHECK_EQUAL( args->begin()->value(), tokens[13] );
+        
+        ++ args;
+        BOOST_REQUIRE( args != info.arguments().end() );
+        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_CHECK_EQUAL( args->begin()->value(), tokens[14] );
+        
+        ++ args;
+        BOOST_CHECK( args == info.arguments().end() );
+    }
 
-    ++ args;
-    BOOST_REQUIRE( args != info.arguments().end() );
-    BOOST_REQUIRE_EQUAL( args->size(), 1u );
-    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[1] );
-                         
-    ++ args;
-    BOOST_REQUIRE( args != info.arguments().end() );
-    BOOST_REQUIRE_EQUAL( args->size(), 1u );
-    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[2] );
-
-    ++ args;
-    BOOST_REQUIRE( args != info.arguments().end() );
-    BOOST_REQUIRE_EQUAL( args->size(), 8u );
-    for (unsigned i (0); i<8; ++i)
-        BOOST_CHECK_EQUAL( args->begin()[i].value(), tokens[4+i] );
-
-    ++ args;
-    BOOST_REQUIRE( args != info.arguments().end() );
-    BOOST_REQUIRE_EQUAL( args->size(), 1u );
-    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[13] );
-
-    ++ args;
-    BOOST_REQUIRE( args != info.arguments().end() );
-    BOOST_REQUIRE_EQUAL( args->size(), 1u );
-    BOOST_CHECK_EQUAL( args->begin()->value(), tokens[14] );
-
-    ++ args;
-    BOOST_CHECK( args == info.arguments().end() );
+    commands.clear();
 }
 
 namespace {
@@ -220,17 +272,19 @@ BOOST_AUTO_UNIT_TEST(checkedArgumentIterator)
     senf::console::CommandParser parser;
 
     BOOST_CHECK( parser.parse("foo a", &setInfo) );
-    BOOST_CHECK_THROW( parseArgs(info.arguments()), senf::console::SyntaxErrorException );
+    BOOST_CHECK_THROW( parseArgs(commands.back().arguments()), 
+                       senf::console::SyntaxErrorException );
 
     BOOST_CHECK( parser.parse("foo a b", &setInfo) );
-    BOOST_CHECK_NO_THROW( parseArgs(info.arguments()) );
+    BOOST_CHECK_NO_THROW( parseArgs(commands.back().arguments()) );
 
     BOOST_CHECK( parser.parse("foo a b c", &setInfo) );
-    BOOST_CHECK_THROW( parseArgs(info.arguments()), senf::console::SyntaxErrorException );
+    BOOST_CHECK_THROW( parseArgs(commands.back().arguments()), 
+                       senf::console::SyntaxErrorException );
     
-    senf::console::CheckedArgumentIteratorWrapper arg (info.arguments());
-    BOOST_CHECK( arg == info.arguments().begin() );
-    BOOST_CHECK( arg != info.arguments().end() );
+    senf::console::CheckedArgumentIteratorWrapper arg (commands.back().arguments());
+    BOOST_CHECK( arg == commands.back().arguments().begin() );
+    BOOST_CHECK( arg != commands.back().arguments().end() );
     BOOST_CHECK( arg );
     ++ arg;
     BOOST_CHECK( arg );
@@ -238,7 +292,23 @@ BOOST_AUTO_UNIT_TEST(checkedArgumentIterator)
     BOOST_CHECK( arg.done() );
 
     senf::console::ParseCommandInfo::ArgumentIterator i (arg);
-    BOOST_CHECK( i == info.arguments().end() );
+    BOOST_CHECK( i == commands.back().arguments().end() );
+
+    commands.clear();
+}
+
+BOOST_AUTO_UNIT_TEST(parseIncremental)
+{
+    senf::console::CommandParser parser;
+
+    BOOST_CHECK_EQUAL( parser.parseIncremental("foo a", &setInfo), 0u );
+    BOOST_CHECK_EQUAL( parser.parseIncremental("foo a; cd", &setInfo), 7u );
+    BOOST_CHECK_EQUAL( parser.parseIncremental("foo a; cd /bar", &setInfo), 7u );
+    BOOST_CHECK_EQUAL( parser.parseIncremental("foo a; cd /bar; ", &setInfo), 16u );
+    BOOST_CHECK_EQUAL( parser.parseIncremental(" ", &setInfo), 1u );
+    BOOST_CHECK_EQUAL( commands.size(), 4u );
+
+    commands.clear();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

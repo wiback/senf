@@ -35,6 +35,8 @@
 #include "../Socket/Protocols/INet/TCPSocketHandle.hh"
 #include "../Socket/ServerSocketHandle.hh"
 #include "../Scheduler/Scheduler.hh"
+#include "../Scheduler/Binding.hh"
+#include "../Scheduler/Timer.hh"
 #include "../Scheduler/ReadHelper.hh"
 #include "Parse.hh"
 #include "Executor.hh"
@@ -80,17 +82,50 @@ namespace console {
         
         typedef detail::ServerHandle ServerHandle;
 
+        enum Mode { Automatic, Interactive, Noninteractive };
+
+        ///////////////////////////////////////////////////////////////////////////
+
         ~Server();
 
         static Server & start(senf::INet4SocketAddress const & address);
                                         ///< Start server on given IPv4 address/port
         static Server & start(senf::INet6SocketAddress const & address);
                                         ///< Start server on given IPv6 address/port
+
+        std::string const & name() const; ///< Get server name
+                                        /**< This information is used in the prompt string. */
+
         Server & name(std::string const & name); ///< Set server name
                                         /**< This information is used in the prompt string. */
+
+        DirectoryNode & root() const;   ///< Get root node
+
+        Server & root(DirectoryNode & root); ///< Set root node
+                                        /**< \a node will be the root node for all clients launched
+                                             from this server. */
+
+        Mode mode() const;              ///< Get mode
+                                        /**< \see \ref mode(Mode) */
         
+        Server & mode(Mode mode);       ///< Set mode
+                                        /**< There are two Server types: 
+                                             \li An interactive server displays a command prompt and
+                                                 optionally supports command-line editing.
+                                             \li A non-interactive server does not display any
+                                                 prompt and does not allow any interactive
+                                                 editing. This type of server is used for (remote)
+                                                 scripting.
+
+                                             The \a mode parameter selects between these modes. In
+                                             \c Automatic (the default), a client connection is
+                                             considered to be interactive if there is no data
+                                             traffic in the first 500ms after the connection is
+                                             opened. */
+
         void stop();                    ///< Stop the server
                                         /**< All clients will be closed */
+
         
     protected:
 
@@ -104,6 +139,8 @@ namespace console {
         void removeClient(Client & client);
         
         ServerHandle handle_;
+        DirectoryNode::ptr root_;
+        Mode mode_;
         
         typedef std::set< boost::intrusive_ptr<Client> > Clients;
         Clients clients_;
@@ -130,6 +167,8 @@ namespace console {
         SENF_LOG_CLASS_AREA();
         SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
 
+        static const unsigned INTERACTIVE_TIMEOUT = 500; // milliseconds;
+
     public:
         typedef Server::ServerHandle::ClientSocketHandle ClientHandle;
 
@@ -142,27 +181,35 @@ namespace console {
         ClientHandle handle() const;
         std::ostream & stream();
         std::string promptString() const;
+        DirectoryNode & root() const;
+        Server::Mode mode() const;
 
         static Client & get(std::ostream & os);
 
     protected:
         
     private:
-        Client(Server & server, ClientHandle handle, std::string const & name);
+        Client(Server & server, ClientHandle handle);
 
+        void setInteractive();
+        void setNoninteractive();
+        
         void translate(std::string & data);
-        void handleInput(std::string input);
+        unsigned handleInput(std::string input, bool incremental = false);
         virtual void v_write(senf::log::time_type timestamp, std::string const & stream, 
                              std::string const & area, unsigned level, 
                              std::string const & message);
         
         Server & server_;
         ClientHandle handle_;
+        SchedulerBinding binding_;
+        SchedulerTimer timer_;
         CommandParser parser_;
         Executor executor_;
         std::string name_;
         std::string lastCommand_;
         boost::scoped_ptr<detail::ClientReader> reader_;
+        Server::Mode mode_;
 
         friend class Server;
         friend class detail::ClientReader;

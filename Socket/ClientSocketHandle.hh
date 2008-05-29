@@ -427,13 +427,13 @@ namespace senf {
         void state(SocketStateMap & map, unsigned lod=0);
         std::string dumpState(unsigned lod=0);
 
+        unsigned available();
+
     protected:
         ClientSocketHandle(FileHandle other, bool isChecked);
         explicit ClientSocketHandle(std::auto_ptr<SocketBody> body);
 
     private:
-        unsigned available();
-
         friend class senf::ServerSocketHandle<SPolicy>;
     };
 

@@ -90,7 +90,7 @@ namespace detail {
         // Called by subclasses to perform actions in the Client
 
         void stopClient();
-        void handleInput(std::string const & input) const;
+        std::string::size_type handleInput(std::string const & input, bool incremental=false) const;
 
         // Called by the Client
 
@@ -131,6 +131,28 @@ namespace detail {
         std::string tail_;
         unsigned promptLen_;
         bool promptActive_;
+    };
+
+    /** \brief Internal: Primitive ClientReader implementation
+        
+        This implementation uses the cooked telnet mode to read lines from the console. It does not
+        support explicit line editing or any other advanced features.
+     */
+    class NoninteractiveClientReader
+        : public ClientReader
+    {
+    public:
+        NoninteractiveClientReader(Client & client);
+
+    private:
+        virtual void v_disablePrompt();
+        virtual void v_enablePrompt();
+        virtual void v_translate(std::string & data);
+
+        void newData(senf::Scheduler::EventId event);
+
+        SchedulerBinding binding_;
+        std::string buffer_;
     };
     
 }}}

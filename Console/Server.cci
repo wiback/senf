@@ -52,6 +52,30 @@ prefix_ senf::console::Server & senf::console::Server::name(std::string const & 
     return *this;
 }
 
+prefix_ std::string const & senf::console::Server::name()
+    const
+{
+    return name_;
+}
+
+prefix_ senf::console::Server & senf::console::Server::root(DirectoryNode & root)
+{
+    root_ = root.thisptr();
+    return *this;
+}
+
+prefix_ senf::console::Server & senf::console::Server::mode(Mode m)
+{
+    mode_ = m;
+    return *this;
+}
+
+prefix_ senf::console::Server::Mode senf::console::Server::mode()
+    const
+{
+    return mode_;
+}
+
 prefix_ void senf::console::Server::stop()
 {
     // commit suicide
@@ -62,7 +86,9 @@ prefix_ void senf::console::Server::stop()
 // senf::console::Client
 
 prefix_ senf::console::Client::~Client()
-{}
+{
+    stream() << std::flush;
+}
 
 prefix_ void senf::console::Client::stop()
 {
@@ -80,6 +106,18 @@ prefix_ std::string senf::console::Client::promptString()
     const
 {
     return name_ + ":" + executor_.cwdPath() + "$ ";
+}
+
+prefix_ senf::console::DirectoryNode & senf::console::Client::root()
+    const
+{
+    return server_.root();
+}
+
+prefix_ senf::console::Server::Mode senf::console::Client::mode()
+    const
+{
+    return mode_;
 }
 
 prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)
@@ -133,10 +171,11 @@ prefix_ void senf::console::detail::ClientReader::stopClient()
     client().stop();
 }
 
-prefix_ void senf::console::detail::ClientReader::handleInput(std::string const & input)
+prefix_ std::string::size_type
+senf::console::detail::ClientReader::handleInput(std::string const & input, bool incremental)
     const
 {
-    client().handleInput(input);
+    return client().handleInput(input, incremental);
 }
 
 prefix_ void senf::console::detail::ClientReader::disablePrompt()

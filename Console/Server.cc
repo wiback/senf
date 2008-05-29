@@ -103,7 +103,7 @@ prefix_ senf::console::Server & senf::console::Server::start(ServerHandle handle
 }
 
 prefix_ senf::console::Server::Server(ServerHandle handle)
-    : handle_ (handle)
+    : handle_ (handle), mode_ (Automatic)
 {
     Scheduler::instance().add( handle_, senf::membind(&Server::newClient, this) );
 }
@@ -116,7 +116,7 @@ prefix_ senf::console::Server::~Server()
 prefix_ void senf::console::Server::newClient(Scheduler::EventId event)
 {
     ServerHandle::ClientSocketHandle client (handle_.accept());
-    boost::intrusive_ptr<Client> p (new Client(*this, client, name_));
+    boost::intrusive_ptr<Client> p (new Client(*this, client));
     clients_.insert( p );
     SENF_LOG(( "Registered new client " << p.get() ));
 }
@@ -190,16 +190,85 @@ prefix_ void senf::console::detail::DumbClientReader::v_translate(std::string & 
 {}
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::NoninteractiveClientReader
+
+prefix_
+senf::console::detail::NoninteractiveClientReader::NoninteractiveClientReader(Client & client)
+    : ClientReader (client), binding_ (handle(),
+                                       senf::membind(&NoninteractiveClientReader::newData, this),
+                                       senf::Scheduler::EV_READ)
+{}
+
+prefix_ void senf::console::detail::NoninteractiveClientReader::v_disablePrompt()
+{}
+
+prefix_ void senf::console::detail::NoninteractiveClientReader::v_enablePrompt()
+{}
+
+prefix_ void senf::console::detail::NoninteractiveClientReader::v_translate(std::string & data)
+{}
+
+prefix_ void
+senf::console::detail::NoninteractiveClientReader::newData(senf::Scheduler::EventId event)
+{
+    if (event != senf::Scheduler::EV_READ || handle().eof()) {
+        if (! buffer_.empty())
+            handleInput(buffer_);
+        stopClient();
+        return;
+    }
+
+    std::string::size_type n (buffer_.size());
+    buffer_.resize(n + handle().available());
+    buffer_.erase(handle().read(boost::make_iterator_range(buffer_.begin()+n, buffer_.end())),
+                  buffer_.end());
+    buffer_.erase(0, handleInput(buffer_, true));
+    stream() << std::flush;
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::Client
 
-prefix_ senf::console::Client::Client(Server & server, ClientHandle handle,
-                                      std::string const & name)
+prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
     : out_t(boost::ref(*this)), senf::log::IOStreamTarget(out_t::member), server_ (server),
-      handle_ (handle), name_ (name), reader_ (new detail::SafeReadlineClientReader (*this))
+      handle_ (handle), 
+      binding_ (handle, boost::bind(&Client::setNoninteractive,this), Scheduler::EV_READ, false),
+      timer_ (Scheduler::instance().eventTime() + ClockService::milliseconds(INTERACTIVE_TIMEOUT),
+              boost::bind(&Client::setInteractive, this), false),
+      name_ (server.name()), reader_ (), mode_ (server.mode())
 {
-    executor_.autocd(true).autocomplete(true);
     handle_.facet<senf::TCPSocketProtocol>().nodelay();
-    // route< senf::SenfLog, senf::log::NOTICE >();
+    switch (mode_) {
+    case Server::Interactive :
+        setInteractive();
+        break;
+    case Server::Noninteractive :
+        setNoninteractive();
+        break;
+    case Server::Automatic :
+        binding_.enable();
+        timer_.enable();
+        break;
+    }
+}
+
+prefix_ void senf::console::Client::setInteractive()
+{
+    SENF_LOG(("Set client interactive"));
+    binding_.disable();
+    timer_.disable();
+    mode_ = Server::Interactive;
+    reader_.reset(new detail::SafeReadlineClientReader (*this));
+    executor_.autocd(true).autocomplete(true);
+}
+
+prefix_ void senf::console::Client::setNoninteractive()
+{
+    SENF_LOG(("Set client non-interactive"));
+    binding_.disable();
+    timer_.disable();
+    mode_ = Server::Noninteractive;
+    reader_.reset(new detail::NoninteractiveClientReader(*this));
 }
 
 prefix_ void senf::console::Client::translate(std::string & data)
@@ -207,17 +276,29 @@ prefix_ void senf::console::Client::translate(std::string & data)
     reader_->translate(data);
 }
 
-prefix_ void senf::console::Client::handleInput(std::string data)
+prefix_ std::string::size_type senf::console::Client::handleInput(std::string data,
+                                                                  bool incremental)
 {
-    if (data.empty())
+    SENF_LOG(("Data: " << data));
+    
+    if (data.empty() && ! incremental)
         data = lastCommand_;
     else
         lastCommand_ = data;
 
+    bool state (true);
+    std::string::size_type n (data.size());
+
     try {
-        if (! parser_.parse(data, boost::bind<void>( boost::ref(executor_),
-                                                     boost::ref(stream()),
-                                                     _1 )) )
+        if (incremental)
+            n = parser_.parseIncremental(data, boost::bind<void>( boost::ref(executor_),
+                                                                  boost::ref(stream()),
+                                                                  _1 ));
+        else
+            state = parser_.parse(data, boost::bind<void>( boost::ref(executor_),
+                                                           boost::ref(stream()),
+                                                           _1 ));
+        if (! state )
             stream() << "syntax error" << std::endl;
     }
     catch (Executor::ExitException &) {
@@ -226,7 +307,6 @@ prefix_ void senf::console::Client::handleInput(std::string data)
         // are called from the client reader callback and that will continue executing even if we
         // call stop here ...
         handle_.facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD);
-        return;
     }
     catch (std::exception & ex) {
         stream() << ex.what() << std::endl;
@@ -234,6 +314,7 @@ prefix_ void senf::console::Client::handleInput(std::string data)
     catch (...) {
         stream() << "unidentified error (unknown exception thrown)" << std::endl;
     }
+    return n;
 }
 
 prefix_ void senf::console::Client::v_write(senf::log::time_type timestamp,
@@ -254,13 +335,18 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Client const
     typedef ClientSocketHandle< MakeSocketPolicy<
         INet6AddressingPolicy,ConnectedCommunicationPolicy>::policy > V6Socket;
 
-    if (check_socket_cast<V4Socket>(client.handle()))
-        os << dynamic_socket_cast<V4Socket>(client.handle()).peer();
-    else if (check_socket_cast<V6Socket>(client.handle()))
-        os << dynamic_socket_cast<V6Socket>(client.handle()).peer();
-    else
-        os << static_cast<void const *>(&client);
-
+    try {
+        if (check_socket_cast<V4Socket>(client.handle()))
+            os << dynamic_socket_cast<V4Socket>(client.handle()).peer();
+        else if (check_socket_cast<V6Socket>(client.handle()))
+            os << dynamic_socket_cast<V6Socket>(client.handle()).peer();
+        else
+            os << static_cast<void const *>(&client);
+    }
+    catch (SystemException &) {
+        os << "0.0.0.0:0";
+    }
+        
     return os;
 }
 

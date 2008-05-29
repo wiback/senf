@@ -53,8 +53,12 @@ prefix_ int senf::console::detail::ReadlineClientReader::getc()
 
 prefix_ void senf::console::detail::ReadlineClientReader::write(std::string text)
 {
-    translate(text);
-    handle().write(text);
+    try {
+        translate(text);
+        handle().write(text);
+    } catch (SystemException &) {
+        ;
+    }
 }
 
 prefix_ void senf::console::detail::ReadlineClientReader::terminate()
