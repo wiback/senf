@@ -184,7 +184,6 @@ namespace detail {
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_ls)(d_, path_) ]
                     |    keyword_p("exit")        [ bind(&PD::builtin_exit)(d_) ]
-                    
                     |    keyword_p("help")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_help)(d_, path_) ]

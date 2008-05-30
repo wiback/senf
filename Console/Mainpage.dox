@@ -421,9 +421,9 @@
     order they are specified, so in this case, the command line options will override any options
     specified in one of the configuration files.
 
-    \section console_access_console The interactive console
+    \section console_access_console The network console
 
-    To make the console accessible, it must be initialized when the program is started:
+    To make the network console accessible, it must be initialized when the program is started:
     \code
     #include <senf/Console.hh>
 
@@ -493,17 +493,47 @@
         members</a> for the Client API
 
 
-    \subsection console_shell Features of the interactive console shell
+    \subsection console_shell The interactive console shell
 
     The interactive shell will use the GNU readline library for the first connected
     instance. Further users will not have access to this functionality since GNU readline is
-    completely non-reentrant.
+    completely non-reentrant. GNU readline supports history and some command keys (like C-d for \c
+    exit or C-c to clear and restart the input).
 
     The shell supports auto-cd and auto-completion: If you enter the name of a directory at the
     prompt, the console will change to that directory. With auto-completion, any unique beginning of
-    a path component will be completed automatically and transparently to th corresponding full
+    a path component will be completed automatically and transparently to the corresponding full
     name.
 
+    \subsection console_noninteractive Non-interactive network console
+
+    After a new connection is established, the console server waits a short time for data to arrive.
+    arrive. Only if nothing happens in the first 500ms, readline is initialized (if available) and
+    the interactive prompt is displayed.
+
+    By sending data immediately after opening the connection, the console is switched into
+    non-interactive mode. In this mode, no prompt is displayed. In this mode, commands are \e not
+    terminated automatically by end-of-line (CR). This allows, to easily cat an arbitrary
+    configuration file into the network console using netcat:
+    
+    <pre>
+    $ nc -q1 localhost 23232 < some.conf
+    </pre>
+
+    The argument <tt>-q1</tt> makes netcat close the sending end of the connection on EOF and wait
+    up to 1 second for the console to terminate. Even better, use \c netcat6, which has full TCP
+    half-close support.
+
+    <pre>
+    $ echo "ls" | nc6 --half-close localhost 23232 2>/dev/null
+    console/
+    server/
+    test/
+    $
+    </pre>
+
+    Commands are executed as soon as the terminating character (';', '{' or '}') is received or when
+    the sending end of the connection is closed.    
  */
 
 /** \defgroup console_commands Supported command types
