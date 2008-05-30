@@ -254,7 +254,6 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
 
 prefix_ void senf::console::Client::setInteractive()
 {
-    SENF_LOG(("Set client interactive"));
     binding_.disable();
     timer_.disable();
     mode_ = Server::Interactive;
@@ -264,7 +263,6 @@ prefix_ void senf::console::Client::setInteractive()
 
 prefix_ void senf::console::Client::setNoninteractive()
 {
-    SENF_LOG(("Set client non-interactive"));
     binding_.disable();
     timer_.disable();
     mode_ = Server::Noninteractive;
@@ -279,8 +277,6 @@ prefix_ void senf::console::Client::translate(std::string & data)
 prefix_ std::string::size_type senf::console::Client::handleInput(std::string data,
                                                                   bool incremental)
 {
-    SENF_LOG(("Data: " << data));
-    
     if (data.empty() && ! incremental)
         data = lastCommand_;
     else

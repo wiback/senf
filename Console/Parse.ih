@@ -28,15 +28,11 @@
 
 // Custom includes
 #include <vector>
-#include <boost/regex.hpp>
 #include <boost/spirit.hpp>
 #include <boost/spirit/utility/grammar_def.hpp>
-#include <boost/spirit/actor.hpp>
 #include <boost/spirit/dynamic.hpp>
 #include <boost/spirit/phoenix.hpp>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-#include <boost/ref.hpp>
+#include "../Utils/Phoenix.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -45,30 +41,6 @@ namespace console {
 namespace detail {
 
 #ifndef DOXYGEN
-
-    ///////////////////////////////////////////////////////////////////////////
-    // append_a
-
-    struct append_action
-    {
-        template <class T, class Value>
-        void act(T & ref, Value const & value) const
-            { ref += T(1, value); }
-
-        template <class T, class Iterator>
-        void act(T & ref, Iterator const & f, Iterator const & l) const
-            { ref += T(f,l); }
-    };
-
-    template <class T>
-    inline boost::spirit::ref_value_actor<T, append_action> 
-    append_a(T & ref)
-    { return boost::spirit::ref_value_actor<T, append_action>(ref); }
-    
-    template <class T, class Value>
-    inline boost::spirit::ref_const_ref_actor<T, Value, append_action> 
-    append_a(T & ref, Value const & value)
-    { return boost::spirit::ref_const_ref_actor<T, Value, append_action>(ref, value); }
 
     ///////////////////////////////////////////////////////////////////////////
     // Grammar
@@ -91,11 +63,6 @@ namespace detail {
             std::vector<Token> path;
             char ch;
             Token token;
-            
-            // OUCH ... This is sooooo stupid .. push_back_a and assign_a take their 
-            // arguments by const-reference and STORE the REFERENCE ... they do NOT accept
-            // literal values !!!!!! 
-            static const Token EmptyToken;
         };
 
         Context & context;
@@ -109,69 +76,6 @@ namespace detail {
         // Dispatching semantic actions
 
         ParseDispatcher & dispatcher;
-
-        struct Dispatch_actor
-        {
-            Dispatch_actor(boost::function<void ()> fn_) : fn (fn_) {}
-
-            template <class Value>
-            void operator()(Value const & value) const
-                { fn(); }
-
-            template <class Iterator>
-            void operator()(Iterator const & f, Iterator const & l) const
-                { fn(); }
-
-            boost::function<void ()> fn;
-        };
-        
-        template <class Callback>
-        Dispatch_actor dispatch(Callback cb) const
-            { return Dispatch_actor(boost::bind(cb, boost::ref(dispatcher))); }
-
-        template <class Callback, class Arg>
-        Dispatch_actor dispatch(Callback cb, Arg const & arg) const
-            { return Dispatch_actor(boost::bind(cb, boost::ref(dispatcher), arg)); }
-
-        template <class Callback, class Arg1, class Arg2>
-        Dispatch_actor dispatch(Callback cb, Arg1 const & arg1, Arg2 const & arg2) const
-            { return Dispatch_actor(boost::bind(cb, boost::ref(dispatcher), arg1, arg2)); }
-
-        struct TokenSetter_actor
-        {
-            TokenSetter_actor(Context & c, TokenType t) : c_ (c), t_ (t) {}
-            
-            void operator()(std::string const & value) const
-                { c_.token = Token(t_, value); }
-            void operator()(char value) const
-                { c_.token = Token(t_, std::string(1,value)); }
-            template <class Iterator> void operator()(Iterator const & f, Iterator const & l) const
-                { c_.token = Token(t_, std::string(f,l)); }
-
-            Context & c_;
-            TokenType t_;
-        };
-
-        struct TokenSetter_value_actor
-            : public TokenSetter_actor
-        {
-            TokenSetter_value_actor(Context & c, TokenType t, std::string & v) 
-                : TokenSetter_actor(c,t), v_ (v) {}
-
-            template <class Value> void operator()(Value const &) const
-                { TokenSetter_actor::operator()(v_); }
-
-            template <class Iterator> void operator()(Iterator const &, Iterator const &) const
-                { TokenSetter_actor::operator()(v_); }
-
-            std::string & v_;
-        };
-
-        TokenSetter_actor set_token_a(TokenType t) const
-            { return TokenSetter_actor(context, t); }
-
-        TokenSetter_value_actor set_token_a(TokenType t, std::string & arg) const
-            { return TokenSetter_value_actor(context, t, arg); }
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -217,9 +121,15 @@ namespace detail {
 
             {
                 using namespace boost::spirit;
-                using namespace phoenix;
+                using namespace ::phoenix;
+                using namespace senf::phoenix;
                 typedef ParseDispatcher PD;
-                typedef Token AT;
+
+                actor< variable< char > >               ch_    (self.context.ch);
+                actor< variable< std::string > >        str_   (self.context.str);
+                actor< variable< std::vector<Token> > > path_  (self.context.path);
+                actor< variable< Token > >              token_ (self.context.token);
+                actor< variable< ParseDispatcher > >    d_     (self.dispatcher);
 
                 ///////////////////////////////////////////////////////////////////
                 // Spirit grammar
@@ -269,34 +179,29 @@ namespace detail {
                 builtin
                     =    keyword_p("cd") 
                       >> path
-                      >> eps_p                    [ self.dispatch(&PD::builtin_cd,
-                                                                  boost::ref(self.context.path)) ]
+                      >> eps_p                    [ bind(&PD::builtin_cd)(d_, path_) ]
                     |    keyword_p("ls")
                       >> ! path
-                      >> eps_p                    [ self.dispatch(&PD::builtin_ls,
-                                                                  boost::ref(self.context.path)) ]
-                    |    keyword_p("exit")        [ self.dispatch(&PD::builtin_exit) ]
+                      >> eps_p                    [ bind(&PD::builtin_ls)(d_, path_) ]
+                    |    keyword_p("exit")        [ bind(&PD::builtin_exit)(d_) ]
                     
                     |    keyword_p("help")
                       >> ! path
-                      >> eps_p                    [ self.dispatch(&PD::builtin_help,
-                                                                  boost::ref(self.context.path)) ]
+                      >> eps_p                    [ bind(&PD::builtin_help)(d_, path_) ]
                     ;
 
                 group_start
-                    =    ch_p('{')                [ self.dispatch(&PD::pushDirectory,
-                                                                  boost::ref(self.context.path)) ]
+                    =    ch_p('{')                [ bind(&PD::pushDirectory)(d_, path_) ]
                     ;
 
                 group_close
-                    =    ch_p('}')                [ self.dispatch(&PD::popDirectory) ]
+                    =    ch_p('}')                [ bind(&PD::popDirectory)(d_) ]
                     ;
 
                 statement
-                    =    eps_p                    [ self.dispatch(&PD::beginCommand, 
-                                                                  boost::ref(self.context.path)) ]
+                    =    eps_p                    [ bind(&PD::beginCommand)(d_, path_) ]
                       >> arguments
-                      >> statement_end            [ self.dispatch(&PD::endCommand) ]
+                      >> statement_end            [ bind(&PD::endCommand)(d_) ]
                     ;
 
                 arguments
@@ -304,8 +209,7 @@ namespace detail {
                     ;
 
                 argument
-                    =    simple_argument          [ self.dispatch(&PD::pushToken, 
-                                                                  boost::ref(self.context.token)) ]
+                    =    simple_argument          [ bind(&PD::pushToken)(d_, token_) ]
                     |    balanced_tokens
                     ;
                 
@@ -316,85 +220,92 @@ namespace detail {
                     ;
                 
                 string                  // Returns value in context.token
-                    =    eps_p                    [ clear_a(self.context.str) ]
+                    =    eps_p                    [ clear(str_) ]
                       >> lexeme_d
                          [
                              ch_p('"')
-                          >> * ( ( lex_escape_ch_p[ assign_a(self.context.ch) ] 
+                          >> * ( ( lex_escape_ch_p[ ch_ = arg1 ] 
                                    - '"' 
-                                 )                [ append_a(self.context.str,
-                                                             self.context.ch) ] 
+                                 )                [ str_ += ch_ ]
                                )
-                          >> ch_p('"')            [ self.set_token_a(AT::BasicString, 
-                                                                     self.context.str) ]
+                          >> ch_p('"')            [ token_ = construct_<Token>(Token::BasicString, 
+                                                                               str_) ]
                          ]
                     ;
 
                 hexstring               // Returns value in context.token
-                    =    eps_p                    [ clear_a(self.context.str) ]
+                    =    eps_p                    [ clear(str_) ]
                       >> confix_p( "x\"", * hexbyte, '"' )
-                                                  [ self.set_token_a(AT::HexString,
-                                                                     self.context.str) ]
+                                                  [ token_ = construct_<Token>(Token::HexString,
+                                                                               str_) ]
                     ;
 
                 path                    // Returns value in context.path
-                    =    eps_p                    [ clear_a(self.context.path) ]
+                    =    eps_p                    [ clear(path_) ]
                       >> relpath | abspath
                     ;
 
                 relpath
-                    =    (   word                 [ push_back_a(self.context.path,
-                                                                self.context.token) ]
+                    =    (   word                 [ push_back(path_, token_) ]
                            % ch_p('/') )
-                      >> ( ! ch_p('/')            [ push_back_a(self.context.path,
-                                                                self.context.EmptyToken) ] )
+                      >> ( ! ch_p('/')            [ push_back(path_, construct_<Token>()) ] )
                     ;
 
                 abspath
-                    =    ch_p('/')                [ push_back_a(self.context.path,
-                                                                self.context.EmptyToken) ]
+                    =    ch_p('/')                [ push_back(path_, construct_<Token>()) ]
                       >> ( relpath
-                         | eps_p                  [ push_back_a(self.context.path,
-                                                                self.context.EmptyToken) ] )
+                         | eps_p                  [ push_back(path_, construct_<Token>()) ] )
                     ;
 
                 balanced_tokens 
-                    =    ch_p('(')                [ self.set_token_a(AT::ArgumentGroupOpen) ]
-                                                  [ self.dispatch(&PD::pushToken, 
-                                                                  boost::ref(self.context.token)) ]
+                    =    ch_p('(')                [ token_ = construct_<Token>(
+                                                        Token::ArgumentGroupOpen,
+                                                        "(") ]
+                                                  [ bind(&PD::pushToken)(d_, token_) ]
                       >> * token
-                      >> ch_p(')')                [ self.set_token_a(AT::ArgumentGroupClose) ]
-                                                  [ self.dispatch(&PD::pushToken, 
-                                                                  boost::ref(self.context.token)) ]
+                      >> ch_p(')')                [ token_ = construct_<Token>(
+                                                        Token::ArgumentGroupClose,
+                                                        ")") ]
+                                                  [ bind(&PD::pushToken)(d_, token_) ]
                     ;
 
                 token
-                    =    simple_argument          [ self.dispatch(&PD::pushToken,
-								  boost::ref(self.context.token)) ]
-                    |    punctuation              [ self.dispatch(&PD::pushToken,
-                                                                  boost::ref(self.context.token)) ]
+                    =    simple_argument          [ bind(&PD::pushToken)(d_, token_) ]
+                    |    punctuation              [ bind(&PD::pushToken)(d_, token_) ]
                     |    balanced_tokens
                     ;
 
                 punctuation             // Returns value in context.str
-                    =    ch_p('/')                [ self.set_token_a(AT::PathSeparator) ]
-                    |    ch_p('{')                [ self.set_token_a(AT::DirectoryGroupOpen) ]
-                    |    ch_p('}')                [ self.set_token_a(AT::DirectoryGroupClose) ]
-                    |    ch_p(';')                [ self.set_token_a(AT::CommandTerminator) ]
-                    |    punctuation_p            [ self.set_token_a(AT::OtherPunctuation) ]
+                    =    ch_p('/')                [ token_ = construct_<Token>(
+                                                        Token::PathSeparator,
+                                                        "/") ]
+                    |    ch_p('{')                [ token_ = construct_<Token>(
+                                                        Token::DirectoryGroupOpen,
+                                                        "{") ]
+                    |    ch_p('}')                [ token_ = construct_<Token>(
+                                                        Token::DirectoryGroupClose,
+                                                        "}") ]
+                    |    ch_p(';')                [ token_ = construct_<Token>(
+                                                        Token::CommandTerminator,
+                                                        ";") ]
+                    |    punctuation_p            [ token_ = construct_<Token>(
+                                                        Token::OtherPunctuation,
+                                                        construct_<std::string>(1u, arg1)) ]
                     ;
 
                 word                    // Returns value in context.token
                     =    lexeme_d
                          [
-                             (+ word_p)           [ assign_a(self.context.str) ]
+                             (+ word_p)           [ str_ = construct_<std::string>(arg1, arg2) ]
                          ]
-                      >> eps_p                    [ self.set_token_a(AT::Word, self.context.str) ]
+                      >> eps_p                    [ token_ = construct_<Token>(
+                                                        Token::Word, 
+                                                        str_) ]
                     ;
 
                 hexbyte
                     =    uint_parser<char, 16, 2, 2>()
-                                                  [ append_a(self.context.str) ]
+                                                  [ push_back(str_, arg1) ]
                     ;
 
                 statement_end
@@ -440,9 +351,6 @@ namespace detail {
             }
         };
     };
-
-    template <class ParseDispatcher>
-    Token const CommandGrammar<ParseDispatcher>::Context::EmptyToken;
 
 #endif
 

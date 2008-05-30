@@ -150,6 +150,7 @@ prefix_ senf::console::detail::ReadlineClientReader::ReadlineClientReader(Client
                               0xFF, 0xFB, 0x03, // IAC WILL SGA
                               0x00 };
     handle().write(options, options+sizeof(options));
+    handle().write(std::string("(readline support enabled)\r\n"));
 
     strncpy(promptBuffer_, promptString().c_str(), 1024);
     promptBuffer_[1023] = 0;
