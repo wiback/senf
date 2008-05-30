@@ -62,6 +62,8 @@ namespace detail {
     /** \brief Internal: Nonblocking boost::iostreams::sink
 
         The sink discards data if the output socket would.
+
+        \fixme Don't throw exceptions ... set stream error indicator (if at all)
      */
     class NonblockingSocketSink 
         : public boost::iostreams::sink

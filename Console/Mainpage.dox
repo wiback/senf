@@ -29,6 +29,7 @@
 
     \autotoc
 
+
     \section console_intro Introduction
 
     There are three parts to the Config/console library:
@@ -46,6 +47,7 @@
     structure and can be called passing arbitrary arguments. Configuration parameters are just
     commands which set their respective parameter, however the library allows commands to do much
     more than just that.
+
 
     \section console_example Example
 
@@ -115,6 +117,7 @@
 
     \see \ref console_testserver for a complete example application
 
+
     \section intro_usage Access
 
     There are several ways to access the node tree:
@@ -123,6 +126,7 @@
     \li By providing interactive console access
 
     \see console_access
+
 
     \section intro_nodes The node tree
 
@@ -157,6 +161,7 @@
 
     \autotoc
 
+
     \section console_access_config Configuration support
 
     The configuration support of the Console/Config library revolves around the ConfigSource
@@ -174,6 +179,7 @@
     When parsing these configuration sources, it is always possible to optionally change the root
     node used during parsing and it is also possible to restrict parsing to a command subset. See
     \ref console_access_partial.
+
 
     \subsection console_access_file Configuration files
 
@@ -203,6 +209,7 @@
     and a user specific configuration file) see \ref console_access_multiple and add one (or more)
     senf::console::FileConfig() source to a senf::console::ConfigBundle.
 
+
     \subsubsection console_access_file_syntax Configuration file syntax
 
     Configuration files are written in a simple configuration language. This language is almost
@@ -222,6 +229,7 @@
     \endcode
 
     \see \ref console_parser
+
 
     \subsection console_access_options Command line options
 
@@ -257,6 +265,7 @@
 
     See \ref senf::console::ProgramOptions for the source specific additional parameters. These
     apply to senf::console::ProgramOptions and to the senf::console::OptionsConfig() source.
+
 
     \subsubsection console_access_options_syntax Options syntax
 
@@ -327,6 +336,7 @@
 
     (Beware, that the second argument to \c alias() is \e not shell quoted). 
 
+
     \subsection console_access_root Changing the root node
 
     When used in it's default state, parsing will always interpret all commands relative to the
@@ -346,6 +356,7 @@
     This functionality is even more powerful by combining it with \c link nodes: This allows to
     selectively choose commands from the node tree which are to be made accessible for
     configuration. See \ref node_tree.
+
 
     \subsection console_access_partial Partial / incremental configuration
 
@@ -377,6 +388,7 @@
     <em>partial parsing always applies to the \e real target and ignores links</em>. This is very
     important: It allows a subsystem to parse it's configuration parameters irrespective of any
     links pointing to nodes of that subsystem.
+
 
     \subsection console_access_multiple Multiple sources
 
@@ -421,6 +433,7 @@
     order they are specified, so in this case, the command line options will override any options
     specified in one of the configuration files.
 
+
     \section console_access_console The network console
 
     To make the network console accessible, it must be initialized when the program is started:
@@ -459,6 +472,10 @@
     bash$
     </pre>
     \endhtmlonly
+
+    It is possible to start multiple server consoles by calling \c start() multiple times with
+    different ports/addresses. Each server can be configured separately (e.g. root node, mode ...).q
+
 
     \subsection console_serverclient Server and Client objects
 
@@ -505,6 +522,7 @@
     a path component will be completed automatically and transparently to the corresponding full
     name.
 
+
     \subsection console_noninteractive Non-interactive network console
 
     After a new connection is established, the console server waits a short time for data to arrive.
@@ -542,6 +560,7 @@
     of command are registered, by passing them to DirectoryNode::add()
 
     \autotoc
+
 
     \section console_cmdadd Adding commands and setting attributes
 
@@ -657,6 +676,7 @@
     
     To greatly simplify parsing complex commands, we turn to automatic argument parsing. 
 
+
     \subsection console_autoadd Adding
 
     Automatically parsed commands are registered by just adding a callback which has the correct
@@ -722,6 +742,7 @@
     server:/$
     </pre>
     \endhtmlonly
+
 
     \subsection command_overload Overloading
 
@@ -1099,6 +1120,7 @@
 
     \see senf::console::VariableAttributor for the complete attribute interface
 
+
     \subsection console_varchange Change notification
 
     A \e handler can be set to be called, whenever the variable is changed. It will be called with a
@@ -1121,12 +1143,33 @@
     After this setup, \c varChanged will be called, whenever the value has changed.
 
 
-    \section console_args Registering special argument types
+    \section console_args Special argument types
 
     By default, argument types which can be read and written using \c iostreams are automatically
     supported. Other types need to be registered explicitly
 
 
+    \subsection console_args_bool Boolean arguments and return values
+
+    The console library by default formats boolean values using the strings \c true and \c false for
+    their representation. When parsing a boolean value, most sensible representations will be
+    accepted:
+    
+    <table class="senf">
+    <tr><td>\c true</td>    <td>\c false</td>    <td>\ref senf::console::formatTrueFalse</td></tr>
+    <tr><td>\c on</td>      <td>\c off</td>      <td>\ref senf::console::formatOnOff</td></tr>
+    <tr><td>\c enabled</td> <td>\c disabled</td> <td>\ref senf::console::formatEnabledDisabled</td></tr>
+    <tr><td>\c yes</td>     <td>\c no</td>       <td>\ref senf::console::formatYesNo</td></tr>
+    <tr><td><em>non-zero integer</em></td><td>\c 0</td><td>\ref senf::console::formatOneZero</td></tr>
+    </table>
+
+    The boolean parser will accept these values in any (mixed) case and accepts any unique initial
+    substring (e.g. \c Y / \c N).
+
+    The last column lists explicit formatters which can be set to customize the return value
+    formatting of a registered overload accordingly.
+
+    
     \subsection console_args_enum Registering enum types
 
     Enum types are a special case, since it is not possible, to find a string representation for the
@@ -1195,7 +1238,7 @@
     \endhtmlonly
 
 
-    \subsection console_args_custom Customizing argument and return value parsing/formatting
+    \subsection console_args_custom Extending the library to support additional types
 
     To support or customize parsing/formatting of other types, they need to be registered. In it's
     simplest case, this works, by just providing an appropriate overload for

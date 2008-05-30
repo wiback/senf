@@ -133,6 +133,44 @@ namespace console {
     template <class Type>
     void parse(ParseCommandInfo::TokensRange const & tokens, Type & out);
 
+#ifndef DOXYGEN
+
+    // Parse bool: true/false, yes/no, enabled/disabled, 0/1
+    template <>
+    struct ArgumentTraits<bool>
+    {
+        typedef bool type;
+
+        static void parse(ParseCommandInfo::TokensRange const & tokens, bool & out);
+        static std::string description();
+        static std::string str(bool value);
+    };
+
+    template <>
+    struct ReturnValueTraits<bool>
+    {
+        typedef bool type;
+
+        static void format(bool value, std::ostream & os);
+    };
+
+#endif
+
+    /** \brief Format boolean value as \c true / \c false */
+    void formatTrueFalse(bool value, std::ostream & os);
+
+    /** \brief Format boolean value as \c yes / \c no */
+    void formatYesNo(bool value, std::ostream & os);
+
+    /** \brief Format boolean value as \c enabled / \c disabled */
+    void formatEnabledDisabled(bool value, std::ostream & os);
+    
+    /** \brief Format boolean value as \c on / \c off */
+    void formatOnOff(bool value, std::ostream & os);
+
+    /** \brief Format boolean value as \c 1 / \c 0 */
+    void formatOneZero(bool value, std::ostream & os);
+
     /** \brief Register enum type for argument parsing
 
         Enum types need to be registered explicitly to support parsing. 
@@ -169,7 +207,7 @@ namespace console {
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Traits.cci"
+#include "Traits.cci"
 #include "Traits.ct"
 #include "Traits.cti"
 #endif
