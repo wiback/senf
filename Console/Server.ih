@@ -29,6 +29,7 @@
 // Custom includes
 #include <boost/iostreams/concepts.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <set>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -39,6 +40,24 @@ namespace console {
     class Client;
 
 namespace detail {
+
+    class ServerManager
+        : public senf::singleton<ServerManager>
+    {
+    public:
+        typedef boost::intrusive_ptr<Server> ptr;
+
+    protected:
+
+    private:
+        static void add(ptr server);
+        static void remove(ptr server);
+
+        typedef std::set<ptr> Servers;
+        Servers servers_;
+
+        friend class senf::console::Server;
+    };
 
     /** \brief Internal: Nonblocking boost::iostreams::sink
 

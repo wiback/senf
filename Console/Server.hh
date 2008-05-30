@@ -56,7 +56,6 @@ namespace console {
 
         This class provides an interactive console TCP server.
 
-        \todo Add interactivity detection using timeout
         \idea To support blocking commands, we could give the Client 'suspend()' and 'resume()'
             members. suspend() would probably throw some kind of exception to transfer control back
             to the Client instance. on resume(), the command would be called again, maybe setting
@@ -64,15 +63,11 @@ namespace console {
             our own little host-name cache. When the name is not found, we ask the resolver to
             resolve it and call 'resume' when the name is found. Since it is in the cache now, the
             command will now complete.
-        
-        \implementation We do \e not provide an \c instance() member so we can easily later extend
-            the server to allow registering more than one instance, e.g. with each instance on a
-            differently firewalled port and with different security restrictions.
-        
+
         \ingroup console_access
       */
     class Server
-        : boost::noncopyable
+        : public senf::intrusive_refcount
     {
         SENF_LOG_CLASS_AREA();
         SENF_LOG_DEFAULT_LEVEL( senf::log::NOTICE );
@@ -124,16 +119,15 @@ namespace console {
                                              opened. */
 
         void stop();                    ///< Stop the server
-                                        /**< All clients will be closed */
+                                        /**< All clients will be closed 
+                                             \warning The Server instance itself will be deleted */
 
-        
     protected:
 
     private:
         Server(ServerHandle handle);
 
         static Server & start(ServerHandle handle);
-        static boost::scoped_ptr<Server> & instancePtr();
 
         void newClient(Scheduler::EventId event);
         void removeClient(Client & client);

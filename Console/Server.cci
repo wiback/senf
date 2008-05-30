@@ -31,6 +31,19 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ServerManager
+
+prefix_ void senf::console::detail::ServerManager::add(ptr server)
+{
+    instance().servers_.insert(server);
+}
+
+prefix_ void senf::console::detail::ServerManager::remove(ptr server)
+{
+    instance().servers_.erase(instance().servers_.find(server));
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NonblockingSocketSink
 
 prefix_ senf::console::detail::NonblockingSocketSink::NonblockingSocketSink(Client & client)
@@ -58,6 +71,12 @@ prefix_ std::string const & senf::console::Server::name()
     return name_;
 }
 
+prefix_ senf::console::DirectoryNode & senf::console::Server::root()
+    const
+{
+    return *root_;
+}
+
 prefix_ senf::console::Server & senf::console::Server::root(DirectoryNode & root)
 {
     root_ = root.thisptr();
@@ -79,7 +98,7 @@ prefix_ senf::console::Server::Mode senf::console::Server::mode()
 prefix_ void senf::console::Server::stop()
 {
     // commit suicide
-    instancePtr().reset(0);
+    detail::ServerManager::remove(boost::intrusive_ptr<Server>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////////

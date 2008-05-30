@@ -83,27 +83,18 @@ senf::console::Server::start(senf::INet6SocketAddress const & address)
     return server;
 }
 
-prefix_ boost::scoped_ptr<senf::console::Server> & senf::console::Server::instancePtr()
-{
-    // We cannot make 'instance' a global or class-static variable, since it will then be destructed
-    // at an unknown time which may fail if the scheduler or the file-handle pool allocators have
-    // already been destructed.
-    static boost::scoped_ptr<senf::console::Server> instance;
-    return instance;
-}
-
 prefix_ senf::console::Server & senf::console::Server::start(ServerHandle handle)
 {
     // Uah .... ensure the scheduler is created before the instance pointer so it get's destructed
     // AFTER it.
     (void) senf::Scheduler::instance();
-    SENF_ASSERT( ! instancePtr() );
-    instancePtr().reset(new Server(handle));
-    return * instancePtr();
+    boost::intrusive_ptr<Server> p (new Server(handle));
+    detail::ServerManager::add(boost::intrusive_ptr<Server>(p));
+    return *p;
 }
 
 prefix_ senf::console::Server::Server(ServerHandle handle)
-    : handle_ (handle), mode_ (Automatic)
+    : handle_ (handle), root_ (root().thisptr()), mode_ (Automatic)
 {
     Scheduler::instance().add( handle_, senf::membind(&Server::newClient, this) );
 }
@@ -238,6 +229,7 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
       name_ (server.name()), reader_ (), mode_ (server.mode())
 {
     handle_.facet<senf::TCPSocketProtocol>().nodelay();
+    executor_.chroot(root());
     switch (mode_) {
     case Server::Interactive :
         setInteractive();
