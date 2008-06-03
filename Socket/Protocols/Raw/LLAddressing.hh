@@ -30,9 +30,10 @@
 // Custom includes
 #include <sys/socket.h>
 #include <netpacket/packet.h>
-#include "../../../Socket/SocketPolicy.hh"
-#include "../../../Socket/FileHandle.hh"
-#include "../../../Socket/Protocols/GenericAddressingPolicy.hh"
+#include "../../SocketPolicy.hh"
+#include "../../FileHandle.hh"
+#include "../BSDAddressingPolicy.hh"
+#include "../BSDSocketAddress.hh"
 #include "MACAddress.hh"
 
 //#include "LLAddressing.mpp"
@@ -54,8 +55,11 @@ namespace senf {
         \nosubgrouping
      */
     class LLSocketAddress
+        : public BSDSocketAddress
     {
     public:
+        static short const addressFamily = AF_PACKET;
+
         /** \brief Valid pkttype() values
 
             These are the possible values returned by pkttype() 
@@ -95,16 +99,18 @@ namespace senf {
                                              \param addr Address to send data to
                                              \param iface Interface to send packet from */
 
+        LLSocketAddress(const LLSocketAddress& other);
+        LLSocketAddress& operator=(const LLSocketAddress& other);
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void clear();                   ///< Clear the address
-
-        unsigned protocol() const;      ///< Return address protocol (ethertype)
+        MACAddress address() const;     ///< Return address
         std::string interface() const;  ///< Return interface name
+        unsigned protocol() const;      ///< Return address protocol (ethertype)
+
         unsigned arptype() const;       ///< Return the hatype field (ARP hardware type)
         PktType pkttype() const;        ///< Return type of packet
-        MACAddress address() const;     ///< Return address
 
         // The mutating interface is purposely restricted to allow only
         // changing those members, which are sensible to be changed.
@@ -113,14 +119,8 @@ namespace senf {
         void interface(std::string const & iface); ///< Change interface
         void protocol(unsigned prot);   ///< Change protocol
 
-        ///\name Generic SocketAddress interface
-        ///@{
-
-        struct sockaddr * sockaddr_p();
-        struct sockaddr const * sockaddr_p() const;
-        unsigned sockaddr_len() const;
-
-        ///@}
+        using BSDSocketAddress::sockaddr_p;
+        using BSDSocketAddress::socklen_p;
 
     private:
         struct ::sockaddr_ll addr_;
@@ -146,12 +146,12 @@ namespace senf {
      */
     struct LLAddressingPolicy
         : public AddressingPolicyBase,
-          private GenericAddressingPolicy<LLSocketAddress>
+          private BSDAddressingPolicyMixin<LLSocketAddress>
     {
         typedef LLSocketAddress Address;
 
-        using GenericAddressingPolicy<LLSocketAddress>::local;
-        using GenericAddressingPolicy<LLSocketAddress>::bind;
+        using BSDAddressingPolicyMixin<LLSocketAddress>::local;
+        using BSDAddressingPolicyMixin<LLSocketAddress>::bind;
     };
 
     /// @}

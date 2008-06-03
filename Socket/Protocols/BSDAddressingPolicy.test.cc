@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     David Wagner <dw6@berlios.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,33 +21,28 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNAddressing.test unit tests */
+    \brief BSDAddressingPolicy.test unit tests */
 
-//#include "UNAddressing.test.hh"
-//#include "UNAddressing.test.ih"
+//#include "BSDAddressingPolicy.test.hh"
+//#include "BSDAddressingPolicy.test.ih"
 
 // Custom includes
-#include "UNAddressing.hh"
+#include "BSDAddressingPolicy.hh"
+#include "INet/TCPSocketHandle.hh"
 
-#include "../../../Utils/auto_unit_test.hh"
+#include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-
-#include <sys/socket.h>
-#include <sys/un.h>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(unSocketAddress)
+BOOST_AUTO_UNIT_TEST(bsdAddressingPolicy)
 {
-//  TODO: muss wieder rein.     
-//    std::string testS = "/tmp/senfTestSocket";
-//    senf::UNSocketAddress addr (testS) ; 
-//    int mySock = socket(AF_UNIX, SOCK_DGRAM, 0); 
-//    if (bind(mySock, addr.sockaddr_p(), addr.socklen())) { 
-//        std::cout << "Error while binding name to unix socket" << std::endl;
-//    }
+    typedef senf::ClientSocketHandle<senf::MakeSocketPolicy<
+        senf::BSDAddressingPolicy>::policy> BSDHandle;
 
+    senf::TCPv4ClientSocketHandle tcph;
+    BOOST_CHECK_EQUAL( BSDHandle(tcph).local(), tcph.local() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

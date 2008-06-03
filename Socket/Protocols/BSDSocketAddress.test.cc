@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     David Wagner <dw6@berlios.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,33 +21,34 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNAddressing.test unit tests */
+    \brief BSDSocketAddress.test unit tests */
 
-//#include "UNAddressing.test.hh"
-//#include "UNAddressing.test.ih"
+//#include "BSDSocketAddress.test.hh"
+//#include "BSDSocketAddress.test.ih"
 
 // Custom includes
-#include "UNAddressing.hh"
+#include "BSDSocketAddress.hh"
+#include "INet/INetAddressing.hh"
 
-#include "../../../Utils/auto_unit_test.hh"
+#include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-
-#include <sys/socket.h>
-#include <sys/un.h>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(unSocketAddress)
+BOOST_AUTO_UNIT_TEST(bsdSocketAddress)
 {
-//  TODO: muss wieder rein.     
-//    std::string testS = "/tmp/senfTestSocket";
-//    senf::UNSocketAddress addr (testS) ; 
-//    int mySock = socket(AF_UNIX, SOCK_DGRAM, 0); 
-//    if (bind(mySock, addr.sockaddr_p(), addr.socklen())) { 
-//        std::cout << "Error while binding name to unix socket" << std::endl;
-//    }
+    senf::GenericBSDSocketAddress g1;
+    senf::GenericBSDSocketAddress g2 (senf::INet4SocketAddress("1.2.3.4:5678"));
 
+    BOOST_CHECK_EQUAL( g2.family(), senf::INet4SocketAddress::addressFamily+0 );
+    BOOST_CHECK_EQUAL( senf::sockaddr_cast<senf::INet4SocketAddress>(g2).port(), 5678u );
+    BOOST_CHECK_THROW( senf::sockaddr_cast<senf::INet6SocketAddress>(g2), std::bad_cast );
+    BOOST_CHECK( g2 );
+    BOOST_CHECK( ! g1 );
+    BOOST_CHECK( g1 != g2 );
+    g1 = g2;
+    BOOST_CHECK( g1 == g2 );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

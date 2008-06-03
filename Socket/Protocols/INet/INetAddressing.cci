@@ -34,15 +34,18 @@
 // senf::INet4Address
 
 prefix_ senf::INet4SocketAddress::INet4SocketAddress()
-{
-    clear();
-}
+    : BSDSocketAddress (sizeof(sockaddr_in), AF_INET)
+{}
 
-prefix_ bool senf::INet4SocketAddress::operator==(INet4SocketAddress const & other)
-    const
+prefix_ senf::INet4SocketAddress::INet4SocketAddress(const INet4SocketAddress& other)
+    : BSDSocketAddress(other)
+{}
+
+prefix_ senf::INet4SocketAddress&
+senf::INet4SocketAddress::operator=(const INet4SocketAddress& other)
 {
-    return addr_.sin_port == other.addr_.sin_port &&
-        addr_.sin_addr.s_addr == other.addr_.sin_addr.s_addr;
+    BSDSocketAddress::operator=(other);
+    return *this;
 }
 
 prefix_ senf::INet4Address senf::INet4SocketAddress::address()
@@ -57,12 +60,6 @@ prefix_ unsigned senf::INet4SocketAddress::port()
     return ntohs(addr_.sin_port);
 }
 
-prefix_ bool senf::INet4SocketAddress::boolean_test()
-    const
-{
-    return port() || address();
-}
-
 prefix_ void senf::INet4SocketAddress::address(INet4Address const & addr)
 {
     addr_.sin_addr.s_addr = addr.inaddr();
@@ -71,23 +68,6 @@ prefix_ void senf::INet4SocketAddress::address(INet4Address const & addr)
 prefix_ void senf::INet4SocketAddress::port(unsigned p)
 {
     addr_.sin_port = htons(p);
-}
-
-prefix_ struct sockaddr * senf::INet4SocketAddress::sockaddr_p()
-{
-    return reinterpret_cast<struct sockaddr *>(&addr_);
-}
-
-prefix_ struct sockaddr const * senf::INet4SocketAddress::sockaddr_p()
-    const
-{
-    return reinterpret_cast<struct sockaddr const *>(&addr_);
-}
-
-prefix_ unsigned senf::INet4SocketAddress::sockaddr_len()
-    const
-{
-    return sizeof(addr_);
 }
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4SocketAddress const & addr)
@@ -100,30 +80,40 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4SocketAddress co
 // senf::INet6SocketAddress
 
 prefix_ senf::INet6SocketAddress::INet6SocketAddress()
-{
-    clear();
-}
+    : BSDSocketAddress (sizeof(sockaddr_in6), AF_INET6)
+{}
 
 prefix_ senf::INet6SocketAddress::INet6SocketAddress(INet6Address const & addr, unsigned port)
+    : BSDSocketAddress (sizeof(sockaddr_in6), AF_INET6)
 {
-    clear();
     std::copy(addr.begin(), addr.end(), &sockaddr_.sin6_addr.s6_addr[0]);
     sockaddr_.sin6_port = htons(port);
 }
 
 prefix_ senf::INet6SocketAddress::INet6SocketAddress(INet6Address const & addr, unsigned port,
                                                      std::string const & iface)
+    : BSDSocketAddress (sizeof(sockaddr_in6), AF_INET6)
 {
-    clear();
     std::copy(addr.begin(), addr.end(), &sockaddr_.sin6_addr.s6_addr[0]);
     sockaddr_.sin6_port = htons(port);
     assignIface(iface);
 }
 
 prefix_ senf::INet6SocketAddress::INet6SocketAddress(unsigned port)
+    : BSDSocketAddress (sizeof(sockaddr_in6), AF_INET6)
 {
-    clear();
     sockaddr_.sin6_port = htons(port);
+}
+
+prefix_ senf::INet6SocketAddress::INet6SocketAddress(const INet6SocketAddress& other)
+    : BSDSocketAddress (other)
+{}
+
+prefix_ senf::INet6SocketAddress&
+senf::INet6SocketAddress::operator=(const INet6SocketAddress& other)
+{
+    BSDSocketAddress::operator=(other);
+    return *this;
 }
 
 prefix_ senf::INet6Address senf::INet6SocketAddress::address()
@@ -151,29 +141,6 @@ prefix_ void senf::INet6SocketAddress::port(unsigned port)
 prefix_ void senf::INet6SocketAddress::iface(std::string const & iface)
 {
     assignIface(iface);
-}
-
-prefix_ bool senf::INet6SocketAddress::boolean_test()
-    const
-{
-    return address() || port() || sockaddr_.sin6_scope_id;
-}
-
-prefix_ struct sockaddr * senf::INet6SocketAddress::sockaddr_p()
-{
-    return reinterpret_cast<struct sockaddr *>(&sockaddr_);
-}
-
-prefix_ struct sockaddr const * senf::INet6SocketAddress::sockaddr_p()
-    const
-{
-    return reinterpret_cast<struct sockaddr const *>(&sockaddr_);
-}
-
-prefix_ unsigned senf::INet6SocketAddress::sockaddr_len()
-    const
-{
-    return sizeof(sockaddr_);
 }
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6SocketAddress const & addr)

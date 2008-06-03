@@ -31,12 +31,11 @@
 #include <string>
 #include <exception>
 #include <netinet/in.h>
-#include <boost/operators.hpp>
-#include "../../../Socket/SocketPolicy.hh"
-#include "../../../Socket/ClientSocketHandle.hh"
-#include "../../../Socket/CommunicationPolicy.hh"
-#include "../../../Socket/Protocols/GenericAddressingPolicy.hh"
-#include "../../../Utils/safe_bool.hh"
+#include "../../SocketPolicy.hh"
+#include "../../ClientSocketHandle.hh"
+#include "../../CommunicationPolicy.hh"
+#include "../BSDAddressingPolicy.hh"
+#include "../BSDSocketAddress.hh"
 #include "INet4Address.hh"
 #include "INet6Address.hh"
 
@@ -56,10 +55,11 @@ namespace senf {
         \ingroup addr_group
      */
     class INet4SocketAddress
-        : public boost::equality_comparable<INet4SocketAddress>, 
-          public senf::comparable_safe_bool<INet4SocketAddress>
+        : public BSDSocketAddress
     {
     public:
+        static short const addressFamily = AF_INET;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -85,30 +85,20 @@ namespace senf {
                                         ///< Set port, address is set to 0.0.0.0
                                         /**< \param[in] port port number */
 
+        INet4SocketAddress(const INet4SocketAddress& other);
+        INet4SocketAddress& operator=(const INet4SocketAddress& other);
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-
-        bool operator==(INet4SocketAddress const & other) const;
-                                        ///< Check INet4SocketAddress for equality
 
         INet4Address address() const;   ///< Return address
         unsigned port() const;          ///< Return port number
 
-        bool boolean_test() const;      ///< \c true, if address is not empty (i.e. 0.0.0.0:0)
-
-        void clear();                   ///< Clear address/port to 0.0.0.0:0
-
         void address(INet4Address const & addr); ///< Set address
         void port(unsigned p);          ///< Set port number
 
-        /// \name Generic Address Interface
-        /// @{
-
-        struct sockaddr * sockaddr_p();
-        struct sockaddr const * sockaddr_p() const;
-        unsigned sockaddr_len() const;
-
-        /// @}
+        using BSDSocketAddress::sockaddr_p;
+        using BSDSocketAddress::socklen_p;
 
     private:
         struct ::sockaddr_in addr_;
@@ -152,10 +142,11 @@ namespace senf {
         \ingroup addr_group
      */
     class INet6SocketAddress
-        : public boost::equality_comparable<INet6SocketAddress>, 
-          public senf::comparable_safe_bool<INet6SocketAddress>
+        : public BSDSocketAddress
     {
     public:
+        static short const addressFamily = AF_INET6;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -181,15 +172,13 @@ namespace senf {
                                         /**< The address is set to [::]
                                              \param[in] port port number  */
 
+        INet6SocketAddress(const INet6SocketAddress& other);
+        INet6SocketAddress& operator=(const INet6SocketAddress& other);
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        bool operator==(INet6SocketAddress const & other) const; ///< Check addresses for equality
-
-        void clear();                   ///< Clear socket address
-
         INet6Address address() const;    ///< Get printable address representation
-
         void address(INet6Address const & addr); ///< Change address
 
         unsigned port() const;          ///< Get port number
@@ -198,16 +187,8 @@ namespace senf {
         std::string iface() const;      ///< Get interface name
         void iface(std::string const & iface); ///< Change interface
 
-        bool boolean_test() const;      ///< \c true, if address is not empty (i.e. [::]:0)
-
-        ///\name Generic SocketAddress interface
-        ///@{
-
-        struct sockaddr * sockaddr_p();
-        struct sockaddr const * sockaddr_p() const;
-        unsigned sockaddr_len() const;
-
-        ///@}
+        using BSDSocketAddress::sockaddr_p;
+        using BSDSocketAddress::socklen_p;
 
     protected:
 
@@ -234,19 +215,19 @@ namespace senf {
         addresses.
 
         The various members are directly imported from
-        GenericAddressingPolicy which see for a detailed
+        BSDAddressingPolicyMixin which see for a detailed
         documentation.
      */
     struct INet4AddressingPolicy
-        : public AddressingPolicyBase,
-          private GenericAddressingPolicy<INet4SocketAddress>
+        : public BSDAddressingPolicy,
+          private BSDAddressingPolicyMixin<INet4SocketAddress>
     {
         typedef INet4SocketAddress Address;
 
-        using GenericAddressingPolicy<INet4SocketAddress>::peer;
-        using GenericAddressingPolicy<INet4SocketAddress>::local;
-        using GenericAddressingPolicy<INet4SocketAddress>::connect;
-        using GenericAddressingPolicy<INet4SocketAddress>::bind;
+        using BSDAddressingPolicyMixin<INet4SocketAddress>::peer;
+        using BSDAddressingPolicyMixin<INet4SocketAddress>::local;
+        using BSDAddressingPolicyMixin<INet4SocketAddress>::connect;
+        using BSDAddressingPolicyMixin<INet4SocketAddress>::bind;
     };
 
     /** \brief Addressing policy supporting IPv6 addressing
@@ -258,19 +239,19 @@ namespace senf {
         addresses.
 
         The various members are directly imported from
-        GenericAddressingPolicy which see for a detailed
+        BSDAddressingPolicyMixin which see for a detailed
         documentation.
      */
     struct INet6AddressingPolicy
-        : public AddressingPolicyBase,
-          private GenericAddressingPolicy<INet6SocketAddress>
+        : public BSDAddressingPolicy,
+          private BSDAddressingPolicyMixin<INet6SocketAddress>
     {
         typedef INet6SocketAddress Address;
 
-        using GenericAddressingPolicy<INet6SocketAddress>::peer;
-        using GenericAddressingPolicy<INet6SocketAddress>::local;
-        using GenericAddressingPolicy<INet6SocketAddress>::connect;
-        using GenericAddressingPolicy<INet6SocketAddress>::bind;
+        using BSDAddressingPolicyMixin<INet6SocketAddress>::peer;
+        using BSDAddressingPolicyMixin<INet6SocketAddress>::local;
+        using BSDAddressingPolicyMixin<INet6SocketAddress>::connect;
+        using BSDAddressingPolicyMixin<INet6SocketAddress>::bind;
     };
 
     /// @}

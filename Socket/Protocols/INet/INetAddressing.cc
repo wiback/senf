@@ -44,8 +44,8 @@
 // senf::INet4SocketAddress
 
 prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & addr)
+    : BSDSocketAddress (sizeof(sockaddr_in), AF_INET)
 {
-    clear();
     unsigned portIx = addr.find(':');
     try {
         port( boost::lexical_cast< ::u_int16_t >(portIx == std::string::npos 
@@ -59,22 +59,16 @@ prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & addr)
 }
 
 prefix_ senf::INet4SocketAddress::INet4SocketAddress(INet4Address const & addr, unsigned p)
+    : BSDSocketAddress (sizeof(sockaddr_in), AF_INET)
 {
-    clear();
     address(addr);
     port(p);
 }
 
 prefix_ senf::INet4SocketAddress::INet4SocketAddress(unsigned p)
+    : BSDSocketAddress (sizeof(sockaddr_in), AF_INET)
 {
-    clear();
     port(p);
-}
-
-prefix_ void senf::INet4SocketAddress::clear()
-{
-    ::memset(&addr_,0,sizeof(addr_));
-    addr_.sin_family = AF_INET;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -82,9 +76,8 @@ prefix_ void senf::INet4SocketAddress::clear()
 
 prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
                                                      INet6Address::Resolve_t resolve)
+    : BSDSocketAddress (sizeof(sockaddr_in6), AF_INET6)
 {
-    clear();
-
     // Format of addr: "[" address [ "%" interface ] "]" ":" port
     //             or: host ":" port
     //             or: port
@@ -111,20 +104,6 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
                             resolve));
         std::copy(a.begin(), a.end(), &sockaddr_.sin6_addr.s6_addr[0]);
     }
-}
-
-prefix_ bool senf::INet6SocketAddress::operator==(INet6SocketAddress const & other)
-    const
-{
-    return ::memcmp(&sockaddr_.sin6_addr, &other.sockaddr_.sin6_addr, sizeof(sockaddr_.sin6_addr))==0 &&
-        sockaddr_.sin6_port == other.sockaddr_.sin6_port &&
-        sockaddr_.sin6_scope_id == other.sockaddr_.sin6_scope_id;
-}
-
-prefix_ void senf::INet6SocketAddress::clear()
-{
-    ::memset(&sockaddr_,0,sizeof(sockaddr_));
-    sockaddr_.sin6_family = AF_INET6;
 }
 
 prefix_ std::string senf::INet6SocketAddress::iface()

@@ -31,21 +31,14 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::LLSocketAddress::clear()
-{
-    ::memset(&addr_,0,sizeof(addr_));
-    addr_.sll_family = AF_PACKET;
-}
-
 prefix_ void senf::LLSocketAddress::address(MACAddress const & addr)
 {
     std::copy(addr.begin(), addr.end(),&addr_.sll_addr[0]);
 }
 
 prefix_ senf::LLSocketAddress::LLSocketAddress()
-{
-    clear();
-}
+    : BSDSocketAddress (sizeof(sockaddr_ll), AF_PACKET)
+{}
 
 prefix_ void senf::LLSocketAddress::protocol(unsigned prot)
 {
@@ -53,24 +46,34 @@ prefix_ void senf::LLSocketAddress::protocol(unsigned prot)
 }
 
 prefix_ senf::LLSocketAddress::LLSocketAddress(unsigned prot, std::string const & iface)
+    : BSDSocketAddress (sizeof(sockaddr_ll), AF_PACKET)
 {
-    clear();
     protocol(prot);
     interface(iface);
 }
 
 prefix_ senf::LLSocketAddress::LLSocketAddress(std::string const &iface)
+    : BSDSocketAddress (sizeof(sockaddr_ll), AF_PACKET)
 {
-    clear();
     interface(iface);
 }
 
 prefix_ senf::LLSocketAddress::LLSocketAddress(MACAddress const & addr,
                                                std::string const & iface)
+    : BSDSocketAddress (sizeof(sockaddr_ll), AF_PACKET)
 {
-    clear();
     address(addr);
     interface(iface);
+}
+
+prefix_ senf::LLSocketAddress::LLSocketAddress(const LLSocketAddress& other)
+    : BSDSocketAddress (other)
+{}
+
+prefix_ senf::LLSocketAddress& senf::LLSocketAddress::operator=(const LLSocketAddress& other)
+{
+    BSDSocketAddress::operator=(other);
+    return *this;
 }
 
 prefix_ unsigned senf::LLSocketAddress::protocol()
@@ -95,23 +98,6 @@ prefix_ senf::MACAddress senf::LLSocketAddress::address()
     const
 {
     return MACAddress::from_data(&addr_.sll_addr[0]);
-}
-
-prefix_ struct sockaddr * senf::LLSocketAddress::sockaddr_p()
-{
-    return reinterpret_cast<struct sockaddr *>(&addr_);
-}
-
-prefix_ struct sockaddr const * senf::LLSocketAddress::sockaddr_p()
-    const
-{
-    return reinterpret_cast<struct sockaddr const *>(&addr_);
-}
-
-prefix_ unsigned senf::LLSocketAddress::sockaddr_len()
-    const
-{
-    return sizeof(addr_);
 }
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, LLSocketAddress const & llAddr)

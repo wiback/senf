@@ -31,8 +31,8 @@
 #include <string>
 #include <sys/socket.h>
 #include <sys/un.h>
-#include "../../../Socket/Protocols/GenericAddressingPolicy.hh"
-#include "../../../Utils/safe_bool.hh"
+#include "../BSDAddressingPolicy.hh"
+#include "../BSDSocketAddress.hh"
 
 //#include "UNAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -49,25 +49,24 @@ namespace senf {
         \ingroup addr_group
      */
     class UNSocketAddress
-        : public comparable_safe_bool<UNSocketAddress>
+        : public BSDSocketAddress
     {
     public:
+        static short const addressFamily = AF_UNIX;
+        
         UNSocketAddress(); 
+
         explicit UNSocketAddress(std::string const & path);
                                         ///< Construct an address constant from given path
 
-        bool operator==(UNSocketAddress const & other) const;
-                                        ///< Compare UNSocketAddress for equality
+        UNSocketAddress(const UNSocketAddress& other);
+        UNSocketAddress& operator=(const UNSocketAddress& other);
 
         std::string path() const ;      ///< Return path as string
+        void path(std::string const & path);
 
-        bool boolean_test() const;      ///< \c true, if address is not empty
-        
-        void clear();                   ///< Clear address
-
-        struct sockaddr * sockaddr_p() ;
-        struct sockaddr const * sockaddr_p() const;
-        unsigned sockaddr_len() const;
+        using BSDSocketAddress::sockaddr_p;
+        using BSDSocketAddress::socklen_p;
 
     private:
         struct sockaddr_un addr_;
@@ -91,26 +90,26 @@ namespace senf {
         addresses.
 
         The various members are directly imported from
-        GenericAddressingPolicy which see for a detailed
+        BSDAddressingPolicyMixin which see for a detailed
         documentation.
      */
     struct UNAddressingPolicy
-        : public AddressingPolicyBase,
-          private GenericAddressingPolicy<UNSocketAddress>
+        : public BSDAddressingPolicy,
+          private BSDAddressingPolicyMixin<UNSocketAddress>
     {
         typedef UNSocketAddress Address;
 
-        using GenericAddressingPolicy<UNSocketAddress>::peer;
-        using GenericAddressingPolicy<UNSocketAddress>::local;
-        using GenericAddressingPolicy<UNSocketAddress>::connect;
-        using GenericAddressingPolicy<UNSocketAddress>::bind;
+        using BSDAddressingPolicyMixin<UNSocketAddress>::peer;
+        using BSDAddressingPolicyMixin<UNSocketAddress>::local;
+        using BSDAddressingPolicyMixin<UNSocketAddress>::connect;
+        using BSDAddressingPolicyMixin<UNSocketAddress>::bind;
     };
 
     ///@}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "UNAddressing.cci"
+#include "UNAddressing.cci"
 //#include "UNAddressing.ct"
 //#include "UNAddressing.cti"
 #endif

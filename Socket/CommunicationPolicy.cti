@@ -53,7 +53,7 @@ accept(ServerSocketHandle<SPolicy> handle,
        typename ServerSocketHandle<SPolicy>::Address & address,
        typename IfAddressingPolicyIsNot<SPolicy,NoAddressingPolicy>::type *)
 {
-    return do_accept(handle,address.sockaddr_p(),address.sockaddr_len());
+    return do_accept(handle,address.sockaddr_p(),address.socklen());
 }
 #else
 template <class SPolicy>

@@ -21,22 +21,23 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief GenericAddressingPolicy public header
+    \brief BSDAddressingPolicyMixin public header
  */
 
 /** \defgroup addr_group Addressing classes
  */
 
-#ifndef HH_GenericAddressingPolicy_
-#define HH_GenericAddressingPolicy_ 1
+#ifndef HH_BSDAddressingPolicyMixin_
+#define HH_BSDAddressingPolicyMixin_ 1
 
 // Custom includes
-#include "../../Socket/SocketHandle.hh"
-#include "../../Socket/FileHandle.hh"
-#include "../../Socket/SocketPolicy.hh"
-#include "../../Socket/CommunicationPolicy.hh"
+#include "../SocketHandle.hh"
+#include "../FileHandle.hh"
+#include "../SocketPolicy.hh"
+#include "../CommunicationPolicy.hh"
+#include "BSDSocketAddress.hh"
 
-//#include "GenericAddressingPolicy.mpp"
+//#include "BSDAddressingPolicy.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -44,16 +45,16 @@ namespace senf {
     /// \addtogroup policy_impl_group
     /// @{
 
-    /** \brief Non-template implementation class of GenericAddressingPolicy template
+    /** \brief Non-template implementation class of BSDAddressingPolicyMixin template
 
         \internal
      */
-    struct GenericAddressingPolicy_Base
+    struct BSDAddressingPolicyMixinBase
     {
-        static void do_local(FileHandle handle, struct sockaddr * addr, unsigned len);
-        static void do_peer(FileHandle handle, struct sockaddr * addr, unsigned len);
-        static void do_bind(FileHandle handle, struct sockaddr const * addr, unsigned len);
-        static void do_connect(FileHandle handle, struct sockaddr const * addr, unsigned len);
+        static void do_local(FileHandle handle, struct sockaddr * addr, socklen_t * len);
+        static void do_peer(FileHandle handle, struct sockaddr * addr, socklen_t * len);
+        static void do_bind(FileHandle handle, struct sockaddr const * addr, socklen_t len);
+        static void do_connect(FileHandle handle, struct sockaddr const * addr, socklen_t len);
     };
 
     /** \brief Template for generic AddressingPolicy implementation based on the BSD socket API
@@ -63,7 +64,7 @@ namespace senf {
         (connect/bind/getsockname/getpeername).
 
         The \a Address template parameter specifies the address type of the addressing policy. This
-        type must have two members: \c sockaddr_p() and \c sockaddr_len(). The first must return a
+        type must have two members: \c sockaddr_p() and \c socklen(). The first must return a
         <tt>struct sockaddr *</tt> to the address, the second must return the size of the address in
         bytes. The pointer returned by \c sockaddr_p() must be non-const if called on a non-const
         address. <em>The underlying socket address stored at that pointer might be
@@ -81,8 +82,8 @@ namespace senf {
         storage representation of the address.
      */
     template <class Address>
-    struct GenericAddressingPolicy
-        : private GenericAddressingPolicy_Base
+    struct BSDAddressingPolicyMixin
+        : private BSDAddressingPolicyMixinBase
     {
 #       ifndef DOXYGEN
         template <class SPolicy>
@@ -126,13 +127,25 @@ namespace senf {
 
     /// @}
 
+    struct BSDAddressingPolicy
+        : public AddressingPolicyBase,
+          private BSDAddressingPolicyMixin<GenericBSDSocketAddress>
+    {
+        typedef GenericBSDSocketAddress Address;
+
+        using BSDAddressingPolicyMixin<GenericBSDSocketAddress>::peer;
+        using BSDAddressingPolicyMixin<GenericBSDSocketAddress>::local;
+        using BSDAddressingPolicyMixin<GenericBSDSocketAddress>::connect;
+        using BSDAddressingPolicyMixin<GenericBSDSocketAddress>::bind;
+    };
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "GenericAddressingPolicy.cci"
-//#include "GenericAddressingPolicy.ct"
-#include "GenericAddressingPolicy.cti"
-//#include "GenericAddressingPolicy.mpp"
+//#include "BSDAddressingPolicy.cci"
+//#include "BSDAddressingPolicy.ct"
+#include "BSDAddressingPolicy.cti"
+//#include "BSDAddressingPolicy.mpp"
 #endif
 
 

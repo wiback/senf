@@ -324,6 +324,10 @@ namespace senf {
                                              returns. */
         
         ClockService::clock_type eventTime() const; ///< Return date/time of last event
+                                        /**< This is the timestamp, the last event has been
+                                             signaled. This is the real time at which the event is
+                                             delivered \e not the time it should have been delivered
+                                             (in the case of timers). */
 
     protected:
 

@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief GenericAddressingPolicy inline template implementation
+    \brief BSDAddressingPolicyMixin inline template implementation
  */
 
-//#include "GenericAddressingPolicy.ih"
+//#include "BSDAddressingPolicy.ih"
 
 // Custom includes
 
@@ -32,18 +32,17 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::GenericAddressingPolicy<Address>
+// senf::BSDAddressingPolicyMixin<Address>
 
 #ifndef DOXYGEN
 template <class Address>
 template <class SPolicy>
-prefix_ void senf::GenericAddressingPolicy<Address>::
+prefix_ void senf::BSDAddressingPolicyMixin<Address>::
 peer(SocketHandle<SPolicy> handle, Address & addr,
      typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
-    addr.clear();
     try {
-        do_peer(handle,addr.sockaddr_p(),addr.sockaddr_len());
+        do_peer(handle,addr.sockaddr_p(),addr.socklen_p());
     } catch (Exception & e) {
         e << "; could not get peer for address \"" << addr << "\"";
         throw;
@@ -52,7 +51,7 @@ peer(SocketHandle<SPolicy> handle, Address & addr,
 #else
 template <class Address>
 template <class SPolicy>
-prefix_ void senf::GenericAddressingPolicy<Address>::
+prefix_ void senf::BSDAddressingPolicyMixin<Address>::
 peer(SocketHandle<SPolicy> handle, Address & addr)
 {}
 #endif
@@ -60,12 +59,12 @@ peer(SocketHandle<SPolicy> handle, Address & addr)
 #ifndef DOXYGEN
 template <class Address>
 template <class SPolicy>
-prefix_ void senf::GenericAddressingPolicy<Address>::
+prefix_ void senf::BSDAddressingPolicyMixin<Address>::
 connect(SocketHandle<SPolicy> handle, Address const & addr,
         typename IfCommunicationPolicyIs<SPolicy,ConnectedCommunicationPolicy>::type *)
 {
     try {
-        do_connect(handle,addr.sockaddr_p(),addr.sockaddr_len());
+        do_connect(handle,addr.sockaddr_p(),addr.socklen());
     } catch (Exception & e) {
         e << "; could not connect to address \"" << addr << "\"";
         throw;
@@ -74,18 +73,17 @@ connect(SocketHandle<SPolicy> handle, Address const & addr,
 #else
 template <class Address>
 template <class SPolicy>
-prefix_ void senf::GenericAddressingPolicy<Address>::
+prefix_ void senf::BSDAddressingPolicyMixin<Address>::
 connect(SocketHandle<SPolicy> handle, Address const & addr)
 {}
 #endif
 
 template <class Address>
-prefix_ void senf::GenericAddressingPolicy<Address>::local(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixin<Address>::local(FileHandle handle,
                                                            Address & addr)
 {
-    addr.clear();
     try {
-        do_local(handle,addr.sockaddr_p(),addr.sockaddr_len());
+        do_local(handle,addr.sockaddr_p(),addr.socklen_p());
     } catch (Exception & e) {
         // TODO: identify socket by some meaningful attribute
         e << "; could not get name for address \"" << addr << "\"";
@@ -94,11 +92,11 @@ prefix_ void senf::GenericAddressingPolicy<Address>::local(FileHandle handle,
 }
 
 template <class Address>
-prefix_ void senf::GenericAddressingPolicy<Address>::bind(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixin<Address>::bind(FileHandle handle,
                                                                  Address const & addr)
 {
     try {
-        do_bind(handle,addr.sockaddr_p(),addr.sockaddr_len());
+        do_bind(handle,addr.sockaddr_p(),addr.socklen());
     } catch (Exception & e) {
         e << "; could not bind to address \"" << addr << "\"";
         throw;

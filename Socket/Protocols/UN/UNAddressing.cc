@@ -27,67 +27,18 @@
 //#include "UNAddressing.ih"
 
 // Custom includes
-
+#include "../AddressExceptions.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::UNSocketAddress::UNSocketAddress()
-{}
-
-prefix_ senf::UNSocketAddress::UNSocketAddress(std::string const & path)
+prefix_ void senf::UNSocketAddress::path(std::string const & path)
 {
-    clear();
-    ::strncpy(addr_.sun_path, path.c_str(), sizeof(addr_.sun_path));
-    addr_.sun_path[sizeof(addr_.sun_path)-1] = 0;
-}
-
-prefix_ bool senf::UNSocketAddress::operator==(UNSocketAddress const & other)
-    const
-{
-    return path() == other.path();
-}
-
-prefix_ std::string senf::UNSocketAddress::path()
-    const
-{
-    return std::string(addr_.sun_path);
-}
-
-prefix_ bool senf::UNSocketAddress::boolean_test()
-    const
-{
-    return addr_.sun_path[0] != 0;
-}
-
-prefix_ void senf::UNSocketAddress::clear()
-{
-    ::memset(&addr_, 0, sizeof(addr_));
-    addr_.sun_family = AF_UNIX;
-}
-
-prefix_ sockaddr * senf::UNSocketAddress::sockaddr_p()
-{
-    return reinterpret_cast <struct sockaddr  *> (&addr_); 
-}
-
-prefix_ sockaddr const * senf::UNSocketAddress::sockaddr_p()
-    const
-{
-    return reinterpret_cast <struct sockaddr const  *> (&addr_); 
-}
-
-prefix_ unsigned senf::UNSocketAddress::sockaddr_len()
-    const
-{
-    return sizeof(addr_);
-}
-
-prefix_ std::ostream & senf::operator<<(std::ostream & os,
-                                  senf::UNSocketAddress::UNSocketAddress const & addr)
-{
-    os << addr.path();
-    return os;
+    if (path.size() > sizeof(sockaddr_un)-sizeof(short)-1)
+        throw AddressSyntaxException();
+    socklen(path.size()+sizeof(short));
+    memcpy(addr_.sun_path, path.c_str(), socklen()-sizeof(short));
+    addr_.sun_path[socklen()-sizeof(short)+1] = 0;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -21,48 +21,48 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief GenericAddressingPolicy non-inline non-template implementation
+    \brief BSDAddressingPolicyMixin non-inline non-template implementation
  */
 
-#include "GenericAddressingPolicy.hh"
-//#include "GenericAddressingPolicy.ih"
+#include "BSDAddressingPolicy.hh"
+//#include "BSDAddressingPolicy.ih"
 
 // Custom includes
 #include <sys/socket.h>
 #include <sys/types.h>
 #include "../../Utils/Exception.hh"
 
-//#include "GenericAddressingPolicy.mpp"
+//#include "BSDAddressingPolicy.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::GenericAddressingPolicy_Base::do_local(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixinBase::do_local(FileHandle handle,
                                                                  struct sockaddr * addr,
-                                                                 unsigned len)
+                                                                 socklen_t * len)
 {
-    if (::getsockname(handle.fd(),addr,&len) < 0)
+    if (::getsockname(handle.fd(),addr,len) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
-prefix_ void senf::GenericAddressingPolicy_Base::do_peer(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixinBase::do_peer(FileHandle handle,
                                                                 struct sockaddr * addr,
-                                                                unsigned len)
+                                                                socklen_t * len)
 {
-    if (::getpeername(handle.fd(),addr,&len) < 0)
+    if (::getpeername(handle.fd(),addr,len) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
-prefix_ void senf::GenericAddressingPolicy_Base::do_bind(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixinBase::do_bind(FileHandle handle,
                                                                 struct sockaddr const * addr,
-                                                                unsigned len)
+                                                                socklen_t len)
 {
     if (::bind(handle.fd(),addr,len) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("");
 }
 
-prefix_ void senf::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
+prefix_ void senf::BSDAddressingPolicyMixinBase::do_connect(FileHandle handle,
                                                                    struct sockaddr const * addr,
-                                                                   unsigned len)
+                                                                   socklen_t len)
 {
     while(1) {
         if (::connect(handle.fd(),addr,len) < 0)
@@ -89,7 +89,7 @@ prefix_ void senf::GenericAddressingPolicy_Base::do_connect(FileHandle handle,
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "GenericAddressingPolicy.mpp"
+//#include "BSDAddressingPolicy.mpp"
 
 
 // Local Variables:

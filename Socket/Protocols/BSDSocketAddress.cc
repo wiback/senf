@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     David Wagner <dw6@berlios.de>
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,37 +21,48 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNAddressing.test unit tests */
+    \brief BSDSocketAddress non-inline non-template implementation */
 
-//#include "UNAddressing.test.hh"
-//#include "UNAddressing.test.ih"
+//#include "BSDSocketAddress.hh"
+//#include "BSDSocketAddress.ih"
 
 // Custom includes
-#include "UNAddressing.hh"
+#include "INet/INetAddressing.hh"
+#include "UN/UNAddressing.hh"
+#include "Raw/LLAddressing.hh"
 
-#include "../../../Utils/auto_unit_test.hh"
-#include <boost/test/test_tools.hpp>
-
-#include <sys/socket.h>
-#include <sys/un.h>
-
+//#include "BSDSocketAddress.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(unSocketAddress)
+prefix_ std::ostream & senf::operator<<(std::ostream & os, BSDSocketAddress const & addr)
 {
-//  TODO: muss wieder rein.     
-//    std::string testS = "/tmp/senfTestSocket";
-//    senf::UNSocketAddress addr (testS) ; 
-//    int mySock = socket(AF_UNIX, SOCK_DGRAM, 0); 
-//    if (bind(mySock, addr.sockaddr_p(), addr.socklen())) { 
-//        std::cout << "Error while binding name to unix socket" << std::endl;
-//    }
-
+    switch(addr.family()) {
+    case INet4SocketAddress::addressFamily :
+        os << sockaddr_cast<INet4SocketAddress>(addr);
+        break;
+    case INet6SocketAddress::addressFamily :
+        os << sockaddr_cast<INet6SocketAddress>(addr);
+        break;
+    case UNSocketAddress::addressFamily :
+        os << sockaddr_cast<UNSocketAddress>(addr);
+        break;
+    case LLSocketAddress::addressFamily :
+        os << sockaddr_cast<LLSocketAddress>(addr);
+        break;
+    case AF_UNSPEC :
+        os << "[unspecified address]";
+        break;
+    default:
+        os << "[unknown address family " << addr.family() << "]";
+        break;
+    }
+    return os;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "BSDSocketAddress.mpp"
 
 
 // Local Variables:
