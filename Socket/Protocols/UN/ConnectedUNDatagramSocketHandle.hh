@@ -40,9 +40,6 @@
 
 namespace senf {
 
-    /// \addtogroup concrete_protocol_group
-    /// @{
-
     typedef MakeSocketPolicy<
         UNAddressingPolicy,
         DatagramFramingPolicy,
@@ -50,6 +47,9 @@ namespace senf {
         ReadablePolicy,
         WriteablePolicy
         >::policy ConnectedUNDatagramSocket_Policy;   ///< Socket Policy of the Unix Domain Datagram Protocol (connected)
+
+    /// \ingroup concrete_protocol_group
+    /// \{
 
     /** \brief Unix Domain Datagram Socket Protocol (connected)
 
@@ -100,6 +100,8 @@ namespace senf {
     };
 
     typedef ProtocolClientSocketHandle<ConnectedUNDatagramSocketProtocol> ConnectedUNDatagramClientSocketHandle;
+
+    ///\}
 
 }
 

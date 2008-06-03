@@ -36,21 +36,49 @@
 
 namespace senf {
 
-    /** \brief
+    /** \brief Socket addressing, BSD style
+        
+        BSDSocketAddress is the base class of all BSD \c sockaddr based addressing classes. The \c
+        sockaddr addressing interface is split into several parts
+
+        \li The BSDSocketAddress provides a read-only and generic \c sockaddr interface
+        \li Address family specific derived classes implement addressing of a specific type. These
+            are INet4SocketAddress (\c AF_INET), INet6SocketAddress (\c AF_INET6), UNSocketAddress
+            (\c AF_UNIX) and LLSocketAddress (\c AF_PACKET)
+        \li GenericBSDSocketAddress provides writable support for generic addresses.
+
+        It is \e not possible to create or store BSDSocketAddress instances: You must either store
+        an address in one of the specifically typed subclasses or using GenericBSDSocketAddress.
+
+        All these classes provide a generic \c sockaddr API to interface with legacy \c sockaddr
+        based code (e.g. the BSD socket API). In this base-class, this interface is read-only, the
+        derived classes however provide a read-write interface.
+
+        \ingroup addr_group
       */
     class BSDSocketAddress
         : public senf::comparable_safe_bool<BSDSocketAddress>
     {
     public:
-        
-        bool operator==(BSDSocketAddress const & other) const;
-        bool operator!=(BSDSocketAddress const & other) const;
+        bool operator==(BSDSocketAddress const & other) const; ///< Compare two arbitrary addresses
+                                        /**< For addresses to be considered equal, they must have
+                                             the same family, length and the data must be
+                                             identical. */
+        bool operator!=(BSDSocketAddress const & other) const; ///< Inverse of operator==
 
-        bool boolean_test() const;
-        short family() const;
+        bool boolean_test() const;      ///< Return \c true, if address is not empty
+                                        /**< An address is considered empty if
+                                             \li the family is AF_UNSPEC
+                                             \li or the size is 0
+                                             \li or all data bytes are 0 */
+
+        short family() const;           ///< Return the address family.
+                                        /**< This value is found in the \c addressFamily member of
+                                             each typed derived class
+                                             (e.g. INet4Address::addressFamily) */
 
         ///////////////////////////////////////////////////////////////////////////
-        ///\name Generic \c sockaddr interface
+        ///\name Generic sockaddr interface
         ///\{
 
         struct sockaddr const * sockaddr_p() const;
@@ -74,15 +102,43 @@ namespace senf {
         socklen_t len_;
     };
 
+    /** \brief Safe socket address down-cast
+
+        sockaddr_cast allows to safely cast a socket address to it's derived type. Only the family
+        specific derived addressing classes are permissible for \a Target.
+
+        This cast is especially useful to cast a GenericBSDSocketAddress to it's concrete type.
+
+        \related BSDSocketAddress
+     */
     template <class Target>
     Target & sockaddr_cast(BSDSocketAddress & source);
 
+    /** \brief Safe socket address down-cast (const)
+        \see sockaddr_cast()
+        \related BSDSocketAddress
+     */
     template <class Target>
     Target const & sockaddr_cast(BSDSocketAddress const & source);
 
+    /** \brief Output generic socket address
+
+        This stream operator will output a generic BSDSocketAddress in a family depending format.
+        
+        \related BSDSocketAddress
+     */
     std::ostream & operator<<(std::ostream & os, BSDSocketAddress const & addr);
 
-    /** \brief
+    /** \brief Generic BSD \c sockaddr storage
+
+        While BSDSocketAddress provides read-only generic \c sockaddr access,
+        GenericBSDSocketAddress allows to store (write) arbitrary socket addresses. (It is
+        internally based on \c sockaddr_storage). 
+
+        To access the stored address, use sockaddr_cast to cast the GenericBSDSocketAddress to the
+        correct family specific address class.
+
+        \ingroup addr_group
       */
     class GenericBSDSocketAddress
         : public BSDSocketAddress
@@ -101,7 +157,7 @@ namespace senf {
         
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-        ///\name Generic \c sockaddr interface
+        ///\name Generic sockaddr interface
         ///\{
 
         struct sockaddr const * sockaddr_p() const;

@@ -24,27 +24,79 @@ namespace senf {
 
 /** \mainpage The SENF Socket Library
 
-    The Socket library provides a high level and object oriented abstraction of the BSD socket
-    API. The abstraction is based on several concepts:
+    The Socket library provides a high level and object oriented abstraction based on the BSD socket
+    API (but not limited to it). 
+    
+    \autotoc
+    
+    \section socket_intro Introduction
 
-    \li The basic visible interface is a \link handle_group handle object \endlink
+    The socket library abstraction is based on several concepts:
+
+    \li The basic visible interface is a \link handle_group handle object\endlink
     \li The socket interface relies on a \link policy_group policy framework \endlink to configure
         it's functionality
     \li The rest of the socket API is accessible using a classic inheritance hierarchy of \link
         protocol_group protocol classes \endlink
+    \li There is a family of auxilliary \ref addr_group to supplement the socket library
+
+    \see
+        \ref structure \n
+        \ref usage
+
+
+    \section socket_handle Socket Handles
 
     The handle/body architecture provides automatic reference counted management of socket
-    instances, the policy framework provides highly efficient access to the most important socket
-    functions (like reading and writing) and the inheritance hierarchy provides convenient access to
-    the multitude of special and protocol dependent options.
+    instances. This is the visible interface to the socket library.
+
+    Each specific protocol is used primarily via a protocol specific handle (a typedef
+    symbol). However, more generic kinds of handles can be defined for more generic functionality.
 
     \see 
-        \ref structure \n
-        \ref usage \n
         \ref handle_group \n
-        \ref policy_group \n
-        \ref protocol_group \n
-        \ref addr_group \n
+        \ref concrete_protocol_group
+
+    
+    \section socket_policy The Policy interface
+
+    The policy framework configures the exact features, a specific type of socket handle
+    provides. This offers highly efficient access to the most important socket functions (like
+    reading and writing). The policy interface however is a \e static, non-polymorphic interface.
+
+    \see
+        \ref policy_group
+    
+    \section socket_protocol The Protocol interface
+
+    The protocol interface provides further protocol dependent and (possibly) polymorphic access to
+    further socket funcitonality. On the other hand, this type of interface is not as flexible,
+    generic and fast as the policy interface.
+
+    \see
+        \ref protocol_group
+    
+    \section socket_addr Auxilliary Addressing classes
+    
+    To supplement the socket library, there are a multitude of addressing classes. These come in two
+    basic groups:
+    \li Protocol specific addresses (e.g. INet4Address, MACAddress)
+    \li Socket addresses (\c sockaddr) (e.g. INet4SocketAddress, LLSocketAddress)
+
+    Whereas the protocol specific addresses are custom value types which represent their
+    corresponding low-level address, the socket addresses are based on the corresponding \c sockaddr
+    structures. 
+    
+    \see
+        \ref addr_group
+
+    \section socket_further Going further
+
+    The socket library is highly flexible and extensible. The implementation is not restricted to
+    plain BSD sockets: Any type of read/write communication can be wrapped into the socket library
+    (one Example is the TapSocketHandle which provides access to a Linux \c tap device).
+
+    \see
         \ref extend \n
         \ref implementation
  */
