@@ -94,7 +94,7 @@ prefix_ senf::console::Server & senf::console::Server::start(ServerHandle handle
 }
 
 prefix_ senf::console::Server::Server(ServerHandle handle)
-    : handle_ (handle), root_ (root().thisptr()), mode_ (Automatic)
+    : handle_ (handle), root_ (senf::console::root().thisptr()), mode_ (Automatic)
 {
     Scheduler::instance().add( handle_, senf::membind(&Server::newClient, this) );
 }
