@@ -33,77 +33,77 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::VectorParser<ElementParser,Sizer>
 
-template <class ElementParser, class Sizer>
-prefix_ senf::VectorParser<ElementParser,Sizer>::VectorParser(data_iterator i, state_type s)
-    : PacketParserBase(i,s), sizer_()
+template <class ElementParser, class AuxPolicy>
+prefix_ senf::VectorParser<ElementParser,AuxPolicy>::VectorParser(data_iterator i, state_type s)
+    : PacketParserBase(i,s), AuxPolicy()
 {}
 
-template <class ElementParser, class Sizer>
-prefix_ senf::VectorParser<ElementParser,Sizer>::VectorParser(Sizer sizer, data_iterator i,
-                                                              state_type s)
-    : PacketParserBase(i,s), sizer_(sizer)
+template <class ElementParser, class AuxPolicy>
+prefix_ senf::VectorParser<ElementParser,AuxPolicy>::VectorParser(AuxPolicy policy,
+                                                                  data_iterator i, state_type s)
+    : PacketParserBase(i,s), AuxPolicy(policy)
 {}
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser<ElementParser,Sizer>::size_type
-senf::VectorParser<ElementParser,Sizer>::bytes()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::size_type
+senf::VectorParser<ElementParser,AuxPolicy>::bytes()
     const
 {
-    return size()*ElementParser::fixed_bytes + sizer_.bytes(i(),state());
+    return size()*ElementParser::fixed_bytes + AuxPolicy::aux_bytes;
 }
 
 // Container interface
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser<ElementParser,Sizer>::size_type
-senf::VectorParser<ElementParser,Sizer>::size()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::size_type
+senf::VectorParser<ElementParser,AuxPolicy>::size()
     const
 {
-    return sizer_.size(i(),state());
+    return aux(i(),state());
 }
 
-template <class ElementParser, class Sizer>
-prefix_ bool senf::VectorParser<ElementParser,Sizer>::empty()
+template <class ElementParser, class AuxPolicy>
+prefix_ bool senf::VectorParser<ElementParser,AuxPolicy>::empty()
     const
 {
     return size()==0;
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser<ElementParser,Sizer>::iterator
-senf::VectorParser<ElementParser,Sizer>::begin()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::iterator
+senf::VectorParser<ElementParser,AuxPolicy>::begin()
     const
 {
-    return iterator(sizer_.begin(i(),state()),state());
+    return iterator(adjust(i(),state()),state());
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser<ElementParser,Sizer>::iterator
-senf::VectorParser<ElementParser,Sizer>::end()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::iterator
+senf::VectorParser<ElementParser,AuxPolicy>::end()
     const
 {
     return boost::next(begin(),size());
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser<ElementParser,Sizer>::value_type
-senf::VectorParser<ElementParser,Sizer>::operator[](difference_type i)
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::value_type
+senf::VectorParser<ElementParser,AuxPolicy>::operator[](difference_type i)
     const
 {
     return begin()[i];
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser<ElementParser,Sizer>::value_type
-senf::VectorParser<ElementParser,Sizer>::front()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::value_type
+senf::VectorParser<ElementParser,AuxPolicy>::front()
     const
 {
     return begin()[0];
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser<ElementParser,Sizer>::value_type
-senf::VectorParser<ElementParser,Sizer>::back()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::value_type
+senf::VectorParser<ElementParser,AuxPolicy>::back()
     const
 {
     return begin()[size()-1];
@@ -111,98 +111,56 @@ senf::VectorParser<ElementParser,Sizer>::back()
 
 // Mutators
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser<ElementParser,Sizer>::push_back(Value value, size_type n)
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back(Value value, size_type n)
     const
 {
     container c (*this);
     c.push_back(value,n);
 }
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser<ElementParser,Sizer>::push_back_space(size_type n)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back_space(size_type n)
     const
 {
     container c (*this);
     c.push_back_space(n);
 }
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser<ElementParser,Sizer>::push_front(Value value, size_type n)
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_front(Value value, size_type n)
     const
 {
     container c (*this);
     c.push_front(value,n);
 }
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser<ElementParser,Sizer>::push_front_space(size_type n)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_front_space(size_type n)
     const
 {
     container c (*this);
     c.push_front_space(n);
 }
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser<ElementParser,Sizer>::resize(size_type n)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::resize(size_type n)
     const
 {
     container c (*this);
     c.resize(n);
 }
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser<ElementParser,Sizer>::resize(size_type n, Value value)
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::resize(size_type n, Value value)
     const
 {
     container c (*this);
     c.resize(n,value);
 }
-
-///////////////////////////////////////////////////////////////////////////
-// senf::SimpleSizeParser<SizeParser,offset>
-
-template <class SizeParser, unsigned Distance>
-prefix_ typename senf::detail::VectorNParser_Sizer<SizeParser,Distance>::size_type
-senf::detail::VectorNParser_Sizer<SizeParser,Distance>::size(iterator i, state_type s)
-    const
-{
-    return SizeParser(boost::prior(i, Distance), s).value();
-}
-
-template <class SizeParser, unsigned Distance>
-prefix_ void senf::detail::VectorNParser_Sizer<SizeParser,Distance>::size(iterator i,
-                                                                          state_type s,
-                                                                          size_type v)
-    const
-{
-    SizeParser(boost::prior(i, Distance), s).value(v);
-}
-
-template <class SizeParser, unsigned Distance>
-prefix_ typename senf::detail::VectorNParser_Sizer<SizeParser,Distance>::iterator
-senf::detail::VectorNParser_Sizer<SizeParser,Distance>::begin(iterator i, state_type s)
-    const
-{
-    return i;
-}
-
-template <class SizeParser, unsigned Distance>
-prefix_ typename senf::detail::VectorNParser_Sizer<SizeParser,Distance>::size_type
-senf::detail::VectorNParser_Sizer<SizeParser,Distance>::bytes(iterator i, state_type s)
-    const
-{
-    return 0;
-}
-
-template <class SizeParser, unsigned Distance>
-prefix_ void senf::detail::VectorNParser_Sizer<SizeParser,Distance>::init(iterator i,
-                                                                          state_type s)
-    const
-{}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::VectorParser_wrapper<Parser,SizeParser,Container>
@@ -212,65 +170,65 @@ prefix_ void senf::detail::VectorNParser_Sizer<SizeParser,Distance>::init(iterat
 // hm ... be careful here ! the data() member is called in an incompletely intitialized
 // instance. However, data() only depends on state_ which is initialized before the call. YOU MUST
 // NOT CHANGE THE ORDERING OF THE DATA MEMBERS
-template <class ElementParser, class Sizer>
-prefix_ senf::VectorParser_Container<ElementParser,Sizer>::
+template <class ElementParser, class AuxPolicy>
+prefix_ senf::VectorParser_Container<ElementParser,AuxPolicy>::
 VectorParser_Container(parser_type const & vector)
-    : sizer_ (vector.sizer_), state_ (vector.state()), 
+    : AuxPolicy(vector), state_ (vector.state()), 
       i_ (std::distance(data().begin(),vector.i()))
 {}
 
 // accessors
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::size_type
-senf::VectorParser_Container<ElementParser,Sizer>::size()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::size_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::size()
     const
 {
-    return sizer_.size(i(),state());
+    return aux(i(),state());
 }
 
-template <class ElementParser, class Sizer>
-prefix_ bool senf::VectorParser_Container<ElementParser,Sizer>::empty()
+template <class ElementParser, class AuxPolicy>
+prefix_ bool senf::VectorParser_Container<ElementParser,AuxPolicy>::empty()
     const
 {
     return size() == 0;
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::iterator
-senf::VectorParser_Container<ElementParser,Sizer>::begin()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::iterator
+senf::VectorParser_Container<ElementParser,AuxPolicy>::begin()
     const
 {
-    return iterator(sizer_.begin(i(),state()),state());
+    return iterator(adjust(i(),state()),state());
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::iterator
-senf::VectorParser_Container<ElementParser,Sizer>::end()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::iterator
+senf::VectorParser_Container<ElementParser,AuxPolicy>::end()
     const
 {
     return boost::next(begin(),size());
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::value_type
-senf::VectorParser_Container<ElementParser,Sizer>::operator[](difference_type i)
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::value_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::operator[](difference_type i)
     const
 {
     return begin()[i];
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::value_type
-senf::VectorParser_Container<ElementParser,Sizer>::front()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::value_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::front()
     const
 {
     return begin()[0];
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::value_type
-senf::VectorParser_Container<ElementParser,Sizer>::back()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::value_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::back()
     const
 {
     return begin()[size()-1];
@@ -278,109 +236,109 @@ senf::VectorParser_Container<ElementParser,Sizer>::back()
 
 // Mutators
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::insert(iterator pos,
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::insert(iterator pos,
                                                                        Value const & t)
 {
     *shift(pos) << t;
 }
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::erase(iterator pos, size_type n)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::erase(iterator pos, size_type n)
 {
     data().erase(pos.raw(),boost::next(pos.raw(),n*ElementParser::fixed_bytes));
     setSize(size()-n);
 }
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::erase(iterator f, iterator l)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::erase(iterator f, iterator l)
 {
     erase(f,std::distance(f,l));
 }
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::clear()
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::clear()
 {
     erase(begin(),end());
 }
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::push_back(Value value,
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_back(Value value,
                                                                           size_type n)
 {
     insert(end(),n,value);
 }
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::push_back_space(size_type n)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_back_space(size_type n)
 {
     shift(end(),n);
 }
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::push_front(Value value,
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_front(Value value,
                                                                            size_type n)
 {
     insert(begin(),n,value);
 }
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::push_front_space(size_type n)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_front_space(size_type n)
 {
     shift(begin(),n);
 }
 
 // Parser interface
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::parser_type
-senf::VectorParser_Container<ElementParser,Sizer>::parser()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::parser_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::parser()
     const
 {
     return parser_type(i(),state());
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::data_iterator
-senf::VectorParser_Container<ElementParser,Sizer>::i()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::data_iterator
+senf::VectorParser_Container<ElementParser,AuxPolicy>::i()
     const
 {
     return boost::next(data().begin(),i_);
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::state_type
-senf::VectorParser_Container<ElementParser,Sizer>::state()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::state_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::state()
     const
 {
     return state_;
 }
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 prefix_ senf::PacketData &
-senf::VectorParser_Container<ElementParser,Sizer>::data()
+senf::VectorParser_Container<ElementParser,AuxPolicy>::data()
     const
 {
     return *state_;
 }
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::size_type
-senf::VectorParser_Container<ElementParser,Sizer>::bytes()
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::size_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::bytes()
     const
 {
-    return size()*ElementParser::fixed_bytes + sizer_.bytes(i(),state());
+    return size()*ElementParser::fixed_bytes + AuxPolicy::aux_bytes;
 }
 
 // private members
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::setSize(size_type value)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::setSize(size_type value)
 {
-    sizer_.size(i(),state(),value);
+    aux(i(),state()).value(value);
 }
 
 /////////////////////////////cti.e///////////////////////////////////////

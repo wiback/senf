@@ -84,6 +84,18 @@ namespace detail {
     struct ParserInitBytes
         : public ParserInitBytes_Choose<Parser,SENF_MPL_RV(ParserInitBytes_Choose_<Parser>(0))> {};
 
+    template <class Parser, unsigned _>
+    struct ParserIsFixed_Choose
+        : public boost::false_type {};
+
+    template <class Parser>
+    struct ParserIsFixed_Choose<Parser, 1>
+        : public boost::true_type {};
+
+    template <class Parser>
+    struct ParserIsFixed
+        : public ParserIsFixed_Choose<Parser,SENF_MPL_RV(ParserInitBytes_Choose_<Parser>(0))> {};
+
 #   endif
 
 }}

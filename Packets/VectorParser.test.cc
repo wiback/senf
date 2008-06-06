@@ -48,7 +48,7 @@ BOOST_AUTO_UNIT_TEST(VectorParser)
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
     typedef senf::VectorParser<
         senf::UInt16Parser,
-        senf::detail::VectorNParser_Sizer<senf::UInt8Parser, 1u>
+        senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1u>
         > UInt16VectorParser;
 
     {
@@ -123,7 +123,7 @@ BOOST_AUTO_UNIT_TEST(VectorParser_wrapper)
     senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
     typedef senf::VectorParser<
         senf::UInt16Parser,
-        senf::detail::VectorNParser_Sizer<senf::UInt8Parser, 1u>
+        senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1u>
         > UInt16VectorParser;
     UInt16VectorParser v (boost::next(p->data().begin(),1), &p->data());
     UInt16VectorParser::container w (v);
@@ -170,6 +170,74 @@ BOOST_AUTO_UNIT_TEST(VectorParser_wrapper)
     BOOST_CHECK_EQUAL( p->data().size(), 1u );
 
     BOOST_CHECK_EQUAL( w.parser().size(), 0u );
+}
+
+BOOST_AUTO_UNIT_TEST(dynamicPolicyVector)
+{
+    unsigned char data[] = { 0x03,                                   // size
+                             0x10, 0x11,  0x12, 0x13,  0x14, 0x15,   // data
+                             0x20, 0x21,  0x22, 0x23,  0x24, 0x25 };
+    senf::PacketInterpreterBase::ptr p (senf::PacketInterpreter<VoidPacket>::create(data));
+
+    typedef senf::VectorParser<
+        senf::UInt16Parser,
+        senf::detail::DynamicAuxParserPolicy<senf::UInt8Parser>
+        > UInt16VectorParser;
+
+    UInt16VectorParser v (senf::UInt8Parser(p->data().begin(), &p->data()),
+                          boost::next(p->data().begin(),1), &p->data());
+    UInt16VectorParser::container w (v);
+    
+    BOOST_CHECK_EQUAL( v.size(), 3u );
+    BOOST_CHECK_EQUAL( w.size(), 3u );
+
+    BOOST_CHECK_EQUAL( v[0], 0x1011 );
+    BOOST_CHECK_EQUAL( v[2], 0x1415 );
+
+    BOOST_CHECK_EQUAL( w[0], 0x1011 );
+    BOOST_CHECK_EQUAL( w[2], 0x1415 );
+}
+
+namespace {
+
+    struct TestVectorParser 
+        : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+
+        SENF_PARSER_PRIVATE_FIELD ( size1 , senf::UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD ( size2 , senf::UInt8Parser );
+        SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );
+        SENF_PARSER_VECTOR        ( vec1  , size1, senf::UInt16Parser );
+        SENF_PARSER_VECTOR        ( vec2  , size2, senf::UInt16Parser );
+
+        SENF_PARSER_FINALIZE( TestVectorParser );
+    };
+
+}
+
+BOOST_AUTO_UNIT_TEST(vectorMacro)
+{
+    unsigned char data[] = { 0x03,                   // size1
+                             0x02,                   // size2
+                             0x01, 0x02, 0x03, 0x04, // dummy
+                             0x05, 0x06,             // vec1[0]
+                             0x07, 0x08,             // vec1[1]
+                             0x09, 0x0A,             // vec1[2]
+                             0x0B, 0x0C,             // vec2[0]
+                             0x0D, 0x0E };           // vec2[1]
+
+    senf::DataPacket p (senf::DataPacket::create(data));
+    TestVectorParser parser (p.data().begin(), &p.data());
+    
+    BOOST_CHECK_EQUAL( parser.vec1().size(), 3u );
+    BOOST_CHECK_EQUAL( parser.vec2().size(), 2u );
+    BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
+    BOOST_CHECK_EQUAL( parser.vec1()[0], 0x0506u );
+    BOOST_CHECK_EQUAL( parser.vec1()[1], 0x0708u );
+    BOOST_CHECK_EQUAL( parser.vec1()[2], 0x090Au );
+    BOOST_CHECK_EQUAL( parser.vec2()[0], 0x0B0Cu );
+    BOOST_CHECK_EQUAL( parser.vec2()[1], 0x0D0Eu );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

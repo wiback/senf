@@ -33,9 +33,9 @@
 #include <boost/type_traits.hpp>
 #include "PacketParser.hh"
 #include "ArrayParser.hh" // for ArrayParser_iterator
+#include "AuxParser.hh" // for the AuxPolicies
 
 //#include "VectorParser.mpp"
-#include "VectorParser.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -61,11 +61,13 @@ namespace senf {
         \see ExampleVectorPolicy
         \ingroup parsecollection
      */
-    template <class ElementParser, class Sizer>
-    struct VectorParser : public PacketParserBase
+    template <class ElementParser, class AuxPolicy>
+    struct VectorParser 
+        : public PacketParserBase, 
+          private AuxPolicy
     {
         VectorParser(data_iterator i, state_type s);
-        VectorParser(Sizer sizer, data_iterator i, state_type s);
+        VectorParser(AuxPolicy policy, data_iterator i, state_type s);
                                         ///< Additional sizer specific constructor
                                         /**< This constructor may be used, if the sizer needs
                                              additional parameters. */
@@ -73,7 +75,7 @@ namespace senf {
         size_type bytes() const;
         void init() const;
 
-        static const size_type init_bytes = Sizer::init_bytes;
+        static const size_type init_bytes = AuxPolicy::aux_bytes;
 
         ///////////////////////////////////////////////////////////////////////////
         // Container interface
@@ -81,7 +83,7 @@ namespace senf {
         typedef ElementParser value_type;
         typedef detail::ArrayParser_iterator<value_type> iterator;
         typedef iterator const_iterator;
-        typedef VectorParser_Container<ElementParser,Sizer> container;
+        typedef VectorParser_Container<ElementParser,AuxPolicy> container;
 
         size_type size() const;
         bool empty() const;
@@ -107,33 +109,8 @@ namespace senf {
         template <class Value> void resize           (size_type n, Value value) const;
 
      private:
-        Sizer sizer_;
 
-        friend class VectorParser_Container<ElementParser,Sizer>;
-    };
-
-    /** \brief Vector with prefix sizing
-        
-        This is a 'template typedef'. It defines a vector with a <em>directly preceding</em> size
-        field holding the number of vector elements. The size field is considered part of the
-        vector.
-        \code
-        // Define MyVector as a vector of 16bit unsigned elements with a directly preceding
-        // 8bit unsigned size field
-        typedef senf::VectorNParser<senf::UInt16Parser, senf::UInt8Parser>::parser MyVector;
-        \endcode
-
-        \param ElementParser \e fixed-size parser for parsing the vector elements
-        \param SizeParser parser for parsing the vector size (number of elements)
-
-        \see VectorParser
-        \ingroup parsecollection
-     */
-    template <class ElementParser, class SizeParser, unsigned Distance>
-    struct VectorNParser
-    {
-        typedef VectorParser< ElementParser,
-                              detail::VectorNParser_Sizer<SizeParser, Distance> > parser;
+        friend class VectorParser_Container<ElementParser,AuxPolicy>;
     };
 
     /** \brief Define VectorNParser field
@@ -145,7 +122,7 @@ namespace senf {
         // The size field should be declared private (size is accessible via the vector)
         SENF_PARSER_PRIVATE_FIELD ( vec_size_, senf::UInt16Parser );
         // Define the vector, here it has 32bit unsigned integer elements
-        SENF_PARSER_VEC_N         ( vec,       _vec_size, senf::UInt32Parser );
+        SENF_PARSER_VEC_N         ( vec,       vec_size_, senf::UInt32Parser );
         \endcode
         
         \param[in] name field name
@@ -166,6 +143,14 @@ namespace senf {
 #   define SENF_PARSER_PRIVATE_VEC_N(name, size, elt_type)                                        \
         SENF_PARSER_VEC_N_I(SENF_PARSER_PRIVATE_FIELD, name, size, elt_type)
 
+#   define SENF_PARSER_VECTOR(name, size, elt_type) \
+        SENF_PARSER_VECTOR_I(public, name, size, elt_type)
+
+#   define SENF_PARSER_PRIVATE_VECTOR(name, size, elt_type) \
+        SENF_PARSER_VECTOR_I(private, name, size, elt_type)
+
+
+
     /** \brief VectorParser container wrapper
 
         This is the container wrapper used for vector parsers. The container wrapper will stay valid
@@ -184,14 +169,15 @@ namespace senf {
 
         \see VectorParser
       */
-    template <class ElementParser, class Sizer>
+    template <class ElementParser, class AuxPolicy>
     class VectorParser_Container
+        : private AuxPolicy
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef VectorParser<ElementParser,Sizer> parser_type;
+        typedef VectorParser<ElementParser,AuxPolicy> parser_type;
         typedef PacketParserBase::data_iterator data_iterator;
         typedef PacketParserBase::size_type size_type;
         typedef PacketParserBase::difference_type difference_type;
@@ -276,7 +262,6 @@ namespace senf {
     private:
         void setSize(size_type value);
 
-        Sizer sizer_;
         state_type state_;
         size_type i_;
     };

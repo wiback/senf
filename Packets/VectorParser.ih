@@ -33,38 +33,34 @@
 namespace senf {
 namespace detail {
 
-    /** \brief Internal: Sizer implementing prefix sizing
-
-        \internal
-
-        This is the sizer policy used by VectorNParser
-     */
-    template <class SizeParser, unsigned Distance>
-    struct VectorNParser_Sizer
-    {
-        typedef PacketParserBase::size_type size_type;
-        typedef PacketParserBase::data_iterator iterator;
-        typedef PacketParserBase::state_type state_type;
-
-        static const size_type init_bytes = 0;
-
-        size_type  size  (iterator i, state_type s) const;
-        void       size  (iterator i, state_type s, size_type v) const;
-        iterator   begin (iterator i, state_type s) const;
-        size_type  bytes (iterator i, state_type s) const;
-        void       init  (iterator i, state_type s) const;
-    };
-
 #   define SENF_PARSER_VEC_N_I(field, name, size, elt_type)                                       \
-        typedef senf::VectorNParser< elt_type,                                                    \
-                                     BOOST_PP_CAT(size, _t),                                      \
-                                     SENF_PARSER_CURRENT_FIXED_OFFSET()                           \
-                                         - SENF_PARSER_FIXED_OFFSET(size)                         \
-            >::parser BOOST_PP_CAT(name, _vec_t);                                                 \
+        typedef senf::VectorParser<                                                               \
+            elt_type,                                                                             \
+            senf::detail::FixedAuxParserPolicy< BOOST_PP_CAT(size, _t),                           \
+                                                SENF_PARSER_CURRENT_FIXED_OFFSET()                \
+                                                    - SENF_PARSER_FIXED_OFFSET(size) >            \
+        > BOOST_PP_CAT(name, _vec_t);                                                             \
         field( name, BOOST_PP_CAT(name, _vec_t) )
 
-}}
+    template <class ElementParser>
+    struct VectorParserTraits
+    {
+        template <class AuxPolicy, class AuxTag>
+        struct parser {
+            typedef senf::VectorParser<ElementParser, AuxPolicy> type;
+        };
+    };
 
+
+#   define SENF_PARSER_VECTOR_I(access, name, size, elt_type)                                     \
+        SENF_PARSER_REQUIRE_VAR(vector)                                                           \
+        SENF_PARSER_COLLECTION_I( access,                                                         \
+                                  name,                                                           \
+                                  size,                                                           \
+                                  senf::detail::VectorParserTraits<elt_type> )
+
+}}
+                              
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
 

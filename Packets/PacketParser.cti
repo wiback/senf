@@ -42,11 +42,25 @@ prefix_ Parser senf::PacketParserBase::parse(data_iterator i)
     return Parser(i,state());
 }
 
+template <class Parser, class Arg>
+prefix_ Parser senf::PacketParserBase::parse(Arg const & arg, data_iterator i)
+    const
+{
+    return Parser(arg, i, state());
+}
+
 template <class Parser>
 prefix_ Parser senf::PacketParserBase::parse(size_type n)
     const
 {
     return Parser(boost::next(i(),n),state());
+}
+
+template <class Parser, class Arg>
+prefix_ Parser senf::PacketParserBase::parse(Arg const & arg, size_type n)
+    const
+{
+    return Parser(arg, boost::next(i(),n), state());
 }
 
 ///////////////////////////////////////////////////////////////////////////

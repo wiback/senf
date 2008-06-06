@@ -1,0 +1,146 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief AuxParser inline template implementation */
+
+//#include "AuxParser.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::PrefixAuxParserPolicy<P>
+
+template <class P>
+prefix_ typename senf::detail::PrefixAuxParserPolicy<P>::ParserType
+senf::detail::PrefixAuxParserPolicy<P>::aux(PacketParserBase::data_iterator i,
+                                            PacketParserBase::state_type s)
+    const
+{
+    return ParserType(i, s);
+}
+
+template <class P>
+prefix_ senf::PacketParserBase::data_iterator
+senf::detail::PrefixAuxParserPolicy<P>::adjust(PacketParserBase::data_iterator i,
+                                               PacketParserBase::state_type s)
+    const
+{
+    return i+ParserType::fixed_bytes;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::FixedAuxParserPolicy<P>
+
+template <class P, unsigned Dist>
+prefix_ typename senf::detail::FixedAuxParserPolicy<P,Dist>::ParserType
+senf::detail::FixedAuxParserPolicy<P,Dist>::aux(PacketParserBase::data_iterator i,
+                                                PacketParserBase::state_type s)
+    const
+{
+    return ParserType(i-Dist, s);
+}
+
+template <class P, unsigned Dist>
+prefix_ senf::PacketParserBase::data_iterator
+senf::detail::FixedAuxParserPolicy<P,Dist>::adjust(PacketParserBase::data_iterator i,
+                                                   PacketParserBase::state_type s)
+    const
+{
+    return i;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::DynamicAuxParserPolicy<P>
+
+template <class P>
+prefix_ senf::detail::DynamicAuxParserPolicy<P>::DynamicAuxParserPolicy(ParserType p)
+    : p_ (p)
+{}
+
+template <class P>
+prefix_
+senf::detail::DynamicAuxParserPolicy<P>::DynamicAuxParserPolicy(WrapperPolicy const & other)
+    : p_ (* other.p_)
+{}
+
+template <class P>
+prefix_ typename senf::detail::DynamicAuxParserPolicy<P>::ParserType
+senf::detail::DynamicAuxParserPolicy<P>::aux(PacketParserBase::data_iterator i,
+                                             PacketParserBase::state_type s)
+    const
+{
+    return p_;
+}
+
+template <class P>
+prefix_ senf::PacketParserBase::data_iterator
+senf::detail::DynamicAuxParserPolicy<P>::adjust(PacketParserBase::data_iterator i,
+                                                PacketParserBase::state_type s)
+    const
+{
+    return i;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::DynamicWrapperAuxParserPolicy<P>
+
+template <class P>
+prefix_ senf::detail::DynamicWrapperAuxParserPolicy<P>::
+DynamicWrapperAuxParserPolicy(ParserPolicy const & other)
+    : p_ (other.p_)
+{}
+
+template <class P>
+prefix_ typename senf::detail::DynamicWrapperAuxParserPolicy<P>::ParserType
+senf::detail::DynamicWrapperAuxParserPolicy<P>::aux(PacketParserBase::data_iterator i,
+                                                    PacketParserBase::state_type s)
+    const
+{
+    return * p_;
+}
+
+template <class P>
+prefix_ senf::PacketParserBase::data_iterator
+senf::detail::DynamicWrapperAuxParserPolicy<P>::adjust(PacketParserBase::data_iterator i,
+                                                       PacketParserBase::state_type s)
+    const
+{
+    return i;
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

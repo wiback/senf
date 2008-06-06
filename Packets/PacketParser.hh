@@ -328,10 +328,21 @@ namespace senf {
                                              beginning at \a i. Automatically passes \a state() to
                                              the new parser. */
 
+        template <class Parser, class Arg> Parser parse(Arg const & arg, data_iterator i) const;
+                                        ///< Create sub-parser
+                                        /**< This is like parse(data_iterator), however it passes
+                                             the extra argument \a arg to the \a Parser
+                                             constructor. */
+
         template <class Parser> Parser parse(size_type n) const; ///< Create sub-parser
                                         /**< Creates a new instance of \a Parser to parse data
                                          * beginning at i()<tt> + </tt>\a n. Automatically passes \a
                                              state() to the new parser. */
+
+        template <class Parser, class Arg> Parser parse(Arg const & arg, size_type n) const;
+                                        ///< Create sub-parser
+                                        /**< This is like parse(size_type), however it passes the
+                                             extra argument \a arg to the \a Parser constructor. */
 
         void defaultInit() const;       ///< Default implementation
                                         /**< This is just an empty default
@@ -370,6 +381,7 @@ namespace senf {
     PacketParserBase::size_type bytes(Parser p);
     
     namespace detail { template <class Parser> class ParserInitBytes; }
+    namespace detail { template <class Parser> class ParserIsFixed; }
 
     /** \brief Return number of bytes to allocate to new object of given type
 
@@ -388,6 +400,10 @@ namespace senf {
      */
     template <class Parser>
     struct init_bytes : public detail::ParserInitBytes<Parser>
+    {};
+
+    template <class Parser>
+    struct is_fixed : public detail::ParserIsFixed<Parser>
     {};
 
 #   ifndef DOXYGEN
