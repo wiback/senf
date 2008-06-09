@@ -38,11 +38,8 @@
 BOOST_AUTO_UNIT_TEST(VariantParser)
 {
     typedef senf::ArrayParser<10, senf::UInt8Parser> Array10;
-    typedef senf::DirectVariantParser< senf::UInt8Parser, 1, senf::detail::VariantParser_IdentityTranslator,
-        senf::VoidPacketParser,
-        Array10, 
-        senf:: UInt32Parser 
-        >::parser Variant;
+    typedef senf::VariantParser< senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1>,
+        boost::mpl::vector<senf::VoidPacketParser, Array10, senf:: UInt32Parser> > Variant;
     
     unsigned char data[] = { 0x01, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
                              0x19, 0x1A, 0x1B };
@@ -96,10 +93,17 @@ namespace {
     struct TestParser : public senf::PacketParserBase
     {
 #       include SENF_PARSER()
+
+        struct TestTransform {
+            typedef unsigned value_type;
+            static unsigned get(unsigned v) { return v/2; }
+            static unsigned set(unsigned v) { return 2*v; }
+        };
         
         SENF_PARSER_SKIP_BITS( 4 );
-        SENF_PARSER_PRIVATE_BITFIELD( type_, 4, unsigned );
-        SENF_PARSER_PRIVATE_VARIANT( content_, type_, (senf::VoidPacketParser)(SubParser) );
+        SENF_PARSER_BITFIELD_RO( type, 4, unsigned );
+        SENF_PARSER_PRIVATE_VARIANT( content_, transform(TestTransform, type),
+                                     (senf::VoidPacketParser)(SubParser) );
 
         bool hasContent() const { return content_().variant() == 1; }
         void hasContent(bool v) const { if (v) content_().init<1>(); else content_().init<0>(); }
@@ -116,9 +120,9 @@ BOOST_AUTO_UNIT_TEST(VariantParserMacro)
     
     {
         TestParser v (p.data().begin(), & p.data());
-    
         BOOST_CHECK( ! v.hasContent() );
         BOOST_CHECK_EQUAL( senf::bytes(v), 1u );
+        BOOST_CHECK_EQUAL( v.type(), 0u );
         v.hasContent(true);
         // Parser invalidated
     }
@@ -127,6 +131,7 @@ BOOST_AUTO_UNIT_TEST(VariantParserMacro)
         BOOST_CHECK( v.hasContent() );
         BOOST_CHECK_EQUAL( senf::bytes(v), 7u );
         BOOST_CHECK_EQUAL( v.content().foo(), 0u );
+        BOOST_CHECK_EQUAL( v.type(), 2u );
     }
 }
 

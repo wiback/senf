@@ -39,7 +39,6 @@
 #include "PacketParser.hh"
 
 //#include "VariantParser.mpp"
-#include "VariantParser.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -62,7 +61,7 @@ namespace senf {
         packet change depending on some condition.
         \code
         typedef senf::VariantParser< 
-            MyVariantPolicy, 
+            MyAuxPolicy, 
             senf::VoidPacketParser, TypeAParser, TypeBParser> MyVariantParser;
         \endcode
         This typedef defines a variant parser choosing one of three sub
@@ -73,28 +72,29 @@ namespace senf {
         initialized to the first sub-parser.
 
         \see 
-            ExampleVariantPolicy on how to implement the \a VariantPolicy \n
+            ExampleAuxPolicy on how to implement the \a AuxPolicy \n
             \ref SENF_PARSER_VARIANT() on how to integrate the parser into another parser
         \ingroup parsecollection
      */
-    template <class VariantPolicy, SENF_PARSE_VARIANT_TPL_ARGS_DFL(class P)>
+    template <class AuxPolicy, class Parsers>
     class VariantParser 
-        : public PacketParserBase, private VariantPolicy
+        : public PacketParserBase, private AuxPolicy
     {
-        typedef boost::mpl::vector< SENF_PARSE_VARIANT_TPL_ARGS(P) > parsers;
+        typedef Parsers parsers;
 
     public:
         ///\name Parser interface
         ///\{
 
         VariantParser(data_iterator i, state_type s);
-        VariantParser(VariantPolicy policy, data_iterator i, state_type s);
+        VariantParser(AuxPolicy policy, data_iterator i, state_type s);
 
         size_type bytes() const;
         void init();
         
-        static const size_type init_bytes = 
-            senf::init_bytes<P0>::value + VariantPolicy::init_bytes;
+        static const size_type init_bytes = senf::init_bytes< 
+            typename boost::mpl::at<parsers, boost::mpl::int_<0> >::type>::value 
+                + AuxPolicy::aux_bytes;
 
         ///\}
         ///////////////////////////////////////////////////////////////////////////
@@ -121,42 +121,6 @@ namespace senf {
                                              sub-parser at index \a N changing the currently
                                              selected variant.
                                              \post variant() == \a N */
-    };
-
-    /** \brief Variant with direct, fixed distance type field
-        
-        This struct is a template typedef defining a senf::Parser_Variant instantiation. It defines
-        a variant parser which interprets the value returned by some other parser directly as index
-        into the list of sub parsers (the numeric template argument to senf::VariantParser::get()
-        and senf::Parser_Variant::init()).
-
-        \code
-            // Define a variant choosing between FooParser and BarParser depending on the directly
-            // preceding 1-byte 8bit uint value
-            typedef senf::DirectVariantParser< senf::UInt8Parser, 1u, 
-                                                FooParser, BarParser >::parser MyVariant;
-        \endcode
-
-        \a ChooserType defines the type of the field used to choose the sub parser. This must be a
-        fixed-size value parser. \a Distance gives the \e fixed distance of this field \e before the
-        currently defined field.
-
-        It is best to define a field of this type using \ref SENF_PARSER_VARIANT() or \ref
-        SENF_PARSER_PRIVATE_VARIANT().
-
-        \param[in] ChooserType type of chooser field (a value parser)
-        \param[in] Distance    fixed distance of the chooser field before the current field
-        \param[in] P           any number of sub parsers
-
-        \see senf::Parser_Variant
-        \ingroup parsecollection
-     */
-    template <class ChooserType, unsigned Distance, class Translator,
-              SENF_PARSE_VARIANT_TPL_ARGS_DFL(class P)>
-    struct DirectVariantParser
-    {
-        typedef VariantParser< detail::DirectVariantParser<ChooserType, Distance, Translator>,
-                               SENF_PARSE_VARIANT_TPL_ARGS(P) > parser;
     };
 
     /** \brief Define DirectVariantParser field
@@ -212,12 +176,8 @@ namespace senf {
         \hideinitializer
         \ingroup packetparsermacros
      */
-#   define SENF_PARSER_VARIANT(name, chooser, types)                                              \
-        SENF_PARSER_VARIANT_I(SENF_PARSER_FIELD,                                                  \
-                              name,                                                               \
-                              chooser,                                                            \
-                              senf::detail::VariantParser_IdentityTranslator,                     \
-                              types)
+#   define SENF_PARSER_VARIANT(name, chooser, types) \
+        SENF_PARSER_VARIANT_I(public, name, chooser, types)
 
     /** \brief Define DirectVariantParser field (private)
         
@@ -225,12 +185,8 @@ namespace senf {
         \hideinitializer
         \ingroup packetparsermacros
      */
-#   define SENF_PARSER_PRIVATE_VARIANT(name, chooser, types)                                      \
-        SENF_PARSER_VARIANT_I(SENF_PARSER_PRIVATE_FIELD,                                          \
-                              name,                                                               \
-                              chooser,                                                            \
-                              senf::detail::VariantParser_IdentityTranslator,                     \
-                              types)
+#   define SENF_PARSER_PRIVATE_VARIANT(name, chooser, types) \
+        SENF_PARSER_VARIANT_I(private, name, chooser, types)
 
     /** \brief Define DirectVariantParser field with translator
         
@@ -260,25 +216,7 @@ namespace senf {
         \hideinitializer
         \ingroup packetparsermacros
      */
-#   define SENF_PARSER_VARIANT_TRANS(name, chooser, translator, types)                            \
-        SENF_PARSER_VARIANT_I(SENF_PARSER_FIELD,                                                  \
-                              name,                                                               \
-                              chooser,                                                            \
-                              translator,                                                         \
-                              types)
 
-    /** \brief Define DirectVariantParser field with translator (private)
-        
-        \see \ref SENF_PARSER_VARIANT_TRANS()
-        \hideinitializer
-        \ingroup packetparsermacros
-     */
-#   define SENF_PARSER_PRIVATE_VARIANT_TRANS(name, chooser, types)                                \
-        SENF_PARSER_VARIANT_I(SENF_PARSER_PRIVATE_FIELD,                                          \
-                              name,                                                               \
-                              chooser,                                                            \
-                              translator,                                                         \
-                              types)
 
 }
 

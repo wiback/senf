@@ -39,7 +39,7 @@ namespace senf {
 #       include SENF_PARSER()        
         SENF_PARSER_PRIVATE_FIELD ( num_of_fbips, UInt8Parser );
         SENF_PARSER_PRIVATE_FIELD ( reserved ,    UInt8Parser );   //must be zero 
-        SENF_PARSER_VEC_N         ( fbiplist,     num_of_fbips, INet4AddressParser );
+        SENF_PARSER_VECTOR        ( fbiplist,     num_of_fbips, INet4AddressParser );
 
         SENF_PARSER_FINALIZE(DTCPIPv4AddressListParser);
     };
@@ -48,7 +48,7 @@ namespace senf {
 #       include SENF_PARSER()        
         SENF_PARSER_PRIVATE_FIELD ( num_of_fbips, UInt8Parser );
         SENF_PARSER_PRIVATE_FIELD ( reserved,     UInt8Parser );   //must be zero 
-        SENF_PARSER_VEC_N         ( fbiplist,     num_of_fbips, INet6AddressParser );
+        SENF_PARSER_VECTOR        ( fbiplist,     num_of_fbips, INet6AddressParser );
 
         SENF_PARSER_FINALIZE(DTCPIPv6AddressListParser);
     };
@@ -94,14 +94,15 @@ namespace senf {
          */
 
         struct ip_version_translator {
-            static unsigned fromChooser(ip_version_t::value_type in) {
+	    typedef unsigned value_type;
+            static unsigned get(ip_version_t::value_type in) {
                 switch (in) { 
                 case 4: return 0;
                 case 6: return 1;
                 }
                 return 1; //default. should rather throw an exception 
             }
-            static ip_version_t::value_type toChooser(unsigned in) {
+            static ip_version_t::value_type set(unsigned in) {
                 switch (in) {
                 case 0: return 4;
                 case 1: return 6; 
@@ -110,12 +111,13 @@ namespace senf {
             }
         };
     
-        SENF_PARSER_VARIANT_TRANS    ( fbiplist,             ip_version, ip_version_translator,
+        SENF_PARSER_VARIANT          ( fbiplist, transform(ip_version_translator, ip_version),
                                                                  (senf::DTCPIPv4AddressListParser)        //IPv4 
                                                                  (senf::DTCPIPv6AddressListParser) );     //IPv6
                                                                  
         DTCPIPv4AddressListParser getIpv4AddressList () const { return fbiplist().get<0>(); }  // this is the absolute index 
         DTCPIPv6AddressListParser getIpv6AddressList () const { return fbiplist().get<1>(); }
+
         void setIpVersion4() const { fbiplist().init<0>(); }
         void setIpVersion6() const { fbiplist().init<1>(); }
 

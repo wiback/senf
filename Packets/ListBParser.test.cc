@@ -44,12 +44,15 @@ namespace {
 #       include SENF_PARSER()
 
         SENF_PARSER_PRIVATE_FIELD( size, senf::UInt8Parser );
-        SENF_PARSER_VEC_N( vec, size, senf::UInt16Parser );
+        SENF_PARSER_VECTOR( vec, size, senf::UInt16Parser );
 
         SENF_PARSER_FINALIZE(VectorParser);
     };
 
-    typedef senf::ListBParser<VectorParser,senf::UInt16Parser>::parser MyListBParser;
+    typedef senf::ListParser<
+        senf::detail::ListBParser_Policy<
+            VectorParser,
+            senf::detail::PrefixAuxParserPolicy<senf::UInt16Parser> > > MyListBParser;
 }
 
 BOOST_AUTO_UNIT_TEST(ListBParser)

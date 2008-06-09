@@ -45,16 +45,20 @@ namespace {
 #       include SENF_PARSER()
 
         SENF_PARSER_PRIVATE_FIELD( size, senf::UInt8Parser );
-        SENF_PARSER_VEC_N( vec, size, senf::UInt16Parser );
+        SENF_PARSER_VECTOR( vec, size, senf::UInt16Parser );
         
         SENF_PARSER_FINALIZE(MyVec);
     };
+
+    typedef senf::ListParser<
+        senf::detail::ListNParser_Policy<
+            MyVec,
+            senf::detail::PrefixAuxParserPolicy<
+                senf::UInt16Parser> > > MyListNParser;
 }
 
 BOOST_AUTO_UNIT_TEST(ListNParser_container)
 {
-    typedef senf::ListNParser<MyVec,senf::UInt16Parser>::parser MyListNParser;
-    
     VoidPacket vp (VoidPacket::create(MyListNParser::init_bytes));
     MyListNParser(vp.data().begin(),&vp.data()).init();
 
@@ -84,8 +88,6 @@ BOOST_AUTO_UNIT_TEST(ListNParser_container)
 
 BOOST_AUTO_UNIT_TEST(ListNParser)
 {
-    typedef senf::ListNParser<MyVec,senf::UInt16Parser>::parser MyListNParser;
-    
     VoidPacket vp (VoidPacket::create(MyListNParser::init_bytes));
 
     {

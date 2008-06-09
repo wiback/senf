@@ -31,9 +31,9 @@
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-template <class VariantPolicy, SENF_PARSE_VARIANT_TPL_ARGS(class P)>
+template <class AuxPolicy, class Parsers>
 template <unsigned N>
-prefix_ void senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::init()
+prefix_ void senf::VariantParser<AuxPolicy,Parsers>::init()
 {
     unsigned oldSize( bytes() );
     typedef typename boost::mpl::at<parsers, boost::mpl::int_<N> >::type NewParser;
@@ -44,15 +44,15 @@ prefix_ void senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::
         std::fill(i(), j, 0u);
         safe_data_iterator safe_i (*this);
         data().insert(j, senf::init_bytes<NewParser>::value - oldSize, 0u);
-        VariantPolicy::variant(N, safe_i, state());
-        NewParser( VariantPolicy::begin(safe_i, state()), state() ).init();
+        AuxPolicy::aux(N, safe_i, state());
+        NewParser( AuxPolicy::adjust(safe_i, state()), state() ).init();
     } else {
         data_iterator j (i());
         std::advance(j, senf::init_bytes<NewParser>::value);
         data().erase(j, boost::next(i(), oldSize));
         std::fill(i(), j, 0u);
-        VariantPolicy::variant(N, i(), state());
-        NewParser(VariantPolicy::begin(i(), state()), state()).init();
+        AuxPolicy::aux(N, i(), state());
+        NewParser(AuxPolicy::adjust(i(), state()), state()).init();
     }
 }
 

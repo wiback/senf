@@ -50,12 +50,6 @@ namespace senf {
         \see ListParser
         \ingroup parsecollection
      */
-    template <class ElementParser, class SizeParser>
-    struct ListNParser {
-        typedef ListParser< detail::ListNParser_Policy<
-            ElementParser,
-            detail::PrefixAuxParserPolicy<SizeParser> > > parser;
-    };
 
     /** \brief Define ListNParser field
 
@@ -69,9 +63,6 @@ namespace senf {
         \hideinitializer
         \ingroup packetparsermacros
      */
-#    define SENF_PARSER_LIST_N(name, elt_type, size_type)                                         \
-        typedef senf::ListNParser<elt_type, size_type>::parser BOOST_PP_CAT(name, _list_t);       \
-        SENF_PARSER_FIELD( name, BOOST_PP_CAT(name, _list_t) )
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

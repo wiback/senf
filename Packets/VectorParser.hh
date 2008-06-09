@@ -131,8 +131,6 @@ namespace senf {
         \hideinitializer
         \ingroup packetparsermacros
      */
-#   define SENF_PARSER_VEC_N(name, size, elt_type)                                                \
-        SENF_PARSER_VEC_N_I(SENF_PARSER_FIELD, name, size, elt_type)
 
     /** \brief Define VectorNParser field
 
@@ -140,8 +138,6 @@ namespace senf {
         \hideinitializer
         \ingroup packetparsermacros
      */
-#   define SENF_PARSER_PRIVATE_VEC_N(name, size, elt_type)                                        \
-        SENF_PARSER_VEC_N_I(SENF_PARSER_PRIVATE_FIELD, name, size, elt_type)
 
 #   define SENF_PARSER_VECTOR(name, size, elt_type) \
         SENF_PARSER_VECTOR_I(public, name, size, elt_type)

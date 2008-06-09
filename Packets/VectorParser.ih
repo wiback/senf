@@ -33,15 +33,6 @@
 namespace senf {
 namespace detail {
 
-#   define SENF_PARSER_VEC_N_I(field, name, size, elt_type)                                       \
-        typedef senf::VectorParser<                                                               \
-            elt_type,                                                                             \
-            senf::detail::FixedAuxParserPolicy< BOOST_PP_CAT(size, _t),                           \
-                                                SENF_PARSER_CURRENT_FIXED_OFFSET()                \
-                                                    - SENF_PARSER_FIXED_OFFSET(size) >            \
-        > BOOST_PP_CAT(name, _vec_t);                                                             \
-        field( name, BOOST_PP_CAT(name, _vec_t) )
-
     template <class ElementParser, class AuxPolicy, class AuxTag>
     struct VectorParserPolicy
     {};

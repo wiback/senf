@@ -33,55 +33,55 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>
+// senf::VariantParser<AuxPolicy,Parsers>
 
-template <class VariantPolicy, SENF_PARSE_VARIANT_TPL_ARGS(class P)>
-prefix_ senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::
+template <class AuxPolicy, class Parsers>
+prefix_ senf::VariantParser<AuxPolicy,Parsers>::
 VariantParser(data_iterator i, state_type s)
     : PacketParserBase(i,s)
 {}
 
-template <class VariantPolicy, SENF_PARSE_VARIANT_TPL_ARGS(class P)>
-prefix_ senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::
-VariantParser(VariantPolicy policy, data_iterator i, state_type s)
-    : PacketParserBase(i,s), VariantPolicy(policy)
+template <class AuxPolicy, class Parsers>
+prefix_ senf::VariantParser<AuxPolicy,Parsers>::
+VariantParser(AuxPolicy policy, data_iterator i, state_type s)
+    : PacketParserBase(i,s), AuxPolicy(policy)
 {}
 
-template <class VariantPolicy, SENF_PARSE_VARIANT_TPL_ARGS(class P)>
+template <class AuxPolicy, class Parsers>
 prefix_ senf::PacketParserBase::size_type
-senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::bytes()
+senf::VariantParser<AuxPolicy,Parsers>::bytes()
     const
 {
     return detail::VariantBytes< VariantParser, boost::mpl::size<parsers>::value - 1 >
-        ::bytes(*this, variant()) + VariantPolicy::bytes(i(),state());
+        ::bytes(*this, variant()) + AuxPolicy::aux_bytes;
 }
 
-template <class VariantPolicy, SENF_PARSE_VARIANT_TPL_ARGS(class P)>
+template <class AuxPolicy, class Parsers>
 prefix_ void
-senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::init()
+senf::VariantParser<AuxPolicy,Parsers>::init()
 {
-    VariantPolicy::variant(0,i(),state());
+    AuxPolicy::aux(0,i(),state());
     get<0>().init();
 }
 
-template <class VariantPolicy, SENF_PARSE_VARIANT_TPL_ARGS(class P)>
-prefix_ unsigned senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::variant()
+template <class AuxPolicy, class Parsers>
+prefix_ unsigned senf::VariantParser<AuxPolicy,Parsers>::variant()
     const
 {
-    return VariantPolicy::variant(i(),state());
+    return AuxPolicy::aux(i(),state());
 }
 
-template <class VariantPolicy, SENF_PARSE_VARIANT_TPL_ARGS(class P)>
+template <class AuxPolicy, class Parsers>
 template <unsigned N>
 prefix_ typename boost::mpl::at<
-    typename senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::parsers, 
+    typename senf::VariantParser<AuxPolicy,Parsers>::parsers, 
     boost::mpl::int_<N> >::type
-senf::VariantParser<VariantPolicy,SENF_PARSE_VARIANT_TPL_ARGS(P)>::get()
+senf::VariantParser<AuxPolicy,Parsers>::get()
     const
 {
     SENF_ASSERT( variant() == N );
     return typename boost::mpl::at<parsers, boost::mpl::int_<N> >::type(
-        VariantPolicy::begin(i(), state()), state() );
+        AuxPolicy::adjust(i(), state()), state() );
 }
 
 /////////////////////////////////////////////////////////////////////////
