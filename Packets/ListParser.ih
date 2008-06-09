@@ -38,38 +38,58 @@ namespace detail {
 
         \internal
      */
-    template <class ElementParser, class IteratorPolicy>
+    template <class Container>
     class ListParser_Iterator
-        : public boost::iterator_facade< ListParser_Iterator<ElementParser,IteratorPolicy>,
-                                         ElementParser,
+        : public boost::iterator_facade< ListParser_Iterator<Container>,
+                                         typename Container::value_type,
                                          boost::forward_traversal_tag,
-                                         ElementParser >,
-          private IteratorPolicy
+                                         typename Container::value_type >,
+          private Container::policy::iterator_data
     {
     public:
-        enum Begin_t { Begin };
-        enum End_t { End };
+        typedef typename Container::value_type value_type;
 
         ListParser_Iterator();
-        ListParser_Iterator(PacketParserBase::data_iterator i, PacketParserBase::state_type s, 
-                            Begin_t);
-        ListParser_Iterator(PacketParserBase::data_iterator i, PacketParserBase::state_type s, 
-                            End_t);
-        ListParser_Iterator(PacketParserBase::data_iterator i, PacketParserBase::state_type s, 
-                            PacketParserBase::data_iterator p);
+        explicit ListParser_Iterator(Container const & c);
 
         PacketParserBase::data_iterator raw() const;
+        PacketParserBase::data_iterator i() const;
         
+        static ListParser_Iterator & get(typename Container::policy::iterator_data & d);
+        static ListParser_Iterator const & get(typename Container::policy::iterator_data const & d);
+
     private:
         friend class boost::iterator_core_access;
+        template <class P> friend class ListParser_Container;
         
-        ElementParser dereference() const;
+        value_type dereference() const;
         bool equal(ListParser_Iterator const & other) const;
         void increment();
 
         PacketParserBase::data_iterator i_;
-        PacketParserBase::state_type s_;
+        Container const * c_;
     };
+
+    template <class ElementParser, class AuxPolicy, class AuxTag>
+    struct ListParserPolicy
+    {};
+
+    template <class ElementParser>
+    struct ListParserTraits
+    {
+        template <class AuxPolicy, class AuxTag>
+        struct parser {
+            typedef senf::ListParser<
+                typename ListParserPolicy<ElementParser, AuxPolicy, AuxTag>::type > type;
+        };
+    };
+
+#   define SENF_PARSER_LIST_I(access, name, size, elt_type)                                       \
+        SENF_PARSER_REQUIRE_VAR(list)                                                             \
+            SENF_PARSER_COLLECTION_I( access,                                                     \
+                                      name,                                                       \
+                                      size,                                                       \
+                                      senf::detail::ListParserTraits<elt_type> )
 
 }}
 

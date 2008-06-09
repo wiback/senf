@@ -40,7 +40,7 @@
 
 namespace senf {
 
-    template <class ElementParser, class Sizer> class VectorParser_Container;
+    template <class ElementParser, class AuxPolicy> class VectorParser_Container;
 
     /** \brief Collection of fixed-size elements
 

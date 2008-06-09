@@ -62,7 +62,6 @@ BOOST_AUTO_UNIT_TEST(ListBParser)
     BOOST_CHECK_EQUAL( p.size(), 0u );
     BOOST_CHECK_EQUAL( p.bytes(), 2u );
     BOOST_CHECK( p.empty() );
-    BOOST_CHECK( p.begin() == p.end() );
 
     // the mutators are really tested together with the container wrappers since they are based
     // on the container wrapper. Here we only need one call to make the list larger ...
@@ -72,7 +71,6 @@ BOOST_AUTO_UNIT_TEST(ListBParser)
     BOOST_CHECK_EQUAL( p.bytes(), 3u );
     BOOST_CHECK_EQUAL( p.size(), 1u );
     BOOST_CHECK( ! p.empty() );
-    BOOST_CHECK( p.begin() != p.end() );
 }
 
 BOOST_AUTO_UNIT_TEST(ListBParser_container)
@@ -146,6 +144,90 @@ BOOST_AUTO_UNIT_TEST(ListBParser_container)
        }
     }
 }
+
+namespace {
+    
+    struct TestListParser
+        : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+
+        SENF_PARSER_PRIVATE_FIELD ( size1 , senf::UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD ( size2 , senf::UInt8Parser );
+        SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );
+        SENF_PARSER_LIST          ( list1  , bytes(size1) , VectorParser );
+        SENF_PARSER_LIST          ( list2  , bytes(size2) , VectorParser );
+
+        SENF_PARSER_FINALIZE(TestListParser);
+    };
+
+}
+
+BOOST_AUTO_UNIT_TEST(listBytesMacro)
+{
+    unsigned char data[] = { 0x08,                   // size1
+                             0x09,                   // size2
+                             0x01, 0x02, 0x03, 0x04, // dummy
+                             0x01,                   // list1()[0].size()
+                             0x05, 0x06,             // list1().vec()[0]
+                             0x02,                   // list1()[1].size()
+                             0x07, 0x08,             // list1()[1].vec()[0]
+                             0x09, 0x0A,             // list1()[1].vec()[1]
+                             0x00,                   // list2()[0].size()
+                             0x02,                   // list2()[1].size()
+                             0x0B, 0x0C,             // list2()[1].vec()[0]
+                             0x0D, 0x0E,             // list2()[1].vec()[1]
+                             0x01,                   // list2()[2].size()
+                             0x0F, 0x10 };           // list2()[2].vec()[0]
+    
+    senf::DataPacket p (senf::DataPacket::create(data));
+    TestListParser parser (p.data().begin(), &p.data());
+    
+    BOOST_CHECK_EQUAL( parser.list1().size(), 2u );
+    BOOST_CHECK_EQUAL( parser.list2().size(), 3u );
+    BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
+
+    TestListParser::list2_t::container list2 (parser.list2());
+
+    {
+        TestListParser::list1_t::container list (parser.list1());
+        BOOST_CHECK_EQUAL( list.size(), 2u );
+
+        TestListParser::list1_t::container::iterator i (list.begin());
+        BOOST_CHECK_EQUAL( i->vec().size(), 1u );
+        BOOST_CHECK_EQUAL( i->vec()[0], 0x0506u );
+
+        ++i;
+        BOOST_CHECK_EQUAL( i->vec().size(), 2u );
+        BOOST_CHECK_EQUAL( i->vec()[0], 0x0708u );
+        BOOST_CHECK_EQUAL( i->vec()[1], 0x090Au );
+        
+        ++i;
+        BOOST_CHECK( i == list.end() );
+    }
+
+    {
+        TestListParser::list2_t::container list (parser.list2());
+        BOOST_CHECK_EQUAL( list.size(), 3u );
+
+        TestListParser::list2_t::container::iterator i (list.begin());
+        BOOST_CHECK_EQUAL( i->vec().size(), 0u );
+
+        ++i;
+        BOOST_CHECK_EQUAL( i->vec().size(), 2u );
+        BOOST_CHECK_EQUAL( i->vec()[0], 0x0B0Cu );
+        BOOST_CHECK_EQUAL( i->vec()[1], 0x0D0Eu );
+        
+        ++i;
+        BOOST_CHECK_EQUAL( i->vec().size(), 1u );
+        BOOST_CHECK_EQUAL( i->vec()[0], 0x0F10u );
+        
+        ++i;
+        BOOST_CHECK( i == list.end() );
+    }
+
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

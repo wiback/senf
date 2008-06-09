@@ -31,13 +31,13 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::VectorParser<ElementParser,Sizer>
+// senf::VectorParser<ElementParser,AuxPolicy>
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser<ElementParser,Sizer>::init()
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::init()
     const
 {
-    aux(i(), state()) = 0;
+    aux(0, i(), state());
     iterator i (begin());
     iterator const e (end());
     for (; i!=e; ++i)
@@ -45,10 +45,10 @@ prefix_ void senf::VectorParser<ElementParser,Sizer>::init()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::VectorParser_Container<ElementParser,Sizer>
+// senf::VectorParser_Container<ElementParser,AuxPolicy>
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::init()
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::init()
     const
 {
     iterator i (begin());
@@ -59,9 +59,9 @@ prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::init()
 
 // Mutators
 
-template <class ElementParser, class Sizer>
-prefix_ typename senf::VectorParser_Container<ElementParser,Sizer>::iterator
-senf::VectorParser_Container<ElementParser,Sizer>::shift(iterator pos, size_type n)
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::iterator
+senf::VectorParser_Container<ElementParser,AuxPolicy>::shift(iterator pos, size_type n)
 {
     size_type ix (std::distance(data().begin(),pos.raw()));
     data().insert(pos.raw(),n*ElementParser::fixed_bytes,0);
@@ -69,9 +69,9 @@ senf::VectorParser_Container<ElementParser,Sizer>::shift(iterator pos, size_type
     return iterator(boost::next(data().begin(),ix),state());
 }
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::insert(iterator pos,
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::insert(iterator pos,
                                                                        size_type n,
                                                                        Value const & t)
 {
@@ -80,9 +80,9 @@ prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::insert(iterator 
 }
 
 #ifndef DOXYGEN
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class ForwardIterator>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::
 insert(iterator pos, ForwardIterator f, ForwardIterator l,
        typename boost::disable_if< boost::is_convertible<ForwardIterator,size_type> >::type *)
 {
@@ -90,15 +90,15 @@ insert(iterator pos, ForwardIterator f, ForwardIterator l,
         *j << *f;
 }
 #else
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class ForwardIterator>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::
 insert(iterator pos, ForwardIterator f, ForwardIterator l)
 {}
 #endif
 
-template <class ElementParser, class Sizer>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::resize(size_type n)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::resize(size_type n)
 {
     if (size()>=n)
         erase(boost::next(begin(),n),end());
@@ -106,9 +106,10 @@ prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::resize(size_type
         push_back_space(n-size());
 }
 
-template <class ElementParser, class Sizer>
+template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser_Container<ElementParser,Sizer>::resize(size_type n, Value value)
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::resize(size_type n,
+                                                                           Value value)
 {
     if (size()>=n)
         erase(boost::next(begin(),n),end());

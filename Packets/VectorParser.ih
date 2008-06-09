@@ -42,12 +42,47 @@ namespace detail {
         > BOOST_PP_CAT(name, _vec_t);                                                             \
         field( name, BOOST_PP_CAT(name, _vec_t) )
 
+    template <class ElementParser, class AuxPolicy, class AuxTag>
+    struct VectorParserPolicy
+    {};
+
+    template <class ElementParser, class AuxPolicy>
+    struct VectorParserPolicy<ElementParser, AuxPolicy, senf::detail::auxtag::none>
+    {
+        typedef AuxPolicy type;
+    };
+
+    template <class ElementParser, class AuxPolicy, class Transform>
+    struct VectorParserPolicy<ElementParser, AuxPolicy, 
+                              senf::detail::auxtag::transform<Transform> >
+    {
+        typedef senf::detail::TransformAuxParserPolicy<AuxPolicy, Transform> type;
+    };
+
+    template <unsigned fixedSize>
+    struct VectorParserBytesTransform
+    {
+        typedef PacketParserBase::size_type value_type;
+        static value_type get(value_type v) { return v/fixedSize; }
+        static value_type set(value_type v) { return v*fixedSize; }
+    };
+
+    template <class ElementParser, class AuxPolicy>
+    struct VectorParserPolicy<ElementParser, AuxPolicy, senf::detail::auxtag::bytes>
+    {
+        typedef senf::detail::TransformAuxParserPolicy<
+            AuxPolicy, 
+            VectorParserBytesTransform<ElementParser::fixed_bytes> > type;
+    };
+
     template <class ElementParser>
     struct VectorParserTraits
     {
         template <class AuxPolicy, class AuxTag>
         struct parser {
-            typedef senf::VectorParser<ElementParser, AuxPolicy> type;
+            typedef senf::VectorParser<
+                ElementParser, 
+                typename VectorParserPolicy<ElementParser, AuxPolicy, AuxTag>::type > type;
         };
     };
 

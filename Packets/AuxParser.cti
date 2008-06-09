@@ -34,12 +34,21 @@
 // senf::detail::PrefixAuxParserPolicy<P>
 
 template <class P>
-prefix_ typename senf::detail::PrefixAuxParserPolicy<P>::ParserType
+prefix_ typename P::value_type
 senf::detail::PrefixAuxParserPolicy<P>::aux(PacketParserBase::data_iterator i,
                                             PacketParserBase::state_type s)
     const
 {
-    return ParserType(i, s);
+    return P(i, s).value();
+}
+
+template <class P>
+prefix_ void senf::detail::PrefixAuxParserPolicy<P>::aux(typename P::value_type const & v,
+                                                         PacketParserBase::data_iterator i,
+                                                         PacketParserBase::state_type s)
+    const
+{
+    P(i, s).value(v);
 }
 
 template <class P>
@@ -48,19 +57,28 @@ senf::detail::PrefixAuxParserPolicy<P>::adjust(PacketParserBase::data_iterator i
                                                PacketParserBase::state_type s)
     const
 {
-    return i+ParserType::fixed_bytes;
+    return i+P::fixed_bytes;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::FixedAuxParserPolicy<P>
 
 template <class P, unsigned Dist>
-prefix_ typename senf::detail::FixedAuxParserPolicy<P,Dist>::ParserType
+prefix_ typename P::value_type
 senf::detail::FixedAuxParserPolicy<P,Dist>::aux(PacketParserBase::data_iterator i,
                                                 PacketParserBase::state_type s)
     const
 {
-    return ParserType(i-Dist, s);
+    return P(i-Dist, s).value();
+}
+
+template <class P, unsigned Dist>
+prefix_ void senf::detail::FixedAuxParserPolicy<P,Dist>::aux(typename P::value_type const & v,
+                                                             PacketParserBase::data_iterator i,
+                                                             PacketParserBase::state_type s)
+    const
+{
+    P(i-Dist, s).value(v);
 }
 
 template <class P, unsigned Dist>
@@ -76,7 +94,7 @@ senf::detail::FixedAuxParserPolicy<P,Dist>::adjust(PacketParserBase::data_iterat
 // senf::detail::DynamicAuxParserPolicy<P>
 
 template <class P>
-prefix_ senf::detail::DynamicAuxParserPolicy<P>::DynamicAuxParserPolicy(ParserType p)
+prefix_ senf::detail::DynamicAuxParserPolicy<P>::DynamicAuxParserPolicy(P p)
     : p_ (p)
 {}
 
@@ -87,12 +105,21 @@ senf::detail::DynamicAuxParserPolicy<P>::DynamicAuxParserPolicy(WrapperPolicy co
 {}
 
 template <class P>
-prefix_ typename senf::detail::DynamicAuxParserPolicy<P>::ParserType
+prefix_ typename P::value_type
 senf::detail::DynamicAuxParserPolicy<P>::aux(PacketParserBase::data_iterator i,
                                              PacketParserBase::state_type s)
     const
 {
-    return p_;
+    return p_.value();
+}
+
+template <class P>
+prefix_ void senf::detail::DynamicAuxParserPolicy<P>::aux(typename P::value_type const & v,
+                                                          PacketParserBase::data_iterator i,
+                                                          PacketParserBase::state_type s)
+    const
+{
+    p_.value(v);
 }
 
 template <class P>
@@ -114,12 +141,22 @@ DynamicWrapperAuxParserPolicy(ParserPolicy const & other)
 {}
 
 template <class P>
-prefix_ typename senf::detail::DynamicWrapperAuxParserPolicy<P>::ParserType
+prefix_ typename P::value_type
 senf::detail::DynamicWrapperAuxParserPolicy<P>::aux(PacketParserBase::data_iterator i,
                                                     PacketParserBase::state_type s)
     const
 {
-    return * p_;
+    return p_->value();
+}
+
+template <class P>
+prefix_ void
+senf::detail::DynamicWrapperAuxParserPolicy<P>::aux(typename P::value_type const & v,
+                                                    PacketParserBase::data_iterator i,
+                                                    PacketParserBase::state_type s)
+    const
+{
+    p_->value(v);
 }
 
 template <class P>
@@ -129,6 +166,38 @@ senf::detail::DynamicWrapperAuxParserPolicy<P>::adjust(PacketParserBase::data_it
     const
 {
     return i;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::TransformAuxParserPolicy<Policy,Transform>
+
+template <class Policy, class Transform>
+prefix_ senf::detail::TransformAuxParserPolicy<Policy,Transform>::TransformAuxParserPolicy()
+{}
+
+template <class Policy, class Transform>
+template <class Arg>
+prefix_ senf::detail::TransformAuxParserPolicy<Policy,Transform>::
+TransformAuxParserPolicy(Arg const & arg)
+    : Policy(arg)
+{}
+
+template <class Policy, class Transform>
+prefix_ typename Transform::value_type
+senf::detail::TransformAuxParserPolicy<Policy,Transform>::aux(PacketParserBase::data_iterator i,
+                                                              PacketParserBase::state_type s)
+    const
+{
+    return Transform::get(Policy::aux(i,s));
+}
+
+template <class Policy, class Transform>
+prefix_ void senf::detail::TransformAuxParserPolicy<Policy,Transform>::
+aux(typename Transform::value_type const & v, PacketParserBase::data_iterator i,
+    PacketParserBase::state_type s)
+    const
+{
+    Policy::aux(Transform::set(v), i, s);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

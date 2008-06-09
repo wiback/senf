@@ -338,7 +338,7 @@ senf::VectorParser_Container<ElementParser,AuxPolicy>::bytes()
 template <class ElementParser, class AuxPolicy>
 prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::setSize(size_type value)
 {
-    aux(i(),state()).value(value);
+    aux(value, i(),state());
 }
 
 /////////////////////////////cti.e///////////////////////////////////////

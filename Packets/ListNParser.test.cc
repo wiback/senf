@@ -51,6 +51,37 @@ namespace {
     };
 }
 
+BOOST_AUTO_UNIT_TEST(ListNParser_container)
+{
+    typedef senf::ListNParser<MyVec,senf::UInt16Parser>::parser MyListNParser;
+    
+    VoidPacket vp (VoidPacket::create(MyListNParser::init_bytes));
+    MyListNParser(vp.data().begin(),&vp.data()).init();
+
+    {
+        MyListNParser::container c (MyListNParser(vp.data().begin(),&vp.data()));
+
+        c.push_back_space(2u);
+        BOOST_CHECK_EQUAL( std::distance(c.begin(), c.end()), 2 );
+        BOOST_CHECK_EQUAL( std::distance(c.data().begin(), c.begin().raw()), 2 );
+        BOOST_CHECK_EQUAL( std::distance(c.data().begin(), c.front().vec().begin().raw()), 3 );
+        BOOST_CHECK_EQUAL( std::distance(c.data().begin(), c.front().vec().end().raw()), 3 );
+        BOOST_CHECK_EQUAL( std::distance(c.data().begin(), c.back().vec().begin().raw()), 4 );
+        BOOST_CHECK_EQUAL( std::distance(c.data().begin(), c.back().vec().end().raw()), 4 );
+        BOOST_CHECK_EQUAL( std::distance(c.data().begin(), c.end().raw()), 4 );
+        BOOST_CHECK_EQUAL( c.bytes(), 4u );
+
+        MyListNParser::container::iterator i (c.begin());
+        BOOST_CHECK_EQUAL( std::distance(c.data().begin(), i->i()), 2 );
+        BOOST_CHECK( i != c.end() );
+        ++i;
+        BOOST_CHECK_EQUAL( std::distance(c.data().begin(), i->i()), 3 );
+        BOOST_CHECK( i != c.end() );
+        ++i;
+        BOOST_CHECK( i == c.end() );
+    }
+}
+
 BOOST_AUTO_UNIT_TEST(ListNParser)
 {
     typedef senf::ListNParser<MyVec,senf::UInt16Parser>::parser MyListNParser;
@@ -63,7 +94,6 @@ BOOST_AUTO_UNIT_TEST(ListNParser)
         BOOST_CHECK_EQUAL( p.size(), 0u );
         BOOST_CHECK_EQUAL( p.bytes(), 2u );
         BOOST_CHECK( p.empty() );
-        BOOST_CHECK( p.begin() == p.end() );
     }
 
     {
@@ -85,11 +115,13 @@ BOOST_AUTO_UNIT_TEST(ListNParser)
 
         p.front().vec().push_back(0x2345u);
         BOOST_CHECK_EQUAL( p.front().vec().back(), 0x2345u );
+        BOOST_CHECK_EQUAL( p.front().vec().size(), 2u );
         BOOST_CHECK_EQUAL( p.bytes(), 7u );
 
         p.push_back_space();
         BOOST_CHECK_EQUAL( p.size(), 2u );
         BOOST_CHECK_EQUAL( p.bytes(), 8u );
+        BOOST_CHECK_EQUAL( p.back().vec().size(), 0u );
         
         p.back().vec().push_front(0x0123u);
         BOOST_CHECK_EQUAL( p.front().vec().size(), 2u );
@@ -108,17 +140,95 @@ BOOST_AUTO_UNIT_TEST(ListNParser)
     }
 }
 
-BOOST_AUTO_UNIT_TEST(ListNParser_container)
-{
-    typedef senf::ListNParser<MyVec,senf::UInt16Parser>::parser MyListNParser;
+namespace {
     
-    VoidPacket vp (VoidPacket::create(MyListNParser::init_bytes));
+    struct TestTransform
+    {
+        typedef unsigned value_type;
+        static unsigned get(unsigned v) { return v/2; }
+        static unsigned set(unsigned v) { return 2*v; }
+    };
 
-    MyListNParser(vp.data().begin(),&vp.data()).init();
+    struct TestListParser
+        : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
 
-    
+        SENF_PARSER_PRIVATE_FIELD ( size1 , senf::UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD ( size2 , senf::UInt8Parser );
+        SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );
+        SENF_PARSER_LIST          ( list1  , transform(TestTransform, size1) , MyVec );
+        SENF_PARSER_LIST          ( list2  , size2 , MyVec );
+
+        SENF_PARSER_FINALIZE(TestListParser);
+    };
+
 }
 
+BOOST_AUTO_UNIT_TEST(listMacro)
+{
+    unsigned char data[] = { 0x04,                   // size1
+                             0x03,                   // size2
+                             0x01, 0x02, 0x03, 0x04, // dummy
+                             0x01,                   // list1()[0].size()
+                             0x05, 0x06,             // list1().vec()[0]
+                             0x02,                   // list1()[1].size()
+                             0x07, 0x08,             // list1()[1].vec()[0]
+                             0x09, 0x0A,             // list1()[1].vec()[1]
+                             0x00,                   // list2()[0].size()
+                             0x02,                   // list2()[1].size()
+                             0x0B, 0x0C,             // list2()[1].vec()[0]
+                             0x0D, 0x0E,             // list2()[1].vec()[1]
+                             0x01,                   // list2()[2].size()
+                             0x0F, 0x10 };           // list2()[2].vec()[0]
+    
+    senf::DataPacket p (senf::DataPacket::create(data));
+    TestListParser parser (p.data().begin(), &p.data());
+    
+    BOOST_CHECK_EQUAL( parser.list1().size(), 2u );
+    BOOST_CHECK_EQUAL( parser.list2().size(), 3u );
+    BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
+
+    TestListParser::list2_t::container list2 (parser.list2());
+
+    {
+        TestListParser::list1_t::container list (parser.list1());
+        BOOST_CHECK_EQUAL( list.size(), 2u );
+
+        TestListParser::list1_t::container::iterator i (list.begin());
+        BOOST_CHECK_EQUAL( i->vec().size(), 1u );
+        BOOST_CHECK_EQUAL( i->vec()[0], 0x0506u );
+
+        ++i;
+        BOOST_CHECK_EQUAL( i->vec().size(), 2u );
+        BOOST_CHECK_EQUAL( i->vec()[0], 0x0708u );
+        BOOST_CHECK_EQUAL( i->vec()[1], 0x090Au );
+        
+        ++i;
+        BOOST_CHECK( i == list.end() );
+    }
+
+    {
+        TestListParser::list2_t::container list (parser.list2());
+        BOOST_CHECK_EQUAL( list.size(), 3u );
+
+        TestListParser::list2_t::container::iterator i (list.begin());
+        BOOST_CHECK_EQUAL( i->vec().size(), 0u );
+
+        ++i;
+        BOOST_CHECK_EQUAL( i->vec().size(), 2u );
+        BOOST_CHECK_EQUAL( i->vec()[0], 0x0B0Cu );
+        BOOST_CHECK_EQUAL( i->vec()[1], 0x0D0Eu );
+        
+        ++i;
+        BOOST_CHECK_EQUAL( i->vec().size(), 1u );
+        BOOST_CHECK_EQUAL( i->vec()[0], 0x0F10u );
+        
+        ++i;
+        BOOST_CHECK( i == list.end() );
+    }
+
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

@@ -44,11 +44,12 @@ namespace detail {
     struct PrefixAuxParserPolicy
     {
         typedef PrefixAuxParserPolicy WrapperPolicy;
-        typedef P ParserType;
+        typedef PrefixAuxParserPolicy ParserPolicy;
 
-        static PacketParserBase::size_type const aux_bytes = ParserType::fixed_bytes;
+        static PacketParserBase::size_type const aux_bytes = P::fixed_bytes;
         
-        ParserType aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        typename P::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        void aux(typename P::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
     };
 
@@ -56,11 +57,12 @@ namespace detail {
     struct FixedAuxParserPolicy
     {
         typedef FixedAuxParserPolicy WrapperPolicy;
-        typedef P ParserType;
+        typedef FixedAuxParserPolicy ParserPolicy;
 
         static PacketParserBase::size_type const aux_bytes = 0;
         
-        ParserType aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        typename P::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        void aux(typename P::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
     };
 
@@ -70,33 +72,51 @@ namespace detail {
     struct DynamicAuxParserPolicy
     {
         typedef DynamicWrapperAuxParserPolicy<P> WrapperPolicy;
-        typedef P ParserType;
+        typedef DynamicAuxParserPolicy<P> ParserPolicy;
 
         static PacketParserBase::size_type const aux_bytes = 0;
 
-        DynamicAuxParserPolicy(ParserType p);
+        DynamicAuxParserPolicy(P p);
         DynamicAuxParserPolicy(WrapperPolicy const & other);
         
-        ParserType aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        typename P::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        void aux(typename P::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
 
-        ParserType p_;
+        mutable P p_;
     };
 
     template <class P>
     struct DynamicWrapperAuxParserPolicy
     {
+        typedef DynamicWrapperAuxParserPolicy<P> WrapperPolicy;
         typedef DynamicAuxParserPolicy<P> ParserPolicy;
-        typedef P ParserType;
 
         static PacketParserBase::size_type const aux_bytes = 0;
 
         DynamicWrapperAuxParserPolicy(ParserPolicy const & other);
         
-        ParserType aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        typename P::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        void aux(typename P::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
 
-        SafePacketParserWrapper<ParserType> p_;
+        mutable SafePacketParserWrapper<P> p_;
+    };
+
+    template <class Policy, class Transform>
+    struct TransformAuxParserPolicy
+        : public Policy
+    {
+        typedef TransformAuxParserPolicy<typename Policy::WrapperPolicy, Transform> WrapperPolicy;
+        typedef TransformAuxParserPolicy<typename Policy::ParserPolicy, Transform> ParserPolicy;
+
+        static PacketParserBase::size_type const aux_bytes = Policy::aux_bytes;
+        
+        TransformAuxParserPolicy();
+        template <class Arg> TransformAuxParserPolicy(Arg const & arg);
+
+        typename Transform::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        void aux(typename Transform::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
     };
 }}
 

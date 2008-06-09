@@ -200,6 +200,13 @@ BOOST_AUTO_UNIT_TEST(dynamicPolicyVector)
 
 namespace {
 
+    struct TestTransform
+    {
+        typedef unsigned value_type;
+        static unsigned get(unsigned v) { return v-2; }
+        static unsigned set(unsigned v) { return v+2; }
+    };
+
     struct TestVectorParser 
         : public senf::PacketParserBase
     {
@@ -208,8 +215,8 @@ namespace {
         SENF_PARSER_PRIVATE_FIELD ( size1 , senf::UInt8Parser );
         SENF_PARSER_PRIVATE_FIELD ( size2 , senf::UInt8Parser );
         SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );
-        SENF_PARSER_VECTOR        ( vec1  , size1, senf::UInt16Parser );
-        SENF_PARSER_VECTOR        ( vec2  , size2, senf::UInt16Parser );
+        SENF_PARSER_VECTOR        ( vec1  , transform(TestTransform, size1) , senf::UInt16Parser );
+        SENF_PARSER_VECTOR        ( vec2  , bytes(size2) , senf::UInt16Parser );
 
         SENF_PARSER_FINALIZE( TestVectorParser );
     };
@@ -218,8 +225,8 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(vectorMacro)
 {
-    unsigned char data[] = { 0x03,                   // size1
-                             0x02,                   // size2
+    unsigned char data[] = { 0x05,                   // size1
+                             0x04,                   // size2
                              0x01, 0x02, 0x03, 0x04, // dummy
                              0x05, 0x06,             // vec1[0]
                              0x07, 0x08,             // vec1[1]

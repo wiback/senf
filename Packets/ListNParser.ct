@@ -31,36 +31,37 @@
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-template <class ElementParser, class SizeParser>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListNParser_Policy<ElementParser,SizeParser>::iterator_policy::
-setFromPosition(iterator i, state_type s, iterator p)
+senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::setFromPosition(container_type const & c,
+                                                                           iterator_data & d,
+                                                                           data_iterator p)
+    const
 {
-    l_ = i;
-    if (p == data(s).end()) {
-        n_ = 0;
+    if (p == c.data().end()) {
+        d.n_ = 0;
         return;
     }
-    n_ = SizeParser(i,s);
-    iterator j (boost::next(i,SizeParser::fixed_bytes));
-    for (; n_; --n_, j += ElementParser(j,s).bytes())
+    d.n_ = this->aux(c.i(),c.state());
+    data_iterator j (this->adjust(c.i(),c.state()));
+    for (; d.n_; --d.n_, j += ElementParser(j,c.state()).bytes())
         if (j==p)
             return;
     SENF_ASSERT( false );
 }
 
-template <class ElementParser, class SizeParser>
-prefix_ typename senf::detail::ListNParser_Policy<ElementParser,SizeParser>::iterator
-senf::detail::ListNParser_Policy<ElementParser,SizeParser>::iterator_policy::raw(iterator i,
-                                                                                 state_type s)
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::data_iterator
+senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::raw(container_type const & c,
+                                                               iterator_data const & d)
     const
 {
-    if (i != data(s).end())
-        return i;
-    size_type n (SizeParser(l_,s));
-    iterator j (boost::next(l_,SizeParser::fixed_bytes));
+    if (container_type::iterator::get(d).i() != c.data().end())
+        return container_type::iterator::get(d).i();
+    size_type n (this->aux(c.i(),c.state()));
+    data_iterator j (this->adjust(c.i(),c.state()));
     for (; n; --n)
-        j += ElementParser(j,s).bytes();
+        j += ElementParser(j,c.state()).bytes();
     return j;
 }
 

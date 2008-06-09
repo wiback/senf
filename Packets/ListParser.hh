@@ -35,8 +35,7 @@
 
 namespace senf {
 
-    namespace detail { template <class ElementParser, class IteratorPolicy>
-                       class ListParser_Iterator; }
+    namespace detail { template <class Container> class ListParser_Iterator; }
 
     template <class ListPolicy>
     class ListParser_Container;
@@ -65,6 +64,8 @@ namespace senf {
           private ListPolicy
     {
     public:
+        typedef ListPolicy policy;
+
         ListParser(data_iterator i, state_type s);
         ListParser(ListPolicy policy, data_iterator i, state_type s);
                                         ///< Additional policy specific constructor
@@ -80,16 +81,10 @@ namespace senf {
         // Container interface
 
         typedef typename ListPolicy::element_type value_type;
-        typedef detail::ListParser_Iterator<
-            value_type, typename ListPolicy::iterator_policy > iterator;
-        typedef iterator const_iterator;
         typedef typename ListPolicy::container_type container;
 
         size_type size() const;
         bool empty() const;
-
-        iterator begin() const;
-        iterator end() const;
 
         value_type front() const;
         value_type back() const;
@@ -100,6 +95,9 @@ namespace senf {
                                void push_front_space (size_type n=1) const;
                                void resize           (size_type n) const;
         template <class Value> void resize           (size_type n, Value value) const;
+
+        static ListParser & get(ListPolicy & p);
+        static ListParser const & get(ListPolicy const & p);
 
     private:
         template <class Policy> friend class ListParser_Container;
@@ -131,13 +129,13 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        typedef ListPolicy policy;
         typedef typename ListPolicy::parser_type parser_type;
         typedef PacketParserBase::data_iterator data_iterator;
         typedef PacketParserBase::size_type size_type;
         typedef PacketParserBase::difference_type difference_type;
         typedef typename ListPolicy::element_type value_type;
-        typedef detail::ListParser_Iterator<
-            value_type, typename ListPolicy::iterator_policy> iterator;
+        typedef detail::ListParser_Iterator<ListParser_Container> iterator;
         typedef iterator const_iterator;
         typedef PacketParserBase::state_type state_type;
 
@@ -213,10 +211,17 @@ namespace senf {
         ///@}
 
     private:
+        friend class detail::ListParser_Iterator<ListParser_Container>;
+
         state_type state_;
         size_type i_;
     };
 
+#    define SENF_PARSER_LIST(name, size, elt_type) \
+         SENF_PARSER_LIST_I(public, name, size, elt_type)
+
+#    define SENF_PARSER_PRIVATE_LIST(name, size, elt_type) \
+        SENF_PARSER_LIST_I(private, name, size, elt_type)
 
 }
 

@@ -48,17 +48,18 @@ namespace senf {
             void      init   (data_iterator i, state_type s) const;
 
             // Members needed only in the container policy
-            void      erase  (data_iterator i, state_type s, iterator p) const;
-            void      insert (data_iterator i, state_type s, iterator p) const;
+            void      erase  (container_type & c, data_iterator p) const;
+            void      insert (container_type & c, data_iterator p) const;
+            void      update (container_type const & c, data_iterator p) const;
 
-            struct iterator_policy
-            {
-                iterator setBegin        (data_iterator i, state_type s);
-                iterator setEnd          (data_iterator i, state_type s);
-                void     setFromPosition (data_iterator i, state_type s, iterator p);
-                iterator next            (data_iterator i, state_type s);
-                iterator raw             (data_iterator i, state_type s) const;
-            };
+            // Members needed in the container policy for iteration
+            struct iterator_data {};
+
+            data_iterator setBegin        (container_type const & c, iterator_data & d) const;
+            data_iterator setEnd          (container_type const & c, iterator_data & d) const;
+            void          setFromPosition (container_type const & c, iterator_data & d, iterator p) const;
+            data_iterator next            (container_type const & c, iterator_data & d) const;
+            data_iterator raw             (container_type const & c, iterator_data const & d) const;
         };
         \endcode
 
@@ -79,13 +80,13 @@ namespace senf {
         typedef PacketParserBase::state_type state_type;
         typedef PacketParserBase::size_type size_type;
 
-        typedef void element_type;      ///< Type of list elements
+        typedef unspecified element_type; ///< Type of list elements
                                         /**< This is the parser used to parse the list elements. */
-        typedef void parser_type;       ///< List parser type
+        typedef unspecified parser_type; ///< List parser type
                                         /**< parser_type is the list parser used to parse a list of
                                              this type,
                                              e.g. <tt>senf::Parse_List<ExampleListPolicy></tt>. */
-        typedef void container_type;    ///< Type of container wrapper
+        typedef unspecified container_type; ///< Type of container wrapper
                                         /**< This is the container wrapper of the list, e.g.
                                              <tt>Parse_List_Container<ExampleListPolicy></tt>. The
                                              container may however use a \e different policy, as
@@ -123,14 +124,7 @@ namespace senf {
                                         /**< This is called after an element has been inserted at p
                                              into the List (i,s) to update the meta-data. */
 
-        /** \brief Example of a list iterator policy. ONLY FOR EXPOSITION.
-
-            \see \ref ExampleListPolicy \n
-                 \ref ListParser
-         */
-        struct iterator_policy
-        {
-            iterator setBegin(iterator i, state_type s); ///< Initialize iterator to begin()
+        iterator setBegin(iterator i, state_type s); ///< Initialize iterator to begin()
                                         /**< Initialize the policy from the given List (i,s). Set
                                              the iterator to the beginning iterator. Return
                                              data_iterator to the first element.
@@ -138,42 +132,35 @@ namespace senf {
                                              \warning if the list is empty, the returned iterator
                                              \e must be the same as the one returned by setEnd. */
 
-            iterator setEnd(iterator i, state_type s); ///< Initialize iterator to end()
+        iterator setEnd(iterator i, state_type s); ///< Initialize iterator to end()
                                         /**< Initialize the policy from the given List (i,s). Set
                                              the iterator to the end iterator. Return data_iterator
                                              used to mark the end of the range. This may be a
                                              special sentinel value (e.g. data().end()) if
                                              needed. */
 
-            void setFromPosition(iterator i, state_type s, iterator p);
+        void setFromPosition(iterator i, state_type s, iterator p);
                                         ///< Initialize iterator from the given raw position
                                         /**< Set the iterator to the Element at raw position p. This
                                              operation can potentially be very inefficient if the
                                              list needs to be traversed from the beginning until the
                                              iterator is found. */
 
-            iterator next(iterator i, state_type s); ///< Advance to next element
+        iterator next(iterator i, state_type s); ///< Advance to next element
                                         /**< given an iterator to an element, go to the next
                                              element. */
 
-            iterator raw(iterator i, state_type s); ///< Return raw position of element
+        iterator raw(iterator i, state_type s); ///< Return raw position of element
                                         /**< Given the iterator state (i,s), return the raw iterator
                                              to the datum. This will be i in almost all cases EXCEPT
                                              if a special sentinel value is used as end() value. In
                                              this case, this member must return the real position
                                              after the last element. */
-        };
 
-        /** \brief Example of a list container policy. ONLY FOR EXPOSITION
+        void update(iterator i, state_type s); ///< Called before every container access
 
-            \see \ref ExampleListPolicy \n
-                 \ref ListParser
-         */
-        struct container_policy
-        {
-            void init(iterator i, state_type s); ///< Initialize new container
-            void update(iterator i, state_type s); ///< Called before every container access
-        };
+        struct iterator_data
+        {};
     };
 
 }

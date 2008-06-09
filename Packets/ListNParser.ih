@@ -27,6 +27,7 @@
 #define IH_ListNParser_ 1
 
 // Custom includes
+#include "ListParser.ih"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -37,41 +38,52 @@ namespace detail {
         \internal
         \see \ref ListNParser
      */
-    template <class ElementParser, class SizeParser>
+    template <class ElementParser, class AuxPolicy>
     struct ListNParser_Policy
+        : public AuxPolicy
     {
-        typedef PacketParserBase::data_iterator iterator;
+        typedef PacketParserBase::data_iterator data_iterator;
         typedef PacketParserBase::state_type state_type;
         typedef PacketParserBase::size_type size_type;
         typedef ElementParser element_type;
         typedef ListParser< ListNParser_Policy > parser_type;
         typedef ListParser_Container< ListNParser_Policy > container_type;
 
-        static const size_type init_bytes = SizeParser::fixed_bytes;
+        static const size_type init_bytes = AuxPolicy::aux_bytes;
 
-        size_type bytes  (iterator i, state_type s) const;
-        size_type size   (iterator i, state_type s) const;
-        void      init   (iterator i, state_type s) const;
-        void      erase  (iterator i, state_type s, iterator p) const;
-        void      insert (iterator i, state_type s, iterator p) const;
-        void      update (iterator i, state_type s) const;
+        ListNParser_Policy();
+        template <class Arg> ListNParser_Policy(Arg const & aux);
 
-        /** \brief Iternal: ListNParser_Policy's iterator policy
-            \internal
-         */
-        struct iterator_policy
-        {
-            iterator setBegin        (iterator i, state_type s);
-            iterator setEnd          (iterator i, state_type s);
-            void     setFromPosition (iterator i, state_type s, iterator p);
-            iterator next            (iterator i, state_type s);
-            iterator raw             (iterator i, state_type s) const;
+        size_type bytes  (data_iterator i, state_type s) const;
+        size_type size   (data_iterator i, state_type s) const;
+        void      init   (data_iterator i, state_type s) const;
+        
+        void      erase  (container_type & c, data_iterator p) const;
+        void      insert (container_type & c, data_iterator p) const;
+        void      update (container_type const & c) const;
 
+        struct iterator_data {
             size_type n_;
-            iterator l_;
         };
 
-        static PacketData & data(state_type s);
+        data_iterator setBegin        (container_type const & c, iterator_data & d) const;
+        data_iterator setEnd          (container_type const & c, iterator_data & d) const;
+        void          setFromPosition (container_type const & c, iterator_data & d, data_iterator p) const;
+        data_iterator next            (container_type const & c, iterator_data & d) const;
+        data_iterator raw             (container_type const & c, iterator_data const & d) const;
+    };
+
+    template <class ElementParser, class AuxPolicy>
+    struct ListParserPolicy<ElementParser, AuxPolicy, senf::detail::auxtag::none>
+    {
+        typedef ListNParser_Policy<ElementParser, AuxPolicy> type;
+    };
+
+    template <class ElementParser, class AuxPolicy, class Transform>
+    struct ListParserPolicy<ElementParser, AuxPolicy, senf::detail::auxtag::transform<Transform> >
+    {
+        typedef ListNParser_Policy< ElementParser,
+                                    TransformAuxParserPolicy<AuxPolicy, Transform> > type;
     };
 
 }}

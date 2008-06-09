@@ -31,148 +31,168 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::detail::ListBParser_Policy<ElementParser,BytesParser>
+// senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>
 
-template <class ElementParser, class BytesParser>
-prefix_ typename senf::detail::ListBParser_Policy<ElementParser,BytesParser>::size_type
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::bytes(iterator i, state_type s)
-    const
-{
-    return BytesParser(i,s) + BytesParser::fixed_bytes;
-}
-
-template <class ElementParser, class BytesParser>
-prefix_ typename senf::detail::ListBParser_Policy<ElementParser,BytesParser>::size_type
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::size(iterator i, state_type s)
-    const
-{
-    parser_type l (i,s);
-    return std::distance(l.begin(),l.end());
-}
-
-template <class ElementParser, class BytesParser>
-prefix_ void senf::detail::ListBParser_Policy<ElementParser,BytesParser>::init(iterator i,
-                                                                               state_type s)
-    const
+template <class ElementParser, class AuxPolicy>
+prefix_ senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::ListBParser_Policy()
 {}
 
-///////////////////////////////////////////////////////////////////////////
-// senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator_policy
-
-template <class ElementParser, class BytesParser>
-prefix_ typename senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator_policy::
-setBegin(iterator i, state_type s)
-{
-    return boost::next(i,BytesParser::fixed_bytes);
-}
-
-template <class ElementParser, class BytesParser>
-prefix_ typename senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator_policy::
-setEnd(iterator i, state_type s)
-{
-    return boost::next(i,BytesParser(i,s) + BytesParser::fixed_bytes);
-}
-
-template <class ElementParser, class BytesParser>
-prefix_ void
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator_policy::
-setFromPosition(iterator i, state_type s, iterator p)
-{}
-
-template <class ElementParser, class BytesParser>
-prefix_ typename senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator_policy::next(iterator i,
-                                                                                   state_type s)
-{
-    return boost::next(i,senf::bytes(ElementParser(i,s)));
-}
-
-template <class ElementParser, class BytesParser>
-prefix_ typename senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::iterator_policy::raw(iterator i,
-                                                                                  state_type s)
-    const
-{
-    return i;
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::detail::ListBParser_Policy<ElementParser,BytesParser>
-
-template <class ElementParser, class BytesParser>
+template <class ElementParser, class AuxPolicy>
+template <class Arg>
 prefix_
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::container_policy::
-container_policy(parser_type const & list)
-{
-    iterator const e (boost::next(list.i(),list.bytes()));
-    iterator i (boost::next(list.i(), BytesParser::fixed_bytes));
-    for(n_=0; i!=e; ++n_, std::advance(i,ElementParser(i,list.state()).bytes())) ;
-    container_size_ = list.data().size();
-}
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::ListBParser_Policy(Arg const & arg)
+    : AuxPolicy (arg)
+{}
 
-template <class ElementParser, class BytesParser>
-prefix_ typename senf::detail::ListBParser_Policy<ElementParser,BytesParser>::size_type
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::container_policy::
-bytes(iterator i, state_type s)
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::size_type
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::bytes(data_iterator i, state_type s)
     const
 {
-    return BytesParser(i,s) + BytesParser::fixed_bytes;
+    return AuxPolicy::aux(i,s) + AuxPolicy::aux_bytes;
 }
 
-template <class ElementParser, class BytesParser>
-prefix_ typename senf::detail::ListBParser_Policy<ElementParser,BytesParser>::size_type
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::container_policy::
-size(iterator i, state_type s)
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::size_type
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::size(data_iterator i, state_type s)
+    const
+{
+    parser_type p (*this, i, s);
+    container_type c (p);
+    return std::distance(c.begin(),c.end());
+}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::init(data_iterator i,
+                                                                             state_type s)
+    const
+{
+    AuxPolicy::aux(0,i,s);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::ListBParser_Policy<ElementParser,BytesParser>
+
+template <class ElementParser, class AuxPolicy>
+prefix_
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+container_policy(parser_policy const & p)
+    : AuxPolicy (p)
+{
+    data_iterator const e (boost::next(parser_type::get(p).i(),parser_type::get(p).bytes()));
+    data_iterator i (AuxPolicy::adjust(parser_type::get(p).i(), parser_type::get(p).state()));
+    for( n_=0; i!=e; 
+         ++n_, std::advance(i,senf::bytes(ElementParser(i,parser_type::get(p).state())))) ;
+    container_size_ = parser_type::get(p).data().size();
+}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::size_type
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::bytes(data_iterator i,
+                                                                                   state_type s)
+    const
+{
+    return AuxPolicy::aux(i,s) + AuxPolicy::aux_bytes;
+}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::size_type
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::size(data_iterator i,
+                                                                                  state_type s)
     const
 {
     return n_;
 }
 
-template <class ElementParser, class BytesParser>
-prefix_ void
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::container_policy::
-erase(iterator i, state_type s, iterator p)
-{
-    size_type b (senf::bytes(ElementParser(p,s)));
-    BytesParser(i,s) -= b;
-    --n_;
-    // The container will be reduced by b bytes directly after this call
-    container_size_ = s->size()-b;
-}
-
-template <class ElementParser, class BytesParser>
-prefix_ void
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::container_policy::
-insert(iterator i, state_type s, iterator p)
-{
-    BytesParser(i,s) += senf::bytes(ElementParser(p,s));
-    ++n_;
-    container_size_ = s->size();
-}
-
-template <class ElementParser, class BytesParser>
-prefix_ void
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::container_policy::
-init(iterator i, state_type s)
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+init(data_iterator i, state_type s)
 {
     n_ = 0;
     container_size_ = s->size();
+    AuxPolicy::aux(0,i,s);
 }
 
-template <class ElementParser, class BytesParser>
+template <class ElementParser, class AuxPolicy>
+prefix_ void senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+erase(container_type & c, data_iterator p)
+{
+    size_type b (senf::bytes(ElementParser(p,c.state())));
+    AuxPolicy::aux( AuxPolicy::aux(c.i(), c.state())-b, c.i(), c.state());
+    --n_;
+    // The container will be reduced by b bytes directly after this call
+    container_size_ = c.data().size()-b;
+}
+
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListBParser_Policy<ElementParser,BytesParser>::container_policy::
-update(iterator i, state_type s)
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+insert(container_type & c, data_iterator p)
+{
+    size_type b (senf::bytes(ElementParser(p,c.state())));
+    AuxPolicy::aux( AuxPolicy::aux(c.i(), c.state())+b, c.i(), c.state());
+    ++n_;
+    container_size_ = c.data().size();
+}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+update(container_type const & c)
     const
 {
-    if (container_size_ == s->size())
+    if (container_size_ == c.data().size())
         return;
-    iterator j (boost::next(i,BytesParser::fixed_bytes));
-    for (size_type n (n_); n; --n, std::advance(j,ElementParser(j,s).bytes())) ;
-    BytesParser(i,s) = std::distance(i,j) - BytesParser::fixed_bytes;
-    container_size_ = s->size();
+    data_iterator i (AuxPolicy::adjust(c.i(), c.state()));
+    data_iterator j (i);
+    for (size_type n (n_); n; --n, std::advance(j,senf::bytes(ElementParser(j,c.state())))) ;
+    aux( std::distance(i,j), c.i(), c.state() );
+    container_size_ = c.data().size();
+}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+setBegin(container_type const & c, iterator_data & d)
+    const
+{
+    return AuxPolicy::adjust(c.i(), c.state());
+}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+setEnd(container_type const & c, iterator_data & d)
+    const
+{
+    return boost::next(AuxPolicy::adjust(c.i(), c.state()),aux(c.i(),c.state()));
+}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+setFromPosition(container_type const & c, iterator_data & d, data_iterator p)
+    const
+{}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+next(container_type const & c, iterator_data & d)
+    const
+{
+    return boost::next( container_type::iterator::get(d).i(),
+                        senf::bytes(ElementParser( container_type::iterator::get(d).i(), 
+                                                   c.state() )) );
+}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
+raw(container_type const & c, iterator_data const & d)
+    const
+{
+    return container_type::iterator::get(d).i();
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

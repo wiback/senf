@@ -39,8 +39,9 @@ prefix_ void senf::ListParser<ListPolicy>::init()
     const
 {
     ListPolicy::init(i(),state());
-    iterator i (begin());
-    iterator const e (end());
+    container c (*this);
+    typename container::iterator i (c.begin());
+    typename container::iterator const e (c.end());
     for(; i!=e; ++i)
         i->init();
 }
@@ -51,8 +52,9 @@ senf::ListParser<ListPolicy>::back()
     const
 {
     SENF_ASSERT( ! empty() );
-    iterator i (begin()), j;
-    iterator const e (end());
+    container c(*this);
+    typename container::iterator i (c.begin()), j;
+    typename container::iterator const e (c.end());
     for (j=i; i!=e; j=i, ++i) ;
     return *j;
 }
@@ -75,13 +77,12 @@ senf::ListParser_Container<ListPolicy>::back()
 template <class ListPolicy>
 prefix_ void senf::ListParser_Container<ListPolicy>::shift(iterator pos, size_type n)
 {
-    ListPolicy::update(i(),state());
+    ListPolicy::update(*this);
     safe_data_iterator sp (data(),pos.raw());
-    safe_data_iterator si (data(),i());
     for (; n>0; --n) {
         data().insert(sp,senf::init_bytes<value_type>::value,0);
         value_type(sp,state()).init();
-        ListPolicy::insert(si,state(),sp);
+        ListPolicy::insert(*this,sp);
     }
 }
 
@@ -91,14 +92,13 @@ prefix_ void senf::ListParser_Container<ListPolicy>::insert(iterator pos,
                                                             size_type n,
                                                             Value const & t)
 {
-    ListPolicy::update(i(),state());
+    ListPolicy::update(*this);
     safe_data_iterator sp (data(),pos.raw());
-    safe_data_iterator si (data(),i());
     for (; n>0; --n) {
         data().insert(sp,senf::init_bytes<value_type>::value,0);
         value_type(sp,state()).init();
         value_type(sp,state()) << t;
-        ListPolicy::insert(si,state(),sp);
+        ListPolicy::insert(*this,sp);
     }
 }
 
@@ -109,14 +109,13 @@ prefix_ void senf::ListParser_Container<ListPolicy>::
 insert(iterator pos, ForwardIterator f, ForwardIterator l,
        typename boost::disable_if< boost::is_convertible<ForwardIterator,size_type> >::type *)
 {
-    ListPolicy::update(i(),state());
+    ListPolicy::update(*this);
     safe_data_iterator sp (data(),pos.raw());
-    safe_data_iterator si (data(),i());
     for (; f!=l; ++f) {
         data().insert(sp,senf::init_bytes<value_type>::value,0);
         value_type(sp,state()).init();
         value_type(sp,state()) << *f;
-        ListPolicy::insert(si,state(),sp);
+        ListPolicy::insert(*this,sp);
         sp += senf::bytes(value_type(sp,state()));
     }
 }
@@ -132,11 +131,10 @@ template <class ListPolicy>
 prefix_ void senf::ListParser_Container<ListPolicy>::erase(iterator pos,
                                                            size_type n)
 {
-    ListPolicy::update(i(),state());
-    safe_data_iterator si (data(),i());
+    ListPolicy::update(*this);
     safe_data_iterator sp (data(),pos.raw());
     for (; n>0; --n) {
-        ListPolicy::erase(si,state(),sp);
+        ListPolicy::erase(*this,sp);
         data().erase(sp,boost::next(sp,senf::bytes(value_type(sp,state()))));
     }
 }
