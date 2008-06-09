@@ -54,7 +54,8 @@ namespace detail {
 
     template <class ElementParser, class AuxPolicy, class Transform>
     struct VectorParserPolicy<ElementParser, AuxPolicy, 
-                              senf::detail::auxtag::transform<Transform> >
+                              senf::detail::auxtag::transform<Transform,
+                                                              senf::detail::auxtag::none> >
     {
         typedef senf::detail::TransformAuxParserPolicy<AuxPolicy, Transform> type;
     };

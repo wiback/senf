@@ -29,6 +29,7 @@
 # include <boost/preprocessor/if.hpp>
 # include <boost/preprocessor/expand.hpp>
 # include <boost/preprocessor/facilities/is_empty.hpp>
+# include <boost/preprocessor/punctuation/comma.hpp>
 # include "../Utils/mpl.hh"
 #
 # ////////////////////////////////ih.p///////////////////////////////////////
@@ -444,19 +445,46 @@
   namespace senf { namespace detail { namespace auxtag { 
       struct bytes {}; } } }
   namespace senf { namespace detail { namespace auxtag { 
-      template <class T> 
+      template <class Transform, class Tag> 
       struct transform {}; } } }
 #
 # define SENF_PARSER_COLLECTION_TAG_GOBBLE__bytes(x)
-# define SENF_PARSER_COLLECTION_TAG__bytes(x) senf::detail::auxtag::bytes
+# define SENF_PARSER_COLLECTION_TAG__bytes(x) bytes()
+# define SENF_PARSER_COLLECTION_TAG_EXPAND__bytes() senf::detail::auxtag::bytes
 # define SENF_PARSER_COLLECTION_TAG_GETAUX__bytes(x) x
 #
+# // No recursive call so we need some more of theese ... ARGH !!!
+# define SENF_CAT_RECURS1(a, b) SENF_CAT_RECURS1_I(a,b)
+# define SENF_CAT_RECURS1_I(a, b) a ## b
+# define SENF_CAT_RECURS2(a, b) SENF_CAT_RECURS2_I(a,b)
+# define SENF_CAT_RECURS2_I(a, b) a ## b
+#
 # define SENF_PARSER_COLLECTION_TAG_GOBBLE__transform(x,y)
-# define SENF_PARSER_COLLECTION_TAG__transform(x,y) senf::detail::auxtag::transform<x>
-# define SENF_PARSER_COLLECTION_TAG_GETAUX__transform(x,y) y
+# define SENF_PARSER_COLLECTION_TAG__transform(x,y) \
+      transform(x, SENF_PARSER_COLLECTION_TAG_RECURS1(y))
+# define SENF_PARSER_COLLECTION_TAG_EXPAND__transform(x,y)                                        \
+      senf::detail::auxtag::transform<                                                            \
+          x,                                                                                      \
+          SENF_CAT_RECURS1(SENF_PARSER_COLLECTION_TAG_EXPAND__, y)>
+# define SENF_PARSER_COLLECTION_TAG_GETAUX__transform(x,y) \
+      SENF_PARSER_COLLECTION_TAG_GETAUX_RECURS1(y)
+#
+# define SENF_PARSER_COLLECTION_TAG_EXPAND__none() senf::detail::auxtag::none
+#
+# define SENF_PARSER_COLLECTION_TAG_RECURS1(aux)                                                  \
+      BOOST_PP_IF(                                                                                \
+          SENF_PARSER_COLLECTION_HAS_KEYWORD(aux),                                                \
+          BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG__, aux),                                        \
+          none() )
+#
+# define SENF_PARSER_COLLECTION_TAG_GETAUX_RECURS1(aux)                                           \
+      BOOST_PP_IF(                                                                                \
+          SENF_PARSER_COLLECTION_HAS_KEYWORD(aux),                                                \
+          BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_GETAUX__, aux),                                 \
+          aux)
 #
 # define SENF_PARSER_COLLECTION_HAS_KEYWORD(x)                                                    \
-      BOOST_PP_IS_EMPTY( BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_GOBBLE__, x) )
+      BOOST_PP_IS_EMPTY( SENF_CAT_RECURS1(SENF_PARSER_COLLECTION_TAG_GOBBLE__, x) )
 #
 # define SENF_PARSER_COLLECTION_I(access, name, aux, traits)                                      \
       BOOST_PP_EXPAND(                                                                            \
@@ -465,13 +493,13 @@
                   SENF_PARSER_COLLECTION_HAS_KEYWORD(aux),                                        \
                   ( access,                                                                       \
                     name,                                                                         \
-                    BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_GETAUX__, aux),                       \
-                    BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG__, aux),                              \
+                    SENF_CAT_RECURS2(SENF_PARSER_COLLECTION_TAG_GETAUX__, aux),                   \
+                    SENF_CAT_RECURS2(SENF_PARSER_COLLECTION_TAG__, aux),                          \
                     traits ),                                                                     \
                   ( access,                                                                       \
                     name,                                                                         \
                     aux,                                                                          \
-                    senf::detail::auxtag::none,                                                   \
+                    none(),                                                                       \
                     traits ) ))
 #
 # define SENF_PARSER_COLLECTION_II(access, name, aux, tag, traits)                                \
@@ -481,7 +509,7 @@
               BOOST_PP_CAT(name,_aux_policy);                                                     \
           typedef traits::parser<                                                                 \
               BOOST_PP_CAT(name,_aux_policy),                                                     \
-              tag                                                                                 \
+              BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_EXPAND__, tag)                              \
               >::type BOOST_PP_CAT(name, _collection_t);                                          \
       access:                                                                                     \
           SENF_PARSER_FIELD_SETUP_I( name,                                                        \

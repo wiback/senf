@@ -147,6 +147,13 @@ BOOST_AUTO_UNIT_TEST(ListBParser_container)
 
 namespace {
     
+    struct TestTransform
+    {
+        typedef unsigned value_type;
+        static unsigned get(unsigned v) { return v/2; }
+        static unsigned set(unsigned v) { return 2*v; }
+    };
+
     struct TestListParser
         : public senf::PacketParserBase
     {
@@ -156,7 +163,8 @@ namespace {
         SENF_PARSER_PRIVATE_FIELD ( size2 , senf::UInt8Parser );
         SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );
         SENF_PARSER_LIST          ( list1  , bytes(size1) , VectorParser );
-        SENF_PARSER_LIST          ( list2  , bytes(size2) , VectorParser );
+        SENF_PARSER_LIST          ( list2  , transform(TestTransform, bytes(size2)) , 
+                                             VectorParser );
 
         SENF_PARSER_FINALIZE(TestListParser);
     };
@@ -165,8 +173,8 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(listBytesMacro)
 {
-    unsigned char data[] = { 0x08,                   // size1
-                             0x09,                   // size2
+    unsigned char data[] = {    8,                   // size1
+                               18,                   // size2
                              0x01, 0x02, 0x03, 0x04, // dummy
                              0x01,                   // list1()[0].size()
                              0x05, 0x06,             // list1().vec()[0]

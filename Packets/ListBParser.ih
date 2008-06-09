@@ -131,6 +131,15 @@ namespace detail {
         typedef ListBParser_Policy<ElementParser, AuxPolicy> type;
     };
 
+    template <class ElementParser, class AuxPolicy, class Transform>
+    struct ListParserPolicy<ElementParser, AuxPolicy, 
+                            senf::detail::auxtag::transform<Transform, 
+                                                            senf::detail::auxtag::bytes> >
+    {
+        typedef ListBParser_Policy< ElementParser,
+                                    TransformAuxParserPolicy<AuxPolicy, Transform> > type;
+    };
+
 }}
 
 ///////////////////////////////ih.e////////////////////////////////////////
