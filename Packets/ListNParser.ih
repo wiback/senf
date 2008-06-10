@@ -62,7 +62,7 @@ namespace detail {
         void      insert (container_type & c, data_iterator p) const;
         void      update (container_type const & c) const;
 
-        /** Internal: ListNParser iterator specific data
+        /** Internal: ListNParser iterator specific data */
         struct iterator_data {
             size_type n_;
         };

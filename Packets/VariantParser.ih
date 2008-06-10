@@ -36,7 +36,7 @@
 namespace senf {
 namespace detail {
 
-#   ifndef DOXYGEN
+#ifndef DOXYGEN
 
     template <class Variant, unsigned N>
     struct VariantBytes {
@@ -86,7 +86,7 @@ namespace detail {
             chooser,                                                                              \
             senf::detail::VariantParserTraits< BOOST_PP_CAT(name, _parsers) > )
 
-#   endif
+#endif
 
 }}
 
