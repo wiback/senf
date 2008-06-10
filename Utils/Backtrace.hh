@@ -39,7 +39,7 @@ namespace senf {
         ::backtrace function.
      */
 
-    /** \brief Formnat a given backtrace
+    /** \brief Format a given backtrace
 
         This functions will write \a backtrace formatted to \a os. This includes demangling symbol
         names and interpreting some additional kernel symbols.
