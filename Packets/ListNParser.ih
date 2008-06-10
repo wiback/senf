@@ -62,6 +62,7 @@ namespace detail {
         void      insert (container_type & c, data_iterator p) const;
         void      update (container_type const & c) const;
 
+        /** Internal: ListNParser iterator specific data
         struct iterator_data {
             size_type n_;
         };
@@ -72,6 +73,8 @@ namespace detail {
         data_iterator next            (container_type const & c, iterator_data & d) const;
         data_iterator raw             (container_type const & c, iterator_data const & d) const;
     };
+
+#ifndef DOXYGEN
 
     template <class ElementParser, class AuxPolicy>
     struct ListParserPolicy<ElementParser, AuxPolicy, senf::detail::auxtag::none>
@@ -87,6 +90,8 @@ namespace detail {
         typedef ListNParser_Policy< ElementParser,
                                     TransformAuxParserPolicy<AuxPolicy, Transform> > type;
     };
+
+#endif
 
 }}
 

@@ -440,6 +440,8 @@
 # ///////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_COLLECTION_I
 #
+# ifndef DOXYGEN
+# 
   namespace senf { namespace detail { namespace auxtag { 
       struct none {}; } } }
   namespace senf { namespace detail { namespace auxtag { 
@@ -447,6 +449,8 @@
   namespace senf { namespace detail { namespace auxtag { 
       template <class Transform, class Tag> 
       struct transform {}; } } }
+# 
+# endif
 #
 # define SENF_PARSER_COLLECTION_TAG_GOBBLE__bytes(x)
 # define SENF_PARSER_COLLECTION_TAG__bytes(x) bytes()
@@ -526,6 +530,8 @@
 #
 # define SENF_PARSER_COLLECTION_AUXTYPE_fix(name, aux)
 #
+# ifndef DOXYGEN
+#
   namespace senf { namespace detail {
       template <class Parser> struct DynamicAuxParserPolicy;
       template <class Parser, unsigned offset> struct FixedAuxParserPolicy;
@@ -536,6 +542,8 @@
       struct ParserAuxPolicySelect<Parser, fixedOffset, true> 
       { typedef senf::detail::FixedAuxParserPolicy<Parser, fixedOffset> type; };
   }};
+#
+# endif
 #
 # define SENF_PARSER_COLLECTION_AUX_I_var(name, aux)                                              \
       senf::detail::ParserAuxPolicySelect< BOOST_PP_CAT(aux, _t),                                 \

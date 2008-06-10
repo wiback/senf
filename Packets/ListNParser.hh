@@ -35,34 +35,6 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
-    /** \brief List parser with size-field giving number of list elements
-
-        This parser will parse a list which size is giving by a preceding field containing the
-        number of list elements. This struct is just a 'template typedef':
-        \code
-        senf::VectorNParser< Parser_UInt32, Parser_UInt16 >::parser MyVectorParser;
-        senf::ListNParser< MyVectorParser, UInt16Parser >::parser MyListParser;
-        \endcode
-        This first defines a Vector of 32 bit unsigned integers with 16 bit length counter. Then it
-        defines a list of such vectors with a 16 bit size field.
-
-        \see ListParser
-        \ingroup parsecollection
-     */
-
-    /** \brief Define ListNParser field
-
-        This macro is a special helper to define a senf::ListNParser type field, a list of elements
-        of type \a elt_type (a parser type) directly preceded by a numeric size field of type \a
-        size_type (another parser type).
-
-        \param[in] name field name
-        \param[in] elt_type list element type
-        \param[in] size_type size type
-        \hideinitializer
-        \ingroup packetparsermacros
-     */
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

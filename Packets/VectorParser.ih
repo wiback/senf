@@ -33,6 +33,8 @@
 namespace senf {
 namespace detail {
 
+#ifndef DOXYGEN
+
     template <class ElementParser, class AuxPolicy, class AuxTag>
     struct VectorParserPolicy
     {};
@@ -85,6 +87,8 @@ namespace detail {
                                   name,                                                           \
                                   size,                                                           \
                                   senf::detail::VectorParserTraits<elt_type> )
+
+#endif
 
 }}
                               

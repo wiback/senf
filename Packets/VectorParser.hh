@@ -51,14 +51,10 @@ namespace senf {
         A vector is a model of an STL random-access sequence. The parser only provides a reduced
         interface, the container wrapper however completes this interface.
 
-        VectorParser makes use of a policy template argument, \a Sizer, to customize the way the
-        containers size is obtained. You will normally not instantiate Parser_Vector directly, you
-        will use one of the 'template typedefs' (which are templated structures since C++ does not
-        provide real template typedefs) provided with the policy implementations.
+        VectorParser makes use of a policy template argument, \a AuxPolicy, to customize the way the
+        containers size is obtained. You will normally not instantiate VectorParser directly, you
+        will use the \ref SENF_PARSER_VECTOR() helper macro.
         
-        \todo Make the sizer a private base-class to profit from the empty-base-class optimization
-
-        \see ExampleVectorPolicy
         \ingroup parsecollection
      */
     template <class ElementParser, class AuxPolicy>
@@ -112,40 +108,6 @@ namespace senf {
 
         friend class VectorParser_Container<ElementParser,AuxPolicy>;
     };
-
-    /** \brief Define VectorNParser field
-        
-        This macro is a special helper to define a senf::VectorNParser type field, a vector of
-        elements of type \a elt_type (a parser) which size is given by the \a size field.
-
-        \code
-        // The size field should be declared private (size is accessible via the vector)
-        SENF_PARSER_PRIVATE_FIELD ( vec_size_, senf::UInt16Parser );
-        // Define the vector, here it has 32bit unsigned integer elements
-        SENF_PARSER_VEC_N         ( vec,       vec_size_, senf::UInt32Parser );
-        \endcode
-        
-        \param[in] name field name
-        \param[in] size name of field giving the vector size
-        \param[in] elt_type vector element type
-        \hideinitializer
-        \ingroup packetparsermacros
-     */
-
-    /** \brief Define VectorNParser field
-
-        \see \ref SENF_PARSER_VEC_N()
-        \hideinitializer
-        \ingroup packetparsermacros
-     */
-
-#   define SENF_PARSER_VECTOR(name, size, elt_type) \
-        SENF_PARSER_VECTOR_I(public, name, size, elt_type)
-
-#   define SENF_PARSER_PRIVATE_VECTOR(name, size, elt_type) \
-        SENF_PARSER_VECTOR_I(private, name, size, elt_type)
-
-
 
     /** \brief VectorParser container wrapper
 
@@ -262,6 +224,65 @@ namespace senf {
         size_type i_;
     };
 
+    /** \brief Define VectorParser field
+        
+        This macro is a special helper to define a senf::VectorParser type field, a vector of
+        elements of type \a elt_type (a parser) which size is given by the \a size field.
+
+        \code
+        // The size field should be declared private (size is accessible via the vector)
+        SENF_PARSER_PRIVATE_FIELD ( vec_size_, senf::UInt16Parser );
+        // Define the vector, here it has 32bit unsigned integer elements
+        SENF_PARSER_VECTOR        ( vec,       vec_size_, senf::UInt32Parser );
+        \endcode
+
+        Further additional tags are supported which modify the way, the \a size field is
+        interpreted:
+
+        <table class="senf fixedcolumn">
+        <tr><td>\c bytes(\a size)</td><td>\a size gives the size of the vector in bytes not the
+        number of contained elements</td></tr>
+
+        <tr><td>\c transform(\a transform, \a size)</td><td>The \a transform is applied to the \a
+        size value, the value is not used directly</td>
+        </table>
+
+        The optional \a transform is a class with the following layout
+
+        \code
+        struct MyTransform
+        {
+            typedef ... value_type;
+            static value_type get(other_type v);
+            static other_type set(value_type v);
+        };
+        \endcode \c other_type is the \a size ::\c value_type where as the \c value_type typedef is
+        the arbitrary return type of the transform.
+
+        The tags are applied to the \a size parameter:
+        \code
+        SENF_PARSER_VECTOR ( vec, transform(MyTransform, vec_size_), senf::UInt32Parser );
+        \endcode
+        
+        \param[in] name field name
+        \param[in] size name of field giving the vector size
+        \param[in] elt_type vector element type
+
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#   define SENF_PARSER_VECTOR(name, size, elt_type) \
+        SENF_PARSER_VECTOR_I(public, name, size, elt_type)
+
+    /** \brief Define private VectorParser field
+
+        \see \ref SENF_PARSER_VECTOR()
+
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#   define SENF_PARSER_PRIVATE_VECTOR(name, size, elt_type) \
+        SENF_PARSER_VECTOR_I(private, name, size, elt_type)
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

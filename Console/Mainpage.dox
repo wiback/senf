@@ -118,12 +118,12 @@
     \see \ref console_testserver for a complete example application
 
 
-    \section intro_usage Access
+    \section intro_usage Access: Configuration files, Network console, ...
 
     There are several ways to access the node tree:
     \li By parsing configuration files
     \li By parsing command line parameters
-    \li By providing interactive console access
+    \li By providing interactive or non-interactive network console access
 
     \see console_access
 

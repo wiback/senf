@@ -34,7 +34,10 @@
 #include "Server.hh"
 #include "ParsedCommand.hh"
 #include "ScopedDirectory.hh"
+#include "OverloadedCommand.hh"
 #include "Config.hh"
+#include "ConfigFile.hh"
+#include "ProgramOptions.hh"
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Console.cci"

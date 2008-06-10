@@ -50,10 +50,13 @@ namespace senf {
         provides a reduced interface to this sequence, the container wrapper provides the complete
         interface.
 
-        Pare_List makes use of a policy template argument, \a ListPolicy, to customize the way the
-        list is laid out. This policy is given quite some freedom in the list
-        implementation. It is however important, that list elements <em>always follow each other
-        without padding</em> (if padding is needed, it needs to be part of the element parser).
+        ListParser makes use of a policy template argument, \a ListPolicy, to customize the way the
+        list is laid out. This policy is given quite some freedom in the list implementation. It is
+        however important, that list elements <em>always follow each other without padding</em> (if
+        padding is needed, it needs to be part of the element parser).
+
+        You will normally not instantiate ListParser directly, you will use the \ref
+        SENF_PARSER_LIST() helper macro.
 
         \see ExampleListPolicy
         \ingroup parsecollection
@@ -217,10 +220,81 @@ namespace senf {
         size_type i_;
     };
 
-#    define SENF_PARSER_LIST(name, size, elt_type) \
-         SENF_PARSER_LIST_I(public, name, size, elt_type)
+    /** \brief Define ListParser field
 
-#    define SENF_PARSER_PRIVATE_LIST(name, size, elt_type) \
+        This macro is a special helper to define a senf::ListParser type field, a list of elements
+        of type \a elt_type (a parser)  which size is determined by \a size.
+
+        \code
+        // The size field should be declared private or read-only (size is accessible via the list)
+        SENF_PARSER_PRIVATE_FIELD ( list_size_, senf::UInt16Parser );
+        // Define the list
+        SENF_PARSER_VECTOR ( list, list_size_, EltParser );
+        \endcode
+        
+        Here \c EltParser can be an arbitrary parser and need not have a fixed size.
+
+        Further additional tags are supported which modify the type of list created:
+
+        <table class="senf fixedcolumn">
+        <tr><td>\c bytes(\a size)</td><td>\a size gives the size of the list in bytes not the
+        number of contained elements</td></tr>
+
+        <tr><td>\c transform(\a transform, \a size)</td><td>The \a transform is applied to the \a
+        size value, the value is not used directly</td>
+
+        <tr><td>\c transform(\a transform, \c bytes(\a size))</td><td>The \a transform is applied to
+        the \a size value. The value is then interpreted containing the list size in bytes not
+        number of elements</td> 
+        </table>
+
+        The optional \a transform is a class with the following layout
+        \code
+        struct MyTransform
+        {
+            typedef ... value_type;
+            static value_type get(other_type v);
+            static other_type set(value_type v);
+        };
+        \endcode 
+
+        \c other_type is \a size ::\c value_type, the type of the value returned by the \a size
+        field, whereas the \c value_type typedef is the arbitrary return type of the transform.
+
+        The tags are applied to the \a size parameter:
+        \code
+        SENF_PARSER_LIST ( vec, transform(MyTransform, list_size_), EltParser );
+        \endcode
+
+        \warning There are some caveats when working with \c bytes() type lists:
+        \li You may <b>only change the size of a contained element from a container wrapper</b>.
+        \li While you hold a container wrapper, <b>only access the packet through this wrapper</b>
+            or a nested wrapper either for reading or writing.
+
+        \warning If lists are nested, you need to allocate a container wrapper for each level and
+        may only access the packet through the lowest-level active container wrapper.
+
+        \implementation These restrictions are necessary to ensure correct recalculation of the
+            <tt>bytes</tt> field. For more info, see the comments in \ref ListBParser.ih
+
+        \param[in] name field name
+        \param[in] size name of field giving the list size
+        \param[in] elt_type list element type
+
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#   define SENF_PARSER_LIST(name, size, elt_type) \
+        SENF_PARSER_LIST_I(public, name, size, elt_type)
+
+    /** \brief Define private ListParser field
+
+        \see \ref SENF_PARSER_LIST()
+
+        \hideinitializer
+        \ingroup packetparsermacros
+     */
+#   define SENF_PARSER_PRIVATE_LIST(name, size, elt_type) \
         SENF_PARSER_LIST_I(private, name, size, elt_type)
 
 }

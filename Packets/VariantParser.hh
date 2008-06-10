@@ -62,7 +62,7 @@ namespace senf {
         \code
         typedef senf::VariantParser< 
             MyAuxPolicy, 
-            senf::VoidPacketParser, TypeAParser, TypeBParser> MyVariantParser;
+            senf::mpl::vector<senf::VoidPacketParser, TypeAParser, TypeBParser> > MyVariantParser;
         \endcode
         This typedef defines a variant parser choosing one of three sub
         parsers. senf::VoidPacketParser is an empty parser, it effectively makes this parser
@@ -123,14 +123,10 @@ namespace senf {
                                              \post variant() == \a N */
     };
 
-    /** \brief Define DirectVariantParser field
+    /** \brief Define VariantParser field
 
         This macro is a special helper to define a senf::DirectVariantParser type field. This is a
         variant field which chooses the sub-type by directly taking the value of some other field.
-
-        \warning
-          This is a dynamically sized parser. Nevertheless, the chooser field \e must have a
-          \e fixed distance to this field, the \a chooser must be a fixed-size value parser.
 
         \code
         struct SomeParser : public PacketParserBase
@@ -166,6 +162,36 @@ namespace senf {
         It is customary, to hide the variant parser (by defining it private) and provide more
         conveniently named accessors.
 
+        Further additional tags are supported which modify the way, the \a chooser field is
+        interpreted:
+
+        <table class="senf fixedcolumn">
+        <tr><td>\c transform(\a transform, \a size)</td><td>The \a transform is applied to the \a
+        chooser value, the value is not used directly</td>
+        </table>
+
+        The optional \a transform is a class with the following layout
+
+        \code
+        struct MyTransform
+        {
+            typedef ... value_type;
+            static value_type get(other_type v);
+            static other_type set(value_type v);
+        };
+        \endcode \c other_type is the \a chooser ::\c value_type where as the \c value_type typedef
+        is the arbitrary return type of the transform.
+
+        The tags are applied to the \a chooser parameter:
+        \code
+        SENF_PARSER_VARIANT ( content, transform(MyTransform, type_),
+                                            (senf::VoidPacketParser)
+                                            (senf::UInt8Parser)
+                                            (senf::UInt16Parser)
+                                            (senf::UInt24Parser)
+                                            (senf::UInt32Parser) );
+        \endcode
+        
         \param[in] name name of the field
         \param[in] chooser name of the field choosing the variant to use
         \param[in] types a Boost.Preprocessor style sequence of sub-parser types
@@ -179,7 +205,7 @@ namespace senf {
 #   define SENF_PARSER_VARIANT(name, chooser, types) \
         SENF_PARSER_VARIANT_I(public, name, chooser, types)
 
-    /** \brief Define DirectVariantParser field (private)
+    /** \brief Define private VariantParser field
         
         \see \ref SENF_PARSER_VARIANT()
         \hideinitializer
@@ -187,37 +213,6 @@ namespace senf {
      */
 #   define SENF_PARSER_PRIVATE_VARIANT(name, chooser, types) \
         SENF_PARSER_VARIANT_I(private, name, chooser, types)
-
-    /** \brief Define DirectVariantParser field with translator
-        
-        This is like \ref SENF_PARSER_VARIANT(), however it allows to specify a \a translator
-        argument which translates between \a chooser values and type indices:
-        \code
-        struct SomeTranslator {
-            static unsigned fromChooser(chooser_field_t::value_type value) {
-                switch (value) {
-                case 1  : return 0 ;
-                case 5  : return 1 ;
-                default : return 2 ;
-                }
-            }
-            static chooser_field_t::value_type toChooser(unsigned value) {
-                static chooser_field_t::value_type table[] const = { 1, 5, 0 };
-                return table[value];
-            }
-        };
-        \endcode
-        The \a translator class must have two publicly accessible static members, \c fromChooser and
-        \c toChooser. \c fromChooser takes the value as returned by the \a chooser field and must
-        return the corresponding class index whereas \c toChooser takes the class index and must
-        return the value to write into the \a chooser field.
-
-        \see \ref SENF_PARSER_VARIANT()
-        \hideinitializer
-        \ingroup packetparsermacros
-     */
-
-
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

@@ -70,6 +70,8 @@ namespace detail {
         Container const * c_;
     };
 
+#ifndef DOXYGEN
+
     template <class ElementParser, class AuxPolicy, class AuxTag>
     struct ListParserPolicy
     {};
@@ -90,6 +92,8 @@ namespace detail {
                                       name,                                                       \
                                       size,                                                       \
                                       senf::detail::ListParserTraits<elt_type> )
+
+#endif
 
 }}
 

@@ -402,6 +402,20 @@ namespace senf {
     struct init_bytes : public detail::ParserInitBytes<Parser>
     {};
 
+    /** \brief Test, whether a parser is a fixed-size parser
+
+        This meta-function is called like
+        \code
+            senf::is_fixed<SomeParser>::value
+        \endcode
+
+        This expression evaluates to a compile-time constant boolean expression which is \c true, if
+        \a SomeParser is a fixed size parser, \c false otherwise
+
+        \param[in] Parser The Parser to test
+        \returns \c true, if \a Parser is fixed size, \c false otherwise
+        \ingroup packetparser
+     */
     template <class Parser>
     struct is_fixed : public detail::ParserIsFixed<Parser>
     {};

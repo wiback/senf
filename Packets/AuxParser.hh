@@ -40,6 +40,10 @@
 namespace senf {
 namespace detail {
 
+    /** \brief Internal: Prefix aux-parser policy
+
+        Place auxiliary field directly before a container/collection.
+     */
     template <class P>
     struct PrefixAuxParserPolicy
     {
@@ -53,6 +57,10 @@ namespace detail {
         PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
     };
 
+    /** \brief Internal: Fixed distance aux-parser policy
+
+        Place auxiliary field a fixed distance before the container/collection
+     */
     template <class P, unsigned Dist>
     struct FixedAuxParserPolicy
     {
@@ -68,6 +76,10 @@ namespace detail {
 
     template <class P> struct DynamicWrapperAuxParserPolicy;
     
+    /** \brief Internal: Dynamic aux-parser policy
+
+        Place auxiliary field at a variable distance before the container/collection
+     */
     template <class P>
     struct DynamicAuxParserPolicy
     {
@@ -86,6 +98,11 @@ namespace detail {
         mutable P p_;
     };
 
+    /** \brief Internal: Dynamic aux-parser policy (container wrapper)
+
+        Place auxiliary field at a variable distance before the container/collection. This is the
+        wrapper policy used by DynamicAuxParserPolicy
+     */
     template <class P>
     struct DynamicWrapperAuxParserPolicy
     {
@@ -103,6 +120,18 @@ namespace detail {
         mutable SafePacketParserWrapper<P> p_;
     };
 
+    /** \brief Internal: Apply transformation to arbitrary aux-parser policy
+
+        Transform must statisfy the interface
+        \code
+        struct Transform
+        {
+            typedef unspecified value_type;
+            static value_type get(unspecified v);
+            static unspecified set(value_type v);
+        };
+        \endcode
+     */
     template <class Policy, class Transform>
     struct TransformAuxParserPolicy
         : public Policy

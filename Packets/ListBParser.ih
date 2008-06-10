@@ -86,6 +86,7 @@ namespace detail {
         size_type size   (data_iterator i, state_type s) const;
         void      init   (data_iterator i, state_type s) const;
 
+        /** \brief Internal: ListBParser container/wrapper policy */
         struct container_policy
             : public AuxPolicy
         {
@@ -110,6 +111,7 @@ namespace detail {
             void      insert (container_type & c, data_iterator p);
             void      update (container_type const & c) const;
 
+            /** \brief Internal: ListBParser specific iterator data */
             struct iterator_data {};
 
             data_iterator setBegin        (container_type const & c, iterator_data & d) const;
@@ -125,6 +127,8 @@ namespace detail {
         };
     };
 
+#ifndef DOXYGEN
+
     template <class ElementParser, class AuxPolicy>
     struct ListParserPolicy<ElementParser, AuxPolicy, senf::detail::auxtag::bytes>
     {
@@ -139,6 +143,8 @@ namespace detail {
         typedef ListBParser_Policy< ElementParser,
                                     TransformAuxParserPolicy<AuxPolicy, Transform> > type;
     };
+
+#endif
 
 }}
 
