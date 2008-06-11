@@ -135,22 +135,11 @@ namespace senf {
         
             SENF_PARSER_PRIVATE_FIELD( type, senf::UInt8Parser );
             SENF_PARSER_PRIVATE_VARIANT( content, type,
-                                            (senf::VoidPacketParser)
-                                            (senf::UInt8Parser)
-                                            (senf::UInt16Parser)
-                                            (senf::UInt24Parser)
-                                            (senf::UInt32Parser) );
-
-            senf::UInt8Parser  uint8()  const { return content().get<1>(); }
-            senf::UInt16Parser uint16() const { return content().get<2>(); }
-            senf::UInt24Parser uint24() const { return content().get<3>(); }
-            senf::UInt32Parser uint32() const { return content().get<4>(); }
-
-            void disable()    const { content().init<0>(); }
-            void set_uint8()  const { content().init<1>(); }
-            void set_uint16() const { content().init<2>(); }
-            void set_uint24)  const { content().init<3>(); }
-            void set_uint23() const { content().init<4>(); }
+                                            (novalue( disable, senf::VoidPacketParser ))
+                                            (     id( uint8,   senf::UInt8Parser      ))
+                                            (     id( uint16,  senf::UInt16Parser     ))
+                                            (     id( uint24,  senf::UInt24Parser     ))
+                                            (     id( uint32,  senf::UInt32Parser     )) );
 
             SENF_PARSER_FINALIZE(SomeParser);
         };
@@ -159,14 +148,54 @@ namespace senf {
         The variant \c content chooses one of the sub parsers depending on the \c type field. If \c
         type is 0, senf::VoidPacketParser is selected, if it is 1, senf::UInt8Parser and so on. 
 
-        It is customary, to hide the variant parser (by defining it private) and provide more
-        conveniently named accessors.
+        The \a types parameter specifies the types of sub-objects supported by this variant
+        parser. This parameter is a (Boost.Preprocessor style) sequence
+        <pre>(\a type) (\a type) ...</pre>
+        of parser types with additional optional information:
+
+        <table class="senf fixedcolumn">
+        <tr><td>\a type</td><td>Do not provide accessor and use the 0-based type index as
+        key.</td></tr>
+
+        <tr><td>\c id(\a name, \a type)</td><td>Automatically create an accessor \a name for this
+        type</td></tr>
+
+        <tr><td>\c novalue(\a name, \a type)</td><td>This is like \c id but only provides an
+        initializer called \a name and no accessor</td></tr>
+
+        <tr><td>\c key(\a value, \a type)</td><td>Use \a value to identity this type. The type is
+        selected, when the \a chooser is equal to \a value</td></tr>
+
+        <tr><td>\c id(\a name, \c key(\a value, \a type))<br/>\c novalue(\a name, \c key(\a value,
+        \a type))</td><td>The options may be nested in this way.</td></tr> </table>
+
+        It is customary, to hide the variant parser (by defining it private) and provide
+        more conveniently named accessors. In above example, these accessors are automatically
+        generated using the id's given. The exact members defined are:
+
+        <table class="senf fixedcolumn">
+        <tr><td>\a name \c _t</td><td>The type for this specific variant value if not \c
+        novalue.</td></tr> 
+
+        <tr><td><em>name</em><tt>_t</tt> <em>name</em>()</td><td>Return the variant value at this id
+        if not \c novalue.</td></tr>
+
+        <tr><td><tt>void</tt> <tt>init_</tt><em>name</em>()</td><td>Set the variant to have a value
+        of this type. If the field is \c novalue, the \c init_ prefix is omitted.</td></tr>
+        
+        <tr><td><tt>bool</tt> <tt>has_</tt><em>name</em>()</td><td>Return \c true, if the variant
+        currently holds this kind of value, \c false otherwise. Only if not \c novalue.</td></tr>
+        </table>
+
+        If \a value keys are given, they designate the value to expect in the \a chooser field to
+        select a specific variant type. If the \a chooser value does not match any key, the variant
+        will be initialized to the \e first type.
 
         Further additional tags are supported which modify the way, the \a chooser field is
         interpreted:
 
         <table class="senf fixedcolumn">
-        <tr><td>\c transform(\a transform, \a size)</td><td>The \a transform is applied to the \a
+        <tr><td>\c transform(\a transform, \a chooser)</td><td>The \a transform is applied to the \a
         chooser value, the value is not used directly</td>
         </table>
 
@@ -179,12 +208,12 @@ namespace senf {
             static value_type get(other_type v);
             static other_type set(value_type v);
         };
-        \endcode \c other_type is the \a chooser ::\c value_type where as the \c value_type typedef
+        \endcode \c other_type is the \a chooser ::\c value_type whereas the \c value_type typedef
         is the arbitrary return type of the transform.
 
         The tags are applied to the \a chooser parameter:
         \code
-        SENF_PARSER_VARIANT ( content, transform(MyTransform, type_),
+        SENF_PARSER_VARIANT ( content, transform(MyTransform, type),
                                             (senf::VoidPacketParser)
                                             (senf::UInt8Parser)
                                             (senf::UInt16Parser)

@@ -327,7 +327,9 @@
 # define SENF_PARSER_SKIP_BITS_fix(bits) SENF_PARSER_I_SKIP_BITS(bits, fix)
 #
 # define SENF_PARSER_I_SKIP_BITS(bits, ofstype)                                                   \
-      SENF_MPL_SLOT_SET(bit, SENF_MPL_SLOT_GET(bit) + bits)
+      private:                                                                                    \
+          SENF_MPL_SLOT_SET(bit, SENF_MPL_SLOT_GET(bit) + bits);                                  \
+      public:
 #
 # ///////////////////////////////////////////////////////////////////////////
 # // SENF_PARSER_GOTO_*
