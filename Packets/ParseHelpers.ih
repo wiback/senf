@@ -462,6 +462,8 @@
 # define SENF_CAT_RECURS1_I(a, b) a ## b
 # define SENF_CAT_RECURS2(a, b) SENF_CAT_RECURS2_I(a,b)
 # define SENF_CAT_RECURS2_I(a, b) a ## b
+# define SENF_CAT_RECURS3(a, b) SENF_CAT_RECURS3_I(a,b)
+# define SENF_CAT_RECURS3_I(a, b) a ## b
 #
 # define SENF_PARSER_COLLECTION_TAG_GOBBLE__transform(x,y)
 # define SENF_PARSER_COLLECTION_TAG__transform(x,y) \
@@ -490,6 +492,11 @@
 # define SENF_PARSER_COLLECTION_HAS_KEYWORD(x)                                                    \
       BOOST_PP_IS_EMPTY( SENF_CAT_RECURS1(SENF_PARSER_COLLECTION_TAG_GOBBLE__, x) )
 #
+# define SENF_PARSER_COLLECTION_GETAUX(aux)                                                       \
+      BOOST_PP_IF( SENF_PARSER_COLLECTION_HAS_KEYWORD(aux),                                       \
+                   SENF_CAT_RECURS2(SENF_PARSER_COLLECTION_TAG_GETAUX__, aux),                    \
+                   aux )
+
 # define SENF_PARSER_COLLECTION_I(access, name, aux, traits)                                      \
       BOOST_PP_EXPAND(                                                                            \
           SENF_PARSER_COLLECTION_II                                                               \

@@ -30,6 +30,10 @@
 #include "PacketParser.hh"
 #include <boost/preprocessor/cat.hpp>
 #include <boost/preprocessor/seq/enum.hpp>
+#include <boost/preprocessor/seq/fold_left.hpp>
+#include <boost/preprocessor/seq/for_each.hpp>
+#include <boost/preprocessor/logical/or.hpp>
+#include <boost/preprocessor/seq/for_each_i.hpp>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -48,43 +52,201 @@ namespace detail {
         static PacketParserBase::size_type bytes(Variant const & v, unsigned n);
     };
 
+    template <class Transform, class AuxPolicy, class AuxTag>
+    struct VariantParserPolicy;
+
     template <class AuxPolicy, class AuxTag>
-    struct VariantParserPolicy {};
+    struct VariantParserPolicy<void, AuxPolicy, AuxTag>
+    {};
+
+    template <class Transform, class AuxPolicy, class AuxTag>
+    struct VariantParserPolicy
+        : public VariantParserPolicy< void, 
+                                      TransformAuxParserPolicy<AuxPolicy, Transform>, AuxTag >
+    {};
 
     template <class AuxPolicy>
-    struct VariantParserPolicy<AuxPolicy, senf::detail::auxtag::none>
+    struct VariantParserPolicy<void, AuxPolicy, senf::detail::auxtag::none>
     {
         typedef AuxPolicy type;
     };
 
-
     template <class AuxPolicy, class Transform>
-    struct VariantParserPolicy<AuxPolicy, 
+    struct VariantParserPolicy<void,
+                               AuxPolicy, 
                                senf::detail::auxtag::transform<Transform, 
                                                                senf::detail::auxtag::none> >
     {
         typedef TransformAuxParserPolicy<AuxPolicy, Transform> type;
     };
 
-    template <class Parsers>
+    template <class Parsers, class Transform>
     struct VariantParserTraits
     {
         template <class AuxPolicy, class AuxTag>
         struct parser {
             typedef senf::VariantParser<
-                typename VariantParserPolicy<AuxPolicy, AuxTag>::type,
+                typename VariantParserPolicy<Transform, AuxPolicy, AuxTag>::type,
                 Parsers> type;
         };
     };
+
+    template <class T, T (*KeyFn)()> 
+    struct VariantKey 
+    {
+        static T key() { return (*KeyFn)(); }
+    };
+
+    template <class T, class Keys>
+    struct VariantKeyTransform
+    {
+        typedef unsigned value_type;
+        typedef T input_type;
+        static unsigned get(input_type v);
+        static input_type set(unsigned v);
+    };
+
+    template <class In, class Out, class Keys, unsigned N>
+    struct VariantKeyTransformCheck
+    {
+        static Out get(In v);
+        static In set(Out v);
+    };
+
+    template <class In, class Out, class Keys>
+    struct VariantKeyTransformCheck<In, Out, Keys, 0>
+    {
+        static Out get(In v);
+        static In set(Out v);
+    };
     
 #   define SENF_PARSER_VARIANT_I(access, name, chooser, types)                                    \
-        typedef boost::mpl::vector< BOOST_PP_SEQ_ENUM(types) > BOOST_PP_CAT(name, _parsers);      \
         SENF_PARSER_REQUIRE_VAR(variant)                                                          \
+        typedef boost::mpl::vector< BOOST_PP_SEQ_ENUM(SENF_PARSER_VARIANT_TYPES(types)) >         \
+            BOOST_PP_CAT(name, _parsers);                                                         \
+        typedef BOOST_PP_CAT(SENF_PARSER_COLLECTION_GETAUX(chooser), _t)::value_type              \
+            BOOST_PP_CAT(name,_chooser_value_type);                                               \
+        BOOST_PP_IF( SENF_PARSER_VARIANT_NEEDTRANSFORM(types),                                    \
+                     SENF_PARSER_VARIANT_MAKETRANSFORM,                                           \
+                     SENF_PARSER_VARIANT_NOTRANSFORM )(name,                                      \
+                                                       types)                                     \
+        typedef senf::detail::VariantParserTraits< BOOST_PP_CAT(name, _parsers),                  \
+                                                   BOOST_PP_CAT(name, _transform) >               \
+            BOOST_PP_CAT(name, _traits);                                                          \
         SENF_PARSER_COLLECTION_I(                                                                 \
-            access,                                                                               \
-            name,                                                                                 \
-            chooser,                                                                              \
-            senf::detail::VariantParserTraits< BOOST_PP_CAT(name, _parsers) > )
+            access, name, chooser, BOOST_PP_CAT(name, _traits) );                                 \
+        BOOST_PP_SEQ_FOR_EACH_I(SENF_PARSER_VARIANT_ACCESSOR, name, types)
+
+#   define SENF_PARSER_VARIANT_MAKETRANSFORM(name, types)                                         \
+        BOOST_PP_SEQ_FOR_EACH_I(SENF_PARSER_VARIANT_KEYVALUE, name, types)                        \
+        template <BOOST_PP_CAT(name, _chooser_value_type) (*KeyFn)()>                             \
+        struct BOOST_PP_CAT(name, _key_value_template)                                            \
+            : public senf::detail::VariantKey<BOOST_PP_CAT(name, _chooser_value_type), KeyFn> {}; \
+        typedef senf::detail::VariantKeyTransform<                                                \
+            BOOST_PP_CAT(name,_chooser_value_type),                                               \
+            boost::mpl::vector<                                                                   \
+                BOOST_PP_SEQ_ENUM(SENF_PARSER_VARIANT_KEYVALUES(name, types))                     \
+            > > BOOST_PP_CAT(name, _transform);
+
+#   define SENF_PARSER_VARIANT_KEYVALUE(r, name, i, elem)                                         \
+        static BOOST_PP_CAT(name, _chooser_value_type)                                            \
+            BOOST_PP_CAT(BOOST_PP_CAT(name, _key_),i)()                                           \
+                { return SENF_PARSER_VARIANT_GETKEY(elem, i); }
+
+#   define SENF_PARSER_VARIANT_NOTRANSFORM(name, types)                                           \
+        typedef void BOOST_PP_CAT(name, _transform);
+
+#   define SENF_PARSER_VARIANT_KEYVALUES(name, types)                                             \
+        BOOST_PP_SEQ_FOR_EACH_I(SENF_PARSER_VARIANT_KEYVALUES_, name, types)
+
+#   define SENF_PARSER_VARIANT_KEYVALUES_(r, name, i, elem)                                       \
+        (BOOST_PP_CAT(name,_key_value_template)<                                                  \
+             & BOOST_PP_CAT(BOOST_PP_CAT(name, _key_), i) >)
+
+#   define SENF_PARSER_VARIANT_ACCESSOR(r, name, i, elem)                                         \
+        BOOST_PP_IF( SENF_PARSER_VARIANT_HASID(elem),                                             \
+                     SENF_PARSER_VARIANT_MAKEACCESSOR,                                            \
+                     SENF_PARSER_VARIANT_NOACCESSOR )(name, i, elem)
+
+#   define SENF_PARSER_VARIANT_NOACCESSOR(name, i, elem)
+#   define SENF_PARSER_VARIANT_MAKEACCESSOR(name, i, elem)                                        \
+        BOOST_PP_IF( SENF_PARSER_VARIANT_HASVALUE(elem),                                          \
+                     SENF_PARSER_VARIANT_MAKEVACCESSOR,                                           \
+                     SENF_PARSER_VARIANT_MAKENVACCESSOR )(name, i, elem)
+
+#   define SENF_PARSER_VARIANT_MAKEVACCESSOR(name, i, elem)                                       \
+        SENF_PARSER_VARIANT_GETTYPE(elem) SENF_PARSER_VARIANT_GETID(elem)()                       \
+        { return name().get<i>(); }                                                               \
+        void BOOST_PP_CAT(init_, SENF_PARSER_VARIANT_GETID(elem))()                               \
+        { name().init<i>(); }                                                                     \
+        bool BOOST_PP_CAT(has_, SENF_PARSER_VARIANT_GETID(elem))()                                \
+        { return name().variant() == i; }
+
+#   define SENF_PARSER_VARIANT_MAKENVACCESSOR(name, i, elem)                                      \
+        void SENF_PARSER_VARIANT_GETID(elem)()                                                    \
+        { name().init<i>(); }
+
+#   define SENF_PARSER_VARIANT_KEY_GOBBLE__key(key, type)
+#   define SENF_PARSER_VARIANT_KEY_GETKEY__key(key, type) key
+#   define SENF_PARSER_VARIANT_KEY_GETTYPE__key(key, type) type
+
+#   define SENF_PARSER_VARIANT_ID_GOBBLE__id(id, value)
+#   define SENF_PARSER_VARIANT_ID_GETID__id(id, value) id
+#   define SENF_PARSER_VARIANT_ID_GETVALUE__id(id, value) value
+
+#   define SENF_PARSER_VARIANT_ID_GOBBLE__novalue(id, value)
+#   define SENF_PARSER_VARIANT_ID_GETID__novalue(id, value) id
+#   define SENF_PARSER_VARIANT_ID_GETVALUE__novalue(id, value) value
+
+#   define SENF_PARSER_VARIANT_HASVALUE_GOBBLE__id(id, value)
+
+#   define SENF_PARSER_VARIANT_HASKEY(x)                                                          \
+        SENF_PARSER_VARIANT_HASKEY_( SENF_PARSER_VARIANT_GETVALUE(x) )
+
+#   define SENF_PARSER_VARIANT_HASKEY_(x)                                                         \
+        BOOST_PP_IS_EMPTY( SENF_CAT_RECURS1(SENF_PARSER_VARIANT_KEY_GOBBLE__, x) )
+
+#   define SENF_PARSER_VARIANT_GETKEY(x, default)                                                 \
+        SENF_PARSER_VARIANT_GETKEY_( SENF_PARSER_VARIANT_GETVALUE(x), default )
+
+#   define SENF_PARSER_VARIANT_GETKEY_(x, default)                                                \
+        BOOST_PP_IF( SENF_PARSER_VARIANT_HASKEY_(x),                                              \
+                     BOOST_PP_CAT(SENF_PARSER_VARIANT_KEY_GETKEY__, x),                           \
+                     default )
+
+#   define SENF_PARSER_VARIANT_HASID(x)                                                           \
+        BOOST_PP_IS_EMPTY( SENF_CAT_RECURS2(SENF_PARSER_VARIANT_ID_GOBBLE__, x) )
+
+#   define SENF_PARSER_VARIANT_GETID(x)                                                           \
+        BOOST_PP_CAT(SENF_PARSER_VARIANT_ID_GETID__, x)
+
+#   define SENF_PARSER_VARIANT_GETVALUE(x)                                                        \
+        BOOST_PP_IF( SENF_PARSER_VARIANT_HASID(x),                                                \
+                     BOOST_PP_CAT(SENF_PARSER_VARIANT_ID_GETVALUE__, x),                          \
+                     x )
+
+#   define SENF_PARSER_VARIANT_HASVALUE(x)                                                        \
+        BOOST_PP_IS_EMPTY( SENF_CAT_RECURS3(SENF_PARSER_VARIANT_HASVALUE_GOBBLE__, x) )
+
+#   define SENF_PARSER_VARIANT_GETTYPE(x)                                                         \
+        SENF_PARSER_VARIANT_GETTYPE_( SENF_PARSER_VARIANT_GETVALUE(x) )
+
+#   define SENF_PARSER_VARIANT_GETTYPE_(x)                                                        \
+        BOOST_PP_IF( SENF_PARSER_VARIANT_HASKEY_(x),                                              \
+                     BOOST_PP_CAT(SENF_PARSER_VARIANT_KEY_GETTYPE__, x),                          \
+                     x )
+
+#   define SENF_PARSER_VARIANT_NEEDTRANSFORM(types)                                               \
+        BOOST_PP_SEQ_FOLD_LEFT(SENF_PARSER_VARIANT_NEEDTRANSFORM_, 0, types)
+
+#   define SENF_PARSER_VARIANT_NEEDTRANSFORM_(s, state, elem)                                     \
+        BOOST_PP_OR(state, SENF_PARSER_VARIANT_HASKEY(elem))
+
+#   define SENF_PARSER_VARIANT_TYPES(types)                                                       \
+        BOOST_PP_SEQ_FOR_EACH(SENF_PARSER_VARIANT_TYPES_, _, types)
+
+#   define SENF_PARSER_VARIANT_TYPES_(r, _, elem)                                                 \
+        (SENF_PARSER_VARIANT_GETTYPE(elem))
 
 #endif
 

@@ -94,20 +94,12 @@ namespace {
     {
 #       include SENF_PARSER()
 
-        struct TestTransform {
-            typedef unsigned value_type;
-            static unsigned get(unsigned v) { return v/2; }
-            static unsigned set(unsigned v) { return 2*v; }
-        };
-        
         SENF_PARSER_SKIP_BITS( 4 );
         SENF_PARSER_BITFIELD_RO( type, 4, unsigned );
-        SENF_PARSER_PRIVATE_VARIANT( content_, transform(TestTransform, type),
-                                     (senf::VoidPacketParser)(SubParser) );
-
-        bool hasContent() const { return content_().variant() == 1; }
-        void hasContent(bool v) const { if (v) content_().init<1>(); else content_().init<0>(); }
-        SubParser content() const { return content_().get<1>(); }
+        SENF_PARSER_PRIVATE_VARIANT( content_, type,
+                                         ( novalue( nocontent, key(10, senf::VoidPacketParser)) )
+                                         (      id( content,           SubParser              ) )
+            );
 
         SENF_PARSER_FINALIZE(TestParser);
     };
@@ -120,18 +112,21 @@ BOOST_AUTO_UNIT_TEST(VariantParserMacro)
     
     {
         TestParser v (p.data().begin(), & p.data());
-        BOOST_CHECK( ! v.hasContent() );
+        v.init();
+        BOOST_CHECK( ! v.has_content() );
         BOOST_CHECK_EQUAL( senf::bytes(v), 1u );
-        BOOST_CHECK_EQUAL( v.type(), 0u );
-        v.hasContent(true);
+        BOOST_CHECK_EQUAL( v.type(), 10u );
+        v.init_content();
         // Parser invalidated
     }
     {
         TestParser v (p.data().begin(), & p.data());
-        BOOST_CHECK( v.hasContent() );
+        BOOST_CHECK( v.has_content() );
         BOOST_CHECK_EQUAL( senf::bytes(v), 7u );
         BOOST_CHECK_EQUAL( v.content().foo(), 0u );
-        BOOST_CHECK_EQUAL( v.type(), 2u );
+        BOOST_CHECK_EQUAL( v.type(), 1u );
+        v.nocontent();
+        // Parser invalidated
     }
 }
 

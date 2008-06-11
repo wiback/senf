@@ -104,6 +104,54 @@ senf::detail::VariantBytes<Variant,0>::bytes(Variant const & v, unsigned n)
     return senf::bytes(v.template get<0>());
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::VariantKeyTransform<T,Keys>
+
+template <class T, class Keys>
+prefix_ unsigned senf::detail::VariantKeyTransform<T,Keys>::get(input_type v)
+{
+    return VariantKeyTransformCheck<
+        input_type, value_type, Keys, boost::mpl::size<Keys>::type::value-1>::get(v);
+}
+
+template <class T, class Keys>
+prefix_ typename senf::detail::VariantKeyTransform<T,Keys>::input_type
+senf::detail::VariantKeyTransform<T,Keys>::set(unsigned v)
+{
+    return VariantKeyTransformCheck<
+        input_type, value_type, Keys, boost::mpl::size<Keys>::type::value-1>::set(v);
+}
+
+template <class In, class Out, class Keys, unsigned N>
+prefix_ Out senf::detail::VariantKeyTransformCheck<In,Out,Keys,N>::get(In v)
+{
+    if (boost::mpl::at<Keys, boost::mpl::int_<N> >::type::key() == v)
+        return N;
+    else
+        return VariantKeyTransformCheck<In, Out, Keys, N-1>::get(v);
+}
+
+template <class In, class Out, class Keys, unsigned N>
+prefix_ In senf::detail::VariantKeyTransformCheck<In,Out,Keys,N>::set(Out v)
+{
+    if (v == N)
+        return boost::mpl::at<Keys, boost::mpl::int_<N> >::type::key();
+    else
+        return VariantKeyTransformCheck<In, Out, Keys, N-1>::set(v);
+}
+
+template <class In, class Out, class Keys>
+prefix_ Out senf::detail::VariantKeyTransformCheck<In, Out, Keys, 0>::get(In v)
+{
+    return 0;
+}
+
+template <class In, class Out, class Keys>
+prefix_ In senf::detail::VariantKeyTransformCheck<In, Out, Keys, 0>::set(Out v)
+{
+    return boost::mpl::at<Keys, boost::mpl::int_<0> >::type::key();
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
