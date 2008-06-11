@@ -156,6 +156,8 @@ namespace mpl {
      */
     template <class _> struct take_class {};
 
+#ifndef SENF_MPL_SLOT_NOEXPAND
+
     /** \brief Define MPL slot
 
         The slot macros \ref SENF_MPL_SLOT_DEF(), \ref SENF_MPL_SLOT_SET() and \ref
@@ -219,6 +221,8 @@ namespace mpl {
      */
 #   define SENF_MPL_SLOT_GET(name)                                                                \
         SENF_MPL_SLOT_I_GET(name)
+
+#endif
 
 }}
 

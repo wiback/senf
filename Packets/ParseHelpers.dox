@@ -21,10 +21,25 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \page parsermacro_expand_example Example macro-expansion of packet parser helper macros
-    
+
+    Debugging the packet parser makros is somwhat difficult since the makro expansion will place
+    everything in a single line. To help pin down problems, I use
+
+    <pre>
+    $ g++ -DSENF_MPL_SLOT_NOEXPAND -o <path-to-file>.ii -E -DSENF_DEBUG -Iinclude <path-to-file>.cc
+    $ sed -i -e 's/}/}\\n/g' -e '/^#.*$/d' <path-to-file>.ii
+    $ astyle --style=linux -b <path-to-file>.ii
+    </pre>
+
+    I normally just cut-and-paste the \c g++ command from a normal build and add
+    <tt>-DSENF_MPL_SLOT_NOEXPAND</tt>. \c astyle is found at http://astyle.sourceforge.net/. If
+    needed, I then reissue this file (the precessed \.ii file) back to the compiler using the
+    original commandline (just replacing the \c .cc with \c .ii) to get error messages with
+    meaningful line numbers.
+
     The following packet parser definition (taken from VariantParser.test.cc) has been subject to
-    macro-expansion (and a lot of reformatting) to show the inner workings of the packet parser
-    macros:
+    macro-expansion (and a lot of manual reformatting) to show the inner workings of the packet
+    parser macros:
     \code
     struct TestParser : public senf::PacketParserBase
     {
@@ -92,7 +107,7 @@
             } 
 
     public:
-        size_type type_offset () const
+        size_type type_offset() const
             {
                 return field_offset_(static_cast<senf::mpl::rv<type_index - 1> *>(0)) -
                     SENF_MPL_SLOT_GET(bitfield_size); 
@@ -114,13 +129,13 @@
         static size_type const type_group = SENF_MPL_SLOT_GET(group) + 0;
         SENF_MPL_SLOT_SET(group, type_group);
         SENF_MPL_SLOT_SET(bitfield_size, type_t::fixed_bytes);
-        type_t type_ () const
+        type_t type_() const
             {
                 return parse <type_bit_t> (type_offset ());
             }
 
     public:
-        type_t::value_type type () const
+        type_t::value_type type() const
             {
                 return type_();
             }
@@ -198,7 +213,7 @@
                 return parse<T>(content__offset());
             }
         template < class T >
-        T content__dispatch (boost::false_type) const
+        T content__dispatch(boost::false_type) const
             {
                 return parse<T>(type(), content__offset());
             }
@@ -208,7 +223,7 @@
                 return content__dispatch<content__t>(
                     boost::integral_constant<bool, content__aux_fixed>());
             }
-        content__t content_ () const
+        content__t content_() const
             {
                 return content__ ();
             }
@@ -236,7 +251,7 @@
         // /////////////////////////////////////////////////////////////////////////
         // SENF_PARSER_FINALIZE(TestParser);
 
-        void defaultInit () const
+        void defaultInit() const
             {
                 init_chain(static_cast<senf::mpl::rv<SENF_MPL_SLOT_GET(index)> *>(0));
             }

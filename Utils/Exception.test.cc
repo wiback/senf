@@ -58,7 +58,9 @@ BOOST_AUTO_UNIT_TEST(wrapException)
             }
         }
         catch (std::exception const & ex) {
+#ifdef SENF_DEBUG
             BOOST_CHECK( std::string(ex.what()).find("-- \n") != std::string::npos );
+#endif
             BOOST_CHECK( std::string(ex.what()).find("special exception") != std::string::npos );
             throw;
         }
