@@ -259,7 +259,7 @@
     automatically or it may be calculated from other values (we'll see later how to do this).
 
     In all these cases we will want to disallow the user to directly change the value, while still
-    allowing to read the value. To do this, we mark \e value \e fields as read-only:
+    allowing to read the value. To do this, we can mark \e value \e fields as read-only:
 
     \code
     SENF_PARSER_BITFIELD_RO ( checksumPresent,  1, bool     );
@@ -270,31 +270,36 @@
     sub-parsers.
 
     In this case however, we still want to allow the user to change the field value, albeit not
-    directly. We will need to go through the collection parser, in this case the variant. Since the
-    variant syntax to change the currently active variant is not very comfortable, we provide some
-    helper functions:
+    directly. We will need to go through the collection parser, in this case the variant. 
 
-    \code
-    void enableChecksum()  const { optionalFields_().init<1>(); }
-    void disableChecksum() const { optionalFields_().init<0>(); }
-    \endcode
+    The syntax for accessing a variant is quite cumbersome. Therefore we adjust the variant
+    definition to generate a more usable interface:
 
-    By changing the collection we automatically change the field, that this collection references.
-    Now we only need to provide an additional \a checksum member to hide the complex variant access
-    syntax from the user. And, since all variant access is now done via specialized members, we can
-    hide the variant field completely from the user:
-    
     \code
     SENF_PARSER_PRIVATE_VARIANT ( optionalFields_, checksumPresent,
-                                      (senf::VoidPacketParser)
-                                      (GREPacketParser_OptFields) );
-
-    GREPacketParser_OptFields::checksum_t checksum() const
-        { return optionalFields_().get<1>().checksum(); }
+                                      (novalue(disable_checksum, senf::VoidPacketParser))
+                                      (     id(checksum,         GREPacketParser_OptFields)) );
     \endcode
 
-    As we can see here, we have used the <em>name</em><code>_t</code> typedef which is available for
-    all fields to provide the return value for our accessor member.
+    Here, we changed to things:
+    \li We made the variant private
+    \li We added some optional information to the variants type list
+
+    With this information, \ref SENF_PARSER_PRIVATE_VARIANT() will create some additional \e public
+    accessor members (those are public, only the variant itself is private). The members generated
+    work like:
+    \code
+    void disable_checksum() const { optionalFields_().init<0>; }
+
+    typedef GREPacketParser_OptFields checksum_t;
+    checksum_t checksum()      const { return optionalFields_().get<1>(); }
+    void       init_checksum() const { optionalFields_().init<1>; }
+    bool       has_checksum()  const { return optionalFields_().variant() == 1; }
+    \endcode
+    (Again: We don't implement these fields ourselves, this is done by \ref SENF_PARSER_VARIANT())
+
+    \c disable_checksum() and \c init_checksum() change the selected variant. This will
+    automatically change the \c checksumPresent() field accordingly.
 
     The \c GREPacketParser is now simple and safe to use. The only responsibility of the user now is to
     only access \a checksum() if the \a checksumPresent() field is set. Otherwise, the behavior is
@@ -311,7 +316,7 @@
     \code
     #include <senf/Utils/IpChecksum.hh>
 
-    checksum_t::value_type calculateChecksum() const 
+    checksum_t::checksum_t::value_type calculateChecksum() const 
     {
         if (!checksumEnabled()) 
             return 0;
@@ -371,18 +376,12 @@
         SENF_PARSER_FIELD           ( protocolType,    senf::UInt16Parser            );
 
         SENF_PARSER_PRIVATE_VARIANT ( optionalFields_, checksumPresent,
-                                                         (senf::VoidPacketParser)
-                                                         (GREPacketParser_OptFields) );
+                                          (novalue(disable_checksum, senf::VoidPacketParser))
+                                          (     id(checksum,         GREPacketParser_OptFields)) );
 
-        GREPacketParser_OptFields::checksum_t checksum() const
-            { return optionalFields_().get<1>().checksum(); }
-
-        void enableChecksum()  const { optionalFields_().init<1>(); }
-        void disableChecksum() const { optionalFields_().init<0>(); }
-    
         SENF_PARSER_FINALIZE(GREPacketParser);
 
-        checksum_t::value_type calculateChecksum() const;
+        checksum_t::checksum_t::value_type calculateChecksum() const;
     };
 
     // In the implementation (.cc) file:
@@ -801,22 +800,15 @@
 
         SENF_PARSER_FIELD            ( protocolType,    senf::UInt16Parser            );
 
-        SENF_PARSER_PRIVATE_VARIANT  ( optionalFields_, checksumPresent,
-                                                          (senf::VoidPacketParser)
-                                                          (GREPacketParser_OptFields) );
+        SENF_PARSER_PRIVATE_VARIANT ( optionalFields_, checksumPresent,
+                                          (novalue(disable_checksum, senf::VoidPacketParser))
+                                          (     id(checksum,         GREPacketParser_OptFields)) );
 
         bool valid() const { return version() == 0 && reserved0_5bits_() == 0; }
 
-        typedef GREPacketParser_OptFields::checksum_t checksum_t;
-        checksum_t checksum() const
-            { return optionalFields_().get<1>().checksum(); }
-
-        void enableChecksum()  const { optionalFields_().init<1>(); }
-        void disableChecksum() const { optionalFields_().init<0>(); }
-    
         SENF_PARSER_FINALIZE(GREPacketParser);
 
-        checksum_t::value_type calculateChecksum() const;
+        checksum_t::checksum_t::value_type calculateChecksum() const;
     };
 
     struct GREPacketType
@@ -858,7 +850,7 @@
     SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x6558, senf::EthernetPacket );
     SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 47, GREPacket );
 
-    GREPacketParser::checksum_t::value_type GREPacketParser::calculateChecksum() const
+    GREPacketParser::checksum_t::checksum_t::value_type GREPacketParser::calculateChecksum() const
     {
         if (!checksumEnabled()) 
             return 0;

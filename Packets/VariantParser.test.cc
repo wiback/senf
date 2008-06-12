@@ -96,8 +96,9 @@ namespace {
 
         SENF_PARSER_SKIP_BITS( 4 );
         SENF_PARSER_BITFIELD_RO( type, 4, unsigned );
-        SENF_PARSER_PRIVATE_VARIANT( content_, type,
-                                         ( novalue( nocontent, key(10, senf::VoidPacketParser)) )
+        SENF_PARSER_VARIANT( content_, type,
+                                         ( novalue( nocontent
+, key(10, senf::VoidPacketParser)) )
                                          (      id( content,           SubParser              ) )
             );
 

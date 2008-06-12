@@ -34,6 +34,8 @@
 #include <boost/preprocessor/seq/for_each.hpp>
 #include <boost/preprocessor/logical/or.hpp>
 #include <boost/preprocessor/seq/for_each_i.hpp>
+#include <boost/preprocessor/logical/not.hpp>
+#include <boost/preprocessor/expr_if.hpp>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -136,8 +138,11 @@ namespace detail {
             BOOST_PP_CAT(name, _traits);                                                          \
     public:                                                                                       \
         SENF_PARSER_COLLECTION_I(                                                                 \
-            access, name, chooser, BOOST_PP_CAT(name, _traits) );                                 \
-        BOOST_PP_SEQ_FOR_EACH_I(SENF_PARSER_VARIANT_ACCESSOR, name, types)
+            BOOST_PP_IIF( SENF_PARSER_VARIANT_NEEDACCESSORS(types), private, access),             \
+            name, chooser, BOOST_PP_CAT(name, _traits) );                                         \
+    access:                                                                                       \
+        BOOST_PP_SEQ_FOR_EACH_I(SENF_PARSER_VARIANT_ACCESSOR, name, types)                        \
+    public:
 
 #   define SENF_PARSER_VARIANT_MAKETRANSFORM(name, types)                                         \
         BOOST_PP_SEQ_FOR_EACH_I(SENF_PARSER_VARIANT_KEYVALUE, name, types)                        \
@@ -173,23 +178,32 @@ namespace detail {
 
 #   define SENF_PARSER_VARIANT_NOACCESSOR(name, i, elem)
 #   define SENF_PARSER_VARIANT_MAKEACCESSOR(name, i, elem)                                        \
-        BOOST_PP_IF( SENF_PARSER_VARIANT_HASVALUE(elem),                                          \
-                     SENF_PARSER_VARIANT_MAKEVACCESSOR,                                           \
-                     SENF_PARSER_VARIANT_MAKENVACCESSOR )(name, i, elem)
+        SENF_PARSER_VARIANT_MAKEACCESSOR_VALUE(name, i, elem, SENF_PARSER_VARIANT_GETID(elem))    \
+        SENF_PARSER_VARIANT_MAKEACCESSOR_HAS(name, i, elem, SENF_PARSER_VARIANT_GETHASID(elem))   \
+        SENF_PARSER_VARIANT_MAKEACCESSOR_INIT(name, i, elem, SENF_PARSER_VARIANT_GETINITID(elem))
 
-#   define SENF_PARSER_VARIANT_MAKEVACCESSOR(name, i, elem)                                       \
-        typedef SENF_PARSER_VARIANT_GETTYPE(elem)                                                 \
-            BOOST_PP_CAT(SENF_PARSER_VARIANT_GETID(elem), _t);                                    \
-        SENF_PARSER_VARIANT_GETTYPE(elem) SENF_PARSER_VARIANT_GETID(elem)() const                 \
-        { return name().get<i>(); }                                                               \
-        void BOOST_PP_CAT(init_, SENF_PARSER_VARIANT_GETID(elem))() const                         \
-        { name().init<i>(); }                                                                     \
-        bool BOOST_PP_CAT(has_, SENF_PARSER_VARIANT_GETID(elem))() const                          \
-        { return name().variant() == i; }
+#   define SENF_PARSER_VARIANT_IFNOTNA(id, x)                                                     \
+        BOOST_PP_EXPR_IIF( BOOST_PP_NOT( SENF_PARSER_VARIANT_NA(id) ), x )
+    
+#   define SENF_PARSER_VARIANT_MAKEACCESSOR_VALUE(name, i, elem, id)                              \
+        SENF_PARSER_VARIANT_IFNOTNA( id,                                                          \
+            typedef SENF_PARSER_VARIANT_GETTYPE(elem)                                             \
+                BOOST_PP_CAT(id, _t);                                                             \
+            BOOST_PP_CAT(id, _t) id() const                                                       \
+                { return name().get<i>(); }                                                       \
+        )
+                                     
+#   define SENF_PARSER_VARIANT_MAKEACCESSOR_HAS(name, i, elem, id)                                \
+        SENF_PARSER_VARIANT_IFNOTNA( id,                                                          \
+            bool id() const                                                                       \
+                { return name().variant() == i; }                                                 \
+        )
 
-#   define SENF_PARSER_VARIANT_MAKENVACCESSOR(name, i, elem)                                      \
-        void SENF_PARSER_VARIANT_GETID(elem)() const                                              \
-        { name().init<i>(); }
+#   define SENF_PARSER_VARIANT_MAKEACCESSOR_INIT(name, i, elem, id)                               \
+        SENF_PARSER_VARIANT_IFNOTNA( id,                                                          \
+            void id() const                                                                       \
+            { name().init<i>(); }                                                                 \
+        )
 
 #   define SENF_PARSER_VARIANT_KEY_GOBBLE__key(key, type)
 #   define SENF_PARSER_VARIANT_KEY_GETKEY__key(key, type) key
@@ -198,12 +212,25 @@ namespace detail {
 #   define SENF_PARSER_VARIANT_ID_GOBBLE__id(id, value)
 #   define SENF_PARSER_VARIANT_ID_GETID__id(id, value) id
 #   define SENF_PARSER_VARIANT_ID_GETVALUE__id(id, value) value
+#   define SENF_PARSER_VARIANT_ID_GETHASID__id(id, value) SENF_CAT_RECURS3(has_, id)
+#   define SENF_PARSER_VARIANT_ID_GETINITID__id(id, value) SENF_CAT_RECURS3(init_, id)
 
 #   define SENF_PARSER_VARIANT_ID_GOBBLE__novalue(id, value)
-#   define SENF_PARSER_VARIANT_ID_GETID__novalue(id, value) id
+#   define SENF_PARSER_VARIANT_ID_GETID__novalue(id, value) na
 #   define SENF_PARSER_VARIANT_ID_GETVALUE__novalue(id, value) value
+#   define SENF_PARSER_VARIANT_ID_GETHASID__novalue(id, value) na
+#   define SENF_PARSER_VARIANT_ID_GETINITID__novalue(id, value) id
 
-#   define SENF_PARSER_VARIANT_HASVALUE_GOBBLE__id(id, value)
+#   define SENF_PARSER_VARIANT_ID_GOBBLE__ids(id, hasid, initid, value)
+#   define SENF_PARSER_VARIANT_ID_GETID__ids(id, hasid, initid, value) id
+#   define SENF_PARSER_VARIANT_ID_GETVALUE__ids(id, hasid, initid, value) value
+#   define SENF_PARSER_VARIANT_ID_GETHASID__ids(id, hasid, initid, value) hasid
+#   define SENF_PARSER_VARIANT_ID_GETINITID__ids(id, hasid, initid, value) initid
+
+#   define SENF_PARSER_VARIANT_NA_GOBBLE__na
+
+#   define SENF_PARSER_VARIANT_NA(x)                                                              \
+        BOOST_PP_IS_EMPTY( SENF_CAT_RECURS1(SENF_PARSER_VARIANT_NA_GOBBLE__, x) )
 
 #   define SENF_PARSER_VARIANT_HASKEY(x)                                                          \
         SENF_PARSER_VARIANT_HASKEY_( SENF_PARSER_VARIANT_GETVALUE(x) )
@@ -225,13 +252,16 @@ namespace detail {
 #   define SENF_PARSER_VARIANT_GETID(x)                                                           \
         BOOST_PP_CAT(SENF_PARSER_VARIANT_ID_GETID__, x)
 
+#   define SENF_PARSER_VARIANT_GETHASID(x)                                                        \
+        BOOST_PP_CAT(SENF_PARSER_VARIANT_ID_GETHASID__, x)
+
+#   define SENF_PARSER_VARIANT_GETINITID(x)                                                       \
+        BOOST_PP_CAT(SENF_PARSER_VARIANT_ID_GETINITID__, x)
+
 #   define SENF_PARSER_VARIANT_GETVALUE(x)                                                        \
         BOOST_PP_IF( SENF_PARSER_VARIANT_HASID(x),                                                \
                      BOOST_PP_CAT(SENF_PARSER_VARIANT_ID_GETVALUE__, x),                          \
                      x )
-
-#   define SENF_PARSER_VARIANT_HASVALUE(x)                                                        \
-        BOOST_PP_IS_EMPTY( SENF_CAT_RECURS3(SENF_PARSER_VARIANT_HASVALUE_GOBBLE__, x) )
 
 #   define SENF_PARSER_VARIANT_GETTYPE(x)                                                         \
         SENF_PARSER_VARIANT_GETTYPE_( SENF_PARSER_VARIANT_GETVALUE(x) )
@@ -246,6 +276,12 @@ namespace detail {
 
 #   define SENF_PARSER_VARIANT_NEEDTRANSFORM_(s, state, elem)                                     \
         BOOST_PP_OR(state, SENF_PARSER_VARIANT_HASKEY(elem))
+
+#   define SENF_PARSER_VARIANT_NEEDACCESSORS(types)                                               \
+        BOOST_PP_SEQ_FOLD_LEFT(SENF_PARSER_VARIANT_NEEDACCESSORS_, 0, types)
+
+#   define SENF_PARSER_VARIANT_NEEDACCESSORS_(s, state, elem)                                     \
+        BOOST_PP_OR(state, SENF_PARSER_VARIANT_HASID(elem))
 
 #   define SENF_PARSER_VARIANT_TYPES(types)                                                       \
         BOOST_PP_SEQ_FOR_EACH(SENF_PARSER_VARIANT_TYPES_, _, types)

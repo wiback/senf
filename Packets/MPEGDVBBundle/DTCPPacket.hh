@@ -86,41 +86,17 @@ namespace senf {
          *      -you NEVER can use templated Parsers in these macros since the macro-preprocessor won't recognize the <> brackets and will
          *      interpret the ","
          * 
-         * The first problem is solved by using (actually inventing)  SENF_PARSER_VARIANT_TRANS which has the same limitations 
-         *      concerning the number of types but isn't limited to the values used. This is achieved by a translating function 
-         *      as you can see. 
+         * The first problem is solved by using key()
          * The second problem is solved by introducing Helper-Parser which cover both the list and the number field. By that no 
          *      templates have to be used. 
          */
 
-        struct ip_version_translator {
-	    typedef unsigned value_type;
-            static unsigned get(ip_version_t::value_type in) {
-                switch (in) { 
-                case 4: return 0;
-                case 6: return 1;
-                }
-                return 1; //default. should rather throw an exception 
-            }
-            static ip_version_t::value_type set(unsigned in) {
-                switch (in) {
-                case 0: return 4;
-                case 1: return 6; 
-                }
-                return 6; //default. should rather throw an exception 
-            }
-        };
-    
-        SENF_PARSER_VARIANT          ( fbiplist, transform(ip_version_translator, ip_version),
-                                                                 (senf::DTCPIPv4AddressListParser)        //IPv4 
-                                                                 (senf::DTCPIPv6AddressListParser) );     //IPv6
+        SENF_PARSER_VARIANT( fbiplist, ip_version,
+       	                         ( ids(getIpv4AddressList, na, setIpVersion4, 
+				       key(4, senf::DTCPIPv4AddressListParser)) )    //IPv4 
+  			         ( ids(getIpv6AddressList, na, setIpVersion6,
+				       key(6, senf::DTCPIPv6AddressListParser)) ) ); //IPv6
                                                                  
-        DTCPIPv4AddressListParser getIpv4AddressList () const { return fbiplist().get<0>(); }  // this is the absolute index 
-        DTCPIPv6AddressListParser getIpv6AddressList () const { return fbiplist().get<1>(); }
-
-        void setIpVersion4() const { fbiplist().init<0>(); }
-        void setIpVersion6() const { fbiplist().init<1>(); }
-
         SENF_PARSER_FINALIZE(DTCPPacketParser);
     };
     

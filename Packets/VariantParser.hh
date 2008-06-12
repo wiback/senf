@@ -125,26 +125,24 @@ namespace senf {
 
     /** \brief Define VariantParser field
 
-        This macro is a special helper to define a senf::DirectVariantParser type field. This is a
-        variant field which chooses the sub-type by directly taking the value of some other field.
-
+        This macro is a special helper to define a senf::VariantParser type field.
         \code
         struct SomeParser : public PacketParserBase
         {
         #   include SENF_PARSER()
         
             SENF_PARSER_PRIVATE_FIELD( type, senf::UInt8Parser );
-            SENF_PARSER_PRIVATE_VARIANT( content, type,
-                                            (novalue( disable, senf::VoidPacketParser ))
-                                            (     id( uint8,   senf::UInt8Parser      ))
-                                            (     id( uint16,  senf::UInt16Parser     ))
-                                            (     id( uint24,  senf::UInt24Parser     ))
-                                            (     id( uint32,  senf::UInt32Parser     )) );
+            SENF_PARSER_VARIANT( content, type,
+                                    (novalue( disable, senf::VoidPacketParser ))
+                                    (     id( uint8,   senf::UInt8Parser      ))
+                                    (     id( uint16,  senf::UInt16Parser     ))
+                                    (     id( uint24,  senf::UInt24Parser     ))
+                                    (     id( uint32,  senf::UInt32Parser     )) );
 
             SENF_PARSER_FINALIZE(SomeParser);
         };
-        \endcode
-
+        \endcode 
+            
         The variant \c content chooses one of the sub parsers depending on the \c type field. If \c
         type is 0, senf::VoidPacketParser is selected, if it is 1, senf::UInt8Parser and so on. 
 
@@ -157,25 +155,34 @@ namespace senf {
         <tr><td>\a type</td><td>Do not provide accessor and use the 0-based type index as
         key.</td></tr>
 
-        <tr><td>\c id(\a name, \a type)</td><td>Automatically create an accessor \a name for this
-        type</td></tr>
+        <tr><td>\c id(\a name, \a type)</td><td>Automatically create an accessor \a name, a test
+        function <tt>has_</tt>\a name and a function to switch to this type <tt>init_</tt>\a name
+        for this type. Identical to \c ids(\a name, <tt>has_</tt>\a name, <tt>init_</tt>\a name, \a
+        type)</td></tr>
 
         <tr><td>\c novalue(\a name, \a type)</td><td>This is like \c id but only provides an
-        initializer called \a name and no accessor</td></tr>
+        initializer called \a name and no accessor. Identical to \c ids(\c na, \c na, \a name, \a
+        type)</td></tr>
+
+        <tr><td>\c ids(\a accessorId, \a testId, \a initId, \a type)</td><td>This is again like \c
+        id but the names of the accessor, test function and init function are given
+        explicitly. Setting any of the id's to \c na will disable that function.</td></tr>
 
         <tr><td>\c key(\a value, \a type)</td><td>Use \a value to identity this type. The type is
         selected, when the \a chooser is equal to \a value</td></tr>
 
         <tr><td>\c id(\a name, \c key(\a value, \a type))<br/>\c novalue(\a name, \c key(\a value,
-        \a type))</td><td>The options may be nested in this way.</td></tr> </table>
+        \a type))</td><td>The options may be nested in this way.</td></tr>
+        </table>
 
-        It is customary, to hide the variant parser (by defining it private) and provide
-        more conveniently named accessors. In above example, these accessors are automatically
-        generated using the id's given. The exact members defined are:
+        Whenever an id is specified for any type, the variant itself will automatically be made
+        private so the only access to the variant from the outside is via the accessors.
+
+        The functions defined by specifying an id are:
 
         <table class="senf fixedcolumn">
-        <tr><td>\a name \c _t</td><td>The type for this specific variant value if not \c
-        novalue.</td></tr> 
+        <tr><td><em>name</em><tt>_t</tt></td><td>The type for this specific variant value if not \c
+        novalue.</td></tr>
 
         <tr><td><em>name</em><tt>_t</tt> <em>name</em>()</td><td>Return the variant value at this id
         if not \c novalue.</td></tr>
@@ -187,7 +194,7 @@ namespace senf {
         currently holds this kind of value, \c false otherwise. Only if not \c novalue.</td></tr>
         </table>
 
-        If \a value keys are given, they designate the value to expect in the \a chooser field to
+        If \c key specs are given, they designate the value to expect in the \a chooser field to
         select a specific variant type. If the \a chooser value does not match any key, the variant
         will be initialized to the \e first type.
 
@@ -226,7 +233,7 @@ namespace senf {
         \param[in] types a Boost.Preprocessor style sequence of sub-parser types
 
         \see 
-            senf::VariantParser \n 
+            senf::VariantParser for the VariantParser API\n 
             \ref SENF_PARSER_PRIVATE_VARIANT()
         \hideinitializer
         \ingroup packetparsermacros
