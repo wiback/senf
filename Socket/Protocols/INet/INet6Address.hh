@@ -203,6 +203,12 @@ namespace senf {
                                              \par 
                                              INet4 compatible INet6 addresses are not directly
                                              supported, they are deprecated in the RFC. */
+        std::string toString() const;
+                                        ///< get the string representation of this INet6Address
+        in6_addr  toin6_addr() const;
+                                        ///< get the linux in6_addr struct (convinience only) 
+        
+        
         ///@}
         ///////////////////////////////////////////////////////////////////////////
         ///\name Accessors

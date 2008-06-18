@@ -85,16 +85,26 @@ prefix_ senf::INet6Address senf::INet6Address::from_string(std::string const & s
         throw UnknownHostnameException(s);
 }
 
+prefix_ in6_addr senf:: INet6Address::toin6_addr() const {
+    ::in6_addr ina;
+    std::copy((*this).begin(), (*this).end(), &ina.s6_addr[0]);
+    return ina;
+}
+
+prefix_ std::string senf::INet6Address::toString() const {
+    char buffer[5*8];
+    ::in6_addr ina  = (*this).toin6_addr();
+    ::inet_ntop(AF_INET6, & ina , buffer, sizeof(buffer));
+    buffer[sizeof(buffer)-1] = 0;
+    return buffer;
+}
+
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Address const & addr)
 {
-    ::in6_addr ina;
-    char buffer[5*8];
-    std::copy(addr.begin(),addr.end(),&ina.s6_addr[0]);
-    ::inet_ntop(AF_INET6,&ina,buffer,sizeof(buffer));
-    buffer[sizeof(buffer)-1] = 0;
-    os << buffer;
+    os << addr.toString();
     return os;
 }
+
 
 senf::INet6Address const senf::INet6Address::None;
 senf::INet6Address const senf::INet6Address::Loopback   (0u,0u,0u,0u,0u,0u,0u,1u);
