@@ -284,7 +284,7 @@ namespace senf {
         void timeoutEarly(ClockService::clock_type v);
                                         ///< Set the \a timeoutEarly parameter
 
-        ClockService::clock_type timeoutAdjust() const;\
+        ClockService::clock_type timeoutAdjust() const;
                                         ///< Fetch the \a timeoutAdjust parameter
         void timeoutAdjust(ClockService::clock_type v);
                                         ///< Set the \a timeoutAdjust parameter

@@ -55,6 +55,28 @@ prefix_ void senf::Scheduler::cancelTimeout(unsigned id)
         i->second.canceled = true;
 }
 
+prefix_ senf::ClockService::clock_type senf::Scheduler::timeoutEarly()
+    const
+{
+    return eventEarly_;
+}
+
+prefix_ void senf::Scheduler::timeoutEarly(ClockService::clock_type v)
+{
+    eventEarly_ = v;
+}
+
+prefix_ senf::ClockService::clock_type senf::Scheduler::timeoutAdjust()
+    const
+{
+    return eventAdjust_;
+}
+
+prefix_ void senf::Scheduler::timeoutAdjust(ClockService::clock_type v)
+{
+    eventAdjust_ = v;
+}
+
 prefix_ void senf::Scheduler::terminate()
 {
     terminate_ = true;
