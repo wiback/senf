@@ -55,9 +55,6 @@ prefix_ boost::uint16_t senf::IPv4PacketParser::calcChecksum()
     validate(bytes(*this));
     IpChecksum summer;
     summer.feed( i(),                   i()+checksum_offset );
-    // Not needed since the number of 0-bytes is even
-    // summer.feed( 0u );
-    // summer.feed( 0u );
     summer.feed( i()+checksum_offset+2, i()+bytes(*this)    );
     return summer.sum();
 }

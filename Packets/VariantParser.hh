@@ -133,11 +133,11 @@ namespace senf {
         
             SENF_PARSER_PRIVATE_FIELD( type, senf::UInt8Parser );
             SENF_PARSER_VARIANT( content, type,
-                                    (novalue( disable, senf::VoidPacketParser ))
-                                    (     id( uint8,   senf::UInt8Parser      ))
-                                    (     id( uint16,  senf::UInt16Parser     ))
-                                    (     id( uint24,  senf::UInt24Parser     ))
-                                    (     id( uint32,  senf::UInt32Parser     )) );
+                                    (novalue( disable,      senf::VoidPacketParser ))
+                                    (     id( uint8value,   senf::UInt8Parser      ))
+                                    (     id( uint16value,  senf::UInt16Parser     ))
+                                    (     id( uint24value,  senf::UInt24Parser     ))
+                                    (     id( uint32value,  senf::UInt32Parser     )) );
 
             SENF_PARSER_FINALIZE(SomeParser);
         };
@@ -145,6 +145,10 @@ namespace senf {
             
         The variant \c content chooses one of the sub parsers depending on the \c type field. If \c
         type is 0, senf::VoidPacketParser is selected, if it is 1, senf::UInt8Parser and so on. 
+
+        \warning Realize, that the \a chooser field is controlled by the variant parser. This field
+            should therefore be declared either read-only or private and must be changed only via
+            the variant parser.
 
         The \a types parameter specifies the types of sub-objects supported by this variant
         parser. This parameter is a (Boost.Preprocessor style) sequence

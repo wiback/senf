@@ -20,27 +20,75 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief DTCPPacket non-inline non-template implementation */
 
+//#include "DTCPPacket.hh"
+//#include "DTCPPacket.ih"
+
+// Custom includes
 #include "DTCPPacket.hh"
 #include <boost/io/ios_state.hpp>
 #include <iomanip>
 
 #define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::DTCPPacketType::dump(packet p, std::ostream & os)
+prefix_ void senf::DTCPHelloPacketType::dump(packet p, std::ostream & os)
 {
+    static char const * COMMANDS[] = { "0", "JOIN", "LEAVE", "3", "4", "5", "6", "7",
+                                       "8", "9", "10", "11", "12", "13", "14", "15" };
     boost::io::ios_all_saver ias(os);
-    os << "DTCPPacket" << std::endl
-       << "  version              : " << p->version_number()              << std::endl
-       << "  command              : " << p->command()                     << std::endl
-       << "  interval             : " << p->interval()                    << std::endl
-       << "  sequence_number      : " << p->sequence_number()             << std::endl
-       << "  receive_capable_feed : " << p->receive_capable_feed()        << std::endl
-       << "  ip_version           : " << p->ip_version()                  << std::endl
-       << "  tunnel_protocol      : " << p->tunnel_protocol()             << std::endl
-       ;
-       
-        //TODO: print included IPs
+    os << "DTCP HELLO Packet:" << std::endl
+       << "  version              : " << p->versionNumber()                       << std::endl
+       << "  command              : " << COMMANDS[p->command()]                   << std::endl
+       << "  interval             : " << unsigned(p->interval())                  << std::endl
+       << "  sequence number      : " << p->sequenceNumber()                      << std::endl
+       << "  receive capable feed : " << (p->receiveCapableFeed() ? "yes" : "no") << std::endl
+       << "  ip version           : " << p->ipVersion()                           << std::endl
+       << "  tunnel protocol      : " << unsigned(p->tunnelProtocol())            << std::endl
+       << "  number of BDL ips    : " << unsigned(p->fbipCount())                 << std::endl
+       << "  feed BDL ips         : ";
+    
+    switch (p->ipVersion()) {
+    case 4 : {
+        typedef DTCPHelloPacket::Parser::v4fbipList_t FBIPList;
+        FBIPList::container fbips (p->v4fbipList());
+        FBIPList::container::iterator i (fbips.begin());
+        FBIPList::container::iterator const i_end (fbips.end());
+        for (; i != i_end; ++i)
+            os << "\n    " << *i;
+        break;
+    }
+    case 6 : {
+        typedef DTCPHelloPacket::Parser::v6fbipList_t FBIPList;
+        FBIPList::container fbips (p->v6fbipList());
+        FBIPList::container::iterator i (fbips.begin());
+        FBIPList::container::iterator const i_end (fbips.end());
+        for (; i != i_end; ++i)
+            os << "\n    " << *i;
+        break;
+    }
+    default:
+        os << "unknown ip version";
+    }
+    
+    os << std::endl;
 }
 
 #undef prefix_
+
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

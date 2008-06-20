@@ -3,6 +3,7 @@
 PROJECT_NAME = libPackets
 GENERATE_TAGFILE = doc/Packets.tag
 INPUT = .
+RECURSIVE = YES
 EXAMPLE_PATH = . DefaultBundle
 
 TAGFILES = \

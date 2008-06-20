@@ -366,4 +366,5 @@ namespace senf {
 // ispell-local-dictionary: "american"
 // mode: flyspell
 // mode: auto-fill
+// compile-command: "scons -u doc"
 // End:

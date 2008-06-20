@@ -90,7 +90,7 @@
  */
 #define SENF_CHECK_NO_THROW(expr)                                                                 \
     BOOST_CHECK_NO_THROW(                                                                         \
-        try { (void) expr ; }                                                                     \
+        try { expr ; }                                                                            \
         catch (std::exception & e) { std::cerr << e.what() << std::endl; throw; } )
 
 ///////////////////////////////hh.e////////////////////////////////////////

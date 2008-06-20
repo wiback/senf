@@ -20,12 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \mainpage The MPEG/DVB Bundle
-
-    \ref protocolbundle_mpegdvb
- */
-
-/** \defgroup protocolbundle_mpegdvb Protocols of the MPEG/DVB bundle
+/** \defgroup protocolbundle_mpegdvb The MPEG/DVB bundle
 
     Each protocol consists of several objects
 

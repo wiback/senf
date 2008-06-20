@@ -24,11 +24,24 @@
 
     <table class="glossary">
 
+    <tr><td>collection parser</td> <td>libPackets</td> <td>A packet parser which allows to repeat
+    another parser or which uses some additional information to decide on the type or number of
+    sub-parsers.</td></tr>
+
     <tr><td>complete policy</td> <td>libSocket</td> <td>socket policy where each axis is specified
     completely</td></tr>
 
+    <tr><td>composite parser</td> <td>libPackets</td> <td>A packet parser providing access to named
+    sub-fields which are parsers themselves.</td></tr>
+
     <tr><td>incomplete policy</td> <td>libSocket</td> <td>socket policy, where at least one axis is
     not fully specified</td></tr>
+
+    <tr><td>packet interpreter</td> <td>libPackets</td> <td>Internal datastructure which represents
+    one protocol or header in the chain of interpreters representing a complete packet</td></tr>
+
+    <tr><td>packet parser</td> <td>libPackets</td> <td>lightweight class to convert between byte
+    representation and interpreted value. Derived from senf::PacketParserBase</td></tr>
 
     <tr><td>policy axis</td> <td>libSocket</td> <td>one aspect defined in the socket policy, typedef
     and member of the senf::SocketPolicy template</td></tr>
@@ -54,7 +67,13 @@
     senf::ProtocolClientSocketHandle::protocol()/senf::ProtocolServerSocketHandle::protocol()
     member</td></tr>
 
+    <tr><td>protocol parser</td> <td>libPackets</td> <td>A composite parser which defines a network
+    protocol.</td></tr>
+
     <tr><td>socket policy</td> <td>libSocket</td> <td>another name for 'policy'</td></tr>
+
+    <tr><td>value parser</td> <td>libPackets</td> <td>A packet parser which parses a simple value
+    like a number or network address.</td></tr>
 
     </table>
  */
@@ -67,7 +86,7 @@
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -u doc"
 // mode: flyspell
 // mode: auto-fill
 // End:

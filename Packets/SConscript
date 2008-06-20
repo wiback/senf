@@ -14,7 +14,8 @@ SENFSCons.Lib(env,
               sources = SENFSCons.GlobSources(),
               LIBS = [ 'Utils' ])
 SENFSCons.Doxygen(env, extra_sources = [
-    env.Dia2Png("structure.dia")
+    env.Dia2Png("structure.dia"),
+    env.Dia2Png("MPEGDVBBundle/TLV.dia")
 ])
 
 SConscript(glob.glob("*/SConscript"))

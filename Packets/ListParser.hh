@@ -234,6 +234,10 @@ namespace senf {
         
         Here \c EltParser can be an arbitrary parser and need not have a fixed size.
 
+        \warning Realize, that the \a size field is controlled by the list parser. This field
+            should therefore be declared either read-only or private and must be changed only via
+            the list parser.
+
         Further additional tags are supported which modify the type of list created:
 
         <table class="senf fixedcolumn">

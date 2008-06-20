@@ -50,6 +50,20 @@ namespace senf {
         It is \e not possible to create or store BSDSocketAddress instances: You must either store
         an address in one of the specifically typed subclasses or using GenericBSDSocketAddress.
 
+        A BSDSocketAddress or GenericBSDSocketAddress can be cast (like a downcast) to (the correct)
+        type specific cast using sockaddr_cast:
+
+        \code
+        void foo(senf::BSDSOcketAddress const & addr)
+        {
+            if (addr.family() == senf::INet4SocketAddress::addressFamily) {
+                senf::INet4SocketAddress i4addr (
+                    senf::sockaddr_cast<senf::INet4SocketAddress>(addr) );
+                ...
+            }
+        }
+        \endcode
+        
         All these classes provide a generic \c sockaddr API to interface with legacy \c sockaddr
         based code (e.g. the BSD socket API). In this base-class, this interface is read-only, the
         derived classes however provide a read-write interface.

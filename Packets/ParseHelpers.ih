@@ -150,10 +150,12 @@
         size_type BOOST_PP_CAT(name,_offset)() const {                                            \
             return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));    \
         }                                                                                         \
-        static size_type const BOOST_PP_CAT(name, _init_bytes) = SENF_MPL_SLOT_GET(init_bytes);
+        static size_type const BOOST_PP_CAT(name, _init_bytes) =                                  \
+            SENF_MPL_SLOT_GET(init_bytes);
 #
 # define SENF_PARSER_I_FIELD_OFS_fix(name, type, access)                                          \
-        static size_type const BOOST_PP_CAT(name, _offset) = SENF_MPL_SLOT_GET(offset);
+        static size_type const BOOST_PP_CAT(name, _offset) =                                      \
+            SENF_MPL_SLOT_GET(offset);
 #
 # ////////////////////////////////////////
 # // SENF_PARSER_I_ADVANCE_OFS_*
@@ -287,12 +289,12 @@
             return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0))     \
                 - SENF_MPL_SLOT_GET(bitfield_size);                                               \
         }                                                                                         \
-        static size_type const BOOST_PP_CAT(name, _init_bytes) = SENF_MPL_SLOT_GET(init_bytes)    \
-            - SENF_MPL_SLOT_GET(bitfield_size);
+        static size_type const BOOST_PP_CAT(name, _init_bytes) =                                  \
+            SENF_MPL_SLOT_GET(init_bytes) - SENF_MPL_SLOT_GET(bitfield_size);
 #
 # define SENF_PARSER_I_BITFIELD_OFS_fix(name, type, access)                                       \
-        static size_type const BOOST_PP_CAT(name, _offset) = SENF_MPL_SLOT_GET(offset)            \
-            - SENF_MPL_SLOT_GET(bitfield_size);
+        static size_type const BOOST_PP_CAT(name, _offset) =                                      \
+            SENF_MPL_SLOT_GET(offset) - SENF_MPL_SLOT_GET(bitfield_size);
 #
 # ////////////////////////////////////////
 # // SENF_PARSER_I_BITFIELD_RESET

@@ -20,103 +20,122 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief DTCPPacket public header */
 
-#ifndef DTCPPACKET_HH_
-#define DTCPPACKET_HH_
+#ifndef HH_DTCPPacket_
+#define HH_DTCPPacket_ 1
 
+// Custom includes
 #include "../../Packets/Packets.hh"
 #include "../../Packets/DefaultBundle/IPv4Packet.hh"
 #include "../../Packets/DefaultBundle/IPv6Packet.hh"
 
-#define DTCP_V4_MCADDRESS "224.0.0.36"
-#define DTCP_V6_MCADDRESS "FF02:0:0:0:0:0:1:4"
-#define DTCP_UDP_PORT 652
+//#include "DTCPPacket.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
-    //first we have to define some helpers
-    struct DTCPIPv4AddressListParser : public PacketParserBase {
+
+#   define DTCP_V4_MCADDRESS "224.0.0.36"
+#   define DTCP_V6_MCADDRESS "FF02:0:0:0:0:0:1:4"
+#   define DTCP_UDP_PORT 652
+
+    struct DTCPIPv4AddressListParser : public PacketParserBase 
+    {
 #       include SENF_PARSER()        
-        SENF_PARSER_PRIVATE_FIELD ( num_of_fbips, UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD ( reserved ,    UInt8Parser );   //must be zero 
-        SENF_PARSER_VECTOR        ( fbiplist,     num_of_fbips, INet4AddressParser );
+
+        SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser );
+
+        SENF_PARSER_VECTOR( fbips, fbipCount_, INet4AddressParser );
+
+        // Needed since we do NOT want to init fbipCount_ or reseverd_. And since
+        // INet4AddressParser::init() is a no-op, we can just as well disable init completely
+        SENF_PARSER_INIT() {}
 
         SENF_PARSER_FINALIZE(DTCPIPv4AddressListParser);
     };
         
-    struct DTCPIPv6AddressListParser : public PacketParserBase {
+    struct DTCPIPv6AddressListParser : public PacketParserBase 
+    {
 #       include SENF_PARSER()        
-        SENF_PARSER_PRIVATE_FIELD ( num_of_fbips, UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD ( reserved,     UInt8Parser );   //must be zero 
-        SENF_PARSER_VECTOR        ( fbiplist,     num_of_fbips, INet6AddressParser );
+
+        SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser );
+
+        SENF_PARSER_VECTOR( fbips, fbipCount_, INet6AddressParser );
+
+        // Needed since we do NOT want to init fbipCount_ or reseverd_. And since
+        // INet4AddressParser::init() is a no-op, we can just as well disable init completely
+        SENF_PARSER_INIT() {}
 
         SENF_PARSER_FINALIZE(DTCPIPv6AddressListParser);
     };
 
-    /** \brief Parse a DTCP packet
+    /** \brief Parse a DTCP HELLO packet
 
         Parser implementing the DTCP packet according to RFC 3077
         
         \see DTCPPacketType
      */
-    struct DTCPPacketParser : public PacketParserBase
+    struct DTCPHelloPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_BITFIELD         ( version_number,       4, unsigned );  // =1 according to rfc3077
-        SENF_PARSER_BITFIELD         ( command,              4, unsigned );  // 1=JOIN 2=LEAVE
-        SENF_PARSER_FIELD            ( interval,             UInt8Parser );  // 5 according to rfc3077
-        SENF_PARSER_FIELD            ( sequence_number,      UInt16Parser );
-        SENF_PARSER_PRIVATE_BITFIELD ( reserved,             3, unsigned );
-        SENF_PARSER_BITFIELD         ( receive_capable_feed, 1, bool );      // 0=send only, 1=receive_capable_feed
-        SENF_PARSER_BITFIELD_RO      ( ip_version,           4, unsigned );  // 4=IPv4, 6=IPv6
-        SENF_PARSER_FIELD    ( tunnel_protocol,      UInt8Parser ); 
-        /* Please consider the following comments on the implementation given in this class: 
-         * 1. you could think of simply using SENF_PARSER_PRIVATE_VARIANT and List / Vectorparser like this:
-         * SENF_PARSER_PRIVATE_VARIANT  ( fbiplist,             ip_version,
-         *                                                       (senf::VoidPacketParser) //ip_version=0
-         *                                                       (senf::VoidPacketParser) //1
-         *                                                       (senf::VoidPacketParser) //2
-         *                                                       (senf::VoidPacketParser) //3
-         *                                                       (senf::ListBParser< IPv4Packet, num_of_fbips>) //4 
-         *                                                       (senf::VoidPacketParser) //5
-         *                                                       (senf::ListBParser< IPv6Packet, num_of_fbips>) ); //6
-         * This can't work for two reasons: 
-         *      -SENF_PARSER_PRIVATE_VARIANT only accepts 6 templates in types but you have to start from 0.
-         *      -you NEVER can use templated Parsers in these macros since the macro-preprocessor won't recognize the <> brackets and will
-         *      interpret the ","
-         * 
-         * The first problem is solved by using key()
-         * The second problem is solved by introducing Helper-Parser which cover both the list and the number field. By that no 
-         *      templates have to be used. 
-         */
+        SENF_PARSER_BITFIELD         ( versionNumber,        4, unsigned );  // must be 1
+        SENF_PARSER_BITFIELD         ( command,              4, unsigned );
 
-        SENF_PARSER_VARIANT( fbiplist, ip_version,
-       	                         ( ids(getIpv4AddressList, na, setIpVersion4, 
-				       key(4, senf::DTCPIPv4AddressListParser)) )    //IPv4 
-  			         ( ids(getIpv6AddressList, na, setIpVersion6,
-				       key(6, senf::DTCPIPv6AddressListParser)) ) ); //IPv6
+	enum Command { JOIN=1, LEAVE=2 };
+
+        SENF_PARSER_FIELD            ( interval,             UInt8Parser );  // should be 5
+        SENF_PARSER_FIELD            ( sequenceNumber,       UInt16Parser );
+
+        SENF_PARSER_PRIVATE_BITFIELD ( reserved0_,           3, unsigned );
+        SENF_PARSER_BITFIELD         ( receiveCapableFeed,   1, bool );
+        SENF_PARSER_BITFIELD_RO      ( ipVersion,            4, unsigned );  // 4=IPv4, 6=IPv6
+
+        SENF_PARSER_FIELD            ( tunnelProtocol,       UInt8Parser ); 
+        SENF_PARSER_FIELD_RO         ( fbipCount,            UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD    ( reserved1_,           UInt8Parser );  //must be zero 
+
+        // Go back to fbipCount so the variant has access to that field
+        SENF_PARSER_GOTO( fbipCount );
+
+        SENF_PARSER_VARIANT          ( fbipList_,            ipVersion,
+				           ( ids(na, has_v4fbipList, init_v4fbipList,
+                                                 key(4, DTCPIPv4AddressListParser)) ) 
+				           ( ids(na, has_v6fbipList, init_v6fbipList,
+                                                 key(6, DTCPIPv6AddressListParser)) ) );
+
+        // We define the two variant accessors ourselves so we can directly return the vector and
+        // not the collection parser which contains the vector ...
+
+        typedef DTCPIPv4AddressListParser::fbips_t v4fbipList_t;
+        v4fbipList_t v4fbipList() { return fbipList_().get<0>().fbips(); }
+
+        typedef DTCPIPv6AddressListParser::fbips_t v6fbipList_t;
+        v6fbipList_t v6fbipList() { return fbipList_().get<1>().fbips(); }
                                                                  
-        SENF_PARSER_FINALIZE(DTCPPacketParser);
+        SENF_PARSER_FINALIZE(DTCPHelloPacketParser);
     };
     
-    /** \brief DTCP packet
+    /** \brief DTCP HELLO packet
         
         \par Packet type (typedef):
-            \ref DTCPPacket
+            \ref DTCPHelloPacket
 
         \par Fields:
-            \ref DTCPPacketParser
+            \ref DTCPHelloPacketParser
 
         \ingroup protocolbundle_mpegdvb
      */
-    struct DTCPPacketType
+    struct DTCPHelloPacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<DTCPPacketType>
+          public PacketTypeMixin<DTCPHelloPacketType>
     {
-        typedef PacketTypeMixin<DTCPPacketType> mixin;
-        typedef ConcretePacket<DTCPPacketType> packet;
-        typedef DTCPPacketParser parser;
+        typedef PacketTypeMixin<DTCPHelloPacketType> mixin;
+        typedef ConcretePacket<DTCPHelloPacketType> packet;
+        typedef DTCPHelloPacketParser parser;
     
         using mixin::nextPacketRange;
         using mixin::init;
@@ -126,7 +145,22 @@ namespace senf {
     };
     
     /** \brief DTCP packet typedef */
-    typedef DTCPPacketType::packet DTCPPacket;
+    typedef DTCPHelloPacketType::packet DTCPHelloPacket;
 }
 
-#endif /*DTCPPACKET_HH_*/
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "DTCPPacket.cci"
+//#include "DTCPPacket.ct"
+//#include "DTCPPacket.cti"
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

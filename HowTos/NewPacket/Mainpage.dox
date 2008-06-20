@@ -276,18 +276,15 @@
     definition to generate a more usable interface:
 
     \code
-    SENF_PARSER_PRIVATE_VARIANT ( optionalFields_, checksumPresent,
-                                      (novalue(disable_checksum, senf::VoidPacketParser))
-                                      (     id(checksum,         GREPacketParser_OptFields)) );
+    SENF_PARSER_VARIANT ( optionalFields_, checksumPresent,
+                                  (novalue(disable_checksum, senf::VoidPacketParser))
+                                  (     id(checksum,         GREPacketParser_OptFields)) );
     \endcode
 
-    Here, we changed to things:
-    \li We made the variant private
-    \li We added some optional information to the variants type list
+    Here, we added some optional information to the variants type list.
 
-    With this information, \ref SENF_PARSER_PRIVATE_VARIANT() will create some additional \e public
-    accessor members (those are public, only the variant itself is private). The members generated
-    work like:
+    With this information, \ref SENF_PARSER_VARIANT() will create some additional \e public accessor
+    members and will automatically make the variant itself private. The members generated work like:
     \code
     void disable_checksum() const { optionalFields_().init<0>; }
 

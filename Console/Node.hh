@@ -100,6 +100,8 @@
     
     \li senf::console::DirectoryNode provides internal nodes with an arbitrary number of children
     \li senf::console::CommandNode describes a command entry in the tree
+    \li senf::console::LinkNode is a link to another node. It works much like a symlink on POSIX
+        systems.
 
     senf::console::CommandNode is the base-class of all command nodes of which there are several,
     depending on the type of command.
@@ -119,6 +121,7 @@
     \li A senf::console::CommandNode is normally added to the tree by directly adding a callback
         using one of the overloaded senf::console::DirectoryNode::add() members. See \ref
         console_commands.
+    \li A senf::console::LinkNode is created by senf::console::DirectoryNode::link()
 
     When directly adding a node callback, the type of node added depends on the type of
     callback. The callback types which can be added are listed at \ref console_callbacks.

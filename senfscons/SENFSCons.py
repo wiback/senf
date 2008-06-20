@@ -25,6 +25,7 @@
 import os.path, glob
 import SCons.Options, SCons.Environment, SCons.Script.SConscript, SCons.Node.FS
 import SCons.Defaults, SCons.Action
+from SCons.Script import *
 
 ## \defgroup use Predefined Framework Configurators
 #
@@ -451,6 +452,8 @@ def InstallWithSources(env, targets, dir, sources, testSources = [], no_includes
 #
 # \ingroup target
 def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
+    if not 'all' in BUILD_TARGETS and not 'doc' in BUILD_TARGETS and not 'all_docs' in BUILD_TARGETS:
+        return []
     # ARGHHH !!! without the [:] we are changing the target list
     #        ||| WITHIN THE DOXYGEN BUILDER
     docs = env.Doxygen(doxyfile)[:]

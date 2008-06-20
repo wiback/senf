@@ -136,16 +136,16 @@
     parsers). When defining composite parsers without the help of the \ref packetparsermacros, you
     should provide those same members.
 
-    \subsection parserimpl_packet Packet parsers
+    \subsection parserimpl_packet Protocol parsers
 
-    Packet parsers are composite parsers with relaxed requirements. Since a packet parser will never
-    be used as a sub-parser (it will not be used within another composite parser or as value type in
-    a collection parser), the value returned by senf::bytes for this parser must not necessarily
-    cover the complete packet (e.g. if the packet has a trailer, the trailer will live outside the
-    range given by senf::bytes). You may define any member you want to have in your packets field
-    interface. These members may access the packet data in any way. You just need to ensure, that
-    the integration into the packet-type is correct (the senf::PacketTypeMixin will by default use
-    senf::bytes() to find the end of the header).
+    Protocol parsers are composite parsers with relaxed requirements. Since a Protocol parser will
+    never be used as a sub-parser (it will not be used within another composite parser or as value
+    type in a collection parser), the value returned by senf::bytes for this parser must not
+    necessarily cover the complete packet (e.g. if the packet has a trailer, the trailer will live
+    outside the range given by senf::bytes). You may define any member you want to have in your
+    packets field interface. These members may access the packet data in any way. You just need to
+    ensure, that the integration into the packet-type is correct (the senf::PacketTypeMixin will by
+    default use senf::bytes() to find the end of the header).
 
     <hr>
  */

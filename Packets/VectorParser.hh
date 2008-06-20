@@ -236,6 +236,10 @@ namespace senf {
         SENF_PARSER_VECTOR        ( vec,       vec_size_, senf::UInt32Parser );
         \endcode
 
+        \warning Realize, that the \a size field is controlled by the vector parser. This field
+            should therefore be declared either read-only or private and must be changed only via
+            the vector parser.
+
         Further additional tags are supported which modify the way, the \a size field is
         interpreted:
 

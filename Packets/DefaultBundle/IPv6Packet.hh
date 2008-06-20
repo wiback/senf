@@ -51,8 +51,8 @@ namespace senf {
 
         value_type value() const { return value_type::from_data(i()); }
         void value(value_type const & v) { std::copy(v.begin(), v.end(), i()); }
-        operator value_type() { return value(); }
-        byte & operator[](size_type index) { return *boost::next(i(),index); }
+        operator value_type() const { return value(); }
+        byte & operator[](size_type index) const { return *boost::next(i(),index); }
         INet6AddressParser const & operator= (value_type const & other) 
             { value(other); return *this; }
     };

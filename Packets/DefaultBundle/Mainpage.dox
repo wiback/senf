@@ -20,13 +20,7 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \mainpage The Default Bundle
-
-    The default bundle combines a set of basic low level protocols like Ethernet or IP. Find the
-    list of protocols implemented at \ref protocolbundle_default
- */
-
-/** \defgroup protocolbundle_default Protocols contained in the DefaultBundle
+/** \defgroup protocolbundle_default The DefaultBundle
 
     Each protocol consists of several objects
 
