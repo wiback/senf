@@ -50,10 +50,7 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
     const
 {
     IpChecksum summer;
-    summer.feed( i(), i()+checksum_offset );
-    summer.feed( i()+checksum_offset+2, data().end() );
-    
-    // Now on to the awkward part: the IP pseudo header
+    // first on to the awkward part: the IP pseudo header
     IPv4Packet ipv4 (packet().rfind<IPv4Packet>(nothrow));
     if (ipv4) {
         // Pseudo header defined in RFC768
@@ -88,6 +85,11 @@ prefix_ boost::uint16_t senf::UDPPacketParser::calcChecksum()
         }
     }
     
+    // since header are 16 / even 32bit aligned we don't have to care for padding. since IpChecksum 
+    // cares for padding at the final summing we don't have to care is the payload is 16nbit-aligned, too.
+    summer.feed( i(), i()+checksum_offset );
+    summer.feed( i()+checksum_offset+2, data().end() );
+
     boost::uint16_t rv (summer.sum());
     return rv ? rv : 0xffffu;
 }
