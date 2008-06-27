@@ -39,7 +39,8 @@
 
 BOOST_AUTO_UNIT_TEST(macAddress)
 {
-    senf::MACAddress mac (senf::MACAddress::from_string("A1-b2-C3:d4:E5:f6"));
+	std::string test ("A1-b2-C3:d4:E5:f6");
+    senf::MACAddress mac (senf::MACAddress::from_string(test));
 
     BOOST_CHECK_EQUAL( mac[0], 0xA1u );
     BOOST_CHECK_EQUAL( mac[1], 0xB2u );
@@ -51,7 +52,8 @@ BOOST_AUTO_UNIT_TEST(macAddress)
     std::stringstream str;
     str << mac;
     BOOST_CHECK_EQUAL( str.str(), "a1:b2:c3:d4:e5:f6" );
-
+    BOOST_CHECK_EQUAL (mac.toString(), "a1:b2:c3:d4:e5:f6");
+    
     BOOST_CHECK( ! mac.local() );
     BOOST_CHECK( mac.multicast() );
     BOOST_CHECK( ! mac.broadcast() );

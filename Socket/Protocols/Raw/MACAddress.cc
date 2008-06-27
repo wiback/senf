@@ -28,6 +28,8 @@
 
 // Custom includes
 #include <iomanip>
+#include <string>
+#include <sstream>
 #include <boost/tokenizer.hpp>
 #include <boost/io/ios_state.hpp>
 #include <boost/range.hpp>
@@ -104,6 +106,12 @@ prefix_ senf::MACAddress senf::MACAddress::from_eui64(boost::uint64_t v)
 
 senf::MACAddress const senf::MACAddress::Broadcast = senf::MACAddress(0xFFFFFFFFFFFFull);
 senf::MACAddress const senf::MACAddress::None;
+
+prefix_ std::string senf::MACAddress::toString() const {
+	std::ostringstream tmp; 
+	tmp << (*this);
+	return tmp.str();
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // namespace members

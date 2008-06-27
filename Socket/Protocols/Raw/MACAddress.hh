@@ -67,7 +67,14 @@ namespace senf {
             INet6Address(0x2001u,0xDB8u,0x1u,0x0u,0x001Au,0x2BFFu,0xFE3Cu,0x3D5Fu).id())
         \endcode
 
-        Since MACAddress is based on \c boost::array, you can access the raw data bytes of the
+        Since MACAddress is based on \c boo Ziel, aber nur ein paar davon sind standardkomform.
+
+Der aktuelle C++ Standard unterstützt drei verschiedene Möglichkeiten eine Zahl in einen String umzuwandeln. Diese Möglichkeiten sind:
+
+    * sprintf
+    * std::strstream
+    * std::stringstream
+        st::array, you can access the raw data bytes of the
         address using \c begin(), \c end() or \c operator[]:
         \code
         MACAddress mac = ...;
@@ -128,6 +135,8 @@ namespace senf {
         boost::uint32_t nic() const;    ///< Return last 3 bytes of the address
         
         boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
+        
+        std::string toString() const; ///< Return string representation of MAC address like 12:34:56:78:90:ab
 
     };
 
