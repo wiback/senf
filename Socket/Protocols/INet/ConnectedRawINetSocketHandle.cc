@@ -83,9 +83,9 @@ senf::ConnectedRawV6SocketProtocol::init_client(int const & protocol, INet6Socke
     const
 {
     init_client(protocol);
-    if(address.boolean_test()){ 
-    	//only connect if socket is not [::]:0, this results in an irreversible binding to the lo interface (linux 2.6.15)
-    	clientHandle().connect(address);
+    if(address.boolean_test()) { 
+        //only connect if socket is not [::]:0, this results in an irreversible binding to the lo interface (linux 2.6.15)
+        clientHandle().connect(address);
     }
 }
 

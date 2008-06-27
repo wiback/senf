@@ -39,21 +39,21 @@ prefix_  void senf::ppi::module::ForwardSwitch::onRequest()
 }
 
 prefix_ bool  senf::ppi::module::ForwardSwitch::forward(){
-	return forward_;
+    return forward_;
 }
 
 prefix_ bool  senf::ppi::module::ForwardSwitch::forward(bool state){
-	forward_ = state;
-	return state;
+    forward_ = state;
+    return state;
 }
 
 prefix_ bool  senf::ppi::module::ForwardSwitch::stopForwarding(){
-	return forward(false);
+    return forward(false);
 }
 
 
 prefix_ bool  senf::ppi::module::ForwardSwitch::startForwarding(){
-	return forward(true);
+    return forward(true);
 }
 
 #undef prefix_

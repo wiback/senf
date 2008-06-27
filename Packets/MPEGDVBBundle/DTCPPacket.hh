@@ -85,7 +85,7 @@ namespace senf {
         SENF_PARSER_BITFIELD         ( versionNumber,        4, unsigned );  // must be 1
         SENF_PARSER_BITFIELD         ( command,              4, unsigned );
 
-	enum Command { JOIN=1, LEAVE=2 };
+        enum Command { JOIN=1, LEAVE=2 };
 
         SENF_PARSER_FIELD            ( interval,             UInt8Parser );  // should be 5
         SENF_PARSER_FIELD            ( sequenceNumber,       UInt16Parser );
@@ -96,16 +96,16 @@ namespace senf {
 
         SENF_PARSER_FIELD            ( tunnelProtocol,       UInt8Parser ); 
         SENF_PARSER_FIELD_RO         ( fbipCount,            UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD    ( reserved1_,           UInt8Parser );  //must be zero 
+        SENF_PARSER_PRIVATE_FIELD    ( reserved1_,           UInt8Parser );  // must be zero 
 
         // Go back to fbipCount so the variant has access to that field
         SENF_PARSER_GOTO( fbipCount );
 
         SENF_PARSER_VARIANT          ( fbipList_,            ipVersion,
-				           ( ids(na, has_v4fbipList, init_v4fbipList,
-                                                 key(4, DTCPIPv4AddressListParser)) ) 
-				           ( ids(na, has_v6fbipList, init_v6fbipList,
-                                                 key(6, DTCPIPv6AddressListParser)) ) );
+                           ( ids(na, has_v4fbipList, init_v4fbipList,
+                                 key(4, DTCPIPv4AddressListParser)) ) 
+                           ( ids(na, has_v6fbipList, init_v6fbipList,
+                                 key(6, DTCPIPv6AddressListParser)) ) );
 
         // We define the two variant accessors ourselves so we can directly return the vector and
         // not the collection parser which contains the vector ...

@@ -44,8 +44,8 @@ public:
     bool stopForwarding();
     bool startForwarding();
 private:
-    void onRequest();	
-	bool forward_;
+    void onRequest();
+    bool forward_;
 
 };
 
