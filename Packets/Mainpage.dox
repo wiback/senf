@@ -715,8 +715,8 @@
     The definition of senf::EthernetPacket is quite straight forward. This template works for most
     simple packet types.
 
-    \see \ref senf::PacletTypeMixin
-        \ref senf::PacketTypeBase
+    \see \ref senf::PacketTypeMixin \n
+        \ref senf::PacketTypeBase \n
         \ref senf::PacketRegistry
  */
 
