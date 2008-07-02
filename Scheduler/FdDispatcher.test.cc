@@ -28,7 +28,6 @@
 
 // Custom includes
 #include <sys/types.h>
-#include <signal.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -166,6 +165,7 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
     senf::scheduler::FdManager manager;
     senf::scheduler::FIFORunner runner;
     senf::scheduler::FdDispatcher dispatcher (manager, runner);
+    manager.timeout(1000);
 
     int pid (start_server());
     BOOST_REQUIRE( pid );
@@ -187,7 +187,6 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
 
     SENF_CHECK_NO_THROW( dispatcher.add(sock, boost::bind(&callback, sock, _1),
                                         senf::scheduler::FdDispatcher::EV_READ) );
-    manager.timeout(1000);
     event = 0;
     SENF_CHECK_NO_THROW( manager.processOnce() );
     SENF_CHECK_NO_THROW( runner.run() );

@@ -29,7 +29,6 @@
 
 // Custom includes
 #include <signal.h>
-#include <setjmp.h>
 #include <map>
 #include <queue>
 #include <boost/function.hpp>
