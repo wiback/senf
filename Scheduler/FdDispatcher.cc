@@ -64,29 +64,29 @@ prefix_ void senf::scheduler::FdDispatcher::add(int fd, Callback const & cb, int
     if (events & EV_PRIO) event.FdEvent::PrioTask::cb = cb;
     if (events & EV_WRITE) event.FdEvent::WriteTask::cb = cb;
 
-     manager_.set(fd, event.activeEvents(), &event);
- }
+    manager_.set(fd, event.activeEvents(), &event);
+}
 
- prefix_ void senf::scheduler::FdDispatcher::remove(int fd, int events)
- {
-     if (events == 0)
-         return;
+prefix_ void senf::scheduler::FdDispatcher::remove(int fd, int events)
+{
+    if (events == 0)
+        return;
 
-     FdMap::iterator i (fds_.find(fd));
-     if (i == fds_.end())
-         return;
-     FdEvent & event (i->second);
+    FdMap::iterator i (fds_.find(fd));
+    if (i == fds_.end())
+        return;
+    FdEvent & event (i->second);
 
-     if (events & EV_READ) event.FdEvent::ReadTask::cb = 0;
-     if (events & EV_PRIO) event.FdEvent::PrioTask::cb = 0;
-     if (events & EV_WRITE) event.FdEvent::WriteTask::cb = 0;
+    if (events & EV_READ) event.FdEvent::ReadTask::cb = 0;
+    if (events & EV_PRIO) event.FdEvent::PrioTask::cb = 0;
+    if (events & EV_WRITE) event.FdEvent::WriteTask::cb = 0;
 
-     int activeEvents (event.activeEvents());
-     if (! activeEvents) {
-         manager_.remove(fd);
-         runner_.dequeue(static_cast<FdEvent::ReadTask*>(&i->second));
-         runner_.dequeue(static_cast<FdEvent::PrioTask*>(&i->second));
-         runner_.dequeue(static_cast<FdEvent::WriteTask*>(&i->second));
+    int activeEvents (event.activeEvents());
+    if (! activeEvents) {
+        manager_.remove(fd);
+        runner_.dequeue(static_cast<FdEvent::ReadTask*>(&i->second));
+        runner_.dequeue(static_cast<FdEvent::PrioTask*>(&i->second));
+        runner_.dequeue(static_cast<FdEvent::WriteTask*>(&i->second));
         fds_.erase(fd);
     } else
         manager_.set(fd, activeEvents, &event);

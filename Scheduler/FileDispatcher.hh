@@ -21,18 +21,18 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief FdDispatcher public header */
+    \brief FileDispatcher public header */
 
-#ifndef HH_FdDispatcher_
-#define HH_FdDispatcher_ 1
+#ifndef HH_FileDispatcher_
+#define HH_FileDispatcher_ 1
 
 // Custom includes
 #include <map>
 #include "FdManager.hh"
 #include "FIFORunner.hh"
+#include "FdDispatcher.hh"
 
-//#include "FdDispatcher.mpp"
-#include "FdDispatcher.ih"
+//#include "FileDispatcher.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -40,7 +40,7 @@ namespace scheduler {
 
     /** \brief
       */
-    class FdDispatcher
+    class FileDispatcher
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -49,55 +49,58 @@ namespace scheduler {
         typedef boost::function<void (int)> Callback;
 
         enum Events { 
-            EV_READ = FdManager::EV_READ, EV_PRIO = FdManager::EV_PRIO, EV_WRITE = FdManager::EV_WRITE,
+            EV_READ = FdManager::EV_READ, EV_WRITE = FdManager::EV_WRITE,
             EV_HUP = FdManager::EV_HUP, EV_ERR = FdManager::EV_ERR,
-            EV_ALL = FdManager::EV_READ | FdManager::EV_WRITE | FdManager::EV_PRIO
+            EV_ALL = FdManager::EV_READ | FdManager::EV_WRITE
         };
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-        
-        FdDispatcher(FdManager & manager, FIFORunner & runner);
-        ~FdDispatcher();
+
+        FileDispatcher(FdManager & manager, FIFORunner & runner);
+        ~FileDispatcher();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-
+        
         void add(int fd, Callback const & cb, int events = EV_ALL);
         void remove(int fd, int events = EV_ALL);
+
+        void prepareRun();
+
+        void timeout(int t);
+        int timeout() const;
 
     protected:
 
     private:
-        struct FdEvent 
-            : public detail::FdTask<0, FdEvent>,
-              public detail::FdTask<1, FdEvent>,
-              public detail::FdTask<2, FdEvent>,
-              public FdManager::Event
+        struct FileEvent
+            : public detail::FdTask<0, FileEvent>,
+              public detail::FdTask<1, FileEvent>
         {
-            typedef detail::FdTask<0, FdEvent> ReadTask;
-            typedef detail::FdTask<1, FdEvent> PrioTask;
-            typedef detail::FdTask<2, FdEvent> WriteTask;
+            typedef detail::FdTask<0, FileEvent> ReadTask;
+            typedef detail::FdTask<1, FileEvent> WriteTask;
 
-            virtual void signal(int events);
             int activeEvents() const;
             int events;
         };
 
-        typedef std::map<int, FdEvent> FdMap;
+        typedef std::map<int, FileEvent> FileMap;
 
-        FdMap fds_;
+        FileMap files_;
         FdManager & manager_;
         FIFORunner & runner_;
+        int managerTimeout_;
     };
+
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "FdDispatcher.cci"
-#include "FdDispatcher.ct"
-#include "FdDispatcher.cti"
+#include "FileDispatcher.cci"
+//#include "FileDispatcher.ct"
+//#include "FileDispatcher.cti"
 #endif
 
 
