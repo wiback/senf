@@ -24,7 +24,9 @@
     \brief ClockService inline non-template implementation */
 
 // Custom includes
+#include <time.h>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
+#include "../Utils/Exception.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -32,67 +34,45 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::ClockService
 
+prefix_ senf::ClockService::clock_type senf::ClockService::now()
+{
+    struct timespec spec;
+    if (clock_gettime(CLOCK_MONOTONIC, &spec) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("clock_gettime()");
+    return spec.tv_sec * 1000000000LL + spec.tv_nsec;
+}
+
 ////////////////////////////////////////
 // private members
 
-prefix_ bool senf::ClockService::checkSkew(boost::posix_time::ptime time)
-{
-    boost::posix_time::ptime h (heartbeat_); // reduce chance for race condition
-    return time < h || (time - h) > boost::posix_time::seconds(2*CheckInterval);
-}
-
-prefix_ void senf::ClockService::clockSkew(boost::posix_time::ptime time,
-                                           boost::posix_time::ptime expected)
-{
-    base_ += (time - expected);
-}
-
 prefix_ senf::ClockService::clock_type senf::ClockService::clock_m(abstime_type time)
 {
-    ///\fixme What happens, if base_ is changed in SIGALRM while reading it here ?
-
-    // Idea: Have *two* base values: one is written by the SIGALRM handler, the other is only
-    // Written by synchronous code. If they differ, we block signals, copy over and continue.  If
-    // they transiently differ because we are reading the SIGALRM value while it is being changed
-    // this does not matter: We will then still copy it over.
-
-    boost::posix_time::time_duration delta (time - base_);
-    return clock_type( delta.ticks() )
+    boost::posix_time::time_duration delta (time - baseAbstime_);
+    return baseClock_ + clock_type( delta.ticks() )
         * clock_type( 1000000000UL / boost::posix_time::time_duration::ticks_per_second() );
-}
-
-prefix_ senf::ClockService::clock_type senf::ClockService::now_m()
-{
-    // We want to make the normal case (no skew) really fast. This first 'checkSkew' *might*
-    // transiently fail if a SIGALRM is delivered in the midst of the test. updateSkew will
-    // therefore block signals and do the check again to make sure.
-    //
-    // The opposite case (the test returns 'false' even though it should return 'true') is so highly
-    // improbable that it is treated as academic. (it will be catched by the next SIGALRM)
-
-    boost::posix_time::ptime time (boost::posix_time::microsec_clock::universal_time());
-    if (checkSkew(time)) 
-        updateSkew(time);
-    
-    // 'clock' will pick up the corrected base_ value if needed.
-    return clock_m(time);
 }
 
 prefix_ senf::ClockService::abstime_type senf::ClockService::abstime_m(clock_type clock)
 {
 #ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
-    return base_ + boost::posix_time::nanoseconds(clock);
+    return baseAbstime_ + boost::posix_time::nanoseconds(clock-baseClock_);
 #else
-    return base_ + boost::posix_time::microseconds((clock+500)/1000);
+    return baseAbstime_ + boost::posix_time::microseconds((clock-baseClock_+500)/1000);
 #endif
 }
 
-// public members
-
-prefix_ senf::ClockService::clock_type senf::ClockService::now()
+prefix_ senf::ClockService::ClockService()
 {
-    return instance().now_m();
+    restart_m();
 }
+
+prefix_ void senf::ClockService::restart_m()
+{
+    baseAbstime_ = boost::posix_time::microsec_clock::universal_time();
+    baseClock_ = now();
+}
+
+// public members
 
 prefix_ senf::ClockService::abstime_type senf::ClockService::abstime(clock_type clock)
 {

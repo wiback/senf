@@ -36,19 +36,6 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace senf {
-namespace detail {
-
-    struct ClockServiceTest
-    {
-        static boost::posix_time::ptime & base() 
-            { return senf::ClockService::instance().base_; }
-        static boost::posix_time::ptime & heartbeat()
-            { return senf::ClockService::instance().heartbeat_; }
-    };
-
-}}
-
 namespace {
 
     bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
@@ -85,35 +72,18 @@ BOOST_AUTO_UNIT_TEST(clockService)
                            (t2) );
 
     t1 = t2;
-    // We shift both heartbeat() and base() back 1 minute. This is the same as
-    // moving the current time forward 1 minute.
-    boost::posix_time::ptime b (senf::detail::ClockServiceTest::base());
-    boost::posix_time::ptime h (senf::detail::ClockServiceTest::heartbeat());
-    senf::detail::ClockServiceTest::heartbeat() -= boost::posix_time::minutes(1);
-    senf::detail::ClockServiceTest::base() -= boost::posix_time::minutes(1);
 
     // Wait for SIGALRM and let the signal handler do the clock-skew detection
-    delay(senf::ClockService::CheckInterval*1000);
-
-    BOOST_CHECK_PREDICATE( is_close_pt,
-                           (b)
-                           (senf::detail::ClockServiceTest::base()) );
-    BOOST_CHECK_PREDICATE( is_close_pt,
-                           (h+boost::posix_time::seconds(senf::ClockService::CheckInterval))
-                           (senf::detail::ClockServiceTest::heartbeat()) );
+    delay(1*1000);
 
     t2 = senf::ClockService::now();
     BOOST_CHECK_PREDICATE( is_close_clock,
-                           (t1 + senf::ClockService::seconds(senf::ClockService::CheckInterval))
+                           (t1 + senf::ClockService::seconds(1))
                            (t2)
                            (senf::ClockService::milliseconds(500)) );
 
     t1 = t2;
 
-    senf::detail::ClockServiceTest::heartbeat() -= boost::posix_time::minutes(1);
-    senf::detail::ClockServiceTest::base() -= boost::posix_time::minutes(1);
-
-    // Let now() do the clock skew detection using getitimer() ...
     delay(200);
     BOOST_CHECK_PREDICATE( is_close_clock,
                            (t1 + senf::ClockService::milliseconds(200))

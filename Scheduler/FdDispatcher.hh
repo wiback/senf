@@ -58,7 +58,7 @@ namespace scheduler {
         ///\name Structors and default members
         ///@{
         
-        explicit FdDispatcher(FdManager & manager, FIFORunner & runner);
+        FdDispatcher(FdManager & manager, FIFORunner & runner);
         ~FdDispatcher();
 
         ///@}

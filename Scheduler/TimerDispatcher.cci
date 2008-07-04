@@ -21,9 +21,9 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SignalDispatcher inline non-template implementation */
+    \brief TimerDispatcher inline non-template implementation */
 
-//#include "SignalDispatcher.ih"
+//#include "TimerDispatcher.ih"
 
 // Custom includes
 #include <unistd.h>
@@ -31,30 +31,16 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::scheduler::SignalDispatcher::blockSignals()
-{
-    if (blocked_) return;
-    sigprocmask(SIG_BLOCK, &sigSet_, 0);
-    blocked_ = true;
-}
-
-prefix_ void senf::scheduler::SignalDispatcher::unblockSignals()
-{
-    if (!blocked_) return;
-    sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
-    blocked_ = false;
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::scheduler::SignalDispatcher::SignalEvent
-
-prefix_ senf::scheduler::SignalDispatcher::SignalEvent::SignalEvent(Callback cb_)
-    : cb (cb_)
+prefix_ senf::scheduler::TimerDispatcher::TimerEvent::TimerEvent(timer_id id_,
+                                                                 Callback const & cb_,
+                                                                 TimerDispatcher & dispatcher_)
+    : id (id_), cb (cb_), dispatcher (dispatcher_)
 {}
 
-prefix_ void senf::scheduler::SignalDispatcher::SignalEvent::run()
+prefix_ void senf::scheduler::TimerDispatcher::TimerEvent::run()
 {
-    cb(siginfo);
+    cb();
+    dispatcher.remove(id);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

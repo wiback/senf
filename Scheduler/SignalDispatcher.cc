@@ -41,7 +41,7 @@ prefix_ senf::scheduler::SignalDispatcher::SignalDispatcher(FdManager & manager,
 {
     SENF_ASSERT( !instance_ );
     if (pipe(sigPipe_) <0)
-        throw SystemException("pipe()");
+        SENF_THROW_SYSTEM_EXCEPTION("pipe()");
     sigemptyset(&sigSet_);
     instance_ = this;
     manager_.set(sigPipe_[0], FdManager::EV_READ, this);
@@ -49,11 +49,11 @@ prefix_ senf::scheduler::SignalDispatcher::SignalDispatcher(FdManager & manager,
 
 prefix_ senf::scheduler::SignalDispatcher::~SignalDispatcher()
 {
-    sigprocmask(SIG_UNBLOCK, & sigSet_, 0);
     for (HandlerMap::iterator i (handlers_.begin()); i != handlers_.end(); ++i) {
         ::signal(i->first, SIG_DFL);
         runner_.dequeue(&i->second);
     }
+    sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
     manager_.remove(sigPipe_[0]);
     close(sigPipe_[0]);
     close(sigPipe_[1]);
@@ -86,7 +86,7 @@ prefix_ void senf::scheduler::SignalDispatcher::add(int signal, Callback const &
         if (j->first == SIGCLD)
             act.sa_flags |= SA_NOCLDSTOP;
         if (sigaction(j->first, &act, 0) < 0)
-            throw SystemException("sigaction()");
+            SENF_THROW_SYSTEM_EXCEPTION("sigaction()");
     }
 }
 

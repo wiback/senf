@@ -21,48 +21,55 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SignalDispatcher.test unit tests */
+    \brief TimerDispatcher.test unit tests */
 
-//#include "SignalDispatcher.test.hh"
-//#include "SignalDispatcher.test.ih"
+//#include "TimerDispatcher.test.hh"
+//#include "TimerDispatcher.test.ih"
 
 // Custom includes
-#include "SignalDispatcher.hh"
+#include "TimerDispatcher.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include "../Utils//auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
+
+    bool is_close(senf::ClockService::clock_type a, senf::ClockService::clock_type b)
+    {
+        return (a<b ? b-a : a-b) < senf::ClockService::milliseconds(100);
+    }
     
     bool called = false;
-    void handler(siginfo_t const &)
+    void handler()
     {
         called = true;
     }
 
 }
 
-BOOST_AUTO_UNIT_TEST(signalDispatcher)
+BOOST_AUTO_UNIT_TEST(timerDispatcher)
 {
     senf::scheduler::FdManager manager;
     senf::scheduler::FIFORunner runner;
-    senf::scheduler::SignalDispatcher dispatcher (manager, runner);
+    senf::scheduler::TimerDispatcher dispatcher (manager, runner);
     manager.timeout(1000);
 
-    SENF_CHECK_NO_THROW( dispatcher.add(SIGUSR1, &handler) );
-    BOOST_CHECK( ! called );
-    ::kill(::getpid(), SIGUSR1);
-    sleep(1);
+    senf::ClockService::clock_type t (senf::ClockService::now());
+    senf::scheduler::TimerDispatcher::timer_id id;
+    SENF_CHECK_NO_THROW(
+        id = dispatcher.add( t + senf::ClockService::milliseconds(500), &handler ) );
     SENF_CHECK_NO_THROW( dispatcher.unblockSignals() );
     SENF_CHECK_NO_THROW( manager.processOnce() );
     SENF_CHECK_NO_THROW( dispatcher.blockSignals() );
     SENF_CHECK_NO_THROW( runner.run() );
+    senf::ClockService::clock_type t2 (senf::ClockService::now());
     BOOST_CHECK( called );
+    BOOST_CHECK_PREDICATE( is_close, (t2)(t + senf::ClockService::milliseconds(500)) );
 
-    SENF_CHECK_NO_THROW( dispatcher.remove(SIGUSR1) );
+    SENF_CHECK_NO_THROW( dispatcher.remove(id) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

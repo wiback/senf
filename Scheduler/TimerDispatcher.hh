@@ -21,18 +21,20 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SignalDispatcher public header */
+    \brief TimerDispatcher public header */
 
-#ifndef HH_SignalDispatcher_
-#define HH_SignalDispatcher_ 1
+#ifndef HH_TimerDispatcher_
+#define HH_TimerDispatcher_ 1
 
 // Custom includes
 #include <signal.h>
+#include <set>
 #include <map>
+#include "ClockService.hh"
 #include "FdManager.hh"
 #include "FIFORunner.hh"
 
-//#include "SignalDispatcher.mpp"
+//#include "TimerDispatcher.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -40,27 +42,28 @@ namespace scheduler {
 
     /** \brief
       */
-    class SignalDispatcher
+    class TimerDispatcher
         : public FdManager::Event
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef boost::function<void (siginfo_t const &)> Callback;
+        typedef boost::function<void ()> Callback;
+        typedef unsigned timer_id;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-        SignalDispatcher(FdManager & manager, FIFORunner & runner);
-        ~SignalDispatcher();
+        TimerDispatcher(FdManager & manager, FIFORunner & runner);
+        ~TimerDispatcher();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void add(int signal, Callback const & cb);
-        void remove(int signal);
+        timer_id add(ClockService::clock_type timeout, Callback const & cb);
+        void remove(timer_id id);
 
         void blockSignals();
         void unblockSignals();
@@ -68,40 +71,45 @@ namespace scheduler {
     protected:
 
     private:
-        struct SignalEvent
+        struct TimerEvent
             : public FIFORunner::TaskInfo
         {
-            explicit SignalEvent(Callback cb_);
+            TimerEvent(timer_id id_, Callback const & cb_, TimerDispatcher & dispatcher_);
             virtual void run();
 
-            siginfo_t siginfo;
+            timer_id id;
             Callback cb;
+            TimerDispatcher & dispatcher;
         };
 
         virtual void signal(int events);
         static void sigHandler(int signal, ::siginfo_t * siginfo, void *);
+        void reschedule();
 
         FdManager & manager_;
         FIFORunner & runner_;
 
-        typedef std::map<int, SignalEvent> HandlerMap;
-        HandlerMap handlers_;
+        typedef std::multimap<ClockService::clock_type, TimerEvent> TimerMap;
+        typedef std::map<int, TimerMap::iterator> TimerIdMap;
 
-        int sigPipe_[2];
+        TimerMap timers_;
+        TimerIdMap timerIdIndex_;
+        timer_id lastId_;
 
-        bool blocked_;
+        int timerPipe_[2];
         sigset_t sigSet_;
+        bool blocked_;
+        timer_t timerId_;
 
-        static SignalDispatcher * instance_;
+        static unsigned useCount_;
     };
-
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "SignalDispatcher.cci"
-//#include "SignalDispatcher.ct"
-//#include "SignalDispatcher.cti"
+#include "TimerDispatcher.cci"
+//#include "TimerDispatcher.ct"
+//#include "TimerDispatcher.cti"
 #endif
 
 

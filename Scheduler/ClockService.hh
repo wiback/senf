@@ -114,15 +114,6 @@ namespace senf {
          */
         typedef boost::posix_time::ptime abstime_type;
 
-        static unsigned const CheckInterval = 10;
-
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
-        ~ClockService();
-
-        ///@}
         ///////////////////////////////////////////////////////////////////////////
 
         static clock_type now();  ///< Return current clock value
@@ -171,30 +162,16 @@ namespace senf {
     private:
         ClockService();
 
-        void timer();
-
-        clock_type now_m();
         abstime_type abstime_m(clock_type clock);
         clock_type clock_m(abstime_type time);
-        void restart_m(bool restart = true);
+        void restart_m();
 
-        bool checkSkew(boost::posix_time::ptime time);
-        void updateSkew(boost::posix_time::ptime time);
-        void clockSkew(boost::posix_time::ptime time, boost::posix_time::ptime expected);
+        boost::posix_time::ptime baseAbstime_;
+        clock_type baseClock_;
 
-        void restartTimer(bool restart = true);
-
-        boost::posix_time::ptime base_;
-        boost::posix_time::ptime heartbeat_;
-
-        // I don't want this header to depend on the legacy C headers.
         /// Internal: ClockService private data (PIMPL idiom)
-        struct Impl;
-        boost::scoped_ptr<Impl> impl_;
 
-        friend class Impl;
 #ifndef DOXYGEN
-        friend class senf::detail::ClockServiceTest;
         friend class singleton<ClockService>;
 #endif
     };
