@@ -98,7 +98,7 @@ template <class SPolicy>
 prefix_ std::string senf::ClientSocketHandle<SPolicy>::read(unsigned limit)
 {
     std::string rv;
-    this->read(rv,limit);
+    this->read(rv, limit);
     return rv;
 }
 
@@ -122,8 +122,8 @@ senf::ClientSocketHandle<SPolicy>::readfrom(unsigned limit)
 {
     std::string rv;
     boost::value_initialized<typename SPolicy::AddressingPolicy::Address> addr;
-    this->readfrom(rv,addr.data(),limit);
-    return std::make_pair(rv,addr.data());
+    this->readfrom(rv, addr.data(), limit);
+    return std::make_pair(rv, addr.data());
 }
 
 template <class SPolicy>

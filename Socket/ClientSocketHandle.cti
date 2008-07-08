@@ -297,6 +297,7 @@ prefix_ char const * senf::ClientSocketHandle<SPolicy>::writeto(AddressParam add
 template <class SPolicy>
 prefix_ typename SPolicy::AddressingPolicy::Address
 senf::ClientSocketHandle<SPolicy>::peer()
+    const
 {
     typename SPolicy::AddressingPolicy::Address addr;
     this->peer(addr);
@@ -306,8 +307,9 @@ senf::ClientSocketHandle<SPolicy>::peer()
 template <class SPolicy>
 prefix_ void senf::ClientSocketHandle<SPolicy>::
 peer(typename SPolicy::AddressingPolicy::Address & addr)
+    const
 {
-    SPolicy::AddressingPolicy::peer(*this,addr);
+    SPolicy::AddressingPolicy::peer(*this, addr);
 }
 
 // senf::ClientSocketHandle<SPolicy>::local
@@ -315,6 +317,7 @@ peer(typename SPolicy::AddressingPolicy::Address & addr)
 template <class SPolicy>
 prefix_ typename SPolicy::AddressingPolicy::Address
 senf::ClientSocketHandle<SPolicy>::local()
+    const
 {
     typename SPolicy::AddressingPolicy::Address addr;
     this->local(addr);
@@ -324,6 +327,7 @@ senf::ClientSocketHandle<SPolicy>::local()
 template <class SPolicy>
 prefix_ void senf::ClientSocketHandle<SPolicy>::
 local(typename SPolicy::AddressingPolicy::Address & addr)
+    const
 {
     SPolicy::AddressingPolicy::local(*this,addr);
 }
@@ -332,8 +336,9 @@ local(typename SPolicy::AddressingPolicy::Address & addr)
 
 template <class SPolicy>
 prefix_ void senf::ClientSocketHandle<SPolicy>::connect(AddressParam addr)
+    const
 {
-    SPolicy::AddressingPolicy::connect(*this,addr);
+    SPolicy::AddressingPolicy::connect(*this, addr);
 }
 
 // senf::ClientSocketHandle<SPolicy>::bind
@@ -341,8 +346,9 @@ prefix_ void senf::ClientSocketHandle<SPolicy>::connect(AddressParam addr)
 template <class SPolicy>
 prefix_ void senf::ClientSocketHandle<SPolicy>::
 bind(typename boost::call_traits<typename SPolicy::AddressingPolicy::Address>::param_type addr)
+    const
 {
-    SPolicy::AddressingPolicy::bind(*this,addr);
+    SPolicy::AddressingPolicy::bind(*this, addr);
 }
 
 ////////////////////////////////////////
@@ -372,7 +378,7 @@ template <class SPolicy>
 prefix_ void senf::ClientSocketHandle<SPolicy>::state(SocketStateMap & map, unsigned lod)
 {
     map["handle"] = prettyName(typeid(*this));
-    this->body().state(map,lod);
+    this->body().state(map, lod);
 }
 
 template <class SPolicy>

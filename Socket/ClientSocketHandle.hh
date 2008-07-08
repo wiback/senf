@@ -374,18 +374,18 @@ namespace senf {
 
             \throws senf::SystemException
          */
-        void         connect      (AddressParam addr);
+        void         connect      (AddressParam addr) const;
 
         /** \brief Set local address
 
             For addressable protocols (AddressingPolicy is not NoAddressingPolicy), bind() will set
             the local address of the socket.
 
-            \param[in] addr Local socket address to asign
+            \param[in] addr Local socket address to assign
 
             \throws senf::SystemException
          */
-        void         bind         (AddressParam addr);
+        void         bind         (AddressParam addr) const;
 
         /** \brief Query remote address
 
@@ -398,8 +398,8 @@ namespace senf {
 
             \throws senf::SystemException
          */
-        Address      peer         ();
-        void         peer         (Address & addr);
+        Address      peer         () const;
+        void         peer         (Address & addr) const;
                                         ///< Query remote address
                                         /**< \see \ref peer() */
 
@@ -413,8 +413,8 @@ namespace senf {
 
             \throws senf::SystemException
          */
-        Address      local        ();
-        void         local        (Address & addr);
+        Address      local        () const;
+        void         local        (Address & addr) const;
                                         ///< Query local address
                                         /**< \see \ref local() */
 
