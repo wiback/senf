@@ -46,10 +46,7 @@ prefix_ senf::log::TimeSource::~TimeSource()
 prefix_ senf::log::time_type senf::log::SystemTimeSource::operator()()
     const
 {
-    struct ::timespec tm;
-    if (::clock_gettime(CLOCK_MONOTONIC, &tm) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("::clock_gettime()");
-    return static_cast<time_type>(tm.tv_sec)*1000000000ll+tm.tv_nsec;
+    return senf::ClockService::now();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

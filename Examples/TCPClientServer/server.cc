@@ -50,7 +50,7 @@ public:
     }
 
 private:
-    void accept(senf::Scheduler::EventId event)
+    void accept(int event)
     {
         senf::TCPv4ClientSocketHandle clientSock (serverSock.accept());
         senf::Scheduler::instance().add(
@@ -59,7 +59,7 @@ private:
             senf::Scheduler::EV_READ);
     }
 
-    void readFromClient(senf::TCPv4ClientSocketHandle clientSock, senf::Scheduler::EventId event)
+    void readFromClient(senf::TCPv4ClientSocketHandle clientSock, int event)
     {
         if (!clientSock) {
             senf::Scheduler::instance().remove(clientSock);

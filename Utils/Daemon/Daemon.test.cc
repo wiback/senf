@@ -35,6 +35,7 @@
 #include <boost/filesystem/operations.hpp>
 #include "Daemon.hh"
 #include "../Utils/Exception.hh"
+#include "../Utils/Backtrace.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -79,11 +80,19 @@ namespace {
 
     int pid;
 
+    void backtrace(int)
+    {
+        senf::backtrace(std::cerr, 100);
+        ::signal(SIGABRT, SIG_DFL);
+        ::kill(::getpid(), SIGABRT);
+    };
+
     int run(int argc, char ** argv)
     {
         pid  = ::fork();
         if (pid < 0) throw senf::SystemException("::fork()");
         if (pid == 0) {
+            signal(SIGABRT, &backtrace);
             try {
                 ::_exit(myMain(argc, argv));
             } catch (std::exception & ex) {

@@ -43,6 +43,12 @@ prefix_ void senf::console::detail::ServerManager::remove(ptr server)
     instance().servers_.erase(instance().servers_.find(server));
 }
 
+prefix_ senf::console::detail::ServerManager & senf::console::detail::ServerManager::instance()
+{
+    static ServerManager manager;
+    return manager;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NonblockingSocketSink
 

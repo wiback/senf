@@ -33,6 +33,7 @@
 #include "ClockService.hh"
 #include "FdManager.hh"
 #include "FIFORunner.hh"
+#include "../Utils/Logger/SenfLog.hh"
 
 //#include "TimerDispatcher.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -40,11 +41,20 @@
 namespace senf {
 namespace scheduler {
 
-    /** \brief
+    /** \brief Scheduler dispatcher managing timers
+
+        Timers are implemented using high-precision POSIX real-time timers. As such, the timer
+        granularity is given by clock_getres(CLOCK_MONOTONIC) which is 1ns on current linux kernels.
+
+        \implementation TimerDispatcher manages a single POSIX timer which is always programmed to
+            expire when the next scheduled timer needs to fire. The timer sends a signal (SIGALRM is
+            used). The handler writes data into a pipe which is has been added to the FdManager.
       */
     class TimerDispatcher
         : public FdManager::Event
     {
+        SENF_LOG_CLASS_AREA();
+
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
@@ -62,19 +72,35 @@ namespace scheduler {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        timer_id add(ClockService::clock_type timeout, Callback const & cb);
-        void remove(timer_id id);
+        timer_id add(std::string const & name, ClockService::clock_type timeout, 
+                     Callback const & cb);
+                                        ///< Add timer event
+                                        /**< This call adds a new timer expiring at the given point
+                                             in time.
+                                             \param[in] name descriptive name
+                                             \param[in] timeout point in time when the timer is to
+                                                 expire 
+                                             \param[in] cb callback 
+                                             \returns a \c timer_id which can be used to remove the
+                                                 timer. */
+        void remove(timer_id id);       ///< Remove timer
 
-        void blockSignals();
-        void unblockSignals();
+        void unblockSignals();          ///< Unblock internal signals
+                                        /**< Must be called before waiting for an event */
+        void blockSignals();            ///< Block internal signals
+                                        /**< Must be called directly after the FdManager returns */
+        
+        bool empty() const;             ///< \c true, if no timer is registered.
 
     protected:
 
     private:
+        /// Internal: Timer event
         struct TimerEvent
             : public FIFORunner::TaskInfo
         {
-            TimerEvent(timer_id id_, Callback const & cb_, TimerDispatcher & dispatcher_);
+            TimerEvent(timer_id id_, Callback const & cb_, TimerDispatcher & dispatcher_,
+                       std::string const & name);
             virtual void run();
 
             timer_id id;

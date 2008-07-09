@@ -34,6 +34,11 @@ namespace senf {
 namespace scheduler {
 namespace detail {
     
+    /** \brief Internal: File descriptor task
+        
+        \implementation This class allows to inherit FIFORunner::TaskInfo multiple times to add
+            multiple tasks to one event and still allows efficient access to the event class
+     */
     template <unsigned index, class Self>
     struct FdTask
         : public FIFORunner::TaskInfo

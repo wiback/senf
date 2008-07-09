@@ -66,7 +66,8 @@ BOOST_AUTO_UNIT_TEST(fileDispatcher)
     int fd (open("/dev/null", O_RDWR));
     
     senf::ClockService::clock_type t (senf::ClockService::now());
-    SENF_CHECK_NO_THROW( dispatcher.add(fd, &handler, senf::scheduler::FileDispatcher::EV_READ) );
+    SENF_CHECK_NO_THROW( dispatcher.add("testHandler", fd, &handler, 
+                                        senf::scheduler::FileDispatcher::EV_READ) );
     SENF_CHECK_NO_THROW( manager.processOnce() );
     SENF_CHECK_NO_THROW( dispatcher.prepareRun() );
     SENF_CHECK_NO_THROW( runner.run() );

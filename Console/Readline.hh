@@ -72,7 +72,7 @@ namespace detail {
         virtual void v_enablePrompt();
         virtual void v_translate(std::string & data);
 
-        void charEvent(Scheduler::EventId event);
+        void charEvent(int event);
 
         static ReadlineClientReader * instance_;
         int ch_;

@@ -141,7 +141,7 @@ namespace {
     int size;
     int event;
 
-    void callback(int fd, Scheduler::EventId ev)
+    void callback(int fd, int ev)
     {
         event = ev;
         switch (event & Scheduler::EV_ALL) {
@@ -160,8 +160,10 @@ namespace {
         Scheduler::instance().terminate();
     }
 
+    bool timeoutCalled = false;
     void timeout()
     {
+        timeoutCalled = true;
         Scheduler::instance().terminate();
     }
 
@@ -177,7 +179,7 @@ namespace {
         return handle.fd_;
     }
 
-    void handleCallback(HandleWrapper const & handle, Scheduler::EventId event)
+    void handleCallback(HandleWrapper const & handle, int event)
     {
         if (handle.tag_ != "TheTag")
             return;
@@ -191,12 +193,12 @@ namespace {
     
     ClockService::clock_type sigtime (0);
 
-    void sigusr()
+    void sigusr(siginfo_t const &)
     {
         sigtime = ClockService::now();
         Scheduler::instance().terminate();
     }
-        
+
     void delay(unsigned long milliseconds)
     {
         struct timespec ts;
@@ -204,9 +206,16 @@ namespace {
         ts.tv_nsec = (milliseconds % 1000) * 1000000;
         while (nanosleep(&ts,&ts) < 0 && errno == EINTR) ;
     }
+
+    void blockingHandler()
+    {
+        delay(1200);
+        Scheduler::instance().terminate();
+    }
+
 }
 
-BOOST_AUTO_UNIT_TEST(scheduler)
+BOOST_AUTO_UNIT_TEST(testScheduler)
 {
     int pid = start_server();
     BOOST_REQUIRE (pid);
@@ -239,15 +248,26 @@ BOOST_AUTO_UNIT_TEST(scheduler)
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "READ" );
 
+    event = Scheduler::EV_NONE;
     BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
                               ClockService::now()+ClockService::milliseconds(200),&timeout) );
     BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
                               ClockService::now()+ClockService::milliseconds(400),&timeout) );
     ClockService::clock_type t (ClockService::now());
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()-t) (ClockService::milliseconds(200)) );
+    BOOST_CHECK( timeoutCalled );
+    BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (Scheduler::instance().eventTime()) );
+    timeoutCalled = false;
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(400)) );
+    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()-t) (ClockService::milliseconds(400)) );
+    BOOST_CHECK( timeoutCalled );
+    BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
+
+    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(ClockService::now(), &blockingHandler) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+    BOOST_CHECK_EQUAL( Scheduler::instance().hangCount(), 1u );
 
     HandleWrapper handle(sock,"TheTag");
     BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,

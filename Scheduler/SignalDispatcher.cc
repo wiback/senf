@@ -68,7 +68,7 @@ prefix_ void senf::scheduler::SignalDispatcher::add(int signal, Callback const &
         return;
     }
 
-    i = handlers_.insert(std::make_pair(signal, SignalEvent(cb))).first;
+    i = handlers_.insert(std::make_pair(signal, SignalEvent(signal, cb))).first;
     sigaddset(&sigSet_, signal);
     runner_.enqueue(&i->second);
 

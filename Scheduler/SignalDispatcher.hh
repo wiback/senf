@@ -38,7 +38,16 @@
 namespace senf {
 namespace scheduler {
 
-    /** \brief
+    /** \brief Scheduler dispatcher managing UNIX signals
+
+        This dispatcher supports registering UNIX signals with the Scheduler.
+
+        \implementation SignalDispatcher provides a single signal handler which all registered
+            signals are assigned to. When a signal is received, data is written to a pipe which has
+            been added to the FdManager and this signals the event.
+
+        \todo Add signal block/unblock management to the FdManager to reduce the number of
+            setprocmask() calls
       */
     class SignalDispatcher
         : public FdManager::Event
@@ -59,19 +68,27 @@ namespace scheduler {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void add(int signal, Callback const & cb);
-        void remove(int signal);
+        void add(int signal, Callback const & cb); ///< Add signal event
+                                        /**< \param[in] signal signal number
+                                             \param[in] cb Callback */
 
-        void blockSignals();
-        void unblockSignals();
+        void remove(int signal); ///< Unregister signal event
+
+        void unblockSignals();          ///< Unblock registered signals
+                                        /**< Must be called before waiting for an event */
+        void blockSignals();            ///< Block registered signals
+                                        /**< Must be called directly after FdManager returns */
+
+        bool empty() const;             ///< \c true, if no signal is registered.
 
     protected:
 
     private:
+        ///< Internal: UNIX signal event
         struct SignalEvent
             : public FIFORunner::TaskInfo
         {
-            explicit SignalEvent(Callback cb_);
+            SignalEvent(int signal, Callback cb_);
             virtual void run();
 
             siginfo_t siginfo;

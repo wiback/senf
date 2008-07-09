@@ -51,6 +51,12 @@ prefix_ int senf::scheduler::FileDispatcher::timeout()
     return managerTimeout_;
 }
 
+prefix_ bool senf::scheduler::FileDispatcher::empty()
+    const
+{
+    return files_.empty();
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

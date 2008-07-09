@@ -129,7 +129,7 @@ namespace console {
 
         static Server & start(ServerHandle handle);
 
-        void newClient(Scheduler::EventId event);
+        void newClient(int event);
         void removeClient(Client & client);
         
         ServerHandle handle_;

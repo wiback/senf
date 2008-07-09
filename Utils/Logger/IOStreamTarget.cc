@@ -71,10 +71,10 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
     char sep (' ');
 
     for (; i != i_end; ++i) {
-        stream_ << timestamp << sep;
+        stream_ << senf::ClockService::abstime(timestamp) << sep;
         stream_ << "[" << LEVELNAMES_[level] << "]";
         if (area != "senf::log::DefaultArea")
-            stream_ << "[" << area << "]";
+            stream_ << " [" << area << "]";
         stream_ << " " << *i << "\n";
         sep = '-';
     }

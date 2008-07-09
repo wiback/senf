@@ -28,14 +28,11 @@
 #define HH_Scheduler_ 1
 
 // Custom includes
-#include <signal.h>
-#include <map>
-#include <queue>
-#include <boost/function.hpp>
-#include <boost/utility.hpp>
-#include <boost/call_traits.hpp>
-#include <boost/integer.hpp>
-#include "ClockService.hh"
+#include "../Utils/Logger/SenfLog.hh"
+#include "FdDispatcher.hh"
+#include "TimerDispatcher.hh"
+#include "SignalDispatcher.hh"
+#include "FileDispatcher.hh"
 #include "../Utils/Logger/SenfLog.hh"
 
 //#include "scheduler.mpp"
@@ -44,10 +41,10 @@
 /** \brief SENF Project namespace */
 namespace senf {
 
-    /** \brief Singleton class to manage the event loop
+    /** \brief Visible scheduler interface
 
-        The %scheduler singleton manages the central event loop. It manages and dispatches all types
-        of events managed by the scheduler library:
+        The %scheduler singleton manages access to the %scheduler library. It provides access to
+        several event dispatchers:
         \li File descriptor notifications
         \li Timeouts
         \li UNIX Signals
@@ -87,7 +84,10 @@ namespace senf {
         // e.g. in Foo::Foo() constructor:
         Scheduler::instance().add(handle_, senf::membind(&Foo::callback, this)), EV_READ)
         \endcode
-        
+
+        The handler can also be identified by an arbitrary, user specified name. This name is used
+        in error messages to identify the failing handler.
+
 
         \section sched_fd Registering file descriptors
         
@@ -125,20 +125,9 @@ namespace senf {
         Scheduler::instance().cancelTimeout(id);
         \endcode 
         Timing is based on the ClockService, which provides a high resolution and strictly
-        monotonous time source. Registering a timeout will fire the callback when the target time is
-        reached. The timer may be canceled by passing the returned \a id to cancelTimeout().
-
-        There are two parameters which adjust the exact: \a timeoutEarly and \a timeoutAdjust. \a
-        timeoutEarly is the time, a callback may be called before the deadline time is
-        reached. Setting this value below the scheduling granularity of the kernel will have the
-        %scheduler go into a <em>busy wait</em> (that is, an endless loop consuming 100% of CPU
-        recources) until the deadline time is reached! This is seldom desired. The default setting
-        of 11ms is adequate in most cases (it's slightly above the lowest linux scheduling
-        granularity). 
-
-        The other timeout scheduling parameter is \a timeoutAdjust. This value will be added to the
-        timeout value before calculating the next delay value thereby compensating for \a
-        timeoutEarly. By default, this value is set to 0 but may be changed if needed.
+        monotonous time source which again is based on POSIX timers. Registering a timeout will fire
+        the callback when the target time is reached. The timer may be canceled by passing the
+        returned \a id to cancelTimeout().
 
 
         \section sched_signals Registering POSIX/UNIX signals
@@ -155,13 +144,10 @@ namespace senf {
         A registered signal does \e not count as 'something to do'. It is therefore not possible to
         wait for signals \e only.
 
-        \todo Fix EventId parameter (probably to int) to allow |-ing without casting ...
-        
+        \todo Change the Scheduler API to use RAII. Additionally, this will remove all dynamic
+            memory allocations from the scheduler.
         \todo Fix the file support to use threads (?) fork (?) and a pipe so it works reliably even
             over e.g. NFS.
-
-        \todo Add a check in the alarm callback which is already called every x seconds to check,
-            that a single callback is not blocking.
       */
     class Scheduler
         : boost::noncopyable
@@ -181,34 +167,30 @@ namespace senf {
             \li Error flags. These additional flags may be passed to a handler to pass an error
                 condition to the handler. 
          */
-        enum EventId { 
-            EV_NONE  =  0   /**< No event */
-          , EV_READ  =  1   /**< File descriptor is readable */
-          , EV_PRIO  =  2   /**< File descriptor has OOB data */
-          , EV_WRITE =  4   /**< File descriptor is writable */
-          , EV_ALL   =  7   /**< Used to register all events at once (read/prio/write) */
-          , EV_HUP   =  8   /**< Hangup condition on file handle */
-          , EV_ERR   = 16   /**< Error condition on file handle */
+        enum EventId {
+            EV_NONE  = 0                              /**< No event */
+          , EV_READ  = scheduler::FdManager::EV_READ  /**< File descriptor is readable */
+          , EV_PRIO  = scheduler::FdManager::EV_PRIO  /**< File descriptor has OOB data */
+          , EV_WRITE = scheduler::FdManager::EV_WRITE /**< File descriptor is writable */
+          , EV_ALL   = scheduler::FdManager::EV_READ
+                     | scheduler::FdManager::EV_PRIO
+                     | scheduler::FdManager::EV_WRITE /**< Used to register all events at once
+                                                           (read/prio/write) */
+          , EV_HUP   = scheduler::FdManager::EV_HUP   /**< Hangup condition on file handle */
+          , EV_ERR   = scheduler::FdManager::EV_ERR   /**< Error condition on file handle */
         };
 
-        /** \brief Template typedef for Callback type
-
-            This is a template typedef (which does not exist in C++) that is, a template class whose
-            sole member is a typedef symbol defining the callback type given the handle type.
-
-            The Callback is any callable object taking a \c Handle and an \c EventId as argument.
-            \code
-            template <class Handle>
-            struct GenericCallback {
-                typedef boost::function<void (typename boost::call_traits<Handle>::param_type,
-                                              EventId) > Callback;
-            };
-            \endcode
-         */
-        typedef boost::function<void (EventId)> FdCallback;
+        /** \brief Callback type for file descriptor events */
+        typedef boost::function<void (int)> FdCallback;
 
         /** \brief Callback type for timer events */
         typedef boost::function<void ()> SimpleCallback;
+
+        /** \brief Callback type for signal events */
+        typedef boost::function<void (siginfo_t const &)> SignalCallback;
+
+        /** \brief Timer id type */
+        typedef scheduler::TimerDispatcher::timer_id timer_id;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -225,11 +207,6 @@ namespace senf {
             This static member is used to access the singleton instance. This member is save to
             return a correctly initialized %scheduler instance even if called at global construction
             time
-
-            \implementation This static member just defines the %scheduler as a static method
-                variable. The C++ standard then provides above guarantee. The instance will be
-                initialized the first time, the code flow passes the variable declaration found in
-                the instance() body.
          */
         static Scheduler & instance();
 
@@ -240,20 +217,29 @@ namespace senf {
         ///\{
 
         template <class Handle>
-        void add(Handle const & handle, FdCallback const & cb,
-                 int eventMask = EV_ALL); ///< Add file handle event callback
+        void add(std::string const & name, Handle const & handle, FdCallback const & cb,
+                 int eventMask = EV_ALL);  ///< Add file handle event callback
                                         /**< add() will add a callback to the %scheduler. The
                                              callback will be called for the given type of event on
                                              the given  arbitrary file-descriptor or
                                              handle-like object. If there already is a Callback
                                              registered for one of the events requested, the new
                                              handler will replace the old one.
+                                             \param[in] name descriptive name to identify the
+                                                 callback.
                                              \param[in] handle file descriptor or handle providing
                                                  the Handle interface defined above.
                                              \param[in] cb callback
                                              \param[in] eventMask arbitrary combination via '|'
                                                  operator of \ref senf::Scheduler::EventId "EventId"
                                                  designators. */
+ 
+        template <class Handle>        
+        void add(Handle const & handle, FdCallback const & cb,
+                 int eventMask = EV_ALL); ///< Add file handle event callback
+                                        /**< \see add() */
+
+
         template <class Handle>
         void remove(Handle const & handle, int eventMask = EV_ALL); ///< Remove event callback
                                         /**< remove() will remove any callback registered for any of
@@ -264,36 +250,42 @@ namespace senf {
                                              \param[in] eventMask arbitrary combination via '|'
                                                  operator of \ref senf::Scheduler::EventId "EventId"
                                                  designators. */
+
         ///\}
 
         ///\name Timeouts
         ///\{
 
-        unsigned timeout(ClockService::clock_type timeout, SimpleCallback const & cb); 
+        timer_id timeout(std::string const & name, ClockService::clock_type timeout, 
+                         SimpleCallback const & cb); 
                                         ///< Add timeout event
                                         /**< \returns timer id
+                                             \param[in] name descriptive name to identify the
+                                                 callback.
                                              \param[in] timeout timeout in nanoseconds
                                              \param[in] cb callback to call after \a timeout
                                                  milliseconds */
 
-        void cancelTimeout(unsigned id); ///< Cancel timeout \a id
+        timer_id timeout(ClockService::clock_type timeout, SimpleCallback const & cb); 
+                                        ///< Add timeout event
+                                        /**< \see timeout() */
 
+        void cancelTimeout(timer_id id); ///< Cancel timeout \a id
+
+#ifndef DOXYGEN
         ClockService::clock_type timeoutEarly() const;
-                                        ///< Fetch the \a timeoutEarly parameter
         void timeoutEarly(ClockService::clock_type v);
-                                        ///< Set the \a timeoutEarly parameter
 
         ClockService::clock_type timeoutAdjust() const;
-                                        ///< Fetch the \a timeoutAdjust parameter
         void timeoutAdjust(ClockService::clock_type v);
-                                        ///< Set the \a timeoutAdjust parameter
+#endif
 
         ///\}
 
         ///\name Signal handlers
         ///\{
         
-        void registerSignal(unsigned signal, SimpleCallback const & cb);
+        void registerSignal(unsigned signal, SignalCallback const & cb);
                                         ///< Add signal handler
                                         /**< \param[in] signal signal number to register handler for
                                              \param[in] cb callback to call whenever \a signal is
@@ -301,12 +293,6 @@ namespace senf {
 
         void unregisterSignal(unsigned signal);
                                         ///< Remove signal handler for \a signal
-
-        /// The signal number passed to registerSignal or unregisterSignal is invalid
-        struct InvalidSignalNumberException : public senf::Exception
-        { InvalidSignalNumberException() 
-              : senf::Exception("senf::Scheduler::InvalidSignalNumberException"){} };
-
 
         ///\}
 
@@ -328,92 +314,26 @@ namespace senf {
                                              delivered \e not the time it should have been delivered
                                              (in the case of timers). */
 
+        unsigned hangCount() const;
+
     protected:
 
     private:
         Scheduler();
 
         void do_add(int fd, FdCallback const & cb, int eventMask = EV_ALL);
-        void do_remove(int fd, int eventMask = EV_ALL);
+        void do_add(std::string const & name, int fd, FdCallback const & cb, 
+                    int eventMask = EV_ALL);
+        void do_remove(int fd, int eventMask);
 
-        void registerSigHandlers();
-        static void sigHandler(int signal, ::siginfo_t * siginfo, void *);
-
-#       ifndef DOXYGEN
-
-        /** \brief Descriptor event specification
-            \internal */
-        struct EventSpec
-        {
-            FdCallback cb_read;
-            FdCallback cb_prio;
-            FdCallback cb_write;
-
-            EventSpec() : file(false) {}
-
-            int epollMask() const;
-
-            bool file;
-        };
-
-        /** \brief Timer event specification
-            \internal */
-        struct TimerSpec
-        {
-            TimerSpec() : timeout(), cb() {}
-            TimerSpec(ClockService::clock_type timeout_, SimpleCallback cb_, unsigned id_)
-                : timeout(timeout_), cb(cb_), id(id_), canceled(false) {}
-
-            bool operator< (TimerSpec const & other) const
-                { return timeout > other.timeout; }
-
-            ClockService::clock_type timeout;
-            SimpleCallback cb;
-            unsigned id;
-            bool canceled;
-        };
-
-#       endif 
-
-        typedef std::map<int,EventSpec> FdTable;
-        typedef std::map<unsigned,TimerSpec> TimerMap; // sorted by id
-        typedef std::vector<unsigned> FdEraseList;
-
-#       ifndef DOXYGEN
-
-        struct TimerSpecCompare
-        {
-            typedef TimerMap::iterator first_argument_type;
-            typedef TimerMap::iterator second_argument_type;
-            typedef bool result_type;
-            
-            result_type operator()(first_argument_type a, second_argument_type b);
-        };
-
-#       endif
-
-        typedef std::priority_queue<TimerMap::iterator, std::vector<TimerMap::iterator>, 
-                                    TimerSpecCompare> TimerQueue; // sorted by time
-
-        typedef std::vector<SimpleCallback> SigHandlers;
-
-        FdTable fdTable_;
-        FdEraseList fdErase_;
-        unsigned files_;
-
-        unsigned timerIdCounter_;
-        TimerQueue timerQueue_;
-        TimerMap timerMap_;
-
-        SigHandlers sigHandlers_;
-        ::sigset_t sigset_;
-        int sigpipe_[2];
-
-        int epollFd_;
         bool terminate_;
-        ClockService::clock_type eventTime_;
-        ClockService::clock_type eventEarly_;
-        ClockService::clock_type eventAdjust_;
+        scheduler::FdManager manager_;
+        scheduler::FIFORunner runner_;
+
+        scheduler::FdDispatcher fdDispatcher_;
+        scheduler::TimerDispatcher timerDispatcher_;
+        scheduler::SignalDispatcher signalDispatcher_;
+        scheduler::FileDispatcher fileDispatcher_;
     };
 
     /** \brief Default file descriptor accessor

@@ -46,10 +46,11 @@ prefix_ senf::scheduler::FdDispatcher::~FdDispatcher()
     }
 }
 
-prefix_ void senf::scheduler::FdDispatcher::add(int fd, Callback const & cb, int events)
+prefix_ bool senf::scheduler::FdDispatcher::add(std::string const & name, int fd,
+                                                Callback const & cb, int events)
 {
     if (events == 0)
-        return;
+        return true;
     
     FdMap::iterator i (fds_.find(fd));
     if (i == fds_.end()) {
@@ -60,11 +61,28 @@ prefix_ void senf::scheduler::FdDispatcher::add(int fd, Callback const & cb, int
     }
     FdEvent & event (i->second);
 
-    if (events & EV_READ) event.FdEvent::ReadTask::cb = cb;
-    if (events & EV_PRIO) event.FdEvent::PrioTask::cb = cb;
-    if (events & EV_WRITE) event.FdEvent::WriteTask::cb = cb;
+    if (events & EV_READ) {
+        event.FdEvent::ReadTask::cb = cb;
+        event.FdEvent::ReadTask::name = name;
+    }
+    if (events & EV_PRIO) {
+        event.FdEvent::PrioTask::cb = cb;
+        event.FdEvent::PrioTask::name = name;
+    }
+    if (events & EV_WRITE) {
+        event.FdEvent::WriteTask::cb = cb;
+        event.FdEvent::WriteTask::name = name;
+    }
 
-    manager_.set(fd, event.activeEvents(), &event);
+    if (! manager_.set(fd, event.activeEvents(), &event)) {
+        runner_.dequeue(static_cast<FdEvent::ReadTask*>(&i->second));
+        runner_.dequeue(static_cast<FdEvent::PrioTask*>(&i->second));
+        runner_.dequeue(static_cast<FdEvent::WriteTask*>(&i->second));
+        fds_.erase(i);
+        return false;
+    }
+    else
+        return true;
 }
 
 prefix_ void senf::scheduler::FdDispatcher::remove(int fd, int events)
@@ -77,9 +95,18 @@ prefix_ void senf::scheduler::FdDispatcher::remove(int fd, int events)
         return;
     FdEvent & event (i->second);
 
-    if (events & EV_READ) event.FdEvent::ReadTask::cb = 0;
-    if (events & EV_PRIO) event.FdEvent::PrioTask::cb = 0;
-    if (events & EV_WRITE) event.FdEvent::WriteTask::cb = 0;
+    if (events & EV_READ) {
+        event.FdEvent::ReadTask::cb = 0;
+        event.FdEvent::ReadTask::name.clear();
+    }
+    if (events & EV_PRIO) {
+        event.FdEvent::PrioTask::cb = 0;
+        event.FdEvent::PrioTask::name.clear();
+    }
+    if (events & EV_WRITE) {
+        event.FdEvent::WriteTask::cb = 0;
+        event.FdEvent::WriteTask::name.clear();
+    }
 
     int activeEvents (event.activeEvents());
     if (! activeEvents) {
@@ -106,7 +133,7 @@ prefix_ void senf::scheduler::FdDispatcher::FdEvent::signal(int e)
     if (events & EV_WRITE)
         WriteTask::runnable = true;
 
-    if (events & (EV_ERR | EV_HUP) && ! events & (EV_READ | EV_PRIO | EV_WRITE)) {
+    if ((events & (EV_ERR | EV_HUP)) && ! (events & (EV_READ | EV_PRIO | EV_WRITE))) {
         if (ReadTask::cb) ReadTask::runnable = true;
         if (PrioTask::cb) PrioTask::runnable = true;
         if (WriteTask::cb) WriteTask::runnable = true;

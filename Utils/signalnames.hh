@@ -21,44 +21,29 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief FIFORunner inline non-template implementation */
+    \brief signalnames public header */
 
-//#include "FIFORunner.ih"
+#ifndef HH_signalnames_
+#define HH_signalnames_ 1
 
 // Custom includes
-#ifdef SENF_DEBUG
-#include <sstream>
-#include "../Utils/Backtrace.hh"
-#endif
+#include <string>
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "signalnames.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-prefix_ senf::scheduler::FIFORunner::TaskInfo::TaskInfo()
-    : runnable (false)
-{}
+namespace senf {
 
-prefix_ senf::scheduler::FIFORunner::TaskInfo::~TaskInfo()
-{}
+    std::string const & signalName(int signal);
 
-prefix_ void senf::scheduler::FIFORunner::enqueue(TaskInfo * task)
-{
-    tasks_.push_back(*task);
-#ifdef SENF_DEBUG
-    std::stringstream ss;
-    backtrace(ss, 32);
-    task->backtrace = ss.str();
-#endif
 }
 
-prefix_ unsigned senf::scheduler::FIFORunner::hangCount()
-    const
-{
-    return hangCount_;
-}
 
-///////////////////////////////cci.e///////////////////////////////////////
-#undef prefix_
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "signalnames.cci"
+//#include "signalnames.ct"
+//#include "signalnames.cti"
+#endif
 
 
 // Local Variables:

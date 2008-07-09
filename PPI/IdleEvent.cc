@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "../Scheduler/Scheduler.hh"
+#include "../Utils/Logger/SenfLog.hh"
 
 //#include "IdleEvent.mpp"
 #define prefix_

@@ -27,6 +27,7 @@
 
 // Custom includes
 #include <unistd.h>
+#include "../Utils/signalnames.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
@@ -45,12 +46,20 @@ prefix_ void senf::scheduler::SignalDispatcher::unblockSignals()
     blocked_ = false;
 }
 
+prefix_ bool senf::scheduler::SignalDispatcher::empty()
+    const
+{
+    return handlers_.empty();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::scheduler::SignalDispatcher::SignalEvent
 
-prefix_ senf::scheduler::SignalDispatcher::SignalEvent::SignalEvent(Callback cb_)
+prefix_ senf::scheduler::SignalDispatcher::SignalEvent::SignalEvent(int signal, Callback cb_)
     : cb (cb_)
-{}
+{
+    name = signalName(signal);
+}
 
 prefix_ void senf::scheduler::SignalDispatcher::SignalEvent::run()
 {

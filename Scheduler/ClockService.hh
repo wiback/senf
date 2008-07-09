@@ -43,55 +43,21 @@ namespace senf {
     namespace detail { class ClockServiceTest; }
 #endif
 
-    // Implementation note:
+    // Implementation note: The clock value is represented as a 64bit unsigned integer number of
+    // nanosecods based on the CLOCK_MONOTONIC POSIX clock.
     //
-    // The clock value is represented as a 64bit unsigned integer number of nanosecods elapsed since
-    // the construction of the ClockService object. 
-    // 
-    // The implementation must provide two features:
-    // a) It must reliably detect clock changes
-    // b) In case of a clock change a reasonably accurate fallback clock value must be provided
-    //
-    // We do this using setitimer/getitimer. We setup an interval timer sending SIGALRM whenever
-    // CheckInverval seconds have elapsed.
-    //
-    // On every SIGALRM signal we save the current value of gettimeofday(). If this new value is
-    // substantially different from the currently saved value + CheckInterval, the clock has been
-    // changed.
-    //
-    // Whenever the current clock value is requested using now(), the current gettimeofday() value
-    // is compared with the saved value. If the difference is substantially more than CheckInterval,
-    // the clock has been changed.
-    //
-    // This provides clock skew detection. If clock skew is detected, we need to move base_ by the
-    // amount the time has been changed. To do this we need an as accurate as possible approximation
-    // of the expected current time value. We need to differentiate two cases:
-    //
-    // a) Clock skew detected within now()
-    //
-    // In this case, we use getitimer() to find the time remaining in the timer. Using this value
-    // and the saved gettimeofday() value we can adjust base_ accordingly.
-    //
-    // b) Clock skew detected in the signal handler
-    //
-    // In this case we use the saved gettimeofday() value + CheckInterval to adjust base_.
+    // To allow conversion between clock value and absolute time, the ClockService samples the
+    // absolute current time and the clock value when the conversion is performed. This is done at
+    // most once per second on a if-needed basis.
     
     /** \brief Reliable high precision monotonous clock source
 
         The ClockService provides a highly accurate monotonous clock source based on
         gettimeofday(). However, it takes additional precautions to detect clock skew.
 
-        \implementation We use a mix of static and non-static members to achieve high performance
-            in the normal case (no clock skew) and still encapsulate the dependency on legacy C
-            headers. Using the senf::singleton mixin ensures, that the instance is constructed
-            before main even when instance() is not called.
-
-        \bug There is a deadlock condition between ClockService and the streaming of Boost.DateTime
-            values: Boost.DateTime seems to call tzset() whenever writing a date/time value (ugh)
-            and since tzset changes basic date/time values, it seems to block gettimeofday() which
-            leads to the SIGLARM handler blocking indefinitely. Resolution either a) find out, why
-            tzset() of all functions is called or b) move the ClockService heartbeat functionality
-            into the Scheduler.
+        \implementation The funny mixture of static and non-static members stems from the old
+            implementation based on interval timers and gettimeofday(). The current implementation
+            usses POSIX clocks and is much simpler and more precise.
       */
     class ClockService
         : singleton<ClockService>
@@ -106,6 +72,11 @@ namespace senf {
             nanoseconds relative to some implementation defined reference time.
          */
         typedef boost::int_fast64_t clock_type;
+
+        /** \brief Supplementary integer type
+
+            This type is used to represent varies supplementary values (e.g. number of microseconds)
+         */
         typedef boost::int_fast64_t int64_type;
 
         /** \brief Absolute time data type
@@ -157,7 +128,10 @@ namespace senf {
         static int64_type in_hours(clock_type v); ///< Convert \a v to hours
         static int64_type in_days(clock_type v); ///< Convert \a v to days
 
-        static void restart();
+        static void restart(); ///< Force re-syncronisation of abstime and clock
+                                        /**< Calling the member should never be necessary since
+                                             abstime() / clock() automatically call restart() if
+                                             needed */
 
     private:
         ClockService();

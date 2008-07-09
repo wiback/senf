@@ -33,14 +33,17 @@
 
 prefix_ senf::scheduler::TimerDispatcher::TimerEvent::TimerEvent(timer_id id_,
                                                                  Callback const & cb_,
-                                                                 TimerDispatcher & dispatcher_)
+                                                                 TimerDispatcher & dispatcher_,
+                                                                 std::string const & n)
     : id (id_), cb (cb_), dispatcher (dispatcher_)
-{}
-
-prefix_ void senf::scheduler::TimerDispatcher::TimerEvent::run()
 {
-    cb();
-    dispatcher.remove(id);
+    name = n;    
+}
+
+prefix_ bool senf::scheduler::TimerDispatcher::empty()
+    const
+{
+    return timers_.empty();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -56,6 +56,7 @@ prefix_ senf::scheduler::TimerDispatcher::TimerDispatcher(FdManager & manager,
     }
 
     struct sigevent ev;
+    ::memset(&ev, 0, sizeof(ev));
     ev.sigev_notify = SIGEV_SIGNAL;
     ev.sigev_signo = SIGALRM;
     ev.sigev_value.sival_ptr = this;
@@ -84,10 +85,12 @@ prefix_ senf::scheduler::TimerDispatcher::~TimerDispatcher()
 }
 
 prefix_ senf::scheduler::TimerDispatcher::timer_id
-senf::scheduler::TimerDispatcher::add(ClockService::clock_type timeout, Callback const & cb)
+senf::scheduler::TimerDispatcher::add(std::string const & name,
+                                      ClockService::clock_type timeout, Callback const & cb)
 {
     while (timerIdIndex_.find(++lastId_) != timerIdIndex_.end()) ;
-    TimerMap::iterator i (timers_.insert(std::make_pair(timeout, TimerEvent(lastId_, cb, *this))));
+    TimerMap::iterator i (
+        timers_.insert(std::make_pair(timeout, TimerEvent(lastId_, cb, *this, name))));
     timerIdIndex_.insert(std::make_pair(lastId_, i));
     runner_.enqueue(&(i->second));
     if (! blocked_)
@@ -132,7 +135,7 @@ prefix_ void senf::scheduler::TimerDispatcher::signal(int events)
 
     TimerMap::iterator i (timers_.begin());
     TimerMap::iterator const i_end (timers_.end());
-    ClockService::clock_type now (ClockService::now());
+    ClockService::clock_type now (manager_.eventTime());
     for (; i != i_end && i->first <= now ; ++i)
         i->second.runnable = true;
 }
@@ -152,20 +155,39 @@ prefix_ void senf::scheduler::TimerDispatcher::sigHandler(int signal, ::siginfo_
 prefix_ void senf::scheduler::TimerDispatcher::reschedule()
 {
     struct itimerspec timer;
+    memset(&timer, 0, sizeof(timer));
     timer.it_interval.tv_sec = 0;
     timer.it_interval.tv_nsec = 0;
     if (timers_.empty()) {
+        SENF_LOG( (senf::log::VERBOSE)("Timer disabled") );
         timer.it_value.tv_sec = 0;
         timer.it_value.tv_nsec = 0;
     }
     else {
         ClockService::clock_type next (timers_.begin()->first);
+        if (next <= 0)
+            next = 1;
         timer.it_value.tv_sec = ClockService::in_seconds(next);
         timer.it_value.tv_nsec = ClockService::in_nanoseconds(
             next - ClockService::seconds(timer.it_value.tv_sec));
+        SENF_LOG( (senf::log::VERBOSE)("Next timeout scheduled @" << timer.it_value.tv_sec << "." 
+                   << std::setw(9) << std::setfill('0') << timer.it_value.tv_nsec) );
     }
     if (timer_settime(timerId_, TIMER_ABSTIME, &timer, 0)<0)
         SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::TimerDispatcher::TimerEvent
+
+prefix_ void senf::scheduler::TimerDispatcher::TimerEvent::run()
+{
+    Callback savedCb (cb);
+    dispatcher.remove(id);
+    // The member is now running WITHOUT AN OBJECT ... that has been destroyed above !!!!!!  On the
+    // other hand, if we do things the other way round, we have no idea, whether the callback might
+    // explicitly remove us and we have the same problem then ...
+    savedCb();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

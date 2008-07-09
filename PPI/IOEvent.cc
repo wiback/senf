@@ -51,7 +51,7 @@ prefix_ void senf::ppi::IOEvent::v_disable()
     Scheduler::instance().remove(fd_, Scheduler::EventId(events_));
 }
 
-prefix_ void senf::ppi::IOEvent::cb(Scheduler::EventId event)
+prefix_ void senf::ppi::IOEvent::cb(int event)
 {
     if ((event & ~events_) != 0) {
         if (event & Err)

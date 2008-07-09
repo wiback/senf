@@ -60,16 +60,26 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
     senf::ClockService::clock_type t (senf::ClockService::now());
     senf::scheduler::TimerDispatcher::timer_id id;
     SENF_CHECK_NO_THROW(
-        id = dispatcher.add( t + senf::ClockService::milliseconds(500), &handler ) );
+        id = dispatcher.add( "testTimer", t + senf::ClockService::milliseconds(500), &handler ) );
     SENF_CHECK_NO_THROW( dispatcher.unblockSignals() );
     SENF_CHECK_NO_THROW( manager.processOnce() );
     SENF_CHECK_NO_THROW( dispatcher.blockSignals() );
     SENF_CHECK_NO_THROW( runner.run() );
     senf::ClockService::clock_type t2 (senf::ClockService::now());
     BOOST_CHECK( called );
-    BOOST_CHECK_PREDICATE( is_close, (t2)(t + senf::ClockService::milliseconds(500)) );
+    BOOST_CHECK_PREDICATE( is_close, (t2-t)(senf::ClockService::milliseconds(500)) );
 
     SENF_CHECK_NO_THROW( dispatcher.remove(id) );
+
+    called=false;
+    t = senf::ClockService::now();
+    SENF_CHECK_NO_THROW( dispatcher.add( "testTimer", t, &handler ) );
+    SENF_CHECK_NO_THROW( dispatcher.unblockSignals() );
+    SENF_CHECK_NO_THROW( manager.processOnce() );
+    SENF_CHECK_NO_THROW( dispatcher.blockSignals() );
+    SENF_CHECK_NO_THROW( runner.run() );
+    BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
+    BOOST_CHECK( called );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

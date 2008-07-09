@@ -43,6 +43,7 @@
 #include "../Exception.hh"
 #include "../membind.hh"
 #include "../Backtrace.hh"
+#include "../signalnames.hh"
 
 // #define __USE_GNU
 #include <ucontext.h>
@@ -487,19 +488,9 @@ prefix_ bool senf::Daemon::pidfileCreate()
 namespace {
     void fatalSignalsHandler(int sig, ::siginfo_t * info, void * arg)
     {
-        static char const * const signames[] = {
-            "", 
-            "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", 
-            "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", 
-            "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", 
-            "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGIO", 
-            "SIGPWR", "SIGSYS" };
-
         // ::ucontext_t * ucontext = static_cast<ucontext_t*>(arg);
-        std::cerr << "\n" << "Signal " << sig;
-        if (unsigned(sig) < sizeof(signames) / sizeof(signames[0]))
-            std::cerr << " (" << signames[unsigned(sig)] << ")";
-        std::cerr << " received\n";
+        std::cerr << "\n" << "Signal " << senf::signalName(sig) << '(' << sig << ')'
+                  << " received\n";
 
         if (sig == SIGSEGV)
             std::cerr << "Invalid memory access at " << info->si_addr << "\n";
@@ -605,7 +596,7 @@ prefix_ void senf::detail::DaemonWatcher::pipeClosed(int id)
     }
 }
 
-prefix_ void senf::detail::DaemonWatcher::sigChld()
+prefix_ void senf::detail::DaemonWatcher::sigChld(siginfo_t const &)
 {
     sigChld_ = true;
     if (coutpipe_ == -1 && cerrpipe_ == -1)
@@ -658,7 +649,7 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::addTarget(int fd)
     targets_.push_back(target);
 }
 
-prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(Scheduler::EventId event)
+prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(int event)
 {
     char buf[1024];
     int n (0);
@@ -692,7 +683,7 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(Scheduler::EventId
     buffer_.insert(buffer_.end(), buf, buf+n);
 }
 
-prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(Scheduler::EventId event,
+prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(int event,
                                                                Targets::iterator target)
 {    
     if (event != Scheduler::EV_WRITE) {

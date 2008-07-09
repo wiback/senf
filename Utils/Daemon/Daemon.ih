@@ -70,8 +70,8 @@ namespace detail {
             };
             typedef std::list<Target> Targets;
 
-            void readData(Scheduler::EventId event);
-            void writeData(Scheduler::EventId event, Targets::iterator target);
+            void readData(int event);
+            void writeData(int event, Targets::iterator target);
 
             Buffer buffer_;
             int src_;
@@ -82,7 +82,7 @@ namespace detail {
         };
         
         void pipeClosed(int id);
-        void sigChld();
+        void sigChld(siginfo_t const &);
         void childDied();
         void childOk();
 

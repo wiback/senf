@@ -38,7 +38,9 @@
 namespace senf {
 namespace scheduler {
 
-    /** \brief
+    /** \brief Scheduler dispatcher managing poll-able file descriptors
+
+        File descriptors are added directly to the event loop.
       */
     class FdDispatcher
     {
@@ -64,12 +66,27 @@ namespace scheduler {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void add(int fd, Callback const & cb, int events = EV_ALL);
-        void remove(int fd, int events = EV_ALL);
+        bool add(std::string const & name, int fd, Callback const & cb, int events = EV_ALL);
+                                        ///< Add file descriptor callback
+                                        /**< There is always one active callback for each
+                                             combination of file descriptor and event. Registering a
+                                             new callback will overwrite the old callback.
+                                             \param[in] name descriptive name
+                                             \param[in] fd file descriptor
+                                             \param[in] cb callback
+                                             \param[in] events Events to call \a cb for */
+
+        void remove(int fd, int events = EV_ALL); ///< Remove callback
+                                        /**< \param[in] fd file descriptor
+                                             \param[in] events Events for which to remove the
+                                                 callback */
+        
+        bool empty() const;             ///< \c true, if no file descriptors are registered.
 
     protected:
 
     private:
+        /// Internal: File descriptor event
         struct FdEvent 
             : public detail::FdTask<0, FdEvent>,
               public detail::FdTask<1, FdEvent>,

@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "Poller.hh"
+#include "ClockService.hh"
 
 //#include "FdManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -35,7 +36,21 @@
 namespace senf {
 namespace scheduler {
 
-    /** \brief
+    /** \brief Manage file descriptor event processing
+
+        The FdManager is the internal class which manages all events (all events need to somehow be
+        made accessible via a file descriptor). File descriptors are added or removed from the
+        FdManager which then allows waiting until an event occurs on one of the descriptors.
+
+        Registered events must be derived from FdManager::Event. The FdManager does \e not manage
+        the event classes, it just manages pointers to externally owned events (the events are owned
+        by the respective dispatchers). 
+
+        When an event is posted, it's \c signal() member is called. However, this call will \e not
+        execute the user callback registered for the event, it will just mark the relevant tasks as
+        runnable.
+
+        \implementation
       */
     class FdManager
     {
@@ -43,9 +58,10 @@ namespace scheduler {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        ///< Event baseclass
         struct Event {
             virtual ~Event();
-            virtual void signal(int events) = 0;
+            virtual void signal(int events) = 0; ///< Called when the given event is posted
         };
 
         enum Events { 
@@ -57,21 +73,41 @@ namespace scheduler {
         ///\name Structors and default members
         ///@{
 
+        FdManager();
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void set(int fd, int events, Event * entry);
-        void remove(int fd);
+        bool set(int fd, int events, Event * entry); ///< Set file descriptor event mask
+                                        /**< This sets the event mask for \a fd to \a events which
+                                             is a combination of values from the \c Events enum. If
+                                             \a fd is already registered, the registration is
+                                             changed to conform to the parameters passed, otherwise
+                                             a new registration is added.
+                                             \param[in] fd file descriptor
+                                             \param[in] events events to register for
+                                             \param[in] entry event to signal 
+                                             \returns \c true, if \a fd supports polling, \c false
+                                                 otherwise */
+        void remove(int fd);            ///< Remove \a fd from the manager
 
-        void timeout(int t);
-        int timeout() const;
+        void timeout(int t);            ///< Set event timeout
+                                        /**< proceseOnce() will wait for max \a t milliseconds for
+                                             an event to occur. If set to -1, processOnce() will
+                                             wait forever. */
+        int timeout() const;            ///< Get  timeout in milliseconds
 
-        void processOnce();
+        void processOnce();             ///< Wait for events
+                                        /**< This call waits until at least one event is posted but
+                                             no longer than the current timeout(). */
+
+        ClockService::clock_type eventTime() const; ///< Time of last event
 
     protected:
 
     private:
         Poller<Event> poller_;
+        senf::ClockService::clock_type eventTime_;
     };
 
 }}

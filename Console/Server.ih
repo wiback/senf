@@ -42,7 +42,6 @@ namespace console {
 namespace detail {
 
     class ServerManager
-        : public senf::singleton<ServerManager>
     {
     public:
         typedef boost::intrusive_ptr<Server> ptr;
@@ -52,6 +51,8 @@ namespace detail {
     private:
         static void add(ptr server);
         static void remove(ptr server);
+
+        static ServerManager & instance();
 
         typedef std::set<ptr> Servers;
         Servers servers_;
@@ -170,7 +171,7 @@ namespace detail {
         virtual void v_enablePrompt();
         virtual void v_translate(std::string & data);
 
-        void newData(senf::Scheduler::EventId event);
+        void newData(int event);
 
         SchedulerBinding binding_;
         std::string buffer_;

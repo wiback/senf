@@ -198,7 +198,7 @@ prefix_ void senf::console::detail::ReadlineClientReader::v_translate(std::strin
     boost::replace_all(data, "\xff", "\xff\xff");
 }
 
-prefix_ void senf::console::detail::ReadlineClientReader::charEvent(Scheduler::EventId event)
+prefix_ void senf::console::detail::ReadlineClientReader::charEvent(int event)
 {
     char ch;
     if (event != Scheduler::EV_READ || handle().read(&ch, &ch+1) <= &ch) {

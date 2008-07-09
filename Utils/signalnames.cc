@@ -21,21 +21,35 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Dispatcher inline non-template implementation */
+    \brief signalnames non-inline non-template implementation */
 
-//#include "Dispatcher.ih"
+#include "signalnames.hh"
+//#include "signalnames.ih"
 
 // Custom includes
+#include <boost/format.hpp>
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "signalnames.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::scheduler::Dispatcher::Dispatcher()
-    : fdDispatcher_ (fdManager_, runner_)
-{}
+prefix_ std::string const & senf::signalName(int signal)
+{
+    static std::string const names[] = {
+        "<unknown>", 
+        "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", 
+        "SIGKILL", "SIGUSR1", "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", 
+        "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP", "SIGTTIN", "SIGTTOU", 
+        "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGIO", 
+        "SIGPWR", "SIGSYS" };
 
-///////////////////////////////cci.e///////////////////////////////////////
+    return names[
+        (signal <= 0 || signal > int(sizeof(names)/sizeof(names[0]))) ? 0 : signal ];
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "signalnames.mpp"
 
 
 // Local Variables:

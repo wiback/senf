@@ -38,7 +38,13 @@
 namespace senf {
 namespace scheduler {
 
-    /** \brief
+    /** \brief Epoll abstraction
+
+        This class provides a more convenient interface to the epoll() API. File descriptors are
+        registered with pointers to a parameterized event type. After waiting for an event, the
+        Poller allows to iterate over the event instances for all posted events.
+
+        \tparam Value Event type
       */
     template <class Value>
     class Poller
@@ -75,12 +81,17 @@ namespace scheduler {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        bool set(int fd, int events, Value * data);
-        void remove(int fd);
-        range wait();
+        bool set(int fd, int events, Value * data); ///< Set file descriptor event data and mask
+                                        /**< The Poller does \e not own \a data. The value is owned
+                                             by some external entity (the dispatcher to be more
+                                             precise). */
+        void remove(int fd);            ///< Remove file descriptor
+        range wait();                   ///< Wait for one event
+                                        /**< \returns a range of iterators which iterate over the
+                                             data values registered with the event */
         
-        void timeout(int t);
-        int timeout() const;
+        void timeout(int t);            ///< Set event timeout to \a t milliseconds
+        int timeout() const;            ///< Current event timeout
 
     private:
         int epollFd_;

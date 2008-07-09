@@ -38,7 +38,14 @@
 namespace senf {
 namespace scheduler {
 
-    /** \brief
+    /** \brief Scheduler dispatcher managing disc files
+
+        This dispatcher manages file descriptors which are connected to disc files. Since disc files
+        do not support select() / poll() / epoll(), they are considered to be always ready (which is
+        especially untrue for remote files e.g. vie NFS).
+
+        The FileDispatcher will change the FdManager's event timeout value to 0 (from -1) whenever
+        there is at least one file registered.
       */
     class FileDispatcher
     {
@@ -64,17 +71,37 @@ namespace scheduler {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
         
-        void add(int fd, Callback const & cb, int events = EV_ALL);
+        void add(std::string const & name, int fd, Callback const & cb, int events = EV_ALL);
+                                        ///< Add file descriptor callback
+                                        /**< There is always one active callback for each
+                                             combination of file descriptor and event. Registering a
+                                             new callback will overwrite the old callback.
+                                             \param[in] name descriptive name
+                                             \param[in] fd file descriptor
+                                             \param[in] cb callback
+                                             \param[in] events Events to call \a cb for */
+
         void remove(int fd, int events = EV_ALL);
+                                        /**< \param[in] fd file descriptor
+                                             \param[in] events Events for which to remove the
+                                                 callback */
 
-        void prepareRun();
+        void prepareRun();              ///< Prepare tasks
+                                        /**< This must be called after the FdManager returns before
+                                             running the runnable tasks. */
 
-        void timeout(int t);
-        int timeout() const;
+        void timeout(int t);            ///< Change FdManager timeout
+                                        /**< Since the FileDispatcher must be able to change the
+                                             timeout value, the value must be set here and not
+                                             directly in the FdManager. */
+        int timeout() const;            ///< Retrieve current timeout value
+
+        bool empty() const;             ///< \c true, if no files are registered.
 
     protected:
 
     private:
+        /// Internal: Disk file event
         struct FileEvent
             : public detail::FdTask<0, FileEvent>,
               public detail::FdTask<1, FileEvent>

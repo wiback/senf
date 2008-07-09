@@ -185,8 +185,8 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
         BOOST_FAIL("connect");
     }
 
-    SENF_CHECK_NO_THROW( dispatcher.add(sock, boost::bind(&callback, sock, _1),
-                                        senf::scheduler::FdDispatcher::EV_READ) );
+    BOOST_CHECK( dispatcher.add("testHandler", sock, boost::bind(&callback, sock, _1),
+                                senf::scheduler::FdDispatcher::EV_READ) );
     event = 0;
     SENF_CHECK_NO_THROW( manager.processOnce() );
     SENF_CHECK_NO_THROW( runner.run() );
@@ -197,8 +197,8 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
 
     strcpy(buffer,"WRITE");
     size=5;
-    SENF_CHECK_NO_THROW( dispatcher.add(sock, boost::bind(&callback, sock, _1),
-                                        senf::scheduler::FdDispatcher::EV_WRITE) );
+    BOOST_CHECK( dispatcher.add("testHandler", sock, boost::bind(&callback, sock, _1),
+                                senf::scheduler::FdDispatcher::EV_WRITE) );
     event = 0;
     sleep(1);
     SENF_CHECK_NO_THROW( manager.processOnce() );

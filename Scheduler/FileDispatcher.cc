@@ -47,7 +47,8 @@ prefix_ senf::scheduler::FileDispatcher::~FileDispatcher()
     }
 }
 
-prefix_ void senf::scheduler::FileDispatcher::add(int fd, Callback const & cb, int events)
+prefix_ void senf::scheduler::FileDispatcher::add(std::string const & name, int fd,
+                                                  Callback const & cb, int events)
 {
     if (events == 0)
         return;
@@ -60,8 +61,14 @@ prefix_ void senf::scheduler::FileDispatcher::add(int fd, Callback const & cb, i
     }
     FileEvent & event (i->second);
 
-    if (events & EV_READ) event.FileEvent::ReadTask::cb = cb;
-    if (events & EV_WRITE) event.FileEvent::WriteTask::cb = cb;
+    if (events & EV_READ) {
+        event.FileEvent::ReadTask::cb = cb;
+        event.FileEvent::ReadTask::name = name;
+    }
+    if (events & EV_WRITE) {
+        event.FileEvent::WriteTask::cb = cb;
+        event.FileEvent::WriteTask::name = name;
+    }
     
     manager_.timeout(0);
 }

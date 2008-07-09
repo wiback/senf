@@ -45,6 +45,10 @@ namespace {
 
 }
 
+#if 0
+// We can't test this when testing the Scheduler since the Scheduler instance
+// already uses the only SignalDispatcher instance allowed ...
+
 BOOST_AUTO_UNIT_TEST(signalDispatcher)
 {
     senf::scheduler::FdManager manager;
@@ -64,6 +68,8 @@ BOOST_AUTO_UNIT_TEST(signalDispatcher)
 
     SENF_CHECK_NO_THROW( dispatcher.remove(SIGUSR1) );
 }
+
+#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

@@ -27,6 +27,7 @@
 #define HH_FIFORunner_ 1
 
 // Custom includes
+#include <signal.h>
 #include <boost/utility.hpp>
 #include "../boost/intrusive/ilist.hpp"
 #include "../boost/intrusive/ilist_hook.hpp"
@@ -37,7 +38,14 @@
 namespace senf { 
 namespace scheduler {
 
-    /** \brief
+    /** \brief Task execution scheduler
+
+        The FIFORunner implements a simple FIFO scheduler for callback tasks. All tasks are held in
+        a queue. Whenever a task is run, it is moved to the end of the queue. Running the queue will
+        run all tasks which have been marked runnable. 
+
+        When running a task, it's runnable flag is always reset. The flag is set whenever an event
+        is posted for the task.
       */
     class FIFORunner
         : boost::noncopyable
@@ -55,14 +63,26 @@ namespace scheduler {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        /** \brief Task structure
+
+            TaskInfo is the base-class for all tasks.
+         */
         struct TaskInfo 
             : public TaskListBase
         {
             TaskInfo();
             virtual ~TaskInfo();
 
-            bool runnable;
-            virtual void run() = 0;
+            bool runnable;              ///< Runnable flag
+                                        /**< This must be set to \c true when the task is
+                                             runnable. It is reset automatically when the task is
+                                             run. */
+
+            std::string name;           ///< Descriptive task name
+#       ifdef SENF_DEBUG
+            std::string backtrace;
+#       endif
+            virtual void run() = 0;     ///< Called to run the task
         };
 
         ///////////////////////////////////////////////////////////////////////////
@@ -70,20 +90,35 @@ namespace scheduler {
         ///@{
 
         FIFORunner();
+        ~FIFORunner();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void enqueue(TaskInfo * task);
-        void dequeue(TaskInfo * task);
+        void enqueue(TaskInfo * task);  ///< Add task to queue
+        void dequeue(TaskInfo * task);  ///< Remove task from queue
         
-        void run();
+        void run();                     ///< Run queue
+
+        unsigned hangCount() const;     ///< Number of task expirations
+                                        /**< The FIFORunner manages a watchdog which checks, that a
+                                             single task does not run continuously for a longer time
+                                             or block. If a task runs for more than 1s, a warning is
+                                             printed  and the hangCount is increased. */
 
     protected:
 
     private:
+        static void watchdog(int, siginfo_t *, void *);
+
         TaskList tasks_;
         TaskList::iterator next_;
+        int watchdogId_;
+        std::string runningName_;
+#   ifdef SENF_DEBUG
+        std::string runningBacktrace_;
+#   endif
+        unsigned hangCount_;
     };
 
 

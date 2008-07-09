@@ -27,16 +27,50 @@
 //#include "FIFORunner.ih"
 
 // Custom includes
+#include <signal.h>
+#include <time.h>
+#include "../Utils/Exception.hh"
 
 //#include "FIFORunner.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+prefix_ senf::scheduler::FIFORunner::FIFORunner()
+    : tasks_ (), next_ (tasks_.end()), hangCount_ (0)
+{
+    struct sigevent ev;
+    ::memset(&ev, 0, sizeof(ev));
+    ev.sigev_notify = SIGEV_SIGNAL;
+    ev.sigev_signo = SIGURG;
+    ev.sigev_value.sival_ptr = this;
+    if (timer_create(CLOCK_MONOTONIC, &ev, &watchdogId_) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("timer_create()");
+
+    struct sigaction sa;
+    ::memset(&sa, 0, sizeof(sa));
+    sa.sa_sigaction = &watchdog;
+    sa.sa_flags = SA_SIGINFO;
+    if (sigaction(SIGURG, &sa, 0) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("sigaction()");
+
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGURG);
+    if (sigprocmask(SIG_UNBLOCK, &mask, 0) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("sigprocmask()");
+}
+
+prefix_ senf::scheduler::FIFORunner::~FIFORunner()
+{
+    timer_delete(watchdogId_);
+    signal(SIGURG, SIG_DFL);
+}
+
 // At the moment, the FIFORunner is not very efficient with many non-runnable tasks since the
 // complete list of tasks is traversed on each run().
 //
 // To optimize this, we woould need a way to find the relative ordering of two tasks in O(1) (at the
-// moment, this is an O)(N) operation by traversing the list).
+// moment, this is an O(N) operation by traversing the list).
 //
 // One idea is, to give each task an 'order' value. Whenever a task is added at the end, it's order
 // value is set to the order value of the last task + 1. Whenever the order value such added exceeds
@@ -85,10 +119,21 @@ prefix_ void senf::scheduler::FIFORunner::run()
     tasks_.push_back(null);
     TaskList::iterator end (TaskList::current(null));
     next_ = tasks_.begin();
+    struct itimerspec timer;
+    timer.it_interval.tv_sec = 0;
+    timer.it_interval.tv_nsec = 0;
+    timer.it_value.tv_sec = 1;
+    timer.it_value.tv_nsec = 0;
     while (next_ != end) {
         TaskInfo & task (*next_);
         if (task.runnable) {
             task.runnable = false;
+            if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+                SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+            runningName_ = task.name;
+#       ifdef SENF_DEBUG
+            runningBacktrace_ = task.backtrace;
+#       endif
             TaskList::iterator i (next_);
             ++ next_;
             tasks_.splice(tasks_.end(), tasks_, i);
@@ -97,8 +142,25 @@ prefix_ void senf::scheduler::FIFORunner::run()
         else
             ++ next_;
     }
+    timer.it_value.tv_sec = 0;
+    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
     tasks_.erase(end);
     next_ = tasks_.end();
+}
+
+prefix_ void senf::scheduler::FIFORunner::watchdog(int, siginfo_t * si, void *)
+{
+    FIFORunner & runner (*static_cast<FIFORunner *>(si->si_value.sival_ptr));
+    ++ runner.hangCount_;
+    write(1, "\n\n*** Scheduler task hanging: ", 30);
+    write(1, runner.runningName_.c_str(), runner.runningName_.size());
+    write(1, "\n", 1);
+#ifdef SENF_DEBUG
+    write(1, "Task was initialized at\n", 24);
+    write(1, runner.runningBacktrace_.c_str(), runner.runningBacktrace_.size());
+#endif
+    write(1, "\n", 1);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -104,7 +104,7 @@ prefix_ senf::console::Server::~Server()
     Scheduler::instance().remove(handle_);
 }
 
-prefix_ void senf::console::Server::newClient(Scheduler::EventId event)
+prefix_ void senf::console::Server::newClient(int event)
 {
     ServerHandle::ClientSocketHandle client (handle_.accept());
     boost::intrusive_ptr<Client> p (new Client(*this, client));
@@ -200,7 +200,7 @@ prefix_ void senf::console::detail::NoninteractiveClientReader::v_translate(std:
 {}
 
 prefix_ void
-senf::console::detail::NoninteractiveClientReader::newData(senf::Scheduler::EventId event)
+senf::console::detail::NoninteractiveClientReader::newData(int event)
 {
     if (event != senf::Scheduler::EV_READ || handle().eof()) {
         if (! buffer_.empty())

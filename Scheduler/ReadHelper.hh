@@ -131,8 +131,8 @@ namespace senf {
 
         ReadHelper(Handle handle, unsigned maxSize,  InternalPredicate * predicate, Callback cb);
 
-        static void dispatchProcess(ptr helper, Handle handle, senf::Scheduler::EventId event);
-        void process(Handle handle, senf::Scheduler::EventId event);
+        static void dispatchProcess(ptr helper, Handle handle, int event);
+        void process(Handle handle, int event);
         void done();
 
         Handle handle_;

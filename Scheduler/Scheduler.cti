@@ -40,6 +40,13 @@ prefix_ void senf::Scheduler::add(Handle const & handle, FdCallback const & cb, 
 }
 
 template <class Handle>
+prefix_ void senf::Scheduler::add(std::string const & name, Handle const & handle,
+                                  FdCallback const & cb, int eventMask)
+{
+    do_add(name, retrieve_filehandle(handle),cb,eventMask);
+}
+
+template <class Handle>
 prefix_ void senf::Scheduler::remove(Handle const & handle, int eventMask)
 {
     // retrieve_filehandle is found via ADL

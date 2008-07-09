@@ -37,6 +37,12 @@ prefix_ senf::scheduler::FdDispatcher::FdDispatcher(FdManager & manager, FIFORun
     : manager_ (manager), runner_ (runner)
 {}
 
+prefix_ bool senf::scheduler::FdDispatcher::empty()
+    const
+{
+    return fds_.empty();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::scheduler::FdDispatcher::FdEvent
 

@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    void readFromClient(senf::Scheduler::EventId event)
+    void readFromClient(int event)
     {
         std::string data (serverSock.read());
         std::cout << "> " << data<<std::endl ;

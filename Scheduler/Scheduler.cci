@@ -27,9 +27,34 @@
 //#include "Scheduler.ih"
 
 // Custom includes
+#include <boost/format.hpp>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
+
+// private members
+
+prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMask)
+{
+    do_add((boost::format("<anon fd %d>") % fd).str(), fd, cb, eventMask);
+}
+
+prefix_ void senf::Scheduler::do_add(std::string const & name, int fd, FdCallback const & cb,
+                                     int eventMask)
+{
+    if (! fdDispatcher_.add(name, fd, cb, eventMask))
+        fileDispatcher_.add(name, fd, cb, eventMask);
+}
+
+prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
+{
+    // We don't know, where the descriptor is registered. However, this is no problem since removing
+    // a non-registered fd is a no-opp
+    fdDispatcher_.remove(fd, eventMask);
+    fileDispatcher_.remove(fd, eventMask);
+}
+
+// public members
 
 prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
 {
@@ -37,44 +62,65 @@ prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
     return instance;
 }
 
-prefix_ unsigned senf::Scheduler::timeout(ClockService::clock_type timeout,
-                                          SimpleCallback const & cb)
+prefix_ int senf::retrieve_filehandle(int fd)
 {
-    ++ timerIdCounter_;
-    TimerMap::iterator i (
-        timerMap_.insert(std::make_pair(timerIdCounter_, 
-                                        TimerSpec(timeout,cb,timerIdCounter_))).first);
-    timerQueue_.push(i);
-    return timerIdCounter_;
+    return fd;
 }
 
-prefix_ void senf::Scheduler::cancelTimeout(unsigned id)
+prefix_ senf::Scheduler::timer_id senf::Scheduler::timeout(ClockService::clock_type timeout,
+                                                           SimpleCallback const & cb)
 {
-    TimerMap::iterator i (timerMap_.find(id));
-    if (i != timerMap_.end())
-        i->second.canceled = true;
+    return timerDispatcher_.add("<anon timer>", timeout, cb);
+}
+
+prefix_ senf::Scheduler::timer_id senf::Scheduler::timeout(std::string const & name,
+                                                           ClockService::clock_type timeout,
+                                                           SimpleCallback const & cb)
+{
+    return timerDispatcher_.add(name, timeout, cb);
+}
+
+prefix_ void senf::Scheduler::cancelTimeout(timer_id id)
+{
+    timerDispatcher_.remove(id);
 }
 
 prefix_ senf::ClockService::clock_type senf::Scheduler::timeoutEarly()
     const
 {
-    return eventEarly_;
+    SENF_LOG( (senf::log::IMPORTANT) 
+              ("timeoutEarly() is deprecated and a no-op. It will be removed") );
+    return 0;
 }
 
 prefix_ void senf::Scheduler::timeoutEarly(ClockService::clock_type v)
 {
-    eventEarly_ = v;
+    SENF_LOG( (senf::log::IMPORTANT) 
+              ("timeoutEarly() is deprecated and a no-op. It will be removed") );
 }
 
 prefix_ senf::ClockService::clock_type senf::Scheduler::timeoutAdjust()
     const
 {
-    return eventAdjust_;
+    SENF_LOG( (senf::log::IMPORTANT) 
+              ("timeoutAdjust() is deprecated and a no-op. It will be removed") );
+    return 0;
 }
 
 prefix_ void senf::Scheduler::timeoutAdjust(ClockService::clock_type v)
 {
-    eventAdjust_ = v;
+    SENF_LOG( (senf::log::IMPORTANT) 
+              ("timeoutAdjust() is deprecated and a no-op. It will be removed") );
+}
+
+prefix_ void senf::Scheduler::registerSignal(unsigned signal, SignalCallback const & cb)
+{
+    signalDispatcher_.add(signal, cb);
+}
+
+prefix_ void senf::Scheduler::unregisterSignal(unsigned signal)
+{
+    signalDispatcher_.remove(signal);
 }
 
 prefix_ void senf::Scheduler::terminate()
@@ -85,19 +131,22 @@ prefix_ void senf::Scheduler::terminate()
 prefix_ senf::ClockService::clock_type senf::Scheduler::eventTime()
     const
 {
-    return eventTime_;
+    return manager_.eventTime();
 }
 
-prefix_ int senf::retrieve_filehandle(int fd)
+prefix_ unsigned senf::Scheduler::hangCount()
+    const
 {
-    return fd;
+    return runner_.hangCount();
 }
 
-prefix_ senf::Scheduler::TimerSpecCompare::result_type
-senf::Scheduler::TimerSpecCompare::operator()(first_argument_type a, second_argument_type b)
-{
-    return a->second < b->second;
-}
+prefix_ senf::Scheduler::Scheduler()
+    : terminate_ (false), 
+      fdDispatcher_ (manager_, runner_),
+      timerDispatcher_ (manager_, runner_),
+      signalDispatcher_ (manager_, runner_),
+      fileDispatcher_ (manager_, runner_)
+{}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

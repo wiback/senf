@@ -57,8 +57,7 @@ prefix_ void senf::ReadHelper<Handle>::revoke()
 
 template <class Handle>
 prefix_ void
-senf::ReadHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
-                                                 senf::Scheduler::EventId event)
+senf::ReadHelper<Handle>::dispatchProcess(ptr helper, Handle handle, int event)
 {
     // since we have a 'ptr' argument, the instance cannot be deleted
     // before this method returns
@@ -66,8 +65,7 @@ senf::ReadHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
 }
 
 template <class Handle>
-prefix_ void senf::ReadHelper<Handle>::process(Handle handle,
-                                                      senf::Scheduler::EventId event)
+prefix_ void senf::ReadHelper<Handle>::process(Handle handle,int event)
 {
     try {
         if (event != senf::Scheduler::EV_READ)

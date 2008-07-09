@@ -33,9 +33,13 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::scheduler::FdManager
 
-prefix_ void senf::scheduler::FdManager::set(int fd, int events, Event * entry)
+prefix_ senf::scheduler::FdManager::FdManager()
+    : eventTime_ (senf::ClockService::now())
+{}
+
+prefix_ bool senf::scheduler::FdManager::set(int fd, int events, Event * entry)
 {
-    poller_.set(fd, events, entry);
+    return poller_.set(fd, events, entry);
 }
 
 prefix_ void senf::scheduler::FdManager::remove(int fd)
@@ -52,6 +56,12 @@ prefix_ int senf::scheduler::FdManager::timeout()
     const
 {
     return poller_.timeout();
+}
+
+prefix_ senf::ClockService::clock_type senf::scheduler::FdManager::eventTime()
+    const
+{
+    return eventTime_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
