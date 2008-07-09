@@ -34,6 +34,7 @@
 
 namespace senf {
 
+    /** \brief Convert signal number to signal name */
     std::string const & signalName(int signal);
 
 }

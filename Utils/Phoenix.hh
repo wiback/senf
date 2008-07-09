@@ -33,10 +33,25 @@
 #include "Phoenix.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
+/** \defgroup phoenix_helpers Boost.Phoenix extensions */
+
 namespace senf {
 namespace phoenix {
+    
+    /** \brief \c push_back phoenix functor
 
+        <tt>push_back(c, x) := c.push_back(x)</tt>
+
+        \ingroup phoenix_helpers
+     */
     ::phoenix::function<detail::push_back> const push_back;
+
+    /** \brief \c clear phoenix functor
+
+        <tt>clear(c) := c.clear()</tt>
+
+        \ingroup phoenix_helpers
+     */
     ::phoenix::function<detail::clear>     const clear;
 
 }}
