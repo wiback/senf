@@ -113,7 +113,7 @@ namespace scheduler {
 
         TaskList tasks_;
         TaskList::iterator next_;
-        int watchdogId_;
+        timer_t watchdogId_;
         std::string runningName_;
 #   ifdef SENF_DEBUG
         std::string runningBacktrace_;
