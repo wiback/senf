@@ -396,7 +396,7 @@
         invalid packets since the packet will not be validated against it's protocol.
 
 
-    \section packet_usage_fields Protocol fields
+    \section packet_usage_fields Field access
 
     When working with concrete protocols, the packet library provides direct access to all the
     protocol information.
@@ -447,7 +447,7 @@
     This is a very abstract description of the parser structure. For a more concrete description, we
     need to differentiate between the different parser types
 
-    \subsection packet_usage_fields_value Value parsers
+    \subsection packet_usage_fields_value Simple fields (Value parsers)
 
     We have already seen value parsers: These are the lowest level building blocks witch parse
     numbers, addresses etc. They return some type of value and can be assigned such a value. More
@@ -496,10 +496,33 @@
 
     Remember, that a parser does \e not contain any data: It only points into the raw data
     container. This is also true for the collection parsers. VectorParser and ListParser provide an
-    interface which looks like an STL container to access the elements.
+    interface which looks like an STL container to access a sequence of elements.
 
-    We will use an MLDv2 Query as an example (see <a
-    href="http://tools.ietf.org/html/rfc3810#section-5">RFC 3810</a>).
+    We will use an \c MLDv2QueryPacket as an example (see <a
+    href="http://tools.ietf.org/html/rfc3810#section-5">RFC 3810</a>). Here an excerpt of the
+    relevant fields:
+
+    <table class="fields">
+    <tr><td>nrOfSources</td><td>Integer</td><td>Number of multicast sources in this packet</td></tr>
+    <tr><td>sources</td><td>Vector of IPv6 Addresses</td><td>Multicast sources</td></tr>
+    </table>
+
+    To demonstrate nested collections, we use the \c MLDv2ReportPacket as an example. The relevant
+    fields of this packet are;
+    
+    <table class="fields">
+    <tr><td>nrOfRecords</td><td>Integer</td><td>Number of multicast address records</td></tr>
+    <tr><td>records</td><td>List of Records</td><td>List of multicast groups and sources</td></tr>
+    </table>
+
+    Each Record is a composite with the following relevant fields:
+
+    <table class="fields">
+    <tr><td>nrSources</td><td>Integer</td><td>Number of sources in this record</td></tr>
+    <tr><td>sources</td><td>Vector of IPv6 Addresses</td><td>Multicast sources</td></tr>
+    </table>
+    
+    The first example will iterate over the sources in a \c MLDv2QueryPacket:
 
     \code
     MLDv2QueryPacket mld = ...;
@@ -515,10 +538,12 @@
 
     Beside other fields, the MLDv2Query consists of a list of source addresses. The \c sources()
     member returns a VectorParser for these addresses. The collection parsers can only be accessed
-    completely using a container wrapper. This is, what we do in above example.
+    completely using a container wrapper. The container wrapper type is available as the \c
+    container member of the collection parser, here it is \c
+    MLDv2QueryPacket::Parser::sources_t::container.
 
-    The wrapper can also be used to manipulate that list. Here we copy a list of addresses from an
-    \c std::vector into the packet:
+    Using this wrapper, we can not only read the data, we can also manipulate the source list. Here
+    we copy a list of addresses from an \c std::vector into the packet:
 
     \code
     std::vector<senf::INet6Address> addrs (...);
@@ -527,10 +552,10 @@
     std::copy(addrs.begin(), addrs.end(), sources.begin())
     \endcode
 
-    Collection parsers may also be nested. To access a nested collection parser, such a container
-    wrapper should be allocated for each level. An MLD Report (which is a composite parser) includes
-    a list of multicast address records called \c records(). Each record is again a composite which
-    contains a list of sources called \c sources():
+    Collection parsers may be nested. To access a nested collection parser, a container wrapper must
+    be allocated for each level. An MLD Report (which is a composite parser) includes a list of
+    multicast address records called \c records(). Each record is again a composite which contains a
+    list of sources called \c sources():
 
     \code
     MLDv2ReportPacket report = ...;

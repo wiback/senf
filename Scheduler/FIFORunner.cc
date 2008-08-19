@@ -36,7 +36,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::scheduler::FIFORunner::FIFORunner()
-    : tasks_ (), next_ (tasks_.end()), hangCount_ (0)
+    : tasks_ (), next_ (tasks_.end()), watchdogMs_ (1000), watchdogCount_(0), hangCount_ (0)
 {
     struct sigevent ev;
     ::memset(&ev, 0, sizeof(ev));
@@ -120,16 +120,16 @@ prefix_ void senf::scheduler::FIFORunner::run()
     TaskList::iterator end (TaskList::current(null));
     next_ = tasks_.begin();
     struct itimerspec timer;
-    timer.it_interval.tv_sec = 0;
-    timer.it_interval.tv_nsec = 0;
-    timer.it_value.tv_sec = 1;
-    timer.it_value.tv_nsec = 0;
+    timer.it_interval.tv_sec = watchdogMs_ / 1000;
+    timer.it_interval.tv_nsec = (watchdogMs_ % 1000) * 1000000ul;
+    timer.it_value.tv_sec = timer.it_interval.tv_sec;
+    timer.it_value.tv_nsec = timer.it_interval.tv_nsec;
+    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
     while (next_ != end) {
         TaskInfo & task (*next_);
         if (task.runnable) {
             task.runnable = false;
-            if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
-                SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
             runningName_ = task.name;
 #       ifdef SENF_DEBUG
             runningBacktrace_ = task.backtrace;
@@ -137,12 +137,17 @@ prefix_ void senf::scheduler::FIFORunner::run()
             TaskList::iterator i (next_);
             ++ next_;
             tasks_.splice(tasks_.end(), tasks_, i);
+            watchdogCount_ = 1;
             task.run();
         }
         else
             ++ next_;
     }
+    watchdogCount_ = 0;
+    timer.it_interval.tv_sec = 0;
+    timer.it_interval.tv_nsec = 0;
     timer.it_value.tv_sec = 0;
+    timer.it_value.tv_nsec = 0;
     if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
     tasks_.erase(end);
@@ -152,15 +157,20 @@ prefix_ void senf::scheduler::FIFORunner::run()
 prefix_ void senf::scheduler::FIFORunner::watchdog(int, siginfo_t * si, void *)
 {
     FIFORunner & runner (*static_cast<FIFORunner *>(si->si_value.sival_ptr));
-    ++ runner.hangCount_;
-    write(1, "\n\n*** Scheduler task hanging: ", 30);
-    write(1, runner.runningName_.c_str(), runner.runningName_.size());
-    write(1, "\n", 1);
+    if (runner.watchdogCount_ > 0) {
+        ++ runner.watchdogCount_;
+        if (runner.watchdogCount_ > 2) {
+            ++ runner.hangCount_;
+            write(1, "\n\n*** Scheduler task hanging: ", 30);
+            write(1, runner.runningName_.c_str(), runner.runningName_.size());
+            write(1, "\n", 1);
 #ifdef SENF_DEBUG
-    write(1, "Task was initialized at\n", 24);
-    write(1, runner.runningBacktrace_.c_str(), runner.runningBacktrace_.size());
+            write(1, "Task was initialized at\n", 24);
+            write(1, runner.runningBacktrace_.c_str(), runner.runningBacktrace_.size());
 #endif
-    write(1, "\n", 1);
+            write(1, "\n", 1);
+        }
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

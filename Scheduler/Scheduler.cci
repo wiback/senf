@@ -134,6 +134,17 @@ prefix_ senf::ClockService::clock_type senf::Scheduler::eventTime()
     return manager_.eventTime();
 }
 
+prefix_ void senf::Scheduler::taskTimeout(unsigned ms)
+{
+    runner_.taskTimeout(ms);
+}
+
+prefix_ unsigned senf::Scheduler::taskTimeout()
+    const
+{
+    return runner_.taskTimeout();
+}
+
 prefix_ unsigned senf::Scheduler::hangCount()
     const
 {

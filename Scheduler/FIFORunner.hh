@@ -100,6 +100,9 @@ namespace scheduler {
         
         void run();                     ///< Run queue
 
+        void taskTimeout(unsigned ms);  ///< Set task timeout to \a ms milliseconds
+        unsigned taskTimeout() const;   ///< Get task timeout in milliseconds
+
         unsigned hangCount() const;     ///< Number of task expirations
                                         /**< The FIFORunner manages a watchdog which checks, that a
                                              single task does not run continuously for a longer time
@@ -114,10 +117,12 @@ namespace scheduler {
         TaskList tasks_;
         TaskList::iterator next_;
         timer_t watchdogId_;
+        unsigned watchdogMs_;
         std::string runningName_;
 #   ifdef SENF_DEBUG
         std::string runningBacktrace_;
 #   endif
+        unsigned watchdogCount_;
         unsigned hangCount_;
     };
 

@@ -314,6 +314,8 @@ namespace senf {
                                              delivered \e not the time it should have been delivered
                                              (in the case of timers). */
 
+        void taskTimeout(unsigned ms);
+        unsigned taskTimeout() const;
         unsigned hangCount() const;
 
     protected:

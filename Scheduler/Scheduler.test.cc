@@ -209,7 +209,7 @@ namespace {
 
     void blockingHandler()
     {
-        delay(1200);
+        delay(2200);
         Scheduler::instance().terminate();
     }
 

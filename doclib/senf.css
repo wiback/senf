@@ -295,6 +295,33 @@ table.senf th {
         font-weight: bold;
 }
 
+table.fields {
+        width: 95%;
+        margin: 10pt auto;
+        border: 1px solid #AAAAAA;
+        padding: 2px;
+        border-spacing: 0;
+}
+
+table.fields td,th {
+        border: 2px solid white;
+        background-color: #EEEEEE;
+        padding: 2px 4px;
+        text-align: left;
+        vertical-align: top;
+}
+
+table.fields th {
+        background-color: #DDDDDD;
+        text-align: center;
+        font-weight: bold;
+}
+
+table.fields td:first-child {
+        width: 25%;
+        font-style: italic;
+}
+
 table.fixedcolumn td:first-child {
         width: 35%; 
 }

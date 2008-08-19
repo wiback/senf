@@ -51,6 +51,17 @@ prefix_ void senf::scheduler::FIFORunner::enqueue(TaskInfo * task)
 #endif
 }
 
+prefix_ void senf::scheduler::FIFORunner::taskTimeout(unsigned ms)
+{
+    watchdogMs_ = ms;
+}
+
+prefix_ unsigned senf::scheduler::FIFORunner::taskTimeout()
+    const
+{
+    return watchdogMs_;
+}
+
 prefix_ unsigned senf::scheduler::FIFORunner::hangCount()
     const
 {
