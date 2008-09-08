@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 PATH=${HOME}/bin:${PATH}
 LOGDIR=${HOME}/log
