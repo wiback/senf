@@ -3,9 +3,11 @@ Priority: extra
 Maintainer: Stefan Bund <senf-dev@lists.berlios.de>
 Build-Depends: debhelper (>= 5), scons (>= 0.97), binutils-dev, libboost-dev, 
 	libboost-test-dev, libboost-date-time-dev, libboost-regex-dev, 
-	libboost-filesystem-dev, libboost-serialization-dev, doxygen (>= 1.5.5), 
-	dia, tidy, xsltproc, graphviz, perl-base, linklint, netpbm
-Standards-Version: 3.7.2 Section: libs
+	libboost-filesystem-dev, libboost-serialization-dev, libboost-iostreams-dev,
+	doxygen (>= 1.5.5), libreadline-dev, dia, tidy, xsltproc, graphviz, perl-base, 
+	linklint, netpbm
+Standards-Version: 3.7.2 
+Section: libs
 
 Package: libsenf
 Section: libdevel
@@ -48,7 +50,7 @@ Description: SENF Extensible Network Framework, header files
 Package: libsenf-doc
 Section: doc
 Architecture: all
-Description: SENF Extensible Network Framework, Documentation and Examples
+Description: SENF Extensible Network Framework, documentation and examples
  The SENF Simple and Extensible Network Framework aims to be a
  complete set of libraries to facilitate the development of network
  applications focusing on network protocols on the layers below the
