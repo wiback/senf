@@ -17,20 +17,20 @@ def recursiveChildren(f):
     rv = {}
     map(rv.setdefault,f)    
     for c in f:
-        map(rv.setdefault,recursiveChildren(c.children()))
+        if c is not None : map(rv.setdefault,recursiveChildren(c.children()))
     return rv.keys()
 
 def filterIncludes(files, extensions):
     return [ f for f in files
-             if f.get_suffix() in extensions ]
+             if f is not None and f.get_suffix() in extensions ]
 
 def filterIncludesInv(files, extensions):
     return [ f for f in files
-             if '.' + str(f).split('.',1)[-1] not in extensions ]
+             if f is not None and  '.' + str(f).split('.',1)[-1] not in extensions ]
 
 def filterDirectory(files, dir):
     return [ f for f in files
-             if f.abspath.startswith(dir.abspath) ]
+             if f is not None and f.abspath.startswith(dir.abspath) ]
 
 def excludeDirectories(files, dirs):
     return [ f for f in files

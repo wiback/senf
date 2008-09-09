@@ -78,7 +78,10 @@ BOOST_AUTO_UNIT_TEST(VariantParser)
     };
 }
 
-namespace {
+// We can't use the unnamed namespace here since there's a bug in gcc-4.2.3 which is 
+// the default version of gcc on ubuntu hardy :-(
+// See http://gcc.gnu.org/bugzilla/show_bug.cgi?id=34213
+namespace VariantParser_test_cc_anon_namespace {
     
     struct SubParser : public senf::PacketParserBase
     { 
@@ -97,8 +100,7 @@ namespace {
         SENF_PARSER_SKIP_BITS( 4 );
         SENF_PARSER_BITFIELD_RO( type, 4, unsigned );
         SENF_PARSER_VARIANT( content_, type,
-                                         ( novalue( nocontent
-, key(10, senf::VoidPacketParser)) )
+                                         ( novalue( nocontent, key(10, senf::VoidPacketParser)) )
                                          (      id( content,           SubParser              ) )
             );
 
@@ -106,6 +108,7 @@ namespace {
     };
     
 }
+using namespace VariantParser_test_cc_anon_namespace;
 
 BOOST_AUTO_UNIT_TEST(VariantParserMacro)
 {

@@ -317,7 +317,8 @@ def Test(env, sources, LIBS = [], OBJECTS = []):
     if compileTestSources:
         test.extend(env.CompileCheck(source = compileTestSources))
     env.Alias('all_tests', test)
-    env.Alias(env.File('test'), test)
+    env.Command(env.File('test'), test, [])
+    #env.Alias(env.File('test'), test)
     
 
 ## \brief Build object files
@@ -348,10 +349,10 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = [], no_includ
     if sources:
         obsources = [ source
                       for source in sources
-                      if not str(source).endswith('.o') ]
+                      if type(source) is type('') and not source.endswith('.o') ]
         objects = [ source
                     for source in sources
-                    if str(source).endswith('.o') ]
+                    if type(source) is not type('') or source.endswith('.o') ]
         if obsources:
             objects += env.Object(obsources)
 
@@ -371,7 +372,8 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = [], no_includ
         # Hmm ... here I'd like to use an Alias instead of a file
         # however the alias does not seem to live in the subdirectory
         # which breaks 'scons -u test'
-        env.Alias(env.File('test'), test)
+        env.Command(env.File('test'), test, [])
+        #env.Alias(env.File('test'), test)
 
     return objects
 
