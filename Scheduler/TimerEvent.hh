@@ -47,6 +47,24 @@ namespace scheduler {
         class TimerDispatcher;
     }
 
+    /** \brief Deadline timer event
+
+        The TimerEvent class registeres a deadline timer callback which will be called when the
+        timer expires.
+
+        Timer events are implemented using POSIX timers. Depending on kernel features, the timer
+        resolution will be far more precise than the linux clock tick resolution. The nominal timer
+        resolution is 1 nanosecond.
+        
+        The timeout time is set as \e absolute time as returned by the senf::ClockService. After
+        expiration, the timer will be disabled. It may be re-enabled by setting a new timeout time.
+        It is also possible to change a running timer resetting the timeout time.
+
+        The TimerEvent class is an implementation of the RAII idiom: The event will be automatically
+        unregistered in the TimerEvent destructor. The TimerEvent instance should be created
+        within the same scope or on a scope below where the callback is defined (e.g. if the
+        callback is a member function it should be defined as a class member).
+     */
     class TimerEvent
         : public FIFORunner::TaskInfo,
           public detail::TimerSetBase
@@ -63,18 +81,39 @@ namespace scheduler {
 
         TimerEvent(std::string const & name, Callback const & cb, ClockService::clock_type timeout,
                    bool initiallyEnabled = true);
+                                        ///< Register a timer event
+                                        /**< Registers \a cb to be called as soon as possible after
+                                             the time \a timeout is reached. If \a initiallyEnabled
+                                             is set \c false, the callback will not be enabled
+                                             automatically. Use enable() to do so.
+                                             \param[in] name Descriptive timer name (purely
+                                                 informational)
+                                             \param[in] cb Callback to call
+                                             \param[in] initiallyEnabled if set \c false, do not
+                                                 enable callback automatically. */
         TimerEvent(std::string const & name, Callback const & cb);
+                                        ///< Create a timer event
+                                        /**< Creates a timer event for callback \a cb. The timer is
+                                             initially disabled. Use the timeout() member to set the
+                                             timeout time. 
+                                             \param[in] name Descriptive timer name (purely
+                                                 informational)
+                                             \param[in] cb Callback to call. */
         ~TimerEvent();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void enable();
-        void disable();
-        bool enabled();
+        void disable();                 ///< Disable timer
+        void enable();                  ///< Enable timer
+        bool enabled();                 ///< \c true, if timer enabled, \c false otherwise        
 
-        void action(Callback const & cb);
-        void timeout(ClockService::clock_type timeout, bool enable=true);
+        void action(Callback const & cb); ///< Change timer event callback
+        void timeout(ClockService::clock_type timeout, bool initiallyEnabled=true);
+                                        ///< Re-arm or move timeout
+                                        /**< \param[in] timeout new timeout time
+                                             \param[in] initiallyEnabled if set \c false, do not
+                                                 enable callback automatically. */
 
     private:
         virtual void run();
