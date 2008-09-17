@@ -31,11 +31,15 @@
 #include <boost/utility.hpp>
 #include "../boost/intrusive/ilist.hpp"
 #include "../boost/intrusive/ilist_hook.hpp"
+#include "../Utils/singleton.hh"
 
 //#include "FIFORunner.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf { 
+
+    class Scheduler;
+
 namespace scheduler {
 
     /** \brief Task execution scheduler
@@ -48,7 +52,7 @@ namespace scheduler {
         is posted for the task.
       */
     class FIFORunner
-        : boost::noncopyable
+        : public singleton<FIFORunner>
     {
     public:
         struct TaskInfo;
@@ -56,8 +60,7 @@ namespace scheduler {
     private:
         struct TaskListTag;
         typedef boost::intrusive::ilist_base_hook<TaskListTag> TaskListBase;
-        typedef TaskListBase::value_traits<TaskInfo> TaskListType;
-        typedef boost::intrusive::ilist<TaskListType, false> TaskList;
+        typedef boost::intrusive::ilist<TaskListBase::value_traits<TaskInfo>, false> TaskList;
 
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -89,8 +92,8 @@ namespace scheduler {
         ///\name Structors and default members
         ///@{
 
-        FIFORunner();
-        ~FIFORunner();
+        using singleton<FIFORunner>::instance;
+        using singleton<FIFORunner>::alive;
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -112,6 +115,9 @@ namespace scheduler {
     protected:
 
     private:
+        FIFORunner();
+        ~FIFORunner();
+
         static void watchdog(int, siginfo_t *, void *);
 
         TaskList tasks_;
@@ -124,6 +130,9 @@ namespace scheduler {
 #   endif
         unsigned watchdogCount_;
         unsigned hangCount_;
+
+        friend class singleton<FIFORunner>;
+        friend class senf::Scheduler;
     };
 
 

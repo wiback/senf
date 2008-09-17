@@ -1,4 +1,5 @@
 import os, os.path, sys
+from cStringIO import StringIO
 from SCons.Script import *
 import SCons.Scanner.C
 
@@ -14,13 +15,18 @@ def scanTests(f):
         elif line.startswith('}') and name and start:
             tests[name] = (start, linenr)
     return tests
-            
+
 def CompileCheck(target, source, env):
     tests = scanTests(file(source[0].abspath))
-    errf = os.popen(env.subst('$CXXCOM -DCOMPILE_CHECK 2>&1', source=source, target=target))
+    cenv = env.Clone()
+    cenv.Append( CPPDEFINES = { 'COMPILE_CHECK': '' } )
+    out = StringIO()
+    cenv['SPAWN'] = lambda sh, escape, cmd, args, env, pspawn=cenv['PSPAWN'], out=out: \
+                    pspawn(sh, escape, cmd, args, env, out, out)
+    Action('$CXXCOM').execute(target, source, cenv)
     passedTests = {}
     delay_name = None
-    for error in errf:
+    for error in out.getvalue().splitlines():
         elts = error.split(':',2)
         if len(elts) != 3 : continue
         filename, line, message = elts

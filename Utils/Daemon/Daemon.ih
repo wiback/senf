@@ -32,6 +32,7 @@
 #include <boost/utility.hpp>
 #include <boost/function.hpp>
 #include "../../Scheduler/Scheduler.hh"
+#include "../../Scheduler/SignalEvent.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -93,6 +94,7 @@ namespace detail {
         int stderr_;
         bool sigChld_;
 
+        scheduler::SignalEvent cldSignal_;
         Forwarder coutForwarder_;
         Forwarder cerrForwarder_;
     };

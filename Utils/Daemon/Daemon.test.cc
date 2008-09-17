@@ -36,6 +36,7 @@
 #include "Daemon.hh"
 #include "../Utils/Exception.hh"
 #include "../Utils/Backtrace.hh"
+#include "../Scheduler/Scheduler.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -100,11 +101,17 @@ namespace {
             } catch (...) {
                 std::cerr << "Unexpected exception" << std::endl;
             }
-            ::_exit(2);
+            ::_exit(125);
         }
         int status;
-        if (::waitpid(pid, &status, 0) < 0) throw senf::SystemException("::waitpid()");
-        return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
+        if (::waitpid(pid, &status, 0) < 0) 
+            throw senf::SystemException("::waitpid()");
+        if (WIFSIGNALED(status))
+            std::cerr << "Terminated with signal " 
+                      << senf::signalName(WTERMSIG(status)) << "(" << WTERMSIG(status) << ")\n";
+        else if (WIFEXITED(status))
+            std::cerr << "Exited normally with exit status " << WEXITSTATUS(status) << "\n";
+        return status;
     }
 
 }
@@ -112,28 +119,29 @@ namespace {
 BOOST_AUTO_UNIT_TEST(testDaemon)
 {
     char * args[] = { "run", 
-                      "--console-log=testDaemon.log,none", 
+                      "--console-log=testDaemon.log", 
                       "--pid-file=testDaemon.pid" };
     BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args),args), 0 );
 
     BOOST_CHECK( ! boost::filesystem::exists("invalid.log") );
     BOOST_CHECK( ! boost::filesystem::exists("invalid.pid") );
-    BOOST_REQUIRE( boost::filesystem::exists("testDaemon.pid") );
+    BOOST_CHECK( boost::filesystem::exists("testDaemon.pid") );
     BOOST_REQUIRE( boost::filesystem::exists("testDaemon.log") );
     
     boost::filesystem::rename("testDaemon.log", "testDaemon.log.1");
     {
         std::ifstream pidFile ("testDaemon.pid");
         int pid (0);
-        BOOST_REQUIRE( pidFile >> pid );
-        BOOST_REQUIRE( pid != 0 );
-        ::kill(pid, SIGHUP);
+        BOOST_CHECK( pidFile >> pid );
+        BOOST_CHECK( pid != 0 );
+        if (pid != 0)
+            ::kill(pid, SIGHUP);
     }
 
     delay(1000);
     BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.log") );
-    BOOST_REQUIRE( boost::filesystem::exists("testDaemon.log.1") );
+    BOOST_CHECK( boost::filesystem::exists("testDaemon.log.1") );
     
     std::ifstream log ("testDaemon.log.1");
     std::stringstream data;

@@ -23,47 +23,84 @@
 /** \file
     \brief SignalDispatcher inline non-template implementation */
 
-//#include "SignalDispatcher.ih"
+#include "SignalEvent.ih"
 
 // Custom includes
 #include <unistd.h>
 #include "../Utils/signalnames.hh"
+#include "../Utils/senfassert.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::scheduler::SignalDispatcher::blockSignals()
+prefix_ void senf::scheduler::detail::SignalDispatcher::blockSignals()
 {
     if (blocked_) return;
     sigprocmask(SIG_BLOCK, &sigSet_, 0);
     blocked_ = true;
 }
 
-prefix_ void senf::scheduler::SignalDispatcher::unblockSignals()
+prefix_ void senf::scheduler::detail::SignalDispatcher::unblockSignals()
 {
     if (!blocked_) return;
     sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
     blocked_ = false;
 }
 
-prefix_ bool senf::scheduler::SignalDispatcher::empty()
+prefix_ bool senf::scheduler::detail::SignalDispatcher::empty()
     const
 {
     return handlers_.empty();
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::scheduler::SignalDispatcher::SignalEvent
+// senf::scheduler::SignalEvent
 
-prefix_ senf::scheduler::SignalDispatcher::SignalEvent::SignalEvent(int signal, Callback cb_)
-    : cb (cb_)
+prefix_ senf::scheduler::SignalEvent::SignalEvent(int signal, Callback cb,
+                                                  bool initiallyEnabled)
+    : signal_ (signal), enabled_ (initiallyEnabled), cb_ (cb)
 {
     name = signalName(signal);
+    if (enabled_)
+        senf::scheduler::detail::SignalDispatcher::instance().add(*this);
 }
 
-prefix_ void senf::scheduler::SignalDispatcher::SignalEvent::run()
+prefix_ senf::scheduler::SignalEvent::~SignalEvent()
 {
-    cb(siginfo);
+    if (senf::scheduler::detail::SignalDispatcher::alive())
+        senf::scheduler::detail::SignalDispatcher::instance().remove(*this);
+}
+
+prefix_ void senf::scheduler::SignalEvent::disable()
+{
+    if (enabled_) {
+        senf::scheduler::detail::SignalDispatcher::instance().remove(*this);
+        enabled_ = false;
+    }
+}
+
+prefix_ void senf::scheduler::SignalEvent::enable()
+{
+    if (! enabled_) {
+        senf::scheduler::detail::SignalDispatcher::instance().add(*this);
+        enabled_ = true;
+    }
+}
+
+prefix_ bool senf::scheduler::SignalEvent::enabled()
+    const
+{
+    return enabled_;
+}
+
+prefix_ void senf::scheduler::SignalEvent::action(Callback cb)
+{
+    cb_ = cb;
+}
+
+prefix_ void senf::scheduler::SignalEvent::run()
+{
+    cb_(siginfo_);
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

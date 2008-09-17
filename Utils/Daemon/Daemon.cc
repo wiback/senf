@@ -377,6 +377,8 @@ prefix_ void senf::Daemon::fork()
         LIBC_CALL( ::close, (cerrpipe[1]) );
         LIBC_CALL( ::setsid, () );
         LIBC_CALL( ::sigprocmask, (SIG_SETMASK, &oldsig, 0) );
+
+        senf::Scheduler::instance().restart();
         return;
     }
 
@@ -385,6 +387,8 @@ prefix_ void senf::Daemon::fork()
     
     LIBC_CALL( ::close, (coutpipe[1]) );
     LIBC_CALL( ::close, (cerrpipe[1]) );
+
+    senf::Scheduler::instance().restart();
 
     detail::DaemonWatcher watcher (pid, coutpipe[0], cerrpipe[0], stdout_, stderr_);
     watcher.run();
@@ -558,6 +562,7 @@ prefix_ senf::detail::DaemonWatcher::DaemonWatcher(int pid, int coutpipe, int ce
                                                    int stdout, int stderr)
     : childPid_(pid), coutpipe_(coutpipe), cerrpipe_(cerrpipe), stdout_(stdout),
       stderr_(stderr), sigChld_(false),
+      cldSignal_ (SIGCHLD, senf::membind(&DaemonWatcher::sigChld, this)),
       coutForwarder_(coutpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 1)), 
       cerrForwarder_(cerrpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 2)) 
 {
@@ -571,7 +576,6 @@ prefix_ senf::detail::DaemonWatcher::DaemonWatcher(int pid, int coutpipe, int ce
 
 prefix_ void senf::detail::DaemonWatcher::run()
 {
-    Scheduler::instance().registerSignal(SIGCHLD, senf::membind(&DaemonWatcher::sigChld, this));
     Scheduler::instance().process();
 }
 
@@ -588,8 +592,8 @@ prefix_ void senf::detail::DaemonWatcher::pipeClosed(int id)
     if (coutpipe_ == -1 && cerrpipe_ == -1) {
         if (sigChld_)
             childDied(); // does not return
-        if (::kill(childPid_, SIGUSR1) < 0)
-            if (errno != ESRCH) SENF_THROW_SYSTEM_EXCEPTION("::kill()");
+        if (::kill(childPid_, SIGUSR1) < 0 && errno != ESRCH)
+            SENF_THROW_SYSTEM_EXCEPTION("::kill()");
         Scheduler::instance().timeout(
             Scheduler::instance().eventTime() + ClockService::seconds(1),
             senf::membind(&DaemonWatcher::childOk, this));
@@ -611,10 +615,10 @@ prefix_ void senf::detail::DaemonWatcher::childDied()
         ::signal(WTERMSIG(status),SIG_DFL);
         ::kill(::getpid(), WTERMSIG(status));
         // should not be reached
-        ::_exit(1);
+        ::_exit(126);
     }
     if (WEXITSTATUS(status) == 0)
-        ::_exit(1);
+        ::_exit(127);
     ::_exit(WEXITSTATUS(status));
 }
 

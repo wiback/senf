@@ -21,13 +21,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SignalDispatcher.test unit tests */
+    \brief SignalEvent.test unit tests */
 
-//#include "SignalDispatcher.test.hh"
-//#include "SignalDispatcher.test.ih"
+//#include "SignalEvent.test.hh"
+//#include "SignalEvent.test.ih"
 
 // Custom includes
-#include "SignalDispatcher.hh"
+#include "SignalEvent.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -45,31 +45,24 @@ namespace {
 
 }
 
-#if 0
-// We can't test this when testing the Scheduler since the Scheduler instance
-// already uses the only SignalDispatcher instance allowed ...
-
 BOOST_AUTO_UNIT_TEST(signalDispatcher)
 {
-    senf::scheduler::FdManager manager;
-    senf::scheduler::FIFORunner runner;
-    senf::scheduler::SignalDispatcher dispatcher (manager, runner);
-    manager.timeout(1000);
+    senf::scheduler::FdManager::instance().timeout(1000);
+    senf::scheduler::SignalEvent sig (SIGUSR1, &handler);
 
-    SENF_CHECK_NO_THROW( dispatcher.add(SIGUSR1, &handler) );
+    SENF_CHECK_NO_THROW( sig.disable() );
+    SENF_CHECK_NO_THROW( sig.enable() );
+    SENF_CHECK_NO_THROW( sig.action(&handler) );
+    BOOST_CHECK( sig.enabled() );
     BOOST_CHECK( ! called );
     ::kill(::getpid(), SIGUSR1);
     sleep(1);
-    SENF_CHECK_NO_THROW( dispatcher.unblockSignals() );
-    SENF_CHECK_NO_THROW( manager.processOnce() );
-    SENF_CHECK_NO_THROW( dispatcher.blockSignals() );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::detail::SignalDispatcher::instance().unblockSignals() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::detail::SignalDispatcher::instance().blockSignals() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     BOOST_CHECK( called );
-
-    SENF_CHECK_NO_THROW( dispatcher.remove(SIGUSR1) );
 }
-
-#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

@@ -113,16 +113,6 @@ prefix_ void senf::Scheduler::timeoutAdjust(ClockService::clock_type v)
               ("timeoutAdjust() is deprecated and a no-op. It will be removed") );
 }
 
-prefix_ void senf::Scheduler::registerSignal(unsigned signal, SignalCallback const & cb)
-{
-    signalDispatcher_.add(signal, cb);
-}
-
-prefix_ void senf::Scheduler::unregisterSignal(unsigned signal)
-{
-    signalDispatcher_.remove(signal);
-}
-
 prefix_ void senf::Scheduler::terminate()
 {
     terminate_ = true;
@@ -131,32 +121,31 @@ prefix_ void senf::Scheduler::terminate()
 prefix_ senf::ClockService::clock_type senf::Scheduler::eventTime()
     const
 {
-    return manager_.eventTime();
+    return scheduler::FdManager::instance().eventTime();
 }
 
 prefix_ void senf::Scheduler::taskTimeout(unsigned ms)
 {
-    runner_.taskTimeout(ms);
+    scheduler::FIFORunner::instance().taskTimeout(ms);
 }
 
 prefix_ unsigned senf::Scheduler::taskTimeout()
     const
 {
-    return runner_.taskTimeout();
+    return scheduler::FIFORunner::instance().taskTimeout();
 }
 
 prefix_ unsigned senf::Scheduler::hangCount()
     const
 {
-    return runner_.hangCount();
+    return scheduler::FIFORunner::instance().hangCount();
 }
 
 prefix_ senf::Scheduler::Scheduler()
     : terminate_ (false), 
-      fdDispatcher_ (manager_, runner_),
-      timerDispatcher_ (manager_, runner_),
-      signalDispatcher_ (manager_, runner_),
-      fileDispatcher_ (manager_, runner_)
+      fdDispatcher_ (scheduler::FdManager::instance(), scheduler::FIFORunner::instance()),
+      timerDispatcher_ (scheduler::FdManager::instance(), scheduler::FIFORunner::instance()),
+      fileDispatcher_ (scheduler::FdManager::instance(), scheduler::FIFORunner::instance())
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

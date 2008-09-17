@@ -88,7 +88,11 @@ namespace senf {
         : boost::noncopyable
     {
     protected:
+        singleton();
+        ~singleton();
+
         static Self & instance();       ///< Return singleton instance
+        static bool alive();            ///< Return \c true, if instance ok, \c false otherwise
 
     private:
         /** \brief Internal
@@ -101,6 +105,7 @@ namespace senf {
         };
 
         static force_creation creator_;
+        static bool alive_;
     };
 
 }

@@ -29,11 +29,15 @@
 // Custom includes
 #include "Poller.hh"
 #include "ClockService.hh"
+#include "../Utils/singleton.hh"
 
 //#include "FdManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    class Scheduler;
+
 namespace scheduler {
 
     /** \brief Manage file descriptor event processing
@@ -53,6 +57,7 @@ namespace scheduler {
         \implementation
       */
     class FdManager
+        : public singleton<FdManager>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -73,7 +78,8 @@ namespace scheduler {
         ///\name Structors and default members
         ///@{
 
-        FdManager();
+        using singleton<FdManager>::instance;
+        using singleton<FdManager>::alive;
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -106,8 +112,13 @@ namespace scheduler {
     protected:
 
     private:
+        FdManager();
+
         Poller<Event> poller_;
         senf::ClockService::clock_type eventTime_;
+
+        friend class singleton<FdManager>;
+        friend class senf::Scheduler;
     };
 
 }}

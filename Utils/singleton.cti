@@ -31,12 +31,33 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Self>
+prefix_ senf::singleton<Self>::singleton()
+{
+    alive_ = true;
+}
+
+template <class Self>
+prefix_ senf::singleton<Self>::~singleton()
+{
+    alive_ = false;
+}
+
+template <class Self>
+bool senf::singleton<Self>::alive_ (false);
+
+template <class Self>
 prefix_ Self & senf::singleton<Self>::instance()
 {
     static Self instance_;
     // Force instantiation of force_creation (at static object creation time)
     creator_.nop();
     return instance_;
+}
+
+template <class Self>
+prefix_ bool senf::singleton<Self>::alive()
+{
+    return alive_;
 }
 
 template <class Self>

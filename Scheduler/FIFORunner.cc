@@ -30,6 +30,7 @@
 #include <signal.h>
 #include <time.h>
 #include "../Utils/Exception.hh"
+#include "../Utils/senfassert.hh"
 
 //#include "FIFORunner.mpp"
 #define prefix_
@@ -116,32 +117,45 @@ prefix_ void senf::scheduler::FIFORunner::run()
     // - We keep the next to-be-processed node in a class variable which is checked and updated
     //   whenever a node is removed.
     NullTask null;
-    tasks_.push_back(null);
-    TaskList::iterator end (TaskList::current(null));
-    next_ = tasks_.begin();
     struct itimerspec timer;
     timer.it_interval.tv_sec = watchdogMs_ / 1000;
     timer.it_interval.tv_nsec = (watchdogMs_ % 1000) * 1000000ul;
     timer.it_value.tv_sec = timer.it_interval.tv_sec;
     timer.it_value.tv_nsec = timer.it_interval.tv_nsec;
-    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
-    while (next_ != end) {
-        TaskInfo & task (*next_);
-        if (task.runnable) {
-            task.runnable = false;
-            runningName_ = task.name;
-#       ifdef SENF_DEBUG
-            runningBacktrace_ = task.backtrace;
-#       endif
-            TaskList::iterator i (next_);
-            ++ next_;
-            tasks_.splice(tasks_.end(), tasks_, i);
-            watchdogCount_ = 1;
-            task.run();
+    tasks_.push_back(null);
+    TaskList::iterator end (TaskList::current(null));
+    next_ = tasks_.begin();
+    try {
+        if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+            SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+        while (next_ != end) {
+            TaskInfo & task (*next_);
+            if (task.runnable) {
+                task.runnable = false;
+                runningName_ = task.name;
+#           ifdef SENF_DEBUG
+                runningBacktrace_ = task.backtrace;
+#           endif
+                TaskList::iterator i (next_);
+                ++ next_;
+                tasks_.splice(tasks_.end(), tasks_, i);
+                watchdogCount_ = 1;
+                task.run();
+            }
+            else
+                ++ next_;
         }
-        else
-            ++ next_;
+    }
+    catch (...) {
+        watchdogCount_ = 0;
+        timer.it_interval.tv_sec = 0;
+        timer.it_interval.tv_nsec = 0;
+        timer.it_value.tv_sec = 0;
+        timer.it_value.tv_nsec = 0;
+        timer_settime(watchdogId_, 0, &timer, 0);
+        tasks_.erase(end);
+        next_ = tasks_.end();
+        throw;
     }
     watchdogCount_ = 0;
     timer.it_interval.tv_sec = 0;

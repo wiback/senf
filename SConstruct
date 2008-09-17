@@ -173,6 +173,21 @@ env.Append(
                     'config.hh', 'local_config.hh' ],
 )
 
+def parseLogOption(value):
+    stream, area, level = ( x.strip() for x in value.strip().split('|') )
+    if stream  : stream = ''.join('(%s)' % x for x in stream.split('::') )
+    else       : stream = '(_)'
+    if area : area = ''.join( '(%s)' % x for x in area.split('::') )
+    else    : area = '(_)'
+    return '(( %s,%s,%s ))' % (stream,area,level)
+
+def expandLogOption(target, source, env, for_signature):
+    return ' '.join( parseLogOption(x) for x in env.subst('$LOGLEVELS').split() )
+
+if env.subst('$LOGLEVELS'):
+    env.Append( expandLogOption=expandLogOption )
+    env.Append( CPPDEFINES = { 'SENF_LOG_CONF': '$expandLogOption' } )
+
 env.SetDefault(
        LIBSENF = "senf"
 )

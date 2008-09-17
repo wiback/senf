@@ -52,19 +52,17 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(timerDispatcher)
 {
-    senf::scheduler::FdManager manager;
-    senf::scheduler::FIFORunner runner;
-    senf::scheduler::TimerDispatcher dispatcher (manager, runner);
-    manager.timeout(1000);
+    senf::scheduler::TimerDispatcher dispatcher (senf::scheduler::FdManager::instance(), senf::scheduler::FIFORunner::instance());
+    senf::scheduler::FdManager::instance().timeout(1000);
 
     senf::ClockService::clock_type t (senf::ClockService::now());
     senf::scheduler::TimerDispatcher::timer_id id;
     SENF_CHECK_NO_THROW(
         id = dispatcher.add( "testTimer", t + senf::ClockService::milliseconds(500), &handler ) );
     SENF_CHECK_NO_THROW( dispatcher.unblockSignals() );
-    SENF_CHECK_NO_THROW( manager.processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
     SENF_CHECK_NO_THROW( dispatcher.blockSignals() );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     senf::ClockService::clock_type t2 (senf::ClockService::now());
     BOOST_CHECK( called );
     BOOST_CHECK_PREDICATE( is_close, (t2-t)(senf::ClockService::milliseconds(500)) );
@@ -75,9 +73,9 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
     t = senf::ClockService::now();
     SENF_CHECK_NO_THROW( dispatcher.add( "testTimer", t, &handler ) );
     SENF_CHECK_NO_THROW( dispatcher.unblockSignals() );
-    SENF_CHECK_NO_THROW( manager.processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
     SENF_CHECK_NO_THROW( dispatcher.blockSignals() );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
     BOOST_CHECK( called );
 }

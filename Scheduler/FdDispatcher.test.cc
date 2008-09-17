@@ -162,10 +162,8 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(fdDispatcher)
 {
-    senf::scheduler::FdManager manager;
-    senf::scheduler::FIFORunner runner;
-    senf::scheduler::FdDispatcher dispatcher (manager, runner);
-    manager.timeout(1000);
+    senf::scheduler::FdDispatcher dispatcher (senf::scheduler::FdManager::instance(), senf::scheduler::FIFORunner::instance());
+    senf::scheduler::FdManager::instance().timeout(1000);
 
     int pid (start_server());
     BOOST_REQUIRE( pid );
@@ -188,8 +186,8 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
     BOOST_CHECK( dispatcher.add("testHandler", sock, boost::bind(&callback, sock, _1),
                                 senf::scheduler::FdDispatcher::EV_READ) );
     event = 0;
-    SENF_CHECK_NO_THROW( manager.processOnce() );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     BOOST_CHECK_EQUAL( event, senf::scheduler::FdDispatcher::EV_READ );
     BOOST_CHECK_EQUAL( size, 4 );
     buffer[size] = 0;
@@ -201,29 +199,29 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
                                 senf::scheduler::FdDispatcher::EV_WRITE) );
     event = 0;
     sleep(1);
-    SENF_CHECK_NO_THROW( manager.processOnce() );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     BOOST_CHECK_EQUAL( event, senf::scheduler::FdDispatcher::EV_WRITE );
 
     SENF_CHECK_NO_THROW( dispatcher.remove(sock, senf::scheduler::FdDispatcher::EV_WRITE) );
     event = 0;
     sleep(1);
-    SENF_CHECK_NO_THROW( manager.processOnce() );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     BOOST_CHECK_EQUAL( event, senf::scheduler::FdDispatcher::EV_HUP | senf::scheduler::FdDispatcher::EV_READ );
     BOOST_CHECK_EQUAL( size, 2 );
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "OK" );
 
     BOOST_CHECK_EQUAL( calls, 3 );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     BOOST_CHECK_EQUAL( calls, 3 );
     
     // Ensure, removing an already closed file-descriptor doesn't wreak havoc
     close(sock);
     SENF_CHECK_NO_THROW( dispatcher.remove(sock) );
 
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     BOOST_CHECK_EQUAL( calls, 3 );
 
 

@@ -1,0 +1,114 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief SignalDispatcher internal header */
+
+#ifndef IH_SignalDispatcher_
+#define IH_SignalDispatcher_ 1
+
+// Custom includes
+#include "FdManager.hh"
+#include "../boost/intrusive/iset.hpp"
+#include "../Utils/Exception.hh"
+#include "../Utils/singleton.hh"
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+    
+    class Scheduler;
+
+namespace scheduler {
+namespace detail {
+
+    struct SignalSetCompare {
+        bool operator()(SignalEvent const & a, SignalEvent const & b) const
+            { return a.signal_ < b.signal_; }
+    };
+
+    struct FindNumericSignal {
+        bool operator()(SignalEvent const & a, int b) const
+            { return a.signal_ < b; } 
+        bool operator()(int a, SignalEvent const & b) const
+            { return a < b.signal_; }
+    };
+
+    class SignalDispatcher
+        : public FdManager::Event,
+          public singleton<SignalDispatcher>
+    {
+        typedef boost::intrusive::iset< SignalSetBase::value_traits<SignalEvent>,
+                                        SignalSetCompare,
+                                        false > SignalSet;
+    public:
+        using singleton<SignalDispatcher>::instance;
+        using singleton<SignalDispatcher>::alive;
+
+        void add(SignalEvent & event);
+        void remove(SignalEvent & event);
+
+        void unblockSignals();
+        void blockSignals();
+
+        bool empty() const;
+
+        struct DuplicateSignalRegistrationException : public Exception
+        { DuplicateSignalRegistrationException() 
+              : Exception("duplicate signal registration") {} };
+
+    protected:
+
+    private:
+        SignalDispatcher();
+        ~SignalDispatcher();
+
+        virtual void signal(int events);
+        static void sigHandler(int signal, ::siginfo_t * siginfo, void *);
+
+        SignalSet handlers_;
+
+        int sigPipe_[2];
+
+        bool blocked_;
+        sigset_t sigSet_;
+
+        friend class senf::scheduler::SignalEvent;
+        friend class singleton<SignalDispatcher>;
+        friend class senf::Scheduler;
+    };
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

@@ -23,7 +23,7 @@ def SetupForSENF(env):
     def parseLogOption(value):
         stream, area, level = ( x.strip() for x in value.strip().split('|') )
         stream = ''.join('(%s)' % x for x in stream.split('::') )
-        if area : area = ''.join( '(%s)' % x for x in elts[1].split('::') )
+        if area : area = ''.join( '(%s)' % x for x in area.split('::') )
         else    : area = '(_)'
         return '(( %s,%s,%s ))' % (stream,area,level)
 

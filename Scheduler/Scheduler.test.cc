@@ -265,6 +265,7 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
     BOOST_CHECK( timeoutCalled );
     BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
 
+    BOOST_WARN_MESSAGE( false, "A 'Scheduler task hanging' error is expected to be signaled here." );
     BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(ClockService::now(), &blockingHandler) );
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
     BOOST_CHECK_EQUAL( Scheduler::instance().hangCount(), 1u );
@@ -291,15 +292,18 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
 
     unsigned tid (Scheduler::instance().timeout(
                       ClockService::now()+ClockService::milliseconds(400),&timeout));
-    BOOST_CHECK_NO_THROW( Scheduler::instance().registerSignal(SIGUSR1, &sigusr) );
-    t = ClockService::now();
-    ::kill(::getpid(), SIGUSR1);
-    delay(100);
+    {
+        senf::scheduler::SignalEvent sig (SIGUSR1, &sigusr);
+
+        t = ClockService::now();
+        ::kill(::getpid(), SIGUSR1);
+        delay(100);
+        BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
+        BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
+        BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+ClockService::milliseconds(200)) );
+    } 
     BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
-    BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+ClockService::milliseconds(200)) );
-    Scheduler::instance().cancelTimeout(tid);
-    BOOST_CHECK_NO_THROW( Scheduler::instance().unregisterSignal(SIGUSR1) );
+    BOOST_CHECK_NO_THROW( Scheduler::instance().cancelTimeout(tid) );
 
     ///////////////////////////////////////////////////////////////////////////
 

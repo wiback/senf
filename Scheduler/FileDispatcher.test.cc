@@ -56,9 +56,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(fileDispatcher)
 {
-    senf::scheduler::FdManager manager;
-    senf::scheduler::FIFORunner runner;
-    senf::scheduler::FileDispatcher dispatcher (manager, runner);
+    senf::scheduler::FileDispatcher dispatcher (senf::scheduler::FdManager::instance(), senf::scheduler::FIFORunner::instance());
     dispatcher.timeout(500);
 
     // It's not necessary for the cb to be a real file .. it can be anything. The only thing is,
@@ -68,9 +66,9 @@ BOOST_AUTO_UNIT_TEST(fileDispatcher)
     senf::ClockService::clock_type t (senf::ClockService::now());
     SENF_CHECK_NO_THROW( dispatcher.add("testHandler", fd, &handler, 
                                         senf::scheduler::FileDispatcher::EV_READ) );
-    SENF_CHECK_NO_THROW( manager.processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
     SENF_CHECK_NO_THROW( dispatcher.prepareRun() );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     
     BOOST_CHECK( called );
     BOOST_CHECK_PREDICATE( is_close, (t)(senf::ClockService::now()) );
@@ -80,9 +78,9 @@ BOOST_AUTO_UNIT_TEST(fileDispatcher)
 
     called = false;
     t = senf::ClockService::now();
-    SENF_CHECK_NO_THROW( manager.processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
     SENF_CHECK_NO_THROW( dispatcher.prepareRun() );
-    SENF_CHECK_NO_THROW( runner.run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
 
     BOOST_CHECK( ! called );
     BOOST_CHECK_PREDICATE( 

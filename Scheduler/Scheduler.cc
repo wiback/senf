@@ -35,6 +35,7 @@
 //#include "Scheduler.ih"
 
 // Custom includes
+#include "SignalEvent.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -45,14 +46,38 @@ prefix_ void senf::Scheduler::process()
     while(! terminate_ && ! (fdDispatcher_.empty() &&
                              timerDispatcher_.empty() &&
                              fileDispatcher_.empty())) {
-        signalDispatcher_.unblockSignals();
+        scheduler::detail::SignalDispatcher::instance().unblockSignals();
         timerDispatcher_.unblockSignals();
-        manager_.processOnce();
+        scheduler::FdManager::instance().processOnce();
         timerDispatcher_.blockSignals();
-        signalDispatcher_.blockSignals();
+        scheduler::detail::SignalDispatcher::instance().blockSignals();
         fileDispatcher_.prepareRun();
-        runner_.run();
+        scheduler::FIFORunner::instance().run();
     }
+}
+
+prefix_ void senf::Scheduler::restart()
+{
+    scheduler::FdManager* fdm (&scheduler::FdManager::instance());
+    scheduler::FIFORunner* ffr (&scheduler::FIFORunner::instance());
+    scheduler::FdDispatcher* fdd (&fdDispatcher_);
+    scheduler::TimerDispatcher* td (&timerDispatcher_);
+    scheduler::detail::SignalDispatcher* sd (&scheduler::detail::SignalDispatcher::instance());
+    scheduler::FileDispatcher* fld (&fileDispatcher_);
+    
+    fld->~FileDispatcher();
+    sd->~SignalDispatcher();
+    td->~TimerDispatcher();
+    fdd->~FdDispatcher();
+    ffr->~FIFORunner();
+    fdm->~FdManager();
+    
+    new (fdm) scheduler::FdManager();
+    new (ffr) scheduler::FIFORunner();
+    new (fdd) scheduler::FdDispatcher(*fdm, *ffr);
+    new (td) scheduler::TimerDispatcher(*fdm, *ffr);
+    new (sd) scheduler::detail::SignalDispatcher();
+    new (fld) scheduler::FileDispatcher(*fdm, *ffr);
 }
 
 ///////////////////////////////////////////////////////////////////////////

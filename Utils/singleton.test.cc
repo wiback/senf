@@ -27,6 +27,7 @@
 //#include "singleton.test.ih"
 
 // Custom includes
+#include <iostream>
 #include "singleton.hh"
 
 #include "../Utils/auto_unit_test.hh"
@@ -47,6 +48,7 @@ namespace {
 
     public:
         using senf::singleton<Test>::instance;
+        using senf::singleton<Test>::alive;
 
         int foo() { return foo_; }
     };
@@ -55,6 +57,73 @@ namespace {
 BOOST_AUTO_UNIT_TEST(sInGlEtOn)
 {
     BOOST_CHECK_EQUAL( Test::instance().foo(), 1234 );
+    BOOST_CHECK( Test::alive() );
+}
+
+namespace {
+
+    bool test1Dead (false);
+    bool test2Dead (false);
+
+    bool test1Alive (false);
+    bool test2Alive (false);
+
+    struct AliveTest1 : public senf::singleton<AliveTest1>
+    {
+        friend class senf::singleton<AliveTest1>;
+        using senf::singleton<AliveTest1>::alive;
+        using senf::singleton<AliveTest1>::instance;
+        AliveTest1();
+        ~AliveTest1();
+    };
+
+    struct AliveTest2 : public senf::singleton<AliveTest2>
+    {
+        friend class senf::singleton<AliveTest2>;
+        using senf::singleton<AliveTest2>::alive;
+        using senf::singleton<AliveTest2>::instance;
+        AliveTest2();
+        ~AliveTest2();
+    };
+
+    AliveTest1::AliveTest1() 
+    {
+        test2Alive = AliveTest2::alive();
+    }
+
+    AliveTest1::~AliveTest1()
+    {
+        if (test2Dead) {
+            assert( ! AliveTest2::alive() );
+            std::cerr << "singleton alive test ok\n";
+        }
+        test1Dead = true;
+    }
+
+    AliveTest2::AliveTest2()
+    {
+        test1Alive = AliveTest1::alive();
+    }
+
+    AliveTest2::~AliveTest2()
+    {
+        if (test1Dead) {
+            assert( ! AliveTest1::alive() );
+            std::cerr << "singleton alive test ok\n";
+        }
+        test2Dead = true;
+    }
+
+}
+
+BOOST_AUTO_UNIT_TEST(singletonAlive)
+{
+    (void) AliveTest1::instance();
+    (void) AliveTest2::instance();
+
+    BOOST_CHECK( (test1Alive && !test2Alive) || (!test1Alive && test2Alive) );
+    BOOST_CHECK( AliveTest1::alive() );
+    BOOST_CHECK( AliveTest2::alive() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

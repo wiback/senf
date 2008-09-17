@@ -23,107 +23,105 @@
 /** \file
     \brief SignalDispatcher non-inline non-template implementation */
 
-#include "SignalDispatcher.hh"
-//#include "SignalDispatcher.ih"
+#include "SignalEvent.hh"
+#include "SignalEvent.ih"
 
 // Custom includes
 #include "../Utils/senfassert.hh"
+#include "../Utils/signalnames.hh"
 
-//#include "SignalDispatcher.mpp"
+//#include "SignalEvent.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-senf::scheduler::SignalDispatcher * senf::scheduler::SignalDispatcher::instance_ = 0;
-
-prefix_ senf::scheduler::SignalDispatcher::SignalDispatcher(FdManager & manager,
-                                                            FIFORunner & runner)
-    : manager_ (manager), runner_ (runner), blocked_ (true)
+prefix_ senf::scheduler::detail::SignalDispatcher::SignalDispatcher()
+    : blocked_ (true)
 {
-    SENF_ASSERT( !instance_ );
     if (pipe(sigPipe_) <0)
         SENF_THROW_SYSTEM_EXCEPTION("pipe()");
     sigemptyset(&sigSet_);
-    instance_ = this;
-    manager_.set(sigPipe_[0], FdManager::EV_READ, this);
+    FdManager::instance().set(sigPipe_[0], FdManager::EV_READ, this);
 }
 
-prefix_ senf::scheduler::SignalDispatcher::~SignalDispatcher()
+prefix_ senf::scheduler::detail::SignalDispatcher::~SignalDispatcher()
 {
-    for (HandlerMap::iterator i (handlers_.begin()); i != handlers_.end(); ++i) {
-        ::signal(i->first, SIG_DFL);
-        runner_.dequeue(&i->second);
+    for (SignalSet::iterator i (handlers_.begin()); i != handlers_.end(); ++i) {
+        ::signal(i->signal_, SIG_DFL);
+        FIFORunner::instance().dequeue(&(*i));
     }
     sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
-    manager_.remove(sigPipe_[0]);
+    FdManager::instance().remove(sigPipe_[0]);
     close(sigPipe_[0]);
     close(sigPipe_[1]);
-    instance_ = 0;
 }
 
-prefix_ void senf::scheduler::SignalDispatcher::add(int signal, Callback const & cb)
+prefix_ void senf::scheduler::detail::SignalDispatcher::add(SignalEvent & event)
 {
-    HandlerMap::iterator i (handlers_.find(signal));
-    if (i != handlers_.end()) {
-        i->second.cb = cb;
-        return;
-    }
+    SignalSet::iterator i (handlers_.find(event));
+    if (i != handlers_.end())
+        throw DuplicateSignalRegistrationException() 
+            << " for signal " << signalName(event.signal_) << " (" << event.signal_ << ")";
 
-    i = handlers_.insert(std::make_pair(signal, SignalEvent(signal, cb))).first;
-    sigaddset(&sigSet_, signal);
-    runner_.enqueue(&i->second);
+    handlers_.insert(event);
+    sigaddset(&sigSet_, event.signal_);
+    FIFORunner::instance().enqueue(&event);
 
     sigset_t sig;
     sigemptyset(&sig);
-    sigaddset(&sig, signal);
+    sigaddset(&sig, event.signal_);
     sigprocmask(blocked_ ? SIG_BLOCK : SIG_UNBLOCK, &sig, 0);
 
     // Need to re-register all handlers to update sa_mask
-    for (HandlerMap::iterator j (handlers_.begin()); i != handlers_.end(); ++i) {
-        struct sigaction act;
-        act.sa_sigaction = &sigHandler;
-        act.sa_mask = sigSet_;
-        act.sa_flags = SA_SIGINFO | SA_RESTART;
-        if (j->first == SIGCLD)
+    struct sigaction act;
+    act.sa_sigaction = &sigHandler;
+    act.sa_mask = sigSet_;
+    act.sa_flags = SA_SIGINFO | SA_RESTART;
+    for (SignalSet::iterator i (handlers_.begin()); i != handlers_.end(); ++i) {
+        if (i->signal_ == SIGCLD)
             act.sa_flags |= SA_NOCLDSTOP;
-        if (sigaction(j->first, &act, 0) < 0)
+        else
+            act.sa_flags &= ~SA_NOCLDSTOP;
+        if (sigaction(i->signal_, &act, 0) < 0)
             SENF_THROW_SYSTEM_EXCEPTION("sigaction()");
     }
 }
 
-prefix_ void senf::scheduler::SignalDispatcher::remove(int signal)
+prefix_ void senf::scheduler::detail::SignalDispatcher::remove(SignalEvent & event)
 {
-    ::signal(signal, SIG_DFL);
+    ::signal(event.signal_, SIG_DFL);
+    FIFORunner::instance().dequeue(&event);
+    handlers_.erase(event);
     sigset_t sig;
     sigemptyset(&sig);
-    sigaddset(&sig, signal);
+    sigaddset(&sig, event.signal_);
     sigprocmask(SIG_UNBLOCK, &sig, 0);
 }
 
-prefix_ void senf::scheduler::SignalDispatcher::signal(int events)
+prefix_ void senf::scheduler::detail::SignalDispatcher::signal(int events)
 {
     siginfo_t info;
     if (read(sigPipe_[0], &info, sizeof(info)) < int(sizeof(info)))
         return;
-    HandlerMap::iterator i (handlers_.find(info.si_signo));
+    SignalSet::iterator i (handlers_.find(info.si_signo, FindNumericSignal()));
     if (i == handlers_.end())
         return;
-    i->second.siginfo = info;
-    i->second.runnable = true;
+    i->siginfo_ = info;
+    i->runnable = true;
 }
 
-prefix_ void senf::scheduler::SignalDispatcher::sigHandler(int signal, ::siginfo_t * siginfo,
+prefix_ void senf::scheduler::detail::SignalDispatcher::sigHandler(int signal, ::siginfo_t * siginfo,
                                                            void *)
 {
-    SENF_ASSERT( instance_ );
+    SENF_ASSERT( alive() );
     // The manpage says, si_signo is unused in linux so we set it here
     siginfo->si_signo = signal; 
     // We can't do much on error anyway so we ignore errors here
-    write(instance_->sigPipe_[1], siginfo, sizeof(*siginfo));
+    write(instance().sigPipe_[1], siginfo, sizeof(*siginfo));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "SignalDispatcher.mpp"
+//#include "SignalEvent.mpp"
 
 
 // Local Variables:

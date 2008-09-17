@@ -31,7 +31,7 @@
 #include "../Utils/Logger/SenfLog.hh"
 #include "FdDispatcher.hh"
 #include "TimerDispatcher.hh"
-#include "SignalDispatcher.hh"
+#include "SignalEvent.hh"
 #include "FileDispatcher.hh"
 #include "../Utils/Logger/SenfLog.hh"
 
@@ -282,20 +282,6 @@ namespace senf {
 
         ///\}
 
-        ///\name Signal handlers
-        ///\{
-        
-        void registerSignal(unsigned signal, SignalCallback const & cb);
-                                        ///< Add signal handler
-                                        /**< \param[in] signal signal number to register handler for
-                                             \param[in] cb callback to call whenever \a signal is
-                                                 delivered. */
-
-        void unregisterSignal(unsigned signal);
-                                        ///< Remove signal handler for \a signal
-
-        ///\}
-
         void process();                 ///< Event handler main loop
                                         /**< This member must be called at some time to enter the
                                              event handler main loop. Only while this function is
@@ -318,6 +304,8 @@ namespace senf {
         unsigned taskTimeout() const;
         unsigned hangCount() const;
 
+        void restart();
+
     protected:
 
     private:
@@ -329,12 +317,9 @@ namespace senf {
         void do_remove(int fd, int eventMask);
 
         bool terminate_;
-        scheduler::FdManager manager_;
-        scheduler::FIFORunner runner_;
 
         scheduler::FdDispatcher fdDispatcher_;
         scheduler::TimerDispatcher timerDispatcher_;
-        scheduler::SignalDispatcher signalDispatcher_;
         scheduler::FileDispatcher fileDispatcher_;
     };
 
