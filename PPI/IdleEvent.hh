@@ -56,7 +56,7 @@ namespace ppi {
 
         void cb();
         
-        unsigned id_;
+        scheduler::TimerEvent timer_;
     };
 
 }}

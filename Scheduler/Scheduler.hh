@@ -30,7 +30,7 @@
 // Custom includes
 #include "../Utils/Logger/SenfLog.hh"
 #include "FdDispatcher.hh"
-#include "TimerDispatcher.hh"
+#include "TimerEvent.hh"
 #include "SignalEvent.hh"
 #include "FileDispatcher.hh"
 #include "../Utils/Logger/SenfLog.hh"
@@ -189,9 +189,6 @@ namespace senf {
         /** \brief Callback type for signal events */
         typedef boost::function<void (siginfo_t const &)> SignalCallback;
 
-        /** \brief Timer id type */
-        typedef scheduler::TimerDispatcher::timer_id timer_id;
-
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -253,35 +250,6 @@ namespace senf {
 
         ///\}
 
-        ///\name Timeouts
-        ///\{
-
-        timer_id timeout(std::string const & name, ClockService::clock_type timeout, 
-                         SimpleCallback const & cb); 
-                                        ///< Add timeout event
-                                        /**< \returns timer id
-                                             \param[in] name descriptive name to identify the
-                                                 callback.
-                                             \param[in] timeout timeout in nanoseconds
-                                             \param[in] cb callback to call after \a timeout
-                                                 milliseconds */
-
-        timer_id timeout(ClockService::clock_type timeout, SimpleCallback const & cb); 
-                                        ///< Add timeout event
-                                        /**< \see timeout() */
-
-        void cancelTimeout(timer_id id); ///< Cancel timeout \a id
-
-#ifndef DOXYGEN
-        ClockService::clock_type timeoutEarly() const;
-        void timeoutEarly(ClockService::clock_type v);
-
-        ClockService::clock_type timeoutAdjust() const;
-        void timeoutAdjust(ClockService::clock_type v);
-#endif
-
-        ///\}
-
         void process();                 ///< Event handler main loop
                                         /**< This member must be called at some time to enter the
                                              event handler main loop. Only while this function is
@@ -319,7 +287,6 @@ namespace senf {
         bool terminate_;
 
         scheduler::FdDispatcher fdDispatcher_;
-        scheduler::TimerDispatcher timerDispatcher_;
         scheduler::FileDispatcher fileDispatcher_;
     };
 

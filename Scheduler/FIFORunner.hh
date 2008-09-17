@@ -73,7 +73,7 @@ namespace scheduler {
         struct TaskInfo 
             : public TaskListBase
         {
-            TaskInfo();
+            explicit TaskInfo(std::string const & name_);
             virtual ~TaskInfo();
 
             bool runnable;              ///< Runnable flag

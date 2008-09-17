@@ -74,7 +74,7 @@ namespace scheduler {
         ///\name Structors and default members
         ///@{
 
-        SignalEvent(int signal, Callback cb, bool initiallyEnabled=true);
+        SignalEvent(int signal, Callback const & cb, bool initiallyEnabled=true);
                                         ///< Register a signal event
                                         /**< Registers \a cb as callback for the UNIX signal \a
                                              signal. If \a initiallyEnabled is set \c false, the
@@ -92,13 +92,12 @@ namespace scheduler {
         void disable();                 ///< Enable signal event registration
         void enable();                  ///< Disable the signal event registration
         bool enabled() const;           ///< \c true, if event enabled, \c false otherwise
-        void action(Callback cb);       ///< Change signal event callback
+        void action(Callback const & cb); ///< Change signal event callback
 
     private:
         virtual void run();
         
         int signal_;
-        bool enabled_;
         Callback cb_;
         siginfo_t siginfo_;
 

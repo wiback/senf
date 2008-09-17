@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,76 +21,77 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IntervalTimer public header */
+    \brief TimerDispatcher public header */
 
-#ifndef HH_IntervalTimer_
-#define HH_IntervalTimer_ 1
+#ifndef HH_TimerDispatcher_
+#define HH_TimerDispatcher_ 1
 
 // Custom includes
-#include "../Scheduler/ClockService.hh"
-#include "Events.hh"
+#include <signal.h>
+#include "../boost/intrusive/iset_hook.hpp"
+#include "ClockService.hh"
+#include "FdManager.hh"
+#include "FIFORunner.hh"
+#include "../Utils/Logger/SenfLog.hh"
 
-//#include "IntervalTimer.mpp"
+//#include "TimerEvent.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-namespace ppi {
+namespace scheduler {
 
-    /** \brief IntervalTimer event information
+    namespace detail {
+        struct TimerSetTag;
+        typedef boost::intrusive::iset_base_hook<TimerSetTag> TimerSetBase;
+        struct TimerSetCompare;
+        class TimerDispatcher;
+    }
 
-        Information passed to the IntervalTimer event handler
-     */
-    struct IntervalTimerEventInfo
-    {
-        ClockService::clock_type expected; ///< Scheduled event time
-        ClockService::clock_type intervalStart; ///< Start of the current time interval
-        unsigned number;                ///< Number of the current event within the interval
-    };
-
-    /** \brief High precision regularly signaled event.
-
-        An IntervalTimer signals an event \a eventsPerInterval times each \a interval
-        nanoseconds. The event counter and timer are reset, whenever the event is disabled.
-
-        \see IntervalTimerEventInfo
-
-        \ingroup event_group
-      */
-    class IntervalTimer
-        : public EventImplementation<IntervalTimerEventInfo>
+    class TimerEvent
+        : public FIFORunner::TaskInfo,
+          public detail::TimerSetBase
     {
     public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        typedef boost::function<void ()> Callback;
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-        explicit IntervalTimer(ClockService::clock_type interval,
-                               unsigned eventsPerInterval=1);
+        TimerEvent(std::string const & name, Callback const & cb, ClockService::clock_type timeout,
+                   bool initiallyEnabled = true);
+        TimerEvent(std::string const & name, Callback const & cb);
+        ~TimerEvent();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-    protected:
+        void enable();
+        void disable();
+        bool enabled();
+
+        void action(Callback const & cb);
+        void timeout(ClockService::clock_type timeout, bool enable=true);
 
     private:
-        virtual void v_enable();
-        virtual void v_disable();
+        virtual void run();
 
-        void schedule();
-        void cb();
+        Callback cb_;
+        ClockService::clock_type timeout_;
 
-        ClockService::clock_type interval_;
-        unsigned eventsPerInterval_;
-        IntervalTimerEventInfo info_;
-        scheduler::TimerEvent timer_;
+        friend class detail::TimerDispatcher;
+        friend class detail::TimerSetCompare;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "IntervalTimer.cci"
-//#include "IntervalTimer.ct"
-//#include "IntervalTimer.cti"
+#include "TimerEvent.cci"
+//#include "TimerEvent.ct"
+//#include "TimerEvent.cti"
 #endif
 
 

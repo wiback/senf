@@ -84,8 +84,9 @@ BOOST_AUTO_UNIT_TEST(activeSocketSink)
 
     senf::UDPv4ClientSocketHandle inputSocket;
     inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
-    senf::Scheduler::instance().timeout(
-        senf::ClockService::now() + senf::ClockService::milliseconds(100), &timeout);
+    senf::scheduler::TimerEvent timer (
+        "activeSocketSink test timer", &timeout,
+        senf::ClockService::now() + senf::ClockService::milliseconds(100));
     source.submit(p);
     senf::ppi::run();
 

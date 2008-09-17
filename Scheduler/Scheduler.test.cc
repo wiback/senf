@@ -247,28 +247,34 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
     BOOST_REQUIRE_EQUAL( size, 4 );
     buffer[size]=0;
     BOOST_CHECK_EQUAL( buffer, "READ" );
+    
+    {
+        senf::scheduler::TimerEvent timer1 ("testTimer1", &timeout, 
+                                            ClockService::now()+ClockService::milliseconds(200));
+        senf::scheduler::TimerEvent timer2 ("testTimer2", &timeout,
+                                            ClockService::now()+ClockService::milliseconds(400));
+                                            
+        event = Scheduler::EV_NONE;
+        ClockService::clock_type t (ClockService::now());
+        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+        BOOST_CHECK_PREDICATE( is_close, (ClockService::now()-t) (ClockService::milliseconds(200)) );
+        BOOST_CHECK( timeoutCalled );
+        BOOST_CHECK( ! timer1.enabled() );
+        BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
+        BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (Scheduler::instance().eventTime()) );
+        timeoutCalled = false;
+        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+        BOOST_CHECK_PREDICATE( is_close, (ClockService::now()-t) (ClockService::milliseconds(400)) );
+        BOOST_CHECK( timeoutCalled );
+        BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
+        BOOST_CHECK( ! timer2.enabled() );
 
-    event = Scheduler::EV_NONE;
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
-                              ClockService::now()+ClockService::milliseconds(200),&timeout) );
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(
-                              ClockService::now()+ClockService::milliseconds(400),&timeout) );
-    ClockService::clock_type t (ClockService::now());
-    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()-t) (ClockService::milliseconds(200)) );
-    BOOST_CHECK( timeoutCalled );
-    BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (Scheduler::instance().eventTime()) );
-    timeoutCalled = false;
-    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_PREDICATE( is_close, (ClockService::now()-t) (ClockService::milliseconds(400)) );
-    BOOST_CHECK( timeoutCalled );
-    BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
-
-    BOOST_WARN_MESSAGE( false, "A 'Scheduler task hanging' error is expected to be signaled here." );
-    BOOST_CHECK_NO_THROW( Scheduler::instance().timeout(ClockService::now(), &blockingHandler) );
-    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_EQUAL( Scheduler::instance().hangCount(), 1u );
+        BOOST_WARN_MESSAGE( false, "A 'Scheduler task hanging' error is expected to be signaled here." );
+        BOOST_CHECK_NO_THROW( timer1.action(&blockingHandler) );
+        BOOST_CHECK_NO_THROW( timer1.timeout(ClockService::now()) );
+        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+        BOOST_CHECK_EQUAL( Scheduler::instance().hangCount(), 1u );
+    }
 
     HandleWrapper handle(sock,"TheTag");
     BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,
@@ -290,20 +296,19 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
     BOOST_CHECK_EQUAL( buffer, "OK" );
     BOOST_CHECK_NO_THROW( Scheduler::instance().remove(handle) );
 
-    unsigned tid (Scheduler::instance().timeout(
-                      ClockService::now()+ClockService::milliseconds(400),&timeout));
     {
+        senf::scheduler::TimerEvent timer ("testWatchdog", &timeout,
+                                           ClockService::now()+ClockService::milliseconds(400));
         senf::scheduler::SignalEvent sig (SIGUSR1, &sigusr);
 
-        t = ClockService::now();
+        ClockService::clock_type t = ClockService::now();
         ::kill(::getpid(), SIGUSR1);
         delay(100);
         BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
         BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
         BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+ClockService::milliseconds(200)) );
+        BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
     } 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().cancelTimeout(tid) );
 
     ///////////////////////////////////////////////////////////////////////////
 

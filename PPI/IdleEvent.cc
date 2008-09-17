@@ -42,13 +42,12 @@
 
 prefix_ void senf::ppi::IdleEvent::v_enable()
 {
-    id_ = Scheduler::instance().timeout(manager().now(), boost::bind(&IdleEvent::cb,this));
+    timer_.timeout(manager().now());
 }
 
 prefix_ void senf::ppi::IdleEvent::v_disable()
 {
-    Scheduler::instance().cancelTimeout(id_);
-    id_ = 0;
+    timer_.disable();
 }
 
 prefix_ void senf::ppi::IdleEvent::cb()

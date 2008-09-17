@@ -36,7 +36,6 @@
 #include "../Socket/ServerSocketHandle.hh"
 #include "../Scheduler/Scheduler.hh"
 #include "../Scheduler/Binding.hh"
-#include "../Scheduler/Timer.hh"
 #include "../Scheduler/ReadHelper.hh"
 #include "Parse.hh"
 #include "Executor.hh"
@@ -197,7 +196,7 @@ namespace console {
         Server & server_;
         ClientHandle handle_;
         SchedulerBinding binding_;
-        SchedulerTimer timer_;
+        scheduler::TimerEvent timer_;
         CommandParser parser_;
         Executor executor_;
         std::string name_;

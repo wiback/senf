@@ -101,6 +101,7 @@ namespace {
     struct NullTask 
         : public senf::scheduler::FIFORunner::TaskInfo
     {
+        NullTask() : senf::scheduler::FIFORunner::TaskInfo ("<null>") {}
         void run() {};
     };
 }

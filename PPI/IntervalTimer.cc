@@ -49,14 +49,13 @@ prefix_ void senf::ppi::IntervalTimer::v_enable()
 
 prefix_ void senf::ppi::IntervalTimer::v_disable()
 {
-    Scheduler::instance().cancelTimeout(id_);
-    id_ = 0;
+    timer_.disable();
 }
 
 prefix_ void senf::ppi::IntervalTimer::schedule()
 {
     info_.expected = info_.intervalStart + ( interval_ * (info_.number+1) ) / eventsPerInterval_;
-    id_ = Scheduler::instance().timeout(info_.expected, boost::bind(&IntervalTimer::cb,this));
+    timer_.timeout(info_.expected);
 }
 
 prefix_ void senf::ppi::IntervalTimer::cb()

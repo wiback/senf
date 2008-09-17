@@ -95,6 +95,7 @@ namespace detail {
         bool sigChld_;
 
         scheduler::SignalEvent cldSignal_;
+        scheduler::TimerEvent timer_;
         Forwarder coutForwarder_;
         Forwarder cerrForwarder_;
     };

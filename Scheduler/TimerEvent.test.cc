@@ -21,13 +21,13 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TimerDispatcher.test unit tests */
+    \brief TimerEvent.test unit tests */
 
-//#include "TimerDispatcher.test.hh"
-//#include "TimerDispatcher.test.ih"
+//#include "TimerEvent.test.hh"
+//#include "TimerEvent.test.ih"
 
 // Custom includes
-#include "TimerDispatcher.hh"
+#include "TimerEvent.hh"
 
 #include "../Utils//auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -52,32 +52,35 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(timerDispatcher)
 {
-    senf::scheduler::TimerDispatcher dispatcher (senf::scheduler::FdManager::instance(), senf::scheduler::FIFORunner::instance());
     senf::scheduler::FdManager::instance().timeout(1000);
 
     senf::ClockService::clock_type t (senf::ClockService::now());
-    senf::scheduler::TimerDispatcher::timer_id id;
-    SENF_CHECK_NO_THROW(
-        id = dispatcher.add( "testTimer", t + senf::ClockService::milliseconds(500), &handler ) );
-    SENF_CHECK_NO_THROW( dispatcher.unblockSignals() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
-    SENF_CHECK_NO_THROW( dispatcher.blockSignals() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
-    senf::ClockService::clock_type t2 (senf::ClockService::now());
-    BOOST_CHECK( called );
-    BOOST_CHECK_PREDICATE( is_close, (t2-t)(senf::ClockService::milliseconds(500)) );
+    {
+        senf::scheduler::TimerEvent timer ("testTimer", &handler, 
+                                           t + senf::ClockService::milliseconds(500));
+        SENF_CHECK_NO_THROW( timer.disable() );
+        SENF_CHECK_NO_THROW( timer.enable() );
+        BOOST_CHECK( timer.enabled() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().unblockSignals() );
+        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().blockSignals() );
+        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        senf::ClockService::clock_type t2 (senf::ClockService::now());
+        BOOST_CHECK( called );
+        BOOST_CHECK( ! timer.enabled() );
+        BOOST_CHECK_PREDICATE( is_close, (t2-t)(senf::ClockService::milliseconds(500)) );
 
-    SENF_CHECK_NO_THROW( dispatcher.remove(id) );
-
-    called=false;
-    t = senf::ClockService::now();
-    SENF_CHECK_NO_THROW( dispatcher.add( "testTimer", t, &handler ) );
-    SENF_CHECK_NO_THROW( dispatcher.unblockSignals() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
-    SENF_CHECK_NO_THROW( dispatcher.blockSignals() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
-    BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
-    BOOST_CHECK( called );
+        called=false;
+        t = senf::ClockService::now();
+        SENF_CHECK_NO_THROW( timer.timeout(t) );
+        BOOST_CHECK( timer.enabled() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().unblockSignals() );
+        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().blockSignals() );
+        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
+        BOOST_CHECK( called );
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

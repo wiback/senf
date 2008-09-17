@@ -44,12 +44,12 @@ prefix_ void senf::Scheduler::process()
 {
     terminate_ = false;
     while(! terminate_ && ! (fdDispatcher_.empty() &&
-                             timerDispatcher_.empty() &&
+                             scheduler::detail::TimerDispatcher::instance().empty() &&
                              fileDispatcher_.empty())) {
         scheduler::detail::SignalDispatcher::instance().unblockSignals();
-        timerDispatcher_.unblockSignals();
+        scheduler::detail::TimerDispatcher::instance().unblockSignals();
         scheduler::FdManager::instance().processOnce();
-        timerDispatcher_.blockSignals();
+        scheduler::detail::TimerDispatcher::instance().blockSignals();
         scheduler::detail::SignalDispatcher::instance().blockSignals();
         fileDispatcher_.prepareRun();
         scheduler::FIFORunner::instance().run();
@@ -61,7 +61,7 @@ prefix_ void senf::Scheduler::restart()
     scheduler::FdManager* fdm (&scheduler::FdManager::instance());
     scheduler::FIFORunner* ffr (&scheduler::FIFORunner::instance());
     scheduler::FdDispatcher* fdd (&fdDispatcher_);
-    scheduler::TimerDispatcher* td (&timerDispatcher_);
+    scheduler::detail::TimerDispatcher* td (&scheduler::detail::TimerDispatcher::instance());
     scheduler::detail::SignalDispatcher* sd (&scheduler::detail::SignalDispatcher::instance());
     scheduler::FileDispatcher* fld (&fileDispatcher_);
     
@@ -75,7 +75,7 @@ prefix_ void senf::Scheduler::restart()
     new (fdm) scheduler::FdManager();
     new (ffr) scheduler::FIFORunner();
     new (fdd) scheduler::FdDispatcher(*fdm, *ffr);
-    new (td) scheduler::TimerDispatcher(*fdm, *ffr);
+    new (td) scheduler::detail::TimerDispatcher();
     new (sd) scheduler::detail::SignalDispatcher();
     new (fld) scheduler::FileDispatcher(*fdm, *ffr);
 }

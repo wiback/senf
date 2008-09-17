@@ -43,6 +43,9 @@ namespace detail {
     struct FdTask
         : public FIFORunner::TaskInfo
     {
+        explicit FdTask(std::string const & name) 
+            : FIFORunner::TaskInfo (name) {}
+
         typedef boost::function<void (int)> Callback;
         virtual void run();
         Self & self();

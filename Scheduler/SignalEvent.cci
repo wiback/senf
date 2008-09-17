@@ -56,44 +56,39 @@ prefix_ bool senf::scheduler::detail::SignalDispatcher::empty()
 ///////////////////////////////////////////////////////////////////////////
 // senf::scheduler::SignalEvent
 
-prefix_ senf::scheduler::SignalEvent::SignalEvent(int signal, Callback cb,
+prefix_ senf::scheduler::SignalEvent::SignalEvent(int signal, Callback const & cb,
                                                   bool initiallyEnabled)
-    : signal_ (signal), enabled_ (initiallyEnabled), cb_ (cb)
+    : FIFORunner::TaskInfo(signalName(signal)), signal_ (signal), cb_ (cb)
 {
-    name = signalName(signal);
-    if (enabled_)
-        senf::scheduler::detail::SignalDispatcher::instance().add(*this);
+    if (initiallyEnabled)
+        enable();
 }
 
 prefix_ senf::scheduler::SignalEvent::~SignalEvent()
 {
     if (senf::scheduler::detail::SignalDispatcher::alive())
-        senf::scheduler::detail::SignalDispatcher::instance().remove(*this);
+        disable();
 }
 
 prefix_ void senf::scheduler::SignalEvent::disable()
 {
-    if (enabled_) {
+    if (detail::SignalSetBase::linked())
         senf::scheduler::detail::SignalDispatcher::instance().remove(*this);
-        enabled_ = false;
-    }
 }
 
 prefix_ void senf::scheduler::SignalEvent::enable()
 {
-    if (! enabled_) {
+    if (! detail::SignalSetBase::linked())
         senf::scheduler::detail::SignalDispatcher::instance().add(*this);
-        enabled_ = true;
-    }
 }
 
 prefix_ bool senf::scheduler::SignalEvent::enabled()
     const
 {
-    return enabled_;
+    return detail::SignalSetBase::linked();
 }
 
-prefix_ void senf::scheduler::SignalEvent::action(Callback cb)
+prefix_ void senf::scheduler::SignalEvent::action(Callback const & cb)
 {
     cb_ = cb;
 }

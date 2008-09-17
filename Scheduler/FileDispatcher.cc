@@ -55,20 +55,16 @@ prefix_ void senf::scheduler::FileDispatcher::add(std::string const & name, int 
     
     FileMap::iterator i (files_.find(fd));
     if (i == files_.end()) {
-        i = files_.insert(std::make_pair(fd, FileEvent())).first;
+        i = files_.insert(std::make_pair(fd, FileEvent(name))).first;
         runner_.enqueue(static_cast<FileEvent::ReadTask*>(&i->second));
         runner_.enqueue(static_cast<FileEvent::WriteTask*>(&i->second));
     }
     FileEvent & event (i->second);
 
-    if (events & EV_READ) {
+    if (events & EV_READ)
         event.FileEvent::ReadTask::cb = cb;
-        event.FileEvent::ReadTask::name = name;
-    }
-    if (events & EV_WRITE) {
+    if (events & EV_WRITE)
         event.FileEvent::WriteTask::cb = cb;
-        event.FileEvent::WriteTask::name = name;
-    }
     
     manager_.timeout(0);
 }

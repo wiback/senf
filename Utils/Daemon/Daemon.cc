@@ -563,6 +563,7 @@ prefix_ senf::detail::DaemonWatcher::DaemonWatcher(int pid, int coutpipe, int ce
     : childPid_(pid), coutpipe_(coutpipe), cerrpipe_(cerrpipe), stdout_(stdout),
       stderr_(stderr), sigChld_(false),
       cldSignal_ (SIGCHLD, senf::membind(&DaemonWatcher::sigChld, this)),
+      timer_ ("DaemanWatcher watchdog", senf::membind(&DaemonWatcher::childOk, this)),
       coutForwarder_(coutpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 1)), 
       cerrForwarder_(cerrpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 2)) 
 {
@@ -594,9 +595,7 @@ prefix_ void senf::detail::DaemonWatcher::pipeClosed(int id)
             childDied(); // does not return
         if (::kill(childPid_, SIGUSR1) < 0 && errno != ESRCH)
             SENF_THROW_SYSTEM_EXCEPTION("::kill()");
-        Scheduler::instance().timeout(
-            Scheduler::instance().eventTime() + ClockService::seconds(1),
-            senf::membind(&DaemonWatcher::childOk, this));
+        timer_.timeout(Scheduler::instance().eventTime() + ClockService::seconds(1));
     }
 }
 

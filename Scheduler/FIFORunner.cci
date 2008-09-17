@@ -34,8 +34,8 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::scheduler::FIFORunner::TaskInfo::TaskInfo()
-    : runnable (false)
+prefix_ senf::scheduler::FIFORunner::TaskInfo::TaskInfo(std::string const & name_)
+    : runnable (false), name (name_)
 {}
 
 prefix_ senf::scheduler::FIFORunner::TaskInfo::~TaskInfo()

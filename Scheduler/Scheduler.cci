@@ -67,52 +67,6 @@ prefix_ int senf::retrieve_filehandle(int fd)
     return fd;
 }
 
-prefix_ senf::Scheduler::timer_id senf::Scheduler::timeout(ClockService::clock_type timeout,
-                                                           SimpleCallback const & cb)
-{
-    return timerDispatcher_.add("<anon timer>", timeout, cb);
-}
-
-prefix_ senf::Scheduler::timer_id senf::Scheduler::timeout(std::string const & name,
-                                                           ClockService::clock_type timeout,
-                                                           SimpleCallback const & cb)
-{
-    return timerDispatcher_.add(name, timeout, cb);
-}
-
-prefix_ void senf::Scheduler::cancelTimeout(timer_id id)
-{
-    timerDispatcher_.remove(id);
-}
-
-prefix_ senf::ClockService::clock_type senf::Scheduler::timeoutEarly()
-    const
-{
-    SENF_LOG( (senf::log::IMPORTANT) 
-              ("timeoutEarly() is deprecated and a no-op. It will be removed") );
-    return 0;
-}
-
-prefix_ void senf::Scheduler::timeoutEarly(ClockService::clock_type v)
-{
-    SENF_LOG( (senf::log::IMPORTANT) 
-              ("timeoutEarly() is deprecated and a no-op. It will be removed") );
-}
-
-prefix_ senf::ClockService::clock_type senf::Scheduler::timeoutAdjust()
-    const
-{
-    SENF_LOG( (senf::log::IMPORTANT) 
-              ("timeoutAdjust() is deprecated and a no-op. It will be removed") );
-    return 0;
-}
-
-prefix_ void senf::Scheduler::timeoutAdjust(ClockService::clock_type v)
-{
-    SENF_LOG( (senf::log::IMPORTANT) 
-              ("timeoutAdjust() is deprecated and a no-op. It will be removed") );
-}
-
 prefix_ void senf::Scheduler::terminate()
 {
     terminate_ = true;
@@ -144,7 +98,6 @@ prefix_ unsigned senf::Scheduler::hangCount()
 prefix_ senf::Scheduler::Scheduler()
     : terminate_ (false), 
       fdDispatcher_ (scheduler::FdManager::instance(), scheduler::FIFORunner::instance()),
-      timerDispatcher_ (scheduler::FdManager::instance(), scheduler::FIFORunner::instance()),
       fileDispatcher_ (scheduler::FdManager::instance(), scheduler::FIFORunner::instance())
 {}
 

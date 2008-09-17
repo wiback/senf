@@ -109,6 +109,9 @@ namespace scheduler {
             typedef detail::FdTask<0, FileEvent> ReadTask;
             typedef detail::FdTask<1, FileEvent> WriteTask;
 
+            explicit FileEvent(std::string const & name)
+                : ReadTask (name), WriteTask (name) {}
+
             int activeEvents() const;
             int events;
         };

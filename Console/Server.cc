@@ -224,8 +224,10 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
     : out_t(boost::ref(*this)), senf::log::IOStreamTarget(out_t::member), server_ (server),
       handle_ (handle), 
       binding_ (handle, boost::bind(&Client::setNoninteractive,this), Scheduler::EV_READ, false),
-      timer_ (Scheduler::instance().eventTime() + ClockService::milliseconds(INTERACTIVE_TIMEOUT),
-              boost::bind(&Client::setInteractive, this), false),
+      timer_ ("senf::console::Client interactive timeout", 
+              boost::bind(&Client::setInteractive, this),
+              Scheduler::instance().eventTime() + ClockService::milliseconds(INTERACTIVE_TIMEOUT),
+              false),
       name_ (server.name()), reader_ (), mode_ (server.mode())
 {
     handle_.facet<senf::TCPSocketProtocol>().nodelay();
