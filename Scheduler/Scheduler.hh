@@ -38,29 +38,23 @@
 
 namespace senf {
 
-/** \brief Visible scheduler interface
+/** \brief The Scheduler interface
 
-    The %scheduler singleton manages access to the %scheduler library. It provides access to
-    several event dispatchers:
-    \li File descriptor notifications
-    \li Timeouts
-    \li UNIX Signals
+    The %scheduler API is comprised of two parts:
 
-    The %scheduler is entered by calling it's process() member. This call will continue to run as
-    long as there is something to do, or until one of the handlers calls terminate(). The
-    %scheduler has 'something to do' as long as there is any file descriptor or timeout active.
+    \li Specific event classes, one for each type of event.
+    \li Some generic functions implemented in the \ref senf::scheduler namespace.
 
-    The %scheduler only provides low level primitive scheduling capability. Additional helpers
-    are defined on top of this functionality (e.g. ReadHelper or WriteHelper or the interval
-    timers of the PPI).
+    Events are registered via the respective event class. The (global) functions are used to enter
+    the application main-loop or query for global information.
 
 
     \section sched_handlers Specifying handlers
 
-    All handlers are passed as generic <a
-    href="http://www.boost.org/doc/html/function.html">Boost.Function</a> objects. This allows
-    to pass any callable as a handler. Depending on the type of handler, some additional
-    arguments may be passed to the handler by the %scheduler. 
+    All handlers are specified as generic <a
+    href="http://www.boost.org/doc/html/function.html">Boost.Function</a> objects. This allows to
+    pass any callable as a handler. Depending on the type of handler, some additional arguments may
+    be passed to the handler by the %scheduler.
 
     If you need to pass additional information to your handler, use <a
     href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a>:
@@ -68,81 +62,42 @@ namespace senf {
     // Handle callback function
     void callback(UDPv4ClientSocketHandle handle, senf::Scheduler::EventId event) {..}
     // Pass 'handle' as additional first argument to callback()
-    Scheduler::instance().add(handle, boost::bind(&callback, handle, _1), EV_READ)
+    senf::scheduler::FdEvent event ("name", boost::bind(&callback, handle, _1), 
+                                    handle, senf::scheduler::FdEvent::EV_READ);
      // Timeout function
     void timeout( int n) {..}
     // Call timeout() handler with argument 'n'
-    Scheduler::instance().timeout(boost::bind(&timeout, n))
+    senf::scheduler::TimerEvent timer ("name", boost::bind(&timeout, n),
+                                       senf::ClockService::now() + senf::ClockService::seconds(1));
     \endcode
 
     To use member-functions as callbacks, use either <a
     href="http://www.boost.org/libs/bind/bind.html">Boost.Bind</a> or senf::membind()
     \code
     // e.g. in Foo::Foo() constructor:
-    Scheduler::instance().add(handle_, senf::membind(&Foo::callback, this)), EV_READ)
+    Foo::Foo()
+        : handle_ (...),
+          readevent_ ("Foo read", senf::membind(&Foo::callback, this), 
+                      handle_, senf::scheduler::FdEvent::EV_READ)
+    { ... }
     \endcode
 
-    The handler can also be identified by an arbitrary, user specified name. This name is used
-    in error messages to identify the failing handler.
+    The handler is identified by an arbitrary, user specified name. This name is used in error
+    messages to identify the failing handler.
 
 
-    \section sched_fd Registering file descriptors
+    \section sched_fd Registering events
+
+    Events are registered by allocating an instance of the corresponding event class:
+
+    \li senf::scheduler::FdEvent for file descriptor events
+    \li senf::scheduler::TimerEvent for single-shot deadline timer events
+    \li senf::scheduler::SignalEvent for UNIX signal events
+
+    The destructor of each of these classes will ensure, that the event will be properly
+    unregistered. The registration can be enabled, disabled or changed using appropriate
+    members. See the event class for details on a specific type of event.
     
-    File descriptors are managed using add() or remove()
-    \code
-    Scheduler::instance().add(handle, &callback, EV_ALL);
-    Scheduler::instance().remove(handle);
-    \endcode 
-
-    The callback will be called with one additional argument. This argument is the event mask of
-    type EventId. This mask will tell, which of the registered events are signaled. The
-    additional flags EV_HUP or EV_ERR (on hangup or error condition) may be set additionally.
-
-    Only a single handler may be registered for any combination of file descriptor and event
-    (registering multiple callbacks for a single fd and event does not make sense).
-
-    The %scheduler will accept any object as \a handle argument as long as retrieve_filehandle()
-    may be called on that object
-    \code
-    int fd = retrieve_filehandle(handle);
-    \endcode 
-    to fetch the file handle given some abstract handle type. retrieve_filehandle() will be
-    found using ADL depending on the argument namespace. A default implementation is provided
-    for \c int arguments (file descriptors)
-
-
-    \section sched_timers Registering timers
-
-    The %scheduler has very simple timer support. There is only one type of timer: A single-shot
-    deadline timer. More complex timers are built based on this. Timers are managed using
-    timeout() and cancelTimeout()
-    \code
-    int id = Scheduler::instance().timeout(Scheduler::instance().eventTime() + ClockService::milliseconds(100),
-                                           &callback);
-    Scheduler::instance().cancelTimeout(id);
-    \endcode 
-    Timing is based on the ClockService, which provides a high resolution and strictly
-    monotonous time source which again is based on POSIX timers. Registering a timeout will fire
-    the callback when the target time is reached. The timer may be canceled by passing the
-    returned \a id to cancelTimeout().
-
-
-    \section sched_signals Registering POSIX/UNIX signals
-
-    The %scheduler also incorporates standard POSIX/UNIX signals. Signals registered with the
-    %scheduler will be handled \e synchronously within the event loop.
-    \code
-    Scheduler::instance().registerSignal(SIGUSR1, &callback);
-    Scheduler::instance().unregisterSignal(SIGUSR1);
-    \endcode
-    When registering a signal with the %scheduler, that signal will automatically be blocked so
-    it can be handled within the %scheduler. 
-
-    A registered signal does \e not count as 'something to do'. It is therefore not possible to
-    wait for signals \e only.
-
-    \todo Change the Scheduler API to use RAII. Additionally, this will remove all dynamic
-        memory allocations from the scheduler.
     \todo Fix the file support to use threads (?) fork (?) and a pipe so it works reliably even
         over e.g. NFS.
   */

@@ -29,13 +29,18 @@
 
     \section scheduler_scheduler The Scheduler
 
-    The main interface is the senf::Scheduler class. This provides support for several types of
-    events:
+    The Scheduler is based on the RAII principle: Every event is represented by a class
+    instance. The event is registered in the constructor and removed by the destructor of that
+    instance. This implementation automatically links the lifetime of an event with the lifetime of
+    the object resposible for it's creation.
+    
+    The Scheduler supports the following types of events::
+
     \li File descriptors
     \li Timers
     \li UNIX signals
 
-    \see senf::Scheduler
+    \see \ref senf::scheduler
 
 
     \section scheduler_clockservice The ClockService
@@ -56,9 +61,6 @@
         is met (e.g. number of chars read or a specific character sequence is found in the input).
     \li senf::WriteHelper writes data to an arbitrary file descriptor until all provided data has
         been written.
-    \li senf::SchedulerBinding is an RAII class which manages the registration of a file descriptor
-        with the %scheduler.
-    \li senf::SchedulerTimer is an RAII class which manages a timer registration.
 
     
     \section scheduler_i Implementation
@@ -85,42 +87,44 @@
     
     \li Every registered event is represented by an event specific event class instance.
 
-    \li The Dispatcher ultimately registeres with the senf::scheduler::FdManager. Since the
+    \li The Dispatcher ultimately registeres with the senf::scheduler::detail::FdManager. Since the
         event-loop is based on epoll() (it could easily be changed to be based on select() or
         poll()), all events must ultimately be represented by some type of file descriptor (not
         necessarily a \e different file descriptor for each event).
 
     \li The Dispatcher registeres all callbacks as tasks with the runner
-        (senf::scheduler::FIFORunner).
+        (senf::scheduler::detail::FIFORunner).
 
-    \li The senf::scheduler::FdManager uses senf::scheduler::detail::Poller to access the low-level epoll()
-    API.
+    \li The senf::scheduler::detail::FdManager uses senf::scheduler::detail::Poller to access the
+        low-level epoll() API.
 
-    All these classes are \e not singletons. They are all instantiatied by the senf::Scheduler
-    singleton.
+    All these classes are singletons.
 
 
     \section scheduler_i_dispatchers Dispatchers
     
-    There is one dispatcher for each event type
+    There is a dispatcher for each event type
 
-    \li senf::scheduler::FdDispatcher manages poll-able file descriptors. This does \e not include
-        real files.
-    \li senf::scheduler::FileDispatcher manages disk files
-    \li senf::scheduler::TimerDispatcher manages timers
-    \li senf::scheduler::SignalDispatcher manages UNIX signals
+    \li senf::scheduler::detail::FdDispatcher manages poll-able file descriptors. This does \e not
+        include real files.
+    \li senf::scheduler::detail::FileDispatcher manages disk files
+    \li senf::scheduler::detail::TimerDispatcher manages timers
+    \li senf::scheduler::detail::SignalDispatcher manages UNIX signals
 
-    At the moment, each dispatcher has a specific API and the integration into the main-loop is not
-    standardized for performance reasons.
+    Each dispatcher has a specific API and the integration into the main-loop is not standardized
+    for performance reasons.
 
-    The Dispatcher owns all relevant data, the other classese (senf::scheduler::FIFORunner,
-    senf::scheduler::FdManager) only hold pointers to the data owned by the dispatcher.
+    The Dispatcher does not own the event instances, instead those instances are owned by the
+    respective object creating the event. The implementation uses boost::intrusive containeres to
+    manage the events. This makes the Scheduler itself be completely devoid of dynamic memory
+    allocations.
 
     
     \section scheduler_i_mainloop The main loop
 
-    The application mainloop is part of senf::Scheduler. It is constructed by calling the correct
-    members of all these classes repeatedly in the correct order: 
+    The application mainloop senf::scheduler::process() is constructed by calling the correct
+    members of all these classes repeatedly in the correct order:
+
     \li First dispatchers are set up
     \li then the senf::scheduler::FdManager is called to wait for an event
     \li After cleaning up the dispatchers,

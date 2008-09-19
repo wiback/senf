@@ -51,19 +51,23 @@ namespace scheduler {
 
         The FdEvent class registers a file descriptor for read or write events.
 
-        The type of event is specified using an event mask. Possible events are
+        There are a number of different event types supported for file descriptors. Those are
+        specified using a bit mask. Possible events are
 
         \li \c EV_READ: File descriptor is readable (or at EOF)
         \li \c EV_PRIO: There is out-of-band data available to be read on the file descriptor
         \li \c EV_WRITE: File descriptor is writable
 
-        These event flags can be or-ed together to form an event mask. The callback will be called
-        with those flags set which are currently signaled. There are additional flags which may be
-        set when calling the callback:
-
+        The callback will be called with one additional argument. This argument is the event mask of
+        type int. This mask will tell, which of the registered events are signaled. There are some
+        additional flags which can be set when calling the handler callback:
+        
         \li \c EV_HUP: The other end has closed the connection
         \li \c EV_ERR: Transport error
 
+        Only a single handler may be registered for any combination of file descriptor and event
+        otherwise a DuplicateEventRegistrationException is thrown.
+        
         The file descriptor is specified using an arbitrary handle type which supports the \c
         retrieve_filehandle() protocol: There must be a global function \c retrieve_filehandle
         callable with the handle type. This function must return the file descriptor associated with
@@ -87,15 +91,15 @@ namespace scheduler {
 	typedef boost::function<void (int)> Callback;
 
         enum Events { 
-            EV_NONE = 0,
-            EV_READ = detail::FdManager::EV_READ, 
-            EV_PRIO = detail::FdManager::EV_PRIO, 
-            EV_WRITE = detail::FdManager::EV_WRITE,
-            EV_HUP = detail::FdManager::EV_HUP, 
-            EV_ERR = detail::FdManager::EV_ERR,
-            EV_ALL = (detail::FdManager::EV_READ 
+            EV_NONE = 0                 ///< No event
+          , EV_READ = detail::FdManager::EV_READ ///< fd readable (or EOF)
+          , EV_PRIO = detail::FdManager::EV_PRIO, ///< OOB data available for read
+          , EV_WRITE = detail::FdManager::EV_WRITE ///< fd writable
+          , EV_HUP = detail::FdManager::EV_HUP ///< remote end closed connection
+          , EV_ERR = detail::FdManager::EV_ERR ///< transport error
+          , EV_ALL = (detail::FdManager::EV_READ 
                       | detail::FdManager::EV_WRITE 
-                      | detail::FdManager::EV_PRIO)
+                      | detail::FdManager::EV_PRIO) ///< register all events
         };
 
         ///////////////////////////////////////////////////////////////////////////
