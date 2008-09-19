@@ -52,7 +52,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(timerDispatcher)
 {
-    senf::scheduler::FdManager::instance().timeout(1000);
+    senf::scheduler::detail::FdManager::instance().timeout(1000);
 
     senf::ClockService::clock_type t (senf::ClockService::now());
     {
@@ -62,9 +62,9 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
         SENF_CHECK_NO_THROW( timer.enable() );
         BOOST_CHECK( timer.enabled() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().unblockSignals() );
-        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().blockSignals() );
-        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         senf::ClockService::clock_type t2 (senf::ClockService::now());
         BOOST_CHECK( called );
         BOOST_CHECK( ! timer.enabled() );
@@ -75,9 +75,9 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
         SENF_CHECK_NO_THROW( timer.timeout(t) );
         BOOST_CHECK( timer.enabled() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().unblockSignals() );
-        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().blockSignals() );
-        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
         BOOST_CHECK( called );
     }

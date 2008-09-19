@@ -97,8 +97,9 @@ namespace senf {
     private:
         WriteHelper(Handle handle, std::string const & data, Callback callback);
 
-        static void dispatchProcess(ptr helper, Handle handle, senf::Scheduler::EventId event);
-        void process(Handle handle, senf::Scheduler::EventId event);
+        static void dispatchProcess(ptr helper, Handle handle, 
+                                    senf::scheduler::FdEvent::Events event);
+        void process(Handle handle, senf::scheduler::FdEvent::Events event);
         void done();
 
         Handle handle_;

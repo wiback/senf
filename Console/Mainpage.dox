@@ -87,7 +87,7 @@
             .name("someServer");
 
         // Run the scheduler
-       senf::Scheduler::instance().process();
+       senf::scheduler::process();
     }
     \endcode
 
@@ -449,7 +449,7 @@
            .name("myserver");
 
         // You need to enter the scheduler main-loop for the server to work
-        senf::Scheduler::instance().process();
+        senf::scheduler::process();
        
         // Alternatively enter the main-loop via the PPI
         // senf::ppi::run();

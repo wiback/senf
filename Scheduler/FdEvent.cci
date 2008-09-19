@@ -36,7 +36,7 @@
 // senf::scheduler::FdEvent
 
 prefix_ senf::scheduler::FdEvent::FdEvent(std::string const & name, Callback const & cb)
-    : FIFORunner::TaskInfo (name), cb_ (cb), fd_ (-1), pollable_ (true), events_ (0)
+    : detail::FIFORunner::TaskInfo (name), cb_ (cb), fd_ (-1), pollable_ (true), events_ (0)
 {}
 
 prefix_ senf::scheduler::FdEvent::~FdEvent()
@@ -92,7 +92,7 @@ prefix_ void senf::scheduler::detail::FileDispatcher::timeout(int t)
 {
     managerTimeout_ = t;
     if (fds_.empty())
-        FdManager::instance().timeout(managerTimeout_);
+        detail::FdManager::instance().timeout(managerTimeout_);
 }
 
 prefix_ int senf::scheduler::detail::FileDispatcher::timeout()

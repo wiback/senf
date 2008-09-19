@@ -378,7 +378,7 @@ prefix_ void senf::Daemon::fork()
         LIBC_CALL( ::setsid, () );
         LIBC_CALL( ::sigprocmask, (SIG_SETMASK, &oldsig, 0) );
 
-        senf::Scheduler::instance().restart();
+        senf::scheduler::restart();
         return;
     }
 
@@ -388,7 +388,7 @@ prefix_ void senf::Daemon::fork()
     LIBC_CALL( ::close, (coutpipe[1]) );
     LIBC_CALL( ::close, (cerrpipe[1]) );
 
-    senf::Scheduler::instance().restart();
+    senf::scheduler::restart();
 
     detail::DaemonWatcher watcher (pid, coutpipe[0], cerrpipe[0], stdout_, stderr_);
     watcher.run();
@@ -577,7 +577,7 @@ prefix_ senf::detail::DaemonWatcher::DaemonWatcher(int pid, int coutpipe, int ce
 
 prefix_ void senf::detail::DaemonWatcher::run()
 {
-    Scheduler::instance().process();
+    scheduler::process();
 }
 
 ////////////////////////////////////////
@@ -595,7 +595,7 @@ prefix_ void senf::detail::DaemonWatcher::pipeClosed(int id)
             childDied(); // does not return
         if (::kill(childPid_, SIGUSR1) < 0 && errno != ESRCH)
             SENF_THROW_SYSTEM_EXCEPTION("::kill()");
-        timer_.timeout(Scheduler::instance().eventTime() + ClockService::seconds(1));
+        timer_.timeout(scheduler::eventTime() + ClockService::seconds(1));
     }
 }
 
@@ -623,7 +623,7 @@ prefix_ void senf::detail::DaemonWatcher::childDied()
 
 prefix_ void senf::detail::DaemonWatcher::childOk()
 {
-    Scheduler::instance().terminate();
+    scheduler::terminate();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -680,7 +680,7 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(int event)
 
 prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(int event, Target * target)
 {    
-    if (event != Scheduler::EV_WRITE) {
+    if (event != scheduler::FdEvent::EV_WRITE) {
         // Broken pipe while writing data ? Not much, we can do here, we just drop the data
         targets_.erase_and_destroy(Targets::current(*target),DestroyDelete());
         if (targets_.empty() && src_ == -1)

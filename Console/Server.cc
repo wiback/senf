@@ -85,9 +85,6 @@ senf::console::Server::start(senf::INet6SocketAddress const & address)
 
 prefix_ senf::console::Server & senf::console::Server::start(ServerHandle handle)
 {
-    // Uah .... ensure the scheduler is created before the instance pointer so it get's destructed
-    // AFTER it.
-    (void) senf::Scheduler::instance();
     boost::intrusive_ptr<Server> p (new Server(handle));
     detail::ServerManager::add(boost::intrusive_ptr<Server>(p));
     return *p;
@@ -184,7 +181,7 @@ senf::console::detail::NoninteractiveClientReader::NoninteractiveClientReader(Cl
     : ClientReader (client), 
       readevent_ ("NoninteractiveClientReader", 
                   senf::membind(&NoninteractiveClientReader::newData, this),
-                  handle(), senf::Scheduler::EV_READ)
+                  handle(), senf::scheduler::FdEvent::EV_READ)
 {}
 
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_disablePrompt()
@@ -199,7 +196,7 @@ prefix_ void senf::console::detail::NoninteractiveClientReader::v_translate(std:
 prefix_ void
 senf::console::detail::NoninteractiveClientReader::newData(int event)
 {
-    if (event != senf::Scheduler::EV_READ || handle().eof()) {
+    if (event != senf::scheduler::FdEvent::EV_READ || handle().eof()) {
         if (! buffer_.empty())
             handleInput(buffer_);
         stopClient();
@@ -221,10 +218,10 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
     : out_t(boost::ref(*this)), senf::log::IOStreamTarget(out_t::member), server_ (server),
       handle_ (handle), 
       readevent_ ("senf::console::Client", boost::bind(&Client::setNoninteractive,this), 
-                  handle, Scheduler::EV_READ, false),
+                  handle, scheduler::FdEvent::EV_READ, false),
       timer_ ("senf::console::Client interactive timeout", 
               boost::bind(&Client::setInteractive, this),
-              Scheduler::instance().eventTime() + ClockService::milliseconds(INTERACTIVE_TIMEOUT),
+              scheduler::eventTime() + ClockService::milliseconds(INTERACTIVE_TIMEOUT),
               false),
       name_ (server.name()), reader_ (), mode_ (server.mode())
 {

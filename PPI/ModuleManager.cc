@@ -60,7 +60,7 @@ prefix_ void senf::ppi::ModuleManager::run()
 {
     init();
     RunGuard guard (*this);
-    Scheduler::instance().process();
+    scheduler::process();
 }
 
 ////////////////////////////////////////

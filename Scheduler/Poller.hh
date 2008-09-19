@@ -37,6 +37,7 @@
 
 namespace senf {
 namespace scheduler {
+namespace detail {
 
     /** \brief Epoll abstraction
 
@@ -69,8 +70,8 @@ namespace scheduler {
         enum Events { 
             EV_READ = EPOLLIN, EV_PRIO = EPOLLPRI, EV_WRITE = EPOLLOUT,
             EV_HUP = EPOLLHUP, EV_ERR = EPOLLERR 
-};
-
+        };
+        
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -99,7 +100,7 @@ namespace scheduler {
     };
 
 
-}}
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Poller.cci"

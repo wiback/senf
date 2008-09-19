@@ -145,27 +145,25 @@ namespace {
     void callback(int fd, int ev)
     {
         event = ev;
-        switch (event & Scheduler::EV_ALL) {
-        case Scheduler::EV_READ:
+        switch (event & senf::scheduler::FdEvent::EV_ALL) {
+        case senf::scheduler::FdEvent::EV_READ:
             size = recv(fd,buffer,1024,0);
             break;
-        case Scheduler::EV_PRIO:
+        case senf::scheduler::FdEvent::EV_PRIO:
             size = recv(fd,buffer,1024,MSG_OOB);
-            Scheduler::instance().terminate();
             break;
-        case Scheduler::EV_WRITE:
+        case senf::scheduler::FdEvent::EV_WRITE:
             size = write(fd,buffer,size);
-            Scheduler::instance().terminate();
             break;
         }
-        Scheduler::instance().terminate();
+        senf::scheduler::terminate();
     }
 
     bool timeoutCalled = false;
     void timeout()
     {
         timeoutCalled = true;
-        Scheduler::instance().terminate();
+        senf::scheduler::terminate();
     }
 
     struct HandleWrapper
@@ -197,7 +195,7 @@ namespace {
     void sigusr(siginfo_t const &)
     {
         sigtime = ClockService::now();
-        Scheduler::instance().terminate();
+        senf::scheduler::terminate();
     }
 
     void delay(unsigned long milliseconds)
@@ -211,7 +209,7 @@ namespace {
     void blockingHandler()
     {
         delay(2200);
-        Scheduler::instance().terminate();
+        senf::scheduler::terminate();
     }
 
 }
@@ -238,14 +236,12 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
 
     ///////////////////////////////////////////////////////////////////////////
 
-    BOOST_CHECK_NO_THROW( Scheduler::instance() );
-
     {
         senf::scheduler::FdEvent fde1 ("testFdEvent", boost::bind(&callback, sock, _1),
                                       sock, senf::scheduler::FdEvent::EV_READ);
-        event = Scheduler::EV_NONE;
-        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-        BOOST_CHECK_EQUAL( event, Scheduler::EV_READ );
+        event = senf::scheduler::FdEvent::EV_NONE;
+        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_READ );
         BOOST_REQUIRE_EQUAL( size, 4 );
         buffer[size]=0;
         BOOST_CHECK_EQUAL( buffer, "READ" );
@@ -255,15 +251,15 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
                                       handle, senf::scheduler::FdEvent::EV_WRITE);
         strcpy(buffer,"WRITE");
         size=5;
-        event = Scheduler::EV_NONE;
-        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-        BOOST_CHECK_EQUAL( event, Scheduler::EV_WRITE );
+        event = senf::scheduler::FdEvent::EV_NONE;
+        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_WRITE );
 
         SENF_CHECK_NO_THROW( fde2.disable() );
-        event = Scheduler::EV_NONE;
+        event = senf::scheduler::FdEvent::EV_NONE;
         sleep(1);
-        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-        BOOST_CHECK_EQUAL( event, Scheduler::EventId(Scheduler::EV_READ|Scheduler::EV_HUP) );
+        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_READ|senf::scheduler::FdEvent::EV_HUP );
         BOOST_REQUIRE_EQUAL( size, 2 );
         buffer[size]=0;
         BOOST_CHECK_EQUAL( buffer, "OK" );
@@ -275,26 +271,26 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
         senf::scheduler::TimerEvent timer2 ("testTimer2", &timeout,
                                             ClockService::now()+ClockService::milliseconds(400));
                                             
-        event = Scheduler::EV_NONE;
+        event = senf::scheduler::FdEvent::EV_NONE;
         ClockService::clock_type t (ClockService::now());
-        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_PREDICATE( is_close, (ClockService::now()-t) (ClockService::milliseconds(200)) );
         BOOST_CHECK( timeoutCalled );
         BOOST_CHECK( ! timer1.enabled() );
-        BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
-        BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (Scheduler::instance().eventTime()) );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
+        BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (senf::scheduler::eventTime()) );
         timeoutCalled = false;
-        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_PREDICATE( is_close, (ClockService::now()-t) (ClockService::milliseconds(400)) );
         BOOST_CHECK( timeoutCalled );
-        BOOST_CHECK_EQUAL( event, Scheduler::EV_NONE );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
         BOOST_CHECK( ! timer2.enabled() );
 
         BOOST_WARN_MESSAGE( false, "A 'Scheduler task hanging' error is expected to be signaled here." );
         BOOST_CHECK_NO_THROW( timer1.action(&blockingHandler) );
         BOOST_CHECK_NO_THROW( timer1.timeout(ClockService::now()) );
-        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-        BOOST_CHECK_EQUAL( Scheduler::instance().hangCount(), 1u );
+        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        BOOST_CHECK_EQUAL( senf::scheduler::hangCount(), 1u );
     }
 
     {
@@ -305,10 +301,10 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
         ClockService::clock_type t = ClockService::now();
         ::kill(::getpid(), SIGUSR1);
         delay(100);
-        BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
+        BOOST_CHECK_NO_THROW( senf::scheduler::process() ); 
         BOOST_CHECK_PREDICATE( is_close, (ClockService::now()) (t+ClockService::milliseconds(200)) );
         BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+ClockService::milliseconds(200)) );
-        BOOST_CHECK_NO_THROW( Scheduler::instance().process() ); 
+        BOOST_CHECK_NO_THROW( senf::scheduler::process() ); 
     } 
 
     ///////////////////////////////////////////////////////////////////////////

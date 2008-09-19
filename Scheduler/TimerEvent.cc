@@ -37,7 +37,7 @@ prefix_ senf::scheduler::detail::TimerDispatcher::TimerDispatcher()
 {
     if (pipe(timerPipe_) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("pipe()");
-    senf::scheduler::FdManager::instance().set(timerPipe_[0], FdManager::EV_READ, this);
+    senf::scheduler::detail::FdManager::instance().set(timerPipe_[0], detail::FdManager::EV_READ, this);
 
     sigemptyset(&sigSet_);
     sigaddset(&sigSet_, SIGALRM);
@@ -64,12 +64,12 @@ prefix_ senf::scheduler::detail::TimerDispatcher::~TimerDispatcher()
     TimerSet::iterator i (timers_.begin());
     TimerSet::iterator const i_end (timers_.end());
     for (; i != i_end; ++i)
-        senf::scheduler::FIFORunner::instance().dequeue(&(*i));
+        senf::scheduler::detail::FIFORunner::instance().dequeue(&(*i));
 
     timer_delete(timerId_);
     ::signal(SIGALRM, SIG_IGN);
     sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
-    senf::scheduler::FdManager::instance().remove(timerPipe_[0]);
+    senf::scheduler::detail::FdManager::instance().remove(timerPipe_[0]);
     close(timerPipe_[0]);
     close(timerPipe_[1]);
 }
@@ -77,7 +77,7 @@ prefix_ senf::scheduler::detail::TimerDispatcher::~TimerDispatcher()
 void senf::scheduler::detail::TimerDispatcher::add(TimerEvent & event)
 {
     TimerSet::iterator i (timers_.insert(event));
-    senf::scheduler::FIFORunner::instance().enqueue(&(*i));
+    senf::scheduler::detail::FIFORunner::instance().enqueue(&(*i));
     if (! blocked_)
         reschedule();
 }
@@ -87,7 +87,7 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::remove(TimerEvent & event
     TimerSet::iterator i (TimerSet::current(event));
     if (i == timers_.end())
         return;
-    senf::scheduler::FIFORunner::instance().dequeue(&(*i));
+    senf::scheduler::detail::FIFORunner::instance().dequeue(&(*i));
     timers_.erase(i);
     if (! blocked_)
         reschedule();
@@ -117,7 +117,7 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::signal(int events)
         return;
     TimerSet::iterator i (timers_.begin());
     TimerSet::iterator const i_end (timers_.end());
-    ClockService::clock_type now (senf::scheduler::FdManager::instance().eventTime());
+    ClockService::clock_type now (senf::scheduler::detail::FdManager::instance().eventTime());
     for (; i != i_end && i->timeout_ <= now ; ++i)
         i->setRunnable();
 }

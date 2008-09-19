@@ -82,7 +82,7 @@ int main(int argc, char const * argv[])
         MCSniffer sniffer2 (
             senf::INet4Address::from_string("233.132.152.2"), f2);
             
-        senf::Scheduler::instance().process();
+        senf::scheduler::process();
     }
     catch (std::exception const & ex) {
         std::cerr << senf::prettyName(typeid(ex)) << ": " << ex.what() << "\n";

@@ -62,7 +62,7 @@ struct TestObject
 
 void shutdownServer()
 {
-    senf::Scheduler::instance().terminate();
+    senf::scheduler::terminate();
     throw senf::console::Executor::ExitException();
 }
 
@@ -113,7 +113,7 @@ int main(int, char **)
     senf::console::Server::start( senf::INet4SocketAddress(23232u) )
         .name("testServer");
 
-    senf::Scheduler::instance().process();
+    senf::scheduler::process();
 }
 
 

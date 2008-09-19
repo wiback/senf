@@ -37,14 +37,14 @@
 prefix_ senf::scheduler::TimerEvent::TimerEvent(std::string const & name, Callback const & cb,
                                                 ClockService::clock_type timeout,
                                                 bool initiallyEnabled)
-    : FIFORunner::TaskInfo (name), cb_ (cb), timeout_ (timeout)
+    : detail::FIFORunner::TaskInfo (name), cb_ (cb), timeout_ (timeout)
 {
     if (initiallyEnabled)
         enable();
 }
 
 prefix_ senf::scheduler::TimerEvent::TimerEvent(std::string const & name, Callback const & cb)
-    : FIFORunner::TaskInfo (name), cb_ (cb), timeout_ (0)
+    : detail::FIFORunner::TaskInfo (name), cb_ (cb), timeout_ (0)
 {}
 
 prefix_ senf::scheduler::TimerEvent::~TimerEvent()

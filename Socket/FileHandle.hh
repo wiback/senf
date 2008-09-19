@@ -195,7 +195,7 @@ namespace senf {
         friend class FileBody;
     };
 
-    /** \brief Adapt FileHandle to senf::Scheduler
+    /** \brief Adapt FileHandle to senf::scheduler
         \related senf::FileHandle
 
         \internal

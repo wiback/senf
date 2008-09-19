@@ -125,8 +125,8 @@
     By default, the logging library will call gettimeofday() for each log message. To change the
     time source, just pass the new class or instance to senf::log::timeSource:
     \code
-    // Use senf::Scheduler::instance().eventTime() to time log messages
-    senf::log::timeSource<senf::SchedulerLogTimeSource>();
+    // Use senf::scheduler::eventTime() to time log messages
+    senf::log::timeSource<senf::scheduler::LogTimeSource>();
     \endcode
  */
 

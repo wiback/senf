@@ -35,10 +35,10 @@
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
-    
-    class Scheduler;
-
 namespace scheduler {
+
+    void restart();
+
 namespace detail {
 
     struct SignalSetCompare {
@@ -54,7 +54,7 @@ namespace detail {
     };
 
     class SignalDispatcher
-        : public FdManager::Event,
+        : public detail::FdManager::Event,
           public singleton<SignalDispatcher>
     {
         typedef boost::intrusive::iset< SignalSetBase::value_traits<SignalEvent>,
@@ -92,9 +92,9 @@ namespace detail {
         bool blocked_;
         sigset_t sigSet_;
 
+        friend void senf::scheduler::restart();
         friend class senf::scheduler::SignalEvent;
         friend class singleton<SignalDispatcher>;
-        friend class senf::Scheduler;
     };
 
 }}}

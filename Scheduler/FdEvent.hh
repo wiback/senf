@@ -76,9 +76,9 @@ namespace scheduler {
         callback is a member function it should be defined as a class member).
      */
     class FdEvent
-	: public FIFORunner::TaskInfo,
+	: public detail::FIFORunner::TaskInfo,
 	  public detail::FdSetBase,
-	  public FdManager::Event
+	  public detail::FdManager::Event
     {
     public: 
         ///////////////////////////////////////////////////////////////////////////
@@ -87,9 +87,15 @@ namespace scheduler {
 	typedef boost::function<void (int)> Callback;
 
         enum Events { 
-            EV_READ = FdManager::EV_READ, EV_PRIO = FdManager::EV_PRIO, EV_WRITE = FdManager::EV_WRITE,
-            EV_HUP = FdManager::EV_HUP, EV_ERR = FdManager::EV_ERR,
-            EV_ALL = FdManager::EV_READ | FdManager::EV_WRITE | FdManager::EV_PRIO
+            EV_NONE = 0,
+            EV_READ = detail::FdManager::EV_READ, 
+            EV_PRIO = detail::FdManager::EV_PRIO, 
+            EV_WRITE = detail::FdManager::EV_WRITE,
+            EV_HUP = detail::FdManager::EV_HUP, 
+            EV_ERR = detail::FdManager::EV_ERR,
+            EV_ALL = (detail::FdManager::EV_READ 
+                      | detail::FdManager::EV_WRITE 
+                      | detail::FdManager::EV_PRIO)
         };
 
         ///////////////////////////////////////////////////////////////////////////

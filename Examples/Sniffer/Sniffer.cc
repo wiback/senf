@@ -79,7 +79,7 @@ public:
 
     void run()
     {
-        senf::Scheduler::instance().process();
+        senf::scheduler::process();
     }
 
 private:

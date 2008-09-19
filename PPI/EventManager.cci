@@ -42,7 +42,7 @@ prefix_ senf::ppi::EventManager & senf::ppi::EventManager::instance()
 
 prefix_ senf::ClockService::clock_type senf::ppi::EventManager::now()
 {
-    return Scheduler::instance().eventTime();
+    return scheduler::eventTime();
 }
 
 prefix_ senf::ClockService::clock_type senf::ppi::EventManager::time()

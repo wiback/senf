@@ -60,7 +60,7 @@ namespace scheduler {
         callback is a member function it should be defined as a class member).
      */
     class SignalEvent
-        : public FIFORunner::TaskInfo,
+        : public detail::FIFORunner::TaskInfo,
           public detail::SignalSetBase 
     {
     public:
@@ -104,7 +104,6 @@ namespace scheduler {
         friend class detail::SignalSetCompare;
         friend class detail::FindNumericSignal;
         friend class detail::SignalDispatcher;
-        friend class senf::Scheduler;
     };
 
 

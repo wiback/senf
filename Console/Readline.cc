@@ -117,7 +117,7 @@ namespace {
 prefix_ senf::console::detail::ReadlineClientReader::ReadlineClientReader(Client & client)
     : ClientReader(client), ch_ (-1), skipChars_ (0), 
       readevent_ ( "ReadlineClientReader", senf::membind(&ReadlineClientReader::charEvent, this),
-                   client.handle(), Scheduler::EV_READ, false ),
+                   client.handle(), scheduler::FdEvent::EV_READ, false ),
       terminate_ (false)
 {
     if (instance_ != 0)
@@ -199,7 +199,7 @@ prefix_ void senf::console::detail::ReadlineClientReader::v_translate(std::strin
 prefix_ void senf::console::detail::ReadlineClientReader::charEvent(int event)
 {
     char ch;
-    if (event != Scheduler::EV_READ || handle().read(&ch, &ch+1) <= &ch) {
+    if (event != scheduler::FdEvent::EV_READ || handle().read(&ch, &ch+1) <= &ch) {
         stopClient();
         return;
     }

@@ -33,41 +33,41 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::scheduler::FdManager
 
-prefix_ senf::scheduler::FdManager::FdManager()
+prefix_ senf::scheduler::detail::FdManager::FdManager()
     : eventTime_ (senf::ClockService::now())
 {}
 
-prefix_ bool senf::scheduler::FdManager::set(int fd, int events, Event * entry)
+prefix_ bool senf::scheduler::detail::FdManager::set(int fd, int events, Event * entry)
 {
     return poller_.set(fd, events, entry);
 }
 
-prefix_ void senf::scheduler::FdManager::remove(int fd)
+prefix_ void senf::scheduler::detail::FdManager::remove(int fd)
 {
     poller_.remove(fd);
 }
 
-prefix_ void senf::scheduler::FdManager::timeout(int t)
+prefix_ void senf::scheduler::detail::FdManager::timeout(int t)
 {
     poller_.timeout(t);
 }
 
-prefix_ int senf::scheduler::FdManager::timeout()
+prefix_ int senf::scheduler::detail::FdManager::timeout()
     const
 {
     return poller_.timeout();
 }
 
-prefix_ senf::ClockService::clock_type senf::scheduler::FdManager::eventTime()
+prefix_ senf::ClockService::clock_type senf::scheduler::detail::FdManager::eventTime()
     const
 {
     return eventTime_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::scheduler::FdManager::Event
+// senf::scheduler::detail::FdManager::Event
 
-prefix_ senf::scheduler::FdManager::Event::~Event()
+prefix_ senf::scheduler::detail::FdManager::Event::~Event()
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

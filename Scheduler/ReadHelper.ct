@@ -67,7 +67,7 @@ template <class Handle>
 prefix_ void senf::ReadHelper<Handle>::process(Handle handle,int event)
 {
     try {
-        if (event != senf::Scheduler::EV_READ)
+        if (event != senf::scheduler::FdEvent::EV_READ)
             throw SystemException(EPIPE SENF_EXC_DEBUGINFO);
         std::string rcv;
         handle.read(rcv, maxSize_ - data_.size());

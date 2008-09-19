@@ -66,7 +66,7 @@ namespace scheduler {
         callback is a member function it should be defined as a class member).
      */
     class TimerEvent
-        : public FIFORunner::TaskInfo,
+        : public detail::FIFORunner::TaskInfo,
           public detail::TimerSetBase
     {
     public:

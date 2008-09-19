@@ -58,7 +58,7 @@ prefix_ bool senf::scheduler::detail::SignalDispatcher::empty()
 
 prefix_ senf::scheduler::SignalEvent::SignalEvent(int signal, Callback const & cb,
                                                   bool initiallyEnabled)
-    : FIFORunner::TaskInfo(signalName(signal)), signal_ (signal), cb_ (cb)
+    : detail::FIFORunner::TaskInfo(signalName(signal)), signal_ (signal), cb_ (cb)
 {
     if (initiallyEnabled)
         enable();

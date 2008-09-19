@@ -93,7 +93,7 @@
     \li The Dispatcher registeres all callbacks as tasks with the runner
         (senf::scheduler::FIFORunner).
 
-    \li The senf::scheduler::FdManager uses senf::scheduler::Poller to access the low-level epoll()
+    \li The senf::scheduler::FdManager uses senf::scheduler::detail::Poller to access the low-level epoll()
     API.
 
     All these classes are \e not singletons. They are all instantiatied by the senf::Scheduler

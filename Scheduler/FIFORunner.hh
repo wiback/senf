@@ -37,20 +37,12 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf { 
-
-    class Scheduler;
-
 namespace scheduler {
 
-    /** \brief Task execution scheduler
+    void restart();
 
-        The FIFORunner implements a simple FIFO scheduler for callback tasks. All tasks are held in
-        a queue. Whenever a task is run, it is moved to the end of the queue. Running the queue will
-        run all tasks which have been marked runnable. 
+namespace detail {
 
-        When running a task, it's runnable flag is always reset. The flag is set whenever an event
-        is posted for the task.
-      */
     class FIFORunner
         : public singleton<FIFORunner>
     {
@@ -63,13 +55,6 @@ namespace scheduler {
         typedef boost::intrusive::ilist<TaskListBase::value_traits<TaskInfo>, false> TaskList;
 
     public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-        /** \brief Task structure
-
-            TaskInfo is the base-class for all tasks.
-         */
         class TaskInfo 
             : public TaskListBase
         {
@@ -91,24 +76,16 @@ namespace scheduler {
 
             friend class FIFORunner;
         };
-
-        ///////////////////////////////////////////////////////////////////////////
-        ///\name Structors and default members
-        ///@{
-
         using singleton<FIFORunner>::instance;
         using singleton<FIFORunner>::alive;
 
-        ///@}
-        ///////////////////////////////////////////////////////////////////////////
-
-        void enqueue(TaskInfo * task);  ///< Add task to queue
-        void dequeue(TaskInfo * task);  ///< Remove task from queue
+        void enqueue(TaskInfo * task);
+        void dequeue(TaskInfo * task);
         
-        void run();                     ///< Run queue
+        void run();
 
-        void taskTimeout(unsigned ms);  ///< Set task timeout to \a ms milliseconds
-        unsigned taskTimeout() const;   ///< Get task timeout in milliseconds
+        void taskTimeout(unsigned ms);
+        unsigned taskTimeout() const;
 
         unsigned hangCount() const;     ///< Number of task expirations
                                         /**< The FIFORunner manages a watchdog which checks, that a
@@ -135,11 +112,11 @@ namespace scheduler {
         unsigned watchdogCount_;
         unsigned hangCount_;
 
+        friend void senf::scheduler::restart();
         friend class singleton<FIFORunner>;
-        friend class senf::Scheduler;
     };
 
-}}
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "FIFORunner.cci"

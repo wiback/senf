@@ -61,9 +61,8 @@ prefix_ void senf::WriteHelper<Handle>::revoke()
 }
 
 template <class Handle>
-prefix_ void
-senf::WriteHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
-                                                  senf::Scheduler::EventId event)
+prefix_ void senf::WriteHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
+                                                        senf::scheduler::FdEvent::Events event)
 {
     // since we have a 'ptr' argument, the instance cannot be deleted
     // before this method returns
@@ -72,11 +71,11 @@ senf::WriteHelper<Handle>::dispatchProcess(ptr helper, Handle handle,
 
 template <class Handle>
 prefix_ void senf::WriteHelper<Handle>::process(Handle handle,
-                                                       senf::Scheduler::EventId event)
+                                                senf::scheduler::FdEvent::Events event)
 {
     bool complete_ (false);
     try {
-        if (event != senf::Scheduler::EV_WRITE)
+        if (event != senf::scheduler::FdEvent::EV_WRITE)
             throw SystemException(EPIPE SENF_EXC_DEBUGINFO);
         offset_ = handle.write(std::make_pair(offset_,data_.end()));
         if (offset_ == data_.end()) {

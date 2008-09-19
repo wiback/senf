@@ -33,7 +33,7 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Value>
-prefix_ bool senf::scheduler::Poller<Value>::set(int fd, int events, Value * data)
+prefix_ bool senf::scheduler::detail::Poller<Value>::set(int fd, int events, Value * data)
 {
     struct epoll_event ev = { events, { data } };
     if (epoll_ctl(epollFd_, EPOLL_CTL_ADD, fd, &ev) != -1) 
@@ -47,7 +47,7 @@ prefix_ bool senf::scheduler::Poller<Value>::set(int fd, int events, Value * dat
 }
 
 template <class Value>
-prefix_ void senf::scheduler::Poller<Value>::remove(int fd)
+prefix_ void senf::scheduler::detail::Poller<Value>::remove(int fd)
 {
     if (epoll_ctl(epollFd_, EPOLL_CTL_DEL, fd, 0) == -1)
         if (errno != ENOENT && errno != EBADF && errno != EPERM)
@@ -61,7 +61,7 @@ prefix_ void senf::scheduler::Poller<Value>::remove(int fd)
 }
 
 template <class Value>
-prefix_ typename senf::scheduler::Poller<Value>::range senf::scheduler::Poller<Value>::wait()
+prefix_ typename senf::scheduler::detail::Poller<Value>::range senf::scheduler::detail::Poller<Value>::wait()
 {
     static epoll_event events[NumEvents];
     int rv (0);

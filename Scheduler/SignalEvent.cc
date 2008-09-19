@@ -40,17 +40,17 @@ prefix_ senf::scheduler::detail::SignalDispatcher::SignalDispatcher()
     if (pipe(sigPipe_) <0)
         SENF_THROW_SYSTEM_EXCEPTION("pipe()");
     sigemptyset(&sigSet_);
-    FdManager::instance().set(sigPipe_[0], FdManager::EV_READ, this);
+    detail::FdManager::instance().set(sigPipe_[0], detail::FdManager::EV_READ, this);
 }
 
 prefix_ senf::scheduler::detail::SignalDispatcher::~SignalDispatcher()
 {
     for (SignalSet::iterator i (handlers_.begin()); i != handlers_.end(); ++i) {
         ::signal(i->signal_, SIG_DFL);
-        FIFORunner::instance().dequeue(&(*i));
+        detail::FIFORunner::instance().dequeue(&(*i));
     }
     sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
-    FdManager::instance().remove(sigPipe_[0]);
+    detail::FdManager::instance().remove(sigPipe_[0]);
     close(sigPipe_[0]);
     close(sigPipe_[1]);
 }
@@ -64,7 +64,7 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::add(SignalEvent & event)
 
     handlers_.insert(event);
     sigaddset(&sigSet_, event.signal_);
-    FIFORunner::instance().enqueue(&event);
+    detail::FIFORunner::instance().enqueue(&event);
 
     sigset_t sig;
     sigemptyset(&sig);
@@ -89,7 +89,7 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::add(SignalEvent & event)
 prefix_ void senf::scheduler::detail::SignalDispatcher::remove(SignalEvent & event)
 {
     ::signal(event.signal_, SIG_DFL);
-    FIFORunner::instance().dequeue(&event);
+    detail::FIFORunner::instance().dequeue(&event);
     handlers_.erase(event);
     sigset_t sig;
     sigemptyset(&sig);

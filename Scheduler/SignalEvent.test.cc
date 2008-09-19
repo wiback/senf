@@ -47,7 +47,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(signalDispatcher)
 {
-    senf::scheduler::FdManager::instance().timeout(1000);
+    senf::scheduler::detail::FdManager::instance().timeout(1000);
     senf::scheduler::SignalEvent sig (SIGUSR1, &handler);
 
     SENF_CHECK_NO_THROW( sig.disable() );
@@ -58,9 +58,9 @@ BOOST_AUTO_UNIT_TEST(signalDispatcher)
     ::kill(::getpid(), SIGUSR1);
     sleep(1);
     SENF_CHECK_NO_THROW( senf::scheduler::detail::SignalDispatcher::instance().unblockSignals() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
     SENF_CHECK_NO_THROW( senf::scheduler::detail::SignalDispatcher::instance().blockSignals() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
     BOOST_CHECK( called );
 }
 

@@ -40,53 +40,62 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::Scheduler::process()
+namespace {
+    bool terminate_ (false);
+}
+
+prefix_ void senf::scheduler::terminate()
+{
+    terminate_ = true;
+}
+
+prefix_ void senf::scheduler::process()
 {
     terminate_ = false;
-    while(! terminate_ && ! (scheduler::detail::FdDispatcher::instance().empty() &&
-                             scheduler::detail::TimerDispatcher::instance().empty() &&
-                             scheduler::detail::FileDispatcher::instance().empty())) {
-        scheduler::detail::SignalDispatcher::instance().unblockSignals();
-        scheduler::detail::TimerDispatcher::instance().unblockSignals();
-        scheduler::FdManager::instance().processOnce();
-        scheduler::detail::TimerDispatcher::instance().blockSignals();
-        scheduler::detail::SignalDispatcher::instance().blockSignals();
-        scheduler::detail::FileDispatcher::instance().prepareRun();
-        scheduler::FIFORunner::instance().run();
+    while(! terminate_ && ! (detail::FdDispatcher::instance().empty() &&
+                             detail::TimerDispatcher::instance().empty() &&
+                             detail::FileDispatcher::instance().empty())) {
+        detail::SignalDispatcher::instance().unblockSignals();
+        detail::TimerDispatcher::instance().unblockSignals();
+        detail::FdManager::instance().processOnce();
+        detail::TimerDispatcher::instance().blockSignals();
+        detail::SignalDispatcher::instance().blockSignals();
+        detail::FileDispatcher::instance().prepareRun();
+        detail::FIFORunner::instance().run();
     }
 }
 
-prefix_ void senf::Scheduler::restart()
+prefix_ void senf::scheduler::restart()
 {
-    scheduler::FdManager* fdm (&scheduler::FdManager::instance());
-    scheduler::FIFORunner* ffr (&scheduler::FIFORunner::instance());
-    scheduler::detail::FdDispatcher* fdd (&scheduler::detail::FdDispatcher::instance());
-    scheduler::detail::TimerDispatcher* td (&scheduler::detail::TimerDispatcher::instance());
-    scheduler::detail::SignalDispatcher* sd (&scheduler::detail::SignalDispatcher::instance());
-    scheduler::detail::FileDispatcher* fld (&scheduler::detail::FileDispatcher::instance());
+    detail::FdManager*        fdm (&detail::FdManager::instance());
+    detail::FIFORunner*       ffr (&detail::FIFORunner::instance());
+    detail::FdDispatcher*     fdd (&detail::FdDispatcher::instance());
+    detail::TimerDispatcher*  tdd (&detail::TimerDispatcher::instance());
+    detail::SignalDispatcher* sdd (&detail::SignalDispatcher::instance());
+    detail::FileDispatcher*   fld (&detail::FileDispatcher::instance());
     
     fld->~FileDispatcher();
-    sd->~SignalDispatcher();
-    td->~TimerDispatcher();
+    sdd->~SignalDispatcher();
+    tdd->~TimerDispatcher();
     fdd->~FdDispatcher();
     ffr->~FIFORunner();
     fdm->~FdManager();
     
-    new (fdm) scheduler::FdManager();
-    new (ffr) scheduler::FIFORunner();
-    new (fdd) scheduler::detail::FdDispatcher();
-    new (td) scheduler::detail::TimerDispatcher();
-    new (sd) scheduler::detail::SignalDispatcher();
-    new (fld) scheduler::detail::FileDispatcher();
+    new (fdm) detail::FdManager();
+    new (ffr) detail::FIFORunner();
+    new (fdd) detail::FdDispatcher();
+    new (tdd) detail::TimerDispatcher();
+    new (sdd) detail::SignalDispatcher();
+    new (fld) detail::FileDispatcher();
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::SchedulerLogTimeSource
+// senf::schedulerLogTimeSource
 
-prefix_ senf::log::time_type senf::SchedulerLogTimeSource::operator()()
+prefix_ senf::log::time_type senf::scheduler::LogTimeSource::operator()()
     const
 {
-    return Scheduler::instance().eventTime();
+    return eventTime();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

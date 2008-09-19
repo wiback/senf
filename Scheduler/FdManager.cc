@@ -32,7 +32,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::scheduler::FdManager::processOnce()
+prefix_ void senf::scheduler::detail::FdManager::processOnce()
 {
     Poller<Event>::range events (poller_.wait());
     eventTime_ = ClockService::now();

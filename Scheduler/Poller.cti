@@ -32,7 +32,7 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 template <class Value>
-prefix_ senf::scheduler::Poller<Value>::Poller()
+prefix_ senf::scheduler::detail::Poller<Value>::Poller()
     : timeout_ (-1)
 {
     epollFd_ = epoll_create(NumEvents);
@@ -41,27 +41,27 @@ prefix_ senf::scheduler::Poller<Value>::Poller()
 }
 
 template <class Value>
-prefix_ senf::scheduler::Poller<Value>::~Poller()
+prefix_ senf::scheduler::detail::Poller<Value>::~Poller()
 {
     close(epollFd_);
 }
 
 template <class Value>
-prefix_ void senf::scheduler::Poller<Value>::timeout(int t)
+prefix_ void senf::scheduler::detail::Poller<Value>::timeout(int t)
 {
     timeout_ = t;
 }
 
 template <class Value>
-prefix_ int senf::scheduler::Poller<Value>::timeout()
+prefix_ int senf::scheduler::detail::Poller<Value>::timeout()
     const
 {
     return timeout_;
 }
 
 template <class Value>
-prefix_ typename senf::scheduler::Poller<Value>::GetPollResult::result_type
-senf::scheduler::Poller<Value>::GetPollResult::operator()(epoll_event const & ev)
+prefix_ typename senf::scheduler::detail::Poller<Value>::GetPollResult::result_type
+senf::scheduler::detail::Poller<Value>::GetPollResult::operator()(epoll_event const & ev)
     const
 
 {

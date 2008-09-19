@@ -164,7 +164,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(fdDispatcher)
 {
-    senf::scheduler::FdManager::instance().timeout(1000);
+    senf::scheduler::detail::FdManager::instance().timeout(1000);
 
     int pid (start_server());
     BOOST_REQUIRE( pid );
@@ -190,8 +190,8 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
         senf::scheduler::FdEvent sockwrite ("testHandler", boost::bind(&callback, sock, _1),
                                             sock, senf::scheduler::FdEvent::EV_WRITE, false);
         event = 0;
-        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
-        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_READ );
         BOOST_CHECK_EQUAL( size, 4 );
         buffer[size] = 0;
@@ -202,29 +202,29 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
         SENF_CHECK_NO_THROW( sockwrite.enable() );
         event = 0;
         sleep(1);
-        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
-        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_WRITE );
 
         SENF_CHECK_NO_THROW( sockwrite.disable() );
         event = 0;
         sleep(1);
-        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
-        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_HUP | senf::scheduler::FdEvent::EV_READ );
         BOOST_CHECK_EQUAL( size, 2 );
         buffer[size]=0;
         BOOST_CHECK_EQUAL( buffer, "OK" );
 
         BOOST_CHECK_EQUAL( calls, 3 );
-        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         BOOST_CHECK_EQUAL( calls, 3 );
     
         // Ensure, removing an already closed file-descriptor doesn't wreak havoc
         close(sock);
     }
 
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
     BOOST_CHECK_EQUAL( calls, 3 );
 
     BOOST_CHECK (stop_server(pid));
@@ -254,9 +254,9 @@ BOOST_AUTO_UNIT_TEST(fileDispatcher)
     try {
         senf::scheduler::FdEvent fde ("testHandler", &handler, 
                                       fd, senf::scheduler::FdEvent::EV_READ);
-        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FileDispatcher::instance().prepareRun() );
-        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
         
         BOOST_CHECK( called );
         BOOST_CHECK_PREDICATE( is_close, (t)(senf::ClockService::now()) );
@@ -269,9 +269,9 @@ BOOST_AUTO_UNIT_TEST(fileDispatcher)
 
     called = false;
     t = senf::ClockService::now();
-    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
     SENF_CHECK_NO_THROW( senf::scheduler::detail::FileDispatcher::instance().prepareRun() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+    SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
 
     BOOST_CHECK( ! called );
     BOOST_CHECK_PREDICATE( 

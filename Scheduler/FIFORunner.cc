@@ -36,7 +36,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::scheduler::FIFORunner::FIFORunner()
+prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
     : tasks_ (), next_ (tasks_.end()), watchdogMs_ (1000), watchdogCount_(0), hangCount_ (0)
 {
     struct sigevent ev;
@@ -61,7 +61,7 @@ prefix_ senf::scheduler::FIFORunner::FIFORunner()
         SENF_THROW_SYSTEM_EXCEPTION("sigprocmask()");
 }
 
-prefix_ senf::scheduler::FIFORunner::~FIFORunner()
+prefix_ senf::scheduler::detail::FIFORunner::~FIFORunner()
 {
     timer_delete(watchdogId_);
     signal(SIGURG, SIG_DFL);
@@ -89,7 +89,7 @@ prefix_ senf::scheduler::FIFORunner::~FIFORunner()
 // will mostly be localized to the end of the queue. only occasionally one of the dormant tasks will
 // be runnable. This additional traversal time will be amortized over a larger time.
 
-prefix_ void senf::scheduler::FIFORunner::dequeue(TaskInfo * task)
+prefix_ void senf::scheduler::detail::FIFORunner::dequeue(TaskInfo * task)
 {
     TaskList::iterator i (TaskList::current(*task));
     if (next_ == i)
@@ -99,14 +99,14 @@ prefix_ void senf::scheduler::FIFORunner::dequeue(TaskInfo * task)
 
 namespace {
     struct NullTask 
-        : public senf::scheduler::FIFORunner::TaskInfo
+        : public senf::scheduler::detail::FIFORunner::TaskInfo
     {
-        NullTask() : senf::scheduler::FIFORunner::TaskInfo ("<null>") {}
+        NullTask() : senf::scheduler::detail::FIFORunner::TaskInfo ("<null>") {}
         void run() {};
     };
 }
 
-prefix_ void senf::scheduler::FIFORunner::run()
+prefix_ void senf::scheduler::detail::FIFORunner::run()
 {
     // This algorithm is carefully adjusted to make it work even when arbitrary tasks are removed
     // from the queue
@@ -169,7 +169,7 @@ prefix_ void senf::scheduler::FIFORunner::run()
     next_ = tasks_.end();
 }
 
-prefix_ void senf::scheduler::FIFORunner::watchdog(int, siginfo_t * si, void *)
+prefix_ void senf::scheduler::detail::FIFORunner::watchdog(int, siginfo_t * si, void *)
 {
     FIFORunner & runner (*static_cast<FIFORunner *>(si->si_value.sival_ptr));
     if (runner.watchdogCount_ > 0) {

@@ -34,19 +34,19 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::scheduler::FIFORunner::TaskInfo::TaskInfo(std::string const & name)
+prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::TaskInfo(std::string const & name)
     : runnable_ (false), name_ (name)
 {}
 
-prefix_ senf::scheduler::FIFORunner::TaskInfo::~TaskInfo()
+prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::~TaskInfo()
 {}
 
-prefix_ void senf::scheduler::FIFORunner::TaskInfo::setRunnable()
+prefix_ void senf::scheduler::detail::FIFORunner::TaskInfo::setRunnable()
 {
     runnable_ = true;
 }
 
-prefix_ void senf::scheduler::FIFORunner::enqueue(TaskInfo * task)
+prefix_ void senf::scheduler::detail::FIFORunner::enqueue(TaskInfo * task)
 {
     tasks_.push_back(*task);
 #ifdef SENF_DEBUG
@@ -56,18 +56,18 @@ prefix_ void senf::scheduler::FIFORunner::enqueue(TaskInfo * task)
 #endif
 }
 
-prefix_ void senf::scheduler::FIFORunner::taskTimeout(unsigned ms)
+prefix_ void senf::scheduler::detail::FIFORunner::taskTimeout(unsigned ms)
 {
     watchdogMs_ = ms;
 }
 
-prefix_ unsigned senf::scheduler::FIFORunner::taskTimeout()
+prefix_ unsigned senf::scheduler::detail::FIFORunner::taskTimeout()
     const
 {
     return watchdogMs_;
 }
 
-prefix_ unsigned senf::scheduler::FIFORunner::hangCount()
+prefix_ unsigned senf::scheduler::detail::FIFORunner::hangCount()
     const
 {
     return hangCount_;

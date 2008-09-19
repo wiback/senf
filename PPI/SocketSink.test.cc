@@ -47,7 +47,7 @@ namespace debug = module::debug;
 
 namespace {
     void timeout() {
-        senf::Scheduler::instance().terminate();
+        senf::scheduler::terminate();
     }
 }
 

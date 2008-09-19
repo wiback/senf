@@ -39,8 +39,8 @@
 prefix_ senf::scheduler::detail::FdDispatcher::~FdDispatcher()
 {
     for (FdSet::iterator i (fds_.begin()); i != fds_.end(); ++i) {
-        FdManager::instance().remove(i->fd_);
-        FIFORunner::instance().dequeue(&(*i));
+        detail::FdManager::instance().remove(i->fd_);
+        detail::FIFORunner::instance().dequeue(&(*i));
     }
 }
 
@@ -53,10 +53,10 @@ prefix_ bool senf::scheduler::detail::FdDispatcher::add(FdEvent & event)
     if (event.events_ & events)
 	throw FdEvent::DuplicateEventRegistrationException();
 
-    if (! FdManager::instance().set(event.fd_, events | event.events_, &event))
+    if (! detail::FdManager::instance().set(event.fd_, events | event.events_, &event))
         return false;
 
-    FIFORunner::instance().enqueue(&event);
+    detail::FIFORunner::instance().enqueue(&event);
     fds_.insert(range.first, event);
 
     return true;
@@ -65,16 +65,16 @@ prefix_ bool senf::scheduler::detail::FdDispatcher::add(FdEvent & event)
 prefix_ void senf::scheduler::detail::FdDispatcher::remove(FdEvent & event)
 {
     fds_.erase(FdSet::current(event));
-    FIFORunner::instance().dequeue(&event);
+    detail::FIFORunner::instance().dequeue(&event);
 
     std::pair<FdSet::iterator,FdSet::iterator> range (fds_.equal_range(event));
     if (range.first == range.second)
-	FdManager::instance().remove(event.fd_);
+	detail::FdManager::instance().remove(event.fd_);
     else {
         int events (0);
         for (FdSet::iterator i (range.first); i != range.second; ++i)
             events |= i->events_;
-	FdManager::instance().set(event.fd_, events, &(*range.first));
+	detail::FdManager::instance().set(event.fd_, events, &(*range.first));
     }
 }
 
@@ -90,21 +90,21 @@ prefix_ void senf::scheduler::detail::FileDispatcher::add(FdEvent & event)
     if (event.events_ & events)
 	throw FdEvent::DuplicateEventRegistrationException();
 
-    FIFORunner::instance().enqueue(&event);
+    detail::FIFORunner::instance().enqueue(&event);
     fds_.insert(range.first, event);
 
-    FdManager::instance().timeout(0);
+    detail::FdManager::instance().timeout(0);
 }
 
 prefix_ senf::scheduler::detail::FileDispatcher::FileDispatcher()
-    : managerTimeout_ (scheduler::FdManager::instance().timeout())
+    : managerTimeout_ (scheduler::detail::FdManager::instance().timeout())
 {}
 
 prefix_ senf::scheduler::detail::FileDispatcher::~FileDispatcher()
 {
-    FdManager::instance().timeout(-1);
+    detail::FdManager::instance().timeout(-1);
     for (FdSet::iterator i (fds_.begin()); i != fds_.end(); ++i)
-        FIFORunner::instance().dequeue(&(*i));
+        detail::FIFORunner::instance().dequeue(&(*i));
 }
 
 prefix_ void senf::scheduler::detail::FileDispatcher::prepareRun()
@@ -118,9 +118,9 @@ prefix_ void senf::scheduler::detail::FileDispatcher::prepareRun()
 prefix_ void senf::scheduler::detail::FileDispatcher::remove(FdEvent & event)
 {
     fds_.erase(FdSet::current(event));
-    FIFORunner::instance().dequeue(&event);
+    detail::FIFORunner::instance().dequeue(&event);
     if (fds_.empty())
-        FdManager::instance().timeout(managerTimeout_);
+        detail::FdManager::instance().timeout(managerTimeout_);
 }
 
 ///////////////////////////////////////////////////////////////////////////

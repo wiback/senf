@@ -32,10 +32,10 @@
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
-
-    class Scheduler;
-
 namespace scheduler {
+
+    void restart();
+
 namespace detail {
 
     struct FdSetCompare {
@@ -74,7 +74,7 @@ namespace detail {
 
         FdSet fds_;
 
-        friend class senf::Scheduler;
+        friend void senf::scheduler::restart();
         friend class singleton<FdDispatcher>;
         friend class senf::scheduler::FdEvent;
     };
@@ -111,7 +111,7 @@ namespace detail {
         FdSet fds_;
         int managerTimeout_;
 
-        friend class senf::Scheduler;
+        friend void senf::scheduler::restart();
         friend class singleton<FileDispatcher>;
     };
 

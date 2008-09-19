@@ -32,10 +32,10 @@
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
-
-    class Scheduler;
-
 namespace scheduler {
+
+    void restart();
+
 namespace detail {
 
     struct TimerSetCompare {
@@ -44,7 +44,7 @@ namespace detail {
     };
 
     class TimerDispatcher
-        : public FdManager::Event,
+        : public detail::FdManager::Event,
           public singleton<TimerDispatcher>
     {
         SENF_LOG_CLASS_AREA();
@@ -82,7 +82,7 @@ namespace detail {
         bool blocked_;
         timer_t timerId_;
 
-        friend class senf::Scheduler;
+        friend void senf::scheduler::restart();
         friend class singleton<TimerDispatcher>;
     };
 

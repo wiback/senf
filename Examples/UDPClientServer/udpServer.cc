@@ -41,7 +41,7 @@ public:
     void run()
     {
         event.enable();
-        senf::Scheduler::instance().process();
+        senf::scheduler::process();
     }
 
 private:

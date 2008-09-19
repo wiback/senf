@@ -77,11 +77,11 @@ namespace ppi {
         // with the enumeration symbols
 
         enum EventFlags { 
-              Read  = Scheduler::EV_READ   /**< FileHandle is readable */
-            , Prio = Scheduler::EV_PRIO    /**< FileHandle priority data is readable */
-            , Write = Scheduler::EV_WRITE  /**< FileHandle is writable */
-            , Hup = Scheduler::EV_HUP      /**< Hangup condition on FileHandle */
-            , Err = Scheduler::EV_ERR      /**< Some other error condition on FileHandle */
+              Read  = scheduler::FdEvent::EV_READ   /**< FileHandle is readable */
+            , Prio = scheduler::FdEvent::EV_PRIO    /**< FileHandle priority data is readable */
+            , Write = scheduler::FdEvent::EV_WRITE  /**< FileHandle is writable */
+            , Hup = scheduler::FdEvent::EV_HUP      /**< Hangup condition on FileHandle */
+            , Err = scheduler::FdEvent::EV_ERR      /**< Some other error condition on FileHandle */
         };
 
         ///////////////////////////////////////////////////////////////////////////
