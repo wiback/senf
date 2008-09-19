@@ -25,6 +25,7 @@
 
 // Custom includes
 #include <errno.h>
+#include <boost/bind.hpp>
 #include "../Utils/Exception.hh"
 #include "Scheduler.hh"
 
@@ -34,13 +35,11 @@
 template <class Handle>
 prefix_ senf::WriteHelper<Handle>::WriteHelper(Handle handle, std::string const & data,
                                                       Callback callback)
-    : handle_(handle), data_(data), callback_(callback),
-      offset_(data_.begin()), errno_(0)
-{
-    senf::Scheduler::instance()
-        .add(handle_, boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2),
-             senf::Scheduler::EV_WRITE);
-}
+    : handle_(handle), 
+      fde_("WriteHelper", boost::bind(&WriteHelper::dispatchProcess, ptr(this), _1, _2), 
+           handle, scheduler::FdEvent::EV_WRITE),
+      data_(data), callback_(callback), offset_(data_.begin()), errno_(0)
+{}
 
 template <class Handle>
 prefix_ std::string const & senf::WriteHelper<Handle>::data()
@@ -57,8 +56,8 @@ template <class Handle>
 prefix_ void senf::WriteHelper<Handle>::revoke()
 {
     ptr guard (this); // To ensure, 'this' is deleted only after this method terminates ...
-    senf::Scheduler::instance()
-        .remove(handle_, senf::Scheduler::EV_WRITE);
+    fde_.disable();
+    fde_.action(0); // To remove the smart pointer reference to this
 }
 
 template <class Handle>

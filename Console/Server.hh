@@ -35,7 +35,6 @@
 #include "../Socket/Protocols/INet/TCPSocketHandle.hh"
 #include "../Socket/ServerSocketHandle.hh"
 #include "../Scheduler/Scheduler.hh"
-#include "../Scheduler/Binding.hh"
 #include "../Scheduler/ReadHelper.hh"
 #include "Parse.hh"
 #include "Executor.hh"
@@ -79,8 +78,6 @@ namespace console {
         enum Mode { Automatic, Interactive, Noninteractive };
 
         ///////////////////////////////////////////////////////////////////////////
-
-        ~Server();
 
         static Server & start(senf::INet4SocketAddress const & address);
                                         ///< Start server on given IPv4 address/port
@@ -132,6 +129,7 @@ namespace console {
         void removeClient(Client & client);
         
         ServerHandle handle_;
+        scheduler::FdEvent event_;
         DirectoryNode::ptr root_;
         Mode mode_;
         
@@ -195,7 +193,7 @@ namespace console {
         
         Server & server_;
         ClientHandle handle_;
-        SchedulerBinding binding_;
+        scheduler::FdEvent readevent_;
         scheduler::TimerEvent timer_;
         CommandParser parser_;
         Executor executor_;

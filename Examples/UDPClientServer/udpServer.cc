@@ -29,17 +29,18 @@
 class Server
 {
     senf::UDPv4ClientSocketHandle serverSock;
+    senf::scheduler::FdEvent event;
 
 public:
     Server(senf::INet4Address const & host, unsigned int port)
-        : serverSock(senf::INet4SocketAddress(host, port)) {}
+        : serverSock(senf::INet4SocketAddress(host, port)),
+          event("UDPv4ClientServer", senf::membind(&Server::readFromClient, this),
+                serverSock, senf::scheduler::FdEvent::EV_READ, false)
+        {}
 
     void run()
     {
-        senf::Scheduler::instance().add(
-                serverSock,
-                senf::membind(&Server::readFromClient, this),
-                senf::Scheduler::EV_READ);
+        event.enable();
         senf::Scheduler::instance().process();
     }
 
@@ -63,3 +64,14 @@ int main(int argc, char const * argv[])
     }
     return 0;
 }
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u"
+// End:

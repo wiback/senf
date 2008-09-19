@@ -32,39 +32,12 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-// private members
-
-prefix_ void senf::Scheduler::do_add(int fd, FdCallback const & cb, int eventMask)
-{
-    do_add((boost::format("<anon fd %d>") % fd).str(), fd, cb, eventMask);
-}
-
-prefix_ void senf::Scheduler::do_add(std::string const & name, int fd, FdCallback const & cb,
-                                     int eventMask)
-{
-    if (! fdDispatcher_.add(name, fd, cb, eventMask))
-        fileDispatcher_.add(name, fd, cb, eventMask);
-}
-
-prefix_ void senf::Scheduler::do_remove(int fd, int eventMask)
-{
-    // We don't know, where the descriptor is registered. However, this is no problem since removing
-    // a non-registered fd is a no-opp
-    fdDispatcher_.remove(fd, eventMask);
-    fileDispatcher_.remove(fd, eventMask);
-}
-
 // public members
 
 prefix_ senf::Scheduler::Scheduler & senf::Scheduler::instance()
 {
     static Scheduler instance;
     return instance;
-}
-
-prefix_ int senf::retrieve_filehandle(int fd)
-{
-    return fd;
 }
 
 prefix_ void senf::Scheduler::terminate()
@@ -96,9 +69,7 @@ prefix_ unsigned senf::Scheduler::hangCount()
 }
 
 prefix_ senf::Scheduler::Scheduler()
-    : terminate_ (false), 
-      fdDispatcher_ (scheduler::FdManager::instance(), scheduler::FIFORunner::instance()),
-      fileDispatcher_ (scheduler::FdManager::instance(), scheduler::FIFORunner::instance())
+    : terminate_ (false)
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

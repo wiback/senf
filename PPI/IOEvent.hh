@@ -106,12 +106,12 @@ namespace ppi {
 
     private:
         virtual void v_enable();
-         virtual void v_disable();
+        virtual void v_disable();
         
         void cb(int event);
 
         int fd_;
-        unsigned events_;
+        scheduler::FdEvent event_;
     };
 
     

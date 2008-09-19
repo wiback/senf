@@ -131,11 +131,11 @@ prefix_ void senf::scheduler::FIFORunner::run()
             SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
         while (next_ != end) {
             TaskInfo & task (*next_);
-            if (task.runnable) {
-                task.runnable = false;
-                runningName_ = task.name;
+            if (task.runnable_) {
+                task.runnable_ = false;
+                runningName_ = task.name_;
 #           ifdef SENF_DEBUG
-                runningBacktrace_ = task.backtrace;
+                runningBacktrace_ = task.backtrace_;
 #           endif
                 TaskList::iterator i (next_);
                 ++ next_;

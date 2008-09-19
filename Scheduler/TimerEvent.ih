@@ -49,10 +49,6 @@ namespace detail {
     {
         SENF_LOG_CLASS_AREA();
         
-        typedef boost::intrusive::imultiset< TimerSetBase::value_traits<TimerEvent>,
-                                             TimerSetCompare,
-                                             false > TimerSet;
-
     public:
         using singleton<TimerDispatcher>::instance;
         using singleton<TimerDispatcher>::alive;
@@ -74,6 +70,10 @@ namespace detail {
         virtual void signal(int events);
         static void sigHandler(int signal, ::siginfo_t * siginfo, void *);
         void reschedule();
+
+        typedef boost::intrusive::imultiset< TimerSetBase::value_traits<TimerEvent>,
+                                             TimerSetCompare,
+                                             false > TimerSet;
 
         TimerSet timers_;
 

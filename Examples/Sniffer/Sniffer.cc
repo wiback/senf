@@ -67,17 +67,18 @@ int loop_main (int argc, char const * argv[])
 class Sniffer
 {
     senf::PacketSocketHandle sock;
+    senf::scheduler::FdEvent event;
 
 public:
     Sniffer(std::string const & interface)
+        : event ("Sniffer", senf::membind(&Sniffer::dumpPacket, this),
+                 sock, senf::scheduler::FdEvent::EV_READ)
     {
         sock.bind(senf::LLSocketAddress(interface));
     }
 
     void run()
     {
-        senf::Scheduler::instance().add(
-            sock, senf::membind(&Sniffer::dumpPacket, this));
         senf::Scheduler::instance().process();
     }
 

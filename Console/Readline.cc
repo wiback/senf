@@ -116,10 +116,8 @@ namespace {
 
 prefix_ senf::console::detail::ReadlineClientReader::ReadlineClientReader(Client & client)
     : ClientReader(client), ch_ (-1), skipChars_ (0), 
-      schedBinding_ ( client.handle(), 
-                      senf::membind(&ReadlineClientReader::charEvent, this),
-                      Scheduler::EV_READ, 
-                      false ),
+      readevent_ ( "ReadlineClientReader", senf::membind(&ReadlineClientReader::charEvent, this),
+                   client.handle(), Scheduler::EV_READ, false ),
       terminate_ (false)
 {
     if (instance_ != 0)
@@ -158,7 +156,7 @@ prefix_ senf::console::detail::ReadlineClientReader::ReadlineClientReader(Client
 
     _rl_bell_preference = 0; // Set this *after* the config file has been read
 
-    schedBinding_.enable();
+    readevent_.enable();
 }
 
 prefix_ senf::console::detail::ReadlineClientReader::~ReadlineClientReader()

@@ -23,12 +23,26 @@
 /** \file
     \brief FdDispatcher non-inline template implementation  */
 
-#include "FdDispatcher.ih"
+#include "FdEvent.ih"
 
 // Custom includes
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::FdEvent
+
+template <class Handle>
+prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::handle(Handle const & handle)
+{
+    bool en (enabled());
+    fd_ = retrieve_filehandle(handle);
+    pollable_ = true;
+    if (en)
+        enable();
+    return *this;
+}
 
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_

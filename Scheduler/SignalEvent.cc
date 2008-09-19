@@ -106,7 +106,7 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::signal(int events)
     if (i == handlers_.end())
         return;
     i->siginfo_ = info;
-    i->runnable = true;
+    i->setRunnable();
 }
 
 prefix_ void senf::scheduler::detail::SignalDispatcher::sigHandler(int signal, ::siginfo_t * siginfo,

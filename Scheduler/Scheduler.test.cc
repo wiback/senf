@@ -36,6 +36,7 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
+#include <boost/bind.hpp>
 
 #include "Scheduler.hh"
 
@@ -239,14 +240,34 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
 
     BOOST_CHECK_NO_THROW( Scheduler::instance() );
 
-    BOOST_CHECK_NO_THROW( Scheduler::instance().add(sock,boost::bind(&callback, sock, _1),
-                                                    Scheduler::EV_READ) );
-    event = Scheduler::EV_NONE;
-    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_EQUAL( event, Scheduler::EV_READ );
-    BOOST_REQUIRE_EQUAL( size, 4 );
-    buffer[size]=0;
-    BOOST_CHECK_EQUAL( buffer, "READ" );
+    {
+        senf::scheduler::FdEvent fde1 ("testFdEvent", boost::bind(&callback, sock, _1),
+                                      sock, senf::scheduler::FdEvent::EV_READ);
+        event = Scheduler::EV_NONE;
+        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+        BOOST_CHECK_EQUAL( event, Scheduler::EV_READ );
+        BOOST_REQUIRE_EQUAL( size, 4 );
+        buffer[size]=0;
+        BOOST_CHECK_EQUAL( buffer, "READ" );
+
+        HandleWrapper handle(sock,"TheTag");
+        senf::scheduler::FdEvent fde2 ("testFdEvent", boost::bind(&handleCallback,handle,_1),
+                                      handle, senf::scheduler::FdEvent::EV_WRITE);
+        strcpy(buffer,"WRITE");
+        size=5;
+        event = Scheduler::EV_NONE;
+        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+        BOOST_CHECK_EQUAL( event, Scheduler::EV_WRITE );
+
+        SENF_CHECK_NO_THROW( fde2.disable() );
+        event = Scheduler::EV_NONE;
+        sleep(1);
+        BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
+        BOOST_CHECK_EQUAL( event, Scheduler::EventId(Scheduler::EV_READ|Scheduler::EV_HUP) );
+        BOOST_REQUIRE_EQUAL( size, 2 );
+        buffer[size]=0;
+        BOOST_CHECK_EQUAL( buffer, "OK" );
+    }
     
     {
         senf::scheduler::TimerEvent timer1 ("testTimer1", &timeout, 
@@ -275,26 +296,6 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
         BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
         BOOST_CHECK_EQUAL( Scheduler::instance().hangCount(), 1u );
     }
-
-    HandleWrapper handle(sock,"TheTag");
-    BOOST_CHECK_NO_THROW( Scheduler::instance().add(handle,
-                                                    boost::bind(&handleCallback,handle,_1),
-                                                    Scheduler::EV_WRITE) );
-    strcpy(buffer,"WRITE");
-    size=5;
-    event = Scheduler::EV_NONE;
-    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_EQUAL( event, Scheduler::EV_WRITE );
-
-    BOOST_CHECK_NO_THROW( Scheduler::instance().remove(handle,Scheduler::EV_WRITE) );
-    event = Scheduler::EV_NONE;
-    sleep(1);
-    BOOST_CHECK_NO_THROW( Scheduler::instance().process() );
-    BOOST_CHECK_EQUAL( event, Scheduler::EventId(Scheduler::EV_READ|Scheduler::EV_HUP) );
-    BOOST_REQUIRE_EQUAL( size, 2 );
-    buffer[size]=0;
-    BOOST_CHECK_EQUAL( buffer, "OK" );
-    BOOST_CHECK_NO_THROW( Scheduler::instance().remove(handle) );
 
     {
         senf::scheduler::TimerEvent timer ("testWatchdog", &timeout,

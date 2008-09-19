@@ -1,0 +1,129 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief FdDispatcher inline non-template implementation */
+
+#include "FdEvent.ih"
+
+// Custom includes
+#include "../Utils/senfassert.hh"
+#include "FdManager.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::FdEvent
+
+prefix_ senf::scheduler::FdEvent::FdEvent(std::string const & name, Callback const & cb)
+    : FIFORunner::TaskInfo (name), cb_ (cb), fd_ (-1), pollable_ (true), events_ (0)
+{}
+
+prefix_ senf::scheduler::FdEvent::~FdEvent()
+{
+    if (detail::FdDispatcher::alive())
+	disable();
+}
+
+prefix_ bool senf::scheduler::FdEvent::enabled()
+{
+    return detail::FdSetBase::linked();
+}
+
+prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::action(Callback const & cb)
+{
+    cb_ = cb;
+    return *this;
+}
+
+prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::addEvents(int e)
+{
+    events( events() | e );
+    return *this;
+}
+
+prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::removeEvents(int e)
+{
+    events( events() & ~e );
+    return *this;
+}
+
+prefix_ int senf::scheduler::FdEvent::events()
+{
+    return events_;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::FdDispatcher
+
+prefix_ senf::scheduler::detail::FdDispatcher::FdDispatcher()
+{}
+
+prefix_ bool senf::scheduler::detail::FdDispatcher::empty()
+    const
+{
+    return fds_.empty();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::FileDispatcher
+
+prefix_ void senf::scheduler::detail::FileDispatcher::timeout(int t)
+{
+    managerTimeout_ = t;
+    if (fds_.empty())
+        FdManager::instance().timeout(managerTimeout_);
+}
+
+prefix_ int senf::scheduler::detail::FileDispatcher::timeout()
+    const
+{
+    return managerTimeout_;
+}
+
+prefix_ bool senf::scheduler::detail::FileDispatcher::empty()
+    const
+{
+    return fds_.empty();
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+prefix_ int senf::scheduler::retrieve_filehandle(int fd)
+{
+    return fd;
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

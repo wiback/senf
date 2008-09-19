@@ -243,7 +243,7 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Daemon.cci"
+#include "Daemon.cci"
 //#include "Daemon.ct"
 //#include "Daemon.cti"
 #endif

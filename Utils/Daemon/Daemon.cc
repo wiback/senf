@@ -630,26 +630,19 @@ prefix_ void senf::detail::DaemonWatcher::childOk()
 // senf::detail::DaemonWatcher::Forwarder
 
 prefix_ senf::detail::DaemonWatcher::Forwarder::Forwarder(int src, Callback cb)
-    : src_(src), cb_(cb)
-{
-    Scheduler::instance().add(src_, senf::membind(&Forwarder::readData, this),
-                              Scheduler::EV_READ);
-}
+    : src_(src), cb_(cb), 
+      readevent_("DaemanWatcher::Forwarder", senf::membind(&Forwarder::readData, this),
+                 src_, scheduler::FdEvent::EV_READ)
+{}
 
 prefix_ senf::detail::DaemonWatcher::Forwarder::~Forwarder()
 {
-    if (src_ != -1)
-        Scheduler::instance().remove(src_);
-    
-    for (Targets::iterator i (targets_.begin()); i != targets_.end(); ++i)
-        if (i->offset >= buffer_.size())
-            Scheduler::instance().remove(i->fd);
+    targets_.clear_and_destroy(DestroyDelete());
 }
 
 prefix_ void senf::detail::DaemonWatcher::Forwarder::addTarget(int fd)
 {
-    Target target = { fd, 0 };
-    targets_.push_back(target);
+    targets_.push_back(*(new Target(*this, fd)));
 }
 
 prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(int event)
@@ -660,17 +653,18 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(int event)
     while (1) {
         n = ::read(src_,buf,1024);
         if (n<0) {
-            if (errno != EINTR) SENF_THROW_SYSTEM_EXCEPTION("::read()");
-        } else 
+            if (errno != EINTR) 
+                SENF_THROW_SYSTEM_EXCEPTION("::read()");
+        } 
+        else 
             break;
     }
 
     if (n == 0) {
-        // Hangup
-        Scheduler::instance().remove(src_);
         if (buffer_.empty())
             cb_(); 
         src_ = -1;
+        readevent_.disable();
         return;
     }
 
@@ -679,20 +673,16 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::readData(int event)
 
     for (Targets::iterator i (targets_.begin()); i != targets_.end(); ++i)
         if (i->offset >= buffer_.size())
-            Scheduler::instance().add( i->fd, 
-                                       boost::bind(&Forwarder::writeData, this, _1, i),
-                                       Scheduler::EV_WRITE );
+            i->writeevent.enable();
 
     buffer_.insert(buffer_.end(), buf, buf+n);
 }
 
-prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(int event,
-                                                               Targets::iterator target)
+prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(int event, Target * target)
 {    
     if (event != Scheduler::EV_WRITE) {
         // Broken pipe while writing data ? Not much, we can do here, we just drop the data
-        Scheduler::instance().remove(target->fd);
-        targets_.erase(target);
+        targets_.erase_and_destroy(Targets::current(*target),DestroyDelete());
         if (targets_.empty() && src_ == -1)
             cb_();
         return;
@@ -719,7 +709,7 @@ prefix_ void senf::detail::DaemonWatcher::Forwarder::writeData(int event,
         i->offset -= n;
 
     if (target->offset >= buffer_.size())
-        Scheduler::instance().remove(target->fd);
+        target->writeevent.disable();
     if (src_ == -1 && (buffer_.empty() || targets_.empty()))
         cb_();
 }

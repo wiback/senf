@@ -31,7 +31,6 @@
 #include "Server.hh"
 #include "../Utils/Exception.hh"
 #include "../Scheduler/Scheduler.hh"
-#include "../Scheduler/Binding.hh"
 
 //#include "Readline.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -79,7 +78,7 @@ namespace detail {
         unsigned skipChars_;
         char nameBuffer_[256];
         char promptBuffer_[1024];
-        SchedulerBinding schedBinding_;
+        scheduler::FdEvent readevent_;
         bool terminate_;
 
         char * savedLineBuffer_;

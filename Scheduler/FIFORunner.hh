@@ -70,22 +70,26 @@ namespace scheduler {
 
             TaskInfo is the base-class for all tasks.
          */
-        struct TaskInfo 
+        class TaskInfo 
             : public TaskListBase
         {
-            explicit TaskInfo(std::string const & name_);
+        public:
+            explicit TaskInfo(std::string const & name);
             virtual ~TaskInfo();
 
-            bool runnable;              ///< Runnable flag
-                                        /**< This must be set to \c true when the task is
-                                             runnable. It is reset automatically when the task is
-                                             run. */
+        protected:
+            void setRunnable();
+            
+        private:
+            virtual void run() = 0;
 
-            std::string name;           ///< Descriptive task name
+            bool runnable_;
+            std::string name_;
 #       ifdef SENF_DEBUG
-            std::string backtrace;
+            std::string backtrace_;
 #       endif
-            virtual void run() = 0;     ///< Called to run the task
+
+            friend class FIFORunner;
         };
 
         ///////////////////////////////////////////////////////////////////////////
@@ -134,7 +138,6 @@ namespace scheduler {
         friend class singleton<FIFORunner>;
         friend class senf::Scheduler;
     };
-
 
 }}
 

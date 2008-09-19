@@ -43,15 +43,15 @@
 prefix_ void senf::Scheduler::process()
 {
     terminate_ = false;
-    while(! terminate_ && ! (fdDispatcher_.empty() &&
+    while(! terminate_ && ! (scheduler::detail::FdDispatcher::instance().empty() &&
                              scheduler::detail::TimerDispatcher::instance().empty() &&
-                             fileDispatcher_.empty())) {
+                             scheduler::detail::FileDispatcher::instance().empty())) {
         scheduler::detail::SignalDispatcher::instance().unblockSignals();
         scheduler::detail::TimerDispatcher::instance().unblockSignals();
         scheduler::FdManager::instance().processOnce();
         scheduler::detail::TimerDispatcher::instance().blockSignals();
         scheduler::detail::SignalDispatcher::instance().blockSignals();
-        fileDispatcher_.prepareRun();
+        scheduler::detail::FileDispatcher::instance().prepareRun();
         scheduler::FIFORunner::instance().run();
     }
 }
@@ -60,10 +60,10 @@ prefix_ void senf::Scheduler::restart()
 {
     scheduler::FdManager* fdm (&scheduler::FdManager::instance());
     scheduler::FIFORunner* ffr (&scheduler::FIFORunner::instance());
-    scheduler::FdDispatcher* fdd (&fdDispatcher_);
+    scheduler::detail::FdDispatcher* fdd (&scheduler::detail::FdDispatcher::instance());
     scheduler::detail::TimerDispatcher* td (&scheduler::detail::TimerDispatcher::instance());
     scheduler::detail::SignalDispatcher* sd (&scheduler::detail::SignalDispatcher::instance());
-    scheduler::FileDispatcher* fld (&fileDispatcher_);
+    scheduler::detail::FileDispatcher* fld (&scheduler::detail::FileDispatcher::instance());
     
     fld->~FileDispatcher();
     sd->~SignalDispatcher();
@@ -74,10 +74,10 @@ prefix_ void senf::Scheduler::restart()
     
     new (fdm) scheduler::FdManager();
     new (ffr) scheduler::FIFORunner();
-    new (fdd) scheduler::FdDispatcher(*fdm, *ffr);
+    new (fdd) scheduler::detail::FdDispatcher();
     new (td) scheduler::detail::TimerDispatcher();
     new (sd) scheduler::detail::SignalDispatcher();
-    new (fld) scheduler::FileDispatcher(*fdm, *ffr);
+    new (fld) scheduler::detail::FileDispatcher();
 }
 
 ///////////////////////////////////////////////////////////////////////////

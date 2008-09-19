@@ -136,6 +136,7 @@ namespace senf {
         void done();
 
         Handle handle_;
+        scheduler::FdEvent fde_;
         std::string::size_type maxSize_;
         boost::scoped_ptr<InternalPredicate> predicate_;
         Callback callback_;

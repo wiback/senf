@@ -21,13 +21,15 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief FdDispatcher.test unit tests */
+    \brief FdEvent.test unit tests */
 
-//#include "FdDispatcher.test.hh"
-//#include "FdDispatcher.test.ih"
+//#include "FdEvent.test.hh"
+//#include "FdEvent.test.ih"
 
 // Custom includes
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -36,7 +38,7 @@
 #include <string.h>
 #include <iostream>
 
-#include "FdDispatcher.hh"
+#include "FdEvent.hh"
 
 #include <boost/bind.hpp>
 
@@ -145,14 +147,14 @@ namespace {
     {
         ++calls;
         event = ev;
-        switch (event & senf::scheduler::FdDispatcher::EV_ALL) {
-        case senf::scheduler::FdDispatcher::EV_READ:
+        switch (event & senf::scheduler::FdEvent::EV_ALL) {
+        case senf::scheduler::FdEvent::EV_READ:
             size = recv(fd,buffer,1024,0);
             break;
-        case senf::scheduler::FdDispatcher::EV_PRIO:
+        case senf::scheduler::FdEvent::EV_PRIO:
             size = recv(fd,buffer,1024,MSG_OOB);
             break;
-        case senf::scheduler::FdDispatcher::EV_WRITE:
+        case senf::scheduler::FdEvent::EV_WRITE:
             size = write(fd,buffer,size);
             break;
         }
@@ -162,7 +164,6 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(fdDispatcher)
 {
-    senf::scheduler::FdDispatcher dispatcher (senf::scheduler::FdManager::instance(), senf::scheduler::FIFORunner::instance());
     senf::scheduler::FdManager::instance().timeout(1000);
 
     int pid (start_server());
@@ -182,50 +183,102 @@ BOOST_AUTO_UNIT_TEST(fdDispatcher)
         error("connect");
         BOOST_FAIL("connect");
     }
-
-    BOOST_CHECK( dispatcher.add("testHandler", sock, boost::bind(&callback, sock, _1),
-                                senf::scheduler::FdDispatcher::EV_READ) );
-    event = 0;
-    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
-    BOOST_CHECK_EQUAL( event, senf::scheduler::FdDispatcher::EV_READ );
-    BOOST_CHECK_EQUAL( size, 4 );
-    buffer[size] = 0;
-    BOOST_CHECK_EQUAL( buffer, "READ" );
-
-    strcpy(buffer,"WRITE");
-    size=5;
-    BOOST_CHECK( dispatcher.add("testHandler", sock, boost::bind(&callback, sock, _1),
-                                senf::scheduler::FdDispatcher::EV_WRITE) );
-    event = 0;
-    sleep(1);
-    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
-    BOOST_CHECK_EQUAL( event, senf::scheduler::FdDispatcher::EV_WRITE );
-
-    SENF_CHECK_NO_THROW( dispatcher.remove(sock, senf::scheduler::FdDispatcher::EV_WRITE) );
-    event = 0;
-    sleep(1);
-    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
-    BOOST_CHECK_EQUAL( event, senf::scheduler::FdDispatcher::EV_HUP | senf::scheduler::FdDispatcher::EV_READ );
-    BOOST_CHECK_EQUAL( size, 2 );
-    buffer[size]=0;
-    BOOST_CHECK_EQUAL( buffer, "OK" );
-
-    BOOST_CHECK_EQUAL( calls, 3 );
-    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
-    BOOST_CHECK_EQUAL( calls, 3 );
     
-    // Ensure, removing an already closed file-descriptor doesn't wreak havoc
-    close(sock);
-    SENF_CHECK_NO_THROW( dispatcher.remove(sock) );
+    {
+        senf::scheduler::FdEvent sockread ("testHandler",  boost::bind(&callback, sock, _1),
+                                           sock, senf::scheduler::FdEvent::EV_READ);
+        senf::scheduler::FdEvent sockwrite ("testHandler", boost::bind(&callback, sock, _1),
+                                            sock, senf::scheduler::FdEvent::EV_WRITE, false);
+        event = 0;
+        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_READ );
+        BOOST_CHECK_EQUAL( size, 4 );
+        buffer[size] = 0;
+        BOOST_CHECK_EQUAL( buffer, "READ" );
+
+        strcpy(buffer,"WRITE");
+        size=5;
+        SENF_CHECK_NO_THROW( sockwrite.enable() );
+        event = 0;
+        sleep(1);
+        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_WRITE );
+
+        SENF_CHECK_NO_THROW( sockwrite.disable() );
+        event = 0;
+        sleep(1);
+        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_HUP | senf::scheduler::FdEvent::EV_READ );
+        BOOST_CHECK_EQUAL( size, 2 );
+        buffer[size]=0;
+        BOOST_CHECK_EQUAL( buffer, "OK" );
+
+        BOOST_CHECK_EQUAL( calls, 3 );
+        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        BOOST_CHECK_EQUAL( calls, 3 );
+    
+        // Ensure, removing an already closed file-descriptor doesn't wreak havoc
+        close(sock);
+    }
 
     SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
     BOOST_CHECK_EQUAL( calls, 3 );
-
 
     BOOST_CHECK (stop_server(pid));
+}
+
+namespace {
+
+    bool is_close(senf::ClockService::clock_type a, senf::ClockService::clock_type b)
+    {
+        return (a<b ? b-a : a-b) < senf::ClockService::milliseconds(100);
+    }
+
+    bool called (false);
+    void handler(int events)
+    {
+        called=true;
+    }
+}
+
+BOOST_AUTO_UNIT_TEST(fileDispatcher)
+{
+    senf::scheduler::detail::FileDispatcher::instance().timeout(500);
+
+    int fd (open("test.empty.file", O_RDWR|O_CREAT|O_TRUNC, 0600));
+    
+    senf::ClockService::clock_type t (senf::ClockService::now());
+    try {
+        senf::scheduler::FdEvent fde ("testHandler", &handler, 
+                                      fd, senf::scheduler::FdEvent::EV_READ);
+        SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::FileDispatcher::instance().prepareRun() );
+        SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+        
+        BOOST_CHECK( called );
+        BOOST_CHECK_PREDICATE( is_close, (t)(senf::ClockService::now()) );
+    }
+    catch (std::exception const & ex) {
+        std::cerr << "Exception:\n" << ex.what() << "\n";
+        throw;
+    }
+    close(fd);
+
+    called = false;
+    t = senf::ClockService::now();
+    SENF_CHECK_NO_THROW( senf::scheduler::FdManager::instance().processOnce() );
+    SENF_CHECK_NO_THROW( senf::scheduler::detail::FileDispatcher::instance().prepareRun() );
+    SENF_CHECK_NO_THROW( senf::scheduler::FIFORunner::instance().run() );
+
+    BOOST_CHECK( ! called );
+    BOOST_CHECK_PREDICATE( 
+        is_close, (t+senf::ClockService::milliseconds(500))(senf::ClockService::now()) );
+
+    unlink("test.empty.file");
+    senf::scheduler::detail::FileDispatcher::instance().timeout(-1);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

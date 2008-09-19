@@ -28,7 +28,6 @@
 
 // Custom includes
 #include "../Utils/senfassert.hh"
-#include <boost/bind.hpp>
 
 //#include "IOEvent.mpp"
 #define prefix_
@@ -42,18 +41,17 @@
 
 prefix_ void senf::ppi::IOEvent::v_enable()
 {
-    Scheduler::instance().add(fd_, boost::bind(&IOEvent::cb,this,_1),
-                              Scheduler::EventId(events_));
+    event_.enable();
 }
 
 prefix_ void senf::ppi::IOEvent::v_disable()
 {
-    Scheduler::instance().remove(fd_, Scheduler::EventId(events_));
+    event_.disable();
 }
 
 prefix_ void senf::ppi::IOEvent::cb(int event)
 {
-    if ((event & ~events_) != 0) {
+    if ((event & ~event_.events()) != 0) {
         if (event & Err)
             throw ErrorException();
         else if (event & Hup)

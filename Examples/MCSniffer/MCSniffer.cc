@@ -44,16 +44,16 @@ class MCSniffer
 {
     senf::UDPv4ClientSocketHandle sock;
     std::ostream& stream;
+    senf::scheduler::FdEvent event;
 
 public:
     MCSniffer(senf::INet4Address addr, std::ostream& s)
-        : stream(s)
+        : stream(s), event("MCSniffer", senf::membind(&MCSniffer::dumpPacket, this),
+                           sock, senf::scheduler::FdEvent::EV_READ)
     {
         // sock.bind(addr);
         sock.protocol().mcLoop(true);
         sock.protocol().mcAddMembership(addr);
-        senf::Scheduler::instance().add(
-            sock, senf::membind(&MCSniffer::dumpPacket, this));
     }
 
 private:

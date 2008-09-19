@@ -28,7 +28,8 @@
 
 // Custom includes
 #include <deque>
-#include <list>
+#include "../boost/intrusive/iset.hpp"
+#include "../boost/intrusive/iset_hook.hpp"
 #include <boost/utility.hpp>
 #include <boost/function.hpp>
 #include "../../Scheduler/Scheduler.hh"
@@ -63,23 +64,37 @@ namespace detail {
 
         private:
 
+            // This is awkward ... we'll need to erase an element from the target list given
+            // only the target object. This is best implement using an intrusive container.
+            // However, this makes memory-management explicit and we'll need to be careful.
             typedef std::deque<char> Buffer;
-            struct Target
+            struct TargetListTag;
+            typedef boost::intrusive::ilist_base_hook<TargetListTag> TargetListBase;
+
+            struct Target : public TargetListBase
             {
+                Target(Forwarder & fwd, int fd);
+
                 int fd;
                 Buffer::size_type offset;
+                scheduler::FdEvent writeevent;
             };
-            typedef std::list<Target> Targets;
+            typedef boost::intrusive::ilist<TargetListBase::value_traits<Target>,false> Targets;
+
+            struct DestroyDelete
+            {
+                template <class T>
+                void operator()(T * t) { delete t; }
+            };
 
             void readData(int event);
-            void writeData(int event, Targets::iterator target);
+            void writeData(int event, Target * target);
 
             Buffer buffer_;
             int src_;
-
             Targets targets_;
-
             Callback cb_;
+            scheduler::FdEvent readevent_;
         };
         
         void pipeClosed(int id);

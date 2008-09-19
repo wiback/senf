@@ -1,6 +1,9 @@
 // $Id$
 //
 // Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,26 +21,24 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Binding inline template implementation */
+    \brief Daemon inline non-template implementation */
 
-//#include "Binding.ih"
+#include "Daemon.ih"
 
 // Custom includes
+#include <boost/bind.hpp>
 
 #define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+///////////////////////////////cci.p///////////////////////////////////////
 
-template <class Handle>
-prefix_ senf::SchedulerBinding::SchedulerBinding(Handle const & handle,
-                                                 Scheduler::FdCallback cb, int eventMask,
-                                                 bool enabled)
-    : fd_ (retrieve_filehandle(handle)), cb_ (cb), eventMask_ (eventMask), enabled_ (false)
-{
-    if (enabled)
-        enable();
-}
+prefix_ senf::detail::DaemonWatcher::Forwarder::Target::Target(Forwarder & fwd, int fd_)
+    : fd (fd_), offset (0),
+      writeevent ("DaemonWatcher::Forwarder::Target",
+                  boost::bind(&Forwarder::writeData, &fwd, _1, this),
+                  fd, scheduler::FdEvent::EV_WRITE, false)
+{}
 
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
 

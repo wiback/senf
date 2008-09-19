@@ -49,7 +49,7 @@ namespace scheduler {
 
     /** \brief Deadline timer event
 
-        The TimerEvent class registeres a deadline timer callback which will be called when the
+        The TimerEvent class registers a deadline timer callback which will be called when the
         timer expires.
 
         Timer events are implemented using POSIX timers. Depending on kernel features, the timer

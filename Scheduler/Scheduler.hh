@@ -29,10 +29,9 @@
 
 // Custom includes
 #include "../Utils/Logger/SenfLog.hh"
-#include "FdDispatcher.hh"
+#include "FdEvent.hh"
 #include "TimerEvent.hh"
 #include "SignalEvent.hh"
-#include "FileDispatcher.hh"
 #include "../Utils/Logger/SenfLog.hh"
 
 //#include "scheduler.mpp"
@@ -210,46 +209,6 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        ///\name File Descriptors
-        ///\{
-
-        template <class Handle>
-        void add(std::string const & name, Handle const & handle, FdCallback const & cb,
-                 int eventMask = EV_ALL);  ///< Add file handle event callback
-                                        /**< add() will add a callback to the %scheduler. The
-                                             callback will be called for the given type of event on
-                                             the given  arbitrary file-descriptor or
-                                             handle-like object. If there already is a Callback
-                                             registered for one of the events requested, the new
-                                             handler will replace the old one.
-                                             \param[in] name descriptive name to identify the
-                                                 callback.
-                                             \param[in] handle file descriptor or handle providing
-                                                 the Handle interface defined above.
-                                             \param[in] cb callback
-                                             \param[in] eventMask arbitrary combination via '|'
-                                                 operator of \ref senf::Scheduler::EventId "EventId"
-                                                 designators. */
- 
-        template <class Handle>        
-        void add(Handle const & handle, FdCallback const & cb,
-                 int eventMask = EV_ALL); ///< Add file handle event callback
-                                        /**< \see add() */
-
-
-        template <class Handle>
-        void remove(Handle const & handle, int eventMask = EV_ALL); ///< Remove event callback
-                                        /**< remove() will remove any callback registered for any of
-                                             the given events on the given file descriptor or handle
-                                             like object.
-                                             \param[in] handle file descriptor or handle providing
-                                                 the Handle interface defined above.
-                                             \param[in] eventMask arbitrary combination via '|'
-                                                 operator of \ref senf::Scheduler::EventId "EventId"
-                                                 designators. */
-
-        ///\}
-
         void process();                 ///< Event handler main loop
                                         /**< This member must be called at some time to enter the
                                              event handler main loop. Only while this function is
@@ -279,25 +238,8 @@ namespace senf {
     private:
         Scheduler();
 
-        void do_add(int fd, FdCallback const & cb, int eventMask = EV_ALL);
-        void do_add(std::string const & name, int fd, FdCallback const & cb, 
-                    int eventMask = EV_ALL);
-        void do_remove(int fd, int eventMask);
-
         bool terminate_;
-
-        scheduler::FdDispatcher fdDispatcher_;
-        scheduler::FileDispatcher fileDispatcher_;
     };
-
-    /** \brief Default file descriptor accessor
-
-        retrieve_filehandle() provides the %scheduler with support for explicit file descriptors as
-        file handle argument.
-
-        \relates Scheduler
-     */
-    int retrieve_filehandle(int fd);
 
     /** \brief %scheduler specific time source for Utils/Logger framework
 
@@ -315,7 +257,7 @@ namespace senf {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Scheduler.cci"
 //#include "Scheduler.ct"
-#include "Scheduler.cti"
+//#include "Scheduler.cti"
 #endif
 
 

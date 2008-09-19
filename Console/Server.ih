@@ -173,7 +173,7 @@ namespace detail {
 
         void newData(int event);
 
-        SchedulerBinding binding_;
+        scheduler::FdEvent readevent_;
         std::string buffer_;
     };
     

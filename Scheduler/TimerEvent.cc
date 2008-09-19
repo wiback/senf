@@ -119,7 +119,7 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::signal(int events)
     TimerSet::iterator const i_end (timers_.end());
     ClockService::clock_type now (senf::scheduler::FdManager::instance().eventTime());
     for (; i != i_end && i->timeout_ <= now ; ++i)
-        i->runnable = true;
+        i->setRunnable();
 }
 
 prefix_ void senf::scheduler::detail::TimerDispatcher::sigHandler(int signal, 

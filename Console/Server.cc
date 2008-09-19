@@ -94,15 +94,11 @@ prefix_ senf::console::Server & senf::console::Server::start(ServerHandle handle
 }
 
 prefix_ senf::console::Server::Server(ServerHandle handle)
-    : handle_ (handle), root_ (senf::console::root().thisptr()), mode_ (Automatic)
-{
-    Scheduler::instance().add( handle_, senf::membind(&Server::newClient, this) );
-}
-
-prefix_ senf::console::Server::~Server()
-{
-    Scheduler::instance().remove(handle_);
-}
+    : handle_ (handle), 
+      event_ ("console::Server", senf::membind(&Server::newClient, this),
+              handle_, scheduler::FdEvent::EV_READ),
+      root_ (senf::console::root().thisptr()), mode_ (Automatic)
+{}
 
 prefix_ void senf::console::Server::newClient(int event)
 {
@@ -185,9 +181,10 @@ prefix_ void senf::console::detail::DumbClientReader::v_translate(std::string & 
 
 prefix_
 senf::console::detail::NoninteractiveClientReader::NoninteractiveClientReader(Client & client)
-    : ClientReader (client), binding_ (handle(),
-                                       senf::membind(&NoninteractiveClientReader::newData, this),
-                                       senf::Scheduler::EV_READ)
+    : ClientReader (client), 
+      readevent_ ("NoninteractiveClientReader", 
+                  senf::membind(&NoninteractiveClientReader::newData, this),
+                  handle(), senf::Scheduler::EV_READ)
 {}
 
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_disablePrompt()
@@ -223,7 +220,8 @@ senf::console::detail::NoninteractiveClientReader::newData(int event)
 prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
     : out_t(boost::ref(*this)), senf::log::IOStreamTarget(out_t::member), server_ (server),
       handle_ (handle), 
-      binding_ (handle, boost::bind(&Client::setNoninteractive,this), Scheduler::EV_READ, false),
+      readevent_ ("senf::console::Client", boost::bind(&Client::setNoninteractive,this), 
+                  handle, Scheduler::EV_READ, false),
       timer_ ("senf::console::Client interactive timeout", 
               boost::bind(&Client::setInteractive, this),
               Scheduler::instance().eventTime() + ClockService::milliseconds(INTERACTIVE_TIMEOUT),
@@ -240,7 +238,7 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
         setNoninteractive();
         break;
     case Server::Automatic :
-        binding_.enable();
+        readevent_.enable();
         timer_.enable();
         break;
     }
@@ -248,7 +246,7 @@ prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
 
 prefix_ void senf::console::Client::setInteractive()
 {
-    binding_.disable();
+    readevent_.disable();
     timer_.disable();
     mode_ = Server::Interactive;
     reader_.reset(new detail::SafeReadlineClientReader (*this));
@@ -257,7 +255,7 @@ prefix_ void senf::console::Client::setInteractive()
 
 prefix_ void senf::console::Client::setNoninteractive()
 {
-    binding_.disable();
+    readevent_.disable();
     timer_.disable();
     mode_ = Server::Noninteractive;
     reader_.reset(new detail::NoninteractiveClientReader(*this));

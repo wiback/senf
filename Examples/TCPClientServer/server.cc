@@ -35,17 +35,19 @@
 class Server
 {
     senf::TCPv4ServerSocketHandle serverSock;
+    senf::scheduler::FdEvent acceptevent;
+    senf::scheduler::FdEvent readevent;
 
 public:
     Server(senf::INet4Address const & host, unsigned int port)
-        : serverSock(senf::INet4SocketAddress(host, port)) {}
+        : serverSock(senf::INet4SocketAddress(host, port)),
+          acceptevent("Server accept", senf::membind(&Server::accept, this),
+                      serverSock, senf::scheduler::FdEvent::EV_READ),
+          readevent("Server read", 0)
+        {}
 
     void run()
     {
-        senf::Scheduler::instance().add(
-            serverSock,
-            senf::membind(&Server::accept, this),
-            senf::Scheduler::EV_READ);
         senf::Scheduler::instance().process();
     }
 
@@ -53,16 +55,17 @@ private:
     void accept(int event)
     {
         senf::TCPv4ClientSocketHandle clientSock (serverSock.accept());
-        senf::Scheduler::instance().add(
-            clientSock,
-            boost::bind(&Server::readFromClient, this, clientSock, _1),
-            senf::Scheduler::EV_READ);
+        readevent
+            .action(boost::bind(&Server::readFromClient, this, clientSock, _1))
+            .handle(clientSock)
+            .events(senf::scheduler::FdEvent::EV_READ)
+            .enable();
     }
 
     void readFromClient(senf::TCPv4ClientSocketHandle clientSock, int event)
     {
         if (!clientSock) {
-            senf::Scheduler::instance().remove(clientSock);
+            readevent.disable();
             return;
         }
         std::string data (clientSock.read());

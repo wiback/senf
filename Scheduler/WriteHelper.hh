@@ -102,6 +102,7 @@ namespace senf {
         void done();
 
         Handle handle_;
+        scheduler::FdEvent fde_;
         mutable std::string data_;
         Callback callback_;
 

@@ -35,24 +35,23 @@
 template <class Handle>
 prefix_ senf::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_type maxSize,
                                                     InternalPredicate * predicate, Callback cb)
-    : handle_(handle), maxSize_(maxSize), predicate_(predicate), callback_(cb),
-      errno_(0), complete_(false)
+    : handle_(handle), 
+      fde_("ReadHelper", boost::bind(&ReadHelper::dispatchProcess,ptr(this), handle, _1),
+           handle, senf::scheduler::FdEvent::EV_READ),
+      maxSize_(maxSize), predicate_(predicate), callback_(cb), errno_(0), complete_(false)
 {
     // Here we add a *static* member taking a *smart* pointer as first
     // argumnet instead of a simple bound-member as callback to the
     // scheduler. This ensures, that the refcount is at least 1 as
     // long as the helper is registered with the scheduler.
-    senf::Scheduler::instance()
-        .add(handle,boost::bind(&ReadHelper::dispatchProcess,ptr(this), handle, _1),
-             senf::Scheduler::EV_READ);
 }
 
 template <class Handle>
 prefix_ void senf::ReadHelper<Handle>::revoke()
 {
     ptr guard (this); // To ensure, 'this' is deleted only after this method terminates ...
-    senf::Scheduler::instance()
-        .remove(handle_,senf::Scheduler::EV_READ);
+    fde_.disable();
+    fde_.action(0); // Remove smart pointer reference to this
 }
 
 template <class Handle>
