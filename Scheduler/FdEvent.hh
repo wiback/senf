@@ -91,12 +91,12 @@ namespace scheduler {
 	typedef boost::function<void (int)> Callback;
 
         enum Events { 
-            EV_NONE = 0                 ///< No event
-          , EV_READ = detail::FdManager::EV_READ ///< fd readable (or EOF)
-          , EV_PRIO = detail::FdManager::EV_PRIO, ///< OOB data available for read
-          , EV_WRITE = detail::FdManager::EV_WRITE ///< fd writable
-          , EV_HUP = detail::FdManager::EV_HUP ///< remote end closed connection
-          , EV_ERR = detail::FdManager::EV_ERR ///< transport error
+            EV_NONE = 0                             ///< No event
+          , EV_READ = detail::FdManager::EV_READ    ///< fd readable (or EOF)
+          , EV_PRIO = detail::FdManager::EV_PRIO    ///< OOB data available for read
+          , EV_WRITE = detail::FdManager::EV_WRITE  ///< fd writable
+          , EV_HUP = detail::FdManager::EV_HUP      ///< remote end closed connection
+          , EV_ERR = detail::FdManager::EV_ERR      ///< transport error
           , EV_ALL = (detail::FdManager::EV_READ 
                       | detail::FdManager::EV_WRITE 
                       | detail::FdManager::EV_PRIO) ///< register all events
