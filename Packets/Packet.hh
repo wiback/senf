@@ -330,15 +330,50 @@ namespace senf {
                                              This is an alias for boolean_test() which is called
                                              when using a packet in a boolean context. */
 
-        void finalize() const;          ///< Update calculated fields
+        void finalizeThis();            ///< Update calculated fields
                                         /**< This call will update all calculated fields of the
-                                             packet after it has been created or changed. This
-                                             includes checksums, payload size fields or other
-                                             fields, which can be set from other information in the
-                                             packet. Each concrete packet type should document,
-                                             which fields are set by finalize().
+                                             packet. This includes checksums, payload size fields or
+                                             other fields, which can be set from other information
+                                             in the packet. Each concrete packet type should
+                                             document, which fields are set by finalize().
 
-                                             finalize() will automatically process all
+                                             finalizeThis() will \e only process the current
+                                             header. Even if only changing fields in this protocol,
+                                             depending on the protocol it may not be enough to
+                                             finalize this header only. See the packet type
+                                             documentation. */
+
+        template <class Other>
+        void finalizeTo();              ///< Update calculated fields
+                                        /**< This call will update all calculated fields of the
+                                             packet. This includes checksums, payload size fields or
+                                             other fields, which can be set from other information
+                                             in the packet. Each concrete packet type should
+                                             document, which fields are set by finalize().
+
+                                             finalizeTo() will automatically process all
+                                             packets/headers/interpreters from the first occurrence
+                                             of packet type \a Other backwards up to \c this. */
+
+        void finalizeTo(Packet other);  ///< Update calculated fields
+                                        /**< This call will update all calculated fields of the
+                                             packet. This includes checksums, payload size fields or
+                                             other fields, which can be set from other information
+                                             in the packet. Each concrete packet type should
+                                             document, which fields are set by finalize().
+
+                                             finalizeAll(other) will automatically process all
+                                             packets/headers/interpreters from \a other backwards up
+                                             to \c this. */
+
+        void finalizeAll();             ///< Update calculated fields
+                                        /**< This call will update all calculated fields of the
+                                             packet. This includes checksums, payload size fields or
+                                             other fields, which can be set from other information
+                                             in the packet. Each concrete packet type should
+                                             document, which fields are set by finalize().
+
+                                             finalizeAll() will automatically process all
                                              packets/headers/interpreters from the end of the chain
                                              backwards up to \c this. */
 

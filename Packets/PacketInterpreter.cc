@@ -79,11 +79,16 @@ prefix_ void senf::PacketInterpreterBase::dump(std::ostream & os)
         i->v_dump(os);
 }
 
-prefix_ void senf::PacketInterpreterBase::finalize()
+prefix_ void senf::PacketInterpreterBase::finalizeThis()
 {
-    for (ptr i (last()) ; i.get() != this ; i = i->prev())
-        i->v_finalize();
     v_finalize();
+}
+
+prefix_ void senf::PacketInterpreterBase::finalizeTo(ptr other)
+{
+    for (ptr i (other); i.get() != this && i.get(); i = i->prev())
+        i->finalizeThis();
+    finalizeThis();
 }
 
 ///////////////////////////////////////////////////////////////////////////

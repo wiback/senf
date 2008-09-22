@@ -59,7 +59,7 @@ BOOST_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
     senf::EthernetPacket eth (senf::EthernetPacket::createAfter(llcsnap));
     senf::DataPacket payload  (senf::DataPacket::createAfter(
             eth, std::string("Hello, world!")));    
-    llcsnap.finalize();
+    llcsnap.finalizeAll();
 
     BOOST_CHECK_EQUAL( llcsnap->dsap(), 0xaa );
     BOOST_CHECK_EQUAL( llcsnap->ssap(), 0xaa );

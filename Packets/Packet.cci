@@ -137,11 +137,19 @@ prefix_ bool senf::Packet::operator==(Packet other)
     return ptr() == other.ptr();
 }
 
-prefix_ void senf::Packet::finalize()
-    const
+prefix_ void senf::Packet::finalizeThis()
 {
-    last(); // Make sure the packet is complete
-    ptr()->finalize();
+    ptr()->finalizeThis();
+}
+
+prefix_ void senf::Packet::finalizeTo(Packet other)
+{
+    ptr()->finalizeTo(other.ptr());
+}
+
+prefix_ void senf::Packet::finalizeAll()
+{
+    ptr()->finalizeTo(last().ptr());
 }
 
 prefix_ void senf::Packet::dump(std::ostream & os)

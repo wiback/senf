@@ -77,13 +77,13 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_create)
 
     BOOST_CHECK( ! ip->validateChecksum() );
 
-    ip.finalize();
+    ip.finalizeAll();
     BOOST_CHECK_EQUAL( ip->length(), 28u );
     BOOST_CHECK_EQUAL( ip->protocol(), 17u );
     BOOST_CHECK_EQUAL( ip->checksum(), 0xbad2 );
 
     // Check, that the checksum field is correctly skipped
-    ip.finalize();
+    ip.finalizeAll();
     BOOST_CHECK_EQUAL( ip->checksum(), 0xbad2 );
 
     BOOST_CHECK( ip->validateChecksum() );

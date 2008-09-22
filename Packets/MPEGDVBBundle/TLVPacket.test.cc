@@ -94,7 +94,7 @@ BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_simple_length)
     TestTLVPacket tlvPacket (TestTLVPacket::create());
     tlvPacket->type() = 42u;
     DataPacket::createAfter( tlvPacket, payload );
-    tlvPacket.finalize();
+    tlvPacket.finalizeAll();
 
     BOOST_CHECK_EQUAL( tlvPacket->type(), 42u);
     BOOST_CHECK_EQUAL( tlvPacket->length(), 13u);
@@ -113,7 +113,7 @@ BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_extended_length)
     TestTLVPacket tlvPacket (TestTLVPacket::create());
     tlvPacket->type() = 42u;
     DataPacket::createAfter( tlvPacket, payload );
-    tlvPacket.finalize();
+    tlvPacket.finalizeAll();
         
     BOOST_CHECK_EQUAL( tlvPacket->type(), 42u );
     BOOST_CHECK_EQUAL( tlvPacket->length(), payload.size() );
@@ -123,7 +123,7 @@ BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_extended_length)
 
     payload = std::string("This is a short string with less than 127 characters. That's all.");
     DataPacket::createAfter( tlvPacket, payload );
-    tlvPacket.finalize();
+    tlvPacket.finalizeAll();
 
     BOOST_CHECK_EQUAL( tlvPacket->type(), 42u );
     BOOST_CHECK_EQUAL( tlvPacket->length(), payload.size() );
@@ -186,7 +186,7 @@ void test_TLVFixPacket_creating()
     TLVFixPacketType tlvPacket (TLVFixPacketType::create());
     tlvPacket->type() = 42u;
     DataPacket::createAfter( tlvPacket, payload );
-    tlvPacket.finalize();
+    tlvPacket.finalizeAll();
 
     BOOST_CHECK_EQUAL( tlvPacket->type(), 42u);
     BOOST_CHECK_EQUAL( tlvPacket->length(), 13u);
@@ -216,7 +216,7 @@ void test_invalid_TLVFixPacket_creating(boost::uint32_t max_value)
     tlvPacket->type() = 42u;
     DataPacket payload (DataPacket::createAfter( tlvPacket, max_value+1));
     //DataPacket::createAfter( payload, 1); // this is one byte to much.
-    BOOST_CHECK_THROW( tlvPacket.finalize(), UnsuportedTLVPacketException);
+    BOOST_CHECK_THROW( tlvPacket.finalizeAll(), UnsuportedTLVPacketException);
 }
 
 BOOST_AUTO_UNIT_TEST(TLVFixPacket_create_invalid_packet)

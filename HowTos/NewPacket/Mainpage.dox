@@ -939,7 +939,7 @@
             senf::EthernetPacket eth (senf::EthernetPacket::create(senf::noinit));
             isock.read(eth.data(),0u);
             GREPacket gre (senf::GREPacket::createBefore(eth));
-            gre.finalize();
+            gre.finalizeAll();
             osock.write(gre.data());
         }
     }

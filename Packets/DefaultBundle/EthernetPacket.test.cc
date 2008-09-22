@@ -83,12 +83,12 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
     vlan->cfi() = true;
     vlan->vlanId() = 0x234u;
 
-    eth.finalize();
+    eth.finalizeAll();
     BOOST_CHECK_EQUAL(eth->type_length(), 0x8100u);
     BOOST_CHECK_EQUAL(vlan->type(), 0u);
 
     senf::IPv4Packet ip (senf::IPv4Packet::createAfter(vlan));
-    eth.finalize();
+    eth.finalizeAll();
     BOOST_CHECK_EQUAL(vlan->type(), 0x0800u);
 }
 
@@ -101,7 +101,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_llcsnap)
     senf::LlcSnapPacket llcsnap (senf::LlcSnapPacket::createAfter(eth));
     senf::DataPacket payload  (senf::DataPacket::createAfter(
             llcsnap, std::string("Hello, world!")));
-    eth.finalize();
+    eth.finalizeAll();
     
     BOOST_CHECK_EQUAL( eth->type_length(), 8u + 13u);
     BOOST_CHECK_EQUAL( llcsnap->dsap(), 0xaa );
@@ -111,7 +111,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_llcsnap)
     BOOST_CHECK_EQUAL( llcsnap->type_length(), 0u);
 
     senf::IPv4Packet ip (senf::IPv4Packet::createAfter(llcsnap));
-    eth.finalize();
+    eth.finalizeAll();
     BOOST_CHECK_EQUAL(llcsnap->type_length(), 0x0800u);
 }
 

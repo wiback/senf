@@ -128,6 +128,13 @@ prefix_ OtherPacket senf::Packet::first()
     return first().as<OtherPacket>();
 }
 
+template <class Other>
+prefix_ void senf::Packet::finalizeTo()
+{
+    Packet p (find<Other>(nothrow));
+    ptr()->finalizeTo(p ? p.ptr() : last().ptr());
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ConcretePacket<PacketType>
 

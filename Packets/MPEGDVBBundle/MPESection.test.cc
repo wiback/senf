@@ -164,7 +164,7 @@ BOOST_AUTO_UNIT_TEST(MPESection_create)
     };
     senf::DataPacket payload (senf::DataPacket::createAfter(ip, payload_data));
     
-    sec.finalize();
+    sec.finalizeAll();
     
     unsigned char sec_data[] = {
             0x3e, 0xb0, 0x77, 0x00, 0x00, 0xc3, 0x00, 0x00,

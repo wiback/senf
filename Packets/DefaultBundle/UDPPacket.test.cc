@@ -73,7 +73,7 @@ BOOST_AUTO_UNIT_TEST(udpPacket_create)
     // validates, since the checksum is 0 and thus ignored !
     BOOST_CHECK( udp->validateChecksum() );
 
-    ip.finalize();
+    ip.finalizeAll();
     BOOST_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
                                    ip.data().begin(), ip.data().end() );
     BOOST_CHECK( udp->validateChecksum() );

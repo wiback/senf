@@ -201,7 +201,7 @@
     eth->source()      = senf::MACAddress::from_string("00:11:22:33:44:55");
     eth->destination() = senf::MACAddress::from_string("00:11:22:33:44:66");
     
-    eth.finalize();
+    eth.finalizeAll();
     \endcode
 
     Again, realize, that \a eth, \a ip, \a udp and \a payload share the same internal packet
@@ -274,12 +274,12 @@
     eth->source()      = senf::MACAddress::from_string("00:11:22:33:44:55");
     eth->destination() = senf::MACAddress::from_string("00:11:22:33:44:66");
     
-    eth.finalize();
+    eth.finalizeAll();
     \endcode
 
     As seen above, packet fields are accessed using the <tt>-></tt> operator whereas other packet
-    facilities (like \c finalize()) are directly accessed using the member operator. The field
-    values are simply set using appropriately named accessors. As a last step, the \c finalize()
+    facilities (like \c finalizeAll()) are directly accessed using the member operator. The field
+    values are simply set using appropriately named accessors. As a last step, the \c finalizeAll()
     call will update all calculated fields (fields like next-protocol, header or payload length,
     checksums etc). Now the packet is ready. We may now send it out using a packet socket
 

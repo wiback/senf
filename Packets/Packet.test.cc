@@ -159,11 +159,11 @@ BOOST_AUTO_UNIT_TEST(packet)
     packet.dump(s);
     BOOST_CHECK_EQUAL( s.str(), "BarPacket:\ntype: 0\nlength: 0\n" );
     
-    packet.finalize();
+    packet.finalizeAll();
     BOOST_CHECK_EQUAL( packet.last().as<BarPacket>()->type(), 
                        BarPacket::type::parser::type_t::value_type(-1) );
     packet.last().append(FooPacket::create());
-    packet.finalize();
+    packet.finalizeAll();
     BOOST_CHECK_EQUAL( packet.find<BarPacket>()->type(), 1u );
 
     BOOST_CHECK( packet.factory() == FooPacket::factory() );

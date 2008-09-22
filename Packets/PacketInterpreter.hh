@@ -166,7 +166,8 @@ namespace senf {
         ///@{
 
         optional_range nextPacketRange();
-        void finalize();
+        void finalizeThis();
+        void finalizeTo(ptr other);
         void dump(std::ostream & os);
         TypeIdValue typeId();
         factory_t factory();
