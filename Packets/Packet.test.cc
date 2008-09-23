@@ -161,8 +161,11 @@ BOOST_AUTO_UNIT_TEST(packet)
     
     packet.finalizeAll();
     BOOST_CHECK_EQUAL( packet.last().as<BarPacket>()->type(), 
-                       BarPacket::type::parser::type_t::value_type(-1) );
+                       BarPacket::Parser::type_t::value_type(-1) );
     packet.last().append(FooPacket::create());
+    packet.finalizeThis();
+    packet.finalizeTo<BarPacket>();
+    packet.finalizeTo(packet.find<BarPacket>());
     packet.finalizeAll();
     BOOST_CHECK_EQUAL( packet.find<BarPacket>()->type(), 1u );
 

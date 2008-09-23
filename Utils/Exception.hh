@@ -96,9 +96,9 @@
         SENF_WRAP_EXC(std::bad_cast)
         SENF_WRAP_EXC(somelib::FooException)
     }
-    \endcode The re-thrown exception can then be caught as <tt>std::bad_cast</tt> or as
-    senf::ExceptionMixin as needed. It is safe, to wrap an exception twice (the macro will detect
-    this case).
+    \endcode 
+    The re-thrown exception can then be caught as <tt>std::bad_cast</tt> or as senf::ExceptionMixin
+    as needed. It is safe, to wrap an exception twice (the macro will detect this case).
     \code
     bar() {
     try {
