@@ -197,7 +197,7 @@ BOOST_AUTO_UNIT_TEST(commandParser)
         "                   0304\";"
         "ls /foo/bar; ";
 
-    BOOST_CHECK( parser.parse(text, &setInfo) );
+    BOOST_CHECK_NO_THROW( parser.parse(text, &setInfo) );
     BOOST_CHECK_EQUAL( commands.size(), 2u );
 
     {
@@ -271,14 +271,14 @@ BOOST_AUTO_UNIT_TEST(checkedArgumentIterator)
 {
     senf::console::CommandParser parser;
 
-    BOOST_CHECK( parser.parse("foo a", &setInfo) );
+    BOOST_CHECK_NO_THROW( parser.parse("foo a", &setInfo) );
     BOOST_CHECK_THROW( parseArgs(commands.back().arguments()), 
                        senf::console::SyntaxErrorException );
 
-    BOOST_CHECK( parser.parse("foo a b", &setInfo) );
+    BOOST_CHECK_NO_THROW( parser.parse("foo a b", &setInfo) );
     BOOST_CHECK_NO_THROW( parseArgs(commands.back().arguments()) );
 
-    BOOST_CHECK( parser.parse("foo a b c", &setInfo) );
+    BOOST_CHECK_NO_THROW( parser.parse("foo a b c", &setInfo) );
     BOOST_CHECK_THROW( parseArgs(commands.back().arguments()), 
                        senf::console::SyntaxErrorException );
     
@@ -309,6 +309,35 @@ BOOST_AUTO_UNIT_TEST(parseIncremental)
     BOOST_CHECK_EQUAL( commands.size(), 4u );
 
     commands.clear();
+}
+
+namespace {
+    std::string parseErrorMessage(std::string const & msg)
+    {
+        std::string::size_type i (msg.find("-- \n"));
+        return i == std::string::npos ? msg : msg.substr(i+4);
+    }
+}
+
+BOOST_AUTO_UNIT_TEST(parseExceptions)
+{
+    senf::console::CommandParser parser;
+    std::string msg;
+
+#   define CheckParseEx(c, e)                                                                     \
+        commands.clear();                                                                         \
+        msg.clear();                                                                              \
+        try { parser.parse(c, &setInfo); }                                                        \
+        catch (std::exception & ex) { msg = parseErrorMessage(ex.what()); }                       \
+        BOOST_CHECK_EQUAL( msg, e )
+
+    CheckParseEx( "/foo/bar;\n  ()", "path expected\nat <unknown>:2:3" );
+    CheckParseEx( "cd /foo/bar foo/bar", "end of statement expected\nat <unknown>:1:13" );
+    CheckParseEx( "/foo/bar foo /", "end of statement expected\nat <unknown>:1:14" );
+    CheckParseEx( "cd \"foo\"", "path expected\nat <unknown>:1:4" );
+    CheckParseEx( "/foo/bar \"string", "'\"' expected\nat <unknown>:1:17" );
+    CheckParseEx( "/foo/bar x\"hi\"", "'\"' expected\nat <unknown>:1:12" );
+    CheckParseEx( "/foo/bar (", "')' expected\nat <unknown>:1:11" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

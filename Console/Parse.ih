@@ -78,6 +78,17 @@ namespace detail {
         ParseDispatcher & dispatcher;
 
         ///////////////////////////////////////////////////////////////////////////
+        // Errors
+
+        enum Errors {
+            EndOfStatementExpected,
+            GroupOrArgumentsExpected,
+            PathExpected,
+            ClosingParenExpected,
+            QuoteExpected
+        };
+
+        ///////////////////////////////////////////////////////////////////////////
 
         CommandGrammar(ParseDispatcher & d, Context & c) 
             : context(c), incremental(false), dispatcher(d) {}
@@ -98,7 +109,7 @@ namespace detail {
             definition(CommandGrammar const & self) : 
 
                 // Characters with a special meaning within the parser
-                special_p ("/(){};"),
+                special_p ("/(){};\""),
 
                 // Additional characters which are returned as punctuation tokens
                 // (only allowed within '()').
@@ -130,6 +141,12 @@ namespace detail {
                 actor< variable< std::vector<Token> > > path_  (self.context.path);
                 actor< variable< Token > >              token_ (self.context.token);
                 actor< variable< ParseDispatcher > >    d_     (self.dispatcher);
+
+                assertion<Errors> end_of_statement_expected   (EndOfStatementExpected);
+                assertion<Errors> group_or_arguments_expected (GroupOrArgumentsExpected);
+                assertion<Errors> path_expected               (PathExpected);
+                assertion<Errors> closing_paren_expected      (ClosingParenExpected);
+                assertion<Errors> quote_expected              (QuoteExpected);
 
                 ///////////////////////////////////////////////////////////////////
                 // Spirit grammar
@@ -170,15 +187,16 @@ namespace detail {
                 // More info is in the Boost.Spirit documentation
 
                 command 
-                    =    builtin >> statement_end
-                    |    path >> ( group_start | statement )
+                    =    builtin >> end_of_statement_expected(statement_end)
                     |    group_close
                     |    ch_p(';') // Ignore empty commands
+                    |    path_expected(path) 
+                      >> group_or_arguments_expected( group_start | statement )
                     ;
 
                 builtin
                     =    keyword_p("cd") 
-                      >> path
+                      >> path_expected(path)
                       >> eps_p                    [ bind(&PD::builtin_cd)(d_, path_) ]
                     |    keyword_p("ls")
                       >> ! path
@@ -200,7 +218,8 @@ namespace detail {
                 statement
                     =    eps_p                    [ bind(&PD::beginCommand)(d_, path_) ]
                       >> arguments
-                      >> statement_end            [ bind(&PD::endCommand)(d_) ]
+                      >> end_of_statement_expected(statement_end)
+                                                  [ bind(&PD::endCommand)(d_) ]
                     ;
 
                 arguments
@@ -227,14 +246,17 @@ namespace detail {
                                    - '"' 
                                  )                [ str_ += ch_ ]
                                )
-                          >> ch_p('"')            [ token_ = construct_<Token>(Token::BasicString, 
+                          >> quote_expected(ch_p('"'))
+                                                  [ token_ = construct_<Token>(Token::BasicString, 
                                                                                str_) ]
                          ]
                     ;
 
                 hexstring               // Returns value in context.token
                     =    eps_p                    [ clear(str_) ]
-                      >> confix_p( "x\"", * hexbyte, '"' )
+                      >>  "x\""
+                      >> * ( hexbyte - ch_p('"') )
+                      >> quote_expected(ch_p('"'))
                                                   [ token_ = construct_<Token>(Token::HexString,
                                                                                str_) ]
                     ;
@@ -262,7 +284,8 @@ namespace detail {
                                                         "(") ]
                                                   [ bind(&PD::pushToken)(d_, token_) ]
                       >> * token
-                      >> ch_p(')')                [ token_ = construct_<Token>(
+                      >> closing_paren_expected(ch_p(')'))
+                                                  [ token_ = construct_<Token>(
                                                         Token::ArgumentGroupClose,
                                                         ")") ]
                                                   [ bind(&PD::pushToken)(d_, token_) ]

@@ -229,23 +229,6 @@ prefix_ void senf::console::ParseCommandInfo::ArgumentIterator::increment()
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::SyntaxErrorException
-
-prefix_ senf::console::SyntaxErrorException::SyntaxErrorException(std::string const & msg)
-    : message_(msg)
-{}
-
-prefix_ senf::console::SyntaxErrorException::~SyntaxErrorException()
-    throw()
-{}
-
-prefix_ std::string const & senf::console::SyntaxErrorException::message()
-    const
-{
-    return message_;
-}
-
-///////////////////////////////////////////////////////////////////////////
 
 prefix_ senf::console::CheckedArgumentIteratorWrapper::
 CheckedArgumentIteratorWrapper(ParseCommandInfo::ArgumentsRange const & range,

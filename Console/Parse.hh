@@ -197,6 +197,7 @@
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/function.hpp>
 #include "../Utils/safe_bool.hh"
+#include "../Utils/Exception.hh"
 
 //#include "Parse.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -323,7 +324,7 @@ namespace console {
 
         Every command parsed is returned in a ParseCommandInfo instance. This information is purely
         taken from the parser, no semantic information is attached at this point, the config/console
-        node tree is not involved in any why. ParseCommandInfo consist of
+        node tree is not involved in any way. ParseCommandInfo consist of
         
         \li the type of command: built-in or normal command represented by a possibly relative path
             into the command tree.
@@ -438,17 +439,9 @@ namespace console {
         All errors while parsing the arguments of a command must be signaled by throwing an instance
         of SyntaxErrorException. This is important, so command overloading works.
      */
-    struct SyntaxErrorException : public std::exception
-    {
-        explicit SyntaxErrorException(std::string const & msg = "");
-        virtual ~SyntaxErrorException() throw();
-
-        virtual char const * what() const throw();
-        std::string const & message() const;
-
-    private:
-        std::string message_;
-    };
+    struct SyntaxErrorException : public senf::Exception
+    { explicit SyntaxErrorException(std::string const & msg = "syntax error") 
+          : senf::Exception(msg) {} };
 
     /** \brief Wrapper checking argument iterator access for validity
         
@@ -543,7 +536,7 @@ namespace console {
         
         using IteratorFacade::operator++;
         ParseCommandInfo::ArgumentIterator operator++(int);
-        
+
     private:
         reference dereference() const;
         void increment();
@@ -596,13 +589,13 @@ namespace console {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        bool parse(std::string const & command, Callback cb); ///< Parse string
-        bool parseFile(std::string const & filename, Callback cb); ///< Parse file
+        void parse(std::string const & command, Callback cb); ///< Parse string
+        void parseFile(std::string const & filename, Callback cb); ///< Parse file
                                         /**< \throws SystemException if the file cannot be
                                              read. */
 
-        bool parseArguments(std::string const & arguments, ParseCommandInfo & info);
-                                        ///< Parse \a argumtns
+        void parseArguments(std::string const & arguments, ParseCommandInfo & info);
+                                        ///< Parse \a arguments
                                         /**< parseArguments() parses the string \a arguments which
                                              contains arbitrary command arguments (without the name
                                              of the command). The argument tokens are written into
@@ -619,12 +612,16 @@ namespace console {
                                                  to be terminated explicitly. This means, that the
                                                  last ';' is \e not optional in this case. */
 
+        /** \brief Exception thrown when the parser detects an error */
+        struct ParserErrorException : public SyntaxErrorException
+        { explicit ParserErrorException(std::string const & msg) : SyntaxErrorException(msg) {} };
+
     private:
         struct Impl;
         struct SetIncremental;
 
         template <class Iterator>
-        Iterator parseLoop(Iterator b, Iterator e, Callback cb);
+        Iterator parseLoop(Iterator b, Iterator e, std::string const & source, Callback cb);
 
         Impl & impl();
 

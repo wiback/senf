@@ -271,7 +271,6 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
     else
         lastCommand_ = data;
 
-    bool state (true);
     std::string::size_type n (data.size());
 
     try {
@@ -280,11 +279,9 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
                                                                   boost::ref(stream()),
                                                                   _1 ));
         else
-            state = parser_.parse(data, boost::bind<void>( boost::ref(executor_),
-                                                           boost::ref(stream()),
-                                                           _1 ));
-        if (! state )
-            stream() << "syntax error" << std::endl;
+            parser_.parse(data, boost::bind<void>( boost::ref(executor_),
+                                                   boost::ref(stream()),
+                                                   _1 ));
     }
     catch (Executor::ExitException &) {
         // This generates an EOF condition on the Handle. This EOF condition is expected

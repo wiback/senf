@@ -37,10 +37,9 @@
 
 prefix_ void senf::console::detail::ConfigFileSource::v_parse(RestrictedExecutor & executor)
 {
-    if (! parser_.parseFile(filename_, boost::bind( boost::ref(executor),
-                                                    boost::ref(std::cerr),
-                                                    _1 )) )
-        throw SyntaxErrorException();
+     parser_.parseFile(filename_, boost::bind( boost::ref(executor),
+                                               boost::ref(std::cerr),
+                                               _1 ));
 }
 
 ///////////////////////////////////////////////////////////////////////////

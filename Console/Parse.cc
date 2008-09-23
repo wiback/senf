@@ -30,7 +30,9 @@
 #include <cerrno>
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/spirit/iterator/file_iterator.hpp>
+#include <boost/spirit/iterator/position_iterator.hpp>
 #include "../Utils/Exception.hh"
+#include "../Utils/senfassert.hh"
 
 //#include "Parse.mpp"
 #define prefix_
@@ -241,6 +243,22 @@ struct senf::console::CommandParser::Impl
 
 #endif
 
+namespace {
+    
+    template <class Error>
+    void throwParserError(Error const & err) 
+    {
+        static char const * msg [] = { "end of statement expected",
+                                       "'{' or arguments expected",
+                                       "path expected",
+                                       "')' expected",
+                                       "'\"' expected" };
+        boost::spirit::file_position pos (err.where.get_position());
+        throw senf::console::CommandParser::ParserErrorException(msg[err.descriptor])
+            << "\nat " << pos.file << ":" << pos.line << ":" << pos.column;
+    }
+}
+
 prefix_ senf::console::CommandParser::CommandParser()
     : impl_ (new Impl())
 {}
@@ -252,52 +270,83 @@ prefix_ senf::console::CommandParser::~CommandParser()
 // we would need to expose the Impl member to the public, which we don't want to do.
 
 template <class Iterator>
-prefix_ Iterator senf::console::CommandParser::parseLoop(Iterator b, Iterator e, Callback cb)
+prefix_ Iterator senf::console::CommandParser::parseLoop(Iterator npb, Iterator npe, 
+                                                         std::string const & source, Callback cb)
 {
+    typedef boost::spirit::position_iterator<Iterator> PositionIterator;
+    PositionIterator b (npb, npe, source);
+    PositionIterator e (npe, npe, source);
     ParseCommandInfo info;
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
-    boost::spirit::parse_info<Iterator> result;
+    boost::spirit::parse_info<PositionIterator> result;
 
     for(;;) {
         result = boost::spirit::parse(
             b, e, * impl().grammar.use_parser<Impl::Grammar::SkipParser>());
         b = result.stop;
         if (b == e) 
-            return e;
+            return e.base();
         info.clear();
-        result = boost::spirit::parse(b, e,
-                                      impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
-                                      impl().grammar.use_parser<Impl::Grammar::SkipParser>());
-        if (! result.hit) 
-            return b;
+        try {
+            result = boost::spirit::parse(b, e,
+                                          impl().grammar.use_parser<Impl::Grammar::CommandParser>(),
+                                          impl().grammar.use_parser<Impl::Grammar::SkipParser>());
+        }
+        catch (boost::spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
+            if (impl().grammar.incremental && ex.where == e)
+                return b.base();
+            else
+                throwParserError(ex);
+        }
+        // Otherwise the error handling in the parser is broken
+        SENF_ASSERT( result.hit );
         if (! info.empty()) 
-            cb(info);
+            try {
+                cb(info);
+            }
+            catch (senf::ExceptionMixin & ex) {
+                boost::spirit::file_position pos (result.stop.get_position());
+                ex << "\nat " << pos.file << ":" << pos.line << ":" << pos.column;
+                throw;
+            }
         b = result.stop;
     }
 }
 
-prefix_ bool senf::console::CommandParser::parse(std::string const & command, Callback cb)
+prefix_ void senf::console::CommandParser::parse(std::string const & command, Callback cb)
 {
-    return parseLoop(command.begin(), command.end(), cb) == command.end();
+    parseLoop(command.begin(), command.end(), "<unknown>", cb);
 }
 
-prefix_ bool senf::console::CommandParser::parseFile(std::string const & filename, Callback cb)
+prefix_ void senf::console::CommandParser::parseFile(std::string const & filename, Callback cb)
 {
     boost::spirit::file_iterator<> i (filename);
     if (!i) throw SystemException(ENOENT SENF_EXC_DEBUGINFO);
     boost::spirit::file_iterator<> const i_end (i.make_end());
-    
-    return parseLoop(i, i_end, cb) == i_end;
+    parseLoop(i, i_end, filename, cb);
 }
 
-prefix_ bool senf::console::CommandParser::parseArguments(std::string const & arguments,
+prefix_ void senf::console::CommandParser::parseArguments(std::string const & arguments,
                                                           ParseCommandInfo & info)
 {
+    typedef boost::spirit::position_iterator<std::string::const_iterator> PositionIterator;
+    PositionIterator b (arguments.begin(), arguments.end(), std::string("<unknown>"));
+    PositionIterator e (arguments.end(), arguments.end(), std::string("<unknown>"));
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
-    return boost::spirit::parse( arguments.begin(), arguments.end(), 
-                                 impl().grammar.use_parser<Impl::Grammar::ArgumentsParser>(),
-                                 impl().grammar.use_parser<Impl::Grammar::SkipParser>()
-        ).full;
+    boost::spirit::parse_info<PositionIterator> result;
+    try {
+        result = boost::spirit::parse( b, e, 
+                                       impl().grammar.use_parser<Impl::Grammar::ArgumentsParser>(),
+                                       impl().grammar.use_parser<Impl::Grammar::SkipParser>() );
+    }
+    catch (boost::spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
+        throwParserError(ex);
+    }
+    if (! result.full) {
+        boost::spirit::file_position pos (result.stop.get_position());
+        throw ParserErrorException("argument expected")
+            << "\nat " << pos.file << ":" << pos.line << ":" << pos.column;
+    }
 }
 
 struct senf::console::CommandParser::SetIncremental
@@ -318,16 +367,7 @@ senf::console::CommandParser::parseIncremental(std::string const & commands, Cal
 {
     SetIncremental si (*this);
     return std::distance( commands.begin(), 
-                          parseLoop(commands.begin(), commands.end(), cb) );
-}
-
-///////////////////////////////////////////////////////////////////////////
-// senf::console::SyntaxErrorException
-
-prefix_ char const * senf::console::SyntaxErrorException::what()
-    const throw()
-{
-    return message().empty() ? "syntax error" : message().c_str();
+                          parseLoop(commands.begin(), commands.end(), "<unknown>", cb) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
