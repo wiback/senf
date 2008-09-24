@@ -257,7 +257,7 @@ div.tabs li.$projectname a { background-color: #EDE497; }
   <div id="subtitle">
     <ul>
       <li><a href="@TOPDIR@/doc/html/index.html">Home</a></li>
-      <li><a class="ext" href="ftp://ftp.berlios.de/pub/senf/">Download</a></li>
+      <li><a class="ext" href="http://satext.fokus.fraunhofer.de/senf/debian">Download</a></li>
       <li><a class="ext" href="http://openfacts2.berlios.de/wikien/index.php/BerliosProject:SENF_Network_Framework">Wiki</a></li>
       <li><a class="ext" href="http://developer.berlios.de/projects/senf">BerliOS</a></li>
       <li><a class="ext" href="http://svn.berlios.de/wsvn/senf/?op=log&rev=0&sc=0&isdir=1">ChangeLog</a></li>

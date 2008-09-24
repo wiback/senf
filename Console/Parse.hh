@@ -566,8 +566,6 @@ namespace console {
             some special iterator adaptors from Boost.Spirit. However, the amount of backtracking
             needs to be analyzed before this is viable.
 
-        \todo Implement more detailed error reporting and error recovery.
-
         \ingroup console_parser
       */
     class CommandParser
