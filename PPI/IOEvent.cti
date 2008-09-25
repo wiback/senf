@@ -36,7 +36,7 @@
 
 template <class Handle>
 prefix_ senf::ppi::IOEvent::IOEvent(Handle handle, unsigned events)
-    : fd_ (retrieve_filehandle(handle)),
+    : fd_ (senf::scheduler::get_descriptor(handle)),
       event_ ("senf::ppi::IOEvent", boost::bind(&IOEvent::cb,this,_1), fd_, events, false) 
 {}
 

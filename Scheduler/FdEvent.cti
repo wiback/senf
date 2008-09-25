@@ -37,11 +37,25 @@ template <class Handle>
 prefix_ senf::scheduler::FdEvent::FdEvent(std::string const & name, Callback const & cb,
                                           Handle const & handle, int events,
                                           bool initiallyEnabled)
-    : detail::FIFORunner::TaskInfo (name), cb_ (cb), fd_ (retrieve_filehandle(handle)), pollable_ (true),
-      events_ (events)
+    : detail::FIFORunner::TaskInfo (name), cb_ (cb), fd_ (detail::get_descriptor(handle)), 
+      pollable_ (true), events_ (events)
 {
     if (initiallyEnabled)
 	enable();
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+template <class Handle>
+prefix_ int senf::scheduler::get_descriptor(Handle const & handle)
+{
+    return detail::get_descriptor(handle);
+}
+
+template <class Handle>
+prefix_ int senf::scheduler::detail::get_descriptor(Handle const & handle)
+{
+    return retrieve_filehandle(handle);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

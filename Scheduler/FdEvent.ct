@@ -37,7 +37,7 @@ template <class Handle>
 prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::handle(Handle const & handle)
 {
     bool en (enabled());
-    fd_ = retrieve_filehandle(handle);
+    fd_ = detail::get_descriptor(handle);
     pollable_ = true;
     if (en)
         enable();

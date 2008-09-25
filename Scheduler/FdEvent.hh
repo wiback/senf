@@ -171,9 +171,9 @@ namespace scheduler {
         friend class detail::FileDispatcher;
     };
 
+    template <class Handle>
+    int get_descriptor(Handle const & handle);
 }}
-
-int retrieve_filehandle(int fd);
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "FdEvent.cci"

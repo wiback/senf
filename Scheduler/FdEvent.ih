@@ -115,6 +115,11 @@ namespace detail {
         friend class singleton<FileDispatcher>;
     };
 
+    template <class Handle>
+    int get_descriptor(Handle const & handle);
+
+    int retrieve_filehandle(int fd);
+
 }}}
 
 ///////////////////////////////ih.e////////////////////////////////////////
