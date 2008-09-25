@@ -48,6 +48,49 @@ namespace senf {
     Events are registered via the respective event class. The (global) functions are used to enter
     the application main-loop or query for global information.
 
+    \autotoc
+
+
+    \section sched_objects Event classes
+
+    Every event registration is represented by a class instance of an event specific class:
+
+    \li senf::scheduler::FdEvent for file descriptor events
+    \li senf::scheduler::TimerEvent for single-shot deadline timer events
+    \li senf::scheduler::SignalEvent for UNIX signal events
+
+    These instance are owned and managed by the user of the scheduler \e not by the scheduler so the
+    RAII concept can be used.
+
+    \code
+    class SomeServer
+    {
+        SomeSocketHandle handle_;
+        senf::scheduler::FdEvent event_;
+
+    public:
+        SomeServer(SomeSocketHandle handle)
+            : handle_ (handle), 
+              event_ ("SomeServer handler", senf::membind(&SomeServer::readData, this),
+                      handle, senf::scheduler::FdEvent::EV_READ)
+        {}
+
+        void readData(int events)
+        {
+            // read data from handle_, check for eof and so on.
+        }
+    };
+    \endcode
+
+    The event is defined as a class member variable. When the event member is initialized in the
+    constructor, the event is automatically registered (except if the optional \a initiallyEnabled
+    flag argument is set to \c false). The Destructor will automatically remove the event from the
+    scheduler and ensure, that no dead code is called accidentally.
+
+    The process is the same for the other event types or when registering multiple events. For
+    detailed information on the constructor arguments and other features see the event class
+    documentation referenced below.
+
 
     \section sched_handlers Specifying handlers
 
@@ -85,19 +128,6 @@ namespace senf {
     The handler is identified by an arbitrary, user specified name. This name is used in error
     messages to identify the failing handler.
 
-
-    \section sched_fd Registering events
-
-    Events are registered by allocating an instance of the corresponding event class:
-
-    \li senf::scheduler::FdEvent for file descriptor events
-    \li senf::scheduler::TimerEvent for single-shot deadline timer events
-    \li senf::scheduler::SignalEvent for UNIX signal events
-
-    The destructor of each of these classes will ensure, that the event will be properly
-    unregistered. The registration can be enabled, disabled or changed using appropriate
-    members. See the event class for details on a specific type of event.
-    
     \todo Fix the file support to use threads (?) fork (?) and a pipe so it works reliably even
         over e.g. NFS.
   */
@@ -148,6 +178,10 @@ namespace scheduler {
         This time source may be used to provide timing information for log messages within the
         Utils/Logger framework. This time source will use Scheduler::eventTime() to provide timing
         information.
+
+        \code
+        senf::log::timeSource<senf::scheduler::LogTimeSource>();
+        \endcode
 
         Using this information reduces the number of necessary ClockService::now() calls and thus
         the number of system calls.

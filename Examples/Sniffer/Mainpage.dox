@@ -132,33 +132,31 @@
 
     \until }
 
-    The class constructor binds the socket defined as a data member to the correct interface.
+    The class constructor binds the socket defined as a data member to the correct interface. To
+    tell the scheduler to call us back whenever data is available on the socket, we add a
+    senf::scheduler::FdEvent isntance to out class.
 
-    \until add
-
-    The public \c run() member is called to run the sniffer.  It first adds the socket to the
-    Scheduler. The \c add() call takes two Arguments, the socket to bind to (which can be a lot of
-    things and must not necessarily be a socket instance) and callback to call, whenever there is an
-    event on that socket. A third argument may be specified to restrict the events, on which the
-    function is called, here we have left out this argument which defaults to
-    senf::Scheduler::EV_ALL.
-
-    The callback is specified as a <a
-    href="http://www.boost.org/doc/html/function.html">Boost.Function</a> object. We use the \c
-    senf::membind helper from the Utils library to build such a function object. This helper takes
-    an arbitrary class member and binds it to a specific instance.
+    The senf::scheduler::FdEvent constructor takes several arguments:
+    \li a string describing the event.
+    \li the callback to call whenever the event occurs.  The callback is specified as a <a
+        href="http://www.boost.org/doc/html/function.html">Boost.Function</a> object. We use the \c
+        senf::membind helper from the Utils library to build such a function object. This helper
+        takes an arbitrary class member and binds it to a specific instance.
+    \li the handle or file descriptor to monitor.
+    \li and the events to watch for.
 
     \until }
 
-    Calling the Schedulers \c process() method will start the event loop. This call does not return
-    (ok, it does return in special cases if \c senf::Scheduler::terminate() is called which does not
-    apply here).
+    The public \c run() member is called to run the sniffer.  Here we just forward the call to the
+    scheduler. Calling the Schedulers \c process() method will start the event loop. This call does
+    not return (ok, it does return in special cases if \c senf::scheduler::terminate() is called
+    which does not apply here).
 
     \until {
 
     The \c dumpPacket() member is called by the scheduler whenever an event on the socket is
-    encountered. The scheduler always passes two arguments: The socket and an event id which
-    identifies the type of event which triggered the call.
+    encountered. The scheduler calls this function with a mask of the events which triggered the
+    call.
 
     \until };
 
@@ -189,7 +187,7 @@
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
-// compile-command: "scons -u test"
+// compile-command: "scons -u doc"
 // mode: flyspell
 // mode: auto-fill
 // End:

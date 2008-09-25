@@ -109,7 +109,7 @@ prefix_ bool senf::scheduler::detail::FileDispatcher::empty()
 
 ///////////////////////////////////////////////////////////////////////////
 
-prefix_ int senf::scheduler::retrieve_filehandle(int fd)
+prefix_ int retrieve_filehandle(int fd)
 {
     return fd;
 }

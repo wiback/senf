@@ -99,7 +99,7 @@ namespace scheduler {
           , EV_ERR = detail::FdManager::EV_ERR      ///< transport error
           , EV_ALL = (detail::FdManager::EV_READ 
                       | detail::FdManager::EV_WRITE 
-                      | detail::FdManager::EV_PRIO) ///< register all events
+                      | detail::FdManager::EV_PRIO) ///< register all events (read, prio and write)
         };
 
         ///////////////////////////////////////////////////////////////////////////
@@ -171,9 +171,9 @@ namespace scheduler {
         friend class detail::FileDispatcher;
     };
 
-    int retrieve_filehandle(int fd);
-
 }}
+
+int retrieve_filehandle(int fd);
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "FdEvent.cci"
