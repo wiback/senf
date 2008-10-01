@@ -28,7 +28,8 @@
     \autotoc
 
     
-    \section packet_intro_arch Overall Architecture
+    \section packet_intro_arch Introduction
+    \seechapter \ref packet_arch
 
     The Packet library consists of several components:
     
@@ -42,27 +43,22 @@
     All these components work together to provide a hopefully simple and intuitive interface to
     packet parsing and creation.
 
-    \see \ref packet_arch
 
-
-    \section packet_intro_usage Using the packet library
+    \section packet_intro_usage Tutorial
+    \seechapter \ref packet_usage 
 
     This chapter discusses the usage of the packet library from a high level view. 
 
-    \see \ref packet_usage 
-
     
-    \section packet_intro_parser Parsing packet data
+    \section packet_intro_api The packet API
 
-    This chapter goes into more detail discussing the usage of packet parsers. 
-    
-    \li categorizing packet parsers
-    \li reading and writing values
-    \li using complex parsers
+    The packet library API is divided into three areas
 
-    \see \ref packetparser
+    \li the \ref senf::PacketData API for accessing the raw data container
+    \li the packet interpreter chain providing \ref packet_module
+    \li and \ref packetparser which provides access to protocol specific packet fields.
 
-    
+   
     \section protocolbundles Supported packet types (protocols)
 
     Each protocol bundle provides a collection of related concrete packet classes for a group of
@@ -83,11 +79,11 @@
 
     
     \section packet_intro_new Defining new packet types
+    \seechapter \ref packet_new
 
     The packet library provides the framework which allows to define arbitrary packet types. There
-    is quite some information needed to completely specify a specific type of paceket.
+    is quite some information needed to completely specify a specific type of packet.
 
-    \see \ref packet_new
  */
 
 /** \page packet_arch Overall Packet library Architecture
@@ -167,7 +163,7 @@
     udp.first<IPv4Packet>()            // throws InvalidPacketChainException
 
     udp.prev() == ip                   // true
-    udp.prev<EthernetPacket>()         // throws Inv
+    udp.prev<EthernetPacket>()         // throws InvalidPacketChainException
     \endcode
     
     \see \ref packet_module
@@ -181,7 +177,7 @@
 
     To access this information, we need to use a protocol specific handle, the senf::ConcretePacket
     which takes as a template argument the specific type of packet to be interpreted. This allows us
-    to easily interpret or create packets. Here an example on how to create a new Etheret / IP / UDP
+    to easily interpret or create packets. Here an example on how to create a new Ethernet / IP / UDP
     / Payload packet interpreter chain:
 
     \code
@@ -518,7 +514,7 @@
     Each Record is a composite with the following relevant fields:
 
     <table class="fields">
-    <tr><td>nrSources</td><td>Integer</td><td>Number of sources in this record</td></tr>
+    <tr><td>nrOfSources</td><td>Integer</td><td>Number of sources in this record</td></tr>
     <tr><td>sources</td><td>Vector of IPv6 Addresses</td><td>Multicast sources</td></tr>
     </table>
     
@@ -567,7 +563,7 @@
     for (MLDv2ReportPacket::Parser::records_t::container::iterator i (records.begin());
          i != records.end(); ++i) {
         // Allocate a collection wrapper for the multicast address record
-        typedef MLDv2ReportPackte::Parser::records_t::value_type::sources_t Sources;
+        typedef MLDv2ReportPacket::Parser::records_t::value_type::sources_t Sources;
         Sources::container sources (i->sources());
         
         // Iterate over the sources in this record

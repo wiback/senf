@@ -47,8 +47,8 @@ prefix_ senf::detail::PacketImpl::~PacketImpl()
     Annotations::const_iterator const i_end (annotations_.end());
     std::vector<bool>::iterator small (AnnotationIndexerBase::small().begin());
     for (; i != i_end; ++i, ++small)
-        if (! *small && *i)
-            delete *i;
+        if (! *small && i->p)
+            delete i->p;
 }
 
 // This function has a problem being inlined. Somehow, often when calling this, the size of the 

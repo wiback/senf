@@ -30,6 +30,7 @@
 #include <memory>
 #include <vector>
 #include <boost/utility.hpp>
+#include <boost/type_traits/is_base_of.hpp>
 #include "../Utils/pool_alloc_mixin.hh"
 #include "PacketTypes.hh"
 #include "../Utils/singleton.hh"
@@ -38,7 +39,27 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    struct ComplexAnnotation {};
+
 namespace detail {
+
+    struct AnnotationP
+    {
+        virtual ~AnnotationP();
+    };
+
+    template <class Annotation>
+    struct TAnnotationP
+        : public AnnotationP
+    {
+        Annotation annotation;
+    };
+
+    union AnnotationEntry {
+        AnnotationP * p;
+        unsigned long long i;
+    };
 
     struct AnnotationIndexerBase
     {
@@ -54,34 +75,21 @@ namespace detail {
         AnnotationIndexer();
         unsigned index_;
         static unsigned index();
-        static bool const Small = (sizeof(Annotation) <= sizeof(void*));
-    };
-
-    struct AnnotationP
-    {
-        virtual ~AnnotationP();
-    };
-
-    template <class Annotation>
-    struct TAnnotationP
-        : public AnnotationP
-    {
-        Annotation annotation;
+        static bool const Small = (sizeof(Annotation) <= sizeof(AnnotationEntry) 
+                                   && ! boost::is_base_of<ComplexAnnotation, Annotation>::value);
     };
 
     template <class Annotation, bool Small = AnnotationIndexer<Annotation>::Small>
     struct GetAnnotation
     {
-        static Annotation & get(AnnotationP * & p);
+        static Annotation & get(AnnotationEntry & e);
     };
 
-/*
     template <class Annotation>
     struct GetAnnotation<Annotation, true>
     {
-        static Annotation & get(AnnotationP * & p);
+        static Annotation & get(AnnotationEntry & e);
     };
-*/
 
     /** \brief Internal: Packet data storage
 
@@ -171,7 +179,7 @@ namespace detail {
         raw_container data_;
         interpreter_list interpreters_;
         
-        typedef std::vector<AnnotationP*> Annotations;
+        typedef std::vector<AnnotationEntry> Annotations;
         Annotations annotations_;
 
         void eraseInterpreters(interpreter_list::iterator b, interpreter_list::iterator e);

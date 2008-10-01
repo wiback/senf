@@ -72,11 +72,11 @@ prefix_ senf::detail::AnnotationP::~AnnotationP()
 // senf::detail::PacketImpl
 
 prefix_ senf::detail::PacketImpl::PacketImpl()
-    : refcount_(0), annotations_(AnnotationIndexerBase::maxAnnotations, 0)
+    : refcount_(0), annotations_(AnnotationIndexerBase::maxAnnotations)
 {}
 
 prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
-    : refcount_(0), data_(size,initValue), annotations_(AnnotationIndexerBase::maxAnnotations, 0)
+    : refcount_(0), data_(size,initValue), annotations_(AnnotationIndexerBase::maxAnnotations)
 {}
 
 // rerference/memory management

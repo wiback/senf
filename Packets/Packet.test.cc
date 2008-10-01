@@ -110,13 +110,21 @@ namespace {
     }
 
     struct IntAnnotation {
-        int value;
+        unsigned value;
+    };
+    
+    struct LargeAnnotation {
+        char value[32];
     };
 
-    struct ComplexAnnotation {
+    struct ComplexAnnotation : senf::ComplexAnnotation
+    {
         std::string s;
         int i;
     };
+
+    struct ComplexEmptyAnnotation : senf::ComplexAnnotation
+    {};
 
 }
 
@@ -125,10 +133,6 @@ BOOST_AUTO_UNIT_TEST(packet)
     senf::Packet packet (FooPacket::create());
     BarPacket::createAfter(packet);
 
-    SENF_CHECK_NO_THROW( packet.annotation<IntAnnotation>().value = 0xDEADBEEF );
-    ComplexAnnotation & ca (packet.annotation<ComplexAnnotation>());
-    ca.s = "dead beef";
-    ca.i = 0x12345678;
     BOOST_REQUIRE( packet );
     BOOST_CHECK( packet.next() );
     BOOST_CHECK( ! packet.next().next(senf::nothrow) );
@@ -245,6 +249,28 @@ BOOST_AUTO_UNIT_TEST(concretePacket)
 
     BOOST_CHECK( packet.clone() != packet );
     BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
+}
+
+BOOST_AUTO_UNIT_TEST(packetAnnotation)
+{
+    senf::Packet packet (FooPacket::create());
+    BarPacket::createAfter(packet);
+
+    ComplexAnnotation & ca (packet.annotation<ComplexAnnotation>());
+    ca.s = "dead beef";
+    ca.i = 0x12345678;
+    SENF_CHECK_NO_THROW( packet.annotation<IntAnnotation>().value = 0xDEADBEEF );
+
+    senf::Packet p2 (packet.next());
+
+    BOOST_CHECK_EQUAL( p2.annotation<IntAnnotation>().value, 0xDEADBEEFu );
+    BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().s, "dead beef" );
+    BOOST_CHECK_EQUAL( p2.annotation<ComplexAnnotation>().i, 0x12345678 );
+
+    BOOST_CHECK( senf::detail::AnnotationIndexer<IntAnnotation>::Small );
+    BOOST_CHECK( ! senf::detail::AnnotationIndexer<LargeAnnotation>::Small );
+    BOOST_CHECK( ! senf::detail::AnnotationIndexer<ComplexAnnotation>::Small );
+    BOOST_CHECK( ! senf::detail::AnnotationIndexer<ComplexEmptyAnnotation>::Small );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

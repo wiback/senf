@@ -316,9 +316,49 @@ namespace senf {
 
         ///\name Annotations
         ///@{
-        
+
         template <class Annotation>
-        Annotation & annotation();
+        Annotation & annotation();      ///< Get packet annotation
+                                        /**< This member will retrieve an arbitrary packet
+                                             annotation. Every annotation is identified by a unique
+                                             \a Annotation type. This type should \e always be a \c
+                                             struct.
+
+                                             \code
+                                             struct MyAnnotation {
+                                                 int value;
+                                             };
+
+                                             senf::Packet p (...);
+                                            
+                                             p.annotation<MyAnnotation>().value = 1;
+                                             \endcode
+                                             
+                                             Annotations are shared by all headers / interpreters
+                                             within a single packet chain.
+
+                                             If an annotation is \e not a POD type (more
+                                             specifically, if it's constructor or destructor is not
+                                             trivial), the \a Annotation type \e must inherit from
+                                             senf::ComplexAnnotation. Failing to follow this rule
+                                             will result in undefined behavior and will probably
+                                             lead to a program crash.
+
+                                             \code
+                                             struct MyStringAnnotation : senf::ComplexAnnotation {
+                                                 std::string value;
+                                             };
+                                             \endcode
+
+                                             \implementation The annotation system is implemented
+                                                 quite efficiently since annotations are stored
+                                                 within a packet embedded vector of fixed size (the
+                                                 size is determined automatically at runtime by the
+                                                 number of different annotations
+                                                 used). Additionally, non-complex small annotations
+                                                 require no additional memory management (\c new /
+                                                 \c delete).
+                                          */
 
         ///@}
 
