@@ -89,6 +89,14 @@ prefix_ void senf::scheduler::restart()
     new (fld) detail::FileDispatcher();
 }
 
+prefix_ bool senf::scheduler::empty()
+{
+    return detail::FdDispatcher::instance().empty() 
+        && detail::TimerDispatcher::instance().empty()
+        && detail::FileDispatcher::instance().empty()
+        && detail::SignalDispatcher::instance().empty();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::schedulerLogTimeSource
 

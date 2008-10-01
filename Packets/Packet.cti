@@ -135,6 +135,12 @@ prefix_ void senf::Packet::finalizeTo()
     ptr()->finalizeTo(p ? p.ptr() : last().ptr());
 }
 
+template <class Annotation>
+prefix_ Annotation & senf::Packet::annotation()
+{
+    return ptr()->annotation<Annotation>();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ConcretePacket<PacketType>
 

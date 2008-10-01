@@ -28,29 +28,21 @@
     \autotoc
 
     \section scheduler_scheduler The Scheduler
+    \seechapter \ref senf::scheduler
 
-    The Scheduler is based on the RAII principle: Every event is represented by a class
-    instance. The event is registered in the constructor and removed by the destructor of that
-    instance. This implementation automatically links the lifetime of an event with the lifetime of
-    the object resposible for it's creation.
-    
-    The Scheduler supports the following types of events::
+    The %scheduler provides a single threaded event dispatch architecture with reliable task
+    queueing using FIFO scheduling. The %scheduler provides event handling for
 
     \li File descriptors
     \li Timers
     \li UNIX signals
 
-    \see \ref senf::scheduler
-
-
     \section scheduler_clockservice The ClockService
+    \seechapter senf::ClockService
 
     To support precise event timing, the senf::ClockService class implements a reliable monotonous
     time source. It is based on the high precision POSIX clock and adds support for reliable
     conversion between an abstract clock type and absolute date/time
-
-    \see senf::ClockService
-
 
     \section scheduler_helpers Miscellaneous helpers
 
@@ -61,14 +53,13 @@
         is met (e.g. number of chars read or a specific character sequence is found in the input).
     \li senf::WriteHelper writes data to an arbitrary file descriptor until all provided data has
         been written.
-
     
     \section scheduler_i Implementation
+    \seechapter \ref scheduler_implementation
 
     senf::Scheduler is only a wrapper around the real implementation. The real implementation is now
     based on a modular dispatcher architecture
 
-    \see \ref scheduler_implementation
  */
 
 /** \page scheduler_implementation The Scheduler Implementation

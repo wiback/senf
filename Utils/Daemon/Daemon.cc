@@ -363,6 +363,15 @@ prefix_ void senf::Daemon::fork()
     ::sigemptyset(&cldsig);
     LIBC_CALL( ::sigaddset, (&cldsig, SIGCHLD) );
     LIBC_CALL( ::sigprocmask, (SIG_BLOCK, &cldsig, &oldsig) );
+
+    if (! senf::scheduler::empty() )
+        std::cerr << 
+            "\n"
+            "*** WARNING ***\n"
+            "Scheduler not empty before fork(). THIS MUST NOT HAPPEN.\n"
+            "The scheduler will be reinitialized by the fork() and lose all registrations.\n"
+            "*** WARNING ***\n"
+            "\n";
     
     LIBC_CALL_RV( pid, ::fork, () );
 

@@ -30,6 +30,21 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::AnnotationIndexerBase
+
+prefix_ std::vector<bool> & senf::detail::AnnotationIndexerBase::small()
+{
+    static std::vector<bool> smalls;
+    return smalls;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::AnnotationP
+
+prefix_ senf::detail::AnnotationP::~AnnotationP()
+{}
+
 // Memory management:
 //
 // * The PacketImpl destructor will *explicitly* clean-up the interpreters_ list by removing
@@ -57,19 +72,12 @@
 // senf::detail::PacketImpl
 
 prefix_ senf::detail::PacketImpl::PacketImpl()
-    : refcount_(0)
+    : refcount_(0), annotations_(AnnotationIndexerBase::maxAnnotations, 0)
 {}
 
 prefix_ senf::detail::PacketImpl::PacketImpl(size_type size, byte initValue)
-    : refcount_(0), data_(size,initValue)
+    : refcount_(0), data_(size,initValue), annotations_(AnnotationIndexerBase::maxAnnotations, 0)
 {}
-
-prefix_ senf::detail::PacketImpl::~PacketImpl()
-{
-    // We increment refcount_ to ensure, release() won't call delete again
-    ++refcount_;
-    eraseInterpreters(interpreters_.begin(), interpreters_.end());
-}
 
 // rerference/memory management
 

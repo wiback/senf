@@ -171,6 +171,12 @@ namespace scheduler {
         friend class detail::FileDispatcher;
     };
 
+    /** \brief Get file descriptor from handle object
+
+        This function will query the \a handle for it's file descriptor. The real implementation
+        must be provided by a freestanding function \c retrieve_filehandle(Handle const & h) within
+        the namespace of \a Handle.
+     */
     template <class Handle>
     int get_descriptor(Handle const & handle);
 }}

@@ -33,8 +33,23 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+unsigned senf::detail::AnnotationIndexerBase::maxAnnotations (0);
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketImpl
+
+prefix_ senf::detail::PacketImpl::~PacketImpl()
+{
+    // We increment refcount_ to ensure, release() won't call delete again
+    ++refcount_;
+    eraseInterpreters(interpreters_.begin(), interpreters_.end());
+    Annotations::const_iterator  i (annotations_.begin());
+    Annotations::const_iterator const i_end (annotations_.end());
+    std::vector<bool>::iterator small (AnnotationIndexerBase::small().begin());
+    for (; i != i_end; ++i, ++small)
+        if (! *small && *i)
+            delete *i;
+}
 
 // This function has a problem being inlined. Somehow, often when calling this, the size of the 
 // resulting inlined code would be huge. Need to further debug this.

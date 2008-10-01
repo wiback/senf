@@ -109,6 +109,15 @@ namespace {
         senf::PacketRegistry<RegTag>::RegistrationProxy<BarPacket> registerBar(2u);
     }
 
+    struct IntAnnotation {
+        int value;
+    };
+
+    struct ComplexAnnotation {
+        std::string s;
+        int i;
+    };
+
 }
 
 BOOST_AUTO_UNIT_TEST(packet)
@@ -116,6 +125,10 @@ BOOST_AUTO_UNIT_TEST(packet)
     senf::Packet packet (FooPacket::create());
     BarPacket::createAfter(packet);
 
+    SENF_CHECK_NO_THROW( packet.annotation<IntAnnotation>().value = 0xDEADBEEF );
+    ComplexAnnotation & ca (packet.annotation<ComplexAnnotation>());
+    ca.s = "dead beef";
+    ca.i = 0x12345678;
     BOOST_REQUIRE( packet );
     BOOST_CHECK( packet.next() );
     BOOST_CHECK( ! packet.next().next(senf::nothrow) );

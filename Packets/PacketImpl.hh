@@ -28,15 +28,60 @@
 
 // Custom includes
 #include <memory>
+#include <vector>
 #include <boost/utility.hpp>
 #include "../Utils/pool_alloc_mixin.hh"
 #include "PacketTypes.hh"
+#include "../Utils/singleton.hh"
 
 //#include "PacketImpl.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace detail {
+
+    struct AnnotationIndexerBase
+    {
+        static unsigned maxAnnotations;
+        static std::vector<bool> & small();
+    };
+
+    template <class Annotation>
+    struct AnnotationIndexer 
+        : public senf::singleton< AnnotationIndexer<Annotation> >, 
+          public AnnotationIndexerBase
+    {
+        AnnotationIndexer();
+        unsigned index_;
+        static unsigned index();
+        static bool const Small = (sizeof(Annotation) <= sizeof(void*));
+    };
+
+    struct AnnotationP
+    {
+        virtual ~AnnotationP();
+    };
+
+    template <class Annotation>
+    struct TAnnotationP
+        : public AnnotationP
+    {
+        Annotation annotation;
+    };
+
+    template <class Annotation, bool Small = AnnotationIndexer<Annotation>::Small>
+    struct GetAnnotation
+    {
+        static Annotation & get(AnnotationP * & p);
+    };
+
+/*
+    template <class Annotation>
+    struct GetAnnotation<Annotation, true>
+    {
+        static Annotation & get(AnnotationP * & p);
+    };
+*/
 
     /** \brief Internal: Packet data storage
 
@@ -103,6 +148,10 @@ namespace detail {
         void erase(PacketData * self, iterator first, iterator last);
         void clear(PacketData * self);
 
+        // Annotations
+        template <class Annotation>
+        Annotation & annotation();
+
         /** \brief Internal: Keep PacketImpl instance alive
 
             \internal
@@ -121,6 +170,9 @@ namespace detail {
         refcount_t refcount_;
         raw_container data_;
         interpreter_list interpreters_;
+        
+        typedef std::vector<AnnotationP*> Annotations;
+        Annotations annotations_;
 
         void eraseInterpreters(interpreter_list::iterator b, interpreter_list::iterator e);
         void updateIterators(PacketData * self, difference_type pos, difference_type n);

@@ -60,6 +60,7 @@ checksumPresent
 CIDR
 classsenf
 ClientSocketHandle
+cloneable
 CloneSource
 cmd
 cmdadd
@@ -76,6 +77,7 @@ ConnectedCommunicationPolicy
 ConnectedRawV
 ConnectedUDPv
 const
+copyable
 CPPDEFINES
 CPPPATH
 createAfter
@@ -528,6 +530,7 @@ templated
 ThresholdQueueing
 ThrottleBarrier
 tigris
+timestamp
 todo
 tokenizes
 TokensRange

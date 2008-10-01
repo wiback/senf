@@ -50,6 +50,12 @@ prefix_ typename senf::PacketInterpreter<Type>::ptr senf::PacketInterpreterBase:
         static_cast< PacketInterpreter<Type>* >(this));
 }
 
+template <class Annotation>
+prefix_ Annotation & senf::PacketInterpreterBase::annotation()
+{
+    return impl().annotation<Annotation>();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::PacketInterpreter<PacketType>
 

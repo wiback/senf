@@ -31,6 +31,41 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::detail::AnnotationIndexer<Annotation>
+
+template <class Annotation>
+prefix_ senf::detail::AnnotationIndexer<Annotation>::AnnotationIndexer()
+    : index_ (maxAnnotations++)
+{
+    small().push_back(Small);
+}
+
+template <class Annotation>
+prefix_ unsigned senf::detail::AnnotationIndexer<Annotation>::index()
+{
+    return AnnotationIndexer::instance().index_;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::GetAnnotation<Annotation,Small>
+
+template <class Annotation, bool Small>
+prefix_ Annotation & senf::detail::GetAnnotation<Annotation,Small>::get(AnnotationP * & p)
+{
+    if (!p)
+        p = new TAnnotationP<Annotation>();
+    return static_cast< TAnnotationP<Annotation>* >(p)->annotation;
+}
+
+/*
+template <class Annotation>
+prefix_ Annotation & senf::detail::GetAnnotation<Annotation, true>::get(AnnotationP * & p)
+{
+    return * reinterpret_cast<Annotation*>(p);
+}
+*/
+
+///////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketImpl
 
 // Data container
@@ -46,8 +81,17 @@ prefix_ void senf::detail::PacketImpl::insert(PacketData * self, iterator pos, F
 
 template <class InputIterator>
 prefix_ senf::detail::PacketImpl::PacketImpl(InputIterator first, InputIterator last)
-    : refcount_(0), data_(first,last)
+    : refcount_(0), data_(first,last), annotations_(AnnotationIndexerBase::maxAnnotations, 0)
 {}
+
+// Annotations
+
+template <class Annotation>
+prefix_ Annotation & senf::detail::PacketImpl::annotation()
+{
+    return GetAnnotation<Annotation>::get(
+        annotations_[AnnotationIndexer<Annotation>::index()]);
+}
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

@@ -314,6 +314,14 @@ namespace senf {
         
         ///@}
 
+        ///\name Annotations
+        ///@{
+        
+        template <class Annotation>
+        Annotation & annotation();
+
+        ///@}
+
         ///\name Other methods
         ///@{
 
@@ -331,11 +339,12 @@ namespace senf {
                                              when using a packet in a boolean context. */
 
         void finalizeThis();            ///< Update calculated fields
-                                        /**< This call will update all calculated fields of the
-                                             packet. This includes checksums, payload size fields or
-                                             other fields, which can be set from other information
-                                             in the packet. Each concrete packet type should
-                                             document, which fields are set by finalize().
+                                        /**< The finalize() fammily of members will update
+                                             calculated packet fields: checksums, size fields and so
+                                             on. This includes any field, which can be set from
+                                             other information in the packet. Each concrete packet
+                                             type should document, which fields are set by
+                                             finalize().
 
                                              finalizeThis() will \e only process the current
                                              header. Even if only changing fields in this protocol,
@@ -345,37 +354,56 @@ namespace senf {
 
         template <class Other>
         void finalizeTo();              ///< Update calculated fields
-                                        /**< This call will update all calculated fields of the
-                                             packet. This includes checksums, payload size fields or
-                                             other fields, which can be set from other information
-                                             in the packet. Each concrete packet type should
-                                             document, which fields are set by finalize().
+                                        /**< The finalize() fammily of members will update
+                                             calculated packet fields: checksums, size fields and so
+                                             on. This includes any field, which can be set from
+                                             other information in the packet. Each concrete packet
+                                             type should document, which fields are set by
+                                             finalize().
 
                                              finalizeTo() will automatically process all
-                                             packets/headers/interpreters from the first occurrence
-                                             of packet type \a Other backwards up to \c this. */
+                                             packets/headers/interpreters from the \e first
+                                             occurrence of packet type \a Other (beginning at \c
+                                             this packet searching forward towards deeper nested
+                                             packets) backwards up to \c this. 
+                                             
+                                             This call is equivalent to
+                                             \code
+                                             p.finalizeTo(p.next<Other>())
+                                             \endcode */
 
         void finalizeTo(Packet other);  ///< Update calculated fields
-                                        /**< This call will update all calculated fields of the
-                                             packet. This includes checksums, payload size fields or
-                                             other fields, which can be set from other information
-                                             in the packet. Each concrete packet type should
-                                             document, which fields are set by finalize().
+                                        /**< The finalize() fammily of members will update
+                                             calculated packet fields: checksums, size fields and so
+                                             on. This includes any field, which can be set from
+                                             other information in the packet. Each concrete packet
+                                             type should document, which fields are set by
+                                             finalize().
 
-                                             finalizeAll(other) will automatically process all
-                                             packets/headers/interpreters from \a other backwards up
-                                             to \c this. */
+                                             finalizeTo(other) will automatically process all
+                                             packets/headers/interpreters beginning at \a other
+                                             backwards towards outer packets up to \c this. */
 
         void finalizeAll();             ///< Update calculated fields
-                                        /**< This call will update all calculated fields of the
-                                             packet. This includes checksums, payload size fields or
-                                             other fields, which can be set from other information
-                                             in the packet. Each concrete packet type should
-                                             document, which fields are set by finalize().
+                                        /**< The finalize() fammily of members will update
+                                             calculated packet fields: checksums, size fields and so
+                                             on. This includes any field, which can be set from
+                                             other information in the packet. Each concrete packet
+                                             type should document, which fields are set by
+                                             finalize().
 
                                              finalizeAll() will automatically process all
                                              packets/headers/interpreters from the end of the chain
-                                             backwards up to \c this. */
+                                             (the most inner packet) backwards up to \c this. 
+                                             
+                                             This call is equivalent to
+                                             \code
+                                             p.finalizeTo(p.last())
+                                             \endcode 
+                                             
+                                             Beware, that finalizeAll() will \e not finalize any
+                                             headers before \c this, it will \e only process inner
+                                             headers. */
 
         void dump(std::ostream & os) const; ///< Write out a printable packet representation
                                         /**< This method is provided mostly to help debugging packet

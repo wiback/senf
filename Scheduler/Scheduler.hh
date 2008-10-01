@@ -42,8 +42,9 @@ namespace senf {
 
     The %scheduler API is comprised of two parts:
 
-    \li Specific event classes, one for each type of event.
-    \li Some generic functions implemented in the \ref senf::scheduler namespace.
+    \li Specific \ref sched_objects, one for each type of event.
+    \li Some <a href="#autotoc-7.">generic functions</a> implemented in the \ref senf::scheduler
+        namespace.
 
     Events are registered via the respective event class. The (global) functions are used to enter
     the application main-loop or query for global information.
@@ -53,7 +54,12 @@ namespace senf {
 
     \section sched_objects Event classes
 
-    Every event registration is represented by a class instance of an event specific class:
+    The Scheduler is based on the RAII principle: Every event is represented by a class
+    instance. The event is registered in the constructor and removed by the destructor of that
+    instance. This implementation automatically links the lifetime of an event with the lifetime of
+    the object resposible for it's creation.
+
+    Every event registration is represented by an instance of an event specific class:
 
     \li senf::scheduler::FdEvent for file descriptor events
     \li senf::scheduler::TimerEvent for single-shot deadline timer events
@@ -128,6 +134,65 @@ namespace senf {
     The handler is identified by an arbitrary, user specified name. This name is used in error
     messages to identify the failing handler.
 
+
+    \section sched_exec Executing the Scheduler
+
+    To enter the scheduler main-loop, call
+    
+    \code
+    senf::scheduler::process();
+    \endcode
+
+    This call will only return in two cases:
+
+    \li When a handler calls senf::scheduler::terminate()
+    \li When there is no active file descriptor or timer event.
+
+    Additional <a href="#autotoc-7.">generic functions</a> provide information and %scheduler
+    parameters.
+
+    \section sched_container Event objects and container classes
+
+    As the event objects are \e not copyable, they cannot be placed into ordinary
+    containers. However, it is quite simple to use pointer containers to hold event instances:
+
+    \code
+    #include <boost/ptr_container/ptr_map.hpp>
+    #include <boost/bind.hpp>
+    
+    class Foo
+    {
+    public:
+        void add(int fd)
+        {
+            fdEvents.insert(
+                fd, 
+                new senf::scheduler::FdEvent("foo", boost::bind(&callback, this, fd, _1), fd, 
+                                             senf::scheduler::FdEvent::EV_READ) );
+        }
+
+        void callback(int fd, int events)
+        {
+            FdEvent & event (fdEvents_[fd]);
+
+            // ...
+
+            if (complete)
+                fdEvents_.remove(fd)
+        }
+
+    private:
+        boost::ptr_map<int, FdEvent> fdEvents_;
+    };
+    \endcode
+
+    The pointer container API is (almost) completely identical to the corresponding standard library
+    container API. The only difference is, that all elements added to the container \e must be
+    created via \c new and that the pointer containers themselves are \e not copyable (ok, they are,
+    if the elements are cloneable ...). See <a
+    href="http://www.boost.org/doc/libs/1_36_0/libs/ptr_container/doc/ptr_container.html">Boost.PointerContainer</a>
+    for the pointer container library reference.
+
     \todo Fix the file support to use threads (?) fork (?) and a pipe so it works reliably even
         over e.g. NFS.
   */
@@ -149,7 +214,7 @@ namespace scheduler {
      */
     void terminate(); 
 
-    /** \brief Return date/time of last event
+    /** \brief Return timestamp of last event
 
         This is the timestamp, the last event has been signaled. This is the real time at which the
         event is delivered \e not the time it should have been delivered (in the case of timers). 
@@ -172,6 +237,9 @@ namespace scheduler {
         \warning This call will \e remove all registered events from the scheduler
      */
     void restart(); 
+
+    /** \brief Return \c true, if any event is registered, \c false otherwise. */
+    bool empty();
 
     /** \brief %scheduler specific time source for Utils/Logger framework
 

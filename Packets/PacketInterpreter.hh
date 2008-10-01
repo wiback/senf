@@ -162,6 +162,14 @@ namespace senf {
         
         ///@}
 
+        ///\name Annotations
+        ///@{
+
+        template <class Annotation>
+        Annotation & annotation();
+
+        ///@}
+
         ///\name Access to the abstract interface
         ///@{
 

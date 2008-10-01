@@ -190,7 +190,8 @@ ALIASES                = "fixme=\xrefitem fixme \"Fix\" \"Fixmes\"" \
                          "idea=\xrefitem idea \"Idea\" \"Ideas\"" \
                          "implementation=\par \"Implementation note:\"" \
                          "doc=\xrefitem doc \"Documentation request\" \"Documentation Requests\"" \
-                         "autotoc=\htmlonly <div id=\"autotoc\"></div> \endhtmlonly"
+                         "autotoc=\htmlonly <div id=\"autotoc\"></div> \endhtmlonly" \
+                         "seechapter=<b>\htmlonly &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&rarr;&nbsp;\endhtmlonly see </b>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C 
 # sources only. Doxygen will then generate output that is more tailored for C. 
