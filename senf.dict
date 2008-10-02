@@ -62,6 +62,7 @@ checksumPresent
 CIDR
 classsenf
 ClientSocketHandle
+ClockService
 cloneable
 CloneSource
 cmd
@@ -72,6 +73,7 @@ CommandOverload
 CommandParser
 CommunicationPolicy
 CommunicationPolicyBase
+ComplexAnnotation
 ConcretePacket
 conf
 config
@@ -435,6 +437,7 @@ ratestuffer
 RawINetProtocol
 RawV
 rdynamic
+ReadInfo
 refcount
 regex
 registerEvent

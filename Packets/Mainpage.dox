@@ -660,6 +660,77 @@
         to define variants in a different way giving other names to the special members (\c has_\e
         name or \c init_\e name etc.). This must be documented with the composite or protocol parser
         which defines the variant.
+
+    \section packet_usage_annotation Annotations
+
+    Sometimes we need to store additional data with a packet. Data, which is not part of the packet
+    itself but gives us some information about the packet: A timestamp, the interface the packet was
+    received on or other processing related information.
+
+    This type of information can be stored using the annotation interface.
+
+    \code
+    struct Timestamp {
+        senf::ClockService::clock_t value;
+    };
+
+    senf::EthernetPacket packet (senf::EthernetPacket::create(senf::noinit));
+    sock.read(packet.data(), 0u);
+    packet.annotation<Timestamp>().value = senf::ClockService::now();
+    \endcode
+
+    In the same way, the annotation can be used later
+
+    \code
+    if (senf::ClockService::now() - packet.annotation<Timestamp>().value 
+            > senf::ClockService::seconds(1)) {
+        // Ouch ... this packet is to old
+        // ...
+    }
+    \endcode
+
+    It is very important to define a specific structure (or class) type for each type of
+    annotation. \e Never directly store a fundamental type as an annotation: The name of the type is
+    used to look up the annotation, so you can store only one annotation for each built-in type. \c
+    typedef does not help since \c typedef does not introduce new type names, it only defines an
+    alias.
+
+    Of course, the annotation structure can be arbitrary. However, one very important caveat: If the
+    annotation is not a POD type, it needs to inherit from senf::ComplexAnnotation. A type is POD,
+    if it is really just a bunch of bytes: No (non-static) members, no constructor or destructor and
+    no base classes and all it's members must be POD too. So the following annotation is complex
+    since \c std::string is not POD
+
+    \code
+    struct ReadInfo : senf::ComplexAnnotation
+    {
+        std::string interface;
+        senf::ClockService::clock_t timestamp;
+    };
+
+    // ...
+
+    packet.annotation<ReadInfo>().interface = "eth0";
+    packet.annotation<ReadInfo>().timestamp = senf::ClockService::now();
+
+    // Or store a reference to the annotation for easier access
+
+    ReadInfo & info (packet.annotation<ReadInfo>());
+    
+    if (info.interface == "eth0") {
+        // ...
+    }
+    \endcode
+
+    You should use annotations economically: Every annotation type used in your program will
+    allocate an annotation slot in \e all packet data structures. So don't use hundreds of different
+    annotation types if this is not really necessary: Reuse annotation types where possible or
+    aggregate data into larger annotation structures. The best solution is to use annotations only
+    for a small number of packet specific informations. If you really need to manage a train-load of
+    data together with the packet consider some other way (e.g. place the packet into another class
+    which holds that data).
+
+    \see senf::Packet::annotation()
  */
 
 /** \page packet_new Defining new Packet types

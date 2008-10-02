@@ -358,6 +358,16 @@ namespace senf {
                                                  used). Additionally, non-complex small annotations
                                                  require no additional memory management (\c new /
                                                  \c delete).
+                                             
+                                             \idea Pool the annotation vectors: In the destructor
+                                                 swap the vector into a vector graveyard (swapping
+                                                 two vectors is an O(1) no allocation operation). In
+                                                 the constructor, if there is a vector in the
+                                                 graveyard, swap it in from there. Of course, it
+                                                 would be better to do away with the vector and just
+                                                 allocate the space together with the packet but
+                                                 that looks quite complicated to do ... especially
+                                                 considering that the packetimpl itself uses a pool.
                                           */
 
         ///@}
