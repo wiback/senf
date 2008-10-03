@@ -36,14 +36,26 @@
 namespace senf {
 namespace log {
     
+    /** \brief Log target writing to the syslog
+
+        The SyslogTarget will send all log messages to the syslog at the given facility.
+
+        Valid facility values (taken from <tt>man 3 syslog</tt>):
+        \par "" 
+           <tt>LOG_AUTHPRIV</tt>, <tt>LOG_CRON</tt>, <tt>LOG_DAEMON</tt>, <tt>LOG_FTP</tt>,
+           <tt>LOG_KERN</tt>, <tt>LOG_LOCAL0</tt>, <tt>LOG_LOCAL1</tt>, <tt>LOG_LOCAL2</tt>,
+           <tt>LOG_LOCAL3</tt>, <tt>LOG_LOCAL4</tt>, <tt>LOG_LOCAL5</tt>, <tt>LOG_LOCAL6</tt>,
+           <tt>LOG_LOCAL7</tt>, <tt>LOG_LPR</tt>, <tt>LOG_MAIL</tt>, <tt>LOG_NEWS</tt>,
+           <tt>LOG_SYSLOG</tt>, <tt>LOG_USER</tt>, <tt>LOG_UUCP</tt>
+
+        The default facility is <tt>LOG_USER</tt>.
+
+        \ingroup targets
+     */
     class SyslogTarget 
         : public Target
     {
     public:
-        ///////////////////////////////////////////////////////////////////////////
-        // Types
-
-
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -53,12 +65,11 @@ namespace log {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-    protected:
+    private:
         void v_write(time_type timestamp, std::string const & stream, 
                      std::string const & area, unsigned level, 
                      std::string const & message);
 
-    private:
         int facility_;
         static int const LEVELMAP_[8];
     };
