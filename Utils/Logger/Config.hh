@@ -54,16 +54,16 @@
     <pre>
     g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Debug),(_),DISABLED ))
                              (( (senf)(log)(Debug),(foo)(SomeClass),VERBOSE ))
-                             (( (foo)(Transactions),(_),NOTICE ))" ...
+                             (( (_),(_),NOTICE ))" ...
     </pre>
     The value is relatively complex; It's a Boost.Preprocessor style sequence of tuples, of which
     the first and second elements are again sequences. What this boils down to, is that it allows to
-    configure compile time logging limits based on stream and optional area. 
+    configure compile time logging limits based on stream and optional area.
 
     The above example disables all debug logging by setting the default log limit for all areas on
-    the \c senf::log::Debug stream to \c DISABLED. It then re-enables debug logging only within the
-    \c foo::SomeClass area, where it is set to \c VERBOSE. Furthermore, the limit on the \c
-    foo::Transactions stream is set to \c NOTICE.
+    the \c senf::log::Debug stream to \c DISABLED. It enables debug logging only within the \c
+    foo::SomeClass area, where it is set to \c VERBOSE. Lastly, the global compile time limit is set
+    to \c NOTICE.
 
     There are two standard uses for this configuration: Either to disable most logging in final
     builds by changing the compile time limit to something like senf::log::IMPORTANT or to enable
@@ -76,6 +76,20 @@
     g++ ... -DSENF_LOG_CONF="(( (senf)(log)(Verbose), (some)(Area), VERBOSE ))"
     </pre>
 
+    All the entries specified via \c SENF_LOG_CONF are applied in a fixed order:
+    
+    \li First the entries which have both a stream and an area specified are checked
+    \li next all entries with area but no stream given are checked
+    \li followed by all entries with a given stream but no area
+    \li and lastly if no match was found until now, a generic entry without stream and area is
+        checked
+    \li if no matching entry is found, the default compile time limit of the stream is used
+
+    So an area specification has precedence over a stream specification.
+
+    \warning Enabling a message at compile time does \e not ensure, the message is shown. You
+        additionally need to \e route the message (see next chapter). This is especially true for \c
+        VERBOSE messages, which are default disabled at runtime.
 
     \see \ref SENF_LOG_CONF
 
@@ -83,8 +97,8 @@
 
     The runtime configuration is performed by routing messages to one or more logging targets:
     \code
-    senf::log::ConsoleLog & consoleLog (senf::log::ConsoleLog::instance());
-    senf::log::FileLog fileLog ("my.log");
+    senf::log::ConsoleTarget & consoleLog (senf::log::ConsoleTarget::instance());
+    senf::log::FileTarget fileLog ("my.log");
 
     consoleLog.route<senf::log::Debug>();
     consoleLog.route<foo::Transactions, foo::SomeClass>(senf::log::Target::REJECT);
@@ -99,6 +113,10 @@
 
     The routing statements are processed by the targets in order, the first matching rule will
     decide a log messages fate for that target.
+
+    \warning You can \e only route those messages at runtime which have been compile-time
+        enabled. By default, \c VERBOSE messages are \e disabled at compile time. They must be
+        enabled \e explicitly by setting \c SENF_LOG_CONF so they can be routed.
 
     \section config_fallback Fallback routing
     
@@ -147,28 +165,30 @@ namespace log {
 
         \par ""
             <table class="ebnf">
-            <tr><td>conf</td>         <td>::= \e element \e element* \n</td></tr>
-            <tr><td>element</td>      <td>::= <tt>((</tt> \e stream <tt>,</tt> \e optional_area <tt>,</tt> \e level <tt>))</tt> \n</td></tr>
-            <tr><td>stream</td>       <td>::= \e scope_seq \n</td></tr>
-            <tr><td>optional_area</td><td>::= <tt>(_)</tt> | \e scope_seq \n</td></tr>
-            <tr><td>level</td>        <td>::= \c VERBOSE | \c NOTICE | \c MESSAGE | \c IMPORTANT | \c CRITICAL | \c DISABLED \n</td></tr>
-            <tr><td>scope_seq</td>    <td>::= \e scope \e scope* \n</td></tr>
-            <tr><td>scope</td>        <td>::= <tt>(</tt> \e name <tt>)</tt> \n</td></tr>
-            <tr><td>name</td>         <td>::= arbitrary C++ identifier</td></tr>
+            <tr><td>conf</td>            <td>::= \e element \e element* \n</td></tr>
+            <tr><td>element</td>         <td>::= <tt>((</tt> \e optional_stream <tt>,</tt> \e optional_area <tt>,</tt> \e level <tt>))</tt> \n</td></tr>
+            <tr><td>optional_stream</td> <td>::= <tt>(_)</tt> | \e scope_seq \n</td></tr>
+            <tr><td>optional_area</td>   <td>::= <tt>(_)</tt> | \e scope_seq \n</td></tr>
+            <tr><td>level</td>           <td>::= \c VERBOSE | \c NOTICE | \c MESSAGE | \c IMPORTANT | \c CRITICAL | \c DISABLED \n</td></tr>
+            <tr><td>scope_seq</td>       <td>::= \e scope \e scope* \n</td></tr>
+            <tr><td>scope</td>           <td>::= <tt>(</tt> \e name <tt>)</tt> \n</td></tr>
+            <tr><td>name</td>            <td>::= arbitrary C++ identifier</td></tr>
             </table>
 
-        \ref SENF_LOG_CONF is a Boost.Preprocessor style sequence of 3-tuples. Each tuple applies to
-        a specific stream which is defined by the first tuple element \e stream. 
+        \ref SENF_LOG_CONF is a Boost.Preprocessor style sequence of 3-tuples. 
+
+        The first tuple element \e optional_stream specifies the stream to match. If this is
+        <tt>(_)</tt>, the entry will match any stream.
 
         The next tuple element, \e optional_area optionally restricts the entry to match only the
-        given area. 
+        given area. If set to <tt>(_)</tt>, the area is left unrestricted.
 
         The last tuple element \e level defines the compile time log level. Messages with a level
         below this are discarded at compile time.
 
-        Both \e stream and \e optional_area are given as a \e scope_seq. A scope sequence is a fully
-        qualified C++ identifier placed into a sequence: <tt>foo::bar::baz</tt> is represented by
-        <tt>(foo)(bar)(baz)</tt>.
+        Both \e optional_stream and \e optional_area are given as a \e scope_seq. A scope sequence
+        is a fully qualified C++ identifier placed into a sequence: <tt>foo::bar::baz</tt> is
+        represented by <tt>(foo)(bar)(baz)</tt>.
      */
 #   define SENF_LOG_CONF
 

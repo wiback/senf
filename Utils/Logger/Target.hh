@@ -58,8 +58,8 @@ namespace log {
 
     /** \brief Logging target base class
         
-        Targets are the final destination of %log messages. Every message is eventually routed to one
-        or several targets.
+        Targets are the final destination of %log messages. Every message is eventually routed to
+        one or several targets.
 
         \section target_routing Routing
 
@@ -67,12 +67,13 @@ namespace log {
         matched against this table. If an entry matches, the action associated with this entry is
         taken (either \c ACCEPT or \c REJECT).
 
-        Every target manages it's own routing table. Conceptually, every routing message will be
-        routed to every target where it will then be matched against each targets routing table (the
+        Every target manages it's own routing table. Conceptually, every message will be routed to
+        every target where it will then be matched against each targets routing table (the
         implementation is more efficient and utilizes a routing cache).
 
         Each routing entry consists of the following parameters
-        \li (optional) \e stream. The entry will match only messages directed at that stream
+        \li (optional) \e stream. If specified, the entry will match only messages directed at that
+            stream
         \li (optional) \e area. If the area is specified, only messages directed at that area are
             matched, otherwise any area will be allowed
         \li (optional) \e level. If the log level is specified, messages will be accepted if their
@@ -87,11 +88,13 @@ namespace log {
         \code
         target.route<foo::SomeStream, senf::log::NOTICE>(senf::log::Target::REJECT);
         target.route<foo::SomeStream>();
+        target.route();
         \endcode
         The identical routing statements may be expressed using dynamic routing via:
         \code
         target.route("foo::SomeStream", "", senf::log::NOTICE::value, senf::log::Target::REJECT);
         target.route("foo::SomeStream");
+        target.route();
         \endcode
         The static representation has the benefit of being compile-time type checked: Invalid
         routing parameters will be caught while compiling the code. The dynamic representation is
@@ -114,11 +117,11 @@ namespace log {
         To implement a new target type, you need to derive from senf::log::Target and implement the
         single \c v_write member. This member will be called whenever a message should be output. 
 
-        The target may process in any arbitrary way: reformat, writing it into an SQL DB, whatever
-        can be envisioned. However, there is one important limitation: The \c v_write call must not
-        block. So for more complex scenarios, additional measures must be taken (e.g. writing a %log
-        backend daemon which receives the messages via UDP and processes them). Of course, in rare
-        cases messages might be lost but this cannot be avoided.
+        The target may process the message in any arbitrary way: reformat it, write it into an SQL
+        DB, whatever can be envisioned. However, there is one important limitation: The \c v_write
+        call must \e not block. So for more complex scenarios, additional measures must be taken
+        (e.g. writing a %log backend daemon which receives the messages via UDP and processes
+        them). Of course, in rare cases messages might be lost but this cannot be avoided.
 
         \see \ref targets
       */
@@ -196,12 +199,15 @@ namespace log {
                                         /**< Add a route for the given combination of \a Stream, \a
                                              Area and \a Level. All parameters (\a Stream, \a Area
                                              and \a Level) are optional (the template signature is
-                                             shown simplified here). Examples:
+                                             shown simplified here). So possible commands are:
                                              \code
-                                             target.route<SomeLevel>();
+                                             target.route();
                                              target.route<SomeStream>();
-                                             target.route<SomeStream, SomeLevel>();
+                                             target.route<SomeArea>();
+                                             target.route<SomeLevel>();
                                              target.route<SomeStream, SomeArea>();
+                                             target.route<SomeStream, SomeLevel>();
+                                             target.route<SomeArea, SomeLevel>();
                                              target.route<SomeStream, SomeArea, SomeLevel>();
                                              \endcode
 
@@ -293,6 +299,7 @@ namespace log {
 
 #       ifndef DOXYGEN
 
+        void route(action_t action = ACCEPT, int index = -1);
         template <class A1>
         void route(action_t action = ACCEPT, int index = -1);
         template <class A1, class A2>
@@ -300,6 +307,7 @@ namespace log {
         template <class A1, class A2, class A3>
         void route(action_t action = ACCEPT, int index = -1);
 
+        void unroute(action_t action = ACCEPT);
         template <class A1>
         void unroute(action_t action = ACCEPT);
         template <class A1, class A2>

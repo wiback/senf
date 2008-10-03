@@ -174,7 +174,7 @@ prefix_ void senf::log::Target::updateRoutingCache(detail::StreamBase const * st
         if ( (! i->stream_ || i->stream_ == stream) &&
              (! i->area_ || i->area_ == area) &&
              i->action_ == ACCEPT ) {
-            unsigned l (i->level_ == NONE::value ? i->stream_->defaultRuntimeLimit() : i->level_);
+            unsigned l (i->level_ == NONE::value ? stream->defaultRuntimeLimit() : i->level_);
             if (l < limit)
                 limit = l;
         }
@@ -194,7 +194,7 @@ prefix_ void senf::log::Target::write(time_type timestamp,
     for (; i != i_end; ++i)
         if ( (! i->stream_ || i->stream_ == &stream) &&
              (! i->area_ || i->area_ == &area) &&
-             (i->level_ == NONE::value ? i->stream_->defaultRuntimeLimit() : i->level_) <= level ) {
+             (i->level_ == NONE::value ? stream.defaultRuntimeLimit() : i->level_) <= level ) {
             if (i->action_ == ACCEPT)
                 v_write(timestamp, stream.v_name(), area.v_name(), level, message);
             return;

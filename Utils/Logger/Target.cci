@@ -34,6 +34,16 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target
 
+prefix_ void senf::log::Target::route(action_t action, int index)
+{
+    route(0, 0, NONE::value, action, index);
+}
+
+prefix_ void senf::log::Target::unroute(action_t action)
+{
+    unroute(0, 0, NONE::value, action);
+}
+
 prefix_ senf::log::Target::iterator senf::log::Target::begin()
     const
 {

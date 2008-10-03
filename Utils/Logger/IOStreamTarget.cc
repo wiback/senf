@@ -39,7 +39,7 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::IOStreamTarget
 
-const char * const senf::log::IOStreamTarget::LEVELNAMES_[8] = {
+char const * const senf::log::IOStreamTarget::LEVELNAMES_[8] = {
         "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
 
 prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)

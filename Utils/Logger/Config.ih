@@ -44,18 +44,30 @@ namespace detail {
     struct na {};
 
     /// Internal: Compile time configuration for given \a Stream and \a Area
-    template <class Stream, class Area>
+    template <class Stream, class Area, class QueryStream=Stream, bool Query=true>
     struct Config
     {
-        typedef typename Config<Stream,na>::compileLimit compileLimit;
+        typedef typename Config<na, Area, Stream, Query>::compileLimit compileLimit;
     };
 
 #   ifndef DOXYGEN
 
-    template <class Stream>
-    struct Config<Stream, na>
+    template <class Area, class QueryStream, bool Query>
+    struct Config<na, Area, QueryStream, Query>
     {
-        typedef typename Stream::compileLimit compileLimit;
+        typedef typename Config<QueryStream, na, QueryStream, Query>::compileLimit compileLimit;
+    };
+
+    template <class Stream, class QueryStream, bool Query>
+    struct Config<Stream, na, QueryStream, Query>
+    {
+        typedef typename Config<na, na, QueryStream, Query>::compileLimit compileLimit;
+    };
+
+    template <class QueryStream, bool Query>
+    struct Config<na, na, QueryStream, Query>
+    {
+        typedef typename QueryStream::compileLimit compileLimit;
     };
 
 #   endif
@@ -88,9 +100,11 @@ namespace detail {
     SENF_LOG_PREDECL(stream)                                                                      \
     SENF_LOG_PREDECL(area)                                                                        \
     namespace senf { namespace log { namespace detail {                                           \
-        template <>                                                                               \
+        template <class QueryStream>                                                              \
         struct Config< SENF_LOG_SEQ_TO_NAME(stream),                                              \
-                       SENF_LOG_SEQ_TO_NAME(area) >                                               \
+                       SENF_LOG_SEQ_TO_NAME(area),                                                \
+                       QueryStream,                                                               \
+                       true >                                                                     \
         { typedef senf::log::level compileLimit; };                                               \
     }}}
 
