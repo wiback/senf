@@ -21,25 +21,40 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Daemon inline non-template implementation */
+    \brief Traits non-inline non-template implementation */
 
-#include "Daemon.ih"
+#include "Traits.hh"
+#include "Traits.ih"
 
 // Custom includes
-#include <boost/bind.hpp>
+#include "../../Utils/senfassert.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+//#include "Traits.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::detail::DaemonWatcher::Forwarder::Target::Target(Forwarder & fwd, int fd_)
-    : fd (fd_), offset (0),
-      writeevent ("senf::detail::DaemonWatcher::Forwarder::Target::writeevent",
-                  boost::bind(&Forwarder::writeData, &fwd, _1, this),
-                  fd, scheduler::FdEvent::EV_WRITE, false)
-{}
+prefix_ long senf::console::detail::parseEnum(EnumTable const & table,
+                                              ParseCommandInfo::TokensRange const & tokens)
+{
+    if (tokens.size() != 1)
+        throw SyntaxErrorException("parameter syntax error");
 
-///////////////////////////////cci.e///////////////////////////////////////
+    EnumTable::left_map::const_iterator i (table.left.find(tokens.begin()[0].value()));
+    if (i == table.left.end())
+        throw SyntaxErrorException("parameter syntax error: invalid enum value");
+    return i->second;
+}
+
+prefix_ std::string senf::console::detail::formatEnum(EnumTable const & table, long value)
+{
+    EnumTable::right_map::const_iterator i (table.right.find(value));
+    SENF_ASSERT( i != table.right.end() );
+    return i->second;
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
+//#include "Traits.mpp"
 
 
 // Local Variables:

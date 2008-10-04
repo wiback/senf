@@ -32,6 +32,7 @@
 #include "../boost/intrusive/ilist.hpp"
 #include "../boost/intrusive/ilist_hook.hpp"
 #include "../Utils/singleton.hh"
+#include "EventManager.hh"
 
 //#include "FIFORunner.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -56,26 +57,30 @@ namespace detail {
 
     public:
         class TaskInfo 
-            : public TaskListBase
+            : public Event, 
+              public TaskListBase
         {
         public:
             explicit TaskInfo(std::string const & name);
             virtual ~TaskInfo();
 
+            void run();
+
         protected:
             void setRunnable();
             
         private:
-            virtual void run() = 0;
+            virtual void v_run() = 0;
+            virtual bool v_enabled() const;
 
             bool runnable_;
-            std::string name_;
 #       ifdef SENF_DEBUG
             std::string backtrace_;
 #       endif
 
             friend class FIFORunner;
         };
+
         using singleton<FIFORunner>::instance;
         using singleton<FIFORunner>::alive;
 
@@ -87,11 +92,7 @@ namespace detail {
         void taskTimeout(unsigned ms);
         unsigned taskTimeout() const;
 
-        unsigned hangCount() const;     ///< Number of task expirations
-                                        /**< The FIFORunner manages a watchdog which checks, that a
-                                             single task does not run continuously for a longer time
-                                             or block. If a task runs for more than 1s, a warning is
-                                             printed  and the hangCount is increased. */
+        unsigned hangCount() const;
 
     protected:
 

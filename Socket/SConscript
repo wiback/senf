@@ -21,7 +21,7 @@ SENFSCons.Lib(env,
               library = 'Socket',
               sources = sources + subob,
               testSources = testSources,
-              LIBS = [ 'Scheduler', 'Utils' ])
+              LIBS = [ 'Utils' ])
 
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('SocketLibrary-classes.dia'),

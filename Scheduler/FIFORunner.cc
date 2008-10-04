@@ -102,7 +102,9 @@ namespace {
         : public senf::scheduler::detail::FIFORunner::TaskInfo
     {
         NullTask() : senf::scheduler::detail::FIFORunner::TaskInfo ("<null>") {}
-        void run() {};
+        virtual void v_run() {};
+        virtual char const * v_type() const { return 0; }
+        virtual std::string v_info() const { return ""; }
     };
 }
 
@@ -133,7 +135,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
             TaskInfo & task (*next_);
             if (task.runnable_) {
                 task.runnable_ = false;
-                runningName_ = task.name_;
+                runningName_ = task.name();
 #           ifdef SENF_DEBUG
                 runningBacktrace_ = task.backtrace_;
 #           endif

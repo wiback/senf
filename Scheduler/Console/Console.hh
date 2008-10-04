@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,31 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include "Scheduler/Console/Console.hh"
+/** \file
+    \brief Console public header */
+
+#ifndef HH_Console_
+#define HH_Console_ 1
+
+// Custom includes
+
+//#include "Console.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
+
+#include "Server.hh"
+#include "ParsedCommand.hh"
+#include "ScopedDirectory.hh"
+#include "OverloadedCommand.hh"
+#include "Config.hh"
+#include "ConfigFile.hh"
+#include "ProgramOptions.hh"
+#include "Sysdir.hh"
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "Console.cci"
+//#include "Console.ct"
+//#include "Console.cti"
+#endif
 
 
 // Local Variables:

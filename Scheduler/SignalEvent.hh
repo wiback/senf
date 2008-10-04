@@ -95,7 +95,9 @@ namespace scheduler {
         void action(Callback const & cb); ///< Change signal event callback
 
     private:
-        virtual void run();
+        virtual void v_run();
+        virtual char const * v_type() const;
+        virtual std::string v_info() const;
         
         int signal_;
         Callback cb_;

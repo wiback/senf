@@ -157,7 +157,9 @@ namespace scheduler {
 
     private:
 	virtual void signal(int events);
-	virtual void run();
+	virtual void v_run();
+        virtual char const * v_type() const;
+        virtual std::string v_info() const;
 
 	Callback cb_;
 	int fd_;

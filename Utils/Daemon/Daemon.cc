@@ -572,7 +572,7 @@ prefix_ senf::detail::DaemonWatcher::DaemonWatcher(int pid, int coutpipe, int ce
     : childPid_(pid), coutpipe_(coutpipe), cerrpipe_(cerrpipe), stdout_(stdout),
       stderr_(stderr), sigChld_(false),
       cldSignal_ (SIGCHLD, senf::membind(&DaemonWatcher::sigChld, this)),
-      timer_ ("DaemanWatcher watchdog", senf::membind(&DaemonWatcher::childOk, this)),
+      timer_ ("senf::detail::DaemonWatcher::childOk", senf::membind(&DaemonWatcher::childOk, this)),
       coutForwarder_(coutpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 1)), 
       cerrForwarder_(cerrpipe_, boost::bind(&DaemonWatcher::pipeClosed, this, 2)) 
 {
@@ -640,7 +640,7 @@ prefix_ void senf::detail::DaemonWatcher::childOk()
 
 prefix_ senf::detail::DaemonWatcher::Forwarder::Forwarder(int src, Callback cb)
     : src_(src), cb_(cb), 
-      readevent_("DaemanWatcher::Forwarder", senf::membind(&Forwarder::readData, this),
+      readevent_("senf::detail::DaemonWatcher::Forwarder::readevent", senf::membind(&Forwarder::readData, this),
                  src_, scheduler::FdEvent::EV_READ)
 {}
 

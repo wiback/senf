@@ -32,7 +32,7 @@
 // senf::ppi::IdleEvent
 
 prefix_ senf::ppi::IdleEvent::IdleEvent()
-    : timer_ ("PPI idle event", boost::bind(&IdleEvent::cb,this))
+    : timer_ ("senf::ppi::IdleEvent", boost::bind(&IdleEvent::cb,this))
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

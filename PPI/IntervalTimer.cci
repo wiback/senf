@@ -34,7 +34,7 @@
 prefix_ senf::ppi::IntervalTimer::IntervalTimer(ClockService::clock_type interval,
                                                 unsigned eventsPerInterval)
     : interval_ (interval), eventsPerInterval_ (eventsPerInterval),
-      timer_("PPI interval timer",  boost::bind(&IntervalTimer::cb,this))
+      timer_("senf::ppi::IntervalTimer",  boost::bind(&IntervalTimer::cb,this))
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

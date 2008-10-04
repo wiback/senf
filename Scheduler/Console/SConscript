@@ -1,0 +1,10 @@
+# -*- python -*-
+
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+env.Command(env.File('test'), '../test', [])
+
+SENFSCons.Doxygen(env)

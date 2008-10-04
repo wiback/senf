@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,34 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include "Scheduler/Console/Console.hh"
+/** \file
+    \brief LazyDirectory non-inline non-template implementation */
+
+#include "LazyDirectory.hh"
+//#include "LazyDirectory.ih"
+
+// Custom includes
+#include "Console.hh"
+
+//#include "LazyDirectory.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
+
+prefix_ senf::console::LazyDirectory::LazyDirectory()
+    : p_( new ScopedDirectory<>() )
+{}
+
+prefix_ senf::console::LazyDirectory::~LazyDirectory()
+{}
+
+prefix_ senf::console::ScopedDirectory<> & senf::console::LazyDirectory::operator()()
+{
+    return *p_;
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "LazyDirectory.mpp"
 
 
 // Local Variables:

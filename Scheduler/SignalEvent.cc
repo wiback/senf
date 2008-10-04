@@ -119,6 +119,23 @@ prefix_ void senf::scheduler::detail::SignalDispatcher::sigHandler(int signal, :
     write(instance().sigPipe_[1], siginfo, sizeof(*siginfo));
 }
 
+prefix_ void senf::scheduler::SignalEvent::v_run()
+{
+    cb_(siginfo_);
+}
+
+prefix_ char const * senf::scheduler::SignalEvent::v_type()
+    const
+{
+    return "signal";
+}
+
+prefix_ std::string senf::scheduler::SignalEvent::v_info()
+    const
+{
+    return "";
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "SignalEvent.mpp"

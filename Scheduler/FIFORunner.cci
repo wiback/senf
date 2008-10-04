@@ -35,7 +35,7 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::TaskInfo(std::string const & name)
-    : runnable_ (false), name_ (name)
+    : Event(name), runnable_ (false)
 {}
 
 prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::~TaskInfo()
@@ -44,6 +44,18 @@ prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::~TaskInfo()
 prefix_ void senf::scheduler::detail::FIFORunner::TaskInfo::setRunnable()
 {
     runnable_ = true;
+}
+
+prefix_ void senf::scheduler::detail::FIFORunner::TaskInfo::run()
+{
+    v_run();
+    countRun();
+}
+
+prefix_ bool senf::scheduler::detail::FIFORunner::TaskInfo::v_enabled()
+    const
+{
+    return TaskListBase::linked();
 }
 
 prefix_ void senf::scheduler::detail::FIFORunner::enqueue(TaskInfo * task)

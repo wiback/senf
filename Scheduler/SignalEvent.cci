@@ -93,11 +93,6 @@ prefix_ void senf::scheduler::SignalEvent::action(Callback const & cb)
     cb_ = cb;
 }
 
-prefix_ void senf::scheduler::SignalEvent::run()
-{
-    cb_(siginfo_);
-}
-
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

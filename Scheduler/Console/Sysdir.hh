@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,30 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include "Scheduler/Console/Console.hh"
+/** \file
+    \brief Sysdir public header */
+
+#ifndef HH_Sysdir_
+#define HH_Sysdir_ 1
+
+// Custom includes
+#include "Node.hh"
+
+//#include "Sysdir.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
+
+namespace senf {
+namespace console {
+
+    ScopedDirectory<> & sysdir();
+
+}}
+
+///////////////////////////////hh.e////////////////////////////////////////
+#include "Sysdir.cci"
+//#include "Sysdir.ct"
+//#include "Sysdir.cti"
+#endif
 
 
 // Local Variables:

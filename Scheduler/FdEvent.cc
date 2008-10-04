@@ -27,6 +27,7 @@
 #include "FdEvent.ih"
 
 // Custom includes
+#include <sstream>
 #include "../Utils/senfassert.hh"
 
 //#include "FdEvent.mpp"
@@ -168,9 +169,32 @@ prefix_ void senf::scheduler::FdEvent::signal(int events)
     }
 }
 
-prefix_ void senf::scheduler::FdEvent::run()
+prefix_ void senf::scheduler::FdEvent::v_run()
 {
     cb_(signaledEvents_);
+}
+
+prefix_ char const * senf::scheduler::FdEvent::v_type()
+    const
+{
+    return "fd";
+}
+
+prefix_ std::string senf::scheduler::FdEvent::v_info()
+    const
+{
+    std::stringstream ss;
+
+    ss << "fd " << fd_;
+    if (! pollable_)
+        ss << " (NOT pollable)";
+    if (events_ & EV_READ)
+        ss << " READ";
+    if (events_ & EV_PRIO)
+        ss << " PRIO";
+    if (events_ & EV_WRITE)
+        ss << " WRITE";
+    return ss.str();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

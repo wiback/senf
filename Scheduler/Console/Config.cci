@@ -1,0 +1,140 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Config inline non-template implementation */
+
+#include "Config.ih"
+
+// Custom includes
+#include "../../Utils/membind.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::RestrictedExecutor
+
+prefix_ bool senf::console::detail::RestrictedExecutor::complete()
+    const
+{
+    return parsedNodes_.size() == 1 
+        && ! parsedNodes_[0].expired() 
+        && *parsedNodes_[0].lock() == executor_.chroot();
+}
+
+prefix_ void senf::console::detail::RestrictedExecutor::reset()
+{
+    parsedNodes_.clear();
+}
+
+prefix_ senf::console::DirectoryNode & senf::console::detail::RestrictedExecutor::root()
+    const
+{
+    return executor_.chroot();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::ConfigBundle
+
+prefix_ senf::console::ConfigBundle::ConfigBundle()
+{}
+
+prefix_ senf::console::ConfigBundle::ConfigBundle(DirectoryNode & root)
+    : executor_ (root)
+{}
+
+prefix_ bool senf::console::ConfigBundle::complete()
+    const
+{
+    return executor_.complete();
+}
+
+prefix_ bool senf::console::ConfigBundle::parsed(GenericNode & node)
+    const
+{
+    return executor_.parsed(node);
+}
+
+prefix_ void senf::console::ConfigBundle::reset()
+{
+    executor_.reset();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::ConfigSource
+
+prefix_ void senf::console::detail::ConfigSource::parse(RestrictedExecutor & executor)
+{
+    v_parse(executor);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::BundleMixin
+
+prefix_ senf::console::detail::BundleMixin::BundleMixin()
+{}
+
+prefix_ senf::console::detail::BundleMixin::BundleMixin(DirectoryNode & root)
+    : bundle_ (root)
+{}
+
+prefix_ void senf::console::detail::BundleMixin::parse()
+{
+    bundle_.parse();
+}
+
+prefix_ void senf::console::detail::BundleMixin::parse(DirectoryNode & restrict)
+{
+    bundle_.parse(restrict);
+}
+
+prefix_ bool senf::console::detail::BundleMixin::complete()
+    const
+{
+    return bundle_.complete();
+}
+
+prefix_ bool senf::console::detail::BundleMixin::parsed(GenericNode & node)
+    const
+{
+    return bundle_.parsed(node);
+}
+
+prefix_ void senf::console::detail::BundleMixin::reset()
+{
+    bundle_.reset();
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

@@ -27,6 +27,7 @@
 #include "TimerEvent.ih"
 
 // Custom includes
+#include <sstream>
 
 //#include "TimerEvent.mpp"
 #define prefix_
@@ -163,10 +164,26 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::reschedule()
 ///////////////////////////////////////////////////////////////////////////
 // senf::scheduler::detail::TimerDispatcher::TimerEvent
 
-prefix_ void senf::scheduler::TimerEvent::run()
+prefix_ void senf::scheduler::TimerEvent::v_run()
 {
     disable();
     cb_();
+}
+
+prefix_ char const * senf::scheduler::TimerEvent::v_type()
+    const
+{
+    return "timer";
+}
+
+prefix_ std::string senf::scheduler::TimerEvent::v_info()
+    const
+{
+    std::stringstream ss;
+    ss.imbue( std::locale(ss.getloc(),
+                          new boost::posix_time::time_facet("%Y-%m-%d %H:%M:%S.%f-0000")) );
+    ss << "expire " << ClockService::abstime(timeout_);
+    return ss.str();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

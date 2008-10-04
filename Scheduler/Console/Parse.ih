@@ -1,0 +1,393 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Parse internal header */
+
+#ifndef IH_Parse_
+#define IH_Parse_ 1
+
+// Custom includes
+#include <vector>
+#include <boost/spirit.hpp>
+#include <boost/spirit/utility/grammar_def.hpp>
+#include <boost/spirit/dynamic.hpp>
+#include <boost/spirit/phoenix.hpp>
+#include "../../Utils/Phoenix.hh"
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+namespace console {
+namespace detail {
+
+#ifndef DOXYGEN
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Grammar
+
+    template <class ParseDispatcher>
+    struct CommandGrammar : boost::spirit::grammar<CommandGrammar<ParseDispatcher> >
+    {
+        ///////////////////////////////////////////////////////////////////////////
+        // Start rules
+
+        enum { CommandParser, SkipParser, ArgumentsParser };
+
+        ///////////////////////////////////////////////////////////////////////////
+        // The parse context (variables needed while parsing)
+
+        typedef Token::TokenType TokenType;
+
+        struct Context {
+            std::string str;
+            std::vector<Token> path;
+            char ch;
+            Token token;
+        };
+
+        Context & context;
+
+        ///////////////////////////////////////////////////////////////////////////
+        // Configuration
+
+        bool incremental;
+
+        ///////////////////////////////////////////////////////////////////////////
+        // Dispatching semantic actions
+
+        ParseDispatcher & dispatcher;
+
+        ///////////////////////////////////////////////////////////////////////////
+        // Errors
+
+        enum Errors {
+            EndOfStatementExpected,
+            GroupOrArgumentsExpected,
+            PathExpected,
+            ClosingParenExpected,
+            QuoteExpected
+        };
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        CommandGrammar(ParseDispatcher & d, Context & c) 
+            : context(c), incremental(false), dispatcher(d) {}
+
+        template <class Scanner>
+        struct definition 
+            : public boost::spirit::grammar_def< boost::spirit::rule<Scanner>, 
+                                                 boost::spirit::rule<Scanner>,
+                                                 boost::spirit::rule<Scanner> >
+        {
+            boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
+                punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin, 
+                skip, statement, relpath, abspath, arguments, group_start, group_close, 
+                statement_end;
+            boost::spirit::chset<> special_p, punctuation_p, space_p, invalid_p, word_p;
+            boost::spirit::distinct_parser<> keyword_p;
+
+            definition(CommandGrammar const & self) : 
+
+                // Characters with a special meaning within the parser
+                special_p ("/(){};\""),
+
+                // Additional characters which are returned as punctuation tokens
+                // (only allowed within '()').
+                punctuation_p (",="),
+
+                // Whitespace characters
+                space_p (" \t\n\r"),
+
+                // Invalid characters: All chars below \x20 (space) which are not space_p
+                // (don't put a \0 in the chset<> argument *string* ...)
+                invalid_p (
+                    boost::spirit::chset<>('\0') | boost::spirit::chset<>("\x01-\x20") - space_p ),
+
+                // Valid word characters
+                word_p (
+                    boost::spirit::anychar_p - special_p - punctuation_p - space_p - invalid_p),
+
+                // Keywords must not be followed by a word char or '/'
+                keyword_p ( word_p | boost::spirit::ch_p('/') )
+
+            {
+                using namespace boost::spirit;
+                using namespace ::phoenix;
+                using namespace senf::phoenix;
+                typedef ParseDispatcher PD;
+
+                actor< variable< char > >               ch_    (self.context.ch);
+                actor< variable< std::string > >        str_   (self.context.str);
+                actor< variable< std::vector<Token> > > path_  (self.context.path);
+                actor< variable< Token > >              token_ (self.context.token);
+                actor< variable< ParseDispatcher > >    d_     (self.dispatcher);
+
+                assertion<Errors> end_of_statement_expected   (EndOfStatementExpected);
+                assertion<Errors> group_or_arguments_expected (GroupOrArgumentsExpected);
+                assertion<Errors> path_expected               (PathExpected);
+                assertion<Errors> closing_paren_expected      (ClosingParenExpected);
+                assertion<Errors> quote_expected              (QuoteExpected);
+
+                ///////////////////////////////////////////////////////////////////
+                // Spirit grammar
+                //
+                // Syntax summary:
+                // This is EBNF with some minor tweaks to accommodate C++ syntax
+                //
+                //   * a        any number of a's
+                //   + a        at least one a
+                //   ! a        an optional a
+                //   a >> b     a followed by b
+                //   a | b      a or b
+                //   a % b      any number of a's separated by b's
+                //   a - b      a but not b
+                //
+                // Beside this, we use some special parsers (ch_p, eps_p, confix_p, lex_escape_ch_p,
+                // keyword_p, comment_p) and directives (lexeme_d), however, the parser should be
+                // quite readable.
+                //   
+                //   ch_p             match character
+                //   eps_p            always matches nothing (to attach unconditional actions)
+                //   confix_p(a,b,c)  match b, preceded by a and terminated by c. Used to parse
+                //                    string literals and comments
+                //   lex_escape_ch_p  match a lex style escape char. This is like a C++ style
+                //                    literal string escape char, however \x will be replaced by 'x'
+                //                    for any char 'x' if it has no special meaning.
+                //   keyword_p        match a delimited keyword
+                //   comment_p(a,b)   match comment starting with a and terminated with b. b
+                //                    defaults to end-of-line
+                //
+                //   lexeme_d         don't skip whitespace (as defined by the skip parser)
+                //
+                // Aligned to the right at column 50 are semantic actions.
+                //
+                // For clarity, I have used 'ch_p' explicitly throughout even though it is optional
+                // in most cases.
+                //
+                // More info is in the Boost.Spirit documentation
+
+                command 
+                    =    builtin >> end_of_statement_expected(statement_end)
+                    |    group_close
+                    |    ch_p(';') // Ignore empty commands
+                    |    path_expected(path) 
+                      >> group_or_arguments_expected( group_start | statement )
+                    ;
+
+                builtin
+                    =    keyword_p("cd") 
+                      >> path_expected(path)
+                      >> eps_p                    [ bind(&PD::builtin_cd)(d_, path_) ]
+                    |    keyword_p("ls")
+                      >> ! path
+                      >> eps_p                    [ bind(&PD::builtin_ls)(d_, path_) ]
+                    |    keyword_p("exit")        [ bind(&PD::builtin_exit)(d_) ]
+                    |    keyword_p("help")
+                      >> ! path
+                      >> eps_p                    [ bind(&PD::builtin_help)(d_, path_) ]
+                    ;
+
+                group_start
+                    =    ch_p('{')                [ bind(&PD::pushDirectory)(d_, path_) ]
+                    ;
+
+                group_close
+                    =    ch_p('}')                [ bind(&PD::popDirectory)(d_) ]
+                    ;
+
+                statement
+                    =    eps_p                    [ bind(&PD::beginCommand)(d_, path_) ]
+                      >> arguments
+                      >> end_of_statement_expected(statement_end)
+                                                  [ bind(&PD::endCommand)(d_) ]
+                    ;
+
+                arguments
+                    =    * argument
+                    ;
+
+                argument
+                    =    simple_argument          [ bind(&PD::pushToken)(d_, token_) ]
+                    |    balanced_tokens
+                    ;
+                
+                simple_argument         // All these return their value in context.token
+                    =    string
+                    |    hexstring
+                    |    word
+                    ;
+                
+                string                  // Returns value in context.token
+                    =    eps_p                    [ clear(str_) ]
+                      >> lexeme_d
+                         [
+                             ch_p('"')
+                          >> * ( ( lex_escape_ch_p[ ch_ = arg1 ] 
+                                   - '"' 
+                                 )                [ str_ += ch_ ]
+                               )
+                          >> quote_expected(ch_p('"'))
+                                                  [ token_ = construct_<Token>(Token::BasicString, 
+                                                                               str_) ]
+                         ]
+                    ;
+
+                hexstring               // Returns value in context.token
+                    =    eps_p                    [ clear(str_) ]
+                      >>  "x\""
+                      >> * ( hexbyte - ch_p('"') )
+                      >> quote_expected(ch_p('"'))
+                                                  [ token_ = construct_<Token>(Token::HexString,
+                                                                               str_) ]
+                    ;
+
+                path                    // Returns value in context.path
+                    =    eps_p                    [ clear(path_) ]
+                      >> relpath | abspath
+                    ;
+
+                relpath
+                    =    (   word                 [ push_back(path_, token_) ]
+                           % ch_p('/') )
+                      >> ( ! ch_p('/')            [ push_back(path_, construct_<Token>()) ] )
+                    ;
+
+                abspath
+                    =    ch_p('/')                [ push_back(path_, construct_<Token>()) ]
+                      >> ( relpath
+                         | eps_p                  [ push_back(path_, construct_<Token>()) ] )
+                    ;
+
+                balanced_tokens 
+                    =    ch_p('(')                [ token_ = construct_<Token>(
+                                                        Token::ArgumentGroupOpen,
+                                                        "(") ]
+                                                  [ bind(&PD::pushToken)(d_, token_) ]
+                      >> * token
+                      >> closing_paren_expected(ch_p(')'))
+                                                  [ token_ = construct_<Token>(
+                                                        Token::ArgumentGroupClose,
+                                                        ")") ]
+                                                  [ bind(&PD::pushToken)(d_, token_) ]
+                    ;
+
+                token
+                    =    simple_argument          [ bind(&PD::pushToken)(d_, token_) ]
+                    |    punctuation              [ bind(&PD::pushToken)(d_, token_) ]
+                    |    balanced_tokens
+                    ;
+
+                punctuation             // Returns value in context.str
+                    =    ch_p('/')                [ token_ = construct_<Token>(
+                                                        Token::PathSeparator,
+                                                        "/") ]
+                    |    ch_p('{')                [ token_ = construct_<Token>(
+                                                        Token::DirectoryGroupOpen,
+                                                        "{") ]
+                    |    ch_p('}')                [ token_ = construct_<Token>(
+                                                        Token::DirectoryGroupClose,
+                                                        "}") ]
+                    |    ch_p(';')                [ token_ = construct_<Token>(
+                                                        Token::CommandTerminator,
+                                                        ";") ]
+                    |    punctuation_p            [ token_ = construct_<Token>(
+                                                        Token::OtherPunctuation,
+                                                        construct_<std::string>(1u, arg1)) ]
+                    ;
+
+                word                    // Returns value in context.token
+                    =    lexeme_d
+                         [
+                             (+ word_p)           [ str_ = construct_<std::string>(arg1, arg2) ]
+                         ]
+                      >> eps_p                    [ token_ = construct_<Token>(
+                                                        Token::Word, 
+                                                        str_) ]
+                    ;
+
+                hexbyte
+                    =    uint_parser<char, 16, 2, 2>()
+                                                  [ push_back(str_, arg1) ]
+                    ;
+
+                statement_end
+                    =    if_p(var(self.incremental)) [
+                               ch_p(';')
+                         ]
+                         .else_p [
+                               ch_p(';') 
+                             | end_p
+                         ]
+                    ;
+
+                skip
+                    =    space_p | comment_p('#')
+                    ;
+
+                ///////////////////////////////////////////////////////////////////
+
+                start_parsers(
+                    command,            // CommandParser
+                    skip,               // SkipParser
+                    arguments           // ArgumentsParser
+                );
+
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(command,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(path,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(argument,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(word,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(string,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(hexstring,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(token,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(punctuation,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(hexbyte,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(balanced_tokens,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(simple_argument,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(complex_argument,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(builtin,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(commands,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(block,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(statement,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(relpath,1);
+                BOOST_SPIRIT_DEBUG_TRACE_RULE(abspath,1);
+            }
+        };
+    };
+
+#endif
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

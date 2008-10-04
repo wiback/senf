@@ -1,0 +1,128 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief EventManager inline non-template implementation */
+
+//#include "EventManager.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::Event
+
+prefix_ senf::scheduler::detail::Event::Event(std::string const & name)
+    : name_ (name), runCount_ (0u)
+{
+    EventManager::instance().add(*this);
+}
+
+prefix_ senf::scheduler::detail::Event::~Event()
+{
+    EventManager::instance().remove(*this);
+}
+
+prefix_ void senf::scheduler::detail::EventManager::add(Event & event)
+{
+    events_.push_back(event);
+}
+
+prefix_ void senf::scheduler::detail::EventManager::remove(Event & event)
+{
+    events_.erase(EventList::current(event));
+}
+
+prefix_ std::string const & senf::scheduler::detail::Event::name()
+    const
+{
+    return name_;
+}
+
+prefix_ bool senf::scheduler::detail::Event::enabled()
+    const
+{
+    return v_enabled();
+}
+
+prefix_ unsigned senf::scheduler::detail::Event::runCount()
+    const
+{
+    return runCount_;
+}
+
+prefix_ char const * senf::scheduler::detail::Event::type()
+    const
+{
+    return v_type();
+}
+
+prefix_ std::string senf::scheduler::detail::Event::info()
+    const
+{
+    return v_info();
+}
+
+prefix_ void senf::scheduler::detail::Event::countRun()
+{
+    ++ runCount_;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::EventManager
+
+prefix_ bool senf::scheduler::detail::EventManager::IteratorFilter::operator()(Event const & e)
+{
+    return e.type() != 0;
+}
+
+prefix_ senf::scheduler::detail::EventManager::iterator
+senf::scheduler::detail::EventManager::begin()
+    const
+{
+    // We need to filter out elements with e.type() == 0 ... the NullTask temporarily added
+    // by the FIFORunner is such an element and must be skipped.
+    return boost::make_filter_iterator(IteratorFilter(), events_.begin(), events_.end());
+}
+
+prefix_ senf::scheduler::detail::EventManager::iterator
+senf::scheduler::detail::EventManager::end()
+    const
+{
+    return boost::make_filter_iterator(IteratorFilter(), events_.end(), events_.end());
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

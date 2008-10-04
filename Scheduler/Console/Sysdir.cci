@@ -1,8 +1,8 @@
 // $Id$
 //
-// Copyright (C) 2007 
-// Fraunhofer Institut fuer offene Kommunikationssysteme (FOKUS)
-// Kompetenzzentrum fuer Satelitenkommunikation (SatCom)
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -20,7 +20,35 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#include "Scheduler/Console/Console.hh"
+/** \file
+    \brief Sysdir inline non-template implementation */
+
+#include "Sysdir.ih"
+
+// Custom includes
+#include "ScopedDirectory.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ senf::console::ScopedDirectory<> & senf::console::sysdir()
+{
+    return detail::SysdirManager::instance().sysdir();
+}
+
+prefix_ senf::console::ScopedDirectory<> &
+senf::console::detail::SysdirManager::sysdir()
+{
+    return sysdir_;
+}
+
+prefix_ senf::console::detail::SysdirManager::SysdirManager()
+{
+    senf::console::root().add("sys", sysdir_);
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:
