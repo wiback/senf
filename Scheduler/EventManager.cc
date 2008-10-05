@@ -39,7 +39,17 @@
 prefix_ senf::scheduler::detail::EventManager::EventManager()
 {
 #ifndef SENF_DISABLE_CONSOLE
-    consoleDir_().add("events", senf::membind(&EventManager::consoleEvents, this));
+    consoleDir_().add("events", senf::membind(&EventManager::consoleEvents, this))
+        .doc("List all scheduler events sorted by priority\n"
+             "\n"
+             "Columns:\n"
+             "    TP      event type: fd - file descriptor, tm - timer, si - UNIX signal\n"
+             "    NAME    descriptive event name\n"
+             "    ADDRESS address of event class instance\n"
+             "    RUNCNT  number of times, the event was called\n"
+             "    S       state: R - runnable, W - Waiting, '-' - event disabled\n"
+             "    INFO    further event specific information");
+
     senf::console::sysdir().add("scheduler", consoleDir_());
 #endif
 }

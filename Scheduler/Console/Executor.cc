@@ -232,7 +232,7 @@ prefix_ void senf::console::Executor::help(std::ostream & output,
                                            ParseCommandInfo::TokensRange path)
 {
     GenericNode const & node (traverseNode(path));
-    output << prettyName(typeid(node)) << " at " << node.path() << "\n\n";
+    // output << prettyName(typeid(node)) << " at " << node.path() << "\n\n";
     node.help(output);
     output << std::flush;
 }

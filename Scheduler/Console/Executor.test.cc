@@ -148,7 +148,7 @@ BOOST_AUTO_UNIT_TEST(executor)
         parser.parse("help /dir2", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinHELP );
-        BOOST_CHECK_EQUAL( os.str(), "senf::console::DirectoryNode at /dir2\n\nHelptext\n" );
+        BOOST_CHECK_EQUAL( os.str(), "Helptext\n" );
     }
 
     {
