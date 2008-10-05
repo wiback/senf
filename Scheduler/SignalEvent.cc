@@ -127,7 +127,7 @@ prefix_ void senf::scheduler::SignalEvent::v_run()
 prefix_ char const * senf::scheduler::SignalEvent::v_type()
     const
 {
-    return "signal";
+    return "si";
 }
 
 prefix_ std::string senf::scheduler::SignalEvent::v_info()

@@ -66,6 +66,8 @@ namespace detail {
 
             void run();
 
+            bool runnable() const;
+
         protected:
             void setRunnable();
             
@@ -81,6 +83,9 @@ namespace detail {
             friend class FIFORunner;
         };
 
+        typedef boost::filter_iterator<
+            EventManager::IteratorFilter, TaskList::const_iterator> iterator;
+
         using singleton<FIFORunner>::instance;
         using singleton<FIFORunner>::alive;
 
@@ -93,6 +98,9 @@ namespace detail {
         unsigned taskTimeout() const;
 
         unsigned hangCount() const;
+
+        iterator begin() const;
+        iterator end() const;
 
     protected:
 

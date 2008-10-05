@@ -173,7 +173,7 @@ prefix_ void senf::scheduler::TimerEvent::v_run()
 prefix_ char const * senf::scheduler::TimerEvent::v_type()
     const
 {
-    return "timer";
+    return "tm";
 }
 
 prefix_ std::string senf::scheduler::TimerEvent::v_info()

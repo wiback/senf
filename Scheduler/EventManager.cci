@@ -103,14 +103,16 @@ senf::scheduler::detail::EventManager::begin()
 {
     // We need to filter out elements with e.type() == 0 ... the NullTask temporarily added
     // by the FIFORunner is such an element and must be skipped.
-    return boost::make_filter_iterator(IteratorFilter(), events_.begin(), events_.end());
+    return boost::make_filter_iterator(
+        IteratorFilter(), events_.begin(), events_.end());
 }
 
 prefix_ senf::scheduler::detail::EventManager::iterator
 senf::scheduler::detail::EventManager::end()
     const
 {
-    return boost::make_filter_iterator(IteratorFilter(), events_.end(), events_.end());
+    return boost::make_filter_iterator(
+        IteratorFilter(), events_.end(), events_.end());
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

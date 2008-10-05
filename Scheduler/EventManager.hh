@@ -88,15 +88,16 @@ namespace detail {
     class EventManager
         : public singleton<EventManager>
     {
-        struct IteratorFilter {
-            bool operator()(Event const & e);
-        };
-
     public:
         using singleton<EventManager>::instance;
         using singleton<EventManager>::alive;
         
-        typedef boost::filter_iterator<IteratorFilter, EventList::const_iterator> iterator;
+        struct IteratorFilter {
+            bool operator()(Event const & e);
+        };
+
+        typedef boost::filter_iterator<
+            IteratorFilter, EventList::const_iterator> iterator;
 
         void add(Event & event);
         void remove(Event & event);

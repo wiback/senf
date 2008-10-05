@@ -46,24 +46,35 @@ prefix_ senf::scheduler::detail::EventManager::EventManager()
 
 prefix_ void senf::scheduler::detail::EventManager::consoleEvents(std::ostream & os)
 {
-    iterator i (begin());
-    iterator const i_end (end());
-    // On an 80 column display, this wraps nicely directly before the RUN column
-    os << boost::format("%-6s %-52s %-10s %-8s %7s %s\n")
-        % "TYPE"
-        % "NAME"
-        % "ADDRESS"
-        % "ACTIVE?"
-        % "RUN"
-        % "INFO";
-    for (; i != i_end; ++i)
-        os << boost::format("%-6.6s %-52.52s 0x%08x %-8.8s %7d %s\n")
-            % i->type()
-            % i->name() 
-            % reinterpret_cast<unsigned long>(&(*i))
-            % (i->enabled() ? "enabled" : "disabled")
-            % i->runCount()
-            % i->info();
+    // On an 80 column display, this wraps nicely directly before the INFO column
+    boost::format fmt  ("%s %-55.55s 0x%08x %8d %s %s\n");
+    os << boost::format("%s %-55.55s %-10s %8s %s %s\n")
+        % "TP" % "NAME" % "ADDRESS" % "RUNCNT" % "S" % "INFO";
+    {
+        FIFORunner::iterator i (FIFORunner::instance().begin());
+        FIFORunner::iterator const i_end (FIFORunner::instance().end());
+        for (; i != i_end; ++i)
+            os << fmt 
+                % i->type()
+                % i->name() 
+                % reinterpret_cast<unsigned long>(&(*i))
+                % i->runCount()
+                % (i->runnable() ? "R" : "W")
+                % i->info();
+    }
+    {
+        iterator i (begin());
+        iterator const i_end (end());
+        for (; i != i_end; ++i)
+            if (! i->enabled())
+                os << fmt
+                    % i->type()
+                    % i->name() 
+                    % reinterpret_cast<unsigned long>(&(*i))
+                    % i->runCount()
+                    % "-"
+                    % i->info();
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

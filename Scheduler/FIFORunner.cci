@@ -48,8 +48,15 @@ prefix_ void senf::scheduler::detail::FIFORunner::TaskInfo::setRunnable()
 
 prefix_ void senf::scheduler::detail::FIFORunner::TaskInfo::run()
 {
-    v_run();
     countRun();
+    // Be sure to run v_run last since the callback may destroy this instance
+    v_run();
+}
+
+prefix_ bool senf::scheduler::detail::FIFORunner::TaskInfo::runnable()
+    const
+{
+    return runnable_;
 }
 
 prefix_ bool senf::scheduler::detail::FIFORunner::TaskInfo::v_enabled()
@@ -83,6 +90,23 @@ prefix_ unsigned senf::scheduler::detail::FIFORunner::hangCount()
     const
 {
     return hangCount_;
+}
+
+prefix_ senf::scheduler::detail::FIFORunner::iterator
+senf::scheduler::detail::FIFORunner::begin()
+    const
+{
+    // We need to filter out elements with e.type() == 0 ... the NullTask temporarily added is such
+    // an element and must be skipped.
+    return boost::make_filter_iterator(
+        EventManager::IteratorFilter(), tasks_.begin(), tasks_.end());
+}
+
+prefix_ senf::scheduler::detail::FIFORunner::iterator senf::scheduler::detail::FIFORunner::end()
+    const
+{
+    return boost::make_filter_iterator(
+        EventManager::IteratorFilter(), tasks_.end(), tasks_.end());
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////
