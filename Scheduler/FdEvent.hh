@@ -138,7 +138,6 @@ namespace scheduler {
 
 	void disable();                 ///< Disable event
 	void enable();                  ///< Enable event
-	bool enabled();                 ///< \c true if event enabled, \c false otherwise
 
 	FdEvent & action(Callback const & cb); ///< Change event callback
 

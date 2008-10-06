@@ -106,7 +106,6 @@ namespace scheduler {
 
         void disable();                 ///< Disable timer
         void enable();                  ///< Enable timer
-        bool enabled();                 ///< \c true, if timer enabled, \c false otherwise        
 
         void action(Callback const & cb); ///< Change timer event callback
         void timeout(ClockService::clock_type timeout, bool initiallyEnabled=true);

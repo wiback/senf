@@ -65,11 +65,6 @@ prefix_ void senf::scheduler::TimerEvent::disable()
         senf::scheduler::detail::TimerDispatcher::instance().remove(*this);
 }
 
-prefix_ bool senf::scheduler::TimerEvent::enabled()
-{
-    return detail::TimerSetBase::linked();
-}
-
 prefix_ void senf::scheduler::TimerEvent::action(Callback const & cb)
 {
     cb_ = cb;

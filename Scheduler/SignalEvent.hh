@@ -91,7 +91,7 @@ namespace scheduler {
 
         void disable();                 ///< Enable signal event registration
         void enable();                  ///< Disable the signal event registration
-        bool enabled() const;           ///< \c true, if event enabled, \c false otherwise
+
         void action(Callback const & cb); ///< Change signal event callback
 
     private:

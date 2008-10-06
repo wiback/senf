@@ -45,11 +45,6 @@ prefix_ senf::scheduler::FdEvent::~FdEvent()
 	disable();
 }
 
-prefix_ bool senf::scheduler::FdEvent::enabled()
-{
-    return detail::FdSetBase::linked();
-}
-
 prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::action(Callback const & cb)
 {
     cb_ = cb;

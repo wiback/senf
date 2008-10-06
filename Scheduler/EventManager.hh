@@ -65,11 +65,11 @@ namespace detail {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        std::string const & name() const;
-        bool enabled() const;
-        unsigned runCount() const;
-        char const * type() const;
-        std::string info() const;
+        std::string const & name() const; ///< Get event name
+        bool enabled() const;           ///< \c true, if event is enabled, \c false otherwise
+        unsigned runCount() const;      ///< Number of times, event was fired
+        char const * type() const;      ///< Event type code
+        std::string info() const;       ///< Additional event information
 
     protected:
         void countRun();
