@@ -311,23 +311,30 @@ senf::INet6MulticastSocketProtocol::mcDropMembership(INet6Address const & mcAddr
 }
 
 namespace {
-    void mc6SSMSourceRequest(int operation, int fd, senf::INet6Address const & group,
-                             senf::INet6Address const & source, std::string const & iface)
-    {
-        struct group_source_req req;
-        ::memset(&req, 0, sizeof(req));
-        req.gsr_interface = if_nametoindex(iface.c_str());
-        if (req.gsr_interface == 0)
-            throw senf::SystemException("::if_nametoindex()", ENOENT SENF_EXC_DEBUGINFO);
-        req.gsr_group.ss_family = AF_INET6;
-        std::copy(group.begin(), group.end(),
-                  reinterpret_cast<struct sockaddr_in6&>(req.gsr_group).sin6_addr.s6_addr);
-        req.gsr_source.ss_family = AF_INET6;
-        std::copy(source.begin(), source.end(),
-                  reinterpret_cast<struct sockaddr_in6&>(req.gsr_source).sin6_addr.s6_addr);
-        if (::setsockopt(fd, SOL_IPV6, MCAST_JOIN_SOURCE_GROUP, &req, sizeof(req)) < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("::setsockopt()");
+void mc6SSMSourceRequest(int operation, int fd, senf::INet6Address const & group,
+                         senf::INet6Address const & source, int const & ifacei)
+{
+    struct group_source_req req;
+    ::memset(&req, 0, sizeof(req));
+    req.gsr_interface = ifacei;
+    req.gsr_group.ss_family = AF_INET6;
+    std::copy(group.begin(), group.end(),
+              reinterpret_cast<struct sockaddr_in6&>(req.gsr_group).sin6_addr.s6_addr);
+    req.gsr_source.ss_family = AF_INET6;
+    std::copy(source.begin(), source.end(),
+              reinterpret_cast<struct sockaddr_in6&>(req.gsr_source).sin6_addr.s6_addr);
+    if (::setsockopt(fd, SOL_IPV6, MCAST_JOIN_SOURCE_GROUP, &req, sizeof(req)) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("::setsockopt()");
+}
+void mc6SSMSourceRequest(int operation, int fd, senf::INet6Address const & group,
+                         senf::INet6Address const & source, std::string const & iface)
+{
+    int ifacei = if_nametoindex(iface.c_str());
+    if (ifacei == 0)
+        throw senf::SystemException("::if_nametoindex()", ENOENT SENF_EXC_DEBUGINFO);
+    mc6SSMSourceRequest(operation, fd, group, source, ifacei);
     }
+
 }
 
 prefix_ void senf::INet6MulticastSocketProtocol::mcJoinSSMSource(INet6Address const & group,
@@ -338,6 +345,20 @@ prefix_ void senf::INet6MulticastSocketProtocol::mcJoinSSMSource(INet6Address co
     mc6SSMSourceRequest(MCAST_JOIN_SOURCE_GROUP, fd(), group, source, iface);
 }
 
+prefix_ void senf::INet6MulticastSocketProtocol::mcJoinSSMSource(INet6Address const & group,
+                                                                 INet6Address const & source,
+                                                                 int ifacei)
+    const
+{
+    mc6SSMSourceRequest(MCAST_JOIN_SOURCE_GROUP, fd(), group, source, ifacei);
+}
+prefix_ void senf::INet6MulticastSocketProtocol::mcJoinSSMSource(INet6Address const & group,
+                                                                 INet6Address const & source)
+    const
+{
+    mc6SSMSourceRequest(MCAST_JOIN_SOURCE_GROUP, fd(), group, source, 0);
+}
+
 prefix_ void senf::INet6MulticastSocketProtocol::mcLeaveSSMSource(INet6Address const & group,
                                                                   INet6Address const & source,
                                                                   std::string const & iface)
@@ -345,6 +366,7 @@ prefix_ void senf::INet6MulticastSocketProtocol::mcLeaveSSMSource(INet6Address c
 {
     mc6SSMSourceRequest(MCAST_LEAVE_SOURCE_GROUP, fd(), group, source, iface);
 }
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

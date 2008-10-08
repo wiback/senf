@@ -197,6 +197,24 @@ namespace senf {
                                              \param[in] source SSM multicast source to join the
                                                  group on
                                              \param[in] iface interface to join the group on */
+        void mcJoinSSMSource(INet6Address const & group, INet6Address const & source, 
+                             int ifacei) const;
+                                        ///< join SSM multicast group
+                                        /**< This call will join the multicast group \a group for
+                                             traffic from \a source. A single group may be joined
+                                             multiple times on different sources.
+                                             \param[in] group multicast group to join
+                                             \param[in] source SSM multicast source to join the
+                                                 group on
+                                             \param[in] ifacei interface index to join the group on */
+        void mcJoinSSMSource(INet6Address const & group, INet6Address const & source) const;
+                                        ///< join SSM multicast group
+                                        /**< This call will join the multicast group \a group for
+                                             traffic from \a source. A single group may be joined
+                                             multiple times on different sources.
+                                             \param[in] group multicast group to join
+                                             \param[in] source SSM multicast source to join the
+                                                 group on */
         void mcLeaveSSMSource(INet6Address const & group, INet6Address const & source,
                               std::string const & iface) const;
                                         ///< leave SSM multicast group
