@@ -40,6 +40,9 @@ namespace senf {
     ///\{
    
     /** \brief Generic addressing type independent multicast protocol facet
+
+        \todo implement complete new multicast API from RFC3678 (as far as supported by linux)
+        \bug mcLeaveSSMSource fails with EADDRNOTAVAIL
      */
     class MulticastSocketProtocol 
         : public virtual SocketProtocol
@@ -125,6 +128,26 @@ namespace senf {
                                              interface with the given local address.
                                              \param[in] mcAddr address of group to leave
                                              \param[in] iface interface name */
+
+        void mcJoinSSMSource(INet4Address const & group, INet4Address const & source, 
+                             std::string const & iface) const;
+                                        ///< join SSM multicast group
+                                        /**< This call will join the multicast group \a group for
+                                             traffic from \a source. A single group may be joined
+                                             multiple times on different sources.
+                                             \param[in] group multicast group to join
+                                             \param[in] source SSM multicast source to join the
+                                                 group on
+                                             \param[in] iface interface to join the group on */
+        void mcLeaveSSMSource(INet4Address const & group, INet4Address const & source,
+                              std::string const & iface) const;
+                                        ///< leave SSM multicast group
+                                        /**< This call will leave the multicast group \a group for
+                                             traffic from \a source.
+                                             \param[in] group multicast group to leave
+                                             \param[in] source SSM multicast source to leave the
+                                                 group from
+                                             \param[in] iface interface to leave the group on */
     };
 
     /** \brief Multicast protocol facet for INet6 addressable multicast enabled sockets
@@ -156,14 +179,33 @@ namespace senf {
                                              multicast groups received. The group is left from the
                                              default interface.
                                              \param[in] mcAddr address of group to leave */
-        void mcDropMembership(INet6Address const & mcAddr, std::string const & iface) 
-            const;
+        void mcDropMembership(INet6Address const & mcAddr, std::string const & iface) const;
                                         ///< leave multicast group on a specific interface
                                         /**< This member will remove \a mcAddr from the list of
                                              multicast groups received. The group is left from the
                                              interface with the given local address.
                                              \param[in] mcAddr address of group to leave
                                              \param[in] iface interface name */
+
+        void mcJoinSSMSource(INet6Address const & group, INet6Address const & source, 
+                             std::string const & iface) const;
+                                        ///< join SSM multicast group
+                                        /**< This call will join the multicast group \a group for
+                                             traffic from \a source. A single group may be joined
+                                             multiple times on different sources.
+                                             \param[in] group multicast group to join
+                                             \param[in] source SSM multicast source to join the
+                                                 group on
+                                             \param[in] iface interface to join the group on */
+        void mcLeaveSSMSource(INet6Address const & group, INet6Address const & source,
+                              std::string const & iface) const;
+                                        ///< leave SSM multicast group
+                                        /**< This call will leave the multicast group \a group for
+                                             traffic from \a source.
+                                             \param[in] group multicast group to leave
+                                             \param[in] source SSM multicast source to leave the
+                                                 group from
+                                             \param[in] iface interface to leave the group on */
     };
 
     ///\}

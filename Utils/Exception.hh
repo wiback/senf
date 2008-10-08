@@ -308,7 +308,7 @@ namespace senf {
 #       define SENF_EXC_DEBUGINFO
 #   endif
 
-#   define SENF_THROW_SYSTEM_EXCEPTION(desc) throw SystemException(desc SENF_EXC_DEBUGINFO)
+#   define SENF_THROW_SYSTEM_EXCEPTION(desc) throw senf::SystemException(desc SENF_EXC_DEBUGINFO)
 
 }
 
