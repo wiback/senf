@@ -38,9 +38,10 @@
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::module::PassiveQueue::init()
+prefix_ void senf::ppi::module::PassiveQueue::v_init()
 {
-    output.throttle();
+    if (!input)
+        output.throttle();
 }
 
 prefix_ void senf::ppi::module::PassiveQueue::onInput()

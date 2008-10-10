@@ -53,11 +53,11 @@ namespace connector {
         \li it has an (optional) packet type
 
         \e Active connectors are activated from within the module, \e passive connectors are
-        signaled by the external framework. \e Input modules receive packets, \e output modules send
-        packets.
+        signaled by the external framework. \e Input connectors receive packets, \e output
+        connectors send packets.
 
         All passive connectors call some onRequest callback whenever I/O needs to be performed. All
-        input modules possess a packet queue.
+        input connectors possess a packet queue.
 
         We therefore have 4 connector types each of which is parameterized by the type of packet
         traversing the connector:
@@ -90,7 +90,7 @@ namespace connector {
         private:
             void onRequest() {
                 // 'input()' will return a senf::EthernetPacket packet handle
-                try { output( input().find<IpPacket>() ); }
+                try { output( input().find<senf::IpPacket>() ); }
                 catch (senf::InvalidPacketChainException & ex) { ; }
             }
         };
@@ -128,16 +128,20 @@ namespace connector {
         Connector & peer() const;       ///< Get peer connected to this connector
         module::Module & module() const; ///< Get this connectors containing module
 
+        bool connected() const;         ///< \c true, if connector connected, \c false otherwise
+
     protected:
         Connector();
         virtual ~Connector();
 
         void connect(Connector & target);
-
+        
     private:
         virtual std::type_info const & packetTypeID();
 
         void setModule(module::Module & module);
+        void init();        
+        virtual void v_init() = 0;        
 
         Connector * peer_;
         module::Module * module_;
@@ -193,6 +197,8 @@ namespace connector {
         void emit();
 
     private:
+        virtual void v_init();
+
         // Called by the routing to change the remote throttling state
         void notifyThrottle();          ///< Forward a throttle notification to this connector
         void notifyUnthrottle();        ///< Forward an unthrottle notification to this connector
@@ -268,6 +274,8 @@ namespace connector {
         ActiveConnector();
 
     private:
+        virtual void v_init();
+
         // called by the peer() to forward throttling notifications
         void notifyThrottle();
         void notifyUnthrottle();
@@ -280,6 +288,8 @@ namespace connector {
 
         typedef std::vector<ForwardingRoute*> NotifyRoutes;
         NotifyRoutes notifyRoutes_;
+
+        bool throttled_;        
 
         friend class senf::ppi::ForwardingRoute;
         friend class PassiveConnector;
@@ -560,7 +570,7 @@ namespace connector {
     {
     public:
         operator()(PacketType packet);  ///< Send out a packet
-        write(PacketType packet);       ///< Alias for operator()
+        void write(PacketType packet);  ///< Alias for operator()
     };
 
     /** \brief Connector passively providing packets
@@ -580,7 +590,7 @@ namespace connector {
     {
     public:
         operator()(PacketType packet);  ///< Send out a packet
-        write(PacketType packet);       ///< Alias for operator()
+        void write(PacketType packet);  ///< Alias for operator()
     };
 
 #endif

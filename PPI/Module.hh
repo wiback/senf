@@ -289,7 +289,8 @@ namespace module {
 
     private:
 #endif
-        virtual void init();            ///< Called just before the network is run
+        void init();
+        virtual void v_init();
 
 #ifndef DOXYGEN
     public:

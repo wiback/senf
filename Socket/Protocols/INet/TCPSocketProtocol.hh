@@ -29,6 +29,7 @@
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"
+#include "INetSocketProtocol.hh"
 
 //#include "TCPSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -44,7 +45,7 @@ namespace senf {
         which are available on any TCP socket.
      */
     class TCPSocketProtocol
-        : public virtual SocketProtocol
+        : public virtual INetSocketProtocol
     {
     public:
         bool nodelay() const;           ///< Check current \c SO_NODELAY status

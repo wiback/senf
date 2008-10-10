@@ -1,0 +1,7 @@
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+SENFSCons.Binary(env, 'multimcloop', [ 'MultiMCLoop.cc' ],
+                 LIBS = [ 'Scheduler', 'Socket', 'Utils' ])

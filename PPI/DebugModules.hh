@@ -120,7 +120,7 @@ namespace debug {
 
     private:
         void request();
-        void init();
+        virtual void v_init();
 
         Queue packets_;
     };

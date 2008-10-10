@@ -44,7 +44,7 @@ namespace senf {
         
      */
     class RawINetSocketProtocol
-        : public virtual SocketProtocol
+        : public virtual INetSocketProtocol
     {
     public:
         ///\name Abstract Interface Implementation

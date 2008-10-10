@@ -29,6 +29,7 @@
 // Custom includes
 #include "Route.hh"
 #include "Module.hh"
+#include "ModuleManager.hh"
 
 //#include "Connectors.mpp"
 #define prefix_
@@ -51,6 +52,9 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
             
     peer_ = & target;
     target.peer_ = this;
+
+    if (ModuleManager::instance().running())
+        v_init();
 }
 
 prefix_ std::type_info const & senf::ppi::connector::Connector::packetTypeID()
@@ -63,6 +67,24 @@ prefix_ std::type_info const & senf::ppi::connector::Connector::packetTypeID()
 
 ////////////////////////////////////////
 // private members
+
+prefix_ void senf::ppi::connector::PassiveConnector::v_init()
+{
+    Routes::const_iterator i (routes_.begin());
+    Routes::const_iterator const i_end (routes_.end());
+    for (; i != i_end; ++i)
+        if ((*i)->throttled())
+            break;
+    if (i == i_end)
+        remoteThrottled_ = false;
+    if (throttled())
+        emitThrottle();
+    else
+        emitUnthrottle();
+}
+
+prefix_ void senf::ppi::connector::PassiveConnector::v_unthrottleEvent()
+{}
 
 prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
 {
@@ -87,24 +109,36 @@ prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
 ////////////////////////////////////////
 // private members
 
+prefix_ void senf::ppi::connector::ActiveConnector::v_init()
+{
+    if (! connected())
+        notifyThrottle();
+}
+
 prefix_ void senf::ppi::connector::ActiveConnector::notifyThrottle()
 {
-    if (throttleCallback_)
-        throttleCallback_();
-    NotifyRoutes::const_iterator i (notifyRoutes_.begin());
-    NotifyRoutes::const_iterator const i_end (notifyRoutes_.end());
-    for (; i != i_end; ++i)
-        (*i)->notifyThrottle();
+    if (! throttled_) {
+        throttled_ = true;
+        if (throttleCallback_)
+            throttleCallback_();
+        NotifyRoutes::const_iterator i (notifyRoutes_.begin());
+        NotifyRoutes::const_iterator const i_end (notifyRoutes_.end());
+        for (; i != i_end; ++i)
+            (*i)->notifyThrottle();
+    }
 }
 
 prefix_ void senf::ppi::connector::ActiveConnector::notifyUnthrottle()
 {
-    if (unthrottleCallback_)
-        unthrottleCallback_();
-    NotifyRoutes::const_iterator i (notifyRoutes_.begin());
-    NotifyRoutes::const_iterator const i_end (notifyRoutes_.end());
-    for (; i != i_end; ++i)
-        (*i)->notifyUnthrottle();
+    if (throttled_) {
+        throttled_ = false;
+        if (unthrottleCallback_)
+            unthrottleCallback_();
+        NotifyRoutes::const_iterator i (notifyRoutes_.begin());
+        NotifyRoutes::const_iterator const i_end (notifyRoutes_.end());
+        for (; i != i_end; ++i)
+            (*i)->notifyUnthrottle();
+    }
 }
 
 prefix_ void senf::ppi::connector::ActiveConnector::registerRoute(ForwardingRoute & route)

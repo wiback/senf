@@ -65,12 +65,17 @@ namespace senf {
 
         bool mcLoop() const;            ///< Return current multicast loopback state. 
         void mcLoop(bool value) const;  ///< Set multicast loopback state
-        /**< If set to false via \c mcLoop(value) multicast messages will not be looped back  to local sockets. Default value is \c true (1).   */
+                                        /**< If set to false via \c mcLoop(value) multicast messages
+                                             will not be looped back to local sockets. Default value
+                                             is \c true. */
 
         void mcIface(std::string const & iface = std::string()) const;
                                         ///< Set multicast send interface of the socket
                                         /**< \param[in] iface name of interface to send multicast
-                                             data from */
+                                             data from 
+
+                                             Under current linux versions this option is broken at
+                                             best. Don't use. */
     };
 
     /** \brief Multicast protocol facet for INet4 addressable multicast enabled sockets
@@ -85,8 +90,7 @@ namespace senf {
                                              groups received. The group is joined on the default
                                              interface.
                                              \param[in] mcAddr address of group to join */
-        void mcAddMembership(INet4Address const & mcAddr, INet4Address const & localAddr) 
-            const;
+        void mcAddMembership(INet4Address const & mcAddr, INet4Address const & localAddr) const;
                                         ///< join multicast group on a specific interface
                                         /**< This member will add \a mcAddr to the list of multicast
                                              groups received. The group is joined on the interface
@@ -165,7 +169,7 @@ namespace senf {
                                              groups received. The group is joined on the default
                                              interface.
                                              \param[in] mcAddr address of group to join */
-        void mcAddMembership(INet6Address const & mcAddr, std::string const & iface);
+        void mcAddMembership(INet6Address const & mcAddr, std::string const & iface) const;
                                         ///< join multicast group on a specific interface
                                         /**< This member will add \a mcAddr to the list of multicast
                                              groups received. The group is joined on the given
@@ -196,9 +200,10 @@ namespace senf {
                                              \param[in] group multicast group to join
                                              \param[in] source SSM multicast source to join the
                                                  group on
-                                             \param[in] iface interface to join the group on */
+                                             \param[in] iface interface to join the group on. If set
+                                                 to the empty string, use the default interface. */
         void mcJoinSSMSource(INet6Address const & group, INet6Address const & source, 
-                             int ifacei) const;
+                             int ifacei = 0) const;
                                         ///< join SSM multicast group
                                         /**< This call will join the multicast group \a group for
                                              traffic from \a source. A single group may be joined
@@ -206,14 +211,7 @@ namespace senf {
                                              \param[in] group multicast group to join
                                              \param[in] source SSM multicast source to join the
                                                  group on
-                                             \param[in] ifacei interface index to join the group on */
-        void mcJoinSSMSource(INet6Address const & group, INet6Address const & source) const;
-                                        ///< join SSM multicast group
-                                        /**< This call will join the multicast group \a group for
-                                             traffic from \a source. A single group may be joined
-                                             multiple times on different sources.
-                                             \param[in] group multicast group to join
-                                             \param[in] source SSM multicast source to join the
+                                             \param[in] ifacei optional interface index to join the
                                                  group on */
         void mcLeaveSSMSource(INet6Address const & group, INet6Address const & source,
                               std::string const & iface) const;

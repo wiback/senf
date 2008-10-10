@@ -70,7 +70,7 @@ namespace module {
                                              \see connector::GenericPassiveInput::qdisc() */
 
     private:
-        void init();
+        virtual void v_init();
 
         void onInput();
         void onOutput();

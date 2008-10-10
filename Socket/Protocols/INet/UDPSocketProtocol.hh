@@ -30,6 +30,7 @@
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"
 #include "INetAddressing.hh"
+#include "INetSocketProtocol.hh"
 
 //#include "UDPSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -45,7 +46,7 @@ namespace senf {
         which are available on any UDP socket.
      */
     class UDPSocketProtocol
-        : public virtual SocketProtocol
+        : public virtual INetSocketProtocol
     {
     public:
         ///\name Abstract Interface Implementation
