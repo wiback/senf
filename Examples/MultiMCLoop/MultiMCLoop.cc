@@ -32,6 +32,7 @@
 #include <senf/Utils/membind.hh>
 #include <senf/Socket/Protocols/INet.hh>
 #include <boost/format.hpp>
+#include <boost/scoped_ptr.hpp>
 
 //#include "MultiMCLoop.mpp"
 #define prefix_
@@ -156,7 +157,8 @@ void sigintHandler(siginfo_t const &)
 int main(int argc, char * argv[])
 {
     try {
-        IfSetup setup ("dummy0");
+        boost::scoped_ptr<IfSetup> setup (
+            (argc != 2 || std::string(argv[1]) != "-n") ? new IfSetup("dummy0") : 0);
         
         senf::scheduler::SignalEvent sigint (SIGINT, &sigintHandler);
 
