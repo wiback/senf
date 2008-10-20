@@ -56,7 +56,7 @@ prefix_ Handle senf::ReadHelper<Handle>::handle()
 }
 
 template <class Handle>
-prefix_ unsigned senf::ReadHelper<Handle>::maxSize()
+prefix_ std::string::size_type senf::ReadHelper<Handle>::maxSize()
     const
 {
     return maxSize_;

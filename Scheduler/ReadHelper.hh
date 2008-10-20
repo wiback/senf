@@ -113,7 +113,7 @@ namespace senf {
         ///////////////////////////////////////////////////////////////////////////
 
         Handle handle() const;          ///< Access the handle object
-        unsigned maxSize() const;       ///< Return maximum number of bytes to be read
+        std::string::size_type maxSize() const; ///< Return maximum number of bytes to be read
 
         std::string const & data() const; ///< return data read
         std::string const & tail() const; ///< return data read but not matched by the predicate
@@ -129,7 +129,8 @@ namespace senf {
     private:
         struct InternalPredicate;
 
-        ReadHelper(Handle handle, unsigned maxSize,  InternalPredicate * predicate, Callback cb);
+        ReadHelper(Handle handle, std::string::size_teyp maxSize,  
+                   InternalPredicate * predicate, Callback cb);
 
         static void dispatchProcess(ptr helper, Handle handle, int event);
         void process(Handle handle, int event);
