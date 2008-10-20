@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "Connectors.hh"
+#include "Module.hh"
 #include "ModuleManager.hh"
 
 #define prefix_ inline

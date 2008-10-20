@@ -34,8 +34,12 @@
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::TaskInfo(std::string const & name)
-    : Event(name), runnable_ (false)
+///////////////////////////////////////////////////////////////////////////
+//  senf::scheduler::detail::FIFORunner::TaskInfo
+
+prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::TaskInfo(std::string const & name,
+                                                                Priority priority)
+    : Event(name), runnable_ (false), priority_ (priority)
 {}
 
 prefix_ senf::scheduler::detail::FIFORunner::TaskInfo::~TaskInfo()
@@ -65,9 +69,40 @@ prefix_ bool senf::scheduler::detail::FIFORunner::TaskInfo::v_enabled()
     return TaskListBase::linked();
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::FIFORunner::NullTask
+
+prefix_ senf::scheduler::detail::FIFORunner::NullTask::NullTask()
+    : senf::scheduler::detail::FIFORunner::TaskInfo ("<null>") 
+{}
+
+prefix_ senf::scheduler::detail::FIFORunner::NullTask::~NullTask()
+{
+    if (TaskListBase::linked())
+        FIFORunner::instance().dequeue(this);
+}
+
+prefix_ void senf::scheduler::detail::FIFORunner::NullTask::v_run()
+{}
+
+prefix_ char const * senf::scheduler::detail::FIFORunner::NullTask::v_type()
+    const
+{
+    return 0;
+}
+
+prefix_ std::string senf::scheduler::detail::FIFORunner::NullTask::v_info()
+    const
+{
+    return "";
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::FIFORunner
+
 prefix_ void senf::scheduler::detail::FIFORunner::enqueue(TaskInfo * task)
 {
-    tasks_.push_back(*task);
+    tasks_.insert(priorityEnd(task->priority_), *task);
 #ifdef SENF_DEBUG
     std::stringstream ss;
     backtrace(ss, 32);

@@ -32,6 +32,7 @@
 #include "FdEvent.hh"
 #include "TimerEvent.hh"
 #include "SignalEvent.hh"
+#include "EventEvent.hh"
 
 //#include "scheduler.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -64,6 +65,7 @@ namespace senf {
     \li senf::scheduler::FdEvent for file descriptor events
     \li senf::scheduler::TimerEvent for single-shot deadline timer events
     \li senf::scheduler::SignalEvent for UNIX signal events
+    \li senf::scheduler::EventEvent for a special event hook
 
     These instance are owned and managed by the user of the scheduler \e not by the scheduler so the
     RAII concept can be used.

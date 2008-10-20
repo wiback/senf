@@ -75,9 +75,9 @@ namespace scheduler {
         handles are provided.
 
         The FdEvent class is an implementation of the RAII idiom: The event will be automatically
-        unregistered in the FdEvent destructor. The TimerEvent instance should be created
-        within the same scope or on a scope below where the callback is defined (e.g. if the
-        callback is a member function it should be defined as a class member).
+        unregistered in the FdEvent destructor. The FdEvent instance should be created within the
+        same scope or on a scope below where the callback is defined (e.g. if the callback is a
+        member function it should be defined as a class member).
      */
     class FdEvent
 	: public detail::FIFORunner::TaskInfo,

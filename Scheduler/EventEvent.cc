@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2008 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,62 +21,65 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ModuleManager non-inline non-template implementation */
+    \brief EventEvent non-inline non-template implementation */
 
-#include "ModuleManager.hh"
-//#include "ModuleManager.ih"
+#include "EventEvent.hh"
+#include "EventEvent.ih"
 
 // Custom includes
-#include "../Scheduler/Scheduler.hh"
-#include "../Utils/membind.hh"
-#include "Module.hh"
 
-//#include "ModuleManager.mpp"
+//#include "EventEvent.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::ModuleManager
+// senf::scheduler::EventEvent
 
-prefix_ void senf::ppi::ModuleManager::init()
+prefix_ void senf::scheduler::EventEvent::v_run()
 {
-    while (! initQueue_.empty()) {
-        initQueue_.front()->v_init();
-        initQueue_.pop_front();
-    }
-    initRunner_.disable();
+    cb_();
 }
 
-#ifndef DOXYGEN
-
-struct senf::ppi::ModuleManager::RunGuard
+prefix_ char const * senf::scheduler::EventEvent::v_type()
+    const
 {
-    RunGuard(ModuleManager & m) : manager(m) { manager.running_ = true; }
-    ~RunGuard() { manager.running_ = false; }
-    ModuleManager & manager;
-};
-
-#endif
-
-prefix_ void senf::ppi::ModuleManager::run()
-{
-    init();
-    RunGuard guard (*this);
-    scheduler::process();
+    return "ee";
 }
 
-////////////////////////////////////////
-// private members
+prefix_ std::string senf::scheduler::EventEvent::v_info()
+    const
+{
+    return "";
+}
 
-prefix_ senf::ppi::ModuleManager::ModuleManager()
-    : running_(false), terminate_(false), 
-      initRunner_ ("senf::ppi::init", membind(&ModuleManager::init, this), false, 
-                   scheduler::EventEvent::PRIORITY_LOW)
-{}
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::EventEventDispatcher
+
+prefix_ senf::scheduler::detail::EventEventDispatcher::~EventEventDispatcher()
+{
+    for (EventList::iterator i (events_.begin()); i != events_.end(); ++i)
+        FIFORunner::instance().dequeue(&(*i));
+}
+
+prefix_ prefix_ void senf::scheduler::detail::EventEventDispatcher::remove(EventEvent & event)
+{
+    EventList::iterator i (EventList::current(event));
+    if (i == events_.end())
+        return;
+    FIFORunner::instance().dequeue(&event);
+    events_.erase(i);
+}
+
+prefix_ void senf::scheduler::detail::EventEventDispatcher::prepareRun()
+{
+    for (EventList::iterator i (events_.begin()); i != events_.end(); ++i)
+        i->setRunnable();
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "ModuleManager.mpp"
+//#include "EventEvent.mpp"
 
 
 // Local Variables:

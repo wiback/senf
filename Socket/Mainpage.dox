@@ -30,7 +30,9 @@ namespace senf {
     \autotoc
     
     \section socket_intro Introduction
-
+    \seechapter \ref structure \n
+    \seechapter \ref usage
+    
     The socket library abstraction is based on several concepts:
 
     \li The basic visible interface is a \link handle_group handle object\endlink
@@ -40,12 +42,10 @@ namespace senf {
         protocol_group protocol classes \endlink
     \li There is a family of auxilliary \ref addr_group to supplement the socket library
 
-    \see
-        \ref structure \n
-        \ref usage
-
 
     \section socket_handle Socket Handles
+    \seechapter \ref handle_group \n
+    \seechapter \ref concrete_protocol_group
 
     The handle/body architecture provides automatic reference counted management of socket
     instances. This is the visible interface to the socket library.
@@ -53,30 +53,26 @@ namespace senf {
     Each specific protocol is used primarily via a protocol specific handle (a typedef
     symbol). However, more generic kinds of handles can be defined for more generic functionality.
 
-    \see 
-        \ref handle_group \n
-        \ref concrete_protocol_group
 
     
     \section socket_policy The Policy interface
+    \seechapter \ref policy_group
 
     The policy framework configures the exact features, a specific type of socket handle
     provides. This offers highly efficient access to the most important socket functions (like
     reading and writing). The policy interface however is a \e static, non-polymorphic interface.
 
-    \see
-        \ref policy_group
     
     \section socket_protocol The Protocol interface
+    \seechapter \ref protocol_group
+    
 
     The protocol interface provides further protocol dependent and (possibly) polymorphic access to
     further socket funcitonality. On the other hand, this type of interface is not as flexible,
     generic and fast as the policy interface.
 
-    \see
-        \ref protocol_group
-    
     \section socket_addr Auxilliary Addressing classes
+    \seechapter \ref addr_group
     
     To supplement the socket library, there are a multitude of addressing classes. These come in two
     basic groups:
@@ -87,18 +83,14 @@ namespace senf {
     corresponding low-level address, the socket addresses are based on the corresponding \c sockaddr
     structures. 
     
-    \see
-        \ref addr_group
-
     \section socket_further Going further
+    \seechapter \ref extend \n
+    \seechapter \ref implementation
 
     The socket library is highly flexible and extensible. The implementation is not restricted to
     plain BSD sockets: Any type of read/write communication can be wrapped into the socket library
     (one Example is the TapSocketHandle which provides access to a Linux \c tap device).
 
-    \see
-        \ref extend \n
-        \ref implementation
  */
 
 /** \page structure Overview of the Socket Library Structure

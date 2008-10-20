@@ -221,7 +221,7 @@
     must be untyped (they accept arbitrary senf::Packet's, the optional tempalte argument is empty),
     or they both accept the same type of packet. This check is performed at runtime. 
 
-    To complete our simplified example: Lets connet senf::ppi::module::ActiveSocketReader and
+    To complete our simplified example: Lets connect senf::ppi::module::ActiveSocketReader and
     senf::ppi::module::PassiveSocketWriter to our example module:
 
     \code

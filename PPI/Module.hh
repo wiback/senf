@@ -33,6 +33,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include "../Scheduler/ClockService.hh"
 #include "predecl.hh"
+#include "ModuleManager.hh"
 
 //#include "Module.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -167,7 +168,7 @@ namespace module {
         \see \ref ppi_modules
      */
     class Module
-        : boost::noncopyable
+        : ModuleManager::Initializable, boost::noncopyable
     {
     public:
         virtual ~Module();
@@ -289,7 +290,6 @@ namespace module {
 
     private:
 #endif
-        void init();
         virtual void v_init();
 
 #ifndef DOXYGEN

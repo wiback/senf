@@ -38,15 +38,6 @@
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::module::Module::init()
-{
-    ConnectorRegistry::iterator i (connectorRegistry_.begin());
-    ConnectorRegistry::iterator i_end (connectorRegistry_.end());
-    for (; i != i_end; ++i)
-        (*i)->init();
-    v_init();
-}
-
 prefix_ void senf::ppi::module::Module::v_init()
 {}
 

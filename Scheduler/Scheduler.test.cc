@@ -212,6 +212,12 @@ namespace {
         senf::scheduler::terminate();
     }
 
+    unsigned eventCount (0);
+
+    void eventeventhandler()
+    {
+        ++ eventCount;
+    }
 }
 
 BOOST_AUTO_UNIT_TEST(testScheduler)
@@ -235,6 +241,9 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
     }
 
     ///////////////////////////////////////////////////////////////////////////
+
+    senf::scheduler::EventEvent evev ("eventCounter", eventeventhandler, true,
+                                      senf::scheduler::EventEvent::PRIORITY_HIGH);
 
     {
         senf::scheduler::FdEvent fde1 ("testFdEvent", boost::bind(&callback, sock, _1),
@@ -306,6 +315,8 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
         BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+ClockService::milliseconds(200)) );
         BOOST_CHECK_NO_THROW( senf::scheduler::process() ); 
     } 
+
+    BOOST_CHECK_EQUAL( eventCount, 8u );
 
     ///////////////////////////////////////////////////////////////////////////
 

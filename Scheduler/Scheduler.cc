@@ -35,7 +35,6 @@
 //#include "Scheduler.ih"
 
 // Custom includes
-#include "SignalEvent.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -61,19 +60,22 @@ prefix_ void senf::scheduler::process()
         detail::TimerDispatcher::instance().blockSignals();
         detail::SignalDispatcher::instance().blockSignals();
         detail::FileDispatcher::instance().prepareRun();
+        detail::EventEventDispatcher::instance().prepareRun();
         detail::FIFORunner::instance().run();
     }
 }
 
 prefix_ void senf::scheduler::restart()
 {
-    detail::FdManager*        fdm (&detail::FdManager::instance());
-    detail::FIFORunner*       ffr (&detail::FIFORunner::instance());
-    detail::FdDispatcher*     fdd (&detail::FdDispatcher::instance());
-    detail::TimerDispatcher*  tdd (&detail::TimerDispatcher::instance());
-    detail::SignalDispatcher* sdd (&detail::SignalDispatcher::instance());
-    detail::FileDispatcher*   fld (&detail::FileDispatcher::instance());
-    
+    detail::FdManager*            fdm (&detail::FdManager::instance());
+    detail::FIFORunner*           ffr (&detail::FIFORunner::instance());
+    detail::FdDispatcher*         fdd (&detail::FdDispatcher::instance());
+    detail::TimerDispatcher*      tdd (&detail::TimerDispatcher::instance());
+    detail::SignalDispatcher*     sdd (&detail::SignalDispatcher::instance());
+    detail::FileDispatcher*       fld (&detail::FileDispatcher::instance());
+    detail::EventEventDispatcher* eed (&detail::EventEventDispatcher::instance());
+
+    eed->~EventEventDispatcher();
     fld->~FileDispatcher();
     sdd->~SignalDispatcher();
     tdd->~TimerDispatcher();
@@ -87,6 +89,7 @@ prefix_ void senf::scheduler::restart()
     new (tdd) detail::TimerDispatcher();
     new (sdd) detail::SignalDispatcher();
     new (fld) detail::FileDispatcher();
+    new (eed) detail::EventEventDispatcher();
 }
 
 prefix_ bool senf::scheduler::empty()
@@ -94,7 +97,8 @@ prefix_ bool senf::scheduler::empty()
     return detail::FdDispatcher::instance().empty() 
         && detail::TimerDispatcher::instance().empty()
         && detail::FileDispatcher::instance().empty()
-        && detail::SignalDispatcher::instance().empty();
+        && detail::SignalDispatcher::instance().empty()
+        && detail::EventEventDispatcher::instance().empty();
 }
 
 ///////////////////////////////////////////////////////////////////////////

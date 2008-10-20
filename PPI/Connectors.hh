@@ -36,6 +36,7 @@
 #include "predecl.hh"
 #include "detail/Callback.hh"
 #include "Queueing.hh"
+#include "ModuleManager.hh"
 
 //#include "Connectors.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -122,13 +123,15 @@ namespace connector {
         to the containing module)
      */
     class Connector
-        : boost::noncopyable
+        : ModuleManager::Initializable, boost::noncopyable
     {
     public:
         Connector & peer() const;       ///< Get peer connected to this connector
         module::Module & module() const; ///< Get this connectors containing module
 
         bool connected() const;         ///< \c true, if connector connected, \c false otherwise
+
+        void disconnect();              ///< Disconnect connector from peer
 
     protected:
         Connector();
@@ -140,8 +143,6 @@ namespace connector {
         virtual std::type_info const & packetTypeID();
 
         void setModule(module::Module & module);
-        void init();        
-        virtual void v_init() = 0;        
 
         Connector * peer_;
         module::Module * module_;

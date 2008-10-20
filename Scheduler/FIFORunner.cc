@@ -59,6 +59,9 @@ prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
     sigaddset(&mask, SIGURG);
     if (sigprocmask(SIG_UNBLOCK, &mask, 0) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("sigprocmask()");
+
+    tasks_.push_back(highPriorityEnd_);
+    tasks_.push_back(normalPriorityEnd_);
 }
 
 prefix_ senf::scheduler::detail::FIFORunner::~FIFORunner()
@@ -97,40 +100,66 @@ prefix_ void senf::scheduler::detail::FIFORunner::dequeue(TaskInfo * task)
     tasks_.erase(i);
 }
 
-namespace {
-    struct NullTask 
-        : public senf::scheduler::detail::FIFORunner::TaskInfo
-    {
-        NullTask() : senf::scheduler::detail::FIFORunner::TaskInfo ("<null>") {}
-        virtual void v_run() {};
-        virtual char const * v_type() const { return 0; }
-        virtual std::string v_info() const { return ""; }
-    };
-}
-
 prefix_ void senf::scheduler::detail::FIFORunner::run()
 {
-    // This algorithm is carefully adjusted to make it work even when arbitrary tasks are removed
-    // from the queue
-    // - Before we begin, we add a NullTask to the queue. The only purpose of this node is, to mark
-    //   the current end of the queue. The iterator to this node becomes the end iterator of the
-    //   range to process
-    // - We update the TaskInfo and move it to the end of the queue before calling the callback so
-    //   we don't access the TaskInfo if it is removed while the callback is running
-    // - We keep the next to-be-processed node in a class variable which is checked and updated
-    //   whenever a node is removed.
-    NullTask null;
     struct itimerspec timer;
     timer.it_interval.tv_sec = watchdogMs_ / 1000;
     timer.it_interval.tv_nsec = (watchdogMs_ % 1000) * 1000000ul;
     timer.it_value.tv_sec = timer.it_interval.tv_sec;
     timer.it_value.tv_nsec = timer.it_interval.tv_nsec;
-    tasks_.push_back(null);
-    TaskList::iterator end (TaskList::current(null));
-    next_ = tasks_.begin();
+
+    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+
+    timer.it_interval.tv_sec = 0;
+    timer.it_interval.tv_nsec = 0;
+    timer.it_value.tv_sec = 0;
+    timer.it_value.tv_nsec = 0;
+    
     try {
-        if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+        TaskList::iterator f (tasks_.begin());
+        TaskList::iterator l (TaskList::current(highPriorityEnd_));
+        run(f, l);
+
+        f = l; ++f;
+        l = TaskList::current(normalPriorityEnd_);
+        run(f, l);
+        
+        f = l; ++f;
+        l = tasks_.end();
+        run(f, l);
+    }
+    catch(...) {
+        timer_settime(watchdogId_, 0, &timer, 0);
+        throw;
+    }
+
+    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+}
+
+
+prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, TaskList::iterator l)
+{
+    if (f == l)
+        // We'll have problems inserting NullTask between f and l below, so just explicitly bail out
+        return;
+
+    // This algorithm is carefully adjusted to make it work even when arbitrary tasks are removed
+    // from the queue
+    // - Before we begin, we add a NullTask to the queue. The only purpose of this node is, to mark
+    //   the current end of the queue. The iterator to this node becomes the end iterator of the
+    //   range to process
+    // - We update the TaskInfo and move it to the next queue Element before calling the callback so
+    //   we don't access the TaskInfo if it is removed while the callback is running
+    // - We keep the next to-be-processed node in a class variable which is checked and updated
+    //   whenever a node is removed.
+
+    NullTask null;
+    tasks_.insert(l, null);
+    TaskList::iterator end (TaskList::current(null));
+    next_ = f;
+    try {
         while (next_ != end) {
             TaskInfo & task (*next_);
             if (task.runnable_) {
@@ -141,7 +170,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
 #           endif
                 TaskList::iterator i (next_);
                 ++ next_;
-                tasks_.splice(tasks_.end(), tasks_, i);
+                tasks_.splice(l, tasks_, i);
                 watchdogCount_ = 1;
                 task.run();
             }
@@ -151,24 +180,25 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
     }
     catch (...) {
         watchdogCount_ = 0;
-        timer.it_interval.tv_sec = 0;
-        timer.it_interval.tv_nsec = 0;
-        timer.it_value.tv_sec = 0;
-        timer.it_value.tv_nsec = 0;
-        timer_settime(watchdogId_, 0, &timer, 0);
-        tasks_.erase(end);
-        next_ = tasks_.end();
+        next_ = l;
         throw;
     }
     watchdogCount_ = 0;
-    timer.it_interval.tv_sec = 0;
-    timer.it_interval.tv_nsec = 0;
-    timer.it_value.tv_sec = 0;
-    timer.it_value.tv_nsec = 0;
-    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
-    tasks_.erase(end);
-    next_ = tasks_.end();
+    next_ = l;
+}
+
+prefix_ senf::scheduler::detail::FIFORunner::TaskList::iterator
+senf::scheduler::detail::FIFORunner::priorityEnd(TaskInfo::Priority p)
+{
+    switch (p) {
+    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_LOW : 
+        return tasks_.end();
+    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_NORMAL : 
+        return TaskList::current(normalPriorityEnd_);
+    case senf::scheduler::detail::FIFORunner::TaskInfo::PRIORITY_HIGH : 
+        return TaskList::current(highPriorityEnd_);
+    }
+    return tasks_.begin();
 }
 
 prefix_ void senf::scheduler::detail::FIFORunner::watchdog(int, siginfo_t * si, void *)

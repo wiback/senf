@@ -56,8 +56,11 @@ prefix_ senf::ppi::connector::Connector::Connector()
 
 prefix_ senf::ppi::connector::Connector::~Connector()
 {
-    if (connected())
+    if (connected()) {
+        Connector & peer (*peer_);
         peer_->peer_ = 0;
+        peer.v_init();
+    }
 }
 
 prefix_ bool senf::ppi::connector::Connector::connected()
@@ -72,11 +75,6 @@ prefix_ bool senf::ppi::connector::Connector::connected()
 prefix_ void senf::ppi::connector::Connector::setModule(module::Module & module)
 {
     module_ = &module;
-}
-
-prefix_ void senf::ppi::connector::Connector::init()
-{
-    v_init();
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,9 @@
 
 // Custom includes
 #include <vector>
+#include <deque>
 #include "predecl.hh"
+#include "../Scheduler/Scheduler.hh"
 
 //#include "ModuleManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -44,6 +46,21 @@ namespace ppi {
     class ModuleManager
     {
     public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        struct Initializable
+        {
+            Initializable();
+            virtual ~Initializable();
+            ModuleManager & moduleManager() const;
+            void enqueueInitializable();
+            void dequeueInitializable();
+            bool initializationScheduled() const;
+
+            virtual void v_init() = 0;
+        };
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
@@ -71,7 +88,12 @@ namespace ppi {
         void registerModule(module::Module & module);
         void unregisterModule(module::Module & module);
 
+        void registerInitializable(Initializable & i);
+        void unregisterInitializable(Initializable & i);
+        bool initializableRegistered(Initializable const & i) const;
+
         typedef std::vector<module::Module *> ModuleRegistry;
+        typedef std::deque<Initializable *> InitQueue;
 
 #ifndef DOXYGEN
         struct RunGuard;
@@ -82,7 +104,12 @@ namespace ppi {
         bool running_;
         bool terminate_;
 
+        InitQueue initQueue_;
+
+        scheduler::EventEvent initRunner_;
+
         friend class module::Module;
+        friend class Initializable;
     };
 
 

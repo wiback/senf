@@ -21,25 +21,54 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief FileDispatcher inline non-template implementation */
+    \brief EventEvent internal header */
 
-#include "FileDispatcher.ih"
+#ifndef IH_EventEvent_
+#define IH_EventEvent_ 1
 
 // Custom includes
+#include "../Utils/singleton.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////ih.p////////////////////////////////////////
 
-prefix_ int senf::scheduler::FileDispatcher::FileEvent::activeEvents()
-    const
-{
-    return 
-        (ReadTask::cb ? EV_READ : 0) | 
-        (WriteTask::cb ? EV_WRITE : 0);
-}
+namespace senf {
+namespace scheduler {
 
-///////////////////////////////cci.e///////////////////////////////////////
-#undef prefix_
+    void restart();
+
+namespace detail {
+    
+    class EventEventDispatcher
+        : public singleton<EventEventDispatcher>
+    {
+    public:
+        using singleton<EventEventDispatcher>::instance;
+        using singleton<EventEventDispatcher>::alive;
+
+        void add(EventEvent & event);
+        void remove(EventEvent & event);
+
+        void prepareRun();
+
+        bool empty() const;
+
+    private:
+        EventEventDispatcher();
+        ~EventEventDispatcher();
+
+        typedef boost::intrusive::ilist< 
+            EventEventListBase::value_traits<EventEvent>, false > EventList;
+
+        EventList events_;
+
+        friend void senf::scheduler::restart();
+        friend class singleton<EventEventDispatcher>;
+    };
+
+}}}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
 
 
 // Local Variables:

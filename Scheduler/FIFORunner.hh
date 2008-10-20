@@ -61,7 +61,9 @@ namespace detail {
               public TaskListBase
         {
         public:
-            explicit TaskInfo(std::string const & name);
+            enum Priority { PRIORITY_LOW = 0, PRIORITY_NORMAL = 1, PRIORITY_HIGH = 2 };
+
+            explicit TaskInfo(std::string const & name, Priority priority=PRIORITY_NORMAL);
             virtual ~TaskInfo();
 
             void run();
@@ -76,6 +78,7 @@ namespace detail {
             virtual bool v_enabled() const;
 
             bool runnable_;
+            Priority priority_;
 #       ifdef SENF_DEBUG
             std::string backtrace_;
 #       endif
@@ -110,8 +113,24 @@ namespace detail {
 
         static void watchdog(int, siginfo_t *, void *);
 
+        TaskList::iterator priorityEnd(TaskInfo::Priority p);
+        void run(TaskList::iterator f, TaskList::iterator l);
+        
+        struct NullTask : public TaskInfo
+        {
+            NullTask();
+            ~NullTask();
+            virtual void v_run();;
+            virtual char const * v_type() const;
+            virtual std::string v_info() const;
+        };
+
         TaskList tasks_;
         TaskList::iterator next_;
+
+        NullTask normalPriorityEnd_;
+        NullTask highPriorityEnd_;
+        
         timer_t watchdogId_;
         unsigned watchdogMs_;
         std::string runningName_;

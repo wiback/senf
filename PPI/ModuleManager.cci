@@ -50,10 +50,67 @@ prefix_ void senf::ppi::ModuleManager::unregisterModule(module::Module & module)
         moduleRegistry_.end());
 }
 
+prefix_ void senf::ppi::ModuleManager::registerInitializable(Initializable & i)
+{
+    initQueue_.push_back(&i);
+    initRunner_.enable();
+}
+
+prefix_ void senf::ppi::ModuleManager::unregisterInitializable(Initializable & i)
+{
+    initQueue_.erase(
+        std::remove(initQueue_.begin(), initQueue_.end(), & i),
+        initQueue_.end());
+    if (initQueue_.empty())
+        initRunner_.disable();
+}
+
+prefix_ bool senf::ppi::ModuleManager::initializableRegistered(Initializable const & i)
+    const
+{
+    return std::find(initQueue_.begin(), initQueue_.end(), &i) != initQueue_.end();
+}
+
 prefix_ bool senf::ppi::ModuleManager::running()
     const
 {
     return running_;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::ModuleManager::Initializable
+
+prefix_ senf::ppi::ModuleManager::Initializable::Initializable()
+{
+    enqueueInitializable();
+}
+
+prefix_ senf::ppi::ModuleManager::Initializable::~Initializable()
+{
+    dequeueInitializable();
+}
+
+prefix_ void senf::ppi::ModuleManager::Initializable::enqueueInitializable()
+{
+    moduleManager().registerInitializable(*this);
+}
+
+prefix_ void senf::ppi::ModuleManager::Initializable::dequeueInitializable()
+{
+    moduleManager().unregisterInitializable(*this);
+}
+
+prefix_ bool senf::ppi::ModuleManager::Initializable::initializationScheduled()
+    const
+{
+    return moduleManager().initializableRegistered(*this);
+}
+
+prefix_ senf::ppi::ModuleManager::ModuleManager &
+senf::ppi::ModuleManager::Initializable::moduleManager()
+    const
+{
+    return ModuleManager::instance();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

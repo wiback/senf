@@ -421,6 +421,123 @@ BOOST_AUTO_UNIT_TEST(connectorTest)
     }
 }
 
+BOOST_AUTO_UNIT_TEST(delayedConnect)
+{
+    {
+        debug::PassiveSource source;
+        debug::ActiveSink target;
+
+        ppi::init();
+
+        BOOST_CHECK( ! target.input );
+        BOOST_CHECK( ! target.request() );
+
+        ppi::connect(source, target);
+        ppi::init();
+
+        BOOST_CHECK( ! target.input );
+
+        senf::Packet p (senf::DataPacket::create());
+        source.submit(p);
+        BOOST_CHECK( target.request() == p );
+    }
+
+    {
+        debug::PassiveSource source;
+        debug::ActiveSink target;
+
+        ppi::init();
+
+        senf::Packet p (senf::DataPacket::create());
+        source.submit(p);
+
+        BOOST_CHECK( ! target.input );
+        BOOST_CHECK( ! target.request() );
+
+        ppi::connect(source, target);
+        ppi::init();
+
+        BOOST_CHECK( target.input );
+        BOOST_CHECK( target.request() == p );
+    }
+
+    {
+        debug::ActiveSource source;
+        debug::PassiveSink target;
+
+        ppi::init();
+
+        BOOST_CHECK( ! source.output );
+        SENF_CHECK_NO_THROW( source.output(senf::DataPacket::create()) );
+
+        ppi::connect(source, target);
+        ppi::init();
+        
+        BOOST_CHECK( source.output );
+
+        senf::Packet p (senf::DataPacket::create());
+        source.submit(p);
+
+        BOOST_CHECK( target.front() == p );        
+        BOOST_CHECK_EQUAL( target.size(), 1u );
+    }
+
+    {
+        debug::ActiveSource source;
+        debug::PassiveSink target;
+
+        ppi::init();
+
+        BOOST_CHECK( ! source.output );
+        SENF_CHECK_NO_THROW( source.output(senf::DataPacket::create()) );
+        target.throttle();
+
+        ppi::connect(source, target);
+        ppi::init();
+        
+        BOOST_CHECK( ! source.output );
+        target.unthrottle();
+        BOOST_CHECK( source.output );
+    }
+}
+
+BOOST_AUTO_UNIT_TEST(disconnect)
+{
+    {
+        debug::PassiveSource source;
+        debug::ActiveSink target;
+
+        ppi::connect(source, target);
+        ppi::init();
+
+        BOOST_CHECK( ! target.input );
+
+        senf::Packet p (senf::DataPacket::create());
+        source.submit(p);
+
+        BOOST_CHECK( target.input );
+        
+        target.input.disconnect();
+        ppi::init();
+        
+        BOOST_CHECK( ! target.input );
+    }
+    {
+        debug::ActiveSource source;
+        debug::PassiveSink target;
+
+        ppi::connect(source, target);
+        ppi::init();
+
+        BOOST_CHECK( source.output );
+
+        source.output.disconnect();
+        ppi::init();
+
+        BOOST_CHECK( ! source.output );
+    }
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

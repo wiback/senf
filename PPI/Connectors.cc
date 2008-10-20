@@ -53,8 +53,23 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
     peer_ = & target;
     target.peer_ = this;
 
-    if (ModuleManager::instance().running())
-        v_init();
+    if (! initializationScheduled())
+        enqueueInitializable();
+    if (! peer().initializationScheduled())
+        peer().enqueueInitializable();
+}
+
+prefix_ void senf::ppi::connector::Connector::disconnect()
+{
+    SENF_ASSERT( peer_ );
+    Connector & peer (*peer_);
+    peer_ = 0;
+    peer.peer_ = 0;
+
+    if (! initializationScheduled())
+        enqueueInitializable();
+    if (! peer.initializationScheduled())
+        peer.enqueueInitializable();
 }
 
 prefix_ std::type_info const & senf::ppi::connector::Connector::packetTypeID()
