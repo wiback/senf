@@ -31,6 +31,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <limits.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
