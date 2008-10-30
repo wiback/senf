@@ -186,7 +186,7 @@ namespace console {
         void setNoninteractive();
         
         void translate(std::string & data);
-        unsigned handleInput(std::string input, bool incremental = false);
+        size_t handleInput(std::string input, bool incremental = false);
         virtual void v_write(senf::log::time_type timestamp, std::string const & stream, 
                              std::string const & area, unsigned level, 
                              std::string const & message);
