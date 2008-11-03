@@ -339,7 +339,8 @@ namespace senf {
 
                                              If an annotation is \e not a POD type (more
                                              specifically, if it's constructor or destructor is not
-                                             trivial), the \a Annotation type \e must inherit from
+                                             trivial including base classes and members), the \a
+                                             Annotation type \e must inherit from
                                              senf::ComplexAnnotation. Failing to follow this rule
                                              will result in undefined behavior and will probably
                                              lead to a program crash.
@@ -349,6 +350,7 @@ namespace senf {
                                                  std::string value;
                                              };
                                              \endcode
+                                             (This type is not POD since \c std::string is not POD)
 
                                              \implementation The annotation system is implemented
                                                  quite efficiently since annotations are stored

@@ -30,6 +30,7 @@ ArrayParser
 async
 attr
 Augustin
+AUTHPRIV
 autoadd
 autoparse
 autoThrottling
@@ -88,6 +89,7 @@ CPPPATH
 createAfter
 createBefore
 cref
+CRON
 ct
 cti
 CXXFLAGS
@@ -289,6 +291,7 @@ ListPolicy
 localAddr
 localhost
 loopback
+LPR
 mac
 MACAddress
 MACAddressParser
@@ -551,6 +554,8 @@ svnbook
 svnroot
 SyntaxErrorException
 SyntaxException
+syslog
+SyslogTarget
 SystemException
 TapSocketHandle
 td

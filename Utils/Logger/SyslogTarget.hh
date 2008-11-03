@@ -50,6 +50,17 @@ namespace log {
 
         The default facility is <tt>LOG_USER</tt>.
 
+        The SENF log levels are mapped to syslog levels in the following way:
+
+        <table class="senf fixedcolumn">
+        <tr><td>senf::log::VERBOSE</td>   <td>\c LOG_DEBUG</td></tr>
+        <tr><td>senf::log::NOTICE</td>    <td>\c LOG_INFO</td></tr>
+        <tr><td>senf::log::MESSAGE</td>   <td>\c LOG_NOTICE</td></tr>
+        <tr><td>senf::log::IMPORTANT</td> <td>\c LOG_WARNING</td></tr>
+        <tr><td>senf::log::CRITICAL</td>  <td>\c LOG_CRIT</td></tr>
+        <tr><td>senf::log::FATAL</td>     <td>\c LOG_EMERG</td></tr>
+        </table>
+
         \ingroup targets
      */
     class SyslogTarget 

@@ -40,6 +40,22 @@
 
 namespace senf {
 
+    /** \brief Marker base-class for complex annotations
+
+        This class is used as a base class to mark an annotation type as complex. A complex
+        annotation will have it's constructor/destructor called. Non-complex annotations will not
+        have their constructor called, they will be zero initialized. The destructor of non-complex
+        annotations is never called.
+
+        An annotation must be marked as complex if it is not <a
+        href="http://en.wikipedia.org/wiki/Plain_Old_Data_Structures">POD</a>. Simplified, an
+        annotation must be marked as ComplexAnnotation, if
+
+        \li it has a (user defined) constructor or destructor
+        \li it has any data members which have (user defined) constructors or destructors
+
+        \see \ref packet_usage_annotation
+     */
     struct ComplexAnnotation {};
 
 namespace detail {
