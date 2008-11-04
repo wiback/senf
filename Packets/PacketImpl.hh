@@ -31,6 +31,7 @@
 #include <vector>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_base_of.hpp>
+#include <boost/static_assert.hpp>
 #include "../Utils/pool_alloc_mixin.hh"
 #include "PacketTypes.hh"
 #include "../Utils/singleton.hh"
@@ -91,8 +92,14 @@ namespace detail {
         AnnotationIndexer();
         unsigned index_;
         static unsigned index();
-        static bool const Small = (sizeof(Annotation) <= sizeof(AnnotationEntry) 
-                                   && ! boost::is_base_of<ComplexAnnotation, Annotation>::value);
+        static bool const Complex = boost::is_base_of<ComplexAnnotation, Annotation>::value;
+        static bool const Small = (sizeof(Annotation) <= sizeof(AnnotationEntry) && ! Complex);
+
+#       ifdef BOOST_HAS_TYPE_TRAITS_INTRINSICS
+
+        BOOST_STATIC_ASSERT(( boost::is_pod<Annotation>::value || Complex ));
+
+#       endif
     };
 
     template <class Annotation, bool Small = AnnotationIndexer<Annotation>::Small>

@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <sstream>
+#include <boost/static_assert.hpp>
 #include "Packets.hh"
 
 #include "../Utils/auto_unit_test.hh"
@@ -125,6 +126,11 @@ namespace {
 
     struct ComplexEmptyAnnotation : senf::ComplexAnnotation
     {};
+
+    struct InvalidAnnotation
+    {
+        std::string value;
+    };
 
 }
 
@@ -272,6 +278,24 @@ BOOST_AUTO_UNIT_TEST(packetAnnotation)
     BOOST_CHECK( ! senf::detail::AnnotationIndexer<ComplexAnnotation>::Small );
     BOOST_CHECK( ! senf::detail::AnnotationIndexer<ComplexEmptyAnnotation>::Small );
 }
+
+#ifdef COMPILE_CHECK
+
+COMPILE_FAIL(invalidAnnotation)
+{
+#   ifdef BOOST_HAS_TYPE_TRAITS_INTRINSICS
+
+    senf::Packet packet (FooPacket::create());
+    (void) packet.annotation<InvalidAnnotation>();
+
+#   else
+
+    BOOST_STATIC_ASSERT(( false ));
+
+#   endif
+}
+
+#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
