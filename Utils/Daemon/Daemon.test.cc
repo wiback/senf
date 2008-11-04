@@ -118,10 +118,11 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(testDaemon)
 {
-    char * args[] = { "run", 
-                      "--console-log=testDaemon.log", 
-                      "--pid-file=testDaemon.pid" };
-    BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args),args), 0 );
+    char const * args[] = { "run", 
+                            "--console-log=testDaemon.log", 
+                            "--pid-file=testDaemon.pid" };
+
+    BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args), const_cast<char **>(args)), 0 );
 
     BOOST_CHECK( ! boost::filesystem::exists("invalid.log") );
     BOOST_CHECK( ! boost::filesystem::exists("invalid.pid") );

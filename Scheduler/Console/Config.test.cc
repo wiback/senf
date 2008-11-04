@@ -77,7 +77,7 @@ BOOST_AUTO_UNIT_TEST(configBundle)
     TempFile cfg ("test.cfg");
     cfg << "dir1/fun1 foo; fun2;" << TempFile::close;
 
-    char * argv[] = { "", "--dir1-fun1=bar" };
+    char const * argv[] = { "", "--dir1-fun1=bar" };
 
     senf::console::ConfigBundle bundle(root);
     bundle.add( senf::console::FileConfig(cfg.name()) );

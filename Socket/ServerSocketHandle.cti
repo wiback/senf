@@ -92,30 +92,30 @@ prefix_ void senf::ServerSocketHandle<SPolicy>::local(Address & addr)
 }
 
 template <class SPolicy>
-prefix_ typename senf::ServerSocketHandle<SPolicy>::ClientSocketHandle
+prefix_ typename senf::ServerSocketHandle<SPolicy>::ClientHandle
 senf::ServerSocketHandle<SPolicy>::accept()
 {
-    return ClientSocketHandle(this->body().clone(
-                                  SPolicy::CommunicationPolicy::accept(*this), false));
+    return ClientHandle(this->body().clone(
+                            SPolicy::CommunicationPolicy::accept(*this), false));
 }
 
 template <class SPolicy>
-prefix_ std::pair<typename senf::ServerSocketHandle<SPolicy>::ClientSocketHandle,
+prefix_ std::pair<typename senf::ServerSocketHandle<SPolicy>::ClientHandle,
                   typename senf::ServerSocketHandle<SPolicy>::Address>
 senf::ServerSocketHandle<SPolicy>::acceptfrom()
 {
 
     Address address;
-    ClientSocketHandle handle = acceptfrom(address);
+    ClientHandle handle = acceptfrom(address);
     return std::make_pair(handle,address);
 }
 
 template <class SPolicy>
-prefix_ typename senf::ServerSocketHandle<SPolicy>::ClientSocketHandle
+prefix_ typename senf::ServerSocketHandle<SPolicy>::ClientHandle
 senf::ServerSocketHandle<SPolicy>::acceptfrom(Address & addr)
 {
-    return ClientSocketHandle(this->protocol().clone(),
-                              SPolicy::CommunicationPolicy::accept(*this,addr));
+    return ClienttHandle(this->protocol().clone(),
+                         SPolicy::CommunicationPolicy::accept(*this,addr));
 }
 
 ///////////////////////////////////////////////////////////////////////////

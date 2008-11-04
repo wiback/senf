@@ -84,7 +84,7 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
     BOOST_CHECK_EQUAL( myh.local(), 2u );
 
     {
-        MySocketHandle::ClientSocketHandle client = myh.accept();
+        MySocketHandle::ClientHandle client = myh.accept();
         BOOST_CHECK_EQUAL( client.fd(), -1 );
     }
 

@@ -62,7 +62,7 @@ BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
         OtherSocketHandle osh (h);
         h = senf::static_socket_cast<MySocketHandle>(osh);
 
-        MySocketHandle::ClientSocketHandle client = h.accept();
+        MySocketHandle::ClientHandle client = h.accept();
         BOOST_CHECK_EQUAL( client.fd(), -1 );
 
         BOOST_CHECK_EQUAL( h.dumpState(),

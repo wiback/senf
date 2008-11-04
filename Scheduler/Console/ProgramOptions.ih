@@ -43,14 +43,14 @@ namespace detail {
     public:
         typedef boost::intrusive_ptr<ProgramOptionsSource> ptr;
 
-        static ptr create(int argc, char ** argv);
+        static ptr create(int argc, char const ** argv);
 
         template <class Container>
         ProgramOptionsSource & nonOptions(Container & container);
         ProgramOptionsSource & alias(char letter, std::string const & longOpt, bool withArg=false);
         
     private:
-        ProgramOptionsSource(int argc, char ** argv);
+        ProgramOptionsSource(int argc, char const ** argv);
         
         virtual void v_parse(RestrictedExecutor & executor);
 
@@ -86,7 +86,7 @@ namespace detail {
         typedef std::map<char, ShortOption> ShortOptions;
         
         int argc_;
-        char ** argv_;
+        char const ** argv_;
         CommandParser parser_;
         ShortOptions shortOptions_;
         boost::scoped_ptr<NonOptionContainer> nonOptions_;

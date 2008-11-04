@@ -72,7 +72,7 @@ namespace console {
         ///\name Structors and default members
         ///@{
         
-        ProgramOptions(int argc, char ** argv, DirectoryNode & root = root());
+        ProgramOptions(int argc, char const ** argv, DirectoryNode & root = root());
                                         ///< Create ProgramOptions parser for given options
                                         /**< The given argc/argv values are those passed to main by
                                              the operating system. Especially argv[0] is \e not an
@@ -113,7 +113,7 @@ namespace console {
 
         \related ProgramOptions
      */
-    void parseOptions(int argc, char ** argv, DirectoryNode & root = root());
+    void parseOptions(int argc, char const ** argv, DirectoryNode & root = root());
 
     /** \brief ConfigBundle source reading command line options
 
@@ -122,7 +122,7 @@ namespace console {
 
         \related ProgramOptions
      */
-    detail::ProgramOptionsSource::ptr OptionsConfig(int argc, char ** argv);
+    detail::ProgramOptionsSource::ptr OptionsConfig(int argc, char const ** argv);
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

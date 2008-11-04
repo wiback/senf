@@ -654,7 +654,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
     objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
     program = None
     if objects:
-        progEnv = env.Copy()
+        progEnv = env.Clone()
         progEnv.Prepend(LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ])
         program = progEnv.ProgramNoScan(target=binary,source=objects+OBJECTS)
         env.Default(program)

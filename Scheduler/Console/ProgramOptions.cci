@@ -34,13 +34,13 @@
 // senf::console::detail::ProgramOptionsSource
 
 prefix_ senf::console::detail::ProgramOptionsSource::ptr
-senf::console::detail::ProgramOptionsSource::create(int argc, char ** argv)
+senf::console::detail::ProgramOptionsSource::create(int argc, char const ** argv)
 {
     return ptr(new ProgramOptionsSource(argc,argv));
 }
 
 prefix_ senf::console::detail::ProgramOptionsSource::ProgramOptionsSource(int argc,
-                                                                          char ** argv)
+                                                                          char const ** argv)
     : argc_ (argc), argv_ (argv)
 {}
 
@@ -63,7 +63,7 @@ ShortOption(bool withArg_, std::string const & longOpt_)
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ProgramOptions
 
-prefix_ senf::console::ProgramOptions::ProgramOptions(int argc, char ** argv,
+prefix_ senf::console::ProgramOptions::ProgramOptions(int argc, char const ** argv,
                                                       DirectoryNode & root)
     : detail::BundleMixin (root), config_ (add(detail::ProgramOptionsSource::create(argc, argv)))
 {}
@@ -78,7 +78,7 @@ senf::console::ProgramOptions::alias(char letter, std::string const & longOpt, b
 ///////////////////////////////////////////////////////////////////////////
 
 prefix_ senf::console::detail::ProgramOptionsSource::ptr
-senf::console::OptionsConfig(int argc, char ** argv)
+senf::console::OptionsConfig(int argc, char const ** argv)
 {
     return detail::ProgramOptionsSource::create(argc, argv);
 }

@@ -98,7 +98,7 @@ namespace detail {
     class ClientReader
     {
     public:
-        typedef ServerHandle::ClientSocketHandle ClientHandle;
+        typedef ServerHandle::ClientHandle ClientHandle;
 
         virtual ~ClientReader() = 0;
 

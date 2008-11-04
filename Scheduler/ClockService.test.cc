@@ -39,13 +39,7 @@
 namespace {
 
     bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
-                        unsigned long delta = senf::ClockService::milliseconds(100))
-    {
-        return (a<b ? b-a : a-b ) < delta;
-    }
-
-    bool is_close_pt(boost::posix_time::ptime a, boost::posix_time::ptime b,
-                     boost::posix_time::time_duration delta = boost::posix_time::milliseconds(100) )
+                        unsigned long delta)
     {
         return (a<b ? b-a : a-b ) < delta;
     }
@@ -69,7 +63,8 @@ BOOST_AUTO_UNIT_TEST(clockService)
     senf::ClockService::clock_type t2 (senf::ClockService::now());
     BOOST_CHECK_PREDICATE( is_close_clock,
                            (t1 + senf::ClockService::milliseconds(200)) 
-                           (t2) );
+                           (t2)
+                           (senf::ClockService::milliseconds(100)) );
 
     t1 = t2;
 
@@ -87,14 +82,16 @@ BOOST_AUTO_UNIT_TEST(clockService)
     delay(200);
     BOOST_CHECK_PREDICATE( is_close_clock,
                            (t1 + senf::ClockService::milliseconds(200))
-                           (senf::ClockService::now()) );
+                           (senf::ClockService::now())
+                           (senf::ClockService::milliseconds(100)) );
 
     // The next check validates that the clock service itimer/heartbeat_ is correctly reset after a
     // clock-skew is detected
 
     BOOST_CHECK_PREDICATE( is_close_clock,
                            (t1 + senf::ClockService::milliseconds(200))
-                           (senf::ClockService::now()) );
+                           (senf::ClockService::now()) 
+                           (senf::ClockService::milliseconds(100)) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -90,7 +90,7 @@ namespace senf {
          */
         typedef typename boost::call_traits<Address>::param_type AddressParam;
         /// Corresponding client socket handle with the same policy
-        typedef ClientSocketHandle<SPolicy> ClientSocketHandle;
+        typedef ClientSocketHandle<SPolicy> ClientHandle;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -171,17 +171,15 @@ namespace senf {
 
             \returns handle of new client connection
          */
-        ClientSocketHandle
-                     accept       ();
-        std::pair<ClientSocketHandle, Address>
+        ClientHandle accept       ();
+        std::pair<ClientHandle, Address>
                      acceptfrom   ();   ///< Accept new connection
                                         /**< This variant will additionally return the remote
                                            address of the client
                                            \returns \c std::pair with client handle and client
                                            address.
                                            \see \ref accept() */
-        ClientSocketHandle
-                     acceptfrom   (Address & addr);
+        ClientHandle acceptfrom   (Address & addr);
                                         ///< Accept new connection
                                         /**< This variant will additionally return the remote
                                            address of the client

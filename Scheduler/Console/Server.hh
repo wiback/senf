@@ -161,7 +161,7 @@ namespace console {
         static const unsigned INTERACTIVE_TIMEOUT = 500; // milliseconds;
 
     public:
-        typedef Server::ServerHandle::ClientSocketHandle ClientHandle;
+        typedef Server::ServerHandle::ClientHandle ClientHandle;
 
         ~Client();
 

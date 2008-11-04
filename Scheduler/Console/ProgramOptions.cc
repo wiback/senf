@@ -49,7 +49,7 @@ prefix_ void senf::console::detail::ProgramOptionsSource::v_parse(RestrictedExec
         nonOptions_->clear();
     if (argc_ <= 1)
         return;
-    char ** argp (argv_+1);
+    char const ** argp (argv_+1);
     int n (argc_-1);
     for (; n; --n, ++argp) {
         std::string arg (*argp);
@@ -151,7 +151,7 @@ senf::console::detail::ProgramOptionsSource::parseNonOption(std::string const & 
 
 ///////////////////////////////////////////////////////////////////////////
 
-prefix_ void senf::console::parseOptions(int argc, char ** argv, DirectoryNode & root)
+prefix_ void senf::console::parseOptions(int argc, char const ** argv, DirectoryNode & root)
 {
     ProgramOptions opts (argc, argv, root);
     opts.parse();

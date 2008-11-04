@@ -99,7 +99,7 @@ prefix_ senf::console::Server::Server(ServerHandle handle)
 
 prefix_ void senf::console::Server::newClient(int event)
 {
-    ServerHandle::ClientSocketHandle client (handle_.accept());
+    ServerHandle::ClientHandle client (handle_.accept());
     boost::intrusive_ptr<Client> p (new Client(*this, client));
     clients_.insert( p );
     SENF_LOG(( "Registered new client " << p.get() ));

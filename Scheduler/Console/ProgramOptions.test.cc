@@ -58,7 +58,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     root.mkdir("name-with-dashes").add("fun-2", &fun2);
 
     {
-        char * argv[] = { "", "--dir1-fun1=foo","--fun2" };
+        char const * argv[] = { "", "--dir1-fun1=foo","--fun2" };
         senf::console::ProgramOptions opts (sizeof(argv)/sizeof(argv[0]), argv, root);
 
         SENF_CHECK_NO_THROW( opts.parse() );
@@ -67,7 +67,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     }
 
     {
-        char * argv[] = { "", "--d-f=foo","--fun" };
+        char const * argv[] = { "", "--d-f=foo","--fun" };
         senf::console::ProgramOptions opts (sizeof(argv)/sizeof(argv[0]), argv, root);
 
         val1 = "";
@@ -79,7 +79,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     }
 
     {
-        char * argv[] = { "", "--name-w-fun" };
+        char const * argv[] = { "", "--name-w-fun" };
         senf::console::ProgramOptions opts (sizeof(argv)/sizeof(argv[0]), argv, root);
 
         val1 = "";
@@ -91,7 +91,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     }
     
     {
-        char * argv[] = { "", "-ab" };
+        char const * argv[] = { "", "-ab" };
         senf::console::ProgramOptions opts(sizeof(argv)/sizeof(argv[0]), argv, root);
         opts
             .alias('a', "--dir1-fun1=baz")
@@ -106,7 +106,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     }
 
     {
-        char * argv[] = { "", "-badoo" };
+        char const * argv[] = { "", "-badoo" };
         senf::console::ProgramOptions opts(sizeof(argv)/sizeof(argv[0]), argv, root);
         opts
             .alias('a', "--dir1-fun1", true)
@@ -121,7 +121,7 @@ BOOST_AUTO_UNIT_TEST(programOptions)
     }
 
     {
-        char * argv[] = { "", "-a","dii","-b" };
+        char const * argv[] = { "", "-a","dii","-b" };
         senf::console::ProgramOptions opts(sizeof(argv)/sizeof(argv[0]), argv, root);
         opts
             .alias('a', "--dir1-fun1", true)

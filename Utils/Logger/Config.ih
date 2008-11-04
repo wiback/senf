@@ -33,6 +33,7 @@
 #include <boost/preprocessor/seq/fold_right.hpp>
 #include <boost/preprocessor/seq/pop_back.hpp>
 #include <boost/preprocessor/if.hpp>
+#include <boost/preprocessor/facilities/is_empty.hpp>
 #include "../preprocessor.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
@@ -74,7 +75,15 @@ namespace detail {
 
 }}}
 
-#define SENF_LOG_SEQ_TO_NAME_(s,state,elem) state::elem
+#define SENF_LOG_CHECK_NA_
+
+#define SENF_LOG_CAT(a,b) SENF_LOG_CAT_I(a,b)
+#define SENF_LOG_CAT_I(a,b) a ## b
+
+#define SENF_LOG_IS_NA(elt) BOOST_PP_IS_EMPTY( SENF_LOG_CAT(SENF_LOG_CHECK_NA, elt) )
+
+#define SENF_LOG_SEQ_TO_NAME_(s,state,elem)                                                       \
+    BOOST_PP_IF( SENF_LOG_IS_NA(elem), senf::log::detail::na, state::elem )
 
 #define SENF_LOG_SEQ_TO_NAME(seq)                                                                 \
     BOOST_PP_SEQ_FOLD_LEFT(SENF_LOG_SEQ_TO_NAME_, , seq)
@@ -88,7 +97,7 @@ namespace detail {
                              BOOST_PP_SEQ_POP_BACK(seq) )
 
 #define SENF_LOG_PREDECL_short(seq)                                                               \
-        class SENF_PP_SEQ_BACK(seq);
+   BOOST_PP_IF( SENF_LOG_IS_NA( SENF_PP_SEQ_BACK(seq) ), ; , class SENF_PP_SEQ_BACK(seq); )
 
 #define SENF_LOG_PREDECL(seq)                                                                     \
     BOOST_PP_CAT(SENF_LOG_PREDECL_,                                                               \
@@ -110,14 +119,12 @@ namespace detail {
 
 #ifdef SENF_LOG_CONF
 
-#   define _ senf::log::detail::na
 #   define SLC_elt(r, data, elt) \
         SENF_LOG_CONF_DEFINE elt
 
     BOOST_PP_SEQ_FOR_EACH(SLC_elt, none, SENF_LOG_CONF)
 
 #   undef SLC_elt
-#   undef _
 
 #endif
 

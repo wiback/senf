@@ -33,7 +33,7 @@ def BoostUnitTests(env, target, objects, test_sources=None, LIBS = [], OBJECTS =
             test_sources = [ test_sources ]
     else:
         test_sources = []
-    testEnv = env.Copy(**kw)
+    testEnv = env.Clone(**kw)
     testEnv.Prepend(_LIBFLAGS = ' -Wl,-Bstatic -l$BOOSTTESTLIB -Wl,-Bdynamic ')
     testEnv.Prepend(LIBS = LIBS)
     testEnv.Append(LIBS = env['TEST_EXTRA_LIBS'])

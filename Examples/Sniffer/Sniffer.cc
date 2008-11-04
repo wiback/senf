@@ -114,11 +114,12 @@ int main(int argc, char const * argv[])
     std::cout << "Registered packets:\n\n";
     senf::dumpPacketRegistries(std::cout);
 
-    if (argc >= 3)
+    if (argc >= 3) {
         if (std::string(argv[1]) == "loop")
             return loop_main(argc,argv);
         else if (std::string(argv[1]) == "scheduler")
             return scheduler_main(argc,argv);
+    }
 
     std::cerr << "Usage: sniffer { loop | scheduler } [interface]" << std::endl;
     return 1;

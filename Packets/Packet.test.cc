@@ -290,7 +290,7 @@ COMPILE_FAIL(invalidAnnotation)
 
 #   else
 
-    BOOST_STATIC_ASSERT(( false ));
+    invalid_annotation_check_disabled();
 
 #   endif
 }

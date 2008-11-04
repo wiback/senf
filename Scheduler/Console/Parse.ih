@@ -120,8 +120,8 @@ namespace detail {
 
                 // Invalid characters: All chars below \x20 (space) which are not space_p
                 // (don't put a \0 in the chset<> argument *string* ...)
-                invalid_p (
-                    boost::spirit::chset<>('\0') | boost::spirit::chset<>("\x01-\x20") - space_p ),
+                invalid_p ( (boost::spirit::chset<>('\0') 
+                             | boost::spirit::chset<>("\x01-\x20")) - space_p ),
 
                 // Valid word characters
                 word_p (

@@ -65,7 +65,7 @@ namespace {
     };
 
     bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b,
-                        unsigned long delta = senf::ClockService::milliseconds(100))
+                        unsigned long delta)
     {
         return (a<b ? b-a : a-b ) < delta;
     }
@@ -78,7 +78,8 @@ BOOST_AUTO_UNIT_TEST(intervalTimer)
     senf::ppi::run();
     BOOST_CHECK_PREDICATE( is_close_clock,
                            (senf::ClockService::now())
-                           (start+senf::ClockService::milliseconds(400)) );
+                           (start+senf::ClockService::milliseconds(400))
+                           (senf::ClockService::milliseconds(100)) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
