@@ -254,12 +254,13 @@ v_execute(std::ostream & os, ParseCommandInfo const & command)
 {
     // We NEED to know the number of arguments beforehand so we can assign default values
     // correctly ... hrmpf ...
-    unsigned nArgs ( command.arguments().size() );
+    unsigned nArgs ( std::distance(command.arguments().begin(), command.arguments().end()) );
     if ( nArgs > BOOST_PP_ITERATION() )
         throw SyntaxErrorException("invalid number of arguments");
     int nDefaults ( BOOST_PP_ITERATION() - nArgs );
+    (void) nDefaults;
 
-    typedef typename boost::range_const_reverse_iterator<ParseCommandInfo::ArgumentsRange>::type
+    typedef typename boost::range_reverse_iterator<const ParseCommandInfo::ArgumentsRange>::type
         riterator;
     riterator i (boost::rbegin(command.arguments()));
     riterator const i_end (boost::rend(command.arguments()));
@@ -293,12 +294,13 @@ v_execute(std::ostream & os, ParseCommandInfo const & command)
 {
     // We NEED to know the number of arguments beforehand so we can assign default values
     // correctly ... hrmpf ...
-    unsigned nArgs ( command.arguments().size() );
+    unsigned nArgs ( std::distance(command.arguments().begin(), command.arguments().end()) );
     if ( nArgs > BOOST_PP_ITERATION() )
         throw SyntaxErrorException("invalid number of arguments");
     int nDefaults ( BOOST_PP_ITERATION() - nArgs );
+    (void) nDefaults;
 
-    typedef typename boost::range_const_reverse_iterator<ParseCommandInfo::ArgumentsRange>::type
+    typedef typename boost::range_reverse_iterator<const ParseCommandInfo::ArgumentsRange>::type
         riterator;
     riterator i (boost::rbegin(command.arguments()));
     riterator const i_end (boost::rend(command.arguments()));

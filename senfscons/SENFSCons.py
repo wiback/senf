@@ -137,6 +137,8 @@ def UseBoost():
     opts.Add('BOOST_RUNTIME', 'The boost runtime to use', '')
     opts.Add('BOOST_DEBUG_RUNTIME', 'The boost debug runtime to use', '')
     opts.Add('BOOST_LIBDIR', 'The directory of the boost libraries', '')
+    opts.Add('BOOST_PREFIX', 'The prefix into which boost is installed', '')
+    opts.Add('BOOST_VERSION', 'The version of boost to use', '')
     Finalizer(FinalizeBoost)
 
 ## \brief Finalize Boost environment
@@ -152,13 +154,25 @@ def FinalizeBoost(env):
         if runtime: runtime = "-" + runtime
         env['BOOST_VARIANT'] = "-" + env['BOOST_TOOLSET'] + runtime
 
+    if env['BOOST_VARIANT'] and env['BOOST_VERSION']:
+        env['BOOST_VARIANT'] = env['BOOST_VARIANT'] + '-%s' % env['BOOST_VERSION'].replace('.','_')
+
     env['BOOSTTESTLIB'] = 'boost_unit_test_framework' + env['BOOST_VARIANT']
     env['BOOSTREGEXLIB'] = 'boost_regex' + env['BOOST_VARIANT']
     env['BOOSTFSLIB'] = 'boost_filesystem' + env['BOOST_VARIANT']
     env['BOOSTIOSTREAMSLIB'] = 'boost_iostreams' + env['BOOST_VARIANT']
 
+    if env['BOOST_PREFIX']:
+        env['BOOST_LIBDIR'] = os.path.join(env['BOOST_PREFIX'], 'lib')
+        env['BOOST_INCLUDES'] = os.path.join(env['BOOST_PREFIX'],
+                                             'include/boost-%s'
+                                                 % env['BOOST_VERSION'].replace('.','_'))
+
     env.Append(LIBPATH = [ '$BOOST_LIBDIR' ],
                CPPPATH = [ '$BOOST_INCLUDES' ])
+
+    if env['BOOST_LIBDIR']:
+        env.Append(ENV = { 'LD_LIBRARY_PATH': env['BOOST_LIBDIR'] })
 
 ## \brief Use STLPort as STL replacement if available
 #

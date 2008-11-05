@@ -62,9 +62,11 @@ namespace {
         server_pid = ::fork();
         if (server_pid < 0) BOOST_FAIL("fork()");
         if (server_pid == 0) {
+            signal(SIGCHLD, SIG_IGN);
             (*fn)();
             _exit(0);
         }
+        signal(SIGCHLD, SIG_DFL);
     }
 
     void wait()
@@ -154,7 +156,7 @@ BOOST_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
                                            std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
         BOOST_CHECK_NO_THROW( sock.protocol().timestamp() );
-        sock.writeto(senf::INet4SocketAddress("127.0.0.1:12345"),"QUIT");
+        sock.writeto(senf::INet4SocketAddress("127.0.0.1:12345"), std::string("QUIT"));
         sleep(1);
         stop();
         sleep(1);

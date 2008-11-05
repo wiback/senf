@@ -80,7 +80,7 @@ BOOST_AUTO_UNIT_TEST(packetInterpreterBase)
         BOOST_CHECK_EQUAL( pi2->data().size(), 1u );
         BOOST_CHECK_EQUAL( pi2b->data().size(), 2u );
 
-        BOOST_CHECK_EQUAL( pi1->data().size(), pi1->nextPacketRange()->size() );
+        BOOST_CHECK_EQUAL( pi1->data().size(), unsigned(pi1->nextPacketRange()->size()) );
         pi1->append(pi2b);
         BOOST_CHECK_EQUAL( pi1->data().size(), 2u );
         BOOST_REQUIRE( pi1->next() );
@@ -286,7 +286,7 @@ BOOST_AUTO_UNIT_TEST(packetInterpreter_factory)
         senf::PacketInterpreterBase::ptr p2 (p->parseNextAs(factory));
         BOOST_CHECK( p2->is<OtherPacket>() );
         BOOST_CHECK( ! p2->is<VoidPacket>() );
-        BOOST_CHECK_EQUAL( boost::size(*p2->nextPacketRange()), 4u );
+        BOOST_CHECK_EQUAL( unsigned(boost::size(*p2->nextPacketRange())), 4u );
     }
 
 }

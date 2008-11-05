@@ -61,9 +61,11 @@ namespace {
         server_pid = ::fork();
         if (server_pid < 0) BOOST_FAIL("fork()");
         if (server_pid == 0) {
+            signal(SIGCHLD, SIG_IGN);
             (*fn)();
             _exit(0);
         }
+        signal(SIGCHLD, SIG_DFL);
         ::sleep(1);
     }
 
@@ -174,10 +176,10 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
-        BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
+        BOOST_CHECK_NO_THROW( sock.write(std::string("TEST-WRITE")) );
+        BOOST_CHECK_EQUAL( sock.read(), std::string("TEST-WRITE") );
         BOOST_CHECK( !sock.eof() );
-        sock.write("QUIT");
+        sock.write(std::string("QUIT"));
         sleep(1);
         stop();
         sleep(1);
@@ -245,12 +247,12 @@ BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
         BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
         BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.write("TEST-WRITE") );
-        BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
+        BOOST_CHECK_NO_THROW( sock.write(std::string("TEST-WRITE")) );
+        BOOST_CHECK_EQUAL( sock.read(), std::string("TEST-WRITE") );
         // this fails with ENOFILE ... why ????
         // BOOST_CHECK_NO_THROW( sock.protocol().timestamp() );
         BOOST_CHECK( !sock.eof() );
-        sock.write("QUIT");
+        sock.write(std::string("QUIT"));
         sleep(1);
         stop();
         sleep(1);
@@ -347,7 +349,7 @@ BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
 
         BOOST_CHECKPOINT("Accepting connection");
         senf::TCPv4ClientSocketHandle client = server.accept();
-        BOOST_CHECK_NO_THROW(client.write("QUIT"));
+        BOOST_CHECK_NO_THROW(client.write(std::string("QUIT")));
 
         BOOST_CHECKPOINT("Stopping client");
         sleep(1);
@@ -373,7 +375,7 @@ BOOST_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
 
         BOOST_CHECKPOINT("Accepting connection");
         senf::TCPv6ClientSocketHandle client = server.accept();
-        BOOST_CHECK_NO_THROW(client.write("QUIT"));
+        BOOST_CHECK_NO_THROW(client.write(std::string("QUIT")));
 
         BOOST_CHECKPOINT("Stopping client");
         sleep(1);

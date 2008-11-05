@@ -94,6 +94,7 @@ namespace {
         if (pid < 0) throw senf::SystemException("::fork()");
         if (pid == 0) {
             signal(SIGABRT, &backtrace);
+            signal(SIGCHLD, SIG_IGN);
             try {
                 ::_exit(myMain(argc, argv));
             } catch (std::exception & ex) {
@@ -103,6 +104,7 @@ namespace {
             }
             ::_exit(125);
         }
+        signal(SIGCHLD, SIG_DFL);
         int status;
         if (::waitpid(pid, &status, 0) < 0) 
             throw senf::SystemException("::waitpid()");
@@ -122,7 +124,7 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
                             "--console-log=testDaemon.log", 
                             "--pid-file=testDaemon.pid" };
 
-    BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args), const_cast<char **>(args)), 0 );
+    SENF_CHECK_NO_THROW( BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args), const_cast<char **>(args)), 0 ) );
 
     BOOST_CHECK( ! boost::filesystem::exists("invalid.log") );
     BOOST_CHECK( ! boost::filesystem::exists("invalid.pid") );

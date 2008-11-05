@@ -25,6 +25,7 @@
 
 #include "Node.hh"
 #include "Node.ih"
+#include "../../Utils/range.hh"
 
 // Custom includes
 
@@ -173,7 +174,7 @@ prefix_ void senf::console::detail::NodeTraverser::operator()(std::string const 
         else if (elt_ != "" && elt_ != ".") {
             if (! dir_->hasChild(elt_) && autocomplete_) {
                 DirectoryNode::ChildrenRange completions (dir_->completions(elt_));
-                if (completions.size() == 1)
+                if (has_one_elt(completions))
                     elt_ = completions.begin()->first;
             }
             // Why does g++ give an error on this line ???? :
@@ -190,7 +191,7 @@ prefix_ senf::console::GenericNode & senf::console::detail::NodeTraverser::node(
     if (elt_ != "" && elt_ != ".") {
         if (! dir_->hasChild(elt_) && autocomplete_) {
             DirectoryNode::ChildrenRange completions (dir_->completions(elt_));
-            if (completions.size() == 1)
+            if (has_one_elt(completions))
                 elt_ = completions.begin()->first;
         }
         return dir_->get(elt_);

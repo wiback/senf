@@ -29,6 +29,7 @@
 // Custom includes
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
+#include "../../Utils/range.hh"
 
 //#include "ProgramOptions.mpp"
 #define prefix_
@@ -115,7 +116,7 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
             std::string key (name.substr(b,e-b));
             if (! cwd->hasChild(key)) {
                 DirectoryNode::ChildrenRange completions (cwd->completions(key));
-                if (completions.size() == 1)
+                if (has_one_elt(completions))
                     key = completions.begin()->first;
                 else
                     continue;

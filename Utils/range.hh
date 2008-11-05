@@ -21,54 +21,27 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief parameter public header */
+    \brief range public header */
 
-/** \defgroup boost_parameter Boost.Parameter utilities
-   
-    Here we define some utilities for the <a
-    href="http://www.boost.org/doc/libs/1_33_1/libs/parameter/doc/html/index.html">Boost.Parameter</a>
-    library.
- */
-
-#ifndef HH_parameter_
-#define HH_parameter_ 1
+#ifndef HH_range_
+#define HH_range_ 1
 
 // Custom includes
-#include <boost/parameter/binding.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/mpl/not.hpp>
 
-//#include "parameter.mpp"
+//#include "range.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 
-    ///\addtogroup boost_parameter
-    ///\{
+    template <class Range>
+    bool has_one_elt(Range r);
 
-    /** \brief Test \a ArgumentPack, whether the \a TagType argument was supplied
-        
-        This check will test, whether the argument identified by the \a TagType keyword tag type was
-        specified in the \a ArgumentPack. This inherits from \c boost::mpl::true_ or \c
-        boost::mpl::false_ accordingly.
-
-        \tparam ArgumentPack argument pack to check
-        \tparam TagType keyword tag type identifying the argument to check
-     */
-    template <class ArgumentPack, class TagType>
-    struct has_parameter
-        : public boost::mpl::not_< 
-              boost::is_same< typename boost::parameter::binding< ArgumentPack, TagType, void>::type,
-                                                                  void > >::type
-    {};
-
-    ///\}
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "parameter.cci"
-//#include "parameter.ct"
-//#include "parameter.cti"
+//#include "range.cci"
+//#include "range.ct"
+#include "range.cti"
 #endif
 
 

@@ -102,6 +102,7 @@ namespace {
         unlink(SOCK_PATH);
         int pid = fork();
         if (pid == 0) {
+            signal(SIGCHLD, SIG_IGN);
             server();
             _exit(0);
         }
@@ -109,6 +110,7 @@ namespace {
             error("fork");
             return 0;
         }
+        signal(SIGCHLD, SIG_DFL);
 
         sleep(1); // Wait for the server socket to be opened
         return pid;

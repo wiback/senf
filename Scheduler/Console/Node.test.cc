@@ -116,7 +116,8 @@ BOOST_AUTO_UNIT_TEST(directoryNode)
     senf::console::root().remove("dir2");
     senf::console::root().remove("fn");
 
-    BOOST_CHECK_EQUAL( senf::console::root().children().size(), 1u );
+    BOOST_CHECK_EQUAL( std::distance(senf::console::root().children().begin(),
+                                     senf::console::root().children().end()), 1 );
 }
 
 BOOST_AUTO_UNIT_TEST(linkNode)

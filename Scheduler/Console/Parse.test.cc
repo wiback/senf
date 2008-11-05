@@ -211,7 +211,7 @@ BOOST_AUTO_UNIT_TEST(commandParser)
 
         BOOST_CHECK_EQUAL_COLLECTIONS( info.commandPath().begin(), info.commandPath().end(),
                                        path, path + sizeof(path)/sizeof(path[0]) );
-        BOOST_CHECK_EQUAL( info.tokens().size(), 15u );
+        BOOST_CHECK_EQUAL( unsigned(info.tokens().size()), 15u );
         
         char const * tokens[] = { "arg", 
                                   "flab::blub", 
@@ -222,7 +222,7 @@ BOOST_AUTO_UNIT_TEST(commandParser)
 
         senf::console::ParseCommandInfo::argument_iterator args (info.arguments().begin());
         BOOST_REQUIRE( args != info.arguments().end() );
-        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_REQUIRE_EQUAL( unsigned(args->size()), 1u );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[0] );
         
         ++ args;

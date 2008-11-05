@@ -33,6 +33,7 @@
 #include "../../Utils/senfassert.hh"
 #include "../../Utils/Range.hh"
 #include "../../Utils/String.hh"
+#include "../../Utils/range.hh"
 
 //#include "Executor.mpp"
 #define prefix_
@@ -301,7 +302,7 @@ prefix_ std::string senf::console::Executor::complete(DirectoryNode & dir,
 {
     if (! dir.hasChild(name)) {
         DirectoryNode::ChildrenRange completions (dir.completions(name));
-        if (completions.size() == 1)
+        if (has_one_elt(completions))
             return completions.begin()->first;
     }
     return name;
