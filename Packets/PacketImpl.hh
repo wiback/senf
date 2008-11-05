@@ -31,6 +31,7 @@
 #include <vector>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_base_of.hpp>
+#include <boost/type_traits/is_pod.hpp>
 #include <boost/static_assert.hpp>
 #include "../Utils/pool_alloc_mixin.hh"
 #include "PacketTypes.hh"
