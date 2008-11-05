@@ -118,7 +118,7 @@ senf::detail::PacketRegistryImpl<KeyType>::begin()
     const
 {
     return boost::make_transform_iterator(
-        registry_.begin(), __gnu_cxx::select1st<typename PacketMap::value_type>());
+        registry_.begin(), ::__gnu_cxx::select1st<typename PacketMap::value_type>());
 }
 
 template <class KeyType>
@@ -127,13 +127,13 @@ senf::detail::PacketRegistryImpl<KeyType>::end()
     const
 {
     return boost::make_transform_iterator(
-        registry_.end(), __gnu_cxx::select1st<typename PacketMap::value_type>());
+        registry_.end(), ::__gnu_cxx::select1st<typename PacketMap::value_type>());
 }
 
 ///////////////////////////////PacketRegistry..e///////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

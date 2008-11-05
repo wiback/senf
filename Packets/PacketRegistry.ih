@@ -40,7 +40,7 @@ namespace senf {
 
         Value returned by a registry lookup
      */
-    struct PkReg_Entry 
+    struct PkReg_Entry
         : public intrusive_refcount
     {
         virtual ~PkReg_Entry();
@@ -50,7 +50,7 @@ namespace senf {
     };
 
 namespace detail {
-    
+
     /** \brief Internal: Registry entry implementation for a specific packet type
 
         \internal
@@ -64,7 +64,7 @@ namespace detail {
     };
 
     /** \brief Internal: Registry implementation base-class and registry of registries
-        
+
         \internal
      */
     class PacketRegistryImplBase
@@ -88,7 +88,7 @@ namespace detail {
         \internal
      */
     template <class KeyType>
-    class PacketRegistryImpl 
+    class PacketRegistryImpl
         : public PacketRegistryImplBase
     {
     public:
@@ -104,13 +104,13 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef boost::transform_iterator< __gnu_cxx::select1st<typename PacketMap::value_type>,
+        typedef boost::transform_iterator< ::__gnu_cxx::select1st<typename PacketMap::value_type>,
                                            typename PacketMap::const_iterator > iterator;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-        
+
         PacketRegistryImpl(std::string const & name);
 
         ///@}
