@@ -69,6 +69,7 @@ prefix_ typename senf::ArrayParser<elements,ElementParser>::value_type
 senf::ArrayParser<elements,ElementParser>::operator[](difference_type i)
     const
 {
+    // Access out of range element
     SENF_ASSERT( i>=0 && i < difference_type(elements) );
     return begin()[i];
 }

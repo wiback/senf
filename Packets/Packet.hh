@@ -352,6 +352,8 @@ namespace senf {
                                              \endcode
                                              (This type is not POD since \c std::string is not POD)
 
+                                             \see \ref packet_usage_annotation
+
                                              \implementation The annotation system is implemented
                                                  quite efficiently since annotations are stored
                                                  within a packet embedded vector of fixed size (the

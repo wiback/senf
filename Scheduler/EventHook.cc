@@ -21,47 +21,47 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventEvent non-inline non-template implementation */
+    \brief EventHook non-inline non-template implementation */
 
-#include "EventEvent.hh"
-#include "EventEvent.ih"
+#include "EventHook.hh"
+#include "EventHook.ih"
 
 // Custom includes
 
-//#include "EventEvent.mpp"
+//#include "EventHook.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::scheduler::EventEvent
+// senf::scheduler::EventHook
 
-prefix_ void senf::scheduler::EventEvent::v_run()
+prefix_ void senf::scheduler::EventHook::v_run()
 {
     cb_();
 }
 
-prefix_ char const * senf::scheduler::EventEvent::v_type()
+prefix_ char const * senf::scheduler::EventHook::v_type()
     const
 {
     return "ee";
 }
 
-prefix_ std::string senf::scheduler::EventEvent::v_info()
+prefix_ std::string senf::scheduler::EventHook::v_info()
     const
 {
     return "";
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::scheduler::detail::EventEventDispatcher
+// senf::scheduler::detail::EventHookDispatcher
 
-prefix_ senf::scheduler::detail::EventEventDispatcher::~EventEventDispatcher()
+prefix_ senf::scheduler::detail::EventHookDispatcher::~EventHookDispatcher()
 {
     for (EventList::iterator i (events_.begin()); i != events_.end(); ++i)
         FIFORunner::instance().dequeue(&(*i));
 }
 
-prefix_ prefix_ void senf::scheduler::detail::EventEventDispatcher::remove(EventEvent & event)
+prefix_ prefix_ void senf::scheduler::detail::EventHookDispatcher::remove(EventHook & event)
 {
     EventList::iterator i (EventList::current(event));
     if (i == events_.end())
@@ -70,7 +70,7 @@ prefix_ prefix_ void senf::scheduler::detail::EventEventDispatcher::remove(Event
     events_.erase(i);
 }
 
-prefix_ void senf::scheduler::detail::EventEventDispatcher::prepareRun()
+prefix_ void senf::scheduler::detail::EventHookDispatcher::prepareRun()
 {
     for (EventList::iterator i (events_.begin()); i != events_.end(); ++i)
         i->setRunnable();
@@ -79,7 +79,7 @@ prefix_ void senf::scheduler::detail::EventEventDispatcher::prepareRun()
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "EventEvent.mpp"
+//#include "EventHook.mpp"
 
 
 // Local Variables:

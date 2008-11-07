@@ -60,7 +60,7 @@ prefix_ void senf::scheduler::process()
         detail::TimerDispatcher::instance().blockSignals();
         detail::SignalDispatcher::instance().blockSignals();
         detail::FileDispatcher::instance().prepareRun();
-        detail::EventEventDispatcher::instance().prepareRun();
+        detail::EventHookDispatcher::instance().prepareRun();
         detail::FIFORunner::instance().run();
     }
 }
@@ -73,9 +73,9 @@ prefix_ void senf::scheduler::restart()
     detail::TimerDispatcher*      tdd (&detail::TimerDispatcher::instance());
     detail::SignalDispatcher*     sdd (&detail::SignalDispatcher::instance());
     detail::FileDispatcher*       fld (&detail::FileDispatcher::instance());
-    detail::EventEventDispatcher* eed (&detail::EventEventDispatcher::instance());
+    detail::EventHookDispatcher* eed (&detail::EventHookDispatcher::instance());
 
-    eed->~EventEventDispatcher();
+    eed->~EventHookDispatcher();
     fld->~FileDispatcher();
     sdd->~SignalDispatcher();
     tdd->~TimerDispatcher();
@@ -89,7 +89,7 @@ prefix_ void senf::scheduler::restart()
     new (tdd) detail::TimerDispatcher();
     new (sdd) detail::SignalDispatcher();
     new (fld) detail::FileDispatcher();
-    new (eed) detail::EventEventDispatcher();
+    new (eed) detail::EventHookDispatcher();
 }
 
 prefix_ bool senf::scheduler::empty()
@@ -98,7 +98,7 @@ prefix_ bool senf::scheduler::empty()
         && detail::TimerDispatcher::instance().empty()
         && detail::FileDispatcher::instance().empty()
         && detail::SignalDispatcher::instance().empty()
-        && detail::EventEventDispatcher::instance().empty();
+        && detail::EventHookDispatcher::instance().empty();
 }
 
 ///////////////////////////////////////////////////////////////////////////

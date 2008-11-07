@@ -667,7 +667,8 @@
     itself but gives us some information about the packet: A timestamp, the interface the packet was
     received on or other processing related information.
 
-    This type of information can be stored using the annotation interface.
+    This type of information can be stored using the annotation interface. The following example
+    will read packet data and will store the read timestamp as a packet annotation.
 
     \code
     struct Timestamp {
@@ -689,7 +690,7 @@
     }
     \endcode
 
-    It is very important to define a specific structure (or class) type for each type of
+    It is very important to define a specific structure (or class or enum) type for each type of
     annotation. \e Never directly store a fundamental type as an annotation: The name of the type is
     used to look up the annotation, so you can store only one annotation for each built-in type. \c
     typedef does not help since \c typedef does not introduce new type names, it only defines an
@@ -721,6 +722,9 @@
         // ...
     }
     \endcode
+
+    Every annotation is automatically default-initialized, there is no way to query, whether a
+    packet holds a specific annotation -- every packet conceptually always holds all annotations.
 
     You should use annotations economically: Every annotation type used in your program will
     allocate an annotation slot in \e all packet data structures. So don't use hundreds of different

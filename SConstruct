@@ -196,7 +196,7 @@ Export('env')
 
 # Create Doxyfile.local otherwise doxygen will barf on this non-existent file
 # Create it even when cleaning, to silence the doxygen builder warnings
-if not env.GetOption('clean') and not os.path.exists("Doxyfile.local"):
+if not os.path.exists("Doxyfile.local"):
     Execute(Touch("Doxyfile.local"))
 
 # Create local_config.h

@@ -244,8 +244,8 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
 
     ///////////////////////////////////////////////////////////////////////////
 
-    senf::scheduler::EventEvent evev ("eventCounter", eventeventhandler, true,
-                                      senf::scheduler::EventEvent::PRIORITY_HIGH);
+    senf::scheduler::EventHook evev ("eventCounter", eventeventhandler, true,
+                                      senf::scheduler::EventHook::PRE);
 
     {
         senf::scheduler::FdEvent fde1 ("testFdEvent", boost::bind(&callback, sock, _1),

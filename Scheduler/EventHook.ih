@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventEvent internal header */
+    \brief EventHook internal header */
 
-#ifndef IH_EventEvent_
-#define IH_EventEvent_ 1
+#ifndef IH_EventHook_
+#define IH_EventHook_ 1
 
 // Custom includes
 #include "../Utils/singleton.hh"
@@ -38,31 +38,31 @@ namespace scheduler {
 
 namespace detail {
     
-    class EventEventDispatcher
-        : public singleton<EventEventDispatcher>
+    class EventHookDispatcher
+        : public singleton<EventHookDispatcher>
     {
     public:
-        using singleton<EventEventDispatcher>::instance;
-        using singleton<EventEventDispatcher>::alive;
+        using singleton<EventHookDispatcher>::instance;
+        using singleton<EventHookDispatcher>::alive;
 
-        void add(EventEvent & event);
-        void remove(EventEvent & event);
+        void add(EventHook & event);
+        void remove(EventHook & event);
 
         void prepareRun();
 
         bool empty() const;
 
     private:
-        EventEventDispatcher();
-        ~EventEventDispatcher();
+        EventHookDispatcher();
+        ~EventHookDispatcher();
 
         typedef boost::intrusive::ilist< 
-            EventEventListBase::value_traits<EventEvent>, false > EventList;
+            EventHookListBase::value_traits<EventHook>, false > EventList;
 
         EventList events_;
 
         friend void senf::scheduler::restart();
-        friend class singleton<EventEventDispatcher>;
+        friend class singleton<EventHookDispatcher>;
     };
 
 }}}

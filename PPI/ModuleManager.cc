@@ -71,7 +71,7 @@ prefix_ void senf::ppi::ModuleManager::run()
 prefix_ senf::ppi::ModuleManager::ModuleManager()
     : running_(false), terminate_(false), 
       initRunner_ ("senf::ppi::init", membind(&ModuleManager::init, this), false, 
-                   scheduler::EventEvent::PRIORITY_LOW)
+                   scheduler::EventHook::POST)
 {}
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -158,6 +158,13 @@ namespace module {
                 event.enable();
             }
 
+            void v_init() {
+                // Optional. Called after before running the module but after connections have been
+                // set up. This is either directly before senf::ppi::run() or senf::ppi::init() is
+                // called or, for modules created while the PPI is already running, after returning
+                // from all event handlers but before going back to the event loop.
+            }
+
         };
         \endcode
 
@@ -290,7 +297,13 @@ namespace module {
 
     private:
 #endif
-        virtual void v_init();
+        virtual void v_init();          ///< Called after module setup
+                                        /**< This member is called directly before the PPI (resumes)
+                                             execution. It is called after connections have been
+                                             setup before entering the PPI main loop. 
+
+                                             You may overload this member. Your overload should
+                                             always call the base-class implementation. */
 
 #ifndef DOXYGEN
     public:

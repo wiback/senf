@@ -229,9 +229,9 @@ namespace debug {
         throttled.
 
         \note ActiveFeederSink does \e not have a termination condition like ActiveFeederSource, it
-            relies on the network to throttle it's input. Also, the same not as for
-            ActiveFeederSource applies here too: You need to ensure, that no events are active
-            eventually or senf::ppi::run will not return.
+            relies on the network to throttle it's input. Additionally, the restrictions of
+            ActiveFeederSource apply here too: You need to ensure, that no (additional) events are
+            active (eventually) or senf::ppi::run will not return.
 
         ActiveFeederSink is not a module but a collection of two modules: a PassiveSink and an
         ActiveFeeder.

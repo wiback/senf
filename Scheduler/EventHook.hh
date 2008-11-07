@@ -21,26 +21,26 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventEvent public header */
+    \brief EventHook public header */
 
-#ifndef HH_EventEvent_
-#define HH_EventEvent_ 1
+#ifndef HH_EventHook_
+#define HH_EventHook_ 1
 
 // Custom includes
 #include <boost/function.hpp>
 #include "../boost/intrusive/ilist_hook.hpp"
 #include "FIFORunner.hh"
 
-//#include "EventEvent.mpp"
+//#include "EventHook.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace scheduler {
 
     namespace detail {
-        struct EventEventListTag;
-        typedef boost::intrusive::ilist_base_hook<EventEventListTag> EventEventListBase;
-        class EventEventDispatcher;
+        struct EventHookListTag;
+        typedef boost::intrusive::ilist_base_hook<EventHookListTag> EventHookListBase;
+        class EventHookDispatcher;
     }
 
     /** \brief Event hook event
@@ -53,22 +53,20 @@ namespace scheduler {
         void beforeEventHook();
         void afterEventHook();
 
-        senf::scheduler::EventEvent beforeEventHookEvent (
-            "beforeEventHook", beforeEventHook, true, senf::scheduler::EventEvent::PRIORITY_LOW);
-        senf::scheduler::EventEvent afterEventHookEvent (
-            "afterEventHook", afterEventHook, true, senf::scheduler::EventEvent::PRIORITY_HIGH);
+        senf::scheduler::EventHook beforeEventHookEvent (
+            "beforeEventHook", beforeEventHook, true, senf::scheduler::EventHook::POST);
+        senf::scheduler::EventHook afterEventHookEvent (
+            "afterEventHook", afterEventHook, true, senf::scheduler::EventHook::PRE);
         \endcode
 
-        This usage assumes, that all ordinary events are registered with \c PRIORITY_NORMAL.
-
-        The EventEvent class is an implementation of the RAII idiom: The event will be automatically
-        unregistered in the EventEvent destructor. The EventEvent instance should be created within
+        The EventHook class is an implementation of the RAII idiom: The event will be automatically
+        unregistered in the EventHook destructor. The EventHook instance should be created within
         the same scope or on a scope below where the callback is defined (e.g. if the callback is a
         member function it should be defined as a class member).
       */
-    class EventEvent
+    class EventHook
         : public detail::FIFORunner::TaskInfo,
-          public detail::EventEventListBase
+          public detail::EventHookListBase
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -76,12 +74,15 @@ namespace scheduler {
 
         typedef boost::function<void ()> Callback;
 
+        static Priority const PRE = PRIORITY_HIGH; ///< Execute hook BEFORE all other events
+        static Priority const POST = PRIORITY_LOW; ///< Execute hook AFTER all other events
+
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-        EventEvent(std::string const & name, Callback const & cb,
-                   bool initiallyEnabled = true, Priority priority = PRIORITY_NORMAL);
+        EventHook(std::string const & name, Callback const & cb,
+                   bool initiallyEnabled = true, Priority priority = POST);
                                         ///< Register an event hook
                                         /**< Registers \a cb to be called whenever any other event
                                              is signaled by the scheduler. If \a initiallyEnabled is
@@ -93,8 +94,8 @@ namespace scheduler {
                                              \param[in] initiallyEnabled if set \c false, do not
                                                  enable callback automatically. 
                                              \param[in] priority event priority, defaults to
-                                                 PRIORITY_NORMAL */
-        ~EventEvent();
+                                                 POST */
+        ~EventHook();
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -113,15 +114,15 @@ namespace scheduler {
 
         Callback cb_;
 
-        friend class detail::EventEventDispatcher;
+        friend class detail::EventHookDispatcher;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "EventEvent.cci"
-//#include "EventEvent.ct"
-//#include "EventEvent.cti"
+#include "EventHook.cci"
+//#include "EventHook.ct"
+//#include "EventHook.cti"
 #endif
 
 

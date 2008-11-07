@@ -36,7 +36,7 @@ template <class Handle>
 prefix_ senf::ReadHelper<Handle>::ReadHelper(Handle handle, std::string::size_type maxSize,
                                                     InternalPredicate * predicate, Callback cb)
     : handle_(handle), 
-      fde_("ReadHelper", boost::bind(&ReadHelper::dispatchProcess,ptr(this), handle, _1),
+      fde_("senf::ReadHelper", boost::bind(&ReadHelper::dispatchProcess,ptr(this), handle, _1),
            handle, senf::scheduler::FdEvent::EV_READ),
       maxSize_(maxSize), predicate_(predicate), callback_(cb), errno_(0), complete_(false)
 {

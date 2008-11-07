@@ -40,7 +40,14 @@
 
 prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 {
-    SENF_ASSERT( module_ && ! peer_ && target.module_ && ! target.peer_ );
+    // The connector is not registered -> route() or noroute() statement missing
+    SENF_ASSERT( module_ );
+    // The connector is already connected
+    SENF_ASSERT( ! peer_ );
+    // The target connector is not registered -> route() or noroute() statement missing
+    SENF_ASSERT( target.module_ );
+    // The target connector is already connected
+    SENF_ASSERT( ! target.peer_ );
     if (! (packetTypeID() == typeid(void) ||
            target.packetTypeID() == typeid(void) || 
            packetTypeID() == target.packetTypeID()) )
@@ -61,6 +68,7 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
 
 prefix_ void senf::ppi::connector::Connector::disconnect()
 {
+    // Cannot disconnected a non-connected connector
     SENF_ASSERT( peer_ );
     Connector & peer (*peer_);
     peer_ = 0;

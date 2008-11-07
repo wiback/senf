@@ -106,7 +106,7 @@ namespace ppi {
 
         InitQueue initQueue_;
 
-        scheduler::EventEvent initRunner_;
+        scheduler::EventHook initRunner_;
 
         friend class module::Module;
         friend class Initializable;

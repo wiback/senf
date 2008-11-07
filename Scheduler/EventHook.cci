@@ -21,9 +21,9 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventEvent inline non-template implementation */
+    \brief EventHook inline non-template implementation */
 
-#include "EventEvent.ih"
+#include "EventHook.ih"
 
 // Custom includes
 
@@ -31,9 +31,9 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::scheduler::EventEvent
+// senf::scheduler::EventHook
 
-prefix_ senf::scheduler::EventEvent::EventEvent(std::string const & name, Callback const & cb,
+prefix_ senf::scheduler::EventHook::EventHook(std::string const & name, Callback const & cb,
                                                 bool initiallyEnabled,
                                                 detail::FIFORunner::TaskInfo::Priority priority)
     : detail::FIFORunner::TaskInfo(name, priority), cb_ (cb)
@@ -42,45 +42,45 @@ prefix_ senf::scheduler::EventEvent::EventEvent(std::string const & name, Callba
         enable();
 }
 
-prefix_ senf::scheduler::EventEvent::~EventEvent()
+prefix_ senf::scheduler::EventHook::~EventHook()
 {
-    if (detail::EventEventDispatcher::alive())
+    if (detail::EventHookDispatcher::alive())
         disable();
 }
 
-prefix_ void senf::scheduler::EventEvent::disable()
+prefix_ void senf::scheduler::EventHook::disable()
 {
     if (enabled())
-        detail::EventEventDispatcher::instance().remove(*this);
+        detail::EventHookDispatcher::instance().remove(*this);
 }
 
-prefix_ void senf::scheduler::EventEvent::enable()
+prefix_ void senf::scheduler::EventHook::enable()
 {
     if (! enabled())
-        detail::EventEventDispatcher::instance().add(*this);
+        detail::EventHookDispatcher::instance().add(*this);
 }
 
-prefix_ void senf::scheduler::EventEvent::action(Callback const & cb)
+prefix_ void senf::scheduler::EventHook::action(Callback const & cb)
 {
     cb_ = cb;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::scheduler::detail::EventEventDispatcher
+// senf::scheduler::detail::EventHookDispatcher
 
-prefix_ void senf::scheduler::detail::EventEventDispatcher::add(EventEvent & event)
+prefix_ void senf::scheduler::detail::EventHookDispatcher::add(EventHook & event)
 {
     events_.push_back(event);
     FIFORunner::instance().enqueue(&event);
 }
 
-prefix_ bool senf::scheduler::detail::EventEventDispatcher::empty()
+prefix_ bool senf::scheduler::detail::EventHookDispatcher::empty()
     const
 {
     return events_.empty();
 }
 
-prefix_ senf::scheduler::detail::EventEventDispatcher::EventEventDispatcher()
+prefix_ senf::scheduler::detail::EventHookDispatcher::EventHookDispatcher()
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////
