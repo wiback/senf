@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/cstdint.hpp>
-#include <linux/dvb/frontend.h> 
+#include <linux/dvb/frontend.h>
 #include "../../../Socket/FramingPolicy.hh"
 #include "../../../Socket/CommunicationPolicy.hh"
 #include "../../../Socket/ReadWritePolicy.hh"
@@ -49,9 +49,11 @@ namespace senf {
         UnconnectedCommunicationPolicy,
         NotReadablePolicy,
         NotWriteablePolicy
-        >::policy DVBFrontend_Policy;   ///< Socket Policy for xxxx
+        >::policy DVBFrontend_Policy;   ///< Socket Policy for DVBFrontendSocketProtocol
 
-    /** \brief xxx
+    /** \brief SocketProtocol for the dvb frontend device
+
+        The DVB frontend device controls the tuner and DVB demodulator hardware.
      */
     class DVBFrontendSocketProtocol
         : public ConcreteSocketProtocol<DVBFrontend_Policy, DVBFrontendSocketProtocol>
@@ -63,7 +65,8 @@ namespace senf {
         ///\name Constructors
         ///@{
 
-        void init_client(boost::uint8_t adapter=0, boost::uint8_t device=0) const;       ///< xxx
+        void init_client(boost::uint8_t adapter=0, boost::uint8_t device=0) const;
+                                        ///< Opens the specified frontend device in read-only mode.
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
@@ -71,13 +74,19 @@ namespace senf {
         ///@}
         ///\name Abstract Interface Implementation
         ///@{
-        
-        unsigned available() const;
-        bool eof() const;
+
+        unsigned available() const;     ///< Returns always <tt>0</tt>
+                                        /**< Returns always <tt>0</tt>, since the DVB frontend
+                                             socket is not readable. */
+        bool eof() const;               ///< Returns always <tt>false</tt>
+                                        /**< Returns always <tt>false</tt>, since the DVB frontend
+                                             socket does not support the notion of EOF. */
 
         ///@}
-        
-        void signalStrength(int16_t *strength) const;
+
+        int16_t signalStrength() const; ///< Return current signal strength
+                                        /**< Returns the signal strength value for the signal
+                                             currently received by the front-end. */
     };
 
     typedef ProtocolClientSocketHandle<DVBFrontendSocketProtocol> DVBFrontendHandle;
@@ -92,7 +101,7 @@ namespace senf {
 //#include "DVBFrontendHandle.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

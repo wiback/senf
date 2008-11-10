@@ -40,14 +40,15 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::DVBFrontendHandle
 
-prefix_ void senf::DVBFrontendSocketProtocol::init_client(uint8_t adapter, boost::uint8_t device)
+prefix_ void senf::DVBFrontendSocketProtocol::init_client(boost::uint8_t adapter, boost::uint8_t device)
     const
 {
     std::string devFrontend = str( boost::format(
             "/dev/dvb/adapter%d/frontend%d") % adapter % device);
     int f = open(devFrontend.c_str(), O_RDONLY | O_NONBLOCK);
     if (f < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("") << "Could not open frontend device of DVB adapter " << devFrontend << ".";
+        SENF_THROW_SYSTEM_EXCEPTION("")
+            << "Could not open frontend device of DVB adapter " << devFrontend << ".";
     fd(f);
 }
 
@@ -63,18 +64,20 @@ prefix_ bool senf::DVBFrontendSocketProtocol::eof()
     return false;
 }
 
-prefix_ void senf::DVBFrontendSocketProtocol::signalStrength(int16_t *strength)
+prefix_ int16_t senf::DVBFrontendSocketProtocol::signalStrength()
     const
 {
-    if (::ioctl(fd(), FE_READ_SIGNAL_STRENGTH, strength) < 0)
+	int16_t strength;
+    if (::ioctl(fd(), FE_READ_SIGNAL_STRENGTH, &strength) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("Could not get signal strength of DVB adapter.");
+    return strength;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "DVBFrontendHandle.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
