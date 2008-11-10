@@ -31,7 +31,8 @@
 #include <vector>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_base_of.hpp>
-#include <boost/type_traits/is_pod.hpp>
+#include <boost/type_traits/has_trivial_constructor.hpp>
+#include <boost/type_traits/has_trivial_destructor.hpp>
 #include <boost/static_assert.hpp>
 #include "../Utils/pool_alloc_mixin.hh"
 #include "PacketTypes.hh"
@@ -98,7 +99,9 @@ namespace detail {
 
 #       ifdef BOOST_HAS_TYPE_TRAITS_INTRINSICS
 
-        BOOST_STATIC_ASSERT(( boost::is_pod<Annotation>::value || Complex ));
+        BOOST_STATIC_ASSERT(( (boost::has_trivial_constructor<Annotation>::value 
+                               && boost::has_trivial_destructor<Annotation>::value)
+                              || Complex ));
 
 #       endif
     };

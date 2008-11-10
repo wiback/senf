@@ -40,6 +40,13 @@ namespace log {
 
         The SyslogTarget will send all log messages to the syslog at the given facility.
 
+        \code
+        senf::log::SyslogTarget syslog;
+
+        // Route all messages to the syslog
+        syslog.route();
+        \endcode
+
         Valid facility values (taken from <tt>man 3 syslog</tt>):
         \par "" 
            <tt>LOG_AUTHPRIV</tt>, <tt>LOG_CRON</tt>, <tt>LOG_DAEMON</tt>, <tt>LOG_FTP</tt>,

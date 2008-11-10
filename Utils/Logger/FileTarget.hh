@@ -42,6 +42,13 @@ namespace log {
         The FileTarget will save all %log messages in the given file. Messages will be appended at
         the end of the file.
 
+        \code
+        senf::log::FileTarget target ("file.name");
+        
+        // Route all messages to this file.
+        target.route();
+        \endcode
+
         After %log files have been rotated, the reopen() member should be called to create a new %log
         file.
 
