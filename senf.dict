@@ -17,6 +17,8 @@ addrs
 addtogroup
 aListCollection
 alloc
+AnnotationRouter
+AnnotationType
 anotherCallback
 api
 arg
@@ -558,6 +560,7 @@ syslog
 SyslogTarget
 SystemException
 TapSocketHandle
+TargetInterface
 td
 templated
 ThresholdQueueing
