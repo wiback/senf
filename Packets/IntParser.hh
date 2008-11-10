@@ -284,8 +284,60 @@ namespace senf {
     inline std::ostream & operator<<(std::ostream & os, UInt32Parser const & i)
     { os << i.value(); return os; }
 
+    /** \brief Parse 64bit signed byte aligned integer
+        \see parseint
+        \ingroup parseint
+     */
+    struct Int64Parser
+        : public detail::packet::IntParserOps<Int64Parser,boost::int64_t>,
+          public PacketParserBase
+    {
+        Int64Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        typedef boost::int64_t value_type;
+        static size_type const fixed_bytes = 8;
+
+        value_type value() const { return detail::packet::parse_uint64(i()); }
+        void value(value_type v) { detail::packet::write_uint64(i(),v); }
+        Int64Parser const & operator= (value_type other) { value(other); return *this; }
+    };
+    /** \brief Write parsed value to stream
+        \related Int64Parser
+    */
+    inline std::ostream & operator<<(std::ostream & os, Int64Parser const & i)
+    { os << i.value(); return os; }
+
+
+    /** \brief Parse 64bit unsigned byte aligned integer
+        \see parseint
+        \ingroup parseint
+     */
+    struct UInt64Parser
+        : public detail::packet::IntParserOps<UInt64Parser,boost::uint64_t>,
+          public PacketParserBase
+    {
+        UInt64Parser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        typedef boost::uint64_t value_type;
+        static size_type const fixed_bytes = 8;
+
+        value_type value() const { return detail::packet::parse_uint64(i()); }
+        void value(value_type v) { detail::packet::write_uint64(i(),v); }
+        UInt64Parser const & operator= (value_type other) { value(other); return *this; }
+    };
+    /** \brief Write parsed value to stream
+        \related UInt64Parser
+     */
+    inline std::ostream & operator<<(std::ostream & os, UInt64Parser const & i)
+    { os << i.value(); return os; }
+
+
     /** \brief Parse signed bitfield with up to 32bit's
-        
+
         This parser will parse a bitfield beginning at the bit \a Start and ending \e before \a
         End. Bits are numbered <em>most significant bit first</em> as this is the customary
         numbering used when defining packet data structures. \a Start and \a End can be \e
@@ -303,7 +355,7 @@ namespace senf {
             compile-time constants, the compiler will create optimized bit-masks to directly access
             the value. The parser is also optimized to access the minimum number of data bytes
             necessary.
-        
+
         \ingroup parseint
      */
     template <unsigned Start, unsigned End>
@@ -343,7 +395,7 @@ namespace senf {
     { os << i.value(); return os; }
 
     /** \brief Parse unsigned bitfield with up to 32bit's
-        
+
         This parser will parse a bitfield beginning at the bit \a Start and ending \e before \a
         End. Bits are numbered <em>most significant bit first</em> as this is the customary
         numbering used when defining packet data structures. \a Start and \a End can be \e
@@ -361,7 +413,7 @@ namespace senf {
             compile-time constants, the compiler will create optimized bit-masks to directly access
             the value. The parser is also optimized to access the minimum number of data bytes
             necessary.
-        
+
         \ingroup parseint
      */
     template <unsigned Start, unsigned End>
@@ -449,7 +501,7 @@ namespace senf {
 //#include "IntParser.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

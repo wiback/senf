@@ -155,6 +155,34 @@ namespace packet {
         i[3] = ( v       ) & 0xff;
     }
 
+    /** \brief Internal: Extract 64bit network byte order value
+
+        \internal
+     */
+    inline boost::uint64_t parse_uint64(iterator i)
+    {
+        return ((boost::uint64_t)i[7]) | ((boost::uint64_t)i[6])<<8
+                | ((boost::uint64_t)i[5])<<16 | ((boost::uint64_t)i[4])<<24
+                | ((boost::uint64_t)i[3])<<32 | ((boost::uint64_t)i[2])<<40
+                | ((boost::uint64_t)i[1])<<48 | ((boost::uint64_t)i[0])<<56;
+    }
+
+    /** \brief Internal: Write 64bit network byte order value
+
+        \internal
+     */
+    inline void write_uint64(iterator i, boost::uint64_t v)
+    {
+        i[0] = ( v >> 56 ) & 0xff;
+        i[1] = ( v >> 48 ) & 0xff;
+        i[2] = ( v >> 40 ) & 0xff;
+        i[3] = ( v >> 32 ) & 0xff;
+        i[4] = ( v >> 24 ) & 0xff;
+        i[5] = ( v >> 16 ) & 0xff;
+        i[6] = ( v >> 8  ) & 0xff;
+        i[7] = ( v       ) & 0xff;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // bitfield extraction
 
@@ -263,7 +291,7 @@ namespace packet {
 ///////////////////////////////ih.e////////////////////////////////////////
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
