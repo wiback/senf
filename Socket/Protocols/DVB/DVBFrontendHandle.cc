@@ -73,6 +73,24 @@ prefix_ int16_t senf::DVBFrontendSocketProtocol::signalStrength()
     return strength;
 }
 
+prefix_ int16_t senf::DVBFrontendSocketProtocol::signalNoiseRatio()
+    const
+{
+    int16_t snr;
+    if (::ioctl(fd(), FE_READ_SNR, &snr) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("Could not get signal-to-noise ratio of DVB adapter.");
+    return snr;
+}
+
+prefix_ uint32_t senf::DVBFrontendSocketProtocol::bitErrorRate()
+    const
+{
+    uint32_t ber;
+    if (::ioctl(fd(), FE_READ_BER, &ber) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("Could not get bit error rate of DVB adapter.");
+    return ber;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "DVBFrontendHandle.mpp"

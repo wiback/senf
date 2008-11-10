@@ -84,9 +84,21 @@ namespace senf {
 
         ///@}
 
-        int16_t signalStrength() const; ///< Return current signal strength
+        int16_t signalStrength() const; ///< Returns current signal strength
                                         /**< Returns the signal strength value for the signal
-                                             currently received by the front-end. */
+                                             currently received by the front-end. For this method,
+                                             read-only access to the device is sufficient.*/
+
+        int16_t signalNoiseRatio() const;
+                                        ///< Returns current signal-to-noise ratio
+                                        /**< Returns the signal-to-noise ratio for the signal
+                                             currently received by the front-end. For this method,
+                                             read-only access to the device is sufficient. */
+
+        uint32_t bitErrorRate() const;  ///< Returns the current bit error rate for the signal
+                                        /**< Returns the bit error rate for the signal currently
+                                             received/demodulated by the front-end. For this method,
+                                             read-only access to the device is sufficient. */
     };
 
     typedef ProtocolClientSocketHandle<DVBFrontendSocketProtocol> DVBFrontendHandle;
