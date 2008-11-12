@@ -4,7 +4,11 @@
 
 CONCURRENCY_LEVEL ?= 2
 
-SCONS=scons -j $(CONCURRENCY_LEVEL)
+ifdef final
+  FINAL = "final=1"
+endif
+
+SCONS=scons -j $(CONCURRENCY_LEVEL) $(FINAL)
 
 default: build
 
