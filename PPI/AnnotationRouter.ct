@@ -45,8 +45,16 @@ senf::ppi::module::AnnotationRouter<AnnotationType>::newOutput(AnnotationType co
     if (outputs_.find(key) != outputs_.end())
         throw DuplicateKeyException(key); 
     // key must not be const ... has something to do with exception guarantees ??
+    // From boost 1.34.0 on we can use auto_ptr which we really should for exception safety
+    // but this doesn't work with boost 1.33.1 :-(
+#if BOOST_VERSION >= 103400
+    return *outputs_.insert(key, 
+                            std::auto_ptr<connector::ActiveOutput<> >(
+                                new connector::ActiveOutput<>())).first->second;
+#else
     AnnotationType k (key); 
     return *outputs_.insert(k, new connector::ActiveOutput<>()).first;
+#endif
 }
 
 template <class AnnotationType>
@@ -56,8 +64,13 @@ prefix_ void senf::ppi::module::AnnotationRouter<AnnotationType>::request()
     typename Outputs::iterator i (outputs_.find(p.annotation<AnnotationType>()));
     if (i == outputs_.end())
         defaultOutput(p);
-    else
+    else {
+#if BOOST_VERSION >= 103400
+        (*i->second)(p);
+#else
         (*i)(p);
+#endif
+    }
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////
