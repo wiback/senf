@@ -44,15 +44,15 @@ namespace senf {
         SENF_PARSER_BITFIELD ( table_boundary,           1,  bool     );
         SENF_PARSER_BITFIELD ( frame_boundary,           1,  bool     );
         SENF_PARSER_BITFIELD ( address,                  18, unsigned );
-        
+
         SENF_PARSER_FINALIZE( MPERealTimeParametersParser );
     };
-    
+
 
     /** \brief Parse a MPE Section
-    
+
         Parser implementing the header of a MPE Section
-        
+
         \see MPESectionType
      */
     class MPESectionParser : public PacketParserBase
@@ -61,15 +61,15 @@ namespace senf {
 #       include SENF_FIXED_PARSER()
 
         SENF_PARSER_FIELD( table_id, UInt8Parser );
-        
+
         SENF_PARSER_BITFIELD        ( section_syntax_indicator, 1,  bool     );
         SENF_PARSER_BITFIELD        ( private_indicator,        1,  bool     );
         SENF_PARSER_PRIVATE_BITFIELD( reserved_1,               2,  unsigned );
         SENF_PARSER_BITFIELD        ( section_length,           12, unsigned );
-        
+
         SENF_PARSER_FIELD( mac_addr_6, UInt8Parser );
         SENF_PARSER_FIELD( mac_addr_5, UInt8Parser );
-        
+
         SENF_PARSER_PRIVATE_BITFIELD( reserved_2,          2, unsigned );
         SENF_PARSER_BITFIELD        ( payload_scrmbl_ctrl, 2, unsigned );
         SENF_PARSER_BITFIELD        ( addr_scrmbl_ctrl,    2, unsigned );
@@ -80,11 +80,11 @@ namespace senf {
         SENF_PARSER_FIELD( last_section_num, UInt8Parser );
 
         SENF_PARSER_FIELD( real_time_parameters, MPERealTimeParametersParser );
-        
+
         SENF_PARSER_FINALIZE( MPESectionParser );
-        
+
         SENF_PARSER_PRIVATE_BITFIELD( ip_datagram_version, 4, unsigned );
-        
+
         SENF_PARSER_INIT() {
             table_id() = 0x3e;
             section_syntax_indicator() = 1;
@@ -95,19 +95,21 @@ namespace senf {
             addr_scrmbl_ctrl() = 0;
             curr_next_indicator() = 1;
         }
-        
+
         UInt32Parser crc() const { return parse<UInt32Parser>( data().size()-4 ); }
         boost::uint32_t calcCrc() const;
-        
+
         friend class MPESectionType;
-        
+
     private:
-        typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> crc32_t;        
+        //typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> crc32_t;
+        static unsigned long crc32tab_[];
+
     };
-    
-    
+
+
     /** \brief MPE Section
-        
+
         \par Packet type (typedef):
             \ref MPESection
 
@@ -126,14 +128,14 @@ namespace senf {
 
         using mixin::nextPacketRange;
         using mixin::init;
-        
+
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
         static PacketParserBase::size_type initSize();
         static PacketParserBase::size_type initHeadSize();
     };
-        
+
     typedef ConcretePacket<MPESectionType> MPESection;
 }
 
@@ -144,7 +146,7 @@ namespace senf {
 //#include "MPESection.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
