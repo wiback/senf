@@ -102,9 +102,7 @@ namespace senf {
         friend class MPESectionType;
 
     private:
-        //typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> crc32_t;
-        static unsigned long crc32tab_[];
-
+        typedef boost::crc_optimal<32, 0x04C11DB7, 0xFFFFFFFF, 0, false, false> crc32_t;
     };
 
 
