@@ -47,7 +47,10 @@ namespace senf {
         \ingroup packet_module
      */
     struct DataPacketType : public PacketTypeBase
-    {};
+    {
+        typedef ConcretePacket<DataPacketType> packet;
+        static void dump(packet p, std::ostream & os);
+    };
 
     /** \brief Generic payload-only packet typedef */
     typedef ConcretePacket<DataPacketType> DataPacket;

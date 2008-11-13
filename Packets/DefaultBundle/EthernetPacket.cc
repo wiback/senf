@@ -67,11 +67,14 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::EthernetPacketType::nextPac
 
 prefix_ void senf::EthernetPacketType::finalize(packet p)
 {
-    optional_key_t k (key(p.next(nothrow)));
-    if (k)
-        p->type_length() << k;
-    else if (p.next().is<LlcSnapPacket>())
-        p->type_length() << p.next().data().size();
+    Packet n (p.next(nothrow));
+    if (n) {
+        optional_key_t k (key(n));
+        if (k)
+            p->type_length() << k;
+        else if (n.is<LlcSnapPacket>())
+            p->type_length() << n.data().size();
+    }
     // Do NOT reset type_length if the type is not known ... doing this will destroy read packets
 }
 

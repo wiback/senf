@@ -361,11 +361,17 @@ next_type arg ( BOOST_PP_ENUM_BINARY_PARAMS( BOOST_PP_ITERATION(), A, const & a 
 // ////////////////////////////////////////////////////////////////////////
 // Undefine local Macros
 
+#undef mpp_TrailingBindArgs
+#undef mpp_BindArgs_
+
 #undef mpp_TrailingArgs
 #undef mpp_Args_
 
-#undef mpp_TrailingArgTypes
+#undef mpp_ArgTypes
 #undef mpp_ArgTypes_
+
+#undef mpp_TrailingArgTypes
+#undef mpp_TrailingArgTypes_
 
 #undef mpp_ArgN
 #undef mpp_ArgTypeN
