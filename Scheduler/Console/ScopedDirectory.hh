@@ -189,7 +189,8 @@ namespace console {
 
     template <class Owner, class Function>
     SimpleCommandNode & senf_console_add_node(
-        DirectoryNode & node, Owner & owner, std::string const & name, Function const & fn, ...);
+        DirectoryNode & node, Owner & owner, std::string const & name,
+        SimpleCommandNode::Function fn, int);
 
     template <class Owner>
     SimpleCommandNode & senf_console_add_node(

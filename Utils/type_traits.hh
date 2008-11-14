@@ -131,6 +131,11 @@ namespace senf
         typedef T type;
     };
 
+    template < class C, class T > struct remove_member_pointer <T (C::* const) >
+    {
+        typedef T type;
+    };
+
 #endif
 
     /** \brief Get class of a member pointer
@@ -159,6 +164,11 @@ namespace senf
 #ifndef DOXYGEN
 
     template < class C, class T > struct member_class <T (C::*) >
+    {
+        typedef C type;
+    };
+
+    template < class C, class T > struct member_class <T (C::* const) >
     {
         typedef C type;
     };

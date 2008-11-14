@@ -47,7 +47,8 @@ namespace console {
     template <class Variable>
     VariableAttributor<Variable> senf_console_add_node(
         DirectoryNode & node, std::string const & name, Variable & var, int,
-        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0);
+        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
+        typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
 
     template <class Variable>
     typename detail::VariableNodeCreator<Variable>::result_type
@@ -57,7 +58,13 @@ namespace console {
     template <class Variable, class Owner>
     VariableAttributor<Variable> senf_console_add_node(
         DirectoryNode & node, Owner & owner, std::string const & name, Variable & var, int,
-        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0);
+        typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
+        typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
+
+    template <class Variable, class Owner>
+    typename detail::VariableNodeCreator<Variable>::result_type
+    senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name, 
+                          boost::reference_wrapper<Variable> var, int);
 
 #endif
 

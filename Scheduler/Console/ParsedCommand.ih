@@ -112,7 +112,10 @@ namespace detail {
 
     template <class FnunctionP, class Function, bool isFN=boost::is_function<Function>::value>
     struct ParsedCommandTraits_i
-    {};
+    {
+        static const bool is_callable = false;
+        static const bool is_member = false;
+    };
 
     template <class FunctionP, class Function>
     struct ParsedCommandTraits_i<FunctionP, Function, true>
@@ -132,6 +135,7 @@ namespace detail {
 
         typedef typename senf::remove_cvref<typename base_traits::result_type>::type result_type;
 
+        static const bool is_callable = true;
         static const bool is_member = boost::is_member_pointer<base_type>::value;
         
         typedef typename senf::member_class<base_type>::type class_type;

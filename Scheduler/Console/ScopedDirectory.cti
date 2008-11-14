@@ -75,7 +75,7 @@ senf::console::ScopedDirectory<Owner>::add(std::string const & name, Object & ob
 template <class Owner, class Function>
 prefix_ senf::console::SimpleCommandNode & senf::console::
 senf_console_add_node(DirectoryNode & node, Owner & , std::string const & name,
-                      Function const & fn, ...)
+                      SimpleCommandNode::Function fn, int)
 {
     return node.add(name,fn);
 }

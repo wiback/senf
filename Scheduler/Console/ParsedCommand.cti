@@ -373,7 +373,8 @@ namespace detail {
 template <class Function>
 typename senf::console::detail::ParsedCommandTraits<Function>::Attributor
 senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
-                                     Function fn, int)
+                                     Function fn, int,
+                                     typename boost::enable_if_c<detail::ParsedCommandTraits<Function>::is_callable>::type *)
 {
     return senf::console::detail::addOverloadedCommandNode<Function>(node, name, fn);
 }
