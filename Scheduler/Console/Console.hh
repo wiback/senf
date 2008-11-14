@@ -35,6 +35,7 @@
 #include "ParsedCommand.hh"
 #include "ScopedDirectory.hh"
 #include "OverloadedCommand.hh"
+#include "Variables.hh"
 #include "Config.hh"
 #include "ConfigFile.hh"
 #include "ProgramOptions.hh"
