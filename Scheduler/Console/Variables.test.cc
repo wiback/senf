@@ -93,6 +93,27 @@ BOOST_AUTO_UNIT_TEST(variables)
         .formatter(&testFormatter);
 }
 
+namespace {
+    
+    class Test2
+    {
+    public:
+        senf::console::ScopedDirectory<Test2> dir;
+        
+        Test2() : dir(this), var_(0)
+            { dir.add("var", var_); }
+        
+    private:
+        int var_;
+    };
+  
+}
+
+BOOST_AUTO_UNIT_TEST(memberVariables)
+{
+    Test2 test2ob;
+}
+
 #ifdef COMPILE_CHECK
 
 COMPILE_FAIL(constVariable)

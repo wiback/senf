@@ -195,6 +195,15 @@ senf::console::senf_console_add_node(DirectoryNode & node, std::string const & n
     return detail::VariableNodeCreator<Variable>::add(node, name, var.get());
 }
 
+template <class Variable, class Owner>
+prefix_ senf::console::VariableAttributor<Variable> senf::console::
+senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
+                      Variable & var, int,
+                      typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *)
+{
+    return detail::VariableNodeCreator<Variable>::add(node, name, var);
+}
+
 #endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
