@@ -24,8 +24,8 @@
     \brief FramingPolicy public header
  */
 
-#ifndef HH_FramingPolicy_
-#define HH_FramingPolicy_ 1
+#ifndef HH_SENF_Socket_FramingPolicy_
+#define HH_SENF_Socket_FramingPolicy_ 1
 
 // Custom includes
 #include "SocketPolicy.hh"

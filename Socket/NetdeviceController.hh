@@ -24,8 +24,8 @@
     \brief NetdeviceController public header
  */
 
-#ifndef HH_NetdeviceController_
-#define HH_NetdeviceController_ 1
+#ifndef HH_SENF_Socket_NetdeviceController_
+#define HH_SENF_Socket_NetdeviceController_ 1
 
 // Custom includes
 #include <string>

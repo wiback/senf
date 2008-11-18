@@ -23,8 +23,8 @@
 /** \file
     \brief Logger public header */
 
-#ifndef HH_Logger_
-#define HH_Logger_ 1
+#ifndef HH_SENF_Utils_Logger_Logger_
+#define HH_SENF_Utils_Logger_Logger_ 1
 
 #include "all_includes.hh"
 

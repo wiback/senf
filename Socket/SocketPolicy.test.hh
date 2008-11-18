@@ -20,8 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_SocketPolicy_test_
-#define HH_SocketPolicy_test_ 1
+#ifndef HH_SENF_Socket_SocketPolicy_test_
+#define HH_SENF_Socket_SocketPolicy_test_ 1
 
 // Custom includes
 #include "SocketPolicy.hh"

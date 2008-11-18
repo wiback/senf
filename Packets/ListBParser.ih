@@ -23,8 +23,8 @@
 /** \file
     \brief ListBParser internal header */
 
-#ifndef IH_ListBParser_
-#define IH_ListBParser_ 1
+#ifndef IH_SENF_Packets_ListBParser_
+#define IH_SENF_Packets_ListBParser_ 1
 
 // Custom includes
 #include "ListParser.ih"

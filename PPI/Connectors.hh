@@ -23,8 +23,8 @@
 /** \file
     \brief Connectors public header */
 
-#ifndef HH_Connectors_
-#define HH_Connectors_ 1
+#ifndef HH_SENF_PPI_Connectors_
+#define HH_SENF_PPI_Connectors_ 1
 
 // Custom includes
 #include <deque>

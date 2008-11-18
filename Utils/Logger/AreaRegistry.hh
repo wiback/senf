@@ -23,8 +23,8 @@
 /** \file
     \brief AreaRegistry public header */
 
-#ifndef HH_AreaRegistry_
-#define HH_AreaRegistry_ 1
+#ifndef HH_SENF_Utils_Logger_AreaRegistry_
+#define HH_SENF_Utils_Logger_AreaRegistry_ 1
 
 // Custom includes
 #include <map>

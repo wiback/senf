@@ -23,8 +23,8 @@
 /** \file
     \brief SocketSource public header */
 
-#ifndef HH_SocketSource_
-#define HH_SocketSource_ 1
+#ifndef HH_SENF_PPI_SocketSource_
+#define HH_SENF_PPI_SocketSource_ 1
 
 // Custom includes
 #include "../Packets/Packets.hh"

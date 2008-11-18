@@ -23,8 +23,8 @@
 /** \file
     \brief mpl public header */
 
-#ifndef HH_mpl_
-#define HH_mpl_ 1
+#ifndef HH_SENF_Utils_mpl_
+#define HH_SENF_Utils_mpl_ 1
 
 // Custom includes
 #include "../config.hh"

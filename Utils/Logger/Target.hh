@@ -23,8 +23,8 @@
 /** \file
     \brief Target public header */
 
-#ifndef HH_Target_
-#define HH_Target_ 1
+#ifndef HH_SENF_Utils_Logger_Target_
+#define HH_SENF_Utils_Logger_Target_ 1
 
 // Custom includes
 #include <set>

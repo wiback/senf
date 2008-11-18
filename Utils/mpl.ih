@@ -23,8 +23,8 @@
 /** \file
     \brief mpl internal header */
 
-#ifndef IH_mpl_
-#define IH_mpl_ 1
+#ifndef IH_SENF_Utils_mpl_
+#define IH_SENF_Utils_mpl_ 1
 
 // Custom includes
 

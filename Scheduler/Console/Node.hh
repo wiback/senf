@@ -194,8 +194,8 @@
     class to add the node to the tree.
  */
 
-#ifndef HH_Node_
-#define HH_Node_ 1
+#ifndef HH_SENF_Scheduler_Console_Node_
+#define HH_SENF_Scheduler_Console_Node_ 1
 
 // Custom includes
 #include <map>

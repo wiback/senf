@@ -23,8 +23,8 @@
 /** \file
     \brief UNDatagramSocketHandle public header */
 
-#ifndef HH_UNDatagramSocketHandle_
-#define HH_UNDatagramSocketHandle_ 1
+#ifndef HH_SENF_Socket_Protocols_UN_UNDatagramSocketHandle_
+#define HH_SENF_Socket_Protocols_UN_UNDatagramSocketHandle_ 1
 
 // Custom includes
 #include "UNAddressing.hh"

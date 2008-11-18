@@ -23,8 +23,8 @@
 /** \file
     \brief DVBDemuxSocketProtocol public header */
 
-#ifndef HH_DVBDemuxSocketProtocol_
-#define HH_DVBDemuxSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_DVB_DVBDemuxSocketProtocol_
+#define HH_SENF_Socket_Protocols_DVB_DVBDemuxSocketProtocol_ 1
 
 #include <linux/dvb/dmx.h> 
 

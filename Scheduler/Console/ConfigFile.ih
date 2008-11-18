@@ -23,8 +23,8 @@
 /** \file
     \brief ConfigFile internal header */
 
-#ifndef IH_ConfigFile_
-#define IH_ConfigFile_ 1
+#ifndef IH_SENF_Scheduler_Console_ConfigFile_
+#define IH_SENF_Scheduler_Console_ConfigFile_ 1
 
 // Custom includes
 

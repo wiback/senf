@@ -237,8 +237,8 @@
     as base classes to build other policy classes.
  */
 
-#ifndef HH_SocketPolicy_
-#define HH_SocketPolicy_ 1
+#ifndef HH_SENF_Socket_SocketPolicy_
+#define HH_SENF_Socket_SocketPolicy_ 1
 
 // Custom includes
 

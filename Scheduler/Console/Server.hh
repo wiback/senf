@@ -23,8 +23,8 @@
 /** \file
     \brief Server public header */
 
-#ifndef HH_Server_
-#define HH_Server_ 1
+#ifndef HH_SENF_Scheduler_Console_Server_
+#define HH_SENF_Scheduler_Console_Server_ 1
 
 // Custom includes
 #include <set>

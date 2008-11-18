@@ -23,8 +23,8 @@
 /** \file
     \brief PacketInterpreter public header */
 
-#ifndef HH_PacketInterpreter_
-#define HH_PacketInterpreter_ 1
+#ifndef HH_SENF_Packets_PacketInterpreter_
+#define HH_SENF_Packets_PacketInterpreter_ 1
 
 // Custom includes
 #include "../boost/intrusive/ilist.hpp"
@@ -395,8 +395,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_PacketInterpreter_i_)
-#define HH_PacketInterpreter_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketInterpreter_i_)
+#define HH_SENF_Packets_PacketInterpreter_i_
 #include "PacketInterpreter.cci"
 #include "PacketInterpreter.ct"
 #include "PacketInterpreter.cti"

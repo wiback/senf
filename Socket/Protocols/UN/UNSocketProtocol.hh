@@ -23,8 +23,8 @@
 /** \file
     \brief UNSocketProtocol public header */
 
-#ifndef HH_UNSocketProtocol_
-#define HH_UNSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_UN_UNSocketProtocol_
+#define HH_SENF_Socket_Protocols_UN_UNSocketProtocol_ 1
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"

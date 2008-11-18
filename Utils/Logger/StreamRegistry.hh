@@ -23,8 +23,8 @@
 /** \file
     \brief StreamRegistry public header */
 
-#ifndef HH_StreamRegistry_
-#define HH_StreamRegistry_ 1
+#ifndef HH_SENF_Utils_Logger_StreamRegistry_
+#define HH_SENF_Utils_Logger_StreamRegistry_ 1
 
 // Custom includes
 #include <map>

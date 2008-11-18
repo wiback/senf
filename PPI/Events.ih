@@ -23,8 +23,8 @@
 /** \file
     \brief Events internal header */
 
-#ifndef IH_Events_
-#define IH_Events_ 1
+#ifndef IH_SENF_PPI_Events_
+#define IH_SENF_PPI_Events_ 1
 
 // Custom includes
 

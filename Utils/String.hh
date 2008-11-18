@@ -23,8 +23,8 @@
 /** \file
     \brief String public header */
 
-#ifndef HH_String_
-#define HH_String_ 1
+#ifndef HH_SENF_Utils_String_
+#define HH_SENF_Utils_String_ 1
 
 // Custom includes
 #include <string>

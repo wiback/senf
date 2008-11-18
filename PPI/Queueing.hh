@@ -23,8 +23,8 @@
 /** \file
     \brief Queueing public header */
 
-#ifndef HH_Queueing_
-#define HH_Queueing_ 1
+#ifndef HH_SENF_PPI_Queueing_
+#define HH_SENF_PPI_Queueing_ 1
 
 // Custom includes
 #include "predecl.hh"

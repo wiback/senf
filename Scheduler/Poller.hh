@@ -23,8 +23,8 @@
 /** \file
     \brief Poller public header */
 
-#ifndef HH_Poller_
-#define HH_Poller_ 1
+#ifndef HH_SENF_Scheduler_Poller_
+#define HH_SENF_Scheduler_Poller_ 1
 
 // Custom includes
 #include <sys/epoll.h>

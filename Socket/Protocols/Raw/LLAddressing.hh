@@ -24,8 +24,8 @@
     \brief LLSocketAddress and LLAddressingPolicy public header
  */
 
-#ifndef HH_LLAddressing_
-#define HH_LLAddressing_ 1
+#ifndef HH_SENF_Socket_Protocols_Raw_LLAddressing_
+#define HH_SENF_Socket_Protocols_Raw_LLAddressing_ 1
 
 // Custom includes
 #include <sys/socket.h>

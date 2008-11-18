@@ -24,8 +24,8 @@
     \brief ServerSocketHandle public header
  */
 
-#ifndef HH_ServerSocketHandle_
-#define HH_ServerSocketHandle_ 1
+#ifndef HH_SENF_Socket_ServerSocketHandle_
+#define HH_SENF_Socket_ServerSocketHandle_ 1
 
 // Custom includes
 #include <boost/static_assert.hpp>

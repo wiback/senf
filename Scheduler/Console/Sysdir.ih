@@ -23,8 +23,8 @@
 /** \file
     \brief Sysdir internal header */
 
-#ifndef IH_Sysdir_
-#define IH_Sysdir_ 1
+#ifndef IH_SENF_Scheduler_Console_Sysdir_
+#define IH_SENF_Scheduler_Console_Sysdir_ 1
 
 // Custom includes
 

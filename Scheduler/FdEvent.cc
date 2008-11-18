@@ -50,9 +50,9 @@ prefix_ bool senf::scheduler::detail::FdDispatcher::add(FdEvent & event)
     std::pair<FdSet::iterator,FdSet::iterator> range (fds_.equal_range(event));
     int events (0);
     for (FdSet::iterator i (range.first); i != range.second; ++i)
-	events |= i->events_;
+        events |= i->events_;
     if (event.events_ & events)
-	throw FdEvent::DuplicateEventRegistrationException();
+        throw FdEvent::DuplicateEventRegistrationException();
 
     if (! detail::FdManager::instance().set(event.fd_, events | event.events_, &event))
         return false;
@@ -70,12 +70,12 @@ prefix_ void senf::scheduler::detail::FdDispatcher::remove(FdEvent & event)
 
     std::pair<FdSet::iterator,FdSet::iterator> range (fds_.equal_range(event));
     if (range.first == range.second)
-	detail::FdManager::instance().remove(event.fd_);
+        detail::FdManager::instance().remove(event.fd_);
     else {
         int events (0);
         for (FdSet::iterator i (range.first); i != range.second; ++i)
             events |= i->events_;
-	detail::FdManager::instance().set(event.fd_, events, &(*range.first));
+        detail::FdManager::instance().set(event.fd_, events, &(*range.first));
     }
 }
 
@@ -87,9 +87,9 @@ prefix_ void senf::scheduler::detail::FileDispatcher::add(FdEvent & event)
     std::pair<FdSet::iterator,FdSet::iterator> range (fds_.equal_range(event));
     int events (0);
     for (FdSet::iterator i (range.first); i != range.second; ++i)
-	events |= i->events_;
+        events |= i->events_;
     if (event.events_ & events)
-	throw FdEvent::DuplicateEventRegistrationException();
+        throw FdEvent::DuplicateEventRegistrationException();
 
     detail::FIFORunner::instance().enqueue(&event);
     fds_.insert(range.first, event);
@@ -153,7 +153,7 @@ prefix_ senf::scheduler::FdEvent & senf::scheduler::FdEvent::events(int events)
     disable();
     events_ = events;
     if (en)
-	enabled();
+        enabled();
     return *this;
 }
 
@@ -163,9 +163,9 @@ prefix_ void senf::scheduler::FdEvent::signal(int events)
     detail::FdDispatcher::FdSet::iterator const i_end (detail::FdDispatcher::instance().fds_.end());
     bool all ((events & (EV_ERR | EV_HUP)) && ! (events & (EV_READ | EV_PRIO | EV_WRITE)));
     for (; i != i_end && fd_ == i->fd_; ++i) {
-	i->signaledEvents_ = events;
-	if (i->events_ & events || all)
-	    i->setRunnable();
+        i->signaledEvents_ = events;
+        if (i->events_ & events || all)
+            i->setRunnable();
     }
 }
 

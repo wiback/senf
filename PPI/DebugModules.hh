@@ -23,8 +23,8 @@
 /** \file
     \brief DebugModules public header */
 
-#ifndef HH_DebugModules_
-#define HH_DebugModules_ 1
+#ifndef HH_SENF_PPI_DebugModules_
+#define HH_SENF_PPI_DebugModules_ 1
 
 // Custom includes
 #include <deque>

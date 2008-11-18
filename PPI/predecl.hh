@@ -23,8 +23,8 @@
 /** \file
     \brief predecl public header */
 
-#ifndef HH_predecl_
-#define HH_predecl_ 1
+#ifndef HH_SENF_PPI_predecl_
+#define HH_SENF_PPI_predecl_ 1
 
 // Custom includes
 

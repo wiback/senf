@@ -23,8 +23,8 @@
 /** \file
     \brief range public header */
 
-#ifndef HH_range_
-#define HH_range_ 1
+#ifndef HH_SENF_Utils_range_
+#define HH_SENF_Utils_range_ 1
 
 // Custom includes
 

@@ -23,8 +23,8 @@
 /** \file
     \brief Phoenix public header */
 
-#ifndef HH_Phoenix_
-#define HH_Phoenix_ 1
+#ifndef HH_SENF_Utils_Phoenix_
+#define HH_SENF_Utils_Phoenix_ 1
 
 // Custom includes
 #include <boost/spirit/phoenix/functions.hpp>

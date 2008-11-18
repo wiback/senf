@@ -23,10 +23,10 @@
 /** \file
     \brief SafeIterator public header */
 
-#ifndef HH_SafeIterator_
-#define HH_SafeIterator_ 1
+#ifndef HH_SENF_Packets_SafeIterator_
+#define HH_SENF_Packets_SafeIterator_ 1
 
-#ifndef HH_Packets_
+#ifndef HH_SENF_Packets_Packets_
 #error "Don't include 'SafeIterator.hh' directly, include 'Packets.hh'"
 #endif
 
@@ -142,10 +142,10 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        Parser operator*() const;       ///< Access the stored parser
+        Parser & operator*() const;       ///< Access the stored parser
                                         /**< On every access, the stored parsers iterator will be
                                              updated / re-validated. */
-        Parser const * operator->() const; ///< Access the stored parser
+        Parser * operator->() const; ///< Access the stored parser
                                         /**< On every access, the stored parsers iterator will be
                                              updated / re-validated. */
         bool boolean_test() const;      ///< Check validity
@@ -161,8 +161,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_SafeIterator_i_)
-#define HH_SafeIterator_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_SafeIterator_i_)
+#define HH_SENF_Packets_SafeIterator_i_
 #include "SafeIterator.cci"
 //#include "SafeIterator.ct"
 #include "SafeIterator.cti"

@@ -23,8 +23,8 @@
 /** \file
     \brief main.test public header */
 
-#ifndef HH_main_test_
-#define HH_main_test_ 1
+#ifndef HH_SENF_Packets_main_test_
+#define HH_SENF_PAckets_main_test_ 1
 
 // Custom includes
 

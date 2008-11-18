@@ -56,7 +56,7 @@ prefix_ MCReader::MCReader(unsigned n, std::string const & name_,
                            UDPSocket::Address const & group)
     : name (name_), socket (),
       event (name, senf::membind(&MCReader::handler, this), socket, 
-	     senf::scheduler::FdEvent::EV_READ)
+             senf::scheduler::FdEvent::EV_READ)
 {
     socket.protocol().reuseaddr(true);
     socket.bind(group);
@@ -84,7 +84,7 @@ class MCWriter
     
 public:
     MCWriter(std::string const & name, UDPSocket::Address const & group, 
-	     senf::ClockService::clock_type interval);
+             senf::ClockService::clock_type interval);
 };
 
 prefix_ MCWriter::MCWriter(std::string const & name_, UDPSocket::Address const & group_,
@@ -163,23 +163,23 @@ int main(int argc, char * argv[])
         senf::scheduler::SignalEvent sigint (SIGINT, &sigintHandler);
 
         UDPSocket::Address g1 ("225.1:43434");
-	UDPSocket::Address g2 ("225.2:43434");
+        UDPSocket::Address g2 ("225.2:43434");
 
-	MCReader r1g1 (1u, "r1g1", g1);
-	MCReader r2g1 (2u, "r2g1", g1);
-	MCReader r1g2 (3u, "r1g2", g2);
-	MCReader r2g2 (4u, "r2g2", g2);
+        MCReader r1g1 (1u, "r1g1", g1);
+        MCReader r2g1 (2u, "r2g1", g1);
+        MCReader r1g2 (3u, "r1g2", g2);
+        MCReader r2g2 (4u, "r2g2", g2);
 
-	MCWriter w1g1 ("w1g1", g1, senf::ClockService::milliseconds(600));
-	MCWriter w2g1 ("w2g1", g1, senf::ClockService::milliseconds(800));
-	MCWriter w1g2 ("w1g2", g2, senf::ClockService::milliseconds(700));
-	MCWriter w2g2 ("w2g2", g2, senf::ClockService::milliseconds(900));
+        MCWriter w1g1 ("w1g1", g1, senf::ClockService::milliseconds(600));
+        MCWriter w2g1 ("w2g1", g1, senf::ClockService::milliseconds(800));
+        MCWriter w1g2 ("w1g2", g2, senf::ClockService::milliseconds(700));
+        MCWriter w2g2 ("w2g2", g2, senf::ClockService::milliseconds(900));
 
-	senf::scheduler::process();
+        senf::scheduler::process();
     }
     catch (std::exception const & ex) {
-	std::cerr << ex.what() << "\n";
-	return 1;
+        std::cerr << ex.what() << "\n";
+        return 1;
     }
 };
 

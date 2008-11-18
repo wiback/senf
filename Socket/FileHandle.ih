@@ -24,8 +24,8 @@
     \brief FileHandle internal header
  */
 
-#ifndef IH_FileHandle_
-#define IH_FileHandle_ 1
+#ifndef IH_SENF_Socket_FileHandle_
+#define IH_SENF_Socket_FileHandle_ 1
 
 // Custom includes
 #include <boost/intrusive_ptr.hpp>

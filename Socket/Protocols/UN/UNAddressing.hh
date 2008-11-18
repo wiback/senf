@@ -23,8 +23,8 @@
 /** \file
     \brief UNAddressing public header */
 
-#ifndef HH_UNAddressing_
-#define HH_UNAddressing_ 1
+#ifndef HH_SENF_Socket_Protocols_UN_UNAddressing_
+#define HH_SENF_Socket_Protocols_UN_UNAddressing_ 1
 
 // Custom includes
 #include <iostream>

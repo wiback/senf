@@ -23,8 +23,8 @@
 /** \file
     \brief Socket public header */
 
-#ifndef HH_Socket_
-#define HH_Socket_ 1
+#ifndef HH_SENF_Socket_Socket_
+#define HH_SENF_Socket_Socket_ 1
 
 #include "all_includes.hh"
 

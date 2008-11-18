@@ -23,8 +23,8 @@
 /** \file
     \brief Parse public header */
 
-#ifndef HH_Parse_
-#define HH_Parse_ 1
+#ifndef HH_SENF_Scheduler_Console_Parse_
+#define HH_SENF_Scheduler_Console_Parse_ 1
 
 /** \defgroup console_parser The parser
 

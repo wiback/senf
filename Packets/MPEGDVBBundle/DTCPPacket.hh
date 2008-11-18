@@ -23,8 +23,8 @@
 /** \file
     \brief DTCPPacket public header */
 
-#ifndef HH_DTCPPacket_
-#define HH_DTCPPacket_ 1
+#ifndef HH_SENF_Packets_MPEGDVBBundle_DTCPPacket_
+#define HH_SENF_Packets_MPEGDVBBundle_DTCPPacket_ 1
 
 // Custom includes
 #include "../../Packets/Packets.hh"

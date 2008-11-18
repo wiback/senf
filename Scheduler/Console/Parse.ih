@@ -23,8 +23,8 @@
 /** \file
     \brief Parse internal header */
 
-#ifndef IH_Parse_
-#define IH_Parse_ 1
+#ifndef IH_SENF_Scheduler_Console_Parse_
+#define IH_SENF_Scheduler_Console_Parse_ 1
 
 // Custom includes
 #include <vector>

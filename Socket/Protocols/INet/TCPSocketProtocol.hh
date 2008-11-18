@@ -24,8 +24,8 @@
     \brief TCPSocketProtocol public header
  */
 
-#ifndef HH_TCPSocketProtocol_
-#define HH_TCPSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_INet_TCPSocketProtocol_
+#define HH_SENF_Socket_Protocols_INet_TCPSocketProtocol_ 1
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"

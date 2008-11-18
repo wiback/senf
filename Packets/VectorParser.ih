@@ -23,8 +23,8 @@
 /** \file
     \brief VectorParser internal header */
 
-#ifndef IH_VectorParser_
-#define IH_VectorParser_ 1
+#ifndef IH_SENF_Packets_VectorParser_
+#define IH_SENF_Packets_VectorParser_ 1
 
 // Custom includes
 

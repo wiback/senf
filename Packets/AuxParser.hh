@@ -23,10 +23,10 @@
 /** \file
     \brief AuxParser public header */
 
-#ifndef HH_AuxParser_
-#define HH_AuxParser_ 1
+#ifndef HH_SENF_Packets_AuxParser_
+#define HH_SENF_Packets_AuxParser_ 1
 
-#ifndef HH_Packets_
+#ifndef HH_SENF_Packets_Packets_
 #error "Don't include 'AuxParser.hh' directly, include 'Packets.hh'"
 #endif
 
@@ -151,8 +151,8 @@ namespace detail {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_AuxParser_i_)
-#define HH_AuxParser_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_AuxParser_i_)
+#define HH_SENF_Packets_AuxParser_i_
 //#include "AuxParser.cci"
 //#include "AuxParser.ct"
 #include "AuxParser.cti"

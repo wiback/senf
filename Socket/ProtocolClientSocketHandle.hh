@@ -24,8 +24,8 @@
     \brief ProtocolClientSocketHandle public header
  */
 
-#ifndef HH_ProtocolClientSocketHandle_
-#define HH_ProtocolClientSocketHandle_ 1
+#ifndef HH_SENF_Socket_ProtocolClientSocketHandle_
+#define HH_SENF_Socket_ProtocolClientSocketHandle_ 1
 
 // Custom includes
 #include "ClientSocketHandle.hh"

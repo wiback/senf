@@ -23,8 +23,8 @@
 /** \file
     \brief PPI public header */
 
-#ifndef HH_PPI_
-#define HH_PPI_ 1
+#ifndef HH_SENF_PPI_PPI_
+#define HH_SENF_PPI_PPI_ 1
 
 #include "all_includes.hh"
 

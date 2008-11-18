@@ -23,8 +23,8 @@
 /** \file
     \brief type_traits public header */
 
-#ifndef HH_type_traits_
-#define HH_type_traits_ 1
+#ifndef HH_SENF_Utils_type_traits_
+#define HH_SENF_Utils_type_traits_ 1
 
 // Custom includes
 #include <boost/type_traits/function_traits.hpp>

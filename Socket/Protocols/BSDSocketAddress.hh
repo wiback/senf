@@ -23,8 +23,8 @@
 /** \file
     \brief BSDSocketAddress public header */
 
-#ifndef HH_BSDSocketAddress_
-#define HH_BSDSocketAddress_ 1
+#ifndef HH_SENF_Socket_Protocols_BSDSocketAddress_
+#define HH_SENF_Socket_Protocols_BSDSocketAddress_ 1
 
 // Custom includes
 #include "../../Utils/safe_bool.hh"

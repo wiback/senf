@@ -23,8 +23,8 @@
 /** \file
     \brief Exception public header */
 
-#ifndef HH_Exception_
-#define HH_Exception_ 1
+#ifndef HH_SENF_Utils_Exception_
+#define HH_SENF_Utils_Exception_ 1
 
 // Custom includes
 #include <exception>

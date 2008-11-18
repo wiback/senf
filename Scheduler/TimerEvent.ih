@@ -23,8 +23,8 @@
 /** \file
     \brief TimerDispatcher internal header */
 
-#ifndef IH_TimerDispatcher_
-#define IH_TimerDispatcher_ 1
+#ifndef IH_SENF_Scheduler_TimerEvent_
+#define IH_SENF_Scheduler_TimerEvent_ 1
 
 // Custom includes
 #include "../boost/intrusive/iset.hpp"

@@ -20,8 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef RAWINETSOCKETHANDLE_HH_
-#define RAWINETSOCKETHANDLE_HH_
+#ifndef HH_SENF_Socket_Protocols_INet_RawINetSocketHandle_
+#define HH_SENF_Socket_Protocols_INet_RawINetSocketHandle_
 
 
 // Custom includes
@@ -181,4 +181,4 @@ namespace senf {
 
 }
 
-#endif /*RAWINETSOCKETHANDLE_HH_*/
+#endif /*HH_SENF_Socket_Protocols_INet_RawINetSocketHandle_*/

@@ -23,8 +23,8 @@
 /** \file
     \brief ListParser internal header */
 
-#ifndef IH_ListParser_
-#define IH_ListParser_ 1
+#ifndef IH_SENF_Packets_ListParser_
+#define IH_SENF_Packets_ListParser_ 1
 
 // Custom includes
 #include <boost/iterator/iterator_facade.hpp>

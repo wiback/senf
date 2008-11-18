@@ -24,8 +24,8 @@
     \brief INet[46]Address and INet[46]AddressingPolicy public header
  */
 
-#ifndef HH_INetAddressing_
-#define HH_INetAddressing_ 1
+#ifndef HH_SENF_Socket_Protocols_INet_INetAddressing_
+#define HH_SENF_Socket_Protocols_INet_INetAddressing_ 1
 
 // Custom includes
 #include <string>

@@ -23,8 +23,8 @@
 /** \file
     \brief TimerDispatcher public header */
 
-#ifndef HH_TimerDispatcher_
-#define HH_TimerDispatcher_ 1
+#ifndef HH_SENF_Scheduler_TimerEvent_
+#define HH_SENF_Scheduler_TimerEvent_ 1
 
 // Custom includes
 #include <signal.h>

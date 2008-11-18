@@ -21,8 +21,8 @@
 /** \file
     \brief ReadHelper internal header */
 
-#ifndef IH_ReadHelper_
-#define IH_ReadHelper_ 1
+#ifndef IH_SENF_Scheduler_ReadHelper_
+#define IH_SENF_Scheduler_ReadHelper_ 1
 
 // Custom includes
 

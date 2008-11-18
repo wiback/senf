@@ -89,8 +89,8 @@
     accessibility of the socket body from all facets.
  */
 
-#ifndef HH_SocketProtocol_
-#define HH_SocketProtocol_ 1
+#ifndef HH_SENF_Socket_SocketProtocol_
+#define HH_SENF_Socket_SocketProtocol_ 1
 
 // Custom includes
 #include <boost/utility.hpp>

@@ -24,8 +24,8 @@
     \brief SocketHandle public header
  */
 
-#ifndef HH_SocketHandle_
-#define HH_SocketHandle_ 1
+#ifndef HH_SENF_Socket_SocketHandle_
+#define HH_SENF_Socket_SocketHandle_ 1
 
 // Custom includes
 #include <memory> // std::auto_ptr

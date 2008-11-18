@@ -46,8 +46,8 @@
     ob.*fn use.
  */
 
-#ifndef HH_membind_
-#define HH_membind_ 1
+#ifndef HH_SENF_Utils_membind_
+#define HH_SENF_Utils_membind_ 1
 
 // Custom includes
 #include <boost/bind.hpp>

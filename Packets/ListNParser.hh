@@ -23,8 +23,8 @@
 /** \file
     \brief ListNParser public header */
 
-#ifndef HH_ListNParser_
-#define HH_ListNParser_ 1
+#ifndef HH_SENF_Packets_ListNParser_
+#define HH_SENF_Packets_ListNParser_ 1
 
 // Custom includes
 #include "ListParser.hh"
@@ -39,8 +39,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_ListNParser_i_)
-#define HH_ListNParser_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_ListNParser_i_)
+#define HH_SENF_Packets_ListNParser_i_
 //#include "ListNParser.cci"
 #include "ListNParser.ct"
 #include "ListNParser.cti"

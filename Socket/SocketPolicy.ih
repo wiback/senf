@@ -24,8 +24,8 @@
     \brief Policy Framework internal header
  */
 
-#ifndef IH_SocketPolicy_
-#define IH_SocketPolicy_ 1
+#ifndef IH_SENF_Socket_SocketPolicy_
+#define IH_SENF_Socket_SocketPolicy_ 1
 
 // Custom includes
 #include <boost/preprocessor/seq/for_each.hpp>

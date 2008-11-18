@@ -23,8 +23,8 @@
 /** \file
     \brief AddressExceptions public header */
 
-#ifndef HH_AddressExceptions_
-#define HH_AddressExceptions_ 1
+#ifndef HH_SENF_Socket_Protocols_AddressExceptions_
+#define HH_SENF_Socket_Protocols_AddressExceptions_ 1
 
 // Custom includes
 #include "../Utils/Exception.hh"

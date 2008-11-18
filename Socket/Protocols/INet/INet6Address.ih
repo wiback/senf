@@ -23,8 +23,8 @@
 /** \file
     \brief INet6Address internal header */
 
-#ifndef IH_INet6Address_
-#define IH_INet6Address_ 1
+#ifndef IH_SENF_Socket_Protocols_INet_INet6Address_
+#define IH_SENF_Socket_Protocols_INet_INet6Address_ 1
 
 // Custom includes
 

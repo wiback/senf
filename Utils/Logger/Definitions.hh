@@ -23,8 +23,8 @@
 /** \file
     \brief Definitions public header */
 
-#ifndef HH_Definitions_
-#define HH_Definitions_ 1
+#ifndef HH_SENF_Utils_Logger_Definitions_
+#define HH_SENF_Utils_Logger_Definitions_ 1
 
 // Custom includes
 

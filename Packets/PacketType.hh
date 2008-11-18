@@ -23,8 +23,8 @@
 /** \file
     \brief PacketType public header */
 
-#ifndef HH_PacketType_
-#define HH_PacketType_ 1
+#ifndef HH_SENF_Packets_PacketType_
+#define HH_SENF_Packets_PacketType_ 1
 
 // Custom includes
 #include <iostream>
@@ -358,8 +358,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_PacketType_i_)
-#define HH_PacketType_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketType_i_)
+#define HH_SENF_Packets_PacketType_i_
 #include "PacketType.cci"
 #include "PacketType.ct"
 #include "PacketType.cti"

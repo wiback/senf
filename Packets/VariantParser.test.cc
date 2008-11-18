@@ -97,11 +97,18 @@ namespace VariantParser_test_cc_anon_namespace {
     {
 #       include SENF_PARSER()
 
-        SENF_PARSER_SKIP_BITS( 4 );
+        SENF_PARSER_BITFIELD_RO( len,  4, unsigned );
         SENF_PARSER_BITFIELD_RO( type, 4, unsigned );
+        // just here so the second variant is 'var'
+        SENF_PARSER_VARIANT( value, len, 
+                                 (senf::VoidPacketParser)
+                                 (senf::UInt8Parser)
+                                 (senf::UInt16Parser)
+                                 (senf::UInt32Parser)
+            );
         SENF_PARSER_VARIANT( content_, type,
-                                         ( novalue( nocontent, key(10, senf::VoidPacketParser)) )
-                                         (      id( content,           SubParser              ) )
+                                 ( novalue( nocontent, key(10, senf::VoidPacketParser) ) )
+                                 (      id( content,           SubParser               ) )
             );
 
         SENF_PARSER_FINALIZE(TestParser);

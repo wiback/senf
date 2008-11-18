@@ -23,8 +23,8 @@
 /** \file
     \brief Config public header */
 
-#ifndef HH_Config_
-#define HH_Config_ 1
+#ifndef HH_SENF_Utils_Logger_Config_
+#define HH_SENF_Utils_Logger_Config_ 1
 
 // Custom includes
 #include "Levels.hh"

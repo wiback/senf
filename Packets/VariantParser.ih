@@ -23,8 +23,8 @@
 /** \file
     \brief VariantParser internal header */
 
-#ifndef IH_VariantParser_
-#define IH_VariantParser_ 1
+#ifndef IH_SENF_Packets_VariantParser_
+#define IH_SENF_Packets_VariantParser_ 1
 
 // Custom includes
 #include "PacketParser.hh"

@@ -23,8 +23,8 @@
 /** \file
     \brief StringTarget public header */
 
-#ifndef HH_StringTarget_
-#define HH_StringTarget_ 1
+#ifndef HH_SENF_Utils_Logger_StringTarget_
+#define HH_SENF_Utils_Logger_StringTarget_ 1
 
 // Custom includes
 #include <sstream>

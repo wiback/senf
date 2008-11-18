@@ -23,8 +23,8 @@
 /** \file
     \brief CloneSource public header */
 
-#ifndef HH_CloneSource_
-#define HH_CloneSource_ 1
+#ifndef HH_SENF_PPI_CloneSource_
+#define HH_SENF_PPI_CloneSource_ 1
 
 // Custom includes
 #include "../Packets/Packets.hh"

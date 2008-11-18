@@ -23,8 +23,8 @@
 /** \file
     \brief DVBFrontendHandle public header */
 
-#ifndef HH_DVBFrontendHandle_
-#define HH_DVBFrontendHandle_ 1
+#ifndef HH_SENF_Socket_Protocols_DVB_DVBFrontendHandle_
+#define HH_SENF_Socket_Protocols_DVB_DVBFrontendHandle_ 1
 
 // Custom includes
 #include <boost/cstdint.hpp>

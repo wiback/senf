@@ -20,8 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef RAWINETPROTOCOL_HH_
-#define RAWINETPROTOCOL_HH_
+#ifndef HH_SENF_Socket_Protocols_INet_RawINetSocketProtocol_
+#define HH_SENF_Socket_Protocols_INet_RawINetSocketProtocol_
 
 // Custom includes
 #include "INetAddressing.hh"
@@ -59,4 +59,4 @@ namespace senf {
     /// @}
 }
 
-#endif /*RAWINETPROTOCOL_HH_*/
+#endif /*HH_SENF_Socket_Protocols_INet_RawINetSocketProtocol_*/

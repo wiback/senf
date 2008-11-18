@@ -27,8 +27,8 @@
     protocol interface
  */
 
-#ifndef HH_TCPSocketHandle_
-#define HH_TCPSocketHandle_ 1
+#ifndef HH_SENF_Socket_Protocols_INet_TCPSocketHandle_
+#define HH_SENF_Socket_Protocols_INet_TCPSocketHandle_ 1
 
 // Custom includes
 #include "INetSocketProtocol.hh"

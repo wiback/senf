@@ -23,8 +23,8 @@
 /** \file
     \brief TimeSource public header */
 
-#ifndef HH_TimeSource_
-#define HH_TimeSource_ 1
+#ifndef HH_SENF_Utils_Logger_TimeSource_
+#define HH_SENF_Utils_Logger_TimeSource_ 1
 
 // Custom includes
 #include <boost/cstdint.hpp>

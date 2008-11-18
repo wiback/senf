@@ -23,8 +23,8 @@
 /** \file
     \brief Module internal header */
 
-#ifndef IH_Module_
-#define IH_Module_ 1
+#ifndef IH_SENF_PPI_Module_
+#define IH_SENF_PPI_Module_ 1
 
 // Custom includes
 

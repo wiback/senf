@@ -23,8 +23,8 @@
 /** \file
     \brief ConsoleTarget public header */
 
-#ifndef HH_ConsoleTarget_
-#define HH_ConsoleTarget_ 1
+#ifndef HH_SENF_Utils_Logger_ConsoleTarget_
+#define HH_SENF_Utils_Logger_ConsoleTarget_ 1
 
 // Custom includes
 #include "IOStreamTarget.hh"

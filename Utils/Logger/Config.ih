@@ -23,8 +23,8 @@
 /** \file
     \brief Config internal header */
 
-#ifndef IH_Config_
-#define IH_Config_ 1
+#ifndef IH_SENF_Utils_Logger_Config_
+#define IH_SENF_Utils_Logger_Config_ 1
 
 // Custom includes
 #include <boost/preprocessor/expand.hpp>

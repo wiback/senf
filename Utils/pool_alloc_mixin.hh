@@ -23,8 +23,8 @@
 /** \file
     \brief pool_alloc_mixin public header */
 
-#ifndef HH_pool_alloc_mixin_
-#define HH_pool_alloc_mixin_ 1
+#ifndef HH_SENF_Utils_pool_alloc_mixin_
+#define HH_SENF_Utils_pool_alloc_mixin_ 1
 
 // Custom includes
 #include <boost/pool/singleton_pool.hpp>

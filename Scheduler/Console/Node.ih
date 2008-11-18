@@ -23,8 +23,8 @@
 /** \file
     \brief Node internal header */
 
-#ifndef IH_Node_
-#define IH_Node_ 1
+#ifndef IH_SENF_Scheduler_Console_Node_
+#define IH_SENF_Scheduler_Console_Node_ 1
 
 // Custom includes
 

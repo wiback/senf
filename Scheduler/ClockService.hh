@@ -23,8 +23,8 @@
 /** \file
     \brief ClockService public header */
 
-#ifndef HH_ClockService_
-#define HH_ClockService_ 1
+#ifndef HH_SENF_Scheduler_ClockService_
+#define HH_SENF_Scheduler_ClockService_ 1
 
 // Custom includes
 #include <sys/time.h> 

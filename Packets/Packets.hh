@@ -23,10 +23,10 @@
 /** \file
     \brief Packets public header */
 
-#ifndef HH_Packets_
-#define HH_Packets_ 1
+#ifndef HH_SENF_Packets_Packets_
+#define HH_SENF_Packets_Packets_ 1
 
-#define HH_Packets__decls_
+#define HH_SENF_Packets_Packets__decls_
 
 #include "PacketTypes.hh"
 #include "PacketImpl.hh"
@@ -47,7 +47,7 @@
 #include "ParseHelpers.hh"
 #include "DataPacket.hh"
 
-#undef HH_Packets__decls_
+#undef HH_SENF_Packets_Packets__decls_
 
 #include "PacketTypes.hh"
 #include "PacketImpl.hh"

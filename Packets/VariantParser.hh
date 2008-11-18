@@ -23,10 +23,10 @@
 /** \file
     \brief VariantParser public header */
 
-#ifndef HH_VariantParser_
-#define HH_VariantParser_ 1
+#ifndef HH_SENF_Packets_VariantParser_
+#define HH_SENF_Packets_VariantParser_ 1
 
-#ifndef HH_Packets_
+#ifndef HH_SENF_Packets_Packets_
 #error "Don't include 'VariantParser.hh' directly, include 'Packets.hh'"
 #endif
 
@@ -257,8 +257,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_VariantParser_i_)
-#define HH_VariantParser_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_VariantParser_i_)
+#define HH_SENF_Packets_VariantParser_i_
 //#include "VariantParser.cci"
 #include "VariantParser.ct"
 #include "VariantParser.cti"

@@ -23,8 +23,8 @@
 /** \file
     \brief EventManager public header */
 
-#ifndef HH_EventManager_
-#define HH_EventManager_ 1
+#ifndef HH_SENF_PPI_EventManager_
+#define HH_SENF_PPI_EventManager_ 1
 
 // Custom includes
 #include <boost/ptr_container/ptr_vector.hpp>

@@ -23,8 +23,8 @@
 /** \file
     \brief Daemon public header */
 
-#ifndef HH_Daemon_
-#define HH_Daemon_ 1
+#ifndef HH_SENF_Utils_Daemon_Daemon_
+#define HH_SENF_Utils_Daemon_Daemon_ 1
 
 // Custom includes
 #include <boost/utility.hpp>

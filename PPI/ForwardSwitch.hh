@@ -18,8 +18,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef FORWARDSWITCH_HH_
-#define FORWARDSWITCH_HH_
+#ifndef HH_SENF_PPI_ForwardSwitch_
+#define HH_SENF_PPI_ForwardSwitch_
 
 // Custom includes
 #include "Connectors.hh"
@@ -51,4 +51,4 @@ private:
 
 }}} //namespaces
 #include "ForwardSwitch.cci"
-#endif /*FORWARDSWITCH_HH_*/
+#endif /*HH_SENF_PPI_ForwardSwitch_*/

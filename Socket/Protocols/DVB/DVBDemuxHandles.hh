@@ -23,8 +23,8 @@
 /** \file
     \brief DVBDemuxHandles public header */
 
-#ifndef HH_DVBDemuxHandles_
-#define HH_DVBDemuxHandles_ 1
+#ifndef HH_SENF_Socket_Protocols_DVB_DVBDemuxHandles_
+#define HH_SENF_Socket_Protocols_DVB_DVBDemuxHandles_ 1
 
 // Custom includes
 #include "../../../Socket/FramingPolicy.hh"

@@ -23,8 +23,8 @@
 /** \file
     \brief Joins public header */
 
-#ifndef HH_Joins_
-#define HH_Joins_ 1
+#ifndef HH_SENF_PPI_Joins_
+#define HH_SENF_PPI_Joins_ 1
 
 // Custom includes
 #include <boost/ptr_container/ptr_vector.hpp>

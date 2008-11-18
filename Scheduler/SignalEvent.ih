@@ -23,8 +23,8 @@
 /** \file
     \brief SignalDispatcher internal header */
 
-#ifndef IH_SignalDispatcher_
-#define IH_SignalDispatcher_ 1
+#ifndef IH_SENF_Scheduler_SignalEvent_
+#define IH_SENF_Scheduler_SignalEvent_ 1
 
 // Custom includes
 #include "FdManager.hh"

@@ -23,8 +23,8 @@
 /** \file
     \brief PacketTypes public header */
 
-#ifndef HH_PacketTypes_
-#define HH_PacketTypes_ 1
+#ifndef HH_SENF_Packets_PacketTypes_
+#define HH_SENF_Packets_PacketTypes_ 1
 
 // Custom includes
 #include <vector>
@@ -79,8 +79,8 @@ namespace test {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_PacketTypes_i_)
-#define HH_PacketTypes_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketTypes_i_)
+#define HH_SENF_Packets_PacketTypes_i_
 //#include "PacketTypes.cci"
 //#include "PacketTypes.ct"
 //#include "PacketTypes.cti"

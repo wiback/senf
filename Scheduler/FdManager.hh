@@ -23,8 +23,8 @@
 /** \file
     \brief FdManager public header */
 
-#ifndef HH_FdManager_
-#define HH_FdManager_ 1
+#ifndef HH_SENF_Scheduler_FdManager_
+#define HH_SENF_Scheduler_FdManager_ 1
 
 // Custom includes
 #include "Poller.hh"

@@ -23,8 +23,8 @@
 /** \file
     \brief Readline public header */
 
-#ifndef HH_Readline_
-#define HH_Readline_ 1
+#ifndef HH_SENF_Scheduler_Console_Readline_
+#define HH_SENF_Scheduler_Console_Readline_ 1
 
 // Custom includes
 #include <boost/scoped_ptr.hpp>

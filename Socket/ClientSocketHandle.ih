@@ -23,8 +23,8 @@
 /** \file
     \brief ClientSocketHandle internal header */
 
-#ifndef IH_ClientSocketHandle_
-#define IH_ClientSocketHandle_ 1
+#ifndef IH_SENF_Socket_ClientSocketHandle_
+#define IH_SENF_Socket_ClientSocketHandle_ 1
 
 // Custom includes
 #include "../Utils/IteratorTraits.hh"

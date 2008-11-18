@@ -24,8 +24,8 @@
     \brief SocketHandle internal header
  */
 
-#ifndef IH_SocketHandle_
-#define IH_SocketHandle_ 1
+#ifndef IH_SENF_Socket_SocketHandle_
+#define IH_SENF_Socket_SocketHandle_ 1
 
 // Custom includes
 #include <map>

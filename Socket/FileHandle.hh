@@ -62,8 +62,8 @@
     the SocketHandle classes should not be changed.
  */
 
-#ifndef HH_FileHandle_
-#define HH_FileHandle_ 1
+#ifndef HH_SENF_Socket_FileHandle_
+#define HH_SENF_Socket_FileHandle_ 1
 
 // Custom includes
 #include <memory> // std::auto_ptr

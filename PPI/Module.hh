@@ -24,8 +24,8 @@
     \brief Module public header 
 */
 
-#ifndef HH_Module_
-#define HH_Module_ 1
+#ifndef HH_SENF_PPI_Module_
+#define HH_SENF_PPI_Module_ 1
 
 // Custom includes
 #include <vector>

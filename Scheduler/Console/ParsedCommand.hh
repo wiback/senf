@@ -23,8 +23,8 @@
 /** \file
     \brief ParsedCommand public header */
 
-#ifndef HH_ParsedCommand_
-#define HH_ParsedCommand_ 1
+#ifndef HH_SENF_Scheduler_Console_ParsedCommand_
+#define HH_SENF_Scheduler_Console_ParsedCommand_ 1
 
 // Custom includes
 

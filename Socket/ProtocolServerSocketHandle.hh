@@ -24,8 +24,8 @@
     \brief ProtocolServerSocketHandle public header
  */
 
-#ifndef HH_ProtocolServerSocketHandle_
-#define HH_ProtocolServerSocketHandle_ 1
+#ifndef HH_SENF_Socket_ProtocolServerSocketHandle_
+#define HH_SENF_Socket_ProtocolServerSocketHandle_ 1
 
 // Custom includes
 #include "ServerSocketHandle.hh"

@@ -23,8 +23,8 @@
 /** \file
     \brief safe_bool public header */
 
-#ifndef HH_safe_bool_
-#define HH_safe_bool_ 1
+#ifndef HH_SENF_Utils_safe_bool_
+#define HH_SENF_Utils_safe_bool_ 1
 
 // Custom includes
 

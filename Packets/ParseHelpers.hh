@@ -23,10 +23,10 @@
 /** \file
     \brief ParseHelpers public header */
 
-#ifndef HH_ParseHelpers_
-#define HH_ParseHelpers_ 1
+#ifndef HH_SENF_Packets_ParseHelpers_
+#define HH_SENF_Packets_ParseHelpers_ 1
 
-#ifndef HH_Packets_
+#ifndef HH_SENF_Packets_Packets_
 #error "Don't include 'ParseHelpers.hh' directly, include 'Packets.hh'"
 #endif
 
@@ -691,8 +691,8 @@
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_ParseHelpers_i_)
-#define HH_ParseHelpers_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_ParseHelpers_i_)
+#define HH_SENF_Packets_ParseHelpers_i_
 //#include "ParseHelpers.cci"
 //#include "ParseHelpers.ct"
 //#include "ParseHelpers.cti"

@@ -23,8 +23,8 @@
 /** \file
     \brief SenfLog public header */
 
-#ifndef HH_SenfLog_
-#define HH_SenfLog_ 1
+#ifndef HH_SENF_Utils_Logger_SenfLog_
+#define HH_SENF_Utils_Logger_SenfLog_ 1
 
 // Custom includes
 #include "../../config.hh"

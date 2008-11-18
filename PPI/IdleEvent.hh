@@ -23,8 +23,8 @@
 /** \file
     \brief IdleEvent public header */
 
-#ifndef HH_IdleEvent_
-#define HH_IdleEvent_ 1
+#ifndef HH_SENF_PPI_IdleEvent_
+#define HH_SENF_PPI_IdleEvent_ 1
 
 // Custom includes
 #include "Events.hh"

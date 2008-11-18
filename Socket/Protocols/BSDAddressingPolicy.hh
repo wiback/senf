@@ -27,8 +27,8 @@
 /** \defgroup addr_group Addressing classes
  */
 
-#ifndef HH_BSDAddressingPolicyMixin_
-#define HH_BSDAddressingPolicyMixin_ 1
+#ifndef HH_SENF_Socket_Protocols_BSDAddressingPolicy_
+#define HH_SENF_Socket_Protocols_BSDAddressingPolicy_ 1
 
 // Custom includes
 #include "../SocketHandle.hh"

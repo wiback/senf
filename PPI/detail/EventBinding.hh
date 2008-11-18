@@ -23,8 +23,8 @@
 /** \file
     \brief EventBinding public header */
 
-#ifndef HH_EventBinding_
-#define HH_EventBinding_ 1
+#ifndef HH_SENF_PPI_detail_EventBinding_
+#define HH_SENF_PPI_detail_EventBinding_ 1
 
 // Custom includes
 #include "../../Scheduler/ClockService.hh"

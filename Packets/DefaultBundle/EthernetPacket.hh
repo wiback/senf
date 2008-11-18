@@ -23,8 +23,8 @@
 /** \file
     \brief EthernetPacket public header */
 
-#ifndef HH_EthernetPacket_
-#define HH_EthernetPacket_ 1
+#ifndef HH_SENF_Packets_DefaultBundle_EthernetPacket_
+#define HH_SENF_Packets_DefaultBundle_EthernetPacket_ 1
 
 // Custom includes
 #include <algorithm>

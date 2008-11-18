@@ -23,8 +23,8 @@
 /** \file
     \brief IpChecksum public header */
 
-#ifndef HH_IpChecksum_
-#define HH_IpChecksum_ 1
+#ifndef HH_SENF_Utils_IpChecksum_
+#define HH_SENF_Utils_IpChecksum_ 1
 
 // Custom includes
 #include <boost/cstdint.hpp>

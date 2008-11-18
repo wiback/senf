@@ -20,8 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_SocketProtocol_test_
-#define HH_SocketProtocol_test_ 1
+#ifndef HH_SENF_Socket_SocketProtocol_test_
+#define HH_SENF_Socket_SocketProtocol_test_ 1
 
 // Custom includes
 #include "SocketProtocol.hh"

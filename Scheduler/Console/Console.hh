@@ -23,8 +23,8 @@
 /** \file
     \brief Console public header */
 
-#ifndef HH_Console_
-#define HH_Console_ 1
+#ifndef HH_SENF_Scheduler_Console_Console_
+#define HH_SENF_Scheduler_Console_Console_ 1
 
 // Custom includes
 

@@ -23,8 +23,8 @@
 /** \file
     \brief Connectors internal header */
 
-#ifndef IH_Connectors_
-#define IH_Connectors_ 1
+#ifndef IH_SENF_PPI_Connectors_
+#define IH_SENF_PPI_Connectors_ 1
 
 // Custom includes
 

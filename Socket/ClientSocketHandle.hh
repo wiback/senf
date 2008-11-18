@@ -24,8 +24,8 @@
     \brief ClientSocketHandle public header
  */
 
-#ifndef HH_ClientSocketHandle_
-#define HH_ClientSocketHandle_ 1
+#ifndef HH_SENF_Socket_ClientSocketHandle_
+#define HH_SENF_Socket_ClientSocketHandle_ 1
 
 // Custom includes
 #include <boost/call_traits.hpp>

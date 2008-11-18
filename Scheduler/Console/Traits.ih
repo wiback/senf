@@ -23,8 +23,8 @@
 /** \file
     \brief Traits internal header */
 
-#ifndef IH_Traits_
-#define IH_Traits_ 1
+#ifndef IH_SENF_Scheduler_Console_Traits_
+#define IH_SENF_Scheduler_Console_Traits_ 1
 
 // Custom includes
 #include <string>

@@ -24,8 +24,8 @@
     \brief UDPSocketProtocol public header
  */
 
-#ifndef HH_UDPSocketProtocol_
-#define HH_UDPSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_INet_UDPSocketProtocol_
+#define HH_SENF_Socket_Protocols_INet_UDPSocketProtocol_ 1
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"

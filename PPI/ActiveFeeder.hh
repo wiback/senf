@@ -23,8 +23,8 @@
 /** \file
     \brief ActiveFeeder public header */
 
-#ifndef HH_ActiveFeeder_
-#define HH_ActiveFeeder_ 1
+#ifndef HH_SENF_PPI_ActiveFeeder_
+#define HH_SENF_PPI_ActiveFeeder_ 1
 
 // Custom includes
 #include "Module.hh"

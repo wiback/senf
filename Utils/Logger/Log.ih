@@ -23,8 +23,8 @@
 /** \file
     \brief Log internal header */
 
-#ifndef IH_Log_
-#define IH_Log_ 1
+#ifndef IH_SENF_Utils_Logger_Log_
+#define IH_SENF_Utils_Logger_Log_ 1
 
 // Custom includes
 #include <sstream>

@@ -23,8 +23,8 @@
 /** \file
     \brief MPESection public header */
 
-#ifndef HH_MPESection_
-#define HH_MPESection_ 1
+#ifndef HH_SENF_Packets_MPEGDVBBundle_MPESection_
+#define HH_SENF_Packets_MPEGDVBBundle_MPESection_ 1
 
 // Custom includes
 #include <boost/crc.hpp>

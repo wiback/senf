@@ -24,8 +24,8 @@
     \brief Scheduler public header
  */
 
-#ifndef HH_Scheduler_
-#define HH_Scheduler_ 1
+#ifndef HH_SENF_Scheduler_Scheduler_
+#define HH_SENF_Scheduler_Scheduler_ 1
 
 // Custom includes
 #include "../Utils/Logger/SenfLog.hh"

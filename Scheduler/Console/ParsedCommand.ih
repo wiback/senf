@@ -23,8 +23,8 @@
 /** \file
     \brief ParsedCommand internal header */
 
-#ifndef IH_ParsedCommand_
-#define IH_ParsedCommand_ 1
+#ifndef IH_SENF_Scheduler_Console_ParsedCommand_
+#define IH_SENF_Scheduler_Console_ParsedCommand_ 1
 
 // Custom includes
 #include <boost/function.hpp>

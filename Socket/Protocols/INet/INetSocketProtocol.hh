@@ -30,8 +30,8 @@
     for SOCK_DGRAM (UDP) and not SOCK_STREAM (TCP) sockets
  */
 
-#ifndef HH_INetSocketProtocol_
-#define HH_INetSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_INet_INetSocketProtocol_
+#define HH_SENF_Socket_Protocols_INet_INetSocketProtocol_ 1
 
 // Custom includes
 #include "../../../Socket/SocketProtocol.hh"

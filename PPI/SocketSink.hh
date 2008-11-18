@@ -23,8 +23,8 @@
 /** \file
     \brief SocketSink public header */
 
-#ifndef HH_SocketSink_
-#define HH_SocketSink_ 1
+#ifndef HH_SENF_PPI_SocketSink_
+#define HH_SENF_PPI_SocketSink_ 1
 
 // Custom includes
 #include "../Packets/Packets.hh"

@@ -52,7 +52,7 @@ prefix_ senf::SafePacketParserWrapper<Parser> & senf::SafePacketParserWrapper<Pa
 }
 
 template <class Parser>
-prefix_ Parser senf::SafePacketParserWrapper<Parser>::operator*()
+prefix_ Parser & senf::SafePacketParserWrapper<Parser>::operator*()
     const
 {
     SENF_ASSERT( i_ );
@@ -61,7 +61,7 @@ prefix_ Parser senf::SafePacketParserWrapper<Parser>::operator*()
 }
 
 template <class Parser>
-prefix_ Parser const * senf::SafePacketParserWrapper<Parser>::operator->()
+prefix_ Parser * senf::SafePacketParserWrapper<Parser>::operator->()
     const
 {
     SENF_ASSERT( i_ );

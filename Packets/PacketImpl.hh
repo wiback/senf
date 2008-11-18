@@ -23,8 +23,8 @@
 /** \file
     \brief PacketImpl public header */
 
-#ifndef HH_PacketImpl_
-#define HH_PacketImpl_ 1
+#ifndef HH_SENF_Packets_PacketImpl_
+#define HH_SENF_Packets_PacketImpl_ 1
 
 // Custom includes
 #include <memory>
@@ -217,8 +217,8 @@ namespace detail {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_PacketImpl_i_)
-#define HH_PacketImpl_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketImpl_i_)
+#define HH_SENF_Packets_PacketImpl_i_
 #include "PacketImpl.cci"
 //#include "PacketImpl.ct"
 #include "PacketImpl.cti"

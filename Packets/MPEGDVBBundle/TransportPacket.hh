@@ -23,8 +23,8 @@
 /** \file
     \brief TransportPacket public header */
 
-#ifndef HH_TransportPacket_
-#define HH_TransportPacket_ 1
+#ifndef HH_SENF_Packets_MPEGDVBBundle_TransportPacket_
+#define HH_SENF_Packets_MPEGDVBBundle_TransportPacket_ 1
 
 // Custom includes
 #include "../../Packets/Packets.hh"

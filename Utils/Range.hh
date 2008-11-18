@@ -23,8 +23,8 @@
 /** \file
     \brief Range public header */
 
-#ifndef HH_Range_
-#define HH_Range_ 1
+#ifndef HH_SENF_Utils_Range_
+#define HH_SENF_Utils_Range_ 1
 
 // Custom includes
 #include <boost/range/iterator_range.hpp>

@@ -23,8 +23,8 @@
 /** \file
     \brief Route public header */
 
-#ifndef HH_Route_
-#define HH_Route_ 1
+#ifndef HH_SENF_PPI_Route_
+#define HH_SENF_PPI_Route_ 1
 
 // Custom includes
 #include <boost/type_traits.hpp>

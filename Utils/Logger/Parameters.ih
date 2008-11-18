@@ -23,8 +23,8 @@
 /** \file
     \brief Parameters internal header */
 
-#ifndef IH_Parameters_
-#define IH_Parameters_ 1
+#ifndef IH_SENF_Utils_Logger_Parameters_
+#define IH_SENF_Utils_Logger_Parameters_ 1
 
 // Custom includes
 #include <iostream>

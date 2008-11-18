@@ -24,8 +24,8 @@
     \brief PacketSocketProtocol and PacketSocketHandle public header
  */
 
-#ifndef HH_PacketSocketHandle_
-#define HH_PacketSocketHandle_ 1
+#ifndef HH_SENF_Socket_Protocols_Raw_PacketSocketHandle_
+#define HH_SENF_Socket_Protocols_Raw_PacketSocketHandle_ 1
 
 // Custom includes
 #include "../../../Socket/SocketPolicy.hh"

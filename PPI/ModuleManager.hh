@@ -23,8 +23,8 @@
 /** \file
     \brief ModuleManager public header */
 
-#ifndef HH_ModuleManager_
-#define HH_ModuleManager_ 1
+#ifndef HH_SENF_PPI_ModuleManager_
+#define HH_SENF_PPI_ModuleManager_ 1
 
 // Custom includes
 #include <vector>

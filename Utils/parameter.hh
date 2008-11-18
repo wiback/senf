@@ -30,8 +30,8 @@
     library.
  */
 
-#ifndef HH_parameter_
-#define HH_parameter_ 1
+#ifndef HH_SENF_Utils_parameter_
+#define HH_SENF_Utils_parameter_ 1
 
 // Custom includes
 #include <boost/parameter/binding.hpp>

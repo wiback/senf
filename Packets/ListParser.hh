@@ -23,8 +23,8 @@
 /** \file
     \brief ListParser public header */
 
-#ifndef HH_ListParser_
-#define HH_ListParser_ 1
+#ifndef HH_SENF_Packets_ListParser_
+#define HH_SENF_Packets_ListParser_ 1
 
 // Custom includes
 #include <boost/utility.hpp>
@@ -305,8 +305,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_ListParser_i_)
-#define HH_ListParser_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_ListParser_i_)
+#define HH_SENF_Packets_ListParser_i_
 //#include "ListParser.cci"
 #include "ListParser.ct"
 #include "ListParser.cti"

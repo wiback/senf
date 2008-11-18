@@ -23,8 +23,8 @@
 /** \file
     \brief AnnotationRouter public header */
 
-#ifndef HH_AnnotationRouter_
-#define HH_AnnotationRouter_ 1
+#ifndef HH_SENF_PPI_AnnotationRouter_
+#define HH_SENF_PPI_AnnotationRouter_ 1
 
 // Custom includes
 #include <boost/ptr_container/ptr_map.hpp>

@@ -24,8 +24,8 @@
     \brief CommunicationPolicy public header
  */
 
-#ifndef HH_CommunicationPolicy_
-#define HH_CommunicationPolicy_ 1
+#ifndef HH_SENF_Socket_CommunicationPolicy_
+#define HH_SENF_Socket_CommunicationPolicy_ 1
 
 // Custom includes
 #include "SocketPolicy.hh"

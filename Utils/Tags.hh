@@ -23,8 +23,8 @@
 /** \file
     \brief Tags public header */
 
-#ifndef HH_Tags_
-#define HH_Tags_ 1
+#ifndef HH_SENF_Utils_Tags_
+#define HH_SENF_Utils_Tags_ 1
 
 // Custom includes
 

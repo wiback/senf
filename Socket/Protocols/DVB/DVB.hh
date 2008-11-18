@@ -23,8 +23,8 @@
 /** \file
     \brief INet public header */
 
-#ifndef HH_DVB_
-#define HH_DVB_ 1
+#ifndef HH_SENF_Socket_Protocols_DVB_DVB_
+#define HH_SENF_Socket_Protocols_DVB_DVB_ 1
 
 #include "all_includes.hh"
 

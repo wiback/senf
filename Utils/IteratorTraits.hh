@@ -23,8 +23,8 @@
 /** \file
     \brief IteratorTraits public header */
 
-#ifndef HH_IteratorTraits_
-#define HH_IteratorTraits_ 1
+#ifndef HH_SENF_Utils_IteratorTraits_
+#define HH_SENF_Utils_IteratorTraits_ 1
 
 // Custom includes
 #include <boost/type_traits/integral_constant.hpp>

@@ -23,8 +23,8 @@
 /** \file
     \brief IOStreamTarget public header */
 
-#ifndef HH_IOStreamTarget_
-#define HH_IOStreamTarget_ 1
+#ifndef HH_SENF_Utils_Logger_IOStreamTarget_
+#define HH_SENF_Utils_Logger_IOStreamTarget_ 1
 
 // Custom includes
 #include <boost/utility.hpp>

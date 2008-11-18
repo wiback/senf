@@ -23,8 +23,8 @@
 /** \file
     \brief MACAddress public header */
 
-#ifndef HH_MACAddress_
-#define HH_MACAddress_ 1
+#ifndef HH_SENF_Socket_Protocols_Raw_MACAddress_
+#define HH_SENF_Socket_Protocols_Raw_MACAddress_ 1
 
 // Custom includes
 #include <iostream>

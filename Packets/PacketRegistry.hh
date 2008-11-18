@@ -23,8 +23,8 @@
 /** \file
     \brief PacketRegistry public header */
 
-#ifndef HH_PacketRegistryImpl_
-#define HH_PacketRegistryImpl_ 1
+#ifndef HH_SENF_Packets_PacketRegistry_
+#define HH_SENF_Packets_PacketRegistry_ 1
 
 // Custom includes
 #include <map>
@@ -222,8 +222,8 @@ packet of which the key is requested
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_PacketRegistryImpl_i_)
-#define HH_PacketRegistryImpl_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketRegistry_i_)
+#define HH_SENF_Packets_PacketRegistry_i_
 #include "PacketRegistry.cci"
 #include "PacketRegistry.ct"
 #include "PacketRegistry.cti"

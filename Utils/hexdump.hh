@@ -23,8 +23,8 @@
 /** \file
     \brief public header for hexdump */
 
-#ifndef HH_hexdump_
-#define HH_hexdump_ 1
+#ifndef HH_SENF_Utils_hexdump_
+#define HH_SENF_Utils_hexdump_ 1
 
 // Custom includes
 #include <iostream>

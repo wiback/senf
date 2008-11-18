@@ -24,8 +24,8 @@
     \brief PacketSocketProtocol and PacketSocketHandle public header
  */
 
-#ifndef HH_TunTapSocketHandle_
-#define HH_TunTapSocketHandle_ 1
+#ifndef HH_SENF_Socket_Protocols_Raw_TunTapSocketHandle_
+#define HH_SENF_Socket_Protocols_Raw_TunTapSocketHandle_ 1
 
 // Custom includes
 #include "../../../Socket/SocketPolicy.hh"

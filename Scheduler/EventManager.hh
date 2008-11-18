@@ -23,8 +23,8 @@
 /** \file
     \brief EventManager public header */
 
-#ifndef HH_SchedulerEventManager_
-#define HH_SchedulerEventManager_ 1
+#ifndef HH_SENF_Scheduler_EventManager_
+#define HH_SENF_Scheduler_EventManager_ 1
 
 // Custom includes
 #include <string>

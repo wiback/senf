@@ -23,8 +23,8 @@
 /** \file
     \brief IntervalTimer public header */
 
-#ifndef HH_IntervalTimer_
-#define HH_IntervalTimer_ 1
+#ifndef HH_SENF_PPI_IntervalTimer_
+#define HH_SENF_PPI_IntervalTimer_ 1
 
 // Custom includes
 #include "../Scheduler/ClockService.hh"

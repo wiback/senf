@@ -23,8 +23,8 @@
 /** \file
     \brief signalnames public header */
 
-#ifndef HH_signalnames_
-#define HH_signalnames_ 1
+#ifndef HH_SENF_Utils_signalnames_
+#define HH_SENF_Utils_signalnames_ 1
 
 // Custom includes
 #include <string>

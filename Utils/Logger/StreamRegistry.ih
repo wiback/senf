@@ -23,8 +23,8 @@
 /** \file
     \brief StreamRegistry internal header */
 
-#ifndef IH_StreamRegistry_
-#define IH_StreamRegistry_ 1
+#ifndef IH_SENF_Utils_Logger_StreamRegistry_
+#define IH_SENF_Utils_Logger_StreamRegistry_ 1
 
 // Custom includes
 #include <string>

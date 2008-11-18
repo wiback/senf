@@ -23,8 +23,8 @@
 /** \file
     \brief VectorParser public header */
 
-#ifndef HH_VectorParser_
-#define HH_VectorParser_ 1
+#ifndef HH_SENF_Packets_VectorParser_
+#define HH_SENF_Packets_VectorParser_ 1
 
 // Custom includes
 #include <boost/iterator/iterator_facade.hpp>
@@ -291,8 +291,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_VectorParser_i_)
-#define HH_VectorParser_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_VectorParser_i_)
+#define HH_SENF_Packets_VectorParser_i_
 //#include "VectorParser.cci"
 #include "VectorParser.ct"
 #include "VectorParser.cti"

@@ -23,8 +23,8 @@
 /** \file
     \brief SyslogTarget public header */
 
-#ifndef HH_SyslogTarget_
-#define HH_SyslogTarget_ 1
+#ifndef HH_SENF_Utils_Logger_SyslogTarget_
+#define HH_SENF_Utils_Logger_SyslogTarget_ 1
 
 // Custom includes
 #include <syslog.h>

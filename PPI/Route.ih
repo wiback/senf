@@ -23,8 +23,8 @@
 /** \file
     \brief Route internal header */
 
-#ifndef IH_Route_
-#define IH_Route_ 1
+#ifndef IH_SENF_PPI_Route_
+#define IH_SENF_PPI_Route_ 1
 
 // Custom includes
 #include <boost/type_traits/is_convertible.hpp>

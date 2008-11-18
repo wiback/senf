@@ -23,8 +23,8 @@
 /** \file
     \brief PacketData public header */
 
-#ifndef HH_PacketData_
-#define HH_PacketData_ 1
+#ifndef HH_SENF_Packets_PacketData_
+#define HH_SENF_Packets_PacketData_ 1
 
 // Custom includes
 #include <boost/utility.hpp>
@@ -166,8 +166,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_PacketData_i_)
-#define HH_PacketData_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketData_i_)
+#define HH_SENF_Packets_PacketData_i_
 #include "PacketData.cci"
 //#include "PacketData.ct"
 #include "PacketData.cti"

@@ -23,8 +23,8 @@
 /** \file
     \brief preprocessor public header */
 
-#ifndef HH_preprocessor_
-#define HH_preprocessor_ 1
+#ifndef HH_SENF_Utils_preprocessor_
+#define HH_SENF_Utils_preprocessor_ 1
 
 // Custom includes
 #include <boost/preprocessor/seq/size.hpp>

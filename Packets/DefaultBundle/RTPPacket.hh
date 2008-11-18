@@ -23,8 +23,8 @@
 // Definition of non-inline non-template functions
 
 // Custom includes
-#ifndef RTPPACKET_HH_
-#define RTPPACKET_HH_
+#ifndef HH_SENF_Packets_DefaultBundle_RTPPacket_
+#define HH_SENF_Packets_DefaultBundle_RTPPacket_
 
 #include "../../Packets/Packets.hh"
 #include "../../Socket/Protocols/INet/INet6Address.hh"

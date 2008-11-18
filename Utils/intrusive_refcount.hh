@@ -23,8 +23,8 @@
 /** \file
     \brief intrusive_refcount public header */
 
-#ifndef HH_intrusive_refcount_
-#define HH_intrusive_refcount_ 1
+#ifndef HH_SENF_Utils_intrusive_refcount_
+#define HH_SENF_Utils_intrusive_refcount_ 1
 
 // Custom includes
 #include <boost/utility.hpp>

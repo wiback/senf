@@ -23,8 +23,8 @@
 /** \file
     \brief singleton public header */
 
-#ifndef HH_singleton_
-#define HH_singleton_ 1
+#ifndef HH_SENF_Utils_singleton_
+#define HH_SENF_Utils_singleton_ 1
 
 // Custom includes
 #include <boost/utility.hpp>

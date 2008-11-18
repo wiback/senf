@@ -21,8 +21,8 @@
 /** \file
     \brief WriteHelper public header */
 
-#ifndef HH_WriteHelper_
-#define HH_WriteHelper_ 1
+#ifndef HH_SENF_Scheduler_WriteHelper_
+#define HH_SENF_Scheduler_WriteHelper_ 1
 
 // Custom includes
 #include <string>

@@ -23,8 +23,8 @@
 /** \file
     \brief INet public header */
 
-#ifndef HH_INet_
-#define HH_INet_ 1
+#ifndef HH_SENF_Socket_Protocols_INet_INet_
+#define HH_SENF_Socket_Protocols_INet_INet_ 1
 
 #include "all_includes.hh"
 

@@ -23,8 +23,8 @@
 /** \file
     \brief EventHook public header */
 
-#ifndef HH_EventHook_
-#define HH_EventHook_ 1
+#ifndef HH_SENF_Scheduler_EventHook_
+#define HH_SENF_Scheduler_EventHook_ 1
 
 // Custom includes
 #include <boost/function.hpp>

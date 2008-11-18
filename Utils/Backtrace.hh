@@ -23,8 +23,8 @@
 /** \file
     \brief Backtrace public header */
 
-#ifndef HH_Backtrace_
-#define HH_Backtrace_ 1
+#ifndef HH_SENF_Utils_Backtrace_
+#define HH_SENF_Utils_Backtrace_ 1
 
 // Custom includes
 #include <iostream>

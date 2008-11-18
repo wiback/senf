@@ -23,8 +23,8 @@
 /** \file
     \brief FdDispatcher public header */
 
-#ifndef HH_FdDispatcher_
-#define HH_FdDispatcher_ 1
+#ifndef HH_SENF_Scheduler_FdEvent_
+#define HH_SENF_Scheduler_FdEvent_ 1
 
 // Custom includes
 #include "../boost/intrusive/iset_hook.hpp"
@@ -39,8 +39,8 @@ namespace senf {
 namespace scheduler {
 
     namespace detail {
-	struct FdSetTag;
-	typedef boost::intrusive::iset_base_hook<FdSetTag> FdSetBase;
+        struct FdSetTag;
+        typedef boost::intrusive::iset_base_hook<FdSetTag> FdSetBase;
         struct FdSetCompare;
         struct FindFd;
         class FdDispatcher;
@@ -80,15 +80,15 @@ namespace scheduler {
         member function it should be defined as a class member).
      */
     class FdEvent
-	: public detail::FIFORunner::TaskInfo,
-	  public detail::FdSetBase,
-	  public detail::FdManager::Event
+        : public detail::FIFORunner::TaskInfo,
+          public detail::FdSetBase,
+          public detail::FdManager::Event
     {
     public: 
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-	typedef boost::function<void (int)> Callback;
+        typedef boost::function<void (int)> Callback;
 
         enum Events { 
             EV_NONE = 0                             ///< No event
@@ -107,8 +107,8 @@ namespace scheduler {
         ///@{
 
         template <class Handle>
-	FdEvent(std::string const & name, Callback const & cb, Handle const & handle, int events,
-		bool initiallyEnabled = true);
+        FdEvent(std::string const & name, Callback const & cb, Handle const & handle, int events,
+                bool initiallyEnabled = true);
                                         ///< Register a file descriptor event
                                         /**< Registers \a cb to be called when any of the \a events
                                              occurs on \a handle. If \a initiallyEnabled is set \c
@@ -131,17 +131,17 @@ namespace scheduler {
                                              \param[in] cb Callback to call. This callback may \e
                                                  explicitly be set to \c 0 if the value cannot be
                                                  initialized. */
-	~FdEvent();
+        ~FdEvent();
         
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-	void disable();                 ///< Disable event
-	void enable();                  ///< Enable event
+        void disable();                 ///< Disable event
+        void enable();                  ///< Enable event
 
-	FdEvent & action(Callback const & cb); ///< Change event callback
+        FdEvent & action(Callback const & cb); ///< Change event callback
 
-	FdEvent & events(int events);   ///< Change event mask
+        FdEvent & events(int events);   ///< Change event mask
         FdEvent & addEvents(int events); ///< Add additional events to event mask
         FdEvent & removeEvents(int events); ///< Remove events from event mask
         int events();                   ///< Current event mask
@@ -155,16 +155,16 @@ namespace scheduler {
     protected:
 
     private:
-	virtual void signal(int events);
-	virtual void v_run();
+        virtual void signal(int events);
+        virtual void v_run();
         virtual char const * v_type() const;
         virtual std::string v_info() const;
 
-	Callback cb_;
-	int fd_;
+        Callback cb_;
+        int fd_;
         bool pollable_;
-	int events_;
-	int signaledEvents_;
+        int events_;
+        int signaledEvents_;
 
         friend class detail::FdSetCompare;
         friend class detail::FindFd;

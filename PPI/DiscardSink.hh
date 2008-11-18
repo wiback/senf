@@ -23,8 +23,8 @@
 /** \file
     \brief DiscardSink public header */
 
-#ifndef HH_DiscardSink_
-#define HH_DiscardSink_ 1
+#ifndef HH_SENF_PPI_DiscardSink_
+#define HH_SENF_PPI_DiscardSink_ 1
 
 // Custom includes
 #include "Connectors.hh"

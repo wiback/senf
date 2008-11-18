@@ -23,8 +23,8 @@
 /** \file
     \brief ArrayParser internal header */
 
-#ifndef IH_ArrayParser_
-#define IH_ArrayParser_ 1
+#ifndef IH_SENF_Packets_ArrayParser_
+#define IH_SENF_Packets_ArrayParser_ 1
 
 // Custom includes
 #include <boost/iterator/iterator_facade.hpp>

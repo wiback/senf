@@ -23,8 +23,8 @@
 /** \file
     \brief ProgramOptions public header */
 
-#ifndef HH_ProgramOptions_
-#define HH_ProgramOptions_ 1
+#ifndef HH_SENF_Scheduler_Console_ProgramOptions_
+#define HH_SENF_Scheduler_Console_ProgramOptions_ 1
 
 // Custom includes
 #include "Config.hh"

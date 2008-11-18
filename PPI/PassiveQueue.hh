@@ -23,8 +23,8 @@
 /** \file
     \brief PassiveQueue public header */
 
-#ifndef HH_PassiveQueue_
-#define HH_PassiveQueue_ 1
+#ifndef HH_SENF_PPI_PassiveQueue_
+#define HH_SENF_PPI_PassiveQueue_ 1
 
 // Custom includes
 #include "Connectors.hh"

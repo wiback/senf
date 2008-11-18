@@ -23,8 +23,8 @@
 /** \file
     \brief BSDSocketProtocol public header */
 
-#ifndef HH_BSDSocketProtocol_
-#define HH_BSDSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_BSDSocketProtocol_
+#define HH_SENF_Socket_Protocols_BSDSocketProtocol_ 1
 
 // Custom includes
 #include "../../Socket/SocketProtocol.hh"

@@ -23,8 +23,8 @@
 /** \file
     \brief LLC/SNAP public header */
 
-#ifndef HH_LlcSnapPacket_
-#define HH_LlcSnapPacket_ 1
+#ifndef HH_SENF_Packets_DefaultBundle_LlcSnapPacket_
+#define HH_SENF_Packets_DefaultBundle_LlcSnapPacket_ 1
 
 // Custom includes
 #include <algorithm>

@@ -150,8 +150,8 @@
     <hr>
  */
 
-#ifndef HH_PacketParser_
-#define HH_PacketParser_ 1
+#ifndef HH_SENF_Packets_PacketParser_
+#define HH_SENF_Packets_PacketParser_ 1
 
 // Custom includes
 #include <boost/utility/enable_if.hpp>
@@ -499,8 +499,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_PacketParser_i_)
-#define HH_PacketParser_i_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_PacketParser_i_)
+#define HH_SENF_Packets_PacketParser_i_
 #include "PacketParser.cci"
 #include "PacketParser.ct"
 #include "PacketParser.cti"

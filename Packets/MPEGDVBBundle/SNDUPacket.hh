@@ -23,8 +23,8 @@
 /** \file
     \brief SNDUPacket public header */
 
-#ifndef HH_SNDUPacket_
-#define HH_SNDUPacket_ 1
+#ifndef HH_SENF_Packets_MPEGDVBBundle_SNDUPacket_
+#define HH_SENF_Packets_MPEGDVBBundle_SNDUPacket_ 1
 
 // Custom includes
 #include <algorithm>

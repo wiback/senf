@@ -23,8 +23,8 @@
 /** \file
     \brief EventHook internal header */
 
-#ifndef IH_EventHook_
-#define IH_EventHook_ 1
+#ifndef IH_SENF_Scheduler_EventHook_
+#define IH_SENF_Scheduler_EventHook_ 1
 
 // Custom includes
 #include "../Utils/singleton.hh"

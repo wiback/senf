@@ -23,8 +23,8 @@
 /** \file
     \brief LazyDirectory public header */
 
-#ifndef HH_LazyDirectory_
-#define HH_LazyDirectory_ 1
+#ifndef HH_SENF_Scheduler_Console_LazyDirectory_
+#define HH_SENF_Scheduler_Console_LazyDirectory_ 1
 
 // Custom includes
 #include <boost/utility.hpp>

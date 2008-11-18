@@ -23,8 +23,8 @@
 /** \file
     \brief SignalDispatcher public header */
 
-#ifndef HH_SignalDispatcher_
-#define HH_SignalDispatcher_ 1
+#ifndef HH_SENF_Scheduler_SignalEvent_
+#define HH_SENF_Scheduler_SignalEvent_ 1
 
 // Custom includes
 #include <signal.h>

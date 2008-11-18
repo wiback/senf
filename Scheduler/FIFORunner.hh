@@ -23,8 +23,8 @@
 /** \file
     \brief FIFORunner public header */
 
-#ifndef HH_FIFORunner_
-#define HH_FIFORunner_ 1
+#ifndef HH_SENF_Scheduler_FIFORunner_
+#define HH_SENF_Scheduler_FIFORunner_ 1
 
 // Custom includes
 #include <signal.h>

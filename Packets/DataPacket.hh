@@ -23,8 +23,8 @@
 /** \file
     \brief DataPacket public header */
 
-#ifndef HH_DataPacket_
-#define HH_DataPacket_ 1
+#ifndef HH_SENF_Packets_DataPacket_
+#define HH_SENF_Packets_DataPacket_ 1
 
 // Custom includes
 #include "PacketType.hh"
@@ -58,8 +58,8 @@ namespace senf {
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
-#if !defined(HH_Packets__decls_) && !defined(HH_DataPacket_impl_)
-#define HH_DataPacket_impl_
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_DataPacket_impl_)
+#define HH_SENF_Packets_DataPacket_impl_
 //#include "DataPacket.cci"
 //#include "DataPacket.ct"
 //#include "DataPacket.cti"

@@ -23,8 +23,8 @@
 /** \file
     \brief TypeInfo public header */
 
-#ifndef HH_TypeInfo_
-#define HH_TypeInfo_ 1
+#ifndef HH_SENF_Utils_TypeInfo_
+#define HH_SENF_Utils_TypeInfo_ 1
 
 // Custom includes
 #include <string>

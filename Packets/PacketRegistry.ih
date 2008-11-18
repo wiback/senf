@@ -23,8 +23,8 @@
 /** \file
     \brief PacketRegistry internal header */
 
-#ifndef IH_PacketRegistryImpl_
-#define IH_PacketRegistryImpl_ 1
+#ifndef IH_SENF_Packets_PacketRegistry_
+#define IH_SENF_Packets_PacketRegistry_ 1
 
 // Custom includes
 #include <ext/functional>

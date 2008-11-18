@@ -23,8 +23,8 @@
 /** \file
     \brief IOEvent public header */
 
-#ifndef HH_IOEvent_
-#define HH_IOEvent_ 1
+#ifndef HH_SENF_PPI_IOEvent_
+#define HH_SENF_PPI_IOEvent_ 1
 
 // Custom includes
 #include "../Scheduler/Scheduler.hh"

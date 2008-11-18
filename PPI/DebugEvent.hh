@@ -23,8 +23,8 @@
 /** \file
     \brief DebugEvent public header */
 
-#ifndef HH_DebugEvent_
-#define HH_DebugEvent_ 1
+#ifndef HH_SENF_PPI_DebugEvent_
+#define HH_SENF_PPI_DebugEvent_ 1
 
 // Custom includes
 #include "Events.hh"

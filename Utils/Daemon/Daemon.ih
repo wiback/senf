@@ -23,8 +23,8 @@
 /** \file
     \brief Daemon internal header */
 
-#ifndef IH_Daemon_
-#define IH_Daemon_ 1
+#ifndef IH_SENF_Utils_Daemon_Daemon_
+#define IH_SENF_Utils_Daemon_Daemon_ 1
 
 // Custom includes
 #include <deque>

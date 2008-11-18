@@ -23,8 +23,8 @@
 /** \file
     \brief Traits public header */
 
-#ifndef HH_Traits_
-#define HH_Traits_ 1
+#ifndef HH_SENF_Scheduler_Console_Traits_
+#define HH_SENF_Scheduler_Console_Traits_ 1
 
 // Custom includes
 #include <iostream>

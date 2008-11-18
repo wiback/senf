@@ -23,8 +23,8 @@
 /** \file
     \brief TLVPacket public header */
 
-#ifndef HH_TLVPacket_
-#define HH_TLVPacket_ 1
+#ifndef HH_SENF_Packets_MPEGDVBBundle_TLVPacket_
+#define HH_SENF_Packets_MPEGDVBBundle_TLVPacket_ 1
 
 // Custom includes
 #include <algorithm>

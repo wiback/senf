@@ -17,8 +17,8 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#ifndef RATEFILTER_HH_
-#define RATEFILTER_HH_
+#ifndef HH_SENF_PPI_RateFilter_
+#define HH_SENF_PPI_RateFilter_
 
 // Custom includes
 #include "Connectors.hh"
@@ -49,4 +49,4 @@ private:
 
 }}} //namespaces
 
-#endif /*RATEFILTER_HH_*/
+#endif /*HH_SENF_PPI_RateFilter_*/

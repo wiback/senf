@@ -23,8 +23,8 @@
 /** \file
     \brief FileTarget public header */
 
-#ifndef HH_FileTarget_
-#define HH_FileTarget_ 1
+#ifndef HH_SENF_Utils_Logger_FileTarget_
+#define HH_SENF_Utils_Logger_FileTarget_ 1
 
 // Custom includes
 #include <boost/utility.hpp>

@@ -23,8 +23,8 @@
 /** \file
     \brief DatagramSocketProtocol public header */
 
-#ifndef HH_DatagramSocketProtocol_
-#define HH_DatagramSocketProtocol_ 1
+#ifndef HH_SENF_Socket_Protocols_DatagramSocketProtocol_
+#define HH_SENF_Socket_Protocols_DatagramSocketProtocol_ 1
 
 // Custom includes
 #include <sys/time.h>

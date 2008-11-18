@@ -23,8 +23,8 @@
 /** \file
     \brief TypeIdValue public header */
 
-#ifndef HH_TypeIdValue_
-#define HH_TypeIdValue_ 1
+#ifndef HH_SENF_Utils_TypeIdValue_
+#define HH_SENF_Utils_TypeIdValue_ 1
 
 // Custom includes
 #include <typeinfo>

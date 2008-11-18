@@ -23,8 +23,8 @@
 /** \file
     \brief Parameters public header */
 
-#ifndef HH_Parameters_
-#define HH_Parameters_ 1
+#ifndef HH_SENF_Utils_Logger_Parameters_
+#define HH_SENF_Utils_Logger_Parameters_ 1
 
 // Custom includes
 

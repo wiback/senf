@@ -23,8 +23,8 @@
 /** \file
     \brief FdDispatcher internal header */
 
-#ifndef IH_FdDispatcher_
-#define IH_FdDispatcher_ 1
+#ifndef IH_SENF_Scheduler_FdEvent_
+#define IH_SENF_Scheduler_FdEvent_ 1
 
 // Custom includes
 #include "../boost/intrusive/iset.hpp"
@@ -39,24 +39,24 @@ namespace scheduler {
 namespace detail {
 
     struct FdSetCompare {
-	bool operator()(FdEvent const & a, FdEvent const & b) const
-	{ return a.fd_ < b.fd_; }
+        bool operator()(FdEvent const & a, FdEvent const & b) const
+        { return a.fd_ < b.fd_; }
     };
 
     struct FindFd {
-	bool operator()(FdEvent const & a, int b) const
-	{ return a.fd_ < b; }
-	bool operator()(int a, FdEvent const & b) const
-	{ return a < b.fd_; }
+        bool operator()(FdEvent const & a, int b) const
+        { return a.fd_ < b; }
+        bool operator()(int a, FdEvent const & b) const
+        { return a < b.fd_; }
     };
     
     class FdDispatcher
-	: public senf::singleton<FdDispatcher>
+        : public senf::singleton<FdDispatcher>
     {
     public:
-	using senf::singleton<FdDispatcher>::instance;
-	using senf::singleton<FdDispatcher>::alive;
-	
+        using senf::singleton<FdDispatcher>::instance;
+        using senf::singleton<FdDispatcher>::alive;
+        
         bool add(FdEvent & event);
         void remove(FdEvent & event);
 
@@ -68,9 +68,9 @@ namespace detail {
         FdDispatcher();
         ~FdDispatcher();
 
-	typedef boost::intrusive::imultiset< FdSetBase::value_traits<FdEvent>,
-					     FdSetCompare,
-					     false > FdSet;
+        typedef boost::intrusive::imultiset< FdSetBase::value_traits<FdEvent>,
+                                             FdSetCompare,
+                                             false > FdSet;
 
         FdSet fds_;
 
@@ -80,11 +80,11 @@ namespace detail {
     };
 
     class FileDispatcher
-	: public senf::singleton<FileDispatcher>
+        : public senf::singleton<FileDispatcher>
     {
     public:
-	using senf::singleton<FileDispatcher>::instance;
-	using senf::singleton<FileDispatcher>::alive;
+        using senf::singleton<FileDispatcher>::instance;
+        using senf::singleton<FileDispatcher>::alive;
 
         void add(FdEvent & event);
         void remove(FdEvent & event);
@@ -104,9 +104,9 @@ namespace detail {
 
         // We really only need a list here but we need to use the same event structure used by
         // the FdEvent.
-	typedef boost::intrusive::imultiset< FdSetBase::value_traits<FdEvent>,
-					     FdSetCompare,
-					     false > FdSet;
+        typedef boost::intrusive::imultiset< FdSetBase::value_traits<FdEvent>,
+                                             FdSetCompare,
+                                             false > FdSet;
 
         FdSet fds_;
         int managerTimeout_;

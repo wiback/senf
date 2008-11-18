@@ -23,8 +23,8 @@
 /** \file
     \brief IPv6Extensions public header */
 
-#ifndef HH_IPv6Extensions_
-#define HH_IPv6Extensions_ 1
+#ifndef HH_SENF_Packets_DefaultBundle_IPv6Extensions_
+#define HH_SENF_Packets_DefaultBundle_IPv6Extensions_ 1
 
 // Custom includes
 #include "IPv6Packet.hh"

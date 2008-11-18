@@ -23,8 +23,8 @@
 /** \file
     \brief Levels public header */
 
-#ifndef HH_Levels_
-#define HH_Levels_ 1
+#ifndef HH_SENF_Utils_Logger_Levels_
+#define HH_SENF_Utils_Logger_Levels_ 1
 
 // Custom includes
 

@@ -23,8 +23,8 @@
 /** \file
     \brief psi2ts.hh public header */
 
-#ifndef HH_psi2ts_
-#define HH_psi2ts_ 1
+#ifndef HH_SENF_Examples_psi2tsModule_psi2ts_
+#define HH_SENF_Examples_psi2tsModule_psi2ts_ 1
 
 // Custom includes
 #include <senf/PPI/PPI.hh>

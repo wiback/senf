@@ -23,8 +23,8 @@
 /** \file
     \brief UDPPacket public header */
 
-#ifndef HH_UDPPacket_
-#define HH_UDPPacket_ 1
+#ifndef HH_SENF_Packets_DefaultBundle_UDPPacket_
+#define HH_SENF_Packets_DefaultBundle_UDPPacket_ 1
 
 // Custom includes
 #include "../../Packets/Packets.hh"

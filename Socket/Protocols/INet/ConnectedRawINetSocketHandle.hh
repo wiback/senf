@@ -20,8 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef CONNECTEDRAWINETSOCKETHANDLE_HH_
-#define CONNECTEDRAWINETSOCKETHANDLE_HH_
+#ifndef CONNECTEDHH_SENF_Socket_Protocols_INet_RawINetSocketHandle_
+#define CONNECTEDHH_SENF_Socket_Protocols_INet_RawINetSocketHandle_
 
 // Custom includes
 #include "INetSocketProtocol.hh"
@@ -181,4 +181,4 @@ namespace senf {
 
 }
 
-#endif /*CONNECTEDRAWINETSOCKETHANDLE_HH_*/
+#endif /*CONNECTEDHH_SENF_Socket_Protocols_INet_RawINetSocketHandle_*/

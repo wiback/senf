@@ -23,8 +23,8 @@
 /** \file
     \brief Callback public header */
 
-#ifndef HH_Callback_
-#define HH_Callback_ 1
+#ifndef HH_SENF_PPI_detail_Callback_
+#define HH_SENF_PPI_detail_Callback_ 1
 
 // Custom includes
 #include <boost/function.hpp>

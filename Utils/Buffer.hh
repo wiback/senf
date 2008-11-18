@@ -23,8 +23,8 @@
 /** \file
     \brief Buffer public header */
 
-#ifndef HH_Buffer_
-#define HH_Buffer_ 1
+#ifndef HH_SENF_Utils_Buffer_
+#define HH_SENF_Utils_Buffer_ 1
 
 // Custom includes
 #include "../config.hh"

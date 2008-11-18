@@ -23,8 +23,8 @@
 /** \file
     \brief PacketParser internal header */
 
-#ifndef IH_PacketParser_
-#define IH_PacketParser_ 1
+#ifndef IH_SENF_Packets_PacketParser_
+#define IH_SENF_Packets_PacketParser_ 1
 
 // Custom includes
 #include "../Utils/mpl.hh"

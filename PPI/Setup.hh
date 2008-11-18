@@ -23,8 +23,8 @@
 /** \file
     \brief Setup public header */
 
-#ifndef HH_Setup_
-#define HH_Setup_ 1
+#ifndef HH_SENF_PPI_Setup_
+#define HH_SENF_PPI_Setup_ 1
 
 // Custom includes
 #include <boost/type_traits.hpp>

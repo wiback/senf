@@ -26,8 +26,8 @@
     \todo ReadWritePolicy.test.cc
  */
 
-#ifndef HH_ReadWritePolicy_
-#define HH_ReadWritePolicy_ 1
+#ifndef HH_SENF_Socket_ReadWritePolicy_
+#define HH_SENF_Socket_ReadWritePolicy_ 1
 
 // Custom includes
 #include "SocketPolicy.hh"

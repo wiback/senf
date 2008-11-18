@@ -23,8 +23,8 @@
 /** \file
     \brief Phoenix internal header */
 
-#ifndef IH_Phoenix_
-#define IH_Phoenix_ 1
+#ifndef IH_SENF_Utils_Phoenix_
+#define IH_SENF_Utils_Phoenix_ 1
 
 // Custom includes
 

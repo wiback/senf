@@ -67,7 +67,7 @@ prefix_ bool senf::DVBFrontendSocketProtocol::eof()
 prefix_ int16_t senf::DVBFrontendSocketProtocol::signalStrength()
     const
 {
-	int16_t strength;
+        int16_t strength;
     if (::ioctl(fd(), FE_READ_SIGNAL_STRENGTH, &strength) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("Could not get signal strength of DVB adapter.");
     return strength;

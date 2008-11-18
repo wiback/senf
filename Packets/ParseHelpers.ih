@@ -572,7 +572,7 @@
           template <class T> T BOOST_PP_CAT(name, _dispatch)(boost::true_type) const              \
           { return parse<T>( SENF_PARSER_OFFSET(name) ); }                                        \
           template <class T> T BOOST_PP_CAT(name, _dispatch)(boost::false_type) const             \
-          { return parse<T>( BOOST_PP_CAT(aux,_)(), SENF_PARSER_OFFSET(name) ); }                                 \
+          { return parse<T>( BOOST_PP_CAT(aux,_)(), SENF_PARSER_OFFSET(name) ); }                 \
           BOOST_PP_CAT(name, _t) BOOST_PP_CAT(name, _)() const                                    \
           { return BOOST_PP_CAT(name, _dispatch) <BOOST_PP_CAT(name, _t)>(                        \
                   boost::integral_constant<bool, BOOST_PP_CAT(name, _aux_fixed)>()); }            \

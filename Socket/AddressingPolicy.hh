@@ -24,8 +24,8 @@
     \brief NoAddressingPolicy public header
  */
 
-#ifndef HH_AddressingPolicy_
-#define HH_AddressingPolicy_ 1
+#ifndef HH_SENF_Socket_AddressingPolicy_
+#define HH_SENF_Socket_AddressingPolicy_ 1
 
 // Custom includes
 #include "SocketPolicy.hh"

@@ -27,8 +27,8 @@
     protocol interface
  */
 
-#ifndef HH_UDPSocketHandle_
-#define HH_UDPSocketHandle_ 1
+#ifndef HH_SENF_Socket_Protocols_INet_UDPSocketHandle_
+#define HH_SENF_Socket_Protocols_INet_UDPSocketHandle_ 1
 
 // Custom includes
 #include "INetSocketProtocol.hh"

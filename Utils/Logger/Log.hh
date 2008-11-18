@@ -23,8 +23,8 @@
 /** \file
     \brief Log public header */
 
-#ifndef HH_Log_
-#define HH_Log_ 1
+#ifndef HH_SENF_Utils_Logger_Log_
+#define HH_SENF_Utils_Logger_Log_ 1
 
 // Custom includes
 #include <boost/preprocessor/seq/size.hpp>

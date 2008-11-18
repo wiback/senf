@@ -108,9 +108,9 @@ senf::MACAddress const senf::MACAddress::Broadcast = senf::MACAddress(0xFFFFFFFF
 senf::MACAddress const senf::MACAddress::None;
 
 prefix_ std::string senf::MACAddress::toString() const {
-	std::ostringstream tmp; 
-	tmp << (*this);
-	return tmp.str();
+        std::ostringstream tmp; 
+        tmp << (*this);
+        return tmp.str();
 }
 
 ///////////////////////////////////////////////////////////////////////////

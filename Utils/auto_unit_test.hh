@@ -33,8 +33,8 @@
     </pre> (with possibliy adjusted path).
  */
 
-#ifndef HH_auto_unit_test_
-#define HH_auto_unit_test_ 1
+#ifndef HH_SENF_Utils_auto_unit_test_
+#define HH_SENF_Utils_auto_unit_test_ 1
 
 // Custom includes
 #include <boost/version.hpp>

@@ -21,8 +21,8 @@
 /** \file
     \brief ReadHelper public header */
 
-#ifndef HH_ReadHelper_
-#define HH_ReadHelper_ 1
+#ifndef HH_SENF_Scheduler_ReadHelper_
+#define HH_SENF_Scheduler_ReadHelper_ 1
 
 // Custom includes
 #include <string>

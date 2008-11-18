@@ -23,8 +23,8 @@
 /** \file
     \brief IntParser internal header */
 
-#ifndef IH_IntParser_
-#define IH_IntParser_ 1
+#ifndef IH_SENF_Packets_IntParser_
+#define IH_SENF_Packets_IntParser_ 1
 
 // Custom includes
 #include "PacketTypes.hh"

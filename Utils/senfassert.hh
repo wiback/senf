@@ -23,8 +23,8 @@
 /** \file
     \brief senfassert public header */
 
-#ifndef HH_senfassert_
-#define HH_senfassert_ 1
+#ifndef HH_SENF_Utils_senfassert_
+#define HH_SENF_Utils_senfassert_ 1
 
 // Custom includes
 #include "../Utils/senfassert.hh"

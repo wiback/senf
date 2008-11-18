@@ -43,9 +43,10 @@ prefix_ void senf::VariantParser<AuxPolicy,Parsers>::init()
         std::advance(j, oldSize);
         std::fill(i(), j, 0u);
         safe_data_iterator safe_i (*this);
+        typename AuxPolicy::WrapperPolicy safeAux (static_cast<AuxPolicy&>(*this));
         data().insert(j, senf::init_bytes<NewParser>::value - oldSize, 0u);
-        AuxPolicy::aux(N, safe_i, state());
-        NewParser( AuxPolicy::adjust(safe_i, state()), state() ).init();
+        safeAux.aux(N, safe_i, state());
+        NewParser( safeAux.adjust(safe_i, state()), state() ).init();
     } else {
         data_iterator j (i());
         std::advance(j, senf::init_bytes<NewParser>::value);

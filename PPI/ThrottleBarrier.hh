@@ -23,8 +23,8 @@
 /** \file
     \brief ThrottleBarrier public header */
 
-#ifndef HH_ThrottleBarrier_
-#define HH_ThrottleBarrier_ 1
+#ifndef HH_SENF_PPI_ThrottleBarrier_
+#define HH_SENF_PPI_ThrottleBarrier_ 1
 
 // Custom includes
 #include "Connectors.hh"

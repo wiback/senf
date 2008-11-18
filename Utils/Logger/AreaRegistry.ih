@@ -23,8 +23,8 @@
 /** \file
     \brief AreaRegistry internal header */
 
-#ifndef IH_AreaRegistry_
-#define IH_AreaRegistry_ 1
+#ifndef IH_SENF_Utils_Logger_AreaRegistry_
+#define IH_SENF_Utils_Logger_AreaRegistry_ 1
 
 // Custom includes
 #include <string>

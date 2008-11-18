@@ -23,8 +23,8 @@
 /** \file
     \brief Events public header */
 
-#ifndef HH_Events_
-#define HH_Events_ 1
+#ifndef HH_SENF_PPI_Events_
+#define HH_SENF_PPI_Events_ 1
 
 // Custom includes
 #include <vector>

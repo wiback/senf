@@ -23,8 +23,8 @@
 /** \file
     \brief IteratorTraits internal header */
 
-#ifndef IH_IteratorTraits_
-#define IH_IteratorTraits_ 1
+#ifndef IH_SENF_Utils_IteratorTraits_
+#define IH_SENF_Utils_IteratorTraits_ 1
 
 // Custom includes
 
