@@ -445,15 +445,15 @@
 # // SENF_PARSER_COLLECTION_I
 #
 # ifndef DOXYGEN
-# 
-  namespace senf { namespace detail { namespace auxtag { 
+#
+  namespace senf { namespace detail { namespace auxtag {
       struct none {}; } } }
-  namespace senf { namespace detail { namespace auxtag { 
+  namespace senf { namespace detail { namespace auxtag {
       struct bytes {}; } } }
-  namespace senf { namespace detail { namespace auxtag { 
-      template <class Transform, class Tag> 
+  namespace senf { namespace detail { namespace auxtag {
+      template <class Transform, class Tag>
       struct transform {}; } } }
-# 
+#
 # endif
 #
 # define SENF_PARSER_COLLECTION_TAG_GOBBLE__bytes(x)
@@ -547,10 +547,10 @@
       template <class Parser> struct DynamicAuxParserPolicy;
       template <class Parser, unsigned offset> struct FixedAuxParserPolicy;
       template <class Parser, unsigned fixedOffset, bool fixedDelta>
-      struct ParserAuxPolicySelect 
+      struct ParserAuxPolicySelect
       { typedef senf::detail::DynamicAuxParserPolicy<Parser> type; };
       template <class Parser, unsigned fixedOffset>
-      struct ParserAuxPolicySelect<Parser, fixedOffset, true> 
+      struct ParserAuxPolicySelect<Parser, fixedOffset, true>
       { typedef senf::detail::FixedAuxParserPolicy<Parser, fixedOffset> type; };
   }};
 #
@@ -572,7 +572,7 @@
           template <class T> T BOOST_PP_CAT(name, _dispatch)(boost::true_type) const              \
           { return parse<T>( SENF_PARSER_OFFSET(name) ); }                                        \
           template <class T> T BOOST_PP_CAT(name, _dispatch)(boost::false_type) const             \
-          { return parse<T>( aux(), SENF_PARSER_OFFSET(name) ); }                                 \
+          { return parse<T>( BOOST_PP_CAT(aux,_)(), SENF_PARSER_OFFSET(name) ); }                                 \
           BOOST_PP_CAT(name, _t) BOOST_PP_CAT(name, _)() const                                    \
           { return BOOST_PP_CAT(name, _dispatch) <BOOST_PP_CAT(name, _t)>(                        \
                   boost::integral_constant<bool, BOOST_PP_CAT(name, _aux_fixed)>()); }            \
