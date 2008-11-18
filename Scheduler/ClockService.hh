@@ -33,6 +33,7 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/cstdint.hpp>
 #include "../Utils/singleton.hh"
+#include "Console/Parse.hh"
 
 //#include "ClockService.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -150,6 +151,41 @@ namespace senf {
 #endif
     };
 
+    /** \brief Console argument parser to parse value as time interval
+
+        This parser will parse a time interval specification into a ClockService::clock_type
+        value. The following units are supported:
+
+        <table class="senf fixedcolumn">
+        <tr><td>\c d</td><td>days</td></tr>
+        <tr><td>\c h</td><td>hours</td></tr>
+        <tr><td>\c m</td><td>minutes</td></tr>
+        <tr><td>\c s</td><td>seconds</td></tr>
+        </table>
+
+        Additionally, the unit may be prefixed by an SI scale:
+
+        <table class="senf fixedcolumn">
+        <tr><td>\c m</td><td>milli</td></tr>
+        <tr><td>\c u</td><td>micro</td></tr>
+        <tr><td>\c n</td><td>nano</td></tr>
+        </table>
+
+        An optional decimal point is also supported. A single timer interval may combine any number
+        of these specifications. The following are all valid intervals:
+
+        <table class="senf fixedcolumn">
+        <tr><td><code>10d</code></td><td>10 days</td></tr>
+        <tr><td><code>5d5d</code></td><td>10 days</td></tr>
+        <tr><td><code>1d2h100m3.5s</code></td><td>27 hours, 30 minutes and 3.5 seconds</td></tr>
+        <tr><td><code>1s100ms</code></td><td>1.1 seconds</td></tr>
+        <tr><td><code>1.1s</code></td><td>1.1 seconds</td></tr>
+        <tr><td><code>123.456us</code></td><td>123.456 microseconds</td></tr>
+        <tr><td><code>2md</code></td><td>(very unusual) 2 milli-days</td></tr>
+        </table>
+     */
+    void parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & tokens, 
+                                   ClockService::clock_type & out);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

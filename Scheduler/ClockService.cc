@@ -27,15 +27,57 @@
 //#include "ClockService.ih"
 
 // Custom includes
-#include <errno.h>
-#include <signal.h>
-#include <sys/time.h>
-#include <pthread.h>
-#include "../Utils/Exception.hh"
+#include <boost/regex.hpp>
+#include "Console/Console.hh"
 
 //#include "ClockService.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+prefix_ void
+senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & tokens,
+                                ClockService::clock_type & out)
+{
+    out = 0;
+    std::string value;
+    {
+        senf::console::CheckedArgumentIteratorWrapper arg (tokens);
+        senf::console::parse( *(arg++), value );
+    }
+    static boost::sregex_iterator::regex_type rx ("[mun]?[dhms]");
+    boost::sregex_iterator i (value.begin(), value.end(), rx);
+    boost::sregex_iterator const i_end;
+    std::string::const_iterator j (value.begin());
+    for (; i != i_end; ++i) {
+        boost::sregex_iterator::value_type::value_type match ((*i)[0]);
+        long double v (boost::lexical_cast<long double>(std::string(j, match.first)));
+        char scale (0);
+        char unit (0);
+        if (match.length() == 2) {
+            scale = *match.first;
+            unit = *boost::next(match.first);
+        } else {
+            SENF_ASSERT( match.length() == 1);
+            unit = *match.first;
+        }
+        switch (scale) {
+        case 0: break;
+        case 'n': v /= 1000.0;
+        case 'u': v /= 1000.0;
+        case 'm': v /= 1000.0;
+        }
+        switch (unit) {
+        case 'd': v *= 24.0;
+        case 'h': v *= 60.0;
+        case 'm': v *= 60.0;
+        case 's': v *= 1000000000.0;
+        }
+        out += senf::ClockService::nanoseconds(senf::ClockService::int64_type(v));
+        j = match.second;
+    }
+    if (j != value.end())
+        throw senf::console::SyntaxErrorException();
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
