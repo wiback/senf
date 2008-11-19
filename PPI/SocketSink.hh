@@ -45,8 +45,8 @@ namespace senf {
 namespace ppi {
 
     /** \brief Writer for module::ActiveSocketSink / module::PassiveSocketSink
-        
-        This writer will write the packets completely as datagrams to the given socket which must be connected. 
+
+        This writer will write the packets completely as datagrams to the given socket which must be connected.
      */
     class ConnectedDgramWriter
     {
@@ -56,7 +56,7 @@ namespace ppi {
                                     senf::DatagramFramingPolicy,
                                     senf::ConnectedCommunicationPolicy>::policy > Handle;
                                         ///< Handle type supported by this writer
-        
+
         void operator()(Handle handle, Packet packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
@@ -65,7 +65,35 @@ namespace ppi {
                                              \param[in] packet Packet to write */
     };
 
-    class IPv6SourceForcingDgramWriter
+    class IPv4SourceForcingDgramWriter : ConnectedDgramWriter
+    {
+    public:
+        IPv4SourceForcingDgramWriter();
+        IPv4SourceForcingDgramWriter(senf::INet4Address sourceAddr, senf::INet4SocketAddress destAddr);
+        typedef senf::ClientSocketHandle<
+            senf::MakeSocketPolicy< senf::WriteablePolicy,
+                                    senf::DatagramFramingPolicy>::policy > Handle;
+                                        ///< Handle type supported by this writer
+
+        void source(senf::INet4Address & source);
+        senf::INet4Address source();
+        void destination(senf::INet4SocketAddress & dest);
+        senf::INet4SocketAddress destination();
+
+        void operator()(Handle handle, Packet packet);
+                                        ///< Write \a packet to \a handle
+                                        /**< Write the complete \a packet as a datagram to \a
+                                             handle.
+                                             \param[in] handle Handle to write data to
+                                             \param[in] packet Packet to write */
+    private:
+        int sendtoandfrom(int sock, const void *data, size_t dataLen, const in_addr *dst, int port, const in_addr *src);
+        senf::INet4Address source_;
+        senf::INet4Address destination_;
+        unsigned int protocolId_;
+};
+
+    class IPv6SourceForcingDgramWriter : ConnectedDgramWriter
     {
     public:
         IPv6SourceForcingDgramWriter();
@@ -74,7 +102,7 @@ namespace ppi {
             senf::MakeSocketPolicy< senf::WriteablePolicy,
                                     senf::DatagramFramingPolicy>::policy > Handle;
                                         ///< Handle type supported by this writer
-        
+
         void source(senf::INet6Address & source);
         senf::INet6Address source();
         void destination(senf::INet6SocketAddress & dest);
@@ -91,9 +119,9 @@ namespace ppi {
         senf::INet6Address source_;
         senf::INet6Address destination_;
         unsigned int protocolId_;
-};    
-    
-    
+};
+
+
 }}
 
 namespace senf {
@@ -101,9 +129,9 @@ namespace ppi {
 namespace module {
 
     /** \brief Output %module writing data to a FileHandle using the provided Writer.
-        If using the default ConnectedDgramWriter the filehandle must be writable, connected and 
-        able to handle complete datagrams.  
-        
+        If using the default ConnectedDgramWriter the filehandle must be writable, connected and
+        able to handle complete datagrams.
+
         This output %module will write data to a FileHandle object using a given \a Writer. This
         output %module is active. This requires the file handle to be able to signal its readiness to
         accept more data via the Scheduler.
@@ -137,16 +165,16 @@ namespace module {
         typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
         connector::ActiveInput<> input; ///< Input connector from which data is received
-        
+
         ActiveSocketSink(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be default constructible
                                              \param[in] handle Handle to write data to */
-        ActiveSocketSink(Handle handle, Writer const & writer); 
+        ActiveSocketSink(Handle handle, Writer const & writer);
                                         ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be copy constructible
-                                             \param[in] handle Handle to write data to 
+                                             \param[in] handle Handle to write data to
                                              \param[in] writer Writer helper writing packet date to the
                                                  socket */
 
@@ -160,9 +188,9 @@ namespace module {
     };
 
     /** \brief Output module writing data to a FileHandle using the provided \a Writer.
-        If using the default ConnectedDgramWriter the filehandle must be writable, connected and 
-        able to handle complete datagrams.  
-        
+        If using the default ConnectedDgramWriter the filehandle must be writable, connected and
+        able to handle complete datagrams.
+
         This output module will write data to a FileHandle object using a given \a Writer. This
         output module is passive. This implies, that the output handle may not block. This also
         implies, that data will probably get lost if written to fast for the underlying transport
@@ -198,7 +226,7 @@ namespace module {
         typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
         connector::PassiveInput<> input; ///< Input connector from which data is received
-        
+
         PassiveSocketSink(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be default constructible
@@ -210,7 +238,7 @@ namespace module {
                                              \param[in] handle Handle to write data to */
 
         Writer & writer();      ///< Access the Writer
-        Handle & handle();      /**< Access the handle. This is intendet to be mainly used to reconnect 
+        Handle & handle();      /**< Access the handle. This is intendet to be mainly used to reconnect
                                      the underlying socket. */
        /* void reconnect(senf::SocketAddress newAddress);
         ///< Reconnect the handle to which the packets are written
@@ -218,9 +246,9 @@ namespace module {
         void replaceHandle(Handle newHandle);
                                         /**< Replace the handle to which the packets are written
                                          * Normally you should access the handle and call connect with
-                                         * the new address. This also works for other 
+                                         * the new address. This also works for other
                                          * (active) ConnectedSocketSinks/Sources */
-                                        
+
     private:
         void write();
 
@@ -237,7 +265,7 @@ namespace module {
 #include "SocketSink.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
