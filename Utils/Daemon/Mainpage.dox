@@ -26,6 +26,8 @@
     process is implemented by deriving from senf::Daemon and implementing the necessary (virtual)
     member functions.
     \code
+    #include <senf/Utils/Daemon.hh>
+    
     class MyDaemon : public senf::Daemon
     {
         void configure() {
@@ -65,6 +67,8 @@
     must call detach() as soon as initialization is completed to detach from the foreground
     terminal.    
     \code
+    #include <senf/Utils/Daemon.hh>
+    
     class MyDaemon : public senf::Daemon
     {
         // 'configure()' like above. Don't implement 'init()' or 'run()' if you implement 'main()'.
@@ -88,6 +92,9 @@
             app.run();
         }
     };
+
+    // Provide main() function
+    SENF_DAEMON_MAIN(MyDaemon);
     \endcode
 
     \see 
