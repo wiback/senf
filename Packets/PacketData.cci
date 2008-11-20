@@ -108,6 +108,17 @@ prefix_ void senf::PacketData::clear()
     impl().clear(this);
 }
 
+prefix_ void senf::PacketData::reserve(size_type n)
+{
+    impl().reserve(n + size() - impl().size());
+}
+
+prefix_ senf::PacketData::size_type senf::PacketData::capacity()
+    const
+{
+    return impl().capacity() - (impl().size() - size());
+}
+
 prefix_ bool senf::PacketData::valid()
 {
     return impl_;

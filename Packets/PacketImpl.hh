@@ -183,6 +183,9 @@ namespace detail {
         void erase(PacketData * self, iterator first, iterator last);
         void clear(PacketData * self);
 
+        void reserve(size_type n);
+        size_type capacity() const;
+
         // Annotations
         template <class Annotation>
         Annotation & annotation();

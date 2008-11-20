@@ -89,7 +89,7 @@ prefix_ int senf::Daemon::argc()
     return argc_;
 }
 
-prefix_ char ** senf::Daemon::argv() 
+prefix_ char const ** senf::Daemon::argv() 
 {
     return argv_;
 }
@@ -107,7 +107,7 @@ namespace {
 
 prefix_ void senf::Daemon::removeDaemonArgs()
 {
-    char ** last (std::remove_if(argv_+1, argv_+argc_, IsDaemonOpt()));
+    char const ** last (std::remove_if(argv_+1, argv_+argc_, IsDaemonOpt()));
     *last = 0;
     argc_ = last - argv_;
 }
@@ -238,7 +238,7 @@ prefix_ void senf::Daemon::exit(unsigned code)
     throw DaemonExitException(code);
 }
 
-prefix_ int senf::Daemon::start(int argc, char ** argv)
+prefix_ int senf::Daemon::start(int argc, char const ** argv)
 {
     argc_ = argc;
     argv_ = argv;

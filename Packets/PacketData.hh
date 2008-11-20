@@ -133,6 +133,9 @@ namespace senf {
         
         void resize(size_type n, byte v=0);
 
+        void reserve(size_type n);
+        size_type capacity() const;
+
         ///@}
 
     protected:

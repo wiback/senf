@@ -157,7 +157,7 @@ namespace senf {
                                              successful startup. */
 
         int argc();                     ///< Access command line parameter count
-        char ** argv();                 ///< Access command line parameters
+        char const ** argv();           ///< Access command line parameters
         void removeDaemonArgs();        ///< Remove the daemon arguments from argc()/argv()
 
         static void exit(unsigned code=0); ///< Terminate daemon with failure
@@ -168,7 +168,7 @@ namespace senf {
 
         ///\}
         
-        int start(int argc, char ** argv); ///< Called from main() to launch daemon.
+        int start(int argc, char const ** argv); ///< Called from main() to launch daemon.
                                         /**< Normally not called directly but from the
                                              \ref SENF_DAEMON_MAIN macro. */
 
@@ -211,7 +211,7 @@ namespace senf {
         void installSighandlers();
 
         int argc_;
-        char ** argv_;
+        char const ** argv_;
 
         bool daemonize_;
         std::string stdoutLog_;
@@ -234,7 +234,7 @@ namespace senf {
         \ingroup process
      */
 #   define SENF_DAEMON_MAIN(klass)                                                                \
-        int main(int argc, char ** argv)                                                    \
+        int main(int argc, char const ** argv)                                                    \
         {                                                                                         \
             klass instance;                                                                       \
             return instance.start(argc, argv);                                                    \

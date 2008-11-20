@@ -100,7 +100,7 @@ namespace module {
 
         struct DuplicateKeyException : public senf::Exception
         { DuplicateKeyException(AnnotationType const & key) 
-              : senf::Exception("Duplicate senf::ppi::module::AnnotationRouter routing key")
+              : senf::Exception("Duplicate senf::ppi::module::AnnotationRouter routing key ")
                 { append(boost::lexical_cast<std::string>(key)); } };
 
     private:

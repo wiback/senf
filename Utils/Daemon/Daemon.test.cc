@@ -73,7 +73,7 @@ namespace {
         }
     };
 
-    int myMain(int argc, char ** argv)
+    int myMain(int argc, char const ** argv)
     {
         MyDaemon instance;
         return instance.start(argc, argv);
