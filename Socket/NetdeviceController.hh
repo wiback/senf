@@ -38,29 +38,41 @@
 
 namespace senf {
 
-    /** \brief NetdeviceController
-     
-        \todo document me
+    /** \brief Netdevice Controller
+
+        This controller provides an interface which can be used to configure network
+        devices. Note, that some setting members are privileged operations.
+
+        \see manual page netdevice(7) for more informations.
+
         \todo Add 'promisc' member to enable/disable promiscuous mode
      */
     class NetdeviceController
     {
     public:
         NetdeviceController(std::string const & interface_name);
+                                        ///< Construct a new controller for the given interface name.
         NetdeviceController(int interface_index);
+                                        ///< Construct a new controller for the given interface index.
         virtual ~NetdeviceController();
-        
-        int interfaceIndex() const; ///< return the interface index
-    
-        MACAddress hardwareAddress() const; ///< return hardware address
-        void hardwareAddress(const MACAddress &newAddress); ///< set hardware address
 
-        std::string interfaceName() const; ///< return interface name
-        void interfaceName(const std::string &newName) const; ///< set interface name
-
-        int mtu() const; ///< return the Maximum Transmission Unit
-        void mtu(int new_mtu) const; //< set the Maximum Transmission Unit
-
+        int interfaceIndex() const;     ///< return the interface index
+        MACAddress hardwareAddress() const;
+                                        ///< return hardware address
+        void hardwareAddress(const MACAddress &newAddress);
+                                        ///< set hardware address
+                                        /**< Note, that setting the hardware address is a privileged operation. */
+        std::string interfaceName() const;
+                                        ///< return interface name
+        void interfaceName(const std::string &newName);
+                                        ///< set interface name
+                                        /**< Changes the name of the interface. Note, that this is a
+                                             privileged operation. It is only allowed when the interface is not up. */
+        int mtu() const;                ///< return the Maximum Transmission Unit
+        void mtu(int new_mtu);          ///< set the Maximum Transmission Unit
+                                        /**< Set the MTU (Maximum Transfer Unit) of the device.
+                                             Note, that this is a privileged operation.
+                                             Setting the MTU to too small values may cause kernel crashes. */
     private:
         void openSocket();
         void doIoctl(ifreq& ifr, int request) const;
@@ -78,7 +90,7 @@ namespace senf {
 //#include "NetdeviceController.mpp"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

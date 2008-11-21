@@ -38,33 +38,26 @@
 BOOST_AUTO_UNIT_TEST(NetdeviceController) {
 
     senf::NetdeviceController ctrl ("lo");
-    std::cout << "name: " << ctrl.interfaceName() << "\n";
+    BOOST_CHECK_EQUAL( ctrl.interfaceName(), "lo");
 
-    senf::MACAddress oldAddr(ctrl.hardwareAddress());
-    int oldMTU = ctrl.mtu();
-
-    std::cout << "hw addr: " << oldAddr << "\n";
-    std::cout << "mtu: " << oldMTU << "\n";
+    int oldMTU;
+    BOOST_CHECK_NO_THROW( oldMTU = ctrl.mtu());
 
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot run some tests of senf::NetdeviceController as non-root user");
         return;
     }
 
-    ctrl.mtu(oldMTU - 16);
-    std::cout << "new mtu: " << ctrl.mtu() << "\n";
-    ctrl.mtu(oldMTU);
-
-    senf::MACAddress newAddr(senf::MACAddress::from_string("00:18:de:2e:ec:00"));
-    ctrl.hardwareAddress(newAddr);
-    std::cout << "new hw addr: " << ctrl.hardwareAddress() << "\n";
-    ctrl.hardwareAddress(oldAddr);
+    BOOST_CHECK_NO_THROW( ctrl.mtu(oldMTU-16));
+    BOOST_CHECK_EQUAL( ctrl.mtu(), oldMTU-16);
+    BOOST_CHECK_NO_THROW( ctrl.mtu(oldMTU));
+    BOOST_CHECK_EQUAL( ctrl.mtu(), oldMTU);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

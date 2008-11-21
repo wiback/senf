@@ -86,7 +86,6 @@ prefix_ int senf::NetdeviceController::mtu()
 }
 
 prefix_ void senf::NetdeviceController::mtu(int new_mtu)
-    const
 {
     struct ifreq ifr;
     ifrName( ifr);
@@ -133,7 +132,7 @@ prefix_ void senf::NetdeviceController::doIoctl(ifreq& ifr, int request)
 #undef prefix_
 //#include "NetdeviceController.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
