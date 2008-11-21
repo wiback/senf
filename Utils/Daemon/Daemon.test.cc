@@ -88,7 +88,7 @@ namespace {
         ::kill(::getpid(), SIGABRT);
     };
 
-    int run(int argc, char ** argv)
+    int run(int argc, char const ** argv)
     {
         pid  = ::fork();
         if (pid < 0) throw senf::SystemException("::fork()");
@@ -124,7 +124,7 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
                             "--console-log=testDaemon.log", 
                             "--pid-file=testDaemon.pid" };
 
-    SENF_CHECK_NO_THROW( BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args), const_cast<char **>(args)), 0 ) );
+    SENF_CHECK_NO_THROW( BOOST_CHECK_EQUAL( run(sizeof(args)/sizeof(*args), args), 0 ) );
 
     BOOST_CHECK( ! boost::filesystem::exists("invalid.log") );
     BOOST_CHECK( ! boost::filesystem::exists("invalid.pid") );

@@ -72,6 +72,7 @@ def InitOpts():
     opts.Add('EXTRA_DEFINES', 'Additional preprocessor defines', '')
     opts.Add('EXTRA_LIBS', 'Additional libraries to link against', '')
     opts.Add(SCons.Options.BoolOption('final','Enable optimization',0))
+    opts.Add(SCons.Options.BoolOption('debug','Enable debug symbols in binaries',0))
     opts.Add('PREFIX', 'Installation prefix', '/usr/local')
     opts.Add('LIBINSTALLDIR', 'Library install dir', '$PREFIX/lib')
     opts.Add('BININSTALLDIR', 'Executable install dir', '$PREFIX/bin')
@@ -267,8 +268,11 @@ def MakeEnvironment():
         # The boost-regex library is not compiled with _GLIBCXX_DEBUG so this fails:
         #          CPPDEFINES = [ '_GLIBCXX_DEBUG' ],
         env.Append(CXXFLAGS = [ '-O0', '-g' ],
-                   CPPDEFINES = { 'SENF_DEBUG': ''},
-                   LINKFLAGS = [ '-g', '-rdynamic' ])
+                   CPPDEFINES = { 'SENF_DEBUG': ''})
+        if env['debug']:
+            env.Append(LINKFLAGS = [ '-g', '-rdynamic' ])
+        else:
+            env.Append(LINKFLAGS = [ '-Wl,-S', '-rdynamic' ])
 
     env.Append(CPPDEFINES = [ '$EXTRA_DEFINES' ],
                LIBS = [ '$EXTRA_LIBS' ],
