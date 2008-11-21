@@ -86,6 +86,12 @@ namespace senf {
          */
         typedef boost::posix_time::ptime abstime_type;
 
+        /** \brief Relative time data type
+
+            Boost.DateTime datatype used to represent time intervals
+         */
+        typedef boost::posix_time::time_duration reltime_type;
+
         ///////////////////////////////////////////////////////////////////////////
 
         static clock_type now();  ///< Return current clock value
@@ -97,6 +103,12 @@ namespace senf {
                                                  absolute time value. Clock time is guaranteed to be
                                                  monotonous, absolute time may be non-monotonous if
                                                  the system date/time is changed. */
+
+        static reltime_type reltime(clock_type clock); ///< Convert clock to relative time
+                                        /**< This member converts a clock value into a relative
+                                             Boost.DateTime time interval
+                                             \note The resolution of reltime_type might be smaller
+                                                 than the clock_type resolution */
 
         static clock_type clock(abstime_type time); ///< Convert absolute time to clock value
                                         /**< This member converst an absolute time value into the

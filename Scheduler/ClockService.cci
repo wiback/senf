@@ -83,6 +83,15 @@ prefix_ senf::ClockService::abstime_type senf::ClockService::abstime(clock_type 
     return instance().abstime_m(clock);
 }
 
+prefix_ senf::ClockService::reltime_type senf::ClockService::reltime(clock_type clock)
+{
+#ifdef BOOST_DATE_TIME_POSIX_TIME_STD_CONFIG
+    return boost::posix_time::nanoseconds(clock);
+#else
+    return  boost::posix_time::microseconds((clock+500)/1000);
+#endif
+}
+
 prefix_ senf::ClockService::clock_type senf::ClockService::clock(abstime_type time)
 {
     return instance().clock_m(time);
