@@ -35,7 +35,7 @@ template <class AuxPolicy, class Parsers>
 template <unsigned N>
 prefix_ void senf::VariantParser<AuxPolicy,Parsers>::init()
 {
-    unsigned oldSize( bytes() );
+    size_type oldSize( bytes() );
     typedef typename boost::mpl::at<parsers, boost::mpl::int_<N> >::type NewParser;
 
     if (oldSize < senf::init_bytes<NewParser>::value) {
@@ -60,7 +60,7 @@ prefix_ void senf::VariantParser<AuxPolicy,Parsers>::init()
 ///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
