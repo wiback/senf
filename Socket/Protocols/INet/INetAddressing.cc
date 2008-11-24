@@ -46,9 +46,9 @@
 prefix_ senf::INet4SocketAddress::INet4SocketAddress(std::string const & addr)
     : BSDSocketAddress (sizeof(sockaddr_in), AF_INET)
 {
-    unsigned portIx = addr.find(':');
+    std::string::size_type portIx = addr.find(':');
     try {
-        port( boost::lexical_cast< ::u_int16_t >(portIx == std::string::npos 
+        port( boost::lexical_cast< ::u_int16_t >(portIx == std::string::npos
                                                  ? addr : std::string(addr,portIx+1)) );
     }
     catch (boost::bad_lexical_cast const &) {
@@ -88,7 +88,7 @@ prefix_ senf::INet6SocketAddress::INet6SocketAddress(std::string const & addr,
            ZoneId   = 2,
            Hostname = 3,
            Port     = 4 };
-    
+
     boost::smatch match;
     if (! regex_match(addr, match, addressRx))
         throw AddressSyntaxException();
@@ -135,7 +135,7 @@ prefix_ void senf::INet6SocketAddress::assignIface(std::string const & iface)
 #undef prefix_
 //#include "INetAddressing.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
