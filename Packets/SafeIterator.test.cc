@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -41,16 +41,17 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(safePacketParser)
 {
-    senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(6u));
+    senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
+            senf::PacketInterpreterBase::size_type(6u)));
     senf::SafePacketParserWrapper<senf::UInt16Parser> p;
-    
+
     BOOST_CHECK( !p );
 
     p =  senf::UInt16Parser(pi->data().begin(),&pi->data());
 
     BOOST_CHECK( p );
     (*p) = 0x1234u;
-    
+
     BOOST_CHECK_EQUAL( (*p), 0x1234u );
     BOOST_CHECK_EQUAL( p->data()[0], 0x12u );
 
@@ -63,7 +64,7 @@ BOOST_AUTO_UNIT_TEST(safePacketParser)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

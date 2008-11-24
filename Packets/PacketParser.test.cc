@@ -42,7 +42,7 @@ namespace {
     {
 #       include SENF_FIXED_PARSER()
         SENF_PARSER_FINALIZE(SimpleParser);
-        
+
         using senf::PacketParserBase::check;
         using senf::PacketParserBase::validate;
     };
@@ -70,7 +70,8 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(packetParserBase)
 {
-    senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(6u));
+    senf::PacketInterpreter<VoidPacket>::ptr pi (senf::PacketInterpreter<VoidPacket>::create(
+            senf::PacketInterpreterBase::size_type(6u)));
     SimpleParser p (pi->data().begin(),&pi->data());
 
     BOOST_CHECK( pi->data().begin() == p.i() );
@@ -94,7 +95,7 @@ BOOST_AUTO_UNIT_TEST(packetParserBase)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
