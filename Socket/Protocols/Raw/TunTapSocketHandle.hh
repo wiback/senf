@@ -77,20 +77,20 @@ namespace senf {
     public:
         ///\name Constructors
         ///@{
-        void init_client() const;
+        std::string init_client() const;
                                         ///< Create TAP socket
                                         /**< \todo document me */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        void init_client(std::string const & interface_name, bool const NO_PI=true) const;
+        std::string init_client(std::string const & interface_name, bool const NO_PI=true) const;
                                         ///< Create TAP socket
                                         /**< \todo document me
                                              \param[in] address remote address to connect to */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        
+
         ///@}
 
         ///\name Abstract Interface Implementation
@@ -98,7 +98,11 @@ namespace senf {
 
         unsigned available() const;
         bool eof() const;
+        unsigned int ifaceIndex() const;
+        std::string ifaceName() const;
 
+    private:
+    	mutable unsigned int ifaceIndex_;
         ///@}
     };
 
@@ -116,7 +120,7 @@ namespace senf {
 //#include "TunTapSocketHandle.mpp"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

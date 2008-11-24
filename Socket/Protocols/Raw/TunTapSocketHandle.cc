@@ -21,8 +21,8 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief 
-    
+    \brief
+
  */
 
 #include "TunTapSocketHandle.hh"
@@ -39,13 +39,13 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::TapSocketProtocol::init_client() 
+prefix_ std::string senf::TapSocketProtocol::init_client()
     const
 {
-    init_client(std::string());
+    return init_client(std::string());
 }
 
-prefix_ void senf::TapSocketProtocol::init_client(std::string const & interface_name, bool const NO_PI) 
+prefix_ std::string senf::TapSocketProtocol::init_client(std::string const & interface_name, bool const NO_PI)
     const
 {
     int f;
@@ -59,7 +59,9 @@ prefix_ void senf::TapSocketProtocol::init_client(std::string const & interface_
     interface_name.copy( ifr.ifr_name, IFNAMSIZ);
     if (::ioctl(f, TUNSETIFF, (void *) &ifr) < 0 )
         SENF_THROW_SYSTEM_EXCEPTION( "Could not create tap device: ") << ifr.ifr_name << ".";
+    ifaceIndex_ = if_nametoindex(ifr.ifr_name);
     fd(f);
+    return ifaceName();
 }
 
 prefix_ unsigned senf::TapSocketProtocol::available()
@@ -95,11 +97,25 @@ prefix_ bool senf::TapSocketProtocol::eof()
     return false;
 }
 
+prefix_ unsigned int senf::TapSocketProtocol::ifaceIndex()
+	const
+{
+	return ifaceIndex_;
+}
+
+prefix_ std::string senf::TapSocketProtocol::ifaceName()
+	const
+{
+	char buf[IF_NAMESIZE];
+	if_indextoname(ifaceIndex_, buf);
+	return std::string(buf);
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "TunTapSocketHandle.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
