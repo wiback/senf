@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -52,7 +52,7 @@ prefix_ bool senf::scheduler::detail::FdDispatcher::add(FdEvent & event)
     for (FdSet::iterator i (range.first); i != range.second; ++i)
         events |= i->events_;
     if (event.events_ & events)
-        throw FdEvent::DuplicateEventRegistrationException();
+        throw FdEvent::DuplicateEventRegistrationException() << "vinfo: " << event.v_info();
 
     if (! detail::FdManager::instance().set(event.fd_, events | event.events_, &event))
         return false;
@@ -89,7 +89,7 @@ prefix_ void senf::scheduler::detail::FileDispatcher::add(FdEvent & event)
     for (FdSet::iterator i (range.first); i != range.second; ++i)
         events |= i->events_;
     if (event.events_ & events)
-        throw FdEvent::DuplicateEventRegistrationException();
+        throw FdEvent::DuplicateEventRegistrationException() << "vinfo: " << event.v_info();
 
     detail::FIFORunner::instance().enqueue(&event);
     fds_.insert(range.first, event);
@@ -201,7 +201,7 @@ prefix_ std::string senf::scheduler::FdEvent::v_info()
 #undef prefix_
 //#include "FdEvent.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
