@@ -1,13 +1,12 @@
 ;; Configuration file for cc-ide.el (Emacs C++ IDE extension, see http://g0dil.de)
 
- (defconst senf-c-style
+ (defvar senf-c-style
   '((c-basic-offset              . 4)
     (c-backslash-column          . 98)
     (c-cleanup-list              . (empty-defun-braces 
 				    defun-close-semi 
 				    list-close-comma 
-				    scope-operator 
-				    compact-empty-funcall))
+				    scope-operator))
     (c-hanging-braces-alist      . ((namespace-open after)
                                     (namespace-close before after)
                                     (brace-list-open)
@@ -18,7 +17,7 @@
                                     (inexpr-class-open after)
                                     (inexpr-class-close before)))
     (c-offsets-alist             . ((namespace-open . 0)
-                                    (namespace-close . -)
+                                    (namespace-close . 0)
                                     (innamespace . +)
                                     (statement-block-intro . +)
                                     (substatement-open . 0)
@@ -82,3 +81,17 @@ is ignored (Those are the file local variables and local words)."
 (set (make-local-variable 'ispell-personal-dictionary)
      (expand-file-name "senf.dict" ccide-project-root))
 (flyspell-cc-mode)
+
+(defun senf-new-file-hook ()
+  (when (string-match "\\.test\\.cc$" (buffer-file-name))
+    (save-excursion
+      (goto-char (point-min))
+      (search-forward "auto_unit_test.hpp")
+      (beginning-of-line)
+      (delete-region (point) (progn (end-of-line) (point)))
+      (insert "#include \""
+	      (string-replace "[^/]+/" "../" (substring (file-name-directory (buffer-file-name))
+							(length ccide-project-root)) t)
+	      "Utils/auto_unit_test.hh\""))))
+
+(add-hook 'ccide-new-file-hooks 'senf-new-file-hook nil t)
