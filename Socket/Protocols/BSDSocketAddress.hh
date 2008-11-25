@@ -27,6 +27,8 @@
 #define HH_SENF_Socket_Protocols_BSDSocketAddress_ 1
 
 // Custom includes
+#include <boost/type_traits/alignment_of.hpp>
+#include <boost/type_traits/type_with_alignment.hpp>
 #include "../../Utils/safe_bool.hh"
 #include <sys/socket.h>
 #include <iostream>
@@ -113,7 +115,10 @@ namespace senf {
 
     private:
 
-        socklen_t len_;
+        union {
+            socklen_t len_;
+            boost::type_with_alignment<boost::alignment_of<struct sockaddr_storage>::value> _;
+        };
     };
 
     /** \brief Safe socket address down-cast
