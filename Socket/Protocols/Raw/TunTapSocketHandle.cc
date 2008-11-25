@@ -67,13 +67,13 @@ prefix_ std::string senf::TapSocketProtocol::init_client(std::string const & int
 prefix_ unsigned senf::TapSocketProtocol::available()
   const
 {
-  if (! fh().readable())
-      return 0;
-  ssize_t l = ::recv(fd(),0,0,MSG_PEEK | MSG_TRUNC);
-  if (l < 0)
-      //SENF_THROW_SYSTEM_EXCEPTION("");
-      return 1588;
-  return l;
+    if (!fh().readable())
+        return 0;
+    ssize_t l = ::recv(fd(), 0, 0, MSG_PEEK | MSG_TRUNC);
+    if (l < 0)
+        //SENF_THROW_SYSTEM_EXCEPTION("");
+        return 1588;
+    return l;
 }
 
 /*
@@ -98,17 +98,17 @@ prefix_ bool senf::TapSocketProtocol::eof()
 }
 
 prefix_ unsigned int senf::TapSocketProtocol::ifaceIndex()
-	const
+    const
 {
-	return ifaceIndex_;
+    return ifaceIndex_;
 }
 
 prefix_ std::string senf::TapSocketProtocol::ifaceName()
-	const
+    const
 {
-	char buf[IF_NAMESIZE];
-	if_indextoname(ifaceIndex_, buf);
-	return std::string(buf);
+    char buf[IF_NAMESIZE];
+    if_indextoname(ifaceIndex_, buf);
+    return std::string(buf);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
