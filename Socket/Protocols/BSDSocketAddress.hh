@@ -114,10 +114,15 @@ namespace senf {
         void socklen(socklen_t len);
 
     private:
-
+        
+        // The following incantation is needed to fix the alignment of the sockaddr data members
+        // which will be added by the derived classes later: The alignment must be forced
+        // to coincide with the struct sockaddr_storage alignment (which must have the largest
+        // alignment of all sockaddr types).
         union {
             socklen_t len_;
-            boost::type_with_alignment<boost::alignment_of<struct sockaddr_storage>::value> _;
+            boost::type_with_alignment<boost::alignment_of<struct sockaddr_storage>::value> a_;
+            char _b[boost::alignment_of<struct sockaddr_storage>::value];
         };
     };
 
