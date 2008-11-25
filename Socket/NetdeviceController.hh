@@ -61,13 +61,17 @@ namespace senf {
                                         ///< return hardware address
         void hardwareAddress(const MACAddress &newAddress);
                                         ///< set hardware address
-                                        /**< Note, that setting the hardware address is a privileged operation. */
+                                        /**< Changes the hardware address of the interface.
+                                             Note, that setting the hardware address is a privileged operation. It is only allowed when the interface
+                                             is not up. If the interface is up, this call will cause an SystemException to be thrown.*/
         std::string interfaceName() const;
                                         ///< return interface name
         void interfaceName(const std::string &newName);
                                         ///< set interface name
-                                        /**< Changes the name of the interface. Note, that this is a
-                                             privileged operation. It is only allowed when the interface is not up. */
+                                        /**< Changes the name of the interface.
+                                             Note, that setting the name is a privileged operation. It is only allowed when the interface
+                                             is not up. If the interface is up, this call will cause an SystemException to be thrown.*/
+
         int mtu() const;                ///< return the Maximum Transmission Unit
         void mtu(int new_mtu);          ///< set the Maximum Transmission Unit
                                         /**< Set the MTU (Maximum Transfer Unit) of the device.

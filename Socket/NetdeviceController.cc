@@ -30,6 +30,7 @@
 // Custom includes
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <net/if.h>
 #include "../Utils/Exception.hh"
 
 #define prefix_
@@ -59,6 +60,22 @@ prefix_ std::string senf::NetdeviceController::interfaceName()
     return std::string( ifr.ifr_name);
 }
 
+prefix_ void senf::NetdeviceController::interfaceName(const std::string & newname)
+{
+    if (sizeof(newname) <= IFNAMSIZ) {
+        struct ifreq ifr;
+        ifrName(ifr);
+        strncpy(ifr. ifr_newname, newname.c_str(), IFNAMSIZ);
+        try {
+            doIoctl(ifr, SIOCSIFNAME);
+        } catch (senf::SystemException e) {
+            e << "Could not change the interface name. Is the interface really down?";
+            throw ;
+        }
+    }
+    return;
+}
+
 prefix_ senf::MACAddress senf::NetdeviceController::hardwareAddress()
     const
 {
@@ -73,7 +90,12 @@ prefix_ void senf::NetdeviceController::hardwareAddress(const MACAddress &newAdd
     ifrName( ifr);
     ifr.ifr_hwaddr.sa_family = 1; // TODO: lookup named constant; PF_LOCAL ???
     std::copy(newAddress.begin(), newAddress.end(), ifr.ifr_hwaddr.sa_data);
-    doIoctl( ifr, SIOCSIFHWADDR);
+    try {
+        doIoctl(ifr, SIOCSIFHWADDR);
+    } catch (senf::SystemException e) {
+        e << "Could not change the interface MAC address. Is the interface really down?";
+        throw ;
+    }
 }
 
 prefix_ int senf::NetdeviceController::mtu()
