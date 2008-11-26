@@ -78,17 +78,23 @@ BOOST_AUTO_UNIT_TEST(configFile)
         senf::console::ConfigFile cfg (cfgf.name());
 
         var1 = 0;
-        SENF_CHECK_NO_THROW( cfg.parse() )
+        SENF_CHECK_NO_THROW( cfg.parse() );
         BOOST_CHECK_EQUAL( var1, 10 );
 
         var1 = 0;
-        SENF_CHECK_NO_THROW( cfg.parse() )
+        SENF_CHECK_NO_THROW( cfg.parse() );
         BOOST_CHECK_EQUAL( var1, 0 );
 
         var1 = 0;
         cfg.reset();
-        SENF_CHECK_NO_THROW( cfg.parse() )
+        SENF_CHECK_NO_THROW( cfg.parse() );
         BOOST_CHECK_EQUAL( var1, 10 );
+    }
+
+    {
+        senf::console::ConfigFile cfg ("i don't exist");
+        cfg.ignoreMissing();
+        SENF_CHECK_NO_THROW( cfg.parse() );
     }
 }
 

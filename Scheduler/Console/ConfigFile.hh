@@ -73,6 +73,11 @@ namespace console {
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
+
+        void ignoreMissing();           ///< Call to ignore missing files
+
+    private:
+        detail::ConfigFileSource & self_;
     };
 
     /** \brief Read configuration file

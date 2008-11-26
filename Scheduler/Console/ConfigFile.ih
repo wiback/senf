@@ -43,12 +43,15 @@ namespace detail {
 
         static ptr create(std::string const & filename);
 
+        ptr ignoreMissing();
+
     private:
         ConfigFileSource(std::string const & filename);
 
         virtual void v_parse(RestrictedExecutor & executor);
 
         std::string filename_;
+        bool ignoreMissing_;
         CommandParser parser_;
     };
 

@@ -201,6 +201,8 @@
     
     \code
     senf::console::ConfigFile cf ("some.conf");
+    // The following line is optional: Call to ignore mussing files
+    cf.ignoreMissing();
     cf.parse();
     \endcode
 
@@ -410,7 +412,7 @@
     std::vector<std::string> args;
     senf::console::ConfigBundle conf (senf::console::root()["config"]);
     conf.add( senf::console::FileConfig("/etc/myserver.conf") );
-    conf.add( senf::console::FileConfig(".myserver.conf") );
+    conf.add( senf::console::FileConfig(".myserver.conf")->ignoreMissing() );
     conf.add( senf::console::OptionsConfig(senf::Daemon::instance().argc(), 
                                            senf::Daemon::instance().argv()) )
         .nonOptions(args)

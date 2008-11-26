@@ -39,8 +39,15 @@ senf::console::detail::ConfigFileSource::create(std::string const & filename)
     return ptr(new ConfigFileSource(filename));
 }
 
+prefix_ senf::console::detail::ConfigFileSource::ptr
+senf::console::detail::ConfigFileSource::ignoreMissing()
+{
+    ignoreMissing_ = true;
+    return ptr(this);
+}
+
 prefix_ senf::console::detail::ConfigFileSource::ConfigFileSource(std::string const & filename)
-    : filename_ (filename)
+    : filename_ (filename), ignoreMissing_ (true)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
@@ -48,9 +55,12 @@ prefix_ senf::console::detail::ConfigFileSource::ConfigFileSource(std::string co
 
 prefix_ senf::console::ConfigFile::ConfigFile(std::string const & filename,
                                               DirectoryNode & root)
-    : detail::BundleMixin(root)
+    : detail::BundleMixin(root), self_ (add(detail::ConfigFileSource::create(filename)))
+{}
+
+prefix_ void senf::console::ConfigFile::ignoreMissing()
 {
-    add(detail::ConfigFileSource::create(filename));
+    self_.ignoreMissing();
 }
 
 ///////////////////////////////////////////////////////////////////////////

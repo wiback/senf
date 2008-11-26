@@ -37,9 +37,15 @@
 
 prefix_ void senf::console::detail::ConfigFileSource::v_parse(RestrictedExecutor & executor)
 {
-     parser_.parseFile(filename_, boost::bind( boost::ref(executor),
-                                               boost::ref(std::cerr),
-                                               _1 ));
+    try {
+        parser_.parseFile(filename_, boost::bind( boost::ref(executor),
+                                                  boost::ref(std::cerr),
+                                                  _1 ));
+    }
+    catch (SystemException & ex) {
+        if (! (ignoreMissing_ && ex.anyOf(ENOENT)))
+            throw;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
