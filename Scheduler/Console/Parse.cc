@@ -136,7 +136,7 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Token const 
         0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 7, 0, 6, 0, 10 };
     // We need to check token.type() against 0 explicitly since 0 and 1 will both be mapped to 0
     os << tokenTypeName[ token.type() 
-                         ? bitPosition[((token.type() & -token.type()) * 0x077CB531UL) >> 27]
+                         ? bitPosition[(((token.type() & -token.type()) * 0x077CB531UL) >> 27) & 31]
                          : 0 ]
        << "('"
        << token.value()
