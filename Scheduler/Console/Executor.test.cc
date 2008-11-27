@@ -231,7 +231,7 @@ BOOST_AUTO_UNIT_TEST(executorPolicy)
 
 BOOST_AUTO_UNIT_TEST(executorAuto)
 {
-    senf::console::root().mkdir("dir1").mkdir("dir3");
+    senf::console::root().mkdir("tdir1").mkdir("dir3");
     senf::console::root().mkdir("dir2").doc("Helptext").add("test",&testCommand);
 
     senf::console::Executor executor;
@@ -247,6 +247,22 @@ BOOST_AUTO_UNIT_TEST(executorAuto)
         BOOST_CHECK_EQUAL( executor.cwdPath(), "/dir2" );
         BOOST_CHECK_EQUAL( os.str(), "" );
     }
+
+    {
+        std::stringstream os;
+        parser.parse("..", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( executor.cwdPath(), "/" );
+        BOOST_CHECK_EQUAL( os.str(), "" );
+    }
+
+    {
+        std::stringstream os;
+        parser.parse("d", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( executor.cwdPath(), "/dir2" );
+        BOOST_CHECK_EQUAL( os.str(), "" );
+    }
     
     {
         std::stringstream os;
@@ -257,7 +273,7 @@ BOOST_AUTO_UNIT_TEST(executorAuto)
     
 
     commands.clear();
-    senf::console::root().remove("dir1");
+    senf::console::root().remove("tdir1");
     senf::console::root().remove("dir2");
 }
 

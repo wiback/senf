@@ -249,8 +249,17 @@ senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path
                               path.begin(),
                               boost::prior(path.end())),
                           dir);
+        // For auto-cd support we need to check against '.' and '..' here too
+        Token const & tok (*boost::prior(path.end()));
+        if (tok == WordToken("..")) {
+            if (dir.size() > 1)
+                dir.pop_back();
+            return *dir.back().lock();
+        }
         DirectoryNode & base (*dir.back().lock());
-        std::string const & name (complete(base, boost::prior(path.end())->value()));
+        if (tok == WordToken("."))
+            return base;
+        std::string const & name (complete(base, tok.value()));
         if (policy_)
             policy_( base, name );
         return dir.back().lock()->get(name);
