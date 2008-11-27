@@ -271,7 +271,6 @@ BOOST_AUTO_UNIT_TEST(executorAuto)
         BOOST_CHECK_EQUAL( os.str(), "testCommand\n" );
     }
     
-
     commands.clear();
     senf::console::root().remove("tdir1");
     senf::console::root().remove("dir2");

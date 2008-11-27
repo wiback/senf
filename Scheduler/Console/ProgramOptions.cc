@@ -60,7 +60,13 @@ prefix_ void senf::console::detail::ProgramOptionsSource::v_parse(RestrictedExec
             break;
         }
         else if (boost::algorithm::starts_with(arg, std::string("--")) && arg.size() > 2)
-            parseLongOption(arg.substr(2), executor);
+            try {
+                parseLongOption(arg.substr(2), executor);
+            }
+            catch (senf::ExceptionMixin & e) {
+                e << "\nwhile parsing command line option: " << arg;
+                throw;
+            }
         else if (boost::algorithm::starts_with(arg, std::string("-")) && arg.size() > 1) {
             for (std::string::size_type i (1); i<arg.size(); ++i) {
                 char opt (arg[i]);
@@ -87,7 +93,13 @@ prefix_ void senf::console::detail::ProgramOptionsSource::v_parse(RestrictedExec
                 }
                 if (boost::algorithm::starts_with(longOpt, std::string("--")))
                     longOpt = longOpt.substr(2);
-                parseLongOption(longOpt, executor);
+                try {
+                    parseLongOption(longOpt, executor);
+                }
+                catch (senf::ExceptionMixin & e) {
+                    e << "\nwhile parsing command line option: -" << opt << ' ' << param;
+                    throw;
+                }
             }
         }
         else
@@ -107,7 +119,7 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
 
     ParseCommandInfo cmd;
     Path path;
-    
+ 
     DirectoryNode::ptr cwd (executor.root().thisptr());
     std::string::size_type b (0);
     while (b < name.size()) {
@@ -118,8 +130,10 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
                 DirectoryNode::ChildrenRange completions (cwd->completions(key));
                 if (has_one_elt(completions))
                     key = completions.begin()->first;
-                else
+                else {
+                    e -= 1;
                     continue;
+                }
             }
             path.push_back(WordToken(key));
             if (e < name.size())
@@ -135,7 +149,7 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
             b = name.size();
         }
     }
-    
+
     cmd.command(path);
     parser_.parseArguments(value, cmd);
     executor(std::cerr, cmd);
