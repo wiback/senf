@@ -51,7 +51,8 @@ namespace module {
         \li Comparison with '<' (\c LessThanCompatable concept)
         \li Copy construction and copy assignment (\c Copyable und \c Assignable concepts)
             (e.g. via compiler synthesized copy constructor and assignment operator)
-        \li Output streaming to an ostream via '\c <<' (\c OutputStreamable concept)
+        \li Output streaming to an ostream via '\c <<' (for error description purposes) (\c
+            OutputStreamable concept)
 
         The following annotation can be used to route the packets according to a mac address.
         \code
