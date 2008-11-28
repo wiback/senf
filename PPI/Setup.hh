@@ -37,6 +37,8 @@
 namespace senf {
 namespace ppi {
 
+#ifdef DOXYGEN
+
     /** \brief Connect modules
 
         senf::ppi::connect() establishes a connection between two modules or, to be more precise,
@@ -52,16 +54,22 @@ namespace ppi {
         \li Either or both of the connectors are untyped (they accept/send arbitrary senf::Packet's)
         \li Both connectors send/accept the exactly same packet type.
 
+        Depending on the type of input or output, the connect call may require additional
+        arguments. See the respective module documentation for more information
+
         \throws connector::IncompatibleConnectorsException if the two connectors are not type
             compatible.
         
         \see \ref ppi_connections
      */
-    void connect(connector::GenericActiveOutput & source, connector::GenericPassiveInput & target);
+    void connect(connector::Connector & source, connector::Connector & target, ...);
 
-    /** \brief Connect modules
-        \see connect() */
+#else
+
+    void connect(connector::GenericActiveOutput & source, connector::GenericPassiveInput & target);
     void connect(connector::GenericPassiveOutput & source, connector::GenericActiveInput & target);
+
+#endif
 
 #ifndef DOXYGEN    
 

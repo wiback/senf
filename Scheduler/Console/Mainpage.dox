@@ -119,26 +119,25 @@
 
 
     \section intro_usage Using the Console: Configuration files, Network console
+    \seechapter \ref console_access
 
     There are several ways to access the node tree:
     \li By parsing configuration files
     \li By parsing command line parameters
     \li By providing interactive or non-interactive network console access
 
-    \see console_access
-
 
     \section intro_nodes The node tree
+    \seechapter \ref node_tree
 
     The basic idea is, that the console/config library manages a directory structure of parameters
     and auxiliary commands. Parameters are just commands which set a parameter value so everything
     is either a directory entry (senf::console::DirectoryNode) or a command
     (senf::console::CommandNode).
     
-    \see \ref node_tree
-
 
     \section intro_commands Implementing console/config commands
+    \seechapter \ref console_commands
 
     The console/config language does not define, how arguments are passed to the commands, it just
     tokenizes the input and passes the tokens to the commands which then handle the
@@ -150,8 +149,6 @@
     which will be called with an already parsed integer value (or throw a
     senf::console::SyntaxErrorException if the conversion fails). This will be the most often used
     command.
-
-    \see \ref console_commands
  */
 
 /** \defgroup console_access Accessing the Console/Config tree
