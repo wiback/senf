@@ -62,7 +62,7 @@ namespace ppi {
         
         \see \ref ppi_connections
      */
-    void connect(connector::Connector & source, connector::Connector & target, ...);
+    void connect(connector::OutputConnector & source, connector::InputConnector & target, ...);
 
 #else
 
