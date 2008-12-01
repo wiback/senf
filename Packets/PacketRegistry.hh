@@ -40,22 +40,22 @@
 
 namespace senf {
 
-    /** \brief Packet registration facility
+    /** \brief %Packet registration facility
 
-        The PacketRegistry provides a generic facility to associate an arbitrary key with
+        The %PacketRegistry provides a generic facility to associate an arbitrary key with
         Packets. Example keys are Ethertype or IP protocols.
 
-        Every PacketRegistry is identified by a type tag:
+        Every %PacketRegistry is identified by a type tag:
         \code
         struct SomeTag {
             typedef some_key_type key_t;
         };
         \endcode
-        The key type can be an arbitrary value type. The PacketRegistry for this Tag can then be
+        The key type can be an arbitrary value type. The %PacketRegistry for this Tag can then be
         accessed using <code>senf::PacketRegistry<SomeTag>::</code>.
 
-        The PacketRegistry class has only static members and provides access to the packet
-        registry. It allows two-way lookup either by key or by packet type. 
+        The %PacketRegistry class has only static members and provides access to the packet
+        registry. It allows two-way lookup either by key or by packet type.
 
         \code
         senf::Packet::factory_t factory (senf::PacketRegistry<SomeTag>::lookup(some_key).factory());
@@ -78,7 +78,7 @@ namespace senf {
         static registration only works when the symbol is included into the final binary. To force
         this inclusion, you should not put packet registrations into a library but into an object
         file.
-        
+
         \ingroup packet_module
      */
     template <class Tag>
@@ -110,11 +110,12 @@ namespace senf {
 
             Register \a PacketType in the packet registry \a Tag under the given \a key.
 
-            \par Preconditions: The given \a key must be unique and not be assigned to any other
-                packet class in this registry.  The Packet must not already be registered in the
+            \par Preconditions:
+                The given \a key must be unique and not be assigned to any other
+                packet class in this registry.  The %Packet must not already be registered in the
                 registry.
 
-            \param PacketType ConcretePacket instantiation of packet to register
+            \tparam PacketType ConcretePacket instantiation of packet to register
             \param key The key of the packet
          */
         template <class PacketType>
@@ -124,7 +125,7 @@ namespace senf {
 
             Return the key of \a PacketType as registered in the \a Tag registry
 
-            \param PacketType packet of which the key is requested
+            \tparam PacketType packet of which the key is requested
             \returns key of the packet
             \throws PacketTypeNotRegistered if the packet type is not found in the registry.
          */
@@ -135,7 +136,7 @@ namespace senf {
 
             Return the key of \a PacketType as registered in the \a Tag registry
 
-            \param PacketType packet of which the key is requested
+            \tparam PacketType packet of which the key is requested
             \returns key of the packet wrapped in a <a
                 href="http://www.boost.org/libs/optional/doc/optional.html">boost::optional</a> or
                 an unbound optional, if the key is not found.
@@ -150,15 +151,14 @@ namespace senf {
             \param packet The packet of which the key is requested
             \returns key of the packet
             \throws PacketTypeNotRegistered if the packet type is not found in the registry.
-         */        
+         */
         static typename Tag::key_t key(Packet packet);
 
         /** \brief Find key of a packet
 
             Return the key of \a packet, an arbitrary packet, as registered in the \a Tag registry.
 
-            \param packet The 
-packet of which the key is requested
+            \param packet The packet of which the key is requested
             \returns key of the packet wrapped in a <a
                 href="http://www.boost.org/libs/optional/doc/optional.html">boost::optional</a> or
                 an unbound optional, if the key is not found.
@@ -166,9 +166,9 @@ packet of which the key is requested
         static typename boost::optional<typename Tag::key_t> key(Packet packet, NoThrow_t);
 
         /** \brief Lookup a packet by it's key
-            
+
             \throws PacketTypeNotRegistered if the \a key is not found in the registry
-            \return Packet entry for given \a key
+            \return %Packet entry for given \a key
          */
         static PkReg_Entry const & lookup(typename Tag::key_t key);
 
@@ -229,7 +229,7 @@ packet of which the key is requested
 #include "PacketRegistry.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
