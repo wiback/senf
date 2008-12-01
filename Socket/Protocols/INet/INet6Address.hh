@@ -46,7 +46,7 @@ namespace senf {
 
     /** \brief INet6 network address
 
-        This implementation of an INet6 address is based strictly on 
+        This implementation of an INet6 address is based strictly on
         <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>: Internet Protocol
         Version 6 (INet6) Addressing Architecture. This class provides accessors to all the
         information fields defined in this document.
@@ -66,7 +66,7 @@ namespace senf {
             2002::/16 prefix
         \li <a href="http://tools.ietf.org/html/rfc3849">RFC 3849</a>:
             INet6 Address Prefix Reserved for Documentation. Defines the 2001:db8::/32 prefix
-        
+
         Here an overview of well-known prefixes:
 
         \htmlonly
@@ -141,8 +141,8 @@ namespace senf {
         /** \brief Possible scope values
 
             List of all possible scope values. This list includes all scope values defined for
-            multicast addresses in <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>. 
-            The values \ref LinkScope, \ref SiteScope and \ref GlobalScope are also used with 
+            multicast addresses in <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>.
+            The values \ref LinkScope, \ref SiteScope and \ref GlobalScope are also used with
             unicast addresses.
          */
         enum ScopeId {
@@ -155,7 +155,7 @@ namespace senf {
 
             , ReservedScope     =  0    /**< Reserved scope value */
             , UnassignedScope   =  6    /**< Unassigned scope, may be defined locally */
-        }; 
+        };
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -166,7 +166,7 @@ namespace senf {
                               boost::uint16_t a3=0u, boost::uint16_t a4=0u, boost::uint16_t a5=0u,
                               boost::uint16_t a6=0u, boost::uint16_t a7=0u);
                                         ///< Construct an address constant
-        
+
         static INet6Address from_in6addr(in6_addr const & in6addr); ///< Construct from std C struct
 
         static INet6Address from_string(std::string const & s, Resolve_t resolve = ResolveINet6);
@@ -179,14 +179,14 @@ namespace senf {
                                                  protocol like DNS or NIS
                                              \throws AddressSyntaxException if the address cannot be
                                                  converted for some reason
-                                             \param[in] s Address literal or hostname 
+                                             \param[in] s Address literal or hostname
                                              \param[in] resolve If this is set to \c ResolveINet4,
                                                  the call will additionally try to interpret \a s as
                                                  an INet4 address if no valid INet6 address is
                                                  found. The address will be returned as mapped INet6
                                                  address. */
 
-        template <class InputIterator> 
+        template <class InputIterator>
         static INet6Address from_data(InputIterator i);
                                         ///< Construct address from 16 bytes of raw data
                                         /**< from_data will build an address from 16 bytes of raw
@@ -198,17 +198,17 @@ namespace senf {
                                         /**< This will construct an address of the form
                                              <tt>::FFFF::w.x.y.z</tt> where <tt>w.x.y.z</tt> is
                                              the INet4Address value. This kind of address is called
-                                             an INet6-mapped INet4 address (see 
+                                             an INet6-mapped INet4 address (see
                                              <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>).
-                                             \par 
+                                             \par
                                              INet4 compatible INet6 addresses are not directly
                                              supported, they are deprecated in the RFC. */
         std::string toString() const;
                                         ///< get the string representation of this INet6Address
         in6_addr  toin6_addr() const;
-                                        ///< get the linux in6_addr struct (convinience only) 
-        
-        
+                                        ///< get the linux in6_addr struct (convinience only)
+
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
         ///\name Accessors
@@ -236,7 +236,7 @@ namespace senf {
                                              site or global scope (where site scope is deprecated),
                                              multicast address can have a number of scope values of
                                              which local, site and global are a few. See the \ref
-                                             ScopeId enumerators. */ 
+                                             ScopeId enumerators. */
         bool globalScope() const;       ///< \c true, if address is global unicast or multicast
         bool linkScope() const;         ///< \c true, if address is link-local unicast or multicast
 
@@ -246,23 +246,23 @@ namespace senf {
                                              is given by the last 32 bits of the INet6 address. \par
                                              The value returned is only a valid INet4 address if
                                              either inet4Compatible() or inet4Mapped() return \c
-                                             true. */ 
+                                             true. */
         bool inet4Compatible() const;   ///< \c true, if address is INet4 compatible
                                         /**< INet4 compatible INet6 addresses are deprecated. */
         bool inet4Mapped() const;       ///< \c true, if address is INet4 mapped
 
         bool globalMulticastAddr() const; ///< \c true, if T bit is \e not set
                                         /**< Any multicast address with a cleared T bit must be
-                                             globally assigned. See 
+                                             globally assigned. See
                                              <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>. */
         bool prefixMulticastAddr() const; ///< \c true, if P bit is set
                                         /**< In <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>,
                                              the P bit is specified as defining a
-                                             unicast prefix based multicast address. See 
-                                             <a href="http://tools.ietf.org/html/rfc3306">RFC 3306</a>. */ 
+                                             unicast prefix based multicast address. See
+                                             <a href="http://tools.ietf.org/html/rfc3306">RFC 3306</a>. */
         bool embeddedRpAddr() const;    ///< \c true, if R bit is set
                                         /**< In <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>,
-                                             the R bit is specified as defining a multicast address 
+                                             the R bit is specified as defining a multicast address
                                              with embedded rendezvous point. See
                                              <a href="http://tools.ietf.org/html/rfc3956">RFC 3956</a>. */
 
@@ -271,7 +271,7 @@ namespace senf {
         ///@}
         ///\name Mutators
         ///@{
-        
+
         void network(boost::uint64_t net); ///< Set network part of address
         void id(boost::uint64_t id);    ///< Set interface id part of address
 
@@ -285,7 +285,7 @@ namespace senf {
     std::ostream & operator<<(std::ostream & os, INet6Address const & addr);
 
     /** \brief Check INet6Address against a fixed network prefix
-        
+
         This helper allows to easily and efficiently check an INet6Address against an arbitrary but
         constant network prefix. It takes from 1 to 8 arguments for the network address and an
         additional last argument providing the prefix length. So
@@ -295,13 +295,13 @@ namespace senf {
             ... <tt>,</tt> <i>prefix_len</i> <tt>></tt>
 
         represents the network
-        
+
         \par ""
             <i>addr_1</i> <tt>:</tt> <i>addr_2</i> <tt>:</tt> ... <tt>::/</tt> <i>prefix_len</i> .
 
         The class exposes a single static member <tt>match(</tt> <i>addr</i> <tt>)</tt> which
         matches the INet6Address \a addr against the prefix:
-        
+
         \code
         if (senf::CheckINet6Network<0x2000u,0xDB8u,32u>::match(addr)) {
             // 'addr' is within in the 2001:db8::/32 documentation-only network
@@ -314,15 +314,17 @@ namespace senf {
     template <unsigned a0, unsigned a1, unsigned a2=0u, unsigned a3=0u, unsigned a4=0u,
               unsigned a5=0u, unsigned a6=0u, unsigned a7=0u, unsigned a8=0u>
     struct CheckINet6Network
+#ifndef DOXYGEN
         : public detail::CheckINet6Network_impl<a0,a1,a2,a3,a4,a5,a6,a7,a8>
+#endif
     {};
 
     /** \brief INet6 network prefix
 
-        This class represents an INet6 network prefix in CIDR notation. 
+        This class represents an INet6 network prefix in CIDR notation.
       */
     class INet6Network
-        : public boost::equality_comparable<INet6Network>, 
+        : public boost::equality_comparable<INet6Network>,
           public comparable_safe_bool<INet6Network>
     {
     public:
@@ -344,7 +346,7 @@ namespace senf {
         bool boolean_test() const;      ///< \c true, if INet6Network is non-empty
         bool operator==(INet6Network const & other) const;
                                         ///< Compare two networks for equality
-        
+
         bool match(INet6Address addr) const; ///< \c true, if the network includes \a addr
         bool match(INet6Network net) const; ///< \c true, if the network includes \a net
                                         /**< The is true, if \a net is sub-network (or the same as)
@@ -362,7 +364,7 @@ namespace senf {
                                              \code
                                              INet6Network("2001:db8::/32").subnet(0x12u,40u) == INet6Network("2001:db8:1200::/40")
                                              INet6Network("2001:db8:1200::/40").subnet(0x2345,64u) == INet6Network("2001:db8:1200:2345::/64")
-                                             \endcode 
+                                             \endcode
                                              \param[in] net network number
                                              \param[in] prefix_len length of subnet prefix */
 

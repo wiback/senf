@@ -42,7 +42,7 @@ senf::detail::ReadRange<Handle,ForwardWritableRange,true>::read(Handle & handle,
 {
     typename boost::range_iterator<ForwardWritableRange>::type const i (boost::begin(range));
     char * const ic (reinterpret_cast<char*>(storage_iterator(i)));
-    return i + (handle.read( ic, 
+    return i + (handle.read( ic,
                              reinterpret_cast<char*>(storage_iterator(boost::end(range))) )
                 - ic);
 }
@@ -54,7 +54,7 @@ readfrom(Handle & handle, ForwardWritableRange & range, typename Handle::Address
 {
     typename boost::range_iterator<ForwardWritableRange>::type const i (boost::begin(range));
     char * const ic (reinterpret_cast<char*>(storage_iterator(i)));
-    return i + (handle.readfrom( ic, 
+    return i + (handle.readfrom( ic,
                                  reinterpret_cast<char*>(storage_iterator(boost::end(range))),
                                  addr )
                 - ic);
@@ -68,7 +68,7 @@ prefix_ typename boost::range_const_iterator<ForwardReadableRange>::type
 senf::detail::WriteRange<Handle, ForwardReadableRange, true>::
 write(Handle & handle, ForwardReadableRange & range)
 {
-    typename boost::range_const_iterator<ForwardReadableRange>::type i 
+    typename boost::range_const_iterator<ForwardReadableRange>::type i
         (boost::const_begin(range));
     char const * const ic (reinterpret_cast<char const *>(storage_iterator(i)));
     std::advance(i, handle.write(ic,
@@ -82,7 +82,7 @@ prefix_ typename boost::range_const_iterator<ForwardReadableRange>::type
 senf::detail::WriteRange<Handle, ForwardReadableRange, true>::
 writeto(Handle & handle, ForwardReadableRange & range, typename Handle::Address const & addr)
 {
-    typename boost::range_const_iterator<ForwardReadableRange>::type i 
+    typename boost::range_const_iterator<ForwardReadableRange>::type i
         (boost::const_begin(range));
     char const * const ic (reinterpret_cast<char const *>(storage_iterator(i)));
     std::advance(i, handle.writeto(addr, ic,
@@ -107,7 +107,7 @@ template <class OtherPolicy>
 prefix_ senf::ClientSocketHandle<SPolicy>::
 ClientSocketHandle(ClientSocketHandle<OtherPolicy> other,
                    typename SocketHandle<SPolicy>::template IsCompatible<OtherPolicy>::type *)
-    : SocketHandle<SPolicy>(other,true) 
+    : SocketHandle<SPolicy>(other,true)
 {}
 #else
 template <class SPolicy>
@@ -119,13 +119,13 @@ ClientSocketHandle(ClientSocketHandle<OtherPolicy> other)
 
 template <class SPolicy>
 prefix_ senf::ClientSocketHandle<SPolicy>::ClientSocketHandle(FileHandle other, bool isChecked)
-    : SocketHandle<SPolicy>(other, isChecked) 
+    : SocketHandle<SPolicy>(other, isChecked)
 {}
 
 template <class SPolicy>
 prefix_
 senf::ClientSocketHandle<SPolicy>::ClientSocketHandle(std::auto_ptr<SocketBody> body)
-    : SocketHandle<SPolicy>(body) 
+    : SocketHandle<SPolicy>(body)
 {}
 
 #ifndef DOXYGEN
@@ -137,7 +137,7 @@ senf::ClientSocketHandle<SPolicy>::operator=(ClientSocketHandle<OtherPolicy> oth
     assign(other);
     return *this;
 }
-#else 
+#else
 template <class SPolicy>
 template <class OtherPolicy>
 prefix_ OtherPolicy const &
@@ -158,9 +158,9 @@ senf::ClientSocketHandle<SPolicy>::
 read(ForwardWritableRange const & range,
      typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type *)
 {
-    return detail::ReadRange< 
-        ClientSocketHandle<SPolicy>, 
-        ForwardWritableRange const, 
+    return detail::ReadRange<
+        ClientSocketHandle<SPolicy>,
+        ForwardWritableRange const,
         contiguous_storage_iterator<
             typename boost::range_iterator<ForwardWritableRange>::type
         >::value && sizeof(typename boost::range_value<ForwardWritableRange>::type)==sizeof(char)
@@ -183,9 +183,9 @@ senf::ClientSocketHandle<SPolicy>::
 read(ForwardWritableRange & range,
      typename boost::disable_if< boost::is_convertible<ForwardWritableRange,unsigned> >::type *)
 {
-    return detail::ReadRange< 
-        ClientSocketHandle<SPolicy>, 
-        ForwardWritableRange, 
+    return detail::ReadRange<
+        ClientSocketHandle<SPolicy>,
+        ForwardWritableRange,
         contiguous_storage_iterator<
             typename boost::range_iterator<ForwardWritableRange>::type
         >::value && sizeof(typename boost::range_value<ForwardWritableRange>::type)==sizeof(char)
@@ -213,9 +213,9 @@ template <class ForwardWritableRange>
 prefix_ typename boost::range_iterator<ForwardWritableRange const>::type
 senf::ClientSocketHandle<SPolicy>::readfrom(ForwardWritableRange const & range, Address & from)
 {
-    return detail::ReadRange< 
-        ClientSocketHandle<SPolicy>, 
-        ForwardWritableRange const, 
+    return detail::ReadRange<
+        ClientSocketHandle<SPolicy>,
+        ForwardWritableRange const,
         contiguous_storage_iterator<
             typename boost::range_iterator<ForwardWritableRange>::type
         >::value && sizeof(typename boost::range_value<ForwardWritableRange>::type)==sizeof(char)
@@ -227,9 +227,9 @@ template <class ForwardWritableRange>
 prefix_ typename boost::range_iterator<ForwardWritableRange>::type
 senf::ClientSocketHandle<SPolicy>::readfrom(ForwardWritableRange & range, Address & from)
 {
-    return detail::ReadRange< 
-        ClientSocketHandle<SPolicy>, 
-        ForwardWritableRange, 
+    return detail::ReadRange<
+        ClientSocketHandle<SPolicy>,
+        ForwardWritableRange,
         contiguous_storage_iterator<
             typename boost::range_iterator<ForwardWritableRange>::type
         >::value && sizeof(typename boost::range_value<ForwardWritableRange>::type)==sizeof(char)
@@ -344,8 +344,7 @@ prefix_ void senf::ClientSocketHandle<SPolicy>::connect(AddressParam addr)
 // senf::ClientSocketHandle<SPolicy>::bind
 
 template <class SPolicy>
-prefix_ void senf::ClientSocketHandle<SPolicy>::
-bind(typename boost::call_traits<typename SPolicy::AddressingPolicy::Address>::param_type addr)
+prefix_ void senf::ClientSocketHandle<SPolicy>::bind(AddressParam addr)
     const
 {
     SPolicy::AddressingPolicy::bind(*this, addr);

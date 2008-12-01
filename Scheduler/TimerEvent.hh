@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -55,7 +55,7 @@ namespace scheduler {
         Timer events are implemented using POSIX timers. Depending on kernel features, the timer
         resolution will be far more precise than the linux clock tick resolution. The nominal timer
         resolution is 1 nanosecond.
-        
+
         The timeout time is set as \e absolute time as returned by the senf::ClockService. After
         expiration, the timer will be disabled. It may be re-enabled by setting a new timeout time.
         It is also possible to change a running timer resetting the timeout time.
@@ -88,6 +88,8 @@ namespace scheduler {
                                              automatically. Use enable() to do so.
                                              \param[in] name Descriptive timer name (purely
                                                  informational)
+                                             \param[in] timeout timeout time after the timer
+                                                 will be disabled
                                              \param[in] cb Callback to call
                                              \param[in] initiallyEnabled if set \c false, do not
                                                  enable callback automatically. */
@@ -95,7 +97,7 @@ namespace scheduler {
                                         ///< Create a timer event
                                         /**< Creates a timer event for callback \a cb. The timer is
                                              initially disabled. Use the timeout() member to set the
-                                             timeout time. 
+                                             timeout time.
                                              \param[in] name Descriptive timer name (purely
                                                  informational)
                                              \param[in] cb Callback to call. */

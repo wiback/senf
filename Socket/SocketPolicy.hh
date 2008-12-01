@@ -42,7 +42,7 @@
     <span coords="41,191,180,219">\ref ReadPolicyBase</span>
     </div>
     \htmlonly <img src="SocketPolicy.png" border="0" alt="SocketPolicy" usemap="#SocketPolicy"> \endhtmlonly
-        
+
     \section policy_group_introduction Introduction to the Policy Framework
 
     The policy framework conceptually implements a list of parallel inheritance hierarchies each
@@ -70,7 +70,7 @@
     from the axis base class <tt>FramingPolicyBase</tt>. This base class also doubles as
     <tt>UnspecifiedFramingPolicy</tt> (which is just a typedef alias).  If a policy axis is assigned
     this Unspecified type, the axis is left unspecified, the concrete policy will be incomplete.
-    
+
     The senf::SocketPolicy template defines the behavior of a socket handle. The socket handle
     instances do not implement any socket functionality themselves instead deferring the
     implementation to the policy classes. The SocketHandle interface is therefore \e not implemented
@@ -129,7 +129,7 @@
     meta-programming are needed. However, this information is only needed if you want to write new
     policy classes or want to use the policy framework explicitly for your own involved
     optimizations ... or if you are just plain curious :-)
-    
+
     In the following discussion we will use the following conventions:
     \li \e Axis is one or \c AddressingPolicy, \c FramingPolicy, \c CommunicationPolicy, \c
         ReadPolicy or \c WritePolicy
@@ -324,7 +324,7 @@ namespace senf {
 
         The \c listen member is straight forward. The \c accept() member must return a new file
         descriptor (which will be used to create a new SocketHandle of the correct
-        type). 
+        type).
 
         \note This Policy only has two meaningful states: ConnectedCommunicationPolicy and
         UnconnectedCommunicationPolicy. It is probably not sensible to define a new
@@ -459,6 +459,8 @@ namespace senf {
             information.
          */
         AddressingPolicyBase const & theAddressingPolicy() const = 0;
+
+        virtual ~SocketPolicyBase();
     };
 
     /** \brief Collection of policy classes
