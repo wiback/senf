@@ -1,0 +1,151 @@
+// $Id: $
+//
+// Copyright (C) 2006
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Christian Niephaus <christian.niephaus@fokus.fraunhofer.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+// Definition of non-inline non-template functions
+
+// Custom includes
+#include "../../Packets/Packets.hh"
+#include "../../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
+#include "RadiotapPacket.hh"
+#include <senf/Utils/hexdump.hh>
+
+BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet)
+{
+    /* used madwifi 0.9.4 */
+    unsigned char data[] = {	0x00 ,0x00 ,0x1a ,0x00, 0x6f, 0x18, 0x00, 0x00,
+								0x02, 0xe6, 0x8a, 0xdf, 0x12, 0x00,	0x00, 0x00,
+								0x12, 0x0c, 0xc8, 0x14, 0x40, 0x01, 0xc3, 0xa0,
+								0x02, 0x23
+							};
+    senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
+
+    /* mandatory fields*/
+    BOOST_CHECK_EQUAL( p->version(), 0u);
+    BOOST_CHECK_EQUAL( p->length(), 26u);
+
+    /* present flags */
+    BOOST_CHECK_EQUAL( p->tsftPresent(), true);
+    BOOST_CHECK_EQUAL( p->flagsPresent(), true);
+    BOOST_CHECK_EQUAL( p->extendedBitmaskPresent(), false);
+    BOOST_CHECK_EQUAL( p->ratePresent(), true);
+    BOOST_CHECK_EQUAL( p->channelPresent(), true);
+    BOOST_CHECK_EQUAL( p->fhssPresent(), false);
+    BOOST_CHECK_EQUAL( p->dbmAntennaSignalPresent(), true);
+    BOOST_CHECK_EQUAL( p->dbmAntennaNoisePresent(), true);
+    BOOST_CHECK_EQUAL( p->lockQualityPresent(), false);
+    BOOST_CHECK_EQUAL( p->txAttenuationPresent(), false);
+    BOOST_CHECK_EQUAL( p->dbmTxAttenuationPresent(), false);
+    BOOST_CHECK_EQUAL( p->dbTxAttenuationPresent(), false);
+    BOOST_CHECK_EQUAL( p->antennaPresent(), true);
+    BOOST_CHECK_EQUAL( p->dbAntennaSignalPresent(), true);
+    BOOST_CHECK_EQUAL( p->dbAntennaNoisePresent(), false);
+
+    /* data flieds */
+    BOOST_CHECK_EQUAL( p->tsft(), 81059833346uLL);
+    BOOST_CHECK_EQUAL( p->rate(), 12u);
+    BOOST_CHECK_EQUAL( p->channelOptions().freq(), 5320u);
+    BOOST_CHECK_EQUAL( p->dbmAntennaSignal(), -61);
+    BOOST_CHECK_EQUAL( p->dbmAntennaNoise(), -96);
+    BOOST_CHECK_EQUAL( p->antenna(), 2u);
+    BOOST_CHECK_EQUAL( p->dbAntennaSignal(), 35u);
+
+    /* flags */
+    BOOST_CHECK_EQUAL( p->flags().cfp(), false);
+    BOOST_CHECK_EQUAL( p->flags().shortPreamble(), true);
+    BOOST_CHECK_EQUAL( p->flags().wep(), false);
+    BOOST_CHECK_EQUAL( p->flags().fragmentation(), false);
+    BOOST_CHECK_EQUAL( p->flags().fcsPresent(), true);
+    BOOST_CHECK_EQUAL( p->flags().padding(), false);
+    BOOST_CHECK_EQUAL( p->flags().badFCS(), false);
+    BOOST_CHECK_EQUAL( p->flags().shortGI(), false);
+
+    /* channel flags */
+    BOOST_CHECK_EQUAL( p->channelOptions().ofdm(), true);
+    BOOST_CHECK_EQUAL( p->channelOptions().turbo(), false);
+    BOOST_CHECK_EQUAL( p->channelOptions().cck(), false);
+    BOOST_CHECK_EQUAL( p->channelOptions().flag5ghz(), true);
+    BOOST_CHECK_EQUAL( p->channelOptions().passive(), false);
+    BOOST_CHECK_EQUAL( p->channelOptions().cckOfdm(), false);
+    BOOST_CHECK_EQUAL( p->channelOptions().gfsk(), false);
+    BOOST_CHECK_EQUAL( p->channelOptions().gsm(), false);
+    BOOST_CHECK_EQUAL( p->channelOptions().staticTurbo(), false);
+    BOOST_CHECK_EQUAL( p->channelOptions().halfRateChannel(), false);
+    BOOST_CHECK_EQUAL( p->channelOptions().quarterRateChannel(), false);
+}
+
+BOOST_AUTO_UNIT_TEST(RadiotapPacket_create)
+{
+    unsigned char data[] = {    0x00 ,0x00 ,0x1a ,0x00, 0x6f, 0x18, 0x00, 0x00,
+                                0x02, 0xe6, 0x8a, 0xdf, 0x12, 0x00, 0x00, 0x00,
+                                0x12, 0x0c, 0xc8, 0x14, 0x40, 0x01, 0xc3, 0xa0,
+                                0x02, 0x23
+                            };
+
+    senf::RadiotapPacket p (senf::RadiotapPacket::create());
+
+    SENF_CHECK_NO_THROW(p->init_tsft());
+    SENF_CHECK_NO_THROW(p->tsft()=81059833346uLL);
+
+    SENF_CHECK_NO_THROW(p->init_rate());
+    SENF_CHECK_NO_THROW(p->rate()=12u);
+    SENF_CHECK_NO_THROW(p->init_dbmAntennaSignal());
+    SENF_CHECK_NO_THROW(p->dbmAntennaSignal()=-61);
+    SENF_CHECK_NO_THROW(p->init_dbmAntennaNoise());
+    SENF_CHECK_NO_THROW(p->dbmAntennaNoise()=-96);
+    SENF_CHECK_NO_THROW(p->init_antenna());
+    SENF_CHECK_NO_THROW(p->antenna()=2u);
+    SENF_CHECK_NO_THROW(p->init_dbAntennaSignal());
+    SENF_CHECK_NO_THROW(p->dbAntennaSignal()=35);
+
+    SENF_CHECK_NO_THROW(p->init_flags());
+    SENF_CHECK_NO_THROW(p->flags().cfp()=false);
+    SENF_CHECK_NO_THROW(p->flags().shortPreamble()=true);
+    SENF_CHECK_NO_THROW(p->flags().wep()=false);
+    SENF_CHECK_NO_THROW(p->flags().fragmentation()=false);
+    SENF_CHECK_NO_THROW(p->flags().fcsPresent()=true);
+    SENF_CHECK_NO_THROW(p->flags().padding()=false);
+    SENF_CHECK_NO_THROW(p->flags().badFCS()=false);
+    SENF_CHECK_NO_THROW(p->flags().shortGI()=false);
+
+    SENF_CHECK_NO_THROW(p->init_channelOptions());
+    SENF_CHECK_NO_THROW(p->channelOptions().freq()=5320u)
+    SENF_CHECK_NO_THROW(p->channelOptions().ofdm()=true);
+    SENF_CHECK_NO_THROW(p->channelOptions().turbo()=false);
+    SENF_CHECK_NO_THROW(p->channelOptions().cck()=false);
+    SENF_CHECK_NO_THROW(p->channelOptions().flag5ghz()=true);
+    SENF_CHECK_NO_THROW(p->channelOptions().passive()=false);
+    SENF_CHECK_NO_THROW(p->channelOptions().cckOfdm()=false);
+    SENF_CHECK_NO_THROW(p->channelOptions().gfsk()=false);
+    SENF_CHECK_NO_THROW(p->channelOptions().gsm()=false);
+    SENF_CHECK_NO_THROW(p->channelOptions().staticTurbo()=false);
+    SENF_CHECK_NO_THROW(p->channelOptions().halfRateChannel()=false);
+    SENF_CHECK_NO_THROW(p->channelOptions().quarterRateChannel()=false);
+
+    p.finalizeAll();
+
+    BOOST_CHECK_EQUAL( p->length(), 26u );
+    BOOST_CHECK( equal( p.data().begin(), p.data().end(), data ));
+
+}
+
+

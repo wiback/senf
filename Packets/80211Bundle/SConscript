@@ -1,0 +1,22 @@
+# -*- python -*-
+
+Import('env')
+import SENFSCons, glob
+
+###########################################################################
+
+sources = SENFSCons.GlobSources()
+
+SENFSCons.StandardTargets(env)
+
+SENFSCons.Object(env, 
+    target = '80211Bundle', 
+    sources=sources,
+    LIBS = ['Packets', 'Socket', 'Utils'])
+
+SENFSCons.Lib(env, 
+    library = 'Packets_80211Bundle',
+    sources = sources[0],
+    no_includes = 1)
+                 
+SConscript(glob.glob("*/SConscript"))
