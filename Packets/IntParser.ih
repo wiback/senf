@@ -114,6 +114,25 @@ namespace packet {
         i[1] = ( v       ) & 0xff;
     }
 
+    /** \brief Internal: Extract 16bit least significant bit order value
+
+        \internal
+     */
+    inline boost::uint16_t parse_uint16LSB(iterator i)
+    {
+        return i[0] | i[1]<<8;
+    }
+
+    /** \brief Internal: Write 16bit least significant bit order value
+
+        \internal
+     */
+    inline void write_uint16LSB(iterator i, boost::uint16_t v)
+    {
+        i[0] = ( v       ) & 0xff;
+        i[1] = ( v >>  8 ) & 0xff;
+    }
+
     /** \brief Internal: Extract 24bit network byte order value
 
         \internal
@@ -155,6 +174,27 @@ namespace packet {
         i[3] = ( v       ) & 0xff;
     }
 
+    /** \brief Internal: Extract 32bit network byte order value
+
+        \internal
+     */
+    inline boost::uint32_t parse_uint32LSB(iterator i)
+    {
+        return i[0] | i[1]<<8 | i[2]<<16 | i[3]<<24;
+    }
+
+    /** \brief Internal: Write 32bit network byte order value
+
+        \internal
+     */
+    inline void write_uint32LSB(iterator i, boost::uint32_t v)
+    {
+        i[3] = ( v >> 24 ) & 0xff;
+        i[2] = ( v >> 16 ) & 0xff;
+        i[1] = ( v >>  8 ) & 0xff;
+        i[0] = ( v       ) & 0xff;
+    }
+
     /** \brief Internal: Extract 64bit network byte order value
 
         \internal
@@ -181,6 +221,34 @@ namespace packet {
         i[5] = ( v >> 16 ) & 0xff;
         i[6] = ( v >> 8  ) & 0xff;
         i[7] = ( v       ) & 0xff;
+    }
+
+    /** \brief Internal: Extract 64bit least significant bit order value
+
+        \internal
+     */
+    inline boost::uint64_t parse_uint64LSB(iterator i)
+    {
+        return ((boost::uint64_t)i[0]) | ((boost::uint64_t)i[1])<<8
+                | ((boost::uint64_t)i[2])<<16 | ((boost::uint64_t)i[3])<<24
+                | ((boost::uint64_t)i[4])<<32 | ((boost::uint64_t)i[5])<<40
+                | ((boost::uint64_t)i[6])<<48 | ((boost::uint64_t)i[7])<<56;
+    }
+
+    /** \brief Internal: Write 64bit least significant bit order value
+
+        \internal
+     */
+    inline void write_uint64LSB(iterator i, boost::uint64_t v)
+    {
+        i[0] = ( v       ) & 0xff;
+        i[1] = ( v >> 8  ) & 0xff;
+        i[2] = ( v >> 16 ) & 0xff;
+        i[3] = ( v >> 24 ) & 0xff;
+        i[4] = ( v >> 32 ) & 0xff;
+        i[5] = ( v >> 40 ) & 0xff;
+        i[6] = ( v >> 48 ) & 0xff;
+        i[7] = ( v >> 56 ) & 0xff;
     }
 
     ///////////////////////////////////////////////////////////////////////////

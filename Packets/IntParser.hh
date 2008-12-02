@@ -148,6 +148,34 @@ namespace senf {
     inline std::ostream & operator<<(std::ostream & os, Int16Parser const & i)
     { os << i.value(); return os; }
 
+    /** \brief Parse 16bit signed byte aligned integer LSB
+        \see parseint
+        \ingroup parseint
+     */
+    struct Int16LSBParser
+        : public detail::packet::IntParserOps<Int16LSBParser,boost::int16_t>,
+          public PacketParserBase
+    {
+        Int16LSBParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        typedef boost::int16_t value_type;
+        static size_type const fixed_bytes = 2;
+        static value_type const min_value = -32768;
+        static value_type const max_value = 32767;
+
+
+        value_type value() const { return detail::packet::parse_uint16LSB(i()); }
+        void value(value_type v) { detail::packet::write_uint16LSB(i(),v); }
+        Int16LSBParser const & operator= (value_type other) { value(other); return *this; }
+    };
+    /** \brief Write parsed value to stream
+        \related Int16Parser
+     */
+    inline std::ostream & operator<<(std::ostream & os, Int16LSBParser const & i)
+    { os << i.value(); return os; }
+
     /** \brief Parse 16bit unsigned byte aligned integer
         \see parseint
         \ingroup parseint
@@ -173,6 +201,33 @@ namespace senf {
         \related UInt16Parser
      */
     inline std::ostream & operator<<(std::ostream & os, UInt16Parser const & i)
+    { os << i.value(); return os; }
+
+    /** \brief Parse 16bit unsigned byte aligned integer LSB
+        \see parseint
+        \ingroup parseint
+     */
+    struct UInt16LSBParser
+        : public detail::packet::IntParserOps<UInt16LSBParser,boost::uint16_t>,
+          public PacketParserBase
+    {
+        UInt16LSBParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        typedef boost::uint16_t value_type;
+        static size_type const fixed_bytes = 2;
+        static value_type const min_value = 0u;
+        static value_type const max_value = 65535u;
+
+        value_type value() const { return detail::packet::parse_uint16LSB(i()); }
+        void value(value_type v) { detail::packet::write_uint16LSB(i(),v); }
+        UInt16LSBParser const & operator= (value_type other) { value(other); return *this; }
+    };
+    /** \brief Write parsed value to stream
+        \related UInt16LSBParser
+     */
+    inline std::ostream & operator<<(std::ostream & os, UInt16LSBParser const & i)
     { os << i.value(); return os; }
 
     /** \brief Parse 24bit signed byte aligned integer
@@ -284,6 +339,32 @@ namespace senf {
     inline std::ostream & operator<<(std::ostream & os, UInt32Parser const & i)
     { os << i.value(); return os; }
 
+    struct UInt32LSBParser
+        : public detail::packet::IntParserOps<UInt32LSBParser,boost::uint32_t>,
+          public PacketParserBase
+    {
+        UInt32LSBParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        typedef boost::uint32_t value_type;
+        static size_type const fixed_bytes = 4;
+        static value_type const min_value = 0u;
+        static value_type const max_value = 4294967295u;
+
+        value_type value() const { return detail::packet::parse_uint32LSB(i()); }
+        void value(value_type v) { detail::packet::write_uint32LSB(i(),v); }
+        UInt32LSBParser const & operator= (value_type other) { value(other); return *this; }
+    };
+    /** \brief Write parsed value to stream
+        \related UInt32LSBParser
+     */
+    inline std::ostream & operator<<(std::ostream & os, UInt32LSBParser const & i)
+    { os << i.value(); return os; }
+
+
+
+
     /** \brief Parse 64bit signed byte aligned integer
         \see parseint
         \ingroup parseint
@@ -335,6 +416,30 @@ namespace senf {
     inline std::ostream & operator<<(std::ostream & os, UInt64Parser const & i)
     { os << i.value(); return os; }
 
+    /** \brief Parse 64bit unsigned byte aligned integer LSB
+        \see parseint
+        \ingroup parseint
+     */
+    struct UInt64LSBParser
+        : public detail::packet::IntParserOps<UInt64LSBParser,boost::uint64_t>,
+          public PacketParserBase
+    {
+        UInt64LSBParser(data_iterator i, state_type s) : PacketParserBase(i,s,fixed_bytes) {}
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        typedef boost::uint64_t value_type;
+        static size_type const fixed_bytes = 8;
+
+        value_type value() const { return detail::packet::parse_uint64LSB(i()); }
+        void value(value_type v) { detail::packet::write_uint64LSB(i(),v); }
+        UInt64LSBParser const & operator= (value_type other) { value(other); return *this; }
+    };
+    /** \brief Write parsed value to stream
+        \related UInt64LSBParser
+     */
+    inline std::ostream & operator<<(std::ostream & os, UInt64LSBParser const & i)
+    { os << i.value(); return os; }
 
     /** \brief Parse signed bitfield with up to 32bit's
 
