@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -24,11 +24,11 @@
     \brief Node public header */
 
 /** \defgroup node_tree The node tree
-    
+
     The console/config node tree is the central data-structure of the library. Into this tree, all
     commands and parameters are entered. The tree is then exposed using a file-system like
     interface.
-    
+
     \autotoc
 
     \section console_tree The tree
@@ -51,7 +51,7 @@
         // it to the node tree later.
         senf::console::ScopedDirectory<SomeClass> dir;
 
-        SomeClass() : dir(this) 
+        SomeClass() : dir(this)
         {
             // You may document the directory here or later when adding it to the tree
             dir.doc("Manager for something");
@@ -97,7 +97,7 @@
     \subsection console_nodes Node types
 
     The console/config library tree consists of two basic node types:
-    
+
     \li senf::console::DirectoryNode provides internal nodes with an arbitrary number of children
     \li senf::console::CommandNode describes a command entry in the tree
     \li senf::console::LinkNode is a link to another node. It works much like a symlink on POSIX
@@ -110,7 +110,7 @@
     this node, the tree is traversed.
 
     All nodes are allocated on the heap and are managed using a smart pointer.
-    
+
     \subsection console_manipulate Manipulating the node tree
 
     There are several ways to add nodes to the tree:
@@ -125,7 +125,7 @@
 
     When directly adding a node callback, the type of node added depends on the type of
     callback. The callback types which can be added are listed at \ref console_callbacks.
-    
+
     \code
     void callback(std::ostream & os, senf::console::ParseCommandInfo const & command) { ... }
     // ...
@@ -162,7 +162,7 @@
     \endcode
     Since the parameter setters all return the node reference, additional parameters may just be
     added to the end of the command.
-    
+
     \subsection console_tree_traverse Traversing the tree
 
     The simplest way to access tree elements is to save the return value of the
@@ -241,7 +241,7 @@ namespace console {
 
         \ingroup node_tree
       */
-    class GenericNode 
+    class GenericNode
         : public boost::enable_shared_from_this<GenericNode>
     {
         SENF_LOG_CLASS_AREA();
@@ -265,7 +265,7 @@ namespace console {
         std::string path() const;       ///< Node path
                                         /**< The node path is built by joining the names of all
                                              parent nodes with '/' chars. */
-        std::string path(DirectoryNode const & root) const;       
+        std::string path(DirectoryNode const & root) const;
                                         ///< Node path up to \a root
                                         /**< The node path is built by joining the names of all
                                              parent nodes up to \a root with '/' chars. */
@@ -339,11 +339,11 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
-        
+
         static ptr create(GenericNode & node); ///< Create new link node.
                                         /**< You should normally use DirectoryNode::link() to
                                              create a link node. */
-        
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
@@ -362,14 +362,14 @@ namespace console {
     class SimpleCommandNode;
 
     /** \brief Internal: Node creation helper traits
-        
+
         This class is used internally to find out the type of node to create for a specific argument
-        type. 
+        type.
      */
     template <class Object>
     struct NodeCreateTraits
     {
-        typedef BOOST_TYPEOF_TPL( senf_console_add_node( 
+        typedef BOOST_TYPEOF_TPL( senf_console_add_node(
                                       * static_cast<DirectoryNode *>(0),
                                       * static_cast<std::string const *>(0),
                                       * static_cast<Object *>(0),
@@ -381,7 +381,7 @@ namespace console {
 
         /// Internal
         struct Creator {
-            static result_type create(DirectoryNode & node, std::string const & name, 
+            static result_type create(DirectoryNode & node, std::string const & name,
                                       Object & ob);
         };
     };
@@ -390,7 +390,7 @@ namespace console {
 
         This node type provides the internal and root nodes of the tree. It allows to add arbitrary
         children and supports directory traversal.
-        
+
         Nodes are normally not instantiated manually but are created by the DirectoryNode via
         mkdir() or add(). Special add() members however allow externally allocated node objects.
 
@@ -448,7 +448,7 @@ namespace console {
                                              \a name is empty, it is set to 'unnamed'. */
 
         template <class Object>
-        typename NodeCreateTraits<Object>::result_type add(std::string const & name, 
+        typename NodeCreateTraits<Object>::result_type add(std::string const & name,
                                                            Object const & ob);
                                         ///< Generic child node factory
                                         /**< This member is used to create a new child node of the
@@ -475,7 +475,7 @@ namespace console {
                                              overloads). */
 
         template <class Object>
-        typename NodeCreateTraits<Object>::result_type add(std::string const & name, 
+        typename NodeCreateTraits<Object>::result_type add(std::string const & name,
                                                            Object & ob);
                                         ///< Generic child node factory
                                         /**< \see add() */
@@ -503,15 +503,15 @@ namespace console {
                                         ///< Get directory child node
                                         /**< Same as operator[]
                                              \throws UnknownNodeNameException if a child \a name
-                                                 does not exist. 
+                                                 does not exist.
                                              \throws std::bad_cast if the child \a name is not a
                                                  directory node. */
-        
+
         DirectoryNode & operator[](std::string const & name) const;
                                         ///< Get directory child node
                                         /**< Same as getDirectory
                                              \throws UnknownNodeNameException if a child \a name
-                                                 does not exist. 
+                                                 does not exist.
                                              \throws std::bad_cast if the child \a name is not a
                                                  directory node. */
 
@@ -533,7 +533,7 @@ namespace console {
 
         DirectoryNode & mkdir(std::string const & name);
                                         ///< Create sub-directory node
-        
+
         ChildrenRange children() const; ///< Return iterator range over all children.
                                         /**< The returned range is sorted by child name. */
 
@@ -542,6 +542,8 @@ namespace console {
                                         /**< The returned range is sorted by child name. */
 
         void link(std::string const & name, GenericNode & target);
+                                        ///< Create a child node which is a link to target. \a s
+                                        /**< The new link node will be a child of the node for which this member function is called. */
 
         ///\}
         ///////////////////////////////////////////////////////////////////////////
@@ -643,7 +645,7 @@ namespace console {
         { ... }
         \endcode
         to the tree.
- 
+
         \ingroup console_commands
      */
     class SimpleCommandNode : public CommandNode
@@ -682,7 +684,7 @@ namespace console {
     private:
         virtual void v_help(std::ostream & output) const;
         virtual void v_execute(std::ostream & output, ParseCommandInfo const & command) const;
-        
+
 
         Function fn_;
         std::string doc_;
@@ -690,7 +692,7 @@ namespace console {
 
 #ifndef DOXYGEN
 
-    SimpleCommandNode & senf_console_add_node(DirectoryNode & node, std::string const & name, 
+    SimpleCommandNode & senf_console_add_node(DirectoryNode & node, std::string const & name,
                                               SimpleCommandNode::Function fn, int);
 
 #endif
@@ -709,7 +711,7 @@ BOOST_TYPEOF_REGISTER_TYPE(senf::console::SimpleCommandNode)
 #include "Node.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
