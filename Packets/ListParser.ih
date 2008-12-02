@@ -44,7 +44,9 @@ namespace detail {
                                          typename Container::value_type,
                                          boost::forward_traversal_tag,
                                          typename Container::value_type >,
+#ifndef DOXYGEN
           private Container::policy::iterator_data
+#endif
     {
     public:
         typedef typename Container::value_type value_type;

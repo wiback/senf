@@ -12,8 +12,10 @@ def SetupForSENF(env):
                 BOOSTREGEXLIB  = 'boost_regex',
                 BOOSTIOSTREAMSLIB = 'boost_iostreams',
                 CXXFLAGS       = [ '-Wno-long-long',
-                                   '${"$CXXFLAGS_"+(final and "final" or "debug")}' ],
-                LINKFLAGS      = [ '${"$LINKFLAGS_"+(final and "final" or "debug")}' ],
+                                   '${"$CXXFLAGS_"+(final and "final" or "debug")}',
+                                   '${profile and ("-g","-pg") or None}' ],
+                LINKFLAGS      = [ '${"$LINKFLAGS_"+(final and "final" or "debug")}',
+                                   '${profile and "-pg" or None}' ],
                 SENF_BUILDOPTS = [ '-j%s' % (env.GetOption('num_jobs') or "1") ],
                 CXXFLAGS_debug  = [ '-O0', '-g', '-fno-inline' ],
                 LINKFLAGS_debug = [ '-g', '-rdynamic' ],
@@ -35,6 +37,8 @@ def SetupForSENF(env):
     opts.Add( 'LOGLEVELS', 'Special log levels. Syntax: <stream>|[<area>]|<level> ...',
               '${"$LOGLEVELS_"+(final and "final" or "debug")}' )
     opts.Add( BoolOption('final', 'Build final (optimized) build', False) )
+    opts.Add( BoolOption('debug', 'Link in debug symbols', False) )
+    opts.Add( BoolOption('profile', 'Add profile information', False) )
     opts.Update(env)
 
     if env.subst('$LOGLEVELS'):
@@ -49,7 +53,9 @@ def SetupForSENF(env):
         print "\nUsing SENF in './senf'\n"
         env.Append( LIBPATH = [ 'senf' ],
                     CPPPATH = [ 'senf/include' ],
-                    SENF_BUILDOPTS = [ '${final and "final=1" or None}' ],
+                    SENF_BUILDOPTS = [ '${final and "final=1" or None}',
+                                       '${debug and "debug=1" or None}',
+                                       '${profile and "profile=1" or None}' ],
                     CPPDEFINES = [ '${not(final) and "SENF_DEBUG" or None}' ] )
 
         env.Default(

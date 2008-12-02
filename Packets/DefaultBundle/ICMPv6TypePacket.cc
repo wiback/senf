@@ -27,6 +27,8 @@
 #include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
 
+#ifndef DOXYGEN
+
 namespace {
 //Implementing the ICMPv6 Type registry
     senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPV6ErrDestUnreachable>
@@ -46,3 +48,5 @@ namespace {
     senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::MLDv2ListenerReport>
         registerMLDv2ListenerReport (143);
 }
+
+#endif

@@ -100,6 +100,9 @@ namespace detail {
         void taskTimeout(unsigned ms);
         unsigned taskTimeout() const;
 
+        void startWatchdog();
+        void stopWatchdog();
+
         unsigned hangCount() const;
 
         iterator begin() const;
@@ -132,6 +135,7 @@ namespace detail {
         NullTask highPriorityEnd_;
         
         timer_t watchdogId_;
+        bool watchdogRunning_;
         unsigned watchdogMs_;
         std::string runningName_;
 #   ifdef SENF_DEBUG

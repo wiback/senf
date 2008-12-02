@@ -113,6 +113,8 @@ prefix_ void senf::scheduler::detail::FIFORunner::enqueue(TaskInfo * task)
 prefix_ void senf::scheduler::detail::FIFORunner::taskTimeout(unsigned ms)
 {
     watchdogMs_ = ms;
+    if (watchdogRunning_)
+        startWatchdog();
 }
 
 prefix_ unsigned senf::scheduler::detail::FIFORunner::taskTimeout()

@@ -50,19 +50,29 @@ prefix_ void senf::scheduler::terminate()
 
 prefix_ void senf::scheduler::process()
 {
-    terminate_ = false;
-    while(! terminate_ && ! (detail::FdDispatcher::instance().empty() &&
-                             detail::TimerDispatcher::instance().empty() &&
-                             detail::FileDispatcher::instance().empty())) {
+    try {
+        detail::FIFORunner::instance().startWatchdog();
         detail::SignalDispatcher::instance().unblockSignals();
         detail::TimerDispatcher::instance().unblockSignals();
-        detail::FdManager::instance().processOnce();
+        terminate_ = false;
+        while(! terminate_ && ! (detail::FdDispatcher::instance().empty() &&
+                                 detail::TimerDispatcher::instance().empty() &&
+                                 detail::FileDispatcher::instance().empty())) {
+            detail::FdManager::instance().processOnce();
+            detail::FileDispatcher::instance().prepareRun();
+            detail::EventHookDispatcher::instance().prepareRun();
+            detail::FIFORunner::instance().run();
+        }
+    }
+    catch(...) {
         detail::TimerDispatcher::instance().blockSignals();
         detail::SignalDispatcher::instance().blockSignals();
-        detail::FileDispatcher::instance().prepareRun();
-        detail::EventHookDispatcher::instance().prepareRun();
-        detail::FIFORunner::instance().run();
+        detail::FIFORunner::instance().stopWatchdog();
+        throw;
     }
+    detail::TimerDispatcher::instance().blockSignals();
+    detail::SignalDispatcher::instance().blockSignals();
+    detail::FIFORunner::instance().stopWatchdog();
 }
 
 prefix_ void senf::scheduler::restart()
@@ -73,7 +83,7 @@ prefix_ void senf::scheduler::restart()
     detail::TimerDispatcher*      tdd (&detail::TimerDispatcher::instance());
     detail::SignalDispatcher*     sdd (&detail::SignalDispatcher::instance());
     detail::FileDispatcher*       fld (&detail::FileDispatcher::instance());
-    detail::EventHookDispatcher* eed (&detail::EventHookDispatcher::instance());
+    detail::EventHookDispatcher*  eed (&detail::EventHookDispatcher::instance());
 
     eed->~EventHookDispatcher();
     fld->~FileDispatcher();

@@ -37,7 +37,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
-    : tasks_ (), next_ (tasks_.end()), watchdogMs_ (1000), watchdogCount_(0), hangCount_ (0)
+    : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000), 
+      watchdogCount_(0), hangCount_ (0)
 {
     struct sigevent ev;
     ::memset(&ev, 0, sizeof(ev));
@@ -68,6 +69,33 @@ prefix_ senf::scheduler::detail::FIFORunner::~FIFORunner()
 {
     timer_delete(watchdogId_);
     signal(SIGURG, SIG_DFL);
+}
+
+prefix_ void senf::scheduler::detail::FIFORunner::startWatchdog()
+{
+    struct itimerspec timer;
+    ::memset(&timer, 0, sizeof(timer));
+
+    timer.it_interval.tv_sec = watchdogMs_ / 1000;
+    timer.it_interval.tv_nsec = (watchdogMs_ % 1000) * 1000000ul;
+    timer.it_value.tv_sec = timer.it_interval.tv_sec;
+    timer.it_value.tv_nsec = timer.it_interval.tv_nsec;
+
+    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+
+    watchdogRunning_ = true;
+}
+
+prefix_ void senf::scheduler::detail::FIFORunner::stopWatchdog()
+{
+    struct itimerspec timer;
+    ::memset(&timer, 0, sizeof(timer));
+
+    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+
+    watchdogRunning_ = false;
 }
 
 // At the moment, the FIFORunner is not very efficient with many non-runnable tasks since the
@@ -102,40 +130,17 @@ prefix_ void senf::scheduler::detail::FIFORunner::dequeue(TaskInfo * task)
 
 prefix_ void senf::scheduler::detail::FIFORunner::run()
 {
-    struct itimerspec timer;
-    timer.it_interval.tv_sec = watchdogMs_ / 1000;
-    timer.it_interval.tv_nsec = (watchdogMs_ % 1000) * 1000000ul;
-    timer.it_value.tv_sec = timer.it_interval.tv_sec;
-    timer.it_value.tv_nsec = timer.it_interval.tv_nsec;
+    TaskList::iterator f (tasks_.begin());
+    TaskList::iterator l (TaskList::current(highPriorityEnd_));
+    run(f, l);
 
-    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
-
-    timer.it_interval.tv_sec = 0;
-    timer.it_interval.tv_nsec = 0;
-    timer.it_value.tv_sec = 0;
-    timer.it_value.tv_nsec = 0;
-    
-    try {
-        TaskList::iterator f (tasks_.begin());
-        TaskList::iterator l (TaskList::current(highPriorityEnd_));
-        run(f, l);
-
-        f = l; ++f;
-        l = TaskList::current(normalPriorityEnd_);
-        run(f, l);
+    f = l; ++f;
+    l = TaskList::current(normalPriorityEnd_);
+    run(f, l);
         
-        f = l; ++f;
-        l = tasks_.end();
-        run(f, l);
-    }
-    catch(...) {
-        timer_settime(watchdogId_, 0, &timer, 0);
-        throw;
-    }
-
-    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+    f = l; ++f;
+    l = tasks_.end();
+    run(f, l);
 }
 
 

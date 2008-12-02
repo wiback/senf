@@ -73,6 +73,7 @@ def InitOpts():
     opts.Add('EXTRA_LIBS', 'Additional libraries to link against', '')
     opts.Add(SCons.Options.BoolOption('final','Enable optimization',0))
     opts.Add(SCons.Options.BoolOption('debug','Enable debug symbols in binaries',0))
+    opts.Add(SCons.Options.BoolOption('profile','Enable profiling',0))
     opts.Add('PREFIX', 'Installation prefix', '/usr/local')
     opts.Add('LIBINSTALLDIR', 'Library install dir', '$PREFIX/lib')
     opts.Add('BININSTALLDIR', 'Executable install dir', '$PREFIX/bin')
@@ -264,12 +265,18 @@ def MakeEnvironment():
 
     if env['final']:
         env.Append(CXXFLAGS = [ '-O3' ])
+        if env['profile']:
+            env.Append(CXXFLAGS = [ '-g', '-pg' ],
+                       LINKFLAGS = [ '-g', '-pg' ])
     else:
         # The boost-regex library is not compiled with _GLIBCXX_DEBUG so this fails:
         #          CPPDEFINES = [ '_GLIBCXX_DEBUG' ],
         env.Append(CXXFLAGS = [ '-O0', '-g' ],
                    CPPDEFINES = { 'SENF_DEBUG': ''})
-        if env['debug']:
+        if env['profile']:
+            env.Append(CXXFLAGS = [ '-pg' ],
+                       LINKFLAGS = [ '-pg' ])
+        if env['debug'] or env['profile']:
             env.Append(LINKFLAGS = [ '-g', '-rdynamic' ])
         else:
             env.Append(LINKFLAGS = [ '-Wl,-S', '-rdynamic' ])

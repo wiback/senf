@@ -91,7 +91,7 @@ namespace ppi {
         senf::INet4Address source_;
         senf::INet4Address destination_;
         unsigned int protocolId_;
-};
+    };
 
     class IPv6SourceForcingDgramWriter : ConnectedDgramWriter
     {

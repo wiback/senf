@@ -52,7 +52,7 @@ prefix_ senf::detail::PacketImpl::~PacketImpl()
 }
 
 // This function has a problem being inlined. Somehow, often when calling this, the size of the 
-// resulting inlined code would be huge. Need to further debug this.
+// resulting inlined code would be huge. Need to further debug this. (Disabled inliningfor now)
 
 prefix_ void senf::detail::PacketImpl::release(refcount_t n)
 {
