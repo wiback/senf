@@ -1,9 +1,9 @@
-// $Id: $
+// $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Christian Niephaus <christian.niephaus@fokus.fraunhofer.de>
+//     Christian Niephaus <cni@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,10 +29,6 @@
 
 #define prefix_
 
-namespace
-{
-
-}
 
 prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 {
@@ -44,7 +40,7 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 
 prefix_ void senf::RadiotapPacketType::finalize(packet p)
 {
-    p->length()  << p.size();
+    p->length() << p.size();
 }
 
 
