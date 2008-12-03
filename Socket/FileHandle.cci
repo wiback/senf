@@ -93,6 +93,18 @@ prefix_ void senf::FileBody::waitWriteable()
     pollCheck(fd(),false,true);
 }
 
+prefix_ bool senf::FileBody::oobReadable()
+    const
+{
+    return pollCheck(fd(),true,false,true);
+}
+
+prefix_ void senf::FileBody::waitOOBReadable()
+    const
+{
+    pollCheck(fd(),true,true,true);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::FileHandle
 
@@ -141,6 +153,18 @@ prefix_ void senf::FileHandle::waitWriteable()
     const
 {
     body().waitWriteable();
+}
+
+prefix_ bool senf::FileHandle::oobReadable()
+    const
+{
+    return body().oobReadable();
+}
+
+prefix_ void senf::FileHandle::waitOOBReadable()
+    const
+{
+    body().waitOOBReadable();
 }
 
 prefix_ bool senf::FileHandle::blocking()

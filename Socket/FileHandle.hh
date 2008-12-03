@@ -143,6 +143,10 @@ namespace senf {
                                      ///< (ignoring blocking state)
         void waitWriteable() const;  ///< Wait, until a write on the handle would not block
                                      ///< (ignoring blocking state)
+        bool oobReadable() const;    ///< Check, whether a read of prioritized data on the handle 
+                                     ///< would not block (ignoring blocking state)
+        void waitOOBReadable() const; ///< Wait, until read of prioritized data on the handle does
+                                     ///< not block (ignoring blocking state)
 
         bool blocking() const;       ///< Return current blocking state
         void blocking(bool status);  ///< Set blocking state
