@@ -35,7 +35,7 @@
 
 template <class Self>
 prefix_ senf::PacketInterpreterBase::optional_range
-senf::PacketTypeMixin<Self,void>::nextPacketRange(Packet p)
+senf::PacketTypeMixin<Self,void>::nextPacketRange(Packet const & p)
 {
     typename Self::size_type sz (Self::initHeadSize());
     ///\idea This if condition could be replaced with a compile time switch by checking, wether

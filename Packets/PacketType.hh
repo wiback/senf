@@ -312,7 +312,7 @@ namespace senf {
         typedef typename Registry::key_t key_t;
         typedef boost::optional<key_t> optional_key_t;
 
-        static optional_key_t key (Packet p); ///< Find key of packet from registry
+        static optional_key_t key (Packet const & p); ///< Find key of packet from registry
                                         /**< key() will query the registry to find the key of the
                                              given packet. Whereas \c nextPacketKey() as implemented
                                              by the mixin user will provide the registry key of the
@@ -333,10 +333,10 @@ namespace senf {
         ///\name PacketType interface implementation
         ///@{
 
-        static PacketInterpreterBase::optional_range nextPacketRange (Packet p);
-        static PacketInterpreterBase::factory_t      nextPacketType  (Packet p);
+        static PacketInterpreterBase::optional_range nextPacketRange (Packet const & p);
+        static PacketInterpreterBase::factory_t      nextPacketType  (Packet const & p);
         static PacketInterpreterBase::size_type      initSize        ();
-        static void                                  init            (Packet p);
+        static void                                  init            (Packet const & p);
         
         ///@}
     };
@@ -347,9 +347,9 @@ namespace senf {
     class PacketTypeMixin<Self,void>
     {
     public:
-        static PacketInterpreterBase::optional_range nextPacketRange (Packet p);
+        static PacketInterpreterBase::optional_range nextPacketRange (Packet const & p);
         static PacketInterpreterBase::size_type      initSize        ();
-        static void                                  init            (Packet p);
+        static void                                  init            (Packet const & p);
     };
 
 #   endif

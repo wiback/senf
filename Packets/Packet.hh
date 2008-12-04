@@ -137,7 +137,7 @@ namespace senf {
             \ref ConcretePacket for the %type specific interface\n
             \ref PacketData for the sequence interface\n
             \ref packetparser for a specification of the parser interface
-      */
+     */
     class Packet
         : public safe_bool<Packet>,
           public boost::equality_comparable<Packet>
@@ -148,7 +148,7 @@ namespace senf {
         
         typedef void type;              ///< Type of the packet.
         typedef senf::detail::packet::size_type size_type;
-                                        ///< Unsigned type to represent packet size
+        ///< Unsigned type to represent packet size
         typedef PacketInterpreterBase::factory_t factory_t; ///< Packet factory type (see below)
 
         ///////////////////////////////////////////////////////////////////////////
@@ -173,9 +173,9 @@ namespace senf {
 
         template <class PacketType>     
         Packet(ConcretePacket<PacketType> packet); ///< Copy-construct Packet from ConcretePacket
-                                        /**< This constructor allows to convert an arbitrary
-                                             ConcretePacket into a general Packet, loosing the
-                                             protocol specific interface. */
+        /**< This constructor allows to convert an arbitrary
+             ConcretePacket into a general Packet, loosing the
+             protocol specific interface. */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -183,123 +183,123 @@ namespace senf {
         ///\name Interpreter chain access
         ///@{
 
-                                     Packet      next() const; 
-                                        ///< Get next packet in chain
-                                        /**< \throws InvalidPacketChainException if no next packet 
-                                             exists */
-                                     Packet      next(NoThrow_t) const; 
-                                        ///< Get next packet in chain
-                                        /**< \returns in - valid() packet if no next packet 
-                                             exists */
+        Packet      next() const; 
+        ///< Get next packet in chain
+        /**< \throws InvalidPacketChainException if no next packet 
+             exists */
+        Packet      next(NoThrow_t) const; 
+        ///< Get next packet in chain
+        /**< \returns in - valid() packet if no next packet 
+             exists */
         template <class OtherPacket> OtherPacket next() const; 
-                                        ///< Get next packet in chain and cast to \a OtherPacket
-                                        /**< \throws std::bad_cast if the next() packet is not of
-                                             type \a OtherPacket
-                                             \throws InvalidPacketChainException if no next packet
-                                                 exists */
+        ///< Get next packet in chain and cast to \a OtherPacket
+        /**< \throws std::bad_cast if the next() packet is not of
+             type \a OtherPacket
+             \throws InvalidPacketChainException if no next packet
+                 exists */
         template <class OtherPacket> OtherPacket next(NoThrow_t) const; 
-                                        ///< Get next packet in chain and cast to \a OtherPacket
-                                        /**< \throws std::bad_cast if the next() packet is not of
-                                             type \a OtherPacket
-                                             \returns in - valid() packet if no next packet
-                                                 exists */
+        ///< Get next packet in chain and cast to \a OtherPacket
+        /**< \throws std::bad_cast if the next() packet is not of
+             type \a OtherPacket
+             \returns in - valid() packet if no next packet
+                 exists */
         template <class OtherPacket> OtherPacket find() const;
-                                        ///< Search chain forward for packet of type \a OtherPacket
-                                        /**< The search will start with the current packet.
-                                             \throws InvalidPacketChainException if no packet of
-                                                 type \a OtherPacket can be found. */
+        ///< Search chain forward for packet of type \a OtherPacket
+        /**< The search will start with the current packet.
+             \throws InvalidPacketChainException if no packet of
+                 type \a OtherPacket can be found. */
         template <class OtherPacket> OtherPacket find(NoThrow_t) const;
-                                        ///< Search chain forward for packet of type \a OtherPacket
-                                        /**< The search will start with the current packet.
-                                             \returns in - valid() packet if no packet of type \a
-                                                 OtherPacket can be found. */
+        ///< Search chain forward for packet of type \a OtherPacket
+        /**< The search will start with the current packet.
+             \returns in - valid() packet if no packet of type \a
+                 OtherPacket can be found. */
         
-                                     Packet      prev() const; 
-                                        ///< Get previous packet in chain
-                                        /**< \throws InvalidPacketChainException if no previous
-                                             packet exists */
-                                     Packet      prev(NoThrow_t) const; 
-                                        ///< Get previous packet in chain
-                                        /**< \returns in - valid() packet if no previous packet
-                                             exists */
+        Packet      prev() const; 
+        ///< Get previous packet in chain
+        /**< \throws InvalidPacketChainException if no previous
+             packet exists */
+        Packet      prev(NoThrow_t) const; 
+        ///< Get previous packet in chain
+        /**< \returns in - valid() packet if no previous packet
+             exists */
         template <class OtherPacket> OtherPacket prev() const; 
-                                        ///< Get previous packet in chain and cast to \a OtherPacket
-                                        /**< \throws std::bad_cast, if the previous packet is not of
-                                             type \a OtherPacket
-                                             \throws InvalidPacketChainException if no previous
-                                                 packet exists */
+        ///< Get previous packet in chain and cast to \a OtherPacket
+        /**< \throws std::bad_cast, if the previous packet is not of
+             type \a OtherPacket
+             \throws InvalidPacketChainException if no previous
+                 packet exists */
         template <class OtherPacket> OtherPacket prev(NoThrow_t) const; 
-                                        ///< Get previous packet in chain and cast to \a OtherPacket
-                                        /**< \throws std::bad_cast, if the previous packet is not of
-                                             type \a OtherPacket
-                                             \returns in - valid() packet if no previous packet 
-                                                 exists */
+        ///< Get previous packet in chain and cast to \a OtherPacket
+        /**< \throws std::bad_cast, if the previous packet is not of
+             type \a OtherPacket
+             \returns in - valid() packet if no previous packet 
+                 exists */
         template <class OtherPacket> OtherPacket rfind() const;
-                                        ///< Search chain backwards for packet of type \a OtherPacket
-                                        /**< The search will start with the current packet.
-                                             \throws InvalidPacketChainException if no packet of
-                                                 type \a OtherPacket can be found. */
+        ///< Search chain backwards for packet of type \a OtherPacket
+        /**< The search will start with the current packet.
+             \throws InvalidPacketChainException if no packet of
+                 type \a OtherPacket can be found. */
         template <class OtherPacket> OtherPacket rfind(NoThrow_t) const;
-                                        ///< Search chain backwards for packet of type \a OtherPacket
-                                        /**< The search will start with the current packet.
-                                             \returns in - valid() packet if no packet of type \a
-                                                 OtherPacket can be found. */
+        ///< Search chain backwards for packet of type \a OtherPacket
+        /**< The search will start with the current packet.
+             \returns in - valid() packet if no packet of type \a
+                 OtherPacket can be found. */
 
 
-                                     Packet      first() const;
-                                        ///< Return first packet in chain
+        Packet      first() const;
+        ///< Return first packet in chain
         template <class OtherPacket> OtherPacket first() const;
-                                        ///< Return first packet in chain and cast
-                                        /**< \throws std::bad_cast if the first() packet is not of
-                                             type \a OtherPacket */
+        ///< Return first packet in chain and cast
+        /**< \throws std::bad_cast if the first() packet is not of
+             type \a OtherPacket */
 
-                                     Packet      last() const;
-                                        ///< Return last packet in chain
+        Packet      last() const;
+        ///< Return last packet in chain
         template <class OtherPacket> OtherPacket last() const;
-                                        ///< Return last packet in chain and cast
-                                        /**< \throws std::bad_cast if the last() packet is not of
-                                             type \a OtherPacket  */
+        ///< Return last packet in chain and cast
+        /**< \throws std::bad_cast if the last() packet is not of
+             type \a OtherPacket  */
 
 
         template <class OtherPacket> OtherPacket parseNextAs() const;
-                                        ///< Interpret payload of \c this as \a OtherPacket
-                                        /**< parseNextAs() will throw away the packet chain after
-                                             the current packet if necessary. It will then parse the
-                                             payload section of \c this packet as given by \a
-                                             OtherPacket. The new packet is added to the chain after
-                                             \c this.
-                                             \returns new packet instance sharing the same data and
-                                                 placed after \c this packet in the chain. */
-                                     Packet      parseNextAs(factory_t factory) const;
-                                        ///< Interpret payload of \c this as \a factory type packet
-                                        /**< parseNextAs() will throw away the packet chain after
-                                             the current packet if necessary. It will then parse the
-                                             payload section of \c this packet as given by \a
-                                             factory. The new packet is added to the chain after
-                                             \c this.
-                                             \returns new packet instance sharing the same data and
-                                                 placed after \c this packet in the chain. */
+        ///< Interpret payload of \c this as \a OtherPacket
+        /**< parseNextAs() will throw away the packet chain after
+             the current packet if necessary. It will then parse the
+             payload section of \c this packet as given by \a
+             OtherPacket. The new packet is added to the chain after
+             \c this.
+             \returns new packet instance sharing the same data and
+                 placed after \c this packet in the chain. */
+        Packet      parseNextAs(factory_t factory) const;
+        ///< Interpret payload of \c this as \a factory type packet
+        /**< parseNextAs() will throw away the packet chain after
+             the current packet if necessary. It will then parse the
+             payload section of \c this packet as given by \a
+             factory. The new packet is added to the chain after
+             \c this.
+             \returns new packet instance sharing the same data and
+                 placed after \c this packet in the chain. */
 
         template <class OtherPacket> bool        is() const;
-                                        ///< Check, whether \c this packet is of the given type
+        ///< Check, whether \c this packet is of the given type
         template <class OtherPacket> OtherPacket as() const;
-                                        ///< Cast current packet to the given type
-                                        /**< This operations returns a handle to the same packet
-                                             header/interpreter however cast to the given
-                                             ConcretePacket type.
-                                             \throws std::bad_cast if the current packet is not of
-                                                 type \a OtherPacket */
+        ///< Cast current packet to the given type
+        /**< This operations returns a handle to the same packet
+             header/interpreter however cast to the given
+             ConcretePacket type.
+             \throws std::bad_cast if the current packet is not of
+                 type \a OtherPacket */
 
-        Packet append(Packet packet) const; ///< Append the given packet to \c this packet
-                                        /**< This operation will replace the payload section of \c
-                                             this packet with \a packet. This operation will replace
-                                             the packet chain after \c this packet with a clone of
-                                             \a packet and will replace the raw data of the payload
-                                             of \c this with the raw data of \a packet. \c this
-                                             packet will not share any date with \a packet.
-                                             \returns Packet handle to the cloned \a packet, placed
-                                                 after \c this in the packet/header/interpreter
-                                                 chain. */
+        Packet append(Packet const & packet) const; ///< Append the given packet to \c this packet
+        /**< This operation will replace the payload section of \c
+             this packet with \a packet. This operation will replace
+             the packet chain after \c this packet with a clone of
+             \a packet and will replace the raw data of the payload
+             of \c this with the raw data of \a packet. \c this
+             packet will not share any date with \a packet.
+             \returns Packet handle to the cloned \a packet, placed
+                 after \c this in the packet/header/interpreter
+                 chain. */
 
         ///@}
 
@@ -325,9 +325,9 @@ namespace senf {
                                              struct.
 
                                              \code
-                                             struct MyAnnotation {
+                                                 struct MyAnnotation {
                                                  int value;
-                                             };
+                                                 };
 
                                              senf::Packet p (...);
                                             
@@ -346,11 +346,11 @@ namespace senf {
                                              lead to a program crash.
 
                                              \code
-                                             struct MyStringAnnotation : senf::ComplexAnnotation {
+                                                 struct MyStringAnnotation : senf::ComplexAnnotation {
                                                  std::string value;
-                                             };
+                                                 };
                                              \endcode
-                                             (This type is not POD since \c std::string is not POD)
+                                                 (This type is not POD since \c std::string is not POD)
 
                                              \see \ref packet_usage_annotation
 
@@ -379,9 +379,9 @@ namespace senf {
         ///\name Other methods
         ///@{
 
-        bool operator==(Packet other) const; ///< Check for packet identity
-                                        /**< Two packet handles compare equal if they really are the
-                                             same packet header in the same packet chain. */
+        bool operator==(Packet const & other) const; ///< Check for packet identity
+        /**< Two packet handles compare equal if they really are the
+             same packet header in the same packet chain. */
         bool boolean_test() const;      ///< Check, whether the packet is valid()
                                         /**< \see valid() */
         bool valid() const;             ///< Check, whether the packet is valid()
@@ -423,20 +423,20 @@ namespace senf {
                                              
                                              This call is equivalent to
                                              \code
-                                             p.finalizeTo(p.next<Other>())
+                                                 p.finalizeTo(p.next<Other>())
                                              \endcode */
 
-        void finalizeTo(Packet other);  ///< Update calculated fields
-                                        /**< The finalize() fammily of members will update
-                                             calculated packet fields: checksums, size fields and so
-                                             on. This includes any field, which can be set from
-                                             other information in the packet. Each concrete packet
-                                             type should document, which fields are set by
-                                             finalize().
+        void finalizeTo(Packet const & other);  ///< Update calculated fields
+        /**< The finalize() fammily of members will update
+             calculated packet fields: checksums, size fields and so
+             on. This includes any field, which can be set from
+             other information in the packet. Each concrete packet
+             type should document, which fields are set by
+             finalize().
 
-                                             finalizeTo(other) will automatically process all
-                                             packets/headers/interpreters beginning at \a other
-                                             backwards towards outer packets up to \c this. */
+             finalizeTo(other) will automatically process all
+             packets/headers/interpreters beginning at \a other
+             backwards towards outer packets up to \c this. */
 
         void finalizeAll();             ///< Update calculated fields
                                         /**< The finalize() fammily of members will update
@@ -449,35 +449,35 @@ namespace senf {
                                              finalizeAll() will automatically process all
                                              packets/headers/interpreters from the end of the chain
                                              (the most inner packet) backwards up to \c this. 
-                                             
+
                                              This call is equivalent to
                                              \code
-                                             p.finalizeTo(p.last())
+                                                 p.finalizeTo(p.last())
                                              \endcode 
-                                             
+
                                              Beware, that finalizeAll() will \e not finalize any
                                              headers before \c this, it will \e only process inner
                                              headers. */
 
         void dump(std::ostream & os) const; ///< Write out a printable packet representation
-                                        /**< This method is provided mostly to help debugging packet
-                                             problems. Each concrete packet should implement a dump
-                                             method writing out all fields of the packet in a
-                                             readable representation. dump() will call this member
-                                             for each packet/header/interpreter in the chain from \c
-                                             this packet up to the end of the chain. */
+        /**< This method is provided mostly to help debugging packet
+             problems. Each concrete packet should implement a dump
+             method writing out all fields of the packet in a
+             readable representation. dump() will call this member
+             for each packet/header/interpreter in the chain from \c
+             this packet up to the end of the chain. */
 
         TypeIdValue typeId() const;     ///< Get id of \c this packet
-                                        /**< This value is used e.g. in the packet registry to
-                                             associate packet types with other information.
-                                             \returns A type holding the same information as a
-                                                 type_info object, albeit assignable */
+        /**< This value is used e.g. in the packet registry to
+             associate packet types with other information.
+             \returns A type holding the same information as a
+                 type_info object, albeit assignable */
         factory_t factory() const;      ///< Return factory instance of \c this packet
-                                        /**< The returned factory instance can be used to create new
-                                             packets of the given type without knowing the concrete
-                                             type of the packet. The value may be stored away for
-                                             later use if needed. */
-        
+        /**< The returned factory instance can be used to create new
+             packets of the given type without knowing the concrete
+             type of the packet. The value may be stored away for
+             later use if needed. */
+
         ///@}
 
     protected:
@@ -488,9 +488,9 @@ namespace senf {
     private:
         Packet checkNext() const;
         Packet checkLast() const;
-        
+
         PacketInterpreterBase::ptr packet_;
-        
+
         template <class PacketType>
         friend class ConcretePacket;
         friend class PacketParserBase;
@@ -508,13 +508,13 @@ namespace senf {
 
         The new members provided by ConcretePacket over packet are mostly comprised of the packet
         constructors. These come in three major flavors:
-        
+
         \li The create() family of constructors will create completely new packets.
         \li The createAfter() family of constructors will create new packets (with new data for the
             packet) \e after a given existing packet.
         \li The createBefore()  family of constructors will create new packets (again with new data)
             \e before a given existing packet.
-        
+
         Whereas create() will create a completely new packet with it's own chain and data storage,
         createAfter() and createBefore() extend a packet with additional
         headers/interpreters. createAfter() will set the payload of the given packet to the new
@@ -524,10 +524,10 @@ namespace senf {
         createAfter() differs from Packet::parseNextAs() in that the former creates a new packet \e
         replacing any possibly existing data whereas the latter will interpret the already \e
         existing data as given by the type argument.
-        
+
         \see \ref PacketTypeBase for a specification of the interface to be provided by the \a
             PacketType policy class.
-      */
+     */
     template <class PacketType>
     class ConcretePacket 
         : public Packet
@@ -535,7 +535,7 @@ namespace senf {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-        
+
         typedef PacketType type;
         typedef typename PacketType::parser Parser;
 
@@ -549,40 +549,40 @@ namespace senf {
         // no conversion constructors
 
         ConcretePacket();               ///< Create uninitialized packet handle
-                                        /**< An uninitialized handle is not valid(). It does not
-                                             allow any operation except assignment and checking for
-                                             validity. */
+        /**< An uninitialized handle is not valid(). It does not
+             allow any operation except assignment and checking for
+             validity. */
 
         static factory_t factory();     ///< Return factory for packets of specific type
-                                        /**< This \e static member is like Packet::factory() for a
-                                             specific packet of type \a PacketType */
+        /**< This \e static member is like Packet::factory() for a
+             specific packet of type \a PacketType */
 
         // Create completely new packet
 
         static ConcretePacket create(); ///< Create default initialized packet
-                                        /**< The packet will be initialized to it's default empty
-                                             state. */
+        /**< The packet will be initialized to it's default empty
+             state. */
         static ConcretePacket create(senf::NoInit_t); ///< Create uninitialized empty packet
-                                        /**< This will create a completely empty and uninitialized
-                                             packet with <tt>size() == 0</tt>.
-                                             \param[in] senf::noinit This parameter must always have the
-                                                 value \c senf::noinit. */
+        /**< This will create a completely empty and uninitialized
+             packet with <tt>size() == 0</tt>.
+             \param[in] senf::noinit This parameter must always have the
+                 value \c senf::noinit. */
         static ConcretePacket create(size_type size); ///< Create default initialized packet
-                                        /**< This member will create a default initialized packet
-                                             with the given size. If the size parameter is smaller
-                                             than the minimum allowed packet size an exception will
-                                             be thrown.
-                                             \param[in] size Size of the packet to create in bytes.
-                                             \throws TruncatedPacketException if \a size is smaller
-                                                 than the smallest permissible size for this type of
-                                                 packet. */
+        /**< This member will create a default initialized packet
+             with the given size. If the size parameter is smaller
+             than the minimum allowed packet size an exception will
+             be thrown.
+             \param[in] size Size of the packet to create in bytes.
+             \throws TruncatedPacketException if \a size is smaller
+                 than the smallest permissible size for this type of
+                 packet. */
         static ConcretePacket create(size_type size, senf::NoInit_t); 
-                                        ///< Create uninitialized packet
-                                        /**< Creates an uninitialized (all-zero) packet of the exact
-                                             given size. 
-                                             \param[in] size Size of the packet to create in bytes
-                                             \param[in] senf::noinit This parameter must always have the
-                                                 value \c senf::noinit. */
+        ///< Create uninitialized packet
+        /**< Creates an uninitialized (all-zero) packet of the exact
+             given size. 
+             \param[in] size Size of the packet to create in bytes
+             \param[in] senf::noinit This parameter must always have the
+                 value \c senf::noinit. */
 #ifndef DOXYGEN
         template <class ForwardReadableRange>
         static ConcretePacket create(
@@ -591,105 +591,112 @@ namespace senf {
 #else
         template <class ForwardReadableRange>
         static ConcretePacket create(ForwardReadableRange const & range); 
-                                        ///< Create packet from given data
-                                        /**< The packet will be created from a copy of the given
-                                             data. The data from the range will be copied directly
-                                             into the packet representation. The data will \e not be
-                                             validated in any way.
-                                             \param[in] range <a
-                                                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a> 
-                                                 of data to construct packet from. */
+        ///< Create packet from given data
+        /**< The packet will be created from a copy of the given
+             data. The data from the range will be copied directly
+             into the packet representation. The data will \e not be
+             validated in any way.
+             \param[in] range <a
+                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a> 
+                 of data to construct packet from. */
 #endif
 
         // Create packet as new packet after a given packet
 
-        static ConcretePacket createAfter(Packet packet); 
-                                        ///< Create default initialized packet after \a packet
-                                        /**< The packet will be initialized to it's default empty
-                                             state. It will be appended as next header/interpreter
-                                             after \a packet in that packets interpreter chain.
-                                             \param[in] packet Packet to append new packet to. */
-        static ConcretePacket createAfter(Packet packet, senf::NoInit_t);
-                                        ///< Create uninitialized empty packet after\a packet
-                                        /**< This will create a completely empty and uninitialized
-                                             packet with <tt>size() == 0</tt>. It will be appended
-                                             as next header/interpreter after \a packet in that
-                                             packets interpreter chain.
-                                             \param[in] packet Packet to append new packet to.
-                                             \param[in] senf::noinit This parameter must always have the
-                                                 value \c senf::noinit. */
-        static ConcretePacket createAfter(Packet packet, size_type size);
-                                        ///< Create default initialized packet after \a packet
-                                        /**< This member will create a default initialized packet
-                                             with the given size. If the size parameter is smaller
-                                             than the minimum allowed packet size an exception will
-                                             be thrown. It will be appended as next
-                                             header/interpreter after \a packet in that packets
-                                             interpreter chain.
-                                             \param[in] packet Packet to append new packet to.
-                                             \param[in] size Size of the packet to create in bytes.
-                                             \throws TruncatedPacketException if \a size is smaller
-                                                 than the smallest permissible size for this type of
-                                                 packet. */
-        static ConcretePacket createAfter(Packet packet, size_type size, senf::NoInit_t);
-                                        ///< Create uninitialized packet after \a packet
-                                        /**< Creates an uninitialized (all-zero) packet of the exact
-                                             given size.  It will be appended as next
-                                             header/interpreter after \a packet in that packets
-                                             interpreter chain.
-                                             \param[in] packet Packet to append new packet to.
-                                             \param[in] size Size of the packet to create in bytes
-                                             \param[in] senf::noinit This parameter must always have the
-                                                 value \c senf::noinit. */
+        static ConcretePacket createAfter(Packet const & packet); 
+        ///< Create default initialized packet after \a packet
+        /**< The packet will be initialized to it's default empty
+             state. It will be appended as next header/interpreter
+             after \a packet in that packets interpreter chain.
+             \param[in] packet Packet to append new packet to. */
+        static ConcretePacket createAfter(Packet const & packet, senf::NoInit_t);
+        ///< Create uninitialized empty packet after\a packet
+        /**< This will create a completely empty and uninitialized
+             packet with <tt>size() == 0</tt>. It will be appended
+             as next header/interpreter after \a packet in that
+             packets interpreter chain.
+             \param[in] packet Packet to append new packet to.
+             \param[in] senf::noinit This parameter must always have the
+                 value \c senf::noinit. */
+        static ConcretePacket createAfter(Packet const & packet, size_type size);
+        ///< Create default initialized packet after \a packet
+        /**< This member will create a default initialized packet
+             with the given size. If the size parameter is smaller
+             than the minimum allowed packet size an exception will
+             be thrown. It will be appended as next
+             header/interpreter after \a packet in that packets
+             interpreter chain.
+             \param[in] packet Packet to append new packet to.
+             \param[in] size Size of the packet to create in bytes.
+             \throws TruncatedPacketException if \a size is smaller
+                 than the smallest permissible size for this type of
+                 packet. */
+        static ConcretePacket createAfter(Packet const & packet, size_type size, senf::NoInit_t);
+        ///< Create uninitialized packet after \a packet
+        /**< Creates an uninitialized (all-zero) packet of the exact
+             given size.  It will be appended as next
+             header/interpreter after \a packet in that packets
+             interpreter chain.
+             \param[in] packet Packet to append new packet to.
+             \param[in] size Size of the packet to create in bytes
+             \param[in] senf::noinit This parameter must always have the
+                 value \c senf::noinit. */
 #ifndef DOXYGEN
         template <class ForwardReadableRange>
         static ConcretePacket createAfter(
-            Packet packet, 
+            Packet const & packet, 
             ForwardReadableRange const & range,
             typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type * = 0);
 #else
         template <class ForwardReadableRange>
-        static ConcretePacket createAfter(Packet packet, 
+        static ConcretePacket createAfter(Packet const & packet, 
                                           ForwardReadableRange const & range);
-                                        ///< Create packet from given data after \a packet
-                                        /**< The packet will be created from a copy of the given
-                                             data. The data from the range will be copied directly
-                                             into the packet representation. The data will \e not be
-                                             validated in any way.  It will be appended as next
-                                             header/interpreter after \a packet in that packets
-                                             interpreter chain.
-                                             \param[in] packet Packet to append new packet to.
-                                             \param[in] range <a
-                                                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a> 
-                                                 of data to construct packet from. */
+        ///< Create packet from given data after \a packet
+        /**< The packet will be created from a copy of the given
+             data. The data from the range will be copied directly
+             into the packet representation. The data will \e not be
+             validated in any way.  It will be appended as next
+             header/interpreter after \a packet in that packets
+             interpreter chain.
+             \param[in] packet Packet to append new packet to.
+             \param[in] range <a
+                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a> 
+                 of data to construct packet from. */
 #endif
 
         // Create packet as new packet (header) before a given packet
 
-        static ConcretePacket createBefore(Packet packet); 
-                                        ///< Create default initialized packet before \a packet
-                                        /**< The packet will be initialized to it's default empty
-                                             state. It will be prepended as previous
-                                             header/interpreter before \a packet in that packets
-                                             interpreter chain.
-                                             \param[in] packet Packet to prepend new packet to. */
-        static ConcretePacket createBefore(Packet packet, senf::NoInit_t);
-                                        ///< Create uninitialized empty packet before \a packet
-                                        /**< Creates a completely empty and uninitialized packet. It
-                                             will be prepended as previous header/interpreter before
-                                             \a packet in that packets interpreter chain.
-                                             \param[in] packet Packet to prepend new packet to. */
+        static ConcretePacket createBefore(Packet const & packet); 
+        ///< Create default initialized packet before \a packet
+        /**< The packet will be initialized to it's default empty
+             state. It will be prepended as previous
+             header/interpreter before \a packet in that packets
+             interpreter chain.
+             \param[in] packet Packet to prepend new packet to. */
+        static ConcretePacket createBefore(Packet const & packet, senf::NoInit_t);
+        ///< Create uninitialized empty packet before \a packet
+        /**< Creates a completely empty and uninitialized packet. It
+             will be prepended as previous header/interpreter before
+             \a packet in that packets interpreter chain.
+             \param[in] packet Packet to prepend new packet to. */
         
         // Create a clone of the current packet
 
         ConcretePacket clone() const;
-
+         
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-
+         
         // Field access
+         
+        struct ParserProxy 
+        {
+            ParserProxy(Parser const & p) : p_ (p) {}
+            Parser * operator->() { return &p_; }
+            Parser p_;
+        };
 
-        Parser * operator->() const;    ///< Access packet fields
+        ParserProxy operator->() const;    ///< Access packet fields
                                         /**< This operator allows to access the parsed fields of the
                                              packet using the notation <tt>packet->field()</tt>. The
                                              fields of the packet are specified by the PacketType's

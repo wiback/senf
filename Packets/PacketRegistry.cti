@@ -66,14 +66,14 @@ prefix_ typename boost::optional<typename Tag::key_t> senf::PacketRegistry<Tag>:
 }
 
 template <class Tag>
-prefix_ typename Tag::key_t senf::PacketRegistry<Tag>::key(Packet packet)
+prefix_ typename Tag::key_t senf::PacketRegistry<Tag>::key(Packet const & packet)
 {
     return registry().key(packet.typeId());
 }
 
 template <class Tag>
 prefix_ typename boost::optional<typename Tag::key_t>
-senf::PacketRegistry<Tag>::key(Packet packet, NoThrow_t)
+senf::PacketRegistry<Tag>::key(Packet const & packet, NoThrow_t)
 {
     return registry().key(packet.typeId(),true);
 }

@@ -92,6 +92,22 @@ ConstVariableAttributor(QueryOverload & queryOverload)
     : queryOverload_ (queryOverload)
 {}
 
+template <class Variable>
+prefix_ senf::console::OverloadedCommandNode &
+senf::console::ConstVariableAttributor<Variable>::node()
+    const
+{
+    return queryOverload_.node();
+}
+
+template <class Variable>
+prefix_ senf::console::ConstVariableAttributor<Variable>::
+operator senf::console::OverloadedCommandNode &()
+    const
+{
+    return node();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::VariableAttributor<Variable>
 

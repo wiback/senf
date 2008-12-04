@@ -30,8 +30,6 @@
 #include "../boost/intrusive/ilist.hpp"
 #include <boost/optional.hpp>
 #include <boost/range.hpp>
-#include <boost/type_traits/aligned_storage.hpp>
-#include <boost/type_traits/alignment_of.hpp>
 #include "../Utils/intrusive_refcount.hh"
 #include "../Utils/pool_alloc_mixin.hh"
 #include "../Utils/Tags.hh"
@@ -258,8 +256,6 @@ namespace senf {
         // no copy
         // no conversion constructors
 
-        ~PacketInterpreter();
-
         static factory_t factory();
 
         // Create completely new packet
@@ -296,7 +292,6 @@ namespace senf {
         // Packet field access
 
         parser fields();
-        parser * fields_p();
 
         // PacketType access
 
@@ -372,11 +367,6 @@ namespace senf {
         };
 
         static const FactoryImpl factory_;
-
-        parser * parser_p();
-
-        boost::aligned_storage< sizeof(parser), 
-                                boost::alignment_of<parser>::value > parserStorage_;
 
         friend class detail::packet::test::TestDriver;
         friend class PacketInterpreterBase;

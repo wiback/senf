@@ -57,7 +57,7 @@ namespace ppi {
                                     senf::ConnectedCommunicationPolicy>::policy > Handle;
                                         ///< Handle type supported by this writer
 
-        void operator()(Handle handle, Packet packet);
+        void operator()(Handle handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -80,7 +80,7 @@ namespace ppi {
         void destination(senf::INet4SocketAddress & dest);
         senf::INet4SocketAddress destination();
 
-        void operator()(Handle handle, Packet packet);
+        void operator()(Handle handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.
@@ -108,7 +108,7 @@ namespace ppi {
         void destination(senf::INet6SocketAddress & dest);
         senf::INet6SocketAddress destination();
 
-        void operator()(Handle handle, Packet packet);
+        void operator()(Handle handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
                                         /**< Write the complete \a packet as a datagram to \a
                                              handle.

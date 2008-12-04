@@ -108,7 +108,7 @@ prefix_ senf::Packet senf::Packet::parseNextAs(factory_t factory)
     return Packet(ptr()->parseNextAs(factory));
 }
 
-prefix_ senf::Packet senf::Packet::append(Packet packet)
+prefix_ senf::Packet senf::Packet::append(Packet const & packet)
     const
 {
     return Packet(ptr()->append(packet.ptr()));
@@ -131,7 +131,7 @@ prefix_ senf::Packet::size_type senf::Packet::size()
 
 // Other methods
 
-prefix_ bool senf::Packet::operator==(Packet other)
+prefix_ bool senf::Packet::operator==(Packet const & other)
     const
 {
     return ptr() == other.ptr();
@@ -142,7 +142,7 @@ prefix_ void senf::Packet::finalizeThis()
     ptr()->finalizeThis();
 }
 
-prefix_ void senf::Packet::finalizeTo(Packet other)
+prefix_ void senf::Packet::finalizeTo(Packet const & other)
 {
     ptr()->finalizeTo(other.ptr());
 }

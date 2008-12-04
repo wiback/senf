@@ -152,7 +152,7 @@ namespace senf {
             \returns key of the packet
             \throws PacketTypeNotRegistered if the packet type is not found in the registry.
          */
-        static typename Tag::key_t key(Packet packet);
+        static typename Tag::key_t key(Packet const & packet);
 
         /** \brief Find key of a packet
 
@@ -163,7 +163,7 @@ namespace senf {
                 href="http://www.boost.org/libs/optional/doc/optional.html">boost::optional</a> or
                 an unbound optional, if the key is not found.
          */
-        static typename boost::optional<typename Tag::key_t> key(Packet packet, NoThrow_t);
+        static typename boost::optional<typename Tag::key_t> key(Packet const & packet, NoThrow_t);
 
         /** \brief Lookup a packet by it's key
 

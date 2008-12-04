@@ -48,7 +48,8 @@ prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::destination(senf::INet4Soc
     protocolId_ = dest.port();
 }
 
-prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::operator()(Handle handle, Packet packet){
+prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::operator()(Handle handle, 
+								 Packet const & packet){
     sendtoandfrom(
             handle.fd(),
             reinterpret_cast<void*> (&*packet.data().begin()),
@@ -119,7 +120,8 @@ prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::destination(senf::INet6Soc
     protocolId_ = dest.port();
 }
 
-prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::operator()(Handle handle, Packet packet){
+prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::operator()(Handle handle, 
+								 Packet const & packet){
     sendtoandfrom(
             handle.fd(),
             reinterpret_cast<void*> (&*packet.data().begin()),

@@ -204,28 +204,29 @@ create(ForwardReadableRange const & range,
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createAfter(Packet packet)
+senf::ConcretePacket<PacketType>::createAfter(Packet const & packet)
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr()));
 }
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createAfter(Packet packet, senf::NoInit_t)
+senf::ConcretePacket<PacketType>::createAfter(Packet const & packet, senf::NoInit_t)
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr(),senf::noinit));
 }
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createAfter(Packet packet, size_type size)
+senf::ConcretePacket<PacketType>::createAfter(Packet const & packet, size_type size)
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr(), size));
 }
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createAfter(Packet packet, size_type size, senf::NoInit_t)
+senf::ConcretePacket<PacketType>::createAfter(Packet const & packet, size_type size, 
+                                              senf::NoInit_t)
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr(), size, senf::noinit));
 }
@@ -235,7 +236,7 @@ senf::ConcretePacket<PacketType>::createAfter(Packet packet, size_type size, sen
 template <class PacketType>
 template <class ForwardReadableRange>
 prefix_ senf::ConcretePacket<PacketType> senf::ConcretePacket<PacketType>::
-createAfter(Packet packet, ForwardReadableRange const & range,
+createAfter(Packet const & packet, ForwardReadableRange const & range,
             typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type *)
 {
     return ConcretePacket(interpreter::createAfter(packet.ptr(), range));
@@ -247,14 +248,14 @@ createAfter(Packet packet, ForwardReadableRange const & range,
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createBefore(Packet packet)
+senf::ConcretePacket<PacketType>::createBefore(Packet const & packet)
 {
     return ConcretePacket(interpreter::createBefore(packet.ptr()));
 }
 
 template <class PacketType>
 prefix_ senf::ConcretePacket<PacketType>
-senf::ConcretePacket<PacketType>::createBefore(Packet packet, senf::NoInit_t)
+senf::ConcretePacket<PacketType>::createBefore(Packet const & packet, senf::NoInit_t)
 {
     return ConcretePacket(interpreter::createBefore(packet.ptr(), senf::noinit));
 }
@@ -272,19 +273,19 @@ senf::ConcretePacket<PacketType>::clone()
 // Field access
 
 template <class PacketType>
-prefix_ typename senf::ConcretePacket<PacketType>::Parser *
-senf::ConcretePacket<PacketType>::operator->()
-    const
-{
-    return ptr()->fields_p();
-}
-
-template <class PacketType>
 prefix_ typename senf::ConcretePacket<PacketType>::Parser
 senf::ConcretePacket<PacketType>::parser()
     const
 {
     return ptr()->fields();
+}
+
+template <class PacketType>
+prefix_ typename senf::ConcretePacket<PacketType>::ParserProxy
+senf::ConcretePacket<PacketType>::operator->()
+    const
+{
+    return ParserProxy(parser());
 }
 
 // private members

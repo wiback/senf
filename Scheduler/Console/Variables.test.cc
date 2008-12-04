@@ -79,11 +79,11 @@ BOOST_AUTO_UNIT_TEST(variables)
                       "\n"
                       "Current blorg limit\n");
 
-    dir.add("refvar", boost::ref(var))
+    senf::console::CommandNode & refvar (dir.add("refvar", boost::ref(var))
         .doc("Current blorg limit")
         .formatter(&testFormatter)
         .parser(&testParser)
-        .typeName("number");
+        .typeName("number"));
 
     dir.add("crefvar", boost::cref(var))
         .doc("Current blorg limit")

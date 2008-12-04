@@ -32,7 +32,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-senf::ppi::module::CloneSource::CloneSource(senf::Packet packet)
+senf::ppi::module::CloneSource::CloneSource(senf::Packet const & packet)
     : packet_(packet)
 {
     noroute(output);
@@ -43,7 +43,7 @@ void senf::ppi::module::CloneSource::request()
 {
     output(packet_.clone());
 }
-void senf::ppi::module::CloneSource::replacePacket(senf::Packet packet)
+void senf::ppi::module::CloneSource::replacePacket(senf::Packet const & packet)
 {
     packet_ = packet;
 }

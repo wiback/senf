@@ -60,12 +60,6 @@ prefix_ Annotation & senf::PacketInterpreterBase::annotation()
 // senf::PacketInterpreter<PacketType>
 
 template <class PacketType>
-prefix_ senf::PacketInterpreter<PacketType>::~PacketInterpreter()
-{
-    parser_p()->~parser();
-}
-
-template <class PacketType>
 prefix_ typename senf::PacketInterpreter<PacketType>::factory_t
 senf::PacketInterpreter<PacketType>::factory()
 {
@@ -132,32 +126,6 @@ senf::PacketInterpreter<PacketType>::fields()
     return parser (data().begin(),&data());
 }
 
-template <class PacketType>
-prefix_ typename senf::PacketInterpreter<PacketType>::parser *
-senf::PacketInterpreter<PacketType>::fields_p()
-{
-    // This is somewhat awkward. We want to allow the user to access the packet's field using the
-    // 'operator->' member of the packet class (the handle). Now, 'operator->' *must* return a
-    // pointer to a non-dynamically allocated object. So where should it point to? We need to return
-    // a pointer to a parser instance, but parser instances are designed to be transient (they are
-    // invalidated whenever a packet's size is changed).
-
-    // What we do is the following: parserStorage_ is an (initialy uninitialized) storage area
-    // within the interpreter with enough space (and correct alignment) to take hold of a parser
-    // instance. In the constructor we use placement new to construct a parser in this area which we
-    // explicit dispose of in the destructor. Now, whenever the fields_p() member is called, we
-    // destroy the parser object and recreate it. 
-
-    // This does introduce one additional problem: It is not safe for multiple threads to
-    // concurrently read from the same packet. On the other hand, the packet classes are not
-    // syncronized in any way and are not safe to use from multiple threads anyways (e.g. the lazy
-    // packet chain makes some read-only operations change the packet which is not thread safe).
-
-    parser_p()->~parser();
-    new (parser_p()) parser (data().begin(),&data());
-    return parser_p();
-}
-
 ////////////////////////////////////////
 // private members
 
@@ -183,17 +151,13 @@ template <class PacketType>
 prefix_ senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl,
                                                                iterator b, iterator e, Append_t)
     : PacketInterpreterBase(impl,b,e,Append)
-{
-    new (parser_p()) parser (data().begin(),&data());
-}
+{}
 
 template <class PacketType>
 prefix_ senf::PacketInterpreter<PacketType>::PacketInterpreter(detail::PacketImpl * impl,
                                                                iterator b, iterator e, Prepend_t)
     : PacketInterpreterBase(impl,b,e,Prepend)
-{
-    new (parser_p()) parser (data().begin(),&data());
-}
+{}
 
 // PacketType access
 
@@ -216,13 +180,6 @@ template <class PacketType>
 prefix_ void senf::PacketInterpreter<PacketType>::init()
 {
     return type::init(ConcretePacket<PacketType>(ptr(this)));
-}
-
-template <class PacketType>
-prefix_ typename senf::PacketInterpreter<PacketType>::parser *
-senf::PacketInterpreter<PacketType>::parser_p()
-{
-    return reinterpret_cast<parser *>(&parserStorage_);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

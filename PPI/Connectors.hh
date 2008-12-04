@@ -350,7 +350,7 @@ namespace connector {
         InputConnector();
 
     private:
-        void enqueue(Packet p);
+        void enqueue(Packet const & p);
 
         virtual void v_requestEvent();
         virtual void v_enqueueEvent();
@@ -371,9 +371,9 @@ namespace connector {
         : public virtual Connector
     {
     public:
-        void operator()(Packet p);      ///< Send out a packet
+        void operator()(Packet const & p);      ///< Send out a packet
 
-        void write(Packet p);           ///< Alias for operator()(Packet p)
+        void write(Packet const & p);           ///< Alias for operator()(Packet p)
 
         InputConnector & peer() const;
 

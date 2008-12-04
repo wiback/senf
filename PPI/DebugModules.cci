@@ -38,7 +38,7 @@ prefix_ senf::ppi::module::debug::ActiveSource::ActiveSource()
     noroute(output);
 }
 
-prefix_ void senf::ppi::module::debug::ActiveSource::submit(Packet packet)
+prefix_ void senf::ppi::module::debug::ActiveSource::submit(Packet const & packet)
 {
     output(packet);
 }
@@ -68,7 +68,7 @@ prefix_ void senf::ppi::module::debug::PassiveSource::unthrottle()
     output.unthrottle();
 }
 
-prefix_ void senf::ppi::module::debug::PassiveSource::submit(Packet packet)
+prefix_ void senf::ppi::module::debug::PassiveSource::submit(Packet const & packet)
 {
     packets_.push_back(packet);
     output.unthrottle();

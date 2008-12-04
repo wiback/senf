@@ -84,7 +84,7 @@ namespace debug {
 
         ActiveSource();
 
-        void submit(Packet packet);     ///< Submit packet
+        void submit(Packet const & packet);     ///< Submit packet
                                         /**< \pre boolean_test() is \c true */
 
         bool boolean_test() const;      ///< \c true if \a output is not throttled
@@ -113,7 +113,7 @@ namespace debug {
         void throttle();                ///< Throttle output connector
         void unthrottle();              ///< Unthrottle output connector
 
-        void submit(Packet packet);     ///< Enqueue packet
+        void submit(Packet const & packet);     ///< Enqueue packet
 
         bool empty();                   ///< \c true if queue is empty
         size_type size();               ///< Number of packets in queue

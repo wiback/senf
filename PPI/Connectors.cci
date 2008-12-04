@@ -258,7 +258,7 @@ prefix_ senf::ppi::connector::InputConnector::InputConnector()
 ////////////////////////////////////////
 // private members
 
-prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet p)
+prefix_ void senf::ppi::connector::InputConnector::enqueue(Packet const & p)
 {
     queue_.push_front(p);
     v_enqueueEvent();
@@ -273,13 +273,13 @@ prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConne
     return dynamic_cast<InputConnector&>(Connector::peer());
 }
 
-prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet p)
+prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet const & p)
 {
     if (connected())
         peer().enqueue(p);
 }
 
-prefix_ void senf::ppi::connector::OutputConnector::write(Packet p)
+prefix_ void senf::ppi::connector::OutputConnector::write(Packet const & p)
 {
     operator()(p);
 }

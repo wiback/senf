@@ -84,6 +84,9 @@ namespace console {
         ConstVariableAttributor doc(std::string const & doc);
         ConstVariableAttributor formatter(Formatter formatter);
 
+        OverloadedCommandNode & node() const; ///< Return the node object
+        operator OverloadedCommandNode & () const; ///< Automatically convert to node object
+
     protected:
         explicit ConstVariableAttributor(QueryOverload & queryOverload);
 
@@ -100,8 +103,8 @@ namespace console {
         variables type to set the variable and another one taking no arguments and just querying the
         current variable value.
         \code
-        int var;
-        ScopedDirectory<> dir;
+            int var;
+            ScopedDirectory<> dir;
 
         dir.add("var", var);
         \endcode
@@ -118,12 +121,12 @@ namespace console {
         boost::cref(). Such a variable cannot be changed only queried. Therefore, it does not have
         the parser() and typeName() attributes.
         \code
-        dir.add("const_var", boost::cref(var))
+            dir.add("const_var", boost::cref(var))
         \endcode
 
         \ingroup console_commands
      */
-   template <class Variable>
+    template <class Variable>
     class VariableAttributor
         : public ConstVariableAttributor<Variable>
     {
@@ -139,36 +142,36 @@ namespace console {
 
         VariableAttributor doc(std::string const & doc); ///< Set documentation of the variable
         VariableAttributor formatter(Formatter formatter); ///< Set formatter
-                                        /**< The \a formatter must be a callable with a signature
-                                             compatible with
-                                             \code
-                                             void formatter(Variable const & value, std::ostream & os);
-                                             \endcode
-                                             The \a formatter takes the return value of the call \a
-                                             value and writes it properly formated to \a os. */
+        /**< The \a formatter must be a callable with a signature
+             compatible with
+             \code
+                 void formatter(Variable const & value, std::ostream & os);
+             \endcode
+                 The \a formatter takes the return value of the call \a
+                 value and writes it properly formated to \a os. */
        
         VariableAttributor parser(Parser parser); ///< Set argument parser
-                                        /**< The parser is an arbitrary callable object with
-                                             the signature
-                                             \code
-                                                 void parser(senf::console::ParseCommandInfo::TokensRange const & tokens, value_type & out);
-                                             \endcode
+        /**< The parser is an arbitrary callable object with
+             the signature
+             \code
+                 void parser(senf::console::ParseCommandInfo::TokensRange const & tokens, value_type & out);
+             \endcode
 
-                                             where \c value_type is the type of the overload
-                                             parameter. The parser must read and parse the complete
-                                             \a tokens range and return the parsed value in \a
-                                             out. If the parser fails, it must raise a
-                                             senf::console::SyntaxErrorException. */
+             where \c value_type is the type of the overload
+             parameter. The parser must read and parse the complete
+             \a tokens range and return the parsed value in \a
+             out. If the parser fails, it must raise a
+             senf::console::SyntaxErrorException. */
         VariableAttributor typeName(std::string const & name); ///< Set name of the variable type
         VariableAttributor onChange(OnChangeHandler handler); ///< Set change callback
-                                        /**< The \a handler callback is called, whenever the value
-                                             of the variable is changed. The new value has already
-                                             been set, when the callback is called, the old value is
-                                             passed to the callback. The callback must have a
-                                             signature compatible to
-                                             \code
-                                             void handler(Variable const & oldValue);
-                                             \endcode */
+        /**< The \a handler callback is called, whenever the value
+             of the variable is changed. The new value has already
+             been set, when the callback is called, the old value is
+             passed to the callback. The callback must have a
+             signature compatible to
+             \code
+                 void handler(Variable const & oldValue);
+             \endcode */
  
     protected:
 
