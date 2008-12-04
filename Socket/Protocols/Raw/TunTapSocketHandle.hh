@@ -1,9 +1,9 @@
 // $Id:PacketSocketHandle.hh 218 2007-03-20 14:39:32Z tho $
 //
-// Copyright (C) 2006
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+//     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,23 +52,28 @@ namespace senf {
         ConnectedCommunicationPolicy,
         ReadablePolicy,
         WriteablePolicy
-        >::policy Tap_Policy;        ///< Policy for TAP
+        >::policy Tap_Policy;        ///< Policy for TapSocketProtocol
 
-    /** \brief TAP
-
-        \todo document me
+    /** \brief SocketProcol for the tap pseudo-device.
 
         \par Socket Handle typedefs:
-
+            \ref TapSocketHandle
 
         \par Policy Interface:
+            ClientSocketHandle::read() ...
 
+        The TapSocketProtocol provides access to the Linux tap device.
 
-        \par Address Type:
-
+        The tap device is a virtual ethernet network device. The tap driver was designed as low
+        level kernel support for ethernet tunneling. Userland application can write Ethernet
+        frames to the socket and kernel will receive this frames from the tap interface.
+        In the same time every frame that kernel writes to the tap interface can be read by
+        userland application from the socket.
 
         This class is utilized as the protocol class of the ProtocolClientSocketHandle via the
-        Socket Handle typedefs above.
+        Socket Handle typedef above.
+
+        \see <a href="http://www.kernel.org/pub/linux/kernel/people/marcelo/linux-2.4/Documentation/networking/tuntap.txt">Kernel documentation for the TUN/TAP device driver.</a>
      */
     class TapSocketProtocol
         : public ConcreteSocketProtocol<Tap_Policy,TapSocketProtocol>,
@@ -77,16 +82,30 @@ namespace senf {
     public:
         ///\name Constructors
         ///@{
-        std::string init_client() const;
-                                        ///< Create TAP socket
-                                        /**< \todo document me */
+        void init_client() const;       ///< Open tap socket and create new tap interface
+                                        /**< Opens the tun/tap socket and create a new tap interface
+                                             Use \ref ifaceName() to get the actual name of the newly
+                                             created interface.
+             
+                                             The new interface is down and has to be set up separately. 
+                                             After closing the socket, the tap interface and all
+                                             corresponding routes will be deleted automatically. */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
-        std::string init_client(std::string const & interface_name, bool const NO_PI=true) const;
-                                        ///< Create TAP socket
-                                        /**< \todo document me
-                                             \param[in] address remote address to connect to */
+        void init_client(std::string const & interface_name, bool NO_PI=true) const;
+                                        ///< Open tap socket and create new tap interface
+                                        /**< Opens the tun/tap socket and create a new tap interface
+                                             with the given name. Note that the created interface can
+                                             have a different name as specified. Use \ref ifaceName()
+                                             to get the actual name.
+                                             
+                                             The new interface is down and has to be set up separately. 
+                                             After closing the socket, the tap interface and all
+                                             corresponding routes will be deleted automatically. 
+                                             \param[in] interface_name name of the new tap interface.
+                                             \param[in] NO_PI if set to \c false each packet has a 
+                                                 additional 4 bytes header (flags, proto) */
                                         /**< \note This member is implicitly called from the
                                              ProtocolClientSocketHandle::ProtocolClientSocketHandle()
                                              constructor */
@@ -97,9 +116,9 @@ namespace senf {
         ///@{
 
         unsigned available() const;
-        bool eof() const;
-        unsigned int ifaceIndex() const;
-        std::string ifaceName() const;
+        bool eof() const;               ///< returns always false.
+        unsigned int ifaceIndex() const;///< returns the index of the correspondent tap interface
+        std::string ifaceName() const;  ///< returns the actual name of the correspondent tap interface  
 
     private:
     	mutable unsigned int ifaceIndex_;
@@ -108,7 +127,7 @@ namespace senf {
 
     typedef ProtocolClientSocketHandle<TapSocketProtocol> TapSocketHandle;
                                         ///< SocketHandle of TapSocketProtocol
-                                        /**< \related TapPrototol */
+                                        /**< \related TapSocketProtocol */
 
     /// @}
 }

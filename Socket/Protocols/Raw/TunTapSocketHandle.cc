@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+//     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,13 +39,13 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ std::string senf::TapSocketProtocol::init_client()
+prefix_ void senf::TapSocketProtocol::init_client()
     const
 {
-    return init_client(std::string());
+    init_client(std::string());
 }
 
-prefix_ std::string senf::TapSocketProtocol::init_client(std::string const & interface_name, bool const NO_PI)
+prefix_ void senf::TapSocketProtocol::init_client(std::string const & interface_name, bool NO_PI)
     const
 {
     int f;
@@ -61,7 +61,6 @@ prefix_ std::string senf::TapSocketProtocol::init_client(std::string const & int
         SENF_THROW_SYSTEM_EXCEPTION( "Could not create tap device: ") << ifr.ifr_name << ".";
     ifaceIndex_ = if_nametoindex(ifr.ifr_name);
     fd(f);
-    return ifaceName();
 }
 
 prefix_ unsigned senf::TapSocketProtocol::available()

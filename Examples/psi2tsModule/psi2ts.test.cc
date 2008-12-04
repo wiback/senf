@@ -89,7 +89,7 @@ BOOST_AUTO_UNIT_TEST(one_section_to_one_transportpacket)
             ts_payload_data.end(),
             0xffu));
 }
-#include <senf/Utils/hexdump.hh>
+
 BOOST_AUTO_UNIT_TEST(one_section_to_two_transportpackets)
 {
     senf::ppi::module::debug::ActiveSource source;

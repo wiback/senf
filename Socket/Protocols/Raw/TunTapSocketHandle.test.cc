@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+//     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,11 +45,11 @@ BOOST_AUTO_UNIT_TEST(tapSocketHandle)
         BOOST_WARN_MESSAGE(false, "Cannot test senf::TunTapSocketHandle as non-root user");
         return;
     }
-    
+
     senf::TapSocketHandle handle ("tap_unittest");
     int ret = system( "/sbin/ifconfig tap_unittest up");
     BOOST_CHECK_EQUAL( WEXITSTATUS(ret), 0);
-    
+
     senf::PacketSocketHandle sock;
     BOOST_CHECK_NO_THROW( sock.bind(senf::LLSocketAddress("tap_unittest")) );
 }
@@ -57,7 +57,7 @@ BOOST_AUTO_UNIT_TEST(tapSocketHandle)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
