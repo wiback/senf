@@ -85,6 +85,8 @@ BOOST_AUTO_UNIT_TEST(variables)
         .parser(&testParser)
         .typeName("number"));
 
+    (void) refvar;
+
     dir.add("crefvar", boost::cref(var))
         .doc("Current blorg limit")
         .formatter(&testFormatter);
