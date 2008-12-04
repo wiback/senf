@@ -41,7 +41,7 @@ namespace module {
     /** \brief Route packets to destination according to some annotation value
 
         This router takes packet on a single input and directs them to one of it outputs depending
-        on a \link packet_usage_annotation packet annotation\endlink. Each output connected
+        on a \ref packet_usage_annotation "packet annotation". Each output connected
         will be associated with a single annotation value. Incoming packets for which no matching
         output is found are directed to a default output. If this output is left unconnected, those
         packets will be dropped.
