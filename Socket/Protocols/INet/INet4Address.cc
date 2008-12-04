@@ -89,11 +89,20 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
         reinterpret_cast<in_addr*>(*(ent->h_addr_list))->s_addr);
 }
 
+prefix_ std::string senf::INet4Address::toString() const {
+    char buffer[4*4];
+    ::in_addr ina;
+    ina.s_addr  = (*this).inaddr();
+    ::inet_ntop(AF_INET, & ina , buffer, sizeof(buffer));
+    buffer[sizeof(buffer)-1] = 0;
+    return buffer;
+}
+
 prefix_ bool senf::INet4Address::local()
     const
 {
     address_type l (address());
-    return 
+    return
         (l & 0xFF000000u) == 0x0A000000u ||
         (l & 0xFFF00000u) == 0xAC100000u ||
         (l & 0xFFFF0000u) == 0xA9FE0000u ||
@@ -147,7 +156,7 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4Address const & 
     char buffer[16];
     ina.s_addr = addr.inaddr();
     ::inet_ntop(AF_INET,&ina,buffer,16);
-    buffer[15] = 0; 
+    buffer[15] = 0;
     os << buffer;
     return os;
 }
@@ -156,7 +165,7 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4Address const & 
 #undef prefix_
 //#include "INet4Address.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

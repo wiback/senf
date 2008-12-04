@@ -40,9 +40,9 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     /** \brief IPv4 Internet address
-        
+
         INet4Address represents a simple IP address. It is modelled as a fixed-size
         container/sequence of 4 bytes.
 
@@ -50,7 +50,7 @@ namespace senf {
         \code
         // Used to construct constant INet4 addresses
         INet4Address(0xD3C2B1A0)
-        
+
         // Construct an INet4 address from it's string representation. All the standard address
         // representations are supported
         INet4Address::from_string("211.194.177.160")
@@ -87,13 +87,13 @@ namespace senf {
         \ingroup addr_group
       */
     class INet4Address
-        : public boost::array<boost::uint8_t,4>, 
+        : public boost::array<boost::uint8_t,4>,
           public comparable_safe_bool<INet4Address>
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-        
+
         typedef uint32_t address_type;  ///< Address representation as number in host byte order
         typedef uint32_t inaddr_type;   ///< Legacy address representation in network byte order
 
@@ -121,8 +121,8 @@ namespace senf {
                                              \throws AddressSyntaxException if the address cannot be
                                                  converted for some reason
                                              \param[in] s Address literal or hostname */
-        
-        template <class InputIterator> 
+
+        template <class InputIterator>
         static INet4Address from_data(InputIterator i);
                                         ///< Construct address from 4 bytes of raw data
                                         /**< from_data will build an address from 4 bytes of raw
@@ -153,12 +153,14 @@ namespace senf {
         bool boolean_test() const;      ///< \c true, if address is non-empty (!= 0.0.0.0)
 
         inaddr_type inaddr() const;     ///< Return the raw network byte order address
-                                        /**< This member is used to interact with legacy code. 
+                                        /**< This member is used to interact with legacy code.
                                              \return */
         address_type address() const;   ///< Return address represented as integer number
                                         /**< This member returns the address as an integer number in
                                              host byte order. This representation allows simple
                                              network math operations. */
+        std::string toString() const;
+                                        ///< get the string representation of this INet4Address
 
         ////@}
 
@@ -178,10 +180,10 @@ namespace senf {
 
         This helper allows to easily and efficiently check an INet4Address against an arbitrary but
         constant network prefix. The network prefix is represented by
-        
+
         \par ""
             <tt>senf::CheckINet4Network<</tt> <i>addr</i> <tt>,</tt> <i>prefix-len</i> <tt>></tt>
-        
+
         Where \a addr is the v4 Internet address as a 32-bit unsigned integer number in host byte
         order and \a prefix_len is the length of the network prefix. The class exposes a single
         static member <tt>match(</tt> <i>addr</i> <tt>)</tt> which matches the INet4Address \a addr
@@ -206,10 +208,10 @@ namespace senf {
 
     /** \brief IPv4 network prefix
 
-        This class represents an IPv4 network prefix in CIDR notation. 
+        This class represents an IPv4 network prefix in CIDR notation.
       */
     class INet4Network
-        : public boost::equality_comparable<INet4Network>, 
+        : public boost::equality_comparable<INet4Network>,
           public comparable_safe_bool<INet4Network>
     {
     public:
@@ -231,7 +233,7 @@ namespace senf {
         bool boolean_test() const;      ///< \c true, if INet4Network is non-empty
         bool operator==(INet4Network const & other) const;
                                         ///< Compare to networks for equality
-        
+
         bool match(INet4Address addr) const; ///< \c true, if the network includes \a addr
         bool match(INet4Network net) const; ///< \c true, if the network includes \a net
                                         /**< The is true, if \a net is sub-network (or the same as)
@@ -253,7 +255,7 @@ namespace senf {
                                              \code
                                              INet4Network("192.168.0.0/16").subnet(111u,24u) == INet4Network("192.168.111.0/24")
                                              INet4Network("192.168.111.0/24").subnet(1u,28u) == INet4Network("192.168.111.16/28")
-                                             \endcode 
+                                             \endcode
                                              \param[in] net network number
                                              \param[in] prefix_len length of subnet prefix */
 
@@ -270,7 +272,7 @@ namespace senf {
         \related INet4Network
      */
     std::ostream & operator<<(std::ostream & os, INet4Network const & addr);
-        
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
@@ -279,7 +281,7 @@ namespace senf {
 #include "INet4Address.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
