@@ -72,37 +72,40 @@ prefix_ bool senf::FileBody::valid()
 prefix_ bool senf::FileBody::readable()
     const
 {
-    return pollCheck(fd(),true);
+    return pollCheck(fd(),true,0);
 }
 
-prefix_ void senf::FileBody::waitReadable()
+prefix_ bool senf::FileBody::waitReadable(senf::ClockService::clock_type timeout)
     const
 {
-    pollCheck(fd(),true,true);
+    return pollCheck(fd(), true, 
+                     (timeout==-1?-1:senf::ClockService::in_milliseconds(timeout)) );
 }
 
 prefix_ bool senf::FileBody::writeable()
     const
 {
-    return pollCheck(fd(),false);
+    return pollCheck(fd(),false,0);
 }
 
-prefix_ void senf::FileBody::waitWriteable()
+prefix_ bool senf::FileBody::waitWriteable(senf::ClockService::clock_type timeout)
     const
 {
-    pollCheck(fd(),false,true);
+    return pollCheck(fd(), false, 
+                     (timeout==-1?-1:senf::ClockService::in_milliseconds(timeout)) );
 }
 
 prefix_ bool senf::FileBody::oobReadable()
     const
 {
-    return pollCheck(fd(),true,false,true);
+    return pollCheck(fd(),true,0,true);
 }
 
-prefix_ void senf::FileBody::waitOOBReadable()
+prefix_ bool senf::FileBody::waitOOBReadable(senf::ClockService::clock_type timeout)
     const
 {
-    pollCheck(fd(),true,true,true);
+    return pollCheck(fd(), true, 
+                     (timeout==-1?-1:senf::ClockService::in_milliseconds(timeout)), true);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -137,10 +140,10 @@ prefix_ bool senf::FileHandle::readable()
     return body().readable();
 }
 
-prefix_ void senf::FileHandle::waitReadable()
+prefix_ bool senf::FileHandle::waitReadable(senf::ClockService::clock_type timeout)
     const
 {
-    body().waitReadable();
+    return body().waitReadable(timeout);
 }
 
 prefix_ bool senf::FileHandle::writeable()
@@ -149,10 +152,10 @@ prefix_ bool senf::FileHandle::writeable()
     return body().writeable();
 }
 
-prefix_ void senf::FileHandle::waitWriteable()
+prefix_ bool senf::FileHandle::waitWriteable(senf::ClockService::clock_type timeout)
     const
 {
-    body().waitWriteable();
+    return body().waitWriteable(timeout);
 }
 
 prefix_ bool senf::FileHandle::oobReadable()
@@ -161,10 +164,10 @@ prefix_ bool senf::FileHandle::oobReadable()
     return body().oobReadable();
 }
 
-prefix_ void senf::FileHandle::waitOOBReadable()
+prefix_ bool senf::FileHandle::waitOOBReadable(senf::ClockService::clock_type timeout)
     const
 {
-    body().waitOOBReadable();
+    return body().waitOOBReadable(timeout);
 }
 
 prefix_ bool senf::FileHandle::blocking()

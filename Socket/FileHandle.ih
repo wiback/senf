@@ -105,11 +105,11 @@ namespace senf {
         void destroyClose();
 
         bool readable() const;
-        void waitReadable() const;
+        bool waitReadable(senf::ClockService::clock_type timeout) const;
         bool writeable() const;
-        void waitWriteable() const;
+        bool waitWriteable(senf::ClockService::clock_type timeout) const;
         bool oobReadable() const;
-        void waitOOBReadable() const;
+        bool waitOOBReadable(senf::ClockService::clock_type timeout) const;
 
         bool blocking() const;
         void blocking(bool status);
@@ -142,7 +142,7 @@ namespace senf {
     protected:
 
     private:
-        bool pollCheck(int fd, bool incoming, bool block=false, bool oob=false) const;
+        bool pollCheck(int fd, bool incoming, int timeout, bool oob=false) const;
 
         int fd_;
     };

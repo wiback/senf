@@ -68,6 +68,7 @@
 // Custom includes
 #include <memory> // std::auto_ptr
 #include "../Utils/safe_bool.hh"
+#include "../Scheduler/ClockService.hh"
 
 //#include "FileHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -137,16 +138,31 @@ namespace senf {
 
         bool readable() const;       ///< Check, whether a read on the handle would not block
                                      ///< (ignoring blocking state)
-        void waitReadable() const;   ///< Wait, until read on the handle would not block (ignoring
+        bool waitReadable(senf::ClockService::clock_type timeout = -1) const;  
+                                     ///< Wait, until read on the handle would not block (ignoring
                                      ///< blocking state)
+                                     /**< \param[in] timeout max time to wait, default is to wait
+                                              forever.  
+                                          \returns \c true, if handle became readable or \c false on
+                                              timeout. */
         bool writeable() const;      ///< Check, whether a write on the handle would not block
                                      ///< (ignoring blocking state)
-        void waitWriteable() const;  ///< Wait, until a write on the handle would not block
+        bool waitWriteable(senf::ClockService::clock_type timeout = -1) const;
+                                     ///< Wait, until a write on the handle would not block
                                      ///< (ignoring blocking state)
+                                     /**< \param[in] timeout max time to wait, default is to wait
+                                              forever.  
+                                          \returns \c true, if handle became writable or \c false on
+                                              timeout. */
         bool oobReadable() const;    ///< Check, whether a read of prioritized data on the handle 
                                      ///< would not block (ignoring blocking state)
-        void waitOOBReadable() const; ///< Wait, until read of prioritized data on the handle does
+        bool waitOOBReadable(senf::ClockService::clock_type timeout = -1) const; 
+                                     ///< Wait, until read of prioritized data on the handle does
                                      ///< not block (ignoring blocking state)
+                                     /**< \param[in] timeout max time to wait, default is to wait
+                                              forever.  
+                                          \returns \c true, if handle became readable for
+                                              out-of-band data or \c false on timeout. */
 
         bool blocking() const;       ///< Return current blocking state
         void blocking(bool status);  ///< Set blocking state

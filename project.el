@@ -1,6 +1,11 @@
 ;; Configuration file for cc-ide.el (Emacs C++ IDE extension, see http://g0dil.de)
 
- (defvar senf-c-style
+(defun check-namespace-indent (arg)
+  (save-excursion
+    (back-to-indentation)
+    (if (looking-at "namespace") [0] '+)))
+
+ (defconst senf-c-style
   '((c-basic-offset              . 4)
     (c-backslash-column          . 98)
     (c-cleanup-list              . (empty-defun-braces 
@@ -16,9 +21,9 @@
                                     (extern-lang-open after)
                                     (inexpr-class-open after)
                                     (inexpr-class-close before)))
-    (c-offsets-alist             . ((namespace-open . 0)
-                                    (namespace-close . 0)
-                                    (innamespace . +)
+    (c-offsets-alist             . ((namespace-open . [0])
+                                    (namespace-close . [0])
+                                    (innamespace . check-namespace-indent)
                                     (statement-block-intro . +)
                                     (substatement-open . 0)
                                     (label . 0)

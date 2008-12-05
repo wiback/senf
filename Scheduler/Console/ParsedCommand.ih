@@ -38,7 +38,7 @@ namespace console {
 
     template < class FunctionTraits, 
                class ReturnType=typename FunctionTraits::result_type, 
-              unsigned arity=FunctionTraits::arity >
+               unsigned arity=FunctionTraits::arity >
     class ParsedCommandOverload;
 
     template < class Overload, 

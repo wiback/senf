@@ -111,7 +111,7 @@ prefix_ void senf::FileBody::blocking(bool status)
 /* We don't take POLLIN/POLLOUT as argument to avoid having to include
    sys/poll.h in the .cci file (and therefore indirectly into the .hh
    and then every file which uses FileHandle) */
-prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, bool block, bool oob)
+prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, int timeout, bool oob)
     const
 {
     struct ::pollfd pfd;
@@ -120,7 +120,7 @@ prefix_ bool senf::FileBody::pollCheck(int fd, bool incoming, bool block, bool o
     pfd.events = incoming?(oob?POLLPRI:POLLIN):POLLOUT;
     int rv = -1;
     do {
-        rv = ::poll(&pfd,1,block?-1:0);
+        rv = ::poll(&pfd,1,timeout);
         if (rv<0)
             switch (errno) {
             case EINTR:
