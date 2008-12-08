@@ -49,6 +49,9 @@ prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::da()
         return addr3();
         break;
     }
+    //just to avoid compiler warning
+    //TODO
+    return addr1();
 }
 
 prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::sa()
@@ -67,6 +70,9 @@ prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::sa()
 //    case 3:
 //        return addr4();
     }
+    //just to avoid compiler warning
+    //TODO
+    return addr1();
 }
 
 prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::bssid()
@@ -83,6 +89,9 @@ prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::bssid()
     case 2:
         return addr2();
     }
+    //just to avoid compiler warning
+    //TODO
+    return addr1();
 }
 
 //shift some bits to read the 12bit sequence number bit field in LSB byte order
