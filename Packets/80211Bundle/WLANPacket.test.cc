@@ -59,19 +59,21 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
     BOOST_CHECK_EQUAL( p->duration(),       0u    );
 
     BOOST_CHECK_EQUAL( 
-            p->dataFrame().da().value(),
+            p->dataFrame().destinationAddress().value(),
             senf::MACAddress::from_string("00:18:4d:6e:78:48") );
     BOOST_CHECK_EQUAL( 
-            p->dataFrame().sa().value(),
+            p->dataFrame().sourceAddress().value(),
             senf::MACAddress::from_string("00:0b:6b:57:06:b0") );
     BOOST_CHECK_EQUAL( 
             p->dataFrame().bssid().value(),
             senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
 
     BOOST_CHECK_EQUAL( 
-            p->dataFrame().bssid().value(), p->dataFrame().ra().value() );
+            p->dataFrame().bssid().value(), 
+            p->dataFrame().receiverAddress().value() );
     BOOST_CHECK_EQUAL( 
-            p->dataFrame().ta().value(), p->dataFrame().sa().value() );
+            p->dataFrame().transmitterAddress().value(), 
+            p->dataFrame().sourceAddress().value() );
 
     BOOST_CHECK_EQUAL( p->dataFrame().sequenceNumber(), 3u );
     BOOST_CHECK_EQUAL( p->dataFrame().fragmentNumber(), 0u );
@@ -129,7 +131,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
     BOOST_CHECK_EQUAL( p->order(),          false );
     BOOST_CHECK_EQUAL( p->duration(),       0u    );
 
-    BOOST_CHECK_EQUAL( p->has_mgtFrame(),   true  );
+    BOOST_CHECK_EQUAL( p->is_mgtFrame(),    true  );
 
     BOOST_CHECK_EQUAL( 
             p->mgtFrame().destinationAddress().value(),
@@ -193,7 +195,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_packet)
     BOOST_CHECK_EQUAL( p->duration(),       0u    );
 
     BOOST_CHECK_EQUAL( 
-            p->ctrlFrame().recieverAddress().value(),
+            p->ctrlFrame().receiverAddress().value(),
             senf::MACAddress::from_string("00:0b:6b:57:06:b0") );
 }
 
@@ -205,7 +207,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_create)
 //    std::cout << unsigned( senf::init_bytes<senf::WLANPacketParser_CtrlFrameParser>::value ) << "\n";
     SENF_CHECK_NO_THROW(p->init_ctrlFrame());
 //    std::cout << unsigned( senf::init_bytes<senf::WLANPacketParser_CtrlFrameParser>::value ) << "\n";
-    p->ctrlFrame().recieverAddress() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c");
+    p->ctrlFrame().receiverAddress() = senf::MACAddress::from_string("00:1a:4d:3e:c7:5c");
     p->ctrlFrame().set_ack();
     BOOST_CHECK_EQUAL( p->type(), 1u);
     BOOST_CHECK_EQUAL( p->subtype(), 13u);

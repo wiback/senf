@@ -75,7 +75,7 @@ namespace senf
         SENF_PARSER_SKIP_BITS        (           4                       ); //skip type and version
         //jump to fist address field
         SENF_PARSER_SKIP             ( 3, 3                              );
-        SENF_PARSER_FIELD            ( recieverAddress, MACAddressParser );
+        SENF_PARSER_FIELD            ( receiverAddress, MACAddressParser );
 
         //only RTS frame contains a source address field
         //variant is also needed to set correct subtype value
@@ -97,26 +97,26 @@ namespace senf
     struct WLANPacket_DataFrameParser : public senf::PacketParserBase
     {
     #   include SENF_PARSER()
-        SENF_PARSER_PRIVATE_BITFIELD    ( subtype,  4,  unsigned);
+        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned  );
         //jump to 'toDS' and 'fromDS' bits
         //skip type and version
-        SENF_PARSER_SKIP_BITS   ( 4                                    );
+        SENF_PARSER_SKIP_BITS        ( 4                       );
         //skip other flags
-        SENF_PARSER_SKIP_BITS   ( 6                                    );
+        SENF_PARSER_SKIP_BITS        ( 6                       );
         //needed in data frames due to the variable address fields
-        SENF_PARSER_PRIVATE_BITFIELD    ( dsBits,    2,  unsigned);
+        SENF_PARSER_PRIVATE_BITFIELD ( dsBits,  2,  unsigned   );
         //skip duration field
-        SENF_PARSER_SKIP        ( 2,0                          );
+        SENF_PARSER_SKIP             ( 2, 0                    );
 
-        SENF_PARSER_PRIVATE_FIELD               ( addr1, MACAddressParser        );
-        SENF_PARSER_PRIVATE_FIELD               ( addr2, MACAddressParser        );
-        SENF_PARSER_PRIVATE_FIELD               ( addr3, MACAddressParser        );
+        SENF_PARSER_PRIVATE_FIELD    ( addr1, MACAddressParser );
+        SENF_PARSER_PRIVATE_FIELD    ( addr2, MACAddressParser );
+        SENF_PARSER_PRIVATE_FIELD    ( addr3, MACAddressParser );
 
         //sequence Number and fragment number
         //shift bits manually due to LSB
-        SENF_PARSER_PRIVATE_BITFIELD    (seqNumber_1, 4, unsigned);
-        SENF_PARSER_BITFIELD    (fragmentNumber, 4, unsigned);
-        SENF_PARSER_PRIVATE_FIELD     (seqNumber_2, UInt8Parser)
+        SENF_PARSER_PRIVATE_BITFIELD ( seqNumber_1,    4, unsigned );
+        SENF_PARSER_BITFIELD         ( fragmentNumber, 4, unsigned );
+        SENF_PARSER_PRIVATE_FIELD    ( seqNumber_2,    UInt8Parser );
 
         //TODO fourth address field in case of WDS
 //        SENF_PARSER_PRIVATE_VARIANT (wds_, dsBits,
@@ -124,14 +124,12 @@ namespace senf
 //                ( id      ( addr4,  key (3,                   MACAddressParser                     ))) );
 
         //QoS Filed
-        SENF_PARSER_VARIANT (qosField_, subtype,
-                ( ids (na, na, set_data, key(0, VoidPacketParser)))
-                ( ids (na, na, set_nullData, key(4, VoidPacketParser)))
-                ( ids (qosField, has_qosField, set_qosData, key(8, UInt16LSBParser)))
+        SENF_PARSER_VARIANT ( qosField_, subtype,
+                ( ids( na,       na,           set_data,        key(0, VoidPacketParser)) )
+                ( ids( na,       na,           set_nullData,    key(4, VoidPacketParser)) )
+                ( ids( qosField, has_qosField, set_qosData,     key(8, UInt16LSBParser )) )
                 //we cannot parse qos Null (data) frames at the moment
-                ( ids (na, na, set_qosNullData, key(12, UInt16LSBParser))) );
-
-
+                ( ids( na,       na,           set_qosNullData, key(12, UInt16LSBParser)) ) );
 
         SENF_PARSER_FINALIZE(WLANPacket_DataFrameParser);
 
@@ -140,10 +138,10 @@ namespace senf
 
         boost::uint16_t sequenceNumber() const;
 
-        MACAddressParser ra() const { return addr1(); }; //ra is always addr1
-        MACAddressParser ta() const { return addr2(); }; //ta is always addr2
-        MACAddressParser sa() const;
-        MACAddressParser da() const;
+        MACAddressParser receiverAddress() const    { return addr1(); }; //ra is always addr1
+        MACAddressParser transmitterAddress() const { return addr2(); }; //ta is always addr2
+        MACAddressParser sourceAddress() const;
+        MACAddressParser destinationAddress() const;
         MACAddressParser bssid() const;
     };
 
@@ -173,14 +171,14 @@ namespace senf
         SENF_PARSER_BITFIELD    ( fromDS,         1,  bool     );
         SENF_PARSER_BITFIELD    ( toDS,           1,  bool     );
 
-        SENF_PARSER_FIELD (duration,          UInt16LSBParser);
+        SENF_PARSER_FIELD       ( duration,       UInt16LSBParser );
 
-        SENF_PARSER_GOTO( subtype ); //subparsers need to know the subtype
-        SENF_PARSER_VARIANT ( type__,             type,
-                (      id( mgtFrame,   WLANPacket_MgtFrameParser  ))
-                (      id( ctrlFrame,  WLANPacket_CtrlFrameParser ))
-                (      id( dataFrame,  WLANPacket_DataFrameParser ))
-                ( novalue( reserved,   WLANPacket_CtrlFrameParser )) );
+        SENF_PARSER_GOTO( subtype ); // subparsers need to know the subtype
+        SENF_PARSER_VARIANT ( frameType_,  type,
+                (     ids( mgtFrame,  is_mgtFrame,  init_mgtFrame,  WLANPacket_MgtFrameParser  ))
+                (     ids( ctrlFrame, is_ctrlFrame, init_ctrlFrame, WLANPacket_CtrlFrameParser ))
+                (     ids( dataFrame, is_dataFrame, init_dataFrame, WLANPacket_DataFrameParser ))
+                ( novalue( reserved,                                WLANPacket_CtrlFrameParser )) );
 
         SENF_PARSER_CUSTOM_FIELD( fcs, senf::UInt32Parser, fcs_t::fixed_bytes, fcs_t::fixed_bytes) {
           return parse<UInt32Parser>( data().size()-4 ); }
@@ -197,6 +195,16 @@ namespace senf
 
     };
 
+    /** \brief WLAN packet
+
+        \par Packet type (typedef):
+            \ref WLANPacket
+
+        \par Fields:
+            \ref WLANPacketParser
+
+        \ingroup protocolbundle_80211
+     */
     struct WLANPacketType
         : public senf::PacketTypeBase,
           public senf::PacketTypeMixin<WLANPacketType>

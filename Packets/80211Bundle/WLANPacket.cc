@@ -30,26 +30,18 @@
 
 #define prefix_
 
-prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::da()
+prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::destinationAddress()
     const
 {
-    switch (dsBits())
-    {
+    switch (dsBits()) {
     case 0 :
     case 2 :
         return addr1();
-        break;
-    case 1 :
-    case 3 :
-        return addr3();
-        break;
     }
-    //just to avoid compiler warning
-    //TODO
-    return addr1();
+    return addr3();
 }
 
-prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::sa()
+prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::sourceAddress()
     const
 {
     switch (dsBits())
@@ -114,19 +106,33 @@ prefix_ boost::uint16_t senf::WLANPacket_DataFrameParser::sequenceNumber()
 prefix_ void senf::WLANPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
-    os  << "802.11 MAC Frame:\n"
-        << "  Type              : " << unsigned (p->type()) << "\n"
-        << "  Subtype           : " << unsigned (p->subtype()) << "\n"
-        << "  Retransmission    : " << unsigned (p->retry()) << "\n"
-        << "  Duration          : " << unsigned (p->duration()) << "\n";
-
-    if (p->has_mgtFrame())
-    {
-        os << "  BSSID               : " << p->mgtFrame().bssid() << "\n";
-        os << "  Destination Address : " << p->mgtFrame().destinationAddress() << "\n";
-        os << "  Source Address      : " << p->mgtFrame().sourceAddress() << "\n";
+    os << "802.11 MAC Frame:\n"
+       << "  Type           : " << unsigned( p->type()) << "\n"
+       << "  Subtype        : " << unsigned( p->subtype()) << "\n"
+       << "  Retransmission : " << unsigned( p->retry()) << "\n"
+       << "  Duration       : " << unsigned( p->duration()) << "\n";
+    if (p->is_mgtFrame()) {
+        os << "  Management-Frame:\n" 
+           << "    BSSID               : " << p->mgtFrame().bssid() << "\n"
+           << "    Destination Address : " << p->mgtFrame().destinationAddress() << "\n"
+           << "    Source Address      : " << p->mgtFrame().sourceAddress() << "\n"
+           << "    Sequence Number     : " << unsigned( p->mgtFrame().sequenceNumber()) << "\n"
+           << "    Fragment Number     : " << unsigned( p->mgtFrame().fragmentNumber()) << "\n";
     }
-
+    if (p->is_ctrlFrame()) {
+        os << "  Control-Frame ";
+        if (p->ctrlFrame().is_cts()) os << "(CTS):\n";
+        if (p->ctrlFrame().is_ack()) os << "(ACK):\n";
+        if (p->ctrlFrame().is_rts()) os << "(RTS):\n";
+        os << "    Receiver Address : " << p->ctrlFrame().receiverAddress() << "\n";
+        if (p->ctrlFrame().is_rts())
+            os << "    Source Address : " << p->ctrlFrame().sourceAddress() << "\n";
+    }
+    if (p->is_dataFrame()) {
+        os << "  Data-Frame:\n"
+           << "    Sequence Number     : " << unsigned( p->mgtFrame().sequenceNumber()) << "\n"
+           << "    Fragment Number     : " << unsigned( p->mgtFrame().fragmentNumber()) << "\n";
+    }
 };
 
 
