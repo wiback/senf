@@ -121,7 +121,7 @@ namespace senf {
         std::string ifaceName() const;  ///< returns the actual name of the correspondent tap interface  
 
     private:
-    	mutable unsigned int ifaceIndex_;
+        mutable unsigned int ifaceIndex_;
         ///@}
     };
 

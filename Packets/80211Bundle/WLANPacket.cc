@@ -1,9 +1,9 @@
-// $Id: $
+// $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Christian Niephaus <christian.niephaus@fokus.fraunhofer.de>
+//     Christian Niephaus <cni@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,12 +30,7 @@
 
 #define prefix_
 
-namespace
-{
-
-}
-
-prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::da()
+prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::da()
     const
 {
     switch (dsBits())
@@ -54,7 +49,7 @@ prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::da()
     return addr1();
 }
 
-prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::sa()
+prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::sa()
     const
 {
     switch (dsBits())
@@ -75,7 +70,7 @@ prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::sa()
     return addr1();
 }
 
-prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::bssid()
+prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::bssid()
     const
 {
     switch (dsBits())
@@ -95,7 +90,7 @@ prefix_ senf::MACAddressParser senf::WLANPacketParser_DataFrameParser::bssid()
 }
 
 //shift some bits to read the 12bit sequence number bit field in LSB byte order
-prefix_ boost::uint16_t senf::WLANPacketParser_MgtFrameParser::sequenceNumber()
+prefix_ boost::uint16_t senf::WLANPacket_MgtFrameParser::sequenceNumber()
     const
 {
     boost::uint16_t seqN = 0;
@@ -106,7 +101,7 @@ prefix_ boost::uint16_t senf::WLANPacketParser_MgtFrameParser::sequenceNumber()
 }
 
 //shift some bits to read the 12bit sequence number bit field in LSB byte order
-prefix_ boost::uint16_t senf::WLANPacketParser_DataFrameParser::sequenceNumber()
+prefix_ boost::uint16_t senf::WLANPacket_DataFrameParser::sequenceNumber()
     const
 {
     boost::uint16_t seqN = 0;
@@ -127,9 +122,9 @@ prefix_ void senf::WLANPacketType::dump(packet p, std::ostream &os)
 
     if (p->has_mgtFrame())
     {
-        os << "  BSSID              : " << p->mgtFrame().bssid() << "\n";
-        os << "  Destination Addr.  : " << p->mgtFrame().da() << "\n";
-        os << "  Source Addr.  : " << p->mgtFrame().sa() << "\n";
+        os << "  BSSID               : " << p->mgtFrame().bssid() << "\n";
+        os << "  Destination Address : " << p->mgtFrame().destinationAddress() << "\n";
+        os << "  Source Address      : " << p->mgtFrame().sourceAddress() << "\n";
     }
 
 };

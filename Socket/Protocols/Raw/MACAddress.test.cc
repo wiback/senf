@@ -39,7 +39,7 @@
 
 BOOST_AUTO_UNIT_TEST(macAddress)
 {
-        std::string test ("A1-b2-C3:d4:E5:f6");
+    std::string test ("A1-b2-C3:d4:E5:f6");
     senf::MACAddress mac (senf::MACAddress::from_string(test));
 
     BOOST_CHECK_EQUAL( mac[0], 0xA1u );

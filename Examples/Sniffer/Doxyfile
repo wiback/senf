@@ -1,5 +1,7 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
+SHOW_NAMESPACES = NO
+ALPHABETICAL_INDEX = NO
 PROJECT_NAME = Sniffer
 EXAMPLE_PATH = .
 
