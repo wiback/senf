@@ -24,6 +24,7 @@
 
 // Custom includes
 #include "RadiotapPacket.hh"
+#include "WLANPacket.hh"
 #include "../../Packets/Packets.hh"
 #include <boost/io/ios_state.hpp>
 
@@ -33,14 +34,29 @@
 prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
-    os 	<< "Radiotap:\n"
-        << "  Version			: " << p->version() << "\n"
-        << "  Length			: " << p->length() << "\n";
+    os 	    << "Radiotap:\n"
+            << "  Version             : " << unsigned (p->version()) << "\n"
+            << "  Length              : " << unsigned (p->length()) << "\n";
+    if (p->has_dbmAntennaSignal())
+        os  << "  Signal              : " << signed (p-> dbmAntennaSignal()) << "\n";
+    if (p->has_tsft())
+        os  << "  MAC timestamp       : " << unsigned (p->tsft()) << "\n";
+    if (p->has_dbmAntennaNoise())
+        os  << "  Noise               : " << signed (p-> dbmAntennaNoise()) << "\n";
+
+
+
 }
 
 prefix_ void senf::RadiotapPacketType::finalize(packet p)
 {
+    //TODO
     p->length() << p.size();
+}
+
+prefix_ senf::PacketInterpreterBase::factory_t senf::RadiotapPacketType::nextPacketType(packet p)
+{
+    return WLANPacket::factory();
 }
 
 

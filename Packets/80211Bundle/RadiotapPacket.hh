@@ -35,6 +35,7 @@ namespace senf
 
     /** \brief Parse Flag field in Radiotap header
      * <b>Re-ordering of bits due to LSB byte order</b>
+     * (see http://www.radiotap.org/)
 
      */
     struct RadiotapPacketParser_Flags : public senf::PacketParserBase
@@ -84,6 +85,15 @@ namespace senf
 
         Parser implementing the Radiotap header
 
+        Radiotap requires that all fields in the radiotap header
+        are aligned to natural boundaries. For radiotap,
+        that means all 8-, 16-, 32-, and 64-bit fields
+        must begin on 8-, 16-, 32-, and 64-bit boundaries, respectively.
+        In this way, generators and parsers can avoid unaligned
+        accesses to radiotap capture fields. Radiotap-compliant
+        generators must insert padding before a capture field
+        to ensure its natural alignment.
+
         \see <a href="http://www.radiotap.org">Radiotap.org</a>
 
         \todo extended present field (bit 31 of present field is set)
@@ -112,7 +122,8 @@ namespace senf
         SENF_PARSER_BITFIELD_RO ( ratePresent,             1, bool );
         SENF_PARSER_BITFIELD_RO ( flagsPresent,            1, bool );
         SENF_PARSER_BITFIELD_RO ( tsftPresent,             1, bool );
-        SENF_PARSER_SKIP_BITS   ( 2                                ); //currently unused bits
+        SENF_PARSER_SKIP_BITS   ( 1                                ); //currently unused bits
+        SENF_PARSER_BITFIELD_RO ( fcsPresent,              1, bool );
         SENF_PARSER_BITFIELD_RO ( dbAntennaNoisePresent,   1, bool );
         SENF_PARSER_BITFIELD_RO ( dbAntennaSignalPresent,  1, bool );
         SENF_PARSER_BITFIELD_RO ( antennaPresent,          1, bool );
@@ -127,24 +138,43 @@ namespace senf
         /*
          * Radiotap data
          * parsing data according to present flags
+         *
+         * PARSER_SKIP required to skip correct length of padding bits
          */
+
+        /* macro to create required variant parser */
         #define OPTIONAL_FIELD(name, parser) SENF_PARSER_VARIANT \
             ( name##_, name##Present, \
               ( novalue( disable_##name, VoidPacketParser )) \
               (      id( name,           parser           )) );
 
+        /*  */
+        #define SKIP_OPTIONAL_PADDING(cond, parser, size) \
+            SENF_PARSER_SKIP( \
+                    (cond ? (size - (parser##__offset() + \
+                            senf::bytes(parser##_())) % size) % size : 0) , 0  );
+
         OPTIONAL_FIELD ( tsft,             UInt64LSBParser                     );
         OPTIONAL_FIELD ( flags,            RadiotapPacketParser_Flags          );
         OPTIONAL_FIELD ( rate,             UInt8Parser                         );
-        OPTIONAL_FIELD ( channelOptions,   RadiotapPacketParser_ChannelOptions );
+        SKIP_OPTIONAL_PADDING(channelOptionsPresent(), rate, 2);
+        OPTIONAL_FIELD ( channelOptions,   RadiotapPacketParser_ChannelOptions ) ;
+        SKIP_OPTIONAL_PADDING(fhssPresent(), channelOptions, 2);
         OPTIONAL_FIELD ( fhss,             UInt16LSBParser                     );
         OPTIONAL_FIELD ( dbmAntennaSignal, Int8Parser                          );
         OPTIONAL_FIELD ( dbmAntennaNoise,  Int8Parser                          );
+        SKIP_OPTIONAL_PADDING(lockQualityPresent(), dbmAntennaNoise, 2);
+        OPTIONAL_FIELD ( lockQuality,             UInt16LSBParser                     );
+        SKIP_OPTIONAL_PADDING(txAttenuationPresent(), lockQuality, 2);
         OPTIONAL_FIELD ( txAttenuation,    UInt16LSBParser                     );
+        SKIP_OPTIONAL_PADDING(dbTxAttenuationPresent(), txAttenuation, 2);
         OPTIONAL_FIELD ( dbTxAttenuation,  UInt16LSBParser                     );
+        OPTIONAL_FIELD ( dbmTxAttenuation, Int8Parser                     );
         OPTIONAL_FIELD ( antenna,          UInt8Parser                         );
         OPTIONAL_FIELD ( dbAntennaSignal,  UInt8Parser                         );
         OPTIONAL_FIELD ( dbAntennaNoise,   UInt8Parser                         );
+        SKIP_OPTIONAL_PADDING(fcsPresent(), dbAntennaNoise, 4)
+        OPTIONAL_FIELD ( fcs,              UInt32Parser                        );
 
         SENF_PARSER_INIT() {
             version() = 0;
@@ -177,6 +207,8 @@ namespace senf
 
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
+        static factory_t nextPacketType(packet p);
+
     };
 
     typedef senf::ConcretePacket<RadiotapPacketType> RadiotapPacket;

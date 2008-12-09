@@ -148,3 +148,25 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_create)
     BOOST_CHECK_EQUAL( p->length(), 26u );
     BOOST_CHECK( equal( p.data().begin(), p.data().end(), data ));
 }
+
+BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
+{
+    /* radiotap packet from ath9k with atheros card*/
+    unsigned char data[] = {
+            0x00, 0x00, 0x20, 0x00, 0x6f, 0x48, 0x00, 0x00, 0x87, 0xbb, 0x91, 0x7c, 0x3b, 0x00, 0x00, 0x00,
+            0x00, 0x04, 0x85, 0x09, 0x80, 0x04, 0xb2, 0xa1, 0x00, 0x00, 0x00, 0x00, 0xd5, 0x1a, 0xf7, 0x94
+    };
+    senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
+
+    /* mandatory fields*/
+    BOOST_CHECK_EQUAL( p->version(), 0u);
+    BOOST_CHECK_EQUAL( p->length(), 32u);
+
+    BOOST_CHECK_EQUAL( p->dbmAntennaSignal(), -78);
+    BOOST_CHECK_EQUAL( p->dbmAntennaNoise(), -95);
+    BOOST_CHECK_EQUAL( p->fcs(), 0xd51af794);
+    BOOST_CHECK_EQUAL( p->antenna(), 0u);
+
+
+}
+
