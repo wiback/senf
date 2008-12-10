@@ -91,11 +91,12 @@ namespace module {
         {
         public:
             typedef unspecified_type Handle;                       // type of handle requested
+            typedef unspecified_type PacketType                    // type of packet returned
 
             SomeReader();                                          // EITHER default constructible
             SomeReader(SomeReader const & other);                  // OR copy constructible
 
-            Packet operator()(Handle handle);                      // extraction function
+            PacketType operator()(Handle handle);                  // extraction function
         };
         \endcode
         Whenever the FileHandle object is ready for reading, the \a Reader's \c operator() is called

@@ -3,7 +3,9 @@
 (defun check-namespace-indent (arg)
   (save-excursion
     (back-to-indentation)
-    (if (looking-at "namespace") [0] '+)))
+    (if (and (looking-at "namespace")
+	     (not (looking-at ".*}")))
+	[0] '+)))
 
  (defconst senf-c-style
   '((c-basic-offset              . 4)

@@ -88,7 +88,7 @@ prefix_ void senf::log::Target::unroute(action_t action)
 // namespace senf::log::detail members
 
 template <class Stream, class Area, class Level>
-prefix_ void senf::log::detail::write(std::string msg)
+prefix_ void senf::log::detail::write(std::string const & msg)
 {
     TargetRegistry::instance().write(Stream::instance(), Area::instance(), Level::value, msg);
 }

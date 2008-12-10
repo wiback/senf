@@ -58,7 +58,7 @@ namespace detail {
         void updateRoutingCache(Target & target, StreamBase const & stream, unsigned limit) const; 
         void removeRoutingCache(Target & target, StreamBase const & stream) const; 
         void write(time_type timestamp, StreamBase const & stream, unsigned level,
-              std::string msg) const;
+                   std::string const & msg) const;
 
     private:
         struct RouteEntry {

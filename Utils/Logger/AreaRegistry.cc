@@ -89,7 +89,7 @@ prefix_ void senf::log::detail::AreaBase::removeRoutingCache(Target & target,
 
 prefix_ void senf::log::detail::AreaBase::write(time_type timestamp,
                                                 StreamBase const & stream, unsigned level,
-                                                std::string msg)
+                                                std::string const & msg)
     const
 {
     if (stream.index >= routingCache_.size())

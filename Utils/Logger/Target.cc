@@ -206,7 +206,7 @@ prefix_ void senf::log::Target::write(time_type timestamp,
 
 prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
                                                       AreaBase const & area, unsigned level,
-                                                      std::string msg)
+                                                      std::string const & msg)
 {
     if (fallbackRouting_) {
         if (level >= stream.defaultRuntimeLimit())

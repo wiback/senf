@@ -41,6 +41,17 @@ senf::make_transform_range(Range const & range, Fn const & fn)
         boost::make_transform_iterator(boost::end(range), fn) );
 }
 
+template <class Range, class Fn>
+prefix_ boost::iterator_range< 
+        boost::transform_iterator< Fn,
+                                   typename boost::range_iterator<Range>::type > >
+senf::make_transform_range(Range & range, Fn const & fn)
+{
+    return boost::make_iterator_range(
+        boost::make_transform_iterator(boost::begin(range), fn),
+        boost::make_transform_iterator(boost::end(range), fn) );
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

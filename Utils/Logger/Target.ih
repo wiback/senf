@@ -45,7 +45,7 @@ namespace detail {
         using senf::singleton<TargetRegistry>::instance;
 
         void write(StreamBase const & stream, AreaBase const & area, unsigned level, 
-                   std::string msg);
+                   std::string const & msg);
 
         void routed();
         bool fallbackRouting();
@@ -67,7 +67,7 @@ namespace detail {
 
     /** \brief Internal: Write log message */
     template <class Stream, class Area, class Level>
-    void write(std::string msg);
+    void write(std::string const & msg);
 
 #ifndef DOXYGEN
 
