@@ -43,12 +43,25 @@ char const * const senf::log::IOStreamTarget::LEVELNAMES_[8] = {
         "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
 
 prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)
-    : stream_(os)
+    : stream_ (os), noformat_ (false), showTime_ (true), showStream_ (false), showLevel_ (true),
+      showArea_ (true) 
 {
-    std::locale const & loc (stream_.getloc());
-    if (!std::has_facet<boost::posix_time::time_facet>(loc))
-        stream_.imbue( std::locale(
+    std::locale const & loc (datestream_.getloc());
+    datestream_.imbue( std::locale(
                            loc, new boost::posix_time::time_facet("%Y-%m-%d %H:%M:%S.%f-0000")) );
+    
+}
+
+prefix_ void senf::log::IOStreamTarget::timeFormat(std::string const & format)
+{
+    if (format.empty())
+        noformat_ = true;
+    else {
+        noformat_ = false;
+        std::locale const & loc (datestream_.getloc());
+        datestream_.imbue( std::locale(
+                               loc, new boost::posix_time::time_facet(format.c_str())) );
+    }
 }
 
 ////////////////////////////////////////
@@ -61,24 +74,35 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
 {
     std::string m (boost::trim_right_copy(message));
 
-    typedef boost::char_separator<char> Separator;
-    typedef boost::tokenizer<Separator> Tokenizer;
-    Separator separator ("\n");
-    Tokenizer tokenizer (m, separator);
-    Tokenizer::iterator i (tokenizer.begin());
-    Tokenizer::iterator const i_end (tokenizer.end());
+    if (!showTime_ && !showStream_ && !showLevel_ && !showArea_)
+        stream_ << m << std::endl;
+    else {
+        typedef boost::char_separator<char> Separator;
+        typedef boost::tokenizer<Separator> Tokenizer;
+        Separator separator ("\n");
+        Tokenizer tokenizer (m, separator);
+        Tokenizer::iterator i (tokenizer.begin());
+        Tokenizer::iterator const i_end (tokenizer.end());
 
-    char sep (' ');
+        if (showTime_) {
+            if (noformat_)
+                datestream_ << std::setfill('0') << std::setw(19) << timestamp;
+            else 
+                datestream_ << senf::ClockService::abstime(timestamp);
+            datestream_ << ' ';
+        }
+        if (showStream_)
+            datestream_ << '[' << stream << "] ";
+        if (showLevel_)
+            datestream_ << '[' << LEVELNAMES_[level] << "] ";
+        if (showArea_ && area != "senf::log::DefaultArea")
+            datestream_ << '[' << area << "] ";
 
-    for (; i != i_end; ++i) {
-        stream_ << senf::ClockService::abstime(timestamp) << sep;
-        stream_ << "[" << LEVELNAMES_[level] << "]";
-        if (area != "senf::log::DefaultArea")
-            stream_ << " [" << area << "]";
-        stream_ << " " << *i << "\n";
-        sep = '-';
+        for (; i != i_end; ++i)
+            stream_ << datestream_.str() << *i << "\n";
+        stream_ << std::flush;
+        datestream_.str("");
     }
-    stream_ << std::flush;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

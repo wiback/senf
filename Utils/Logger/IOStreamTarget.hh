@@ -44,19 +44,8 @@ namespace log {
 
         The \e area will be omitted if it is \c senf::log::DefaultArea.
         
-        The date formatting is set using the Boost.DateTime date_facet, e.g.:
-        \code
-        stream.imbue( std::locale(stream.getloc(), 
-                                  new boost::posix_time::time_facet("%Y%m%d %H:%M:%S")) );
-        \endcode
-
-        By default, the date-time will be written in extended ISO format.
-
         \warning The class keeps a reference to the passed stream.
         
-        \note This class will permanently and globally change the date formating of the given
-            stream if no \c boost::posix_time::time_facet has been set.
-
         \ingroup targets
       */
     class IOStreamTarget
@@ -72,6 +61,25 @@ namespace log {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
+        void showTime(bool flag = true); ///< Enable or disable output of time field
+        void showStream(bool flag = true); ///< Enable or disable output of stream field
+        void showLevel(bool flag = true); ///< Enable or disable output of log level
+        void showArea(bool flag = true); ///< Enable or disable output of log area
+
+        void timeFormat(std::string const & format);
+                                        ///< Set time format
+                                        /**< The date formatting is set using the Boost.DateTime
+                                             date_facet, e.g.
+                                             \code
+                                                 target.timeFormat("%Y%m%d %H:%M:%S");
+                                             \endcode
+                                             If the \c timeFormat is set to the empty string, the
+                                             time is written out as unformatted ClockService value.
+
+                                             By default, the date-time will be written in extended
+                                             ISO format.
+                                             \param[in] format Date/Time format string */
+        
     protected:
         void v_write(time_type timestamp, std::string const & stream, 
                      std::string const & area, unsigned level, 
@@ -79,13 +87,21 @@ namespace log {
 
     private:
         std::ostream & stream_;
+
+        std::stringstream datestream_;
+        bool noformat_;
+        bool showTime_;
+        bool showStream_;
+        bool showLevel_;
+        bool showArea_;
+
         static char const * const LEVELNAMES_[8];
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "IOStreamTarget.cci"
+#include "IOStreamTarget.cci"
 //#include "IOStreamTarget.ct"
 //#include "IOStreamTarget.cti"
 #endif
