@@ -23,7 +23,7 @@
 /** \file
     \brief BSDSocketAddress non-inline non-template implementation */
 
-//#include "BSDSocketAddress.hh"
+#include "BSDSocketAddress.hh"
 //#include "BSDSocketAddress.ih"
 
 // Custom includes

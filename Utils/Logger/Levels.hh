@@ -108,6 +108,9 @@ namespace log {
     struct NONE      : public detail::LevelBase { static unsigned const value = 0; };
 
     ///\}
+    
+    static char const * const LEVELNAMES[8] = {
+        "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
 
 }}
 

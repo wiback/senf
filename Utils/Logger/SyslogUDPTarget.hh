@@ -21,33 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SyslogTarget public header */
+    \brief SyslogUDPTarget public header */
 
-#ifndef HH_SENF_Utils_Logger_SyslogTarget_
-#define HH_SENF_Utils_Logger_SyslogTarget_ 1
+#ifndef HH_SENF_Utils_Logger_SyslogUDPTarget_
+#define HH_SENF_Utils_Logger_SyslogUDPTarget_ 1
 
 // Custom includes
-#include <syslog.h>
-#include "Target.hh"
+#include "SyslogTarget.hh"
+#include "../../Socket/Protocols/INet/INetAddressing.hh"
+#include "../../Socket/ClientSocketHandle.hh"
+#include "../../Socket/FramingPolicy.hh"
+#include "../../Socket/ReadWritePolicy.hh"
+#include "../../Socket/CommunicationPolicy.hh"
 
-//#include "SyslogTarget.mpp"
+//#include "SyslogUDPTarget.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace log {
-    
-    /** \brief Log target writing to the syslog
 
-        The SyslogTarget will send all log messages to the syslog at the given facility.
+    /** \brief Log target writing UDP syslog packets
 
-        \code
-        senf::log::SyslogTarget syslog;
+        The SyslogUDPTarget will send all log messages directly via UDP to a target host. This host
+        should have a syslog daemon or relay running. The protocol is defined in <a
+        href="ttp://tools.ietf.org/html/rfc3164">RFC-3164</a>.
 
-        // Route all messages to the syslog
-        syslog.route();
-        \endcode
+        This log target has some important benefits:
 
-        Valid facility values (taken from <tt>man 3 syslog</tt>):
+        \li It will never block. It may however lose log messages.
+        \li It does \e not add timestamp information locally.
+
+        These are \e advantages since this makes SyslogUDPTarget a very reliable high-performance
+        logging target.
+
+        Valid facility values are from <tt>man 3 syslog</tt>:
+
         \par "" 
            <tt>LOG_AUTHPRIV</tt>, <tt>LOG_CRON</tt>, <tt>LOG_DAEMON</tt>, <tt>LOG_FTP</tt>,
            <tt>LOG_KERN</tt>, <tt>LOG_LOCAL0</tt>, <tt>LOG_LOCAL1</tt>, <tt>LOG_LOCAL2</tt>,
@@ -55,7 +63,7 @@ namespace log {
            <tt>LOG_LOCAL7</tt>, <tt>LOG_LPR</tt>, <tt>LOG_MAIL</tt>, <tt>LOG_NEWS</tt>,
            <tt>LOG_SYSLOG</tt>, <tt>LOG_USER</tt>, <tt>LOG_UUCP</tt>
 
-        The default facility is <tt>LOG_USER</tt>.
+        the default facility is <tt>LOG_USER</tt>
 
         The SENF log levels are mapped to syslog levels in the following way:
 
@@ -68,17 +76,26 @@ namespace log {
         <tr><td>senf::log::FATAL</td>     <td>\c LOG_EMERG</td></tr>
         </table>
 
-        \ingroup targets
+        \note Since the UDP syslog packets are limited to 1024 characters and there must be some
+            space left so a relay may optionally add a timestamp and hostname section, the log
+            messages are split after 896 characters. Additionally the log messages are split at each
+            newline char since non-printable characters are not allowed.
      */
-    class SyslogTarget 
+    class SyslogUDPTarget
         : public Target
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
         ///@{
 
-        explicit SyslogTarget(int facility = LOG_USER);
+        explicit SyslogUDPTarget(senf::INet4Address const & target, int facility = LOG_USER);
+        explicit SyslogUDPTarget(senf::INet4SocketAddress const & target, int facility = LOG_USER);
+        explicit SyslogUDPTarget(senf::INet6Address const & target, int facility = LOG_USER);
+        explicit SyslogUDPTarget(senf::INet6SocketAddress const & target, int facility = LOG_USER);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -89,17 +106,19 @@ namespace log {
                      std::string const & message);
 
         int facility_;
-
-    public:
-        static int const LEVELMAP[8];
+        typedef senf::ClientSocketHandle< senf::MakeSocketPolicy<
+            senf::DatagramFramingPolicy,
+            senf::ConnectedCommunicationPolicy,
+            senf::WriteablePolicy>::policy > Handle;
+        Handle handle_;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "SyslogTarget.cci"
-//#include "SyslogTarget.ct"
-//#include "SyslogTarget.cti"
+//#include "SyslogUDPTarget.cci"
+//#include "SyslogUDPTarget.ct"
+//#include "SyslogUDPTarget.cti"
 #endif
 
 

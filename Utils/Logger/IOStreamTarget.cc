@@ -39,9 +39,6 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::IOStreamTarget
 
-char const * const senf::log::IOStreamTarget::LEVELNAMES_[8] = {
-        "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
-
 prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)
     : stream_ (os), noformat_ (false), showTime_ (true), showStream_ (false), showLevel_ (true),
       showArea_ (true) 
@@ -94,7 +91,7 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
         if (showStream_)
             datestream_ << '[' << stream << "] ";
         if (showLevel_)
-            datestream_ << '[' << LEVELNAMES_[level] << "] ";
+            datestream_ << '[' << LEVELNAMES[level] << "] ";
         if (showArea_ && area != "senf::log::DefaultArea")
             datestream_ << '[' << area << "] ";
 

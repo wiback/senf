@@ -95,7 +95,6 @@ namespace log {
         bool showLevel_;
         bool showArea_;
 
-        static char const * const LEVELNAMES_[8];
     };
 
 }}

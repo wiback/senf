@@ -32,7 +32,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-int const senf::log::SyslogTarget::LEVELMAP_[8] = {
+int const senf::log::SyslogTarget::LEVELMAP[8] = {
     0, LOG_DEBUG, LOG_INFO, LOG_NOTICE, LOG_WARNING, LOG_CRIT, LOG_EMERG, 0 };
 
 prefix_ void senf::log::SyslogTarget::v_write(time_type timestamp, std::string const & stream,
@@ -40,9 +40,9 @@ prefix_ void senf::log::SyslogTarget::v_write(time_type timestamp, std::string c
                                               std::string const & message)
 {
     if (area != "senf::log::DefaultArea")
-        syslog(facility_ | LEVELMAP_[level], "[%s] %s", area.c_str(), message.c_str());
+        syslog(facility_ | LEVELMAP[level], "[%s] %s", area.c_str(), message.c_str());
     else
-        syslog(facility_ | LEVELMAP_[level], "%s", message.c_str());
+        syslog(facility_ | LEVELMAP[level], "%s", message.c_str());
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
