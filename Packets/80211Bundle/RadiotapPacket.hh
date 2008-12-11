@@ -21,9 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Radiotap header \n
-        <b>Radiotap uses least significant bit byte order</b>
-    */
+    \brief Radiotap header */
 
 #ifndef HH_SENF_Packets_80211Bundle_RadiotapPacket_
 #define HH_SENF_Packets_80211Bundle_RadiotapPacket_ 1
@@ -34,9 +32,8 @@ namespace senf
 {
 
     /** \brief Parse Flag field in Radiotap header
-     * <b>Re-ordering of bits due to LSB byte order</b>
-     * (see http://www.radiotap.org/)
 
+        <b>Re-ordering of bits due to LSB byte order</b>
      */
     struct RadiotapPacketParser_Flags : public senf::PacketParserBase
     {
@@ -154,27 +151,27 @@ namespace senf
                     (cond ? (size - (parser##__offset() + \
                             senf::bytes(parser##_())) % size) % size : 0) , 0  );
 
-        OPTIONAL_FIELD          ( tsft,                     UInt64LSBParser                     );
-        OPTIONAL_FIELD          ( flags,                    RadiotapPacketParser_Flags          );
-        OPTIONAL_FIELD          ( rate,                     UInt8Parser                         );
-        SKIP_OPTIONAL_PADDING   ( channelOptionsPresent(),  rate, 2                             );
-        OPTIONAL_FIELD          ( channelOptions,           RadiotapPacketParser_ChannelOptions ) ;
-        SKIP_OPTIONAL_PADDING   ( fhssPresent(),            channelOptions, 2                   );
-        OPTIONAL_FIELD          ( fhss,                     UInt16LSBParser                     );
-        OPTIONAL_FIELD          ( dbmAntennaSignal,         Int8Parser                          );
-        OPTIONAL_FIELD          ( dbmAntennaNoise,          Int8Parser                          );
-        SKIP_OPTIONAL_PADDING   ( lockQualityPresent(),     dbmAntennaNoise, 2                  );
-        OPTIONAL_FIELD          ( lockQuality,              UInt16LSBParser                     );
-        SKIP_OPTIONAL_PADDING   ( txAttenuationPresent(),   lockQuality, 2                      );
-        OPTIONAL_FIELD          ( txAttenuation,            UInt16LSBParser                     );
-        SKIP_OPTIONAL_PADDING   ( dbTxAttenuationPresent(), txAttenuation, 2                    );
-        OPTIONAL_FIELD          ( dbTxAttenuation,          UInt16LSBParser                     );
-        OPTIONAL_FIELD          ( dbmTxAttenuation,         Int8Parser                          );
-        OPTIONAL_FIELD          ( antenna,                  UInt8Parser                         );
-        OPTIONAL_FIELD          ( dbAntennaSignal,          UInt8Parser                         );
-        OPTIONAL_FIELD          ( dbAntennaNoise,           UInt8Parser                         );
-        SKIP_OPTIONAL_PADDING   ( fcsPresent(),             dbAntennaNoise, 4                   );
-        OPTIONAL_FIELD          ( fcs,                      UInt32Parser                        );
+        OPTIONAL_FIELD        ( tsft,                     UInt64LSBParser                     );
+        OPTIONAL_FIELD        ( flags,                    RadiotapPacketParser_Flags          );
+        OPTIONAL_FIELD        ( rate,                     UInt8Parser                         );
+        SKIP_OPTIONAL_PADDING ( channelOptionsPresent(),  rate, 2                             );
+        OPTIONAL_FIELD        ( channelOptions,           RadiotapPacketParser_ChannelOptions );
+        SKIP_OPTIONAL_PADDING ( fhssPresent(),            channelOptions, 2                   );
+        OPTIONAL_FIELD        ( fhss,                     UInt16LSBParser                     );
+        OPTIONAL_FIELD        ( dbmAntennaSignal,         Int8Parser                          );
+        OPTIONAL_FIELD        ( dbmAntennaNoise,          Int8Parser                          );
+        SKIP_OPTIONAL_PADDING ( lockQualityPresent(),     dbmAntennaNoise, 2                  );
+        OPTIONAL_FIELD        ( lockQuality,              UInt16LSBParser                     );
+        SKIP_OPTIONAL_PADDING ( txAttenuationPresent(),   lockQuality, 2                      );
+        OPTIONAL_FIELD        ( txAttenuation,            UInt16LSBParser                     );
+        SKIP_OPTIONAL_PADDING ( dbTxAttenuationPresent(), txAttenuation, 2                    );
+        OPTIONAL_FIELD        ( dbTxAttenuation,          UInt16LSBParser                     );
+        OPTIONAL_FIELD        ( dbmTxAttenuation,         Int8Parser                          );
+        OPTIONAL_FIELD        ( antenna,                  UInt8Parser                         );
+        OPTIONAL_FIELD        ( dbAntennaSignal,          UInt8Parser                         );
+        OPTIONAL_FIELD        ( dbAntennaNoise,           UInt8Parser                         );
+        SKIP_OPTIONAL_PADDING ( fcsPresent(),             dbAntennaNoise, 4                   );
+        OPTIONAL_FIELD        ( fcs,                      UInt32Parser                        );
 
         SENF_PARSER_INIT() {
             version() = 0;
@@ -190,7 +187,9 @@ namespace senf
 
         \par Fields:
             \ref RadiotapPacketParser
-
+        
+        \see http://www.radiotap.org/
+        
         \ingroup protocolbundle_80211
      */
     struct RadiotapPacketType
@@ -208,7 +207,6 @@ namespace senf
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
-
     };
 
     typedef senf::ConcretePacket<RadiotapPacketType> RadiotapPacket;
