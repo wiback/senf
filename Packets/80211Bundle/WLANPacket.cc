@@ -81,27 +81,6 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::bssid()
     return addr1();
 }
 
-//shift some bits to read the 12bit sequence number bit field in LSB byte order
-prefix_ boost::uint16_t senf::WLANPacket_MgtFrameParser::sequenceNumber()
-    const
-{
-    boost::uint16_t seqN = 0;
-    seqN |= seqNumber_2();
-    seqN <<= 4;
-    seqN |= seqNumber_1();
-    return seqN;
-}
-
-//shift some bits to read the 12bit sequence number bit field in LSB byte order
-prefix_ boost::uint16_t senf::WLANPacket_DataFrameParser::sequenceNumber()
-    const
-{
-    boost::uint16_t seqN = 0;
-    seqN |= seqNumber_2();
-    seqN <<= 4;
-    seqN |= seqNumber_1();
-    return seqN;
-}
 
 prefix_ void senf::WLANPacketType::dump(packet p, std::ostream &os)
 {

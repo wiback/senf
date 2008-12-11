@@ -58,7 +58,9 @@ namespace senf
         //this is needed due to the goto in the WLANPacketParser. Don't know exactly why yet.
         SENF_PARSER_INIT() {}
 
-        boost::uint16_t sequenceNumber() const;
+        boost::uint16_t sequenceNumber() const {
+            return (uint16_t)(seqNumber_2()) << 4 | seqNumber_1();
+        };
     };
 
     /** \brief Control frame parser
@@ -136,7 +138,9 @@ namespace senf
         //this is needed to due to the goto in the WLANPacketParser. Don't know exactly why yet.
         SENF_PARSER_INIT() {}
 
-        boost::uint16_t sequenceNumber() const;
+        boost::uint16_t sequenceNumber() const {
+            return (uint16_t)(seqNumber_2()) << 4 | seqNumber_1();
+        };
 
         MACAddressParser receiverAddress() const    { return addr1(); }; //ra is always addr1
         MACAddressParser transmitterAddress() const { return addr2(); }; //ta is always addr2
