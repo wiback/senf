@@ -79,6 +79,8 @@ namespace log {
                                              By default, the date-time will be written in extended
                                              ISO format.
                                              \param[in] format Date/Time format string */
+
+        void tag(std::string const & tag);
         
     protected:
         void v_write(time_type timestamp, std::string const & stream, 
@@ -88,6 +90,7 @@ namespace log {
     private:
         std::ostream & stream_;
 
+        std::string tag_;
         std::stringstream datestream_;
         bool noformat_;
         bool showTime_;

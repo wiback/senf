@@ -21,36 +21,31 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IOStreamTarget inline non-template implementation */
+    \brief SyslogUDPTarget inline non-template implementation */
 
-#include "IOStreamTarget.ih"
+//#include "SyslogUDPTarget.ih"
 
 // Custom includes
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::log::IOStreamTarget::showTime(bool flag)
-{
-    showTime_ = flag;
-}
-
-prefix_ void senf::log::IOStreamTarget::showStream(bool flag)
+prefix_ void senf::log::SyslogUDPTarget::showStream(bool flag)
 {
     showStream_ = flag;
 }
 
-prefix_ void senf::log::IOStreamTarget::showLevel(bool flag)
+prefix_ void senf::log::SyslogUDPTarget::showLevel(bool flag)
 {
     showLevel_ = flag;
 }
 
-prefix_ void senf::log::IOStreamTarget::showArea(bool flag)
+prefix_ void senf::log::SyslogUDPTarget::showArea(bool flag)
 {
     showArea_ = flag;
 }
 
-prefix_ void senf::log::IOStreamTarget::tag(std::string const & tag)
+prefix_ void senf::log::SyslogUDPTarget::tag(std::string const & tag)
 {
     tag_ = tag;
 }

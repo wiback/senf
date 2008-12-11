@@ -24,10 +24,12 @@
     \brief IOStreamTarget non-inline non-template implementation */
 
 #include "IOStreamTarget.hh"
-//#include "IOStreamTarget.ih"
+#include "IOStreamTarget.ih"
 
 // Custom includes
+#include <errno.h>
 #include <locale>
+#include <sstream>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -40,8 +42,8 @@
 // senf::log::IOStreamTarget
 
 prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)
-    : stream_ (os), noformat_ (false), showTime_ (true), showStream_ (false), showLevel_ (true),
-      showArea_ (true) 
+    : stream_ (os), tag_ (detail::getDefaultTag()), noformat_ (false), showTime_ (true),
+      showStream_ (false), showLevel_ (true), showArea_ (true) 
 {
     std::locale const & loc (datestream_.getloc());
     datestream_.imbue( std::locale(
@@ -69,9 +71,11 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
                                                 std::string const & area, unsigned level,
                                                 std::string const & message)
 {
-    std::string m (boost::trim_right_copy(message));
+    std::string m (message);
+    boost::trim_right(m);
+    detail::quoteNonPrintable(m);
 
-    if (!showTime_ && !showStream_ && !showLevel_ && !showArea_)
+    if (tag_.empty() && !showTime_ && !showStream_ && !showLevel_ && !showArea_)
         stream_ << m << std::endl;
     else {
         typedef boost::char_separator<char> Separator;
@@ -88,6 +92,8 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
                 datestream_ << senf::ClockService::abstime(timestamp);
             datestream_ << ' ';
         }
+        if (!tag_.empty())
+            datestream_ << tag_ << ": ";
         if (showStream_)
             datestream_ << '[' << stream << "] ";
         if (showLevel_)
@@ -100,6 +106,22 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
         stream_ << std::flush;
         datestream_.str("");
     }
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+prefix_ void senf::log::detail::quoteNonPrintable(std::string & s)
+{
+    for (std::string::iterator i (s.begin()); i != s.end(); ++i)
+        if (*i < ' ' && *i != '\n')
+            *i = ' ';
+}
+
+prefix_ std::string senf::log::detail::getDefaultTag()
+{
+    std::stringstream ss;
+    ss << ::program_invocation_short_name << '[' << ::getpid() << ']';
+    return ss.str();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

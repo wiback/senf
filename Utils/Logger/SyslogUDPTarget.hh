@@ -80,6 +80,11 @@ namespace log {
             space left so a relay may optionally add a timestamp and hostname section, the log
             messages are split after 896 characters. Additionally the log messages are split at each
             newline char since non-printable characters are not allowed.
+
+        \implementation The RFC only \e recommends the exact message format. This allows us to
+            include the \c PRI part but skip the \c HEADER part (which includes the timestamp and
+            hostname) for better performance. We add a space after the \c PRI to force the syslog
+            daemon to skip the \c HEADER part.
      */
     class SyslogUDPTarget
         : public Target
@@ -100,23 +105,33 @@ namespace log {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
+        void showStream(bool flag = true);
+        void showLevel(bool flag = true);
+        void showArea(bool flag = true);
+
+        void tag(std::string const & tag);
+
     private:
         void v_write(time_type timestamp, std::string const & stream, 
                      std::string const & area, unsigned level, 
                      std::string const & message);
 
         int facility_;
+        std::string tag_;
         typedef senf::ClientSocketHandle< senf::MakeSocketPolicy<
             senf::DatagramFramingPolicy,
             senf::ConnectedCommunicationPolicy,
             senf::WriteablePolicy>::policy > Handle;
         Handle handle_;
+        bool showStream_;
+        bool showLevel_;
+        bool showArea_;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "SyslogUDPTarget.cci"
+#include "SyslogUDPTarget.cci"
 //#include "SyslogUDPTarget.ct"
 //#include "SyslogUDPTarget.cti"
 #endif

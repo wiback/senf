@@ -21,42 +21,26 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IOStreamTarget inline non-template implementation */
+    \brief IOStreamTarget internal header */
 
-#include "IOStreamTarget.ih"
+#ifndef IH_SENF_Utils_Logger_IOStreamTarget_
+#define IH_SENF_Utils_Logger_IOStreamTarget_ 1
 
 // Custom includes
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////ih.p////////////////////////////////////////
 
-prefix_ void senf::log::IOStreamTarget::showTime(bool flag)
-{
-    showTime_ = flag;
-}
+namespace senf {
+namespace log {
+namespace detail {
 
-prefix_ void senf::log::IOStreamTarget::showStream(bool flag)
-{
-    showStream_ = flag;
-}
+    void quoteNonPrintable(std::string & s);
+    std::string getDefaultTag();
 
-prefix_ void senf::log::IOStreamTarget::showLevel(bool flag)
-{
-    showLevel_ = flag;
-}
+}}}
 
-prefix_ void senf::log::IOStreamTarget::showArea(bool flag)
-{
-    showArea_ = flag;
-}
-
-prefix_ void senf::log::IOStreamTarget::tag(std::string const & tag)
-{
-    tag_ = tag;
-}
-
-///////////////////////////////cci.e///////////////////////////////////////
-#undef prefix_
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
 
 
 // Local Variables:
