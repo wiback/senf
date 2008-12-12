@@ -288,11 +288,11 @@ namespace console {
                                              node. */
 
         bool operator== (GenericNode & other) const;
-                                        /// \c true, if this and \a other are the same node
+                                        ///< \c true, if this and \a other are the same node
         bool operator!= (GenericNode & other) const;
-                                        /// \c true, if this and \a other are different nodes
+                                        ///< \c true, if this and \a other are different nodes
 
-        bool isDirectory() const;       ///< \c true, if this is a drectory node
+        bool isDirectory() const;       ///< \c true, if this is a directory node
         bool isLink() const;            ///< \c true, if this is a link node
         bool isCommand() const;         ///< \c true, if this is a command node
 
