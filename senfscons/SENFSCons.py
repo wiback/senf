@@ -163,6 +163,7 @@ def FinalizeBoost(env):
     env['BOOSTREGEXLIB'] = 'boost_regex' + env['BOOST_VARIANT']
     env['BOOSTFSLIB'] = 'boost_filesystem' + env['BOOST_VARIANT']
     env['BOOSTIOSTREAMSLIB'] = 'boost_iostreams' + env['BOOST_VARIANT']
+    env['BOOSTSIGNALSLIB'] = 'boost_signals' + env['BOOST_VARIANT']
 
     if env['BOOST_PREFIX']:
         env['BOOST_LIBDIR'] = os.path.join(env['BOOST_PREFIX'], 'lib')

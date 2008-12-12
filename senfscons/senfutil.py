@@ -8,9 +8,11 @@ from SCons.Script import *
 # c) check for a local SENF, set options accordingly and update that SENF if needed
 
 def SetupForSENF(env):
-    env.Append( LIBS           = [ 'senf', 'readline', 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB' ],
+    env.Append( LIBS           = [ 'senf', 'readline', 'rt', '$BOOSTREGEXLIB',
+                                   '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB' ],
                 BOOSTREGEXLIB  = 'boost_regex',
                 BOOSTIOSTREAMSLIB = 'boost_iostreams',
+                BOOSTSIGNALSLIB = 'boost_signals',
                 CXXFLAGS       = [ '-Wno-long-long',
                                    '${"$CXXFLAGS_"+(final and "final" or "debug")}',
                                    '${profile and ("-g","-pg") or None}' ],

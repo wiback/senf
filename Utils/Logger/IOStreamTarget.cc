@@ -43,7 +43,7 @@
 
 prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)
     : stream_ (os), tag_ (detail::getDefaultTag()), noformat_ (false), showTime_ (true),
-      showStream_ (false), showLevel_ (true), showArea_ (true) 
+      showStream_ (false), showLevel_ (true), showArea_ (true), timeBase_ (-1)
 {
     std::locale const & loc (datestream_.getloc());
     datestream_.imbue( std::locale(
@@ -53,9 +53,10 @@ prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)
 
 prefix_ void senf::log::IOStreamTarget::timeFormat(std::string const & format)
 {
-    if (format.empty())
+    if (format.empty()) {
         noformat_ = true;
-    else {
+        timeBase_ = -1;
+    } else {
         noformat_ = false;
         std::locale const & loc (datestream_.getloc());
         datestream_.imbue( std::locale(
@@ -86,8 +87,14 @@ prefix_ void senf::log::IOStreamTarget::v_write(time_type timestamp,
         Tokenizer::iterator const i_end (tokenizer.end());
 
         if (showTime_) {
-            if (noformat_)
-                datestream_ << std::setfill('0') << std::setw(19) << timestamp;
+            if (noformat_) {
+                if (timeBase_ == -1) timeBase_ = timestamp;
+                time_type delta (timestamp - timeBase_);
+                datestream_ << std::setfill('0') << std::setw(10)
+                            << (delta / 1000000000ll) << '.'
+                            << std::setfill('0') << std::setw(9)
+                            << (delta % 1000000000ll);
+            }
             else 
                 datestream_ << senf::ClockService::abstime(timestamp);
             datestream_ << ' ';

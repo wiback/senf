@@ -98,6 +98,7 @@ namespace log {
         bool showLevel_;
         bool showArea_;
 
+        time_type timeBase_;
     };
 
 }}

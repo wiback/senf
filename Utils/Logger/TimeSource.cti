@@ -36,7 +36,7 @@
 template <class Source>
 prefix_ void senf::log::timeSource()
 {
-    timeSource(std::auto_ptr<Source>(new Source()));
+    timeSource(std::auto_ptr<TimeSource>(new Source()));
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////
