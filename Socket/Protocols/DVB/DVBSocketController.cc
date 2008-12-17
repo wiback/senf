@@ -83,7 +83,6 @@ prefix_ void senf::DVBSocketController::tuneTo(const string & channel)
    
     string configLine = parser.getConfigLine(channel);
     
-    SENF_LOG((senf::log::MESSAGE) ("async: configline found: " << channel) );
     frontend = parser.getFrontendParam(configLine);
     switch (type) {
         case FE_QPSK:
@@ -156,7 +155,6 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneTo_sync(const string &
     dvb_frontend_event ev;
     string configLine = parser.getConfigLine(channel);
     
-    SENF_LOG((senf::log::MESSAGE) ("sync: configline found: " << channel) );
     frontend = parser.getFrontendParam(configLine);
     switch (type) {
         case FE_QPSK:

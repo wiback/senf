@@ -9,6 +9,9 @@
 #include <senf/Scheduler/Scheduler.hh>
 #include "DVBConfigParser.hh"
 #include <senf/Console.hh>
+
+#define MPE_TABLEID 62
+
 namespace senf {
     std::string status2String(fe_status_t status);
 class DVBSocketController : boost::noncopyable
@@ -69,7 +72,7 @@ public:
     unsigned int signalStrength();
     
     void setSectionFilter(unsigned short int pid, 
-               unsigned char filter = 62,
+               unsigned char filter = MPE_TABLEID,
                unsigned int flags = DMX_IMMEDIATE_START | DMX_CHECK_CRC,
                unsigned char mask = 0xff, 
                unsigned char mode = 0,

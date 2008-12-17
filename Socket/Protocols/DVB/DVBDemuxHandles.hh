@@ -76,11 +76,11 @@ namespace senf {
         ///@}
         
         void setSectionFilter(unsigned short int pid, 
-                unsigned int timeout, 
+                unsigned char filter,
                 unsigned int flags, 
-                unsigned char filter, 
                 unsigned char mask, 
-                unsigned char mode) const;    
+                unsigned char mode,
+                unsigned int timeout ) const;    
     };
 
     typedef ProtocolClientSocketHandle<DVBDemuxSectionSocketProtocol> DVBDemuxSectionHandle;
