@@ -36,8 +36,8 @@ namespace senf {
 
             // mandatory typedefs in the parser and container policy
             typedef ElementParser element_type;
-            typedef Parse_List< ExampleListPolicy > parser_type;
-            typedef Parse_List_Container< ExampleListPolicy > container_type;
+            typedef ListParser< ExampleListPolicy > parser_type;
+            typedef ListParser_Container< ExampleListPolicy > container_type;
 
             // mandatory constant in parser and container policy
             static const size_type init_bytes = 0;
@@ -85,10 +85,10 @@ namespace senf {
         typedef unspecified parser_type; ///< List parser type
                                         /**< parser_type is the list parser used to parse a list of
                                              this type,
-                                             e.g. <tt>senf::Parse_List<ExampleListPolicy></tt>. */
+                                             e.g. <tt>senf::ListParser<ExampleListPolicy></tt>. */
         typedef unspecified container_type; ///< Type of container wrapper
                                         /**< This is the container wrapper of the list, e.g.
-                                             <tt>Parse_List_Container<ExampleListPolicy></tt>. The
+                                             <tt>ListParser_Container<ExampleListPolicy></tt>. The
                                              container may however use a \e different policy, as
                                              long as that policy is constructible from the parser
                                              policy. */

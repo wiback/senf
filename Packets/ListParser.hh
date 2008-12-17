@@ -229,7 +229,7 @@ namespace senf {
         // The size field should be declared private or read-only (size is accessible via the list)
         SENF_PARSER_PRIVATE_FIELD ( list_size_, senf::UInt16Parser );
         // Define the list
-        SENF_PARSER_VECTOR ( list, list_size_, EltParser );
+        SENF_PARSER_LIST ( list, list_size_, EltParser );
         \endcode
         
         Here \c EltParser can be an arbitrary parser and need not have a fixed size.
@@ -267,7 +267,7 @@ namespace senf {
 
         The tags are applied to the \a size parameter:
         \code
-        SENF_PARSER_LIST ( vec, transform(MyTransform, list_size_), EltParser );
+        SENF_PARSER_LIST ( list, transform(MyTransform, list_size_), EltParser );
         \endcode
 
         \warning There are some caveats when working with \c bytes() type lists:
