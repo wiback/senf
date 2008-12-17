@@ -58,11 +58,20 @@ prefix_ unsigned senf::DVBDemuxSectionSocketProtocol::available()
     return 4096;
 }
 
-prefix_ void senf::DVBDemuxSectionSocketProtocol::setSectionFilter(struct dmx_sct_filter_params *filter)
+prefix_ void senf::DVBDemuxSectionSocketProtocol::setSectionFilter(unsigned short int pid, unsigned int timeout, unsigned int flags, unsigned char filter, unsigned char mask, unsigned char mode)
     const
 {
-    if (::ioctl(fd(), DMX_SET_FILTER, filter) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("Could not set section filter of DVB adapter.");
+    struct dmx_sct_filter_params sec_filter;
+    ::memset(&sec_filter, 0, sizeof(struct dmx_sct_filter_params));
+    
+       sec_filter.pid = pid;
+       sec_filter.filter.filter[0] = filter;
+       sec_filter.filter.mask[0] = mask;
+       sec_filter.filter.mode[0] = mode;
+       sec_filter.flags = flags;
+       
+       if (::ioctl(fd(), DMX_SET_FILTER, filter) < 0)
+           SENF_THROW_SYSTEM_EXCEPTION("Could not set section filter of DVB adapter.");
 }
 
 // ----------------------------------------------------------------

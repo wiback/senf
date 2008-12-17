@@ -75,7 +75,12 @@ namespace senf {
 
         ///@}
         
-        void setSectionFilter(struct dmx_sct_filter_params *filter) const;    
+        void setSectionFilter(unsigned short int pid, 
+                unsigned int timeout, 
+                unsigned int flags, 
+                unsigned char filter, 
+                unsigned char mask, 
+                unsigned char mode) const;    
     };
 
     typedef ProtocolClientSocketHandle<DVBDemuxSectionSocketProtocol> DVBDemuxSectionHandle;
