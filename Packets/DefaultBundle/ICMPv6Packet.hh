@@ -1,7 +1,9 @@
+// $Id$
+//
 // Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Philipp Batroff <Philipp.Batroff@fokus.fraunhofer.de>
+//     Philipp Batroff <pug@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,40 +20,40 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_ICMPV6Packet
-#define HH_ICMPV6Packet
+#ifndef HH_SENF_Packets_DefaultBundle_ICMPv6Packet_
+#define HH_SENF_Packets_DefaultBundle_ICMPv6Packet_ 1
 
 // Custom includes
 #include "../../Packets/Packets.hh"
 #include "../../Packets/DefaultBundle/IPv6Packet.hh"
 
-namespace senf{
-    struct ICMPV6PacketParser : public senf::PacketParserBase
+namespace senf 
+{
+
+    struct ICMPv6PacketParser : public PacketParserBase
     {
-    #       include SENF_FIXED_PARSER()
-            SENF_PARSER_FIELD    ( type, senf::UInt8Parser );
-            SENF_PARSER_FIELD    ( code, senf::UInt8Parser );
-            SENF_PARSER_PRIVATE_FIELD ( checksum, senf::UInt16Parser);
+#       include SENF_FIXED_PARSER()
+        SENF_PARSER_FIELD ( type,     UInt8Parser  );
+        SENF_PARSER_FIELD ( code,     UInt8Parser  );
+        SENF_PARSER_FIELD ( checksum, UInt16Parser );
     
-            SENF_PARSER_FINALIZE ( ICMPV6PacketParser );
-    
-            void calcChecksum() const;
-            boost::uint16_t checksumOutput() const
-                { return this->checksum();}
+        SENF_PARSER_FINALIZE ( ICMPv6PacketParser );
+        
+        boost::uint16_t calcChecksum() const;
     };
     
-        struct ICMPTypes {
-            // ICMP type registry
-            typedef boost::uint16_t key_t;
-        };
+    struct ICMPTypes {
+        // ICMP type registry
+        typedef boost::uint16_t key_t;
+    };
     
-    struct ICMPV6PacketType 
-            : public senf::PacketTypeBase,
-            public senf::PacketTypeMixin<ICMPV6PacketType, ICMPTypes>
+    struct ICMPv6PacketType 
+        : public PacketTypeBase,
+          public PacketTypeMixin<ICMPv6PacketType, ICMPTypes>
     {
-        typedef senf::PacketTypeMixin<ICMPV6PacketType, ICMPTypes> mixin;
-        typedef senf::ConcretePacket<ICMPV6PacketType> packet;
-        typedef ICMPV6PacketParser parser;
+        typedef PacketTypeMixin<ICMPv6PacketType, ICMPTypes> mixin;
+        typedef ConcretePacket<ICMPv6PacketType> packet;
+        typedef ICMPv6PacketParser parser;
         
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -59,15 +61,18 @@ namespace senf{
         using mixin::initSize;
         
         static void dump(packet p, std::ostream & os);
-        static senf::IpTypes::key_t nextPacketKey(packet p) { 
+        
+        static IpTypes::key_t nextPacketKey(packet p) { 
             return p->type();
         }
+        
         static void finalize(packet p) {
-            p->calcChecksum();
+            p->checksum() << p->calcChecksum();
             p->type() << key(p.next(senf::nothrow));
         }
     };
     
-    typedef ICMPV6PacketType::packet ICMPv6Packet;
+    typedef ConcretePacket<ICMPv6PacketType> ICMPv6Packet;
 }
+
 #endif

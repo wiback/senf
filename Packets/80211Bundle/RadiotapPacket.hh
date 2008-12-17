@@ -35,7 +35,7 @@ namespace senf
 
         <b>Re-ordering of bits due to LSB byte order</b>
      */
-    struct RadiotapPacketParser_Flags : public senf::PacketParserBase
+    struct RadiotapPacketParser_Flags : public PacketParserBase
     {
     #   include SENF_FIXED_PARSER()
 
@@ -55,7 +55,7 @@ namespace senf
 
         <b>Re-ordering of bits due to LSB byte order</b>
      */
-    struct RadiotapPacketParser_ChannelOptions : public senf::PacketParserBase
+    struct RadiotapPacketParser_ChannelOptions : public PacketParserBase
     {
     #   include SENF_FIXED_PARSER()
 
@@ -95,7 +95,7 @@ namespace senf
 
         \todo extended present field (bit 31 of present field is set)
     */
-    struct RadiotapPacketParser : public senf::PacketParserBase
+    struct RadiotapPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
 
@@ -177,7 +177,7 @@ namespace senf
             version() = 0;
         }
 
-        SENF_PARSER_FINALIZE(RadiotapPacketParser);
+        SENF_PARSER_FINALIZE( RadiotapPacketParser );
     };
 
     /** \brief Radiotap packet
@@ -193,12 +193,12 @@ namespace senf
         \ingroup protocolbundle_80211
      */
     struct RadiotapPacketType
-        : public senf::PacketTypeBase,
-          public senf::PacketTypeMixin<RadiotapPacketType>
+        : public PacketTypeBase,
+          public PacketTypeMixin<RadiotapPacketType>
     {
-        typedef senf::PacketTypeMixin<RadiotapPacketType> mixin;
-        typedef senf::ConcretePacket<RadiotapPacketType> packet;
-        typedef senf::RadiotapPacketParser parser;
+        typedef PacketTypeMixin<RadiotapPacketType> mixin;
+        typedef ConcretePacket<RadiotapPacketType> packet;
+        typedef RadiotapPacketParser parser;
 
         using mixin::nextPacketRange;
         using mixin::init;
@@ -209,7 +209,7 @@ namespace senf
         static factory_t nextPacketType(packet p);
     };
 
-    typedef senf::ConcretePacket<RadiotapPacketType> RadiotapPacket;
+    typedef ConcretePacket<RadiotapPacketType> RadiotapPacket;
 }
 
 #endif

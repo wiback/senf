@@ -109,11 +109,10 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<EthernetPacketType, EtherTypes>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<EthernetPacketType, EtherTypes> mixin;
         typedef ConcretePacket<EthernetPacketType> packet;
         typedef EthernetPacketParser parser;
-#endif
+
         using mixin::nextPacketRange;
         using mixin::initSize;
         using mixin::init;
@@ -165,11 +164,10 @@ namespace senf {
         : public PacketTypeBase, 
           public PacketTypeMixin<EthVLanPacketType, EtherTypes>
     {
-#ifndef DOXYGEN
         typedef PacketTypeMixin<EthVLanPacketType, EtherTypes> mixin;
         typedef ConcretePacket<EthVLanPacketType> packet;
         typedef EthVLanPacketParser parser;
-#endif
+
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::initSize;

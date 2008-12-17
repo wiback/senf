@@ -1,7 +1,9 @@
+// $Id$
+//
 // Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Philipp Batroff <Philipp.Batroff@fokus.fraunhofer.de>
+//     Philipp Batroff <pug@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +34,7 @@ namespace {
         registerICMPv6Packet (58);
 }
 
-prefix_ void senf::ICMPV6PacketParser::calcChecksum() const {
+prefix_ boost::uint16_t senf::ICMPv6PacketParser::calcChecksum() const {
 
     senf::IpChecksum summer;
     senf::IPv6Packet ipv6 (packet().rfind<senf::IPv6Packet>(senf::nothrow));
@@ -55,16 +57,16 @@ prefix_ void senf::ICMPV6PacketParser::calcChecksum() const {
     summer.feed( i()+checksum_offset+2, data().end() );
 
     boost::uint16_t rv (summer.sum());
-    this->checksum() << (rv ? rv : 0xffffu);
+    return rv ? rv : 0xffffu;
 }
 
-prefix_ void senf::ICMPV6PacketType::dump(packet p, std::ostream &os)
+prefix_ void senf::ICMPv6PacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "ICMPv6 protocol:\n"
-        << "Type                    : " << p->type() <<"\n"
-        << "Code                    : " << p->code() <<"\n"
-        << "Checksum                : " << p->checksumOutput() << "\n";
+       << "Type                    : " << p->type() <<"\n"
+       << "Code                    : " << p->code() <<"\n"
+       << "Checksum                : " << p->checksum() << "\n";
 }
 
 #undef prefix_

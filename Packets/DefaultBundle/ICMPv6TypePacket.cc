@@ -1,9 +1,9 @@
-// $Id: main.test.cc 206 2008-06-08 14:20:52Z pug $
+// $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Philipp Batroff <Philipp.Batroff@fokus.fraunhofer.de>
+//     Philipp Batroff <pug@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,16 +31,16 @@
 
 namespace {
 //Implementing the ICMPv6 Type registry
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPV6ErrDestUnreachable>
-        registerICMPV6ErrDestUnreachable (1);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPV6ErrTooBig>
-        registerICMPV6ErrTooBig (2);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPV6ErrTimeExceeded>
-        registerICMPV6ErrTimeExceeded (3);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPV6ErrParamProblem>
-        registerICMPV6ErrParamProblem (4);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6EchoReq>
-        registerICMPv6EchoReq (128);
+    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6ErrDestUnreachable>
+        registerICMPv6ErrDestUnreachable (1);
+    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6ErrTooBig>
+        registerICMPv6ErrTooBig (2);
+    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6ErrTimeExceeded>
+        registerICMPv6ErrTimeExceeded (3);
+    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6ErrParamProblem>
+        registerICMPv6ErrParamProblem (4);
+    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6EchoRequest>
+        registerICMPv6EchoRequest (128);
     senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6EchoReply>
         registerICMPv6EchoReply (129);
     senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::MLDv2ListenerQuery>
