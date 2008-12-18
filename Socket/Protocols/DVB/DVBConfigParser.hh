@@ -1,4 +1,4 @@
-// $Id: DVBConfigParser.hh 965 2008-11-18 16:04:20Z g0dil $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
@@ -23,8 +23,8 @@
 /** \file
     \brief DVBDemuxHandles public header */
 
-#ifndef DVBCONFIGPARSER_HH_
-#define DVBCONFIGPARSER_HH_
+#ifndef HH_SENF_Socket_Protocols_DVB_DVBConfigParser_
+#define HH_SENF_Socket_Protocols_DVB_DVBConfigParser_ 1
 
 #include <string>
 #include <vector>
@@ -34,10 +34,12 @@
 #include <fstream>
 #include <boost/tokenizer.hpp>
 #include <linux/dvb/frontend.h>
+
 namespace senf {
-class DVBConfigParser 
-{
-    struct DVBParams {
+
+    class DVBConfigParser 
+    {
+        struct DVBParams {
                 std::map<std::string, fe_spectral_inversion_t> inversion;
                 std::map<std::string, fe_bandwidth_t> bandwidth;
                 std::map<std::string, fe_code_rate_t> code_rate;
@@ -45,29 +47,29 @@ class DVBConfigParser
                 std::map<std::string, fe_hierarchy_t> hierarchy;
                 std::map<std::string, fe_modulation_t> modulation;
                 std::map<std::string, fe_transmit_mode_t> transmit_mode;
-                DVBParams(); };
-    static const DVBParams params;
-    typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
+                DVBParams(); 
+        };
+        static const DVBParams params;
+        typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
  
-
-public:
-	DVBConfigParser(fe_type_t type_, const std::string & configFilePath = "");
-	~DVBConfigParser();
+    public:
+        DVBConfigParser(fe_type_t type_, const std::string & configFilePath = "");
+        ~DVBConfigParser();
 	
-	std::string getConfigLine(std::string channel);
+        std::string getConfigLine(std::string channel);
 	    
-	dvb_frontend_parameters getFrontendParam(std::string configLine);
+        dvb_frontend_parameters getFrontendParam(std::string configLine);
 	
-private:
+    private:
+        fe_type_t type;
+        std::ifstream configFile;
+        void initConfigFile(std::string _configFilePath);
+
+        dvb_frontend_parameters getFrontendParamDVB_T( const tokenizer & tokens);
+        dvb_frontend_parameters getFrontendParamDVB_C( const tokenizer & tokens);
+        dvb_frontend_parameters getFrontendParamDVB_S( const tokenizer & tokens);
 	
-	fe_type_t type;
-	std::ifstream configFile;
-	void initConfigFile(std::string _configFilePath);
-	
-	dvb_frontend_parameters getFrontendParamDVB_T( const tokenizer & tokens);
-	dvb_frontend_parameters getFrontendParamDVB_C( const tokenizer & tokens);
-	dvb_frontend_parameters getFrontendParamDVB_S( const tokenizer & tokens);
-	
-};
+    };
 }
-#endif /*DVBCONFIGPARSER_H_*/
+
+#endif 
