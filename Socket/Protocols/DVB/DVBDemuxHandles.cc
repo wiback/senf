@@ -32,8 +32,7 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include "../../../Utils/Exception.hh"
-// TODO REMOVE V
-#include <iostream>
+
 
 //#include "DVBDemuxHandles.mpp"
 #define prefix_
@@ -45,8 +44,7 @@
 prefix_ void senf::DVBDemuxSectionSocketProtocol::init_client(unsigned short adapter, unsigned short device)
     const
 {
-    std::string devDemux = str( boost::format(
-            "/dev/dvb/adapter%d/demux%d") % adapter % device);
+    std::string devDemux = str( boost::format("/dev/dvb/adapter%d/demux%d") % adapter % device);
     int f = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
     if (f < 0){
         SENF_THROW_SYSTEM_EXCEPTION("Could not open demux device of DVB adapter ") << devDemux << ".";

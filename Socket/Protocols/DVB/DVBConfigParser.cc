@@ -1,7 +1,7 @@
 #include "DVBConfigParser.hh"
 #include <boost/assign/std/map.hpp>
-#include "../../../Utils/Exception.hh"
-
+#include "senf/Utils/Exception.hh"
+#include "senf/Utils/Logger.hh"
 using namespace std;
 #define prefix_
 
@@ -93,8 +93,10 @@ prefix_ string senf::DVBConfigParser::getConfigLine(string channel)
     transform(channel.begin(), channel.end(), channel.begin(), ::toupper);
     if(configFile.bad()) 
         SENF_THROW_SYSTEM_EXCEPTION("Could not read file.");
+    configFile.seekg(0);
     while (configFile.good()){
         getline( configFile, configLine );
+        SENF_LOG((senf::log::NOTICE)  ("configLine: " << configLine ));
         transform(configLine.begin(), configLine.end(), configLine.begin(), ::toupper);
         pos = configLine.find(channel);
         

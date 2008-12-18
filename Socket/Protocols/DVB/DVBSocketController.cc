@@ -1,6 +1,6 @@
-#include "../../../Utils/Exception.hh"
-#include "../../../Utils/Logger/Logger.hh"
-#include <../../../Utils/membind.hh>
+#include "senf/Utils/Exception.hh"
+#include "senf/Utils/Logger/Logger.hh"
+#include "senf/Utils/membind.hh"
 
 #include "DVBSocketController.hh"
 #include <sstream>
@@ -24,21 +24,17 @@ senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_
 prefix_ senf::DVBSocketController::~DVBSocketController()
 {
 }
-prefix_ string senf::DVBSocketController::tuneToCMD(const string & configLine, const string & mode){
+prefix_ void senf::DVBSocketController::tuneToCMD(const string & configLine, const string & mode){
     struct dvb_frontend_parameters frontend;
     
   
     // no valid configline, so it will be treaten like a channel name
     if (configLine.find(":")==string::npos){
-        if (mode.c_str()[0]=='a'){
+        if (mode.c_str()[0]=='a')
             tuneTo(configLine);
-            return "async readConfFile";
-        }
-        else{
+        else
             tuneTo_sync(configLine);
-            return "sync readConfFile";
-        }
-        
+        return;
     }
     // add psydo name to complete configline syntax
     frontend = parser.getFrontendParam("foo:"+configLine);
@@ -57,7 +53,6 @@ prefix_ string senf::DVBSocketController::tuneToCMD(const string & configLine, c
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("Could not determine type of card.");
         }
-        return "async get directly";
     }
     else {
         switch (type) {
@@ -73,7 +68,6 @@ prefix_ string senf::DVBSocketController::tuneToCMD(const string & configLine, c
             default:
                 SENF_THROW_SYSTEM_EXCEPTION("Could not determine type of card.");
         }
-        return "sync get directly";
     }
 }
 
@@ -112,7 +106,9 @@ prefix_ void senf::DVBSocketController::tuneDVB_T(unsigned int frequency,
 {
     if(type != FE_OFDM)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-T Card!";
+    
     event.enable();
+    
     frontendHandle.protocol().setNonBlock();
     frontendHandle.protocol().tuneDVB_T(frequency, 
                 inversion, 
@@ -128,7 +124,9 @@ prefix_ void senf::DVBSocketController::tuneDVB_T(unsigned int frequency,
 prefix_ void senf::DVBSocketController::tuneDVB_S(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate){
     if(type != FE_QPSK)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-S Card!";
+    
     event.enable();
+    
     frontendHandle.protocol().setNonBlock();
     frontendHandle.protocol().tuneDVB_S(frequency, inversion, symbole_rate, code_rate);
 }
@@ -144,6 +142,7 @@ prefix_ void senf::DVBSocketController::tuneDVB_C(unsigned int frequency,
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-C Card!";
     
     event.enable();
+    
     frontendHandle.protocol().setNonBlock();
     
     frontendHandle.protocol().tuneDVB_C(frequency, inversion, symbol_rate, fec_inner, modulation);
@@ -185,7 +184,9 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_T_sync(unsigned in
 {
     if(type != FE_OFDM)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-T Card!";
+    
     event.disable();
+    
     frontendHandle.protocol().setNonBlock(false);
     
     frontendHandle.protocol().tuneDVB_T(frequency, 
@@ -207,8 +208,11 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_T_sync(unsigned in
 prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_S_sync(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate){
     if(type != FE_QPSK)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-S Card!";
+    
     event.disable();
+    
     frontendHandle.protocol().setNonBlock(false);
+    
     frontendHandle.protocol().tuneDVB_S(frequency, inversion, symbole_rate, code_rate);
     
     if(!frontendHandle.waitOOBReadable(senf::ClockService::seconds(2)))
@@ -227,7 +231,9 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_C_sync(unsigned in
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-C Card!";
     
     event.disable();
+    
     frontendHandle.protocol().setNonBlock(false);
+    
     frontendHandle.protocol().tuneDVB_C(frequency, inversion, symbol_rate, fec_inner, modulation);
     if(!frontendHandle.waitOOBReadable(senf::ClockService::seconds(2)))
         SENF_THROW_SYSTEM_EXCEPTION("Could not tune to channel!");
@@ -266,6 +272,7 @@ prefix_ string senf::DVBSocketController::getTuneInfo(const string & conf){
     stringstream info;
     
     fe_status_t status;
+    frontendHandle.protocol().setNonBlock(false);
     uint16_t snr, signal;
     uint32_t ber, uncorrected_blocks;
     status = frontendHandle.protocol().status();
@@ -277,21 +284,23 @@ prefix_ string senf::DVBSocketController::getTuneInfo(const string & conf){
     info << hex;
     
     for(unsigned int i = 0; i < conf.size(); ++i){
+        if(i>0)
+            info << " | ";
         switch(cConf[i]){
             case 'S' :
-                info << " | signal " << signal;
+                info << "signal " << signal;
                 break;
             case 's' : 
-                info << " | snr " << snr;
+                info << "snr " << snr;
                 break;
             case 'b' :
-                info << " | ber " << ber;
+                info << "ber " << ber;
                 break;
             case 'u' :
-                info << " | unc " << uncorrected_blocks;
+                info << "unc " << uncorrected_blocks;
                 break;
             case 'f' :
-                info << " | status: " << status2String(status);
+                info << "status: " << status2String(status);
                 break;
             default:
                 break;
@@ -302,28 +311,28 @@ prefix_ string senf::DVBSocketController::getTuneInfo(const string & conf){
 prefix_ string senf::DVBSocketController::status2String(fe_status_t status){
    string s("");
     if (status & FE_HAS_LOCK)
-        return s += "|HAS LOCK"; 
+        return s += "HAS LOCK"; 
     if (status & FE_HAS_CARRIER)
-        s += "|HAS CARRIER";
+        s += "HAS CARRIER";
     if (status & FE_HAS_VITERBI)
-        s += "|HAS VITERBI";
+        s += "HAS VITERBI";
     if (status & FE_HAS_SYNC)
-        s += "|HAS SYNC";
+        s += "HAS SYNC";
     if (status & FE_HAS_SIGNAL)
-        s += "|HAS SIGNAL";
+        s += "HAS SIGNAL";
     if (status & FE_TIMEDOUT)
-        s += "|TIMED OUT";
+        s += "TIMED OUT";
     if (status & FE_REINIT)
-        s += "|REINIT";
+        s += "REINIT";
 
     return s;
 }
 
 prefix_ void senf::DVBSocketController::setSectionFilter(unsigned short int pid, 
-        unsigned char filter,
+        u_int8_t filter,
         unsigned int flags, 
-        unsigned char mask, 
-        unsigned char mode,
+        u_int8_t mask, 
+        u_int8_t mode,
         unsigned int timeout)
 {
     sectionHandle.protocol().setSectionFilter(pid, timeout, flags, filter, mask, mode);
@@ -345,13 +354,13 @@ prefix_ void senf::DVBSocketController::stopFiltering()
     sectionHandle.protocol().stopFiltering();
 }
 
-
 prefix_ fe_type_t senf::DVBSocketController::getType(){
     return type;
 }
 
 prefix_ void senf::DVBSocketController::readEvent(int event){
-    cb(frontendHandle.protocol().getEvent());
+    if(cb)
+        cb(frontendHandle.protocol().getEvent());
 }
 
 prefix_ void senf::DVBSocketController::initConsole(){
@@ -374,7 +383,7 @@ prefix_ void senf::DVBSocketController::initConsole(){
             and could end in throwing an exception!")
     .arg("conf", "Ssbuf", kw::default_value = "Ssbuf");
     
-    dir.add("tuneTo", &DVBSocketController::tuneToCMD)
+    dir.add("tune", &DVBSocketController::tuneToCMD)
         .doc("tunes to channel listet in the configfile.")
         .arg("channel", "channel to tune")
         .arg("mode", "mode \"sync\" or \"async\"", kw::default_value = "async");

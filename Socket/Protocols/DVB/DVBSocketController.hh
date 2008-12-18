@@ -6,9 +6,9 @@
 // Custom includes
 #include <string>
 #include <linux/dvb/frontend.h>
-#include <senf/Scheduler/Scheduler.hh>
+#include "senf/Scheduler/Scheduler.hh"
 #include "DVBConfigParser.hh"
-#include <senf/Console.hh>
+#include "senf/Console.hh"
 
 #define MPE_TABLEID 62
 
@@ -24,7 +24,7 @@ public:
     DVBSocketController(DVBFrontendHandle frontendHandle_ = DVBFrontendHandle(0,0), DVBDemuxSectionHandle sectionHandle_ = DVBDemuxSectionHandle(0,0), const Callback & cb = NULL);
 	~DVBSocketController();
 	
-	std::string tuneToCMD( const std::string & channel, const std::string & mode = "async");
+	void tuneToCMD( const std::string & channel, const std::string & mode = "async");
 	
 	void tuneTo(const std::string & channel);
 	
@@ -72,10 +72,10 @@ public:
     unsigned int signalStrength();
     
     void setSectionFilter(unsigned short int pid, 
-               unsigned char filter = MPE_TABLEID,
+               u_int8_t filter = MPE_TABLEID,
                unsigned int flags = DMX_IMMEDIATE_START | DMX_CHECK_CRC,
-               unsigned char mask = 0xff, 
-               unsigned char mode = 0,
+               u_int8_t mask = 0xff, 
+               u_int8_t mode = 0,
                unsigned int timeout = 0);
     
     void setBufferSize(unsigned long size); 

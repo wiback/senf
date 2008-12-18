@@ -29,7 +29,7 @@
 // Custom includes
 #include <boost/format.hpp>
 #include <sys/socket.h>
-#include "../../../Utils/Exception.hh"
+#include "senf/Utils/Exception.hh"
 #include <sys/ioctl.h>
 
 
@@ -151,7 +151,9 @@ const
        
     tune(frontend);
 }
-prefix_ void senf::DVBFrontendSocketProtocol::setNonBlock(bool on) const{
+prefix_ void senf::DVBFrontendSocketProtocol::setNonBlock(bool on) 
+    const
+{
    if(on)
        ::fcntl(fd(), F_SETFL, ::fcntl(fd(), F_GETFL) | O_NONBLOCK);
    else
@@ -223,7 +225,7 @@ prefix_ int16_t senf::DVBFrontendSocketProtocol::signalStrength()
 }
 
 prefix_ int16_t senf::DVBFrontendSocketProtocol::signalNoiseRatio()
-    const
+    const 
 {
     int16_t snr;
     if (::ioctl(fd(), FE_READ_SNR, &snr) < 0)

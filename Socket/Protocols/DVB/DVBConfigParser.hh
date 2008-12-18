@@ -48,14 +48,14 @@ class DVBConfigParser
                 DVBParams(); };
     static const DVBParams params;
     typedef boost::tokenizer<boost::char_separator<char> > tokenizer;
-    
+ 
+
 public:
 	DVBConfigParser(fe_type_t type_, const std::string & configFilePath = "");
 	~DVBConfigParser();
 	
 	std::string getConfigLine(std::string channel);
 	    
-	dvb_frontend_parameters parseCMDInput(std::string input);
 	dvb_frontend_parameters getFrontendParam(std::string configLine);
 	
 private:
