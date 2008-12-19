@@ -5,13 +5,9 @@ import SENFSCons, glob
 
 ###########################################################################
 
+sources, includes = SENFSCons.Glob(env)
+
 SENFSCons.StandardTargets(env)
-
-sources = SENFSCons.GlobSources()
-
-SENFSCons.Lib( env,
-               library = 'Utils_Daemon',
-               sources = sources,
-               LIBS = [ 'Logger', 'Scheduler', 'Socket', 'Utils' ] )
-
+SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
+SENFSCons.InstallIncludeFiles(env, includes)

@@ -3,8 +3,5 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.Binary(env, 'client', 'client.cc',
-                LIBS = [ 'Packets', 'Socket', 'Scheduler', 'Utils' ]);
-
-SENFSCons.Binary(env, 'server', 'server.cc',
-                LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Scheduler', 'Utils' ]);
+SENFSCons.Binary(env, 'client', 'client.cc');
+SENFSCons.Binary(env, 'server', 'server.cc');

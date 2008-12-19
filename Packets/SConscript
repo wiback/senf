@@ -5,19 +5,15 @@ import SENFSCons, glob
 
 ###########################################################################
 
-#SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
-#                               if 'defined(HH_Packets__decls_)' in file(f).read() ])
+sources, includes = SENFSCons.Glob(env)
 
 SENFSCons.StandardTargets(env)
-SENFSCons.Lib(env,
-              library = 'Packets',
-              sources = SENFSCons.GlobSources(),
-              LIBS = [ 'Logger', 'Scheduler', 'Socket', 'Utils' ])
+SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png("structure.dia"),
     env.Dia2Png("MPEGDVBBundle/TLV.dia")
 ])
+SENFSCons.InstallIncludeFiles(env, includes)
 
 SConscript(glob.glob("*/SConscript"))
 
-SENFSCons.InstallIncludeFiles(env, [ 'parse_fixed_setup.hh' , 'parse_setup.hh' ])

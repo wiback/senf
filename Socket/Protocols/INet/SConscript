@@ -5,20 +5,12 @@ import SENFSCons, glob
 
 ###########################################################################
 
+SConscript(glob.glob("*/SConscript"))
+
 SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                if f not in ('all_includes.hh','INet.hh') and not f.endswith('.test.hh') ])
 
-sources = SENFSCons.GlobSources()
+sources, includes = SENFSCons.Glob(env)
 
-allob = []
-
-allob.extend(
-    SENFSCons.Objects( env, sources = sources, LIBS = [ 'Socket', 'Scheduler', 'Utils' ] ) )
-
-for sc in glob.glob("*/SConscript"):
-    ob = SConscript(sc)
-    if ob : allob.extend(ob)
-
-SENFSCons.InstallIncludeFiles(env, [ 'INet.hh', 'all_includes.hh' ])
-
-Return('allob')
+SENFSCons.Lib(env, sources)
+SENFSCons.InstallIncludeFiles(env, includes)

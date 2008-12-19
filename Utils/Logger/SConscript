@@ -5,15 +5,13 @@ import SENFSCons, glob
 
 ###########################################################################
 
-SENFSCons.StandardTargets(env)
-
 SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                if ( f not in ('all_includes.hh','Logger.hh','SenfLog.hh')
                                     and not f.endswith('.test.hh') ) ])
-sources = SENFSCons.GlobSources()
-objects = SENFSCons.Lib( env,
-                         library = 'Logger',
-                         sources = sources,
-                         LIBS = [ 'Scheduler', 'Socket', 'Utils' ] )
 
+sources, includes = SENFSCons.Glob(env)
+
+SENFSCons.StandardTargets(env)
+SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
+SENFSCons.InstallIncludeFiles(env, includes)

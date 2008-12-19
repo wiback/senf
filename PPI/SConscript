@@ -3,24 +3,18 @@ import SENFSCons, glob
 
 ###########################################################################
 
-SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
-                               if f not in ('all_includes.hh','PPI.hh') and not f.endswith('.test.hh') ])
-
 SConscript(glob.glob("*/SConscript"))
 
-sources = SENFSCons.GlobSources(subdirs=[ 'detail' ])
+SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
+                               if f not in ('all_includes.hh','PPI.hh') \
+                                  and not f.endswith('.test.hh') ])
 
+sources, includes = SENFSCons.Glob(env, subdirs=[ 'detail' ])
 SENFSCons.StandardTargets(env)
-
-SENFSCons.Lib(env,
-             library = 'PPI',
-             sources = sources,
-             LIBS = [ 'Scheduler', 'Packets', 'Logger', 'Console', 'Socket', 'Utils' ])
-
+SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('scenario.dia'),
     env.Dia2Png('classes.dia'),
     env.Dia2Png('ratestuffer.dia'),
 ])
-
-SENFSCons.InstallIncludeFiles(env, [ 'PPI.hh', 'all_includes.hh' ])
+SENFSCons.InstallIncludeFiles(env, includes)

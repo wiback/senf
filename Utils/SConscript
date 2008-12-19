@@ -5,20 +5,11 @@ import SENFSCons, glob, os.path
 
 ###########################################################################
 
+sources, includes = SENFSCons.Glob(env, subdirs=[ 'impl' ])
+
 SENFSCons.StandardTargets(env)
-
-# OUCH ... another hack to work around a scons bug ...
-if not os.path.exists("Logger/all_includes.hh"):
-    Execute(Touch("Logger/all_includes.hh"))
-
-sources, testSources = SENFSCons.GlobSources()
-objects = SENFSCons.Objects( env, sources = sources, testSources=testSources )
-
-lib = SENFSCons.Lib(env,
-                    library = 'Utils',
-                    sources = objects)
-
+SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
-SENFSCons.InstallIncludeFiles(env, [ 'Logger.hh', 'Daemon.hh' ])
+SENFSCons.InstallIncludeFiles(env, includes)
 
 SConscript(glob.glob("*/SConscript"))

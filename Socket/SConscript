@@ -5,24 +5,15 @@ import SENFSCons, glob
 
 ###########################################################################
 
+SConscript(glob.glob("*/SConscript"))
+
 SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                if f not in ('all_includes.hh','Socket.hh') and not f.endswith('.test.hh') ])
 
-sources, testSources = SENFSCons.GlobSources()
+sources, includes = SENFSCons.Glob(env)
 
 SENFSCons.StandardTargets(env)
-
-subob = []
-for sc in glob.glob("*/SConscript"):
-    ob = SConscript(sc)
-    if ob : subob.extend(ob)
-
-SENFSCons.Lib(env,
-              library = 'Socket',
-              sources = sources + subob,
-              testSources = testSources,
-              LIBS = [ 'Utils' ])
-
+SENFSCons.Lib(env, sources = sources)
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('SocketLibrary-classes.dia'),
     env.Dia2Png('FhHierarchy.dia'),
@@ -30,5 +21,4 @@ SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('Protocols.dia'),
     env.Dia2Png('Handle.dia'),
 ])
-
-SENFSCons.InstallIncludeFiles(env, [ 'Socket.hh', 'all_includes.hh' ])
+SENFSCons.InstallIncludeFiles(env, includes)

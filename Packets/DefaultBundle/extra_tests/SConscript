@@ -5,5 +5,4 @@ import SENFSCons, glob
 
 ###########################################################################
 
-SENFSCons.Test(env, sources = glob.glob("*.test.cc"),
-               LIBS = [ 'Packets_DefaultBundle', 'Packets', 'Socket', 'Utils' ])
+SENFSCons.Test(env, sources = glob.glob("*.test.cc"))

@@ -5,18 +5,11 @@ import SENFSCons, glob
 
 ###########################################################################
 
-sources = SENFSCons.GlobSources()
+sources, includes = SENFSCons.Glob(env)
 
 SENFSCons.StandardTargets(env)
+SENFSCons.Object(env, target='80211Bundle', sources=sources)
+SENFSCons.Lib(env, sources=sources[0])
+SENFSCons.InstallIncludeFiles(env, includes)
 
-SENFSCons.Object(env, 
-    target = '80211Bundle', 
-    sources=sources,
-    LIBS = ['Packets', 'Socket', 'Utils'])
-
-SENFSCons.Lib(env, 
-    library = 'Packets_80211Bundle',
-    sources = sources[0],
-    no_includes = 1)
-                 
 SConscript(glob.glob("*/SConscript"))

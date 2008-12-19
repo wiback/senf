@@ -51,7 +51,6 @@ SCONS_TOOLS = [
     "Doxygen",
     "Dia2Png",
     "CopyToDir",
-    "InstallIncludes",
     "ProgramNoScan",
     "CompileCheck",
 ]
@@ -295,7 +294,7 @@ def MakeEnvironment():
 # in the current directory. The sources will be returned as a tuple of
 # sources, test-sources. The target helpers all accept such a tuple as
 # their source argument.
-def GlobSources(exclude=[], subdirs=[]):
+def GlobSources(env, exclude=[], subdirs=[]):
     testSources = glob.glob("*.test.cc")
     sources = [ x for x in glob.glob("*.cc") if x not in testSources and x not in exclude ]
     for subdir in subdirs:
@@ -303,6 +302,22 @@ def GlobSources(exclude=[], subdirs=[]):
         sources += [ x for x in glob.glob(os.path.join(subdir,"*.cc"))
                      if x not in testSources and x not in exclude ]
     return (sources, testSources)
+
+def GlobIncludes(env, exclude=[], subdirs=[]):
+    includes = []
+    for d in [ '.' ] + subdirs:
+        for f in os.listdir(d):
+            ext = '.' + f.split('.',1)[-1]
+            p = os.path.join(d,f)
+            if ext in env['CPP_INCLUDE_EXTENSIONS'] \
+               and ext not in env['CPP_EXCLUDE_EXTENSIONS'] \
+               and p not in exclude:
+                includes.append(p)
+    return includes
+
+def Glob(env, exclude=[], subdirs=[]):
+    return ( GlobSources(env, exclude, subdirs),
+             GlobIncludes(env, exclude, subdirs) )
 
 ## \brief Add generic standard targets for every module
 #
@@ -370,7 +385,7 @@ def Test(env, sources, LIBS = [], OBJECTS = []):
 # provide both \a sources and \a testSources.
 #
 # \ingroup target
-def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
+def Objects(env, sources, testSources = None, OBJECTS = []):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
@@ -414,39 +429,10 @@ def InstallIncludeFiles(env, files):
     if env.GetOption('clean'):
         return
     target = env.Dir(env['INCLUDEINSTALLDIR'])
-    base = env.Dir(env['INSTALL_BASE'])
+    base = env.Dir('#')
     for f in files:
         src = env.File(f)
         env.Alias('install_all', env.Install(target.Dir(src.dir.get_path(base)), src))
-
-def InstallSourceIncludes(env, sources):
-    target = env.Dir(env['INCLUDEINSTALLDIR']).Dir(
-        env.Dir('.').get_path(env.Dir(env['INSTALL_BASE'])))
-    install = env.InstallIncludes( target = target,
-                                   source = [ type(x) is str and env.File(x) or x
-                                              for x in sources ],
-                                   INSTALL_BASE = env.Dir('.') )
-    env.Alias( 'install_all', install )
-
-def InstallWithSources(env, targets, dir, sources, testSources = [], no_includes = False):
-    if type(sources) is type(()):
-        sources, testSources = sources
-    if type(sources) is not type([]):
-        sources = [ sources ]
-    if type(testSources) is not type([]):
-        testSources = [ testSources ]
-
-    installs = [ env.Install(dir, targets) ]
-    env.Alias( 'install_all', installs[:] )
-
-    if not no_includes:
-        sources = targets
-        if testSources:
-            sources.append( env.File('.test.bin') )
-        installs.append(
-            InstallSourceIncludes(env, sources))
-
-    return installs
 
 ## \brief Build documentation with doxygen
 #
@@ -650,22 +636,21 @@ def DoxyXRef(env, docs=None,
 # The library is added to the list of default targets.
 #
 #\ingroup target
-def Lib(env, library, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
-    objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
+def Lib(env, sources, testSources = None, OBJECTS = []):
+    objects = Objects(env,sources,testSources,OBJECTS=OBJECTS)
     if objects:
         env.Append(ALLOBJECTS = objects)
-        InstallSourceIncludes(env, sources)
     return objects
 
 ## \brief Build Object from multiple sources
-def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
-    objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
+def Object(env, target, sources, testSources = None, OBJECTS = []):
+    objects = Objects(env,sources,testSources,OBJECTS=OBJECTS)
     ob = None
     if objects:
         ob = env.Command(target+"${OBJADDSUFFIX}${OBJSUFFIX}", objects, "ld -r -o $TARGET $SOURCES")
         env.Default(ob)
         env.Alias('default', ob)
-        InstallSourceIncludes(env, sources)
+        env.Alias('install_all', env.Install("$OBJINSTALLDIR", ob))
     return ob
 
 ## \brief Build executable
@@ -678,8 +663,8 @@ def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = [], no
 # construction environment parameters or the framework helpers.
 #
 # \ingroup target
-def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
-    objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
+def Binary(env, binary, sources, testSources = None, OBJECTS = []):
+    objects = Objects(env,sources,testSources,OBJECTS=OBJECTS)
     program = None
     if objects:
         progEnv = env.Clone()
@@ -688,7 +673,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(env['LIBSENF'])) ])
         env.Alias('default', program)
-        InstallWithSources(env, program, '$BININSTALLDIR', sources, testSources, no_includes)
+        env.Alias('install_all', env.Install('$BININSTALLDIR', program))
     return program
 
 def AllIncludesHH(env, headers):
