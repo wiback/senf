@@ -5,9 +5,11 @@ import SENFSCons
 
 ###########################################################################
 
-sources, includes = SENFSCons.Glob(env, exclude=['testServer.cc'])
+sources, includes = SENFSCons.Glob(env, exclude=['testServer.cc', 'telnetServer.cc'])
 
 SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
 SENFSCons.InstallIncludeFiles(env, includes)
+SENFSCons.Binary(env, "testServer", ['testServer.cc'])
+SENFSCons.Binary(env, "telnetServer", ['telnetServer.cc'])
