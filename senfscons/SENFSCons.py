@@ -284,7 +284,7 @@ def MakeEnvironment():
 
     env.Append(CPPDEFINES = [ '$EXTRA_DEFINES' ],
                LIBS = [ '$EXTRA_LIBS' ],
-               ALLLIBS = [])
+               ALLOBJECTS = [])
 
     return env
 
@@ -343,7 +343,7 @@ def Test(env, sources, LIBS = [], OBJECTS = []):
         test_sources = sources,
         LIBS = [ '$LIBSENF' ],
         OBJECTS = OBJECTS,
-        DEPENDS = [ env.File(LibPath(x)) for x in LIBS ]) ]
+        DEPENDS = [ env.File(LibPath(env['LIBSENF'])) ]) ]
     compileTestSources = [ src for src in sources
                            if 'COMPILE_CHECK' in file(src).read() ]
     if compileTestSources:
@@ -395,7 +395,7 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = [], no_includ
             test_sources = testSources,
             LIBS = [ '$LIBSENF' ],
             OBJECTS = OBJECTS,
-            DEPENDS = [ env.File(LibPath(x)) for x in LIBS ]) ]
+            DEPENDS = [ env.File(LibPath(env['LIBSENF'])) ]) ]
         compileTestSources = [ src for src in testSources
                                if 'COMPILE_CHECK' in file(src).read() ]
         if compileTestSources:
@@ -686,7 +686,7 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
         progEnv.Prepend(LIBS = [ '$LIBSENF' ])
         program = progEnv.ProgramNoScan(target=binary,source=objects+OBJECTS)
         env.Default(program)
-        env.Depends(program, [ '$LIBSENF' ])
+        env.Depends(program, [ env.File(LibPath(env['LIBSENF'])) ])
         env.Alias('default', program)
         InstallWithSources(env, program, '$BININSTALLDIR', sources, testSources, no_includes)
     return program

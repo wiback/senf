@@ -1,7 +1,8 @@
 # -*- python -*-
 
 import sys, glob, os.path, datetime, pwd, time, fnmatch, string
-sys.path.append('senfscons')
+sys.path.append(Dir('#/senfscons').abspath)
+sys.path.append(Dir('#/doclib').abspath)
 import SENFSCons
 
 ###########################################################################
