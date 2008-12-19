@@ -4,7 +4,7 @@ Maintainer: Stefan Bund <senf-dev@lists.berlios.de>
 Build-Depends: debhelper (>= 5), scons (>= 0.97), g++, binutils-dev, libboost-dev, 
 	libboost-test-dev, libboost-date-time-dev, libboost-regex-dev, 
 	libboost-filesystem-dev, libboost-serialization-dev, libboost-iostreams-dev,
-	libboost-signal-dev, doxygen (>= 1.5.5), libreadline-dev, dia, tidy, xsltproc, 
+	libboost-signals-dev, doxygen (>= 1.5.5), libreadline-dev, dia, tidy, xsltproc, 
 	graphviz, perl-base, linklint, netpbm
 Standards-Version: 3.7.2 
 Section: libs
@@ -36,7 +36,7 @@ Section: libdevel
 Architecture: all
 Depends: binutils-dev, libboost-dev, libboost-regex-dev, 
 	libboost-date-time-dev, libboost-thread-dev, libboost-serialization-dev,
-	libboost-filesystem-dev, libboost-signal-dev,
+	libboost-filesystem-dev, libboost-signals-dev,
 	libsenf (=${source:Version}) | libsenf-dbg (=${source:Version})
 Recommends: libsenf (=${source:Version}), libsenf-dbg (=${source:Version})
 Suggests: libsenf-doc (=${source:Version})

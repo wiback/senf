@@ -130,7 +130,7 @@ env.Append(
            'PATH' : os.environ.get('PATH')
          },
    LOCAL_CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
-   DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '_tmplates' ],
+   DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '_templates' ],
    DPKG_IGNORED_FILES_OPTS = dpkgIgnoredFilesOpts,
    CLEAN_PATTERNS = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
    BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot $DPKG_IGNORED_FILES_OPTS",
