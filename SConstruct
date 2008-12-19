@@ -198,7 +198,7 @@ SENFSCons.DoxyXRef(env,
 SENFSCons.InstallIncludeFiles(env, [ 'config.hh' ])
 
 # Build combined library 'libsenf'
-libsenf = env.Library(env['LIBSENF'], env['ALLOBJECTS'])
+libsenf = env.Library(env.subst("$LIBSENF$LIBADDSUFFIX"), env['ALLOBJECTS'])
 env.Default(libsenf)
 env.Clean('all', libsenf)
 env.Alias('default', libsenf)

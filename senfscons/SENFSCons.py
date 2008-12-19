@@ -356,7 +356,7 @@ def Test(env, sources, LIBS = [], OBJECTS = []):
         target = 'test',
         objects = [],
         test_sources = sources,
-        LIBS = [ '$LIBSENF' ],
+        LIBS = [ '$LIBSENF$LIBADDSUFFIX' ],
         OBJECTS = OBJECTS,
         DEPENDS = [ env.File(LibPath(env['LIBSENF'])) ]) ]
     compileTestSources = [ src for src in sources
@@ -408,7 +408,7 @@ def Objects(env, sources, testSources = None, OBJECTS = []):
             target = 'test',
             objects = objects,
             test_sources = testSources,
-            LIBS = [ '$LIBSENF' ],
+            LIBS = [ '$LIBSENF$LIBADDSUFFIX' ],
             OBJECTS = OBJECTS,
             DEPENDS = [ env.File(LibPath(env['LIBSENF'])) ]) ]
         compileTestSources = [ src for src in testSources
@@ -668,7 +668,7 @@ def Binary(env, binary, sources, testSources = None, OBJECTS = []):
     program = None
     if objects:
         progEnv = env.Clone()
-        progEnv.Prepend(LIBS = [ '$LIBSENF' ])
+        progEnv.Prepend(LIBS = [ '$LIBSENF$LIBADDSUFFIX' ])
         program = progEnv.ProgramNoScan(target=binary,source=objects+OBJECTS)
         env.Default(program)
         env.Depends(program, [ env.File(LibPath(env['LIBSENF'])) ])
