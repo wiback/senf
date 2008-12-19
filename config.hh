@@ -27,9 +27,17 @@
 # define HH_config_ 1
 # 
 # // Custom includes
+# include <boost/cstdint.hpp>
 # 
 # ///////////////////////////////hh.p////////////////////////////////////////
-# 
+
+namespace senf {
+namespace config {
+
+    typedef boost::int_fast64_t time_type;
+
+}}
+
 # include "local_config.hh"
 #
 # ifndef SENF_ABSOLUTE_INCLUDE_PATH

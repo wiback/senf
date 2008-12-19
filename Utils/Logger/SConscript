@@ -11,8 +11,9 @@ SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                if ( f not in ('all_includes.hh','Logger.hh','SenfLog.hh')
                                     and not f.endswith('.test.hh') ) ])
 sources = SENFSCons.GlobSources()
-objects = SENFSCons.Objects( env, sources = sources, LIBS = [ 'Utils', 'Socket' ] )
+objects = SENFSCons.Lib( env,
+                         library = 'Logger',
+                         sources = sources,
+                         LIBS = [ 'Scheduler', 'Socket', 'Utils' ] )
 
 SENFSCons.Doxygen(env)
-
-Return('objects')

@@ -29,7 +29,7 @@
 // Custom includes
 #include <boost/format.hpp>
 #include "../Utils/membind.hh"
-#include "Console/Console.hh"
+#include "../Utils/Console/Console.hh"
 #include "FIFORunner.hh"
 
 //#include "EventManager.mpp"

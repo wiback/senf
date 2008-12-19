@@ -30,7 +30,7 @@
 #include <boost/scoped_ptr.hpp>
 #include "Server.hh"
 #include "../../Utils/Exception.hh"
-#include "../Scheduler.hh"
+#include "../../Scheduler/Scheduler.hh"
 
 //#include "Readline.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

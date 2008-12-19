@@ -1,11 +1,11 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob
+import SENFSCons, glob, sys
+sys.path.append(env.Dir('#/doclib').abspath)
+import yaptu
 
 ###########################################################################
-
-import yaptu
 
 HOWTOS = []
 for dox in sorted(glob.glob("*/Mainpage.dox")):

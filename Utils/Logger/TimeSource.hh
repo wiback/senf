@@ -29,7 +29,7 @@
 // Custom includes
 #include <boost/cstdint.hpp>
 #include <memory>
-#include "../../Scheduler/ClockService.hh"
+#include "../../config.hh"
 
 //#include "TimeSource.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -37,7 +37,7 @@
 namespace senf {
 namespace log {
 
-    typedef ClockService::clock_type time_type;
+    typedef config::time_type time_type;
 
     /** \brief Log message time source abstract base class
 

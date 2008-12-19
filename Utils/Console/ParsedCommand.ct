@@ -34,7 +34,7 @@
 // senf::console::ParsedCommandOverload<FunctionTraits,n>
 
 #define BOOST_PP_ITERATION_PARAMS_1 (4, (0, SENF_CONSOLE_MAX_COMMAND_ARITY,                       \
-                                         SENF_ABSOLUTE_INCLUDE_PATH(Scheduler/Console/ParsedCommand.mpp),   \
+                                         SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp),   \
                                          3))
 #include BOOST_PP_ITERATE()
 

@@ -330,12 +330,18 @@ def GlobalTargets(env):
 # \internal
 def LibPath(lib): return '${LOCALLIBDIR}/${LIBPREFIX}%s${LIBADDSUFFIX}${LIBSUFFIX}' % lib
 
+## \brief Add explicit test
+#
+# This target helper will add an explicit test. This is like a unit test but is
+# built directly against the completed library
+#
+# \ingroup target
 def Test(env, sources, LIBS = [], OBJECTS = []):
     test = [ env.BoostUnitTests(
         target = 'test',
         objects = [],
         test_sources = sources,
-        LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ],
+        LIBS = [ '$LIBSENF' ],
         OBJECTS = OBJECTS,
         DEPENDS = [ env.File(LibPath(x)) for x in LIBS ]) ]
     compileTestSources = [ src for src in sources
@@ -387,7 +393,7 @@ def Objects(env, sources, testSources = None, LIBS = [], OBJECTS = [], no_includ
             target = 'test',
             objects = objects,
             test_sources = testSources,
-            LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ],
+            LIBS = [ '$LIBSENF' ],
             OBJECTS = OBJECTS,
             DEPENDS = [ env.File(LibPath(x)) for x in LIBS ]) ]
         compileTestSources = [ src for src in testSources
@@ -646,14 +652,10 @@ def DoxyXRef(env, docs=None,
 #\ingroup target
 def Lib(env, library, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
     objects = Objects(env,sources,testSources,LIBS=LIBS,OBJECTS=OBJECTS)
-    lib = None
     if objects:
-        lib = env.Library(env.File(LibPath(library)),objects)
-        env.Default(lib)
-        env.Append(ALLLIBS = library)
-        env.Alias('default', lib)
-        InstallWithSources(env, lib, '$LIBINSTALLDIR', sources, testSources, no_includes)
-    return lib
+        env.Append(ALLOBJECTS = objects)
+        InstallSourceIncludes(env, sources)
+    return objects
 
 ## \brief Build Object from multiple sources
 def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = [], no_includes = False):
@@ -663,7 +665,7 @@ def Object(env, target, sources, testSources = None, LIBS = [], OBJECTS = [], no
         ob = env.Command(target+"${OBJADDSUFFIX}${OBJSUFFIX}", objects, "ld -r -o $TARGET $SOURCES")
         env.Default(ob)
         env.Alias('default', ob)
-        InstallWithSources(env, ob, '$OBJINSTALLDIR', sources, testSources, no_includes)
+        InstallSourceIncludes(env, sources)
     return ob
 
 ## \brief Build executable
@@ -681,10 +683,10 @@ def Binary(env, binary, sources, testSources = None, LIBS = [], OBJECTS = [], no
     program = None
     if objects:
         progEnv = env.Clone()
-        progEnv.Prepend(LIBS = [ x + '$LIBADDSUFFIX' for x in LIBS ])
+        progEnv.Prepend(LIBS = [ '$LIBSENF' ])
         program = progEnv.ProgramNoScan(target=binary,source=objects+OBJECTS)
         env.Default(program)
-        env.Depends(program, [ env.File(LibPath(x)) for x in LIBS ])
+        env.Depends(program, [ '$LIBSENF' ])
         env.Alias('default', program)
         InstallWithSources(env, program, '$BININSTALLDIR', sources, testSources, no_includes)
     return program

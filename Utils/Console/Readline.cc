@@ -192,7 +192,8 @@ prefix_ void senf::console::detail::ReadlineClientReader::v_enablePrompt()
 
 prefix_ void senf::console::detail::ReadlineClientReader::v_translate(std::string & data)
 {
-    boost::replace_all(data, "\n", "\n\r");
+    boost::replace_all(data, "\n", "\r\n");
+    boost::replace_all(data, "\r", "\r\0");
     boost::replace_all(data, "\xff", "\xff\xff");
 }
 

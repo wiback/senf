@@ -12,6 +12,6 @@ sources = SENFSCons.GlobSources()
 SENFSCons.Lib( env,
                library = 'Utils_Daemon',
                sources = sources,
-               LIBS = [ 'Scheduler', 'Socket', 'Utils' ] )
+               LIBS = [ 'Logger', 'Scheduler', 'Socket', 'Utils' ] )
 
 SENFSCons.Doxygen(env)

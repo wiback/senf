@@ -183,7 +183,7 @@ namespace console {
 #ifndef DOXYGEN
 
 #   define BOOST_PP_ITERATION_PARAMS_1 (4, (0, SENF_CONSOLE_MAX_COMMAND_ARITY,                     \
-                                            SENF_ABSOLUTE_INCLUDE_PATH(Scheduler/Console/ParsedCommand.mpp), \
+                                            SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp), \
                                             1))
 #   include BOOST_PP_ITERATE()
 
@@ -492,7 +492,7 @@ namespace console {
 
 #       define BOOST_PP_ITERATION_PARAMS_1                                                        \
             (4, (1, BOOST_PARAMETER_MAX_ARITY,                                                    \
-                 SENF_ABSOLUTE_INCLUDE_PATH(Scheduler/Console/ParsedCommand.mpp),                 \
+                 SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp),                 \
                  5))
 #       include BOOST_PP_ITERATE()
 

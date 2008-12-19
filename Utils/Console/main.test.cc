@@ -19,43 +19,23 @@
 // along with this program; if not, write to the
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-//
-// NEVER INCLUDE DIRECTLY !! INCLUDE senf/membind.hh
 
-#if !BOOST_PP_IS_ITERATING
+// Definition of non-inline non-template functions
 
-#include <boost/preprocessor/cat.hpp>
-#include <boost/preprocessor/repetition/enum_shifted.hpp>
-#include <boost/preprocessor/iteration/iterate.hpp>
+//#include "test.hh"
+//#include "test.ih"
 
-template <typename R, typename T>
-boost::function<R()> membind(R (T::* fn)(),scOBTYPE ob)
-{
-    return boost::bind(fn,ob);
-}
+// Custom includes
+#define BOOST_AUTO_TEST_MAIN
+#include "../../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
-// for BOOST_PP_ITERATION() in 2..9 do
-#define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, SENF_ABSOLUTE_INCLUDE_PATH(Utils/impl/membind.hh), 1))
-#include BOOST_PP_ITERATE()
-#elif BOOST_PP_ITERATION_DEPTH()==1 && BOOST_PP_ITERATION_FLAGS()==1
-// {{
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-#define scARG(z,n,d) BOOST_PP_CAT(d,n)
-#define scPARAMS(d) BOOST_PP_ENUM_SHIFTED(BOOST_PP_ITERATION(),scARG,d)
 
-template < typename R, typename T, scPARAMS(typename A) >
-boost::function<R ( scPARAMS(A) )>
-membind(R (T::* fn)( scPARAMS(A) ), scOBTYPE ob)
-{
-    return boost::bind(fn, ob, scPARAMS(_) );
-}
-
-#undef scPARAMS
-#undef scARG
-
-// }
-#endif
-// done
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

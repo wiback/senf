@@ -14,16 +14,11 @@ if not os.path.exists("Logger/all_includes.hh"):
 sources, testSources = SENFSCons.GlobSources()
 objects = SENFSCons.Objects( env, sources = sources, testSources=testSources )
 
-for sc in glob.glob("*/SConscript"):
-    ob = SConscript(sc)
-    if ob : objects.extend(ob)
-
 lib = SENFSCons.Lib(env,
                     library = 'Utils',
-                    sources = objects,
-                    no_includes = True)
-
-SENFSCons.InstallSourceIncludes(env, Flatten([ lib, '.test.bin', 'Logger/.test.bin' ]))
+                    sources = objects)
 
 SENFSCons.Doxygen(env)
 SENFSCons.InstallIncludeFiles(env, [ 'Logger.hh', 'Daemon.hh' ])
+
+SConscript(glob.glob("*/SConscript"))

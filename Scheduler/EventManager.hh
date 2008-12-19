@@ -32,7 +32,7 @@
 #include "../boost/intrusive/ilist.hpp"
 #include "../boost/intrusive/ilist_hook.hpp"
 #include "../Utils/singleton.hh"
-#include "Console/LazyDirectory.hh"
+#include "../Utils/Console/LazyDirectory.hh"
 
 //#include "EventManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

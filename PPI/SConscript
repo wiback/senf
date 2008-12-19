@@ -15,7 +15,7 @@ SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env,
              library = 'PPI',
              sources = sources,
-             LIBS = [ 'Scheduler', 'Packets', 'Socket', 'Utils' ])
+             LIBS = [ 'Scheduler', 'Packets', 'Logger', 'Console', 'Socket', 'Utils' ])
 
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('scenario.dia'),

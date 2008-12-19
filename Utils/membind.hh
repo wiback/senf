@@ -52,6 +52,7 @@
 // Custom includes
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#include "../config.hh"
 
 ///////////////////////////////hh.p////////////////////////////////////////
 

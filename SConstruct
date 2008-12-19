@@ -68,43 +68,6 @@ def checkLocalConf(target, source, env):
         print
         return 1
 
-def getLibDepends(script):
-    # OUCH ...
-    return os.popen("perl -0777 -n -e '$,=\" \"; print $1=~m/'\"'\"'([^'\"'\"']*)'\"'\"'/g if /LIBS\s*=\s*\[([^\]]*)\]/' %s" % script).read().split()
-
-# Original topological sort code written by Ofer Faigon
-# (www.bitformation.com) and used with permission
-def topological_sort(items, partial_order):
-    """Perform topological sort.
-       items is a list of items to be sorted.
-       partial_order is a list of pairs. If pair (a,b) is in it, it means
-       that item a should appear before item b.
-       Returns a list of the items in one of the possible orders, or None
-       if partial_order contains a loop.
-    """
-    def add_node(graph, node):
-        if not graph.has_key(node):
-            graph[node] = [0] 
-    def add_arc(graph, fromnode, tonode):
-        graph[fromnode].append(tonode)
-        graph[tonode][0] = graph[tonode][0] + 1
-    graph = {}
-    for v in items:
-        add_node(graph, v)
-    for a,b in partial_order:
-        add_arc(graph, a, b)
-    roots = [node for (node,nodeinfo) in graph.items() if nodeinfo[0] == 0]
-    while len(roots) != 0:
-        root = roots.pop()
-        yield root
-        for child in graph[root][1:]:
-            graph[child][0] = graph[child][0] - 1
-            if graph[child][0] == 0:
-                roots.append(child)
-        del graph[root]
-    if len(graph.items()) != 0:
-        raise RuntimeError, "Loop detected in partial_order"
-
 ###########################################################################
 # Load utilities and setup libraries and configure build
 
@@ -137,8 +100,8 @@ logname = os.environ.get('LOGNAME')
 if not logname:
     logname = pwd.getpwuid(os.getuid()).pw_name
 
-def configFilesOpts(target, source, env, for_signature):
-    return [ '-I%s' % os.path.split(f)[1] for f in env['LOCAL_CONFIG_FILES'] ]
+def dpkgIgnoredFilesOpts(target, source, env, for_signature):
+    return [ '-I%s' % os.path.split(f)[1] for f in env.subst('$DPKG_IGNORED_FILES').split() ]
 
 # Options used to debug inlining:
 #
@@ -166,9 +129,10 @@ env.Append(
            'PATH' : os.environ.get('PATH')
          },
    LOCAL_CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
-   CONFIG_FILES_OPTS = configFilesOpts,
+   DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '_tmplates' ],
+   DPKG_IGNORED_FILES_OPTS = dpkgIgnoredFilesOpts,
    CLEAN_PATTERNS = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
-   BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot -I.svn -I_templates $CONFIG_FILES_OPTS",
+   BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot $DPKG_IGNORED_FILES_OPTS",
    TOP_INCLUDES = [ 'Packets', 'PPI', 'Scheduler', 'Socket', 'Utils', 'Console',
                     'config.hh', 'local_config.hh' ],
 )
@@ -221,15 +185,8 @@ env.Clean('all', '.prepare-stamp')
 scripts = []
 dependencies = []
 
-for script in glob.glob("*/SConscript"):
-    depends = getLibDepends(script)
-    script = script.split('/',1)[0]
-    scripts.append(script)
-    dependencies += [ (dep, script) for dep in depends ]
+SConscript(glob.glob("*/SConscript"))
 
-for subdir in topological_sort(scripts, dependencies):
-    SConscript(os.path.join(subdir, "SConscript"))
-    
 SENFSCons.StandardTargets(env)
 SENFSCons.GlobalTargets(env)
 SENFSCons.Doxygen(env)
@@ -240,9 +197,7 @@ SENFSCons.DoxyXRef(env,
 SENFSCons.InstallIncludeFiles(env, [ 'config.hh' ])
 
 # Build combined library 'libsenf'
-libsenf = env.Library(
-    'senf${LIBADDSUFFIX}',
-    Flatten([ env.File(SENFSCons.LibPath(lib)).sources for lib in env['ALLLIBS'] ]))
+libsenf = env.Library(env['LIBSENF'], env['ALLOBJECTS'])
 env.Default(libsenf)
 env.Clean('all', libsenf)
 env.Alias('default', libsenf)

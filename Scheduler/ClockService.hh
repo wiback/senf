@@ -32,8 +32,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/cstdint.hpp>
+#include "../config.hh"
 #include "../Utils/singleton.hh"
-#include "Console/Parse.hh"
+#include "../Utils/Console/Parse.hh"
 
 //#include "ClockService.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -72,7 +73,7 @@ namespace senf {
             Unsigned integer type representing scheduler time. Scheduler time is measured in
             nanoseconds relative to some implementation defined reference time.
          */
-        typedef boost::int_fast64_t clock_type;
+        typedef config::time_type clock_type;
 
         /** \brief Supplementary integer type
 

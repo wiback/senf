@@ -33,6 +33,7 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include "../Scheduler/ClockService.hh"
 
 //#include "IOStreamTarget.mpp"
 #define prefix_
