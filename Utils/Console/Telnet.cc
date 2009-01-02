@@ -399,18 +399,14 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::response(OptInfo & info,
     }
     else if (enabled != info.enabled) {
         // Request to change the current state
-        bool accept (enabled);
         if (!enabled || 
             enabled && (info.wantState == OptInfo::WANTED || info.wantState == OptInfo::ACCEPTED)) {
-            // Accept the request
+            // accept the request
             info.optionState = OptInfo::ACKNOWLEDGED;
             info.enabled = enabled;
-        }
-        else
-            // Reject the request
-            accept = info.enabled;
+        }   // else reject the request
         transmit(CMD_IAC);
-        transmit((info.local ? CMD_WILL : CMD_DO) + (accept ? 0 : 1));
+        transmit((info.local ? CMD_WILL : CMD_DO) + (info.enabled ? 0 : 1));
         transmit(info.option);
     }
     else
@@ -421,8 +417,8 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::response(OptInfo & info,
             i->second->v_init();
     }
     if (decrementCount)
-        // This call must be AFTER calling v_init since v_init might increment the request count
-        // again. Otherwise v_setupComplete might be called prematurely
+        // This call must be AFTER calling v_init since v_init might increment the request count.
+        // and v_setupComplete() might be called prematurely.
         decrementRequestCounter();
 }
 
