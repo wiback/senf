@@ -1,3 +1,26 @@
+// $Id$
+//
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Anton Gillert <atx@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+
 #ifndef DVBSOCKETCONTROLLER_HH_
 #define DVBSOCKETCONTROLLER_HH_
 
@@ -13,24 +36,37 @@
 #define MPE_TABLEID 62
 
 namespace senf {
-    std::string status2String(fe_status_t status);
+    /** \brief Helperclass for configuration and controlling DVB devices.<br><br>
+     * 
+     * The DVB API provides two methods for tuning. The first method is 
+     * synchronous, which means e.g. "tuneTo_sync" will return when the tuning operation on the card succeed,
+     * no matter how long it takes. The second (preferred) method is to tune asynchronous. The call "tuneTo" will return 
+     * immediately and (if a callback was set) call the callback when the tuning operation succeeds.     
+     *   
+     */
 class DVBSocketController : boost::noncopyable
 {
 public:
     senf::console::ScopedDirectory<DVBSocketController> dir;
     
-    typedef boost::function<void (const struct dvb_frontend_event & )> Callback;
+    typedef boost::function<void (const struct dvb_frontend_event & )> Callback; ///< Callback which is called when an asynchronous tuning succeeds.
+                                                                                 /**< Callback which is called when an asynchronous tuning succeeds.*/
         
     DVBSocketController(DVBFrontendHandle frontendHandle_ = DVBFrontendHandle(0,0), DVBDemuxSectionHandle sectionHandle_ = DVBDemuxSectionHandle(0,0), const Callback & cb = NULL);
 	~DVBSocketController();
 	
-	void tuneToCMD( const std::string & channel, const std::string & mode = "async");
-	
-	void tuneTo(const std::string & channel);
+	void tuneToCMD( const std::string & input, const std::string & mode = "async");///< Tunes a DVB device given by the type of the DVBFrontendHandle
+                                                                                    /**< Tunes a DVB device by a channel name or complete configuration line.
+                                                                                    \param[in] input A channel name or a complete configuration line. If a channel name is given it would be searched in the config file.
+	                                                                                \param[in] mode The mode in which it will tune "sync" or "async"*/
+	void tuneTo(const std::string & channel);  
+	                                            ///< Tunes a DVB device given by the type of the DVBFrontendHandle
+                                                /**< Tunes a DVB device, given by the type of the DVBFrontendHandle, by a channel name in asynchronous mode
+                                                     \param[in] channel A channel name which will be looked up in config file.*/
 	
 	void tuneDVB_S(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate);
 	                                                                                ///< Tunes a DVB-S device
-	                                                                                /**< Tunes a DVB-S device. Needs full configuration */
+	                                                                                /**< Tunes a DVB-S device in asynchronous mode and calls the callback if existing. Needs full configuration */
 	void tuneDVB_T(unsigned int frequency,
 	                fe_spectral_inversion_t inversion, fe_bandwidth_t bandwidth,
 	                fe_code_rate_t code_rate_HP, /* high priority stream code rate */
@@ -38,17 +74,22 @@ public:
 	                fe_modulation_t constellation, /* modulation type (see above) */
 	                fe_transmit_mode_t transmission_mode,
 	                fe_guard_interval_t guard_interval,
-	                fe_hierarchy_t hierarchy_information);                                                      ///< Tunes a DVB-T device
-	                                                                                /**< Tunes a DVB-T device. Needs full configuration */
+	                fe_hierarchy_t hierarchy_information);                          ///< Tunes a DVB-T device
+	                                                                                /**< Tunes a DVB-T device in asynchronous mode and calls the callback if existing. Needs full configuration. */
 	void tuneDVB_C(unsigned int frequency,
 	                fe_spectral_inversion_t inversion, unsigned int symbol_rate,
 	                fe_code_rate_t fec_inner, fe_modulation_t modulation); 
+	                                                                                ///< Tunes a DVB-C device
+                                                                                    /**< Tunes a DVB-C device in asynchronous mode and calls the callback if existing. Needs full configuration. */
 	
 	dvb_frontend_event tuneTo_sync( const std::string & channel );
+	                                                                ///< Tunes a DVB device given by the type of the DVBFrontendHandle
+                                                                    /**< Tunes a DVB device, given by the type of the DVBFrontendHandle, by a channel name in synchronous mode
+                                                                        \param[in] channel A channel name which will be looked up in config file.*/
 	
 	dvb_frontend_event tuneDVB_S_sync(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate);
                                                                                 ///< Tunes a DVB-S device
-                                                                                /**< Tunes a DVB-S device. Needs full configuration */
+                                                                                /**< Tunes a DVB-S device in synchronous mode. Needs full configuration */
     dvb_frontend_event tuneDVB_T_sync(unsigned int frequency,
                 fe_spectral_inversion_t inversion, fe_bandwidth_t bandwidth,
                 fe_code_rate_t code_rate_HP, /* high priority stream code rate */
@@ -56,20 +97,35 @@ public:
                 fe_modulation_t constellation, /* modulation type (see above) */
                 fe_transmit_mode_t transmission_mode,
                 fe_guard_interval_t guard_interval,
-                fe_hierarchy_t hierarsourcechy_information);                                                      ///< Tunes a DVB-T device
-                                                                                /**< Tunes a DVB-T device. Needs full configuration */
+                fe_hierarchy_t hierarsourcechy_information);                    
+                                                                                ///< Tunes a DVB-T device
+                                                                                /**< Tunes a DVB-T device in synchronous mode. Needs full configuration */
     dvb_frontend_event tuneDVB_C_sync(unsigned int frequency,
                 fe_spectral_inversion_t inversion, unsigned int symbol_rate,
                 fe_code_rate_t fec_inner, fe_modulation_t modulation); 
+                                                                                ///< Tunes a DVB-C device
+                                                                                /**< Tunes a DVB-C device in synchronous mode. Needs full configuration */
     
-    fe_type_t getType();
+    fe_type_t getType(); ///< Returns the type of the card. The type is defined in frontend.h
     
-    std::string getTypeString();
+    std::string getTypeString(); ///< Returns the type of the card.
+                                 /**< Returns the type of the card but human readable e.g. "DVB-S", "DVB-T" or "DVB-C"*/
     
     std::string status2String(fe_status_t status);
-    unsigned int bitErrorRate();
+                                    ///< Returns a human readable status information
+                                    /**< Returns a human readable version of fe_status_t (defined by frontend.h)*/
+    
+    unsigned int bitErrorRate(); ///< Returns the bit error rate
+                                 /**< Returns the bit error rate. 
+                                 \note This function may not be implemented by your specific driver implementation. In this case the output is random.*/
     unsigned int signalToNoiseRatio();
+                                    ///< Returns the signal to noise ratio
+                                    /**< Returns the signal to noise ratio
+                                    \note This function may not be implemented by your specific driver implementation. In this case the output is random.*/
     unsigned int signalStrength();
+                                    ///< Returns the signal strength
+                                    /**< Returns the signal to noise ratio
+                                    \note This function may not be implemented by your specific driver implementation. In this case the output is random.*/
     
     void setSectionFilter(unsigned short int pid, 
                u_int8_t filter = MPE_TABLEID,
@@ -77,25 +133,31 @@ public:
                u_int8_t mask = 0xff, 
                u_int8_t mode = 0,
                unsigned int timeout = 0);
+                                    ///< Set the section filter
+                                    /**< Set the section filter.*/
     
     void setBufferSize(unsigned long size); 
-                            ///< set the size of the circular buffer used for filtered data.
+                            ///< Set the size of the circular buffer used for filtered data.
                             /**< The default size is two maximum sized sections, i.e. if this
                                  function is not called a buffer size of 2 * 4096 bytes will
                                  be used.
                                  \param[in] size Size of circular buffer. */
     
-    void startFiltering();
+    void startFiltering();  
+                        ///< Starts filtering
+                        /**< Starts filtering.*/
     
     void stopFiltering();
+                        ///< Stops filtering
+                        /**< Stops filtering.*/
     
     std::string getTuneInfo(const std::string & conf ="Ssbuf"); ///< Returns a string which shows actual tuning status
                                                                 /**< Returns a string which shows actual tuning status. 
-                                                                "S" prints signal strength (in hex)
-                                                                "s" prints singal to noise ration (in hex)
-                                                                "b" prints bit error rate (in hex)
-                                                                "u" prints uncorrected blocks (in hex) 
-                                                                "f" prints readable overal status e.g. "Has Lock"
+                                                                <br>"S" prints signal strength (in hex)
+                                                                <br>"s" prints singal to noise ration (in hex)
+                                                                <br>"b" prints bit error rate (in hex)
+                                                                <br>"u" prints uncorrected blocks (in hex) 
+                                                                <br>"f" prints readable overal status e.g. "Has Lock"<br>
                                                                 These characters can be used to form the output. Be aware, some 
                                                                 features may not be supported be your current driver implementation and 
                                                                 could end in throwing an exception!*/

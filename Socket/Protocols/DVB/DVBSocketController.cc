@@ -1,3 +1,26 @@
+// $Id$
+//
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Anton Gillert <atx@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+
 #include "senf/Utils/Exception.hh"
 #include "senf/Utils/Logger/Logger.hh"
 #include "senf/Utils/membind.hh"
@@ -24,20 +47,20 @@ senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_
 prefix_ senf::DVBSocketController::~DVBSocketController()
 {
 }
-prefix_ void senf::DVBSocketController::tuneToCMD(const string & configLine, const string & mode){
+prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const string & mode){
     struct dvb_frontend_parameters frontend;
     
   
     // no valid configline, so it will be treaten like a channel name
-    if (configLine.find(":")==string::npos){
+    if (input.find(":")==string::npos){
         if (mode.c_str()[0]=='a')
-            tuneTo(configLine);
+            tuneTo(input);
         else
-            tuneTo_sync(configLine);
+            tuneTo_sync(input);
         return;
     }
-    // add psydo name to complete configline syntax
-    frontend = parser.getFrontendParam("foo:"+configLine);
+    // add psydo name "foo" to complete configline syntax
+    frontend = parser.getFrontendParam("foo:"+input);
     
     if (mode.c_str()[0]=='a'){
         switch (type) {

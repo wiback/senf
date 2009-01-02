@@ -82,17 +82,21 @@ prefix_ void senf::DVBConfigParser::initConfigFile(string configFilePath_){
         }
         configFilePath_ = configPath;
     }
-    configFile.open( configFilePath_.c_str(), ios_base::in);
+    configFile.open( configFilePath.c_str(), ios_base::in);
     if(configFile.bad())
-        SENF_THROW_SYSTEM_EXCEPTION("Could not read configfile: ") << configFilePath_ << ".";
+        SENF_LOG((senf::log::IMPORTANT)  ("Could not open channels file"<< configFilePath << "." ));
+    configFile.close();
 }
 prefix_ string senf::DVBConfigParser::getConfigLine(string channel)
 {
     string configLine;
     size_t pos;
     transform(channel.begin(), channel.end(), channel.begin(), ::toupper);
-    if(configFile.bad()) 
-        SENF_THROW_SYSTEM_EXCEPTION("Could not read file.");
+    
+    configFile.open( configFilePath.c_str(), ios_base::in);
+    if(configFile.bad())
+           SENF_THROW_SYSTEM_EXCEPTION("Could not read channels file: ") << configFilePath << ".";
+    
     configFile.seekg(0);
     while (configFile.good()){
         getline( configFile, configLine );
@@ -101,10 +105,11 @@ prefix_ string senf::DVBConfigParser::getConfigLine(string channel)
         pos = configLine.find(channel);
         
         if(pos != string::npos && pos == 0){ // only first matching number should be interpreted as channel number 
-            configFile.seekg(0);
+            configFile.close();
             return configLine; // Line found!
         }
     }
+    configFile.close();
     SENF_THROW_SYSTEM_EXCEPTION("Channel \"")<< channel << "\" not found!";
     return channel;
 }

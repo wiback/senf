@@ -62,6 +62,7 @@ namespace senf {
 	
     private:
         fe_type_t type;
+        std::string configFilePath;
         std::ifstream configFile;
         void initConfigFile(std::string _configFilePath);
 
