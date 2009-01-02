@@ -47,11 +47,43 @@ prefix_ senf::console::detail::BaseTelnetProtocol::OptInfo::OptInfo(bool l, opti
 prefix_ senf::console::detail::BaseTelnetProtocol::TelnetHandler::~TelnetHandler()
 {}
 
+prefix_ std::string const & senf::console::detail::telnethandler::TerminalType::terminalType()
+    const
+{
+    return type_;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::detail::telnethandler::NAWS
+
+prefix_ unsigned senf::console::detail::telnethandler::NAWS::width()
+    const
+{
+    return width_;
+}
+
+prefix_ unsigned senf::console::detail::telnethandler::NAWS::height()
+    const
+{
+    return height_;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::BaseTelnetProtocol
 
 prefix_ senf::console::detail::BaseTelnetProtocol::~BaseTelnetProtocol()
 {}
+
+prefix_ void senf::console::detail::BaseTelnetProtocol::incrementRequestCounter()
+{
+    ++ pendingRequests_;
+    timeout_.timeout(senf::scheduler::eventTime() + requestTimeout_);
+}
+
+prefix_ bool senf::console::detail::BaseTelnetProtocol::requestsPending()
+{
+    return pendingRequests_ > 0u;
+}
 
 prefix_ void senf::console::detail::BaseTelnetProtocol::sendNOP()
 {

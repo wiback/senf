@@ -31,6 +31,7 @@
 #include <map>
 #include <senf/Socket.hh>
 #include <senf/Scheduler/Scheduler.hh>
+#include <senf/Scheduler/ClockService.hh>
 
 //#include "Telnet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -50,6 +51,8 @@ namespace detail {
     class BaseTelnetProtocol
     {
     public:
+        static unsigned const DEFAULT_REQUEST_TIMEOUT_MS = 500u;
+
         typedef ClientSocketHandle<senf::MakeSocketPolicy<
             ConnectedCommunicationPolicy, 
             StreamFramingPolicy, 
@@ -88,11 +91,16 @@ namespace detail {
         template <class Handler>
         void registerHandler(Handler * h, bool request=true);
 
+        void incrementRequestCounter();
+        void decrementRequestCounter();
+        bool requestsPending();
+
     private:
 
 #ifndef DOXYGEN
     private:
 #endif
+        virtual void v_setupComplete() = 0;
         virtual void v_charReceived(char c) = 0;
         virtual void v_eof() = 0;
 
@@ -127,6 +135,7 @@ namespace detail {
 
         void readHandler(int state);
         void writeHandler(int state);
+        void timeout();
 
         enum Command { 
             CMD_NONE = 0,
@@ -193,6 +202,11 @@ namespace detail {
         senf::scheduler::FdEvent inputEvent_;
         senf::scheduler::FdEvent outputEvent_;
 
+        unsigned pendingRequests_;
+
+        ClockService::clock_type requestTimeout_;
+        scheduler::TimerEvent timeout_;
+
         friend class TelnetHandler;
     };
 
@@ -221,15 +235,16 @@ namespace telnethandler {
         static option_type const OPTION_CODE = telnetopt::TERMINAL_TYPE;
 
         void nextTerminalType();
+        std::string const & terminalType() const;
         
     protected:
         TerminalType();
 
     private:
-        virtual void v_handleTerminalType(std::string const & type) = 0;
-
         virtual void v_init();
         virtual void v_handleOptionParameters(std::string const & data);
+
+        std::string type_;
     };
 
     class NAWS 
@@ -238,14 +253,20 @@ namespace telnethandler {
     public:
         static option_type const OPTION_CODE = telnetopt::NAWS;
 
+        unsigned width() const;
+        unsigned height() const;
+
     protected:
         NAWS();
         
     private:
-        virtual void v_handleWindowSize(unsigned width, unsigned height) = 0;
+        virtual void v_windowSizeChanged() = 0;
 
         virtual void v_init();
         virtual void v_handleOptionParameters(std::string const & data);
+
+        unsigned width_;
+        unsigned height_;
     };
     
 }

@@ -41,13 +41,20 @@ prefix_ senf::console::detail::BaseTelnetProtocol::BaseTelnetProtocol(Handle han
                    senf::scheduler::FdEvent::EV_READ),
       outputEvent_ ("senf::console::detail::BaseTelnetProtocol::output",
                     senf::membind(&BaseTelnetProtocol::writeHandler, this), handle,
-                    senf::scheduler::FdEvent::EV_WRITE, false)
+                    senf::scheduler::FdEvent::EV_WRITE, false),
+      pendingRequests_ (0u),
+      requestTimeout_ (ClockService::milliseconds(DEFAULT_REQUEST_TIMEOUT_MS)),
+      timeout_ ("senf::console::detail::BaseTelnetProtocol::timeout",
+                senf::membind(&BaseTelnetProtocol::timeout, this))
 {}
 
 prefix_ senf::console::detail::BaseTelnetProtocol::BaseTelnetProtocol()
     : handle_ (), charState_ (NORMAL), command_ (CMD_NONE), option_ (0),
       inputEvent_ ("senf::console::detail::BaseTelnetProtocol::input", 0),
-      outputEvent_ ("senf::console::detail::BaseTelnetProtocol::output", 0)
+      outputEvent_ ("senf::console::detail::BaseTelnetProtocol::output", 0),
+      pendingRequests_ (0u),
+      requestTimeout_ (ClockService::milliseconds(DEFAULT_REQUEST_TIMEOUT_MS)),
+      timeout_ ("senf::console::detail::BaseTelnetProtocol::timeout", 0)
 {}
 
 prefix_ void senf::console::detail::BaseTelnetProtocol::write(std::string const & s)
@@ -346,6 +353,14 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::writeHandler(int state)
         outputEvent_.disable();
 }
 
+prefix_ void senf::console::detail::BaseTelnetProtocol::timeout()
+{
+    if (pendingRequests_ > 0u) {
+        pendingRequests_ = 0u;
+        v_setupComplete();
+    }
+}
+
 prefix_ senf::console::detail::BaseTelnetProtocol::OptInfo &
 senf::console::detail::BaseTelnetProtocol::getOption(bool local, option_type option)
 {
@@ -364,11 +379,14 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::request(OptInfo & info, 
         transmit((info.local ? CMD_WILL : CMD_DO) + (enabled ? 0 : 1));
         transmit(info.option);
         info.optionState = OptInfo::REQUEST_SENT;
+        incrementRequestCounter();
     }
 }
 
 prefix_ void senf::console::detail::BaseTelnetProtocol::response(OptInfo & info, bool enabled)
 {
+    bool decrementCount (false);
+
     // If this is a response, we need to unconditionally accept it.  If this is a remote
     // configuration request, we accept it if wantState is wither WANTED or ACCEPTED.  If this is a
     // response, we never send out a reply. If it is a remote request we send out a reply only if
@@ -377,6 +395,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::response(OptInfo & info,
         // This is a response
         info.optionState = OptInfo::ACKNOWLEDGED;
         info.enabled = enabled;
+        decrementCount = true;
     }
     else if (enabled != info.enabled) {
         // Request to change the current state
@@ -401,6 +420,21 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::response(OptInfo & info,
         if (i != handlers_.end())
             i->second->v_init();
     }
+    if (decrementCount)
+        // This call must be AFTER calling v_init since v_init might increment the request count
+        // again. Otherwise v_setupComplete might be called prematurely
+        decrementRequestCounter();
+}
+
+prefix_ void senf::console::detail::BaseTelnetProtocol::decrementRequestCounter()
+{
+    if (pendingRequests_ > 0u) {
+        -- pendingRequests_;
+        if (pendingRequests_ == 0u) {
+            timeout_.disable();
+            v_setupComplete();
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -421,34 +455,42 @@ v_handleOptionParameters(std::string const & data)
 {
     if (data.size() <= 0)
         return;
-    if (data[0] == '\x00')
-        v_handleTerminalType(data.substr(1));
+    if (data[0] == '\x00') {
+        type_ = data.substr(1);
+        decrementRequestCounter();
+    }
 }
 
 prefix_ void senf::console::detail::telnethandler::TerminalType::v_init()
 {
     nextTerminalType();
+    incrementRequestCounter();
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::telnethandler::NAWS
 
 prefix_ senf::console::detail::telnethandler::NAWS::NAWS()
+    : width_ (0u), height_ (0u)
 {
     registerHandler(this);
 }
 
 prefix_ void senf::console::detail::telnethandler::NAWS::v_init()
-{}
+{
+    incrementRequestCounter();
+}
 
 prefix_ void
 senf::console::detail::telnethandler::NAWS::v_handleOptionParameters(std::string const & data)
 {
     if (data.size() != 4)
         return;
-    v_handleWindowSize(
-        (static_cast<unsigned char>(data[0])<<8)+static_cast<unsigned char>(data[1]),
-        (static_cast<unsigned char>(data[2])<<8)+static_cast<unsigned char>(data[3]));
+    width_ = (static_cast<unsigned char>(data[0])<<8)+static_cast<unsigned char>(data[1]);
+    height_ = (static_cast<unsigned char>(data[2])<<8)+static_cast<unsigned char>(data[3]);
+    if (! requestsPending())
+        v_windowSizeChanged();
+    decrementRequestCounter();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

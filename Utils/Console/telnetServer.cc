@@ -27,7 +27,9 @@
 //#include "telnetServer.ih"
 
 // Custom includes
+#include <boost/bind.hpp>
 #include "Telnet.hh"
+#include "../../Scheduler/Scheduler.hh"
 #include "../Logger.hh"
 #include "../../Socket/Protocols/INet.hh"
 
@@ -55,34 +57,49 @@ namespace {
             {
                 SENF_LOG(("Char: " << c));
             }
+
         virtual void v_eof()
             {
                 SENF_LOG(("EOF"));
-                senf::scheduler::terminate();
-            }
-        virtual void v_handleTerminalType(std::string const & type)
-            {
-                SENF_LOG(("Terminal type: " << type));
+                delete this;
             }
 
-        virtual void v_handleWindowSize(unsigned width, unsigned height)
+        virtual void v_setupComplete()
             {
-                SENF_LOG(("Window size: " << width << "x" << height));
+                SENF_LOG(("Terminal type is '" << terminalType() << "', window size is "
+                          << width() << "x" << height()));
+            }
+
+        virtual void v_windowSizeChanged()
+            {
+                SENF_LOG(("New window size: " << width() << "x" << height()));
             }
     };
 
     typedef senf::TCPv4ServerSocketHandle ServerHandle;
     typedef ServerHandle::ClientHandle ClientHandle;
-    
+
+    void connect(ServerHandle handle, int events)
+    {
+        if (events != senf::scheduler::FdEvent::EV_READ) {
+            senf::scheduler::terminate();
+            return;
+        }
+        ClientHandle client (handle.accept());
+        SENF_LOG(("new client ..."));
+        new MyTelnet (client);
+    }
+
 }
 
 int main(int argc, char const ** argv)
 {
-    SENF_LOG(("Starting server."));
+    senf::log::ConsoleTarget::instance().timeFormat("");
+
     ServerHandle server (ServerHandle::Address("127.0.0.1:22344"));
-    ClientHandle client (server.accept());
-    SENF_LOG(("Starting MyTelnet"));
-    MyTelnet telnet (client);
+    senf::scheduler::FdEvent serverEvent ("telnetServer", boost::bind(&connect, server, _1),
+                                          server, senf::scheduler::FdEvent::EV_READ);
+    SENF_LOG(("Server started at " << server.local()));
 
     senf::scheduler::process();
 
