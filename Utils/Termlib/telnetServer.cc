@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/bind.hpp>
-#include "Telnet.hh"
+#include "TelnetTerminal.hh"
 #include "../../Scheduler/Scheduler.hh"
 #include "../Logger.hh"
 #include "../../Socket/Protocols/INet.hh"
@@ -39,23 +39,15 @@
 
 namespace {
 
-    class MyTelnet 
-        : public virtual senf::console::detail::BaseTelnetProtocol,
-          public senf::console::detail::telnethandler::TerminalType,
-          public senf::console::detail::telnethandler::NAWS
+    class MyTelnet : public senf::term::TelnetTerminal
     {
     public:
-        explicit MyTelnet(Handle handle) : senf::console::detail::BaseTelnetProtocol(handle) 
-            {
-                requestPeerOption(senf::console::detail::telnetopt::SUPPRESS_GO_AHEAD);
-                requestLocalOption(senf::console::detail::telnetopt::SUPPRESS_GO_AHEAD);
-                requestLocalOption(senf::console::detail::telnetopt::ECHO);
-            }
+        explicit MyTelnet(Handle handle) : senf::term::BaseTelnetProtocol(handle) {}
         
     private:
-        virtual void v_charReceived(char c)
+        virtual void v_keyReceived(keycode_t key)
             {
-                SENF_LOG(("Char: " << c));
+                SENF_LOG(("Key " << senf::term::KeyParser::describe(key)));
             }
 
         virtual void v_eof()
@@ -66,6 +58,7 @@ namespace {
 
         virtual void v_setupComplete()
             {
+                TelnetTerminal::v_setupComplete();
                 SENF_LOG(("Terminal type is '" << terminalType() << "', window size is "
                           << width() << "x" << height()));
             }

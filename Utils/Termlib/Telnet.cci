@@ -31,133 +31,133 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::BaseTelnetProtocol::OptInfo
+// senf::term::BaseTelnetProtocol::OptInfo
 
-prefix_ senf::console::detail::BaseTelnetProtocol::OptInfo::OptInfo()
+prefix_ senf::term::BaseTelnetProtocol::OptInfo::OptInfo()
     : local (false), option (0u), wantState (DISABLED), optionState (NONE), enabled (false)
 {}
 
-prefix_ senf::console::detail::BaseTelnetProtocol::OptInfo::OptInfo(bool l, option_type o)
+prefix_ senf::term::BaseTelnetProtocol::OptInfo::OptInfo(bool l, option_type o)
     : local (l), option (o), wantState (DISABLED), optionState (NONE), enabled (false)
 {}
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::BaseTelnetProtocol::TelnetHandler
+// senf::term::BaseTelnetProtocol::TelnetHandler
 
-prefix_ senf::console::detail::BaseTelnetProtocol::TelnetHandler::~TelnetHandler()
+prefix_ senf::term::BaseTelnetProtocol::TelnetHandler::~TelnetHandler()
 {}
 
-prefix_ std::string const & senf::console::detail::telnethandler::TerminalType::terminalType()
+prefix_ std::string const & senf::term::telnethandler::TerminalType::terminalType()
     const
 {
     return type_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::telnethandler::NAWS
+// senf::term::telnethandler::NAWS
 
-prefix_ unsigned senf::console::detail::telnethandler::NAWS::width()
+prefix_ unsigned senf::term::telnethandler::NAWS::width()
     const
 {
     return width_;
 }
 
-prefix_ unsigned senf::console::detail::telnethandler::NAWS::height()
+prefix_ unsigned senf::term::telnethandler::NAWS::height()
     const
 {
     return height_;
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::BaseTelnetProtocol
+// senf::term::BaseTelnetProtocol
 
-prefix_ senf::console::detail::BaseTelnetProtocol::~BaseTelnetProtocol()
+prefix_ senf::term::BaseTelnetProtocol::~BaseTelnetProtocol()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::incrementRequestCounter()
+prefix_ void senf::term::BaseTelnetProtocol::incrementRequestCounter()
 {
     ++ pendingRequests_;
     timeout_.timeout(senf::scheduler::eventTime() + requestTimeout_);
 }
 
-prefix_ bool senf::console::detail::BaseTelnetProtocol::requestsPending()
+prefix_ bool senf::term::BaseTelnetProtocol::requestsPending()
 {
     return pendingRequests_ > 0u;
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::sendNOP()
+prefix_ void senf::term::BaseTelnetProtocol::sendNOP()
 {
     transmit(CMD_IAC);
     transmit(CMD_NOP);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::sendBRK()
+prefix_ void senf::term::BaseTelnetProtocol::sendBRK()
 {
     transmit(CMD_IAC);
     transmit(CMD_BRK);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::sendIP()
+prefix_ void senf::term::BaseTelnetProtocol::sendIP()
 {
     transmit(CMD_IAC);
     transmit(CMD_IP);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::sendAO()
+prefix_ void senf::term::BaseTelnetProtocol::sendAO()
 {
     transmit(CMD_IAC);
     transmit(CMD_AO);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::sendAYT()
+prefix_ void senf::term::BaseTelnetProtocol::sendAYT()
 {
     transmit(CMD_IAC);
     transmit(CMD_AYT);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::sendEC()
+prefix_ void senf::term::BaseTelnetProtocol::sendEC()
 {
     transmit(CMD_IAC);
     transmit(CMD_EC);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::sendEL()
+prefix_ void senf::term::BaseTelnetProtocol::sendEL()
 {
     transmit(CMD_IAC);
     transmit(CMD_EL);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::sendGA()
+prefix_ void senf::term::BaseTelnetProtocol::sendGA()
 {
     transmit(CMD_IAC);
     transmit(CMD_GA);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::requestLocalOption(option_type option,
+prefix_ void senf::term::BaseTelnetProtocol::requestLocalOption(option_type option,
                                                                            bool enabled)
 {
     request(getOption(true, option), enabled);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::acceptLocalOption(option_type option,
+prefix_ void senf::term::BaseTelnetProtocol::acceptLocalOption(option_type option,
                                                                           bool enabled)
 {
     getOption(true, option).wantState = OptInfo::ACCEPTED;
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::requestPeerOption(option_type option,
+prefix_ void senf::term::BaseTelnetProtocol::requestPeerOption(option_type option,
                                                                           bool enabled)
 {
     request(getOption(false, option), enabled);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::acceptPeerOption(option_type option,
+prefix_ void senf::term::BaseTelnetProtocol::acceptPeerOption(option_type option,
                                                                          bool enabled)
 {
     getOption(false, option).wantState = OptInfo::ACCEPTED;
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::emit(char c)
+prefix_ void senf::term::BaseTelnetProtocol::emit(char c)
 {
     v_charReceived(c);
 }

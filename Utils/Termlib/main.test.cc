@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2006
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -20,38 +20,30 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-/** \file
-    \brief Telnet inline template implementation */
+// Definition of non-inline non-template functions
 
-//#include "Telnet.ih"
+//#include "test.hh"
+//#include "test.ih"
 
 // Custom includes
+#define BOOST_AUTO_TEST_MAIN
+#include "../../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::BaseTelnetProtocol
 
-template <class Handler>
-prefix_ void senf::console::detail::BaseTelnetProtocol::registerHandler(Handler * h,
-                                                                        bool request)
-{
-    handlers_.insert(std::make_pair(Handler::OPTION_CODE, h));
-    if (request)
-        requestPeerOption(Handler::OPTION_CODE);
-}
-
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
-// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
+// comment-column: 40
 // End:

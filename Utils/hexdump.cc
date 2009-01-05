@@ -33,7 +33,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ void senf::detail::HexDumper::operator()(unsigned ch)
+prefix_ void senf::detail::HexDumper::operator()(unsigned char ch)
 {
     if ((offset_ % block_size_) == 0) {
         if (!ascii_.empty()) {
@@ -48,7 +48,7 @@ prefix_ void senf::detail::HexDumper::operator()(unsigned ch)
         ascii_ += ' ';
     }
     os_ << ' ' << std::hex << std::setw(2) << std::setfill('0')
-           << ch;
+        << unsigned(ch);
     ascii_ += (ch >= ' ' && ch < 126) ? ch : '.';
     ++ offset_;
 }

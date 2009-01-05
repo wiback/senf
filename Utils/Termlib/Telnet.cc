@@ -34,36 +34,36 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::console::detail::BaseTelnetProtocol::BaseTelnetProtocol(Handle handle)
+prefix_ senf::term::BaseTelnetProtocol::BaseTelnetProtocol(Handle handle)
     : handle_ (handle), charState_ (NORMAL), command_ (CMD_NONE), option_ (0),
-      inputEvent_ ("senf::console::detail::BaseTelnetProtocol::input",
+      inputEvent_ ("senf::term::BaseTelnetProtocol::input",
                    senf::membind(&BaseTelnetProtocol::readHandler, this), handle, 
                    senf::scheduler::FdEvent::EV_READ),
-      outputEvent_ ("senf::console::detail::BaseTelnetProtocol::output",
+      outputEvent_ ("senf::term::BaseTelnetProtocol::output",
                     senf::membind(&BaseTelnetProtocol::writeHandler, this), handle,
                     senf::scheduler::FdEvent::EV_WRITE, false),
       pendingRequests_ (0u),
       requestTimeout_ (ClockService::milliseconds(DEFAULT_REQUEST_TIMEOUT_MS)),
-      timeout_ ("senf::console::detail::BaseTelnetProtocol::timeout",
+      timeout_ ("senf::term::BaseTelnetProtocol::timeout",
                 senf::membind(&BaseTelnetProtocol::timeout, this))
 {}
 
-prefix_ senf::console::detail::BaseTelnetProtocol::BaseTelnetProtocol()
+prefix_ senf::term::BaseTelnetProtocol::BaseTelnetProtocol()
     : handle_ (), charState_ (NORMAL), command_ (CMD_NONE), option_ (0),
-      inputEvent_ ("senf::console::detail::BaseTelnetProtocol::input", 0),
-      outputEvent_ ("senf::console::detail::BaseTelnetProtocol::output", 0),
+      inputEvent_ ("senf::term::BaseTelnetProtocol::input", 0),
+      outputEvent_ ("senf::term::BaseTelnetProtocol::output", 0),
       pendingRequests_ (0u),
       requestTimeout_ (ClockService::milliseconds(DEFAULT_REQUEST_TIMEOUT_MS)),
-      timeout_ ("senf::console::detail::BaseTelnetProtocol::timeout", 0)
+      timeout_ ("senf::term::BaseTelnetProtocol::timeout", 0)
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::write(std::string const & s)
+prefix_ void senf::term::BaseTelnetProtocol::write(std::string const & s)
 {
     for (std::string::const_iterator i (s.begin()); i != s.end(); ++i)
         write(*i);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::write(char c)
+prefix_ void senf::term::BaseTelnetProtocol::write(char c)
 {
     switch (c) {
     case '\r':
@@ -85,7 +85,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::write(char c)
 }
 
 prefix_ void
-senf::console::detail::BaseTelnetProtocol::sendOptionParameters(option_type option,
+senf::term::BaseTelnetProtocol::sendOptionParameters(option_type option,
                                                                 std::string const & data)
 {
     transmit(CMD_IAC);
@@ -102,31 +102,31 @@ senf::console::detail::BaseTelnetProtocol::sendOptionParameters(option_type opti
     transmit(CMD_SE);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::v_handleNOP()
+prefix_ void senf::term::BaseTelnetProtocol::v_handleNOP()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::v_handleBRK()
+prefix_ void senf::term::BaseTelnetProtocol::v_handleBRK()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::v_handleIP()
+prefix_ void senf::term::BaseTelnetProtocol::v_handleIP()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::v_handleAO()
+prefix_ void senf::term::BaseTelnetProtocol::v_handleAO()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::v_handleAYT()
+prefix_ void senf::term::BaseTelnetProtocol::v_handleAYT()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::v_handleEC()
+prefix_ void senf::term::BaseTelnetProtocol::v_handleEC()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::v_handleEL()
+prefix_ void senf::term::BaseTelnetProtocol::v_handleEL()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::v_handleGA()
+prefix_ void senf::term::BaseTelnetProtocol::v_handleGA()
 {}
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::handleChar(char c)
+prefix_ void senf::term::BaseTelnetProtocol::handleChar(char c)
 {
     switch (charState_) {
     case NORMAL:
@@ -153,7 +153,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::handleChar(char c)
     }
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::handleNormalChar(char c)
+prefix_ void senf::term::BaseTelnetProtocol::handleNormalChar(char c)
 {
     switch (c) {
     case '\r':
@@ -168,7 +168,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::handleNormalChar(char c)
     }
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::handleCommand(char c)
+prefix_ void senf::term::BaseTelnetProtocol::handleCommand(char c)
 {
     switch (c) {
     case CMD_SE:
@@ -211,14 +211,14 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::handleCommand(char c)
     }
 }        
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::handleOption(char c)
+prefix_ void senf::term::BaseTelnetProtocol::handleOption(char c)
 {
     option_ = c;
     processCommand();
     charState_ = NORMAL;
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::handleCR(char c)
+prefix_ void senf::term::BaseTelnetProtocol::handleCR(char c)
 {
     switch (c) {
     case '\0':
@@ -237,14 +237,14 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::handleCR(char c)
     }
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::handleSBOption(char c)
+prefix_ void senf::term::BaseTelnetProtocol::handleSBOption(char c)
 {
     option_ = c;
     charState_ = SB_DATA;
     data_.clear();
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::handleSBData(char c)
+prefix_ void senf::term::BaseTelnetProtocol::handleSBData(char c)
 {
     if (c == '\xff')
         charState_ = SB_IAC_SEEN;
@@ -252,7 +252,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::handleSBData(char c)
         data_.push_back(c);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::handleSBIAC(char c)
+prefix_ void senf::term::BaseTelnetProtocol::handleSBIAC(char c)
 {
     switch (c) {
     case CMD_IAC:
@@ -270,7 +270,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::handleSBIAC(char c)
     }
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::processCommand()
+prefix_ void senf::term::BaseTelnetProtocol::processCommand()
 {
     switch (command_) {
     case CMD_NONE:
@@ -320,13 +320,13 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::processCommand()
     }
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::transmit(char c)
+prefix_ void senf::term::BaseTelnetProtocol::transmit(char c)
 {
     sendQueue_.push_back(c);
     outputEvent_.enable();
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::readHandler(int state)
+prefix_ void senf::term::BaseTelnetProtocol::readHandler(int state)
 {
     if (state != senf::scheduler::FdEvent::EV_READ || handle_.eof()) {
         inputEvent_.disable();
@@ -339,7 +339,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::readHandler(int state)
         handleChar(*i);
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::writeHandler(int state)
+prefix_ void senf::term::BaseTelnetProtocol::writeHandler(int state)
 { 
     if (state != senf::scheduler::FdEvent::EV_WRITE) {
         outputEvent_.disable();
@@ -353,7 +353,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::writeHandler(int state)
         outputEvent_.disable();
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::timeout()
+prefix_ void senf::term::BaseTelnetProtocol::timeout()
 {
     if (pendingRequests_ > 0u) {
         pendingRequests_ = 0u;
@@ -361,8 +361,8 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::timeout()
     }
 }
 
-prefix_ senf::console::detail::BaseTelnetProtocol::OptInfo &
-senf::console::detail::BaseTelnetProtocol::getOption(bool local, option_type option)
+prefix_ senf::term::BaseTelnetProtocol::OptInfo &
+senf::term::BaseTelnetProtocol::getOption(bool local, option_type option)
 {
     OptionsMap::iterator i (options_.find(std::make_pair(local, option)));
     if (i == options_.end())
@@ -371,7 +371,7 @@ senf::console::detail::BaseTelnetProtocol::getOption(bool local, option_type opt
     return i->second;
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::request(OptInfo & info, bool enabled)
+prefix_ void senf::term::BaseTelnetProtocol::request(OptInfo & info, bool enabled)
 {
     info.wantState = enabled ? OptInfo::WANTED : OptInfo::DISABLED;
     if (enabled != info.enabled) {
@@ -383,7 +383,7 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::request(OptInfo & info, 
     }
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::response(OptInfo & info, bool enabled)
+prefix_ void senf::term::BaseTelnetProtocol::response(OptInfo & info, bool enabled)
 {
     bool decrementCount (false);
 
@@ -417,12 +417,12 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::response(OptInfo & info,
             i->second->v_init();
     }
     if (decrementCount)
-        // This call must be AFTER calling v_init since v_init might increment the request count.
+        // This call must be AFTER calling v_init since v_init might increment the request count
         // and v_setupComplete() might be called prematurely.
         decrementRequestCounter();
 }
 
-prefix_ void senf::console::detail::BaseTelnetProtocol::decrementRequestCounter()
+prefix_ void senf::term::BaseTelnetProtocol::decrementRequestCounter()
 {
     if (pendingRequests_ > 0u) {
         -- pendingRequests_;
@@ -434,19 +434,19 @@ prefix_ void senf::console::detail::BaseTelnetProtocol::decrementRequestCounter(
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::telnethandler::TerminalType
+// senf::term::telnethandler::TerminalType
 
-prefix_ senf::console::detail::telnethandler::TerminalType::TerminalType()
+prefix_ senf::term::telnethandler::TerminalType::TerminalType()
 {
     registerHandler(this);
 }
 
-prefix_ void senf::console::detail::telnethandler::TerminalType::nextTerminalType()
+prefix_ void senf::term::telnethandler::TerminalType::nextTerminalType()
 {
     sendOptionParameters(telnetopt::TERMINAL_TYPE, "\x01");
 }
 
-prefix_ void senf::console::detail::telnethandler::TerminalType::
+prefix_ void senf::term::telnethandler::TerminalType::
 v_handleOptionParameters(std::string const & data)
 {
     if (data.size() <= 0)
@@ -457,28 +457,28 @@ v_handleOptionParameters(std::string const & data)
     }
 }
 
-prefix_ void senf::console::detail::telnethandler::TerminalType::v_init()
+prefix_ void senf::term::telnethandler::TerminalType::v_init()
 {
     nextTerminalType();
     incrementRequestCounter();
 }
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::telnethandler::NAWS
+// senf::term::telnethandler::NAWS
 
-prefix_ senf::console::detail::telnethandler::NAWS::NAWS()
+prefix_ senf::term::telnethandler::NAWS::NAWS()
     : width_ (0u), height_ (0u)
 {
     registerHandler(this);
 }
 
-prefix_ void senf::console::detail::telnethandler::NAWS::v_init()
+prefix_ void senf::term::telnethandler::NAWS::v_init()
 {
     incrementRequestCounter();
 }
 
 prefix_ void
-senf::console::detail::telnethandler::NAWS::v_handleOptionParameters(std::string const & data)
+senf::term::telnethandler::NAWS::v_handleOptionParameters(std::string const & data)
 {
     if (data.size() != 4)
         return;

@@ -37,14 +37,13 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-namespace console {
-namespace detail {
+namespace term {
 
     /** \brief  Telnet server
 
         \see 
-            <a href="http://tools.ietf.org/html/rfc854>RFC 854</a> The Telnet protocol \n
-            <a href="http://tools.ietf.org/html/rfc854>RFC 855</a> Telnet option specifications
+            <a href="http://tools.ietf.org/html/rfc854">RFC 854</a> The Telnet protocol \n
+            <a href="http://tools.ietf.org/html/rfc854">RFC 855</a> Telnet option specifications
 
         \todo SYNCH handling
      */
@@ -94,8 +93,6 @@ namespace detail {
         void incrementRequestCounter();
         void decrementRequestCounter();
         bool requestsPending();
-
-    private:
 
 #ifndef DOXYGEN
     private:
@@ -271,7 +268,7 @@ namespace telnethandler {
     
 }
 
-}}}
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Telnet.cci"
