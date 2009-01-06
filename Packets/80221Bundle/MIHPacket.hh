@@ -34,6 +34,48 @@
 
 namespace senf {
 
+    struct MIHPacketParser : public senf::PacketParserBase
+    {
+    #   include SENF_PARSER()
+        
+        SENF_PARSER_BITFIELD  ( version,       4,  unsigned );
+        SENF_PARSER_BITFIELD  ( ackRequest,    1,  bool     );
+        SENF_PARSER_BITFIELD  ( ackResponse,   1,  bool     );
+        SENF_PARSER_BITFIELD  ( uir,           1,  bool     );
+        SENF_PARSER_BITFIELD  ( moreFragment,  1,  bool     );
+        SENF_PARSER_BITFIELD  ( fragmentNr,    7,  unsigned );
+        SENF_PARSER_SKIP_BITS ( 1                           );
+        
+        // MIH message ID (MID)
+        SENF_PARSER_BITFIELD  ( sid,           4,  unsigned );
+        SENF_PARSER_BITFIELD  ( opcode,        2,  unsigned );
+        SENF_PARSER_BITFIELD  ( aid,           10, unsigned );
+        
+        SENF_PARSER_SKIP_BITS ( 4                           );
+        SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );
+        SENF_PARSER_FIELD_RO  ( payloadLength, UInt16Parser );
+        
+        SENF_PARSER_FINALIZE ( MIHPacketParser );
+    };
+    
+    
+    struct MIHPacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<MIHPacketType>
+    {
+        typedef PacketTypeMixin<MIHPacketType> mixin;
+        typedef ConcretePacket<MIHPacketType> packet;
+        typedef MIHPacketParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
+
+        static void dump(packet p, std::ostream &os);
+//        static void finalize(packet p);
+    };
+
+    typedef ConcretePacket<MIHPacketType> MIHPacket;
 }
 
 

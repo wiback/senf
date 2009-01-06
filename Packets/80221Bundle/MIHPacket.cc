@@ -27,9 +27,31 @@
 //#include "MIHPacket.ih"
 
 // Custom includes
-
+#include "MIHPacket.hh"
+#include "../../Packets/Packets.hh"
+#include <boost/io/ios_state.hpp>
 
 #define prefix_
+
+
+prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
+{
+    boost::io::ios_all_saver ias(os);
+    os << "MIH Packet:\n"
+       << "  protocol header:\n" << "\n"
+       << "    Version:         " << unsigned( p->version()) << "\n"
+       << "    Ack-Request:     " << p->ackRequest() << "\n"
+       << "    Ack-Response:    " << p->ackResponse() << "\n"
+       << "    UIR:             " << p->uir() << "\n"
+       << "    more fragment:   " << p->moreFragment() << "\n"
+       << "    fragment number: " << p->fragmentNr() << "\n"
+       << "    message ID (MID):\n"
+       << "      SID:           " << unsigned( p->sid()) << "\n"        
+       << "      Opcode:        " << unsigned( p->opcode()) << "\n"
+       << "      AID:           " << unsigned( p->aid()) << "\n"      
+       << "    Transaction ID:  " << unsigned( p->transactionId()) << "\n"
+       << "    payload length:  " << unsigned( p->payloadLength()) << "\n";
+}
 
 
 
