@@ -27,55 +27,56 @@
 //#include "TelnetTerminal.ih"
 
 // Custom includes
-#include <senf/Utils/membind.hh>
 
 //#include "TelnetTerminal.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::term::TelnetTerminal::TelnetTerminal()
-    : keyTimeout_ (senf::ClockService::milliseconds(DEFAULT_KEY_TIMEOUT_MS)),
-      timer_ ("senf::term::TelnetTerminal::keySequenceTimeout", 
-              senf::membind(&TelnetTerminal::keySequenceTimeout, this))
 {
     requestPeerOption(telnetopt::SUPPRESS_GO_AHEAD);
     requestLocalOption(telnetopt::SUPPRESS_GO_AHEAD);
     requestLocalOption(telnetopt::ECHO);
 }
 
+prefix_ void senf::term::TelnetTerminal::setCallbacks(AbstractTerminal::Callbacks & cb)
+{
+    callbacks_ = &cb;
+}
+
+prefix_ std::string senf::term::TelnetTerminal::terminalType()
+{
+    return telnethandler::TerminalType::terminalType();
+}
+
+prefix_ unsigned senf::term::TelnetTerminal::width()
+{
+    return telnethandler::NAWS::width();
+}
+
+prefix_ unsigned senf::term::TelnetTerminal::height()
+{
+    return telnethandler::NAWS::height();
+}
+
+prefix_ void senf::term::TelnetTerminal::write(char ch)
+{
+    BaseTelnetProtocol::write(ch);
+}
+
 prefix_ void senf::term::TelnetTerminal::v_setupComplete()
 {
-    tifo_.load(terminalType());
-    keyParser_.load(tifo_);
+    callbacks_->cb_init();
 }
 
-prefix_ void senf::term::TelnetTerminal::v_charReceived(char c)
+prefix_ void senf::term::TelnetTerminal::v_charReceived(char ch)
 {
-    inputBuffer_ += c;
-    timer_.timeout(senf::scheduler::eventTime() + keyTimeout_);
-    processKeys();
+    callbacks_->cb_charReceived(ch);
 }
 
-prefix_ void senf::term::TelnetTerminal::keySequenceTimeout()
+prefix_ void senf::term::TelnetTerminal::v_windowSizeChanged()
 {
-    while (!inputBuffer_.empty()) {
-        processKeys();
-        v_keyReceived(keycode_t(inputBuffer_[0]));
-        inputBuffer_.erase(0, 1);
-    }
-}
-
-prefix_ void senf::term::TelnetTerminal::processKeys()
-{
-    do {
-        std::pair<senf::term::KeyParser::keycode_t, std::string::size_type> result
-            (keyParser_.lookup(inputBuffer_));
-        if (result.first == senf::term::KeyParser::Incomplete)
-            return;
-        v_keyReceived(result.first);
-        inputBuffer_.erase(0, result.second);
-    } while (! inputBuffer_.empty());
-    timer_.disable();
+    callbacks_->cb_windowSizeChanged();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

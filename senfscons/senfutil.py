@@ -9,10 +9,12 @@ from SCons.Script import *
 
 def SetupForSENF(env):
     env.Append( LIBS           = [ 'senf', 'readline', 'rt', '$BOOSTREGEXLIB',
-                                   '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB' ],
+                                   '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
+                                   '$BOOSTFSLIB' ],
                 BOOSTREGEXLIB  = 'boost_regex',
                 BOOSTIOSTREAMSLIB = 'boost_iostreams',
                 BOOSTSIGNALSLIB = 'boost_signals',
+                BOOSTFSLIB = 'boost_filesystem',
                 CXXFLAGS       = [ '-Wno-long-long',
                                    '${"$CXXFLAGS_"+(final and "final" or "debug")}',
                                    '${profile and ("-g","-pg") or None}' ],

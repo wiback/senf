@@ -47,15 +47,6 @@ namespace term {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        enum Color {
-            Black, Red, Green, Brown, Blue, Magenta, Cyan, LightGray, DarkGray, LightRed,
-            LightGreen, Yellow, LightBlue, Pink, LightCyan, White,
-            Preserve, LastColor = Preserve };
-
-        enum Attribute {
-            Standout, Underline, Reverse, Blink, HalfBright, Bold, Invisible, Protect, AltCharset,
-            Italic, Substript, Superscript, LastAttribute };
-
         enum { NoValue = -1 };
 
         struct properties
@@ -166,6 +157,17 @@ namespace term {
         bool getFlag(properties::Boolean p) const;
         number_t getNumber(properties::Numeric p) const;
         string_t getString(properties::String p) const;
+        bool hasProperty(properties::Boolean p) const;
+        bool hasProperty(properties::Numeric p ) const;
+        bool hasProperty(properties::String p ) const;
+        std::string formatString(properties::String p,
+                                 number_t arg1=NoValue, number_t arg2=NoValue, 
+                                 number_t arg3=NoValue, number_t arg4=NoValue,
+                                 number_t arg5=NoValue, number_t arg6=NoValue,
+                                 number_t arg7=NoValue, number_t arg8=NoValue,
+                                 number_t arg9=NoValue) const;
+
+        ///////////////////////////////////////////////////////////////////////////
 
         void dump(std::ostream & os) const;
 

@@ -21,49 +21,46 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TelnetTerminal public header */
+    \brief Terminal public header */
 
-#ifndef HH_SENF_Utils_Termlib_TelnetTerminal_
-#define HH_SENF_Utils_Termlib_TelnetTerminal_ 1
+#ifndef HH_SENF_Utils_Termlib_AbstractTerminal_
+#define HH_SENF_Utils_Termlib_AbstractTerminal_ 1
 
 // Custom includes
-#include "Telnet.hh"
-#include "AbstractTerminal.hh"
+#include <string>
 
-//#include "TelnetTerminal.mpp"
+//#include "AbstractTerminal.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace term {
 
-    class TelnetTerminal
-        : public telnethandler::TerminalType,
-          public telnethandler::NAWS,
-          public AbstractTerminal
+    struct AbstractTerminal
     {
-    public:
-        TelnetTerminal();
+        struct Callbacks {
+            virtual ~Callbacks() {}
+            virtual void cb_init() = 0;
+            virtual void cb_charReceived(char ch) = 0;
+            virtual void cb_windowSizeChanged() = 0;
+        };
 
-        virtual void setCallbacks(AbstractTerminal::Callbacks & cb);
-        virtual std::string terminalType();
-        virtual unsigned width();
-        virtual unsigned height();
-        virtual void write(char ch);
+        virtual ~AbstractTerminal() {}
 
-    private:
-        virtual void v_setupComplete();
-        virtual void v_charReceived(char ch);
-        virtual void v_windowSizeChanged();
+        virtual void setCallbacks(Callbacks & cb) = 0;
 
-        AbstractTerminal::Callbacks * callbacks_;
+        virtual std::string terminalType() = 0;
+        virtual unsigned width() = 0;
+        virtual unsigned height() = 0;
+
+        virtual void write(char ch) = 0;
     };
 
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "TelnetTerminal.cci"
-//#include "TelnetTerminal.ct"
-//#include "TelnetTerminal.cti"
+//#include "AbstractTerminal.cci"
+//#include "AbstractTerminal.ct"
+//#include "AbstractTerminal.cti"
 #endif
 
 

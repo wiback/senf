@@ -74,6 +74,10 @@ BOOST_AUTO_UNIT_TEST(terminfo)
                        Pair(senf::term::KeyParser::keycode_t('b'), 1u) );
     BOOST_CHECK_EQUAL( kp.lookup(""),
                        Pair(senf::term::KeyParser::keycode_t('\0'), 0u) );
+
+    BOOST_CHECK_EQUAL( ifo.formatString(senf::term::Terminfo::properties::CursorAddress,
+                                        9, 12),
+                       "\e[10;13H" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

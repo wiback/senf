@@ -28,10 +28,11 @@
 
 // Custom includes
 #include <boost/bind.hpp>
-#include "TelnetTerminal.hh"
 #include "../../Scheduler/Scheduler.hh"
 #include "../Logger.hh"
 #include "../../Socket/Protocols/INet.hh"
+#include "TelnetTerminal.hh"
+#include "Editor.hh"
 
 //#include "telnetServer.mpp"
 #define prefix_
@@ -39,34 +40,64 @@
 
 namespace {
 
-    class MyTelnet : public senf::term::TelnetTerminal
+    class MyEditor
+        : public senf::term::BaseEditor
     {
     public:
-        explicit MyTelnet(Handle handle) : senf::term::BaseTelnetProtocol(handle) {}
-        
+        MyEditor(senf::term::AbstractTerminal & terminal) 
+            : BaseEditor(terminal) {}
+
     private:
         virtual void v_keyReceived(keycode_t key)
             {
                 SENF_LOG(("Key " << senf::term::KeyParser::describe(key)));
+                if (key >= ' ' && key < 256)
+                    insertChar(key);
+                else
+                    switch (key) {
+                    case '\r':
+                        newline();
+                        break;
+                    case senf::term::KeyParser::Left: 
+                    {
+                        unsigned c (currentColumn());
+                        if (c > 0)
+                            toColumn(c-1);
+                        break;
+                    }
+                    case senf::term::KeyParser::Backspace: 
+                    {
+                        unsigned c (currentColumn());
+                        if (c > 0) {
+                            toColumn(c-1);
+                            deleteChar();
+                        }
+                        break;
+                    }
+                    case senf::term::KeyParser::Delete:
+                        deleteChar();
+                        break;
+                    }
             }
 
+    };
+
+    class MyTelnet 
+        : public senf::term::TelnetTerminal
+    {
+    public:
+        explicit MyTelnet(Handle handle) 
+            : senf::term::BaseTelnetProtocol(handle),
+              editor_(*this) {}
+        
         virtual void v_eof()
             {
                 SENF_LOG(("EOF"));
                 delete this;
             }
 
-        virtual void v_setupComplete()
-            {
-                TelnetTerminal::v_setupComplete();
-                SENF_LOG(("Terminal type is '" << terminalType() << "', window size is "
-                          << width() << "x" << height()));
-            }
-
-        virtual void v_windowSizeChanged()
-            {
-                SENF_LOG(("New window size: " << width() << "x" << height()));
-            }
+    private:
+        MyEditor editor_;
     };
 
     typedef senf::TCPv4ServerSocketHandle ServerHandle;

@@ -170,6 +170,149 @@ prefix_ senf::term::Terminfo::string_t senf::term::Terminfo::getString(propertie
     return strings_[p];
 }
 
+prefix_ bool senf::term::Terminfo::hasProperty(properties::Boolean p)
+    const
+{
+    return getFlag(p);
+}
+
+prefix_ bool senf::term::Terminfo::hasProperty(properties::Numeric p)
+    const
+{
+    return getNumber(p) != NoValue;
+}
+
+prefix_ bool senf::term::Terminfo::hasProperty(properties::String p)
+    const
+{
+    return getString(p) != 0;
+}
+
+namespace {
+
+    struct Stack
+    {
+        std::vector<senf::term::Terminfo::number_t> stack;
+
+        void push(senf::term::Terminfo::number_t v) 
+            {
+                stack.push_back(v);
+            }
+
+        senf::term::Terminfo::number_t pop() 
+            { 
+                if (stack.empty())
+                    return 0;
+                else {
+                    senf::term::Terminfo::number_t v (stack.back());
+                    stack.pop_back();
+                    return v;
+                }
+            }
+
+        senf::term::Terminfo::number_t popNonzero()
+            {
+                senf::term::Terminfo::number_t v (pop());
+                return v ? v : 1;
+            }
+    };
+
+}
+
+// The following code is taken directly from utio. As far as I understand it is buggy
+// and/or only partially implements the string format language. But seems to be enough for
+// all the common terminal types ...
+prefix_ std::string senf::term::Terminfo::formatString(properties::String p,
+                                                       number_t arg1, number_t arg2,
+                                                       number_t arg3, number_t arg4,
+                                                       number_t arg5, number_t arg6,
+                                                       number_t arg7, number_t arg8,
+                                                       number_t arg9)
+    const
+{
+    char const * fmt_p (getString(p));
+    if (! fmt_p)
+        return "";
+
+    std::string const prgstr (fmt_p);
+    Stack stack;
+    bool bCondValue (false);
+    std::string result;
+
+    for (std::string::const_iterator i (prgstr.begin()); i != prgstr.end(); ++i) {
+	if (*i != '%') {
+	    result += *i;
+	    continue;
+	}
+	int width = 0, base = 0;
+	switch (*++i) {
+        case '%': result += *i; break;
+        case 'i': ++arg1; ++arg2; break;
+        case 'c': result += char(stack.pop());	break;
+        case 'x': base = 16; continue;
+        case '0': if (!base) base = 8;
+        case '1': case '2': case '3': case '4':
+        case '5': case '6': case '7': case '8':
+        case '9': if (!base) base = 10;
+            width = width * base + (*i - '0');
+            continue;
+        case '\\': base = 0;
+        case '{': continue;
+        case '\'': if (*(i - 1) == '%') {
+            if (*(i + 1) != '\\')
+                width = *++i;
+            continue;
+        }
+        case '}': stack.push(width); break;
+	    // Binary operands are in infix (reversed) order
+        case '+': stack.push(stack.pop() + stack.pop()); break;
+        case '-': stack.push(-stack.pop() + stack.pop()); break;
+        case '*': stack.push(stack.pop() * stack.pop()); break;
+        case '/': stack.push(stack.pop() / stack.popNonzero()); break;
+        case 'm': stack.push(stack.pop() % stack.popNonzero()); break;
+        case '|': stack.push(stack.pop() | stack.pop()); break;
+        case '&': stack.push(stack.pop() & stack.pop()); break;
+        case '^': stack.push(stack.pop() ^ stack.pop()); break;
+        case '>': stack.push(stack.pop() < stack.pop()); break;
+        case '<': stack.push(stack.pop() > stack.pop()); break;
+        case '=': stack.push(stack.pop() == stack.pop()); break;
+        case 'A': stack.push(stack.pop() && stack.pop()); break;
+        case 'O': stack.push(stack.pop() || stack.pop()); break;
+        case '!': stack.push(!stack.pop()); break;
+        case '~': stack.push(~stack.pop()); break;
+        case 't': bCondValue = stack.pop();
+        case 'e': if ((bCondValue = !bCondValue)) // this also supports elsif
+            --(i = prgstr.begin() + std::min (prgstr.find ("%e", i-prgstr.begin()), 
+                                              prgstr.find ("%;", i-prgstr.begin())));
+        case '?':
+        case ';': break;
+        case 'p': 
+            switch (*++i) {
+            case '1': stack.push(arg1); break;
+            case '2': stack.push(arg2); break;
+            case '3': stack.push(arg3); break;
+            case '4': stack.push(arg4); break;
+            case '5': stack.push(arg5); break;
+            case '6': stack.push(arg6); break;
+            case '7': stack.push(arg7); break;
+            case '8': stack.push(arg8); break;
+            case '9': stack.push(arg9); break;
+            }
+            break;
+        case 'd': {
+            number_t n = stack.pop();
+            const std::string::size_type iSize = result.size();
+            do {
+                result += std::string::value_type('0' + (n % 10));
+            } while ((n /= 10) || --width > 0);
+            reverse (result.begin() + iSize, result.end());
+            break; }
+        }
+    }
+
+    return result;
+}
+
  prefix_ void senf::term::Terminfo::dump(std::ostream & os)
      const
  {
