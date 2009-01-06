@@ -220,10 +220,23 @@ namespace {
 
         SENF_PARSER_FINALIZE( TestVectorParser );
     };
+        
+    struct TestVectorPacketType
+        : public senf::PacketTypeBase,
+          public senf::PacketTypeMixin<TestVectorPacketType>
+    {
+        typedef senf::PacketTypeMixin<TestVectorPacketType> mixin;
+        typedef TestVectorParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;        
+    };
+    typedef senf::ConcretePacket<TestVectorPacketType> TestVectorPacket;
 
 }
 
-BOOST_AUTO_UNIT_TEST(vectorMacro)
+BOOST_AUTO_UNIT_TEST(vectorMacro_parse)
 {
     unsigned char data[] = { 0x05,                   // size1
                              0x04,                   // size2
@@ -245,6 +258,34 @@ BOOST_AUTO_UNIT_TEST(vectorMacro)
     BOOST_CHECK_EQUAL( parser.vec1()[2], 0x090Au );
     BOOST_CHECK_EQUAL( parser.vec2()[0], 0x0B0Cu );
     BOOST_CHECK_EQUAL( parser.vec2()[1], 0x0D0Eu );
+}
+
+BOOST_AUTO_UNIT_TEST(vectorMacro_create)
+{
+    /*
+     * This test fails with "... is an inaccessible base of ..." error
+     * see bugtracker @ berlios
+    TestVectorPacket p (TestVectorPacket::create());
+    p->dummy() = 0x01020304u;
+    p->vec1().push_back( 0x0506u);
+    p->vec1().push_back( 0x0708u);
+    p->vec1().push_back( 0x090Au);
+    p->vec2().push_back( 0x0B0Cu);
+    p->vec2().push_back( 0x0D0Eu);
+    p.finalizeAll();
+    
+    unsigned char data[] = { 
+            0x05,                   // size1
+            0x04,                   // size2
+            0x01, 0x02, 0x03, 0x04, // dummy
+            0x05, 0x06,             // vec1[0]
+            0x07, 0x08,             // vec1[1]
+            0x09, 0x0A,             // vec1[2]
+            0x0B, 0x0C,             // vec2[0]
+            0x0D, 0x0E };           // vec2[1]
+    
+    BOOST_CHECK( equal( p.data().begin(), p.data().end(), data ));
+     */
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
