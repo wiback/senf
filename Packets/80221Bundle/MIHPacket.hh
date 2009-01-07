@@ -28,34 +28,58 @@
 
 // Custom includes
 #include "../../Packets/Packets.hh"
+#include "TLVPacket.hh"
 
 //#include "MIHPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 
+    struct MIHF_IdParser : public senf::PacketParserBase
+    {
+    #   include SENF_FIXED_PARSER()        
+        
+        SENF_PARSER_FINALIZE ( MIHF_IdParser );
+    };
+
     struct MIHPacketParser : public senf::PacketParserBase
     {
     #   include SENF_PARSER()
         
-        SENF_PARSER_BITFIELD  ( version,       4,  unsigned );
-        SENF_PARSER_BITFIELD  ( ackRequest,    1,  bool     );
-        SENF_PARSER_BITFIELD  ( ackResponse,   1,  bool     );
-        SENF_PARSER_BITFIELD  ( uir,           1,  bool     );
-        SENF_PARSER_BITFIELD  ( moreFragment,  1,  bool     );
-        SENF_PARSER_BITFIELD  ( fragmentNr,    7,  unsigned );
-        SENF_PARSER_SKIP_BITS ( 1                           );
+        SENF_PARSER_BITFIELD_RO ( version,       4,  unsigned );
+        SENF_PARSER_BITFIELD    ( ackRequest,    1,  bool     );
+        SENF_PARSER_BITFIELD    ( ackResponse,   1,  bool     );
+        SENF_PARSER_BITFIELD    ( uir,           1,  bool     );
+        SENF_PARSER_BITFIELD    ( moreFragment,  1,  bool     );
+        SENF_PARSER_BITFIELD    ( fragmentNr,    7,  unsigned );
+        SENF_PARSER_SKIP_BITS   ( 1                           );
         
         // MIH message ID (MID)
-        SENF_PARSER_BITFIELD  ( sid,           4,  unsigned );
-        SENF_PARSER_BITFIELD  ( opcode,        2,  unsigned );
-        SENF_PARSER_BITFIELD  ( aid,           10, unsigned );
+        SENF_PARSER_BITFIELD ( sid,           4,  unsigned );
+        SENF_PARSER_BITFIELD ( opcode,        2,  unsigned );
+        SENF_PARSER_BITFIELD ( aid,           10, unsigned );
         
         SENF_PARSER_SKIP_BITS ( 4                           );
         SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );
         SENF_PARSER_FIELD_RO  ( payloadLength, UInt16Parser );
         
+        // Source MIHF Id
+        SENF_PARSER_PRIVATE_FIELD ( source_type,    UInt8Parser            );
+        SENF_PARSER_PRIVATE_FIELD ( source_length,  DynamicTLVLengthParser );
+        SENF_PARSER_FIELD         ( source_mihf_id, MIHF_IdParser          );
+
+        // Destination MIHF Id
+        SENF_PARSER_PRIVATE_FIELD ( destination_type,    UInt8Parser            );
+        SENF_PARSER_PRIVATE_FIELD ( destination_length,  DynamicTLVLengthParser );
+        SENF_PARSER_FIELD         ( destination_mihf_id, MIHF_IdParser          );
+        
         SENF_PARSER_FINALIZE ( MIHPacketParser );
+        
+        SENF_PARSER_INIT() {
+            version_() = 1;
+            source_type() = 1;
+            destination_type() = 1;
+        }
     };
     
     

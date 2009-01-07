@@ -40,6 +40,7 @@ namespace senf {
         \todo document me
         \todo add usefull exceptions strings
          
+        \ingroup protocolbundle_80221
     */
     struct UnsuportedTLVPacketException : public senf::Exception
     { UnsuportedTLVPacketException() 
@@ -47,6 +48,8 @@ namespace senf {
 
     /** \brief xxx
         \todo document me
+        
+        \ingroup protocolbundle_80221
     */
     class DynamicTLVLengthParser 
         : public detail::packet::IntParserOps<DynamicTLVLengthParser, boost::uint32_t>,
@@ -67,19 +70,25 @@ namespace senf {
         size_type bytes() const;
         void init() const;
 
-    private:
-        typedef FlagParser      <    0 > ExtendedLengthFlagParser;
-        typedef UIntFieldParser < 1, 8 > FixedLengthParser;
-
-        ExtendedLengthFlagParser extended_length_flag() const {
-            return parse<ExtendedLengthFlagParser>( 0 );
-        }
-
-        FixedLengthParser fixed_length_field() const {
-            return parse<FixedLengthParser>( 0 );
-        }
+#       include SENF_PARSER()
         
-        void resize(size_type size);
+        SENF_PARSER_PRIVATE_BITFIELD ( extended_length_flag, 1,  bool     );
+        SENF_PARSER_PRIVATE_BITFIELD ( fixed_length_field,   7,  unsigned );
+        
+    private:
+
+//        typedef FlagParser      <    0 > ExtendedLengthFlagParser;
+//        typedef UIntFieldParser < 1, 8 > FixedLengthParser;
+//
+//        ExtendedLengthFlagParser extended_length_flag() const {
+//            return parse<ExtendedLengthFlagParser>( 0 );
+//        }
+//
+//        FixedLengthParser fixed_length_field() const {
+//            return parse<FixedLengthParser>( 0 );
+//        }
+        
+        void resize(size_type size, SafePacketParserWrapper<DynamicTLVLengthParser> &safeThis);
     };  
         
     /** \brief parse TLVPacket Packet
@@ -87,46 +96,50 @@ namespace senf {
         \todo document me
      
         \see TLVPacketType
+        
+        \ingroup protocolbundle_80221
      */
-    template <class TypeParser, class LengthParser>
-    struct TLVPacketParser : public PacketParserBase
+    struct GenericTLVPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
         
-        SENF_PARSER_FIELD( type,   TypeParser );
-        SENF_PARSER_FIELD( length, LengthParser );
+        SENF_PARSER_FIELD    ( type,   UInt8Parser                );
+        SENF_PARSER_FIELD_RO ( length, DynamicTLVLengthParser     );
+        SENF_PARSER_VECTOR   ( value,  bytes(length), UInt8Parser );
         
-        SENF_PARSER_FINALIZE(TLVPacketParser);
+        SENF_PARSER_FINALIZE( GenericTLVPacketParser );
     };
     
     /** \brief generic TLV Packet type
         
         \todo document me
         
-        \ingroup protocolbundle_mpegdvb
+        \ingroup protocolbundle_80221
      */
-    template <class TypeParser, class LengthParser>
-    struct TLVPacketType
-        : public PacketTypeBase
+    struct GenericTLVPacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<GenericTLVPacketType>
     {
-        typedef ConcretePacket<TLVPacketType<TypeParser, LengthParser> > packet;
-        typedef TLVPacketParser<TypeParser, LengthParser> parser;
+        typedef PacketTypeMixin<GenericTLVPacketType> mixin;
+        typedef ConcretePacket<GenericTLVPacketType> packet;
+        typedef GenericTLVPacketParser parser;
 
-        static optional_range nextPacketRange(packet p);
-        static size_type initSize();
+//        static optional_range nextPacketRange(packet p);
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
         
-        static void finalize(packet p);
-        
+//        static void finalize(packet p);
         static void dump(packet p, std::ostream & os);
     };
     
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, DynamicTLVLengthParser> > MIHInfoElement;
+    typedef ConcretePacket<GenericTLVPacketType> GenericTLVPacket;
 }
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "TLVPacket.cci"
-#include "TLVPacket.ct"
+//#include "TLVPacket.ct"
 //#include "TLVPacket.cti"
 #endif
 

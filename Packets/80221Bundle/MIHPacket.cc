@@ -27,7 +27,6 @@
 //#include "MIHPacket.ih"
 
 // Custom includes
-#include "MIHPacket.hh"
 #include "../../Packets/Packets.hh"
 #include <boost/io/ios_state.hpp>
 

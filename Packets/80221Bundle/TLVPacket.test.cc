@@ -39,97 +39,70 @@
 using namespace senf;
 
 
-template <class TLVPacketType>
-void check_TLVPacket(TLVPacketType tlvPacket, boost::uint32_t type, boost::uint32_t length)
+void check_TLVPacket(GenericTLVPacket &tlvPacket, boost::uint32_t type, boost::uint32_t length)
 {
     BOOST_CHECK_EQUAL( tlvPacket->type(), type );
     BOOST_CHECK_EQUAL( tlvPacket->length(), length );
 
-    PacketData & tlvPacket_value (tlvPacket.next().data());
-    BOOST_CHECK_EQUAL( tlvPacket_value.size(), length);
-    for (int i=0, j=tlvPacket_value.size(); i<j; i++)
-        BOOST_CHECK_EQUAL( tlvPacket_value[i], i );
+    BOOST_CHECK_EQUAL( tlvPacket->value().size(), length);
+    for (int i=0, j=tlvPacket->value().size(); i<j; i++)
+        BOOST_CHECK_EQUAL( tlvPacket->value()[i], i );
 }
 
 
-BOOST_AUTO_UNIT_TEST(TLVPacket_static)
+BOOST_AUTO_UNIT_TEST(GenericTLVPacket_static)
 {
     // check static values:
-    // number of bytes to allocate for a new TLVPacket should be 5
-    // BOOST_CHECK_EQUAL( TLVPacket::type::initSize(), 5u );
+    // number of bytes to allocate for a new GenericTLVPacket should be 2
+    BOOST_CHECK_EQUAL( GenericTLVPacket::type::initSize(), 2u );
 }
 
 
-BOOST_AUTO_UNIT_TEST(TLVPacket_parse_packet_with_simple_length)
+BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_simple_length)
 {
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, DynamicTLVLengthParser> > TestTLVPacket;
     unsigned char data[] = { 
-        0x01, 0x23, 0x45, 0x67, // type
+        0x01, // type
         0x0A, // first bit not set, length=10
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value (payload)
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
     };
-    TestTLVPacket tlvPacket (TestTLVPacket::create(data));
-    check_TLVPacket( tlvPacket, 0x01234567u, 0x0Au );
+    GenericTLVPacket tlvPacket (GenericTLVPacket::create(data));
+    check_TLVPacket( tlvPacket, 0x01, 0x0Au );
 }
 
-
-BOOST_AUTO_UNIT_TEST(TLVPacket_parse_packet_with_extended_length)
+BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_extended_length)
 {
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, DynamicTLVLengthParser> > TestTLVPacket;
     unsigned char data[] = { 
-        0x01, 0x23, 0x45, 0x67, // type
+        0x01, // type
         0x81, // first and last bit set => one byte length following
         0x0A, // length (10 bytes value)
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value (payload)
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
     };        
-    TestTLVPacket tlvPacket (TestTLVPacket::create(data));
-    check_TLVPacket( tlvPacket, 0x01234567u, 0x0Au );
+    GenericTLVPacket tlvPacket (GenericTLVPacket::create(data));
+    check_TLVPacket( tlvPacket, 0x01, 0x0Au );
 }
 
 
-BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_simple_length)
+BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_simple_length)
 {
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, DynamicTLVLengthParser> > TestTLVPacket;
-    std::string payload ("Hello, world!");
-    TestTLVPacket tlvPacket (TestTLVPacket::create());
+    GenericTLVPacket tlvPacket (GenericTLVPacket::create());
     tlvPacket->type() = 42u;
-    DataPacket::createAfter( tlvPacket, payload );
+    for (uint8_t i=0; i<10; i++)
+        tlvPacket->value().push_back( i);
     tlvPacket.finalizeAll();
 
-    BOOST_CHECK_EQUAL( tlvPacket->type(), 42u);
-    BOOST_CHECK_EQUAL( tlvPacket->length(), 13u);
-    
-    PacketData & tlvPacket_value (tlvPacket.next().data());
-    BOOST_CHECK( equal( tlvPacket_value.begin(), tlvPacket_value.end(), payload.begin() ));
+    check_TLVPacket( tlvPacket, 42u, 0x0Au );
 }
 
-
+/**
 BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_extended_length)
 {
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, DynamicTLVLengthParser> > TestTLVPacket;
-    std::string payload (
-            "This is a very long string with more than 127 characters to check if the TLV-Packet "
-            "works correctly with an extended length. That's all." );
-    TestTLVPacket tlvPacket (TestTLVPacket::create());
+    GenericTLVPacket tlvPacket (GenericTLVPacket::create());
     tlvPacket->type() = 42u;
-    DataPacket::createAfter( tlvPacket, payload );
-    tlvPacket.finalizeAll();
-        
-    BOOST_CHECK_EQUAL( tlvPacket->type(), 42u );
-    BOOST_CHECK_EQUAL( tlvPacket->length(), payload.size() );
-    
-    PacketData & tlvPacket_value (tlvPacket.next().data());
-    BOOST_CHECK( equal( tlvPacket_value.begin(), tlvPacket_value.end(), payload.begin() ));
-
-    payload = std::string("This is a short string with less than 127 characters. That's all.");
-    DataPacket::createAfter( tlvPacket, payload );
+    for (uint8_t i=0; i<129; i++)
+        tlvPacket->value().push_back( i);
     tlvPacket.finalizeAll();
 
-    BOOST_CHECK_EQUAL( tlvPacket->type(), 42u );
-    BOOST_CHECK_EQUAL( tlvPacket->length(), payload.size() );
-
-    PacketData & tlvPacket_value2 (tlvPacket.next().data());
-    BOOST_CHECK( equal( tlvPacket_value2.begin(), tlvPacket_value2.end(), payload.begin() ));
+    check_TLVPacket( tlvPacket, 42u, 129u );
 }
 
 
@@ -229,6 +202,8 @@ BOOST_AUTO_UNIT_TEST(TLVFixPacket_create_invalid_packet)
     test_invalid_TLVFixPacket_creating<TestTLVPacket16>( UInt16Parser::max_value);
     test_invalid_TLVFixPacket_creating<TestTLVPacket24>( UInt24Parser::max_value);
 }
+
+*/
 
 
 ///////////////////////////////cc.e////////////////////////////////////////
