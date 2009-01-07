@@ -140,9 +140,9 @@ prefix_ senf::term::Terminfo::Terminfo(std::string const & term)
 prefix_ void senf::term::Terminfo::load(std::string const & term)
 {
     std::string filename (findTerminfo(term));
+    if (filename.empty()) throw InvalidTerminfoException();
     std::ifstream is (filename.c_str());
-    if (!is)
-        throw InvalidTerminfoException();
+    if (!is) throw InvalidTerminfoException();
     load(is);
 }
 
@@ -359,28 +359,25 @@ prefix_ std::string senf::term::Terminfo::formatString(properties::String p,
 
 prefix_ std::string senf::term::Terminfo::findTerminfo(std::string const & name)
 {
+    if (name.empty()) return "";
     boost::filesystem::path subdir (name.substr(0,1)); subdir /= name;
-    boost::filesystem::path tientry, tipath;
+    boost::filesystem::path tientry;
 
     {
         char const * tivar (::getenv("TERMINFO"));
         if (tivar) {
-            tipath = tivar;
-            tientry = tipath / subdir;
+            tientry = boost::filesystem::path(tivar) / subdir;
             if (boost::filesystem::exists(tientry)) return tientry.native_file_string();
         }
     }
 
-    tipath = "/etc/terminfo";
-    tientry = tipath / subdir;
+    tientry = boost::filesystem::path("/etc/terminfo") / subdir;
     if (boost::filesystem::exists(tientry)) return tientry.native_file_string();
 
-    tipath = "/lib/terminfo";
-    tientry = tipath / subdir;
+    tientry = boost::filesystem::path("/lib/terminfo")  / subdir;
     if (boost::filesystem::exists(tientry)) return tientry.native_file_string();
 
-    tipath = "/usr/share/terminfo";
-    tientry = tipath / subdir;
+    tientry = boost::filesystem::path("/usr/share/terminfo") / subdir;
     if (boost::filesystem::exists(tientry)) return tientry.native_file_string();
 
     return "";
@@ -405,11 +402,13 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
 {
     TerminfoHeader h;
     is.read(static_cast<char*>(static_cast<void*>(&h)), sizeof(h));
-    if (h.magic != TerminfoMagic)
-        throw InvalidTerminfoException();
+    if (!is || h.magic != TerminfoMagic) throw InvalidTerminfoException();
 
     name_.resize(h.namesSz);
     is.read(&(name_[0]), name_.size());
+    if (!is) throw InvalidTerminfoException();
+    if (name_.size() & 1)
+        is.ignore(1u);
     {
         std::string::size_type n (name_.find('\0'));
         if (n != std::string::npos)
@@ -420,6 +419,7 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
     for (BoolVec::iterator i (booleans_.begin()); i != booleans_.end(); ++i) {
         char v;
         is.read(&v, sizeof(v));
+        if (!is) throw InvalidTerminfoException();
         *i = v;
     }
     if (booleans_.size() & 1)
@@ -429,6 +429,7 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
     for (NumberVec::iterator i (numbers_.begin()); i != numbers_.end(); ++i) {
         number_t v;
         is.read(static_cast<char*>(static_cast<void*>(&v)), sizeof(v));
+        if (!is) throw InvalidTerminfoException();
         *i = v;
     }
 
@@ -438,17 +439,21 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
     for (OffsetVec::iterator i (offsets.begin()); i != offsets.end(); ++i) {
         number_t v;
         is.read(static_cast<char*>(static_cast<void*>(&v)), sizeof(v));
+        if (!is) throw InvalidTerminfoException();
         *i = v;
     }
     
     stringPool_.resize(h.stringPoolSz);
     is.read(&(stringPool_[0]), stringPool_.size());
+    if (!is) throw InvalidTerminfoException();
 
     strings_.resize(offsets.size());
     StringVec::iterator j (strings_.begin());
     for (OffsetVec::iterator i (offsets.begin()); i != offsets.end(); ++i, ++j)
-        if (*i != NoValue)
+        if (*i != NoValue && *i >= 0 && *i < stringPool_.size())
             *j = &(stringPool_[0]) + *i;
+        else
+            *j = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////

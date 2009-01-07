@@ -27,6 +27,7 @@
 #define HH_SENF_Utils_Termlib_Editor_ 1
 
 // Custom includes
+#include <map>
 #include <senf/Scheduler/ClockService.hh>
 #include <senf/Scheduler/TimerEvent.hh>
 #include "AbstractTerminal.hh"
@@ -50,23 +51,27 @@ namespace term {
 
         void newline();                 ///< Move to beginning of a new, empty line
         void toColumn(unsigned c);      ///< Move cursor to column \p c
-        void insertChar(char ch);       ///< Insert \p ch at current column, shifting text right
-        void overwriteChar(char ch);    ///< Write \p ch at current column
-        void deleteChar();              ///< Delete a character a current column
+        void put(char ch);              ///< Write \p ch at current column
+        void put(std::string const & text);
+        void clearLine();               ///< Clear current line and move cursor to first column
+        void setBold();                 ///< Set bold char display
+        void setNormal();               ///< Set normal char display
 
         unsigned currentColumn() const; ///< Return number of current column
+        unsigned width();
+
+    protected:
+        virtual void cb_init();
+        virtual void cb_windowSizeChanged();
 
     private:
         virtual void v_keyReceived(keycode_t key) = 0;
 
-        virtual void cb_init();
         virtual void cb_charReceived(char c);
-        virtual void cb_windowSizeChanged();
 
         void keySequenceTimeout();
         void processKeys();
 
-        unsigned width();
         void write(char ch);
         void write(std::string const & s);
         
@@ -78,6 +83,87 @@ namespace term {
         scheduler::TimerEvent timer_;
         unsigned column_;
     };
+
+    class LineEditor
+        : public BaseEditor
+    {
+    public:
+        ///////////////////////////////////////////////////////////////////////////
+        // Types
+
+        typedef boost::function<void (LineEditor&)> KeyBinding;
+        typedef boost::function<void (std::string const &)> AcceptCallback;
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        LineEditor(AbstractTerminal & terminal, AcceptCallback cb);
+        
+        ///////////////////////////////////////////////////////////////////////////
+
+        void prompt(std::string const & text);
+        void set(std::string const & text, unsigned pos = 0u);
+
+        // Overall edit control
+        void show();
+        void hide();
+        void accept();
+        void clear();
+        void redisplay();
+        void forceRedisplay();
+        
+        // Cursor and display movement
+        void gotoChar(unsigned n);
+        void scrollTo(unsigned n);
+
+        // Text manipulation
+        void deleteChar(unsigned n=1);
+        void insert(char ch);
+        void insert(std::string const & text);
+
+        // Get information
+        std::string const & text();
+        unsigned point();
+        unsigned displayPos();
+        keycode_t lastKey();
+
+        // Key bindings
+        void defineKey(keycode_t key, KeyBinding binding);
+        void unsetKey(keycode_t key);
+        
+    private:
+        virtual void cb_init();
+        virtual void cb_windowSizeChanged();
+        virtual void v_keyReceived(keycode_t key);
+
+        typedef std::map<keycode_t, KeyBinding> KeyMap;
+
+        bool enabled_;
+        bool redisplayNeeded_;
+        std::string prompt_;
+        unsigned promptWidth_;
+        unsigned editWidth_;
+        std::string text_;
+        unsigned point_;
+        unsigned displayPos_;
+        keycode_t lastKey_;
+        AcceptCallback callback_;
+        KeyMap bindings_;
+    };
+
+namespace bindings {
+
+    void selfInsertCommand   (LineEditor & editor);
+    void forwardChar         (LineEditor & editor);
+    void backwardChar        (LineEditor & editor);
+    void accept              (LineEditor & editor);
+    void backwardDeleteChar  (LineEditor & editor);
+    void deleteChar          (LineEditor & editor);
+    void beginningOfLine     (LineEditor & editor);
+    void endOfLine           (LineEditor & editor);
+    void deleteToEndOfLine   (LineEditor & editor);
+    void restartEdit         (LineEditor & editor);
+
+}
 
 }}
 

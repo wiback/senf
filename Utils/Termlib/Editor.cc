@@ -74,7 +74,7 @@ prefix_ void senf::term::BaseEditor::toColumn(unsigned c)
             column_ = c;
         }
         else {
-            char const * cub1 (tifo_.getString(Terminfo::properties::CursorRight));
+            char const * cub1 (tifo_.getString(Terminfo::properties::CursorLeft));
             while (c < column_) {
                 write(cub1);
                 --column_;
@@ -83,34 +83,49 @@ prefix_ void senf::term::BaseEditor::toColumn(unsigned c)
     }
 }
 
-prefix_ void senf::term::BaseEditor::insertChar(char ch)
+prefix_ void senf::term::BaseEditor::put(char ch)
 {
-    if (column_+1 >= width())
+    if (column_ >= width()-1)
         return;
-    if (tifo_.hasProperty(Terminfo::properties::InsertCharacter))
-        write(tifo_.getString(Terminfo::properties::InsertCharacter));
-    else
-        write(tifo_.formatString(Terminfo::properties::ParmIch, 1));
     write(ch);
     ++ column_;
 }
 
-prefix_ void senf::term::BaseEditor::overwriteChar(char ch)
+prefix_ void senf::term::BaseEditor::put(std::string const & text)
 {
-    write(ch);
-    ++ column_;
+    if (text.size() > width()-column_-1) {
+        write(text.substr(0,width()-column_-1));
+        column_ = width() - 1;
+    }
+    else {
+        write(text);
+        column_ += text.size();
+    }
 }
 
-prefix_ void senf::term::BaseEditor::deleteChar()
+prefix_ void senf::term::BaseEditor::clearLine()
 {
-    if (tifo_.hasProperty(Terminfo::properties::DeleteCharacter))
-        write(tifo_.getString(Terminfo::properties::DeleteCharacter));
-    else
-        write(tifo_.formatString(Terminfo::properties::ParmDch, 1));
+    write("\r");
+    write(tifo_.getString(Terminfo::properties::ClrEol));
+    column_ = 0;
+}
+
+prefix_ void senf::term::BaseEditor::setBold()
+{
+    if (tifo_.hasProperty(Terminfo::properties::EnterBoldMode) &&
+        tifo_.hasProperty(Terminfo::properties::ExitAttributeMode))
+        write(tifo_.getString(Terminfo::properties::EnterBoldMode));
+}
+
+prefix_ void senf::term::BaseEditor::setNormal()
+{
+    if (tifo_.hasProperty(Terminfo::properties::EnterBoldMode) &&
+        tifo_.hasProperty(Terminfo::properties::ExitAttributeMode))
+        write(tifo_.getString(Terminfo::properties::ExitAttributeMode));
 }
 
 prefix_ unsigned senf::term::BaseEditor::currentColumn()
-    const
+   const
 {
     return column_;
 }
@@ -119,6 +134,13 @@ prefix_ void senf::term::BaseEditor::cb_init()
 {
     tifo_.load(terminal_->terminalType());
     keyParser_.load(tifo_);
+
+    typedef Terminfo::properties p;
+    if (! (tifo_.hasProperty(p::ClrEol) &&
+           (tifo_.hasProperty(p::ParmRightCursor) || tifo_.hasProperty(p::CursorRight)) &&
+           (tifo_.hasProperty(p::ParmLeftCursor) || tifo_.hasProperty(p::CursorLeft))))
+        throw Terminfo::InvalidTerminfoException();
+
     if (tifo_.hasProperty(Terminfo::properties::KeypadXmit))
         write(tifo_.getString(Terminfo::properties::KeypadXmit));
 }
@@ -172,6 +194,266 @@ prefix_ void senf::term::BaseEditor::write(std::string const & s)
 {
     for (std::string::const_iterator i (s.begin()); i != s.end(); ++i)
         write(*i);
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+prefix_ senf::term::LineEditor::LineEditor(AbstractTerminal & terminal, AcceptCallback cb)
+    : BaseEditor(terminal), enabled_ (true), prompt_ ("$"), promptWidth_ (1u), editWidth_ (0u), 
+      text_ (""), point_ (0u), displayPos_ (0u), lastKey_ (0u), callback_ (cb)
+{
+    defineKey(KeyParser::Return,    &bindings::accept);
+    defineKey(KeyParser::Right,     &bindings::forwardChar);
+    defineKey(KeyParser::Left,      &bindings::backwardChar);
+    defineKey(KeyParser::Backspace, &bindings::backwardDeleteChar);
+    defineKey(KeyParser::Delete,    &bindings::deleteChar);
+    defineKey(KeyParser::Home,      &bindings::beginningOfLine);
+    defineKey(KeyParser::End,       &bindings::endOfLine);
+    defineKey(KeyParser::Ctrl('K'), &bindings::deleteToEndOfLine);
+    defineKey(KeyParser::Ctrl('A'), &bindings::beginningOfLine);
+    defineKey(KeyParser::Ctrl('E'), &bindings::endOfLine);
+    defineKey(KeyParser::Ctrl('D'), &bindings::deleteChar);
+    defineKey(KeyParser::Ctrl('C'), &bindings::restartEdit);
+}
+
+prefix_ void senf::term::LineEditor::prompt(std::string const & text)
+{
+    prompt_ = text;
+    promptWidth_ = prompt_.size();
+    editWidth_ = width() - promptWidth_ - 3;
+    if (enabled_)
+        redisplay();
+}
+
+prefix_ void senf::term::LineEditor::set(std::string const & text, unsigned pos)
+{
+    text_ = text;
+    point_ = pos;
+    if (point_ > text.size())
+        point_ = text.size();
+    displayPos_ = 0u;
+    if (point_ > editWidth_)
+        displayPos_ = point_ - editWidth_;
+    redisplay();
+}
+
+prefix_ void senf::term::LineEditor::show()
+{
+    if (enabled_)
+        return;
+    enabled_ = true;
+    redisplay();
+}
+
+prefix_ void senf::term::LineEditor::hide()
+{
+    if (! enabled_)
+        return;
+    clearLine();
+    enabled_ = false;
+}
+
+prefix_ void senf::term::LineEditor::accept()
+{
+    if (enabled_)
+        newline();
+    hide();
+    callback_(text_);
+    clear();
+}
+
+prefix_ void senf::term::LineEditor::clear()
+{
+    set("");
+}
+
+prefix_ void senf::term::LineEditor::redisplay()
+{
+    redisplayNeeded_ = true;
+}
+
+prefix_ void senf::term::LineEditor::forceRedisplay()
+{
+    if (! enabled_)
+        return;
+    clearLine();
+    setBold();
+    put(prompt_);
+    put( displayPos_ > 0 ? '<' : ' ' );
+    if (text_.size() > displayPos_ + editWidth_) {
+        toColumn(editWidth_ + promptWidth_ + 1);
+        put('>');
+        toColumn(promptWidth_ + 1);
+    }
+    setNormal();
+    put(text_.substr(displayPos_, editWidth_));
+    toColumn(point_ - displayPos_ + promptWidth_ + 1);
+    redisplayNeeded_ = false;
+}
+
+prefix_ void senf::term::LineEditor::gotoChar(unsigned n)
+{
+    point_ = n;
+    if (point_ > text_.size())
+        point_ = text_.size();
+    if (point_ < displayPos_)
+        displayPos_ = point_;
+    if (point_ > displayPos_+editWidth_)
+        displayPos_ = point_-editWidth_;
+    redisplay();
+}
+
+prefix_ void senf::term::LineEditor::scrollTo(unsigned n)
+{
+    displayPos_ = n;
+    if (displayPos_ > text_.size())
+        displayPos_ = text_.size();
+    if (point_ < displayPos_)
+        point_ = displayPos_;
+    if (point_ > displayPos_+editWidth_)
+        point_ = displayPos_+editWidth_;
+    redisplay();
+}
+
+prefix_ void senf::term::LineEditor::deleteChar(unsigned n)
+{
+    if (point_ >= text_.size())
+        return;
+    text_.erase(point_, n);
+    redisplay();
+}
+
+prefix_ void senf::term::LineEditor::insert(char ch)
+{
+    text_.insert(point_, std::string(1, ch));
+    gotoChar(point_+1);
+    redisplay();
+}
+
+prefix_ void senf::term::LineEditor::insert(std::string const & text)
+{
+    text_.insert(point_, text);
+    gotoChar(point_+text.size());
+    redisplay();
+}
+
+prefix_ std::string const & senf::term::LineEditor::text()
+{
+    return text_;
+}
+
+prefix_ unsigned senf::term::LineEditor::point()
+{
+    return point_;
+}
+
+prefix_ unsigned senf::term::LineEditor::displayPos()
+{
+    return displayPos_;
+}
+
+prefix_ senf::term::LineEditor::keycode_t senf::term::LineEditor::lastKey()
+{
+    return lastKey_;
+}
+
+prefix_ void senf::term::LineEditor::defineKey(keycode_t key, KeyBinding binding)
+{
+    bindings_[key] = binding;
+}
+
+prefix_ void senf::term::LineEditor::unsetKey(keycode_t key)
+{
+    bindings_.erase(key);
+}
+
+prefix_ void senf::term::LineEditor::cb_init()
+{
+    BaseEditor::cb_init();
+    editWidth_ = width() - promptWidth_ - 3;
+    forceRedisplay();
+}
+
+prefix_ void senf::term::LineEditor::cb_windowSizeChanged()
+{
+    BaseEditor::cb_windowSizeChanged();
+    editWidth_ = width() - promptWidth_ - 3;
+    gotoChar(point_);
+    forceRedisplay();
+}
+
+prefix_ void senf::term::LineEditor::v_keyReceived(keycode_t key)
+{
+    lastKey_ = key;
+    KeyMap::iterator i (bindings_.find(key));
+    if (i != bindings_.end())
+        i->second(*this);
+    else if (key >= ' ' && key < 256)
+        insert(char(key));
+    if (redisplayNeeded_)
+        forceRedisplay();
+}
+
+///////////////////////////////////////////////////////////////////////////
+
+prefix_ void senf::term::bindings::selfInsertCommand(LineEditor & editor)
+{
+    LineEditor::keycode_t key (editor.lastKey());
+    if (key >= ' ' && key < 256)
+        editor.insert(key);
+}
+
+prefix_ void senf::term::bindings::forwardChar(LineEditor & editor)
+{
+    editor.gotoChar(editor.point()+1);
+}
+
+prefix_ void senf::term::bindings::backwardChar(LineEditor & editor)
+{
+    unsigned p (editor.point());
+    if (p>0)
+        editor.gotoChar(p-1);
+}
+
+prefix_ void senf::term::bindings::accept(LineEditor & editor)
+{
+    editor.accept();
+}
+
+prefix_ void senf::term::bindings::backwardDeleteChar(LineEditor & editor)
+{
+    unsigned p (editor.point());
+    if (p>0) {
+        editor.gotoChar(p-1);
+        editor.deleteChar();
+    }
+}
+
+prefix_ void senf::term::bindings::deleteChar(LineEditor & editor)
+{
+    editor.deleteChar();
+}
+
+prefix_ void senf::term::bindings::beginningOfLine(LineEditor & editor)
+{
+    editor.gotoChar(0u);
+}
+
+prefix_ void senf::term::bindings::endOfLine(LineEditor & editor)
+{
+    editor.gotoChar(editor.text().size());
+}
+
+prefix_ void senf::term::bindings::deleteToEndOfLine(LineEditor & editor)
+{
+    editor.deleteChar(editor.text().size()-editor.point());
+}
+
+prefix_ void senf::term::bindings::restartEdit(LineEditor & editor)
+{
+    editor.newline();
+    editor.clear();
+    editor.redisplay();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

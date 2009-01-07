@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <boost/bind.hpp>
+#include "../../Utils/membind.hh"
 #include "../../Scheduler/Scheduler.hh"
 #include "../Logger.hh"
 #include "../../Socket/Protocols/INet.hh"
@@ -39,65 +40,32 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-
-    class MyEditor
-        : public senf::term::BaseEditor
-    {
-    public:
-        MyEditor(senf::term::AbstractTerminal & terminal) 
-            : BaseEditor(terminal) {}
-
-    private:
-        virtual void v_keyReceived(keycode_t key)
-            {
-                SENF_LOG(("Key " << senf::term::KeyParser::describe(key)));
-                if (key >= ' ' && key < 256)
-                    insertChar(key);
-                else
-                    switch (key) {
-                    case '\r':
-                        newline();
-                        break;
-                    case senf::term::KeyParser::Left: 
-                    {
-                        unsigned c (currentColumn());
-                        if (c > 0)
-                            toColumn(c-1);
-                        break;
-                    }
-                    case senf::term::KeyParser::Backspace: 
-                    {
-                        unsigned c (currentColumn());
-                        if (c > 0) {
-                            toColumn(c-1);
-                            deleteChar();
-                        }
-                        break;
-                    }
-                    case senf::term::KeyParser::Delete:
-                        deleteChar();
-                        break;
-                    }
-            }
-
-    };
-
+    
     class MyTelnet 
         : public senf::term::TelnetTerminal
     {
     public:
         explicit MyTelnet(Handle handle) 
-            : senf::term::BaseTelnetProtocol(handle),
-              editor_(*this) {}
-        
+            : senf::term::BaseTelnetProtocol (handle), 
+              editor_ (*this, senf::membind(&MyTelnet::executeLine, this)) 
+            {
+                editor_.prompt("myTelnet$");
+            }
+
         virtual void v_eof()
             {
                 SENF_LOG(("EOF"));
                 delete this;
             }
 
+        virtual void executeLine(std::string const & text)
+            {
+                SENF_LOG(("Execute line: " << text));
+                editor_.show();
+            }
+
     private:
-        MyEditor editor_;
+        senf::term::LineEditor editor_;
     };
 
     typedef senf::TCPv4ServerSocketHandle ServerHandle;
@@ -111,7 +79,15 @@ namespace {
         }
         ClientHandle client (handle.accept());
         SENF_LOG(("new client ..."));
-        new MyTelnet (client);
+        try {
+            new MyTelnet (client);
+        }
+        catch (std::exception & ex) {
+            SENF_LOG(("Client open failed: " << ex.what()));
+        }
+        catch (...) {
+            SENF_LOG(("Client open failed: unknown exception"));
+        }
     }
 
 }
