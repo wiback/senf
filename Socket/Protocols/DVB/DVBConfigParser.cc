@@ -82,6 +82,7 @@ prefix_ void senf::DVBConfigParser::initConfigFile(string configFilePath_){
         }
         configFilePath_ = configPath;
     }
+    configFilePath = configFilePath_;
     configFile.open( configFilePath.c_str(), ios_base::in);
     if(configFile.bad())
         SENF_LOG((senf::log::IMPORTANT)  ("Could not open channels file"<< configFilePath << "." ));
@@ -97,7 +98,6 @@ prefix_ string senf::DVBConfigParser::getConfigLine(string channel)
     if(configFile.bad())
            SENF_THROW_SYSTEM_EXCEPTION("Could not read channels file: ") << configFilePath << ".";
     
-    configFile.seekg(0);
     while (configFile.good()){
         getline( configFile, configLine );
         SENF_LOG((senf::log::NOTICE)  ("configLine: " << configLine ));

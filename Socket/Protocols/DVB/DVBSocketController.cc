@@ -79,7 +79,7 @@ prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const st
     }
     else {
         switch (type) {
-            case FE_QPSK: if (mode.c_str()[0]=='a')
+            case FE_QPSK:
                 tuneDVB_S_sync(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate, frontend.u.qpsk.fec_inner);
                 break;
             case FE_QAM:
@@ -336,17 +336,17 @@ prefix_ string senf::DVBSocketController::status2String(fe_status_t status){
     if (status & FE_HAS_LOCK)
         return s += "HAS LOCK"; 
     if (status & FE_HAS_CARRIER)
-        s += "HAS CARRIER";
+        s += "HAS CARRIER ";
     if (status & FE_HAS_VITERBI)
-        s += "HAS VITERBI";
+        s += "HAS VITERBI ";
     if (status & FE_HAS_SYNC)
-        s += "HAS SYNC";
+        s += "HAS SYNC ";
     if (status & FE_HAS_SIGNAL)
-        s += "HAS SIGNAL";
+        s += "HAS SIGNAL ";
     if (status & FE_TIMEDOUT)
-        s += "TIMED OUT";
+        s += "TIMED OUT ";
     if (status & FE_REINIT)
-        s += "REINIT";
+        s += "REINIT ";
 
     return s;
 }
@@ -423,11 +423,11 @@ prefix_ void senf::DVBSocketController::initConsole(){
     
     dir.add("filter", &DVBSocketController::setSectionFilter)
         .arg("pid", "pid to filter")
-        .arg("filter", "filter", kw::default_value = 62)
-        .arg("flags", "or-able: DMX_CHECK_CRC(0x01), DMX_ONESHOT(0x02), DMX_IMMEDIATE_START(0x04), DMX_KERNEL_CLIENT(0x8000)", kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC)
-        .arg("mask", "mask", kw::default_value = 0xff)
-        .arg("mode", "mode", kw::default_value = 0)
-        .arg("timeout", "timeout", kw::default_value = 0)
+        .arg("filter", "filter", kw::default_value = 62, kw::default_doc   = "0x3e")
+        .arg("flags", "or-able: DMX_CHECK_CRC(0x01), DMX_ONESHOT(0x02), DMX_IMMEDIATE_START(0x04), DMX_KERNEL_CLIENT(0x8000)", kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC, kw::default_doc   = "0x05")
+        .arg("mask", "mask", kw::default_value = 0xff, kw::default_doc   = "0xff")
+        .arg("mode", "mode", kw::default_value = 0, kw::default_doc   = "0x00")
+        .arg("timeout", "timeout", kw::default_value = 0, kw::default_doc   = "0x00")
         .doc("Sets parameters for section filter.");
        
     dir.add("stop", &DVBSocketController::setBufferSize)
