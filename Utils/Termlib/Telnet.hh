@@ -65,6 +65,8 @@ namespace term {
         void write(std::string const & s);
         void write(char c);
 
+        Handle handle();
+
         void sendNOP();
         void sendBRK();
         void sendIP();
@@ -81,6 +83,9 @@ namespace term {
 
         void requestPeerOption(option_type option, bool enabled = true);
         void acceptPeerOption(option_type option, bool enabled = true);
+
+        bool localOption(option_type option);
+        bool peerOption(option_type option);
         
     protected:
         explicit BaseTelnetProtocol(Handle handle);

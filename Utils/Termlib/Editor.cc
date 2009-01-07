@@ -130,16 +130,21 @@ prefix_ unsigned senf::term::BaseEditor::currentColumn()
     return column_;
 }
 
-prefix_ void senf::term::BaseEditor::cb_init()
+prefix_ bool senf::term::BaseEditor::cb_init()
 {
-    tifo_.load(terminal_->terminalType());
-    keyParser_.load(tifo_);
+    try {
+        tifo_.load(terminal_->terminalType());
+        keyParser_.load(tifo_);
+    }
+    catch (Terminfo::InvalidTerminfoException & ex) {
+        return false;
+    }
 
     typedef Terminfo::properties p;
     if (! (tifo_.hasProperty(p::ClrEol) &&
            (tifo_.hasProperty(p::ParmRightCursor) || tifo_.hasProperty(p::CursorRight)) &&
            (tifo_.hasProperty(p::ParmLeftCursor) || tifo_.hasProperty(p::CursorLeft))))
-        throw Terminfo::InvalidTerminfoException();
+        return false;
 
     if (tifo_.hasProperty(Terminfo::properties::KeypadXmit))
         write(tifo_.getString(Terminfo::properties::KeypadXmit));
@@ -220,6 +225,8 @@ prefix_ void senf::term::LineEditor::prompt(std::string const & text)
 {
     prompt_ = text;
     promptWidth_ = prompt_.size();
+    if (promptWidth_ > width() - 4 && width() > 4)
+        promptWidth_ = width() - 4;
     editWidth_ = width() - promptWidth_ - 3;
     if (enabled_)
         redisplay();
@@ -278,7 +285,10 @@ prefix_ void senf::term::LineEditor::forceRedisplay()
         return;
     clearLine();
     setBold();
-    put(prompt_);
+    if (prompt_.size() > promptWidth_)
+        put(prompt_.substr(prompt_.size()-promptWidth_));
+    else
+        put(prompt_);
     put( displayPos_ > 0 ? '<' : ' ' );
     if (text_.size() > displayPos_ + editWidth_) {
         toColumn(editWidth_ + promptWidth_ + 1);
@@ -367,23 +377,27 @@ prefix_ void senf::term::LineEditor::unsetKey(keycode_t key)
     bindings_.erase(key);
 }
 
-prefix_ void senf::term::LineEditor::cb_init()
+prefix_ bool senf::term::LineEditor::cb_init()
 {
-    BaseEditor::cb_init();
-    editWidth_ = width() - promptWidth_ - 3;
+    if (!BaseEditor::cb_init())
+        return false;
+    prompt(prompt_);
     forceRedisplay();
+    return true;
 }
 
 prefix_ void senf::term::LineEditor::cb_windowSizeChanged()
 {
     BaseEditor::cb_windowSizeChanged();
-    editWidth_ = width() - promptWidth_ - 3;
+    prompt(prompt_);
     gotoChar(point_);
     forceRedisplay();
 }
 
 prefix_ void senf::term::LineEditor::v_keyReceived(keycode_t key)
 {
+    if (! enabled_)
+        return;
     lastKey_ = key;
     KeyMap::iterator i (bindings_.find(key));
     if (i != bindings_.end())

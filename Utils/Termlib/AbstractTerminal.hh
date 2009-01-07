@@ -39,7 +39,7 @@ namespace term {
     {
         struct Callbacks {
             virtual ~Callbacks() {}
-            virtual void cb_init() = 0;
+            virtual bool cb_init() = 0;
             virtual void cb_charReceived(char ch) = 0;
             virtual void cb_windowSizeChanged() = 0;
         };

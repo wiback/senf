@@ -33,6 +33,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::term::TelnetTerminal::TelnetTerminal()
+    : setupFailed_ (false)
 {
     requestPeerOption(telnetopt::SUPPRESS_GO_AHEAD);
     requestLocalOption(telnetopt::SUPPRESS_GO_AHEAD);
@@ -66,7 +67,23 @@ prefix_ void senf::term::TelnetTerminal::write(char ch)
 
 prefix_ void senf::term::TelnetTerminal::v_setupComplete()
 {
-    callbacks_->cb_init();
+    if (setupFailed_)
+        v_setupFailed();
+    else if (! (width() > 0 
+                && ! terminalType().empty()
+                && localOption(telnetopt::SUPPRESS_GO_AHEAD)
+                && peerOption(telnetopt::SUPPRESS_GO_AHEAD)
+                && localOption(telnetopt::ECHO)
+                && callbacks_->cb_init())) {
+        setupFailed_ = true;
+        requestPeerOption(telnetopt::SUPPRESS_GO_AHEAD, false);
+        requestLocalOption(telnetopt::SUPPRESS_GO_AHEAD, false);
+        requestLocalOption(telnetopt::ECHO, false);
+        requestPeerOption(telnetopt::TERMINAL_TYPE, false);
+        requestPeerOption(telnetopt::NAWS, false);
+        if (! requestsPending())
+            v_setupFailed();
+    }
 }
 
 prefix_ void senf::term::TelnetTerminal::v_charReceived(char ch)

@@ -61,7 +61,7 @@ namespace term {
         unsigned width();
 
     protected:
-        virtual void cb_init();
+        virtual bool cb_init();
         virtual void cb_windowSizeChanged();
 
     private:
@@ -131,7 +131,7 @@ namespace term {
         void unsetKey(keycode_t key);
         
     private:
-        virtual void cb_init();
+        virtual bool cb_init();
         virtual void cb_windowSizeChanged();
         virtual void v_keyReceived(keycode_t key);
 

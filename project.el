@@ -4,6 +4,7 @@
   (save-excursion
     (back-to-indentation)
     (if (and (looking-at "namespace")
+	     (looking-at ".*{")
 	     (not (looking-at ".*}")))
 	[0] '+)))
 

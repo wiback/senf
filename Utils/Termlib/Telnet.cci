@@ -74,6 +74,11 @@ prefix_ unsigned senf::term::telnethandler::NAWS::height()
 prefix_ senf::term::BaseTelnetProtocol::~BaseTelnetProtocol()
 {}
 
+prefix_ senf::term::BaseTelnetProtocol::Handle senf::term::BaseTelnetProtocol::handle()
+{
+    return handle_;
+}
+
 prefix_ void senf::term::BaseTelnetProtocol::incrementRequestCounter()
 {
     ++ pendingRequests_;
@@ -155,6 +160,16 @@ prefix_ void senf::term::BaseTelnetProtocol::acceptPeerOption(option_type option
                                                                          bool enabled)
 {
     getOption(false, option).wantState = OptInfo::ACCEPTED;
+}
+
+prefix_ bool senf::term::BaseTelnetProtocol::localOption(option_type option)
+{
+    return getOption(true, option).enabled;
+}
+
+prefix_ bool senf::term::BaseTelnetProtocol::peerOption(option_type option)
+{
+    return getOption(false, option).enabled;
 }
 
 prefix_ void senf::term::BaseTelnetProtocol::emit(char c)

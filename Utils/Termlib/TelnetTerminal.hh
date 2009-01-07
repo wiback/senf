@@ -51,11 +51,14 @@ namespace term {
         virtual void write(char ch);
 
     private:
+        virtual void v_setupFailed() = 0;
+
         virtual void v_setupComplete();
         virtual void v_charReceived(char ch);
         virtual void v_windowSizeChanged();
 
         AbstractTerminal::Callbacks * callbacks_;
+        bool setupFailed_;
     };
 
 }}

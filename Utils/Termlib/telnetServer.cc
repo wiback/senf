@@ -49,7 +49,29 @@ namespace {
             : senf::term::BaseTelnetProtocol (handle), 
               editor_ (*this, senf::membind(&MyTelnet::executeLine, this)) 
             {
-                editor_.prompt("myTelnet$");
+                editor_.prompt("myTelnet-with-an-endlesssly-long-prompt$");
+                editor_.defineKey(senf::term::KeyParser::Ctrl('D'), 
+                                  senf::membind(&MyTelnet::deleteCharOrExit, this));
+            }
+
+        void deleteCharOrExit(senf::term::LineEditor & editor)
+            {
+                if (editor.text().empty()) {
+                    exit();
+                }
+                else
+                    senf::term::bindings::deleteChar(editor);
+            }
+
+        void exit()
+            {
+                handle().facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD);
+            }
+
+        virtual void v_setupFailed()
+            {
+                SENF_LOG(("Terminal setup failed"));
+                exit();
             }
 
         virtual void v_eof()

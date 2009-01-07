@@ -450,7 +450,7 @@ prefix_ void senf::term::Terminfo::load(std::istream & is)
     strings_.resize(offsets.size());
     StringVec::iterator j (strings_.begin());
     for (OffsetVec::iterator i (offsets.begin()); i != offsets.end(); ++i, ++j)
-        if (*i != NoValue && *i >= 0 && *i < stringPool_.size())
+        if (*i != NoValue && *i >= 0 && unsigned(*i) < stringPool_.size())
             *j = &(stringPool_[0]) + *i;
         else
             *j = 0;
