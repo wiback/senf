@@ -129,7 +129,7 @@ namespace senf {
       */
     template <class ElementParser, class AuxPolicy>
     class VectorParser_Container
-        : private AuxPolicy
+        : private AuxPolicy::WrapperPolicy
     {
     public:
         ///////////////////////////////////////////////////////////////////////////

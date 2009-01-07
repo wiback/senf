@@ -262,9 +262,6 @@ BOOST_AUTO_UNIT_TEST(vectorMacro_parse)
 
 BOOST_AUTO_UNIT_TEST(vectorMacro_create)
 {
-    /*
-     * This test fails with "... is an inaccessible base of ..." error
-     * see bugtracker @ berlios
     TestVectorPacket p (TestVectorPacket::create());
     p->dummy() = 0x01020304u;
     p->vec1().push_back( 0x0506u);
@@ -285,7 +282,6 @@ BOOST_AUTO_UNIT_TEST(vectorMacro_create)
             0x0D, 0x0E };           // vec2[1]
     
     BOOST_CHECK( equal( p.data().begin(), p.data().end(), data ));
-     */
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
