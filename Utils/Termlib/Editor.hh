@@ -28,6 +28,8 @@
 
 // Custom includes
 #include <map>
+#include <vector>
+#include <string>
 #include <senf/Scheduler/ClockService.hh>
 #include <senf/Scheduler/TimerEvent.hh>
 #include "AbstractTerminal.hh"
@@ -56,6 +58,7 @@ namespace term {
         void clearLine();               ///< Clear current line and move cursor to first column
         void setBold();                 ///< Set bold char display
         void setNormal();               ///< Set normal char display
+        void maybeClrScr();             ///< Clear screen if possible
 
         unsigned currentColumn() const; ///< Return number of current column
         unsigned width();
@@ -94,6 +97,8 @@ namespace term {
         typedef boost::function<void (LineEditor&)> KeyBinding;
         typedef boost::function<void (std::string const &)> AcceptCallback;
 
+        static unsigned const MAX_HISTORY_SIZE = 1024u;
+
         ///////////////////////////////////////////////////////////////////////////
 
         LineEditor(AbstractTerminal & terminal, AcceptCallback cb);
@@ -120,6 +125,11 @@ namespace term {
         void insert(char ch);
         void insert(std::string const & text);
 
+        // History
+        void pushHistory(std::string const & text);
+        void prevHistory();
+        void nextHistory();
+
         // Get information
         std::string const & text();
         unsigned point();
@@ -136,6 +146,7 @@ namespace term {
         virtual void v_keyReceived(keycode_t key);
 
         typedef std::map<keycode_t, KeyBinding> KeyMap;
+        typedef std::vector<std::string> History;
 
         bool enabled_;
         bool redisplayNeeded_;
@@ -148,6 +159,8 @@ namespace term {
         keycode_t lastKey_;
         AcceptCallback callback_;
         KeyMap bindings_;
+        History history_;
+        unsigned historyPoint_;
     };
 
 namespace bindings {
@@ -162,6 +175,9 @@ namespace bindings {
     void endOfLine           (LineEditor & editor);
     void deleteToEndOfLine   (LineEditor & editor);
     void restartEdit         (LineEditor & editor);
+    void prevHistory         (LineEditor & editor);
+    void nextHistory         (LineEditor & editor);
+    void clearScreen         (LineEditor & editor);
 
 }
 

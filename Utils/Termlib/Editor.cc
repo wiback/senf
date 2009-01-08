@@ -124,6 +124,12 @@ prefix_ void senf::term::BaseEditor::setNormal()
         write(tifo_.getString(Terminfo::properties::ExitAttributeMode));
 }
 
+prefix_ void senf::term::BaseEditor::maybeClrScr()
+{
+    if (tifo_.hasProperty(Terminfo::properties::ClearScreen))
+        write(tifo_.getString(Terminfo::properties::ClearScreen));
+}
+
 prefix_ unsigned senf::term::BaseEditor::currentColumn()
    const
 {
@@ -148,6 +154,7 @@ prefix_ bool senf::term::BaseEditor::cb_init()
 
     if (tifo_.hasProperty(Terminfo::properties::KeypadXmit))
         write(tifo_.getString(Terminfo::properties::KeypadXmit));
+    return true;
 }
 
 prefix_ void senf::term::BaseEditor::cb_charReceived(char c)
@@ -205,11 +212,13 @@ prefix_ void senf::term::BaseEditor::write(std::string const & s)
 
 prefix_ senf::term::LineEditor::LineEditor(AbstractTerminal & terminal, AcceptCallback cb)
     : BaseEditor(terminal), enabled_ (true), prompt_ ("$"), promptWidth_ (1u), editWidth_ (0u), 
-      text_ (""), point_ (0u), displayPos_ (0u), lastKey_ (0u), callback_ (cb)
+      text_ (""), point_ (0u), displayPos_ (0u), lastKey_ (0u), callback_ (cb), historyPoint_ (0u)
 {
     defineKey(KeyParser::Return,    &bindings::accept);
     defineKey(KeyParser::Right,     &bindings::forwardChar);
     defineKey(KeyParser::Left,      &bindings::backwardChar);
+    defineKey(KeyParser::Up,        &bindings::prevHistory);
+    defineKey(KeyParser::Down,      &bindings::nextHistory);
     defineKey(KeyParser::Backspace, &bindings::backwardDeleteChar);
     defineKey(KeyParser::Delete,    &bindings::deleteChar);
     defineKey(KeyParser::Home,      &bindings::beginningOfLine);
@@ -219,6 +228,7 @@ prefix_ senf::term::LineEditor::LineEditor(AbstractTerminal & terminal, AcceptCa
     defineKey(KeyParser::Ctrl('E'), &bindings::endOfLine);
     defineKey(KeyParser::Ctrl('D'), &bindings::deleteChar);
     defineKey(KeyParser::Ctrl('C'), &bindings::restartEdit);
+    defineKey(KeyParser::Ctrl('L'), &bindings::clearScreen);
 }
 
 prefix_ void senf::term::LineEditor::prompt(std::string const & text)
@@ -249,7 +259,7 @@ prefix_ void senf::term::LineEditor::show()
     if (enabled_)
         return;
     enabled_ = true;
-    redisplay();
+    forceRedisplay();
 }
 
 prefix_ void senf::term::LineEditor::hide()
@@ -265,6 +275,7 @@ prefix_ void senf::term::LineEditor::accept()
     if (enabled_)
         newline();
     hide();
+    pushHistory(text_);
     callback_(text_);
     clear();
 }
@@ -272,6 +283,7 @@ prefix_ void senf::term::LineEditor::accept()
 prefix_ void senf::term::LineEditor::clear()
 {
     set("");
+    historyPoint_ = history_.size();
 }
 
 prefix_ void senf::term::LineEditor::redisplay()
@@ -345,6 +357,41 @@ prefix_ void senf::term::LineEditor::insert(std::string const & text)
     text_.insert(point_, text);
     gotoChar(point_+text.size());
     redisplay();
+}
+
+prefix_ void senf::term::LineEditor::pushHistory(std::string const & text)
+{
+    if (! text.empty()
+        && (historyPoint_ == history_.size() || history_[historyPoint_] != text)
+        && (history_.empty() || history_.back() != text)) {
+        history_.push_back(text);
+        while (history_.size() > MAX_HISTORY_SIZE)
+            history_.erase(history_.begin());
+        historyPoint_ = history_.size() - 1;
+    }
+}
+
+prefix_ void senf::term::LineEditor::prevHistory()
+{
+    if (historyPoint_ <= 0)
+        return;
+    pushHistory(text_);
+    std::string entry (history_[--historyPoint_]);
+    set(entry, entry.size());
+}
+
+prefix_ void senf::term::LineEditor::nextHistory()
+{
+    if (historyPoint_ >= history_.size())
+        return;
+    pushHistory(text_);
+    ++ historyPoint_;
+    if (historyPoint_ >= history_.size())
+        set("");
+    else {
+        std::string entry (history_[historyPoint_]);
+        set(entry, entry.size());
+    }
 }
 
 prefix_ std::string const & senf::term::LineEditor::text()
@@ -468,6 +515,23 @@ prefix_ void senf::term::bindings::restartEdit(LineEditor & editor)
     editor.newline();
     editor.clear();
     editor.redisplay();
+}
+
+prefix_ void senf::term::bindings::prevHistory(LineEditor & editor)
+{
+    editor.prevHistory();
+}
+
+prefix_ void senf::term::bindings::nextHistory(LineEditor & editor)
+{
+    editor.nextHistory();
+}
+
+prefix_ void senf::term::bindings::clearScreen(LineEditor & editor)
+{
+    editor.maybeClrScr();
+    editor.clearLine();
+    editor.forceRedisplay();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

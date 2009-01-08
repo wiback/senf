@@ -291,7 +291,11 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
         handle_.facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD);
     }
     catch (std::exception & ex) {
-        stream() << ex.what() << std::endl;
+        std::string msg (ex.what());
+        std::string::size_type i (msg.find("-- \n"));
+        if (i != std::string::npos)
+            msg = msg.substr(i+4);
+        stream() << msg << std::endl;
     }
     catch (...) {
         stream() << "unidentified error (unknown exception thrown)" << std::endl;

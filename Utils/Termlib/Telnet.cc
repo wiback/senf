@@ -44,7 +44,7 @@ prefix_ senf::term::BaseTelnetProtocol::BaseTelnetProtocol(Handle handle)
                     senf::scheduler::FdEvent::EV_WRITE, false),
       pendingRequests_ (0u),
       requestTimeout_ (ClockService::milliseconds(DEFAULT_REQUEST_TIMEOUT_MS)),
-      timeout_ ("senf::term::BaseTelnetProtocol::timeout",
+      timeout_ ("senf::term::BaseTelnetProtocol::configTimeout",
                 senf::membind(&BaseTelnetProtocol::timeout, this))
 {}
 
