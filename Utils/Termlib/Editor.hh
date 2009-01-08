@@ -159,6 +159,7 @@ namespace term {
 
         typedef std::map<keycode_t, KeyBinding> KeyMap;
         typedef std::vector<std::string> History;
+        typedef std::vector<std::string> AuxDisplay;
 
         bool enabled_;
         bool redisplayNeeded_;
@@ -173,6 +174,7 @@ namespace term {
         KeyMap bindings_;
         History history_;
         unsigned historyPoint_;
+        AuxDisplay auxDisplay_;
     };
 
 namespace bindings {

@@ -324,6 +324,11 @@ prefix_ void senf::term::LineEditor::show()
     if (enabled_)
         return;
     enabled_ = true;
+    for (unsigned n (0); n < auxDisplay_.size(); ++n) {
+        toLine(n+1);
+        put(auxDisplay_[n]);
+    }
+    toLine(0);
     forceRedisplay();
 }
 
@@ -331,6 +336,7 @@ prefix_ void senf::term::LineEditor::hide()
 {
     if (! enabled_)
         return;
+    reset();
     clearLine();
     enabled_ = false;
 }
@@ -464,6 +470,9 @@ prefix_ void senf::term::LineEditor::auxDisplay(int line, std::string const & te
     toLine(line+1);
     clearLine();
     put(text);
+    while (auxDisplay_.size() < line+1)
+        auxDisplay_.push_back("");
+    auxDisplay_[line] = text;
 }
 
 prefix_ unsigned senf::term::LineEditor::maxAuxDisplayHeight()
@@ -474,6 +483,7 @@ prefix_ unsigned senf::term::LineEditor::maxAuxDisplayHeight()
 prefix_ void senf::term::LineEditor::clearAuxDisplay()
 {
     reset();
+    auxDisplay_.clear();
 }
 
 prefix_ std::string const & senf::term::LineEditor::text()
