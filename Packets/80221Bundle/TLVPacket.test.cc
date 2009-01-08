@@ -31,7 +31,6 @@
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-#include <vector>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -39,22 +38,16 @@
 using namespace senf;
 
 
-void check_TLVPacket(GenericTLVPacket &tlvPacket, boost::uint32_t type, boost::uint32_t length)
+void check_TLVPacket(GenericTLVPacket &tlvPacket, boost::uint8_t type, boost::uint32_t length)
 {
-    BOOST_CHECK_EQUAL( tlvPacket->type(), type );
-    BOOST_CHECK_EQUAL( tlvPacket->length(), length );
-
-    BOOST_CHECK_EQUAL( tlvPacket->value().size(), length);
-    for (int i=0, j=tlvPacket->value().size(); i<j; i++)
-        BOOST_CHECK_EQUAL( tlvPacket->value()[i], i );
-}
-
-
-BOOST_AUTO_UNIT_TEST(GenericTLVPacket_static)
-{
-    // check static values:
-    // number of bytes to allocate for a new GenericTLVPacket should be 2
-    BOOST_CHECK_EQUAL( GenericTLVPacket::type::initSize(), 2u );
+    BOOST_CHECK_EQUAL( tlvPacket->type(),         type   );
+    BOOST_CHECK_EQUAL( tlvPacket->length(),       length );
+    BOOST_CHECK_EQUAL( tlvPacket->value().size(), length );
+    senf::PacketData::iterator dataIterator (tlvPacket->value().begin());
+    for (unsigned i=0; i<length; i++) {
+        BOOST_CHECK_EQUAL( *dataIterator, i );
+        dataIterator++;
+    }
 }
 
 
@@ -68,6 +61,7 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_simple_length)
     GenericTLVPacket tlvPacket (GenericTLVPacket::create(data));
     check_TLVPacket( tlvPacket, 0x01, 0x0Au );
 }
+
 
 BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_extended_length)
 {
@@ -84,16 +78,25 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_extended_length)
 
 BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_simple_length)
 {
+    unsigned char value[] = { 
+           0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09
+    };
     GenericTLVPacket tlvPacket (GenericTLVPacket::create());
     tlvPacket->type() = 42u;
-    for (uint8_t i=0; i<10; i++)
-        tlvPacket->value().push_back( i);
-    tlvPacket.finalizeAll();
+    tlvPacket->value( value);
+    tlvPacket.finalizeThis();
 
     check_TLVPacket( tlvPacket, 42u, 0x0Au );
+    
+    unsigned char data[] = { 
+        0x2a, // type
+        0x0A, // first bit not set, length=10
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
+    };
+    BOOST_CHECK( equal( tlvPacket.data().begin(), tlvPacket.data().end(), data ));
 }
 
-/**
+#if 0
 BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_extended_length)
 {
     GenericTLVPacket tlvPacket (GenericTLVPacket::create());
@@ -203,8 +206,7 @@ BOOST_AUTO_UNIT_TEST(TLVFixPacket_create_invalid_packet)
     test_invalid_TLVFixPacket_creating<TestTLVPacket24>( UInt24Parser::max_value);
 }
 
-*/
-
+#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

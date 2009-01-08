@@ -38,7 +38,7 @@ namespace senf {
     struct MIHF_IdParser : public senf::PacketParserBase
     {
     #   include SENF_FIXED_PARSER()        
-        
+                
         SENF_PARSER_FINALIZE ( MIHF_IdParser );
     };
 
@@ -55,9 +55,9 @@ namespace senf {
         SENF_PARSER_SKIP_BITS   ( 1                           );
         
         // MIH message ID (MID)
-        SENF_PARSER_BITFIELD ( sid,           4,  unsigned );
-        SENF_PARSER_BITFIELD ( opcode,        2,  unsigned );
-        SENF_PARSER_BITFIELD ( aid,           10, unsigned );
+        SENF_PARSER_BITFIELD ( sid,     4,  unsigned );
+        SENF_PARSER_BITFIELD ( opcode,  2,  unsigned );
+        SENF_PARSER_BITFIELD ( aid,    10,  unsigned );
         
         SENF_PARSER_SKIP_BITS ( 4                           );
         SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );
@@ -78,7 +78,7 @@ namespace senf {
         SENF_PARSER_INIT() {
             version_() = 1;
             source_type() = 1;
-            destination_type() = 1;
+            destination_type() = 2;
         }
     };
     
