@@ -173,6 +173,7 @@ namespace console {
         std::ostream & stream();
         std::string promptString() const;
         DirectoryNode & root() const;
+        DirectoryNode & cwd() const;
         Server::Mode mode() const;
         void write(std::string const & data) const;
 

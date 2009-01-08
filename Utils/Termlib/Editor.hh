@@ -54,14 +54,19 @@ namespace term {
         void newline();                 ///< Move to beginning of a new, empty line
         void toColumn(unsigned c);      ///< Move cursor to column \p c
         void put(char ch);              ///< Write \p ch at current column
-        void put(std::string const & text);
+        void put(std::string const & text); ///< Write \a text starting at current column
         void clearLine();               ///< Clear current line and move cursor to first column
         void setBold();                 ///< Set bold char display
         void setNormal();               ///< Set normal char display
         void maybeClrScr();             ///< Clear screen if possible
 
+        void toLine(unsigned l);        ///< Move to relative display line \a l
+        void reset();                   ///< Reset display area to single line
+
         unsigned currentColumn() const; ///< Return number of current column
-        unsigned width();
+        unsigned currentLine() const;   ///< Return number of current relative line
+        unsigned width();               ///< Return current screen width
+        unsigned height();              ///< Return current screen height
 
     protected:
         virtual bool cb_init();
@@ -85,6 +90,8 @@ namespace term {
         ClockService::clock_type keyTimeout_;
         scheduler::TimerEvent timer_;
         unsigned column_;
+        unsigned displayHeight_;
+        unsigned line_;
     };
 
     class LineEditor
@@ -129,6 +136,11 @@ namespace term {
         void pushHistory(std::string const & text);
         void prevHistory();
         void nextHistory();
+
+        // Aux Display
+        void auxDisplay(int line, std::string const & text);
+        unsigned maxAuxDisplayHeight();
+        void clearAuxDisplay();
 
         // Get information
         std::string const & text();
@@ -178,6 +190,9 @@ namespace bindings {
     void prevHistory         (LineEditor & editor);
     void nextHistory         (LineEditor & editor);
     void clearScreen         (LineEditor & editor);
+
+    typedef boost::function<void (LineEditor &, unsigned b, unsigned e, std::vector<std::string> &)> Completer;
+    void complete            (LineEditor & editor, Completer completer);
 
 }
 

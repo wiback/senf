@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <vector>
+#include "../../config.hh"
 #include <boost/spirit.hpp>
 #include <boost/spirit/utility/grammar_def.hpp>
 #include <boost/spirit/dynamic.hpp>
@@ -51,7 +52,7 @@ namespace detail {
         ///////////////////////////////////////////////////////////////////////////
         // Start rules
 
-        enum { CommandParser, SkipParser, ArgumentsParser };
+        enum { CommandParser, SkipParser, ArgumentsParser, PathParser };
 
         ///////////////////////////////////////////////////////////////////////////
         // The parse context (variables needed while parsing)
@@ -97,12 +98,13 @@ namespace detail {
         struct definition 
             : public boost::spirit::grammar_def< boost::spirit::rule<Scanner>, 
                                                  boost::spirit::rule<Scanner>,
+                                                 boost::spirit::rule<Scanner>,
                                                  boost::spirit::rule<Scanner> >
         {
             boost::spirit::rule<Scanner> command, path, argument, word, string, hexstring, token,
                 punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin, 
                 skip, statement, relpath, abspath, arguments, group_start, group_close, 
-                statement_end;
+                statement_end, opt_path;
             boost::spirit::chset<> special_p, punctuation_p, space_p, invalid_p, word_p;
             boost::spirit::distinct_parser<> keyword_p;
 
@@ -260,6 +262,11 @@ namespace detail {
                                                   [ token_ = construct_<Token>(Token::HexString,
                                                                                str_) ]
                     ;
+                
+                opt_path
+                    = ! path                      [ bind(&PD::beginCommand)(d_, path_) ]
+                                                  [ bind(&PD::endCommand)(d_) ]
+                    ;
 
                 path                    // Returns value in context.path
                     =    eps_p                    [ clear(path_) ]
@@ -349,7 +356,8 @@ namespace detail {
                 start_parsers(
                     command,            // CommandParser
                     skip,               // SkipParser
-                    arguments           // ArgumentsParser
+                    arguments,          // ArgumentsParser
+                    opt_path            // PathParser
                 );
 
                 BOOST_SPIRIT_DEBUG_TRACE_RULE(command,1);

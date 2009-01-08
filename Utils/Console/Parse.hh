@@ -599,6 +599,11 @@ namespace console {
                                              of the command). The argument tokens are written into
                                              \a info. */
 
+        void parsePath(std::string const & path, ParseCommandInfo & info);
+                                        ///< Parse \a path
+                                        /**< parsePath() parses the string \a path as an arbitrary
+                                             command path. The result is written into \a info. */
+
         std::string::size_type parseIncremental(std::string const & commands, Callback cb);
                                         ///< Incremental parse
                                         /**< An incremental parse will parse all complete statements

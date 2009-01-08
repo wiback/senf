@@ -93,6 +93,10 @@ namespace config {
 #     define SENF_CONSOLE_MAX_COMMAND_ARITY 6
 # endif
 # 
+# ifndef PHOENIX_LIMIT
+#     define PHOENIX_LIMIT 6
+# endif
+# 
 # ///////////////////////////////hh.e////////////////////////////////////////
 # endif
  

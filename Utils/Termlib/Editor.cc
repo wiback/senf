@@ -39,14 +39,15 @@ prefix_ senf::term::BaseEditor::BaseEditor(AbstractTerminal & terminal)
       keyTimeout_ (senf::ClockService::milliseconds(DEFAULT_KEY_TIMEOUT_MS)),
       timer_ ("senf::term::BaseEditor::keySequenceTimeout", 
               senf::membind(&BaseEditor::keySequenceTimeout, this)),
-      column_ (0u)
+      column_ (0u), displayHeight_ (1u), line_ (0u)
 {
     terminal_->setCallbacks(*this);
 }
 
 prefix_ void senf::term::BaseEditor::newline()
 {
-    write("\r\n");
+    reset();
+    write("\n");
     write(tifo_.getString(Terminfo::properties::ClrEol));
     column_ = 0;
 }
@@ -130,10 +131,69 @@ prefix_ void senf::term::BaseEditor::maybeClrScr()
         write(tifo_.getString(Terminfo::properties::ClearScreen));
 }
 
+prefix_ void senf::term::BaseEditor::toLine(unsigned l)
+{
+    if (l >= height())
+        l = height() - 1;
+    unsigned ll (l);
+    if (ll >= displayHeight_)
+        ll = displayHeight_-1;
+    if (ll > line_) {
+        if (tifo_.hasProperty(Terminfo::properties::ParmDownCursor)) {
+            write(tifo_.formatString(Terminfo::properties::ParmDownCursor, ll - line_));
+            line_ = ll;
+        }
+        else {
+            char const * cud1 (tifo_.getString(Terminfo::properties::CursorDown));
+            while (ll > line_) {
+                write(cud1);
+                ++line_;
+            }
+        }
+    }
+    else if (ll < line_) {
+        if (tifo_.hasProperty(Terminfo::properties::ParmUpCursor)) {
+            write(tifo_.formatString(Terminfo::properties::ParmUpCursor, line_ - ll));
+            line_ = ll;
+        }
+        else {
+            char const * cuu1 (tifo_.getString(Terminfo::properties::CursorUp));
+            while (ll < line_) {
+                write(cuu1);
+                --line_;
+            }
+        }
+    }
+    while (line_ < l) {
+        write("\n");
+        write(tifo_.getString(Terminfo::properties::ClrEol));
+        ++displayHeight_;
+        ++line_;
+    }
+    write('\r');
+    column_ = 0;
+}
+
+prefix_ void senf::term::BaseEditor::reset()
+{
+    for (unsigned i (1); i < displayHeight_; ++i) {
+        toLine(i);
+        clearLine();
+    }
+    toLine(0);
+    displayHeight_ = 1;
+}
+
 prefix_ unsigned senf::term::BaseEditor::currentColumn()
    const
 {
     return column_;
+}
+
+prefix_ unsigned senf::term::BaseEditor::currentLine()
+    const
+{
+    return line_;
 }
 
 prefix_ bool senf::term::BaseEditor::cb_init()
@@ -195,6 +255,11 @@ prefix_ void senf::term::BaseEditor::processKeys()
 prefix_ unsigned senf::term::BaseEditor::width()
 {
     return terminal_->width();
+}
+
+prefix_ unsigned senf::term::BaseEditor::height()
+{
+    return terminal_->height();
 }
 
 prefix_ void senf::term::BaseEditor::write(char ch)
@@ -394,6 +459,23 @@ prefix_ void senf::term::LineEditor::nextHistory()
     }
 }
 
+prefix_ void senf::term::LineEditor::auxDisplay(int line, std::string const & text)
+{
+    toLine(line+1);
+    clearLine();
+    put(text);
+}
+
+prefix_ unsigned senf::term::LineEditor::maxAuxDisplayHeight()
+{
+    return height()-1;
+}
+
+prefix_ void senf::term::LineEditor::clearAuxDisplay()
+{
+    reset();
+}
+
 prefix_ std::string const & senf::term::LineEditor::text()
 {
     return text_;
@@ -436,6 +518,7 @@ prefix_ bool senf::term::LineEditor::cb_init()
 prefix_ void senf::term::LineEditor::cb_windowSizeChanged()
 {
     BaseEditor::cb_windowSizeChanged();
+    clearAuxDisplay();
     prompt(prompt_);
     gotoChar(point_);
     forceRedisplay();
@@ -445,14 +528,19 @@ prefix_ void senf::term::LineEditor::v_keyReceived(keycode_t key)
 {
     if (! enabled_)
         return;
+    clearAuxDisplay();
     lastKey_ = key;
     KeyMap::iterator i (bindings_.find(key));
     if (i != bindings_.end())
         i->second(*this);
     else if (key >= ' ' && key < 256)
         insert(char(key));
+    if (currentLine() != 0)
+        toLine(0);
     if (redisplayNeeded_)
         forceRedisplay();
+    else
+        toColumn(point_ - displayPos_ + promptWidth_ + 1);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -532,6 +620,76 @@ prefix_ void senf::term::bindings::clearScreen(LineEditor & editor)
     editor.maybeClrScr();
     editor.clearLine();
     editor.forceRedisplay();
+}
+
+prefix_ void senf::term::bindings::complete(LineEditor & editor, Completer completer)
+{
+    typedef std::vector<std::string> Completions;
+
+    Completions completions;
+    completer(editor, 0, editor.point(), completions);
+    if (completions.empty())
+        return;
+    
+    // Find common start string of all completions
+    unsigned commonStart (completions[0].size());
+    unsigned maxLen (commonStart);
+    for (Completions::const_iterator i (boost::next(completions.begin()));
+         i != completions.end(); ++i) {
+        if (i->size() > maxLen)
+            maxLen = i->size();
+        unsigned n (0u);
+        for (; n < commonStart && n < i->size() && completions[0][n] == (*i)[n]; ++n) ;
+        commonStart = n;
+    }
+
+    // Replace to-be-completed string with the common start string shared by all completions
+    std::string text (editor.text());
+    std::string completion (completions[0].substr(0, commonStart));
+    bool didComplete (false);
+    if (text.substr(0, editor.point()) != completion) {
+        text.erase(0, editor.point());
+        text.insert(0, completion);
+        didComplete = true;
+    }
+
+    // If completion is already unique, make sure completion is followed by a space and place cursor
+    // after that space
+    if (completions.size() == 1u) {
+        if (text.size() <= commonStart || text[commonStart] != ' ')
+            text.insert(commonStart, " ");
+        editor.set(text, commonStart + 1);
+        return;
+    }
+
+    // Otherwise place cursor directly after the partial completion
+    editor.set(text, commonStart);
+    if (didComplete)
+        return;
+
+    // Text was not changed, show list of possible completions
+    unsigned colWidth (maxLen+2);
+    unsigned nColumns ((editor.width()-1) / colWidth);
+    if (nColumns < 1) nColumns = 1;
+    unsigned nRows ((completions.size()+nColumns-1) / nColumns);
+    if (nRows > editor.maxAuxDisplayHeight()) {
+        editor.auxDisplay(0, "(too many completions)");
+        return;
+    }
+    Completions::iterator i (completions.begin());
+    for (unsigned row (0); row < nRows; ++row) {
+        std::string line;
+        for (unsigned column (0); column < nColumns && i != completions.end(); ++column) {
+            std::string entry (colWidth, ' ');
+            if (i->size() > colWidth-2)
+                std::copy(i->begin(), i->begin()+colWidth-2, entry.begin());
+            else
+                std::copy(i->begin(), i->end(), entry.begin());
+            line += entry;
+            ++i;
+        }
+        editor.auxDisplay(row, line);
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -349,6 +349,29 @@ prefix_ void senf::console::CommandParser::parseArguments(std::string const & ar
     }
 }
 
+prefix_ void senf::console::CommandParser::parsePath(std::string const & path,
+                                                     ParseCommandInfo & info)
+{
+    typedef boost::spirit::position_iterator<std::string::const_iterator> PositionIterator;
+    PositionIterator b (path.begin(), path.end(), std::string("<unknown>"));
+    PositionIterator e (path.end(), path.end(), std::string("<unknown>"));
+    detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
+    boost::spirit::parse_info<PositionIterator> result;
+    try {
+        result = boost::spirit::parse( b, e, 
+                                       impl().grammar.use_parser<Impl::Grammar::PathParser>(),
+                                       impl().grammar.use_parser<Impl::Grammar::SkipParser>() );
+    }
+    catch (boost::spirit::parser_error<Impl::Grammar::Errors, PositionIterator> & ex) {
+        throwParserError(ex);
+    }
+    if (! result.full) {
+        boost::spirit::file_position pos (result.stop.get_position());
+        throw ParserErrorException("path expected")
+            << "\nat " << pos.file << ":" << pos.line << ":" << pos.column;
+    }
+}
+
 struct senf::console::CommandParser::SetIncremental
 {
     SetIncremental(CommandParser & parser) : parser_ (parser) {

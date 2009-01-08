@@ -139,6 +139,12 @@ prefix_ senf::console::DirectoryNode & senf::console::Client::root()
     return server_.root();
 }
 
+prefix_ senf::console::DirectoryNode & senf::console::Client::cwd()
+    const
+{
+    return executor_.cwd();
+}
+
 prefix_ senf::console::Server::Mode senf::console::Client::mode()
     const
 {
