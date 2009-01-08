@@ -174,6 +174,7 @@ namespace console {
         std::string promptString() const;
         DirectoryNode & root() const;
         Server::Mode mode() const;
+        void write(std::string const & data) const;
 
         static Client & get(std::ostream & os);
 
@@ -185,7 +186,6 @@ namespace console {
         void setInteractive();
         void setNoninteractive();
         
-        void translate(std::string & data);
         size_t handleInput(std::string input, bool incremental = false);
         virtual void v_write(senf::log::time_type timestamp, std::string const & stream, 
                              std::string const & area, unsigned level, 

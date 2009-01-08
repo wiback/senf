@@ -130,7 +130,7 @@ prefix_ std::string const & senf::console::Client::name()
 prefix_ std::string senf::console::Client::promptString()
     const
 {
-    return name_ + ":" + executor_.cwdPath() + "$ ";
+    return name_ + ":" + executor_.cwdPath() + "$";
 }
 
 prefix_ senf::console::DirectoryNode & senf::console::Client::root()
@@ -143,6 +143,12 @@ prefix_ senf::console::Server::Mode senf::console::Client::mode()
     const
 {
     return mode_;
+}
+
+prefix_ void senf::console::Client::write(std::string const & data)
+    const
+{
+    reader_->write(data);
 }
 
 prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)
@@ -213,9 +219,9 @@ prefix_ void senf::console::detail::ClientReader::enablePrompt()
     v_enablePrompt();
 }
 
-prefix_ void senf::console::detail::ClientReader::translate(std::string & data)
+prefix_ void senf::console::detail::ClientReader::write(std::string const & data)
 {
-    v_translate(data);
+    v_write(data);
 }
 
 prefix_ senf::console::detail::ClientReader::ClientReader(Client & client)

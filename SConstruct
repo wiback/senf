@@ -118,7 +118,7 @@ INLINE_OPTS = [ '-finline-limit=5000' ]
 env.Append(
    CPPPATH = [ '#/include' ],
    CXXFLAGS = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long' ] + INLINE_OPTS,
-   LIBS = [ 'readline', 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
+   LIBS = [ 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
             '$BOOSTFSLIB' ],
    TEST_EXTRA_LIBS = [ ],
    DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],

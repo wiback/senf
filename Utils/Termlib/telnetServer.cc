@@ -80,7 +80,7 @@ namespace {
                 delete this;
             }
 
-        virtual void executeLine(std::string const & text)
+        void executeLine(std::string const & text)
             {
                 SENF_LOG(("Execute line: " << text));
                 editor_.show();

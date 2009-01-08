@@ -118,7 +118,7 @@ namespace detail {
 
         void disablePrompt();
         void enablePrompt();
-        void translate(std::string & data);
+        void write(std::string const & data);
 
     protected:
         ClientReader(Client & client);
@@ -126,7 +126,7 @@ namespace detail {
     private:
         virtual void v_disablePrompt() = 0;
         virtual void v_enablePrompt() = 0;
-        virtual void v_translate(std::string & data) = 0;
+        virtual void v_write(std::string const & data) = 0;
 
         Client & client_;
     };
@@ -145,7 +145,7 @@ namespace detail {
     private:
         virtual void v_disablePrompt();
         virtual void v_enablePrompt();
-        virtual void v_translate(std::string & data);
+        virtual void v_write(std::string const & data);
 
         void clientData(senf::ReadHelper<ClientHandle>::ptr helper);
         void showPrompt();
@@ -169,7 +169,7 @@ namespace detail {
     private:
         virtual void v_disablePrompt();
         virtual void v_enablePrompt();
-        virtual void v_translate(std::string & data);
+        virtual void v_write(std::string const & data);
 
         void newData(int event);
 

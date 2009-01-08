@@ -35,7 +35,7 @@
 #include "../../Utils/senfassert.hh"
 #include "../../Utils/membind.hh"
 #include "../../Utils/Logger/SenfLog.hh"
-#include "Readline.hh"
+#include "LineEditor.hh"
 
 //#include "Server.mpp"
 #define prefix_
@@ -50,8 +50,7 @@ prefix_ std::streamsize senf::console::detail::NonblockingSocketSink::write(cons
     try {
         if (client_.handle().writeable()) {
             std::string data (s, n);
-            client_.translate(data);
-            client_.handle().write( data );
+            client_.write(data);
         }
     }
     catch (SystemException & ex) {
@@ -149,6 +148,7 @@ senf::console::detail::DumbClientReader::clientData(senf::ReadHelper<ClientHandl
 prefix_ void senf::console::detail::DumbClientReader::showPrompt()
 {
     std::string prompt (promptString());
+    prompt += " ";
 
     stream() << std::flush;
     handle().write(prompt);
@@ -170,8 +170,10 @@ prefix_ void senf::console::detail::DumbClientReader::v_enablePrompt()
         showPrompt();
 }
 
-prefix_ void senf::console::detail::DumbClientReader::v_translate(std::string & data)
-{}
+prefix_ void senf::console::detail::DumbClientReader::v_write(std::string const & data)
+{
+    handle().write(data);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NoninteractiveClientReader
@@ -190,8 +192,10 @@ prefix_ void senf::console::detail::NoninteractiveClientReader::v_disablePrompt(
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_enablePrompt()
 {}
 
-prefix_ void senf::console::detail::NoninteractiveClientReader::v_translate(std::string & data)
-{}
+prefix_ void senf::console::detail::NoninteractiveClientReader::v_write(std::string const & data)
+{
+    handle().write(data);
+}
 
 prefix_ void
 senf::console::detail::NoninteractiveClientReader::newData(int event)
@@ -247,7 +251,7 @@ prefix_ void senf::console::Client::setInteractive()
     readevent_.disable();
     timer_.disable();
     mode_ = Server::Interactive;
-    reader_.reset(new detail::SafeReadlineClientReader (*this));
+    reader_.reset(new detail::LineEditorSwitcher (*this));
     executor_.autocd(true).autocomplete(true);
 }
 
@@ -257,11 +261,6 @@ prefix_ void senf::console::Client::setNoninteractive()
     timer_.disable();
     mode_ = Server::Noninteractive;
     reader_.reset(new detail::NoninteractiveClientReader(*this));
-}
-
-prefix_ void senf::console::Client::translate(std::string & data)
-{
-    reader_->translate(data);
 }
 
 prefix_ std::string::size_type senf::console::Client::handleInput(std::string data,
