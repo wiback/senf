@@ -39,6 +39,15 @@ namespace senf {
 namespace console {
 namespace detail {
 
+    /** \brief Internal: Client reader switching between LineEditorClientReader or DumbClientReader
+        
+        This ClientReader implementation will try to initialize a LineEditorClientReader. If the
+        setup fails, a DumbClientReader is initialized instead. LineEditor support may fail to be
+        initialized if
+        
+        \li The telnet client does not support necessary functionality
+        \li or the terminal type of the client is missing some functionality.
+     */
     class LineEditorSwitcher
         : public ClientReader
     {
@@ -55,6 +64,10 @@ namespace detail {
         boost::scoped_ptr<ClientReader> reader_;
     };
 
+    /** \brief Internal: ClientReader using senf::term::LineEditor for interactive input
+
+        This ClientReader implementation uses a senf::term::LineEditor for interactive input. 
+     */
     class LineEditorClientReader
         : public ClientReader, public term::TelnetTerminal
     {

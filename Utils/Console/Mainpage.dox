@@ -511,10 +511,9 @@
 
     \subsection console_shell The interactive console shell
 
-    The interactive shell will use the GNU readline library for the first connected
-    instance. Further users will not have access to this functionality since GNU readline is
-    completely non-reentrant. GNU readline supports history and some command keys (like C-d for \c
-    exit or C-c to clear and restart the input).
+    The interactive shell implements a fully function line editor on capable terminals. This support
+    is available when using a full featured telnet client on a fully supported terminal (like vt100
+    or xterm).
 
     The shell supports auto-cd and auto-completion: If you enter the name of a directory at the
     prompt, the console will change to that directory. With auto-completion, any unique beginning of
@@ -525,8 +524,7 @@
     \subsection console_noninteractive Non-interactive network console
 
     After a new connection is established, the console server waits a short time for data to arrive.
-    arrive. Only if nothing happens in the first 500ms, readline is initialized (if available) and
-    the interactive prompt is displayed.
+    arrive. Only if nothing happens in the first 500ms, an interactive session is initialized.
 
     By sending data immediately after opening the connection, the console is switched into
     non-interactive mode. In this mode, no prompt is displayed. In this mode, commands are \e not
