@@ -4,6 +4,7 @@ PROJECT_NAME = libTermlib
 GENERATE_TAGFILE = doc/Console.tag
 EXAMPLE_PATH = .
 EXCLUDE = telnetServer.cc
+ALPHABETICAL_INDEX = NO
 
 TAGFILES = \
     "$(TOPDIR)/Socket/doc/Socket.tag" \

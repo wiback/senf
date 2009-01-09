@@ -36,6 +36,18 @@
 namespace senf {
 namespace term {
 
+    /** \brief AbstractTerminal interface implementation based on telnet
+
+        This class provides a telnet server implementation implementing the AbstractTerminal
+        interface. 
+
+        TelnetTerminal provides one additional callback which needs to be implemented in a derived
+        class: v_setupFailed(). This member will be called, when not all required telnet options are
+        supported by the telnet client. In this case, the communication will be switched back into
+        line-oriented mode and v_setupFailed() is called.
+
+        \ingroup telnet_group
+     */
     class TelnetTerminal
         : public telnethandler::TerminalType,
           public telnethandler::NAWS,
@@ -44,15 +56,23 @@ namespace term {
     public:
         TelnetTerminal();
 
+        ///\name AbstractTerminal interface implementation
+        ///\{
         virtual void setCallbacks(AbstractTerminal::Callbacks & cb);
         virtual std::string terminalType();
         virtual unsigned width();
         virtual unsigned height();
         virtual void write(char ch);
+        ///\}
+
+    protected:
+
+#   ifndef DOXYGEN
+    private:
+#   endif
+        virtual void v_setupFailed() = 0; ///< Called when the telnet setup has failed
 
     private:
-        virtual void v_setupFailed() = 0;
-
         virtual void v_setupComplete();
         virtual void v_charReceived(char ch);
         virtual void v_windowSizeChanged();

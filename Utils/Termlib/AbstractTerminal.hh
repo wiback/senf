@@ -35,24 +35,44 @@
 namespace senf {
 namespace term {
 
+    /** \brief Abstract terminal interface
+
+        This abstract interface base class provides an abstract interface to a terminal. There are
+        two parts to this interface:
+        
+        \li The interface which allows the terminal user to get information about the terminal
+        \li The interface which allows the terminal to send messages to the terminal user
+
+        The first part is implemented by providing abstract virtual members in AbstractTerminal. To
+        allow the terminal to send messages to the terminal user, the terminal user implements the
+        AbstractTerminal::Callbacks interface. The terminal user must register himself with the
+        AbstractTerminal by calling setCallbacks(). Afterwards, the AbstractTerminal implementation
+        will send calls to the terminal user via the AbstractTerminal::Callbacks API.
+     */
     struct AbstractTerminal
     {
+        /** \brief AbstractTerminal callbacks
+
+            \see AbastractTerminal
+         */
         struct Callbacks {
             virtual ~Callbacks() {}
-            virtual bool cb_init() = 0;
-            virtual void cb_charReceived(char ch) = 0;
-            virtual void cb_windowSizeChanged() = 0;
+            virtual bool cb_init() = 0; ///< Called after terminal initialization is complete
+                                        /**< This member may return \c false. In this case, the
+                                             terminal setup is considered to have failed. */
+            virtual void cb_charReceived(char ch) = 0; ///< Called whenever a char is received
+            virtual void cb_windowSizeChanged() = 0; ///< Called when the terminal window is changed
         };
 
         virtual ~AbstractTerminal() {}
 
-        virtual void setCallbacks(Callbacks & cb) = 0;
+        virtual void setCallbacks(Callbacks & cb) = 0; /// Register terminal callbacks
 
-        virtual std::string terminalType() = 0;
-        virtual unsigned width() = 0;
-        virtual unsigned height() = 0;
+        virtual std::string terminalType() = 0; ///< Get the terminal type
+        virtual unsigned width() = 0;   ///< Get current terminal window width
+        virtual unsigned height() = 0;  ///< Get current terminal window height
 
-        virtual void write(char ch) = 0;
+        virtual void write(char ch) = 0; ///< Write character to terminal
     };
 
 }}

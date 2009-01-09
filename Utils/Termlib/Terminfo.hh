@@ -41,16 +41,44 @@
 namespace senf {
 namespace term {
 
+    /** \defgroup terminfo_group Terminfo
+
+        This facility provides access to the terminfo database. It partially re-implements the
+        terminfo suppoprt in \c libncurses.
+
+        \li The senf::term::Terminfo class provides basic terminfo property access and supports terminfo string
+            formatting
+        \li The senf::term::KeyParser class uses the properties found in a Terminfo instance to
+            parser keyboard escape sequences into key codes
+
+        The terminfo implementation is based on the \c utio library by Mike Sharov
+        <msharov@users.sourceforge.net> found at http://sourceforge.net/projects/utio.
+     */
+
+    /** \brief Terminfo database entry
+        
+        This class reads a single terminfo database entry and allows to access the terminfo
+        properties. 
+        
+        \ingroup terminfo_group 
+     */
     class Terminfo
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        /** \brief NoValue constant
+            This value represents the absence of a numeric property value */
         enum { NoValue = -1 };
 
+        /** \brief Terminfo property constants
+
+            This class provides a namespace for all Terminfo property constants
+         */
         struct properties
         {
+            /** \brief Boolean terminfo properties */
             enum Boolean {
                 AutoLeftMargin, AutoRightMargin, NoEscCtlc, CeolStandoutGlitch, EatNewlineGlitch,
                 EraseOverstrike, GenericType, HardCopy, HasMetaKey, HasStatusLine, InsertNullGlitch,
@@ -63,8 +91,11 @@ namespace term {
                 NoCorrectlyWorkingCr, GnuHasMetaKey, LinefeedIsNewline, HasHardwareTabs,
                 ReturnDoesClrEol };
             
+            /** \brief Boolean property names
+                \hideinitializer */
             static char const * const BooleanNames[];
-
+            
+            /** \brief Numeric terminfo properties */
             enum Numeric {
                 Columns, InitTabs, Lines, LinesOfMemory, MagicCookieGlitch, PaddingBaudRate,
                 VirtualTerminal, WidthStatusLine, NumLabels, LabelHeight, LabelWidth, MaxAttributes,
@@ -75,8 +106,11 @@ namespace term {
                 MagicCookieGlitchUl, CarriageReturnDelay, NewLineDelay, BackspaceDelay,
                 HorizontalTabDelay, NumberOfFunctionKeys };
 
+            /** \brief Numeric property names
+                \hideinitializer */
             static char const * const NumericNames[];
-            
+
+            /** \brief String terminfo properties */
             enum String {
                 BackTab, Bell, CarriageReturn, ChangeScrollRegion, ClearAllTabs, ClearScreen,
                 ClrEol, ClrEos, ColumnAddress, CommandCharacter, CursorAddress, CursorDown,
@@ -142,35 +176,43 @@ namespace term {
                 AcsLlcorner, AcsUrcorner, AcsLrcorner, AcsLtee, AcsRtee, AcsBtee, AcsTtee, AcsHline,
                 AcsVline, AcsPlus, MemoryLock, MemoryUnlock, BoxChars1 };
 
+            /** \brief String property names
+                \hideinitializer */
             static char const * const StringNames[];
         };
 
-        typedef boost::int16_t number_t;
-        typedef char const* string_t;
+        typedef boost::int16_t number_t; ///< Numeric terminfo property type
+        typedef char const* string_t;   ///< String terminfo property type
 
         ///////////////////////////////////////////////////////////////////////////
         
         Terminfo();
-        explicit Terminfo(std::string const & term);
-        void load(std::string const & term);
+        explicit Terminfo(std::string const & term); ///< Load terminfo entry \a term
+        void load(std::string const & term); ///< Load terminfo entry \a term
         
-        bool getFlag(properties::Boolean p) const;
-        number_t getNumber(properties::Numeric p) const;
-        string_t getString(properties::String p) const;
-        bool hasProperty(properties::Boolean p) const;
-        bool hasProperty(properties::Numeric p ) const;
-        bool hasProperty(properties::String p ) const;
+        bool getFlag(properties::Boolean p) const; ///< Get boolean property value
+        number_t getNumber(properties::Numeric p) const; ///< Get numeric property value
+        string_t getString(properties::String p) const; ///< Get string property value
+                                        /**< If the property does not exist, 0 is returned */
+        bool hasProperty(properties::Boolean p) const; ///< \c true, if boolean property \a p exists
+        bool hasProperty(properties::Numeric p ) const; ///< \c true, if numeric property \a p exists
+        bool hasProperty(properties::String p ) const; ///< \c true, if string property \a p exists
+
         std::string formatString(properties::String p,
                                  number_t arg1=NoValue, number_t arg2=NoValue, 
                                  number_t arg3=NoValue, number_t arg4=NoValue,
                                  number_t arg5=NoValue, number_t arg6=NoValue,
                                  number_t arg7=NoValue, number_t arg8=NoValue,
                                  number_t arg9=NoValue) const;
+                                        ///< Format string property value
+                                        /**< Formats the string property \a p containing special
+                                             terminfo codes. Terminfo supports up to 9 parameters. */
 
         ///////////////////////////////////////////////////////////////////////////
 
-        void dump(std::ostream & os) const;
+        void dump(std::ostream & os) const; ///< Dump a description of the terminfo entry
 
+        /** \brief Invalid, incomplete or non-existent terminfo entry exception */
         struct InvalidTerminfoException : public senf::Exception
         { InvalidTerminfoException() : senf::Exception("Unreadable terminfo file") {} };
 
@@ -190,13 +232,23 @@ namespace term {
         StringPool stringPool_;
     };
 
+    /** \brief Parse key escape sequences
 
+        The KeyParser will read the relevant properties from a terminfo entry and then provides
+        functions to parser keyboard escape sequences.
+
+        All keys are returned as keyboard code's. Values 0 to 255 represent ordinary ASCII
+        characters, larger values are special keys taken from the KeyCode \c enum
+        
+        \ingroup terminfo_group 
+     */
     class KeyParser
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
+        /** \brief Special keyboard key codes */
         enum KeyCode {
             Space = ' ', Tab = '\t', Return = '\r', First = 0xE000, Esc = First, Backspace, Backtab,
             Begin, CATab, CTab, Cancel, Center, Clear, ClearToEOL, ClearToEOS, Close, Command, Copy,
@@ -213,23 +265,46 @@ namespace term {
             ShiftRedo, ShiftReplace, ShiftResume, ShiftRight, ShiftSave, ShiftSuspend, ShiftTab,
             ShiftUndo, Suspend, Undo, Up, UpLeft, UpRight, Incomplete = 0xE0FF };
 
+        /** \brief Special key code names
+            \hideinitializer */
         static char const * const KeyNames[];
 
-        typedef wchar_t keycode_t;
-        typedef std::string::size_type size_type;
+        typedef wchar_t keycode_t;      ///< Key code data type
+        typedef std::string::size_type size_type; ///< String length type
 
+        /** \brief Helper to convert uppercase char to Control key code */
         static keycode_t Ctrl(char ch) { return ch-'@'; }
 
         ///////////////////////////////////////////////////////////////////////////
 
         KeyParser();
-        explicit KeyParser(Terminfo const & ti);
-        void load(Terminfo const & ti);
+        explicit KeyParser(Terminfo const & ti); ///< Load keymap information from \a ti
+        void load(Terminfo const & ti); ///< Load keymap information from \a ti
 
         std::pair<keycode_t, size_type> lookup(std::string const & key) const;
-        static std::string describe(keycode_t key);
+                                        ///< Lookup up string \a key
+                                        /**< This call will look up the string in \a key in the
+                                             keymap. The return value is a pair.
+                                             \li the first value is the key code
+                                             \li the second value is the number of characters in \a
+                                                 key which have been interpreted and returned in the
+                                                 first value
 
-        void dump(std::ostream & os) const;
+                                             If \a key is not a complete key sequence, the return
+                                             key code will be the \c Invalid value and the returned
+                                             escape sequence size will be 0.
+
+                                             If \a key does not start with an escape sequence, the
+                                             returned key code will be the first character from \a
+                                             key and the escape sequence size will be 1.
+
+                                             Otherwise \a key starts with a complete escape
+                                             sequence. The returned key code will be a value from
+                                             the KeyCode enum and the escape sequence size will be
+                                             returned accordingly. */
+        static std::string describe(keycode_t key); ///< Return descriptive, printable key name
+
+        void dump(std::ostream & os) const; ///< Dump keymap for debug purposes
 
     private:
         typedef std::map<std::string, KeyCode> Keytable;

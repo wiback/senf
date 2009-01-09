@@ -55,7 +55,9 @@ prefix_ senf::term::BaseTelnetProtocol::BaseTelnetProtocol()
       pendingRequests_ (0u),
       requestTimeout_ (ClockService::milliseconds(DEFAULT_REQUEST_TIMEOUT_MS)),
       timeout_ ("senf::term::BaseTelnetProtocol::timeout", 0)
-{}
+{
+    SENF_ASSERT( false );
+}
 
 prefix_ void senf::term::BaseTelnetProtocol::write(std::string const & s)
 {

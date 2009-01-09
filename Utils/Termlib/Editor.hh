@@ -41,6 +41,22 @@
 namespace senf {
 namespace term {
 
+    /** \brief Provide editor support terminal functionality
+
+        This base class utilizes an arbitrary AbstractTerminal and provides terminfo based
+        terminal navigation and key parsing.
+
+        All navigation is relative to the current line. The display area can then be extended
+        downwards up to a maximum of height() lines. Resetting this extended display area will
+        return to a one line area containing only the top line.
+
+        All navigation is restricted to a width() x height() area. The last column may not be
+        written to since auto-margin terminals will move the cursor to the next line when writing to
+        that column.
+
+        This base class calls v_keyReceived() which must be defined in a derived class whenever a
+        key is fully parsed.
+     */
     class BaseEditor
         : public AbstractTerminal::Callbacks
     {
@@ -69,12 +85,16 @@ namespace term {
         unsigned height();              ///< Return current screen height
 
     protected:
-        virtual bool cb_init();
+        virtual bool cb_init();         ///< Called when terminal is initialized
         virtual void cb_windowSizeChanged();
+                                        ///< Called whenever the terminal window size changes
+
+#ifndef DOXYGEN
+    private:
+#endif
+        virtual void v_keyReceived(keycode_t key) = 0; ///< Called whenever a key is received
 
     private:
-        virtual void v_keyReceived(keycode_t key) = 0;
-
         virtual void cb_charReceived(char c);
 
         void keySequenceTimeout();
@@ -93,7 +113,88 @@ namespace term {
         unsigned displayHeight_;
         unsigned line_;
     };
+    
+    /** \brief Single line interactive text editor
 
+        LineEditor implements a single-line input widget on an arbitrary AbstractTerminal.
+
+        \li It supports all the customary editing functions
+        \li It is possible to arbitrarily assign functions to keys via a key map
+        \li LineEditor has builtin TAB completion support
+        \li The LineEditor has a built-in history
+        \li The LineEditor supports an arbitrary auxiliary display area below the input line
+        \li The LineEditor has hide() / show() support to allow editing to be temporarily
+            interrupted.
+        
+        The LineEditor will query the user for an input line. When the user accepts a line,
+        LineEditor will call a user callback function. After the callback has been called, the
+        editor is disabled. To accept a new input line, call show().
+
+        \section editor_keymap The editor key map
+
+        Keys are defined in the keymap using defineKey(). The default bindings are:
+
+        <table class="senf">
+        <tr><td>\c Return</td>    <td>bindings::accept</td></tr>
+        <tr><td>\c Right</td>     <td>bindings::forwardChar</td></tr>
+        <tr><td>\c Left</td>      <td>bindings::backwardChar</td></tr>
+        <tr><td>\c Up</td>        <td>bindings::prevHistory</td></tr>
+        <tr><td>\c Down</td>      <td>bindings::nextHistory</td></tr>
+        <tr><td>\c Backspace</td> <td>bindings::backwardDeleteChar</td></tr>
+        <tr><td>\c Delete</td>    <td>bindings::deleteChar</td></tr>
+        <tr><td>\c Home</td>      <td>bindings::beginningOfLine</td></tr>
+        <tr><td>\c End</td>       <td>bindings::endOfLine</td></tr>
+        <tr><td>\c Ctrl-K</td>    <td>bindings::deleteToEndOfLine</td></tr>
+        <tr><td>\c Ctrl-A</td>    <td>bindings::beginningOfLine</td></tr>
+        <tr><td>\c Ctrl-E</td>    <td>bindings::endOfLine</td></tr>
+        <tr><td>\c Ctrl-D</td>    <td>bindings::deleteChar</td></tr>
+        <tr><td>\c Ctrl-C</td>    <td>bindings::restartEdit</td></tr>
+        <tr><td>\c Ctrl-L</td>    <td>bindings::clearScreen</td></tr>
+        </table>
+
+        See the senf::term::bindings namespace for a list of all default provided key binding
+        functions.
+        
+
+        \section editor_complete Completion suppoprt
+
+        Completion support is provided by senf::term::bindings::complete(). To use the completer,
+        you need to implement a completion function and pass it as second argument to
+        bindings::complete():
+
+        \code
+        void myCompleter(senf::term::LineEditor & editor, unsigned b, unsigned e, 
+                         std::vector<std::string> & completions)
+        {
+            // Get text to complete
+            std::string text (editor.text().substr(b, e-b));
+
+            // Return possible completions in 'completions' array
+            completions.push_back( ... );
+        }
+
+        senf::term::LineEditor editor (...);
+        editor.defineKey(senf::term::KeyParser::TAB, 
+                         boost::bind(&senf::term::bindings::complete, _1, &myCompleter));
+        \endcode
+
+        When \c myCompleter is a class member, use senf::membind() and pass this instead of \c
+        &myCompleter to \c boost::bind() and thus to senf::term::bindings::complete.
+        
+
+        \section editor_auxarea The aux display area
+
+        The auxiliary display area is accessed using auxDisplay() and clearAuxDisplay(). The aux
+        display area is \e cleared \e before each new key is processed. Therefore it is only
+        temporary. The aux display area however will survive hide() / show().
+
+
+        \section editor_hideshow Temporarily disabling the editor
+
+        Calling hide() will temporarily disable the editor. All editor display will be
+        removed. Calling show() will redisplay the editor in it's current state including the aux
+        display area.
+     */
     class LineEditor
         : public BaseEditor
     {
@@ -101,56 +202,95 @@ namespace term {
         ///////////////////////////////////////////////////////////////////////////
         // Types
 
-        typedef boost::function<void (LineEditor&)> KeyBinding;
+        typedef boost::function<void (LineEditor&)> KeyBinding; ///< Type of a key binding function
         typedef boost::function<void (std::string const &)> AcceptCallback;
+                                        ///< Callback function type
 
         static unsigned const MAX_HISTORY_SIZE = 1024u;
 
         ///////////////////////////////////////////////////////////////////////////
 
         LineEditor(AbstractTerminal & terminal, AcceptCallback cb);
+                                        ///< Create a LineEditor
+                                        /**< \parm[in] terminal abstract terminal interface
+                                             \parm[in] cb callback to call for complete input
+                                             line */
         
         ///////////////////////////////////////////////////////////////////////////
 
-        void prompt(std::string const & text);
+        void prompt(std::string const & text); ///< Set prompt string
         void set(std::string const & text, unsigned pos = 0u);
+                                        ///< Set edit buffer contents
+                                        /**< The edit buffer contents will be replaced by \a
+                                             text. The cursor will be placed at position \a pos
+                                             within this text. */
 
-        // Overall edit control
-        void show();
-        void hide();
-        void accept();
-        void clear();
-        void redisplay();
-        void forceRedisplay();
-        
-        // Cursor and display movement
-        void gotoChar(unsigned n);
-        void scrollTo(unsigned n);
+        ///\name Overall edit control
+        ///\{
 
-        // Text manipulation
-        void deleteChar(unsigned n=1);
-        void insert(char ch);
-        void insert(std::string const & text);
+        void show();                    ///< Enable editor widget
+        void hide();                    ///< Disable editor widget
+        void accept();                  ///< Accept current user input and call the accept callback
+        void clear();                   ///< Clear editor buffer
+        void redisplay();               ///< Mark the editor buffer for redisplay
+        void forceRedisplay();          ///< Redisplay the editor buffer \e now
 
-        // History
-        void pushHistory(std::string const & text);
-        void prevHistory();
-        void nextHistory();
+        ///\}
 
-        // Aux Display
+        ///\name Cursor and display movement
+        ///\{
+
+        void gotoChar(unsigned n);      ///< Move cursor to position \a n
+        void scrollTo(unsigned n);      ///< Move positon \n to beginning of display line
+
+        ///\}
+
+        ///\name Text manipulation
+        ///\{
+
+        void deleteChar(unsigned n=1);  ///< Delete \a n characters at point
+        void insert(char ch);           ///< Insert \a ch at point
+        void insert(std::string const & text); ///< Insert \a text at point
+
+        ///\}
+
+        ///\name History
+        ///\{
+
+        void pushHistory(std::string const & text); ///< Add string \a text to history
+        void prevHistory();             ///< Switch to previous history entry
+        void nextHistory();             ///< Switch to next history entry
+
+        ///\}
+
+        ///\name Aux Display
+        ///\{
+
         void auxDisplay(int line, std::string const & text);
-        unsigned maxAuxDisplayHeight();
-        void clearAuxDisplay();
+                                        ///< Display \a text on aux display line \a lilne
+        unsigned maxAuxDisplayHeight(); ///< Get maximum height of the aux display area
+        void clearAuxDisplay();         ///< Clear the aux display area
 
-        // Get information
-        std::string const & text();
-        unsigned point();
-        unsigned displayPos();
-        keycode_t lastKey();
+        ///\}
 
-        // Key bindings
+        ///\name Get information
+        ///\{
+
+        std::string const & text();     ///< Get current editor buffer contents
+        unsigned point();               ///< Get current cursor position
+        unsigned displayPos();          ///< Get current display position
+        keycode_t lastKey();            ///< Get last key code received
+
+        ///\}
+
+        ///\name Key bindings
+        ///\{
+
         void defineKey(keycode_t key, KeyBinding binding);
-        void unsetKey(keycode_t key);
+                                        ///< Bind key \a key to \a binding
+        void unsetKey(keycode_t key);   ///< Remove all bindings for \a key
+
+        ///\}
         
     private:
         virtual bool cb_init();
@@ -177,24 +317,33 @@ namespace term {
         AuxDisplay auxDisplay_;
     };
 
+/** \brief LineEditor key bindings
+ */
 namespace bindings {
 
-    void selfInsertCommand   (LineEditor & editor);
-    void forwardChar         (LineEditor & editor);
-    void backwardChar        (LineEditor & editor);
-    void accept              (LineEditor & editor);
-    void backwardDeleteChar  (LineEditor & editor);
-    void deleteChar          (LineEditor & editor);
-    void beginningOfLine     (LineEditor & editor);
-    void endOfLine           (LineEditor & editor);
-    void deleteToEndOfLine   (LineEditor & editor);
-    void restartEdit         (LineEditor & editor);
-    void prevHistory         (LineEditor & editor);
-    void nextHistory         (LineEditor & editor);
-    void clearScreen         (LineEditor & editor);
+    void selfInsertCommand   (LineEditor & editor); ///< Insert key as literal character
+    void forwardChar         (LineEditor & editor); ///< Move one char forward
+    void backwardChar        (LineEditor & editor); ///< Move one char backwards
+    void accept              (LineEditor & editor); ///< Accept input line
+    void backwardDeleteChar  (LineEditor & editor); ///< Delete char before cursor
+    void deleteChar          (LineEditor & editor); ///< Delete char at cursor
+    void beginningOfLine     (LineEditor & editor); ///< Move to beginning of line
+    void endOfLine           (LineEditor & editor); ///< Move to end of line
+    void deleteToEndOfLine   (LineEditor & editor); ///< Delete from cursor to end of line
+    void restartEdit         (LineEditor & editor); ///< Clear edit buffer and restart edit
+    void prevHistory         (LineEditor & editor); ///< Move to previous history entry
+    void nextHistory         (LineEditor & editor); ///< Move to next history entry
+    void clearScreen         (LineEditor & editor); ///< Clear screen and redisplay editor
 
     typedef boost::function<void (LineEditor &, unsigned b, unsigned e, std::vector<std::string> &)> Completer;
     void complete            (LineEditor & editor, Completer completer);
+                                        ///< Complete text at cursor
+                                        /**< This function calls \a completer to find the list of
+                                             possible completions for the text between \a b and \a e
+                                             (as passed to the completer). The completer must add
+                                             all possible completions to the completions vector. 
+
+                                             \see \ref editor_complete */
 
 }
 
