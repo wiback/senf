@@ -80,6 +80,8 @@ namespace senf {
             source_type() = 1;
             destination_type() = 2;
         }
+        
+        friend class MIHPacketType;
     };
     
     
@@ -96,7 +98,7 @@ namespace senf {
         using mixin::initSize;
 
         static void dump(packet p, std::ostream &os);
-//        static void finalize(packet p);
+        static void finalize(packet p);
     };
 
     typedef ConcretePacket<MIHPacketType> MIHPacket;

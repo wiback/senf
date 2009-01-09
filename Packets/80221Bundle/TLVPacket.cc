@@ -127,25 +127,24 @@ prefix_ void senf::DynamicTLVLengthParser::shrink()
 }
 
 
-prefix_ void senf::BaseTLVPacketParser:: maxLengthValue(DynamicTLVLengthParser::value_type v)
-    const
+prefix_ void senf::DynamicTLVLengthParser:: maxValue(DynamicTLVLengthParser::value_type v)
 {
     if (v <= 127)
         return;
-    size_type b = senf::bytes( length_());
+    size_type b = bytes();
     if (v <= UInt8Parser::max_value) {
-        if (b < 2) length_().resize(2);
+        if (b < 2) resize(2);
         return;
     }
     if (v <= UInt16Parser::max_value) {
-        if (b < 3) length_().resize(3);
+        if (b < 3) resize(3);
         return;
     }
     if (v <= UInt24Parser::max_value) {
-        if (b < 4) length_().resize(4);
+        if (b < 4) resize(4);
         return;
     }
-    if (b < 5) length_().resize(5);
+    if (b < 5) resize(5);
 }
 
 

@@ -53,6 +53,13 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
 }
 
 
+prefix_ void senf::MIHPacketType::finalize(packet p)
+{
+    p->source_length() << senf::bytes( p->source_mihf_id());
+    p->destination_length() << senf::bytes( p->destination_mihf_id());
+    p->payloadLength_() << p.size() - 8;
+}
+
 
 #undef prefix_
 

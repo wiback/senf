@@ -64,8 +64,10 @@ namespace senf {
         SENF_PARSER_PRIVATE_BITFIELD ( extended_length_flag, 1,  bool     );
         SENF_PARSER_PRIVATE_BITFIELD ( fixed_length_field,   7,  unsigned );
 
-        void resize(size_type size);
         void shrink();
+        void maxValue(DynamicTLVLengthParser::value_type v);
+    private:
+        void resize(size_type size);
     };  
         
 
@@ -76,8 +78,12 @@ namespace senf {
         SENF_PARSER_FIELD_RO ( length, DynamicTLVLengthParser );
         SENF_PARSER_FINALIZE ( BaseTLVPacketParser            );
         
-        void maxLengthValue(DynamicTLVLengthParser::value_type v) const;
-        void shrinkLength() { length_().shrink(); };
+        void maxLengthValue(DynamicTLVLengthParser::value_type v) const {
+            length_().maxValue(v);
+        }
+        void shrinkLength() { 
+            length_().shrink(); 
+        };
         
     protected:
         size_type length_bytes() const { return length_().bytes(); };

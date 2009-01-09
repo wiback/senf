@@ -149,8 +149,8 @@ namespace {
     struct TestMacAddressTLVPacketParser : public BaseTLVPacketParser
     {
     #   include SENF_PARSER()        
-        SENF_PARSER_INHERIT ( BaseTLVPacketParser )
-        SENF_PARSER_VECTOR  ( value, bytes(length), senf::MACAddressParser )
+        SENF_PARSER_INHERIT ( BaseTLVPacketParser );
+        SENF_PARSER_VECTOR  ( value, bytes(length), senf::MACAddressParser );
         SENF_PARSER_FINALIZE( TestMacAddressTLVPacketParser );
     };
     
