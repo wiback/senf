@@ -28,6 +28,8 @@
 // Custom includes
 #include "TLVPacket.hh"
 #include <senf/Packets.hh>
+#include "../DefaultBundle/EthernetPacket.hh"
+#include <senf/Utils/hexdump.hh>
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -37,6 +39,7 @@
 
 using namespace senf;
 
+namespace {
 
 void check_TLVPacket(GenericTLVPacket &tlvPacket, boost::uint8_t type, boost::uint32_t length)
 {
@@ -48,6 +51,7 @@ void check_TLVPacket(GenericTLVPacket &tlvPacket, boost::uint8_t type, boost::ui
         BOOST_CHECK_EQUAL( *dataIterator, i );
         dataIterator++;
     }
+}
 }
 
 
@@ -96,117 +100,94 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_simple_length)
     BOOST_CHECK( equal( tlvPacket.data().begin(), tlvPacket.data().end(), data ));
 }
 
-#if 0
-BOOST_AUTO_UNIT_TEST(TLVPacket_create_packet_with_extended_length)
+
+BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_extended_length)
+{
+    unsigned char value[255];
+    for (unsigned i=0; i<sizeof(value); i++)
+        value[i] = i;
+    GenericTLVPacket tlvPacket (GenericTLVPacket::create());
+    tlvPacket->type() = 42u;
+    tlvPacket->value( value);
+    tlvPacket.finalizeThis();
+
+    check_TLVPacket( tlvPacket, 42u, sizeof(value) );
+    
+    unsigned char data[] = { 
+        0x2a, // type
+        0x81, // first and last bit set => one byte length following
+        0xff, // length (255 bytes value)
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // first bytes of value
+    };
+    BOOST_CHECK( equal( 
+            tlvPacket.data().begin(), 
+            boost::next( tlvPacket.data().begin(), sizeof(data)),
+            data ));
+}
+
+
+BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_invalid_packet)
 {
     GenericTLVPacket tlvPacket (GenericTLVPacket::create());
     tlvPacket->type() = 42u;
-    for (uint8_t i=0; i<129; i++)
-        tlvPacket->value().push_back( i);
-    tlvPacket.finalizeAll();
-
-    check_TLVPacket( tlvPacket, 42u, 129u );
-}
-
-
-BOOST_AUTO_UNIT_TEST(TLVPacket_create_invalid_packet)
-{
+    tlvPacket.finalizeThis();
     
-}
-
-
-BOOST_AUTO_UNIT_TEST(TLVFixPacket_static)
-{
-    // check static values:
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt8Parser> > TestTLVPacket8;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt24Parser> > TestTLVPacket24;
+    unsigned char value[255];
+    for (unsigned i=0; i<sizeof(value); i++)
+        value[i] = i;
     
-    BOOST_CHECK_EQUAL( TestTLVPacket8::type::initSize(),  4+1u );
-    BOOST_CHECK_EQUAL( TestTLVPacket24::type::initSize(), 4+3u );
+    BOOST_CHECK_THROW( tlvPacket->value( value), TLVLengthException);
+    tlvPacket->maxLengthValue( sizeof(value));
+    tlvPacket->value( value);
+    tlvPacket.finalizeThis();
+    check_TLVPacket( tlvPacket, 42u, sizeof(value) );
 }
 
 
-template <class TLVFixPacketType>
-void test_TLVFixPacket_parsing(unsigned lengthParser_size)
-{
-    std::vector<char> data;
-    data.push_back(0x01); data.push_back(0x23); data.push_back(0x45); data.push_back(0x67); // type
-    data.insert(data.end(), lengthParser_size-1, 0x00);
-    data.push_back(0x0A); // length
-    for( int i=0; i < 10; i++ ) {
-        data.push_back(i); // payload
-    }
-    TLVFixPacketType tlvPacket (TLVFixPacketType::create(
-            boost::make_iterator_range(data.begin(), data.end())));
-    check_TLVPacket( tlvPacket, 0x01234567u, 0x0Au );
-}
+namespace {
 
-BOOST_AUTO_UNIT_TEST(TLVFixPacket_parse_packet)
-{
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt8Parser> > TestTLVPacket8;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt16Parser> > TestTLVPacket16;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt24Parser> > TestTLVPacket24;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt32Parser> > TestTLVPacket32;
+    struct TestMacAddressTLVPacketParser : public BaseTLVPacketParser
+    {
+    #   include SENF_PARSER()        
+        SENF_PARSER_INHERIT ( BaseTLVPacketParser )
+        SENF_PARSER_VECTOR  ( value, bytes(length), senf::MACAddressParser )
+        SENF_PARSER_FINALIZE( TestMacAddressTLVPacketParser );
+    };
     
-    test_TLVFixPacket_parsing<TestTLVPacket8>( UInt8Parser::fixed_bytes);
-    test_TLVFixPacket_parsing<TestTLVPacket16>( UInt16Parser::fixed_bytes);
-    test_TLVFixPacket_parsing<TestTLVPacket24>( UInt24Parser::fixed_bytes);
-    test_TLVFixPacket_parsing<TestTLVPacket32>( UInt32Parser::fixed_bytes);
+    struct TestMacAddressTLVPacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<TestMacAddressTLVPacketType>
+    {
+        typedef PacketTypeMixin<TestMacAddressTLVPacketType> mixin;
+        typedef TestMacAddressTLVPacketParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
+        
+        static void finalize(ConcretePacket<TestMacAddressTLVPacketType> p) { 
+            p->shrinkLength();
+        }
+    };
+    typedef ConcretePacket<TestMacAddressTLVPacketType> TestMacAddressTLVPacket;
 }
 
-
-template <class TLVFixPacketType>
-void test_TLVFixPacket_creating()
+BOOST_AUTO_UNIT_TEST(TestMacAddressTLVPacket_create)
 {
-    std::string payload ("Hello, world!");
-    TLVFixPacketType tlvPacket (TLVFixPacketType::create());
-    tlvPacket->type() = 42u;
-    DataPacket::createAfter( tlvPacket, payload );
-    tlvPacket.finalizeAll();
-
-    BOOST_CHECK_EQUAL( tlvPacket->type(), 42u);
-    BOOST_CHECK_EQUAL( tlvPacket->length(), 13u);
+    TestMacAddressTLVPacket tlvPacket (TestMacAddressTLVPacket::create());
+    tlvPacket->type() = 42;
+    tlvPacket->value().push_back( senf::MACAddress::from_string("01:23:45:67:89:ab") );
+    tlvPacket->value().push_back( senf::MACAddress::from_string("cd:ef:01:23:45:67") );
+    tlvPacket.finalizeThis();
     
-    PacketData & tlvPacket_value (tlvPacket.next().data());
-    BOOST_CHECK( equal( tlvPacket_value.begin(), tlvPacket_value.end(), payload.begin() ));
+    unsigned char data[] = { 
+        0x2a, // type
+        0x0c, // length
+        0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67  // value
+    };
+    BOOST_CHECK( equal( tlvPacket.data().begin(), tlvPacket.data().end(), data ));
 }
 
-BOOST_AUTO_UNIT_TEST(TLVFixPacket_create_packet)
-{
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt8Parser> > TestTLVPacket8;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt16Parser> > TestTLVPacket16;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt24Parser> > TestTLVPacket24;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt32Parser> > TestTLVPacket32;
-    
-    test_TLVFixPacket_creating<TestTLVPacket8>();
-    test_TLVFixPacket_creating<TestTLVPacket16>();
-    test_TLVFixPacket_creating<TestTLVPacket24>();
-    test_TLVFixPacket_creating<TestTLVPacket32>();
-}
-
-
-template <class TLVFixPacketType>
-void test_invalid_TLVFixPacket_creating(boost::uint32_t max_value)
-{
-    TLVFixPacketType tlvPacket (TLVFixPacketType::create());
-    tlvPacket->type() = 42u;
-    DataPacket payload (DataPacket::createAfter( tlvPacket, max_value+1));
-    //DataPacket::createAfter( payload, 1); // this is one byte to much.
-    BOOST_CHECK_THROW( tlvPacket.finalizeAll(), UnsuportedTLVPacketException);
-}
-
-BOOST_AUTO_UNIT_TEST(TLVFixPacket_create_invalid_packet)
-{
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt8Parser> > TestTLVPacket8;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt16Parser> > TestTLVPacket16;
-    typedef ConcretePacket<TLVPacketType<UInt32Parser, UInt24Parser> > TestTLVPacket24;
-    
-    test_invalid_TLVFixPacket_creating<TestTLVPacket8> ( UInt8Parser::max_value);
-    test_invalid_TLVFixPacket_creating<TestTLVPacket16>( UInt16Parser::max_value);
-    test_invalid_TLVFixPacket_creating<TestTLVPacket24>( UInt24Parser::max_value);
-}
-
-#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
