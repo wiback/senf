@@ -144,11 +144,8 @@ completePath(term::LineEditor & editor, unsigned b, unsigned e,
     ParseCommandInfo::TokensRange path (cmd.commandPath());
     if (path.empty()) {
         DirectoryNode::ChildrenRange cs (client().cwd().children());
-        for (DirectoryNode::ChildrenRange::iterator i (cs.begin()); i != cs.end(); ++i) {
-            completions.push_back(i->first);
-            if (i->second->isDirectory())
-                completions.push_back(i->first + "/");
-        }
+        for (DirectoryNode::ChildrenRange::iterator i (cs.begin()); i != cs.end(); ++i)
+            completions.push_back(i->first + (i->second->isDirectory() ? "/" : ""));
         return;
     }
     
@@ -169,17 +166,21 @@ completePath(term::LineEditor & editor, unsigned b, unsigned e,
             basePath += "../";
         }
         else if (*i == WordToken(".")) 
-            ;
+            basePath += "./";
         else {
             if (dir->hasChild(i->value())) {
-                dir = & dir->getDirectory(i->value());
+                try {
+                    dir = & dir->getDirectory(i->value());
+                }
+                catch (std::bad_cast &) {
+                    return;
+                }
                 basePath += i->value() + "/";
-            } else {
+            } 
+            else {
                 DirectoryNode::ChildrenRange cs (dir->completions(i->value()));
                 if (has_one_elt(cs)) {
                     GenericNode * node (cs.begin()->second.get());
-                    if (node->isLink())
-                        node = & static_cast<LinkNode*>(node)->follow();
                     if (!node->isDirectory())
                         return;
                     dir = static_cast<DirectoryNode*>(node);
@@ -191,11 +192,8 @@ completePath(term::LineEditor & editor, unsigned b, unsigned e,
         }
 
     DirectoryNode::ChildrenRange cs (dir->completions(i->value()));
-    for (DirectoryNode::ChildrenRange::iterator j (cs.begin()); j != cs.end(); ++j) {
-        completions.push_back(basePath + j->first);
-        if (j->second->isDirectory())
-            completions.push_back(basePath + j->first + "/");
-    }
+    for (DirectoryNode::ChildrenRange::iterator j (cs.begin()); j != cs.end(); ++j)
+        completions.push_back(basePath + j->first + (j->second->isDirectory() ? "/" : ""));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

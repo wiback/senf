@@ -663,18 +663,9 @@ prefix_ void senf::term::bindings::complete(LineEditor & editor, Completer compl
         didComplete = true;
     }
 
-    // If completion is already unique, make sure completion is followed by a space and place cursor
-    // after that space
-    if (completions.size() == 1u) {
-        if (text.size() <= commonStart || text[commonStart] != ' ')
-            text.insert(commonStart, " ");
-        editor.set(text, commonStart + 1);
-        return;
-    }
-
-    // Otherwise place cursor directly after the partial completion
+    // Otherwise place cursor directly after the (possibly partial) completion
     editor.set(text, commonStart);
-    if (didComplete)
+    if (didComplete || completions.size() == 1)
         return;
 
     // Text was not changed, show list of possible completions
