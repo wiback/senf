@@ -353,6 +353,9 @@
 
         SENF_PARSER_INHERIT(BaseParser)
     \endcode
+    
+    If you want to define collection fields which reference auxiliary fields in the base parser,
+    <em>you must define the base parser as a variable parser not a fixed parser</em>.
 
     \param[in] base name of base class
     \hideinitializer

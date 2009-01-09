@@ -147,15 +147,19 @@
 # // SENF_PARSER_I_FIELD_OFS_*
 #
 # define SENF_PARSER_I_FIELD_OFS_var(name, type, access)                                          \
+    protected:                                                                                    \
         size_type BOOST_PP_CAT(name,_offset)() const {                                            \
             return field_offset_(static_cast<senf::mpl::rv<BOOST_PP_CAT(name,_index)-1>*>(0));    \
         }                                                                                         \
         static size_type const BOOST_PP_CAT(name, _init_bytes) =                                  \
-            SENF_MPL_SLOT_GET(init_bytes);
+            SENF_MPL_SLOT_GET(init_bytes);                                                        \
+    private:
 #
 # define SENF_PARSER_I_FIELD_OFS_fix(name, type, access)                                          \
+    protected:                                                                                    \
         static size_type const BOOST_PP_CAT(name, _offset) =                                      \
-            SENF_MPL_SLOT_GET(offset);
+            SENF_MPL_SLOT_GET(offset);                                                            \
+    private:
 #
 # ////////////////////////////////////////
 # // SENF_PARSER_I_ADVANCE_OFS_*
@@ -180,7 +184,9 @@
             return BOOST_PP_CAT(name, _next_offset)();                                            \
         }                                                                                         \
         SENF_MPL_SLOT_SET(init_bytes, BOOST_PP_CAT(name,_next_init_bytes));                       \
+    protected:                                                                                    \
         static size_type const BOOST_PP_CAT(name, _group) = SENF_MPL_SLOT_GET(group) + isvar;     \
+    private:                                                                                      \
         SENF_MPL_SLOT_SET(group, BOOST_PP_CAT(name, _group));                                     \
     access:
 #
@@ -195,7 +201,7 @@
 # // SENF_PARSER_I_FIELD_VAL_*
 #
 # define SENF_PARSER_I_FIELD_VAL_rw(name, type, access)                                           \
-    private:                                                                                      \
+    protected:                                                                                    \
         BOOST_PP_CAT(name, _t) BOOST_PP_CAT(name, _)() const {                                    \
             return parse<type>( SENF_PARSER_OFFSET(name) );                                       \
         }                                                                                         \
@@ -205,7 +211,7 @@
         }
 #
 # define SENF_PARSER_I_FIELD_VAL_ro(name, type, access)                                           \
-    private:                                                                                      \
+    protected:                                                                                    \
         BOOST_PP_CAT(name, _t) BOOST_PP_CAT(name, _)() const {                                    \
             return parse<type>( SENF_PARSER_OFFSET(name) );                                       \
         }                                                                                         \

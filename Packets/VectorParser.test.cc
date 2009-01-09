@@ -284,6 +284,59 @@ BOOST_AUTO_UNIT_TEST(vectorMacro_create)
     BOOST_CHECK( equal( p.data().begin(), p.data().end(), data ));
 }
 
+namespace {
+    
+    struct TestVectorBaseParser 
+        : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+
+        SENF_PARSER_PRIVATE_FIELD ( size1 , senf::UInt8Parser );
+        SENF_PARSER_FIELD_RO      ( size2 , senf::UInt8Parser );
+        SENF_PARSER_FIELD         ( dummy , senf::UInt32Parser );\
+
+        SENF_PARSER_FINALIZE( TestVectorBaseParser );
+    };
+
+    struct TestVectorDerivedParser
+        : public TestVectorBaseParser
+    {
+#       include SENF_PARSER()
+
+        SENF_PARSER_INHERIT(TestVectorBaseParser);
+
+        SENF_PARSER_VECTOR        ( vec1  , transform(TestTransform, size1) , senf::UInt16Parser );
+        SENF_PARSER_VECTOR        ( vec2  , bytes(size2) , senf::UInt16Parser );
+
+        SENF_PARSER_FINALIZE( TestVectorDerivedParser );
+    };
+
+}
+
+BOOST_AUTO_UNIT_TEST(vectorMacro_inherit)
+{
+    unsigned char data[] = { 0x05,                   // size1
+                             0x04,                   // size2
+                             0x01, 0x02, 0x03, 0x04, // dummy
+                             0x05, 0x06,             // vec1[0]
+                             0x07, 0x08,             // vec1[1]
+                             0x09, 0x0A,             // vec1[2]
+                             0x0B, 0x0C,             // vec2[0]
+                             0x0D, 0x0E };           // vec2[1]
+
+    senf::DataPacket p (senf::DataPacket::create(data));
+    TestVectorDerivedParser parser (p.data().begin(), &p.data());
+    
+    BOOST_CHECK_EQUAL( parser.vec1().size(), 3u );
+    BOOST_CHECK_EQUAL( parser.vec2().size(), 2u );
+    BOOST_CHECK_EQUAL( parser.dummy(), 0x01020304u );
+    BOOST_CHECK_EQUAL( parser.vec1()[0], 0x0506u );
+    BOOST_CHECK_EQUAL( parser.vec1()[1], 0x0708u );
+    BOOST_CHECK_EQUAL( parser.vec1()[2], 0x090Au );
+    BOOST_CHECK_EQUAL( parser.vec2()[0], 0x0B0Cu );
+    BOOST_CHECK_EQUAL( parser.vec2()[1], 0x0D0Eu );
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
