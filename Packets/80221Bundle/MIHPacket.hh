@@ -35,14 +35,14 @@
 
 namespace senf {
 
-    struct MIHF_IdParser : public senf::PacketParserBase
+    struct MIHF_IdParser : public PacketParserBase
     {
-    #   include SENF_FIXED_PARSER()        
+    #   include SENF_PARSER()        
                 
         SENF_PARSER_FINALIZE ( MIHF_IdParser );
     };
 
-    struct MIHPacketParser : public senf::PacketParserBase
+    struct MIHPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
         
@@ -84,7 +84,16 @@ namespace senf {
         friend class MIHPacketType;
     };
     
-    
+    /** \brief MIH packet
+
+        \par Packet type (typedef):
+            \ref MIHPacket
+
+        \par Fields:
+            \ref MIHPacketParser
+        
+        \ingroup protocolbundle_80221
+     */
     struct MIHPacketType
         : public PacketTypeBase,
           public PacketTypeMixin<MIHPacketType>

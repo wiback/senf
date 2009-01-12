@@ -37,7 +37,7 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "MIH Packet:\n"
-       << "  protocol header:\n" << "\n"
+       << "  protocol header:\n"
        << "    Version:         " << unsigned( p->version()) << "\n"
        << "    Ack-Request:     " << p->ackRequest() << "\n"
        << "    Ack-Response:    " << p->ackResponse() << "\n"

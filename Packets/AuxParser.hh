@@ -122,7 +122,7 @@ namespace detail {
 
     /** \brief Internal: Apply transformation to arbitrary aux-parser policy
 
-        Transform must statisfy the interface
+        Transform must satisfy the interface
         \code
         struct Transform
         {

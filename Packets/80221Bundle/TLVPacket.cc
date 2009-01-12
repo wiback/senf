@@ -163,11 +163,10 @@ prefix_ void senf::DynamicTLVLengthParser::resize(size_type size)
     size_type current_size (bytes());
     SafePacketParserWrapper<DynamicTLVLengthParser> safeThis (*this);
     
-    safe_data_iterator si (data(), i());
     if (current_size > size)
-        data().erase( si, boost::next(si, current_size-size));
+        data().erase( i(), boost::next(i(), current_size-size));
     else
-        data().insert( si, size-current_size, 0);
+        data().insert( i(), size-current_size, 0);
     
     if (size > 1) {
         safeThis->extended_length_flag() = true;
@@ -175,7 +174,7 @@ prefix_ void senf::DynamicTLVLengthParser::resize(size_type size)
     } else {
         safeThis->extended_length_flag() = false;
     }
-    value(v);
+    safeThis->value(v);
 }
 
 

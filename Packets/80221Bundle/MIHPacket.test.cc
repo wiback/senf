@@ -30,12 +30,31 @@
 #include <boost/test/test_tools.hpp>
 
 #include "MIHPacket.hh"
+#include "senf/Utils/hexdump.hh"
 
+using namespace senf;
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-
+BOOST_AUTO_UNIT_TEST(MIHPacket_create)
+{
+    MIHPacket mihPacket (MIHPacket::create());
+    // set some fields
+    mihPacket->fragmentNr() = 42;
+    mihPacket->transactionId() = 21;
+    mihPacket.finalizeThis();
+    
+//    mihPacket.dump(std::cout);
+//    senf::hexdump(mihPacket.data().begin(), mihPacket.data().end(), std::cout);
+    
+    unsigned char data[] = { 
+            0x10, 0x54, 0x00, 0x00, 0x00, 0x15, 0x00, 0x04,
+            0x01, 0x00,
+            0x02, 0x00
+    };
+    BOOST_CHECK( equal( mihPacket.data().begin(), mihPacket.data().end(), data ));
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

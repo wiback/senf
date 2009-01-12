@@ -67,6 +67,7 @@
     \li \ref protocolbundle_default : Some basic default protocols: Ethernet, Ip, TCP, UDP
     \li \ref protocolbundle_mpegdvb : MPEG and DVB protocols
     \li \ref protocolbundle_80211 : 802.11 protocols
+    \li \ref protocolbundle_80221 : 802.21 protocols
 
     There are two ways to link with a bundle
     
