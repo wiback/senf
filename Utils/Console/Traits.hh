@@ -133,6 +133,9 @@ namespace console {
     template <class Type>
     void parse(ParseCommandInfo::TokensRange const & tokens, Type & out);
 
+    template <class Type>
+    void format(Type const & value, std::ostream & os);
+
 #ifndef DOXYGEN
 
     // Parse bool: true/false, yes/no, enabled/disabled, 0/1

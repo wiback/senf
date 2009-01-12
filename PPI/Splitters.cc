@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,32 +21,40 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Console public header */
+    \brief Splitters non-inline non-template implementation */
 
-#ifndef HH_SENF_Scheduler_Console_Console_
-#define HH_SENF_Scheduler_Console_Console_ 1
+#include "Splitters.hh"
+//#include "Splitters.ih"
 
 // Custom includes
 
-//#include "Console.mpp"
-///////////////////////////////hh.p////////////////////////////////////////
+//#include "Splitters.mpp"
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-#include "Server.hh"
-#include "ParsedCommand.hh"
-#include "ScopedDirectory.hh"
-#include "OverloadedCommand.hh"
-#include "Variables.hh"
-#include "Config.hh"
-#include "ConfigFile.hh"
-#include "ProgramOptions.hh"
-#include "Sysdir.hh"
-#include "STLSupport.hh"
+prefix_ senf::ppi::connector::ActiveOutput<> &
+senf::ppi::module::ActiveSplitter::newOutput()
+{
+    outputs_.push_back(new connector::ActiveOutput<>());
+    connector::ActiveOutput<> & output (outputs_.back());
 
-///////////////////////////////hh.e////////////////////////////////////////
-//#include "Console.cci"
-//#include "Console.ct"
-//#include "Console.cti"
-#endif
+    route(input, output);
+
+    return output;
+}
+
+prefix_ void senf::ppi::module::ActiveSplitter::request()
+{
+    Packet p (input());
+    Outputs::iterator i (outputs_.begin());
+    Outputs::iterator const i_end (outputs_.end());
+    for (; i != i_end; ++i)
+        (*i)(p);
+}
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "Splitters.mpp"
 
 
 // Local Variables:

@@ -492,7 +492,7 @@ namespace console {
 
 #       define BOOST_PP_ITERATION_PARAMS_1                                                        \
             (4, (1, BOOST_PARAMETER_MAX_ARITY,                                                    \
-                 SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp),                 \
+                 SENF_ABSOLUTE_INCLUDE_PATH(Utils/Console/ParsedCommand.mpp),                     \
                  5))
 #       include BOOST_PP_ITERATE()
 

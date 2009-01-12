@@ -27,6 +27,7 @@
 #include "Server.ih"
 
 // Custom includes
+#include <errno.h>
 #include <iostream>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
@@ -93,7 +94,8 @@ prefix_ senf::console::Server::Server(ServerHandle handle)
     : handle_ (handle), 
       event_ ("senf::console::Server", senf::membind(&Server::newClient, this),
               handle_, scheduler::FdEvent::EV_READ),
-      root_ (senf::console::root().thisptr()), mode_ (Automatic)
+      root_ (senf::console::root().thisptr()), mode_ (Automatic),
+      name_ (::program_invocation_short_name)
 {}
 
 prefix_ void senf::console::Server::newClient(int event)

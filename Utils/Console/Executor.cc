@@ -257,7 +257,7 @@ senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path
             return *dir.back().lock();
         }
         DirectoryNode & base (*dir.back().lock());
-        if (tok == WordToken("."))
+        if (tok == WordToken(".") || tok == NoneToken())
             return base;
         std::string const & name (complete(base, tok.value()));
         if (policy_)

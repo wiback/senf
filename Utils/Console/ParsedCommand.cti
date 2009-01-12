@@ -182,7 +182,7 @@ argInfo(ArgumentPack const & args)
 
     return next();
 
-#   undef HaveArg
+#   undef ProcessArg
 }
 
 template <class Overload, unsigned index, bool flag>

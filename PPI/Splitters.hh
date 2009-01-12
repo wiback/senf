@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,31 +21,65 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Console public header */
+    \brief Splitters public header */
 
-#ifndef HH_SENF_Scheduler_Console_Console_
-#define HH_SENF_Scheduler_Console_Console_ 1
+#ifndef HH_SENF_PPI_Splitters_
+#define HH_SENF_PPI_Splitters_ 1
 
 // Custom includes
+#include <boost/ptr_container/ptr_vector.hpp>
+#include "predecl.hh"
+#include "Connectors.hh"
+#include "Module.hh"
 
-//#include "Console.mpp"
+//#include "Splitters.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-#include "Server.hh"
-#include "ParsedCommand.hh"
-#include "ScopedDirectory.hh"
-#include "OverloadedCommand.hh"
-#include "Variables.hh"
-#include "Config.hh"
-#include "ConfigFile.hh"
-#include "ProgramOptions.hh"
-#include "Sysdir.hh"
-#include "STLSupport.hh"
+namespace senf {
+namespace ppi {
+
+#ifndef DOXYGEN
+
+    template <class Target>
+    connector::GenericActiveOutput & connect(module::ActiveSplitter & source, Target & target);
+    
+#endif
+
+namespace module {
+
+    class ActiveSplitter
+        : public Module
+    {
+        SENF_PPI_MODULE(ActiveSplitter);
+    public:
+        connector::PassiveInput<> input;
+
+        ActiveSplitter();
+
+    private:
+        connector::ActiveOutput<> & newOutput();
+
+#ifndef DOXYGEN
+    public:
+#endif
+        template <class Target>
+        connector::GenericActiveOutput & connect(Target & target);
+
+    private:
+        void request();
+
+        typedef boost::ptr_vector<connector::ActiveOutput<> > Outputs;
+        Outputs outputs_;
+    };
+
+}}}
+
+
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Console.cci"
-//#include "Console.ct"
-//#include "Console.cti"
+#include "Splitters.cci"
+//#include "Splitters.ct"
+#include "Splitters.cti"
 #endif
 
 

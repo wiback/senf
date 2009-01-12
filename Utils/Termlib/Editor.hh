@@ -218,13 +218,6 @@ namespace term {
         
         ///////////////////////////////////////////////////////////////////////////
 
-        void prompt(std::string const & text); ///< Set prompt string
-        void set(std::string const & text, unsigned pos = 0u);
-                                        ///< Set edit buffer contents
-                                        /**< The edit buffer contents will be replaced by \a
-                                             text. The cursor will be placed at position \a pos
-                                             within this text. */
-
         ///\name Overall edit control
         ///\{
 
@@ -234,6 +227,7 @@ namespace term {
         void clear();                   ///< Clear editor buffer
         void redisplay();               ///< Mark the editor buffer for redisplay
         void forceRedisplay();          ///< Redisplay the editor buffer \e now
+        void prompt(std::string const & text); ///< Set prompt string
 
         ///\}
 
@@ -251,6 +245,11 @@ namespace term {
         void deleteChar(unsigned n=1);  ///< Delete \a n characters at point
         void insert(char ch);           ///< Insert \a ch at point
         void insert(std::string const & text); ///< Insert \a text at point
+        void set(std::string const & text, unsigned pos = 0u);
+                                        ///< Set edit buffer contents
+                                        /**< The edit buffer contents will be replaced by \a
+                                             text. The cursor will be placed at position \a pos
+                                             within this text. */
 
         ///\}
 
