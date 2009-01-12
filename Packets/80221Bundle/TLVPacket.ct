@@ -1,4 +1,4 @@
-// $Id: TLVPacket.ct 1029 2008-12-19 13:08:19Z tho $
+// $Id$
 //
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
@@ -33,8 +33,8 @@
 template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVPacketParser::value(ForwardReadableRange const &range)
 {
-    size_type range_size ( boost::size(range));
-    size_type current_length ( length());
+    DynamicTLVLengthParser::value_type range_size ( boost::size(range));
+    DynamicTLVLengthParser::value_type current_length ( length());
     length( range_size);
 
     safe_data_iterator si (data(), boost::next(i(), 1 + length_bytes() ));
