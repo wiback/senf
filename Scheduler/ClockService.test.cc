@@ -39,7 +39,7 @@
 namespace {
 
     bool is_close_clock(senf::ClockService::clock_type a, senf::ClockService::clock_type b, 
-                        unsigned long delta)
+                        senf::ClockService::clock_type delta)
     {
         return (a<b ? b-a : a-b ) < delta;
     }

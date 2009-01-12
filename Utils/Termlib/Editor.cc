@@ -465,7 +465,7 @@ prefix_ void senf::term::LineEditor::nextHistory()
     }
 }
 
-prefix_ void senf::term::LineEditor::auxDisplay(int line, std::string const & text)
+prefix_ void senf::term::LineEditor::auxDisplay(unsigned line, std::string const & text)
 {
     toLine(line+1);
     clearLine();

@@ -265,7 +265,7 @@ namespace term {
         ///\name Aux Display
         ///\{
 
-        void auxDisplay(int line, std::string const & text);
+        void auxDisplay(unsigned line, std::string const & text);
                                         ///< Display \a text on aux display line \a lilne
         unsigned maxAuxDisplayHeight(); ///< Get maximum height of the aux display area
         void clearAuxDisplay();         ///< Clear the aux display area
