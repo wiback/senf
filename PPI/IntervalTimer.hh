@@ -66,9 +66,13 @@ namespace ppi {
 
         explicit IntervalTimer(ClockService::clock_type interval,
                                unsigned eventsPerInterval=1);
-
+        IntervalTimer();
+        
         ///@}
         ///////////////////////////////////////////////////////////////////////////
+
+        void interval(ClockService::clock_type interval, unsigned eventsPerInterval=1);
+        std::pair<ClockService::clock_type, unsigned> interval() const;
 
     protected:
 

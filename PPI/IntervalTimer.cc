@@ -42,6 +42,8 @@
 
 prefix_ void senf::ppi::IntervalTimer::v_enable()
 {
+    if (eventsPerInterval_ <= 0)
+        return;
     info_.intervalStart = manager().now();
     info_.number = 0;
     schedule();

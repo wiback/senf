@@ -34,8 +34,28 @@
 prefix_ senf::ppi::IntervalTimer::IntervalTimer(ClockService::clock_type interval,
                                                 unsigned eventsPerInterval)
     : interval_ (interval), eventsPerInterval_ (eventsPerInterval),
-      timer_("senf::ppi::IntervalTimer",  boost::bind(&IntervalTimer::cb,this))
+      timer_ ("senf::ppi::IntervalTimer",  boost::bind(&IntervalTimer::cb,this))
 {}
+
+prefix_ senf::ppi::IntervalTimer::IntervalTimer()
+    : interval_ (0), eventsPerInterval_ (0),
+      timer_ ("senf::ppi::IntervalTimer",  boost::bind(&IntervalTimer::cb,this))
+{}
+
+prefix_ void senf::ppi::IntervalTimer::interval(ClockService::clock_type interval,
+                                                unsigned eventsPerInterval)
+{
+    enabled(false);
+    interval_ = interval;
+    eventsPerInterval_ = eventsPerInterval;
+    enabled(true);
+}
+
+prefix_ std::pair<senf::ClockService::clock_type, unsigned> senf::ppi::IntervalTimer::interval()
+    const
+{
+    return std::make_pair(interval_, eventsPerInterval_);
+}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
