@@ -119,7 +119,7 @@
     \code
     Packet p = ...;
 
-    // Change first byte of packet to 0
+    // Change first byte of packet to 1
     p.data()[0] = 1u; 
 
     // Copy packet data into a vector
