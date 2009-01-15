@@ -28,10 +28,25 @@
 
 // Custom includes
 #include <iomanip>
-#include <senf/Utils/hexdump.hh>
+#include "../../Utils/hexdump.hh"
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+prefix_ senf::safe_data_iterator senf::BaseTLVPacketParser::resizeValue(
+        DynamicTLVLengthParser::value_type size) 
+{
+    DynamicTLVLengthParser::value_type current_length ( length());
+    length( size);
+
+    safe_data_iterator si (data(), boost::next(i(), 1 + length_bytes() ));
+    if (current_length > size)
+        data().erase( si, boost::next(si, current_length-size));
+    else
+        data().insert( si, size-current_length, 0);
+    return si;
+}
+
 
 prefix_ senf::DynamicTLVLengthParser::value_type senf::DynamicTLVLengthParser::value() const 
 {
@@ -148,15 +163,6 @@ prefix_ void senf::DynamicTLVLengthParser:: maxValue(DynamicTLVLengthParser::val
 }
 
 
-prefix_ senf::PacketInterpreterBase::range senf::GenericTLVPacketParser::value() 
-    const
-{
-    senf::PacketData::iterator begin (boost::next(data().begin(), 1 + length_bytes() ));
-    return PacketInterpreterBase::range(
-            begin, boost::next( begin, length()) );
-}
-
-
 prefix_ void senf::DynamicTLVLengthParser::resize(size_type size)
 {
     value_type v = value();
@@ -175,6 +181,15 @@ prefix_ void senf::DynamicTLVLengthParser::resize(size_type size)
         safeThis->extended_length_flag() = false;
     }
     safeThis->value(v);
+}
+
+
+prefix_ senf::PacketInterpreterBase::range senf::GenericTLVPacketParser::value() 
+    const
+{
+    senf::PacketData::iterator begin (boost::next(data().begin(), 1 + length_bytes() ));
+    return PacketInterpreterBase::range(
+            begin, boost::next( begin, length()) );
 }
 
 

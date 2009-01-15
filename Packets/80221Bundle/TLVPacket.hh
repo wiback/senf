@@ -88,14 +88,16 @@ namespace senf {
     protected:
         size_type length_bytes() const { return length_().bytes(); };
         void length(DynamicTLVLengthParser::value_type &v) { length_() = v; };
+        senf::safe_data_iterator resizeValue(DynamicTLVLengthParser::value_type size);
     };
 
         
     struct GenericTLVPacketParser : public BaseTLVPacketParser
     {
 #       include SENF_PARSER()        
-        SENF_PARSER_INHERIT( BaseTLVPacketParser )
-        SENF_PARSER_FINALIZE( GenericTLVPacketParser );
+        SENF_PARSER_INHERIT  ( BaseTLVPacketParser    );
+        SENF_PARSER_SKIP     ( length(), 0            );
+        SENF_PARSER_FINALIZE ( GenericTLVPacketParser );
         
         SENF_PARSER_INIT() {
             maxLengthValue( DynamicTLVLengthParser::max_value);

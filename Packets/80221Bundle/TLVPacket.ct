@@ -33,16 +33,7 @@
 template <class ForwardReadableRange>
 prefix_ void senf::GenericTLVPacketParser::value(ForwardReadableRange const &range)
 {
-    DynamicTLVLengthParser::value_type range_size ( boost::size(range));
-    DynamicTLVLengthParser::value_type current_length ( length());
-    length( range_size);
-
-    safe_data_iterator si (data(), boost::next(i(), 1 + length_bytes() ));
-    if (current_length > range_size)
-        data().erase( si, boost::next(si, current_length-range_size));
-    else
-        data().insert( si, range_size-current_length, 0);
-    
+    safe_data_iterator si = resizeValue( boost::size(range) );   
     std::copy( boost::begin(range), boost::end(range), si);
 }
 

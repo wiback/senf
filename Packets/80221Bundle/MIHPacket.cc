@@ -28,9 +28,68 @@
 
 // Custom includes
 #include "../../Packets/Packets.hh"
+#include "../../Utils/hexdump.hh"
 #include <boost/io/ios_state.hpp>
 
 #define prefix_
+
+
+prefix_ std::string senf::MIHFId_TLVParser::asString()
+    const
+{
+    return std::string( i(1+length_bytes()), i(1+length_bytes()+length()) );
+}
+
+prefix_ void senf::MIHFId_TLVParser::setString(std::string const &id)
+{
+    size_type str_size (id.size());
+    // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
+    if (str_size > 253) 
+        throw std::length_error("maximum length of a MIHF_ID is 253 octets");
+    safe_data_iterator si = resizeValue( str_size);   
+    std::copy( id.begin(), id.end(), si);
+}
+
+
+prefix_ senf::MACAddress senf::MIHFId_TLVParser::asMACAddress()
+    const
+{
+    return MACAddress::from_data( 
+            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+12) ));
+}
+
+prefix_ void senf::MIHFId_TLVParser::setMACAddress(senf::MACAddress const &mac)
+{
+    safe_data_iterator si = resizeValue(12);
+    std::copy( mac.begin(), mac.end(), getNAIEncodedOutputIterator(si));
+}
+
+
+prefix_ senf::INet4Address senf::MIHFId_TLVParser::asINet4Address()
+    const
+{
+    return INet4Address::from_data( 
+            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+8) ));
+}
+
+prefix_ void senf::MIHFId_TLVParser::setINet4Address(senf::INet4Address const &addr)
+{
+    safe_data_iterator si = resizeValue(8);
+    std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
+}
+
+prefix_ senf::INet6Address senf::MIHFId_TLVParser::asINet6Address()
+    const
+{
+    return INet6Address::from_data( 
+            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+32) ));
+}
+
+prefix_ void senf::MIHFId_TLVParser::setINet6Address(senf::INet6Address const &addr)
+{
+    safe_data_iterator si = resizeValue(32);
+    std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
+}
 
 
 prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
@@ -49,14 +108,24 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
        << "      Opcode:        " << unsigned( p->opcode()) << "\n"
        << "      AID:           " << unsigned( p->aid()) << "\n"      
        << "    Transaction ID:  " << unsigned( p->transactionId()) << "\n"
-       << "    payload length:  " << unsigned( p->payloadLength()) << "\n";
+       << "    payload length:  " << unsigned( p->payloadLength()) << "\n"
+       << "  source MIHF_Id TLV:\n"
+       << "    length:          " << unsigned (p->src_mihfId().length()) << "\n"
+       << "    value:\n";
+    std::string src_mihfId (p->src_mihfId().asString());
+    hexdump(src_mihfId.begin(), src_mihfId.end(), os);
+    os << "  destination MIHF_Id TLV:\n"
+       << "    length:          " << unsigned (p->dst_mihfId().length()) << "\n"
+       << "    value:\n";
+    std::string dst_mihfId (p->dst_mihfId().asString());
+    hexdump(dst_mihfId.begin(), dst_mihfId.end(), os);
 }
 
 
 prefix_ void senf::MIHPacketType::finalize(packet p)
 {
-    p->source_length() << senf::bytes( p->source_mihf_id());
-    p->destination_length() << senf::bytes( p->destination_mihf_id());
+    p->src_mihfId().shrinkLength();
+    p->dst_mihfId().shrinkLength();
     p->payloadLength_() << p.size() - 8;
 }
 
