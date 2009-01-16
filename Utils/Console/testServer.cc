@@ -97,6 +97,8 @@ int main(int, char **)
         .add("showlog", &enableLogging)
         .doc("Enable display of log messages on the current console");
 
+    senf::console::root().link("sl", senf::console::root()["console"]("showlog"));
+
     serverDir
         .add("shutdown", &shutdownServer)
         .doc("Terminate server application");
@@ -109,6 +111,8 @@ int main(int, char **)
     testDir
         .add("extra", test.dir)
         .doc("Example of an instance directory");
+
+    senf::console::root().link("ex", test.dir);
 
     senf::console::Server::start( senf::INet4SocketAddress(23232u) )
         .name("testServer");

@@ -145,7 +145,7 @@ completePath(term::LineEditor & editor, unsigned b, unsigned e,
     if (path.empty()) {
         DirectoryNode::ChildrenRange cs (client().cwd().children());
         for (DirectoryNode::ChildrenRange::iterator i (cs.begin()); i != cs.end(); ++i)
-            completions.push_back(i->first + (i->second->isDirectory() ? "/" : ""));
+            completions.push_back(i->first + (i->second->followLink().isDirectory() ? "/" : " "));
         return;
     }
     
@@ -180,10 +180,10 @@ completePath(term::LineEditor & editor, unsigned b, unsigned e,
             else {
                 DirectoryNode::ChildrenRange cs (dir->completions(i->value()));
                 if (has_one_elt(cs)) {
-                    GenericNode * node (cs.begin()->second.get());
-                    if (!node->isDirectory())
+                    GenericNode & node (cs.begin()->second->followLink());
+                    if (!node.isDirectory())
                         return;
-                    dir = static_cast<DirectoryNode*>(node);
+                    dir = static_cast<DirectoryNode*>(&node);
                     basePath += cs.begin()->first + "/";
                 }
                 else
@@ -193,7 +193,8 @@ completePath(term::LineEditor & editor, unsigned b, unsigned e,
 
     DirectoryNode::ChildrenRange cs (dir->completions(i->value()));
     for (DirectoryNode::ChildrenRange::iterator j (cs.begin()); j != cs.end(); ++j)
-        completions.push_back(basePath + j->first + (j->second->isDirectory() ? "/" : ""));
+        completions.push_back(basePath + j->first 
+                              + (j->second->followLink().isDirectory() ? "/" : " "));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

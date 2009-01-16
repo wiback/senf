@@ -114,6 +114,21 @@ prefix_ bool senf::console::GenericNode::isCommand()
     return dynamic_cast<CommandNode const *>(this);
 }
 
+prefix_ senf::console::GenericNode const & senf::console::GenericNode::followLink()
+    const
+{
+    return isLink()
+        ? dynamic_cast<LinkNode const *>(this)->follow()
+        : *this;
+}
+
+prefix_ senf::console::GenericNode & senf::console::GenericNode::followLink()
+{
+    return isLink()
+        ? dynamic_cast<LinkNode *>(this)->follow()
+        : *this;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::LinkNode
 
@@ -154,10 +169,7 @@ prefix_ senf::console::GenericNode &
 senf::console::DirectoryNode::get(std::string const & name)
     const
 {
-    GenericNode & node (getLink(name));
-    return node.isLink()
-        ? dynamic_cast<LinkNode&>(node).follow()
-        : node;
+    return getLink(name).followLink();
 }
 
 prefix_ senf::console::DirectoryNode &

@@ -194,8 +194,10 @@ prefix_ void senf::console::Executor::ls(std::ostream & output,
     DirectoryNode::child_iterator const i_end (node.children().end());
     for (; i != i_end; ++i) {
         output << i->first;
-        if (boost::dynamic_pointer_cast<DirectoryNode>(i->second))
+        if (i->second->isDirectory())
             output << "/";
+        else if (i->second->isLink())
+            output << "@";
         output << "\n";
     }
 }

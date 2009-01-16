@@ -48,31 +48,40 @@ prefix_ void senf::scheduler::terminate()
     terminate_ = true;
 }
 
+namespace {
+    
+    // We don't want try { } catch(...) { ... throw; } since that will make debugging more
+    // difficult: the stack backtrace for an unexpected exception would always end here.
+    struct SchedulerScopedInit
+    {
+        SchedulerScopedInit() 
+            {
+                senf::scheduler::detail::FIFORunner::instance().startWatchdog();
+                senf::scheduler::detail::SignalDispatcher::instance().unblockSignals();
+                senf::scheduler::detail::TimerDispatcher::instance().unblockSignals();
+            }
+
+        ~SchedulerScopedInit()
+            {
+                senf::scheduler::detail::TimerDispatcher::instance().blockSignals();
+                senf::scheduler::detail::SignalDispatcher::instance().blockSignals();
+                senf::scheduler::detail::FIFORunner::instance().stopWatchdog();
+            }
+    };
+}
+
 prefix_ void senf::scheduler::process()
 {
-    try {
-        detail::FIFORunner::instance().startWatchdog();
-        detail::SignalDispatcher::instance().unblockSignals();
-        detail::TimerDispatcher::instance().unblockSignals();
-        terminate_ = false;
-        while(! terminate_ && ! (detail::FdDispatcher::instance().empty() &&
-                                 detail::TimerDispatcher::instance().empty() &&
-                                 detail::FileDispatcher::instance().empty())) {
-            detail::FdManager::instance().processOnce();
-            detail::FileDispatcher::instance().prepareRun();
-            detail::EventHookDispatcher::instance().prepareRun();
-            detail::FIFORunner::instance().run();
-        }
+    SchedulerScopedInit initScheduler;
+    terminate_ = false;
+    while(! terminate_ && ! (detail::FdDispatcher::instance().empty() &&
+                             detail::TimerDispatcher::instance().empty() &&
+                             detail::FileDispatcher::instance().empty())) {
+        detail::FdManager::instance().processOnce();
+        detail::FileDispatcher::instance().prepareRun();
+        detail::EventHookDispatcher::instance().prepareRun();
+        detail::FIFORunner::instance().run();
     }
-    catch(...) {
-        detail::TimerDispatcher::instance().blockSignals();
-        detail::SignalDispatcher::instance().blockSignals();
-        detail::FIFORunner::instance().stopWatchdog();
-        throw;
-    }
-    detail::TimerDispatcher::instance().blockSignals();
-    detail::SignalDispatcher::instance().blockSignals();
-    detail::FIFORunner::instance().stopWatchdog();
 }
 
 prefix_ void senf::scheduler::restart()

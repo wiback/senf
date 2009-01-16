@@ -29,8 +29,10 @@
 // Custom includes
 #include <signal.h>
 #include <time.h>
+#include <boost/lambda/lambda.hpp>
 #include "../Utils/Exception.hh"
 #include "../Utils/senfassert.hh"
+#include "../Utils/ScopeExit.hh"
 
 //#include "FIFORunner.mpp"
 #define prefix_
@@ -143,7 +145,6 @@ prefix_ void senf::scheduler::detail::FIFORunner::run()
     run(f, l);
 }
 
-
 prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, TaskList::iterator l)
 {
     if (f == l)
@@ -164,32 +165,30 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
     tasks_.insert(l, null);
     TaskList::iterator end (TaskList::current(null));
     next_ = f;
-    try {
-        while (next_ != end) {
-            TaskInfo & task (*next_);
-            if (task.runnable_) {
-                task.runnable_ = false;
-                runningName_ = task.name();
-#           ifdef SENF_DEBUG
-                runningBacktrace_ = task.backtrace_;
-#           endif
-                TaskList::iterator i (next_);
-                ++ next_;
-                tasks_.splice(l, tasks_, i);
-                watchdogCount_ = 1;
-                task.run();
-            }
-            else
-                ++ next_;
+
+    using namespace boost::lambda;
+    ScopeExit atExit ((
+                          var(watchdogCount_) = 0, 
+                          var(next_) = l
+                          ));
+    
+    while (next_ != end) {
+        TaskInfo & task (*next_);
+        if (task.runnable_) {
+            task.runnable_ = false;
+            runningName_ = task.name();
+#       ifdef SENF_DEBUG
+            runningBacktrace_ = task.backtrace_;
+#       endif
+            TaskList::iterator i (next_);
+            ++ next_;
+            tasks_.splice(l, tasks_, i);
+            watchdogCount_ = 1;
+            task.run();
         }
+        else
+            ++ next_;
     }
-    catch (...) {
-        watchdogCount_ = 0;
-        next_ = l;
-        throw;
-    }
-    watchdogCount_ = 0;
-    next_ = l;
 }
 
 prefix_ senf::scheduler::detail::FIFORunner::TaskList::iterator

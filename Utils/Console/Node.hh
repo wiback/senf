@@ -296,6 +296,9 @@ namespace console {
         bool isLink() const;            ///< \c true, if this is a link node
         bool isCommand() const;         ///< \c true, if this is a command node
 
+        GenericNode const & followLink() const; ///< Follow link if \c this node is a link node
+        GenericNode & followLink();     ///< Follow link if \c this node is a link node
+
     protected:
         GenericNode();
 
@@ -491,7 +494,7 @@ namespace console {
                                         ///< \c true, if there is a child with name \a name
 
         GenericNode & get(std::string const & name) const;
-                                        ///< Get child node
+                                        ///< Get child node automatically dereferencing links
                                         /**< \throws UnknownNodeNameException if a child \a name
                                                  does not exist */
         GenericNode & getLink(std::string const & name) const;
@@ -500,7 +503,7 @@ namespace console {
                                                  does not exist */
 
         DirectoryNode & getDirectory(std::string const & name) const;
-                                        ///< Get directory child node
+                                        ///< Get directory child node (dereferencing links)
                                         /**< Same as operator[]
                                              \throws UnknownNodeNameException if a child \a name
                                                  does not exist.
@@ -508,7 +511,7 @@ namespace console {
                                                  directory node. */
 
         DirectoryNode & operator[](std::string const & name) const;
-                                        ///< Get directory child node
+                                        ///< Get directory child node (dereferencing links)
                                         /**< Same as getDirectory
                                              \throws UnknownNodeNameException if a child \a name
                                                  does not exist.
@@ -516,7 +519,7 @@ namespace console {
                                                  directory node. */
 
         CommandNode & getCommand(std::string const & name) const;
-                                        ///< Get command child node
+                                        ///< Get command child node (dereferencing links)
                                         /**< Same as operator()
                                              \throws UnknownNodeNameException if a child \a name
                                                  does not exist
@@ -524,7 +527,7 @@ namespace console {
                                                  command node. */
 
         CommandNode & operator()(std::string const & name) const;
-                                        ///< Get command child node
+                                        ///< Get command child node (dereferencing links)
                                         /**< Same as getCommand()
                                              \throws UnknownNodeNameException if a child \a name
                                                  does not exist
