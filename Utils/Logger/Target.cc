@@ -141,10 +141,10 @@ prefix_ void senf::log::Target::route(detail::StreamBase const * stream,
 }
 
 prefix_ void senf::log::Target::unroute(detail::StreamBase const * stream,
-                                        detail::AreaBase const * area, unsigned level, 
+                                        detail::AreaBase const * area, unsigned level,
                                         action_t action)
 {
-    RIB::iterator i = std::find(rib_.begin(), rib_.end(), 
+    RIB::iterator i = std::find(rib_.begin(), rib_.end(),
                                 RoutingEntry(stream, area, level, action));
     if (i != rib_.end())
         unroute(std::distance(rib_.begin(), i));
@@ -210,18 +210,29 @@ prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
 {
     if (fallbackRouting_) {
         if (level >= stream.defaultRuntimeLimit())
-            static_cast<Target &>(ConsoleTarget::instance()).v_write( 
+            static_cast<Target &>(ConsoleTarget::instance()).v_write(
                 TimeSource::now(), stream.v_name(), area.v_name(), level, msg );
     }
     else
         area.write( TimeSource::now(), stream, level, msg );
 }
+///////////////////////////////////////////////////////////////////////////
+// namespace members
+
+prefix_ std::ostream & senf::log::operator<<(std::ostream & os, senf::log::Target::action_t const & action)
+{
+    if( action == Target::ACCEPT) os << "ACCEPT";
+    else if( action == Target::REJECT) os << "REJECT";
+    else os << "unknown action";
+    return os;
+}
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Target.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

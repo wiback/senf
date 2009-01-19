@@ -52,12 +52,12 @@
 
 namespace senf {
 namespace log {
-    
+
     namespace detail { class TargetRegistry; }
     namespace detail { class AreaBase; }
 
     /** \brief Logging target base class
-        
+
         Targets are the final destination of %log messages. Every message is eventually routed to
         one or several targets.
 
@@ -115,7 +115,7 @@ namespace log {
         \section target_impl Implementing new targets
 
         To implement a new target type, you need to derive from senf::log::Target and implement the
-        single \c v_write member. This member will be called whenever a message should be output. 
+        single \c v_write member. This member will be called whenever a message should be output.
 
         The target may process the message in any arbitrary way: reformat it, write it into an SQL
         DB, whatever can be envisioned. However, there is one important limitation: The \c v_write
@@ -136,7 +136,7 @@ namespace log {
             Every routing entry is associated with a routing action. This action is final (for this
             target. Each target is processed independently).
          */
-        enum action_t { 
+        enum action_t {
             ACCEPT /** Output message */
           , REJECT /** Suppress message output */
         };
@@ -148,13 +148,13 @@ namespace log {
 
             \see senf::log::Target
          */
-        struct RoutingEntry 
+        struct RoutingEntry
         {
             std::string stream() const; ///< Stream to match
             std::string area() const;   ///< Area to match (empty of unspecified)
             unsigned level() const;     ///< Level to match (senf::log::NONE::value if unspecified)
             action_t action() const;    ///< Action to take
-            
+
 #           ifdef DOXYGEN
         private:
 #           endif
@@ -163,14 +163,14 @@ namespace log {
             bool operator==(RoutingEntry const & other);
 
         private:
-            RoutingEntry(detail::StreamBase const * stream, detail::AreaBase const * area, 
+            RoutingEntry(detail::StreamBase const * stream, detail::AreaBase const * area,
                          unsigned level, action_t action);
 
             detail::StreamBase const * stream_;
             detail::AreaBase const * area_;
             unsigned level_;
             action_t action_;
-            
+
             friend class Target;
         };
 
@@ -212,19 +212,19 @@ namespace log {
                                              \endcode
 
                                              See the class description for information on the \a
-                                             action and \a index parameters 
+                                             action and \a index parameters
 
                                              \tparam Stream stream to match
                                              \tparam Area area to match
                                              \tparam Level level, matches messages with
-                                                 at least the given level. 
+                                                 at least the given level.
                                              \param[in] action routing action to take
                                              \param[in] index position of new route in the routing
                                                  table */
 
 #       endif
 
-        void route(std::string const & stream, std::string const & area = "", 
+        void route(std::string const & stream, std::string const & area = "",
                    unsigned level = NONE::value, action_t action = ACCEPT, int index = -1);
                                         ///< Add route (dynamic)
                                         /**< Add a route for the given combination of \a stream, \a
@@ -234,7 +234,7 @@ namespace log {
                                              senf::log::NONE::value respectively.
 
                                              See the class description for information on the \a
-                                             action and \a index parameters 
+                                             action and \a index parameters
 
                                              \throws InvalidStreamException if the given \a stream
                                                  is not found in the StreamRegistry
@@ -251,7 +251,7 @@ namespace log {
 
 #       ifdef DOXYGEN
 
-        template <class Stream, class Area, class Level> 
+        template <class Stream, class Area, class Level>
         void unroute(action_t action = ACCEPT);
                                         ///< Remove route (static)
                                         /**< This member removes an arbitrary routing entry. The
@@ -266,12 +266,12 @@ namespace log {
                                              \tparam Stream stream to match
                                              \tparam Area area to match
                                              \tparam Level level, matches messages with
-                                                 at least the given level. 
+                                                 at least the given level.
                                              \param[in] action routing action to take */
 
 #       endif
 
-        void unroute(std::string const & stream, std::string const & area = "", 
+        void unroute(std::string const & stream, std::string const & area = "",
                      unsigned level = NONE::value, action_t action = ACCEPT);
                                         ///< Remove route (dynamic)
                                         /**< This member removes an arbitrary routing entry. The \a
@@ -291,9 +291,9 @@ namespace log {
                                              \param[in] action routing action to take */
         void unroute(int index=-1);     ///< Remove route (indexed)
                                         /**< This call will remove the route with the given index.
-                                             
+
                                              See the class documentation for more information on
-                                             indexing. 
+                                             indexing.
 
                                              \param[in] index index of routing entry to remove */
 
@@ -321,21 +321,21 @@ namespace log {
 
         /** \brief Exception: Invalid stream */
         struct InvalidStreamException : public senf::Exception
-        { InvalidStreamException() 
+        { InvalidStreamException()
               : senf::Exception("senf::log::Target::InvalidStreamException"){} };
-        
+
         /** \brief Exception: Invalid area */
         struct InvalidAreaException : public senf::Exception
-        { InvalidAreaException() 
+        { InvalidAreaException()
               : senf::Exception("senf::log::Target::InvalidAreaException"){} };
 
         iterator begin() const;         ///< Iterator to beginning of routing table
         iterator end() const;           ///< Iterator past the end of routing table
-        
+
     private:
-        void route(detail::StreamBase const * stream, detail::AreaBase const * area, 
+        void route(detail::StreamBase const * stream, detail::AreaBase const * area,
                    unsigned level, action_t action, int index);
-        void unroute(detail::StreamBase const * stream, detail::AreaBase const * area, 
+        void unroute(detail::StreamBase const * stream, detail::AreaBase const * area,
                      unsigned level, action_t action);
 
         void updateRoutingCache(detail::StreamBase const * stream, detail::AreaBase const * area);
@@ -347,12 +347,12 @@ namespace log {
     protected:
 #   endif
 
-        virtual void v_write(time_type timestamp, std::string const & stream, 
-                             std::string const & area, unsigned level, 
+        virtual void v_write(time_type timestamp, std::string const & stream,
+                             std::string const & area, unsigned level,
                              std::string const & message) = 0;
                                         ///< Called to write out the routing message
                                         /**< This member must be defined in the derived class to
-                                             somehow format and write the %log message. 
+                                             somehow format and write the %log message.
 
                                              Every %log message always possesses a complete set of
                                              meta information (\a stream, \a area and \a level).
@@ -373,10 +373,15 @@ namespace log {
 #   endif
 
         RIB rib_;
-        
+
         friend class detail::AreaBase;
         friend class detail::TargetRegistry;
     };
+
+    /** \brief Write route action
+        \related Target
+     */
+    std::ostream & operator<<(std::ostream & os, Target::action_t const & action);
 
 }}
 
@@ -386,7 +391,7 @@ namespace log {
 #include "Target.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
