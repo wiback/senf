@@ -57,53 +57,53 @@ public:
                                                                                  /**< Callback which is called when an asynchronous tuning succeeds.*/
         
     DVBSocketController(DVBFrontendHandle frontendHandle_ = DVBFrontendHandle(0,0), DVBDemuxSectionHandle sectionHandle_ = DVBDemuxSectionHandle(0,0), const Callback & cb = NULL);
-	~DVBSocketController();
-	
-	void tuneToCMD( const std::string & input, const std::string & mode = "async");///< Tunes a DVB device given by the type of the DVBFrontendHandle
+    ~DVBSocketController();
+
+    void tuneToCMD( const std::string & input, const std::string & mode = "async");///< Tunes a DVB device given by the type of the DVBFrontendHandle
                                                                                     /**< Tunes a DVB device by a channel name or complete configuration line. This method was created for use in Senf-Console.
                                                                                     \param[in] input A channel name or a complete configuration line. If a channel name is given it would be searched in the config file.
-	                                                                                \param[in] mode The mode in which it will tune "sync" or "async"*/
-	void tuneTo(const std::string & channel);  
-	                                            ///< Tunes a DVB device to a channel 
+                                                                                    \param[in] mode The mode in which it will tune "sync" or "async"*/
+    void tuneTo(const std::string & channel); 
+                                                ///< Tunes a DVB device to a channel 
                                                 /**< Tunes a DVB device to a channel whose parameters are stored in a configfile. The method determines the type of DVB device by it self.
                                                      \param[in] channel A channel name which will be looked up in config file.*/
-	
-	void tuneDVB_S(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate);
-	                                                                                ///< Tunes a DVB-S device
-	                                                                                /**< Tunes a DVB-S device in asynchronous mode and calls the callback if existing. Needs full configuration */
-	void tuneDVB_T(unsigned int frequency,
-	                fe_spectral_inversion_t inversion, fe_bandwidth_t bandwidth,
-	                fe_code_rate_t code_rate_HP, /* high priority stream code rate */
-	                fe_code_rate_t code_rate_LP, /* low priority stream code rate */
-	                fe_modulation_t constellation, /* modulation type (see above) */
-	                fe_transmit_mode_t transmission_mode,
-	                fe_guard_interval_t guard_interval,
-	                fe_hierarchy_t hierarchy_information);                          ///< Tunes a DVB-T device
-	                                                                                /**< Tunes a DVB-T device in asynchronous mode and calls the callback if existing. Needs full configuration. */
-	void tuneDVB_C(unsigned int frequency,
-	                fe_spectral_inversion_t inversion, unsigned int symbol_rate,
-	                fe_code_rate_t fec_inner, fe_modulation_t modulation); 
-	                                                                                ///< Tunes a DVB-C device
+
+    void tuneDVB_S(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate);
+                                                                                    ///< Tunes a DVB-S device
+                                                                                    /**< Tunes a DVB-S device in asynchronous mode and calls the callback if existing. Needs full configuration */
+    void tuneDVB_T(unsigned int frequency,
+                    fe_spectral_inversion_t inversion, fe_bandwidth_t bandwidth,
+                    fe_code_rate_t code_rate_HP, /* high priority stream code rate */
+                    fe_code_rate_t code_rate_LP, /* low priority stream code rate */
+                    fe_modulation_t constellation, /* modulation type (see above) */
+                    fe_transmit_mode_t transmission_mode,
+                    fe_guard_interval_t guard_interval,
+                    fe_hierarchy_t hierarchy_information);                          ///< Tunes a DVB-T device
+                                                                                    /**< Tunes a DVB-T device in asynchronous mode and calls the callback if existing. Needs full configuration. */
+    void tuneDVB_C(unsigned int frequency,
+                    fe_spectral_inversion_t inversion, unsigned int symbol_rate,
+                    fe_code_rate_t fec_inner, fe_modulation_t modulation); 
+                                                                                    ///< Tunes a DVB-C device
                                                                                     /**< Tunes a DVB-C device in asynchronous mode and calls the callback if existing. Needs full configuration. */
-	
-	dvb_frontend_event tuneTo_sync( const std::string & channel );
-	                                                                ///< Tunes a DVB device given by the type of the DVBFrontendHandle
+    
+    dvb_frontend_event tuneTo_sync( const std::string & channel );
+                                                                    ///< Tunes a DVB device given by the type of the DVBFrontendHandle
                                                                     /**< Tunes a DVB device, given by the type of the DVBFrontendHandle, by a channel name in synchronous mode
                                                                         \param[in] channel A channel name which will be looked up in config file.
-	                                                                    \returns dvb_frontend_event  
+                                                                        \returns dvb_frontend_event  
                                                                         \note The member "dvb_frontend_event.status" should be correct by the 
-	                                                                    most device driver implementations. But "dvb_frontend_event.parameters" maybe not and is definitly not set by:
-	                                                                    Cinergy T² (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27) 
-	                                                                    */
-	
-	dvb_frontend_event tuneDVB_S_sync(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate);
+                                                                        most device driver implementations. But "dvb_frontend_event.parameters" maybe not and is definitly not set by:
+                                                                        Cinergy Tï¿½ (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27) 
+                                                                        */
+    
+    dvb_frontend_event tuneDVB_S_sync(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate);
                                                                                 ///< Tunes a DVB-S device
                                                                                 /**< Tunes a DVB-S device in synchronous mode. Needs full configuration
-	                                                                            \returns dvb_frontend_event  
-	                                                                            \note The member "dvb_frontend_event.status" should be correct by the 
-	                                                                             most device driver implementations. But "dvb_frontend_event.parameters" maybe not and is definitly not set by:
-	                                                                            Cinergy T² (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27) 
-	                                                                            */
+                                                                                \returns dvb_frontend_event  
+                                                                                \note The member "dvb_frontend_event.status" should be correct by the 
+                                                                                 most device driver implementations. But "dvb_frontend_event.parameters" maybe not and is definitly not set by:
+                                                                                Cinergy Tï¿½ (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27) 
+                                                                                */
     dvb_frontend_event tuneDVB_T_sync(unsigned int frequency,
                 fe_spectral_inversion_t inversion, fe_bandwidth_t bandwidth,
                 fe_code_rate_t code_rate_HP, /* high priority stream code rate */
@@ -117,7 +117,7 @@ public:
                                                                                 \returns dvb_frontend_event  
                                                                                 \note The member "dvb_frontend_event.status" should be correct by the 
                                                                                 most device driver implementations. But "dvb_frontend_event.parameters" maybe not and is definitly not set by:
-                                                                                Cinergy T² (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27) 
+                                                                                Cinergy Tï¿½ (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27) 
                                                                                 */
     dvb_frontend_event tuneDVB_C_sync(unsigned int frequency,
                 fe_spectral_inversion_t inversion, unsigned int symbol_rate,
@@ -127,7 +127,7 @@ public:
                                                                                 \returns dvb_frontend_event  
                                                                                 \note The member "dvb_frontend_event.status" should be correct by the 
                                                                                 most device driver implementations. But "dvb_frontend_event.parameters" maybe not and is definitly not set by:
-                                                                                Cinergy T² (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27) 
+                                                                                Cinergy Tï¿½ (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27) 
                                                                                 */
     fe_type_t getType(); ///< Returns the type of the card. The type is defined in frontend.h
     
@@ -140,7 +140,7 @@ public:
     
     unsigned int bitErrorRate(); ///< Returns the bit error rate
                                  /**< Returns the bit error rate. 
-                                 \note This function may not be implemented by your specific driver implementation. In this case the output is random. This is true for: Cinergy T² (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27)*/
+                                 \note This function may not be implemented by your specific driver implementation. In this case the output is random. This is true for: Cinergy Tï¿½ (2.6.27), Terratec Cinergy DT USB XS Diversity (2.6.27)*/
     unsigned int signalToNoiseRatio();
                                     ///< Returns the signal to noise ratio
                                     /**< Returns the signal to noise ratio

@@ -110,11 +110,13 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
        << "    Transaction ID:  " << unsigned( p->transactionId()) << "\n"
        << "    payload length:  " << unsigned( p->payloadLength()) << "\n"
        << "  source MIHF_Id TLV:\n"
+       << "    type:            " << unsigned (p->src_mihfId().type()) << "\n"
        << "    length:          " << unsigned (p->src_mihfId().length()) << "\n"
        << "    value:\n";
     std::string src_mihfId (p->src_mihfId().asString());
     hexdump(src_mihfId.begin(), src_mihfId.end(), os);
     os << "  destination MIHF_Id TLV:\n"
+       << "    type:            " << unsigned (p->dst_mihfId().type()) << "\n"
        << "    length:          " << unsigned (p->dst_mihfId().length()) << "\n"
        << "    value:\n";
     std::string dst_mihfId (p->dst_mihfId().asString());

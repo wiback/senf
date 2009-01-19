@@ -55,11 +55,11 @@ namespace senf {
     public:
         DVBConfigParser(fe_type_t type_, const std::string & configFilePath = "");
         ~DVBConfigParser();
-	
+
         std::string getConfigLine(std::string channel);
-	    
+    
         dvb_frontend_parameters getFrontendParam(std::string configLine);
-	
+
     private:
         fe_type_t type;
         std::string configFilePath;
@@ -69,7 +69,7 @@ namespace senf {
         dvb_frontend_parameters getFrontendParamDVB_T( const tokenizer & tokens);
         dvb_frontend_parameters getFrontendParamDVB_C( const tokenizer & tokens);
         dvb_frontend_parameters getFrontendParamDVB_S( const tokenizer & tokens);
-	
+
     };
 }
 

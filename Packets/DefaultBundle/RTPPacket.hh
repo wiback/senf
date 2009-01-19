@@ -35,7 +35,7 @@ namespace senf {
     
     struct RTPPacketParser : public senf::PacketParserBase
     {
-	SENF_LOG_CLASS_AREA();
+        SENF_LOG_CLASS_AREA();
 #       include SENF_PARSER()
         SENF_PARSER_BITFIELD  ( version,        2, unsigned     );      //Version (RFC 3550)
         SENF_PARSER_BITFIELD  ( padding,        1, bool         );      //1 if padding behind payload
@@ -54,9 +54,9 @@ namespace senf {
     
     struct RTPPacketType 
         : public senf::PacketTypeBase,
-        public senf::PacketTypeMixin<RTPPacketType>
+          public senf::PacketTypeMixin<RTPPacketType>
     {
-	SENF_LOG_CLASS_AREA();
+        SENF_LOG_CLASS_AREA();
         typedef senf::PacketTypeMixin<RTPPacketType> mixin;
         typedef senf::ConcretePacket<RTPPacketType> packet;
         typedef RTPPacketParser parser;

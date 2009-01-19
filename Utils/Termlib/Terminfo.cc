@@ -240,15 +240,15 @@ prefix_ std::string senf::term::Terminfo::formatString(properties::String p,
     std::string result;
 
     for (std::string::const_iterator i (prgstr.begin()); i != prgstr.end(); ++i) {
-	if (*i != '%') {
-	    result += *i;
-	    continue;
-	}
-	int width = 0, base = 0;
-	switch (*++i) {
+    if (*i != '%') {
+        result += *i;
+        continue;
+    }
+    int width = 0, base = 0;
+    switch (*++i) {
         case '%': result += *i; break;
         case 'i': ++arg1; ++arg2; break;
-        case 'c': result += char(stack.pop());	break;
+        case 'c': result += char(stack.pop());  break;
         case 'x': base = 16; continue;
         case '0': if (!base) base = 8;
         case '1': case '2': case '3': case '4':
@@ -264,7 +264,7 @@ prefix_ std::string senf::term::Terminfo::formatString(properties::String p,
             continue;
         }
         case '}': stack.push(width); break;
-	    // Binary operands are in infix (reversed) order
+        // Binary operands are in infix (reversed) order
         case '+': stack.push(stack.pop() + stack.pop()); break;
         case '-': stack.push(-stack.pop() + stack.pop()); break;
         case '*': stack.push(stack.pop() * stack.pop()); break;
