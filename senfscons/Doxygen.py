@@ -394,8 +394,8 @@ def DoxyGenerator(source, target, env, for_signature):
 
    data = DoxyfileParse(env, source[0].abspath)
 
-   actions = [ SCons.Action.Action("cd ${SOURCE.dir}  && TOPDIR=%s ${DOXYGEN} ${SOURCE.file}"
-                                   % (relpath(source[0].dir.abspath, env.Dir('#').abspath),)) ]
+   actions = [ SCons.Action.Action("cd ${SOURCE.dir} && TOPDIR=%s ${DOXYGEN} ${SOURCE.file}"
+                                   % env.Dir('#').abspath) ]
 
    # This will add automatic 'installdox' calls.
    #
