@@ -21,25 +21,50 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Splitters inline non-template implementation */
+    \brief Duplicators.test unit tests */
 
-//#include "Splitters.ih"
+//#include "Duplicators.test.hh"
+//#include "Duplicators.test.ih"
 
 // Custom includes
+#include "Duplicators.hh"
+#include "DebugModules.hh"
+#include "Setup.hh"
+#include "../Packets/Packets.hh"
 
-#define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+#include "../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::ActiveSplitter
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::ppi::module::ActiveSplitter::ActiveSplitter()
+namespace ppi = senf::ppi;
+namespace connector = ppi::connector;
+namespace module = ppi::module;
+namespace debug = module::debug;
+
+BOOST_AUTO_UNIT_TEST(activeDuplicator)
 {
-    noroute(input);
-    input.onRequest(&ActiveSplitter::request);
+    debug::ActiveSource source;
+    module::ActiveDuplicator duplicator;
+    debug::PassiveSink sink1;
+    debug::PassiveSink sink2;
+
+    ppi::connect(source, duplicator);
+    ppi::connect(duplicator, sink1);
+    ppi::connect(duplicator, sink2);
+    ppi::init();
+
+    senf::Packet p (senf::DataPacket::create());
+
+    source.submit(p);
+    BOOST_CHECK_EQUAL( sink1.size(), 1u );
+    BOOST_CHECK_EQUAL( sink2.size(), 1u );
+    BOOST_CHECK( sink1.pop_front() == p );
+    BOOST_CHECK( sink2.pop_front() == p );
 }
 
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 

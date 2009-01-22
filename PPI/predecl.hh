@@ -72,7 +72,7 @@ namespace ppi {
         }
         class PassiveJoin;
         class PriorityJoin;
-        class ActiveSplitter;
+        class ActiveDuplicator;
     }
 
     namespace connector {

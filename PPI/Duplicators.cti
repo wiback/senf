@@ -21,9 +21,9 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Splitters inline template implementation */
+    \brief Duplicators inline template implementation */
 
-//#include "Splitters.ih"
+//#include "Duplicators.ih"
 
 // Custom includes
 #include "Setup.hh"
@@ -33,14 +33,14 @@
 
 template <class Target>
 prefix_ senf::ppi::connector::GenericActiveOutput &
-senf::ppi::connect(module::ActiveSplitter & source, Target & target)
+senf::ppi::connect(module::ActiveDuplicator & source, Target & target)
 {
     return source.connect(target);
 }
 
 template <class Target>
 prefix_ senf::ppi::connector::GenericActiveOutput &
-senf::ppi::module::ActiveSplitter::connect(Target & target)
+senf::ppi::module::ActiveDuplicator::connect(Target & target)
 {
     connector::GenericActiveOutput & output (newOutput());
     ppi::connect(output, target);

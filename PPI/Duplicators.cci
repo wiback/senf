@@ -21,40 +21,26 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Splitters non-inline non-template implementation */
+    \brief Duplicators inline non-template implementation */
 
-#include "Splitters.hh"
-//#include "Splitters.ih"
+//#include "Duplicators.ih"
 
 // Custom includes
 
-//#include "Splitters.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ senf::ppi::connector::ActiveOutput<> &
-senf::ppi::module::ActiveSplitter::newOutput()
+///////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::ActiveDuplicator
+
+prefix_ senf::ppi::module::ActiveDuplicator::ActiveDuplicator()
 {
-    outputs_.push_back(new connector::ActiveOutput<>());
-    connector::ActiveOutput<> & output (outputs_.back());
-
-    route(input, output);
-
-    return output;
+    noroute(input);
+    input.onRequest(&ActiveDuplicator::request);
 }
 
-prefix_ void senf::ppi::module::ActiveSplitter::request()
-{
-    Packet p (input());
-    Outputs::iterator i (outputs_.begin());
-    Outputs::iterator const i_end (outputs_.end());
-    for (; i != i_end; ++i)
-        (*i)(p);
-}
-
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
-//#include "Splitters.mpp"
 
 
 // Local Variables:

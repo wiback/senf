@@ -2,9 +2,9 @@
 
 PROJECT_NAME = libPPI
 GENERATE_TAGFILE = doc/PPI.tag
-RECURSIVE = Yes
+RECURSIVE = No
 SHOW_DIRECTORIES = Yes
-EXCLUDE = NetEmu
+INPUT = . detail
 
 TAGFILES = \
     "$(TOPDIR)/Scheduler/doc/Scheduler.tag" \

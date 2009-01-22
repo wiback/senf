@@ -75,7 +75,7 @@ namespace module {
         mac address and allows to pass a senf::MACAddress value as routing key directly:
 
         \code
-        senf::ppi::module::AnnotationRouter router;
+        senf::ppi::module::AnnotationRouter<TargetInterface> router;
 
         senf::ppi::connect(router, target1, senf::MACAddress::from_string("00:1a:2b:04:06:08"));
         \endcode

@@ -61,8 +61,6 @@ namespace module {
         \li \ref io_modules receive external data or forward packets out of the PPI
         \li \ref routing_modules forward packets within the network
         \li \ref adapter_modules are used to connect incompatible connectors to each other
-
-        \todo Implement Spliters: PassiveSplitter, PrioritySplitter, CloneSplitter
      */
 
     /** \defgroup io_modules Source/Sink Modules
