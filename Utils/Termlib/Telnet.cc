@@ -402,7 +402,7 @@ prefix_ void senf::term::BaseTelnetProtocol::response(OptInfo & info, bool enabl
     else if (enabled != info.enabled) {
         // Request to change the current state
         if (!enabled || 
-            enabled && (info.wantState == OptInfo::WANTED || info.wantState == OptInfo::ACCEPTED)) {
+            (enabled && (info.wantState == OptInfo::WANTED || info.wantState == OptInfo::ACCEPTED))) {
             // accept the request
             info.optionState = OptInfo::ACKNOWLEDGED;
             info.enabled = enabled;
