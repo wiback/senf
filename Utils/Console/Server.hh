@@ -176,6 +176,7 @@ namespace console {
         DirectoryNode & cwd() const;
         Server::Mode mode() const;
         void write(std::string const & data) const;
+        std::string const & backtrace() const;
 
         static Client & get(std::ostream & os);
 
@@ -186,7 +187,7 @@ namespace console {
 
         void setInteractive();
         void setNoninteractive();
-        
+
         size_t handleInput(std::string input, bool incremental = false);
         virtual void v_write(senf::log::time_type timestamp, std::string const & stream, 
                              std::string const & area, unsigned level, 
@@ -202,10 +203,19 @@ namespace console {
         std::string lastCommand_;
         boost::scoped_ptr<detail::ClientReader> reader_;
         Server::Mode mode_;
+        std::string backtrace_;
 
         friend class Server;
         friend class detail::ClientReader;
         friend class detail::NonblockingSocketSink;
+
+        class SysBacktrace 
+        {
+            SysBacktrace();
+            static void  backtrace(std::ostream & os);
+            static SysBacktrace instance_;
+        };
+        
     };
         
     /** \brief Output Console Client instance as it's string representation

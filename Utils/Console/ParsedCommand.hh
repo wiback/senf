@@ -571,7 +571,8 @@ namespace console {
 
     template <class Signature>
     typename detail::ParsedCommandTraits<Signature>::Attributor
-    senf_console_add_node(DirectoryNode & node, std::string const & name, boost::function<Signature> fn, int);
+    senf_console_add_node(DirectoryNode & node, std::string const & name, 
+                          boost::function<Signature> fn, int);
 
     template <class Owner, class Function>
     typename detail::ParsedCommandTraits<Function>::Attributor

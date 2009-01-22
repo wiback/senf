@@ -163,7 +163,7 @@ prefix_ void senf::scheduler::FdEvent::signal(int events)
     detail::FdDispatcher::FdSet::iterator const i_end (detail::FdDispatcher::instance().fds_.end());
     bool all ((events & (EV_ERR | EV_HUP)) && ! (events & (EV_READ | EV_PRIO | EV_WRITE)));
     for (; i != i_end && fd_ == i->fd_; ++i) {
-        i->signaledEvents_ = events;
+        i->signaledEvents_ = events & (EV_ERR | EV_HUP | i->events_);
         if (i->events_ & events || all)
             i->setRunnable();
     }

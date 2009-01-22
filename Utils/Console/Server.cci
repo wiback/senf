@@ -157,6 +157,12 @@ prefix_ void senf::console::Client::write(std::string const & data)
     reader_->write(data);
 }
 
+prefix_ std::string const & senf::console::Client::backtrace()
+    const
+{
+    return backtrace_;
+}
+
 prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)
 {
     return dynamic_cast<detail::NonblockingSocketOStream&>(os)->client();

@@ -37,6 +37,9 @@
 #include "../../Utils/membind.hh"
 #include "../../Utils/Logger/SenfLog.hh"
 #include "LineEditor.hh"
+#include "ScopedDirectory.hh"
+#include "Sysdir.hh"
+#include "ParsedCommand.hh"
 
 //#include "Server.mpp"
 #define prefix_
@@ -286,17 +289,20 @@ prefix_ std::string::size_type senf::console::Client::handleInput(std::string da
                                                    _1 ));
     }
     catch (Executor::ExitException &) {
-        // This generates an EOF condition on the Handle. This EOF condition is expected
-        // to be handled gracefully by the ClientReader. We cannot call stop() here, since we
-        // are called from the client reader callback and that will continue executing even if we
-        // call stop here ...
+        // This generates an EOF condition on the Handle. This EOF condition is expected to be
+        // handled gracefully by the ClientReader. We cannot call stop() here, since we are called
+        // from the client reader callback and that will continue executing after stop() has been
+        // called. stop() however will delete *this instance ... BANG ...
         handle_.facet<senf::TCPSocketProtocol>().shutdown(senf::TCPSocketProtocol::ShutRD);
     }
     catch (std::exception & ex) {
         std::string msg (ex.what());
         std::string::size_type i (msg.find("-- \n"));
-        if (i != std::string::npos)
+        if (i != std::string::npos) {
+            backtrace_ = msg.substr(0,i);
             msg = msg.substr(i+4);
+        } else 
+            backtrace_.clear();
         stream() << msg << std::endl;
     }
     catch (...) {
@@ -342,6 +348,26 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Client * cli
 {
     return os << *client;
 }
+
+///////////////////////////////////////////////////////////////////////////
+// senf::console::Client::SysBacktrace
+
+prefix_ senf::console::Client::SysBacktrace::SysBacktrace()
+{
+    sysdir().node().add("backtrace", &SysBacktrace::backtrace)
+        .doc("Display the backtrace of the last error / exception in this console");
+}
+
+prefix_ void senf::console::Client::SysBacktrace::backtrace(std::ostream & os)
+{
+    Client & client (Client::get(os));
+    if (client.backtrace().empty())
+        os << "(no backtrace)";
+    else
+        os << client.backtrace();
+}
+
+senf::console::Client::SysBacktrace senf::console::Client::SysBacktrace::instance_;
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
