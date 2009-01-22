@@ -21,40 +21,40 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MonitorModule non-inline non-template implementation */
+    \brief MonitorModule non-inline template implementation  */
 
-#include "MonitorModule.hh"
 //#include "MonitorModule.ih"
 
 // Custom includes
 
-//#include "MonitorModule.mpp"
 #define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+///////////////////////////////ct.p////////////////////////////////////////
 
-prefix_ void senf::ppi::module::MonitorModule::request()
+template <class PacketType>
+prefix_ void senf::ppi::module::MonitorModule<PacketType>::request()
 {
-    Packet p (input());
+    PacketType p (input());
     v_handlePacket(p);
     if (output.connected())
         output(p);
 }
 
-prefix_ void senf::ppi::module::MonitorModule::throttle()
+template <class PacketType>
+prefix_ void senf::ppi::module::MonitorModule<PacketType>::throttle()
 {
     if (output.connected())
         input.throttle();
 }
 
-prefix_ void senf::ppi::module::MonitorModule::unthrottle()
+template <class PacketType>
+prefix_ void senf::ppi::module::MonitorModule<PacketType>::unthrottle()
 {
     if (output.connected())
         input.unthrottle();
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
-//#include "MonitorModule.mpp"
 
 
 // Local Variables:

@@ -38,7 +38,7 @@
 
 namespace {
     
-    class PacketCounter : public senf::ppi::module::MonitorModule
+    class PacketCounter : public senf::ppi::module::MonitorModule<>
     {
         SENF_PPI_MODULE(PacketCounter);
     public:

@@ -376,6 +376,10 @@ namespace senf {
 
         ///@}
 
+        template <class Annotation>
+        Annotation const & annotation() const; ///< Get packet annotation
+                                        /**< \see annotation() */
+
         ///\name Other methods
         ///@{
 

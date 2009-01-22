@@ -21,16 +21,17 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MonitorModule inline non-template implementation */
+    \brief MonitorModule inline template implementation */
 
 //#include "MonitorModule.ih"
 
 // Custom includes
 
 #define prefix_ inline
-///////////////////////////////cci.p///////////////////////////////////////
+///////////////////////////////cti.p///////////////////////////////////////
 
-prefix_ senf::ppi::module::MonitorModule::MonitorModule()
+template <class PacketType>
+prefix_ senf::ppi::module::MonitorModule<PacketType>::MonitorModule()
 {
     route(input, output).autoThrottling(false);
     input.onRequest(&MonitorModule::request);
@@ -38,7 +39,7 @@ prefix_ senf::ppi::module::MonitorModule::MonitorModule()
     output.onUnthrottle(&MonitorModule::unthrottle);
 }
 
-///////////////////////////////cci.e///////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

@@ -37,16 +37,17 @@ namespace senf {
 namespace ppi {
 namespace module {
 
+    template <class PacketType=Packet>
     class MonitorModule : public Module
     {
     public:
-        senf::ppi::connector::PassiveInput<> input;
-        senf::ppi::connector::ActiveOutput<> output;
+        senf::ppi::connector::PassiveInput<PacketType> input;
+        senf::ppi::connector::ActiveOutput<PacketType> output;
 
     protected:
         MonitorModule();
 
-        virtual void v_handlePacket(Packet const & p) = 0;
+        virtual void v_handlePacket(PacketType const & p) = 0;
 
     private:
         void request();
@@ -58,9 +59,9 @@ namespace module {
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#include "MonitorModule.cci"
-//#include "MonitorModule.ct"
-//#include "MonitorModule.cti"
+//#include "MonitorModule.cci"
+#include "MonitorModule.ct"
+#include "MonitorModule.cti"
 #endif
 
 

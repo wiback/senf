@@ -141,6 +141,13 @@ prefix_ Annotation & senf::Packet::annotation()
     return ptr()->annotation<Annotation>();
 }
 
+template <class Annotation>
+prefix_ Annotation const & senf::Packet::annotation()
+    const
+{
+    return ptr()->annotation<Annotation>();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ConcretePacket<PacketType>
 
