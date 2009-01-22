@@ -526,7 +526,7 @@ namespace connector {
     {
     public:
         PacketType operator()();        ///< Read packet
-                                        /**< \throws std::bad_cast, if the %connector receives a
+                                        /**< \throws std::bad_cast if the %connector receives a
                                              Packet which is not of type \a PacketType.
                                              \returns newly read packet reference. */
         PacketType read();              ///< Alias for operator()
@@ -549,7 +549,7 @@ namespace connector {
     {
     public:
         PacketType operator()();        ///< Read packet
-                                        /**< \throws std::bad_cast, if the %connector receives a
+                                        /**< \throws std::bad_cast if the %connector receives a
                                              Packet which is not of type \a PacketType.
                                              \returns newly read packet reference. */
         PacketType read();              ///< Alias for operator()

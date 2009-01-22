@@ -38,7 +38,7 @@ namespace senf {
 namespace ppi {
 namespace module {
 
-    /** \brief Route packets to destination according to some annotation value
+    /** \brief %Route packets to destination according to some annotation value
 
         This router takes packet on a single input and directs them to one of it outputs depending
         on a \ref packet_usage_annotation "packet annotation". Each output connected
@@ -48,7 +48,7 @@ namespace module {
 
         The \a AnnotationType template parameter defines the routing key. This annotation must
         support the following operations:
-        \li Comparison with '<' (\c LessThanCompatable concept)
+        \li Comparison with '<' (\c LessThanComparable concept)
         \li Copy construction and copy assignment (\c Copyable und \c Assignable concepts)
             (e.g. via compiler synthesized copy constructor and assignment operator)
         \li Output streaming to an ostream via '\c <<' (for error description purposes) (\c

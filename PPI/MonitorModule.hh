@@ -37,16 +37,17 @@ namespace senf {
 namespace ppi {
 namespace module {
 
-    /** \brief Base class providing simple monitor module support
+    /** \brief Base class providing simple monitor %module support
 
-        A monitor module is a module which needs information about traversing packets but does not
-        really act on the packets. Because of this, it is \e optional to connect the output: If the
-        output is not connected, the packets will be silently dropped.
+        A monitor %module is a \ref senf::ppi::module::Module "module" which needs information 
+        about traversing packets but does not really act on the packets. Because of this, it is 
+        \e optional to connect the output: If the output is not connected, the packets will be 
+        silently dropped.
 
         This allows to add monitor modules either into an existing chain or add them using an
         ActiveDuplicator. 
 
-        To write a monitor module, derive from senf::ppi::module::MonitorModule instead of
+        To write a monitor %module, derive from senf::ppi::module::MonitorModule instead of
         senf::ppi::module and implement v_handlePacket():
 
         \code
@@ -55,7 +56,7 @@ namespace module {
         {
             SENF_PPI_MODULE(CountPackets);
         public:
-            SomeMonitor() : counter_ (0u) {}
+            CountPackets() : counter_ (0u) {}
 
         private:
             virtual void v_handlePacket(Packet const & p)
@@ -66,7 +67,7 @@ namespace module {
         \endcode
 
         You may of course add events (or even further connectors besides \c input and \c output
-        provided by MonitorModule) to the module.
+        provided by MonitorModule) to the %module.
 
         \tparam PacketType type of packet expected on input and sent on output. This is also the
             type of the v_handlePacket() argument.
