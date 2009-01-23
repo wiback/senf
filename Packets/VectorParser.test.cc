@@ -337,6 +337,38 @@ BOOST_AUTO_UNIT_TEST(vectorMacro_inherit)
     BOOST_CHECK_EQUAL( parser.vec2()[1], 0x0D0Eu );
 }
 
+namespace {
+
+    struct TestPacketSizeVectorParser
+        : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+
+        SENF_PARSER_VECTOR        ( vec   , packetSize() , senf::UInt16Parser );
+        
+        SENF_PARSER_FINALIZE( TestPacketSizeVectorParser );
+    };
+
+}
+
+BOOST_AUTO_UNIT_TEST(vectorMacro_packetSize)
+{
+    unsigned char data[] = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
+                             0x21, 0x22, 0x23, 0x24, 0x25, 0x26 };
+
+    senf::DataPacket p (senf::DataPacket::create(data));
+    TestPacketSizeVectorParser parser (p.data().begin(), &p.data());
+
+    {
+        BOOST_CHECK_EQUAL( parser.vec().size(), 6u );
+        BOOST_CHECK_EQUAL( parser.vec()[0], 0x1112u );
+        BOOST_CHECK_EQUAL( parser.vec()[1], 0x1314u );
+        BOOST_CHECK_EQUAL( parser.vec()[5], 0x2526u );
+    }
+
+    // The real functionality is already tested in AuxPolixy.test.cc ...
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

@@ -459,21 +459,34 @@
   namespace senf { namespace detail { namespace auxtag {
       template <class Transform, class Tag>
       struct transform {}; } } }
+  namespace senf { namespace detail { namespace auxtag {
+      struct packetSize {}; } } }
 #
 # endif
+#
+# // Each tag is implemented by defining the following macros. If the Tag is <name>(<args>):
+# //   SENF_PARSER_COLLECTION_TAG_GOBBLE__<name>(<args>)
+# //       gobble the tag, that is expand to nothing
+# //   SENF_PARSER_COLLECTION_TAG__<name>(<args>)
+# //       return an intermediate tag. This tag will be used with the next macro to get the aux tag
+# //       this indirection is needed since the tag may include templates with more than one
+# //       argument which cannot be passed through macros ... Ugh ...
+# //   SENF_PARSER_COLLECTION_TAG_EXPAND__<tag>(<tag args>)
+# //       expand to the real tag type
+# //   SENF_PARSER_COLLECTION_TAG_GETAUX__<name>(<args>)
+# //       return the real aux field. More specifically, this is the aux argument to the aux expand
+# //       macro
+# //   SENF_PARSER_COLLECTION_TAG_AUXTYPE__<name>(<args>)
+# //       return an identifier selecting the aux type macro to use. If the expansion of this macro
+# //       is <auxtag>, the macro will be called SENF_PARSER_COLLECTION_TAG_AUXDEF__<auxtag>
+# //   SENF_PARSER_COLLECTION_TAG_AUXDEF__<auxtag>(<name>,<auxarg>)
+# //       this command must declare the typedef <fieldname>_aux_type to the base aux policy
 #
 # define SENF_PARSER_COLLECTION_TAG_GOBBLE__bytes(x)
 # define SENF_PARSER_COLLECTION_TAG__bytes(x) bytes()
 # define SENF_PARSER_COLLECTION_TAG_EXPAND__bytes() senf::detail::auxtag::bytes
 # define SENF_PARSER_COLLECTION_TAG_GETAUX__bytes(x) x
-#
-# // No recursive call so we need some more of theese ... ARGH !!!
-# define SENF_CAT_RECURS1(a, b) SENF_CAT_RECURS1_I(a,b)
-# define SENF_CAT_RECURS1_I(a, b) a ## b
-# define SENF_CAT_RECURS2(a, b) SENF_CAT_RECURS2_I(a,b)
-# define SENF_CAT_RECURS2_I(a, b) a ## b
-# define SENF_CAT_RECURS3(a, b) SENF_CAT_RECURS3_I(a,b)
-# define SENF_CAT_RECURS3_I(a, b) a ## b
+# define SENF_PARSER_COLLECTION_TAG_AUXTYPE__bytes(x) auxField
 #
 # define SENF_PARSER_COLLECTION_TAG_GOBBLE__transform(x,y)
 # define SENF_PARSER_COLLECTION_TAG__transform(x,y) \
@@ -484,6 +497,22 @@
           SENF_CAT_RECURS1(SENF_PARSER_COLLECTION_TAG_EXPAND__, y)>
 # define SENF_PARSER_COLLECTION_TAG_GETAUX__transform(x,y) \
       SENF_PARSER_COLLECTION_TAG_GETAUX_RECURS1(y)
+# define SENF_PARSER_COLLECTION_TAG_AUXTYPE__transform(x,y) \
+      SENF_PARSER_COLLECTION_TAG_AUXTYPE_RECURS1(y)
+#
+# define SENF_PARSER_COLLECTION_TAG_GOBBLE__packetSize()
+# define SENF_PARSER_COLLECTION_TAG__packetSize() packetSize()
+# define SENF_PARSER_COLLECTION_TAG_EXPAND__packetSize() senf::detail::auxtag::bytes
+# define SENF_PARSER_COLLECTION_TAG_GETAUX__packetSize() _
+# define SENF_PARSER_COLLECTION_TAG_AUXTYPE__packetSize() packetSize
+#
+# // No recursive call so we need some more of theese ... ARGH !!!
+# define SENF_CAT_RECURS1(a, b) SENF_CAT_RECURS1_I(a,b)
+# define SENF_CAT_RECURS1_I(a, b) a ## b
+# define SENF_CAT_RECURS2(a, b) SENF_CAT_RECURS2_I(a,b)
+# define SENF_CAT_RECURS2_I(a, b) a ## b
+# define SENF_CAT_RECURS3(a, b) SENF_CAT_RECURS3_I(a,b)
+# define SENF_CAT_RECURS3_I(a, b) a ## b
 #
 # define SENF_PARSER_COLLECTION_TAG_EXPAND__none() senf::detail::auxtag::none
 #
@@ -498,6 +527,12 @@
           SENF_PARSER_COLLECTION_HAS_KEYWORD(aux),                                                \
           BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_GETAUX__, aux),                                 \
           aux)
+#
+# define SENF_PARSER_COLLECTION_TAG_AUXTYPE_RECURS1(aux)                                          \
+      BOOST_PP_IF(                                                                                \
+          SENF_PARSER_COLLECTION_HAS_KEYWORD(aux),                                                \
+          BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_AUXTYPE__, aux),                                \
+          auxField)
 #
 # define SENF_PARSER_COLLECTION_HAS_KEYWORD(x)                                                    \
       BOOST_PP_IS_EMPTY( SENF_CAT_RECURS1(SENF_PARSER_COLLECTION_TAG_GOBBLE__, x) )
@@ -514,20 +549,20 @@
                   SENF_PARSER_COLLECTION_HAS_KEYWORD(aux),                                        \
                   ( access,                                                                       \
                     name,                                                                         \
+                    SENF_CAT_RECURS2(SENF_PARSER_COLLECTION_TAG_AUXTYPE__, aux),                  \
                     SENF_CAT_RECURS2(SENF_PARSER_COLLECTION_TAG_GETAUX__, aux),                   \
                     SENF_CAT_RECURS2(SENF_PARSER_COLLECTION_TAG__, aux),                          \
                     traits ),                                                                     \
                   ( access,                                                                       \
                     name,                                                                         \
+                    auxField,                                                                     \
                     aux,                                                                          \
                     none(),                                                                       \
                     traits ) ))
 #
-# define SENF_PARSER_COLLECTION_II(access, name, aux, tag, traits)                                \
+# define SENF_PARSER_COLLECTION_II(access, name, auxtype, aux, tag, traits)                       \
       private:                                                                                    \
-          BOOST_PP_CAT(SENF_PARSER_COLLECTION_AUXTYPE_, SENF_PARSER_TYPE)(name, aux)              \
-          typedef BOOST_PP_CAT(SENF_PARSER_COLLECTION_AUX_I_, SENF_PARSER_TYPE)(name, aux)        \
-              BOOST_PP_CAT(name,_aux_policy);                                                     \
+          BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_AUXDEF__, auxtype)(name, aux)                   \
           typedef traits::parser<                                                                 \
               BOOST_PP_CAT(name,_aux_policy),                                                     \
               BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_EXPAND__, tag)                              \
@@ -538,8 +573,13 @@
                                      SENF_PARSER_TYPE,                                            \
                                      rw,                                                          \
                                      access )                                                     \
-          BOOST_PP_CAT(SENF_PARSER_COLLECTION_VAL_, SENF_PARSER_TYPE)(name, aux, access)          \
+          BOOST_PP_CAT(SENF_PARSER_COLLECTION_TAG_VAL__, auxtype)(name, aux, access)              \
       public:
+#
+# define SENF_PARSER_COLLECTION_TAG_AUXDEF__auxField(name, aux)                                   \
+          BOOST_PP_CAT(SENF_PARSER_COLLECTION_AUXTYPE_, SENF_PARSER_TYPE)(name, aux)              \
+          typedef BOOST_PP_CAT(SENF_PARSER_COLLECTION_AUX_I_, SENF_PARSER_TYPE)(name, aux)        \
+              BOOST_PP_CAT(name,_aux_policy);
 #
 # define SENF_PARSER_COLLECTION_AUXTYPE_var(name, aux)                                            \
       static bool const BOOST_PP_CAT(name, _aux_fixed) =                                          \
@@ -573,6 +613,12 @@
                                           SENF_PARSER_CURRENT_FIXED_OFFSET()                      \
                                               - SENF_PARSER_FIXED_OFFSET(aux) >
 #
+# define SENF_PARSER_COLLECTION_TAG_AUXDEF__packetSize(name, aux)                                 \
+          typedef senf::detail::PacketSizeAuxParserPolicy BOOST_PP_CAT(name, _aux_policy);
+#
+# define SENF_PARSER_COLLECTION_TAG_VAL__auxField(name, aux, access)                              \
+          BOOST_PP_CAT(SENF_PARSER_COLLECTION_VAL_, SENF_PARSER_TYPE)(name, aux, access)
+#
 # define SENF_PARSER_COLLECTION_VAL_var(name,aux,access)                                          \
       private:                                                                                    \
           template <class T> T BOOST_PP_CAT(name, _dispatch)(boost::true_type) const              \
@@ -587,6 +633,14 @@
           { return BOOST_PP_CAT(name, _)(); }
 #
 # define SENF_PARSER_COLLECTION_VAL_fix(name,aux,access)                                          \
+      private:                                                                                    \
+          BOOST_PP_CAT(name, _t) BOOST_PP_CAT(name, _)() const                                    \
+          { return parse<BOOST_PP_CAT(name, _t)>( SENF_PARSER_OFFSET(name) ); }                   \
+      access:                                                                                     \
+          BOOST_PP_CAT(name, _t) name() const                                                     \
+          { return BOOST_PP_CAT(name, _)(); }
+#
+# define SENF_PARSER_COLLECTION_TAG_VAL__packetSize(name, aux, access)                            \
       private:                                                                                    \
           BOOST_PP_CAT(name, _t) BOOST_PP_CAT(name, _)() const                                    \
           { return parse<BOOST_PP_CAT(name, _t)>( SENF_PARSER_OFFSET(name) ); }                   \

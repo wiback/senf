@@ -147,13 +147,25 @@ namespace detail {
         typename Transform::value_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
         void aux(typename Transform::value_type const & v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
     };
+
+    struct PacketSizeAuxParserPolicy
+    {
+        typedef PacketSizeAuxParserPolicy WrapperPolicy;
+        typedef PacketSizeAuxParserPolicy ParserPolicy;
+
+        static PacketParserBase::size_type const aux_bytes = 0;
+
+        PacketParserBase::size_type aux(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        void aux(unsigned v, PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+        PacketParserBase::data_iterator adjust(PacketParserBase::data_iterator i, PacketParserBase::state_type s) const;
+    };
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
 #if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_AuxParser_i_)
 #define HH_SENF_Packets_AuxParser_i_
-//#include "AuxParser.cci"
+#include "AuxParser.cci"
 //#include "AuxParser.ct"
 #include "AuxParser.cti"
 #endif

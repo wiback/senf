@@ -244,6 +244,9 @@ namespace senf {
         <tr><td>\c bytes(\a size)</td><td>\a size gives the size of the list in bytes not the
         number of contained elements</td></tr>
 
+        <tr><td>\c packetSize()</td><td>Use the size of the packet to get the list size. The
+        list will occupy all space up to the end of the packet.</td></tr>
+
         <tr><td>\c transform(\a transform, \a size)</td><td>The \a transform is applied to the \a
         size value, the value is not used directly</td>
 

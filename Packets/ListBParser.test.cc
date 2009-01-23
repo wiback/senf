@@ -239,6 +239,108 @@ BOOST_AUTO_UNIT_TEST(listBytesMacro)
 
 }
 
+namespace {
+
+    struct TestPacketSizeList
+        : public senf::PacketParserBase
+    {
+#       include SENF_PARSER()
+
+        SENF_PARSER_LIST ( list, packetSize(), VectorParser );
+
+        SENF_PARSER_FINALIZE(TestPacketSizeList);
+    };
+
+
+}
+
+BOOST_AUTO_UNIT_TEST(listBytesParser_packetSize)
+{
+    unsigned char data[] = { 0x01,                   // list()[0].vec().size()
+                             0x05, 0x06,             // list()[0].vec()[0]
+                             0x02,                   // list()[1].vec().size()
+                             0x07, 0x08,             // list()[1].vec()[0]
+                             0x09, 0x0A,             // list()[1].vec()[1]
+                             0x00,                   // list()[2].vec().size()
+                             0x02,                   // list()[3].vec().size()
+                             0x0B, 0x0C,             // list()[3].vec()[0]
+                             0x0D, 0x0E,             // list()[3].vec()[1]
+                             0x01,                   // list()[4].vec().size()
+                             0x0F, 0x10 };           // list()[4].vec()[0]
+    
+    senf::DataPacket p (senf::DataPacket::create(data));
+
+    {
+        TestPacketSizeList l (p.data().begin(), &p.data());
+        BOOST_CHECK_EQUAL( l.list().size(), 5u );
+
+        TestPacketSizeList::list_t::container c (l.list());
+        TestPacketSizeList::list_t::container::iterator i (c.begin());
+
+        senf::UInt16Parser::value_type vec0[] = { 0x0506 };
+        senf::UInt16Parser::value_type vec1[] = { 0x0708, 0x090A };
+        senf::UInt16Parser::value_type vec2[] = {};
+        senf::UInt16Parser::value_type vec3[] = { 0x0B0C, 0x0D0E };
+        senf::UInt16Parser::value_type vec4[] = { 0x0F10 };
+
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec0, vec0+sizeof(vec0)/sizeof(vec0[0]) );
+        ++ i;
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec1, vec1+sizeof(vec1)/sizeof(vec1[0]) );
+        ++ i;
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec2, vec2+sizeof(vec2)/sizeof(vec2[0]) );
+        ++ i;
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec3, vec3+sizeof(vec3)/sizeof(vec3[0]) );
+
+        ++ i;
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec4, vec4+sizeof(vec4)/sizeof(vec4[0]) );
+
+        ++ i;
+        BOOST_CHECK( i == c.end() );
+
+        i = c.begin();
+        ++i;
+        TestPacketSizeList::list_t::value_type::vec_t::container v (i->vec());
+        v.push_back(0xFEFF);
+    }
+
+    {
+        TestPacketSizeList l (p.data().begin(), &p.data());
+        BOOST_CHECK_EQUAL( l.list().size(), 5u );
+        BOOST_CHECK_EQUAL( l.list().bytes(), p.data().size() );
+
+        TestPacketSizeList::list_t::container c (l.list());
+        TestPacketSizeList::list_t::container::iterator i (c.begin());
+
+        senf::UInt16Parser::value_type vec0[] = { 0x0506 };
+        senf::UInt16Parser::value_type vec1[] = { 0x0708, 0x090A, 0xFEFF };
+        senf::UInt16Parser::value_type vec2[] = {};
+        senf::UInt16Parser::value_type vec3[] = { 0x0B0C, 0x0D0E };
+        senf::UInt16Parser::value_type vec4[] = { 0x0F10 };
+
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec0, vec0+sizeof(vec0)/sizeof(vec0[0]) );
+        ++ i;
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec1, vec1+sizeof(vec1)/sizeof(vec1[0]) );
+        ++ i;
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec2, vec2+sizeof(vec2)/sizeof(vec2[0]) );
+        ++ i;
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec3, vec3+sizeof(vec3)/sizeof(vec3[0]) );
+
+        ++ i;
+        BOOST_CHECK_EQUAL_COLLECTIONS( i->vec().begin(), i->vec().end(),
+                                       vec4, vec4+sizeof(vec4)/sizeof(vec4[0]) );
+        ++ i;
+        BOOST_CHECK( i == c.end() );
+    }
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

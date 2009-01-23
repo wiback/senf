@@ -246,6 +246,9 @@ namespace senf {
         <table class="senf fixedcolumn">
         <tr><td>\c bytes(\a size)</td><td>\a size gives the size of the vector in bytes not the
         number of contained elements</td></tr>
+        
+        <tr><td>\c packetSize()</td><td>Use the size of the packet to get the vector size. The
+        vector will occupy all space up to the end of the packet.</td></tr>
 
         <tr><td>\c transform(\a transform, \a size)</td><td>The \a transform is applied to the \a
         size value, the value is not used directly</td>
@@ -266,6 +269,7 @@ namespace senf {
         The tags are applied to the \a size parameter:
         \code
         SENF_PARSER_VECTOR ( vec, transform(MyTransform, vec_size_), senf::UInt32Parser );
+        SENF_PARSER_VECTOR ( vec, packetSize(), senf::UInt32Parser );
         \endcode
         
         \param[in] name field name
