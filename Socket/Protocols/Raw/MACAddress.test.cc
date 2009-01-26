@@ -84,6 +84,8 @@ BOOST_AUTO_UNIT_TEST(macAddress)
 
     BOOST_CHECK_EQUAL( mac, senf::MACAddress::from_eui64(0xa1b2c3fffed4e5f6llu) );
     BOOST_CHECK_THROW( senf::MACAddress::from_eui64(0u), senf::AddressSyntaxException );
+    
+    BOOST_CHECK_EQUAL( senf::MACAddress(0x1a2b3c4d5e6fULL).uint64(), 0x1a2b3c4d5e6fULL);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

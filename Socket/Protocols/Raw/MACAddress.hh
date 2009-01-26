@@ -48,7 +48,7 @@ namespace senf {
         The following statements all create the same MAC address <code>00:1A:2B:3C:4D:5F</code>
         \code
         // Used to construct constant MAC addresses
-        MACAddress(0x001A2B3C4D5Flu)
+        MACAddress(0x001A2B3C4D5Fllu)
 
         // Construct a MAC address from it's string representation:
         MACAddress::from_string("00:1a:2b:3c:4d:5f")   // case is ignored
@@ -128,6 +128,7 @@ namespace senf {
         boost::uint32_t nic() const;    ///< Return last 3 bytes of the address
         
         boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
+        boost::uint64_t uint64() const; ///< Return MAC address as uint64 value 
         
         std::string toString() const; ///< Return string representation of MAC address like 12:34:56:78:90:ab
 

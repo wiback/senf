@@ -108,6 +108,18 @@ prefix_ boost::uint64_t senf::MACAddress::eui64()
         (boost::uint64_t( (*this)[5] )      );
 }
 
+prefix_ boost::uint64_t senf::MACAddress::uint64()
+    const
+{
+    return
+        (boost::uint64_t( (*this)[0] ) << 40) | 
+        (boost::uint64_t( (*this)[1] ) << 32) | 
+        (boost::uint64_t( (*this)[2] ) << 24) | 
+        (boost::uint64_t( (*this)[3] ) << 16) | 
+        (boost::uint64_t( (*this)[4] ) <<  8) | 
+        (boost::uint64_t( (*this)[5] )      );
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
