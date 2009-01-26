@@ -91,7 +91,7 @@ prefix_ void senf::WLANPacketType::dump(packet p, std::ostream &os)
        << "  Retransmission : " << unsigned( p->retry()) << "\n"
        << "  Duration       : " << unsigned( p->duration()) << "\n";
     if (p->is_mgtFrame()) {
-        os << "  Management-Frame:\n" 
+        os << "  Management-Frame:\n"
            << "    BSSID               : " << p->mgtFrame().bssid() << "\n"
            << "    Destination Address : " << p->mgtFrame().destinationAddress() << "\n"
            << "    Source Address      : " << p->mgtFrame().sourceAddress() << "\n"
@@ -109,8 +109,8 @@ prefix_ void senf::WLANPacketType::dump(packet p, std::ostream &os)
     }
     if (p->is_dataFrame()) {
         os << "  Data-Frame:\n"
-           << "    Sequence Number     : " << unsigned( p->mgtFrame().sequenceNumber()) << "\n"
-           << "    Fragment Number     : " << unsigned( p->mgtFrame().fragmentNumber()) << "\n";
+           << "    Sequence Number     : " << unsigned( p->dataFrame().sequenceNumber()) << "\n"
+           << "    Fragment Number     : " << unsigned( p->dataFrame().fragmentNumber()) << "\n";
     }
 };
 
