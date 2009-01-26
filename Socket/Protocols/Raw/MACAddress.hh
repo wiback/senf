@@ -48,7 +48,7 @@ namespace senf {
         The following statements all create the same MAC address <code>00:1A:2B:3C:4D:5F</code>
         \code
         // Used to construct constant MAC addresses
-        MACAddress(0x001A2B3C4D5Fllu)
+        MACAddress(0x001A2B3C4D5Full)
 
         // Construct a MAC address from it's string representation:
         MACAddress::from_string("00:1a:2b:3c:4d:5f")   // case is ignored
@@ -62,7 +62,7 @@ namespace senf {
 
         // Construct a MAC from the EUID64 as used by INet6 interfaces.  The eui64 will come from an
         // INet6 address:
-        MACAddress::from_eui64(0x001A2BFFFE3C4D5Ful)
+        MACAddress::from_eui64(0x001A2BFFFE3C4D5Full)
         MACAddress::from_eui64(
             INet6Address(0x2001u,0xDB8u,0x1u,0x0u,0x001Au,0x2BFFu,0xFE3Cu,0x3D5Fu).id())
         \endcode
