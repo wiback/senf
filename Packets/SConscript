@@ -42,6 +42,9 @@ SENFSCons.Doxygen(env, extra_sources = [
                 PKGDRAWPACKETS = "MLDv2ListenerReportParser"),
     env.PkgDraw("DefaultBundle/MLDv2AddressRecord.png", "DefaultBundle/ICMPv6TypePacket.hh",
                 PKGDRAWPACKETS = "MLDv2AddressRecordParser"),
+    env.PkgDraw("80221Bundle/MIHPacket.hh",
+                PKGDRAWPACKETS = "MIHPacketParser"),
+    env.PkgDraw("80211Bundle/WLANPacket.hh"),
 ])
 SENFSCons.InstallIncludeFiles(env, includes)
 

@@ -138,6 +138,7 @@ namespace senf {
 
         \par Fields:
             \ref MIHPacketParser
+            \image html MIHPacket.png
         
         \ingroup protocolbundle_80221
      */
