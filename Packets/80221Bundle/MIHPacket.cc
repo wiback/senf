@@ -132,6 +132,19 @@ prefix_ void senf::MIHPacketType::finalize(packet p)
 }
 
 
+prefix_ senf::PacketInterpreterBase::factory_t senf::MIHPacketType::nextPacketType(packet p)
+{
+    return MIHPayloadPacket::factory();
+}
+
+
+prefix_ void senf::MIHPayloadPacketType::dump(packet p, std::ostream &os)
+{
+    boost::io::ios_all_saver ias(os);
+    os << "MIH Payload (service specific TLVs):\n";
+}
+
+
 #undef prefix_
 
 

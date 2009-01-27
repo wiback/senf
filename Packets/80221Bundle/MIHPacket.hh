@@ -155,9 +155,38 @@ namespace senf {
 
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
+        static factory_t nextPacketType(packet p);
     };
 
     typedef ConcretePacket<MIHPacketType> MIHPacket;
+    
+    
+    struct MIHPayloadPacketParser : public PacketParserBase
+    {
+    #   include SENF_PARSER()
+        SENF_PARSER_LIST ( tlv_list, packetSize(), GenericTLVPacketParser );
+        
+        SENF_PARSER_FINALIZE ( MIHPayloadPacketParser );
+    };
+    
+    struct MIHPayloadPacketType
+        : public PacketTypeBase,
+          public PacketTypeMixin<MIHPayloadPacketType>
+    {
+        typedef PacketTypeMixin<MIHPayloadPacketType> mixin;
+        typedef ConcretePacket<MIHPayloadPacketType> packet;
+        typedef MIHPayloadPacketParser parser;
+
+        using mixin::nextPacketRange;
+        using mixin::init;
+        using mixin::initSize;
+
+        static void dump(packet p, std::ostream &os);
+    };
+        
+    typedef ConcretePacket<MIHPayloadPacketType> MIHPayloadPacket;
+            
+
 }
 
 
