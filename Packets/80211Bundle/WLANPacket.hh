@@ -40,9 +40,9 @@ namespace senf
     {
     #   include SENF_FIXED_PARSER()
         
-        SENF_PARSER_PRIVATE_BITFIELD ( subtype, 4,  unsigned                );
+        SENF_PARSER_PRIVATE_BITFIELD ( subtype, 4,  unsigned                ); //<pkgdraw: hide
         //jump to fist address field
-        SENF_PARSER_SKIP_BITS        (          28                          );
+        SENF_PARSER_SKIP_BITS        (          28                          ); //<pkgdraw: hide
         SENF_PARSER_FIELD            ( destinationAddress, MACAddressParser );
         SENF_PARSER_FIELD            ( sourceAddress,      MACAddressParser );
         SENF_PARSER_FIELD            ( bssid,              MACAddressParser );
@@ -72,9 +72,9 @@ namespace senf
     {
     #   include SENF_PARSER()
         
-        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned            );
+        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned            ); //<pkgdraw: hide
         //jump to fist address field
-        SENF_PARSER_SKIP_BITS        (          28                       );
+        SENF_PARSER_SKIP_BITS        (          28                       ); //<pkgdraw: hide
         SENF_PARSER_FIELD            ( receiverAddress, MACAddressParser );
 
         //only RTS frame contains a source address field
@@ -97,14 +97,14 @@ namespace senf
     struct WLANPacket_DataFrameParser : public senf::PacketParserBase
     {
     #   include SENF_PARSER()
-        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned  );
+        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned  ); //<pkgdraw: hide
         //jump to 'toDS' and 'fromDS' bits
         //skip type, version and other flags
-        SENF_PARSER_SKIP_BITS        ( 10                      );
+        SENF_PARSER_SKIP_BITS        ( 10                      ); //<pkgdraw: hide
         //needed in data frames due to the variable address fields
-        SENF_PARSER_PRIVATE_BITFIELD ( dsBits,  2,  unsigned   );
+        SENF_PARSER_PRIVATE_BITFIELD ( dsBits,  2,  unsigned   ); //<pkgdraw: hide
         //skip duration field
-        SENF_PARSER_SKIP             ( 2, 2                    );
+        SENF_PARSER_SKIP             ( 2, 2                    ); //<pkgdraw: hide
 
         SENF_PARSER_PRIVATE_FIELD    ( addr1, MACAddressParser );
         SENF_PARSER_PRIVATE_FIELD    ( addr2, MACAddressParser );

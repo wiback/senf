@@ -107,6 +107,9 @@ def formatPacket(width, fields):
                            { 'start': 0, 'size': width, 'skip': True },
                            { 'start': 0, 'size': width, 'top': False } ])
             start = 0
+        if field.get('optional', False):
+            for area in areas:
+                area['optional'] = True
         if field.get('repeat'):
             if start > 0 and start < width:
                 areas.append({ 'start': start, 'size': width-start, 'bottom': False,
@@ -157,11 +160,25 @@ def makeTex(rows):
             elif area.get('dots', False):
                 line.append(r"\wordbox[]{1}{$\vdots$\\[1ex]}")
             else:
-                line.append(r"\bitbox%s{%s}{\strut %s}"
-                            % (sides, area['size'], texquote(area.get('name',''))))
+                name = texquote(area.get('name',''))
+                if name and area.get('optional', False):
+                    name = "[%s]" % name
+                line.append(r"\bitbox%s{%s}{\strut %s}" % (sides, area['size'], name))
         lines.append(" & ".join(line))
     return " \\\\\n".join(lines) + "\n"
 
+COMMENT_RE = re.compile(r'//.*?$|/\*.*?\*/|"(?:\\.|[^\\"])*"', re.S | re.M)
+
+def stripComments(text):
+    def replacer(match):
+        s = match.group(0)
+        if s.startswith('//<pkgdraw:') or s.startswith('//>pkgdraw:'):
+            return s
+        if s.startswith('/'):
+            return ""
+        return s
+    return COMMENT_RE.sub(replacer, text)
+    
 FIELD_TYPES = {
     'UInt8Parser' :  {'size': 8 },
     'UInt16Parser' : {'size': 16 },
@@ -173,15 +190,24 @@ FIELD_TYPES = {
     'Int24Parser' : {'size': 24 },
     'Int32Parser' : {'size': 32 },
     'Int64Parser' : {'size': 64 },
+    'UInt16LSBParser' : {'size': 16 },
+    'UInt24LSBParser' : {'size': 24 },
+    'UInt32LSBParser' : {'size': 32 },
+    'UInt64LSBParser' : {'size': 64 },
+    'Int16LSBParser' : {'size': 16 },
+    'Int24LSBParser' : {'size': 24 },
+    'Int32LSBParser' : {'size': 32 },
+    'Int64LSBParser' : {'size': 64 },
     'MACAddressParser': {'size': 48 },
     'INet4AddressParser' : {'size': 32 },
     'INet6AddressParser' : {'size': 128 },
+    'VoidPacketParser' : {'size': 0 },
     }
     
 def parse_FIELD(args, flags):
     args = [ arg.strip() for arg in args.split(',') ]
     if len(args) != 2:
-        sys.stderr.write("Failed to parse FIELD: %s" % args)
+        sys.stderr.write("Failed to parse FIELD: %s\n" % args)
         return None
     field = dict(FIELD_TYPES.get(args[1].split(':')[-1], {}))
     field['name'] = args[0]
@@ -196,12 +222,12 @@ def parse_FIELD_RO(args, flags):
 def parse_BITFIELD(args, flags):
     args = [ arg.strip() for arg in args.split(',') ]
     if len(args) != 3:
-        sys.stderr.write("Failed to parse BITFIELD: %s" % args)
+        sys.stderr.write("Failed to parse BITFIELD: %s\n" % args)
         return None
     try:
         size = int(args[1])
     except ValueError:
-        sys.stderr.write("Failed to parse BITFIELD: %s" % args)
+        sys.stderr.write("Failed to parse BITFIELD: %s\n" % args)
         return None
     return { 'size' : size, 'name' : args[0] }
 
@@ -216,7 +242,7 @@ def parse_SKIP(args, flags):
     try:
         bytes = int(args.strip())
     except ValueError:
-        sys.stderr.write("Failed to parse SKIP: %s" % args)
+        sys.stderr.write("Failed to parse SKIP: %s\n" % args)
         return None
     return { 'size': 8*bytes, 'name': '' }
 
@@ -224,14 +250,14 @@ def parse_SKIP_BITS(args, flags):
     try:
         bits = int(args.strip())
     except ValueError:
-        sys.stderr.write("Failed to parse SKIP_BITS: %s" % args)
+        sys.stderr.write("Failed to parse SKIP_BITS: %s\n" % args)
         return None
     return { 'size': bits, 'name': '' }
 
 def parse_VECTOR(args, flags):
     args = [ arg.strip() for arg in args.split(',') ]
     if len(args) < 3:
-        sys.stderr.write("Failed to aprse VECTOR: %s" % args)
+        sys.stderr.write("Failed to aprse VECTOR: %s\n" % args)
         return None
     field = dict(FIELD_TYPES.get(args[-1].split(':')[-1], {}))
     field['name'] = args[0]
@@ -241,8 +267,69 @@ def parse_VECTOR(args, flags):
 def parse_LIST(args, flags):
     return parse_VECTOR(args, flags)
 
+VARIANT_FIELD_RE_STR = r"""
+    \(\s*(?:
+        ([a-zA-Z0-9_:]+) |
+        id\(\s*
+            [a-zA-Z0-9_]+\s*,\s*
+            (?:
+                ([a-zA-Z0-9_:]+) |
+                key\(\s*[^,]*,\s*([a-zA-Z0-9_:]+)\s*\)
+            )\s*\) |
+        ids\(\s*
+            [a-zA-Z0-9_]+\s*,\s*
+            [a-zA-Z0-9_]+\s*,\s*
+            [a-zA-Z0-9_]+\s*,\s*
+            (?:
+                ([a-zA-Z0-9_:]+) |
+                key\(\s*[^,]*,\s*([a-zA-Z0-9_:]+)\s*\)
+            )\s*\) |
+        novalue\(\s*
+            [a-zA-Z0-9_]+\s*,\s*
+            (?:
+                ([a-zA-Z0-9_:]+) |
+                key\(\s*[^,]*,\s*([a-zA-Z0-9_:]+)\s*\)
+            )\s*\)
+    )\s*\)
+"""
+
+VARIANT_FIELD_RE = re.compile(VARIANT_FIELD_RE_STR, re.X)
+VARIANT_FIELDS_RE = re.compile(",\s*((?:%s\s*)+)$" % VARIANT_FIELD_RE_STR, re.X)
+
 def parse_VARIANT(args, flags):
-    return { 'name': args.split(',',1)[0].strip() }
+    name = args.split(',',1)[0].strip()
+    fields_match = VARIANT_FIELDS_RE.search(args)
+    if not fields_match:
+        return { 'name': name }
+    fields_str = fields_match.group(1)
+    optional = False
+    minsize = None
+    maxsize = None
+    for field_match in VARIANT_FIELD_RE.finditer(fields_str):
+        parser = ([ group for group in field_match.groups() if group ] + [ None ])[0]
+        field = dict(FIELD_TYPES.get(parser.split(':')[-1], {}))
+        if field.has_key('minsize'):
+            if minsize is None or field['minsize'] < minsize:
+                minsize = field['minsize']
+            if maxsize is None or field['maxsize'] > maxsize:
+                maxsize = field['maxsize']
+        elif field.has_key('size'):
+            if field['size'] == 0:
+                optional = True
+            else:
+                if minsize is None or field['size'] < minsize:
+                    minsize = field['size']
+                if maxsize is None or field['size'] > maxsize:
+                    maxsize = field['size']
+    if minsize is not None and minsize == maxsize:
+        return { 'name': name, 'size': minsize, 'optional': optional }
+    elif minsize is not None:
+        return { 'name': name, 'minsize': minsize, 'maxsize': maxsize, 'optional': optional }
+    else:
+        return { 'name': name, 'optional': optional }
+
+def parse_PRIVATE_VARIANT(args, flags):
+    return parse_VARIANT(args, flags)
 
 def parse_INIT(args, flags):
     return None
@@ -291,9 +378,9 @@ def cleanup():
 signal.signal(signal.SIGINT, cleanup)
 signal.signal(signal.SIGTERM, cleanup)
 signal.signal(signal.SIGHUP, cleanup)
-#atexit.register(cleanup)
+atexit.register(cleanup)
 
-data = scanPackets(sys.stdin.read())
+data = scanPackets(stripComments(sys.stdin.read()))
 
 texf = file(os.path.join(tmpdir, "fields.tex"),"w")
 texf.write(TEX_HEADER)
@@ -305,7 +392,7 @@ else:
     names.sort()
 
 for name in names:
-    texf.write("\\textbf{%s}\n\\bigskip\n\n" % texquote(name))
+    texf.write("\\textbf{%s}\n\\bigskip\\par\n" % texquote(name))
     texf.write(PACKET_HEADER)
     texf.write(makeTex(formatPacket(32, data[name])))
     texf.write(PACKET_FOOTER)
