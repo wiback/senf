@@ -101,4 +101,3 @@ namespace senf
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
-ss
