@@ -96,6 +96,7 @@ namespace senf {
 
         \par Fields:
             \ref EthernetPacketParser
+            \image html EthernetPacket.png
 
         \par Associated registries:
             \ref EtherTypes
@@ -151,7 +152,8 @@ namespace senf {
 
         \par Fields:
             \ref EthVLanPacketParser
-
+            \image html EthVLanPacket.png
+        
         \par Associated registries:
             \ref EtherTypes
 

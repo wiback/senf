@@ -1,5 +1,5 @@
 ## \file
-# \brief Bia2Png builder
+# \brief Dia2Png builder
 
 ## \package senfscons.Dia2Png
 # \brief Build a PNG file from a DIA file
@@ -11,7 +11,7 @@
 #
 # \par Construction Envrionment Variables:
 # <table class="senf">
-# <tr><td>\c DIACOM</td><td>dia command, defaults to \c diak</td></tr>
+# <tr><td>\c DIACOM</td><td>dia command, defaults to \c dia</td></tr>
 # <tr><td>\c DIA2PNGDPI</td><td>resolution of converted image, defaults to 115</td></tr>
 # <tr><td>\c DIA2PNGMAXWIDTH</td><td>maximum image width, defaults to 800</td></tr>
 # </table>

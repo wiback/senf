@@ -44,8 +44,8 @@ namespace senf {
     {
 #       include SENF_PARSER()        
 
-        SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser ); //<pkgdraw: hide
+        SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser ); //<pkgdraw: hide
 
         SENF_PARSER_VECTOR( fbips, fbipCount_, INet4AddressParser );
 
@@ -60,8 +60,8 @@ namespace senf {
     {
 #       include SENF_PARSER()        
 
-        SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser );
-        SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser );
+        SENF_PARSER_PRIVATE_FIELD( fbipCount_, UInt8Parser ); //<pkgdraw: hide
+        SENF_PARSER_PRIVATE_FIELD( reserved_, UInt8Parser ); //<pkgdraw: hide
 
         SENF_PARSER_VECTOR( fbips, fbipCount_, INet6AddressParser );
 
@@ -76,26 +76,28 @@ namespace senf {
 
         Parser implementing the DTCP packet according to RFC 3077
         
-        \see DTCPPacketType
+        \see DTCPHelloPacketType
      */
     struct DTCPHelloPacketParser : public PacketParserBase
     {
 #       include SENF_PARSER()
 
+        //>pkgdraw: name=vers
         SENF_PARSER_BITFIELD         ( versionNumber,        4, unsigned );  // must be 1
-        SENF_PARSER_BITFIELD         ( command,              4, unsigned );
+        SENF_PARSER_BITFIELD         ( command,              4, unsigned );  //<pkgdraw: name=cmd
 
         enum Command { JOIN=1, LEAVE=2 };
 
         SENF_PARSER_FIELD            ( interval,             UInt8Parser );  // should be 5
         SENF_PARSER_FIELD            ( sequenceNumber,       UInt16Parser );
 
-        SENF_PARSER_PRIVATE_BITFIELD ( reserved0_,           3, unsigned );
+        SENF_PARSER_PRIVATE_BITFIELD ( reserved0_,           3, unsigned );  //<pkgdraw: name=
         SENF_PARSER_BITFIELD         ( receiveCapableFeed,   1, bool );
         SENF_PARSER_BITFIELD_RO      ( ipVersion,            4, unsigned );  // 4=IPv4, 6=IPv6
 
         SENF_PARSER_FIELD            ( tunnelProtocol,       UInt8Parser ); 
         SENF_PARSER_FIELD_RO         ( fbipCount,            UInt8Parser );
+        //>pkgdraw: name=
         SENF_PARSER_PRIVATE_FIELD    ( reserved1_,           UInt8Parser );  // must be zero 
 
         // Go back to fbipCount so the variant has access to that field
@@ -126,6 +128,8 @@ namespace senf {
 
         \par Fields:
             \ref DTCPHelloPacketParser
+
+        \image html DTCPPacket.png
 
         \ingroup protocolbundle_mpegdvb
      */

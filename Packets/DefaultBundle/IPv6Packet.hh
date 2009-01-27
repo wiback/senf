@@ -98,6 +98,8 @@ namespace senf {
             Set \a length from payload size\n
             Set \a nextHeader from type of next packet if found in \ref IpTypes
 
+        \image html IPv6Packet.png
+
         \ingroup protocolbundle_default
      */
     struct IPv6PacketType

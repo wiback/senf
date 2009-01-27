@@ -71,6 +71,8 @@ namespace senf {
             Set \a length from payload size\n
             Calculate \a checksum
 
+        \image html UDPPacket.png
+
         \ingroup protocolbundle_default
      */
     struct UDPPacketType

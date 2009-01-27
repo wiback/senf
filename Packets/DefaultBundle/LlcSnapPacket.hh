@@ -77,6 +77,8 @@ namespace senf {
         \par Finalize action:
             XXXX
 
+        \image html LlcSnapPacket.png
+
         \ingroup protocolbundle_default
      */
     struct LlcSnapPacketType

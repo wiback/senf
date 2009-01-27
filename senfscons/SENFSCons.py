@@ -50,6 +50,7 @@ from SCons.Script import *
 SCONS_TOOLS = [
     "Doxygen",
     "Dia2Png",
+    "PkgDraw",
     "CopyToDir",
     "ProgramNoScan",
     "CompileCheck",

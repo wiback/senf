@@ -54,7 +54,16 @@ namespace senf {
         VectorParser makes use of a policy template argument, \a AuxPolicy, to customize the way the
         containers size is obtained. You will normally not instantiate VectorParser directly, you
         will use the \ref SENF_PARSER_VECTOR() helper macro.
+
+        Some basic vector access methods are defined as parser members. To access the complete list
+        API however you will need to instantiate a container wrapper for the vector. See \ref
+        packet_usage_fields_collection.
         
+        \see
+            \ref How to access \ref packet_usage_fields_collection \n
+            SENF_PARSER_VECTOR() macro used to define vector fields \n
+            VectorParser_Container vector container wrapper API
+
         \ingroup parsecollection
      */
     template <class ElementParser, class AuxPolicy>
@@ -275,6 +284,11 @@ namespace senf {
         \param[in] name field name
         \param[in] size name of field giving the vector size
         \param[in] elt_type vector element type
+
+        \see 
+            How to use \ref packet_usage_fields_collection \n
+            senf::VectorParser the vector parser API for vector field access
+            senf::VectorParser_Container the vector parser container API for vector field access
 
         \hideinitializer
         \ingroup packetparsermacros

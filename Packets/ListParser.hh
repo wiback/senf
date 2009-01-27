@@ -58,7 +58,16 @@ namespace senf {
         You will normally not instantiate ListParser directly, you will use the \ref
         SENF_PARSER_LIST() helper macro.
 
-        \see ExampleListPolicy
+        Some basic list access methods are defined as parser members. To access the complete list
+        API however you will need to instantiate a container wrapper for the list. See \ref
+        packet_usage_fields_collection.
+
+        \see 
+            \ref How to access \ref packet_usage_fields_collection
+            SENF_PARSER_LIST() macro used to define list fields \n
+            ListParser_Container list container wrapper API \n
+            ExampleListPolicy
+
         \ingroup parsecollection
       */
     template <class ListPolicy>
@@ -287,6 +296,11 @@ namespace senf {
         \param[in] name field name
         \param[in] size name of field giving the list size
         \param[in] elt_type list element type
+
+        \see 
+            How to use \ref packet_usage_fields_collection \n
+            senf::ListParser the list parser API for list field access
+            senf::ListParser_Container the list parser container API for list field access
 
         \hideinitializer
         \ingroup packetparsermacros

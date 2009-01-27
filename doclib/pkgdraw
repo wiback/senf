@@ -1,0 +1,321 @@
+#!/usr/bin/python
+
+import sys, re, signal, tempfile, os, os.path, shutil, atexit
+
+basedir=os.path.abspath(os.path.split(sys.argv[0])[0])
+
+charsPerBit = 1.4
+
+TEX_HEADER = r"""\documentclass{scrartcl}
+\usepackage[german]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{ae,aecompl}
+\usepackage[active]{srcltx}
+
+\usepackage{color}
+\usepackage{bytefield}
+
+\pagestyle{empty}
+
+\begin{document}
+\sffamily
+"""
+
+PACKET_HEADER=r"""\begin{bytefield}{32}
+  \bitheader{0-31} \\
+"""
+
+PACKET_FOOTER=r"""\end{bytefield}
+\bigskip
+
+"""
+
+TEX_FOOTER = r"""\end{document}
+"""
+
+def formatField(width, start, size):
+    areas = []
+    sz = width - start
+    while size > 0:
+        if sz > size:
+            areas.append({'start': start,
+                          'size': size})
+            size = 0
+        else:
+            areas.append({'start': start,
+                          'size': sz})
+            size -= sz
+        sz = width
+        start = 0
+    for i in range(len(areas)-1):
+        if areas[i]['start'] < areas[i+1]['start']+areas[i+1]['size']:
+            areas[i]['bottom'] = False
+            areas[i+1]['top'] = False
+    return areas
+
+def formatSimpleField(width, start, field):
+    areas = formatField(width, start, field['size'])
+    nameix = 0
+    namesz = 0
+    for i in range(len(areas)):
+        if areas[i]['size'] > namesz:
+            namesz = areas[i]['size']
+            nameix = i
+    areas[nameix]['name'] = field['name'][:int(areas[nameix]['size'] * charsPerBit)]
+    if len(areas) == 2 and areas[0].get('bottom',True):
+        if areas[0].get('name','') : ix = 1
+        else                       : ix = 0
+        if 6 <= int(areas[ix]['size'] * charsPerBit):
+            areas[ix]['name'] = '(cont)'
+    return areas
+    
+def formatPacket(width, fields):
+    rows = [ [] ]
+    start = 0
+    for field in fields:
+        areas = []
+        if field.get('repeat', False):
+            if start > 0 and start < width:
+                areas.append({ 'start': start, 'size': width-start, 'bottom': False,
+                               'right': False})
+            start = 0
+        if field.get('size',None):
+            areas.extend(formatSimpleField(width, start, field))
+            start = areas[-1]['start'] + areas[-1]['size']
+        elif field.get('minsize', None):
+            f = dict(field)
+            f['size'] = field['minsize']
+            areas.extend(formatSimpleField(width, start, f))
+            start = areas[-1]['start'] + areas[-1]['size']
+            if start >= width : start = 0
+            addareas = formatField(width, start, field['maxsize'] - field['minsize'])
+            for area in addareas:
+                area['filled'] = True
+            areas += addareas
+            start = areas[-1]['start'] + areas[-1]['size']
+            if start > 0 and start < width:
+                areas.append({ 'start': start, 'size': width-start, 'bottom': False,
+                               'right': False})
+            start = 0
+        else:
+            if start > 0 and start < width:
+                areas.append({ 'start': start, 'size': width-start, 'bottom': False,
+                               'right': False})
+            areas.extend([ { 'start': 0, 'size': width, 'bottom': False,
+                             'name': field['name'] },
+                           { 'start': 0, 'size': width, 'skip': True },
+                           { 'start': 0, 'size': width, 'top': False } ])
+            start = 0
+        if field.get('repeat'):
+            if start > 0 and start < width:
+                areas.append({ 'start': start, 'size': width-start, 'bottom': False,
+                               'right': False})
+            start = 0
+            areas.append({ 'start': 0, 'size': width, 'dots': True })
+            da = areas[(areas[0].get('right', True) and (0,) or (1,))[0]:-1]
+            for i in range(len(da)):
+                if da[i].get('name','') :
+                    da[i] = dict(da[i])
+                    del da[i]['name']
+            areas.extend(da)
+        if start == width : start = 0
+        
+        while areas:
+            while areas and (not(rows[-1]) or rows[-1][-1]['start'] + rows[-1][-1]['size'] < width):
+                if areas[0].get('right', True) == False:
+                    # This is a fillup field. Check, wether to draw top:
+                    if len(rows) <= 1:
+                        areas[0]['top'] = False
+                    elif rows[-2][-1].get('bottom', True):
+                        areas[0]['top'] = False
+                rows[-1].append(areas.pop(0))
+            if areas:
+                rows.append([])
+    return rows
+
+def texquote(s):
+    s = s.replace('_', '\\_')
+    return s
+
+def makeTex(rows):
+    lines = []
+    for row in rows:
+        line = []
+        for area in row:
+            sides=""
+            if area.get('left',   True) : sides += "l"
+            if area.get('right',  True) : sides += "r"
+            if area.get('top',    True) : sides += "t"
+            if area.get('bottom', True) : sides += "b"
+            if sides == "lrtb" : sides = ""
+            else               : sides = "[%s]" % sides
+            if area.get('filled', False):
+                line.append(r"\bitbox%s{%s}{\color[gray]{0.7}\rule{\width}{\height}}" % (sides, area['size']))
+            elif area.get('skip', False):
+                line.append(r"\skippedwords")
+            elif area.get('dots', False):
+                line.append(r"\wordbox[]{1}{$\vdots$\\[1ex]}")
+            else:
+                line.append(r"\bitbox%s{%s}{\strut %s}"
+                            % (sides, area['size'], texquote(area.get('name',''))))
+        lines.append(" & ".join(line))
+    return " \\\\\n".join(lines) + "\n"
+
+FIELD_TYPES = {
+    'UInt8Parser' :  {'size': 8 },
+    'UInt16Parser' : {'size': 16 },
+    'UInt24Parser' : {'size': 24 },
+    'UInt32Parser' : {'size': 32 },
+    'UInt64Parser' : {'size': 64 },
+    'Int8Parser' : {'size': 8 },
+    'Int16Parser' : {'size': 16 },
+    'Int24Parser' : {'size': 24 },
+    'Int32Parser' : {'size': 32 },
+    'Int64Parser' : {'size': 64 },
+    'MACAddressParser': {'size': 48 },
+    'INet4AddressParser' : {'size': 32 },
+    'INet6AddressParser' : {'size': 128 },
+    }
+    
+def parse_FIELD(args, flags):
+    args = [ arg.strip() for arg in args.split(',') ]
+    if len(args) != 2:
+        sys.stderr.write("Failed to parse FIELD: %s" % args)
+        return None
+    field = dict(FIELD_TYPES.get(args[1].split(':')[-1], {}))
+    field['name'] = args[0]
+    return field
+
+def parse_PRIVATE_FIELD(args, flags):
+    return parse_FIELD(args, flags)
+
+def parse_FIELD_RO(args, flags):
+    return parse_FIELD(args, flags)
+
+def parse_BITFIELD(args, flags):
+    args = [ arg.strip() for arg in args.split(',') ]
+    if len(args) != 3:
+        sys.stderr.write("Failed to parse BITFIELD: %s" % args)
+        return None
+    try:
+        size = int(args[1])
+    except ValueError:
+        sys.stderr.write("Failed to parse BITFIELD: %s" % args)
+        return None
+    return { 'size' : size, 'name' : args[0] }
+
+def parse_PRIVATE_BITFIELD(args, flags):
+    return parse_BITFIELD(args, flags)
+
+def parse_BITFIELD_RO(args, flags):
+    return parse_BITFIELD(args, flags)
+
+def parse_SKIP(args, flags):
+    args = args.split(',')[0]
+    try:
+        bytes = int(args.strip())
+    except ValueError:
+        sys.stderr.write("Failed to parse SKIP: %s" % args)
+        return None
+    return { 'size': 8*bytes, 'name': '' }
+
+def parse_SKIP_BITS(args, flags):
+    try:
+        bits = int(args.strip())
+    except ValueError:
+        sys.stderr.write("Failed to parse SKIP_BITS: %s" % args)
+        return None
+    return { 'size': bits, 'name': '' }
+
+def parse_VECTOR(args, flags):
+    args = [ arg.strip() for arg in args.split(',') ]
+    if len(args) < 3:
+        sys.stderr.write("Failed to aprse VECTOR: %s" % args)
+        return None
+    field = dict(FIELD_TYPES.get(args[-1].split(':')[-1], {}))
+    field['name'] = args[0]
+    field['repeat'] = True
+    return field
+
+def parse_LIST(args, flags):
+    return parse_VECTOR(args, flags)
+
+def parse_VARIANT(args, flags):
+    return { 'name': args.split(',',1)[0].strip() }
+
+def parse_INIT(args, flags):
+    return None
+
+PARSER_START_RE = re.compile(r"#\s*include\s+SENF_(FIXED_)?PARSER\s*\(\s*\)")
+PARSER_END_RE = re.compile(r"SENF_PARSER_FINALIZE\s*\(([^)]*)\)\s*;")
+PARSER_FIELD_RE = re.compile(r"(?://>pkgdraw:(.*)$\s*)?SENF_PARSER_([A-Z_]+)\s*\(([^;]*)\)\s*;(?:\s*//<pkgdraw:(.*)$)?", re.M)
+
+def scanPackets(data):
+    packets = {}
+    end = 0
+    while True:
+        start =  PARSER_START_RE.search(data, end)
+        if not start: return packets
+        start = start.end(0)
+        end = PARSER_END_RE.search(data, start)
+        if not end: return packets
+        name=end.group(1).strip()
+        end = end.start(0)
+        packets[name] = scanFields(data[start:end])
+
+def scanFields(data):
+    fields = []
+    for match in PARSER_FIELD_RE.finditer(data):
+        tp = match.group(2)
+        flags = dict([ ([ arg.strip() for arg in flag.strip().split('=',1) ]+[True])[:2]
+                       for flag in ((match.group(1) or '')+(match.group(4) or '')).split(',') ])
+        if flags.has_key('hide') : continue
+        parser = globals().get("parse_%s" % tp, None)
+        if parser:
+            field = parser(match.group(3).strip(), flags)
+            if field:
+                if flags.has_key('name') : field['name'] = flags['name']
+                field['name'] = field['name'].strip('_')
+                fields.append(field)
+        else:
+            sys.stderr.write("Unknown parser type: %s\n" % tp)
+    return fields
+
+tmpdir = tempfile.mkdtemp(prefix="pkgdraw_")
+
+def cleanup():
+    global tmpdir
+    shutil.rmtree(tmpdir)
+
+signal.signal(signal.SIGINT, cleanup)
+signal.signal(signal.SIGTERM, cleanup)
+signal.signal(signal.SIGHUP, cleanup)
+#atexit.register(cleanup)
+
+data = scanPackets(sys.stdin.read())
+
+texf = file(os.path.join(tmpdir, "fields.tex"),"w")
+texf.write(TEX_HEADER)
+
+if len(sys.argv) > 1:
+    names = sys.argv[1:]
+else:
+    names = data.keys()
+    names.sort()
+
+for name in names:
+    texf.write("\\textbf{%s}\n\\bigskip\n\n" % texquote(name))
+    texf.write(PACKET_HEADER)
+    texf.write(makeTex(formatPacket(32, data[name])))
+    texf.write(PACKET_FOOTER)
+    
+texf.write(TEX_FOOTER)
+texf.close()
+
+if os.system("cd %s; %s/textogif -png -dpi 80 -res 0.25 fields >pkgdraw.log 2>&1"
+             % (tmpdir, basedir)) != 0:
+    sys.stderr.write("Conversion failed. See %s\n" % tmpdir)
+    os._exit(1)
+
+sys.stdout.write(file(os.path.join(tmpdir, "fields.png")).read())

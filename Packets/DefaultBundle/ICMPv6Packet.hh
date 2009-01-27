@@ -46,7 +46,21 @@ namespace senf
         // ICMP type registry
         typedef boost::uint16_t key_t;
     };
-    
+
+    /** \brief ICMP Packet for IPv6
+
+        \par Packet type (typedef):
+            \ref ICMPv6Packet
+
+        \par Fields:
+            \ref ICMPv6PacketParser
+            \image html ICMPv6Packet.png
+        
+        \par Associated registries:
+            \ref ICMPTypes
+
+        \ingroup protocolbundle_default
+     */
     struct ICMPv6PacketType 
         : public PacketTypeBase,
           public PacketTypeMixin<ICMPv6PacketType, ICMPTypes>
@@ -76,3 +90,15 @@ namespace senf
 }
 
 #endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:
+ss

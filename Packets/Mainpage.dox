@@ -587,8 +587,8 @@
     invalidate the wrapper if it changes the packets size.
 
     \see 
-        senf::VectorParser_Container Interface of the vector parser container wrapper \n
-        senf::ListParser_Container Interface of the list parser container wrapper
+        senf::VectorParser / senf::VectorParser_Container Interface of the vector parser \n
+        senf::ListParser / senf::ListParser_Container Interface of the list parser
     
 
     \subsubsection packet_usage_collection_variant The Variant Parser

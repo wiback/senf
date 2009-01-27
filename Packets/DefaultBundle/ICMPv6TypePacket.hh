@@ -43,6 +43,17 @@ namespace senf {
         SENF_PARSER_FINALIZE ( ICMPv6EchoRequestParser );
     };
     
+    /** \brief ICMPv6 Echo Request
+
+        \par Packet type (typedef):
+            \ref ICMPv6EchoRequest
+
+        \par Fields:
+            \ref ICMPv6EchoRequestParser
+            \image html ICMPv6EchoRequest.png
+
+        \ingroup protocolbundle_default
+     */
     struct ICMPv6EchoRequestType
         : public PacketTypeBase,
           public PacketTypeMixin<ICMPv6EchoRequestType>
@@ -70,6 +81,17 @@ namespace senf {
         SENF_PARSER_FINALIZE ( ICMPv6EchoReplyParser );
     };
     
+    /** \brief ICMPv6 Echo Reply
+
+        \par Packet type (typedef):
+            \ref ICMPv6EchoReply
+
+        \par Fields:
+            \ref ICMPv6EchoReplyParser
+            \image html ICMPv6EchoReply.png
+
+        \ingroup protocolbundle_default
+     */
     struct ICMPv6EchoReplyType
         : public PacketTypeBase,
           public PacketTypeMixin<ICMPv6EchoReplyType>
@@ -114,6 +136,17 @@ namespace senf {
         SENF_PARSER_FINALIZE ( ICMPv6ErrDestUnreachableParser );
     };
     
+    /** \brief ICMPv6 Destination unreachable
+
+        \par Packet type (typedef):
+            \ref ICMPv6ErrDestUnreachable
+
+        \par Fields:
+            \ref ICMPv6ErrDestUnreachableParser
+            \image html ICMPv6ErrDestUnreachable.png
+ 
+        \ingroup protocolbundle_default
+    */
     struct ICMPv6ErrDestUnreachableType
         : public PacketTypeBase,
           public PacketTypeMixin<ICMPv6ErrDestUnreachableType>
@@ -146,6 +179,17 @@ namespace senf {
         SENF_PARSER_FINALIZE ( ICMPv6ErrTooBigParser );
     };
     
+    /** \brief ICMPv6 Packet to big
+
+        \par Packet type (typedef):
+            \ref ICMPv6ErrTooBig
+
+        \par Fields:
+            \ref ICMPv6ErrTooBigParser
+            \image html ICMPv6ErrTooBig.png
+
+        \ingroup protocolbundle_default
+     */
     struct ICMPv6ErrTooBigType
         : public PacketTypeBase,
           public PacketTypeMixin<ICMPv6ErrTooBigType>
@@ -179,6 +223,17 @@ namespace senf {
         SENF_PARSER_FINALIZE ( ICMPv6ErrTimeExceededParser );
     };
     
+    /** \brief ICMPv6 Time exceeded
+
+        \par Packet type (typedef):
+            \ref ICMPv6ErrTimeExceeded
+
+        \par Fields:
+            \ref ICMPv6ErrTimeExceededParser
+            \image html ICMPv6ErrTimeExceeded.png
+
+        \ingroup protocolbundle_default
+     */
     struct ICMPv6ErrTimeExceededType
         : public PacketTypeBase,
           public PacketTypeMixin<ICMPv6ErrTimeExceededType>
@@ -212,6 +267,17 @@ namespace senf {
         SENF_PARSER_FINALIZE ( ICMPv6ErrParamProblemParser );
     };
     
+    /** \brief ICMPv6 Parameter problem
+
+        \par Packet type (typedef):
+            \ref ICMPv6ErrParamProblem
+
+        \par Fields:
+            \ref ICMPv6ErrParamProblemParser
+            \image html ICMPv6ErrParamProblem.png
+
+        \ingroup protocolbundle_default
+     */
     struct ICMPv6ErrParamProblemType
         : public PacketTypeBase,
           public PacketTypeMixin<ICMPv6ErrParamProblemType>
@@ -260,6 +326,17 @@ namespace senf {
         }
     };
     
+    /** \brief MLDv2 Listener query
+
+        \par Packet type (typedef):
+	    \ref MLDv2ListenerQuery
+
+        \par Fields:
+            \ref MLDv2ListenerQueryParser
+            \image html MLDv2ListenerQuery.png
+
+        \ingroup protocolbundle_default
+     */
     struct MLDv2ListenerQueryType
         : public PacketTypeBase,
           public PacketTypeMixin<MLDv2ListenerQueryType>
@@ -308,6 +385,18 @@ namespace senf {
         }
     };
     
+    /** \brief MLDv2 Listener report
+
+        \par Packet type (typedef):
+	    \ref MLDv2ListenerReport
+
+        \par Fields:
+            \ref MLDv2ListenerReportParser
+            \image html MLDv2ListenerReport.png
+            \image html MLDv2AddressRecord.png
+
+        \ingroup protocolbundle_default
+     */
     struct MLDv2ListenerReportType
         : public PacketTypeBase,
           public PacketTypeMixin<MLDv2ListenerReportType>
@@ -325,3 +414,14 @@ namespace senf {
 }
 
 #endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

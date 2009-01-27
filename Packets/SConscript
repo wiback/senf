@@ -11,7 +11,37 @@ SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png("structure.dia"),
-    env.Dia2Png("MPEGDVBBundle/TLV.dia")
+    env.Dia2Png("MPEGDVBBundle/TLV.dia"),
+    env.PkgDraw("MPEGDVBBundle/DTCPPacket.hh"),
+    env.PkgDraw("DefaultBundle/EthernetPacket.hh",
+                PKGDRAWPACKETS = "EthernetPacketParser"),
+    env.PkgDraw("DefaultBundle/EthVLanPacket.png", "DefaultBundle/EthernetPacket.hh",
+                PKGDRAWPACKETS = "EthVLanPacketParser"),
+    env.PkgDraw("DefaultBundle/IPv4Packet.hh"),
+    env.PkgDraw("DefaultBundle/IPv6Packet.hh"),
+    env.PkgDraw("DefaultBundle/LlcSnapPacket.hh"),
+    env.PkgDraw("DefaultBundle/UDPPacket.hh"),
+    env.PkgDraw("DefaultBundle/IPv6Extensions_Fragment.png", "DefaultBundle/IPv6Extensions.hh",
+                PKGDRAWPACKETS = "IPv6PacketParserExtension_Fragment"),
+    env.PkgDraw("DefaultBundle/ICMPv6Packet.hh"),
+    env.PkgDraw("DefaultBundle/ICMPv6EchoRequest.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "ICMPv6EchoRequestParser"),
+    env.PkgDraw("DefaultBundle/ICMPv6EchoReply.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "ICMPv6EchoReplyParser"),
+    env.PkgDraw("DefaultBundle/ICMPv6ErrDestUnreachable.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "ICMPv6ErrDestUnreachableParser"),
+    env.PkgDraw("DefaultBundle/ICMPv6ErrTooBig.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "ICMPv6ErrTooBigParser"),
+    env.PkgDraw("DefaultBundle/ICMPv6ErrTimeExceeded.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "ICMPv6ErrTimeExceededParser"),
+    env.PkgDraw("DefaultBundle/ICMPv6ErrParamProblem.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "ICMPv6ErrParamProblemParser"),
+    env.PkgDraw("DefaultBundle/MLDv2ListenerQuery.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "MLDv2ListenerQueryParser"),
+    env.PkgDraw("DefaultBundle/MLDv2ListenerReport.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "MLDv2ListenerReportParser"),
+    env.PkgDraw("DefaultBundle/MLDv2AddressRecord.png", "DefaultBundle/ICMPv6TypePacket.hh",
+                PKGDRAWPACKETS = "MLDv2AddressRecordParser"),
 ])
 SENFSCons.InstallIncludeFiles(env, includes)
 

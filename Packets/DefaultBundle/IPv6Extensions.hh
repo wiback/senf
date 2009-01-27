@@ -71,6 +71,8 @@ namespace senf {
         \par Finalize action:
             Set \a nextHeader from type of next packet if found in \ref IpTypes
 
+        \image html IPv6Extensions_Fragment.png
+
         \ingroup protocolbundle_default
      */
     struct IPv6ExtensionType_Fragment

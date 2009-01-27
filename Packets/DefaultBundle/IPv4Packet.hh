@@ -158,6 +158,8 @@ namespace senf {
             Set \a protocol from type of next packet if found in \ref IpTypes\n
             Calculate \a checksum
 
+        \image html IPv4Packet.png
+
         \ingroup protocolbundle_default
      */
     struct IPv4PacketType
