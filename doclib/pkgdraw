@@ -386,7 +386,11 @@ def scanFields(data):
                         del field['size']
                     else:
                         field['size'] = int(flags['size'])
-                fields.append(field)
+                if not field['name'] and fields and not fields[-1]['name'] \
+                       and field.has_key('size') and fields[-1].has_key('size'):
+                    fields[-1]['size'] += field['size']
+                else:
+                    fields.append(field)
         else:
             sys.stderr.write("Unknown parser type: %s\n" % tp)
     return fields
