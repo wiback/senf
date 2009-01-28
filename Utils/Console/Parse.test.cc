@@ -227,28 +227,28 @@ BOOST_AUTO_UNIT_TEST(commandParser)
         
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
-        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_REQUIRE_EQUAL( args->size(), 1 );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[1] );
         
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
-        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_REQUIRE_EQUAL( args->size(), 1 );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[2] );
         
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
-        BOOST_REQUIRE_EQUAL( args->size(), 8u );
+        BOOST_REQUIRE_EQUAL( args->size(), 8 );
         for (unsigned i (0); i<8; ++i)
             BOOST_CHECK_EQUAL( args->begin()[i].value(), tokens[4+i] );
         
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
-        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_REQUIRE_EQUAL( args->size(), 1 );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[13] );
         
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
-        BOOST_REQUIRE_EQUAL( args->size(), 1u );
+        BOOST_REQUIRE_EQUAL( args->size(), 1 );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[14] );
         
         ++ args;

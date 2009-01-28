@@ -65,10 +65,10 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
     mihPacket->dst_mihfId().setString( std::string(200, 'x'));
     mihPacket.finalizeThis();
     
-    BOOST_CHECK_EQUAL( mihPacket.size(), 8 + 17 + 203);
+    BOOST_CHECK_EQUAL( mihPacket.size(), unsigned(8 + 17 + 203));
     BOOST_CHECK_EQUAL( mihPacket->payloadLength(), 17 + 203);
-    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().length(), 200);
-    BOOST_CHECK_EQUAL( senf::bytes(mihPacket->dst_mihfId()), 203);
+    BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().length(), 200u);
+    BOOST_CHECK_EQUAL( senf::bytes(mihPacket->dst_mihfId()), 203u);
 }
 
 
@@ -205,12 +205,12 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_parse)
     
     GenericTLVPacket::Parser tlv1 = *tlv_list_container.begin();
     BOOST_CHECK_EQUAL( tlv1.type(), 0x42);
-    BOOST_CHECK_EQUAL( tlv1.length(), 0x0a);
+    BOOST_CHECK_EQUAL( tlv1.length(), 0x0au);
     BOOST_CHECK_EQUAL( tlv1.value().size(), 0x0a);
     
     GenericTLVPacket::Parser tlv2 = *boost::next(tlv_list_container.begin());
     BOOST_CHECK_EQUAL( tlv2.type(), 0x43);
-    BOOST_CHECK_EQUAL( tlv2.length(), 0x05);
+    BOOST_CHECK_EQUAL( tlv2.length(), 0x05u);
     BOOST_CHECK_EQUAL( tlv2.value().size(), 0x05);            
 }
 

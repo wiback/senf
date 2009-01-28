@@ -71,6 +71,7 @@ def InitOpts():
     opts.Add('CXX', 'C++ compiler to use', 'g++')
     opts.Add('EXTRA_DEFINES', 'Additional preprocessor defines', '')
     opts.Add('EXTRA_LIBS', 'Additional libraries to link against', '')
+    opts.Add('EXTRA_CCFLAGS', 'Additional compilation parameters', '')
     opts.Add(SCons.Options.BoolOption('final','Enable optimization',0))
     opts.Add(SCons.Options.BoolOption('debug','Enable debug symbols in binaries',0))
     opts.Add(SCons.Options.BoolOption('profile','Enable profiling',0))
@@ -284,6 +285,7 @@ def MakeEnvironment():
 
     env.Append(CPPDEFINES = [ '$EXTRA_DEFINES' ],
                LIBS = [ '$EXTRA_LIBS' ],
+               CXXFLAGS = [ '$EXTRA_CCFLAGS' ],
                ALLOBJECTS = [])
 
     return env
