@@ -33,7 +33,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(main)
+BOOST_AUTO_UNIT_TEST(testMain)
 {
     BOOST_CHECK( true );
 }
