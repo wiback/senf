@@ -40,9 +40,10 @@ namespace senf
     {
     #   include SENF_FIXED_PARSER()
         
-        SENF_PARSER_PRIVATE_BITFIELD ( subtype, 4,  unsigned                ); //<pkgdraw: hide
+        SENF_PARSER_PRIVATE_BITFIELD ( subtype, 4,  unsigned                );
+        SENF_PARSER_SKIP_BITS        (          4                           ); //skip type and version
         //jump to fist address field
-        SENF_PARSER_SKIP_BITS        (          28                          ); //<pkgdraw: hide
+        SENF_PARSER_SKIP             ( 3                                    );
         SENF_PARSER_FIELD            ( destinationAddress, MACAddressParser );
         SENF_PARSER_FIELD            ( sourceAddress,      MACAddressParser );
         SENF_PARSER_FIELD            ( bssid,              MACAddressParser );
@@ -72,9 +73,10 @@ namespace senf
     {
     #   include SENF_PARSER()
         
-        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned            ); //<pkgdraw: hide
+        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned            );
+        SENF_PARSER_SKIP_BITS        (           4                       ); //skip type and version
         //jump to fist address field
-        SENF_PARSER_SKIP_BITS        (          28                       ); //<pkgdraw: hide
+        SENF_PARSER_SKIP             ( 3, 3                              );
         SENF_PARSER_FIELD            ( receiverAddress, MACAddressParser );
 
         //only RTS frame contains a source address field
@@ -97,14 +99,16 @@ namespace senf
     struct WLANPacket_DataFrameParser : public senf::PacketParserBase
     {
     #   include SENF_PARSER()
-        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned  ); //<pkgdraw: hide
+        SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned  );
         //jump to 'toDS' and 'fromDS' bits
-        //skip type, version and other flags
-        SENF_PARSER_SKIP_BITS        ( 10                      ); //<pkgdraw: hide
+        //skip type and version
+        SENF_PARSER_SKIP_BITS        ( 4                       );
+        //skip other flags
+        SENF_PARSER_SKIP_BITS        ( 6                       );
         //needed in data frames due to the variable address fields
-        SENF_PARSER_PRIVATE_BITFIELD ( dsBits,  2,  unsigned   ); //<pkgdraw: hide
+        SENF_PARSER_PRIVATE_BITFIELD ( dsBits,  2,  unsigned   );
         //skip duration field
-        SENF_PARSER_SKIP             ( 2, 2                    ); //<pkgdraw: hide
+        SENF_PARSER_SKIP             ( 2, 0                    );
 
         SENF_PARSER_PRIVATE_FIELD    ( addr1, MACAddressParser );
         SENF_PARSER_PRIVATE_FIELD    ( addr2, MACAddressParser );
@@ -202,7 +206,6 @@ namespace senf
 
         \par Fields:
             \ref WLANPacketParser
-	    \image html WLANPacket.png
 
         \ingroup protocolbundle_80211
      */
