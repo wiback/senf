@@ -110,6 +110,10 @@ def formatPacket(width, fields):
         if field.get('optional', False):
             for area in areas:
                 area['optional'] = True
+            if start > 0 and start < width:
+                areas.append({ 'start': start, 'size': width-start, 'bottom': False,
+                               'right': False})
+            start = 0
         if field.get('repeat'):
             if start > 0 and start < width:
                 areas.append({ 'start': start, 'size': width-start, 'bottom': False,
@@ -130,7 +134,7 @@ def formatPacket(width, fields):
                     # This is a fillup field. Check, wether to draw top:
                     if len(rows) <= 1:
                         areas[0]['top'] = False
-                    elif rows[-2][-1].get('bottom', True):
+                    elif rows[-2][-1].get('bottom', True) or not rows[-2][-1].get('right', True):
                         areas[0]['top'] = False
                 rows[-1].append(areas.pop(0))
             if areas:
@@ -173,11 +177,23 @@ def stripComments(text):
     def replacer(match):
         s = match.group(0)
         if s.startswith('//<pkgdraw:') or s.startswith('//>pkgdraw:'):
-            return s
+            return "@@" + s[2:]
         if s.startswith('/'):
             return ""
         return s
     return COMMENT_RE.sub(replacer, text)
+
+SENF_INCLUDE_RE = re.compile(r"#\s*include\s*SENF_")
+
+def quoteMacros(text):
+    return SENF_INCLUDE_RE.sub("PKGDRAW_", text).replace("SENF_PARSER_","PKGDRAW_PARSER_")
+
+def cppExpand(text, cppopts, dir):
+    tmpf = tempfile.NamedTemporaryFile(dir=dir)
+    tmpf.write(text)
+    tmpf.flush()
+    cmd = "gcc %s -E -o - -x c++-header %s" % (" ".join(cppopts), tmpf.name)
+    return os.popen(cmd).read()
     
 FIELD_TYPES = {
     'UInt8Parser' :  {'size': 8 },
@@ -334,9 +350,9 @@ def parse_PRIVATE_VARIANT(args, flags):
 def parse_INIT(args, flags):
     return None
 
-PARSER_START_RE = re.compile(r"#\s*include\s+SENF_(FIXED_)?PARSER\s*\(\s*\)")
-PARSER_END_RE = re.compile(r"SENF_PARSER_FINALIZE\s*\(([^)]*)\)\s*;")
-PARSER_FIELD_RE = re.compile(r"(?://>pkgdraw:(.*)$\s*)?SENF_PARSER_([A-Z_]+)\s*\(([^;]*)\)\s*;(?:\s*//<pkgdraw:(.*)$)?", re.M)
+PARSER_START_RE = re.compile(r"PKGDRAW_(FIXED_)?PARSER\s*\(\s*\)")
+PARSER_END_RE = re.compile(r"PKGDRAW_PARSER_FINALIZE\s*\(([^)]*)\)\s*;")
+PARSER_FIELD_RE = re.compile(r"(?:@@>pkgdraw:(.*)$\s*)?PKGDRAW_PARSER_([A-Z_]+)\s*\(([^;]*)\)\s*;(?:\s*@@<pkgdraw:(.*)$)?", re.M)
 
 def scanPackets(data):
     packets = {}
@@ -364,6 +380,12 @@ def scanFields(data):
             if field:
                 if flags.has_key('name') : field['name'] = flags['name']
                 field['name'] = field['name'].strip('_')
+                if flags.has_key('size'):
+                    if '-' in flags['size']:
+                        field['minsize'], field['maxsize'] = map(int, flags['size'].split('-',1))
+                        del field['size']
+                    else:
+                        field['size'] = int(flags['size'])
                 fields.append(field)
         else:
             sys.stderr.write("Unknown parser type: %s\n" % tp)
@@ -380,14 +402,27 @@ signal.signal(signal.SIGTERM, cleanup)
 signal.signal(signal.SIGHUP, cleanup)
 atexit.register(cleanup)
 
-data = scanPackets(stripComments(sys.stdin.read()))
+args = sys.argv[1:]
+names = []
+gccopts = []
+
+if len(args)<2 or args[0] == '--' or args[1] == '--':
+    sys.stderr.write("Usage: %s <header> <outfile> [<parser name>...] [ -- <cpp options>...]\n")
+    sys.exit(1)
+
+source = args.pop(0)
+target = args.pop(0)
+
+while args and args[0] != '--' : names.append(args.pop(0))
+if args : gccopts = args[1:]
+
+data = scanPackets(cppExpand(quoteMacros(stripComments(file(source).read())),
+                             gccopts, os.path.dirname(source)))
 
 texf = file(os.path.join(tmpdir, "fields.tex"),"w")
 texf.write(TEX_HEADER)
 
-if len(sys.argv) > 1:
-    names = sys.argv[1:]
-else:
+if not names:
     names = data.keys()
     names.sort()
 
@@ -405,4 +440,4 @@ if os.system("cd %s; %s/textogif -png -dpi 80 -res 0.25 fields >pkgdraw.log 2>&1
     sys.stderr.write("Conversion failed. See %s\n" % tmpdir)
     os._exit(1)
 
-sys.stdout.write(file(os.path.join(tmpdir, "fields.png")).read())
+file(target,"w").write(file(os.path.join(tmpdir, "fields.png")).read())

@@ -22,12 +22,13 @@ import SCons.Builder, SCons.Action
 PkgDraw = SCons.Builder.Builder(
     suffix = ".png",
     src_suffix = ".hh",
-    action = SCons.Action.Action("$PKGDRAWCOM $PKGDRAWPACKETS <$SOURCE >$TARGET"),
+    action = SCons.Action.Action("$PKGDRAWCOM"),
     single_source = 1)
 
 def generate(env):
     env['BUILDERS']['PkgDraw'] = PkgDraw
-    env['PKGDRAWCOM'] = env.Dir('#').abspath + "/doclib/pkgdraw"
+    env['PKGDRAW'] = "doclib/pkgdraw"
+    env['PKGDRAWCOM'] = "$PKGDRAW $SOURCE $TARGET $PKGDRAWPACKETS -- $CPPFLAGS $_CPPINCFLAGS $_CPPDEFFLAGS"
     env['PKGDRAWPACKETS'] = ''
 
 def exists(env):

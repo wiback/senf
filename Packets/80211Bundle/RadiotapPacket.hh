@@ -143,7 +143,7 @@ namespace senf
         #define OPTIONAL_FIELD(name, parser) SENF_PARSER_VARIANT \
             ( name##_, name##Present, \
               ( novalue( disable_##name, VoidPacketParser )) \
-              (      id( name,           parser           )) );
+              (      id( name,           parser           )) )
 
         /* macro to create padding parser */
         #define SKIP_OPTIONAL_PADDING(cond, parser, size) \
@@ -152,10 +152,10 @@ namespace senf
                             senf::bytes(parser##_())) % size) % size : 0) , 0  );
 
         OPTIONAL_FIELD        ( tsft,                     UInt64LSBParser                     );
-        OPTIONAL_FIELD        ( flags,                    RadiotapPacketParser_Flags          );
+        OPTIONAL_FIELD        ( flags,                    RadiotapPacketParser_Flags          ); //<pkgdraw: size=8
         OPTIONAL_FIELD        ( rate,                     UInt8Parser                         );
         SKIP_OPTIONAL_PADDING ( channelOptionsPresent(),  rate, 2                             );
-        OPTIONAL_FIELD        ( channelOptions,           RadiotapPacketParser_ChannelOptions );
+        OPTIONAL_FIELD        ( channelOptions,           RadiotapPacketParser_ChannelOptions ); //<pkgdraw: size=16
         SKIP_OPTIONAL_PADDING ( fhssPresent(),            channelOptions, 2                   );
         OPTIONAL_FIELD        ( fhss,                     UInt16LSBParser                     );
         OPTIONAL_FIELD        ( dbmAntennaSignal,         Int8Parser                          );
@@ -187,6 +187,7 @@ namespace senf
 
         \par Fields:
             \ref RadiotapPacketParser
+	    \image html RadiotapPacket.png
         
         \see http://www.radiotap.org/
         
