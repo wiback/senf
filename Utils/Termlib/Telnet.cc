@@ -350,7 +350,8 @@ prefix_ void senf::term::BaseTelnetProtocol::writeHandler(int state)
         return;
     }
     sendQueue_.erase(sendQueue_.begin(), 
-                     handle_.write(std::make_pair(sendQueue_.begin(), sendQueue_.end())));
+                     handle_.write(boost::make_iterator_range(
+                                       sendQueue_.begin(), sendQueue_.end())));
     if (sendQueue_.empty())
         outputEvent_.disable();
 }

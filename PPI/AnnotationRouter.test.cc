@@ -41,6 +41,7 @@ namespace {
         int value;
         bool operator<(IntAnnotation const & other) const { return value < other.value; }
         bool operator==(IntAnnotation const & other) const { return value == other.value; }
+        IntAnnotation() {}
         IntAnnotation(int v) : value(v) {}
         IntAnnotation & operator=(int v) { value=v; return *this; }
         operator int () const { return value; }

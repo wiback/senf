@@ -97,12 +97,14 @@ namespace detail {
         static bool const Complex = boost::is_base_of<ComplexAnnotation, Annotation>::value;
         static bool const Small = (sizeof(Annotation) <= sizeof(AnnotationEntry) && ! Complex);
 
+#       if 0 // The test is difficult since it does not work with user-defined trivial constructors
 #       ifdef BOOST_HAS_TYPE_TRAITS_INTRINSICS
 
         BOOST_STATIC_ASSERT(( (boost::has_trivial_constructor<Annotation>::value 
                                && boost::has_trivial_destructor<Annotation>::value)
                               || Complex ));
 
+#       endif
 #       endif
     };
 

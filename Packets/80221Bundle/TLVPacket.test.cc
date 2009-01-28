@@ -45,7 +45,7 @@ void check_TLVPacket(GenericTLVPacket &tlvPacket, boost::uint8_t type, boost::ui
 {
     BOOST_CHECK_EQUAL( tlvPacket->type(),         type   );
     BOOST_CHECK_EQUAL( tlvPacket->length(),       length );
-    BOOST_CHECK_EQUAL( tlvPacket->value().size(), length );
+    BOOST_CHECK_EQUAL( tlvPacket->value().size(), int(length) );
     senf::PacketData::iterator dataIterator (tlvPacket->value().begin());
     for (unsigned i=0; i<length; i++) {
         BOOST_CHECK_EQUAL( *dataIterator, i );
