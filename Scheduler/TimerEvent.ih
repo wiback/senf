@@ -27,7 +27,9 @@
 #define IH_SENF_Scheduler_TimerEvent_ 1
 
 // Custom includes
+#include <boost/scoped_ptr.hpp>
 #include "../boost/intrusive/iset.hpp"
+#include "TimerSource.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -44,8 +46,7 @@ namespace detail {
     };
 
     class TimerDispatcher
-        : public detail::FdManager::Event,
-          public singleton<TimerDispatcher>
+        : public singleton<TimerDispatcher>
     {
         SENF_LOG_CLASS_AREA();
         
@@ -56,9 +57,12 @@ namespace detail {
         void add(TimerEvent & event);
         void remove(TimerEvent & event);
 
-        void unblockSignals();
-        void blockSignals();
-        
+        void enable();
+        void disable();
+
+        void prepareRun();
+        void reschedule();
+
         bool empty() const;
 
     protected:
@@ -67,20 +71,13 @@ namespace detail {
         TimerDispatcher();
         ~TimerDispatcher();
 
-        virtual void signal(int events);
-        static void sigHandler(int signal, ::siginfo_t * siginfo, void *);
-        void reschedule();
-
         typedef boost::intrusive::imultiset< TimerSetBase::value_traits<TimerEvent>,
                                              TimerSetCompare,
                                              false > TimerSet;
 
         TimerSet timers_;
 
-        int timerPipe_[2];
-        sigset_t sigSet_;
-        bool blocked_;
-        timer_t timerId_;
+        boost::scoped_ptr<TimerSource> source_;
 
         friend void senf::scheduler::restart();
         friend class singleton<TimerDispatcher>;

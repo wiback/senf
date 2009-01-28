@@ -61,10 +61,12 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
         SENF_CHECK_NO_THROW( timer.disable() );
         SENF_CHECK_NO_THROW( timer.enable() );
         BOOST_CHECK( timer.enabled() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().unblockSignals() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().enable() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().reschedule() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().blockSignals() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().prepareRun() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().disable() );
         senf::ClockService::clock_type t2 (senf::ClockService::now());
         BOOST_CHECK( called );
         BOOST_CHECK( ! timer.enabled() );
@@ -74,10 +76,12 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
         t = senf::ClockService::now();
         SENF_CHECK_NO_THROW( timer.timeout(t) );
         BOOST_CHECK( timer.enabled() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().unblockSignals() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().enable() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().reschedule() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().blockSignals() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().prepareRun() );
         SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().disable() );
         BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
         BOOST_CHECK( called );
     }

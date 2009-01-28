@@ -155,7 +155,7 @@ namespace senf
         OPTIONAL_FIELD        ( flags,                    RadiotapPacketParser_Flags          ); //<pkgdraw: size=8
         OPTIONAL_FIELD        ( rate,                     UInt8Parser                         );
         SKIP_OPTIONAL_PADDING ( channelOptionsPresent(),  rate, 2                             );
-        OPTIONAL_FIELD        ( channelOptions,           RadiotapPacketParser_ChannelOptions ); //<pkgdraw: size=16
+        OPTIONAL_FIELD        ( channelOptions,           RadiotapPacketParser_ChannelOptions ); //<pkgdraw: size=32
         SKIP_OPTIONAL_PADDING ( fhssPresent(),            channelOptions, 2                   );
         OPTIONAL_FIELD        ( fhss,                     UInt16LSBParser                     );
         OPTIONAL_FIELD        ( dbmAntennaSignal,         Int8Parser                          );

@@ -58,12 +58,12 @@ namespace {
             {
                 senf::scheduler::detail::FIFORunner::instance().startWatchdog();
                 senf::scheduler::detail::SignalDispatcher::instance().unblockSignals();
-                senf::scheduler::detail::TimerDispatcher::instance().unblockSignals();
+                senf::scheduler::detail::TimerDispatcher::instance().enable();
             }
 
         ~SchedulerScopedInit()
             {
-                senf::scheduler::detail::TimerDispatcher::instance().blockSignals();
+                senf::scheduler::detail::TimerDispatcher::instance().disable();
                 senf::scheduler::detail::SignalDispatcher::instance().blockSignals();
                 senf::scheduler::detail::FIFORunner::instance().stopWatchdog();
             }
@@ -74,13 +74,16 @@ prefix_ void senf::scheduler::process()
 {
     SchedulerScopedInit initScheduler;
     terminate_ = false;
+    detail::TimerDispatcher::instance().reschedule();
     while(! terminate_ && ! (detail::FdDispatcher::instance().empty() &&
                              detail::TimerDispatcher::instance().empty() &&
                              detail::FileDispatcher::instance().empty())) {
         detail::FdManager::instance().processOnce();
         detail::FileDispatcher::instance().prepareRun();
         detail::EventHookDispatcher::instance().prepareRun();
+        detail::TimerDispatcher::instance().prepareRun();
         detail::FIFORunner::instance().run();
+        detail::TimerDispatcher::instance().reschedule();
     }
 }
 

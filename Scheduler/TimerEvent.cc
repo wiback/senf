@@ -34,31 +34,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::scheduler::detail::TimerDispatcher::TimerDispatcher()
-    : blocked_ (true)
-{
-    if (pipe(timerPipe_) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("pipe()");
-    senf::scheduler::detail::FdManager::instance().set(timerPipe_[0], detail::FdManager::EV_READ, this);
-
-    sigemptyset(&sigSet_);
-    sigaddset(&sigSet_, SIGALRM);
-    sigprocmask(SIG_BLOCK, &sigSet_, 0);
-
-    struct sigaction act;
-    act.sa_sigaction = &sigHandler;
-    act.sa_mask = sigSet_;
-    act.sa_flags = SA_SIGINFO | SA_RESTART;
-    if (sigaction(SIGALRM, &act, 0) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("sigaction()");
-
-    struct sigevent ev;
-    ::memset(&ev, 0, sizeof(ev));
-    ev.sigev_notify = SIGEV_SIGNAL;
-    ev.sigev_signo = SIGALRM;
-    ev.sigev_value.sival_ptr = this;
-    if (timer_create(CLOCK_MONOTONIC, &ev, &timerId_) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("timer_create()");
-}
+    : source_ (new POSIXTimerSource())
+{}
 
 prefix_ senf::scheduler::detail::TimerDispatcher::~TimerDispatcher()
 {
@@ -66,21 +43,12 @@ prefix_ senf::scheduler::detail::TimerDispatcher::~TimerDispatcher()
     TimerSet::iterator const i_end (timers_.end());
     for (; i != i_end; ++i)
         senf::scheduler::detail::FIFORunner::instance().dequeue(&(*i));
-
-    timer_delete(timerId_);
-    ::signal(SIGALRM, SIG_IGN);
-    sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
-    senf::scheduler::detail::FdManager::instance().remove(timerPipe_[0]);
-    close(timerPipe_[0]);
-    close(timerPipe_[1]);
 }
 
 void senf::scheduler::detail::TimerDispatcher::add(TimerEvent & event)
 {
     TimerSet::iterator i (timers_.insert(event));
     senf::scheduler::detail::FIFORunner::instance().enqueue(&(*i));
-    if (! blocked_)
-        reschedule();
 }
 
 prefix_ void senf::scheduler::detail::TimerDispatcher::remove(TimerEvent & event)
@@ -90,32 +58,10 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::remove(TimerEvent & event
         return;
     senf::scheduler::detail::FIFORunner::instance().dequeue(&(*i));
     timers_.erase(i);
-    if (! blocked_)
-        reschedule();
 }
 
-prefix_ void senf::scheduler::detail::TimerDispatcher::blockSignals()
+prefix_ void senf::scheduler::detail::TimerDispatcher::prepareRun()
 {
-    if (blocked_) 
-        return;
-    sigprocmask(SIG_BLOCK, &sigSet_, 0);
-    blocked_ = true;
-}
-
-prefix_ void senf::scheduler::detail::TimerDispatcher::unblockSignals()
-{
-    if (! blocked_)
-        return;
-    reschedule();
-    sigprocmask(SIG_UNBLOCK, &sigSet_, 0);
-    blocked_ = false;
-}
-
-prefix_ void senf::scheduler::detail::TimerDispatcher::signal(int events)
-{
-    siginfo_t info;
-    if (read(timerPipe_[0], &info, sizeof(info)) < int(sizeof(info)))
-        return;
     TimerSet::iterator i (timers_.begin());
     TimerSet::iterator const i_end (timers_.end());
     ClockService::clock_type now (senf::scheduler::detail::FdManager::instance().eventTime());
@@ -123,42 +69,12 @@ prefix_ void senf::scheduler::detail::TimerDispatcher::signal(int events)
         i->setRunnable();
 }
 
-prefix_ void senf::scheduler::detail::TimerDispatcher::sigHandler(int signal, 
-                                                                  ::siginfo_t * siginfo,
-                                                                  void *)
-{
-    // The manpage says, si_signo is unused in linux so we set it here
-    siginfo->si_signo = signal; 
-    // We can't do much on error anyway so we ignore errors here
-    if (siginfo->si_value.sival_ptr == 0)
-        return;
-    write(static_cast<TimerDispatcher*>(siginfo->si_value.sival_ptr)->timerPipe_[1], 
-          siginfo, sizeof(*siginfo));
-}
-
 prefix_ void senf::scheduler::detail::TimerDispatcher::reschedule()
 {
-    struct itimerspec timer;
-    memset(&timer, 0, sizeof(timer));
-    timer.it_interval.tv_sec = 0;
-    timer.it_interval.tv_nsec = 0;
-    if (timers_.empty()) {
-        SENF_LOG( (senf::log::VERBOSE)("Timer disabled") );
-        timer.it_value.tv_sec = 0;
-        timer.it_value.tv_nsec = 0;
-    }
-    else {
-        ClockService::clock_type next (timers_.begin()->timeout_);
-        if (next <= 0)
-            next = 1;
-        timer.it_value.tv_sec = ClockService::in_seconds(next);
-        timer.it_value.tv_nsec = ClockService::in_nanoseconds(
-            next - ClockService::seconds(timer.it_value.tv_sec));
-        SENF_LOG( (senf::log::VERBOSE)("Next timeout scheduled @" << timer.it_value.tv_sec << "." 
-                   << std::setw(9) << std::setfill('0') << timer.it_value.tv_nsec) );
-    }
-    if (timer_settime(timerId_, TIMER_ABSTIME, &timer, 0)<0)
-        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
+    if (timers_.empty())
+        source_->notimeout();
+    else
+        source_->timeout(timers_.begin()->timeout_);
 }
 
 ///////////////////////////////////////////////////////////////////////////
