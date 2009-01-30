@@ -88,6 +88,7 @@ namespace senf {
 
         \par Fields:
             \ref SNDUPacketParser
+            \image html SNDUPacket.png
 
         \ingroup protocolbundle_mpegdvb
      */

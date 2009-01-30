@@ -113,6 +113,7 @@ namespace senf {
 
         \par Fields:
             \ref MPESectionParser
+            \image html MPESection.png
 
         \ingroup protocolbundle_mpegdvb
      */

@@ -46,6 +46,10 @@ SENFSCons.Doxygen(env, extra_sources = [
                 PKGDRAWPACKETS = "MIHPacketParser"),
     env.PkgDraw("80211Bundle/WLANPacket.hh"),
     env.PkgDraw("80211Bundle/RadiotapPacket.hh"),
+    env.PkgDraw("MPEGDVBBundle/GREPacket.hh"),
+    env.PkgDraw("MPEGDVBBundle/MPESection.hh"),
+    env.PkgDraw("MPEGDVBBundle/SNDUPacket.hh"),
+    env.PkgDraw("MPEGDVBBundle/TransportPacket.hh"),
 ])
 SENFSCons.InstallIncludeFiles(env, includes)
 

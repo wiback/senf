@@ -74,6 +74,7 @@ namespace senf {
 
         \par Fields:
             \ref GREPacketParser
+            \image html GREPacket.png
 
         \ingroup protocolbundle_mpegdvb
      */

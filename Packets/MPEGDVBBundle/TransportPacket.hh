@@ -117,6 +117,7 @@ namespace senf {
 
         \par Fields:
             \ref TransportPacketParser
+            \image html TransportPacket.png
 
         \ingroup protocolbundle_mpegdvb
      */

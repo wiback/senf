@@ -158,7 +158,7 @@ def makeTex(rows):
             if sides == "lrtb" : sides = ""
             else               : sides = "[%s]" % sides
             if area.get('filled', False):
-                line.append(r"\bitbox%s{%s}{\color[gray]{0.7}\rule{\width}{\height}}" % (sides, area['size']))
+                line.append(r"\bitbox%s{%s}{\color[gray]{0.93}\rule{\width}{\height}}" % (sides, area['size']))
             elif area.get('skip', False):
                 line.append(r"\skippedwords")
             elif area.get('dots', False):
@@ -355,17 +355,37 @@ PARSER_END_RE = re.compile(r"PKGDRAW_PARSER_FINALIZE\s*\(([^)]*)\)\s*;")
 PARSER_FIELD_RE = re.compile(r"(?:@@>pkgdraw:(.*)$\s*)?PKGDRAW_PARSER_([A-Z_]+)\s*\(([^;]*)\)\s*;(?:\s*@@<pkgdraw:(.*)$)?", re.M)
 
 def scanPackets(data):
+    global FIELD_TYPES
+    
     packets = {}
+    packetOrder = []
     end = 0
     while True:
         start =  PARSER_START_RE.search(data, end)
-        if not start: return packets
+        if not start: return (packets, packetOrder)
         start = start.end(0)
         end = PARSER_END_RE.search(data, start)
-        if not end: return packets
+        if not end: return (packets, packetOrder)
         name=end.group(1).strip()
         end = end.start(0)
         packets[name] = scanFields(data[start:end])
+        packetOrder.append(name)
+        minsize = maxsize = 0
+        for field in packets[name]:
+            if field.get('size', None) is not None:
+                maxsize += field['size']
+            elif field.get('minsize', None) is not None:
+                maxsize += field['maxsize']
+            if not field.get('optional', False):
+                if field.get('size', None) is not None:
+                    minsize += field['size']
+                elif field.get('minsize', None) is not None:
+                    minsize += field['minsize']
+        if minsize is not None and maxsize is not None:
+            if minsize == maxsize:
+                FIELD_TYPES[name] = { 'size' : minsize }
+            else:
+                FIELD_TYPES[name] = { 'minsize' : minsize, 'maxsize' : maxsize }
 
 def scanFields(data):
     fields = []
@@ -411,7 +431,8 @@ names = []
 gccopts = []
 
 if len(args)<2 or args[0] == '--' or args[1] == '--':
-    sys.stderr.write("Usage: %s <header> <outfile> [<parser name>...] [ -- <cpp options>...]\n")
+    sys.stderr.write("Usage: %s <header> <outfile> [<parser names>...] [-- <cpp options>...]\n"
+                     % sys.argv[0])
     sys.exit(1)
 
 source = args.pop(0)
@@ -420,15 +441,15 @@ target = args.pop(0)
 while args and args[0] != '--' : names.append(args.pop(0))
 if args : gccopts = args[1:]
 
-data = scanPackets(cppExpand(quoteMacros(stripComments(file(source).read())),
-                             gccopts, os.path.dirname(source)))
+data, order = scanPackets(cppExpand(quoteMacros(stripComments(file(source).read())),
+                                    gccopts, os.path.dirname(source)))
 
 texf = file(os.path.join(tmpdir, "fields.tex"),"w")
 texf.write(TEX_HEADER)
 
 if not names:
-    names = data.keys()
-    names.sort()
+    order.reverse()
+    names = order
 
 for name in names:
     texf.write("\\textbf{%s}\n\\bigskip\\par\n" % texquote(name))
