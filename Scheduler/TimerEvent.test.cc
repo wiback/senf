@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "TimerEvent.hh"
+#include "Scheduler.hh"
 
 #include "../Utils//auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -61,12 +62,7 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
         SENF_CHECK_NO_THROW( timer.disable() );
         SENF_CHECK_NO_THROW( timer.enable() );
         BOOST_CHECK( timer.enabled() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().enable() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().reschedule() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::FdManager::instance().processOnce() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().prepareRun() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::FIFORunner::instance().run() );
-        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().disable() );
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
         senf::ClockService::clock_type t2 (senf::ClockService::now());
         BOOST_CHECK( called );
         BOOST_CHECK( ! timer.enabled() );
