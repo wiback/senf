@@ -112,7 +112,7 @@ prefix_ void senf::log::Target::unroute(int index)
         updateRoutingCache(entry.stream_, entry.area_);
 }
 
-prefix_ void senf::log::Target::clear()
+prefix_ void senf::log::Target::flush()
 {
     RIB old;
     rib_.swap(old);

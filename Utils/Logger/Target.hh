@@ -160,7 +160,7 @@ namespace log {
 #           endif
 
             RoutingEntry();
-            bool operator==(RoutingEntry const & other);
+            bool operator==(RoutingEntry const & other) const;
 
         private:
             RoutingEntry(detail::StreamBase const * stream, detail::AreaBase const * area,
@@ -338,7 +338,7 @@ namespace log {
         size_type size() const;         ///< Number of routing table entries
         bool empty() const;             ///< \c true, if routing table empty, \c false otherwise
 
-        void clear();                   ///< Clear routing table
+        void flush();                   ///< Clear routing table
 
     private:
         void route(detail::StreamBase const * stream, detail::AreaBase const * area,

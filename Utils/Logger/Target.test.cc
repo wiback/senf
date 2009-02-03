@@ -86,7 +86,7 @@ BOOST_AUTO_UNIT_TEST(target)
     };
 
     BOOST_CHECK_EQUAL_COLLECTIONS( i, i_end, data, data + sizeof(data)/sizeof(data[0]) );
-    BOOST_CHECK_EQUAL( *target.begin(), target[0] );
+    BOOST_CHECK( *target.begin() == target[0] );
 
     target.unroute<senf::log::Debug>();
     target.unroute<senf::log::test::myStream, senf::log::VERBOSE>();
@@ -94,11 +94,11 @@ BOOST_AUTO_UNIT_TEST(target)
     target.unroute("senf::log::test::myStream", "", senf::log::IMPORTANT::value, 
                    senf::log::Target::REJECT);
     target.unroute(1);
-    target.clear();
+    target.flush();
 
     BOOST_CHECK( target.begin() == target.end() );
     BOOST_CHECK( target.empty() );
-    BOOST_CHECK( target.size() == 0 );
+    BOOST_CHECK_EQUAL( target.size(), 0u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
