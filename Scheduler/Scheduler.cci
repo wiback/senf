@@ -54,6 +54,23 @@ prefix_ unsigned senf::scheduler::hangCount()
     return scheduler::detail::FIFORunner::instance().hangCount();
 }
 
+prefix_ void senf::scheduler::hiresTimers()
+{
+    detail::TimerDispatcher::instance().setTimerSource(
+        std::auto_ptr<TimerSource>(new POSIXTimerSource()));
+}
+
+prefix_ void senf::scheduler::loresTimers()
+{
+    detail::TimerDispatcher::instance().setTimerSource(
+        std::auto_ptr<TimerSource>(new PollTimerSource()));
+}
+
+prefix_ bool senf::scheduler::haveScalableHiresTimers()
+{
+    return false;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

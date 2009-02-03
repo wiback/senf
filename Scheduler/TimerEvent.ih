@@ -65,6 +65,8 @@ namespace detail {
 
         bool empty() const;
 
+        void setTimerSource(std::auto_ptr<TimerSource> timerSource);
+
     protected:
 
     private:

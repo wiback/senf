@@ -98,6 +98,12 @@ prefix_ bool senf::scheduler::detail::TimerDispatcher::empty()
     return timers_.empty();
 }
 
+prefix_ void senf::scheduler::detail::TimerDispatcher::
+setTimerSource(std::auto_ptr<TimerSource> timerSource)
+{
+    source_.reset(timerSource.release());
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

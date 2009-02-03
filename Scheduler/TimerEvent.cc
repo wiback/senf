@@ -34,7 +34,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::scheduler::detail::TimerDispatcher::TimerDispatcher()
-    : source_ (new POSIXTimerSource())
+    : source_ (new PollTimerSource())
 {}
 
 prefix_ senf::scheduler::detail::TimerDispatcher::~TimerDispatcher()

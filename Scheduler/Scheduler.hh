@@ -232,6 +232,32 @@ namespace scheduler {
     /** \brief Number of watchdog events */
     unsigned hangCount(); 
 
+    /** \brief Switch to using hi resolution timers
+        
+        By default, timers are implemented directly using epoll. This however restricts the timer
+        resolution to that of the kernel HZ value.
+
+        High resolution timers are implemented either using POSIX timers or, when available, using
+        the Linux special \c timerfd() syscall.
+
+        POSIX timers are delivered using signals. A high timer load this increases the signal load
+        considerably. \c timerfd()'s are delivered on a file descriptor and thus don't have such a
+        scalability issue.
+
+        \warning The timer source must not be switched from a scheduler callback
+     */
+    void hiresTimers();
+
+    /** \brief Switch back to using epoll for timing
+        \see hiresTimers()
+     */
+    void loresTimers();
+
+    /** \brief return \c true, if \c timerfd() timing is available, \c false otherwise
+        \see hiresTimers()
+     */
+    bool haveScalableHiresTimers();
+
     /** \brief Restart scheduler
         
         This call will restart all scheduler dispatchers (timers, signals, file descriptors). This
