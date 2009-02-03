@@ -132,8 +132,11 @@ prefix_ void senf::Daemon::openLog()
                   << " Could not open \"" << stdoutLog_ << "\" for redirecting stdout.";
         stdout_ = fd;
     }
-    if (stderrLog_ == stdoutLog_)
-        stderr_ = fd;
+    if (stderrLog_ == stdoutLog_) {
+        stderr_ = ::dup(fd);
+        if (stderr_ < 0)
+            SENF_THROW_SYSTEM_EXCEPTION("::dup()");
+    } 
     else if (! stderrLog_.empty()) {
         fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
         if (fd < 0)
@@ -307,6 +310,7 @@ senf::Daemon * senf::Daemon::instance_ (0);
 
 prefix_ void senf::Daemon::configure()
 {
+    // int i (not unsigned) since argc_ is int ...
     for (int i (1); i<argc_; ++i) {
         if (argv_[i] == std::string("--no-daemon"))
             daemonize(false);

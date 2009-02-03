@@ -1,4 +1,3 @@
-
 // $Id$
 //
 // Copyright (C) 2006
@@ -318,7 +317,7 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
         BOOST_CHECK_NO_THROW( senf::scheduler::process() ); 
     } 
 
-    BOOST_CHECK_EQUAL( eventCount, 8u );
+    BOOST_CHECK( eventCount >= 8u );
 
     ///////////////////////////////////////////////////////////////////////////
 

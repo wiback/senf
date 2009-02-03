@@ -27,6 +27,7 @@
 //#include "TimerSource.ih"
 
 // Custom includes
+#include "FdEvent.hh"
 
 //#include "TimerSource.mpp"
 #define prefix_
@@ -145,6 +146,27 @@ prefix_ void senf::scheduler::detail::POSIXTimerSource::reschedule()
     if (timer_settime(timerId_, TIMER_ABSTIME, &timer, 0)<0)
         SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
 }
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::PollTimerSource
+
+prefix_ void senf::scheduler::detail::PollTimerSource::timeout(ClockService::clock_type timeout)
+{
+    ClockService::clock_type now (ClockService::now());
+    int delay (ClockService::in_milliseconds(timeout-now)+1);
+    FileDispatcher::instance().timeout(delay<0?0:delay);
+}
+
+prefix_ void senf::scheduler::detail::PollTimerSource::notimeout()
+{
+    FileDispatcher::instance().timeout(-1);
+}
+
+prefix_ void senf::scheduler::detail::PollTimerSource::enable()
+{}
+
+prefix_ void senf::scheduler::detail::PollTimerSource::disable()
+{}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

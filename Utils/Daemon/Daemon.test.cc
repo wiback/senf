@@ -65,11 +65,12 @@ namespace {
 
         void init() { 
             std::cout << "Running init()" << std::endl; 
+            std::cerr << "(stderr)" << std::endl;
         }
 
         void run() {
             std::cout << "Running run()" << std::endl; 
-            delay(1500);
+            delay(2000);
         }
     };
 
@@ -141,7 +142,7 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
             ::kill(pid, SIGHUP);
     }
 
-    delay(1000);
+    delay(2000);
     BOOST_CHECK( ! boost::filesystem::exists("testDaemon.pid") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.log") );
     BOOST_CHECK( boost::filesystem::exists("testDaemon.log.1") );
@@ -149,7 +150,7 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
     std::ifstream log ("testDaemon.log.1");
     std::stringstream data;
     data << log.rdbuf();
-    BOOST_CHECK_EQUAL( data.str(), "Running init()\nRunning run()\n" );
+    BOOST_CHECK_EQUAL( data.str(), "Running init()\n(stderr)\nRunning run()\n" );
     BOOST_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log") );
     BOOST_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log.1") );
 }

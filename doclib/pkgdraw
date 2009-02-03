@@ -63,7 +63,7 @@ def formatSimpleField(width, start, field):
             namesz = areas[i]['size']
             nameix = i
     areas[nameix]['name'] = field['name'][:int(areas[nameix]['size'] * charsPerBit)]
-    if len(areas) == 2 and areas[0].get('bottom',True):
+    if field['name'] and len(areas) == 2 and areas[0].get('bottom',True):
         if areas[0].get('name','') : ix = 1
         else                       : ix = 0
         if 6 <= int(areas[ix]['size'] * charsPerBit):
