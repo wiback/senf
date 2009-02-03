@@ -57,13 +57,13 @@ prefix_ unsigned senf::scheduler::hangCount()
 prefix_ void senf::scheduler::hiresTimers()
 {
     detail::TimerDispatcher::instance().setTimerSource(
-        std::auto_ptr<TimerSource>(new POSIXTimerSource()));
+        std::auto_ptr<detail::TimerSource>(new detail::POSIXTimerSource()));
 }
 
 prefix_ void senf::scheduler::loresTimers()
 {
     detail::TimerDispatcher::instance().setTimerSource(
-        std::auto_ptr<TimerSource>(new PollTimerSource()));
+        std::auto_ptr<detail::TimerSource>(new detail::PollTimerSource()));
 }
 
 prefix_ bool senf::scheduler::haveScalableHiresTimers()
