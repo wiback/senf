@@ -120,7 +120,7 @@ prefix_ void senf::log::Target::clear()
     RIB::const_iterator const i_end (old.end());
     for (; i != i_end; ++i)
         if (i->action_ == ACCEPT)
-            updateRoutingCache(i->stream_, i->area_)
+            updateRoutingCache(i->stream_, i->area_);
 }
 
 ////////////////////////////////////////

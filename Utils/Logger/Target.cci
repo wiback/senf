@@ -56,14 +56,14 @@ prefix_ senf::log::Target::iterator senf::log::Target::end()
     return rib_.end();
 }
 
-prefix_ RoutingEntry const & senf::log::Target::operator[](size_type i)
-    size_type size() const
+prefix_ senf::log::Target::RoutingEntry const & senf::log::Target::operator[](size_type i)
+    const
 {
     return rib_[i];
 }
 
-prefix_ RoutingEntry const & senf::log::Target::operator[](size_type i)
-    size_type size() const
+prefix_ senf::log::Target::size_type senf::log::Target::size()
+    const
 {
     return rib_.size();
 }

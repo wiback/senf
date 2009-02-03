@@ -333,7 +333,7 @@ namespace log {
         iterator begin() const;         ///< Iterator to beginning of routing table
         iterator end() const;           ///< Iterator past the end of routing table
 
-        RoutingEntry const & operator[](size_type i) ///< Access routing entry
+        RoutingEntry const & operator[](size_type i) const; ///< Access routing entry
 
         size_type size() const;         ///< Number of routing table entries
         bool empty() const;             ///< \c true, if routing table empty, \c false otherwise
