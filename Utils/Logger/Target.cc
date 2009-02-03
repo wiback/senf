@@ -85,6 +85,8 @@ prefix_ void senf::log::Target::unroute(std::string const & stream, std::string 
 
 prefix_ void senf::log::Target::unroute(int index)
 {
+    if (rib_.empty())
+        return;
     RIB::iterator i;
     if (index < 0) {
         if (RIB::size_type(-index) >= rib_.size())
@@ -108,6 +110,17 @@ prefix_ void senf::log::Target::unroute(int index)
     rib_.erase(i);
     if (entry.action_ == ACCEPT)
         updateRoutingCache(entry.stream_, entry.area_);
+}
+
+prefix_ void senf::log::Target::clear()
+{
+    RIB old;
+    rib_.swap(old);
+    RIB::const_iterator i (old.begin());
+    RIB::const_iterator const i_end (old.end());
+    for (; i != i_end; ++i)
+        if (i->action_ == ACCEPT)
+            updateRoutingCache(i->stream_, i->area_)
 }
 
 ////////////////////////////////////////

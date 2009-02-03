@@ -56,6 +56,24 @@ prefix_ senf::log::Target::iterator senf::log::Target::end()
     return rib_.end();
 }
 
+prefix_ RoutingEntry const & senf::log::Target::operator[](size_type i)
+    size_type size() const
+{
+    return rib_[i];
+}
+
+prefix_ RoutingEntry const & senf::log::Target::operator[](size_type i)
+    size_type size() const
+{
+    return rib_.size();
+}
+
+prefix_ bool senf::log::Target::empty()
+    const
+{
+    return rib_.empty();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target::RoutingEntry
 

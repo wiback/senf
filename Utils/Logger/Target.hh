@@ -179,6 +179,7 @@ namespace log {
 
     public:
         typedef RIB::const_iterator iterator; ///< Routing table iterator
+        typedef RIB::size_type size_type;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -331,6 +332,13 @@ namespace log {
 
         iterator begin() const;         ///< Iterator to beginning of routing table
         iterator end() const;           ///< Iterator past the end of routing table
+
+        RoutingEntry const & operator[](size_type i) ///< Access routing entry
+
+        size_type size() const;         ///< Number of routing table entries
+        bool empty() const;             ///< \c true, if routing table empty, \c false otherwise
+
+        void clear();                   ///< Clear routing table
 
     private:
         void route(detail::StreamBase const * stream, detail::AreaBase const * area,
