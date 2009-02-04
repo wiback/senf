@@ -37,7 +37,8 @@ namespace senf {
     /** \brief Parse a UDP packet
 
         Parser implementing the UDP header. The fields implemented are:
-
+        \image html UDPPacket.png
+        
         \see UDPPacketType \n
             <a href="http://tools.ietf.org/html/rfc768">RFC 768</a>
      */
@@ -52,11 +53,14 @@ namespace senf {
 
         SENF_PARSER_FINALIZE(UDPPacketParser);
 
-        boost::uint16_t calcChecksum() const;
-
+        boost::uint16_t calcChecksum() const; ///< calculate (pseudo-)header checksum
+                                              /**< calculate and return the checksum of the
+                                                   (pseudo-)header \see \ref senf::IpChecksum */
         bool validateChecksum() const {
             return checksum() == 0u || checksum() == calcChecksum();
-        }
+        }                               ///< validate header checksum
+                                        /**< return \c true if the \ref checksum() "checksum"
+                                             field is equal to the \ref calcChecksum() "calculated checksum" */
     };
 
     /** \brief UDP packet
@@ -67,11 +71,21 @@ namespace senf {
         \par Fields:
             \ref UDPPacketParser
 
+        <table class="packet" cellpadding="5" cellspacing="1" border="1">
+          <tr>
+            <th width="25%">0</th> <th width="25%">8</th> <th width="25%">16</th>
+            <th width="15%">24</th> <th style="text-align:right" width="10%">31</th>
+          </tr><tr>
+            <td colspan="2">\ref UDPPacketParser::source() "Source Port"</td>
+            <td colspan="3">\ref UDPPacketParser::destination() "Destination Port"</td>
+          </tr><tr>
+            <td colspan="2">\ref UDPPacketParser::length() "Length"</td>
+            <td colspan="3">\ref UDPPacketParser::checksum() "Checksum"</td>
+          </tr>
+        </table>
+          
         \par Finalize action:
-            Set \a length from payload size\n
-            Calculate \a checksum
-
-        \image html UDPPacket.png
+            \copydetails finalize()
 
         \ingroup protocolbundle_default
      */
@@ -81,16 +95,22 @@ namespace senf {
     {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<UDPPacketType> mixin;
-        typedef ConcretePacket<UDPPacketType> packet;
-        typedef UDPPacketParser parser;
 #endif
+        typedef ConcretePacket<UDPPacketType> packet; ///< UDP packet typedef
+        typedef UDPPacketParser parser;               ///< typedef to the parser of UDP packet
+
         using mixin::nextPacketRange;
         using mixin::initSize;
         using mixin::init;
 
+        /** \brief Dump given UDPPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
-
-        static void finalize(packet p);
+        
+        static void finalize(packet p); ///< Finalize packet.
+                                        /**< \li set \ref UDPPacketParser::length() "length" from 
+                                               payload size
+                                             \li calculate and set \ref UDPPacketParser::checksum() 
+                                               "checksum" */
     };
 
     /** \brief UDP packet typedef */
@@ -101,7 +121,7 @@ namespace senf {
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
 #ifndef SENF_PACKETS_DECL_ONLY
-//#include UDPPacket.cci"
+//#include "UDPPacket.cci"
 //#include "UDPPacket.ct"
 //#include "UDPPacket.cti"
 #endif

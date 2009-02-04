@@ -71,27 +71,80 @@ namespace senf {
     };  
         
 
+    /** \brief Base class for TLV-Packet-Parsers
+     
+         BaseTLVPacketParser is the abstract base class for TLV-Packet-Parsers. It defines the
+         \ref type() field as an \ref senf::UInt8Parser and the \ref length() field as a 
+         DynamicTLVLengthParser. The length field is read-only. 
+         
+         To create your own \c TLVParser you have to inherit from BaseTLVPacketParser (don't 
+         forget \ref SENF_PARSER_INHERIT) and define the \c value field. In the following example 
+         the value is a vector of MacAddresses: 
+         \code
+         struct MacAddressesTLVParser : public BaseTLVPacketParser {
+         #   include SENF_PARSER()        
+             SENF_PARSER_INHERIT ( BaseTLVPacketParser );
+             SENF_PARSER_VECTOR  ( value, bytes(length), senf::MACAddressParser );
+             SENF_PARSER_FINALIZE( MacAddressesTLVParser );
+         };
+         
+         struct MacAddressesTLVPacketType : public PacketTypeBase {
+            typedef MacAddressesTLVParser parser;
+            ...
+            static void finalize(ConcretePacket<MacAddressesTLVPacketType> p) { 
+                p->shrinkLength();
+            }
+         };
+         \endcode
+         
+         You have to adjust the maximum length value with the \ref maxLengthValue function 
+         before the length value is set. The default maximum value is 127. So, in the above
+         example adding more than 21 MACAddresses to the vector will throw a TLVLengthException
+         if you don't call \c macAddressesTLVPacket->maxLengthValue( \e some_value) before.
+         
+         \see DynamicTLVLengthParser \n
+           GenericTLVPacketParser \n
+     */
     class BaseTLVPacketParser : public PacketParserBase
     {
+    public:
 #       include SENF_PARSER()
         SENF_PARSER_FIELD    ( type,   UInt8Parser            );
         SENF_PARSER_FIELD_RO ( length, DynamicTLVLengthParser );
         SENF_PARSER_FINALIZE ( BaseTLVPacketParser            );
         
+        /** \brief set maximum value of length field
+    
+            The size of the length field will be increased if necessary.
+            \param v maximum value of length field
+         */
         void maxLengthValue(DynamicTLVLengthParser::value_type v) const {
             length_().maxValue(v);
         }
+        
+        /** \brief shrink size of length field to minimum
+    
+            The size of the length field will be decreased to minimum necessary to hold
+            the current length value.
+         */
         void shrinkLength() { 
             length_().shrink(); 
         };
         
     protected:
+        /// return size of length field
         size_type length_bytes() const { return length_().bytes(); };
+        /// set length field to given value
         void length(DynamicTLVLengthParser::value_type &v) { length_() = v; };
+        /// resize the Packet after the length field to given size
         senf::safe_data_iterator resizeValue(DynamicTLVLengthParser::value_type size);
     };
 
         
+    /** \brief Parser for a generic TLV packet
+
+        \see GenericTLVPacketType
+     */
     struct GenericTLVPacketParser : public BaseTLVPacketParser
     {
 #       include SENF_PARSER()        
@@ -109,22 +162,38 @@ namespace senf {
         void value(ForwardReadableRange const &range);
     };
     
+    /** \brief Generic TLV packet
+
+        \par Packet type (typedef):
+            \ref GenericTLVPacket
+
+        \image html TLV.png
+        
+        \ingroup protocolbundle_80221
+     */
     struct GenericTLVPacketType
         : public PacketTypeBase,
           public PacketTypeMixin<GenericTLVPacketType>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<GenericTLVPacketType> mixin;
-        typedef ConcretePacket<GenericTLVPacketType> packet;
-        typedef GenericTLVPacketParser parser;
+#endif
+        typedef ConcretePacket<GenericTLVPacketType> packet; ///< GenericTLV packet typedef
+        typedef GenericTLVPacketParser parser;               ///< typedef to the parser of GenericTLV packet
 
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
         
-        static void finalize(packet p);
-        static void dump(packet p, std::ostream & os);
+        /** \brief Dump given GenericTLVPacket in readable form to given output stream */
+        static void dump(packet p, std::ostream & os);  
+        static void finalize(packet p);  ///< Finalize packet.
+                                         /**< shrink size of length field to minimum 
+                                              \see BaseTLVPacketParser::shrinkLength() */
+        
     };
     
+    /** \brief GenericTLV packet typedef */
     typedef ConcretePacket<GenericTLVPacketType> GenericTLVPacket;
 }
 

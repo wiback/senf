@@ -38,6 +38,7 @@ namespace senf {
 
     /** \brief Parse a LLC/SNAP header
         
+        \image html LlcSnapPacket.png
         \todo document me
      */
     struct LlcSnapPacketParser : public PacketParserBase
@@ -77,8 +78,6 @@ namespace senf {
         \par Finalize action:
             XXXX
 
-        \image html LlcSnapPacket.png
-
         \ingroup protocolbundle_default
      */
     struct LlcSnapPacketType
@@ -87,18 +86,21 @@ namespace senf {
     {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<LlcSnapPacketType, EtherTypes> mixin;
-        typedef ConcretePacket<LlcSnapPacketType> packet;
-        typedef LlcSnapPacketParser parser;
 #endif
+        typedef ConcretePacket<LlcSnapPacketType> packet; ///< LLC/SNAP packet typedef
+        typedef LlcSnapPacketParser parser;               ///< typedef to the parser of LLC/SNAP packet
+
         using mixin::nextPacketRange;
         using mixin::initSize;
         using mixin::init;
         
         static factory_t nextPacketType(packet p);
-        static void dump(packet p, std::ostream & os);
+        /** \brief Dump given LlcSnapPacket in readable form to given output stream */
+        static void dump(packet p, std::ostream & os); 
         static void finalize(packet p);
     };
 
+    /** \brief LLC/SNAP packet typedef */
     typedef ConcretePacket<LlcSnapPacketType> LlcSnapPacket;
 }
 

@@ -37,6 +37,7 @@ namespace senf {
     /** \brief Parse in IPv6 fragment extension header
         
         Parser implementing the IPv6 fragment extension. The fields implemented are:
+        \image html IPv6Extensions_Fragment.png
 
         \see IPv6ExtensionType_Fragment \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
@@ -66,12 +67,10 @@ namespace senf {
             \ref IPv6PacketParserExtension_Fragment
         
         \par Associated registries:
-            \par IpTypes
+            \ref IpTypes
         
         \par Finalize action:
             Set \a nextHeader from type of next packet if found in \ref IpTypes
-
-        \image html IPv6Extensions_Fragment.png
 
         \ingroup protocolbundle_default
      */
@@ -81,9 +80,12 @@ namespace senf {
     {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<IPv6ExtensionType_Fragment, IpTypes> mixin;
-        typedef ConcretePacket<IPv6ExtensionType_Fragment> packet;
-        typedef IPv6PacketParserExtension_Fragment parser;
 #endif
+        /** \brief IPv6 fragment extension packet typedef */
+        typedef ConcretePacket<IPv6ExtensionType_Fragment> packet; 
+        /** \brief typedef to the parser of IPv6 fragment extension packet */
+        typedef IPv6PacketParserExtension_Fragment parser;
+
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::initSize;
@@ -92,10 +94,11 @@ namespace senf {
         static key_t nextPacketKey(packet p) 
             { return p->nextHeader(); }
         
-        static void dump(packet p, std::ostream & os);
+        /** \brief Dump given IPv6Extension_Fragment in readable form to given output stream */
+        static void dump(packet p, std::ostream & os); 
 
-        static void finalize(packet p)
-            { p->nextHeader() << key(p.next(nothrow)); }
+        static void finalize(packet p) { 
+            p->nextHeader() << key(p.next(nothrow)); }
     };
 
     /** \brief IPv6 fragment extension packet typedef */

@@ -85,7 +85,6 @@ namespace senf {
             \ref PacketRegistry
      */
     struct EtherTypes {
-        // See 
         typedef boost::uint16_t key_t;
     };
 
@@ -110,7 +109,9 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<EthernetPacketType, EtherTypes>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<EthernetPacketType, EtherTypes> mixin;
+#endif
         typedef ConcretePacket<EthernetPacketType> packet;
         typedef EthernetPacketParser parser;
 
@@ -119,7 +120,8 @@ namespace senf {
         using mixin::init;
 
         static factory_t nextPacketType(packet p);
-        static void dump(packet p, std::ostream & os);
+        /// Dump given EthernetPacket in readable form to given output stream
+        static void dump(packet p, std::ostream & os); 
         static void finalize(packet p);
     };
 
@@ -166,7 +168,9 @@ namespace senf {
         : public PacketTypeBase, 
           public PacketTypeMixin<EthVLanPacketType, EtherTypes>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<EthVLanPacketType, EtherTypes> mixin;
+#endif
         typedef ConcretePacket<EthVLanPacketType> packet;
         typedef EthVLanPacketParser parser;
 
@@ -180,6 +184,7 @@ namespace senf {
         static key_t nextPacketKey(packet p) 
             { return p->type(); }
 
+        /// Dump given EthVLanPacket in readable form to given output stream
         static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
     };

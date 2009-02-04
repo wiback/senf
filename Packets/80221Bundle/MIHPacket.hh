@@ -44,7 +44,7 @@ namespace senf {
     // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
     // we could set maxLengthValue in INIT, but for the most MIHF_IDs the default
     // maximum length of 127 should be enough.
-    // The user must call mihPacket->src_mihfId().maxLengthValue( 127) before 
+    // The user must call mihPacket->src_mihfId().maxLengthValue( 253) before 
     // setting longer MIHF_IDs
     class MIHFId_TLVParser : public BaseTLVPacketParser
     {
@@ -94,6 +94,13 @@ namespace senf {
         }
     };
 
+    /** \brief Parse a MIH packet
+
+        Parser implementing the MIH header. The fields implemented are:
+        \image html MIHPacket.png
+        
+        \see MIHPacketType
+     */
     struct MIHPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
@@ -138,7 +145,6 @@ namespace senf {
 
         \par Fields:
             \ref MIHPacketParser
-            \image html MIHPacket.png
         
         \ingroup protocolbundle_80221
      */
@@ -146,19 +152,23 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<MIHPacketType>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<MIHPacketType> mixin;
-        typedef ConcretePacket<MIHPacketType> packet;
-        typedef MIHPacketParser parser;
+#endif
+        typedef ConcretePacket<MIHPacketType> packet; ///< MIH packet typedef
+        typedef MIHPacketParser parser;               ///< typedef to the parser of MIH packet
 
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
 
+        /** \brief Dump given MIH packet in readable form to given output stream */
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
     };
 
+    /** \brief MIH packet typedef */
     typedef ConcretePacket<MIHPacketType> MIHPacket;
     
     
@@ -174,20 +184,22 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<MIHPayloadPacketType>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<MIHPayloadPacketType> mixin;
-        typedef ConcretePacket<MIHPayloadPacketType> packet;
-        typedef MIHPayloadPacketParser parser;
+#endif
+        typedef ConcretePacket<MIHPayloadPacketType> packet; ///< MIH Payload packet typedef 
+        typedef MIHPayloadPacketParser parser; ///< typedef to the parser of MIH Payload packet
 
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
 
+        /** \brief Dump given MIHPayload in readable form to given output stream */
         static void dump(packet p, std::ostream &os);
     };
         
+     /** \brief MIH Payload packet typedef */
     typedef ConcretePacket<MIHPayloadPacketType> MIHPayloadPacket;
-            
-
 }
 
 

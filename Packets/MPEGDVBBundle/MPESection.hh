@@ -121,20 +121,27 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<MPESectionType>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<MPESectionType> mixin;
-        typedef ConcretePacket<MPESectionType> packet;
-        typedef MPESectionParser parser;
+#endif
+        typedef ConcretePacket<MPESectionType> packet; ///< MPESection packet typedef
+        typedef MPESectionParser parser;               ///< typedef to the parser of MPESection
 
         using mixin::nextPacketRange;
         using mixin::init;
 
+        /** \brief Dump given MPESection in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
+        
         static void finalize(packet p);
+        
         static factory_t nextPacketType(packet p);
+        
         static PacketParserBase::size_type initSize();
         static PacketParserBase::size_type initHeadSize();
     };
 
+    /** \brief MPESection packet typedef */
     typedef ConcretePacket<MPESectionType> MPESection;
 }
 

@@ -59,6 +59,7 @@ namespace senf {
 
     /** \brief Parse an IPv6 packet
 
+        \image html IPv6Packet.png
         \see IPv6PacketType \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
@@ -91,14 +92,34 @@ namespace senf {
         \par Fields:
             \ref IPv6PacketParser
 
+        <table class="packet" cellpadding="5" cellspacing="1" border="1">
+          <tr>
+            <th width="12.5%">0</th>  <th width="12.5%">4</th> <th width="12.5%">8</th>
+            <th width="12.5%">12</th> <th width="12.5%">16</th> <th width="12.5%">20</th>
+            <th width="12.5%">24</th> <th width="6.5%">28</th>
+            <th style="text-align:right" width="6%">31</th>
+          </tr><tr>
+            <td>\ref IPv6PacketParser::version() "Version"</td>
+            <td colspan="2">\ref IPv6PacketParser::trafficClass() "Traffic Class"</td>
+            <td colspan="6">\ref IPv6PacketParser::flowLabel() "Flow Label"</td>
+          </tr><tr>
+            <td colspan="4">\ref IPv6PacketParser::length() "Payload Length"</td>
+            <td colspan="2">\ref IPv6PacketParser::nextHeader() "Next Header"</td>
+            <td colspan="3">\ref IPv6PacketParser::hopLimit() "Hop Limit"</td>
+          </tr><tr>
+            <td colspan="9" style="height:8em">
+              \ref IPv6PacketParser::source() "Source Address"</td>
+          </tr><tr>
+            <td colspan="9" style="height:8em">
+              \ref IPv6PacketParser::destination()  "Destination Address"</td>
+          </tr>
+        </table>
+          
         \par Associated registries:
             \ref IpTypes
 
         \par Finalize action:
-            Set \a length from payload size\n
-            Set \a nextHeader from type of next packet if found in \ref IpTypes
-
-        \image html IPv6Packet.png
+            \copydetails finalize()
 
         \ingroup protocolbundle_default
      */
@@ -108,9 +129,10 @@ namespace senf {
     {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<IPv6PacketType, IpTypes> mixin;
-        typedef ConcretePacket<IPv6PacketType> packet;
-        typedef IPv6PacketParser parser;
 #endif
+        typedef ConcretePacket<IPv6PacketType> packet; ///< IPv6 packet typedef
+        typedef IPv6PacketParser parser;               ///< typedef to the parser of IPv6 packet
+
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
         using mixin::initSize;
@@ -119,9 +141,15 @@ namespace senf {
         static key_t nextPacketKey(packet p) 
             { return p->nextHeader(); }
         
-        static void dump(packet p, std::ostream & os);
-
-        static void finalize(packet p);
+        /** \brief Dump given IPv6Packet in readable form to given output stream */
+        static void dump(packet p, std::ostream & os); 
+        
+        static void finalize(packet p); ///< Finalize packet.
+                                        /**< \li set \ref IPv6PacketParser::length() "length" 
+                                               from payload size
+                                             \li set \ref IPv6PacketParser::nextHeader() 
+                                               "nextHeader" from type of next packet if found 
+                                               in \ref IpTypes */
     };
 
     /** \brief IPv6 packet typedef */

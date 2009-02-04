@@ -34,16 +34,10 @@
 
 namespace senf {
 
-//    struct PSIPayloadPacketParser : public PacketParserBase
-//    {
-//        static const size_type fixed_bytes = 184;
-//
-//    };
-
-
     /** \brief Parse a Transport Stream packet
 
         Parser implementing the header of a MPEG Transport Stream packet.
+        \image html TransportPacket.png
         
         \see TransportPacketType
      */
@@ -117,7 +111,6 @@ namespace senf {
 
         \par Fields:
             \ref TransportPacketParser
-            \image html TransportPacket.png
 
         \ingroup protocolbundle_mpegdvb
      */
@@ -125,14 +118,17 @@ namespace senf {
         : public PacketTypeBase,
           public PacketTypeMixin<TransportPacketType>
     {
+#ifndef DOXYGEN
         typedef PacketTypeMixin<TransportPacketType> mixin;
-        typedef ConcretePacket<TransportPacketType> packet;
-        typedef TransportPacketParser parser;
+#endif
+        typedef ConcretePacket<TransportPacketType> packet; ///< Transport packet typedef
+        typedef TransportPacketParser parser; ///< typedef to the parser of Transport packet
     
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
         
+        /** \brief Dump given Transport packet in readable form to given output stream */
         static void dump(packet p, std::ostream & os);
         static const byte SYNC_BYTE = 0x47;
     };

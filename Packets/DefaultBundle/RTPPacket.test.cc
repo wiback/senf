@@ -1,9 +1,9 @@
-// $Id: main.test.cc 206 2008-08-06 14:20:52Z pug $
+// $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+//     Philipp Batroff <pug@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,14 +20,15 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+// Unit tests
 
 // Custom includes
+#include "RTPPacket.hh"
 
-#include "../../Packets/Packets.hh"
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-#include "RTPPacket.hh"
+
+
 BOOST_AUTO_UNIT_TEST(RTPPacket_packet)
 {
     unsigned char data[] = {0x80 , 0x08 , 0x1b , 0xbb , 0x02 , 0xcb , 0xad , 0x80 , 0x50 , 0x48 , 0xa7, 0x8c };

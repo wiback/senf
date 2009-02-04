@@ -1,4 +1,4 @@
-// $Id: main.test.cc 206 2008-06-08 14:20:52Z pug $
+// $Id$
 //
 // Copyright (C) 2006
 // Fraunhofer Institute for Open Communication Systems (FOKUS)

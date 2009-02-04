@@ -51,10 +51,6 @@ namespace senf {
                                              received from the network. This allows precise network
                                              timing.
 
-                                             The returned value can be converted to the
-                                             senf::ClockService::clock_type representation using
-                                             semf::ClockService::from_timeval().
-
                                              \pre The \c SO_TIMESTAMP socket option must not be set
                                                  on the socket.
                                              \returns timestamp when last packet was received */

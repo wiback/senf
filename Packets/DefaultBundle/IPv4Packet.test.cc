@@ -54,7 +54,6 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
     BOOST_CHECK_EQUAL( p->tos(),         0x02u       );
     BOOST_CHECK_EQUAL( p->length(),      0x0304u     );
     BOOST_CHECK_EQUAL( p->identifier(),  0x0506u     );
-    BOOST_CHECK_EQUAL( p->reserved(),    0           );
     BOOST_CHECK_EQUAL( p->df(),          0           );
     BOOST_CHECK_EQUAL( p->mf(),          0           );
     BOOST_CHECK_EQUAL( p->frag(),        0x0708u     );

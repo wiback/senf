@@ -1,9 +1,9 @@
-// $Id: main.test.cc 206 2008-08-06 14:20:52Z pug $
+// $Id$
 //
-// Copyright (C) 2006
+// Copyright (C) 2008
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     Stefan Bund <g0dil@berlios.de>
+//     Philipp Batroff <pug@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,14 +20,14 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file 
+    \brief RTPPacket non-inline non-template implementation */
+
+#include "RTPPacket.hh"
+//#include "UDPPacket.ih"
 
 // Custom includes
-#include "RTPPacket.hh"
-#include "../../Packets/Packets.hh"
-#include "../../Scheduler/ClockService.hh"
 #include <boost/io/ios_state.hpp>
-
 
 #define prefix_
 
