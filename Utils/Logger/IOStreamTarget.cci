@@ -23,37 +23,16 @@
 /** \file
     \brief IOStreamTarget inline non-template implementation */
 
-#include "IOStreamTarget.ih"
+//#include "IOStreamTarget.ih"
 
 // Custom includes
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::log::IOStreamTarget::showTime(bool flag)
-{
-    showTime_ = flag;
-}
-
-prefix_ void senf::log::IOStreamTarget::showStream(bool flag)
-{
-    showStream_ = flag;
-}
-
-prefix_ void senf::log::IOStreamTarget::showLevel(bool flag)
-{
-    showLevel_ = flag;
-}
-
-prefix_ void senf::log::IOStreamTarget::showArea(bool flag)
-{
-    showArea_ = flag;
-}
-
-prefix_ void senf::log::IOStreamTarget::tag(std::string const & tag)
-{
-    tag_ = tag;
-}
+prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::ostream & os)
+    : stream_ (os)
+{}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_

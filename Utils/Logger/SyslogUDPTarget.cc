@@ -30,59 +30,23 @@
 #include <sstream>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
-#include "../../Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
-#include "IOStreamTarget.hh"
 
 //#include "SyslogUDPTarget.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet4Address const & target,
-                                                    int facility)
-    : facility_ (facility), tag_ (detail::getDefaultTag()),
-      handle_ ( senf::ConnectedUDPv4ClientSocketHandle(senf::INet4SocketAddress(target, 514u)) ),
-      showStream_ (false), showLevel_ (false), showArea_ (true)
-{}
-
-prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet4SocketAddress const & target,
-                                                    int facility)
-    : facility_ (facility), tag_ (detail::getDefaultTag()),
-      handle_ ( senf::ConnectedUDPv4ClientSocketHandle(target) ),
-      showStream_ (false), showLevel_ (false), showArea_ (true)
-{}
-
-prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet6Address const & target,
-                                                    int facility)
-    : facility_ (facility), tag_ (detail::getDefaultTag()),
-      handle_ ( senf::ConnectedUDPv6ClientSocketHandle(senf::INet6SocketAddress(target, 514u)) ),
-      showStream_ (false), showLevel_ (false), showArea_ (true)
-{}
-
-prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet6SocketAddress const & target,
-                                                    int facility)
-    : facility_ (facility), tag_ (detail::getDefaultTag()),
-      handle_ ( senf::ConnectedUDPv6ClientSocketHandle(target) ),
-      showStream_ (false), showLevel_ (false), showArea_ (true)
-{}
-
 prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::string const & stream,
                                                  std::string const & area, unsigned level,
                                                  std::string const & message)
 {
-    std::stringstream prefix;
-
-    prefix << '<' << (facility_ | senf::log::SyslogTarget::LEVELMAP[level]) << "> ";
-    if (!tag_.empty())
-        prefix << tag_ << ": ";
-    if (showStream_)
-        prefix << '[' << stream << "] ";
-    if (showLevel_)
-        prefix << '[' << LEVELNAMES[level] << "] ";
-    if (showArea_ && area != "senf::log::DefaultArea")
-        prefix << '[' << area << "] ";
     std::string m (message);
     boost::trim_right(m);
     detail::quoteNonPrintable(m);
+
+    std::stringstream prfstream;
+    prfstream << '<' << (facility_ | senf::log::SyslogTarget::LEVELMAP[level]) << "> "
+              << prefix(timestamp, stream, area, level);
+    std::string const & prf (prfstream.str());
 
     typedef boost::char_separator<char> Separator;
     typedef boost::tokenizer<Separator> Tokenizer;
@@ -92,10 +56,10 @@ prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::strin
     Tokenizer::iterator const i_end (tokenizer.end());
 
     std::string line;
-    unsigned sz (896-prefix.str().size());
+    unsigned sz (896-prf.size());
     for (; i != i_end; ++i) 
         for (unsigned j (0); j < i->size(); j += sz) {
-            line = prefix.str();
+            line = prf;
             line += std::string(*i, j, sz);
             handle_.write(line);
         }

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,26 +21,48 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IOStreamTarget internal header */
+    \brief LogFormat inline non-template implementation */
 
-#ifndef IH_SENF_Utils_Logger_IOStreamTarget_
-#define IH_SENF_Utils_Logger_IOStreamTarget_ 1
+//#include "LogFormat.ih"
 
 // Custom includes
 
-///////////////////////////////ih.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
-namespace senf {
-namespace log {
-namespace detail {
+prefix_ void senf::log::detail::LogFormat::showTime(bool flag)
+{
+    showTime_ = flag;
+}
 
-    void quoteNonPrintable(std::string & s);
-    std::string getDefaultTag();
+prefix_ void senf::log::detail::LogFormat::showStream(bool flag)
+{
+    showStream_ = flag;
+}
 
-}}}
+prefix_ void senf::log::detail::LogFormat::showLevel(bool flag)
+{
+    showLevel_ = flag;
+}
 
-///////////////////////////////ih.e////////////////////////////////////////
-#endif
+prefix_ void senf::log::detail::LogFormat::showArea(bool flag)
+{
+    showArea_ = flag;
+}
+
+prefix_ void senf::log::detail::LogFormat::tag(std::string const & tag)
+{
+    tag_ = tag;
+}
+
+prefix_ bool senf::log::detail::LogFormat::isPlainFormat()
+    const
+{
+    return tag_.empty() && !showTime_ && !showStream_ && !showLevel_ && !showArea_;
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
 
 
 // Local Variables:

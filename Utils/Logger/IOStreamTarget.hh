@@ -30,6 +30,7 @@
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 #include "Target.hh"
+#include "LogFormat.hh"
 
 //#include "IOStreamTarget.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -49,7 +50,7 @@ namespace log {
         \ingroup targets
       */
     class IOStreamTarget
-        : public Target
+        : public Target, private detail::LogFormat
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -61,26 +62,12 @@ namespace log {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void showTime(bool flag = true); ///< Enable or disable output of time field
-        void showStream(bool flag = true); ///< Enable or disable output of stream field
-        void showLevel(bool flag = true); ///< Enable or disable output of log level
-        void showArea(bool flag = true); ///< Enable or disable output of log area
-
-        void timeFormat(std::string const & format);
-                                        ///< Set time format
-                                        /**< The date formatting is set using the Boost.DateTime
-                                             date_facet, e.g.
-                                             \code
-                                                 target.timeFormat("%Y%m%d %H:%M:%S");
-                                             \endcode
-                                             If the \c timeFormat is set to the empty string, the
-                                             time is written out as unformatted ClockService value.
-
-                                             By default, the date-time will be written in extended
-                                             ISO format.
-                                             \param[in] format Date/Time format string */
-
-        void tag(std::string const & tag);
+        using detail::LogFormat::showTime;
+        using detail::LogFormat::showStream;
+        using detail::LogFormat::showLevel;
+        using detail::LogFormat::showArea;
+        using detail::LogFormat::timeFormat;
+        using detail::LogFormat::tag;
         
     protected:
         void v_write(time_type timestamp, std::string const & stream, 
@@ -90,15 +77,6 @@ namespace log {
     private:
         std::ostream & stream_;
 
-        std::string tag_;
-        std::stringstream datestream_;
-        bool noformat_;
-        bool showTime_;
-        bool showStream_;
-        bool showLevel_;
-        bool showArea_;
-
-        time_type timeBase_;
     };
 
 }}

@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "SyslogTarget.hh"
+#include "LogFormat.hh"
 #include "../../Socket/Protocols/INet/INetAddressing.hh"
 #include "../../Socket/ClientSocketHandle.hh"
 #include "../../Socket/FramingPolicy.hh"
@@ -87,7 +88,7 @@ namespace log {
             daemon to skip the \c HEADER part.
      */
     class SyslogUDPTarget
-        : public Target
+        : public Target, private detail::LogFormat
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -105,11 +106,12 @@ namespace log {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        void showStream(bool flag = true);
-        void showLevel(bool flag = true);
-        void showArea(bool flag = true);
-
-        void tag(std::string const & tag);
+        using detail::LogFormat::showTime;
+        using detail::LogFormat::showStream;
+        using detail::LogFormat::showLevel;
+        using detail::LogFormat::showArea;
+        using detail::LogFormat::timeFormat;
+        using detail::LogFormat::tag;
 
     private:
         void v_write(time_type timestamp, std::string const & stream, 
@@ -117,15 +119,11 @@ namespace log {
                      std::string const & message);
 
         int facility_;
-        std::string tag_;
         typedef senf::ClientSocketHandle< senf::MakeSocketPolicy<
             senf::DatagramFramingPolicy,
             senf::ConnectedCommunicationPolicy,
             senf::WriteablePolicy>::policy > Handle;
         Handle handle_;
-        bool showStream_;
-        bool showLevel_;
-        bool showArea_;
     };
 
 }}

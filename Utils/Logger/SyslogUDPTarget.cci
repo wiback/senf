@@ -26,29 +26,34 @@
 //#include "SyslogUDPTarget.ih"
 
 // Custom includes
+#include "../../Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
 
-prefix_ void senf::log::SyslogUDPTarget::showStream(bool flag)
-{
-    showStream_ = flag;
-}
+prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet4Address const & target,
+                                                    int facility)
+    : facility_ (facility),
+      handle_ ( senf::ConnectedUDPv4ClientSocketHandle(senf::INet4SocketAddress(target, 514u)) )
+{}
 
-prefix_ void senf::log::SyslogUDPTarget::showLevel(bool flag)
-{
-    showLevel_ = flag;
-}
+prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet4SocketAddress const & target,
+                                                    int facility)
+    : facility_ (facility),
+      handle_ ( senf::ConnectedUDPv4ClientSocketHandle(target) )
+{}
 
-prefix_ void senf::log::SyslogUDPTarget::showArea(bool flag)
-{
-    showArea_ = flag;
-}
+prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet6Address const & target,
+                                                    int facility)
+    : facility_ (facility),
+      handle_ ( senf::ConnectedUDPv6ClientSocketHandle(senf::INet6SocketAddress(target, 514u)) )
+{}
 
-prefix_ void senf::log::SyslogUDPTarget::tag(std::string const & tag)
-{
-    tag_ = tag;
-}
+prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet6SocketAddress const & target,
+                                                    int facility)
+    : facility_ (facility),
+      handle_ ( senf::ConnectedUDPv6ClientSocketHandle(target) )
+{}
 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
