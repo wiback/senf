@@ -57,7 +57,7 @@
 
 /** \brief Check for compile failure
 
-    COMPILE_RAIL() is used to check, that a certain piece of code will produce a compile time
+    COMPILE_FAIL() is used to check, that a certain piece of code will produce a compile time
     failure.
 
     \code

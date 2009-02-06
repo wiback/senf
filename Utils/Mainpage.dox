@@ -103,7 +103,7 @@ namespace senf {
     <tr><td>\ref utils_tags</td><td>Miscellaneous type tags</td></tr>
 
     <tr><td>stringJoin()</td><td>Utility to join a string range into
-    a single string (with separator)</td><?tr>
+    a single string (with separator)</td></tr>
     
     <tr><td>make_transform_range()</td><td>\c boost::make_transform_iterator() with support for
     ranges</td></tr>
