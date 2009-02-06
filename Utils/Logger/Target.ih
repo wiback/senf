@@ -57,6 +57,9 @@ namespace detail {
         void registerTarget(Target * target, std::string const & name);
         void unregisterTarget(Target * target);
 
+        void consoleAreas(std::ostream & os);
+        void consoleStreams(std::ostream & os);
+
         typedef std::set<Target *> Targets;
         Targets targets_;
 

@@ -88,9 +88,13 @@ prefix_ senf::log::Target::Target(std::string const & name)
                                                         std::string const &, std::string const &,
                                                         unsigned, action_t, int)>(&Target::route),
                                                     this)))
-        .arg("stream", "stream to match or empty to match any stream",
+        .arg("stream", 
+             "stream to match or empty to match any stream\n"
+             "              use '/sys/log/streams' to list all available streams",
              kw::default_value="")
-        .arg("area", "area to match or empty to match any area",
+        .arg("area", 
+             "area to match or empty to match any area\n"
+             "              use '/sys/log/areas' to list all available areas",
              kw::default_value="")
         .arg("level", "log level, one of: VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
              kw::default_value=local::VERBOSE)
@@ -237,6 +241,26 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
     : fallbackRouting_(true)
 {
     console::sysdir().add("log", consoleDir_());
+    consoleDir_().add("areas", senf::membind(&TargetRegistry::consoleAreas, this))
+        .doc("List all areas");
+    consoleDir_().add("streams", senf::membind(&TargetRegistry::consoleStreams, this))
+        .doc("List all streams");
+}
+
+prefix_ void senf::log::detail::TargetRegistry::consoleAreas(std::ostream & os)
+{
+    AreaRegistry::iterator i (AreaRegistry::instance().begin());
+    AreaRegistry::iterator const i_end (AreaRegistry::instance().end());
+    for (; i != i_end; ++i)
+        os << *i << "\n";
+}
+
+prefix_ void senf::log::detail::TargetRegistry::consoleStreams(std::ostream & os)
+{
+    StreamRegistry::iterator i (StreamRegistry::instance().begin());
+    StreamRegistry::iterator const i_end (StreamRegistry::instance().end());
+    for (; i != i_end; ++i)
+        os << *i << "\n";
 }
 
 ////////////////////////////////////////
