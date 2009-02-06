@@ -42,12 +42,15 @@ namespace senf {
     template <class ForwardReadableRange>
     std::string stringJoin(ForwardReadableRange const & range, std::string sep);
 
+    template <class T>
+    std::string str(T const & t);
+
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "String.cci"
 #include "String.ct"
-//#include "String.cti"
+#include "String.cti"
 #endif
 
 

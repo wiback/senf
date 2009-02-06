@@ -114,8 +114,8 @@ template <class SPolicy>
 prefix_ typename senf::ServerSocketHandle<SPolicy>::ClientHandle
 senf::ServerSocketHandle<SPolicy>::acceptfrom(Address & addr)
 {
-    return ClienttHandle(this->protocol().clone(),
-                         SPolicy::CommunicationPolicy::accept(*this,addr));
+    return ClientHandle(this->body().clone(
+                            SPolicy::CommunicationPolicy::accept(*this,addr), false));
 }
 
 ///////////////////////////////////////////////////////////////////////////

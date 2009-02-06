@@ -44,6 +44,9 @@ prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::strin
     detail::quoteNonPrintable(m);
 
     std::stringstream prfstream;
+    // The space after the '>' is there on purpose: It ensures, that the prefix (which may be empty)
+    // or message will not inadvertently be interpreted as date or hostname by a receiving syslog
+    // daemon or proxy
     prfstream << '<' << (facility_ | senf::log::SyslogTarget::LEVELMAP[level]) << "> "
               << prefix(timestamp, stream, area, level);
     std::string const & prf (prfstream.str());

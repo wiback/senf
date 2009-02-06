@@ -30,6 +30,7 @@
 #include <memory>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/static_assert.hpp>
+#include "../Console/LazyDirectory.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -53,13 +54,15 @@ namespace detail {
     private:
         TargetRegistry();
         
-        void registerTarget(Target * target);
+        void registerTarget(Target * target, std::string const & name);
         void unregisterTarget(Target * target);
 
         typedef std::set<Target *> Targets;
         Targets targets_;
 
         bool fallbackRouting_;
+
+        console::LazyDirectory consoleDir_;
         
         friend class senf::log::Target;
         friend class senf::singleton<TargetRegistry>;

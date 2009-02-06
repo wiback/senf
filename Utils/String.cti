@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,37 +21,24 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief FileTarget non-inline non-template implementation */
+    \brief String inline template implementation */
 
-#include "FileTarget.hh"
-//#include "FileTarget.ih"
+//#include "String.ih"
 
 // Custom includes
+#include <boost/lexical_cast.hpp>
 
-//#include "FileTarget.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
-prefix_ senf::log::FileTarget::FileTarget(std::string file)
-    : ofstream_t(file.c_str(), std::ofstream::app), IOStreamTarget(file, ofstream_t::member), 
-      file_(file)
-{}
-
-prefix_ void senf::log::FileTarget::reopen()
+template <class T>
+prefix_ std::string senf::str(T const & t)
 {
-    ofstream_t::member.close();
-    ofstream_t::member.open(file_.c_str(), std::ofstream::app);
+    return boost::lexical_cast<std::string>(t);
 }
 
-prefix_ void senf::log::FileTarget::reopen(std::string file)
-{
-    file_ = file;
-    reopen();
-}
-
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
-//#include "FileTarget.mpp"
 
 
 // Local Variables:

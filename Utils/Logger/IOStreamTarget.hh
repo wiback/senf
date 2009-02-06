@@ -57,7 +57,7 @@ namespace log {
         ///\name Structors and default members
         ///@{
 
-        explicit IOStreamTarget(std::ostream & os);
+        IOStreamTarget(std::string const & name, std::ostream & os);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////

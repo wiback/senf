@@ -28,7 +28,11 @@
 
 // Custom includes
 #include <algorithm>
+#include <boost/format.hpp>
 #include "ConsoleTarget.hh"
+#include "../Console/Console.hh"
+#include "../Console/Sysdir.hh"
+#include "../membind.hh"
 
 //#include "Target.mpp"
 #define prefix_
@@ -37,9 +41,106 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::Target
 
-prefix_ senf::log::Target::Target()
+namespace senf {
+namespace log {
+
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER( Target, action_t, (ACCEPT)(REJECT) );
+
+}}
+
+namespace {
+namespace local {
+
+    enum Level { 
+        VERBOSE = senf::log::VERBOSE::value, 
+        NOTICE = senf::log::NOTICE::value, 
+        MESSAGE = senf::log::MESSAGE::value, 
+        IMPORTANT = senf::log::IMPORTANT::value, 
+        CRITICAL = senf::log::CRITICAL::value, 
+        FATAL = senf::log::FATAL::value
+    };
+    SENF_CONSOLE_REGISTER_ENUM( Level, 
+                                (VERBOSE)(NOTICE)(MESSAGE)(IMPORTANT)(CRITICAL)(FATAL) );
+    
+}}
+
+prefix_ senf::log::Target::Target(std::string const & name)
 {
-    detail::TargetRegistry::instance().registerTarget(this);
+    namespace kw = senf::console::kw;
+
+    detail::TargetRegistry::instance().registerTarget(this, name);
+    consoleDir_().add("list", senf::membind(&Target::consoleList, this))
+        .doc("Show routing table\n"
+             "\n"
+             "Columns:\n"
+             "    #       rule index\n"
+             "    STREAM  stream to match, empty to match all streams\n"
+             "    AREA    area to match, empty to match all targets\n"
+             "    LEVEL   match messages with level above this. Log levels in increasing order\n"
+             "            are:\n"
+             "                verbose, notice, message, important, critical, fatal\n"
+             "    ACTION  action to take: accept or reject");
+    consoleDir_().add("route", 
+                      boost::function<void (std::string const &, std::string const &,
+                                            local::Level, action_t, int)>(
+                                                senf::membind(
+                                                    static_cast<void (Target::*)(
+                                                        std::string const &, std::string const &,
+                                                        unsigned, action_t, int)>(&Target::route),
+                                                    this)))
+        .arg("stream", "stream to match or empty to match any stream",
+             kw::default_value="")
+        .arg("area", "area to match or empty to match any area",
+             kw::default_value="")
+        .arg("level", "log level, one of: VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
+             kw::default_value=local::VERBOSE)
+        .arg("action", "routing action, one of: ACCEPT, REJECT",
+             kw::default_value=ACCEPT)
+        .arg("index", "index at which to insert new rule",
+             kw::default_value=-1)
+        .doc("Add routing entry. Log messages are matched against the routing table beginning\n"
+             "with the first entry. The action of the first matching entry determines the\n"
+             "handling of the message.\n"
+             "\n"
+             "Examples:\n"
+             "\n"
+             "    route\n"
+             "        route all messages to this target.\n"
+             "\n"
+             "    route \"\" my::Class\n"
+             "        route all messages which are in the my::Class area.\n"
+             "\n"
+             "    route senf::log::Debug \"\" VERBOSE REJECT\n"
+             "    route \"\" \"\" VERBOSE\n"
+             "        route all messages not in the senf::log::Debug stream to the current area.\n"
+             "\n"
+             "The additional optional index argument identifies the position in the routing table\n"
+             "where the new routing entry will be added. Positive numbers count from the\n"
+             "beginning, 0 being the first routing entry. Negative values count from the end.\n");
+    consoleDir_().add("unroute",
+                      senf::membind(static_cast<void (Target::*)(int)>(&Target::unroute), this))
+        .arg("index", "index of routing entry to remove")
+        .overloadDoc("Remove routing entry with the given index");
+    consoleDir_().add("unroute", 
+                      boost::function<void (std::string const &, std::string const &,
+                                            local::Level, action_t)>(
+                                                senf::membind(
+                                                    static_cast<void (Target::*)(
+                                                        std::string const &, std::string const &,
+                                                        unsigned, action_t)>(&Target::unroute),
+                                                    this)))
+        .arg("stream", "stream to match or empty to match any stream",
+             kw::default_value="")
+        .arg("area", "area to match or empty to match any area",
+             kw::default_value="")
+        .arg("level", "log level, one of: VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
+             kw::default_value=local::VERBOSE)
+        .arg("action", "routing action, one of: ACCEPT, REJECT",
+             kw::default_value=ACCEPT)
+        .overloadDoc("Remove the routing entry matching the specified arguments.");
+    consoleDir_().add("flush", senf::membind(&Target::flush, this))
+        .doc("Remove all routing entries clearing the routing table. This will disable all\n"
+             "logging output on this target.");
 }
 
 prefix_ senf::log::Target::~Target()
@@ -56,9 +157,12 @@ prefix_ senf::log::Target::~Target()
 prefix_ void senf::log::Target::route(std::string const & stream, std::string const & area,
                                       unsigned level, action_t action, int index)
 {
-    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
-    if (!s)
-        throw InvalidStreamException();
+    detail::StreamBase const * s (0);
+    if (! stream.empty()) {
+        s = StreamRegistry::instance().lookup(stream);
+        if (!s)
+            throw InvalidStreamException();
+    }
     detail::AreaBase const * a (0);
     if (! area.empty()) {
         a = AreaRegistry::instance().lookup(area);
@@ -71,9 +175,12 @@ prefix_ void senf::log::Target::route(std::string const & stream, std::string co
 prefix_ void senf::log::Target::unroute(std::string const & stream, std::string const & area,
                                         unsigned level, action_t action)
 {
-    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
-    if (!s)
-        throw InvalidStreamException();
+    detail::StreamBase const * s (0);
+    if (! stream.empty()) {
+        s = StreamRegistry::instance().lookup(stream);
+        if (!s)
+            throw InvalidStreamException();
+    }
     detail::AreaBase const * a (0);
     if (! area.empty()) {
         a = AreaRegistry::instance().lookup(area);
@@ -121,6 +228,15 @@ prefix_ void senf::log::Target::flush()
     for (; i != i_end; ++i)
         if (i->action_ == ACCEPT)
             updateRoutingCache(i->stream_, i->area_);
+}
+
+////////////////////////////////////////
+// protected members
+
+prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
+    : fallbackRouting_(true)
+{
+    console::sysdir().add("log", consoleDir_());
 }
 
 ////////////////////////////////////////
@@ -214,8 +330,43 @@ prefix_ void senf::log::Target::write(time_type timestamp,
         }
 }
 
+namespace {
+    std::string formatLabel(std::string const & l)
+    {
+        if (l.empty())
+            return "-";
+        if (l.size() > 29)
+            return l.substr(l.size()-29);
+        return l;
+    }
+}
+
+prefix_ void senf::log::Target::consoleList(std::ostream & os)
+{
+    static char const * levels[] = { 
+        "none", "verbose", "notice", "message", "important", "critical", "fatal", "disabled" };
+
+    boost::format fmt ("%2d %-29s %-29s %-9s %-6s\n");
+    os << fmt % "#" % "STREAM" % "AREA" % "LEVEL" % "ACTION";
+    unsigned n (0);
+    for (iterator i (begin()); i != end(); ++i, ++n)
+        os << fmt 
+            % n 
+            % formatLabel(i->stream())
+            % formatLabel(i->area())
+            % levels[i->level()]
+            % (i->action() == ACCEPT ? "accept" : "reject");
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::TargetRegistry
+
+prefix_ void senf::log::detail::TargetRegistry::registerTarget(Target * target,
+                                                               std::string const & name)
+{
+    targets_.insert(target);
+    consoleDir_().add(name, target->consoleDir_());
+}
 
 prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
                                                       AreaBase const & area, unsigned level,

@@ -88,7 +88,7 @@ namespace detail {
 
     typedef senf::ServerSocketHandle<
         senf::MakeSocketPolicy< senf::TCPv4SocketProtocol::Policy, 
-                                senf::UnspecifiedAddressingPolicy>::policy > ServerHandle;
+                                senf::BSDAddressingPolicy>::policy > ServerHandle;
 
     /** \brief Internal: Generic client interface
 

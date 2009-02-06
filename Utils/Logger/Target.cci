@@ -137,15 +137,6 @@ prefix_ bool senf::log::detail::TargetRegistry::fallbackRouting()
 ////////////////////////////////////////
 // private members
 
-prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
-    : fallbackRouting_(true)
-{}
-
-prefix_ void senf::log::detail::TargetRegistry::registerTarget(Target * target)
-{
-    targets_.insert(target);
-}
-
 prefix_ void senf::log::detail::TargetRegistry::unregisterTarget(Target * target)
 {
     targets_.erase(target);

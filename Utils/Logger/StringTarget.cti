@@ -34,7 +34,7 @@
 // senf::log::StringTarget
 
 prefix_ senf::log::StringTarget::StringTarget()
-    : IOStreamTarget(stream_base::member)
+    : IOStreamTarget("membuffer", stream_base::member)
 {}
 
 prefix_ std::string senf::log::StringTarget::str()

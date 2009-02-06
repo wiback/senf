@@ -36,6 +36,7 @@
 #include "StreamRegistry.hh"
 #include "../Exception.hh"
 #include "TimeSource.hh"
+#include "../Console/LazyDirectory.hh"
 
 //#include "Target.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -185,7 +186,7 @@ namespace log {
         ///\name Structors and default members
         ///@{
 
-        Target();
+        explicit Target(std::string const & name);
         virtual ~Target();
 
         ///@}
@@ -351,6 +352,8 @@ namespace log {
         void write(time_type timestamp, detail::StreamBase const & stream,
                    detail::AreaBase const & area, unsigned level, std::string const & message);
 
+        void consoleList(std::ostream & os);
+
 #   ifdef DOXYGEN
     protected:
 #   endif
@@ -381,6 +384,8 @@ namespace log {
 #   endif
 
         RIB rib_;
+
+        console::LazyDirectory consoleDir_;
 
         friend class detail::AreaBase;
         friend class detail::TargetRegistry;

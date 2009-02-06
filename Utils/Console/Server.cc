@@ -106,12 +106,12 @@ prefix_ void senf::console::Server::newClient(int event)
     ServerHandle::ClientHandle client (handle_.accept());
     boost::intrusive_ptr<Client> p (new Client(*this, client));
     clients_.insert( p );
-    SENF_LOG(( "Registered new client " << p.get() ));
+    SENF_LOG(( "Registered new client " << client.peer() ));
 }
 
 prefix_ void senf::console::Server::removeClient(Client & client)
 {
-    SENF_LOG(( "Disposing client " << & client ));
+    SENF_LOG(( "Disposing client " << client.handle().peer() ));
     // THIS DELETES THE CLIENT INSTANCE !!
     clients_.erase(boost::intrusive_ptr<Client>(&client));
 }
@@ -224,8 +224,9 @@ senf::console::detail::NoninteractiveClientReader::newData(int event)
 // senf::console::Client
 
 prefix_ senf::console::Client::Client(Server & server, ClientHandle handle)
-    : out_t(boost::ref(*this)), senf::log::IOStreamTarget(out_t::member), server_ (server),
-      handle_ (handle), 
+    : out_t(boost::ref(*this)), 
+      senf::log::IOStreamTarget("client-" + senf::str(handle.peer()), out_t::member), 
+      server_ (server), handle_ (handle), 
       readevent_ ("senf::console::Client::interactive_check", 
                   boost::bind(&Client::setNoninteractive,this), 
                   handle, scheduler::FdEvent::EV_READ, false),
@@ -320,33 +321,6 @@ prefix_ void senf::console::Client::v_write(senf::log::time_type timestamp,
     IOStreamTarget::v_write(timestamp, stream, area, level, message);
     out_t::member << std::flush;
     reader_->enablePrompt();
-}
-
-prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Client const & client)
-{
-    typedef ClientSocketHandle< MakeSocketPolicy<
-        INet4AddressingPolicy,ConnectedCommunicationPolicy>::policy > V4Socket;
-    typedef ClientSocketHandle< MakeSocketPolicy<
-        INet6AddressingPolicy,ConnectedCommunicationPolicy>::policy > V6Socket;
-
-    try {
-        if (check_socket_cast<V4Socket>(client.handle()))
-            os << dynamic_socket_cast<V4Socket>(client.handle()).peer();
-        else if (check_socket_cast<V6Socket>(client.handle()))
-            os << dynamic_socket_cast<V6Socket>(client.handle()).peer();
-        else
-            os << static_cast<void const *>(&client);
-    }
-    catch (SystemException &) {
-        os << "0.0.0.0:0";
-    }
-        
-    return os;
-}
-
-prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Client * client)
-{
-    return os << *client;
 }
 
 ///////////////////////////////////////////////////////////////////////////
