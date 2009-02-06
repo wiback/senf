@@ -77,11 +77,12 @@ namespace log {
         iterator begin();               ///< Beginning of area name sequence
         iterator end();                 ///< End of area name sequence
 
+        detail::AreaBase const * lookup(std::string const & name);
+
     private:
         AreaRegistry();
 
         void registerArea(detail::AreaBase const & area);
-        detail::AreaBase const * lookup(std::string const & name);
 
         Registry registry_;
 

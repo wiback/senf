@@ -75,11 +75,12 @@ namespace log {
         iterator begin();
         iterator end();
 
+        detail::StreamBase const * lookup(std::string const & name);
+
     private:
         StreamRegistry();
 
         void registerStream(detail::StreamBase const & stream);
-        detail::StreamBase const * lookup(std::string const & name);
 
         Registry registry_;
 

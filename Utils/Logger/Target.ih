@@ -43,6 +43,15 @@ namespace detail {
         : public senf::singleton<TargetRegistry>
     {
     public:
+        enum Level { 
+            VERBOSE = senf::log::VERBOSE::value, 
+            NOTICE = senf::log::NOTICE::value, 
+            MESSAGE = senf::log::MESSAGE::value, 
+            IMPORTANT = senf::log::IMPORTANT::value, 
+            CRITICAL = senf::log::CRITICAL::value, 
+            FATAL = senf::log::FATAL::value
+        };
+
         using senf::singleton<TargetRegistry>::instance;
 
         void write(StreamBase const & stream, AreaBase const & area, unsigned level, 
@@ -59,6 +68,8 @@ namespace detail {
 
         void consoleAreas(std::ostream & os);
         void consoleStreams(std::ostream & os);
+        void consoleWrite(std::string const & stream, std::string const & area, Level level,
+                          std::string const & msg);
 
         typedef std::set<Target *> Targets;
         Targets targets_;

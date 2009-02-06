@@ -46,23 +46,12 @@ namespace log {
 
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( Target, action_t, (ACCEPT)(REJECT) );
 
-}}
+namespace detail {
 
-namespace {
-namespace local {
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER( TargetRegistry, Level, 
+                                       (VERBOSE)(NOTICE)(MESSAGE)(IMPORTANT)(CRITICAL)(FATAL) );
 
-    enum Level { 
-        VERBOSE = senf::log::VERBOSE::value, 
-        NOTICE = senf::log::NOTICE::value, 
-        MESSAGE = senf::log::MESSAGE::value, 
-        IMPORTANT = senf::log::IMPORTANT::value, 
-        CRITICAL = senf::log::CRITICAL::value, 
-        FATAL = senf::log::FATAL::value
-    };
-    SENF_CONSOLE_REGISTER_ENUM( Level, 
-                                (VERBOSE)(NOTICE)(MESSAGE)(IMPORTANT)(CRITICAL)(FATAL) );
-    
-}}
+}}}
 
 prefix_ senf::log::Target::Target(std::string const & name)
 {
@@ -82,7 +71,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
              "    ACTION  action to take: accept or reject");
     consoleDir_().add("route", 
                       boost::function<void (std::string const &, std::string const &,
-                                            local::Level, action_t, int)>(
+                                            detail::TargetRegistry::Level, action_t, int)>(
                                                 senf::membind(
                                                     static_cast<void (Target::*)(
                                                         std::string const &, std::string const &,
@@ -97,7 +86,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
              "              use '/sys/log/areas' to list all available areas",
              kw::default_value="")
         .arg("level", "log level, one of: VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
-             kw::default_value=local::VERBOSE)
+             kw::default_value=detail::TargetRegistry::VERBOSE)
         .arg("action", "routing action, one of: ACCEPT, REJECT",
              kw::default_value=ACCEPT)
         .arg("index", "index at which to insert new rule",
@@ -127,7 +116,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
         .overloadDoc("Remove routing entry with the given index");
     consoleDir_().add("unroute", 
                       boost::function<void (std::string const &, std::string const &,
-                                            local::Level, action_t)>(
+                                            detail::TargetRegistry::Level, action_t)>(
                                                 senf::membind(
                                                     static_cast<void (Target::*)(
                                                         std::string const &, std::string const &,
@@ -138,7 +127,7 @@ prefix_ senf::log::Target::Target(std::string const & name)
         .arg("area", "area to match or empty to match any area",
              kw::default_value="")
         .arg("level", "log level, one of: VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
-             kw::default_value=local::VERBOSE)
+             kw::default_value=detail::TargetRegistry::VERBOSE)
         .arg("action", "routing action, one of: ACCEPT, REJECT",
              kw::default_value=ACCEPT)
         .overloadDoc("Remove the routing entry matching the specified arguments.");
@@ -240,11 +229,22 @@ prefix_ void senf::log::Target::flush()
 prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
     : fallbackRouting_(true)
 {
+    namespace kw = senf::console::kw;
+
     console::sysdir().add("log", consoleDir_());
     consoleDir_().add("areas", senf::membind(&TargetRegistry::consoleAreas, this))
         .doc("List all areas");
     consoleDir_().add("streams", senf::membind(&TargetRegistry::consoleStreams, this))
         .doc("List all streams");
+    consoleDir_().add("message", senf::membind(&TargetRegistry::consoleWrite, this))
+        .arg("stream", "stream to write message to",
+             kw::default_value = "senf::log::Debug")
+        .arg("area","area to write message to",
+             kw::default_value = "senf::log::DefaultArea")
+        .arg("level", "log level",
+             kw::default_value = MESSAGE)
+        .arg("message", "message to write")
+        .doc("Write log message");
 }
 
 prefix_ void senf::log::detail::TargetRegistry::consoleAreas(std::ostream & os)
@@ -261,6 +261,20 @@ prefix_ void senf::log::detail::TargetRegistry::consoleStreams(std::ostream & os
     StreamRegistry::iterator const i_end (StreamRegistry::instance().end());
     for (; i != i_end; ++i)
         os << *i << "\n";
+}
+
+prefix_ void senf::log::detail::TargetRegistry::consoleWrite(std::string const & stream,
+                                                             std::string const & area,
+                                                             Level level,
+                                                             std::string const & msg)
+{
+    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
+    if (!s)
+        throw Target::InvalidStreamException();
+    detail::AreaBase const * a (AreaRegistry::instance().lookup(area));
+    if (!a)
+        throw Target::InvalidAreaException();
+    write(*s, *a, level, msg);
 }
 
 ////////////////////////////////////////
