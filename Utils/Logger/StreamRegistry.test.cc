@@ -37,12 +37,13 @@
 
 BOOST_AUTO_UNIT_TEST(streamRegistry)
 {
-    char const * streams[] = { "senf::log::Debug", "senf::log::test::myStream" };
+    char const * streams[] = 
+        { "senf::SenfLog", "senf::log::Debug", "senf::log::test::myStream" };
 
     BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::StreamRegistry::instance().begin(),
                                    senf::log::StreamRegistry::instance().end(),
                                    streams, streams+sizeof(streams)/sizeof(streams[0]) );
-    BOOST_CHECK_EQUAL( senf::log::detail::StreamBase::nStreams, 2u );
+    BOOST_CHECK_EQUAL( senf::log::detail::StreamBase::nStreams, 3u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

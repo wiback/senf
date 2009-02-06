@@ -37,6 +37,8 @@
 
 BOOST_AUTO_UNIT_TEST(areaRegistry)
 {
+#if 0
+    // Need to rewrite this test ... 
     char const * areas[] = { "GlobalTestArea",
                              "senf::log::DefaultArea", 
                              "senf::log::test::Foo", 
@@ -45,7 +47,7 @@ BOOST_AUTO_UNIT_TEST(areaRegistry)
     BOOST_CHECK_EQUAL_COLLECTIONS( senf::log::AreaRegistry::instance().begin(),
                                    senf::log::AreaRegistry::instance().end(),
                                    areas, areas+sizeof(areas)/sizeof(areas[0]) );
-
+#endif
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
