@@ -241,10 +241,19 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
              kw::default_value = "senf::log::Debug")
         .arg("area","area to write message to",
              kw::default_value = "senf::log::DefaultArea")
-        .arg("level", "log level",
+        .arg("level", "log level, one of:\n"
+             "                  VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
              kw::default_value = MESSAGE)
         .arg("message", "message to write")
         .doc("Write log message");
+}
+
+prefix_ senf::log::detail::TargetRegistry::~TargetRegistry()
+{
+    Targets::iterator i (dynamicTargets_.begin());
+    Targets::iterator const i_end (dynamicTargets_.end());
+    for (; i != i_end; ++i)
+        delete *i;
 }
 
 prefix_ void senf::log::detail::TargetRegistry::consoleAreas(std::ostream & os)
@@ -404,6 +413,15 @@ prefix_ void senf::log::Target::consoleList(std::ostream & os)
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::TargetRegistry
 
+prefix_ void senf::log::detail::TargetRegistry::dynamicTarget(std::auto_ptr<Target> target)
+{
+    target->consoleDir().add("remove", boost::function<void ()>(
+                                 boost::bind(
+                                     &TargetRegistry::consoleRemoveTarget, this, target.get())))
+        .doc("Remove target.");
+    dynamicTargets_.insert(target.release());
+}
+
 prefix_ void senf::log::detail::TargetRegistry::registerTarget(Target * target,
                                                                std::string const & name)
 {
@@ -423,6 +441,13 @@ prefix_ void senf::log::detail::TargetRegistry::write(StreamBase const & stream,
     else
         area.write( TimeSource::now(), stream, level, msg );
 }
+
+prefix_ void senf::log::detail::TargetRegistry::consoleRemoveTarget(Target * target)
+{
+    dynamicTargets_.erase(target);
+    delete target;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // namespace members
 
@@ -434,6 +459,13 @@ prefix_ std::ostream & senf::log::operator<<(std::ostream & os, senf::log::Targe
     return os;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// I need to put this here, otherwise the file target will not be registered
+// if it is not used ... :-(
+
+senf::log::FileTarget::RegisterConsole senf::log::FileTarget::RegisterConsole::instance;
+senf::log::SyslogTarget::RegisterConsole senf::log::SyslogTarget::RegisterConsole::instance;
+senf::log::SyslogUDPTarget::RegisterConsole senf::log::SyslogUDPTarget::RegisterConsole::instance;
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

@@ -60,8 +60,13 @@ namespace detail {
         void routed();
         bool fallbackRouting();
 
+        senf::console::ScopedDirectory<> & consoleDir();
+
+        void dynamicTarget(std::auto_ptr<Target> target);
+
     private:
         TargetRegistry();
+        ~TargetRegistry();
         
         void registerTarget(Target * target, std::string const & name);
         void unregisterTarget(Target * target);
@@ -70,6 +75,7 @@ namespace detail {
         void consoleStreams(std::ostream & os);
         void consoleWrite(std::string const & stream, std::string const & area, Level level,
                           std::string const & msg);
+        void consoleRemoveTarget(Target * target);
 
         typedef std::set<Target *> Targets;
         Targets targets_;
@@ -77,6 +83,8 @@ namespace detail {
         bool fallbackRouting_;
 
         console::LazyDirectory consoleDir_;
+
+        Targets dynamicTargets_;
         
         friend class senf::log::Target;
         friend class senf::singleton<TargetRegistry>;

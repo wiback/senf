@@ -109,6 +109,7 @@ namespace senf {
         \related INet4SocketAddress
      */
     std::ostream & operator<<(std::ostream & os, INet4SocketAddress const & addr);
+    std::istream & operator>>(std::istream & is, INet4SocketAddress & addr);
 
     /** \brief IPv6 socket address
 
@@ -202,6 +203,7 @@ namespace senf {
         \related INet6SocketAddress
      */
     std::ostream & operator<<(std::ostream & os, INet6SocketAddress const & addr);
+    std::istream & operator>>(std::istream & is, INet6SocketAddress & addr);
 
     /// \addtogroup policy_impl_group
     /// @{

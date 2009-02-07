@@ -134,6 +134,11 @@ prefix_ bool senf::log::detail::TargetRegistry::fallbackRouting()
     return fallbackRouting_;
 }
 
+prefix_ senf::console::ScopedDirectory<> & senf::log::detail::TargetRegistry::consoleDir()
+{
+    return consoleDir_();
+}
+
 ////////////////////////////////////////
 // private members
 

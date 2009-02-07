@@ -30,6 +30,7 @@
 #include <sstream>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/tokenizer.hpp>
+#include "../Console/Console.hh"
 
 //#include "SyslogUDPTarget.mpp"
 #define prefix_
@@ -66,6 +67,79 @@ prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::strin
             line += std::string(*i, j, sz);
             handle_.write(line);
         }
+}
+
+namespace senf {
+namespace log {
+
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER(SyslogUDPTarget, LogFacility,
+                                      (AUTHPRIV)(CRON)(DAEMON)(FTP)(KERN)(LPR)(MAIL)(NEWS)(SYSLOG)
+                                      (USER)(UUCP)(LOCAL0)(LOCAL1)(LOCAL2)(LOCAL3)(LOCAL4)(LOCAL5)
+                                      (LOCAL6)(LOCAL7));
+
+}}
+
+prefix_ senf::log::SyslogUDPTarget::RegisterConsole::RegisterConsole()
+{
+    namespace kw = senf::console::kw;
+
+    detail::TargetRegistry::instance().consoleDir().add(
+        "udp-target", static_cast<void (*)(INet4SocketAddress const &, LogFacility)>(
+            &RegisterConsole::create))
+        .arg("address", "target address to send log messages to")
+        .arg("facility", "syslog facility to send messages to. One of\n"
+             "                  AUTHPRIV, CRON, DAEMON, FTP, KERN, LPR, MAIL, NEWS, SYSLOG, USER,\n"
+             "                  UUCP, LOCAL0, LOCAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7",
+             kw::default_value = USER)
+        .doc("Create new udp target. The {address} can be an IPv4 or IPv6 address. If the port\n"
+             "number is omitted, it defaults to the default syslog port 514.");
+    detail::TargetRegistry::instance().consoleDir().add(
+        "udp-target", static_cast<void (*)(INet4Address const &, LogFacility)>(
+            &RegisterConsole::create))
+        .arg("address")
+        .arg("facility", kw::default_value = USER);
+    detail::TargetRegistry::instance().consoleDir().add(
+        "udp-target", static_cast<void (*)(INet6SocketAddress const &, LogFacility)>(
+            &RegisterConsole::create))
+        .arg("address")
+        .arg("facility", kw::default_value = USER);
+    detail::TargetRegistry::instance().consoleDir().add(
+        "udp-target", static_cast<void (*)(INet6Address const &, LogFacility)>(
+            &RegisterConsole::create))
+        .arg("address")
+        .arg("facility", kw::default_value = USER);
+}
+
+prefix_ void
+senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet4SocketAddress const & target,
+                                                    LogFacility facility)
+{
+    detail::TargetRegistry::instance().dynamicTarget(
+        std::auto_ptr<Target>(new SyslogUDPTarget(target, facility)));
+}
+
+prefix_ void
+senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet4Address const & target,
+                                                    LogFacility facility)
+{
+    detail::TargetRegistry::instance().dynamicTarget(
+        std::auto_ptr<Target>(new SyslogUDPTarget(target, facility)));
+}
+
+prefix_ void
+senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet6SocketAddress const & target,
+                                                    LogFacility facility)
+{
+    detail::TargetRegistry::instance().dynamicTarget(
+        std::auto_ptr<Target>(new SyslogUDPTarget(target, facility)));
+}
+
+prefix_ void
+senf::log::SyslogUDPTarget::RegisterConsole::create(senf::INet6Address const & target,
+                                                    LogFacility facility)
+{
+    detail::TargetRegistry::instance().dynamicTarget(
+        std::auto_ptr<Target>(new SyslogUDPTarget(target, facility)));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

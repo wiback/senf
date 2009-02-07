@@ -86,6 +86,8 @@ namespace log {
             include the \c PRI part but skip the \c HEADER part (which includes the timestamp and
             hostname) for better performance. We add a space after the \c PRI to force the syslog
             daemon to skip the \c HEADER part.
+
+        \ingroup targets
      */
     class SyslogUDPTarget
         : public Target, private detail::LogFormat
@@ -124,6 +126,44 @@ namespace log {
             senf::ConnectedCommunicationPolicy,
             senf::WriteablePolicy>::policy > Handle;
         Handle handle_;
+
+    public:
+        enum LogFacility { 
+            AUTHPRIV = LOG_AUTHPRIV,
+            CRON = LOG_CRON,
+            DAEMON = LOG_DAEMON,
+            FTP = LOG_FTP,
+            KERN = LOG_KERN,
+            LOCAL0 = LOG_LOCAL0,
+            LOCAL1 = LOG_LOCAL1,
+            LOCAL2 = LOG_LOCAL2,
+            LOCAL3 = LOG_LOCAL3,
+            LOCAL4 = LOG_LOCAL4,
+            LOCAL5 = LOG_LOCAL5,
+            LOCAL6 = LOG_LOCAL6,
+            LOCAL7 = LOG_LOCAL7,
+            LPR = LOG_LPR,
+            MAIL = LOG_MAIL,
+            NEWS = LOG_NEWS,
+            SYSLOG = LOG_SYSLOG,
+            USER = LOG_USER,
+            UUCP = LOG_UUCP
+        };
+
+    private:
+
+        struct RegisterConsole {
+            RegisterConsole();
+            static void create(senf::INet4SocketAddress const & target, 
+                               LogFacility facility = USER);
+            static void create(senf::INet4Address const & target,
+                               LogFacility facility = USER);
+            static void create(senf::INet6SocketAddress const & target,
+                               LogFacility facility = USER);
+            static void create(senf::INet6Address const & target,
+                               LogFacility facility = USER);
+            static RegisterConsole instance;
+        };
     };
 
 }}

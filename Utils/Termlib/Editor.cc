@@ -433,7 +433,6 @@ prefix_ void senf::term::LineEditor::insert(std::string const & text)
 prefix_ void senf::term::LineEditor::pushHistory(std::string const & text)
 {
     if (! text.empty()
-        && (historyPoint_ == history_.size() || history_[historyPoint_] != text)
         && (history_.empty() || history_.back() != text)) {
         history_.push_back(text);
         while (history_.size() > MAX_HISTORY_SIZE)

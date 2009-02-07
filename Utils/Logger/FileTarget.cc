@@ -27,15 +27,26 @@
 //#include "FileTarget.ih"
 
 // Custom includes
+#include "../Console/Console.hh"
 
 //#include "FileTarget.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::log::FileTarget::FileTarget(std::string file)
+prefix_ senf::log::FileTarget::FileTarget(std::string const & file)
     : ofstream_t(file.c_str(), std::ofstream::app), IOStreamTarget(file, ofstream_t::member), 
       file_(file)
-{}
+{
+    consoleDir().add( "reopen", senf::membind(
+                          static_cast<void (FileTarget::*)()>(&FileTarget::reopen),
+                          this))
+        .doc("Reopen logfile");
+    consoleDir().add("reopen", senf::membind(
+                         static_cast<void (FileTarget::*)(std::string const &)>(&FileTarget::reopen),
+                         this))
+        .arg("filename","new filename")
+        .overloadDoc("Reopen logfile under new name");
+}
 
 prefix_ void senf::log::FileTarget::reopen()
 {
@@ -43,10 +54,27 @@ prefix_ void senf::log::FileTarget::reopen()
     ofstream_t::member.open(file_.c_str(), std::ofstream::app);
 }
 
-prefix_ void senf::log::FileTarget::reopen(std::string file)
+prefix_ void senf::log::FileTarget::reopen(std::string const & file)
 {
     file_ = file;
     reopen();
+    // Rename console directory
+    console::DirectoryNode::ptr parent (consoleDir().node().parent());
+    if (parent)
+        parent->add(file, consoleDir().node().unlink());
+}
+
+prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
+{
+    detail::TargetRegistry::instance().consoleDir().add("file-target",&RegisterConsole::create)
+        .arg("filename", "name of logfile")
+        .doc("Create new file target.");
+}
+
+prefix_ void senf::log::FileTarget::RegisterConsole::create(std::string const & filename)
+{
+    detail::TargetRegistry::instance().dynamicTarget(
+        std::auto_ptr<Target>(new FileTarget(filename)));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

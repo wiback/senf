@@ -175,6 +175,7 @@ namespace senf {
         \related INet4Address
      */
     std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
+    std::istream & operator>>(std::istream & os, INet4Address & addr);
 
     /** \brief CHeck INet4Address against a fixed network prefix
 

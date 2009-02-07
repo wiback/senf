@@ -70,12 +70,6 @@ prefix_ void senf::INet4SocketAddress::port(unsigned p)
     addr_.sin_port = htons(p);
 }
 
-prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4SocketAddress const & addr)
-{
-    os << addr.address() << ":" << addr.port();
-    return os;
-}
-
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet6SocketAddress
 
@@ -141,16 +135,6 @@ prefix_ void senf::INet6SocketAddress::port(unsigned port)
 prefix_ void senf::INet6SocketAddress::iface(std::string const & iface)
 {
     assignIface(iface);
-}
-
-prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6SocketAddress const & addr)
-{
-    os << '[' << addr.address();
-    std::string iface (addr.iface());
-    if (! iface.empty())
-        os << '%' << iface;
-    os << "]:" << addr.port();
-    return os;
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

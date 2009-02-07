@@ -71,6 +71,26 @@ prefix_ senf::INet4SocketAddress::INet4SocketAddress(unsigned p)
     port(p);
 }
 
+prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4SocketAddress const & addr)
+{
+    os << addr.address() << ":" << addr.port();
+    return os;
+}
+
+prefix_ std::istream & senf::operator>>(std::istream & is, INet4SocketAddress & addr)
+{
+    std::string s;
+    if (!(is >> s))
+        return is;
+    try {
+        addr = INet4SocketAddress(s);
+    }
+    catch (AddressException &) {
+        is.setstate(std::ios::failbit);
+    }
+    return is;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet6SocketAddress
 
@@ -129,6 +149,30 @@ prefix_ void senf::INet6SocketAddress::assignIface(std::string const & iface)
         if (sockaddr_.sin6_scope_id == 0)
             throw AddressSyntaxException();
     }
+}
+
+prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6SocketAddress const & addr)
+{
+    os << '[' << addr.address();
+    std::string iface (addr.iface());
+    if (! iface.empty())
+        os << '%' << iface;
+    os << "]:" << addr.port();
+    return os;
+}
+
+prefix_ std::istream & senf::operator>>(std::istream & is, INet6SocketAddress & addr)
+{
+    std::string s;
+    if (!(is >> s))
+        return is;
+    try {
+        addr = INet6SocketAddress(s);
+    }
+    catch (AddressException &) {
+        is.setstate(std::ios::failbit);
+    }
+    return is;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

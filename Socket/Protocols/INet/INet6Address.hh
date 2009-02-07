@@ -283,6 +283,7 @@ namespace senf {
         \related INet6Address
      */
     std::ostream & operator<<(std::ostream & os, INet6Address const & addr);
+    std::istream & operator>>(std::istream & is, INet6Address & addr);
 
     /** \brief Check INet6Address against a fixed network prefix
 

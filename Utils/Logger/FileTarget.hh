@@ -65,16 +65,23 @@ namespace log {
         ///\name Structors and default members
         ///@{
 
-        explicit FileTarget(std::string file); ///< Construct FileTarget writing to \a file
+        explicit FileTarget(std::string const & filename); 
+                                        ///< Construct FileTarget writing to \a file
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
         void reopen();                  ///< Reopen %log after log-file rotation
-        void reopen(std::string file);  ///< Reopen %log under a new name
+        void reopen(std::string const & file);  ///< Reopen %log under a new name
 
     private:
         std::string file_;
+
+        struct RegisterConsole {
+            RegisterConsole();
+            static void create(std::string const & filename);
+            static RegisterConsole instance;
+        };
     };
 
 }}

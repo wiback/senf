@@ -67,6 +67,7 @@ prefix_ std::string senf::console::Executor::cwdPath()
 {
     if (skipping())
         return "";
+    (void) cwd(); // ensure, cwd is live.
     return "/" + senf::stringJoin(
         senf::make_transform_range(
             boost::make_iterator_range(boost::next(cwd_.begin()), cwd_.end()),

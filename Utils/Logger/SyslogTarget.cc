@@ -27,6 +27,7 @@
 //#include "SyslogTarget.ih"
 
 // Custom includes
+#include "../Console/Console.hh"
 
 //#include "SyslogTarget.mpp"
 #define prefix_
@@ -43,6 +44,34 @@ prefix_ void senf::log::SyslogTarget::v_write(time_type timestamp, std::string c
         syslog(facility_ | LEVELMAP[level], "[%s] %s", area.c_str(), message.c_str());
     else
         syslog(facility_ | LEVELMAP[level], "%s", message.c_str());
+}
+
+namespace senf {
+namespace log {
+
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER(SyslogTarget, LogFacility,
+                                      (AUTHPRIV)(CRON)(DAEMON)(FTP)(KERN)(LPR)(MAIL)(NEWS)(SYSLOG)
+                                      (USER)(UUCP)(LOCAL0)(LOCAL1)(LOCAL2)(LOCAL3)(LOCAL4)(LOCAL5)
+                                      (LOCAL6)(LOCAL7));
+
+}}
+
+prefix_ senf::log::SyslogTarget::RegisterConsole::RegisterConsole()
+{
+    namespace kw = senf::console::kw;
+
+    detail::TargetRegistry::instance().consoleDir().add("syslog-target",&RegisterConsole::create)
+        .arg("facility", "syslog facility to send messages to. One of\n"
+             "                  AUTHPRIV, CRON, DAEMON, FTP, KERN, LPR, MAIL, NEWS, SYSLOG, USER,\n"
+             "                  UUCP, LOCAL0, LOCAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7",
+             kw::default_value = USER)
+        .doc("Create new syslog target.");
+}
+
+prefix_ void senf::log::SyslogTarget::RegisterConsole::create(LogFacility facility)
+{
+    detail::TargetRegistry::instance().dynamicTarget(
+        std::auto_ptr<Target>(new SyslogTarget(facility)));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
