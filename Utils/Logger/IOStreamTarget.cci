@@ -31,7 +31,7 @@
 ///////////////////////////////cci.p///////////////////////////////////////
 
 prefix_ senf::log::IOStreamTarget::IOStreamTarget(std::string const & name, std::ostream & os)
-    : Target(name), stream_ (os)
+    : Target(name), LogFormat(consoleDir()), stream_ (os)
 {}
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -29,6 +29,7 @@
 // Custom includes
 #include <sstream>
 #include "Target.hh"
+#include "../Console/LazyDirectory.hh"
 
 //#include "LogFormat.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -41,6 +42,7 @@ namespace detail {
     {
     public:
         LogFormat();
+        explicit LogFormat(console::ScopedDirectory<> & dir);
 
         void showTime(bool flag = true); ///< Enable or disable output of time field
         void showStream(bool flag = true); ///< Enable or disable output of stream field
@@ -69,7 +71,10 @@ namespace detail {
         bool isPlainFormat() const;
 
     private:
+        void consoleFormat(std::ostream & os);
+
         std::string tag_;
+        std::string timeFormat_;
         std::stringstream datestream_;
         bool noformat_;
         bool showTime_;

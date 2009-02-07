@@ -34,25 +34,25 @@
 
 prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet4Address const & target,
                                                     int facility)
-    : Target("udp-" + senf::str(target)), facility_ (facility),
+    : Target("udp-" + senf::str(target)), LogFormat(consoleDir()), facility_ (facility),
       handle_ ( senf::ConnectedUDPv4ClientSocketHandle(senf::INet4SocketAddress(target, 514u)) )
 {}
 
 prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet4SocketAddress const & target,
                                                     int facility)
-    : Target("udp-" + senf::str(target)), facility_ (facility),
+    : Target("udp-" + senf::str(target)), LogFormat(consoleDir()), facility_ (facility),
       handle_ ( senf::ConnectedUDPv4ClientSocketHandle(target) )
 {}
 
 prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet6Address const & target,
                                                     int facility)
-    : Target("udp-" + senf::str(target)), facility_ (facility),
+    : Target("udp-" + senf::str(target)), LogFormat(consoleDir()), facility_ (facility),
       handle_ ( senf::ConnectedUDPv6ClientSocketHandle(senf::INet6SocketAddress(target, 514u)) )
 {}
 
 prefix_ senf::log::SyslogUDPTarget::SyslogUDPTarget(senf::INet6SocketAddress const & target,
                                                     int facility)
-    : Target("udp-" + senf::str(target)), facility_ (facility),
+    : Target("udp-" + senf::str(target)), LogFormat(consoleDir()), facility_ (facility),
       handle_ ( senf::ConnectedUDPv6ClientSocketHandle(target) )
 {}
 

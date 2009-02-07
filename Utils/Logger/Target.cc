@@ -277,6 +277,11 @@ prefix_ void senf::log::detail::TargetRegistry::consoleWrite(std::string const &
     write(*s, *a, level, msg);
 }
 
+prefix_ senf::console::ScopedDirectory<> & senf::log::Target::consoleDir()
+{
+    return consoleDir_();
+}
+
 ////////////////////////////////////////
 // private members
 

@@ -341,6 +341,9 @@ namespace log {
 
         void flush();                   ///< Clear routing table
 
+    protected:
+        senf::console::ScopedDirectory<> & consoleDir(); ///< Get console/config directory
+
     private:
         void route(detail::StreamBase const * stream, detail::AreaBase const * area,
                    unsigned level, action_t action, int index);
