@@ -114,7 +114,7 @@ namespace senf {
                                         ///< Convert string to address
                                         /**< This member will try to convert the given string into
                                              an IP address. from_string() supports all standard IP
-                                             literal representations as well es hostnames.
+                                             literal representations as well as hostnames.
                                              \attention This call may block if \a s represents a
                                                  hostname which must be looked up via some network
                                                  protocol like DNS or NIS
@@ -175,6 +175,11 @@ namespace senf {
         \related INet4Address
      */
     std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
+    /** \brief Try to initialize INet4Address instance from a string representation
+        sets std::ios::failbit on the stream if an error occurred
+        \see INet4Address from_string()
+        \related INet4Address
+     */
     std::istream & operator>>(std::istream & os, INet4Address & addr);
 
     /** \brief CHeck INet4Address against a fixed network prefix
