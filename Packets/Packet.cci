@@ -177,6 +177,12 @@ prefix_ bool senf::Packet::boolean_test()
     return packet_ && packet_->valid();
 }
 
+prefix_ bool senf::Packet::valid()
+    const
+{
+    return *this;
+}
+
 template <class PacketType, class Parser>
 prefix_ Parser senf::operator<<(Parser target, ConcretePacket<PacketType> const & packet)
 {
