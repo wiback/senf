@@ -346,7 +346,7 @@ prefix_ void senf::term::LineEditor::accept()
     if (enabled_)
         newline();
     hide();
-    pushHistory(text_);
+    pushHistory(text_, true);
     callback_(text_);
     clear();
 }
@@ -430,14 +430,16 @@ prefix_ void senf::term::LineEditor::insert(std::string const & text)
     redisplay();
 }
 
-prefix_ void senf::term::LineEditor::pushHistory(std::string const & text)
+prefix_ void senf::term::LineEditor::pushHistory(std::string const & text, bool accept)
 {
     if (! text.empty()
+        && (accept || historyPoint_ == history_.size() || history_[historyPoint_] != text)
         && (history_.empty() || history_.back() != text)) {
         history_.push_back(text);
         while (history_.size() > MAX_HISTORY_SIZE)
             history_.erase(history_.begin());
-        historyPoint_ = history_.size() - 1;
+        if (accept)
+            historyPoint_ = history_.size() - 1;
     }
 }
 

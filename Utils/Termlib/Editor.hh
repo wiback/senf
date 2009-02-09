@@ -256,7 +256,8 @@ namespace term {
         ///\name History
         ///\{
 
-        void pushHistory(std::string const & text); ///< Add string \a text to history
+        void pushHistory(std::string const & text, bool accept = false);
+                                        ///< Add string \a text to history
         void prevHistory();             ///< Switch to previous history entry
         void nextHistory();             ///< Switch to next history entry
 
