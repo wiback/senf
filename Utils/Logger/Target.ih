@@ -31,12 +31,27 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/static_assert.hpp>
 #include "../Console/LazyDirectory.hh"
+#include "../Console/Parse.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
 namespace log {
 namespace detail {
+
+    struct LogParameters {
+        StreamBase const * stream;
+        AreaBase const * area;
+        unsigned level;
+        void clear();
+        void setDefaults();
+        static LogParameters defaultParameters();
+    };
+
+    std::ostream & operator<<(std::ostream & os, LogParameters const & pm);
+
+    void senf_console_parse_argument(console::ParseCommandInfo::TokensRange const & tokens, 
+                                     LogParameters & out);
 
     /** \brief Internal: Target registry */
     class TargetRegistry
@@ -73,8 +88,7 @@ namespace detail {
 
         void consoleAreas(std::ostream & os);
         void consoleStreams(std::ostream & os);
-        void consoleWrite(std::string const & stream, std::string const & area, Level level,
-                          std::string const & msg);
+        void consoleWrite(LogParameters parameters, std::string const & msg);
         void consoleRemoveTarget(Target * target);
 
         typedef std::set<Target *> Targets;

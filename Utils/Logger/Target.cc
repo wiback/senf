@@ -69,65 +69,49 @@ prefix_ senf::log::Target::Target(std::string const & name)
              "            are:\n"
              "                verbose, notice, message, important, critical, fatal\n"
              "    ACTION  action to take: accept or reject");
-    consoleDir_().add("route", 
-                      boost::function<void (std::string const &, std::string const &,
-                                            detail::TargetRegistry::Level, action_t, int)>(
-                                                senf::membind(
-                                                    static_cast<void (Target::*)(
-                                                        std::string const &, std::string const &,
-                                                        unsigned, action_t, int)>(&Target::route),
-                                                    this)))
-        .arg("stream", 
-             "stream to match or empty to match any stream\n"
-             "              use '/sys/log/streams' to list all available streams",
-             kw::default_value="")
-        .arg("area", 
-             "area to match or empty to match any area\n"
-             "              use '/sys/log/areas' to list all available areas",
-             kw::default_value="")
-        .arg("level", "log level, one of: VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
-             kw::default_value=detail::TargetRegistry::VERBOSE)
+    consoleDir_().add("route", senf::membind(&Target::consoleRoute, this))
+        .arg("index", "index at which to insert new rule")
+        .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
+             "              and log level. You may specify any combination of these parameterse\n"
+             "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
+             "              to list all valid streams and areas. Valid log levels are:\n"
+             "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL")
         .arg("action", "routing action, one of: ACCEPT, REJECT",
              kw::default_value=ACCEPT)
-        .arg("index", "index at which to insert new rule",
-             kw::default_value=-1)
         .doc("Add routing entry. Log messages are matched against the routing table beginning\n"
              "with the first entry. The action of the first matching entry determines the\n"
              "handling of the message.\n"
              "\n"
              "Examples:\n"
              "\n"
-             "    route\n"
+             "    route ()\n"
              "        route all messages to this target.\n"
              "\n"
-             "    route \"\" my::Class\n"
-             "        route all messages which are in the my::Class area.\n"
+             "    route 1 (my::Class)\n"
+             "        route all messages which are in the my::Class area. Insert this route after\n"
+             "        the first route,\n"
              "\n"
-             "    route senf::log::Debug \"\" VERBOSE REJECT\n"
-             "    route \"\" \"\" VERBOSE\n"
+             "    route (senf::log::Debug VERBOSE) REJECT\n"
+             "    route (VERBOSE)\n"
              "        route all messages not in the senf::log::Debug stream to the current area.\n"
              "\n"
              "The additional optional index argument identifies the position in the routing table\n"
              "where the new routing entry will be added. Positive numbers count from the\n"
-             "beginning, 0 being the first routing entry. Negative values count from the end.\n");
+             "beginning, 0 being the first routing entry. Negative values count from the end.");
+    consoleDir_().add("route", boost::function<void (detail::LogParameters, action_t)>(
+                          boost::bind(&Target::consoleRoute, this, -1, _1, _2)))
+        .arg("parameters")
+        .arg("action", kw::default_value=ACCEPT);
     consoleDir_().add("unroute",
                       senf::membind(static_cast<void (Target::*)(int)>(&Target::unroute), this))
         .arg("index", "index of routing entry to remove")
         .overloadDoc("Remove routing entry with the given index");
-    consoleDir_().add("unroute", 
-                      boost::function<void (std::string const &, std::string const &,
-                                            detail::TargetRegistry::Level, action_t)>(
-                                                senf::membind(
-                                                    static_cast<void (Target::*)(
-                                                        std::string const &, std::string const &,
-                                                        unsigned, action_t)>(&Target::unroute),
-                                                    this)))
-        .arg("stream", "stream to match or empty to match any stream",
-             kw::default_value="")
-        .arg("area", "area to match or empty to match any area",
-             kw::default_value="")
-        .arg("level", "log level, one of: VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
-             kw::default_value=detail::TargetRegistry::VERBOSE)
+    consoleDir_().add("unroute", senf::membind(&Target::consoleUnroute, this))
+        .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
+             "              and log level. You may specify any combination of these parameterse\n"
+             "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
+             "              to list all valid streams and areas. Valid log levels are:\n"
+             "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL")
         .arg("action", "routing action, one of: ACCEPT, REJECT",
              kw::default_value=ACCEPT)
         .overloadDoc("Remove the routing entry matching the specified arguments.");
@@ -225,66 +209,6 @@ prefix_ void senf::log::Target::flush()
 
 ////////////////////////////////////////
 // protected members
-
-prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
-    : fallbackRouting_(true)
-{
-    namespace kw = senf::console::kw;
-
-    console::sysdir().add("log", consoleDir_());
-    consoleDir_().add("areas", senf::membind(&TargetRegistry::consoleAreas, this))
-        .doc("List all areas");
-    consoleDir_().add("streams", senf::membind(&TargetRegistry::consoleStreams, this))
-        .doc("List all streams");
-    consoleDir_().add("message", senf::membind(&TargetRegistry::consoleWrite, this))
-        .arg("stream", "stream to write message to",
-             kw::default_value = "senf::log::Debug")
-        .arg("area","area to write message to",
-             kw::default_value = "senf::log::DefaultArea")
-        .arg("level", "log level, one of:\n"
-             "                  VERBOSE, NOTICE, MESSAGE, IMPORTANT, CRITICAL, FATAL",
-             kw::default_value = MESSAGE)
-        .arg("message", "message to write")
-        .doc("Write log message");
-}
-
-prefix_ senf::log::detail::TargetRegistry::~TargetRegistry()
-{
-    Targets::iterator i (dynamicTargets_.begin());
-    Targets::iterator const i_end (dynamicTargets_.end());
-    for (; i != i_end; ++i)
-        delete *i;
-}
-
-prefix_ void senf::log::detail::TargetRegistry::consoleAreas(std::ostream & os)
-{
-    AreaRegistry::iterator i (AreaRegistry::instance().begin());
-    AreaRegistry::iterator const i_end (AreaRegistry::instance().end());
-    for (; i != i_end; ++i)
-        os << *i << "\n";
-}
-
-prefix_ void senf::log::detail::TargetRegistry::consoleStreams(std::ostream & os)
-{
-    StreamRegistry::iterator i (StreamRegistry::instance().begin());
-    StreamRegistry::iterator const i_end (StreamRegistry::instance().end());
-    for (; i != i_end; ++i)
-        os << *i << "\n";
-}
-
-prefix_ void senf::log::detail::TargetRegistry::consoleWrite(std::string const & stream,
-                                                             std::string const & area,
-                                                             Level level,
-                                                             std::string const & msg)
-{
-    detail::StreamBase const * s (StreamRegistry::instance().lookup(stream));
-    if (!s)
-        throw Target::InvalidStreamException();
-    detail::AreaBase const * a (AreaRegistry::instance().lookup(area));
-    if (!a)
-        throw Target::InvalidAreaException();
-    write(*s, *a, level, msg);
-}
 
 prefix_ senf::console::ScopedDirectory<> & senf::log::Target::consoleDir()
 {
@@ -410,6 +334,16 @@ prefix_ void senf::log::Target::consoleList(std::ostream & os)
             % (i->action() == ACCEPT ? "accept" : "reject");
 }
 
+prefix_ void senf::log::Target::consoleRoute(int index, detail::LogParameters const & pm, action_t action)
+{
+    route(pm.stream, pm.area, pm.level, action, index);
+}
+
+prefix_ void senf::log::Target::consoleUnroute(detail::LogParameters const & pm, action_t action)
+{
+    unroute(pm.stream, pm.area, pm.level, action);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::TargetRegistry
 
@@ -448,6 +382,93 @@ prefix_ void senf::log::detail::TargetRegistry::consoleRemoveTarget(Target * tar
     delete target;
 }
 
+prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
+    : fallbackRouting_(true)
+{
+    namespace kw = senf::console::kw;
+
+    console::sysdir().add("log", consoleDir_());
+    consoleDir_().add("areas", senf::membind(&TargetRegistry::consoleAreas, this))
+        .doc("List all areas");
+    consoleDir_().add("streams", senf::membind(&TargetRegistry::consoleStreams, this))
+        .doc("List all streams");
+    consoleDir_().add("message", senf::membind(&TargetRegistry::consoleWrite, this))
+        .arg("parameters", "log parameters. The log parameters select the log stream, log area\n"
+             "              and log level. You may specify any combination of these parameterse\n"
+             "              in any order. Use the '/sys/log/stream' and '/sys/log/areas' commands\n"
+             "              to list all valid streams and areas. Valid log levels are:\n"
+             "                  VERBOSE NOTICE MESSAGE IMPORTANT CRITICAL FATAL",
+             kw::default_value = LogParameters::defaultParameters())
+        .arg("message", "message to write")
+        .doc("Write log message.\n"
+             "\n"
+             "Examples:\n"
+             "    message \"Test\";\n"
+             "    message (senf::log::DefaultArea NOTICE) \"Test notice\";\n"
+             "    message (FATAL) \"Program on fire\";\n"
+             "    message (VERBOSE senf::log::Debug) \"Debug message\";");
+}
+
+prefix_ senf::log::detail::TargetRegistry::~TargetRegistry()
+{
+    Targets::iterator i (dynamicTargets_.begin());
+    Targets::iterator const i_end (dynamicTargets_.end());
+    for (; i != i_end; ++i)
+        delete *i;
+}
+
+prefix_ void senf::log::detail::TargetRegistry::consoleAreas(std::ostream & os)
+{
+    AreaRegistry::iterator i (AreaRegistry::instance().begin());
+    AreaRegistry::iterator const i_end (AreaRegistry::instance().end());
+    for (; i != i_end; ++i)
+        os << *i << "\n";
+}
+
+prefix_ void senf::log::detail::TargetRegistry::consoleStreams(std::ostream & os)
+{
+    StreamRegistry::iterator i (StreamRegistry::instance().begin());
+    StreamRegistry::iterator const i_end (StreamRegistry::instance().end());
+    for (; i != i_end; ++i)
+        os << *i << "\n";
+}
+
+prefix_ void senf::log::detail::TargetRegistry::consoleWrite(LogParameters pm,
+                                                             std::string const & msg)
+{
+    pm.setDefaults();
+    write(*pm.stream, *pm.area, pm.level, msg);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::log::detail::LogParameters
+
+prefix_ void senf::log::detail::LogParameters::clear()
+{
+    stream = 0;
+    area = 0;
+    level = NONE::value;
+}
+
+prefix_ void senf::log::detail::LogParameters::setDefaults()
+{
+    if (! stream)
+        stream = & senf::log::Debug::instance();
+    if (! area)
+        area = & senf::log::DefaultArea::instance();
+    if (level == NONE::value)
+        level = MESSAGE::value;
+}
+
+prefix_ senf::log::detail::LogParameters::LogParameters
+senf::log::detail::LogParameters::defaultParameters()
+{
+    LogParameters pm;
+    pm.clear();
+    pm.setDefaults();
+    return pm;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // namespace members
 
@@ -457,6 +478,69 @@ prefix_ std::ostream & senf::log::operator<<(std::ostream & os, senf::log::Targe
     else if( action == Target::REJECT) os << "REJECT";
     else os << "unknown action";
     return os;
+}
+
+namespace {
+
+    char const * levelNames[] = { 
+        "NONE", "VERBOSE", "NOTICE", "MESSAGE", "IMPORTANT", "CRITICAL", "FATAL", "DISABLED" };
+
+    void parseParamToken(std::string const & value, senf::log::detail::LogParameters & out)
+    {
+        senf::log::detail::StreamBase const * s (
+            senf::log::StreamRegistry::instance().lookup(value));
+        if (s) {
+            if (out.stream)
+                throw senf::console::SyntaxErrorException("duplicate stream parameter");
+            out.stream = s;
+            return;
+        }
+
+        senf::log::detail::AreaBase const * a (
+            senf::log::AreaRegistry::instance().lookup(value));
+        if (a) {
+            if (out.area)
+                throw senf::console::SyntaxErrorException("duplicate area parameter");
+            out.area = a;
+            return;
+        }
+        
+        char const ** i (
+            std::find(levelNames+1, levelNames+sizeof(levelNames)/sizeof(levelNames[0])-1, value));
+        if (i == levelNames+sizeof(levelNames)/sizeof(levelNames[0])-1)
+            throw senf::console::SyntaxErrorException("invalid log parameter");
+        if (out.level != senf::log::NONE::value)
+            throw senf::console::SyntaxErrorException("duplicate level parameter");
+        out.level = i-levelNames;
+    }
+
+}
+
+prefix_ std::ostream & senf::log::detail::operator<<(std::ostream & os,
+                                                     LogParameters const & pm)
+{
+    os << '(';
+    if (pm.stream)
+        os << pm.stream->v_name();
+    if (pm.area)
+        if (pm.stream) os << ' ';
+        os << pm.area->v_name();
+    if (pm.level != NONE::value)
+        if (pm.stream || pm.area) os << ' ';
+        os << levelNames[pm.level];
+    os << ')';
+    return os;
+}
+
+prefix_ void senf::log::detail::
+senf_console_parse_argument(console::ParseCommandInfo::TokensRange const & tokens,
+                            LogParameters & out)
+{
+    out.clear();
+    
+    for (console::ParseCommandInfo::TokensRange::iterator i (tokens.begin());
+         i != tokens.end(); ++i)
+        parseParamToken(i->value(), out);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -56,6 +56,7 @@ namespace log {
 
     namespace detail { class TargetRegistry; }
     namespace detail { class AreaBase; }
+    namespace detail { struct LogParameters; }
 
     /** \brief Logging target base class
 
@@ -356,6 +357,8 @@ namespace log {
                    detail::AreaBase const & area, unsigned level, std::string const & message);
 
         void consoleList(std::ostream & os);
+        void consoleRoute(int index, detail::LogParameters const & pm, action_t action);
+        void consoleUnroute(detail::LogParameters const & pm, action_t action);
 
 #   ifdef DOXYGEN
     protected:

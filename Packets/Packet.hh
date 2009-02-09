@@ -732,6 +732,15 @@ namespace senf {
         friend class PacketInterpreter<PacketType>;
     };
 
+    /** \brief Generic parser copying
+
+        This operator allows to copy the value of identical parsers. This operation does \e not
+        depend on the parsers detailed implementation, it will just replace the data bytes of the
+        target parser with those from the source packet.
+     */
+    template <class PacketType, class Parser>
+    Parser operator<<(Parser target, ConcretePacket<PacketType> const & packet);
+
     ///@}
 
 }

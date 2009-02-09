@@ -257,6 +257,17 @@ BOOST_AUTO_UNIT_TEST(concretePacket)
     BOOST_CHECK_EQUAL( BarPacket::create()->reserved(), 0xA0A0u );
 }
 
+BOOST_AUTO_UNIT_TEST(packetAssign)
+{
+    BarPacket bar1 (BarPacket::create());
+    BarPacket bar2 (BarPacket::create());
+
+    bar2->type() << 0x2A2Bu;
+    bar1.parser() << bar2;
+    
+    BOOST_CHECK_EQUAL( bar1->type(), 0x2A2Bu );
+}
+
 BOOST_AUTO_UNIT_TEST(packetAnnotation)
 {
     senf::Packet packet (FooPacket::create());
