@@ -89,15 +89,6 @@ prefix_ senf::INet4Address senf::INet4Address::from_string(std::string const & s
         reinterpret_cast<in_addr*>(*(ent->h_addr_list))->s_addr);
 }
 
-prefix_ std::string senf::INet4Address::toString() const {
-    char buffer[4*4];
-    ::in_addr ina;
-    ina.s_addr  = (*this).inaddr();
-    ::inet_ntop(AF_INET, & ina , buffer, sizeof(buffer));
-    buffer[sizeof(buffer)-1] = 0;
-    return buffer;
-}
-
 prefix_ bool senf::INet4Address::local()
     const
 {

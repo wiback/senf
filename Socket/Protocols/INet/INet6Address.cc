@@ -91,17 +91,14 @@ prefix_ in6_addr senf:: INet6Address::toin6_addr() const {
     return ina;
 }
 
-prefix_ std::string senf::INet6Address::toString() const {
-    char buffer[5*8];
-    ::in6_addr ina  = (*this).toin6_addr();
-    ::inet_ntop(AF_INET6, & ina , buffer, sizeof(buffer));
-    buffer[sizeof(buffer)-1] = 0;
-    return buffer;
-}
-
 prefix_ std::ostream & senf::operator<<(std::ostream & os, INet6Address const & addr)
 {
-    os << addr.toString();
+    ::in6_addr ina;
+    char buffer[5*8];
+    std::copy(addr.begin(),addr.end(),&ina.s6_addr[0]);
+    ::inet_ntop(AF_INET6,&ina,buffer,sizeof(buffer));
+    buffer[sizeof(buffer)-1] = 0;
+    os << buffer;
     return os;
 }
 
@@ -147,7 +144,7 @@ prefix_ senf::INet6Network::INet6Network(std::string s)
 #undef prefix_
 //#include "INet6Address.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -159,9 +159,6 @@ namespace senf {
                                         /**< This member returns the address as an integer number in
                                              host byte order. This representation allows simple
                                              network math operations. */
-        std::string toString() const;
-                                        ///< get the string representation of this INet4Address
-
         ////@}
 
     private:

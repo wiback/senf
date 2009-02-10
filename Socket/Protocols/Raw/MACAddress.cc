@@ -57,7 +57,7 @@ namespace {
         else
             throw senf::AddressSyntaxException();
     }
-    
+
     template <class Range>
     boost::uint8_t hexToByte(Range const & range)
     {
@@ -107,11 +107,6 @@ prefix_ senf::MACAddress senf::MACAddress::from_eui64(boost::uint64_t v)
 senf::MACAddress const senf::MACAddress::Broadcast = senf::MACAddress(0xFFFFFFFFFFFFull);
 senf::MACAddress const senf::MACAddress::None;
 
-prefix_ std::string senf::MACAddress::toString() const {
-        std::ostringstream tmp; 
-        tmp << (*this);
-        return tmp.str();
-}
 
 ///////////////////////////////////////////////////////////////////////////
 // namespace members
@@ -146,7 +141,7 @@ prefix_ std::istream & senf::operator>>(std::istream & is, MACAddress & mac)
 #undef prefix_
 //#include "MACAddress.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

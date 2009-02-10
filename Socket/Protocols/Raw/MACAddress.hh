@@ -42,7 +42,7 @@
 namespace senf {
 
     /** \brief Ethernet MAC address
-        
+
         The Ethernet MAC is modelled as a fixed-size container/sequence of 6 bytes.
 
         The following statements all create the same MAC address <code>00:1A:2B:3C:4D:5F</code>
@@ -85,7 +85,7 @@ namespace senf {
         \ingroup addr_group
      */
     struct MACAddress
-        : public boost::array<boost::uint8_t,6>, 
+        : public boost::array<boost::uint8_t,6>,
           public comparable_safe_bool<MACAddress>
     {
         static MACAddress const Broadcast; ///< The broadcast address
@@ -103,7 +103,7 @@ namespace senf {
                                              accepted as a delimiter.
                                              \throws AddressSyntaxException */
 
-        template <class InputIterator> 
+        template <class InputIterator>
         static MACAddress from_data(InputIterator i);
                                         ///< Construct address from raw data
                                         /**< Copies the data from \a i into the MAC address.
@@ -126,12 +126,9 @@ namespace senf {
 
         boost::uint32_t oui() const;    ///< Return first 3 bytes of the address
         boost::uint32_t nic() const;    ///< Return last 3 bytes of the address
-        
-        boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
-        boost::uint64_t uint64() const; ///< Return MAC address as uint64 value 
-        
-        std::string toString() const; ///< Return string representation of MAC address like 12:34:56:78:90:ab
 
+        boost::uint64_t eui64() const;  ///< Build EUI-64 from the MAC address
+        boost::uint64_t uint64() const; ///< Return MAC address as uint64 value
     };
 
     /** \brief Output MAC instance as it's string representation
@@ -153,7 +150,7 @@ namespace senf {
 //#include "MACAddress.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
