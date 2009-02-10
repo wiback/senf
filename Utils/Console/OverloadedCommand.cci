@@ -72,16 +72,16 @@ prefix_ senf::console::OverloadedCommandNode::OverloadedCommandNode()
 prefix_ senf::console::CommandOverload::~CommandOverload()
 {}
 
-prefix_ void senf::console::CommandOverload::execute(std::ostream & os,
+prefix_ void senf::console::CommandOverload::execute(boost::any & rv, std::ostream & os,
                                                      ParseCommandInfo const & command)
 {
-    v_execute(os, command);
+    v_execute(rv, os, command);
 }
 
-prefix_ void senf::console::CommandOverload::operator()(std::ostream & os,
+prefix_ void senf::console::CommandOverload::operator()(boost::any & rv, std::ostream & os,
                                                         ParseCommandInfo const & command)
 {
-    execute(os, command);
+    execute(rv, os, command);
 }
 
 prefix_ unsigned senf::console::CommandOverload::numArguments()

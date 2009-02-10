@@ -83,7 +83,6 @@ namespace detail {
 
         enum Errors {
             EndOfStatementExpected,
-            GroupOrArgumentsExpected,
             PathExpected,
             ClosingParenExpected,
             QuoteExpected
@@ -145,7 +144,6 @@ namespace detail {
                 actor< variable< ParseDispatcher > >    d_     (self.dispatcher);
 
                 assertion<Errors> end_of_statement_expected   (EndOfStatementExpected);
-                assertion<Errors> group_or_arguments_expected (GroupOrArgumentsExpected);
                 assertion<Errors> path_expected               (PathExpected);
                 assertion<Errors> closing_paren_expected      (ClosingParenExpected);
                 assertion<Errors> quote_expected              (QuoteExpected);
@@ -192,8 +190,16 @@ namespace detail {
                     =    builtin >> end_of_statement_expected(statement_end)
                     |    group_close
                     |    ch_p(';') // Ignore empty commands
-                    |    path_expected(path) 
-                      >> group_or_arguments_expected( group_start | statement )
+                    |    statement
+                    ;
+
+                statement
+                    =    path_expected(path)      [ bind(&PD::beginCommand)(d_, path_) ]
+                      >> arguments
+                      >> end_of_statement_expected( 
+                           ( group_start | statement_end )
+                                                  [ bind(&PD::endCommand)(d_) ]
+                         )
                     ;
 
                 builtin
@@ -210,18 +216,11 @@ namespace detail {
                     ;
 
                 group_start
-                    =    ch_p('{')                [ bind(&PD::pushDirectory)(d_, path_) ]
+                    =    ch_p('{')                [ bind(&PD::pushDirectory)(d_) ]
                     ;
 
                 group_close
                     =    ch_p('}')                [ bind(&PD::popDirectory)(d_) ]
-                    ;
-
-                statement
-                    =    eps_p                    [ bind(&PD::beginCommand)(d_, path_) ]
-                      >> arguments
-                      >> end_of_statement_expected(statement_end)
-                                                  [ bind(&PD::endCommand)(d_) ]
                     ;
 
                 arguments

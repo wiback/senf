@@ -342,7 +342,6 @@ namespace log {
 
         void flush();                   ///< Clear routing table
 
-    protected:
         senf::console::ScopedDirectory<> & consoleDir(); ///< Get console/config directory
 
     private:

@@ -273,6 +273,36 @@ BOOST_AUTO_UNIT_TEST(memberParsedCommand)
     }
 }
 
+namespace {
+
+    senf::console::DirectoryNode::ptr dircb() 
+    {
+        senf::console::DirectoryNode & dir (
+            senf::console::root()["test"].mkdir("dircb"));
+        dir.add("cb1", &cb1);
+        return dir.thisptr();
+    }
+
+}
+
+BOOST_AUTO_UNIT_TEST(directoryReturn)
+{
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+    dir.add("test", &dircb);
+
+    {
+        std::stringstream ss;
+        SENF_CHECK_NO_THROW(
+            parser.parse("test/test { ls; }",
+                         boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+        BOOST_CHECK_EQUAL( ss.str(), "<Directory at '/test/dircb'>\ncb1\n" );
+    }
+    
+}
+
 #ifdef COMPILE_CHECK
 
 COMPILE_FAIL(argParser)

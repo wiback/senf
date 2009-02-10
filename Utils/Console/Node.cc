@@ -209,11 +209,11 @@ prefix_ void senf::console::SimpleCommandNode::v_help(std::ostream & output)
     output << doc_ << "\n";
 }
 
-prefix_ void senf::console::SimpleCommandNode::v_execute(std::ostream & output,
+prefix_ void senf::console::SimpleCommandNode::v_execute(boost::any & rv, std::ostream & os,
                                                          ParseCommandInfo const & command)
     const
 {
-    fn_(output, command);
+    fn_(os, command);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

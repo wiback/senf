@@ -76,10 +76,10 @@ namespace detail {
               info_->builtin(ParseCommandInfo::BuiltinLS);
               setBuiltinPathArg(path); }
 
-        void pushDirectory(std::vector<Token> & path)
-            { info_->clear();
-              info_->builtin(ParseCommandInfo::BuiltinPUSHD);
-              setBuiltinPathArg(path); }
+        void pushDirectory()
+            { // Do NOT call clear since pushDirectory is set in ADDITION
+              // to an ordinary command (which may be only a directory name)
+              info_->builtin(ParseCommandInfo::BuiltinPUSHD); }
 
         void popDirectory()
             { info_->clear();
@@ -96,11 +96,12 @@ namespace detail {
 
         void setBuiltinPathArg(std::vector<Token> & path)
             {
-                pushToken(ArgumentGroupOpenToken());
-                for (std::vector<Token>::const_iterator i (path.begin());
-                     i != path.end(); ++i)
-                    pushToken(*i);
-                pushToken(ArgumentGroupCloseToken());
+                info_->command(path);
+//                 pushToken(ArgumentGroupOpenToken());
+//                 for (std::vector<Token>::const_iterator i (path.begin());
+//                      i != path.end(); ++i)
+//                     pushToken(*i);
+//                 pushToken(ArgumentGroupCloseToken());
             }
     };
 
@@ -249,7 +250,6 @@ namespace {
     void throwParserError(Error const & err) 
     {
         static char const * msg [] = { "end of statement expected",
-                                       "'{' or arguments expected",
                                        "path expected",
                                        "')' expected",
                                        "'\"' expected" };

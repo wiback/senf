@@ -178,7 +178,6 @@ prefix_ bool senf::console::ParseCommandInfo::empty()
 prefix_ void senf::console::ParseCommandInfo::builtin(BuiltinCommand builtin)
 {
     builtin_ = builtin;
-    commandPath_.clear();
 }
 
 prefix_ void
@@ -186,7 +185,6 @@ senf::console::ParseCommandInfo::command(std::vector<Token> & commandPath)
 {
     commandPath_.clear();
     commandPath_.swap(commandPath);
-    builtin_ = NoBuiltin;
 }
 
 prefix_ void senf::console::ParseCommandInfo::addToken(Token const & token)

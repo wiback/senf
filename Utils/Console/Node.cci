@@ -282,7 +282,16 @@ prefix_ void senf::console::CommandNode::execute(std::ostream & output,
                                                  ParseCommandInfo const & command)
     const
 {
-    v_execute(output, command);
+    boost::any rv;
+    execute(rv, output, command);
+}
+
+prefix_ void senf::console::CommandNode::execute(boost::any & rv, std::ostream & output,
+                                                 ParseCommandInfo const & command)
+    const
+{
+    rv = boost::any();
+    v_execute(rv, output, command);
 }
 
 prefix_ void senf::console::CommandNode::operator()(std::ostream & output,
@@ -290,6 +299,13 @@ prefix_ void senf::console::CommandNode::operator()(std::ostream & output,
     const
 {
     execute(output, command);
+}
+
+prefix_ void senf::console::CommandNode::operator()(boost::any & rv, std::ostream & output,
+                                                    ParseCommandInfo const & command)
+    const
+{
+    execute(rv, output, command);
 }
 
 ///////////////////////////////////////////////////////////////////////////

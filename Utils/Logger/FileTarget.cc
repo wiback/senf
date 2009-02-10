@@ -71,10 +71,13 @@ prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
         .doc("Create new file target.");
 }
 
-prefix_ void senf::log::FileTarget::RegisterConsole::create(std::string const & filename)
+prefix_ boost::shared_ptr<senf::console::DirectoryNode>
+senf::log::FileTarget::RegisterConsole::create(std::string const & filename)
 {
-    detail::TargetRegistry::instance().dynamicTarget(
-        std::auto_ptr<Target>(new FileTarget(filename)));
+    std::auto_ptr<Target> tp (new FileTarget(filename));
+    Target & target (*tp.get());
+    detail::TargetRegistry::instance().dynamicTarget(tp);
+    return target.consoleDir().node().thisptr();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

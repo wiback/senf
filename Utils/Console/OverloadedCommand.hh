@@ -69,13 +69,13 @@ namespace console {
 
         virtual ~CommandOverload();
 
-        void execute(std::ostream & os, ParseCommandInfo const & command);
+        void execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command);
                                         ///< Call the overload
                                         /**< If the \a arguments are not acceptable for this
                                              overload, a SyntaxErrorException must be thrown. 
                                              Same as operator()() */
 
-        void operator()(std::ostream & os, ParseCommandInfo const & command);
+        void operator()(boost::any & rv, std::ostream & os, ParseCommandInfo const & command);
                                         ///< Call the overload
                                         /**< If the \a arguments are not acceptable for this
                                              overload, a SyntaxErrorException must be thrown. 
@@ -120,7 +120,8 @@ namespace console {
                                         /**< This member must be implemented in the derived class to
                                              return the overloads documentation string. */
 
-        virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const = 0;
+        virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
+            const = 0;
                                         ///< Execute the overload
                                         /**< This member must be implemented in the derived class
                                              o execute the overload. */
@@ -196,7 +197,8 @@ namespace console {
         OverloadedCommandNode();
 
         virtual void v_help(std::ostream & output) const;
-        virtual void v_execute(std::ostream & output, ParseCommandInfo const & command) const;
+        virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
+            const;
 
         typedef std::vector<CommandOverload::ptr> Overloads;
 
@@ -240,7 +242,8 @@ namespace console {
         virtual unsigned v_numArguments() const;
         virtual void v_argumentDoc(unsigned index, ArgumentDoc & doc) const;
         virtual std::string v_doc() const;
-        virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const;
+        virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
+            const;
 
         Function fn_;
         std::string doc_;

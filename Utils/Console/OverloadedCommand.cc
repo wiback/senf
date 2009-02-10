@@ -155,7 +155,8 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
     }
 }
 
-prefix_ void senf::console::OverloadedCommandNode::v_execute(std::ostream & output,
+prefix_ void senf::console::OverloadedCommandNode::v_execute(boost::any & rv,
+                                                             std::ostream & os,
                                                              ParseCommandInfo const & command)
     const
 {
@@ -164,7 +165,7 @@ prefix_ void senf::console::OverloadedCommandNode::v_execute(std::ostream & outp
     SyntaxErrorException err;
     for (; i != i_end; ++i) {
         try {
-            (**i)(output, command);
+            (**i)(rv, os, command);
             return;
         }
         catch (SyntaxErrorException & ex) {
@@ -193,7 +194,8 @@ prefix_ std::string senf::console::SimpleCommandOverload::v_doc()
     return doc_;
 }
 
-prefix_ void senf::console::SimpleCommandOverload::v_execute(std::ostream & os,
+prefix_ void senf::console::SimpleCommandOverload::v_execute(boost::any & rv,
+                                                             std::ostream & os,
                                                              ParseCommandInfo const & command)
     const
 {

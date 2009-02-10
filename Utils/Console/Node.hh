@@ -206,6 +206,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/typeof/typeof.hpp>
 #include <boost/type_traits/remove_reference.hpp>
+#include <boost/any.hpp>
 #include "../../Utils/Exception.hh"
 #include "../../Utils/mpl.hh"
 #include "../../Utils/Logger/SenfLog.hh"
@@ -606,7 +607,15 @@ namespace console {
 
         void execute(std::ostream & output, ParseCommandInfo const & command) const;
                                         ///< Execute the command
-                                        /**< Same as operator()()
+                                        /**< \param[in] output stream where result messages may be
+                                                 written to
+                                             \param[in] arguments command arguments. This is a
+                                                 range of ranges of Token instances. */
+
+        void execute(boost::any & rv, std::ostream & output, ParseCommandInfo const & command) 
+            const;
+                                        ///< Execute the command
+                                        /**< \param[out] rv command return value
                                              \param[in] output stream where result messages may be
                                                  written to
                                              \param[in] arguments command arguments. This is a
@@ -619,6 +628,8 @@ namespace console {
                                                  written to
                                              \param[in] arguments command arguments. This is a
                                                  range of ranges of Token instances. */
+        void operator()(boost::any & rv, std::ostream & output, ParseCommandInfo const & command)
+            const;
 
         ptr thisptr();
         cptr thisptr() const;
@@ -629,10 +640,10 @@ namespace console {
 #ifndef DOXYGEN
     private:
 #endif
-        virtual void v_execute(std::ostream & output, ParseCommandInfo const & command) const = 0;
+        virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
+            const = 0;
                                         ///< Called to execute the command
-                                        /**< \param[in] output stream where result messages may be
-                                                 written to
+                                        /**< \param[out] rv return value holder
                                              \param[in] arguments command arguments. This is a
                                                  range of ranges of Token instances. */
 
@@ -686,7 +697,8 @@ namespace console {
 
     private:
         virtual void v_help(std::ostream & output) const;
-        virtual void v_execute(std::ostream & output, ParseCommandInfo const & command) const;
+        virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
+            const;
 
 
         Function fn_;

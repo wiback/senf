@@ -163,6 +163,8 @@ namespace console {
         bool autocomplete_;
     };
 
+    void senf_console_format_value(DirectoryNode::ptr value, std::ostream & os);
+
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

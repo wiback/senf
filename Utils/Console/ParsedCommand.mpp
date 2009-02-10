@@ -102,7 +102,8 @@ protected:
 private:
     ParsedCommandOverload(Function fn);
 
-    virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const;
+    virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command) 
+        const;
 
     Function function_;
     Formatter formatter_;
@@ -140,7 +141,8 @@ protected:
 private:
     ParsedCommandOverload(Function fn);
 
-    virtual void v_execute(std::ostream & os, ParseCommandInfo const & command) const;
+    virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command) 
+        const;
 
     Function function_;
 };
@@ -249,7 +251,7 @@ ParsedCommandOverload(Function fn)
 
 template <class FunctionTraits, class ReturnValue>
 prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, ReturnValue, BOOST_PP_ITERATION() >::
-v_execute(std::ostream & os, ParseCommandInfo const & command)
+v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
     const
 {
     // We NEED to know the number of arguments beforehand so we can assign default values
@@ -280,16 +282,18 @@ v_execute(std::ostream & os, ParseCommandInfo const & command)
 #   undef mpp_l
 #   undef mpp_l_
 
+    ReturnValue rvv (function_(os mpp_TrailingArgs()));
+    rv = rvv;
     if (formatter_)
-        formatter_( function_(os mpp_TrailingArgs()), os );
+        formatter_(rvv, os);
     else
-        ReturnValueTraits<result_type>::format( function_(os mpp_TrailingArgs()), os );
+        ReturnValueTraits<result_type>::format(rvv, os);
     os << "\n";
 }
 
 template <class FunctionTraits>
 prefix_ void senf::console::ParsedCommandOverload<FunctionTraits, void, BOOST_PP_ITERATION() >::
-v_execute(std::ostream & os, ParseCommandInfo const & command)
+v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
     const
 {
     // We NEED to know the number of arguments beforehand so we can assign default values

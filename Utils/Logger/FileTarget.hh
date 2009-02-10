@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <boost/utility.hpp>
+#include <boost/shared_ptr.hpp>
 #include <fstream>
 #include "IOStreamTarget.hh"
 
@@ -35,6 +36,9 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    namespace console { class DirectoryNode; }
+
 namespace log {
 
     /** \brief Log target writing to a %log file.
@@ -79,7 +83,8 @@ namespace log {
 
         struct RegisterConsole {
             RegisterConsole();
-            static void create(std::string const & filename);
+            static boost::shared_ptr<senf::console::DirectoryNode> create(
+                std::string const & filename);
             static RegisterConsole instance;
         };
     };

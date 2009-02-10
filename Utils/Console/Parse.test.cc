@@ -49,8 +49,8 @@ namespace
 
         std::ostream & os_;
 
-        void pushDirectory(std::vector<senf::console::Token> const & path)
-            { os_ << "pushDirectory( " << senf::stringJoin(path, "/") << " )\n"; }
+        void pushDirectory()
+            { os_ << "pushDirectory()\n"; }
         void popDirectory()
             { os_ << "popDirectory()\n"; }
 
@@ -154,7 +154,10 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
                          "foo/bar/ {", 
                          grammar.use_parser<Grammar::CommandParser>(), 
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
-        BOOST_CHECK_EQUAL( ss.str(), "pushDirectory( Word('foo')/Word('bar')/None('') )\n" );
+        BOOST_CHECK_EQUAL( ss.str(), 
+                           "beginCommand( Word('foo')/Word('bar')/None('') )\n"
+                           "pushDirectory()\n"
+                           "endCommand()\n" );
     }
 
     {
@@ -330,7 +333,7 @@ BOOST_AUTO_UNIT_TEST(parseExceptions)
         try { parser.parse(c, &setInfo); }                                                        \
         catch (std::exception & ex) { msg = parseErrorMessage(ex.what()); }                       \
         BOOST_CHECK_EQUAL( msg, e )
-
+    
     CheckParseEx( "/foo/bar;\n  ()", "path expected\nat <unknown>:2:3" );
     CheckParseEx( "cd /foo/bar foo/bar", "end of statement expected\nat <unknown>:1:13" );
     CheckParseEx( "/foo/bar foo /", "end of statement expected\nat <unknown>:1:14" );

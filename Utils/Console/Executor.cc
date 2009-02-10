@@ -96,7 +96,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
                 break;
             try {
                 // The parser ensures, we have exactly one argument
-                cd(*command.arguments().begin());
+                cd(command.commandPath());
             }
             catch (IgnoreCommandException &) {
                 throw SyntaxErrorException(
@@ -108,13 +108,15 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             if (skipping())
                 break;
             // The parser ensures, we have either one or no argument
-            ls( output,
-                command.tokens().empty() ? command.tokens() : *command.arguments().begin() );
+            ls( output, command.commandPath() );
             break;
 
         case ParseCommandInfo::BuiltinPUSHD :
             // The parser ensures, we have exactly one argument
-            pushd( *command.arguments().begin() );
+            if (skipping())
+                pushd(command.commandPath());
+            else
+                exec(output, command);
             break;
             
         case ParseCommandInfo::BuiltinPOPD :
@@ -133,8 +135,7 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             if (skipping())
                 break;
             // The parser ensures, we have either one or no arguments
-            help( output,
-                  command.tokens().empty() ? command.tokens() : *command.arguments().begin() );
+            help( output, command.commandPath() );
             break;
 
         }
@@ -154,17 +155,45 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
 prefix_ void senf::console::Executor::exec(std::ostream & output,
                                            ParseCommandInfo const & command)
 {
-    GenericNode & node ( traverseNode(command.commandPath()) );
-    DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
-    if ( dir ) {
-        if (autocd_ && command.tokens().empty()) {
-            cd( boost::make_iterator_range(
-                    command.commandPath().begin(),
-                    command.commandPath().end()) );
-        } else
-            throw InvalidCommandException();
-    } else {
-        dynamic_cast<CommandNode &>(node)(output, command);
+    try {
+        GenericNode & node ( traverseNode(command.commandPath()) );
+        DirectoryNode * dir ( dynamic_cast<DirectoryNode*>(&node) );
+        if ( dir ) {
+            if (! command.tokens().empty())
+                throw InvalidCommandException();
+            if (command.builtin() == ParseCommandInfo::BuiltinPUSHD)
+                pushd( command.commandPath() );
+            else if (autocd_) {
+                cd(command.commandPath());
+            }
+            else
+                throw InvalidCommandException();
+        } else {
+            boost::any rv;
+            dynamic_cast<CommandNode &>(node)(rv, output, command);
+            if (command.builtin() == ParseCommandInfo::BuiltinPUSHD) {
+                DirectoryNode::ptr rvdir;
+                try {
+                    rvdir = boost::any_cast<DirectoryNode::ptr>(rv);
+                }
+                catch (boost::bad_any_cast &) {
+                    throw InvalidCommandException();
+                }
+                Path newDir (cwd_);
+                newDir.push_back(rvdir);
+                dirstack_.push_back(Path());
+                dirstack_.back().swap(cwd_);
+                cwd_.swap(newDir);
+            }
+        }
+    }
+    catch (IgnoreCommandException &) {
+        if (command.builtin() == ParseCommandInfo::BuiltinPUSHD) {
+            dirstack_.push_back(Path());
+            dirstack_.back().swap(cwd_);
+        }
+        else
+            throw;
     }
 }
 
@@ -318,6 +347,15 @@ prefix_ std::string senf::console::Executor::complete(DirectoryNode & dir,
             return completions.begin()->first;
     }
     return name;
+}
+
+prefix_ void senf::console::senf_console_format_value(DirectoryNode::ptr value,
+                                                      std::ostream & os)
+{
+    if (value)
+        os << "<Directory at '" << value->path() << "'>";
+    else
+        os << "<Null Directory>";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
