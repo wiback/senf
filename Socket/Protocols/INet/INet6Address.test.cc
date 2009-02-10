@@ -129,6 +129,13 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 
         BOOST_CHECK( INet6Address::Loopback );
         BOOST_CHECK( ! INet6Address::None );
+        
+        std::stringstream str;
+        str << addr;
+        BOOST_CHECK_EQUAL( str.str(), "2001:dead:beef::1002:3004");
+        
+        str >> addr;
+        BOOST_CHECK_EQUAL(addr, INet6Address::from_string("2001:dead:beef::1002:3004"));
     }
 
     {

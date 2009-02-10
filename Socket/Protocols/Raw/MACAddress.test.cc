@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <sstream>
-#include <boost/lexical_cast.hpp>
 #include "MACAddress.hh"
+#include "../../../Utils/String.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -39,8 +39,11 @@
 
 BOOST_AUTO_UNIT_TEST(macAddress)
 {
+    using senf::MACAddress;
+    using senf::AddressSyntaxException;
+    
     std::string test ("A1-b2-C3:d4:E5:f6");
-    senf::MACAddress mac (senf::MACAddress::from_string(test));
+    MACAddress mac (MACAddress::from_string(test));
 
     BOOST_CHECK_EQUAL( mac[0], 0xA1u );
     BOOST_CHECK_EQUAL( mac[1], 0xB2u );
@@ -52,7 +55,9 @@ BOOST_AUTO_UNIT_TEST(macAddress)
     std::stringstream str;
     str << mac;
     BOOST_CHECK_EQUAL( str.str(), "a1:b2:c3:d4:e5:f6" );
-    BOOST_CHECK_EQUAL (mac.toString(), "a1:b2:c3:d4:e5:f6");
+    
+    str >> mac;
+    BOOST_CHECK_EQUAL(mac, MACAddress::from_string(test));
     
     BOOST_CHECK( ! mac.local() );
     BOOST_CHECK( mac.multicast() );
@@ -62,30 +67,27 @@ BOOST_AUTO_UNIT_TEST(macAddress)
     BOOST_CHECK_EQUAL( mac.nic(), 0xd4e5f6u );
     BOOST_CHECK_EQUAL( mac.eui64(), 0xa1b2c3fffed4e5f6llu );
 
-    senf::MACAddress mac2;
+    MACAddress mac2;
     BOOST_CHECK( ! mac2 );
-    mac2 = senf::MACAddress::from_string("ff:ff:ff:ff:ff:ff");
+    mac2 = MACAddress::from_string("ff:ff:ff:ff:ff:ff");
     BOOST_CHECK( mac2.broadcast() );
-    BOOST_CHECK_EQUAL( mac2, senf::MACAddress::Broadcast );
+    BOOST_CHECK_EQUAL( mac2, MACAddress::Broadcast );
     char data[] = { 0x01,0x02,0x03,0x04,0x05,0x06 };
-    mac2 = senf::MACAddress::from_data(data);
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(mac2), "01:02:03:04:05:06" );
+    mac2 = MACAddress::from_data(data);
+    BOOST_CHECK_EQUAL( senf::str(mac2), "01:02:03:04:05:06" );
     BOOST_CHECK( mac != mac2 );
     mac2 = mac;
     BOOST_CHECK( mac == mac2 );
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(mac2), "a1:b2:c3:d4:e5:f6" );
+    BOOST_CHECK_EQUAL( senf::str(mac2), "a1:b2:c3:d4:e5:f6" );
 
-    BOOST_CHECK_THROW( senf::MACAddress::from_string("1:2:3:4:5:6"), 
-                       senf::AddressSyntaxException );
-    BOOST_CHECK_THROW( senf::MACAddress::from_string("01:02:03:04:05"), 
-                       senf::AddressSyntaxException );
-    BOOST_CHECK_THROW( senf::MACAddress::from_string("01:02:03:04:05:z6"), 
-                       senf::AddressSyntaxException );
+    BOOST_CHECK_THROW( MACAddress::from_string("1:2:3:4:5:6"), AddressSyntaxException );
+    BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05"), AddressSyntaxException );
+    BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05:z6"), AddressSyntaxException );
 
-    BOOST_CHECK_EQUAL( mac, senf::MACAddress::from_eui64(0xa1b2c3fffed4e5f6llu) );
-    BOOST_CHECK_THROW( senf::MACAddress::from_eui64(0u), senf::AddressSyntaxException );
+    BOOST_CHECK_EQUAL( mac, MACAddress::from_eui64(0xa1b2c3fffed4e5f6llu) );
+    BOOST_CHECK_THROW( MACAddress::from_eui64(0u), AddressSyntaxException );
     
-    BOOST_CHECK_EQUAL( senf::MACAddress(0x1a2b3c4d5e6fULL).uint64(), 0x1a2b3c4d5e6fULL);
+    BOOST_CHECK_EQUAL( MACAddress(0x1a2b3c4d5e6fULL).uint64(), 0x1a2b3c4d5e6fULL);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

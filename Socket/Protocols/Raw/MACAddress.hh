@@ -134,10 +134,16 @@ namespace senf {
 
     };
 
-    /** \brief Write MAC address
+    /** \brief Output MAC instance as it's string representation
         \related MACAddress
      */
     std::ostream & operator<<(std::ostream & os, MACAddress const & mac);
+    /** \brief Try to initialize MACAddress instance from a string representation
+        sets std::ios::failbit on the stream if an error occurred
+        \see MACAddress from_string()
+        \related MACAddress
+     */
+    std::istream & operator>>(std::istream & os, MACAddress & mac);
 
 }
 

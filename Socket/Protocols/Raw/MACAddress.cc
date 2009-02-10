@@ -128,6 +128,20 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, MACAddress const & ma
     return os;
 }
 
+prefix_ std::istream & senf::operator>>(std::istream & is, MACAddress & mac)
+{
+    std::string s;
+    if (!(is >> s))
+        return is;
+    try {
+        mac = MACAddress::from_string(s);
+    }
+    catch (AddressException &) {
+        is.setstate(std::ios::failbit);
+    }
+    return is;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "MACAddress.mpp"

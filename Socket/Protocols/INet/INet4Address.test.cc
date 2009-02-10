@@ -67,6 +67,9 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
     std::stringstream str;
     str << addr;
     BOOST_CHECK_EQUAL( str.str(), "128.129.130.131" );
+    
+    str >> addr;
+    BOOST_CHECK_EQUAL(addr, senf::INet4Address::from_string("128.129.130.131") );
 }
 
 BOOST_AUTO_UNIT_TEST(inet4Network)
