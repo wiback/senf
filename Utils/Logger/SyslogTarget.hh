@@ -28,12 +28,16 @@
 
 // Custom includes
 #include <syslog.h>
+#include <boost/shared_ptr.hpp>
 #include "Target.hh"
 
 //#include "SyslogTarget.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    namespace console { class DirectoryNode; }
+
 namespace log {
     
     /** \brief Log target writing to the syslog
@@ -118,7 +122,8 @@ namespace log {
     private:
         struct RegisterConsole {
             RegisterConsole();
-            static void create(LogFacility facility);
+            static boost::shared_ptr<senf::console::DirectoryNode> create(
+                LogFacility facility);
             static RegisterConsole instance;
         };
     };

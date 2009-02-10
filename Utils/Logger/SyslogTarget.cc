@@ -68,10 +68,13 @@ prefix_ senf::log::SyslogTarget::RegisterConsole::RegisterConsole()
         .doc("Create new syslog target.");
 }
 
-prefix_ void senf::log::SyslogTarget::RegisterConsole::create(LogFacility facility)
+prefix_ boost::shared_ptr<senf::console::DirectoryNode>
+senf::log::SyslogTarget::RegisterConsole::create(LogFacility facility)
 {
-    detail::TargetRegistry::instance().dynamicTarget(
-        std::auto_ptr<Target>(new SyslogTarget(facility)));
+    std::auto_ptr<Target> tp (new SyslogTarget(facility));
+    Target & target (*tp.get());
+    detail::TargetRegistry::instance().dynamicTarget(tp);
+    return target.consoleDir().node().thisptr();
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

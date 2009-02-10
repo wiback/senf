@@ -78,6 +78,16 @@ namespace detail {
 
         ParseDispatcher & dispatcher;
 
+        //////////////////////////////////////////////////////////////////////////
+        // charachter sets
+        
+        static boost::spirit::chset<> special_p;
+        static boost::spirit::chset<> punctuation_p;
+        static boost::spirit::chset<> space_p;
+        static boost::spirit::chset<> invalid_p;
+        static boost::spirit::chset<> word_p;
+        static boost::spirit::distinct_parser<> keyword_p;
+
         ///////////////////////////////////////////////////////////////////////////
         // Errors
 
@@ -104,33 +114,8 @@ namespace detail {
                 punctuation, hexbyte, balanced_tokens, simple_argument, complex_argument, builtin, 
                 skip, statement, relpath, abspath, arguments, group_start, group_close, 
                 statement_end, opt_path;
-            boost::spirit::chset<> special_p, punctuation_p, space_p, invalid_p, word_p;
-            boost::spirit::distinct_parser<> keyword_p;
 
-            definition(CommandGrammar const & self) : 
-
-                // Characters with a special meaning within the parser
-                special_p ("/(){};\""),
-
-                // Additional characters which are returned as punctuation tokens
-                // (only allowed within '()').
-                punctuation_p (",="),
-
-                // Whitespace characters
-                space_p (" \t\n\r"),
-
-                // Invalid characters: All chars below \x20 (space) which are not space_p
-                // (don't put a \0 in the chset<> argument *string* ...)
-                invalid_p ( (boost::spirit::chset<>('\0') 
-                             | boost::spirit::chset<>("\x01-\x20")) - space_p ),
-
-                // Valid word characters
-                word_p (
-                    boost::spirit::anychar_p - special_p - punctuation_p - space_p - invalid_p),
-
-                // Keywords must not be followed by a word char or '/'
-                keyword_p ( word_p | boost::spirit::ch_p('/') )
-
+            definition(CommandGrammar const & self)
             {
                 using namespace boost::spirit;
                 using namespace ::phoenix;
@@ -203,14 +188,14 @@ namespace detail {
                     ;
 
                 builtin
-                    =    keyword_p("cd") 
+                    =    self.keyword_p("cd") 
                       >> path_expected(path)
                       >> eps_p                    [ bind(&PD::builtin_cd)(d_, path_) ]
-                    |    keyword_p("ls")
+                    |    self.keyword_p("ls")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_ls)(d_, path_) ]
-                    |    keyword_p("exit")        [ bind(&PD::builtin_exit)(d_) ]
-                    |    keyword_p("help")
+                    |    self.keyword_p("exit")   [ bind(&PD::builtin_exit)(d_) ]
+                    |    self.keyword_p("help")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_help)(d_, path_) ]
                     ;
@@ -316,7 +301,7 @@ namespace detail {
                     |    ch_p(';')                [ token_ = construct_<Token>(
                                                         Token::CommandTerminator,
                                                         ";") ]
-                    |    punctuation_p            [ token_ = construct_<Token>(
+                    |    self.punctuation_p       [ token_ = construct_<Token>(
                                                         Token::OtherPunctuation,
                                                         construct_<std::string>(1u, arg1)) ]
                     ;
@@ -324,7 +309,7 @@ namespace detail {
                 word                    // Returns value in context.token
                     =    lexeme_d
                          [
-                             (+ word_p)           [ str_ = construct_<std::string>(arg1, arg2) ]
+                             (+ self.word_p)      [ str_ = construct_<std::string>(arg1, arg2) ]
                          ]
                       >> eps_p                    [ token_ = construct_<Token>(
                                                         Token::Word, 
@@ -347,7 +332,7 @@ namespace detail {
                     ;
 
                 skip
-                    =    space_p | comment_p('#')
+                    =    self.space_p | comment_p('#')
                     ;
 
                 ///////////////////////////////////////////////////////////////////
@@ -380,6 +365,19 @@ namespace detail {
             }
         };
     };
+
+    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::special_p (
+        "/(){};\"");
+    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::punctuation_p (
+        ",=");
+    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::space_p (
+        " \t\n\r");
+    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::invalid_p ( 
+        (boost::spirit::chset<>('\0') | boost::spirit::chset<>("\x01-\x20")) - space_p );
+    template <class PD> boost::spirit::chset<> CommandGrammar<PD>::word_p (
+        boost::spirit::anychar_p - special_p - punctuation_p - space_p - invalid_p);
+    template <class PD> boost::spirit::distinct_parser<> CommandGrammar<PD>::keyword_p (
+        word_p | boost::spirit::ch_p('/'));
 
 #endif
 

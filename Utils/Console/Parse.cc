@@ -393,7 +393,35 @@ senf::console::CommandParser::parseIncremental(std::string const & commands, Cal
                           parseLoop(commands.begin(), commands.end(), "<unknown>", cb) );
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////
+// Character sets
+
+prefix_ bool senf::console::CommandParser::isSpecialChar(char ch)
+{
+    return Impl::Grammar::special_p.test(ch);
+}
+
+prefix_ bool senf::console::CommandParser::isPunctuationChar(char ch)
+{
+    return Impl::Grammar::punctuation_p.test(ch);
+}
+
+prefix_ bool senf::console::CommandParser::isSpaceChar(char ch)
+{
+    return Impl::Grammar::space_p.test(ch);
+}
+
+prefix_ bool senf::console::CommandParser::isInvalidChar(char ch)
+{
+    return Impl::Grammar::invalid_p.test(ch);
+}
+
+prefix_ bool senf::console::CommandParser::isWordChar(char ch)
+{
+    return Impl::Grammar::word_p.test(ch);
+}
+
+/////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Parse.mpp"
 

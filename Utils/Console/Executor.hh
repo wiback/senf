@@ -108,16 +108,17 @@ namespace console {
                                         /**< if autocomplete is enabled, path components which can
                                              be uniquely completed will be completed
                                              automatically. Disabled by default (but enabled
-                                             automatically by the interactive console) void
-                                             autocomplete(bool v). */
+                                             automatically by the interactive console). */
 
         Executor & autocomplete(bool v); ///< Set autocomplete status
                                         /**< \see autocomplete() */
+
 
         DirectoryNode & chroot() const; ///< Get root node
                                         /**< The root node defaults to senf::console::root(). If
                                              changed, all path references are relative to this node
                                              and objects outside that tree cannot be accessed. */ 
+
         Executor & chroot(DirectoryNode & node); ///< chroot into given directory
                                         /**< After this call, all path's are interpreted relative to
                                              \a node and only nodes in the tree rooted at \a node

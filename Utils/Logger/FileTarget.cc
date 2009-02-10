@@ -33,8 +33,21 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace {
+    
+    std::string quoteFilename(std::string filename)
+    {
+        for (std::string::iterator i (filename.begin()); i != filename.end(); ++i)
+            if (! senf::console::CommandParser::isWordChar(*i))
+                *i = '_';
+        return filename;
+    }
+
+}
+
 prefix_ senf::log::FileTarget::FileTarget(std::string const & file)
-    : ofstream_t(file.c_str(), std::ofstream::app), IOStreamTarget(file, ofstream_t::member), 
+    : ofstream_t(file.c_str(), std::ofstream::app), 
+      IOStreamTarget(quoteFilename(file), ofstream_t::member), 
       file_(file)
 {
     consoleDir().add( "reopen", senf::membind(

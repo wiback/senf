@@ -154,14 +154,14 @@ namespace log {
 
         struct RegisterConsole {
             RegisterConsole();
-            static void create(senf::INet4SocketAddress const & target, 
-                               LogFacility facility = USER);
-            static void create(senf::INet4Address const & target,
-                               LogFacility facility = USER);
-            static void create(senf::INet6SocketAddress const & target,
-                               LogFacility facility = USER);
-            static void create(senf::INet6Address const & target,
-                               LogFacility facility = USER);
+            static boost::shared_ptr<senf::console::DirectoryNode> create(
+                senf::INet4SocketAddress const & target, LogFacility facility = USER);
+            static boost::shared_ptr<senf::console::DirectoryNode> create(
+                senf::INet4Address const & target, LogFacility facility = USER);
+            static boost::shared_ptr<senf::console::DirectoryNode> create(
+                senf::INet6SocketAddress const & target, LogFacility facility = USER);
+            static boost::shared_ptr<senf::console::DirectoryNode> create(
+                senf::INet6Address const & target, LogFacility facility = USER);
             static RegisterConsole instance;
         };
     };

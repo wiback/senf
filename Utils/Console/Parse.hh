@@ -615,6 +615,12 @@ namespace console {
                                                  to be terminated explicitly. This means, that the
                                                  last ';' is \e not optional in this case. */
 
+        static bool isSpecialChar(char ch); ///< Check, if \a ch is a special character
+        static bool isPunctuationChar(char ch); ///< Check, if \a ch is a punctuation character
+        static bool isSpaceChar(char ch); ///< Check, if \a ch is a space character
+        static bool isInvalidChar(char ch); ///< Check, if \a ch is an invalid character
+        static bool isWordChar(char ch); ///< Check, if \a ch is a word character
+
         /** \brief Exception thrown when the parser detects an error */
         struct ParserErrorException : public SyntaxErrorException
         { explicit ParserErrorException(std::string const & msg) : SyntaxErrorException(msg) {} };
