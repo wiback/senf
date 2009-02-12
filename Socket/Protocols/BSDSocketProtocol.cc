@@ -41,7 +41,7 @@ prefix_ std::pair<bool,unsigned> senf::BSDSocketProtocol::linger()
 {
     struct linger ling;
     socklen_t len = sizeof(ling);
-    ::memset(&ling,sizeof(ling),0);
+    ::memset(&ling, 0, sizeof(ling));
     if (::getsockopt(fd(),SOL_SOCKET,SO_LINGER,&ling,&len) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("");
     return std::make_pair(ling.l_onoff, ling.l_linger);
@@ -147,7 +147,7 @@ prefix_ void senf::AddressableBSDSocketProtocol::reuseaddr(bool value)
 #undef prefix_
 //#include "BSDSocketProtocol.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
