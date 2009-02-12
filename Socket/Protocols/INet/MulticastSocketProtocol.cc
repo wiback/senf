@@ -79,7 +79,7 @@ prefix_ void senf::MulticastSocketProtocol::mcIface(std::string const & iface)
     const
 {
     struct ip_mreqn mreqn;
-    ::memset(&mreqn,sizeof(mreqn),0);
+    ::memset(&mreqn, 0, sizeof(mreqn));
     if (!iface.empty()) {
         mreqn.imr_ifindex = if_nametoindex(iface.c_str());
         if (mreqn.imr_ifindex == 0)
@@ -372,7 +372,7 @@ prefix_ void senf::INet6MulticastSocketProtocol::mcLeaveSSMSource(INet6Address c
 #undef prefix_
 //#include "MulticastSocketProtocol.mpp"
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
