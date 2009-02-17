@@ -5,10 +5,16 @@
 CONCURRENCY_LEVEL ?= 2
 
 ifdef final
-  FINAL = "final=1"
+  SCONS_ARGS += "final="$(final)
+endif
+ifdef debug
+  SCONS_ARGS += "debug="$(debug)
+endif
+ifdef profile
+  SCONS_ARGS += "profile="$(profile)
 endif
 
-SCONS=scons -j $(CONCURRENCY_LEVEL) $(FINAL)
+SCONS=scons -j $(CONCURRENCY_LEVEL) $(SCONS_ARGS)
 
 default: build
 
@@ -17,6 +23,11 @@ build:
 
 clean:
 	$(SCONS) --clean all
+	find ./ -name \*.gcno | xargs rm -f
+	find ./ -name \*.gcda | xargs rm -f
+	find ./ -name \*.gcov | xargs rm -f
+	rm -f test_coverage.info
+	rm -rf /doc/test_coverage
 
 all_docs all_tests all:
 	$(SCONS) $@
@@ -27,10 +38,23 @@ all_docs all_tests all:
 %/build:
 	$(SCONS) $*
 
+
+#----------------------------------------------------------------------
+# test coverage
+#----------------------------------------------------------------------
+test_coverage:
+	$(SCONS) debug=1 EXTRA_CCFLAGS="-fprofile-arcs -ftest-coverage" EXTRA_LIBS="gcov" all_tests
+	ln -s ../../boost/ include/senf/  # ugly work-around
+	lcov --directory . --capture --output-file test_coverage.info --base-directory .
+	rm include/senf/boost
+	lcov --output-file /tmp/test_coverage.info.tmp --extract test_coverage.info \*/senf/\*
+	lcov --output-file test_coverage.info --remove /tmp/test_coverage.info.tmp \*/senf/include/\*
+	rm /tmp/test_coverage.info.tmp
+	genhtml --output-directory doc/test_coverage --title "all_tests" test_coverage.info
+
 #----------------------------------------------------------------------
 # Subversion stuff
 #----------------------------------------------------------------------
-
 svn_version:
 	@svnversion
 
