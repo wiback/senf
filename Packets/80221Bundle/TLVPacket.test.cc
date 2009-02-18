@@ -27,9 +27,7 @@
 
 // Custom includes
 #include "TLVPacket.hh"
-#include <senf/Packets.hh>
 #include "../DefaultBundle/EthernetPacket.hh"
-#include <senf/Utils/hexdump.hh>
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -57,7 +55,7 @@ void check_TLVPacket(GenericTLVPacket &tlvPacket, boost::uint8_t type, boost::ui
 
 BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_simple_length)
 {
-    unsigned char data[] = { 
+    unsigned char data[] = {
         0x01, // type
         0x0A, // first bit not set, length=10
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
@@ -69,12 +67,12 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_simple_length)
 
 BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_extended_length)
 {
-    unsigned char data[] = { 
+    unsigned char data[] = {
         0x01, // type
         0x81, // first and last bit set => one byte length following
         0x0A, // length (10 bytes value)
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
-    };        
+    };
     GenericTLVPacket tlvPacket (GenericTLVPacket::create(data));
     check_TLVPacket( tlvPacket, 0x01, 0x0Au );
 }
@@ -82,7 +80,7 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_parse_packet_with_extended_length)
 
 BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_simple_length)
 {
-    unsigned char value[] = { 
+    unsigned char value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09
     };
     GenericTLVPacket tlvPacket (GenericTLVPacket::create());
@@ -91,8 +89,8 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_simple_length)
     tlvPacket.finalizeThis();
 
     check_TLVPacket( tlvPacket, 42u, 0x0Au );
-    
-    unsigned char data[] = { 
+
+    unsigned char data[] = {
         0x2a, // type
         0x0A, // first bit not set, length=10
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // value
@@ -112,15 +110,15 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_extended_length)
     tlvPacket.finalizeThis();
 
     check_TLVPacket( tlvPacket, 42u, sizeof(value) );
-    
-    unsigned char data[] = { 
+
+    unsigned char data[] = {
         0x2a, // type
         0x81, // first and last bit set => one byte length following
         0xff, // length (255 bytes value)
         0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 // first bytes of value
     };
-    BOOST_CHECK( equal( 
-            tlvPacket.data().begin(), 
+    BOOST_CHECK( equal(
+            tlvPacket.data().begin(),
             boost::next( tlvPacket.data().begin(), sizeof(data)),
             data ));
 }
@@ -131,11 +129,11 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_invalid_packet)
     GenericTLVPacket tlvPacket (GenericTLVPacket::create());
     tlvPacket->type() = 42u;
     tlvPacket.finalizeThis();
-    
+
     unsigned char value[255];
     for (unsigned i=0; i<sizeof(value); i++)
         value[i] = i;
-    
+
     BOOST_CHECK_THROW( tlvPacket->value( value), TLVLengthException);
     tlvPacket->maxLengthValue( sizeof(value));
     tlvPacket->value( value);
@@ -148,12 +146,12 @@ namespace {
 
     struct TestMacAddressTLVPacketParser : public BaseTLVPacketParser
     {
-    #   include SENF_PARSER()        
+    #   include SENF_PARSER()
         SENF_PARSER_INHERIT ( BaseTLVPacketParser );
         SENF_PARSER_VECTOR  ( value, bytes(length), senf::MACAddressParser );
         SENF_PARSER_FINALIZE( TestMacAddressTLVPacketParser );
     };
-    
+
     struct TestMacAddressTLVPacketType
         : public PacketTypeBase,
           public PacketTypeMixin<TestMacAddressTLVPacketType>
@@ -164,8 +162,8 @@ namespace {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
-        
-        static void finalize(ConcretePacket<TestMacAddressTLVPacketType> p) { 
+
+        static void finalize(ConcretePacket<TestMacAddressTLVPacketType> p) {
             p->shrinkLength();
         }
     };
@@ -179,8 +177,8 @@ BOOST_AUTO_UNIT_TEST(TestMacAddressTLVPacket_create)
     tlvPacket->value().push_back( senf::MACAddress::from_string("01:23:45:67:89:ab") );
     tlvPacket->value().push_back( senf::MACAddress::from_string("cd:ef:01:23:45:67") );
     tlvPacket.finalizeThis();
-    
-    unsigned char data[] = { 
+
+    unsigned char data[] = {
         0x2a, // type
         0x0c, // length
         0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef, 0x01, 0x23, 0x45, 0x67  // value
@@ -192,7 +190,7 @@ BOOST_AUTO_UNIT_TEST(TestMacAddressTLVPacket_create)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

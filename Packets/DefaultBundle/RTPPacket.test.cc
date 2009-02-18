@@ -44,4 +44,7 @@ BOOST_AUTO_UNIT_TEST(RTPPacket_packet)
     BOOST_CHECK_EQUAL( p->seqNumber(), 0x1bbbu);
     BOOST_CHECK_EQUAL( p->timeStamp(), 0x2cbad80u);
     BOOST_CHECK_EQUAL( p->synSourceId(), 0x5048a78cu);
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }

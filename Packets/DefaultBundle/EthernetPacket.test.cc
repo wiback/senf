@@ -38,16 +38,19 @@
 
 BOOST_AUTO_UNIT_TEST(ethernetPacket_parse)
 {
-    senf::PacketData::byte data[] = { 
+    senf::PacketData::byte data[] = {
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06,  // destination MAC
         0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,  // source MAC
-        0x10, 0x11 
+        0x10, 0x11
     };                        // EtherType
     senf::EthernetPacket p (senf::EthernetPacket::create(data));
 
     BOOST_CHECK_EQUAL( p->destination()[3], 0x04 );
     BOOST_CHECK_EQUAL( p->source()[0], 0x07 );
     BOOST_CHECK_EQUAL( p->type_length(), 0x1011 );
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 BOOST_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
@@ -58,7 +61,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_parse_chain)
         0x81, 0x00,                          // EtherType: VLan
         0x92, 0x34,                          // VLAN prio, cfi, id
         0xab, 0xcd,                          // EtherType
-        0xf0, 0xf1, 0xf2, 0xf3, 0xf4 
+        0xf0, 0xf1, 0xf2, 0xf3, 0xf4
     };      // Payload
     senf::EthernetPacket p (senf::EthernetPacket::create(data));
 
@@ -77,7 +80,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_create)
     senf::EthernetPacket eth (senf::EthernetPacket::create());
     eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");
     eth->destination() = senf::MACAddress::from_string("07:08:09:0a:0b:0c");
-    
+
     senf::EthVLanPacket vlan (senf::EthVLanPacket::createAfter(eth));
     vlan->priority() = 9u;
     vlan->cfi() = true;
@@ -97,12 +100,12 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_llcsnap)
     senf::EthernetPacket eth (senf::EthernetPacket::create());
     eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");
     eth->destination() = senf::MACAddress::from_string("07:08:09:0a:0b:0c");
-    
+
     senf::LlcSnapPacket llcsnap (senf::LlcSnapPacket::createAfter(eth));
     senf::DataPacket payload  (senf::DataPacket::createAfter(
             llcsnap, std::string("Hello, world!")));
     eth.finalizeAll();
-    
+
     BOOST_CHECK_EQUAL( eth->type_length(), 8u + 13u);
     BOOST_CHECK_EQUAL( llcsnap->dsap(), 0xaa );
     BOOST_CHECK_EQUAL( llcsnap->ssap(), 0xaa );
@@ -118,7 +121,7 @@ BOOST_AUTO_UNIT_TEST(ethernetPacket_llcsnap)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

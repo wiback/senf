@@ -31,7 +31,7 @@
 
 BOOST_AUTO_UNIT_TEST(ICMPv6Packet_packet)
 {
-    unsigned char data[] = { 
+    unsigned char data[] = {
             0x8f, 0x00, 0x8d, 0x54, 0x00, 0x00, 0x00, 0x01,
             0x04, 0x00, 0x00, 0x00, 0xff, 0x15, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -39,7 +39,7 @@ BOOST_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     };
 
     senf::ICMPv6Packet p ( senf::ICMPv6Packet::create(data) );
-    
+
     BOOST_CHECK_EQUAL( p->type(),     0x8f   );
     BOOST_CHECK_EQUAL( p->code(),     0x00   );
     BOOST_CHECK_EQUAL( p->checksum(), 0x8d54 );
@@ -47,4 +47,6 @@ BOOST_AUTO_UNIT_TEST(ICMPv6Packet_packet)
     BOOST_CHECK( p.next().is<senf::MLDv2ListenerReport>() );
     BOOST_CHECK_EQUAL( p.next().size(), 24u );
 
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }

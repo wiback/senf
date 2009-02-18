@@ -42,7 +42,7 @@ BOOST_AUTO_UNIT_TEST(llcsnap_parse)
         0xaa,             // SSAP
         0x03,             // ctrl
         0x00, 0x00, 0x00, // Protocol Identification Field
-        0x10, 0x11        // EtherType / Length 
+        0x10, 0x11        // EtherType / Length
     };
     senf::LlcSnapPacket p (senf::LlcSnapPacket::create(data));
 
@@ -51,6 +51,9 @@ BOOST_AUTO_UNIT_TEST(llcsnap_parse)
     BOOST_CHECK_EQUAL( p->ctrl(), 0x03 );
     BOOST_CHECK_EQUAL( p->protocolId(), 0x000000u );
     BOOST_CHECK_EQUAL( p->type_length(), 0x1011 );
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 BOOST_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
@@ -58,7 +61,7 @@ BOOST_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
     senf::LlcSnapPacket llcsnap (senf::LlcSnapPacket::create());
     senf::EthernetPacket eth (senf::EthernetPacket::createAfter(llcsnap));
     senf::DataPacket payload  (senf::DataPacket::createAfter(
-            eth, std::string("Hello, world!")));    
+            eth, std::string("Hello, world!")));
     llcsnap.finalizeAll();
 
     BOOST_CHECK_EQUAL( llcsnap->dsap(), 0xaa );
@@ -72,7 +75,7 @@ BOOST_AUTO_UNIT_TEST(llcSnapPacket_ethernet)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

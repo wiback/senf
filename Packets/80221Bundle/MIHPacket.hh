@@ -41,27 +41,31 @@
 
 namespace senf {
 
-    // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
-    // we could set maxLengthValue in INIT, but for the most MIHF_IDs the default
-    // maximum length of 127 should be enough.
-    // The user must call mihPacket->src_mihfId().maxLengthValue( 253) before 
-    // setting longer MIHF_IDs
+    /** \brief Parse a MIHF_ID
+
+         the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
+         we could set maxLengthValue in init(), but for the most MIHF_IDs the default
+         maximum length of 127 should be enough.
+         
+         \note you must call mihfIdPacket.maxLengthValue( 253) *before*
+         setting longer MIHF_IDs values.
+    */
     class MIHFId_TLVParser : public BaseTLVPacketParser
     {
-    #   include SENF_PARSER()        
+    #   include SENF_PARSER()
         SENF_PARSER_INHERIT  ( BaseTLVPacketParser );
         SENF_PARSER_SKIP     ( length(), 0         );
         SENF_PARSER_FINALIZE ( MIHFId_TLVParser    );
-                
+
         std::string asString() const;
         void setString(std::string const &id);
-        
+
         senf::MACAddress asMACAddress() const;
         void setMACAddress(senf::MACAddress const &mac);
 
         senf::INet4Address asINet4Address() const;
         void setINet4Address(senf::INet4Address const &addr);
-        
+
         senf::INet6Address asINet6Address() const;
         void setINet6Address(senf::INet6Address const &addr);
 
@@ -70,7 +74,7 @@ namespace senf {
         struct binaryNAIEncoder {
             binaryNAIEncoder(OutputIterator &i) : i_(i) {}
             void operator()(const boost::uint8_t &v) const {
-                *i_++ = '\\'; 
+                *i_++ = '\\';
                 *i_++ = v;
             }
             OutputIterator &i_;
@@ -79,10 +83,10 @@ namespace senf {
         static boost::function_output_iterator<binaryNAIEncoder<OutputIterator> > getNAIEncodedOutputIterator(OutputIterator i) {
             return boost::make_function_output_iterator(binaryNAIEncoder<OutputIterator>(i));
         }
-        
+
         struct binaryNAIDecoder {
             binaryNAIDecoder() : readNextByte_(true) {}
-            bool operator()(const boost::uint8_t &v) { 
+            bool operator()(const boost::uint8_t &v) {
                 readNextByte_ = readNextByte_ ? false : true;
                 return readNextByte_;
             }
@@ -98,13 +102,13 @@ namespace senf {
 
         Parser implementing the MIH header. The fields implemented are:
         \image html MIHPacket.png
-        
+
         \see MIHPacketType
      */
     struct MIHPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
-        
+
         SENF_PARSER_BITFIELD_RO ( version,       4,  unsigned );
         SENF_PARSER_BITFIELD    ( ackRequest,    1,  bool     );
         SENF_PARSER_BITFIELD    ( ackResponse,   1,  bool     );
@@ -112,32 +116,32 @@ namespace senf {
         SENF_PARSER_BITFIELD    ( moreFragment,  1,  bool     );
         SENF_PARSER_BITFIELD    ( fragmentNr,    7,  unsigned );
         SENF_PARSER_SKIP_BITS   ( 1                           );
-        
+
         // MIH message ID (MID)
         SENF_PARSER_BITFIELD ( sid,     4,  unsigned );
         SENF_PARSER_BITFIELD ( opcode,  2,  unsigned );
         SENF_PARSER_BITFIELD ( aid,    10,  unsigned );
-        
+
         SENF_PARSER_SKIP_BITS ( 4                           );
         SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );
         SENF_PARSER_FIELD_RO  ( payloadLength, UInt16Parser );
-        
+
         // Source MIHF Id
         SENF_PARSER_FIELD ( src_mihfId, MIHFId_TLVParser );
         // Destination MIHF Id
         SENF_PARSER_FIELD ( dst_mihfId, MIHFId_TLVParser );
-        
+
         SENF_PARSER_FINALIZE ( MIHPacketParser );
-        
+
         SENF_PARSER_INIT() {
             version_() = 1;
             src_mihfId().type() = 1;
             dst_mihfId().type() = 2;
         }
-        
+
         friend class MIHPacketType;
     };
-    
+
     /** \brief MIH packet
 
         \par Packet type (typedef):
@@ -145,7 +149,7 @@ namespace senf {
 
         \par Fields:
             \ref MIHPacketParser
-        
+
         \ingroup protocolbundle_80221
      */
     struct MIHPacketType
@@ -170,16 +174,16 @@ namespace senf {
 
     /** \brief MIH packet typedef */
     typedef ConcretePacket<MIHPacketType> MIHPacket;
-    
-    
+
+
     struct MIHPayloadPacketParser : public PacketParserBase
     {
     #   include SENF_PARSER()
         SENF_PARSER_LIST ( tlv_list, packetSize(), GenericTLVPacketParser );
-        
+
         SENF_PARSER_FINALIZE ( MIHPayloadPacketParser );
     };
-    
+
     struct MIHPayloadPacketType
         : public PacketTypeBase,
           public PacketTypeMixin<MIHPayloadPacketType>
@@ -187,7 +191,7 @@ namespace senf {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<MIHPayloadPacketType> mixin;
 #endif
-        typedef ConcretePacket<MIHPayloadPacketType> packet; ///< MIH Payload packet typedef 
+        typedef ConcretePacket<MIHPayloadPacketType> packet; ///< MIH Payload packet typedef
         typedef MIHPayloadPacketParser parser; ///< typedef to the parser of MIH Payload packet
 
         using mixin::nextPacketRange;
@@ -197,7 +201,7 @@ namespace senf {
         /** \brief Dump given MIHPayload in readable form to given output stream */
         static void dump(packet p, std::ostream &os);
     };
-        
+
      /** \brief MIH Payload packet typedef */
     typedef ConcretePacket<MIHPayloadPacketType> MIHPayloadPacket;
 }
@@ -211,7 +215,7 @@ namespace senf {
 //#include "MIHPacket.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

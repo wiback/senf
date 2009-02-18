@@ -48,6 +48,9 @@ BOOST_AUTO_UNIT_TEST(udpPacket_packet)
     BOOST_CHECK_EQUAL( p->destination(),       0x0304       );
     BOOST_CHECK_EQUAL( p->length(),            0x0506       );
     BOOST_CHECK_EQUAL( p->checksum(),          0x0708       );
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 BOOST_AUTO_UNIT_TEST(udpPacket_create)
@@ -63,11 +66,11 @@ BOOST_AUTO_UNIT_TEST(udpPacket_create)
     ip->destination() = senf::INet4Address::Loopback;
     ip->df() = true;
     ip->ttl() = 64;
-    
+
     senf::UDPPacket udp (senf::UDPPacket::createAfter(ip));
     udp->source() = 23456;
     udp->destination() = 12345;
-    
+
     senf::DataPacket::createAfter(udp,std::string("TEST-WRITE"));
 
     // validates, since the checksum is 0 and thus ignored !
@@ -83,7 +86,7 @@ BOOST_AUTO_UNIT_TEST(udpPacket_create)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

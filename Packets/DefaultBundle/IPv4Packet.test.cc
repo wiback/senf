@@ -62,6 +62,9 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_packet)
     BOOST_CHECK_EQUAL( p->checksum(),    0x0B0Cu     );
     BOOST_CHECK_EQUAL( p->source().value(), senf::INet4Address(0x11121314u) );
     BOOST_CHECK_EQUAL( p->destination().value(), senf::INet4Address(0x15161718u) );
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 BOOST_AUTO_UNIT_TEST(ipV4Packet_create)
@@ -91,7 +94,7 @@ BOOST_AUTO_UNIT_TEST(ipV4Packet_create)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

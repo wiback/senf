@@ -63,12 +63,15 @@ BOOST_AUTO_UNIT_TEST(ipV6Packet_packet)
     BOOST_CHECK( p.next() );
     BOOST_CHECK( p.next().is<senf::DataPacket>() );
     BOOST_CHECK_EQUAL( p.next().size(), 1u );
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

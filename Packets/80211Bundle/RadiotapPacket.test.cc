@@ -92,6 +92,9 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet)
     BOOST_CHECK_EQUAL( p->channelOptions().staticTurbo(), false);
     BOOST_CHECK_EQUAL( p->channelOptions().halfRateChannel(), false);
     BOOST_CHECK_EQUAL( p->channelOptions().quarterRateChannel(), false);
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 BOOST_AUTO_UNIT_TEST(RadiotapPacket_create)

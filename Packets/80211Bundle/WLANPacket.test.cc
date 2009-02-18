@@ -58,25 +58,28 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
 
     BOOST_CHECK_EQUAL( p->duration(),       0u    );
 
-    BOOST_CHECK_EQUAL( 
+    BOOST_CHECK_EQUAL(
             p->dataFrame().destinationAddress().value(),
             senf::MACAddress::from_string("00:18:4d:6e:78:48") );
-    BOOST_CHECK_EQUAL( 
+    BOOST_CHECK_EQUAL(
             p->dataFrame().sourceAddress().value(),
             senf::MACAddress::from_string("00:0b:6b:57:06:b0") );
-    BOOST_CHECK_EQUAL( 
+    BOOST_CHECK_EQUAL(
             p->dataFrame().bssid().value(),
             senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
 
-    BOOST_CHECK_EQUAL( 
-            p->dataFrame().bssid().value(), 
+    BOOST_CHECK_EQUAL(
+            p->dataFrame().bssid().value(),
             p->dataFrame().receiverAddress().value() );
-    BOOST_CHECK_EQUAL( 
-            p->dataFrame().transmitterAddress().value(), 
+    BOOST_CHECK_EQUAL(
+            p->dataFrame().transmitterAddress().value(),
             p->dataFrame().sourceAddress().value() );
 
     BOOST_CHECK_EQUAL( p->dataFrame().sequenceNumber(), 3u );
     BOOST_CHECK_EQUAL( p->dataFrame().fragmentNumber(), 0u );
+
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
 
@@ -133,16 +136,16 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_beaconFrame_packet)
 
     BOOST_CHECK_EQUAL( p->is_mgtFrame(),    true  );
 
-    BOOST_CHECK_EQUAL( 
+    BOOST_CHECK_EQUAL(
             p->mgtFrame().destinationAddress().value(),
             senf::MACAddress::from_string("ff:ff:ff:ff:ff:ff") );
-    BOOST_CHECK_EQUAL( 
+    BOOST_CHECK_EQUAL(
             p->mgtFrame().sourceAddress().value(),
             senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
-    BOOST_CHECK_EQUAL( 
+    BOOST_CHECK_EQUAL(
             p->mgtFrame().bssid().value(),
             senf::MACAddress::from_string("00:1a:4d:3e:c7:5c") );
-    
+
     BOOST_CHECK_EQUAL( p->mgtFrame().sequenceNumber(), 302u );
     BOOST_CHECK_EQUAL( p->mgtFrame().fragmentNumber(), 0u   );
 
@@ -194,7 +197,7 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_ctrlFrame_packet)
 
     BOOST_CHECK_EQUAL( p->duration(),       0u    );
 
-    BOOST_CHECK_EQUAL( 
+    BOOST_CHECK_EQUAL(
             p->ctrlFrame().receiverAddress().value(),
             senf::MACAddress::from_string("00:0b:6b:57:06:b0") );
 }
