@@ -132,6 +132,33 @@ prefix_ senf::log::time_type senf::scheduler::LogTimeSource::operator()()
     return eventTime();
 }
 
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::BlockSignals
+
+prefix_ senf::scheduler::BlockSignals::BlockSignals(bool initiallyBlocked)
+    : blocked_ (false)
+{
+    ::sigfillset(&allSigs_);
+    if (initiallyBlocked)
+        block();
+}
+
+prefix_ void senf::scheduler::BlockSignals::block()
+{
+    if (blocked_)
+        return;
+    ::sigprocmask(SIG_BLOCK, &allSigs_, &savedSigs_);
+    blocked_ = true;
+}
+
+prefix_ void senf::scheduler::BlockSignals::unblock()
+{
+    if (!blocked_)
+        return;
+    ::sigprocmask(SIG_SETMASK, &savedSigs_, 0);
+    blocked_ = false;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

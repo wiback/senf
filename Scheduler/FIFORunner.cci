@@ -124,9 +124,10 @@ prefix_ unsigned senf::scheduler::detail::FIFORunner::taskTimeout()
 }
 
 prefix_ unsigned senf::scheduler::detail::FIFORunner::hangCount()
-    const
 {
-    return hangCount_;
+    unsigned hc (hangCount_);
+    hangCount_ = 0;
+    return hc;
 }
 
 prefix_ senf::scheduler::detail::FIFORunner::iterator

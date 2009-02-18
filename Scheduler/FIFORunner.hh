@@ -103,7 +103,7 @@ namespace detail {
         void startWatchdog();
         void stopWatchdog();
 
-        unsigned hangCount() const;
+        unsigned hangCount();
 
         iterator begin() const;
         iterator end() const;

@@ -28,6 +28,7 @@
 #define HH_SENF_Scheduler_Scheduler_ 1
 
 // Custom includes
+#include <boost/utility.hpp>
 #include "../Utils/Logger/SenfLog.hh"
 #include "FdEvent.hh"
 #include "TimerEvent.hh"
@@ -229,7 +230,10 @@ namespace scheduler {
     /** \brief Current task watchdog timeout */
     unsigned taskTimeout(); 
 
-    /** \brief Number of watchdog events */
+    /** \brief Number of watchdog events 
+
+        calling hangCount() will reset the counter to 0
+     */
     unsigned hangCount(); 
 
     /** \brief Switch to using hi resolution timers
@@ -289,6 +293,44 @@ namespace scheduler {
     struct LogTimeSource : public senf::log::TimeSource
     {
         senf::log::time_type operator()() const;
+    };
+
+    /** \brief Temporarily block all signals
+
+        This class is used to temporarily block all signals in a critical section.
+        
+        \code
+        // Begin critical section
+        {
+            senf::scheduler::BlockSignals signalBlocker;
+
+            // critical code executed with all signals blocked
+        }
+        // End critical section
+        \endcode
+
+        You need to take care not to block since even the watchdog timer will be disabled while
+        executing within a critical section.
+     */
+    class BlockSignals
+        : boost::noncopyable
+    {
+    public:
+        BlockSignals(bool initiallyBlocked=true);
+                                        ///< Block signals until end of scope
+                                        /**< \param[in] initiallyBlocked set to \c false to not
+                                             automatically block signals initially */
+        ~BlockSignals();                ///< Release all signal blocks
+        
+        void block();                   ///< Block signals if not blocked
+        void unblock();                 ///< Unblock signals if blocked
+        bool blocked() const;           ///< \c true, if signals currently blocked, \c false
+                                        ///< otherwise
+
+    private:
+        bool blocked_;
+        sigset_t allSigs_;
+        sigset_t savedSigs_;
     };
 
 }}
