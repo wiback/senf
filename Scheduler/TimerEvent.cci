@@ -99,9 +99,15 @@ prefix_ bool senf::scheduler::detail::TimerDispatcher::empty()
 }
 
 prefix_ void senf::scheduler::detail::TimerDispatcher::
-setTimerSource(std::auto_ptr<TimerSource> timerSource)
+timerSource(std::auto_ptr<TimerSource> timerSource)
 {
     source_.reset(timerSource.release());
+}
+
+prefix_ senf::scheduler::detail::TimerSource *
+senf::scheduler::detail::TimerDispatcher::timerSource()
+{
+    return source_.get();
 }
 
 ///////////////////////////////cci.e///////////////////////////////////////

@@ -81,7 +81,19 @@ prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
 {
     detail::TargetRegistry::instance().consoleDir().add("file-target",&RegisterConsole::create)
         .arg("filename", "name of logfile")
-        .doc("Create new file target.");
+        .doc("Create new file target. Examples:\n"
+             "\n"
+             "Create new file target '/var/log/example.log\n"
+             "    $ file-target \"/var/log/example.log\"\n"
+             "    <Directory '/sys/log/_var_log_example.log'>\n"
+             "\n"
+             "In a configuration file, create new file target '/var/log/example.log' and set\n"
+             "some parameters (If written on one line, this works at the console too:\n"
+             "    /sys/log/file-target \"/var/log/example.log\" {\n"
+             "        route (IMPORTANT);             # route all important messages\n"
+             "        timeFormat \"\";               # use non-formatted time format\n"
+             "        showArea false;                # don't show log area\n"
+             "    }\n");
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>

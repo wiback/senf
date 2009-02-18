@@ -62,10 +62,22 @@ prefix_ senf::log::SyslogTarget::RegisterConsole::RegisterConsole()
 
     detail::TargetRegistry::instance().consoleDir().add("syslog-target",&RegisterConsole::create)
         .arg("facility", "syslog facility to send messages to. One of\n"
-             "                  AUTHPRIV, CRON, DAEMON, FTP, KERN, LPR, MAIL, NEWS, SYSLOG, USER,\n"
-             "                  UUCP, LOCAL0, LOCAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7",
+             "                  AUTHPRIV CRON DAEMON FTP KERN LPR MAIL NEWS SYSLOG USER\n"
+             "                  UUCP LOCAL0 LOCAL1 LOCAL2 LOCAL3 LOCAL4 LOCAL5 LOCAL6 LOCAL7",
              kw::default_value = USER)
-        .doc("Create new syslog target.");
+        .doc("Create new syslog target. Examples:\n"
+             "\n"
+             "Create new syslog target\n"
+             "    $ syslog-target\n"
+             "    <Directory '/sys/log/syslog'>\n"
+             "\n"
+             "In a configuration file, create new syslog target and set some parameters (If\n"
+             "written on one line, this works at the console too:\n"
+             "    /sys/log/syslog-target LOCAL2 {\n"
+             "        route (IMPORTANT);             # route all important messages\n"
+             "        timeFormat \"\";               # use non-formatted time format\n"
+             "        showArea false;                # don't show log area\n"
+             "    }\n");
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>

@@ -115,10 +115,19 @@ namespace log {
         using detail::LogFormat::timeFormat;
         using detail::LogFormat::tag;
 
+        bool syslog() const;            ///< \c true, if using syslog format, \c false otherwise
+                                        /**< When syslog format is disabled, messages are not
+                                             formated as valid syslog messages but sent using plain
+                                             UDP. */
+        void syslog(bool enabled=true); /// Set syslog format
+
     private:
+        void init(); 
         void v_write(time_type timestamp, std::string const & stream, 
                      std::string const & area, unsigned level, 
                      std::string const & message);
+
+        void consoleFormat(std::ostream & os);
 
         int facility_;
         typedef senf::ClientSocketHandle< senf::MakeSocketPolicy<
@@ -126,6 +135,7 @@ namespace log {
             senf::ConnectedCommunicationPolicy,
             senf::WriteablePolicy>::policy > Handle;
         Handle handle_;
+        bool syslogFormat_;
 
     public:
         enum LogFacility { 

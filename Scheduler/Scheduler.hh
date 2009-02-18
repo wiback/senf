@@ -258,6 +258,10 @@ namespace scheduler {
      */
     bool haveScalableHiresTimers();
 
+    /** \brief Return \c true, if using hires times, \c false otherwise
+        \see hiresTimers() */
+    bool usingHiresTimers();
+
     /** \brief Restart scheduler
         
         This call will restart all scheduler dispatchers (timers, signals, file descriptors). This
@@ -266,7 +270,7 @@ namespace scheduler {
      */
     void restart(); 
 
-    /** \brief Return \c true, if any event is registered, \c false otherwise. */
+    /** \brief Return \c true, if no event is registered, \c false otherwise. */
     bool empty();
 
     /** \brief %scheduler specific time source for Utils/Logger framework

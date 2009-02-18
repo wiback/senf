@@ -69,9 +69,9 @@ namespace detail {
         std::string prefix(time_type timestamp, std::string const & stream, 
                            std::string const & area, unsigned level);
         bool isPlainFormat() const;
+        void consoleFormat(std::ostream & os);
 
     private:
-        void consoleFormat(std::ostream & os);
 
         std::string tag_;
         std::string timeFormat_;

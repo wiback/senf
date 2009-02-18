@@ -319,6 +319,8 @@ BOOST_AUTO_UNIT_TEST(testScheduler)
 
     BOOST_CHECK( eventCount >= 8u );
 
+    BOOST_CHECK( ! senf::scheduler::usingHiresTimers() );
+
     ///////////////////////////////////////////////////////////////////////////
 
     close(sock);

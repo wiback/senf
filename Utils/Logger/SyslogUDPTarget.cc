@@ -36,6 +36,25 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+prefix_ void senf::log::SyslogUDPTarget::init()
+{
+    namespace kw = senf::console::kw;
+
+    consoleDir().remove("format");
+    consoleDir().add("format", senf::membind(&SyslogUDPTarget::consoleFormat, this))
+        .doc("Show the current log message format.");
+    consoleDir().add("syslog", senf::membind(
+                         static_cast<void (SyslogUDPTarget::*)(bool)>(&SyslogUDPTarget::syslog),
+                         this))
+        .arg("flag","new syslog format state",
+             kw::default_value=true)
+        .doc("Change the syslog format flag. By default, syslog formating is enabled. In this\n"
+             "state, the udp target will send out minimal but valid syslog format messages.\n"
+             "\n"
+             "Disabling syslog format will remove the syslog prefix. Log messages will then be\n"
+             "sent using plain UDP.");
+}
+
 prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::string const & stream,
                                                  std::string const & area, unsigned level,
                                                  std::string const & message)
@@ -48,8 +67,9 @@ prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::strin
     // The space after the '>' is there on purpose: It ensures, that the prefix (which may be empty)
     // or message will not inadvertently be interpreted as date or hostname by a receiving syslog
     // daemon or proxy
-    prfstream << '<' << (facility_ | senf::log::SyslogTarget::LEVELMAP[level]) << "> "
-              << prefix(timestamp, stream, area, level);
+    if (syslogFormat_)
+        prfstream << '<' << (facility_ | senf::log::SyslogTarget::LEVELMAP[level]) << "> ";
+    prfstream << prefix(timestamp, stream, area, level);
     std::string const & prf (prfstream.str());
 
     typedef boost::char_separator<char> Separator;
@@ -67,6 +87,12 @@ prefix_ void senf::log::SyslogUDPTarget::v_write(time_type timestamp, std::strin
             line += std::string(*i, j, sz);
             handle_.write(line);
         }
+}
+
+prefix_ void senf::log::SyslogUDPTarget::consoleFormat(std::ostream & os)
+{
+    LogFormat::consoleFormat(os);
+    os << "syslog prefix " << (syslogFormat_ ? "enabled" : "disabled") << "\n";
 }
 
 namespace senf {
@@ -93,7 +119,20 @@ prefix_ senf::log::SyslogUDPTarget::RegisterConsole::RegisterConsole()
              "                  UUCP LOCAL0 LOCAL1 LOCAL2 LOCAL3 LOCAL4 LOCAL5 LOCAL6 LOCAL7",
              kw::default_value = USER)
         .doc("Create new udp target. The {address} can be an IPv4 or IPv6 address. If the port\n"
-             "number is omitted, it defaults to the default syslog port 514.");
+             "number is omitted, it defaults to the default syslog port 514. Examples:\n"
+             "\n"
+             "Create new udp target sending messages to the syslog daemon running at localhost\n"
+             "    $ udp-target localhost\n"
+             "    <Directory '/sys/log/udp-127.0.0.1:514'>\n"
+             "\n"
+             "In a configuration file, create new udp target and set some parameters (If\n"
+             "written on one line, this works at the console too:\n"
+             "    /sys/log/udp-target localhost:2345 LOCAL2 {\n"
+             "        route (IMPORTANT);             # route all important messages\n"
+             "        timeFormat \"\";               # use non-formatted time format\n"
+             "        showArea false;                # don't show log area\n"
+             "        syslog false;                  # no syslog format, just plain udp\n"
+             "    }\n");
     detail::TargetRegistry::instance().consoleDir().add(
         "udp-target", 
         static_cast<senf::console::DirectoryNode::ptr (*)(INet4Address const &, LogFacility)>(

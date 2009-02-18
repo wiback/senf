@@ -407,6 +407,15 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
              "    message (senf::log::DefaultArea NOTICE) \"Test notice\";\n"
              "    message (FATAL) \"Program on fire\";\n"
              "    message (VERBOSE senf::log::Debug) \"Debug message\";");
+    consoleDir_().add("self", senf::membind(&TargetRegistry::consoleSelf, this))
+        .doc("Get the log directory of the current network client. Example usage:\n"
+             "\n"
+             "Just get the log config directory\n"
+             "    $ /sys/log/self\n"
+             "    <Directory '/sys/log/client-xxx.xxx.xxx.xxx:xxx'>\n"
+             "\n"
+             "Route all messages to the currently connected client\n"
+             "    $ /sys/log/self { route (); }");
 }
 
 prefix_ senf::log::detail::TargetRegistry::~TargetRegistry()
@@ -439,6 +448,12 @@ prefix_ void senf::log::detail::TargetRegistry::consoleWrite(LogParameters pm,
     pm.setDefaults();
     write(*pm.stream, *pm.area, pm.level, msg);
 }
+
+prefix_ boost::shared_ptr<senf::console::DirectoryNode>
+senf::log::detail::TargetRegistry::consoleSelf(std::ostream & os)
+{
+    return senf::console::Client::get(os).consoleDir().node().thisptr();
+}                                            
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::LogParameters

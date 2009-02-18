@@ -30,12 +30,16 @@
 #include <memory>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/static_assert.hpp>
+#include <boost/shared_ptr.hpp>
 #include "../Console/LazyDirectory.hh"
 #include "../Console/Parse.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
 namespace senf {
+
+    namespace console { class DirectoryNode; }
+
 namespace log {
 namespace detail {
 
@@ -90,6 +94,7 @@ namespace detail {
         void consoleStreams(std::ostream & os);
         void consoleWrite(LogParameters parameters, std::string const & msg);
         void consoleRemoveTarget(Target * target);
+        boost::shared_ptr<senf::console::DirectoryNode> consoleSelf(std::ostream & os);
 
         typedef std::set<Target *> Targets;
         Targets targets_;
