@@ -200,7 +200,7 @@ BOOST_AUTO_UNIT_TEST(commandParser)
         "                   0304\";"
         "ls /foo/bar; ";
 
-    BOOST_CHECK_NO_THROW( parser.parse(text, &setInfo) );
+    SENF_CHECK_NO_THROW( parser.parse(text, &setInfo) );
     BOOST_CHECK_EQUAL( commands.size(), 2u );
 
     {
@@ -274,14 +274,14 @@ BOOST_AUTO_UNIT_TEST(checkedArgumentIterator)
 {
     senf::console::CommandParser parser;
 
-    BOOST_CHECK_NO_THROW( parser.parse("foo a", &setInfo) );
+    SENF_CHECK_NO_THROW( parser.parse("foo a", &setInfo) );
     BOOST_CHECK_THROW( parseArgs(commands.back().arguments()), 
                        senf::console::SyntaxErrorException );
 
-    BOOST_CHECK_NO_THROW( parser.parse("foo a b", &setInfo) );
-    BOOST_CHECK_NO_THROW( parseArgs(commands.back().arguments()) );
+    SENF_CHECK_NO_THROW( parser.parse("foo a b", &setInfo) );
+    SENF_CHECK_NO_THROW( parseArgs(commands.back().arguments()) );
 
-    BOOST_CHECK_NO_THROW( parser.parse("foo a b c", &setInfo) );
+    SENF_CHECK_NO_THROW( parser.parse("foo a b c", &setInfo) );
     BOOST_CHECK_THROW( parseArgs(commands.back().arguments()), 
                        senf::console::SyntaxErrorException );
     

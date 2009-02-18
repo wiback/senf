@@ -132,7 +132,7 @@ BOOST_AUTO_UNIT_TEST(socketPolicy)
         Policy3 p3;
 
         BOOST_CHECK_THROW( Policy1::checkBaseOf(p3), std::bad_cast );
-        BOOST_CHECK_NO_THROW( Policy3::checkBaseOf(p1) );
+        SENF_CHECK_NO_THROW( Policy3::checkBaseOf(p1) );
     }
 }
 

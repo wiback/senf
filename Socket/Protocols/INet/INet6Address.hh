@@ -193,7 +193,7 @@ namespace senf {
                                              data as accessed by the iterator. The data must be in
                                              network byte order. */
 
-        static INet6Address from_inet4address(INet4Address addr);
+        static INet6Address from_inet4address(INet4Address const & addr);
                                         ///< Construct an INet6-mapped INet4 address
                                         /**< This will construct an address of the form
                                              <tt>::FFFF::w.x.y.z</tt> where <tt>w.x.y.z</tt> is
@@ -335,9 +335,9 @@ namespace senf {
         ///@{
 
         INet6Network();                 ///< Construct empty (::/0) network
-        INet6Network(INet6Address address, unsigned prefix_len);
+        INet6Network(INet6Address const & address, unsigned prefix_len);
                                         ///< Construct network from given address and prefix length
-        explicit INet6Network(std::string s); ///< Construct network from CIDR notation
+        explicit INet6Network(std::string const & s); ///< Construct network from CIDR notation
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -349,8 +349,8 @@ namespace senf {
         bool operator==(INet6Network const & other) const;
                                         ///< Compare two networks for equality
 
-        bool match(INet6Address addr) const; ///< \c true, if the network includes \a addr
-        bool match(INet6Network net) const; ///< \c true, if the network includes \a net
+        bool match(INet6Address const & addr) const; ///< \c true, if the network includes \a addr
+        bool match(INet6Network const & net) const; ///< \c true, if the network includes \a net
                                         /**< The is true, if \a net is sub-network (or the same as)
                                              \c this. */
         INet6Address host(boost::uint64_t id); ///< Return the host with the given id

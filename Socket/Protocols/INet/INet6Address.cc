@@ -124,7 +124,7 @@ senf::INet6Address const senf::INet6Address::AllRouters (0xFF02u,0u,0u,0u,0u,0u,
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet6Network
 
-prefix_ senf::INet6Network::INet6Network(std::string s)
+prefix_ senf::INet6Network::INet6Network(std::string const & s)
 {
     using boost::lambda::_1;
     using boost::lambda::_2;

@@ -248,7 +248,7 @@ void schedulerTest()
         senf::scheduler::FdEvent fde1 ("testFdEvent", boost::bind(&callback, sock, _1),
                                       sock, senf::scheduler::FdEvent::EV_READ);
         event = senf::scheduler::FdEvent::EV_NONE;
-        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_READ );
         BOOST_REQUIRE_EQUAL( size, 4 );
         buffer[size]=0;
@@ -260,13 +260,13 @@ void schedulerTest()
         strcpy(buffer,"WRITE");
         size=5;
         event = senf::scheduler::FdEvent::EV_NONE;
-        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_WRITE );
 
         SENF_CHECK_NO_THROW( fde2.disable() );
         event = senf::scheduler::FdEvent::EV_NONE;
         sleep(1);
-        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_READ|senf::scheduler::FdEvent::EV_HUP );
         BOOST_REQUIRE_EQUAL( size, 2 );
         buffer[size]=0;
@@ -281,23 +281,23 @@ void schedulerTest()
                                             
         event = senf::scheduler::FdEvent::EV_NONE;
         senf::ClockService::clock_type t (senf::ClockService::now());
-        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()-t) (senf::ClockService::milliseconds(200)) );
         BOOST_CHECK( timeoutCalled );
         BOOST_CHECK( ! timer1.enabled() );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
         BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()) (senf::scheduler::eventTime()) );
         timeoutCalled = false;
-        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()-t) (senf::ClockService::milliseconds(400)) );
         BOOST_CHECK( timeoutCalled );
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
         BOOST_CHECK( ! timer2.enabled() );
 
         BOOST_WARN_MESSAGE( false, "A 'Scheduler task hanging' error is expected to be signaled here." );
-        BOOST_CHECK_NO_THROW( timer1.action(&blockingHandler) );
-        BOOST_CHECK_NO_THROW( timer1.timeout(senf::ClockService::now()) );
-        BOOST_CHECK_NO_THROW( senf::scheduler::process() );
+        SENF_CHECK_NO_THROW( timer1.action(&blockingHandler) );
+        SENF_CHECK_NO_THROW( timer1.timeout(senf::ClockService::now()) );
+        SENF_CHECK_NO_THROW( senf::scheduler::process() );
         BOOST_CHECK_EQUAL( senf::scheduler::hangCount(), 1u );
     }
 
@@ -309,10 +309,10 @@ void schedulerTest()
         senf::ClockService::clock_type t = senf::ClockService::now();
         ::kill(::getpid(), SIGUSR1);
         delay(200);
-        BOOST_CHECK_NO_THROW( senf::scheduler::process() ); 
+        SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
         BOOST_CHECK_PREDICATE( is_close, (senf::ClockService::now()) (t+senf::ClockService::milliseconds(200)) );
         BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+senf::ClockService::milliseconds(200)) );
-        BOOST_CHECK_NO_THROW( senf::scheduler::process() ); 
+        SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
     } 
 
     BOOST_CHECK( eventCount >= 8u );
@@ -365,14 +365,14 @@ BOOST_AUTO_UNIT_TEST(blockSignals)
     senf::scheduler::SignalEvent sig (SIGUSR1, &sigusr);
     
     senf::ClockService::clock_type t = senf::ClockService::now();
-    BOOST_CHECK_NO_THROW( senf::scheduler::process() ); 
+    SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
 
     BOOST_CHECK_PREDICATE( is_close, 
                            (senf::ClockService::now()) 
                            (t+senf::ClockService::milliseconds(200)) );
     BOOST_CHECK_PREDICATE( is_close, (sigtime) (t+senf::ClockService::milliseconds(200)) );
 
-    BOOST_CHECK_NO_THROW( senf::scheduler::process() ); 
+    SENF_CHECK_NO_THROW( senf::scheduler::process() ); 
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -74,13 +74,13 @@ BOOST_AUTO_UNIT_TEST(serverSocketHandle)
         >::policy> SomeOtherSocketHandle;
     typedef senf::ClientSocketHandle<OtherSocketPolicy> OtherClientHandle;
 
-    BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
+    SENF_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
     BOOST_CHECK_THROW( senf::dynamic_socket_cast<SomeOtherSocketHandle>(osh),
                        std::bad_cast );
     BOOST_CHECK_THROW( senf::dynamic_socket_cast<OtherClientHandle>(osh),
                        std::bad_cast );
 
-    BOOST_CHECK_NO_THROW( myh.bind(0) );
+    SENF_CHECK_NO_THROW( myh.bind(0) );
     BOOST_CHECK_EQUAL( myh.local(), 2u );
 
     {

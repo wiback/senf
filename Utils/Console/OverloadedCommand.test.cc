@@ -71,7 +71,7 @@ BOOST_AUTO_UNIT_TEST(overladedCommand)
                            senf::console::SyntaxErrorException );
         
         cmd.add(senf::console::SimpleCommandOverload::create(&fn3)).doc("fn3");
-        BOOST_CHECK_NO_THROW( senf::console::root()("overload")(ss, info) );
+        SENF_CHECK_NO_THROW( senf::console::root()("overload")(ss, info) );
         BOOST_CHECK_EQUAL( ss.str(), "fn3\n" );
     }
     

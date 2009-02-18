@@ -41,7 +41,7 @@ BOOST_AUTO_UNIT_TEST(macAddress)
 {
     using senf::MACAddress;
     using senf::AddressSyntaxException;
-    
+
     std::string test ("A1-b2-C3:d4:E5:f6");
     MACAddress mac (MACAddress::from_string(test));
 
@@ -53,12 +53,15 @@ BOOST_AUTO_UNIT_TEST(macAddress)
     BOOST_CHECK_EQUAL( mac[5], 0xF6u );
 
     std::stringstream str;
+    str >> mac;
+    BOOST_CHECK( str.fail());
+    str.clear();
     str << mac;
     BOOST_CHECK_EQUAL( str.str(), "a1:b2:c3:d4:e5:f6" );
-    
     str >> mac;
+    BOOST_CHECK( ! str.fail());
     BOOST_CHECK_EQUAL(mac, MACAddress::from_string(test));
-    
+
     BOOST_CHECK( ! mac.local() );
     BOOST_CHECK( mac.multicast() );
     BOOST_CHECK( ! mac.broadcast() );
@@ -86,14 +89,14 @@ BOOST_AUTO_UNIT_TEST(macAddress)
 
     BOOST_CHECK_EQUAL( mac, MACAddress::from_eui64(0xa1b2c3fffed4e5f6llu) );
     BOOST_CHECK_THROW( MACAddress::from_eui64(0u), AddressSyntaxException );
-    
+
     BOOST_CHECK_EQUAL( MACAddress(0x1a2b3c4d5e6fULL).uint64(), 0x1a2b3c4d5e6fULL);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

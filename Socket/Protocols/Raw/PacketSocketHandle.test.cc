@@ -48,19 +48,19 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
     {
         senf::PacketSocketHandle sock;
 
-        BOOST_CHECK_NO_THROW( sock.bind(senf::LLSocketAddress("eth0")) );
+        SENF_CHECK_NO_THROW( sock.bind(senf::LLSocketAddress("eth0")) );
         senf::LLSocketAddress a;
-        BOOST_CHECK_NO_THROW( sock.local(a) );
+        SENF_CHECK_NO_THROW( sock.local(a) );
         BOOST_CHECK_EQUAL( a.interface(), "eth0" );
 
         // How am I supposed to test read and write .. grmpf ..
 
-        BOOST_CHECK_NO_THROW( sock.protocol().mcAdd(
+        SENF_CHECK_NO_THROW( sock.protocol().mcAdd(
                                   "eth0",senf::MACAddress::from_string("01-02-03-04-05-06")) );
-        BOOST_CHECK_NO_THROW( sock.protocol().mcDrop(
+        SENF_CHECK_NO_THROW( sock.protocol().mcDrop(
                                   "eth0",senf::MACAddress::from_string("01-02-03-04-05-06")) );
 
-        BOOST_CHECK_NO_THROW( sock.protocol().available() );
+        SENF_CHECK_NO_THROW( sock.protocol().available() );
         BOOST_CHECK( ! sock.eof() );
     }
 }

@@ -80,8 +80,8 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
         typedef senf::SocketHandle<senf::test::SomeSocketProtocol::Policy> SomeSocketHandle;
         SomeSocketHandle ssh = senf::static_socket_cast<SomeSocketHandle>(osh);
 
-        BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
-        BOOST_CHECK_NO_THROW( senf::dynamic_socket_cast<AnotherSocketHandle>(osh) );
+        SENF_CHECK_NO_THROW( senf::dynamic_socket_cast<SomeSocketHandle>(osh) );
+        SENF_CHECK_NO_THROW( senf::dynamic_socket_cast<AnotherSocketHandle>(osh) );
 
         typedef senf::SocketHandle< senf::MakeSocketPolicy<
             OtherSocketPolicy,
@@ -102,7 +102,7 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
                            "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
                            "socket.server: false\n" );
 
-        BOOST_CHECK_NO_THROW( myh.facet<senf::test::SomeSocketProtocol>() );
+        SENF_CHECK_NO_THROW( myh.facet<senf::test::SomeSocketProtocol>() );
     }
     
     // Ensure, the destructor is called and calls the correct close() implementation

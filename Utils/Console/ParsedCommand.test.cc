@@ -132,7 +132,7 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
         // Just for the fun of it, use a functor and not a function pointer as parser ...
         dir.add("cb6", &cb5)
             .arg( kw::parser = TestParser() );
-        BOOST_CHECK_NO_THROW(
+        SENF_CHECK_NO_THROW(
             parser.parse("test/cb6 false",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
         BOOST_CHECK_EQUAL( ss.str(), "Value: true\n" );
@@ -145,7 +145,7 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
         // compatible types also work
         dir.add("cb7", boost::function<float()>(&cb2))
             .formatter( &testFormatter );
-        BOOST_CHECK_NO_THROW(
+        SENF_CHECK_NO_THROW(
             parser.parse("test/cb7",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
         BOOST_CHECK_EQUAL( ss.str(), "formatter\n" );
@@ -187,16 +187,16 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
 
         (void) cbNode;
 
-        BOOST_CHECK_NO_THROW(
+        SENF_CHECK_NO_THROW(
             parser.parse("test/cb 111 222.4",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-        BOOST_CHECK_NO_THROW(
+        SENF_CHECK_NO_THROW(
             parser.parse("test/cb 222",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-        BOOST_CHECK_NO_THROW(
+        SENF_CHECK_NO_THROW(
             parser.parse("test/cb foo",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-        BOOST_CHECK_NO_THROW(
+        SENF_CHECK_NO_THROW(
             parser.parse("test/cb",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
 

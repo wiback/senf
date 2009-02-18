@@ -122,19 +122,25 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK( INet6Address(0u,0u,0u,0u,0u,0xFFFF,0x0102,0x0304).inet4Mapped() );
         BOOST_CHECK( ! addr.inet4Compatible() );
         BOOST_CHECK( ! addr.inet4Mapped() );
-    
+
         BOOST_CHECK( INet6Address::AllNodes.globalMulticastAddr() );
         BOOST_CHECK( ! INet6Address::AllNodes.prefixMulticastAddr() );
         BOOST_CHECK( ! INet6Address::AllNodes.embeddedRpAddr() );
 
         BOOST_CHECK( INet6Address::Loopback );
         BOOST_CHECK( ! INet6Address::None );
-        
+    }
+
+    {
+        INet6Address addr (INet6Address::from_string("2001:dead:beef::1002:3004"));
         std::stringstream str;
+        str >> addr;
+        BOOST_CHECK( str.fail());
+        str.clear();
         str << addr;
         BOOST_CHECK_EQUAL( str.str(), "2001:dead:beef::1002:3004");
-        
         str >> addr;
+        BOOST_CHECK( ! str.fail());
         BOOST_CHECK_EQUAL(addr, INet6Address::from_string("2001:dead:beef::1002:3004"));
     }
 
@@ -149,34 +155,41 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 
 BOOST_AUTO_UNIT_TEST(inet6Network)
 {
-    senf::INet6Network net (senf::INet6Address(0xFF14u,0x1234u),32u);
+    using senf::INet6Address;
+    using senf::INet6Network;
+    using senf::AddressSyntaxException;
+
+    INet6Network net (INet6Address(0xFF14u,0x1234u),32u);
     BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net.address()), "ff14:1234::");
     BOOST_CHECK_EQUAL( net.prefix_len(), 32u );
     BOOST_CHECK( net );
-    BOOST_CHECK( ! senf::INet6Network() );
-    
-    senf::INet6Network net2 ("2001:db8:1234::/44");
-    BOOST_CHECK_EQUAL( net2.address(), senf::INet6Address::from_string("2001:db8:1230::") );
+    BOOST_CHECK( ! INet6Network() );
+
+    INet6Network net2 ("2001:db8:1234::/44");
+    BOOST_CHECK_EQUAL( net2.address(), INet6Address::from_string("2001:db8:1230::") );
     BOOST_CHECK_EQUAL( net2.prefix_len(), 44u );
 
     BOOST_CHECK( net != net2 );
-    BOOST_CHECK( net.match(senf::INet6Address::from_string("ff14:1234::1")) );
-    BOOST_CHECK( ! net2.match(senf::INet6Address::from_string("ff13:1234::1")) );
+    BOOST_CHECK( net.match(INet6Address::from_string("ff14:1234::1")) );
+    BOOST_CHECK( ! net2.match(INet6Address::from_string("ff13:1234::1")) );
     BOOST_CHECK( ! net.match(net2) );
-    BOOST_CHECK( net2.match(senf::INet6Network("2001:db8:1234::/48")) );
-    BOOST_CHECK( ! net2.match(senf::INet6Network("2001:db8:1234::/32")) );
+    BOOST_CHECK( net2.match(INet6Network("2001:db8:1234::/48")) );
+    BOOST_CHECK( ! net2.match(INet6Network("2001:db8:1234::/32")) );
 
     BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2), "2001:db8:1230::/44" );
 
-    BOOST_CHECK_EQUAL( net2.host(0x1234u), senf::INet6Address::from_string("2001:db8:1230::1234") );
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2.subnet(2u,48u)), 
+    BOOST_CHECK_EQUAL( net2.host(0x1234u), INet6Address::from_string("2001:db8:1230::1234") );
+    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2.subnet(2u,48u)),
                        "2001:db8:1232::/48" );
+
+    BOOST_CHECK_THROW( INet6Network(""), AddressSyntaxException );
+    BOOST_CHECK_THROW( INet6Network("2001:db8:1234::/beef"), AddressSyntaxException );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -40,36 +40,46 @@
 
 BOOST_AUTO_UNIT_TEST(inet4Address)
 {
-    senf::INet4Address addr (senf::INet4Address::from_string("127.0.0.1"));
-    BOOST_CHECK_EQUAL( addr, senf::INet4Address::Loopback );
-    BOOST_CHECK( addr != senf::INet4Address::Broadcast );
+    using senf::INet4Address;
+    using senf::AddressSyntaxException;
+    using senf::UnknownHostnameException;
 
-    addr = senf::INet4Address::from_string("localhost");
-    BOOST_CHECK_EQUAL( addr, senf::INet4Address::Loopback );
+    INet4Address addr (INet4Address::from_string("127.0.0.1"));
+    BOOST_CHECK_EQUAL( addr, INet4Address::Loopback );
+    BOOST_CHECK( addr != INet4Address::Broadcast );
+
+    addr = INet4Address::from_string("localhost");
+    BOOST_CHECK_EQUAL( addr, INet4Address::Loopback );
     BOOST_CHECK( addr.loopback() );
 
     char data[] = { 128, 129, 130, 131 };
-    addr = senf::INet4Address::from_data(data);
-    BOOST_CHECK_EQUAL( addr, senf::INet4Address::from_string("128.129.130.131") );
+    addr = INet4Address::from_data(data);
+    BOOST_CHECK_EQUAL( addr, INet4Address::from_string("128.129.130.131") );
     BOOST_CHECK_EQUAL( addr.inaddr(), htonl(0x80818283u) );
     BOOST_CHECK_EQUAL( addr.address(), 0x80818283u );
 
     BOOST_CHECK( ! addr.loopback() );
     BOOST_CHECK( ! addr.local() );
-    BOOST_CHECK( senf::INet4Address::from_string("192.168.1.2").local() );
+    BOOST_CHECK( INet4Address::from_string("192.168.1.2").local() );
     BOOST_CHECK( ! addr.multicast() );
-    BOOST_CHECK( senf::INet4Address::from_string("224.1.2.3").multicast() );
+    BOOST_CHECK( INet4Address::from_string("224.1.2.3").multicast() );
     BOOST_CHECK( ! addr.broadcast() );
-    BOOST_CHECK( senf::INet4Address::from_string("255.255.255.255").broadcast() );
+    BOOST_CHECK( INet4Address::from_string("255.255.255.255").broadcast() );
     BOOST_CHECK( addr );
-    BOOST_CHECK( ! senf::INet4Address() );
+    BOOST_CHECK( ! INet4Address() );
+    BOOST_CHECK_THROW( INet4Address::from_string(""), AddressSyntaxException );
+    BOOST_CHECK( INet4Address::from_string("www.6bone.net") != INet4Address::None );
+    BOOST_CHECK_THROW( INet4Address::from_string("invalid.host.fhg.de"), UnknownHostnameException);
 
     std::stringstream str;
+    str >> addr;
+    BOOST_CHECK( str.fail());
+    str.clear();
     str << addr;
     BOOST_CHECK_EQUAL( str.str(), "128.129.130.131" );
-    
     str >> addr;
-    BOOST_CHECK_EQUAL(addr, senf::INet4Address::from_string("128.129.130.131") );
+    BOOST_CHECK( ! str.fail());
+    BOOST_CHECK_EQUAL(addr, INet4Address::from_string("128.129.130.131") );
 }
 
 BOOST_AUTO_UNIT_TEST(inet4Network)
@@ -79,7 +89,7 @@ BOOST_AUTO_UNIT_TEST(inet4Network)
     BOOST_CHECK_EQUAL( net.prefix_len(), 8u );
     BOOST_CHECK( net );
     BOOST_CHECK( ! senf::INet4Network() );
-    
+
     senf::INet4Network net2 ("192.0.111.222/16");
     BOOST_CHECK_EQUAL( net2.address(), senf::INet4Address::from_string("192.0.0.0") );
     BOOST_CHECK_EQUAL( net2.prefix_len(), 16u );
@@ -95,12 +105,15 @@ BOOST_AUTO_UNIT_TEST(inet4Network)
 
     BOOST_CHECK_EQUAL( net2.host(-1), senf::INet4Address::from_string("192.0.255.255") );
     BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2.subnet(2u,24u)), "192.0.2.0/24" );
+
+    BOOST_CHECK_THROW( senf::INet4Network(""), senf::AddressSyntaxException );
+    BOOST_CHECK_THROW( senf::INet4Network("192.0.2.0/24/beef"), senf::AddressSyntaxException );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

@@ -129,7 +129,7 @@ BOOST_AUTO_UNIT_TEST(packetInterpreter)
     }
 
     {
-        BOOST_CHECK_NO_THROW(
+        SENF_CHECK_NO_THROW(
             senf::PacketInterpreter<OtherPacket>::create(4u,senf::noinit));
         senf::PacketInterpreter<OtherPacket>::ptr p
             (senf::PacketInterpreter<OtherPacket>::create(senf::noinit));
@@ -178,7 +178,7 @@ BOOST_AUTO_UNIT_TEST(packetInterpreter)
         BOOST_CHECK_EQUAL( p2->data()[0], 0x01u );
         BOOST_CHECK_THROW( senf::PacketInterpreter<OtherPacket>::createAfter(p, size_type(4u)),
                            senf::TruncatedPacketException );
-        BOOST_CHECK_NO_THROW( senf::PacketInterpreter<OtherPacket>::createAfter(
+        SENF_CHECK_NO_THROW( senf::PacketInterpreter<OtherPacket>::createAfter(
                                   p,4u,senf::noinit) );
     }
 

@@ -146,16 +146,16 @@ BOOST_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
         alarm(10);
         start(server_v4);
         senf::UDPv4ClientSocketHandle sock;
-        BOOST_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress("127.0.0.1:23456")) );
+        SENF_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress("127.0.0.1:23456")) );
         BOOST_CHECK( sock.local() == senf::INet4SocketAddress("127.0.0.1:23456") );
-        BOOST_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
+        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
+        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:12345"),
+        SENF_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:12345"),
                                            std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
-        BOOST_CHECK_NO_THROW( sock.protocol().timestamp() );
+        SENF_CHECK_NO_THROW( sock.protocol().timestamp() );
         sock.writeto(senf::INet4SocketAddress("127.0.0.1:12345"), std::string("QUIT"));
         sleep(1);
         stop();

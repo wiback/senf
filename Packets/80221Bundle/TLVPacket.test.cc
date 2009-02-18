@@ -44,6 +44,8 @@ void check_TLVPacket(GenericTLVPacket &tlvPacket, boost::uint8_t type, boost::ui
     BOOST_CHECK_EQUAL( tlvPacket->type(),         type   );
     BOOST_CHECK_EQUAL( tlvPacket->length(),       length );
     BOOST_CHECK_EQUAL( tlvPacket->value().size(), int(length) );
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( tlvPacket.dump( oss));
     senf::PacketData::iterator dataIterator (tlvPacket->value().begin());
     for (unsigned i=0; i<length; i++) {
         BOOST_CHECK_EQUAL( *dataIterator, i );
@@ -105,6 +107,7 @@ BOOST_AUTO_UNIT_TEST(GenericTLVPacket_create_packet_with_extended_length)
     for (unsigned i=0; i<sizeof(value); i++)
         value[i] = i;
     GenericTLVPacket tlvPacket (GenericTLVPacket::create());
+    tlvPacket->maxLengthValue( DynamicTLVLengthParser::max_value);
     tlvPacket->type() = 42u;
     tlvPacket->value( value);
     tlvPacket.finalizeThis();

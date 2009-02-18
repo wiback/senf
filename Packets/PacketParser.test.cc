@@ -77,7 +77,7 @@ BOOST_AUTO_UNIT_TEST(packetParserBase)
     BOOST_CHECK( pi->data().begin() == p.i() );
     BOOST_CHECK( p.check(6u) );
     BOOST_CHECK( ! p.check(7u) );
-    BOOST_CHECK_NO_THROW( p.validate(6u) );
+    SENF_CHECK_NO_THROW( p.validate(6u) );
     BOOST_CHECK_THROW( p.validate(7u), senf::TruncatedPacketException );
 
     // ?? Why the heck do I need the +0? I get an 'undefined symbol FooParser::fixed_bytes'

@@ -60,6 +60,9 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
     BOOST_CHECK_EQUAL( mihPacket->src_mihfId().asString(), "senf@berlios.de");
     BOOST_CHECK_EQUAL( mihPacket->dst_mihfId().asString(), "test");
 
+    // the maximum length of a MIHF_ID is 253 octets
+    BOOST_CHECK_THROW( mihPacket->dst_mihfId().setString( std::string(254, 'x')), std::length_error);
+
     // now expand a MIHF_ID
     mihPacket->dst_mihfId().maxLengthValue(253);
     mihPacket->dst_mihfId().setString( std::string(200, 'x'));

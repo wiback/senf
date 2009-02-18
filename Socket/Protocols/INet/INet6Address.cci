@@ -63,7 +63,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_in6addr(in6_addr const & in6
     return senf::INet6Address::from_data(&in6addr.s6_addr[0]);
 }
 
-prefix_ senf::INet6Address senf::INet6Address::from_inet4address(INet4Address addr4)
+prefix_ senf::INet6Address senf::INet6Address::from_inet4address(INet4Address const & addr4)
 {
     INet6Address addr;
     addr[10] = 0xffu;
@@ -75,7 +75,7 @@ prefix_ senf::INet6Address senf::INet6Address::from_inet4address(INet4Address ad
 prefix_ boost::uint64_t senf::INet6Address::network()
     const
 {
-    return 
+    return
         ((boost::uint64_t((*this)[0]) & 0xff) << 56 ) |
         ((boost::uint64_t((*this)[1]) & 0xff) << 48 ) |
         ((boost::uint64_t((*this)[2]) & 0xff) << 40 ) |
@@ -89,7 +89,7 @@ prefix_ boost::uint64_t senf::INet6Address::network()
 prefix_ boost::uint64_t senf::INet6Address::id()
     const
 {
-    return 
+    return
         ((boost::uint64_t((*this)[ 8]) & 0xff) << 56 ) |
         ((boost::uint64_t((*this)[ 9]) & 0xff) << 48 ) |
         ((boost::uint64_t((*this)[10]) & 0xff) << 40 ) |
@@ -138,9 +138,9 @@ prefix_ senf::INet6Address::ScopeId senf::INet6Address::scope()
             AdminScope, SiteScope, UnassignedScope, UnassignedScope,
             OrganizationScope, UnassignedScope, UnassignedScope, UnassignedScope,
             UnassignedScope, UnassignedScope, GlobalScope, ReservedScope };
-    return multicast() ? scopeMap[(*this)[1] & 0x0Fu] : 
-        (*this)[0] == 0xFEu ? (((*this)[1]&0xC0) == 0x80 ? LinkScope : 
-                               ((*this)[1]&0xC0) == 0xC0 ? SiteScope : GlobalScope ) 
+    return multicast() ? scopeMap[(*this)[1] & 0x0Fu] :
+        (*this)[0] == 0xFEu ? (((*this)[1]&0xC0) == 0x80 ? LinkScope :
+                               ((*this)[1]&0xC0) == 0xC0 ? SiteScope : GlobalScope )
         : GlobalScope;
 }
 
@@ -161,7 +161,7 @@ prefix_ bool senf::INet6Address::globalScope()
 {
     return scope() == GlobalScope;
 }
- 
+
 prefix_ bool senf::INet6Address::linkScope()
     const
 {
@@ -230,7 +230,7 @@ prefix_ senf::INet6Network::INet6Network()
     : prefix_len_(), address_()
 {}
 
-prefix_ senf::INet6Network::INet6Network(INet6Address address, unsigned prefix_len)
+prefix_ senf::INet6Network::INet6Network(INet6Address const & address, unsigned prefix_len)
     : prefix_len_(prefix_len), address_(address)
 {
     using boost::lambda::_1;
@@ -262,7 +262,7 @@ prefix_ bool senf::INet6Network::operator==(INet6Network const & other)
     return prefix_len() == other.prefix_len() && address() == other.address();
 }
 
-prefix_ bool senf::INet6Network::match(INet6Address addr)
+prefix_ bool senf::INet6Network::match(INet6Address const & addr)
     const
 {
     using boost::lambda::_1;
@@ -272,7 +272,7 @@ prefix_ bool senf::INet6Network::match(INet6Address addr)
                                 _1 != (_2 & _3)) == address_.end();
 }
 
-prefix_ bool senf::INet6Network::match(INet6Network net)
+prefix_ bool senf::INet6Network::match(INet6Network const & net)
     const
 {
     return net.prefix_len() >= prefix_len() && match(net.address());
@@ -316,7 +316,7 @@ prefix_ boost::uint8_t senf::detail::low_bits_mask(unsigned bits)
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

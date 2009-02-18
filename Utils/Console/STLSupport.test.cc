@@ -72,13 +72,13 @@ BOOST_AUTO_UNIT_TEST(vectorSupport)
         .arg("data", "test data", senf::console::kw::default_value = defv);
     std::stringstream ss;
 
-    BOOST_CHECK_NO_THROW(
+    SENF_CHECK_NO_THROW(
         parser.parse("test/test; test/test (); test/test 5; test/test (13); test/test (4 5 8)",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL( ss.str(), "9\n" "0\n" "5\n" "13\n" "17\n" );
 
     ss.str("");
-    BOOST_CHECK_NO_THROW( 
+    SENF_CHECK_NO_THROW( 
         parser.parse("help test/test",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL(
@@ -103,13 +103,13 @@ BOOST_AUTO_UNIT_TEST(listSupport)
         .arg("data", "test data", senf::console::kw::default_value = defv);
     std::stringstream ss;
 
-    BOOST_CHECK_NO_THROW(
+    SENF_CHECK_NO_THROW(
         parser.parse("test/test; test/test (); test/test 5; test/test (13); test/test (4 5 8)",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL( ss.str(), "9\n" "0\n" "5\n" "13\n" "17\n" );
 
     ss.str("");
-    BOOST_CHECK_NO_THROW( 
+    SENF_CHECK_NO_THROW( 
         parser.parse("help test/test",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL(

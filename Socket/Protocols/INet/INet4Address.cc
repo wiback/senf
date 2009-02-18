@@ -125,7 +125,7 @@ senf::INet4Address const senf::INet4Address::Broadcast (0xFFFFFFFFu);
 ///////////////////////////////////////////////////////////////////////////
 // senf::INet4Network
 
-prefix_ senf::INet4Network::INet4Network(std::string s)
+prefix_ senf::INet4Network::INet4Network(std::string const & s)
 {
     std::string::size_type i (s.find('/'));
     if (i == std::string::npos)

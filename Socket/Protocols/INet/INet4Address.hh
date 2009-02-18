@@ -223,9 +223,9 @@ namespace senf {
         ///@{
 
         INet4Network();                 ///< Construct empty (0.0.0.0/0) network
-        INet4Network(INet4Address address, unsigned prefix_len);
+        INet4Network(INet4Address const & address, unsigned prefix_len);
                                         ///< Construct network from given address and prefix length
-        explicit INet4Network(std::string s); ///< Construct network from CIDR notation
+        explicit INet4Network(std::string const & s); ///< Construct network from CIDR notation
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
@@ -237,8 +237,8 @@ namespace senf {
         bool operator==(INet4Network const & other) const;
                                         ///< Compare to networks for equality
 
-        bool match(INet4Address addr) const; ///< \c true, if the network includes \a addr
-        bool match(INet4Network net) const; ///< \c true, if the network includes \a net
+        bool match(INet4Address const & addr) const; ///< \c true, if the network includes \a addr
+        bool match(INet4Network const & net) const; ///< \c true, if the network includes \a net
                                         /**< The is true, if \a net is sub-network (or the same as)
                                              \c this. */
 

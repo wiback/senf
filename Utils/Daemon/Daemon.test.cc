@@ -151,8 +151,8 @@ BOOST_AUTO_UNIT_TEST(testDaemon)
     std::stringstream data;
     data << log.rdbuf();
     BOOST_CHECK_EQUAL( data.str(), "Running init()\n(stderr)\nRunning run()\n" );
-    BOOST_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log") );
-    BOOST_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log.1") );
+    SENF_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log") );
+    SENF_CHECK_NO_THROW( boost::filesystem::remove("testDaemon.log.1") );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

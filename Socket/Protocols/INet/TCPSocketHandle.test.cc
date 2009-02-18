@@ -167,16 +167,16 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         alarm(10);
         start(server_v4);
         senf::TCPv4ClientSocketHandle sock;
-        BOOST_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress("127.0.0.1:23456")) );
-        BOOST_CHECK_NO_THROW( sock.connect(senf::INet4SocketAddress("127.0.0.1:12345")) );
+        SENF_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress("127.0.0.1:23456")) );
+        SENF_CHECK_NO_THROW( sock.connect(senf::INet4SocketAddress("127.0.0.1:12345")) );
         BOOST_CHECK( sock.peer() == senf::INet4SocketAddress("127.0.0.1:12345") );
         BOOST_CHECK( sock.local() == senf::INet4SocketAddress("127.0.0.1:23456") );
         BOOST_CHECK( sock.blocking() );
-        BOOST_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
+        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
+        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.write(std::string("TEST-WRITE")) );
+        SENF_CHECK_NO_THROW( sock.write(std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), std::string("TEST-WRITE") );
         BOOST_CHECK( !sock.eof() );
         sock.write(std::string("QUIT"));
@@ -202,25 +202,25 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         // are at least not sensible ...
         // I'll have to move those to a UDPSocket test ... they should
         // realy only be in the UDP Protocol implementation
-//        BOOST_CHECK_NO_THROW( sock.protocol().mcTTL() );
+//        SENF_CHECK_NO_THROW( sock.protocol().mcTTL() );
 //        BOOST_CHECK_THROW( sock.protocol().mcTTL(1), senf::SystemException );
-//        BOOST_CHECK_NO_THROW( sock.protocol().mcLoop() );
-//        BOOST_CHECK_NO_THROW( sock.protocol().mcLoop(false) );
-//        BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0") );
-//        BOOST_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0","127.0.0.1:0") );
-//        BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0","127.0.0.1:0") );
-//        BOOST_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0") );
+//        SENF_CHECK_NO_THROW( sock.protocol().mcLoop() );
+//        SENF_CHECK_NO_THROW( sock.protocol().mcLoop(false) );
+//        SENF_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0") );
+//        SENF_CHECK_NO_THROW( sock.protocol().mcAddMembership("224.0.0.1:0","127.0.0.1:0") );
+//        SENF_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0","127.0.0.1:0") );
+//        SENF_CHECK_NO_THROW( sock.protocol().mcDropMembership("224.0.0.1:0") );
 //        BOOST_CHECK_THROW( sock.protocol().mcIface("lo"), senf::SystemException );
 
         // The following setsockopts are hard to REALLY test ...
-        BOOST_CHECK_NO_THROW( sock.protocol().nodelay(true) );
+        SENF_CHECK_NO_THROW( sock.protocol().nodelay(true) );
         BOOST_CHECK( sock.protocol().nodelay() );
         BOOST_CHECK_EQUAL( sock.protocol().siocinq(), 0u );
         BOOST_CHECK_EQUAL( sock.protocol().siocoutq(), 0u );
 
-        BOOST_CHECK_NO_THROW( sock.protocol().reuseaddr(true) );
+        SENF_CHECK_NO_THROW( sock.protocol().reuseaddr(true) );
         BOOST_CHECK( sock.protocol().reuseaddr() );
-        BOOST_CHECK_NO_THROW( sock.protocol().linger(true,0) );
+        SENF_CHECK_NO_THROW( sock.protocol().linger(true,0) );
         BOOST_CHECK( sock.protocol().linger() == std::make_pair(true, 0u) );
     }
 }
@@ -238,19 +238,19 @@ BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
         alarm(10);
         start(server_v6);
         senf::TCPv6ClientSocketHandle sock;
-        BOOST_CHECK_NO_THROW( sock.bind(senf::INet6SocketAddress("[::1]:23456")) );
-        BOOST_CHECK_NO_THROW( sock.connect(senf::INet6SocketAddress("[::1]:12345")) );
+        SENF_CHECK_NO_THROW( sock.bind(senf::INet6SocketAddress("[::1]:23456")) );
+        SENF_CHECK_NO_THROW( sock.connect(senf::INet6SocketAddress("[::1]:12345")) );
         BOOST_CHECK( sock.peer() == senf::INet6SocketAddress("[::1]:12345") );
         BOOST_CHECK( sock.local() == senf::INet6SocketAddress("[::1]:23456") );
         BOOST_CHECK( sock.blocking() );
-        BOOST_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
+        SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
+        SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
-        BOOST_CHECK_NO_THROW( sock.write(std::string("TEST-WRITE")) );
+        SENF_CHECK_NO_THROW( sock.write(std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), std::string("TEST-WRITE") );
         // this fails with ENOFILE ... why ????
-        // BOOST_CHECK_NO_THROW( sock.protocol().timestamp() );
+        // SENF_CHECK_NO_THROW( sock.protocol().timestamp() );
         BOOST_CHECK( !sock.eof() );
         sock.write(std::string("QUIT"));
         sleep(1);
@@ -272,14 +272,14 @@ BOOST_AUTO_UNIT_TEST(tcpv6ClientSocketHandle)
         senf::TCPv6ClientSocketHandle sock;
 
         // The following setsockopts are hard to REALLY test ...
-        BOOST_CHECK_NO_THROW( sock.protocol().nodelay(true) );
+        SENF_CHECK_NO_THROW( sock.protocol().nodelay(true) );
         BOOST_CHECK( sock.protocol().nodelay() );
         BOOST_CHECK_EQUAL( sock.protocol().siocinq(), 0u );
         BOOST_CHECK_EQUAL( sock.protocol().siocoutq(), 0u );
 
-        BOOST_CHECK_NO_THROW( sock.protocol().reuseaddr(true) );
+        SENF_CHECK_NO_THROW( sock.protocol().reuseaddr(true) );
         BOOST_CHECK( sock.protocol().reuseaddr() );
-        BOOST_CHECK_NO_THROW( sock.protocol().linger(true,0) );
+        SENF_CHECK_NO_THROW( sock.protocol().linger(true,0) );
         BOOST_CHECK( sock.protocol().linger() == std::make_pair(true, 0u) );
     }
 }
@@ -349,7 +349,7 @@ BOOST_AUTO_UNIT_TEST(tcpv4ServerSocketHandle)
 
         BOOST_CHECKPOINT("Accepting connection");
         senf::TCPv4ClientSocketHandle client = server.accept();
-        BOOST_CHECK_NO_THROW(client.write(std::string("QUIT")));
+        SENF_CHECK_NO_THROW(client.write(std::string("QUIT")));
 
         BOOST_CHECKPOINT("Stopping client");
         sleep(1);
@@ -375,7 +375,7 @@ BOOST_AUTO_UNIT_TEST(tcpv6ServerSocketHandle)
 
         BOOST_CHECKPOINT("Accepting connection");
         senf::TCPv6ClientSocketHandle client = server.accept();
-        BOOST_CHECK_NO_THROW(client.write(std::string("QUIT")));
+        SENF_CHECK_NO_THROW(client.write(std::string("QUIT")));
 
         BOOST_CHECKPOINT("Stopping client");
         sleep(1);

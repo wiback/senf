@@ -402,22 +402,22 @@ BOOST_AUTO_UNIT_TEST(connectorTest)
     {
         TypedPassiveInput<> input;
         TypedActiveOutput<> output;
-        BOOST_CHECK_NO_THROW( ppi::connect(output, input) );
+        SENF_CHECK_NO_THROW( ppi::connect(output, input) );
     }
     { 
         TypedPassiveInput<> input;
         debug::ActiveSource output;
-        BOOST_CHECK_NO_THROW( ppi::connect(output, input) );
+        SENF_CHECK_NO_THROW( ppi::connect(output, input) );
     }
     {
         debug::ActiveSink input;
         TypedPassiveOutput<> output;
-        BOOST_CHECK_NO_THROW( ppi::connect(output, input) );
+        SENF_CHECK_NO_THROW( ppi::connect(output, input) );
     }
     {
         debug::ActiveSink input;
         debug::PassiveSource output;
-        BOOST_CHECK_NO_THROW( ppi::connect(output, input) );
+        SENF_CHECK_NO_THROW( ppi::connect(output, input) );
     }
 }
 

@@ -104,7 +104,7 @@ prefix_ senf::INet4Network::INet4Network()
     : prefix_len_(), address_()
 {}
 
-prefix_ senf::INet4Network::INet4Network(INet4Address address, unsigned prefix_len)
+prefix_ senf::INet4Network::INet4Network(INet4Address const & address, unsigned prefix_len)
     : prefix_len_(prefix_len), address_(INet4Address(address.address() & mask()))
 {}
 
@@ -126,13 +126,13 @@ prefix_ bool senf::INet4Network::operator==(INet4Network const & other)
     return address() == other.address() && prefix_len() == other.prefix_len();
 }
 
-prefix_ bool senf::INet4Network::match(INet4Address addr)
+prefix_ bool senf::INet4Network::match(INet4Address const & addr)
     const
 {
     return (addr.address() & mask()) == address_.address();
 }
 
-prefix_ bool senf::INet4Network::match(INet4Network net)
+prefix_ bool senf::INet4Network::match(INet4Network const & net)
     const
 {
     return net.prefix_len() >= prefix_len() && match(net.address());
@@ -160,7 +160,7 @@ prefix_ std::ostream & senf::operator<<(std::ostream & os, INet4Network const & 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

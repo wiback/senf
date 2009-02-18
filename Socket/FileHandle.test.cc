@@ -73,9 +73,9 @@ BOOST_AUTO_UNIT_TEST(fileHandle)
             BOOST_CHECK_EQUAL(fh.fd(), fh2.fd());
 
             BOOST_CHECK(fh.writeable());
-            BOOST_CHECK_NO_THROW(fh.close());
+            SENF_CHECK_NO_THROW(fh.close());
             BOOST_CHECK_THROW(fh.close(),senf::SystemException);
-            BOOST_CHECK_NO_THROW(fh.terminate());
+            SENF_CHECK_NO_THROW(fh.terminate());
         }
 
         {
