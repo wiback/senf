@@ -129,7 +129,7 @@ env.Append(
            'CONCURRENCY_LEVEL' : env.GetOption('num_jobs') or "1",
            'SCONS' : 1,
            'PATH' : os.environ.get('PATH'),
-	   'TEXINPUTS' : os.environ.get('TEXINPUTS'),
+	   'TEXINPUTS' : os.environ.get('TEXINPUTS',':'),
          },
    LOCAL_CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
    DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '_templates' ],
