@@ -92,17 +92,6 @@ namespace detail {
         virtual void disable();
     };
 
-    class TimerFDTimerSource
-        : public TimerSource
-    {
-    public:
-        virtual void timeout(ClockService::clock_type timeout);
-        virtual void notimeout();
-
-        virtual void enable();
-        virtual void disable();
-    };
-
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
