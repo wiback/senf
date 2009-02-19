@@ -337,19 +337,19 @@ BOOST_AUTO_UNIT_TEST(testSchedulerHiresTimers)
         BOOST_MESSAGE( "Using timerfd() hires timers" );
     else
         BOOST_MESSAGE( "Using POSIX hires timers");
-    senf::scheduler::hiresTimers();
+    SENF_CHECK_NO_THROW( senf::scheduler::hiresTimers() );
     BOOST_CHECK( senf::scheduler::usingHiresTimers() );
     schedulerTest();
-    senf::scheduler::loresTimers();
+    SENF_CHECK_NO_THROW( senf::scheduler::loresTimers() );
     BOOST_CHECK( ! senf::scheduler::usingHiresTimers() );
 }
 
 BOOST_AUTO_UNIT_TEST(testSchedulerPOSIXTimers)
 {
     if (senf::scheduler::haveScalableHiresTimers()) {
-        senf::scheduler::detail::TimerDispatcher::instance().timerSource(
-            std::auto_ptr<senf::scheduler::detail::TimerSource>(
-                new senf::scheduler::detail::POSIXTimerSource()));
+        SENF_CHECK_NO_THROW( senf::scheduler::detail::TimerDispatcher::instance().timerSource(
+                                 std::auto_ptr<senf::scheduler::detail::TimerSource>(
+                                     new senf::scheduler::detail::POSIXTimerSource())) );
         schedulerTest();
         senf::scheduler::loresTimers();
     }

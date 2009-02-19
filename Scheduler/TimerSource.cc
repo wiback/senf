@@ -217,6 +217,35 @@ prefix_ void senf::scheduler::detail::TimerFDTimerSource::enable()
 prefix_ void senf::scheduler::detail::TimerFDTimerSource::disable()
 {}
 
+namespace {
+
+    struct TimerFdCheck
+    {
+        TimerFdCheck();
+        bool timerFdOk;
+    };
+
+    TimerFdCheck::TimerFdCheck()
+        : timerFdOk (false)
+    {
+        int fd (timerfd_create(CLOCK_MONOTONIC, 0));
+        if (fd == -1) {
+            if (errno != EINVAL)
+                SENF_THROW_SYSTEM_EXCEPTION("timerfd_create()");
+        }
+        else {
+            timerFdOk = true;
+            close(fd);
+        }
+    }
+
+}
+prefix_ bool senf::scheduler::detail::TimerFDTimerSource::haveTimerFD()
+{
+    static TimerFdCheck check;
+    return check.timerFdOk;
+}
+
 prefix_ void senf::scheduler::detail::TimerFDTimerSource::signal(int events)
 {
     uint64_t expirations (0);

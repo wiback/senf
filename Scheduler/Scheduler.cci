@@ -54,18 +54,6 @@ prefix_ unsigned senf::scheduler::hangCount()
     return scheduler::detail::FIFORunner::instance().hangCount();
 }
 
-prefix_ void senf::scheduler::hiresTimers()
-{
-#ifdef HAVE_TIMERFD
-    if (haveScalableHiresTimers())
-        detail::TimerDispatcher::instance().timerSource(
-            std::auto_ptr<detail::TimerSource>(new detail::TimerFDTimerSource()));
-    else
-#endif
-        detail::TimerDispatcher::instance().timerSource(
-            std::auto_ptr<detail::TimerSource>(new detail::POSIXTimerSource()));
-}
-
 prefix_ void senf::scheduler::loresTimers()
 {
     detail::TimerDispatcher::instance().timerSource(
@@ -77,7 +65,7 @@ prefix_ bool senf::scheduler::haveScalableHiresTimers()
 #ifndef HAVE_TIMERFD
     return false;
 #else
-    return true;
+    return detail::TimerFDTimerSource::haveTimerFD();
 #endif
 }
 

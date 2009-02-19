@@ -106,6 +106,8 @@ namespace detail {
         virtual void enable();
         virtual void disable();
 
+        static bool haveTimerFD();
+
     private:
         virtual void signal(int events);
         void reschedule();

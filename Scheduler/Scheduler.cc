@@ -123,6 +123,18 @@ prefix_ bool senf::scheduler::empty()
         && detail::EventHookDispatcher::instance().empty();
 }
 
+prefix_ void senf::scheduler::hiresTimers()
+{
+#ifdef HAVE_TIMERFD
+    if (haveScalableHiresTimers())
+        detail::TimerDispatcher::instance().timerSource(
+            std::auto_ptr<detail::TimerSource>(new detail::TimerFDTimerSource()));
+    else
+#endif
+        detail::TimerDispatcher::instance().timerSource(
+            std::auto_ptr<detail::TimerSource>(new detail::POSIXTimerSource()));
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::schedulerLogTimeSource
 
