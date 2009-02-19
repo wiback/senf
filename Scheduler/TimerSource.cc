@@ -28,6 +28,9 @@
 
 // Custom includes
 #include "FdEvent.hh"
+#ifdef HAVE_TIMERFD
+#include <sys/timerfd.h>
+#endif
 
 //#include "TimerSource.mpp"
 #define prefix_
@@ -167,6 +170,72 @@ prefix_ void senf::scheduler::detail::PollTimerSource::enable()
 
 prefix_ void senf::scheduler::detail::PollTimerSource::disable()
 {}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::scheduler::detail::TimerFDTimerSource
+
+#ifdef HAVE_TIMERFD
+prefix_ senf::scheduler::detail::TimerFDTimerSource::TimerFDTimerSource()
+    : timerfd_ (-1), timeoutEnabled_ (false), timeout_ (0)
+{
+    timerfd_ = timerfd_create(CLOCK_MONOTONIC, 0);
+    if (timerfd_ < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("timerfd_create()");
+    senf::scheduler::detail::FdManager::instance().set(
+        timerfd_, detail::FdManager::EV_READ, this);
+}
+
+prefix_ senf::scheduler::detail::TimerFDTimerSource::~TimerFDTimerSource()
+{
+    senf::scheduler::detail::FdManager::instance().remove(timerfd_);
+    close(timerfd_);
+}
+
+prefix_ void
+senf::scheduler::detail::TimerFDTimerSource::timeout(ClockService::clock_type timeout)
+{
+    if (!timeoutEnabled_ || timeout_ != timeout) {
+        timeout_ = timeout;
+        if (timeout_ <= 0)
+            timeout_ = 1;
+        timeoutEnabled_ = true;
+        reschedule();
+    }
+}
+
+prefix_ void senf::scheduler::detail::TimerFDTimerSource::notimeout()
+{
+    if (timeoutEnabled_) {
+        timeoutEnabled_ = false;
+        reschedule();
+    }
+}
+
+prefix_ void senf::scheduler::detail::TimerFDTimerSource::enable()
+{}
+
+prefix_ void senf::scheduler::detail::TimerFDTimerSource::disable()
+{}
+
+prefix_ void senf::scheduler::detail::TimerFDTimerSource::signal(int events)
+{
+    uint64_t expirations (0);
+    read(timerfd_, &expirations, sizeof(expirations));
+}
+
+prefix_ void senf::scheduler::detail::TimerFDTimerSource::reschedule()
+{
+    struct itimerspec timer;
+    memset(&timer, 0, sizeof(timer));
+    if (timeoutEnabled_) {
+        timer.it_value.tv_sec = ClockService::in_seconds(timeout_);
+        timer.it_value.tv_nsec = ClockService::in_nanoseconds(
+            timeout_ - ClockService::seconds(timer.it_value.tv_sec));
+    }
+    if (timerfd_settime(timerfd_, TIMER_ABSTIME, &timer, 0)<0)
+        SENF_THROW_SYSTEM_EXCEPTION("timerfd_settime()");
+}
+#endif
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

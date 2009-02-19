@@ -28,6 +28,7 @@
 # 
 # // Custom includes
 # include <boost/cstdint.hpp>
+# include <limits.h>
 # 
 # ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -95,6 +96,10 @@ namespace config {
 # 
 # ifndef PHOENIX_LIMIT
 #     define PHOENIX_LIMIT 6
+# endif
+#
+# if __GLIBC__>=2 && __GLIBC_MINOR__>=8
+#     define HAVE_TIMERFD 1
 # endif
 # 
 # ///////////////////////////////hh.e////////////////////////////////////////

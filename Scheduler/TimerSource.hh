@@ -92,6 +92,30 @@ namespace detail {
         virtual void disable();
     };
 
+#ifdef HAVE_TIMERFD
+    class TimerFDTimerSource
+        : public detail::FdManager::Event, public TimerSource
+    {
+    public:
+        TimerFDTimerSource();
+        ~TimerFDTimerSource();
+
+        virtual void timeout(ClockService::clock_type timeout);
+        virtual void notimeout();
+
+        virtual void enable();
+        virtual void disable();
+
+    private:
+        virtual void signal(int events);
+        void reschedule();
+
+        int timerfd_;
+        bool timeoutEnabled_;
+        ClockService::clock_type timeout_;
+    };
+#endif
+
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////

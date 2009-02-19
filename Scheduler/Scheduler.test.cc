@@ -294,7 +294,7 @@ void schedulerTest()
         BOOST_CHECK_EQUAL( event, senf::scheduler::FdEvent::EV_NONE );
         BOOST_CHECK( ! timer2.enabled() );
 
-        BOOST_WARN_MESSAGE( false, "A 'Scheduler task hanging' error is expected to be signaled here." );
+        BOOST_MESSAGE( "A 'Scheduler task hanging' error is expected to be signaled here." );
         SENF_CHECK_NO_THROW( timer1.action(&blockingHandler) );
         SENF_CHECK_NO_THROW( timer1.timeout(senf::ClockService::now()) );
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
@@ -333,11 +333,26 @@ BOOST_AUTO_UNIT_TEST(testSchedulerPollTimers)
 
 BOOST_AUTO_UNIT_TEST(testSchedulerHiresTimers)
 {
+    if (senf::scheduler::haveScalableHiresTimers())
+        BOOST_MESSAGE( "Using timerfd() hires timers" );
+    else
+        BOOST_MESSAGE( "Using POSIX hires timers");
     senf::scheduler::hiresTimers();
     BOOST_CHECK( senf::scheduler::usingHiresTimers() );
     schedulerTest();
     senf::scheduler::loresTimers();
     BOOST_CHECK( ! senf::scheduler::usingHiresTimers() );
+}
+
+BOOST_AUTO_UNIT_TEST(testSchedulerPOSIXTimers)
+{
+    if (senf::scheduler::haveScalableHiresTimers()) {
+        senf::scheduler::detail::TimerDispatcher::instance().timerSource(
+            std::auto_ptr<senf::scheduler::detail::TimerSource>(
+                new senf::scheduler::detail::POSIXTimerSource()));
+        schedulerTest();
+        senf::scheduler::loresTimers();
+    }
 }
 
 namespace {
