@@ -102,6 +102,14 @@ prefix_ void senf::console::LinkNode::v_help(std::ostream & os)
 ///////////////////////////////////////////////////////////////////////////
 //senf::console::DirectoryNode
 
+prefix_ senf::console::DirectoryNode::~DirectoryNode()
+{
+    ChildMap::iterator i (children_.begin());
+    ChildMap::iterator const i_end (children_.end());
+    for (; i != i_end; ++i)
+        i->second->parent_ = 0;
+}
+
 prefix_ senf::console::GenericNode::ptr
 senf::console::DirectoryNode::remove(std::string const & name)
 {

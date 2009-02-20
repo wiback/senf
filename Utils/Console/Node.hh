@@ -436,6 +436,7 @@ namespace console {
         static ptr create();            ///< Create node object.
                                         /**< You should normally use either mkdir() or
                                              ScopedDirectory instead of create() */
+        ~DirectoryNode();
 
         ///\}
         ///////////////////////////////////////////////////////////////////////////
