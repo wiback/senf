@@ -41,7 +41,7 @@
 
 namespace {
 
-    struct TraverseTokens {
+    struct TraversTokens {
         typedef std::string const & result_type;
         result_type operator()(senf::console::Token const & token) const {
             return token.value();
@@ -140,11 +140,11 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
 
         }
     }
-    catch (InvalidPathException &) {
-        throw SyntaxErrorException("invalid path");
+    catch (InvalidPathException & ex) {
+        throw SyntaxErrorException("invalid path") << " '" << ex.path << "'";
     }
-    catch (InvalidDirectoryException &) {
-        throw SyntaxErrorException("invalid directory");
+    catch (InvalidDirectoryException & ex) {
+        throw SyntaxErrorException("invalid directory") << " '" << ex.path << "'";
     }
     catch (InvalidCommandException &) {
         throw SyntaxErrorException("invalid command");
@@ -297,7 +297,12 @@ senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path
         return dir.back().lock()->get(name);
     }
     catch (UnknownNodeNameException &) {
-        throw InvalidPathException();
+        throw InvalidPathException(
+            senf::stringJoin(
+                senf::make_transform_range(
+                    boost::make_iterator_range(path.begin(), path.end()),
+                    boost::bind(&Token::value, _1)),
+                "/"));
     }
 }
 
@@ -305,10 +310,14 @@ prefix_ void
 senf::console::Executor::traverseDirectory(ParseCommandInfo::TokensRange const & path,
                                            Path & dir)
 {
+    std::string errorPath;
     try {
         ParseCommandInfo::TokensRange::const_iterator i (path.begin());
         ParseCommandInfo::TokensRange::const_iterator const i_end (path.end());
         for (; i != i_end; ++i) {
+            if (i != path.begin())
+                errorPath += "/";
+            errorPath += i->value();
             if (*i == NoneToken()) {
                 if (i == path.begin()) {
                     dir.clear();

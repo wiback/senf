@@ -120,9 +120,8 @@ prefix_ void senf::console::ConfigBundle::parse(DirectoryNode & restrict)
 
 prefix_ void senf::console::ConfigBundle::parseInternal()
 {
-    Sources::const_iterator i (sources_.begin());
-    Sources::const_iterator const i_end (sources_.end());
-    for (; i != i_end; ++i)
+    // It is valid to add additional sources at the end while parsing ...
+    for (Sources::const_iterator i (sources_.begin()); i != sources_.end(); ++i)
         (*i)->parse(executor_);
 }
 

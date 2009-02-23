@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,44 +21,27 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ConfigFile non-inline non-template implementation */
+    \brief DiscardStream inline non-template implementation */
 
-#include "ConfigFile.hh"
-#include "ConfigFile.ih"
+//#include "DiscardStream.ih"
 
 // Custom includes
 
-//#include "ConfigFile.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::ConfigFileSource
-
-prefix_ void senf::console::detail::ConfigFileSource::v_parse(RestrictedExecutor & executor)
+prefix_ std::streamsize senf::DiscardSink::write(char const * s, std::streamsize n)
 {
-    try {
-        parser_.parseFile(filename_, boost::bind( boost::ref(executor),
-                                                  boost::ref(executor.stream()),
-                                                  _1 ));
-    }
-    catch (SystemException & ex) {
-        if (! (ignoreMissing_ && ex.anyOf(ENOENT)))
-            throw;
-    }
+    return n;
 }
 
-///////////////////////////////////////////////////////////////////////////
-
-prefix_ void senf::console::parseFile(std::string const & filename, DirectoryNode & root)
+prefix_ senf::DiscardStream::DiscardStream()
 {
-    ConfigFile cfg (filename, root);
-    cfg.parse();
+    open(DiscardSink());
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
+///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
-//#include "ConfigFile.mpp"
 
 
 // Local Variables:

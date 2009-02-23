@@ -31,6 +31,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include "Executor.hh"
 #include "../../Utils/intrusive_refcount.hh"
+#include "../../Utils/DiscardStream.hh"
 
 ///////////////////////////////ih.p////////////////////////////////////////
 
@@ -77,6 +78,8 @@ namespace detail {
 
         DirectoryNode & root() const;
 
+        std::ostream & stream();
+
         class RestrictGuard;
 
     protected:
@@ -90,6 +93,7 @@ namespace detail {
         Executor executor_;
         ParsedNodes parsedNodes_;
         DirectoryNode::ptr restrict_;
+        DiscardStream stream_;
 
         friend class RestrictGuard;
     };

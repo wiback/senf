@@ -152,7 +152,7 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
 
     cmd.command(path);
     parser_.parseArguments(value, cmd);
-    executor(std::cerr, cmd);
+    executor(executor.stream(), cmd);
 }
 
 prefix_ void

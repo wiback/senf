@@ -47,12 +47,14 @@ namespace detail {
     /** \brief Internal: Area base class */
     struct AreaBase
     {
+        AreaBase();
         virtual ~AreaBase();
         
         std::string fullName() const;
         virtual std::string v_name() const;
 
         void init();
+        bool alive() const;
 
         unsigned limit(StreamBase const & stream) const;
         void updateRoutingCache(Target & target, StreamBase const & stream, unsigned limit) const; 
@@ -74,6 +76,7 @@ namespace detail {
         };
         typedef std::vector<CacheEntry> RoutingCache;
         mutable RoutingCache routingCache_;
+        bool alive_;
     };
 
 }}}

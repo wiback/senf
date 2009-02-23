@@ -70,11 +70,6 @@ namespace detail {
         : public boost::iostreams::sink
     {
     public:
-        typedef ClientSocketHandle< 
-            senf::MakeSocketPolicy<StreamFramingPolicy,
-                                   WriteablePolicy,
-                                   ConnectedCommunicationPolicy>::policy > Handle;
-
         NonblockingSocketSink(Client & client);
         std::streamsize write(const char * s, std::streamsize n);
 

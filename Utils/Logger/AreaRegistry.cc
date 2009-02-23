@@ -36,8 +36,14 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::detail::AreaBase
 
-prefix_ senf::log::detail::AreaBase::~AreaBase()
+prefix_ senf::log::detail::AreaBase::AreaBase()
+    : alive_ (true)
 {}
+
+prefix_ senf::log::detail::AreaBase::~AreaBase()
+{
+    alive_ = false;
+}
 
 prefix_ void senf::log::detail::AreaBase::updateRoutingCache(Target & target,
                                                              StreamBase const & stream,

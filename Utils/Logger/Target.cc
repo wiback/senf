@@ -272,6 +272,9 @@ prefix_ void senf::log::Target::updateRoutingCache(detail::StreamBase const * st
             updateRoutingCache(stream, i->second);
         return;
     }
+    if (! area->alive())
+        // We are globally destructing and the area is gone already ...
+        return;
     unsigned limit (DISABLED::value);
     RIB::iterator i (rib_.begin());
     RIB::iterator const i_end (rib_.end());
@@ -415,7 +418,7 @@ prefix_ senf::log::detail::TargetRegistry::TargetRegistry()
              "    <Directory '/sys/log/client-xxx.xxx.xxx.xxx:xxx'>\n"
              "\n"
              "Route all messages to the currently connected client\n"
-             "    $ /sys/log/self { route (); }");
+ "    $ /sys/log/self { route (); }");
 }
 
 prefix_ senf::log::detail::TargetRegistry::~TargetRegistry()

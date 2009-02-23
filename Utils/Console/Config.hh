@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <boost/utility.hpp>
+#include <list>
 #include "Parse.hh"
 #include "Executor.hh"
 
@@ -94,7 +95,7 @@ namespace console {
     private:
         void parseInternal();
 
-        typedef std::vector<detail::ConfigSource::ptr> Sources;
+        typedef std::list<detail::ConfigSource::ptr> Sources;
 
         Sources sources_;
         detail::RestrictedExecutor executor_;

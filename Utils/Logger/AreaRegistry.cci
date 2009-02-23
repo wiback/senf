@@ -88,6 +88,12 @@ prefix_ void senf::log::detail::AreaBase::init()
     senf::log::AreaRegistry::instance().registerArea(*this);
 }
 
+prefix_ bool senf::log::detail::AreaBase::alive()
+    const
+{
+    return alive_;
+}
+
 prefix_ unsigned senf::log::detail::AreaBase::limit(StreamBase const & stream)
     const
 {

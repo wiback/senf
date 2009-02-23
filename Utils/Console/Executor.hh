@@ -148,8 +148,17 @@ namespace console {
                                Path & dir);
         std::string complete(DirectoryNode & dir, std::string const & name);
 
-        struct InvalidPathException {};
-        struct InvalidDirectoryException {};
+        struct InvalidPathException {
+            std::string path;
+            InvalidPathException() : path() {}
+            InvalidPathException(std::string path_) : path(path_) {}
+            
+        };
+        struct InvalidDirectoryException {
+            std::string path;
+            InvalidDirectoryException() : path() {}
+            InvalidDirectoryException(std::string path_) : path(path_) {}
+        };
         struct InvalidCommandException {};
         
         DirectoryNode::ptr root_;

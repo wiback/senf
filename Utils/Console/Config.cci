@@ -53,6 +53,11 @@ prefix_ senf::console::DirectoryNode & senf::console::detail::RestrictedExecutor
     return executor_.chroot();
 }
 
+prefix_ std::ostream & senf::console::detail::RestrictedExecutor::stream()
+{
+    return stream_;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ConfigBundle
 

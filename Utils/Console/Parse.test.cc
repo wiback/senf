@@ -85,7 +85,7 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
     {
         static char text[] = 
             "# Comment\n"
-            "doo / bii / doo arg"
+            "doo/bii/doo arg/two/three"
             "                flab::blub"
             "                123.434>a"
             "                (a,b;c (huhu/{haha}))"
@@ -99,7 +99,7 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), 
                            "beginCommand( Word('doo')/Word('bii')/Word('doo') )\n"
-                           "pushToken( Word('arg') )\n"
+                           "pushToken( Word('arg/two/three') )\n"
                            "pushToken( Word('flab::blub') )\n"
                            "pushToken( Word('123.434>a') )\n"
                            "pushToken( ArgumentGroupOpen('(') )\n"

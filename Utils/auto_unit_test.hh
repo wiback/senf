@@ -37,6 +37,7 @@
 #define HH_SENF_Utils_auto_unit_test_ 1
 
 // Custom includes
+#include <iostream>
 #include <boost/version.hpp>
 
 //#include "auto_unit_test.mpp"

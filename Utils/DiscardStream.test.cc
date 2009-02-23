@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,44 +21,28 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ConfigFile non-inline non-template implementation */
+    \brief DiscardStream.test unit tests */
 
-#include "ConfigFile.hh"
-#include "ConfigFile.ih"
+//#include "DiscardStream.test.hh"
+//#include "DiscardStream.test.ih"
 
 // Custom includes
+#include "DiscardStream.hh"
 
-//#include "ConfigFile.mpp"
+#include "../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::console::detail::ConfigFileSource
-
-prefix_ void senf::console::detail::ConfigFileSource::v_parse(RestrictedExecutor & executor)
+BOOST_AUTO_UNIT_TEST(discardStream)
 {
-    try {
-        parser_.parseFile(filename_, boost::bind( boost::ref(executor),
-                                                  boost::ref(executor.stream()),
-                                                  _1 ));
-    }
-    catch (SystemException & ex) {
-        if (! (ignoreMissing_ && ex.anyOf(ENOENT)))
-            throw;
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////
-
-prefix_ void senf::console::parseFile(std::string const & filename, DirectoryNode & root)
-{
-    ConfigFile cfg (filename, root);
-    cfg.parse();
+    senf::DiscardStream stream;
+    SENF_CHECK_NO_THROW( stream << "discard me" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "ConfigFile.mpp"
 
 
 // Local Variables:
