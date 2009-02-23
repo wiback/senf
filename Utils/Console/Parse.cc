@@ -112,6 +112,12 @@ namespace detail {
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Token
 
+prefix_ senf::console::Token::Token(TokenType type, std::string token,
+                                    detail::FilePositionWithIndex const & pos)
+    : type_(type), token_ (token), line_ (pos.line), column_ (pos.column), index_ (pos.index)
+{}
+
+
 prefix_ std::ostream & senf::console::operator<<(std::ostream & os, Token const & token)
 {
     static char const * tokenTypeName[] = {
@@ -253,11 +259,42 @@ namespace {
                                        "path expected",
                                        "')' expected",
                                        "'\"' expected" };
-        boost::spirit::file_position pos (err.where.get_position());
+        senf::console::detail::FilePositionWithIndex pos (err.where.get_position());
         throw senf::console::CommandParser::ParserErrorException(msg[err.descriptor])
             << "\nat " << pos.file << ":" << pos.line << ":" << pos.column;
     }
+
 }
+
+namespace boost { 
+namespace spirit {
+
+    template <>
+    struct position_policy<senf::console::detail::FilePositionWithIndex>
+        : public position_policy<file_position>
+    {
+        typedef position_policy<file_position> Base;
+
+        void next_line(senf::console::detail::FilePositionWithIndex & pos)
+            {
+                Base::next_line(pos);
+                pos.index ++;
+            }
+
+        void next_char(senf::console::detail::FilePositionWithIndex & pos)
+            {
+                Base::next_char(pos);
+                pos.index ++;
+            }
+
+        void tabulation(senf::console::detail::FilePositionWithIndex & pos)
+            {
+                Base::tabulation(pos);
+                pos.index ++;
+            }
+    };
+
+}}
 
 prefix_ senf::console::CommandParser::CommandParser()
     : impl_ (new Impl())
@@ -273,7 +310,8 @@ template <class Iterator>
 prefix_ Iterator senf::console::CommandParser::parseLoop(Iterator npb, Iterator npe, 
                                                          std::string const & source, Callback cb)
 {
-    typedef boost::spirit::position_iterator<Iterator> PositionIterator;
+    typedef boost::spirit::position_iterator<
+        Iterator, detail::FilePositionWithIndex> PositionIterator;
     PositionIterator b (npb, npe, source);
     PositionIterator e (npe, npe, source);
     ParseCommandInfo info;
@@ -305,7 +343,7 @@ prefix_ Iterator senf::console::CommandParser::parseLoop(Iterator npb, Iterator 
                 cb(info);
             }
             catch (senf::ExceptionMixin & ex) {
-                boost::spirit::file_position pos (result.stop.get_position());
+                detail::FilePositionWithIndex pos (result.stop.get_position());
                 ex << "\nat " << pos.file << ":" << pos.line << ":" << pos.column;
                 throw;
             }
@@ -329,7 +367,8 @@ prefix_ void senf::console::CommandParser::parseFile(std::string const & filenam
 prefix_ void senf::console::CommandParser::parseArguments(std::string const & arguments,
                                                           ParseCommandInfo & info)
 {
-    typedef boost::spirit::position_iterator<std::string::const_iterator> PositionIterator;
+    typedef boost::spirit::position_iterator<
+        std::string::const_iterator, detail::FilePositionWithIndex> PositionIterator;
     PositionIterator b (arguments.begin(), arguments.end(), std::string("<unknown>"));
     PositionIterator e (arguments.end(), arguments.end(), std::string("<unknown>"));
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
@@ -343,7 +382,7 @@ prefix_ void senf::console::CommandParser::parseArguments(std::string const & ar
         throwParserError(ex);
     }
     if (! result.full) {
-        boost::spirit::file_position pos (result.stop.get_position());
+        detail::FilePositionWithIndex pos (result.stop.get_position());
         throw ParserErrorException("argument expected")
             << "\nat " << pos.file << ":" << pos.line << ":" << pos.column;
     }
@@ -352,7 +391,8 @@ prefix_ void senf::console::CommandParser::parseArguments(std::string const & ar
 prefix_ void senf::console::CommandParser::parsePath(std::string const & path,
                                                      ParseCommandInfo & info)
 {
-    typedef boost::spirit::position_iterator<std::string::const_iterator> PositionIterator;
+    typedef boost::spirit::position_iterator<
+        std::string::const_iterator, detail::FilePositionWithIndex> PositionIterator;
     PositionIterator b (path.begin(), path.end(), std::string("<unknown>"));
     PositionIterator e (path.end(), path.end(), std::string("<unknown>"));
     detail::ParseDispatcher::BindInfo bind (impl().dispatcher, info);
@@ -366,7 +406,7 @@ prefix_ void senf::console::CommandParser::parsePath(std::string const & path,
         throwParserError(ex);
     }
     if (! result.full) {
-        boost::spirit::file_position pos (result.stop.get_position());
+        detail::FilePositionWithIndex pos (result.stop.get_position());
         throw ParserErrorException("path expected")
             << "\nat " << pos.file << ":" << pos.line << ":" << pos.column;
     }

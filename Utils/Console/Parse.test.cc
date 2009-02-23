@@ -85,7 +85,7 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
     {
         static char text[] = 
             "# Comment\n"
-            "doo/bii/doo arg/two/three"
+            "doo / bii / doo arg"
             "                flab::blub"
             "                123.434>a"
             "                (a,b;c (huhu/{haha}))"
@@ -99,7 +99,7 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), 
                            "beginCommand( Word('doo')/Word('bii')/Word('doo') )\n"
-                           "pushToken( Word('arg/two/three') )\n"
+                           "pushToken( Word('arg') )\n"
                            "pushToken( Word('flab::blub') )\n"
                            "pushToken( Word('123.434>a') )\n"
                            "pushToken( ArgumentGroupOpen('(') )\n"
@@ -214,6 +214,7 @@ BOOST_AUTO_UNIT_TEST(commandParser)
 
         BOOST_CHECK_EQUAL_COLLECTIONS( info.commandPath().begin(), info.commandPath().end(),
                                        path, path + sizeof(path)/sizeof(path[0]) );
+        BOOST_CHECK_EQUAL( boost::next(info.commandPath().begin())->index(), 16u );
         BOOST_CHECK_EQUAL( unsigned(info.tokens().size()), 15u );
         
         char const * tokens[] = { "arg", 
@@ -243,11 +244,15 @@ BOOST_AUTO_UNIT_TEST(commandParser)
         BOOST_REQUIRE_EQUAL( args->size(), 8u );
         for (unsigned i (0); i<8; ++i)
             BOOST_CHECK_EQUAL( args->begin()[i].value(), tokens[4+i] );
+        BOOST_CHECK_EQUAL( info.tokens().begin()[3].index(), 96u );
+        BOOST_CHECK_EQUAL( info.tokens().begin()[5].index(), 98u );
+        BOOST_CHECK_EQUAL( info.tokens().begin()[12].index(), 109u );
         
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );
         BOOST_REQUIRE_EQUAL( args->size(), 1u );
         BOOST_CHECK_EQUAL( args->begin()->value(), tokens[13] );
+        BOOST_CHECK_EQUAL( args->begin()->index(), 126u );
         
         ++ args;
         BOOST_REQUIRE( args != info.arguments().end() );

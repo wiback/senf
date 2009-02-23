@@ -47,6 +47,24 @@ prefix_ senf::console::Token::TokenType senf::console::Token::type()
     return type_;
 }
 
+prefix_ unsigned senf::console::Token::line()
+    const
+{
+    return line_;
+}
+
+prefix_ unsigned senf::console::Token::column()
+    const
+{
+    return column_;
+}
+
+prefix_ unsigned senf::console::Token::index()
+    const
+{
+    return index_;
+}
+
 prefix_ bool senf::console::Token::is(unsigned tokens)
     const
 {
@@ -66,11 +84,11 @@ prefix_ bool senf::console::Token::operator!=(Token const & other)
 }
 
 prefix_ senf::console::Token::Token()
-    : type_(None), token_()
+    : type_ (None), token_ ()
 {}
 
 prefix_ senf::console::Token::Token(TokenType type, std::string token)
-    : type_(type), token_ (token)
+    : type_ (type), token_ (token), line_ (0), column_ (0), index_ (0)
 {}
 
 prefix_ senf::console::Token senf::console::NoneToken()

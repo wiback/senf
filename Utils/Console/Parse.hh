@@ -205,6 +205,8 @@
 namespace senf {
 namespace console {
 
+    namespace detail { class FilePositionWithIndex; }
+
     namespace detail { struct ParserAccess; }
 
     /** \brief Single argument token
@@ -253,13 +255,20 @@ namespace console {
         };
         
         Token();                        ///< Create empty token
-        Token(TokenType type, std::string token); ///< Create token with given type and value
+        Token(TokenType type, std::string token); 
+                                        ///< Create token with given type and value
+        Token(TokenType type, std::string token, detail::FilePositionWithIndex const & pos); 
+                                        ///< Create token with given type and value
 
 
         std::string const & value() const; ///< String value of token
                                         /**< This value is properly unquoted */
 
         TokenType type() const;         ///< Token type
+
+        unsigned line() const;          ///< Line number of token in source
+        unsigned column() const;        ///< Column number of token in source
+        unsigned index() const;         ///< Index (char count) of token in source
 
         bool is(unsigned tokens) const; ///< Check, whether tokens type matches \a tokens
                                         /**< \a tokens is a bit-mask of token types to check. */
@@ -272,6 +281,9 @@ namespace console {
     private:
         TokenType type_;
         std::string token_;
+        unsigned line_;
+        unsigned column_;
+        unsigned index_;
     };
 
     std::ostream & operator<<(std::ostream & os, Token const & token);

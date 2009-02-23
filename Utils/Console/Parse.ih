@@ -43,6 +43,30 @@ namespace detail {
 
 #ifndef DOXYGEN
 
+    struct FilePositionWithIndex 
+        : public boost::spirit::file_position
+    {
+        int index;
+        
+        FilePositionWithIndex(std::string const & file_ = std::string(),
+                                 int line_ = 1, int column_ = 1, int index_ = 0)
+            : boost::spirit::file_position (file_, line_, column_), index (index_)
+            {}
+
+        bool operator==(const FilePositionWithIndex & fp) const
+            {
+                return boost::spirit::file_position::operator==(fp) && index == fp.index; 
+            }
+    };
+
+    struct PositionOf {
+        template <class A1> struct result { typedef FilePositionWithIndex type; };
+        template <class A1> FilePositionWithIndex operator()(A1 & a1) { return a1.get_position(); }
+        FilePositionWithIndex operator()(char const * a1) { return FilePositionWithIndex(); }
+    };
+
+    ::phoenix::function<PositionOf> const positionOf;
+
     ///////////////////////////////////////////////////////////////////////////
     // Grammar
 
@@ -64,6 +88,7 @@ namespace detail {
             std::vector<Token> path;
             char ch;
             Token token;
+            FilePositionWithIndex pos;
         };
 
         Context & context;
@@ -122,11 +147,12 @@ namespace detail {
                 using namespace senf::phoenix;
                 typedef ParseDispatcher PD;
 
-                actor< variable< char > >               ch_    (self.context.ch);
-                actor< variable< std::string > >        str_   (self.context.str);
-                actor< variable< std::vector<Token> > > path_  (self.context.path);
-                actor< variable< Token > >              token_ (self.context.token);
-                actor< variable< ParseDispatcher > >    d_     (self.dispatcher);
+                actor< variable< char > >                  ch_    (self.context.ch);
+                actor< variable< std::string > >           str_   (self.context.str);
+                actor< variable< std::vector<Token> > >    path_  (self.context.path);
+                actor< variable< Token > >                 token_ (self.context.token);
+                actor< variable< FilePositionWithIndex > > pos_   (self.context.pos);
+                actor< variable< ParseDispatcher > >       d_     (self.dispatcher);
 
                 assertion<Errors> end_of_statement_expected   (EndOfStatementExpected);
                 assertion<Errors> path_expected               (PathExpected);
@@ -224,7 +250,7 @@ namespace detail {
                     ;
                 
                 string                  // Returns value in context.token
-                    =    eps_p                    [ clear(str_) ]
+                    =    eps_p                    [ pos_ = positionOf(arg1) ][ clear(str_) ]
                       >> lexeme_d
                          [
                              ch_p('"')
@@ -234,17 +260,19 @@ namespace detail {
                                )
                           >> quote_expected(ch_p('"'))
                                                   [ token_ = construct_<Token>(Token::BasicString, 
-                                                                               str_) ]
+                                                                               str_,
+                                                                               pos_) ]
                          ]
                     ;
 
                 hexstring               // Returns value in context.token
-                    =    eps_p                    [ clear(str_) ]
+                    =    eps_p                    [ pos_ = positionOf(arg1) ][ clear(str_) ]
                       >>  "x\""
                       >> * ( hexbyte - ch_p('"') )
                       >> quote_expected(ch_p('"'))
                                                   [ token_ = construct_<Token>(Token::HexString,
-                                                                               str_) ]
+                                                                               str_,
+                                                                               pos_) ]
                     ;
                 
                 opt_path
@@ -270,15 +298,19 @@ namespace detail {
                     ;
 
                 balanced_tokens 
-                    =    ch_p('(')                [ token_ = construct_<Token>(
+                    =    eps_p                    [ pos_ = positionOf(arg1) ]
+                      >> ch_p('(')                [ token_ = construct_<Token>(
                                                         Token::ArgumentGroupOpen,
-                                                        "(") ]
+                                                        "(",
+                                                        pos_) ]
                                                   [ bind(&PD::pushToken)(d_, token_) ]
                       >> * token
+                      >> eps_p                    [ pos_ = positionOf(arg1) ]
                       >> closing_paren_expected(ch_p(')'))
                                                   [ token_ = construct_<Token>(
                                                         Token::ArgumentGroupClose,
-                                                        ")") ]
+                                                        ")",
+                                                        pos_) ]
                                                   [ bind(&PD::pushToken)(d_, token_) ]
                     ;
 
@@ -289,31 +321,37 @@ namespace detail {
                     ;
 
                 punctuation             // Returns value in context.str
-                    =    ch_p('/')                [ token_ = construct_<Token>(
-                                                        Token::PathSeparator,
-                                                        "/") ]
-                    |    ch_p('{')                [ token_ = construct_<Token>(
-                                                        Token::DirectoryGroupOpen,
-                                                        "{") ]
-                    |    ch_p('}')                [ token_ = construct_<Token>(
-                                                        Token::DirectoryGroupClose,
-                                                        "}") ]
-                    |    ch_p(';')                [ token_ = construct_<Token>(
-                                                        Token::CommandTerminator,
-                                                        ";") ]
-                    |    self.punctuation_p       [ token_ = construct_<Token>(
-                                                        Token::OtherPunctuation,
-                                                        construct_<std::string>(1u, arg1)) ]
+                    =    eps_p                      [ pos_ = positionOf(arg1) ]
+                      >> (
+                           ch_p('/')                [ token_ = construct_<Token>(
+                                                          Token::PathSeparator,
+                                                          "/") ]
+                         | ch_p('{')                [ token_ = construct_<Token>(
+                                                          Token::DirectoryGroupOpen,
+                                                          "{") ]
+                         | ch_p('}')                [ token_ = construct_<Token>(
+                                                          Token::DirectoryGroupClose,
+                                                          "}") ]
+                         | ch_p(';')                [ token_ = construct_<Token>(
+                                                          Token::CommandTerminator,
+                                                          ";") ]
+                         | self.punctuation_p       [ token_ = construct_<Token>(
+                                                          Token::OtherPunctuation,
+                                                          construct_<std::string>(1u, arg1),
+                                                          pos_) ]
+                        )
                     ;
 
                 word                    // Returns value in context.token
-                    =    lexeme_d
+                    =    eps_p                    [ pos_ = positionOf(arg1) ]
+                      >> lexeme_d
                          [
                              (+ self.word_p)      [ str_ = construct_<std::string>(arg1, arg2) ]
                          ]
                       >> eps_p                    [ token_ = construct_<Token>(
                                                         Token::Word, 
-                                                        str_) ]
+                                                        str_,
+                                                        pos_) ]
                     ;
 
                 hexbyte
