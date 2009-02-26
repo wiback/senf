@@ -66,6 +66,7 @@ namespace senf {
         ///\name Abstract Interface Implementation
         ///@{
 
+        void close() const;
         unsigned available() const;
         bool eof() const;
 

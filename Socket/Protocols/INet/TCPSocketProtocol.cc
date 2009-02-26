@@ -79,7 +79,14 @@ prefix_ void senf::TCPSocketProtocol::shutdown(ShutType type)
     const
 {
     if (::shutdown(fd(), type) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("");
+        SENF_THROW_SYSTEM_EXCEPTION("::shutdown()");
+}
+
+prefix_ void senf::TCPSocketProtocol::close()
+    const
+{
+    shutdown(ShutRDWR);
+    INetSocketProtocol::close();
 }
 
 prefix_ unsigned senf::TCPSocketProtocol::available()
