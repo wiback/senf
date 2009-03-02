@@ -67,6 +67,8 @@ prefix_ void senf::term::TelnetTerminal::write(char ch)
 
 prefix_ void senf::term::TelnetTerminal::v_setupComplete()
 {
+    bool init (true);
+
     if (setupFailed_)
         v_setupFailed();
     else if (! (width() > 0 
@@ -74,7 +76,23 @@ prefix_ void senf::term::TelnetTerminal::v_setupComplete()
                 && localOption(telnetopt::SUPPRESS_GO_AHEAD)
                 && peerOption(telnetopt::SUPPRESS_GO_AHEAD)
                 && localOption(telnetopt::ECHO)
-                && callbacks_->cb_init())) {
+                && (init = callbacks_->cb_init()))) {
+
+        SENF_LOG_BLOCK((senf::log::NOTICE)({
+            log << "TelnetTerminal setup failed:\n";
+            if (width() <= 0)
+                log << "    missing telnet client NAWS support\n";
+            if (terminalType().empty())
+                log << "    missing telnet client TERMINAL_TYPE support\n";
+            if (! localOption(telnetopt::SUPPRESS_GO_AHEAD) ||
+                ! peerOption(telnetopt::SUPPRESS_GO_AHEAD))
+                log << "    missing telnet clinet SGO support\n";
+            if (! localOption(telnetopt::ECHO))
+                log << "    missing telnet client ECHO support\n";
+            if (! init)
+                log << "    terminal initialization (cb_init) failed\n";
+        }));
+                  
         setupFailed_ = true;
         requestPeerOption(telnetopt::SUPPRESS_GO_AHEAD, false);
         requestLocalOption(telnetopt::SUPPRESS_GO_AHEAD, false);
@@ -84,6 +102,10 @@ prefix_ void senf::term::TelnetTerminal::v_setupComplete()
         if (! requestsPending())
             v_setupFailed();
     }
+    else
+        SENF_LOG((senf::log::NOTICE)(
+                     "Initialized TelnetTerminal: TERM=" << terminalType()
+                     << ", size=" << width() << "x" << height()));
 }
 
 prefix_ void senf::term::TelnetTerminal::v_charReceived(char ch)

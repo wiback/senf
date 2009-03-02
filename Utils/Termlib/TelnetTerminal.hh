@@ -29,6 +29,7 @@
 // Custom includes
 #include "Telnet.hh"
 #include "AbstractTerminal.hh"
+#include "../Logger.hh"
 
 //#include "TelnetTerminal.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -53,6 +54,7 @@ namespace term {
           public telnethandler::NAWS,
           public AbstractTerminal
     {
+        SENF_LOG_CLASS_AREA();
     public:
         TelnetTerminal();
 
