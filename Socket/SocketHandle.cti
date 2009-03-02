@@ -88,7 +88,7 @@ prefix_ senf::SocketBody const & senf::SocketHandle<SPolicy>::body()
 }
 
 template <class SPolicy>
-prefix_ senf::SocketProtocol const & senf::SocketHandle<SPolicy>::protocol()
+prefix_ senf::SocketProtocol & senf::SocketHandle<SPolicy>::protocol()
     const
 {
     return body().protocol();
@@ -189,11 +189,11 @@ prefix_ std::string senf::SocketHandle<SPolicy>::dumpState(unsigned lod)
 
 template <class SPolicy>
 template <class Facet>
-prefix_ Facet const & senf::SocketHandle<SPolicy>::facet()
+prefix_ Facet & senf::SocketHandle<SPolicy>::facet()
 
 {
     try {
-        return dynamic_cast<Facet const &>(protocol());
+        return dynamic_cast<Facet &>(protocol());
     }
     SENF_WRAP_EXC(std::bad_cast)
 }

@@ -100,7 +100,7 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        Protocol const & protocol();    ///< Access the protocol interface
+        Protocol  & protocol();         ///< Access the protocol interface
                                         /**< The returned protocol class reference gives access to
                                            the complete protocol interface as defined by that
                                            class. See the respective protocol class documentation.

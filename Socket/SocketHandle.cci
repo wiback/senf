@@ -43,14 +43,9 @@ prefix_ senf::SocketBody::SocketBody(bool isServer, int fd)
 {}
 
 prefix_ senf::SocketProtocol & senf::SocketBody::protocol()
-{
-    return const_cast<SocketProtocol &>(v_protocol());
-}
-
-prefix_ senf::SocketProtocol const & senf::SocketBody::protocol()
     const
 {
-    return v_protocol();
+    return const_cast<SocketProtocol &>(v_protocol());
 }
 
 prefix_ bool senf::SocketBody::isServer()

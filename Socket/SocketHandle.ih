@@ -122,8 +122,7 @@ namespace senf {
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        SocketProtocol & protocol(); ///< Access the protocol instance
-        SocketProtocol const & protocol() const; ///< Access the protocol instance (const)
+        SocketProtocol & protocol() const; ///< Access the protocol instance
 
         bool isServer();                ///< Check socket type
                                         /**< \return \c true, if this is a server socket, \c false

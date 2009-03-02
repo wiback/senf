@@ -148,7 +148,7 @@ namespace senf {
                                                  documentation. */
 
         template <class Facet>
-        Facet const & facet();          ///< Access a protocol facet
+        Facet & facet();                ///< Access a protocol facet
                                         /**< This member will try to access the given protocol facet
                                              of the socket. If \a Facet is a valid facet of the
                                              protocol, it is returned, otherwise \c std::bad_cast
@@ -190,7 +190,7 @@ namespace senf {
                                         /**< This member replaces the corresponding FileHandle
                                              member and returns an appropriately cast body
                                              reference */
-        SocketProtocol const & protocol() const;
+        SocketProtocol & protocol() const;
                                         ///< Access protocol class
 
         void assign(FileHandle other);  /**< \internal */

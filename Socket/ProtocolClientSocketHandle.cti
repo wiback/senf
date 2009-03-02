@@ -58,13 +58,13 @@ ProtocolClientSocketHandle(FileHandle other, bool isChecked)
 {}
 
 template <class SocketProtocol>
-prefix_ SocketProtocol const &
+prefix_ SocketProtocol &
 senf::ProtocolClientSocketHandle<SocketProtocol>::protocol()
 {
-    SENF_ASSERT( dynamic_cast<SocketProtocol const *>(&this->body().protocol()) );
+    SENF_ASSERT( dynamic_cast<SocketProtocol *>(&this->body().protocol()) );
     // Need dynamic_cast here, since senf::SocketProtocol is a
     // virtual base
-    return dynamic_cast<SocketProtocol const &>(this->body().protocol());
+    return dynamic_cast<SocketProtocol &>(this->body().protocol());
 }
 
 template <class SocketProtocol>
