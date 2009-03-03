@@ -40,8 +40,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    enum TestEnum { Foo, Bar };
-    SENF_CONSOLE_REGISTER_ENUM( TestEnum, (Foo)(Bar) );
+    enum TestEnum { Foo, Bar, FooBar };
+    SENF_CONSOLE_REGISTER_ENUM( TestEnum, (Foo)(Bar)(FooBar) );
 
     TestEnum test (TestEnum value) { return value; }
 
@@ -139,6 +139,24 @@ BOOST_AUTO_UNIT_TEST(enumSupport)
         parser.parse("test/member MemberBar",
                      boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
     BOOST_CHECK_EQUAL( ss.str(), "MemberBar\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test foob",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "FooBar\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test b",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "Bar\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test foo",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "Foo\n" );
 }
 
 

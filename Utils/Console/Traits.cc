@@ -39,10 +39,21 @@ prefix_ long senf::console::detail::parseEnum(EnumTable const & table,
     if (tokens.size() != 1)
         throw SyntaxErrorException("parameter syntax error");
 
-    EnumTable::left_map::const_iterator i (table.left.find(tokens.begin()[0].value()));
-    if (i == table.left.end())
-        throw SyntaxErrorException("parameter syntax error: invalid enum value");
-    return i->second;
+    std::string sym (tokens.begin()[0].value());
+    boost::algorithm::to_lower(sym);
+    EnumTable::left_map::const_iterator i1 (table.left.lower_bound(sym));
+    EnumTable::left_map::const_iterator i2 (table.left.lower_bound(sym+"\xff"));
+    if (i1 == i2)
+        throw SyntaxErrorException("parameter syntax error: invalid enum value: ")
+            << tokens.begin()[0].value();
+    long v (i1->second);
+    if (boost::algorithm::to_lower_copy(i1->first) == sym)
+        return v;
+    ++i1;
+    if (i1 != i2)
+        throw SyntaxErrorException("parameter syntax error: ambiguous enum value: ")
+            << tokens.begin()[0].value();
+    return v;
 }
 
 prefix_ std::string senf::console::detail::formatEnum(EnumTable const & table, long value)

@@ -184,6 +184,10 @@ namespace console {
         This macro will register an enum type and it's enumerators defined at namespace scope. See
         \ref SENF_CONSOLE_REGISTER_ENUM_MEMBER to register a member enum type.
 
+        \note All enumerator values must be unique ignoring case.
+
+        The enum parser will accept any unique initial substring ignoring case as valid enum value.
+
         \ingroup console_commands
      */
 #   define SENF_CONSOLE_REGISTER_ENUM(Type, Values) \
