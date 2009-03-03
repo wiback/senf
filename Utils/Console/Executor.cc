@@ -340,10 +340,10 @@ senf::console::Executor::traverseDirectory(ParseCommandInfo::TokensRange const &
         }
     }
     catch (std::bad_cast &) {
-        throw InvalidDirectoryException();
+        throw InvalidDirectoryException(errorPath);
     }
     catch (UnknownNodeNameException &) {
-        throw InvalidDirectoryException();
+        throw InvalidDirectoryException(errorPath);
     }
 }
 

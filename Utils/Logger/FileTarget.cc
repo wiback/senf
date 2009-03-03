@@ -28,6 +28,8 @@
 
 // Custom includes
 #include "../Console/Console.hh"
+#include "../Exception.hh"
+#include <boost/filesystem/path.hpp>
 
 //#include "FileTarget.mpp"
 #define prefix_
@@ -35,21 +37,23 @@
 
 namespace {
     
-    std::string quoteFilename(std::string filename)
+    std::string getNodename(std::string const & filename, std::string const & nodename)
     {
-        for (std::string::iterator i (filename.begin()); i != filename.end(); ++i)
-            if (! senf::console::CommandParser::isWordChar(*i))
-                *i = '_';
-        return filename;
+        if (! nodename.empty())
+            return nodename;
+        return boost::filesystem::path(filename).leaf();
     }
 
 }
 
-prefix_ senf::log::FileTarget::FileTarget(std::string const & file)
-    : ofstream_t(file.c_str(), std::ofstream::app), 
-      IOStreamTarget(quoteFilename(file), ofstream_t::member), 
-      file_(file)
+prefix_ senf::log::FileTarget::FileTarget(std::string const & filename,
+                                          std::string const & nodename)
+    : ofstream_t (filename.c_str(), std::ofstream::app), 
+      IOStreamTarget (getNodename(filename, nodename), ofstream_t::member), 
+      file_ (filename)
 {
+    if (! ofstream_t::member)
+        SENF_THROW_SYSTEM_EXCEPTION("logfile open") << ": " << filename;
     consoleDir().add( "reopen", senf::membind(
                           static_cast<void (FileTarget::*)()>(&FileTarget::reopen),
                           this))
@@ -59,6 +63,8 @@ prefix_ senf::log::FileTarget::FileTarget(std::string const & file)
                          this))
         .arg("filename","new filename")
         .overloadDoc("Reopen logfile under new name");
+    consoleDir().add("file", boost::cref(file_))
+        .doc("Show filename log messages are sent to");
 }
 
 prefix_ void senf::log::FileTarget::reopen()
@@ -79,17 +85,21 @@ prefix_ void senf::log::FileTarget::reopen(std::string const & file)
 
 prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
 {
+    namespace kw = senf::console::kw;
+
     detail::TargetRegistry::instance().consoleDir().add("file-target",&RegisterConsole::create)
         .arg("filename", "name of logfile")
+        .arg("nodename", "name of node in console. Defaults to the files basename",
+             kw::default_value = "")
         .doc("Create new file target. Examples:\n"
              "\n"
              "Create new file target '/var/log/example.log\n"
              "    $ file-target \"/var/log/example.log\"\n"
-             "    <Directory '/sys/log/_var_log_example.log'>\n"
+             "    <Directory '/sys/log/example.log'>\n"
              "\n"
              "In a configuration file, create new file target '/var/log/example.log' and set\n"
              "some parameters (If written on one line, this works at the console too:\n"
-             "    /sys/log/file-target \"/var/log/example.log\" {\n"
+             "    /sys/log/file-target \"/var/log/example.log\" mainlog {\n"
              "        route (IMPORTANT);             # route all important messages\n"
              "        timeFormat \"\";               # use non-formatted time format\n"
              "        showArea false;                # don't show log area\n"
@@ -97,9 +107,10 @@ prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
 }
 
 prefix_ boost::shared_ptr<senf::console::DirectoryNode>
-senf::log::FileTarget::RegisterConsole::create(std::string const & filename)
+senf::log::FileTarget::RegisterConsole::create(std::string const & filename, 
+                                               std::string const & nodename)
 {
-    std::auto_ptr<Target> tp (new FileTarget(filename));
+    std::auto_ptr<Target> tp (new FileTarget(filename, nodename));
     Target & target (*tp.get());
     detail::TargetRegistry::instance().dynamicTarget(tp);
     return target.consoleDir().node().thisptr();

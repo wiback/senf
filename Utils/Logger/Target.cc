@@ -313,7 +313,7 @@ namespace {
     std::string formatLabel(std::string const & l)
     {
         if (l.empty())
-            return "-";
+            return "*";
         if (l.size() > 29)
             return l.substr(l.size()-29);
         return l;
@@ -323,7 +323,7 @@ namespace {
 prefix_ void senf::log::Target::consoleList(std::ostream & os)
 {
     static char const * levels[] = { 
-        "none", "verbose", "notice", "message", "important", "critical", "fatal", "disabled" };
+        "verbose", "verbose", "notice", "message", "important", "critical", "fatal", "disabled" };
 
     boost::format fmt ("%2d %-29s %-29s %-9s %-6s\n");
     os << fmt % "#" % "STREAM" % "AREA" % "LEVEL" % "ACTION";

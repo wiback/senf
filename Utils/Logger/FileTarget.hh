@@ -69,7 +69,7 @@ namespace log {
         ///\name Structors and default members
         ///@{
 
-        explicit FileTarget(std::string const & filename); 
+        explicit FileTarget(std::string const & filename, std::string const & nodename = ""); 
                                         ///< Construct FileTarget writing to \a file
 
         ///@}
@@ -84,7 +84,7 @@ namespace log {
         struct RegisterConsole {
             RegisterConsole();
             static boost::shared_ptr<senf::console::DirectoryNode> create(
-                std::string const & filename);
+                std::string const & filename, std::string const & nodename);
             static RegisterConsole instance;
         };
     };

@@ -261,7 +261,7 @@ namespace senf {
         the exception description:
         \code
         // Standard usage: Take \c errno from environment
-        SENF_THROW_SYSTEM_EXCEPTION()
+        SENF_THROW_SYSTEM_EXCEPTION("::open()")
             << " while opening configuration file: " << filename;
 
         // You may however explicitly specify the errno value
