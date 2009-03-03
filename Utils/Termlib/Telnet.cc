@@ -27,6 +27,7 @@
 //#include "Telnet.ih"
 
 // Custom includes
+#include <boost/algorithm/string/case_conv.hpp>
 #include "../membind.hh"
 #include "../Logger/SenfLog.hh"
 
@@ -456,6 +457,7 @@ v_handleOptionParameters(std::string const & data)
         return;
     if (data[0] == '\x00') {
         type_ = data.substr(1);
+        boost::algorithm::to_lower(type_);
         decrementRequestCounter();
     }
 }

@@ -82,8 +82,12 @@ prefix_ void senf::term::TelnetTerminal::v_setupComplete()
             log << "TelnetTerminal setup failed:\n";
             if (width() <= 0)
                 log << "    missing telnet client NAWS support\n";
+            else
+                log << "    size=" << width() << "x" << height() << "\n";
             if (terminalType().empty())
                 log << "    missing telnet client TERMINAL_TYPE support\n";
+            else
+                log << "    TERM=" << terminalType() << "\n";
             if (! localOption(telnetopt::SUPPRESS_GO_AHEAD) ||
                 ! peerOption(telnetopt::SUPPRESS_GO_AHEAD))
                 log << "    missing telnet clinet SGO support\n";
