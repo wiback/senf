@@ -40,7 +40,7 @@
 
 prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
     : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000), 
-      watchdogCount_(0), hangCount_ (0)
+      watchdogAbort_ (false), watchdogCount_(0), hangCount_ (0)
 {
     struct sigevent ev;
     ::memset(&ev, 0, sizeof(ev));
@@ -75,18 +75,20 @@ prefix_ senf::scheduler::detail::FIFORunner::~FIFORunner()
 
 prefix_ void senf::scheduler::detail::FIFORunner::startWatchdog()
 {
-    struct itimerspec timer;
-    ::memset(&timer, 0, sizeof(timer));
+    if (watchdogMs_ > 0) {
+        struct itimerspec timer;
+        ::memset(&timer, 0, sizeof(timer));
 
-    timer.it_interval.tv_sec = watchdogMs_ / 1000;
-    timer.it_interval.tv_nsec = (watchdogMs_ % 1000) * 1000000ul;
-    timer.it_value.tv_sec = timer.it_interval.tv_sec;
-    timer.it_value.tv_nsec = timer.it_interval.tv_nsec;
+        timer.it_interval.tv_sec = watchdogMs_ / 1000;
+        timer.it_interval.tv_nsec = (watchdogMs_ % 1000) * 1000000ul;
+        timer.it_value.tv_sec = timer.it_interval.tv_sec;
+        timer.it_value.tv_nsec = timer.it_interval.tv_nsec;
+        
+        if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
+            SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
 
-    if (timer_settime(watchdogId_, 0, &timer, 0) < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("timer_settime()");
-
-    watchdogRunning_ = true;
+        watchdogRunning_ = true;
+    }
 }
 
 prefix_ void senf::scheduler::detail::FIFORunner::stopWatchdog()
@@ -220,6 +222,8 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdog(int, siginfo_t * si, 
             write(1, runner.runningBacktrace_.c_str(), runner.runningBacktrace_.size());
 #endif
             write(1, "\n", 1);
+            if (runner.watchdogAbort_)
+                assert(false);
         }
     }
 }

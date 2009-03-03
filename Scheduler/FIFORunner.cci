@@ -123,6 +123,17 @@ prefix_ unsigned senf::scheduler::detail::FIFORunner::taskTimeout()
     return watchdogMs_;
 }
 
+prefix_ void senf::scheduler::detail::FIFORunner::abortOnTimeout(bool flag)
+{
+    watchdogAbort_ = flag;
+}
+
+prefix_ bool senf::scheduler::detail::FIFORunner::abortOnTimeout()
+    const
+{
+    return watchdogAbort_;
+}
+
 prefix_ unsigned senf::scheduler::detail::FIFORunner::hangCount()
 {
     unsigned hc (hangCount_);

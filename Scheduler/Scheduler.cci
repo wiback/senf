@@ -39,19 +39,29 @@ prefix_ senf::ClockService::clock_type senf::scheduler::eventTime()
     return scheduler::detail::FdManager::instance().eventTime();
 }
 
-prefix_ void senf::scheduler::taskTimeout(unsigned ms)
+prefix_ void senf::scheduler::watchdogTimeout(unsigned ms)
 {
     scheduler::detail::FIFORunner::instance().taskTimeout(ms);
 }
 
-prefix_ unsigned senf::scheduler::taskTimeout()
+prefix_ unsigned senf::scheduler::watchdogTimeout()
 {
     return scheduler::detail::FIFORunner::instance().taskTimeout();
 }
 
-prefix_ unsigned senf::scheduler::hangCount()
+prefix_ unsigned senf::scheduler::watchdogEvents()
 {
     return scheduler::detail::FIFORunner::instance().hangCount();
+}
+
+prefix_ void senf::scheduler::watchdogAbort(bool flag)
+{
+    scheduler::detail::FIFORunner::instance().abortOnTimeout(flag);
+}
+
+prefix_ bool senf::scheduler::watchdogAbort()
+{
+    return scheduler::detail::FIFORunner::instance().abortOnTimeout();
 }
 
 prefix_ void senf::scheduler::loresTimers()

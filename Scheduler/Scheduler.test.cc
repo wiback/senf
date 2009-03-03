@@ -298,7 +298,7 @@ void schedulerTest()
         SENF_CHECK_NO_THROW( timer1.action(&blockingHandler) );
         SENF_CHECK_NO_THROW( timer1.timeout(senf::ClockService::now()) );
         SENF_CHECK_NO_THROW( senf::scheduler::process() );
-        BOOST_CHECK_EQUAL( senf::scheduler::hangCount(), 1u );
+        BOOST_CHECK_EQUAL( senf::scheduler::watchdogEvents(), 1u );
     }
 
     {

@@ -196,6 +196,30 @@ namespace senf {
     href="http://www.boost.org/doc/libs/1_36_0/libs/ptr_container/doc/ptr_container.html">Boost.PointerContainer</a>
     for the pointer container library reference.
 
+
+    \section sched_signals Signals and the Watchdog
+
+    To secure against blocking callbacks, the %scheduler implementation includes a watchdog
+    timer. This timer will produce a warning message on the standard error stream when a single
+    callback is executing for more than the watchdog timeout value. Since the scheduler
+    implementation is completely single threaded, we cannot terminate the callback but at least we
+    can produce an informative message and optionally the program can be aborted.
+
+    The watchdog is controlled using the watchdogTimeout(), watchdogEvents() and watchdogAbort().
+    functions. 
+
+    The watchdog is implemented using a free running interval timer. The watchdog signal must \e not
+    be blocked. If signals need to be blocked for some reason, those regions will not be checked by
+    the watchdog. If a callback blocks, the watchdog has no chance to interrupt the process.
+
+    \warning Since the watchdog is free running for performance reasons, every callback must expect
+        signals to happen. Signals \e will certainly happen since the watchdog signal is generated
+        periodically (which does not necessarily generate a watchdog event ...)
+
+    Additional signals may occur when using using hires timers on kernel/glibc combinations which do
+    not support timerfd(). On such systems, hires timers are implemented using POSIX timers which
+    generate a considerable number of additional signals.
+
     \todo Fix the file support to use threads (?) fork (?) and a pipe so it works reliably even
         over e.g. NFS.
   */
@@ -224,17 +248,30 @@ namespace scheduler {
      */
     ClockService::clock_type eventTime(); 
 
-    /** \brief Set task watchdog timeout */
-    void taskTimeout(unsigned ms); 
+    /** \brief Set watchdog timeout to \a ms milliseconds.
+        
+        Setting the watchdog timeout to 0 will disable the watchdog.
+     */
+    void watchdogTimeout(unsigned ms); 
 
-    /** \brief Current task watchdog timeout */
-    unsigned taskTimeout(); 
+    /** \brief Current watchdog timeout in milliseconds */
+    unsigned watchdogTimeout(); 
 
     /** \brief Number of watchdog events 
 
-        calling hangCount() will reset the counter to 0
+        calling watchtogEvents() will reset the counter to 0
      */
-    unsigned hangCount(); 
+    unsigned watchdogEvents(); 
+
+    /** \brief Enable/disable abort on watchdog event.
+        
+        Calling watchdogAbort(\c true) will enable aborting the program execution on a watchdog
+        event.
+     */
+    void watchdogAbort(bool flag);
+
+    /** \brief Get current watchdog abort on event status */
+    bool watchdogAbort();
 
     /** \brief Switch to using hi resolution timers
         

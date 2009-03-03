@@ -99,6 +99,8 @@ namespace detail {
 
         void taskTimeout(unsigned ms);
         unsigned taskTimeout() const;
+        void abortOnTimeout(bool flag);
+        bool abortOnTimeout() const;
 
         void startWatchdog();
         void stopWatchdog();
@@ -137,6 +139,7 @@ namespace detail {
         timer_t watchdogId_;
         bool watchdogRunning_;
         unsigned watchdogMs_;
+        bool watchdogAbort_;
         std::string runningName_;
 #   ifdef SENF_DEBUG
         std::string runningBacktrace_;
