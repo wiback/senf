@@ -83,7 +83,6 @@ prefix_ void senf::TCPSocketProtocol::shutdown(ShutType type)
 }
 
 prefix_ void senf::TCPSocketProtocol::close()
-    const
 {
     shutdown(ShutRDWR);
     INetSocketProtocol::close();

@@ -168,7 +168,7 @@ namespace senf {
                                              not support the notion of EOF, this member should
                                              always return \c false. */
 
-        virtual void close() const;     ///< Close socket
+        virtual void close();           ///< Close socket
                                         /**< This override will automatically \c shutdown() the
                                              socket whenever it is closed.
                                              \throws senf::SystemException 

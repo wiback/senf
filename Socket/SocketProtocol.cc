@@ -35,7 +35,6 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ void senf::SocketProtocol::close()
-    const
 {
     if (::close(body().fd()) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("::close(socket_fd)");

@@ -53,7 +53,6 @@ prefix_ bool senf::UNSocketProtocol::eof()
 }
 
 prefix_ void senf::UNSocketProtocol::close() 
-    const
 {
     check_and_unlink();
   

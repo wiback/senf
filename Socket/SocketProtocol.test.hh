@@ -48,7 +48,7 @@ namespace test {
         bool eof() const
             { return false; }
 
-        virtual void close() const {
+        virtual void close() {
             closeCount(1);
         }
 

@@ -49,10 +49,10 @@ namespace senf {
         : public virtual SocketProtocol
     {
     public:
-        virtual void close() const;   ///< Close socket
-                              /**< This override will automatically \c shutdown() the
-                                   socket whenever it is closed.
-                                   \throws senf::SystemException */  
+        virtual void close();           ///< Close socket
+                                        /**< This override will automatically \c shutdown() the
+                                             socket whenever it is closed.
+                                             \throws senf::SystemException */ // 
         virtual void terminate() const;       ///< Forcibly close socket
                                         /**< This override will automatically \c shutdown() the
                                            socket whenever it is called. Additionally it will
