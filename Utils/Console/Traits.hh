@@ -211,6 +211,32 @@ namespace console {
 #   define SENF_CONSOLE_REGISTER_ENUM_MEMBER(Class, Type, Values) \
         SENF_CONSOLE_REGISTER_ENUM_(Class::, Type, Values)
 
+    template <class Enum>
+    struct FlagCollection
+    {
+        operator unsigned long() const { return value; }
+        FlagCollection() : value (0) {}
+        FlagCollection(unsigned long value_) : value (value_) {}
+        FlagCollection(Enum value_) : value (value_) {}
+        unsigned long value;
+    };
+
+    template <class Enum>
+    struct ArgumentTraits< FlagCollection<Enum> >
+    {
+        typedef FlagCollection<Enum> type;
+        static void parse(ParseCommandInfo::TokensRange const & tokens, type & out);
+        static std::string description();
+        static std::string str(type const & value);
+    };
+
+    template <class Enum>
+    struct ReturnValueTraits< FlagCollection<Enum> >
+    {
+        typedef FlagCollection<Enum> type;
+        static void format(type const & value, std::ostream & os);
+    };
+
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////

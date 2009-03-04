@@ -208,17 +208,18 @@ namespace senf {
     The watchdog is controlled using the watchdogTimeout(), watchdogEvents() and watchdogAbort().
     functions. 
 
-    The watchdog is implemented using a free running interval timer. The watchdog signal must \e not
-    be blocked. If signals need to be blocked for some reason, those regions will not be checked by
-    the watchdog. If a callback blocks, the watchdog has no chance to interrupt the process.
+    The watchdog is implemented using a free running interval timer. The watchdog signal (\c SIGURG)
+    must \e not be blocked. If signals need to be blocked for some reason, those regions will not be
+    checked by the watchdog. If a callback blocks, the watchdog has no chance to interrupt the
+    process.
 
     \warning Since the watchdog is free running for performance reasons, every callback must expect
         signals to happen. Signals \e will certainly happen since the watchdog signal is generated
         periodically (which does not necessarily generate a watchdog event ...)
 
-    Additional signals may occur when using using hires timers on kernel/glibc combinations which do
-    not support timerfd(). On such systems, hires timers are implemented using POSIX timers which
-    generate a considerable number of additional signals.
+    Additional signals (\c SIGALRM) may occur when using using hires timers on kernel/glibc
+    combinations which do not support timerfd(). On such systems, hires timers are implemented using
+    POSIX timers which generate a considerable number of additional signals.
 
     \todo Fix the file support to use threads (?) fork (?) and a pipe so it works reliably even
         over e.g. NFS.

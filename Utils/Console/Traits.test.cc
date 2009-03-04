@@ -40,7 +40,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    enum TestEnum { Foo, Bar, FooBar };
+    enum TestEnum { Foo=1, Bar=2, FooBar=4 };
     SENF_CONSOLE_REGISTER_ENUM( TestEnum, (Foo)(Bar)(FooBar) );
 
     TestEnum test (TestEnum value) { return value; }
@@ -52,6 +52,9 @@ namespace {
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( TestClass, MemberEnum, (MemberFoo)(MemberBar) );
 
     bool boolTest(bool value) { return value; }
+
+    senf::console::FlagCollection<TestEnum> collectionTest(
+        senf::console::FlagCollection<TestEnum> flags) { return flags; }
 }
 
 BOOST_AUTO_UNIT_TEST(boolTraits)
@@ -159,6 +162,34 @@ BOOST_AUTO_UNIT_TEST(enumSupport)
     BOOST_CHECK_EQUAL( ss.str(), "Foo\n" );
 }
 
+BOOST_AUTO_UNIT_TEST(flagCollection)
+{
+    senf::console::Executor executor;
+    senf::console::CommandParser parser;
+    senf::console::ScopedDirectory<> dir;
+    senf::console::root().add("test", dir);
+    std::stringstream ss;
+
+    dir.add("test",&collectionTest);
+    
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test foo",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "Foo\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test (foo bar)",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "(Foo Bar)\n" );
+
+    ss.str("");
+    SENF_CHECK_NO_THROW(
+        parser.parse("test/test ()",
+                     boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
+    BOOST_CHECK_EQUAL( ss.str(), "()\n" );
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
