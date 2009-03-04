@@ -59,7 +59,7 @@ namespace detail {
         ( BOOST_PP_STRINGIZE(e), static_cast<long>(d e) )
 
 #   define SENF_CONSOLE_REGISTER_ENUM_(Prefix, Type, Values)                                      \
-        senf::console::detail::EnumTable & senf_console_enum_table(Prefix Type)                   \
+        inline senf::console::detail::EnumTable & senf_console_enum_table(Prefix Type)            \
         {                                                                                         \
             static senf::console::detail::EnumTable table;                                        \
             if (table.empty())                                                                    \
@@ -67,14 +67,14 @@ namespace detail {
                     BOOST_PP_SEQ_FOR_EACH( SENF_CONSOLE_REGISTER_ENUM_ELT, Prefix, Values );      \
             return table;                                                                         \
         }                                                                                         \
-        void senf_console_parse_argument(                                                         \
+        inline void senf_console_parse_argument(                                                  \
             senf::console::ParseCommandInfo::TokensRange const & tokens, Prefix Type & out)       \
         {                                                                                         \
             out = static_cast<Prefix Type>(                                                       \
                 senf::console::detail::parseEnum(                                                 \
                     senf_console_enum_table( Prefix Type() ), tokens) );                          \
         }                                                                                         \
-        void senf_console_format_value(Prefix Type value, std::ostream & os)                      \
+        inline void senf_console_format_value(Prefix Type value, std::ostream & os)               \
         {                                                                                         \
             os << senf::console::detail::formatEnum(                                              \
                 senf_console_enum_table( Prefix Type() ), static_cast<long>(value) );             \
