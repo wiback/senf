@@ -34,10 +34,15 @@ namespace {
         registerICMPv6Packet (58);
 }
 
-prefix_ boost::uint16_t senf::ICMPv6PacketParser::calcChecksum() const {
+prefix_ boost::uint16_t senf::ICMPv6PacketParser::calcChecksum() 
+    const
+{
 
     senf::IpChecksum summer;
     senf::IPv6Packet ipv6 (packet().rfind<senf::IPv6Packet>(senf::nothrow));
+
+    if (! ipv6)
+        return 0u;
     
     summer.feed( ipv6->source().i(), 
                     ipv6->source().i() + senf::IPv6Packet::Parser::source_t::fixed_bytes );
