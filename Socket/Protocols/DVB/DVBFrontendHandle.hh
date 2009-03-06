@@ -74,6 +74,8 @@ namespace senf {
     private: 
         void tune(const struct dvb_frontend_parameters & frontend) const;
     public:
+        
+        
         ///////////////////////////////////////////////////////////////////////////
         // internal interface
 
@@ -86,6 +88,7 @@ namespace senf {
                                              constructor */
 
         ///@}
+
         void setNonBlock(bool on = true) const;
        
         void tuneDVB_S(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate) const;

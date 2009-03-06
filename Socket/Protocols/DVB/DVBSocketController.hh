@@ -30,6 +30,7 @@
 #include "DVBFrontendHandle.hh"
 #include "DVBDemuxHandles.hh"
 #include "DVBConfigParser.hh"
+#include "DVBProtocolWrapper.hh"
 #include "../../../Scheduler/Scheduler.hh"
 #include "../../../Utils/Console/Console.hh"
 
@@ -52,17 +53,37 @@ namespace senf {
      You have to find out which parts of these functionality are implemented by your preferred
      device driver by your own.
 */
+    
+    
+    
 class DVBSocketController : boost::noncopyable
 {
 public:
+
     senf::console::ScopedDirectory<DVBSocketController> dir;
 
     typedef boost::function<void (const struct dvb_frontend_event & )> Callback;
                                         ///< Callback which is called when an asynchronous tuning succeeds.
 
-    DVBSocketController(DVBFrontendHandle frontendHandle_ = DVBFrontendHandle(0,0), DVBDemuxSectionHandle sectionHandle_ = DVBDemuxSectionHandle(0,0), const Callback & cb = NULL);
+    DVBSocketController(DVBFrontendHandle frontendHandle_ = DVBFrontendHandle(0,0), const Callback & cb = NULL);
     ~DVBSocketController();
+    
+    senf::DVBDemuxSectionHandle createDVBDemuxSectionHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
+    senf::DVBDemuxPESHandle createDVBDemuxPESHandle(  int adapternumber=0, int demuxnumber=0, bool addToConsole=false );
 
+    void addToConsole(senf::DVBDemuxSectionHandle sh);
+    ///< Adds an DVBDemuxSectionHandle to the console 
+    /**< Allocates the functionality of DVBDemuxSectionProtocol into the folder 
+         of the DVBSocketController. If the protocol is closed, or all handles are 
+         discarded the console support will automatically removed.
+         \param[in] handle of a protocol*/
+    void addToConsole(senf::DVBDemuxPESHandle sh);
+    ///< Adds an DVBDemuxPESHandle to the console 
+    /**< Allocates the functionality of DVBDemuxPESProtocol into the folder 
+         of the DVBSocketController. If the protocol is closed, or all handles are 
+         discarded the console support will automatically removed.
+         \param[in] handle of a protocol*/
+    
     void tuneToCMD( const std::string & input, const std::string & mode = "async");
                                         ///< Tunes a DVB device given by the type of the DVBFrontendHandle
                                         /**< Tunes a DVB device by a channel name or complete
@@ -189,25 +210,6 @@ public:
                                              specific driver implementation. In this case the output is
                                              random.*/
 
-    void setSectionFilter(unsigned short int pid,
-               u_int8_t filter = MPE_TABLEID,
-               unsigned int flags = DMX_IMMEDIATE_START | DMX_CHECK_CRC,
-               u_int8_t mask = 0xff,
-               u_int8_t mode = 0,
-               unsigned int timeout = 0);
-                                        ///< Set the section filter
-
-    void setBufferSize(unsigned long size);
-                                        ///< Set the size of the circular buffer used for filtered data.
-                                        /**< The default size is two maximum sized sections, i.e. if
-                                             this function is not called a buffer size of 2 * 4096
-                                             bytes will be used.
-                                             \param[in] size Size of circular buffer. */
-
-    void startFiltering();              ///< Starts filtering
-
-    void stopFiltering();               ///< Stops filtering
-
     std::string getTuneInfo(const std::string & conf ="Ssbuf");
                                         ///< Returns a string which shows actual tuning status
                                         /**< <br>"S" prints signal strength (in hex)
@@ -221,12 +223,13 @@ public:
                                              an exception! */
 private:
     DVBFrontendHandle frontendHandle;
-    senf::DVBDemuxSectionHandle sectionHandle;
     fe_type_t type;
     DVBConfigParser parser;
     Callback cb;
+    static unsigned int controllerNr;
+    unsigned int sectionNr;
+    unsigned int pesNr;
     senf::scheduler::FdEvent event;
-
     void readEvent(int i);
     void initConsole();
 };

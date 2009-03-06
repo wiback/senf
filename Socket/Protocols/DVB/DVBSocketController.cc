@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DVBSocketController non-inline non-template implementation */
+    \brief DVBSocketControlle-r non-inline non-template implementation */
 
 #include "DVBSocketController.hh"
 
@@ -30,19 +30,23 @@
 #include "senf/Utils/Exception.hh"
 #include "senf/Utils/Logger/Logger.hh"
 #include "senf/Utils/membind.hh"
+#include <boost/shared_ptr.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
 using namespace std;
 
-senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_, DVBDemuxSectionHandle sectionHandle_ , const Callback & cb_)
+unsigned int senf::DVBSocketController::controllerNr(0);
+
+senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_, const Callback & cb_)
     : dir( this ),
       frontendHandle( frontendHandle_ ),
-      sectionHandle( sectionHandle_ ),
       type( frontendHandle.protocol().getInfo().type ),
       parser( type ),
       cb( cb_ ),
+      sectionNr(1),
+      pesNr(1),
       event( "senf::DVBSocketController::readEvent", senf::membind(&DVBSocketController::readEvent, this), frontendHandle, senf::scheduler::FdEvent::EV_PRIO, false )
 {
     initConsole();
@@ -50,6 +54,35 @@ senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_
 
 prefix_ senf::DVBSocketController::~DVBSocketController()
 {
+}
+
+prefix_ senf::DVBDemuxSectionHandle senf::DVBSocketController::createDVBDemuxSectionHandle( int adapternumber, int demuxnumber, bool addToConsole ){
+    DVBDemuxSectionHandle sectionHandle(adapternumber, demuxnumber); 
+    if(addToConsole)
+        this->addToConsole(sectionHandle);
+    return sectionHandle;
+        
+}
+
+prefix_ senf::DVBDemuxPESHandle senf::DVBSocketController::createDVBDemuxPESHandle( int adapternumber, int demuxnumber, bool addToConsole ){
+    DVBDemuxPESHandle pesHandle(adapternumber, demuxnumber); 
+    if(addToConsole )
+        this->addToConsole(pesHandle);
+    return pesHandle;
+        
+}
+
+prefix_ void senf::DVBSocketController::addToConsole(senf::DVBDemuxSectionHandle sh){
+    boost::shared_ptr<DVBSectionProtocolWrapper> wrap(new DVBSectionProtocolWrapper(sh));
+    sh.protocol().addWrapper(wrap);
+    dir.node().add("section" + senf::str(sectionNr), wrap->dir);
+    sectionNr++;
+}
+prefix_ void senf::DVBSocketController::addToConsole(senf::DVBDemuxPESHandle sh){
+    boost::shared_ptr<DVBPESProtocolWrapper> wrap(new DVBPESProtocolWrapper(sh));
+    sh.protocol().addWrapper(wrap);
+    dir.node().add("pes"+ senf::str(pesNr), wrap->dir);
+    pesNr++;
 }
 
 prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const string & mode)
@@ -364,31 +397,7 @@ prefix_ string senf::DVBSocketController::status2String(fe_status_t status)
     return s;
 }
 
-prefix_ void senf::DVBSocketController::setSectionFilter(unsigned short int pid,
-        u_int8_t filter,
-        unsigned int flags,
-        u_int8_t mask,
-        u_int8_t mode,
-        unsigned int timeout)
-{
-    sectionHandle.protocol().setSectionFilter(pid, timeout, flags, filter, mask, mode);
 
-}
-
-prefix_ void senf::DVBSocketController::setBufferSize(unsigned long size)
-{
-    sectionHandle.protocol().setBufferSize(size);
-}
-
-prefix_ void senf::DVBSocketController::startFiltering()
-{
-    sectionHandle.protocol().startFiltering();
-}
-
-prefix_ void senf::DVBSocketController::stopFiltering()
-{
-    sectionHandle.protocol().stopFiltering();
-}
 
 prefix_ fe_type_t senf::DVBSocketController::getType()
 {
@@ -405,7 +414,8 @@ prefix_ void senf::DVBSocketController::initConsole()
 {
     // binding functions to console
     namespace kw = senf::console::kw;
-    dir.doc("DVB Controller");
+    dir.doc("DVB Controller " + controllerNr);
+    ++controllerNr;
 
     dir.add("type", &DVBSocketController::getTypeString)
     .doc("Shows actual type of card DVB-{T, S, C}");
@@ -426,28 +436,6 @@ prefix_ void senf::DVBSocketController::initConsole()
         .doc("tunes to channel listet in the configfile.")
         .arg("channel", "channel to tune")
         .arg("mode", "mode \"sync\" or \"async\"", kw::default_value = "async");
-
-    dir.add("buffersize", &DVBSocketController::setBufferSize)
-        .doc("Set the size of the circular buffer used for filtered data.")
-        .arg("size", "in byte");
-
-    dir.add("start", &DVBSocketController::startFiltering)
-        .doc("Starts filtering");
-
-    dir.add("stop", &DVBSocketController::setBufferSize)
-        .doc("Stops filtering");
-
-    dir.add("filter", &DVBSocketController::setSectionFilter)
-        .arg("pid", "pid to filter")
-        .arg("filter", "filter", kw::default_value = 62, kw::default_doc   = "0x3e")
-        .arg("flags", "or-able: DMX_CHECK_CRC(0x01), DMX_ONESHOT(0x02), DMX_IMMEDIATE_START(0x04), DMX_KERNEL_CLIENT(0x8000)", kw::default_value = DMX_IMMEDIATE_START | DMX_CHECK_CRC, kw::default_doc   = "0x05")
-        .arg("mask", "mask", kw::default_value = 0xff, kw::default_doc   = "0xff")
-        .arg("mode", "mode", kw::default_value = 0, kw::default_doc   = "0x00")
-        .arg("timeout", "timeout", kw::default_value = 0, kw::default_doc   = "0x00")
-        .doc("Sets parameters for section filter.");
-
-    dir.add("stop", &DVBSocketController::setBufferSize)
-            .doc("Stops filtering");
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

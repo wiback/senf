@@ -34,6 +34,9 @@
 #include "DVBDemuxSocketProtocol.hh"
 
 //#include "DVBDemuxHandles.mpp"
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/shared_ptr.hpp>
+#include <iostream>
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
@@ -51,10 +54,36 @@ namespace senf {
 
     /** \brief xxx
      */
+    class DVBPrococolWrapper :public boost::enable_shared_from_this<DVBPrococolWrapper> {
+        public:
+            DVBPrococolWrapper(){}
+            virtual ~DVBPrococolWrapper(){}
+    };
+    
+    class DVBSocketProtocol : public virtual SocketProtocol {
+private:
+        boost::shared_ptr<DVBPrococolWrapper> wrap_;
+public:
+        DVBSocketProtocol() {}
+        ~DVBSocketProtocol() {}
+
+        void addWrapper(boost::shared_ptr<DVBPrococolWrapper> wrap) {
+            wrap_ = wrap;
+        }
+        virtual void close(){
+            wrap_.reset();
+            SocketProtocol::close();
+
+        }
+    };
+    
+    
     class DVBDemuxSectionSocketProtocol
         : public ConcreteSocketProtocol<DVBDemux_Policy, DVBDemuxSectionSocketProtocol>,
-          public DVBDemuxSocketProtocol
+          public DVBDemuxSocketProtocol, 
+          public DVBSocketProtocol
     {
+    
     public:
         ///////////////////////////////////////////////////////////////////////////
         // internal interface
@@ -76,11 +105,12 @@ namespace senf {
         ///@}
         
         void setSectionFilter(unsigned short int pid, 
-                unsigned char filter,
-                unsigned int flags, 
-                unsigned char mask, 
-                unsigned char mode,
-                unsigned int timeout ) const;    
+                unsigned char filter= 0x3e,
+                unsigned int flags= DMX_IMMEDIATE_START | DMX_CHECK_CRC, 
+                unsigned char mask = 0xff, 
+                unsigned char mode =0x00,
+                unsigned int timeout =0x00) const;
+        
     };
 
     typedef ProtocolClientSocketHandle<DVBDemuxSectionSocketProtocol> DVBDemuxSectionHandle;
@@ -91,7 +121,8 @@ namespace senf {
      */
     class DVBDemuxPESSocketProtocol
         : public ConcreteSocketProtocol<DVBDemux_Policy,DVBDemuxPESSocketProtocol>,
-          public DVBDemuxSocketProtocol
+          public DVBDemuxSocketProtocol,
+          public DVBSocketProtocol
     {
     public:
         ///////////////////////////////////////////////////////////////////////////
@@ -113,7 +144,7 @@ namespace senf {
 
         ///@}
         
-        void setPESFilter(struct dmx_pes_filter_params *filter) const;    
+        void setPESFilter(unsigned short int pid, dmx_input_t input, dmx_output_t output, dmx_pes_type_t pesType, unsigned int flags)const;    
     };
 
     typedef ProtocolClientSocketHandle<DVBDemuxPESSocketProtocol> DVBDemuxPESHandle;

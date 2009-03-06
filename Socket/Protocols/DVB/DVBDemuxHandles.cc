@@ -92,10 +92,19 @@ prefix_ unsigned senf::DVBDemuxPESSocketProtocol::available()
     return 4096; //???
 }
 
-prefix_ void senf::DVBDemuxPESSocketProtocol::setPESFilter(struct dmx_pes_filter_params *filter)
+prefix_ void senf::DVBDemuxPESSocketProtocol::setPESFilter(unsigned short int pid, dmx_input_t input, dmx_output_t output, dmx_pes_type_t pesType, unsigned int flags)
     const
 {
-    if (::ioctl(fd(), DMX_SET_PES_FILTER, filter) < 0)
+   
+    struct dmx_pes_filter_params pes_filter;
+        ::memset(&pes_filter, 0, sizeof(struct dmx_pes_filter_params));
+        pes_filter.pid = pid;
+        pes_filter.input = input;
+        pes_filter.output = output;
+        pes_filter.pes_type = pesType;
+        pes_filter.flags = flags;
+        
+    if (::ioctl(fd(), DMX_SET_PES_FILTER, &pes_filter) < 0)
         SENF_THROW_SYSTEM_EXCEPTION("Could not set PES filter of DVB adapter.");
 }
 
