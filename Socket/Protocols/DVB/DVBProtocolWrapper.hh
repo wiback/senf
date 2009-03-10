@@ -46,7 +46,7 @@ namespace senf {
 
      */
 
-    class DVBSectionProtocolWrapper : public senf::DVBPrococolWrapper {
+    class DVBSectionProtocolWrapper : public senf::DVBProtocolWrapper {
 
 public:
         enum Flags {CHECK_CRC = DMX_CHECK_CRC,
@@ -116,7 +116,7 @@ public:
             (CHECK_CRC)(ONESHOT)(IMMEDIATE_START)(KERNEL_CLIENT))
     ;
 
-    class DVBPESProtocolWrapper : public senf::DVBPrococolWrapper {
+    class DVBPESProtocolWrapper : public senf::DVBProtocolWrapper {
 
 public:
         enum Flags {CHECK_CRC = DMX_CHECK_CRC,

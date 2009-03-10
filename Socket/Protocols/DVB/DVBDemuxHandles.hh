@@ -52,22 +52,25 @@ namespace senf {
         NotWriteablePolicy
         >::policy DVBDemux_Policy;   ///< Socket Policy for xxxx
 
-    /** \brief xxx
+    /** \brief Baseclass of various DVBProtocolWrappers which are defined in DVBProtocolWrapper.hh 
      */
-    class DVBPrococolWrapper :public boost::enable_shared_from_this<DVBPrococolWrapper> {
+    class DVBProtocolWrapper :public boost::enable_shared_from_this<DVBProtocolWrapper> {
         public:
-            DVBPrococolWrapper(){}
-            virtual ~DVBPrococolWrapper(){}
+            DVBProtocolWrapper(){}
+            virtual ~DVBProtocolWrapper(){}
     };
-    
+    /** \brief Baseclass for DVBSocketProtocols which want use Wrappers for console. 
+    */
     class DVBSocketProtocol : public virtual SocketProtocol {
 private:
-        boost::shared_ptr<DVBPrococolWrapper> wrap_;
+        boost::shared_ptr<DVBProtocolWrapper> wrap_;
 public:
         DVBSocketProtocol() {}
         ~DVBSocketProtocol() {}
-
-        void addWrapper(boost::shared_ptr<DVBPrococolWrapper> wrap) {
+        
+        void addWrapper(boost::shared_ptr<DVBProtocolWrapper> wrap)/**< Binds a wrapper to a DVBProtocol, 
+                                                                        so if it is closed the functionality of the wrapper is automatically removed from console.*/ 
+        {
             wrap_ = wrap;
         }
         virtual void close(){
