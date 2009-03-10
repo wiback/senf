@@ -172,7 +172,7 @@ namespace senf {
     
         /*   Code     static set to 0       */
     //     SENF_PARSER_INIT() {
-    //         ICMPv6Packet icmpv6 (senf::Packet().rfind<ICMPv6Packet>(senf::nothrow));
+    //         ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
     //         icmpv6->code() = 0;
     //     }
         
@@ -216,7 +216,7 @@ namespace senf {
         /*  Code    0 - Hop limit exceeded in transit
                     1 - Fragment reassembly time exceeded   */
         void setErrCode(int code){
-            ICMPv6Packet icmpv6 (senf::Packet().rfind<ICMPv6Packet>(senf::nothrow));
+            ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
             icmpv6->code() = code;
         }
         
@@ -261,7 +261,7 @@ namespace senf {
                     2 - Unrecognized IPv6 option encountered          */
         
         void setErrCode(int code){
-            ICMPv6Packet icmpv6 (senf::Packet().rfind<ICMPv6Packet>(senf::nothrow));
+            ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
             icmpv6->code() = code;
         }
         SENF_PARSER_FINALIZE ( ICMPv6ErrParamProblemParser );
