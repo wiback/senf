@@ -43,6 +43,7 @@ void senf::ppi::module::CloneSource::request()
 {
     output(packet_.clone());
 }
+
 void senf::ppi::module::CloneSource::replacePacket(senf::Packet const & packet)
 {
     packet_ = packet;

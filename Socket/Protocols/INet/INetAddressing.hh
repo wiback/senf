@@ -168,6 +168,8 @@ namespace senf {
                                         ///< Initialize from address and port
         INet6SocketAddress(INet6Address const & addr, unsigned port, std::string const & iface);
                                         ///< Initialize explicitly from given parameters
+                                        /**< \throws AddressSyntaxException if the
+                                                given iface cannot be resolved. */
         explicit INet6SocketAddress(unsigned port);
                                         ///< Initialize from port and set to 'unspecified' addr
                                         /**< The address is set to [::]
@@ -183,10 +185,12 @@ namespace senf {
         void address(INet6Address const & addr); ///< Change address
 
         unsigned port() const;          ///< Get port number
-        void port(unsigned poirt);      ///< Change port number
+        void port(unsigned port);       ///< Change port number
 
         std::string iface() const;      ///< Get interface name
         void iface(std::string const & iface); ///< Change interface
+                                               /**< \throws AddressSyntaxException if the
+                                                        given iface cannot be resolved. */
 
         using BSDSocketAddress::sockaddr_p;
         using BSDSocketAddress::socklen_p;

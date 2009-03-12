@@ -80,8 +80,8 @@ BOOST_AUTO_UNIT_TEST(udpPacket_in_ipv6_create)
     BOOST_CHECK( udp->validateChecksum() );
 
     ip.finalizeAll();
-    BOOST_CHECK_EQUAL_COLLECTIONS( data, data+sizeof(data),
-                                   ip.data().begin(), ip.data().end() );
+    BOOST_CHECK_EQUAL_COLLECTIONS( 
+            data, data+sizeof(data), ip.data().begin(), ip.data().end() );
     BOOST_CHECK( udp->validateChecksum() );
 }
 

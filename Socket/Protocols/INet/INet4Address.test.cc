@@ -28,9 +28,9 @@
 
 // Custom includes
 #include <arpa/inet.h>
-#include <boost/lexical_cast.hpp>
 #include <sstream>
 #include "INet4Address.hh"
+#include "../../../Utils/String.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -71,15 +71,24 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
     BOOST_CHECK( INet4Address::from_string("www.6bone.net") != INet4Address::None );
     BOOST_CHECK_THROW( INet4Address::from_string("invalid.host.fhg.de"), UnknownHostnameException);
 
-    std::stringstream str;
-    str >> addr;
-    BOOST_CHECK( str.fail());
-    str.clear();
-    str << addr;
-    BOOST_CHECK_EQUAL( str.str(), "128.129.130.131" );
-    str >> addr;
-    BOOST_CHECK( ! str.fail());
-    BOOST_CHECK_EQUAL(addr, INet4Address::from_string("128.129.130.131") );
+    {
+        std::stringstream str;
+        str >> addr;
+        BOOST_CHECK( str.fail());
+    }
+    {
+        std::stringstream str ("invalid.host.fhg.de");
+        str >> addr;
+        BOOST_CHECK( str.fail());
+    }
+    {
+        std::stringstream str;
+        str << addr;
+        BOOST_CHECK_EQUAL( str.str(), "128.129.130.131" );
+        str >> addr;
+        BOOST_CHECK( ! str.fail());
+        BOOST_CHECK_EQUAL(addr, INet4Address::from_string("128.129.130.131") );
+    }
 }
 
 BOOST_AUTO_UNIT_TEST(inet4Network)
@@ -101,10 +110,10 @@ BOOST_AUTO_UNIT_TEST(inet4Network)
     BOOST_CHECK( net2.match(senf::INet4Network("192.0.111.0/24")) );
     BOOST_CHECK( ! net2.match(senf::INet4Network("192.0.0.0/15")) );
 
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2), "192.0.0.0/16" );
+    BOOST_CHECK_EQUAL( senf::str(net2), "192.0.0.0/16" );
 
     BOOST_CHECK_EQUAL( net2.host(-1), senf::INet4Address::from_string("192.0.255.255") );
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2.subnet(2u,24u)), "192.0.2.0/24" );
+    BOOST_CHECK_EQUAL( senf::str(net2.subnet(2u,24u)), "192.0.2.0/24" );
 
     BOOST_CHECK_THROW( senf::INet4Network(""), senf::AddressSyntaxException );
     BOOST_CHECK_THROW( senf::INet4Network("192.0.2.0/24/beef"), senf::AddressSyntaxException );

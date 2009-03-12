@@ -27,8 +27,8 @@
 //#include "INet6Address.test.ih"
 
 // Custom includes
-#include <boost/lexical_cast.hpp>
 #include "INet6Address.hh"
+#include "../../../Utils/String.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -63,7 +63,7 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK_EQUAL( addr1[15], 0 );
         BOOST_CHECK( INet6Address::from_string("www.6bone.net") != INet6Address::None );
         INet6Address addr2;
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr2), "::" );
+        BOOST_CHECK_EQUAL( senf::str(addr2), "::" );
         addr2 = INet6Address::from_string("::1");
         BOOST_CHECK( addr1 != addr2 );
         addr1 =INet6Address::from_string("::1");
@@ -72,7 +72,7 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         addr2 = INet6Address::from_string("::");
         BOOST_CHECK_EQUAL( addr1, addr2 );
         BOOST_CHECK_THROW( INet6Address::from_string(""), AddressSyntaxException );
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr1), "::" );
+        BOOST_CHECK_EQUAL( senf::str(addr1), "::" );
         unsigned char data[] = { 0x12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x21, 0 };
         INet6Address addr3 (INet6Address::from_data(data));
         BOOST_CHECK_EQUAL( addr3, INet6Address::from_string("1200::21") );
@@ -132,11 +132,20 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
     }
 
     {
-        INet6Address addr (INet6Address::from_string("2001:dead:beef::1002:3004"));
         std::stringstream str;
+        INet6Address addr;
         str >> addr;
         BOOST_CHECK( str.fail());
-        str.clear();
+    }
+    {
+        std::stringstream str ("invalid.host.fhg.de");
+        INet6Address addr;
+        str >> addr;
+        BOOST_CHECK( str.fail());
+    }
+    {
+        std::stringstream str;
+        INet6Address addr (INet6Address::from_string("2001:dead:beef::1002:3004"));
         str << addr;
         BOOST_CHECK_EQUAL( str.str(), "2001:dead:beef::1002:3004");
         str >> addr;
@@ -160,7 +169,7 @@ BOOST_AUTO_UNIT_TEST(inet6Network)
     using senf::AddressSyntaxException;
 
     INet6Network net (INet6Address(0xFF14u,0x1234u),32u);
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net.address()), "ff14:1234::");
+    BOOST_CHECK_EQUAL( senf::str(net.address()), "ff14:1234::");
     BOOST_CHECK_EQUAL( net.prefix_len(), 32u );
     BOOST_CHECK( net );
     BOOST_CHECK( ! INet6Network() );
@@ -176,11 +185,10 @@ BOOST_AUTO_UNIT_TEST(inet6Network)
     BOOST_CHECK( net2.match(INet6Network("2001:db8:1234::/48")) );
     BOOST_CHECK( ! net2.match(INet6Network("2001:db8:1234::/32")) );
 
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2), "2001:db8:1230::/44" );
+    BOOST_CHECK_EQUAL( senf::str(net2), "2001:db8:1230::/44" );
 
     BOOST_CHECK_EQUAL( net2.host(0x1234u), INet6Address::from_string("2001:db8:1230::1234") );
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(net2.subnet(2u,48u)),
-                       "2001:db8:1232::/48" );
+    BOOST_CHECK_EQUAL( senf::str(net2.subnet(2u,48u)), "2001:db8:1232::/48" );
 
     BOOST_CHECK_THROW( INet6Network(""), AddressSyntaxException );
     BOOST_CHECK_THROW( INet6Network("2001:db8:1234::/beef"), AddressSyntaxException );

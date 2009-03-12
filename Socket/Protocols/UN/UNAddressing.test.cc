@@ -1,9 +1,9 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
-//     David Wagner <dw6@berlios.de>
+//     Thorsten Horstmann <tho@berlios.de>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,33 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNAddressing.test unit tests */
+    \brief UNAddressing unit tests */
 
 //#include "UNAddressing.test.hh"
 //#include "UNAddressing.test.ih"
 
 // Custom includes
 #include "UNAddressing.hh"
+#include "../AddressExceptions.hh"
+#include <sstream>
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 
-#include <sys/socket.h>
-#include <sys/un.h>
-
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(unSocketAddress)
+BOOST_AUTO_UNIT_TEST(UNSocketAddress)
 {
-//  TODO: muss wieder rein.     
-//    std::string testS = "/tmp/senfTestSocket";
-//    senf::UNSocketAddress addr (testS) ; 
-//    int mySock = socket(AF_UNIX, SOCK_DGRAM, 0); 
-//    if (bind(mySock, addr.sockaddr_p(), addr.socklen())) { 
-//        std::cout << "Error while binding name to unix socket" << std::endl;
-//    }
-
+    senf::UNSocketAddress addr;
+    BOOST_CHECK( ! addr);
+        
+    std::string path ("/tmp/SENF_TEST");
+    addr.path( path);
+    
+    BOOST_CHECK( addr);
+    BOOST_CHECK_EQUAL( addr.path(), path);
+    BOOST_CHECK_EQUAL( addr, senf::UNSocketAddress(path));
+    BOOST_CHECK_EQUAL( addr, senf::UNSocketAddress(addr));
+    
+    std::stringstream str;
+    str << addr;
+    BOOST_CHECK_EQUAL( str.str(), path );
+    
+    // UNSocketAddress path too long
+    BOOST_CHECK_THROW( senf::UNSocketAddress(std::string(1024, 'x')), senf::AddressSyntaxException );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

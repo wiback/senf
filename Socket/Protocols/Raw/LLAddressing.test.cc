@@ -26,7 +26,7 @@
 //#include "LLAddressing.test.ih"
 
 // Custom includes
-#include <boost/lexical_cast.hpp>
+#include "../../../Utils/String.hh"
 #include "LLAddressing.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
@@ -37,42 +37,64 @@
 
 BOOST_AUTO_UNIT_TEST(llAddress)
 {
+    using senf::LLSocketAddress;
+    
     {
-        senf::LLSocketAddress a;
+        LLSocketAddress addr;
 
-        BOOST_CHECK_EQUAL( a.protocol(), 0u );
-        BOOST_CHECK_EQUAL( a.interface(), "" );
-        BOOST_CHECK_EQUAL( a.arptype(), 0u );
-        BOOST_CHECK_EQUAL( a.pkttype(), senf::LLSocketAddress::Undefined );
-        BOOST_CHECK( ! a.address() );
+        BOOST_CHECK( ! addr );
+        BOOST_CHECK_EQUAL( addr.protocol(), 0u );
+        BOOST_CHECK_EQUAL( addr.interface(), "" );
+        BOOST_CHECK_EQUAL( addr.arptype(), 0u );
+        BOOST_CHECK_EQUAL( addr.pkttype(), LLSocketAddress::Undefined );
+        BOOST_CHECK( ! addr.address() );
 
-        a.address(senf::MACAddress::from_string("05-10-1A-2f-25-30"));
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(a.address()), "05:10:1a:2f:25:30" );
-        a.interface("lo");
-        BOOST_CHECK_EQUAL( a.interface(), "lo" );
-        a.protocol(123);
-        BOOST_CHECK_EQUAL( a.protocol(), 123u );
+        senf::MACAddress mac (senf::MACAddress::from_string("05-10-1A-2f-25-30"));
+        addr.address( mac);
+        BOOST_CHECK( addr );
+        BOOST_CHECK_EQUAL( addr, LLSocketAddress(mac));
+        BOOST_CHECK_EQUAL( addr, LLSocketAddress(addr));
+        BOOST_CHECK_EQUAL( addr.address(), mac );
+        addr.interface("lo");
+        BOOST_CHECK_EQUAL( addr.interface(), "lo" );
+        addr.protocol(123);
+        BOOST_CHECK_EQUAL( addr.protocol(), 123u );
     }
 
     {
-        senf::LLSocketAddress a (
+        LLSocketAddress addr (
             senf::MACAddress::from_string("11-12-13-14-15-16"), "lo");
 
-        BOOST_CHECK_EQUAL( a.protocol(), 0u );
-        BOOST_CHECK_EQUAL( a.interface(), "lo" );
-        BOOST_CHECK_EQUAL( a.arptype(), 0u );
-        BOOST_CHECK_EQUAL( a.pkttype(), senf::LLSocketAddress::Undefined );
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(a.address()), "11:12:13:14:15:16" );
+        BOOST_CHECK_EQUAL( addr.protocol(), 0u );
+        BOOST_CHECK_EQUAL( addr.interface(), "lo" );
+        BOOST_CHECK_EQUAL( addr.arptype(), 0u );
+        BOOST_CHECK_EQUAL( addr.pkttype(), LLSocketAddress::Undefined );
+        BOOST_CHECK_EQUAL( senf::str(addr.address()), "11:12:13:14:15:16" );
     }
 
     {
-        senf::LLSocketAddress a (123, "lo");
+        LLSocketAddress addr (123, "lo");
 
-        BOOST_CHECK_EQUAL( a.protocol(), 123u );
-        BOOST_CHECK_EQUAL( a.interface(), "lo" );
-        BOOST_CHECK_EQUAL( a.arptype(), 0u );
-        BOOST_CHECK_EQUAL( a.pkttype(), senf::LLSocketAddress::Undefined );
-        BOOST_CHECK( ! a.address() );
+        BOOST_CHECK_EQUAL( addr.protocol(), 123u );
+        BOOST_CHECK_EQUAL( addr.interface(), "lo" );
+        BOOST_CHECK_EQUAL( addr.arptype(), 0u );
+        BOOST_CHECK_EQUAL( addr.pkttype(), LLSocketAddress::Undefined );
+        BOOST_CHECK( ! addr.address() );
+    }
+    
+    {
+        BOOST_CHECK_THROW( LLSocketAddress addr("SENF_TEST_INVALID_INTERFACENAME"),
+                senf::AddressSyntaxException );
+        
+        LLSocketAddress addr ("lo");
+        
+        BOOST_CHECK_EQUAL( addr.protocol(), 0u );
+        BOOST_CHECK_EQUAL( addr.interface(), "lo" );
+        BOOST_CHECK_EQUAL( addr.arptype(), 0u );
+        BOOST_CHECK_EQUAL( addr.pkttype(), LLSocketAddress::Undefined );
+        BOOST_CHECK( ! addr.address() );
+        
+        BOOST_CHECK_EQUAL( LLSocketAddress("").interface(), "" );
     }
 }
 

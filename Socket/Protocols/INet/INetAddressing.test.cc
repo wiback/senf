@@ -27,6 +27,7 @@
 
 // Custom includes
 #include "INetAddressing.hh"
+#include "../../../Utils/String.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -42,13 +43,10 @@ BOOST_AUTO_UNIT_TEST(inet4SocketAddress)
 
     {
         INet4SocketAddress addr;
-
         BOOST_CHECK( ! addr );
-
         addr = INet4SocketAddress("127.0.0.1:12345");
         BOOST_CHECK ( addr != INet4SocketAddress("127.0.0.2:12345") );
     }
-
     {
         INet4SocketAddress addr1("127.0.0.1:12345");
         INet4SocketAddress addr3(INet4Address::Loopback,12345);
@@ -62,24 +60,31 @@ BOOST_AUTO_UNIT_TEST(inet4SocketAddress)
     BOOST_CHECK_THROW( INet4SocketAddress(":12345"), AddressSyntaxException );
     BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1:1234a"), AddressSyntaxException );
 
+    BOOST_CHECK_EQUAL( INet4SocketAddress(12345).port(), 12345 );
+    BOOST_CHECK_EQUAL( INet4SocketAddress(12345).address(), INet4Address::None );
     BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").address(), INet4Address::Loopback );
     BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").port(), 12345u );
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(INet4SocketAddress("127.0.0.1:12345")),
-                       "127.0.0.1:12345" );
+    BOOST_CHECK_EQUAL( senf::str(INet4SocketAddress("127.0.0.1:12345")), "127.0.0.1:12345" );
+
+    INet4SocketAddress addr("127.0.0.1:12345");
+    BOOST_CHECK_EQUAL( reinterpret_cast< ::sockaddr_in * >(addr.sockaddr_p())->sin_port,
+            htons(12345) );
+    BOOST_CHECK_EQUAL( reinterpret_cast< ::sockaddr_in * >(addr.sockaddr_p())->sin_addr.s_addr,
+            htonl(INADDR_LOOPBACK) );
+    BOOST_CHECK_EQUAL( addr, INet4SocketAddress(addr) );
 
     {
-        INet4SocketAddress addr("127.0.0.1:12345");
-        BOOST_CHECK_EQUAL( reinterpret_cast< ::sockaddr_in * >(addr.sockaddr_p())->sin_port,
-                           htons(12345) );
-        BOOST_CHECK_EQUAL( reinterpret_cast< ::sockaddr_in * >(addr.sockaddr_p())->sin_addr.s_addr,
-                           htonl(INADDR_LOOPBACK) );
-
-        BOOST_CHECK_EQUAL( addr, INet4SocketAddress(addr) );
-
         std::stringstream str;
         str >> addr;
         BOOST_CHECK( str.fail());
-        str.clear();
+    }
+    {
+        std::stringstream str ("foo:bar");
+        str >> addr;
+        BOOST_CHECK( str.fail());
+    }
+    {
+        std::stringstream str;
         str << addr;
         BOOST_CHECK_EQUAL( str.str(), "127.0.0.1:12345" );
         str >> addr;
@@ -97,7 +102,7 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
     {
         INet6SocketAddress addr;
         BOOST_CHECK( ! addr );
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr.address()), "::" );
+        BOOST_CHECK_EQUAL( senf::str(addr.address()), "::" );
         BOOST_CHECK_EQUAL( addr.port(), 0u );
         BOOST_CHECK_EQUAL( addr.iface(), "" );
         addr = INet6SocketAddress("[12::21]:12345");
@@ -114,15 +119,24 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
         BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("::ffff:1.2.3.4") );
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
 
-        std::stringstream str;
-        str >> addr;
-        BOOST_CHECK( str.fail());
-        str.clear();
-        str << addr;
-        BOOST_CHECK_EQUAL( str.str(), "[::ffff:1.2.3.4]:12345");
-        str >> addr;
-        BOOST_CHECK( ! str.fail());
-        BOOST_CHECK_EQUAL(addr, INet6SocketAddress("[::ffff:1.2.3.4]:12345"));
+        {
+            std::stringstream str;
+            str >> addr;
+            BOOST_CHECK( str.fail());
+        }
+        {
+            std::stringstream str ("[::1]");
+            str >> addr;
+            BOOST_CHECK( str.fail());
+        }
+        {
+            std::stringstream str;
+            str << addr;
+            BOOST_CHECK_EQUAL( str.str(), "[::ffff:1.2.3.4]:12345");
+            str >> addr;
+            BOOST_CHECK( ! str.fail());
+            BOOST_CHECK_EQUAL(addr, INet6SocketAddress("[::ffff:1.2.3.4]:12345"));
+        }
     }
 
     {
@@ -132,6 +146,8 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
     }
 
     {
+        BOOST_CHECK_THROW( INet6SocketAddress(INet6Address::Loopback, 1, "invalid_iface"), 
+                AddressSyntaxException );
         INet6SocketAddress addr (INet6Address::Loopback, 1, "lo");
         BOOST_CHECK_EQUAL( addr, INet6SocketAddress("[::1%lo]:1") );
         BOOST_CHECK_EQUAL( addr.iface(), "lo" );
@@ -145,11 +161,13 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
         BOOST_CHECK_THROW( INet6SocketAddress("[::1]"), AddressSyntaxException );
         BOOST_CHECK_THROW( INet6SocketAddress("[::1]1234"), AddressSyntaxException );
         addr = INet6SocketAddress("[12::21%lo]:12345");
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr), "[12::21%lo]:12345" );
+        BOOST_CHECK_EQUAL( senf::str(addr), "[12::21%lo]:12345" );
         BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("12::21") );
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
         BOOST_CHECK_EQUAL( addr.iface(), "lo" );
-        BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(addr), "[12::21%lo]:12345" );
+        BOOST_CHECK_EQUAL( senf::str(addr), "[12::21%lo]:12345" );
+        BOOST_CHECK_EQUAL( INet6SocketAddress(12345).port(), 12345 );
+        BOOST_CHECK_EQUAL( INet6SocketAddress(12345).address(), INet6Address::None );
     }
 }
 

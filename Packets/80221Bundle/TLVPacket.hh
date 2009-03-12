@@ -35,10 +35,11 @@
 
 namespace senf {
 
-
     struct TLVLengthException : public senf::Exception
-    { TLVLengthException() 
-          : senf::Exception("TLVLengthException"){} };
+    { 
+        TLVLengthException() 
+          : senf::Exception("TLVLengthException") {} 
+    };
 
     
     class DynamicTLVLengthParser 

@@ -136,7 +136,7 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(packet)
 {
-    senf::Packet packet (FooPacket::create());
+    senf::Packet packet (FooPacket::create());    
     BarPacket::createAfter(packet);
 
     BOOST_REQUIRE( packet );
@@ -197,7 +197,7 @@ BOOST_AUTO_UNIT_TEST(packet)
     senf::PacketData::byte data[] = { 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                       0x81, 0x82, 0x83 };
 
-    BarPacket::createAfter(packet,data);
+    BarPacket::createAfter(packet, data);
     BOOST_REQUIRE( packet.next() );
     BOOST_REQUIRE( packet.next().is<BarPacket>() );
     BOOST_CHECK( packet.last().is<FooPacket>() );
@@ -214,6 +214,10 @@ BOOST_AUTO_UNIT_TEST(packet)
     BOOST_CHECK( packet.last().rfind<FooPacket>() == packet.last() );
     BOOST_CHECK( packet.next<BarPacket>() == packet.next() );
     BOOST_CHECK( packet.last().prev().prev<FooPacket>() == packet );
+    
+    senf::DataPacket::createAfter(packet);
+    BOOST_CHECK_THROW( packet.next().next().next().parseNextAs<BarPacket>(),
+            senf::InvalidPacketChainException );
 }
 
 BOOST_AUTO_UNIT_TEST(concretePacket)

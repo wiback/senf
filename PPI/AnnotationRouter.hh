@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <boost/ptr_container/ptr_map.hpp>
+#include "../Utils/String.hh"
 #include "Module.hh"
 #include "Connectors.hh"
 
@@ -104,7 +105,7 @@ namespace module {
         struct DuplicateKeyException : public senf::Exception
         { DuplicateKeyException(AnnotationType const & key) 
               : senf::Exception("Duplicate senf::ppi::module::AnnotationRouter routing key ")
-                { append(boost::lexical_cast<std::string>(key)); } };
+                { append( senf::str(key)); } };
 
     private:
         connector::ActiveOutput<> & newOutput(AnnotationType const & key);

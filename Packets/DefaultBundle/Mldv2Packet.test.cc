@@ -25,10 +25,13 @@
 // Custom includes
 
 #include "ICMPv6Packet.hh"
+#include "ICMPv6TypePacket.hh"
 #include "../../Packets/DataPacket.hh"
+#include "../../Utils/String.hh"
+
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-#include "ICMPv6TypePacket.hh"
+
 
 BOOST_AUTO_UNIT_TEST(ICMPv6_MLDv2_Packet_packet)
 {
@@ -44,5 +47,5 @@ BOOST_AUTO_UNIT_TEST(ICMPv6_MLDv2_Packet_packet)
     senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container mcastAddrRecords (p->mcastAddrRecords());
     senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container::iterator mcAddrIt (mcastAddrRecords.begin() );
     BOOST_CHECK_EQUAL(mcAddrIt->recordType(), 0x04);
-    BOOST_CHECK_EQUAL(boost::lexical_cast<std::string>(mcAddrIt->mcAddress() ), "ff15::16");
+    BOOST_CHECK_EQUAL(senf::str(mcAddrIt->mcAddress() ), "ff15::16");
 }

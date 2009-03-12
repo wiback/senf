@@ -52,16 +52,25 @@ BOOST_AUTO_UNIT_TEST(macAddress)
     BOOST_CHECK_EQUAL( mac[4], 0xE5u );
     BOOST_CHECK_EQUAL( mac[5], 0xF6u );
 
-    std::stringstream str;
-    str >> mac;
-    BOOST_CHECK( str.fail());
-    str.clear();
-    str << mac;
-    BOOST_CHECK_EQUAL( str.str(), "a1:b2:c3:d4:e5:f6" );
-    str >> mac;
-    BOOST_CHECK( ! str.fail());
+    {
+        std::stringstream str;
+        str >> mac;
+        BOOST_CHECK( str.fail());
+    }
+    {
+        std::stringstream str ( "invalid_mac_address");
+        str >> mac;
+        BOOST_CHECK( str.fail());
+    }
+    {
+        std::stringstream str;
+        str << mac;
+        BOOST_CHECK_EQUAL( str.str(), "a1:b2:c3:d4:e5:f6" );
+        str >> mac;
+        BOOST_CHECK( ! str.fail());
+    }
+    
     BOOST_CHECK_EQUAL(mac, MACAddress::from_string(test));
-
     BOOST_CHECK( ! mac.local() );
     BOOST_CHECK( mac.multicast() );
     BOOST_CHECK( ! mac.broadcast() );
@@ -85,7 +94,11 @@ BOOST_AUTO_UNIT_TEST(macAddress)
 
     BOOST_CHECK_THROW( MACAddress::from_string("1:2:3:4:5:6"), AddressSyntaxException );
     BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05"), AddressSyntaxException );
+    // test all invalid ascii ranges
     BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05:z6"), AddressSyntaxException );
+    BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05:/6"), AddressSyntaxException );
+    BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05:@6"), AddressSyntaxException );
+    BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05:[6"), AddressSyntaxException );
 
     BOOST_CHECK_EQUAL( mac, MACAddress::from_eui64(0xa1b2c3fffed4e5f6llu) );
     BOOST_CHECK_THROW( MACAddress::from_eui64(0u), AddressSyntaxException );

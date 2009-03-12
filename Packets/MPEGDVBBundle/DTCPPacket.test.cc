@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "DTCPPacket.hh"
+#include "../../Utils/String.hh"
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -64,8 +65,8 @@ BOOST_AUTO_UNIT_TEST(dtcpPacket)
     BOOST_CHECK_EQUAL( hello->tunnelProtocol(), 23u );
     BOOST_CHECK_EQUAL( hello->fbipCount(), 2u );
     BOOST_CHECK( hello->has_v4fbipList() );
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(hello->v4fbipList()[0]), "101.102.103.104" );
-    BOOST_CHECK_EQUAL( boost::lexical_cast<std::string>(hello->v4fbipList()[1]), "201.202.203.204" );
+    BOOST_CHECK_EQUAL( senf::str(hello->v4fbipList()[0]), "101.102.103.104" );
+    BOOST_CHECK_EQUAL( senf::str(hello->v4fbipList()[1]), "201.202.203.204" );
 
     std::stringstream ss;
     hello.dump(ss);

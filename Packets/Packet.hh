@@ -269,7 +269,10 @@ namespace senf {
              OtherPacket. The new packet is added to the chain after
              \c this.
              \returns new packet instance sharing the same data and
-                 placed after \c this packet in the chain. */
+                 placed after \c this packet in the chain. 
+             \throws InvalidPacketChainException if no next
+                 packet header is allowed (viz. nextPacketRange() of the the current
+                 PacketType returns no_range() ) */
         Packet      parseNextAs(factory_t factory) const;
         ///< Interpret payload of \c this as \a factory type packet
         /**< parseNextAs() will throw away the packet chain after
@@ -278,7 +281,10 @@ namespace senf {
              factory. The new packet is added to the chain after
              \c this.
              \returns new packet instance sharing the same data and
-                 placed after \c this packet in the chain. */
+                 placed after \c this packet in the chain.
+             \throws InvalidPacketChainException if no next
+                 packet header is allowed (viz. nextPacketRange() of the the current
+                 PacketType returns no_range() ) */
 
         template <class OtherPacket> bool        is() const;
         ///< Check, whether \c this packet is of the given type
