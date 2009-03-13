@@ -45,12 +45,12 @@ all_docs all_tests all:
 test_coverage:
 	$(SCONS) debug=1 EXTRA_CCFLAGS="-fprofile-arcs -ftest-coverage" EXTRA_LIBS="gcov" all_tests
 	ln -s ../../boost/ include/senf/  # ugly work-around
-	lcov --directory . --capture --output-file test_coverage.info --base-directory .
-	rm include/senf/boost
-	lcov --output-file /tmp/test_coverage.info.tmp --extract test_coverage.info \*/senf/\*
-	lcov --output-file test_coverage.info --remove /tmp/test_coverage.info.tmp \*/senf/include/\*
-	rm /tmp/test_coverage.info.tmp
+	lcov --directory . --capture --output-file /tmp/test_coverage.info --base-directory .
+#	lcov --output-file /tmp/test_coverage.info.tmp --extract test_coverage.info \*/senf/\*
+	lcov --output-file test_coverage.info --remove /tmp/test_coverage.info \*/include/\*
 	genhtml --output-directory doc/test_coverage --title "all_tests" test_coverage.info
+	rm /tmp/test_coverage.info
+	rm include/senf/boost
 
 #----------------------------------------------------------------------
 # Subversion stuff
