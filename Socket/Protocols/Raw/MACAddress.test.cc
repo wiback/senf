@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MACAddress.test unit tests */
+    \brief MACAddress unit tests */
 
 //#include "MACAddress.test.hh"
 //#include "MACAddress.test.ih"

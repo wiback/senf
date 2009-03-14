@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IpChecksum.test unit tests */
+    \brief IpChecksum unit tests */
 
 //#include "IpChecksum.test.hh"
 //#include "IpChecksum.test.ih"

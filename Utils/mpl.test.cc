@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief mpl.test unit tests */
+    \brief mpl unit tests */
 
 //#include "mpl.test.hh"
 //#include "mpl.test.ih"

@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief RawINetSocketHandle.test unit tests */
+    \brief RawINetSocketHandle unit tests */
 
 #include <sys/types.h>
 #include <sys/ioctl.h>

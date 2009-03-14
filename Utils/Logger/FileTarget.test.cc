@@ -32,7 +32,7 @@
 #include "FileTarget.hh"
 #include "Logger.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include "../auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

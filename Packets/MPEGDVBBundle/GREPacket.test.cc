@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief GREPacket unit tests */
 
 //#include "GREPacket.test.hh"
 //#include "GREPacket.test.ih"

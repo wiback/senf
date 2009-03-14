@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ParseHelpers.test unit tests */
+    \brief ParseHelpers unit tests */
 
 //#include "ParseHelpers.test.hh"
 //#include "ParseHelpers.test.ih"

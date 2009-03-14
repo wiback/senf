@@ -20,20 +20,21 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief SocketPolicy unit tests */
 
-//#include "SocketPolicy.test.hh"
+#include "SocketPolicy.test.hh"
 //#include "SocketPolicy.test.ih"
 
 // Custom includes
-#include "SocketPolicy.hh"
-#include "SocketPolicy.test.hh"
-
-#include "../Utils/auto_unit_test.hh"
-#include <boost/test/test_tools.hpp>
 #include <boost/mpl/assert.hpp>
 #include <boost/concept_check.hpp>
 #include <boost/utility.hpp> // enable_if
+
+#include "SocketPolicy.hh"
+
+#include "../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

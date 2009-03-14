@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Parameters.test unit tests */
+    \brief Parameters unit tests */
 
 //#include "Parameters.test.hh"
 //#include "Parameters.test.ih"

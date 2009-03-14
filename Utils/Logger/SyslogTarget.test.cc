@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SyslogTarget.test unit tests */
+    \brief SyslogTarget unit tests */
 
 //#include "SyslogTarget.test.hh"
 //#include "SyslogTarget.test.ih"
@@ -29,7 +29,7 @@
 // Custom includes
 #include "Logger.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

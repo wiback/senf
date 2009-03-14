@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ListBParser.test unit tests */
+    \brief ListBParser unit tests */
 
 //#include "ListBParser.test.hh"
 //#include "ListBParser.test.ih"

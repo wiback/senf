@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DiscardSink.test unit tests */
+    \brief DiscardSink unit tests */
 
 //#include "DiscardSink.test.hh"
 //#include "DiscardSink.test.ih"

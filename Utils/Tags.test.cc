@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Tags.test unit tests */
+    \brief Tags unit tests */
 
 //#include "Tags.test.hh"
 //#include "Tags.test.ih"

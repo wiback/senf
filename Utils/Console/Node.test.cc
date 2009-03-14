@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Node.test unit tests */
+    \brief Node unit tests */
 
 //#include "Node.test.hh"
 //#include "Node.test.ih"

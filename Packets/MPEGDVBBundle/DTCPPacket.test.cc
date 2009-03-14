@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DTCPPacket.test unit tests */
+    \brief DTCPPacket unit tests */
 
 //#include "DTCPPacket.test.hh"
 //#include "DTCPPacket.test.ih"
@@ -38,15 +38,17 @@
 
 BOOST_AUTO_UNIT_TEST(dtcpPacket)
 {
-    unsigned char data[] = { 0x11,                 // versionNumber = 1, command = JOIN
-                             5,                    // interval
-                             0x0A, 0x0B,           // sequence number
-                             0x14,                 // receiveCapable = true, ipVersion = 4
-                             23,                   // tunnelProtocol
-                             2,                    // fbipCount
-                             0x00,
-                             101, 102, 103, 104,   // fbip1
-                             201, 202, 203, 204 }; // fbip2
+    unsigned char data[] = { 
+            0x11,                 // versionNumber = 1, command = JOIN
+            5,                    // interval
+            0x0A, 0x0B,           // sequence number
+            0x14,                 // receiveCapable = true, ipVersion = 4
+            23,                   // tunnelProtocol
+            2,                    // fbipCount
+            0x00,
+            101, 102, 103, 104,   // fbip1
+            201, 202, 203, 204    // fbip2
+    };
 
     senf::DTCPHelloPacket hello (senf::DTCPHelloPacket::create(
                                      boost::make_iterator_range(data, data+sizeof(data))));

@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketImpl.test unit tests */
+    \brief PacketImpl unit tests */
 
 //#include "PacketImpl.test.hh"
 //#include "PacketImpl.test.ih"

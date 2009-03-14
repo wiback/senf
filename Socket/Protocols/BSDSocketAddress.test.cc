@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief BSDSocketAddress.test unit tests */
+    \brief BSDSocketAddress unit tests */
 
 //#include "BSDSocketAddress.test.hh"
 //#include "BSDSocketAddress.test.ih"

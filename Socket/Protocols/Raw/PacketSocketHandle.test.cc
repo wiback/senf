@@ -20,16 +20,16 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief PacketSocketHandle unit tests */
 
 //#include "PacketSocketHandle.test.hh"
 //#include "PacketSocketHandle.test.ih"
 
-#include "PacketSocketHandle.hh"
-
 // Custom includes
 #include <iostream>
 #include <unistd.h>
+#include "PacketSocketHandle.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>

@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IdleEvent.test unit tests */
+    \brief IdleEvent unit tests */
 
 //#include "IdleEvent.test.hh"
 //#include "IdleEvent.test.ih"

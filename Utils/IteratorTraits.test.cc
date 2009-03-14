@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IteratorTraits.test unit tests */
+    \brief IteratorTraits unit tests */
 
 //#include "IteratorTraits.test.hh"
 //#include "IteratorTraits.test.ih"

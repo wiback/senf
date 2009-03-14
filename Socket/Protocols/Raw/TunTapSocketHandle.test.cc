@@ -20,18 +20,19 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief TunTapSocketHandle unit tests */
 
 //#include "TunTapSocketHandle.test.hh"
 //#include "TunTapSocketHandle.test.ih"
-
-#include "TunTapSocketHandle.hh"
-#include "PacketSocketHandle.hh"
 
 // Custom includes
 #include <iostream>
 #include <unistd.h>
 #include <stdlib.h>
+
+#include "TunTapSocketHandle.hh"
+#include "PacketSocketHandle.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>

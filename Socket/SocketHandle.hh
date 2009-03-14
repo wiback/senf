@@ -27,15 +27,15 @@
 #ifndef HH_SENF_Socket_SocketHandle_
 #define HH_SENF_Socket_SocketHandle_ 1
 
+//#include "SocketHandle.mpp"
+#include "SocketHandle.ih"
+
 // Custom includes
 #include <memory> // std::auto_ptr
 #include "FileHandle.hh"
 #include "SocketPolicy.hh"
 
-//#include "SocketHandle.mpp"
-#include "SocketHandle.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
-#include "SocketHandle.ih"
 
 namespace senf {
 

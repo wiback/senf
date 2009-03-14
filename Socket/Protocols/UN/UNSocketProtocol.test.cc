@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief UNSocketProtocol.test unit tests */
+    \brief UNSocketProtocol unit tests */
 
 //#include "UNSocketProtocol.test.hh"
 //#include "UNSocketProtocol.test.ih"

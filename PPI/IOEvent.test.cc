@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IOEvent.test unit tests */
+    \brief IOEvent unit tests */
 
 //#include "IOEvent.test.hh"
 //#include "IOEvent.test.ih"

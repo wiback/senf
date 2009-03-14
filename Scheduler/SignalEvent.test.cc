@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SignalEvent.test unit tests */
+    \brief SignalEvent unit tests */
 
 //#include "SignalEvent.test.hh"
 //#include "SignalEvent.test.ih"
@@ -42,7 +42,6 @@ namespace {
     {
         called = true;
     }
-
 }
 
 BOOST_AUTO_UNIT_TEST(signalDispatcher)

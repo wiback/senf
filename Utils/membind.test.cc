@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief membind unit tests */
 
 //#include "membind.test.hh"
 //#include "membind.test.ih"
@@ -28,7 +29,7 @@
 // Custom includes
 #include <sstream>
 #include <string>
-#include "../Utils/membind.hh"
+#include "membind.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>

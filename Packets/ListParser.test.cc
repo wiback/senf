@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ListParser.test unit tests */
+    \brief ListParser unit tests */
 
 //#include "ListParser.test.hh"
 //#include "ListParser.test.ih"

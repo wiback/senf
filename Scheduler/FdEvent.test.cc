@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief FdEvent.test unit tests */
+    \brief FdEvent unit tests */
 
 //#include "FdEvent.test.hh"
 //#include "FdEvent.test.ih"

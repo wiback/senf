@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief INetAddressing unit tests */
 
 //#include "INetAddressing.test.hh"
 //#include "INetAddressing.test.ih"

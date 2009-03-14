@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief pool_alloc_mixin.test unit tests */
+    \brief pool_alloc_mixin unit tests */
 
 //#include "pool_alloc_mixin.test.hh"
 //#include "pool_alloc_mixin.test.ih"

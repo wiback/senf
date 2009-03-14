@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Poller.test unit tests */
+    \brief Poller unit tests */
 
 //#include "Poller.test.hh"
 //#include "Poller.test.ih"

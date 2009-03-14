@@ -26,15 +26,15 @@
 //#include "MIHPacket.test.hh"
 //#include "MIHPacket.test.ih"
 
+// Custom includes
+#include "MIHPacket.hh"
+
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 
-#include "MIHPacket.hh"
-
-using namespace senf;
-
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+using namespace senf;
 
 BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
 {

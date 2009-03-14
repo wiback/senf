@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Parse.test unit tests */
+    \brief Parse unit tests */
 
 //#include "Parse.test.hh"
 //#include "Parse.test.ih"

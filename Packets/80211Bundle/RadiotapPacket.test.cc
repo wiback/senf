@@ -20,15 +20,17 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
+/** \file
+    \brief RadiotapPacket unit tests */
 
 // Custom includes
+#include "RadiotapPacket.hh"
 #include "../../Packets/Packets.hh"
+
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-#include "RadiotapPacket.hh"
 
-
+///////////////////////////////cc.p////////////////////////////////////////
 BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet)
 {
     /* used madwifi 0.9.4 */

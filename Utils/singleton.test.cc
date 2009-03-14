@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief singleton.test unit tests */
+    \brief singleton unit tests */
 
 //#include "singleton.test.hh"
 //#include "singleton.test.ih"

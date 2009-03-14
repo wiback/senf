@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DebugEvent.test unit tests */
+    \brief DebugEvent unit tests */
 
 //#include "DebugEvent.test.hh"
 //#include "DebugEvent.test.ih"

@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ScopedDirectory.test unit tests */
+    \brief ScopedDirectory unit tests */
 
 //#include "ScopedDirectory.test.hh"
 //#include "ScopedDirectory.test.ih"

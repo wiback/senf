@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Duplicators.test unit tests */
+    \brief Duplicators unit tests */
 
 //#include "Duplicators.test.hh"
 //#include "Duplicators.test.ih"

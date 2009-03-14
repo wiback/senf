@@ -20,7 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief TCPSocketHandle unit tests */
 
 //#include "TCPSocketHandle.test.hh"
 //#include "TCPSocketHandle.test.ih"
@@ -32,8 +33,8 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "TCPSocketHandle.hh"
 #include <iostream>
+#include "TCPSocketHandle.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>

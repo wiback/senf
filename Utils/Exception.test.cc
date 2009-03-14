@@ -21,18 +21,18 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Exception.test unit tests */
+    \brief Exception unit tests */
 
 //#include "Exception.test.hh"
 //#include "Exception.test.ih"
 
 // Custom includes
 #include "Exception.hh"
+#include <boost/format.hpp>
+#include <errno.h>
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-#include <boost/format.hpp>
-#include <errno.h>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

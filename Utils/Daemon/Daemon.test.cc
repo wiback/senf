@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Daemon.test unit tests */
+    \brief Daemon unit tests */
 
 //#include "Daemon.test.hh"
 //#include "Daemon.test.ih"
@@ -34,11 +34,11 @@
 #include <fstream>
 #include <boost/filesystem/operations.hpp>
 #include "Daemon.hh"
-#include "../Utils/Exception.hh"
-#include "../Utils/Backtrace.hh"
-#include "../Scheduler/Scheduler.hh"
+#include "../Exception.hh"
+#include "../Backtrace.hh"
+#include "../../Scheduler/Scheduler.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include "../auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

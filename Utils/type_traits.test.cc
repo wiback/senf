@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief type_traits.test unit tests */
+    \brief type_traits unit tests */
 
 //#include "type_traits.test.hh"
 //#include "type_traits.test.ih"

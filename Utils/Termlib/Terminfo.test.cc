@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Terminfo.test unit tests */
+    \brief Terminfo unit tests */
 
 //#include "Terminfo.test.hh"
 //#include "Terminfo.test.ih"

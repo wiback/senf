@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IPv6Extensions.test unit tests */
+    \brief IPv6Extensions unit tests */
 
 //#include "IPv6Extensions.test.hh"
 //#include "IPv6Extensions.test.ih"
@@ -30,7 +30,6 @@
 #include "IPv6Extensions.hh"
 #include "IPv6Packet.hh"
 #include "UDPPacket.hh"
-#include "../../Socket/Protocols/INet/INetAddressing.hh"
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>

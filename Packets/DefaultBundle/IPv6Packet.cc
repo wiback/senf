@@ -30,7 +30,6 @@
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
 #include "EthernetPacket.hh"
-#include "../../Socket/Protocols/INet/INetAddressing.hh"
 
 //#include "IPv6Packet.mpp"
 #define prefix_

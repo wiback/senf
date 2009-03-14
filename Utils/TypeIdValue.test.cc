@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TypeIdValue.test unit tests */
+    \brief TypeIdValue unit tests */
 
 //#include "TypeIdValue.test.hh"
 //#include "TypeIdValue.test.ih"

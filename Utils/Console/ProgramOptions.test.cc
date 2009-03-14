@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ProgramOptions.test unit tests */
+    \brief ProgramOptions unit tests */
 
 //#include "ProgramOptions.test.hh"
 //#include "ProgramOptions.test.ih"

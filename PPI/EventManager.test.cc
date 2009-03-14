@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief EventManager.test unit tests */
+    \brief EventManager unit tests */
 
 //#include "EventManager.test.hh"
 //#include "EventManager.test.ih"

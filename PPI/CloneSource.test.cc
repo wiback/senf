@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief CloneSource.test unit tests */
+    \brief CloneSource unit tests */
 
 //#include "CloneSource.test.hh"
 //#include "CloneSource.test.ih"

@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief INet6Address.test unit tests */
+    \brief INet6Address unit tests */
 
 //#include "INet6Address.test.hh"
 //#include "INet6Address.test.ih"

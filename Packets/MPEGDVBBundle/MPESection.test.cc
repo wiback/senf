@@ -20,18 +20,19 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief MPESection unit tests */
 
 //#include "MPESection.test.hh"
 //#include "MPESection.test.ih"
 
 // Custom includes
 #include "MPESection.hh"
-
-#include "../../Utils/auto_unit_test.hh"
 #include "../../Packets/DefaultBundle/LlcSnapPacket.hh"
 #include "../../Packets/DefaultBundle/EthernetPacket.hh"
 #include "../../Packets/DefaultBundle/IPv4Packet.hh"
+
+#include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

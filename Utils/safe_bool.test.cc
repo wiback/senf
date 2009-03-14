@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief safe_bool.test unit tests */
+    \brief safe_bool unit tests */
 
 //#include "safe_bool.test.hh"
 //#include "safe_bool.test.ih"

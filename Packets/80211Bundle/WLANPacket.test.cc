@@ -21,15 +21,16 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief WLANPacket.test unit tests */
+    \brief WLANPacket unit tests */
 
 // Custom includes
-
+#include "WLANPacket.hh"
 #include "../../Packets/Packets.hh"
+
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-#include "WLANPacket.hh"
 
+///////////////////////////////cc.p////////////////////////////////////////
 /* test parser with a data frame */
 BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
 {

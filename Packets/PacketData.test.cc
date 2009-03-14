@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketData.test unit tests */
+    \brief PacketData unit tests */
 
 //#include "PacketData.test.hh"
 //#include "PacketData.test.ih"

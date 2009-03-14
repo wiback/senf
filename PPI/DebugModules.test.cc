@@ -21,11 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DebubgModules.test unit tests */
+    \brief DebubgModules unit tests */
 
 //#include "DebubgModules.test.hh"
 //#include "DebubgModules.test.ih"
-
 
 // Custom includes
 #include <algorithm>

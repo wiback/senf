@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MonitorModule.test unit tests */
+    \brief MonitorModule unit tests */
 
 //#include "MonitorModule.test.hh"
 //#include "MonitorModule.test.ih"

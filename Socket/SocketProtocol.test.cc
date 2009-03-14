@@ -20,15 +20,15 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief SocketProtocol unit tests */
 
-//#include "SocketProtocol.test.hh"
+#include "SocketProtocol.test.hh"
 //#include "SocketProtocol.test.ih"
 
 // Custom includes
 #include "SocketProtocol.hh"
 #include "SocketPolicy.hh"
-#include "SocketProtocol.test.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>

@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Buffer.test unit tests */
+    \brief Buffer unit tests */
 
 //#include "Buffer.test.hh"
 //#include "Buffer.test.ih"

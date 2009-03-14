@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief String.test unit tests */
+    \brief String unit tests */
 
 //#include "String.test.hh"
 //#include "String.test.ih"

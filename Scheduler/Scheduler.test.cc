@@ -20,10 +20,11 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Unit tests
+/** \file
+    \brief Scheduler unit tests */
 
-//#include "scheduler.test.hh"
-//#include "scheduler.test.ih"
+//#include "Scheduler.test.hh"
+//#include "Scheduler.test.ih"
 
 // Custom includes
 #include <sys/types.h>
