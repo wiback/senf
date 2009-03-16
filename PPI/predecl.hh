@@ -90,6 +90,8 @@ namespace ppi {
         template <class PacketType=Packet> class ActiveInput;
         template <class PacketType=Packet> class ActiveOutput;
 
+        class Jack;
+
 #ifndef DOXYGEN
 
         namespace detail {

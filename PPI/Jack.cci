@@ -1,0 +1,126 @@
+// $Id$
+//
+// Copyright (C) 2009 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Jack inline non-template implementation */
+
+//#include "Jack.ih"
+
+// Custom includes
+#include "Setup.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ senf::ppi::connector::GenericActiveInputJack::
+GenericActiveInputJack(GenericActiveInput & input)
+    : input_ (input)
+{}
+
+prefix_ senf::ppi::connector::GenericActiveInput &
+senf::ppi::connector::GenericActiveInputJack::connector()
+{
+    return input_;
+}
+
+prefix_ senf::ppi::connector::GenericActiveOutputJack::
+GenericActiveOutputJack(GenericActiveOutput & output)
+    : output_ (output)
+{}
+
+prefix_ senf::ppi::connector::GenericActiveOutput &
+senf::ppi::connector::GenericActiveOutputJack::connector()
+{
+    return output_;
+}
+
+prefix_ senf::ppi::connector::GenericPassiveInputJack::
+GenericPassiveInputJack(GenericPassiveInput & input)
+    : input_ (input)
+{}
+
+prefix_ senf::ppi::connector::GenericPassiveInput &
+senf::ppi::connector::GenericPassiveInputJack::connector()
+{
+    return input_;
+}
+
+prefix_ senf::ppi::connector::GenericPassiveOutputJack::
+GenericPassiveOutputJack(GenericPassiveOutput & output)
+    : output_ (output)
+{}
+
+prefix_ senf::ppi::connector::GenericPassiveOutput &
+senf::ppi::connector::GenericPassiveOutputJack::connector()
+{
+    return output_;
+}
+
+prefix_ void senf::ppi::connect(connector::GenericActiveOutputJack & source,
+                                connector::GenericPassiveInputJack & target)
+{
+    connect(source.connector(), target.connector());
+}
+
+prefix_ void senf::ppi::connect(connector::GenericPassiveOutputJack & source,
+                                connector::GenericActiveInputJack & target)
+{
+    connect(source.connector(), target.connector());
+}
+
+prefix_ void senf::ppi::connect(connector::GenericActiveOutputJack & source,
+                                connector::GenericPassiveInput & target)
+{
+    connect(source.connector(), target);
+}
+
+prefix_ void senf::ppi::connect(connector::GenericPassiveOutputJack & source,
+                                connector::GenericActiveInput & target)
+{
+    connect(source.connector(), target);
+}
+
+prefix_ void senf::ppi::connect(connector::GenericActiveOutput & source,
+                                connector::GenericPassiveInputJack & target)
+{
+    connect(source, target.connector());
+}
+
+prefix_ void senf::ppi::connect(connector::GenericPassiveOutput & source,
+                                connector::GenericActiveInputJack & target)
+{
+    connect(source, target.connector());
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

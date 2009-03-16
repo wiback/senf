@@ -76,17 +76,21 @@ namespace ppi {
     template <class T, class C>
     void connect(T & source, C & target,
                  typename boost::disable_if< boost::is_base_of<connector::Connector, T> >::type * = 0,
-                 typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0);
+                 typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0,
+                 typename boost::disable_if< boost::is_base_of<connector::Jack, T> >:: type * = 0);
 
     template <class C, class T>
     void connect(C & source, T & target,
                  typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0,
-                 typename boost::disable_if< boost::is_base_of<connector::Connector,T> >::type * = 0);
+                 typename boost::disable_if< boost::is_base_of<connector::Connector,T> >::type * = 0,
+                 typename boost::disable_if< boost::is_base_of<connector::Jack, T> >:: type * = 0);
 
     template <class T1, class T2>
     void connect(T1 & source, T2 & target,
                  typename boost::disable_if< boost::is_base_of<connector::Connector, T1> >::type * = 0,
-                 typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type * = 0);
+                 typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type * = 0,
+                 typename boost::disable_if< boost::is_base_of<connector::Jack, T1> >:: type * = 0,
+                 typename boost::disable_if< boost::is_base_of<connector::Jack, T2> >:: type * = 0);
 
 #endif
     
