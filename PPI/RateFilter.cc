@@ -19,26 +19,34 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief ppitest non-inline non-template implementation */
+    \brief RateFilter non-inline non-template implementation */
 
 #include "RateFilter.hh"
+//#include "RateFilter.ih"
 
+// Custom includes
+
+//#include "RateFilter.mpp"
 #define prefix_
-// ////////////////////////////////////////////////////////////////////////
-// RateFilter
-
+///////////////////////////////cc.p////////////////////////////////////////
 
 senf::ppi::module::RateFilter::RateFilter(senf::ClockService::clock_type interval)
-    : timer(interval) 
+    : timer_(interval) 
 {
-    route(input,timer);
-    route(timer,output);
-    registerEvent(timer, &RateFilter::timeout);
+    route(input, timer_);
+    route(timer_, output);
+    registerEvent(timer_, &RateFilter::timeout);
 }
 
 void senf::ppi::module::RateFilter::timeout()
 {
     output(input());
+}
+
+senf::ClockService::clock_type senf::ppi::module::RateFilter::interval()
+    const
+{
+    return timer_.interval().first;
 }
 
 
@@ -48,3 +56,18 @@ void senf::ppi::module::RateFilter::changeInterval(senf::ClockService::clock_typ
     //timer = ppi::IntervalTimer(interval);
 }
 */
+
+///////////////////////////////cc.e////////////////////////////////////////
+#undef prefix_
+//#include "RateFilter.mpp"
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

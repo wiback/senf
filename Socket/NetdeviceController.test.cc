@@ -41,6 +41,11 @@ BOOST_AUTO_UNIT_TEST(NetdeviceController) {
     senf::NetdeviceController ctrl ("lo");
     BOOST_CHECK_EQUAL( ctrl.interfaceName(), "lo");
 
+    int index = ctrl.interfaceIndex();
+    BOOST_CHECK_EQUAL( index, senf::NetdeviceController(index).interfaceIndex() );
+    
+    BOOST_CHECK_THROW( senf::NetdeviceController("invalid_interfacename"), senf::SystemException );
+    
     int oldMTU;
     SENF_CHECK_NO_THROW( oldMTU = ctrl.mtu());
 
@@ -53,6 +58,7 @@ BOOST_AUTO_UNIT_TEST(NetdeviceController) {
     BOOST_CHECK_EQUAL( ctrl.mtu(), oldMTU-16);
     SENF_CHECK_NO_THROW( ctrl.mtu(oldMTU));
     BOOST_CHECK_EQUAL( ctrl.mtu(), oldMTU);
+    
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

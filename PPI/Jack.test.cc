@@ -21,7 +21,7 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Jack.test unit tests */
+    \brief Jack unit tests */
 
 //#include "Jack.test.hh"
 //#include "Jack.test.ih"
