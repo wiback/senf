@@ -41,12 +41,14 @@
 
 prefix_ void senf::ppi::IOEvent::v_enable()
 {
-    event_.enable();
+    if (fd_ != -1)
+        event_.enable();
 }
 
 prefix_ void senf::ppi::IOEvent::v_disable()
 {
-    event_.disable();
+    if (fd_ != -1)
+        event_.disable();
 }
 
 prefix_ void senf::ppi::IOEvent::cb(int event)

@@ -88,11 +88,16 @@ namespace ppi {
         ///\name Structors and default members
         ///@{
 
+        IOEvent();
+
         template <class Handle>
         IOEvent(Handle handle, unsigned events);
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
+
+        template <class Handle>
+        void set(Handle handle, unsigned events);
 
         /** \brief Unhandled error condition */
         struct ErrorException : public senf::Exception

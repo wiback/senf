@@ -97,6 +97,9 @@ namespace connector {
     public:
         explicit ActiveInputJack(ActiveInput<PacketType> & input);
         explicit ActiveInputJack(ActiveInput<> & input);
+        
+        explicit ActiveInputJack(ActiveInputJack & input);
+        explicit ActiveInputJack(ActiveInputJack<> & input);
     };
 
 #ifndef DOXYGEN
@@ -107,6 +110,7 @@ namespace connector {
     {
     public:
         explicit ActiveInputJack(ActiveInput<> & input);
+        explicit ActiveInputJack(ActiveInputJack & input);
     };
 
 #endif
@@ -118,6 +122,9 @@ namespace connector {
     public:
         explicit ActiveOutputJack(ActiveOutput<PacketType> & output);
         explicit ActiveOutputJack(ActiveOutput<> & output);
+
+        explicit ActiveOutputJack(ActiveOutputJack & output);
+        explicit ActiveOutputJack(ActiveOutputJack<> & output);
     };
 
 #ifndef DOXYGEN
@@ -128,6 +135,7 @@ namespace connector {
     {
     public:
         explicit ActiveOutputJack(ActiveOutput<> & output);
+        explicit ActiveOutputJack(ActiveOutputJack & output);
     };
 
 #endif
@@ -139,6 +147,9 @@ namespace connector {
     public:
         explicit PassiveInputJack(PassiveInput<PacketType> & input);
         explicit PassiveInputJack(PassiveInput<> & input);
+
+        explicit PassiveInputJack(PassiveInputJack & input);
+        explicit PassiveInputJack(PassiveInputJack<> & input);
     };
 
 #ifndef DOXYGEN
@@ -149,6 +160,7 @@ namespace connector {
     {
     public:
         explicit PassiveInputJack(PassiveInput<> & input);
+        explicit PassiveInputJack(PassiveInputJack & input);
     };
 
 #endif
@@ -160,6 +172,9 @@ namespace connector {
     public:
         explicit PassiveOutputJack(PassiveOutput<PacketType> & output);
         explicit PassiveOutputJack(PassiveOutput<> & output);
+
+        explicit PassiveOutputJack(PassiveOutputJack & output);
+        explicit PassiveOutputJack(PassiveOutputJack<> & output);
     };
 
 #ifndef DOXYGEN
@@ -170,6 +185,7 @@ namespace connector {
     {
     public:
         explicit PassiveOutputJack(PassiveOutput<> & output);
+        explicit PassiveOutputJack(PassiveOutputJack & output);
     };
 
 #endif

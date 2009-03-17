@@ -45,9 +45,18 @@ prefix_ Packet senf::ppi::DgramReader<Packet>::operator()(Handle handle)
 // senf::ppi::module::ActiveSocketSource<Reader>
 
 template <class Reader>
+prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource()
+{}
+
+template <class Reader>
+prefix_ senf::ppi::module::ActiveSocketSource<Reader>::ActiveSocketSource(Reader reader)
+    : reader_(reader)
+{}
+
+template <class Reader>
 prefix_ senf::ppi::module::ActiveSocketSource<Reader>::
 ActiveSocketSource(Handle handle)
-    : handle_(handle), event_(handle_, IOEvent::Read), reader_()
+    : handle_(handle), event_(handle_, IOEvent::Read)
 {
     registerEvent( event_, &ActiveSocketSource::read );
     route(event_, output);

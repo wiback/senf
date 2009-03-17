@@ -39,6 +39,20 @@ prefix_ Reader & senf::ppi::module::ActiveSocketSource<Reader>::reader()
     return reader_;
 }
 
+template <class Reader>
+prefix_ typename senf::ppi::module::ActiveSocketSource<Reader>::Handle
+senf::ppi::module::ActiveSocketSource<Reader>::handle()
+{
+    return handle_;
+}
+
+template <class Reader>
+prefix_ void senf::ppi::module::ActiveSocketSource<Reader>::handle(Handle handle)
+{
+    handle_ = handle;
+    event_.set(handle_, IOEvent::Read);
+}
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

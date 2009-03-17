@@ -116,7 +116,13 @@ namespace module {
         connector::ActiveOutput<typename Reader::PacketType> output; 
                                         ///< Output connector to which the data received is written
         
-        ActiveSocketSource(Handle handle); ///< Create new reader for the given handle
+        ActiveSocketSource();           ///< Create non-connected reader
+                                        /**< The reader will be disabled until a socket is set
+                                             \pre Requires \a Reader to be default constructible */
+        explicit ActiveSocketSource(Reader reader); ///< Create non-connected reader
+                                        /**< The reader will be disabled until a socket is set
+                                             \pre Requires \a Reader to be copy constructible */
+        explicit ActiveSocketSource(Handle handle); ///< Create new reader for the given handle
                                         /**< Data will be read from \a handle and be parsed by \a
                                              Reader.
                                              \pre Requires \a Reader to be default constructible
@@ -129,6 +135,10 @@ namespace module {
                                              \param[in] handle Handle to read data from */
 
         Reader & reader();              ///< Access Reader helper
+        Handle handle();                ///< Access handle
+        void handle(Handle handle);     ///< Set handle
+                                        /**< Assigning an empty or in-valid() handle will disable
+                                             the module until a new, valid handle is assigned. */
         
     private:
         void read();

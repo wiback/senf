@@ -183,11 +183,6 @@ if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
 
 env.Clean('all', '.prepare-stamp')
 
-# Not nice, but until we get to fixing the dependency jungle
-# concerning generated sources ...
-scripts = []
-dependencies = []
-
 SConscript(glob.glob("*/SConscript"))
 
 SENFSCons.StandardTargets(env)
