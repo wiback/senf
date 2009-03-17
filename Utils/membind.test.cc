@@ -44,7 +44,7 @@ namespace {
             return "meth1()";
         }
 
-        std::string meth2(int foo, int bar) {
+        std::string meth2(int foo, int bar) const {
             std::stringstream s;
             s << "meth2(" << foo << "," << bar << ")";
             return s.str();

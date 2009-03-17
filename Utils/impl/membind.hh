@@ -34,6 +34,12 @@ boost::function<R()> membind(R (T::* fn)(),scOBTYPE ob)
     return boost::bind(fn,ob);
 }
 
+template <typename R, typename T>
+boost::function<R()> membind(R (T::* fn)() const,scOBTYPE ob)
+{
+    return boost::bind(fn,ob);
+}
+
 // for BOOST_PP_ITERATION() in 2..9 do
 #define BOOST_PP_ITERATION_PARAMS_1 (4, (2, 9, SENF_ABSOLUTE_INCLUDE_PATH(Utils/impl/membind.hh), 1))
 #include BOOST_PP_ITERATE()
@@ -46,6 +52,13 @@ boost::function<R()> membind(R (T::* fn)(),scOBTYPE ob)
 template < typename R, typename T, scPARAMS(typename A) >
 boost::function<R ( scPARAMS(A) )>
 membind(R (T::* fn)( scPARAMS(A) ), scOBTYPE ob)
+{
+    return boost::bind(fn, ob, scPARAMS(_) );
+}
+
+template < typename R, typename T, scPARAMS(typename A) >
+boost::function<R ( scPARAMS(A) )>
+membind(R (T::* fn)( scPARAMS(A) ) const, scOBTYPE ob)
 {
     return boost::bind(fn, ob, scPARAMS(_) );
 }

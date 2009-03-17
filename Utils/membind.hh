@@ -25,8 +25,8 @@
 
 /** \defgroup membind Bound Member Functions
 
-    The membind() family of function templates simplifies the creation
-    of simple bound member function pointers:
+    The membind() family of function templates simplifies the creation of simple bound member
+    function pointers:
 
     \code
       struct Foo {
@@ -38,12 +38,13 @@
       int rv = f(1); // Calls foo->test(1)
     \endcode
 
-    \idea Make the \a ob argument type an additional P template
-    parameter (using call_traits for the exact arg type? Probably
-    we'll get deduction problems then) . The only operation this
-    object must support is ob->*fn. This would allow the use of
-    smart pointers. We should keep the T & version to still support
-    ob.*fn use.
+    senf::membind() takes either a pointer or an object as second argument. When passing an object,
+    <em>that object will be copied into the bound member function returned.</em>
+
+    \idea Make the \a ob argument type an additional P template parameter (using call_traits for the
+    exact arg type? Probably we'll get deduction problems then) . The only operation this object
+    must support is ob->*fn. This would allow the use of smart pointers. We should keep the T &
+    version to still support ob.*fn use.
  */
 
 #ifndef HH_SENF_Utils_membind_
