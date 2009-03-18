@@ -39,6 +39,20 @@ prefix_ Writer & senf::ppi::module::ActiveSocketSink<Writer>::writer()
     return writer_;
 }
 
+template <class Writer>
+prefix_ typename senf::ppi::module::ActiveSocketSink<Writer>::Handle
+senf::ppi::module::ActiveSocketSink<Writer>::handle()
+{
+    return handle_;
+}
+
+template <class Writer>
+prefix_ void senf::ppi::module::ActiveSocketSink<Writer>::handle(Handle handle)
+{
+    handle_ = handle;
+    event_.set(handle_, IOEvent::Write);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::PassiveSocketSink<Writer>
 
@@ -55,10 +69,20 @@ prefix_ typename Writer::Handle & senf::ppi::module::PassiveSocketSink<Writer>::
 }
 
 template <class Writer>
-prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::replaceHandle(Handle handle)
+prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::handle(Handle handle)
 {
     handle_ = handle;
+    checkThrottle();
 }
+
+#ifndef DOXYGEN
+template <class Writer>
+prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::replaceHandle(Handle newHandle)
+{
+    handle(newHandle);
+}
+#endif
+
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 

@@ -123,7 +123,7 @@ namespace ppi {
 }}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "IOEvent.cci"
+#include "IOEvent.cci"
 //#include "IOEvent.ct"
 #include "IOEvent.cti"
 #endif

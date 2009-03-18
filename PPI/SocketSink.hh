@@ -166,7 +166,16 @@ namespace module {
 
         connector::ActiveInput<> input; ///< Input connector from which data is received
 
-        ActiveSocketSink(Handle handle); ///< Create new writer for the given handle
+        ActiveSocketSink();             ///< Create non-connected writer
+                                        /**< The writer will be disabled until a socket is set
+                                             \pre Requires \a Writer to be default constructible */
+        explicit ActiveSocketSink(Writer const & writer);
+                                        ///< Create non-connected writer
+                                        /**< The writer will be disabled until a socket is set
+                                             \pre Requires \a Writer to be copy constructible
+                                             \param[in] writer Writer helper writing packet date to
+                                                 the socket */
+        explicit ActiveSocketSink(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be default constructible
                                              \param[in] handle Handle to write data to */
@@ -175,10 +184,15 @@ namespace module {
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be copy constructible
                                              \param[in] handle Handle to write data to
-                                             \param[in] writer Writer helper writing packet date to the
-                                                 socket */
+                                             \param[in] writer Writer helper writing packet date to
+                                                 the socket */
 
-        Writer & writer();                  ///< Access the Writer
+        Writer & writer();              ///< Access the Writer
+        Handle handle();                ///< Access handle
+        void handle(Handle handle);     ///< Set handle
+                                        /**< Assigning an empty or in-valid() handle will disable
+                                             the module until a new. valid handle is assigned. */
+
     private:
         void write();
 
@@ -227,7 +241,16 @@ namespace module {
 
         connector::PassiveInput<> input; ///< Input connector from which data is received
 
-        PassiveSocketSink(Handle handle); ///< Create new writer for the given handle
+        PassiveSocketSink();            ///< Create non-connected writer
+                                        /**< The writer will be disabled until a socket is set
+                                             \pre Requires \a Writer to be default constructible */
+        explicit PassiveSocketSink(Writer const & writer);
+                                        ///< Create non-connected writer
+                                        /**< The writer will be disabled until a socket is set
+                                             \pre Requires \a Writer to be copy constructible
+                                             \param[in] writer Writer helper writing packet date to
+                                                 the socket */
+        explicit PassiveSocketSink(Handle handle); ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be default constructible
                                              \param[in] handle Handle to write data to */
@@ -235,22 +258,23 @@ namespace module {
                                         ///< Create new writer for the given handle
                                         /**< Data will be written to \a handle using \a Writer.
                                              \pre Requires \a Writer to be copy constructible
-                                             \param[in] handle Handle to write data to */
+                                             \param[in] handle Handle to write data to
+                                             \param[in] writer Writer helper writing packet date to
+                                                 the socket */
 
-        Writer & writer();      ///< Access the Writer
-        Handle & handle();      /**< Access the handle. This is intendet to be mainly used to reconnect
-                                     the underlying socket. */
-       /* void reconnect(senf::SocketAddress newAddress);
-        ///< Reconnect the handle to which the packets are written
-       */
+        Writer & writer();              ///< Access the Writer
+        Handle & handle();              ///< Access handle
+        void handle(Handle handle);     ///< Set handle
+                                        /**< Assigning an empty or in-valid() handle will disable
+                                             the module until a new. valid handle is assigned. */
+
+#ifndef DOXYGEN
         void replaceHandle(Handle newHandle);
-                                        /**< Replace the handle to which the packets are written
-                                         * Normally you should access the handle and call connect with
-                                         * the new address. This also works for other
-                                         * (active) ConnectedSocketSinks/Sources */
+#endif
 
     private:
         void write();
+        void checkThrottle();
 
         Handle handle_;
         Writer writer_;
