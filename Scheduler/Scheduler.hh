@@ -233,7 +233,10 @@ namespace scheduler {
         \li a callback calls terminate()
         \li the run queue becomes empty. 
      */    
-    void process();                     
+    void process();
+
+    /** \brief \c true, if scheduler is running, \c false otherwise */
+    bool running();
 
     /** \brief Called by callbacks to terminate the main loop
 
@@ -248,6 +251,15 @@ namespace scheduler {
         event is delivered \e not the time it should have been delivered (in the case of timers). 
      */
     ClockService::clock_type eventTime(); 
+
+    /** \brief Return (approximate) current time
+
+        This call will return the current time as far as it is already known to the scheduler. If
+        the scheduler is running, this will return eventTime(), otherwise it will return
+        ClockService::now(). While the scheduler is running, this will reduce the number of system
+        calls.
+     */
+    ClockService::clock_type now();
 
     /** \brief Set watchdog timeout to \a ms milliseconds.
         

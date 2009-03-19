@@ -70,7 +70,7 @@ namespace detail {
                                         /**< This call waits until at least one event is posted but
                                              no longer than the current timeout(). */
         ClockService::clock_type eventTime() const; ///< Time of last event
-
+        
     protected:
 
     private:

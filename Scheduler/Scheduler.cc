@@ -41,11 +41,22 @@
 
 namespace {
     bool terminate_ (false);
+    bool running_ (false);
 }
 
 prefix_ void senf::scheduler::terminate()
 {
     terminate_ = true;
+}
+
+prefix_ bool senf::scheduler::running()
+{
+    return running_;
+}
+
+prefix_ senf::ClockService::clock_type senf::scheduler::now()
+{
+    return running() ? eventTime() : ClockService::now();
 }
 
 namespace {
@@ -59,6 +70,7 @@ namespace {
                 senf::scheduler::detail::FIFORunner::instance().startWatchdog();
                 senf::scheduler::detail::SignalDispatcher::instance().unblockSignals();
                 senf::scheduler::detail::TimerDispatcher::instance().enable();
+                running_ = true;
             }
 
         ~SchedulerScopedInit()
@@ -66,6 +78,7 @@ namespace {
                 senf::scheduler::detail::TimerDispatcher::instance().disable();
                 senf::scheduler::detail::SignalDispatcher::instance().blockSignals();
                 senf::scheduler::detail::FIFORunner::instance().stopWatchdog();
+                running_ = false;
             }
     };
 }
@@ -74,6 +87,7 @@ prefix_ void senf::scheduler::process()
 {
     SchedulerScopedInit initScheduler;
     terminate_ = false;
+    running_ = true;
     detail::TimerDispatcher::instance().reschedule();
     while(! terminate_ && ! (detail::FdDispatcher::instance().empty() &&
                              detail::TimerDispatcher::instance().empty() &&
