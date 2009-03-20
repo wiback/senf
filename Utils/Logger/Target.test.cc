@@ -59,6 +59,15 @@ BOOST_AUTO_UNIT_TEST(target)
 {
     senf::log::StringTarget target;
 
+    BOOST_CHECK_THROW( target.route("senf::log::test::myStream", "invalid_area"), 
+            senf::log::Target::InvalidAreaException );
+    BOOST_CHECK_THROW( target.route("invalid_stream", ""),
+            senf::log::Target::InvalidStreamException );
+    BOOST_CHECK_THROW( target.unroute("senf::log::test::myStream", "invalid_area"), 
+            senf::log::Target::InvalidAreaException );
+    BOOST_CHECK_THROW( target.unroute("invalid_stream", ""),
+            senf::log::Target::InvalidStreamException );
+
     target.route<senf::log::Debug>();
     target.route<senf::log::test::myStream, senf::log::DefaultArea>(senf::log::Target::REJECT);
     target.route<senf::log::test::myStream, senf::log::VERBOSE>(senf::log::Target::ACCEPT, 0);

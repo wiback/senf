@@ -64,6 +64,7 @@ BOOST_AUTO_UNIT_TEST(rateFilter)
     
     senf::ppi::run();
 
+    BOOST_CHECK_EQUAL( rateFilter.interval(), senf::ClockService::milliseconds(100) );
     BOOST_CHECK_EQUAL( sink.size(), 2);
 }
 
@@ -104,6 +105,7 @@ BOOST_AUTO_UNIT_TEST(rateFilter_changeInterval)
     
     senf::ppi::run();
 
+    BOOST_CHECK_EQUAL( rateFilter.interval(), senf::ClockService::milliseconds(200) );
     BOOST_CHECK_EQUAL( sink.size(), 4);
 }
 
