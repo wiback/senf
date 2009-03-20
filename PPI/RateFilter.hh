@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
@@ -43,7 +45,7 @@ class RateFilter
 
 public:
     RateFilter(senf::ClockService::clock_type interval);
-//    void changeInterval(senf::ClockService::clock_type interval);   not yet implemented!
+    void interval(senf::ClockService::clock_type interval);
     senf::ClockService::clock_type interval() const;
     
     connector::ActiveInput<> input;

@@ -779,6 +779,20 @@
         .add("over", static_cast<void (*)(int)>(&over));
     senf::console::root()
         .add("over", static_cast<void (*)(int,int)>(&over));
+        
+    class SomeModule {
+      senf::console::ScopedDirectory<SomeModule> dir;
+      
+      unsigned int overlodedMethod() const {....};
+      void overlodedMethod(unsigned int)   {....};
+        
+      void addConsoleCommands() {
+        dir.node().add("overlodedMethod", senf::membind(
+            static_cast<unsigned int (SomeModule::*)() const>(&SomeModule::overlodedMethod), this));
+        dir.node().add("overlodedMethod", senf::membind(
+            static_cast<void (SomeModule::*)(unsigned int)>(&SomeModule::overlodedMethod), this));
+      }
+    }
     \endcode
 
 

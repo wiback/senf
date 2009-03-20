@@ -1,3 +1,5 @@
+// $Id$
+//
 // Copyright (C) 2007
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
@@ -49,13 +51,11 @@ senf::ClockService::clock_type senf::ppi::module::RateFilter::interval()
     return timer_.interval().first;
 }
 
-
-/*  this should be what should happen. but _this_ most likely won't work
-void senf::ppi::module::RateFilter::changeInterval(senf::ClockService::clock_type interval)
+void senf::ppi::module::RateFilter::interval(senf::ClockService::clock_type interval)
 {
-    //timer = ppi::IntervalTimer(interval);
+    timer_.interval(interval);
 }
-*/
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
