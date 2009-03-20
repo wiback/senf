@@ -40,7 +40,7 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
     if (p->has_tsft())
         os  << "  MAC timestamp       : " << unsigned( p->tsft()) << "\n";
     // TODO: flags
-    if (p->has_tsft())
+    if (p->has_rate())
         os  << "  Rate                : " << unsigned( p->rate()) << "\n";
     // TODO: channelOptions
     if (p->has_fhss())
