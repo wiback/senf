@@ -26,6 +26,7 @@
 // Custom includes
 #include "WLANPacket.hh"
 #include "../../Packets/Packets.hh"
+#include "../DefaultBundle/LlcSnapPacket.hh"
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -39,9 +40,10 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
             0x4d, 0x3e, 0xc7, 0x5c, 0x00, 0x0b, 0x6b, 0x57,
             0x06, 0xb0, 0x00, 0x18, 0x4d, 0x6e, 0x78, 0x48,
             0x30, 0x00, 0x01, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, //dummy data
+            0xaa, 0xaa, 0x03, 0x00, 0x00, 0x00, 0x08, 0x00,  //llc header
             0x38, 0x39, 0x30, 0x31                          //trailer
     };
+
 
     senf::WLANPacket p (senf::WLANPacket::create(data));
 
@@ -81,6 +83,9 @@ BOOST_AUTO_UNIT_TEST(WLANPacket_dataFrame_packet)
 
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( p.dump( oss));
+
+    BOOST_CHECK( p.next());
+    BOOST_CHECK( p.next().is<senf::LlcSnapPacket>() );
 }
 
 

@@ -81,6 +81,26 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::bssid()
     return addr1();
 }
 
+prefix_ senf::PacketInterpreterBase::factory_t senf::WLANPacketType::nextPacketType(packet p)
+{
+    if (p->is_dataFrame() && (p->subtype()==0 || p->subtype()==8)) //data frame and subtype is Data or QoS Data
+        return LlcSnapPacket::factory();
+    return no_factory();
+}
+
+prefix_ senf::PacketInterpreterBase::optional_range senf::WLANPacketType::nextPacketRange(packet p)
+{
+    if (p->is_dataFrame()) {
+        size_type sz = 24; //header length of wlan data frame (WDS is not considered)
+        if (p->subtype()==8) //subtype QoSData
+            sz+=2;  //2 bytes for QoS field
+        return range(
+                boost::next(p.data().begin(),sz),
+                boost::prior(p.data().end(),4) ); //-4 bytes FCS
+    }
+    //TODO beacon frame payload
+    return no_range();
+}
 
 prefix_ void senf::WLANPacketType::dump(packet p, std::ostream &os)
 {

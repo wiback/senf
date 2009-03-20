@@ -39,7 +39,7 @@ namespace senf
     struct WLANPacket_MgtFrameParser : public senf::PacketParserBase
     {
     #   include SENF_FIXED_PARSER()
-        
+
         SENF_PARSER_PRIVATE_BITFIELD ( subtype, 4,  unsigned                ); //<pkgdraw: hide
 	//skip type and version
         SENF_PARSER_SKIP_BITS        (          4                           ); //<pkgdraw: hide
@@ -73,7 +73,7 @@ namespace senf
     struct WLANPacket_CtrlFrameParser : public senf::PacketParserBase
     {
     #   include SENF_PARSER()
-        
+
         SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned            ); //<pkgdraw: hide
 	//skip type and version
         SENF_PARSER_SKIP_BITS        (           4                       ); //<pkgdraw: hide
@@ -220,10 +220,12 @@ namespace senf
         typedef senf::ConcretePacket<WLANPacketType> packet;
         typedef WLANPacketParser parser;
 
-//        using mixin::nextPacketRange;
+
         using mixin::init;
         using mixin::initSize;
-        using senf::PacketTypeBase::nextPacketRange;;
+//        using senf::PacketTypeBase::nextPacketRange;
+        static optional_range nextPacketRange(packet p);
+        static factory_t nextPacketType(packet p);
 
         static void dump(packet p, std::ostream &os);
 //        static PacketParserBase::size_type initSize();
