@@ -56,7 +56,7 @@ namespace {
         unsigned n;
 
     public:
-        TimerTest(senf::ClockService::clock_type d_, unsigned n_)
+        TimerTest(senf::ClockService::int64_type d_, unsigned n_)
         :   timer ( senf::ClockService::milliseconds(d_) ),
             n     ( n_ )
         {
@@ -73,13 +73,13 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(intervalTimer)
 {
-    TimerTest timer (100,4);
+    TimerTest timer (100,3);
     senf::ClockService::clock_type start (senf::ClockService::now());
     senf::ppi::run();
     BOOST_CHECK_PREDICATE( is_close_clock,
                            (senf::ClockService::now())
                            (start+senf::ClockService::milliseconds(300))
-                           (senf::ClockService::milliseconds(100)) );
+                           (senf::ClockService::milliseconds(80)) );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
