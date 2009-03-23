@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,26 +21,31 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief IOEvent inline template implementation */
+    \brief IOEvent non-inline template implementation  */
 
 //#include "IOEvent.ih"
 
 // Custom includes
-#include <boost/bind.hpp>
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////
-// senf::ppi::IOEvent
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Handle>
-prefix_ senf::ppi::IOEvent::IOEvent(Handle handle, unsigned events)
-    : fd_ (senf::scheduler::get_descriptor(handle)),
-      event_ ("senf::ppi::IOEvent", boost::bind(&IOEvent::cb,this,_1), fd_, events, false) 
-{}
+prefix_ void senf::ppi::IOEvent::set(Handle handle, unsigned events)
+{
+    if (handle) {
+        fd_ = senf::scheduler::get_descriptor(handle);
+        event_.events(events).handle(fd_);
+        event_.enable();
+    }
+    else {
+        event_.disable();
+        event_.events(0).handle(-1);
+        fd_ = -1;
+    }
+}
 
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
 
 
