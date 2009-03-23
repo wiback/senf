@@ -80,10 +80,19 @@ prefix_ void senf::ppi::module::PassiveJoin::onUnthrottle()
 ////////////////////////////////////////
 // private members
 
-prefix_ senf::ppi::connector::ActiveInput<> & senf::ppi::module::PriorityJoin::newInput()
+prefix_ senf::ppi::connector::ActiveInput<> &
+senf::ppi::module::PriorityJoin::newInput(int priority)
 {
-    inputs_.push_back(new connector::ActiveInput<>());
-    connector::ActiveInput<> & input (inputs_.back());
+    if (priority > int(inputs_.size()))
+        priority = inputs_.size();
+    else if (priority < 0) {
+        priority = inputs_.size() + priority + 1;
+        if (priority < 0) 
+            priority = 0;
+    }
+
+    connector::ActiveInput<> & input (
+        *inputs_.insert(inputs_.begin()+priority, new connector::ActiveInput<>()));
 
     noroute(input);
     input.onThrottle(&PriorityJoin::onThrottle);

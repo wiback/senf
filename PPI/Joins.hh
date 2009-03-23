@@ -44,7 +44,8 @@ namespace ppi {
     connector::GenericPassiveInput & connect(Source & source, module::PassiveJoin & target);
 
     template <class Source>
-    connector::GenericActiveInput & connect(Source & source, module::PriorityJoin & target);
+    connector::GenericActiveInput & connect(Source & source, module::PriorityJoin & target,
+                                            int priority = -1);
 
 #endif
 
@@ -133,13 +134,13 @@ namespace module {
         PriorityJoin();
 
     private:
-        connector::ActiveInput<> & newInput();
+        connector::ActiveInput<> & newInput(int priority);
 
 #ifndef DOXYGEN
     public:
 #endif
         template <class Source>
-        connector::GenericActiveInput & connect(Source & source);
+        connector::GenericActiveInput & connect(Source & source, int prioricty);
 
     private:
         void request();

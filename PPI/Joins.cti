@@ -48,9 +48,9 @@ senf::ppi::module::PassiveJoin::connect(Source & source)
 
 template <class Source>
 prefix_ senf::ppi::connector::GenericActiveInput &
-senf::ppi::module::PriorityJoin::connect(Source & source)
+senf::ppi::module::PriorityJoin::connect(Source & source, int priority)
 {
-    connector::GenericActiveInput & input (newInput());
+    connector::GenericActiveInput & input (newInput(priority));
     ppi::connect(source,input);
     return input;
 }
@@ -61,17 +61,17 @@ senf::ppi::module::PriorityJoin::connect(Source & source)
 #ifndef DOXYGEN
 
 template <class Source>
-prefix_ senf::ppi::connector::GenericPassiveInput & senf::ppi::connect(Source & source,
-                                                                module::PassiveJoin & target)
+prefix_ senf::ppi::connector::GenericPassiveInput &
+senf::ppi::connect(Source & source, module::PassiveJoin & target)
 {
     return target.connect(source);
 }
 
 template <class Source>
-prefix_ senf::ppi::connector::GenericActiveInput & senf::ppi::connect(Source & source,
-                                                               module::PriorityJoin & target)
+prefix_ senf::ppi::connector::GenericActiveInput &
+senf::ppi::connect(Source & source, module::PriorityJoin & target, int priority)
 {
-    return target.connect(source);
+    return target.connect(source, priority);
 }
 
 #endif

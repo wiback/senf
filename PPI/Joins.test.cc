@@ -106,6 +106,25 @@ BOOST_AUTO_UNIT_TEST(priorityJoin)
     BOOST_CHECK( sink.request() == p1 );
     BOOST_CHECK( sink.request() == p2 );
     BOOST_CHECK( ! sink );
+
+    debug::PassiveSource source3;
+    debug::PassiveSource source4;
+    ppi::connect(source3, join, 0);
+    ppi::connect(source4, join, -2);
+    // Ordering now: source3, source1, source4, source2
+ 
+    senf::Packet p3 (senf::DataPacket::create());
+    senf::Packet p4 (senf::DataPacket::create());
+ 
+    source4.submit(p4);
+    source3.submit(p3);
+    source2.submit(p2);
+    source1.submit(p1);
+    BOOST_CHECK( sink.request() == p3 );
+    BOOST_CHECK( sink.request() == p1 );
+    BOOST_CHECK( sink.request() == p4 );
+    BOOST_CHECK( sink.request() == p2 );
+    BOOST_CHECK( ! sink );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
