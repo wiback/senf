@@ -199,6 +199,7 @@ template <class Variable>
 prefix_ senf::console::VariableAttributor<Variable> senf::console::
 senf_console_add_node(DirectoryNode & node, std::string const & name, Variable & var, int,
                       typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *,
+                      typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type *, 
                       typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type *)
 {
     return detail::VariableNodeCreator<Variable>::add(node, name, var);
@@ -214,9 +215,10 @@ senf::console::senf_console_add_node(DirectoryNode & node, std::string const & n
 
 template <class Variable, class Owner>
 prefix_ senf::console::VariableAttributor<Variable> senf::console::
-senf_console_add_node(DirectoryNode & node, Owner &, std::string const & name,
+senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & name,
                       Variable & var, int,
-                      typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *,
+                      typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type *, 
+                      typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type *, 
                       typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type *)
 {
     return detail::VariableNodeCreator<Variable>::add(node, name, var);

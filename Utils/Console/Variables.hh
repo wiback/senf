@@ -42,12 +42,15 @@ namespace console {
     class ScopedDirectoryBase;
     template <class Variable> class VariableAttributor;
 
+    
+
 #ifndef DOXYGEN
 
     template <class Variable>
     VariableAttributor<Variable> senf_console_add_node(
         DirectoryNode & node, std::string const & name, Variable & var, int,
         typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
+        typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type * = 0,
         typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
 
     template <class Variable>
@@ -59,6 +62,7 @@ namespace console {
     VariableAttributor<Variable> senf_console_add_node(
         DirectoryNode & node, Owner & owner, std::string const & name, Variable & var, int,
         typename boost::disable_if< boost::is_convertible<Variable*, ScopedDirectoryBase*> >::type * = 0,
+        typename boost::disable_if< boost::is_convertible<Variable*, GenericNode*> >::type * = 0,
         typename boost::disable_if_c<detail::ParsedCommandTraits<Variable>::is_callable>::type * = 0);
 
     template <class Variable, class Owner>

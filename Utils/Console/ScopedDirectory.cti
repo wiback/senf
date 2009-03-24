@@ -88,6 +88,14 @@ senf_console_add_node(DirectoryNode & node, Owner & owner, std::string const & n
     return node.add(name, boost::bind(fn,boost::ref(owner),_1,_2));
 }
 
+template <class Owner>
+prefix_ senf::console::DirectoryNode &
+senf::console::senf_console_add_node(DirectoryNode & node, Owner & owner,
+                                     std::string const & name, DirectoryNode & dir, int)
+{
+    return node.add(name, dir.thisptr());
+}
+
 template <class Node>
 prefix_ senf::console::DirectoryNode & senf::console::
 senf_console_add_node(DirectoryNode & dir, std::string const & name, Node const & node, int,

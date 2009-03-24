@@ -212,6 +212,12 @@ senf::console::DirectoryNode::mkdir(std::string const & name)
     return add(name, create());
 }
 
+prefix_ senf::console::DirectoryNode &
+senf::console::DirectoryNode::provideDirectory(std::string const & name)
+{
+    return hasChild(name) ? getDirectory(name) : mkdir(name);
+}
+
 prefix_ senf::console::DirectoryNode::ChildrenRange senf::console::DirectoryNode::children()
     const
 {
@@ -346,6 +352,13 @@ senf::console::senf_console_add_node(DirectoryNode & node, std::string const & n
                                      SimpleCommandNode::Function fn, int)
 {
     return node.add(name, SimpleCommandNode::create(fn));
+}
+
+prefix_ senf::console::DirectoryNode &
+senf::console::senf_console_add_node(DirectoryNode & node, std::string const & name,
+                                     DirectoryNode & dir, int)
+{
+    return node.add(name, dir.thisptr());
 }
 
 #endif

@@ -538,6 +538,8 @@ namespace console {
 
         DirectoryNode & mkdir(std::string const & name);
                                         ///< Create sub-directory node
+        DirectoryNode & provideDirectory(std::string const & name);
+                                        ///< Return subdirectory, possibly creating it
 
         ChildrenRange children() const; ///< Return iterator range over all children.
                                         /**< The returned range is sorted by child name. */
@@ -710,6 +712,9 @@ namespace console {
 
     SimpleCommandNode & senf_console_add_node(DirectoryNode & node, std::string const & name,
                                               SimpleCommandNode::Function fn, int);
+
+    DirectoryNode & senf_console_add_node(DirectoryNode & node, std::string const & name,
+                                          DirectoryNode & dir, int);
 
 #endif
 

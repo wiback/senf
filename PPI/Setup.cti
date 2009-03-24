@@ -26,6 +26,7 @@
 //#include "Setup.ih"
 
 // Custom includes
+#include "Jack.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
@@ -37,7 +38,7 @@ prefix_ void senf::ppi::
 connect(T & source, C & target,
         typename boost::disable_if< boost::is_base_of<connector::Connector, T> >::type *,
         typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *,
-        typename boost::disable_if< boost::is_base_of<connector::Jack, T> >:: type *)
+        typename boost::disable_if< boost::is_base_of<connector::Jack, T> >::type *)
 {
     connect(source.output, target);
 }
@@ -47,7 +48,7 @@ prefix_ void senf::ppi::
 connect(C & source, T & target,
         typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type *,
         typename boost::disable_if< boost::is_base_of<connector::Connector,T> >::type *,
-        typename boost::disable_if< boost::is_base_of<connector::Jack, T> >:: type *)
+        typename boost::disable_if< boost::is_base_of<connector::Jack, T> >::type *)
 {
     connect(source, target.input);
 }
@@ -57,8 +58,8 @@ prefix_ void senf::ppi::
 connect(T1 & source, T2 & target,
         typename boost::disable_if< boost::is_base_of<connector::Connector, T1> >::type *,
         typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type *,
-        typename boost::disable_if< boost::is_base_of<connector::Jack, T1> >:: type *,
-        typename boost::disable_if< boost::is_base_of<connector::Jack, T2> >:: type *)
+        typename boost::disable_if< boost::is_base_of<connector::Jack, T1> >::type *,
+        typename boost::disable_if< boost::is_base_of<connector::Jack, T2> >::type *)
 {
     connect(source.output, target.input);
 }

@@ -197,6 +197,10 @@ namespace console {
         DirectoryNode & node, Owner & owner, std::string const & name,
         void (Owner::*fn)(std::ostream &, ParseCommandInfo const &), int);
 
+    template <class Owner>
+    DirectoryNode & senf_console_add_node(DirectoryNode & node, Owner & owner, 
+                                          std::string const & name, DirectoryNode & dir, int);
+
     template <class Node>
     DirectoryNode & senf_console_add_node(
         DirectoryNode & dir, std::string const & name, Node const & node, int, 
