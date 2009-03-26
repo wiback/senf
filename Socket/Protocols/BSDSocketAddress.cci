@@ -118,7 +118,7 @@ prefix_ senf::BSDSocketAddress &
 senf::BSDSocketAddress::operator=(BSDSocketAddress const & other)
 {
     len_ = other.socklen();
-    ::memcpy(sockaddr_p(), other.sockaddr_p(), len_);
+    ::memmove(sockaddr_p(), other.sockaddr_p(), len_);
     return *this;
 }
 
