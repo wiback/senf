@@ -56,10 +56,13 @@ BOOST_AUTO_UNIT_TEST(packetSocketHandle)
         // How am I supposed to test read and write .. grmpf ..
 
         SENF_CHECK_NO_THROW( sock.protocol().mcAdd(
-                                  "eth0",senf::MACAddress::from_string("01-02-03-04-05-06")) );
+                "eth0", senf::MACAddress::from_string("01-02-03-04-05-06")) );
         SENF_CHECK_NO_THROW( sock.protocol().mcDrop(
-                                  "eth0",senf::MACAddress::from_string("01-02-03-04-05-06")) );
+                "eth0", senf::MACAddress::from_string("01-02-03-04-05-06")) );
 
+        SENF_CHECK_NO_THROW( sock.protocol().promisc( "eth0", true) );
+        SENF_CHECK_NO_THROW( sock.protocol().promisc( "eth0", false));
+                
         SENF_CHECK_NO_THROW( sock.protocol().available() );
         BOOST_CHECK( ! sock.eof() );
     }
