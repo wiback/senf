@@ -44,8 +44,6 @@ namespace senf {
         devices. Note, that some setting members are privileged operations.
 
         \see manual page netdevice(7) for more informations.
-
-        \todo Add 'promisc' member to enable/disable promiscuous mode
      */
     class NetdeviceController
     {
@@ -62,21 +60,31 @@ namespace senf {
         void hardwareAddress(const MACAddress &newAddress);
                                         ///< set hardware address
                                         /**< Changes the hardware address of the interface.
-                                             Note, that setting the hardware address is a privileged operation. It is only allowed when the interface
-                                             is not up. If the interface is up, this call will cause an SystemException to be thrown.*/
+                                             Note, that setting the hardware address is a privileged
+                                             operation. It is only allowed when the interface is not
+                                             up. If the interface is up, this call will cause an
+                                             SystemException to be thrown. */
         std::string interfaceName() const;
                                         ///< return interface name
         void interfaceName(const std::string &newName);
                                         ///< set interface name
                                         /**< Changes the name of the interface.
-                                             Note, that setting the name is a privileged operation. It is only allowed when the interface
-                                             is not up. If the interface is up, this call will cause an SystemException to be thrown.*/
+                                             Note, that setting the name is a privileged operation. 
+                                             It is only allowed when the interface is not up. If 
+                                             the interface is up, this call will cause an 
+                                             SystemException to be thrown. */
 
         int mtu() const;                ///< return the Maximum Transmission Unit
         void mtu(int new_mtu);          ///< set the Maximum Transmission Unit
                                         /**< Set the MTU (Maximum Transfer Unit) of the device.
                                              Note, that this is a privileged operation.
-                                             Setting the MTU to too small values may cause kernel crashes. */
+                                             Setting the MTU to too small values may cause kernel 
+                                             crashes. */
+
+        bool promisc() const;           ///< return \c true if interface is in promiscuous mode
+        void promisc(bool mode);        ///< enable/disable promiscuous mode of the interface
+                                        /**< Note, that this is a privileged operation. */
+                
     private:
         void openSocket();
         void doIoctl(ifreq& ifr, int request) const;

@@ -1,8 +1,7 @@
 #----------------------------------------------------------------------
 # Some SCONS shortcuts
 #----------------------------------------------------------------------
-
-CONCURRENCY_LEVEL ?= 2
+CONCURRENCY_LEVEL ?= $(shell grep process /proc/cpuinfo | wc -l)
 
 ifdef final
   SCONS_ARGS += "final="$(final)

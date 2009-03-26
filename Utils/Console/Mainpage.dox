@@ -344,7 +344,7 @@
     The first possibility to control this is to change the root node. This is done by 
     \li passing that root node to the helper class or to the parse helper as an additional argument
         (see the respective documentation).
-    \li passing it to the senf:;console::ConfigBundle constructor when parsing multiple sources.
+    \li passing it to the senf::console::ConfigBundle constructor when parsing multiple sources.
     
     for example:
 

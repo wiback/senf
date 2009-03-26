@@ -48,6 +48,9 @@ BOOST_AUTO_UNIT_TEST(NetdeviceController) {
     
     int oldMTU;
     SENF_CHECK_NO_THROW( oldMTU = ctrl.mtu());
+    
+    bool promisc;
+    SENF_CHECK_NO_THROW( promisc = ctrl.promisc());
 
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot run some tests of senf::NetdeviceController as non-root user");
@@ -59,6 +62,10 @@ BOOST_AUTO_UNIT_TEST(NetdeviceController) {
     SENF_CHECK_NO_THROW( ctrl.mtu(oldMTU));
     BOOST_CHECK_EQUAL( ctrl.mtu(), oldMTU);
     
+    SENF_CHECK_NO_THROW( ctrl.promisc( !promisc));
+    BOOST_CHECK_EQUAL( ctrl.promisc(), !promisc);
+    SENF_CHECK_NO_THROW( ctrl.promisc( promisc));
+    BOOST_CHECK_EQUAL( ctrl.promisc(), promisc);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

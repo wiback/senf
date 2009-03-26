@@ -115,6 +115,27 @@ prefix_ void senf::NetdeviceController::mtu(int new_mtu)
     doIoctl( ifr, SIOCSIFMTU);
 }
 
+prefix_ bool senf::NetdeviceController::promisc()
+    const
+{
+    struct ifreq ifr;
+    ifrName( ifr);
+    doIoctl( ifr, SIOCGIFFLAGS);
+    return ifr.ifr_flags & IFF_PROMISC;
+}
+
+prefix_ void senf::NetdeviceController::promisc(bool mode)
+{
+    struct ifreq ifr;
+    ifrName( ifr);
+    doIoctl( ifr, SIOCGIFFLAGS);
+    if (mode)
+        ifr.ifr_flags |= IFF_PROMISC;
+    else
+        ifr.ifr_flags &= ~IFF_PROMISC;
+    doIoctl( ifr, SIOCSIFFLAGS);
+}
+
 prefix_ int senf::NetdeviceController::interfaceIndex()
     const
 {
