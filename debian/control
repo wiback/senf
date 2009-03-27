@@ -5,7 +5,8 @@ Build-Depends: debhelper (>= 5), scons (>= 0.97), g++, binutils-dev, libboost-de
 	libboost-test-dev, libboost-date-time-dev, libboost-regex-dev, 
 	libboost-filesystem-dev, libboost-serialization-dev, libboost-iostreams-dev,
 	libboost-signals-dev, doxygen (>= 1.5.5), libreadline-dev, dia, tidy, xsltproc, 
-	graphviz, perl-base, linklint, netpbm
+	graphviz, perl-base, linklint, netpbm, dvips, gs, tetex-bin, tetex-latex-extra,
+	perl
 Standards-Version: 3.7.2 
 Section: libs
 
