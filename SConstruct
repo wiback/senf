@@ -102,7 +102,8 @@ if not logname:
     logname = pwd.getpwuid(os.getuid()).pw_name
 
 def dpkgIgnoredFilesOpts(target, source, env, for_signature):
-    return [ '-I%s' % os.path.split(f)[1] for f in env.subst('$DPKG_IGNORED_FILES').split() ]
+    return [ '-I%s' % (('/' in f) and (os.path.split(os.getcwd())[1])+f or f)
+             for f in env.subst('$DPKG_IGNORED_FILES').split() ]
 
 # Options used to debug inlining:
 #
@@ -131,8 +132,8 @@ env.Append(
            'PATH' : os.environ.get('PATH'),
 	   'TEXINPUTS' : os.environ.get('TEXINPUTS',':'),
          },
-   LOCAL_CONFIG_FILES = [ 'Doxyfile.local', 'SConfig', 'local_config.hh' ],
-   DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '_templates' ],
+   LOCAL_CONFIG_FILES = [ '/Doxyfile.local', '/SConfig', '/local_config.hh' ],
+   DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '/_templates' ],
    DPKG_IGNORED_FILES_OPTS = dpkgIgnoredFilesOpts,
    CLEAN_PATTERNS = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign', '.sconsign.dblite' ],
    BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot $DPKG_IGNORED_FILES_OPTS",
