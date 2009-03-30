@@ -1,0 +1,192 @@
+// $Id$
+//
+// Copyright (C) 2008 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Statistics inline non-template implementation */
+
+//#include "Statistics.ih"
+
+// Custom includes
+#include <float.h>
+#include "Range.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::StatisticsBase::Transform
+
+prefix_ senf::StatisticsBase::Transform::result_type
+senf::StatisticsBase::Transform::operator()(first_argument_type i)
+    const
+{
+    return i.second;
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::StatisticsBase::OutputEntry
+
+prefix_ senf::StatisticsBase::OutputEntry::OutputEntry()
+    : n(), min(), avg(), max() 
+{
+    initDir();
+}
+
+prefix_ senf::StatisticsBase::OutputEntry::OutputEntry(unsigned n_)
+    : n(n_), min(), avg(), max() 
+{
+    initDir();
+}
+
+prefix_ senf::StatisticsBase::OutputEntry::OutputEntry(const OutputEntry& other)
+    : n(other.n), min(other.min), avg(other.avg), max(other.max) 
+{
+    initDir();
+}
+
+prefix_ void senf::StatisticsBase::OutputEntry::initDir()
+{
+    dir.add("list", senf::membind(&OutputEntry::consoleList, this))
+        .doc("List all known connected targets. This list might not be complete.");
+}
+
+prefix_ senf::StatisticsBase::OutputEntry &
+senf::StatisticsBase::OutputEntry::operator=(const OutputEntry& other)
+{
+    n = other.n;
+    min = other.min;
+    avg = other.avg;
+    max = other.max;
+    return *this;
+}
+
+prefix_ void senf::StatisticsBase::OutputEntry::consoleList(std::ostream & os)
+{
+    for (boost::ptr_vector<TargetBase>::iterator i (targets_.begin());
+         i != targets_.end(); ++i)
+        if (! i->label.empty())
+            os << i->label << "\n";
+}
+
+/////////////////////////////////////////////////////////////////////////
+// senf::StatisticsBase
+
+prefix_ senf::StatisticsBase::StatisticsBase()
+    : min_ (0.0f), avg_ (0.0f), max_ (0.0f), maxQueueLen_ (0u)
+{}
+
+prefix_ senf::StatisticsBase::~StatisticsBase()
+{}
+
+prefix_ senf::StatisticsBase::CollectorRange senf::StatisticsBase::collectors()
+{
+    return senf::make_transform_range(children_, Transform());
+}
+
+prefix_ float senf::StatisticsBase::min()
+    const
+{
+    return min_;
+}
+
+prefix_ float senf::StatisticsBase::avg()
+    const
+{
+    return avg_;
+}
+
+prefix_ float senf::StatisticsBase::max()
+    const
+{
+    return max_;
+}
+
+prefix_ unsigned senf::StatisticsBase::rank()
+    const
+{
+    return 1;
+}
+
+prefix_ senf::Statistics & senf::StatisticsBase::base()
+{
+    return v_base();
+}
+
+prefix_ std::string senf::StatisticsBase::path()
+    const
+{
+    return v_path();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::Collector
+
+prefix_ senf::Collector::Collector(StatisticsBase * owner, unsigned rank)
+    : rank_ (rank), i_ (0u), accMin_ (FLT_MAX), accAvg_ (0.0f), accMax_ (-FLT_MAX),
+      owner_ (owner)
+{}
+
+prefix_ unsigned senf::Collector::rank()
+    const
+{
+    return rank_;
+}
+
+prefix_ senf::StatisticsBase::OutputProxy<senf::Collector>
+senf::Collector::output(unsigned n)
+{
+
+    return StatisticsBase::OutputProxy<Collector>(this, StatisticsBase::output(n));
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::Statistics
+
+prefix_ void senf::Statistics::operator()(float min, float avg, float max)
+{
+    enter(min, avg, max);
+}
+
+prefix_ void senf::Statistics::operator()(float value)
+{
+    enter(value, value, value);
+}
+
+prefix_ senf::StatisticsBase::OutputProxy<senf::Statistics>
+senf::Statistics::output(unsigned n)
+{
+    return StatisticsBase::OutputProxy<Statistics>(this, StatisticsBase::output(n));
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
