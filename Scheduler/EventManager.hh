@@ -105,6 +105,8 @@ namespace detail {
         iterator begin() const;
         iterator end() const;
 
+        void listEvents(std::ostream & os);
+
     protected:
 
     private:
@@ -115,8 +117,6 @@ namespace detail {
         friend class singleton<EventManager>;
 
 #ifndef SENF_DISABLE_CONSOLE
-        void consoleEvents(std::ostream & os);
-        
         console::LazyDirectory consoleDir_;
 #endif
     };

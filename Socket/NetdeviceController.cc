@@ -136,6 +136,33 @@ prefix_ void senf::NetdeviceController::promisc(bool mode)
     doIoctl( ifr, SIOCSIFFLAGS);
 }
 
+prefix_ bool senf::NetdeviceController::isUp()
+    const
+{
+    struct ifreq ifr;
+    ifrName(ifr);
+    doIoctl(ifr, SIOCGIFFLAGS);
+    return ifr.ifr_flags & IFF_UP;
+}
+
+prefix_ void senf::NetdeviceController::up()
+{
+    struct ifreq ifr;
+    ifrName(ifr);
+    doIoctl(ifr, SIOCGIFFLAGS);
+    ifr.ifr_flags |= IFF_UP;
+    doIoctl(ifr, SIOCSIFFLAGS);
+}
+
+prefix_ void senf::NetdeviceController::down()
+{
+    struct ifreq ifr;
+    ifrName(ifr);
+    doIoctl(ifr, SIOCGIFFLAGS);
+    ifr.ifr_flags &= ~IFF_UP;
+    doIoctl(ifr, SIOCSIFFLAGS);
+}
+
 prefix_ int senf::NetdeviceController::interfaceIndex()
     const
 {

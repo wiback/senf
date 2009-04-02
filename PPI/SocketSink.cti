@@ -31,6 +31,42 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
+// senf::ppi::TargetDgramWriter<HandleType>
+
+template <class HandleType>
+prefix_ senf::ppi::TargetDgramWriter<HandleType>::TargetDgramWriter()
+{}
+
+template <class HandleType>
+prefix_ senf::ppi::TargetDgramWriter<HandleType>::
+TargetDgramWriter(typename Handle::Address const & target)
+: target_ (target)
+{}
+
+template <class HandleType>
+prefix_ typename senf::ppi::TargetDgramWriter<HandleType>::Handle::Address
+senf::ppi::TargetDgramWriter<HandleType>::target()
+    const
+{
+    return target_;
+}
+
+template <class HandleType>
+prefix_ void
+senf::ppi::TargetDgramWriter<HandleType>::target(typename Handle::Address const & target)
+{
+    target_ = target;
+}
+
+template <class HandleType>
+prefix_ void senf::ppi::TargetDgramWriter<HandleType>::operator()(Handle handle,
+                                                                  Packet const & packet)
+{
+    if (target_)
+        handle.writeto(target_, packet.data());
+}
+
+///////////////////////////////////////////////////////////////////////////
 // senf::ppi::module::ActiveSocketSink<Writer>
 
 template <class Writer>

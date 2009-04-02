@@ -84,7 +84,11 @@ namespace senf {
         bool promisc() const;           ///< return \c true if interface is in promiscuous mode
         void promisc(bool mode);        ///< enable/disable promiscuous mode of the interface
                                         /**< Note, that this is a privileged operation. */
-                
+
+        bool isUp() const;              ///< return \c true if interface is up
+        void up();                      ///< ifconfig up interface
+        void down();                    ///< ifconfig down interface
+
     private:
         void openSocket();
         void doIoctl(ifreq& ifr, int request) const;

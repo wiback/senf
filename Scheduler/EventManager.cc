@@ -39,7 +39,7 @@
 prefix_ senf::scheduler::detail::EventManager::EventManager()
 {
 #ifndef SENF_DISABLE_CONSOLE
-    consoleDir_().add("events", senf::membind(&EventManager::consoleEvents, this))
+    consoleDir_().add("events", senf::membind(&EventManager::listEvents, this))
         .doc("List all scheduler events sorted by priority\n"
              "\n"
              "Columns:\n"
@@ -61,7 +61,7 @@ prefix_ senf::scheduler::detail::EventManager::EventManager()
 #endif
 }
 
-prefix_ void senf::scheduler::detail::EventManager::consoleEvents(std::ostream & os)
+prefix_ void senf::scheduler::detail::EventManager::listEvents(std::ostream & os)
 {
     // On an 80 column display, this wraps nicely directly before the INFO column
     boost::format fmt  ("%s %-55.55s 0x%08x %8d %s %s\n");

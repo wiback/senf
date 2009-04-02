@@ -132,17 +132,19 @@ prefix_ void senf::Daemon::openLog()
                   << " Could not open \"" << stdoutLog_ << "\" for redirecting stdout.";
         stdout_ = fd;
     }
-    if (stderrLog_ == stdoutLog_) {
-        stderr_ = ::dup(fd);
-        if (stderr_ < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("::dup()");
-    } 
-    else if (! stderrLog_.empty()) {
-        fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
-        if (fd < 0)
-            SENF_THROW_SYSTEM_EXCEPTION("")
-                  << " Could not open \"" << stderrLog_ << "\" for redirecting stderr.";
-        stderr_ = fd;
+    if (! stderrLog_.empty()) {
+        if (stderrLog_ == stdoutLog_) {
+            stderr_ = ::dup(fd);
+            if (stderr_ < 0)
+                SENF_THROW_SYSTEM_EXCEPTION("::dup()");
+        } 
+        else {
+            fd = ::open(stdoutLog_.c_str(), O_WRONLY | O_APPEND | O_CREAT, 0666);
+            if (fd < 0)
+                SENF_THROW_SYSTEM_EXCEPTION("")
+                    << " Could not open \"" << stderrLog_ << "\" for redirecting stderr.";
+            stderr_ = fd;
+        }
     }
 }
 
@@ -369,14 +371,17 @@ prefix_ void senf::Daemon::fork()
     LIBC_CALL( ::sigaddset, (&cldsig, SIGCHLD) );
     LIBC_CALL( ::sigprocmask, (SIG_BLOCK, &cldsig, &oldsig) );
 
-    if (! senf::scheduler::empty() )
+    if (! senf::scheduler::empty() ) {
         std::cerr << 
             "\n"
             "*** WARNING ***\n"
             "Scheduler not empty before fork(). THIS MUST NOT HAPPEN.\n"
-            "The scheduler will be reinitialized by the fork() and lose all registrations.\n"
-            "*** WARNING ***\n"
+            "The scheduler will be reinitialized by the fork() and lose all registrations.\n\n";
+        senf::scheduler::detail::EventManager::instance().listEvents(std::cerr);
+        std::cerr <<
+            "\n*** WARNING ***\n"
             "\n";
+    }
     
     LIBC_CALL_RV( pid, ::fork, () );
 

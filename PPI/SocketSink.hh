@@ -65,6 +65,24 @@ namespace ppi {
                                              \param[in] packet Packet to write */
     };
 
+    template <class HandleType>
+    class TargetDgramWriter
+    {
+    public:
+        typedef HandleType Handle;
+
+        TargetDgramWriter();
+        TargetDgramWriter(typename Handle::Address const & target);
+
+        typename Handle::Address target() const;
+        void target(typename Handle::Address const & target);
+
+        void operator()(Handle handle, Packet const & packet);
+
+    private:
+        typename Handle::Address target_;
+    };
+
     class IPv4SourceForcingDgramWriter : ConnectedDgramWriter
     {
     public:
