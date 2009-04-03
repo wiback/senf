@@ -29,12 +29,13 @@
 
 // Custom includes
 #include <string>
-#include <net/if.h>
 #include "Protocols/Raw/MACAddress.hh"
 
 
 //#include "NetdeviceController.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
+
+struct ifreq;
 
 namespace senf {
 

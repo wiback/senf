@@ -46,14 +46,14 @@ namespace senf {
     {
 #       include SENF_FIXED_PARSER()
 
-        SENF_PARSER_FIELD( nextHeader     , UInt8Parser );
-        SENF_PARSER_FIELD( reserved1      , UInt8Parser );
+        SENF_PARSER_FIELD            ( nextHeader     , UInt8Parser  );
+        SENF_PARSER_PRIVATE_FIELD    ( reserved1      , UInt8Parser  );
 
-        SENF_PARSER_BITFIELD( fragmentOffset, 13, unsigned );
-        SENF_PARSER_BITFIELD( reserved2,       2, unsigned );
-        SENF_PARSER_BITFIELD( moreFragments,   1, bool     );
+        SENF_PARSER_BITFIELD         ( fragmentOffset , 13, unsigned );
+        SENF_PARSER_PRIVATE_BITFIELD ( reserved2      ,  2, unsigned );
+        SENF_PARSER_BITFIELD         ( moreFragments  ,  1, bool     );
 
-        SENF_PARSER_FIELD( id             , UInt32Parser   );
+        SENF_PARSER_FIELD            ( id             , UInt32Parser );
 
         SENF_PARSER_FINALIZE(IPv6PacketParserExtension_Fragment);
     };
