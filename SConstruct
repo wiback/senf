@@ -242,7 +242,7 @@ PhonyTarget(env, 'fixlinks', [
     'python doclib/fix-links.py -v -s .svn -s linklint -s debian linklint/errorX.txt linklint/errorAX.txt',
 ])
 
-PhonyTarget(env, 'prepare', [])
+PhonyTarget(env, 'prepare', [ 'true' ])
 
 PhonyTarget(env, 'valgrind', [
     'find -name .test.bin | while read test; do echo; echo "Running $$test"; echo; valgrind --tool=memcheck --error-exitcode=99 --suppressions=valgrind.sup $$test $BOOSTTESTARGS; [ $$? -ne 99 ] || exit 1; done'

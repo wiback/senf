@@ -1,5 +1,5 @@
 import os, os.path, sys
-from cStringIO import StringIO
+import tempfile
 from SCons.Script import *
 import SCons.Scanner.C
 
@@ -20,13 +20,14 @@ def CompileCheck(target, source, env):
     tests = scanTests(file(source[0].abspath))
     cenv = env.Clone()
     cenv.Append( CPPDEFINES = { 'COMPILE_CHECK': '' } )
-    out = StringIO()
+    out = tempfile.TemporaryFile()
     cenv['SPAWN'] = lambda sh, escape, cmd, args, env, pspawn=cenv['PSPAWN'], out=out: \
                     pspawn(sh, escape, cmd, args, env, out, out)
     Action('$CXXCOM').execute(target, source, cenv)
     passedTests = {}
     delay_name = None
-    for error in out.getvalue().splitlines():
+    out.seek(0)
+    for error in out.read().splitlines():
         elts = error.split(':',2)
         if len(elts) != 3 : continue
         filename, line, message = elts
