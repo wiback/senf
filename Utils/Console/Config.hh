@@ -67,7 +67,7 @@ namespace console {
         ///\name Structors and default members
         ///@{
 
-        ConfigBundle();
+        ConfigBundle();                     ///< root node is set to console::root()
         ConfigBundle(DirectoryNode & root); ///< Set custom root node
 
         ///@}
@@ -77,18 +77,18 @@ namespace console {
         Source & add(boost::intrusive_ptr<Source> source);
                                         ///< Add configuration source
        
-        void parse();                   ///< Parse config file
+        void parse();                   ///< Parse config bundle
                                         /**< All nodes already parsed are skipped */
-        void parse(DirectoryNode & restrict); ///< Parse config file under \a restrict
+        void parse(DirectoryNode & restrict); ///< Parse config bundle under \a restrict
                                         /**< Only nodes which are children of \a restrict are
-                                             parsed.  */
+                                             parsed. */
 
         bool complete() const;          ///< \c true, if all nodes have been parsed
         bool parsed(GenericNode & node) const; ///< \c true. if \a node has been parsed
         void reset();                   ///< Reset node parse info state
                                         /**< After a call to reset(), all information about already
                                              parsed nodes is cleared. Calling parse() will parse the
-                                             complete config file again. */
+                                             complete config bundle again. */
 
     protected:
 

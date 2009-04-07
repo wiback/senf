@@ -20,16 +20,19 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+/** \file
+    \brief ICMPv6Packet public header */
+
 #ifndef HH_SENF_Packets_DefaultBundle_ICMPv6Packet_
 #define HH_SENF_Packets_DefaultBundle_ICMPv6Packet_ 1
 
 // Custom includes
 #include "../../Packets/Packets.hh"
-#include "../../Packets/DefaultBundle/IPv6Packet.hh"
 
+//#include "ICMPv6Packet.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 namespace senf 
 {
-
     struct ICMPv6PacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
@@ -76,7 +79,7 @@ namespace senf
         
         static void dump(packet p, std::ostream & os);
         
-        static IpTypes::key_t nextPacketKey(packet p) { 
+        static key_t nextPacketKey(packet p) { 
             return p->type();
         }
         
@@ -89,6 +92,12 @@ namespace senf
     typedef ConcretePacket<ICMPv6PacketType> ICMPv6Packet;
 }
 
+///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#ifndef SENF_PACKETS_DECL_ONLY
+//#include "IPv4Packet.cci"
+//#include "IPv4Packet.ct"
+//#include "IPv4Packet.cti"
 #endif
 
 
@@ -101,3 +110,4 @@ namespace senf
 // compile-command: "scons -u test"
 // comment-column: 40
 // End:
+

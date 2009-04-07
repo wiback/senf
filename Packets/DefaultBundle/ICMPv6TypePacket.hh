@@ -26,7 +26,8 @@
 #define HH_SENF_Packets_DefaultBundle_ICMPv6TypePacket_ 1
 
 // Custom includes
-#include "../../Packets/Packets.hh"
+#include "../Packets.hh"
+#include "IPv6Packet.hh"
 #include "ICMPv6Packet.hh"
 
 namespace senf {

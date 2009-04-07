@@ -20,17 +20,16 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Definition of non-inline non-template functions
-
 /** \file
     \brief ICMPv6Packet unit tests */
 
 // Custom includes
+#include "ICMPv6Packet.hh"
+#include "ICMPv6TypePacket.hh"
 
 #include "../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
-#include "ICMPv6Packet.hh"
-#include "ICMPv6TypePacket.hh"
+
 
 BOOST_AUTO_UNIT_TEST(ICMPv6Packet_packet)
 {

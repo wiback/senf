@@ -48,7 +48,7 @@ prefix_ void senf::ExceptionMixin::addBacktrace()
     ss << "\nException at\n";
     formatBacktrace(ss, entries, nEntries);
     ss << "-- \n" << message_;
-    message_ = ss.str();
+    what_ = ss.str();
 }
 #endif
 
@@ -62,7 +62,7 @@ prefix_ senf::Exception::~Exception()
 prefix_ char const * senf::Exception::what()
     const throw()
 {
-    return message().c_str();
+    return what_.c_str();
 }
 
 ///////////////////////////////////////////////////////////////////////////

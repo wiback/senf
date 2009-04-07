@@ -66,7 +66,7 @@ namespace term {
 
         virtual ~AbstractTerminal() {}
 
-        virtual void setCallbacks(Callbacks & cb) = 0; /// Register terminal callbacks
+        virtual void setCallbacks(Callbacks & cb) = 0; ///< Register terminal callbacks
 
         virtual std::string terminalType() = 0; ///< Get the terminal type
         virtual unsigned width() = 0;   ///< Get current terminal window width

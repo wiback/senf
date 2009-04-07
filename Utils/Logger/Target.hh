@@ -78,12 +78,12 @@ namespace log {
             stream
         \li (optional) \e area. If the area is specified, only messages directed at that area are
             matched, otherwise any area will be allowed
-        \li (optional) \e level. If the log level is specified, messages will be accepted if their
+        \li (optional) \e level. If the %log level is specified, messages will be accepted if their
             level is at least that value. If the value is not specified, the limit will be taken
             from the stream's default value.
 
         Each parameter (stream, area and level) has two representations: A static (compile time
-        constant) representation, which is the representation also used in the log statements, and a
+        constant) representation, which is the representation also used in the %log statements, and a
         dynamic representation, which may be used for manipulating the routing table.
 
         The static representation is used, when passing routing parameters via template arguments:

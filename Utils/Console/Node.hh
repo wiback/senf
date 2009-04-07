@@ -278,7 +278,7 @@ namespace console {
 
         bool active() const;            ///< \c true, if node is attached to the root() node
 
-        void help(std::ostream & output) const; /// Write help info to \a output
+        void help(std::ostream & output) const; ///< Write help info to \a output
 
         ptr thisptr();                  ///< Get smart pointer to node
         cptr thisptr() const;           ///< Get smart pointer to node (const)

@@ -31,7 +31,8 @@
 // senf::ExceptionMixin
 
 prefix_ senf::ExceptionMixin::ExceptionMixin(std::string const & description)
-    : message_(description)
+    : what_(description),
+      message_(description)
 {
 #ifdef SENF_DEBUG
     addBacktrace();
@@ -47,6 +48,7 @@ prefix_ std::string const & senf::ExceptionMixin::message()
 prefix_ void senf::ExceptionMixin::append(std::string text)
 {
     message_ += text;
+    what_ += text;
 }
 
 ///////////////////////////////////////////////////////////////////////////

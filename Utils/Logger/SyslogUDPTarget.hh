@@ -43,9 +43,9 @@ namespace log {
 
     /** \brief Log target writing UDP syslog packets
 
-        The SyslogUDPTarget will send all log messages directly via UDP to a target host. This host
-        should have a syslog daemon or relay running. The protocol is defined in <a
-        href="ttp://tools.ietf.org/html/rfc3164">RFC-3164</a>.
+        The SyslogUDPTarget will send all %log messages directly via UDP to a target host. This 
+        host should have a syslog daemon or relay running. The protocol is defined in <a
+        href="http://tools.ietf.org/html/rfc3164">RFC-3164</a>.
 
         This log target has some important benefits:
 
@@ -66,7 +66,7 @@ namespace log {
 
         the default facility is <tt>LOG_USER</tt>
 
-        The SENF log levels are mapped to syslog levels in the following way:
+        The SENF %log levels are mapped to syslog levels in the following way:
 
         <table class="senf fixedcolumn">
         <tr><td>senf::log::VERBOSE</td>   <td>\c LOG_DEBUG</td></tr>
@@ -78,8 +78,8 @@ namespace log {
         </table>
 
         \note Since the UDP syslog packets are limited to 1024 characters and there must be some
-            space left so a relay may optionally add a timestamp and hostname section, the log
-            messages are split after 896 characters. Additionally the log messages are split at each
+            space left so a relay may optionally add a timestamp and hostname section, the %log
+            messages are split after 896 characters. Additionally the %log messages are split at each
             newline char since non-printable characters are not allowed.
 
         \implementation The RFC only \e recommends the exact message format. This allows us to
@@ -119,7 +119,7 @@ namespace log {
                                         /**< When syslog format is disabled, messages are not
                                              formated as valid syslog messages but sent using plain
                                              UDP. */
-        void syslog(bool enabled=true); /// Set syslog format
+        void syslog(bool enabled=true); ///< Set syslog format
 
     private:
         void init(); 

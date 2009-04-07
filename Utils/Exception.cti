@@ -56,7 +56,7 @@ template <class BaseException>
 prefix_ char const * senf::WrapException<BaseException>::what()
     const throw()
 {
-    return message().c_str();
+    return what_.c_str();
 }
 
 /////////////////////////////cti.e///////////////////////////////////////

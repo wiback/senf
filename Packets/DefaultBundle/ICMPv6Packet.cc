@@ -20,14 +20,19 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-// Custom includes
-#include "../../Packets/Packets.hh"
+/** \file
+    \brief ICMPv6Packet non-inline non-template implementation */
+
 #include "ICMPv6Packet.hh"
+//#include "ICMPv6Packet.ih"
+
+// Custom includes
 #include <boost/io/ios_state.hpp>
 #include "../../Packets/DefaultBundle/IPv6Packet.hh"
 #include "../../Utils/IpChecksum.hh"
 
 #define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
     senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::ICMPv6Packet>
@@ -74,6 +79,7 @@ prefix_ void senf::ICMPv6PacketType::dump(packet p, std::ostream &os)
        << "Checksum                : " << p->checksum() << "\n";
 }
 
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
