@@ -37,6 +37,8 @@ namespace {
         registerIPv6ExtensionType_Fragment (44);
     senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_Routing>
         registerIPv6ExtensionType_Routing (43);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_HopByHop>
+        registerIPv6ExtensionType_HopByHop (0u);
 }
 
 prefix_ void senf::IPv6ExtensionType_Fragment::dump(packet p, std::ostream & os)

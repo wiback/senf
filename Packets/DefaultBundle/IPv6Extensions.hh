@@ -279,7 +279,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
     };
     
     /** \brief IPv6 routing Hop-By-Hop packet typedef */
-    typedef ConcretePacket<IPv6ExtensionType_Routing> IPv6Extension_HopByHop;
+    typedef ConcretePacket<IPv6ExtensionType_HopByHop> IPv6Extension_HopByHop;
     
 } //namespace senf
 ///////////////////////////////hh.e////////////////////////////////////////
