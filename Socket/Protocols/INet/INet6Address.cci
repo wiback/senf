@@ -72,6 +72,22 @@ prefix_ senf::INet6Address senf::INet6Address::from_inet4address(INet4Address co
     return addr;
 }
 
+prefix_ senf::INet6Address senf::INet6Address::from_mac(senf::MACAddress const & mac)
+{
+    INet6Address addr;
+    addr[0] = 0xfe;
+    addr[1] = 0x80;
+    addr[8] = mac[0];
+    addr[9] = mac[1];
+    addr[10] = mac[2];
+    addr[11] = 0xff;
+    addr[12] = 0xfe;
+    addr[13] = mac[3];
+    addr[14] = mac[4];
+    addr[15] = mac[5];
+    return addr;
+}
+
 prefix_ boost::uint64_t senf::INet6Address::network()
     const
 {

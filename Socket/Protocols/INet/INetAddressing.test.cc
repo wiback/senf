@@ -61,7 +61,7 @@ BOOST_AUTO_UNIT_TEST(inet4SocketAddress)
     BOOST_CHECK_THROW( INet4SocketAddress(":12345"), AddressSyntaxException );
     BOOST_CHECK_THROW( INet4SocketAddress("127.0.0.1:1234a"), AddressSyntaxException );
 
-    BOOST_CHECK_EQUAL( INet4SocketAddress(12345).port(), 12345 );
+    BOOST_CHECK_EQUAL( INet4SocketAddress(12345).port(), 12345u );
     BOOST_CHECK_EQUAL( INet4SocketAddress(12345).address(), INet4Address::None );
     BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").address(), INet4Address::Loopback );
     BOOST_CHECK_EQUAL( INet4SocketAddress("127.0.0.1:12345").port(), 12345u );

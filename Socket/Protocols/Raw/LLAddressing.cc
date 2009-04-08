@@ -63,6 +63,22 @@ prefix_ void senf::LLSocketAddress::interface(std::string const & iface)
     }
 }
 
+prefix_ std::ostream & senf::operator<<(std::ostream & os, LLSocketAddress const & llAddr)
+{
+    os << "[" << llAddr.address()
+       << '%' << llAddr.interface() 
+       << ' ' << llAddr.protocol()
+       << ' ' << llAddr.arptype()
+       << ( llAddr.pkttype() == senf::LLSocketAddress::Host ? " Host" :
+            llAddr.pkttype() == senf::LLSocketAddress::Broadcast ? " Broadcast" :
+            llAddr.pkttype() == senf::LLSocketAddress::Multicast ? " Multicast" :
+            llAddr.pkttype() == senf::LLSocketAddress::OtherHost ? " OtherHost" :
+            llAddr.pkttype() == senf::LLSocketAddress::Outgoing ? " Outgoing" :
+            llAddr.pkttype() == senf::LLSocketAddress::Broadcast ? "Broadcast" : "" )
+       << "]";
+    return os;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "LLAddressing.mpp"

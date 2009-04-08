@@ -37,6 +37,7 @@
 #include "../../../Utils/Tags.hh"
 #include "INet4Address.hh"
 #include "../AddressExceptions.hh"
+#include "../Raw/MACAddress.hh"
 
 //#include "INet6Address.mpp"
 #include "INet6Address.ih"
@@ -203,6 +204,11 @@ namespace senf {
                                              \par
                                              INet4 compatible INet6 addresses are not directly
                                              supported, they are deprecated in the RFC. */
+        static INet6Address from_mac(senf::MACAddress const & mac);
+                                        ///< Construct a link-local INet6 address
+                                        /**< This will construct a link local address of the form
+                                             <tt>fe80::xxxx:xxff:fexx:xxxx</tt>. */
+        
         in6_addr toin6_addr() const;    ///< get the linux in6_addr struct (convinience only)
 
         ///@}
