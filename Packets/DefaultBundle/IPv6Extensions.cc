@@ -4,7 +4,7 @@
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
-//
+//     Philipp Batroff <philipp.batroff@fokus.fraunhofer.de>
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -35,6 +35,8 @@
 namespace {
     senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_Fragment>
         registerIPv6ExtensionType_Fragment (44);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_Routing>
+        registerIPv6ExtensionType_Routing (43);
 }
 
 prefix_ void senf::IPv6ExtensionType_Fragment::dump(packet p, std::ostream & os)
@@ -44,6 +46,28 @@ prefix_ void senf::IPv6ExtensionType_Fragment::dump(packet p, std::ostream & os)
        << "  fragment offset: " << std::hex << unsigned(p->fragmentOffset()) << "\n"
        << "  more fragments : " << (p->moreFragments()?"yes":"no") << "\n"
        << "  id             : " << std::hex << unsigned(p->id()) << "\n";
+}
+
+prefix_ void senf::IPv6ExtensionType_Routing::dump(packet p, std::ostream & os)
+{
+    os << "Internet protocol Version 6 routing extension:\n"
+        << "  next header           : " << unsigned (p->nextHeader()) << "\n"
+        << "  header length         : " << unsigned (p->headerLength()) << "\n"
+        << "  routing type          : " << unsigned (p->routingType()) << "\n"
+        << "  segments left         : " << unsigned (p->segmentsLeft()) << "\n";
+        IPv6Extension_Routing::Parser::hopAddresses_t::container hopAddresses (p->hopAddresses());
+        os << "  further Hop Addresses : \n";
+        if ( p->segmentsLeft() != 0 ){
+            for (IPv6Extension_Routing::Parser::hopAddresses_t::container::iterator i (hopAddresses.begin()); i != hopAddresses.end(); ++i)
+                os << *i << "\n";
+        }
+}
+
+prefix_ void senf::IPv6ExtensionType_HopByHop::dump(packet p, std::ostream & os)
+{
+    os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
+        << "  next header           : " << unsigned (p->nextHeader()) << "\n"
+        << "  header length         : " << unsigned (p->headerLength()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
