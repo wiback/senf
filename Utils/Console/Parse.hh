@@ -85,11 +85,12 @@
     returned as punctuation tokens
     
     <table class="senf">
-    <tr><td>/</td><td>path component separator</td></tr>
-    <tr><td>( )</td><td>argument grouping</td></tr>
-    <tr><td>{ }</td><td>directory grouping</td></tr>
-    <tr><td>;</td><td>command terminator</td></tr>
-    <tr><td>, =</td><td>punctuation tokens</td></tr>
+        <tr><td>#</td><td>Comments are marked with '#' and continue to the end of the line</td></tr>
+        <tr><td>/</td><td>path component separator</td></tr>
+        <tr><td>( )</td><td>argument grouping</td></tr>
+        <tr><td>{ }</td><td>directory grouping</td></tr>
+        <tr><td>;</td><td>command terminator</td></tr>
+        <tr><td>, =</td><td>punctuation tokens</td></tr>
     </table>
 
     \subsection console_basic Basic elements
