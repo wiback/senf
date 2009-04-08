@@ -90,6 +90,9 @@ namespace console {
                                              parsed nodes is cleared. Calling parse() will parse the
                                              complete config bundle again. */
 
+        DirectoryNode & root() const;
+        void chroot(DirectoryNode & node);
+
     protected:
 
     private:

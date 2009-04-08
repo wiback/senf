@@ -84,7 +84,7 @@ namespace log {
 
         Each parameter (stream, area and level) has two representations: A static (compile time
         constant) representation, which is the representation also used in the %log statements, and a
-        dynamic representation, which may be used for manipulating the routing table.
+        dynamic (runtime) representation.
 
         The static representation is used, when passing routing parameters via template arguments:
         \code
@@ -113,6 +113,21 @@ namespace log {
         \li The \e level is statically represented by a level class from \ref
             loglevels. Dynamically, it is represented by an unsigned integer number, the \c value
             member of that class.
+
+        \subsection target_routing_processing Ordering routing entries and route processing
+
+        The routing table is processed from first route to last route, the first matching entry
+        determines the fate of a log messages. Therefore, the ordering of routing entries is
+        important.
+        
+        If no position is explicitly specified, new routing entries are added to the end of the
+        routing table. All routing statements however take an index as optional argument to
+        explicitly specify the position of the new routing entry.
+
+        The index value starts from 0 for the first route. The value gives the position the new
+        routing entry will have after it has been added. An index of 0 will thus insert the new
+        routing entry at the beginning of the table. Negative values count from the back, -1 being
+        the last entry.
 
         \section target_impl Implementing new targets
 

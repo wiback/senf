@@ -6,6 +6,7 @@ ActiveFeederSink
 ActiveFeederSource
 ActiveInput
 ActiveOutput
+ActiveOutputJack
 ActiveSink
 ActiveSocketReader
 ActiveSource
@@ -15,12 +16,14 @@ AddressingPolicyBase
 AddressParser
 addrs
 addtogroup
+aka
 aListCollection
 alloc
 AnnotationRouter
 AnnotationType
 anotherCallback
 api
+ApplyInterfaceDecorator
 arg
 argattributes
 argc
@@ -60,6 +63,7 @@ cci
 cd
 cerr
 cfi
+ChannelGroupTable
 checksumEnabled
 checksumPresent
 CIDR
@@ -126,6 +130,10 @@ DTCP
 DTCPHelloPacket
 DVB
 ElementParser
+EmulatedInterface
+EmulatedReceiver
+EmulatedTransmitter
+EmulatedWLANInterface
 enableChecksum
 endcode
 endhtmlonly
@@ -231,6 +239,7 @@ IDE
 IdleEvent
 ietf
 iface
+ifconfig
 ifndef
 ih
 impl
@@ -246,6 +255,7 @@ InputConnector
 inputSocket
 Institut
 int
+InterfaceAPI
 IntervalTimer
 IntField
 InvalidPacketChainException
@@ -317,11 +327,14 @@ multicast
 MulticastSocketProtocol
 MyClass
 mycommand
+MyDecoration
 mydir
 myDirectory
 MyEnum
+MyInputGroup
 MyList
 MyNodeType
+MyOutputGroup
 MyParser
 myserver
 MySpecialObject
@@ -329,10 +342,12 @@ mytarget
 MyVariant
 MyVariantPolicy
 MyVector
+MyWLANInterface
 namespace
 nbar
 nc
 netcat
+NetEmu
 NETwork
 newpacket
 NewPacket
@@ -345,11 +360,13 @@ NoAddressingPolicy
 NoBuiltin
 NodeCreateTraits
 noinit
+noop
 noroute
 nothrow
 nrOfRecords
 nrOfSources
 nUsing
+NyInputGroup
 ob
 ObjectDirectory
 offene
@@ -412,6 +429,7 @@ ParseVariant
 ParseVec
 PassiveConnector
 PassiveInput
+PassiveInputJack
 PassiveJoin
 PassiveOutput
 PassiveQueue
@@ -460,6 +478,7 @@ RP
 SafePacketParser
 SatCom
 Satelitenkommunikation
+sbund
 SConfig
 scons
 SCons
@@ -575,6 +594,7 @@ TruncatedPacketException
 tt
 ttl
 TunTapSocketHandle
+txpower
 TypeA
 TypeB
 typeField
@@ -611,6 +631,13 @@ Ver
 vlanId
 VLanId
 VoidPacketParser
+WiredInterface
+WiredReceiver
+WiredTransmitter
+WirelessInterface
+WirelessReceiver
+WirelessTransmitter
+WLAN
 Wno
 Woverloaded
 WrapException

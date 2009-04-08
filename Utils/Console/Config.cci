@@ -53,6 +53,11 @@ prefix_ senf::console::DirectoryNode & senf::console::detail::RestrictedExecutor
     return executor_.chroot();
 }
 
+prefix_ void senf::console::detail::RestrictedExecutor::chroot(DirectoryNode & node)
+{
+    executor_.chroot(node);
+}
+
 prefix_ std::ostream & senf::console::detail::RestrictedExecutor::stream()
 {
     return stream_;
@@ -83,6 +88,17 @@ prefix_ bool senf::console::ConfigBundle::parsed(GenericNode & node)
 prefix_ void senf::console::ConfigBundle::reset()
 {
     executor_.reset();
+}
+
+prefix_ senf::console::DirectoryNode & senf::console::ConfigBundle::root()
+    const
+{
+    return executor_.root();
+}
+
+prefix_ void senf::console::ConfigBundle::chroot(DirectoryNode & node)
+{
+    executor_.chroot(node);
 }
 
 ///////////////////////////////////////////////////////////////////////////
