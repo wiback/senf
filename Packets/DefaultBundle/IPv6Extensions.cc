@@ -39,6 +39,8 @@ namespace {
         registerIPv6ExtensionType_Routing (43);
     senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_HopByHop>
         registerIPv6ExtensionType_HopByHop (0u);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_Destination>
+        registerIPv6ExtensionType_Destination (60u);
 }
 
 prefix_ void senf::IPv6ExtensionType_Fragment::dump(packet p, std::ostream & os)
@@ -70,6 +72,13 @@ prefix_ void senf::IPv6ExtensionType_HopByHop::dump(packet p, std::ostream & os)
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
         << "  next header           : " << unsigned (p->nextHeader()) << "\n"
         << "  header length         : " << unsigned (p->headerLength()) << "\n";
+}
+
+prefix_ void senf::IPv6ExtensionType_Destination::dump(packet p, std::ostream & os)
+{
+    os << "Internet protocol Version 6 Destination Options extension:\n"
+            << "  next header           : " << unsigned (p->nextHeader()) << "\n"
+            << "  header length         : " << unsigned (p->headerLength()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

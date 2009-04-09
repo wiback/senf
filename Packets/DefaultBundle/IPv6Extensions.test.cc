@@ -147,7 +147,11 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions)
     BOOST_CHECK_EQUAL( pICMPv6->code(), 0u);
     BOOST_CHECK_EQUAL( pICMPv6->checksum(), 0xa3d3);
 }
-
+    //==============================================================================================
+    
+    /*
+    no unittests for Hop by Hop - and Destination - Options extension Header yet. No real implementation there, only IPv6 extension skeleton implemented.
+    */
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

@@ -281,6 +281,74 @@ The Type 0 Routing header has the following format: (RFC 2460)
     /** \brief IPv6 routing Hop-By-Hop packet typedef */
     typedef ConcretePacket<IPv6ExtensionType_HopByHop> IPv6Extension_HopByHop;
     
+// =====================================================================================================
+    
+    /** \brief Parse in IPv6 Destination Options extension header
+
+        Parser implementing the IPv6 Destination Options Header extension. The fields implemented are:
+    \image html IPv6Extensions_Destination.png
+
+    \see IPv6ExtensionType_Destination \n
+    <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
+     */
+    
+    // Destination Options skeleton without TLV-Options
+
+    struct IPv6PacketParserExtension_Destination : public PacketParserBase {
+#       include SENF_PARSER()
+        SENF_PARSER_FIELD ( nextHeader, UInt8Parser	);
+        SENF_PARSER_FIELD ( headerLength, UInt8Parser	);
+        
+        SENF_PARSER_FINALIZE ( IPv6PacketParserExtension_Destination );
+    };
+    
+    /** \brief IPv6 Destination Options extension
+
+        \par Packet type (typedef):
+    \ref IPv6Extension_Destination
+
+        \par Fields:
+    \ref IPv6PacketParserExtension_Destination
+        
+        \par Associated registries:
+    \ref IpTypes
+        
+        \par Finalize action:
+    Set \a nextHeader from type of next packet if found in \ref IpTypes
+
+    \ingroup protocolbundle_default
+         */
+    
+    struct IPv6ExtensionType_Destination
+    :   public PacketTypeBase,
+        public PacketTypeMixin<IPv6ExtensionType_Destination, IpTypes>
+    {
+#ifndef DOXYGEN
+        typedef PacketTypeMixin<IPv6ExtensionType_Destination, IpTypes> mixin;
+#endif
+        /** \brief IPv6 Destination Options extension packet typedef */
+        typedef ConcretePacket<IPv6ExtensionType_Destination> packet;
+        /** \brief typedef to the parser of IPv6 Destination Options extension packet */
+        typedef IPv6PacketParserExtension_Destination parser;
+        
+        using mixin::nextPacketRange;
+        using mixin::nextPacketType;
+        using mixin::init;
+        using mixin::initSize;
+        
+        static key_t nextPacketKey(packet p) 
+        { return p->nextHeader(); }
+        /** \brief Dump given IPv6Extension_Destination in readable form to given output stream */
+        static void dump(packet p, std::ostream & os); 
+        
+        static void finalize(packet p) { 
+            p->nextHeader() << key(p.next(nothrow)); }
+    };
+    
+    /** \brief IPv6 routing Destination Options packet typedef */
+    typedef ConcretePacket<IPv6ExtensionType_Destination> IPv6Extension_Destination;
+
+    
 } //namespace senf
 ///////////////////////////////hh.e////////////////////////////////////////
 #endif
