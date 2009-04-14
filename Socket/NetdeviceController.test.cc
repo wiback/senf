@@ -29,6 +29,7 @@
 // Custom includes
 #include "NetdeviceController.hh"
 #include "Protocols/Raw/MACAddress.hh"
+#include <net/if.h>
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -38,11 +39,13 @@
 
 BOOST_AUTO_UNIT_TEST(NetdeviceController) {
 
-    senf::NetdeviceController ctrl ("lo");
-    BOOST_CHECK_EQUAL( ctrl.interfaceName(), "lo");
+    std::string ifname ("lo");
+    senf::NetdeviceController ctrl (ifname);
+    BOOST_CHECK_EQUAL( ctrl.interfaceName(), ifname);
 
     int index = ctrl.interfaceIndex();
     BOOST_CHECK_EQUAL( index, senf::NetdeviceController(index).interfaceIndex() );
+    BOOST_CHECK_EQUAL( index, if_nametoindex( ifname.c_str()) );
     
     BOOST_CHECK_THROW( senf::NetdeviceController("invalid_interfacename"), senf::SystemException );
     
@@ -51,6 +54,8 @@ BOOST_AUTO_UNIT_TEST(NetdeviceController) {
     
     bool promisc;
     SENF_CHECK_NO_THROW( promisc = ctrl.promisc());
+    
+    BOOST_CHECK( ctrl.isUp());
 
     if (getuid() != 0) {
         BOOST_WARN_MESSAGE(false, "Cannot run some tests of senf::NetdeviceController as non-root user");
@@ -71,7 +76,7 @@ BOOST_AUTO_UNIT_TEST(NetdeviceController) {
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

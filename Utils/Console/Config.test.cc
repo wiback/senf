@@ -69,10 +69,15 @@ namespace {
 BOOST_AUTO_UNIT_TEST(configBundle)
 {
     senf::console::ScopedDirectory<> root;
-    senf::console::root().add("root",root);
+    senf::console::root().add("root", root);
 
-    root.mkdir("dir1").add("fun1",&fun1);
-    root.add("fun2",&fun2);
+    senf::console::ScopedDirectory<> chroot;
+    senf::console::root().add("chroot", chroot);
+
+    root.mkdir("dir1").add("fun1", &fun1);
+    root.add("fun2", &fun2);
+    chroot.mkdir("dir1").add("fun1", &fun1);
+    chroot.add("fun2", &fun2);
 
     TempFile cfg ("test.cfg");
     cfg << "dir1/fun1 foo; fun2;" << TempFile::close;
@@ -83,6 +88,11 @@ BOOST_AUTO_UNIT_TEST(configBundle)
     bundle.add( senf::console::FileConfig(cfg.name()) );
     bundle.add( senf::console::OptionsConfig(sizeof(argv)/sizeof(argv[0]), argv) );
 
+    SENF_CHECK_NO_THROW( bundle.parse() );
+    BOOST_CHECK_EQUAL( val1, "bar" );
+    BOOST_CHECK_EQUAL( val2, true );
+    
+    bundle.chroot( chroot);
     SENF_CHECK_NO_THROW( bundle.parse() );
     BOOST_CHECK_EQUAL( val1, "bar" );
     BOOST_CHECK_EQUAL( val2, true );
