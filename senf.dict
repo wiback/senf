@@ -47,6 +47,8 @@ BaseParser
 berlios
 BerliOS
 bitfield
+bitrate
+bitrates
 bool
 boostfn
 broadcastEnabled
@@ -102,6 +104,7 @@ CXXFLAGS
 daemonization
 DatagramSection
 DataPacket
+datarate
 dd
 de
 DEBUGINFO
@@ -136,6 +139,7 @@ EmulatedTransmitter
 EmulatedWLANInterface
 enableChecksum
 endcode
+enddot
 endhtmlonly
 endif
 endl
@@ -194,6 +198,8 @@ fixvariant
 flurgle
 fno
 fokus
+fontname
+fontsize
 foo
 fooCallback
 FooException
@@ -218,6 +224,10 @@ GREPackeType
 GREParser
 hangup
 HangupException
+HardwareInterface
+HardwareWLANInterface
+headport
+Helvetica
 hh
 hideinitializer
 Hmm
@@ -256,6 +266,8 @@ inputSocket
 Institut
 int
 InterfaceAPI
+interfaceapi
+InterfaceDecorator
 IntervalTimer
 IntField
 InvalidPacketChainException
@@ -309,12 +321,16 @@ MACAddress
 MACAddressParser
 mainpage
 manualparse
+maxTxPowerIndex
+Mbit
 mcAddMembership
 mcAddr
 mcDropMembership
 mcLoop
 mem
 memberfn
+Mhz
+min
 mixin
 mkdir
 mld
@@ -346,6 +362,7 @@ MyWLANInterface
 namespace
 nbar
 nc
+nChannels
 netcat
 NetEmu
 NETwork
@@ -363,6 +380,7 @@ noinit
 noop
 noroute
 nothrow
+nParameters
 nrOfRecords
 nrOfSources
 nUsing
@@ -408,6 +426,7 @@ PacketTypeBase
 PacketTypeMixin
 PacketTypeNotRegistered
 param
+parameterIndex
 ParseArray
 parsecollection
 ParseCommandInfo
@@ -436,9 +455,11 @@ PassiveQueue
 PassiveSink
 PassiveSocketWriter
 PassiveSource
+pencolor
 png
 POPD
 POSIX
+powerIndexValue
 ppi
 pre
 prev
@@ -452,6 +473,8 @@ py
 QueryPacket
 QueueingDiscipline
 queueSize
+rankdir
+ranksep
 RateFilter
 rateFilter
 ratefilter
@@ -461,6 +484,7 @@ RawINetProtocol
 RawV
 rdynamic
 ReadInfo
+ReceiverDecorator
 refcount
 regex
 registerEvent
@@ -473,8 +497,10 @@ repos
 rerference
 rfc
 RFCs
+RL
 RO
 RP
+RSSI
 SafePacketParser
 SatCom
 Satelitenkommunikation
@@ -539,6 +565,7 @@ SimpleVectorSizer
 SiteScope
 SizeParser
 skipline
+SNR
 SocketAddress
 SocketHandle
 SocketProtocol
@@ -590,6 +617,7 @@ todo
 tokenizes
 TokensRange
 tr
+TransmitterDecorator
 TruncatedPacketException
 tt
 ttl
@@ -606,6 +634,7 @@ udpWriter
 UInt
 UIntField
 UIntFieldParser
+un
 Unhandled
 unicast
 uniquified
@@ -638,6 +667,7 @@ WirelessInterface
 WirelessReceiver
 WirelessTransmitter
 WLAN
+WLANController
 Wno
 Woverloaded
 WrapException

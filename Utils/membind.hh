@@ -57,6 +57,15 @@
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
+#define SENF_FNP(ret, fn, args) \
+    static_cast<ret (*) args>(& fn)
+
+#define SENF_MEMFNP(ret, cls, fn, args) \
+    static_cast<ret (cls::*) args>(& cls :: fn)
+
+#define SENF_MEMBINDFNP(ret, cls, fn, args) \
+    senf::membind(SENF_MEMFNP(ret, cls, fn, args), this)
+
 namespace senf {
 
 #define scOBTYPE T *
