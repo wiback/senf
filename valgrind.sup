@@ -101,3 +101,10 @@
    Memcheck:Cond
    fun:inet_ntop
 }
+
+{
+   if_indextoname-suppression-1
+   Memcheck:Param
+   ioctl(SIOCGIFINDEX)
+   obj:/lib/ld-2.3.6.so
+}

@@ -47,6 +47,7 @@ prefix_ std::string senf::LLSocketAddress::interface()
     if (addr_.sll_ifindex == 0)
         return std::string();
     char name[IFNAMSIZ];
+    ::bzero(name, IFNAMSIZ);
     if (! ::if_indextoname(addr_.sll_ifindex, name))
         throw AddressSyntaxException();
     return std::string(name);
