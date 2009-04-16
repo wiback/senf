@@ -57,12 +57,92 @@
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
+/** \brief Get function pointer
+
+    This macro will get a function pointer of a possibly overloaded function:
+
+    \code
+    void foo(int i);
+    int foo();
+
+    SENF_FNP(void, foo, (int i)) // Get the address of the first overload
+    \endcode
+
+    The macro arguments are the return type, function name and function arguments just as specified
+    in the declaration.
+
+    This macro only works for functions at namespace scope or for class static functions. For member
+    functions use \ref SENF_MEMFNP() or \ref SENF_MEMBINDFNP().
+
+    \hideinitializer
+    \ingroup membind
+ */
 #define SENF_FNP(ret, fn, args) \
     static_cast<ret (*) args>(& fn)
 
+/** \brief Get function pointer
+
+    This macro will get a member function pointer of a possibly overloaded member function:
+
+    \code
+    struct Foo
+    {
+        void foo(int i);
+        int foo() const;
+    };
+
+    SENF_MEMFNP(int, Foo, foo, () const) // Get the address of the first overload
+    \endcode
+
+    The macro arguments are the return type, class name, function name and function arguments just
+    as specified in the declaration.
+
+    This macro only works for member functions. For namespace scope functions or class static
+    functions use SENF_FNP.
+
+    This macro returns a member function pointer. To automatically bind this pointer to \c this, use
+    \ref SENF_MEMBINDFNP() or use senf::membind() to bind to some other instance besides \c this.
+
+    \hideinitializer
+    \ingroup membind
+ */
 #define SENF_MEMFNP(ret, cls, fn, args) \
     static_cast<ret (cls::*) args>(& cls :: fn)
 
+/** \brief Get function pointer
+
+    This macro will get a member function pointer of a possibly overloaded member function and bind
+    it to \c this returning a boost::function object resembling an ordinary non-member function (see
+    senf::membind()).
+
+    \code
+    struct Foo
+    {
+        void foo(int i);
+        int foo() const;
+
+        Foo()
+        {
+            // Get bound member function for second overload
+            SENF_MEMBINDFNP(int, Foo, foo, () const) 
+        }
+    
+    };
+    \endcode
+
+    The macro arguments are the return type, class name, function name and function arguments just
+    as specified in the declaration.
+
+    This macro only works for member functions. For namespace scope functions or class static
+    functions use SENF_FNP.
+
+    This macro returns a bound member function (a \c boost::function object instance). To get an
+    ordinary member function pointer use \ref SENF_MEMFNP(), for non-member function or class static
+    functions use \ref MEM_FNP().
+
+    \hideinitializer
+    \ingroup membind
+ */
 #define SENF_MEMBINDFNP(ret, cls, fn, args) \
     senf::membind(SENF_MEMFNP(ret, cls, fn, args), this)
 
