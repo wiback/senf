@@ -150,11 +150,11 @@ The Type 0 Routing header has the following format: (RFC 2460)
 */
 #       include SENF_PARSER()
         
-        SENF_PARSER_FIELD ( nextHeader, UInt8Parser	);
-        SENF_PARSER_FIELD ( headerLength, UInt8Parser	);
-        SENF_PARSER_FIELD ( routingType, UInt8Parser	); //set to Zero for minimal implementation
-        SENF_PARSER_FIELD_RO ( segmentsLeft, UInt8Parser   );
-        SENF_PARSER_FIELD ( reserved, UInt32Parser      ); //set to zero by RFC
+        SENF_PARSER_FIELD ( nextHeader, UInt8Parser      );
+        SENF_PARSER_FIELD ( headerLength, UInt8Parser    );
+        SENF_PARSER_FIELD ( routingType, UInt8Parser     ); //set to Zero for minimal implementation
+        SENF_PARSER_FIELD_RO ( segmentsLeft, UInt8Parser );
+        SENF_PARSER_FIELD ( reserved, UInt32Parser       ); //set to zero by RFC
         SENF_PARSER_VECTOR ( hopAddresses, segmentsLeft, INet6AddressParser );
         
         SENF_PARSER_FINALIZE ( IPv6PacketParserExtension_Routing );
@@ -229,8 +229,8 @@ The Type 0 Routing header has the following format: (RFC 2460)
 
     struct IPv6PacketParserExtension_HopByHop : public PacketParserBase {
 #       include SENF_PARSER()
-        SENF_PARSER_FIELD ( nextHeader, UInt8Parser	);
-        SENF_PARSER_FIELD ( headerLength, UInt8Parser	);
+        SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
+        SENF_PARSER_FIELD ( headerLength, UInt8Parser );
         
         SENF_PARSER_FINALIZE ( IPv6PacketParserExtension_HopByHop );
     };
@@ -296,8 +296,8 @@ The Type 0 Routing header has the following format: (RFC 2460)
 
     struct IPv6PacketParserExtension_Destination : public PacketParserBase {
 #       include SENF_PARSER()
-        SENF_PARSER_FIELD ( nextHeader, UInt8Parser	);
-        SENF_PARSER_FIELD ( headerLength, UInt8Parser	);
+        SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
+        SENF_PARSER_FIELD ( headerLength, UInt8Parser );
         
         SENF_PARSER_FINALIZE ( IPv6PacketParserExtension_Destination );
     };

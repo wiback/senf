@@ -330,7 +330,7 @@ namespace senf {
     /** \brief MLDv2 Listener query
 
         \par Packet type (typedef):
-	    \ref MLDv2ListenerQuery
+            \ref MLDv2ListenerQuery
 
         \par Fields:
             \ref MLDv2ListenerQueryParser
@@ -389,7 +389,7 @@ namespace senf {
     /** \brief MLDv2 Listener report
 
         \par Packet type (typedef):
-	    \ref MLDv2ListenerReport
+            \ref MLDv2ListenerReport
 
         \par Fields:
             \ref MLDv2ListenerReportParser

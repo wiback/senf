@@ -41,7 +41,7 @@ namespace senf
     #   include SENF_FIXED_PARSER()
 
         SENF_PARSER_PRIVATE_BITFIELD ( subtype, 4,  unsigned                ); //<pkgdraw: hide
-	//skip type and version
+        //skip type and version
         SENF_PARSER_SKIP_BITS        (          4                           ); //<pkgdraw: hide
         //jump to fist address field
         SENF_PARSER_SKIP             ( 3                                    ); //<pkgdraw: hide
@@ -75,7 +75,7 @@ namespace senf
     #   include SENF_PARSER()
 
         SENF_PARSER_PRIVATE_BITFIELD ( subtype,  4,  unsigned            ); //<pkgdraw: hide
-	//skip type and version
+        //skip type and version
         SENF_PARSER_SKIP_BITS        (           4                       ); //<pkgdraw: hide
         //jump to fist address field
         SENF_PARSER_SKIP             ( 3, 3                              ); //<pkgdraw: hide
@@ -208,7 +208,7 @@ namespace senf
 
         \par Fields:
             \ref WLANPacketParser
-	    \image html WLANPacket.png
+            \image html WLANPacket.png
 
         \ingroup protocolbundle_80211
      */

@@ -187,7 +187,7 @@ namespace senf
 
         \par Fields:
             \ref RadiotapPacketParser
-	    \image html RadiotapPacket.png
+            \image html RadiotapPacket.png
         
         \see http://www.radiotap.org/
         
