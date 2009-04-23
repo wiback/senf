@@ -78,6 +78,8 @@ namespace log {
         void reopen();                  ///< Reopen %log after log-file rotation
         void reopen(std::string const & file);  ///< Reopen %log under a new name
 
+        std::string const & filename() const; ///< Return current log file name
+
     private:
         std::string file_;
 
