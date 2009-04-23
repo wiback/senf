@@ -646,6 +646,7 @@ TunTapSocketHandle
 txpower
 TypeA
 TypeB
+TypedInterfaceDecorator
 typeField
 UDLR
 udp

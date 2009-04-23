@@ -83,6 +83,12 @@ prefix_ void senf::log::FileTarget::reopen(std::string const & file)
         parent->add(file, consoleDir().node().unlink());
 }
 
+prefix_ std::string const & senf::log::FileTarget::filename()
+    const
+{
+    return file_;
+}
+
 prefix_ senf::log::FileTarget::RegisterConsole::RegisterConsole()
 {
     namespace kw = senf::console::kw;

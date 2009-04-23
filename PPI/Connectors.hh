@@ -97,6 +97,42 @@ namespace connector {
         };
         \endcode
 
+
+        \section ppi_jacks Jacks
+
+        A Jack is a packet type aware and possibly packet type converting reference to an arbitrary
+        connector of the same type. Jacks are used in groups to indirectly declare the input's and
+        output's
+
+        \code
+        class MyGroup
+        {
+        private:
+            senf::ppi::module::PassiveQueue queue;
+            senf::ppi::module::RateAnalyzer analyzer;
+
+        public:
+            senf::ppi::connector::ActiveInputJack<senf::EthernetPacket> input;
+            senf::ppi::connector::ActiveOutputJack<senf::EthernetPacket> output;
+
+            MyGroup() 
+                : queue (), analyzer (), input (queue.input), output (analyzer.output)
+            {
+                senf::ppi::connect(queue, analyzer);
+            }
+        };
+        \endcode
+
+        The jacks are initialized by passing an arbitrary compatible connector to the jack
+        constructor. A connector is compatible, if
+        \li It has the same input/output active/passive specification
+        \li Either the Jack or the Connector are generic (senf::Packet) or Jack and Connector have
+            the same packet type
+
+        Jacks can be used wherever connectors may be used. Jacks may be defined anywhere, not only
+        in modules. It is however important to ensure that the lifetime of the jack does not exceed
+        the lifetime of the referenced connector.
+
         \see
             senf::ppi::module::Module \n
             senf::ppi::connect() \n

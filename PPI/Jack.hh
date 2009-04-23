@@ -38,58 +38,70 @@ namespace senf {
 namespace ppi {
 namespace connector {
 
+    /** \brief Connector Jack base class
+        \see \ref ppi_jacks */
     class Jack
         : private boost::noncopyable
     {};
 
+    /** \brief Jack referencing an ActiveInput 
+        \see \ref ppi_jacks */
     class GenericActiveInputJack
         : public Jack
     {
     public:
         explicit GenericActiveInputJack(GenericActiveInput & input);
 
-        GenericActiveInput & connector();
+        GenericActiveInput & connector(); ///< Get referenced connector
 
     private:
         GenericActiveInput & input_;
     };
 
+    /** \brief Jack referencing an ActiveOutput
+        \see \ref ppi_jacks */
     class GenericActiveOutputJack
         : public Jack
     {
     public:
         explicit GenericActiveOutputJack(GenericActiveOutput & output);
 
-        GenericActiveOutput & connector();
+        GenericActiveOutput & connector(); ///< Get referenced connector
 
     private:
         GenericActiveOutput & output_;
     };
 
+    /** \brief Jack referencing a PassiveInput
+        \see \ref ppi_jacks */
     class GenericPassiveInputJack
         : public Jack
     {
     public:
         explicit GenericPassiveInputJack(GenericPassiveInput & input);
 
-        GenericPassiveInput & connector();
+        GenericPassiveInput & connector(); ///< Get referenced connector
 
     private:
         GenericPassiveInput & input_;
     };
     
+    /** \brief Jack referencing a PassiveOutput
+        \see \ref ppi_jacks */
     class GenericPassiveOutputJack
         : public Jack
     {
     public:
         explicit GenericPassiveOutputJack(GenericPassiveOutput & output);
 
-        GenericPassiveOutput & connector();
+        GenericPassiveOutput & connector(); ///< Get referenced connector
 
     private:
         GenericPassiveOutput & output_;
     };
 
+    /** \brief Jack with packet type referencing an ActiveInput
+        \see \ref ppi_jacks */
     template <class PacketType=Packet>
     class ActiveInputJack
         : public GenericActiveInputJack
@@ -115,6 +127,8 @@ namespace connector {
 
 #endif
 
+    /** \brief Jack with packet type referencing an ActiveOutput
+        \see \ref ppi_jacks */
     template <class PacketType=Packet>
     class ActiveOutputJack
         : public GenericActiveOutputJack
@@ -140,6 +154,8 @@ namespace connector {
 
 #endif
 
+    /** \brief Jack with packet type referencing a PassiveInput
+        \see \ref ppi_jacks */
     template <class PacketType=Packet>
     class PassiveInputJack
         : public GenericPassiveInputJack
@@ -165,6 +181,8 @@ namespace connector {
 
 #endif
 
+    /** \brief Jack with packet type referencing a PassiveOutput
+        \see \ref ppi_jacks */
     template <class PacketType=Packet>
     class PassiveOutputJack
         : public GenericPassiveOutputJack
