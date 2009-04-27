@@ -79,6 +79,12 @@ senf::parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & t
         throw senf::console::SyntaxErrorException();
 }
 
+prefix_ void senf::formatClockServiceInterval(ClockService::clock_type interval,
+                                              std::ostream & os)
+{
+    os << interval << "ns";
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "ClockService.mpp"

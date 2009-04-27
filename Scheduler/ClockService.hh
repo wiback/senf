@@ -199,6 +199,8 @@ namespace senf {
      */
     void parseClockServiceInterval(console::ParseCommandInfo::TokensRange const & tokens, 
                                    ClockService::clock_type & out);
+
+    void formatClockServiceInterval(ClockService::clock_type interval, std::ostream & os);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
