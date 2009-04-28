@@ -55,16 +55,6 @@ senf::ppi::connector::ActiveInputJack<PacketType>::ActiveInputJack(ActiveInputJa
     : GenericActiveInputJack (input.connector())
 {}
 
-prefix_
-senf::ppi::connector::ActiveInputJack<senf::Packet>::ActiveInputJack(ActiveInput<> & input)
-    : GenericActiveInputJack (input) 
-{}
-
-prefix_
-senf::ppi::connector::ActiveInputJack<senf::Packet>::ActiveInputJack(ActiveInputJack & input)
-    : GenericActiveInputJack (input.connector()) 
-{}
-
 template <class PacketType>
 prefix_ senf::ppi::connector::ActiveOutputJack<PacketType>::
 ActiveOutputJack(ActiveOutput<PacketType> & output)
@@ -87,16 +77,6 @@ template <class PacketType>
 prefix_ senf::ppi::connector::ActiveOutputJack<PacketType>::
 ActiveOutputJack(ActiveOutputJack<> & output)
     : GenericActiveOutputJack (output.connector())
-{}
-
-prefix_ senf::ppi::connector::ActiveOutputJack<senf::Packet>::
-ActiveOutputJack(ActiveOutput<> & output)
-    : GenericActiveOutputJack (output) 
-{}
-
-prefix_ senf::ppi::connector::ActiveOutputJack<senf::Packet>::
-ActiveOutputJack(ActiveOutputJack & output)
-    : GenericActiveOutputJack (output.connector()) 
 {}
 
 template <class PacketType>
@@ -123,16 +103,6 @@ PassiveInputJack(PassiveInputJack<> & input)
     : GenericPassiveInputJack (input.connector())
 {}
 
-prefix_
-senf::ppi::connector::PassiveInputJack<senf::Packet>::PassiveInputJack(PassiveInput<> & input)
-    : GenericPassiveInputJack (input) 
-{}
-
-prefix_ senf::ppi::connector::PassiveInputJack<senf::Packet>::
-PassiveInputJack(PassiveInputJack & input)
-    : GenericPassiveInputJack (input.connector()) 
-{}
-
 template <class PacketType>
 prefix_ senf::ppi::connector::PassiveOutputJack<PacketType>::
 PassiveOutputJack(PassiveOutput<PacketType> & output)
@@ -155,16 +125,6 @@ template <class PacketType>
 prefix_ senf::ppi::connector::PassiveOutputJack<PacketType>::
 PassiveOutputJack(PassiveOutputJack<> & output)
     : GenericPassiveOutputJack (output.connector())
-{}
-
-prefix_ senf::ppi::connector::PassiveOutputJack<senf::Packet>::
-PassiveOutputJack(PassiveOutput<> & output)
-    : GenericPassiveOutputJack (output) 
-{}
-
-prefix_ senf::ppi::connector::PassiveOutputJack<senf::Packet>::
-PassiveOutputJack(PassiveOutputJack & output)
-    : GenericPassiveOutputJack (output.connector()) 
 {}
 
 template <class T>

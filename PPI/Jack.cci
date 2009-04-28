@@ -75,6 +75,46 @@ senf::ppi::connector::GenericPassiveOutputJack::connector()
     return output_;
 }
 
+prefix_ senf::ppi::connector::ActiveInputJack<senf::Packet>::
+ActiveInputJack(GenericActiveInput & input)
+    : GenericActiveInputJack (input) 
+{}
+
+prefix_ senf::ppi::connector::ActiveInputJack<senf::Packet>::
+ActiveInputJack(GenericActiveInputJack input)
+    : GenericActiveInputJack (input.connector()) 
+{}
+
+prefix_ senf::ppi::connector::ActiveOutputJack<senf::Packet>::
+ActiveOutputJack(GenericActiveOutput & output)
+    : GenericActiveOutputJack (output) 
+{}
+
+prefix_ senf::ppi::connector::ActiveOutputJack<senf::Packet>::
+ActiveOutputJack(GenericActiveOutputJack & output)
+    : GenericActiveOutputJack (output.connector()) 
+{}
+
+prefix_ senf::ppi::connector::PassiveInputJack<senf::Packet>::
+PassiveInputJack(GenericPassiveInput & input)
+    : GenericPassiveInputJack (input) 
+{}
+
+prefix_ senf::ppi::connector::PassiveInputJack<senf::Packet>::
+PassiveInputJack(GenericPassiveInputJack & input)
+    : GenericPassiveInputJack (input.connector()) 
+{}
+
+prefix_ senf::ppi::connector::PassiveOutputJack<senf::Packet>::
+PassiveOutputJack(GenericPassiveOutput & output)
+    : GenericPassiveOutputJack (output) 
+{}
+
+prefix_ senf::ppi::connector::PassiveOutputJack<senf::Packet>::
+PassiveOutputJack(GenericPassiveOutputJack & output)
+    : GenericPassiveOutputJack (output.connector()) 
+{}
+
 prefix_ void senf::ppi::connect(connector::GenericActiveOutputJack & source,
                                 connector::GenericPassiveInputJack & target)
 {

@@ -121,8 +121,8 @@ namespace connector {
         : public GenericActiveInputJack
     {
     public:
-        explicit ActiveInputJack(ActiveInput<> & input);
-        explicit ActiveInputJack(ActiveInputJack & input);
+        explicit ActiveInputJack(GenericActiveInput & input);
+        explicit ActiveInputJack(GenericActiveInputJack input);
     };
 
 #endif
@@ -148,8 +148,8 @@ namespace connector {
         : public GenericActiveOutputJack
     {
     public:
-        explicit ActiveOutputJack(ActiveOutput<> & output);
-        explicit ActiveOutputJack(ActiveOutputJack & output);
+        explicit ActiveOutputJack(GenericActiveOutput & output);
+        explicit ActiveOutputJack(GenericActiveOutputJack & output);
     };
 
 #endif
@@ -175,8 +175,8 @@ namespace connector {
         : public GenericPassiveInputJack
     {
     public:
-        explicit PassiveInputJack(PassiveInput<> & input);
-        explicit PassiveInputJack(PassiveInputJack & input);
+        explicit PassiveInputJack(GenericPassiveInput & input);
+        explicit PassiveInputJack(GenericPassiveInputJack & input);
     };
 
 #endif
@@ -202,8 +202,8 @@ namespace connector {
         : public GenericPassiveOutputJack
     {
     public:
-        explicit PassiveOutputJack(PassiveOutput<> & output);
-        explicit PassiveOutputJack(PassiveOutputJack & output);
+        explicit PassiveOutputJack(GenericPassiveOutput & output);
+        explicit PassiveOutputJack(GenericPassiveOutputJack & output);
     };
 
 #endif
