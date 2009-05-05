@@ -65,19 +65,31 @@ namespace ppi {
                                              \param[in] packet Packet to write */
     };
 
+    /** \brief Writer sending data with ClientSocketHandle::writeto()
+
+        This writer will send out data using ClientSocketHandle::writeto(). The target address can
+        be specified in the writer constructor and can be adjusted at any time.
+
+        If no target address is set, incoming data will be <em>silently dropped</em>.
+     */
     template <class HandleType>
     class TargetDgramWriter
     {
     public:
         typedef HandleType Handle;
 
-        TargetDgramWriter();
+        TargetDgramWriter();            ///< Create TargetDgramWriter with unset target address
         TargetDgramWriter(typename Handle::Address const & target);
+                                        ///< Create TargetDgramWriter sending to \a target
 
-        typename Handle::Address target() const;
-        void target(typename Handle::Address const & target);
+        typename Handle::Address target() const; ///< Get current target address
+        void target(typename Handle::Address const & target); ///< Set target address
 
-        void operator()(Handle handle, Packet const & packet);
+        void operator()(Handle handle, Packet const & packet); ///< Write \a packet to \a handle
+                                        /**< Write the complete \a packet as a datagram to \a
+                                             handle.
+                                             \param[in] handle Handle to write data to
+                                             \param[in] packet Packet to write */
 
     private:
         typename Handle::Address target_;
