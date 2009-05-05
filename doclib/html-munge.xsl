@@ -2,6 +2,8 @@
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:str="http://exslt.org/strings"
+  xmlns:set="http://exslt.org/sets"
+  xmlns:exslt="http://exslt.org/common"
   extension-element-prefixes="str">
 
   <xsl:output 
@@ -317,7 +319,7 @@
       </xsl:variable>
       <xsl:if test="string($public-memfn)">
         <tr><td colspan="3"><h2>Public Member Functions</h2></td></tr>
-        <xsl:copy-of select="$public-memfn"/>
+        <xsl:copy-of select="set:distinct(exslt:node-set($public-memfn)/tr)"/>
       </xsl:if>
 
       <xsl:variable name="public-var">
