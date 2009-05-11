@@ -32,6 +32,10 @@
 #include "DebugModules.hh"
 #include "Module.hh"
 #include "Setup.hh"
+#include "CloneSource.hh"
+#include "Joins.hh"
+#include "PassiveQueue.hh"
+#include "../Utils/membind.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -171,6 +175,67 @@ BOOST_AUTO_UNIT_TEST(route)
     BOOST_CHECK( passiveSource.output.throttled() );
     BOOST_CHECK( activeSink );
 }
+
+///////////////////////////////////////////////////
+// test connection new modules on runtime
+
+namespace {
+    void timeout() {
+        senf::scheduler::terminate();
+    }
+    
+    // just a helper class for the test
+    struct ModuleConnector {
+        module::PriorityJoin & join_;
+        ModuleConnector( module::PriorityJoin & join)
+            : join_( join) {};
+        void connect() {
+            module::PassiveQueue * queue = new module::PassiveQueue;
+            ppi::connect( *queue, join_, 0);
+        }
+    };
+    
+    class TestSink : public module::Module
+    {
+        SENF_PPI_MODULE(TestSink);
+    public:
+        connector::PassiveInput<> input;
+        TestSink() {
+            noroute(input);
+            input.onRequest(&TestSink::request);
+        }
+    private:
+        void request() {
+            (void) input.read().data();
+        }
+    };
+}
+
+BOOST_AUTO_UNIT_TEST(connect_runtime)
+{
+    TestSink sink;
+    module::ActiveFeeder feeder;
+    module::PriorityJoin join;
+    module::CloneSource source1 (senf::DataPacket::create());
+    module::PassiveQueue queue;
+    
+    ppi::connect( feeder, sink);
+    ppi::connect( join, feeder);
+    ppi::connect( source1, join);
+    
+    ModuleConnector moduleConnector ( join);
+    senf::scheduler::TimerEvent timer ( "connect_runtime timer",
+        senf::membind(&ModuleConnector::connect, moduleConnector),
+        senf::ClockService::now() + senf::ClockService::milliseconds(25));
+    
+    senf::scheduler::TimerEvent timeoutTimer (
+        "connect_runtime test timeoutTimer", &timeout,
+        senf::ClockService::now() + senf::ClockService::milliseconds(50));
+    
+//    senf::ppi::run();
+}
+
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
