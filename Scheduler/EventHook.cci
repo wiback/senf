@@ -56,8 +56,10 @@ prefix_ void senf::scheduler::EventHook::disable()
 
 prefix_ void senf::scheduler::EventHook::enable()
 {
-    if (! enabled())
+    if (! enabled()) {
         detail::EventHookDispatcher::instance().add(*this);
+        setRunnable();
+    }
 }
 
 prefix_ void senf::scheduler::EventHook::action(Callback const & cb)

@@ -158,6 +158,11 @@ prefix_ senf::scheduler::detail::FIFORunner::iterator senf::scheduler::detail::F
         EventManager::IteratorFilter(), tasks_.end(), tasks_.end());
 }
 
+prefix_ void senf::scheduler::detail::FIFORunner::yield()
+{
+    yield_ = true;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

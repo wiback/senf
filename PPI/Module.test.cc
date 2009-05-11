@@ -27,6 +27,8 @@
 //#include "Module.test.ih"
 
 // Custom includes
+#include <boost/scoped_ptr.hpp>
+#include "../Utils/membind.hh"
 #include "DebugEvent.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
@@ -78,6 +80,57 @@ BOOST_AUTO_UNIT_TEST(module)
     tester.event.trigger();
     BOOST_CHECK_EQUAL( sink.size(), 1u );
     BOOST_CHECK( senf::ClockService::now() - tester.time() < senf::ClockService::seconds(1) );
+}
+
+namespace {
+
+    void timeout() {
+        senf::scheduler::terminate();
+    }
+    
+    class InitTest : public ppi::module::Module
+    {
+        SENF_PPI_MODULE(InitTest);
+    public:
+        InitTest() : init (false) {}
+        void v_init() { init = true; }
+
+        bool init;
+    };
+
+    struct MakeInit {
+        boost::scoped_ptr<InitTest> tester;
+        void make() {
+            tester.reset(new InitTest());
+        }
+        void test() {
+            BOOST_REQUIRE( tester );
+            BOOST_CHECK( tester->init );
+        }
+    };
+
+}
+
+BOOST_AUTO_UNIT_TEST(delayedInit)
+{
+    MakeInit maker;
+    senf::scheduler::TimerEvent timer ( 
+        "delayedInit timer",
+        senf::membind(&MakeInit::make, &maker),
+        senf::ClockService::now() + senf::ClockService::milliseconds(250) );
+    senf::scheduler::TimerEvent testTimer (
+        "delayedInit test",
+        senf::membind(&MakeInit::test, &maker),
+        senf::ClockService::now() + senf::ClockService::milliseconds(500) );
+    senf::scheduler::TimerEvent timeoutTimer (
+        "delayedInit timeout",
+        &timeout,
+        senf::ClockService::now() + senf::ClockService::milliseconds(750) );
+
+    senf::ppi::run();
+
+    BOOST_REQUIRE( maker.tester );
+    BOOST_CHECK( maker.tester->init );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

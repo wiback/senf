@@ -245,6 +245,13 @@ namespace scheduler {
      */
     void terminate(); 
 
+    /** \brief Immediately rescheduler
+
+        Calling yield() will cause the scheduler to terminate the current queue run and immediately
+        rescheduler all pending tasks.
+     */
+    void yield();
+
     /** \brief Return timestamp of last event
 
         This is the timestamp, the last event has been signaled. This is the real time at which the

@@ -110,6 +110,8 @@ namespace detail {
         iterator begin() const;
         iterator end() const;
 
+        void yield();
+
     protected:
 
     private:
@@ -146,6 +148,7 @@ namespace detail {
 #   endif
         unsigned watchdogCount_;
         unsigned hangCount_;
+        bool yield_;
 
         friend void senf::scheduler::restart();
         friend class singleton<FIFORunner>;

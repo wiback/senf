@@ -49,6 +49,11 @@ prefix_ void senf::scheduler::terminate()
     terminate_ = true;
 }
 
+prefix_ void senf::scheduler::yield()
+{
+    senf::scheduler::detail::FIFORunner::instance().yield();
+}
+
 prefix_ bool senf::scheduler::running()
 {
     return running_;

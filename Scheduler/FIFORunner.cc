@@ -40,7 +40,7 @@
 
 prefix_ senf::scheduler::detail::FIFORunner::FIFORunner()
     : tasks_ (), next_ (tasks_.end()), watchdogRunning_ (false), watchdogMs_ (1000), 
-      watchdogAbort_ (false), watchdogCount_(0), hangCount_ (0)
+      watchdogAbort_ (false), watchdogCount_(0), hangCount_ (0), yield_ (false)
 {
     struct sigevent ev;
     ::memset(&ev, 0, sizeof(ev));
@@ -134,17 +134,32 @@ prefix_ void senf::scheduler::detail::FIFORunner::dequeue(TaskInfo * task)
 
 prefix_ void senf::scheduler::detail::FIFORunner::run()
 {
-    TaskList::iterator f (tasks_.begin());
-    TaskList::iterator l (TaskList::current(highPriorityEnd_));
-    run(f, l);
+    for(;;) {
+        TaskList::iterator f (tasks_.begin());
+        TaskList::iterator l (TaskList::current(highPriorityEnd_));
+        run(f, l);
+        if (yield_) {
+            yield_ = false;
+            continue;
+        }
 
-    f = l; ++f;
-    l = TaskList::current(normalPriorityEnd_);
-    run(f, l);
-        
-    f = l; ++f;
-    l = tasks_.end();
-    run(f, l);
+        f = l; ++f;
+        l = TaskList::current(normalPriorityEnd_);
+        run(f, l); 
+        if (yield_) {
+            yield_ = false;
+            continue;
+        }
+       
+        f = l; ++f;
+        l = tasks_.end();
+        run(f, l);
+        if (yield_) {
+            yield_ = false;
+            continue;
+        }
+        break;
+    }
 }
 
 prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, TaskList::iterator l)
@@ -172,7 +187,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
     ScopeExit atExit ((
                           var(watchdogCount_) = 0, 
                           var(next_) = l
-                          ));
+                     ));
     
     while (next_ != end) {
         TaskInfo & task (*next_);
@@ -186,7 +201,10 @@ prefix_ void senf::scheduler::detail::FIFORunner::run(TaskList::iterator f, Task
             ++ next_;
             tasks_.splice(l, tasks_, i);
             watchdogCount_ = 1;
+            yield_ = false;
             task.run();
+            if (yield_)
+                return;
         }
         else
             ++ next_;

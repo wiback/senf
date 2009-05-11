@@ -54,6 +54,10 @@ prefix_ void senf::ppi::ModuleManager::registerInitializable(Initializable & i)
 {
     initQueue_.push_back(&i);
     initRunner_.enable();
+    // This call ensures, that the senf::ppi::init() handler is called as next handler
+    // after this handler returns (this works since the senf::ppi::init() handler is registered as 
+    // PRE hook and thus has very high priority)
+    senf::scheduler::yield();
 }
 
 prefix_ void senf::ppi::ModuleManager::unregisterInitializable(Initializable & i)
