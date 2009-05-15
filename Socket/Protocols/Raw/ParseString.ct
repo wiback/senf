@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,25 +21,41 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MACAddress non-inline template implementation  */
+    \brief ParseString non-inline template implementation  */
 
-//#include "MACAddress.ih"
+//#include "ParseString.ih"
 
 // Custom includes
-#include "../../../config.hh"
+#include <boost/tokenizer.hpp>
+#include <boost/range.hpp>
+#include <boost/numeric/conversion/cast.hpp>
+#include "../../../Utils/String.hh"
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::MACAddress
-
-template <class InputIterator>
-prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_data(InputIterator i)
+template <class ForwardIterator>
+prefix_ void senf::detail::parseHexString(std::string const & value,
+                                          char const * separator, ForwardIterator f,
+                                          ForwardIterator l)
 {
-    MACAddress mac (senf::noinit);
-    SENF_copy_n(i, 6, mac.begin());
-    return mac;
+    typedef boost::char_separator<char> Separator;
+    typedef boost::tokenizer<Separator> Tokenizer;
+    Separator sep (separator);
+    Tokenizer tok (value, sep);
+    Tokenizer::iterator i (tok.begin());
+    Tokenizer::iterator const i_end (tok.end());
+    try {
+        for (; i!=i_end && f!=l; ++i, ++f)
+            *f = boost::numeric_cast<typename std::iterator_traits<ForwardIterator>::value_type>(
+                senf::lexical_cast<unsigned long>()[std::hex](
+                    std::string(boost::begin(*i),boost::end(*i))));
+    }
+    catch (std::bad_cast &) {
+        throw AddressSyntaxException();
+    }
+    if (i!=i_end || f!=l)
+        throw AddressSyntaxException();
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

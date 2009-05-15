@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,29 +21,30 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MACAddress non-inline template implementation  */
+    \brief ParseString public header */
 
-//#include "MACAddress.ih"
+#ifndef HH_SENF_Socket_Protocols_Raw_ParseString_
+#define HH_SENF_Socket_Protocols_Raw_ParseString_ 1
 
 // Custom includes
-#include "../../../config.hh"
 
-#define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+//#include "ParseString.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// senf::MACAddress
+namespace senf {
+namespace detail {
 
-template <class InputIterator>
-prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_data(InputIterator i)
-{
-    MACAddress mac (senf::noinit);
-    SENF_copy_n(i, 6, mac.begin());
-    return mac;
-}
+    template <class ForwardIterator>
+    void parseHexString(std::string const & value, char const * separator,
+                        ForwardIterator f, ForwardIterator l);
 
-///////////////////////////////ct.e////////////////////////////////////////
-#undef prefix_
+}}
+
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "ParseString.cci"
+#include "ParseString.ct"
+//#include "ParseString.cti"
+#endif
 
 
 // Local Variables:

@@ -30,44 +30,12 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
-#include <boost/tokenizer.hpp>
 #include <boost/io/ios_state.hpp>
-#include <boost/range.hpp>
+#include "ParseString.hh"
 
 //#include "MACAddress.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-namespace {
-
-    boost::uint8_t hexToNibble(char c)
-    {
-        if (c<'0')
-            throw senf::AddressSyntaxException();
-        else if (c<='9')
-            return c-'0';
-        else if (c<'A')
-            throw senf::AddressSyntaxException();
-        else if (c<='F')
-            return c-'A'+10;
-        else if (c<'a')
-            throw senf::AddressSyntaxException();
-        else if (c<='f')
-            return c-'a'+10;
-        else
-            throw senf::AddressSyntaxException();
-    }
-
-    template <class Range>
-    boost::uint8_t hexToByte(Range const & range)
-    {
-        if (boost::size(range) != 2)
-            throw senf::AddressSyntaxException();
-        typename boost::range_const_iterator<Range>::type i (boost::begin(range));
-        return hexToNibble(i[0])*16+hexToNibble(i[1]);
-    }
-
-}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::MACAddress
@@ -75,18 +43,7 @@ namespace {
 prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_string(std::string const & s)
 {
     MACAddress mac (senf::noinit);
-    typedef boost::char_separator<char> separator;
-    typedef boost::tokenizer<separator> tokenizer;
-    separator sep (":-");
-    tokenizer tok (s,sep);
-    tokenizer::iterator i (tok.begin());
-    tokenizer::iterator const i_end (tok.end());
-    iterator j (mac.begin());
-    iterator const j_end (mac.end());
-    for (; i!=i_end && j!=j_end; ++i, ++j)
-        *j = hexToByte(*i);
-    if (i!=i_end || j!=j_end)
-        throw AddressSyntaxException();
+    detail::parseHexString(s, ":-", mac.begin(), mac.end());
     return mac;
 }
 
@@ -113,7 +70,7 @@ senf::MACAddress const senf::MACAddress::None;
 
 prefix_ std::ostream & senf::operator<<(std::ostream & os, MACAddress const & mac)
 {
-    boost::io::ios_all_saver ias(os);
+    boost::io::ios_all_saver ias (os);
     os << std::hex << std::setfill('0');
     for (MACAddress::const_iterator i (mac.begin()); i != mac.end(); ++i) {
         if (i != mac.begin())

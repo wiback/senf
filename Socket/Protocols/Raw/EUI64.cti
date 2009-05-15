@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,28 +21,25 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief MACAddress non-inline template implementation  */
+    \brief EUI64 inline template implementation */
 
-//#include "MACAddress.ih"
+//#include "EUI64.ih"
 
 // Custom includes
 #include "../../../config.hh"
 
-#define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////
-// senf::MACAddress
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
 
 template <class InputIterator>
-prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_data(InputIterator i)
+prefix_ senf::EUI64 senf::EUI64::from_data(InputIterator i)
 {
-    MACAddress mac (senf::noinit);
-    SENF_copy_n(i, 6, mac.begin());
-    return mac;
+    EUI64 eui (senf::noinit);
+    SENF_copy_n(i, 8, eui.begin());
+    return eui;
 }
 
-///////////////////////////////ct.e////////////////////////////////////////
+///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_
 
 

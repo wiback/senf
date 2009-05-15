@@ -1,0 +1,103 @@
+// $Id$
+//
+// Copyright (C) 2009 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief EUI64 inline non-template implementation */
+
+//#include "EUI64.ih"
+
+// Custom includes
+#include <algorithm>
+#include <boost/lambda/lambda.hpp>
+#include "MACAddress.hh"
+
+#define prefix_ inline
+///////////////////////////////cci.p///////////////////////////////////////
+
+prefix_ senf::EUI64::EUI64(boost::uint64_t v)
+{
+    (*this)[0] = (v>>56) & 0xffu;
+    (*this)[1] = (v>>48) & 0xffu;
+    (*this)[2] = (v>>40) & 0xffu;
+    (*this)[3] = (v>>32) & 0xffu;
+    (*this)[4] = (v>>24) & 0xffu;
+    (*this)[5] = (v>>16) & 0xffu;
+    (*this)[6] = (v>> 8) & 0xffu;
+    (*this)[7] = (v    ) & 0xffu;
+}
+
+prefix_ senf::EUI64::EUI64(senf::NoInit_t)
+{}
+
+prefix_ senf::EUI64 senf::EUI64::from_mac(MACAddress const & mac)
+{
+    EUI64 eui (senf::noinit);
+    eui[0] = mac[0];
+    eui[1] = mac[1];
+    eui[2] = mac[2];
+    eui[3] = 0xffu;
+    eui[4] = 0xfeu;
+    eui[5] = mac[3];
+    eui[6] = mac[4];
+    eui[7] = mac[5];
+    return eui;
+}
+
+prefix_ bool senf::EUI64::isMACCompatible()
+    const
+{
+    return (*this)[3] == 0xffu && (*this)[4] == 0xfeu;
+}
+
+prefix_ bool senf::EUI64::boolean_test()
+    const
+{
+    using boost::lambda::_1;
+    return std::find_if(begin(),end(), _1 != 0x00u) != end();
+}
+
+prefix_ boost::uint64_t senf::EUI64::uint64()
+    const
+{
+    return (boost::uint64_t((*this)[0])<<56)
+        |  (boost::uint64_t((*this)[1])<<48)
+        |  (boost::uint64_t((*this)[2])<<40)
+        |  (boost::uint64_t((*this)[3])<<32)
+        |  (boost::uint64_t((*this)[4])<<24)
+        |  (boost::uint64_t((*this)[5])<<16)
+        |  (boost::uint64_t((*this)[6])<< 8)
+        |  (boost::uint64_t((*this)[7])    );
+}
+
+///////////////////////////////cci.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
