@@ -29,9 +29,11 @@
 // Custom includes
 #include "TimerEvent.hh"
 #include "Scheduler.hh"
+#include <boost/bind.hpp>
 
 #include "../Utils//auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
+#include <boost/random.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -81,6 +83,67 @@ BOOST_AUTO_UNIT_TEST(timerDispatcher)
         BOOST_CHECK_PREDICATE( is_close, (t) (senf::ClockService::now()) );
         BOOST_CHECK( called );
     }
+}
+
+namespace {
+
+    senf::ClockService::clock_type randomDelay()
+    {
+        static boost::uniform_smallint<> random (100,300);
+        static boost::mt19937 generator;
+        return senf::scheduler::now() + senf::ClockService::milliseconds(random(generator));
+    }
+
+    unsigned count (0);
+    senf::ClockService::clock_type delay (0);
+
+    void jitterCb(senf::scheduler::TimerEvent & tm)
+    {
+        std::cerr << senf::scheduler::now() << ' ' << tm.timeout() << '\n';
+        count ++;
+        delay += senf::scheduler::now() - tm.timeout();
+        tm.timeout(randomDelay());
+    }
+
+    void logSchedulerTime()
+    {
+        std::cerr << senf::scheduler::now() << '\n';
+    }
+
+    void jitterTest()
+    {
+        count = 0;
+        delay = 0;
+        senf::scheduler::TimerEvent tm1 ("jitterTest::tm1", boost::bind(&jitterCb, boost::ref(tm1)),
+                                         randomDelay());
+        senf::scheduler::TimerEvent tm2 ("jitterTest::tm2", boost::bind(&jitterCb, boost::ref(tm2)),
+                                         randomDelay());
+        senf::scheduler::TimerEvent tm3 ("jitterTest::tm3", boost::bind(&jitterCb, boost::ref(tm3)),
+                                         randomDelay());
+        
+        senf::scheduler::TimerEvent timeout("jitterTest::timeout", &senf::scheduler::terminate,
+                                            senf::scheduler::now() + senf::ClockService::seconds(5));
+
+        senf::scheduler::EventHook timerCalled ("jitterTest::logSchedulerTime", &logSchedulerTime,
+                                                senf::scheduler::EventHook::PRE);
+
+        senf::scheduler::process();
+
+        std::cerr << "Average scheduling delay: " << delay/count << "\n";
+    }
+
+}
+
+BOOST_AUTO_UNIT_TEST(timerJitter)
+{
+    senf::scheduler::watchdogTimeout(0);
+    std::cerr << "Epoll timers\n";
+    senf::scheduler::loresTimers();
+    jitterTest();
+    std::cerr << "Hires timers\n";
+    senf::scheduler::hiresTimers();
+    jitterTest();
+    senf::scheduler::watchdogTimeout(1000);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

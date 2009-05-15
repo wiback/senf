@@ -116,6 +116,7 @@ namespace scheduler {
                                              \param[in] initiallyEnabled if set \c false, do not
                                                  enable callback automatically. */
         ClockService::clock_type timeout() const;
+                                        ///< Get current/last timeout value
 
     private:
         virtual void v_run();

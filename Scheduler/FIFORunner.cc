@@ -89,6 +89,8 @@ prefix_ void senf::scheduler::detail::FIFORunner::startWatchdog()
 
         watchdogRunning_ = true;
     }
+    else
+        stopWatchdog();
 }
 
 prefix_ void senf::scheduler::detail::FIFORunner::stopWatchdog()
