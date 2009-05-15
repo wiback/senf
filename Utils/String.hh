@@ -45,6 +45,13 @@ namespace senf {
     template <class T>
     std::string str(T const & t);
 
+    template <class Target, class Source>
+    Target lexical_cast(Source const & arg);
+
+    namespace detail { template <class Target> class lexical_caster; }
+
+    template <class Target>
+    detail::lexical_caster<Target> lexical_cast();
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
