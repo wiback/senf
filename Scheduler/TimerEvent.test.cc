@@ -96,24 +96,37 @@ namespace {
 
     unsigned count (0);
     senf::ClockService::clock_type delay (0);
+    bool haveCb (false);
 
     void jitterCb(senf::scheduler::TimerEvent & tm)
     {
         std::cerr << senf::scheduler::now() << ' ' << tm.timeout() << '\n';
         count ++;
         delay += senf::scheduler::now() - tm.timeout();
+        haveCb = true;
         tm.timeout(randomDelay());
     }
 
-    void logSchedulerTime()
+    void preCb()
     {
-        std::cerr << senf::scheduler::now() << '\n';
+        haveCb = false;
+    }
+
+    void postCb()
+    {
+        if (! haveCb)
+            std::cerr << senf::scheduler::now() << '\n';
     }
 
     void jitterTest()
     {
         count = 0;
         delay = 0;
+        senf::scheduler::EventHook pre ("jitterTest::preCb", &preCb,
+                                        senf::scheduler::EventHook::PRE);
+        senf::scheduler::EventHook post ("jitterTest::postCb", &postCb,
+                                         senf::scheduler::EventHook::POST);
+
         senf::scheduler::TimerEvent tm1 ("jitterTest::tm1", boost::bind(&jitterCb, boost::ref(tm1)),
                                          randomDelay());
         senf::scheduler::TimerEvent tm2 ("jitterTest::tm2", boost::bind(&jitterCb, boost::ref(tm2)),
@@ -123,9 +136,6 @@ namespace {
         
         senf::scheduler::TimerEvent timeout("jitterTest::timeout", &senf::scheduler::terminate,
                                             senf::scheduler::now() + senf::ClockService::seconds(5));
-
-        senf::scheduler::EventHook timerCalled ("jitterTest::logSchedulerTime", &logSchedulerTime,
-                                                senf::scheduler::EventHook::PRE);
 
         senf::scheduler::process();
 

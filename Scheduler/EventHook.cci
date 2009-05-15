@@ -34,8 +34,8 @@
 // senf::scheduler::EventHook
 
 prefix_ senf::scheduler::EventHook::EventHook(std::string const & name, Callback const & cb,
-                                                bool initiallyEnabled,
-                                                detail::FIFORunner::TaskInfo::Priority priority)
+                                              detail::FIFORunner::TaskInfo::Priority priority,
+                                              bool initiallyEnabled)
     : detail::FIFORunner::TaskInfo(name, priority), cb_ (cb)
 {
     if (initiallyEnabled)

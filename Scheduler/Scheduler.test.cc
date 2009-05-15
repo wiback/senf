@@ -242,8 +242,8 @@ void schedulerTest()
 
     ///////////////////////////////////////////////////////////////////////////
 
-    senf::scheduler::EventHook evev ("eventCounter", eventeventhandler, true,
-                                      senf::scheduler::EventHook::PRE);
+    senf::scheduler::EventHook evev ("eventCounter", eventeventhandler,
+                                     senf::scheduler::EventHook::PRE);
 
     {
         senf::scheduler::FdEvent fde1 ("testFdEvent", boost::bind(&callback, sock, _1),

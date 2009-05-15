@@ -82,7 +82,7 @@ namespace scheduler {
         ///@{
 
         EventHook(std::string const & name, Callback const & cb,
-                   bool initiallyEnabled = true, Priority priority = POST);
+                  Priority priority, bool initiallyEnabled = true);
                                         ///< Register an event hook
                                         /**< Registers \a cb to be called whenever any other event
                                              is signaled by the scheduler. If \a initiallyEnabled is
