@@ -40,16 +40,6 @@ prefix_ bool senf::ppi::EventDescriptor::enabled()
     return enabled_;
 }
 
-prefix_ void senf::ppi::EventDescriptor::enabled(bool v)
-{
-    SENF_ASSERT(v_isRegistered());
-    if (v && ! enabled_)
-        v_enable();
-    else if (! v && enabled_)
-        v_disable();
-    enabled_ = v;
-}
-
 ////////////////////////////////////////
 // protected members
 

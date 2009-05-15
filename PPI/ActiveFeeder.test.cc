@@ -50,14 +50,17 @@ BOOST_AUTO_UNIT_TEST(activeFeeder)
     ppi::connect(source,feeder);
     ppi::connect(feeder,sink);
 
-    source.submit(senf::DataPacket::create());
-    source.submit(senf::DataPacket::create());
-    source.submit(senf::DataPacket::create());
+    for (unsigned i (0); i < 500; ++i)
+        source.submit(senf::DataPacket::create());
 
+    senf::ClockService::clock_type start (senf::ClockService::now());
     ppi::run();
+    std::cerr << "ActiveFeeder: " 
+              << (500*1e9)/(senf::ClockService::now()-start)
+              << " packets/s" << std::endl;
 
     BOOST_CHECK_EQUAL( source.size(), 0u );
-    BOOST_CHECK_EQUAL( sink.size(), 3u );
+    BOOST_CHECK_EQUAL( sink.size(), 500u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

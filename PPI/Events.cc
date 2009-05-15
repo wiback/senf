@@ -47,6 +47,16 @@ prefix_ void senf::ppi::EventDescriptor::notifyUnthrottle()
         enabled(true);
 }
 
+prefix_ void senf::ppi::EventDescriptor::enabled(bool v)
+{
+    SENF_ASSERT(v_isRegistered()); // Module::registerEvent() call missing !!
+    if (v && ! enabled_)
+        v_enable();
+    else if (! v && enabled_)
+        v_disable();
+    enabled_ = v;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "Events.mpp"
