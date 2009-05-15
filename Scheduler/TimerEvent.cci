@@ -79,6 +79,12 @@ prefix_ void senf::scheduler::TimerEvent::timeout(ClockService::clock_type timeo
         enable();
 }
 
+prefix_ senf::ClockService::clock_type senf::scheduler::TimerEvent::timeout()
+    const
+{
+    return timeout_;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::scheduler::detail::TimerDispatcher
 
