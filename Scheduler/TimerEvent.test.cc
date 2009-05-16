@@ -153,6 +153,7 @@ BOOST_AUTO_UNIT_TEST(timerJitter)
     std::cerr << "Hires timers\n";
     senf::scheduler::hiresTimers();
     jitterTest();
+    senf::scheduler::loresTimers();
     senf::scheduler::watchdogTimeout(1000);
 }
 
