@@ -38,12 +38,15 @@
 #include "INet4Address.hh"
 #include "../AddressExceptions.hh"
 #include "../Raw/MACAddress.hh"
+#include "../Raw/EUI64.hh"
 
 //#include "INet6Address.mpp"
 #include "INet6Address.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
+
+    class INet6Network;
 
     /** \brief INet6 network address
 
@@ -208,6 +211,11 @@ namespace senf {
                                         ///< Construct a link-local INet6 address
                                         /**< This will construct a link local address of the form
                                              <tt>fe80::xxxx:xxff:fexx:xxxx</tt>. */
+
+        static INet6Address from_eui64(senf::EUI64 const & eui);
+                                        ///< Construct link-local INet6 address
+                                        /**< This will construct a link local address of the form
+                                             <tt>fe80::xxxx:xxxx:xxxx:xxxx</tt>. */
         
         in6_addr toin6_addr() const;    ///< get the linux in6_addr struct (convinience only)
 
@@ -216,9 +224,9 @@ namespace senf {
         ///\name Accessors
         ///@{
 
-        boost::uint64_t network() const; ///< Return 64bit network part
-        bool hasEuid64() const;         ///< \c true, if address is based on an EUID-64
-        boost::uint64_t id() const;     ///< Return interface id (EUID-64)
+        INet6Network network() const; ///< Return <tt>/64</tt> Network of this address
+        bool hasEUI64() const;          ///< \c true, if address is based on an EUID-64
+        EUI64 id() const;               ///< Return interface id (EUID-64)
         bool universalId() const;       ///< \c true, if the id() is universally assigned
         bool groupId() const;           ///< \c true, if the id()'s \a group bit is set
 

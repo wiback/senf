@@ -88,32 +88,25 @@ prefix_ senf::INet6Address senf::INet6Address::from_mac(senf::MACAddress const &
     return addr;
 }
 
-prefix_ boost::uint64_t senf::INet6Address::network()
-    const
+prefix_ senf::INet6Address senf::INet6Address::from_eui64(senf::EUI64 const & eui)
 {
-    return
-        ((boost::uint64_t((*this)[0]) & 0xff) << 56 ) |
-        ((boost::uint64_t((*this)[1]) & 0xff) << 48 ) |
-        ((boost::uint64_t((*this)[2]) & 0xff) << 40 ) |
-        ((boost::uint64_t((*this)[3]) & 0xff) << 32 ) |
-        ((boost::uint64_t((*this)[4]) & 0xff) << 24 ) |
-        ((boost::uint64_t((*this)[5]) & 0xff) << 16 ) |
-        ((boost::uint64_t((*this)[6]) & 0xff) <<  8 ) |
-        ((boost::uint64_t((*this)[7]) & 0xff)       );
+    INet6Address addr;
+    addr[0] = 0xfe;
+    addr[1] = 0x80;
+    std::copy(eui.begin(), eui.end(), addr.begin()+8);
+    return addr;
 }
 
-prefix_ boost::uint64_t senf::INet6Address::id()
+prefix_ senf::INet6Network senf::INet6Address::network()
     const
 {
-    return
-        ((boost::uint64_t((*this)[ 8]) & 0xff) << 56 ) |
-        ((boost::uint64_t((*this)[ 9]) & 0xff) << 48 ) |
-        ((boost::uint64_t((*this)[10]) & 0xff) << 40 ) |
-        ((boost::uint64_t((*this)[11]) & 0xff) << 32 ) |
-        ((boost::uint64_t((*this)[12]) & 0xff) << 24 ) |
-        ((boost::uint64_t((*this)[13]) & 0xff) << 16 ) |
-        ((boost::uint64_t((*this)[14]) & 0xff) <<  8 ) |
-        ((boost::uint64_t((*this)[15]) & 0xff)       );
+    return senf::INet6Network(*this, 64);
+}
+
+prefix_ senf::EUI64 senf::INet6Address::id()
+    const
+{
+    return senf::EUI64::from_data(begin()+8);
 }
 
 prefix_ bool senf::INet6Address::universalId()
@@ -166,7 +159,7 @@ prefix_ bool senf::INet6Address::unicast()
     return ! multicast();
 }
 
-prefix_ bool senf::INet6Address::hasEuid64()
+prefix_ bool senf::INet6Address::hasEUI64()
     const
 {
     return unicast() && ((*this)[0]&0xE0u) != 0u;

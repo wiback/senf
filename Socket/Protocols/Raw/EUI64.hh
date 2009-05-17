@@ -52,7 +52,7 @@ namespace senf {
         <tr><td><tt>std::string</tt></td>
                 <td><tt>senf::EUI64::from_string("1a:2b:3c:4d-5f:60:71:82")</tt><br/>
                     <tt>senf::str(</tt><i>eui64</i><tt>)</tt></td></tr>
-        <tr><td><i>raw data</i></td>
+        <tr><td><i>raw data</i><br/>&nbsp;&nbsp;&nbsp;&nbsp;(8 bytes)</td>
                 <td><tt>senf::EUI64::from_data(</tt><i>iterator</i><tt>)</tt><br/>
                     <i>eui64</i><tt>.begin()</tt></td></tr>
         <tr><td>senf::MACAddress<br/>&nbsp;&nbsp;&nbsp;&nbsp;(aka EUI-48)</td>
@@ -60,7 +60,16 @@ namespace senf {
                     <tt>senf::MACAddress::from_eui64(</tt><i>eui64</i><tt>)</tt></td></tr>
         </table>
 
-        Additionally, a senf::MACAddress can be converted into an EUI64 and vice versa.
+        Since senf::EUI64 is based on \c boost::array, you can access the raw data bytes of the
+        address using \c begin(), \c end() or \c operator[]:
+        \code
+        senf::EUI64 eui64 (...);
+        std::vector<char> data;
+        data.resize(8);
+        std::copy(eui64.begin(), eui64.end(), data.begin()); // Copy 8 bytes
+        \endcode
+
+        \see <a href="http://tools.ietf.org/html/rfc4291">RFC 4291</a>
 
         \ingroup addr_group
      */
@@ -86,7 +95,8 @@ namespace senf {
         static EUI64 from_string(std::string const & s);
                                         ///< Construct EUI-64 from string representation
                                         /**< The string representation consists of 8 octets in
-                                             hexadecimal notation spearated by ':' or '-' */
+                                             hexadecimal notation spearated by ':' or '-'
+                                             \throws senf::AddressSyntaxException */
         template <class InputIterator>
         static EUI64 from_data(InputIterator i);
                                         ///< Construct EUI-64 from 8 data octets
@@ -99,6 +109,13 @@ namespace senf {
         bool isMACCompatible() const;   ///< \c true, if EUI64 is MAC compatible, \c false otherwise
                                         /**< An EUI64 is MAC compatible if bytes 4th and 5th byte
                                              (in network byte order) are 0xfffe. */
+        bool local() const;             ///< \c true if the \e local bit is set, \c false otherwise
+                                        /**< The \e local bit is the second least significant bit of
+                                             the first octet (bit 6 in standard RFC bit numbering).
+                                          */
+        bool group() const;             ///< \c true if the \e group bit is set, \c false otherwise
+                                        /**< The \e group bit is the least significant bit of the
+                                             first octed (bit 7 in standard RFC bit numbering). */
         bool boolean_test() const;      ///< \c true, if EUI64 is != 0, \c false otherwise
         boost::uint64_t uint64() const; ///< Return EUI64 as integer number
     };

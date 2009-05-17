@@ -68,6 +68,18 @@ prefix_ bool senf::EUI64::isMACCompatible()
     return (*this)[3] == 0xffu && (*this)[4] == 0xfeu;
 }
 
+prefix_ bool senf::EUI64::local()
+    const
+{
+    return (*this)[0]&0x02;
+}
+
+prefix_ bool senf::EUI64::group()
+    const
+{
+    return (*this)[0]&0x01;
+}
+
 prefix_ bool senf::EUI64::boolean_test()
     const
 {

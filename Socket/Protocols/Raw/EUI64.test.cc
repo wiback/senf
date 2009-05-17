@@ -46,6 +46,8 @@ BOOST_AUTO_UNIT_TEST(eui64)
     BOOST_CHECK_EQUAL_COLLECTIONS( eui.begin(), eui.end(), data, data+sizeof(data)/sizeof(data[0]) );
     BOOST_CHECK( eui );
     BOOST_CHECK( eui.isMACCompatible() );
+    BOOST_CHECK( ! eui.local() );
+    BOOST_CHECK( ! eui.group() );
     BOOST_CHECK_EQUAL( eui.uint64(), 0x102030fffe405060ull );
 
     BOOST_CHECK_EQUAL( eui, senf::EUI64::from_data(data) );

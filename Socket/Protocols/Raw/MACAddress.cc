@@ -32,6 +32,7 @@
 #include <sstream>
 #include <boost/io/ios_state.hpp>
 #include "ParseString.hh"
+#include "EUI64.hh"
 
 //#include "MACAddress.mpp"
 #define prefix_
@@ -47,17 +48,17 @@ prefix_ senf::MACAddress::MACAddress senf::MACAddress::from_string(std::string c
     return mac;
 }
 
-prefix_ senf::MACAddress senf::MACAddress::from_eui64(boost::uint64_t v)
+prefix_ senf::MACAddress senf::MACAddress::from_eui64(senf::EUI64 const & eui)
 {
-    if ( boost::uint16_t(v>>24)  != 0xfffe )
+    if (eui[3] != 0xffu || eui[4] != 0xfeu)
         throw AddressSyntaxException();
     MACAddress mac (senf::noinit);
-    mac[0] = boost::uint8_t( v>>56 );
-    mac[1] = boost::uint8_t( v>>48 );
-    mac[2] = boost::uint8_t( v>>40 );
-    mac[3] = boost::uint8_t( v>>16 );
-    mac[4] = boost::uint8_t( v>> 8 );
-    mac[5] = boost::uint8_t( v     );
+    mac[0] = eui[0];
+    mac[1] = eui[1];
+    mac[2] = eui[2];
+    mac[3] = eui[5];
+    mac[4] = eui[6];
+    mac[5] = eui[7];
     return mac;
 }
 

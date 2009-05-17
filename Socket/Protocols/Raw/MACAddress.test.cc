@@ -30,6 +30,7 @@
 #include <sstream>
 #include "MACAddress.hh"
 #include "../../../Utils/String.hh"
+#include "EUI64.hh"
 
 #include "../../../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -100,8 +101,9 @@ BOOST_AUTO_UNIT_TEST(macAddress)
     BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05:@6"), AddressSyntaxException );
     BOOST_CHECK_THROW( MACAddress::from_string("01:02:03:04:05:[6"), AddressSyntaxException );
 
-    BOOST_CHECK_EQUAL( mac, MACAddress::from_eui64(0xa1b2c3fffed4e5f6llu) );
-    BOOST_CHECK_THROW( MACAddress::from_eui64(0u), AddressSyntaxException );
+    BOOST_CHECK_EQUAL( mac, MACAddress::from_eui64(senf::EUI64(0xa1b2c3fffed4e5f6llu)) );
+    BOOST_CHECK_THROW( MACAddress::from_eui64(senf::EUI64(0ull)),
+                       AddressSyntaxException );
 
     BOOST_CHECK_EQUAL( MACAddress(0x1a2b3c4d5e6fULL).uint64(), 0x1a2b3c4d5e6fULL);
 }

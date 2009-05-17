@@ -86,10 +86,11 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
 
     {
         INet6Address addr (INet6Address::from_string("2001:dead:beef::1002:3004"));
-        BOOST_CHECK_EQUAL( addr.network(), 0x2001deadbeef0000llu );
-        BOOST_CHECK_EQUAL( addr.id(), 0x0000000010023004llu );
-        BOOST_CHECK( addr.hasEuid64() );
-        BOOST_CHECK( ! INet6Address::from_inet4address(INet4Address(0x01020304)).hasEuid64() );
+        BOOST_CHECK_EQUAL( addr.network(), senf::INet6Network(
+                               senf::INet6Address(0x2001u,0xdeadu, 0xbeef),64) );
+        BOOST_CHECK_EQUAL( addr.id(), senf::EUI64(0x0000000010023004llu) );
+        BOOST_CHECK( addr.hasEUI64() );
+        BOOST_CHECK( ! INet6Address::from_inet4address(INet4Address(0x01020304)).hasEUI64() );
         BOOST_CHECK( ! addr.universalId() );
         BOOST_CHECK( ! addr.groupId() );
         BOOST_CHECK( addr.unicast() );
