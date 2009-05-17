@@ -42,7 +42,27 @@ namespace senf {
 
     /** \brief EUI-64 data type
         
-        An EUI-64 is a 64 bit (8 octet) id. 
+        An EUI-64 is a 64 bit (8 octet) id. The id is represented as an 8 byte sequence in network
+        byte order. An EUI64 can be converted from/to several other representations
+
+        <table class="senf">
+        <tr><td><tt>boost::uint64_t</tt></td>
+                <td><tt>senf::EUI64(0x1a2b3c4d5f607182ull)</tt><br/>
+                    <i>eui64</i><tt>.uint64()</tt></td></tr>
+        <tr><td><tt>std::string</tt></td>
+                <td><tt>senf::EUI64::from_string("1a:2b:3c:4d-5f:60:71:82")</tt><br/>
+                    <tt>senf::str(</tt><i>eui64</i><tt>)</tt></td></tr>
+        <tr><td><i>raw data</i></td>
+                <td><tt>senf::EUI64::from_data(</tt><i>iterator</i><tt>)</tt><br/>
+                    <i>eui64</i><tt>.begin()</tt></td></tr>
+        <tr><td>senf::MACAddress<br/>&nbsp;&nbsp;&nbsp;&nbsp;(aka EUI-48)</td>
+                <td><tt>senf::EUI64::from_mac(</tt><i>mac-address</i><tt>)</tt><br/>
+                    <tt>senf::MACAddress::from_eui64(</tt><i>eui64</i><tt>)</tt></td></tr>
+        </table>
+
+        Additionally, a senf::MACAddress can be converted into an EUI64 and vice versa.
+
+        \ingroup addr_group
      */
     class EUI64
         : public boost::array<boost::uint8_t,8>,
@@ -58,23 +78,39 @@ namespace senf {
         // default destructor
         // no conversion constructors
 
-        explicit EUI64(boost::uint64_t v=0u);
-        explicit EUI64(senf::NoInit_t);
+        explicit EUI64(boost::uint64_t v=0u); ///< Construct EUI-64
+        explicit EUI64(senf::NoInit_t);       ///< Construct <em>uninitialized</em> EUI-64
 
         static EUI64 from_mac(MACAddress const & mac);
+                                        ///< Construct EUI-64 from senf::MACAddress
         static EUI64 from_string(std::string const & s);
+                                        ///< Construct EUI-64 from string representation
+                                        /**< The string representation consists of 8 octets in
+                                             hexadecimal notation spearated by ':' or '-' */
         template <class InputIterator>
         static EUI64 from_data(InputIterator i);
+                                        ///< Construct EUI-64 from 8 data octets
+                                        /**< The iterator \a i must point to a sequence of 8
+                                             octets in network byte order. */
 
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        bool isMACCompatible() const;
-        bool boolean_test() const;
-        boost::uint64_t uint64() const;
+        bool isMACCompatible() const;   ///< \c true, if EUI64 is MAC compatible, \c false otherwise
+                                        /**< An EUI64 is MAC compatible if bytes 4th and 5th byte
+                                             (in network byte order) are 0xfffe. */
+        bool boolean_test() const;      ///< \c true, if EUI64 is != 0, \c false otherwise
+        boost::uint64_t uint64() const; ///< Return EUI64 as integer number
     };
 
+    /** \brief Write out EUI64 in it's string representation to stream
+        \related senf::EUI64
+     */
     std::ostream & operator<<(std::ostream & os, EUI64 const & v);
+
+    /** \brief Read EUI64 string representation from stream
+        \related senf::EUI64
+     */
     std::istream & operator>>(std::istream & is, EUI64 & v);
 
 }
