@@ -29,6 +29,7 @@
 // Custom includes
 #include <map>
 #include <functional>
+#include <ext/functional>
 #include <boost/iterator/transform_iterator.hpp>
 #include "Levels.hh"
 #include "../singleton.hh"
@@ -55,14 +56,9 @@ namespace log {
     {
         typedef std::map<std::string, detail::StreamBase const *> Registry;
 
-        struct SelectName 
-        {
-            typedef std::string result_type;
-            std::string const & operator()(Registry::value_type const & v) const;
-        };
-
     public:
-        typedef boost::transform_iterator<SelectName, Registry::const_iterator> iterator;
+        typedef boost::transform_iterator< ::__gnu_cxx::select1st<Registry::value_type>, 
+                                           Registry::const_iterator > iterator;
 
 #       ifdef DOXYGEN
         // Hmm ... doxygen does not understand 'using declarations' ...

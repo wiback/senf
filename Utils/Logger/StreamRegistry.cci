@@ -34,24 +34,19 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::log::StreamRegistry
 
-prefix_ std::string const &
-senf::log::StreamRegistry::SelectName::operator()(Registry::value_type const & v)
-    const
-{
-    return v.first;
-}
-
 prefix_ senf::log::StreamRegistry::StreamRegistry()
 {}
 
 prefix_ senf::log::StreamRegistry::iterator senf::log::StreamRegistry::begin()
 {
-    return boost::make_transform_iterator(registry_.begin(), SelectName());
+    return boost::make_transform_iterator(registry_.begin(), 
+                                          ::__gnu_cxx::select1st<Registry::value_type>());
 }
 
 prefix_ senf::log::StreamRegistry::iterator senf::log::StreamRegistry::end()
 {
-    return boost::make_transform_iterator(registry_.end(), SelectName());
+    return boost::make_transform_iterator(registry_.end(),
+                                          ::__gnu_cxx::select1st<Registry::value_type>());
 }
 
 prefix_ void senf::log::StreamRegistry::registerStream(detail::StreamBase const & stream)
