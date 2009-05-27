@@ -261,7 +261,7 @@ prefix_ void senf::scheduler::detail::TimerFDTimerSource::reschedule()
         timer.it_value.tv_nsec = ClockService::in_nanoseconds(
             timeout_ - ClockService::seconds(timer.it_value.tv_sec));
     }
-    if (timerfd_settime(timerfd_, TIMER_ABSTIME, &timer, 0)<0)
+    if (timerfd_settime(timerfd_, TFD_TIMER_ABSTIME, &timer, 0)<0)
         SENF_THROW_SYSTEM_EXCEPTION("timerfd_settime()");
 }
 #endif

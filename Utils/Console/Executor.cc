@@ -299,9 +299,7 @@ senf::console::Executor::traverseNode(ParseCommandInfo::TokensRange const & path
     catch (UnknownNodeNameException &) {
         throw InvalidPathException(
             senf::stringJoin(
-                senf::make_transform_range(
-                    boost::make_iterator_range(path.begin(), path.end()),
-                    boost::bind(&Token::value, _1)),
+                senf::make_transform_range(path, boost::bind(&Token::value, _1)),
                 "/"));
     }
 }

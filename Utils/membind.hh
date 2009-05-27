@@ -148,11 +148,11 @@
 
 namespace senf {
 
-#define scOBTYPE T *
+#define scOBTYPE *
 #include "../Utils/impl/membind.hh"
 #undef scOBTYPE
 
-#define scOBTYPE T &
+#define scOBTYPE &
 #include "../Utils/impl/membind.hh"
 #undef scOBTYPE
 

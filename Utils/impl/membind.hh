@@ -28,16 +28,22 @@
 #include <boost/preprocessor/repetition/enum_shifted.hpp>
 #include <boost/preprocessor/iteration/iterate.hpp>
 
-template <typename R, typename T>
-boost::function<R()> membind(R (T::* fn)(),scOBTYPE ob)
+template <typename R, typename T1, typename T2>
+boost::function<R()> membind(R (T1::* fn)(),T2 scOBTYPE ob)
 {
-    return boost::bind(fn,ob);
+    return boost::bind(fn,static_cast<T1 scOBTYPE>(ob));
 }
 
-template <typename R, typename T>
-boost::function<R()> membind(R (T::* fn)() const,scOBTYPE ob)
+template <typename R, typename T1, typename T2>
+boost::function<R()> membind(R (T1::* fn)() const, T2 const scOBTYPE ob)
 {
-    return boost::bind(fn,ob);
+    return boost::bind(fn,static_cast<T1 const scOBTYPE>(ob));
+}
+
+template <typename R, typename T1, typename T2>
+boost::function<R()> membind(R (T1::* fn)() const, T2 scOBTYPE ob)
+{
+    return boost::bind(fn,static_cast<T1 const scOBTYPE>(ob));
 }
 
 // for BOOST_PP_ITERATION() in 2..9 do
@@ -49,18 +55,25 @@ boost::function<R()> membind(R (T::* fn)() const,scOBTYPE ob)
 #define scARG(z,n,d) BOOST_PP_CAT(d,n)
 #define scPARAMS(d) BOOST_PP_ENUM_SHIFTED(BOOST_PP_ITERATION(),scARG,d)
 
-template < typename R, typename T, scPARAMS(typename A) >
+template < typename R, typename T1, typename T2, scPARAMS(typename A) >
 boost::function<R ( scPARAMS(A) )>
-membind(R (T::* fn)( scPARAMS(A) ), scOBTYPE ob)
+membind(R (T1::* fn)( scPARAMS(A) ), T2 scOBTYPE ob)
 {
-    return boost::bind(fn, ob, scPARAMS(_) );
+    return boost::bind(fn, static_cast<T1 scOBTYPE>(ob), scPARAMS(_) );
 }
 
-template < typename R, typename T, scPARAMS(typename A) >
+template < typename R, typename T1, typename T2, scPARAMS(typename A) >
 boost::function<R ( scPARAMS(A) )>
-membind(R (T::* fn)( scPARAMS(A) ) const, scOBTYPE ob)
+membind(R (T1::* fn)( scPARAMS(A) ) const, T2 const scOBTYPE ob)
 {
-    return boost::bind(fn, ob, scPARAMS(_) );
+    return boost::bind(fn, static_cast<T1 const scOBTYPE>(ob), scPARAMS(_) );
+}
+
+template < typename R, typename T1, typename T2, scPARAMS(typename A) >
+boost::function<R ( scPARAMS(A) )>
+membind(R (T1::* fn)( scPARAMS(A) ) const, T2 scOBTYPE ob)
+{
+    return boost::bind(fn, static_cast<T1 const scOBTYPE>(ob), scPARAMS(_) );
 }
 
 #undef scPARAMS
