@@ -100,9 +100,9 @@ namespace {
 
     void jitterCb(senf::scheduler::TimerEvent & tm)
     {
-        std::cerr << senf::scheduler::now() << ' ' << tm.timeout() << '\n';
+        std::cerr << "diff:" << senf::ClockService::in_microseconds( senf::scheduler::now() - tm.timeout()) << '\n';
         count ++;
-        delay += senf::scheduler::now() - tm.timeout();
+        delay += senf::ClockService::in_microseconds( senf::scheduler::now() - tm.timeout());
         haveCb = true;
         tm.timeout(randomDelay());
     }
@@ -118,6 +118,11 @@ namespace {
             std::cerr << senf::scheduler::now() << '\n';
     }
 
+    void idleCb(senf::scheduler::TimerEvent & tm)
+    {
+        tm.timeout( senf::scheduler::now());
+    }
+
     void jitterTest()
     {
         count = 0;
@@ -127,13 +132,17 @@ namespace {
         senf::scheduler::EventHook post ("jitterTest::postCb", &postCb,
                                          senf::scheduler::EventHook::POST);
 
-        senf::scheduler::TimerEvent tm1 ("jitterTest::tm1", boost::bind(&jitterCb, boost::ref(tm1)),
-                                         randomDelay());
-        senf::scheduler::TimerEvent tm2 ("jitterTest::tm2", boost::bind(&jitterCb, boost::ref(tm2)),
-                                         randomDelay());
-        senf::scheduler::TimerEvent tm3 ("jitterTest::tm3", boost::bind(&jitterCb, boost::ref(tm3)),
-                                         randomDelay());
+        senf::scheduler::TimerEvent tm1 (
+                "jitterTest::tm1", boost::bind(&jitterCb, boost::ref(tm1)), randomDelay());
+        senf::scheduler::TimerEvent tm2 (
+                "jitterTest::tm2", boost::bind(&jitterCb, boost::ref(tm2)), randomDelay());
+        senf::scheduler::TimerEvent tm3 (
+                "jitterTest::tm3", boost::bind(&jitterCb, boost::ref(tm3)), randomDelay());
         
+        // enabled "Idle"-Event will degrade scheduling delay
+        //senf::scheduler::TimerEvent idle (
+        //        "jitterTest::idle", boost::bind(&idleCb, boost::ref(idle)), senf::scheduler::now());
+
         senf::scheduler::TimerEvent timeout("jitterTest::timeout", &senf::scheduler::terminate,
                                             senf::scheduler::now() + senf::ClockService::seconds(5));
 
