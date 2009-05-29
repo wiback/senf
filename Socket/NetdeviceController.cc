@@ -37,8 +37,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::NetdeviceController::NetdeviceController(std::string const & interface_name)
+    : sockfd_ (sockfd())
 {
-    openSocket();
     struct ifreq ifr;
     ::memset( &ifr, 0, sizeof(ifr));
     interface_name.copy( ifr.ifr_name, IFNAMSIZ);
@@ -47,8 +47,8 @@ prefix_ senf::NetdeviceController::NetdeviceController(std::string const & inter
 }
 
 prefix_ senf::NetdeviceController::NetdeviceController(int interface_index)
+    : sockfd_ (sockfd())
 {
-    openSocket();
     ifindex_ = interface_index;
 }
 
@@ -171,14 +171,7 @@ prefix_ int senf::NetdeviceController::interfaceIndex()
 
 prefix_ senf::NetdeviceController::~NetdeviceController()
 {
-    close( sockfd_);
-}
-
-prefix_ void senf::NetdeviceController::openSocket()
-{
-    sockfd_ = ::socket( PF_INET, SOCK_DGRAM, 0);
-    if ( sockfd_ < 0)
-        SENF_THROW_SYSTEM_EXCEPTION("Could not open socket for NetdeviceController.");
+    close( sockfd_->fd);
 }
 
 prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
@@ -186,7 +179,7 @@ prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
 {
     ::memset( &ifr, 0, sizeof(ifr));
     ifr.ifr_ifindex = ifindex_;
-    if ( ::ioctl( sockfd_, SIOCGIFNAME, &ifr ) < 0 )
+    if ( ::ioctl( sockfd_->fd, SIOCGIFNAME, &ifr ) < 0 )
         SENF_THROW_SYSTEM_EXCEPTION("NetdeviceController")
         << " could not discover the name of the interface with index " << ifindex_ << ".";
 }
@@ -194,8 +187,36 @@ prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
 prefix_ void senf::NetdeviceController::doIoctl(ifreq& ifr, int request)
     const
 {
-    if ( ::ioctl( sockfd_, request, &ifr ) < 0 )
+    if ( ::ioctl( sockfd_->fd, request, &ifr ) < 0 )
         SENF_THROW_SYSTEM_EXCEPTION("NetdeviceController::doIoctl failed.");
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::NetdeviceController::SockFd
+
+prefix_ senf::NetdeviceController::SockFd::SockFd()
+    : fd (::socket(PF_INET, SOCK_DGRAM, 0))
+{
+    if ( fd < 0)
+        SENF_THROW_SYSTEM_EXCEPTION("Could not open socket for NetdeviceController.");
+}
+
+prefix_ senf::NetdeviceController::SockFd::~SockFd()
+{
+    ::close(fd);
+}
+
+prefix_ senf::NetdeviceController::SockFd::ptr senf::NetdeviceController::sockfd()
+{
+    static boost::weak_ptr<SockFd> sockfd;
+
+    if (sockfd.expired()) {
+        SockFd::ptr newsockfd (new SockFd());
+        sockfd = newsockfd;
+        return newsockfd;
+    }
+    return sockfd.lock();
+        
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -29,6 +29,8 @@
 
 // Custom includes
 #include <string>
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
 #include "Protocols/Raw/MACAddress.hh"
 
 
@@ -49,9 +51,9 @@ namespace senf {
     class NetdeviceController
     {
     public:
-        NetdeviceController(std::string const & interface_name);
+        explicit NetdeviceController(std::string const & interface_name);
                                         ///< Construct a new controller for the given interface name.
-        NetdeviceController(int interface_index);
+        explicit NetdeviceController(int interface_index);
                                         ///< Construct a new controller for the given interface index.
         virtual ~NetdeviceController();
 
@@ -90,11 +92,19 @@ namespace senf {
         void up();                      ///< ifconfig up interface
         void down();                    ///< ifconfig down interface
 
+        struct SockFd {
+            typedef boost::shared_ptr<SockFd> ptr;
+            int fd;
+            SockFd();
+            ~SockFd();
+        };
+
+        static SockFd::ptr sockfd();
+
     private:
-        void openSocket();
         void doIoctl(ifreq& ifr, int request) const;
         void ifrName(ifreq& ifr) const;
-        int sockfd_;
+        SockFd::ptr sockfd_;
         int ifindex_;
     };
 
