@@ -169,11 +169,6 @@ prefix_ int senf::NetdeviceController::interfaceIndex()
     return ifindex_;
 }
 
-prefix_ senf::NetdeviceController::~NetdeviceController()
-{
-    close( sockfd_->fd);
-}
-
 prefix_ void senf::NetdeviceController::ifrName(ifreq& ifr)
     const
 {
@@ -199,24 +194,22 @@ prefix_ senf::NetdeviceController::SockFd::SockFd()
 {
     if ( fd < 0)
         SENF_THROW_SYSTEM_EXCEPTION("Could not open socket for NetdeviceController.");
+    std::cerr << ">>Made SockFd: " << fd << std::endl;
 }
 
 prefix_ senf::NetdeviceController::SockFd::~SockFd()
 {
+    std::cerr << ">>Dispose SockFd: " << fd << std::endl;
     ::close(fd);
 }
 
 prefix_ senf::NetdeviceController::SockFd::ptr senf::NetdeviceController::sockfd()
 {
     static boost::weak_ptr<SockFd> sockfd;
-
-    if (sockfd.expired()) {
-        SockFd::ptr newsockfd (new SockFd());
-        sockfd = newsockfd;
-        return newsockfd;
-    }
-    return sockfd.lock();
-        
+    SockFd::ptr p (sockfd.lock());
+    if (!p)
+         sockfd = p = SockFd::ptr(new SockFd());
+    return p;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -55,8 +55,6 @@ namespace senf {
                                         ///< Construct a new controller for the given interface name.
         explicit NetdeviceController(int interface_index);
                                         ///< Construct a new controller for the given interface index.
-        virtual ~NetdeviceController();
-
         int interfaceIndex() const;     ///< return the interface index
         MACAddress hardwareAddress() const;
                                         ///< return hardware address
