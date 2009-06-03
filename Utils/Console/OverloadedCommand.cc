@@ -160,7 +160,16 @@ prefix_ std::string senf::console::OverloadedCommandNode::v_shorthelp()
 {
     if (!shortdoc_.empty())
         return shortdoc_;
-    return doc_.substr(0,doc_.find('\n'));
+    if (!doc_.empty())
+        return doc_.substr(0,doc_.find('\n'));
+    Overloads::const_iterator i (overloads_.begin());
+    Overloads::const_iterator const i_end (overloads_.end());
+    for (; i != i_end; ++i) {
+        std::string overloadDoc ((*i)->doc());
+        if (! overloadDoc.empty()) 
+            return overloadDoc.substr(0,doc_.find('\n'));
+    }
+    return "";
 }
 
 prefix_ void senf::console::OverloadedCommandNode::v_execute(boost::any & rv,

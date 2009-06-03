@@ -99,7 +99,10 @@ BOOST_AUTO_UNIT_TEST(executor)
         parser.parse("ls", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
-        BOOST_CHECK_EQUAL( os.str(), "dir1/\ndir2/\nsys/\n" );
+        BOOST_CHECK_EQUAL( os.str(), 
+                           "dir1/               \n"
+                           "dir2/               Helptext\n"
+                           "sys/                \n" );
     }
 
     {
@@ -107,7 +110,7 @@ BOOST_AUTO_UNIT_TEST(executor)
         parser.parse("ls dir1", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
-        BOOST_CHECK_EQUAL( os.str(), "dir3/\n" );
+        BOOST_CHECK_EQUAL( os.str(), "dir3/               \n" );
     }
 
     {
@@ -213,7 +216,7 @@ BOOST_AUTO_UNIT_TEST(executorPolicy)
         parser.parse("ls dir1", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
-        BOOST_CHECK_EQUAL( os.str(), "dir3/\n" );
+        BOOST_CHECK_EQUAL( os.str(), "dir3/               \n" );
     }
 
     {

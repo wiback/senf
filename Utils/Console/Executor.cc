@@ -30,6 +30,7 @@
 #include <boost/utility.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 #include "../../Utils/senfassert.hh"
 #include "../../Utils/Range.hh"
 #include "../../Utils/String.hh"
@@ -222,14 +223,16 @@ prefix_ void senf::console::Executor::ls(std::ostream & output,
     DirectoryNode & node (*dir.back().lock());
     DirectoryNode::child_iterator i (node.children().begin());
     DirectoryNode::child_iterator const i_end (node.children().end());
-    for (; i != i_end; ++i) {
-        output << i->first;
-        if (i->second->isDirectory())
-            output << "/";
-        else if (i->second->isLink())
-            output << "@";
-        output << "\n";
-    }
+    boost::format fmt ("%s%s  %|20t|%.59s\n");
+    for (; i != i_end; ++i)
+        output << fmt
+            % i->first
+            % ( i->second->isDirectory()
+                ? "/"
+                : i->second->isLink()
+                ? "@"
+                : "" )
+            % i->second->shorthelp();
 }
 
 prefix_ void senf::console::Executor::pushd(ParseCommandInfo::TokensRange dir)
