@@ -104,6 +104,15 @@ senf::console::ParsedArgumentAttributorBase<Overload,Self,ReturnType>::doc(std::
 
 template <class Overload, class Self, class ReturnType>
 prefix_ Self senf::console::ParsedArgumentAttributorBase<Overload,Self,ReturnType>::
+shortdoc(std::string const & doc)
+    const
+{
+    this->ParsedCommandAttributorBase::shortDoc(doc);
+    return static_cast<Self const &>(*this);
+}
+
+template <class Overload, class Self, class ReturnType>
+prefix_ Self senf::console::ParsedArgumentAttributorBase<Overload,Self,ReturnType>::
 overloadDoc(std::string const & doc)
     const
 {
@@ -133,6 +142,15 @@ senf::console::ParsedArgumentAttributorBase<Overload,Self,void>::doc(std::string
     const
 {
     this->ParsedCommandAttributorBase::nodeDoc(doc);
+    return static_cast<Self const &>(*this);
+}
+
+template <class Overload, class Self>
+prefix_ Self senf::console::ParsedArgumentAttributorBase<Overload, Self, void>::
+shortdoc(std::string const & doc)
+    const
+{
+    this->ParsedCommandAttributorBase::shortDoc(doc);
     return static_cast<Self const &>(*this);
 }
 

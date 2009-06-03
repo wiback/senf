@@ -165,6 +165,9 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
                 "lux sto ioco. Per Re dono. Copiose reus scitus jus diligens sis scapulare\n"
                 "Servitium transi." )
 
+            .shortdoc(
+                "Ops fortunate." )
+
             .overloadDoc(
                 "Lo nam balnearius Opprimo Pennatus, no decentia sui, dicto esse se pulchritudo,\n"
                 "pupa Sive res indifferenter. Captivo pa." )
@@ -201,6 +204,8 @@ BOOST_AUTO_UNIT_TEST(parsedCommand)
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
 
         BOOST_CHECK_EQUAL( ss.str(), "333\n" "224\n" "Value: foo\n" "Value: \n" );
+
+        BOOST_CHECK_EQUAL( dir("cb").shorthelp(), "Ops fortunate." );
     }
 
     {

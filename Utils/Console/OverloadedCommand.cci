@@ -56,6 +56,13 @@ senf::console::OverloadedCommandNode::doc(std::string const & doc)
     return *this;
 }
 
+prefix_ senf::console::OverloadedCommandNode &
+senf::console::OverloadedCommandNode::shortdoc(std::string const & doc)
+{
+    shortdoc_ = doc;
+    return *this;
+}
+
 prefix_ unsigned
 senf::console::OverloadedCommandNode::overloadIndex(CommandOverload const & overload)
 {

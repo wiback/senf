@@ -279,6 +279,7 @@ namespace console {
         bool active() const;            ///< \c true, if node is attached to the root() node
 
         void help(std::ostream & output) const; ///< Write help info to \a output
+        std::string shorthelp() const;  ///< Get short (one-line) documentation
 
         ptr thisptr();                  ///< Get smart pointer to node
         cptr thisptr() const;           ///< Get smart pointer to node (const)
@@ -312,8 +313,12 @@ namespace console {
 #endif
         virtual void v_help(std::ostream & output) const = 0;
                                         ///< Provide help information
-                                        /**< This member must be implemented in derived classes
-                                             to provide node specific help information. */
+                                        /**< This member must be implemented in derived classes to
+                                             provide node specific help information. */
+        virtual std::string v_shorthelp() const = 0;
+                                        ///< Provide short documentation
+                                        /**< This member must be implemented in derived classes to
+                                             provide node specific documentation. */
 
     private:
         std::string name_;
@@ -359,6 +364,7 @@ namespace console {
         explicit LinkNode(GenericNode & node);
 
         virtual void v_help(std::ostream &) const;
+        virtual std::string v_shorthelp() const;
 
         GenericNode::ptr node_;
     };
@@ -556,6 +562,7 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
 
         DirectoryNode & doc(std::string const & doc); ///< Set node documentation
+        DirectoryNode & shortdoc(std::string const & doc); ///< Set node short documentation
 
         ptr thisptr();
         cptr thisptr() const;
@@ -566,9 +573,11 @@ namespace console {
     private:
         void add(GenericNode::ptr node);
         virtual void v_help(std::ostream & output) const;
+        virtual std::string v_shorthelp() const;
 
         ChildMap children_;
         std::string doc_;
+        std::string shortdoc_;
 
         friend DirectoryNode & root();
     };
@@ -694,18 +703,21 @@ namespace console {
         cptr thisptr() const;
 
         SimpleCommandNode & doc(std::string const & doc);
+        SimpleCommandNode & shortdoc(std::string const & doc);
 
     protected:
         SimpleCommandNode(Function const & fn);
 
     private:
         virtual void v_help(std::ostream & output) const;
+        virtual std::string v_shorthelp() const;
         virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
             const;
 
 
         Function fn_;
         std::string doc_;
+        std::string shortdoc_;
     };
 
 #ifndef DOXYGEN

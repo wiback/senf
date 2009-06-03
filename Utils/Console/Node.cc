@@ -95,8 +95,13 @@ prefix_ bool senf::console::GenericNode::isChildOf(DirectoryNode & parent)
 prefix_ void senf::console::LinkNode::v_help(std::ostream & os)
     const
 {
-    os << "link to ";
     follow().help(os);
+}
+
+prefix_ std::string senf::console::LinkNode::v_shorthelp()
+    const
+{
+    return follow().shorthelp();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -161,6 +166,14 @@ prefix_ void senf::console::DirectoryNode::v_help(std::ostream & output)
     output << doc_ << "\n";
 }
 
+prefix_ std::string senf::console::DirectoryNode::v_shorthelp()
+    const
+{
+    if (! shortdoc_.empty())
+        return shortdoc_;
+    return doc_.substr(0,doc_.find('\n'));
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NodeTraverser
 
@@ -215,6 +228,14 @@ prefix_ void senf::console::SimpleCommandNode::v_help(std::ostream & output)
     const
 {
     output << doc_ << "\n";
+}
+
+prefix_ std::string senf::console::SimpleCommandNode::v_shorthelp()
+    const
+{
+    if (! shortdoc_.empty())
+        return shortdoc_;
+    return doc_.substr(0,doc_.find('\n'));
 }
 
 prefix_ void senf::console::SimpleCommandNode::v_execute(boost::any & rv, std::ostream & os,

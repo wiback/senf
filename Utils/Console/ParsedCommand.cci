@@ -120,6 +120,12 @@ prefix_ void senf::console::ParsedCommandAttributorBase::nodeDoc(std::string con
     node().doc(doc);
 }
 
+prefix_ void senf::console::ParsedCommandAttributorBase::shortDoc(std::string const & doc)
+    const
+{
+    node().shortdoc(doc);
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

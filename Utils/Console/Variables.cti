@@ -80,6 +80,14 @@ senf::console::ConstVariableAttributor<Variable>::doc(std::string const & doc)
 
 template <class Variable>
 prefix_ senf::console::ConstVariableAttributor<Variable>
+senf::console::ConstVariableAttributor<Variable>::shortdoc(std::string const & doc)
+{
+    queryOverload_.node().shortdoc(doc);
+    return *this;
+}
+
+template <class Variable>
+prefix_ senf::console::ConstVariableAttributor<Variable>
 senf::console::ConstVariableAttributor<Variable>::formatter(Formatter formatter)
 {
     queryOverload_.formatter(formatter);
@@ -141,6 +149,14 @@ prefix_ typename senf::console::VariableAttributor<Variable>
 senf::console::VariableAttributor<Variable>::doc(std::string const & doc)
 {
     ConstVariableAttributor<Variable>::doc(doc);
+    return *this;
+}
+
+template <class Variable>
+prefix_ typename senf::console::VariableAttributor<Variable>
+senf::console::VariableAttributor<Variable>::shortdoc(std::string const & doc)
+{
+    ConstVariableAttributor<Variable>::shortdoc(doc);
     return *this;
 }
 

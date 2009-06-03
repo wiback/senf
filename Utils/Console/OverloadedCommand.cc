@@ -155,6 +155,14 @@ prefix_ void senf::console::OverloadedCommandNode::v_help(std::ostream & os)
     }
 }
 
+prefix_ std::string senf::console::OverloadedCommandNode::v_shorthelp()
+    const
+{
+    if (!shortdoc_.empty())
+        return shortdoc_;
+    return doc_.substr(0,doc_.find('\n'));
+}
+
 prefix_ void senf::console::OverloadedCommandNode::v_execute(boost::any & rv,
                                                              std::ostream & os,
                                                              ParseCommandInfo const & command)

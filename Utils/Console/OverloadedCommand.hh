@@ -184,6 +184,8 @@ namespace console {
 
         OverloadedCommandNode & doc(std::string const & doc);
                                         ///< Assign global help for all overloads
+        OverloadedCommandNode & shortdoc(std::string const & doc);
+                                        ///< Assign short documentation for all overloads
 
         unsigned overloadIndex(CommandOverload const & overload);
                                         ///< Return the overload index for \a overload
@@ -197,6 +199,7 @@ namespace console {
         OverloadedCommandNode();
 
         virtual void v_help(std::ostream & output) const;
+        virtual std::string v_shorthelp() const;
         virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
             const;
 
@@ -204,6 +207,7 @@ namespace console {
 
         Overloads overloads_;
         std::string doc_;
+        std::string shortdoc_;
     };
 
     /** \brief Basic command overload

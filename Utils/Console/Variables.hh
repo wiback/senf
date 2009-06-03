@@ -86,6 +86,7 @@ namespace console {
         typedef ConstVariableAttributor return_type;
 
         ConstVariableAttributor doc(std::string const & doc);
+        ConstVariableAttributor shortdoc(std::string const & doc);
         ConstVariableAttributor formatter(Formatter formatter);
 
         OverloadedCommandNode & node() const; ///< Return the node object
@@ -145,6 +146,7 @@ namespace console {
         typedef typename ConstVariableAttributor<Variable>::QueryOverload QueryOverload;
 
         VariableAttributor doc(std::string const & doc); ///< Set documentation of the variable
+        VariableAttributor shortdoc(std::string const & doc); ///< Set short documentation
         VariableAttributor formatter(Formatter formatter); ///< Set formatter
         /**< The \a formatter must be a callable with a signature
              compatible with

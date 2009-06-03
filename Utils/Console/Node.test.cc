@@ -107,10 +107,15 @@ BOOST_AUTO_UNIT_TEST(directoryNode)
         completions, 
         completions+sizeof(completions)/sizeof(completions[0]) );
 
-    p->doc("test doc");
+    p->doc("test doc\nline 2");
     std::stringstream ss;
     p->help(ss);
-    BOOST_CHECK_EQUAL( ss.str(), "test doc\n" );
+    BOOST_CHECK_EQUAL( ss.str(), "test doc\nline 2\n" );
+    BOOST_CHECK_EQUAL( p->shorthelp(), "test doc" );
+    p->doc("");
+    BOOST_CHECK_EQUAL( p->shorthelp(), "" );
+    p->shortdoc("short doc");
+    BOOST_CHECK_EQUAL( p->shorthelp(), "short doc" );
 
     BOOST_CHECK( senf::console::root().remove("dir1") == p );
     senf::console::root().remove("dir2");

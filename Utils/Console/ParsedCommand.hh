@@ -216,6 +216,7 @@ namespace console {
         ParsedCommandOverloadBase & overload() const;
         void overloadDoc(std::string const & doc) const;
         void nodeDoc(std::string const & doc) const;
+        void shortDoc(std::string const & doc) const;
         
     private:
         ParsedCommandOverloadBase & overload_;
@@ -398,6 +399,7 @@ namespace console {
     {
     public:
         Self doc(std::string const & doc) const; ///< Set documentation for all overloads
+        Self shortdoc(std::string const & doc) const; ///< Set short documentation for all overloads
         Self overloadDoc(std::string const & doc) const; ///< Set overload specific documentation
         Self formatter(typename Overload::Formatter formatter) const; 
                                         ///< Set return value formatter
@@ -426,6 +428,7 @@ namespace console {
     {
     public:
         Self doc(std::string const & doc) const; ///< Set documentation for all overloads
+        Self shortdoc(std::string const & doc) const; ///< Set short documentation for all overloads
         Self overloadDoc(std::string const & doc) const; ///< Set overload specific documentation
 
     protected:

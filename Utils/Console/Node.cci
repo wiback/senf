@@ -84,6 +84,12 @@ prefix_ void senf::console::GenericNode::help(std::ostream & output)
     v_help(output);
 }
 
+prefix_ std::string senf::console::GenericNode::shorthelp()
+    const
+{
+    return v_shorthelp();
+}
+
 prefix_ bool senf::console::GenericNode::operator==(GenericNode & other)
     const
 {
@@ -247,6 +253,13 @@ senf::console::DirectoryNode::doc(std::string const & doc)
     return *this;
 }
 
+prefix_ senf::console::DirectoryNode &
+senf::console::DirectoryNode::shortdoc(std::string const & doc)
+{
+    shortdoc_ = doc;
+    return *this;
+}
+
 prefix_ senf::console::DirectoryNode::ptr senf::console::DirectoryNode::thisptr()
 {
     return boost::static_pointer_cast<DirectoryNode>(shared_from_this());
@@ -331,6 +344,13 @@ prefix_ senf::console::SimpleCommandNode &
 senf::console::SimpleCommandNode::doc(std::string const & doc)
 {
     doc_ = doc;
+    return *this;
+}
+
+prefix_ senf::console::SimpleCommandNode &
+senf::console::SimpleCommandNode::shortdoc(std::string const & doc)
+{
+    shortdoc_ = doc;
     return *this;
 }
 
