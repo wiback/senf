@@ -180,6 +180,12 @@ prefix_ void senf::console::detail::DumbClientReader::v_write(std::string const 
     handle().write(data);
 }
 
+prefix_ unsigned senf::console::detail::DumbClientReader::v_width()
+    const
+{
+    return 80;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NoninteractiveClientReader
 
@@ -200,6 +206,12 @@ prefix_ void senf::console::detail::NoninteractiveClientReader::v_enablePrompt()
 prefix_ void senf::console::detail::NoninteractiveClientReader::v_write(std::string const & data)
 {
     handle().write(data);
+}
+
+prefix_ unsigned senf::console::detail::NoninteractiveClientReader::v_width()
+    const
+{
+    return 80;
 }
 
 prefix_ void

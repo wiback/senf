@@ -100,9 +100,9 @@ BOOST_AUTO_UNIT_TEST(executor)
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
         BOOST_CHECK_EQUAL( os.str(), 
-                           "dir1/               \n"
-                           "dir2/               Helptext\n"
-                           "sys/                \n" );
+                           "dir1/                       \n"
+                           "dir2/                       Helptext\n"
+                           "sys/                        \n" );
     }
 
     {
@@ -110,7 +110,7 @@ BOOST_AUTO_UNIT_TEST(executor)
         parser.parse("ls dir1", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
-        BOOST_CHECK_EQUAL( os.str(), "dir3/               \n" );
+        BOOST_CHECK_EQUAL( os.str(), "dir3/                       \n" );
     }
 
     {
@@ -121,6 +121,19 @@ BOOST_AUTO_UNIT_TEST(executor)
         BOOST_CHECK_EQUAL( os.str(), "" );
     }
     
+    {
+        std::stringstream os;
+        parser.parse("lr", &setCommand);
+        executor(os, commands.back());
+        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLR );
+        BOOST_CHECK_EQUAL( os.str().substr(0,213),
+                           "dir1/                                   \n"
+                           "  dir3/                                 \n"
+                           "dir2/                                   Helptext\n"
+                           "  test                                  \n"
+                           "sys/                                    \n" );
+    }
+
     {
         std::stringstream os;
         parser.parse("dir1/dir3 { }", &setCommand);
@@ -216,7 +229,7 @@ BOOST_AUTO_UNIT_TEST(executorPolicy)
         parser.parse("ls dir1", &setCommand);
         executor(os, commands.back());
         BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
-        BOOST_CHECK_EQUAL( os.str(), "dir3/               \n" );
+        BOOST_CHECK_EQUAL( os.str(), "dir3/                       \n" );
     }
 
     {

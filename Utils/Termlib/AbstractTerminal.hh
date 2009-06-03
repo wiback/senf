@@ -69,8 +69,8 @@ namespace term {
         virtual void setCallbacks(Callbacks & cb) = 0; ///< Register terminal callbacks
 
         virtual std::string terminalType() = 0; ///< Get the terminal type
-        virtual unsigned width() = 0;   ///< Get current terminal window width
-        virtual unsigned height() = 0;  ///< Get current terminal window height
+        virtual unsigned width() const = 0;   ///< Get current terminal window width
+        virtual unsigned height() const = 0;  ///< Get current terminal window height
 
         virtual void write(char ch) = 0; ///< Write character to terminal
     };

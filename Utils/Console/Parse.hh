@@ -366,6 +366,7 @@ namespace console {
         enum BuiltinCommand { NoBuiltin, 
                               BuiltinCD, 
                               BuiltinLS, 
+                              BuiltinLR,
                               BuiltinPUSHD, 
                               BuiltinPOPD,
                               BuiltinEXIT,

@@ -253,11 +253,13 @@ prefix_ void senf::term::BaseEditor::processKeys()
 }
 
 prefix_ unsigned senf::term::BaseEditor::width()
+    const
 {
     return terminal_->width();
 }
 
 prefix_ unsigned senf::term::BaseEditor::height()
+    const
 {
     return terminal_->height();
 }

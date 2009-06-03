@@ -220,6 +220,9 @@ namespace detail {
                     |    self.keyword_p("ls")
                       >> ! path
                       >> eps_p                    [ bind(&PD::builtin_ls)(d_, path_) ]
+                    |    self.keyword_p("lr")
+                      >> ! path
+                      >> eps_p                    [ bind(&PD::builtin_lr)(d_, path_) ]
                     |    self.keyword_p("exit")   [ bind(&PD::builtin_exit)(d_) ]
                     |    self.keyword_p("help")
                       >> ! path

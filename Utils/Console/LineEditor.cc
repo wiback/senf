@@ -65,6 +65,12 @@ prefix_ void senf::console::detail::LineEditorSwitcher::v_write(std::string cons
     reader_->write(data);
 }
 
+prefix_ unsigned senf::console::detail::LineEditorSwitcher::v_width()
+    const
+{
+    return reader_->width();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::LineEditorClientReader
 
@@ -107,6 +113,12 @@ prefix_ void senf::console::detail::LineEditorClientReader::v_enablePrompt()
 prefix_ void senf::console::detail::LineEditorClientReader::v_write(std::string const & data)
 {
     BaseTelnetProtocol::write(data);
+}
+
+prefix_ unsigned senf::console::detail::LineEditorClientReader::v_width()
+    const
+{
+    return editor_.width();
 }
 
 prefix_ void

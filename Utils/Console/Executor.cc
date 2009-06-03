@@ -35,6 +35,7 @@
 #include "../../Utils/Range.hh"
 #include "../../Utils/String.hh"
 #include "../../Utils/range.hh"
+#include "Server.hh"
 
 //#include "Executor.mpp"
 #define prefix_
@@ -110,6 +111,13 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
                 break;
             // The parser ensures, we have either one or no argument
             ls( output, command.commandPath() );
+            break;
+
+        case ParseCommandInfo::BuiltinLR :
+            if (skipping())
+                break;
+            // The parser ensures, we have either one or no argument
+            lr( output, command.commandPath() );
             break;
 
         case ParseCommandInfo::BuiltinPUSHD :
@@ -218,12 +226,21 @@ prefix_ void senf::console::Executor::cd(ParseCommandInfo::TokensRange dir)
 prefix_ void senf::console::Executor::ls(std::ostream & output,
                                          ParseCommandInfo::TokensRange path)
 {
+    unsigned width (80);
+    try {
+        width = senf::console::Client::get(output).width();
+    }
+    catch (std::bad_cast &)
+    {}
+    if (width<60)
+        width = 80;
+    width -= 28+1;
     Path dir (cwd_);
     traverseDirectory(path, dir);
     DirectoryNode & node (*dir.back().lock());
     DirectoryNode::child_iterator i (node.children().begin());
     DirectoryNode::child_iterator const i_end (node.children().end());
-    boost::format fmt ("%s%s  %|20t|%.59s\n");
+    boost::format fmt ("%s%s  %|28t|%s\n");
     for (; i != i_end; ++i)
         output << fmt
             % i->first
@@ -232,7 +249,66 @@ prefix_ void senf::console::Executor::ls(std::ostream & output,
                 : i->second->isLink()
                 ? "@"
                 : "" )
-            % i->second->shorthelp();
+            % i->second->shorthelp().substr(0,width);
+}
+
+namespace {
+
+    typedef std::map<senf::console::DirectoryNode*,std::string> NodesMap;
+
+    void dolr(std::ostream & output, unsigned width, NodesMap & nodes, std::string const & base, 
+              unsigned level, senf::console::DirectoryNode & node)
+    {
+        boost::format fmt ("%s%s%s  %|40t|%s\n");
+        std::string pad (2*level, ' ');
+        senf::console::DirectoryNode::child_iterator i (node.children().begin());
+        senf::console::DirectoryNode::child_iterator const i_end (node.children().end());
+        for (; i != i_end; ++i) {
+            output << fmt
+                % pad
+                % i->first
+                % ( i->second->isDirectory()
+                    ? "/"
+                    : i->second->isLink()
+                    ? "@"
+                    : "" )
+                % i->second->shorthelp().substr(0,width);
+            if (i->second->followLink().isDirectory()) {
+                senf::console::DirectoryNode & subnode (
+                    static_cast<senf::console::DirectoryNode&>(i->second->followLink()));
+                NodesMap::iterator j (nodes.find(&subnode));
+                if (j == nodes.end()) {
+                    std::string subbase (base);
+                    if (! subbase.empty())
+                        subbase += "/";
+                    subbase += i->first;
+                    nodes.insert(std::make_pair(&subnode, subbase));
+                    dolr(output, width, nodes, subbase, level+1, subnode);
+                } else
+                    output << pad << "  -> " << j->second << "\n";
+            }
+        }
+    }
+
+}
+
+prefix_ void senf::console::Executor::lr(std::ostream & output,
+                                         ParseCommandInfo::TokensRange path)
+{
+    unsigned width (80);
+    try {
+        width = senf::console::Client::get(output).width();
+    }
+    catch (std::bad_cast &)
+    {}
+    if (width<60)
+        width = 80;
+    width -= 40+1;
+    Path dir (cwd_);
+    traverseDirectory(path, dir);
+    DirectoryNode & node (*dir.back().lock());
+    NodesMap nodes;
+    dolr(output, width, nodes, "", 0, node);
 }
 
 prefix_ void senf::console::Executor::pushd(ParseCommandInfo::TokensRange dir)

@@ -303,7 +303,9 @@ BOOST_AUTO_UNIT_TEST(directoryReturn)
         SENF_CHECK_NO_THROW(
             parser.parse("test/test { ls; }",
                          boost::bind<void>( boost::ref(executor), boost::ref(ss), _1 )) );
-        BOOST_CHECK_EQUAL( ss.str(), "<Directory at '/test/dircb'>\ncb1                 \n" );
+        BOOST_CHECK_EQUAL( ss.str(), 
+                           "<Directory at '/test/dircb'>\n"
+                           "cb1                         \n" );
     }
     
 }

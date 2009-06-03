@@ -62,8 +62,8 @@ namespace term {
         ///\{
         virtual void setCallbacks(AbstractTerminal::Callbacks & cb);
         virtual std::string terminalType();
-        virtual unsigned width();
-        virtual unsigned height();
+        virtual unsigned width() const;
+        virtual unsigned height() const;
         virtual void write(char ch);
         ///\}
 

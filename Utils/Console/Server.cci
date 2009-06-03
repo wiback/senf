@@ -163,6 +163,12 @@ prefix_ std::string const & senf::console::Client::backtrace()
     return backtrace_;
 }
 
+prefix_ unsigned senf::console::Client::width()
+    const
+{
+    return reader_->width();
+}
+
 prefix_ senf::console::Client & senf::console::Client::get(std::ostream & os)
 {
     return dynamic_cast<detail::NonblockingSocketOStream&>(os)->client();
@@ -234,6 +240,12 @@ prefix_ void senf::console::detail::ClientReader::enablePrompt()
 prefix_ void senf::console::detail::ClientReader::write(std::string const & data)
 {
     v_write(data);
+}
+
+prefix_ unsigned senf::console::detail::ClientReader::width()
+    const
+{
+    return v_width();
 }
 
 prefix_ senf::console::detail::ClientReader::ClientReader(Client & client)

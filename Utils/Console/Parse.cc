@@ -76,6 +76,11 @@ namespace detail {
               info_->builtin(ParseCommandInfo::BuiltinLS);
               setBuiltinPathArg(path); }
 
+        void builtin_lr(std::vector<Token> & path)
+            { info_->clear();
+              info_->builtin(ParseCommandInfo::BuiltinLR);
+              setBuiltinPathArg(path); }
+
         void pushDirectory()
             { // Do NOT call clear since pushDirectory is set in ADDITION
               // to an ordinary command (which may be only a directory name)
@@ -169,7 +174,7 @@ prefix_ std::ostream & senf::console::operator<<(std::ostream & stream,
         }
     }
     else {
-        char const * builtins[] = { 0, "cd", "ls", "pushd", "popd", "exit", "help" };
+        char const * builtins[] = { 0, "cd", "ls", "lr", "pushd", "popd", "exit", "help" };
         stream << "builtin-" << builtins[info.builtin()];
     }
         

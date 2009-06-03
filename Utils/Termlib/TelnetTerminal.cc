@@ -51,11 +51,13 @@ prefix_ std::string senf::term::TelnetTerminal::terminalType()
 }
 
 prefix_ unsigned senf::term::TelnetTerminal::width()
+    const
 {
     return telnethandler::NAWS::width();
 }
 
 prefix_ unsigned senf::term::TelnetTerminal::height()
+    const
 {
     return telnethandler::NAWS::height();
 }

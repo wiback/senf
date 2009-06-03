@@ -81,8 +81,8 @@ namespace term {
 
         unsigned currentColumn() const; ///< Return number of current column
         unsigned currentLine() const;   ///< Return number of current relative line
-        unsigned width();               ///< Return current screen width
-        unsigned height();              ///< Return current screen height
+        unsigned width() const;         ///< Return current screen width
+        unsigned height() const;        ///< Return current screen height
 
     protected:
         virtual bool cb_init();         ///< Called when terminal is initialized

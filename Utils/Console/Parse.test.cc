@@ -66,6 +66,8 @@ namespace
             { os_ << "builtin_cd( " << senf::stringJoin(path, "/") << " )\n"; }
         void builtin_ls(std::vector<senf::console::Token> const & path)
             { os_ << "builtin_ls( " << senf::stringJoin(path, "/") << " )\n"; }
+        void builtin_lr(std::vector<senf::console::Token> const & path)
+            { os_ << "builtin_lr( " << senf::stringJoin(path, "/") << " )\n"; }
         void builtin_exit()
             { os_ << "builtin_exit()\n"; }
         void builtin_help(std::vector<senf::console::Token> const & path)
@@ -128,6 +130,15 @@ BOOST_AUTO_UNIT_TEST(commandGrammar)
                          grammar.use_parser<Grammar::CommandParser>(), 
                          grammar.use_parser<Grammar::SkipParser>() ) . full );
         BOOST_CHECK_EQUAL( ss.str(), "builtin_ls( None('')/Word('foo')/Word('bar') )\n" );
+    }
+
+    {
+        ss.str("");
+        BOOST_CHECK( boost::spirit::parse( 
+                         "lr /foo/bar;", 
+                         grammar.use_parser<Grammar::CommandParser>(), 
+                         grammar.use_parser<Grammar::SkipParser>() ) . full );
+        BOOST_CHECK_EQUAL( ss.str(), "builtin_lr( None('')/Word('foo')/Word('bar') )\n" );
     }
 
     {

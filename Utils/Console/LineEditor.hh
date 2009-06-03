@@ -60,6 +60,7 @@ namespace detail {
         virtual void v_disablePrompt();
         virtual void v_enablePrompt();
         virtual void v_write(std::string const & data);
+        virtual unsigned v_width() const;
 
         boost::scoped_ptr<ClientReader> reader_;
     };
@@ -83,6 +84,7 @@ namespace detail {
         virtual void v_disablePrompt();
         virtual void v_enablePrompt();
         virtual void v_write(std::string const & data);
+        virtual unsigned v_width() const;
 
         // Editor callbacks
         void executeLine(std::string const & text);

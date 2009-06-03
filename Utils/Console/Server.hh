@@ -177,6 +177,7 @@ namespace console {
         Server::Mode mode() const;
         void write(std::string const & data) const;
         std::string const & backtrace() const;
+        unsigned width() const;
 
         static Client & get(std::ostream & os);
 
