@@ -33,8 +33,9 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::ArgumentInfoBase
 
-prefix_ senf::console::detail::ArgumentInfoBase::ArgumentInfoBase(std::string const & type_)
-    : type (type_), name (), hasDefault (false)
+prefix_ senf::console::detail::ArgumentInfoBase::ArgumentInfoBase(std::string const & type_,
+                                                                  bool singleToken_)
+    : type (type_), name (), hasDefault (false), singleToken (singleToken_)
 {}
 
 ///////////////////////////////////////////////////////////////////////////

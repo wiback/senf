@@ -30,6 +30,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include "../../Utils/range.hh"
+#include "OverloadedCommand.hh"
 
 //#include "ProgramOptions.mpp"
 #define prefix_
@@ -151,8 +152,35 @@ senf::console::detail::ProgramOptionsSource::parseLongOption(std::string const &
     }
 
     cmd.command(path);
-    parser_.parseArguments(value, cmd);
-    executor(executor.stream(), cmd);
+    // Here we check, whether the command
+    // - is an overloaded/parsed command
+    // - with a single overload
+    // - taking only a single argument
+    // - which consists of a single token
+    // If all these conditions are met, we pass the parameter value as a single WordToken
+    // otherwise we parse it using the config parser
+    try {
+        GenericNode const & node (executor.getNode(cmd));
+        OverloadedCommandNode const * cmdnode (dynamic_cast<OverloadedCommandNode const *>(&node));
+        if (cmdnode && cmdnode->overloads().size() == 1) {
+            CommandOverload const & overload (**cmdnode->overloads().begin());
+            if (overload.numArguments() == 1) {
+                ArgumentDoc argdoc;
+                argdoc.singleToken = false;
+                overload.argumentDoc(0, argdoc);
+                if (argdoc.singleToken) {
+                    cmd.addToken(WordToken(value));
+                    goto execute;
+                }
+            }
+        } /* else */ {
+            parser_.parseArguments(value, cmd);
+        }
+    execute:
+        executor(executor.stream(), cmd);
+    }
+    catch (Executor::IgnoreCommandException &)
+    {}
 }
 
 prefix_ void

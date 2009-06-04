@@ -70,6 +70,13 @@ senf::console::OverloadedCommandNode::overloadIndex(CommandOverload const & over
         - overloads_.begin() + 1;
 }
 
+prefix_ senf::console::OverloadedCommandNode::OverloadsRange
+senf::console::OverloadedCommandNode::overloads()
+    const
+{
+    return boost::make_iterator_range(overloads_.begin(), overloads_.end());
+}
+
 prefix_ senf::console::OverloadedCommandNode::OverloadedCommandNode()
 {}
 

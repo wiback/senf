@@ -43,6 +43,7 @@ namespace console {
     struct SequenceArgumentTraits
     {
         typedef Sequence type;
+        static bool const singleToken = false;
 
         static void parse(ParseCommandInfo::TokensRange const & tokens, type & out);
         static std::string description();

@@ -191,6 +191,14 @@ BOOST_AUTO_UNIT_TEST(flagCollection)
     BOOST_CHECK_EQUAL( ss.str(), "()\n" );
 }
 
+BOOST_AUTO_UNIT_TEST(singleToken)
+{
+    BOOST_CHECK( senf::console::ArgumentTraits<std::string>::singleToken );
+    BOOST_CHECK( senf::console::ArgumentTraits<int>::singleToken );
+    BOOST_CHECK( ! senf::console::ArgumentTraits< 
+                       senf::console::FlagCollection<TestEnum> >::singleToken );
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

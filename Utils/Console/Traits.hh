@@ -29,6 +29,7 @@
 // Custom includes
 #include <iostream>
 #include <boost/intrusive_ptr.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include "../../Utils/intrusive_refcount.hh"
 #include "Parse.hh"
 #include "Node.hh"
@@ -94,6 +95,12 @@ namespace console {
     {
         typedef Type type;
 
+        static bool const singleToken = 
+            boost::is_same< typeof(senf_console_parse_argument(
+                                       *static_cast<ParseCommandInfo::TokensRange const *>(0),
+                                       *static_cast<Type*>(0))),
+                            bool >::value;
+
         static void parse(ParseCommandInfo::TokensRange const & tokens, Type & out);
                                         ///< Parse token range into value
                                         /**< This function needs to parse \a tokens and write the
@@ -121,7 +128,7 @@ namespace console {
         \related ArgumentTraits
      */
     template <class Type>
-    void senf_console_parse_argument(ParseCommandInfo::TokensRange const & tokens, Type & out);
+    bool senf_console_parse_argument(ParseCommandInfo::TokensRange const & tokens, Type & out);
 
     /** \brief Parse token range
 
@@ -143,6 +150,7 @@ namespace console {
     struct ArgumentTraits<bool>
     {
         typedef bool type;
+        static bool const singleToken = true;
 
         static void parse(ParseCommandInfo::TokensRange const & tokens, bool & out);
         static std::string description();
@@ -225,6 +233,7 @@ namespace console {
     struct ArgumentTraits< FlagCollection<Enum> >
     {
         typedef FlagCollection<Enum> type;
+        static bool const singleToken = false;
         static void parse(ParseCommandInfo::TokensRange const & tokens, type & out);
         static std::string description();
         static std::string str(type const & value);

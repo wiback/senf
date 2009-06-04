@@ -31,7 +31,7 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class Type>
-prefix_ void
+prefix_ bool
 senf::console::senf_console_parse_argument(ParseCommandInfo::TokensRange const & tokens,
                                            Type & out)
 {
@@ -44,6 +44,7 @@ senf::console::senf_console_parse_argument(ParseCommandInfo::TokensRange const &
     catch (std::bad_cast & ex) {
         throw SyntaxErrorException("parameter syntax error");
     }
+    return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////

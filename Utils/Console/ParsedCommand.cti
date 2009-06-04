@@ -45,7 +45,8 @@ senf::console::detail::ArgumentInfo<ParameterType>::create()
 
 template <class ParameterType>
 prefix_ senf::console::detail::ArgumentInfo<ParameterType>::ArgumentInfo()
-    : ArgumentInfoBase ( ArgumentTraits<ParameterType>::description() ),
+    : ArgumentInfoBase ( ArgumentTraits<ParameterType>::description(), 
+                         ArgumentTraits<ParameterType>::singleToken ),
       defaultValue ()
 {}
 

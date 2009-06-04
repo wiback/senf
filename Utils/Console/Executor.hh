@@ -92,6 +92,7 @@ namespace console {
                                         ///< Execute command
                                         /**< Output will be written to \a output. 
                                              Same as execute(). */
+        GenericNode & getNode(ParseCommandInfo const & command);
         DirectoryNode & cwd() const;    ///< Current working directory
         std::string cwdPath() const;    ///< Return pathname of current directory
         bool skipping() const;          ///< \c true, if currently skipping a directory group

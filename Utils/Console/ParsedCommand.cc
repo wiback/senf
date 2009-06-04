@@ -65,6 +65,7 @@ prefix_ void senf::console::ParsedCommandOverloadBase::v_argumentDoc(unsigned in
             doc.defaultValue = "(empty)";
     }
     doc.doc = arg.doc;
+    doc.singleToken = arg.singleToken;
 }
 
 prefix_ std::string senf::console::ParsedCommandOverloadBase::v_doc()

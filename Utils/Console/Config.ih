@@ -69,6 +69,8 @@ namespace detail {
                                         /**< Output will be written to \a output. 
                                              Same as execute(). */
 
+        GenericNode & getNode(ParseCommandInfo const & command);
+
         bool complete() const;          ///< \c true, if all nodes have been parsed
         bool parsed(GenericNode & node) const; ///< \c true. if \a node has been parsed
         void reset();                   ///< Reset node parse info state

@@ -64,8 +64,9 @@ namespace detail {
         std::string defaultDoc;
         bool hasDefault;
         std::string doc;
+        bool singleToken;
         
-        ArgumentInfoBase(std::string const & type);
+        explicit ArgumentInfoBase(std::string const & type, bool singleToken=false);
         virtual ~ArgumentInfoBase();
 
         virtual std::string defaultValueStr() const = 0;

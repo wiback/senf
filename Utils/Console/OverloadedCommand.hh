@@ -29,6 +29,7 @@
 // Custom includes
 #include "Node.hh"
 #include <boost/intrusive_ptr.hpp>
+#include <boost/range/iterator_range.hpp>
 #include "../../Utils/intrusive_refcount.hh"
 
 //#include "OverloadedCommand.mpp"
@@ -48,6 +49,7 @@ namespace console {
         std::string type; ///< Argument type (string representation)
         std::string defaultValue; ///< Default value (string representation) or empty string
         std::string doc; ///< Documentation for this argument
+        bool singleToken; ///< \c true, if argument is parsed from single token
     };
 
     /** \brief Base class for command overload of OverloadedCommandNode
@@ -159,6 +161,8 @@ namespace console {
     class OverloadedCommandNode
         : public CommandNode
     {
+        typedef std::vector<CommandOverload::ptr> Overloads;
+
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
@@ -169,6 +173,8 @@ namespace console {
 
         typedef OverloadedCommandNode node_type;
         typedef OverloadedCommandNode & return_type;
+
+        typedef boost::iterator_range<Overloads::const_iterator> OverloadsRange;
 
         ///////////////////////////////////////////////////////////////////////////
         ///\name Structors and default members
@@ -192,6 +198,8 @@ namespace console {
                                         /**< overloadIndex returns the index of \a overload in the
                                              internal list of overloads. */
 
+        OverloadsRange overloads() const; ///< Get all overloads
+
         ptr thisptr();
         cptr thisptr() const;
 
@@ -202,8 +210,6 @@ namespace console {
         virtual std::string v_shorthelp() const;
         virtual void v_execute(boost::any & rv, std::ostream & os, ParseCommandInfo const & command)
             const;
-
-        typedef std::vector<CommandOverload::ptr> Overloads;
 
         Overloads overloads_;
         std::string doc_;

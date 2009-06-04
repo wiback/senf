@@ -57,6 +57,12 @@ senf::console::detail::RestrictedExecutor::operator()(std::ostream & output,
     execute(output, command);
 }
 
+prefix_ senf::console::GenericNode &
+senf::console::detail::RestrictedExecutor::getNode(ParseCommandInfo const & command)
+{
+    return executor_.getNode(command);
+}
+
 prefix_ bool senf::console::detail::RestrictedExecutor::parsed(GenericNode & node)
     const
 {

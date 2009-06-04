@@ -161,6 +161,12 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
     catch (IgnoreCommandException &) {}
 }
 
+prefix_ senf::console::GenericNode &
+senf::console::Executor::getNode(ParseCommandInfo const & command)
+{
+    return traverseNode(command.commandPath());
+}
+
 prefix_ void senf::console::Executor::exec(std::ostream & output,
                                            ParseCommandInfo const & command)
 {
