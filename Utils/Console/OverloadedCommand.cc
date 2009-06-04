@@ -167,7 +167,7 @@ prefix_ std::string senf::console::OverloadedCommandNode::v_shorthelp()
     for (; i != i_end; ++i) {
         std::string overloadDoc ((*i)->doc());
         if (! overloadDoc.empty()) 
-            return overloadDoc.substr(0,doc_.find('\n'));
+            return overloadDoc.substr(0,overloadDoc.find('\n'));
     }
     return "";
 }
