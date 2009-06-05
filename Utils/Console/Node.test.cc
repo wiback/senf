@@ -117,6 +117,17 @@ BOOST_AUTO_UNIT_TEST(directoryNode)
     p->shortdoc("short doc");
     BOOST_CHECK_EQUAL( p->shorthelp(), "short doc" );
 
+    ss.str("");
+    senf::console::root()["dir2"].mkdir("dir4");
+    senf::console::root()["dir2"].link("link", *p);
+    senf::console::root()["dir2"]["dir4"].link("link", senf::console::root());
+    senf::console::dump(ss, senf::console::root()["dir2"]);
+    BOOST_CHECK_EQUAL( ss.str(),
+                       "dir3/\n"
+                       "dir4/\n"
+                       "  link@ -> /\n"
+                       "link@ -> /dir1\n" );
+
     BOOST_CHECK( senf::console::root().remove("dir1") == p );
     senf::console::root().remove("dir2");
     senf::console::root().remove("fn");

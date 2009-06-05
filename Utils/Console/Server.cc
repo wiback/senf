@@ -284,9 +284,10 @@ prefix_ void senf::console::Client::setNoninteractive()
 prefix_ std::string::size_type senf::console::Client::handleInput(std::string data,
                                                                   bool incremental)
 {
-    if (data.empty() && ! incremental)
+    if (data.empty() && ! incremental) {
         data = lastCommand_;
-    else
+        stream() << "repeat: " << data << std::endl;
+    } else
         lastCommand_ = data;
 
     std::string::size_type n (data.size());

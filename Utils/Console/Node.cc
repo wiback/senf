@@ -39,6 +39,31 @@ prefix_ senf::console::DirectoryNode & senf::console::root()
     return *rootNode;
 }
 
+namespace {
+    void dodump(std::ostream & output, unsigned level, senf::console::DirectoryNode & node)
+    {
+        std::string pad (2*level, ' ');
+        senf::console::DirectoryNode::child_iterator i (node.children().begin());
+        senf::console::DirectoryNode::child_iterator const i_end (node.children().end());
+        for (; i != i_end; ++i) {
+            output << pad << i->first;
+            if (i->second->isDirectory()) {
+                output << "/\n";
+                dodump(output, level+1,static_cast<senf::console::DirectoryNode&>(*i->second));
+            }
+            else if (i->second->isLink()) 
+                output << "@ -> " << i->second->followLink().path() << '\n';
+            else
+                output << '\n';
+        }
+    }
+}
+
+prefix_ void senf::console::dump(std::ostream & os, DirectoryNode & dir)
+{
+    dodump(os,0,dir);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::GenericNode
 

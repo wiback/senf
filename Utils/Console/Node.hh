@@ -224,6 +224,7 @@ namespace console {
     class CommandNode;
 
     DirectoryNode & root();
+    void dump(std::ostream & os, DirectoryNode & dir=root());
 
     /** \brief Config/console node tree base-class
 
