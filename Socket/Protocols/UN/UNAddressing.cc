@@ -37,7 +37,7 @@ prefix_ void senf::UNSocketAddress::path(std::string const & path)
     if (path.size() > sizeof(sockaddr_un)-sizeof(short)-1)
         throw AddressSyntaxException() << "UNSocketAddress path too long: " << path;
     socklen(path.size()+sizeof(short));
-    memcpy(addr_.sun_path, path.c_str(), socklen()-sizeof(short));
+    strncpy(addr_.sun_path, path.c_str(), socklen()-sizeof(short));
     addr_.sun_path[socklen()-sizeof(short)+1] = 0;
 }
 

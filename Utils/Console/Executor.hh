@@ -94,6 +94,7 @@ namespace console {
                                              Same as execute(). */
         GenericNode & getNode(ParseCommandInfo const & command);
         DirectoryNode & cwd() const;    ///< Current working directory
+        void cwd(DirectoryNode & dir);  ///< Change current directory
         std::string cwdPath() const;    ///< Return pathname of current directory
         bool skipping() const;          ///< \c true, if currently skipping a directory group
 

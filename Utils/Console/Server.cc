@@ -349,7 +349,7 @@ prefix_ void senf::console::Client::SysBacktrace::backtrace(std::ostream & os)
 {
     Client & client (Client::get(os));
     if (client.backtrace().empty())
-        os << "(no backtrace)";
+        os << "(no backtrace)\n";
     else
         os << client.backtrace();
 }

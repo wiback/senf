@@ -46,6 +46,15 @@ prefix_ void senf::console::Executor::operator()(std::ostream & output,
     return execute(output, command);
 }
 
+prefix_ void senf::console::Executor::cwd(DirectoryNode & dir)
+{
+    cwd_.clear();
+    cwd_.push_back(dir.thisptr());
+    oldCwd_ = cwd_;
+    dirstack_.clear();
+}
+
+
 prefix_ bool senf::console::Executor::autocd()
     const
 {
