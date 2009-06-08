@@ -40,7 +40,19 @@
 namespace senf {
 namespace console {
 
-    /** \brief
+    /** \brief UDP Console server
+
+        This class provides UDP access to the console to allow remote scripting. The UDP console
+        does support multicast operation.
+
+        Every UDP packet will be executed in a clean context: No directory groups are open/closed,
+        and the current directory is always the root directory. 
+
+        By default, the server will send command replies via UDP to the sender of the corresponding
+        incoming command. Replies may however either be completely disabled or be sent to a fixed
+        address (which may be a multicast address).
+
+        \ingroup console_access
       */
     class UDPServer
         : public boost::noncopyable
@@ -60,14 +72,18 @@ namespace console {
         ///@{
 
         explicit UDPServer(senf::INet4SocketAddress const & address);
+                                        ///< Open UDP server on \a address
         explicit UDPServer(senf::INet6SocketAddress const & address);
+                                        ///< Open UDP server on \a address
         
         ///@}
         ///////////////////////////////////////////////////////////////////////////
 
-        UDPServer & replies(bool enable);
+        UDPServer & replies(bool enable); ///< Enable or disable reply packets
         UDPServer & replies(senf::INet4SocketAddress const & address);
+                                        ///< Send replies to \a address
         UDPServer & replies(senf::INet6SocketAddress const & address);
+                                        ///< Send replies to \a address
 
         DirectoryNode & root() const;   ///< Get root node
 

@@ -524,7 +524,7 @@
     \subsection console_noninteractive Non-interactive network console
 
     After a new connection is established, the console server waits a short time for data to arrive.
-    arrive. Only if nothing happens in the first 500ms, an interactive session is initialized.
+    Only if nothing happens in the first 500ms, an interactive session is initialized.
 
     By sending data immediately after opening the connection, the console is switched into
     non-interactive mode. In this mode, no prompt is displayed. In this mode, commands are \e not
@@ -549,6 +549,25 @@
 
     Commands are executed as soon as the terminating character (';', '{' or '}') is received or when
     the sending end of the connection is closed.    
+
+    \section console_udp Non-interactive UDP console
+
+    The UDP console allows to script the console tree via UDP packets. Every UDP packet must be a
+    complete command (or sequence of commands). The combined reply of all these commands will be
+    returned in a single UDP packet. This reply can be disabled or directed to a different address. 
+
+    To start a UDP server, just create an instance of the senf::console::UDPServer class
+    \code
+    senf::console::UDPServer server (senf::INet4SocketAddress("127.0.0.1:23232"));
+    \endcode
+    (Remember to enter the scheduler main-loop for processing)
+
+    Commands may then be sent to this UDP console e.g. using netcat
+    <pre>
+    $ echo "cd sys; ls" | nc6 -u --half-close localhost 23232 2>/dev/null
+    </pre>
+
+    \see senf::console::UDPServer
  */
 
 /** \defgroup console_commands Supported command types
