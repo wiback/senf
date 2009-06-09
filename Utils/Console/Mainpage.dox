@@ -634,10 +634,11 @@
             // do not parse all arguments.
             senf::console::CheckedArgumentIteratorWrapper args (command.arguments());
 
-            senf::console::ParseCommandInfo::TokensRange argTokens ( *(args++) );
+            // Extract the first argument. This is again a token range.
+            senf::console::ParseCommandInfo::TokensRange arg1Tokens ( *(args++) );
             if (arg1Tokens.size() != 1)
                 raise senf::console::SyntaxErrorException("argument syntax error");
-            value = arg1Tokens[0];
+            value = arg1Tokens[0].value();
         }
 
         os << value << std::endl;
@@ -789,15 +790,17 @@
     One note: When taking the address of an overloaded function (member or non-member), the C++
     language forces you to cast that address to one of the possible types so the compiler knows,
     which overload is requested. So to add a function which is overloaded in C++, each overload
-    needs to be added explicitly, casting to the correct type:
+    needs to be added explicitly, casting to the correct type. There are some macros in
+    Utils/membind.hh to simplify this:
+
     \code
     void over(int);
     void over(int,int);
 
     senf::console::root()
-        .add("over", static_cast<void (*)(int)>(&over));
+        .add("over", SENF_FNP(void, over, (int)));
     senf::console::root()
-        .add("over", static_cast<void (*)(int,int)>(&over));
+        .add("over", SENF_FNP(void, over, (int,int));
         
     class SomeModule {
       senf::console::ScopedDirectory<SomeModule> dir;
@@ -806,10 +809,10 @@
       void overlodedMethod(unsigned int)   {....};
         
       void addConsoleCommands() {
-        dir.node().add("overlodedMethod", senf::membind(
-            static_cast<unsigned int (SomeModule::*)() const>(&SomeModule::overlodedMethod), this));
-        dir.node().add("overlodedMethod", senf::membind(
-            static_cast<void (SomeModule::*)(unsigned int)>(&SomeModule::overlodedMethod), this));
+        dir.node().add("overlodedMethod", 
+                       SENF_MEMBINDFNP(unsigned int, SomeModule, overlodedMethod, () const));
+        dir.node().add("overlodedMethod", 
+                       SENF_MEMBINDFNP(unsigned int, SomeModule, overlodedMethod, (unsigned int));
       }
     }
     \endcode
@@ -1239,7 +1242,7 @@
     public:
         enum Color { Red, Green, Blue };
     
-        senf::console::ScopedDirectory<MyClass> dir;
+        senf::console::ScopedDirectory<Test3> dir;
 
         Test3();
 
@@ -1248,7 +1251,7 @@
     SENF_CONSOLE_REGISTER_ENUM_MEMBER( Test3, Color, (Red)(Green)(Blue) );
 
     Test3::Test3() : dir(this)
-        { dir.add("test", &MyClass::mem3); }
+        { dir.add("test", &Test3::mem3); }
     
     Test3 test3ob;
     senf::console::root().add("test3ob", test3ob.dir);
