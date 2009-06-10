@@ -56,6 +56,7 @@ namespace ppi {
                                     senf::DatagramFramingPolicy,
                                     senf::ConnectedCommunicationPolicy>::policy > Handle;
                                         ///< Handle type supported by this writer
+        typedef Packet PacketType;
 
         void operator()(Handle handle, Packet const & packet);
                                         ///< Write \a packet to \a handle
@@ -77,6 +78,7 @@ namespace ppi {
     {
     public:
         typedef HandleType Handle;
+        typedef Packet PacketType;
 
         TargetDgramWriter();            ///< Create TargetDgramWriter with unset target address
         TargetDgramWriter(typename Handle::Address const & target);
@@ -104,6 +106,7 @@ namespace ppi {
             senf::MakeSocketPolicy< senf::WriteablePolicy,
                                     senf::DatagramFramingPolicy>::policy > Handle;
                                         ///< Handle type supported by this writer
+        typedef Packet PacketType;
 
         void source(senf::INet4Address & source);
         senf::INet4Address source();
@@ -132,6 +135,7 @@ namespace ppi {
             senf::MakeSocketPolicy< senf::WriteablePolicy,
                                     senf::DatagramFramingPolicy>::policy > Handle;
                                         ///< Handle type supported by this writer
+        typedef Packet PacketType;
 
         void source(senf::INet6Address & source);
         senf::INet6Address source();
@@ -175,6 +179,7 @@ namespace module {
           {
           public:
               typedef unspecified Handle;                          // type of handle requested
+              typedef unspecified_type PacketType                  // type of packet read
 
               SomeWriter();                                        // EITHER default constructible OR
               SomeWriter(SomeWriter const & other);                // copy constructible
@@ -194,7 +199,7 @@ namespace module {
     public:
         typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
-        connector::ActiveInput<> input; ///< Input connector from which data is received
+        connector::ActiveInput<typename Writer::PacketType> input; ///< Input connector from which data is received
 
         ActiveSocketSink();             ///< Create non-connected writer
                                         /**< The writer will be disabled until a socket is set
@@ -250,6 +255,7 @@ namespace module {
           {
           public:
               typedef unspecified Handle;                          // type of handle requested
+              typedef unspecified_type PacketType                  // type of packet read
 
               SomeWriter();                                          // EITHER default constructible
               SomeWriter(SomeWriter const & other);                    // OR copy constructible
@@ -269,7 +275,7 @@ namespace module {
     public:
         typedef typename Writer::Handle Handle; ///< Handle type requested by writer
 
-        connector::PassiveInput<> input; ///< Input connector from which data is received
+        connector::PassiveInput<typename Writer::PacketType> input; ///< Input connector from which data is received
 
         PassiveSocketSink();            ///< Create non-connected writer
                                         /**< The writer will be disabled until a socket is set

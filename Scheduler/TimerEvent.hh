@@ -88,9 +88,9 @@ namespace scheduler {
                                              automatically. Use enable() to do so.
                                              \param[in] name Descriptive timer name (purely
                                                  informational)
+                                             \param[in] cb Callback to call
                                              \param[in] timeout timeout time after the timer
                                                  will be disabled
-                                             \param[in] cb Callback to call
                                              \param[in] initiallyEnabled if set \c false, do not
                                                  enable callback automatically. */
         TimerEvent(std::string const & name, Callback const & cb);

@@ -100,7 +100,7 @@ namespace {
 
     void jitterCb(senf::scheduler::TimerEvent & tm)
     {
-        std::cerr << "diff:" << senf::ClockService::in_microseconds( senf::scheduler::now() - tm.timeout()) << '\n';
+        //std::cerr << "diff:" << senf::ClockService::in_microseconds( senf::scheduler::now() - tm.timeout()) << '\n';
         count ++;
         delay += senf::ClockService::in_microseconds( senf::scheduler::now() - tm.timeout());
         haveCb = true;
@@ -127,10 +127,10 @@ namespace {
     {
         count = 0;
         delay = 0;
-        senf::scheduler::EventHook pre ("jitterTest::preCb", &preCb,
-                                        senf::scheduler::EventHook::PRE);
-        senf::scheduler::EventHook post ("jitterTest::postCb", &postCb,
-                                         senf::scheduler::EventHook::POST);
+//        senf::scheduler::EventHook pre ("jitterTest::preCb", &preCb,
+//                                        senf::scheduler::EventHook::PRE);
+//        senf::scheduler::EventHook post ("jitterTest::postCb", &postCb,
+//                                         senf::scheduler::EventHook::POST);
 
         senf::scheduler::TimerEvent tm1 (
                 "jitterTest::tm1", boost::bind(&jitterCb, boost::ref(tm1)), randomDelay());
@@ -148,7 +148,7 @@ namespace {
 
         senf::scheduler::process();
 
-        std::cerr << "Average scheduling delay: " << delay/count << "\n";
+        std::cerr << "Average scheduling delay: " << delay/count << " microseconds\n";
     }
 
 }
