@@ -55,6 +55,7 @@ senf::UDPv4SocketProtocol::init_client(INet4SocketAddress const & address)
     const
 {
     init_client();
+    reuseaddr(true);
     clientHandle().bind(address);
 }
 

@@ -41,6 +41,7 @@
 #include "ProgramOptions.hh"
 #include "Sysdir.hh"
 #include "STLSupport.hh"
+#include "UDPServer.hh"
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "Console.cci"

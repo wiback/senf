@@ -35,7 +35,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ senf::console::UDPServer::UDPServer(senf::INet4SocketAddress const & address)
-    : replies_ (true), target_ (), handle_ (senf::UDPv4ClientSocketHandle(address)), 
+    : replies_ (true), emptyReplies_ (true), target_ (), 
+      handle_ (senf::UDPv4ClientSocketHandle(address)), 
       readevent_ ("senf::console::UDPServer::readevent", 
                   senf::membind(&UDPServer::handleInput, this), 
                   handle_, 
@@ -82,6 +83,12 @@ senf::console::UDPServer::replies(senf::INet6SocketAddress const & address)
     return *this;
 }
 
+prefix_ senf::console::UDPServer & senf::console::UDPServer::emptyReplies(bool enable)
+{
+    emptyReplies_ = enable;
+    return *this;
+}
+
 prefix_ senf::console::DirectoryNode & senf::console::UDPServer::root()
     const
 {
@@ -123,7 +130,7 @@ prefix_ void senf::console::UDPServer::handleInput(int events)
             msg = msg.substr(i+4);
         stream << msg << std::endl;
     }
-    if (replies_) {
+    if (replies_ && (emptyReplies_ || ! stream.str().empty())) {
         if (target_)
             address = target_;
         if (stream.str().empty())

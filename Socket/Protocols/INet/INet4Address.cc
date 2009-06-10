@@ -166,6 +166,20 @@ prefix_ std::istream & senf::operator>>(std::istream & is, INet4Address & addr)
     return is;
 }
 
+prefix_ std::istream & senf::operator>>(std::istream & is, INet4Network & addr)
+{
+    std::string s;
+    if (!(is >> s))
+        return is;
+    try {
+        addr = INet4Network(s);
+    }
+    catch (AddressException &) {
+        is.setstate(std::ios::failbit);
+    }
+    return is;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "INet4Address.mpp"

@@ -71,10 +71,12 @@ prefix_ bool senf::BSDSocketAddress::operator==(BSDSocketAddress const & other)
     return socklen()==other.socklen() && memcmp(sockaddr_p(), other.sockaddr_p(), socklen())==0;
 }
 
-prefix_ bool senf::BSDSocketAddress::operator!=(BSDSocketAddress const & other)
+prefix_ bool senf::BSDSocketAddress::operator<(BSDSocketAddress const & other)
     const
 {
-    return ! operator==(other);
+    if (socklen() < other.socklen()) return true;
+    else if (socklen() > other.socklen()) return false;
+    else return memcmp(sockaddr_p(), other.sockaddr_p(), socklen()) < 0;
 }
 
 prefix_ bool senf::BSDSocketAddress::boolean_test()

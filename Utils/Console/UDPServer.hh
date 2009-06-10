@@ -85,6 +85,8 @@ namespace console {
         UDPServer & replies(senf::INet6SocketAddress const & address);
                                         ///< Send replies to \a address
 
+        UDPServer & emptyReplies(bool enable); ///< Enable or disable empty reply packets
+
         DirectoryNode & root() const;   ///< Get root node
 
         UDPServer & root(DirectoryNode & root); ///< Set root node
@@ -97,6 +99,7 @@ namespace console {
         void handleInput(int events);
 
         bool replies_;
+        bool emptyReplies_;
         senf::GenericBSDSocketAddress target_;
 
         Handle handle_;

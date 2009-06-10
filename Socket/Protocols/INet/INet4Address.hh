@@ -172,7 +172,8 @@ namespace senf {
         \related INet4Address
      */
     std::ostream & operator<<(std::ostream & os, INet4Address const & addr);
-    /** \brief Try to initialize INet4Address instance from a string representation
+
+    /** \brief Initialize INet4Address instance from a string representation
         sets std::ios::failbit on the stream if an error occurred
         \see INet4Address from_string()
         \related INet4Address
@@ -275,6 +276,13 @@ namespace senf {
         \related INet4Network
      */
     std::ostream & operator<<(std::ostream & os, INet4Network const & addr);
+
+    /** \brief Initialize INet4Address instance from a string representation
+        sets std::ios::failbit on the stream if an error occurred
+        \see INet4Address from_string()
+        \related INet4Network
+     */
+    std::istream & operator>>(std::istream & is, INet4Network & addr);
 
 }
 

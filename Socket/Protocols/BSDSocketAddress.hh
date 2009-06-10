@@ -29,6 +29,7 @@
 // Custom includes
 #include <boost/type_traits/alignment_of.hpp>
 #include <boost/type_traits/type_with_alignment.hpp>
+#include <boost/operators.hpp>
 #include "../../Utils/safe_bool.hh"
 #include <sys/socket.h>
 #include <iostream>
@@ -73,14 +74,19 @@ namespace senf {
         \ingroup addr_group
       */
     class BSDSocketAddress
-        : public senf::comparable_safe_bool<BSDSocketAddress>
+        : public senf::comparable_safe_bool<BSDSocketAddress>,
+          public boost::less_than_comparable<BSDSocketAddress>,
+          public boost::equality_comparable<BSDSocketAddress>
     {
     public:
         bool operator==(BSDSocketAddress const & other) const; ///< Compare two arbitrary addresses
                                         /**< For addresses to be considered equal, they must have
                                              the same family, length and the data must be
                                              identical. */
-        bool operator!=(BSDSocketAddress const & other) const; ///< Inverse of operator==
+        bool operator<(BSDSocketAddress const & other) const; ///< Compare two arbitrary addresses
+                                        /**< Ordering is based on the in-memory representation.  It
+                                             is primarily useful to use addresses as keys in a map
+                                             or set. */
 
         bool boolean_test() const;      ///< Return \c true, if address is not empty
                                         /**< An address is considered empty if
@@ -114,7 +120,6 @@ namespace senf {
         void socklen(socklen_t len);
 
     private:
-        
         // The following incantation is needed to fix the alignment of the sockaddr data members
         // which will be added by the derived classes later: The alignment must be forced
         // to coincide with the struct sockaddr_storage alignment (which must have the largest
