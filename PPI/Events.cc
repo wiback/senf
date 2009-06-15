@@ -49,7 +49,7 @@ prefix_ void senf::ppi::EventDescriptor::notifyUnthrottle()
 
 prefix_ void senf::ppi::EventDescriptor::enabled(bool v)
 {
-    SENF_ASSERT(v_isRegistered()); // Module::registerEvent() call missing !!
+    SENF_ASSERT(v_isRegistered() && "Module::registerEvent() call missing");
     if (v && ! enabled_)
         v_enable();
     else if (! v && enabled_)
