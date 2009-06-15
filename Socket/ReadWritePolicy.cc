@@ -61,11 +61,11 @@ prefix_ unsigned senf::ReadablePolicy::read(FileHandle handle, char * buffer,
 
 prefix_ unsigned senf::ReadablePolicy::do_readfrom(FileHandle handle, char * buffer,
                                                           unsigned size,
-                                                          struct ::sockaddr * addr, socklen_t len)
+                                                          struct ::sockaddr * addr, socklen_t * len)
 {
     int rv = -1;
     do {
-        rv = ::recvfrom(handle.fd(),buffer, size, 0, addr, &len);
+        rv = ::recvfrom(handle.fd(),buffer, size, 0, addr, len);
         if (rv < 0)
             switch (errno) {
             case EINTR:

@@ -78,7 +78,7 @@ namespace senf {
 
     private:
         static unsigned do_readfrom(FileHandle handle, char * buffer, unsigned size,
-                                    struct ::sockaddr * addr, socklen_t len);
+                                    struct ::sockaddr * addr, socklen_t * len);
     };
 
     /** \brief ReadPolicy for unreadable sockets
