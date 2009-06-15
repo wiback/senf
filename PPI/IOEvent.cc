@@ -59,8 +59,7 @@ prefix_ void senf::ppi::IOEvent::cb(int event)
         else if (event & Hup)
             throw HangupException();
         else
-            // This cannot happen.
-            SENF_ASSERT(false);
+            SENF_ASSERT(false && "Internal failure in senf::ppi::IOEvent::cb(int)");
     } else {
         IOEventInfo info = { event };
         callback(info);

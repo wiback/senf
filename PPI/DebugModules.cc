@@ -37,7 +37,9 @@
 
 prefix_ void senf::ppi::module::debug::PassiveSource::request()
 {
-    SENF_ASSERT( ! packets_.empty() );
+    SENF_ASSERT( ! packets_.empty() &&
+                 "senf::ppi::module::debug::PassiveSource::request(): "
+                 "Requesting packet from empty source." );
     output(packets_.front());
     packets_.pop_front();
     if (packets_.empty())

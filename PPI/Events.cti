@@ -59,7 +59,8 @@ template <class EventType, class Self>
 prefix_ senf::ppi::detail::EventBinding<EventType> &
 senf::ppi::EventImplementationHelper<EventType,Self>::binding()
 {
-    SENF_ASSERT( static_cast<Self*>(this)->binding_ );
+    SENF_ASSERT( static_cast<Self*>(this)->binding_ &&
+                 "senf::ppi::EventImplementationHelper::binding(): Missing registerEvent()" );
     return * static_cast<Self*>(this)->binding_;
 }
 
@@ -89,7 +90,8 @@ template <class Self>
 prefix_ senf::ppi::detail::EventBinding<void> &
 senf::ppi::EventImplementationHelper<void,Self>::binding()
 {
-    SENF_ASSERT( static_cast<Self*>(this)->binding_ );
+    SENF_ASSERT( static_cast<Self*>(this)->binding_ &&
+                 "senf::ppi::EventImplementationHelper::binding(): Missing registerEvent()" );
     return * static_cast<Self*>(this)->binding_;
 }
 
