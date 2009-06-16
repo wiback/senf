@@ -89,11 +89,12 @@ namespace detail {
         // Editor callbacks
         void executeLine(std::string const & text);
         void deleteCharOrExit(term::LineEditor & editor);
-        void completePath(term::LineEditor & editor, unsigned b, unsigned e, 
-                          std::vector<std::string> & completions);
+        void completePath(term::LineEditor & editor, unsigned & b, unsigned & e, 
+                          std::string & prefix, std::vector<std::string> & completions);
 
         term::LineEditor editor_;
         LineEditorSwitcher * switcher_;
+        std::string default_;
     };
 
 }}}

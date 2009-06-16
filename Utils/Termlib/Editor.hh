@@ -163,8 +163,8 @@ namespace term {
         bindings::complete():
 
         \code
-        void myCompleter(senf::term::LineEditor & editor, unsigned b, unsigned e, 
-                         std::vector<std::string> & completions)
+        void myCompleter(senf::term::LineEditor & editor, unsigned & b, unsigned & e, 
+                         std::string & prefix, std::vector<std::string> & completions)
         {
             // Get text to complete
             std::string text (editor.text().substr(b, e-b));
@@ -180,6 +180,19 @@ namespace term {
 
         When \c myCompleter is a class member, use senf::membind() and pass this instead of \c
         &myCompleter to \c boost::bind() and thus to senf::term::bindings::complete.
+
+        The completion protocol is as follows: When completion is desired, the completer function is
+        called. \a b and \a e are set to 0 and <tt>editor.point()</tt> respectively. \a prefix and
+        \a completions are empty.
+        
+        \li the completer may restrict the to-be-completed string to any subrange by changing \a b
+            and \a e accordingly.
+        \li If there is an initial substring which applies to \e all completions but should not be
+            listed in the list of completions, assign this value to \a prefix.
+        \li Add all possible completions to the \a completions vector not including the \a prefix. 
+        \li The completion result is taken from the size of the \a completions vector \e only: If
+            this vector is empty, completion failed (even if \a prefix is set), a single entry in \a
+            completions (even if it is the empty string) signals a unique completion.
         
 
         \section editor_auxarea The aux display area
@@ -325,6 +338,7 @@ namespace bindings {
     void forwardChar         (LineEditor & editor); ///< Move one char forward
     void backwardChar        (LineEditor & editor); ///< Move one char backwards
     void accept              (LineEditor & editor); ///< Accept input line
+    void acceptWithRepeat    (LineEditor & editor); ///< Accept, possibly repeat last history entry
     void backwardDeleteChar  (LineEditor & editor); ///< Delete char before cursor
     void deleteChar          (LineEditor & editor); ///< Delete char at cursor
     void beginningOfLine     (LineEditor & editor); ///< Move to beginning of line
@@ -335,13 +349,14 @@ namespace bindings {
     void nextHistory         (LineEditor & editor); ///< Move to next history entry
     void clearScreen         (LineEditor & editor); ///< Clear screen and redisplay editor
 
-    typedef boost::function<void (LineEditor &, unsigned b, unsigned e, std::vector<std::string> &)> Completer;
+    typedef boost::function<void (LineEditor &, unsigned & b, unsigned & e, 
+                                  std::string & prefix, std::vector<std::string> &)> Completer;
     void complete            (LineEditor & editor, Completer completer);
                                         ///< Complete text at cursor
                                         /**< This function calls \a completer to find the list of
                                              possible completions for the text between \a b and \a e
                                              (as passed to the completer). The completer must add
-                                             all possible completions to the completions vector. 
+                                             all possible completions to the \a completions vector. 
 
                                              \see \ref editor_complete */
 

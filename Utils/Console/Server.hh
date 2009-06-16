@@ -234,7 +234,6 @@ namespace console {
         CommandParser parser_;
         Executor executor_;
         std::string name_;
-        std::string lastCommand_;
         boost::scoped_ptr<detail::ClientReader> reader_;
         Server::Mode mode_;
         std::string backtrace_;

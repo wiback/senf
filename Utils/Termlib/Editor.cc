@@ -582,6 +582,15 @@ prefix_ void senf::term::bindings::accept(LineEditor & editor)
     editor.accept();
 }
 
+prefix_ void senf::term::bindings::acceptWithRepeat(LineEditor & editor)
+{
+    if (editor.text().empty()) {
+        editor.prevHistory();
+        editor.forceRedisplay();
+    }
+    editor.accept();
+}
+
 prefix_ void senf::term::bindings::backwardDeleteChar(LineEditor & editor)
 {
     unsigned p (editor.point());
@@ -639,10 +648,18 @@ prefix_ void senf::term::bindings::complete(LineEditor & editor, Completer compl
 {
     typedef std::vector<std::string> Completions;
 
+    std::string text (editor.text());
     Completions completions;
-    completer(editor, 0, editor.point(), completions);
+    unsigned b (0);
+    unsigned e (editor.point());
+    std::string prefix;
+    completer(editor, b, e, prefix, completions);
     if (completions.empty())
         return;
+    if (e > text.size()) 
+        e = text.size();
+    if (b > e)
+        b = e;
     
     // Find common start string of all completions
     unsigned commonStart (completions[0].size());
@@ -657,17 +674,16 @@ prefix_ void senf::term::bindings::complete(LineEditor & editor, Completer compl
     }
 
     // Replace to-be-completed string with the common start string shared by all completions
-    std::string text (editor.text());
-    std::string completion (completions[0].substr(0, commonStart));
+    std::string completion (prefix+completions[0].substr(0, commonStart));
     bool didComplete (false);
-    if (text.substr(0, editor.point()) != completion) {
-        text.erase(0, editor.point());
-        text.insert(0, completion);
+    if (text.substr(b, e) != completion) {
+        text.erase(b, e);
+        text.insert(b, completion);
         didComplete = true;
     }
 
     // Otherwise place cursor directly after the (possibly partial) completion
-    editor.set(text, commonStart);
+    editor.set(text, b+prefix.size()+commonStart);
     if (didComplete || completions.size() == 1)
         return;
 
@@ -683,14 +699,12 @@ prefix_ void senf::term::bindings::complete(LineEditor & editor, Completer compl
     Completions::iterator i (completions.begin());
     for (unsigned row (0); row < nRows; ++row) {
         std::string line;
-        for (unsigned column (0); column < nColumns && i != completions.end(); ++column) {
+        for (unsigned column (0); column < nColumns && i != completions.end(); ++column, ++i) {
             std::string entry (colWidth, ' ');
-            if (i->size() > colWidth-2)
-                std::copy(i->begin(), i->begin()+colWidth-2, entry.begin());
-            else
-                std::copy(i->begin(), i->end(), entry.begin());
+            std::copy(i->begin(), 
+                      i->size() > colWidth-2 ? i->begin()+colWidth-2 : i->end(), 
+                      entry.begin());
             line += entry;
-            ++i;
         }
         editor.auxDisplay(row, line);
     }

@@ -87,6 +87,7 @@ LineEditorClientReader(Client & client, LineEditorSwitcher & switcher)
                       boost::bind(&term::bindings::complete,
                                   _1, 
                                   senf::membind(&LineEditorClientReader::completePath, this)));
+    editor_.defineKey(senf::term::KeyParser::Return, &senf::term::bindings::acceptWithRepeat);
 }
 
 prefix_ void senf::console::detail::LineEditorClientReader::v_setupFailed()
@@ -140,10 +141,27 @@ senf::console::detail::LineEditorClientReader::deleteCharOrExit(term::LineEditor
 }
 
 prefix_ void senf::console::detail::LineEditorClientReader::
-completePath(term::LineEditor & editor, unsigned b, unsigned e,
+completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string & prefix,
              std::vector<std::string> & completions)
 {
-    std::string base (editor.text().substr(b,e));
+    std::string const & t (editor.text());
+    // Search backward from e finding the longest valid path. This does *not* accept all valid
+    // path's, only those without empedded white-space. However, this is only for completion so
+    // it's ok. 
+    if (b<e) {
+        unsigned bb (e-1);
+        for (;;) {
+            if (! CommandParser::isWordChar(t[bb]) && t[bb] != '/') {
+                ++bb;
+                break;
+            }
+            if (bb == b)
+                break;
+            --bb;
+        }
+        b = bb;
+    }
+    std::string base (t.substr(b,e));
     CommandParser parser;
     ParseCommandInfo cmd;
     try {
@@ -204,9 +222,9 @@ completePath(term::LineEditor & editor, unsigned b, unsigned e,
         }
 
     DirectoryNode::ChildrenRange cs (dir->completions(i->value()));
+    prefix = basePath;
     for (DirectoryNode::ChildrenRange::iterator j (cs.begin()); j != cs.end(); ++j)
-        completions.push_back(basePath + j->first 
-                              + (j->second->followLink().isDirectory() ? "/" : " "));
+        completions.push_back(j->first + (j->second->followLink().isDirectory() ? "/" : " "));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
