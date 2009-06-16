@@ -168,18 +168,51 @@ namespace console {
         void stop();                    ///< Stop the client
                                         /**< This will close the client socket. */
 
-        std::string const & name() const;
-        ClientHandle handle() const;
-        std::ostream & stream();
-        std::string promptString() const;
-        DirectoryNode & root() const;
-        DirectoryNode & cwd() const;
-        Server::Mode mode() const;
+        std::string const & name() const; ///< Get name of the client instance
+                                        /**< This name is used in the prompt string and is set by
+                                             the server. */
+        ClientHandle handle() const;    ///< Get the client's network socket handle
+        std::ostream & stream();        ///< Get client's output stream
+                                        /**< Data sent to this stream is sent out over the network
+                                             via the client's socket handle. Write operation is 
+                                             non-blocking and data may be dropped. Data is written
+                                             using Client::write(). */
+        std::string promptString() const; ///< Get the prompt string
+        DirectoryNode & root() const;   ///< Get configured root node
+        DirectoryNode & cwd() const;    ///< Get current directory
+                                        /**< This is the directory, the console currently is changed
+                                             into by the user of the console. */
+        Server::Mode mode() const;      ///< Get operation mode
+                                        /**< \see Server::mode() */
         void write(std::string const & data) const;
-        std::string const & backtrace() const;
-        unsigned width() const;
+                                        ///< Write data to network socket
+                                        /**< The data is automatically filtered depending on the
+                                             type of connection (e.g. on a telnet connection,
+                                             specific bytes are quoted). */
+        std::string const & backtrace() const; ///< Get backtrace of last console error, if any
+        unsigned width() const;         ///< Get console width
+                                        /**< If possible, this will be the width of the connected
+                                             terminal, otherwise a default value (normally 80) is
+                                             returned. */
 
         static Client & get(std::ostream & os);
+                                        ///< Access client instance
+                                        /**< Allows to access the client instance from console
+                                             command implementations. The first argument to a
+                                             console command is a stream object. \e If this stream
+                                             object belongs to a network console client, this call
+                                             will return the associated Client instance reference.
+                                             \throws std::bad_cast if \a os is not associated with a
+                                                 Client instance. */
+        static unsigned getWidth(std::ostream & os, unsigned defaultWidth = 0, 
+                                 unsigned minWidth = 0);
+                                        ///< Get width of client console if possible
+                                        /**< If possible, the width of the client console attached
+                                             to the stream \a os is returned. If this is not
+                                             possible, the \a defaultValue will be used.
+                                             
+                                             If the width obtained this way is smaller than \a
+                                             minWidth, \a defaultValue will be returned instead. */
 
     protected:
         

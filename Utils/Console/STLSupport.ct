@@ -26,6 +26,7 @@
 //#include "VectorSupport.ih"
 
 // Custom includes
+#include <boost/format.hpp>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -79,6 +80,42 @@ prefix_ void senf::console::SequenceReturnValueTraits<Sequence>::format(type con
             else
                 os << " ";
         }
+    os << ")";
+}
+
+template <class T1, class T2>
+prefix_ void senf::console::ArgumentTraits< std::pair<T1,T2> >::
+parse(ParseCommandInfo::TokensRange const & tokens, type & out)
+{
+    CheckedArgumentIteratorWrapper arg (tokens);
+    senf::console::parse( *(arg++), out.first );
+    senf::console::parse( *(arg++), out.second );
+}
+
+template <class T1, class T2>
+prefix_ std::string senf::console::ArgumentTraits< std::pair<T1,T2> >::description()
+{
+    return (boost::format("pair<%s,%s>")
+            % ArgumentTraits<T1>::description()
+            % ArgumentTraits<T2>::description()).str();
+}
+
+template <class T1, class T2>
+prefix_ std::string senf::console::ArgumentTraits< std::pair<T1,T2> >::str(type const & value)
+{
+    std::stringstream ss;
+    senf::console::format(value, ss);
+    return ss.str();
+}
+
+template <class T1, class T2>
+prefix_ void senf::console::ReturnValueTraits< std::pair<T1,T2> >::format(type const & value,
+                                                                          std::ostream & os)
+{
+    os << "(";
+    senf::console::format(value.first, os);
+    os << " ";
+    senf::console::format(value.second, os);
     os << ")";
 }
 

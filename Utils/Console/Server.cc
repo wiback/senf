@@ -336,6 +336,17 @@ prefix_ void senf::console::Client::v_write(senf::log::time_type timestamp,
     reader_->enablePrompt();
 }
 
+prefix_ unsigned senf::console::Client::getWidth(std::ostream & os, unsigned defaultWidth,
+                                                 unsigned minWidth)
+{
+    unsigned rv (defaultWidth);
+    try { 
+        rv = get(os).width(); 
+    }
+    catch (std::bad_cast &) {}
+    return rv < minWidth ? defaultWidth : rv;
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::Client::SysBacktrace
 

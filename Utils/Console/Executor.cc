@@ -31,6 +31,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
+#include <boost/preprocessor/stringize.hpp>
 #include "../../Utils/senfassert.hh"
 #include "../../Utils/Range.hh"
 #include "../../Utils/String.hh"
@@ -232,21 +233,15 @@ prefix_ void senf::console::Executor::cd(ParseCommandInfo::TokensRange dir)
 prefix_ void senf::console::Executor::ls(std::ostream & output,
                                          ParseCommandInfo::TokensRange path)
 {
-    unsigned width (80);
-    try {
-        width = senf::console::Client::get(output).width();
-    }
-    catch (std::bad_cast &)
-    {}
-    if (width<60)
-        width = 80;
-    width -= 28+1;
+#   define HELP_COLUMN 28
+
+    unsigned width (senf::console::Client::getWidth(output, 80u, 60u)-(HELP_COLUMN+1));
     Path dir (cwd_);
     traverseDirectory(path, dir);
     DirectoryNode & node (*dir.back().lock());
     DirectoryNode::child_iterator i (node.children().begin());
     DirectoryNode::child_iterator const i_end (node.children().end());
-    boost::format fmt ("%s%s  %|28t|%s\n");
+    boost::format fmt ("%s%s  %|" BOOST_PP_STRINGIZE(HELP_COLUMN) "t|%s\n");
     for (; i != i_end; ++i)
         output << fmt
             % i->first
@@ -256,7 +251,11 @@ prefix_ void senf::console::Executor::ls(std::ostream & output,
                 ? "@"
                 : "" )
             % i->second->shorthelp().substr(0,width);
+
+#   undef HELP_COLUMN
 }
+
+#   define HELP_COLUMN 40
 
 namespace {
 
@@ -265,25 +264,20 @@ namespace {
     void dolr(std::ostream & output, unsigned width, NodesMap & nodes, std::string const & base, 
               unsigned level, senf::console::DirectoryNode & node)
     {
-        boost::format fmt ("%s%s%s  %|40t|%s\n");
+        boost::format fmt ("%s%s%s  %|" BOOST_PP_STRINGIZE(HELP_COLUMN) "t|%s\n");
         std::string pad (2*level, ' ');
         senf::console::DirectoryNode::child_iterator i (node.children().begin());
         senf::console::DirectoryNode::child_iterator const i_end (node.children().end());
         for (; i != i_end; ++i) {
-            output << fmt
-                % pad
-                % i->first
-                % ( i->second->isDirectory()
-                    ? "/"
-                    : i->second->isLink()
-                    ? "@"
-                    : "" )
-                % i->second->shorthelp().substr(0,width);
             if (i->second->followLink().isDirectory()) {
                 senf::console::DirectoryNode & subnode (
                     static_cast<senf::console::DirectoryNode&>(i->second->followLink()));
                 NodesMap::iterator j (nodes.find(&subnode));
                 if (j == nodes.end()) {
+                    output << fmt
+                        % pad % i->first 
+                        % ( i->second->isDirectory() ? "/" : i->second->isLink() ? "@" : "" )
+                        % i->second->shorthelp().substr(0,width);
                     std::string subbase (base);
                     if (! subbase.empty())
                         subbase += "/";
@@ -291,7 +285,14 @@ namespace {
                     nodes.insert(std::make_pair(&subnode, subbase));
                     dolr(output, width, nodes, subbase, level+1, subnode);
                 } else
-                    output << pad << "  -> " << j->second << "\n";
+                    output << pad << i->first 
+                           << ( i->second->isDirectory() ? "/" : i->second->isLink() ? "@" : "" )
+                           << " -> " << j->second << "\n";
+            } else {
+                output << fmt
+                    % pad % i->first 
+                    % ( i->second->isDirectory() ? "/" : i->second->isLink() ? "@" : "" )
+                    % i->second->shorthelp().substr(0,width);
             }
         }
     }
@@ -301,21 +302,15 @@ namespace {
 prefix_ void senf::console::Executor::lr(std::ostream & output,
                                          ParseCommandInfo::TokensRange path)
 {
-    unsigned width (80);
-    try {
-        width = senf::console::Client::get(output).width();
-    }
-    catch (std::bad_cast &)
-    {}
-    if (width<60)
-        width = 80;
-    width -= 40+1;
     Path dir (cwd_);
     traverseDirectory(path, dir);
     DirectoryNode & node (*dir.back().lock());
     NodesMap nodes;
-    dolr(output, width, nodes, "", 0, node);
+    dolr(output, senf::console::Client::getWidth(output, 80u, 60u)-(HELP_COLUMN+1), 
+         nodes, "", 0, node);
 }
+
+#undef HELP_COLUMN
 
 prefix_ void senf::console::Executor::pushd(ParseCommandInfo::TokensRange dir)
 {

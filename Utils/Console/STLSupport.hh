@@ -78,6 +78,25 @@ namespace console {
         : public SequenceReturnValueTraits< std::list<T,Alloc> >
     {};
 
+    template <class T1, class T2>
+    struct ArgumentTraits< std::pair<T1,T2> >
+    {
+        typedef std::pair<T1,T2> type;
+        static bool const singleToken = false;
+
+        static void parse(ParseCommandInfo::TokensRange const & tokens, type & out);
+        static std::string description();
+        static std::string str(type const & value);
+    };
+
+    template <class T1, class T2>
+    struct ReturnValueTraits< std::pair<T1,T2> >
+    {
+        typedef std::pair<T1,T2> type;
+
+        static void format(type const & value, std::ostream & os);
+    };
+
 #endif
 
 }}

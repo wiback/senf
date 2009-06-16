@@ -223,7 +223,17 @@ namespace console {
     class DirectoryNode;
     class CommandNode;
 
+    /** \brief Get console root node */
     DirectoryNode & root();
+
+    /** \brief Dump console directory structure
+
+        Recursively dumps the console directory structure starting at \a dir. By default, dumps the
+        complete tree beginning at the root node.
+        
+        In contrast to the console 'lr' command, links are dumped by showing the \e absolute path
+        to the target node.
+     */
     void dump(std::ostream & os, DirectoryNode & dir=root());
 
     /** \brief Config/console node tree base-class
