@@ -146,7 +146,7 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
 {
     std::string const & t (editor.text());
     // Search backward from e finding the longest valid path. This does *not* accept all valid
-    // path's, only those without empedded white-space. However, this is only for completion so
+    // path's, only those without embedded white-space. However, this is only for completion so
     // it's ok. 
     if (b<e) {
         unsigned bb (e-1);
@@ -182,21 +182,20 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
     ParseCommandInfo::TokensRange::const_iterator i (path.begin());
     ParseCommandInfo::TokensRange::const_iterator const i_end (boost::prior(path.end()));
     DirectoryNode * dir (& client().cwd());
-    std::string basePath;
     for (; i != i_end; ++i)
         if (*i == NoneToken()) {
             if (i == path.begin()) {
                 dir = & client().root();
-                basePath = "/";
+                prefix = "/";
             }
         }
         else if (*i == WordToken("..")) {
             DirectoryNode * parent (dir->parent().get());
             if (parent) dir = parent;
-            basePath += "../";
+            prefix += "../";
         }
         else if (*i == WordToken(".")) 
-            basePath += "./";
+            prefix += "./";
         else {
             if (dir->hasChild(i->value())) {
                 try {
@@ -205,7 +204,7 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
                 catch (std::bad_cast &) {
                     return;
                 }
-                basePath += i->value() + "/";
+                prefix += i->value() + "/";
             } 
             else {
                 DirectoryNode::ChildrenRange cs (dir->completions(i->value()));
@@ -214,7 +213,7 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
                     if (!node.isDirectory())
                         return;
                     dir = static_cast<DirectoryNode*>(&node);
-                    basePath += cs.begin()->first + "/";
+                    prefix += cs.begin()->first + "/";
                 }
                 else
                     return;
@@ -222,7 +221,6 @@ completePath(term::LineEditor & editor, unsigned & b, unsigned & e, std::string 
         }
 
     DirectoryNode::ChildrenRange cs (dir->completions(i->value()));
-    prefix = basePath;
     for (DirectoryNode::ChildrenRange::iterator j (cs.begin()); j != cs.end(); ++j)
         completions.push_back(j->first + (j->second->followLink().isDirectory() ? "/" : " "));
 }
