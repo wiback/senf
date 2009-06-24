@@ -54,6 +54,8 @@ namespace senf {
         operator value_type() const;
         StringParser const & operator=(value_type other);
     };
+
+    std::ostream & operator<<(std::ostream & os, StringParser const & value);
     
 }
 

@@ -66,6 +66,12 @@ prefix_ senf::StringParser const & senf::StringParser::operator=(value_type othe
     value(other); return *this; 
 }
 
+prefix_ std::ostream & senf::operator<<(std::ostream & os, StringParser const & value)
+{
+    os << value.value();
+    return os;
+}
+
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 
