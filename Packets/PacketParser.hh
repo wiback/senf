@@ -354,6 +354,16 @@ namespace senf {
                                              parsers when access to previous or following packets is
                                              needed e.g. for calculating checksums etc. */
 
+        void resize(size_type oldSize, size_type newSize); ///< Resize data container
+                                        /**< This command will erase or insert bytes from/into the
+                                             data container at the end of the parser (at i() + \a
+                                             newSize). If \a oldSize is > \a newSize, bytes will be
+                                             removed, otherwise bytes will be inserted.
+
+                                             \warning This may invalidate iterators and other
+                                                 parsers. The current parser itself is automatically
+                                                 updated */
+
     private:
         data_iterator end() const;
 

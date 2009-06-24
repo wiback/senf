@@ -60,6 +60,7 @@
 #include "SafeIterator.hh"
 #include "ArrayParser.hh"
 #include "IntParser.hh"
+#include "StringParser.hh"
 #include "AuxParser.hh"
 #include "ListParser.hh"
 #include "ListBParser.hh"
