@@ -42,7 +42,7 @@ all_docs all_tests all:
 #----------------------------------------------------------------------
 JOBS := 1
 
-all@% all_docs@% all_test@% build@%:
+all@% all_docs@% all_tests@% build@%:
 	ssh $* "cd `pwd` && $(MAKE) -j $(JOBS) $(firstword $(subst @, ,$@))"
 
 	

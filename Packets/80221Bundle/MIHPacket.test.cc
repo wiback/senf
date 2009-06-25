@@ -36,6 +36,15 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 using namespace senf;
 
+BOOST_AUTO_UNIT_TEST(MIHPacket_msgId)
+{
+    MIHPacket mihPacket (MIHPacket::create());
+    mihPacket->sid() = 4;
+    mihPacket->opcode() = 3;
+    mihPacket->aid() = 42;
+    BOOST_CHECK_EQUAL( mihPacket->messageId(), 0x4c2a );        
+}
+
 BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)
 {
     MIHPacket mihPacket (MIHPacket::create());
@@ -237,7 +246,7 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
     tlv2->type() = 0x43;
     tlv2->value( tlv1_value);
     tlv2.finalizeThis();
-    mihPayload->tlv_list().push_front( tlv2.parser());
+    mihPayload->tlv_list().push_front( tlv2);
 
     unsigned char tlv2_value[] = {
            0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09 };
@@ -245,7 +254,7 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
     tlv1->type() = 0x42;
     tlv1->value( tlv2_value);
     tlv1.finalizeThis();
-    mihPayload->tlv_list().push_front( tlv1.parser());
+    mihPayload->tlv_list().push_front( tlv1);
 
     mihPacket.finalizeAll();
 
@@ -278,7 +287,7 @@ BOOST_AUTO_UNIT_TEST(MIHPayload_create)
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

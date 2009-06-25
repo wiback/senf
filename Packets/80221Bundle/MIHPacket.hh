@@ -97,6 +97,11 @@ namespace senf {
             return boost::make_filter_iterator<binaryNAIDecoder>(begin, end);
         }
     };
+    
+    struct MIHMessageRegistry {
+        // MIH messages registry
+        typedef boost::uint16_t key_t;
+    };
 
     /** \brief Parse a MIH packet
 
@@ -118,14 +123,18 @@ namespace senf {
         SENF_PARSER_SKIP_BITS   ( 1                           );
 
         // MIH message ID (MID)
-        SENF_PARSER_BITFIELD ( sid,     4,  unsigned );
-        SENF_PARSER_BITFIELD ( opcode,  2,  unsigned );
-        SENF_PARSER_BITFIELD ( aid,    10,  unsigned );
-
+        SENF_PARSER_LABEL    ( msgId_begin)
+        SENF_PARSER_BITFIELD ( sid,     4,  unsigned   );
+        SENF_PARSER_BITFIELD ( opcode,  2,  unsigned   );
+        SENF_PARSER_BITFIELD ( aid,    10,  unsigned   );
+        SENF_PARSER_GOTO     ( msgId_begin             );
+        SENF_PARSER_FIELD    ( messageId, UInt16Parser );
+        
         SENF_PARSER_SKIP_BITS ( 4                           );
         SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );
         SENF_PARSER_FIELD_RO  ( payloadLength, UInt16Parser );
 
+        
         // Source MIHF Id
         SENF_PARSER_FIELD ( src_mihfId, MIHFId_TLVParser );
         // Destination MIHF Id
@@ -154,10 +163,10 @@ namespace senf {
      */
     struct MIHPacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<MIHPacketType>
+          public PacketTypeMixin<MIHPacketType, MIHMessageRegistry>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<MIHPacketType> mixin;
+        typedef PacketTypeMixin<MIHPacketType, MIHMessageRegistry> mixin;
 #endif
         typedef ConcretePacket<MIHPacketType> packet; ///< MIH packet typedef
         typedef MIHPacketParser parser;               ///< typedef to the parser of MIH packet
@@ -216,6 +225,7 @@ namespace senf {
 #endif
 
 
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
