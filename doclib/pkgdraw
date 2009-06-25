@@ -1,4 +1,33 @@
 #!/usr/bin/python
+#
+# Usage:
+#    pkgdraw <header> <outfile> [<parser names>...] [-- <cpp options>...]
+#
+# Extract packet structure from <header>. Write generated PNG diagram
+# to <outfile>.  If <parser names> is given, it is a list names of
+# parsers to generate diagrams for. All other parsers from the same
+# header file will be skipped.
+#
+# <cpp options> are parsed to the C preprocessor while processing the
+# header file.
+#
+# pkgdraw will interpret most SENF_PARSER statements, it does however
+# *not* understand GOTO statements. Special comments may be added
+# directly before or after a field to pass parameters to pkgdraw
+#
+#    SENF_PARSER_FIELD( id, senf::UInt16Parser ); //<pkgdraw: <option>, <option>...
+#
+# or
+#
+#    //>pkgdraw: <option>, <option>...
+#    SENF_PARSER_FIELD( id, senf::UInt16Parser );
+#
+# <option> is any valid option:
+#
+#   hide                Completely skip this field (Helps with GOTO)
+#   name=<name>         Sets the field name to <name>
+#   size=<min>[-<max>]  Sets the field size in bits.
+#
 
 import sys, re, signal, tempfile, os, os.path, shutil, atexit
 
