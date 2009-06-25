@@ -1,8 +1,14 @@
 #!/bin/sh
 
 topdir="`dirname "$0"`"; topdir="`cd "$topdir/.."; pwd`"
+if head -4 "$1" | grep -q nomunge; then
+    dot "$@"
+    exit $?
+fi
 sed -i -e 's/rankdir=LR/rankdir=TB/' "$1"
 "$topdir/doclib/dot-munge.pl" "$1"
+unflatten -l3 -c3 -f -o "$1".unflat "$1"
+mv "$1".unflat "$1"
 
 case "$2" in
     -Tpng:gd)
