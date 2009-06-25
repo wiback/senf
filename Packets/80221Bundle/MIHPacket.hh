@@ -123,12 +123,11 @@ namespace senf {
         SENF_PARSER_SKIP_BITS   ( 1                           );
 
         // MIH message ID (MID)
-        SENF_PARSER_LABEL    ( msgId_begin)
+        SENF_PARSER_FIELD    ( messageId, UInt16Parser ); //<pkgdraw:hide
+        SENF_PARSER_GOTO     ( messageId               );
         SENF_PARSER_BITFIELD ( sid,     4,  unsigned   );
         SENF_PARSER_BITFIELD ( opcode,  2,  unsigned   );
         SENF_PARSER_BITFIELD ( aid,    10,  unsigned   );
-        SENF_PARSER_GOTO     ( msgId_begin             );
-        SENF_PARSER_FIELD    ( messageId, UInt16Parser );
         
         SENF_PARSER_SKIP_BITS ( 4                           );
         SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );

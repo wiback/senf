@@ -161,6 +161,7 @@ MULTILINE_CPP_IS_BRIEF = YES
 # documentation.
 
 DETAILS_AT_TOP         = YES
+LAYOUT_FILE            = $(TOPDIR)/doclib/DoxygenLayout.xml
 
 # If the INHERIT_DOCS tag is set to YES (the default) then an undocumented 
 # member inherits the documentation from any documented member that it 

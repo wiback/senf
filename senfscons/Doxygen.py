@@ -264,7 +264,7 @@ def DoxyfileParse(env,file):
    data = parser.items()
    for k,v in data.items():
       if not v : del data[k]
-      elif k in ("INPUT", "FILE_PATTERNS", "EXCLUDE_PATTERNS", "@INCLUDE", "TAGFILES") : continue
+      elif k in ("LAYOUT_FILE", "INPUT", "FILE_PATTERNS", "EXCLUDE_PATTERNS", "@INCLUDE", "TAGFILES") : continue
       elif len(v)==1 : data[k] = v[0]
    return data
 
@@ -274,7 +274,7 @@ def DoxySourceScan(node, env, path):
    any files used to generate docs to the list of source files.
    """
    dep_add_keys = (
-      '@INCLUDE', 'HTML_HEADER', 'HTML_FOOTER', 'TAGFILES', 'INPUT_FILTER'
+      'LAYOUT_FILE', '@INCLUDE', 'HTML_HEADER', 'HTML_FOOTER', 'TAGFILES', 'INPUT_FILTER'
    )
 
    default_file_patterns = (
