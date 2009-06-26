@@ -31,6 +31,7 @@
 #include "../Utils/String.hh"
 #include "Module.hh"
 #include "Connectors.hh"
+#include "DynamicConnectorMixin.hh"
 
 //#include "AnnotationRouter.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -93,7 +94,11 @@ namespace module {
         from the container 
      */
     template <class AnnotationType>
-    class AnnotationRouter : public Module
+    class AnnotationRouter 
+        : public Module, 
+          public DynamicConnectorMixin< AnnotationRouter<AnnotationType>,
+                                        connector::ActiveOutput<>,
+                                        AnnotationType >
     {
         SENF_PPI_MODULE(AnnotationRouter);
     public:
@@ -108,39 +113,23 @@ namespace module {
                 { append( senf::str(key)); } };
 
     private:
-        connector::ActiveOutput<> & newOutput(AnnotationType const & key);
-
-#ifndef DOXYGEN
-        // I didn't get template friend functions to work ...
-    public:
-#endif
-        template <class Target>
-        connector::GenericActiveOutput & connect(Target & target, AnnotationType const & key);
-
-    private:
+        AnnotationType connectorSetup(connector::ActiveOutput<> & conn, AnnotationType const & key);
         void request();
         
         typedef boost::ptr_map<AnnotationType, connector::ActiveOutput<> > Outputs;
         Outputs outputs_;
+
+        friend class DynamicConnectorMixin< AnnotationRouter<AnnotationType>,
+                                            connector::ActiveOutput<>,
+                                            AnnotationType >;
     };
 
-}
-
-#ifndef DOXYGEN
-
-    template <class Target, class AnnotationType, class ArgType>
-    connector::GenericActiveOutput & connect(
-        module::AnnotationRouter<AnnotationType> & source, Target & target, 
-        ArgType const & key);
-
-#endif
-
-}}
+}}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "AnnotationRouter.cci"
 #include "AnnotationRouter.ct"
-#include "AnnotationRouter.cti"
+//#include "AnnotationRouter.cti"
 #endif
 
 

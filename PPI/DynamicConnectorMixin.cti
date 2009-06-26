@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,39 +21,35 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief AnnotationRouter inline template implementation */
+    \brief DynamicConnectorMixin inline template implementation */
 
-//#include "AnnotationRouter.ih"
+//#include "DynamicConnectorMixin.ih"
 
 // Custom includes
-#include "Setup.hh"
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////
 
-template <class AnnotationType>
-template <class Target>
-prefix_ senf::ppi::connector::GenericActiveOutput &
-senf::ppi::module::AnnotationRouter<AnnotationType>::connect(Target & target,
-                                                             AnnotationType const & key)
+template <class Self, class ConnectorType, class KeyType, class ContainerType>
+prefix_ ContainerType &
+senf::ppi::module::DynamicConnectorMixin<Self,ConnectorType,KeyType,ContainerType>::connectors()
 {
-    connector::GenericActiveOutput & output (newOutput(key));
-    route(input, output);
-    ppi::connect(output, target);
-    return output;
+    return connectors_;
 }
 
-#ifndef DOXYGEN
-
-template <class Target, class AnnotationType, class ArgType>
-prefix_ senf::ppi::connector::GenericActiveOutput &
-senf::ppi::connect(module::AnnotationRouter<AnnotationType> & source, Target & target,
-                   ArgType const & key)
+template <class Self, class ConnectorType, class ContainerType>
+prefix_ ContainerType &
+senf::ppi::module::DynamicConnectorMixin<Self, ConnectorType, void, ContainerType>::connectors()
 {
-    return source.connect(target, AnnotationType(key));
+    return connectors_;
 }
 
-#endif
+#define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
+            0, \
+            SENF_DYNAMIC_CONNECTOR_MAX_ARGS, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/DynamicConnectorMixin.mpp), \
+            3 ))
+#include BOOST_PP_ITERATE()
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

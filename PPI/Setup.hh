@@ -37,6 +37,12 @@
 namespace senf {
 namespace ppi {
 
+namespace detail { 
+    struct DisableStandardInput {};
+    struct DisableStandardOutput {};
+    struct DisableStandardConnect : public DisableStandardInput, public DisableStandardOutput {};
+}
+
 #ifdef DOXYGEN
 
     /** \brief Connect modules
@@ -77,20 +83,20 @@ namespace ppi {
     void connect(T & source, C & target,
                  typename boost::disable_if< boost::is_base_of<connector::Connector, T> >::type * = 0,
                  typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0,
-                 typename boost::disable_if< boost::is_base_of<connector::Jack, T> >:: type * = 0);
+                 typename boost::disable_if< boost::is_base_of<detail::DisableStandardOutput, T> >::type * = 0);
 
     template <class C, class T>
     void connect(C & source, T & target,
                  typename boost::enable_if< boost::is_base_of<connector::Connector, C> >::type * = 0,
                  typename boost::disable_if< boost::is_base_of<connector::Connector,T> >::type * = 0,
-                 typename boost::disable_if< boost::is_base_of<connector::Jack, T> >:: type * = 0);
+                 typename boost::disable_if< boost::is_base_of<detail::DisableStandardInput, T> >::type * = 0);
 
     template <class T1, class T2>
     void connect(T1 & source, T2 & target,
                  typename boost::disable_if< boost::is_base_of<connector::Connector, T1> >::type * = 0,
                  typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type * = 0,
-                 typename boost::disable_if< boost::is_base_of<connector::Jack, T1> >:: type * = 0,
-                 typename boost::disable_if< boost::is_base_of<connector::Jack, T2> >:: type * = 0);
+                 typename boost::disable_if< boost::is_base_of<detail::DisableStandardOutput, T1> >:: type * = 0,
+                 typename boost::disable_if< boost::is_base_of<detail::DisableStandardInput, T2> >:: type * = 0);
 
 #endif
     

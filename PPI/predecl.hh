@@ -61,6 +61,7 @@ namespace ppi {
         class BackwardForwardingRouteFromEventImplementation;
         template <class Source, class Target>
             class RouteImplementation;
+        struct DisableStandardConnect;
     }
 
 #endif

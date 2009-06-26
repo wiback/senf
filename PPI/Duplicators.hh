@@ -31,20 +31,13 @@
 #include "predecl.hh"
 #include "Connectors.hh"
 #include "Module.hh"
+#include "DynamicConnectorMixin.hh"
 
 //#include "Duplicators.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
-
-#ifndef DOXYGEN
-
-    template <class Target>
-    connector::GenericActiveOutput & connect(module::ActiveDuplicator & source, Target & target);
-    
-#endif
-
 namespace module {
 
     /** \brief Copy every incoming packet to each output
@@ -65,7 +58,8 @@ namespace module {
         \ingroup routing_modules
      */
     class ActiveDuplicator
-        : public Module
+        : public Module,
+          public DynamicConnectorMixin<ActiveDuplicator, connector::ActiveOutput<> >
     {
         SENF_PPI_MODULE(ActiveDuplicator);
     public:
@@ -74,19 +68,10 @@ namespace module {
         ActiveDuplicator();
 
     private:
-        connector::ActiveOutput<> & newOutput();
-
-#ifndef DOXYGEN
-    public:
-#endif
-        template <class Target>
-        connector::GenericActiveOutput & connect(Target & target);
-
-    private:
+        void connectorSetup(ActiveDuplicator::DynamicConnector & conn);
         void request();
 
-        typedef boost::ptr_vector<connector::ActiveOutput<> > Outputs;
-        Outputs outputs_;
+        friend class DynamicConnectorMixin<ActiveDuplicator, connector::ActiveOutput<> >;
     };
 
 }}}
@@ -96,7 +81,7 @@ namespace module {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Duplicators.cci"
 //#include "Duplicators.ct"
-#include "Duplicators.cti"
+//#include "Duplicators.cti"
 #endif
 
 

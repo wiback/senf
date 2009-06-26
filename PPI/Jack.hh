@@ -30,6 +30,7 @@
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
 #include "Connectors.hh"
+#include "Setup.hh"
 
 //#include "Jack.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -41,7 +42,7 @@ namespace connector {
     /** \brief Connector Jack base class
         \see \ref ppi_jacks */
     class Jack
-        : private boost::noncopyable
+        : private boost::noncopyable, private ppi::detail::DisableStandardConnect
     {};
 
     /** \brief Jack referencing an ActiveInput 

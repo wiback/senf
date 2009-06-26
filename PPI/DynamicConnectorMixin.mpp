@@ -1,0 +1,188 @@
+// $Id$
+//
+// Copyright (C) 2009 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief DynamicConnectorMixin Boost.Preprocesser external iteration include */
+
+#if !BOOST_PP_IS_ITERATING && !defined(MPP_SENF_PPI_DynamicConnectorMixin_)
+#define MPP_SENF_PPI_DynamicConnectorMixin_ 1
+
+// Custom includes
+#include <boost/preprocessor/iteration/iterate.hpp>
+#include <boost/preprocessor/control/if.hpp>
+#include <boost/preprocessor/facilities/empty.hpp> 
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/repetition/enum_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_params.hpp>
+#include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp> 
+#include <boost/type_traits/is_base_of.hpp>
+
+// ///////////////////////////mpp.p////////////////////////////////////////
+#elif BOOST_PP_IS_ITERATING // ////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Local Macros
+
+#define mpp_TplParams()                                                 \
+    BOOST_PP_IF(                                                        \
+        BOOST_PP_ITERATION(),                                           \
+        mpp_TplParams_,                                                 \
+        BOOST_PP_EMPTY)()
+#define mpp_TplParams_()                                                \
+    template <BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), class A)>
+    
+#define mpp_TplParamsKomma()                                            \
+    BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_ITERATION(), class A)
+#define mpp_FnParams()                                                  \
+    BOOST_PP_ENUM_BINARY_PARAMS(BOOST_PP_ITERATION(), A, const & a)
+#define mpp_FnParamsKomma()                                             \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(BOOST_PP_ITERATION(), A, const & a)
+#define mpp_CallParams()                                                \
+    BOOST_PP_ENUM_PARAMS(BOOST_PP_ITERATION(), a)
+#define mpp_CallParamsKomma()                                           \
+    BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_ITERATION(), a)
+
+// ////////////////////////////////////////////////////////////////////////
+#if BOOST_PP_ITERATION_FLAGS()==1 // //////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// DynamicConnectorMixin member declaration
+
+mpp_TplParams()
+ConnectorType & newConnector( mpp_FnParams() );
+
+template <class Source, class Target mpp_TplParamsKomma()>
+friend typename boost::enable_if<
+        boost::is_base_of<connector::OutputConnector, typename Source::DynamicConnector>,
+        typename Source::DynamicConnector & >::type
+    senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma());
+
+template <class Source, class Target mpp_TplParamsKomma()>
+friend typename boost::enable_if<
+        boost::is_base_of<connector::InputConnector, typename Target::DynamicConnector>,
+        typename Target::DynamicConnector & >::type
+    senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma());
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==2 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// senf::ppi namespace member declaration
+
+template <class Source, class Target mpp_TplParamsKomma()>
+typename boost::enable_if<
+    boost::is_base_of<connector::OutputConnector, typename Source::DynamicConnector>,
+    typename Source::DynamicConnector & >::type
+connect(Source & source, Target & target mpp_FnParamsKomma());
+
+template <class Source, class Target mpp_TplParamsKomma()>
+typename boost::enable_if<
+    boost::is_base_of<connector::InputConnector, typename Target::DynamicConnector>,
+    typename Target::DynamicConnector & >::type
+connect(Source & source, Target & target mpp_FnParamsKomma());
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==3 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Implementation
+
+template <class Self, class ConnectorType, class KeyType, class ContainerType>
+mpp_TplParams()
+prefix_ ConnectorType &
+senf::ppi::module::DynamicConnectorMixin<Self,ConnectorType,KeyType,ContainerType>::
+newConnector(mpp_FnParams())
+{
+    std::auto_ptr<ConnectorType> conn (new ConnectorType);
+    KeyType key (static_cast<Self*>(this)->connectorSetup(*conn mpp_CallParamsKomma()));
+    return * connectors_.insert(key, conn).first->second;
+}
+
+template <class Self, class ConnectorType, class ContainerType>
+mpp_TplParams()
+prefix_ ConnectorType &
+senf::ppi::module::DynamicConnectorMixin<Self,ConnectorType,void,ContainerType>::
+newConnector(mpp_FnParams())
+{
+    connectors_.push_back(new ConnectorType);
+    ConnectorType & conn (connectors_.back());
+    try { static_cast<Self*>(this)->connectorSetup(conn mpp_CallParamsKomma()); }
+    catch (...) { connectors_.pop_back(); throw; }
+    return conn;
+}
+
+template <class Source, class Target mpp_TplParamsKomma()>
+typename boost::enable_if<
+    boost::is_base_of<senf::ppi::connector::OutputConnector, typename Source::DynamicConnector>,
+    typename Source::DynamicConnector & >::type
+senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
+{
+    connect(source.newConnector(mpp_CallParams()), target);
+}
+
+template <class Source, class Target mpp_TplParamsKomma()>
+typename boost::enable_if<
+    boost::is_base_of<senf::ppi::connector::InputConnector, typename Target::DynamicConnector>,
+    typename Target::DynamicConnector & >::type
+senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
+{
+    connect(source, target.newConnector(mpp_CallParams()));
+}
+
+// ////////////////////////////////////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Undefine local Macros
+
+#undef mpp_CallParamsKomma
+#undef mpp_CallParams
+#undef mpp_FnParamsKomma
+#undef mpp_FnParams
+#undef mpp_TplParamsKomma
+#undef mpp_TplParams_
+#undef mpp_TplParams
+            
+// ////////////////////////////////////////////////////////////////////////
+/*
+ (save-excursion (re-search-backward "^// Undefine local Macros")
+ (forward-line 1) (delete-region (point) (progn (search-forward
+ "// ////") (forward-line -1) (point))) (insert "\n") (let ((b (point))
+ (e (progn (insert (save-excursion (re-search-backward 
+ "^// Local Macros") (search-forward "#define") (beginning-of-line)
+ (buffer-substring (point) (progn (search-forward "// ////")
+ (search-backward "#define") (forward-line 1) (point))))) (point))))
+ (reverse-region b e) (shell-command-on-region b e "grep -F '#define'" nil
+ t) (goto-char b) (while (looking-at "#define") (delete-char 7) (insert
+ "#undef") (skip-chars-forward " ") (re-search-forward "[^a-zA-Z_]")
+ (delete-region (1- (point)) (progn (end-of-line) (point))) (forward-line
+ 1))))
+*/
+// ////////////////////////////////////////////////////////////////////////
+#endif // /////////////////////////////////////////////////////////////////
+// ///////////////////////////mpp.e////////////////////////////////////////
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

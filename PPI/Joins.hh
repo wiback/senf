@@ -31,23 +31,13 @@
 #include "predecl.hh"
 #include "Connectors.hh"
 #include "Module.hh"
+#include "DynamicConnectorMixin.hh"
 
 //#include "Joins.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
 namespace ppi {
-
-#ifndef DOXYGEN
-
-    template <class Source>
-    connector::GenericPassiveInput & connect(Source & source, module::PassiveJoin & target);
-
-    template <class Source>
-    connector::GenericActiveInput & connect(Source & source, module::PriorityJoin & target,
-                                            int priority = -1);
-
-#endif
 
 namespace module {
 
@@ -71,7 +61,8 @@ namespace module {
         \ingroup routing_modules
      */
     class PassiveJoin
-        : public Module
+        : public Module,
+          public DynamicConnectorMixin<PassiveJoin, connector::PassiveInput<> >
     {
         SENF_PPI_MODULE(PassiveJoin);
     public:
@@ -80,22 +71,12 @@ namespace module {
         PassiveJoin();
 
     private:
-        connector::PassiveInput<> & newInput();
-
-#ifndef DOXYGEN
-        // I didn't get template friend functions to work ...
-    public:
-#endif
-        template <class Source>
-        connector::GenericPassiveInput & connect(Source & source);
-
-    private:
+        void connectorSetup(connector::PassiveInput<> & conn);
         void request(connector::GenericPassiveInput & input);
         void onThrottle();
         void onUnthrottle();
 
-        typedef boost::ptr_vector<connector::PassiveInput<> > Inputs;
-        Inputs inputs_;
+        friend class DynamicConnectorMixin<PassiveJoin, connector::PassiveInput<> >;
     };
 
     /** \brief Join multiple packet streams with active inputs
@@ -125,7 +106,8 @@ namespace module {
         \ingroup routing_modules
      */
     class PriorityJoin
-        : public Module
+        : public Module,
+          public DynamicConnectorMixin<PriorityJoin, connector::ActiveInput<> >
     {
         SENF_PPI_MODULE(PriorityJoin);
     public:
@@ -134,21 +116,12 @@ namespace module {
         PriorityJoin();
 
     private:
-        connector::ActiveInput<> & newInput(int priority);
-
-#ifndef DOXYGEN
-    public:
-#endif
-        template <class Source>
-        connector::GenericActiveInput & connect(Source & source, int prioricty);
-
-    private:
+        void connectorSetup(PriorityJoin::DynamicConnector & conn, int priority=-1);
         void request();
         void onThrottle();
         void onUnthrottle();
 
-        typedef boost::ptr_vector<connector::ActiveInput<> > Inputs;
-        Inputs inputs_;
+        friend class DynamicConnectorMixin<PriorityJoin, connector::ActiveInput<> >;
     };
 
 }}}
@@ -156,7 +129,7 @@ namespace module {
 ///////////////////////////////hh.e////////////////////////////////////////
 #include "Joins.cci"
 //#include "Joins.ct"
-#include "Joins.cti"
+//#include "Joins.cti"
 #endif
 
 

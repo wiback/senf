@@ -32,22 +32,17 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::ppi::connector::ActiveOutput<> &
-senf::ppi::module::ActiveDuplicator::newOutput()
+prefix_ void
+senf::ppi::module::ActiveDuplicator::connectorSetup(ActiveDuplicator::DynamicConnector & conn)
 {
-    outputs_.push_back(new connector::ActiveOutput<>());
-    connector::ActiveOutput<> & output (outputs_.back());
-
-    route(input, output);
-
-    return output;
+    route(input, conn);
 }
 
 prefix_ void senf::ppi::module::ActiveDuplicator::request()
 {
     Packet p (input());
-    Outputs::iterator i (outputs_.begin());
-    Outputs::iterator const i_end (outputs_.end());
+    ActiveDuplicator::ConnectorContainer::iterator i (connectors().begin());
+    ActiveDuplicator::ConnectorContainer::iterator const i_end (connectors().end());
     for (; i != i_end; ++i)
         (*i)(p);
 }

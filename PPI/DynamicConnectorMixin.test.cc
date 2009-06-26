@@ -21,34 +21,24 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Duplicators inline template implementation */
+    \brief DynamicConnectorMixin.test unit tests */
 
-//#include "Duplicators.ih"
+//#include "DynamicConnectorMixin.test.hh"
+//#include "DynamicConnectorMixin.test.ih"
 
 // Custom includes
-#include "Setup.hh"
+#include "DynamicConnectorMixin.hh"
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+#include "../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
-template <class Target>
-prefix_ senf::ppi::connector::GenericActiveOutput &
-senf::ppi::connect(module::ActiveDuplicator & source, Target & target)
-{
-    return source.connect(target);
-}
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-template <class Target>
-prefix_ senf::ppi::connector::GenericActiveOutput &
-senf::ppi::module::ActiveDuplicator::connect(Target & target)
-{
-    connector::GenericActiveOutput & output (newOutput());
-    ppi::connect(output, target);
-    return output;
-}
+BOOST_AUTO_UNIT_TEST(dynamicConnectorMixin)
+{}
 
-
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
