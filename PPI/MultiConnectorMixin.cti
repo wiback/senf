@@ -37,6 +37,15 @@ senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerTy
     return connectors_;
 }
 
+template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
+prefix_ ContainerType_ const &
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>::
+connectors()
+    const
+{
+    return connectors_;
+}
+
 template <class Self_, class ConnectorType_, class ContainerType_>
 prefix_ ContainerType_ &
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::connectors()
@@ -91,7 +100,7 @@ senf::ppi::connect(Source & source, Target & target , A1 const & a1)
     connect(source, target.newConnector(a1));
 }
 
-#endif
+#else
 
 // Include 'Implementation' from MultiConnectorMixin.mpp
 #define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
@@ -100,6 +109,8 @@ senf::ppi::connect(Source & source, Target & target , A1 const & a1)
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             3 ))
 #include BOOST_PP_ITERATE()
+
+#endif
 
 ///////////////////////////////cti.e///////////////////////////////////////
 #undef prefix_

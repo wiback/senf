@@ -41,11 +41,15 @@ namespace detail {
         typedef boost::ptr_map<KeyType, ConnectorType> type; 
     };
 
+#ifndef DOXYGEN
+
     template <class ConnectorType>
     struct MultiConnectorDefaultContainer<void,ConnectorType> 
     { 
         typedef boost::ptr_vector<ConnectorType> type;
     };
+
+#endif
 
     template <class ConnectorType>
     struct MultiConnectorSelectBase

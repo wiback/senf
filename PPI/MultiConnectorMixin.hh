@@ -54,20 +54,26 @@ namespace ppi {
     // output, otherwise the second overload.
 
     /** \brief Connect MultiConnector source to arbitrary target
+
         Additional implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments.
+
         \related module::MultiConnectorMixin
      */
-    template <class Source, class Target, class A1>
-    Source::ConnectorType & connect(Source & source, Target & target, A1 const & a1);
+    template <class MultiConnectorSource, class Target, class A1>
+    MultiConnectorSource::ConnectorType & connect(
+        MultiConnectorSource & source, Target & target, A1 const & a1);
     
     /** \brief Connect arbitrary source to MultiConnector target
+
         Additional implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments.
+
         \related module::MultiConnectorMixin
      */
-    template <class Source, class Target>
-    Target::ConnectorType & connect(Source & source, Target & target, A1 const & a1);
+    template <class Source, class MultiConnectorTarget, class A1>
+    MultiConnectorTarget::ConnectorType & connect(
+        Source & source, MultiConnectorTarget & target, A1 const & a1);
 
-#endif
+#else
 
     // Include 'senf::ppi::namespace member declarations' from MultiConnectorMixin.mpp
 #   define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
@@ -76,6 +82,8 @@ namespace ppi {
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             2 ))
 #   include BOOST_PP_ITERATE()
+
+#endif
 
 namespace module {
 
@@ -153,12 +161,12 @@ namespace module {
 
         \par "Example:" senf::ppi::module::AnnotationRouter
 
-        \section senf_ppi_multiconnector_connect Connect and additional \c connectorSetup() arguments
+        \section senf_ppi_multiconnector_connect Connect and additional connectorSetup() arguments
 
         When connecting to a module using the MultiConnectorMixin, every new connect call will
         allocate a new connector
         \code
-        MuModule muModule;
+        MyModule muModule;
         
         senf::ppi::connect(someModule, myModule);
         \endcode
@@ -176,6 +184,7 @@ namespace module {
         {
             container().insert(container().begin()+index, container().pop_back().release());
         }
+        \endcode
 
         \par "Advanced note:" These additional arguments are always passed by const-reference. If
             you need to pass a non-const reference, declare the \c connectorSetup() argument as
@@ -191,14 +200,15 @@ namespace module {
         : private detail::MultiConnectorSelectBase<ConnectorType_>::type
     {
     public:
-        typedef ConnectorType_ ConnectorType;
+        typedef ConnectorType_ ConnectorType; ///< Type of MultiConnector connector
 
     protected:
-        typedef ContainerType_ ContainerType;
-        ContainerType_ & connectors();
+        typedef ContainerType_ ContainerType; ///< Type of connector container
+        ContainerType_ & connectors();        ///< Get connector container
+        ContainerType_ const & connectors() const; ///< Get connectors container (const)
 
     private:
-#ifdef DOXYGEN
+#ifdef 0
         // For exposition only
         // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
 
@@ -218,6 +228,7 @@ namespace module {
                                                           Target & target,
                                                           A1 const & a1);
 #endif
+#ifndef DOXYGEN
 
         // Include 'MultiConnectorMixin member declaration' from MultiConnectorMixin.mpp
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
@@ -226,9 +237,13 @@ namespace module {
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             1 ))
 #       include BOOST_PP_ITERATE()
+
+#endif
         
         ContainerType_ connectors_;
     };
+
+#ifndef DOXYGEN
 
     template <class Self_,
               class ConnectorType_,
@@ -245,7 +260,7 @@ namespace module {
 
     private:
 
-#ifdef DOXYGEN
+#if 0
         // For exposition only
         // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
 
@@ -276,6 +291,8 @@ namespace module {
         
         ContainerType_ connectors_;
     };
+
+#endif
         
 }}}
 
