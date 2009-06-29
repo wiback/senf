@@ -31,7 +31,7 @@
 #include "predecl.hh"
 #include "Connectors.hh"
 #include "Module.hh"
-#include "DynamicConnectorMixin.hh"
+#include "MultiConnectorMixin.hh"
 
 //#include "Duplicators.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -59,7 +59,7 @@ namespace module {
      */
     class ActiveDuplicator
         : public Module,
-          public DynamicConnectorMixin<ActiveDuplicator, connector::ActiveOutput<> >
+          public MultiConnectorMixin<ActiveDuplicator, connector::ActiveOutput<> >
     {
         SENF_PPI_MODULE(ActiveDuplicator);
     public:
@@ -68,10 +68,10 @@ namespace module {
         ActiveDuplicator();
 
     private:
-        void connectorSetup(ActiveDuplicator::DynamicConnector & conn);
+        void connectorSetup(ActiveDuplicator::ConnectorType & conn);
         void request();
 
-        friend class DynamicConnectorMixin<ActiveDuplicator, connector::ActiveOutput<> >;
+        friend class MultiConnectorMixin<ActiveDuplicator, connector::ActiveOutput<> >;
     };
 
 }}}

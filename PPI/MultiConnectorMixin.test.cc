@@ -21,37 +21,24 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DynamicConnectorMixin inline template implementation */
+    \brief MultiConnectorMixin.test unit tests */
 
-//#include "DynamicConnectorMixin.ih"
+//#include "MultiConnectorMixin.test.hh"
+//#include "MultiConnectorMixin.test.ih"
 
 // Custom includes
+#include "MultiConnectorMixin.hh"
 
-#define prefix_ inline
-///////////////////////////////cti.p///////////////////////////////////////
+#include "../Utils/auto_unit_test.hh"
+#include <boost/test/test_tools.hpp>
 
-template <class Self, class ConnectorType, class KeyType, class ContainerType>
-prefix_ ContainerType &
-senf::ppi::module::DynamicConnectorMixin<Self,ConnectorType,KeyType,ContainerType>::connectors()
-{
-    return connectors_;
-}
+#define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
-template <class Self, class ConnectorType, class ContainerType>
-prefix_ ContainerType &
-senf::ppi::module::DynamicConnectorMixin<Self, ConnectorType, void, ContainerType>::connectors()
-{
-    return connectors_;
-}
+BOOST_AUTO_UNIT_TEST(dynamicConnectorMixin)
+{}
 
-#define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
-            0, \
-            SENF_DYNAMIC_CONNECTOR_MAX_ARGS, \
-            SENF_ABSOLUTE_INCLUDE_PATH(PPI/DynamicConnectorMixin.mpp), \
-            3 ))
-#include BOOST_PP_ITERATE()
-
-///////////////////////////////cti.e///////////////////////////////////////
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 

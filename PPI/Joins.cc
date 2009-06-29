@@ -76,7 +76,7 @@ prefix_ void senf::ppi::module::PassiveJoin::onUnthrottle()
 // private members
 
 prefix_ void
-senf::ppi::module::PriorityJoin::connectorSetup(PriorityJoin::DynamicConnector & conn,
+senf::ppi::module::PriorityJoin::connectorSetup(PriorityJoin::ConnectorType & conn,
                                                 int priority)
 {
     noroute(conn);
@@ -98,7 +98,7 @@ prefix_ void senf::ppi::module::PriorityJoin::request()
 {
     using boost::lambda::_1;
     using boost::lambda::bind;
-    PriorityJoin::ConnectorContainer::iterator i (
+    PriorityJoin::ContainerType::iterator i (
         std::find_if(connectors().begin(), connectors().end(),
                      ! bind(&connector::GenericActiveInput::throttled, _1)));
     if (i != connectors().end())

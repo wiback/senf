@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DynamicConnectorMixin public header */
+    \brief MultiConnectorMixin public header */
 
-#ifndef HH_SENF_PPI_DynamicConnectorMixin_
-#define HH_SENF_PPI_DynamicConnectorMixin_ 1
+#ifndef HH_SENF_PPI_MultiConnectorMixin_
+#define HH_SENF_PPI_MultiConnectorMixin_ 1
 
 // Custom includes
 #include "../config.hh"
@@ -34,11 +34,11 @@
 #include "Connectors.hh"
 #include "Setup.hh"
 
-#include "DynamicConnectorMixin.mpp"
+#include "MultiConnectorMixin.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-#ifndef SENF_DYNAMIC_CONNECTOR_MAX_ARGS
-#define SENF_DYNAMIC_CONNECTOR_MAX_ARGS 3
+#ifndef SENF_MULTI_CONNECTOR_MAX_ARGS
+#define SENF_MULTI_CONNECTOR_MAX_ARGS 3
 #endif
 
 namespace senf {
@@ -46,8 +46,8 @@ namespace ppi {
 
 #   define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
-            SENF_DYNAMIC_CONNECTOR_MAX_ARGS, \
-            SENF_ABSOLUTE_INCLUDE_PATH(PPI/DynamicConnectorMixin.mpp), \
+            SENF_MULTI_CONNECTOR_MAX_ARGS, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             2 ))
 #   include BOOST_PP_ITERATE()
 
@@ -55,11 +55,11 @@ namespace module {
 
 namespace detail {
     template <class KeyType, class ConnectorType>
-    struct DefaultDynamicContainer 
+    struct DefaultMultiConnectorContainer 
     { typedef boost::ptr_map<KeyType, ConnectorType> type; };
 
     template <class ConnectorType>
-    struct DefaultDynamicContainer<void,ConnectorType> 
+    struct DefaultMultiConnectorContainer<void,ConnectorType> 
     { typedef boost::ptr_vector<ConnectorType> type; };
 
     template <class ConnectorType>
@@ -90,62 +90,62 @@ namespace detail {
         The list manager will insert the new connector at the end of the list BEFORE calling
         connetorSetup. This allows the setup routine to manipulate the position.
      */
-    template <class Self, 
-              class ConnectorType, 
-              class KeyType=void, 
-              class ContainerType=typename detail::DefaultDynamicContainer<
-                                               KeyType,ConnectorType>::type>
-    class DynamicConnectorMixin 
-        : private detail::DynamicDisableType<ConnectorType>::type
+    template <class Self_, 
+              class ConnectorType_, 
+              class KeyType_=void, 
+              class ContainerType_=typename detail::DefaultMultiConnectorContainer<
+                                               KeyType_,ConnectorType_>::type>
+    class MultiConnectorMixin 
+        : private detail::DynamicDisableType<ConnectorType_>::type
     {
     public:
-        typedef ConnectorType DynamicConnector;
+        typedef ConnectorType_ ConnectorType;
 
     protected:
-        typedef ContainerType DynamicConnectorContainer;
-        ContainerType & connectors();
+        typedef ContainerType_ ContainerType;
+        ContainerType_ & connectors();
 
     private:
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
-            SENF_DYNAMIC_CONNECTOR_MAX_ARGS, \
-            SENF_ABSOLUTE_INCLUDE_PATH(PPI/DynamicConnectorMixin.mpp), \
+            SENF_MULTI_CONNECTOR_MAX_ARGS, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             1 ))
 #       include BOOST_PP_ITERATE()
         
-        ContainerType connectors_;
+        ContainerType_ connectors_;
     };
 
-    template <class Self,
-              class ConnectorType,
-              class ContainerType>
-    class DynamicConnectorMixin<Self, ConnectorType, void, ContainerType>
-        : private detail::DynamicDisableType<ConnectorType>::type
+    template <class Self_,
+              class ConnectorType_,
+              class ContainerType_>
+    class MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>
+        : private detail::DynamicDisableType<ConnectorType_>::type
     {
     public:
-        typedef ConnectorType DynamicConnector;
+        typedef ConnectorType_ ConnectorType;
         
     protected:
-        typedef ContainerType ConnectorContainer;
-        ContainerType & connectors();
+        typedef ContainerType_ ContainerType;
+        ContainerType_ & connectors();
 
     private:
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
-            SENF_DYNAMIC_CONNECTOR_MAX_ARGS, \
-            SENF_ABSOLUTE_INCLUDE_PATH(PPI/DynamicConnectorMixin.mpp), \
+            SENF_MULTI_CONNECTOR_MAX_ARGS, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             1 ))
 #       include BOOST_PP_ITERATE()
         
-        ContainerType connectors_;
+        ContainerType_ connectors_;
     };
         
 }}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "DynamicConnectorMixin.cci"
-//#include "DynamicConnectorMixin.ct"
-#include "DynamicConnectorMixin.cti"
+//#include "MultiConnectorMixin.cci"
+//#include "MultiConnectorMixin.ct"
+#include "MultiConnectorMixin.cti"
 #endif
 
 

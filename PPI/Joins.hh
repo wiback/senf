@@ -31,7 +31,7 @@
 #include "predecl.hh"
 #include "Connectors.hh"
 #include "Module.hh"
-#include "DynamicConnectorMixin.hh"
+#include "MultiConnectorMixin.hh"
 
 //#include "Joins.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -62,7 +62,7 @@ namespace module {
      */
     class PassiveJoin
         : public Module,
-          public DynamicConnectorMixin<PassiveJoin, connector::PassiveInput<> >
+          public MultiConnectorMixin<PassiveJoin, connector::PassiveInput<> >
     {
         SENF_PPI_MODULE(PassiveJoin);
     public:
@@ -76,7 +76,7 @@ namespace module {
         void onThrottle();
         void onUnthrottle();
 
-        friend class DynamicConnectorMixin<PassiveJoin, connector::PassiveInput<> >;
+        friend class MultiConnectorMixin<PassiveJoin, connector::PassiveInput<> >;
     };
 
     /** \brief Join multiple packet streams with active inputs
@@ -107,7 +107,7 @@ namespace module {
      */
     class PriorityJoin
         : public Module,
-          public DynamicConnectorMixin<PriorityJoin, connector::ActiveInput<> >
+          public MultiConnectorMixin<PriorityJoin, connector::ActiveInput<> >
     {
         SENF_PPI_MODULE(PriorityJoin);
     public:
@@ -116,12 +116,12 @@ namespace module {
         PriorityJoin();
 
     private:
-        void connectorSetup(PriorityJoin::DynamicConnector & conn, int priority=-1);
+        void connectorSetup(PriorityJoin::ConnectorType & conn, int priority=-1);
         void request();
         void onThrottle();
         void onUnthrottle();
 
-        friend class DynamicConnectorMixin<PriorityJoin, connector::ActiveInput<> >;
+        friend class MultiConnectorMixin<PriorityJoin, connector::ActiveInput<> >;
     };
 
 }}}

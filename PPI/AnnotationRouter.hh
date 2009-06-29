@@ -31,7 +31,7 @@
 #include "../Utils/String.hh"
 #include "Module.hh"
 #include "Connectors.hh"
-#include "DynamicConnectorMixin.hh"
+#include "MultiConnectorMixin.hh"
 
 //#include "AnnotationRouter.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -96,7 +96,7 @@ namespace module {
     template <class AnnotationType>
     class AnnotationRouter 
         : public Module, 
-          public DynamicConnectorMixin< AnnotationRouter<AnnotationType>,
+          public MultiConnectorMixin< AnnotationRouter<AnnotationType>,
                                         connector::ActiveOutput<>,
                                         AnnotationType >
     {
@@ -119,7 +119,7 @@ namespace module {
         typedef boost::ptr_map<AnnotationType, connector::ActiveOutput<> > Outputs;
         Outputs outputs_;
 
-        friend class DynamicConnectorMixin< AnnotationRouter<AnnotationType>,
+        friend class MultiConnectorMixin< AnnotationRouter<AnnotationType>,
                                             connector::ActiveOutput<>,
                                             AnnotationType >;
     };

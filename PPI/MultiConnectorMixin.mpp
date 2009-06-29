@@ -21,10 +21,10 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief DynamicConnectorMixin Boost.Preprocesser external iteration include */
+    \brief MultiConnectorMixin Boost.Preprocesser external iteration include */
 
-#if !BOOST_PP_IS_ITERATING && !defined(MPP_SENF_PPI_DynamicConnectorMixin_)
-#define MPP_SENF_PPI_DynamicConnectorMixin_ 1
+#if !BOOST_PP_IS_ITERATING && !defined(MPP_SENF_PPI_MultiConnectorMixin_)
+#define MPP_SENF_PPI_MultiConnectorMixin_ 1
 
 // Custom includes
 #include <boost/preprocessor/iteration/iterate.hpp>
@@ -63,21 +63,21 @@
 // ////////////////////////////////////////////////////////////////////////
 #if BOOST_PP_ITERATION_FLAGS()==1 // //////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
-// DynamicConnectorMixin member declaration
+// MultiConnectorMixin member declaration
 
 mpp_TplParams()
-ConnectorType & newConnector( mpp_FnParams() );
+ConnectorType_ & newConnector( mpp_FnParams() );
 
 template <class Source, class Target mpp_TplParamsKomma()>
 friend typename boost::enable_if<
-        boost::is_base_of<connector::OutputConnector, typename Source::DynamicConnector>,
-        typename Source::DynamicConnector & >::type
+        boost::is_base_of<connector::OutputConnector, typename Source::ConnectorType>,
+        typename Source::ConnectorType & >::type
     senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma());
 
 template <class Source, class Target mpp_TplParamsKomma()>
 friend typename boost::enable_if<
-        boost::is_base_of<connector::InputConnector, typename Target::DynamicConnector>,
-        typename Target::DynamicConnector & >::type
+        boost::is_base_of<connector::InputConnector, typename Target::ConnectorType>,
+        typename Target::ConnectorType & >::type
     senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
@@ -87,14 +87,14 @@ friend typename boost::enable_if<
 
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<
-    boost::is_base_of<connector::OutputConnector, typename Source::DynamicConnector>,
-    typename Source::DynamicConnector & >::type
+    boost::is_base_of<connector::OutputConnector, typename Source::ConnectorType>,
+    typename Source::ConnectorType & >::type
 connect(Source & source, Target & target mpp_FnParamsKomma());
 
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<
-    boost::is_base_of<connector::InputConnector, typename Target::DynamicConnector>,
-    typename Target::DynamicConnector & >::type
+    boost::is_base_of<connector::InputConnector, typename Target::ConnectorType>,
+    typename Target::ConnectorType & >::type
 connect(Source & source, Target & target mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
@@ -102,34 +102,34 @@ connect(Source & source, Target & target mpp_FnParamsKomma());
 // ////////////////////////////////////////////////////////////////////////
 // Implementation
 
-template <class Self, class ConnectorType, class KeyType, class ContainerType>
+template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
 mpp_TplParams()
-prefix_ ConnectorType &
-senf::ppi::module::DynamicConnectorMixin<Self,ConnectorType,KeyType,ContainerType>::
+prefix_ ConnectorType_ &
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>::
 newConnector(mpp_FnParams())
 {
-    std::auto_ptr<ConnectorType> conn (new ConnectorType);
-    KeyType key (static_cast<Self*>(this)->connectorSetup(*conn mpp_CallParamsKomma()));
+    std::auto_ptr<ConnectorType_> conn (new ConnectorType_);
+    KeyType_ key (static_cast<Self_*>(this)->connectorSetup(*conn mpp_CallParamsKomma()));
     return * connectors_.insert(key, conn).first->second;
 }
 
-template <class Self, class ConnectorType, class ContainerType>
+template <class Self_, class ConnectorType_, class ContainerType_>
 mpp_TplParams()
-prefix_ ConnectorType &
-senf::ppi::module::DynamicConnectorMixin<Self,ConnectorType,void,ContainerType>::
+prefix_ ConnectorType_ &
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::
 newConnector(mpp_FnParams())
 {
-    connectors_.push_back(new ConnectorType);
-    ConnectorType & conn (connectors_.back());
-    try { static_cast<Self*>(this)->connectorSetup(conn mpp_CallParamsKomma()); }
+    connectors_.push_back(new ConnectorType_);
+    ConnectorType_ & conn (connectors_.back());
+    try { static_cast<Self_*>(this)->connectorSetup(conn mpp_CallParamsKomma()); }
     catch (...) { connectors_.pop_back(); throw; }
     return conn;
 }
 
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<
-    boost::is_base_of<senf::ppi::connector::OutputConnector, typename Source::DynamicConnector>,
-    typename Source::DynamicConnector & >::type
+    boost::is_base_of<senf::ppi::connector::OutputConnector, typename Source::ConnectorType>,
+    typename Source::ConnectorType & >::type
 senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 {
     connect(source.newConnector(mpp_CallParams()), target);
@@ -137,8 +137,8 @@ senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<
-    boost::is_base_of<senf::ppi::connector::InputConnector, typename Target::DynamicConnector>,
-    typename Target::DynamicConnector & >::type
+    boost::is_base_of<senf::ppi::connector::InputConnector, typename Target::ConnectorType>,
+    typename Target::ConnectorType & >::type
 senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 {
     connect(source, target.newConnector(mpp_CallParams()));

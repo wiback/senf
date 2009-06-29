@@ -33,7 +33,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 prefix_ void
-senf::ppi::module::ActiveDuplicator::connectorSetup(ActiveDuplicator::DynamicConnector & conn)
+senf::ppi::module::ActiveDuplicator::connectorSetup(ActiveDuplicator::ConnectorType & conn)
 {
     route(input, conn);
 }
@@ -41,8 +41,8 @@ senf::ppi::module::ActiveDuplicator::connectorSetup(ActiveDuplicator::DynamicCon
 prefix_ void senf::ppi::module::ActiveDuplicator::request()
 {
     Packet p (input());
-    ActiveDuplicator::ConnectorContainer::iterator i (connectors().begin());
-    ActiveDuplicator::ConnectorContainer::iterator const i_end (connectors().end());
+    ActiveDuplicator::ContainerType::iterator i (connectors().begin());
+    ActiveDuplicator::ContainerType::iterator const i_end (connectors().end());
     for (; i != i_end; ++i)
         (*i)(p);
 }
