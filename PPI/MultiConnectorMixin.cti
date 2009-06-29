@@ -44,6 +44,56 @@ senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>
     return connectors_;
 }
 
+#ifdef DOXYGEN
+
+// Only for exposition
+// Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
+
+template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
+template <class A1>
+prefix_ ConnectorType_ &
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>::
+newConnector(A1 const & a1)
+{
+    std::auto_ptr<ConnectorType_> conn (new ConnectorType_);
+    KeyType_ key (static_cast<Self_*>(this)->connectorSetup(*conn, a1));
+    return * connectors_.insert(key, conn).first->second;
+}
+
+template <class Self_, class ConnectorType_, class ContainerType_>
+template <class A1>
+prefix_ ConnectorType_ &
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::
+newConnector(A1 const & a1)
+{
+    connectors_.push_back(new ConnectorType_);
+    ConnectorType_ & conn (connectors_.back());
+    try { static_cast<Self_*>(this)->connectorSetup(conn , a1); }
+    catch (...) { connectors_.pop_back(); throw; }
+    return conn;
+}
+
+template <class Source, class Target , class A1>
+typename boost::enable_if<
+    boost::is_base_of<senf::ppi::connector::OutputConnector, typename Source::ConnectorType>,
+    typename Source::ConnectorType & >::type
+senf::ppi::connect(Source & source, Target & target , A1 const & a1)
+{
+    connect(source.newConnector(a1), target);
+}
+
+template <class Source, class Target , class A1>
+typename boost::enable_if<
+    boost::is_base_of<senf::ppi::connector::InputConnector, typename Target::ConnectorType>,
+    typename Target::ConnectorType & >::type
+senf::ppi::connect(Source & source, Target & target , A1 const & a1)
+{
+    connect(source, target.newConnector(a1));
+}
+
+#endif
+
+// Include 'Implementation' from MultiConnectorMixin.mpp
 #define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
             SENF_MULTI_CONNECTOR_MAX_ARGS, \

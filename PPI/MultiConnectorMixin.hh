@@ -35,6 +35,7 @@
 #include "Setup.hh"
 
 #include "MultiConnectorMixin.mpp"
+#include "MultiConnectorMixin.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 #ifndef SENF_MULTI_CONNECTOR_MAX_ARGS
@@ -43,7 +44,32 @@
 
 namespace senf {
 namespace ppi {
+    
+#ifdef DOXYGEN
 
+    // For exposition only.
+    // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
+    // The real implementation includes a boost::enable_if condition in the return value, which is
+    // used to only enable the correct overload: The first overload, if the MultiConnector is an
+    // output, otherwise the second overload.
+
+    /** \brief Connect MultiConnector source to arbitrary target
+        Additional implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments.
+        \related module::MultiConnectorMixin
+     */
+    template <class Source, class Target, class A1>
+    Source::ConnectorType & connect(Source & source, Target & target, A1 const & a1);
+    
+    /** \brief Connect arbitrary source to MultiConnector target
+        Additional implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments.
+        \related module::MultiConnectorMixin
+     */
+    template <class Source, class Target>
+    Target::ConnectorType & connect(Source & source, Target & target, A1 const & a1);
+
+#endif
+
+    // Include 'senf::ppi::namespace member declarations' from MultiConnectorMixin.mpp
 #   define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
             SENF_MULTI_CONNECTOR_MAX_ARGS, \
@@ -53,50 +79,116 @@ namespace ppi {
 
 namespace module {
 
-namespace detail {
-    template <class KeyType, class ConnectorType>
-    struct DefaultMultiConnectorContainer 
-    { typedef boost::ptr_map<KeyType, ConnectorType> type; };
+    /** \brief Multi connector management
 
-    template <class ConnectorType>
-    struct DefaultMultiConnectorContainer<void,ConnectorType> 
-    { typedef boost::ptr_vector<ConnectorType> type; };
+        This mixin provides a module with support for a runtime configurable number of input or
+        output connectors.
+        \code
+        class MyModule 
+            : public senf::ppi::module::MultiConnectorMixin<
+                  MyModule, senf::ppi::connector::ActiveInput<> >
+        {
+            SENF_PPI_MODULE(MyModule);
+        public:
+            senf::ppi::connector::PassiveOutput<> output;
 
-    template <class ConnectorType>
-    struct DynamicDisableType
-        : public boost::mpl::if_< 
-              boost::is_base_of<connector::InputConnector, ConnectorType>,
-              ppi::detail::DisableStandardInput, ppi::detail::DisableStandardOutput >
-    {};
-}
+            // ...
 
-    /** \brief Dynamic connector management
+        private:
+            void connectorSetup(senf::ppi::connector::ActiveInput & input)
+            {
+                route(input, output);
+                input.onThrottle(&MyModule::doThrottle);
+            }
 
-        Provide modules with support for dynamic connectors.
+            void doThrottle()
+            { 
+                // ...
+            }
 
-        \li A module might have dynamic input or output connectors
-        \li Creating a new connection might take an argument
-        \li Connectors are stored either in a vector or a map
+            friend class senf::ppi::module::MultiConnectorMixin<
+                MyModule, senf::ppi::connector::ActiveInput<> >
+        }
+        \endcode
+
+        Using the MultiConnectorMixin consists of
+        \li inheriting from MultiConnectorMixin
+        \li defining a function \c connectorSetup
+        \li declaring the mixin as a friend
+
+        The MultiConnectorMixin takes several template arguments
+        \li the name of the derived class, \a Self_
+        \li the type of connector, \a ConnectorType_
+        \li an optional \a KeyType_ if a mapping container is required
+        \li an optional \a ContainerType_ to replace the default \c boost::ptr_vector or \c
+            boost::ptr_map.
+
+        \section senf_ppi_multiconnector_sequence Sequence/vector based multi connector mixin
+
+        If no \a KeyType_ is given (or the \a KeyType_ is \c void), the mixin will use a sequence
+        container, by default a \c boost::ptr_vector to store the connectors. In this case, new
+        connectors will be added to the end of the container. The \c connectorSetup() routine
+        however may be used to move the inserted connector to some other location, e.g.
+        \code
+        container().insert(begin(), container().pop_back().release());
+        \endcode
+        which will move the new connector from the end to the beginning. 
+        \warning If you throw an exception from \c connectorSetup(), you must do so \e before moving
+            the new connector around since the mixin will remove the last element from the container
+            on an exception.
+
+        \par "Example:" senf::ppi::module::PriorityJoin
+
+        \section senf_ppi_multiconnector_map Map based multi connector mixin
+
+        If \a KeyType_ is given (and is not \c void), the mixin will use a mapping container, by
+        default a \c boost::ptr_map to store the connectors. The \c connectorSetup() member function
+        must return the key value under which the new connector will be stored. The new connector
+        will this be written to the container only \e after \c connectorSetup() returns.
+
+        When the returned key is not unique, the new connector will \e replace the old one. If this
+        is not, what you want, either check for an already existing member and throw an exception in
+        \c connectorSetup() or replace the \c boost::ptr_map by a \c boost::ptr_multimap using the
+        fourth template argument to MultiConnectorMixin.
+
+        \par "Example:" senf::ppi::module::AnnotationRouter
+
+        \section senf_ppi_multiconnector_connect Connect and additional \c connectorSetup() arguments
+
+        When connecting to a module using the MultiConnectorMixin, every new connect call will
+        allocate a new connector
+        \code
+        MuModule muModule;
         
-        Workflow:
-        \li Connectors are created by the helper.
-        \li Connector is passed to Self::connectorSetup. This returns either void or the map
-            key. connectorSetup must setup internal routing and callbacks.
-        \li Connector inserted into container.
+        senf::ppi::connect(someModule, myModule);
+        \endcode
+        Some modules will expect additional arguments to be passed (see below)
+        \code
+        MyModule myModule;
 
-        connectorSetup may take additional arguments besides reference to connector. These arguments
-        are taken from the trailing ppi::connect call arguments.
+        senf::ppi::connect(mod1, myModule);     // index = 0, see below
+        senf::ppi::connect(mod2, myModule, 1);  // index = 1, see below
+        \endcode
+        To declare these additional arguments, just declare \c connectorSetup() with those
+        additional arguments:
+        \code
+        void connectorSetup(MyModule::ConnectorType & input, int index=0)
+        {
+            container().insert(container().begin()+index, container().pop_back().release());
+        }
 
-        The list manager will insert the new connector at the end of the list BEFORE calling
-        connetorSetup. This allows the setup routine to manipulate the position.
+        \par "Advanced note:" These additional arguments are always passed by const-reference. If
+            you need to pass a non-const reference, declare the \c connectorSetup() argument as
+            non-const reference and wrap the real argument using \c boost::ref() (The reason for
+            this is known as 'The forwarding problem'
      */
     template <class Self_, 
               class ConnectorType_, 
               class KeyType_=void, 
-              class ContainerType_=typename detail::DefaultMultiConnectorContainer<
+              class ContainerType_=typename detail::MultiConnectorDefaultContainer<
                                                KeyType_,ConnectorType_>::type>
     class MultiConnectorMixin 
-        : private detail::DynamicDisableType<ConnectorType_>::type
+        : private detail::MultiConnectorSelectBase<ConnectorType_>::type
     {
     public:
         typedef ConnectorType_ ConnectorType;
@@ -106,6 +198,28 @@ namespace detail {
         ContainerType_ & connectors();
 
     private:
+#ifdef DOXYGEN
+        // For exposition only
+        // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
+
+        tempalte <class A1>
+        ConnectorType_ & newConnector(A1 const & a1);
+
+        // See above for an additional note regarding the boost::enable_if in the real
+        // implementation
+        
+        template <class Source, class Target, class A1>
+        friend Source::ConnectorType & senf::ppi::connect(Source & source, 
+                                                          Target & target, 
+                                                          A1 const & a1);
+
+        template <class Source, class Target, class A1>
+        friend Target::ConnectorType & senf::ppi::connect(Source & source,
+                                                          Target & target,
+                                                          A1 const & a1);
+#endif
+
+        // Include 'MultiConnectorMixin member declaration' from MultiConnectorMixin.mpp
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
             SENF_MULTI_CONNECTOR_MAX_ARGS, \
@@ -120,7 +234,7 @@ namespace detail {
               class ConnectorType_,
               class ContainerType_>
     class MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>
-        : private detail::DynamicDisableType<ConnectorType_>::type
+        : private detail::MultiConnectorSelectBase<ConnectorType_>::type
     {
     public:
         typedef ConnectorType_ ConnectorType;
@@ -130,6 +244,29 @@ namespace detail {
         ContainerType_ & connectors();
 
     private:
+
+#ifdef DOXYGEN
+        // For exposition only
+        // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
+
+        tempalte <class A1>
+        ConnectorType_ & newConnector(A1 const & a1);
+
+        // See above for an additional note regarding the boost::enable_if in the real
+        // implementation
+        
+        template <class Source, class Target, class A1>
+        friend Source::ConnectorType & senf::ppi::connect(Source & source, 
+                                                          Target & target, 
+                                                          A1 const & a1);
+
+        template <class Source, class Target, class A1>
+        friend Target::ConnectorType & senf::ppi::connect(Source & source,
+                                                          Target & target,
+                                                          A1 const & a1);
+#endif
+
+        // Include 'MultiConnectorMixin member declaration' from MultiConnectorMixin.mpp
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
             SENF_MULTI_CONNECTOR_MAX_ARGS, \
