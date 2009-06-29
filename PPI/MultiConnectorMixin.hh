@@ -208,7 +208,7 @@ namespace module {
         ContainerType_ const & connectors() const; ///< Get connectors container (const)
 
     private:
-#ifdef 0
+#if 0
         // For exposition only
         // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
 
