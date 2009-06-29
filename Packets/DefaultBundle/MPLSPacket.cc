@@ -30,8 +30,17 @@
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
 
+#include "EthernetPacket.hh"
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+
+namespace {
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::MPLSPacket>
+        registerMPLSPacket (0x8848);
+}
+
+
 // senf::MPLSPacketType
 
 prefix_ void senf::MPLSPacketType::dump(packet p, std::ostream & os)
