@@ -102,6 +102,9 @@ connect(Source & source, Target & target mpp_FnParamsKomma());
 // ////////////////////////////////////////////////////////////////////////
 // Implementation
 
+////////////////////////////////////////
+// Map container
+
 template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
 mpp_TplParams()
 prefix_ ConnectorType_ &
@@ -112,6 +115,9 @@ newConnector(mpp_FnParams())
     KeyType_ key (static_cast<Self_*>(this)->connectorSetup(*conn mpp_CallParamsKomma()));
     return * connectors_.insert(key, conn).first->second;
 }
+
+////////////////////////////////////////
+// Vector container
 
 template <class Self_, class ConnectorType_, class ContainerType_>
 mpp_TplParams()
@@ -125,6 +131,24 @@ newConnector(mpp_FnParams())
     catch (...) { connectors_.pop_back(); throw; }
     return conn;
 }
+
+////////////////////////////////////////
+// User managed container
+
+template <class Self_, class ConnectorType_>
+mpp_TplParams()
+prefix_ ConnectorType_ &
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,void>::
+newConnector(mpp_FnParams())
+{
+    std::auto_ptr<ConnectorType_> cp (new ConnectorType_);
+    ConnectorType_ & cref (*cp);
+    static_cast<Self_*>(this)->connectorSetup(cp mpp_CallParamsKomma());
+    return cref;
+}
+
+////////////////////////////////////////
+// senf::ppi::connect
 
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<

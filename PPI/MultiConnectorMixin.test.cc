@@ -27,7 +27,7 @@
 //#include "MultiConnectorMixin.test.ih"
 
 // Custom includes
-#include "MultiConnectorMixin.hh"
+#include "PPI.hh"
 
 #include "../Utils/auto_unit_test.hh"
 #include <boost/test/test_tools.hpp>
@@ -35,8 +35,73 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-BOOST_AUTO_UNIT_TEST(dynamicConnectorMixin)
-{}
+namespace {
+    // We only test the user-collection case, all other cases are already handled by
+    // existing modules
+
+    // Primitive duplicator
+    class MyModule
+        : public senf::ppi::module::Module,
+          public senf::ppi::module::MultiConnectorMixin<MyModule,
+                                                        senf::ppi::connector::ActiveOutput<>,
+                                                        void, void>
+    {
+        SENF_PPI_MODULE(MyModule);
+    public:
+        senf::ppi::connector::PassiveInput<> input;
+
+        MyModule()
+            {
+                noroute(input); 
+                input.onRequest(&MyModule::request);
+            }
+
+    private:
+        void connectorSetup(std::auto_ptr<ConnectorType> c)
+            {
+                route(input, *c);
+                connectors_.push_back(c);
+            }
+
+        void request()
+            {
+                senf::Packet p (input());
+                for (Connectors::iterator i (connectors_.begin()), i_end (connectors_.end());
+                     i != i_end; ++i)
+                    (*i)(p);
+            }
+
+        typedef boost::ptr_vector<MyModule::ConnectorType> Connectors;
+        Connectors connectors_;
+                
+        friend class senf::ppi::module::MultiConnectorMixin<MyModule,
+                                                            senf::ppi::connector::ActiveOutput<>,
+                                                            void, void>;
+
+    };
+}
+
+BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
+{
+    senf::ppi::module::debug::ActiveSource source;
+    MyModule module;
+    senf::ppi::module::debug::PassiveSink sink1;
+    senf::ppi::module::debug::PassiveSink sink2;
+
+    senf::ppi::connect(source, module);
+    senf::ppi::connect(module, sink1);
+    senf::ppi::connect(module, sink2);
+    senf::ppi::init();
+
+    senf::Packet p (senf::DataPacket::create());
+
+    source.submit(p);
+    BOOST_CHECK_EQUAL( sink1.size(), 1u );
+    BOOST_CHECK_EQUAL( sink2.size(), 1u );
+    BOOST_CHECK( sink1.pop_front() == p );
+    BOOST_CHECK( sink2.pop_front() == p );
+    
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

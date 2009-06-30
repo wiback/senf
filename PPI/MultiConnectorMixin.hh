@@ -93,7 +93,8 @@ namespace module {
         output connectors.
         \code
         class MyModule 
-            : public senf::ppi::module::MultiConnectorMixin<
+            : public senf::ppi::module::Modulem,
+              public senf::ppi::module::MultiConnectorMixin<
                   MyModule, senf::ppi::connector::ActiveInput<> >
         {
             SENF_PPI_MODULE(MyModule);
@@ -190,6 +191,39 @@ namespace module {
             you need to pass a non-const reference, declare the \c connectorSetup() argument as
             non-const reference and wrap the real argument using \c boost::ref() (The reason for
             this is known as 'The forwarding problem'
+
+        \section Advanced usage: Managing your own container
+
+        If you need to use a completely different type of container, you can take over the container
+        management yourself. To do this, pass \c void as container type and change \c
+        connectorSetup() to take an \c std::auto_ptr as argument. \c connectorSetup() must ensure to
+        save this connector in some container or throw an exception
+        \code
+        class MyModule 
+            : public senf::ppi::module::Modulem,
+              public senf::ppi::module::MultiConnectorMixin<
+                  MyModule, senf::ppi::connector::ActiveInput<>, void, void >
+        {
+            SENF_PPI_MODULE(MyModule);
+        public:
+            // ...
+
+        private:
+            void connectorSetup(std::auto_ptr<ConnectorType> conn, unsigned p)
+            {
+                if (p>connectors_.size())
+                   throw SomeErrorException();
+                route(*conn, output);
+                connectors_.insert(connectors_.begin()+p,conn);
+            }
+
+            boost::ptr_vector<ConnectorType> connectors_;
+        };
+        \endcode
+        \warning You must make absolutely sure the connector does not get deleted when returning
+            normally from \c connectorSetup(): The connector \e must be saved somewhere
+            successfully, otherwise your code will break.
+
      */
     template <class Self_, 
               class ConnectorType_, 
@@ -290,6 +324,46 @@ namespace module {
 #       include BOOST_PP_ITERATE()
         
         ContainerType_ connectors_;
+    };
+
+    template <class Self_, 
+              class ConnectorType_>
+    class MultiConnectorMixin<Self_,ConnectorType_,void,void>
+        : private detail::MultiConnectorSelectBase<ConnectorType_>::type
+    {
+    public:
+        typedef ConnectorType_ ConnectorType;
+
+    private:
+
+#if 0
+        // For exposition only
+        // Other implementations with 0..SENF_MULTI_CONNECTOR_MAX_ARGS arguments accordingly
+
+        tempalte <class A1>
+        ConnectorType_ & newConnector(A1 const & a1);
+
+        // See above for an additional note regarding the boost::enable_if in the real
+        // implementation
+        
+        template <class Source, class Target, class A1>
+        friend Source::ConnectorType & senf::ppi::connect(Source & source, 
+                                                          Target & target, 
+                                                          A1 const & a1);
+
+        template <class Source, class Target, class A1>
+        friend Target::ConnectorType & senf::ppi::connect(Source & source,
+                                                          Target & target,
+                                                          A1 const & a1);
+#endif
+
+        // Include 'MultiConnectorMixin member declaration' from MultiConnectorMixin.mpp
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
+            0, \
+            SENF_MULTI_CONNECTOR_MAX_ARGS, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
+            1 ))
+#       include BOOST_PP_ITERATE()
     };
 
 #endif
