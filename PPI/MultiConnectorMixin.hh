@@ -192,7 +192,7 @@ namespace module {
             non-const reference and wrap the real argument using \c boost::ref() (The reason for
             this is known as 'The forwarding problem'
 
-        \section Advanced usage: Managing your own container
+        \section senf_ppi_multiconnector_advanced Advanced usage: Managing your own container
 
         If you need to use a completely different type of container, you can take over the container
         management yourself. To do this, pass \c void as container type and change \c
@@ -200,7 +200,7 @@ namespace module {
         save this connector in some container or throw an exception
         \code
         class MyModule 
-            : public senf::ppi::module::Modulem,
+            : public senf::ppi::module::Module,
               public senf::ppi::module::MultiConnectorMixin<
                   MyModule, senf::ppi::connector::ActiveInput<>, void, void >
         {

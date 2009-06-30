@@ -60,7 +60,7 @@ namespace {
         void connectorSetup(std::auto_ptr<ConnectorType> c)
             {
                 route(input, *c);
-                connectors_.push_back(c);
+                connectors_.push_back(boost::shared_ptr<ConnectorType>(c));
             }
 
         void request()
@@ -68,10 +68,10 @@ namespace {
                 senf::Packet p (input());
                 for (Connectors::iterator i (connectors_.begin()), i_end (connectors_.end());
                      i != i_end; ++i)
-                    (*i)(p);
+                    (**i)(p);
             }
 
-        typedef boost::ptr_vector<MyModule::ConnectorType> Connectors;
+        typedef std::vector< boost::shared_ptr<MyModule::ConnectorType> > Connectors;
         Connectors connectors_;
                 
         friend class senf::ppi::module::MultiConnectorMixin<MyModule,
