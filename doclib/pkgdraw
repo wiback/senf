@@ -304,6 +304,7 @@ def parse_VECTOR(args, flags):
         sys.stderr.write("Failed to aprse VECTOR: %s\n" % args)
         return None
     field = dict(FIELD_TYPES.get(args[-1].split(':')[-1], {}))
+    print args,repr(field);
     field['name'] = args[0]
     field['repeat'] = True
     return field
@@ -400,15 +401,21 @@ def scanPackets(data):
         packetOrder.append(name)
         minsize = maxsize = 0
         for field in packets[name]:
-            if field.get('size', None) is not None:
-                maxsize += field['size']
-            elif field.get('minsize', None) is not None:
-                maxsize += field['maxsize']
+            if maxsize is not None:
+                if field.get('repeat', False):
+                    maxsize = None
+                elif field.get('size', None) is not None:
+                    maxsize += field['size']
+                elif field.get('minsize', None) is not None:
+                    maxsize += field['maxsize']
+                else:
+                    maxsize = None
             if not field.get('optional', False):
                 if field.get('size', None) is not None:
                     minsize += field['size']
                 elif field.get('minsize', None) is not None:
                     minsize += field['minsize']
+        print name,minsize,maxsize
         if minsize is not None and maxsize is not None:
             if minsize == maxsize:
                 FIELD_TYPES[name] = { 'size' : minsize }

@@ -7,7 +7,7 @@ if head -4 "$1" | grep -q nomunge; then
 fi
 sed -i -e 's/rankdir=LR/rankdir=TB/' "$1"
 "$topdir/doclib/dot-munge.pl" "$1"
-unflatten -l3 -c3 -f -o "$1".unflat "$1"
+unflatten -l2 -c2 -f -o "$1".unflat "$1"
 mv "$1".unflat "$1"
 
 case "$2" in

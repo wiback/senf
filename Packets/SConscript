@@ -56,6 +56,7 @@ SENFSCons.Doxygen(env, extra_sources = [
     env.PkgDraw("MPEGDVBBundle/MPESection.hh"),
     env.PkgDraw("MPEGDVBBundle/SNDUPacket.hh"),
     env.PkgDraw("MPEGDVBBundle/TransportPacket.hh"),
+    env.PkgDraw("DefaultBundle/MPLSPacket.hh"),
 ])
 SENFSCons.InstallIncludeFiles(env, includes)
 

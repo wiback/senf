@@ -39,6 +39,8 @@ namespace senf {
 
         Parser implementing an MPLS header.
 
+        \image html MPLSPacket.png
+
         \see MPLSPacketType
      */
     struct MPLSPacketParser : public PacketParserBase
