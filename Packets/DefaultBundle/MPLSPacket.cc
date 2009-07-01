@@ -63,6 +63,10 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MPLSPacketType::nextPacketT
 
 prefix_ void senf::MPLSPacketType::finalize(packet p)
 {
+    if (p.prev(senf::nothrow).is<MPLSPacket>()) //not the last label on the MPLS stack
+        p->s_() << false;
+    else
+        p->s_() << true;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "MPLSPacket.hh"
+#include "EthernetPacket.hh"
 
 
 #include "../../Utils/auto_unit_test.hh"
@@ -72,13 +73,26 @@ BOOST_AUTO_UNIT_TEST(mplsPacket_parse_chain)
 
 BOOST_AUTO_UNIT_TEST(mplsPacket_create)
 {
-    senf::MPLSPacket p (senf::MPLSPacket::create());
+    senf::EthernetPacket eth (senf::EthernetPacket::create());
+    eth->source() = senf::MACAddress::from_string("01:02:03:04:05:06");
+    eth->destination() = senf::MACAddress::from_string("07:08:09:0a:0b:0c");
+
+    senf::MPLSPacket p (senf::MPLSPacket::createAfter(eth));
     p->label()=4444u;
     p->ttl()=10u;
-    p->s()=true;
     p->tc()=0x0u;
 
-    SENF_CHECK_NO_THROW(p.finalizeThis());
+    senf::MPLSPacket p2 (senf::MPLSPacket::createAfter(p));
+    p->label()=5555u;
+    p->ttl()=10u;
+    p->tc()=0x0u;
+
+    SENF_CHECK_NO_THROW(eth.finalizeAll());
+
+    BOOST_REQUIRE( eth.next().is<senf::MPLSPacket>() );
+    BOOST_REQUIRE( p.next().is<senf::MPLSPacket>() );
+    BOOST_CHECK( p->s());
+    BOOST_CHECK( !p2->s());
 
 }
 

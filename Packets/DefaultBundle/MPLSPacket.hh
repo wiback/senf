@@ -49,10 +49,12 @@ namespace senf {
 
         SENF_PARSER_BITFIELD( label, 20, unsigned);
         SENF_PARSER_BITFIELD( tc, 3, unsigned);
-        SENF_PARSER_BITFIELD( s, 1, bool);
+        SENF_PARSER_BITFIELD_RO( s, 1, bool);
         SENF_PARSER_FIELD( ttl, UInt8Parser);
 
         SENF_PARSER_FINALIZE(MPLSPacketParser);
+
+        friend class MPLSPacketType;
     };
 
     /** \brief MPLS packet
@@ -62,7 +64,7 @@ namespace senf {
 
         \par Fields:
             \ref MPLSPacketParser
-          
+
 
         \ingroup protocolbundle_default
      */
@@ -82,7 +84,7 @@ namespace senf {
 
         static factory_t nextPacketType(packet p);
         /// Dump given MPLSPacket in readable form to given output stream
-        static void dump(packet p, std::ostream & os); 
+        static void dump(packet p, std::ostream & os);
         static void finalize(packet p);
     };
 
@@ -100,7 +102,7 @@ namespace senf {
 //#include "MPLSPacket.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
