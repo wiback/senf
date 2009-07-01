@@ -120,19 +120,12 @@ prefix_ void senf::ppi::connector::PassiveConnector::v_unthrottleEvent()
 
 prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
 {
-    if (throttled() && !nativeThrottled_) {
-        Routes::const_iterator i (routes_.begin());
-        Routes::const_iterator const i_end (routes_.end());
-        for (; i != i_end; ++i)
-            if ((*i)->throttled())
-                break;
-        if (i == i_end) {
-            remoteThrottled_ = false;
-            emitUnthrottle();
-        }
-    } 
-    else
+    if (std::find_if(routes_.begin(), routes_.end(), 
+                     boost::bind(&ForwardingRoute::throttled, _1)) == routes_.end()) {
         remoteThrottled_ = false;
+        if (!nativeThrottled_)
+            emitUnthrottle();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
