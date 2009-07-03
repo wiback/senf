@@ -33,7 +33,18 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::AnnotationIndexerBase
+
 unsigned senf::detail::AnnotationIndexerBase::maxAnnotations (0);
+
+prefix_ void senf::detail::AnnotationIndexerBase::dump(PacketImpl * p, std::ostream & os)
+{
+    for(std::vector<AnnotationIndexerBase*>::const_iterator 
+            i (registry().begin()), i_end (registry().end());
+        i != i_end; ++i)
+        (*i)->v_dump(p,os);
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::PacketImpl

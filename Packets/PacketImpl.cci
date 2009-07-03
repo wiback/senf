@@ -33,10 +33,20 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::AnnotationIndexerBase
 
+prefix_ senf::detail::AnnotationIndexerBase::~AnnotationIndexerBase()
+{}
+
 prefix_ std::vector<bool> & senf::detail::AnnotationIndexerBase::small()
 {
     static std::vector<bool> smalls;
     return smalls;
+}
+
+prefix_ std::vector<senf::detail::AnnotationIndexerBase*> &
+senf::detail::AnnotationIndexerBase::registry()
+{
+    static std::vector<AnnotationIndexerBase*> reg;
+    return reg;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -184,6 +194,11 @@ prefix_ senf::detail::PacketImpl::size_type senf::detail::PacketImpl::capacity()
     const
 {
     return data_.capacity();
+}
+
+prefix_ void senf::detail::PacketImpl::dumpAnnotations(std::ostream & os)
+{
+    AnnotationIndexerBase::dump(this, os);
 }
 
 // This function has a problem being inlined. Somehow, often when calling this, the size of the 

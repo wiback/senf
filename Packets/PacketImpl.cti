@@ -38,6 +38,21 @@ prefix_ senf::detail::AnnotationIndexer<Annotation>::AnnotationIndexer()
     : index_ (maxAnnotations++)
 {
     small().push_back(Small);
+    registry().push_back(this);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::AnnotationIndexer<Annotation>
+
+
+template <class Annotation>
+prefix_ void senf::detail::AnnotationIndexer<Annotation>::v_dump(PacketImpl * p,
+                                                                 std::ostream & os)
+{
+
+    os << "  " << senf::prettyName(typeid(Annotation)) << ": ";
+    p->dumpAnnotation<Annotation>(os);
+    os << "\n";
 }
 
 template <class Annotation>
@@ -57,10 +72,25 @@ prefix_ Annotation & senf::detail::GetAnnotation<Annotation,Small>::get(Annotati
     return static_cast< TAnnotationP<Annotation>* >(e.p)->annotation;
 }
 
+template <class Annotation, bool Small>
+prefix_ void senf::detail::GetAnnotation<Annotation,Small>::dump(AnnotationEntry & e,
+                                                                 std::ostream & os)
+{
+    if (!e.p) os << "no value";
+    else      os << get(e);
+}
+
 template <class Annotation>
 prefix_ Annotation & senf::detail::GetAnnotation<Annotation, true>::get(AnnotationEntry & e)
 {
     return * static_cast<Annotation*>(static_cast<void*>(& e.i));
+}
+
+template <class Annotation>
+prefix_ void senf::detail::GetAnnotation<Annotation, true>::dump(AnnotationEntry & e,
+                                                                 std::ostream & os)
+{
+    os << get(e);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -89,6 +119,13 @@ prefix_ Annotation & senf::detail::PacketImpl::annotation()
 {
     return GetAnnotation<Annotation>::get(
         annotations_[AnnotationIndexer<Annotation>::index()]);
+}
+
+template <class Annotation>
+prefix_ void senf::detail::PacketImpl::dumpAnnotation(std::ostream & os)
+{
+    GetAnnotation<Annotation>::dump(
+        annotations_[AnnotationIndexer<Annotation>::index()], os);
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////

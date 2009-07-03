@@ -82,8 +82,13 @@ namespace detail {
 
     struct AnnotationIndexerBase
     {
+        virtual ~AnnotationIndexerBase();
+        virtual void v_dump(PacketImpl * p, std::ostream & os) = 0;
+
         static unsigned maxAnnotations;
         static std::vector<bool> & small();
+        static std::vector<AnnotationIndexerBase*> & registry();
+        static void dump(PacketImpl * p, std::ostream & os);
     };
 
     template <class Annotation>
@@ -92,6 +97,7 @@ namespace detail {
           public AnnotationIndexerBase
     {
         AnnotationIndexer();
+        virtual void v_dump(PacketImpl * p, std::ostream & os);
         unsigned index_;
         static unsigned index();
         static bool const Complex = boost::is_base_of<ComplexAnnotation, Annotation>::value;
@@ -112,12 +118,14 @@ namespace detail {
     struct GetAnnotation
     {
         static Annotation & get(AnnotationEntry & e);
+        static void dump(AnnotationEntry & e, std::ostream & os);
     };
 
     template <class Annotation>
     struct GetAnnotation<Annotation, true>
     {
         static Annotation & get(AnnotationEntry & e);
+        static void dump(AnnotationEntry & e, std::ostream & os);
     };
 
     /** \brief Internal: Packet data storage
@@ -191,6 +199,9 @@ namespace detail {
         // Annotations
         template <class Annotation>
         Annotation & annotation();
+        void dumpAnnotations(std::ostream & os);
+        template <class Annotation>
+        void dumpAnnotation(std::ostream & os);
 
         /** \brief Internal: Keep PacketImpl instance alive
 

@@ -90,8 +90,8 @@ namespace {
         using mixin::init;
         static void dump(packet p, std::ostream & os) {
             os << "BarPacket:\n"
-               << "type: " << p->type() << "\n"
-               << "length: " << p->length() << "\n";
+               << "  type: " << p->type() << "\n"
+               << "  length: " << p->length() << "\n";
         }
         static void finalize(packet p) {
             if (p.next(senf::nothrow))
@@ -113,24 +113,40 @@ namespace {
     struct IntAnnotation {
         unsigned value;
     };
+
+    std::ostream & operator<<(std::ostream & os, IntAnnotation const & v)
+    { os << v.value; return os; }
     
     struct LargeAnnotation {
         char value[32];
     };
 
+    std::ostream & operator<<(std::ostream & os, LargeAnnotation const & v)
+    { os << v.value; return os; }
+
     struct ComplexAnnotation : senf::ComplexAnnotation
     {
+        ComplexAnnotation() : s(), i() {}
         std::string s;
         int i;
     };
 
+    std::ostream & operator<<(std::ostream & os, ComplexAnnotation const & v)
+    { os << "('" << v.s << "' " << v.i << ')'; return os; }
+
     struct ComplexEmptyAnnotation : senf::ComplexAnnotation
     {};
+
+    std::ostream & operator<<(std::ostream & os, ComplexEmptyAnnotation const & v)
+    { os << "(empty)"; return os; }
 
     struct InvalidAnnotation
     {
         std::string value;
     };
+
+    std::ostream & operator<<(std::ostream & os, InvalidAnnotation const & v)
+    { os << v.value; return os; }
 
 }
 
@@ -180,7 +196,13 @@ BOOST_AUTO_UNIT_TEST(packet)
     
     std::stringstream s;
     packet.dump(s);
-    BOOST_CHECK_EQUAL( s.str(), "BarPacket:\ntype: 0\nlength: 0\n" );
+    BOOST_CHECK_EQUAL( s.str(), 
+                       "Annotations:\n"
+                       "  (anonymous namespace)::ComplexAnnotation: no value\n"
+                       "  (anonymous namespace)::IntAnnotation: 0\n"
+                       "BarPacket:\n"
+                       "  type: 0\n"
+                       "  length: 0\n" );
     
     packet.finalizeAll();
     BOOST_CHECK_EQUAL( packet.last().as<BarPacket>()->type(), 
