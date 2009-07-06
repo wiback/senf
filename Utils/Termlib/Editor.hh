@@ -225,9 +225,9 @@ namespace term {
 
         LineEditor(AbstractTerminal & terminal, AcceptCallback cb);
                                         ///< Create a LineEditor
-                                        /**< \parm[in] terminal abstract terminal interface
-                                             \parm[in] cb callback to call for complete input
-                                             line */
+                                        /**< \param[in] terminal abstract terminal interface
+                                             \param[in] cb callback to call for complete input
+                                                 line */
         
         ///////////////////////////////////////////////////////////////////////////
 

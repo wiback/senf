@@ -632,7 +632,7 @@ namespace console {
                                         ///< Execute the command
                                         /**< \param[in] output stream where result messages may be
                                                  written to
-                                             \param[in] arguments command arguments. This is a
+                                             \param[in] command command arguments. This is a
                                                  range of ranges of Token instances. */
 
         void execute(boost::any & rv, std::ostream & output, ParseCommandInfo const & command) 
@@ -641,7 +641,7 @@ namespace console {
                                         /**< \param[out] rv command return value
                                              \param[in] output stream where result messages may be
                                                  written to
-                                             \param[in] arguments command arguments. This is a
+                                             \param[in] command command arguments. This is a
                                                  range of ranges of Token instances. */
 
         void operator()(std::ostream & output, ParseCommandInfo const & command) const;
@@ -649,7 +649,7 @@ namespace console {
                                         /**< Same as execute()
                                              \param[in] output stream where result messages may be
                                                  written to
-                                             \param[in] arguments command arguments. This is a
+                                             \param[in] command command arguments. This is a
                                                  range of ranges of Token instances. */
         void operator()(boost::any & rv, std::ostream & output, ParseCommandInfo const & command)
             const;
@@ -667,7 +667,9 @@ namespace console {
             const = 0;
                                         ///< Called to execute the command
                                         /**< \param[out] rv return value holder
-                                             \param[in] arguments command arguments. This is a
+                                              \param[in] os stream where result messages may be
+                                                 written to
+                                             \param[in] command command arguments. This is a
                                                  range of ranges of Token instances. */
 
     private:

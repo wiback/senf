@@ -32,6 +32,7 @@
 //#include "hexdump.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
+#ifndef DOXYGEN
 
 prefix_ void senf::detail::HexDumper::operator()(unsigned char ch)
 {
@@ -65,6 +66,7 @@ prefix_ senf::detail::HexDumper::~HexDumper()
     }
 }
 
+#endif 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "hexdump.mpp"

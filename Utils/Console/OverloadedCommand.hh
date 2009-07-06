@@ -90,7 +90,7 @@ namespace console {
                                              empty before this call.
                                              \pre \a index < numArguments()
                                              \param[in] index Argument index
-                                             \param[outp doc Argument documentation */
+                                             \param[out] doc Argument documentation */
 
         std::string doc() const;        ///< Get overload documentation
         

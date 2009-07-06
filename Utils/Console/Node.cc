@@ -201,6 +201,7 @@ prefix_ std::string senf::console::DirectoryNode::v_shorthelp()
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NodeTraverser
+#ifndef DOXYGEN
 
 prefix_ void senf::console::detail::NodeTraverser::operator()(std::string const & name)
 {
@@ -245,6 +246,7 @@ prefix_ senf::console::GenericNode & senf::console::detail::NodeTraverser::node(
     else
         return * dir_;
 }
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::SimpleCommandNode

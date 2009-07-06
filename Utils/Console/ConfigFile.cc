@@ -34,6 +34,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::ConfigFileSource
+#ifndef DOXYGEN
 
 prefix_ void senf::console::detail::ConfigFileSource::v_parse(RestrictedExecutor & executor)
 {
@@ -47,6 +48,7 @@ prefix_ void senf::console::detail::ConfigFileSource::v_parse(RestrictedExecutor
             throw;
     }
 }
+#endif 
 
 ///////////////////////////////////////////////////////////////////////////
 

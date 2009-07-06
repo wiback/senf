@@ -32,12 +32,13 @@
 
 ///////////////////////////////////////////////////////////////////////////
 //senf::detail::HexDumper
+#ifndef DOXYGEN
 
 prefix_ senf::detail::HexDumper::HexDumper(std::ostream & os, unsigned block_size)
     : os_ (os), ias_ (os_), block_size_ (block_size), offset_ (0)
 {}
 
-
+#endif 
 ///////////////////////////////cci.e///////////////////////////////////////
 #undef prefix_
 

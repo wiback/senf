@@ -273,12 +273,14 @@ prefix_ senf::console::DirectoryNode::cptr senf::console::DirectoryNode::thisptr
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::NodeTraverser
+#ifndef DOXYGEN
 
 prefix_ senf::console::detail::NodeTraverser::NodeTraverser(DirectoryNode & root,
                                                             DirectoryNode & dir,
                                                             bool autocomplete)
     : root_ (root), dir_ (dir.thisptr()), autocomplete_ (autocomplete), init_ (false)
 {}
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::CommandNode

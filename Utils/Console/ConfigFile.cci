@@ -32,6 +32,7 @@
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::detail::ConfigFileSource
+#ifndef DOXYGEN
 
 prefix_ senf::console::detail::ConfigFileSource::ptr
 senf::console::detail::ConfigFileSource::create(std::string const & filename)
@@ -49,6 +50,7 @@ senf::console::detail::ConfigFileSource::ignoreMissing()
 prefix_ senf::console::detail::ConfigFileSource::ConfigFileSource(std::string const & filename)
     : filename_ (filename), ignoreMissing_ (true)
 {}
+#endif 
 
 ///////////////////////////////////////////////////////////////////////////
 // senf::console::ConfigFile
