@@ -91,6 +91,7 @@ namespace detail {
 
         void prepareRun();
 
+        // Called by IdleEventDispatcher
         void timeout(int t);
         int timeout() const;
 

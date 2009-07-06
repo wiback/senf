@@ -92,15 +92,16 @@ prefix_ void senf::scheduler::process()
 {
     SchedulerScopedInit initScheduler;
     terminate_ = false;
-    running_ = true;
     detail::TimerDispatcher::instance().reschedule();
     while(! terminate_ && ! (detail::FdDispatcher::instance().empty() &&
                              detail::TimerDispatcher::instance().empty() &&
-                             detail::FileDispatcher::instance().empty())) {
+                             detail::FileDispatcher::instance().empty() &&
+                             detail::IdleEventDispatcher::instance().empty()) ) {
         detail::FdManager::instance().processOnce();
         detail::FileDispatcher::instance().prepareRun();
         detail::EventHookDispatcher::instance().prepareRun();
         detail::TimerDispatcher::instance().prepareRun();
+        detail::IdleEventDispatcher::instance().prepareRun();
         detail::FIFORunner::instance().run();
         detail::TimerDispatcher::instance().reschedule();
     }
@@ -114,9 +115,11 @@ prefix_ void senf::scheduler::restart()
     detail::TimerDispatcher*      tdd (&detail::TimerDispatcher::instance());
     detail::SignalDispatcher*     sdd (&detail::SignalDispatcher::instance());
     detail::FileDispatcher*       fld (&detail::FileDispatcher::instance());
+    detail::IdleEventDispatcher*  ied (&detail::IdleEventDispatcher::instance());
     detail::EventHookDispatcher*  eed (&detail::EventHookDispatcher::instance());
 
     eed->~EventHookDispatcher();
+    ied->~IdleEventDispatcher();
     fld->~FileDispatcher();
     sdd->~SignalDispatcher();
     tdd->~TimerDispatcher();
@@ -130,6 +133,7 @@ prefix_ void senf::scheduler::restart()
     new (tdd) detail::TimerDispatcher();
     new (sdd) detail::SignalDispatcher();
     new (fld) detail::FileDispatcher();
+    new (ied) detail::IdleEventDispatcher();
     new (eed) detail::EventHookDispatcher();
 }
 
@@ -139,6 +143,7 @@ prefix_ bool senf::scheduler::empty()
         && detail::TimerDispatcher::instance().empty()
         && detail::FileDispatcher::instance().empty()
         && detail::SignalDispatcher::instance().empty()
+        && detail::IdleEventDispatcher::instance().empty()
         && detail::EventHookDispatcher::instance().empty();
 }
 
@@ -160,7 +165,7 @@ prefix_ void senf::scheduler::hiresTimers()
 prefix_ senf::log::time_type senf::scheduler::LogTimeSource::operator()()
     const
 {
-    return eventTime();
+    return now();
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -61,11 +61,11 @@ namespace detail {
 
         bool set(int fd, int events, Event * entry);
         void remove(int fd);
-        void timeout(int t);            ///< Set event timeout
-                                        /**< proceseOnce() will wait for max \a t milliseconds for
-                                             an event to occur. If set to -1, processOnce() will
-                                             wait forever. */
+
+        // Called by FileDispatcher
+        void timeout(int t);
         int timeout() const;
+
         void processOnce();             ///< Wait for events
                                         /**< This call waits until at least one event is posted but
                                              no longer than the current timeout(). */

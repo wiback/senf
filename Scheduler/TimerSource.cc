@@ -27,7 +27,7 @@
 //#include "TimerSource.ih"
 
 // Custom includes
-#include "FdEvent.hh"
+#include "IdleEvent.hh"
 #ifdef HAVE_TIMERFD
 #include <sys/timerfd.h>
 #endif
@@ -157,12 +157,12 @@ prefix_ void senf::scheduler::detail::PollTimerSource::timeout(ClockService::clo
 {
     ClockService::clock_type now (ClockService::now());
     int delay (ClockService::in_milliseconds(timeout-now)+1);
-    FileDispatcher::instance().timeout(delay<0?0:delay);
+    IdleEventDispatcher::instance().timeout(delay<0?0:delay);
 }
 
 prefix_ void senf::scheduler::detail::PollTimerSource::notimeout()
 {
-    FileDispatcher::instance().timeout(-1);
+    IdleEventDispatcher::instance().timeout(-1);
 }
 
 prefix_ void senf::scheduler::detail::PollTimerSource::enable()

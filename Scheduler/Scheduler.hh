@@ -33,6 +33,7 @@
 #include "FdEvent.hh"
 #include "TimerEvent.hh"
 #include "SignalEvent.hh"
+#include "IdleEvent.hh"
 #include "EventHook.hh"
 
 //#include "scheduler.mpp"
