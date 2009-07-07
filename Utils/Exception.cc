@@ -47,7 +47,9 @@ prefix_ void senf::ExceptionMixin::addBacktrace()
     std::stringstream ss;
     ss << "\nException at\n";
     formatBacktrace(ss, entries, nEntries);
-    ss << "-- \n" << message_;
+    ss << "-- \n";
+    excLen_ = ss.str().size();
+    ss << what_;
     what_ = ss.str();
 }
 #endif

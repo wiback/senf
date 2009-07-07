@@ -140,7 +140,8 @@ namespace senf {
     class ExceptionMixin
     {
     public:
-        std::string const & message() const; ///< get exception description
+        std::string message() const; ///< get exception description
+        std::string backtrace() const; ///< Return backtrace (if available)
 
         void append(std::string text);  ///< Extend exception description
                                         /**< Adds \a text to the description text. */
@@ -152,12 +153,13 @@ namespace senf {
                                              string. This should probably be a string constant
                                              describing the exception for most derived
                                              exceptions. */
+
         std::string what_;
     private:
 #ifdef SENF_DEBUG
         void addBacktrace();
+        std::string::size_type excLen_;
 #endif
-        std::string message_;
     };
 
     /** \brief Extensible exception base-class

@@ -45,7 +45,7 @@ prefix_ senf::console::UDPServer::UDPServer(senf::INet4SocketAddress const & add
 {
     if (address.address().multicast())
         handle_.facet<senf::INet4MulticastSocketProtocol>().mcAddMembership(address.address());
-    SENF_LOG(("UDP Console server started at " << address));
+    SENF_LOG(("UDP Console server started at " << address ));
 }
 
 prefix_ senf::console::UDPServer::UDPServer(senf::INet6SocketAddress const & address)
@@ -58,7 +58,7 @@ prefix_ senf::console::UDPServer::UDPServer(senf::INet6SocketAddress const & add
 {
     if (address.address().multicast())
         handle_.facet<senf::INet6MulticastSocketProtocol>().mcAddMembership(address.address());
-    SENF_LOG(("UDP Console server started at " << address));
+    SENF_LOG(("UDP Console server started at " << address ));
 }
 
 prefix_ senf::console::UDPServer & senf::console::UDPServer::replies(bool enable)
@@ -123,12 +123,14 @@ prefix_ void senf::console::UDPServer::handleInput(int events)
     catch (Executor::ExitException &) {
         // Ignored
     }
+    catch (ExceptionMixin & ex) {
+        stream << ex.message() << '\n';
+        SENF_LOG((senf::log::IMPORTANT)("Error: " << ex.message()));
+        SENF_LOG((senf::log::NOTICE)(ex.backtrace()));
+    }
     catch (std::exception & ex) {
-        std::string msg (ex.what());
-        std::string::size_type i (msg.find("-- \n"));
-        if (i != std::string::npos)
-            msg = msg.substr(i+4);
-        stream << msg << std::endl;
+        stream << ex.what() << '\n';
+        SENF_LOG((senf::log::IMPORTANT)("Error: " << ex.what()));
     }
     if (replies_ && (emptyReplies_ || ! stream.str().empty())) {
         if (target_)

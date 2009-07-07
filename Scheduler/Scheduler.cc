@@ -165,7 +165,7 @@ prefix_ void senf::scheduler::hiresTimers()
 prefix_ senf::log::time_type senf::scheduler::LogTimeSource::operator()()
     const
 {
-    return now();
+    return senf::scheduler::now();
 }
 
 ///////////////////////////////////////////////////////////////////////////

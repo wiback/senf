@@ -40,16 +40,17 @@ namespace detail {
         : public senf::singleton<TimeSourceManager>
     {
     public:
-        TimeSourceManager();
-
         using senf::singleton<TimeSourceManager>::instance;
 
         time_type now();
         void timeSource(std::auto_ptr<TimeSource> source);
         
     private:
+        TimeSourceManager();
         
         boost::scoped_ptr<TimeSource> timeSource_;
+
+        friend class senf::singleton<TimeSourceManager>;
     };
 
 }}}

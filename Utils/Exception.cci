@@ -31,23 +31,35 @@
 // senf::ExceptionMixin
 
 prefix_ senf::ExceptionMixin::ExceptionMixin(std::string const & description)
-    : what_(description),
-      message_(description)
+    : what_(description)
 {
 #ifdef SENF_DEBUG
     addBacktrace();
 #endif
 }
 
-prefix_ std::string const & senf::ExceptionMixin::message()
+prefix_ std::string senf::ExceptionMixin::message()
     const
 {
+#ifdef SENF_DEBUG
+    return what_.substr(excLen_);
+#else
     return message_;
+#endif
+}
+
+prefix_ std::string senf::ExceptionMixin::backtrace()
+    const
+{
+#ifdef SENF_DEBUG
+    return what_.substr(0,excLen_-4);
+#else
+    return "";
+#endif
 }
 
 prefix_ void senf::ExceptionMixin::append(std::string text)
 {
-    message_ += text;
     what_ += text;
 }
 

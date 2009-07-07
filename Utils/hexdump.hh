@@ -34,10 +34,13 @@
 
 namespace senf {
 
-    /** \brief Write range [ i, i_end ) to output stream in hexadecimal format
-     */
+    /** \brief Write range [ i, i_end ) to output stream in hexadecimal format */
     template <class Iterator>
     void hexdump(Iterator i, Iterator i_end, std::ostream & stream, unsigned block_size=16);
+
+    /** \brief Return quoted iterator range */
+    template <class Iterator>
+    std::string hexdumpQuote(Iterator i, Iterator i_end);
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

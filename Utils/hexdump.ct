@@ -40,6 +40,15 @@ prefix_ void senf::hexdump(Iterator i, Iterator i_end, std::ostream & stream,
         dumper(*i);
 }
 
+template <class Iterator>
+prefix_ std::string senf::hexdumpQuote(Iterator i, Iterator i_end)
+{
+    std::string s;
+    for (; i != i_end; ++i)
+        s.push_back(*i >= ' ' && *i <= 126 ? *i : '.');
+    return s;
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 //#include "hexdump.mpp"
