@@ -50,7 +50,6 @@ prefix_ void senf::MIHFId_TLVParser::setString(std::string const &id)
     std::copy( id.begin(), id.end(), si);
 }
 
-
 prefix_ senf::MACAddress senf::MIHFId_TLVParser::asMACAddress()
     const
 {
@@ -91,46 +90,44 @@ prefix_ void senf::MIHFId_TLVParser::setINet6Address(senf::INet6Address const &a
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
-
 prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "MIH Packet:\n"
        << "  protocol header:\n"
-       << "    Version:         "  << unsigned( p->version()) << "\n"
-       << "    Ack-Request:     "  << p->ackRequest() << "\n"
-       << "    Ack-Response:    "  << p->ackResponse() << "\n"
-       << "    UIR:             "  << p->uir() << "\n"
-       << "    more fragment:   "  << p->moreFragment() << "\n"
-       << "    fragment number: "  << p->fragmentNr() << "\n"
+       << "    Version:          " << unsigned( p->version()) << "\n"
+       << "    Ack-Request:      " << p->ackRequest() << "\n"
+       << "    Ack-Response:     " << p->ackResponse() << "\n"
+       << "    UIR:              " << p->uir() << "\n"
+       << "    more fragment:    " << p->moreFragment() << "\n"
+       << "    fragment number:  " << p->fragmentNr() << "\n"
        << "    message ID (MID): " << unsigned( p->messageId()) << "\n"
-       << "      SID:           "  << unsigned( p->sid()) << "\n"        
-       << "      Opcode:        "  << unsigned( p->opcode()) << "\n"
-       << "      AID:           "  << unsigned( p->aid()) << "\n"      
-       << "    Transaction ID:  "  << unsigned( p->transactionId()) << "\n"
-       << "    payload length:  "  << unsigned( p->payloadLength()) << "\n"
+       << "      SID:            " << unsigned( p->sid()) << "\n"        
+       << "      Opcode:         " << unsigned( p->opcode()) << "\n"
+       << "      AID:            " << unsigned( p->aid()) << "\n"      
+       << "    Transaction ID:   " << unsigned( p->transactionId()) << "\n"
+       << "    payload length:   " << unsigned( p->payloadLength()) << "\n"
        << "  source MIHF_Id TLV:\n"
-       << "    type:            "  << unsigned (p->src_mihfId().type()) << "\n"
-       << "    length:          "  << unsigned (p->src_mihfId().length()) << "\n"
+       << "    type:             " << unsigned (p->src_mihfId().type()) << "\n"
+       << "    length:           " << unsigned (p->src_mihfId().length()) << "\n"
        << "    value:\n";
     std::string src_mihfId (p->src_mihfId().asString());
     hexdump(src_mihfId.begin(), src_mihfId.end(), os);
     os << "  destination MIHF_Id TLV:\n"
-       << "    type:            "  << unsigned (p->dst_mihfId().type()) << "\n"
-       << "    length:          "  << unsigned (p->dst_mihfId().length()) << "\n"
+       << "    type:             " << unsigned (p->dst_mihfId().type()) << "\n"
+       << "    length:           " << unsigned (p->dst_mihfId().length()) << "\n"
        << "    value:\n";
     std::string dst_mihfId (p->dst_mihfId().asString());
     hexdump(dst_mihfId.begin(), dst_mihfId.end(), os);
 }
-
 
 prefix_ void senf::MIHPacketType::finalize(packet p)
 {
     p->src_mihfId().shrinkLength();
     p->dst_mihfId().shrinkLength();
     p->payloadLength_() << p.size() - 8;
+    p->messageId() << key(p.next(nothrow));
 }
-
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::MIHPacketType::nextPacketType(packet p)
 {
@@ -140,14 +137,12 @@ prefix_ senf::PacketInterpreterBase::factory_t senf::MIHPacketType::nextPacketTy
     return e ? e->factory() : MIHPayloadPacket::factory();
 }
 
-
 prefix_ void senf::MIHPayloadPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "MIH Payload (service specific TLVs):\n"
        << "  ToDo!\n";
 }
-
 
 #undef prefix_
 
