@@ -40,7 +40,18 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-
+    
+    struct MIHMessageRegistry {
+        // MIH messages registry
+        typedef boost::uint16_t key_t;
+    };
+    
+#   define SENF_MIH_PACKET_REGISTRY_REGISTER( sid, opcode, aid, type )                             \
+        SENF_PACKET_REGISTRY_REGISTER(                                                             \
+            senf::MIHMessageRegistry,                                                              \
+            boost::uint16_t((boost::uint16_t(sid) << 12) | (boost::uint16_t(opcode) << 10) | aid), \
+            type )
+    
     /** \brief Parse a MIHF_ID
 
          the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
@@ -97,12 +108,7 @@ namespace senf {
             return boost::make_filter_iterator<binaryNAIDecoder>(begin, end);
         }
     };
-    
-    struct MIHMessageRegistry {
-        // MIH messages registry
-        typedef boost::uint16_t key_t;
-    };
-
+ 
     /** \brief Parse a MIH packet
 
         Parser implementing the MIH header. The fields implemented are:
@@ -178,6 +184,8 @@ namespace senf {
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
+        
+        enum ResponseStatus { Success, UnspecifiedFailure, Rejected, AuthorizationFailure, NetworkError };
     };
 
     /** \brief MIH packet typedef */
