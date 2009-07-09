@@ -80,12 +80,16 @@ namespace console {
         ///////////////////////////////////////////////////////////////////////////
 
         UDPServer & replies(bool enable); ///< Enable or disable reply packets
+                                        /** \e Default: enabled */
         UDPServer & replies(senf::INet4SocketAddress const & address);
                                         ///< Send replies to \a address
+                                        /**< \e Default: no address set (send replies to sender) */
         UDPServer & replies(senf::INet6SocketAddress const & address);
                                         ///< Send replies to \a address
+                                        /**< \e Default: no address set (send replies to sender) */
 
         UDPServer & emptyReplies(bool enable); ///< Enable or disable empty reply packets
+                                        /**< \e Default: enabled */
 
         DirectoryNode & root() const;   ///< Get root node
 

@@ -564,7 +564,7 @@
 
     Commands may then be sent to this UDP console e.g. using netcat
     <pre>
-    $ echo "cd sys; ls" | nc6 -u --half-close localhost 23232 2>/dev/null
+    $ echo "cd sys; ls" | nc -uq0 localhost 23232 2>/dev/null
     </pre>
 
     \see senf::console::UDPServer
