@@ -46,7 +46,7 @@ prefix_ void senf::MIHFId_TLVParser::setString(std::string const &id)
     // the maximum length of a MIHF_ID is 253 octets (see F.3.11 in 802.21)
     if (str_size > 253) 
         throw std::length_error("maximum length of a MIHF_ID is 253 octets");
-    safe_data_iterator si = resizeValue( str_size);   
+    safe_data_iterator si = resizeValueField( str_size);   
     std::copy( id.begin(), id.end(), si);
 }
 
@@ -59,7 +59,7 @@ prefix_ senf::MACAddress senf::MIHFId_TLVParser::asMACAddress()
 
 prefix_ void senf::MIHFId_TLVParser::setMACAddress(senf::MACAddress const &mac)
 {
-    safe_data_iterator si = resizeValue(12);
+    safe_data_iterator si = resizeValueField(12);
     std::copy( mac.begin(), mac.end(), getNAIEncodedOutputIterator(si));
 }
 
@@ -73,7 +73,7 @@ prefix_ senf::INet4Address senf::MIHFId_TLVParser::asINet4Address()
 
 prefix_ void senf::MIHFId_TLVParser::setINet4Address(senf::INet4Address const &addr)
 {
-    safe_data_iterator si = resizeValue(8);
+    safe_data_iterator si = resizeValueField(8);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
@@ -86,7 +86,7 @@ prefix_ senf::INet6Address senf::MIHFId_TLVParser::asINet6Address()
 
 prefix_ void senf::MIHFId_TLVParser::setINet6Address(senf::INet6Address const &addr)
 {
-    safe_data_iterator si = resizeValue(32);
+    safe_data_iterator si = resizeValueField(32);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 

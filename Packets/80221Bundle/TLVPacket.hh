@@ -62,8 +62,11 @@ namespace senf {
         void init() const;
 
 #       include SENF_PARSER()
+        SENF_PARSER_PRIVATE_FIELD ( length_field, UInt8Parser );
+        SENF_PARSER_GOTO( length_field );
         SENF_PARSER_PRIVATE_BITFIELD ( extended_length_flag, 1,  bool     );
-        SENF_PARSER_PRIVATE_BITFIELD ( fixed_length_field,   7,  unsigned );
+        SENF_PARSER_PRIVATE_BITFIELD ( underflow_flag,       1,  bool     );
+        SENF_PARSER_PRIVATE_BITFIELD ( fixed_length_field,   6,  unsigned );
 
         void shrink();
         void maxValue(DynamicTLVLengthParser::value_type v);
@@ -138,7 +141,7 @@ namespace senf {
         /// set length field to given value
         void length(DynamicTLVLengthParser::value_type &v) { length_() = v; };
         /// resize the Packet after the length field to given size
-        senf::safe_data_iterator resizeValue(DynamicTLVLengthParser::value_type size);
+        senf::safe_data_iterator resizeValueField(DynamicTLVLengthParser::value_type size);
     };
 
         
@@ -200,7 +203,7 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "TLVPacket.cci"
+#include "TLVPacket.cci"
 #include "TLVPacket.ct"
 //#include "TLVPacket.cti"
 #endif

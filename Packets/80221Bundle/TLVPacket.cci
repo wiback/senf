@@ -21,23 +21,22 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief TLVPacket non-inline template implementation  */
+    \brief TLVPacket inline non-template implementation */
 
 //#include "TLVPacket.ih"
 
 // Custom includes
 
-#define prefix_
-///////////////////////////////ct.p////////////////////////////////////////
+#define prefix_ inline
+///////////////////////////////cci.p////////////////////////////////////////
 
-template <class ForwardReadableRange>
-prefix_ void senf::GenericTLVPacketParser::value(ForwardReadableRange const &range)
+prefix_ senf::DynamicTLVLengthParser::size_type senf::DynamicTLVLengthParser::bytes() const 
 {
-    safe_data_iterator si = resizeValueField( boost::size(range) );   
-    std::copy( boost::begin(range), boost::end(range), si);
+    return 1 + ( length_field()<=128 ? 0 : fixed_length_field());
 }
 
-///////////////////////////////ct.e////////////////////////////////////////
+
+///////////////////////////////cci.e////////////////////////////////////////
 #undef prefix_
 
 

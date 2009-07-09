@@ -33,7 +33,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_ senf::safe_data_iterator senf::BaseTLVPacketParser::resizeValue(
+prefix_ senf::safe_data_iterator senf::BaseTLVPacketParser::resizeValueField(
         DynamicTLVLengthParser::value_type size) 
 {
     DynamicTLVLengthParser::value_type current_length ( length());
@@ -52,15 +52,15 @@ prefix_ senf::DynamicTLVLengthParser::value_type senf::DynamicTLVLengthParser::v
 {
     switch (bytes() ) {
     case 1:
-        return fixed_length_field().value();
+        return length_field().value();
     case 2:
-        return parse<UInt8Parser>( 1 ).value();
+        return parse<UInt8Parser>( 1 ).value() + (underflow_flag() ? 0 : 128u);
     case 3:
-        return parse<UInt16Parser>( 1 ).value();
+        return parse<UInt16Parser>( 1 ).value() + (underflow_flag() ? 0 : 128u);
     case 4:
-        return parse<UInt24Parser>( 1 ).value();
+        return parse<UInt24Parser>( 1 ).value() + (underflow_flag() ? 0 : 128u);
     case 5:
-        return parse<UInt32Parser>( 1 ).value();
+        return parse<UInt32Parser>( 1 ).value() + (underflow_flag() ? 0 : 128u);
     default:
         throw(TLVLengthException());
     };
@@ -71,27 +71,28 @@ prefix_ void senf::DynamicTLVLengthParser::value(value_type const & v)
 {
     switch (bytes() ) {
     case 1:
-        if (v > 127) throw( TLVLengthException());
+        if (v > 128) throw( TLVLengthException());
         fixed_length_field() = v;
         return;
     case 2:
-        if (v > UInt8Parser::max_value) throw( TLVLengthException());
-        parse<UInt8Parser>(1) = v;
-        return;
+        if (v > UInt8Parser::max_value + 128) throw( TLVLengthException());
+        parse<UInt8Parser>(1) = v - (v>128 ? 128 : 0);
+        break;
     case 3:
-        if (v > UInt16Parser::max_value) throw( TLVLengthException());
-        parse<UInt16Parser>(1) = v;
-        return;
+        if (v > UInt16Parser::max_value + 128) throw( TLVLengthException());
+        parse<UInt16Parser>(1) = v - (v>128 ? 128 : 0);
+        break;;
     case 4:
-        if (v > UInt24Parser::max_value) throw( TLVLengthException());
-        parse<UInt24Parser>(1) = v;
-        return;
+        if (v > UInt24Parser::max_value + 128) throw( TLVLengthException());
+        parse<UInt24Parser>(1) = v - (v>128 ? 128 : 0);
+        break;
     case 5:
-        parse<UInt32Parser>(1) = v;
-        return;
+        parse<UInt32Parser>(1) = v - (v>128 ? 128 : 0);
+        break;
     default:
         throw( TLVLengthException());
     };
+    underflow_flag() = v < 128;
 }
 
 
@@ -101,15 +102,6 @@ prefix_ senf::DynamicTLVLengthParser const & senf::DynamicTLVLengthParser::opera
     return *this; 
 }
 
-
-prefix_ senf::DynamicTLVLengthParser::size_type senf::DynamicTLVLengthParser::bytes() const 
-{
-    if ( extended_length_flag() )
-        return 1 + fixed_length_field();
-    else
-        return 1;
-}
-    
 
 prefix_ void senf::DynamicTLVLengthParser::init() const 
 {
@@ -122,19 +114,19 @@ prefix_ void senf::DynamicTLVLengthParser::shrink()
 {
     value_type v = value();
     size_type b = bytes();
-    if (v <= 127) {
+    if (v <= 128) {
         if (b != 1) resize(1);
         return;
     }
-    if (v <= UInt8Parser::max_value) {
+    if (v <= UInt8Parser::max_value + 128) {
         if (b != 2) resize(2);
         return;
     }
-    if (v <= UInt16Parser::max_value) {
+    if (v <= UInt16Parser::max_value + 128) {
         if (b != 3) resize(3);
         return;
     }
-    if (v <= UInt24Parser::max_value) {
+    if (v <= UInt24Parser::max_value + 128 ){
         if (b != 4) resize(4);
         return;
     }
@@ -144,18 +136,18 @@ prefix_ void senf::DynamicTLVLengthParser::shrink()
 
 prefix_ void senf::DynamicTLVLengthParser:: maxValue(DynamicTLVLengthParser::value_type v)
 {
-    if (v <= 127)
+    if (v <= 128)
         return;
     size_type b = bytes();
-    if (v <= UInt8Parser::max_value) {
+    if (v <= UInt8Parser::max_value + 128) {
         if (b < 2) resize(2);
         return;
     }
-    if (v <= UInt16Parser::max_value) {
+    if (v <= UInt16Parser::max_value + 128) {
         if (b < 3) resize(3);
         return;
     }
-    if (v <= UInt24Parser::max_value) {
+    if (v <= UInt24Parser::max_value + 128) {
         if (b < 4) resize(4);
         return;
     }

@@ -46,11 +46,9 @@ namespace senf {
         typedef boost::uint16_t key_t;
     };
     
-#   define SENF_MIH_PACKET_REGISTRY_REGISTER( sid, opcode, aid, type )                             \
+#   define SENF_MIH_PACKET_REGISTRY_REGISTER( packetType )                                         \
         SENF_PACKET_REGISTRY_REGISTER(                                                             \
-            senf::MIHMessageRegistry,                                                              \
-            boost::uint16_t((boost::uint16_t(sid) << 12) | (boost::uint16_t(opcode) << 10) | aid), \
-            type )
+            senf::MIHMessageRegistry, packetType::type::MESSAGE_ID, packetType )
     
     /** \brief Parse a MIHF_ID
 
@@ -138,7 +136,8 @@ namespace senf {
         SENF_PARSER_SKIP_BITS ( 4                           );
         SENF_PARSER_BITFIELD  ( transactionId, 12, unsigned );
         SENF_PARSER_FIELD_RO  ( payloadLength, UInt16Parser );
-
+        
+        SENF_PARSER_GOTO_OFFSET( 8, 8); // just to limit the offset calculation
         
         // Source MIHF Id
         SENF_PARSER_FIELD ( src_mihfId, MIHFId_TLVParser );
