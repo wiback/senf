@@ -3,6 +3,9 @@
 #----------------------------------------------------------------------
 CONCURRENCY_LEVEL ?= $(shell grep process /proc/cpuinfo | wc -l)
 
+ifdef nice
+  SCONS_ARGS += CXX='nice -n $(nice) g++'
+endif
 ifdef final
   SCONS_ARGS += "final="$(final)
 endif
@@ -40,10 +43,8 @@ all_docs all_tests all:
 #----------------------------------------------------------------------
 # remote compile targets
 #----------------------------------------------------------------------
-JOBS := 1
-
 all@% all_docs@% all_tests@% build@%:
-	ssh $* "cd `pwd` && $(MAKE) -j $(JOBS) $(firstword $(subst @, ,$@))"
+	ssh $* "cd `pwd` && $(MAKE) SCONS_ARGS=\"$(SCONS_ARGS)\" $(firstword $(subst @, ,$@))"
 
 	
 #----------------------------------------------------------------------
