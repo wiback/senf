@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2008 
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,33 +21,62 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief Console public header */
+    \brief Utility public header */
 
-#ifndef HH_SENF_Scheduler_Console_Console_
-#define HH_SENF_Scheduler_Console_Console_ 1
+#ifndef HH_SENF_Utils_Console_Utility_
+#define HH_SENF_Utils_Console_Utility_ 1
 
 // Custom includes
+#include "Parse.hh"
+#include "Traits.hh"
 
-//#include "Console.mpp"
+//#include "Utility.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
-#include "Server.hh"
-#include "ParsedCommand.hh"
-#include "ScopedDirectory.hh"
-#include "OverloadedCommand.hh"
-#include "Variables.hh"
-#include "Config.hh"
-#include "ConfigFile.hh"
-#include "ProgramOptions.hh"
-#include "Sysdir.hh"
-#include "STLSupport.hh"
-#include "UDPServer.hh"
-#include "Utility.hh"
+namespace senf {
+namespace console {
+
+    /** \brief Value range
+        
+        A value range may be represented in the console either by a single value (setting both \a
+        low and \a high to the same value) or as a lower and upper bound seperated by a colon
+     */
+    template <class T>
+    struct ValueRange
+    {
+        T low;
+        T high;
+    };
+
+#ifndef DOXYGEN
+
+    template <class T>
+    struct ArgumentTraits< ValueRange<T> >
+    {
+        typedef ValueRange<T> type;
+        static bool const singleToken = true;
+
+        static void parse(ParseCommandInfo::TokensRange const & tokens, type & out);
+        static std::string description();
+        static std::string str(type const & value);
+    };
+
+    template <class T>
+    struct ReturnValueTraits< ValueRange<T> >
+    {
+        typedef ValueRange<T> type;
+
+        static void format(type const & value, std::ostream & os);
+    };
+
+#endif
+
+}}
 
 ///////////////////////////////hh.e////////////////////////////////////////
-//#include "Console.cci"
-//#include "Console.ct"
-//#include "Console.cti"
+//#include "Utility.cci"
+#include "Utility.ct"
+//#include "Utility.cti"
 #endif
 
 

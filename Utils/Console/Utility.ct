@@ -1,0 +1,93 @@
+// $Id$
+//
+// Copyright (C) 2009 
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Stefan Bund <g0dil@berlios.de>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+    \brief Utility non-inline template implementation  */
+
+//#include "Utility.ih"
+
+// Custom includes
+#include <sstream>
+#include <boost/format.hpp>
+
+#define prefix_
+///////////////////////////////ct.p////////////////////////////////////////
+
+template <class T>
+prefix_ void senf::console::ArgumentTraits< senf::console::ValueRange<T> >::
+parse(ParseCommandInfo::TokensRange const & tokens, type & out)
+{
+    if (tokens.size() != 1)
+        throw senf::console::SyntaxErrorException("parameter syntax error");
+    std::string v (tokens.begin()[0].value());
+    unsigned i (v.find(':'));
+    try {
+        if (i == std::string::npos)
+            out.low = out.high = boost::lexical_cast<T>(v);
+        else {
+            out.low = boost::lexical_cast<T>(v.substr(0,i));
+            out.high = boost::lexical_cast<T>(v.substr(i+1));
+        }
+    }
+    catch (std::bad_cast & ex) {
+        throw senf::console::SyntaxErrorException("parameter syntax error");
+    }
+}
+
+template <class T>
+prefix_ std::string senf::console::ArgumentTraits< senf::console::ValueRange<T> >::
+description()
+{
+    return (boost::format("range<%s>") % ArgumentTraits<T>::description()).str();
+}
+
+template <class T>
+prefix_ std::string senf::console::ArgumentTraits< senf::console::ValueRange<T> >::
+str(type const & value)
+{
+    std::stringstream ss;
+    senf::console::format(value, ss);
+    return ss.str();
+}
+
+template <class T>
+prefix_ void senf::console::ReturnValueTraits< senf::console::ValueRange<T> >::
+format(type const & value, std::ostream & os)
+{
+    os << value.low;
+    if (value.low != value.high)
+        os << ':' << value.high;
+}
+
+///////////////////////////////ct.e////////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
