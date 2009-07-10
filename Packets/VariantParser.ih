@@ -124,9 +124,10 @@ namespace detail {
     
 #   define SENF_PARSER_VARIANT_I(access, name, chooser, types)                                    \
         SENF_PARSER_REQUIRE_VAR(variant)                                                          \
-    private:                                                                                      \
+    protected:                                                                                    \
         typedef boost::mpl::vector< BOOST_PP_SEQ_ENUM(SENF_PARSER_VARIANT_TYPES(types)) >         \
             BOOST_PP_CAT(name, _parsers);                                                         \
+    private:                                                                                      \
         typedef BOOST_PP_CAT(SENF_PARSER_COLLECTION_GETAUX(chooser), _t)::value_type              \
             BOOST_PP_CAT(name,_chooser_value_type);                                               \
         BOOST_PP_IF( SENF_PARSER_VARIANT_NEEDTRANSFORM(types),                                    \
@@ -138,7 +139,7 @@ namespace detail {
             BOOST_PP_CAT(name, _traits);                                                          \
     public:                                                                                       \
         SENF_PARSER_COLLECTION_I(                                                                 \
-            BOOST_PP_IIF( SENF_PARSER_VARIANT_NEEDACCESSORS(types), private, access),             \
+            BOOST_PP_IIF( SENF_PARSER_VARIANT_NEEDACCESSORS(types), protected, access),           \
             name, chooser, BOOST_PP_CAT(name, _traits) );                                         \
     access:                                                                                       \
         BOOST_PP_SEQ_FOR_EACH_I(SENF_PARSER_VARIANT_ACCESSOR, name, types)                        \
