@@ -49,10 +49,10 @@ BOOST_AUTO_UNIT_TEST(NetdeviceController) {
     
     BOOST_CHECK_THROW( senf::NetdeviceController("invalid_interfacename"), senf::SystemException );
     
-    int oldMTU;
+    int oldMTU (0);
     SENF_CHECK_NO_THROW( oldMTU = ctrl.mtu());
     
-    bool promisc;
+    bool promisc (false);
     SENF_CHECK_NO_THROW( promisc = ctrl.promisc());
     
     BOOST_CHECK( ctrl.isUp());
