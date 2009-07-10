@@ -304,7 +304,7 @@ namespace senf {
         \ingroup packetparsermacros
      */
 #   define SENF_PARSER_PRIVATE_VECTOR(name, size, elt_type) \
-        SENF_PARSER_VECTOR_I(private, name, size, elt_type)
+        SENF_PARSER_VECTOR_I(protected, name, size, elt_type)
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

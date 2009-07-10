@@ -252,7 +252,7 @@ namespace senf {
         \ingroup packetparsermacros
      */
 #   define SENF_PARSER_PRIVATE_VARIANT(name, chooser, types) \
-        SENF_PARSER_VARIANT_I(private, name, chooser, types)
+        SENF_PARSER_VARIANT_I(protected, name, chooser, types)
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////

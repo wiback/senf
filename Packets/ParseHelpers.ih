@@ -94,8 +94,8 @@
 # define SENF_PARSER_FIELD_fix(name, type)    SENF_PARSER_FIELD_I(name, type, fix, rw, public)
 # define SENF_PARSER_FIELD_RO_fix(name, type) SENF_PARSER_FIELD_I(name, type, fix, ro, public)
 #
-# define SENF_PARSER_P_FIELD_var(name, type)    SENF_PARSER_FIELD_I(name, type, var, rw, private)
-# define SENF_PARSER_P_FIELD_fix(name, type)    SENF_PARSER_FIELD_I(name, type, fix, rw, private)
+# define SENF_PARSER_P_FIELD_var(name, type)    SENF_PARSER_FIELD_I(name, type, var, rw, protected)
+# define SENF_PARSER_P_FIELD_fix(name, type)    SENF_PARSER_FIELD_I(name, type, fix, rw, protected)
 #
 # define SENF_PARSER_FIELD_I(name, type, ofstype, rwtype, access)                                 \
     access:                                                                                       \
@@ -250,9 +250,9 @@
       SENF_PARSER_BITFIELD_I(name, bits, type, fix, ro, public)
 #
 # define SENF_PARSER_P_BITFIELD_var(name, bits, type)                                             \
-      SENF_PARSER_BITFIELD_I(name, bits, type, var, rw, private)
+      SENF_PARSER_BITFIELD_I(name, bits, type, var, rw, protected)
 # define SENF_PARSER_P_BITFIELD_fix(name, bits, type)                                             \
-      SENF_PARSER_BITFIELD_I(name, bits, type, fix, rw, private)
+      SENF_PARSER_BITFIELD_I(name, bits, type, fix, rw, protected)
 #
 # ////////////////////////////////////////
 # // SENF_PARSER_BITFIELD_I

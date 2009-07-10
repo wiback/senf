@@ -316,7 +316,7 @@ namespace senf {
         \ingroup packetparsermacros
      */
 #   define SENF_PARSER_PRIVATE_LIST(name, size, elt_type) \
-        SENF_PARSER_LIST_I(private, name, size, elt_type)
+        SENF_PARSER_LIST_I(protected, name, size, elt_type)
 
 }
 
