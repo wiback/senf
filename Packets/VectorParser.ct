@@ -64,8 +64,8 @@ prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::iterator
 senf::VectorParser_Container<ElementParser,AuxPolicy>::shift(iterator pos, size_type n)
 {
     size_type ix (std::distance(data().begin(),pos.raw()));
-    data().insert(pos.raw(),n*ElementParser::fixed_bytes,0);
     setSize(size()+n);
+    data().insert(pos.raw(),n*ElementParser::fixed_bytes,0);
     return iterator(boost::next(data().begin(),ix),state());
 }
 

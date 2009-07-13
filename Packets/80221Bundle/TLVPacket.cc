@@ -92,7 +92,27 @@ prefix_ void senf::DynamicTLVLengthParser::value(value_type const & v)
     default:
         throw( TLVLengthException());
     };
-    underflow_flag() = v < 128;
+    underflow_flag() = (v <= 128);
+}
+
+
+prefix_ senf::DynamicTLVLengthParser::value_type senf::DynamicTLVLengthParser::maxValue()
+    const
+{
+    switch (bytes() ) {
+    case 1:
+        return 128;
+    case 2:
+        return UInt8Parser::max_value + 128;
+    case 3:
+        return UInt16Parser::max_value + 128;
+    case 4:
+        return UInt24Parser::max_value + 128;
+    case 5:
+        return UInt32Parser::max_value; 
+    default:
+        throw( TLVLengthException());
+    };
 }
 
 
@@ -110,7 +130,7 @@ prefix_ void senf::DynamicTLVLengthParser::init() const
 }
 
 
-prefix_ void senf::DynamicTLVLengthParser::shrink()
+prefix_ void senf::DynamicTLVLengthParser::finalize()
 {
     value_type v = value();
     size_type b = bytes();
@@ -199,7 +219,7 @@ prefix_ void senf::GenericTLVPacketType::dump(packet p, std::ostream & os)
 
 prefix_ void senf::GenericTLVPacketType::finalize(packet p)
 {
-    p->shrinkLength();
+    p->finalizeLength();
 }
 
 

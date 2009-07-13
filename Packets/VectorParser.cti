@@ -247,8 +247,8 @@ prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::insert(itera
 template <class ElementParser, class AuxPolicy>
 prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::erase(iterator pos, size_type n)
 {
-    data().erase(pos.raw(),boost::next(pos.raw(),n*ElementParser::fixed_bytes));
     setSize(size()-n);
+    data().erase(pos.raw(),boost::next(pos.raw(),n*ElementParser::fixed_bytes));
 }
 
 template <class ElementParser, class AuxPolicy>

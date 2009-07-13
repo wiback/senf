@@ -68,8 +68,9 @@ namespace senf {
         SENF_PARSER_PRIVATE_BITFIELD ( underflow_flag,       1,  bool     );
         SENF_PARSER_PRIVATE_BITFIELD ( fixed_length_field,   6,  unsigned );
 
-        void shrink();
-        void maxValue(DynamicTLVLengthParser::value_type v);
+        void finalize();
+        void maxValue(value_type v);
+        value_type maxValue() const;
     private:
         void resize(size_type size);
     };  
@@ -131,8 +132,8 @@ namespace senf {
             The size of the length field will be decreased to minimum necessary to hold
             the current length value.
          */
-        void shrinkLength() { 
-            length_().shrink(); 
+        void finalizeLength() { 
+            length_().finalize(); 
         };
         
     protected:

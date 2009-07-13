@@ -123,8 +123,8 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
 
 prefix_ void senf::MIHPacketType::finalize(packet p)
 {
-    p->src_mihfId().shrinkLength();
-    p->dst_mihfId().shrinkLength();
+    p->src_mihfId().finalizeLength();
+    p->dst_mihfId().finalizeLength();
     p->payloadLength_() << p.size() - 8;
     p->messageId() << key(p.next(nothrow));
 }
