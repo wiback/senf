@@ -72,7 +72,7 @@ prefix_ void senf::DynamicTLVLengthParser::value(value_type const & v)
     switch (bytes() ) {
     case 1:
         if (v > 128) throw( TLVLengthException());
-        fixed_length_field() = v;
+        length_field() = v;
         return;
     case 2:
         if (v > UInt8Parser::max_value + 128) throw( TLVLengthException());
