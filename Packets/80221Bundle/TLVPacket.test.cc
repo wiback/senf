@@ -181,7 +181,7 @@ namespace {
         using mixin::initSize;
 
         static void finalize(ConcretePacket<TestMacAddressTLVPacketType> p) {
-            p->shrinkLength();
+            p->finalizeLength();
         }
     };
     typedef ConcretePacket<TestMacAddressTLVPacketType> TestMacAddressTLVPacket;
