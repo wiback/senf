@@ -195,8 +195,6 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#ifndef SENF_PACKETS_DECL_ONLY
 //#include "EthernetPacket.cci"
 //#include "EthernetPacket.ct"
 //#include "EthernetPacket.cti"

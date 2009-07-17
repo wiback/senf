@@ -119,8 +119,6 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#ifndef SENF_PACKETS_DECL_ONLY
 //#include "UDPPacket.cci"
 //#include "UDPPacket.ct"
 //#include "UDPPacket.cti"

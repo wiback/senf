@@ -201,8 +201,6 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#ifndef SENF_PACKETS_DECL_ONLY
 //#include "IPv4Packet.cci"
 //#include "IPv4Packet.ct"
 //#include "IPv4Packet.cti"

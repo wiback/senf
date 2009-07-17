@@ -34,21 +34,74 @@
 #include "TLVPacket.hh"
 #include <boost/function_output_iterator.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+#include "boost/variant.hpp"
 
 
 //#include "MIHPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 namespace senf {
-    
+
     struct MIHMessageRegistry {
         // MIH messages registry
         typedef boost::uint16_t key_t;
     };
+
+#   define SENF_MIH_PACKET_REGISTRY_REGISTER( packet )                    \
+        SENF_PACKET_REGISTRY_REGISTER(                                    \
+            senf::MIHMessageRegistry, packet::type::MESSAGE_ID, packet )
     
-#   define SENF_MIH_PACKET_REGISTRY_REGISTER( packetType )                                         \
-        SENF_PACKET_REGISTRY_REGISTER(                                                             \
-            senf::MIHMessageRegistry, packetType::type::MESSAGE_ID, packetType )
+    class MIHFId 
+        : public boost::variant< boost::blank, senf::MACAddress, senf::INet4Address, 
+                senf::INet6Address, std::string, senf::EUI64 >,
+          public boost::less_than_comparable<MIHFId>,
+          public boost::equality_comparable<MIHFId>
+    {
+    public:
+        enum Type { Empty, MACAddress, INet4Address, INet6Address, String, EUI64 };
+      
+        MIHFId();
+        MIHFId(senf::MACAddress const & addr);
+        MIHFId(senf::INet4Address const & addr);
+        MIHFId(senf::INet6Address const & addr);
+        MIHFId(std::string const & addr);
+        MIHFId(senf::EUI64 const & addr);
+        
+        Type type() const;
+        bool operator==(MIHFId const & other) const;
+        bool operator<(MIHFId const & other) const; 
+        
+    private:
+        struct GetTypeVisitor : public boost::static_visitor<Type> {
+            Type operator()(boost::blank const &) const { return Empty; }
+            Type operator()(senf::MACAddress const &) const { return MACAddress; }
+            Type operator()(senf::INet4Address const &) const { return INet4Address; }
+            Type operator()(senf::INet6Address const &) const { return INet6Address; }
+            Type operator()(std::string const & ) const { return String; }
+            Type operator()(senf::EUI64 const &) const { return EUI64; }
+        };
+        struct EqualsVisitor : public boost::static_visitor<bool> {
+            template <typename T, typename U>
+            bool operator()(T const &, U const &) const {
+                return false;
+            }
+            template <typename T>
+            bool operator()( const T & lhs, const T & rhs ) const {
+                return lhs == rhs;
+            }
+        };
+        struct LessThanVisitor : public boost::static_visitor<bool> {
+            template <typename T, typename U>
+            bool operator()(T const &, U const &) const {
+                return false;
+            }
+            template <typename T>
+            bool operator()( const T & lhs, const T & rhs ) const {
+                return lhs < rhs;
+            }
+        };
+    };
+    
     
     /** \brief Parse a MIHF_ID
 
@@ -77,7 +130,12 @@ namespace senf {
 
         senf::INet6Address asINet6Address() const;
         void setINet6Address(senf::INet6Address const &addr);
+        
+        senf::EUI64 asEUI64() const;
+        void setEUI64(senf::EUI64 const &addr);
 
+        MIHFId valueAs(MIHFId::Type type) const;
+        
     private:
         template <class OutputIterator>
         struct binaryNAIEncoder {
@@ -223,9 +281,7 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#ifndef SENF_PACKETS_DECL_ONLY
-//#include "MIHPacket.cci"
+#include "MIHPacket.cci"
 //#include "MIHPacket.ct"
 //#include "MIHPacket.cti"
 #endif

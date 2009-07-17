@@ -36,6 +36,17 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 using namespace senf;
 
+BOOST_AUTO_UNIT_TEST(MIHPacket_MIHFId)
+{
+    MIHFId id ( MACAddress::from_string("01:02:03:04:05:06"));
+    BOOST_CHECK_EQUAL( id.type(), MIHFId::MACAddress);
+    BOOST_CHECK_EQUAL( id, MIHFId( MACAddress::from_string("01:02:03:04:05:06")));
+    BOOST_CHECK( id != MIHFId( MACAddress::from_string("01:02:03:04:05:07")));
+    BOOST_CHECK( id != MIHFId( INet4Address::from_string("128.129.130.131")));
+    BOOST_CHECK( id < MIHFId( MACAddress::from_string("01:02:03:04:05:07")));
+    BOOST_CHECK( id < MIHFId( INet4Address::from_string("128.129.130.131")));
+}
+
 BOOST_AUTO_UNIT_TEST(MIHPacket_msgId)
 {
     MIHPacket mihPacket (MIHPacket::create());

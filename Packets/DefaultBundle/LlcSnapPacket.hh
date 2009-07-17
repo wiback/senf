@@ -106,8 +106,6 @@ namespace senf {
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#ifndef SENF_PACKETS_DECL_ONLY
 //#include "LlcSnapPacket.cci"
 //#include "LlcSnapPacket.ct"
 //#include "LlcSnapPacket.cti"

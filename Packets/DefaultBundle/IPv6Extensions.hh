@@ -351,8 +351,6 @@ The Type 0 Routing header has the following format: (RFC 2460)
     
 } //namespace senf
 ///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#ifndef SENF_PACKETS_DECL_ONLY
 //#include "IPv6Extensions.cci"
 //#include "IPv6Extensions.ct"
 //#include "IPv6Extensions.cti"

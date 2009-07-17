@@ -159,8 +159,6 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#ifndef SENF_PACKETS_DECL_ONLY
 //#include "IPv6Packet.cci"
 //#include "IPv6Packet.ct"
 //#include "IPv6Packet.cti"

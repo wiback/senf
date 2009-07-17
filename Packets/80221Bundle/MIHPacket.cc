@@ -32,13 +32,12 @@
 #include <boost/io/ios_state.hpp>
 
 #define prefix_
+///////////////////////////////cc.p////////////////////////////////////////
 
 
-prefix_ std::string senf::MIHFId_TLVParser::asString()
-    const
-{
-    return std::string( i(1+length_bytes()), i(1+length_bytes()+length()) );
-}
+
+///////////////////////////////////////////////////////////////////////////
+// MIHFId_TLVParser
 
 prefix_ void senf::MIHFId_TLVParser::setString(std::string const &id)
 {
@@ -50,25 +49,10 @@ prefix_ void senf::MIHFId_TLVParser::setString(std::string const &id)
     std::copy( id.begin(), id.end(), si);
 }
 
-prefix_ senf::MACAddress senf::MIHFId_TLVParser::asMACAddress()
-    const
-{
-    return MACAddress::from_data( 
-            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+12) ));
-}
-
 prefix_ void senf::MIHFId_TLVParser::setMACAddress(senf::MACAddress const &mac)
 {
     safe_data_iterator si = resizeValueField(12);
     std::copy( mac.begin(), mac.end(), getNAIEncodedOutputIterator(si));
-}
-
-
-prefix_ senf::INet4Address senf::MIHFId_TLVParser::asINet4Address()
-    const
-{
-    return INet4Address::from_data( 
-            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+8) ));
 }
 
 prefix_ void senf::MIHFId_TLVParser::setINet4Address(senf::INet4Address const &addr)
@@ -77,18 +61,42 @@ prefix_ void senf::MIHFId_TLVParser::setINet4Address(senf::INet4Address const &a
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
 
-prefix_ senf::INet6Address senf::MIHFId_TLVParser::asINet6Address()
-    const
-{
-    return INet6Address::from_data( 
-            getNAIDecodedIterator( i(1+length_bytes()), i(1+length_bytes()+32) ));
-}
-
 prefix_ void senf::MIHFId_TLVParser::setINet6Address(senf::INet6Address const &addr)
 {
     safe_data_iterator si = resizeValueField(32);
     std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
 }
+
+prefix_ void senf::MIHFId_TLVParser::setEUI64(senf::EUI64 const &addr)
+{
+    safe_data_iterator si = resizeValueField(16);
+    std::copy( addr.begin(), addr.end(), getNAIEncodedOutputIterator(si));
+}
+
+prefix_ senf::MIHFId senf::MIHFId_TLVParser::valueAs(MIHFId::Type type)
+    const
+{
+    if (length() == 0) return MIHFId();
+    switch (type) {
+    case MIHFId::Empty:
+        return MIHFId();
+    case MIHFId::MACAddress:
+        return MIHFId( asMACAddress());
+    case MIHFId::INet4Address:
+        return MIHFId( asINet4Address());
+    case MIHFId::INet6Address:
+        return MIHFId( asINet6Address());
+    case MIHFId::String:
+        return MIHFId( asINet6Address());
+    case MIHFId::EUI64:
+        return MIHFId( asINet6Address());
+    }
+    return MIHFId();
+}
+
+
+///////////////////////////////////////////////////////////////////////////
+// MIHPacketType
 
 prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
 {
@@ -144,6 +152,7 @@ prefix_ void senf::MIHPayloadPacketType::dump(packet p, std::ostream &os)
        << "  ToDo!\n";
 }
 
+///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 
 
