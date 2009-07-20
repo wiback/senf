@@ -56,6 +56,31 @@ senf::ppi::connector::ActiveInputJack<PacketType>::ActiveInputJack(ActiveInputJa
 {}
 
 template <class PacketType>
+prefix_ void
+senf::ppi::connector::ActiveInputJack<PacketType>::reset(ActiveInput<PacketType> & input)
+{
+    GenericActiveInputJack::reset(input);
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::connector::ActiveInputJack<PacketType>::reset(ActiveInput<> & input)
+{
+    GenericActiveInputJack::reset(input);
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::connector::ActiveInputJack<PacketType>::reset(ActiveInputJack & input)
+{
+    GenericActiveInputJack::reset(input);
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::connector::ActiveInputJack<PacketType>::reset(ActiveInputJack<> & input)
+{
+    GenericActiveInputJack::reset(input);
+}
+
+template <class PacketType>
 prefix_ senf::ppi::connector::ActiveOutputJack<PacketType>::
 ActiveOutputJack(ActiveOutput<PacketType> & output)
     : GenericActiveOutputJack (output)
@@ -78,6 +103,33 @@ prefix_ senf::ppi::connector::ActiveOutputJack<PacketType>::
 ActiveOutputJack(ActiveOutputJack<> & output)
     : GenericActiveOutputJack (output.connector())
 {}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::ActiveOutputJack<PacketType>::reset(ActiveOutput<PacketType> & output)
+{
+    GenericActiveOutputJack::reset(output);
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::connector::ActiveOutputJack<PacketType>::reset(ActiveOutput<> & output)
+{
+    GenericActiveOutputJack::reset(output);
+}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::ActiveOutputJack<PacketType>::reset(ActiveOutputJack & output)
+{
+    GenericActiveOutputJack::reset(output);
+}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::ActiveOutputJack<PacketType>::reset(ActiveOutputJack<> & output)
+{
+    GenericActiveOutputJack::reset(output);
+}
 
 template <class PacketType>
 prefix_ senf::ppi::connector::PassiveInputJack<PacketType>::
@@ -104,6 +156,32 @@ PassiveInputJack(PassiveInputJack<> & input)
 {}
 
 template <class PacketType>
+prefix_ void
+senf::ppi::connector::PassiveInputJack<PacketType>::reset(PassiveInput<PacketType> & input)
+{
+    GenericPassiveInputJack::reset(input);
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::connector::PassiveInputJack<PacketType>::reset(PassiveInput<> & input)
+{
+    GenericPassiveInputJack::reset(input);
+}
+
+template <class PacketType>
+prefix_ void senf::ppi::connector::PassiveInputJack<PacketType>::reset(PassiveInputJack & input)
+{
+    GenericPassiveInputJack::reset(input);
+}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::PassiveInputJack<PacketType>::reset(PassiveInputJack<> & input)
+{
+    GenericPassiveInputJack::reset(input);
+}
+
+template <class PacketType>
 prefix_ senf::ppi::connector::PassiveOutputJack<PacketType>::
 PassiveOutputJack(PassiveOutput<PacketType> & output)
     : GenericPassiveOutputJack (output)
@@ -126,6 +204,34 @@ prefix_ senf::ppi::connector::PassiveOutputJack<PacketType>::
 PassiveOutputJack(PassiveOutputJack<> & output)
     : GenericPassiveOutputJack (output.connector())
 {}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::PassiveOutputJack<PacketType>::reset(PassiveOutput<PacketType> & output)
+{
+    GenericPassiveOutputJack::reset(output);
+}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::PassiveOutputJack<PacketType>::reset(PassiveOutput<> & output)
+{
+    GenericPassiveOutputJack::reset(output);
+}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::PassiveOutputJack<PacketType>::reset(PassiveOutputJack & output)
+{
+    GenericPassiveOutputJack::reset(output);
+}
+
+template <class PacketType>
+prefix_ void
+senf::ppi::connector::PassiveOutputJack<PacketType>::reset(PassiveOutputJack<> & output)
+{
+    GenericPassiveOutputJack::reset(output);
+}
 
 template <class T>
 prefix_ void

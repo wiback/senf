@@ -45,12 +45,14 @@ namespace {
         senf::ppi::connector::ActiveInput<> input;
         senf::ppi::connector::PassiveOutput<> output;
 
-        ActiveDummyForward()
+        ActiveDummyForward() : n (0)
             { route(input, output); output.onRequest(&ActiveDummyForward::request); }
+
+        unsigned n;
 
     private:
         void request()
-            { output(input()); }
+            { ++n; output(input()); }
     };
 
     class PassiveDummyForward 
@@ -61,38 +63,50 @@ namespace {
         senf::ppi::connector::PassiveInput<> input;
         senf::ppi::connector::ActiveOutput<> output;
 
-        PassiveDummyForward()
+        PassiveDummyForward() : n (0)
             { route(input, output); input.onRequest(&PassiveDummyForward::request); }
+
+        unsigned n;
 
     private:
         void request()
-            { output(input()); }
+            { ++n; output(input()); }
     };
 
-    class ActiveGroup
+    struct ActiveGroup
     {
-    public:
         senf::ppi::connector::ActiveInputJack<> input;
         senf::ppi::connector::PassiveOutputJack<> output;
 
         ActiveGroup()
-            : input (forward.input), output (forward.output) {}
+            : input (forward1.input), output (forward1.output) {}
 
-    private:
-        ActiveDummyForward forward;
+        void flip()
+        {
+            input.reset(forward2.input);
+            output.reset(forward2.output);
+        }
+
+        ActiveDummyForward forward1;
+        ActiveDummyForward forward2;
     };
 
-    class PassiveGroup
+    struct PassiveGroup
     {
-    public:
         senf::ppi::connector::PassiveInputJack<> input;
         senf::ppi::connector::ActiveOutputJack<> output;
 
         PassiveGroup()
-            : input (forward.input), output (forward.output) {}
+            : input (forward1.input), output (forward1.output) {}
         
-    private:
-        PassiveDummyForward forward;
+        void flip()
+        {
+            input.reset(forward2.input);
+            output.reset(forward2.output);
+        }
+
+        PassiveDummyForward forward1;
+        PassiveDummyForward forward2;
     };
 
 }
@@ -109,10 +123,25 @@ BOOST_AUTO_UNIT_TEST(jacks)
         
         senf::ppi::init();
         
-        senf::Packet p (senf::DataPacket::create());
-        source.submit(p);
+        {
+            senf::Packet p (senf::DataPacket::create());
+            source.submit(p);
+
+            BOOST_CHECK(p == sink.request());
+        }
+
+        group.flip();
+        senf::ppi::init();
         
-        BOOST_CHECK(p == sink.request());
+        {
+            senf::Packet p (senf::DataPacket::create());
+            source.submit(p);
+
+            BOOST_CHECK(p == sink.request());
+        }
+
+        BOOST_CHECK_EQUAL( group.forward1.n, 1u );
+        BOOST_CHECK_EQUAL( group.forward2.n, 1u );
     }
      
     {
@@ -125,10 +154,25 @@ BOOST_AUTO_UNIT_TEST(jacks)
 
         senf::ppi::init();
 
-        senf::Packet p (senf::DataPacket::create());
-        source.submit(p);
+        {
+            senf::Packet p (senf::DataPacket::create());
+            source.submit(p);
 
-        BOOST_CHECK(p == sink.front());
+            BOOST_CHECK(p == sink.pop_front());
+        }
+
+        group.flip();
+        senf::ppi::init();
+
+        {
+            senf::Packet p (senf::DataPacket::create());
+            source.submit(p);
+
+            BOOST_CHECK(p == sink.pop_front());
+        }
+
+        BOOST_CHECK_EQUAL( group.forward1.n, 1u );
+        BOOST_CHECK_EQUAL( group.forward2.n, 1u );
     }
 }
 

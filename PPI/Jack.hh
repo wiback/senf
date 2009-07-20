@@ -55,8 +55,11 @@ namespace connector {
 
         GenericActiveInput & connector(); ///< Get referenced connector
 
+        void reset(GenericActiveInput & input); ///< Change connector
+                                        /**< Will update any existing connection accordingly */
+
     private:
-        GenericActiveInput & input_;
+        GenericActiveInput * input_;
     };
 
     /** \brief Jack referencing an ActiveOutput
@@ -69,8 +72,11 @@ namespace connector {
 
         GenericActiveOutput & connector(); ///< Get referenced connector
 
+        void reset(GenericActiveOutput & output); ///< Change connector
+                                        /**< Will update any existing connection accordingly */
+
     private:
-        GenericActiveOutput & output_;
+        GenericActiveOutput * output_;
     };
 
     /** \brief Jack referencing a PassiveInput
@@ -83,8 +89,11 @@ namespace connector {
 
         GenericPassiveInput & connector(); ///< Get referenced connector
 
+        void reset(GenericPassiveInput & input); ///< Change connector
+                                        /**< Will update any existing connection accordingly */
+
     private:
-        GenericPassiveInput & input_;
+        GenericPassiveInput * input_;
     };
     
     /** \brief Jack referencing a PassiveOutput
@@ -97,8 +106,11 @@ namespace connector {
 
         GenericPassiveOutput & connector(); ///< Get referenced connector
 
+        void reset(GenericPassiveOutput & output); ///< Change connector
+                                        /**< Will update any existing connection accordingly */
+
     private:
-        GenericPassiveOutput & output_;
+        GenericPassiveOutput * output_;
     };
 
     /** \brief Jack with packet type referencing an ActiveInput
@@ -113,6 +125,12 @@ namespace connector {
         
         explicit ActiveInputJack(ActiveInputJack & input);
         explicit ActiveInputJack(ActiveInputJack<> & input);
+
+        void reset(ActiveInput<PacketType> & input);
+        void reset(ActiveInput<> & input);
+        
+        void reset(ActiveInputJack & input);
+        void reset(ActiveInputJack<> & input);
     };
 
 #ifndef DOXYGEN
@@ -124,6 +142,9 @@ namespace connector {
     public:
         explicit ActiveInputJack(GenericActiveInput & input);
         explicit ActiveInputJack(GenericActiveInputJack input);
+
+        void reset(GenericActiveInput & input);
+        void reset(GenericActiveInputJack input);
     };
 
 #endif
@@ -140,6 +161,12 @@ namespace connector {
 
         explicit ActiveOutputJack(ActiveOutputJack & output);
         explicit ActiveOutputJack(ActiveOutputJack<> & output);
+
+        void reset(ActiveOutput<PacketType> & output);
+        void reset(ActiveOutput<> & output);
+
+        void reset(ActiveOutputJack & output);
+        void reset(ActiveOutputJack<> & output);
     };
 
 #ifndef DOXYGEN
@@ -151,6 +178,9 @@ namespace connector {
     public:
         explicit ActiveOutputJack(GenericActiveOutput & output);
         explicit ActiveOutputJack(GenericActiveOutputJack & output);
+
+        void reset(GenericActiveOutput & output);
+        void reset(GenericActiveOutputJack & output);
     };
 
 #endif
@@ -167,6 +197,12 @@ namespace connector {
 
         explicit PassiveInputJack(PassiveInputJack & input);
         explicit PassiveInputJack(PassiveInputJack<> & input);
+
+        void reset(PassiveInput<PacketType> & input);
+        void reset(PassiveInput<> & input);
+
+        void reset(PassiveInputJack & input);
+        void reset(PassiveInputJack<> & input);
     };
 
 #ifndef DOXYGEN
@@ -178,6 +214,9 @@ namespace connector {
     public:
         explicit PassiveInputJack(GenericPassiveInput & input);
         explicit PassiveInputJack(GenericPassiveInputJack & input);
+
+        void reset(GenericPassiveInput & input);
+        void reset(GenericPassiveInputJack & input);
     };
 
 #endif
@@ -194,6 +233,12 @@ namespace connector {
 
         explicit PassiveOutputJack(PassiveOutputJack & output);
         explicit PassiveOutputJack(PassiveOutputJack<> & output);
+
+        void reset(PassiveOutput<PacketType> & output);
+        void reset(PassiveOutput<> & output);
+
+        void reset(PassiveOutputJack & output);
+        void reset(PassiveOutputJack<> & output);
     };
 
 #ifndef DOXYGEN
@@ -205,6 +250,9 @@ namespace connector {
     public:
         explicit PassiveOutputJack(GenericPassiveOutput & output);
         explicit PassiveOutputJack(GenericPassiveOutputJack & output);
+
+        void reset(GenericPassiveOutput & output);
+        void reset(GenericPassiveOutputJack & output);
     };
 
 #endif
