@@ -49,7 +49,7 @@ namespace ppi {
         defaults to DataPacket (type DataPacketType), which will place the data uninterpreted 
         into a packet data structure.
      */
-    template <class Packet=DataPacket>
+    template <class Packet=DataPacket, unsigned MaxSize=0u>
     class DgramReader
     {
     public:

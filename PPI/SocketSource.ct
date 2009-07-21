@@ -31,13 +31,13 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::DgramReader<Packet>
+// senf::ppi::DgramReader<Packet,MaxSize>
 
-template <class Packet>
-prefix_ Packet senf::ppi::DgramReader<Packet>::operator()(Handle handle)
+template <class Packet, unsigned MaxSize>
+prefix_ Packet senf::ppi::DgramReader<Packet,MaxSize>::operator()(Handle handle)
 {
     Packet packet (Packet::create(senf::noinit));
-    handle.read(packet.data(),0u);
+    handle.read(packet.data(),MaxSize);
     return packet;
 }
 
