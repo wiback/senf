@@ -35,6 +35,7 @@
 #include "../Utils/ScopeExit.hh"
 #include <execinfo.h>
 #include "../config.hh"
+#include <stdint.h>
 
 //#include "FIFORunner.mpp"
 #define prefix_
@@ -255,7 +256,7 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
     for (unsigned i (0); i < nEntries; ++i) {
         write(1, " 0x", 3);
         for (unsigned j (sizeof(void*)); j > 0; --j) {
-            unsigned v (unsigned(entries[i])>>(8*(j-1)));
+             ::uintptr_t v( ::uintptr_t (entries[i])>>(8*(j-1)));
             write(1, &(hex[ (v >> 4) & 0x0f ]), 1);
             write(1, &(hex[ (v     ) & 0x0f ]), 1);
         }
