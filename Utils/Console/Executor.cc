@@ -114,6 +114,13 @@ prefix_ void senf::console::Executor::execute(std::ostream & output,
             ls( output, command.commandPath() );
             break;
 
+        case ParseCommandInfo::BuiltinLL :
+            if (skipping())
+                break;
+            // The parser ensures, we have either one or no argument
+            ll( output, command.commandPath() );
+            break;
+
         case ParseCommandInfo::BuiltinLR :
             if (skipping())
                 break;
@@ -231,6 +238,18 @@ prefix_ void senf::console::Executor::cd(ParseCommandInfo::TokensRange dir)
 }
 
 prefix_ void senf::console::Executor::ls(std::ostream & output,
+                                         ParseCommandInfo::TokensRange path)
+{
+    Path dir (cwd_);
+    traverseDirectory(path, dir);
+    DirectoryNode & node (*dir.back().lock());
+    DirectoryNode::child_iterator i (node.children().begin());
+    DirectoryNode::child_iterator const i_end (node.children().end());
+    for (; i != i_end; ++i)
+        output << i->first << "\n";
+}
+
+prefix_ void senf::console::Executor::ll(std::ostream & output,
                                          ParseCommandInfo::TokensRange path)
 {
 #   define HELP_COLUMN 28

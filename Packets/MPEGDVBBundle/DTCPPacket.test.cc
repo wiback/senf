@@ -74,15 +74,15 @@ BOOST_AUTO_UNIT_TEST(dtcpPacket)
     hello.dump(ss);
     BOOST_CHECK_EQUAL( ss.str(), 
                        "DTCP HELLO Packet:\n"
-                       "  version              : 1\n"
-                       "  command              : JOIN\n"
-                       "  interval             : 5\n"
-                       "  sequence number      : 2571\n"
-                       "  receive capable feed : yes\n"
-                       "  ip version           : 4\n"
-                       "  tunnel protocol      : 23\n"
-                       "  number of BDL ips    : 2\n"
-                       "  feed BDL ips         : \n"
+                       "  version                 : 1\n"
+                       "  command                 : JOIN\n"
+                       "  interval                : 5\n"
+                       "  sequence number         : 2571\n"
+                       "  receive capable feed    : yes\n"
+                       "  ip version              : 4\n"
+                       "  tunnel protocol         : 23\n"
+                       "  number of BDL ips       : 2\n"
+                       "  feed BDL ips            : \n"
                        "    101.102.103.104\n"
                        "    201.202.203.204\n" );
 

@@ -52,27 +52,27 @@ prefix_ void senf::MPESectionType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "MPE Section:\n"
        << std::hex
-       << "  table_id: 0x" << unsigned(p->table_id()) << "\n"
-       << "  section_syntax_indicator: " << p->section_syntax_indicator() << "\n"
-       << "  private_indicator: " << p->private_indicator() << "\n"
+       <<     "  table_id                : 0x" << unsigned(p->table_id()) << "\n"
+       <<     "  section syntax indicator: " << p->section_syntax_indicator() << "\n"
+       <<     "  private indicator       : " << p->private_indicator() << "\n"
        << std::dec
-       << "  section_length: " << p->section_length() << "\n"
+       <<     "  section length          : " << p->section_length() << "\n"
        << std::hex
-       << "  MAC_address_6: 0x" << unsigned(p->mac_addr_6()) << "\n"
-       << "  MAC_address_5: 0x" << unsigned(p->mac_addr_5()) << "\n"
-       << "  payload_scrambling_control: 0x" << p->payload_scrmbl_ctrl() << "\n"
-       << "  address_scrambling_control: 0x" << p-> addr_scrmbl_ctrl()  << "\n"
-       << "  LLC_SNAP_flag: 0x" << p->llc_snap_flag() << "\n"
-       << "  current_next_indicator: 0x" << p->curr_next_indicator() << "\n"
-       << "  section_number: 0x" << unsigned(p->section_num()) << "\n"
-       << "  last_section_number: 0x" << unsigned(p->last_section_num()) << "\n"
-       << "  real_time_parameters: \n"
-       << "    delta_t: 0x" << unsigned(p->real_time_parameters().delta_t()) << "\n"
-       << "    table_boundary: 0x" << unsigned(p->real_time_parameters().table_boundary()) << "\n"
-       << "    frame_boundary: 0x" << unsigned(p->real_time_parameters().frame_boundary()) << "\n"
-       << "    address: 0x" << unsigned(p->real_time_parameters().address()) << "\n"
+       <<     "  MAC address 6           : 0x" << unsigned(p->mac_addr_6()) << "\n"
+       <<     "  MAC address 5           : 0x" << unsigned(p->mac_addr_5()) << "\n"
+       <<     "  payload scrambling ctrl : 0x" << p->payload_scrmbl_ctrl() << "\n"
+       <<     "  address scrambling ctrl : 0x" << p-> addr_scrmbl_ctrl()  << "\n"
+       <<     "  LLC/SNAP flag           : 0x" << p->llc_snap_flag() << "\n"
+       <<     "  current next indicator  : 0x" << p->curr_next_indicator() << "\n"
+       <<     "  section number          : 0x" << unsigned(p->section_num()) << "\n"
+       <<     "  last section number     : 0x" << unsigned(p->last_section_num()) << "\n"
+       <<     "  real time parameters    : \n"
+       <<     "    delta_t               : 0x" << unsigned(p->real_time_parameters().delta_t()) << "\n"
+       <<     "    table boundary        : 0x" << unsigned(p->real_time_parameters().table_boundary()) << "\n"
+       <<     "    frame boundary        : 0x" << unsigned(p->real_time_parameters().frame_boundary()) << "\n"
+       <<     "    address               : 0x" << unsigned(p->real_time_parameters().address()) << "\n"
        << std::dec
-       << "  CRC: " << unsigned(p->crc()) << "\n";
+       <<     "  crc                     : " << unsigned(p->crc()) << "\n";
 }
 
 prefix_ senf::PacketParserBase::size_type senf::MPESectionType::initSize()

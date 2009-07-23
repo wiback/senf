@@ -42,7 +42,7 @@ namespace senf
         SENF_PARSER_BITFIELD ( shortGI,        1, bool );
         SENF_PARSER_BITFIELD ( badFCS,         1, bool );
         SENF_PARSER_BITFIELD ( padding,        1, bool );
-        SENF_PARSER_BITFIELD ( fcsPresent,     1, bool );
+        SENF_PARSER_BITFIELD_RO ( fcsAtEnd,    1, bool ); // Cannot change this (change packet size)
         SENF_PARSER_BITFIELD ( fragmentation,  1, bool );
         SENF_PARSER_BITFIELD ( wep,            1, bool );
         SENF_PARSER_BITFIELD ( shortPreamble,  1, bool );
@@ -120,7 +120,7 @@ namespace senf
         SENF_PARSER_BITFIELD_RO ( flagsPresent,            1, bool );
         SENF_PARSER_BITFIELD_RO ( tsftPresent,             1, bool );
         SENF_PARSER_SKIP_BITS   ( 1                                ); //currently unused bits
-        SENF_PARSER_BITFIELD_RO ( fcsPresent,              1, bool );
+        SENF_PARSER_BITFIELD_RO ( headerFcsPresent,        1, bool );
         SENF_PARSER_BITFIELD_RO ( dbAntennaNoisePresent,   1, bool );
         SENF_PARSER_BITFIELD_RO ( dbAntennaSignalPresent,  1, bool );
         SENF_PARSER_BITFIELD_RO ( antennaPresent,          1, bool );
@@ -131,6 +131,8 @@ namespace senf
         //if bit is set,another 32 bit present flag is attached (not implemented yet)
         SENF_PARSER_BITFIELD    ( extendedBitmaskPresent,  1, bool );
         SENF_PARSER_SKIP_BITS   ( 7                                ); //currently unused bits
+
+        SENF_PARSER_LABEL( headerEnd_ );
 
         /*
          * Radiotap data
@@ -170,14 +172,32 @@ namespace senf
         OPTIONAL_FIELD        ( antenna,                  UInt8Parser                         );
         OPTIONAL_FIELD        ( dbAntennaSignal,          UInt8Parser                         );
         OPTIONAL_FIELD        ( dbAntennaNoise,           UInt8Parser                         );
-        SKIP_OPTIONAL_PADDING ( fcsPresent(),             dbAntennaNoise, 4                   );
-        OPTIONAL_FIELD        ( fcs,                      UInt32Parser                        );
+        SKIP_OPTIONAL_PADDING ( headerFcsPresent(),       dbAntennaNoise, 4                   );
+        OPTIONAL_FIELD        ( headerFcs,                UInt32Parser                        );
+
+        SENF_PARSER_LABEL( packetEnd_ );
+
+        size_type calculateSize() { return packetEnd__offset(); }
+
+        // Ouch ... changing the flags().fcsAtEnd() field needs to resize the packet ... !!!
+        // Need to think, if I can do this with a variant parser ...
+        SENF_PARSER_CUSTOM_FIELD( fcs, senf::UInt32Parser, 0, 0 ) {
+            return parse<senf::UInt32Parser>(data().end()-4);
+        }
 
         SENF_PARSER_INIT() {
             version() = 0;
         }
 
+        // The headers length is to be taken from the 'length' value
+        SENF_PARSER_GOTO_OFFSET( length(), headerEnd__init_bytes );
+
         SENF_PARSER_FINALIZE( RadiotapPacketParser );
+
+        SENF_PARSER_SKIP_BITS( 4 );
+        SENF_PARSER_BITFIELD_RO ( frameType, 2, unsigned );
+        SENF_PARSER_SKIP_BITS( 2 );
+            
     };
 
     /** \brief Radiotap packet
@@ -201,16 +221,27 @@ namespace senf
         typedef ConcretePacket<RadiotapPacketType> packet;
         typedef RadiotapPacketParser parser;
 
-        using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
 
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
+        static optional_range nextPacketRange(packet p);
     };
 
     typedef ConcretePacket<RadiotapPacketType> RadiotapPacket;
 }
 
 #endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

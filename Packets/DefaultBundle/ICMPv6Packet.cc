@@ -74,9 +74,9 @@ prefix_ void senf::ICMPv6PacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "ICMPv6 protocol:\n"
-       << "Type                    : " << p->type() <<"\n"
-       << "Code                    : " << p->code() <<"\n"
-       << "Checksum                : " << p->checksum() << "\n";
+       <<     "  type                    : " << p->type() <<"\n"
+       <<     "  code                    : " << p->code() <<"\n"
+       <<     "  checksum                : " << p->checksum() << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

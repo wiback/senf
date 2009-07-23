@@ -35,47 +35,60 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Radiotap:\n"
-       << "  Version             : " << unsigned( p->version()) << "\n"
-       << "  Length              : " << unsigned( p->length()) << "\n";
+       <<     "  version                 : " << unsigned( p->version()) << "\n"
+       <<     "  length                  : " << unsigned( p->length()) << "\n";
     if (p->has_tsft())
-        os  << "  MAC timestamp       : " << unsigned( p->tsft()) << "\n";
+        os << "  MAC timestamp           : " << unsigned( p->tsft()) << "\n";
     // TODO: flags
     if (p->has_rate())
-        os  << "  Rate                : " << unsigned( p->rate()) << "\n";
+        os << "  rate                    : " << unsigned( p->rate()) << "\n";
     // TODO: channelOptions
     if (p->has_fhss())
-        os  << "  FHSS                : " << unsigned( p->fhss()) << "\n";
+        os << "  FHSS                    : " << unsigned( p->fhss()) << "\n";
     if (p->has_dbmAntennaSignal())
-        os  << "  Antenna Signal (dBm): " << signed( p->dbmAntennaSignal()) << "\n";
+        os << "  antenna signal (dBm)    : " << signed( p->dbmAntennaSignal()) << "\n";
     if (p->has_dbmAntennaNoise())
-        os  << "  Antenna Noise (dBm) : " << signed( p->dbmAntennaNoise()) << "\n";
+        os << "  antenna noise (dBm)     : " << signed( p->dbmAntennaNoise()) << "\n";
     if (p->has_lockQuality())
-        os  << "  Lock Quality        : " << unsigned( p->lockQuality()) << "\n";
+        os << "  lock quality            : " << unsigned( p->lockQuality()) << "\n";
     if (p->has_txAttenuation())
-        os  << "  txAttenuation       : " << unsigned( p->txAttenuation()) << "\n";
+        os << "  tx attenuation          : " << unsigned( p->txAttenuation()) << "\n";
     if (p->has_dbTxAttenuation())
-        os  << "  dbTxAttenuation     : " << unsigned( p->dbTxAttenuation()) << "\n";
+        os << "  tx attenuation (dB)     : " << unsigned( p->dbTxAttenuation()) << "\n";
     if (p->has_dbmTxAttenuation())
-        os  << "  dbmTxAttenuation    : " << signed( p->dbmTxAttenuation()) << "\n";
+        os << "  tx attenuation (dBm)    : " << signed( p->dbmTxAttenuation()) << "\n";
     if (p->has_antenna())
-        os  << "  Antenna             : " << unsigned( p->antenna()) << "\n";
+        os << "  antenna                 : " << unsigned( p->antenna()) << "\n";
     if (p->has_dbAntennaSignal())
-        os  << "  Antenna Signal (dB) : " << unsigned( p->dbAntennaSignal()) << "\n";
+        os << "  antenna signal (dB)     : " << unsigned( p->dbAntennaSignal()) << "\n";
     if (p->has_dbAntennaNoise())
-        os  << "  Antenna Noise (dB)  : " << unsigned( p->dbAntennaNoise()) << "\n";
-    if (p->has_fcs())
-        os  << "  FCS                 : " << unsigned( p->fcs()) << "\n";
+        os << "  antenna noise (dB)      : " << unsigned( p->dbAntennaNoise()) << "\n";
+    if (p->has_headerFcs())
+        os << "  FCS                     : " << unsigned( p->fcs()) << "\n";
 }
 
 prefix_ void senf::RadiotapPacketType::finalize(packet p)
 {
-    p->length() << senf::bytes( p.parser());
+    p->length() << p->calculateSize();
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::RadiotapPacketType::nextPacketType(packet p)
 {
-    return WLANPacket::factory();
+    static factory_t frameTypeFactory[] = { WLANPacket_MgtFrame::factory(),
+                                            WLANPacket_CtrlFrame::factory(),
+                                            WLANPacket_DataFrame::factory(),
+                                            no_factory() };
+    return frameTypeFactory[p->frameType()];
 }
 
+prefix_ senf::RadiotapPacketType::optional_range
+senf::RadiotapPacketType::nextPacketRange(packet p)
+{
+    size_type h (senf::bytes(p.parser()));
+    size_type t (p->flagsPresent() && p->flags().fcsAtEnd() ? 4 : 0);
+    return p.size() < h+t 
+        ? no_range() 
+        : optional_range( range(p.data().begin() + h, p.data().end() - t) );
+}
 
 #undef prefix_

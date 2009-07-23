@@ -194,12 +194,10 @@ prefix_ senf::NetdeviceController::SockFd::SockFd()
 {
     if ( fd < 0)
         SENF_THROW_SYSTEM_EXCEPTION("Could not open socket for NetdeviceController.");
-    std::cerr << ">>Made SockFd: " << fd << std::endl;
 }
 
 prefix_ senf::NetdeviceController::SockFd::~SockFd()
 {
-    std::cerr << ">>Dispose SockFd: " << fd << std::endl;
     ::close(fd);
 }
 

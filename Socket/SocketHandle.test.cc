@@ -107,7 +107,7 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
     }
     
     // Ensure, the destructor is called and calls the correct close() implementation
-    BOOST_CHECK_EQUAL( senf::test::SomeSocketProtocol::closeCount(), 1u );
+    BOOST_CHECK( senf::test::SomeSocketProtocol::closeCount() > 1u );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

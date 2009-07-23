@@ -64,16 +64,15 @@ prefix_ void senf::RTPPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Real Time Protocol:\n"
-       << "  Version                            : " << p->version() << "\n"
-       << "  Padding                            : " << p->padding() << "\n"
-       << "  Extension                          : " << p->extension() << "\n"
-       << "  Contributing Source Count(CC)      : " << p->csrcCount() << "\n"
-       << "  Marker                             : " << p->marker() << "\n"
-       << "  Payload Type                       : " << p->payloadType() << " "<< ptName(p->payloadType() ) <<"\n"
-       << "  Sequence number                    : " << p->seqNumber() << "\n"
-       << "  Timestamp                          : " << p->timeStamp() << "\n"
-       << "  Synchronisation Source Identifier  : " << p->synSourceId() << "\n";
-
+       <<     "  version                 : " << p->version() << "\n"
+       <<     "  padding                 : " << p->padding() << "\n"
+       <<     "  extension               : " << p->extension() << "\n"
+       <<     "  contributing source cnt : " << p->csrcCount() << "\n"
+       <<     "  marker                  : " << p->marker() << "\n"
+       <<     "  payload type            : " << p->payloadType() << " "<< ptName(p->payloadType() ) <<"\n"
+       <<     "  sequence number         : " << p->seqNumber() << "\n"
+       <<     "  timestamp               : " << p->timeStamp() << "\n"
+       <<     "  sync source id          : " << p->synSourceId() << "\n";
 }
 
 #undef prefix_

@@ -25,20 +25,65 @@
 // Custom includes
 #include "WLANPacket.hh"
 #include "../../Packets/Packets.hh"
-#include "../DefaultBundle/LlcSnapPacket.hh"
 #include <boost/io/ios_state.hpp>
 
 #define prefix_
+
+namespace {
+    
+    void dumpBase(senf::WLANPacketParser const & p, std::ostream & os)
+    {
+        os << "  version                 : " << unsigned(p.version()) <<"\n"
+           << "  type                    : " << unsigned(p.type()) << "\n"
+           << "  subtype                 : " << unsigned(p.subtype()) << "\n"
+           << "  flags                   :";
+        if ( p.toDS()           ) os << " toDS";
+        if ( p.fromDS()         ) os << " fromDS";
+        if ( p.moreFrag()       ) os << " moreFrag";
+        if ( p.retry()          ) os << " retry";
+        if ( p.pwrMgt()         ) os << " pwrMgt";
+        if ( p.moreData()       ) os << " moreData";
+        if ( p.protectedFrame() ) os << " protected";
+        if ( p.order()          ) os << " order";
+
+        if ( !(p.toDS() || p.fromDS() || p.moreFrag() || p.retry() || p.pwrMgt() ||
+               p.moreData() || p.protectedFrame() || p.order()) ) 
+            os << " none";
+        os << "\n"
+           << "  duration                : " << unsigned(p.duration()) << "\n";
+    }
+}
+
+prefix_ void senf::WLANPacket_MgtFrameType::dump(packet p, std::ostream &os)
+{
+    boost::io::ios_all_saver ias(os);
+    os     << "802.11 MAC Mangement Frame:\n";
+    dumpBase(p.parser(), os);
+    os     << "  destination             : " << p->destinationAddress() << "\n"
+           << "  source                  : " << p->sourceAddress() << "\n"
+           << "  bss id                  : " << p->bssid() << "\n"
+           << "  sequence number         : " << p->sequenceNumber() << "\n"
+           << "  fragment number         : " << p->fragmentNumber() << "\n";
+}
+
+prefix_ void senf::WLANPacket_CtrlFrameType::dump(packet p, std::ostream &os)
+{
+    boost::io::ios_all_saver ias(os);
+    os     << "802.11 MAC Control Frame:\n";
+    dumpBase(p.parser(), os);
+    os     << "  receiver                : " << p->receiverAddress() << "\n";
+    if (p->is_rts())
+        os << "  source                  : " << p->sourceAddress() << "\n";
+}
 
 prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::destinationAddress()
     const
 {
     switch (dsBits()) {
     case 0 :
-    case 2 :
-        return addr1();
+    case 2 : return addr1();
+    default: return addr3();
     }
-    return addr3();
 }
 
 prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::sourceAddress()
@@ -47,19 +92,11 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::sourceAddress()
     switch (dsBits())
     {
     case 0 :
-    case 1 :
-        return addr2();
-        break;
-    case 2 :
-        return addr3();
-        break;
-//TODO wds frames
-//    case 3:
-//        return addr4();
+    case 1 : return addr2();
+    // TODO wds frames
+    // case 3 : return addr4();
+    default: return addr3();
     }
-    //just to avoid compiler warning
-    //TODO
-    return addr1();
 }
 
 prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::bssid()
@@ -67,74 +104,42 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::bssid()
 {
     switch (dsBits())
     {
-    case 0 :
-        return addr3();
-        break;
-    case 1 :
-        return addr1();
-        break;
-    case 2:
-        return addr2();
+    case 0 : return addr3();
+    case 1 : return addr1();
+    default: return addr2();
     }
-    //just to avoid compiler warning
-    //TODO
-    return addr1();
 }
 
-prefix_ senf::PacketInterpreterBase::factory_t senf::WLANPacketType::nextPacketType(packet p)
-{
-    if (p->is_dataFrame() && (p->subtype()==0 || p->subtype()==8)) //data frame and subtype is Data or QoS Data
-        return LlcSnapPacket::factory();
-    return no_factory();
-}
-
-prefix_ senf::PacketInterpreterBase::optional_range senf::WLANPacketType::nextPacketRange(packet p)
-{
-    if (p->is_dataFrame()) {
-        size_type sz = 24; //header length of wlan data frame (WDS is not considered)
-        if (p->subtype()==8) //subtype QoSData
-            sz+=2;  //2 bytes for QoS field
-        return range(
-                boost::next(p.data().begin(),sz),
-                boost::prior(p.data().end(),4) ); //-4 bytes FCS
-    }
-    //TODO beacon frame payload
-    return no_range();
-}
-
-prefix_ void senf::WLANPacketType::dump(packet p, std::ostream &os)
+prefix_ void senf::WLANPacket_DataFrameType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
-    os << "802.11 MAC Frame:\n"
-       << "  Type           : " << unsigned( p->type()) << "\n"
-       << "  Subtype        : " << unsigned( p->subtype()) << "\n"
-       << "  Retransmission : " << unsigned( p->retry()) << "\n"
-       << "  Duration       : " << unsigned( p->duration()) << "\n";
-    if (p->is_mgtFrame()) {
-        os << "  Management-Frame:\n"
-           << "    BSSID               : " << p->mgtFrame().bssid() << "\n"
-           << "    Destination Address : " << p->mgtFrame().destinationAddress() << "\n"
-           << "    Source Address      : " << p->mgtFrame().sourceAddress() << "\n"
-           << "    Sequence Number     : " << unsigned( p->mgtFrame().sequenceNumber()) << "\n"
-           << "    Fragment Number     : " << unsigned( p->mgtFrame().fragmentNumber()) << "\n";
-    }
-    if (p->is_ctrlFrame()) {
-        os << "  Control-Frame ";
-        if (p->ctrlFrame().is_cts()) os << "(CTS):\n";
-        if (p->ctrlFrame().is_ack()) os << "(ACK):\n";
-        if (p->ctrlFrame().is_rts()) os << "(RTS):\n";
-        os << "    Receiver Address : " << p->ctrlFrame().receiverAddress() << "\n";
-        if (p->ctrlFrame().is_rts())
-            os << "    Source Address : " << p->ctrlFrame().sourceAddress() << "\n";
-    }
-    if (p->is_dataFrame()) {
-        os << "  Data-Frame:\n"
-           << "    Sequence Number     : " << unsigned( p->dataFrame().sequenceNumber()) << "\n"
-           << "    Fragment Number     : " << unsigned( p->dataFrame().fragmentNumber()) << "\n";
-    }
-};
-
-
-
+    os     << "802.11 MAC Data Frame:\n";
+    dumpBase(p.parser(), os);
+    os     << "  destination             : " << p->destinationAddress();
+    if (p->dsBits()==0 || p->dsBits()==2) os << " (receiver)";
+    os     << "\n"
+           << "  source                  : " << p->sourceAddress();
+    if (p->dsBits()==0 || p->dsBits()==1) os << " (transmitter)";
+    os     << "\n"
+           << "  bss id                  : " << p->bssid();
+    if (p->dsBits()==1) os << " (receiver)";
+    else if (p->dsBits()!=0) os << " (transmitter)";
+    os     << "\n"
+           << "  sequence number         : " << p->sequenceNumber() << "\n"
+           << "  fragment number         : " << p->fragmentNumber() << "\n";
+    if (p->has_qosField())
+        os << "  QOS data                : " << p->qosField() << "\n";
+}
 
 #undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:

@@ -46,21 +46,21 @@ namespace {
 prefix_ void senf::IPv6ExtensionType_Fragment::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 fragment extension:\n"
-       << "  next header    : " << unsigned(p->nextHeader()) << "\n"
-       << "  fragment offset: " << std::hex << unsigned(p->fragmentOffset()) << "\n"
-       << "  more fragments : " << (p->moreFragments()?"yes":"no") << "\n"
-       << "  id             : " << std::hex << unsigned(p->id()) << "\n";
+       <<     "  next header             : " << unsigned(p->nextHeader()) << "\n"
+       <<     "  fragment offset         : " << std::hex << unsigned(p->fragmentOffset()) << "\n"
+       <<     "  more fragments          : " << (p->moreFragments()?"yes":"no") << "\n"
+       <<     "  id                      : " << std::hex << unsigned(p->id()) << "\n";
 }
 
 prefix_ void senf::IPv6ExtensionType_Routing::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 routing extension:\n"
-        << "  next header           : " << unsigned (p->nextHeader()) << "\n"
-        << "  header length         : " << unsigned (p->headerLength()) << "\n"
-        << "  routing type          : " << unsigned (p->routingType()) << "\n"
-        << "  segments left         : " << unsigned (p->segmentsLeft()) << "\n";
-        IPv6Extension_Routing::Parser::hopAddresses_t::container hopAddresses (p->hopAddresses());
-        os << "  further Hop Addresses : \n";
+       <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
+       <<     "  header length           : " << unsigned (p->headerLength()) << "\n"
+       <<     "  routing type            : " << unsigned (p->routingType()) << "\n"
+       <<     "  segments left           : " << unsigned (p->segmentsLeft()) << "\n";
+    IPv6Extension_Routing::Parser::hopAddresses_t::container hopAddresses (p->hopAddresses());
+    os <<     "  further Hop Addresses   : \n";
         if ( p->segmentsLeft() != 0 ){
             for (IPv6Extension_Routing::Parser::hopAddresses_t::container::iterator i (hopAddresses.begin()); i != hopAddresses.end(); ++i)
                 os << *i << "\n";
@@ -70,15 +70,15 @@ prefix_ void senf::IPv6ExtensionType_Routing::dump(packet p, std::ostream & os)
 prefix_ void senf::IPv6ExtensionType_HopByHop::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
-        << "  next header           : " << unsigned (p->nextHeader()) << "\n"
-        << "  header length         : " << unsigned (p->headerLength()) << "\n";
+       <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
+       <<     "  header length           : " << unsigned (p->headerLength()) << "\n";
 }
 
 prefix_ void senf::IPv6ExtensionType_Destination::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Destination Options extension:\n"
-            << "  next header           : " << unsigned (p->nextHeader()) << "\n"
-            << "  header length         : " << unsigned (p->headerLength()) << "\n";
+       <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
+       <<     "  header length           : " << unsigned (p->headerLength()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

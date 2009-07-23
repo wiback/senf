@@ -96,9 +96,9 @@ BOOST_AUTO_UNIT_TEST(executor)
 
     {
         std::stringstream os;
-        parser.parse("ls", &setCommand);
+        parser.parse("ll", &setCommand);
         executor(os, commands.back());
-        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
+        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLL );
         BOOST_CHECK_EQUAL( os.str(), 
                            "dir1/                       \n"
                            "dir2/                       Helptext\n"
@@ -107,9 +107,9 @@ BOOST_AUTO_UNIT_TEST(executor)
 
     {
         std::stringstream os;
-        parser.parse("ls dir1", &setCommand);
+        parser.parse("ll dir1", &setCommand);
         executor(os, commands.back());
-        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
+        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLL );
         BOOST_CHECK_EQUAL( os.str(), "dir3/                       \n" );
     }
 
@@ -226,9 +226,9 @@ BOOST_AUTO_UNIT_TEST(executorPolicy)
 
     {
         std::stringstream os;
-        parser.parse("ls dir1", &setCommand);
+        parser.parse("ll dir1", &setCommand);
         executor(os, commands.back());
-        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLS );
+        BOOST_CHECK_EQUAL( commands.back().builtin(), senf::console::ParseCommandInfo::BuiltinLL );
         BOOST_CHECK_EQUAL( os.str(), "dir3/                       \n" );
     }
 

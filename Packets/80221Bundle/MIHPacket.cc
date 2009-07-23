@@ -102,29 +102,29 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "MIH Packet:\n"
-       << "  protocol header:\n"
-       << "    Version:          " << unsigned( p->version()) << "\n"
-       << "    Ack-Request:      " << p->ackRequest() << "\n"
-       << "    Ack-Response:     " << p->ackResponse() << "\n"
-       << "    UIR:              " << p->uir() << "\n"
-       << "    more fragment:    " << p->moreFragment() << "\n"
-       << "    fragment number:  " << p->fragmentNr() << "\n"
-       << "    message ID (MID): " << unsigned( p->messageId()) << "\n"
-       << "      SID:            " << unsigned( p->sid()) << "\n"        
-       << "      Opcode:         " << unsigned( p->opcode()) << "\n"
-       << "      AID:            " << unsigned( p->aid()) << "\n"      
-       << "    Transaction ID:   " << unsigned( p->transactionId()) << "\n"
-       << "    payload length:   " << unsigned( p->payloadLength()) << "\n"
-       << "  source MIHF_Id TLV:\n"
-       << "    type:             " << unsigned (p->src_mihfId().type()) << "\n"
-       << "    length:           " << unsigned (p->src_mihfId().length()) << "\n"
-       << "    value:\n";
+       <<     "  protocol header:\n"
+       <<     "    version               : " << unsigned( p->version()) << "\n"
+       <<     "    ack request           : " << p->ackRequest() << "\n"
+       <<     "    ack response          : " << p->ackResponse() << "\n"
+       <<     "    UIR                   : " << p->uir() << "\n"
+       <<     "    more fragments        : " << p->moreFragment() << "\n"
+       <<     "    fragment number       : " << p->fragmentNr() << "\n"
+       <<     "    message ID (MID)      : " << unsigned( p->messageId()) << "\n"
+       <<     "      sid                 : " << unsigned( p->sid()) << "\n"        
+       <<     "      opcode              : " << unsigned( p->opcode()) << "\n"
+       <<     "      aid                 : " << unsigned( p->aid()) << "\n"      
+       <<     "    transaction id        : " << unsigned( p->transactionId()) << "\n"
+       <<     "    payload length        : " << unsigned( p->payloadLength()) << "\n"
+       <<     "  source MIHF_Id TLV      :\n"
+       <<     "    type                  : " << unsigned (p->src_mihfId().type()) << "\n"
+       <<     "    length                : " << unsigned (p->src_mihfId().length()) << "\n"
+       <<     "    value                 :\n";
     std::string src_mihfId (p->src_mihfId().asString());
     hexdump(src_mihfId.begin(), src_mihfId.end(), os);
-    os << "  destination MIHF_Id TLV:\n"
-       << "    type:             " << unsigned (p->dst_mihfId().type()) << "\n"
-       << "    length:           " << unsigned (p->dst_mihfId().length()) << "\n"
-       << "    value:\n";
+    os <<     "  destination MIHF_Id TLV:\n"
+       <<     "    type                  : " << unsigned (p->dst_mihfId().type()) << "\n"
+       <<     "    length                : " << unsigned (p->dst_mihfId().length()) << "\n"
+       <<     "    value                 :\n";
     std::string dst_mihfId (p->dst_mihfId().asString());
     hexdump(dst_mihfId.begin(), dst_mihfId.end(), os);
 }

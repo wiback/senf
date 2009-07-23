@@ -40,15 +40,15 @@ prefix_ void senf::DTCPHelloPacketType::dump(packet p, std::ostream & os)
                                        "8", "9", "10", "11", "12", "13", "14", "15" };
     boost::io::ios_all_saver ias(os);
     os << "DTCP HELLO Packet:" << std::endl
-       << "  version              : " << p->versionNumber()                       << std::endl
-       << "  command              : " << COMMANDS[p->command()]                   << std::endl
-       << "  interval             : " << unsigned(p->interval())                  << std::endl
-       << "  sequence number      : " << p->sequenceNumber()                      << std::endl
-       << "  receive capable feed : " << (p->receiveCapableFeed() ? "yes" : "no") << std::endl
-       << "  ip version           : " << p->ipVersion()                           << std::endl
-       << "  tunnel protocol      : " << unsigned(p->tunnelProtocol())            << std::endl
-       << "  number of BDL ips    : " << unsigned(p->fbipCount())                 << std::endl
-       << "  feed BDL ips         : ";
+       <<     "  version                 : " << p->versionNumber()                       << std::endl
+       <<     "  command                 : " << COMMANDS[p->command()]                   << std::endl
+       <<     "  interval                : " << unsigned(p->interval())                  << std::endl
+       <<     "  sequence number         : " << p->sequenceNumber()                      << std::endl
+       <<     "  receive capable feed    : " << (p->receiveCapableFeed() ? "yes" : "no") << std::endl
+       <<     "  ip version              : " << p->ipVersion()                           << std::endl
+       <<     "  tunnel protocol         : " << unsigned(p->tunnelProtocol())            << std::endl
+       <<     "  number of BDL ips       : " << unsigned(p->fbipCount())                 << std::endl
+       <<     "  feed BDL ips            : ";
     
     switch (p->ipVersion()) {
     case 4 : {

@@ -210,9 +210,9 @@ prefix_ void senf::GenericTLVPacketType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "GenericTLVPacket:\n"
        << std::dec
-       << "  type:   " << unsigned( p->type()) << "\n"
-       << "  length: " << unsigned( p->length()) << "\n"
-       << "  value\n:";
+       <<     "  type                    : " << unsigned( p->type()) << "\n"
+       <<     "  length                  : " << unsigned( p->length()) << "\n"
+       <<     "  value\n                 : ";
     senf::hexdump( p->value().begin(), p->value().end(), os);
 }
 

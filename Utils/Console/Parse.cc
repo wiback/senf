@@ -76,6 +76,11 @@ namespace detail {
               info_->builtin(ParseCommandInfo::BuiltinLS);
               setBuiltinPathArg(path); }
 
+        void builtin_ll(std::vector<Token> & path)
+            { info_->clear();
+              info_->builtin(ParseCommandInfo::BuiltinLL);
+              setBuiltinPathArg(path); }
+
         void builtin_lr(std::vector<Token> & path)
             { info_->clear();
               info_->builtin(ParseCommandInfo::BuiltinLR);

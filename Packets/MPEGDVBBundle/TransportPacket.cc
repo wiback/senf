@@ -60,18 +60,18 @@ prefix_ void senf::TransportPacketType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "TransportPacket:\n"
        << std::hex
-       << "  syncByte: 0x" << unsigned(p->sync_byte()) << "\n"
-       << "  transport_error_indicator: 0x" << unsigned(p->transport_error_indicator()) << "\n"
-       << "  payload_unit_start_indicator (pusi): 0x" << unsigned(p->pusi()) << "\n"
-       << "  transport_priority: 0x" << unsigned(p->transport_priority()) << "\n"
+       <<     "  syncByte                : 0x" << unsigned(p->sync_byte()) << "\n"
+       <<     "  transport error ind.    : 0x" << unsigned(p->transport_error_indicator()) << "\n"
+       <<     "  payload unit start ind. : 0x" << unsigned(p->pusi()) << "\n"
+       <<     "  transport priority      : 0x" << unsigned(p->transport_priority()) << "\n"
        << std::dec
-       << "  pid: " << unsigned(p->pid()) << "\n"
+       <<     "  pid                     : " << unsigned(p->pid()) << "\n"
        << std::hex
-       << "  transport_scrambling_control: 0x" << unsigned(p->transport_scrmbl_ctrl()) << "\n"
-       << "  adaptation_field_control: 0x" << unsigned(p->adaptation_field_ctrl()) << "\n"
-       << "  continuity_counter: 0x" << unsigned(p->continuity_counter()) << "\n";
+       <<     "  transport scrambling c. : 0x" << unsigned(p->transport_scrmbl_ctrl()) << "\n"
+       <<     "  adaptation field ctrl   : 0x" << unsigned(p->adaptation_field_ctrl()) << "\n"
+       <<     "  continuity counter      : 0x" << unsigned(p->continuity_counter()) << "\n";
     if (p->pusi())
-        os << "  pointer_field: 0x" << unsigned(p->pointer_field()) << "\n";
+        os << "  pointer field           : 0x" << unsigned(p->pointer_field()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

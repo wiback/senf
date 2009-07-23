@@ -71,7 +71,7 @@ BOOST_AUTO_UNIT_TEST(udpServer)
     nread = 0;
     flags = 0;
     data = "";
-    socket.write("ls");
+    socket.write("ll");
     timer.timeout(delay(300));
     senf::scheduler::process();
     BOOST_CHECK_EQUAL( nread, 1 );
@@ -104,7 +104,7 @@ BOOST_AUTO_UNIT_TEST(udpServer)
     nread = 0;
     flags = 0;
     data = "";
-    socket.write("ls");
+    socket.write("ll");
     timer.timeout(delay(300));
     senf::scheduler::process();
     BOOST_CHECK_EQUAL( nread, 1 );

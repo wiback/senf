@@ -38,7 +38,8 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet)
             0x00 ,0x00 ,0x1a ,0x00, 0x6f, 0x18, 0x00, 0x00,
             0x02, 0xe6, 0x8a, 0xdf, 0x12, 0x00, 0x00, 0x00,
             0x12, 0x0c, 0xc8, 0x14, 0x40, 0x01, 0xc3, 0xa0,
-            0x02, 0x23
+            0x02, 0x23, 
+            0x00, 0x00, 0x00, 0x00,
     };
     senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
 
@@ -77,7 +78,7 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet)
     BOOST_CHECK_EQUAL( p->flags().shortPreamble(), true);
     BOOST_CHECK_EQUAL( p->flags().wep(), false);
     BOOST_CHECK_EQUAL( p->flags().fragmentation(), false);
-    BOOST_CHECK_EQUAL( p->flags().fcsPresent(), true);
+    BOOST_CHECK_EQUAL( p->flags().fcsAtEnd(), true);
     BOOST_CHECK_EQUAL( p->flags().padding(), false);
     BOOST_CHECK_EQUAL( p->flags().badFCS(), false);
     BOOST_CHECK_EQUAL( p->flags().shortGI(), false);
@@ -104,7 +105,7 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_create)
     unsigned char data[] = {
             0x00 ,0x00 ,0x1a ,0x00, 0x6f, 0x18, 0x00, 0x00,
             0x02, 0xe6, 0x8a, 0xdf, 0x12, 0x00, 0x00, 0x00,
-            0x12, 0x0c, 0xc8, 0x14, 0x40, 0x01, 0xc3, 0xa0,
+            0x02, 0x0c, 0xc8, 0x14, 0x40, 0x01, 0xc3, 0xa0,
             0x02, 0x23
     };
 
@@ -129,7 +130,7 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_create)
     SENF_CHECK_NO_THROW( p->flags().shortPreamble() = true);
     SENF_CHECK_NO_THROW( p->flags().wep() = false);
     SENF_CHECK_NO_THROW( p->flags().fragmentation() = false);
-    SENF_CHECK_NO_THROW( p->flags().fcsPresent() = true);
+    // SENF_CHECK_NO_THROW( p->flags().fcsAtEnd() = true);
     SENF_CHECK_NO_THROW( p->flags().padding() = false);
     SENF_CHECK_NO_THROW( p->flags().badFCS() = false);
     SENF_CHECK_NO_THROW( p->flags().shortGI() = false);
@@ -151,15 +152,19 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_create)
     p.finalizeAll();
 
     BOOST_CHECK_EQUAL( p->length(), 26u );
-    BOOST_CHECK( equal( p.data().begin(), p.data().end(), data ));
+    BOOST_CHECK_EQUAL_COLLECTIONS( p.data().begin(), p.data().end(),
+                                   data, data+sizeof(data)/sizeof(data[0]) );
 }
 
 BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
 {
     /* radiotap packet from ath9k with atheros card*/
     unsigned char data[] = {
-            0x00, 0x00, 0x20, 0x00, 0x6f, 0x48, 0x00, 0x00, 0x87, 0xbb, 0x91, 0x7c, 0x3b, 0x00, 0x00, 0x00,
-            0x00, 0x04, 0x85, 0x09, 0x80, 0x04, 0xb2, 0xa1, 0x00, 0x00, 0x00, 0x00, 0xd5, 0x1a, 0xf7, 0x94
+            0x00, 0x00, 0x20, 0x00, 0x6f, 0x48, 0x00, 0x00, 
+            0x87, 0xbb, 0x91, 0x7c, 0x3b, 0x00, 0x00, 0x00,
+            0x00, 0x04, 0x85, 0x09, 0x80, 0x04, 0xb2, 0xa1,
+            0x00, 0x00, 0x00, 0x00, 0xd5, 0x1a, 0xf7, 0x94,
+            0x00, 0x00, 0x00, 0x00,
     };
     senf::RadiotapPacket p (senf::RadiotapPacket::create(data));
 
@@ -169,9 +174,18 @@ BOOST_AUTO_UNIT_TEST(RadiotapPacket_packet_ath9k)
 
     BOOST_CHECK_EQUAL( p->dbmAntennaSignal(), -78);
     BOOST_CHECK_EQUAL( p->dbmAntennaNoise(), -95);
-    BOOST_CHECK_EQUAL( p->fcs(), 0xd51af794);
+    BOOST_CHECK_EQUAL( p->headerFcs(), 0xd51af794);
     BOOST_CHECK_EQUAL( p->antenna(), 0u);
-
-
 }
 
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// comment-column: 40
+// End:
