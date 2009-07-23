@@ -33,6 +33,8 @@
 #include "../Utils/Exception.hh"
 #include "../Utils/senfassert.hh"
 #include "../Utils/ScopeExit.hh"
+#include <execinfo.h>
+#include "../config.hh"
 
 //#include "FIFORunner.mpp"
 #define prefix_
@@ -234,18 +236,39 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdog(int, siginfo_t * si, 
         ++ runner.watchdogCount_;
         if (runner.watchdogCount_ > 2) {
             ++ runner.hangCount_;
-            write(1, "\n\n*** Scheduler task hanging: ", 30);
-            write(1, runner.runningName_.c_str(), runner.runningName_.size());
-            write(1, "\n", 1);
-#ifdef SENF_DEBUG
-            write(1, "Task was initialized at\n", 24);
-            write(1, runner.runningBacktrace_.c_str(), runner.runningBacktrace_.size());
-#endif
-            write(1, "\n", 1);
-            if (runner.watchdogAbort_)
-                assert(false);
+            runner.watchdogError();
         }
     }
+}
+
+prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
+{
+    static char const hex[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                                'a', 'b', 'c', 'd', 'e', 'f' };
+    static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
+    
+    write(1, "\n\n*** Scheduler task hanging: ", 30);
+    write(1, runningName_.c_str(), runningName_.size());
+    write(1, " at\n ", 3);
+
+    unsigned nEntries( ::backtrace(entries, SENF_DEBUG_BACKTRACE_NUMCALLERS) );
+    for (unsigned i (0); i < nEntries; ++i) {
+        write(1, " 0x", 3);
+        for (unsigned j (sizeof(void*)); j > 0; --j) {
+            unsigned v (unsigned(entries[i])>>(8*(j-1)));
+            write(1, &(hex[ (v >> 4) & 0x0f ]), 1);
+            write(1, &(hex[ (v     ) & 0x0f ]), 1);
+        }
+    }
+    write(1, "\n", 1);
+        
+#ifdef SENF_DEBUG
+    write(1, "Task was initialized at\n", 24);
+    write(1, runningBacktrace_.c_str(), runningBacktrace_.size());
+#endif
+    write(1, "\n", 1);
+    if (watchdogAbort_)
+        assert(false);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

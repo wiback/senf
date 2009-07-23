@@ -119,6 +119,7 @@ namespace detail {
         ~FIFORunner();
 
         static void watchdog(int, siginfo_t *, void *);
+        void watchdogError();
 
         TaskList::iterator priorityEnd(TaskInfo::Priority p);
         void run(TaskList::iterator f, TaskList::iterator l);
