@@ -243,6 +243,7 @@ namespace senf {
         static factory_t nextPacketType(packet p);
         
         enum ResponseStatus { Success, UnspecifiedFailure, Rejected, AuthorizationFailure, NetworkError };
+        enum Opcode { Request=1, Response, Indication }; 
     };
 
     /** \brief MIH packet typedef */
