@@ -21,6 +21,7 @@ SENFSCons.Doxygen(env, extra_sources = [
     env.PkgDraw("DefaultBundle/IPv6Packet.hh"),
     env.PkgDraw("DefaultBundle/LlcSnapPacket.hh"),
     env.PkgDraw("DefaultBundle/UDPPacket.hh"),
+    env.PkgDraw("DefaultBundle/TCPPacket.hh"),
     env.PkgDraw("DefaultBundle/IPv6Extensions_Fragment.png", "DefaultBundle/IPv6Extensions.hh",
                 PKGDRAWPACKETS = "IPv6PacketParserExtension_Fragment"),
     env.PkgDraw("DefaultBundle/IPv6Extensions_Routing.png", "DefaultBundle/IPv6Extensions.hh",
