@@ -55,7 +55,7 @@ BOOST_AUTO_UNIT_TEST(udpPacket_parse)
     SENF_CHECK_NO_THROW( p.dump( oss));
 }
 
-BOOST_AUTO_UNIT_TEST(udpPacket_in_ipv6_create)
+BOOST_AUTO_UNIT_TEST(udpPacket_in_ipv4_create)
 {
     unsigned char data[] = { 
             0x45, 0x00, 0x00, 0x26, 0x00, 0x00, 0x40, 0x00,
