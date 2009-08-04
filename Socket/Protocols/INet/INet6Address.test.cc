@@ -61,7 +61,7 @@ BOOST_AUTO_UNIT_TEST(inet6Address)
         BOOST_CHECK_EQUAL( addr1[13], 14 );
         BOOST_CHECK_EQUAL( addr1[14], 15 );
         BOOST_CHECK_EQUAL( addr1[15], 0 );
-        BOOST_CHECK( INet6Address::from_string("www.6bone.net") != INet6Address::None );
+        BOOST_CHECK( INet6Address::from_string("www.go6.net") != INet6Address::None );
         INet6Address addr2;
         BOOST_CHECK_EQUAL( senf::str(addr2), "::" );
         addr2 = INet6Address::from_string("::1");

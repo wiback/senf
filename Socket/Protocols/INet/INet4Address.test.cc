@@ -68,7 +68,7 @@ BOOST_AUTO_UNIT_TEST(inet4Address)
     BOOST_CHECK( addr );
     BOOST_CHECK( ! INet4Address() );
     BOOST_CHECK_THROW( INet4Address::from_string(""), AddressSyntaxException );
-    BOOST_CHECK( INet4Address::from_string("www.6bone.net") != INet4Address::None );
+    BOOST_CHECK( INet4Address::from_string("www.go6.net") != INet4Address::None );
     BOOST_CHECK_THROW( INet4Address::from_string("invalid.host.fhg.de"), UnknownHostnameException);
 
     {

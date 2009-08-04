@@ -48,7 +48,7 @@ namespace senf {
 
         INet4Address wraps the standard sockaddr_in datatype. It provides simple accessor methods
         to access the host and port. It does \e not integrate \c gethostbyname or DNS lookup.
-        
+
         \implementation This implementation is based on sockaddr_in, which is needed since it needs
             to provide a non-const struct sockaddr * for legacy compatibility.
 
@@ -76,7 +76,7 @@ namespace senf {
                                              \throws UnknownHostnameException if the
                                                  address cannot be resolved. */
 
-        INet4SocketAddress(INet4Address const & addr, unsigned port); 
+        INet4SocketAddress(INet4Address const & addr, unsigned port);
                                         ///< Set address and port explicitly
                                         /**< \param[in] addr IP address
                                              \param[in] port port number */
@@ -123,10 +123,10 @@ namespace senf {
 
         Where \e address is an arbitrary numeric IPv6 address, \e zone-id is an optional network
         interface name and \e port is the port number. So some example addresses are
-        
+
         \par ""
             <tt>[2001:db8:1::1]:80</tt> \n
-            <tt>www.6bone.net:80</tt> \n
+            <tt>www.go6.net:80</tt> \n
             <tt>[fe80::1\%eth0]:443</tt>
 
         \implementation The sockaddr_in6 structure has an sin6_flowinfo member. However RFC3493 does
@@ -153,7 +153,7 @@ namespace senf {
         ///@{
 
         INet6SocketAddress();           ///< Create empty instance
-        explicit INet6SocketAddress(std::string const & addr, 
+        explicit INet6SocketAddress(std::string const & addr,
                                     INet6Address::Resolve_t resolve = INet6Address::ResolveINet6);
                                         ///< Initialize/convert from string representation
                                         /**< \throws AddressSyntaxException if the address syntax is
@@ -271,7 +271,7 @@ namespace senf {
 //#include "INetAddressing.mpp"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100

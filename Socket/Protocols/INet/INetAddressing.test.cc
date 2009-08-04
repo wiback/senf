@@ -115,7 +115,7 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
         BOOST_CHECK_EQUAL( addr.iface(), "" );
         BOOST_CHECK_EQUAL( addr, INet6SocketAddress("[12::21]:12345") );
-        SENF_CHECK_NO_THROW( INet6SocketAddress("www.6bone.net:80") );
+        SENF_CHECK_NO_THROW( INet6SocketAddress("www.go6.net:80") );
         addr = INet6SocketAddress("1.2.3.4:12345", INet6Address::ResolveINet4);
         BOOST_CHECK_EQUAL( addr.address(), INet6Address::from_string("::ffff:1.2.3.4") );
         BOOST_CHECK_EQUAL( addr.port(), 12345u );
@@ -147,7 +147,7 @@ BOOST_AUTO_UNIT_TEST(inet6SocketAddress)
     }
 
     {
-        BOOST_CHECK_THROW( INet6SocketAddress(INet6Address::Loopback, 1, "invalid_iface"), 
+        BOOST_CHECK_THROW( INet6SocketAddress(INet6Address::Loopback, 1, "invalid_iface"),
                 AddressSyntaxException );
         INet6SocketAddress addr (INet6Address::Loopback, 1, "lo");
         BOOST_CHECK_EQUAL( addr, INet6SocketAddress("[::1%lo]:1") );
