@@ -30,7 +30,7 @@
 #include <signal.h>
 #include <boost/function.hpp>
 #include "FIFORunner.hh"
-#include "../boost/intrusive/iset_hook.hpp"
+#include <boost/intrusive/iset_hook.hpp>
 
 //#include "SignalEvent.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

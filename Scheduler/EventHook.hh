@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/function.hpp>
-#include "../boost/intrusive/ilist_hook.hpp"
+#include <boost/intrusive/ilist_hook.hpp>
 #include "FIFORunner.hh"
 
 //#include "EventHook.mpp"

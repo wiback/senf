@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <signal.h>
-#include "../boost/intrusive/iset_hook.hpp"
+#include <boost/intrusive/iset_hook.hpp>
 #include "ClockService.hh"
 #include "FdManager.hh"
 #include "FIFORunner.hh"

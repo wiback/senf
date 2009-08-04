@@ -115,9 +115,6 @@ namespace module {
     private:
         AnnotationType connectorSetup(connector::ActiveOutput<> & conn, AnnotationType const & key);
         void request();
-        
-        typedef boost::ptr_map<AnnotationType, connector::ActiveOutput<> > Outputs;
-        Outputs outputs_;
 
         friend class MultiConnectorMixin< AnnotationRouter<AnnotationType>,
                                             connector::ActiveOutput<>,

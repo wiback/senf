@@ -27,7 +27,7 @@
 #define HH_SENF_Packets_PacketInterpreter_ 1
 
 // Custom includes
-#include "../boost/intrusive/ilist.hpp"
+#include <boost/intrusive/ilist.hpp>
 #include <boost/optional.hpp>
 #include <boost/range.hpp>
 #include "../Utils/intrusive_refcount.hh"

@@ -241,9 +241,6 @@ namespace senf {
         static void dump(packet p, std::ostream &os);
         static void finalize(packet p);
         static factory_t nextPacketType(packet p);
-        
-        enum ResponseStatus { Success, UnspecifiedFailure, Rejected, AuthorizationFailure, NetworkError };
-        enum Opcode { Request=1, Response, Indication }; 
     };
 
     /** \brief MIH packet typedef */

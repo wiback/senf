@@ -30,8 +30,8 @@
 #include <vector>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/cstdint.hpp>
-#include "../boost/intrusive/ilist.hpp"
-#include "../boost/intrusive/ilist_hook.hpp"
+#include <boost/intrusive/ilist.hpp>
+#include <boost/intrusive/ilist_hook.hpp>
 
 //#include "PacketTypes.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

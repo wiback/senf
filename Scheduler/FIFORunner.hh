@@ -29,8 +29,8 @@
 // Custom includes
 #include <signal.h>
 #include <boost/utility.hpp>
-#include "../boost/intrusive/ilist.hpp"
-#include "../boost/intrusive/ilist_hook.hpp"
+#include <boost/intrusive/ilist.hpp>
+#include <boost/intrusive/ilist_hook.hpp>
 #include "../Utils/singleton.hh"
 #include "EventManager.hh"
 

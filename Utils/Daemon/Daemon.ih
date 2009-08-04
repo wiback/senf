@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <deque>
-#include "../boost/intrusive/iset.hpp"
-#include "../boost/intrusive/iset_hook.hpp"
+#include <boost/intrusive/iset.hpp>
+#include <boost/intrusive/iset_hook.hpp>
 #include <boost/utility.hpp>
 #include <boost/function.hpp>
 #include "../../Scheduler/Scheduler.hh"
