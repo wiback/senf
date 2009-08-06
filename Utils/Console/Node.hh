@@ -75,7 +75,7 @@
 
         // Add a new directory to the root and document it. All the mutators return the node object
         // itself so operations can be chained.
-        senf::console::DirectoryNode & mydir (
+        senf::console::DirectoryNode & mydir ( senf::console::root()
                 .mkdir("myserver")
                 .doc("My server specific directory"));
 
