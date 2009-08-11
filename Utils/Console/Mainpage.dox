@@ -1271,6 +1271,29 @@
     \endhtmlonly
 
 
+    \subsection console_args_convert Handling special argument types by conversion
+
+    Sometimes an argument type is best handled by just pretending it to be of some other type. The
+    basic idea is, to us \c boost::function to convert the real argument type to some different type
+
+    \code
+    unsigned char fun4(unsigned char value)
+    {
+        return value;
+    }
+    
+    senf::console::root()
+        .add("test8", boost::function<unsigned (unsigned)>(&fun4));
+    \endcode
+    
+    Here, the type signature specified via \c boost::function is different from the real type
+    signature but is compatible. \c boost::function automatically handles the conversion
+    process. Since the console library now sees the argument and return value of type \c unsigned,
+    the values will be parsed correctly as numeric values.
+
+    The same idea can be used to support custom parsing rules. See senf::console::FlagCollection.
+
+
     \subsection console_args_custom Extending the library to support additional types
 
     To support or customize parsing/formatting of other types, they need to be registered. In it's
