@@ -275,9 +275,12 @@ namespace debug {
         SENF_PPI_MODULE(Logger);
     public:
         Logger();
+        explicit Logger(std::string label);
 
     private:
         virtual void v_handlePacket(Packet const & packet);
+
+        std::string label_;
     };
 
 }}}}

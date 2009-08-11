@@ -134,7 +134,7 @@ BOOST_AUTO_UNIT_TEST(logSink)
     logTarget.route<senf::log::Debug,senf::log::VERBOSE>();
 
     debug::ActiveFeederSource source;
-    debug::Logger<> logger;
+    debug::Logger<> logger ("Prefix text");
 
     ppi::connect(source,logger);
     senf::PacketData::byte data[] = { 0x13u, 0x24u, 0x35u };

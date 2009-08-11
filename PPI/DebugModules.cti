@@ -38,6 +38,11 @@ template <class Stream, class Area, class Level>
 prefix_ senf::ppi::module::debug::Logger<Stream,Area,Level>::Logger()
 {}
 
+template <class Stream, class Area, class Level>
+prefix_ senf::ppi::module::debug::Logger<Stream,Area,Level>::Logger(std::string label)
+    : label_ (label+"\n")
+{}
+
 ////////////////////////////////////////
 // private members
 
@@ -46,9 +51,10 @@ prefix_ void
 senf::ppi::module::debug::Logger<Stream,Area,Level>::v_handlePacket(Packet const & packet)
 {
     SENF_LOG_BLOCK_TPL((Stream)(Area)(Level)({
-        packet.dump(log);
-        hexdump(packet.last().data().begin(), packet.last().data().end(),log);
-    }));
+                log << label_;
+                packet.dump(log);
+                hexdump(packet.last().data().begin(), packet.last().data().end(),log);
+            }));
 }
 
 ///////////////////////////////cti.e///////////////////////////////////////
