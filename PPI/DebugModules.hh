@@ -30,7 +30,7 @@
 #include <deque>
 #include "../Utils/safe_bool.hh"
 #include "../Packets/Packets.hh"
-#include "Module.hh"
+#include "MonitorModule.hh"
 #include "ActiveFeeder.hh"
 #include "../Utils/Logger/SenfLog.hh"
 
@@ -269,18 +269,15 @@ namespace debug {
     template < class Stream = log::Debug,
                class Area   = log::DefaultArea,
                class Level  = log::VERBOSE >
-    class LogSink
-        : public module::Module
+    class Logger
+        : public MonitorModule<>
     {
-        SENF_PPI_MODULE(LogSink);
+        SENF_PPI_MODULE(Logger);
     public:
-
-        connector::PassiveInput<> input;
-
-        LogSink();
+        Logger();
 
     private:
-        void request();
+        virtual void v_handlePacket(Packet const & packet);
     };
 
 }}}}

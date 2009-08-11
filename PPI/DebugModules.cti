@@ -32,22 +32,19 @@
 ///////////////////////////////cti.p///////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::debug::LogSink<Stream,Area,level>
+// senf::ppi::module::debug::Logger<Stream,Area,level>
 
 template <class Stream, class Area, class Level>
-prefix_ senf::ppi::module::debug::LogSink<Stream,Area,Level>::LogSink()
-{
-    noroute(input);
-    input.onRequest(&LogSink::request);
-}
+prefix_ senf::ppi::module::debug::Logger<Stream,Area,Level>::Logger()
+{}
 
 ////////////////////////////////////////
 // private members
 
 template <class Stream, class Area, class Level>
-prefix_ void senf::ppi::module::debug::LogSink<Stream,Area,Level>::request()
+prefix_ void
+senf::ppi::module::debug::Logger<Stream,Area,Level>::v_handlePacket(Packet const & packet)
 {
-    Packet packet (input());
     SENF_LOG_BLOCK_TPL((Stream)(Area)(Level)({
         packet.dump(log);
         hexdump(packet.last().data().begin(), packet.last().data().end(),log);
