@@ -30,6 +30,7 @@
 #include "Route.hh"
 #include "Module.hh"
 #include "ModuleManager.hh"
+#include "../Utils/Console/Console.hh"
 
 //#include "Connectors.mpp"
 #define prefix_
@@ -72,6 +73,78 @@ prefix_ void senf::ppi::connector::Connector::connect(Connector & target)
         enqueueInitializable();
     if (! peer().initializationScheduled())
         peer().enqueueInitializable();
+}
+
+senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::traceState_ (
+    senf::ppi::connector::Connector::NO_TRACING);
+
+prefix_ void senf::ppi::connector::Connector::trace(Packet const & p, char const * label)
+{
+    if (traceState_ ==  NO_TRACING)
+        return;
+    SENF_LOG_BLOCK(({
+                std::string type (prettyName(p.typeId().id()));
+                log << "PPI trace: 0x" << std::hex << p.id() << " " 
+                    << type.substr(21, type.size()-22) << " " << label
+                    << " on " << & module() << " " << prettyName(typeid(module()))
+                    << " connector 0x" << this << "\n";
+                if (traceState_ == TRACE_CONTENTS)
+                    p.dump(log);
+            }));
+}
+
+namespace senf { namespace ppi { namespace connector {
+
+    SENF_CONSOLE_REGISTER_ENUM_MEMBER( 
+        Connector, TraceState, (NO_TRACING)(TRACE_IDS)(TRACE_CONTENTS) );
+
+}}}
+
+namespace {
+
+    struct ConsoleRegister
+    {
+        ConsoleRegister();
+    };
+
+    ConsoleRegister::ConsoleRegister()
+    {
+        senf::console::sysdir()
+            .add("ppiTracing", SENF_FNP(senf::ppi::connector::Connector::TraceState,
+                                         senf::ppi::connector::Connector::tracing, ()))
+            .doc("Log every packet sent or received by any module.\n"
+                 "There are three different tracing levels:\n"
+                 "\n"
+                 "    NO_TRACING      don't output any tracing information\n"
+                 "    TRACE_IDS       trace packet id's but do not show packet contents\n"
+                 "    TRACE_CONTENTS  trace complete packet contents\n"
+                 "\n"
+                 "A log message is generated whenever the packet traverses a connector. The\n"
+                 "TRACE_IDS log message has the following format:\n"
+                 "\n"
+                 "    PPI trace: <packet-id> <packet-type> <direction>\n"
+                 "                      on <module-id> <module-type> connector <connector-id>\n"
+                 "\n"
+                 "The fields are:\n"
+                 "\n"
+                 "    packet-id       Numeric unique packet id. This value is unique for packets\n"
+                 "                    alive at the same time, packets at different times may (and\n"
+                 "                    will) share id's\n"
+                 "    packet-type     The type of the packet header\n"
+                 "    direction       'INCOMING' for packets entering the module, 'OUTGOING' for\n"
+                 "                    packets leaving it\n"
+                 "    module-id       Unique module id\n"
+                 "    module-type     Type of the module the packet is sent to/from\n"
+                 "    connector-id    Unique connector id\n");
+
+        senf::console::sysdir()
+            .add("ppiTracing", SENF_FNP(void, senf::ppi::connector::Connector::tracing,
+                                         (senf::ppi::connector::Connector::TraceState)))
+            .arg("state", "new tracing state");
+    }
+
+    ConsoleRegister consoleRegister;
+
 }
 
 prefix_ void senf::ppi::connector::Connector::disconnect()
@@ -184,6 +257,7 @@ prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
         queue_.pop_back();
         v_dequeueEvent();
     }
+    trace(p, "INCOMING");
     return p;
 }
 

@@ -390,8 +390,8 @@ namespace senf {
         ///@{
 
         bool operator==(Packet const & other) const; ///< Check for packet identity
-        /**< Two packet handles compare equal if they really are the
-             same packet header in the same packet chain. */
+                                        /**< Two packet handles compare equal if they really are the
+                                             same packet header in the same packet chain. */
         bool boolean_test() const;      ///< Check, whether the packet is valid()
                                         /**< \see valid() */
         bool valid() const;             ///< Check, whether the packet is valid()
@@ -437,16 +437,16 @@ namespace senf {
                                              \endcode */
 
         void finalizeTo(Packet const & other);  ///< Update calculated fields
-        /**< The finalize() fammily of members will update
-             calculated packet fields: checksums, size fields and so
-             on. This includes any field, which can be set from
-             other information in the packet. Each concrete packet
-             type should document, which fields are set by
-             finalize().
-
-             finalizeTo(other) will automatically process all
-             packets/headers/interpreters beginning at \a other
-             backwards towards outer packets up to \c this. */
+                                        /**< The finalize() fammily of members will update
+                                             calculated packet fields: checksums, size fields and so
+                                             on. This includes any field, which can be set from
+                                             other information in the packet. Each concrete packet
+                                             type should document, which fields are set by
+                                             finalize().
+                                             
+                                             finalizeTo(other) will automatically process all
+                                             packets/headers/interpreters beginning at \a other
+                                             backwards towards outer packets up to \c this. */
 
         void finalizeAll();             ///< Update calculated fields
                                         /**< The finalize() fammily of members will update
@@ -470,23 +470,27 @@ namespace senf {
                                              headers. */
 
         void dump(std::ostream & os) const; ///< Write out a printable packet representation
-        /**< This method is provided mostly to help debugging packet
-             problems. Each concrete packet should implement a dump
-             method writing out all fields of the packet in a
-             readable representation. dump() will call this member
-             for each packet/header/interpreter in the chain from \c
-             this packet up to the end of the chain. */
+                                        /**< This method is provided mostly to help debugging packet
+                                             problems. Each concrete packet should implement a dump
+                                             method writing out all fields of the packet in a
+                                             readable representation. dump() will call this member
+                                             for each packet/header/interpreter in the chain from \c
+                                             this packet up to the end of the chain. */
 
-        TypeIdValue typeId() const;     ///< Get id of \c this packet
-        /**< This value is used e.g. in the packet registry to
-             associate packet types with other information.
-             \returns A type holding the same information as a
-                 type_info object, albeit assignable */
+        TypeIdValue typeId() const;     ///< Get type of \c this packet
+                                        /**< This value is used e.g. in the packet registry to
+                                             associate packet types with other information.
+                                             \returns A type holding the same information as a
+                                             type_info object, albeit assignable */
         factory_t factory() const;      ///< Return factory instance of \c this packet
-        /**< The returned factory instance can be used to create new
-             packets of the given type without knowing the concrete
-             type of the packet. The value may be stored away for
-             later use if needed. */
+                                        /**< The returned factory instance can be used to create new
+                                             packets of the given type without knowing the concrete
+                                             type of the packet. The value may be stored away for
+                                             later use if needed. */
+
+        unsigned long id() const;       ///< Unique packet id
+                                        /**< Get a unique packet id. If two packets have the same
+                                             id, they share the internal data representation.. */
 
         ///@}
 

@@ -50,6 +50,16 @@ prefix_ senf::ppi::module::Module & senf::ppi::connector::Connector::module()
     return *module_;
 }
 
+prefix_ void senf::ppi::connector::Connector::tracing(TraceState state)
+{
+    traceState_ = state;
+}
+
+prefix_ senf::ppi::connector::Connector::TraceState senf::ppi::connector::Connector::tracing()
+{
+    return traceState_;
+}
+
 ////////////////////////////////////////
 // protected members
 
@@ -276,6 +286,7 @@ prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConne
 
 prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet const & p)
 {
+    trace(p, "OUTGOING");
     if (connected())
         peer().enqueue(p);
 }

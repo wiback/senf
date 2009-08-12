@@ -161,6 +161,8 @@ namespace connector {
     class Connector
         : ModuleManager::Initializable, boost::noncopyable
     {
+        SENF_LOG_CLASS_AREA();
+        SENF_LOG_DEFAULT_LEVEL(senf::log::NOTICE);
     public:
         Connector & peer() const;       ///< Get peer connected to this connector
         module::Module & module() const; ///< Get this connectors containing module
@@ -169,11 +171,18 @@ namespace connector {
 
         void disconnect();              ///< Disconnect connector from peer
 
+        enum TraceState { NO_TRACING, TRACE_IDS, TRACE_CONTENTS };
+
+        static void tracing(TraceState state);
+        static TraceState tracing();
+
     protected:
         Connector();
         virtual ~Connector();
 
         void connect(Connector & target);
+
+        void trace(Packet const & p, char const * label);
         
     private:
         virtual std::type_info const & packetTypeID();
@@ -182,6 +191,8 @@ namespace connector {
 
         Connector * peer_;
         module::Module * module_;
+
+        static TraceState traceState_;
 
         friend class module::Module;
     };

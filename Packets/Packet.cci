@@ -171,6 +171,12 @@ prefix_ senf::Packet::factory_t senf::Packet::factory()
     return ptr()->factory();
 }
 
+prefix_ unsigned long senf::Packet::id()
+    const
+{
+    return reinterpret_cast<unsigned long>(&ptr()->impl());
+}
+
 prefix_ bool senf::Packet::boolean_test()
     const
 {
