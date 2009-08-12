@@ -81,6 +81,12 @@ prefix_ bool senf::ppi::ModuleManager::running()
     return running_;
 }
 
+prefix_ senf::console::DirectoryNode & senf::ppi::ModuleManager::consoleDir()
+    const
+{
+    return consoleDir_.node();
+}
+
 ///////////////////////////////////////////////////////////////////////////
 // senf::ppi::ModuleManager::Initializable
 

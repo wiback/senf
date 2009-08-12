@@ -30,6 +30,7 @@
 #include "../Scheduler/Scheduler.hh"
 #include "../Utils/membind.hh"
 #include "Module.hh"
+#include "../Utils/Console/Console.hh"
 
 //#include "ModuleManager.mpp"
 #define prefix_
@@ -72,7 +73,31 @@ prefix_ senf::ppi::ModuleManager::ModuleManager()
     : running_(false), terminate_(false), 
       initRunner_ ("senf::ppi::init", membind(&ModuleManager::init, this),
                    scheduler::EventHook::PRE, false)
-{}
+{
+    senf::console::sysdir().add("ppi", consoleDir_);
+
+    consoleDir_
+        .add("dump", senf::membind(&ModuleManager::dumpModules, this))
+        .doc("Dump complete PPI structure\n"
+             "The dump will contain one paragraph for each module. The first line gives module\n"
+             "information, additional lines list all connectors and their peers (if connected).");
+}
+
+prefix_ void senf::ppi::ModuleManager::dumpModules(std::ostream & os)
+{
+    for (ModuleRegistry::const_iterator i (moduleRegistry_.begin()), i_end (moduleRegistry_.end());
+         i != i_end; ++i) {
+        os << *i << " " << prettyName(typeid(**i)) << "\n";
+        for (module::Module::ConnectorRegistry::iterator j ((*i)->connectorRegistry_.begin()),
+                 j_end ((*i)->connectorRegistry_.end()); j != j_end; ++j) {
+            os << "  " << *j << " " << prettyName(typeid(**j));
+            if ((**j).connected())
+                os << " " << & (*j)->peer();
+            os << "\n";
+        }
+        os << "\n";
+    }
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

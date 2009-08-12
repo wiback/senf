@@ -31,6 +31,7 @@
 #include <deque>
 #include "predecl.hh"
 #include "../Scheduler/Scheduler.hh"
+#include "../Utils/Console/ScopedDirectory.hh"
 
 //#include "ModuleManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -82,6 +83,8 @@ namespace ppi {
 
         bool running() const;           ///< \c true, if the network is running
 
+        senf::console::DirectoryNode & consoleDir() const;
+
     private:
         ModuleManager();
 
@@ -91,6 +94,8 @@ namespace ppi {
         void registerInitializable(Initializable & i);
         void unregisterInitializable(Initializable & i);
         bool initializableRegistered(Initializable const & i) const;
+
+        void dumpModules(std::ostream & os);
 
         typedef std::vector<module::Module *> ModuleRegistry;
         typedef std::deque<Initializable *> InitQueue;
@@ -107,6 +112,8 @@ namespace ppi {
         InitQueue initQueue_;
 
         scheduler::EventHook initRunner_;
+
+        senf::console::ScopedDirectory<> consoleDir_;
 
         friend class module::Module;
         friend class Initializable;

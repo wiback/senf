@@ -84,10 +84,9 @@ prefix_ void senf::ppi::connector::Connector::trace(Packet const & p, char const
         return;
     SENF_LOG_BLOCK(({
                 std::string type (prettyName(p.typeId().id()));
-                log << "PPI trace: 0x" << std::hex << p.id() << " " 
-                    << type.substr(21, type.size()-22) << " " << label
-                    << " on " << & module() << " " << prettyName(typeid(module()))
-                    << " connector 0x" << this << "\n";
+                log << "PPI trace: " << label << " 0x" << std::hex << p.id() << " " 
+                    << type.substr(21, type.size()-22) << " on " << & module() << " " 
+                    << prettyName(typeid(module())) << " connector 0x" << this << "\n";
                 if (traceState_ == TRACE_CONTENTS)
                     p.dump(log);
             }));
@@ -109,9 +108,9 @@ namespace {
 
     ConsoleRegister::ConsoleRegister()
     {
-        senf::console::sysdir()
-            .add("ppiTracing", SENF_FNP(senf::ppi::connector::Connector::TraceState,
-                                         senf::ppi::connector::Connector::tracing, ()))
+        senf::ppi::ModuleManager::instance().consoleDir()
+            .add("tracing", SENF_FNP(senf::ppi::connector::Connector::TraceState,
+                                     senf::ppi::connector::Connector::tracing, ()))
             .doc("Log every packet sent or received by any module.\n"
                  "There are three different tracing levels:\n"
                  "\n"
@@ -137,9 +136,9 @@ namespace {
                  "    module-type     Type of the module the packet is sent to/from\n"
                  "    connector-id    Unique connector id\n");
 
-        senf::console::sysdir()
-            .add("ppiTracing", SENF_FNP(void, senf::ppi::connector::Connector::tracing,
-                                         (senf::ppi::connector::Connector::TraceState)))
+        senf::ppi::ModuleManager::instance().consoleDir()
+            .add("tracing", SENF_FNP(void, senf::ppi::connector::Connector::tracing,
+                                     (senf::ppi::connector::Connector::TraceState)))
             .arg("state", "new tracing state");
     }
 
