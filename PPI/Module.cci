@@ -55,8 +55,11 @@ prefix_ senf::ppi::ModuleManager & senf::ppi::module::Module::moduleManager()
 
 prefix_ void senf::ppi::module::Module::registerConnector(connector::Connector & connector)
 {
-    connectorRegistry_.push_back(&connector);
-    connector.setModule(*this);
+    if (std::find(connectorRegistry_.begin(), connectorRegistry_.end(), &connector) 
+        == connectorRegistry_.end()) {
+        connectorRegistry_.push_back(&connector);
+        connector.setModule(*this);
+    }
 }
 
 prefix_ senf::ppi::RouteBase &
