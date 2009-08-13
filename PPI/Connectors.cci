@@ -110,12 +110,14 @@ prefix_ bool senf::ppi::connector::PassiveConnector::throttled()
 
 prefix_ void senf::ppi::connector::PassiveConnector::emitThrottle()
 {
+    throttleTrace("OUT", "throttle");
     if (connected())
         peer().notifyThrottle();
 }
 
 prefix_ void senf::ppi::connector::PassiveConnector::emitUnthrottle()
 {
+    throttleTrace("OUT", "unthrottle");
     if (connected()) {
         peer().notifyUnthrottle();
         v_unthrottleEvent();
@@ -150,7 +152,8 @@ prefix_ void senf::ppi::connector::PassiveConnector::throttle()
     if (!throttled()) {
         nativeThrottled_ = true;
         emitThrottle();
-    }
+    } else
+        nativeThrottled_ = true;
 }
 
 prefix_ void senf::ppi::connector::PassiveConnector::unthrottle()
@@ -176,6 +179,8 @@ prefix_ void senf::ppi::connector::PassiveConnector::emit()
     SENF_ASSERT(callback_ && "senf::ppi::connector::PassiveConnector: missing onRequest()");
     if (!throttled())
         callback_();
+    else
+        throttleTrace("IN ", "queueing packet");
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -286,7 +291,7 @@ prefix_ senf::ppi::connector::InputConnector & senf::ppi::connector::OutputConne
 
 prefix_ void senf::ppi::connector::OutputConnector::operator()(Packet const & p)
 {
-    trace(p, "OUTGOING");
+    trace(p, "OUT");
     if (connected())
         peer().enqueue(p);
 }

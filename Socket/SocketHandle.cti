@@ -175,7 +175,11 @@ prefix_ void senf::SocketHandle<SPolicy>::state(SocketStateMap & map, unsigned l
     // the type name and therefore show the \e static policy of the
     // socket handle.
     map["handle"] << prettyName(typeid(*this));
-    body().state(map,lod);
+    if (valid()) {
+        map["valid"] << "true";
+        body().state(map,lod);
+    } else
+        map["valid"] << "false";
 }
 
 template <class SPolicy>

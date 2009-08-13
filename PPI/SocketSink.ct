@@ -125,7 +125,7 @@ prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::write()
 template <class Writer>
 prefix_ void senf::ppi::module::PassiveSocketSink<Writer>::checkThrottle()
 {
-    if (handle_)
+    if (handle_.valid())
         input.unthrottle();
     else
         input.throttle();

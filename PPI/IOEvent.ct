@@ -36,7 +36,10 @@ prefix_ void senf::ppi::IOEvent::set(Handle handle, unsigned events)
     if (handle) {
         fd_ = senf::scheduler::get_descriptor(handle);
         event_.events(events).handle(fd_);
-        event_.enable();
+        if (enabled())
+            event_.enable();
+        else
+            event_.disable();
     }
     else {
         event_.disable();

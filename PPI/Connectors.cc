@@ -84,11 +84,22 @@ prefix_ void senf::ppi::connector::Connector::trace(Packet const & p, char const
         return;
     SENF_LOG_BLOCK(({
                 std::string type (prettyName(p.typeId().id()));
-                log << "PPI trace: " << label << " 0x" << std::hex << p.id() << " " 
+                log << "PPI packet trace: " << label << " 0x" << std::hex << p.id() << " " 
                     << type.substr(21, type.size()-22) << " on " << & module() << " " 
                     << prettyName(typeid(module())) << " connector 0x" << this << "\n";
                 if (traceState_ == TRACE_CONTENTS)
                     p.dump(log);
+            }));
+}
+
+prefix_ void senf::ppi::connector::Connector::throttleTrace(char const * label,
+                                                            char const * type)
+{
+    if (traceState_ == NO_TRACING)
+        return;
+    SENF_LOG_BLOCK(({
+                log << "PPI throttling trace: " << label << " " << type << " on " << & module() 
+                    << " " << prettyName(typeid(module())) << " connector 0x" << this << "\n";
             }));
 }
 
@@ -121,20 +132,23 @@ namespace {
                  "A log message is generated whenever the packet traverses a connector. The\n"
                  "TRACE_IDS log message has the following format:\n"
                  "\n"
-                 "    PPI trace: <packet-id> <packet-type> <direction>\n"
+                 "    PPI packet trace: <direction> <packet-id> <packet-type>\n"
+                 "                      on <module-id> <module-type> connector <connector-id>\n"
+                 "    PPI throttling trace: <direction> <throttle-msg>\n"
                  "                      on <module-id> <module-type> connector <connector-id>\n"
                  "\n"
                  "The fields are:\n"
                  "\n"
+                 "    direction       'IN' for packets/throttle notifications entering the module,\n"
+                 "                    'OUT' for packets/throttle notifications leaving it\n"
                  "    packet-id       Numeric unique packet id. This value is unique for packets\n"
                  "                    alive at the same time, packets at different times may (and\n"
                  "                    will) share id's\n"
                  "    packet-type     The type of the packet header\n"
-                 "    direction       'INCOMING' for packets entering the module, 'OUTGOING' for\n"
-                 "                    packets leaving it\n"
                  "    module-id       Unique module id\n"
                  "    module-type     Type of the module the packet is sent to/from\n"
-                 "    connector-id    Unique connector id\n");
+                 "    connector-id    Unique connector id\n"
+                 "    throttle-msg    Type of throttling event\n");
 
         senf::ppi::ModuleManager::instance().consoleDir()
             .add("tracing", SENF_FNP(void, senf::ppi::connector::Connector::tracing,
@@ -197,7 +211,8 @@ prefix_ void senf::ppi::connector::PassiveConnector::notifyUnthrottle()
         remoteThrottled_ = false;
         if (!nativeThrottled_)
             emitUnthrottle();
-    }
+    } else
+        throttleTrace("OUT", "not forwarding unthrottle event");
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -214,6 +229,7 @@ prefix_ void senf::ppi::connector::ActiveConnector::v_init()
 
 prefix_ void senf::ppi::connector::ActiveConnector::notifyThrottle()
 {
+    throttleTrace("IN ", "throttle");
     if (! throttled_) {
         throttled_ = true;
         if (throttleCallback_)
@@ -227,6 +243,7 @@ prefix_ void senf::ppi::connector::ActiveConnector::notifyThrottle()
 
 prefix_ void senf::ppi::connector::ActiveConnector::notifyUnthrottle()
 {
+    throttleTrace("IN ", "unthrottle");
     if (throttled_) {
         throttled_ = false;
         if (unthrottleCallback_)
@@ -256,7 +273,7 @@ prefix_ senf::Packet senf::ppi::connector::InputConnector::operator()()
         queue_.pop_back();
         v_dequeueEvent();
     }
-    trace(p, "INCOMING");
+    trace(p, "IN ");
     return p;
 }
 

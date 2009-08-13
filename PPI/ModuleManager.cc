@@ -80,7 +80,13 @@ prefix_ senf::ppi::ModuleManager::ModuleManager()
         .add("dump", senf::membind(&ModuleManager::dumpModules, this))
         .doc("Dump complete PPI structure\n"
              "The dump will contain one paragraph for each module. The first line gives module\n"
-             "information, additional lines list all connectors and their peers (if connected).");
+             "information, additional lines list all connectors and their peers (if connected).\n"
+             "\n"
+             "This information can be processed by 'PPI/drawmodules.py' and 'dot' (from the\n"
+             "graphviz package) to generate a graphic representation of the module structure:\n"
+             "\n"
+             "    $ echo /sys/ppi/dump | nc -q1 <host> <port> \\\n"
+             "          | python PPI/drawmodules.py | dot -Tpng /dev/fd/0 >modules.png\n");
 }
 
 prefix_ void senf::ppi::ModuleManager::dumpModules(std::ostream & os)

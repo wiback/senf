@@ -91,7 +91,11 @@ senf::ProtocolServerSocketHandle<SocketProtocol>::state(SocketStateMap & map,
                                                                unsigned lod)
 {
     map["handle"] = prettyName(typeid(*this));
-    this->body().state(map,lod);
+    if (this->valid()) {
+        map["valid"] << "true";
+        this->body().state(map,lod);
+    } else
+        map["valid"] << "false";
 }
 
 template <class SocketProtocol>

@@ -87,6 +87,7 @@ namespace ppi {
         void registerRoute(ForwardingRoute & route);
 
         bool enabled_;
+        bool throttled_;
 
         typedef std::vector<ForwardingRoute*> Routes;
         Routes routes_;

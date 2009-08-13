@@ -183,6 +183,7 @@ namespace connector {
         void connect(Connector & target);
 
         void trace(Packet const & p, char const * label);
+        void throttleTrace(char const * label, char const * type);
         
     private:
         virtual std::type_info const & packetTypeID();
@@ -247,11 +248,11 @@ namespace connector {
     private:
         virtual void v_init();
 
-        // Called by the routing to change the remote throttling state
+        // Called by the routing to change the throttling state from forwarding routes
         void notifyThrottle();          ///< Forward a throttle notification to this connector
         void notifyUnthrottle();        ///< Forward an unthrottle notification to this connector
 
-        // Internal members to emit throttling notifications
+        // Internal members to emit throttling notifications to the connected peer
         void emitThrottle();
         void emitUnthrottle();
 

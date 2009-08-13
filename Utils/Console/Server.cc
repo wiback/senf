@@ -111,7 +111,15 @@ prefix_ void senf::console::Server::newClient(int event)
 
 prefix_ void senf::console::Server::removeClient(Client & client)
 {
-    SENF_LOG(( "Disposing client " << client.handle().peer() ));
+    SENF_LOG_BLOCK(({
+                log << "Disposing client ";
+                try {
+                    log << client.handle().peer();
+                }
+                catch (senf::SystemException ex) {
+                    log << "(unknown)";
+                }
+            }));
     // THIS DELETES THE CLIENT INSTANCE !!
     clients_.erase(boost::intrusive_ptr<Client>(&client));
 }

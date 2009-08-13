@@ -43,13 +43,17 @@ prefix_ void senf::ppi::EventDescriptor::notifyUnthrottle()
     for (; i != i_end; ++i)
         if ((*i)->throttled())
             break;
-    if (i == i_end) 
-        enabled(true);
+    if (i != i_end) 
+        return;
+    throttled_ = false;
+    enabled(true);
 }
 
 prefix_ void senf::ppi::EventDescriptor::enabled(bool v)
 {
     SENF_ASSERT(v_isRegistered() && "Module::registerEvent() call missing");
+    if (throttled_ && v)
+        return;
     if (v && ! enabled_)
         v_enable();
     else if (! v && enabled_)
