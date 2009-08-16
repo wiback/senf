@@ -96,12 +96,13 @@ BOOST_AUTO_UNIT_TEST(socketHandle)
                            std::bad_cast );
 
         BOOST_CHECK_EQUAL( myh.dumpState(),
-                           "file.handle: 0\n"
-                           "file.refcount: 3\n"
-                           "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy> >\n"
-                           "socket.protocol: senf::test::SomeSocketProtocol\n"
-                           "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
-                           "socket.server: false\n" );
+                "file.handle: 0\n"
+                "file.refcount: 3\n"
+                "handle: senf::SocketHandle<senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy> >\n"
+                "socket.protocol: senf::test::SomeSocketProtocol\n"
+                "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
+                "socket.server: false\n"
+                "valid: true\n" );
 
         SENF_CHECK_NO_THROW( myh.facet<senf::test::SomeSocketProtocol>() );
     }

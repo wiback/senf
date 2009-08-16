@@ -67,13 +67,8 @@ BOOST_AUTO_UNIT_TEST(protocolServerSocketHandle)
         BOOST_CHECK_EQUAL( client.fd(), -1 );
 
         BOOST_CHECK_EQUAL( h.dumpState(),
-                           "file.handle: -1\n"
-                           "file.refcount: 2\n"
-                           "handle: senf::ProtocolServerSocketHandle<(anonymous namespace)::MySocketProtocol>\n"
-                           "socket.protocol: (anonymous namespace)::MySocketProtocol\n"
-                           "socket.protocol.policy: senf::SocketPolicy<senf::test::SomeAddressingPolicy, senf::test::SomeFramingPolicy, senf::test::SomeCommunicationPolicy, senf::test::SomeReadPolicy, senf::test::SomeWritePolicy>\n"
-                           "socket.server: true\n" );
-
+                "handle: senf::ProtocolServerSocketHandle<(anonymous namespace)::MySocketProtocol>\n"
+                "valid: false\n" );
     }
 
     {
