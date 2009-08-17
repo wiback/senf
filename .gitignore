@@ -1,0 +1,8 @@
+/Doxyfile.local
+/local_config.hh
+*.pyc
+all_includes.hh
+/.prepare-stamp
+.sconsign*
+doc/
+*.png
