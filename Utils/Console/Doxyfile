@@ -1,12 +1,5 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = libConsole
-GENERATE_TAGFILE = doc/Console.tag
 EXAMPLE_PATH = .
 EXCLUDE = testServer.cc
-
-TAGFILES = \
-    "$(TOPDIR)/Socket/doc/Socket.tag" \
-    "$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
-    "$(TOPDIR)/Utils/doc/Utils.tag" \
-    "$(TOPDIR)/Utils/Logger/doc/Logger.tag"

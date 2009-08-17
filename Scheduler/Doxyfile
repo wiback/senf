@@ -1,9 +1,4 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = libScheduler
-GENERATE_TAGFILE = doc/Scheduler.tag
 ALPHABETICAL_INDEX = NO
-
-TAGFILES = \
-    "$(TOPDIR)/Socket/doc/Socket.tag" \
-    "$(TOPDIR)/Utils/doc/Utils.tag"

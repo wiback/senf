@@ -1,13 +1,6 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = libTermlib
-GENERATE_TAGFILE = doc/Console.tag
 EXAMPLE_PATH = .
 EXCLUDE = telnetServer.cc
 ALPHABETICAL_INDEX = NO
-
-TAGFILES = \
-    "$(TOPDIR)/Socket/doc/Socket.tag" \
-    "$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
-    "$(TOPDIR)/Utils/doc/Utils.tag" \
-    "$(TOPDIR)/Utils/Logger/doc/Logger.tag"

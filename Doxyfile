@@ -5,12 +5,3 @@ INPUT = . doclib
 PROJECT_NAME = Overview
 PROJECT_NUMBER = "(Version $(REVISION))"
 GENERATE_XML = NO
-GENERATE_TAGFILE = doc/overview.tag
-
-TAGFILES = \
-    "$(TOPDIR)/PPI/doc/PPI.tag" \
-    "$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
-    "$(TOPDIR)/Packets/doc/Packets.tag" \
-    "$(TOPDIR)/Socket/doc/Socket.tag" \
-    "$(TOPDIR)/Utils/doc/Utils.tag" \
-    "$(TOPDIR)/senfscons/doc/senfscons.tag"

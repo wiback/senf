@@ -1,11 +1,6 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = libPackets
-GENERATE_TAGFILE = doc/Packets.tag
 INPUT = .
 RECURSIVE = YES
 EXAMPLE_PATH = . DefaultBundle
-
-TAGFILES = \
-    "$(TOPDIR)/Utils/doc/Utils.tag" \
-    "$(TOPDIR)/Socket/doc/Socket.tag" 

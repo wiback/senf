@@ -122,8 +122,6 @@ env.Append(
    LIBS = [ 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
             '$BOOSTFSLIB' ],
    TEST_EXTRA_LIBS = [ ],
-   DOXY_XREF_TYPES = [ 'bug', 'fixme', 'todo', 'idea' ],
-   DOXY_HTML_XSL = '#/doclib/html-munge.xsl',
    ENV = { 'TODAY' : str(datetime.date.today()),
            'REVISION' : rev,
            'LOGNAME' : logname, # needed by the debian build scripts
@@ -131,6 +129,7 @@ env.Append(
            'SCONS' : 1,
            'PATH' : os.environ.get('PATH'),
 	   'TEXINPUTS' : os.environ.get('TEXINPUTS',env.Dir('#/doclib').abspath + ':'),
+           'DOXYGEN' : os.environ.get('DOXYGEN', 'doxygen'),
          },
    LOCAL_CONFIG_FILES = [ '/Doxyfile.local', '/SConfig', '/local_config.hh' ],
    DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '/_templates' ],
@@ -139,6 +138,11 @@ env.Append(
    BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot $DPKG_IGNORED_FILES_OPTS",
    TOP_INCLUDES = [ 'Packets', 'PPI', 'Scheduler', 'Socket', 'Utils', 'Console',
                     'config.hh', 'local_config.hh' ],
+   ALL_TAGFILES = []
+)
+
+env.Replace(
+   DOXYGENCOM = "doclib/doxygen.sh $DOXYOPTS $SOURCE",
 )
 
 def parseLogOption(value):
@@ -189,9 +193,6 @@ SConscript(glob.glob("*/SConscript"))
 SENFSCons.StandardTargets(env)
 SENFSCons.GlobalTargets(env)
 env.Depends( SENFSCons.Doxygen(env), env.Value(rev) )
-SENFSCons.DoxyXRef(env,
-                   HTML_HEADER = '#/doclib/doxy-header.html',
-                   HTML_FOOTER = '#/doclib/doxy-footer.html')
 
 SENFSCons.InstallIncludeFiles(env, [ 'config.hh' ])
 

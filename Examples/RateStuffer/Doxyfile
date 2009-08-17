@@ -4,10 +4,3 @@ SHOW_NAMESPACES = NO
 ALPHABETICAL_INDEX = NO
 PROJECT_NAME = RateStuffer
 EXAMPLE_PATH = .
-
-TAGFILES = \
-    "$(TOPDIR)/PPI/doc/PPI.tag" \
-    "$(TOPDIR)/Scheduler/doc/Scheduler.tag" \
-    "$(TOPDIR)/Packets/doc/Packets.tag" \
-    "$(TOPDIR)/Socket/doc/Socket.tag" \
-    "$(TOPDIR)/Utils/doc/Utils.tag"

@@ -254,7 +254,7 @@ def DoxyfileParse(env,file):
       return {}
    ENV = {}
    ENV.update(env.get("ENV",{}))
-   ENV['TOPDIR'] = env.Dir('#').abspath
+   ENV.update(env.get("DOXYENV", {}))
    parser = DoxyfileParser(file,ENV)
    try:
       parser.parse()
@@ -311,10 +311,9 @@ def DoxySourceScan(node, env, path):
 
    for key in dep_add_keys:
       if data.has_key(key):
-         elt = data[key]
-         if type(elt) is type ("") : elt = [ elt ]
+         elt = env.Flatten(env.subst_list(data[key]))
          sources.extend([ os.path.normpath(os.path.join(basedir,f))
-                          for f in elt ])
+                          for f in elt if f ])
 
    sources = map( lambda path: env.File(path), sources )
    return sources
@@ -337,7 +336,7 @@ def DoxyEmitter(source, target, env):
    data = DoxyfileParse(env, source[0].abspath)
 
    targets = []
-   if data.has_key("OUTPUT_DIRECTORY"):
+   if data.get("OUTPUT_DIRECTORY",""):
       out_dir = data["OUTPUT_DIRECTORY"]
       dir = env.Dir( os.path.join(source[0].dir.abspath, out_dir) )
       dir.sources = source
@@ -350,7 +349,7 @@ def DoxyEmitter(source, target, env):
    # add our output locations
    html_dir = None
    for (k, v) in output_formats.iteritems():
-      if data.get("GENERATE_" + k, v[0]).upper() == "YES":
+      if data.get("GENERATE_" + k, v[0]).upper() == "YES" and data.get(k + "_OUTPUT", v[1]):
          dir = env.Dir( os.path.join(source[0].dir.abspath, out_dir, data.get(k + "_OUTPUT", v[1])) )
          if k == "HTML" : html_dir = dir
          dir.sources = source
@@ -358,10 +357,10 @@ def DoxyEmitter(source, target, env):
          targets.append(node)
          if env.GetOption('clean'): targets.append(dir)
 
-   if data.has_key("GENERATE_TAGFILE") and html_dir:
+   if data.get("GENERATE_TAGFILE",""):
       targets.append(env.File( os.path.join(source[0].dir.abspath, data["GENERATE_TAGFILE"]) ))
 
-   if data.get("SEARCHENGINE","NO").upper() == "YES":
+   if data.get("SEARCHENGINE","NO").upper() == "YES" and html_dir:
       targets.append(env.File( os.path.join(html_dir.abspath, "search.idx") ))
 
    # don't clobber targets
@@ -391,53 +390,12 @@ def relpath(source, target):
                          target_elts[prefix_len:]))
 
 def DoxyGenerator(source, target, env, for_signature):
-
    data = DoxyfileParse(env, source[0].abspath)
-
-   actions = [ SCons.Action.Action("cd ${SOURCE.dir} && TOPDIR=%s ${DOXYGEN} ${SOURCE.file}"
-                                   % env.Dir('#').abspath) ]
-
-   # This will add automatic 'installdox' calls.
-   #
-   # For every referenced tagfile, the generator first checks for the
-   # existence of a construction variable '<name>_DOXY_URL' where
-   # '<name>' is the uppercased name of the tagfile sans extension
-   # (e.g. 'Utils.tag' -> 'UTILS_DOXY_URL'). If this variable exists,
-   # it must contain the url or path to the installed documentation
-   # corresponding to the tag file.
-   #
-   # Is the variable is not found and if a referenced tag file is a
-   # target within this same build, the generator will parse the
-   # 'Doxyfile' from which the tag file is built. It will
-   # automatically create the html directory from the information in
-   # that 'Doxyfile'.
-   #
-   # If for any referenced tagfile no url can be found, 'installdox'
-   # will *not* be called and a warning about the missing url is
-   # generated.
-
-   if data.get('GENERATE_HTML','YES').upper() == "YES":
-      output_dir = os.path.normpath(os.path.join( source[0].dir.abspath,
-                                                  data.get("OUTPUT_DIRECTORY","."),
-                                                  data.get("HTML_OUTPUT","html") ))
-      args = []
-      for tagfile in data.get('TAGFILES',[]):
-         url = env.get(os.path.splitext(os.path.basename(tagfile))[0].upper()+"_DOXY_URL", None)
-         if not url:
-            url = doxyNodeHtmlDir(
-               env,
-               env.File(os.path.normpath(os.path.join(str(source[0].dir), tagfile))))
-            if url : url = relpath(output_dir, url)
-         if not url:
-            print "WARNING:",source[0].abspath, ": missing tagfile url for", tagfile
-            args = None
-         if args is not None and url:
-            args.append("-l %s@%s" % ( os.path.basename(tagfile), url ))
-      if args:
-         actions.append(SCons.Action.Action('cd %s && ./installdox %s' % (output_dir, " ".join(args))))
-
-   actions.append(SCons.Action.Action([ "touch $TARGETS" ]))
-
+   actions = [ 
+      SCons.Action.Action("$DOXYGENCOM"),
+      SCons.Action.Action([ "touch $TARGETS" ]),
+      ]
+   
    return actions
 
 def generate(env):
@@ -452,12 +410,11 @@ def generate(env):
    )
 
    doxyfile_builder = env.Builder(
-      # scons 0.96.93 hang on the next line but I don't know hot to FIX the problem
       generator = DoxyGenerator,
       emitter = DoxyEmitter,
       target_factory = env.fs.Entry,
       single_source = True,
-      source_scanner =  doxyfile_scanner
+      source_scanner = doxyfile_scanner
    )
 
    env.Append(BUILDERS = {
@@ -465,7 +422,7 @@ def generate(env):
    })
 
    env.SetDefault(
-      DOXYGEN = 'doxygen',
+      DOXYGENCOM = 'cd ${SOURCE.dir} && doxygen ${SOURCE.file}'
    )
 
 def exists(env):

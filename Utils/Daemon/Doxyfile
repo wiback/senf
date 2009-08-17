@@ -1,7 +1,4 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
 PROJECT_NAME = Daemon
-GENERATE_TAGFILE = doc/Daemon.tag
 ALPHABETICAL_INDEX = NO
-
-TAGFILES = "$(TOPDIR)/Utils/doc/Utils.tag"
