@@ -1,8 +1,18 @@
+# Local files (files in this directory)
 /Doxyfile.local
 /local_config.hh
-*.pyc
-all_includes.hh
 /.prepare-stamp
-.sconsign*
-doc/
+/libsenf.a
+
+# File name patters to ignore in all directories
+*.pyc
 *.png
+*.o
+*.test.checked
+.sconsign*
+
+# File names to ignore in all directories
+all_includes.hh
+doc/
+.test.bin
+.test.stamp
