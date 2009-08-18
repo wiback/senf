@@ -156,7 +156,9 @@ typename boost::enable_if<
     typename Source::ConnectorType & >::type
 senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 {
-    connect(source.newConnector(mpp_CallParams()), target);
+    typename Source::ConnectorType & c (source.newConnector(mpp_CallParams()));
+    connect(c, target);
+    return c;
 }
 
 template <class Source, class Target mpp_TplParamsKomma()>
@@ -165,7 +167,9 @@ typename boost::enable_if<
     typename Target::ConnectorType & >::type
 senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 {
-    connect(source, target.newConnector(mpp_CallParams()));
+    typename Target::ConnectorType & c (target.newConnector(mpp_CallParams()));
+    connect(source, c);
+    return c;
 }
 
 // ////////////////////////////////////////////////////////////////////////
