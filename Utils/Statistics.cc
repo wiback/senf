@@ -85,24 +85,24 @@ senf::StatisticsBase::output(unsigned n)
 //
 char *format_eng( float f)
 {
-    static buf[16];
+    static char buf[16];
     if( f > 0){
         int n = 0;
-        while( f > 1000.0f){
+        while( f >= 1000.0f){
                 f /= 1000.f;
                 n+=3;
         }
 
-        sprintf( buf, " %3.2fe%03d", f, n);
+        sprintf( buf, " %3.2fe%+03d", f, n);
     }
     else if( f < 0){
         int n = 0;
-        while( f < 1000.0f){
+        while( f <= -1000.0f){
                 f *= 1000.f;
                 n+=3;
         }
 
-        sprintf( buf, "-%3.2fe%03d", f, n);
+        sprintf( buf, "-%3.2fe%+03d", f, n);
     }
     else{
         sprintf( buf, "        0.00");
@@ -115,8 +115,8 @@ char *format_eng( float f)
 prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os)
     const
 {
-    os << boost::format("%s%-5d%|15t|  %12g  %12g  %12g\n") 
-        % std::string(2*level,' ') % rank() % min() % avg() % max();
+    os << boost::format("%s%-5d%|15t|  %12s  %12s  %12s\n") 
+        % std::string(2*level,' ') % rank() % format_eng(min()) % format_eng(avg()) % format_eng(max());
     {
         OutputMap::const_iterator i (outputs_.begin());
         OutputMap::const_iterator i_end (outputs_.end());
