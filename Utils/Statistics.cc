@@ -80,6 +80,38 @@ senf::StatisticsBase::output(unsigned n)
     return OutputProxy<StatisticsBase>(this, &(i->second));
 }
 
+//
+// generate an engineering style notation i
+//
+char *format_eng( float f)
+{
+    static buf[16];
+    if( f > 0){
+        int n = 0;
+        while( f > 1000.0f){
+                f /= 1000.f;
+                n+=3;
+        }
+
+        sprintf( buf, " %3.2fe%03d", f, n);
+    }
+    else if( f < 0){
+        int n = 0;
+        while( f < 1000.0f){
+                f *= 1000.f;
+                n+=3;
+        }
+
+        sprintf( buf, "-%3.2fe%03d", f, n);
+    }
+    else{
+        sprintf( buf, "        0.00");
+    }
+
+    return buf;
+}
+
+
 prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os)
     const
 {
@@ -89,11 +121,11 @@ prefix_ void senf::StatisticsBase::consoleList(unsigned level, std::ostream & os
         OutputMap::const_iterator i (outputs_.begin());
         OutputMap::const_iterator i_end (outputs_.end());
         for (; i != i_end; ++i)
-            os << boost::format("            %3d  %12g  %12g  %12g\n")
+            os << boost::format("            %3d  %12s  %12s  %12s\n")
                 % i->second.n 
-                % (i->second.min/i->second.n) 
-                % (i->second.avg/i->second.n)
-                % (i->second.max/i->second.n);
+                % format_eng(i->second.min/i->second.n) 
+                % format_eng(i->second.avg/i->second.n)
+                % format_eng(i->second.max/i->second.n);
     }
     {
         Children::const_iterator i (children_.begin());
