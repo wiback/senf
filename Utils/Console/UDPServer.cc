@@ -114,7 +114,7 @@ prefix_ void senf::console::UDPServer::handleInput(int events)
     senf::GenericBSDSocketAddress address;
     handle_.readfrom(data, address, 0u);
     boost::trim(data);
-    
+
     executor_.cwd(executor_.chroot());
     std::stringstream stream;
     try {
