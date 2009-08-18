@@ -102,7 +102,7 @@ char *format_eng( float f)
                 n+=3;
         }
 
-        sprintf( buf, "-%3.2fe%+03d", f, n);
+        sprintf( buf, "%3.2fe%+03d", f, n);
     }
     else{
         sprintf( buf, "        0.00");
