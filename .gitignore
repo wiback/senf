@@ -8,6 +8,7 @@
 /build-indep-stamp
 /configure-stamp
 /linklint
+/SConscript.local
 
 # File name patters to ignore in all directories
 *.pyc

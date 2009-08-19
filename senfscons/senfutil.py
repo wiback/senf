@@ -1,21 +1,18 @@
 import os.path
 from SCons.Script import *
 
-def setLogOption(env):
-    # Parse LOGLEVELS parameter
-    def parseLogOption(value):
-        stream, area, level = ( x.strip() for x in value.strip().split('|') )
-        stream = ''.join('(%s)' % x for x in stream.split('::') )
-        if area : area = ''.join( '(%s)' % x for x in area.split('::') )
-        else    : area = '(_)'
-        return '(( %s,%s,%s ))' % (stream,area,level)
+def parseLogOption(value):
+    stream, area, level = ( x.strip() for x in value.strip().split('|') )
+    stream = ''.join('(%s)' % x for x in stream.split('::') )
+    if area : area = ''.join( '(%s)' % x for x in area.split('::') )
+    else    : area = '(_)'
+    return '((%s,%s,%s))' % (stream,area,level)
 
-    def expandLogOption(target, source, env, for_signature):
-        return ' '.join( parseLogOption(x) for x in env.subst('$LOGLEVELS').split() )
-
-    if env.subst('$LOGLEVELS'):
-        env.Append( expandLogOption=expandLogOption )
-        env.Append( CPPDEFINES = { 'SENF_LOG_CONF': '$expandLogOption' } )
+def expandLogOption(target, source, env, for_signature):
+    if env.get('LOGLEVELS'):
+        return [ 'SENF_LOG_CONF="' + ''.join( parseLogOption(x) for x in env.subst('$LOGLEVELS').split() )+'"']
+    else:
+        return []
 
 
 ###########################################################################
@@ -40,6 +37,9 @@ def SetupForSENF(env):
                 SENF_BUILDOPTS = [ '-j%s' % (env.GetOption('num_jobs') or "1") ],
                 CXXFLAGS_debug  = [ '-O0', '-g', '-fno-inline' ],
                 LINKFLAGS_debug = [ '-g', '-rdynamic' ],
+                
+                expandLogOption = expandLogOption,
+                CPPDEFINES      = [ '$expandLogOptions' ],
                 )
 
     # Add command-line options: 'LOGLEVELS' and 'final'
@@ -52,8 +52,6 @@ def SetupForSENF(env):
     opts.Update(env)
 
     env.Help(opts.GenerateHelpText(env))
-
-    setLogOption(env)
 
     # If we have a symbolic link (or directory) 'senf', we use it as our
     # senf repository

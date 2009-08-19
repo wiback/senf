@@ -122,7 +122,6 @@ if [ ! -r "SConstruct" ]; then
 fi
 TOPDIR="`pwd`";
 reltopdir="`relpath "$doxydir/$output_dir/$html_dir" "$TOPDIR"`" #`"
-echo "relpath $doxydir/$output_dir/$html_dir $TOPDIR -> $reltopdir"
 cd "$doxydir"
 
 
