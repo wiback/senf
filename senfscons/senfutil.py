@@ -67,5 +67,17 @@ def SetupForSENF(env):
         #env.Default(
         #    env.AlwaysBuild(
         #        env.Command('senf/libsenf.a', [],  [ 'scons -C %s $SENF_BUILDOPTS libsenf.a' % os.path.realpath('senf')])))
+    elif os.path.exists('../senf'):
+        print "\nUsing SENF in '../senf'\n"
+        env.Append( LIBPATH = [ '../senf' ],
+                    CPPPATH = [ '../senf/include' ],
+                    SENF_BUILDOPTS = [ '${final and "final=1" or None}',
+                                       '${debug and "debug=1" or None}',
+                                       '${profile and "profile=1" or None}' ],
+                    CPPDEFINES = [ '${not(final) and "SENF_DEBUG" or None}' ] )
+
+        #env.Default(
+        #    env.AlwaysBuild(
+        #        env.Command('senf/libsenf.a', [],  [ 'scons -C %s $SENF_BUILDOPTS libsenf.a' % os.path.realpath('senf')])))
     else:
         print '\nUsing global SENF\n'
