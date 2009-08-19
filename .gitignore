@@ -3,6 +3,11 @@
 /local_config.hh
 /.prepare-stamp
 /libsenf.a
+/build-arch-debug-stamp
+/build-arch-final-stamp
+/build-indep-stamp
+/configure-stamp
+/linklint
 
 # File name patters to ignore in all directories
 *.pyc
@@ -10,6 +15,8 @@
 *.o
 *.test.checked
 .sconsign*
+*~
+#*#
 
 # File names to ignore in all directories
 all_includes.hh

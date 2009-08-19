@@ -556,3 +556,6 @@ def AllIncludesHH(env, headers):
     file(target.abspath,"w").write("".join([ '#include "%s"\n' % f
                                              for f in headers ]))
     env.Clean('all', target)
+
+def PhonyTarget(env, target, action, sources=[]):
+    env.AlwaysBuild(env.Alias(target, sources, env.Action(action)))

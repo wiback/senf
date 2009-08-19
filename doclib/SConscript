@@ -39,11 +39,7 @@
 # 2. Regenerating header and/or footer
 #
 # If needed, the doxy-header.html and/or doxy-footer.html file will be
-# regenerated. The dependencies are *not* complete, just adding a new
-# subdirectory sadly does not automatically update the header (which
-# contains the menu)
-#
-# The header and/or footer are written are generated from templates
+# regenerated. The header and/or footer are generated from templates
 # using a simple python based templating system called yaptu which is
 # included in doclib/.
 #
@@ -121,7 +117,7 @@
 
 
 Import('env')
-import SENFSCons
+import SENFSCons, datetime, os
 
 ###########################################################################
 
@@ -186,7 +182,10 @@ def indices():
              if doc.name == "search.idx" ]
 
 def writeTemplate(target = None, source = None, env = None):
-    file(target[0].abspath,"w").write(yaptu.process(str(env['TEMPLATE']), globals(), env.Dictionary()))
+    file(target[0].abspath,"w").write(processTemplate(env))
+
+def processTemplate(env):
+    return yaptu.process(str(env['TEMPLATE']), globals(), env.Dictionary())
 
 writeTemplate = env.Action(writeTemplate, varlist = [ 'TEMPLATE' ])
 
@@ -274,11 +273,42 @@ function paths() {
 }
 ?>"""
 
-env.Command('doxy-header.html', 'SConscript', writeTemplate,
-            TEMPLATE = Literal(HEADER),
-            TITLE = "Documentation and API reference")
-env.Command('doxy-footer.html', 'SConscript', writeTemplate,
-            TEMPLATE = Literal(FOOTER))
+env.Append( ENV = {
+    'TODAY' : str(datetime.date.today()),
+    'TEXINPUTS' : os.environ.get('TEXINPUTS',env.Dir('#/doclib').abspath + ':'),
+    'DOXYGEN' : env.get('DOXYGEN', 'doxygen'),
+})
+
+env.Replace(
+    ALL_TAGFILES = [],
+    DOXYGENCOM = "doclib/doxygen.sh $DOXYOPTS $SOURCE",
+)
+
+SENFSCons.PhonyTarget(env, 'linklint', [
+    'rm -rf linklint',
+    'linklint -doc linklint -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
+    '[ ! -r linklint/errorX.html ] || python doclib/linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
+    '[ ! -r linklint/errorX.html.new ] || mv linklint/errorX.html.new linklint/errorX.html',
+    '[ ! -r linklint/errorAX.html ] || python doclib/linklint_addnames.py <linklint/errorAX.html >linklint/errorAX.html.new',
+    '[ ! -r linklint/errorAX.html.new ] || mv linklint/errorAX.html.new linklint/errorAX.html',
+    'echo -e "\\nLokal link check results: linklint/index.html\\nRemote link check results: linklint/urlindex.html\\n"',
+])
+
+env.Clean('all', env.Dir('linklint'))
+
+SENFSCons.PhonyTarget(env, 'fixlinks', [
+    'python doclib/fix-links.py -v -s .svn -s linklint -s debian linklint/errorX.txt linklint/errorAX.txt',
+])
+
+
+header = env.Command('doxy-header.html', 'SConscript', writeTemplate,
+                     TEMPLATE = Literal(HEADER),
+                     TITLE = "Documentation and API reference")
+env.Depends(header, env.Value(repr(list(modules()))))
+
+footer = env.Command('doxy-footer.html', 'SConscript', writeTemplate,
+                     TEMPLATE = Literal(FOOTER))
+
 env.Alias('all_docs',
           env.Command('search.php', [ 'html-munge.xsl', 'SConscript' ],
                       [ writeTemplate,

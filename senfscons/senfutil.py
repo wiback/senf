@@ -1,6 +1,23 @@
 import os.path
 from SCons.Script import *
 
+def setLogOption(env):
+    # Parse LOGLEVELS parameter
+    def parseLogOption(value):
+        stream, area, level = ( x.strip() for x in value.strip().split('|') )
+        stream = ''.join('(%s)' % x for x in stream.split('::') )
+        if area : area = ''.join( '(%s)' % x for x in area.split('::') )
+        else    : area = '(_)'
+        return '(( %s,%s,%s ))' % (stream,area,level)
+
+    def expandLogOption(target, source, env, for_signature):
+        return ' '.join( parseLogOption(x) for x in env.subst('$LOGLEVELS').split() )
+
+    if env.subst('$LOGLEVELS'):
+        env.Append( expandLogOption=expandLogOption )
+        env.Append( CPPDEFINES = { 'SENF_LOG_CONF': '$expandLogOption' } )
+
+
 ###########################################################################
 # This looks much more complicated than it is: We do three things here:
 # a) switch between final or debug options
@@ -25,17 +42,6 @@ def SetupForSENF(env):
                 LINKFLAGS_debug = [ '-g', '-rdynamic' ],
                 )
 
-    # Parse LOGLEVELS parameter
-    def parseLogOption(value):
-        stream, area, level = ( x.strip() for x in value.strip().split('|') )
-        stream = ''.join('(%s)' % x for x in stream.split('::') )
-        if area : area = ''.join( '(%s)' % x for x in area.split('::') )
-        else    : area = '(_)'
-        return '(( %s,%s,%s ))' % (stream,area,level)
-
-    def expandLogOption(target, source, env, for_signature):
-        return ' '.join( parseLogOption(x) for x in env.subst('$LOGLEVELS').split() )
-
     # Add command-line options: 'LOGLEVELS' and 'final'
     opts = Options()
     opts.Add( 'LOGLEVELS', 'Special log levels. Syntax: <stream>|[<area>]|<level> ...',
@@ -45,11 +51,9 @@ def SetupForSENF(env):
     opts.Add( BoolOption('profile', 'Add profile information', False) )
     opts.Update(env)
 
-    if env.subst('$LOGLEVELS'):
-        env.Append( expandLogOption=expandLogOption )
-        env.Append( CPPDEFINES = { 'SENF_LOG_CONF': '$expandLogOption' } )
-
     env.Help(opts.GenerateHelpText(env))
+
+    setLogOption(env)
 
     # If we have a symbolic link (or directory) 'senf', we use it as our
     # senf repository

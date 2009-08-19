@@ -274,8 +274,21 @@ def DoxySourceScan(node, env, path):
    any files used to generate docs to the list of source files.
    """
    dep_add_keys = (
-      'LAYOUT_FILE', '@INCLUDE', 'HTML_HEADER', 'HTML_FOOTER', 'TAGFILES', 'INPUT_FILTER'
+      ('HTML', 'LAYOUT_FILE'), 
+      (None,   '@INCLUDE'), 
+      ('HTML', 'HTML_HEADER'), 
+      ('HTML', 'HTML_FOOTER'), 
+      (None,   'TAGFILES'), 
+      (None,   'INPUT_FILTER'),
    )
+
+   output_formats = {
+      "HTML"  : ("YES", "html"),
+      "LATEX" : ("YES", "latex"),
+      "RTF"   : ("NO",  "rtf"),
+      "MAN"   : ("YES", "man"),
+      "XML"   : ("NO",  "xml"),
+   }
 
    default_file_patterns = (
       '*.c', '*.cc', '*.cxx', '*.cpp', '*.c++', '*.java', '*.ii', '*.ixx',
@@ -309,8 +322,9 @@ def DoxySourceScan(node, env, path):
                     and not reduce(lambda x, y: x or fnmatch(f, y), exclude_patterns, False) ):
                   sources.append(filename)
 
-   for key in dep_add_keys:
-      if data.has_key(key):
+   for fmt, key in dep_add_keys:
+      if data.has_key(key) and \
+             (fmt is None or data.get("GENERATE_%s" % fmt, output_formats[fmt][0]).upper() == "YES"):
          elt = env.Flatten(env.subst_list(data[key]))
          sources.extend([ os.path.normpath(os.path.join(basedir,f))
                           for f in elt if f ])
