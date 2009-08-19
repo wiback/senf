@@ -59,7 +59,7 @@ namespace senf {
         (This is, why we call the data structure interpreter and not header: The interpreter is
         responsible for interpreting a range of the packet according to a specific protocol), the
         packet interpreters are nested inside each other.
-    
+
         For each interpreter, this structure automatically divides the packet into three areas (each
         of which are optional): The header, the payload and the trailer. Every packet will have
         either a header or a payload section while most don't have a trailer.
@@ -98,7 +98,7 @@ namespace senf {
 
     ///\addtogroup packet_module
     ///@{
-    
+
     /** \brief Main %Packet class
 
         %Packet is the main externally visible class of the packet library. %Packet is a handle into
@@ -111,12 +111,12 @@ namespace senf {
         class extending %Packet is provided.
 
         \section packet_semantics Semantics
-        
+
         All operations accessing the data of \c this packet in some way will ignore any preceding
         packets/headers/interpreters in the chain. It does not matter, whether a given packet is
         taken from the middle or the beginning of the chain, all operations (except those explicitly
         accessing the chain of course) should work the same.
-        
+
         This especially includes members like clone() or append(): clone() will clone \e only from
         \c this packet until the end of the chain, append() will append the given packet \e ignoring
         any possibly preceding packets/headers/interpreters.
@@ -133,7 +133,7 @@ namespace senf {
         instantiations (Example: \ref EthernetPacket is a typedef for
         \ref ConcretePacket < \ref EthernetPacketType >).
 
-        \see 
+        \see
             \ref ConcretePacket for the %type specific interface\n
             \ref PacketData for the sequence interface\n
             \ref packetparser for a specification of the parser interface
@@ -145,7 +145,7 @@ namespace senf {
     public:
         ///////////////////////////////////////////////////////////////////////////
         // Types
-        
+
         typedef void type;              ///< Type of the packet.
         typedef senf::detail::packet::size_type size_type;
         ///< Unsigned type to represent packet size
@@ -158,7 +158,7 @@ namespace senf {
         // default copy constructor
         // default copy assignment
         // default destructor
-        
+
         Packet();                       ///< Create uninitialized packet handle
                                         /**< An uninitialized handle is in - valid(). It does not
                                              allow any operation except assignment and checking for
@@ -171,7 +171,7 @@ namespace senf {
 
         // conversion constructors
 
-        template <class PacketType>     
+        template <class PacketType>
         Packet(ConcretePacket<PacketType> packet); ///< Copy-construct Packet from ConcretePacket
         /**< This constructor allows to convert an arbitrary
              ConcretePacket into a general Packet, loosing the
@@ -183,21 +183,21 @@ namespace senf {
         ///\name Interpreter chain access
         ///@{
 
-        Packet      next() const; 
+        Packet      next() const;
         ///< Get next packet in chain
-        /**< \throws InvalidPacketChainException if no next packet 
+        /**< \throws InvalidPacketChainException if no next packet
              exists */
-        Packet      next(NoThrow_t) const; 
+        Packet      next(NoThrow_t) const;
         ///< Get next packet in chain
-        /**< \returns in - valid() packet if no next packet 
+        /**< \returns in - valid() packet if no next packet
              exists */
-        template <class OtherPacket> OtherPacket next() const; 
+        template <class OtherPacket> OtherPacket next() const;
         ///< Get next packet in chain and cast to \a OtherPacket
         /**< \throws std::bad_cast if the next() packet is not of
              type \a OtherPacket
              \throws InvalidPacketChainException if no next packet
                  exists */
-        template <class OtherPacket> OtherPacket next(NoThrow_t) const; 
+        template <class OtherPacket> OtherPacket next(NoThrow_t) const;
         ///< Get next packet in chain and cast to \a OtherPacket
         /**< \throws std::bad_cast if the next() packet is not of
              type \a OtherPacket
@@ -213,26 +213,26 @@ namespace senf {
         /**< The search will start with the current packet.
              \returns in - valid() packet if no packet of type \a
                  OtherPacket can be found. */
-        
-        Packet      prev() const; 
+
+        Packet      prev() const;
         ///< Get previous packet in chain
         /**< \throws InvalidPacketChainException if no previous
              packet exists */
-        Packet      prev(NoThrow_t) const; 
+        Packet      prev(NoThrow_t) const;
         ///< Get previous packet in chain
         /**< \returns in - valid() packet if no previous packet
              exists */
-        template <class OtherPacket> OtherPacket prev() const; 
+        template <class OtherPacket> OtherPacket prev() const;
         ///< Get previous packet in chain and cast to \a OtherPacket
         /**< \throws std::bad_cast, if the previous packet is not of
              type \a OtherPacket
              \throws InvalidPacketChainException if no previous
                  packet exists */
-        template <class OtherPacket> OtherPacket prev(NoThrow_t) const; 
+        template <class OtherPacket> OtherPacket prev(NoThrow_t) const;
         ///< Get previous packet in chain and cast to \a OtherPacket
         /**< \throws std::bad_cast, if the previous packet is not of
              type \a OtherPacket
-             \returns in - valid() packet if no previous packet 
+             \returns in - valid() packet if no previous packet
                  exists */
         template <class OtherPacket> OtherPacket rfind() const;
         ///< Search chain backwards for packet of type \a OtherPacket
@@ -269,7 +269,7 @@ namespace senf {
              OtherPacket. The new packet is added to the chain after
              \c this.
              \returns new packet instance sharing the same data and
-                 placed after \c this packet in the chain. 
+                 placed after \c this packet in the chain.
              \throws InvalidPacketChainException if no next
                  packet header is allowed (viz. nextPacketRange() of the the current
                  PacketType returns no_range() ) */
@@ -291,8 +291,8 @@ namespace senf {
         template <class OtherPacket> OtherPacket as() const;
         ///< Cast current packet to the given type
         /**< This operations returns a handle to the same packet
-             header/interpreter however cast to the given
-             ConcretePacket type.
+             header/interpreter however upcast to the given
+             ConcretePacket type which have been instantiated before.
              \throws std::bad_cast if the current packet is not of
                  type \a OtherPacket */
 
@@ -317,7 +317,7 @@ namespace senf {
                                         /**< This size does \e not include the size of any preceding
                                              headers/packets/interpreters. It does however include
                                              \c this packets payload. */
-        
+
         ///@}
 
         ///\name Annotations
@@ -336,10 +336,10 @@ namespace senf {
                                                  };
 
                                              senf::Packet p (...);
-                                            
+
                                              p.annotation<MyAnnotation>().value = 1;
                                              \endcode
-                                             
+
                                              Annotations are shared by all headers / interpreters
                                              within a single packet chain.
 
@@ -368,7 +368,7 @@ namespace senf {
                                                  used). Additionally, non-complex small annotations
                                                  require no additional memory management (\c new /
                                                  \c delete).
-                                             
+
                                              \idea Pool the annotation vectors: In the destructor
                                                  swap the vector into a vector graveyard (swapping
                                                  two vectors is an O(1) no allocation operation). In
@@ -397,8 +397,8 @@ namespace senf {
         bool valid() const;             ///< Check, whether the packet is valid()
                                         /**< An in - valid() packet does not allow any operation
                                              except checking for validity and assignment. in -
-                                             valid() packets serve the same role as 0-pointers. 
-                                             
+                                             valid() packets serve the same role as 0-pointers.
+
                                              This is an alias for boolean_test() which is called
                                              when using a packet in a boolean context. */
 
@@ -429,8 +429,8 @@ namespace senf {
                                              packets/headers/interpreters from the \e first
                                              occurrence of packet type \a Other (beginning at \c
                                              this packet searching forward towards deeper nested
-                                             packets) backwards up to \c this. 
-                                             
+                                             packets) backwards up to \c this.
+
                                              This call is equivalent to
                                              \code
                                                  p.finalizeTo(p.next<Other>())
@@ -443,7 +443,7 @@ namespace senf {
                                              other information in the packet. Each concrete packet
                                              type should document, which fields are set by
                                              finalize().
-                                             
+
                                              finalizeTo(other) will automatically process all
                                              packets/headers/interpreters beginning at \a other
                                              backwards towards outer packets up to \c this. */
@@ -458,12 +458,12 @@ namespace senf {
 
                                              finalizeAll() will automatically process all
                                              packets/headers/interpreters from the end of the chain
-                                             (the most inner packet) backwards up to \c this. 
+                                             (the most inner packet) backwards up to \c this.
 
                                              This call is equivalent to
                                              \code
                                                  p.finalizeTo(p.last())
-                                             \endcode 
+                                             \endcode
 
                                              Beware, that finalizeAll() will \e not finalize any
                                              headers before \c this, it will \e only process inner
@@ -533,7 +533,7 @@ namespace senf {
         createAfter() and createBefore() extend a packet with additional
         headers/interpreters. createAfter() will set the payload of the given packet to the new
         packet whereas createBefore() will create a new packet with the existing packet as it's
-        payload. 
+        payload.
 
         createAfter() differs from Packet::parseNextAs() in that the former creates a new packet \e
         replacing any possibly existing data whereas the latter will interpret the already \e
@@ -543,7 +543,7 @@ namespace senf {
             PacketType policy class.
      */
     template <class PacketType>
-    class ConcretePacket 
+    class ConcretePacket
         : public Packet
     {
     public:
@@ -590,10 +590,10 @@ namespace senf {
              \throws TruncatedPacketException if \a size is smaller
                  than the smallest permissible size for this type of
                  packet. */
-        static ConcretePacket create(size_type size, senf::NoInit_t); 
+        static ConcretePacket create(size_type size, senf::NoInit_t);
         ///< Create uninitialized packet
         /**< Creates an uninitialized (all-zero) packet of the exact
-             given size. 
+             given size.
              \param[in] size Size of the packet to create in bytes
              \param[in] senf::noinit This parameter must always have the
                  value \c senf::noinit. */
@@ -601,23 +601,23 @@ namespace senf {
         template <class ForwardReadableRange>
         static ConcretePacket create(
             ForwardReadableRange const & range,
-            typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type * = 0); 
+            typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type * = 0);
 #else
         template <class ForwardReadableRange>
-        static ConcretePacket create(ForwardReadableRange const & range); 
+        static ConcretePacket create(ForwardReadableRange const & range);
         ///< Create packet from given data
         /**< The packet will be created from a copy of the given
              data. The data from the range will be copied directly
              into the packet representation. The data will \e not be
              validated in any way.
              \param[in] range <a
-                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a> 
+                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a>
                  of data to construct packet from. */
 #endif
 
         // Create packet as new packet after a given packet
 
-        static ConcretePacket createAfter(Packet const & packet); 
+        static ConcretePacket createAfter(Packet const & packet);
         ///< Create default initialized packet after \a packet
         /**< The packet will be initialized to it's default empty
              state. It will be appended as next header/interpreter
@@ -658,12 +658,12 @@ namespace senf {
 #ifndef DOXYGEN
         template <class ForwardReadableRange>
         static ConcretePacket createAfter(
-            Packet const & packet, 
+            Packet const & packet,
             ForwardReadableRange const & range,
             typename boost::disable_if< boost::is_integral<ForwardReadableRange> >::type * = 0);
 #else
         template <class ForwardReadableRange>
-        static ConcretePacket createAfter(Packet const & packet, 
+        static ConcretePacket createAfter(Packet const & packet,
                                           ForwardReadableRange const & range);
         ///< Create packet from given data after \a packet
         /**< The packet will be created from a copy of the given
@@ -674,13 +674,13 @@ namespace senf {
              interpreter chain.
              \param[in] packet Packet to append new packet to.
              \param[in] range <a
-                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a> 
+                 href="http://www.boost.org/libs/range/index.html">Boost.Range</a>
                  of data to construct packet from. */
 #endif
 
         // Create packet as new packet (header) before a given packet
 
-        static ConcretePacket createBefore(Packet const & packet); 
+        static ConcretePacket createBefore(Packet const & packet);
         ///< Create default initialized packet before \a packet
         /**< The packet will be initialized to it's default empty
              state. It will be prepended as previous
@@ -693,17 +693,17 @@ namespace senf {
              will be prepended as previous header/interpreter before
              \a packet in that packets interpreter chain.
              \param[in] packet Packet to prepend new packet to. */
-        
+
         // Create a clone of the current packet
 
         ConcretePacket clone() const;
-         
+
         ///@}
         ///////////////////////////////////////////////////////////////////////////
-         
+
         // Field access
-         
-        struct ParserProxy 
+
+        struct ParserProxy
         {
             ParserProxy(Parser const & p) : p_ (p) {}
             Parser * operator->() { return &p_; }
@@ -714,7 +714,7 @@ namespace senf {
                                         /**< This operator allows to access the parsed fields of the
                                              packet using the notation <tt>packet->field()</tt>. The
                                              fields of the packet are specified by the PacketType's
-                                             \c parser member. 
+                                             \c parser member.
 
                                              The members are not strictly restricted to simple field
                                              access. The parser class may have any member which is
@@ -735,7 +735,7 @@ namespace senf {
         typedef PacketInterpreter<PacketType> interpreter;
 
         ConcretePacket(typename interpreter::ptr packet_);
-        
+
         typename interpreter::ptr ptr() const;
 
         friend class Packet;
@@ -764,7 +764,7 @@ namespace senf {
 #include "Packet.cti"
 #endif
 
-
+
 // Local Variables:
 // mode: c++
 // fill-column: 100
