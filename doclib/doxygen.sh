@@ -1,11 +1,12 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 do_html_cleanup()
 {
     sed -e 's/id="current"/class="current"/' \
 	| tidy -ascii -q --wrap 0 --show-warnings no --fix-uri no \
 	| sed -e 's/name="\([^"]*\)"\([^>]*\) id="\1"/name="\1"\2/g' \
-	| xsltproc --novalid --nonet --html --stringparam topdir $TOPDIR "$base/html-munge.xsl" -
+	| xsltproc --novalid --nonet --html --stringparam topdir "$reltopdir" \
+	      "$base/html-munge.xsl" -
 }
 
 ###########################################################################
@@ -62,7 +63,7 @@ EOF
     exit 1
 fi
 
-if [ "$tagfile" == "YES" -a -z "$tagfile_name" ]; then
+if [ "$tagfile" = "YES" -a -z "$tagfile_name" ]; then
     echo "--tagfile-name is required with --tagfile"
     exit 1
 fi
@@ -86,13 +87,14 @@ relpath()
 	srcd="${src%%/*}"
 	dstd="${dst%%/*}"
 	if [ "$srcd" = "$dstd" ]; then
-	    src="${src#*/}"
-	    dst="${dst#*/}"
+	    src="${src#$srcd}"; src="${src#/}"
+	    dst="${dst#$dstd}"; dst="${dst#/}"
 	else
 	    break
 	fi
     done
-    echo "`echo "$src" | sed -e "s/[^\/]*/../g"`/$dst" # `"
+    rel="`echo "$src" | sed -e "s/[^\/]*/../g"`/$dst" # `"
+    echo "${rel%/}"
 }
 
 # Log executed commands
@@ -119,6 +121,8 @@ if [ ! -r "SConstruct" ]; then
     exit 1;
 fi
 TOPDIR="`pwd`";
+reltopdir="`relpath "$doxydir/$output_dir/$html_dir" "$TOPDIR"`" #`"
+echo "relpath $doxydir/$output_dir/$html_dir $TOPDIR -> $reltopdir"
 cd "$doxydir"
 
 
@@ -137,7 +141,7 @@ fi
 ## Call doxygen proper
 
 generate_tagfile=""
-if [ "$tagfile" == "YES" ]; then
+if [ "$tagfile" = "YES" ]; then
     generate_tagfile="$tagfile_name"
 fi
 export TOPDIR html tagfile tagfile_name tagfiles output_dir html_dir generate_tagfile
@@ -147,7 +151,7 @@ cmd ${DOXYGEN:-doxygen}
 
 ## Clean up tagfile, if generated
 
-if [ "$tagfile" == "YES" ]; then
+if [ "$tagfile" = "YES" ]; then
     mv "$tagfile_name" "${tagfile_name}.orig"
     cmd xsltproc --novalid --nonet -o "$tagfile_name" "$tagxsl" "${tagfile_name}.orig"
 fi
@@ -173,7 +177,7 @@ fi
 
 ## Postprocess html files, if generated
 
-if [ "$html" == "YES" ]; then
+if [ "$html" = "YES" ]; then
     for h in "$doxydir/$output_dir/$html_dir"/*.html; do
 	cmd html_cleanup "$h"
     done

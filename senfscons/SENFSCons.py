@@ -456,16 +456,17 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     # Rule to generate tagfile
     # (need to exclude the 'clean' case, otherwise we'll have duplicate nodes)
     if not env.GetOption('clean'):
-        env.Append(ALL_TAGFILES =
-                   env.Doxygen(doxyfile,
-                               DOXYOPTS = [ '--tagfile-name', '"${MODULE}.tag"',
-                                            '--tagfile' ],
-                               DOXYENV  = { 'TOPDIR'          : env.Dir('#').abspath,
-                                            'output_dir'      : 'doc',
-                                            'html_dir'        : 'html',
-                                            'html'            : 'NO',
-                                            'generate_tagfile': 'doc/${MODULE}.tag' },
-                               MODULE   = module )[0].abspath)
+        tagfile = env.Doxygen(doxyfile,
+                              DOXYOPTS = [ '--tagfile-name', '"${MODULE}.tag"',
+                                           '--tagfile' ],
+                              DOXYENV  = { 'TOPDIR'          : env.Dir('#').abspath,
+                                           'output_dir'      : 'doc',
+                                           'html_dir'        : 'html',
+                                           'html'            : 'NO',
+                                           'generate_tagfile': 'doc/${MODULE}.tag' },
+                              MODULE   = module )
+        env.Append(ALL_TAGFILES = tagfile[0].abspath)
+        env.Depends(tagfile, env.File('#/doclib/doxygen.sh'))
 
     # Rule to generate HTML documentation
     doc = env.Doxygen(doxyfile,
@@ -478,6 +479,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                                    'output_dir'      : 'doc',
                                    'html_dir'        : 'html',
                                    'html'            : 'YES' } )
+    env.Depends(doc, env.File('#/doclib/doxygen.sh'))
 
     # Copy the extra_sources (the images) into the documentation directory
     # (need to exclude the 'clean' case otherwise there are multiple ways to clean the copies)
