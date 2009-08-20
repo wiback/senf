@@ -5,9 +5,10 @@ import SENFSCons, glob
 
 ###########################################################################
 
-sources, includes = SENFSCons.Glob(env)
+(sources, tests), includes = SENFSCons.Glob(env)
 
-SENFSCons.Object(env, target='MPEGDVBBundle', sources=sources)
-SENFSCons.Lib(env, sources[0])
+SENFSCons.Object(env, target='MPEGDVBBundle', sources=sources,
+                 testSources = tests + [ 'MPEGDVBBundle.o' ])
+SENFSCons.Lib(env, sources)
 
 env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)

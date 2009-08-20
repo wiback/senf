@@ -5,9 +5,10 @@ import SENFSCons, glob
 
 ###########################################################################
 
-sources, includes = SENFSCons.Glob(env)
+(sources, tests), includes = SENFSCons.Glob(env)
 
-SENFSCons.Object(env, target = '80221Bundle', sources=sources)
-SENFSCons.Lib(env, sources[0])
+SENFSCons.Object(env, target = '80221Bundle', sources=sources,
+                 testSources = tests + [ '80221Bundle.o' ])
+SENFSCons.Lib(env, sources)
 
 SConscript(glob.glob("*/SConscript"))

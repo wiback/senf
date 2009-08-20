@@ -30,64 +30,36 @@ def Glob(env, exclude=[], subdirs=[]):
 
 def LibPath(lib): return '${LOCALLIBDIR}/${LIBPREFIX}%s${LIBADDSUFFIX}${LIBSUFFIX}' % lib
 
-def Test(env, sources, LIBS = [], OBJECTS = []):
-    test = [ env.BoostUnitTests(
-        target = 'test',
-        objects = [],
-        test_sources = sources,
-        LIBS = [ '$LIBSENF$LIBADDSUFFIX' ],
-        OBJECTS = OBJECTS,
-        DEPENDS = [ env.File(LibPath(env['LIBSENF'])) ]) ]
+def Test(env, sources):
+    test = env.BoostUnitTests( target = 'test', 
+                               source = sources, 
+                               TEST_EXTRA_LIBS = [ '$LIBSENF$LIBADDSUFFIX' 
+                                                   ] + env['TEST_EXTRA_LIBS'])
+        
     compileTestSources = [ src for src in sources
                            if 'COMPILE_CHECK' in file(src).read() ]
     if compileTestSources:
-        test.extend(env.CompileCheck(source = compileTestSources))
+        env.Depends(test, env.CompileCheck(source = compileTestSources))
+
     env.Alias('all_tests', test)
-    env.Command(env.File('test'), test, [ 'true' ])
+
+    return test
     
 
-def Objects(env, sources, testSources = None, OBJECTS = []):
+def Objects(env, sources, testSources = None):
     if type(sources) == type(()):
         testSources = sources[1]
         sources = sources[0]
     if type(sources) is not type([]):
         sources = [ sources ]
 
-    objects = None
-    if sources:
-        obsources = [ source
-                      for source in sources
-                      if type(source) is type('') and not source.endswith('.o') ]
-        objects = [ source
-                    for source in sources
-                    if type(source) is not type('') or source.endswith('.o') ]
-        if obsources:
-            objects += env.Object(obsources)
+    objects = env.Object(sources)
 
     if testSources:
-        test = [ env.BoostUnitTests(
-            target = 'test',
-            objects = objects,
-            test_sources = testSources,
-            LIBS = [ '$LIBSENF$LIBADDSUFFIX' ],
-            OBJECTS = OBJECTS,
-            DEPENDS = [ env.File(LibPath(env['LIBSENF'])) ]) ]
-        compileTestSources = [ src for src in testSources
-                               if 'COMPILE_CHECK' in file(src).read() ]
-        if compileTestSources:
-            test.extend(env.CompileCheck(source = compileTestSources))
-        env.Alias('all_tests', test)
-        # Hmm ... here I'd like to use an Alias instead of a file
-        # however the alias does not seem to live in the subdirectory
-        # which breaks 'scons -u test'
-        env.Command(env.File('test'), test, [ 'true' ])
-        #env.Alias(env.File('test'), test)
+        Test(env, testSources)
 
     return objects
 
-## \brief Build documentation with doxygen
-#
-# \ingroup target
 def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     # There is one small problem we need to solve with this builder: The Doxygen builder reads
     # the Doxyfile and thus depends on the environment variables set by doclib/doxygen.sh. We
@@ -151,20 +123,21 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     return doc
 
 def Lib(env, sources, testSources = None, OBJECTS = []):
-    objects = Objects(env,sources,testSources,OBJECTS=OBJECTS)
+    objects = Objects(env,sources,testSources)
     env.Append(ALLOBJECTS = objects)
     return objects
 
 def Object(env, target, sources, testSources = None, OBJECTS = []):
-    objects = Objects(env,sources,testSources,OBJECTS=OBJECTS)
-    ob = env.Command(target+"${OBJADDSUFFIX}${OBJSUFFIX}", objects, "ld -r -o $TARGET $SOURCES")
+    objects = Objects(env,sources,testSources)
+    ob = env.Command(target+"${OBJADDSUFFIX}${OBJSUFFIX}", objects+OBJECTS, 
+                     [ "ld -r -o $TARGET $SOURCES" ])
     env.Default(ob)
     env.Alias('default', ob)
     env.Alias('install_all', env.Install("$OBJINSTALLDIR", ob))
     return ob
 
 def Binary(env, binary, sources, testSources = None, OBJECTS = []):
-    objects = Objects(env, sources, testSources, OBJECTS=OBJECTS)
+    objects = Objects(env, sources, testSources)
     program = env.Program(target = binary, 
                           source = objects+OBJECTS,
                           LIBS   = [ '$LIBSENF$LIBADDSUFFIX' ] + env['LIBS'])

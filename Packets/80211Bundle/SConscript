@@ -5,10 +5,11 @@ import SENFSCons, glob
 
 ###########################################################################
 
-sources, includes = SENFSCons.Glob(env)
+(sources, tests), includes = SENFSCons.Glob(env)
 
-SENFSCons.Object(env, target='80211Bundle', sources=sources)
-SENFSCons.Lib(env, sources=sources[0])
+SENFSCons.Object(env, target='80211Bundle', sources=sources,
+                 testSources = tests + [ '80211Bundle.o' ])
+SENFSCons.Lib(env, sources=sources)
 
 env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
 

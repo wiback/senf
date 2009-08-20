@@ -26,37 +26,28 @@ import SCons.Defaults
 import os.path
 import os
 
-def BoostUnitTests(env, target, objects, test_sources=None, LIBS = [], OBJECTS = [], DEPENDS = [], **kw):
-    path, name = os.path.split(target)
-    if test_sources:
-        if type(test_sources) is not type([]):
-            test_sources = [ test_sources ]
-    else:
-        test_sources = []
-    testEnv = env.Clone(**kw)
-    testEnv.Prepend(_LIBFLAGS = ' -Wl,-Bstatic -l$BOOSTTESTLIB -Wl,-Bdynamic ')
-    testEnv.Prepend(LIBS = LIBS)
-    testEnv.Append(LIBS = env['TEST_EXTRA_LIBS'])
-    all_objects = []
-    if not objects:
-        objects = []
-    all_objects = objects + env.Object(test_sources) + OBJECTS
-    binName = os.path.join(path,'.' + name +'.bin')
-    testRunner = testEnv.Program(binName, all_objects)
-    stamp = os.path.join(path,'.' + os.path.splitext(name)[0]+'.stamp')
-    if DEPENDS:
-        env.Depends(testRunner, DEPENDS)
-    return env.Command([ stamp ], testRunner,
-                       [ '$SOURCE $BOOSTTESTARGS',
-                         'touch $TARGET' ])
+def BoostUnitTests(env, target=None, source=None,  **kw):
+    target = env.arg2nodes(target)[0]
 
-def dispatcher(*arg,**kw):
-    return BoostUnitTests(*arg,**kw)
+    binnode = target.dir.File('.' + target.name + '.bin')
+    stampnode = target.dir.File('.' + target.name + '.stamp')
+
+    bin = env.Program(binnode, source, 
+                      LIBS = env['LIBS'] + [ '$TEST_EXTRA_LIBS' ],
+                      _LIBFLAGS = ' -Wl,-Bstatic -l$BOOSTTESTLIB -Wl,-Bdynamic ' + env['_LIBFLAGS'],
+                      **kw)
+
+    stamp = env.Command(stampnode, bin,
+                        [ '$SOURCE $BOOSTTESTARGS',
+                          'touch $TARGET' ],
+                        **kw)
+
+    return env.Command(env.File(target), stamp, [ 'true' ])
 
 def generate(env):
     env['BOOSTTESTLIB'] = 'boost_unit_test_framework'
     env['BOOSTTESTARGS'] = [ '--build_info=yes', '--log_level=test_suite' ]
-    env.__class__.BoostUnitTests = dispatcher
+    env['BUILDERS']['BoostUnitTests'] = BoostUnitTests
 
 def exists(env):
     return 1
