@@ -1,58 +1,8 @@
-## \file
-# \brief SENFSCons package
-
-## \package senfscons.SENFSCons
-# \brief Build helpers and utilities
-#
-# The SENFSCons package contains a number of build helpers and
-# utilities which are used to simplify commmon tasks.
-#
-# The utitlities of this package are grouped into:
-# <dl><dt>\ref use</dt><dd>help using complex environments and
-# configure the construction environmen correspondingly</dd>
-#
-# <dt>\ref target</dt><dd>simplify building common targest and include
-# enhanced functionality like unit-testing.</dd></dl>
-#
-# Additionally for external use are
-# <dl><dt>MakeEnvironment()</dt><dd>Build construction
-# environment</dd>
-#
-# <dt>GlobSources()</dt><dd>Utility to find source files</dd></dl>
-#
-# All other functions are for internal use only.
-
 import os.path, glob
 import SCons.Options, SCons.Environment, SCons.Script.SConscript, SCons.Node.FS
 import SCons.Defaults, SCons.Action
 from SCons.Script import *
 
-## \defgroup use Predefined Framework Configurators
-#
-# The following framework configurators are used in the top level \c
-# SConstruct file to simplify more complex configurations.
-#
-# Each of the framework configurators introduces additional
-# configuration parameters to \ref sconfig
-
-## \defgroup target Target Helpers
-#
-# To specify standard targets, the following helpers can be used. They
-# automatically integrate several modules (like documentation,
-# unit-testing etc).
-
-## \defgroup builder Builders
-#
-# The SENFSCons framework includes a series of builders. Each builder
-# is defined in it's own package.
-
-## \brief Find normal and test C++ sources
-#
-# GlobSources() will return a list of all C++ source files (named
-# "*.cc") as well as a list of all unit-test files (named "*.test.cc")
-# in the current directory. The sources will be returned as a tuple of
-# sources, test-sources. The target helpers all accept such a tuple as
-# their source argument.
 def GlobSources(env, exclude=[], subdirs=[]):
     testSources = glob.glob("*.test.cc")
     sources = [ x for x in glob.glob("*.cc") if x not in testSources and x not in exclude ]
@@ -78,16 +28,8 @@ def Glob(env, exclude=[], subdirs=[]):
     return ( GlobSources(env, exclude, subdirs),
              GlobIncludes(env, exclude, subdirs) )
 
-## \brief Return path of a built library within $LOCALLIBDIR
-# \internal
 def LibPath(lib): return '${LOCALLIBDIR}/${LIBPREFIX}%s${LIBADDSUFFIX}${LIBSUFFIX}' % lib
 
-## \brief Add explicit test
-#
-# This target helper will add an explicit test. This is like a unit test but is
-# built directly against the completed library
-#
-# \ingroup target
 def Test(env, sources, LIBS = [], OBJECTS = []):
     test = [ env.BoostUnitTests(
         target = 'test',
@@ -102,26 +44,8 @@ def Test(env, sources, LIBS = [], OBJECTS = []):
         test.extend(env.CompileCheck(source = compileTestSources))
     env.Alias('all_tests', test)
     env.Command(env.File('test'), test, [ 'true' ])
-    #env.Alias(env.File('test'), test)
     
 
-## \brief Build object files
-#
-# This target helper will build object files from the given
-# sources.
-#
-# If \a testSources are given, a unit test will be built using the <a
-# href="http://www.boost.org/libs/test/doc/index.html">Boost.Test</a>
-# library. \a LIBS may specify any additional library modules <em>from
-# the same project</em> on which the test depends. Those libraries
-# will be linked into the final test executable. The test will
-# automatically be run if the \c test or \c all_tests targets are
-# given.
-#
-# If \a sources is a 2-tuple as returned by GlobSources(), it will
-# provide both \a sources and \a testSources.
-#
-# \ingroup target
 def Objects(env, sources, testSources = None, OBJECTS = []):
     if type(sources) == type(()):
         testSources = sources[1]
@@ -160,16 +84,6 @@ def Objects(env, sources, testSources = None, OBJECTS = []):
         #env.Alias(env.File('test'), test)
 
     return objects
-
-def InstallIncludeFiles(env, files):
-    # Hrmpf ... why do I need this in 0.97??
-    if env.GetOption('clean'):
-        return
-    target = env.Dir(env['INCLUDEINSTALLDIR'])
-    base = env.Dir('#')
-    for f in files:
-        src = env.File(f)
-        env.Alias('install_all', env.Install(target.Dir(src.dir.get_path(base)), src))
 
 ## \brief Build documentation with doxygen
 #
@@ -236,53 +150,27 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
 
     return doc
 
-## \brief Build library
-#
-# This target helper will build the given library. The library will be
-# called lib<i>library</i>.a as is customary on UNIX systems. \a
-# sources, \a testSources and \a LIBS are directly forwarded to the
-# Objects build helper.
-#
-# The library is added to the list of default targets.
-#
-#\ingroup target
 def Lib(env, sources, testSources = None, OBJECTS = []):
     objects = Objects(env,sources,testSources,OBJECTS=OBJECTS)
-    if objects:
-        env.Append(ALLOBJECTS = objects)
+    env.Append(ALLOBJECTS = objects)
     return objects
 
-## \brief Build Object from multiple sources
 def Object(env, target, sources, testSources = None, OBJECTS = []):
     objects = Objects(env,sources,testSources,OBJECTS=OBJECTS)
-    ob = None
-    if objects:
-        ob = env.Command(target+"${OBJADDSUFFIX}${OBJSUFFIX}", objects, "ld -r -o $TARGET $SOURCES")
-        env.Default(ob)
-        env.Alias('default', ob)
-        env.Alias('install_all', env.Install("$OBJINSTALLDIR", ob))
+    ob = env.Command(target+"${OBJADDSUFFIX}${OBJSUFFIX}", objects, "ld -r -o $TARGET $SOURCES")
+    env.Default(ob)
+    env.Alias('default', ob)
+    env.Alias('install_all', env.Install("$OBJINSTALLDIR", ob))
     return ob
 
-## \brief Build executable
-#
-# This target helper will build the given binary.  The \a sources, \a
-# testSources and \a LIBS arguments are forwarded to the Objects
-# builder. The final program will be linked against all the library
-# modules specified in \a LIBS (those are libraries which are built as
-# part of the same proejct). To specify non-module libraries, use the
-# construction environment parameters or the framework helpers.
-#
-# \ingroup target
 def Binary(env, binary, sources, testSources = None, OBJECTS = []):
-    objects = Objects(env,sources,testSources,OBJECTS=OBJECTS)
-    program = None
-    if objects:
-        progEnv = env.Clone()
-        progEnv.Prepend(LIBS = [ '$LIBSENF$LIBADDSUFFIX' ])
-        program = progEnv.Program(target=binary,source=objects+OBJECTS)
-        env.Default(program)
-        env.Alias('default', program)
-        env.Alias('install_all', env.Install('$BININSTALLDIR', program))
+    objects = Objects(env, sources, testSources, OBJECTS=OBJECTS)
+    program = env.Program(target = binary, 
+                          source = objects+OBJECTS,
+                          LIBS   = [ '$LIBSENF$LIBADDSUFFIX' ] + env['LIBS'])
+    env.Default(program)
+    env.Alias('default', program)
+    env.Alias('install_all', env.Install('$BININSTALLDIR', program))
     return program
 
 def AllIncludesHH(env, headers):

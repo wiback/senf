@@ -17,7 +17,8 @@
 *.test.checked
 .sconsign*
 *~
-#*#
+*#
+.#*
 
 # File names to ignore in all directories
 all_includes.hh

@@ -9,4 +9,5 @@ sources, includes = SENFSCons.Glob(env)
 
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
-SENFSCons.InstallIncludeFiles(env, includes)
+
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)

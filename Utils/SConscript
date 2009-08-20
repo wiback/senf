@@ -9,6 +9,7 @@ sources, includes = SENFSCons.Glob(env, subdirs=[ 'impl' ])
 
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
-SENFSCons.InstallIncludeFiles(env, includes)
+
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
 
 SConscript(glob.glob("*/SConscript"))

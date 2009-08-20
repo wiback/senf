@@ -17,4 +17,4 @@ SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('classes.dia'),
     env.Dia2Png('ratestuffer.dia'),
 ])
-SENFSCons.InstallIncludeFiles(env, includes)
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)

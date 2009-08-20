@@ -57,7 +57,8 @@ SENFSCons.Doxygen(env, extra_sources = [
     env.PkgDraw("MPEGDVBBundle/SNDUPacket.hh"),
     env.PkgDraw("MPEGDVBBundle/TransportPacket.hh"),
 ])
-SENFSCons.InstallIncludeFiles(env, includes)
+
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
 
 SConscript(glob.glob("*/SConscript"))
 

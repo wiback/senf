@@ -9,5 +9,7 @@ sources, includes = SENFSCons.Glob(env, exclude=['testServer.cc'])
 
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
-SENFSCons.InstallIncludeFiles(env, includes)
+
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
+
 SENFSCons.Binary(env, "testServer", ['testServer.cc'])

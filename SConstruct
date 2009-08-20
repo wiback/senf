@@ -18,11 +18,12 @@ env.Tool('CopyToDir', [ 'senfscons' ])
 env.Tool('CompileCheck', [ 'senfscons' ])
 env.Tool('Boost', [ 'senfscons' ])
 env.Tool('BoostUnitTests', [ 'senfscons' ])
+env.Tool('InstallSubdir', [ 'senfscons' ])
 
 env.Help("""
 Additional top-level build targets:
 
-prepare      Create all source files not part of the repository
+prepare      Create all target files not part of the repository
 all_tests    Build and run unit tests for all modules
 all_docs     Build documentation for all modules
 all          Build everything
@@ -39,7 +40,7 @@ class BuildTypeOptions:
     def __init__(self, var):
         self._var = var
 
-    def __call__(self, source, target, env, for_signature):
+    def __call__(self, target, source, env, for_signature):
         type = env['final'] and "final" or env['debug'] and "debug" or "normal"
         return env[self._var + "_" + type]
 
@@ -147,7 +148,8 @@ env.Default(libsenf)
 env.Clean('all', libsenf)
 env.Alias('default', libsenf)
 
-SENFSCons.InstallIncludeFiles(env, [ 'config.hh' ])
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = [ 'config.hh' ])
+
 env.Alias('install_all', env.Install('$LIBINSTALLDIR', libsenf))
 
 if env.GetOption('clean'):

@@ -13,4 +13,5 @@ SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
 sources, includes = SENFSCons.Glob(env)
 
 SENFSCons.Lib( env, sources)
-SENFSCons.InstallIncludeFiles(env, includes)
+
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)

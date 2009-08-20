@@ -9,4 +9,5 @@ SConscript(glob.glob("*/SConscript"))
 
 sources, includes = SENFSCons.Glob(env)
 SENFSCons.Lib(env, sources)
-SENFSCons.InstallIncludeFiles(env, includes)
+
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)

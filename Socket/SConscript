@@ -20,4 +20,5 @@ SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('Protocols.dia'),
     env.Dia2Png('Handle.dia'),
 ])
-SENFSCons.InstallIncludeFiles(env, includes)
+
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
