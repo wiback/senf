@@ -279,9 +279,8 @@ def Binary(env, binary, sources, testSources = None, OBJECTS = []):
     if objects:
         progEnv = env.Clone()
         progEnv.Prepend(LIBS = [ '$LIBSENF$LIBADDSUFFIX' ])
-        program = progEnv.ProgramNoScan(target=binary,source=objects+OBJECTS)
+        program = progEnv.Program(target=binary,source=objects+OBJECTS)
         env.Default(program)
-        env.Depends(program, [ env.File(LibPath(env['LIBSENF'])) ])
         env.Alias('default', program)
         env.Alias('install_all', env.Install('$BININSTALLDIR', program))
     return program
