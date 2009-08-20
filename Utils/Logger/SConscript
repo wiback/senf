@@ -5,9 +5,7 @@ import SENFSCons, glob
 
 ###########################################################################
 
-SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
-                               if ( f not in ('all_includes.hh','Logger.hh','SenfLog.hh')
-                                    and not f.endswith('.test.hh') ) ])
+SENFSCons.AllIncludesHH(env, exclude=['Logger.hh','SenfLog.hh'])
 
 sources, tests, includes = SENFSCons.Glob(env)
 

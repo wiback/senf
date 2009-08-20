@@ -7,9 +7,7 @@ import SENFSCons, glob
 
 SConscript(glob.glob("*/SConscript"))
 
-SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
-                               if f not in ('all_includes.hh','PPI.hh') \
-                                  and not f.endswith('.test.hh') ])
+SENFSCons.AllIncludesHH(env, exclude = ['PPI.hh'])
 
 sources, tests, includes = SENFSCons.Glob(env, subdirs=[ 'detail' ])
 

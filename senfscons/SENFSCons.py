@@ -79,7 +79,10 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
 
     return doc
 
-def AllIncludesHH(env, headers):
+def AllIncludesHH(env, exclude=[]):
+    exclude = exclude[:] + ['all_includes.hh'] # Make a copy !!
+    headers = [ f for f in glob.glob("*.hh")
+                if f not in exclude and not f.endswith('.test.hh') ]
     headers.sort()
     target = env.File("all_includes.hh")
     file(target.abspath,"w").write("".join([ '#include "%s"\n' % f

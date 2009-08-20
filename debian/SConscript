@@ -1,7 +1,7 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, os
+import SENFSCons, os, os.path, pwd, time, string
 
 ###########################################################################
 

@@ -1,6 +1,6 @@
 # -*- python -*-
 
-import sys, glob, os.path, datetime, pwd, time, fnmatch, string
+import sys, glob, os.path, fnmatch
 sys.path.append(Dir('#/senfscons').abspath)
 sys.path.append(Dir('#/doclib').abspath)
 import SENFSCons, senfutil
@@ -172,7 +172,7 @@ env.PhonyTarget('valgrind', [ 'all_tests' ], [ """
 #### clean
 env.Clean('all', '.prepare-stamp')
 env.Clean('all', libsenf)
-env.Clean('all', 'linklint')
+env.Clean('all', env.Dir('linklint')) # env.Dir to disambiguate from linklint PhonyTarget
 
 if env.GetOption('clean'):
     env.Clean('all', [ os.path.join(path,f)
