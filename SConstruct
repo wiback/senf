@@ -17,7 +17,7 @@ env.Tool('PkgDraw', [ 'senfscons' ])
 env.Tool('CopyToDir', [ 'senfscons' ])
 env.Tool('CompileCheck', [ 'senfscons' ])
 env.Tool('Boost', [ 'senfscons' ])
-env.Tool('BoostUnitTests', [ 'senfscons' ])
+env.Tool('BoostUnitTest', [ 'senfscons' ])
 env.Tool('InstallSubdir', [ 'senfscons' ])
 
 env.Help("""
@@ -53,7 +53,7 @@ env.Append(
    LIBPATH                = [ '$LOCALLIBDIR' ],
    LIBS                   = [ 'rt', '$BOOSTREGEXLIB', '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
                               '$BOOSTFSLIB' ], 
-   TEST_EXTRA_LIBS        = [ ],
+   TEST_EXTRA_LIBS        = [ '$LIBSENF$LIBADDSUFFIX' ],
 
    PREFIX                 = '/usr/local',
    LIBINSTALLDIR          = '$PREFIX/lib',

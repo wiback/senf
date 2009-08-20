@@ -26,8 +26,12 @@ import SCons.Defaults
 import os.path
 import os
 
-def BoostUnitTests(env, target=None, source=None,  **kw):
+# ARGH ... Why do they put a '+' in the module name ????????
+SCons.Tool.cplusplus=getattr(__import__('SCons.Tool.c++', globals(), locals(), []).Tool, 'c++')
+
+def BoostUnitTest(env, target=None, source=None,  **kw):
     target = env.arg2nodes(target)[0]
+    source = env.arg2nodes(source)
 
     binnode = target.dir.File('.' + target.name + '.bin')
     stampnode = target.dir.File('.' + target.name + '.stamp')
@@ -42,12 +46,21 @@ def BoostUnitTests(env, target=None, source=None,  **kw):
                           'touch $TARGET' ],
                         **kw)
 
-    return env.Command(env.File(target), stamp, [ 'true' ])
+    alias = env.Command(env.File(target), stamp, [ 'true' ])
+
+    compileTests = [ src for src in source 
+                     if src.suffix in SCons.Tool.cplusplus.CXXSuffixes \
+                         and src.exists() \
+                         and 'COMPILE_CHECK' in file(str(src)).read() ]
+    if compileTests:
+        env.Depends(alias, env.CompileCheck(source = compileTests))
+        
+    return alias
 
 def generate(env):
     env['BOOSTTESTLIB'] = 'boost_unit_test_framework'
     env['BOOSTTESTARGS'] = [ '--build_info=yes', '--log_level=test_suite' ]
-    env['BUILDERS']['BoostUnitTests'] = BoostUnitTests
+    env['BUILDERS']['BoostUnitTest'] = BoostUnitTest
 
 def exists(env):
     return 1

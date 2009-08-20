@@ -19,7 +19,7 @@ def scanTests(f):
 def CompileCheck(target, source, env):
     tests = scanTests(file(source[0].abspath))
     cenv = env.Clone()
-    cenv.Append( CPPDEFINES = { 'COMPILE_CHECK': '' } )
+    cenv.Append( CPPDEFINES = [ 'COMPILE_CHECK' ] )
     out = tempfile.TemporaryFile()
     cenv['SPAWN'] = lambda sh, escape, cmd, args, env, pspawn=cenv['PSPAWN'], out=out: \
                     pspawn(sh, escape, cmd, args, env, out, out)

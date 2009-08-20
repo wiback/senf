@@ -28,24 +28,11 @@ def Glob(env, exclude=[], subdirs=[]):
     return ( GlobSources(env, exclude, subdirs),
              GlobIncludes(env, exclude, subdirs) )
 
-def LibPath(lib): return '${LOCALLIBDIR}/${LIBPREFIX}%s${LIBADDSUFFIX}${LIBSUFFIX}' % lib
-
 def Test(env, sources):
-    test = env.BoostUnitTests( target = 'test', 
-                               source = sources, 
-                               TEST_EXTRA_LIBS = [ '$LIBSENF$LIBADDSUFFIX' 
-                                                   ] + env['TEST_EXTRA_LIBS'])
-        
-    compileTestSources = [ src for src in sources
-                           if 'COMPILE_CHECK' in file(src).read() ]
-    if compileTestSources:
-        env.Depends(test, env.CompileCheck(source = compileTestSources))
-
+    test=env.BoostUnitTest( target = 'test', source = sources )
     env.Alias('all_tests', test)
-
     return test
     
-
 def Objects(env, sources, testSources = None):
     if type(sources) == type(()):
         testSources = sources[1]
