@@ -10,9 +10,10 @@ SConscript(glob.glob("*/SConscript"))
 SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                if f not in ('all_includes.hh','Socket.hh') and not f.endswith('.test.hh') ])
 
-sources, includes = SENFSCons.Glob(env)
+sources, tests, includes = SENFSCons.Glob(env)
 
-SENFSCons.Lib(env, sources = sources)
+env.Append(ALLOBJECTS = env.Object(sources))
+env.BoostUnitTest('test', tests)
 SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('SocketLibrary-classes.dia'),
     env.Dia2Png('FhHierarchy.dia'),
@@ -20,5 +21,4 @@ SENFSCons.Doxygen(env, extra_sources = [
     env.Dia2Png('Protocols.dia'),
     env.Dia2Png('Handle.dia'),
 ])
-
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
+env.InstallSubdir('$INCLUDEINSTALLDIR', includes)

@@ -5,12 +5,13 @@ import SENFSCons, glob
 
 ###########################################################################
 
-(sources, tests), includes = SENFSCons.Glob(env)
+sources, tests, includes = SENFSCons.Glob(env)
 
-SENFSCons.Object(env, target='80211Bundle', sources=sources,
-                 testSources = tests + [ '80211Bundle.o' ])
-SENFSCons.Lib(env, sources=sources)
+objects = env.Object(sources)
+cobject = env.CombinedObject('80211Bundle', objects)
+env.Append(ALLOBJECTS = objects)
+env.BoostUnitTest('test', tests + cobject)
 
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
+env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
 
 SConscript(glob.glob("*/SConscript"))

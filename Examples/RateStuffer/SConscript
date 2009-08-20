@@ -3,7 +3,10 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.Binary(env, 'ratestuffer', SENFSCons.GlobSources(env));
+sources, tests, includes = SENFSCons.Glob(env)
+
+env.Default(env.Program('ratestuffer', sources))
+
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('ratestuffer.dia')
 ])

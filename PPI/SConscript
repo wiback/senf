@@ -1,3 +1,5 @@
+# -*- python -*-
+
 Import('env')
 import SENFSCons, glob
 
@@ -9,12 +11,15 @@ SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                if f not in ('all_includes.hh','PPI.hh') \
                                   and not f.endswith('.test.hh') ])
 
-sources, includes = SENFSCons.Glob(env, subdirs=[ 'detail' ])
+sources, tests, includes = SENFSCons.Glob(env, subdirs=[ 'detail' ])
 
-SENFSCons.Lib(env, sources)
+env.Append(ALLOBJECTS = env.Object(sources))
+env.BoostUnitTest('test', tests)
+
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('scenario.dia'),
     env.Dia2Png('classes.dia'),
     env.Dia2Png('ratestuffer.dia'),
 ])
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
+
+env.InstallSubdir('$INCLUDEINSTALLDIR', includes)

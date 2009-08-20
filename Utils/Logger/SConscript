@@ -9,9 +9,9 @@ SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                if ( f not in ('all_includes.hh','Logger.hh','SenfLog.hh')
                                     and not f.endswith('.test.hh') ) ])
 
-sources, includes = SENFSCons.Glob(env)
+sources, tests, includes = SENFSCons.Glob(env)
 
-SENFSCons.Lib(env, sources)
+env.Append(ALLOBJECTS = env.Object(sources))
+env.BoostUnitTest('test', tests)
 SENFSCons.Doxygen(env)
-
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
+env.InstallSubdir('$INCLUDEINSTALLDIR', includes)

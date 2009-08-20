@@ -5,11 +5,10 @@ import SENFSCons
 
 ###########################################################################
 
-sources, includes = SENFSCons.Glob(env, exclude=[ 'telnetServer.cc'])
+sources, tests, includes = SENFSCons.Glob(env, exclude=[ 'telnetServer.cc'])
 
-SENFSCons.Lib(env, sources)
+env.Append(ALLOBJECTS = env.Object(sources))
+env.BoostUnitTest('test', tests)
 SENFSCons.Doxygen(env)
-
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
-
-SENFSCons.Binary(env, "telnetServer", ['telnetServer.cc'])
+env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+env.Program('telnetSserver', ['telnetServer.cc'])

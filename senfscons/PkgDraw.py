@@ -27,7 +27,7 @@ PkgDraw = SCons.Builder.Builder(
 
 def generate(env):
     env['BUILDERS']['PkgDraw'] = PkgDraw
-    env['PKGDRAW'] = "doclib/pkgdraw"
+    env['PKGDRAW'] = "pkgdraw"
     env['PKGDRAWCOM'] = "$PKGDRAW $SOURCE $TARGET $PKGDRAWPACKETS -- $CPPFLAGS $_CPPINCFLAGS $_CPPDEFFLAGS"
     env['PKGDRAWPACKETS'] = ''
 

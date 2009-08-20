@@ -10,8 +10,8 @@ SConscript(glob.glob("*/SConscript"))
 SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                if f not in ('all_includes.hh','Raw.hh') and not f.endswith('.test.hh') ])
 
-sources, includes = SENFSCons.Glob(env)
+sources, tests, includes = SENFSCons.Glob(env)
 
-SENFSCons.Lib(env, sources)
-
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
+env.Append(ALLOBJECTS = env.Object(sources))
+env.BoostUnitTest('test', tests)
+env.InstallSubdir('$INCLUDEINSTALLDIR', includes)

@@ -1,11 +1,14 @@
+# -*- python -*-
+
 Import('env')
 import SENFSCons
 
 ###########################################################################
 
-SENFSCons.Binary(env, 'sniffer', SENFSCons.GlobSources(env),
-    OBJECTS = [ '#/Packets/DefaultBundle/DefaultBundle.o',
-                '#/Packets/MPEGDVBBundle/MPEGDVBBundle.o',
-                '#/Packets/80221Bundle/80221Bundle.o', 
-                '#/Packets/80211Bundle/80211Bundle.o' ] );
+sources, tests, includes = SENFSCons.Glob(env)
+
+env.Program('sniffer', sources + [ '#/Packets/DefaultBundle/DefaultBundle.o',
+                                   '#/Packets/MPEGDVBBundle/MPEGDVBBundle.o',
+                                   '#/Packets/80221Bundle/80221Bundle.o', 
+                                   '#/Packets/80211Bundle/80211Bundle.o' ] )
 SENFSCons.Doxygen(env)

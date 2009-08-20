@@ -283,7 +283,7 @@ env.Replace(
     DOXYGENCOM = "doclib/doxygen.sh $DOXYOPTS $SOURCE",
 )
 
-SENFSCons.PhonyTarget(env, 'linklint', [
+env.PhonyTarget('linklint', [], [
     'rm -rf linklint',
     'linklint -doc linklint -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
     '[ ! -r linklint/errorX.html ] || python doclib/linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
@@ -293,9 +293,7 @@ SENFSCons.PhonyTarget(env, 'linklint', [
     'echo -e "\\nLokal link check results: linklint/index.html\\nRemote link check results: linklint/urlindex.html\\n"',
 ])
 
-env.Clean('all', env.Dir('linklint'))
-
-SENFSCons.PhonyTarget(env, 'fixlinks', [
+env.PhonyTarget('fixlinks', [], [
     'python doclib/fix-links.py -v -s .svn -s linklint -s debian linklint/errorX.txt linklint/errorAX.txt',
 ])
 

@@ -3,6 +3,7 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.Binary(env, 'udpClient', 'udpClient.cc');
-SENFSCons.Binary(env, 'udpServer', 'udpServer.cc',);
+env.Default(env.Program('udpClient', 'udpClient.cc'))
+env.Default(env.Program('udpServer', 'udpServer.cc'))
+
 SENFSCons.Doxygen(env)

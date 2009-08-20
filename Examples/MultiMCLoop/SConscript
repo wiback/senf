@@ -3,4 +3,4 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.Binary(env, 'multimcloop', [ 'MultiMCLoop.cc' ])
+env.Default(env.Program('multimcloop', [ 'MultiMCLoop.cc' ]))

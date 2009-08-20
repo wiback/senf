@@ -3,5 +3,5 @@ import SENFSCons
 
 ###########################################################################
 
-SENFSCons.Binary(env, 'client', 'client.cc');
-SENFSCons.Binary(env, 'server', 'server.cc');
+env.Program('client', 'client.cc')
+env.Program('server', 'server.cc')

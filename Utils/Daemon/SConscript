@@ -5,9 +5,9 @@ import SENFSCons, glob
 
 ###########################################################################
 
-sources, includes = SENFSCons.Glob(env)
+sources, tests, includes = SENFSCons.Glob(env)
 
-SENFSCons.Lib(env, sources)
+env.Append(ALLOBJECTS = env.Object(sources))
+env.BoostUnitTest('test', tests)
 SENFSCons.Doxygen(env)
-
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
+env.InstallSubdir('$INCLUDEINSTALLDIR', includes)

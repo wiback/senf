@@ -5,4 +5,4 @@ import SENFSCons, glob
 
 ###########################################################################
 
-SENFSCons.Test(env, sources = glob.glob("*.test.cc"))
+env.BoostUnitTest('test', glob.glob("*.test.cc"))

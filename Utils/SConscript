@@ -5,11 +5,11 @@ import SENFSCons, glob, os.path
 
 ###########################################################################
 
-sources, includes = SENFSCons.Glob(env, subdirs=[ 'impl' ])
+sources, tests, includes = SENFSCons.Glob(env, subdirs=[ 'impl' ])
 
-SENFSCons.Lib(env, sources)
+env.Append(ALLOBJECTS = env.Object(sources))
+env.BoostUnitTest('test', tests)
 SENFSCons.Doxygen(env)
-
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = includes)
+env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
 
 SConscript(glob.glob("*/SConscript"))

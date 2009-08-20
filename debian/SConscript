@@ -88,19 +88,19 @@ env.Replace(
     BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot $DPKG_IGNORED_FILES_OPTS",
 )
 
-SENFSCons.PhonyTarget(env, 'deb', [
+env.PhonyTarget('deb', [], [
     checkLocalConf,
     updateRevision,
     "$BUILDPACKAGE_COMMAND",
     "fakeroot ./debian/rules debclean"
 ])
 
-SENFSCons.PhonyTarget(env, 'debsrc', [
+env.PhonyTarget('debsrc', [], [
     updateRevision,
     "$BUILDPACKAGE_COMMAND -S",
 ])
 
-SENFSCons.PhonyTarget(env, 'debbin', [
+env.PhonyTarget('debbin', [], [
     checkLocalConf,
     updateRevision,
     "$BUILDPACKAGE_COMMAND -b",
