@@ -7,7 +7,6 @@ import SENFSCons, glob
 
 sources, includes = SENFSCons.Glob(env)
 
-SENFSCons.StandardTargets(env)
 SENFSCons.Object(env, target='80211Bundle', sources=sources)
 SENFSCons.Lib(env, sources=sources[0])
 SENFSCons.InstallIncludeFiles(env, includes)

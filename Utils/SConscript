@@ -7,7 +7,6 @@ import SENFSCons, glob, os.path
 
 sources, includes = SENFSCons.Glob(env, subdirs=[ 'impl' ])
 
-SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
 SENFSCons.InstallIncludeFiles(env, includes)

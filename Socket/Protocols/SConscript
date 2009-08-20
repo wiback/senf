@@ -7,8 +7,6 @@ import SENFSCons, glob
 
 SConscript(glob.glob("*/SConscript"))
 
-SENFSCons.StandardTargets(env)
-
 sources, includes = SENFSCons.Glob(env)
 SENFSCons.Lib(env, sources)
 SENFSCons.InstallIncludeFiles(env, includes)

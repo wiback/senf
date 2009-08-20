@@ -78,28 +78,6 @@ def Glob(env, exclude=[], subdirs=[]):
     return ( GlobSources(env, exclude, subdirs),
              GlobIncludes(env, exclude, subdirs) )
 
-## \brief Add generic standard targets for every module
-#
-# This target helper should be called in the top-level \c SConstruct file
-# as well as in every module \c SConscipt file. It adds general
-# targets. Right now, these are
-# \li clean up \c .sconsign, \c .sconf_temp and \c config.log on
-#   <tt>scons -c all</tt>
-#
-# \ingroup target
-def StandardTargets(env):
-    env.Clean(env.Alias('all'), [ '.sconsign', '.sconf_temp', 'config.log' ])
-
-## \brief Add generic global targets
-#
-# This target helper should be called in the top-level \c SConstruct
-# file. It adds general global targets. Right now theese are
-# \li Make <tt>scons all</tt> build all targets.
-#
-# \ingroup target
-def GlobalTargets(env):
-    env.Alias('all', [ 'default', 'all_tests', 'all_docs' ])
-
 ## \brief Return path of a built library within $LOCALLIBDIR
 # \internal
 def LibPath(lib): return '${LOCALLIBDIR}/${LIBPREFIX}%s${LIBADDSUFFIX}${LIBSUFFIX}' % lib

@@ -6,7 +6,7 @@ import SENFSCons, glob
 ###########################################################################
 
 sources, includes = SENFSCons.Glob(env)
-SENFSCons.StandardTargets(env)
+
 SENFSCons.Object(env, target='DefaultBundle', sources=sources)
 SENFSCons.Lib(env, sources[0])
 SENFSCons.InstallIncludeFiles(env, includes)

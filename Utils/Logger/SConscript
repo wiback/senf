@@ -11,7 +11,6 @@ SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
 
 sources, includes = SENFSCons.Glob(env)
 
-SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
 SENFSCons.InstallIncludeFiles(env, includes)

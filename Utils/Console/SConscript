@@ -7,7 +7,6 @@ import SENFSCons
 
 sources, includes = SENFSCons.Glob(env, exclude=['testServer.cc'])
 
-SENFSCons.StandardTargets(env)
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env)
 SENFSCons.InstallIncludeFiles(env, includes)

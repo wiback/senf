@@ -36,12 +36,6 @@ fixlinks     Fix broken links in doxygen documentation
 valgrind     Run all tests under valgrind/memcheck
 """)
 
-# Compile options
-
-# Options used to debug inlining:
-#
-# BEWARE: You need lots of ram to compile with these settings (approx 1G)
-
 class BuildTypeOptions:
     def __init__(self, var):
         self._var = var
@@ -52,7 +46,7 @@ class BuildTypeOptions:
 
 env.Append(
    ENV                    = { 'PATH' : os.environ.get('PATH') },
-   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
+   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*', '.sconsign' ],
 
    CPPPATH                = [ '#/include' ],
    LOCALLIBDIR            = '#',
@@ -145,10 +139,9 @@ if os.path.exists('SConscript.local'):
 SConscript(list(set(glob.glob("*/SConscript")) - set(initSConscripts)))
 
 # Define the main targets
-SENFSCons.StandardTargets(env)
-SENFSCons.GlobalTargets(env)
+env.Alias('all', [ 'default', 'all_tests', 'all_docs' ])
 
-env.Depends( SENFSCons.Doxygen(env), env.Value(env['ENV']['REVISION']) )
+env.Depends(SENFSCons.Doxygen(env), env.Value(env['ENV']['REVISION']))
 
 libsenf = env.Library(env.subst("$LIBSENF$LIBADDSUFFIX"), env['ALLOBJECTS'])
 env.Default(libsenf)

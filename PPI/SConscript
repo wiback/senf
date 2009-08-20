@@ -10,7 +10,7 @@ SENFSCons.AllIncludesHH(env, [ f for f in glob.glob("*.hh")
                                   and not f.endswith('.test.hh') ])
 
 sources, includes = SENFSCons.Glob(env, subdirs=[ 'detail' ])
-SENFSCons.StandardTargets(env)
+
 SENFSCons.Lib(env, sources)
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('scenario.dia'),
