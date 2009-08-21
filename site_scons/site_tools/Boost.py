@@ -89,11 +89,10 @@ def BoostUnitTest(env, target=None, source=None,  **kw):
                       **kw)
 
     stamp = env.Command(stampnode, bin,
-                        [ '$SOURCE $BOOSTTESTARGS',
-                          'touch $TARGET' ],
+                        [ '$SOURCE $BOOSTTESTARGS', SCons.Script.Touch('$TARGET')],
                         **kw)
 
-    alias = env.Command(env.File(target), stamp, [])
+    alias = env.Command(env.File(target), stamp, [ env.NopAction() ] )
 
     compileTests = [ src for src in source 
                      if src.suffix in SCons.Tool.cplusplus.CXXSuffixes \
@@ -108,6 +107,11 @@ def BoostUnitTest(env, target=None, source=None,  **kw):
 
 def FindAllBoostUnitTests(env, target, source):
     return _ALL_TESTS
+
+def NopAction(env, target, source):
+    def nop(target, source, env) : return None
+    def nopstr(target, source, env) : return ''
+    return env.Action(nop, nopstr)
 
 def generate(env):
     env.SetDefault(
@@ -131,6 +135,7 @@ def generate(env):
         source_scanner = SCons.Scanner.C.CScanner(),
         single_source=1
         )
+    env['BUILDERS']['NopAction'] = NopAction
 
 def exists(env):
     return True
