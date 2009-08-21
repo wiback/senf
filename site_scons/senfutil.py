@@ -57,7 +57,7 @@ def SetupForSENF(env, senf_paths = []):
     # If we have a symbolic link (or directory) 'senf', we use it as our
     # senf repository
     for path in senf_paths:
-        if os.path.exists(path):
+        if os.path.exists(os.path.join(path,"senf/config.hh")):
             print "\nUsing SENF in '%s/'\n" % os.path.abspath(path)
             env.Append( LIBPATH = [ path ],
                         CPPPATH = [ path ],
