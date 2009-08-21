@@ -21,7 +21,8 @@ def expandLogOption(target, source, env, for_signature):
 # b) parse the LOGLEVELS parameter into the correct SENF_LOG_CONF syntax
 # c) check for a local SENF, set options accordingly and update that SENF if needed
 
-def SetupForSENF(env):
+def SetupForSENF(env, senf_paths = []):
+    senf_paths.extend(('senf', '../senf', os.path.dirname(os.path.dirname(__file__))))
     env.Append( LIBS           = [ 'senf', 'rt', '$BOOSTREGEXLIB',
                                    '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
                                    '$BOOSTFSLIB' ],
@@ -55,29 +56,18 @@ def SetupForSENF(env):
 
     # If we have a symbolic link (or directory) 'senf', we use it as our
     # senf repository
-    if os.path.exists('senf'):
-        print "\nUsing SENF in './senf'\n"
-        env.Append( LIBPATH = [ 'senf' ],
-                    CPPPATH = [ 'senf' ],
-                    SENF_BUILDOPTS = [ '${final and "final=1" or None}',
-                                       '${debug and "debug=1" or None}',
-                                       '${profile and "profile=1" or None}' ],
-                    CPPDEFINES = [ '${not(final) and "SENF_DEBUG" or None}' ] )
-
-        #env.Default(
-        #    env.AlwaysBuild(
-        #        env.Command('senf/libsenf.a', [],  [ 'scons -C %s $SENF_BUILDOPTS libsenf.a' % os.path.realpath('senf')])))
-    elif os.path.exists('../senf'):
-        print "\nUsing SENF in '../senf'\n"
-        env.Append( LIBPATH = [ '../senf' ],
-                    CPPPATH = [ '../senf/include' ],
-                    SENF_BUILDOPTS = [ '${final and "final=1" or None}',
-                                       '${debug and "debug=1" or None}',
-                                       '${profile and "profile=1" or None}' ],
-                    CPPDEFINES = [ '${not(final) and "SENF_DEBUG" or None}' ] )
-
-        #env.Default(
-        #    env.AlwaysBuild(
-        #        env.Command('senf/libsenf.a', [],  [ 'scons -C %s $SENF_BUILDOPTS libsenf.a' % os.path.realpath('senf')])))
+    for path in senf_paths:
+        if os.path.exists(path):
+            print "\nUsing SENF in '%s/'\n" % os.path.abspath(path)
+            env.Append( LIBPATH = [ path ],
+                        CPPPATH = [ path ],
+                        SENF_BUILDOPTS = [ '${final and "final=1" or None}',
+                                           '${debug and "debug=1" or None}',
+                                           '${profile and "profile=1" or None}' ],
+                        CPPDEFINES = [ '${not(final) and "SENF_DEBUG" or None}' ] )
+            #env.Default(
+            #    env.AlwaysBuild(
+            #        env.Command('senf/libsenf.a', [],  [ 'scons -C %s $SENF_BUILDOPTS libsenf.a' % os.path.realpath('senf')])))
+            break
     else:
         print '\nUsing global SENF\n'
