@@ -58,11 +58,11 @@ env.Append(
    TEST_EXTRA_LIBS        = [  ],
 
    PREFIX                 = '/usr/local',
-   LIBINSTALLDIR          = '$PREFIX/lib',
-   BININSTALLDIR          = '$PREFIX/bin',
-   INCLUDEINSTALLDIR      = '$PREFIX/include',
+   LIBINSTALLDIR          = '$PREFIX',
+   BININSTALLDIR          = '$PREFIX',
+   INCLUDEINSTALLDIR      = '$PREFIX',
    OBJINSTALLDIR          = '$LIBINSTALLDIR',
-   DOCINSTALLDIR          = '$PREFIX/doc',
+   DOCINSTALLDIR          = '$PREFIX/docs',
    CPP_INCLUDE_EXTENSIONS = [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti' ],
    CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
 
@@ -118,13 +118,11 @@ if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
 # Load SConscripts
 
 SConscript("debian/SConscript")
-SConscript("doclib/SConscript")
 if os.path.exists('SConscript.local') : SConscript('SConscript.local')
-
 SConscript("senf/SConscript")
-
 SConscript("Examples/SConscript")
 SConscript("HowTos/SConscript")
+SConscript("doclib/SConscript")
 
 ###########################################################################
 # Define build targets
@@ -170,6 +168,7 @@ if env.GetOption('clean'):
                        for path, subdirs, files in os.walk('.')
                        for pattern in env['CLEAN_PATTERNS']
                        for f in fnmatch.filter(files,pattern) ])
+    env.Clean('all', '.')
 
 if not env.GetOption('clean') and not os.path.exists(".prepare-stamp"):
     Execute(Touch(".prepare-stamp"))

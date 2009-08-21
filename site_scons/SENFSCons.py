@@ -46,7 +46,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                                            'html'            : 'NO',
                                            'generate_tagfile': 'doc/${MODULE}.tag' },
                               MODULE   = module )
-        env.Append(ALL_TAGFILES = tagfile[0].abspath)
+        env.Append(ALL_TAGFILES = [ tagfile[0].abspath ])
         env.Depends(tagfile, [ env.File('#/doclib/doxygen.sh'), 
                                env.File('#/doclib/tag-munge.xsl') ])
 
@@ -71,8 +71,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
             env.Depends(doc, env.CopyToDir(doc[0].dir, extra_sources))
 
     # Install documentation into DOCINSTALLDIR
-    l = len(env.Dir('#').abspath)
-    env.Install(env.Dir('$DOCINSTALLDIR').Dir(doc[0].dir.get_path('#')), doc[0].dir)
+    env.Install(env.Dir('$DOCINSTALLDIR').Dir(doc[0].dir.dir.get_path(env.Dir('#'))), doc[0].dir)
 
     # Useful aliases
     env.Alias('all_docs', doc)
@@ -95,7 +94,7 @@ def AllIncludesHH(env, exclude=[]):
 # The following functions serve as simple macros for most SConscript files
 #
 # If you need to customize these rules, copy-and-paste the code into the
-# SConscript file and adjust at will (don't to forget to replace the
+# SConscript file and adjust at will (don't forget to replace the
 # parameters with their actual value. Parameters are marked with ((name)) )
 
 def AutoRules(env, exclude=[], subdirs=[], doc_extra_sources = []):
@@ -118,7 +117,7 @@ def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
     subscripts                    = glob.glob("*/SConscript")
 
     objects = env.Object(sources)
-    cobject = env.CombinedObject(name, objects)
+    cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}', objects, NAME=((name)))
 
     env.Default(cobject)
     env.Append(ALLOBJECTS = objects, PACKET_BUNDLES = cobject)

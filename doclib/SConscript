@@ -251,16 +251,19 @@ function paths() {
 }
 ?>"""
 
+env.SetDefault(
+    DOXYGEN = "doxygen"
+)
+
+env.Replace(
+    DOXYGENCOM = "doclib/doxygen.sh $DOXYOPTS $SOURCE",
+)
+
 env.Append( ENV = {
     'TODAY' : str(datetime.date.today()),
     'TEXINPUTS' : os.environ.get('TEXINPUTS',env.Dir('#/doclib').abspath + ':'),
-    'DOXYGEN' : env.get('DOXYGEN', 'doxygen'),
+    'DOXYGEN' : env.File(env['DOXYGEN']).abspath,
 })
-
-env.Replace(
-    ALL_TAGFILES = [],
-    DOXYGENCOM = "doclib/doxygen.sh $DOXYOPTS $SOURCE",
-)
 
 env.PhonyTarget('linklint', [], [
     'rm -rf linklint',

@@ -14,4 +14,4 @@ if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
 SConscript(list(set(glob.glob("*/SConscript")) - set(("Ext/SConscript",))))
 SConscript("Ext/SConscript")
 
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = [ 'config.hh' ])
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = [ 'config.hh', 'local_config.hh' ])
