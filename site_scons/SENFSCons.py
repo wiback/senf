@@ -66,17 +66,19 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
 
     # Copy the extra_sources (the images) into the documentation directory
     # (need to exclude the 'clean' case otherwise there are multiple ways to clean the copies)
-    if not env.GetOption('clean'):
-        if extra_sources:
-            env.Depends(doc, env.CopyToDir(doc[0].dir, extra_sources))
+    if extra_sources:
+        if env.GetOption('clean'):
+            env.Depends(doc, extra_sources)
+        else:
+            env.Depends(env.CopyToDir(doc[0].dir, extra_sources))
 
     # Install documentation into DOCINSTALLDIR
     env.Install(env.Dir('$DOCINSTALLDIR').Dir(doc[0].dir.dir.get_path(env.Dir('#'))), doc[0].dir)
 
     # Useful aliases
     env.Alias('all_docs', doc)
-    env.Clean('all_docs', doc)
-    env.Clean('all', doc)
+    env.Clean(env.Alias('all_docs'), doc)
+    env.Clean(env.Alias('all'), doc)
 
     return doc
 
@@ -88,7 +90,7 @@ def AllIncludesHH(env, exclude=[]):
     target = env.File("all_includes.hh")
     file(target.abspath,"w").write("".join([ '#include "%s"\n' % f
                                              for f in headers ]))
-    env.Clean('all', target)
+    env.Clean(env.Alias('all'), target)
 
 ###########################################################################
 # The following functions serve as simple macros for most SConscript files
