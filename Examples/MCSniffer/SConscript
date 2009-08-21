@@ -7,4 +7,4 @@ import SENFSCons
 
 sources, tests, includes = SENFSCons.Glob(env)
 
-env.Default(env.Program('mcsniffer', sources + env['PACKET_BUNDLES']))
+env.Program('mcsniffer', sources + env['PACKET_BUNDLES'])

@@ -3,4 +3,4 @@ import SENFSCons
 
 ###########################################################################
 
-env.Default(env.Program('multimcloop', [ 'MultiMCLoop.cc' ]))
+env.Program('multimcloop', [ 'MultiMCLoop.cc' ])
