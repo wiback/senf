@@ -27,9 +27,9 @@
 
 // Custom includes
 #include <sstream>
-#include "senf/Utils/Exception.hh"
-#include "senf/Utils/Logger/Logger.hh"
-#include "senf/Utils/membind.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/Logger/Logger.hh>
+#include <senf/Utils/membind.hh>
 #include <boost/shared_ptr.hpp>
 
 #define prefix_

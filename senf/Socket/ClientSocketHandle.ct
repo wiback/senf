@@ -29,7 +29,7 @@
 // Custom includes
 #include <algorithm>
 #include <boost/utility/value_init.hpp>
-#include "../Utils/Buffer.hh"
+#include <senf/Utils/Buffer.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////

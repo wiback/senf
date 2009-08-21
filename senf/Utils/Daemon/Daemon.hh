@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/utility.hpp>
-#include "../Logger/SenfLog.hh"
+#include <senf/Utils/Logger/SenfLog.hh>
 
 //#include "Daemon.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

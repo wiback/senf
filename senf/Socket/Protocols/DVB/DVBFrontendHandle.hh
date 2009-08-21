@@ -32,11 +32,11 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <linux/dvb/frontend.h>
-#include "../../../Socket/FramingPolicy.hh"
-#include "../../../Socket/CommunicationPolicy.hh"
-#include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/ProtocolClientSocketHandle.hh"
-#include "../../../Socket/SocketProtocol.hh"
+#include <senf/Socket/FramingPolicy.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Socket/ProtocolClientSocketHandle.hh>
+#include <senf/Socket/SocketProtocol.hh>
 #include <fcntl.h>
 //#include "DVBFrontendHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

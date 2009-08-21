@@ -29,11 +29,11 @@
 // Custom includes
 #include "SyslogTarget.hh"
 #include "LogFormat.hh"
-#include "../../Socket/Protocols/INet/INetAddressing.hh"
-#include "../../Socket/ClientSocketHandle.hh"
-#include "../../Socket/FramingPolicy.hh"
-#include "../../Socket/ReadWritePolicy.hh"
-#include "../../Socket/CommunicationPolicy.hh"
+#include <senf/Socket/Protocols/INet/INetAddressing.hh>
+#include <senf/Socket/ClientSocketHandle.hh>
+#include <senf/Socket/FramingPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
 
 //#include "SyslogUDPTarget.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

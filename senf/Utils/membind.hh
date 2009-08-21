@@ -53,7 +53,7 @@
 // Custom includes
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include "../config.hh"
+#include <senf/config.hh>
 
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -149,11 +149,11 @@
 namespace senf {
 
 #define scOBTYPE *
-#include "../Utils/impl/membind.hh"
+#include <senf/Utils/impl/membind.hh>
 #undef scOBTYPE
 
 #define scOBTYPE &
-#include "../Utils/impl/membind.hh"
+#include <senf/Utils/impl/membind.hh>
 #undef scOBTYPE
 
 #ifdef DOXYGEN

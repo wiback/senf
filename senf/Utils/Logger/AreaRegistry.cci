@@ -26,7 +26,7 @@
 #include "AreaRegistry.ih"
 
 // Custom includes
-#include "../TypeInfo.hh"
+#include <senf/Utils/TypeInfo.hh>
 #include "Levels.hh"
 #include "StreamRegistry.hh"
 

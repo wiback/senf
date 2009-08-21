@@ -27,7 +27,7 @@
 #define HH_SENF_PPI_IntervalTimer_ 1
 
 // Custom includes
-#include "../Scheduler/ClockService.hh"
+#include <senf/Scheduler/ClockService.hh>
 #include "Events.hh"
 
 //#include "IntervalTimer.mpp"

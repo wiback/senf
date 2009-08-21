@@ -29,7 +29,7 @@
 // Custom includes
 #include <boost/utility.hpp>
 #include "Parse.hh"
-#include "../../Utils/Logger/SenfLog.hh"
+#include <senf/Utils/Logger/SenfLog.hh>
 #include "Node.hh"
 
 //#include "Executor.mpp"

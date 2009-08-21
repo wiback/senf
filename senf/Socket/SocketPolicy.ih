@@ -50,8 +50,8 @@
 #include <boost/mpl/and.hpp>
 #include <boost/utility.hpp> // for enable_if
 
-#include "../Utils/mpl.hh"
-#include "../Utils/pool_alloc_mixin.hh"
+#include <senf/Utils/mpl.hh>
+#include <senf/Utils/pool_alloc_mixin.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

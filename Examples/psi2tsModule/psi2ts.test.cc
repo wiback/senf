@@ -24,13 +24,13 @@
     \brief psi2ts unit tests */
 
 // Custom includes
-#include "senf/PPI/DebugModules.hh"
-#include "senf/PPI/Setup.hh"
+#include <senf/PPI/DebugModules.hh>
+#include <senf/PPI/Setup.hh>
 #include <senf/Packets/MPEGDVBBundle/MPESection.hh>
 #include <senf/Packets/MPEGDVBBundle/TransportPacket.hh>
 #include "psi2ts.hh"
 
-#include "../../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 #include <boost/lambda/lambda.hpp>
 

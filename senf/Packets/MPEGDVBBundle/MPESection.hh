@@ -29,7 +29,7 @@
 // Custom includes
 #include <boost/crc.hpp>
 #include <algorithm>
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 
 //#include "MPESection.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

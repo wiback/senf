@@ -31,8 +31,8 @@
 #include "DVBDemuxHandles.hh"
 #include "DVBConfigParser.hh"
 #include "DVBProtocolWrapper.hh"
-#include "../../../Scheduler/Scheduler.hh"
-#include "../../../Utils/Console/Console.hh"
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Utils/Console/Console.hh>
 
 #define MPE_TABLEID 62
 

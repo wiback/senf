@@ -27,7 +27,7 @@
 //#include "UNAddressing.ih"
 
 // Custom includes
-#include "../AddressExceptions.hh"
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

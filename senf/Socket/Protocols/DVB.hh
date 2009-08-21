@@ -23,7 +23,7 @@
 /** \file
     \brief INet public header */
 
-#include "DVB/DVB.hh"
+#include <senf/Socket/Protocols/DVB/DVB.hh>
 
 
 // Local Variables:

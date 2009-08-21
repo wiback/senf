@@ -32,9 +32,9 @@
 #include <boost/array.hpp>
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
-#include "../../../Utils/safe_bool.hh"
-#include "../../../Utils/Tags.hh"
-#include "../AddressExceptions.hh"
+#include <senf/Utils/safe_bool.hh>
+#include <senf/Utils/Tags.hh>
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 //#include "MACAddress.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -1,7 +1,7 @@
 #include "DVBConfigParser.hh"
 #include <boost/assign/std/map.hpp>
-#include "senf/Utils/Exception.hh"
-#include "senf/Utils/Logger.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/Logger.hh>
 using namespace std;
 #define prefix_
 

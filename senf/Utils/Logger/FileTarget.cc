@@ -27,8 +27,8 @@
 //#include "FileTarget.ih"
 
 // Custom includes
-#include "../Console/Console.hh"
-#include "../Exception.hh"
+#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Exception.hh>
 #include <boost/filesystem/path.hpp>
 
 //#include "FileTarget.mpp"

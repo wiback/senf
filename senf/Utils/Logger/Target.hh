@@ -31,12 +31,12 @@
 #include <vector>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_convertible.hpp>
-#include "../singleton.hh"
-#include "../mpl.hh"
+#include <senf/Utils/singleton.hh>
+#include <senf/Utils/mpl.hh>
 #include "StreamRegistry.hh"
-#include "../Exception.hh"
+#include <senf/Utils/Exception.hh>
 #include "TimeSource.hh"
-#include "../Console/LazyDirectory.hh"
+#include <senf/Utils/Console/LazyDirectory.hh>
 
 //#include "Target.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

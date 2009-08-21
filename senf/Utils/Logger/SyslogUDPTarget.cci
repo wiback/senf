@@ -26,8 +26,8 @@
 //#include "SyslogUDPTarget.ih"
 
 // Custom includes
-#include "../../Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
-#include "../String.hh"
+#include <senf/Socket/Protocols/INet/ConnectedUDPSocketHandle.hh>
+#include <senf/Utils/String.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////

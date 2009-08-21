@@ -26,10 +26,10 @@
 
 #include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
-#include "../../Packets/DataPacket.hh"
-#include "../../Utils/String.hh"
+#include <senf/Packets/DataPacket.hh>
+#include <senf/Utils/String.hh>
 
-#include "../../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 

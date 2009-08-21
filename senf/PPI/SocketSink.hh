@@ -27,15 +27,15 @@
 #define HH_SENF_PPI_SocketSink_ 1
 
 // Custom includes
-#include "../Packets/Packets.hh"
-#include "../Socket/ClientSocketHandle.hh"
-#include "../Socket/SocketPolicy.hh"
-#include "../Socket/ReadWritePolicy.hh"
-#include "../Socket/FramingPolicy.hh"
-#include "../Socket/CommunicationPolicy.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Socket/ClientSocketHandle.hh>
+#include <senf/Socket/SocketPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Socket/FramingPolicy.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
 #include "Module.hh"
 #include "Connectors.hh"
-#include "../Socket/Protocols/INet/INetAddressing.hh"
+#include <senf/Socket/Protocols/INet/INetAddressing.hh>
 #include "IOEvent.hh"
 
 //#include "SocketSink.mpp"

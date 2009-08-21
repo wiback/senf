@@ -27,14 +27,14 @@
 //#include "SocketSink.test.ih"
 
 // Custom includes
-#include "../Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "../Socket/Protocols/INet/ConnectedUDPSocketHandle.hh"
+#include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
+#include <senf/Socket/Protocols/INet/ConnectedUDPSocketHandle.hh>
 #include "SocketSource.hh"
 #include "DebugModules.hh"
 #include "SocketSink.hh"
 #include "Setup.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

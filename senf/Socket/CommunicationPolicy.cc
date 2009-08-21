@@ -31,7 +31,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <errno.h>
-#include "../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 #include "ServerSocketHandle.hh"
 
 //#include "CommunicationPolicy.mpp"

@@ -31,7 +31,7 @@
 #include <string>
 #include "membind.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

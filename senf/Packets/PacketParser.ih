@@ -27,7 +27,7 @@
 #define IH_SENF_Packets_PacketParser_ 1
 
 // Custom includes
-#include "../Utils/mpl.hh"
+#include <senf/Utils/mpl.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

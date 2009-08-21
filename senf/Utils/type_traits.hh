@@ -33,7 +33,7 @@
 #include <boost/type_traits/remove_cv.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/bind.hpp>
-#include "../config.hh"
+#include <senf/config.hh>
 
 #include "type_traits.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

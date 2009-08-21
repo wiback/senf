@@ -26,7 +26,7 @@
 #ifndef HH_SENF_Packets_80211Bundle_RadiotapPacket_
 #define HH_SENF_Packets_80211Bundle_RadiotapPacket_ 1
 
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 
 namespace senf
 {

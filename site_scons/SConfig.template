@@ -1,9 +1,0 @@
-CXX              = "g++-3.4"
-
-BOOST_INCLUDES   = "/usr/local/include/boost-1_33_1"
-BOOST_TOOLSET    = "gcc"
-BOOST_LIBDIR     = "/usr/local/lib"
-
-STLPORT_INCLUDES = "/usr/local/include/stlport"
-STLPORT_LIB      = "stlport_gcc"
-STLPORT_LIBDIR   = "/usr/local/lib"

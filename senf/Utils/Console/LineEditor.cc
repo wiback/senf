@@ -27,8 +27,8 @@
 //#include "LineEditor.ih"
 
 // Custom includes
-#include "../Logger/SenfLog.hh"
-#include "../../Utils/range.hh"
+#include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Utils/range.hh>
 
 //#include "LineEditor.mpp"
 #define prefix_

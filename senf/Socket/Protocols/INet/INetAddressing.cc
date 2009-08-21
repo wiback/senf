@@ -34,7 +34,7 @@
 #include <net/if.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
-#include "../../../Utils/senfassert.hh"
+#include <senf/Utils/senfassert.hh>
 
 //#include "INetAddressing.mpp"
 #define prefix_

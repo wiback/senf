@@ -30,11 +30,11 @@
 #include <signal.h>
 #include <time.h>
 #include <boost/lambda/lambda.hpp>
-#include "../Utils/Exception.hh"
-#include "../Utils/senfassert.hh"
-#include "../Utils/ScopeExit.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/senfassert.hh>
+#include <senf/Utils/ScopeExit.hh>
 #include <execinfo.h>
-#include "../config.hh"
+#include <senf/config.hh>
 #include <stdint.h>
 
 //#include "FIFORunner.mpp"

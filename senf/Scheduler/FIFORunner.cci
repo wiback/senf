@@ -28,7 +28,7 @@
 // Custom includes
 #ifdef SENF_DEBUG
 #include <sstream>
-#include "../Utils/Backtrace.hh"
+#include <senf/Utils/Backtrace.hh>
 #endif
 
 #define prefix_ inline

@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <algorithm>
-#include "../../Packets/Packets.hh"
-#include "../DefaultBundle/EthernetPacket.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 //#include "GREPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -26,7 +26,7 @@
 //#include "DebugModules.ih"
 
 // Custom includes
-#include "../Utils/hexdump.hh"
+#include <senf/Utils/hexdump.hh>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////

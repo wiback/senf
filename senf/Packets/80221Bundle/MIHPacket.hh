@@ -27,14 +27,14 @@
 #define HH_SENF_Packets_80221Bundle_MIHPacket_ 1
 
 // Custom includes
-#include "../../Packets/Packets.hh"
-#include "../../Socket/Protocols/Raw/MACAddress.hh"
-#include "../../Socket/Protocols/INet/INet4Address.hh"
-#include "../../Socket/Protocols/INet/INet6Address.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Socket/Protocols/Raw/MACAddress.hh>
+#include <senf/Socket/Protocols/INet/INet4Address.hh>
+#include <senf/Socket/Protocols/INet/INet6Address.hh>
 #include "TLVPacket.hh"
 #include <boost/function_output_iterator.hpp>
 #include <boost/iterator/filter_iterator.hpp>
-#include "boost/variant.hpp"
+#include <boost/variant.hpp>
 
 
 //#include "MIHPacket.mpp"

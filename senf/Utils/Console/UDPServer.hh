@@ -28,9 +28,9 @@
 
 // Custom includes
 #include <boost/utility.hpp>
-#include "../../Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "../Logger/SenfLog.hh"
-#include "../../Scheduler/Scheduler.hh"
+#include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
+#include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Scheduler/Scheduler.hh>
 #include "Parse.hh"
 #include "Executor.hh"
 

@@ -26,7 +26,7 @@
 #include "Config.ih"
 
 // Custom includes
-#include "../../Utils/membind.hh"
+#include <senf/Utils/membind.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////

@@ -36,8 +36,8 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/signals.hpp>
 #include "Exception.hh"
-#include "Logger/Logger.hh"
-#include "Console/Console.hh"
+#include <senf/Utils/Logger/Logger.hh>
+#include <senf/Utils/Console/Console.hh>
 
 //#include "Statistics.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

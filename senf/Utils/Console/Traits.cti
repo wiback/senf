@@ -28,7 +28,7 @@
 // Custom includes
 #include <sstream>
 #include <boost/lexical_cast.hpp>
-#include "../../Utils/TypeInfo.hh"
+#include <senf/Utils/TypeInfo.hh>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////

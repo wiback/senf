@@ -26,9 +26,9 @@
 #include "PacketRegistry.ih"
 
 // Custom includes
-#include "../Utils/senfassert.hh"
+#include <senf/Utils/senfassert.hh>
 #include <iostream>
-#include "../Utils/TypeInfo.hh"
+#include <senf/Utils/TypeInfo.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////

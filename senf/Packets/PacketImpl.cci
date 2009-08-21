@@ -24,7 +24,7 @@
     \brief PacketImpl inline non-template implementation */
 
 // Custom includes
-#include "../Utils/senfassert.hh"
+#include <senf/Utils/senfassert.hh>
 // #include "PacketInterpreter.hh"
 
 #define prefix_ inline

@@ -23,7 +23,7 @@
 /** \file
     \brief Raw public header */
 
-#include "Raw/Raw.hh"
+#include <senf/Socket/Protocols/Raw/Raw.hh>
 
 
 // Local Variables:

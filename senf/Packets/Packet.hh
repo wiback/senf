@@ -30,9 +30,9 @@
 #include <boost/operators.hpp>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_integral.hpp>
-#include "../Utils/Exception.hh"
-#include "../Utils/Tags.hh"
-#include "../Utils/safe_bool.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/Tags.hh>
+#include <senf/Utils/safe_bool.hh>
 #include "PacketInterpreter.hh"
 
 //#include "Packet.mpp"

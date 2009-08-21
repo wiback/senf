@@ -34,7 +34,7 @@
 #include <sys/ioctl.h>
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
 #include <net/if.h> // for if_nametoindex
-#include "../../../Socket/SocketHandle.hh"
+#include <senf/Socket/SocketHandle.hh>
 
 //#include "UDPSocketProtocol.mpp"
 #define prefix_

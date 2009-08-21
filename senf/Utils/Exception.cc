@@ -29,7 +29,7 @@
 // Custom includes
 #include <execinfo.h>
 #include <sstream>
-#include "../config.hh"
+#include <senf/config.hh>
 #include "Backtrace.hh"
 
 #define prefix_

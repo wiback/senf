@@ -23,7 +23,7 @@
 /** \file
     \brief UN public header */
 
-#include "UN/UN.hh"
+#include <senf/Socket/Protocols/UN/UN.hh>
 
 
 // Local Variables:

@@ -27,7 +27,7 @@
 #define HH_SENF_Utils_Logger_SenfLog_ 1
 
 // Custom includes
-#include "../../config.hh"
+#include <senf/config.hh>
 #include "Logger.hh"
 
 //#include "SenfLog.mpp"

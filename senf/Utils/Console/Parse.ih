@@ -28,12 +28,12 @@
 
 // Custom includes
 #include <vector>
-#include "../../config.hh"
+#include <senf/config.hh>
 #include <boost/spirit.hpp>
 #include <boost/spirit/utility/grammar_def.hpp>
 #include <boost/spirit/dynamic.hpp>
 #include <boost/spirit/phoenix.hpp>
-#include "../../Utils/Phoenix.hh"
+#include <senf/Utils/Phoenix.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

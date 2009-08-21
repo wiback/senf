@@ -29,7 +29,7 @@
 // Custom includes
 #include <sstream>
 #include "Target.hh"
-#include "../Console/LazyDirectory.hh"
+#include <senf/Utils/Console/LazyDirectory.hh>
 
 //#include "LogFormat.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

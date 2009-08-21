@@ -30,8 +30,8 @@
 #include <vector>
 #include <deque>
 #include "predecl.hh"
-#include "../Scheduler/Scheduler.hh"
-#include "../Utils/Console/ScopedDirectory.hh"
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Utils/Console/ScopedDirectory.hh>
 
 //#include "ModuleManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

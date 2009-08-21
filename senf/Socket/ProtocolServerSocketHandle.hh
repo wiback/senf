@@ -29,8 +29,8 @@
 
 // Custom includes
 #include "ServerSocketHandle.hh"
-#include "../config.hh"
-#include "../Utils/Tags.hh"
+#include <senf/config.hh>
+#include <senf/Utils/Tags.hh>
 
 #include "ProtocolServerSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -25,7 +25,7 @@
 // Custom includes
 #include "RadiotapPacket.hh"
 #include "WLANPacket.hh"
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 #include <boost/io/ios_state.hpp>
 
 #define prefix_

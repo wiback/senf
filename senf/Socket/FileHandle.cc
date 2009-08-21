@@ -33,7 +33,7 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
-#include "../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

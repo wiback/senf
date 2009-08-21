@@ -26,7 +26,7 @@
 //#include "EventBinding.ih"
 
 // Custom includes
-#include "../EventManager.hh"
+#include <senf/PPI/EventManager.hh>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////

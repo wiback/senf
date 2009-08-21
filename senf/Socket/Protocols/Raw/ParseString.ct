@@ -29,7 +29,7 @@
 #include <boost/tokenizer.hpp>
 #include <boost/range.hpp>
 #include <boost/numeric/conversion/cast.hpp>
-#include "../../../Utils/String.hh"
+#include <senf/Utils/String.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////

@@ -26,7 +26,7 @@
 //#include "EventManager.ih"
 
 // Custom includes
-#include "../Scheduler/Scheduler.hh"
+#include <senf/Scheduler/Scheduler.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////

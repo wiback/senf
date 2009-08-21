@@ -28,10 +28,10 @@
 
 // Custom includes
 #include "NetdeviceController.hh"
-#include "Protocols/Raw/MACAddress.hh"
+#include <senf/Socket/Protocols/Raw/MACAddress.hh>
 #include <net/if.h>
 
-#include "../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

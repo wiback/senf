@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <boost/algorithm/string/case_conv.hpp>
-#include "../membind.hh"
-#include "../Logger/SenfLog.hh"
+#include <senf/Utils/membind.hh>
+#include <senf/Utils/Logger/SenfLog.hh>
 
 //#include "Telnet.mpp"
 #define prefix_

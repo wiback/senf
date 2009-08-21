@@ -27,7 +27,7 @@
 #define HH_SENF_PPI_CloneSource_ 1
 
 // Custom includes
-#include "../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 #include "Module.hh"
 #include "Connectors.hh"
 

@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <boost/io/ios_state.hpp>
-#include "../../Packets/DefaultBundle/IPv6Packet.hh"
-#include "../../Utils/IpChecksum.hh"
+#include <senf/Packets/DefaultBundle/IPv6Packet.hh>
+#include <senf/Utils/IpChecksum.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

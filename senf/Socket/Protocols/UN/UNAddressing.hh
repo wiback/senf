@@ -31,8 +31,8 @@
 #include <string>
 #include <sys/socket.h>
 #include <sys/un.h>
-#include "../BSDAddressingPolicy.hh"
-#include "../BSDSocketAddress.hh"
+#include <senf/Socket/Protocols/BSDAddressingPolicy.hh>
+#include <senf/Socket/Protocols/BSDSocketAddress.hh>
 
 //#include "UNAddressing.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

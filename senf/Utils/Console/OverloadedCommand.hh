@@ -30,7 +30,7 @@
 #include "Node.hh"
 #include <boost/intrusive_ptr.hpp>
 #include <boost/range/iterator_range.hpp>
-#include "../../Utils/intrusive_refcount.hh"
+#include <senf/Utils/intrusive_refcount.hh>
 
 //#include "OverloadedCommand.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -197,8 +197,8 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/function.hpp>
-#include "../../Utils/safe_bool.hh"
-#include "../../Utils/Exception.hh"
+#include <senf/Utils/safe_bool.hh>
+#include <senf/Utils/Exception.hh>
 
 //#include "Parse.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

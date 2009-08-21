@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/algorithm/string/trim.hpp>
-#include "../membind.hh"
+#include <senf/Utils/membind.hh>
 
 //#include "UDPServer.mpp"
 #define prefix_

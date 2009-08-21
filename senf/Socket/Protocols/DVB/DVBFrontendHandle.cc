@@ -30,7 +30,7 @@
 // Custom includes
 #include <boost/format.hpp>
 #include <sys/socket.h>
-#include "../../../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 #include <sys/ioctl.h>
 
 

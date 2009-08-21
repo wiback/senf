@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <string>
-#include "Logger/Logger.hh"
+#include <senf/Utils/Logger/Logger.hh>
 
 //#include "StatisticsTargets.mpp"
 #include "StatisticsTargets.ih"

@@ -27,7 +27,7 @@
 #define HH_SENF_Utils_Buffer_ 1
 
 // Custom includes
-#include "../config.hh"
+#include <senf/config.hh>
 
 //#include "Buffer.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

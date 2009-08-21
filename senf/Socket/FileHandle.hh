@@ -67,8 +67,8 @@
 
 // Custom includes
 #include <memory> // std::auto_ptr
-#include "../Utils/safe_bool.hh"
-#include "../Scheduler/ClockService.hh"
+#include <senf/Utils/safe_bool.hh>
+#include <senf/Scheduler/ClockService.hh>
 
 //#include "FileHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

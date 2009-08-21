@@ -27,10 +27,10 @@
 //#include "PacketLink.test.ih"
 
 // Custom includes
-#include "../EthernetPacket.hh"
-#include "../IPv6Packet.hh"
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include <senf/Packets/DefaultBundle/IPv6Packet.hh>
 
-#include "../../../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

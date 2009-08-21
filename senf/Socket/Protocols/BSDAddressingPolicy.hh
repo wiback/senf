@@ -31,10 +31,10 @@
 #define HH_SENF_Socket_Protocols_BSDAddressingPolicy_ 1
 
 // Custom includes
-#include "../SocketHandle.hh"
-#include "../FileHandle.hh"
-#include "../SocketPolicy.hh"
-#include "../CommunicationPolicy.hh"
+#include <senf/Socket/SocketHandle.hh>
+#include <senf/Socket/FileHandle.hh>
+#include <senf/Socket/SocketPolicy.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
 #include "BSDSocketAddress.hh"
 
 //#include "BSDAddressingPolicy.mpp"

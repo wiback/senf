@@ -27,10 +27,10 @@
 //#include "ModuleManager.ih"
 
 // Custom includes
-#include "../Scheduler/Scheduler.hh"
-#include "../Utils/membind.hh"
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Utils/membind.hh>
 #include "Module.hh"
-#include "../Utils/Console/Console.hh"
+#include <senf/Utils/Console/Console.hh>
 
 //#include "ModuleManager.mpp"
 #define prefix_

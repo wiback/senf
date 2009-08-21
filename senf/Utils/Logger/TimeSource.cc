@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <time.h>
-#include "../Exception.hh"
-#include "../../Scheduler/ClockService.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Scheduler/ClockService.hh>
 
 //#include "TimeSource.mpp"
 #define prefix_

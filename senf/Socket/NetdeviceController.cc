@@ -31,7 +31,7 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
-#include "../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

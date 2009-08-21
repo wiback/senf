@@ -207,10 +207,10 @@
 #include <boost/typeof/typeof.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #include <boost/any.hpp>
-#include "../../Utils/Exception.hh"
-#include "../../Utils/mpl.hh"
-#include "../../Utils/Logger/SenfLog.hh"
-#include "../../Utils/type_traits.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/mpl.hh>
+#include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Utils/type_traits.hh>
 #include "Parse.hh"
 
 //#include "Node.mpp"

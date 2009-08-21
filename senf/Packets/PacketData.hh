@@ -29,8 +29,8 @@
 // Custom includes
 #include <boost/utility.hpp>
 #include <boost/type_traits.hpp>
-#include "../Utils/safe_bool.hh"
-#include "../Utils/Exception.hh"
+#include <senf/Utils/safe_bool.hh>
+#include <senf/Utils/Exception.hh>
 #include "PacketTypes.hh"
 
 //#include "PacketData.mpp"

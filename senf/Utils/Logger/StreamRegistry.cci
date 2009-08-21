@@ -26,7 +26,7 @@
 #include "StreamRegistry.ih"
 
 // Custom includes
-#include "../TypeInfo.hh"
+#include <senf/Utils/TypeInfo.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////

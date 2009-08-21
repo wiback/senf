@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <typeinfo>
-#include "../Utils/senfassert.hh"
-#include "../Utils/TypeInfo.hh"
+#include <senf/Utils/senfassert.hh>
+#include <senf/Utils/TypeInfo.hh>
 
 #define prefix_ inline
 ///////////////////////////////cti.p///////////////////////////////////////

@@ -27,8 +27,8 @@
 //#include "MIHPacket.ih"
 
 // Custom includes
-#include "../../Packets/Packets.hh"
-#include "../../Utils/hexdump.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Utils/hexdump.hh>
 #include <boost/io/ios_state.hpp>
 
 #define prefix_

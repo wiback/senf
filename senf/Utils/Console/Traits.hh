@@ -30,7 +30,7 @@
 #include <iostream>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include "../../Utils/intrusive_refcount.hh"
+#include <senf/Utils/intrusive_refcount.hh>
 #include "Parse.hh"
 #include "Node.hh"
 

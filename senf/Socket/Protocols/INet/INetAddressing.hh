@@ -31,11 +31,11 @@
 #include <string>
 #include <exception>
 #include <netinet/in.h>
-#include "../../SocketPolicy.hh"
-#include "../../ClientSocketHandle.hh"
-#include "../../CommunicationPolicy.hh"
-#include "../BSDAddressingPolicy.hh"
-#include "../BSDSocketAddress.hh"
+#include <senf/Socket/SocketPolicy.hh>
+#include <senf/Socket/ClientSocketHandle.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Socket/Protocols/BSDAddressingPolicy.hh>
+#include <senf/Socket/Protocols/BSDSocketAddress.hh>
 #include "INet4Address.hh"
 #include "INet6Address.hh"
 

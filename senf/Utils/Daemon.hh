@@ -23,7 +23,7 @@
 /** \file
     \brief Daemon public header */
 
-#include "Daemon/Daemon.hh"
+#include <senf/Utils/Daemon/Daemon.hh>
 
 
 // Local Variables:

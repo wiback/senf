@@ -32,9 +32,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/cstdint.hpp>
-#include "../config.hh"
-#include "../Utils/singleton.hh"
-#include "../Utils/Console/Parse.hh"
+#include <senf/config.hh>
+#include <senf/Utils/singleton.hh>
+#include <senf/Utils/Console/Parse.hh>
 
 //#include "ClockService.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

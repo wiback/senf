@@ -28,11 +28,11 @@
 
 // Custom includes
 #include "MPESection.hh"
-#include "../../Packets/DefaultBundle/LlcSnapPacket.hh"
-#include "../../Packets/DefaultBundle/EthernetPacket.hh"
-#include "../../Packets/DefaultBundle/IPv4Packet.hh"
+#include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
+#include <senf/Packets/DefaultBundle/IPv4Packet.hh>
 
-#include "../../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

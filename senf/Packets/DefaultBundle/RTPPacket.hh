@@ -27,8 +27,8 @@
 #ifndef HH_SENF_Packets_DefaultBundle_RTPPacket_
 #define HH_SENF_Packets_DefaultBundle_RTPPacket_
 
-#include "../../Packets/Packets.hh"
-#include "../../Socket/Protocols/INet/INet6Address.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Socket/Protocols/INet/INet6Address.hh>
 
 
 namespace senf {

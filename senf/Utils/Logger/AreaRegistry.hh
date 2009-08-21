@@ -30,7 +30,7 @@
 #include <map>
 #include <functional>
 #include <boost/iterator/transform_iterator.hpp>
-#include "../singleton.hh"
+#include <senf/Utils/singleton.hh>
 
 //#include "AreaRegistry.mpp"
 #include "AreaRegistry.ih"

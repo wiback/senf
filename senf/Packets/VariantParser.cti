@@ -26,7 +26,7 @@
 #include "VariantParser.ih"
 
 // Custom includes
-#include "../Utils/senfassert.hh"
+#include <senf/Utils/senfassert.hh>
 #include <boost/mpl/size.hpp>
 
 #define prefix_ inline

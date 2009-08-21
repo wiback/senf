@@ -30,8 +30,8 @@
 #include <iostream>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
-#include "../../../Utils/Tags.hh"
-#include "../../../Utils/safe_bool.hh"
+#include <senf/Utils/Tags.hh>
+#include <senf/Utils/safe_bool.hh>
 
 //#include "EUI64.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

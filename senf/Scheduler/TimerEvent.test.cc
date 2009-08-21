@@ -31,7 +31,7 @@
 #include "Scheduler.hh"
 #include <boost/bind.hpp>
 
-#include "../Utils//auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 #include <boost/random.hpp>
 

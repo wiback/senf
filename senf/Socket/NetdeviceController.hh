@@ -31,7 +31,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-#include "Protocols/Raw/MACAddress.hh"
+#include <senf/Socket/Protocols/Raw/MACAddress.hh>
 
 
 //#include "NetdeviceController.mpp"

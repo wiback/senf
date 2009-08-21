@@ -30,7 +30,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
-#include "../../Socket/SocketHandle.hh"
+#include <senf/Socket/SocketHandle.hh>
 
 //#include "BSDSocketProtocol.mpp"
 #define prefix_

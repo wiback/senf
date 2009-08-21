@@ -34,8 +34,8 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/finder.hpp>
 
-#include "../../../Utils/Exception.hh"
-#include "../AddressExceptions.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Socket/Protocols/AddressExceptions.hh>
 
 //#include "LLAddressing.mpp"
 #define prefix_

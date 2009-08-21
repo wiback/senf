@@ -30,7 +30,7 @@
 #include "pool_alloc_mixin.hh"
 #include <boost/scoped_ptr.hpp>
 
-#include "../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

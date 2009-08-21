@@ -31,15 +31,15 @@
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include "../../Utils/intrusive_refcount.hh"
-#include "../../Socket/Protocols/INet/TCPSocketHandle.hh"
-#include "../../Socket/ServerSocketHandle.hh"
-#include "../../Scheduler/Scheduler.hh"
-#include "../../Scheduler/ReadHelper.hh"
+#include <senf/Utils/intrusive_refcount.hh>
+#include <senf/Socket/Protocols/INet/TCPSocketHandle.hh>
+#include <senf/Socket/ServerSocketHandle.hh>
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Scheduler/ReadHelper.hh>
 #include "Parse.hh"
 #include "Executor.hh"
-#include "../../Socket/Protocols/INet/INetAddressing.hh"
-#include "../../Utils/Logger.hh"
+#include <senf/Socket/Protocols/INet/INetAddressing.hh>
+#include <senf/Utils/Logger.hh>
 
 //#include "Server.mpp"
 #include "Server.ih"

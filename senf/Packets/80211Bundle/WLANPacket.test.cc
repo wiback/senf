@@ -25,10 +25,10 @@
 
 // Custom includes
 #include "WLANPacket.hh"
-#include "../../Packets/Packets.hh"
-#include "../DefaultBundle/LlcSnapPacket.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
 
-#include "../../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 ///////////////////////////////cc.p////////////////////////////////////////

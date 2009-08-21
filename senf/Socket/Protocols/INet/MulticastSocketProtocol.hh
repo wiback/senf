@@ -27,7 +27,7 @@
 #define HH_SENF_Socket_Protocols_INet_MulticastSocketProtocol_ 1
 
 // Custom includes
-#include "../../../Socket/SocketProtocol.hh"
+#include <senf/Socket/SocketProtocol.hh>
 #include "INet4Address.hh"
 #include "INet6Address.hh"
 

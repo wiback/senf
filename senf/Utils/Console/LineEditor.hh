@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <boost/scoped_ptr.hpp>
-#include "../Termlib/TelnetTerminal.hh"
-#include "../Termlib/Editor.hh"
+#include <senf/Utils/Termlib/TelnetTerminal.hh>
+#include <senf/Utils/Termlib/Editor.hh>
 #include "Server.hh"
 
 //#include "LineEditor.mpp"

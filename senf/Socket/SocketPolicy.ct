@@ -27,7 +27,7 @@
 #include "SocketPolicy.ih"
 
 // Custom includes
-#include "../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////

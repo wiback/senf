@@ -23,7 +23,7 @@
 /** \file
     \brief INet public header */
 
-#include "INet/INet.hh"
+#include <senf/Socket/Protocols/INet/INet.hh>
 
 
 // Local Variables:

@@ -23,8 +23,8 @@
 
 #ifndef HH_SENF_Socket_Protocols_DVB_DVBProtocolWrapper_
 #define HH_SENF_Socket_Protocols_DVB_DVBProtocolWrapper_ 1
-#include "senf/Utils/Console/Console.hh"
-#include "senf/Utils/Console/Console.hh"
+#include <senf/Utils/Console/Console.hh>
+#include <senf/Utils/Console/Console.hh>
 #include "DVBDemuxHandles.hh"
 // Custom includes
 

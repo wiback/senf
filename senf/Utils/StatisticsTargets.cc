@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/bind.hpp>
-#include "Console/Console.hh"
+#include <senf/Utils/Console/Console.hh>
 #include "Statistics.hh"
 
 //#include "StatisticsTargets.mpp"

@@ -29,8 +29,8 @@
 // Custom includes
 #include <algorithm>
 #include <boost/crc.hpp>
-#include "../../Packets/Packets.hh"
-#include "../DefaultBundle/EthernetPacket.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 //#include "SNDUPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -27,7 +27,7 @@
 #define IH_SENF_Scheduler_EventHook_ 1
 
 // Custom includes
-#include "../Utils/singleton.hh"
+#include <senf/Utils/singleton.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

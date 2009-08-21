@@ -29,11 +29,11 @@
 // Custom includes
 #include "UNAddressing.hh"
 #include "UNSocketProtocol.hh"
-#include "../../../Socket/Protocols/BSDSocketProtocol.hh"
-#include "../../../Socket/FramingPolicy.hh"
-#include "../../../Socket/CommunicationPolicy.hh"
-#include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/ProtocolClientSocketHandle.hh"
+#include <senf/Socket/Protocols/BSDSocketProtocol.hh>
+#include <senf/Socket/FramingPolicy.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Socket/ProtocolClientSocketHandle.hh>
 
 //#include "UNDatagramSocketHandle.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

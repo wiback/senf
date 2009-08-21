@@ -27,11 +27,11 @@
 #define HH_SENF_PPI_SocketSource_ 1
 
 // Custom includes
-#include "../Packets/Packets.hh"
-#include "../Socket/ClientSocketHandle.hh"
-#include "../Socket/SocketPolicy.hh"
-#include "../Socket/ReadWritePolicy.hh"
-#include "../Socket/FramingPolicy.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Socket/ClientSocketHandle.hh>
+#include <senf/Socket/SocketPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Socket/FramingPolicy.hh>
 #include "Module.hh"
 #include "Connectors.hh"
 #include "IOEvent.hh"

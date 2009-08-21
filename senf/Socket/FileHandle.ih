@@ -29,8 +29,8 @@
 
 // Custom includes
 #include <boost/intrusive_ptr.hpp>
-#include "../Utils/intrusive_refcount.hh"
-#include "../Utils/pool_alloc_mixin.hh"
+#include <senf/Utils/intrusive_refcount.hh>
+#include <senf/Utils/pool_alloc_mixin.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

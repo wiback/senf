@@ -37,10 +37,10 @@
 #include <boost/utility.hpp>
 #include <boost/parameter/keyword.hpp>
 #include <boost/parameter/parameters.hpp>
-#include "../../config.hh"
+#include <senf/config.hh>
 #include "OverloadedCommand.hh"
 #include "Traits.hh"
-#include "../../Utils/type_traits.hh"
+#include <senf/Utils/type_traits.hh>
 
 #include "ParsedCommand.ih"
 #include "ParsedCommand.mpp"

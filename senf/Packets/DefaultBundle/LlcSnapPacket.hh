@@ -29,7 +29,7 @@
 // Custom includes
 #include <algorithm>
 #include "EthernetPacket.hh"
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 
 //#include "LlcSnapPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

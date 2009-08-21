@@ -30,9 +30,9 @@
 #include <deque>
 #include <boost/utility.hpp>
 #include <boost/scoped_ptr.hpp>
-#include "../Utils/safe_bool.hh"
-#include "../Utils/Exception.hh"
-#include "../Packets/Packets.hh"
+#include <senf/Utils/safe_bool.hh>
+#include <senf/Utils/Exception.hh>
+#include <senf/Packets/Packets.hh>
 #include "predecl.hh"
 #include "detail/Callback.hh"
 #include "Queueing.hh"

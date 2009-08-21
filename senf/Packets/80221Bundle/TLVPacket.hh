@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <algorithm>
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 
 //#include "TLVPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

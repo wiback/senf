@@ -32,7 +32,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <boost/io/ios_state.hpp>
-#include "../../Utils/IpChecksum.hh"
+#include <senf/Utils/IpChecksum.hh>
 #include "EthernetPacket.hh"
 
 #define prefix_

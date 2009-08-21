@@ -30,7 +30,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <net/if.h>
-#include "../../../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 //#include "INetSocketProtocol.mpp"
 #define prefix_

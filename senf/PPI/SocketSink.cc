@@ -25,7 +25,7 @@
 
 // Custom includes
 #include "SocketSink.hh"
-#include "../Socket/ClientSocketHandle.hh"
+#include <senf/Socket/ClientSocketHandle.hh>
 
 #define prefix_
 

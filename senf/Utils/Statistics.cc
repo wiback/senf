@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <sstream>
-#include "Console/Console.hh"
+#include <senf/Utils/Console/Console.hh>
 #include "StatisticsTargets.hh"
 
 //#include "Statistics.mpp"

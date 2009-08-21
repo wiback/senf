@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/ptr_container/ptr_vector.hpp>
-#include "../Scheduler/ClockService.hh"
+#include <senf/Scheduler/ClockService.hh>
 #include "predecl.hh"
 #include "detail/Callback.hh"
 #include "detail/EventBinding.hh"

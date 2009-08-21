@@ -30,7 +30,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <net/if.h> // for if_nametoindex
-#include "../../../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 //#include "MulticastSocketProtocol.mpp"
 #define prefix_

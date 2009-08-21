@@ -31,8 +31,8 @@
 #include <unistd.h>
 #include <locale>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "../../Scheduler/ClockService.hh"
-#include "../Console/Console.hh"
+#include <senf/Scheduler/ClockService.hh>
+#include <senf/Utils/Console/Console.hh>
 
 //#include "LogFormat.mpp"
 #define prefix_

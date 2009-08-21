@@ -34,10 +34,10 @@
 #define HH_SENF_Socket_Protocols_INet_INetSocketProtocol_ 1
 
 // Custom includes
-#include "../../../Socket/SocketProtocol.hh"
+#include <senf/Socket/SocketProtocol.hh>
 #include "INetAddressing.hh"
-#include "../../../Socket/ClientSocketHandle.hh"
-#include "../../../Socket/CommunicationPolicy.hh"
+#include <senf/Socket/ClientSocketHandle.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
 
 //#include "INetSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

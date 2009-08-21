@@ -27,8 +27,8 @@
 #define HH_SENF_Packets_DefaultBundle_IPv4Packet_ 1
 
 // Custom includes
-#include "../../Socket/Protocols/INet/INet4Address.hh"
-#include "../../Packets/Packets.hh"
+#include <senf/Socket/Protocols/INet/INet4Address.hh>
+#include <senf/Packets/Packets.hh>
 
 //#include "IPv4Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

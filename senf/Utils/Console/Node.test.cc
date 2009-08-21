@@ -31,7 +31,7 @@
 #include "Node.hh"
 #include <boost/iterator/transform_iterator.hpp>
 
-#include "../../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

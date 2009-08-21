@@ -30,7 +30,7 @@
 #include <boost/intrusive_ptr.hpp>
 #include <boost/scoped_ptr.hpp>
 
-#include "../Utils/intrusive_refcount.hh"
+#include <senf/Utils/intrusive_refcount.hh>
 #include "Scheduler.hh"
 
 //#include "ReadHelper.mpp"

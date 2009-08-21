@@ -27,10 +27,10 @@
 #define HH_SENF_Socket_Protocols_UN_UNSocketProtocol_ 1
 
 // Custom includes
-#include "../../../Socket/SocketProtocol.hh"
+#include <senf/Socket/SocketProtocol.hh>
 #include "UNAddressing.hh"
-#include "../../../Socket/ClientSocketHandle.hh"
-#include "../../../Socket/CommunicationPolicy.hh"
+#include <senf/Socket/ClientSocketHandle.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
 
 //#include "UNSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -29,7 +29,7 @@
 #include <linux/dvb/dmx.h> 
 
 // Custom includes
-#include "../../../Socket/SocketProtocol.hh"
+#include <senf/Socket/SocketProtocol.hh>
 
 //#include "DVBSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

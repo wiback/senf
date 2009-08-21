@@ -28,13 +28,13 @@
 
 // Custom includes
 #include <boost/scoped_ptr.hpp>
-#include "../Utils/membind.hh"
+#include <senf/Utils/membind.hh>
 #include "DebugEvent.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
 #include "Module.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 #include <boost/type_traits.hpp>
 

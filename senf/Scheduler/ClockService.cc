@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/regex.hpp>
-#include "../Utils/Console/Console.hh"
+#include <senf/Utils/Console/Console.hh>
 
 //#include "ClockService.mpp"
 #define prefix_

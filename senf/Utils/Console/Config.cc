@@ -27,7 +27,7 @@
 #include "Config.ih"
 
 // Custom includes
-#include "../../Utils/membind.hh"
+#include <senf/Utils/membind.hh>
 
 //#include "Config.mpp"
 #define prefix_

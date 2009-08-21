@@ -27,7 +27,7 @@
 #include "Traits.ih"
 
 // Custom includes
-#include "../../Utils/senfassert.hh"
+#include <senf/Utils/senfassert.hh>
 
 //#include "Traits.mpp"
 #define prefix_

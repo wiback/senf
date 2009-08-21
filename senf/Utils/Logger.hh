@@ -23,7 +23,7 @@
 /** \file
     \brief Logger public header */
 
-#include "Logger/Logger.hh"
+#include <senf/Utils/Logger/Logger.hh>
 
 
 // Local Variables:

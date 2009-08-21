@@ -41,10 +41,10 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/format.hpp>
-#include "../Exception.hh"
-#include "../membind.hh"
-#include "../Backtrace.hh"
-#include "../signalnames.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/membind.hh>
+#include <senf/Utils/Backtrace.hh>
+#include <senf/Utils/signalnames.hh>
 
 // #define __USE_GNU
 #include <ucontext.h>

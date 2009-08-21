@@ -34,7 +34,7 @@
 #include <boost/bimap.hpp>
 #include <boost/assign/list_inserter.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-#include "../../Utils/singleton.hh"
+#include <senf/Utils/singleton.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

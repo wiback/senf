@@ -27,8 +27,8 @@
 #include "SignalEvent.ih"
 
 // Custom includes
-#include "../Utils/senfassert.hh"
-#include "../Utils/signalnames.hh"
+#include <senf/Utils/senfassert.hh>
+#include <senf/Utils/signalnames.hh>
 
 //#include "SignalEvent.mpp"
 #define prefix_

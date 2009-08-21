@@ -28,11 +28,11 @@
 
 // Custom includes
 #include <deque>
-#include "../Utils/safe_bool.hh"
-#include "../Packets/Packets.hh"
+#include <senf/Utils/safe_bool.hh>
+#include <senf/Packets/Packets.hh>
 #include "MonitorModule.hh"
 #include "ActiveFeeder.hh"
-#include "../Utils/Logger/SenfLog.hh"
+#include <senf/Utils/Logger/SenfLog.hh>
 
 //#include "DebugModules.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

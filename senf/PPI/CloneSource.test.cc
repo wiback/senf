@@ -30,9 +30,9 @@
 #include "CloneSource.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
-#include "../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 
-#include "../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

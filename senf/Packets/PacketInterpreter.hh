@@ -30,11 +30,11 @@
 #include <boost/intrusive/ilist.hpp>
 #include <boost/optional.hpp>
 #include <boost/range.hpp>
-#include "../Utils/intrusive_refcount.hh"
-#include "../Utils/pool_alloc_mixin.hh"
-#include "../Utils/Tags.hh"
+#include <senf/Utils/intrusive_refcount.hh>
+#include <senf/Utils/pool_alloc_mixin.hh>
+#include <senf/Utils/Tags.hh>
 #include "PacketData.hh"
-#include "../Utils/TypeIdValue.hh"
+#include <senf/Utils/TypeIdValue.hh>
 
 //#include "PacketInterpreter.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

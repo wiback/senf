@@ -27,8 +27,8 @@
 #define HH_SENF_Packets_DefaultBundle_IPv6Packet_ 1
 
 // Custom includes
-#include "../../Socket/Protocols/INet/INet6Address.hh"
-#include "../../Packets/Packets.hh"
+#include <senf/Socket/Protocols/INet/INet6Address.hh>
+#include <senf/Packets/Packets.hh>
 #include "IPv4Packet.hh"
 
 //#include "IPv6Packet.mpp"

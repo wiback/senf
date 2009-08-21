@@ -29,9 +29,9 @@
 // Custom includes
 #include <iomanip>
 #include <boost/io/ios_state.hpp>
-#include "../../Packets/DefaultBundle/LlcSnapPacket.hh"
-#include "../../Packets/DefaultBundle/IPv4Packet.hh"
-#include "../../Packets/DefaultBundle/IPv6Packet.hh"
+#include <senf/Packets/DefaultBundle/LlcSnapPacket.hh>
+#include <senf/Packets/DefaultBundle/IPv4Packet.hh>
+#include <senf/Packets/DefaultBundle/IPv6Packet.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

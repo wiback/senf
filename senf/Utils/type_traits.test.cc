@@ -31,7 +31,7 @@
 #include <boost/type_traits/is_same.hpp>
 #include "type_traits.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

@@ -27,7 +27,7 @@
 #define HH_SENF_Socket_Protocols_BSDSocketProtocol_ 1
 
 // Custom includes
-#include "../../Socket/SocketProtocol.hh"
+#include <senf/Socket/SocketProtocol.hh>
 #include <boost/cstdint.hpp>
 
 //#include "BSDSocketProtocol.mpp"

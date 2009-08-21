@@ -27,9 +27,9 @@
 #define HH_SENF_PPI_IOEvent_ 1
 
 // Custom includes
-#include "../Scheduler/Scheduler.hh"
+#include <senf/Scheduler/Scheduler.hh>
 #include "Events.hh"
-#include "../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 //#include "IOEvent.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

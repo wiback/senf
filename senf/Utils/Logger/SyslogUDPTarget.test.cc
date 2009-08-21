@@ -28,10 +28,10 @@
 
 // Custom includes
 #include "SyslogUDPTarget.hh"
-#include "../../Socket/Protocols/INet/UDPSocketHandle.hh"
+#include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
 #include "Logger.hh"
 
-#include "../../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

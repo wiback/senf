@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <iomanip>
-#include "../../Utils/hexdump.hh"
+#include <senf/Utils/hexdump.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////

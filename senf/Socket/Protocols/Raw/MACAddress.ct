@@ -26,7 +26,7 @@
 //#include "MACAddress.ih"
 
 // Custom includes
-#include "../../../config.hh"
+#include <senf/config.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////

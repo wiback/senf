@@ -27,7 +27,7 @@
 //#include "IOEvent.ih"
 
 // Custom includes
-#include "../Utils/senfassert.hh"
+#include <senf/Utils/senfassert.hh>
 
 //#include "IOEvent.mpp"
 #define prefix_

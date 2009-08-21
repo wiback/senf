@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/scoped_ptr.hpp>
-#include "../singleton.hh"
+#include <senf/Utils/singleton.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

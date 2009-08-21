@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/ptr_container/ptr_map.hpp>
-#include "../Utils/String.hh"
+#include <senf/Utils/String.hh>
 #include "Module.hh"
 #include "Connectors.hh"
 #include "MultiConnectorMixin.hh"

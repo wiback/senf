@@ -34,7 +34,7 @@
 #include <boost/preprocessor/seq/pop_back.hpp>
 #include <boost/preprocessor/if.hpp>
 #include <boost/preprocessor/facilities/is_empty.hpp>
-#include "../preprocessor.hh"
+#include <senf/Utils/preprocessor.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

@@ -32,7 +32,7 @@
 #include "ClockService.hh"
 #include "FdManager.hh"
 #include "FIFORunner.hh"
-#include "../Utils/Logger/SenfLog.hh"
+#include <senf/Utils/Logger/SenfLog.hh>
 
 //#include "TimerEvent.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

@@ -31,8 +31,8 @@
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/intrusive/ilist.hpp>
 #include <boost/intrusive/ilist_hook.hpp>
-#include "../Utils/singleton.hh"
-#include "../Utils/Console/LazyDirectory.hh"
+#include <senf/Utils/singleton.hh>
+#include <senf/Utils/Console/LazyDirectory.hh>
 
 //#include "EventManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

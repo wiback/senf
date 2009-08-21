@@ -27,7 +27,7 @@
 #define HH_SENF_Packets_MPEGDVBBundle_TransportPacket_ 1
 
 // Custom includes
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 
 //#include "TransportPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

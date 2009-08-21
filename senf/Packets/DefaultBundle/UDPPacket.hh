@@ -27,7 +27,7 @@
 #define HH_SENF_Packets_DefaultBundle_UDPPacket_ 1
 
 // Custom includes
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 
 //#include "UDPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

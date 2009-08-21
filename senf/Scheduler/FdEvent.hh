@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <boost/intrusive/iset_hook.hpp>
-#include "../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 #include "FdManager.hh"
 #include "FIFORunner.hh"
 

@@ -30,7 +30,7 @@
 // Custom includes
 #include <sys/socket.h>
 #include <sys/types.h>
-#include "../../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 //#include "BSDAddressingPolicy.mpp"
 #define prefix_

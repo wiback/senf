@@ -28,14 +28,14 @@
 #define HH_SENF_Socket_Protocols_Raw_PacketSocketHandle_ 1
 
 // Custom includes
-#include "../../../Socket/SocketPolicy.hh"
-#include "../../../Socket/SocketProtocol.hh"
-#include "../../../Socket/ProtocolClientSocketHandle.hh"
-#include "../../../Socket/FramingPolicy.hh"
-#include "../../../Socket/CommunicationPolicy.hh"
-#include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/Protocols/BSDSocketProtocol.hh"
-#include "../../../Socket/Protocols/DatagramSocketProtocol.hh"
+#include <senf/Socket/SocketPolicy.hh>
+#include <senf/Socket/SocketProtocol.hh>
+#include <senf/Socket/ProtocolClientSocketHandle.hh>
+#include <senf/Socket/FramingPolicy.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Socket/Protocols/BSDSocketProtocol.hh>
+#include <senf/Socket/Protocols/DatagramSocketProtocol.hh>
 #include "LLAddressing.hh"
 
 //#include "PacketSocketHandle.mpp"

@@ -23,7 +23,7 @@
 /** \file
     \brief Socket public header */
 
-#include "Socket/Socket.hh"
+#include <senf/Socket/Socket.hh>
 
 
 // Local Variables:

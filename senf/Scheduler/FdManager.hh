@@ -29,7 +29,7 @@
 // Custom includes
 #include "Poller.hh"
 #include "ClockService.hh"
-#include "../Utils/singleton.hh"
+#include <senf/Utils/singleton.hh>
 
 //#include "FdManager.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

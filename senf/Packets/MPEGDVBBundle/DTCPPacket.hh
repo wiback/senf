@@ -27,9 +27,9 @@
 #define HH_SENF_Packets_MPEGDVBBundle_DTCPPacket_ 1
 
 // Custom includes
-#include "../../Packets/Packets.hh"
-#include "../../Packets/DefaultBundle/IPv4Packet.hh"
-#include "../../Packets/DefaultBundle/IPv6Packet.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Packets/DefaultBundle/IPv4Packet.hh>
+#include <senf/Packets/DefaultBundle/IPv6Packet.hh>
 
 //#include "DTCPPacket.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

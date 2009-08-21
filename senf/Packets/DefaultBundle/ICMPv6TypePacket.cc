@@ -23,7 +23,7 @@
 // Definition of non-inline non-template functions
 
 // Custom includes
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 #include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
 

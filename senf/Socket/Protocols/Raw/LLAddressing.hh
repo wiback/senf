@@ -30,10 +30,10 @@
 // Custom includes
 #include <sys/socket.h>
 #include <netpacket/packet.h>
-#include "../../SocketPolicy.hh"
-#include "../../FileHandle.hh"
-#include "../BSDAddressingPolicy.hh"
-#include "../BSDSocketAddress.hh"
+#include <senf/Socket/SocketPolicy.hh>
+#include <senf/Socket/FileHandle.hh>
+#include <senf/Socket/Protocols/BSDAddressingPolicy.hh>
+#include <senf/Socket/Protocols/BSDSocketAddress.hh>
 #include "MACAddress.hh"
 
 //#include "LLAddressing.mpp"

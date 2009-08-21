@@ -32,7 +32,7 @@
 #include <ext/functional>
 #include <boost/iterator/transform_iterator.hpp>
 #include "Levels.hh"
-#include "../singleton.hh"
+#include <senf/Utils/singleton.hh>
 
 //#include "StreamRegistry.mpp"
 #include "StreamRegistry.ih"

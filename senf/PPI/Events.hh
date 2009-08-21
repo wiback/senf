@@ -28,7 +28,7 @@
 
 // Custom includes
 #include <vector>
-#include "../Scheduler/ClockService.hh"
+#include <senf/Scheduler/ClockService.hh>
 #include "predecl.hh"
 
 //#include "Events.mpp"

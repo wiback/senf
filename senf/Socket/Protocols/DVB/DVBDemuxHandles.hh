@@ -27,10 +27,10 @@
 #define HH_SENF_Socket_Protocols_DVB_DVBDemuxHandles_ 1
 
 // Custom includes
-#include "../../../Socket/FramingPolicy.hh"
-#include "../../../Socket/CommunicationPolicy.hh"
-#include "../../../Socket/ReadWritePolicy.hh"
-#include "../../../Socket/ProtocolClientSocketHandle.hh"
+#include <senf/Socket/FramingPolicy.hh>
+#include <senf/Socket/CommunicationPolicy.hh>
+#include <senf/Socket/ReadWritePolicy.hh>
+#include <senf/Socket/ProtocolClientSocketHandle.hh>
 #include "DVBDemuxSocketProtocol.hh"
 
 //#include "DVBDemuxHandles.mpp"

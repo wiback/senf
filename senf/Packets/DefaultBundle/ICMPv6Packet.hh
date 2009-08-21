@@ -27,7 +27,7 @@
 #define HH_SENF_Packets_DefaultBundle_ICMPv6Packet_ 1
 
 // Custom includes
-#include "../../Packets/Packets.hh"
+#include <senf/Packets/Packets.hh>
 
 //#include "ICMPv6Packet.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

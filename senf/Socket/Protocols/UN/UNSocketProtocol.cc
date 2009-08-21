@@ -31,8 +31,8 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
-#include "../../../Utils/Logger/SenfLog.hh"
-#include "../../../Utils/Exception.hh"
+#include <senf/Utils/Logger/SenfLog.hh>
+#include <senf/Utils/Exception.hh>
 
 //#include "UNSocketProtocol.mpp"
 #define prefix_

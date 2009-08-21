@@ -34,11 +34,11 @@
 #include <fstream>
 #include <boost/filesystem/operations.hpp>
 #include "Daemon.hh"
-#include "../Exception.hh"
-#include "../Backtrace.hh"
-#include "../../Scheduler/Scheduler.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/Backtrace.hh>
+#include <senf/Scheduler/Scheduler.hh>
 
-#include "../auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

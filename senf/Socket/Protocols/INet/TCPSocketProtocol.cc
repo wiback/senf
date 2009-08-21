@@ -33,7 +33,7 @@
 #include <netinet/tcp.h>
 #include <sys/ioctl.h>
 #include <linux/sockios.h> // for SIOCINQ / SIOCOUTQ
-#include "../../../Socket/SocketHandle.hh"
+#include <senf/Socket/SocketHandle.hh>
 
 //#include "TCPSocketProtocol.mpp"
 #define prefix_

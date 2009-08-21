@@ -29,7 +29,7 @@
 // Custom includes
 #include "Telnet.hh"
 #include "AbstractTerminal.hh"
-#include "../Logger.hh"
+#include <senf/Utils/Logger.hh>
 
 //#include "TelnetTerminal.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

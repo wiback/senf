@@ -29,7 +29,7 @@
 // Custom includes
 #include <boost/cstdint.hpp>
 #include <memory>
-#include "../../config.hh"
+#include <senf/config.hh>
 
 //#include "TimeSource.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

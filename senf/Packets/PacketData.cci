@@ -24,7 +24,7 @@
     \brief PacketData inline non-template implementation */
 
 // Custom includes
-#include "../Utils/senfassert.hh"
+#include <senf/Utils/senfassert.hh>
 #include <iterator>
 #include "PacketImpl.hh"
 // #include "PacketParser.hh"

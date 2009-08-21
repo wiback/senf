@@ -31,8 +31,8 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/spirit/iterator/file_iterator.hpp>
 #include <boost/spirit/iterator/position_iterator.hpp>
-#include "../../Utils/Exception.hh"
-#include "../../Utils/senfassert.hh"
+#include <senf/Utils/Exception.hh>
+#include <senf/Utils/senfassert.hh>
 
 //#include "Parse.mpp"
 #define prefix_

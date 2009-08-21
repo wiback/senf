@@ -27,7 +27,7 @@
 #define HH_SENF_PPI_MultiConnectorMixin_ 1
 
 // Custom includes
-#include "../config.hh"
+#include <senf/config.hh>
 #include <boost/ptr_container/ptr_map.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/mpl/if.hpp>

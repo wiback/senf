@@ -27,9 +27,9 @@
 //#include "BSDSocketAddress.ih"
 
 // Custom includes
-#include "INet/INetAddressing.hh"
-#include "UN/UNAddressing.hh"
-#include "Raw/LLAddressing.hh"
+#include <senf/Socket/Protocols/INet/INetAddressing.hh>
+#include <senf/Socket/Protocols/UN/UNAddressing.hh>
+#include <senf/Socket/Protocols/Raw/LLAddressing.hh>
 
 //#include "BSDSocketAddress.mpp"
 #define prefix_

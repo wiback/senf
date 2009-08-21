@@ -33,9 +33,9 @@
 #include <boost/iostreams/device/file_descriptor.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/bind.hpp>
-#include "../../Utils/senfassert.hh"
-#include "../../Utils/membind.hh"
-#include "../../Utils/Logger/SenfLog.hh"
+#include <senf/Utils/senfassert.hh>
+#include <senf/Utils/membind.hh>
+#include <senf/Utils/Logger/SenfLog.hh>
 #include "LineEditor.hh"
 #include "ScopedDirectory.hh"
 #include "Sysdir.hh"

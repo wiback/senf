@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <sys/time.h>
-#include "../../Socket/SocketProtocol.hh"
-#include "../../Scheduler/ClockService.hh"
+#include <senf/Socket/SocketProtocol.hh>
+#include <senf/Scheduler/ClockService.hh>
 
 //#include "DatagramSocketProtocol.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

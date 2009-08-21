@@ -32,10 +32,10 @@
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <boost/preprocessor/stringize.hpp>
-#include "../../Utils/senfassert.hh"
-#include "../../Utils/Range.hh"
-#include "../../Utils/String.hh"
-#include "../../Utils/range.hh"
+#include <senf/Utils/senfassert.hh>
+#include <senf/Utils/Range.hh>
+#include <senf/Utils/String.hh>
+#include <senf/Utils/range.hh>
 #include "Server.hh"
 
 //#include "Executor.mpp"

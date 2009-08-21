@@ -27,8 +27,8 @@
 #define HH_SENF_PPI_detail_EventBinding_ 1
 
 // Custom includes
-#include "../../Scheduler/ClockService.hh"
-#include "../predecl.hh"
+#include <senf/Scheduler/ClockService.hh>
+#include <senf/PPI/predecl.hh>
 #include "Callback.hh"
 
 //#include "EventBinding.mpp"

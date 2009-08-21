@@ -30,7 +30,7 @@
 #include "Route.hh"
 #include "Module.hh"
 #include "ModuleManager.hh"
-#include "../Utils/Console/Console.hh"
+#include <senf/Utils/Console/Console.hh>
 
 //#include "Connectors.mpp"
 #define prefix_

@@ -30,8 +30,8 @@
 #include <boost/utility.hpp>
 #include <boost/intrusive_ptr.hpp>
 #include "Executor.hh"
-#include "../../Utils/intrusive_refcount.hh"
-#include "../../Utils/DiscardStream.hh"
+#include <senf/Utils/intrusive_refcount.hh>
+#include <senf/Utils/DiscardStream.hh>
 
 ///////////////////////////////ih.p////////////////////////////////////////
 

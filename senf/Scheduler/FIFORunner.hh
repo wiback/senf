@@ -31,7 +31,7 @@
 #include <boost/utility.hpp>
 #include <boost/intrusive/ilist.hpp>
 #include <boost/intrusive/ilist_hook.hpp>
-#include "../Utils/singleton.hh"
+#include <senf/Utils/singleton.hh>
 #include "EventManager.hh"
 
 //#include "FIFORunner.mpp"

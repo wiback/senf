@@ -28,13 +28,13 @@
 
 // Custom includes
 #include <algorithm>
-#include "../Socket/Protocols/INet/UDPSocketHandle.hh"
-#include "../Scheduler/Scheduler.hh"
+#include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
+#include <senf/Scheduler/Scheduler.hh>
 #include "SocketSource.hh"
 #include "DebugModules.hh"
 #include "Setup.hh"
 
-#include "../Utils/auto_unit_test.hh"
+#include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

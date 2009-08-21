@@ -36,7 +36,7 @@
 #include <boost/mpl/if.hpp>
 #include <boost/utility.hpp>
 #include <boost/type_traits/is_convertible.hpp>
-#include "../mpl.hh"
+#include <senf/Utils/mpl.hh>
 #include "Config.hh"
 #include "Target.hh"
 

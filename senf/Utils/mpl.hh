@@ -27,7 +27,7 @@
 #define HH_SENF_Utils_mpl_ 1
 
 // Custom includes
-#include "../config.hh"
+#include <senf/config.hh>
 
 //#include "mpl.mpp"
 #include "mpl.ih"

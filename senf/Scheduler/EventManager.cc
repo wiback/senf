@@ -28,8 +28,8 @@
 
 // Custom includes
 #include <boost/format.hpp>
-#include "../Utils/membind.hh"
-#include "../Utils/Console/Console.hh"
+#include <senf/Utils/membind.hh>
+#include <senf/Utils/Console/Console.hh>
 #include "FIFORunner.hh"
 
 //#include "EventManager.mpp"

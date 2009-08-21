@@ -33,12 +33,12 @@
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/operators.hpp>
-#include "../../../Utils/safe_bool.hh"
-#include "../../../Utils/Tags.hh"
+#include <senf/Utils/safe_bool.hh>
+#include <senf/Utils/Tags.hh>
 #include "INet4Address.hh"
-#include "../AddressExceptions.hh"
-#include "../Raw/MACAddress.hh"
-#include "../Raw/EUI64.hh"
+#include <senf/Socket/Protocols/AddressExceptions.hh>
+#include <senf/Socket/Protocols/Raw/MACAddress.hh>
+#include <senf/Socket/Protocols/Raw/EUI64.hh>
 
 //#include "INet6Address.mpp"
 #include "INet6Address.ih"

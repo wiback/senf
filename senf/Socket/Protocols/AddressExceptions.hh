@@ -27,7 +27,7 @@
 #define HH_SENF_Socket_Protocols_AddressExceptions_ 1
 
 // Custom includes
-#include "../../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 //#include "AddressExceptions.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////

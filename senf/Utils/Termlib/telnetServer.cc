@@ -28,10 +28,10 @@
 
 // Custom includes
 #include <boost/bind.hpp>
-#include "../../Utils/membind.hh"
-#include "../../Scheduler/Scheduler.hh"
-#include "../Logger.hh"
-#include "../../Socket/Protocols/INet.hh"
+#include <senf/Utils/membind.hh>
+#include <senf/Scheduler/Scheduler.hh>
+#include <senf/Utils/Logger.hh>
+#include <senf/Socket/Protocols/INet.hh>
 #include "TelnetTerminal.hh"
 #include "Editor.hh"
 

@@ -27,9 +27,9 @@
 //#include "FileHandle.ih"
 
 // Custom includes
-#include "../Utils/senfassert.hh"
+#include <senf/Utils/senfassert.hh>
 #include <errno.h>
-#include "../Utils/Exception.hh"
+#include <senf/Utils/Exception.hh>
 
 #define prefix_ inline
 ///////////////////////////////cci.p///////////////////////////////////////
