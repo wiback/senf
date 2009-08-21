@@ -1,0 +1,14 @@
+# -*- python -*-
+
+Import('env')
+import SENFSCons, glob, os
+
+###########################################################################
+
+# Create local_config.h
+if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
+    Execute(Touch("local_config.hh"))
+
+SConscript(glob.glob("*/SConscript"))
+
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = [ 'config.hh' ])

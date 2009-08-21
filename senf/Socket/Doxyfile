@@ -1,0 +1,5 @@
+@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
+
+PROJECT_NAME = Socket
+RECURSIVE = Yes
+SHOW_DIRECTORIES = Yes

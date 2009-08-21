@@ -1,4 +1,0 @@
-@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
-
-PROJECT_NAME = Logger
-ALPHABETICAL_INDEX = NO

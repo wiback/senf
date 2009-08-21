@@ -1,0 +1,6 @@
+@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
+
+PROJECT_NAME = PPI
+RECURSIVE = No
+SHOW_DIRECTORIES = Yes
+INPUT = . detail

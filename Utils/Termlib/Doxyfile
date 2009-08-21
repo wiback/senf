@@ -1,6 +1,0 @@
-@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
-
-PROJECT_NAME = libTermlib
-EXAMPLE_PATH = .
-EXCLUDE = telnetServer.cc
-ALPHABETICAL_INDEX = NO

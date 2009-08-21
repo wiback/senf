@@ -50,7 +50,7 @@ env.Append(
    ENV                    = { 'PATH' : os.environ.get('PATH') },
    CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*', '.sconsign' ],
 
-   CPPPATH                = [ '#/include' ],
+   CPPPATH                = [ '#' ],
    LOCALLIBDIR            = '#',
    LIBPATH                = [ '$LOCALLIBDIR' ],
    LIBS                   = [ '$LIBSENF$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB', 
@@ -111,26 +111,20 @@ Export('env')
 if not os.path.exists("Doxyfile.local"):
     Execute(Touch("Doxyfile.local"))
 
-# Create local_config.h
-if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
-    Execute(Touch("local_config.hh"))
-
 if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
    and not os.environ.get("SCONS") and COMMAND_LINE_TARGETS != [ 'prepare' ]:
     env.Execute([ "scons prepare" ])
 
-# Load SConscripts. Need to load some first (they change the global environment)
-initSConscripts = [ 
-    "debian/SConscript",
-    "doclib/SConscript",
-]
+# Load SConscripts
 
-SConscript(initSConscripts)
+SConscript("debian/SConscript")
+SConscript("doclib/SConscript")
+if os.path.exists('SConscript.local') : SConscript('SConscript.local')
 
-if os.path.exists('SConscript.local'):
-    SConscript('SConscript.local')
+SConscript("senf/SConscript")
 
-SConscript(list(set(glob.glob("*/SConscript")) - set(initSConscripts)))
+SConscript("Examples/SConscript")
+SConscript("HowTos/SConscript")
 
 ###########################################################################
 # Define build targets
@@ -139,10 +133,9 @@ SConscript(list(set(glob.glob("*/SConscript")) - set(initSConscripts)))
 env.Depends(SENFSCons.Doxygen(env), env.Value(env['ENV']['REVISION']))
 
 #### libsenf.a
-libsenf = env.Library(env.subst("$LIBSENF$LIBADDSUFFIX"), env['ALLOBJECTS'])
+libsenf = env.Library("$LOCALLIBDIR/${LIBSENF}${LIBADDSUFFIX}", env['ALLOBJECTS'])
 env.Default(libsenf)
 
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = [ 'config.hh' ])
 env.Install('$LIBINSTALLDIR', libsenf)
 
 #### install_all, default, all_tests, all

@@ -1,18 +1,16 @@
-import sys, glob, os.path, datetime
-sys.path.append('senfscons')
+# -*- python -*-
+
 Import('env')
-import SENFSCons
+import SENFSCons, glob, yaptu
 
 ###########################################################################
 
-import yaptu
-
-HOWTOS = []
+EXAMPLES = []
 for dox in sorted(glob.glob("*/Mainpage.dox")):
     title = ([None] + [ line.split('\\mainpage',1)[-1].strip() for line in file(dox)
                         if '\\mainpage' in line ])[-1]
     if title:
-        HOWTOS.append( (dox.split('/',1)[0], title) )
+        EXAMPLES.append( (dox.split('/',1)[0], title) )
 
 MAINPAGE="""
 /** \mainpage Examples
@@ -20,7 +18,7 @@ MAINPAGE="""
     \htmlonly
     <dl>
 
-{{  for name, title in HOWTOS:
+{{  for name, title in EXAMPLES:
       <dt><a href="../../${name}/doc/html/index.html">${name}</a></dt><dd>${title}</a></dd>
 }}
 

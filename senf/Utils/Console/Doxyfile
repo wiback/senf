@@ -1,5 +1,5 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
-INPUT = .
-PROJECT_NAME = HowTos
+PROJECT_NAME = Utils_Console
 EXAMPLE_PATH = .
+EXCLUDE = testServer.cc

@@ -1,4 +1,0 @@
-@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
-
-PROJECT_NAME = libUtils
-ALPHABETICAL_INDEX = NO

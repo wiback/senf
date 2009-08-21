@@ -127,11 +127,14 @@ def modules():
     # Naja ... etwas rumgehackt aber was solls ...
     global EXTRA_MODULES
     mods = {}
-    pathbase = len(env.Dir('#').abspath)+1
+    pathbase = env.Dir('#/senf').abspath
+    pathbasel = len(pathbase)+1
     for module in env.Alias('all_docs')[0].sources:
         if module.name != 'html.stamp' : continue 
-        mods[module.dir.dir.dir.abspath] = [ module.dir.dir.dir.name,
-                                             module.dir.abspath[pathbase:],
+        if not module.dir.dir.dir.abspath.startswith(pathbase): continue
+        mods[module.dir.dir.dir.abspath] = [ module.dir.dir.dir.abspath[pathbasel:].replace('/','_'),
+                                             module.dir.dir.dir.name,
+                                             module.dir.abspath[pathbasel:],
                                              0 ]
         
     rv = []
@@ -140,38 +143,17 @@ def modules():
     for mod in keys:
         i = 0
         while i < len(rv):
-            if len(rv[i]) > pathbase and mod.startswith(rv[i] + '/'):
-                level = mods[rv[i]][2] + 1
+            if len(rv[i]) > pathbasel and mod.startswith(rv[i] + '/'):
+                level = mods[rv[i]][-1] + 1
                 i += 1
                 while i < len(rv) and mods[rv[i]][2] >= level:
                     i += 1
                 rv[i:i] = [ mod ]
-                mods[mod][2] = level
+                mods[mod][-1] = level
                 break
             i += 1
         if i == len(rv):
             rv.append(mod)
-
-    for mod in keys:
-        if mods[mod][2] == 0:
-            mods[mod][0] = 'lib' + mods[mod][0]
-
-    n = 0
-    for name,path in EXTRA_MODULES:
-        path = env.Dir(path).dir.dir.abspath
-        i = 0
-        while i < len(rv):
-            if rv[i] == path:
-                mods[rv[i]][0] = name
-                m = 1
-                while i+m < len(rv) and mods[rv[i+m]][2] > mods[rv[i]][2]:
-                    m += 1
-                rv[n:n] = rv[i:i+m]
-                rv[i+m:i+2*m] = []
-                i += m
-                n += m
-            else:
-                i += 1
 
     return ( tuple(mods[mod]) for mod in rv )
 
@@ -190,14 +172,6 @@ def processTemplate(env):
 writeTemplate = env.Action(writeTemplate, varlist = [ 'TEMPLATE' ])
 
 ###########################################################################
-
-# Extra documentation modules which are handled (named) different from
-# library modules
-EXTRA_MODULES = [
-    ('Overview', '#/doc/html'),
-    ('Examples', '#/Examples/doc/html'),
-    ('HowTos', '#/HowTos/doc/html'),
-    ('SENFSCons', '#/senfscons/doc/html') ]
 
 HEADER = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -239,11 +213,16 @@ div.tabs li.$projectname a { background-color: #EDE497; }
 <div id="content1">
   <div id="content2">
     <div class="tabs menu">
+      <li class="Overview level0"><a href="@TOPDIR@/doc/html/index.html">Overview</a></li>
+      <li class="Examples level0"><a href="@TOPDIR@/Examples/doc/html/index.html">Examples</a></li>
+      <li class="HowTos level0"><a href="@TOPDIR@/HowTos/doc/html/index.html">HowTos</a></li>
+      <li class="glossary level0"><a href="@TOPDIR@/doc/html/glossary.html">Glossary</a></li>
+    </div>
+    <div class="tabs menu">
       <ul>
-{{      for name, path, level in modules():
-          <li class="${name} level${level}"><a href="@TOPDIR@/${path}/index.html">${name}</a></li>
+{{      for id, name, path, level in modules():
+          <li class="${id} level${level}"><a href="@TOPDIR@/senf/${path}/index.html">${name}</a></li>
 }}
-        <li class="glossary level0"><a href="@TOPDIR@/doc/html/glossary.html">Glossary</a></li>
       </ul>
     </div>"""
 

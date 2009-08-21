@@ -1,4 +1,0 @@
-@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
-
-PROJECT_NAME = Daemon
-ALPHABETICAL_INDEX = NO

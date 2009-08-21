@@ -1,5 +1,0 @@
-@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
-
-PROJECT_NAME = libConsole
-EXAMPLE_PATH = .
-EXCLUDE = testServer.cc

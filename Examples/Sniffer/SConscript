@@ -7,8 +7,5 @@ import SENFSCons
 
 sources, tests, includes = SENFSCons.Glob(env)
 
-env.Program('sniffer', sources + [ '#/Packets/DefaultBundle/DefaultBundle.o',
-                                   '#/Packets/MPEGDVBBundle/MPEGDVBBundle.o',
-                                   '#/Packets/80221Bundle/80221Bundle.o', 
-                                   '#/Packets/80211Bundle/80211Bundle.o' ] )
+env.Program('sniffer', sources + env['PACKET_BUNDLES'])
 SENFSCons.Doxygen(env)

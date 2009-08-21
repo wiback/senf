@@ -1,8 +1,7 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob, sys
-import yaptu
+import SENFSCons, glob, yaptu
 
 ###########################################################################
 

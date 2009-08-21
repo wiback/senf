@@ -1,4 +1,4 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
-INPUT = .
-PROJECT_NAME = HowTos
+PROJECT_NAME = Utils
+ALPHABETICAL_INDEX = NO

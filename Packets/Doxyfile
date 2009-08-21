@@ -1,6 +1,0 @@
-@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
-
-PROJECT_NAME = libPackets
-INPUT = .
-RECURSIVE = YES
-EXAMPLE_PATH = . DefaultBundle

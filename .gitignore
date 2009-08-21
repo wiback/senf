@@ -1,6 +1,5 @@
 # Local files (files in this directory)
 /Doxyfile.local
-/local_config.hh
 /.prepare-stamp
 /libsenf.a
 /build-arch-debug-stamp
