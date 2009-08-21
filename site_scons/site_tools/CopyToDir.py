@@ -1,11 +1,3 @@
-## \file
-# \brief CopyToDir builder
-
-## \package senfscons.CopyToDir
-# \brief Copy source file(s) to a given directory
-#
-# \ingroup builder
-
 import os.path
 import SCons.Builder, SCons.Defaults
 

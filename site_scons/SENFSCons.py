@@ -47,7 +47,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                                            'generate_tagfile': 'doc/${MODULE}.tag' },
                               MODULE   = module )
         env.Append(ALL_TAGFILES = tagfile[0].abspath)
-        env.Depends(tagfile, env.File('#/doclib/doxygen.sh'))
+        env.Depends(tagfile, [ env.File('#/doclib/doxygen.sh'), 
+                               env.File('#/doclib/tag-munge.xsl') ])
 
     # Rule to generate HTML documentation
     doc = env.Doxygen(doxyfile,
@@ -60,7 +61,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                                    'output_dir'      : 'doc',
                                    'html_dir'        : 'html',
                                    'html'            : 'YES' } )
-    env.Depends(doc, env.File('#/doclib/doxygen.sh'))
+    env.Depends(doc, [ env.File('#/doclib/doxygen.sh'),
+                       env.File('#/doclib/html-munge.xsl') ])
 
     # Copy the extra_sources (the images) into the documentation directory
     # (need to exclude the 'clean' case otherwise there are multiple ways to clean the copies)

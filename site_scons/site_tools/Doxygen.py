@@ -17,52 +17,10 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# The Modifications are Copyright (C) 2006,2007
+# The Modifications are Copyright (C) 2006,2007,2008,2009
 # Fraunhofer Institute for Open Communication Systems (FOKUS) 
 # Competence Center NETwork research (NET), St. Augustin, GERMANY 
 #     Stefan Bund <g0dil@berlios.de>
-
-## \file
-# \brief Doxygen builder
-
-## \package senfscons.Doxygen
-# \brief Doxygen Documentation Builder
-#
-# This builder will invoke \c doxygen to build software
-# documentation. The doxygen builder only takes the name of the
-# doxyfile as it's source file. The builder parses that doxygen
-# configuration file.
-#
-# The builder will automatically find all sources on which the
-# documentation depends. This includes
-# \li the source code files (as selected by the \c RECURSIVE, \c
-#     FILE_PATTERNS, \c INPUT and \c EXCLUDE_PATTERNS doxygen
-#     directives
-# \li the \c HTML_HEADER and \c HTML_FOOTER
-# \li all referenced \c TAGFILES
-# \li the \c INPUT_FILTER
-# \li all included doxyfiles (via \c @INCLUDE)
-#
-# The builder will emit a list of targets built by doxygen. This
-# depends on the types of documentation built.
-#
-# The builder will also generate additional commands to resolve
-# cross-references to other module documentations. This is based on
-# the \c TAGFILES used. Tagfiles built in the same project in other
-# modules are automatically found and the links will be resolved
-# correctly. To resolve links from external tagfiles, you may specify
-# <i>tagfilename</i><tt>_DOXY_URL</tt> as a construction environment
-# variable to specify the path to resolve references from the given
-# tagfile to. <i>tagfilename</i> is the uppercased basename of the
-# tagfile used.
-#
-# \par Construction Envrionment Variables:
-# <table class="senf">
-# <tr><td>\c DOXYGEN</td><td>doxygen command, defaults to \c doxygen</td></tr>
-# <tr><td><i>tag</i><tt>_DOXY_URL</tt></td><td>external tagfile resolve URL</td></tr>
-# </table>
-#
-# \ingroup builder
 
 # I (g0dil@berlios.de) have been fighting 4 problems in this
 # implementation:
@@ -75,11 +33,10 @@
 # - Theres a bug in SCons which will produce an error message for
 #   directory targets if dir.sources is not set explicitly
 # - the first argument to env.Clean() must be the command line target,
-#   with which the scons was invoked. This does not help to add
-#   aditional files or directories to be cleaned if you don't know
-#   that target (it's not possible to say 'if you clean this file,
-#   also clean that one' hich is, what I had expected env.Clean to
-#   do).
+#   with which scons was invoked. This does not help to add aditional
+#   files or directories to be cleaned if you don't know that target
+#   (it's not possible to say 'if you clean this file, also clean that
+#   one' which is, what I had expected env.Clean to do).
 #
 # Together, these problems have produced several difficulties. I have
 # solved them by
@@ -87,7 +44,7 @@
 #   cause source scanners to be invoked
 # - Adding the documentation directory as a target (so it will be
 #   cleaned up which env.Clean doesn't help me to do), but *only* if
-#   scons is called to with the -c option
+#   scons is called with the -c option
 # - Setting dir.sources to the known source-list to silence the error
 #   message whenever a directory is added as a target
 #
