@@ -1,8 +1,8 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob
+import SENFSCons
 
 ###########################################################################
 
-env.BoostUnitTest('test', glob.glob("*.test.cc"))
+SENFSCons.AutoRules(env)

@@ -1,13 +1,8 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob
+import SENFSCons
 
 ###########################################################################
 
-sources, tests, includes = SENFSCons.Glob(env)
-
-env.Append(ALLOBJECTS = env.Object(sources))
-env.BoostUnitTest('test', tests)
-SENFSCons.Doxygen(env)
-env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+SENFSCons.AutoRules(env)

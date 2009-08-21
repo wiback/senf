@@ -1,16 +1,9 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob
+import SENFSCons
 
 ###########################################################################
 
-SConscript(glob.glob("*/SConscript"))
-
 SENFSCons.AllIncludesHH(env, exclude=['Raw.hh'])
-
-sources, tests, includes = SENFSCons.Glob(env)
-
-env.Append(ALLOBJECTS = env.Object(sources))
-env.BoostUnitTest('test', tests)
-env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+SENFSCons.AutoRules(env)

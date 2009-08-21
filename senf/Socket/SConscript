@@ -1,23 +1,15 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob
+import SENFSCons
 
 ###########################################################################
 
-SConscript(glob.glob("*/SConscript"))
-
 SENFSCons.AllIncludesHH(env, exclude=['Socket.hh'])
-
-sources, tests, includes = SENFSCons.Glob(env)
-
-env.Append(ALLOBJECTS = env.Object(sources))
-env.BoostUnitTest('test', tests)
-SENFSCons.Doxygen(env, extra_sources = [
+SENFSCons.AutoRules(env, doc_extra_sources = [
     env.Dia2Png('SocketLibrary-classes.dia'),
     env.Dia2Png('FhHierarchy.dia'),
     env.Dia2Png('SocketPolicy.dia'),
     env.Dia2Png('Protocols.dia'),
     env.Dia2Png('Handle.dia'),
 ])
-env.InstallSubdir('$INCLUDEINSTALLDIR', includes)

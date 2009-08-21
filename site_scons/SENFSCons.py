@@ -90,3 +90,41 @@ def AllIncludesHH(env, exclude=[]):
     file(target.abspath,"w").write("".join([ '#include "%s"\n' % f
                                              for f in headers ]))
     env.Clean('all', target)
+
+###########################################################################
+# The following functions serve as simple macros for most SConscript files
+#
+# If you need to customize these rules, copy-and-paste the code into the
+# SConscript file and adjust at will (don't to forget to replace the
+# parameters with their actual value. Parameters are marked with ((name)) )
+
+def AutoRules(env, exclude=[], subdirs=[], doc_extra_sources = []):
+    import SENFSCons, glob, os.path
+
+    sources, tests, includes      = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
+    subscripts                    = glob.glob("*/SConscript")
+
+    if sources                    : env.Append(ALLOBJECTS = env.Object(sources))
+    if tests                      : env.BoostUnitTest('test', tests)
+    if includes                   : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+    if os.path.exists("Doxyfile") : SENFSCons.Doxygen(env, extra_sources=((doc_extra_sources)) )
+    if subscripts                 : SConscript(glob.glob("*/SConscript"))
+
+
+def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
+    import SENFSCons, glob, os.path
+
+    sources, tests, includes      = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
+    subscripts                    = glob.glob("*/SConscript")
+
+    objects = env.Object(sources)
+    cobject = env.CombinedObject(name, objects)
+
+    env.Default(cobject)
+    env.Append(ALLOBJECTS = objects, PACKET_BUNDLES = cobject)
+    env.Install('$OBJINSTALLDIR', cobject)
+
+    if tests                      : env.BoostUnitTest('test', tests + cobject)
+    if includes                   : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+    if os.path.exists("Doxyfile") : SENFSCons.Doxygen(env, extra_sources=((doc_extra_sources)) )
+    if subscripts                 : SConscript(glob.glob("*/SConscript"))

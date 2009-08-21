@@ -5,14 +5,4 @@ import SENFSCons, glob
 
 ###########################################################################
 
-sources, tests, includes = SENFSCons.Glob(env)
-
-objects = env.Object(sources)
-cobject = env.CombinedObject('MPEGDVBBundle', objects)
-env.Default(cobject)
-env.Append(ALLOBJECTS = objects)
-env.Append(PACKET_BUNDLES = cobject)
-env.BoostUnitTest('test', tests + cobject)
-
-env.Install('$OBJINSTALLDIR', cobject)
-env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+SENFSCons.AutoPacketBundle(env, 'MPEGDVBBundle')

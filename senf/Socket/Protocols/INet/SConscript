@@ -5,12 +5,5 @@ import SENFSCons, glob
 
 ###########################################################################
 
-SConscript(glob.glob("*/SConscript"))
-
 SENFSCons.AllIncludesHH(env, exclude=['INet.hh'])
-
-sources, tests, includes = SENFSCons.Glob(env)
-
-env.Append(ALLOBJECTS = env.Object(sources))
-env.BoostUnitTest('test', tests)
-env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+SENFSCons.AutoRules(env)

@@ -5,10 +5,5 @@ import SENFSCons
 
 ###########################################################################
 
-sources, tests, includes = SENFSCons.Glob(env, exclude=['testServer.cc'])
-
-env.Append(ALLOBJECTS = env.Object(sources))
-env.BoostUnitTest('test', tests)
-SENFSCons.Doxygen(env)
-env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+SENFSCons.AutoRules(env,  exclude=['testServer.cc'])
 env.Program('testServer', ['testServer.cc'])

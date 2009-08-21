@@ -1,23 +1,13 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob
+import SENFSCons
 
 ###########################################################################
 
-SConscript(glob.glob("*/SConscript"))
-
 SENFSCons.AllIncludesHH(env, exclude = ['PPI.hh'])
-
-sources, tests, includes = SENFSCons.Glob(env, subdirs=[ 'detail' ])
-
-env.Append(ALLOBJECTS = env.Object(sources))
-env.BoostUnitTest('test', tests)
-
-SENFSCons.Doxygen(env, extra_sources=[
-    env.Dia2Png('scenario.dia'),
-    env.Dia2Png('classes.dia'),
-    env.Dia2Png('ratestuffer.dia'),
+SENFSCons.AutoRules(env, subdirs=['detail'], doc_extra_sources=[
+        env.Dia2Png('scenario.dia'),
+        env.Dia2Png('classes.dia'),
+        env.Dia2Png('ratestuffer.dia'),
 ])
-
-env.InstallSubdir('$INCLUDEINSTALLDIR', includes)

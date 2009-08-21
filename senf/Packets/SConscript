@@ -1,16 +1,11 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob
+import SENFSCons
 
 ###########################################################################
 
-sources, tests, includes = SENFSCons.Glob(env)
-
-env.Append(ALLOBJECTS = env.Object(sources))
-env.BoostUnitTest('test', tests)
-
-SENFSCons.Doxygen(env, extra_sources = [
+SENFSCons.AutoRules(env, doc_extra_sources = [
     env.Dia2Png("structure.dia"),
     env.Dia2Png("80221Bundle/TLV.dia"),
     env.PkgDraw("MPEGDVBBundle/DTCPPacket.hh"),
@@ -59,8 +54,4 @@ SENFSCons.Doxygen(env, extra_sources = [
     env.PkgDraw("MPEGDVBBundle/SNDUPacket.hh"),
     env.PkgDraw("MPEGDVBBundle/TransportPacket.hh"),
 ])
-
-env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
-
-SConscript(glob.glob("*/SConscript"))
 
