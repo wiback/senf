@@ -1,8 +1,6 @@
 # -*- python -*-
 
 import sys, glob, os.path, fnmatch
-sys.path.append(Dir('#/senfscons').abspath)
-sys.path.append(Dir('#/doclib').abspath)
 import SENFSCons, senfutil
 
 ###########################################################################
@@ -11,14 +9,14 @@ import SENFSCons, senfutil
 env = Environment()
 
 # Load all the local SCons tools
-env.Tool('Doxygen', [ 'senfscons' ])
-env.Tool('Dia2Png', [ 'senfscons' ])
-env.Tool('PkgDraw', [ 'senfscons' ])
-env.Tool('InstallSubdir', [ 'senfscons' ])
-env.Tool('CopyToDir', [ 'senfscons' ])
-env.Tool('Boost', [ 'senfscons' ])
-env.Tool('CombinedObject', [ 'senfscons' ])
-env.Tool('PhonyTarget', [ 'senfscons' ])
+env.Tool('Doxygen')
+env.Tool('Dia2Png')
+env.Tool('PkgDraw')
+env.Tool('InstallSubdir')
+env.Tool('CopyToDir')
+env.Tool('Boost')
+env.Tool('CombinedObject')
+env.Tool('PhonyTarget')
 
 env.Help("""
 Additional top-level build targets:
