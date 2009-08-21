@@ -7,40 +7,41 @@ import SENFSCons, glob, os.path, yaptu
 
 sconscripts = sorted(glob.glob("*/SConscript"))
 
-EXTENSIONS = []
-for script in sconscripts:
-    name = os.path.split(script)[0]
-    dox = os.path.join(name, 'Mainpage.dox')
-    title = ''
-    if os.path.exists(dox):
-        title = ([''] + [ line.split('\\mainpage',1)[-1].strip() for line in file(dox)
-                            if '\\mainpage' in line ])[-1]
-    EXTENSIONS.append((name, title))
-        
+if sconscripts:
+    EXTENSIONS = []
+    for script in sconscripts:
+        name = os.path.split(script)[0]
+        dox = os.path.join(name, 'Mainpage.dox')
+        title = ''
+        if os.path.exists(dox):
+            title = ([''] + [ line.split('\\mainpage',1)[-1].strip() for line in file(dox)
+                                if '\\mainpage' in line ])[-1]
+        EXTENSIONS.append((name, title))
 
-MAINPAGE="""
-/** \mainpage Extensions
 
-    This folder contains additional SENF extensions which are built
-    into the senf libarary but are not part of senf proper.
+    MAINPAGE="""
+    /** \mainpage Extensions
 
-    \htmlonly
-    <dl>
+        This folder contains additional SENF extensions which are built
+        into the senf libarary but are not part of senf proper.
 
-{{  for name, title in EXTENSIONS:
-      <dt><a href="../../${name}/doc/html/index.html">${name}</a></dt><dd>${title}</a></dd>
-}}
+        \htmlonly
+        <dl>
 
-    </dl>
-    \endhtmlonly
- */
-"""
+    {{  for name, title in EXTENSIONS:
+          <dt><a href="../../${name}/doc/html/index.html">${name}</a></dt><dd>${title}</a></dd>
+    }}
 
-file("Mainpage.dox","w").write(yaptu.process(MAINPAGE, globals(), env.Dictionary()))
+        </dl>
+        \endhtmlonly
+     */
+    """
 
-SConscript(sconscripts)
+    file("Mainpage.dox","w").write(yaptu.process(MAINPAGE, globals(), env.Dictionary()))
 
-env.Clean('all','Mainpage.dox')
-env.Clean('all_docs','Mainpage.dox')
+    SConscript(sconscripts)
 
-SENFSCons.Doxygen(env)
+    env.Clean('all','Mainpage.dox')
+    env.Clean('all_docs','Mainpage.dox')
+
+    SENFSCons.Doxygen(env)
