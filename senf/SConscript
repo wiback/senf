@@ -9,6 +9,9 @@ import SENFSCons, glob, os
 if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
     Execute(Touch("local_config.hh"))
 
-SConscript(glob.glob("*/SConscript"))
+# Ext/SConscript is last so it can depend on env vars set by any other script
+# (e.g. $PACKET_BUNDLES)
+SConscript(list(set(glob.glob("*/SConscript")) - set(("Ext/SConscript",))))
+SConscript("Ext/SConscript")
 
 env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = [ 'config.hh' ])

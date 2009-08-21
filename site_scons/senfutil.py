@@ -58,7 +58,7 @@ def SetupForSENF(env):
     if os.path.exists('senf'):
         print "\nUsing SENF in './senf'\n"
         env.Append( LIBPATH = [ 'senf' ],
-                    CPPPATH = [ 'senf/include' ],
+                    CPPPATH = [ 'senf' ],
                     SENF_BUILDOPTS = [ '${final and "final=1" or None}',
                                        '${debug and "debug=1" or None}',
                                        '${profile and "profile=1" or None}' ],
