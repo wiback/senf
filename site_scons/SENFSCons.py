@@ -70,7 +70,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         if env.GetOption('clean'):
             env.Depends(doc, extra_sources)
         else:
-            env.Depends(env.CopyToDir(doc[0].dir, extra_sources))
+            env.Depends(doc, env.CopyToDir(doc[0].dir, extra_sources))
 
     # Install documentation into DOCINSTALLDIR
     env.Install(env.Dir('$DOCINSTALLDIR').Dir(doc[0].dir.dir.get_path(env.Dir('#'))), doc[0].dir)
