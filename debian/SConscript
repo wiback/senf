@@ -21,7 +21,7 @@ def updateRevision(target, source, env):
         rev = rev[:-1]
     if 'm' in rev:
         rev = rev[:-1]
-    url = None
+    url = ''
     for line in os.popen("svn info"):
         elts=line.split(':',1)
         if elts[0] == 'URL':
@@ -31,7 +31,7 @@ def updateRevision(target, source, env):
         version = url.rsplit('/',1)[-1].split('_',1)[0]
         if version[0] not in string.digits:
             version = None
-    if version is None:
+    if not version:
         version = '1:0r%s' % rev
     changelog = file('debian/changelog.template').read() % {
         'version': version,
@@ -65,6 +65,10 @@ if os.environ.get('debian_build'):
     rev = os.popen("dpkg-parsechangelog | awk '/^Version:/{print $2}'").read().strip()
 else:
     rev = 'r' + os.popen("svnversion").read().strip().lower()
+    if rev == 'rexported':
+        rev = 'r' + os.popen("gitsvnversion").read().strip().lower()
+        if rev == '':
+            rev = 'unknown'
 
 logname = os.environ.get('LOGNAME')
 if not logname:
@@ -82,7 +86,7 @@ env.Append( ENV = {
 })
 
 env.Replace(                    
-    LOCAL_CONFIG_FILES = [ '/Doxyfile.local', '/SConfig', '/local_config.hh' ],
+    LOCAL_CONFIG_FILES = [ '/Doxyfile.local', '/SConscript.local', '/senf/local_config.hh' ],
     DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '/_templates' ],
     DPKG_IGNORED_FILES_OPTS = dpkgIgnoredFilesOpts,
     BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot $DPKG_IGNORED_FILES_OPTS",

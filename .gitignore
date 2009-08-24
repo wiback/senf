@@ -24,3 +24,4 @@ all_includes.hh
 doc/
 .test.bin
 .test.stamp
+/libsenf_g.a

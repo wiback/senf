@@ -1,13 +1,18 @@
 Source: libsenf
 Priority: extra
 Maintainer: Stefan Bund <senf-dev@lists.berlios.de>
-Build-Depends: debhelper (>= 5), scons (>= 0.97), g++, binutils-dev, libboost-dev, 
-	libboost-test-dev, libboost-date-time-dev, libboost-regex-dev, 
-	libboost-filesystem-dev, libboost-serialization-dev, libboost-iostreams-dev,
-	libboost-signals-dev, doxygen (>= 1.5.5), libreadline-dev, dia, tidy, xsltproc, 
-	graphviz, perl-base, linklint, netpbm, gs, tetex-bin, tetex-extra
-Standards-Version: 3.7.2 
-Section: libs
+Build-Depends: debhelper (>= 5), scons (>= 0.97), g++, binutils-dev,
+	libboost-dev | libboost1.35-dev, 
+	libboost-test-dev | libboost-test1.35-dev,
+	libboost-date-time-dev | libboost-date-time1.35-dev,
+	libboost-regex-dev | libboost-regex1.35-dev,
+	libboost-filesystem-dev | libboost-filesystem1.35-dev,
+	libboost-serialization-dev | libboost-serialization1.35-dev,
+	libboost-iostreams-dev | libboost-iostreams1.35-dev,
+	libboost-signals-dev | libboost-signals1.35-dev, 
+	doxygen (>= 1.5.5), libreadline-dev, dia, tidy, xsltproc, graphviz,
+	perl-base, linklint, netpbm, gs, tetex-extra | texlive-extra-utils
+Standards-Version: 3.7.2 Section: libs
 
 Package: libsenf
 Section: libdevel
@@ -34,9 +39,13 @@ Description: SENF Extensible Network Framework, static library (debug build)
 Package: libsenf-dev
 Section: libdevel
 Architecture: all
-Depends: binutils-dev, libboost-dev, libboost-regex-dev, 
-	libboost-date-time-dev, libboost-thread-dev, libboost-serialization-dev,
-	libboost-filesystem-dev, libboost-signals-dev,
+Depends: binutils-dev, libboost-dev | libboost-1.35-dev,
+	libboost-regex-dev | libboost-regex1.35-dev,
+	libboost-date-time-dev | libboost-date-time1.35-dev,
+	libboost-thread-dev | libboost-thread1.35-dev,
+	libboost-serialization-dev | libboost-serialization1.35-dev,
+	libboost-filesystem-dev | libboost-filesystem1.35-dev,
+	libboost-signals-dev | libboost-signals1.35-dev, 
 	libsenf (=${source:Version}) | libsenf-dbg (=${source:Version})
 Recommends: libsenf (=${source:Version}), libsenf-dbg (=${source:Version})
 Suggests: libsenf-doc (=${source:Version})

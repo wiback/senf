@@ -107,11 +107,9 @@ namespace detail {
             size_type size   (data_iterator i, state_type s) const;
             void      init   (data_iterator i, state_type s);
 
-            void      construct (container_type & c) const;
-            void      destruct  (container_type & c) const;
-            void      erase     (container_type & c, data_iterator p);
-            void      insert    (container_type & c, data_iterator p);
-            void      update    (container_type const & c) const;
+            void      erase  (container_type & c, data_iterator p);
+            void      insert (container_type & c, data_iterator p);
+            void      update (container_type const & c) const;
 
             /** \brief Internal: ListBParser specific iterator data */
             struct iterator_data {};

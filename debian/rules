@@ -19,16 +19,8 @@ export debian_build
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
 
-CFLAGS = -Wall -g
-
 CONCURRENCY_LEVEL ?= 1
 export CONCURRENCY_LEVEL
-
-ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -O0
-else
-	CFLAGS += -O2
-endif
 
 destdir=$(CURDIR)/debian/tmp
 
@@ -36,33 +28,34 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 #	Add here commands to configure the package.
-	rm -f Doxyfile.local SConfig local_config.hh
+#	rm -f Doxyfile.local SConstruct.local senf/local_config.hh
 	scons prepare
 #       If needed, we could create new files 'Doxyfile.local',
-#       'SConfig' and/or 'local_config.hh' here.  We don't remove them
-#       in 'clean' to allow building a source package from an
-#       individually configured svn working copy. (The files are ignored
-#       by dpkg-buildpackge because of appropriate -I arguments provided 
-#       by 'scons deb' and 'scons debsrc'
+#       'SConstruct.local' and/or 'local_config.hh' here.  We don't
+#       remove them in 'clean' to allow building a source package from
+#       an individually configured svn working copy. (The files are
+#       ignored by dpkg-buildpackge because of appropriate -I
+#       arguments provided by 'scons deb' and 'scons debsrc'
 	touch configure-stamp
 
 build: build-arch build-indep
 
-build-arch: build-arch-final build-arch-debug
+build-arch: build-arch-debug build-arch-final
 
 build-arch-final: build-arch-final-stamp
 build-arch-final-stamp: configure-stamp
 # 	Add here commands to compile the arch part of the package.
 	scons -j $(CONCURRENCY_LEVEL) default final=1
-	scons $(destdir)/usr/lib final=1 PREFIX='$(destdir)/usr'
+	scons $(destdir)/usr/lib $(destdir)/usr/bin final=1 syslayout=1 \
+		PREFIX='$(destdir)/usr' OBJINSTALLDIR='$$PREFIX/lib/senf'
 	touch $@
 
 build-arch-debug: build-arch-debug-stamp
 build-arch-debug-stamp: configure-stamp
 # 	Add here commands to compile the arch part of the package.
 	scons -j $(CONCURRENCY_LEVEL) default LIBADDSUFFIX=_g OBJADDSUFFIX=_g
-	scons $(destdir)/usr/lib LIBADDSUFFIX=_g OBJADDSUFFIX=_g \
-		PREFIX='$(destdir)/usr' OBJINSTALLDIR='$$LIBINSTALLDIR/debug'
+	scons $(destdir)/usr/lib syslayout=1 LIBADDSUFFIX=_g OBJADDSUFFIX=_g \
+		PREFIX='$(destdir)/usr' OBJINSTALLDIR='$$PREFIX/lib/senf/debug'
 	touch $@
 
 build-indep: build-indep-stamp
@@ -72,10 +65,9 @@ build-indep-stamp: configure-stamp
 	scons all_docs
 	scons linklint
 	scons fixlinks
-	scons $(destdir)/usr/include $(destdir)/usr/share/doc \
+	scons $(destdir)/usr/include $(destdir)/usr/share/doc syslayout=1 \
 		PREFIX='$(destdir)/usr' \
-		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc/html' \
-		INCLUDEINSTALLDIR='$$PREFIX/include/senf' 
+		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc/html'
 #	Remove all the files not really needed from the documentation directories
 	find $(destdir)/usr/share/doc/libsenf-doc/html \
 		-type f ! -regex '.*\.\(html\|css\|png\|php\|idx\|tag\)' | xargs rm -f

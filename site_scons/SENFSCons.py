@@ -119,7 +119,7 @@ def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
     subscripts                    = glob.glob("*/SConscript")
 
     objects = env.Object(sources)
-    cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}', objects, NAME=((name)))
+    cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', objects, NAME=((name)))
 
     env.Default(cobject)
     env.Append(ALLOBJECTS = objects, PACKET_BUNDLES = cobject)

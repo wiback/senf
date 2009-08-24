@@ -57,11 +57,11 @@ env.Append(
                               '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ], 
    TEST_EXTRA_LIBS        = [  ],
 
-   PREFIX                 = '/usr/local',
-   LIBINSTALLDIR          = '$PREFIX',
-   BININSTALLDIR          = '$PREFIX',
-   INCLUDEINSTALLDIR      = '$PREFIX',
-   OBJINSTALLDIR          = '$LIBINSTALLDIR',
+   PREFIX                 = '#/dist',
+   LIBINSTALLDIR          = '$PREFIX${syslayout and "/lib" or ""}',
+   BININSTALLDIR          = '$PREFIX${syslayout and "/bin" or ""',
+   INCLUDEINSTALLDIR      = '$PREFIX${syslayout and "/include" or ""}',
+   OBJINSTALLDIR          = '$LIBINSTALLDIR${syslayout and "/$LIBINSTALLDIR/senf" or ""',
    DOCINSTALLDIR          = '$PREFIX/docs',
    CPP_INCLUDE_EXTENSIONS = [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti' ],
    CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
@@ -96,9 +96,10 @@ env.Append(
 )
 
 env.SetDefault(
-    LIBSENF = "senf",
-    final   = 0,
-    debug   = 0,
+    LIBSENF   = "senf",
+    final     = 0,
+    debug     = 0,
+    syslayout = 0
 )
 
 # Set variables from command line
@@ -117,7 +118,9 @@ if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
 
 # Load SConscripts
 
+SConscriptChdir(0)
 SConscript("debian/SConscript")
+SConscriptChdir(1)
 if os.path.exists('SConscript.local') : SConscript('SConscript.local')
 SConscript("senf/SConscript")
 SConscript("Examples/SConscript")

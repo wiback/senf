@@ -1,0 +1,5 @@
+/changelog
+/files
+/*.debhelper.log
+/libsenf*/
+/tmp/

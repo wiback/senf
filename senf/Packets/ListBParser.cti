@@ -114,20 +114,6 @@ init(data_iterator i, state_type s)
 }
 
 template <class ElementParser, class AuxPolicy>
-prefix_ void
-senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
-construct(container_type & c)
-    const
-{}
-
-template <class ElementParser, class AuxPolicy>
-prefix_ void
-senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
-destruct(container_type & c)
-    const
-{}
-
-template <class ElementParser, class AuxPolicy>
 prefix_ void senf::detail::ListBParser_Policy<ElementParser,AuxPolicy>::container_policy::
 erase(container_type & c, data_iterator p)
 {

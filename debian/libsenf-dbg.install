@@ -1,4 +1,4 @@
 debian/tmp/usr/lib/libsenf_g.a
-debian/tmp/usr/lib/debug/*.o usr/lib/debug/senf-packets
+debian/tmp/usr/lib/senf/debug/*_g.o usr/lib/senf
 README usr/share/doc/libsenf-dbg
 debian/README.Debian usr/share/doc/libsenf-dbg

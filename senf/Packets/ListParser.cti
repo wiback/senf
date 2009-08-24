@@ -222,15 +222,12 @@ prefix_ senf::ListParser_Container<ListPolicy>::
 ListParser_Container(parser_type const & list)
     : ListPolicy(static_cast<typename parser_type::policy const &>(list)),
       state_(list.state()), i_(std::distance(data().begin(),list.i()))
-{
-    ListPolicy::construct(*this);
-}
+{}
 
 template <class ListPolicy>
 prefix_ senf::ListParser_Container<ListPolicy>::~ListParser_Container()
 {
     ListPolicy::update(*this);
-    ListPolicy::destruct(*this);
 }
 
 // Accessors
