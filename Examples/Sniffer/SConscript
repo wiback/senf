@@ -7,5 +7,5 @@ import SENFSCons
 
 sources, tests, includes = SENFSCons.Glob(env)
 
-env.Program('sniffer', sources + [ '${LOCALLIBDIR}/AllBundles.o' ])
+env.Alias('examples', env.Program('sniffer', sources + [ '${LOCALLIBDIR}/AllBundles.o' ]))
 SENFSCons.Doxygen(env)

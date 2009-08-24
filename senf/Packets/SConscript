@@ -54,5 +54,5 @@ SENFSCons.AutoRules(env, doc_extra_sources = [
     env.PkgDraw("MPEGDVBBundle/SNDUPacket.hh"),
     env.PkgDraw("MPEGDVBBundle/TransportPacket.hh"),
 ])
-env.Default(env.CombinedObject('${LOCALLIBDIR}/${NAME}', env['PACKET_BUNDLES'],
+env.Default(env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', env['PACKET_BUNDLES'],
                                NAME="AllBundles"))

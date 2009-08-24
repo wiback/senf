@@ -3,5 +3,5 @@ import SENFSCons
 
 ###########################################################################
 
-env.Program('client', 'client.cc')
-env.Program('server', 'server.cc')
+env.Alias('examples', env.Program('client', 'client.cc'))
+env.Alias('examples', env.Program('server', 'server.cc'))

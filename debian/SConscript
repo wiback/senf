@@ -111,3 +111,4 @@ env.PhonyTarget('debbin', [], [
     "fakeroot ./debian/rules debclean"
 ])
 
+env.Clean(env.Alias('all'), 'changelog')

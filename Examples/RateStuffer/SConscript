@@ -1,3 +1,5 @@
+# -*- python -*-
+
 Import('env')
 import SENFSCons
 
@@ -5,7 +7,7 @@ import SENFSCons
 
 sources, tests, includes = SENFSCons.Glob(env)
 
-env.Program('ratestuffer', sources)
+env.Alias('examples', env.Program('ratestuffer', sources))
 
 SENFSCons.Doxygen(env, extra_sources=[
     env.Dia2Png('ratestuffer.dia')

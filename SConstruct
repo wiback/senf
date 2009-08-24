@@ -143,7 +143,7 @@ env.Install('$LIBINSTALLDIR', libsenf)
 env.Alias('install_all', env.FindInstalledFiles())
 env.Alias('default', DEFAULT_TARGETS)
 env.Alias('all_tests', env.FindAllBoostUnitTests())
-env.Alias('all', [ 'default', 'all_tests', 'all_docs' ])
+env.Alias('all', [ 'default', 'all_tests', 'examples', 'all_docs' ])
 
 #### prepare
 env.PhonyTarget('prepare', [], [])

@@ -1,6 +1,8 @@
+# -*- python -*-
+
 Import('env')
 import SENFSCons
 
 ###########################################################################
 
-env.Program('multimcloop', [ 'MultiMCLoop.cc' ])
+env.Alias('examples', env.Program('multimcloop', [ 'MultiMCLoop.cc' ]))

@@ -3,7 +3,7 @@ import SENFSCons
 
 ###########################################################################
 
-env.Program('udpClient', 'udpClient.cc')
-env.Program('udpServer', 'udpServer.cc')
+env.Alias('examples', env.Program('udpClient', 'udpClient.cc'))
+env.Alias('examples', env.Program('udpServer', 'udpServer.cc'))
 
 SENFSCons.Doxygen(env)
