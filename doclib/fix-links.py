@@ -26,7 +26,7 @@
 # index. Doxygen seems to create links with the wrong number of 'g'
 # charachters in front sometimes.
 
-import sys,os.path,fnmatch, HTMLParser, getopt, re
+import sys,os.path,fnmatch, HTMLParser, getopt, re, codecs
 
 class HTMLFilter(HTMLParser.HTMLParser):
 
@@ -213,11 +213,11 @@ class LinkFixer:
 
     def fix(self, path, target):
         self._files += 1
-        data = file(path).read()
+        data = codecs.open(path, "r", "utf-8").read()
         filt = LinkFixer.LinkFilter(self._index,
                                     target,
                                     "../" * (len(os.path.split(path)[0].split("/"))),
-                                    file(path,"w"))
+                                    codecs.open(path, "w", "utf-8") )
         filt.feed(data)
         filt.close()
         found, fixed, removed = filt.stats()
