@@ -18,13 +18,15 @@ abspath()
 	/*) echo "$1" ;;
 	*) echo "`pwd`/$1" ;;
     esac | sed \
-	-e 's/\/\//\//g' \
+	-e 's/\/\/*/\//g' \
 	-e:a \
 	-e 's/\/\.\(\/\|$\)/\1/g' \
 	-eta \
 	-e:b \
-	-e 's/\/[^\/]*\/..\(\/\|$\)/\1/g' \
-	-etb
+	-e 's/\/[^\/]*\/..\(\/\|$\)/\1/' \
+	-etb \
+        -e 's/^\(\/..\)*\(\/\|$\)/\2/' \
+	-e 's/^$/\//'
 }
 
 # Create relative path from absolute directory $1 to absolute path $2
@@ -78,13 +80,13 @@ html="NO"; tagfile="NO"; tagfile_name=""; tagfiles=""; output_dir="doc"; html_di
 
 while true; do
     case "$1" in
-	--html) 
+	--html)
 	    html="YES" ; shift ;;
-	--tagfile) 
+	--tagfile)
 	    tagfile="YES" ; shift ;;
-	--tagfile-name) 
+	--tagfile-name)
 	    tagfile_name="$2"; shift 2 ;;
-	--tagfiles) 
+	--tagfiles)
 	    for f in $2; do
 		f="`abspath "$f"`" #`"
 		tagfiles="$tagfiles${tagfiles:+ }$f"
@@ -147,7 +149,7 @@ cd "$doxydir"
 
 ## Remove tagfile_name from list of tagfiles
 
-if [ -n "$tagfile_name" ]; then 
+if [ -n "$tagfile_name" ]; then
     tagfile_name="`abspath "$output_dir/$tagfile_name"`" #`"
     x="$tagfiles"; tagfiles=""
     for f in $x; do
