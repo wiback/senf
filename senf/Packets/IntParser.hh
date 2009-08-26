@@ -171,7 +171,7 @@ namespace senf {
         Int16LSBParser const & operator= (value_type other) { value(other); return *this; }
     };
     /** \brief Write parsed value to stream
-        \related Int16Parser
+        \related Int16LSBParser
      */
     inline std::ostream & operator<<(std::ostream & os, Int16LSBParser const & i)
     { os << i.value(); return os; }

@@ -97,7 +97,7 @@ namespace senf {
             typedef MacAddressesTLVParser parser;
             ...
             static void finalize(ConcretePacket<MacAddressesTLVPacketType> p) { 
-                p->shrinkLength();
+                p->finalizeLength();
             }
          };
          \endcode
@@ -194,7 +194,7 @@ namespace senf {
         static void dump(packet p, std::ostream & os);  
         static void finalize(packet p);  ///< Finalize packet.
                                          /**< shrink size of length field to minimum 
-                                              \see BaseTLVPacketParser::shrinkLength() */
+                                              \see BaseTLVPacketParser::finalizeLength() */
         
     };
     
