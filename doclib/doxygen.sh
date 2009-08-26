@@ -11,6 +11,60 @@ do_html_cleanup()
 
 ###########################################################################
 
+# Build absolute, normalized pathname
+abspath()
+{
+    case "$1" in
+	/*) echo "$1" ;;
+	*) echo "`pwd`/$1" ;;
+    esac | sed \
+	-e 's/\/\//\//g' \
+	-e:a \
+	-e 's/\/\.\(\/\|$\)/\1/g' \
+	-eta \
+	-e:b \
+	-e 's/\/[^\/]*\/..\(\/\|$\)/\1/g' \
+	-etb
+}
+
+# Create relative path from absolute directory $1 to absolute path $2
+relpath()
+{
+    local src="${1#/}"
+    local dst="${2#/}"
+    while true; do
+	if [ -z "$src" -a -z "$dst" ]; then
+	    echo "Internal error in relpath()" 1>&2
+	    exit 1
+	fi
+	srcd="${src%%/*}"
+	dstd="${dst%%/*}"
+	if [ "$srcd" = "$dstd" ]; then
+	    src="${src#$srcd}"; src="${src#/}"
+	    dst="${dst#$dstd}"; dst="${dst#/}"
+	else
+	    break
+	fi
+    done
+    rel="`echo "$src" | sed -e "s/[^\/]*/../g"`/$dst" # `"
+    echo "${rel%/}"
+}
+
+# Log executed commands
+cmd()
+{
+    echo "+" "$@"
+    "$@"
+}
+
+html_cleanup()
+{
+    mv "$1" "${1}.orig"
+    do_html_cleanup <"${1}.orig" >"$1"
+}
+
+###########################################################################
+
 name="`basename "$0"`"; #`"
 base="`dirname "$0"`"; base="`cd "$base"; pwd`" #`"
 
@@ -32,7 +86,7 @@ while true; do
 	    tagfile_name="$2"; shift 2 ;;
 	--tagfiles) 
 	    for f in $2; do
-		f="`readlink -mn "$f"`" #`"
+		f="`abspath "$f"`" #`"
 		tagfiles="$tagfiles${tagfiles:+ }$f"
 	    done
 	    shift 2
@@ -74,41 +128,7 @@ if [ -f "$doxydir" ]; then
     doxydir="`dirname "$doxydir"`" #`"
 fi
 
-doxydir="`readlink -mn "$doxydir"`" #`"
-
-###########################################################################
-
-# Create relative path from absolute directory $1 to absolute path $2
-relpath()
-{
-    local src="${1#/}"
-    local dst="${2#/}"
-    while true; do
-	srcd="${src%%/*}"
-	dstd="${dst%%/*}"
-	if [ "$srcd" = "$dstd" ]; then
-	    src="${src#$srcd}"; src="${src#/}"
-	    dst="${dst#$dstd}"; dst="${dst#/}"
-	else
-	    break
-	fi
-    done
-    rel="`echo "$src" | sed -e "s/[^\/]*/../g"`/$dst" # `"
-    echo "${rel%/}"
-}
-
-# Log executed commands
-cmd()
-{
-    echo "+" "$@"
-    "$@"
-}
-
-html_cleanup()
-{
-    mv "$1" "${1}.orig"
-    do_html_cleanup <"${1}.orig" >"$1"
-}
+doxydir="`abspath "$doxydir"`" #`"
 
 ###########################################################################
 
@@ -128,7 +148,7 @@ cd "$doxydir"
 ## Remove tagfile_name from list of tagfiles
 
 if [ -n "$tagfile_name" ]; then 
-    tagfile_name="`readlink -mn "$output_dir/$tagfile_name"`" #`"
+    tagfile_name="`abspath "$output_dir/$tagfile_name"`" #`"
     x="$tagfiles"; tagfiles=""
     for f in $x; do
 	if [ "$f" != "$tagfile_name" ]; then
