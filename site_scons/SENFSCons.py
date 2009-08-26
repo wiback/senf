@@ -73,7 +73,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
             env.Depends(doc, env.CopyToDir(doc[0].dir, extra_sources))
 
     # Install documentation into DOCINSTALLDIR
-    env.Install(env.Dir('$DOCINSTALLDIR').Dir(doc[0].dir.dir.get_path(env.Dir('#'))), doc[0].dir)
+    env.InstallDir(env.Dir('$DOCINSTALLDIR').Dir(doc[0].dir.dir.get_path(env.Dir('#'))), doc[0].dir,
+                   FILTER_SUFFIXES=['.html','.css','.png','.php','.idx'])
 
     # Useful aliases
     env.Alias('all_docs', doc)

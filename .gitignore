@@ -25,3 +25,5 @@ doc/
 .test.bin
 .test.stamp
 /libsenf_g.a
+/TODO
+/dist/

@@ -17,6 +17,7 @@ env.Tool('CopyToDir')
 env.Tool('Boost')
 env.Tool('CombinedObject')
 env.Tool('PhonyTarget')
+env.Tool('InstallDir')
 
 env.Help("""
 Additional top-level build targets:
@@ -27,13 +28,22 @@ examples     Build all examples
 all_tests    Build and run unit tests for all modules
 all_docs     Build documentation for all modules
 all          Build everything
-install_all  Install SENF into $PREFIX
+install_all  Install SENF into $$PREFIX
 deb          Build debian source and binary package
 debsrc       Build debian source package
 debbin       Build debian binary package
 linklint     Check links of doxygen documentation with 'linklint'
 fixlinks     Fix broken links in doxygen documentation
 valgrind     Run all tests under valgrind/memcheck
+
+Build parameters:
+
+final=1      Build optimized library without debug symbols
+debug=1      Link all binaries with debug symbols (slow!)
+syslayout=1  Install into system layout directories ($$PREFIX/lib, $$PREFIX/include etc)
+
+additionally, any construction environment variable may be set from the scons
+command line (see SConstruct file and SCons documentation for a list of variables).
 """)
 
 class BuildTypeOptions:
@@ -61,10 +71,11 @@ env.Append(
 
    PREFIX                 = '#/dist',
    LIBINSTALLDIR          = '$PREFIX${syslayout and "/lib" or ""}',
-   BININSTALLDIR          = '$PREFIX${syslayout and "/bin" or ""',
+   BININSTALLDIR          = '$PREFIX${syslayout and "/bin" or ""}',
    INCLUDEINSTALLDIR      = '$PREFIX${syslayout and "/include" or ""}',
-   OBJINSTALLDIR          = '$LIBINSTALLDIR${syslayout and "/$LIBINSTALLDIR/senf" or ""',
-   DOCINSTALLDIR          = '$PREFIX/docs',
+   OBJINSTALLDIR          = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
+   DOCINSTALLDIR          = '$PREFIX/manual',
+   SCONSINSTALLDIR        = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
    CPP_INCLUDE_EXTENSIONS = [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti' ],
    CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
 
@@ -142,6 +153,8 @@ env.Default(libsenf)
 env.Install('$LIBINSTALLDIR', libsenf)
 
 #### install_all, default, all_tests, all
+env.Install('${SCONSINSTALLDIR}', 'site_scons')
+
 env.Alias('install_all', env.FindInstalledFiles())
 env.Alias('default', DEFAULT_TARGETS)
 env.Alias('all_tests', env.FindAllBoostUnitTests())

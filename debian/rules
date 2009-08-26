@@ -45,16 +45,16 @@ build-arch: build-arch-debug build-arch-final
 build-arch-final: build-arch-final-stamp
 build-arch-final-stamp: configure-stamp
 # 	Add here commands to compile the arch part of the package.
-	scons -j $(CONCURRENCY_LEVEL) default final=1
-	scons $(destdir)/usr/lib $(destdir)/usr/bin final=1 syslayout=1 \
-		PREFIX='$(destdir)/usr' OBJINSTALLDIR='$$PREFIX/lib/senf'
+	scons -j $(CONCURRENCY_LEVEL) $(destdir)/usr/lib $(destdir)/usr/bin \
+		final=1 syslayout=1 \
+		PREFIX='$(destdir)/usr' OBJINSTALLDIR='$$PREFIX/lib/senf/final'
 	touch $@
 
 build-arch-debug: build-arch-debug-stamp
 build-arch-debug-stamp: configure-stamp
 # 	Add here commands to compile the arch part of the package.
-	scons -j $(CONCURRENCY_LEVEL) default LIBADDSUFFIX=_g OBJADDSUFFIX=_g
-	scons $(destdir)/usr/lib syslayout=1 LIBADDSUFFIX=_g OBJADDSUFFIX=_g \
+		scons -j $(CONCURRENCY_LEVEL) $(destdir)/usr/lib \
+		LIBADDSUFFIX=_g OBJADDSUFFIX=_g syslayout=1 \
 		PREFIX='$(destdir)/usr' OBJINSTALLDIR='$$PREFIX/lib/senf/debug'
 	touch $@
 
@@ -62,15 +62,11 @@ build-indep: build-indep-stamp
 build-indep-stamp: configure-stamp
 # 	Add here commands to compile the indep part of the package.
 	scons -j $(CONCURRENCY_LEVEL) all_docs
-	scons all_docs
 	scons linklint
 	scons fixlinks
-	scons $(destdir)/usr/include $(destdir)/usr/share/doc syslayout=1 \
-		PREFIX='$(destdir)/usr' \
+	scons $(destdir)/usr/include $(destdir)/usr/share/doc \
+		syslayout=1 PREFIX='$(destdir)/usr' \
 		DOCINSTALLDIR='$$PREFIX/share/doc/libsenf-doc/html'
-#	Remove all the files not really needed from the documentation directories
-	find $(destdir)/usr/share/doc/libsenf-doc/html \
-		-type f ! -regex '.*\.\(html\|css\|png\|php\|idx\|tag\)' | xargs rm -f
 #       We need to install the example sourcecode
 	find Examples \( -name "*.hh" -o -name "*.cc" \) -printf "%P\n" | \
 		while read src; do \

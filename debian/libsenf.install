@@ -1,4 +1,4 @@
 debian/tmp/usr/lib/libsenf.a
-debian/tmp/usr/lib/senf/*.o
+debian/tmp/usr/lib/senf/final/*.o usr/lib/senf
 README usr/share/doc/libsenf
 debian/README.Debian usr/share/doc/libsenf
