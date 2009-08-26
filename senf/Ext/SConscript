@@ -28,9 +28,9 @@ if sconscripts:
         \htmlonly
         <dl>
 
-    {{  for name, title in EXTENSIONS:
+{{      for name, title in EXTENSIONS:
           <dt><a href="../../${name}/doc/html/index.html">${name}</a></dt><dd>${title}</a></dd>
-    }}
+}}
 
         </dl>
         \endhtmlonly

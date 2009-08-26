@@ -22,6 +22,8 @@ env.Help("""
 Additional top-level build targets:
 
 prepare      Create all target files not part of the repository
+default      Build all default targets (like calling scons with no arguments)
+examples     Build all examples
 all_tests    Build and run unit tests for all modules
 all_docs     Build documentation for all modules
 all          Build everything

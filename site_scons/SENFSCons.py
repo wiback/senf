@@ -100,23 +100,25 @@ def AllIncludesHH(env, exclude=[]):
 # parameters with their actual value. Parameters are marked with ((name)) )
 
 def AutoRules(env, exclude=[], subdirs=[], doc_extra_sources = []):
-    import SENFSCons, glob, os.path
+    import SENFSCons
 
-    sources, tests, includes      = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
-    subscripts                    = glob.glob("*/SConscript")
+    sources, tests, includes = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
+    subscripts               = env.Glob("*/SConscript")
+    doxyfile                 = env.Glob("Doxyfile")
 
-    if sources                    : env.Append(ALLOBJECTS = env.Object(sources))
-    if tests                      : env.BoostUnitTest('test', tests)
-    if includes                   : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
-    if os.path.exists("Doxyfile") : SENFSCons.Doxygen(env, extra_sources=((doc_extra_sources)) )
-    if subscripts                 : SConscript(glob.glob("*/SConscript"))
+    if sources               : env.Append(ALLOBJECTS = env.Object(sources))
+    if tests                 : env.BoostUnitTest('test', tests)
+    if includes              : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+    if doxyfile              : SENFSCons.Doxygen(env, extra_sources=((doc_extra_sources)) )
+    if subscripts            : SConscript(subscripts)
 
 
 def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
-    import SENFSCons, glob, os.path
+    import SENFSCons
 
-    sources, tests, includes      = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
-    subscripts                    = glob.glob("*/SConscript")
+    sources, tests, includes = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
+    subscripts               = env.Glob("*/SConscript")
+    doxyfile                 = env.Glob("Doxyfile")
 
     objects = env.Object(sources)
     cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', objects, NAME=((name)))
@@ -125,7 +127,7 @@ def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
     env.Append(ALLOBJECTS = objects, PACKET_BUNDLES = cobject)
     env.Install('$OBJINSTALLDIR', cobject)
 
-    if tests                      : env.BoostUnitTest('test', tests + cobject)
-    if includes                   : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
-    if os.path.exists("Doxyfile") : SENFSCons.Doxygen(env, extra_sources=((doc_extra_sources)) )
-    if subscripts                 : SConscript(glob.glob("*/SConscript"))
+    if tests                 : env.BoostUnitTest('test', tests + cobject)
+    if includes              : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)
+    if doxyfile              : SENFSCons.Doxygen(env, extra_sources=((doc_extra_sources)) )
+    if subscripts            : SConscript(subscripts)
