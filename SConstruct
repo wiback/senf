@@ -75,7 +75,7 @@ env.Append(
    INCLUDEINSTALLDIR      = '$PREFIX${syslayout and "/include" or ""}',
    OBJINSTALLDIR          = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
    DOCINSTALLDIR          = '$PREFIX/manual',
-   SCONSINSTALLDIR        = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
+   SCONSINSTALLDIR        = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}/site_scons',
    CPP_INCLUDE_EXTENSIONS = [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti' ],
    CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
 
@@ -153,7 +153,7 @@ env.Default(libsenf)
 env.Install('$LIBINSTALLDIR', libsenf)
 
 #### install_all, default, all_tests, all
-env.Install('${SCONSINSTALLDIR}', 'site_scons')
+env.Install('${SCONSINSTALLDIR}', 'site_scons/senfutil.py')
 
 env.Alias('install_all', env.FindInstalledFiles())
 env.Alias('default', DEFAULT_TARGETS)
