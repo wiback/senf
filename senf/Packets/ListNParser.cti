@@ -68,6 +68,18 @@ prefix_ void senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::init(dat
 
 template <class ElementParser, class AuxPolicy>
 prefix_ void
+senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::construct(container_type & c)
+    const
+{}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::destruct(container_type & c)
+    const
+{}
+
+template <class ElementParser, class AuxPolicy>
+prefix_ void
 senf::detail::ListNParser_Policy<ElementParser,AuxPolicy>::erase(container_type & c,
                                                                  data_iterator p)
     const
