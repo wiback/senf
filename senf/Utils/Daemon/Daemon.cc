@@ -317,7 +317,7 @@ prefix_ void senf::Daemon::configure()
         if (argv_[i] == std::string("--no-daemon"))
             daemonize(false);
         else if (boost::starts_with(argv_[i], std::string("--console-log="))) {
-            std::string arg (std::string(argv_[i]), 14u);
+            std::string arg (std::string(argv_[i]).substr(14u));
             std::string::size_type komma (arg.find(','));
             if (komma == std::string::npos) {
                 boost::trim(arg);
