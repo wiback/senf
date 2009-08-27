@@ -1,0 +1,122 @@
+// $Id: ListOptionTypeParser.ih 965 2008-11-18 16:04:20Z pug $
+//
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Philipp.Batroff@fokus.fraunhofer.de
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+ \brief ListOptionTypeParser internal header */
+
+#ifndef IH_SENF_Packets_ListOptionTypeParser_
+#define IH_SENF_Packets_ListOptionTypeParser_ 1
+
+// Custom includes
+#include "ListParser.ih"
+
+///////////////////////////////ih.p////////////////////////////////////////
+
+namespace senf {
+    namespace detail {
+
+        /** \brief Internal: ListPolicy defing the ListOptionTypeParser parser
+         \internal
+         \see \ref ListOptionTypeParser
+         */
+        template <class ElementParser, class AuxPolicy>
+        struct ListOptionTypeParser_Policy
+        : public AuxPolicy
+        {
+            struct container_policy;
+
+            typedef PacketParserBase::data_iterator data_iterator;
+            typedef PacketParserBase::state_type state_type;
+            typedef PacketParserBase::size_type size_type;
+
+            typedef ElementParser element_type;
+            typedef ListParser< ListOptionTypeParser_Policy > parser_type;
+            typedef ListParser_Container< container_policy > container_type;
+
+            static const size_type init_bytes = AuxPolicy::aux_bytes;
+
+            ListOptionTypeParser_Policy();
+            template <class Arg> ListOptionTypeParser_Policy(Arg const & arg);
+
+            size_type bytes (data_iterator i, state_type s) const;
+            size_type size (data_iterator i, state_type s) const;
+            void init (data_iterator i, state_type s) const;
+
+            /** \brief Internal: ListOptionTypeParser container/wrapper policy */
+            struct container_policy
+            : public AuxPolicy
+            {
+                typedef PacketParserBase::data_iterator data_iterator;
+                typedef PacketParserBase::state_type state_type;
+                typedef PacketParserBase::size_type size_type;
+
+                typedef ListOptionTypeParser_Policy<ElementParser, AuxPolicy> parser_policy;
+                typedef typename parser_policy::element_type element_type;
+                typedef typename parser_policy::parser_type parser_type;
+                typedef typename parser_policy::container_type container_type;
+
+                static const size_type init_bytes = parser_policy::init_bytes;
+
+                container_policy(parser_policy const & p);
+                ~container_policy();
+                size_type bytes (data_iterator i, state_type s) const;
+                size_type size (data_iterator i, state_type s) const;
+                void init (data_iterator i, state_type s);
+
+                void erase (container_type & c, data_iterator p);
+                void insert (container_type & c, data_iterator p);
+                void update (container_type const & c) const;
+
+                void destruct(container_type & c);
+                void construct(container_type & c);
+
+                /** \brief Internal: ListOptionTypeParser specific iterator data */
+                struct iterator_data {};
+
+                data_iterator setBegin (container_type const & c, iterator_data & d) const;
+                data_iterator setEnd (container_type const & c, iterator_data & d) const;
+                void setFromPosition (container_type const & c, iterator_data & d,data_iterator p) const;
+
+                data_iterator next (container_type const & c, iterator_data & d) const;
+                data_iterator raw (container_type const & c, iterator_data const & d) const;
+
+                size_type n_;
+                mutable size_type realAux_;
+                mutable size_type container_size_;
+            };
+        };
+}
+}
+
+///////////////////////////////ih.e////////////////////////////////////////
+#endif
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:

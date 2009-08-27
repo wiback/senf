@@ -27,8 +27,12 @@
 #define HH_SENF_Packets_DefaultBundle_IPv6Extensions_ 1
 
 // Custom includes
-#include "IPv6Packet.hh"
+#include <senf/Packets/Packets.hh>
+#include <senf/Packets/AuxParser.hh>
+#include <senf/Packets/ListOptionTypeParser.hh>
+#include <senf/Packets/DefaultBundle/IPv6ExtOptionType.hh>
 
+#include "IPv6Packet.hh"
 //#include "IPv6Extensions.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -225,13 +229,19 @@ The Type 0 Routing header has the following format: (RFC 2460)
     <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
     */
 
-// Hop-By-Hop skeleton without Options 
+// Hop-By-Hop Extension Header
 
     struct IPv6PacketParserExtension_HopByHop : public PacketParserBase {
 #       include SENF_PARSER()
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
         SENF_PARSER_FIELD ( headerLength, UInt8Parser );
-        
+
+        typedef detail::FixedAuxParserPolicy<UInt8Parser, 1u> ListOptionTypeAuxPolicy;
+        typedef detail::ListOptionTypeParser_Policy<GenericOptTypeTLVPacketParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
+        typedef ListParser<ListOptionTypePolicy> ListOptionTypeParser;
+
+        SENF_PARSER_FIELD  ( options, ListOptionTypeParser);
+
         SENF_PARSER_FINALIZE ( IPv6PacketParserExtension_HopByHop );
     };
     
@@ -295,6 +305,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
     // Destination Options skeleton without TLV-Options
 
     struct IPv6PacketParserExtension_Destination : public PacketParserBase {
+
 #       include SENF_PARSER()
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
         SENF_PARSER_FIELD ( headerLength, UInt8Parser );

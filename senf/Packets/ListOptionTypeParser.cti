@@ -1,0 +1,230 @@
+// $Id: ListOptionTypeParser.cti 869 2008-06-09 13:57:27Z pug $
+//
+// Copyright (C) 2007
+// Fraunhofer Institute for Open Communication Systems (FOKUS)
+// Competence Center NETwork research (NET), St. Augustin, GERMANY
+//     Philipp.Batroff@fokus.fraunhofer.de
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the
+// Free Software Foundation, Inc.,
+// 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+/** \file
+ \brief ListOptionTypeParser inline template implementation */
+
+#include "ListOptionTypeParser.ih"
+
+// Custom includes
+
+#define prefix_ inline
+///////////////////////////////cti.p///////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>
+
+template<class ElementParser, class AuxPolicy>
+prefix_ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::ListOptionTypeParser_Policy() {
+}
+
+template<class ElementParser, class AuxPolicy>
+template<class Arg>
+prefix_ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::ListOptionTypeParser_Policy(Arg const & arg) :AuxPolicy(arg) {
+}
+
+template<class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::size_type
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::bytes(data_iterator i, state_type s) const {
+    return AuxPolicy::aux(i, s) + AuxPolicy::aux_bytes;
+}
+
+template<class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::size_type
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::size(data_iterator i, state_type s) const {
+    parser_type p(*this, i, s);
+    container_type c(p);
+    return std::distance(c.begin(), c.end());
+}
+
+template<class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::init(data_iterator i, state_type s) const {
+    AuxPolicy::aux(0, i, s);
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::ListOptionTypeParser_Policy<ElementParser,BytesParser>
+
+//constructor
+template<class ElementParser, class AuxPolicy>
+prefix_ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::container_policy(parser_policy const & p) :
+    AuxPolicy(p) {
+}
+
+//destructor
+template<class ElementParser, class AuxPolicy>
+prefix_ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::~container_policy()
+{}
+
+//construct method
+template<class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::construct(container_type & c) {
+    data_iterator i = c.i();
+    realAux_ = (AuxPolicy::aux(i, c.state()) * 8) + 6;
+    data_iterator e = i + realAux_;
+    for (n_ = 0; i != e; ++n_) {
+        unsigned int elByte = senf::bytes(ElementParser(i, c.state()));
+        if (((i + elByte) == e) && (i[0] == 0u || i[0] == 1u)) { //check wether last element is padding or not
+            realAux_ -= std::distance(i, e);
+            c.data().erase(i, e); //delete padding
+            e = i; //set end iterator
+        } else
+            std::advance(i, elByte);
+    }
+    //    container_size_ = std::distance(i,e);
+    container_size_ = c.data().size(); //set actual size without padding
+}
+
+//destruct method
+template<class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::destruct(container_type & c) {
+    //	data_iterator i (AuxPolicy::adjust(parser_type::get(p).i(), parser_type::get(p).state()));
+    data_iterator i = c.i();
+    data_iterator const e = i + realAux_;
+    unsigned int padBytes = (realAux_ % 8);
+    c.data().insert(e, padBytes, 0u);
+    if (padBytes > 0) {
+        if (padBytes > 1) {
+            e[0] = 1;
+            e[1] = padBytes - 2;
+        } else
+            e[0] = 0;
+        container_size_ += padBytes;
+        ++n_;
+    }
+    AuxPolicy::aux((realAux_ / 8 - 1), i, c.state());
+}
+
+//bytes()
+template<class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::size_type
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::bytes(data_iterator i,state_type s) const {
+    return (realAux_ + 2);
+}
+
+//size()
+template<class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::size_type
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::size(data_iterator i,state_type s) const {
+    return n_;
+}
+
+//init()
+template<class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::init(data_iterator i, state_type s) {
+    n_ = 0;
+    container_size_ = s->size();
+    AuxPolicy::aux(0, i, s);
+}
+
+//erase()
+template<class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::erase(container_type & c, data_iterator p) {
+    size_type b(senf::bytes(ElementParser(p, c.state()))); //length of parser
+    //    AuxPolicy::aux(
+    //    		AuxPolicy::aux( c.i(), c.state()) -b,
+    //    		c.i(),
+    //    		c.state());
+    realAux_ -= b;
+    --n_;
+    // The container will be reduced by b bytes directly after this call
+    container_size_ = c.data().size() - b;
+}
+
+//insert()
+template<class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::insert(container_type & c, data_iterator p) {
+    size_type b(senf::bytes(ElementParser(p, c.state())));
+    //    AuxPolicy::aux( AuxPolicy::aux(c.i(), c.state())+b, c.i(), c.state());
+    realAux_ += b;
+    ++n_;
+    container_size_ = c.data().size();
+}
+
+//update()
+template<class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::update(container_type const & c) const {
+    if (container_size_ == c.data().size())
+        return;
+    data_iterator i(AuxPolicy::adjust(c.i(), c.state()));
+    data_iterator j(i);
+    for (size_type n(n_); n; --n, std::advance(j, senf::bytes(ElementParser(j,c.state()))));
+    realAux_ = std::distance(i, j);
+    //    aux( std::distance(i,j), c.i(), c.state() );
+    container_size_ = c.data().size();
+}
+
+//setbegin()
+template<class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::setBegin(container_type const & c, iterator_data & d) const {
+    return c.i();
+    //    return AuxPolicy::adjust(c.i(), c.state());
+}
+
+//setEnd()
+template<class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::setEnd(container_type const & c, iterator_data & d) const { //wtf??
+    return boost::next(AuxPolicy::adjust(c.i(), c.state()), aux(c.i(),c.state()));
+}
+
+//setFromPosition()
+template<class ElementParser, class AuxPolicy>
+prefix_ void
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::setFromPosition(container_type const & c, iterator_data & d, data_iterator p) const {
+}
+
+//next()
+template<class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::next(container_type const & c, iterator_data & d) const {
+    return boost::next(container_type::iterator::get(d).i(), senf::bytes(ElementParser(container_type::iterator::get(d).i(), c.state())));
+}
+
+//raw()
+template<class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::raw(container_type const & c, iterator_data const & d) const {
+    return container_type::iterator::get(d).i();
+}
+
+///////////////////////////////cti.e///////////////////////////////////////
+#undef prefix_
+
+
+// Local Variables:
+// mode: c++
+// fill-column: 100
+// comment-column: 40
+// c-file-style: "senf"
+// indent-tabs-mode: nil
+// ispell-local-dictionary: "american"
+// compile-command: "scons -u test"
+// End:
