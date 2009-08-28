@@ -1,18 +1,8 @@
-# Local files (files in this directory)
-/Doxyfile.local
-/.prepare-stamp
-/libsenf.a
-/build-arch-debug-stamp
-/build-arch-final-stamp
-/build-indep-stamp
-/configure-stamp
-/linklint
-/SConscript.local
-
 # File name patters to ignore in all directories
 *.pyc
 *.png
 *.o
+*.a
 *.test.checked
 .sconsign*
 *~
@@ -24,6 +14,12 @@ all_includes.hh
 doc/
 .test.bin
 .test.stamp
-/libsenf_g.a
+
+# Local files (files in this directory)
+/Doxyfile.local
+/SConscript.local
+/*-stamp
+/*.conf
+/linklint
 /TODO
 /dist/

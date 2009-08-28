@@ -55,36 +55,17 @@
     \code
     import sys
     sys.path.extend(('senf/site_scons','/usr/lib/senf/site_scons'))
-    import os.path, glob, senfutil
+    import glob, senfutil
 
     env = Environment()
+    senfutil.SetupForSENF(env)
+    senfutil.DefaultOptions(env)
 
-    senfutil.SetupForSENF( env )
-
-    env.Append(
-
-        LIBS            = [ ],
-        CXXFLAGS        = [ '-Wall', '-Woverloaded-virtual' ],
-        LINKFLAGS       = [ ],
-
-        CXXFLAGS_debug  = [ ],
-        LINKFLAGS_debug = [ ],
-        LOGLEVELS_debug = [ 'senf::log::Debug||VERBOSE' ],
-
-        CXXFLAGS_final  = [ '-O3' ],
-        LINKFLAGS_final = [ ],
-        LOGLEVELS_final = [ ],
-
-        SENF_BUILDOPTS  = [ ],
-
-    )
+    env.Append( LOGLEVELS_debug  = [ 'senf::log::Debug||VERBOSE' ] )
 
     env.Default(
-        env.Program( target = 'udpforward',
-                     source = glob.glob('*.cc') )
+        env.Program( target = 'udpforward', source = glob.glob('*.cc') )
     )
-
-    env.Clean(DEFAULT_TARGETS, [ 'udpforward.log', 'udpforward.pid' ])
     \endcode
 
     This example builds a simple binary from a number of source files (all '.cc' files). It links
@@ -92,17 +73,94 @@
     <tt>senfutil.SetupForSENF( env )</tt>.
 
     This script automatically uses a SENF installation either symlinked or imported into the current
-    project in directory 'senf' or, if this directory does not exist, a globaly installed SENF. A
-    locally installed SENF is automatically recompiled if needed. Parallel building is also
-    supported.
+    project in directory 'senf' or, if this directory does not exist, a globally installed SENF.
 
-    This script automatically supports the \c final and \c LOGLEVELS command line parameters. The
-    LOGLEVELS parameter uses a much more readable syntax than SENF_LOG_CONF:
-    <pre>
-    $ scons -j2 final=1 \
-          LOGLEVELS='senf::log::Debug||IMPORTANT myapp::Transactions|mytrans::Area|VERBOSE'
-    </pre>
+    \see \ref senf_senfutil
 */
+
+/** \page senf_senfutil SENF SCons build utility
+
+    The \c senfutil utility for SCons helps setting up a project to compile against SENF:
+
+    \li \c senfutil adds all necessary libraries to link against
+    \li \c senfutil will set necessary compile options.
+    \li \c senfutil supports normal, debug and final project build options
+    \li \c senfutil allows specifying variables on the scons command line
+    \li \c senfutil supports more readable compile-time SENF loglevel configuration
+
+    Using the utility is quite simple
+
+    \code
+    import sys
+    sys.path.extend(('senf/site_scons','/usr/lib/senf/site_scons'))
+    import glob, senfutil
+
+    env = Environment()
+    senfutil.SetupForSENF(env)
+    # senfutil.DefaultOptions(env)
+
+    # Set or change SCons environment variables with env.Append, env.Replace or env.SetDefault
+    env.Append(
+        CXXFLAGS         = [ '-Wall', '-Woverloaded-virtual' ],
+        CXXFLAGS_final   = [ '-O2' ],
+        CXXFLAGS_normal  = [ '-O0', '-g' ],
+        CXXFLAGS_debug   = [ '$CXXFLAGS_normal' ],
+    
+        LINKFLAGS_normal = [ '-Wl,-S' ],
+
+        LOGLEVELS_debug  = [ 'senf::log::Debug||VERBOSE' ],
+    )
+
+    env.Default(
+        env.Program( target='udpforward', source=glob.glob('*.cc') )
+    )
+    \endcode
+
+    \section senf_senfutil_options Build options
+
+    \c senfutil supports the <tt>debug=1</tt> or <tt>final=1</tt> build options. These parameters
+    select one of the build configurations 'debug', 'normal' or 'final'. The following variables are
+    supported each with separate values for all three configurations:
+
+    \li \c CXXFLAGS    
+    \li \c CPPDEFINES
+    \li \c LINKFLAGS
+    \li \c LOGLEVELS
+
+    \c senfutil will detect the type of SENF library used (final or not) and set the correct compile
+    options.
+
+    \section senf_senfutil_loglevels Specifying compile-time loglevels
+
+    To simplify specifying the compile-time loglevel configuration, the build variable \c LOGLEVELS
+    (and it's build configuration specific variants) may be set. This variable will be parsed and
+    converted into the correct \c SENF_LOG_CONF definition. The \c LOGLEVELS Syntax is
+
+    \par "" \e optional_stream \c | \e optional_area | \e level
+
+    where \e optional_stream and \e optional_area are optional fully scoped C++ names (e.g. \c
+    senf::log::Debug) and \e level is the loglevel. There must be \e no whitespace in a single
+    specification, multiple specifications are either specified using an array or separated with
+    whitespace. 
+
+    \section senf_senfutil_default Default options
+
+    In the example above, all compile options are set manually. To specify the default customary
+    compile options for SENF programs, \c senfutil.DefaultOptions(env) is provided. This function is
+    identical to:
+
+    \code
+    senfutil.DefaultOptions(env) =>
+        env.Append(
+            CXXFLAGS         = [ '-Wall', '-Woverloaded-virtual' ],
+            CXXFLAGS_final   = [ '-O2' ],
+            CXXFLAGS_normal  = [ '-O0', '-g' ],
+            CXXFLAGS_debug   = [ '$CXXFLAGS_normal' ],
+
+            LINKFLAGS_normal = [ '-Wl,-S' ],
+        )
+    \endcode
+ */
 
 /** \page senf_usage Using the SENF framework
 

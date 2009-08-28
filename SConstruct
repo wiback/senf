@@ -46,14 +46,6 @@ additionally, any construction environment variable may be set from the scons
 command line (see SConstruct file and SCons documentation for a list of variables).
 """)
 
-class BuildTypeOptions:
-    def __init__(self, var):
-        self._var = var
-
-    def __call__(self, target, source, env, for_signature):
-        type = env['final'] and "final" or env['debug'] and "debug" or "normal"
-        return env[self._var + "_" + type]
-
 env.Replace(
    PKGDRAW                = 'doclib/pkgdraw',
 )
@@ -76,6 +68,8 @@ env.Append(
    OBJINSTALLDIR          = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
    DOCINSTALLDIR          = '$PREFIX/manual',
    SCONSINSTALLDIR        = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}/site_scons',
+   CONFINSTALLDIR         = '$OBJINSTALLDIR',
+
    CPP_INCLUDE_EXTENSIONS = [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti' ],
    CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
 
@@ -89,20 +83,20 @@ env.Append(
    INLINE_OPTS            = [ '$INLINE_OPTS_NORMAL' ],
    CXXFLAGS               = [ '-Wall', '-Woverloaded-virtual', '-Wno-long-long', '$INLINE_OPTS',
                               '$CXXFLAGS_' ],
-   CXXFLAGS_              = BuildTypeOptions('CXXFLAGS'),
+   CXXFLAGS_              = senfutil.BuildTypeOptions('CXXFLAGS'),
    CXXFLAGS_final         = [ '-O3' ],
    CXXFLAGS_normal        = [ '-O0', '-g' ],
    CXXFLAGS_debug         = [ '$CXXFLAGS_normal' ],
 
    CPPDEFINES             = [ '$expandLogOption', '$CPPDEFINES_' ],
    expandLogOption        = senfutil.expandLogOption,
-   CPPDEFINES_            = BuildTypeOptions('CPPDEFINES'),
+   CPPDEFINES_            = senfutil.BuildTypeOptions('CPPDEFINES'),
    CPPDEFINES_final       = [ ],
    CPPDEFINES_normal      = [ 'SENF_DEBUG' ],
    CPPDEFINES_debug       = [ '$CPPDEFINES_normal' ],
 
    LINKFLAGS              = [ '-rdynamic', '$LINKFLAGS_' ],
-   LINKFLAGS_             = BuildTypeOptions('LINKFLAGS'),
+   LINKFLAGS_             = senfutil.BuildTypeOptions('LINKFLAGS'),
    LINKFLAGS_final        = [ ],
    LINKFLAGS_normal       = [ '-Wl,-S' ],
    LINKFLAGS_debug        = [ ],
@@ -149,8 +143,16 @@ env.Depends(SENFSCons.Doxygen(env), env.Value(env['ENV']['REVISION']))
 #### libsenf.a
 libsenf = env.Library("$LOCALLIBDIR/${LIBSENF}${LIBADDSUFFIX}", env['ALLOBJECTS'])
 env.Default(libsenf)
-
 env.Install('$LIBINSTALLDIR', libsenf)
+
+def create(target, source, env): 
+    file(str(target[0]), 'w').write(source[0].get_contents()+"\n")
+env['BUILDERS']['CreateFile'] = Builder(action = create)
+
+conf = env.CreateFile("${LOCALLIBDIR}/${LIBSENF}${LIBADDSUFFIX}.conf", 
+                      env.Value(env.subst("$_CPPDEFFLAGS")))
+env.Default(conf)
+env.Install('$CONFINSTALLDIR', conf)
 
 #### install_all, default, all_tests, all
 env.Install('${SCONSINSTALLDIR}', 'site_scons/senfutil.py')
