@@ -51,34 +51,14 @@
     \section senfutil_overview Building Projects using SENF
 
     When building projects using senf, SENFSCons has a very simple helper module \ref senfutil to
-    make the building of libraries utilizing senf simpler:
-    \code
-    import sys
-    sys.path.extend(('senf/site_scons','/usr/lib/senf/site_scons'))
-    import glob, senfutil
-
-    env = Environment()
-    senfutil.SetupForSENF(env)
-    senfutil.DefaultOptions(env)
-
-    env.Append( LOGLEVELS_debug  = [ 'senf::log::Debug||VERBOSE' ] )
-
-    env.Default(
-        env.Program( target = 'udpforward', source = glob.glob('*.cc') )
-    )
-    \endcode
-
-    This example builds a simple binary from a number of source files (all '.cc' files). It links
-    against the SENF library and automatically sets all the correct compiler options using
-    <tt>senfutil.SetupForSENF( env )</tt>.
-
-    This script automatically uses a SENF installation either symlinked or imported into the current
-    project in directory 'senf' or, if this directory does not exist, a globally installed SENF.
+    make the building of libraries utilizing senf simpler.
 
     \see \ref senf_senfutil
 */
 
-/** \page senf_senfutil SENF SCons build utility
+/** \page senf_senfutil SENF SCons build utility (senfutil.py)
+
+    \autotoc
 
     The \c senfutil utility for SCons helps setting up a project to compile against SENF:
 
@@ -115,6 +95,13 @@
         env.Program( target='udpforward', source=glob.glob('*.cc') )
     )
     \endcode
+
+    This example builds a simple binary from a number of source files (all '.cc' files). It links
+    against the SENF library and automatically sets all the correct compiler options using
+    <tt>senfutil.SetupForSENF( env )</tt>.
+
+    This script automatically uses a SENF installation either symlinked or imported into the current
+    project in directory 'senf' or, if this directory does not exist, a globally installed SENF.
 
     \section senf_senfutil_options Build options
 
@@ -160,6 +147,33 @@
             LINKFLAGS_normal = [ '-Wl,-S' ],
         )
     \endcode
+
+    Thus above example can be simplified to
+    \code
+    import sys
+    sys.path.extend(('senf/site_scons','/usr/lib/senf/site_scons'))
+    import glob, senfutil
+
+    env = Environment()
+    senfutil.SetupForSENF(env)
+    senfutil.DefaultOptions(env)
+
+    env.Append( LOGLEVELS_debug  = [ 'senf::log::Debug||VERBOSE' ] )
+
+    env.Default(
+        env.Program( target = 'udpforward', source = glob.glob('*.cc') )
+    )
+    \endcode
+
+    \section senf_senfutil_arguments 'scons' Command line arguments
+
+    \c senfutil automatically parses SCons command line arguments into the SCons build
+    environment. This allows specifying any parameter on the command line:
+    <pre>
+    $ scons CXXCOM=mygcc CXXFLAGS+=-mtune=geode
+    </pre>
+    You may either set variables unconditionally using '=' or append values to the end of a list
+    using '+='.
  */
 
 /** \page senf_usage Using the SENF framework

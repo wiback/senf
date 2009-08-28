@@ -22,6 +22,28 @@ class BuildTypeOptions:
         type = env['final'] and "final" or env['debug'] and "debug" or "normal"
         return env[self._var + "_" + type]
 
+def parseArguments(env, *defs):
+    vars = Variables(args=ARGUMENTS)
+    vars.AddVariables(*defs)
+    vars.Update(env)
+    env.Help("""
+Any construction environment variable may be set from the scons
+command line (see SConstruct file and SCons documentation for a list
+of variables) using
+
+   VARNAME=value    Assign new value  
+   VARNAME+=value   Append value at end
+
+Special command line parameters:
+""")
+    env.Help(vars.GenerateHelpText(env))
+    for k,v in vars.UnknownVariables().iteritems():
+        if k.endswith('+'):
+            env.Append(**{k[:-1]: v})
+        else:
+            env.Replace(**{k: v})
+
+
 ###########################################################################
 # This looks much more complicated than it is: We do three things here:
 # a) switch between final or debug options
@@ -73,14 +95,11 @@ def SetupForSENF(env, senf_paths = []):
         )
 
     # Interpret command line options
-    opts = Variables(args=ARGUMENTS)
-    opts.Add( 'LOGLEVELS', 'Special log levels. Syntax: <stream>|[<area>]|<level> ...',
-              '${"$LOGLEVELS_"+(final and "final" or "debug")}' )
-    opts.Add( BoolVariable('final', 'Build final (optimized) build', False) )
-    opts.Add( BoolVariable('debug', 'Link in debug symbols', False) )
-    opts.Update(env)
-    env.Replace(**dict(opts.UnknownVariables()))
-    env.Help(opts.GenerateHelpText(env))
+    parseArguments(
+        env, 
+        BoolVariable('final', 'Build final (optimized) build', False),
+        BoolVariable('debug', 'Link in debug symbols', False),
+    )
 
     # If we have a symbolic link (or directory) 'senf', we use it as our
     # senf repository
@@ -115,4 +134,5 @@ def DefaultOptions(env):
         CXXFLAGS_debug   = [ '$CXXFLAGS_normal' ],
 
         LINKFLAGS_normal = [ '-Wl,-S' ],
+        LINKFLAGS_debug  = [ '-g' ],
     )

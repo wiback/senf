@@ -35,15 +35,6 @@ debbin       Build debian binary package
 linklint     Check links of doxygen documentation with 'linklint'
 fixlinks     Fix broken links in doxygen documentation
 valgrind     Run all tests under valgrind/memcheck
-
-Build parameters:
-
-final=1      Build optimized library without debug symbols
-debug=1      Link all binaries with debug symbols (slow!)
-syslayout=1  Install into system layout directories ($$PREFIX/lib, $$PREFIX/include etc)
-
-additionally, any construction environment variable may be set from the scons
-command line (see SConstruct file and SCons documentation for a list of variables).
 """)
 
 env.Replace(
@@ -99,18 +90,23 @@ env.Append(
    LINKFLAGS_             = senfutil.BuildTypeOptions('LINKFLAGS'),
    LINKFLAGS_final        = [ ],
    LINKFLAGS_normal       = [ '-Wl,-S' ],
-   LINKFLAGS_debug        = [ ],
+   LINKFLAGS_debug        = [ '-g' ],
 )
 
 env.SetDefault(
     LIBSENF   = "senf",
-    final     = 0,
-    debug     = 0,
-    syslayout = 0
+    final     = False,
+    debug     = False,
+    syslayout = False
 )
 
 # Set variables from command line
-env.Replace(**ARGUMENTS)
+senfutil.parseArguments(
+    env,
+    BoolVariable('final', 'Build final (optimized) build', False),
+    BoolVariable('debug', 'Link in debug symbols', False),
+    BoolVariable('syslayout', 'Install in to system layout directories (lib/, include/ etc)', False),
+)
 
 Export('env')
 
