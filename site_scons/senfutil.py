@@ -73,11 +73,11 @@ def SetupForSENF(env, senf_paths = []):
         )
 
     # Interpret command line options
-    opts = Variables(ARGUMENTS)
+    opts = Variables(args=ARGUMENTS)
     opts.Add( 'LOGLEVELS', 'Special log levels. Syntax: <stream>|[<area>]|<level> ...',
               '${"$LOGLEVELS_"+(final and "final" or "debug")}' )
-    opts.Add( BoolOption('final', 'Build final (optimized) build', False) )
-    opts.Add( BoolOption('debug', 'Link in debug symbols', False) )
+    opts.Add( BoolVariable('final', 'Build final (optimized) build', False) )
+    opts.Add( BoolVariable('debug', 'Link in debug symbols', False) )
     opts.Update(env)
     env.Replace(**dict(opts.UnknownVariables()))
     env.Help(opts.GenerateHelpText(env))
