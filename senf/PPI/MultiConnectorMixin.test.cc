@@ -35,63 +35,73 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace ppi = senf::ppi;
+namespace connector = ppi::connector;
+namespace module = ppi::module;
+namespace debug = module::debug;
+
 namespace {
     // We only test the user-collection case, all other cases are already handled by
     // existing modules
 
     // Primitive duplicator
     class MyModule
-        : public senf::ppi::module::Module,
-          public senf::ppi::module::MultiConnectorMixin<MyModule,
-                                                        senf::ppi::connector::ActiveOutput<>,
-                                                        void, void>
+        : public module::Module,
+          public module::MultiConnectorMixin<MyModule, connector::ActiveOutput<>, void, void>
     {
         SENF_PPI_MODULE(MyModule);
     public:
-        senf::ppi::connector::PassiveInput<> input;
+        connector::PassiveInput<> input;
 
         MyModule()
-            {
-                noroute(input); 
-                input.onRequest(&MyModule::request);
-            }
+        {
+            noroute(input); 
+            input.onRequest(&MyModule::request);
+        }
 
     private:
         void connectorSetup(std::auto_ptr<ConnectorType> c)
-            {
-                route(input, *c);
-                connectors_.push_back(boost::shared_ptr<ConnectorType>(c));
-            }
+        {
+            route(input, *c);
+            connectors_.push_back(boost::shared_ptr<ConnectorType>(c));
+        }
 
         void request()
-            {
-                senf::Packet p (input());
-                for (Connectors::iterator i (connectors_.begin()), i_end (connectors_.end());
-                     i != i_end; ++i)
-                    (**i)(p);
-            }
+        {
+            senf::Packet p (input());
+            for (Connectors::iterator i (connectors_.begin()), i_end (connectors_.end());
+                    i != i_end; ++i)
+                (**i)(p);
+        }
 
         typedef std::vector< boost::shared_ptr<MyModule::ConnectorType> > Connectors;
         Connectors connectors_;
                 
-        friend class senf::ppi::module::MultiConnectorMixin<MyModule,
-                                                            senf::ppi::connector::ActiveOutput<>,
-                                                            void, void>;
-
+        friend class module::MultiConnectorMixin<MyModule, connector::ActiveOutput<>, void, void>;
     };
+        
+    struct IntAnnotation {
+        int value;
+        bool operator<(IntAnnotation const & other) const { return value < other.value; }
+        IntAnnotation() {}
+        IntAnnotation(int v) : value(v) {}
+    };
+
+    std::ostream & operator<<(std::ostream & os, IntAnnotation const & value)
+    { os << value.value; return os; }
 }
 
 BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
 {
-    senf::ppi::module::debug::ActiveSource source;
+    debug::ActiveSource source;
     MyModule module;
-    senf::ppi::module::debug::PassiveSink sink1;
-    senf::ppi::module::debug::PassiveSink sink2;
+    debug::PassiveSink sink1;
+    debug::PassiveSink sink2;
 
-    senf::ppi::connect(source, module);
-    senf::ppi::connect(module, sink1);
-    senf::ppi::connect(module, sink2);
-    senf::ppi::init();
+    ppi::connect(source, module);
+    ppi::connect(module, sink1);
+    ppi::connect(module, sink2);
+    ppi::init();
 
     senf::Packet p (senf::DataPacket::create());
 
@@ -100,7 +110,32 @@ BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
     BOOST_CHECK_EQUAL( sink2.size(), 1u );
     BOOST_CHECK( sink1.pop_front() == p );
     BOOST_CHECK( sink2.pop_front() == p );
+}
+
+BOOST_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
+{
+    // This test fails!
+    /*
+    debug::ActiveSource source;
+    debug::PassiveSink sink;
+    module::PassiveJoin join1;
+    module::PassiveJoin join2;
+    module::AnnotationRouter<IntAnnotation> router;
+    MyModule module;
     
+    ppi::connect(source, join1);
+    ppi::connect(join1, router);
+    ppi::connect(router, join2, 1);
+    ppi::connect(join2, module);
+    ppi::connect(module, sink);
+    
+    senf::Packet p (senf::DataPacket::create());
+    p.annotation<IntAnnotation>().value = 1;
+
+    source.submit(p);
+    BOOST_CHECK_EQUAL( sink.size(), 1u );
+    BOOST_CHECK( sink.pop_front() == p );
+    */
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
