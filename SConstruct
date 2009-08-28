@@ -3,6 +3,11 @@
 import sys, glob, os.path, fnmatch
 import SENFSCons, senfutil
 
+try:
+    BoolVariable
+except NameError:
+    BoolVariable = BoolOption
+
 ###########################################################################
 # Load utilities and setup libraries and configure build
 

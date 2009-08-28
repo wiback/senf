@@ -170,7 +170,7 @@
     \c senfutil automatically parses SCons command line arguments into the SCons build
     environment. This allows specifying any parameter on the command line:
     <pre>
-    $ scons CXXCOM=mygcc CXXFLAGS+=-mtune=geode
+    $ scons CXX=myg++ CXXFLAGS+=-mtune=geode
     </pre>
     You may either set variables unconditionally using '=' or append values to the end of a list
     using '+='.

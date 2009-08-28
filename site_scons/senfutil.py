@@ -1,6 +1,13 @@
 import os.path
 from SCons.Script import *
 
+# Fix for SCons 0.97 compatibility
+try:
+    Variables
+except NameError: 
+    Variables = Options
+    BoolVariable = BoolOption
+
 def parseLogOption(value):
     stream, area, level = ( x.strip() for x in value.strip().split('|') )
     stream = ''.join('(%s)' % x for x in stream.split('::') )
@@ -24,7 +31,7 @@ class BuildTypeOptions:
 
 def parseArguments(env, *defs):
     vars = Variables(args=ARGUMENTS)
-    vars.AddVariables(*defs)
+    for d in defs : vars.Add(d)
     vars.Update(env)
     env.Help("""
 Any construction environment variable may be set from the scons
@@ -37,7 +44,9 @@ of variables) using
 Special command line parameters:
 """)
     env.Help(vars.GenerateHelpText(env))
-    for k,v in vars.UnknownVariables().iteritems():
+    try                  : unknv = vars.UnknownVariables()
+    except AttributeError: unknv = vars.UnknownOptions()
+    for k,v in unknv.iteritems():
         if k.endswith('+'):
             env.Append(**{k[:-1]: v})
         else:
