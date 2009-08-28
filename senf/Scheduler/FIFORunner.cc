@@ -248,7 +248,12 @@ prefix_ void senf::scheduler::detail::FIFORunner::watchdogError()
                                 'a', 'b', 'c', 'd', 'e', 'f' };
     static void * entries[SENF_DEBUG_BACKTRACE_NUMCALLERS];
     
-    write(1, "\n\n*** Scheduler task hanging: ", 30);
+    write(1, "\n\n*** Scheduler task hanging (pid ",34);
+    static char pid[7];
+    ::snprintf(pid, 7, "%6d", ::getpid());
+    pid[6] = 0;
+    write(1, pid, 6);
+    write(1, "): ", 3);
     write(1, runningName_.c_str(), runningName_.size());
     write(1, " at\n ", 3);
 
