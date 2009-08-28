@@ -314,10 +314,11 @@ prefix_ void senf::Daemon::configure()
 {
     // int i (not unsigned) since argc_ is int ...
     for (int i (1); i<argc_; ++i) {
-        if (argv_[i] == std::string("--no-daemon"))
+        std::string argv (argv_[i]);
+        if (argv == "--no-daemon")
             daemonize(false);
-        else if (boost::starts_with(argv_[i], std::string("--console-log="))) {
-            std::string arg (std::string(argv_[i]).substr(14u));
+        else if (boost::starts_with(argv, "--console-log=")) {
+            std::string arg (argv.substr(14u));
             std::string::size_type komma (arg.find(','));
             if (komma == std::string::npos) {
                 boost::trim(arg);
@@ -334,7 +335,7 @@ prefix_ void senf::Daemon::configure()
                 else if (! arg2.empty() )        consoleLog(arg2, StdErr);
             }
         }
-        else if (boost::starts_with(argv_[i], std::string("--pid-file="))) 
+        else if (boost::starts_with(argv, "--pid-file="))
             pidFile(std::string(std::string(argv_[i]), 11u));
     }
 }
