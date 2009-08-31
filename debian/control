@@ -7,7 +7,6 @@ Build-Depends: debhelper (>= 5), scons (>= 0.97), g++, binutils-dev,
 	libboost-date-time-dev | libboost-date-time1.35-dev,
 	libboost-regex-dev | libboost-regex1.35-dev,
 	libboost-filesystem-dev | libboost-filesystem1.35-dev,
-	libboost-serialization-dev | libboost-serialization1.35-dev,
 	libboost-iostreams-dev | libboost-iostreams1.35-dev,
 	libboost-signals-dev | libboost-signals1.35-dev, 
 	doxygen (>= 1.5.5), libreadline-dev, dia, tidy, xsltproc, graphviz,
@@ -43,7 +42,6 @@ Depends: binutils-dev, libboost-dev | libboost-1.35-dev,
 	libboost-regex-dev | libboost-regex1.35-dev,
 	libboost-date-time-dev | libboost-date-time1.35-dev,
 	libboost-thread-dev | libboost-thread1.35-dev,
-	libboost-serialization-dev | libboost-serialization1.35-dev,
 	libboost-filesystem-dev | libboost-filesystem1.35-dev,
 	libboost-signals-dev | libboost-signals1.35-dev, 
 	libsenf (=${source:Version}) | libsenf-dbg (=${source:Version})
@@ -61,6 +59,18 @@ Package: libsenf-doc
 Section: doc
 Architecture: all
 Description: SENF Extensible Network Framework, documentation and examples
+ The SENF Simple and Extensible Network Framework aims to be a
+ complete set of libraries to facilitate the development of network
+ applications focusing on network protocols on the layers below the
+ application layer. However, the framework includes many general
+ purpose utilities and will be expedient to use well beyond its primary
+ objective.
+
+Package: libsenf-tools
+Section: libdevel
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: SENF Extensible Network Framework, utilities
  The SENF Simple and Extensible Network Framework aims to be a
  complete set of libraries to facilitate the development of network
  applications focusing on network protocols on the layers below the

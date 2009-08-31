@@ -3,3 +3,4 @@
 /*.debhelper.log
 /libsenf*/
 /tmp/
+/*.substvars

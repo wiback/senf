@@ -3,6 +3,7 @@
 import sys, glob, os.path, fnmatch
 import SENFSCons, senfutil
 
+# Fix for SCons 0.97 compatibility
 try:
     BoolVariable
 except NameError:
@@ -14,6 +15,7 @@ except NameError:
 env = Environment()
 
 # Load all the local SCons tools
+env.Tool('Doxygen')
 env.Tool('Doxygen')
 env.Tool('Dia2Png')
 env.Tool('PkgDraw')
@@ -48,7 +50,7 @@ env.Replace(
 
 env.Append(
    ENV                    = { 'PATH' : os.environ.get('PATH') },
-   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*', '.sconsign' ],
+   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
 
    CPPPATH                = [ '#' ],
    LOCALLIBDIR            = '#',
@@ -61,10 +63,10 @@ env.Append(
    LIBINSTALLDIR          = '$PREFIX${syslayout and "/lib" or ""}',
    BININSTALLDIR          = '$PREFIX${syslayout and "/bin" or ""}',
    INCLUDEINSTALLDIR      = '$PREFIX${syslayout and "/include" or ""}',
-   OBJINSTALLDIR          = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
-   DOCINSTALLDIR          = '$PREFIX/manual',
-   SCONSINSTALLDIR        = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}/site_scons',
-   CONFINSTALLDIR         = '$OBJINSTALLDIR',
+   CONFINSTALLDIR         = '${syslayout and "$LIBINSTALLDIR/senf" or "$PREFIX"}',
+   OBJINSTALLDIR          = '$CONFINSTALLDIR',
+   DOCINSTALLDIR          = '$PREFIX${syslayout and "/share/doc/senf" or "/manual"}',
+   SCONSINSTALLDIR        = '$CONFINSTALLDIR/site_scons',
 
    CPP_INCLUDE_EXTENSIONS = [ '.h', '.hh', '.ih', '.mpp', '.cci', '.ct', '.cti' ],
    CPP_EXCLUDE_EXTENSIONS = [ '.test.hh' ],
@@ -183,6 +185,7 @@ env.PhonyTarget('valgrind', [ 'all_tests' ], [ """
 env.Clean('all', '.prepare-stamp')
 env.Clean('all', libsenf)
 env.Clean('all', env.Dir('linklint')) # env.Dir to disambiguate from linklint PhonyTarget
+env.Clean('all', env.Dir('dist'))
 
 if env.GetOption('clean'):
     env.Clean('all', [ os.path.join(path,f)

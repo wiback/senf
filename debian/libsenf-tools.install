@@ -1,4 +1,3 @@
-debian/tmp/usr/include/senf
-debian/tmp/usr/lib/senf/site_scons
+debian/tmp/usr/bin
 README usr/share/doc/libsenf-dev
 debian/README.Debian usr/share/doc/libsenf-dev

@@ -95,7 +95,7 @@ install-indep: build-indep
 	dh_installdirs -i
 # 	Add here commands to install the indep part of the package into
 # 	debian/<package>-doc.
-	dh_install -X.svn -i
+	dh_install -X.svn -X.git -i
 
 install-arch: build-arch
 	dh_testdir
@@ -104,7 +104,7 @@ install-arch: build-arch
 	dh_installdirs -s
 # 	Add here commands to install the arch part of the package into 
 # 	debian/tmp.
-	dh_install -X.svn -s
+	dh_install -X.svn -X.git -s
 
 # Must not depend on anything. This is to be called by
 # binary-arch/binary-indep
