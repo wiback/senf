@@ -1,4 +1,4 @@
-import os.path
+import os.path, glob
 from SCons.Script import *
 
 # Fix for SCons 0.97 compatibility
