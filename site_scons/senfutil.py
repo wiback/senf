@@ -60,8 +60,13 @@ Special command line parameters:
 # c) check for a local SENF, set options accordingly and update that SENF if needed
 
 def SetupForSENF(env, senf_paths = []):
-    senf_paths.extend(('senf', '../senf', os.path.dirname(os.path.dirname(__file__)),
-                       '/usr/local', '/usr'))
+    senfutildir = os.path.dirname(__file__)
+    senf_paths.extend(('senf', '../senf', os.path.dirname(senfutildir), '/usr/local', '/usr'))
+    tooldir = os.path.join(senfutildir, 'site_tools')
+
+    env.Tool('Boost',       [ tooldir ])
+    env.Tool('PhonyTarget', [ tooldir ])
+
     env.Append(
         LIBS              = [ 'senf', 'rt', '$BOOSTREGEXLIB',
                               '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB',
@@ -145,3 +150,12 @@ def DefaultOptions(env):
         LINKFLAGS_normal = [ '-Wl,-S' ],
         LINKFLAGS_debug  = [ '-g' ],
     )
+
+def Glob(env, exclude=[], subdirs=[]):
+    testSources = glob.glob("*.test.cc")
+    sources = [ x for x in glob.glob("*.cc") if x not in testSources and x not in exclude ]
+    for subdir in subdirs:
+        testSources += glob.glob(os.path.join(subdir,"*.test.cc"))
+        sources += [ x for x in glob.glob(os.path.join(subdir,"*.cc"))
+                     if x not in testSources and x not in exclude ]
+    return (sources, testSources)

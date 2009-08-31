@@ -77,6 +77,8 @@ def CompileCheck(target, source, env):
 CompileCheck = SCons.Script.Action(CompileCheck)
 
 def BoostUnitTest(env, target=None, source=None,  **kw):
+    global _ALL_TESTS
+
     target = env.arg2nodes(target)[0]
     source = env.arg2nodes(source)
 
@@ -89,7 +91,7 @@ def BoostUnitTest(env, target=None, source=None,  **kw):
                       **kw)
 
     stamp = env.Command(stampnode, bin,
-                        [ '$SOURCE $BOOSTTESTARGS', SCons.Script.Touch('$TARGET')],
+                        [ './$SOURCE $BOOSTTESTARGS', SCons.Script.Touch('$TARGET')],
                         **kw)
 
     alias = env.Command(env.File(target), stamp, [ env.NopAction() ] )
@@ -106,6 +108,7 @@ def BoostUnitTest(env, target=None, source=None,  **kw):
     return alias
 
 def FindAllBoostUnitTests(env, target, source):
+    global _ALL_TESTS
     return _ALL_TESTS
 
 def NopAction(env, target, source):
