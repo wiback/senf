@@ -34,13 +34,14 @@
 #include "Connectors.hh"
 #include "Setup.hh"
 
+#ifndef SENF_MULTI_CONNECTOR_MAX_ARGS
+#define SENF_MULTI_CONNECTOR_MAX_ARGS 3
+#define SENF_MULTI_CONNECTOR_MAX_ARGS2 6
+#endif
+
 #include "MultiConnectorMixin.mpp"
 #include "MultiConnectorMixin.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
-
-#ifndef SENF_MULTI_CONNECTOR_MAX_ARGS
-#define SENF_MULTI_CONNECTOR_MAX_ARGS 3
-#endif
 
 namespace senf {
 namespace ppi {
@@ -73,9 +74,14 @@ namespace ppi {
     MultiConnectorTarget::ConnectorType & connect(
         Source & source, MultiConnectorTarget & target, A1 const & a1);
 
+    template <class MultiConnectorSource, class MultiConnectorTarget, class A1, class A2>
+    std::pair<MultiConnectorSource::ConnectorType &, MultiConnectorTarget::ConnectorType &>
+    connect(
+        MultiConnectorSource & source, MultiConnectorTarget & target, A1 const & a1, A2 const & a2);
+
 #else
 
-    // Include 'senf::ppi::namespace member declarations' from MultiConnectorMixin.mpp
+    // Include 'senf::ppi namespace member declarations' from MultiConnectorMixin.mpp
 #   define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
             SENF_MULTI_CONNECTOR_MAX_ARGS, \
@@ -83,9 +89,18 @@ namespace ppi {
             2 ))
 #   include BOOST_PP_ITERATE()
 
+#   define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
+            0, \
+            SENF_MULTI_CONNECTOR_MAX_ARGS2, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
+            6 ))
+#   include BOOST_PP_ITERATE()
+
 #endif
 
 namespace module {
+
+    namespace detail { class MultiConnectorMixinAccess; }
 
     /** \brief Multi connector management
 
@@ -249,18 +264,6 @@ namespace module {
         tempalte <class A1>
         ConnectorType_ & newConnector(A1 const & a1);
 
-        // See above for an additional note regarding the boost::enable_if in the real
-        // implementation
-        
-        template <class Source, class Target, class A1>
-        friend Source::ConnectorType & senf::ppi::connect(Source & source, 
-                                                          Target & target, 
-                                                          A1 const & a1);
-
-        template <class Source, class Target, class A1>
-        friend Target::ConnectorType & senf::ppi::connect(Source & source,
-                                                          Target & target,
-                                                          A1 const & a1);
 #endif
 #ifndef DOXYGEN
 
@@ -272,7 +275,16 @@ namespace module {
             1 ))
 #       include BOOST_PP_ITERATE()
 
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
+            0, \
+            SENF_MULTI_CONNECTOR_MAX_ARGS2, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
+            9 ))
+#       include BOOST_PP_ITERATE()
+
 #endif
+
+        friend class detail::MultiConnectorMixinAccess;
         
         ContainerType_ connectors_;
     };
@@ -323,6 +335,15 @@ namespace module {
             1 ))
 #       include BOOST_PP_ITERATE()
         
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
+            0, \
+            SENF_MULTI_CONNECTOR_MAX_ARGS2, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
+            9 ))
+#       include BOOST_PP_ITERATE()
+
+        friend class detail::MultiConnectorMixinAccess;
+
         ContainerType_ connectors_;
     };
 
@@ -364,6 +385,15 @@ namespace module {
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             1 ))
 #       include BOOST_PP_ITERATE()
+
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
+            0, \
+            SENF_MULTI_CONNECTOR_MAX_ARGS2, \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
+            9 ))
+#       include BOOST_PP_ITERATE()
+
+        friend class detail::MultiConnectorMixinAccess;
     };
 
 #endif

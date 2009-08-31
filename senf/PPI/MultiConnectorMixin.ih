@@ -35,6 +35,16 @@ namespace ppi {
 namespace module {
 namespace detail {
 
+    struct MultiConnectorMixinAccess
+    {
+#       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
+            0, \
+            SENF_MULTI_CONNECTOR_MAX_ARGS,                              \
+            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp),    \
+            8 ))
+#       include BOOST_PP_ITERATE()
+    };
+
     template <class KeyType, class ConnectorType>
     struct MultiConnectorDefaultContainer 
     { 
@@ -57,6 +67,52 @@ namespace detail {
               boost::is_base_of<connector::InputConnector, ConnectorType>,
               ppi::detail::DisableStandardInput, ppi::detail::DisableStandardOutput >
     {};
+
+    template <class T> senf::mpl::rv<0> is_multiconnector_(T *, ...);
+    template <class T> senf::mpl::rv<1> is_multiconnector_(
+        T *,
+        typename boost::enable_if<boost::is_base_of<connector::OutputConnector, 
+                                                    typename T::ConnectorType>, 
+        int>::type);
+    template <class T> senf::mpl::rv<2> is_multiconnector_(
+        T *,
+        typename boost::enable_if<boost::is_base_of<connector::InputConnector, 
+                                                    typename T::ConnectorType>, 
+        int>::type);
+
+    template <class T, unsigned N>
+    struct is_multiconnector_source_
+        : public boost::false_type
+    {};
+
+    template <class T>
+    struct is_multiconnector_source_<T, 1u>
+        : public boost::true_type
+    {};
+
+    template <class T>
+    struct is_multiconnector_source
+        : public is_multiconnector_source_<
+              T, SENF_MPL_RV(is_multiconnector_<T>(static_cast<T*>(0),0))>
+    {};
+
+    template <class T, unsigned N>
+    struct is_multiconnector_target_
+        : public boost::false_type
+    {};
+
+    template <class T>
+    struct is_multiconnector_target_<T, 2u>
+        : public boost::true_type
+    {};
+
+    template <class T>
+    struct is_multiconnector_target
+        : public is_multiconnector_target_<
+              T, SENF_MPL_RV(is_multiconnector_<T>(static_cast<T*>(0),0))>
+    {};
+
+
 
 }}}}
 

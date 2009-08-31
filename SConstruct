@@ -16,7 +16,6 @@ env = Environment()
 
 # Load all the local SCons tools
 env.Tool('Doxygen')
-env.Tool('Doxygen')
 env.Tool('Dia2Png')
 env.Tool('PkgDraw')
 env.Tool('InstallSubdir')

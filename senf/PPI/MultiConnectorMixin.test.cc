@@ -91,6 +91,13 @@ namespace {
     { os << value.value; return os; }
 }
 
+BOOST_AUTO_UNIT_TEST(multiConnectorTraits)
+{
+    BOOST_STATIC_ASSERT( senf::ppi::module::detail::is_multiconnector_source<MyModule>::value );
+    BOOST_STATIC_ASSERT( ! senf::ppi::module::detail::is_multiconnector_target<MyModule>::value );
+}
+
+
 BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
 {
     debug::ActiveSource source;
@@ -114,8 +121,6 @@ BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
 
 BOOST_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
 {
-    // This test fails!
-    /*
     debug::ActiveSource source;
     debug::PassiveSink sink;
     module::PassiveJoin join1;
@@ -135,7 +140,6 @@ BOOST_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
     source.submit(p);
     BOOST_CHECK_EQUAL( sink.size(), 1u );
     BOOST_CHECK( sink.pop_front() == p );
-    */
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

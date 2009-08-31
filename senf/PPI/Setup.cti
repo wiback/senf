@@ -58,8 +58,8 @@ prefix_ void senf::ppi::
 connect(T1 & source, T2 & target,
         typename boost::disable_if< boost::is_base_of<connector::Connector, T1> >::type *,
         typename boost::disable_if< boost::is_base_of<connector::Connector, T2> >::type *,
-        typename boost::disable_if< boost::is_base_of<detail::DisableStandardOutput, T1> >:: type *,
-        typename boost::disable_if< boost::is_base_of<detail::DisableStandardInput, T2> >:: type *)
+        typename boost::disable_if< boost::is_base_of<detail::DisableStandardOutput, T1> >::type *,
+        typename boost::disable_if< boost::is_base_of<detail::DisableStandardInput, T2> >::type *)
 {
     connect(source.output, target.input);
 }

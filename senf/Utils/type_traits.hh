@@ -243,6 +243,14 @@ namespace senf
         : public boost::remove_cv< typename boost::remove_reference<T>::type >
     {};
 
+    template < class T >
+    struct function_arity
+        : public boost::integral_constant<
+              unsigned,
+              boost::function_traits<
+                  typename senf::remove_any_pointer<T>::type>::arity>
+    {};
+
   ///}
 
 #ifndef DOXYGEN

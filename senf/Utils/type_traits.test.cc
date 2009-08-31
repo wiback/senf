@@ -103,6 +103,13 @@ BOOST_AUTO_UNIT_TEST(typeTraits)
         senf::remove_cvref<int const &>::type,
         int
     >::value ));
+
+    BOOST_STATIC_ASSERT(( senf::function_arity<void ()>::value == 0 ));
+    BOOST_STATIC_ASSERT(( senf::function_arity<void (int,int)>::value == 2 ));
+    BOOST_STATIC_ASSERT(( senf::function_arity<void (*)()>::value == 0 ));
+    BOOST_STATIC_ASSERT(( senf::function_arity<void (*)(int,int)>::value == 2 ));
+    BOOST_STATIC_ASSERT(( senf::function_arity<void (Class::*)()>::value == 0 ));
+    BOOST_STATIC_ASSERT(( senf::function_arity<void (Class::*)(int,int)>::value == 2 ));
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

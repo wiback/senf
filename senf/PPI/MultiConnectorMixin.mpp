@@ -35,6 +35,9 @@
 #include <boost/preprocessor/repetition/enum_trailing_params.hpp>
 #include <boost/preprocessor/repetition/enum_trailing_binary_params.hpp> 
 #include <boost/type_traits/is_base_of.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/not.hpp>
+#include <senf/Utils/type_traits.hh>
 
 // ///////////////////////////mpp.p////////////////////////////////////////
 #elif BOOST_PP_IS_ITERATING // ////////////////////////////////////////////
@@ -60,6 +63,18 @@
 #define mpp_CallParamsKomma()                                           \
     BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_ITERATION(), a)
 
+// Same as above but for outer loop in nested loops
+#define mpp_TplParamsKomma2()                                            \
+    BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_FRAME_ITERATION(1), class B)
+#define mpp_FnParams2()                                                  \
+    BOOST_PP_ENUM_BINARY_PARAMS(BOOST_PP_FRAME_ITERATION(1), B, const & a)
+#define mpp_FnParamsKomma2()                                             \
+    BOOST_PP_ENUM_TRAILING_BINARY_PARAMS(BOOST_PP_FRAME_ITERATION(1), B, const & b)
+#define mpp_CallParams2()                                                \
+    BOOST_PP_ENUM_PARAMS(BOOST_PP_FRAME_ITERATION(1), b)
+#define mpp_CallParamsKomma2()                                           \
+    BOOST_PP_ENUM_TRAILING_PARAMS(BOOST_PP_FRAME_ITERATION(1), b)
+
 // ////////////////////////////////////////////////////////////////////////
 #if BOOST_PP_ITERATION_FLAGS()==1 // //////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
@@ -68,34 +83,73 @@
 mpp_TplParams()
 ConnectorType_ & newConnector( mpp_FnParams() );
 
-template <class Source, class Target mpp_TplParamsKomma()>
-friend typename boost::enable_if<
-        boost::is_base_of<connector::OutputConnector, typename Source::ConnectorType>,
-        typename Source::ConnectorType & >::type
-    senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma());
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==9 // //////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// MultiConnectorMixin member declaration
 
 template <class Source, class Target mpp_TplParamsKomma()>
-friend typename boost::enable_if<
-        boost::is_base_of<connector::InputConnector, typename Target::ConnectorType>,
-        typename Target::ConnectorType & >::type
-    senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma());
+static std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+connect_(Source & source, Target & target mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
 #elif BOOST_PP_ITERATION_FLAGS()==2 // ////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
 // senf::ppi namespace member declaration
 
+// Here the reference to Source::ConnectorType / Target::ConnectorType
+// works like enable_if, since only MultiConnector modules have those members
+
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<
-    boost::is_base_of<connector::OutputConnector, typename Source::ConnectorType>,
+    boost::mpl::and_<
+        senf::ppi::module::detail::is_multiconnector_source<Source>,
+        boost::mpl::not_< senf::ppi::module::detail::is_multiconnector_target<Target> > >,
     typename Source::ConnectorType & >::type
 connect(Source & source, Target & target mpp_FnParamsKomma());
 
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<
-    boost::is_base_of<connector::InputConnector, typename Target::ConnectorType>,
+    boost::mpl::and_<
+        boost::mpl::not_< senf::ppi::module::detail::is_multiconnector_source<Source> >,
+        senf::ppi::module::detail::is_multiconnector_target<Target> >,
     typename Target::ConnectorType & >::type
 connect(Source & source, Target & target mpp_FnParamsKomma());
+
+#define BOOST_PP_ITERATION_PARAMS_2 (4, (\
+        0, \
+        SENF_MULTI_CONNECTOR_MAX_ARGS, \
+        SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
+        4 ))
+#include BOOST_PP_ITERATE()
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==6 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// senf::ppi namespace member declaration (nested)
+
+template <class Source, class Target mpp_TplParamsKomma()>
+typename boost::enable_if<
+    boost::mpl::and_<
+        boost::is_base_of<connector::OutputConnector, typename Source::ConnectorType>,
+        boost::is_base_of<connector::InputConnector, typename Target::ConnectorType> >,
+    std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
+connect(Source & source, Target & target mpp_FnParamsKomma());
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==4 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// senf::ppi::detail namespace member declaration (nested iteration)
+
+namespace detail {
+
+template <class Fn, class Source, class Target mpp_TplParamsKomma() mpp_TplParamsKomma2()>
+typename boost::enable_if_c<
+    senf::function_arity<Fn>::value == BOOST_PP_ITERATION()+1,
+    std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
+connect_(Fn, Source & source, Target & target mpp_FnParamsKomma() mpp_FnParamsKomma2());
+
+}
 
 // ////////////////////////////////////////////////////////////////////////
 #elif BOOST_PP_ITERATION_FLAGS()==3 // ////////////////////////////////////
@@ -148,35 +202,152 @@ newConnector(mpp_FnParams())
 }
 
 ////////////////////////////////////////
+// senf::ppi::module::detail::MultiConnectorMixinAccess members
+
+template <class Module mpp_TplParamsKomma()>
+typename Module::ConnectorType & 
+senf::ppi::module::detail::MultiConnectorMixinAccess::newConnector(
+    Module & module mpp_FnParamsKomma())
+{
+    return module.newConnector(mpp_CallParams());
+}
+
+template <class Source, class Target mpp_TplParamsKomma()>
+std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+senf::ppi::module::detail::MultiConnectorMixinAccess::connect(
+    Source & source, Target & target mpp_FnParamsKomma())
+{
+    return Source::connect_(source, target mpp_CallParamsKomma());
+}
+
+////////////////////////////////////////
 // senf::ppi::connect
 
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<
-    boost::is_base_of<senf::ppi::connector::OutputConnector, typename Source::ConnectorType>,
+    boost::mpl::and_<
+        senf::ppi::module::detail::is_multiconnector_source<Source>,
+        boost::mpl::not_< senf::ppi::module::detail::is_multiconnector_target<Target> > >,
     typename Source::ConnectorType & >::type
 senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 {
-    typename Source::ConnectorType & c (source.newConnector(mpp_CallParams()));
+    typename Source::ConnectorType & c (
+        module::detail::MultiConnectorMixinAccess::newConnector(source mpp_CallParamsKomma()));
     connect(c, target);
     return c;
 }
 
 template <class Source, class Target mpp_TplParamsKomma()>
 typename boost::enable_if<
-    boost::is_base_of<senf::ppi::connector::InputConnector, typename Target::ConnectorType>,
+    boost::mpl::and_<
+        boost::mpl::not_< senf::ppi::module::detail::is_multiconnector_source<Source> >,
+        senf::ppi::module::detail::is_multiconnector_target<Target> >,
     typename Target::ConnectorType & >::type
 senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 {
-    typename Target::ConnectorType & c (target.newConnector(mpp_CallParams()));
+    typename Target::ConnectorType & c (
+        module::detail::MultiConnectorMixinAccess::newConnector(target mpp_CallParamsKomma()));
     connect(source, c);
     return c;
 }
+
+#define BOOST_PP_ITERATION_PARAMS_2 (4, (\
+        0, \
+        SENF_MULTI_CONNECTOR_MAX_ARGS, \
+        SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
+        5 ))
+#include BOOST_PP_ITERATE()
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==5 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Implementation for nested iteration
+
+template <class Fn, class Source, class Target mpp_TplParamsKomma() mpp_TplParamsKomma2()>
+typename boost::enable_if_c<
+    senf::function_arity<Fn>::value == BOOST_PP_ITERATION()+1,
+    std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
+senf::ppi::detail::connect_(Fn, Source & source, Target & target 
+                            mpp_FnParamsKomma() mpp_FnParamsKomma2())
+{
+    typename Source::ConnectorType & s (
+        module::detail::MultiConnectorMixinAccess::newConnector(source mpp_CallParamsKomma()));
+    typename Target::ConnectorType & t (
+        module::detail::MultiConnectorMixinAccess::newConnector(target mpp_CallParamsKomma2()));
+    connect(s,t);
+    return std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>(s,t);
+}
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==7 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// Implementation
+
+template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
+template <class Source, class Target mpp_TplParamsKomma()>
+std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>::
+connect_(Source & source, Target & target mpp_FnParamsKomma())
+{
+    return senf::ppi::detail::connect_(
+        & Self_::connectorSetup, source, target mpp_CallParamsKomma());
+}
+
+template <class Self_, class ConnectorType_, class ContainerType_>
+template <class Source, class Target mpp_TplParamsKomma()>
+std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::
+connect_(Source & source, Target & target mpp_FnParamsKomma())
+{
+    return senf::ppi::detail::connect_(
+        & Self_::connectorSetup, source, target mpp_CallParamsKomma());
+}
+
+template <class Self_, class ConnectorType_>
+template <class Source, class Target mpp_TplParamsKomma()>
+std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,void>::
+connect_(Source & source, Target & target mpp_FnParamsKomma())
+{
+    return senf::ppi::detail::connect_(
+        & Self_::connectorSetup, source, target mpp_CallParamsKomma());
+}
+
+template <class Source, class Target mpp_TplParamsKomma()>
+typename boost::enable_if<
+    boost::mpl::and_<
+        boost::is_base_of<senf::ppi::connector::OutputConnector, typename Source::ConnectorType>,
+        boost::is_base_of<senf::ppi::connector::InputConnector, typename Target::ConnectorType> >,
+    std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
+senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
+{
+    return module::detail::MultiConnectorMixinAccess::connect(
+        source, target mpp_CallParamsKomma());
+}
+
+// ////////////////////////////////////////////////////////////////////////
+#elif BOOST_PP_ITERATION_FLAGS()==8 // ////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
+// senf::ppi::module::detail::MultiConnectorMixinAccess members
+
+template <class Module mpp_TplParamsKomma()>
+static typename Module::ConnectorType & 
+newConnector(Module & module mpp_FnParamsKomma());
+
+template <class Source, class Target mpp_TplParamsKomma()>
+static std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+connect(Source & source, Target & target mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
 #endif // /////////////////////////////////////////////////////////////////
 // ////////////////////////////////////////////////////////////////////////
 // Undefine local Macros
 
+#undef mpp_CallParamsKomma2
+#undef mpp_CallParams2
+#undef mpp_FnParamsKomma2
+#undef mpp_FnParams2
+#undef mpp_TplParamsKomma2
 #undef mpp_CallParamsKomma
 #undef mpp_CallParams
 #undef mpp_FnParamsKomma
@@ -196,7 +367,7 @@ senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
  (search-backward "#define") (forward-line 1) (point))))) (point))))
  (reverse-region b e) (shell-command-on-region b e "grep -F '#define'" nil
  t) (goto-char b) (while (looking-at "#define") (delete-char 7) (insert
- "#undef") (skip-chars-forward " ") (re-search-forward "[^a-zA-Z_]")
+ "#undef") (skip-chars-forward " ") (re-search-forward "[^a-zA-Z0-9_]")
  (delete-region (1- (point)) (progn (end-of-line) (point))) (forward-line
  1))))
 */
