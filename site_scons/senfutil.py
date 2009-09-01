@@ -150,6 +150,8 @@ def SetupForSENF(env, senf_path = []):
     else:
         print "\nSENF library not found .. trying build anyway !!\n"
 
+    env.Alias('all', '#')
+
 
 def DefaultOptions(env):
     env.Append(
@@ -184,9 +186,9 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
     
     if tagfiles is None:
         senfdocdir = None
-        senfdoc_path.extend(('senf/manual', '../senf/manual', 'senf', '../senf', 
-                             'senfdoc', os.path.dirname(senfutildir), 
+        senfdoc_path.extend(('senfdoc', 'senf/manual', 'senf', '../senf/manual', '../senf', 
                              os.path.join(os.path.dirname(senfutildir), 'manual'),
+                             os.path.dirname(senfutildir), 
                              '/usr/share/doc/senf', '/usr/local/share/doc/senf',
                              '/usr/share/doc/libsenf-doc/html'))
         for path in senfdoc_path:

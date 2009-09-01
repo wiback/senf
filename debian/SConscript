@@ -108,8 +108,8 @@ env.PhonyTarget('debsrc', [], [
 env.PhonyTarget('debbin', [], [
     checkLocalConf,
     updateRevision,
-    "$BUILDPACKAGE_COMMAND -b",
-    "fakeroot ./debian/rules clean"
+    "$BUILDPACKAGE_COMMAND -b -nc",
+    "fakeroot ./debian/rules debclean"
 ])
 
 if not os.environ.get('debian_build'):

@@ -157,9 +157,12 @@ env.Default(conf)
 env.Install('$CONFINSTALLDIR', conf)
 
 #### install_all, default, all_tests, all
-env.Install('${SCONSINSTALLDIR}', 'site_scons/senfutil.py')
-env.Install('${SCONSINSTALLDIR}/site_tools', [ 'site_scons/site_tools/Boost.py',
-                                               'site_scons/site_tools/PhonyTarget.py' ])
+env.Install('${SCONSINSTALLDIR}', [ 'site_scons/__init__.py',
+                                    'site_scons/senfutil.py',
+                                    'site_scons/yaptu.py' ])
+env.InstallDir('${SCONSINSTALLDIR}', [ 'site_scons/site_tools', 'site_scons/lib' ],
+               FILTER_SUFFIXES=[ '', '.css', '.pl', '.py', '.sh', '.xml', '.xsl', '.yap' ])
+env.Install('${INCLUDEINSTALLDIR}', 'boost')
 
 env.Alias('install_all', env.FindInstalledFiles())
 env.Alias('default', DEFAULT_TARGETS)

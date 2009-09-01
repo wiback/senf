@@ -33,32 +33,46 @@
 ///////////////////////////////////////////////////////////////////////////
 // senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>
 
-template<class ElementParser, class AuxPolicy>
-prefix_ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::ListOptionTypeParser_Policy() {
-}
+template <class ElementParser, class AuxPolicy>
+prefix_
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::
+ListOptionTypeParser_Policy()
+{}
 
-template<class ElementParser, class AuxPolicy>
-template<class Arg>
-prefix_ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::ListOptionTypeParser_Policy(Arg const & arg) :AuxPolicy(arg) {
-}
+template <class ElementParser, class AuxPolicy>
+template <class Arg>
+prefix_
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::
+ListOptionTypeParser_Policy(Arg const & arg)
+    : AuxPolicy(arg) 
+{}
 
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::size_type
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::bytes(data_iterator i, state_type s) const {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::bytes(data_iterator i,
+                                                                          state_type s)
+    const
+{
     return AuxPolicy::aux(i, s) + AuxPolicy::aux_bytes;
 }
 
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::size_type
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::size(data_iterator i, state_type s) const {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::size(data_iterator i,
+                                                                         state_type s)
+    const
+{
     parser_type p(*this, i, s);
     container_type c(p);
     return std::distance(c.begin(), c.end());
 }
 
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::init(data_iterator i, state_type s) const {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::init(data_iterator i,
+                                                                         state_type s)
+    const
+{
     AuxPolicy::aux(0, i, s);
 }
 
@@ -66,20 +80,26 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::init(data_i
 // senf::detail::ListOptionTypeParser_Policy<ElementParser,BytesParser>
 
 //constructor
-template<class ElementParser, class AuxPolicy>
-prefix_ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::container_policy(parser_policy const & p) :
-    AuxPolicy(p) {
-}
+template <class ElementParser, class AuxPolicy>
+prefix_
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+container_policy(parser_policy const & p)
+    : AuxPolicy(p) 
+{}
 
 //destructor
-template<class ElementParser, class AuxPolicy>
-prefix_ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::~container_policy()
+template <class ElementParser, class AuxPolicy>
+prefix_
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+~container_policy()
 {}
 
 //construct method
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::construct(container_type & c) {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+construct(container_type & c)
+{
     data_iterator i = c.i();
     realAux_ = (AuxPolicy::aux(i, c.state()) * 8) + 6;
     data_iterator e = i + realAux_;
@@ -97,9 +117,11 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_p
 }
 
 //destruct method
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::destruct(container_type & c) {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+destruct(container_type & c)
+{
     //	data_iterator i (AuxPolicy::adjust(parser_type::get(p).i(), parser_type::get(p).state()));
     data_iterator i = c.i();
     data_iterator const e = i + realAux_;
@@ -118,32 +140,44 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_p
 }
 
 //bytes()
-template<class ElementParser, class AuxPolicy>
-prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::size_type
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::bytes(data_iterator i,state_type s) const {
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<
+    ElementParser,AuxPolicy>::container_policy::size_type
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+bytes(data_iterator i, state_type s)
+    const
+{
     return (realAux_ + 2);
 }
 
 //size()
-template<class ElementParser, class AuxPolicy>
-prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::size_type
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::size(data_iterator i,state_type s) const {
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<
+    ElementParser,AuxPolicy>::container_policy::size_type
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+size(data_iterator i, state_type s)
+    const
+{
     return n_;
 }
 
 //init()
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::init(data_iterator i, state_type s) {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+init(data_iterator i, state_type s)
+{
     n_ = 0;
     container_size_ = s->size();
     AuxPolicy::aux(0, i, s);
 }
 
 //erase()
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::erase(container_type & c, data_iterator p) {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+erase(container_type & c, data_iterator p)
+{
     size_type b(senf::bytes(ElementParser(p, c.state()))); //length of parser
     //    AuxPolicy::aux(
     //    		AuxPolicy::aux( c.i(), c.state()) -b,
@@ -156,9 +190,11 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_p
 }
 
 //insert()
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::insert(container_type & c, data_iterator p) {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+insert(container_type & c, data_iterator p)
+{
     size_type b(senf::bytes(ElementParser(p, c.state())));
     //    AuxPolicy::aux( AuxPolicy::aux(c.i(), c.state())+b, c.i(), c.state());
     realAux_ += b;
@@ -167,9 +203,12 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_p
 }
 
 //update()
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::update(container_type const & c) const {
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+update(container_type const & c)
+    const
+{
     if (container_size_ == c.data().size())
         return;
     data_iterator i(AuxPolicy::adjust(c.i(), c.state()));
@@ -181,37 +220,55 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_p
 }
 
 //setbegin()
-template<class ElementParser, class AuxPolicy>
-prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::setBegin(container_type const & c, iterator_data & d) const {
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<
+    ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+setBegin(container_type const & c, iterator_data & d)
+    const
+{
     return c.i();
     //    return AuxPolicy::adjust(c.i(), c.state());
 }
 
 //setEnd()
-template<class ElementParser, class AuxPolicy>
-prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::setEnd(container_type const & c, iterator_data & d) const { //wtf??
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<
+    ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+setEnd(container_type const & c, iterator_data & d)
+    const
+{ //wtf??
     return boost::next(AuxPolicy::adjust(c.i(), c.state()), aux(c.i(),c.state()));
 }
 
 //setFromPosition()
-template<class ElementParser, class AuxPolicy>
+template <class ElementParser, class AuxPolicy>
 prefix_ void
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::setFromPosition(container_type const & c, iterator_data & d, data_iterator p) const {
-}
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+setFromPosition(container_type const & c, iterator_data & d, data_iterator p)
+    const
+{}
 
 //next()
-template<class ElementParser, class AuxPolicy>
-prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::next(container_type const & c, iterator_data & d) const {
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<
+    ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+next(container_type const & c, iterator_data & d)
+    const
+{
     return boost::next(container_type::iterator::get(d).i(), senf::bytes(ElementParser(container_type::iterator::get(d).i(), c.state())));
 }
 
 //raw()
-template<class ElementParser, class AuxPolicy>
-prefix_ typename senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::data_iterator
-senf::detail::ListOptionTypeParser_Policy<ElementParser, AuxPolicy>::container_policy::raw(container_type const & c, iterator_data const & d) const {
+template <class ElementParser, class AuxPolicy>
+prefix_ typename senf::detail::ListOptionTypeParser_Policy<
+    ElementParser,AuxPolicy>::container_policy::data_iterator
+senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
+raw(container_type const & c, iterator_data const & d)
+    const
+{
     return container_type::iterator::get(d).i();
 }
 

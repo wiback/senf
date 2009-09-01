@@ -50,6 +50,9 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
         env.Depends(tagfile, [ env.File('#/doclib/doxygen.sh'), 
                                env.File('#/doclib/tag-munge.xsl') ])
 
+        env.Install(env.Dir('$DOCINSTALLDIR').Dir(tagfile[0].dir.get_path(env.Dir('#'))),
+                    tagfile[0])
+
     # Rule to generate HTML documentation
     doc = env.Doxygen(doxyfile,
                       DOXYOPTS = [ '--tagfiles', '"$ALL_TAGFILES"',
