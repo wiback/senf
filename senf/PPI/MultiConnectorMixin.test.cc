@@ -91,13 +91,6 @@ namespace {
     { os << value.value; return os; }
 }
 
-BOOST_AUTO_UNIT_TEST(multiConnectorTraits)
-{
-    BOOST_STATIC_ASSERT( senf::ppi::module::detail::is_multiconnector_source<MyModule>::value );
-    BOOST_STATIC_ASSERT( ! senf::ppi::module::detail::is_multiconnector_target<MyModule>::value );
-}
-
-
 BOOST_AUTO_UNIT_TEST(multiConnectorMixin_userContainer)
 {
     debug::ActiveSource source;

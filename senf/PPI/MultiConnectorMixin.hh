@@ -36,7 +36,6 @@
 
 #ifndef SENF_MULTI_CONNECTOR_MAX_ARGS
 #define SENF_MULTI_CONNECTOR_MAX_ARGS 3
-#define SENF_MULTI_CONNECTOR_MAX_ARGS2 6
 #endif
 
 #include "MultiConnectorMixin.mpp"
@@ -91,7 +90,7 @@ namespace ppi {
 
 #   define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
-            SENF_MULTI_CONNECTOR_MAX_ARGS2, \
+            2*SENF_MULTI_CONNECTOR_MAX_ARGS, \
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             6 ))
 #   include BOOST_PP_ITERATE()
@@ -277,7 +276,7 @@ namespace module {
 
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
-            SENF_MULTI_CONNECTOR_MAX_ARGS2, \
+            2*SENF_MULTI_CONNECTOR_MAX_ARGS, \
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             9 ))
 #       include BOOST_PP_ITERATE()
@@ -337,7 +336,7 @@ namespace module {
         
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
-            SENF_MULTI_CONNECTOR_MAX_ARGS2, \
+            2*SENF_MULTI_CONNECTOR_MAX_ARGS, \
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             9 ))
 #       include BOOST_PP_ITERATE()
@@ -388,7 +387,7 @@ namespace module {
 
 #       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
             0, \
-            SENF_MULTI_CONNECTOR_MAX_ARGS2, \
+            2*SENF_MULTI_CONNECTOR_MAX_ARGS, \
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             9 ))
 #       include BOOST_PP_ITERATE()
