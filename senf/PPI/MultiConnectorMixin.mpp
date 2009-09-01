@@ -37,6 +37,7 @@
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <senf/Utils/type_traits.hh>
 
 // ///////////////////////////mpp.p////////////////////////////////////////
@@ -96,7 +97,7 @@ ConnectorType_ & newConnector( mpp_FnParams() );
 // senf::ppi::module::MultiConnectorMixin member declaration 1..2*MAX_ARGS
 
 template <class Source, class Target mpp_TplParamsKomma()>
-static std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+static boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &>
 connect_(Source & source, Target & target mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
@@ -140,7 +141,7 @@ typename boost::enable_if<
     boost::mpl::and_<
         boost::is_base_of<connector::OutputConnector, typename Source::ConnectorType>,
         boost::is_base_of<connector::InputConnector, typename Target::ConnectorType> >,
-    std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
+    boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
 connect(Source & source, Target & target mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
@@ -153,7 +154,7 @@ namespace detail {
 template <class Fn, class Source, class Target mpp_TplParamsKomma() mpp_TplParamsKomma2()>
 typename boost::enable_if_c<
     senf::function_arity<Fn>::value == BOOST_PP_ITERATION()+1,
-    std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
+    boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
 connect_(Fn, Source & source, Target & target mpp_FnParamsKomma() mpp_FnParamsKomma2());
 
 }
@@ -173,7 +174,7 @@ newConnector(Module & module mpp_FnParamsKomma());
 // senf::ppi::module::detail::MultiConnectorMixinAccess member declaration 1..2*MAX_ARGS
 
 template <class Source, class Target mpp_TplParamsKomma()>
-static std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+static boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &>
 connect(Source & source, Target & target mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
@@ -285,7 +286,7 @@ senf::ppi::module::detail::MultiConnectorMixinAccess::newConnector(
 
 template <class Self_, class ConnectorType_, class KeyType_, class ContainerType_>
 template <class Source, class Target mpp_TplParamsKomma()>
-std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &>
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,KeyType_,ContainerType_>::
 connect_(Source & source, Target & target mpp_FnParamsKomma())
 {
@@ -298,7 +299,7 @@ connect_(Source & source, Target & target mpp_FnParamsKomma())
 
 template <class Self_, class ConnectorType_, class ContainerType_>
 template <class Source, class Target mpp_TplParamsKomma()>
-std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &>
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,ContainerType_>::
 connect_(Source & source, Target & target mpp_FnParamsKomma())
 {
@@ -311,7 +312,7 @@ connect_(Source & source, Target & target mpp_FnParamsKomma())
 
 template <class Self_, class ConnectorType_>
 template <class Source, class Target mpp_TplParamsKomma()>
-std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &>
 senf::ppi::module::MultiConnectorMixin<Self_,ConnectorType_,void,void>::
 connect_(Source & source, Target & target mpp_FnParamsKomma())
 {
@@ -327,7 +328,7 @@ typename boost::enable_if<
     boost::mpl::and_<
         boost::is_base_of<senf::ppi::connector::OutputConnector, typename Source::ConnectorType>,
         boost::is_base_of<senf::ppi::connector::InputConnector, typename Target::ConnectorType> >,
-    std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
+    boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
 senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 {
     return module::detail::MultiConnectorMixinAccess::connect(
@@ -338,7 +339,7 @@ senf::ppi::connect(Source & source, Target & target mpp_FnParamsKomma())
 // senf::ppi::module::detail::MultiConnectorMixinAccess members
 
 template <class Source, class Target mpp_TplParamsKomma()>
-std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>
+boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &>
 senf::ppi::module::detail::MultiConnectorMixinAccess::connect(
     Source & source, Target & target mpp_FnParamsKomma())
 {
@@ -353,7 +354,7 @@ senf::ppi::module::detail::MultiConnectorMixinAccess::connect(
 template <class Fn, class Source, class Target mpp_TplParamsKomma() mpp_TplParamsKomma2()>
 typename boost::enable_if_c<
     senf::function_arity<Fn>::value == BOOST_PP_ITERATION()+1,
-    std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
+    boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &> >::type
 senf::ppi::detail::connect_(Fn, Source & source, Target & target 
                             mpp_FnParamsKomma() mpp_FnParamsKomma2())
 {
@@ -362,7 +363,7 @@ senf::ppi::detail::connect_(Fn, Source & source, Target & target
     typename Target::ConnectorType & t (
         module::detail::MultiConnectorMixinAccess::newConnector(target mpp_CallParamsKomma2()));
     connect(s,t);
-    return std::pair<typename Source::ConnectorType &, typename Target::ConnectorType &>(s,t);
+    return boost::tie(s,t);
 }
 
 // ////////////////////////////////////////////////////////////////////////
