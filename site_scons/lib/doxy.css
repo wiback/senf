@@ -1,0 +1,634 @@
+body {
+        padding: 0;
+        margin: 0;
+        font-family: Verdana, Arial, Helvetica, sans-serif;
+        font-size: 10pt;
+}
+
+/* Argh .. doxygen.css has font-size:90% for td ... */
+td {
+        font-size: 100%;
+}
+
+#head {
+        height: 62px;
+        border-top: 5px solid #DECD40;
+        border-bottom: 1px solid #AF9D00;
+        background-color: #EDE497;
+}
+
+#title { 
+        height: 39px;
+        background-color: #DECD40;
+        border-bottom: 1px solid #AF9D00;
+        margin: 0 0 0 0;
+}
+
+#title2 {
+        padding: 0 0 0 142px;
+        max-width: 62em;
+        margin: 0 10px 0 0;
+}
+
+#head h1 {
+        margin: 0;
+        padding: 6px 0 0 0;
+        font-size: 22px;
+        font-weight: bold;
+        color: white;
+        white-space: nowrap;
+        text-align: left;
+}
+
+#subtitle {
+        margin: 0 10px 0 0px;
+        padding: 4px 0 0 142px;
+        height: 18px;
+        max-width: 62em;
+        background-color: #EDE497;
+        color: #726921;
+}
+
+#head h2 {
+        margin: 0;
+        padding: 0;
+        font-size: 13px;
+        font-weight: normal;
+        white-space: nowrap;
+}
+
+#head ul { 
+        display: inline; /* fuer IE ... */
+        font-size: 13px;
+        height: 0px;
+        margin: 0;
+        padding: 0;
+}
+
+#head li { 
+        list-style-type: none;
+        margin: 0 10px 0 0;
+        padding: 0 0 0 10px;
+        float: left;
+        border-left: 1px solid #726921;
+        height: 14px;
+}
+
+#head li:first-child { 
+        border-left: none;
+        padding: 0;
+}
+
+#head a { 
+        font-weight: normal;
+        color: #726921;
+}
+
+#head a:hover { 
+        background-color: #EDE497;
+        text-decoration: underline;
+}
+
+#search {
+        float: right;
+        width: 150px;
+        height: 39px;
+        font-size: 10px;
+        color: #726921;
+}
+
+#search input { 
+        display: block;
+        height: 16px;
+        border: 1px solid #AF9D00;
+        width: 100%;
+}
+
+#search form { 
+        margin: 0;
+        padding: 0;
+}
+
+#content1 {
+        padding: 0 10px 10px 0;
+        border-bottom: 1px solid #AF9D00;
+}
+
+#content2 {
+        /* need non-zero top padding here to prevent margin propagation */
+        padding: 10px 0 0 142px;
+        max-width: 62em;
+}
+
+a {
+        font-weight: bold;
+        text-decoration: none;
+}
+
+a.literal {
+        font-weight: normal;
+}
+
+a.ext {
+        font-style: italic;
+}
+
+a.anchor { 
+        color: inherit;
+        background-color: white !important;
+}
+
+div.tabs {
+        display: inline; /* IE double margin fix */
+        float: left;
+        clear: left;
+        background-color: #FDF7C3;
+        border: 1px solid #AF9D00;
+        margin: 0 0 10px -132px;
+        width: 120px;
+        overflow: hidden;
+}
+
+* html div.tabs {
+        margin-bottom: 0; /* Grmpf .. IE6 is f**ing up ... */
+}
+
+div.tabs ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+}
+
+div.tabs ul li {
+        display: inline;
+}
+
+div.tabs ul li a {
+        display: block;
+        padding: 2px 5px;
+        font-size: 13px;
+        color: #726921;
+        text-decoration: none;
+        white-space: nowrap;
+        font-weight: normal;
+}
+
+div.tabs ul li a:visited, div.tabs ul li a:active {
+        color: #726921;
+        text-decoration: none;
+}
+
+div.tabs li.current a {
+        background-position: 100% -150px;
+        border-width: 0px;
+}
+
+div.tabs li.current span {
+        background-position: 0% -150px;
+        padding-bottom: 6px;
+}
+
+div.tabs ul li a:hover, div.tabs ul li.current a, div.tabs ul.glossary li a:hover {
+        color: #726921;
+        text-decoration: none;
+        background-color: #EDE497;
+}
+
+div.tabs ul li.level1 a {
+        padding-left: 1.5em;
+        font-size: 90%;
+}
+
+div.tabs ul.glossary li a {
+        background-color: #FDF7C3;
+}
+
+div.tabs ul.glossary li.glossary a {
+        background-color: #EDE497;
+}
+
+#footer {
+        clear: both;
+        padding: 4px 10px 4px 142px;
+        color: #726921;
+        white-space: nowrap;
+        text-align: right;
+        max-width: 62em;
+}
+
+#footer span {
+        font-size: 10px;
+}
+
+#footer a, #footer a:active, #footer a:visited {
+        color: #726921;
+        text-decoration: none;
+}
+
+#footer a:hover {
+        background-color: inherit;
+        text-decoration: underline;
+}
+
+dl.attention {
+        border: 1px solid #AADD88;
+        background-color: #EEFFDD;
+        padding: 4px;
+}
+
+dl.warning {
+        border: 1px solid #DDAA88;
+        background-color: #FFEEDD;
+        padding: 4px;
+}
+
+dl.note {
+        border: 1px solid A0C2C2;
+        background-color: #F0F8F8;
+        padding: 4px;
+}
+ 
+table.packet {
+        width: 95%;
+        margin: 10pt auto;
+        border: 1px solid #AAAAAA;
+        padding: 2px;
+        border-spacing: 0;
+        white-space: nowrap;
+        text-align: center;
+        table-layout: fixed; 
+}
+
+table.packet td,th {
+        border: 2px solid white;
+        background-color: #EEEEEE;
+        padding: 6px 4px;
+}
+
+table.packet th {
+        background-color: white;
+        text-align: left;
+        font-weight: normal;
+        padding: 0px;
+}
+
+table.senf {
+        width: 95%;
+        margin: 10pt auto;
+        border: 1px solid #AAAAAA;
+        padding: 2px;
+        border-spacing: 0;
+}
+
+table.senf td,th {
+        border: 2px solid white;
+        background-color: #EEEEEE;
+        padding: 2px 4px;
+        text-align: left;
+        vertical-align: top;
+}
+
+table.senf th {
+        background-color: #DDDDDD;
+        text-align: center;
+        font-weight: bold;
+}
+
+table.fields {
+        width: 95%;
+        margin: 10pt auto;
+        border: 1px solid #AAAAAA;
+        padding: 2px;
+        border-spacing: 0;
+}
+
+table.fields td,th {
+        border: 2px solid white;
+        background-color: #EEEEEE;
+        padding: 2px 4px;
+        text-align: left;
+        vertical-align: top;
+}
+
+table.fields th {
+        background-color: #DDDDDD;
+        text-align: center;
+        font-weight: bold;
+}
+
+table.fields td:first-child {
+        width: 25%;
+        font-style: italic;
+}
+
+table.fixedcolumn td:first-child {
+        width: 35%; 
+}
+
+table.ebnf {
+        margin: 0;
+        padding: 0;
+        border-spacing: 0;
+        border: none;
+}
+
+table.ebnf td {
+        text-align: left;
+        border: none;
+        padding: 0;
+}
+
+table.ebnf td:first-child {
+        width: 1%;
+        padding-right: 1ex;
+        font-style: italic;
+}
+
+table.listing {
+        margin: 10pt 0;
+        padding: 0;
+        border-spacing: 0;
+        border: none;
+}
+
+table.listing td {
+        text-align: left;
+        vertical-align: top;
+        border: none;
+        padding: 0 0 3pt 0;
+}
+
+table.listing td:first-child {
+        width: 35%;
+}
+
+dl.xref-bug, dl.xref-fix, dl.xref-todo, dl.xref-idea {
+        border: 1px solid #CC8888;
+        padding: 2px 3px;
+        margin: 4px 8px 4px 2px;
+        background-color: #FFEEEE;
+        color: #666666;
+        font-size: 75%;
+        overflow: hidden;
+}
+
+dl.xref-bug dt, dl.xref-fix dt, dl.xref-todo dt, dl.xref-idea dt,
+dl.xref-bug dd, dl.xref-fix dd, dl.xref-todo dd, dl.xref-idea dd {
+        display: inline;
+        margin: 0;
+        padding: 0;
+}
+
+dl.xref-bug a, dl.xref-fix a, dl.xref-todo a, dl.xref-idea a {
+        color: #6666FF;
+}
+
+dl.xref-fix {
+        border-color: #CCCC88;
+        background-color: #FFFFEE;
+}
+
+dl.xref-todo {
+        border-color: #88CC88;
+        background-color: #EEFFEE;
+}
+
+dl.xref-idea {
+        border-color:  #CCCCCC;
+        background-color: #F8F8F8;
+}
+
+div.bug, div.fixme, div.todo, div.idea { 
+        padding-left: 10px;
+}
+
+div.bug { 
+        border-left: 10px solid red;
+}
+
+div.fixme { 
+        border-left: 10px solid yellow;
+}
+
+div.todo { 
+        border-left: 10px solid green;
+}
+
+div.idea { 
+        border-left: 10px solid #AAAAAA;
+}
+
+dl.implementation {
+        color: #666666;
+        font-size: 75%;
+}
+
+p.memtitle {
+        color: #1a41a8;
+        font-weight: bold;
+        margin-right: 14px;
+        border-bottom: 1px solid #84b0c7;
+}
+
+p.sourceline, p.references, p.referencedby, p.reimplementedfrom, p.reimplementedin, 
+p.implementedin {
+        color: #666666;
+        font-size: 75%;
+        margin-bottom: .2em;
+        margin-top: .2em;
+}
+
+div.memdoc p.sourceline, p.references, p.referencedby, p.reimplementedfrom, p.reimplementedin, 
+p.implementedin {
+        margin-left: 10em;
+        text-indent: -4em;
+}
+
+div.memproto {
+        margin-bottom: .5em;
+}
+
+table {
+        width: 100%;
+}
+
+div.ah {
+        margin-right: 10px;
+}
+
+div.nav, div.navpath {
+        width: auto;
+        background-color: white;
+        border: none;
+        border-bottom: 1px solid #AF9D00;
+        padding: 5px 0;
+        margin: 0;
+}
+
+div.qindex {
+        width: auto;
+        background-color: #e8eef2;
+        border: 1px solid #84b0c7;
+        text-align: center;
+        margin: 2px 0;
+        padding: 2px;
+        line-height: 140%;
+}
+
+table.qindextable {
+        font-size: 90%;
+}
+
+table.qindextable td {
+        width: 33%;
+}
+
+dl.parameters dd table {
+        width: auto;
+}
+
+table.glossary {
+        border: none;
+        border-spacing: 0;
+        margin: 10px 0;
+}
+
+table.glossary tr td {
+        border: none;
+        border-bottom: 4px solid white;
+        vertical-align: top;
+        padding: 2px 4px;
+        background-color: #F0F0F0;
+}
+
+table.glossary tr td:first-child {
+        font-weight: bold;
+        white-space: nowrap;
+        padding-right: 10px;
+}
+
+table.members td:first-child {
+        width: 35%;
+}
+
+div.toc {
+        width: 25%;
+        margin: 10px 0px;
+}
+
+div.toc ol {
+        padding: 0px;
+        margin: 0pt 0pt 0pt 40px;
+        list-style-type: decimal;
+}
+
+div.toc li {
+        padding: none;
+}
+
+div.toc div {
+        margin: 10px 0px;
+        font-weight: bold;
+        font-size: 120%;
+}
+
+p.commalist {
+        white-space: nowrap;
+        margin-left: 4em;
+        text-indent: -4em;
+}
+
+#autotoc {
+        width: 30em;
+        background-color: #F5F5F5;
+        border: 1px solid #CCC;
+        padding: 0 1em;
+        margin: 1em 0;
+}
+
+#autotoc h1 {
+        font-size: 120%;
+        text-align: left;
+}
+
+#autotoc ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 1em 0 1em 1em;
+}
+
+#autotoc li {
+        padding: 0 0 0 3em;
+        text-indent: -3em;
+}
+
+#autotoc ul li.level_h2 {
+        margin: .5em 0 .2em 0;
+}
+
+#autotoc ul li.level_h3 {
+        margin-left: 1.5em;
+}
+
+#autotoc ul li.level_h4 {
+        margin-left: 3em;
+}
+
+h4 {
+        font-size: 100%;
+        margin-bottom: .4em;
+}
+
+table.memname {
+        width: 100%; 
+        font-weight: normal; 
+        white-space: normal;
+}
+
+table.memname td {
+        vertical-align: top;
+}
+
+table.memname td.memtype {
+        width: 100%;
+}
+
+table.memname td.memname {
+        width: 35%; 
+        text-align: right; 
+        font-weight: bold;
+}
+
+table.memname td.memparen {
+        width: 1%;
+}
+
+table.memname td.paramtype {
+        width: 30%; 
+        text-align: right;
+}
+
+table.memname td.paramname {
+        width: 33%;
+}
+
+table.memname td.memattrs {
+        text-align: right;
+}
+
+table.memname.macro td.paramtype {
+        text-align: left;
+	color: #602020;
+        font-style: italic;
+}
+
+table.memname.macro td.memattrs {
+        display: none;
+}
+
+/* 
+ * Local Variables:
+ * indent-tabs-mode: nil
+ * ispell-local-dictionary: "american"
+ * End:
+ */

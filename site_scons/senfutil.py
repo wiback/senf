@@ -1,5 +1,7 @@
-import os.path, glob
+import os.path, glob, site_tools.Yaptu
 from SCons.Script import *
+
+senfutildir = os.path.dirname(__file__)
 
 # Fix for SCons 0.97 compatibility
 try:
@@ -60,12 +62,15 @@ Special command line parameters:
 # c) check for a local SENF, set options accordingly and update that SENF if needed
 
 def SetupForSENF(env, senf_paths = []):
-    senfutildir = os.path.dirname(__file__)
+    global senfutildir
     senf_paths.extend(('senf', '../senf', os.path.dirname(senfutildir), '/usr/local', '/usr'))
     tooldir = os.path.join(senfutildir, 'site_tools')
 
     env.Tool('Boost',       [ tooldir ])
     env.Tool('PhonyTarget', [ tooldir ])
+    env.Tool('Yaptu',       [ tooldir ])
+    env.Tool('CopyToDir',   [ tooldir ])
+    env.Tool('Doxygen',     [ tooldir ])
 
     env.Append(
         LIBS              = [ 'senf', 'rt', '$BOOSTREGEXLIB',
@@ -90,6 +95,11 @@ def SetupForSENF(env, senf_paths = []):
         LOGLEVELS_        = BuildTypeOptions('LOGLEVELS'),
         )
 
+    rev = 'unknown'
+    if os.path.isdir('.svn'):
+        rev = 'r'+os.popen('svnversion').read().strip().lower()
+    elif os.path.isdir('.git'):
+        rev = 'r'+os.popen('gitsvnversion').read().strip().lower()
     env.SetDefault( 
         CXXFLAGS_final    = [],
         CXXFLAGS_normal   = [],
@@ -106,6 +116,12 @@ def SetupForSENF(env, senf_paths = []):
         LOGLEVELS_final   = [],
         LOGLEVELS_normal  = [],
         LOGLEVELS_debug   = [],
+
+        PROJECTNAME       = "Unnamed project",
+        DOCLINKS          = [],
+        PROJECTEMAIL      = "nobody@nowhere.org",
+        COPYRIGHT         = "nobody",
+        REVISION          = rev,
         )
 
     # Interpret command line options
@@ -159,3 +175,48 @@ def Glob(env, exclude=[], subdirs=[]):
         sources += [ x for x in glob.glob(os.path.join(subdir,"*.cc"))
                      if x not in testSources and x not in exclude ]
     return (sources, testSources)
+
+def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=False, **kw):
+    # Additional interesting keyword arguments or environment variables:
+    #    PROJECTNAME, DOCLINKS, PROJECTEMAIL, COPYRIGHT
+
+    libdir=os.path.join(senfutildir, 'lib')
+    
+    if env.GetOption('clean'):
+        env.Clean('doc', env.Dir('doc'))
+        if not mydoxyfile:
+            env.Clean('doc', "Doxyfile")
+
+    if not mydoxyfile:
+        # Create Doxyfile NOW
+        site_tools.Yaptu.yaptuAction("Doxyfile", 
+                                     os.path.join(libdir, "Doxyfile.yap"),
+                                     env)
+
+    # The other files are created using dependencies
+    if doxyheader: 
+        doxyheader = env.CopyToDir(env.Dir("doc"), doxyheader)
+    else:
+        doxyheader = env.Yaptu("doc/doxyheader.html", os.path.join(libdir, "doxyheader.yap"), **kw)
+    if doxyfooter:
+        doxyfooter = env.CopyToDir(env.Dir("doc"), doxyfooter)
+    else:
+        doxyfooter = env.Yaptu("doc/doxyfooter.html", os.path.join(libdir, "doxyfooter.yap"), **kw)
+    if doxycss:
+        doxycss = env.CopyToDir(env.Dir("doc"), doxycss)
+    else:
+        doxycss    = env.CopyToDir(env.Dir("doc"), os.path.join(libdir, "doxy.css"))
+
+    doc = env.Doxygen("Doxyfile",
+                      DOXYOPTS   = [ '--html' ],
+                      DOXYENV    = { 'TOPDIR'     : env.Dir('#').abspath,
+                                     'LIBDIR'     : libdir,
+                                     'output_dir' : 'doc',
+                                     'html_dir'   : 'html',
+                                     'html'       : 'YES' },
+                      DOCLIBDIR  = libdir,
+                      DOXYGENCOM = "$DOCLIBDIR/doxygen.sh $DOXYOPTS $SOURCE")
+
+    env.Depends(doc, [ doxyheader, doxyfooter, doxycss ])
+
+    return doc
