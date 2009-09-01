@@ -95,11 +95,6 @@ def SetupForSENF(env, senf_paths = []):
         LOGLEVELS_        = BuildTypeOptions('LOGLEVELS'),
         )
 
-    rev = 'unknown'
-    if os.path.isdir('.svn'):
-        rev = 'r'+os.popen('svnversion').read().strip().lower()
-    elif os.path.isdir('.git'):
-        rev = 'r'+os.popen('gitsvnversion').read().strip().lower()
     env.SetDefault( 
         CXXFLAGS_final    = [],
         CXXFLAGS_normal   = [],
@@ -121,7 +116,6 @@ def SetupForSENF(env, senf_paths = []):
         DOCLINKS          = [],
         PROJECTEMAIL      = "nobody@nowhere.org",
         COPYRIGHT         = "nobody",
-        REVISION          = rev,
         )
 
     # Interpret command line options

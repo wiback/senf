@@ -1,12 +1,12 @@
 #!/bin/sh
 
-topdir="`dirname "$0"`"; topdir="`cd "$topdir/.."; pwd`"
+base="`dirname "$0"`"; base="`cd "$base"; pwd`"
 if head -4 "$1" | grep -q nomunge; then
     dot "$@"
     exit $?
 fi
 sed -i -e 's/rankdir=LR/rankdir=TB/' "$1"
-"$topdir/doclib/dot-munge.pl" "$1"
+"$base/dot-munge.pl" "$1"
 unflatten -l2 -c2 -f -o "$1".unflat "$1"
 mv "$1".unflat "$1"
 

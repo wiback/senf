@@ -99,6 +99,7 @@ EXPAND_AS_DEFINED      = prefix_ \
 EXTERNAL_GROUPS        = NO
 
 HAVE_DOT               = YES
+CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = NO
 GROUP_GRAPHS           = NO
 GRAPHICAL_HIERARCHY    = NO
@@ -108,7 +109,7 @@ MAX_DOT_GRAPH_DEPTH    = 5
 DOT_MULTI_TARGETS      = YES
 DOT_CLEANUP            = NO
 
-SEARCHENGINE           = YES
+SEARCHENGINE           = NO
 
 ###########################################################################
 # The following options are MANDATORY to integrate with the build system
