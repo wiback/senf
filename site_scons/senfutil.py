@@ -61,9 +61,9 @@ Special command line parameters:
 # b) parse the LOGLEVELS parameter into the correct SENF_LOG_CONF syntax
 # c) check for a local SENF, set options accordingly and update that SENF if needed
 
-def SetupForSENF(env, senf_paths = []):
+def SetupForSENF(env, senf_path = []):
     global senfutildir
-    senf_paths.extend(('senf', '../senf', os.path.dirname(senfutildir), '/usr/local', '/usr'))
+    senf_path.extend(('senf', '../senf', os.path.dirname(senfutildir), '/usr/local', '/usr'))
     tooldir = os.path.join(senfutildir, 'site_tools')
 
     env.Tool('Boost',       [ tooldir ])
@@ -116,6 +116,7 @@ def SetupForSENF(env, senf_paths = []):
         DOCLINKS          = [],
         PROJECTEMAIL      = "nobody@nowhere.org",
         COPYRIGHT         = "nobody",
+        REVISION          = "unknown",
         )
 
     # Interpret command line options
@@ -127,7 +128,7 @@ def SetupForSENF(env, senf_paths = []):
 
     # If we have a symbolic link (or directory) 'senf', we use it as our
     # senf repository
-    for path in senf_paths:
+    for path in senf_path:
         if not path.startswith('/') : sconspath = '#/%s' % path
         else                        : sconspath = path
         if os.path.exists(os.path.join(path,"senf/config.hh")):
@@ -170,11 +171,37 @@ def Glob(env, exclude=[], subdirs=[]):
                      if x not in testSources and x not in exclude ]
     return (sources, testSources)
 
-def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=False, **kw):
-    # Additional interesting keyword arguments or environment variables:
-    #    PROJECTNAME, DOCLINKS, PROJECTEMAIL, COPYRIGHT
+tagfiles = None
 
+def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=False, senfdoc_path=[],
+            **kw):
+    # Additional interesting keyword arguments or environment variables:
+    #    PROJECTNAME, DOCLINKS, PROJECTEMAIL, COPYRIGHT, REVISION
+
+    global senfutildir
+    global tagfiles
     libdir=os.path.join(senfutildir, 'lib')
+    
+    if tagfiles is None:
+        senfdocdir = None
+        senfdoc_path.extend(('senf/manual', '../senf/manual', 'senf', '../senf', 
+                             'senfdoc', os.path.dirname(senfutildir), 
+                             os.path.join(os.path.dirname(senfutildir), 'manual'),
+                             '/usr/share/doc/senf', '/usr/local/share/doc/senf',
+                             '/usr/share/doc/libsenf-doc/html'))
+        for path in senfdoc_path:
+            if os.path.exists(os.path.join(path, "doc/Main.tag")):
+                senfdocdir = path
+                break
+        tagfiles = []
+        if senfdocdir is None:
+            print "(SENF documentation not found)"
+        else:
+            for dir, dirs, files in os.walk(senfdocdir):
+                tagfiles.extend([ os.path.join(dir,f) for f in files if f.endswith('.tag') ])
+                if dir.endswith('/doc') : dirs.remove('html')
+                for d in dirs: 
+                    if d.startswith('.') : dirs.remove(d)
     
     if env.GetOption('clean'):
         env.Clean('doc', env.Dir('doc'))
@@ -187,27 +214,37 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
                                      os.path.join(libdir, "Doxyfile.yap"),
                                      env)
 
+    envvalues = [ env.Value('$PROJECTNAME'),
+                  env.Value('$DOCLINKS'),
+                  env.Value('$PROJECTEMAIL'),
+                  env.Value('$COPYRIGHT'),
+                  env.Value('$REVISION') ]
+
     # The other files are created using dependencies
     if doxyheader: 
         doxyheader = env.CopyToDir(env.Dir("doc"), doxyheader)
     else:
         doxyheader = env.Yaptu("doc/doxyheader.html", os.path.join(libdir, "doxyheader.yap"), **kw)
+        env.Depends(doxyheader, envvalues)
     if doxyfooter:
         doxyfooter = env.CopyToDir(env.Dir("doc"), doxyfooter)
     else:
         doxyfooter = env.Yaptu("doc/doxyfooter.html", os.path.join(libdir, "doxyfooter.yap"), **kw)
+        env.Depends(doxyfooter, envvalues)
     if doxycss:
         doxycss = env.CopyToDir(env.Dir("doc"), doxycss)
     else:
         doxycss    = env.CopyToDir(env.Dir("doc"), os.path.join(libdir, "doxy.css"))
 
     doc = env.Doxygen("Doxyfile",
-                      DOXYOPTS   = [ '--html' ],
+                      DOXYOPTS   = [ '--html', '--tagfiles', '"$TAGFILES"' ],
                       DOXYENV    = { 'TOPDIR'     : env.Dir('#').abspath,
                                      'LIBDIR'     : libdir,
+                                     'tagfiles'   : '$TAGFILES',
                                      'output_dir' : 'doc',
                                      'html_dir'   : 'html',
                                      'html'       : 'YES' },
+                      TAGFILES   = tagfiles, 
                       DOCLIBDIR  = libdir,
                       DOXYGENCOM = "$DOCLIBDIR/doxygen.sh $DOXYOPTS $SOURCE")
 
