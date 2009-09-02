@@ -493,6 +493,7 @@ for name in names:
 texf.write(TEX_FOOTER)
 texf.close()
 
+os.environ['TEXINPUTS'] =  "%s:%s" % (os.environ.get('TEXINPUTS',''), os.path.abspath(basedir))
 if os.system("cd %s; %s/textogif -png -dpi 80 -res 0.25 fields >pkgdraw.log 2>&1"
              % (tmpdir, basedir)) != 0:
     sys.stderr.write("Conversion failed. See %s\n" % tmpdir)

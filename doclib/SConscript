@@ -261,7 +261,6 @@ env.Replace(
 
 env.Append( ENV = {
     'TODAY' : str(datetime.date.today()),
-    'TEXINPUTS' : os.environ.get('TEXINPUTS',env.Dir('#/doclib').abspath + ':'),
     'DOXYGEN' : str(env.File(env['DOXYGEN'])),
 })
 

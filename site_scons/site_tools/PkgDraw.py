@@ -1,5 +1,7 @@
-import os
+import os, os.path
 import SCons.Builder, SCons.Action
+
+libdir = os.path.join(os.path.dirname(os.path.dirname(__file__)),'lib')
 
 PkgDraw = SCons.Builder.Builder(
     suffix = ".png",
@@ -9,7 +11,7 @@ PkgDraw = SCons.Builder.Builder(
 
 def generate(env):
     env['BUILDERS']['PkgDraw'] = PkgDraw
-    env['PKGDRAW'] = "pkgdraw"
+    env['PKGDRAW'] = "%s/pkgdraw" % libdir
     env['PKGDRAWCOM'] = "$PKGDRAW $SOURCE $TARGET $PKGDRAWPACKETS -- $CPPFLAGS $_CPPINCFLAGS $_CPPDEFFLAGS"
     env['PKGDRAWPACKETS'] = ''
 

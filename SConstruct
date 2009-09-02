@@ -43,10 +43,6 @@ fixlinks     Fix broken links in doxygen documentation
 valgrind     Run all tests under valgrind/memcheck
 """)
 
-env.Replace(
-   PKGDRAW                = 'doclib/pkgdraw',
-)
-
 env.Append(
    ENV                    = { 'PATH' : os.environ.get('PATH') },
    CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
