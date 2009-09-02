@@ -256,7 +256,7 @@ env.SetDefault(
 )
 
 env.Replace(
-    DOXYGENCOM = "doclib/doxygen.sh $DOXYOPTS $SOURCE",
+    DOXYGENCOM = "site_scons/lib/doxygen.sh $DOXYOPTS $SOURCE",
 )
 
 env.Append( ENV = {

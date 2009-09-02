@@ -9,7 +9,7 @@ ALWAYS_DETAILED_SEC    = YES
 STRIP_FROM_INC_PATH    = $(TOPDIR)
 MULTILINE_CPP_IS_BRIEF = YES
 DETAILS_AT_TOP         = YES
-LAYOUT_FILE            = $(TOPDIR)/doclib/DoxygenLayout.xml
+LAYOUT_FILE            = $(TOPDIR)/site_scons/lib/DoxygenLayout.xml
 
 ALIASES                = "fixme=\xrefitem fixme \"Fix\" \"Fixmes\"" \
                          "idea=\xrefitem idea \"Idea\" \"Ideas\"" \
@@ -43,7 +43,7 @@ EXCLUDE_PATTERNS       = *.test.cc \
                          "#*#"
 EXCLUDE_SYMBOLS        = boost std
 IMAGE_PATH             = .
-INPUT_FILTER           = "$(TOPDIR)/doclib/filter.pl"
+INPUT_FILTER           = "$(TOPDIR)/site_scons/lib/filter.pl"
 
 SOURCE_BROWSER         = YES
 ALPHABETICAL_INDEX     = YES
@@ -109,7 +109,7 @@ COLLABORATION_GRAPH    = NO
 GROUP_GRAPHS           = NO
 GRAPHICAL_HIERARCHY    = NO
 DIRECTORY_GRAPH        = NO
-DOT_PATH               = "$(TOPDIR)/doclib"
+DOT_PATH               = "$(TOPDIR)/site_scons/lib"
 DOT_GRAPH_MAX_NODES    = 10
 MAX_DOT_GRAPH_DEPTH    = 5
 DOT_MULTI_TARGETS      = YES

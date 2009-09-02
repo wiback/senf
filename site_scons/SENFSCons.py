@@ -23,8 +23,8 @@ def Glob(env, exclude=[], subdirs=[]):
 
 def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     # There is one small problem we need to solve with this builder: The Doxygen builder reads
-    # the Doxyfile and thus depends on the environment variables set by doclib/doxygen.sh. We
-    # thus have to provide all necessary definitions here manually via DOXYENV !
+    # the Doxyfile and thus depends on the environment variables set by site_scons/lib/doxygen.sh.
+    # We thus have to provide all necessary definitions here manually via DOXYENV !
 
     if type(doxyfile) is type(""):
         doxyfile = env.File(doxyfile)
@@ -47,8 +47,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                                            'generate_tagfile': 'doc/${MODULE}.tag' },
                               MODULE   = module )
         env.Append(ALL_TAGFILES = [ tagfile[0].abspath ])
-        env.Depends(tagfile, [ env.File('#/doclib/doxygen.sh'), 
-                               env.File('#/doclib/tag-munge.xsl') ])
+        env.Depends(tagfile, [ env.File('#/site_scons/lib/doxygen.sh'), 
+                               env.File('#/site_scons/lib/tag-munge.xsl') ])
 
         env.Install(env.Dir('$DOCINSTALLDIR').Dir(tagfile[0].dir.get_path(env.Dir('#'))),
                     tagfile[0])
@@ -64,8 +64,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                                    'output_dir'      : 'doc',
                                    'html_dir'        : 'html',
                                    'html'            : 'YES' } )
-    env.Depends(doc, [ env.File('#/doclib/doxygen.sh'),
-                       env.File('#/doclib/html-munge.xsl') ])
+    env.Depends(doc, [ env.File('#/site_scons/lib/doxygen.sh'),
+                       env.File('#/site_scons/lib/html-munge.xsl') ])
 
     # Copy the extra_sources (the images) into the documentation directory
     # (need to exclude the 'clean' case otherwise there are multiple ways to clean the copies)
