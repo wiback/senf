@@ -36,6 +36,7 @@
 #include <execinfo.h>
 #include <senf/config.hh>
 #include <stdint.h>
+#include <stdio.h>
 
 //#include "FIFORunner.mpp"
 #define prefix_
