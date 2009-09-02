@@ -32,16 +32,7 @@
 
 /** \defgroup policy_group The Policy Framework
 
-    <div class="diamap" name="SocketPolicy">
-    <span coords="39,229,182,257">\ref WritePolicyBase</span>
-    <span coords="17,76,210,105">\ref AddressingPolicyBase</span>
-    <span coords="29,114,194,143">\ref FramingPolicyBase</span>
-    <span coords="368,0,463,28">\ref PolicyBase</span>
-    <span coords="275,2,691,185">\ref SocketPolicy</span>
-    <span coords="0,152,227,181">\ref CommunicationPolicyBase</span>
-    <span coords="41,191,180,219">\ref ReadPolicyBase</span>
-    </div>
-    \htmlonly <img src="SocketPolicy.png" border="0" alt="SocketPolicy" usemap="#SocketPolicy"> \endhtmlonly
+    \diaimage SocketPolicy.dia
 
     \section policy_group_introduction Introduction to the Policy Framework
 

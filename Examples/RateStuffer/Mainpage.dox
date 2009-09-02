@@ -20,6 +20,8 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+using namespace senf::ppi::module;
+
 /** \mainpage Example introducing the Packet Processing Infrastructure
 
     This example application implements a simple PPI application: It will read UDP packets from an
@@ -60,16 +62,7 @@
 
     \section setup Module setup
 
-    <div class="diamap" name="ratestuffer">
-        <span coords="101,139,220,206">\ref senf::ppi::module::ThrottleBarrier</span>
-        <span coords="241,152,365,219">\ref senf::ppi::module::PassiveQueue</span>
-        <span coords="606,346,748,400">\ref senf::ppi::module::PassiveSocketSink<></span>
-        <span coords="528,190,647,257">\ref RateFilter</span>
-        <span coords="387,165,511,245">\ref senf::ppi::module::PriorityJoin</span>
-        <span coords="0,0,149,53">\ref senf::ppi::module::ActiveSocketSource<></span>
-        <span coords="241,235,365,289">\ref senf::ppi::module::CloneSource</span>
-    </div>
-    \htmlonly <img src="ratestuffer.png" border="0" alt="ratestuffer" usemap="#ratestuffer"> \endhtmlonly
+    \diaimage ratestuffer.dia
 
     Above image depicts the module setup implementing the rate stuffer. A
     senf::ppi::module::ActiveSocketSource reads the incoming UDP packets and sends them into a

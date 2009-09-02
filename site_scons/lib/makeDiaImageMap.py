@@ -18,14 +18,21 @@ stylesheet=u"""
   <xsl:template match="text()"/>
 
   <xsl:template match="dia:object[@type='UML - Class']">
-    <xsl:value-of select="dia:attribute[@name='name']/dia:string"/>
+    <xsl:choose>
+      <xsl:when test="dia:attribute[@name='comment']/dia:string!='##'">
+        <xsl:value-of select="dia:attribute[@name='comment']/dia:string"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="dia:attribute[@name='name']/dia:string"/>
+      </xsl:otherwise>
+    </xsl:choose>
     <xsl:text> </xsl:text>
     <xsl:value-of select="dia:attribute[@name='obj_bb']/dia:rectangle/@val"/>
     <xsl:text>&#x0a;</xsl:text>
   </xsl:template>
 
   <xsl:template match="dia:attribute[@name='obj_bb']/dia:rectangle">
-    <xsl:text>## </xsl:text>
+    <xsl:text>!! </xsl:text>
     <xsl:value-of select="@val"/>
     <xsl:text>&#x0a;</xsl:text>
   </xsl:template>

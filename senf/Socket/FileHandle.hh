@@ -25,16 +25,8 @@
  */
 
 /** \defgroup handle_group The Handle Hierarchy
-
-    <div class="diamap" name="FhHierarchy">
-    <span coords="233,47,438,89">\ref SocketHandle</span>
-    <span coords="32,126,281,168">\ref ClientSocketHandle</span>
-    <span coords="0,187,326,229">\ref ProtocolClientSocketHandle</span>
-    <span coords="350,187,684,229">\ref ProtocolServerSocketHandle</span>
-    <span coords="243,0,343,28">\ref FileHandle</span>
-    <span coords="382,126,638,168">\ref ServerSocketHandle</span>
-    </div>
-    \htmlonly <img src="FhHierarchy.png" border="0" alt="FhHierarchy" usemap="#FhHierarchy"> \endhtmlonly
+    
+    \diaimage FhHierarchy.dia
 
     The senf::FileHandle class is the base of a hierarchy of socket handle classes (realized as
     templates). These classes provide an interface to the complete socket API. While going down the
