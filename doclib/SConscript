@@ -41,7 +41,7 @@
 # If needed, the doxy-header.html and/or doxy-footer.html file will be
 # regenerated. The header and/or footer are generated from templates
 # using a simple python based templating system called yaptu which is
-# included in doclib/.
+# included in site_scons/lib/.
 #
 # 
 # 3. Calling doxygen
@@ -52,7 +52,8 @@
 #
 # * Building prerequisites (e.g. images)
 #
-# * The processing done by the Doxygen builder and doclib/doxygen.sh
+# * The processing done by the Doxygen builder and
+#   site_scon/lib/doxygen.sh
 #
 #
 # 3.1. Building prerequisites
@@ -66,7 +67,7 @@
 # The Doxygen builder will call the doxygen command to build the
 # documentation. 
 #
-# The doxygen command is configured as 'doclib/doxygen.sh' which
+# The doxygen command is configured as 'site_scon/lib/doxygen.sh' which
 # does some additional processing in addition to calling doxygen
 # proper
 #
@@ -81,25 +82,25 @@
 #
 # * a generated tag file is post-processed using an XSLT template
 #
-# (see doclib/doxygen.sh for more information). The Doxygen
+# (see site_scon/lib/doxygen.sh for more information). The Doxygen
 # configuration is set up such, that
 #
-# * doxygen calls 'doclib/filter.pl' on each source file. This filter
-#   will strip excess whitespace from the beginning of lines in
+# * doxygen calls 'site_scons/lib/filter.pl' on each source file. This
+#   filter will strip excess whitespace from the beginning of lines in
 #   '\code' and '<pre>' blocks. Additionally it will expand all tabs,
 #   tab width is 8 spaces (there should be no tabs in the source but
 #   ...)
 # 
-# * doxygen calls 'doclib/dot' to generate the 'dot' images.
+# * doxygen calls 'site_scons/lib/dot' to generate the 'dot' images.
 #
-# * 'doclib/dot' calls 'doclib/dot-munge.pl' on the .dot
-#    files. dot-munge.pl changes the font and font-size and adds
+# * 'site_scons/lib/dot' calls 'site_scons/lib/dot-munge.pl' on the
+#    .dot files. dot-munge.pl changes the font and font-size and adds
 #    line-breaks to long labels
 #
-# * 'doclib/dot' calls the real dot binary. If the resulting image is
-#   more than 800 pixels wide, dot is called again, this time using
-#   the oposite rank direction (top-bottom vs. left-right). The image
-#   with the smaller width is selected and returned.
+# * 'site_scons/lib/dot' calls the real dot binary. If the resulting
+#   image is more than 800 pixels wide, dot is called again, this time
+#   using the oposite rank direction (top-bottom vs. left-right). The
+#   image with the smaller width is selected and returned.
 #
 #
 # 4. Fixing broken links
@@ -288,7 +289,7 @@ footer = env.Command('doxy-footer.html', 'SConscript', writeTemplate,
                      TEMPLATE = Literal(FOOTER))
 
 env.Alias('all_docs',
-          env.Command('search.php', [ 'html-munge.xsl', 'SConscript' ],
+          env.Command('search.php', [ '#/site_scons/lib/html-munge.xsl', 'SConscript' ],
                       [ writeTemplate,
                         'xsltproc --nonet --html --stringparam topdir .. -o - $SOURCE $TARGET 2>/dev/null'
                             + "| sed"
