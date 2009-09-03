@@ -14,6 +14,8 @@ except NameError:
 
 env = Environment()
 
+env.Decider('MD5-timestamp')
+
 # Load all the local SCons tools
 env.Tool('Doxygen')
 env.Tool('Dia2Png')
