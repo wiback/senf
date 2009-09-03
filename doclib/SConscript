@@ -90,7 +90,12 @@
 #   '\code' and '<pre>' blocks. Additionally it will expand all tabs,
 #   tab width is 8 spaces (there should be no tabs in the source but
 #   ...)
-# 
+#
+# * 'site_scons/lib/filter.pl' calls 'site_scons/lib/makeDiaImageMap.py'
+#   whenever finding a '\diaimage' command. This will create an image
+#   map (in an encoded form which will be fixed by html-munge.xsl
+#   later)
+#
 # * doxygen calls 'site_scons/lib/dot' to generate the 'dot' images.
 #
 # * 'site_scons/lib/dot' calls 'site_scons/lib/dot-munge.pl' on the
