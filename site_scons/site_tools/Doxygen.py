@@ -196,7 +196,7 @@ class DoxyfileParser:
             parser.parse()
             return
 
-      raise ValueError,"@INCLUDE file not found"
+      raise ValueError,"@INCLUDE file '%s' not found" % value[0]
 
    def _INCLUDE_PATH(self, op, value):
       self._include_path.extend(value)
