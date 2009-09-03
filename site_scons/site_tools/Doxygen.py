@@ -360,14 +360,14 @@ def relpath(source, target):
    return os.path.join(*([".."] * (len(source_elts) - prefix_len) +
                          target_elts[prefix_len:]))
 
-def DoxyGenerator(source, target, env, for_signature):
-   data = DoxyfileParse(env, source[0].abspath)
-   actions = [ 
-      SCons.Action.Action("$DOXYGENCOM"),
-      SCons.Action.Action([ "touch $TARGETS" ]),
-      ]
-   
-   return actions
+def doxyAction(target, source, env):
+   e = {}
+   e.update(env['ENV'])
+   for k,v in env.get('DOXYENV',[]).iteritems() : e[k] = env.subst(v)
+   SCons.Action.Action("$DOXYGENCOM")(target, source, env.Clone(ENV = e), show=False)
+
+def doxyActionStr(target, source, env):
+   return env.subst("$DOXYGENCOM")
 
 def generate(env):
    """
@@ -381,7 +381,8 @@ def generate(env):
    )
 
    doxyfile_builder = env.Builder(
-      generator = DoxyGenerator,
+      action = [ SCons.Action.Action(doxyAction, doxyActionStr),
+                 SCons.Action.Action([ "touch $TARGETS" ]) ],
       emitter = DoxyEmitter,
       target_factory = env.fs.Entry,
       single_source = True,

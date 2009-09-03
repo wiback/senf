@@ -242,6 +242,7 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
                       DOXYOPTS   = [ '--html', '--tagfiles', '"$TAGFILES"' ],
                       DOXYENV    = { 'TOPDIR'     : env.Dir('#').abspath,
                                      'LIBDIR'     : libdir,
+                                     'REVISION'   : '$REVISION',
                                      'tagfiles'   : '$TAGFILES',
                                      'output_dir' : 'doc',
                                      'html_dir'   : 'html',
