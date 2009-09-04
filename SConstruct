@@ -38,11 +38,13 @@ debbin       Build debian binary package
 linklint     Check links of doxygen documentation with 'linklint'
 fixlinks     Fix broken links in doxygen documentation
 valgrind     Run all tests under valgrind/memcheck
+lcov         Generate test coverage output in doc/lcov and lcov.info
 """)
 
 env.Append(
-   ENV                    = { 'PATH' : os.environ.get('PATH') },
-   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
+   ENV                    = { 'PATH' : os.environ.get('PATH'), 'HOME' : os.environ.get('HOME') },
+   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*',
+                              '*.gcno', '*.gcda', '*.gcov' ],
 
    CPPPATH                = [ '#' ],
    LOCALLIBDIR            = '#',
@@ -93,10 +95,11 @@ env.Append(
 )
 
 env.SetDefault(
-    LIBSENF   = "senf",
-    final     = False,
-    debug     = False,
-    syslayout = False
+    LIBSENF           = "senf",
+    LCOV              = "lcov",
+    GENHTML           = "genhtml",
+    SCONS             = "./tools/scons -j$CONCURRENCY_LEVEL",
+    CONCURRENCY_LEVEL = env.GetOption('num_jobs') or 1,
 )
 
 # Set variables from command line
@@ -178,11 +181,21 @@ env.PhonyTarget('valgrind', [ 'all_tests' ], [ """
         done
 """.replace("\n"," ") ])
 
+### lcov
+env.Alias('lcov', env.AlwaysBuild(
+    env.Command( [ env.Dir('doc/lcov'), 'lcov.info' ], [], [
+        '$SCONS debug=1 CCFLAGS+="-fprofile-arcs -ftest-coverage" LIBS+="gcov" all_tests',
+        '$LCOV --directory . --capture --output-file /tmp/senf_lcov.info --base-directory .',
+        '$LCOV --output-file ${TARGETS[1]} --remove /tmp/senf_lcov.info \\*/include/\\*',
+        '$GENHTML --output-directory ${TARGETS[0]} --title all_tests ${TARGETS[1]}',
+        'rm /tmp/senf_lcov.info' ])))
+
 #### clean
 env.Clean('all', '.prepare-stamp')
 env.Clean('all', libsenf)
 env.Clean('all', env.Dir('linklint')) # env.Dir to disambiguate from linklint PhonyTarget
 env.Clean('all', env.Dir('dist'))
+env.Clean('all', 'lcov.info')
 
 if env.GetOption('clean'):
     env.Clean('all', [ os.path.join(path,f)

@@ -271,19 +271,17 @@ env.Append( ENV = {
 })
 
 env.PhonyTarget('linklint', [], [
-    'rm -rf linklint',
-    'linklint -doc linklint -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
-    '[ ! -r linklint/errorX.html ] || python doclib/linklint_addnames.py <linklint/errorX.html >linklint/errorX.html.new',
-    '[ ! -r linklint/errorX.html.new ] || mv linklint/errorX.html.new linklint/errorX.html',
-    '[ ! -r linklint/errorAX.html ] || python doclib/linklint_addnames.py <linklint/errorAX.html >linklint/errorAX.html.new',
-    '[ ! -r linklint/errorAX.html.new ] || mv linklint/errorAX.html.new linklint/errorAX.html',
-    'echo -e "\\nLokal link check results: linklint/index.html\\nRemote link check results: linklint/urlindex.html\\n"',
+    'rm -rf doc/linklint',
+    'linklint -doc doc/linklint -limit 99999999 `find -type d -name html -printf "/%P/@ "`',
+    '[ ! -r doc/linklint/errorX.html ] || python doclib/linklint_addnames.py <doc/linklint/errorX.html >doc/linklint/errorX.html.new',
+    '[ ! -r doc/linklint/errorX.html.new ] || mv doc/linklint/errorX.html.new doc/linklint/errorX.html',
+    '[ ! -r doc/linklint/errorAX.html ] || python doclib/linklint_addnames.py <doc/linklint/errorAX.html >doc/linklint/errorAX.html.new',
+    '[ ! -r doc/linklint/errorAX.html.new ] || mv doc/linklint/errorAX.html.new doc/linklint/errorAX.html',
 ])
 
 env.PhonyTarget('fixlinks', [], [
-    'python doclib/fix-links.py -v -s .svn -s linklint -s debian linklint/errorX.txt linklint/errorAX.txt',
+    'python doclib/fix-links.py -v -s .svn -s linklint -s debian doc/linklint/errorX.txt doc/linklint/errorAX.txt',
 ])
-
 
 header = env.Command('doxy-header.html', 'SConscript', writeTemplate,
                      TEMPLATE = Literal(HEADER),

@@ -12,28 +12,29 @@ endif
 ifdef debug
   SCONS_ARGS += "debug="$(debug)
 endif
-ifdef profile
-  SCONS_ARGS += "profile="$(profile)
-endif
 
-SCONS=scons -j $(CONCURRENCY_LEVEL) $(SCONS_ARGS)
+SCONS=./tools/scons -j $(CONCURRENCY_LEVEL) $(SCONS_ARGS)
 
-default: build
+# DON'T call this default ... default is a valid scons target ;-)
+build: default
 
-build:
-	$(SCONS)
+TARGETS := prepare default examples all_tests all_docs all install_all \
+	deb debsrc debbin linklint fixlinks valgrind lcov
+ALLTARGETS := $(TARGETS) package build
+
+$(TARGETS):
+	$(SCONS) $@
 
 clean:
 	$(SCONS) --clean all
-	find ./ -name \*.gcno | xargs rm -f
-	find ./ -name \*.gcda | xargs rm -f
-	find ./ -name \*.gcov | xargs rm -f
-	rm -f test_coverage.info
-	rm -rf /doc/test_coverage
 
-all_docs all_tests all:
-	$(SCONS) $@
-	
+package: deb
+test_coverage: lcov
+
+#----------------------------------------------------------------------
+# subdirectory build targets
+#----------------------------------------------------------------------
+
 %/test %/doc:
 	$(SCONS) $@
 
@@ -43,28 +44,19 @@ all_docs all_tests all:
 #----------------------------------------------------------------------
 # remote compile targets
 #----------------------------------------------------------------------
-all@% all_docs@% all_tests@% build@%:
-	ssh $* "cd `pwd` && $(MAKE) SCONS_ARGS=\"$(SCONS_ARGS)\" $(firstword $(subst @, ,$@))"
 
-	
-#----------------------------------------------------------------------
-# test coverage
-#----------------------------------------------------------------------
-test_coverage:
-	$(SCONS) debug=1 EXTRA_CCFLAGS="-fprofile-arcs -ftest-coverage" EXTRA_LIBS="gcov" all_tests
-	ln -s ../../boost/ include/senf/  # ugly work-around
-	lcov --directory . --capture --output-file /tmp/test_coverage.info --base-directory .
-#	lcov --output-file /tmp/test_coverage.info.tmp --extract test_coverage.info \*/senf/\*
-	lcov --output-file test_coverage.info --remove /tmp/test_coverage.info \*/include/\*
-	genhtml --output-directory doc/test_coverage --title "all_tests" test_coverage.info
-	rm /tmp/test_coverage.info
-	rm include/senf/boost
+CWD = $(shell pwd)
+$(ALLTARGETS:%=%@%):
+	ssh $* "cd $(CWD) && $(MAKE) SCONS_ARGS=\"$(SCONS_ARGS)\" $(firstword $(subst @, ,$@))"
 
 #----------------------------------------------------------------------
 # Subversion stuff
 #----------------------------------------------------------------------
+
 svn_version:
-	@svnversion
+	@v=`svnversion`; if [ $$v=="exported" ]; then gitsvnversion else echo $v; fi
+
+version: svn_version
 
 #----------------------------------------------------------------------
 # Building SENF requires some debian packages
@@ -72,16 +64,11 @@ svn_version:
 DEB_BASE   = build-essential
 
 # This line parses the 'Build-Depends' entry from debian/control
-DEB_SENF   = $(shell perl -an -F'[:,]' -e '					\
-	       	         BEGIN{ $$,=" " }					\
-	       	         $$P=0 if /^\S/;					\
-			 map {s/\(.*\)//} @F;					\
-	       	         print @F if $$P;					\
-	       	         if (/^Build-Depends:/) { print @F[1..$$\#F]; $$P=1 }'	\
-	       	     debian/control | xargs echo)
+DEB_SENF   = $(shell perl -alnF'[:,]' -e '							\
+			BEGIN{$$,=" "} END{splice @R,0,1; print @R}				\
+			map {s/\(.*\)|\|.*//; s/[ \n\t]//g} @F;					\
+			push @R,grep {/./} @F if (/^Build-Depends:/i.../^\S/)!~/(^|E0)$$/;'	\
+				debian/control)
 
 prerequisites:
 	aptitude install $(DEB_BASE) $(DEB_SENF)
-
-package:
-	$(SCONS) deb
