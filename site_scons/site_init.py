@@ -11,6 +11,15 @@ sconsscript = os.path.join(os.path.join(sconsbase, 'script'),'scons')
 if os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(SCons.__file__)))) != sconsbase:
     import os, sys, SCons.Util
     SCons.Util.display("scons: Switching version")
-    os.chdir(sys._getframe(2).f_locals['target_top'] or '.')
+    frame = sys._getframe()
+    marker = []
+    target_top = marker
+    while frame and target_top is marker:
+        target_top = frame.f_locals.get('target_top',marker)
+        frame = frame.f_back
+    if target_top is marker:
+        SCons.Util.display("scons: WARNING: scons -u will fail")
+    elif target_top is not None:
+        os.chdir(target_top)
     os.environ['SCONS_LIB_DIR'] = sconsengine
     os.execv(sconsscript, sys.argv)
