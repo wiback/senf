@@ -1,6 +1,6 @@
 @INCLUDE = "$(TOPDIR)/doclib/Doxyfile.global"
 
-INPUT = . doclib
+INPUT = .
 
 PROJECT_NAME = Overview
 PROJECT_NUMBER = "(Version $(REVISION))"

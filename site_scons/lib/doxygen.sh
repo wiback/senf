@@ -32,8 +32,10 @@ abspath()
 # Create relative path from absolute directory $1 to absolute path $2
 relpath()
 {
-    local src="${1#/}"
-    local dst="${2#/}"
+    local src="`abspath "$1"`" # `"
+    local dst="`abspath "$2"`" # `"
+    src="${src#/}"
+    dst="${dst#/}"
     while true; do
 	if [ -z "$src" -a -z "$dst" ]; then
 	    echo "Internal error in relpath()" 1>&2

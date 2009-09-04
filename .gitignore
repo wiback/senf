@@ -19,7 +19,6 @@ doc/
 .test.stamp
 
 # Local files (files in this directory)
-/Doxyfile.local
 /SConscript.local
 /*-stamp
 /*.conf

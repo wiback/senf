@@ -114,8 +114,8 @@ Export('env')
 
 # Create Doxyfile.local otherwise doxygen will barf on this non-existent file
 # Create it even when cleaning, to silence the doxygen builder warnings
-if not os.path.exists("Doxyfile.local"):
-    Execute(Touch("Doxyfile.local"))
+if not os.path.exists("doclib/Doxyfile.local"):
+    Execute(Touch("doclib/Doxyfile.local"))
 
 if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
    and not os.environ.get("SCONS") and COMMAND_LINE_TARGETS != [ 'prepare' ]:
@@ -134,9 +134,6 @@ SConscript("doclib/SConscript")
 
 ###########################################################################
 # Define build targets
-
-#### doc
-env.Depends(SENFSCons.Doxygen(env), env.Value(env['ENV']['REVISION']))
 
 #### libsenf.a
 libsenf = env.Library("$LOCALLIBDIR/${LIBSENF}${LIBADDSUFFIX}", env['ALLOBJECTS'])
@@ -182,18 +179,16 @@ env.PhonyTarget('valgrind', [ 'all_tests' ], [ """
 """.replace("\n"," ") ])
 
 ### lcov
-env.Alias('lcov', env.AlwaysBuild(
-    env.Command( [ env.Dir('doc/lcov'), 'lcov.info' ], [], [
+env.PhonyTarget('lcov', [], [
         '$SCONS debug=1 CCFLAGS+="-fprofile-arcs -ftest-coverage" LIBS+="gcov" all_tests',
         '$LCOV --directory . --capture --output-file /tmp/senf_lcov.info --base-directory .',
         '$LCOV --output-file ${TARGETS[1]} --remove /tmp/senf_lcov.info \\*/include/\\*',
         '$GENHTML --output-directory ${TARGETS[0]} --title all_tests ${TARGETS[1]}',
-        'rm /tmp/senf_lcov.info' ])))
+        'rm /tmp/senf_lcov.info' ])
 
 #### clean
 env.Clean('all', '.prepare-stamp')
 env.Clean('all', libsenf)
-env.Clean('all', env.Dir('linklint')) # env.Dir to disambiguate from linklint PhonyTarget
 env.Clean('all', env.Dir('dist'))
 env.Clean('all', 'lcov.info')
 

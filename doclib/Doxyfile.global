@@ -64,4 +64,4 @@ LAYOUT_FILE            = $(LIBDIR)/DoxygenLayout.xml
 HTML_HEADER            = $(TOPDIR)/doclib/doxy-header.html
 HTML_FOOTER            = $(TOPDIR)/doclib/doxy-footer.html
 
-@INCLUDE = "$(TOPDIR)/Doxyfile.local"
+@INCLUDE = "$(TOPDIR)/doclib/Doxyfile.local"

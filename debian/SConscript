@@ -88,7 +88,7 @@ env.Append( ENV = {
 env.Replace(                    
     LOCAL_CONFIG_FILES = [ '/Doxyfile.local', '/SConscript.local', '/senf/local_config.hh' ],
     DPKG_IGNORED_FILES = [ '$LOCAL_CONFIG_FILES', '.svn', '.git', '.gitignore', '/_templates', 
-                           '/TODO', '.project', '.cproject', '.dir.el', '/project.el' ],
+                           '/TODO', '.project', '.cproject', '.dir.el', '/.project.el' ],
     DPKG_IGNORED_FILES_OPTS = dpkgIgnoredFilesOpts,
     BUILDPACKAGE_COMMAND = "dpkg-buildpackage -us -uc -rfakeroot $DPKG_IGNORED_FILES_OPTS",
 )

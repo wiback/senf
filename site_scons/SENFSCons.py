@@ -21,7 +21,7 @@ def Glob(env, exclude=[], subdirs=[]):
                 includes.append(p)
     return ( sources, testSources, includes )
 
-def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
+def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "doc"):
     # There is one small problem we need to solve with this builder: The Doxygen builder reads
     # the Doxyfile and thus depends on the environment variables set by site_scons/lib/doxygen.sh.
     # We thus have to provide all necessary definitions here manually via DOXYENV !
@@ -34,19 +34,25 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
     module = doxyfile.dir.get_path(env.Dir('#')).replace('/','_')
     if module == '.' : module = "Main"
 
+    # Standard doc build vars and opts
+    def vars(env=env, **kw):
+        denv = { 'TOPDIR'          : env.Dir('#').abspath,
+                 'LIBDIR'          : env.Dir('#/site_scons/lib').abspath,
+                 'output_dir'      : '$OUTPUT_DIRECTORY',
+                 'html_dir'        : 'html',
+                 'html'            : 'NO' }
+        denv.update(kw)
+        return { 'DOXYENV'         : denv,
+                 'MODULE'          : module,
+                 'OUTPUT_DIRECTORY': output_directory };
+    opts = [ '--tagfile-name', '"${MODULE}.tag"',
+             '--output-dir', '$OUTPUT_DIRECTORY' ]
+
     # Rule to generate tagfile
     # (need to exclude the 'clean' case, otherwise we'll have duplicate nodes)
     if not env.GetOption('clean'):
-        tagfile = env.Doxygen(doxyfile,
-                              DOXYOPTS = [ '--tagfile-name', '"${MODULE}.tag"',
-                                           '--tagfile' ],
-                              DOXYENV  = { 'TOPDIR'          : env.Dir('#').abspath,
-                                           'LIBDIR'          : env.Dir('#/site_scons/lib').abspath,
-                                           'output_dir'      : 'doc',
-                                           'html_dir'        : 'html',
-                                           'html'            : 'NO',
-                                           'generate_tagfile': 'doc/${MODULE}.tag' },
-                              MODULE   = module )
+        tagfile = env.Doxygen(doxyfile, DOXYOPTS = opts + [ '--tagfile' ],
+                              **vars(generate_tagfile = 'doc/${MODULE}.tag'))
         env.Append(ALL_TAGFILES = [ tagfile[0].abspath ])
         env.Depends(tagfile, [ env.File('#/site_scons/lib/doxygen.sh'), 
                                env.File('#/site_scons/lib/tag-munge.xsl') ])
@@ -55,17 +61,8 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = []):
                     tagfile[0])
 
     # Rule to generate HTML documentation
-    doc = env.Doxygen(doxyfile,
-                      DOXYOPTS = [ '--tagfiles', '"$ALL_TAGFILES"',
-                                   '--tagfile-name', '"${MODULE}.tag"',
-                                   '--html' ],
-                      MODULE   = module,
-                      DOXYENV  = { 'TOPDIR'          : env.Dir('#').abspath,
-                                   'LIBDIR'          : env.Dir('#/site_scons/lib').abspath,
-                                   'tagfiles'        : '${ALL_TAGFILES}',
-                                   'output_dir'      : 'doc',
-                                   'html_dir'        : 'html',
-                                   'html'            : 'YES' } )
+    doc = env.Doxygen(doxyfile, DOXYOPTS = opts + [ '--tagfiles', '"$ALL_TAGFILES"', '--html' ],
+                      **vars(html = 'YES'))
     env.Depends(doc, [ env.File('#/site_scons/lib/doxygen.sh'),
                        env.File('#/site_scons/lib/html-munge.xsl') ])
 
