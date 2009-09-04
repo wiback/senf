@@ -3,18 +3,13 @@
 import sys, glob, os.path, fnmatch
 import SENFSCons, senfutil
 
-# Fix for SCons 0.97 compatibility
-try:
-    BoolVariable
-except NameError:
-    BoolVariable = BoolOption
-
 ###########################################################################
 # Load utilities and setup libraries and configure build
 
 env = Environment()
 
 env.Decider('MD5-timestamp')
+env.EnsureSConsVersion(1,2)
 
 # Load all the local SCons tools
 env.Tool('Doxygen')
