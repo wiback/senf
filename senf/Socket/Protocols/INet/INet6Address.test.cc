@@ -36,46 +36,6 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
-
-    template <class ForwardIterator1, class ForwardIterator2, class Function>
-    prefix_ ForwardIterator1 find_if_mask(unsigned bits, ForwardIterator1 b1,
-                                          ForwardIterator1 e1, ForwardIterator2 b2, 
-                                          Function fn)
-    {
-        std::cerr << ">>> " << bits << ' ' << e1-b1 << '\n';
-        for(; bits>8 && b1 != e1; bits -= 8, ++b1, ++b2) 
-            if (fn(*b1, *b2, boost::lambda::make_const(0xFFu)))
-                return b1;
-        std::cerr << ">>> " << bits << ' ' << e1-b1 << '\n';
-        if (bits > 0 && b1 != e1)
-            if (fn( *(b1++), *(b2++), boost::lambda::make_const(~ senf::detail::low_bits_mask(8-bits))))
-                return b1;
-        std::cerr << ">>> " << bits << ' ' << e1-b1 << '\n';
-        for(; b1 != e1; ++b1, ++b2)
-            if (fn(*b1, *b2, boost::lambda::make_const(0u)))
-                return b1;
-        return e1;
-    }
-
-    bool match(senf::INet6Network const & n, senf::INet6Address a)
-    {
-        using boost::lambda::_1;
-        using boost::lambda::_2;
-        using boost::lambda::_3;
-        using boost::lambda::ret;
-        using boost::lambda::constant;
-        senf::INet6Address na (n.address());
-        return find_if_mask(
-            n.prefix_len(), na.begin(), na.end(), a.begin(),
-            (
-                std::cerr << constant(">> ") << _1 << ' ' << _2 << ' ' << ret<unsigned>(_3) << '\n',
-                _1 != (_2 & _3)
-            )) == na.end();
-    }
-
-}
-
 BOOST_AUTO_UNIT_TEST(inet6Address)
 {
     using senf::INet6Address;
