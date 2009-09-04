@@ -100,6 +100,7 @@ env.SetDefault(
     GENHTML           = "genhtml",
     SCONS             = "./tools/scons -j$CONCURRENCY_LEVEL",
     CONCURRENCY_LEVEL = env.GetOption('num_jobs') or 1,
+    TOPDIR            = env.Dir('#').abspath,
 )
 
 # Set variables from command line
@@ -181,9 +182,9 @@ env.PhonyTarget('valgrind', [ 'all_tests' ], [ """
 ### lcov
 env.PhonyTarget('lcov', [], [
         '$SCONS debug=1 CCFLAGS+="-fprofile-arcs -ftest-coverage" LIBS+="gcov" all_tests',
-        '$LCOV --directory . --capture --output-file /tmp/senf_lcov.info --base-directory .',
-        '$LCOV --output-file ${TARGETS[1]} --remove /tmp/senf_lcov.info \\*/include/\\*',
-        '$GENHTML --output-directory ${TARGETS[0]} --title all_tests ${TARGETS[1]}',
+        '$LCOV --directory $TOPDIR/senf --capture --output-file /tmp/senf_lcov.info --base-directory $TOPDIR',
+        '$LCOV --output-file lcov.info --remove /tmp/senf_lcov.info "*/include/*" "*/boost/*" "*.test.*" ',
+        '$GENHTML --output-directory doc/lcov --title all_tests lcov.info',
         'rm /tmp/senf_lcov.info' ])
 
 #### clean
