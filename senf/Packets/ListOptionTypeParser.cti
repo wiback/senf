@@ -53,7 +53,7 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::bytes(data_i
                                                                           state_type s)
     const
 {
-    return AuxPolicy::aux(i, s) + AuxPolicy::aux_bytes;
+    return ((AuxPolicy::aux(i, s) * 8 + 6)  + AuxPolicy::aux_bytes);
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -73,6 +73,10 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::init(data_it
                                                                          state_type s)
     const
 {
+    i[0] = 1u;
+    i[1] = 4u;
+    for (unsigned int n = 2;n < 6; ++n)
+        i[n] = 0u;
     AuxPolicy::aux(0, i, s);
 }
 
@@ -100,17 +104,20 @@ prefix_ void
 senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
 construct(container_type & c)
 {
-    data_iterator i = c.i();
+    safe_data_iterator i (c.data(), c.i()) ;
     realAux_ = (AuxPolicy::aux(i, c.state()) * 8) + 6;
-    data_iterator e = i + realAux_;
-    for (n_ = 0; i != e; ++n_) {
+    safe_data_iterator e = i + realAux_;
+    for (n_ = 0; i != e;) {
         unsigned int elByte = senf::bytes(ElementParser(i, c.state()));
         if (((i + elByte) == e) && (i[0] == 0u || i[0] == 1u)) { //check wether last element is padding or not
             realAux_ -= std::distance(i, e);
+            container_size_ -= std::distance(i, e);
             c.data().erase(i, e); //delete padding
             e = i; //set end iterator
-        } else
+        } else{
+            ++n_;
             std::advance(i, elByte);
+        }
     }
     //    container_size_ = std::distance(i,e);
     container_size_ = c.data().size(); //set actual size without padding
@@ -123,20 +130,25 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_po
 destruct(container_type & c)
 {
     //	data_iterator i (AuxPolicy::adjust(parser_type::get(p).i(), parser_type::get(p).state()));
-    data_iterator i = c.i();
-    data_iterator const e = i + realAux_;
-    unsigned int padBytes = (realAux_ % 8);
-    c.data().insert(e, padBytes, 0u);
+    safe_data_iterator i (c.data(), c.i()) ;
+    safe_data_iterator const e = i + realAux_;
+    unsigned int padBytes = 0;
+    if (realAux_ == 0)      //if list is empty, 6 padding bytes required!
+      padBytes = 6;
+    else
+      padBytes = ( (realAux_+2) % 8);
     if (padBytes > 0) {
+        c.data().insert(e, padBytes, 0u);
         if (padBytes > 1) {
-            e[0] = 1;
+            e[0] = 1u;
             e[1] = padBytes - 2;
         } else
             e[0] = 0;
         container_size_ += padBytes;
+        realAux_ += padBytes;
         ++n_;
     }
-    AuxPolicy::aux((realAux_ / 8 - 1), i, c.state());
+    AuxPolicy::aux(( (realAux_ + 2)/ 8 - 1), i, c.state());
 }
 
 //bytes()
@@ -147,7 +159,7 @@ senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_po
 bytes(data_iterator i, state_type s)
     const
 {
-    return (realAux_ + 2);
+    return (realAux_ );
 }
 
 //size()
@@ -167,6 +179,9 @@ prefix_ void
 senf::detail::ListOptionTypeParser_Policy<ElementParser,AuxPolicy>::container_policy::
 init(data_iterator i, state_type s)
 {
+//    i[0] = 1u;
+    //    for (unsigned int n = 1;n < 6; ++n)
+//        i[n] = 0u;
     n_ = 0;
     container_size_ = s->size();
     AuxPolicy::aux(0, i, s);
@@ -186,7 +201,7 @@ erase(container_type & c, data_iterator p)
     realAux_ -= b;
     --n_;
     // The container will be reduced by b bytes directly after this call
-    container_size_ = c.data().size() - b;
+    container_size_ -= b;
 }
 
 //insert()

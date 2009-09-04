@@ -72,6 +72,12 @@ prefix_ void senf::IPv6ExtensionType_HopByHop::dump(packet p, std::ostream & os)
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
        <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
        <<     "  header length           : " << unsigned (p->headerLength()) << "\n";
+       os << "OptionTypes:\n";
+       IPv6Extension_HopByHop::Parser::options_t::container options (p->options());
+       IPv6Extension_HopByHop::Parser::options_t::container::iterator optIter(options.begin());
+       for(;optIter != options.end(); ++ optIter)
+           os << "Option Type:\t" << (unsigned) optIter->optionType()
+             << "\nOptionLength:\t" << (unsigned)  optIter->optionLength() <<"\n";
 }
 
 prefix_ void senf::IPv6ExtensionType_Destination::dump(packet p, std::ostream & os)

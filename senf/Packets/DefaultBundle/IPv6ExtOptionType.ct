@@ -30,8 +30,22 @@
 template <class ForwardReadableRange>
 prefix_ void senf::GenericOptTypeTLVPacketParser::value(ForwardReadableRange const &range)
 {
-    safe_data_iterator si = resizeValueField( boost::size(range) );
-    std::copy( boost::begin(range), boost::end(range), si);
+    safe_data_iterator si( data(), boost::next(data().begin()+2) );
+    unsigned int rangeSize = boost::size(range);
+//    std::cout << "tmpl. method - optLength =" << (unsigned) optionLength()
+//      << ", rangeSize: " << rangeSize
+//      << ", optionType: " << (unsigned) optionType() << std::endl;
+    if ( rangeSize > optionLength() ){
+//        std::cout << "rangeSize > optionLength()" << std::endl;
+        data().insert(si, rangeSize - optionLength(),0 );
+    }
+    if (rangeSize < optionLength() ){
+//        std::cout << "rangeSize < optionLength()" << std::endl;
+        data().erase(si, si + (optionLength() - rangeSize));
+    }
+    std::copy(( boost::begin(range)), boost::end(range), si);
+    optionLength() = 2u;
+//    std::cout << "optLength AFTER =" << (unsigned) optionLength() << ", rangeSize: " << rangeSize << std::endl;
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

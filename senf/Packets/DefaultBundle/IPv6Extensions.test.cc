@@ -149,9 +149,66 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions)
 }
     //==============================================================================================
     
-    /*
-    no unittests for Hop by Hop - and Destination - Options extension Header yet. No real implementation there, only IPv6 extension skeleton implemented.
-    */
+BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop)
+{
+    unsigned char HopByHop_packetData[] = {
+        0x60, 0x00, 0x00, 0x00, //IP version, class, flow label
+        0x00, 0x24,           //payload length
+        0x00,                 //next header: IPv6 hop-by-hop option (0)
+        0x01,                 //hop limit (1)
+        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Source address (fe80::219:b9ff:feeb:b226)
+        0x02, 0x19, 0xb9, 0xff, 0xfe, 0xeb, 0xb2, 0x26,
+
+        0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Destination address ff02::16
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16,
+        //HopByHop option
+        0x3a,   //next Header (ICMPv6)
+        0x00,   //Length (0 = 8Bytes)
+
+        //option Header
+        0x05, //option type
+        0x02, //option Length (= 2 byte)
+        0x00, 0x00, //data (zero data here ...)
+
+        0x02, //option type (2, set for testing purposes only)
+        0x00,  //option Type length (=0, no data field needed here)
+
+        //ICMPv6
+        0x8f, //type 143
+        0x00, //code 0, should always be 0
+        0x50, 0xcc, //checksum
+    };
+
+    std::ostringstream oss (std::ostringstream::out);
+
+    senf::IPv6Packet pHop_packet (senf::IPv6Packet::create(HopByHop_packetData));
+    BOOST_CHECK_EQUAL( pHop_packet->version(), 6u );
+    BOOST_CHECK_EQUAL( pHop_packet->length(), 36u );
+    BOOST_CHECK_EQUAL( pHop_packet->nextHeader(), 0u );
+    BOOST_CHECK_EQUAL( pHop_packet->source().value(), senf::INet6Address::from_string("fe80::219:b9ff:feeb:b226") );
+    BOOST_CHECK_EQUAL( pHop_packet->destination().value(), senf::INet6Address::from_string("ff02::16") );
+
+    SENF_CHECK_NO_THROW( pHop_packet.dump( oss ));
+    BOOST_REQUIRE( pHop_packet.next().is<senf::IPv6Extension_HopByHop>() );
+
+    //hopByHop extension header
+    senf::IPv6Extension_HopByHop pHop_extension (pHop_packet.next().as<senf::IPv6Extension_HopByHop>());
+    BOOST_CHECK_EQUAL( pHop_extension->nextHeader(), 58u );
+    BOOST_CHECK_EQUAL( pHop_extension->headerLength(), 0x00 );
+
+    SENF_CHECK_NO_THROW( pHop_extension.dump( oss ));
+    pHop_extension.dump(std::cout);
+    senf::IPv6Extension_HopByHop::Parser::options_t::container optC(pHop_extension->options() );
+    senf::IPv6Extension_HopByHop::Parser::options_t::container::iterator listIter (optC.begin());
+    BOOST_CHECK_EQUAL( listIter->optionType(), 5u);
+    BOOST_CHECK_EQUAL( listIter->optionLength(), 2u);
+    std::cout << listIter->value() << std::endl;
+    ++listIter;
+    BOOST_CHECK_EQUAL( listIter->optionType(), 2u);
+    BOOST_CHECK_EQUAL( listIter->optionLength(), 0);
+//    pHop_extension.dump(std::cout);  //( no optiontype output ... sth wrong here! )
+}
+
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
 

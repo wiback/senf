@@ -33,9 +33,10 @@ namespace senf {
 class OptTypeTLVPacketParser: public PacketParserBase {
 public:
 #       include SENF_PARSER()
-    SENF_PARSER_BITFIELD (altAction, 2, unsigned);
-    SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
-    SENF_PARSER_BITFIELD (optionType, 5, unsigned);
+//    SENF_PARSER_BITFIELD (altAction, 2, unsigned);
+//    SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
+//    SENF_PARSER_BITFIELD (optionType, 5, unsigned);
+    SENF_PARSER_FIELD (optionType, UInt8Parser);
     SENF_PARSER_FIELD (optionLength, UInt8Parser);
     SENF_PARSER_FINALIZE (OptTypeTLVPacketParser);
 
@@ -47,10 +48,12 @@ struct GenericOptTypeTLVPacketParser: public OptTypeTLVPacketParser {
     SENF_PARSER_SKIP ( optionLength(), 0 );
     SENF_PARSER_FINALIZE ( GenericOptTypeTLVPacketParser );
 
+
     senf::PacketInterpreterBase::range value() const;
 
     template<class ForwardReadableRange>
     void value(ForwardReadableRange const &range);
+
 };
 
 } //namespace senf
