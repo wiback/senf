@@ -2,7 +2,9 @@
 
 if [ -z "$1" ]; then
     cat <<EOF
-Usage: $0 [-f] <name>.<ext> [<author>]
+Usage: 
+    $0 [-f] <name>.<ext> [<author>]
+    $0 [-f] SConscript [<author>]
 
 Will add the file with that name to the current directory by copying
 the appropriate template and replacing the @NAME@ placeholders
@@ -30,7 +32,7 @@ EOF
     exit 1
 fi
 
-base="`dirname "$0"`"; base="`cd "$base"; pwd`"
+base="`dirname "$0"`"; base="`cd "$base/_templates"; pwd`"
 
 if [ "$1" == "-f" ]; then
     force=1
@@ -40,7 +42,7 @@ fi
 name="`basename "$1"`"
 case "$name" in
     *.*) type=".${name#*.}"; name="${name%.$type}" ;;
-    *) type="" ;;
+    *) type=".$name" ;;
 esac
 
 if [ ! -r "$base/Example$type" ] ; then

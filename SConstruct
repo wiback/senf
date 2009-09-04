@@ -172,7 +172,7 @@ env.PhonyTarget('valgrind', [ 'all_tests' ], [ """
             echo;
             echo "Running $$test";
             echo;
-            valgrind --tool=memcheck --error-exitcode=99 --suppressions=valgrind.sup 
+            valgrind --tool=memcheck --error-exitcode=99 --suppressions=tools/valgrind.sup 
                 $$test $BOOSTTESTARGS;
             [ $$? -ne 99 ] || exit 1;
         done

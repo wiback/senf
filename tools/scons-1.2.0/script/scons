@@ -99,10 +99,6 @@ else:
             # script_dir is /foo/bin;
             # check /foo/lib/scons*.
             prefs.append(head)
-        elif tail == "script":
-            # script_dir is /foo/script, probably extracted tarball
-            # check /foo/engine
-            libs.append(os.path.join(head, 'engine'))
 
     head, tail = os.path.split(sys.prefix)
     if tail == "usr":
