@@ -52,7 +52,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
     # (need to exclude the 'clean' case, otherwise we'll have duplicate nodes)
     if not env.GetOption('clean'):
         tagfile = env.Doxygen(doxyfile, DOXYOPTS = opts + [ '--tagfile' ],
-                              **vars(generate_tagfile = 'doc/${MODULE}.tag'))
+                              **vars(generate_tagfile='doc/${MODULE}.tag'))
         env.Append(ALL_TAGFILES = [ tagfile[0].abspath ])
         env.Depends(tagfile, [ env.File('#/site_scons/lib/doxygen.sh'), 
                                env.File('#/site_scons/lib/tag-munge.xsl') ])
@@ -62,7 +62,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
 
     # Rule to generate HTML documentation
     doc = env.Doxygen(doxyfile, DOXYOPTS = opts + [ '--tagfiles', '"$ALL_TAGFILES"', '--html' ],
-                      **vars(html = 'YES'))
+                      **vars(html='YES', tagfiles='$ALL_TAGFILES'))
     env.Depends(doc, [ env.File('#/site_scons/lib/doxygen.sh'),
                        env.File('#/site_scons/lib/html-munge.xsl') ])
 
