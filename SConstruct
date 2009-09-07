@@ -25,20 +25,20 @@ env.Tool('InstallDir')
 env.Help("""
 Additional top-level build targets:
 
-prepare      Create all target files not part of the repository
-default      Build all default targets (like calling scons with no arguments)
-examples     Build all examples
-all_tests    Build and run unit tests for all modules
-all_docs     Build documentation for all modules
-all          Build everything
-install_all  Install SENF into $$PREFIX
-deb          Build debian source and binary package
-debsrc       Build debian source package
-debbin       Build debian binary package
-linklint     Check links of doxygen documentation with 'linklint'
-fixlinks     Fix broken links in doxygen documentation
-valgrind     Run all tests under valgrind/memcheck
-lcov         Generate test coverage output in doc/lcov and lcov.info
+prepare        Create all target files not part of the repository
+default        Build all default targets (like calling scons with no arguments)
+examples       Build all examples
+all_tests      Build and run unit tests for all modules
+all_docs       Build documentation for all modules
+all            Build everything
+install_all    Install SENF into $$PREFIX
+deb            Build debian source and binary package
+debsrc         Build debian source package
+debbin         Build debian binary package
+linklint       Check links of doxygen documentation with 'linklint'
+fixlinks       Fix broken links in doxygen documentation
+all_valgrinds  Run all tests under valgrind/memcheck
+lcov           Generate test coverage output in doc/lcov and lcov.info
 """)
 
 env.Append(
@@ -167,17 +167,17 @@ env.Alias('all', [ 'default', 'all_tests', 'examples', 'all_docs' ])
 env.PhonyTarget('prepare', [], [])
 
 #### valgrind
-env.PhonyTarget('valgrind', [ 'all_tests' ], [ """
-    find -name .test.bin 
-        | while read test; do
-            echo;
-            echo "Running $$test";
-            echo;
-            valgrind --tool=memcheck --error-exitcode=99 --suppressions=tools/valgrind.sup 
-                $$test $BOOSTTESTARGS;
-            [ $$? -ne 99 ] || exit 1;
-        done
-""".replace("\n"," ") ])
+for test in env.FindAllBoostUnitTests():
+    stamp = env.Command(test[0].dir.File('.test-valgrind.stamp'), 
+                        [ test[0].dir.File('.test.bin'), test ],
+                        [ """valgrind --tool=memcheck 
+                                      --error-exitcode=99 
+                                      --suppressions=tools/valgrind.sup 
+                                          $SOURCE $BOOSTTESTARGS;
+                             [ $$? -ne 99 ] || exit 1""".replace("\n"," "),
+                          Touch("$TARGET") ])
+    alias = env.Command(test[0].dir.File('valgrind'), stamp, [ env.NopAction() ])
+    env.Alias('all_valgrinds', alias)
 
 ### lcov
 env.PhonyTarget('lcov', [], [
