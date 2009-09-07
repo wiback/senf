@@ -65,6 +65,9 @@
     \li \c senfutil adds all necessary libraries to link against
     \li \c senfutil will set necessary compile options.
     \li \c senfutil supports normal, debug and final project build options
+    \li \c senfutil adds support for Boost unit tests
+    \li \c senfutil implements a very simple to use enhanced doxygen build with SENF symbol
+        cross-reference
     \li \c senfutil allows specifying variables on the scons command line
     \li \c senfutil supports more readable compile-time SENF loglevel configuration
 
@@ -89,11 +92,26 @@
         LINKFLAGS_normal = [ '-Wl,-S' ],
 
         LOGLEVELS_debug  = [ 'senf::log::Debug||VERBOSE' ],
+
+        PROJECTNAME      = 'Example project',
+        PROJECTEMAIL     = 'developer@domain.com',
+        DOCLINKS         = [ ('Homepage', 'http://www.domain.com') ]
     )
 
-    env.Default(
-        env.Program( target='udpforward', source=glob.glob('*.cc') )
-    )
+    # Create a list of sources and tests. Sources are all *.cc files, test are *.test.cc
+    sources, tests = senfutil.Glob(env, exclude=['main.cc'] )
+
+    # Build objects from sources
+    objects = env.Object(sources)
+    
+    # Build main binary
+    env.Default( env.Program( target='example', source=objects + ['main.cc'] ) )
+
+    # Build a boost unit-test from additional test sources
+    env.BoostUnitTest( 'test', source=objects + tests)
+
+    # Build a documentation, autogenerates a Doxyfile
+    senfutil.Doxygen(env)
     \endcode
 
     This example builds a simple binary from a number of source files (all '.cc' files). It links
@@ -109,7 +127,7 @@
     select one of the build configurations 'debug', 'normal' or 'final'. The following variables are
     supported each with separate values for all three configurations:
 
-    \li \c CXXFLAGS    
+    \li \c CXXFLAGS
     \li \c CPPDEFINES
     \li \c LINKFLAGS
     \li \c LOGLEVELS
@@ -158,12 +176,68 @@
     senfutil.SetupForSENF(env)
     senfutil.DefaultOptions(env)
 
-    env.Append( LOGLEVELS_debug  = [ 'senf::log::Debug||VERBOSE' ] )
+    env.Append( LOGLEVELS_debug  = [ 'senf::log::Debug||VERBOSE' ],
+                PROJECTNAME      = 'Example project',
+                PROJECTEMAIL     = 'developer@domain.com',
+                DOCLINKS         = [ ('Homepage', 'http://www.domain.com') ] )
 
-    env.Default(
-        env.Program( target = 'udpforward', source = glob.glob('*.cc') )
-    )
+    sources, tests = senfutil.Glob(env, exclude=['main.cc'] )
+
+    objects = env.Object(sources)
+    env.Default( env.Program( target='example', source=objects + ['main.cc'] ) )
+    env.BoostUnitTest( 'test', source=objects + tests)
+    senfutil.Doxygen(env)
     \endcode
+
+    \section senf_senfutil_tests Building unit tests
+
+    Building unit tests mostly follows a standard pattern
+
+    \code
+    # Generate list of sources and tests (sources=*.cc, tests=*.test.cc)
+    extra_sources  = ['main.cc']
+    sources, tests = senfutil.Glob(env, exclude=extra_sources)
+
+    # Build object files needed for both main target and unit tests
+    objects = env.Object(sources)
+
+    # Build main target, e.g. a Binary with additional sources which are not part of the unit test
+    env.Program('example', objects+extra_sources)
+    
+    # Build unit tests including additional test sources
+    env.BoostUnitTest('test', objects+tests)
+    \endcode
+    
+    It is important to exclude the \c main function from the unit-test build since the boost unit
+    test library provides it's own.
+
+    \section senf_senfutil_doxygen Building documentation
+
+    Documentation is built using the \c senfutil.Doxygen utility
+
+    \code
+    env.Append( PROJECTNAME  = "Example project",
+                PROJECTEMAIL = "coder@example.com",
+                COPYRIGHT    = "The Master Coders",
+                DOCLINKS     = [ ('Homeage', 'http://www.example.com') ],
+                REVISION     = 'r'+os.popen('svnversion').read().strip().lower() )
+
+    senfutil.Doxygen(env)
+    \endcode
+
+    The \c senfutil.Doxygen utility autogenerates a \c Doxyfile.
+
+    The utility will search for a SENF documentation in the \c senfdoc and \c senf subdirectories as
+    well as via the senfutil module directory and some other standard locations. If SENF
+    documentation is found, the SENF tagfiles will automatically be added. Links will be resolved to
+    the documentation found.
+
+    \c senfutil.Doxygen takes some additional optional keyword arguments:
+    \li \c doxyheader: Path of an alternative HTML header
+    \li \c doxyfooter: Path of an alternative HTML footer
+    \li \c doxycss: Path on an alternative CSS file
+    \li \c mydoxyfile: If set to \c True, don't generate or clean the \c Doxyfile\
+    \li \c senfdoc_path: List of additional directories to search for SENF documentation
 
     \section senf_senfutil_arguments 'scons' Command line arguments
 
