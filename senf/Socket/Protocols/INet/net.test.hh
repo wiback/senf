@@ -61,6 +61,7 @@ namespace {
             _exit(0);
         }
         signal(SIGCHLD, SIG_DFL);
+        sleep(1);
     }
 
     void wait()

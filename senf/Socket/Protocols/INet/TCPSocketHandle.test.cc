@@ -122,8 +122,8 @@ BOOST_AUTO_UNIT_TEST(tcpv4ClientSocketHandle)
         alarm(10);
         start(server_v4);
         senf::TCPv4ClientSocketHandle sock;
-        SENF_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress(localhost4str(1)) );
-                             SENF_CHECK_NO_THROW( sock.connect(senf::INet4SocketAddress(localhost4str(0)))) );
+        SENF_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress(localhost4str(1))) );
+        SENF_CHECK_NO_THROW( sock.connect(senf::INet4SocketAddress(localhost4str(0))) );
         BOOST_CHECK( sock.peer() == senf::INet4SocketAddress(localhost4str(0)) );
         BOOST_CHECK( sock.local() == senf::INet4SocketAddress(localhost4str(1)) );
         BOOST_CHECK( sock.blocking() );
