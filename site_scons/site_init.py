@@ -36,16 +36,14 @@ if os.path.dirname(os.path.dirname(os.path.abspath(SCons.__file__))) != sconseng
     if not target_top:
         target_top = '.'
     if frame:
-        cdir = frame.f_locals.get('cdir', '')
+        cdir = frame.f_locals.get('cdir', '.')
     # END HACK
     
     os.chdir(target_top)
-    for dir in reversed(os.path.normpath(cdir).split('/')):
-        if dir == '..':
-            SCons.Utio.display("scons: WARNING: failed to undo -C option")
-            break
-        if dir == '.':
-            continue
-        os.chdir('..')
+    cdir = os.path.normpath(cdir)
+    if cdir.startswith('../'):
+        SCons.Util.display("scons: WARNING: failed to undo -C option")
+    elif cdir != '.':
+        os.chdir('/'.join(('..' for _ in cdir.split('/'))))
     os.environ['SCONS_LIB_DIR'] = sconsengine
     os.execv(sconsscript, sys.argv)
