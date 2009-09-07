@@ -1,0 +1,12 @@
+# -*- python -*-
+
+import sys
+sys.path.extend(['senf/site_scons', '../../site_scons'])
+import senfutil
+
+env = Environment()
+senfutil.SetupForSENF(env)
+senfutil.DefaultOptions(env)
+
+env.Default( env.Program('client', ['client.cc']) )
+env.Default( env.Program('server', ['server.cc']) )

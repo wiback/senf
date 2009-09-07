@@ -1,0 +1,11 @@
+# -*- python -*-
+
+import sys
+sys.path.extend(['senf/site_scons', '../../site_scons'])
+import senfutil
+
+env = Environment()
+senfutil.SetupForSENF(env)
+senfutil.DefaultOptions(env)
+
+env.Default( env.Program('ratestuffer', senfutil.Glob(env)[0]) )
