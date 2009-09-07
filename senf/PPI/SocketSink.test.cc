@@ -47,12 +47,31 @@ namespace {
     void timeout() {
         senf::scheduler::terminate();
     }
+
+    int base_pid = 0;
+
+    unsigned port(unsigned i)
+    {
+        if (! base_pid)
+            base_pid = ::getpid();
+        return 23456u + (((base_pid^(base_pid>>8)^(base_pid>>16)^(base_pid>>24))&0xff)<<2) + i;
+    }
+
+    std::string localhost4str(unsigned i)
+    {
+        return (boost::format("localhost:%d") % port(i)).str();
+    }
+
+    std::string localhost6str(unsigned i)
+    {
+        return (boost::format("[::1]:%d") % port(i)).str();
+    }
 }
 
 BOOST_AUTO_UNIT_TEST(passiveSocketSink)
 {
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
-        senf::INet4SocketAddress("localhost:44344"));
+        senf::INet4SocketAddress(localhost4str(0)));
     module::PassiveSocketSink<> udpSink(outputSocket);
     debug::ActiveSource source;
     ppi::connect(source, udpSink);
@@ -61,7 +80,7 @@ BOOST_AUTO_UNIT_TEST(passiveSocketSink)
     senf::Packet p (senf::DataPacket::create(data));
 
     senf::UDPv4ClientSocketHandle inputSocket;
-    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
+    inputSocket.bind(senf::INet4SocketAddress(localhost4str(0)));
     senf::ppi::init();
     source.submit(p);
 
@@ -72,7 +91,7 @@ BOOST_AUTO_UNIT_TEST(passiveSocketSink)
 BOOST_AUTO_UNIT_TEST(activeSocketSink)
 {
     senf::ConnectedUDPv4ClientSocketHandle outputSocket (
-        senf::INet4SocketAddress("localhost:44344"));
+        senf::INet4SocketAddress(localhost4str(0)));
     module::ActiveSocketSink<> udpSink(outputSocket);
     debug::PassiveSource source;
     ppi::connect(source, udpSink);
@@ -81,7 +100,7 @@ BOOST_AUTO_UNIT_TEST(activeSocketSink)
     senf::Packet p (senf::DataPacket::create(data));
 
     senf::UDPv4ClientSocketHandle inputSocket;
-    inputSocket.bind(senf::INet4SocketAddress("localhost:44344"));
+    inputSocket.bind(senf::INet4SocketAddress(localhost4str(0)));
     senf::scheduler::TimerEvent timer (
         "activeSocketSink test timer", &timeout,
         senf::ClockService::now() + senf::ClockService::milliseconds(100));

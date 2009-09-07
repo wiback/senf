@@ -42,6 +42,25 @@ namespace {
         senf::scheduler::terminate();
     }
 
+    int base_pid = 0;
+
+    unsigned port(unsigned i)
+    {
+        if (! base_pid)
+            base_pid = ::getpid();
+        return 23456u + (((base_pid^(base_pid>>8)^(base_pid>>16)^(base_pid>>24))&0xff)<<2) + i;
+    }
+
+    std::string localhost4str(unsigned i)
+    {
+        return (boost::format("localhost:%d") % port(i)).str();
+    }
+
+    std::string localhost6str(unsigned i)
+    {
+        return (boost::format("[::1]:%d") % port(i)).str();
+    }
+
     unsigned nread (0);
     unsigned flags (0);
     std::string data;
@@ -62,8 +81,8 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(udpServer)
 {
-    senf::console::UDPServer server (senf::INet4SocketAddress("127.0.0.1:23232"));
-    senf::ConnectedUDPv4ClientSocketHandle socket (senf::INet4SocketAddress("127.0.0.1:23232"));
+    senf::console::UDPServer server (senf::INet4SocketAddress(localhost4str(0)));
+    senf::ConnectedUDPv4ClientSocketHandle socket (senf::INet4SocketAddress(localhost4str(0)));
     senf::scheduler::TimerEvent timer ("udpServer test timer", &timeout);
     senf::scheduler::FdEvent fdev ("udpServer test fd", boost::bind(&read, socket, _1),
                                    socket, senf::scheduler::FdEvent::EV_READ);

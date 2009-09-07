@@ -33,60 +33,15 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "UDPSocketHandle.hh"
 #include <iostream>
+#include "UDPSocketHandle.hh"
+#include "net.test.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
-
-namespace {
-
-    void error(char const * fn, char const * proc="")
-    {
-        std::cerr << "\n" << proc << ((*proc)?": ":"") << fn << ": " << strerror(errno) << std::endl;
-    }
-
-    void fail(char const * proc, char const * fn)
-    {
-        error(fn,proc);
-        _exit(1);
-    }
-
-    int server_pid = 0;
-
-    void start(void (*fn)())
-    {
-        server_pid = ::fork();
-        if (server_pid < 0) BOOST_FAIL("fork()");
-        if (server_pid == 0) {
-            signal(SIGCHLD, SIG_IGN);
-            (*fn)();
-            _exit(0);
-        }
-        signal(SIGCHLD, SIG_DFL);
-    }
-
-    void wait()
-    {
-        int status;
-        if (waitpid(server_pid,&status,0)<0)
-            BOOST_FAIL("waitpid()");
-        BOOST_CHECK_EQUAL( status , 0 );
-    }
-
-    void stop()
-    {
-        if (server_pid) {
-            kill(server_pid,9);
-            wait();
-            server_pid = 0;
-        }
-    }
-
-}
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -99,11 +54,11 @@ namespace {
         struct sockaddr_in sin;
         ::memset(&sin,0,sizeof(sin));
         sin.sin_family = AF_INET;
-        sin.sin_port = htons(12345);
+        sin.sin_port = htons(port(0));
         sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         if (bind(sock,(struct sockaddr *)&sin,sizeof(sin))<0) fail("server_v4","bind()");
 
-        sin.sin_port = htons(23456);
+        sin.sin_port = htons(port(1));
         char buffer[1024];
         while (1) {
             int n = read(sock,buffer,1024);
@@ -122,11 +77,11 @@ namespace {
         struct sockaddr_in6 sin;
         ::memset(&sin,0,sizeof(sin));
         sin.sin6_family = AF_INET6;
-        sin.sin6_port = htons(12345);
+        sin.sin6_port = htons(port(0));
         sin.sin6_addr = in6addr_loopback;
         if (bind(sock,(struct sockaddr *)&sin,sizeof(sin))<0) fail("server_v6","bind()");
 
-        sin.sin6_port = htons(23456);
+        sin.sin6_port = htons(port(1));
         char buffer[1024];
         while (1) {
             int n = read(sock,buffer,1024);
@@ -146,17 +101,17 @@ BOOST_AUTO_UNIT_TEST(udpv4ClientSocketHandle)
         alarm(10);
         start(server_v4);
         senf::UDPv4ClientSocketHandle sock;
-        SENF_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress("127.0.0.1:23456")) );
-        BOOST_CHECK( sock.local() == senf::INet4SocketAddress("127.0.0.1:23456") );
+        SENF_CHECK_NO_THROW( sock.bind(senf::INet4SocketAddress(localhost4str(1))) );
+        BOOST_CHECK( sock.local() == senf::INet4SocketAddress(localhost4str(1)) );
         SENF_CHECK_NO_THROW( sock.protocol().rcvbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().rcvbuf(), 2048u );
         SENF_CHECK_NO_THROW( sock.protocol().sndbuf(2048) );
         BOOST_CHECK_EQUAL( sock.protocol().sndbuf(), 2048u );
-        SENF_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress("127.0.0.1:12345"),
+        SENF_CHECK_NO_THROW( sock.writeto(senf::INet4SocketAddress(localhost4str(0)),
                                            std::string("TEST-WRITE")) );
         BOOST_CHECK_EQUAL( sock.read(), "TEST-WRITE" );
         SENF_CHECK_NO_THROW( sock.protocol().timestamp() );
-        sock.writeto(senf::INet4SocketAddress("127.0.0.1:12345"), std::string("QUIT"));
+        sock.writeto(senf::INet4SocketAddress(localhost4str(0)), std::string("QUIT"));
         sleep(1);
         stop();
         sleep(1);

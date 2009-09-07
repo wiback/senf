@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,34 +21,64 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief SocketSource unit tests */
+    \brief net.test public header */
 
-//#include "SocketSource.test.hh"
-//#include "SocketSource.test.ih"
+#ifndef HH_SENF_senf_Socket_Protocols_INet_net_test_
+#define HH_SENF_senf_Socket_Protocols_INet_net_test_ 1
 
 // Custom includes
-#include <algorithm>
-#include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
-#include <senf/Scheduler/Scheduler.hh>
-#include "SocketSource.hh"
-#include "DebugModules.hh"
-#include "Setup.hh"
-
-#include <senf/Utils/auto_unit_test.hh>
+#include <boost/format.hpp>
 #include <boost/test/test_tools.hpp>
 
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
-namespace ppi = senf::ppi;
-namespace module = ppi::module;
-namespace debug = module::debug;
+//#include "net.test.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
 namespace {
-    void timeout() {
-        senf::scheduler::terminate();
+
+    void error(char const * fn, char const * proc="")
+    {
+        std::cerr << "\n" << proc << ((*proc)?": ":"") << fn << ": " << strerror(errno) << std::endl;
+    }
+
+    void fail(char const * proc, char const * fn)
+    {
+        error(fn,proc);
+        _exit(1);
     }
 
     int base_pid = 0;
+    int server_pid = 0;
+
+    void start(void (*fn)())
+    {
+        if (! base_pid)
+            base_pid = ::getpid();
+        server_pid = ::fork();
+        if (server_pid < 0) BOOST_FAIL("fork()");
+        if (server_pid == 0) {
+            signal(SIGCHLD, SIG_IGN);
+            (*fn)();
+            _exit(0);
+        }
+        signal(SIGCHLD, SIG_DFL);
+    }
+
+    void wait()
+    {
+        int status;
+        if (waitpid(server_pid,&status,0)<0)
+            BOOST_FAIL("waitpid()");
+        BOOST_CHECK_EQUAL( status , 0 );
+    }
+
+    void stop()
+    {
+        if (server_pid) {
+            kill(server_pid,9);
+            wait();
+            server_pid = 0;
+        }
+    }
 
     unsigned port(unsigned i)
     {
@@ -66,34 +96,14 @@ namespace {
     {
         return (boost::format("[::1]:%d") % port(i)).str();
     }
+
 }
 
-BOOST_AUTO_UNIT_TEST(socketSource)
-{
-    senf::UDPv4ClientSocketHandle inputSocket;
-    inputSocket.bind(senf::INet4SocketAddress(localhost4str(0)));
-    inputSocket.blocking(false);
-    module::ActiveSocketSource<> udpSource(inputSocket);
-    debug::PassiveSink sink;
-    ppi::connect(udpSource, sink);
-
-    std::string data ("TEST");
-
-    senf::UDPv4ClientSocketHandle outputSocket;
-    outputSocket.writeto(senf::INet4SocketAddress(localhost4str(0)),data);
-    senf::scheduler::TimerEvent timer (
-        "socketSource test timer", &timeout,
-        senf::ClockService::now() + senf::ClockService::milliseconds(100));
-    senf::ppi::run();
-
-    BOOST_REQUIRE( ! sink.empty() );
-    BOOST_CHECK_EQUAL( sink.front().data().size(), data.size() );
-    BOOST_CHECK( std::equal( sink.front().data().begin(), sink.front().data().end(), 
-                             data.begin()) );
-}
-
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
+///////////////////////////////hh.e////////////////////////////////////////
+//#include "net.test.cci"
+//#include "net.test.ct"
+//#include "net.test.cti"
+#endif
 
 
 // Local Variables:

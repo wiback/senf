@@ -37,12 +37,35 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace {
+
+    int base_pid = 0;
+
+    unsigned port(unsigned i)
+    {
+        if (! base_pid)
+            base_pid = ::getpid();
+        return 23456u + (((base_pid^(base_pid>>8)^(base_pid>>16)^(base_pid>>24))&0xff)<<2) + i;
+    }
+
+    std::string localhost4str(unsigned i)
+    {
+        return (boost::format("localhost:%d") % port(i)).str();
+    }
+
+    std::string localhost6str(unsigned i)
+    {
+        return (boost::format("[::1]:%d") % port(i)).str();
+    }
+
+}
+
 BOOST_AUTO_UNIT_TEST(syslogUDPTarget)
 {
     senf::log::SyslogUDPTarget udplog (
-        senf::INet4SocketAddress(senf::INet4Address::Loopback, 23444u));
+        senf::INet4SocketAddress(senf::INet4Address::Loopback, port(0)));
     senf::UDPv4ClientSocketHandle server (
-        senf::INet4SocketAddress(senf::INet4Address::Loopback, 23444u));
+        senf::INet4SocketAddress(senf::INet4Address::Loopback, port(0)));
 
     udplog.tag("");
     udplog.showTime(false);
