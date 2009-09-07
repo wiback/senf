@@ -29,14 +29,23 @@ if os.path.dirname(os.path.dirname(os.path.abspath(SCons.__file__))) != sconseng
     frame = sys._getframe()
     target_top = marker = []
     while frame and target_top is marker:
-        target_top = frame.f_locals.get('target_top',marker)
         frame = frame.f_back
+        if frame : target_top = frame.f_locals.get('target_top',marker)
     if target_top is marker:
         SCons.Util.display("scons: WARNING: scons -u <target> will probably fail")
     if not target_top:
         target_top = '.'
+    if frame:
+        cdir = frame.f_locals.get('cdir', '')
     # END HACK
-
+    
     os.chdir(target_top)
+    for dir in reversed(os.path.normpath(cdir).split('/')):
+        if dir == '..':
+            SCons.Utio.display("scons: WARNING: failed to undo -C option")
+            break
+        if dir == '.':
+            continue
+        os.chdir('..')
     os.environ['SCONS_LIB_DIR'] = sconsengine
     os.execv(sconsscript, sys.argv)
