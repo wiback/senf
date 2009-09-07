@@ -52,6 +52,7 @@ env.Append(
    LIBS                   = [ '$LIBSENF$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB', 
                               '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ], 
    TEST_EXTRA_LIBS        = [  ],
+   VALGRINDARGS           = [ '--num-callers=50' ],
 
    PREFIX                 = '#/dist',
    LIBINSTALLDIR          = '$PREFIX${syslayout and "/lib" or ""}',
@@ -169,11 +170,12 @@ env.PhonyTarget('prepare', [], [])
 #### valgrind
 for test in env.FindAllBoostUnitTests():
     stamp = env.Command(test[0].dir.File('.test-valgrind.stamp'), 
-                        [ test[0].dir.File('.test.bin'), test ],
+                        [ test[0].dir.File('.test.bin'), 'tools/valgrind.sup', test ],
                         [ """valgrind --tool=memcheck 
                                       --error-exitcode=99 
-                                      --suppressions=tools/valgrind.sup 
-                                          $SOURCE $BOOSTTESTARGS;
+                                      --suppressions=${SOURCES[1]}
+                                      $VALGRINDARGS
+                                          ${SOURCES[0]} $BOOSTTESTARGS;
                              [ $$? -ne 99 ] || exit 1""".replace("\n"," "),
                           Touch("$TARGET") ])
     alias = env.Command(test[0].dir.File('valgrind'), stamp, [ env.NopAction() ])

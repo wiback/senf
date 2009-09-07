@@ -106,11 +106,11 @@
    if_indextoname-suppression-1
    Memcheck:Param
    ioctl(SIOCGIFINDEX)
-   obj:/lib/ld-2.3.6.so
+   obj:/lib/ld-*.so
 }
 
 {
-   boost_unittest_sigaltstack
+   boost_unittest_sigaltstack-suppression-1
    Memcheck:Param
    sigaltstack(ss)
    obj:/lib/ld-2.7.so
