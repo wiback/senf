@@ -29,6 +29,7 @@
 // Custom includes
 #include "SyslogUDPTarget.hh"
 #include <senf/Socket/Protocols/INet/UDPSocketHandle.hh>
+#include <boost/format.hpp>
 #include "Logger.hh"
 
 #include <senf/Utils/auto_unit_test.hh>
