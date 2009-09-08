@@ -60,10 +60,10 @@ BOOST_AUTO_UNIT_TEST(annotationRouter)
     senf::ppi::module::AnnotationRouter<IntAnnotation> router;
     
     senf::ppi::connect(source, router);
-    senf::ppi::connect(router, sink1, 1);
-    senf::ppi::connect(router, sink2, 2);
+    senf::ppi::connect(router, 1, sink1);
+    senf::ppi::connect(router, 2, sink2);
     
-    BOOST_CHECK_THROW( senf::ppi::connect(router, sink2, 2), 
+    BOOST_CHECK_THROW( senf::ppi::connect(router, 2, sink2), 
             senf::ppi::module::AnnotationRouter<IntAnnotation>::DuplicateKeyException);
 
     senf::ppi::init();

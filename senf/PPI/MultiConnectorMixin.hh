@@ -88,13 +88,6 @@ namespace ppi {
             2 ))
 #   include BOOST_PP_ITERATE()
 
-#   define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
-            0, \
-            2*SENF_MULTI_CONNECTOR_MAX_ARGS, \
-            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
-            6 ))
-#   include BOOST_PP_ITERATE()
-
 #endif
 
 namespace module {

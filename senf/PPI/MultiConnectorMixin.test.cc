@@ -123,7 +123,7 @@ BOOST_AUTO_UNIT_TEST(multiConnectorMixin_multipleModules)
     
     ppi::connect(source, join1);
     ppi::connect(join1, router);
-    ppi::connect(router, join2, 1);
+    ppi::connect(router, 1, join2);
     ppi::connect(join2, module);
     ppi::connect(module, sink);
     
