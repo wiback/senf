@@ -113,7 +113,7 @@ senf::VectorParser<ElementParser,AuxPolicy>::back()
 
 template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back(Value value, size_type n)
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back(Value const & value, size_type n)
     const
 {
     container c (*this);
@@ -130,7 +130,7 @@ prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back_space(size_t
 
 template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_front(Value value, size_type n)
+prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_front(Value const & value, size_type n)
     const
 {
     container c (*this);
@@ -265,8 +265,8 @@ prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::clear()
 
 template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_back(Value value,
-                                                                          size_type n)
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_back(Value const & value,
+                                                                              size_type n)
 {
     insert(end(),n,value);
 }
@@ -279,8 +279,8 @@ prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_back_sp
 
 template <class ElementParser, class AuxPolicy>
 template <class Value>
-prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_front(Value value,
-                                                                           size_type n)
+prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_front(Value const & value,
+                                                                               size_type n)
 {
     insert(begin(),n,value);
 }

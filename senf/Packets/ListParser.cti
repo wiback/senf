@@ -84,7 +84,7 @@ senf::ListParser<ListPolicy>::front()
 
 template <class ListPolicy>
 template <class Value>
-prefix_ void senf::ListParser<ListPolicy>::push_back(Value value, size_type n)
+prefix_ void senf::ListParser<ListPolicy>::push_back(Value const & value, size_type n)
     const
 {
     container c(*this);
@@ -101,7 +101,7 @@ prefix_ void senf::ListParser<ListPolicy>::push_back_space(size_type n)
 
 template <class ListPolicy>
 template <class Value>
-prefix_ void senf::ListParser<ListPolicy>::push_front(Value value, size_type n)
+prefix_ void senf::ListParser<ListPolicy>::push_front(Value const & value, size_type n)
     const
 {
     container c(*this);
@@ -301,7 +301,7 @@ prefix_ void senf::ListParser_Container<ListPolicy>::erase(iterator f, iterator 
 
 template <class ListPolicy>
 template <class Value>
-prefix_ void senf::ListParser_Container<ListPolicy>::push_back(Value value,
+prefix_ void senf::ListParser_Container<ListPolicy>::push_back(Value const & value,
                                                                size_type n)
 {
     insert(end(),n,value);
@@ -315,7 +315,7 @@ prefix_ void senf::ListParser_Container<ListPolicy>::push_back_space(size_type n
 
 template <class ListPolicy>
 template <class Value>
-prefix_ void senf::ListParser_Container<ListPolicy>::push_front(Value value,
+prefix_ void senf::ListParser_Container<ListPolicy>::push_front(Value const & value,
                                                                 size_type n)
 {
     insert(begin(),n,value);
