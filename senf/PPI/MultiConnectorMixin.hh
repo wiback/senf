@@ -61,7 +61,7 @@ namespace ppi {
      */
     template <class MultiConnectorSource, class Target, class A1>
     MultiConnectorSource::ConnectorType & connect(
-        MultiConnectorSource & source, Target & target, A1 const & a1);
+        MultiConnectorSource & source, A1 const & a1, Target & target);
     
     /** \brief Connect arbitrary source to MultiConnector target
 
@@ -265,13 +265,6 @@ namespace module {
             SENF_MULTI_CONNECTOR_MAX_ARGS, \
             SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
             1 ))
-#       include BOOST_PP_ITERATE()
-
-#       define BOOST_PP_ITERATION_PARAMS_1 (4, ( \
-            0, \
-            2*SENF_MULTI_CONNECTOR_MAX_ARGS, \
-            SENF_ABSOLUTE_INCLUDE_PATH(PPI/MultiConnectorMixin.mpp), \
-            9 ))
 #       include BOOST_PP_ITERATE()
 
 #endif

@@ -38,7 +38,6 @@
 #include <boost/mpl/and.hpp>
 #include <boost/mpl/not.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <senf/Utils/type_traits.hh>
 
 // ///////////////////////////mpp.p////////////////////////////////////////
 #elif BOOST_PP_IS_ITERATING // ////////////////////////////////////////////
@@ -90,15 +89,6 @@
 
 mpp_TplParams()
 ConnectorType_ & newConnector( mpp_FnParams() );
-
-// ////////////////////////////////////////////////////////////////////////
-#elif BOOST_PP_ITERATION_FLAGS()==9 // ////////////////////////////////////
-// ////////////////////////////////////////////////////////////////////////
-// senf::ppi::module::MultiConnectorMixin member declaration 1..2*MAX_ARGS
-
-template <class Source, class Target mpp_TplParamsKomma()>
-static boost::tuple<typename Source::ConnectorType &, typename Target::ConnectorType &>
-connect_(Source & source, Target & target mpp_FnParamsKomma());
 
 // ////////////////////////////////////////////////////////////////////////
 #elif BOOST_PP_ITERATION_FLAGS()==2 // ////////////////////////////////////
