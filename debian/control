@@ -9,8 +9,9 @@ Build-Depends: debhelper (>= 5), scons (>= 0.97), g++, binutils-dev,
 	libboost-filesystem-dev | libboost-filesystem1.35-dev,
 	libboost-iostreams-dev | libboost-iostreams1.35-dev,
 	libboost-signals-dev | libboost-signals1.35-dev, 
-	doxygen (>= 1.5.5), libreadline-dev, dia, tidy, xsltproc, graphviz,
-	perl-base, linklint, netpbm, gs, tetex-extra | texlive-extra-utils
+	doxygen (>= 1.5.5), dia, tidy, xsltproc, graphviz,
+	perl-base, linklint, netpbm, gs, tetex-extra | texlive-extra-utils,
+	python-4suite-xml
 Standards-Version: 3.7.2 Section: libs
 
 Package: libsenf
