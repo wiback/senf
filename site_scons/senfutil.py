@@ -63,7 +63,7 @@ Special command line parameters:
 
 def SetupForSENF(env, senf_path = []):
     global senfutildir
-    senf_path.extend(('senf', '../senf', os.path.dirname(senfutildir), '/usr/local', '/usr'))
+    senf_path.extend(('senf', os.path.dirname(senfutildir), '/usr/local', '/usr'))
     tooldir = os.path.join(senfutildir, 'site_tools')
 
     env.Tool('Boost',       [ tooldir ])
@@ -136,7 +136,9 @@ def SetupForSENF(env, senf_path = []):
                 % ('/..' in sconspath and os.path.abspath(path) or sconspath)
             env.Append( LIBPATH = [ sconspath ],
                         CPPPATH = [ sconspath ],
-                        BUNDLEDIR = sconspath )
+                        BUNDLEDIR = sconspath,
+                        SENFDIR = sconspath,
+                        SENFSYSLAYOUT = False)
             try:
                 env.MergeFlags(file(os.path.join(path,"senf.conf")).read())
             except IOError:
@@ -145,7 +147,9 @@ def SetupForSENF(env, senf_path = []):
             break
         elif os.path.exists(os.path.join(path,"include/senf/config.hh")):
             print "\nUsing system SENF in '%s/'\n" % sconspath
-            env.Append(BUNDLEDIR = os.path.join(sconspath,"lib/senf"))
+            env.Append(BUNDLEDIR = os.path.join(sconspath,"lib/senf"),
+                       SENFDIR = sconspath,
+                       SENFSYSLAYOUT = True)
             break
     else:
         print "\nSENF library not found .. trying build anyway !!\n"
@@ -186,13 +190,11 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
     
     if tagfiles is None:
         senfdocdir = None
-        senfdoc_path.extend(('senfdoc', 'senf/manual', 'senf', '../senf/manual', '../senf', 
-                             os.path.join(os.path.dirname(senfutildir), 'manual'),
-                             os.path.dirname(senfutildir), 
-                             '/usr/share/doc/senf', '/usr/local/share/doc/senf',
-                             '/usr/share/doc/libsenf-doc/html'))
+        senfdoc_path.extend(('senfdoc', '$SENFDIR', '$SENFDIR/manual',
+                             '$SENFDIR/share/doc/senf', '$SENFDIR/share/doc/libsenf-doc/html'))
         for path in senfdoc_path:
-            if os.path.exists(os.path.join(path, "doc/Main.tag")):
+            path = env.Dir(path).get_path()
+            if os.path.exists(os.path.join(path, "doc/doclib.tag")):
                 senfdocdir = path
                 break
         tagfiles = []
