@@ -139,13 +139,16 @@ doxydir="`abspath "$doxydir"`" #`"
 
 ## Find $TOPDIR
 
-cd "$doxydir"
-while [ ! -r "SConstruct" -a "`pwd`" != "/" ]; do cd ..; done
-if [ ! -r "SConstruct" ]; then
-    echo "topdir not found"
-    exit 1;
+if [ -z "$TOPDIR" ]; then
+    cd "$doxydir"
+    while [ ! -r "SConstruct" -a "`pwd`" != "/" ]; do cd ..; done
+    if [ ! -r "SConstruct" ]; then
+	echo "topdir not found"
+	exit 1;
+    fi
+    TOPDIR="`pwd`";
 fi
-TOPDIR="`pwd`";
+
 reltopdir="`relpath "$doxydir/$output_dir/$html_dir" "$TOPDIR"`" #`"
 cd "$doxydir"
 
@@ -162,6 +165,15 @@ if [ -n "$tagfile_name" ]; then
     done
 fi
 
+## Remove empty tagfiles from list of tagfiles
+
+x="$tagfiles"; tagfiles=""
+for f in $x; do
+    if [ -s "$f" ]; then
+	tagfiles="$tagfiles${tagfiles:+ }$f"
+    fi
+done
+
 ## Call doxygen proper
 
 generate_tagfile=""
@@ -170,6 +182,7 @@ if [ "$tagfile" = "YES" ]; then
 fi
 export TOPDIR LIBDIR html tagfile tagfile_name tagfiles output_dir html_dir generate_tagfile
 
+echo "+ cd $doxydir"
 cmd ${DOXYGEN:-doxygen}
 
 

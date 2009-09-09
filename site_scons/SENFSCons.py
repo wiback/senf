@@ -1,4 +1,4 @@
-import os.path, glob
+import os.path, glob, yaptu
 import SCons.Options, SCons.Environment, SCons.Script.SConscript, SCons.Node.FS
 import SCons.Defaults, SCons.Action
 from SCons.Script import *
@@ -44,7 +44,9 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
         denv.update(kw)
         return { 'DOXYENV'         : denv,
                  'MODULE'          : module,
-                 'OUTPUT_DIRECTORY': output_directory };
+                 'OUTPUT_DIRECTORY': output_directory,
+                 'DOXYGENCOM'      : "site_scons/lib/doxygen.sh $DOXYOPTS $SOURCE",
+                 };
     opts = [ '--tagfile-name', '"${MODULE}.tag"',
              '--output-dir', '$OUTPUT_DIRECTORY' ]
 
@@ -52,7 +54,7 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
     # (need to exclude the 'clean' case, otherwise we'll have duplicate nodes)
     if not env.GetOption('clean'):
         tagfile = env.Doxygen(doxyfile, DOXYOPTS = opts + [ '--tagfile' ],
-                              **vars(generate_tagfile='doc/${MODULE}.tag'))
+                              **vars(generate_tagfile='${OUTPUT_DIRECTORY}/${MODULE}.tag'))
         env.Append(ALL_TAGFILES = [ tagfile[0].abspath ])
         env.Depends(tagfile, [ env.File('#/site_scons/lib/doxygen.sh'), 
                                env.File('#/site_scons/lib/tag-munge.xsl') ])
@@ -94,6 +96,37 @@ def AllIncludesHH(env, exclude=[]):
     file(target.abspath,"w").write("".join([ '#include "%s"\n' % f
                                              for f in headers ]))
     env.Clean(env.Alias('all'), target)
+
+
+INDEXPAGE="""
+/** \mainpage ${TITLE}
+
+    ${TEXT}
+
+    \htmlonly
+    <dl>
+
+{{  for name, title in SUBPAGES:
+      <dt><a href="../../${name}/doc/html/index.html">${name}</a></dt><dd>${title}</a></dd>
+}}
+
+    </dl>
+    \endhtmlonly
+ */
+"""
+
+def IndexPage(env, name, title, text=""):
+    SUBPAGES = []
+    for dox in sorted(glob.glob("*/Mainpage.dox")):
+        subtitle = ([None] + [ line.split('\\mainpage',1)[-1].strip() for line in file(dox)
+                               if '\\mainpage' in line ])[-1]
+        if subtitle:
+            SUBPAGES.append( (dox.split('/',1)[0], subtitle) )
+    file(name,"w").write(yaptu.process(
+            INDEXPAGE, globals(), { 'TITLE': title, 'TEXT': text, 'SUBPAGES': SUBPAGES }))
+    env.Clean('all',name)
+    env.Clean('all_docs',name)
+
 
 ###########################################################################
 # The following functions serve as simple macros for most SConscript files

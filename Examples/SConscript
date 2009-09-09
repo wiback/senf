@@ -1,37 +1,24 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob, yaptu
+import SENFSCons, glob
 
 ###########################################################################
 
-EXAMPLES = []
-for dox in sorted(glob.glob("*/Mainpage.dox")):
-    title = ([None] + [ line.split('\\mainpage',1)[-1].strip() for line in file(dox)
-                        if '\\mainpage' in line ])[-1]
-    if title:
-        EXAMPLES.append( (dox.split('/',1)[0], title) )
-
-MAINPAGE="""
-/** \mainpage Examples
-
-    \htmlonly
-    <dl>
-
-{{  for name, title in EXAMPLES:
-      <dt><a href="../../${name}/doc/html/index.html">${name}</a></dt><dd>${title}</a></dd>
-}}
-
-    </dl>
-    \endhtmlonly
- */
-"""
-
-file("Mainpage.dox","w").write(yaptu.process(MAINPAGE, globals(), env.Dictionary()))
-
-SConscript(glob.glob("*/SConscript"))
-
-env.Clean('all','Mainpage.dox')
-env.Clean('all_docs','Mainpage.dox')
+SENFSCons.IndexPage(env, 'Mainpage.dox', title="Examples")
 
 SENFSCons.Doxygen(env)
+
+for sconstruct in glob.glob("*/SConstruct"):
+    dir=env.File(sconstruct).dir
+    example=env.Command(dir.File('.example.phony'), env.Alias('default'),
+                        [ '$SCONS -C $EXAMPLEDIR' ],
+                        CONCURRENCY_LEVEL=1, EXAMPLEDIR=dir)
+    env.Alias('examples', example)
+
+
+for dox in glob.glob("*/Doxyfile"):
+    extra_sources = [ eval(line.split(':',1)[1])
+                      for line in file(dox) 
+                      if line.startswith("# extra_source: ") ]
+    SENFSCons.Doxygen(env, doxyfile=dox, extra_sources=extra_sources)

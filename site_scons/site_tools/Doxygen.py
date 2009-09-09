@@ -367,7 +367,7 @@ def doxyAction(target, source, env):
    SCons.Action.Action("$DOXYGENCOM")(target, source, env.Clone(ENV = e), show=False)
 
 def doxyActionStr(target, source, env):
-   return env.subst("$DOXYGENCOM")
+   return env.subst("$DOXYGENCOM",target=target,source=source)
 
 def generate(env):
    """

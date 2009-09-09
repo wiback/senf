@@ -1,9 +1,0 @@
-# -*- python -*-
-
-Import('env')
-import SENFSCons
-
-###########################################################################
-
-env.Alias('examples', env.Program('client', 'client.cc'))
-env.Alias('examples', env.Program('server', 'server.cc'))

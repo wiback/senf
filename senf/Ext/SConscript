@@ -8,36 +8,9 @@ import SENFSCons, glob, os.path, yaptu
 sconscripts = sorted(glob.glob("*/SConscript"))
 
 if sconscripts:
-    EXTENSIONS = []
-    for script in sconscripts:
-        name = os.path.split(script)[0]
-        dox = os.path.join(name, 'Mainpage.dox')
-        title = ''
-        if os.path.exists(dox):
-            title = ([''] + [ line.split('\\mainpage',1)[-1].strip() for line in file(dox)
-                                if '\\mainpage' in line ])[-1]
-        EXTENSIONS.append((name, title))
-
-
-    MAINPAGE="""
-    /** \mainpage Extensions
-
-        This folder contains additional SENF extensions which are built
-        into the senf libarary but are not part of senf proper.
-
-        \htmlonly
-        <dl>
-
-{{      for name, title in EXTENSIONS:
-          <dt><a href="../../${name}/doc/html/index.html">${name}</a></dt><dd>${title}</a></dd>
-}}
-
-        </dl>
-        \endhtmlonly
-     */
-    """
-
-    file("Mainpage.dox","w").write(yaptu.process(MAINPAGE, globals(), env.Dictionary()))
+    SENFSCons.IndexPage(env, 'Mainpage.dox', title="Extensions",
+                        text="""This folder contains additional SENF extensions which are built
+                                into the senf libarary but are not part of senf proper.""")
 
     SConscript(sconscripts)
 
