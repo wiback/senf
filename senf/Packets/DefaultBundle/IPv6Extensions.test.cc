@@ -197,16 +197,21 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop)
     BOOST_CHECK_EQUAL( pHop_extension->headerLength(), 0x00 );
 
     SENF_CHECK_NO_THROW( pHop_extension.dump( oss ));
-    pHop_extension.dump(std::cout);
+    pHop_extension.dump(oss);
     senf::IPv6Extension_HopByHop::Parser::options_t::container optC(pHop_extension->options() );
     senf::IPv6Extension_HopByHop::Parser::options_t::container::iterator listIter (optC.begin());
     BOOST_CHECK_EQUAL( listIter->optionType(), 5u);
     BOOST_CHECK_EQUAL( listIter->optionLength(), 2u);
-    std::cout << listIter->value() << std::endl;
     ++listIter;
     BOOST_CHECK_EQUAL( listIter->optionType(), 2u);
     BOOST_CHECK_EQUAL( listIter->optionLength(), 0);
-//    pHop_extension.dump(std::cout);  //( no optiontype output ... sth wrong here! )
+    pHop_extension.dump(oss);
+
+    BOOST_REQUIRE( pHop_extension.next().is<senf::ICMPv6Packet>() );
+    senf::ICMPv6Packet pICMPv6  (pHop_extension.next().as<senf::ICMPv6Packet>());
+    BOOST_CHECK_EQUAL( pICMPv6->type(), 0x8f);
+    BOOST_CHECK_EQUAL( pICMPv6->code(), 0u);
+    BOOST_CHECK_EQUAL( pICMPv6->checksum(), 0x50cc);
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
