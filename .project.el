@@ -97,9 +97,6 @@ is ignored (Those are the file local variables and local words)."
       (search-forward "auto_unit_test.hpp")
       (beginning-of-line)
       (delete-region (point) (progn (end-of-line) (point)))
-      (insert "#include \""
-	      (string-replace "[^/]+/" "../" (substring (file-name-directory (buffer-file-name))
-							(length ccide-project-root)) t)
-	      "Utils/auto_unit_test.hh\""))))
+      (insert "#include <senf/Utils/auto_unit_test.hh>"))))
 
 (add-hook 'ccide-new-file-hooks 'senf-new-file-hook nil t)

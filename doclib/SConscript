@@ -261,10 +261,6 @@ env.SetDefault(
     DOXYGEN = "doxygen"
 )
 
-env.Replace(
-    DOXYGENCOM = "site_scons/lib/doxygen.sh $DOXYOPTS $SOURCE",
-)
-
 env.Append( ENV = {
     'TODAY' : str(datetime.date.today()),
     'DOXYGEN' : str(env.File(env['DOXYGEN'])),
