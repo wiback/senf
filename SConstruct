@@ -170,7 +170,7 @@ env.PhonyTarget('prepare', [], [])
 #### valgrind
 for test in env.FindAllBoostUnitTests():
     stamp = env.Command(test[0].dir.File('.test-valgrind.stamp'), 
-                        [ test[0].dir.File('.test.bin'), 'tools/valgrind.sup', test ],
+                        [ test[0].dir.File('.test.bin'), 'tools/valgrind.sup' ],
                         [ """valgrind --tool=memcheck 
                                       --error-exitcode=99 
                                       --suppressions=${SOURCES[1]}
