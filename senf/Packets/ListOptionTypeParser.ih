@@ -52,7 +52,7 @@ namespace senf {
             typedef ListParser< ListOptionTypeParser_Policy > parser_type;
             typedef ListParser_Container< container_policy > container_type;
 
-            static const size_type init_bytes = 6 + AuxPolicy::aux_bytes;
+            static const size_type init_bytes = 6u + AuxPolicy::aux_bytes;
 
             ListOptionTypeParser_Policy();
             template <class Arg> ListOptionTypeParser_Policy(Arg const & arg);

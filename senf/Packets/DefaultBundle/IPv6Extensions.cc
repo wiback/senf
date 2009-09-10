@@ -25,7 +25,7 @@
 
 #include "IPv6Extensions.hh"
 //#include "IPv6Extensions.ih"
-
+#include <senf/Utils/hexdump.hh>
 // Custom includes
 
 //#include "IPv6Extensions.mpp"
@@ -75,9 +75,11 @@ prefix_ void senf::IPv6ExtensionType_HopByHop::dump(packet p, std::ostream & os)
        os << "OptionTypes:\n";
        IPv6Extension_HopByHop::Parser::options_t::container options (p->options());
        IPv6Extension_HopByHop::Parser::options_t::container::iterator optIter(options.begin());
-       for(;optIter != options.end(); ++ optIter)
+       for(;optIter != options.end(); ++ optIter){
            os << "Option Type:\t" << (unsigned) optIter->optionType()
              << "\nOptionLength:\t" << (unsigned)  optIter->optionLength() <<"\n";
+           senf::hexdump(boost::next(boost::begin(optIter->value())), boost::next( boost::end(optIter->value())), os );
+       }
 }
 
 prefix_ void senf::IPv6ExtensionType_Destination::dump(packet p, std::ostream & os)
