@@ -149,7 +149,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions)
 }
     //==============================================================================================
     
-BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop)
+BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
 {
     unsigned char HopByHop_packetData[] = {
         0x60, 0x00, 0x00, 0x00, //IP version, class, flow label
@@ -200,9 +200,14 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop)
     pHop_extension.dump(oss);
     senf::IPv6Extension_HopByHop::Parser::options_t::container optC(pHop_extension->options() );
     senf::IPv6Extension_HopByHop::Parser::options_t::container::iterator listIter (optC.begin());
+
+    BOOST_CHECK_EQUAL( listIter->altAction(), 0u);
+    BOOST_CHECK_EQUAL( listIter->changeFlag(), 0u);
     BOOST_CHECK_EQUAL( listIter->optionType(), 5u);
     BOOST_CHECK_EQUAL( listIter->optionLength(), 2u);
     ++listIter;
+    BOOST_CHECK_EQUAL( listIter->altAction(), 0u);
+    BOOST_CHECK_EQUAL( listIter->changeFlag(), 0u);
     BOOST_CHECK_EQUAL( listIter->optionType(), 2u);
     BOOST_CHECK_EQUAL( listIter->optionLength(), 0);
     pHop_extension.dump(oss);
@@ -213,6 +218,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop)
     BOOST_CHECK_EQUAL( pICMPv6->code(), 0u);
     BOOST_CHECK_EQUAL( pICMPv6->checksum(), 0x50cc);
 }
+
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_

@@ -89,7 +89,7 @@ BOOST_AUTO_UNIT_TEST(ListOptionTypeParser_container)
         BOOST_CHECK_EQUAL( c.bytes(), 0u ); // padding bytes wont be in here, added/removed automatically in destructor
         BOOST_CHECK( c.begin() == c.end() );
 
-        unsigned char d[]  = {0x05, 0x02, 0x40, 0x34};
+        unsigned char d[]  = {0x65, 0x02, 0x40, 0x34};
         unsigned char d1[] = {0x03, 0x01, 0x77};
         unsigned char d2[] = {0x07, 0x01, 0x13};
 
@@ -106,7 +106,8 @@ BOOST_AUTO_UNIT_TEST(ListOptionTypeParser_container)
         BOOST_CHECK_EQUAL( c.size(), 3u );
 
         OptionParser::list_t::container::iterator cIter (c.begin());
-
+        BOOST_CHECK_EQUAL( cIter->altAction(), 1u);
+        BOOST_CHECK_EQUAL( cIter->changeFlag(), 1u);
         BOOST_CHECK_EQUAL( cIter->optionType(), 5u);
         BOOST_CHECK_EQUAL( cIter->optionLength(), 2u);
         BOOST_CHECK_EQUAL( *(boost::begin(cIter->value()) ), 0x40);

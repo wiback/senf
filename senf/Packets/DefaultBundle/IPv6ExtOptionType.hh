@@ -33,10 +33,10 @@ namespace senf {
 class OptTypeTLVPacketParser: public PacketParserBase {
 public:
 #       include SENF_PARSER()
-//    SENF_PARSER_BITFIELD (altAction, 2, unsigned);
-//    SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
-//    SENF_PARSER_BITFIELD (optionType, 5, unsigned);
-    SENF_PARSER_FIELD (optionType, UInt8Parser);
+    SENF_PARSER_BITFIELD (altAction, 2, unsigned);
+    SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
+    SENF_PARSER_BITFIELD (optionType, 5, unsigned);
+//    SENF_PARSER_FIELD (optionType, UInt8Parser);
     SENF_PARSER_FIELD (optionLength, UInt8Parser);
     SENF_PARSER_FINALIZE (OptTypeTLVPacketParser);
 
