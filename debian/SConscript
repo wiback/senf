@@ -66,9 +66,7 @@ if os.environ.get('debian_build'):
 else:
     rev = 'r' + os.popen("svnversion").read().strip().lower()
     if rev == 'rexported':
-        rev = 'r' + os.popen("gitsvnversion").read().strip().lower()
-        if rev == '':
-            rev = 'unknown'
+        rev = os.popen("gitsvnversion").read().strip().lower()
 
 logname = os.environ.get('LOGNAME')
 if not logname:
