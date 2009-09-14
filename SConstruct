@@ -190,14 +190,15 @@ env.PhonyTarget('lcov', [], [
         'rm /tmp/senf_lcov.info' ])
 if env.GetOption('clean'): 
     env.Depends('lcov', 'all_tests')
-env.Clean('lcov', [ os.path.join(path,f)
-                    for path, subdirs, files in os.walk('.')
-                    for pattern in ['*.gcno', '*.gcda', '*.gcov']
-                    for f in fnmatch.filter(files,pattern) ] + 
-                  [ 'lcov.info', env.Dir('doc/lcov') ])
+    env.Clean('lcov', [ os.path.join(path,f)
+                        for path, subdirs, files in os.walk('.')
+                        for pattern in ['*.gcno', '*.gcda', '*.gcov']
+                        for f in fnmatch.filter(files,pattern) ] + 
+                      [ 'lcov.info', env.Dir('doc/lcov') ])
     
 #### clean
-env.Clean('all', ('.prepare-stamp', libsenf, env.Dir('dist'), 'lcov.info', env.Dir('doc/lcov') ))
+env.Clean('all', ('.prepare-stamp', libsenf, env.Dir('dist')))
+if env.GetOption('clean') : env.Depends('all', ('lcov', 'all_valgrinds'))
 
 if env.GetOption('clean'):
     env.Clean('all', [ os.path.join(path,f)
