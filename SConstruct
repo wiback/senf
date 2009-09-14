@@ -184,16 +184,20 @@ for test in env.FindAllBoostUnitTests():
 ### lcov
 env.PhonyTarget('lcov', [], [
         '$SCONS debug=1 CCFLAGS+="-fprofile-arcs -ftest-coverage" LIBS+="gcov" all_tests',
-        '$LCOV --directory $TOPDIR/senf --capture --output-file /tmp/senf_lcov.info --base-directory $TOPDIR',
+        '$LCOV --follow --directory $TOPDIR/senf --capture --output-file /tmp/senf_lcov.info --base-directory $TOPDIR',
         '$LCOV --output-file lcov.info --remove /tmp/senf_lcov.info "*/include/*" "*/boost/*" "*.test.*" ',
         '$GENHTML --output-directory doc/lcov --title all_tests lcov.info',
         'rm /tmp/senf_lcov.info' ])
-
+if env.GetOption('clean'): 
+    env.Depends('lcov', 'all_tests')
+env.Clean('lcov', [ os.path.join(path,f)
+                    for path, subdirs, files in os.walk('.')
+                    for pattern in ['*.gcno', '*.gcda', '*.gcov']
+                    for f in fnmatch.filter(files,pattern) ] + 
+                  [ 'lcov.info', env.Dir('doc/lcov') ])
+    
 #### clean
-env.Clean('all', '.prepare-stamp')
-env.Clean('all', libsenf)
-env.Clean('all', env.Dir('dist'))
-env.Clean('all', 'lcov.info')
+env.Clean('all', ('.prepare-stamp', libsenf, env.Dir('dist'), 'lcov.info', env.Dir('doc/lcov') ))
 
 if env.GetOption('clean'):
     env.Clean('all', [ os.path.join(path,f)
