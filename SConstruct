@@ -43,8 +43,7 @@ lcov           Generate test coverage output in doc/lcov and lcov.info
 
 env.Append(
    ENV                    = { 'PATH' : os.environ.get('PATH'), 'HOME' : os.environ.get('HOME') },
-   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*',
-                              '*.gcno', '*.gcda', '*.gcov' ],
+   CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
 
    CPPPATH                = [ '#' ],
    LOCALLIBDIR            = '#',
@@ -99,7 +98,8 @@ env.SetDefault(
     LIBSENF           = "senf",
     LCOV              = "lcov",
     GENHTML           = "genhtml",
-    SCONS             = "./tools/scons -j$CONCURRENCY_LEVEL",
+    SCONSBIN          = env.File("#/tools/scons"),
+    SCONS             = "@$SCONSBIN -Q -j$CONCURRENCY_LEVEL",
     CONCURRENCY_LEVEL = env.GetOption('num_jobs') or 1,
     TOPDIR            = env.Dir('#').abspath,
 )
@@ -121,7 +121,7 @@ if not os.path.exists("doclib/Doxyfile.local"):
 
 if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
    and not os.environ.get("SCONS") and COMMAND_LINE_TARGETS != [ 'prepare' ]:
-    env.Execute([ "scons prepare" ])
+    env.Execute([ "$(SCONS) prepare" ])
 
 # Load SConscripts
 
@@ -192,12 +192,12 @@ if env.GetOption('clean'):
     env.Depends('lcov', 'all_tests')
     env.Clean('lcov', [ os.path.join(path,f)
                         for path, subdirs, files in os.walk('.')
-                        for pattern in ['*.gcno', '*.gcda', '*.gcov']
+                        for pattern in ('*.gcno', '*.gcda', '*.gcov')
                         for f in fnmatch.filter(files,pattern) ] + 
                       [ 'lcov.info', env.Dir('doc/lcov') ])
     
 #### clean
-env.Clean('all', ('.prepare-stamp', libsenf, env.Dir('dist')))
+env.Clean('all', ('.prepare-stamp', env.Dir('dist')))
 if env.GetOption('clean') : env.Depends('all', ('lcov', 'all_valgrinds'))
 
 if env.GetOption('clean'):

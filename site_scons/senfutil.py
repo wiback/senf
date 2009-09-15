@@ -132,8 +132,9 @@ def SetupForSENF(env, senf_path = []):
         if not path.startswith('/') : sconspath = '#/%s' % path
         else                        : sconspath = path
         if os.path.exists(os.path.join(path,"senf/config.hh")):
-            print "\nUsing SENF in '%s'\n" \
-                % ('/..' in sconspath and os.path.abspath(path) or sconspath)
+            if not env.GetOption('no_progress'):
+                print "\nUsing SENF in '%s'\n" \
+                    % ('/..' in sconspath and os.path.abspath(path) or sconspath)
             env.Append( LIBPATH = [ sconspath ],
                         CPPPATH = [ sconspath ],
                         BUNDLEDIR = sconspath,
@@ -142,17 +143,20 @@ def SetupForSENF(env, senf_path = []):
             try:
                 env.MergeFlags(file(os.path.join(path,"senf.conf")).read())
             except IOError:
-                print "(SENF configuration file 'senf.conf' not found, assuming non-final SENF)"
+                if not env.GetOption('no_progress'):
+                    print "(SENF configuration file 'senf.conf' not found, assuming non-final SENF)"
                 env.Append(CPPDEFINES = [ 'SENF_DEBUG' ])
             break
         elif os.path.exists(os.path.join(path,"include/senf/config.hh")):
-            print "\nUsing system SENF in '%s/'\n" % sconspath
+            if not env.GetOption('no_progress'):
+                print "\nUsing system SENF in '%s/'\n" % sconspath
             env.Append(BUNDLEDIR = os.path.join(sconspath,"lib/senf"),
                        SENFDIR = sconspath,
                        SENFSYSLAYOUT = True)
             break
     else:
-        print "\nSENF library not found .. trying build anyway !!\n"
+        if not env.GetOption('no_progress'):
+            print "\nSENF library not found .. trying build anyway !!\n"
 
     env.Alias('all', '#')
 
@@ -199,7 +203,8 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
                 break
         tagfiles = []
         if senfdocdir is None:
-            print "(SENF documentation not found)"
+            if not env.GetOption('no_progress'):
+                print "(SENF documentation not found)"
         else:
             for dir, dirs, files in os.walk(senfdocdir):
                 tagfiles.extend([ os.path.join(dir,f) for f in files if f.endswith('.tag') ])
