@@ -16,7 +16,7 @@ PREDEFINED             = \
         typedef type name##_t;"                                                             \
     SENF_PARSER_FIELD_RO(name,type)="                                                       \
         public:                                                                             \
-            type::value_type name() const                                                   \
+            type::value_type name() const;                                                  \
             typedef type name##_t;                                                          \
         protected:                                                                          \
             type name##_() const;"                                                          \
@@ -29,12 +29,12 @@ PREDEFINED             = \
     SENF_PARSER_PRIVATE_FIELD(name,type)="                                                  \
         protected:                                                                          \ 
             type name() const;                                                              \
-            typedef type name##_t;"                                                         \
+            typedef type name##_t;                                                          \
         public:"                                                                            \
     SENF_PARSER_PRIVATE_FIELD_RO(name,type)="                                               \
         protected:                                                                          \
             type::value_type name() const;                                                  \
-            type name##_() const;"                                                          \
+            type name##_() const;                                                           \
             typedef type name##_t;                                                          \
         public:"                                                                            \
     SENF_PARSER_PRIVATE_BITFIELD(name,bits,type)="                                          \
