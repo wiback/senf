@@ -27,3 +27,5 @@ doc/
 /TODO
 /dist/
 /lcov.info
+/build/
+/lcov-build/

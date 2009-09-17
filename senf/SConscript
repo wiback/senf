@@ -1,7 +1,7 @@
 # -*- python -*-
 
 Import('env')
-import SENFSCons, glob, os
+import SENFSCons, os
 
 ###########################################################################
 
@@ -11,7 +11,8 @@ if not env.GetOption('clean') and not os.path.exists("local_config.hh"):
 
 # Ext/SConscript is last so it can depend on env vars set by any other script
 # (e.g. $PACKET_BUNDLES)
-SConscript(list(set(glob.glob("*/SConscript")) - set(("Ext/SConscript",))))
+SConscript(sorted(list(set(env.Glob("*/SConscript", strings=True)) - set(("Ext/SConscript",)))))
 SConscript("Ext/SConscript")
 
-env.InstallSubdir(target = '$INCLUDEINSTALLDIR', source = [ glob.glob("*.hh") ])
+env.InstallSubdir(target = '$INCLUDEINSTALLDIR', 
+                  source = sorted(env.Glob("*.hh", strings=True)))

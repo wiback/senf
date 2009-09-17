@@ -26,7 +26,7 @@
 #ifndef HH_SENF_Utils_Logger_Logger_
 #define HH_SENF_Utils_Logger_Logger_ 1
 
-#include "all_includes.hh"
+#include <senf/Utils/Logger/all_includes.hh>
 
 #endif
 

@@ -26,7 +26,7 @@
 #ifndef HH_SENF_PPI_PPI_
 #define HH_SENF_PPI_PPI_ 1
 
-#include "all_includes.hh"
+#include <senf/PPI/all_includes.hh>
 
 #endif
 

@@ -173,12 +173,17 @@ def DefaultOptions(env):
     )
 
 def Glob(env, exclude=[], subdirs=[]):
-    testSources = glob.glob("*.test.cc")
-    sources = [ x for x in glob.glob("*.cc") if x not in testSources and x not in exclude ]
+    testSources = env.Glob("*.test.cc", strings=True)
+    sources = [ x 
+                for x in env.Glob("*.cc", strings=True) 
+                if x not in testSources and x not in exclude ]
     for subdir in subdirs:
         testSources += glob.glob(os.path.join(subdir,"*.test.cc"))
-        sources += [ x for x in glob.glob(os.path.join(subdir,"*.cc"))
+        sources += [ x 
+                     for x in env.Glob(os.path.join(subdir,"*.cc"))
                      if x not in testSources and x not in exclude ]
+    sources.sort()
+    testSources.sort()
     return (sources, testSources)
 
 tagfiles = None

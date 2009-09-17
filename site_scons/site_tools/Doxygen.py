@@ -151,11 +151,12 @@ class DoxyfileParser:
 
    ENVVAR_RE = re.compile(r"\$\(([0-9A-Za-z_-]+)\)")
 
-   def __init__(self, path, env, include_path=None, items = None):
+   def __init__(self, node, env, include_path=None, items = None):
+      self._node = node
       self._env = env
       self._include_path = include_path or []
-      self._lexer = DoxyfileLexer(file(path))
-      self._dir = os.path.split(path)[0]
+      self._lexer = DoxyfileLexer(file(node.srcnode().get_path()))
+      self._dir = node.dir
       self._items = items or {}
 
    def parse(self):
@@ -192,7 +193,7 @@ class DoxyfileParser:
          p = os.path.join(d,value[0])
          if os.path.exists(p):
             self._items.setdefault('@INCLUDE',[]).append(p)
-            parser = DoxyfileParser(p, self._env, self._include_path, self._items)
+            parser = DoxyfileParser(self._node.File(p), self._env, self._include_path, self._items)
             parser.parse()
             return
 
@@ -204,15 +205,13 @@ class DoxyfileParser:
    def items(self):
       return self._items
 
-def DoxyfileParse(env,file):
+def DoxyfileParse(env,node):
    # We don't parse source files which do not contain the word 'doxyfile'. SCons will
    # pass other dependencies to DoxyfileParse which are not doxyfiles ... grmpf ...
-   if not 'doxyfile' in file.lower():
-      return {}
    ENV = {}
    ENV.update(env.get("ENV",{}))
    ENV.update(env.get("DOXYENV", {}))
-   parser = DoxyfileParser(file,ENV)
+   parser = DoxyfileParser(node,ENV)
    try:
       parser.parse()
    except ValueError, v:
@@ -260,7 +259,7 @@ def DoxySourceScan(node, env, path):
 
    sources          = []
    basedir          = node.dir.abspath
-   data             = DoxyfileParse(env, node.abspath)
+   data             = DoxyfileParse(env, node)
    recursive        = data.get("RECURSIVE", "NO").upper()=="YES"
    file_patterns    = data.get("FILE_PATTERNS", default_file_patterns)
    exclude_patterns = data.get("EXCLUDE_PATTERNS", default_exclude_patterns)
@@ -291,7 +290,7 @@ def DoxySourceScan(node, env, path):
 
 def DoxySourceScanCheck(node, env):
    """Check if we should scan this file"""
-   return os.path.isfile(node.path)
+   return os.path.isfile(node.path) and 'doxyfile' in node.name.lower()
 
 def DoxyEmitter(source, target, env):
    """Doxygen Doxyfile emitter"""
@@ -304,7 +303,7 @@ def DoxyEmitter(source, target, env):
       "XML"   : ("NO",  "xml"),
    }
 
-   data = DoxyfileParse(env, source[0].abspath)
+   data = DoxyfileParse(env, source[0])
 
    targets = []
    if data.get("OUTPUT_DIRECTORY",""):
@@ -342,7 +341,7 @@ def DoxyEmitter(source, target, env):
 
 def doxyNodeHtmlDir(env,node):
    if not node.sources : return None
-   data = DoxyfileParse(env, node.sources[0].abspath)
+   data = DoxyfileParse(env, node.sources[0])
    if data.get("GENERATE_HTML",'YES').upper() != 'YES' : return None
    return os.path.normpath(os.path.join( node.sources[0].dir.abspath,
                                          data.get("OUTPUT_DIRECTORY","."),

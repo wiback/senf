@@ -4,21 +4,27 @@ import SCons.Defaults, SCons.Action
 from SCons.Script import *
 
 def Glob(env, exclude=[], subdirs=[]):
-    testSources = glob.glob("*.test.cc")
-    sources = [ x for x in glob.glob("*.cc") if x not in testSources and x not in exclude ]
+    testSources = env.Glob("*.test.cc",strings=True)
+    sources = [ x 
+                for x in env.Glob("*.cc",strings=True) 
+                if x not in testSources and x not in exclude ]
     for subdir in subdirs:
-        testSources += glob.glob(os.path.join(subdir,"*.test.cc"))
-        sources += [ x for x in glob.glob(os.path.join(subdir,"*.cc"))
+        testSources += env.Glob(os.path.join(subdir,"*.test.cc"),strings=True)
+        sources += [ x 
+                     for x in env.Glob(os.path.join(subdir,"*.cc"),strings=True)
                      if x not in testSources and x not in exclude ]
     includes = []
-    for d in [ '.' ] + subdirs:
-        for f in os.listdir(d):
-            ext = '.' + f.split('.',1)[-1]
-            p = os.path.join(d,f)
+    for d in [ '' ] + [ x+'/' for x in subdirs ]:
+        for p in env.Glob("%s*" % d, strings=True) + env.Glob("%s*" % d, strings=True, ondisk=False):
+            ext = '.' + p.split('.',1)[-1]
             if ext in env['CPP_INCLUDE_EXTENSIONS'] \
                and ext not in env['CPP_EXCLUDE_EXTENSIONS'] \
                and p not in exclude:
                 includes.append(p)
+    includes = list(set(includes))
+    sources.sort()
+    testSources.sort()
+    includes.sort()
     return ( sources, testSources, includes )
 
 def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "doc"):
@@ -88,15 +94,14 @@ def Doxygen(env, doxyfile = "Doxyfile", extra_sources = [], output_directory = "
     return doc
 
 def AllIncludesHH(env, exclude=[]):
-    exclude = exclude[:] + ['all_includes.hh'] # Make a copy !!
-    headers = [ f for f in glob.glob("*.hh")
-                if f not in exclude and not f.endswith('.test.hh') ]
-    headers.sort()
+    exclude = exclude + ['all_includes.hh']
+    headers = [ f for f in env.Glob("*.hh", source=True)
+                if f.name not in exclude and not f.name.endswith('.test.hh') ]
+    headers.sort(key=lambda x:x.name)
     target = env.File("all_includes.hh")
-    file(target.abspath,"w").write("".join([ '#include "%s"\n' % f
-                                             for f in headers ]))
-    env.Clean(env.Alias('all'), target)
-
+    env.Default(env.CreateFile(target, 
+                               env.Value("".join([ '#include <%s>\n' % f.srcnode().get_path(env.Dir('#'))
+                                                   for f in headers ]))))
 
 INDEXPAGE="""
 /** \mainpage ${TITLE}
@@ -117,7 +122,7 @@ INDEXPAGE="""
 
 def IndexPage(env, name, title, text=""):
     SUBPAGES = []
-    for dox in sorted(glob.glob("*/Mainpage.dox")):
+    for dox in sorted(env.Glob("*/Mainpage.dox",strings=True)):
         subtitle = ([None] + [ line.split('\\mainpage',1)[-1].strip() for line in file(dox)
                                if '\\mainpage' in line ])[-1]
         if subtitle:
@@ -139,8 +144,9 @@ def AutoRules(env, exclude=[], subdirs=[], doc_extra_sources = []):
     import SENFSCons
 
     sources, tests, includes = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
-    subscripts               = env.Glob("*/SConscript")
+    subscripts               = sorted(env.Glob("*/SConscript", strings=True))
     doxyfile                 = env.Glob("Doxyfile")
+    objects                  = []
 
     if sources               : env.Append(ALLOBJECTS = env.Object(sources))
     if tests                 : env.BoostUnitTest('test', tests)
@@ -153,7 +159,7 @@ def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
     import SENFSCons
 
     sources, tests, includes = SENFSCons.Glob(env, exclude=((exclude)), subdirs=((subdirs)) )
-    subscripts               = env.Glob("*/SConscript")
+    subscripts               = sorted(env.Glob("*/SConscript", strings=True))
     doxyfile                 = env.Glob("Doxyfile")
 
     objects = env.Object(sources)

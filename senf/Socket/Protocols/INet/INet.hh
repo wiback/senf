@@ -26,7 +26,7 @@
 #ifndef HH_SENF_Socket_Protocols_INet_INet_
 #define HH_SENF_Socket_Protocols_INet_INet_ 1
 
-#include "all_includes.hh"
+#include <senf/Socket/Protocols/INet/all_includes.hh>
 
 #endif
 

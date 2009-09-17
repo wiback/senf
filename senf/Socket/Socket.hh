@@ -26,7 +26,7 @@
 #ifndef HH_SENF_Socket_Socket_
 #define HH_SENF_Socket_Socket_ 1
 
-#include "all_includes.hh"
+#include <senf/Socket/all_includes.hh>
 
 #endif
 

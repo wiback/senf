@@ -5,6 +5,8 @@ import SENFSCons
 
 ###########################################################################
 
+env['PACKET_BUNDLES'] = []
+
 SENFSCons.AutoRules(env, doc_extra_sources = [
     env.Dia2Png("structure.dia"),
     env.Dia2Png("80221Bundle/TLV.dia"),

@@ -26,7 +26,7 @@
 #ifndef HH_SENF_Socket_Protocols_DVB_DVB_
 #define HH_SENF_Socket_Protocols_DVB_DVB_ 1
 
-#include "all_includes.hh"
+#include <senf/Socket/Protocols/DVB/all_includes.hh>
 
 #endif
 

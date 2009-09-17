@@ -1,6 +1,6 @@
 # -*- python -*-
 
-import sys, glob, os.path, fnmatch
+import sys, os.path, fnmatch
 import SENFSCons, senfutil
 
 ###########################################################################
@@ -21,6 +21,7 @@ env.Tool('Boost')
 env.Tool('CombinedObject')
 env.Tool('PhonyTarget')
 env.Tool('InstallDir')
+env.Tool('CreateFile')
 
 env.Help("""
 Additional top-level build targets:
@@ -45,8 +46,9 @@ env.Append(
    ENV                    = { 'PATH' : os.environ.get('PATH'), 'HOME' : os.environ.get('HOME') },
    CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
 
-   CPPPATH                = [ '#' ],
-   LOCALLIBDIR            = '#',
+   BUILDDIR               = '#',
+   CPPPATH                = [ '$BUILDDIR', '#' ],
+   LOCALLIBDIR            = '$BUILDDIR',
    LIBPATH                = [ '$LOCALLIBDIR' ],
    LIBS                   = [ '$LIBSENF$LIBADDSUFFIX', 'rt', '$BOOSTREGEXLIB', 
                               '$BOOSTIOSTREAMSLIB', '$BOOSTSIGNALSLIB', '$BOOSTFSLIB' ], 
@@ -121,7 +123,7 @@ if not os.path.exists("doclib/Doxyfile.local"):
 
 if not env.GetOption('clean') and not os.path.exists(".prepare-stamp") \
    and not os.environ.get("SCONS") and COMMAND_LINE_TARGETS != [ 'prepare' ]:
-    env.Execute([ "$(SCONS) prepare" ])
+    env.Execute([ "$SCONS prepare" ])
 
 # Load SConscripts
 
@@ -129,27 +131,16 @@ SConscriptChdir(0)
 SConscript("debian/SConscript")
 SConscriptChdir(1)
 if os.path.exists('SConscript.local') : SConscript('SConscript.local')
-SConscript("senf/SConscript")
+if env['BUILDDIR'] == '#':
+    SConscript("SConscript")
+else:
+    SConscript("SConscript", variant_dir=env['BUILDDIR'], src_dir='#', duplicate=False)
 SConscript("Examples/SConscript")
 SConscript("HowTos/SConscript")
 SConscript("doclib/SConscript")
 
 ###########################################################################
 # Define build targets
-
-#### libsenf.a
-libsenf = env.Library("$LOCALLIBDIR/${LIBSENF}${LIBADDSUFFIX}", env['ALLOBJECTS'])
-env.Default(libsenf)
-env.Install('$LIBINSTALLDIR', libsenf)
-
-def create(target, source, env): 
-    file(str(target[0]), 'w').write(source[0].get_contents()+"\n")
-env['BUILDERS']['CreateFile'] = Builder(action = create)
-
-conf = env.CreateFile("${LOCALLIBDIR}/${LIBSENF}${LIBADDSUFFIX}.conf", 
-                      env.Value(env.subst("$_CPPDEFFLAGS")))
-env.Default(conf)
-env.Install('$CONFINSTALLDIR', conf)
 
 #### install_all, default, all_tests, all
 env.Install('${SCONSINSTALLDIR}', [ 'site_scons/__init__.py',
@@ -183,18 +174,17 @@ for test in env.FindAllBoostUnitTests():
 
 ### lcov
 env.PhonyTarget('lcov', [], [
-        '$SCONS debug=1 CCFLAGS+="-fprofile-arcs -ftest-coverage" LIBS+="gcov" all_tests',
-        '$LCOV --follow --directory $TOPDIR/senf --capture --output-file /tmp/senf_lcov.info --base-directory $TOPDIR',
+        '$SCONS debug=1 BUILDDIR="#/lcov-build" CCFLAGS+="-fprofile-arcs -ftest-coverage" LIBS+="gcov" all_tests',
+        '$LCOV --follow --directory $TOPDIR/lcov-build/senf --capture --output-file /tmp/senf_lcov.info --base-directory $TOPDIR',
         '$LCOV --output-file lcov.info --remove /tmp/senf_lcov.info "*/include/*" "*/boost/*" "*.test.*" ',
         '$GENHTML --output-directory doc/lcov --title all_tests lcov.info',
         'rm /tmp/senf_lcov.info' ])
 if env.GetOption('clean'): 
-    env.Depends('lcov', 'all_tests')
     env.Clean('lcov', [ os.path.join(path,f)
                         for path, subdirs, files in os.walk('.')
                         for pattern in ('*.gcno', '*.gcda', '*.gcov')
                         for f in fnmatch.filter(files,pattern) ] + 
-                      [ 'lcov.info', env.Dir('doc/lcov') ])
+                      [ 'lcov.info', env.Dir('doc/lcov'), env.Dir('lcov-build') ])
     
 #### clean
 env.Clean('all', ('.prepare-stamp', env.Dir('dist')))

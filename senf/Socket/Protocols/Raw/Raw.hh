@@ -26,7 +26,7 @@
 #ifndef HH_SENF_Socket_Protocols_Raw_Raw_
 #define HH_SENF_Socket_Protocols_Raw_Raw_ 1
 
-#include "all_includes.hh"
+#include <senf/Socket/Protocols/Raw/all_includes.hh>
 
 #endif
 

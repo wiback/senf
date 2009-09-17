@@ -25,6 +25,7 @@ find . \
     -name doc -prune -o \
     -name debian -prune -o \
     -name dist -prune -o \
+    -name build -prune -o \
     -name "*.a" -o \
     -name "*.o" -o \
     -name "*~" -o \
