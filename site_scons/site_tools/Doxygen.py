@@ -189,7 +189,7 @@ class DoxyfileParser:
       if len(value) != 1:
          raise ValueError,"Invalid argument to @INCLUDE"
       
-      for d in [ self._dir ] + self._include_path:
+      for d in [ self._dir.get_path() ] + self._include_path:
          p = os.path.join(d,value[0])
          if os.path.exists(p):
             self._items.setdefault('@INCLUDE',[]).append(p)
