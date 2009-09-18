@@ -178,9 +178,9 @@ def Glob(env, exclude=[], subdirs=[]):
                 for x in env.Glob("*.cc", strings=True) 
                 if x not in testSources and x not in exclude ]
     for subdir in subdirs:
-        testSources += env.Glob(os.path.join(subdir,"*.test.cc", strings=True))
+        testSources += env.Glob(os.path.join(subdir,"*.test.cc"), strings=True)
         sources += [ x 
-                     for x in env.Glob(os.path.join(subdir,"*.cc", strings=True))
+                     for x in env.Glob(os.path.join(subdir,"*.cc"), strings=True)
                      if x not in testSources and x not in exclude ]
     sources.sort()
     testSources.sort()
