@@ -490,8 +490,9 @@
 /** \brief Define bit-field
 
     Bit fields are supported by a special family of parser macros. These macros simplify defining
-    fields using the senf::Parse_Int, senf::Parse_UInt and senf::FlagParser parsers by keeping track
-    of the current bit position and automatically creating the correct template parameters.
+    fields using the senf::IntFieldParser, senf::UIntFieldParser and senf::FlagParser parsers by
+    keeping track of the current bit position and automatically creating the correct template 
+    parameters.
     
     The \a type parameter specifies the type of bitfield to define. This value is one of
     \li \c signed, for signed bit fields (senf::IntFieldParser)

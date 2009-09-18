@@ -15,11 +15,11 @@ PREDEFINED             = \
         type name() const;                                                                  \ 
         typedef type name##_t;"                                                             \
     SENF_PARSER_FIELD_RO(name,type)="                                                       \
+        protected:                                                                          \
+            type name##_() const;                                                           \
         public:                                                                             \
             type::value_type name() const;                                                  \
-            typedef type name##_t;                                                          \
-        protected:                                                                          \
-            type name##_() const;"                                                          \
+            typedef type name##_t;"                                                         \
     SENF_PARSER_BITFIELD(name,bits,type)="                                                  \
         senf::ParseField_##type(bits) name() const"                                         \
     SENF_PARSER_BITFIELD_RO(name,bits,type)="                                               \
@@ -71,7 +71,7 @@ PREDEFINED             = \
     SENF_PARSER_VARIANT(name,chooser,types)="                                               \
         senf::Parse_Variant_Direct<chooser##_t,?,types>::parser name() const"               \
     SENF_PARSER_PRIVATE_VARIANT(name,chooser,types)="                                       \
-        private:                                                                            \
+        protected:                                                                          \
             senf::Parse_Variant_Direct<chooser##_t,?,types>::parser name() const;           \
         public:"                                                                            \
     SENF_PARSER_VEC_N(name,elt_type,size_type)="                                            \
