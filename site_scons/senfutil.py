@@ -178,9 +178,9 @@ def Glob(env, exclude=[], subdirs=[]):
                 for x in env.Glob("*.cc", strings=True) 
                 if x not in testSources and x not in exclude ]
     for subdir in subdirs:
-        testSources += glob.glob(os.path.join(subdir,"*.test.cc"))
+        testSources += env.Glob(os.path.join(subdir,"*.test.cc", strings=True))
         sources += [ x 
-                     for x in env.Glob(os.path.join(subdir,"*.cc"))
+                     for x in env.Glob(os.path.join(subdir,"*.cc", strings=True))
                      if x not in testSources and x not in exclude ]
     sources.sort()
     testSources.sort()
@@ -213,7 +213,9 @@ def Doxygen(env, doxyheader=None, doxyfooter=None, doxycss=None, mydoxyfile=Fals
         else:
             for dir, dirs, files in os.walk(senfdocdir):
                 tagfiles.extend([ os.path.join(dir,f) for f in files if f.endswith('.tag') ])
-                if dir.endswith('/doc') : dirs.remove('html')
+                if dir.endswith('/doc') : 
+                    try: dirs.remove('html')
+                    except ValueError: pass
                 for d in dirs: 
                     if d.startswith('.') : dirs.remove(d)
     
