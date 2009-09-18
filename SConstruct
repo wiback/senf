@@ -195,6 +195,9 @@ if env.GetOption('clean'):
                        for path, subdirs, files in os.walk('.')
                        for pattern in env['CLEAN_PATTERNS']
                        for f in fnmatch.filter(files,pattern) ])
+    if 'all' in BUILD_TARGETS:
+        import SCons.SConsign
+        SCons.SConsign.write = lambda : None
 
 if not env.GetOption('clean') and not os.path.exists(".prepare-stamp"):
     Execute(Touch(".prepare-stamp"))
