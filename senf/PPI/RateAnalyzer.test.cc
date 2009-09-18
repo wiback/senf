@@ -74,6 +74,10 @@ namespace {
 
 BOOST_AUTO_UNIT_TEST(rateAnalyzer)
 {
+    char const * enabled (getenv("SENF_TIMING_CRITICAL_TESTS"));
+    if (! enabled) {
+        BOOST_WARN_MESSAGE(false, "Set SENF_TIMING_CRITICAL_TESTS to not skip timing critical tests");
+    }
     senf::DataPacket p (senf::DataPacket::create(13u));
     senf::ppi::module::CloneSource source (p);
     senf::ppi::module::RateFilter filter (senf::ClockService::milliseconds(58u));
@@ -93,8 +97,10 @@ BOOST_AUTO_UNIT_TEST(rateAnalyzer)
     pps /= calls;
     bps /= calls;
 
-    BOOST_CHECK_CLOSE( pps, 16.67f, .1f );
-    BOOST_CHECK_CLOSE( bps, 216.67f, .1f );
+    if (enabled) {
+        BOOST_CHECK_CLOSE( pps, 16.67f, .1f );
+        BOOST_CHECK_CLOSE( bps, 216.67f, .1f );
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
