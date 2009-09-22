@@ -1,6 +1,6 @@
 // $Id: ListOptionTypeParser.test.cc 1345 2009-08-26 15:40:55Z pug $
 //
-// Copyright (C) 2007
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Philipp Batroff <Philipp.Batroff@fokus.fraunhofer.de>
@@ -21,12 +21,11 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 // Custom includes
-#include "Packets.hh"
-#include <senf/Packets/DefaultBundle/IPv6ExtOptionType.hh>
+#include <senf/Packets/Packets.hh>
+#include "IPv6ExtOptionType.hh"
+#include "ListOptionTypeParser.hh"
 
-#include <senf/Utils/hexdump.hh>
 #include <senf/Utils/auto_unit_test.hh>
-
 #include <boost/test/test_tools.hpp>
 
 #define prefix_

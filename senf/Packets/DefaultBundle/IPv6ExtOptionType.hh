@@ -1,6 +1,6 @@
 // $Id: IPv6ExtOptionType.hh 869 2008-06-09 13:57:27Z pug $
 //
-// Copyright (C) 2007
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Philipp.Batroff@fokus.fraunhofer.de
@@ -20,8 +20,11 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-#ifndef HH_SENF_Packets_DefaultBundle_IPV6EXTOPTIONTYPE_HH_
-#define HH_SENF_Packets_DefaultBundle_IPV6EXTOPTIONTYPE_HH_1
+/** \file
+    \brief IPv6Extension-Options public header */
+
+#ifndef HH_SENF_Packets_DefaultBundle_IPv6ExtOptionType_HH_
+#define HH_SENF_Packets_DefaultBundle_IPv6ExtOptionType_HH_ 1
 
 // Custom includes
 #include <senf/Packets/Packets.hh>
@@ -30,40 +33,38 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
-class OptTypeTLVPacketParser: public PacketParserBase {
-public:
+    class OptTypeTLVPacketParser : public PacketParserBase 
+    {
+    public:
 #       include SENF_PARSER()
-    SENF_PARSER_BITFIELD (altAction, 2, unsigned);
-    SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
-    SENF_PARSER_BITFIELD (optionType, 5, unsigned);
-//    SENF_PARSER_FIELD (optionType, UInt8Parser);
-    SENF_PARSER_FIELD (optionLength, UInt8Parser);
-    SENF_PARSER_FINALIZE (OptTypeTLVPacketParser);
+        SENF_PARSER_BITFIELD (altAction,  2, unsigned);
+        SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
+        SENF_PARSER_BITFIELD (optionType, 5, unsigned);
+        SENF_PARSER_FIELD (optionLength, UInt8Parser);
+        SENF_PARSER_FINALIZE (OptTypeTLVPacketParser);
+    };
 
-}; //OptTypeTLVPacketParser
-
-struct GenericOptTypeTLVPacketParser: public OptTypeTLVPacketParser {
+    struct GenericOptTypeTLVPacketParser : public OptTypeTLVPacketParser 
+    {
 #       include SENF_PARSER()
-    SENF_PARSER_INHERIT ( OptTypeTLVPacketParser );
-    SENF_PARSER_SKIP ( optionLength(), 0 );
-    SENF_PARSER_FINALIZE ( GenericOptTypeTLVPacketParser );
+        SENF_PARSER_INHERIT ( OptTypeTLVPacketParser );
+        SENF_PARSER_SKIP ( optionLength(), 0 );
+        SENF_PARSER_FINALIZE ( GenericOptTypeTLVPacketParser );
 
+        senf::PacketInterpreterBase::range value() const;
 
-    senf::PacketInterpreterBase::range value() const;
+        template<class ForwardReadableRange>
+        void value(ForwardReadableRange const &range);
+    };
 
-    template<class ForwardReadableRange>
-    void value(ForwardReadableRange const &range);
-
-};
-
-} //namespace senf
+}
 
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "IPv6ExtOptionType.cci"
 #include "IPv6ExtOptionType.ct"
 //#include "IPv6ExtOptionType.cti"
-#endif /* HH_SENF_Packets_DefaultBundle_IPV6EXTOPTIONTYPE_HH_ */
+#endif
 
 // Local Variables:
 // mode: c++

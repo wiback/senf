@@ -20,7 +20,10 @@
 // Free Software Foundation, Inc.,
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
-//#include "IPv6ExtOptionType.hh"
+/** \file
+    \brief IPv6Extension-Options non-inline template implementation  */
+
+//#include "IPv6ExtOptionType.ih"
 
 // Custom includes
 

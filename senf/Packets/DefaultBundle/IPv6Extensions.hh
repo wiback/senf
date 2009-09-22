@@ -29,10 +29,10 @@
 // Custom includes
 #include <senf/Packets/Packets.hh>
 #include <senf/Packets/AuxParser.hh>
-#include <senf/Packets/ListOptionTypeParser.hh>
 #include <senf/Packets/DefaultBundle/IPv6ExtOptionType.hh>
-
+#include "ListOptionTypeParser.hh"
 #include "IPv6Packet.hh"
+
 //#include "IPv6Extensions.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
 
@@ -52,11 +52,9 @@ namespace senf {
 
         SENF_PARSER_FIELD            ( nextHeader     , UInt8Parser  );
         SENF_PARSER_PRIVATE_FIELD    ( reserved1      , UInt8Parser  );
-
         SENF_PARSER_BITFIELD         ( fragmentOffset , 13, unsigned );
         SENF_PARSER_PRIVATE_BITFIELD ( reserved2      ,  2, unsigned );
         SENF_PARSER_BITFIELD         ( moreFragments  ,  1, bool     );
-
         SENF_PARSER_FIELD            ( id             , UInt32Parser );
 
         SENF_PARSER_FINALIZE(IPv6PacketParserExtension_Fragment);
@@ -113,10 +111,10 @@ namespace senf {
     /** \brief Parse in IPv6 routing extension header
 
         Parser implementing the IPv6 routing Header extension. The fields implemented are:
-    \image html IPv6Extensions_Routing.png
+        \image html IPv6Extensions_Routing.png
 
-    \see IPv6ExtensionType_Routing \n
-    <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
+        \see IPv6ExtensionType_Routing \n
+        <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
 
 //Routing Header Extension (type 0 only)
@@ -190,7 +188,6 @@ The Type 0 Routing header has the following format: (RFC 2460)
     struct IPv6ExtensionType_Routing
     :   public PacketTypeBase,
         public PacketTypeMixin<IPv6ExtensionType_Routing, IpTypes>
-
     {
 #ifndef DOXYGEN
         typedef PacketTypeMixin<IPv6ExtensionType_Routing, IpTypes> mixin;

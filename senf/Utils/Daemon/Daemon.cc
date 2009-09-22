@@ -569,7 +569,9 @@ prefix_ void senf::Daemon::installSighandlers()
     ::sigaction(SIGFPE,    &sa, NULL);
     ::sigaction(SIGBUS,    &sa, NULL);
     ::sigaction(SIGSEGV,   &sa, NULL);
+#ifdef SIGSTKFLT //SIGSTKFLT is used for stack faults on coprocessors. That condition doesn't exist on MIPS 
     ::sigaction(SIGSTKFLT, &sa, NULL);
+#endif
     ::sigaction(SIGSYS,    &sa, NULL);
     ::sigaction(SIGUSR2,   &sa, NULL);
 #endif

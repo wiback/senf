@@ -1,6 +1,6 @@
 // $Id: ListOptionTypeParser.hh 965 2008-11-18 16:04:20Z pug $
 //
-// Copyright (C) 2007
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Philipp.Batroff@fokus.fraunhofer.de
@@ -21,13 +21,12 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
- \brief ListOptionTypeParser public header */
+    \brief ListOptionTypeParser public header */
 
 #ifndef HH_SENF_Packets_ListOptionTypeParser_
 #define HH_SENF_Packets_ListOptionTypeParser_ 1
 
 // Custom includes
-#include "ListParser.hh"
 
 //#include "ListOptionTypeParser.mpp"
 ///////////////////////////////hh.p////////////////////////////////////////
@@ -37,9 +36,6 @@ namespace senf {
 }
 
 ///////////////////////////////hh.e////////////////////////////////////////
-#endif
-#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_ListOptionTypeParser_i_)
-#define HH_SENF_Packets_ListOptionTypeParser_i_
 //#include "ListOptionTypeParser.cci"
 //#include "ListOptionTypeParser.ct"
 #include "ListOptionTypeParser.cti"
