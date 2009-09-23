@@ -30,11 +30,16 @@
 #include <senf/Packets/Packets.hh>
 #include <senf/Utils/hexdump.hh>
 #include <boost/io/ios_state.hpp>
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
+namespace {
+    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::MIHPacket>
+        registerMIHPacket (0x86dd);
 
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // MIHFId_TLVParser
