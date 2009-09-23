@@ -28,6 +28,7 @@
 
 // Custom includes
 #include "MIHPacket.hh"
+#include <senf/Packets/DefaultBundle/EthernetPacket.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -54,6 +55,16 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_msgId)
     mihPacket->opcode() = 3;
     mihPacket->aid() = 42;
     BOOST_CHECK_EQUAL( mihPacket->messageId(), 0x4c2a );        
+}
+
+BOOST_AUTO_UNIT_TEST(MIHPacket_create_eth)
+{
+    EthernetPacket eth (EthernetPacket::create());
+    MIHPacket mihPacket (MIHPacket::createAfter(eth));
+    eth.finalizeAll();
+    BOOST_CHECK_EQUAL( eth->type_length(), 0x86dd);
+    std::ostringstream oss (std::ostringstream::out);
+    SENF_CHECK_NO_THROW( eth.dump( oss));
 }
 
 BOOST_AUTO_UNIT_TEST(MIHPacket_create_string)

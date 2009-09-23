@@ -57,8 +57,3 @@ SENFSCons.AutoRules(env, doc_extra_sources = [
     env.PkgDraw("MPEGDVBBundle/TransportPacket.hh"),
 ])
 
-cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', env['PACKET_BUNDLES'],
-                              NAME="AllBundles")
-env.Default(cobject)
-env.Install('${OBJINSTALLDIR}', cobject)
-        

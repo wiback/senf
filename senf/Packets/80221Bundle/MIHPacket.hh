@@ -60,12 +60,12 @@ namespace senf {
     public:
         enum Type { Empty, MACAddress, INet4Address, INet6Address, String, EUI64 };
       
-        MIHFId();
-        MIHFId(senf::MACAddress const & addr);
-        MIHFId(senf::INet4Address const & addr);
-        MIHFId(senf::INet6Address const & addr);
-        MIHFId(std::string const & addr);
-        MIHFId(senf::EUI64 const & addr);
+        MIHFId();                                   ///< Create empty instance.
+        MIHFId(senf::MACAddress const & addr);      ///< Construct id with given MACAddress 
+        MIHFId(senf::INet4Address const & addr);    ///< Construct id with given INet4Address
+        MIHFId(senf::INet6Address const & addr);    ///< Construct id with given INet6Address
+        MIHFId(std::string const & addr);           ///< Construct id with given String
+        MIHFId(senf::EUI64 const & addr);           ///< Construct id with given EUI64
         
         Type type() const;
         bool operator==(MIHFId const & other) const;
@@ -118,7 +118,8 @@ namespace senf {
         SENF_PARSER_INHERIT  ( BaseTLVPacketParser );
         SENF_PARSER_SKIP     ( length(), 0         );
         SENF_PARSER_FINALIZE ( MIHFId_TLVParser    );
-
+        
+    public:
         std::string asString() const;
         void setString(std::string const &id);
 
@@ -251,7 +252,6 @@ namespace senf {
     {
     #   include SENF_PARSER()
         SENF_PARSER_LIST ( tlv_list, packetSize(), GenericTLVPacketParser );
-
         SENF_PARSER_FINALIZE ( MIHPayloadPacketParser );
     };
 

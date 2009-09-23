@@ -35,7 +35,6 @@ prefix_ senf::DynamicTLVLengthParser::size_type senf::DynamicTLVLengthParser::by
     return 1 + ( length_field()<=128 ? 0 : fixed_length_field());
 }
 
-
 ///////////////////////////////cci.e////////////////////////////////////////
 #undef prefix_
 
