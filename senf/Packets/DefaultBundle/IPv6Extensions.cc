@@ -5,6 +5,7 @@
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //     Philipp Batroff <philipp.batroff@fokus.fraunhofer.de>
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -33,17 +34,17 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Fragment>
-        registerIPv6FragmentType (44);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Routing>
-        registerIPv6RoutingType (43);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6HopByHop>
-        registerIPv6HopByHopType (0u);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Destination>
-        registerIPv6DestinationType (60u);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6FragmentPacket>
+        registerIPv6FragmentPacketType (44);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6RoutingPacket>
+        registerIPv6RoutingPacketType (43);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6HopByHopOptionsPacket>
+        registerIPv6HopByHopOptionsPacketType (0u);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6DestinationOptionsPacket>
+        registerIPv6DestinationOptionsPacketType (60u);
 }
 
-prefix_ void senf::IPv6FragmentType::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6FragmentPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 fragment extension:\n"
        <<     "  next header             : " << unsigned(p->nextHeader()) << "\n"
@@ -52,39 +53,40 @@ prefix_ void senf::IPv6FragmentType::dump(packet p, std::ostream & os)
        <<     "  id                      : " << std::hex << unsigned(p->id()) << "\n";
 }
 
-prefix_ void senf::IPv6RoutingType::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6RoutingPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 routing extension:\n"
        <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
        <<     "  header length           : " << unsigned (p->headerLength()) << "\n"
        <<     "  routing type            : " << unsigned (p->routingType()) << "\n"
-       <<     "  segments left           : " << unsigned (p->segmentsLeft()) << "\n";
-    IPv6Routing::Parser::hopAddresses_t::container hopAddresses (p->hopAddresses());
-    os <<     "  further Hop Addresses   : \n";
-        if ( p->segmentsLeft() != 0 ){
-            for (IPv6Routing::Parser::hopAddresses_t::container::iterator i (hopAddresses.begin()); i != hopAddresses.end(); ++i)
-                os << *i << "\n";
-        }
+       <<     "  segments left           : " << unsigned (p->segmentsLeft()) << "\n"
+       <<     "  further Hop Addresses   : \n";
+    typedef IPv6RoutingPacket::Parser::hopAddresses_t::container addrContainer_t;
+    addrContainer_t hopAddresses (p->hopAddresses());
+    if ( p->segmentsLeft() != 0 )
+        for (addrContainer_t::iterator i (hopAddresses.begin()); i != hopAddresses.end(); ++i)
+            os << *i << "\n";
 }
 
-prefix_ void senf::IPv6HopByHopType::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
        <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
        <<     "  header length           : " << unsigned (p->headerLength()) << "\n";
-       os << "  OptionTypes:\n";
-       IPv6HopByHop::Parser::options_t::container options (p->options());
-       IPv6HopByHop::Parser::options_t::container::iterator optIter(options.begin());
-       for(;optIter != options.end(); ++optIter){
-           os << "    AltAction             : " << (unsigned) optIter->altAction()
-             << "\n    ChangeFlag            : " << (unsigned) optIter->changeFlag()
-             << "\n    Option Type           : " << (unsigned) optIter->optionType()
-             << "\n    OptionLength          : " << (unsigned)  optIter->optionLength() <<"\n";
-           senf::hexdump(boost::begin(optIter->value()) , boost::end(optIter->value()), os );
-       }
+    os <<     "  OptionTypes:\n";
+    typedef IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t;
+    optContainer_t options (p->options());
+    optContainer_t::iterator optIter(options.begin());
+    for(; optIter != options.end(); ++optIter) {
+        os << "    AltAction             : " << (unsigned) optIter->altAction()
+           << "\n    ChangeFlag            : " << (unsigned) optIter->changeFlag()
+           << "\n    Option Type           : " << (unsigned) optIter->optionType()
+           << "\n    OptionLength          : " << (unsigned)  optIter->optionLength() <<"\n";
+        senf::hexdump(boost::begin(optIter->value()) , boost::end(optIter->value()), os );
+    }
 }
 
-prefix_ void senf::IPv6DestinationType::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6DestinationOptionsPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Destination Options extension:\n"
        <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"

@@ -41,7 +41,8 @@ namespace {
 
         SENF_PARSER_FIELD( size, senf::UInt8Parser );
         typedef senf::detail::FixedAuxParserPolicy<senf::UInt8Parser, 1u> ListOptionTypeAuxPolicy;
-        typedef senf::detail::ListOptionTypeParser_Policy<senf::GenericOptTypeTLVParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
+        typedef senf::detail::ListOptionTypeParser_Policy<
+            senf::IPv6GenericOptionTLVParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
         typedef senf::ListParser<ListOptionTypePolicy> ListOptionTypeParser;
         SENF_PARSER_FIELD ( list, ListOptionTypeParser);
 

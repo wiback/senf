@@ -1,6 +1,6 @@
 // $Id: IPv6ExtOptionType.ct 869 2008-06-09 13:57:27Z pug $
 //
-// Copyright (C) 2007
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Philipp.Batroff@fokus.fraunhofer.de
@@ -31,7 +31,7 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class ForwardReadableRange>
-prefix_ void senf::GenericOptTypeTLVParser::value(ForwardReadableRange const &range)
+prefix_ void senf::IPv6GenericOptionTLVParser::value(ForwardReadableRange const &range)
 {
     unsigned int rangeSize = boost::size(range);
     safe_data_iterator si( data(),  boost::next(i(), 2 + optionLength() ) );
@@ -50,7 +50,7 @@ prefix_ void senf::GenericOptTypeTLVParser::value(ForwardReadableRange const &ra
 }
 
 template <class ForwardReadableRange>
-prefix_ void senf::GenericOptTypeTLVParser::setPayload(ForwardReadableRange const &range)
+prefix_ void senf::IPv6GenericOptionTLVParser::setPayload(ForwardReadableRange const &range)
 {
     unsigned int rangeSize = boost::size(range);
     if ( rangeSize != optionLength() )
@@ -62,7 +62,7 @@ prefix_ void senf::GenericOptTypeTLVParser::setPayload(ForwardReadableRange cons
 
 
 template <class Parser>
-prefix_ Parser& senf::GenericOptTypeTLVParser::init()
+prefix_ Parser& senf::IPv6GenericOptionTLVParser::init()
 {
     size_type oldSize ( bytes() );
     safe_data_iterator j( data(), i() );

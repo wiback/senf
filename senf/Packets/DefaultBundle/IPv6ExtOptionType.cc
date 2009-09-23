@@ -1,6 +1,6 @@
 // $Id: IPv6ExtOptionType.cc 869 2008-06-09 13:57:27Z pug $
 //
-// Copyright (C) 2007
+// Copyright (C) 2009
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Philipp.Batroff@fokus.fraunhofer.de
@@ -27,7 +27,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_  senf::PacketInterpreterBase::range senf::GenericOptTypeTLVParser::value() const {
+prefix_  senf::PacketInterpreterBase::range senf::IPv6GenericOptionTLVParser::value() const {
     senf::PacketData::iterator begin (boost::next(i(), 2 ));
     return PacketInterpreterBase::range(begin, boost::next( begin, optionLength()) );
 }

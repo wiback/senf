@@ -5,6 +5,7 @@
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //     Philipp Batroff <philipp.batroff@fokus.fraunhofer.de>
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -63,10 +64,10 @@ namespace senf {
     /** \brief IPv6 fragment extension
 
         \par Packet type (typedef):
-            \ref IPv6Extension_Fragment
+            \ref IPv6FragmentPacket
 
         \par Fields:
-            \ref IPv6PacketParserExtension_Fragment
+            \ref IPv6FragmentPacketParser
         
         \par Associated registries:
             \ref IpTypes
@@ -76,15 +77,15 @@ namespace senf {
 
         \ingroup protocolbundle_default
      */
-    struct IPv6FragmentType
+    struct IPv6FragmentPacketType
         : public PacketTypeBase,
-          public PacketTypeMixin<IPv6FragmentType, IpTypes>
+          public PacketTypeMixin<IPv6FragmentPacketType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6FragmentType, IpTypes> mixin;
+        typedef PacketTypeMixin<IPv6FragmentPacketType, IpTypes> mixin;
 #endif
         /** \brief IPv6 fragment extension packet typedef */
-        typedef ConcretePacket<IPv6FragmentType> packet;
+        typedef ConcretePacket<IPv6FragmentPacketType> packet;
         /** \brief typedef to the parser of IPv6 fragment extension packet */
         typedef IPv6FragmentPacketParser parser;
 
@@ -96,7 +97,7 @@ namespace senf {
         static key_t nextPacketKey(packet p) 
             { return p->nextHeader(); }
         
-        /** \brief Dump given IPv6Extension_Fragment in readable form to given output stream */
+        /** \brief Dump given IPv6FragmentPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os); 
 
         static void finalize(packet p) { 
@@ -104,52 +105,50 @@ namespace senf {
     };
 
     /** \brief IPv6 fragment extension packet typedef */
-    typedef ConcretePacket<IPv6FragmentType> IPv6Fragment;
+    typedef ConcretePacket<IPv6FragmentPacketType> IPv6FragmentPacket;
 
 // =====================================================================================================
 
     /** \brief Parse in IPv6 routing extension header
 
-        Parser implementing the IPv6 routing Header extension. The fields implemented are:
+        Parser implementing the IPv6 routing Header extension (type 0 only).
+        The fields implemented are:
         \image html IPv6Extensions_Routing.png
 
         \see IPv6ExtensionType_Routing \n
-        <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
+            <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
-
-//Routing Header Extension (type 0 only)
     struct IPv6PRoutingPacketParser : public PacketParserBase
     {
-/*
-The Type 0 Routing header has the following format: (RFC 2460)
+        /*
+        The Type 0 Routing header has the following format: (RFC 2460)
 
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |  Next Header  |  Hdr Ext Len  | Routing Type=0| Segments Left |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                            Reserved                           |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                                                               |
-    +                                                               +
-    |                                                               |
-    +                           Address[1]                          +
-    |                                                               |
-    +                                                               +
-    |                                                               |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    .                               .                               .
-    .                               .                               .
-    .                               .                               .
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    |                                                               |
-    +                                                               +
-    |                                                               |
-    +                           Address[n]                          +
-    |                                                               |
-    +                                                               +
-    |                                                               |
-    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-*/
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |  Next Header  |  Hdr Ext Len  | Routing Type=0| Segments Left |
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |                            Reserved                           |
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |                                                               |
+        +                                                               +
+        |                                                               |
+        +                           Address[1]                          +
+        |                                                               |
+        +                                                               +
+        |                                                               |
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        .                               .                               .
+        .                               .                               .
+        .                               .                               .
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        |                                                               |
+        +                                                               +
+        |                                                               |
+        +                           Address[n]                          +
+        |                                                               |
+        +                                                               +
+        |                                                               |
+        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+        */
 #       include SENF_PARSER()
         
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser      );
@@ -171,29 +170,28 @@ The Type 0 Routing header has the following format: (RFC 2460)
     /** \brief IPv6 routing extension
 
         \par Packet type (typedef):
-    \ref IPv6Extension_Routing
+            \ref IPv6RoutingPacket
 
         \par Fields:
-    \ref IPv6PacketParserExtension_Routing
+            \ref IPv6PRoutingPacketParser
         
         \par Associated registries:
-    \ref IpTypes
+            \ref IpTypes
         
         \par Finalize action:
-    Set \a nextHeader from type of next packet if found in \ref IpTypes
+            Set \a nextHeader from type of next packet if found in \ref IpTypes
 
-    \ingroup protocolbundle_default
-         */
-    
-    struct IPv6RoutingType
+        \ingroup protocolbundle_default
+     */
+    struct IPv6RoutingPacketType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6RoutingType, IpTypes>
+        public PacketTypeMixin<IPv6RoutingPacketType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6RoutingType, IpTypes> mixin;
+        typedef PacketTypeMixin<IPv6RoutingPacketType, IpTypes> mixin;
 #endif
         /** \brief IPv6 routing extension packet typedef */
-        typedef ConcretePacket<IPv6RoutingType> packet;
+        typedef ConcretePacket<IPv6RoutingPacketType> packet;
         /** \brief typedef to the parser of IPv6 routing extension packet */
         typedef IPv6PRoutingPacketParser parser;
         
@@ -204,7 +202,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
         
         static key_t nextPacketKey(packet p) 
             { return p->nextHeader(); }
-        /** \brief Dump given IPv6Extension_Routing in readable form to given output stream */
+        /** \brief Dump given IPv6RoutingPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os); 
         
         static void finalize(packet p) { 
@@ -212,7 +210,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
     };
     
     /** \brief IPv6 routing extension packet typedef */
-    typedef ConcretePacket<IPv6RoutingType> IPv6Routing;
+    typedef ConcretePacket<IPv6RoutingPacketType> IPv6RoutingPacket;
 
     
 // =====================================================================================================
@@ -220,56 +218,54 @@ The Type 0 Routing header has the following format: (RFC 2460)
     /** \brief Parse in IPv6 Hop-By-Hop extension header
 
         Parser implementing the IPv6 routing Header extension. The fields implemented are:
-    \image html IPv6Extensions_HopByHop.png
+        \image html IPv6Extensions_HopByHop.png
 
-    \see IPv6ExtensionType_HopByHop \n
-    <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
+        \see IPv6ExtensionType_HopByHop \n
+            <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
     */
-
-// Hop-By-Hop Extension Header
-
-    struct IPv6HopByHopPacketParser : public PacketParserBase {
+    struct IPv6HopByHopOptionsPacketParser : public PacketParserBase {
 #       include SENF_PARSER()
+      
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
         SENF_PARSER_FIELD ( headerLength, UInt8Parser );
 
         typedef detail::FixedAuxParserPolicy<UInt8Parser, 1u> ListOptionTypeAuxPolicy;
-        typedef detail::ListOptionTypeParser_Policy<GenericOptTypeTLVParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
+        typedef detail::ListOptionTypeParser_Policy<
+            IPv6GenericOptionTLVParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
         typedef ListParser<ListOptionTypePolicy> ListOptionTypeParser;
 
         SENF_PARSER_FIELD  ( options, ListOptionTypeParser);
 
-        SENF_PARSER_FINALIZE ( IPv6HopByHopPacketParser );
+        SENF_PARSER_FINALIZE ( IPv6HopByHopOptionsPacketParser );
     };
     
     /** \brief IPv6 Hop-By-Hop extension
 
         \par Packet type (typedef):
-    \ref IPv6Extension_HopByHop
+            \ref IPv6HopByHopOptionsPacket
 
         \par Fields:
-    \ref IPv6PacketParserExtension_HopByHop
+            \ref IPv6HopByHopOptionsPacketParser
         
         \par Associated registries:
-    \ref IpTypes
+            \ref IpTypes
         
         \par Finalize action:
-    Set \a nextHeader from type of next packet if found in \ref IpTypes
+            Set \a nextHeader from type of next packet if found in \ref IpTypes
 
-    \ingroup protocolbundle_default
+        \ingroup protocolbundle_default
     */
-    
-    struct IPv6HopByHopType
+    struct IPv6HopByHopOptionsPacketType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6HopByHopType, IpTypes>
+        public PacketTypeMixin<IPv6HopByHopOptionsPacketType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6HopByHopType, IpTypes> mixin;
+        typedef PacketTypeMixin<IPv6HopByHopOptionsPacketType, IpTypes> mixin;
 #endif
         /** \brief IPv6 Hop-By-Hop extension packet typedef */
-        typedef ConcretePacket<IPv6HopByHopType> packet;
+        typedef ConcretePacket<IPv6HopByHopOptionsPacketType> packet;
         /** \brief typedef to the parser of IPv6 Hop-By-Hop extension packet */
-        typedef IPv6HopByHopPacketParser parser;
+        typedef IPv6HopByHopOptionsPacketParser parser;
         
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -278,7 +274,8 @@ The Type 0 Routing header has the following format: (RFC 2460)
         
         static key_t nextPacketKey(packet p) 
         { return p->nextHeader(); }
-        /** \brief Dump given IPv6Extension_HopByHop in readable form to given output stream */
+        
+        /** \brief Dump given IPv6HopByHopOptionsPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os); 
         
         static void finalize(packet p) { 
@@ -286,58 +283,55 @@ The Type 0 Routing header has the following format: (RFC 2460)
     };
     
     /** \brief IPv6 routing Hop-By-Hop packet typedef */
-    typedef ConcretePacket<IPv6HopByHopType> IPv6HopByHop;
+    typedef ConcretePacket<IPv6HopByHopOptionsPacketType> IPv6HopByHopOptionsPacket;
     
 // =====================================================================================================
     
     /** \brief Parse in IPv6 Destination Options extension header
 
-        Parser implementing the IPv6 Destination Options Header extension. The fields implemented are:
-    \image html IPv6Extensions_Destination.png
+        Parser implementing the IPv6 Destination Options Header extension. 
+        The fields implemented are:
+        \image html IPv6Extensions_Destination.png
 
-    \see IPv6ExtensionType_Destination \n
-    <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
-     */
-    
-    // Destination Options skeleton without TLV-Options
-
-    struct IPv6DestinationPacketParser : public PacketParserBase {
-
+        \see IPv6ExtensionType_Destination \n
+            <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
+     */    
+    struct IPv6DestinationOptionsPacketParser : public PacketParserBase 
+    {
 #       include SENF_PARSER()
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
         SENF_PARSER_FIELD ( headerLength, UInt8Parser );
         
-        SENF_PARSER_FINALIZE ( IPv6DestinationPacketParser );
+        SENF_PARSER_FINALIZE ( IPv6DestinationOptionsPacketParser );
     };
     
     /** \brief IPv6 Destination Options extension
 
         \par Packet type (typedef):
-    \ref IPv6Extension_Destination
+            \ref IPv6DestinationOptionsPacket
 
         \par Fields:
-    \ref IPv6PacketParserExtension_Destination
+            \ref IPv6DestinationOptionsPacketParser
         
         \par Associated registries:
-    \ref IpTypes
+            \ref IpTypes
         
         \par Finalize action:
-    Set \a nextHeader from type of next packet if found in \ref IpTypes
+            Set \a nextHeader from type of next packet if found in \ref IpTypes
 
-    \ingroup protocolbundle_default
-         */
-    
-    struct IPv6DestinationType
+        \ingroup protocolbundle_default
+     */
+    struct IPv6DestinationOptionsPacketType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6DestinationType, IpTypes>
+        public PacketTypeMixin<IPv6DestinationOptionsPacketType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6DestinationType, IpTypes> mixin;
+        typedef PacketTypeMixin<IPv6DestinationOptionsPacketType, IpTypes> mixin;
 #endif
         /** \brief IPv6 Destination Options extension packet typedef */
-        typedef ConcretePacket<IPv6DestinationType> packet;
+        typedef ConcretePacket<IPv6DestinationOptionsPacketType> packet;
         /** \brief typedef to the parser of IPv6 Destination Options extension packet */
-        typedef IPv6DestinationPacketParser parser;
+        typedef IPv6DestinationOptionsPacketParser parser;
         
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -346,7 +340,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
         
         static key_t nextPacketKey(packet p) 
         { return p->nextHeader(); }
-        /** \brief Dump given IPv6Extension_Destination in readable form to given output stream */
+        /** \brief Dump given IPv6DestinationOptionsPacket in readable form to given output stream */
         static void dump(packet p, std::ostream & os); 
         
         static void finalize(packet p) { 
@@ -354,10 +348,10 @@ The Type 0 Routing header has the following format: (RFC 2460)
     };
     
     /** \brief IPv6 routing Destination Options packet typedef */
-    typedef ConcretePacket<IPv6DestinationType> IPv6Destination;
-
+    typedef ConcretePacket<IPv6DestinationOptionsPacketType> IPv6DestinationOptionsPacket;
     
-} //namespace senf
+}
+
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "IPv6Extensions.cci"
 //#include "IPv6Extensions.ct"

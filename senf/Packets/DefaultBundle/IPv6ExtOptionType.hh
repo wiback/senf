@@ -33,7 +33,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
-    class OptTypeTLVParser : public PacketParserBase
+    class IPv6OptionTLVParser : public PacketParserBase
     {
     public:
 #       include SENF_PARSER()
@@ -41,15 +41,15 @@ namespace senf {
         SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
         SENF_PARSER_BITFIELD (optionType, 5, unsigned);
         SENF_PARSER_FIELD (optionLength, UInt8Parser);
-        SENF_PARSER_FINALIZE (OptTypeTLVParser);
+        SENF_PARSER_FINALIZE (IPv6OptionTLVParser);
     };
 
-    struct GenericOptTypeTLVParser : public OptTypeTLVParser
+    struct IPv6GenericOptionTLVParser : public IPv6OptionTLVParser
     {
 #       include SENF_PARSER()
-        SENF_PARSER_INHERIT ( OptTypeTLVParser );
+        SENF_PARSER_INHERIT ( IPv6OptionTLVParser );
         SENF_PARSER_SKIP ( optionLength(), 0 );
-        SENF_PARSER_FINALIZE ( GenericOptTypeTLVParser );
+        SENF_PARSER_FINALIZE ( IPv6GenericOptionTLVParser );
 
         senf::PacketInterpreterBase::range value() const;
 
@@ -66,7 +66,6 @@ namespace senf {
 
         template<class ForwardReadableRange>
         void setPayload(ForwardReadableRange const &range);
-
     };
 
 }

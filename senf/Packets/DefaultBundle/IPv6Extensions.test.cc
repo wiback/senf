@@ -5,6 +5,7 @@
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //     Philipp Batroff <philipp.batroff@fokus.fraunhofer.de>
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -80,9 +81,9 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_fragment)
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( pFragment_packet.dump( oss));
 
-    BOOST_CHECK( pFragment_packet.next().is<senf::IPv6Fragment>() );
+    BOOST_CHECK( pFragment_packet.next().is<senf::IPv6FragmentPacket>() );
 
-    senf::IPv6Fragment fFragment_packet (pFragment_packet.next().as<senf::IPv6Fragment>());
+    senf::IPv6FragmentPacket fFragment_packet (pFragment_packet.next().as<senf::IPv6FragmentPacket>());
 
     BOOST_CHECK_EQUAL( fFragment_packet->nextHeader(), 17u );
     BOOST_CHECK_EQUAL( fFragment_packet->fragmentOffset(), 160u );
@@ -141,9 +142,9 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_routing)
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( pRouting_packet.dump( oss));
 
-    BOOST_REQUIRE( pRouting_packet.next().is<senf::IPv6Routing>() );
+    BOOST_REQUIRE( pRouting_packet.next().is<senf::IPv6RoutingPacket>() );
 
-    senf::IPv6Routing pRouting_extension (pRouting_packet.next().as<senf::IPv6Routing>());
+    senf::IPv6RoutingPacket pRouting_extension (pRouting_packet.next().as<senf::IPv6RoutingPacket>());
 
     BOOST_CHECK_EQUAL( pRouting_extension->nextHeader(), 58u );
     BOOST_CHECK_EQUAL( pRouting_extension->headerLength(), 0x00 );
@@ -197,13 +198,14 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( pHop_packet.dump( oss ));
 
-    BOOST_REQUIRE( pHop_packet.next().is<senf::IPv6HopByHop>() );
-    senf::IPv6HopByHop pHop_extension (pHop_packet.next().as<senf::IPv6HopByHop>());
+    BOOST_REQUIRE( pHop_packet.next().is<senf::IPv6HopByHopOptionsPacket>() );
+    senf::IPv6HopByHopOptionsPacket pHop_extension (
+            pHop_packet.next().as<senf::IPv6HopByHopOptionsPacket>());
     BOOST_CHECK_EQUAL( pHop_extension->nextHeader(), 58u );
     BOOST_CHECK_EQUAL( pHop_extension->headerLength(), 0x00 );
 
-    senf::IPv6HopByHop::Parser::options_t::container optC(pHop_extension->options() );
-    senf::IPv6HopByHop::Parser::options_t::container::iterator listIter (optC.begin());
+    senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pHop_extension->options() );
+    senf::IPv6HopByHopOptionsPacket::Parser::options_t::container::iterator listIter (optC.begin());
 
     BOOST_CHECK_EQUAL( listIter->altAction(), 0u);
     BOOST_CHECK_EQUAL( listIter->changeFlag(), 0u);
@@ -259,14 +261,14 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
     ip->hopLimit() = 1u;
     ip->source() = senf::INet6Address::from_string("fe80::219:b9ff:feeb:b226");
     ip->destination() = senf::INet6Address::from_string("ff02::16");
-    senf::IPv6HopByHop pext (senf::IPv6HopByHop::createAfter(ip) );
+    senf::IPv6HopByHopOptionsPacket pext (senf::IPv6HopByHopOptionsPacket::createAfter(ip) );
     pext->nextHeader() = 58u;
     pext->headerLength() = 0u;
     {
-        senf::IPv6HopByHop::Parser::options_t::container optC(pext->options() );
+        senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pext->options() );
         
         optC.push_back_space();
-        senf::GenericOptTypeTLVParser opt = optC.back().init<senf::GenericOptTypeTLVParser>();
+        senf::IPv6GenericOptionTLVParser opt = optC.back().init<senf::IPv6GenericOptionTLVParser>();
         opt.altAction() = 0u;
         opt.changeFlag() = 0u;
         opt.optionType() = 5u;
@@ -274,7 +276,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
         opt.setPayload(val);
         
         optC.push_back_space();
-        opt = optC.back().init<senf::GenericOptTypeTLVParser>();
+        opt = optC.back().init<senf::IPv6GenericOptionTLVParser>();
         opt.altAction() = 0u;
         opt.changeFlag() = 0u;
         opt.optionType() = 2u;
