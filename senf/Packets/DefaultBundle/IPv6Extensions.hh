@@ -46,7 +46,7 @@ namespace senf {
         \see IPv6ExtensionType_Fragment \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
-    struct IPv6PacketParserExtension_Fragment : public PacketParserBase
+    struct IPv6FragmentPacketParser : public PacketParserBase
     {
 #       include SENF_FIXED_PARSER()
 
@@ -57,7 +57,7 @@ namespace senf {
         SENF_PARSER_BITFIELD         ( moreFragments  ,  1, bool     );
         SENF_PARSER_FIELD            ( id             , UInt32Parser );
 
-        SENF_PARSER_FINALIZE(IPv6PacketParserExtension_Fragment);
+        SENF_PARSER_FINALIZE(IPv6FragmentPacketParser);
     };
 
     /** \brief IPv6 fragment extension
@@ -76,17 +76,17 @@ namespace senf {
 
         \ingroup protocolbundle_default
      */
-    struct IPv6ExtensionType_Fragment
+    struct IPv6FragmentType
         : public PacketTypeBase,
-          public PacketTypeMixin<IPv6ExtensionType_Fragment, IpTypes>
+          public PacketTypeMixin<IPv6FragmentType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6ExtensionType_Fragment, IpTypes> mixin;
+        typedef PacketTypeMixin<IPv6FragmentType, IpTypes> mixin;
 #endif
         /** \brief IPv6 fragment extension packet typedef */
-        typedef ConcretePacket<IPv6ExtensionType_Fragment> packet; 
+        typedef ConcretePacket<IPv6FragmentType> packet;
         /** \brief typedef to the parser of IPv6 fragment extension packet */
-        typedef IPv6PacketParserExtension_Fragment parser;
+        typedef IPv6FragmentPacketParser parser;
 
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -104,7 +104,7 @@ namespace senf {
     };
 
     /** \brief IPv6 fragment extension packet typedef */
-    typedef ConcretePacket<IPv6ExtensionType_Fragment> IPv6Extension_Fragment;
+    typedef ConcretePacket<IPv6FragmentType> IPv6Fragment;
 
 // =====================================================================================================
 
@@ -118,7 +118,7 @@ namespace senf {
      */
 
 //Routing Header Extension (type 0 only)
-    struct IPv6PacketParserExtension_Routing : public PacketParserBase
+    struct IPv6PRoutingPacketParser : public PacketParserBase
     {
 /*
 The Type 0 Routing header has the following format: (RFC 2460)
@@ -159,7 +159,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
         SENF_PARSER_FIELD ( reserved, UInt32Parser       ); //set to zero by RFC
         SENF_PARSER_VECTOR ( hopAddresses, segmentsLeft, INet6AddressParser );
         
-        SENF_PARSER_FINALIZE ( IPv6PacketParserExtension_Routing );
+        SENF_PARSER_FINALIZE ( IPv6PRoutingPacketParser );
         
         //provisionary, since only type 0 is implemented
         SENF_PARSER_INIT() { 
@@ -185,17 +185,17 @@ The Type 0 Routing header has the following format: (RFC 2460)
     \ingroup protocolbundle_default
          */
     
-    struct IPv6ExtensionType_Routing
+    struct IPv6RoutingType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6ExtensionType_Routing, IpTypes>
+        public PacketTypeMixin<IPv6RoutingType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6ExtensionType_Routing, IpTypes> mixin;
+        typedef PacketTypeMixin<IPv6RoutingType, IpTypes> mixin;
 #endif
         /** \brief IPv6 routing extension packet typedef */
-        typedef ConcretePacket<IPv6ExtensionType_Routing> packet;
+        typedef ConcretePacket<IPv6RoutingType> packet;
         /** \brief typedef to the parser of IPv6 routing extension packet */
-        typedef IPv6PacketParserExtension_Routing parser;
+        typedef IPv6PRoutingPacketParser parser;
         
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -212,7 +212,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
     };
     
     /** \brief IPv6 routing extension packet typedef */
-    typedef ConcretePacket<IPv6ExtensionType_Routing> IPv6Extension_Routing;
+    typedef ConcretePacket<IPv6RoutingType> IPv6Routing;
 
     
 // =====================================================================================================
@@ -228,18 +228,18 @@ The Type 0 Routing header has the following format: (RFC 2460)
 
 // Hop-By-Hop Extension Header
 
-    struct IPv6PacketParserExtension_HopByHop : public PacketParserBase {
+    struct IPv6HopByHopPacketParser : public PacketParserBase {
 #       include SENF_PARSER()
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
         SENF_PARSER_FIELD ( headerLength, UInt8Parser );
 
         typedef detail::FixedAuxParserPolicy<UInt8Parser, 1u> ListOptionTypeAuxPolicy;
-        typedef detail::ListOptionTypeParser_Policy<GenericOptTypeTLVPacketParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
+        typedef detail::ListOptionTypeParser_Policy<GenericOptTypeTLVParser, ListOptionTypeAuxPolicy> ListOptionTypePolicy;
         typedef ListParser<ListOptionTypePolicy> ListOptionTypeParser;
 
         SENF_PARSER_FIELD  ( options, ListOptionTypeParser);
 
-        SENF_PARSER_FINALIZE ( IPv6PacketParserExtension_HopByHop );
+        SENF_PARSER_FINALIZE ( IPv6HopByHopPacketParser );
     };
     
     /** \brief IPv6 Hop-By-Hop extension
@@ -259,17 +259,17 @@ The Type 0 Routing header has the following format: (RFC 2460)
     \ingroup protocolbundle_default
     */
     
-    struct IPv6ExtensionType_HopByHop
+    struct IPv6HopByHopType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6ExtensionType_HopByHop, IpTypes>
+        public PacketTypeMixin<IPv6HopByHopType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6ExtensionType_HopByHop, IpTypes> mixin;
+        typedef PacketTypeMixin<IPv6HopByHopType, IpTypes> mixin;
 #endif
         /** \brief IPv6 Hop-By-Hop extension packet typedef */
-        typedef ConcretePacket<IPv6ExtensionType_HopByHop> packet;
+        typedef ConcretePacket<IPv6HopByHopType> packet;
         /** \brief typedef to the parser of IPv6 Hop-By-Hop extension packet */
-        typedef IPv6PacketParserExtension_HopByHop parser;
+        typedef IPv6HopByHopPacketParser parser;
         
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -286,7 +286,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
     };
     
     /** \brief IPv6 routing Hop-By-Hop packet typedef */
-    typedef ConcretePacket<IPv6ExtensionType_HopByHop> IPv6Extension_HopByHop;
+    typedef ConcretePacket<IPv6HopByHopType> IPv6HopByHop;
     
 // =====================================================================================================
     
@@ -301,13 +301,13 @@ The Type 0 Routing header has the following format: (RFC 2460)
     
     // Destination Options skeleton without TLV-Options
 
-    struct IPv6PacketParserExtension_Destination : public PacketParserBase {
+    struct IPv6DestinationPacketParser : public PacketParserBase {
 
 #       include SENF_PARSER()
         SENF_PARSER_FIELD ( nextHeader, UInt8Parser   );
         SENF_PARSER_FIELD ( headerLength, UInt8Parser );
         
-        SENF_PARSER_FINALIZE ( IPv6PacketParserExtension_Destination );
+        SENF_PARSER_FINALIZE ( IPv6DestinationPacketParser );
     };
     
     /** \brief IPv6 Destination Options extension
@@ -327,17 +327,17 @@ The Type 0 Routing header has the following format: (RFC 2460)
     \ingroup protocolbundle_default
          */
     
-    struct IPv6ExtensionType_Destination
+    struct IPv6DestinationType
     :   public PacketTypeBase,
-        public PacketTypeMixin<IPv6ExtensionType_Destination, IpTypes>
+        public PacketTypeMixin<IPv6DestinationType, IpTypes>
     {
 #ifndef DOXYGEN
-        typedef PacketTypeMixin<IPv6ExtensionType_Destination, IpTypes> mixin;
+        typedef PacketTypeMixin<IPv6DestinationType, IpTypes> mixin;
 #endif
         /** \brief IPv6 Destination Options extension packet typedef */
-        typedef ConcretePacket<IPv6ExtensionType_Destination> packet;
+        typedef ConcretePacket<IPv6DestinationType> packet;
         /** \brief typedef to the parser of IPv6 Destination Options extension packet */
-        typedef IPv6PacketParserExtension_Destination parser;
+        typedef IPv6DestinationPacketParser parser;
         
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -354,7 +354,7 @@ The Type 0 Routing header has the following format: (RFC 2460)
     };
     
     /** \brief IPv6 routing Destination Options packet typedef */
-    typedef ConcretePacket<IPv6ExtensionType_Destination> IPv6Extension_Destination;
+    typedef ConcretePacket<IPv6DestinationType> IPv6Destination;
 
     
 } //namespace senf

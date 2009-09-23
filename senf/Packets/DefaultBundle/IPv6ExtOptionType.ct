@@ -31,18 +31,10 @@
 ///////////////////////////////ct.p////////////////////////////////////////
 
 template <class ForwardReadableRange>
-prefix_ void senf::GenericOptTypeTLVPacketParser::value(ForwardReadableRange const &range)
+prefix_ void senf::GenericOptTypeTLVParser::value(ForwardReadableRange const &range)
 {
     unsigned int rangeSize = boost::size(range);
     safe_data_iterator si( data(),  boost::next(i(), 2 + optionLength() ) );
-//    if ( rangeSize > optionLength() ){
-//        std::cout << "rangeSize > optionLength()" << std::endl;
-//        data().insert(si, rangeSize - optionLength(),0 );
-//    }
-//    if (rangeSize < optionLength() ){
-//        std::cout << "rangeSize < optionLength()" << std::endl;
-//        data().erase(si, si + (optionLength() - rangeSize));
-//    }
     if ( (rangeSize-2) != optionLength() )
         resize(optionLength()+2, rangeSize);
 
@@ -58,7 +50,7 @@ prefix_ void senf::GenericOptTypeTLVPacketParser::value(ForwardReadableRange con
 }
 
 template <class ForwardReadableRange>
-prefix_ void senf::GenericOptTypeTLVPacketParser::setPayload(ForwardReadableRange const &range)
+prefix_ void senf::GenericOptTypeTLVParser::setPayload(ForwardReadableRange const &range)
 {
     unsigned int rangeSize = boost::size(range);
     if ( rangeSize != optionLength() )
@@ -70,7 +62,7 @@ prefix_ void senf::GenericOptTypeTLVPacketParser::setPayload(ForwardReadableRang
 
 
 template <class Parser>
-prefix_ Parser& senf::GenericOptTypeTLVPacketParser::init()
+prefix_ Parser& senf::GenericOptTypeTLVParser::init()
 {
     size_type oldSize ( bytes() );
     safe_data_iterator j( data(), i() );
@@ -82,7 +74,7 @@ prefix_ Parser& senf::GenericOptTypeTLVPacketParser::init()
 }
 
 // template <class Parser>
-// prefix_ Parser& senf::GenericOptTypeTLVPacketParser::get()
+// prefix_ Parser& senf::GenericOptTypeTLVParser::get()
 // {
 //     SENF_ASSERT (optionType() == typeCode);
 //     return *(this);

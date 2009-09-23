@@ -33,7 +33,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
-    class OptTypeTLVPacketParser : public PacketParserBase 
+    class OptTypeTLVParser : public PacketParserBase
     {
     public:
 #       include SENF_PARSER()
@@ -41,15 +41,15 @@ namespace senf {
         SENF_PARSER_BITFIELD (changeFlag, 1, unsigned);
         SENF_PARSER_BITFIELD (optionType, 5, unsigned);
         SENF_PARSER_FIELD (optionLength, UInt8Parser);
-        SENF_PARSER_FINALIZE (OptTypeTLVPacketParser);
+        SENF_PARSER_FINALIZE (OptTypeTLVParser);
     };
 
-    struct GenericOptTypeTLVPacketParser : public OptTypeTLVPacketParser 
+    struct GenericOptTypeTLVParser : public OptTypeTLVParser
     {
 #       include SENF_PARSER()
-        SENF_PARSER_INHERIT ( OptTypeTLVPacketParser );
+        SENF_PARSER_INHERIT ( OptTypeTLVParser );
         SENF_PARSER_SKIP ( optionLength(), 0 );
-        SENF_PARSER_FINALIZE ( GenericOptTypeTLVPacketParser );
+        SENF_PARSER_FINALIZE ( GenericOptTypeTLVParser );
 
         senf::PacketInterpreterBase::range value() const;
 

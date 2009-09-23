@@ -33,17 +33,17 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_Fragment>
-        registerIPv6ExtensionType_Fragment (44);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_Routing>
-        registerIPv6ExtensionType_Routing (43);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_HopByHop>
-        registerIPv6ExtensionType_HopByHop (0u);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Extension_Destination>
-        registerIPv6ExtensionType_Destination (60u);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Fragment>
+        registerIPv6FragmentType (44);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Routing>
+        registerIPv6RoutingType (43);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6HopByHop>
+        registerIPv6HopByHopType (0u);
+    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6Destination>
+        registerIPv6DestinationType (60u);
 }
 
-prefix_ void senf::IPv6ExtensionType_Fragment::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6FragmentType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 fragment extension:\n"
        <<     "  next header             : " << unsigned(p->nextHeader()) << "\n"
@@ -52,29 +52,29 @@ prefix_ void senf::IPv6ExtensionType_Fragment::dump(packet p, std::ostream & os)
        <<     "  id                      : " << std::hex << unsigned(p->id()) << "\n";
 }
 
-prefix_ void senf::IPv6ExtensionType_Routing::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6RoutingType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 routing extension:\n"
        <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
        <<     "  header length           : " << unsigned (p->headerLength()) << "\n"
        <<     "  routing type            : " << unsigned (p->routingType()) << "\n"
        <<     "  segments left           : " << unsigned (p->segmentsLeft()) << "\n";
-    IPv6Extension_Routing::Parser::hopAddresses_t::container hopAddresses (p->hopAddresses());
+    IPv6Routing::Parser::hopAddresses_t::container hopAddresses (p->hopAddresses());
     os <<     "  further Hop Addresses   : \n";
         if ( p->segmentsLeft() != 0 ){
-            for (IPv6Extension_Routing::Parser::hopAddresses_t::container::iterator i (hopAddresses.begin()); i != hopAddresses.end(); ++i)
+            for (IPv6Routing::Parser::hopAddresses_t::container::iterator i (hopAddresses.begin()); i != hopAddresses.end(); ++i)
                 os << *i << "\n";
         }
 }
 
-prefix_ void senf::IPv6ExtensionType_HopByHop::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6HopByHopType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
        <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
        <<     "  header length           : " << unsigned (p->headerLength()) << "\n";
        os << "  OptionTypes:\n";
-       IPv6Extension_HopByHop::Parser::options_t::container options (p->options());
-       IPv6Extension_HopByHop::Parser::options_t::container::iterator optIter(options.begin());
+       IPv6HopByHop::Parser::options_t::container options (p->options());
+       IPv6HopByHop::Parser::options_t::container::iterator optIter(options.begin());
        for(;optIter != options.end(); ++optIter){
            os << "    AltAction             : " << (unsigned) optIter->altAction()
              << "\n    ChangeFlag            : " << (unsigned) optIter->changeFlag()
@@ -84,7 +84,7 @@ prefix_ void senf::IPv6ExtensionType_HopByHop::dump(packet p, std::ostream & os)
        }
 }
 
-prefix_ void senf::IPv6ExtensionType_Destination::dump(packet p, std::ostream & os)
+prefix_ void senf::IPv6DestinationType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Destination Options extension:\n"
        <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"

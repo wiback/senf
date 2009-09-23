@@ -27,7 +27,7 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_  senf::PacketInterpreterBase::range senf::GenericOptTypeTLVPacketParser::value() const {
+prefix_  senf::PacketInterpreterBase::range senf::GenericOptTypeTLVParser::value() const {
     senf::PacketData::iterator begin (boost::next(i(), 2 ));
     return PacketInterpreterBase::range(begin, boost::next( begin, optionLength()) );
 }
