@@ -41,6 +41,7 @@
 #include <boost/version.hpp>
 
 //#include "auto_unit_test.mpp"
+#include "auto_unit_test.ih"
 ///////////////////////////////hh.p////////////////////////////////////////
 
 #if BOOST_VERSION >= 103400
@@ -93,6 +94,36 @@
     BOOST_CHECK_NO_THROW(                                                                         \
         try { expr ; }                                                                            \
         catch (std::exception & e) { std::cerr << e.what() << std::endl; throw; } )
+
+namespace senf {
+namespace test {
+
+    template <class Iterator>
+    typename detail::NoCharIterator<Iterator>::type nocharIterator(Iterator i)
+    { return typename detail::NoCharIterator<Iterator>::type (i); }
+
+    template <class Value>
+    typename detail::NoCharIterator<Value *>::type nocharIterator(Value * i)
+    { return typename detail::NoCharIterator<Value *>::type (i); }
+
+    template <class Value>
+    typename detail::NoCharIterator<Value const *>::type nocharIterator(Value const * i)
+    { return typename detail::NoCharIterator<Value const *>::type (i); }
+
+}}
+
+/** \brief Check ranges for equality, writing char's as int's
+
+    \ref SENF_CHECK_EQUAL_COLLECTIONS() is like \c BOOST_CHECK_EQUAL_COLLECTIONS(). The only
+    difference is, that \ref SENF_CHECK_EQUAL_COLLECTIONS() will write out collection values in
+    numeric form (and not as single characters) if the elements are of any char type. Other types
+    are not affected.
+
+    \ingroup unittest
+ */
+#define SENF_CHECK_EQUAL_COLLECTIONS(a,b,c,d)                                                    \
+    BOOST_CHECK_EQUAL_COLLECTIONS(senf::test::nocharIterator(a), senf::test::nocharIterator(b),  \
+                                  senf::test::nocharIterator(c), senf::test::nocharIterator(d))
 
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "auto_unit_test.cci"

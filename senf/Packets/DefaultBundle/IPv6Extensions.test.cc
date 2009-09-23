@@ -286,9 +286,9 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
     icmp->code() = 0u;
     ip.finalizeAll();
     SENF_CHECK_NO_THROW( ip.dump(oss) );
-    BOOST_CHECK_EQUAL_COLLECTIONS(
-            HopByHop_packetData, HopByHop_packetData+sizeof(HopByHop_packetData),
-            ip.data().begin(), ip.data().end() );
+    SENF_CHECK_EQUAL_COLLECTIONS(
+        HopByHop_packetData, HopByHop_packetData+sizeof(HopByHop_packetData),
+        ip.data().begin(), ip.data().end() );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
