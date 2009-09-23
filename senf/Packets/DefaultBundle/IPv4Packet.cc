@@ -39,11 +39,8 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::IPv4Packet>
-        registerIPv4Packet (0x0800);
-
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv4Packet>
-        regsiterIPv4Packet2 (4); // IP-in-IP encapsulation
+    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x0800, senf::IPv4Packet);
+    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes,    4,      senf::IPv4Packet); // IP-in-IP encapsulation
 }
 
 ///////////////////////////////////////////////////////////////////////////

@@ -30,23 +30,14 @@
 #ifndef DOXYGEN
 
 namespace {
-//Implementing the ICMPv6 Type registry
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6ErrDestUnreachable>
-        registerICMPv6ErrDestUnreachable (1);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6ErrTooBig>
-        registerICMPv6ErrTooBig (2);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6ErrTimeExceeded>
-        registerICMPv6ErrTimeExceeded (3);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6ErrParamProblem>
-        registerICMPv6ErrParamProblem (4);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6EchoRequest>
-        registerICMPv6EchoRequest (128);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::ICMPv6EchoReply>
-        registerICMPv6EchoReply (129);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::MLDv2ListenerQuery>
-        registerMLDv2ListenerQuery (130);
-    senf::PacketRegistry<senf::ICMPTypes>::RegistrationProxy<senf::MLDv2ListenerReport>
-        registerMLDv2ListenerReport (143);
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 1,   senf::ICMPv6ErrDestUnreachable );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 2,   senf::ICMPv6ErrTooBig          );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 3,   senf::ICMPv6ErrTimeExceeded    );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 4,   senf::ICMPv6ErrParamProblem    );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 128, senf::ICMPv6EchoRequest        );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 129, senf::ICMPv6EchoReply          );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 130, senf::MLDv2ListenerQuery       );
+    SENF_PACKET_REGISTRY_REGISTER( senf::ICMPTypes, 143, senf::MLDv2ListenerReport      );
 }
 
 #endif

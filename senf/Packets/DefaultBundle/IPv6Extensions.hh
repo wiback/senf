@@ -42,7 +42,7 @@ namespace senf {
     /** \brief Parse in IPv6 fragment extension header
         
         Parser implementing the IPv6 fragment extension. The fields implemented are:
-        \image html IPv6Extensions_Fragment.png
+        \image html IPv6FragmentPacket.png
 
         \see IPv6ExtensionType_Fragment \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
@@ -113,12 +113,12 @@ namespace senf {
 
         Parser implementing the IPv6 routing Header extension (type 0 only).
         The fields implemented are:
-        \image html IPv6Extensions_Routing.png
+        \image html IPv6RoutingPacket.png
 
         \see IPv6ExtensionType_Routing \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
      */
-    struct IPv6PRoutingPacketParser : public PacketParserBase
+    struct IPv6RoutingPacketParser : public PacketParserBase
     {
         /*
         The Type 0 Routing header has the following format: (RFC 2460)
@@ -158,7 +158,7 @@ namespace senf {
         SENF_PARSER_FIELD ( reserved, UInt32Parser       ); //set to zero by RFC
         SENF_PARSER_VECTOR ( hopAddresses, segmentsLeft, INet6AddressParser );
         
-        SENF_PARSER_FINALIZE ( IPv6PRoutingPacketParser );
+        SENF_PARSER_FINALIZE ( IPv6RoutingPacketParser );
         
         //provisionary, since only type 0 is implemented
         SENF_PARSER_INIT() { 
@@ -193,7 +193,7 @@ namespace senf {
         /** \brief IPv6 routing extension packet typedef */
         typedef ConcretePacket<IPv6RoutingPacketType> packet;
         /** \brief typedef to the parser of IPv6 routing extension packet */
-        typedef IPv6PRoutingPacketParser parser;
+        typedef IPv6RoutingPacketParser parser;
         
         using mixin::nextPacketRange;
         using mixin::nextPacketType;
@@ -218,7 +218,7 @@ namespace senf {
     /** \brief Parse in IPv6 Hop-By-Hop extension header
 
         Parser implementing the IPv6 routing Header extension. The fields implemented are:
-        \image html IPv6Extensions_HopByHop.png
+        \image html IPv6HopByHopOptionsPacket.png
 
         \see IPv6ExtensionType_HopByHop \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>
@@ -291,7 +291,7 @@ namespace senf {
 
         Parser implementing the IPv6 Destination Options Header extension. 
         The fields implemented are:
-        \image html IPv6Extensions_Destination.png
+        \image html IPv6DestinationOptionsPacket.png
 
         \see IPv6ExtensionType_Destination \n
             <a href="http://tools.ietf.org/html/rfc2460">RFC 2460</a>

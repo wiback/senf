@@ -34,14 +34,10 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6FragmentPacket>
-        registerIPv6FragmentPacketType (44);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6RoutingPacket>
-        registerIPv6RoutingPacketType (43);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6HopByHopOptionsPacket>
-        registerIPv6HopByHopOptionsPacketType (0u);
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::IPv6DestinationOptionsPacket>
-        registerIPv6DestinationOptionsPacketType (60u);
+    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 44,  senf::IPv6FragmentPacket           );
+    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 43,  senf::IPv6RoutingPacket            );
+    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 0u,  senf::IPv6HopByHopOptionsPacket    );
+    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 60u, senf::IPv6DestinationOptionsPacket );
 }
 
 prefix_ void senf::IPv6FragmentPacketType::dump(packet p, std::ostream & os)

@@ -35,8 +35,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::EtherTypes>::RegistrationProxy<senf::EthVLanPacket>
-        registerEthVLanPacket(0x8100);
+    SENF_PACKET_REGISTRY_REGISTER( senf::EtherTypes, 0x8100, senf::EthVLanPacket);
 }
 
 ///////////////////////////////////////////////////////////////////////////

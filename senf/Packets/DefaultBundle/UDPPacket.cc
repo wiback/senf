@@ -38,8 +38,7 @@
 ///////////////////////////////cc.p////////////////////////////////////////
 
 namespace {
-    senf::PacketRegistry<senf::IpTypes>::RegistrationProxy<senf::UDPPacket>
-        registerUDPPacket (17);
+    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 17, senf::UDPPacket);
 }
 
 ///////////////////////////////////////////////////////////////////////////
