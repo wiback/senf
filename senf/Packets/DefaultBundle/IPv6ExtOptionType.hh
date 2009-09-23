@@ -53,8 +53,20 @@ namespace senf {
 
         senf::PacketInterpreterBase::range value() const;
 
+        template <class Parser>
+        Parser& init();
+
+    //     template <class Parser>
+    //     Parser& get();
+
+        static const unsigned int typeCode = 7u;
+
         template<class ForwardReadableRange>
         void value(ForwardReadableRange const &range);
+
+        template<class ForwardReadableRange>
+        void setPayload(ForwardReadableRange const &range);
+
     };
 
 }

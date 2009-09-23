@@ -72,13 +72,15 @@ prefix_ void senf::IPv6ExtensionType_HopByHop::dump(packet p, std::ostream & os)
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
        <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
        <<     "  header length           : " << unsigned (p->headerLength()) << "\n";
-       os << "OptionTypes:\n";
+       os << "  OptionTypes:\n";
        IPv6Extension_HopByHop::Parser::options_t::container options (p->options());
        IPv6Extension_HopByHop::Parser::options_t::container::iterator optIter(options.begin());
-       for(;optIter != options.end(); ++ optIter){
-           os << "Option Type:\t" << (unsigned) optIter->optionType()
-             << "\nOptionLength:\t" << (unsigned)  optIter->optionLength() <<"\n";
-           senf::hexdump(boost::next(boost::begin(optIter->value())), boost::next( boost::end(optIter->value())), os );
+       for(;optIter != options.end(); ++optIter){
+           os << "    AltAction             : " << (unsigned) optIter->altAction()
+             << "\n    ChangeFlag            : " << (unsigned) optIter->changeFlag()
+             << "\n    Option Type           : " << (unsigned) optIter->optionType()
+             << "\n    OptionLength          : " << (unsigned)  optIter->optionLength() <<"\n";
+           senf::hexdump(boost::begin(optIter->value()) , boost::end(optIter->value()), os );
        }
 }
 

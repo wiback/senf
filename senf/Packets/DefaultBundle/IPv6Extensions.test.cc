@@ -31,6 +31,7 @@
 #include "IPv6Packet.hh"
 #include "UDPPacket.hh"
 #include "ICMPv6Packet.hh"
+#include <senf/Utils/hexdump.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
 #include <boost/test/test_tools.hpp>
@@ -221,6 +222,72 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
     BOOST_CHECK_EQUAL( pICMPv6->checksum(), 0x50cc);
 }
 
+BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)                                                                                                      
+{                                                                                                                                                         
+    std::ostringstream oss (std::ostringstream::out);                                                                                                   
+    unsigned char HopByHop_packetData[] = {
+            0x60, 0x00, 0x00, 0x00, //IP version, class, flow label                                                                                       
+            0x00, 0x0c,           //payload length                                                                                                        
+            0x00,                 //next header: IPv6 hop-by-hop option (0)                                                                               
+            0x01,                 //hop limit (1)                                                                                                         
+            0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Source address (fe80::219:b9ff:feeb:b226)                                          
+            0x02, 0x19, 0xb9, 0xff, 0xfe, 0xeb, 0xb2, 0x26,
+
+            0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Destination address ff02::16
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16,
+            //HopByHop option
+            0x3a,   //next Header (ICMPv6)
+            0x00,   //Length (0 = 8Bytes)
+
+            //option Header
+            0x05, //option type
+            0x02, //option Length (= 2 byte)
+            0x00, 0x00, //data (zero data here ...)
+
+            0x02, //option type (2, set for testing purposes only)
+            0x00,  //option Type length (=0, no data field needed here)
+
+            //ICMPv6
+            0x8f, //type 143
+            0x00, //code 0, should always be 0
+            0xca, 0xdf, //checksum
+    };
+    senf::IPv6Packet ip (senf::IPv6Packet::create());
+    ip->version() = 6u;
+    ip->length() = 12u;
+    ip->nextHeader() = 0u;
+    ip->hopLimit() = 1u;
+    ip->source() = senf::INet6Address::from_string("fe80::219:b9ff:feeb:b226");
+    ip->destination() = senf::INet6Address::from_string("ff02::16");
+    senf::IPv6Extension_HopByHop pext (senf::IPv6Extension_HopByHop::createAfter(ip) );
+    pext->nextHeader() = 58u;
+    pext->headerLength() = 0u;
+    {
+        senf::IPv6Extension_HopByHop::Parser::options_t::container optC(pext->options() );
+        
+        optC.push_back_space();
+        senf::GenericOptTypeTLVPacketParser opt = optC.back().init<senf::GenericOptTypeTLVPacketParser>();
+        opt.altAction() = 0u;
+        opt.changeFlag() = 0u;
+        opt.optionType() = 5u;
+        unsigned char val[] = {0x00, 0x00};
+        opt.setPayload(val);
+        
+        optC.push_back_space();
+        opt = optC.back().init<senf::GenericOptTypeTLVPacketParser>();
+        opt.altAction() = 0u;
+        opt.changeFlag() = 0u;
+        opt.optionType() = 2u;
+    }
+    senf::ICMPv6Packet icmp (senf::ICMPv6Packet::createAfter (pext));
+    icmp->type() = 0x8f;
+    icmp->code() = 0u;
+    ip.finalizeAll();
+    SENF_CHECK_NO_THROW( ip.dump(oss) );
+    BOOST_CHECK_EQUAL_COLLECTIONS(
+            HopByHop_packetData, HopByHop_packetData+sizeof(HopByHop_packetData),
+            ip.data().begin(), ip.data().end() );
+}
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
