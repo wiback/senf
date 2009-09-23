@@ -92,11 +92,12 @@ prefix_ void senf::ListParser<ListPolicy>::push_back(Value const & value, size_t
 }
 
 template <class ListPolicy>
-prefix_ void senf::ListParser<ListPolicy>::push_back_space(size_type n)
+prefix_ typename senf::ListParser<ListPolicy>::value_type
+senf::ListParser<ListPolicy>::push_back_space(size_type n)
     const
 {
     container c(*this);
-    c.push_back_space(n);
+    return c.push_back_space(n);
 }
 
 template <class ListPolicy>
@@ -109,11 +110,12 @@ prefix_ void senf::ListParser<ListPolicy>::push_front(Value const & value, size_
 }
 
 template <class ListPolicy>
-prefix_ void senf::ListParser<ListPolicy>::push_front_space(size_type n)
+prefix_ typename senf::ListParser<ListPolicy>::value_type
+senf::ListParser<ListPolicy>::push_front_space(size_type n)
     const
 {
     container c(*this);
-    c.push_front_space(n);
+    return c.push_front_space(n);
 }
 
 template <class ListPolicy>
@@ -308,9 +310,10 @@ prefix_ void senf::ListParser_Container<ListPolicy>::push_back(Value const & val
 }
 
 template <class ListPolicy>
-prefix_ void senf::ListParser_Container<ListPolicy>::push_back_space(size_type n)
+prefix_ typename senf::ListParser_Container<ListPolicy>::value_type
+senf::ListParser_Container<ListPolicy>::push_back_space(size_type n)
 {
-    shift(end(),n);
+    return shift(end(),n);
 }
 
 template <class ListPolicy>
@@ -322,9 +325,10 @@ prefix_ void senf::ListParser_Container<ListPolicy>::push_front(Value const & va
 }
 
 template <class ListPolicy>
-prefix_ void senf::ListParser_Container<ListPolicy>::push_front_space(size_type n)
+prefix_ typename senf::ListParser_Container<ListPolicy>::value_type
+senf::ListParser_Container<ListPolicy>::push_front_space(size_type n)
 {
-    shift(begin(),n);
+    return shift(begin(),n);
 }
 
 // Parser interface

@@ -75,7 +75,8 @@ senf::ListParser_Container<ListPolicy>::back()
 }
 
 template <class ListPolicy>
-prefix_ void senf::ListParser_Container<ListPolicy>::shift(iterator pos, size_type n)
+prefix_ typename senf::ListParser_Container<ListPolicy>::value_type
+senf::ListParser_Container<ListPolicy>::shift(iterator pos, size_type n)
 {
     ListPolicy::update(*this);
     safe_data_iterator sp (data(),pos.raw());
@@ -84,6 +85,7 @@ prefix_ void senf::ListParser_Container<ListPolicy>::shift(iterator pos, size_ty
         value_type(sp,state()).init();
         ListPolicy::insert(*this,sp);
     }
+    return value_type(sp,state());
 }
 
 template <class ListPolicy>

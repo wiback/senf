@@ -102,9 +102,9 @@ namespace senf {
         value_type back() const;
 
         template <class Value> void push_back        (Value const & value, size_type n=1) const;
-                               void push_back_space  (size_type n=1) const;
+        value_type                  push_back_space  (size_type n=1) const;
         template <class Value> void push_front       (Value const & value, size_type n=1) const;
-                               void push_front_space (size_type n=1) const;
+        value_type                  push_front_space (size_type n=1) const;
                                void resize           (size_type n) const;
         template <class Value> void resize           (size_type n, Value value) const;
 
@@ -183,7 +183,7 @@ namespace senf {
         ///@{
 
         // All these operations can be quite inefficient depending on the list type
-        void shift(iterator pos, size_type n=1);
+        value_type shift(iterator pos, size_type n=1);
         template <class Value>
         void insert(iterator pos, Value const & t);
         template <class Value>
@@ -201,10 +201,10 @@ namespace senf {
         void clear();
 
         template <class Value> void push_back        (Value const & value, size_type n=1);
-                               void push_back_space  (size_type n=1);
+        value_type                  push_back_space  (size_type n=1);
         template <class Value> void push_front       (Value const & value, size_type n=1);
-                               void push_front_space (size_type n=1);
-                               void resize           (size_type n);
+        value_type                  push_front_space (size_type n=1);
+        void                        resize           (size_type n);
         template <class Value> void resize           (size_type n, Value value);
 
         ///@}

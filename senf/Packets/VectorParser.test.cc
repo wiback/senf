@@ -82,9 +82,9 @@ BOOST_AUTO_UNIT_TEST(VectorParser)
         BOOST_CHECK_EQUAL( v.size(), 8u );
         BOOST_CHECK_EQUAL( v[7], 0xf0f1u );
 
-        v.push_back_space();
+        v.push_back_space() = 37u;
         BOOST_CHECK_EQUAL( v.size(), 9u );
-        BOOST_CHECK_EQUAL( v[8], 0u );
+        BOOST_CHECK_EQUAL( v[8], 37u );
         
         v.push_front(0xf3f4u);
         BOOST_CHECK_EQUAL( v.size(), 10u );

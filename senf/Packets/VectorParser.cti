@@ -121,11 +121,12 @@ prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back(Value const 
 }
 
 template <class ElementParser, class AuxPolicy>
-prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_back_space(size_type n)
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::value_type
+senf::VectorParser<ElementParser,AuxPolicy>::push_back_space(size_type n)
     const
 {
     container c (*this);
-    c.push_back_space(n);
+    return c.push_back_space(n);
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -138,11 +139,12 @@ prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_front(Value const
 }
 
 template <class ElementParser, class AuxPolicy>
-prefix_ void senf::VectorParser<ElementParser,AuxPolicy>::push_front_space(size_type n)
+prefix_ typename senf::VectorParser<ElementParser,AuxPolicy>::value_type
+senf::VectorParser<ElementParser,AuxPolicy>::push_front_space(size_type n)
     const
 {
     container c (*this);
-    c.push_front_space(n);
+    return c.push_front_space(n);
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -272,9 +274,10 @@ prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_back(Va
 }
 
 template <class ElementParser, class AuxPolicy>
-prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_back_space(size_type n)
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::value_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::push_back_space(size_type n)
 {
-    shift(end(),n);
+    return *shift(end(),n);
 }
 
 template <class ElementParser, class AuxPolicy>
@@ -286,9 +289,10 @@ prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_front(V
 }
 
 template <class ElementParser, class AuxPolicy>
-prefix_ void senf::VectorParser_Container<ElementParser,AuxPolicy>::push_front_space(size_type n)
+prefix_ typename senf::VectorParser_Container<ElementParser,AuxPolicy>::value_type
+senf::VectorParser_Container<ElementParser,AuxPolicy>::push_front_space(size_type n)
 {
-    shift(begin(),n);
+    return *shift(begin(),n);
 }
 
 // Parser interface

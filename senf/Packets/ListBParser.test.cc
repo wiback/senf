@@ -100,9 +100,8 @@ BOOST_AUTO_UNIT_TEST(ListBParser_container)
             senf::PacketInterpreterBase::ptr pi2 (senf::PacketInterpreter<VoidPacket>::create(
                     MyListBParser::init_bytes));
             MyListBParser::container c2 (MyListBParser(pi2->data().begin(),&pi2->data()));
-            c2.push_back_space();
             {
-                VectorParser::vec_t::container c2v (c2.front().vec());
+                VectorParser::vec_t::container c2v (c2.push_back_space().vec());
                 c2v.push_back(0x2345u);
                 c2v.push_back(0x3456u);
             }
