@@ -193,28 +193,42 @@ BOOST_AUTO_UNIT_TEST(ICMPv6Packet_create)
 
     ip.finalizeAll();
     
-    std::stringstream ss;
-    ip.dump(ss);
-    BOOST_CHECK_EQUAL( ss.str(), 
-                       "Internet protocol Version 6:\n"
-                       "  version                 : 6\n"
-                       "  traffic class           : 0x00\n"
-                       "  flow label              : 0x00000\n"
-                       "  payload length          : 64\n"
-                       "  next header             : 58\n"
-                       "  hop limit               : 64\n"
-                       "  source                  : ::1\n"
-                       "  destination             : ::1\n"
-                       "ICMPv6 protocol:\n"
-                       "  type                    : 128\n"
-                       "  code                    : 0\n"
-                       "  checksum                : 0xdae0\n"
-                       "ICMPv6 Echo Request:\n"
-                       "  identifier              : 40830\n"
-                       "  sequence nr.            : 9\n"
-                       "Payload data (56 bytes)\n" );
+    std::string dump (
+        "Internet protocol Version 6:\n"
+        "  version                 : 6\n"
+        "  traffic class           : 0x00\n"
+        "  flow label              : 0x00000\n"
+        "  payload length          : 64\n"
+        "  next header             : 58\n"
+        "  hop limit               : 64\n"
+        "  source                  : ::1\n"
+        "  destination             : ::1\n"
+        "ICMPv6 protocol:\n"
+        "  type                    : 128\n"
+        "  code                    : 0\n"
+        "  checksum                : 0xdae0\n"
+        "ICMPv6 Echo Request:\n"
+        "  identifier              : 40830\n"
+        "  sequence nr.            : 9\n"
+        "Payload data (56 bytes)\n"
+        );
+
+    {
+        std::stringstream ss;
+        ip.dump(ss);
+        BOOST_CHECK_EQUAL( ss.str(), dump );
+    }
+
     SENF_CHECK_EQUAL_COLLECTIONS( ip.data().begin(), ip.data().end(),
                                   ping, ping+sizeof(ping) );
+
+    senf::IPv6Packet orig (senf::IPv6Packet::create(ping));
+
+    {
+        std::stringstream ss;
+        orig.dump(ss);
+        BOOST_CHECK_EQUAL( ss.str(), dump );
+    }
 }
 
 // Local Variables:

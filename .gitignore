@@ -3,6 +3,8 @@
 *.png
 *.o
 *.a
+*.os
+*.so
 *.test.checked
 .sconsign*
 *~

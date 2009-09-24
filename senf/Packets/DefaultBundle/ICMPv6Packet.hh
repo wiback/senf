@@ -84,8 +84,8 @@ namespace senf
         }
         
         static void finalize(packet p) {
-            p->checksum() << p->calcChecksum();
             p->type() << key(p.next(senf::nothrow));
+            p->checksum() << p->calcChecksum();
         }
     };
     

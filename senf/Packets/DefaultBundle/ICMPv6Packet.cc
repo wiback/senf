@@ -35,35 +35,41 @@
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-namespace {
-    SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 58, senf::ICMPv6Packet);
-}
+SENF_PACKET_REGISTRY_REGISTER( senf::IpTypes, 58, senf::ICMPv6Packet);
 
 prefix_ boost::uint16_t senf::ICMPv6PacketParser::calcChecksum() 
     const
 {
-
-    senf::IpChecksum summer;
     senf::IPv6Packet ipv6 (packet().rfind<senf::IPv6Packet>(senf::nothrow));
-
-    if (! ipv6)
-        return 0u;
+    if (! ipv6) return 0u;
     
-    summer.feed( ipv6->source().i(), 
-                    ipv6->source().i() + senf::IPv6Packet::Parser::source_t::fixed_bytes );
-    // The destination used here must be the *final* destination ...
-    summer.feed( ipv6->destination().i(), ipv6->destination().i() + senf::IPv6PacketParser::destination_t::fixed_bytes );
+    senf::IpChecksum summer;
 
-    // This is a simplification. The value is really 32bit to support UDP Jumbograms
-    // (RFC2147). However, skipping an even number of 0 bytes does not change the checksum
-    summer.feed( i() + ipv6->length(), i() + ipv6->length() + 2 );
-    // --> http://www.iana.org/assignments/protocol-numbers 
-    // need to insert the correct protocol number here, NOT static 17!!
+    ////////////////////////////////////////
+    // IPv6 pseudo header
+    summer.feed( ipv6->source().i(), 
+                 ipv6->source().i() + senf::IPv6Packet::Parser::source_t::fixed_bytes );
+    // need support for HopByHop routing header -> the destination used here must be the *final*
+    // destination ...
+    summer.feed( ipv6->destination().i(), 
+                 ipv6->destination().i() + senf::IPv6PacketParser::destination_t::fixed_bytes );
+    // packet length
+    boost::uint32_t size (data().size());
+    summer.feed((size>>24)&0xff);
+    summer.feed((size>>16)&0xff);
+    summer.feed((size>> 8)&0xff);
+    summer.feed((size    )&0xff);
+    // protocol number
+    // summer.feed( 0u );
+    // summer.feed( 0u );
     summer.feed( 0u );
     summer.feed( 58u );
-    // since header are 16 / even 32bit aligned we don't have to care for padding. since IpChecksum 
-    // cares for padding at the final summing we don't have to care is the payload is 16nbit-aligned, too.
+
+    ////////////////////////////////////////
+    // ICMP Packet
     summer.feed( i(), i()+checksum_offset );
+    // checksum
+    // summer.feed(0); summer.feed(0);
     summer.feed( i()+checksum_offset+2, data().end() );
 
     boost::uint16_t rv (summer.sum());
