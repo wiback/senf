@@ -266,20 +266,22 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)
     pext->headerLength() = 0u;
     {
         senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pext->options() );
-        
-        optC.push_back_space();
-        senf::IPv6GenericOptionTLVParser opt = optC.back().init<senf::IPv6GenericOptionTLVParser>();
-        opt.altAction() = 0u;
-        opt.changeFlag() = 0u;
-        opt.optionType() = 5u;
-        unsigned char val[] = {0x00, 0x00};
-        opt.setPayload(val);
-        
-        optC.push_back_space();
-        opt = optC.back().init<senf::IPv6GenericOptionTLVParser>();
-        opt.altAction() = 0u;
-        opt.changeFlag() = 0u;
-        opt.optionType() = 2u;
+        {
+            senf::IPv6GenericOptionTLVParser opt (
+                optC.push_back_space().init<senf::IPv6GenericOptionTLVParser>());
+            opt.altAction() = 0u;
+            opt.changeFlag() = 0u;
+            opt.optionType() = 5u;
+            unsigned char val[] = {0x00, 0x00};
+            opt.setPayload(val);
+        }
+        {
+            senf::IPv6GenericOptionTLVParser opt (
+                optC.push_back_space().init<senf::IPv6GenericOptionTLVParser>());
+            opt.altAction() = 0u;
+            opt.changeFlag() = 0u;
+            opt.optionType() = 2u;
+        }
     }
     senf::ICMPv6Packet icmp (senf::ICMPv6Packet::createAfter (pext));
     icmp->type() = 0x8f;

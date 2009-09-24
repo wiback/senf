@@ -99,8 +99,7 @@ namespace senf {
 namespace test {
 
     template <class Iterator>
-    typename detail::NoCharIterator<Iterator>::type nocharIterator(Iterator i)
-    { return typename detail::NoCharIterator<Iterator>::type (i); }
+    typename detail::NoCharIterator<Iterator>::type nocharIterator(Iterator i);
 
 }}
 
@@ -120,7 +119,7 @@ namespace test {
 ///////////////////////////////hh.e////////////////////////////////////////
 //#include "auto_unit_test.cci"
 //#include "auto_unit_test.ct"
-//#include "auto_unit_test.cti"
+#include "auto_unit_test.cti"
 #endif
 
 
