@@ -102,14 +102,6 @@ namespace test {
     typename detail::NoCharIterator<Iterator>::type nocharIterator(Iterator i)
     { return typename detail::NoCharIterator<Iterator>::type (i); }
 
-    template <class Value>
-    typename detail::NoCharIterator<Value *>::type nocharIterator(Value * i)
-    { return typename detail::NoCharIterator<Value *>::type (i); }
-
-    template <class Value>
-    typename detail::NoCharIterator<Value const *>::type nocharIterator(Value const * i)
-    { return typename detail::NoCharIterator<Value const *>::type (i); }
-
 }}
 
 /** \brief Check ranges for equality, writing char's as int's
