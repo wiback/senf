@@ -62,7 +62,7 @@ BOOST_AUTO_UNIT_TEST(MIHPacket_create_eth)
     EthernetPacket eth (EthernetPacket::create());
     MIHPacket mihPacket (MIHPacket::createAfter(eth));
     eth.finalizeAll();
-    BOOST_CHECK_EQUAL( eth->type_length(), 0x86dd);
+    BOOST_CHECK_EQUAL( eth->type_length(), 0x8917);
     std::ostringstream oss (std::ostringstream::out);
     SENF_CHECK_NO_THROW( eth.dump( oss));
 }
