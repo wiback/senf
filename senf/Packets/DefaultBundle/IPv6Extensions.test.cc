@@ -5,7 +5,6 @@
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
 //     Philipp Batroff <philipp.batroff@fokus.fraunhofer.de>
-//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -32,6 +31,8 @@
 #include "IPv6Packet.hh"
 #include "UDPPacket.hh"
 #include "ICMPv6Packet.hh"
+#include "ICMPv6TypePacket.hh"
+#include "EthernetPacket.hh"
 #include <senf/Utils/hexdump.hh>
 
 #include <senf/Utils/auto_unit_test.hh>
@@ -199,8 +200,7 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
     SENF_CHECK_NO_THROW( pHop_packet.dump( oss ));
 
     BOOST_REQUIRE( pHop_packet.next().is<senf::IPv6HopByHopOptionsPacket>() );
-    senf::IPv6HopByHopOptionsPacket pHop_extension (
-            pHop_packet.next().as<senf::IPv6HopByHopOptionsPacket>());
+    senf::IPv6HopByHopOptionsPacket pHop_extension (pHop_packet.next().as<senf::IPv6HopByHopOptionsPacket>());
     BOOST_CHECK_EQUAL( pHop_extension->nextHeader(), 58u );
     BOOST_CHECK_EQUAL( pHop_extension->headerLength(), 0x00 );
 
@@ -225,72 +225,101 @@ BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_parse)
 }
 
 BOOST_AUTO_UNIT_TEST(ipv6Extensions_hopByHop_create)                                                                                                      
-{                                                                                                                                                         
+{   
+    try{
     std::ostringstream oss (std::ostringstream::out);                                                                                                   
     unsigned char HopByHop_packetData[] = {
-            0x60, 0x00, 0x00, 0x00, //IP version, class, flow label                                                                                       
-            0x00, 0x0c,           //payload length                                                                                                        
-            0x00,                 //next header: IPv6 hop-by-hop option (0)                                                                               
-            0x01,                 //hop limit (1)                                                                                                         
-            0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Source address (fe80::219:b9ff:feeb:b226)                                          
-            0x02, 0x19, 0xb9, 0xff, 0xfe, 0xeb, 0xb2, 0x26,
+        //Ethernet
+        0x33 ,0x33 ,0x00 ,0x00 ,0x00 ,0x16 ,    //destination MAC
+        0x00 ,0x19 ,0xb9 ,0xeb ,0xb2 ,0x26 ,    //source MAC
+        0x86 ,0xdd,                             //type (IPv6)
+        //IPv6
+        0x60, 0x00, 0x00, 0x00, //IP version, class, flow label
+        0x00, 0x24,           //payload length
+        0x00,                 //next header: IPv6 hop-by-hop option (0)
+        0x01,                 //hop limit (1)
+        0xfe, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Source address (fe80::219:b9ff:feeb:b226)
+        0x02, 0x19, 0xb9, 0xff, 0xfe, 0xeb, 0xb2, 0x26,
 
-            0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Destination address ff02::16
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16,
-            //HopByHop option
-            0x3a,   //next Header (ICMPv6)
-            0x00,   //Length (0 = 8Bytes)
+        0xff, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,     //IPv6 Destination address ff02::16
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x16,
+        //HopByHop option
+        0x3a,   //next Header (ICMPv6)
+        0x00,   //Length (0 = 8Bytes)
 
-            //option Header
-            0x05, //option type
-            0x02, //option Length (= 2 byte)
-            0x00, 0x00, //data (zero data here ...)
+        //option Header
+        0x05, //option type
+        0x02, //option Length (= 2 byte)
+        0x00, 0x00, //data (zero data here ...)
+        0x01, 0x00, //padding
+        //ICMPv6
+        0x8f, //type 143
+        0x00, //code 0, should always be 0
+        0x50 ,0xcc , //checksum
 
-            0x02, //option type (2, set for testing purposes only)
-            0x00,  //option Type length (=0, no data field needed here)
-
-            //ICMPv6
-            0x8f, //type 143
-            0x00, //code 0, should always be 0
-            0xca, 0xdf, //checksum
+        //MLDv2
+        0x00 ,0x00 , //reserved, zero by default
+        0x00 ,0x01 , //nr of McAddressRecords
+        0x04 ,  //recordType
+        0x00 ,  //auxiliarydatalength
+        0x00 ,0x00 ,    // number of sources
+        0xff ,0x02 ,0x00 ,0x00, 0x00 ,0x00 ,0x00 ,0x00 ,    //ipv6McAddress ff02::1:ffeb:b226
+        0x00 ,0x00 ,0x00 ,0x01 ,0xff ,0xeb ,0xb2 ,0x26
     };
-    senf::IPv6Packet ip (senf::IPv6Packet::create());
+    senf::EthernetPacket eth (senf::EthernetPacket::create() );
+    eth->destination() = senf::MACAddress::from_string( "33:33:00:00:00:16" );
+    eth->source() = senf::MACAddress::from_string( "00:19:b9:eb:b2:26" );
+    eth->type_length() = 0x86dd;
+
+    senf::IPv6Packet ip (senf::IPv6Packet::createAfter(eth));
     ip->version() = 6u;
     ip->length() = 12u;
     ip->nextHeader() = 0u;
     ip->hopLimit() = 1u;
     ip->source() = senf::INet6Address::from_string("fe80::219:b9ff:feeb:b226");
     ip->destination() = senf::INet6Address::from_string("ff02::16");
+
     senf::IPv6HopByHopOptionsPacket pext (senf::IPv6HopByHopOptionsPacket::createAfter(ip) );
     pext->nextHeader() = 58u;
     pext->headerLength() = 0u;
     {
         senf::IPv6HopByHopOptionsPacket::Parser::options_t::container optC(pext->options() );
         {
-            senf::IPv6GenericOptionTLVParser opt (
-                optC.push_back_space().init<senf::IPv6GenericOptionTLVParser>());
+            senf::IPv6GenericOptionTLVParser opt ( optC.push_back_space().init<senf::IPv6GenericOptionTLVParser>());
             opt.altAction() = 0u;
             opt.changeFlag() = 0u;
             opt.optionType() = 5u;
             unsigned char val[] = {0x00, 0x00};
             opt.setPayload(val);
         }
-        {
-            senf::IPv6GenericOptionTLVParser opt (
-                optC.push_back_space().init<senf::IPv6GenericOptionTLVParser>());
-            opt.altAction() = 0u;
-            opt.changeFlag() = 0u;
-            opt.optionType() = 2u;
-        }
     }
+
     senf::ICMPv6Packet icmp (senf::ICMPv6Packet::createAfter (pext));
     icmp->type() = 0x8f;
     icmp->code() = 0u;
-    ip.finalizeAll();
+    icmp->checksum() = 0u;
+    senf::MLDv2ListenerReport mld ( senf::MLDv2ListenerReport::createAfter(icmp) );
+    {
+        senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container c (mld->mcastAddrRecords() );
+        c.push_back_space();
+        c.back().recordType() = 4u;
+        senf::INet6Address addr( senf::INet6Address::from_string("ff02::1:ffeb:b226") );
+        c.back().mcAddress() = addr;
+    }
+    eth.finalizeAll();
     SENF_CHECK_NO_THROW( ip.dump(oss) );
     SENF_CHECK_EQUAL_COLLECTIONS(
-        HopByHop_packetData, HopByHop_packetData+sizeof(HopByHop_packetData),
-        ip.data().begin(), ip.data().end() );
+            HopByHop_packetData, HopByHop_packetData+sizeof(HopByHop_packetData),
+            eth.data().begin(), eth.data().end() );
+    eth.dump(std::cout);
+    senf::hexdump(eth.data().begin(), eth.data().end(), std::cout);
+    std::cout << "\n\n" << std::endl;
+    senf::hexdump(boost::begin(HopByHop_packetData), boost::end(HopByHop_packetData), std::cout);
+    }
+    catch (std::exception & e)
+    {
+        std::cerr << e.what() << std::endl; throw;
+    }
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
