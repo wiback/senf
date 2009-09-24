@@ -1,0 +1,10 @@
+# -*- python -*-
+
+Import('env')
+import SENFSCons
+
+###########################################################################
+
+sources, tests, includes = SENFSCons.Glob(env)
+
+env.BoostUnitTest('test', tests + ['${LOCALLIBDIR}/AllBundles${OBJADDSUFFIX}${OBJSUFFIX}'])
