@@ -30,6 +30,7 @@
 #include <boost/io/ios_state.hpp>
 #include <senf/Packets/DefaultBundle/IPv6Packet.hh>
 #include <senf/Utils/IpChecksum.hh>
+#include <iomanip>
 
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
@@ -73,9 +74,10 @@ prefix_ void senf::ICMPv6PacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "ICMPv6 protocol:\n"
-       <<     "  type                    : " << (unsigned) p->type() <<"\n"
-       <<     "  code                    : " << (unsigned) p->code() <<"\n"
-       <<     "  checksum                : " << (unsigned) p->checksum() << "\n";
+       <<     "  type                    : " << unsigned(p->type()) <<"\n"
+       <<     "  code                    : " << unsigned(p->code()) <<"\n"
+       <<     "  checksum                : 0x" 
+       << std::hex << std::setw(4) << unsigned(p->checksum()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

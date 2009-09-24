@@ -66,6 +66,8 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
+
+        static void dump(packet p, std::ostream & os);
     };
     
     typedef ConcretePacket<ICMPv6EchoRequestType> ICMPv6EchoRequest;

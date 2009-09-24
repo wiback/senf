@@ -24,6 +24,7 @@
     \brief ICMPv6Packet unit tests */
 
 // Custom includes
+#include <sstream>
 #include "ICMPv6Packet.hh"
 #include "ICMPv6TypePacket.hh"
 
@@ -155,6 +156,65 @@ BOOST_AUTO_UNIT_TEST(ICMPv6Packet_packet)
 
     SENF_CHECK_NO_THROW( pErrParamProblem.dump( oss));
     
+}
+
+BOOST_AUTO_UNIT_TEST(ICMPv6Packet_create)
+{
+    unsigned char ping[] = { 0x60, 0x00, 0x00, 0x00, 0x00, 0x40, 0x3a, 0x40,
+                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+                             0x80, 0x00, 0xda, 0xe0, 0x9f, 0x7e, 0x00, 0x09,
+                             
+                             0xb7, 0x3c, 0xbb, 0x4a, 0x9d, 0x90, 0x0a, 0x00, //payload
+                             0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+                             0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
+                             0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
+                             0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
+                             0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+                             0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37
+    };
+
+    senf::IPv6Packet ip (senf::IPv6Packet::create());
+    ip->hopLimit() = 64;
+    ip->source() = senf::INet6Address::Loopback;
+    ip->destination() = senf::INet6Address::Loopback;
+
+    senf::ICMPv6Packet icmp (senf::ICMPv6Packet::createAfter(ip));
+    icmp->code() = 0;
+    
+    senf::ICMPv6EchoRequest ereq (senf::ICMPv6EchoRequest::createAfter(icmp));
+    ereq->identifier() = 0x9f7e;
+    ereq->seqNr() = 9;
+
+    senf::DataPacket data (
+        senf::DataPacket::createAfter(ereq, std::make_pair(ping+48, ping+sizeof(ping))));
+
+    ip.finalizeAll();
+    
+    std::stringstream ss;
+    ip.dump(ss);
+    BOOST_CHECK_EQUAL( ss.str(), 
+                       "Internet protocol Version 6:\n"
+                       "  version                 : 6\n"
+                       "  traffic class           : 0x00\n"
+                       "  flow label              : 0x00000\n"
+                       "  payload length          : 64\n"
+                       "  next header             : 58\n"
+                       "  hop limit               : 64\n"
+                       "  source                  : ::1\n"
+                       "  destination             : ::1\n"
+                       "ICMPv6 protocol:\n"
+                       "  type                    : 128\n"
+                       "  code                    : 0\n"
+                       "  checksum                : 0xdae0\n"
+                       "ICMPv6 Echo Request:\n"
+                       "  identifier              : 40830\n"
+                       "  sequence nr.            : 9\n"
+                       "Payload data (56 bytes)\n" );
+    SENF_CHECK_EQUAL_COLLECTIONS( ip.data().begin(), ip.data().end(),
+                                  ping, ping+sizeof(ping) );
 }
 
 // Local Variables:
