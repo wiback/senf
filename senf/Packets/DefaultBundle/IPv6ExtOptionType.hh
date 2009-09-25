@@ -33,7 +33,7 @@
 ///////////////////////////////hh.p////////////////////////////////////////
 namespace senf {
 
-    class IPv6OptionTLVParser : public PacketParserBase
+        class IPv6OptionTLVParser : public PacketParserBase
     {
     public:
 #       include SENF_PARSER()
@@ -44,6 +44,7 @@ namespace senf {
         SENF_PARSER_FINALIZE (IPv6OptionTLVParser);
     };
 
+    
     struct IPv6GenericOptionTLVParser : public IPv6OptionTLVParser
     {
 #       include SENF_PARSER()
@@ -54,7 +55,7 @@ namespace senf {
         senf::PacketInterpreterBase::range value() const;
 
         template <class Parser>
-        Parser& init();
+        Parser init();
 
     //     template <class Parser>
     //     Parser& get();
@@ -68,6 +69,22 @@ namespace senf {
         void setPayload(ForwardReadableRange const &range);
     };
 
+    struct IPv6ChecksumOptionTLVParser : public IPv6OptionTLVParser
+    {
+#       include SENF_PARSER()
+        SENF_PARSER_INHERIT ( IPv6OptionTLVParser );
+        SENF_PARSER_FIELD ( SlfNetType, UInt8Parser);
+        SENF_PARSER_FIELD ( checksum, UInt16Parser );
+        
+        SENF_PARSER_INIT() {
+            optionType() = typeCode;
+            optionLength() = senf::init_bytes<IPv6ChecksumOptionTLVParser>::value -senf::init_bytes<IPv6OptionTLVParser>::value;
+            SlfNetType() = SN_typeCode;     
+        }
+        SENF_PARSER_FINALIZE ( IPv6ChecksumOptionTLVParser );
+        static const unsigned int typeCode = 13u;
+        static const unsigned int SN_typeCode = 77u;
+    };
 }
 
 

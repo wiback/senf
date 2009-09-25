@@ -82,13 +82,13 @@ prefix_ void senf::ICMPv6ErrParamProblemType::dump(packet p, std::ostream & os){
 prefix_ void senf::MLDv2ListenerQueryType::dump(packet p, std::ostream & os){
     os << "ICMPv6 Multicast Listener Query:\n"
         <<"  Max. ResponseCode            : " << unsigned(p->maxResponseCode() ) 
-        <<"  \nReserved(16Bit)             : " << unsigned(p->reserved() )
-        <<"  \nMulticast Address           : " << p->mcAddress()
-        <<"  \nReserver(4Bit)              : " << unsigned(p->resv() )
-        <<"  \nSuppress Router-Side Processing: " << unsigned(p->sFlag() )
-        <<"  \nQuerier's Robustness Variable: " << unsigned(p->qrv() )
-        <<"  \nQuerier's Query Interval Code: " << unsigned(p->qqic() )    
-        <<"  \nSource Addresses: " << "\n";    
+        <<"\n  Reserved(16Bit)             : " << unsigned(p->reserved() )
+        <<"\n  Multicast Address           : " << p->mcAddress()
+        <<"\n  Reserver(4Bit)              : " << unsigned(p->resv() )
+        <<"\n  Suppress Router-Side Processing: " << unsigned(p->sFlag() )
+        <<"\n  Querier's Robustness Variable: " << unsigned(p->qrv() )
+        <<"\n  Querier's Query Interval Code: " << unsigned(p->qqic() )    
+        <<"\n  Source Addresses: " << "\n";    
         senf::MLDv2ListenerQuery::Parser::srcAddresses_t::container c (p->srcAddresses() );
         senf::MLDv2ListenerQuery::Parser::srcAddresses_t::container::iterator i (c.begin() );
         for (unsigned int nr =1; i != c.end(); ++i, ++nr)
@@ -98,21 +98,21 @@ prefix_ void senf::MLDv2ListenerQueryType::dump(packet p, std::ostream & os){
 
 prefix_ void senf::MLDv2ListenerReportType::dump(packet p, std::ostream & os){
     os << "ICMPv6 Multicast Listener Report Message:\n"
-        <<"  Reserved                    : " << unsigned(p->reserved() ) 
-        <<"  Multicast Address Records:\n";
+        <<"  Reserved                : " << unsigned(p->reserved() ) 
+        <<"\n  Multicast Address Records:\n";
     
     senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container cAddrR (p->mcastAddrRecords() );
     senf::MLDv2ListenerReport::Parser::mcastAddrRecords_t::container::iterator iAddrR (cAddrR.begin() );
     for (; iAddrR != cAddrR.end(); ++iAddrR){
         os << "    Record Type           : " << unsigned(iAddrR->recordType() )
-            <<"    \nMulticast Address     : " << iAddrR->mcAddress() 
-            <<"    \nSource Addresses      :\n";
+            <<"\n    Multicast Address     : " << iAddrR->mcAddress() 
+            <<"\n    Source Addresses      :\n";
             
         senf::MLDv2AddressRecordParser::srcAddresses_t::container cSrcAddr (iAddrR->srcAddresses() );
         senf::MLDv2AddressRecordParser::srcAddresses_t::container::iterator iSrcAddr ( cSrcAddr.begin() );
         for (;iSrcAddr != cSrcAddr.end();++iSrcAddr)
             os <<"      " << *iSrcAddr << "\n";
-        os << "    Auxiliary Data:\n";
+        os << "    Auxiliary Data        :\n";
         senf::MLDv2AddressRecordParser::auxData_t::container cAuxD ( iAddrR->auxData() );
         senf::MLDv2AddressRecordParser::auxData_t::container::iterator iAuxD (cAuxD.begin() );
         for (;iAuxD != cAuxD.end(); ++iAuxD)

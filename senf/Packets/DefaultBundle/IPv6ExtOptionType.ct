@@ -26,6 +26,7 @@
 //#include "IPv6ExtOptionType.ih"
 
 // Custom includes
+#include <senf/Utils/hexdump.hh>
 
 #define prefix_
 ///////////////////////////////ct.p////////////////////////////////////////
@@ -60,17 +61,18 @@ prefix_ void senf::IPv6GenericOptionTLVParser::setPayload(ForwardReadableRange c
 
 
 template <class Parser>
-prefix_ Parser& senf::IPv6GenericOptionTLVParser::init()
-{
-    size_type oldSize ( bytes() );
-    resize( oldSize, senf::init_bytes<Parser>::value);
-    data_iterator j = i();
-    std::advance(j, senf::init_bytes<Parser>::value);
-    std::fill(i() , j, 0u);
-    Parser::init();
-    Parser::optionType() = Parser::typeCode;
-    return *(this);
+prefix_ Parser senf::IPv6GenericOptionTLVParser::init()
+{  
+    size_type oldSize (bytes() );
+    size_type newParserSize ( senf::init_bytes<Parser>::value );
+    resize(  oldSize, newParserSize);
+    std::fill(i(),boost::next(i(), newParserSize), 0u);
+    Parser concreteParser = Parser(i(), state() );
+    concreteParser.init();
+    concreteParser.optionLength() = (newParserSize-2);
+    return concreteParser;
 }
+
 
 // template <class Parser>
 // prefix_ Parser& senf::GenericOptTypeTLVParser::get()
