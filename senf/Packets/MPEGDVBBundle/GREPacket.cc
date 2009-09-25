@@ -41,9 +41,8 @@ prefix_ void senf::GREPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "GRE Encapsulation:\n"
-       <<     "  checksum_present        : " << p->checksum_present() << "\n"
-       <<     "  protocol_type           : 0x" << std::hex << p->protocol_type() << "\n"
-       ;
+       << senf::fieldName("checksum_present")          << p->checksum_present() << "\n"
+       << senf::fieldName("protocol_type")             << "0x" << std::hex << p->protocol_type() << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

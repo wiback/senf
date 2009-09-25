@@ -52,27 +52,27 @@ prefix_ void senf::MPESectionType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "MPE Section:\n"
        << std::hex
-       <<     "  table_id                : 0x" << unsigned(p->table_id()) << "\n"
-       <<     "  section syntax indicator: " << p->section_syntax_indicator() << "\n"
-       <<     "  private indicator       : " << p->private_indicator() << "\n"
+       << senf::fieldName("table_id")                  << "0x" << unsigned(p->table_id()) << "\n"
+       << senf::fieldName("section syntax indicator")  << p->section_syntax_indicator() << "\n"
+       << senf::fieldName("private indicator")         << p->private_indicator() << "\n"
        << std::dec
-       <<     "  section length          : " << p->section_length() << "\n"
+       << senf::fieldName("section length")            << p->section_length() << "\n"
        << std::hex
-       <<     "  MAC address 6           : 0x" << unsigned(p->mac_addr_6()) << "\n"
-       <<     "  MAC address 5           : 0x" << unsigned(p->mac_addr_5()) << "\n"
-       <<     "  payload scrambling ctrl : 0x" << p->payload_scrmbl_ctrl() << "\n"
-       <<     "  address scrambling ctrl : 0x" << p-> addr_scrmbl_ctrl()  << "\n"
-       <<     "  LLC/SNAP flag           : 0x" << p->llc_snap_flag() << "\n"
-       <<     "  current next indicator  : 0x" << p->curr_next_indicator() << "\n"
-       <<     "  section number          : 0x" << unsigned(p->section_num()) << "\n"
-       <<     "  last section number     : 0x" << unsigned(p->last_section_num()) << "\n"
-       <<     "  real time parameters    : \n"
-       <<     "    delta_t               : 0x" << unsigned(p->real_time_parameters().delta_t()) << "\n"
-       <<     "    table boundary        : 0x" << unsigned(p->real_time_parameters().table_boundary()) << "\n"
-       <<     "    frame boundary        : 0x" << unsigned(p->real_time_parameters().frame_boundary()) << "\n"
-       <<     "    address               : 0x" << unsigned(p->real_time_parameters().address()) << "\n"
+       << senf::fieldName("MAC address 6")             << "0x" << unsigned(p->mac_addr_6()) << "\n"
+       << senf::fieldName("MAC address 5")             << "0x" << unsigned(p->mac_addr_5()) << "\n"
+       << senf::fieldName("payload scrambling ctrl")   << "0x" << p->payload_scrmbl_ctrl() << "\n"
+       << senf::fieldName("address scrambling ctrl")   << "0x" << p-> addr_scrmbl_ctrl()  << "\n"
+       << senf::fieldName("LLC/SNAP flag")             << "0x" << p->llc_snap_flag() << "\n"
+       << senf::fieldName("current next indicator")    << "0x" << p->curr_next_indicator() << "\n"
+       << senf::fieldName("section number")            << "0x" << unsigned(p->section_num()) << "\n"
+       << senf::fieldName("last section number")       << "0x" << unsigned(p->last_section_num()) << "\n"
+       << senf::fieldName("real time parameters")      << "\n"
+       << senf::fieldName("  delta_t")                 << "0x" << unsigned(p->real_time_parameters().delta_t()) << "\n"
+       << senf::fieldName("  table boundary")          << "0x" << unsigned(p->real_time_parameters().table_boundary()) << "\n"
+       << senf::fieldName("  frame boundary")          << "0x" << unsigned(p->real_time_parameters().frame_boundary()) << "\n"
+       << senf::fieldName("  address")                 << "0x" << unsigned(p->real_time_parameters().address()) << "\n"
        << std::dec
-       <<     "  crc                     : " << unsigned(p->crc()) << "\n";
+       << senf::fieldName("crc")                       << unsigned(p->crc()) << "\n";
 }
 
 prefix_ senf::PacketParserBase::size_type senf::MPESectionType::initSize()

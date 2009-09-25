@@ -86,18 +86,18 @@ senf::StatisticsBase::output(unsigned n)
 char *format_eng( float f)
 {
     static char buf[16];
-    if( f > 0){
+    if (f > 0) {
         int n = 0;
-        while( f >= 1000.0f){
+        while( f >= 1000.0f) {
                 f /= 1000.f;
                 n+=3;
         }
 
         sprintf( buf, " %3.2fe%+03d", f, n);
     }
-    else if( f < 0){
+    else if (f < 0) {
         int n = 0;
-        while( f <= -1000.0f){
+        while( f <= -1000.0f) {
                 f *= 1000.f;
                 n+=3;
         }

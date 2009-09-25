@@ -35,36 +35,36 @@ prefix_ void senf::RadiotapPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Radiotap:\n"
-       <<     "  version                 : " << unsigned( p->version()) << "\n"
-       <<     "  length                  : " << unsigned( p->length()) << "\n";
+       << senf::fieldName("version") 		       << unsigned( p->version()) << "\n"
+       << senf::fieldName("length") 		       << unsigned( p->length()) << "\n";
     if (p->has_tsft())
-        os << "  MAC timestamp           : " << unsigned( p->tsft()) << "\n";
+        os << senf::fieldName("MAC timestamp") 	       << unsigned( p->tsft()) << "\n";
     // TODO: flags
     if (p->has_rate())
-        os << "  rate                    : " << unsigned( p->rate()) << "\n";
+        os << senf::fieldName("rate") 		       << unsigned( p->rate()) << "\n";
     // TODO: channelOptions
     if (p->has_fhss())
-        os << "  FHSS                    : " << unsigned( p->fhss()) << "\n";
+	os << senf::fieldName("FHSS") 		       << unsigned( p->fhss()) << "\n";
     if (p->has_dbmAntennaSignal())
-        os << "  antenna signal (dBm)    : " << signed( p->dbmAntennaSignal()) << "\n";
+        os << senf::fieldName("antenna signal (dBm)")  << signed( p->dbmAntennaSignal()) << "\n";
     if (p->has_dbmAntennaNoise())
-        os << "  antenna noise (dBm)     : " << signed( p->dbmAntennaNoise()) << "\n";
+        os << senf::fieldName("antenna noise (dBm)")   << signed( p->dbmAntennaNoise()) << "\n";
     if (p->has_lockQuality())
-        os << "  lock quality            : " << unsigned( p->lockQuality()) << "\n";
+        os << senf::fieldName("lock quality") 	       << unsigned( p->lockQuality()) << "\n";
     if (p->has_txAttenuation())
-        os << "  tx attenuation          : " << unsigned( p->txAttenuation()) << "\n";
+        os << senf::fieldName("tx attenuation")        << unsigned( p->txAttenuation()) << "\n";
     if (p->has_dbTxAttenuation())
-        os << "  tx attenuation (dB)     : " << unsigned( p->dbTxAttenuation()) << "\n";
+        os << senf::fieldName("tx attenuation (dB)")   << unsigned( p->dbTxAttenuation()) << "\n";
     if (p->has_dbmTxAttenuation())
-        os << "  tx attenuation (dBm)    : " << signed( p->dbmTxAttenuation()) << "\n";
+        os << senf::fieldName("tx attenuation (dBm)")  << signed( p->dbmTxAttenuation()) << "\n";
     if (p->has_antenna())
-        os << "  antenna                 : " << unsigned( p->antenna()) << "\n";
+        os << senf::fieldName("antenna") 	       << unsigned( p->antenna()) << "\n";
     if (p->has_dbAntennaSignal())
-        os << "  antenna signal (dB)     : " << unsigned( p->dbAntennaSignal()) << "\n";
+        os << senf::fieldName("antenna signal (dB)")   << unsigned( p->dbAntennaSignal()) << "\n";
     if (p->has_dbAntennaNoise())
-        os << "  antenna noise (dB)      : " << unsigned( p->dbAntennaNoise()) << "\n";
+        os << senf::fieldName("antenna noise (dB)")    << unsigned( p->dbAntennaNoise()) << "\n";
     if (p->has_headerFcs())
-        os << "  FCS                     : " << unsigned( p->fcs()) << "\n";
+        os << senf::fieldName("FCS") 		       << unsigned( p->fcs()) << "\n";
 }
 
 prefix_ void senf::RadiotapPacketType::finalize(packet p)

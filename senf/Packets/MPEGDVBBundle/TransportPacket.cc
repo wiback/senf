@@ -60,18 +60,18 @@ prefix_ void senf::TransportPacketType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "TransportPacket:\n"
        << std::hex
-       <<     "  syncByte                : 0x" << unsigned(p->sync_byte()) << "\n"
-       <<     "  transport error ind.    : 0x" << unsigned(p->transport_error_indicator()) << "\n"
-       <<     "  payload unit start ind. : 0x" << unsigned(p->pusi()) << "\n"
-       <<     "  transport priority      : 0x" << unsigned(p->transport_priority()) << "\n"
+       << senf::fieldName("syncByte")                  << "0x" << unsigned(p->sync_byte()) << "\n"
+       << senf::fieldName("transport error ind.")      << "0x" << unsigned(p->transport_error_indicator()) << "\n"
+       << senf::fieldName("payload unit start ind.")   << "0x" << unsigned(p->pusi()) << "\n"
+       << senf::fieldName("transport priority")        << "0x" << unsigned(p->transport_priority()) << "\n"
        << std::dec
-       <<     "  pid                     : " << unsigned(p->pid()) << "\n"
+       << senf::fieldName("pid")                       << unsigned(p->pid()) << "\n"
        << std::hex
-       <<     "  transport scrambling c. : 0x" << unsigned(p->transport_scrmbl_ctrl()) << "\n"
-       <<     "  adaptation field ctrl   : 0x" << unsigned(p->adaptation_field_ctrl()) << "\n"
-       <<     "  continuity counter      : 0x" << unsigned(p->continuity_counter()) << "\n";
+       << senf::fieldName("transport scrambling c.")   << "0x" << unsigned(p->transport_scrmbl_ctrl()) << "\n"
+       << senf::fieldName("adaptation field ctrl")     << "0x" << unsigned(p->adaptation_field_ctrl()) << "\n"
+       << senf::fieldName("continuity counter")        << "0x" << unsigned(p->continuity_counter()) << "\n";
     if (p->pusi())
-        os << "  pointer field           : 0x" << unsigned(p->pointer_field()) << "\n";
+        os << senf::fieldName("pointer field")         << "0x" << unsigned(p->pointer_field()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

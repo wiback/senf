@@ -340,12 +340,12 @@ namespace log {
         /** \brief Exception: Invalid stream */
         struct InvalidStreamException : public senf::Exception
         { InvalidStreamException()
-              : senf::Exception("senf::log::Target::InvalidStreamException"){} };
+              : senf::Exception("senf::log::Target::InvalidStreamException") {} };
 
         /** \brief Exception: Invalid area */
         struct InvalidAreaException : public senf::Exception
         { InvalidAreaException()
-              : senf::Exception("senf::log::Target::InvalidAreaException"){} };
+              : senf::Exception("senf::log::Target::InvalidAreaException") {} };
 
         iterator begin() const;         ///< Iterator to beginning of routing table
         iterator end() const;           ///< Iterator past the end of routing table

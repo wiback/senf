@@ -379,7 +379,7 @@ namespace senf {
         chain member and other similar error conditions. 
      */
     struct InvalidPacketChainException : public senf::Exception
-    { InvalidPacketChainException() : senf::Exception("invalid packet chain"){} };
+    { InvalidPacketChainException() : senf::Exception("invalid packet chain") {} };
     
 }
 

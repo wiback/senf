@@ -492,8 +492,8 @@ senf::log::detail::LogParameters::defaultParameters()
 
 prefix_ std::ostream & senf::log::operator<<(std::ostream & os, senf::log::Target::action_t const & action)
 {
-    if( action == Target::ACCEPT) os << "ACCEPT";
-    else if( action == Target::REJECT) os << "REJECT";
+    if (action == Target::ACCEPT) os << "ACCEPT";
+    else if (action == Target::REJECT) os << "REJECT";
     else os << "unknown action";
     return os;
 }

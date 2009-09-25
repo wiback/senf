@@ -51,10 +51,9 @@ prefix_ void senf::EthernetPacketType::dump(packet p, std::ostream & os)
     else
         os << "Ethernet 802.3 (bad ethertype >1500 and <1536)";
     os <<     ": \n"
-       <<     "  destination             : " << p->destination() << "\n"
-       <<     "  source                  : " << p->source() << "\n"
-       <<     "  type/length             : 0x" 
-       <<     std::hex << std::setw(4) << std::setfill('0') << p->type_length() << "\n";
+       << senf::fieldName("destination")               << p->destination() << "\n"
+       << senf::fieldName("source")                    << p->source() << "\n"
+       << senf::fieldName("type/length")               << senf::prettyNumber(p->type_length().value()) << "\n";
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::EthernetPacketType::nextPacketType(packet p)
@@ -80,12 +79,12 @@ prefix_ void senf::EthernetPacketType::finalize(packet p)
 prefix_ void senf::EthVLanPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
-    os <<     "Ethernet 802.1q (VLAN):\n"
-       <<     "  priority                : " << p->priority() << "\n"
-       <<     "  cfi                     : " << p->cfi() << "\n"
-       <<     "  vlan-ID                 : " << p->vlanId() << "\n"
-       <<     "  ethertype               : 0x" 
-       <<     std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
+    os << "Ethernet 802.1q (VLAN):\n"
+       << senf::fieldName("priority")                  << p->priority() << "\n"
+       << senf::fieldName("cfi")                       << p->cfi() << "\n"
+       << senf::fieldName("vlan-ID")                   << p->vlanId() << "\n"
+       << senf::fieldName("ethertype")
+       << " 0x" << std::hex << std::setw(4) << std::setfill('0') << p->type() << "\n";
 }
 
 prefix_ void senf::EthVLanPacketType::finalize(packet p)

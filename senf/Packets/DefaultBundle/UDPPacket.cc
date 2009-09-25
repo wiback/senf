@@ -99,11 +99,11 @@ prefix_ void senf::UDPPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "UDP:\n"
-       <<     "  source port             : " << p->source() << "\n"
-       <<     "  dest port               : " << p->destination() << "\n"
-       <<     "  length                  : " << p->length() << "\n"
-       <<     "  checksum                : " 
-       << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << "\n";
+       << senf::fieldName("source port")               << p->source() << "\n"
+       << senf::fieldName("dest port")                 << p->destination() << "\n"
+       << senf::fieldName("length")                    << p->length() << "\n"
+       << senf::fieldName("checksum")
+       << "0x" << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << "\n";
 }
 
 prefix_ void senf::UDPPacketType::finalize(packet p)

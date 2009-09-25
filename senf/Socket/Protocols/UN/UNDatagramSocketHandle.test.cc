@@ -62,7 +62,7 @@ BOOST_AUTO_UNIT_TEST(unDatagramSocketHandle)
     BOOST_CHECKPOINT( 7 );
     inputSocket.close();
 
-//    if( unlink(socketPath.c_str()) != 0)
+//    if (unlink(socketPath.c_str()) != 0)
 //        perror( "unlink failed");
 }
 

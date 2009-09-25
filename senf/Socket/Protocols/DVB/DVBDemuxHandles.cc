@@ -46,7 +46,7 @@ prefix_ void senf::DVBDemuxSectionSocketProtocol::init_client(unsigned short ada
 {
     std::string devDemux = str( boost::format("/dev/dvb/adapter%d/demux%d") % adapter % device);
     int f = open(devDemux.c_str(), O_RDONLY | O_NONBLOCK);
-    if (f < 0){
+    if (f < 0) {
         SENF_THROW_SYSTEM_EXCEPTION("Could not open demux device of DVB adapter ") << devDemux << ".";
     }
     fd(f);

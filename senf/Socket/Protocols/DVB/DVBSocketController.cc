@@ -53,32 +53,40 @@ senf::DVBSocketController::DVBSocketController(DVBFrontendHandle frontendHandle_
 }
 
 prefix_ senf::DVBSocketController::~DVBSocketController()
-{
-}
+{}
 
-prefix_ senf::DVBDemuxSectionHandle senf::DVBSocketController::createDVBDemuxSectionHandle( int adapternumber, int demuxnumber, bool addToConsole ){
+prefix_ senf::DVBDemuxSectionHandle
+senf::DVBSocketController::createDVBDemuxSectionHandle(int adapternumber, int demuxnumber,
+                                                       bool addToConsole)
+{
     DVBDemuxSectionHandle sectionHandle(adapternumber, demuxnumber); 
-    if(addToConsole)
+    if (addToConsole)
         this->addToConsole(sectionHandle);
     return sectionHandle;
         
 }
 
-prefix_ senf::DVBDemuxPESHandle senf::DVBSocketController::createDVBDemuxPESHandle( int adapternumber, int demuxnumber, bool addToConsole ){
+prefix_ senf::DVBDemuxPESHandle
+senf::DVBSocketController::createDVBDemuxPESHandle(int adapternumber, int demuxnumber,
+                                                   bool addToConsole)
+{
     DVBDemuxPESHandle pesHandle(adapternumber, demuxnumber); 
-    if(addToConsole )
+    if (addToConsole)
         this->addToConsole(pesHandle);
     return pesHandle;
         
 }
 
-prefix_ void senf::DVBSocketController::addToConsole(senf::DVBDemuxSectionHandle sh){
+prefix_ void senf::DVBSocketController::addToConsole(senf::DVBDemuxSectionHandle sh)
+{
     boost::shared_ptr<DVBSectionProtocolWrapper> wrap(new DVBSectionProtocolWrapper(sh));
     sh.protocol().addWrapper(wrap);
     dir.node().add("section" + senf::str(sectionNr), wrap->dir);
     sectionNr++;
 }
-prefix_ void senf::DVBSocketController::addToConsole(senf::DVBDemuxPESHandle sh){
+
+prefix_ void senf::DVBSocketController::addToConsole(senf::DVBDemuxPESHandle sh)
+{
     boost::shared_ptr<DVBPESProtocolWrapper> wrap(new DVBPESProtocolWrapper(sh));
     sh.protocol().addWrapper(wrap);
     dir.node().add("pes"+ senf::str(pesNr), wrap->dir);
@@ -90,7 +98,8 @@ prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const st
     struct dvb_frontend_parameters frontend;
 
     // no valid configline, so it will be treaten like a channel name
-    if (input.find(":")==string::npos){
+    if (input.find(":")==string::npos)
+    {
         if (mode.c_str()[0]=='a')
             tuneTo(input);
         else
@@ -100,7 +109,7 @@ prefix_ void senf::DVBSocketController::tuneToCMD(const string & input, const st
     // add psydo name "foo" to complete configline syntax
     frontend = parser.getFrontendParam("foo:"+input);
 
-    if (mode.c_str()[0]=='a'){
+    if (mode.c_str()[0]=='a') {
         switch (type) {
             case FE_QPSK:
                 tuneDVB_S(frontend.frequency, frontend.inversion, frontend.u.qpsk.symbol_rate, frontend.u.qpsk.fec_inner);
@@ -165,7 +174,7 @@ prefix_ void senf::DVBSocketController::tuneDVB_T(unsigned int frequency,
                 fe_hierarchy_t hierarchy_information
                 )
 {
-    if(type != FE_OFDM)
+    if (type != FE_OFDM)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-T Card!";
 
     event.enable();
@@ -184,7 +193,7 @@ prefix_ void senf::DVBSocketController::tuneDVB_T(unsigned int frequency,
 
 prefix_ void senf::DVBSocketController::tuneDVB_S(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate)
 {
-    if(type != FE_QPSK)
+    if (type != FE_QPSK)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-S Card!";
 
     event.enable();
@@ -200,7 +209,7 @@ prefix_ void senf::DVBSocketController::tuneDVB_C(unsigned int frequency,
                 fe_modulation_t modulation
                 )
 {
-    if(type != FE_QAM)
+    if (type != FE_QAM)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-C Card!";
 
     event.enable();
@@ -244,7 +253,7 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_T_sync(unsigned in
                 fe_hierarchy_t hierarchy_information
                 )
 {
-    if(type != FE_OFDM)
+    if (type != FE_OFDM)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-T Card!";
 
     event.disable();
@@ -261,14 +270,18 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_T_sync(unsigned in
             guard_interval,
             hierarchy_information);
 
-    if(!frontendHandle.waitOOBReadable(senf::ClockService::seconds(2)))
+    if (!frontendHandle.waitOOBReadable(senf::ClockService::seconds(2)))
         SENF_THROW_SYSTEM_EXCEPTION("Could not tune to channel!");
 
     return frontendHandle.protocol().getEvent();
 }
 
-prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_S_sync(unsigned int frequency, fe_spectral_inversion_t inversion, unsigned int symbole_rate, fe_code_rate_t code_rate){
-    if(type != FE_QPSK)
+prefix_ dvb_frontend_event
+senf::DVBSocketController::tuneDVB_S_sync(unsigned int frequency,
+                                          fe_spectral_inversion_t inversion,
+                                          unsigned int symbole_rate, fe_code_rate_t code_rate)
+{
+    if (type != FE_QPSK)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-S Card!";
 
     event.disable();
@@ -277,7 +290,7 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_S_sync(unsigned in
 
     frontendHandle.protocol().tuneDVB_S(frequency, inversion, symbole_rate, code_rate);
 
-    if(!frontendHandle.waitOOBReadable(senf::ClockService::seconds(2)))
+    if (!frontendHandle.waitOOBReadable(senf::ClockService::seconds(2)))
         SENF_THROW_SYSTEM_EXCEPTION("Could not tune to channel!");
     return frontendHandle.protocol().getEvent();
 }
@@ -289,7 +302,7 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_C_sync(unsigned in
                 fe_modulation_t modulation
                 )
 {
-    if(type != FE_QAM)
+    if (type != FE_QAM)
         SENF_THROW_SYSTEM_EXCEPTION("Type of card is: ") << getTypeString() << " for this operation you need a DVB-C Card!";
 
     event.disable();
@@ -297,7 +310,7 @@ prefix_ dvb_frontend_event senf::DVBSocketController::tuneDVB_C_sync(unsigned in
     frontendHandle.protocol().setNonBlock(false);
 
     frontendHandle.protocol().tuneDVB_C(frequency, inversion, symbol_rate, fec_inner, modulation);
-    if(!frontendHandle.waitOOBReadable(senf::ClockService::seconds(2)))
+    if (!frontendHandle.waitOOBReadable(senf::ClockService::seconds(2)))
         SENF_THROW_SYSTEM_EXCEPTION("Could not tune to channel!");
 
     return frontendHandle.protocol().getEvent();
@@ -350,10 +363,10 @@ prefix_ string senf::DVBSocketController::getTuneInfo(const string & conf)
 
     info << hex;
 
-    for(unsigned int i = 0; i < conf.size(); ++i){
-        if(i>0)
+    for (unsigned int i = 0; i < conf.size(); ++i) {
+        if (i>0)
             info << " | ";
-        switch(cConf[i]){
+        switch (cConf[i]) {
             case 'S' :
                 info << "signal " << signal;
                 break;
@@ -406,7 +419,7 @@ prefix_ fe_type_t senf::DVBSocketController::getType()
 
 prefix_ void senf::DVBSocketController::readEvent(int event)
 {
-    if(cb)
+    if (cb)
         cb(frontendHandle.protocol().getEvent());
 }
 

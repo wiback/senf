@@ -65,13 +65,13 @@ namespace detail {
         lexical_stream()
         {
             stream.unsetf(std::ios::skipws);
-            if(std::numeric_limits<Target>::is_specialized)
+            if (std::numeric_limits<Target>::is_specialized)
                 stream.precision(std::numeric_limits<Target>::digits10 + 1);
         }
         template <class Source>
         bool operator<<(const Source &input)
         {
-            if(std::numeric_limits<Source>::is_specialized)
+            if (std::numeric_limits<Source>::is_specialized)
                 stream.precision(std::numeric_limits<Source>::digits10 + 1);
             return !(stream << input).fail();
         }
@@ -105,7 +105,7 @@ namespace detail {
         Target operator()(Source const & arg) const
             {
                 Target result;
-                if(!((*interpreter_) << arg && (*interpreter_) >> result))
+                if (!((*interpreter_) << arg && (*interpreter_) >> result))
                     boost::throw_exception(boost::bad_lexical_cast(typeid(Source), typeid(Target)));
                 return result;
             }
@@ -128,7 +128,7 @@ prefix_ Target senf::lexical_cast(Source const & arg)
     senf::detail::lexical_stream<Target> interpreter;
     Target result;
     
-    if(!(interpreter << arg && interpreter >> result))
+    if (!(interpreter << arg && interpreter >> result))
         boost::throw_exception(boost::bad_lexical_cast(typeid(Source), typeid(Target)));
     return result;
 }

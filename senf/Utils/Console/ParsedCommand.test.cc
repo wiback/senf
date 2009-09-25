@@ -43,7 +43,7 @@
 namespace {
 
     int cb1(int a, double b) { return int(a+b); }
-    double cb2(){ return 1.2; }
+    double cb2() { return 1.2; }
     void cb3(int i) { }
     std::string cb4(std::ostream & os) { os << "text\n"; return "value"; }
     void cb5(std::ostream & os, std::string const & v) { os << "Value: " << v << "\n"; }

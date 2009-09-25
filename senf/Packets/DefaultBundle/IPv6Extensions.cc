@@ -43,41 +43,43 @@ namespace {
 prefix_ void senf::IPv6FragmentPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 fragment extension:\n"
-       <<     "  next header             : " << unsigned(p->nextHeader()) << "\n"
-       <<     "  fragment offset         : " << std::hex << unsigned(p->fragmentOffset()) << "\n"
-       <<     "  more fragments          : " << (p->moreFragments()?"yes":"no") << "\n"
-       <<     "  id                      : " << std::hex << unsigned(p->id()) << "\n";
+       << senf::fieldName("next header")               << unsigned(p->nextHeader()) << "\n"
+       << senf::fieldName("fragment offset")
+       << "0x" << std::hex << unsigned(p->fragmentOffset()) << "\n"
+       << senf::fieldName("more fragments")            << (p->moreFragments()?"yes":"no") << "\n"
+       << senf::fieldName("id")
+       << "0x" << std::hex << unsigned(p->id()) << "\n";
 }
 
 prefix_ void senf::IPv6RoutingPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 routing extension:\n"
-       <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
-       <<     "  header length           : " << unsigned (p->headerLength()) << "\n"
-       <<     "  routing type            : " << unsigned (p->routingType()) << "\n"
-       <<     "  segments left           : " << unsigned (p->segmentsLeft()) << "\n"
-       <<     "  further Hop Addresses   : \n";
+       << senf::fieldName("next header")               << unsigned(p->nextHeader()) << "\n"
+       << senf::fieldName("header length")             << unsigned(p->headerLength()) << "\n"
+       << senf::fieldName("routing type")              << unsigned(p->routingType()) << "\n"
+       << senf::fieldName("segments left")             << unsigned(p->segmentsLeft()) << "\n"
+       << "  further Hop Addresses:\n";
     typedef IPv6RoutingPacket::Parser::hopAddresses_t::container addrContainer_t;
     addrContainer_t hopAddresses (p->hopAddresses());
     if ( p->segmentsLeft() != 0 )
         for (addrContainer_t::iterator i (hopAddresses.begin()); i != hopAddresses.end(); ++i)
-            os << *i << "\n";
+            os << "    " << *i << "\n";
 }
 
 prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Hop-By-Hop extension:\n"
-       <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
-       <<     "  header length           : " << unsigned (p->headerLength()) << "\n";
-    os <<     "  OptionTypes:\n";
+       << senf::fieldName("next header")               << unsigned(p->nextHeader()) << "\n"
+       << senf::fieldName("header length")             << unsigned(p->headerLength()) << "\n";
+    os << "  OptionTypes:\n";
     typedef IPv6HopByHopOptionsPacket::Parser::options_t::container optContainer_t;
     optContainer_t options (p->options());
     optContainer_t::iterator optIter(options.begin());
     for(; optIter != options.end(); ++optIter) {
-        os << "    AltAction             : " << (unsigned) optIter->altAction()
-           << "\n    ChangeFlag            : " << (unsigned) optIter->changeFlag()
-           << "\n    Option Type           : " << (unsigned) optIter->optionType()
-           << "\n    OptionLength          : " << (unsigned)  optIter->optionLength() <<"\n";
+        os << senf::fieldName("  AltAction")           << unsigned(optIter->altAction()) << "\n"
+           << senf::fieldName("  ChangeFlag")          << unsigned(optIter->changeFlag()) << "\n"
+           << senf::fieldName("  Option Type")         << unsigned(optIter->optionType()) << "\n"
+           << senf::fieldName("  OptionLength")        << unsigned(optIter->optionLength()) <<"\n";
         senf::hexdump(boost::begin(optIter->value()) , boost::end(optIter->value()), os );
     }
 }
@@ -85,8 +87,8 @@ prefix_ void senf::IPv6HopByHopOptionsPacketType::dump(packet p, std::ostream & 
 prefix_ void senf::IPv6DestinationOptionsPacketType::dump(packet p, std::ostream & os)
 {
     os << "Internet protocol Version 6 Destination Options extension:\n"
-       <<     "  next header             : " << unsigned (p->nextHeader()) << "\n"
-       <<     "  header length           : " << unsigned (p->headerLength()) << "\n";
+       << senf::fieldName("next header")               << unsigned (p->nextHeader()) << "\n"
+       << senf::fieldName("header length")             << unsigned (p->headerLength()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

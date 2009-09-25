@@ -155,7 +155,7 @@ const
 prefix_ void senf::DVBFrontendSocketProtocol::setNonBlock(bool on) 
     const
 {
-   if(on)
+   if (on)
        ::fcntl(fd(), F_SETFL, ::fcntl(fd(), F_GETFL) | O_NONBLOCK);
    else
        ::fcntl(fd(), F_SETFL, ::fcntl(fd(), F_GETFL) & ~O_NONBLOCK);
@@ -167,7 +167,7 @@ prefix_ dvb_frontend_info senf::DVBFrontendSocketProtocol::getInfo()
     struct dvb_frontend_info info;
     ::memset(&info, 0, sizeof(struct dvb_frontend_info));
     
-    if( ::ioctl(fd(), FE_GET_INFO, &info) ) {
+    if (::ioctl(fd(), FE_GET_INFO, &info)) {
         SENF_THROW_SYSTEM_EXCEPTION("") << "Could not read on fildescriptor.";
     }
     return info;
@@ -178,7 +178,7 @@ prefix_ dvb_frontend_parameters senf::DVBFrontendSocketProtocol::getFrontendPara
     
     ::memset(&frontend_, 0, sizeof(struct dvb_frontend_parameters));
     
-    if(::ioctl(fd(), FE_GET_FRONTEND, &frontend_)) {
+    if (::ioctl(fd(), FE_GET_FRONTEND, &frontend_)) {
         switch(errno) {
             case EBADF:
                 SENF_THROW_SYSTEM_EXCEPTION("fd is not a valid open file descriptor.");
@@ -201,7 +201,7 @@ prefix_ dvb_frontend_event senf::DVBFrontendSocketProtocol::getEvent() const{
     
     ::memset(&ev, 0, sizeof(struct dvb_frontend_event));
     
-    if(::ioctl(fd(), FE_GET_EVENT, &ev)) {
+    if (::ioctl(fd(), FE_GET_EVENT, &ev)) {
         switch(errno) {
             case EBADF:
                 SENF_THROW_SYSTEM_EXCEPTION("Could not read from frontend device, read-only access to the device is sufficient.");

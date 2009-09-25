@@ -222,7 +222,7 @@ namespace senf {
         This exception is signaled whenever a throwing lookup operation fails.
      */
     struct PacketTypeNotRegisteredException : public senf::Exception
-    { PacketTypeNotRegisteredException() : senf::Exception("packet type not registered"){} };
+    { PacketTypeNotRegisteredException() : senf::Exception("packet type not registered") {} };
 
 }
 

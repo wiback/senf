@@ -80,10 +80,10 @@ prefix_ void senf::ICMPv6PacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "ICMPv6 protocol:\n"
-       <<     "  type                    : " << unsigned(p->type()) <<"\n"
-       <<     "  code                    : " << unsigned(p->code()) <<"\n"
-       <<     "  checksum                : 0x" 
-       << std::hex << std::setw(4) << unsigned(p->checksum()) << "\n";
+       << senf::fieldName("type")                      << unsigned(p->type()) <<"\n"
+       << senf::fieldName("code")                      << unsigned(p->code()) <<"\n"
+       << senf::fieldName("checksum")
+       << "0x" << std::hex << std::setw(4) << unsigned(p->checksum()) << "\n";
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

@@ -62,7 +62,9 @@ senf::DVBConfigParser::~DVBConfigParser()
 {
     configFile.close();
 }
-prefix_ void senf::DVBConfigParser::initConfigFile(string configFilePath_){
+
+prefix_ void senf::DVBConfigParser::initConfigFile(string configFilePath_)
+{
     if (configFilePath_.size() == 0) {
         if ( !(::getenv ("HOME")) )
             SENF_THROW_SYSTEM_EXCEPTION("$HOME not set! You need it to use default configfile.");
@@ -84,7 +86,7 @@ prefix_ void senf::DVBConfigParser::initConfigFile(string configFilePath_){
     }
     configFilePath = configFilePath_;
     configFile.open( configFilePath.c_str(), ios_base::in);
-    if(configFile.bad())
+    if (configFile.bad())
         SENF_LOG((senf::log::IMPORTANT)  ("Could not open channels file"<< configFilePath << "." ));
     configFile.close();
 }
@@ -95,16 +97,16 @@ prefix_ string senf::DVBConfigParser::getConfigLine(string channel)
     transform(channel.begin(), channel.end(), channel.begin(), ::toupper);
     
     configFile.open( configFilePath.c_str(), ios_base::in);
-    if(configFile.bad())
+    if (configFile.bad())
            SENF_THROW_SYSTEM_EXCEPTION("Could not read channels file: ") << configFilePath << ".";
     
-    while (configFile.good()){
+    while (configFile.good()) {
         getline( configFile, configLine );
         SENF_LOG((senf::log::NOTICE)  ("configLine: " << configLine ));
         transform(configLine.begin(), configLine.end(), configLine.begin(), ::toupper);
         pos = configLine.find(channel);
         
-        if(pos != string::npos && pos == 0){ // only first matching number should be interpreted as channel number 
+        if (pos != string::npos && pos == 0) { // only first matching number should be interpreted as channel number 
             configFile.close();
             return configLine; // Line found!
         }
@@ -114,7 +116,8 @@ prefix_ string senf::DVBConfigParser::getConfigLine(string channel)
     return channel;
 }
 
-prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParam(string configLine){
+prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParam(string configLine)
+{
     struct dvb_frontend_parameters frontend;
     transform(configLine.begin(), configLine.end(), configLine.begin(), ::toupper);
     boost::char_separator<char> sep(":");
@@ -135,8 +138,9 @@ prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParam(string c
     return frontend;
 }
 
-prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParamDVB_T( const tokenizer & tokens){
-    
+prefix_ dvb_frontend_parameters
+senf::DVBConfigParser::getFrontendParamDVB_T(const tokenizer & tokens)
+{
     struct dvb_frontend_parameters frontend;
     istringstream isst;
     int number;
@@ -145,51 +149,53 @@ prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParamDVB_T( co
     
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
     
-    /*if(words.size() < 10)
+    /*if (words.size() < 10)
         SENF_THROW_SYSTEM_EXCEPTION("Too few arguments! There must be at least 10, but there are only: ") << words.size();*/
     
     isst.str(words[p_Frequency]);
     isst >> number;
-    if(isst.fail())
+    if (isst.fail())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse frequency");
     frontend.frequency = number;
     
-    if( params.inversion.find(words[p_Inversion]) == params.inversion.end())
+    if (params.inversion.find(words[p_Inversion]) == params.inversion.end())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse inversion");
     frontend.inversion = params.inversion.find(words[p_Inversion])->second;
     
-    if( params.bandwidth.find(words[p_Bandwidth]) == params.bandwidth.end())
+    if (params.bandwidth.find(words[p_Bandwidth]) == params.bandwidth.end())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse bandwidth");
     frontend.u.ofdm.bandwidth = params.bandwidth.find(words[p_Bandwidth])->second;
     
-    if( params.code_rate.find(words[p_hp_code_rate]) == params.code_rate.end())
+    if (params.code_rate.find(words[p_hp_code_rate]) == params.code_rate.end())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse high priority stream code rate");
     frontend.u.ofdm.code_rate_HP = params.code_rate.find(words[p_hp_code_rate])->second;
     
-    if( params.code_rate.find(words[p_lp_code_rate]) == params.code_rate.end())
+    if (params.code_rate.find(words[p_lp_code_rate]) == params.code_rate.end())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse low priority stream code rate");
     frontend.u.ofdm.code_rate_LP = params.code_rate.find(words[p_lp_code_rate])->second;
     
-    if( params.modulation.find(words[p_Mudualtion]) == params.modulation.end())
+    if (params.modulation.find(words[p_Mudualtion]) == params.modulation.end())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse modulation");
     frontend.u.ofdm.constellation = params.modulation.find(words[p_Mudualtion])->second;
     
-    if( params.transmit_mode.find(words[p_Transmission]) == params.transmit_mode.end())
+    if (params.transmit_mode.find(words[p_Transmission]) == params.transmit_mode.end())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse transmission mode");
     frontend.u.ofdm.transmission_mode = params.transmit_mode.find(words[p_Transmission])->second;
     
-    if( params.guard_interval.find(words[p_guard]) == params.guard_interval.end())
+    if (params.guard_interval.find(words[p_guard]) == params.guard_interval.end())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse guard interval");
     frontend.u.ofdm.guard_interval = params.guard_interval.find(words[p_guard])->second;  
     
-    if( params.hierarchy.find(words[p_hierarchy]) == params.hierarchy.end())
+    if (params.hierarchy.find(words[p_hierarchy]) == params.hierarchy.end())
         SENF_THROW_SYSTEM_EXCEPTION("Cant parse hierarchy");
     frontend.u.ofdm.hierarchy_information = params.hierarchy.find(words[p_hierarchy])->second;
     
     return frontend;
 }
 
-prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParamDVB_S( const  tokenizer & tokens){
+prefix_ dvb_frontend_parameters
+senf::DVBConfigParser::getFrontendParamDVB_S(const tokenizer & tokens)
+{
     struct dvb_frontend_parameters frontend;
     istringstream isst;
     int number;
@@ -198,7 +204,7 @@ prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParamDVB_S( co
     
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
     
-    if(words.size() < 5)
+    if (words.size() < 5)
                 SENF_THROW_SYSTEM_EXCEPTION("Too few arguments! There must be at least 5, but there are only: ") << words.size();
     
     isst.str(words[p_Frequency]);
@@ -224,7 +230,9 @@ prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParamDVB_S( co
     return frontend;
 }
 
-prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParamDVB_C( const  tokenizer & tokens){
+prefix_ dvb_frontend_parameters
+senf::DVBConfigParser::getFrontendParamDVB_C(const tokenizer & tokens)
+{
     struct dvb_frontend_parameters frontend;
     istringstream isst;
     int number;
@@ -233,7 +241,7 @@ prefix_ dvb_frontend_parameters senf::DVBConfigParser::getFrontendParamDVB_C( co
   
     ::memset(&frontend, 0, sizeof(struct dvb_frontend_parameters));
     
-    if(words.size() < 6)
+    if (words.size() < 6)
         SENF_THROW_SYSTEM_EXCEPTION("Too few arguments! There must be at least 6, but there are only: ") << words.size();
     
     isst.str(words[p_Frequency]);

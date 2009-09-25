@@ -113,21 +113,21 @@ prefix_ void senf::TCPPacketType::dump(packet p, std::ostream & os)
 {
     boost::io::ios_all_saver ias(os);
     os << "TCP:\n"
-       <<     "  source port             : " << p->source() << "\n"
-       <<     "  destination port        : " << p->destination() << "\n"
-       <<     "  sequence number         : " << p->sequencenumber() << "\n"
-       <<     "  acknowledgment number   : " << p->acknowledgmentnumber() << "\n"
-       <<     "  data offset             : " << p->dataoffset() << "\n"
-       <<     "  urgent flag             : " << p->urgf() << "\n"
-       <<     "  ack flag                : " << p->ackf() << "\n"
-       <<     "  push flag               : " << p->pshf() << "\n"
-       <<     "  reset flag              : " << p->rstf() << "\n"
-       <<     "  syn flag                : " << p->synf() << "\n"
-       <<     "  fin flag                : " << p->finf() << "\n"
-       <<     "  window size             : " << p->window() << "\n"
-       <<     "  checksum                : "
-       << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << "\n"
-       <<     "  urgent pointer          : " << p->urgentpointer() << "\n";
+       << senf::fieldName("source port")               << p->source() << "\n"
+       << senf::fieldName("destination port")          << p->destination() << "\n"
+       << senf::fieldName("sequence number")           << p->sequencenumber() << "\n"
+       << senf::fieldName("acknowledgment number")     << p->acknowledgmentnumber() << "\n"
+       << senf::fieldName("data offset")               << p->dataoffset() << "\n"
+       << senf::fieldName("urgent flag")               << p->urgf() << "\n"
+       << senf::fieldName("ack flag")                  << p->ackf() << "\n"
+       << senf::fieldName("push flag")                 << p->pshf() << "\n"
+       << senf::fieldName("reset flag")                << p->rstf() << "\n"
+       << senf::fieldName("syn flag")                  << p->synf() << "\n"
+       << senf::fieldName("fin flag")                  << p->finf() << "\n"
+       << senf::fieldName("window size")               << p->window() << "\n"
+       << senf::fieldName("checksum")
+       << "0x" << std::hex << std::setw(4) << std::setfill('0') << p->checksum() << "\n"
+       << senf::fieldName("urgent pointer")            << p->urgentpointer() << "\n";
 }
 
 prefix_ void senf::TCPPacketType::finalize(packet p)

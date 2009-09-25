@@ -38,13 +38,13 @@ prefix_ void senf::LlcSnapPacketType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "LLC/SNAP:\n"
        << std::hex << std::setfill('0')
-       <<     "  LLC\n"
-       <<     "    dsap                  : 0x" << unsigned(p->dsap()) << "\n"
-       <<     "    ssap                  : 0x" << unsigned(p->ssap()) << "\n"
-       <<     "    control id            : 0x" << unsigned(p->ctrl()) << "\n"
-       <<     "  SNAP\n"       
-       <<     "    protocol id           : 0x" << std::setw(6) << unsigned(p->protocolId()) << "\n"
-       <<     "    type/length           : 0x" << std::setw(4) << unsigned(p->type_length()) << "\n";
+       << "  LLC\n"
+       << senf::fieldName("  dsap")                    << "0x" << unsigned(p->dsap()) << "\n"
+       << senf::fieldName("  ssap")                    << "0x" << unsigned(p->ssap()) << "\n"
+       << senf::fieldName("  control id")              << "0x" << unsigned(p->ctrl()) << "\n"
+       << "  SNAP\n"       
+       << senf::fieldName("  protocol id")             << "0x" << std::setw(6) << unsigned(p->protocolId()) << "\n"
+       << senf::fieldName("  type/length")             << "0x" << std::setw(4) << unsigned(p->type_length()) << "\n";
 }
 
 prefix_ senf::PacketInterpreterBase::factory_t senf::LlcSnapPacketType::nextPacketType(packet p)

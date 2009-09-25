@@ -40,15 +40,15 @@ prefix_ void senf::DTCPHelloPacketType::dump(packet p, std::ostream & os)
                                        "8", "9", "10", "11", "12", "13", "14", "15" };
     boost::io::ios_all_saver ias(os);
     os << "DTCP HELLO Packet:" << std::endl
-       <<     "  version                 : " << p->versionNumber()                       << std::endl
-       <<     "  command                 : " << COMMANDS[p->command()]                   << std::endl
-       <<     "  interval                : " << unsigned(p->interval())                  << std::endl
-       <<     "  sequence number         : " << p->sequenceNumber()                      << std::endl
-       <<     "  receive capable feed    : " << (p->receiveCapableFeed() ? "yes" : "no") << std::endl
-       <<     "  ip version              : " << p->ipVersion()                           << std::endl
-       <<     "  tunnel protocol         : " << unsigned(p->tunnelProtocol())            << std::endl
-       <<     "  number of BDL ips       : " << unsigned(p->fbipCount())                 << std::endl
-       <<     "  feed BDL ips            : ";
+       << senf::fieldName("version")                   << p->versionNumber()                       << "\n"
+       << senf::fieldName("command")                   << COMMANDS[p->command()]                   << "\n"
+       << senf::fieldName("interval")                  << unsigned(p->interval())                  << "\n"
+       << senf::fieldName("sequence number")           << p->sequenceNumber()                      << "\n"
+       << senf::fieldName("receive capable feed")      << (p->receiveCapableFeed() ? "yes" : "no") << "\n"
+       << senf::fieldName("ip version")                << p->ipVersion()                           << "\n"
+       << senf::fieldName("tunnel protocol")           << unsigned(p->tunnelProtocol())            << "\n"
+       << senf::fieldName("number of BDL ips")         << unsigned(p->fbipCount())                 << "\n"
+       << "  feed BDL ips:\n";
     
     switch (p->ipVersion()) {
     case 4 : {
@@ -57,7 +57,7 @@ prefix_ void senf::DTCPHelloPacketType::dump(packet p, std::ostream & os)
         FBIPList::container::iterator i (fbips.begin());
         FBIPList::container::iterator const i_end (fbips.end());
         for (; i != i_end; ++i)
-            os << "\n    " << *i;
+            os << "    " << *i << "\n";
         break;
     }
     case 6 : {
@@ -66,14 +66,12 @@ prefix_ void senf::DTCPHelloPacketType::dump(packet p, std::ostream & os)
         FBIPList::container::iterator i (fbips.begin());
         FBIPList::container::iterator const i_end (fbips.end());
         for (; i != i_end; ++i)
-            os << "\n    " << *i;
+            os << "    " << *i << "\n";
         break;
     }
     default:
-        os << "unknown ip version";
+        os << "    unknown ip version\n";
     }
-    
-    os << std::endl;
 }
 
 #undef prefix_

@@ -82,7 +82,7 @@ BOOST_AUTO_UNIT_TEST(dtcpPacket)
                        "  ip version              : 4\n"
                        "  tunnel protocol         : 23\n"
                        "  number of BDL ips       : 2\n"
-                       "  feed BDL ips            : \n"
+                       "  feed BDL ips:\n"
                        "    101.102.103.104\n"
                        "    201.202.203.204\n" );
 

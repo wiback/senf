@@ -33,7 +33,8 @@
 
 namespace 
 {
-    std::string ptName(int pt){
+    std::string ptName(int pt)
+    {
         struct pt_item
         {
             int pt;
@@ -49,9 +50,9 @@ namespace
             {116,"32L16S"},{127,"HTML"},{-1,""}
         };
         int n = 0;
-        while ( ptList[n].pt != -1)
+        while (ptList[n].pt != -1)
         {
-            if( ptList[n].pt == pt)
+            if (ptList[n].pt == pt)
                 return ptList[n].name;
             ++n;
         }
@@ -64,15 +65,15 @@ prefix_ void senf::RTPPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "Real Time Protocol:\n"
-       <<     "  version                 : " << p->version() << "\n"
-       <<     "  padding                 : " << p->padding() << "\n"
-       <<     "  extension               : " << p->extension() << "\n"
-       <<     "  contributing source cnt : " << p->csrcCount() << "\n"
-       <<     "  marker                  : " << p->marker() << "\n"
-       <<     "  payload type            : " << p->payloadType() << " "<< ptName(p->payloadType() ) <<"\n"
-       <<     "  sequence number         : " << p->seqNumber() << "\n"
-       <<     "  timestamp               : " << p->timeStamp() << "\n"
-       <<     "  sync source id          : " << p->synSourceId() << "\n";
+       << senf::fieldName("version") 		       << p->version() << "\n"
+       << senf::fieldName("padding") 		       << p->padding() << "\n"
+       << senf::fieldName("extension") 		       << p->extension() << "\n"
+       << senf::fieldName("contributing source cnt")   << p->csrcCount() << "\n"
+       << senf::fieldName("marker") 		       << p->marker() << "\n"
+       << senf::fieldName("payload type") 	       << p->payloadType() << " "<< ptName(p->payloadType() ) <<"\n"
+       << senf::fieldName("sequence number") 	       << p->seqNumber() << "\n"
+       << senf::fieldName("timestamp") 		       << p->timeStamp() << "\n"
+       << senf::fieldName("sync source id") 	       << p->synSourceId() << "\n";
 }
 
 #undef prefix_

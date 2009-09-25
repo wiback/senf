@@ -29,21 +29,27 @@
 
 #define prefix_
 
-prefix_ senf::ppi::IPv4SourceForcingDgramWriter::IPv4SourceForcingDgramWriter(){
+prefix_ senf::ppi::IPv4SourceForcingDgramWriter::IPv4SourceForcingDgramWriter()
+{
     source_ = senf::INet4Address::from_string("0.0.0.0");
     destination_ = senf::INet4Address::from_string("0.0.0.0");
     protocolId_ = 0;
 }
 
-prefix_ senf::ppi::IPv4SourceForcingDgramWriter::IPv4SourceForcingDgramWriter(senf::INet4Address sourceAddr, senf::INet4SocketAddress destAddr){
+prefix_ senf::ppi::IPv4SourceForcingDgramWriter::
+IPv4SourceForcingDgramWriter(senf::INet4Address sourceAddr, senf::INet4SocketAddress destAddr)
+{
     source(sourceAddr);
     destination(destAddr);
 }
 
-prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::source(senf::INet4Address & source){
+prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::source(senf::INet4Address & source)
+{
     source_ = source;
 }
-prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::destination(senf::INet4SocketAddress & dest){
+
+prefix_ void senf::ppi::IPv4SourceForcingDgramWriter::destination(senf::INet4SocketAddress & dest)
+{
     destination_ = dest.address();
     protocolId_ = dest.port();
 }
@@ -102,27 +108,34 @@ prefix_ int senf::ppi::IPv4SourceForcingDgramWriter::sendtoandfrom(
     return sendmsg(sock, &h, 0);
 }
 
-prefix_ senf::ppi::IPv6SourceForcingDgramWriter::IPv6SourceForcingDgramWriter(){
+prefix_ senf::ppi::IPv6SourceForcingDgramWriter::IPv6SourceForcingDgramWriter()
+{
     source_ = senf::INet6Address::from_string("0::0");
     destination_ = senf::INet6Address::from_string("0::0");
     protocolId_ = 0;
 }
 
-prefix_ senf::ppi::IPv6SourceForcingDgramWriter::IPv6SourceForcingDgramWriter(senf::INet6Address sourceAddr, senf::INet6SocketAddress destAddr){
+prefix_ senf::ppi::IPv6SourceForcingDgramWriter::
+IPv6SourceForcingDgramWriter(senf::INet6Address sourceAddr, senf::INet6SocketAddress destAddr)
+{
     source(sourceAddr);
     destination(destAddr);
 }
 
-prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::source(senf::INet6Address & source){
+prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::source(senf::INet6Address & source)
+{
     source_ = source;
 }
-prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::destination(senf::INet6SocketAddress & dest){
+
+prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::destination(senf::INet6SocketAddress & dest)
+{
     destination_ = dest.address();
     protocolId_ = dest.port();
 }
 
 prefix_ void senf::ppi::IPv6SourceForcingDgramWriter::operator()(Handle handle, 
-                                                                 Packet const & packet){
+                                                                 Packet const & packet)
+{
     sendtoandfrom(
             handle.fd(),
             reinterpret_cast<void*> (&*packet.data().begin()),

@@ -146,7 +146,7 @@ prefix_ void senf::DynamicTLVLengthParser::finalize()
         if (b != 3) resize(3);
         return;
     }
-    if (v <= UInt24Parser::max_value + 128 ){
+    if (v <= UInt24Parser::max_value + 128 ) {
         if (b != 4) resize(4);
         return;
     }
@@ -210,9 +210,9 @@ prefix_ void senf::GenericTLVPacketType::dump(packet p, std::ostream & os)
     boost::io::ios_all_saver ias(os);
     os << "GenericTLVPacket:\n"
        << std::dec
-       <<     "  type                    : " << unsigned( p->type()) << "\n"
-       <<     "  length                  : " << unsigned( p->length()) << "\n"
-       <<     "  value\n                 : ";
+       << senf::fieldName("type")                      << unsigned( p->type()) << "\n"
+       << senf::fieldName("length")                    << unsigned( p->length()) << "\n"
+       << "  value:\n";
     senf::hexdump( p->value().begin(), p->value().end(), os);
 }
 

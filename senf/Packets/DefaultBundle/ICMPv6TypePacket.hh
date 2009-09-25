@@ -224,7 +224,8 @@ namespace senf {
         SENF_PARSER_FIELD    ( unused, UInt32Parser );
         /*  Code    0 - Hop limit exceeded in transit
                     1 - Fragment reassembly time exceeded   */
-        void setErrCode(int code){
+        void setErrCode(int code)
+        {
             ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
             icmpv6->code() = code;
         }
@@ -271,7 +272,8 @@ namespace senf {
                     1 - Unrecognized Next Header type encountered
                     2 - Unrecognized IPv6 option encountered          */
         
-        void setErrCode(int code){
+        void setErrCode(int code)
+        {
             ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
             icmpv6->code() = code;
         }

@@ -101,11 +101,11 @@ namespace ppi {
 
         /** \brief Unhandled error condition */
         struct ErrorException : public senf::Exception
-        { ErrorException() : senf::Exception("senf::ppi::IOEvent::ErrorException"){} };
+        { ErrorException() : senf::Exception("senf::ppi::IOEvent::ErrorException") {} };
 
         /** \brief Unhandled hangup condition */
         struct HangupException : public senf::Exception
-        { HangupException() : senf::Exception("senf::ppi::IOEvent::HangupException"){} };
+        { HangupException() : senf::Exception("senf::ppi::IOEvent::HangupException") {} };
 
     protected:
 

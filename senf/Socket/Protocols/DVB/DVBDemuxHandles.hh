@@ -56,8 +56,8 @@ namespace senf {
      */
     class DVBProtocolWrapper :public boost::enable_shared_from_this<DVBProtocolWrapper> {
         public:
-            DVBProtocolWrapper(){}
-            virtual ~DVBProtocolWrapper(){}
+            DVBProtocolWrapper() {}
+            virtual ~DVBProtocolWrapper() {}
     };
     /** \brief Baseclass for DVBSocketProtocols which want use Wrappers for console. 
     */
@@ -73,7 +73,8 @@ public:
         {
             wrap_ = wrap;
         }
-        virtual void close(){
+        virtual void close()
+        {
             wrap_.reset();
             SocketProtocol::close();
 

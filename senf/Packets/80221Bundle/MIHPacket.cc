@@ -105,29 +105,29 @@ prefix_ void senf::MIHPacketType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
     os << "MIH Packet:\n"
-       <<     "  protocol header:\n"
-       <<     "    version               : " << unsigned( p->version()) << "\n"
-       <<     "    ack request           : " << p->ackRequest() << "\n"
-       <<     "    ack response          : " << p->ackResponse() << "\n"
-       <<     "    UIR                   : " << p->uir() << "\n"
-       <<     "    more fragments        : " << p->moreFragment() << "\n"
-       <<     "    fragment number       : " << p->fragmentNr() << "\n"
-       <<     "    message ID (MID)      : " << unsigned( p->messageId()) << "\n"
-       <<     "      sid                 : " << unsigned( p->sid()) << "\n"        
-       <<     "      opcode              : " << unsigned( p->opcode()) << "\n"
-       <<     "      aid                 : " << unsigned( p->aid()) << "\n"      
-       <<     "    transaction id        : " << unsigned( p->transactionId()) << "\n"
-       <<     "    payload length        : " << unsigned( p->payloadLength()) << "\n"
-       <<     "  source MIHF_Id TLV      :\n"
-       <<     "    type                  : " << unsigned (p->src_mihfId().type()) << "\n"
-       <<     "    length                : " << unsigned (p->src_mihfId().length()) << "\n"
-       <<     "    value                 :\n";
+       << "  protocol header:\n"
+       << senf::fieldName("  version")                 << unsigned( p->version()) << "\n"
+       << senf::fieldName("  ack request")             << p->ackRequest() << "\n"
+       << senf::fieldName("  ack response")            << p->ackResponse() << "\n"
+       << senf::fieldName("  UIR")                     << p->uir() << "\n"
+       << senf::fieldName("  more fragments")          << p->moreFragment() << "\n"
+       << senf::fieldName("  fragment number")         << p->fragmentNr() << "\n"
+       << senf::fieldName("  message ID (MID)")        << unsigned( p->messageId()) << "\n"
+       << senf::fieldName("    sid")                   << unsigned( p->sid()) << "\n"        
+       << senf::fieldName("    opcode")                << unsigned( p->opcode()) << "\n"
+       << senf::fieldName("    aid")                   << unsigned( p->aid()) << "\n"      
+       << senf::fieldName("  transaction id")          << unsigned( p->transactionId()) << "\n"
+       << senf::fieldName("  payload length")          << unsigned( p->payloadLength()) << "\n"
+       << "  source MIHF_Id TLV:\n"
+       << senf::fieldName("  type")                    << unsigned (p->src_mihfId().type()) << "\n"
+       << senf::fieldName("  length")                  << unsigned (p->src_mihfId().length()) << "\n"
+       << "    value:\n";
     std::string src_mihfId (p->src_mihfId().asString());
     hexdump(src_mihfId.begin(), src_mihfId.end(), os);
-    os <<     "  destination MIHF_Id TLV:\n"
-       <<     "    type                  : " << unsigned (p->dst_mihfId().type()) << "\n"
-       <<     "    length                : " << unsigned (p->dst_mihfId().length()) << "\n"
-       <<     "    value                 :\n";
+    os << "  destination MIHF_Id TLV:\n"
+       << senf::fieldName("  type")                    << unsigned (p->dst_mihfId().type()) << "\n"
+       << senf::fieldName("  length")                  << unsigned (p->dst_mihfId().length()) << "\n"
+       << "    value:\n";
     std::string dst_mihfId (p->dst_mihfId().asString());
     hexdump(dst_mihfId.begin(), dst_mihfId.end(), os);
 }

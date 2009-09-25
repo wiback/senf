@@ -57,23 +57,23 @@ namespace {
 prefix_ void senf::WLANPacket_MgtFrameType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
-    os     << "802.11 MAC Mangement Frame:\n";
+    os << "802.11 MAC Mangement Frame:\n";
     dumpBase(p.parser(), os);
-    os     << "  destination             : " << p->destinationAddress() << "\n"
-           << "  source                  : " << p->sourceAddress() << "\n"
-           << "  bss id                  : " << p->bssid() << "\n"
-           << "  sequence number         : " << p->sequenceNumber() << "\n"
-           << "  fragment number         : " << p->fragmentNumber() << "\n";
+    os << senf::fieldName("destination")           << p->destinationAddress() << "\n"
+       << senf::fieldName("source")                << p->sourceAddress() << "\n"
+       << senf::fieldName("bss id")                << p->bssid() << "\n"
+       << senf::fieldName("sequence number")       << p->sequenceNumber() << "\n"
+       << senf::fieldName("fragment number")       << p->fragmentNumber() << "\n";
 }
 
 prefix_ void senf::WLANPacket_CtrlFrameType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
-    os     << "802.11 MAC Control Frame:\n";
+    os << "802.11 MAC Control Frame:\n";
     dumpBase(p.parser(), os);
-    os     << "  receiver                : " << p->receiverAddress() << "\n";
+    os << senf::fieldName("receiver")              << p->receiverAddress() << "\n";
     if (p->is_rts())
-        os << "  source                  : " << p->sourceAddress() << "\n";
+        os << senf::fieldName("source")                << p->sourceAddress() << "\n";
 }
 
 prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::destinationAddress()
@@ -113,22 +113,22 @@ prefix_ senf::MACAddressParser senf::WLANPacket_DataFrameParser::bssid()
 prefix_ void senf::WLANPacket_DataFrameType::dump(packet p, std::ostream &os)
 {
     boost::io::ios_all_saver ias(os);
-    os     << "802.11 MAC Data Frame:\n";
+    os << "802.11 MAC Data Frame:\n";
     dumpBase(p.parser(), os);
-    os     << "  destination             : " << p->destinationAddress();
+    os << senf::fieldName("destination")               << p->destinationAddress();
     if (p->dsBits()==0 || p->dsBits()==2) os << " (receiver)";
-    os     << "\n"
-           << "  source                  : " << p->sourceAddress();
+    os << "\n"
+       << senf::fieldName("source")                    << p->sourceAddress();
     if (p->dsBits()==0 || p->dsBits()==1) os << " (transmitter)";
-    os     << "\n"
-           << "  bss id                  : " << p->bssid();
+    os << "\n"
+       << senf::fieldName("bss id")                    << p->bssid();
     if (p->dsBits()==1) os << " (receiver)";
     else if (p->dsBits()!=0) os << " (transmitter)";
-    os     << "\n"
-           << "  sequence number         : " << p->sequenceNumber() << "\n"
-           << "  fragment number         : " << p->fragmentNumber() << "\n";
+    os << "\n"
+       << senf::fieldName("sequence number")           << p->sequenceNumber() << "\n"
+       << senf::fieldName("fragment number")           << p->fragmentNumber() << "\n";
     if (p->has_qosField())
-        os << "  QOS data                : " << p->qosField() << "\n";
+        os << senf::fieldName("QOS data")              << p->qosField() << "\n";
 }
 
 #undef prefix_
