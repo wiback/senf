@@ -106,6 +106,8 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
+        
+        static void dump(packet p, std::ostream & os);
     };
         
     typedef ConcretePacket<ICMPv6EchoReplyType> ICMPv6EchoReply;
@@ -161,6 +163,8 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
+        
+        static void dump(packet p, std::ostream & os);
     };
         
     typedef ConcretePacket<ICMPv6ErrDestUnreachableType> ICMPv6ErrDestUnreachable;
@@ -174,10 +178,10 @@ namespace senf {
         SENF_PARSER_FIELD ( mtu, UInt32Parser );
     
         /*   Code     static set to 0       */
-    //     SENF_PARSER_INIT() {
-    //         ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
-    //         icmpv6->code() = 0;
-    //     }
+        SENF_PARSER_INIT() {
+            ICMPv6Packet icmpv6 (packet().rfind<ICMPv6Packet>(senf::nothrow));
+            icmpv6->code() = 0;
+        }
         
         SENF_PARSER_FINALIZE ( ICMPv6ErrTooBigParser );
     };
@@ -204,6 +208,8 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
+        
+        static void dump(packet p, std::ostream & os);
     };
 
     typedef ConcretePacket<ICMPv6ErrTooBigType> ICMPv6ErrTooBig;
@@ -248,6 +254,8 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
+        
+        static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<ICMPv6ErrTimeExceededType> ICMPv6ErrTimeExceeded;
     
@@ -292,6 +300,8 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
+        
+        static void dump(packet p, std::ostream & os);
     };
     typedef ConcretePacket<ICMPv6ErrParamProblemType> ICMPv6ErrParamProblem;
     
@@ -351,6 +361,8 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
+        
+        static void dump(packet p, std::ostream & os);
     };
         
     typedef ConcretePacket<MLDv2ListenerQueryType> MLDv2ListenerQuery;
@@ -411,6 +423,8 @@ namespace senf {
         using mixin::nextPacketRange;
         using mixin::init;
         using mixin::initSize;
+        
+        static void dump(packet p, std::ostream & os);
     };
         
     typedef ConcretePacket<MLDv2ListenerReportType> MLDv2ListenerReport;
