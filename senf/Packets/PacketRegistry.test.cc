@@ -87,18 +87,17 @@ BOOST_AUTO_UNIT_TEST(packetRegistry_test)
     senf::dumpPacketRegistries(s);
     BOOST_CHECK_EQUAL( s.str(),
                        "(anonymous namespace)::BaseTag:\n"
-                       "1 senf::ConcretePacket<(anonymous namespace)::FooPacketType>\n"
-                       "2 senf::ConcretePacket<(anonymous namespace)::BarPacketType>\n"
+                       "  0x00000001 (         1) (....) (anonymous namespace)::FooPacketType\n"
+                       "  0x00000002 (         2) (....) (anonymous namespace)::BarPacketType\n"
                        "\n"
                        "(anonymous namespace)::RegTag:\n"
-                       "1 senf::ConcretePacket<(anonymous namespace)::FooPacketType>\n"
-                       "2 senf::ConcretePacket<(anonymous namespace)::BarPacketType>\n"
+                       "  0x00000001 (         1) (....) (anonymous namespace)::FooPacketType\n"
+                       "  0x00000002 (         2) (....) (anonymous namespace)::BarPacketType\n"
                        "\n"
                        "(anonymous namespace)::StringTag:\n"
-                       "bar senf::ConcretePacket<(anonymous namespace)::BarPacketType>\n"
-                       "foo senf::ConcretePacket<(anonymous namespace)::FooPacketType>\n"
+                       "  bar              (anonymous namespace)::BarPacketType\n"
+                       "  foo              (anonymous namespace)::FooPacketType\n"
                        "\n" );
-
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////

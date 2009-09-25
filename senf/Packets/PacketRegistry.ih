@@ -28,6 +28,7 @@
 
 // Custom includes
 #include <ext/functional>
+#include <limits>
 #include <boost/intrusive_ptr.hpp>
 #include <boost/iterator/transform_iterator.hpp>
 #include <senf/Utils/TypeIdValue.hh>
@@ -74,13 +75,16 @@ namespace detail {
         virtual ~PacketRegistryImplBase();
 
         static void dump(std::ostream & os);
+        static void clear();
 
     protected:
         typedef std::map<std::string, PacketRegistryImplBase*>  RegistryMap;
         static RegistryMap & registries();
 
     private:
-        virtual void v_dump(std::ostream & os) = 0;
+        virtual bool v_empty() const = 0;
+        virtual void v_dump(std::ostream & os) const = 0;
+        virtual void v_clear() = 0;
     };
 
     /** \brief Internal: Singleton class implementing the packet registry.
@@ -131,12 +135,31 @@ namespace detail {
     protected:
 
     private:
-        virtual void v_dump(std::ostream & os);
+        virtual bool v_empty() const;
+        virtual void v_dump(std::ostream & os) const;
+        virtual void v_clear();
 
         PacketMap registry_;
         ReversePacketMap reverseRegistry_;
     };
 
+    template <class KeyType, bool is_integral=std::numeric_limits<KeyType>::is_integer>
+    struct DumpKey
+    {
+        static void dump(KeyType const & v, std::ostream & os);
+    };
+
+    template <class KeyType>
+    struct DumpKey<KeyType, true>
+    {
+        static void dump(KeyType const & v, std::ostream & os);
+    };
+
+    template <class Type> struct CharToInt { typedef Type type; };
+    template <> struct CharToInt<char> { typedef int type; };
+    template <> struct CharToInt<signed char> { typedef int type; };
+    template <> struct CharToInt<unsigned char> { typedef unsigned type; };
+    
 }}
 
 ///////////////////////////////ih.e////////////////////////////////////////

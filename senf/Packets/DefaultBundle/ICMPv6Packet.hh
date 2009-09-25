@@ -47,7 +47,7 @@ namespace senf
     
     struct ICMPTypes {
         // ICMP type registry
-        typedef boost::uint16_t key_t;
+        typedef boost::uint8_t key_t;
     };
 
     /** \brief ICMP Packet for IPv6

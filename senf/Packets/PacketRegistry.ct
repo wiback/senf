@@ -28,6 +28,8 @@
 // Custom includes
 #include <senf/Utils/senfassert.hh>
 #include <iostream>
+#include <iomanip>
+#include <cmath>
 #include <senf/Utils/TypeInfo.hh>
 
 #define prefix_
@@ -126,12 +128,60 @@ senf::detail::PacketRegistryImpl<KeyType>::lookup(key_t key, bool)
 }
 
 template <class KeyType>
+prefix_ bool senf::detail::PacketRegistryImpl<KeyType>::v_empty()
+    const
+{
+    return registry_.empty();
+}
+
+template <class KeyType>
 prefix_ void senf::detail::PacketRegistryImpl<KeyType>::v_dump(std::ostream & os)
+    const
 {
     typename PacketMap::const_iterator i (registry_.begin());
     typename PacketMap::const_iterator const i_end (registry_.end());
-    for (; i != i_end; ++i)
-        os << i->first << " " << i->second->name() << "\n";
+    for (; i != i_end; ++i) {
+        std::string n (i->second->name());
+        senf::detail::DumpKey<KeyType>::dump(i->first, os);
+        os << ' ' << n.substr(21,n.size()-22) << "\n";
+    }
+}
+
+template <class KeyType>
+prefix_ void senf::detail::PacketRegistryImpl<KeyType>::v_clear()
+{
+    registry_.clear();
+    reverseRegistry_.clear();
+}
+
+///////////////////////////////////////////////////////////////////////////
+// senf::detail::DumpKey<KeyType,is_integral>
+
+template <class KeyType, bool is_integral>
+prefix_ void senf::detail::DumpKey<KeyType,is_integral>::dump(KeyType const & v,
+                                                              std::ostream & os)
+{
+    os << "  " << std::setw(16) << std::left << v << std::setw(0) << std::right;
+}
+
+// senf::detail::DumpKey<KeyType, true>
+
+template <class KeyType>
+prefix_ void senf::detail::DumpKey<KeyType, true>::dump(KeyType const & v, std::ostream & os)
+{
+    int bytes ((std::numeric_limits<KeyType>::digits+7)/8);
+    int digs (int(2.4*bytes)+1);
+
+    os << "  0x" << std::setw(2*bytes) << std::setfill('0') << std::hex 
+       << typename senf::detail::CharToInt<KeyType>::type (v)
+       << " (" << std::setw(digs) << std::setfill(' ') << std::dec 
+       << typename senf::detail::CharToInt<KeyType>::type (v)
+       << ") (";
+    for (int i (bytes-1); i>=0; --i) {
+        char c ((v>>(8*i))&0xff);
+        os << ((c>=32 && c<=127) ? c : '.');
+    }
+    os << ')';
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

@@ -1,6 +1,6 @@
 // $Id$
 //
-// Copyright (C) 2007
+// Copyright (C) 2009 
 // Fraunhofer Institute for Open Communication Systems (FOKUS)
 // Competence Center NETwork research (NET), St. Augustin, GERMANY
 //     Stefan Bund <g0dil@berlios.de>
@@ -21,61 +21,46 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief PacketRegistry non-inline non-template implementation */
-
+    \brief bundledump non-inline non-template implementation */
 
 // Custom includes
+#include <dlfcn.h>
+#include <iostream>
 #include "Packets.hh"
+#include <senf/Utils/Logger/Logger.hh>
 
-//#include "PacketRegistry.mpp"
+//#include "bundledump.mpp"
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-prefix_  senf::PkReg_Entry::~PkReg_Entry()
-{}
-
-prefix_ senf::detail::PacketRegistryImplBase::~PacketRegistryImplBase()
-{}
-
-prefix_ void senf::detail::PacketRegistryImplBase::dump(std::ostream & os)
+int main(int argc, char const ** argv)
 {
-    RegistryMap::const_iterator i (registries().begin());
-    RegistryMap::const_iterator const i_end (registries().end());
-    for (; i!=i_end; ++i) {
-        if (! i->second->v_empty()) {
-            os << i->first << ":\n";
-            i->second->v_dump(os);
-            os << "\n";
+    // Link in logger library ...
+    (void) senf::log::StreamRegistry::instance();
+    for (unsigned i (1); i<argc; ++i) {
+        senf::detail::PacketRegistryImplBase::clear();
+        void *handle = dlopen(argv[i], RTLD_NOW | RTLD_GLOBAL);
+        if (handle == NULL) {
+            std::cerr << "could not load packet bundle " << argv[i] << ": "
+                      << dlerror() << std::endl;
+            return 1;
         }
     }
-}
-
-prefix_ void senf::detail::PacketRegistryImplBase::clear()
-{
-    RegistryMap::const_iterator i (registries().begin());
-    RegistryMap::const_iterator const i_end (registries().end());
-    for (; i!=i_end; ++i)
-        i->second->v_clear();
-}
-
-prefix_ senf::detail::PacketRegistryImplBase::RegistryMap &
-senf::detail::PacketRegistryImplBase::registries()
-{
-    static RegistryMap map;
-    return map;
+    senf::dumpPacketRegistries(std::cout);
+    return 0;
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "PacketRegistry.mpp"
+//#include "bundledump.mpp"
 
 
 // Local Variables:
 // mode: c++
 // fill-column: 100
+// comment-column: 40
 // c-file-style: "senf"
 // indent-tabs-mode: nil
 // ispell-local-dictionary: "american"
 // compile-command: "scons -u test"
-// comment-column: 40
 // End:

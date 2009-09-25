@@ -1,6 +1,9 @@
+# -*- python -*-
+
 Import('env')
 
-env['ALLOBJECTS'] = []
+env.Replace( ALLOBJECTS = [], PACKET_BUNDLES = [] )
+env.SetDefault( ALLBUNDLES = '$LOCALLIBDIR/AllBundles${OBJADDSUFFIX}${OBJSUFFIX}' )
 
 SConscript('senf/SConscript')
 
@@ -14,7 +17,7 @@ conf = env.CreateFile("${LOCALLIBDIR}/${LIBSENF}${LIBADDSUFFIX}.conf",
 env.Default(conf)
 env.Install('$CONFINSTALLDIR', conf)
 
-# AllBundles:
+### AllBundles:
 cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', env['PACKET_BUNDLES'],
                               NAME="AllBundles")
 env.Default(cobject)

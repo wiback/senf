@@ -164,10 +164,14 @@ def AutoPacketBundle(env, name, exclude=[], subdirs=[], doc_extra_sources=[]):
 
     objects = env.Object(sources)
     cobject = env.CombinedObject('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', objects, NAME=((name)))
+    sobundle = env.SharedLibrary('${LOCALLIBDIR}/${NAME}${OBJADDSUFFIX}', sources, NAME=((name)),
+                                 LIBS=[], SHLIBPREFIX='')
 
     env.Default(cobject)
+    env.Default(sobundle)
     env.Append(ALLOBJECTS = objects, PACKET_BUNDLES = cobject)
     env.Install('$OBJINSTALLDIR', cobject)
+    env.Install('$OBJINSTALLDIR', sobundle)
 
     if tests                 : env.BoostUnitTest('test', tests + cobject)
     if includes              : env.InstallSubdir('$INCLUDEINSTALLDIR', includes)

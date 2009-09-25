@@ -117,7 +117,7 @@ namespace senf {
             PacketRegistry
      */
     struct IpTypes {
-        typedef boost::uint16_t key_t;
+        typedef boost::uint8_t key_t;
     };
 
     /** \brief IPv4 packet

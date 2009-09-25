@@ -1,16 +1,5 @@
 #!/bin/sh -e
 
-if [ -z "$1" ]; then
-    echo "Usage:"
-    echo "  $0 [-c] <commands>"
-    echo
-    echo "-c Only list C/C++ source files"
-    echo
-    echo "<commands> are any find commands (which should contain a -print somewhere)"
-    echo "which are matched for any file fond"
-    exit 1
-fi
-
 cond=""
 if [ "$1" = "-c" ]; then
     shift
@@ -36,4 +25,4 @@ find . \
     -name ".sconsign*" -o \
     -name "semantic.cache" -o \
     -name "all_includes.hh" -o \
-    -type f $cond \( "$@" \)
+    -type f $cond \( "$@" -print \)

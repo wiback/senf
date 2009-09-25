@@ -5,9 +5,7 @@ import SENFSCons
 
 ###########################################################################
 
-env['PACKET_BUNDLES'] = []
-
-SENFSCons.AutoRules(env, doc_extra_sources = [
+SENFSCons.AutoRules(env, exclude = [ 'bundledump.cc' ], doc_extra_sources = [
     env.Dia2Png("structure.dia"),
     env.Dia2Png("80221Bundle/TLV.dia"),
     env.PkgDraw("MPEGDVBBundle/DTCPPacket.hh"),
@@ -57,3 +55,5 @@ SENFSCons.AutoRules(env, doc_extra_sources = [
     env.PkgDraw("MPEGDVBBundle/TransportPacket.hh"),
 ])
 
+env.Default(env.Program('bundledump', [ 'bundledump.cc', '$LOCALLIBDIR/DefaultBundle.o' ],
+                        LIBS = [ '$LIBS', 'dl' ]))
