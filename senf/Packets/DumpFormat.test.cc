@@ -21,38 +21,33 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief bundledump non-inline non-template implementation */
+    \brief DumpFormat.test unit tests */
+
+//#include "DumpFormat.test.hh"
+//#include "DumpFormat.test.ih"
 
 // Custom includes
-#include <dlfcn.h>
-#include <iostream>
 #include "Packets.hh"
-#include <senf/Utils/Logger/Logger.hh>
 
-//#include "bundledump.mpp"
+#include <senf/Utils/auto_unit_test.hh>
+#include <boost/test/test_tools.hpp>
+
 #define prefix_
 ///////////////////////////////cc.p////////////////////////////////////////
 
-int main(int argc, char const ** argv)
+BOOST_AUTO_UNIT_TEST(dumpFormat)
 {
-    // Link in logger library ...
-    (void) senf::log::StreamRegistry::instance();
-    for (int i (1); i<argc; ++i) {
-        senf::detail::PacketRegistryImplBase::clear();
-        void *handle = dlopen(argv[i], RTLD_NOW | RTLD_GLOBAL);
-        if (handle == NULL) {
-            std::cerr << "could not load packet bundle " << argv[i] << ": "
-                      << dlerror() << std::endl;
-            return 1;
-        }
-    }
-    senf::dumpPacketRegistries(std::cout);
-    return 0;
+    BOOST_CHECK_EQUAL( senf::fieldName("test"), "  test                    : " );
+    BOOST_CHECK_EQUAL( senf::fieldName("xxxxxxxxxxxxxxxxxxxxxxx"), "  xxxxxxxxxxxxxxxxxxxxxxx : " );
+    BOOST_CHECK_EQUAL( senf::fieldName("xxxxxxxxxxxxxxxxxxxxxxxx"), "  xxxxxxxxxxxxxxxxxxxxxxxx : " );
+
+    BOOST_CHECK_EQUAL( senf::prettyNumber<boost::int16_t>(-1), "-0x0001 (    -1) (..)" );
+    BOOST_CHECK_EQUAL( senf::prettyNumber<boost::int16_t>(1), " 0x0001 (     1) (..)" );
+    BOOST_CHECK_EQUAL( senf::prettyNumber<boost::uint16_t>(1), "0x0001 (    1) (..)" );
 }
 
 ///////////////////////////////cc.e////////////////////////////////////////
 #undef prefix_
-//#include "bundledump.mpp"
 
 
 // Local Variables:

@@ -155,11 +155,6 @@ namespace detail {
         static void dump(KeyType const & v, std::ostream & os);
     };
 
-    template <class Type> struct CharToInt { typedef Type type; };
-    template <> struct CharToInt<char> { typedef int type; };
-    template <> struct CharToInt<signed char> { typedef int type; };
-    template <> struct CharToInt<unsigned char> { typedef unsigned type; };
-    
 }}
 
 ///////////////////////////////ih.e////////////////////////////////////////

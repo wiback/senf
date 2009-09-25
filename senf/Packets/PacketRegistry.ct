@@ -169,19 +169,7 @@ prefix_ void senf::detail::DumpKey<KeyType,is_integral>::dump(KeyType const & v,
 template <class KeyType>
 prefix_ void senf::detail::DumpKey<KeyType, true>::dump(KeyType const & v, std::ostream & os)
 {
-    int bytes ((std::numeric_limits<KeyType>::digits+7)/8);
-    int digs (int(2.4*bytes)+1);
-
-    os << "  0x" << std::setw(2*bytes) << std::setfill('0') << std::hex 
-       << typename senf::detail::CharToInt<KeyType>::type (v)
-       << " (" << std::setw(digs) << std::setfill(' ') << std::dec 
-       << typename senf::detail::CharToInt<KeyType>::type (v)
-       << ") (";
-    for (int i (bytes-1); i>=0; --i) {
-        char c ((v>>(8*i))&0xff);
-        os << ((c>=32 && c<=127) ? c : '.');
-    }
-    os << ')';
+    os << "  " << senf::prettyNumber(v);
 }
 
 ///////////////////////////////ct.e////////////////////////////////////////

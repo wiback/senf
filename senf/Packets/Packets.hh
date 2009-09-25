@@ -46,6 +46,7 @@
 #include "VectorParser.hh"
 #include "ParseHelpers.hh"
 #include "DataPacket.hh"
+#include "DumpFormat.hh"
 
 #undef HH_SENF_Packets_Packets__decls_
 
@@ -69,6 +70,7 @@
 #include "VectorParser.hh"
 #include "ParseHelpers.hh"
 #include "DataPacket.hh"
+#include "DumpFormat.hh"
 
 #endif
 

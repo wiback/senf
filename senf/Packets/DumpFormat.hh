@@ -21,38 +21,44 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief bundledump non-inline non-template implementation */
+    \brief DumpFormat public header */
+
+#ifndef HH_SENF_senf_Packets_DumpFormat_
+#define HH_SENF_senf_Packets_DumpFormat_ 1
+
+#ifndef HH_SENF_Packets_Packets_
+#error "Don't include 'DumpFormat.hh' directly, include 'Packets.hh'"
+#endif
 
 // Custom includes
-#include <dlfcn.h>
-#include <iostream>
-#include "Packets.hh"
-#include <senf/Utils/Logger/Logger.hh>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/is_signed.hpp>
+#include <boost/type_traits/is_unsigned.hpp>
 
-//#include "bundledump.mpp"
-#define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+//#include "DumpFormat.mpp"
+///////////////////////////////hh.p////////////////////////////////////////
 
-int main(int argc, char const ** argv)
-{
-    // Link in logger library ...
-    (void) senf::log::StreamRegistry::instance();
-    for (int i (1); i<argc; ++i) {
-        senf::detail::PacketRegistryImplBase::clear();
-        void *handle = dlopen(argv[i], RTLD_NOW | RTLD_GLOBAL);
-        if (handle == NULL) {
-            std::cerr << "could not load packet bundle " << argv[i] << ": "
-                      << dlerror() << std::endl;
-            return 1;
-        }
-    }
-    senf::dumpPacketRegistries(std::cout);
-    return 0;
+namespace senf {
+
+    std::string fieldName(std::string const & s);
+    
+    template <class T> 
+    std::string prettyNumber(T const & v, 
+                             typename boost::enable_if<boost::is_signed<T> >::type * = 0);
+
+    template <class T> 
+    std::string prettyNumber(T const & v, 
+                             typename boost::enable_if<boost::is_unsigned<T> >::type * = 0);
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
-#undef prefix_
-//#include "bundledump.mpp"
+///////////////////////////////hh.e////////////////////////////////////////
+#endif
+#if !defined(HH_SENF_Packets_Packets__decls_) && !defined(HH_SENF_Packets_DumpFormat_i_)
+#define HH_SENF_Packets_DumpFormat_i_
+//#include "DumpFormat.cci"
+#include "DumpFormat.ct"
+//#include "DumpFormat.cti"
+#endif
 
 
 // Local Variables:

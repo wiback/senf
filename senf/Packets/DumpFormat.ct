@@ -21,38 +21,32 @@
 // 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 /** \file
-    \brief bundledump non-inline non-template implementation */
+    \brief DumpFormat non-inline template implementation  */
+
+#include "DumpFormat.ih"
 
 // Custom includes
-#include <dlfcn.h>
-#include <iostream>
-#include "Packets.hh"
-#include <senf/Utils/Logger/Logger.hh>
+#include <sstream>
 
-//#include "bundledump.mpp"
 #define prefix_
-///////////////////////////////cc.p////////////////////////////////////////
+///////////////////////////////ct.p////////////////////////////////////////
 
-int main(int argc, char const ** argv)
-{
-    // Link in logger library ...
-    (void) senf::log::StreamRegistry::instance();
-    for (int i (1); i<argc; ++i) {
-        senf::detail::PacketRegistryImplBase::clear();
-        void *handle = dlopen(argv[i], RTLD_NOW | RTLD_GLOBAL);
-        if (handle == NULL) {
-            std::cerr << "could not load packet bundle " << argv[i] << ": "
-                      << dlerror() << std::endl;
-            return 1;
-        }
-    }
-    senf::dumpPacketRegistries(std::cout);
-    return 0;
+template <class T>
+prefix_ std::string 
+senf::prettyNumber(T const & v, typename boost::enable_if<boost::is_signed<T> >::type *)
+{ 
+   return detail::prettySignedNumber(v, std::numeric_limits<T>::digits);
 }
 
-///////////////////////////////cc.e////////////////////////////////////////
+template <class T>
+prefix_ std::string
+senf::prettyNumber(T const & v, typename boost::enable_if<boost::is_unsigned<T> >::type *)
+{
+   return detail::prettyUnsignedNumber(v, std::numeric_limits<T>::digits); 
+}
+
+///////////////////////////////ct.e////////////////////////////////////////
 #undef prefix_
-//#include "bundledump.mpp"
 
 
 // Local Variables:
