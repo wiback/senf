@@ -31,6 +31,13 @@ class BuildTypeOptions:
         type = env['final'] and "final" or env['debug'] and "debug" or "normal"
         return env[self._var + "_" + type]
 
+def loadTools(env):
+    global senfutildir
+    tooldir = os.path.join(senfutildir, 'site_tools')
+    for tool in os.listdir(tooldir):
+        name, ext = os.path.splitext(tool)
+        if ext == '.py' and name != "__init__" : env.Tool(name, [ tooldir ])
+
 def parseArguments(env, *defs):
     vars = Variables(args=ARGUMENTS)
     for d in defs : vars.Add(d)
@@ -64,13 +71,8 @@ Special command line parameters:
 def SetupForSENF(env, senf_path = []):
     global senfutildir
     senf_path.extend(('senf', os.path.dirname(senfutildir), '/usr/local', '/usr'))
-    tooldir = os.path.join(senfutildir, 'site_tools')
 
-    env.Tool('Boost',       [ tooldir ])
-    env.Tool('PhonyTarget', [ tooldir ])
-    env.Tool('Yaptu',       [ tooldir ])
-    env.Tool('CopyToDir',   [ tooldir ])
-    env.Tool('Doxygen',     [ tooldir ])
+    loadTools(env)
 
     env.Append(
         LIBS              = [ 'senf', 'rt', '$BOOSTREGEXLIB',

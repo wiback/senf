@@ -12,16 +12,7 @@ env.Decider('MD5-timestamp')
 env.EnsureSConsVersion(1,2)
 
 # Load all the local SCons tools
-env.Tool('Doxygen')
-env.Tool('Dia2Png')
-env.Tool('PkgDraw')
-env.Tool('InstallSubdir')
-env.Tool('CopyToDir')
-env.Tool('Boost')
-env.Tool('CombinedObject')
-env.Tool('PhonyTarget')
-env.Tool('InstallDir')
-env.Tool('CreateFile')
+senfutil.loadTools(env)
 
 env.Help("""
 Additional top-level build targets:
@@ -46,7 +37,7 @@ env.Append(
    ENV                    = { 'PATH' : os.environ.get('PATH'), 'HOME' : os.environ.get('HOME') },
    CLEAN_PATTERNS         = [ '*~', '#*#', '*.pyc', 'semantic.cache', '.sconsign*' ],
 
-   BUILDDIR               = '#',
+   BUILDDIR               = '${FLAVOR and "#/build/$FLAVOR" or "#"}',
    CPPPATH                = [ '$BUILDDIR', '#' ],
    LOCALLIBDIR            = '$BUILDDIR',
    LIBPATH                = [ '$LOCALLIBDIR' ],
@@ -104,6 +95,9 @@ env.SetDefault(
     SCONS             = "@$SCONSBIN -Q -j$CONCURRENCY_LEVEL",
     CONCURRENCY_LEVEL = env.GetOption('num_jobs') or 1,
     TOPDIR            = env.Dir('#').abspath,
+    LIBADDSUFFIX      = '${FLAVOR and "_$FLAVOR" or ""}',
+    OBJADDSUFFIX      = '${LIBADDSUFFIX}',
+    FLAVOR            = '',
 )
 
 # Set variables from command line
@@ -131,10 +125,10 @@ SConscriptChdir(0)
 SConscript("debian/SConscript")
 SConscriptChdir(1)
 if os.path.exists('SConscript.local') : SConscript('SConscript.local')
-if env['BUILDDIR'] == '#':
+if env.subst('$BUILDDIR') == '#':
     SConscript("SConscript")
 else:
-    SConscript("SConscript", variant_dir=env['BUILDDIR'], src_dir='#', duplicate=False)
+    SConscript("SConscript", variant_dir=env.subst('$BUILDDIR'), src_dir='#', duplicate=False)
 SConscript("Examples/SConscript")
 SConscript("HowTos/SConscript")
 SConscript("doclib/SConscript")
@@ -174,8 +168,8 @@ for test in env.FindAllBoostUnitTests():
 
 ### lcov
 env.PhonyTarget('lcov', [], [
-        '$SCONS debug=1 BUILDDIR="#/lcov-build" CCFLAGS+="-fprofile-arcs -ftest-coverage" LIBS+="gcov" all_tests',
-        '$LCOV --follow --directory $TOPDIR/lcov-build/senf --capture --output-file /tmp/senf_lcov.info --base-directory $TOPDIR',
+        '$SCONS debug=1 BUILDDIR="#/build/lcov" CCFLAGS+="-fprofile-arcs -ftest-coverage" LIBS+="gcov" all_tests',
+        '$LCOV --follow --directory $TOPDIR/build/lcov/senf --capture --output-file /tmp/senf_lcov.info --base-directory $TOPDIR',
         '$LCOV --output-file lcov.info --remove /tmp/senf_lcov.info "*/include/*" "*/boost/*" "*.test.*" ',
         '$GENHTML --output-directory doc/lcov --title all_tests lcov.info',
         'rm /tmp/senf_lcov.info' ])
@@ -184,13 +178,13 @@ if env.GetOption('clean'):
                         for path, subdirs, files in os.walk('.')
                         for pattern in ('*.gcno', '*.gcda', '*.gcov')
                         for f in fnmatch.filter(files,pattern) ] + 
-                      [ 'lcov.info', env.Dir('doc/lcov'), env.Dir('lcov-build') ])
+                      [ 'lcov.info', env.Dir('doc/lcov'), env.Dir('build/lcov') ])
     
 #### clean
-env.Clean('all', ('.prepare-stamp', env.Dir('dist')))
+env.Clean('all', ('.prepare-stamp', env.Dir('dist'), env.Dir('build')))
 if env.GetOption('clean') : env.Depends('all', ('lcov', 'all_valgrinds'))
 
-if env.GetOption('clean') and     'all' in BUILD_TARGETS:
+if env.GetOption('clean') and 'all' in BUILD_TARGETS:
     env.Clean('all', [ os.path.join(path,f)
                        for path, subdirs, files in os.walk('.')
                        for pattern in env['CLEAN_PATTERNS']
