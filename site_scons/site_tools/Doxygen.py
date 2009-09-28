@@ -193,7 +193,7 @@ class DoxyfileParser:
          p = os.path.join(d,value[0])
          if os.path.exists(p):
             self._items.setdefault('@INCLUDE',[]).append(p)
-            parser = DoxyfileParser(self._node.File(p), self._env, self._include_path, self._items)
+            parser = DoxyfileParser(self._node.dir.File(p), self._env, self._include_path, self._items)
             parser.parse()
             return
 
