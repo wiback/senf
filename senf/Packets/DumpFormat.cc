@@ -40,7 +40,7 @@
 
 prefix_ std::string senf::fieldName(std::string const & s)
 {
-    std::string t (std::max(unsigned(SENF_PACKET_DUMP_COLON_COLUMN+1), s.size()+5), ' ');
+    std::string t (std::max(std::string::size_type(SENF_PACKET_DUMP_COLON_COLUMN+1), s.size()+5), ' ');
     std::copy(s.begin(), s.end(), t.begin()+2);
     t[t.size()-2] = ':';
     return t;
